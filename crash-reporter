@@ -90,7 +90,7 @@ class InformationCollector:
 	try:
 	    self.info['executable'] = os.readlink('/proc/' + pid + '/exe')
 	except OSError:
-	    pass # ignore it, there's nothing we can do about it
+	    return
 
 	self._get_proc()
 	self._get_pkg()
@@ -107,7 +107,19 @@ class InformationCollector:
 	'''Check whether executable belongs to a package and determine its
 	name, version, and the versions of its dependencies.'''
 
-	pass
+	# get dpkg -s <package> output
+	out = _command_output(['dpkg', '-S', self.info['executable']])
+	if out.startswith('Error:'):
+	    return 
+	pkg = out.split(':', 1)[0]
+	pkgstatus = _command_output(['dpkg', '-s', pkg])
+	if pkgstatus.startswith('Error:'):
+	    return 
+
+	for l in pkgstatus.splitlines():
+	    if l.startswith('Version:'):
+		self.info['pkg'] = '%s %s' % (pkg, l.split(None, 1)[1])
+		break
 
     def _get_os(self):
 	'''Collect information about system.'''
