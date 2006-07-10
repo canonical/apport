@@ -148,10 +148,10 @@ class InformationCollector:
 
 	self.info['stacktrace'] = _command_output(['gdb', '--batch', '--ex',
 	    'bt full', self.info['executable'], self.pid], 
-	    stderr=None).replace('\n\n', '\n.\n').strip()
+	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
 	self.info['thread_stacktrace'] = _command_output(['gdb', '--batch', '--ex',
 	    'thread apply all bt full', self.info['executable'], self.pid], 
-	    stderr=None).replace('\n\n', '\n.\n').strip()
+	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
 
 #################################################################
 #
