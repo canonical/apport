@@ -116,7 +116,7 @@ class InformationCollector:
 	'''Collect information from /proc.'''
 
 	self.info['environment'] = _read_file('/proc/'+ self.pid + '/environ'). \
-	    replace('\n', '\\n').replace('\0', '\n')
+	    replace('\n', '\\n').replace('\0', '\n').strip()
 	self.info['procstatus'] = _read_file('/proc/' + self.pid + '/status')
 
     def _get_pkg(self):
