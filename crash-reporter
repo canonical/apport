@@ -56,6 +56,19 @@ def write_debcontrol(file, fields):
 	else:
 	    print >> file, k + ':', v
 
+def drop_privileges(pid):
+    '''Change user and group to match the given target process.'''
+
+    stat = None
+    try:
+	stat = os.stat('/proc/' + pid)
+    except OSError:
+	raise ValueError, 'Invalid process ID'
+
+    os.setgid(stat.st_gid)
+    os.setuid(stat.st_uid)
+    assert os.getuid() == stat.st_uid
+
 #################################################################
 #
 # classes
@@ -147,6 +160,10 @@ if len(sys.argv) != 3:
     print 'Usage:', sys.argv[0], '<pid> <signal number>'
     sys.exit(-1)
 
-ic = InformationCollector(sys.argv[1], sys.argv[2])
+(pid, signal) = sys.argv[1:]
+
+drop_privileges(pid)
+
+ic = InformationCollector(pid, signal)
 
 write_debcontrol(sys.stdout, ic.info)
