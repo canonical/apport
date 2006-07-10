@@ -30,6 +30,21 @@ def _read_file(f):
     except IOError, e:
 	return 'IOError: ' + str(e)
 
+def _command_output(command, input = None):
+    '''Try to execute given command (array) and return its stdout, or return
+    a textual error if it failed.'''
+
+    try:
+	sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    except OSError, e:
+	return 'OSError: ' + str(e)
+
+    out = sp.communicate(input)[0]
+    if sp.returncode == 0:
+	return out
+    else:
+	return 'Error: command %s failed with exit code %i: %s' % (str(command), sp.returncode, out)
+
 def write_debcontrol(file, fields):
     '''Write dictionary 'fields' into the given file-like object, using Debian
     control file format.'''
@@ -97,16 +112,8 @@ class InformationCollector:
     def _get_os(self):
 	'''Collect information about system.'''
 
-	try:
-	    self.info['lsb_release'] = subprocess.Popen(['lsb_release', '-sir'],
-		stdout=subprocess.PIPE).communicate()[0].strip().replace('\n', ' ')
-	except OSError:
-	    pass
-	try:
-	    self.info['uname'] = subprocess.Popen(['uname', '-a'],
-		stdout=subprocess.PIPE).communicate()[0].strip()
-	except OSError:
-	    pass
+	self.info['lsb_release'] = _command_output(['lsb_release', '-sir']).strip().replace('\n', ' ')
+	self.info['uname'] = _command_output(['uname', '-a']).strip()
 
 #################################################################
 #
