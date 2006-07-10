@@ -14,6 +14,13 @@
 
 import sys, os, subprocess
 
+
+#################################################################
+#
+# functions
+#
+#################################################################
+
 def _read_file(f):
     '''Try to read given file and return its contents, or return a textual
     error if it failed.'''
@@ -22,6 +29,23 @@ def _read_file(f):
 	return open(f).read()
     except IOError, e:
 	return 'IOError: ' + str(e)
+
+def write_debcontrol(file, fields):
+    '''Write dictionary 'fields' into the given file-like object, using Debian
+    control file format.'''
+
+    for k, v in fields.iteritems():
+	if v.find('\n') >= 0:
+	    print >> file, k + ':'
+	    print >> file, '', v.replace('\n', '\n ')
+	else:
+	    print >> file, k + ':', v
+
+#################################################################
+#
+# classes
+#
+#################################################################
 
 class InformationCollector:
     '''Collect and store information about the crash.
@@ -83,17 +107,6 @@ class InformationCollector:
 		stdout=subprocess.PIPE).communicate()[0].strip()
 	except OSError:
 	    pass
-
-def write_debcontrol(file, fields):
-    '''Write dictionary 'fields' into the given file-like object, using Debian
-    control file format.'''
-
-    for k, v in fields.iteritems():
-	if v.find('\n') >= 0:
-	    print >> file, k + ':'
-	    print >> file, '', v.replace('\n', '\n ')
-	else:
-	    print >> file, k + ':', v
 
 #################################################################
 #
