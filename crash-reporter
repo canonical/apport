@@ -14,6 +14,14 @@
 
 import sys, os, subprocess
 
+def _read_file(f):
+    '''Try to read given file and return its contents, or return a textual
+    error if it failed.'''
+
+    try:
+	return open(f).read()
+    except IOError, e:
+	return 'IOError: ' + str(e)
 
 class InformationCollector:
     '''Collect and store information about the crash.
@@ -52,13 +60,9 @@ class InformationCollector:
     def _get_proc(self):
 	'''Collect information from /proc.'''
 
-	try:
-	    self.info['environment'] = open('/proc/'+str(self.pid)+'/environ',
-		'r').read().replace('\n', '\\n').replace('\0', '\n')
-	    self.info['procstatus'] = open('/proc/'+str(self.pid)+'/status',
-		'r').read()
-	except IOError:
-	    pass
+	self.info['environment'] = _read_file('/proc/'+ self.pid + '/environ'). \
+	    replace('\n', '\\n').replace('\0', '\n')
+	self.info['procstatus'] = _read_file('/proc/' + self.pid + '/status')
 
     def _get_pkg(self):
 	'''Check whether executable belongs to a package and determine its
@@ -67,7 +71,7 @@ class InformationCollector:
 	pass
 
     def _get_os(self):
-	'''Collect information about sytem.'''
+	'''Collect information about system.'''
 
 	try:
 	    self.info['lsb_release'] = subprocess.Popen(['lsb_release', '-sir'],
