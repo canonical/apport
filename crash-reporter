@@ -71,6 +71,18 @@ class InformationCollector:
 
 	pass
 
+
+def write_debcontrol(file, fields):
+    '''Write dictionary 'fields' into the given file-like object, using Debian
+    control file format.'''
+
+    for k, v in fields.iteritems():
+	if v.find('\n') >= 0:
+	    print >> file, k + ':'
+	    print >> file, '', v.replace('\n', '\n ')
+	else:
+	    print >> file, k + ':', v
+
 #################################################################
 #
 # main
@@ -83,6 +95,4 @@ if len(sys.argv) != 3:
 
 ic = InformationCollector(sys.argv[1], sys.argv[2])
 
-#f = open('/tmp/crash.%i' % ic.pid, 'w')
-for k, v in ic.info.iteritems():
-    print '%s: %s' % (k, v)
+write_debcontrol(sys.stdout, ic.info)
