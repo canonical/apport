@@ -26,7 +26,7 @@ def _read_file(f):
     error if it failed.'''
 
     try:
-	return open(f).read()
+	return open(f).read().strip()
     except IOError, e:
 	return 'Error: ' + str(e)
 
@@ -51,6 +51,7 @@ def write_debcontrol(file, fields):
 
     for k, v in fields.iteritems():
 	if v.find('\n') >= 0:
+	    assert v.find('\n\n') < 0
 	    print >> file, k + ':'
 	    print >> file, '', v.replace('\n', '\n ')
 	else:
@@ -146,9 +147,11 @@ class InformationCollector:
 	'''Get information from gdb.'''
 
 	self.info['stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'bt full', self.info['executable'], self.pid], stderr=None)
+	    'bt full', self.info['executable'], self.pid], 
+	    stderr=None).replace('\n\n', '\n.\n').strip()
 	self.info['thread_stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'thread apply all bt full', self.info['executable'], self.pid], stderr=None)
+	    'thread apply all bt full', self.info['executable'], self.pid], 
+	    stderr=None).replace('\n\n', '\n.\n').strip()
 
 #################################################################
 #
