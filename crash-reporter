@@ -30,12 +30,12 @@ def _read_file(f):
     except IOError, e:
 	return 'Error: ' + str(e)
 
-def _command_output(command, input = None):
+def _command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout, or return
     a textual error if it failed.'''
 
     try:
-	sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr)
     except OSError, e:
 	return 'Error: ' + str(e)
 
@@ -146,9 +146,9 @@ class InformationCollector:
 	'''Get information from gdb.'''
 
 	self.info['stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'bt full', self.info['executable'], self.pid])
+	    'bt full', self.info['executable'], self.pid], stderr=None)
 	self.info['thread_stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'thread apply all bt full', self.info['executable'], self.pid])
+	    'thread apply all bt full', self.info['executable'], self.pid], stderr=None)
 
 #################################################################
 #
