@@ -28,7 +28,7 @@ def _read_file(f):
     try:
 	return open(f).read()
     except IOError, e:
-	return 'IOError: ' + str(e)
+	return 'Error: ' + str(e)
 
 def _command_output(command, input = None):
     '''Try to execute given command (array) and return its stdout, or return
@@ -37,7 +37,7 @@ def _command_output(command, input = None):
     try:
 	sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     except OSError, e:
-	return 'OSError: ' + str(e)
+	return 'Error: ' + str(e)
 
     out = sp.communicate(input)[0]
     if sp.returncode == 0:
