@@ -1,0 +1,88 @@
+#!/usr/bin/python
+
+# Collect information about a crash and create a report in /var/crash/.
+# See https://wiki.ubuntu.com/AutomatedProblemReports for details.
+#
+# Copyright (c) 2006 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/pgl.html for
+# the full text of the license.
+
+import sys, os
+
+
+class InformationCollector:
+    '''Collect and store information about the crash.
+    
+    Fields with acquired data:
+    - signal: signal that caused the crash
+    - executable: path to the crashed executable
+    - stacktrace: stack trace
+    - environment: env variables from /proc/<pid>/environ
+    - pkg: package name and version; not present if info['executable'] does not
+      belong to a package
+    - dependencies: names and versions of depending packages; not present if
+      pkg is not present
+    - procstatus: /proc/<pid>/status
+    - lsb_release: lsb_release -sir
+    - uname: uname -a
+    '''
+
+    def __init__(self, pid, signal):
+	'Collects all information and stores them in the appropriate fields.'
+
+	self.info = {}
+	self.info['signal'] = signal
+	self.pid = pid
+
+	# determine program name
+	try:
+	    self.info['executable'] = os.readlink('/proc/' + pid + '/exe')
+	except OSError:
+	    pass # ignore it, there's nothing we can do about it
+
+	self._get_proc()
+	self._get_pkg()
+	self._get_os()
+
+    def _get_proc(self):
+	'''Collect information from /proc.'''
+
+	try:
+	    self.info['environment'] = open('/proc/'+str(self.pid)+'/environ',
+		'r').read().replace('\n', '\\n').replace('\0', '\n')
+	    self.info['procstatus'] = open('/proc/'+str(self.pid)+'/status',
+		'r').read()
+	except IOError:
+	    pass
+
+    def _get_pkg(self):
+	'''Check whether executable belongs to a package and determine its
+	name, version, and the versions of its dependencies.'''
+
+	pass
+
+    def _get_os(self):
+	'''Collect information about sytem.'''
+
+	pass
+
+#################################################################
+#
+# main
+#
+#################################################################
+
+if len(sys.argv) != 3:
+    print 'Usage:', sys.argv[0], '<pid> <signal number>'
+    sys.exit(-1)
+
+ic = InformationCollector(sys.argv[1], sys.argv[2])
+
+#f = open('/tmp/crash.%i' % ic.pid, 'w')
+for k, v in ic.info.iteritems():
+    print '%s: %s' % (k, v)
