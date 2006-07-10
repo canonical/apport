@@ -69,6 +69,7 @@ class InformationCollector:
     - signal: signal that caused the crash
     - executable: path to the crashed executable
     - stacktrace: stack trace
+    - thread_stacktrace: thread apply all bt full
     - environment: env variables from /proc/<pid>/environ
     - pkg: package name and version; not present if info['executable'] does not
       belong to a package
@@ -95,6 +96,7 @@ class InformationCollector:
 	self._get_proc()
 	self._get_pkg()
 	self._get_os()
+	self._get_gdb()
 
     def _get_proc(self):
 	'''Collect information from /proc.'''
@@ -126,6 +128,14 @@ class InformationCollector:
 
 	self.info['lsb_release'] = _command_output(['lsb_release', '-sir']).strip().replace('\n', ' ')
 	self.info['uname'] = _command_output(['uname', '-a']).strip()
+
+    def _get_gdb(self):
+	'''Get information from gdb.'''
+
+	self.info['stacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	    'bt full', self.info['executable'], self.pid])
+	self.info['thread_stacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	    'thread apply all bt full', self.info['executable'], self.pid])
 
 #################################################################
 #
