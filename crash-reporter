@@ -12,7 +12,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/pgl.html for
 # the full text of the license.
 
-import sys, os
+import sys, os, subprocess
 
 
 class InformationCollector:
@@ -69,8 +69,16 @@ class InformationCollector:
     def _get_os(self):
 	'''Collect information about sytem.'''
 
-	pass
-
+	try:
+	    self.info['lsb_release'] = subprocess.Popen(['lsb_release', '-sir'],
+		stdout=subprocess.PIPE).communicate()[0].strip().replace('\n', ' ')
+	except OSError:
+	    pass
+	try:
+	    self.info['uname'] = subprocess.Popen(['uname', '-a'],
+		stdout=subprocess.PIPE).communicate()[0].strip()
+	except OSError:
+	    pass
 
 def write_debcontrol(file, fields):
     '''Write dictionary 'fields' into the given file-like object, using Debian
