@@ -183,7 +183,7 @@ try:
     reportfile = open(report, 'w')
     os.chmod(report, 0600)
     os.chown(report, pidstat.st_uid, 0)
-except OSError, IOError:
+except (OSError, IOError):
     reportfile = sys.stderr
 
 drop_privileges(pid)
