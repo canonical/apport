@@ -98,19 +98,23 @@ class InformationCollector:
 	'Collects all information and stores them in the appropriate fields.'
 
 	self.info = {}
-	self.info['signal'] = signal
-	self.pid = pid
-
-	# determine program name
 	try:
-	    self.info['executable'] = os.readlink('/proc/' + pid + '/exe')
-	except OSError:
-	    return
+	    self.info['signal'] = signal
+	    self.pid = pid
 
-	self._get_proc()
-	self._get_pkg()
-	self._get_os()
-	self._get_gdb()
+	    # determine program name
+	    try:
+		self.info['executable'] = os.readlink('/proc/' + pid + '/exe')
+	    except OSError, e:
+		self.info['crash-reporter-information-collector-executable-exception'] = str(e)
+		return
+
+	    self._get_proc()
+	    self._get_pkg()
+	    self._get_os()
+	    self._get_gdb()
+	except Exception, e:
+	    self.info['crash-reporter-information-collector-unhandled-exception'] = str(e)
 
     def _get_proc(self):
 	'''Collect information from /proc.'''
