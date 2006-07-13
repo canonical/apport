@@ -12,7 +12,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/pgl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess
+import sys, os, os.path, subprocess, time, traceback
 
 
 #################################################################
@@ -70,6 +70,18 @@ def drop_privileges(pid):
     os.setuid(stat.st_uid)
     assert os.getuid() == stat.st_uid
 
+def init_error_log():
+    '''Open a suitable error log if sys.stderr is not a tty.'''
+
+    if not os.isatty(sys.stderr.fileno()):
+	f = open('/var/log/crash-reporter.log', 'a')
+	os.dup2(f.fileno(), sys.stderr.fileno())
+
+def error_log(msg):
+    '''Output something to the error log.'''
+
+    print >> sys.stderr, 'crash-reporter %s:' % time.asctime(), msg
+
 #################################################################
 #
 # classes
@@ -98,23 +110,16 @@ class InformationCollector:
 	'Collects all information and stores them in the appropriate fields.'
 
 	self.info = {}
-	try:
-	    self.info['signal'] = signal
-	    self.pid = pid
+	self.info['signal'] = signal
+	self.pid = pid
 
-	    # determine program name
-	    try:
-		self.info['executable'] = os.readlink('/proc/' + pid + '/exe')
-	    except OSError, e:
-		self.info['crash-reporter-information-collector-executable-exception'] = str(e)
-		return
+	# determine program name
+	self.info['executable'] = os.readlink('/proc/' + pid + '/exe')
 
-	    self._get_proc()
-	    self._get_pkg()
-	    self._get_os()
-	    self._get_gdb()
-	except Exception, e:
-	    self.info['crash-reporter-information-collector-unhandled-exception'] = str(e)
+	self._get_proc()
+	self._get_pkg()
+	self._get_os()
+	self._get_gdb()
 
     def _get_proc(self):
 	'''Collect information from /proc.'''
@@ -163,9 +168,13 @@ class InformationCollector:
 #
 #################################################################
 
+init_error_log()
+
 if len(sys.argv) != 3:
-    print 'Usage:', sys.argv[0], '<pid> <signal number>'
+    print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number>'
     sys.exit(-1)
+
+error_log('called with: ' + str(sys.argv))
 
 (pid, signal) = sys.argv[1:]
 
@@ -175,14 +184,14 @@ if len(sys.argv) != 3:
 try:
     pidstat = os.stat('/proc/' + pid)
 except OSError:
-    print >> sys.stderr, 'Invalid PID'
+    error_log('Invalid PID')
     sys.exit(1)
 
 try:
     exename = os.readlink('/proc/' + pid + '/exe').replace('/', '_')
     report = '/var/crash/%s.%i.crash' % (exename, pidstat.st_uid)
     if os.path.exists(report):
-	print >> sys.stderr, 'crash-reporter: report %s already exists, doing nothing to avoid disk usage DoS' % report
+	error_log('crash-reporter: report %s already exists, doing nothing to avoid disk usage DoS' % report)
 	sys.exit(1)
     reportfile = open(report, 'w')
     os.chmod(report, 0600)
@@ -190,8 +199,12 @@ try:
 except (OSError, IOError):
     reportfile = sys.stderr
 
-drop_privileges(pid)
-
-ic = InformationCollector(pid, signal)
-
-write_debcontrol(reportfile, ic.info)
+try:
+    drop_privileges(pid)
+    ic = InformationCollector(pid, signal)
+    write_debcontrol(reportfile, ic.info)
+except Exception, e:
+    error_log('Unhandled exception:')
+    traceback.print_exc()
+    print >> sys.stderr, 'uid: %i, gid: %i, euid: %i, egid: %i' % (
+	os.getuid(), os.getgid(), os.geteuid(), os.getegid())
