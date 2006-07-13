@@ -35,7 +35,7 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
     a textual error if it failed.'''
 
     try:
-	sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr)
+	sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
     except OSError, e:
 	return 'Error: ' + str(e)
 
@@ -76,6 +76,7 @@ def init_error_log():
     if not os.isatty(sys.stderr.fileno()):
 	f = open('/var/log/crash-reporter.log', 'a')
 	os.dup2(f.fileno(), sys.stderr.fileno())
+	os.dup2(f.fileno(), sys.stdout.fileno())
 
 def error_log(msg):
     '''Output something to the error log.'''
