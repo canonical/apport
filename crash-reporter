@@ -99,29 +99,33 @@ class InformationCollector:
     '''Collect and store information about the crash.
     
     Fields with acquired data:
-    - signal: signal that caused the crash
-    - executable: path to the crashed executable
-    - stacktrace: stack trace
-    - thread_stacktrace: thread apply all bt full
-    - environment: env variables from /proc/<pid>/environ
-    - pkg: package name and version; not present if info['executable'] does not
-      belong to a package
-    - dependencies: names and versions of depending packages; not present if
-      pkg is not present
-    - procstatus: /proc/<pid>/status
-    - lsb_release: lsb_release -sir
-    - uname: uname -a
+    - Signal: signal that caused the crash
+    - ExecutablePath: path to the crashed executable
+    - Stacktrace: stack trace
+    - ThreadStacktrace: thread apply all bt full
+    - Package: package name and version; not present if info['ExecutablePath'] does
+      not belong to a package
+    - Dependencies: names and versions of depending packages; not present if
+      Package is not present
+    - ProcCmdline: /proc/<pid>/cmdline
+    - ProcEnviron: /proc/<pid>/environ
+    - ProcStatus: /proc/<pid>/status
+    - ProcMaps: /proc/<pid>/maps
+    - DistroRelease: lsb_release -sir
+    - Uname: uname -a
+
+    TODO: StackFrame, CoreDump
     '''
 
     def __init__(self, pid, signum):
 	'Collects all information and stores them in the appropriate fields.'
 
-	self.info = {}
-	self.info['signal'] = signum
+	self.info = {'ProblemType': 'Crash', 'Date': time.asctime()}
+	self.info['Signal'] = signum
 	self.pid = pid
 
 	# determine program name
-	self.info['executable'] = os.readlink('/proc/' + pid + '/exe')
+	self.info['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
 
 	# reading /proc after drop_privileges() (when called from the kernel)
 	# does not work, so do this with original privileges.
@@ -135,16 +139,18 @@ class InformationCollector:
     def _get_proc(self):
 	'''Collect information from /proc.'''
 
-	self.info['environment'] = _read_file('/proc/'+ self.pid + '/environ'). \
+	self.info['ProcEnviron'] = _read_file('/proc/'+ self.pid + '/environ'). \
 	    replace('\n', '\\n').replace('\0', '\n').strip()
-	self.info['procstatus'] = _read_file('/proc/' + self.pid + '/status')
+	self.info['ProcStatus'] = _read_file('/proc/' + self.pid + '/status')
+	self.info['ProcCmdline'] = _read_file('/proc/' + self.pid + '/cmdline')
+	self.info['ProcMaps'] = _read_file('/proc/' + self.pid + '/maps')
 
     def _get_pkg(self):
 	'''Check whether executable belongs to a package and determine its
 	name, version, and the versions of its dependencies.'''
 
 	# get dpkg -s <package> output
-	out = _command_output(['dpkg', '-S', self.info['executable']])
+	out = _command_output(['dpkg', '-S', self.info['ExecutablePath']])
 	if out.startswith('Error:'):
 	    return 
 	pkg = out.split(':', 1)[0]
@@ -154,23 +160,23 @@ class InformationCollector:
 
 	for l in pkgstatus.splitlines():
 	    if l.startswith('Version:'):
-		self.info['pkg'] = '%s %s' % (pkg, l.split(None, 1)[1])
+		self.info['Package'] = '%s %s' % (pkg, l.split(None, 1)[1])
 		break
 
     def _get_os(self):
 	'''Collect information about system.'''
 
-	self.info['lsb_release'] = _command_output(['lsb_release', '-sir']).strip().replace('\n', ' ')
-	self.info['uname'] = _command_output(['uname', '-a']).strip()
+	self.info['DistroRelease'] = _command_output(['lsb_release', '-sir']).strip().replace('\n', ' ')
+	self.info['Uname'] = _command_output(['uname', '-a']).strip()
 
     def _get_gdb(self):
 	'''Get information from gdb.'''
 
-	self.info['stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'bt full', self.info['executable'], self.pid], 
+	self.info['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	    'bt full', self.info['ExecutablePath'], self.pid], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
-	self.info['thread_stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'thread apply all bt full', self.info['executable'], self.pid], 
+	self.info['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	    'thread apply all bt full', self.info['ExecutablePath'], self.pid], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
 
 #################################################################
