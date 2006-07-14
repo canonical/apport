@@ -28,6 +28,7 @@ def _read_file(f):
     try:
 	return open(f).read().strip()
     except IOError, e:
+	error_log('_read_file %s: %s' % (f, str(e)))
 	return 'Error: ' + str(e)
 
 def _command_output(command, input = None, stderr = subprocess.STDOUT):
@@ -37,13 +38,17 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
     try:
 	sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
     except OSError, e:
+	error_log('_command_output Popen(%s): %s' % (str(command), str(e)))
 	return 'Error: ' + str(e)
 
     out = sp.communicate(input)[0]
     if sp.returncode == 0:
 	return out
     else:
-	return 'Error: command %s failed with exit code %i: %s' % (str(command), sp.returncode, out)
+	error_log('_command_output %s failed with exit code %i: %s' % (
+	    str(command), sp.returncode, out))
+	return 'Error: command %s failed with exit code %i: %s' % (
+	    str(command), sp.returncode, out)
 
 def write_debcontrol(file, fields):
     '''Write dictionary 'fields' into the given file-like object, using Debian
@@ -81,7 +86,8 @@ def init_error_log():
 def error_log(msg):
     '''Output something to the error log.'''
 
-    print >> sys.stderr, 'crash-reporter %s:' % time.asctime(), msg
+    print >> sys.stderr, 'crash-reporter (pid %s) %s:' % (os.getpid(),
+	time.asctime()), msg
 
 #################################################################
 #
@@ -107,11 +113,11 @@ class InformationCollector:
     - uname: uname -a
     '''
 
-    def __init__(self, pid, signal):
+    def __init__(self, pid, signum):
 	'Collects all information and stores them in the appropriate fields.'
 
 	self.info = {}
-	self.info['signal'] = signal
+	self.info['signal'] = signum
 	self.pid = pid
 
 	# determine program name
@@ -177,7 +183,7 @@ if len(sys.argv) != 3:
 
 error_log('called with: ' + str(sys.argv))
 
-(pid, signal) = sys.argv[1:]
+(pid, signum) = sys.argv[1:]
 
 # Create crash report file descriptor. We prefer to create the report in
 # /var/crash/ if we can create a file there; if not, we just use stderr.
@@ -202,10 +208,12 @@ except (OSError, IOError):
 
 try:
     drop_privileges(pid)
-    ic = InformationCollector(pid, signal)
+    ic = InformationCollector(pid, signum)
     write_debcontrol(reportfile, ic.info)
+except SystemExit:
+    raise
 except Exception, e:
     error_log('Unhandled exception:')
     traceback.print_exc()
-    print >> sys.stderr, 'uid: %i, gid: %i, euid: %i, egid: %i' % (
-	os.getuid(), os.getgid(), os.geteuid(), os.getegid())
+    print >> sys.stderr, 'pid: %i, uid: %i, gid: %i, euid: %i, egid: %i' % (
+       os.getpid(), os.getuid(), os.getgid(), os.geteuid(), os.getegid())
