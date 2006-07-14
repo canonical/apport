@@ -123,7 +123,11 @@ class InformationCollector:
 	# determine program name
 	self.info['executable'] = os.readlink('/proc/' + pid + '/exe')
 
+	# reading /proc after drop_privileges() (when called from the kernel)
+	# does not work, so do this with original privileges.
 	self._get_proc()
+
+	drop_privileges(pid)
 	self._get_pkg()
 	self._get_os()
 	self._get_gdb()
@@ -207,7 +211,6 @@ except (OSError, IOError):
     reportfile = sys.stderr
 
 try:
-    drop_privileges(pid)
     ic = InformationCollector(pid, signum)
     write_debcontrol(reportfile, ic.info)
 except SystemExit:
