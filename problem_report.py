@@ -145,6 +145,8 @@ class ProblemReportTest(unittest.TestCase):
 	self.assertRaises(AssertionError, pr.__setitem__, 'a b', '1')
 	self.assertRaises(AssertionError, pr.__setitem__, 'a', 1)
 	self.assertRaises(AssertionError, pr.__setitem__, 'a', 1)
+	self.assertRaises(AssertionError, pr.__setitem__, 'a', (1,))
+	self.assertRaises(AssertionError, pr.__setitem__, 'a', ('/tmp/nonexistant', ''))
 	self.assertRaises(KeyError, pr.__getitem__, 'Nonexistant')
 
     def test_write(self):
