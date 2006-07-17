@@ -20,11 +20,27 @@ class ProblemReport:
 
 	self.info = {'ProblemType': type, 'Date': time.asctime()}
 
-    def	load(self, filename):
-	'''Initialize problem report from loading a file in Debian control file
-	format.'''
+    def	load(self, file):
+	'''Initialize problem report from a file-like object, using Debian
+	control file format.'''
 
-	raise Exception, 'Not yet implemented'
+	#TODO: base64/bzip2
+
+	key = None
+	value = None
+        b64_block = False
+	for line in file:
+	    print 'line:', line
+	    # continuation line
+	    if line.startswith(' '):
+		assert (key != None and value != None)
+		value += line[1:]
+	    else:
+		if key:
+		    assert value != None
+		    self.info[key] = value
+		(key, value) = line.split(':', 1)
+		value = value.strip()
 
     def write(self, file):
 	'''Write information into the given file-like object, using Debian
