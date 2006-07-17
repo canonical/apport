@@ -12,8 +12,10 @@
 # option) any later version.  See http://www.gnu.org/copyleft/pgl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, time, traceback, bz2, base64
+import sys, os, os.path, subprocess, time, traceback
 import tempfile, shutil
+
+import problem_report
 
 
 #################################################################
@@ -50,50 +52,6 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
 	    str(command), sp.returncode, out))
 	return 'Error: command %s failed with exit code %i: %s' % (
 	    str(command), sp.returncode, out)
-
-def write_debcontrol(file, fields):
-    '''Write dictionary 'fields' into the given file-like object, using Debian
-    control file format.
-
-    If a value is a string, it is written directly. Otherwise it must be an
-    one-element tuple containing a string; this is interpreted as a file name,
-    which will be read, bzip2'ed, and base64-encoded.
-
-    The file can be restored again using:
-    
-    >>> for line in infile:
-    >>>     if line.startswith(' '):
-    >>>	        outfil.write(bd.decompress(base64.b64decode(line)))
-    
-    (starting from the first line of data)
-    '''
-
-    for k, v in fields.iteritems():
-	# if it's a string, copy it
-	if hasattr(v, 'find'):
-	    if v.find('\n') >= 0:
-		assert v.find('\n\n') < 0
-		print >> file, k + ':'
-		print >> file, '', v.replace('\n', '\n ')
-	    else:
-		print >> file, k + ':', v
-	# if it's a tuple, it contains a file name, bzip2/base64-encode it
-	else:
-	    f = open(v[0])
-	    print >> file, k + ': base64'
-	    file.write(' ')
-	    bc = bz2.BZ2Compressor(9)
-	    while True:
-		block = f.read(512*1024)
-		if block:
-		    outblock = bc.compress(block)
-		    if outblock:
-			file.write(base64.b64encode(outblock))
-			file.write('\n ')
-		else:
-		    file.write(base64.b64encode(bc.flush()))
-		    file.write('\n')
-		    break
 
 def drop_privileges(pid):
     '''Change user and group to match the given target process.'''
@@ -153,7 +111,7 @@ class InformationCollector:
     def __init__(self, pid, signum, workdir):
 	'Collects all information and stores them in the appropriate fields.'
 
-	self.info = {'ProblemType': 'Crash', 'Date': time.asctime()}
+	self.info = problem_report.ProblemReport('Crash')
 	self.info['Signal'] = signum
 	self.pid = pid
 	self.workdir = workdir
@@ -257,7 +215,7 @@ workdir = None
 try:
     workdir = tempfile.mkdtemp()
     ic = InformationCollector(pid, signum, workdir)
-    write_debcontrol(reportfile, ic.info)
+    ic.info.write(reportfile)
 except SystemExit:
     if workdir:
 	shutil.rmtree(workdir, True)
