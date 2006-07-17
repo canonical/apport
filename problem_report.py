@@ -44,6 +44,9 @@ class ProblemReport:
 		(key, value) = line.split(':', 1)
 		value = value.strip()
 
+	if key != None:
+	    self.info[key] = value
+
     def write(self, file):
 	'''Write information into the given file-like object, using Debian
 	control file format.
@@ -177,7 +180,7 @@ WhiteSpace:
 	self.assertEqual(pr['ProblemType'], 'Crash')
 	self.assertEqual(pr['Date'], 'now!')
 	self.assertEqual(pr['Simple'], 'bar')
-	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
+	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  \n')
 
 if __name__ == '__main__':
     unittest.main()
