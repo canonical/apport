@@ -62,7 +62,12 @@ class ProblemReport:
 	(starting from the first line of data)
 	'''
 
-	for k, v in self.info.iteritems():
+	keys = self.info.keys()
+	keys.remove('ProblemType')
+	keys.sort()
+	keys.insert(0, 'ProblemType')
+	for k in keys:
+	    v = self.info[k]
 	    # if it's a string, copy it
 	    if hasattr(v, 'find'):
 		if v.find('\n') >= 0:
