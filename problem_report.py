@@ -102,3 +102,57 @@ class ProblemReport:
 
     def __delitem__(self, k):
 	return self.info.__delitem__(k)
+
+#
+# Unit test
+#
+
+import unittest, StringIO
+
+class ProblemReportTest(unittest.TestCase):
+    def test_basic_operations(self):
+	'''Test basic creation and operation.'''
+
+	pr = ProblemReport()
+	pr['foo'] = 'bar'
+	pr['bar'] = ' foo   bar\nbaz\n   blip  '
+	self.assertEqual(pr['foo'], 'bar')
+	self.assertEqual(pr['bar'], ' foo   bar\nbaz\n   blip  ')
+	self.assertEqual(pr['ProblemType'], 'Crash')
+	self.assert_(time.strptime(pr['Date']))
+
+    def test_ctor_arguments(self):
+	'''Test non-default constructor arguments.'''
+
+	pr = ProblemReport('Kernel')
+	self.assertEqual(pr['ProblemType'], 'Kernel')
+	pr = ProblemReport(date = '19801224 12:34')
+	self.assertEqual(pr['Date'], '19801224 12:34')
+
+    def test_sanity_checks(self):
+	'''Test various error conditions.'''
+
+	pr = ProblemReport()
+	self.assertRaises(KeyError, pr.__setitem__, 'a b', '1')
+	self.assertRaises(ValueError, pr.__setitem__, 'a', 1)
+
+    def test_write(self):
+	'''Test write() and proper formatting.'''
+
+	pr = ProblemReport(date = 'now!')
+	pr['Simple'] = 'bar'
+	pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  '
+	io = StringIO.StringIO()
+	pr.write(io)
+	self.assertEqual(io.getvalue(), 
+'''ProblemType: Crash
+Date: now!
+Simple: bar
+WhiteSpace:
+  foo   bar
+ baz
+   blip  
+''')
+
+if __name__ == '__main__':
+    unittest.main()
