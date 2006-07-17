@@ -98,6 +98,13 @@ class ProblemReport:
 	return self.info.__getitem__(k)
 
     def __setitem__(self, k, v):
+	assert hasattr(k, 'isalnum')
+	assert k.isalnum()
+	# value must be a string or a one-element tuple with a string
+	assert (hasattr(v, 'isalnum') or 
+	    (hasattr(v, '__getitem__') and len(v) == 1 
+	    and hasattr(v[0], 'isalnum')))
+
 	return self.info.__setitem__(k, v)
 
     def __delitem__(self, k):
@@ -133,8 +140,10 @@ class ProblemReportTest(unittest.TestCase):
 	'''Test various error conditions.'''
 
 	pr = ProblemReport()
-	self.assertRaises(KeyError, pr.__setitem__, 'a b', '1')
-	self.assertRaises(ValueError, pr.__setitem__, 'a', 1)
+	self.assertRaises(AssertionError, pr.__setitem__, 'a b', '1')
+	self.assertRaises(AssertionError, pr.__setitem__, 'a', 1)
+	self.assertRaises(AssertionError, pr.__setitem__, 'a', 1)
+	self.assertRaises(KeyError, pr.__getitem__, 'Nonexistant')
 
     def test_write(self):
 	'''Test write() and proper formatting.'''
