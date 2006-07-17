@@ -13,6 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback, bz2, base64
+import tempfile, shutil
 
 
 #################################################################
@@ -149,12 +150,13 @@ class InformationCollector:
     TODO: StackFrame, CoreDump
     '''
 
-    def __init__(self, pid, signum):
+    def __init__(self, pid, signum, workdir):
 	'Collects all information and stores them in the appropriate fields.'
 
 	self.info = {'ProblemType': 'Crash', 'Date': time.asctime()}
 	self.info['Signal'] = signum
 	self.pid = pid
+	self.workdir = workdir
 
 	# determine program name
 	self.info['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
@@ -248,13 +250,20 @@ try:
 except (OSError, IOError):
     reportfile = sys.stderr
 
+workdir = None
 try:
-    ic = InformationCollector(pid, signum)
+    workdir = tempfile.mkdtemp()
+    ic = InformationCollector(pid, signum, workdir)
     write_debcontrol(reportfile, ic.info)
 except SystemExit:
+    if workdir:
+	shutil.rmtree(workdir, True)
     raise
 except Exception, e:
     error_log('Unhandled exception:')
     traceback.print_exc()
     print >> sys.stderr, 'pid: %i, uid: %i, gid: %i, euid: %i, egid: %i' % (
        os.getpid(), os.getuid(), os.getgid(), os.geteuid(), os.getegid())
+
+if workdir:
+    shutil.rmtree(workdir, True)
