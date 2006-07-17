@@ -33,7 +33,6 @@ class ProblemReport:
 	value = None
         b64_block = False
 	for line in file:
-	    print 'line:', line
 	    # continuation line
 	    if line.startswith(' '):
 		assert (key != None and value != None)
