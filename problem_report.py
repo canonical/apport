@@ -13,12 +13,15 @@ the full text of the license.
 import bz2, base64, time
 
 class ProblemReport:
-    def __init__(self, type = 'Crash'):
+    def __init__(self, type = 'Crash', date = None):
 	'''Initialize a fresh problem report.
 	
-	type can be 'Crash', 'Packaging', or 'Kernel'.'''
+	type can be 'Crash', 'Packaging', or 'Kernel'. date is the desired
+	date/time string; if None (default), the current local time is used. '''
 
-	self.info = {'ProblemType': type, 'Date': time.asctime()}
+	if date == None:
+	    date = time.asctime()
+	self.info = {'ProblemType': type, 'Date': date}
 
     def	load(self, file):
 	'''Initialize problem report from a file-like object, using Debian
