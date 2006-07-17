@@ -162,5 +162,22 @@ WhiteSpace:
    blip  
 ''')
 
+    def test_load(self):
+	'''Test load() with various formatting.'''
+	pr = ProblemReport()
+	pr.load(StringIO.StringIO(
+'''ProblemType: Crash
+Date: now!
+Simple: bar
+WhiteSpace:
+  foo   bar
+ baz
+   blip  
+'''))
+	self.assertEqual(pr['ProblemType'], 'Crash')
+	self.assertEqual(pr['Date'], 'now!')
+	self.assertEqual(pr['Simple'], 'bar')
+	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
+
 if __name__ == '__main__':
     unittest.main()
