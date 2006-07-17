@@ -147,7 +147,7 @@ class InformationCollector:
     - DistroRelease: lsb_release -sir
     - Uname: uname -a
 
-    TODO: StackFrame, CoreDump
+    TODO: StackFrame
     '''
 
     def __init__(self, pid, signum, workdir):
@@ -206,9 +206,12 @@ class InformationCollector:
     def _get_gdb(self):
 	'''Get information from gdb.'''
 
+	corefile = os.path.join(self.workdir, 'core')
 	self.info['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	    'generate-core-file %s' % corefile, '--ex',
 	    'bt full', self.info['ExecutablePath'], self.pid], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+	self.info['CoreDump'] = (corefile,)
 	self.info['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
 	    'thread apply all bt full', self.info['ExecutablePath'], self.pid], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
