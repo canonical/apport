@@ -112,6 +112,9 @@ class ProblemReport:
     def __delitem__(self, k):
 	return self.info.__delitem__(k)
 
+    def has_key(self,k):
+	return self.info.has_key(k)
+
 #
 # Unit test
 #
