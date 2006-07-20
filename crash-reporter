@@ -177,7 +177,8 @@ class InformationCollector:
 	    'generate-core-file %s' % corefile, '--ex',
 	    'bt full', self.info['ExecutablePath'], self.pid], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
-	self.info['CoreDump'] = (corefile,)
+	if os.path.exists(corefile):
+	    self.info['CoreDump'] = (corefile,)
 	self.info['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
 	    'thread apply all bt full', self.info['ExecutablePath'], self.pid], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
