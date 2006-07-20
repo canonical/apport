@@ -13,7 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback
-import tempfile, shutil
+import tempfile, shutil, glob
 
 import problem_report
 
@@ -208,9 +208,15 @@ except OSError:
     error_log('Invalid PID')
     sys.exit(1)
 
+exename = os.readlink('/proc/' + pid + '/exe')
+
+# ignore non-package binaries
+if subprocess.call(['fgrep', '-qx', exename] + glob.glob('/var/lib/dpkg/info/*.list')) != 0:
+    error_log('executable does not belong to a package, ignoring')
+    sys.exit(0)
+
 try:
-    exename = os.readlink('/proc/' + pid + '/exe').replace('/', '_')
-    report = '/var/crash/%s.%i.crash' % (exename, pidstat.st_uid)
+    report = '/var/crash/%s.%i.crash' % (exename.replace('/', '_'), pidstat.st_uid)
     if os.path.exists(report):
 	error_log('crash-reporter: report %s already exists, doing nothing to avoid disk usage DoS' % report)
 	sys.exit(1)
