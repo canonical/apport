@@ -116,7 +116,7 @@ class ProblemReport:
 # Unit test
 #
 
-import unittest, StringIO
+import unittest, StringIO, tempfile
 
 class ProblemReportTest(unittest.TestCase):
     def test_basic_operations(self):
@@ -183,6 +183,37 @@ WhiteSpace:
 	self.assertEqual(pr['Date'], 'now!')
 	self.assertEqual(pr['Simple'], 'bar')
 	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  \n')
+
+    def test_write_file(self):
+	'''Test writing a report with binary file data.'''
+
+	temp = tempfile.NamedTemporaryFile()
+	temp.write('AB' * 10 + '\0' * 10 + 'Z')
+
+	pr = ProblemReport(date = 'now!')
+	pr['File'] = (temp.name,)
+	io = StringIO.StringIO()
+	pr.write(io)
+	temp.close()
+
+	self.assertEqual(io.getvalue(), 
+'''ProblemType: Crash
+Date: now!
+File: base64
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays5CWmg5F3JFOFCQAAAAAA==
+''')
+
+    def test_read_file(self):
+	'''Test reading a report with binary data.'''
+
+	pr = ProblemReport()
+	pr.load(StringIO.StringIO(
+'''ProblemType: Crash
+Date: now!
+File: base64
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays5CWmg5F3JFOFCQAAAAAA==
+'''))
+	self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
 
 if __name__ == '__main__':
     unittest.main()
