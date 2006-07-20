@@ -116,7 +116,7 @@ class ProblemReport:
 # Unit test
 #
 
-import unittest, StringIO, tempfile
+import unittest, StringIO, tempfile, os
 
 class ProblemReportTest(unittest.TestCase):
     def test_basic_operations(self):
@@ -215,6 +215,33 @@ File: base64
  QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 '''))
 	self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
+
+    def test_big_file(self):
+	'''Test writing and re-decoding a big random file.'''
+
+	# create 1 MB random file
+	temp = tempfile.NamedTemporaryFile()
+	data = os.urandom(1048576)
+	temp.write(data)
+	temp.flush()
+
+	# write it into problem report
+	pr = ProblemReport()
+	pr['File'] = (temp.name,)
+	pr['Before'] = 'xtestx'
+	pr['ZAfter'] = 'ytesty'
+	io = StringIO.StringIO()
+	pr.write(io)
+	temp.close()
+
+	# read it again
+	io.seek(0)
+	pr = ProblemReport()
+	pr.load(io)
+
+	self.assert_(pr['File'] == data)
+	self.assertEqual(pr['Before'], 'xtestx')
+	self.assertEqual(pr['ZAfter'], 'ytesty')
 
 if __name__ == '__main__':
     unittest.main()
