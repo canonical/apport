@@ -189,6 +189,7 @@ WhiteSpace:
 
 	temp = tempfile.NamedTemporaryFile()
 	temp.write('AB' * 10 + '\0' * 10 + 'Z')
+	temp.flush()
 
 	pr = ProblemReport(date = 'now!')
 	pr['File'] = (temp.name,)
@@ -200,7 +201,7 @@ WhiteSpace:
 '''ProblemType: Crash
 Date: now!
 File: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays5CWmg5F3JFOFCQAAAAAA==
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 ''')
 
     def test_read_file(self):
@@ -211,7 +212,7 @@ File: base64
 '''ProblemType: Crash
 Date: now!
 File: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays5CWmg5F3JFOFCQAAAAAA==
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 '''))
 	self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
 
