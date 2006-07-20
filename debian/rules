@@ -7,15 +7,25 @@ clean:
 	dh_testroot
 	dh_clean 
 
-binary-indep: install
+	./setup.py clean -a
+
+binary-indep:
 	dh_testdir
 	dh_testroot
 	dh_clean -k 
 
 	dh_installchangelogs 
 	dh_installdocs
+
+	./setup.py install --root debian/python-problem-report/
+
+	dh_pysupport
+	dh_python
 	dh_install
 	dh_installinit -u'defaults 01'
+
+	-rmdir -p debian/python-problem-report/usr/lib/python2.4/site-packages/ 2>/dev/null
+
 	dh_compress
 	dh_fixperms
 	dh_installdeb
