@@ -111,13 +111,12 @@ class InformationCollector:
     TODO: StackFrame
     '''
 
-    def __init__(self, pid, signum, workdir):
+    def __init__(self, pid, signum):
 	'Collects all information and stores them in the appropriate fields.'
 
 	self.info = problem_report.ProblemReport('Crash')
 	self.info['Signal'] = signum
 	self.pid = pid
-	self.workdir = workdir
 
 	# determine program name
 	self.info['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
@@ -127,9 +126,15 @@ class InformationCollector:
 	self._get_proc()
 
 	drop_privileges(pid)
+
+	self.workdir = tempfile.mkdtemp()
 	self._get_pkg()
 	self._get_os()
 	self._get_gdb()
+
+    def __del__(self):
+	if self.workdir:
+	    shutil.rmtree(self.workdir)
 
     def _get_proc(self):
 	'''Collect information from /proc.'''
@@ -214,20 +219,11 @@ try:
 except (OSError, IOError):
     reportfile = sys.stderr
 
-workdir = None
 try:
-    workdir = tempfile.mkdtemp()
-    ic = InformationCollector(pid, signum, workdir)
+    ic = InformationCollector(pid, signum)
     ic.info.write(reportfile)
-except SystemExit:
-    if workdir:
-	shutil.rmtree(workdir, True)
-    raise
 except Exception, e:
     error_log('Unhandled exception:')
     traceback.print_exc()
     print >> sys.stderr, 'pid: %i, uid: %i, gid: %i, euid: %i, egid: %i' % (
        os.getpid(), os.getuid(), os.getgid(), os.geteuid(), os.getegid())
-
-if workdir:
-    shutil.rmtree(workdir, True)
