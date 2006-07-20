@@ -27,8 +27,6 @@ class ProblemReport:
 	'''Initialize problem report from a file-like object, using Debian
 	control file format.'''
 
-	#TODO: base64/bzip2
-
 	key = None
 	value = None
         b64_block = False
@@ -36,13 +34,23 @@ class ProblemReport:
 	    # continuation line
 	    if line.startswith(' '):
 		assert (key != None and value != None)
-		value += line[1:]
+		if b64_block:
+		    value += bd.decompress(base64.b64decode(line))
+		else:
+		    value += line[1:]
 	    else:
+		if b64_block:
+		    b64_block = False
+		    bd = None
 		if key:
 		    assert value != None
 		    self.info[key] = value
 		(key, value) = line.split(':', 1)
 		value = value.strip()
+		if value == 'base64':
+		    value = ''
+		    b64_block = True
+		    bd = bz2.BZ2Decompressor()
 
 	if key != None:
 	    self.info[key] = value
@@ -54,14 +62,6 @@ class ProblemReport:
 	If a value is a string, it is written directly. Otherwise it must be an
 	one-element tuple containing a string; this is interpreted as a file name,
 	which will be read, bzip2'ed, and base64-encoded.
-
-	The file can be restored again using:
-	
-	>>> for line in infile:
-	>>>     if line.startswith(' '):
-	>>>	        outfil.write(bd.decompress(base64.b64decode(line)))
-	
-	(starting from the first line of data)
 	'''
 
 	keys = self.info.keys()
