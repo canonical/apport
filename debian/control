@@ -1,11 +1,11 @@
-Source: crash-reporter
+Source: apport
 Section: base
 Priority: optional
 Build-Depends-Indep: debhelper (>= 5.0.37.2), python-support (>= 0.3)
 Maintainer: Martin Pitt <martin.pitt@ubuntu.com>
 Standards-Version: 3.7.2
 
-Package: crash-reporter
+Package: apport
 Architecture: all
 Depends: python (>= 2.4), python-problem-report, lsb-base (>= 3.0-6)
 Description: automatically generate crash reports for debugging

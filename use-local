@@ -1,2 +1,2 @@
 #!/bin/sh -e
-echo $(readlink -f $(dirname $0)/crash-reporter) > /proc/sys/kernel/crashdump-helper
+echo $(readlink -f $(dirname $0)/apport) > /proc/sys/kernel/crashdump-helper

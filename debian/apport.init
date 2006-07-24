@@ -1,7 +1,7 @@
 #! /bin/sh -e
 
 ### BEGIN INIT INFO
-# Provides:          crash-reporter
+# Provides:          apport
 # Required-Start:    $local_fs $remote_fs
 # Required-Stop:     $local_fs $remote_fs
 # Default-Start:     2 3 4 5
@@ -11,8 +11,8 @@
 
 PATH=/bin
 DESC="automatic crash report generation"
-NAME=crash-reporter
-AGENT=/usr/share/crash-reporter/crash-reporter
+NAME=apport
+AGENT=/usr/share/apport/apport
 SCRIPTNAME=/etc/init.d/$NAME
 PROCFILE=/proc/sys/kernel/crashdump-helper
 

@@ -71,7 +71,7 @@ def init_error_log():
 
     if not os.isatty(sys.stderr.fileno()):
 	try:
-	    f = open('/var/log/crash-reporter.log', 'a')
+	    f = open('/var/log/apport.log', 'a')
 	except IOError: # on a permission error, don't touch stderr
 	    return
 	os.dup2(f.fileno(), sys.stderr.fileno())
@@ -80,7 +80,7 @@ def init_error_log():
 def error_log(msg):
     '''Output something to the error log.'''
 
-    print >> sys.stderr, 'crash-reporter (pid %s) %s:' % (os.getpid(),
+    print >> sys.stderr, 'apport (pid %s) %s:' % (os.getpid(),
 	time.asctime()), msg
 
 def transitive_dependencies(package, depends_set, cache):
@@ -241,7 +241,7 @@ if subprocess.call(['fgrep', '-qx', exename] + glob.glob('/var/lib/dpkg/info/*.l
 try:
     report = '/var/crash/%s.%i.crash' % (exename.replace('/', '_'), pidstat.st_uid)
     if os.path.exists(report):
-	error_log('crash-reporter: report %s already exists, doing nothing to avoid disk usage DoS' % report)
+	error_log('apport: report %s already exists, doing nothing to avoid disk usage DoS' % report)
 	sys.exit(1)
     reportfile = open(report, 'w')
     os.chmod(report, 0600)

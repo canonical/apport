@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup(name='crash-reporter',
+setup(name='apport',
       version='0.1',
       author='Martin Pitt',
       author_email='martin.pitt@ubuntu.com',
