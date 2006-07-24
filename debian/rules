@@ -23,6 +23,7 @@ binary-indep:
 	dh_python
 	dh_install
 	dh_installinit -u'defaults 01'
+	dh_installcron
 
 	-rmdir -p debian/python-problem-report/usr/lib/python2.4/site-packages/ 2>/dev/null
 
