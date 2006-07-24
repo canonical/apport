@@ -9,11 +9,22 @@ Package: apport
 Architecture: all
 Depends: python (>= 2.4), python-problem-report, lsb-base (>= 3.0-6)
 Description: automatically generate crash reports for debugging
- TODO
+ apport automatically collects data from crashed processes and
+ compiles a problem report in /var/crash/. This utilizes the crashdump
+ helper hook provided by the Ubuntu kernel.
+ .
+ See https://wiki.ubuntu.com/AutomatedProblemReports for more
+ information.
 
 Package: python-problem-report
 XB-Python-Version: ${python:Versions}
 Architecture: all
 Depends: ${python:Depends}
-Description: read, write, generate, and modify problem reports
- TODO
+Description: python library to handle problem reports
+ This python library provides an interface for creating, modifying,
+ and accessing standardized problem reports for program and kernel
+ crashes and packaging bugs (for details, see
+ https://wiki.ubuntu.com/AutomatedProblemReports).
+ .
+ These problem reports use standard Debian control format syntax
+ (RFC822).
