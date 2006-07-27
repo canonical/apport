@@ -1,8 +1,9 @@
 apport (0.2) UNRELEASED; urgency=low
 
-  *
+  * debian/apport.cron.daily: Do not produce error messages if 'find' does not
+    find any crash reports.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 24 Jul 2006 14:23:06 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 27 Jul 2006 09:38:55 +0200
 
 apport (0.1) edgy; urgency=low
 
