@@ -21,3 +21,6 @@ merge-po: $(PO_FILES) $(DOMAIN.pot)
 %.mo : %.po
 	mkdir -p mo/$(subst .po,,$<)/LC_MESSAGES/ 
 	msgfmt $< -o mo/$(subst .po,,$<)/LC_MESSAGES/$(DOMAIN).mo 
+
+# generate all *.mo files
+build-mo: $(patsubst %.po,%.mo,$(wildcard *.po))
