@@ -8,6 +8,7 @@ clean:
 	dh_clean 
 
 	./setup.py clean -a
+	make -C po clean
 
 binary-indep:
 	dh_testdir
