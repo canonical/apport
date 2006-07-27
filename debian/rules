@@ -17,11 +17,11 @@ binary-indep:
 	dh_installchangelogs 
 	dh_installdocs
 
-	./setup.py install --root debian/python-problem-report/
+	./setup.py install --root debian/tmp/ --install-scripts usr/share/apport
 
 	dh_pysupport
 	dh_python
-	dh_install
+	dh_install --sourcedir=debian/tmp --autodest --fail-missing
 	dh_installinit -u'defaults 01'
 	dh_installcron
 
