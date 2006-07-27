@@ -1,0 +1,90 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2006 Martin Pitt
+# This file is distributed under the same license as the apport package.
+# Martin Pitt <martin.pitt@ubuntu.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apport 0.2\n"
+"Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
+"POT-Creation-Date: 2006-07-27 17:13+0200\n"
+"PO-Revision-Date: 2006-07-27 16:49+0200\n"
+"Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
+"Language-Team: German <de@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../gtk/apport-gtk.glade.h:1
+msgid "<b>Package:</b>"
+msgstr "<b>Paket:</b>"
+
+#: ../gtk/apport-gtk.glade.h:2
+msgid "<b>Program crash:</b>"
+msgstr "<b>Programmabsturz</b>"
+
+#: ../gtk/apport-gtk.glade.h:3
+msgid "<b>Report file:</b>"
+msgstr "<b>Bericht-Datei:</b>"
+
+#: ../gtk/apport-gtk.glade.h:4
+msgid "Crash Report information"
+msgstr "Absturz-Informationen"
+
+#: ../gtk/apport-gtk.glade.h:5
+msgid "Details"
+msgstr "Details"
+
+#: ../gtk/apport-gtk.glade.h:6
+msgid "GPL, see /usr/share/common-licenses/GPL"
+msgstr "GPL, siehe /usr/share/common-licenses/GPL"
+
+#: ../gtk/apport-gtk.glade.h:7
+msgid "General"
+msgstr "Allgemein"
+
+#: ../gtk/apport-gtk.glade.h:8
+msgid "Open bug reports"
+msgstr "Fehlerberichte öffnen"
+
+#: ../gtk/apport-gtk.glade.h:9
+msgid "Report crashes"
+msgstr "Abstürze melden"
+
+#: ../gtk/apport-gtk.glade.h:10
+msgid ""
+"Some information about the crash has been collected which will help the "
+"developers to fix the problem. Please create a bug report in our bug "
+"tracking system, try to describe what you did to trigger the crash, and "
+"attach the report file.\n"
+"\n"
+"<b>Attention:</b> The report contains information about the runtime status "
+"of the program. If the program worked with potentially sensitive data "
+"(passwords, cryptographic operations, confidential information, etc.), you "
+"should <b>not</b> put the report in any public place like the bug tracking "
+"system."
+msgstr ""
+"Es wurden einige Informationen über den Absturz gesammelt, die den "
+"Entwicklern beim Beheben des Problems helfen. Bitte erstellen Sie eine  "
+"Fehlermeldung im Fehler-Verwaltungs-System, versuchen Sie, die Schritte zu "
+"beschreiben die zu dem Absturz geführt haben, und hängen Sie die Bericht-"
+"Datei an.\n"
+"\n"
+"<b>Achtung:</b> Der Bericht enthält Informationen über den Laufzeit-Zustand "
+"des Programmes. Wenn das Programm mit potentiell sensiblen Daten gearbeitet "
+"hat (Passwörter, Kryptografie, vertrauliche Informationen, usw., sollten Sie "
+"den Fehler-Bericht <b>nicht</b> an einem öffentlich zugänglichen Ort wie dem "
+"Fehler-Verwaltungs-System ablegen."
+
+#: ../gtk/apport-gtk.glade.h:13
+msgid "_File"
+msgstr "_Datei"
+
+#: ../gtk/apport-gtk.glade.h:14
+msgid "_Help"
+msgstr "_Hilfe"
+
+#. TRANSLATORS: Replace this string with your names, one name per line.
+#: ../gtk/apport-gtk.glade.h:16
+msgid "translator-credits"
+msgstr "Martin Pitt"
