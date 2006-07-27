@@ -112,6 +112,9 @@ class ProblemReport:
     def __delitem__(self, k):
 	return self.info.__delitem__(k)
 
+    def __iter__(self):
+	return self.info.__iter__()
+
     def has_key(self,k):
 	return self.info.has_key(k)
 
@@ -245,6 +248,20 @@ File: base64
 	self.assert_(pr['File'] == data)
 	self.assertEqual(pr['Before'], 'xtestx')
 	self.assertEqual(pr['ZAfter'], 'ytesty')
+
+    def test_iter(self):
+	'''Test ProblemReport iteration.'''
+
+	pr = ProblemReport()
+	pr['foo'] = 'bar'
+
+	keys = []
+	for k in pr:
+	    keys.append(k)
+	keys.sort()
+	self.assertEqual(' '.join(keys), 'Date ProblemType foo')
+
+	self.assertEqual(len([k for k in pr if k != 'foo']), 2)
 
 if __name__ == '__main__':
     unittest.main()
