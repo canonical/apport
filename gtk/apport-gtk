@@ -1,0 +1,27 @@
+#!/usr/bin/python
+import gtk, gtk.glade
+import math
+
+class ApportGTK:
+    def __init__(self):
+        self.widgets = gtk.glade.XML('apport-gtk.glade')
+        self.widgets.signal_autoconnect(self)
+
+    def quit(self, widget, *auxargs):
+	gtk.main_quit()
+
+    def w(self, widget):
+	'''Shortcut for getting a widget.'''
+
+	return self.widgets.get_widget(widget)
+
+    def on_about_activate(self, widget):
+	print 'mii'
+	d = self.w('dialog_about')
+	d.run()
+	d.hide()
+
+if __name__ == '__main__':
+    app = ApportGTK()
+    gtk.main()
+
