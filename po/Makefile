@@ -14,7 +14,7 @@ $(DOMAIN).pot:
 	XGETTEXT_ARGS=--msgid-bugs-address=$(CONTACT) intltool-update -p -g $(DOMAIN)
 
 # merge the new stuff into the po files
-merge-po: $(PO_FILES)
+merge-po: $(PO_FILES) $(DOMAIN.pot)
 	XGETTEXT_ARGS=--msgid-bugs-address=$(CONTACT) intltool-update -r -g $(DOMAIN)
 
 # create mo from the pos
