@@ -40,6 +40,7 @@ class ApportGTK:
 
 	# update general information
 	self.w('label_crashed_program').set_text(report['ExecutablePath'])
+	self.w('label_package').set_text(report['Package'])
 	self.w('label_report_file').set_text(self.reports[self.cur_report])
 
 	# update details
