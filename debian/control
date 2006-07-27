@@ -16,6 +16,21 @@ Description: automatically generate crash reports for debugging
  See https://wiki.ubuntu.com/AutomatedProblemReports for more
  information.
 
+Package: apport-gtk
+Section: gnome
+Architecture: all
+Depends: python (>= 2.4), python-problem-report, python-gtk2, python-glade2, apport
+Description: GTK frontend for the apport crash report system
+ apport automatically collects data from crashed processes and
+ compiles a problem report in /var/crash/. This utilizes the crashdump
+ helper hook provided by the Ubuntu kernel.
+ .
+ This package provides a GTK frontend for browsing and handling the
+ crash reports.
+ .
+ See https://wiki.ubuntu.com/AutomatedProblemReports for more
+ information.
+
 Package: python-problem-report
 XB-Python-Version: ${python:Versions}
 Section: python
