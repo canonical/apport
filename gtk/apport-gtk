@@ -1,11 +1,22 @@
 #!/usr/bin/python
 import gtk, gtk.glade
 import math
+import glob
+
+from problem_report import ProblemReport
 
 class ApportGTK:
     def __init__(self):
         self.widgets = gtk.glade.XML('apport-gtk.glade')
         self.widgets.signal_autoconnect(self)
+
+	self.reports = glob.glob('/var/crash/*.crash')
+	if len(self.reports) == 0:
+	    print >> sys.stderr, 'No crash reports found, aborting'
+	    gtk.main_quit()
+
+	self.cur_report = 0
+	self.update_report()
 
     def quit(self, widget, *auxargs):
 	gtk.main_quit()
@@ -16,10 +27,49 @@ class ApportGTK:
 	return self.widgets.get_widget(widget)
 
     def on_about_activate(self, widget):
-	print 'mii'
 	d = self.w('dialog_about')
 	d.run()
 	d.hide()
+
+    def update_report(self):
+	'''Load currently selected report and update UI accordingly.'''
+
+	# load problem report
+	report = ProblemReport()
+	report.load(open(self.reports[self.cur_report]))
+
+	# update general information
+	self.w('label_crashed_program').set_text(report['ExecutablePath'])
+	self.w('label_report_file').set_text(self.reports[self.cur_report])
+
+	# update details
+	self.w('text_crash_report').get_buffer().set_text(open(self.reports[self.cur_report]).read())
+	
+	self.update_browse_buttons()
+
+    def update_browse_buttons(self):
+	'''Enable or disable back/forward buttons depending on which report is
+	currently selected.'''
+
+	if self.cur_report == 0:
+	    self.w('button_prev').set_sensitive(False)
+	else:
+	    self.w('button_prev').set_sensitive(True)
+
+	if self.cur_report == len(self.reports)-1:
+	    self.w('button_next').set_sensitive(False)
+	else:
+	    self.w('button_next').set_sensitive(True)
+
+    def on_button_prev_clicked(self, widget):
+	if self.cur_report > 0:
+	    self.cur_report -= 1
+	    self.update_report()
+
+    def on_button_next_clicked(self, widget):
+	if self.cur_report < len(self.reports)-1:
+	    self.cur_report += 1
+	    self.update_report()
 
 if __name__ == '__main__':
     app = ApportGTK()
