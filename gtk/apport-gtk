@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import gtk, gtk.glade
-import math
 import glob
+import webbrowser, subprocess
 
 from problem_report import ProblemReport
 
@@ -16,6 +16,7 @@ class ApportGTK:
 	    gtk.main_quit()
 
 	self.cur_report = 0
+	self.cur_package = None
 	self.update_report()
 
     def quit(self, widget, *auxargs):
@@ -42,6 +43,7 @@ class ApportGTK:
 	self.w('label_crashed_program').set_text(report['ExecutablePath'])
 	self.w('label_package').set_text(report['Package'])
 	self.w('entry_report_file').set_text(self.reports[self.cur_report])
+	self.cur_package = report['Package'].split()[0]
 
 	# update details
 	self.w('text_crash_report').get_buffer().set_text(open(self.reports[self.cur_report]).read())
@@ -71,6 +73,18 @@ class ApportGTK:
 	if self.cur_report < len(self.reports)-1:
 	    self.cur_report += 1
 	    self.update_report()
+
+    def on_button_malone_clicked(self, widget):
+	url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_package
+
+	# prefer gnome-open if it exists
+	try:
+	    if subprocess.call(['gnome-open', url]) == 0:
+		return
+	except OSError:
+	    pass
+
+	webbrowser.open(url)
 
 if __name__ == '__main__':
     app = ApportGTK()
