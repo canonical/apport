@@ -1,9 +1,12 @@
 #!/usr/bin/python
 import gobject, gtk, gtk.glade
-import glob, sys
+import glob, sys, gettext
+from gettext import gettext as _
 import webbrowser, subprocess
 
 from problem_report import ProblemReport
+
+gettext_domain = 'apport'
 
 class ApportGTK:
     def __init__(self):
@@ -104,6 +107,9 @@ class ApportGTK:
 	webbrowser.open(url)
 
 if __name__ == '__main__':
+    gettext.textdomain(gettext_domain)
+    gtk.glade.textdomain(gettext_domain)
+
     app = ApportGTK()
     gtk.main()
 
