@@ -1,8 +1,9 @@
 apport (0.3) UNRELEASED; urgency=low
 
   * debian/rules clean: Also clean po/.
+  * debian/apport.cron.daily: Clean away empty files everytime.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 28 Jul 2006 00:52:30 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 30 Jul 2006 23:09:31 +0200
 
 apport (0.2) edgy; urgency=low
 
