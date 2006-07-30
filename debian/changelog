@@ -6,8 +6,10 @@ apport (0.3) UNRELEASED; urgency=low
     size.
   * apport: Set proper group for report files instead of 'root'.
   * apport-gtk: Ignore 0-sized reports.
+  * apport-gtk: Add button to remove the current report (by truncating the
+    file to zero bytes; a user cannot unlink files in /var/crash).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 30 Jul 2006 23:20:59 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 31 Jul 2006 00:22:24 +0200
 
 apport (0.2) edgy; urgency=low
 

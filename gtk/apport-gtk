@@ -107,6 +107,27 @@ class ApportGTK:
 
 	webbrowser.open(url)
 
+    def _del_report_file(self, f):
+	'''Delete the given report file.
+
+	Currently this happens by truncating the file to 0 byte, since users
+	cannot remove files from /var/crash.'''
+
+	open(f, 'w').truncate(0)
+
+    def on_button_delete_clicked(self, widget):
+	self._del_report_file(self.reports[self.cur_report])
+	del self.reports[self.cur_report]
+
+	if len(self.reports) <= 1:
+	    gtk.main_quit()
+
+	if self.cur_report < len(self.reports)-1:
+	    self.cur_report += 1
+	else:
+	    self.cur_report -= 1
+	self.update_report()
+
 if __name__ == '__main__':
     gettext.textdomain(gettext_domain)
     gtk.glade.textdomain(gettext_domain)
