@@ -240,7 +240,7 @@ if subprocess.call(['fgrep', '-qx', exename] + glob.glob('/var/lib/dpkg/info/*.l
 
 try:
     report = '/var/crash/%s.%i.crash' % (exename.replace('/', '_'), pidstat.st_uid)
-    if os.path.exists(report):
+    if os.path.exists(report) and os.path.getsize(report) > 0:
 	error_log('apport: report %s already exists, doing nothing to avoid disk usage DoS' % report)
 	sys.exit(1)
     reportfile = open(report, 'w')
