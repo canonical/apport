@@ -14,7 +14,7 @@ class ApportGTK:
 	    'apport-gtk.glade'))
         self.widgets.signal_autoconnect(self)
 
-	self.reports = glob.glob('/var/crash/*.crash')
+	self.reports = [r for r in glob.glob('/var/crash/*.crash') if os.path.getsize(r) > 0]
 	if len(self.reports) == 0:
 	    print >> sys.stderr, 'No crash reports found, aborting'
 	    gtk.main_quit()
