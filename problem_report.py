@@ -23,9 +23,12 @@ class ProblemReport:
 	    date = time.asctime()
 	self.info = {'ProblemType': type, 'Date': date}
 
-    def	load(self, file):
+    def	load(self, file, binary=True):
 	'''Initialize problem report from a file-like object, using Debian
-	control file format.'''
+	control file format.
+	
+	if binary is False, binary data is not loaded; the dictionary key is
+	created, but its value will be an empty string.'''
 
 	key = None
 	value = None
@@ -33,6 +36,8 @@ class ProblemReport:
 	for line in file:
 	    # continuation line
 	    if line.startswith(' '):
+		if b64_block and not binary:
+		    continue
 		assert (key != None and value != None)
 		if b64_block:
 		    value += bd.decompress(base64.b64decode(line))
@@ -50,7 +55,8 @@ class ProblemReport:
 		if value == 'base64':
 		    value = ''
 		    b64_block = True
-		    bd = bz2.BZ2Decompressor()
+		    if binary:
+			bd = bz2.BZ2Decompressor()
 
 	if key != None:
 	    self.info[key] = value
@@ -213,14 +219,21 @@ File: base64
     def test_read_file(self):
 	'''Test reading a report with binary data.'''
 
-	pr = ProblemReport()
-	pr.load(StringIO.StringIO(
-'''ProblemType: Crash
+	bin_report = '''ProblemType: Crash
 Date: now!
 File: base64
  QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
-'''))
+Foo: Bar
+'''
+
+	# test with reading everything
+	pr = ProblemReport()
+	pr.load(StringIO.StringIO(bin_report))
 	self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
+
+	# test with skipping binary data
+	pr.load(StringIO.StringIO(bin_report), binary=False)
+	self.assertEqual(pr['File'], '')
 
     def test_big_file(self):
 	'''Test writing and re-decoding a big random file.'''
