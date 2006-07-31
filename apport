@@ -13,7 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback
-import tempfile, shutil, glob, apt_pkg
+import tempfile, shutil, glob, apt
 
 import problem_report
 
@@ -85,10 +85,11 @@ def error_log(msg):
 
 def transitive_dependencies(package, depends_set, cache):
     '''Recursively add dependencies of package to depends_set, using the given
-    apt_pkg cache.'''
+    apt cache.'''
 
-    cur_ver = cache[package].CurrentVer
-    if not cur_ver:
+    try:
+	cur_ver = cache[package]._pkg.CurrentVer
+    except (AttributeError, KeyError):
 	return
     for p in cur_ver.DependsList.get('Depends', []) + cur_ver.DependsList.get('PreDepends', []):
 	name = p[0].TargetPkg.Name
@@ -112,6 +113,7 @@ class InformationCollector:
     - ThreadStacktrace: thread apply all bt full
     - Package: package name and version; not present if info['ExecutablePath'] does
       not belong to a package
+    - SourcePackage: source package name
     - Dependencies: names and versions of depending packages; not present if
       Package is not present
     - ProcCmdline: /proc/<pid>/cmdline
@@ -168,10 +170,10 @@ class InformationCollector:
 	    return 
 	pkg = out.split(':', 1)[0]
 
-	apt_pkg.init()
-	cache = apt_pkg.GetCache()
+	cache = apt.Cache()
 
-	self.info['Package'] = '%s %s' % (pkg, cache[pkg].CurrentVer.VerStr)
+	self.info['Package'] = '%s %s' % (pkg, cache[pkg].installedVersion)
+	self.info['SourcePackage'] = cache[pkg].sourcePackageName
 
 	# get set of all transitive dependencies
 	dependencies = set([])
@@ -180,11 +182,13 @@ class InformationCollector:
 	# get dependency versions
 	self.info['Dependencies'] = ''
 	for dep in dependencies:
-	    cur_ver = cache[dep].CurrentVer
-	    if cur_ver:
-		if self.info['Dependencies']:
-		    self.info['Dependencies'] += '\n'
-		self.info['Dependencies'] += '%s %s' % (dep, cur_ver.VerStr)
+	    try:
+		cur_ver = cache[dep]._pkg.CurrentVer
+	    except (KeyError, AttributeError):
+		continue
+	    if self.info['Dependencies']:
+		self.info['Dependencies'] += '\n'
+	    self.info['Dependencies'] += '%s %s' % (dep, cur_ver.VerStr)
 
     def _get_os(self):
 	'''Collect information about system.'''
