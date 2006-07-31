@@ -28,7 +28,7 @@ class ApportGTK:
 	self.w('treeview_details').append_column(column)
 
 	self.cur_report = 0
-	self.cur_package = None
+	self.cur_source = None
 	self.update_report()
 
     def quit(self, widget, *auxargs):
@@ -55,7 +55,10 @@ class ApportGTK:
 	self.w('label_crashed_program').set_text(report['ExecutablePath'])
 	self.w('label_package').set_text(report['Package'])
 	self.w('entry_report_file').set_text(self.reports[self.cur_report])
-	self.cur_package = report['Package'].split()[0]
+	try:
+	    self.cur_source = report['SourcePackage']
+	except KeyError:
+	    self.cur_source = report['Package'].split()[0]
 
 	# update details
 	self.tree_model.clear()
@@ -100,7 +103,7 @@ class ApportGTK:
 	    self.update_report()
 
     def on_button_malone_clicked(self, widget):
-	url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_package
+	url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_source
 
 	# prefer gnome-open if it exists
 	try:
