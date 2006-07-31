@@ -49,7 +49,7 @@ class ApportGTK:
 
 	# load problem report
 	report = ProblemReport()
-	report.load(open(self.reports[self.cur_report]))
+	report.load(open(self.reports[self.cur_report]), binary=False)
 
 	# update general information
 	self.w('label_crashed_program').set_text(report['ExecutablePath'])
@@ -64,7 +64,10 @@ class ApportGTK:
 	    self.tree_model.set_value(keyiter, 0, key)
 
 	    valiter = self.tree_model.insert_before(keyiter, None)
-	    self.tree_model.set_value(valiter, 0, report[key])
+	    if report[key]:
+		self.tree_model.set_value(valiter, 0, report[key])
+	    else:
+		self.tree_model.set_value(valiter, 0, '(binary data)')
 
 	    # expand the row if the value has less than 5 lines
 	    if len(filter(lambda c: c == '\n', report[key])) < 4:
