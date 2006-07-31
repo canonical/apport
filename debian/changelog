@@ -16,8 +16,10 @@ apport (0.3) UNRELEASED; urgency=low
     the GUI. They are just gibberish anyway.
   * apport: Switch from apt_pkg to apt, add SourcePackage: to reports.
   * apport-gtk: Use source package name for the Malone URL.
+  * debian/rules: Call setup.py install with --no-compile to not ship *.pyc in
+    debs.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 31 Jul 2006 13:09:44 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 31 Jul 2006 13:11:52 +0200
 
 apport (0.2) edgy; urgency=low
 

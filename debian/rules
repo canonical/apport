@@ -19,7 +19,7 @@ binary-indep:
 	dh_installchangelogs 
 	dh_installdocs
 
-	./setup.py install --root debian/tmp/ --install-scripts usr/share/apport
+	./setup.py install --root debian/tmp/ --install-scripts usr/share/apport --no-compile
 
 	dh_pysupport
 	dh_python
