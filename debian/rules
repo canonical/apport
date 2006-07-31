@@ -9,6 +9,7 @@ clean:
 
 	./setup.py clean -a
 	make -C po clean
+	find -name '*.pyc' -exec rm '{}' \;
 
 binary-indep:
 	dh_testdir
