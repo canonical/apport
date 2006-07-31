@@ -8,8 +8,9 @@ apport (0.3) UNRELEASED; urgency=low
   * apport-gtk: Ignore 0-sized reports.
   * apport-gtk: Add button to remove the current report (by truncating the
     file to zero bytes; a user cannot unlink files in /var/crash).
+  * apport-gtk: Only display reports that the user can actually read.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 31 Jul 2006 00:22:24 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 31 Jul 2006 11:40:26 +0200
 
 apport (0.2) edgy; urgency=low
 
