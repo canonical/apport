@@ -932,7 +932,7 @@ Michael Vogt &lt;mvo@ubuntu.com&gt;
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
-  <property name="resizable">True</property>
+  <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="icon_name"></property>
   <property name="decorated">True</property>
@@ -1052,6 +1052,7 @@ Then attach this file:</property>
 
 	      <child>
 		<widget class="GtkTreeView" id="treeview_reportdetails">
+		  <property name="height_request">400</property>
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="headers_visible">True</property>
