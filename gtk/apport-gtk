@@ -20,90 +20,86 @@ class ApportGTK:
 	    print >> sys.stderr, 'No crash reports found, aborting'
 	    gtk.main_quit()
 
-	# initial tree model and view
+	# initialize tree model and view
 	self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)
-	self.w('treeview_details').set_model(self.tree_model)
+	self.w('treeview_reportdetails').set_model(self.tree_model)
 
 	column = gtk.TreeViewColumn("Report", gtk.CellRendererText(), text=0)
-	self.w('treeview_details').append_column(column)
+	self.w('treeview_reportdetails').append_column(column)
 
-	self.cur_report = 0
+	# save the original strings of the dialog headings (which contain %s,
+	# which we replace later)
+	self.str_heading = self.w('label_heading').get_label()
+	self.str_heading_reopen = self.w('label_heading_reopen').get_label()
+
 	self.cur_source = None
+	self.report = None
 	self.update_report()
 
-    def quit(self, widget, *auxargs):
-	gtk.main_quit()
+    def ignore(self, widget, *auxargs):
+	'''Do nothing with the current report.'''
+
+	self.w('dialog_crash').hide()
+	self.w('dialog_crash_reopen').hide()
+
+	# delete the current report
+	#open(self.reports.pop(0), 'w').truncate(0)
+	self.reports.pop(0)
+	self.report = None
+
+	if len(self.reports) > 0:
+	    self.update_report()
+	else:
+	    gtk.main_quit()
+
+	return True
 
     def w(self, widget):
 	'''Shortcut for getting a widget.'''
 
 	return self.widgets.get_widget(widget)
 
-    def on_about_activate(self, widget):
-	d = self.w('dialog_about')
-	d.run()
-	d.hide()
-
     def update_report(self):
 	'''Load currently selected report and update UI accordingly.'''
 
 	# load problem report
-	report = ProblemReport()
-	report.load(open(self.reports[self.cur_report]), binary=False)
+	self.report = ProblemReport()
+	self.report.load(open(self.reports[0]), binary=False)
 
-	# update general information
-	self.w('label_crashed_program').set_text(report['ExecutablePath'])
-	self.w('label_package').set_text(report['Package'])
-	self.w('entry_report_file').set_text(self.reports[self.cur_report])
 	try:
-	    self.cur_source = report['SourcePackage']
+	    self.cur_source = self.report['SourcePackage']
 	except KeyError:
-	    self.cur_source = report['Package'].split()[0]
+	    self.cur_source = self.report['Package'].split()[0]
+
+	# update dialog
+	label = self.w('label_heading')
+	label.set_markup(self.str_heading %
+	    os.path.basename(self.report['ExecutablePath']))
+
+	self.w('dialog_crash').show_all()
+
+    def on_button_reportbug_clicked(self, widget):
+	'''Open bug page in browser and ask to file a bug.'''
+
+	assert self.report
+
+	url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_source
 
 	# update details
 	self.tree_model.clear()
-	for key, row in zip(report, xrange(sys.maxint)):
+	for key, row in zip(self.report, xrange(sys.maxint)):
 	    keyiter = self.tree_model.insert_before(None, None)
 	    self.tree_model.set_value(keyiter, 0, key)
 
 	    valiter = self.tree_model.insert_before(keyiter, None)
-	    if report[key]:
-		self.tree_model.set_value(valiter, 0, report[key])
+	    if self.report[key]:
+		self.tree_model.set_value(valiter, 0, self.report[key])
 	    else:
 		self.tree_model.set_value(valiter, 0, '(binary data)')
 
 	    # expand the row if the value has less than 5 lines
-	    if len(filter(lambda c: c == '\n', report[key])) < 4:
-		self.w('treeview_details').expand_row(row, False)
-
-	self.update_browse_buttons()
-
-    def update_browse_buttons(self):
-	'''Enable or disable back/forward buttons depending on which report is
-	currently selected.'''
-
-	if self.cur_report == 0:
-	    self.w('button_prev').set_sensitive(False)
-	else:
-	    self.w('button_prev').set_sensitive(True)
-
-	if self.cur_report == len(self.reports)-1:
-	    self.w('button_next').set_sensitive(False)
-	else:
-	    self.w('button_next').set_sensitive(True)
-
-    def on_button_prev_clicked(self, widget):
-	if self.cur_report > 0:
-	    self.cur_report -= 1
-	    self.update_report()
-
-    def on_button_next_clicked(self, widget):
-	if self.cur_report < len(self.reports)-1:
-	    self.cur_report += 1
-	    self.update_report()
-
-    def on_button_malone_clicked(self, widget):
-	url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_source
+	    if len(filter(lambda c: c == '\n', self.report[key])) < 4:
+		self.w('treeview_reportdetails').expand_row(row, False)
 
 	# prefer gnome-open if it exists
 	try:
@@ -113,27 +109,7 @@ class ApportGTK:
 	    pass
 
 	webbrowser.open(url)
-
-    def _del_report_file(self, f):
-	'''Delete the given report file.
-
-	Currently this happens by truncating the file to 0 byte, since users
-	cannot remove files from /var/crash.'''
-
-	open(f, 'w').truncate(0)
-
-    def on_button_delete_clicked(self, widget):
-	self._del_report_file(self.reports[self.cur_report])
-	del self.reports[self.cur_report]
-
-	if len(self.reports) <= 1:
-	    gtk.main_quit()
-
-	if self.cur_report < len(self.reports)-1:
-	    self.cur_report += 1
-	else:
-	    self.cur_report -= 1
-	self.update_report()
+	return True
 
 if __name__ == '__main__':
     gettext.textdomain(gettext_domain)
