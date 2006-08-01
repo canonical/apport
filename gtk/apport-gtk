@@ -31,6 +31,7 @@ class ApportGTK:
 	# which we replace later)
 	self.str_heading = self.w('label_heading').get_label()
 	self.str_heading_reopen = self.w('label_heading_reopen').get_label()
+	self.str_bugreport_title = self.w('window_bugreport').get_title()
 
 	self.cur_source = None
 	self.report = None
@@ -41,6 +42,11 @@ class ApportGTK:
 
 	self.w('dialog_crash').hide()
 	self.w('dialog_crash_reopen').hide()
+	self.next()
+	return True
+
+    def next(self):
+	'''Move on to the next report.'''
 
 	# delete the current report
 	#open(self.reports.pop(0), 'w').truncate(0)
@@ -51,8 +57,6 @@ class ApportGTK:
 	    self.update_report()
 	else:
 	    gtk.main_quit()
-
-	return True
 
     def w(self, widget):
 	'''Shortcut for getting a widget.'''
@@ -83,9 +87,18 @@ class ApportGTK:
 
 	assert self.report
 
+	self.w('dialog_crash').hide()
+	self.w('dialog_crash_reopen').hide()
+
 	url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_source
 
 	# update details
+	self.w('window_bugreport').set_title(self.str_bugreport_title %
+	    self.report['Package'].split()[0])
+
+	self.w('label_reportfile').set_text(self.reports[0])
+	self.w('label_reportfile').set_selectable(True)
+
 	self.tree_model.clear()
 	for key, row in zip(self.report, xrange(sys.maxint)):
 	    keyiter = self.tree_model.insert_before(None, None)
@@ -101,6 +114,8 @@ class ApportGTK:
 	    if len(filter(lambda c: c == '\n', self.report[key])) < 4:
 		self.w('treeview_reportdetails').expand_row(row, False)
 
+	self.w('window_bugreport').show_all()
+
 	# prefer gnome-open if it exists
 	try:
 	    if subprocess.call(['gnome-open', url]) == 0:
@@ -109,6 +124,11 @@ class ApportGTK:
 	    pass
 
 	webbrowser.open(url)
+	return True
+
+    def on_window_bugreport_delete_event(self, widget, event):
+	self.w('window_bugreport').hide()
+	self.next()
 	return True
 
 if __name__ == '__main__':

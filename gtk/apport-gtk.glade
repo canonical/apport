@@ -601,7 +601,7 @@ Michael Vogt &lt;mvo@ubuntu.com&gt;
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">True</property>
-  <signal name="close" handler="ignore" last_modification_time="Tue, 01 Aug 2006 19:29:30 GMT"/>
+  <signal name="delete_event" handler="ignore" last_modification_time="Tue, 01 Aug 2006 20:17:49 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox1">
@@ -938,10 +938,11 @@ Michael Vogt &lt;mvo@ubuntu.com&gt;
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
-  <property name="type_hint">GDK_WINDOW_TYPE_HINT_UTILITY</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
+  <signal name="delete_event" handler="on_window_bugreport_delete_event" last_modification_time="Tue, 01 Aug 2006 19:58:25 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="vbox12">
@@ -1036,7 +1037,8 @@ Then attach this file:</property>
 	<widget class="GtkExpander" id="expander1">
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
-	  <property name="expanded">True</property>
+	  <property name="has_focus">True</property>
+	  <property name="expanded">False</property>
 	  <property name="spacing">0</property>
 
 	  <child>
