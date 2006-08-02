@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2006-07-27 17:13+0200\n"
+"POT-Creation-Date: 2006-08-02 23:05+0200\n"
 "PO-Revision-Date: 2006-07-27 16:49+0200\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -16,75 +16,49 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../gtk/apport-gtk.glade.h:1
-msgid "<b>Package:</b>"
-msgstr "<b>Paket:</b>"
+msgid ""
+"If you were not doing anything confidential (entering passwords or other "
+"private information), you can help improve the application by reporting a "
+"bug."
+msgstr ""
+"Sofern Sie nicht etwas vertrauliches durchgeführt haben (Eingabe von "
+"Passwörtern oder anderen privaten Informationen), können Sie bei der "
+"Verbesserung der Anwendung helfen, indem Sie einen Fehler melden."
 
 #: ../gtk/apport-gtk.glade.h:2
-msgid "<b>Program crash:</b>"
-msgstr "<b>Programmabsturz:</b>"
+msgid "Leave closed"
+msgstr "Geschlossen lassen"
 
 #: ../gtk/apport-gtk.glade.h:3
-msgid "<b>Report file:</b>"
-msgstr "<b>Bericht-Datei:</b>"
-
-#: ../gtk/apport-gtk.glade.h:4
-msgid "Crash Report information"
-msgstr "Absturz-Informationen"
-
-#: ../gtk/apport-gtk.glade.h:5
-msgid "Details"
-msgstr "Details"
-
-#: ../gtk/apport-gtk.glade.h:6
-msgid "GPL, see /usr/share/common-licenses/GPL"
-msgstr "GPL, siehe /usr/share/common-licenses/GPL"
+msgid ""
+"Please check the list for an already existing bug report about this problem. "
+"If there is none, or you are in doubt, please create a new report.\n"
+"\n"
+"Then attach this file:"
+msgstr ""
+"Bitte prüfen Sie die Liste auf einen schon vorhandenen Bericht über dieses "
+"Problem. Wenn noch keiner existiert, oder Sie Zweifel haben, erstellen Sie "
+"bitte einen neuen Bericht\n"
+"\n"
+"Danach hängen Sie bitte diese Datei an:"
 
 #: ../gtk/apport-gtk.glade.h:7
-msgid "General"
-msgstr "Allgemein"
+#, no-c-format
+msgid "Problem report for %s"
+msgstr "Problembericht für %s"
 
 #: ../gtk/apport-gtk.glade.h:8
-msgid "Open bug reports"
-msgstr "Fehlerberichte öffnen"
+msgid "Program crash detected"
+msgstr "Programmabsturz gemeldet"
 
 #: ../gtk/apport-gtk.glade.h:9
-msgid "Report crashes"
-msgstr "Abstürze melden"
+msgid "Reopen"
+msgstr "Erneut öffnen"
 
 #: ../gtk/apport-gtk.glade.h:10
-msgid ""
-"Some information about the crash has been collected which will help the "
-"developers to fix the problem. Please create a bug report in our bug "
-"tracking system, try to describe what you did to trigger the crash, and "
-"attach the report file.\n"
-"\n"
-"<b>Attention:</b> The report contains information about the runtime status "
-"of the program. If the program worked with potentially sensitive data "
-"(passwords, cryptographic operations, confidential information, etc.), you "
-"should <b>not</b> put the report in any public place like the bug tracking "
-"system."
-msgstr ""
-"Es wurden einige Informationen über den Absturz gesammelt, die den "
-"Entwicklern beim Beheben des Problems helfen. Bitte erstellen Sie eine  "
-"Fehlermeldung im Fehler-Verwaltungs-System, versuchen Sie, die Schritte zu "
-"beschreiben die zu dem Absturz geführt haben, und hängen Sie die Bericht-"
-"Datei an.\n"
-"\n"
-"<b>Achtung:</b> Der Bericht enthält Informationen über den Laufzeit-Zustand "
-"des Programmes. Wenn das Programm mit potentiell sensiblen Daten gearbeitet "
-"hat (Passwörter, Kryptografie, vertrauliche Informationen, usw.), sollten Sie "
-"den Fehler-Bericht <b>nicht</b> an einem öffentlich zugänglichen Ort wie dem "
-"Fehler-Verwaltungs-System ablegen."
+msgid "Report a bug..."
+msgstr "Fehler melden..."
 
-#: ../gtk/apport-gtk.glade.h:13
-msgid "_File"
-msgstr "_Datei"
-
-#: ../gtk/apport-gtk.glade.h:14
-msgid "_Help"
-msgstr "_Hilfe"
-
-#. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../gtk/apport-gtk.glade.h:16
-msgid "translator-credits"
-msgstr "Martin Pitt"
+#: ../gtk/apport-gtk.glade.h:11
+msgid "What does this file contain?"
+msgstr "Was enthält diese Datei?"
