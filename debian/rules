@@ -11,7 +11,13 @@ clean:
 	make -C po clean
 	find -name '*.pyc' -exec rm '{}' \;
 
-binary-indep:
+build: build-indep
+
+build-indep:
+	dh_testdir
+	make -C po
+
+binary-indep: build-indep
 	dh_testdir
 	dh_testroot
 	dh_clean -k 

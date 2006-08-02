@@ -5,8 +5,10 @@ apport (0.4) UNRELEASED; urgency=low
     Thomas!
   * po/Makefile: Fix default target to not just break. Now it builds the .pot
     file.
+  * debian/rules: Build .pot file on package build for automatic Rosetta
+    import.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  2 Aug 2006 22:47:38 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  2 Aug 2006 22:51:48 +0200
 
 apport (0.3) edgy; urgency=low
 
