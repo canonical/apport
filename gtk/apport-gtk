@@ -106,8 +106,6 @@ class ApportGTK:
 		self.cur_desktop_entry = xdg.DesktopEntry.DesktopEntry(desktop_file)
 	    except: pass
 
-	print 'desktop file', desktop_file, 'desktop entry', self.cur_desktop_entry
-
 	# update dialog
 	if self.cur_desktop_entry:
 	    heading = _('Sorry, %s closed unexpectedly.') % self.cur_desktop_entry.getName()
