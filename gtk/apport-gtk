@@ -3,10 +3,32 @@ import gobject, gtk, gtk.glade
 import glob, sys, gettext, os.path
 from gettext import gettext as _
 import webbrowser, subprocess
+import xdg.DesktopEntry
 
 from problem_report import ProblemReport
 
 gettext_domain = 'apport'
+
+def find_package_desktopfile(package):
+    '''If given package is installed and has a single .desktop file, return the
+    path to it, otherwise return None.'''
+
+    dpkg = subprocess.Popen(['dpkg', '-L', package], stdout=subprocess.PIPE,
+	stderr=subprocess.PIPE)
+    out = dpkg.communicate(input)[0]
+    if dpkg.returncode != 0:
+	return None
+
+    desktopfile = None
+
+    for line in out.splitlines():
+	if line.endswith('.desktop'):
+	    if desktopfile:
+		return None # more than one
+	    else:
+		desktopfile = line
+
+    return desktopfile
 
 class ApportGTK:
     def __init__(self):
@@ -70,17 +92,29 @@ class ApportGTK:
 	self.report = ProblemReport()
 	self.report.load(open(self.reports[0]), binary=False)
 
+	package = self.report['Package'].split()[0]
 	try:
 	    self.cur_source = self.report['SourcePackage']
 	except KeyError:
-	    self.cur_source = self.report['Package'].split()[0]
+	    self.cur_source = package
+
+	# try to get a matching .desktop file
+	desktop_file = find_package_desktopfile(package)
+	self.cur_desktop_entry = None
+	if desktop_file:
+	    try:
+		self.cur_desktop_entry = xdg.DesktopEntry.DesktopEntry(desktop_file)
+	    except: pass
+
+	print 'desktop file', desktop_file, 'desktop entry', self.cur_desktop_entry
 
 	# update dialog
+	if self.cur_desktop_entry:
+	    heading = _('Sorry, %s closed unexpectedly.') % self.cur_desktop_entry.getName()
+	else:
+	    heading = _('Sorry, the program "%s" closed unexpectedly.') % os.path.basename(self.report['ExecutablePath'])
 	label = self.w('label_heading')
-	label.set_markup(self.str_heading % (
-	    _('Sorry, the program "%s" closed unexpectedly.') %
-	    os.path.basename(self.report['ExecutablePath'])))
-
+	label.set_markup(self.str_heading % heading)
 	self.w('dialog_crash').show_all()
 
     def on_button_reportbug_clicked(self, widget):
