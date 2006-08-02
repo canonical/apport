@@ -111,9 +111,15 @@ class ApportGTK:
 	    heading = _('Sorry, %s closed unexpectedly.') % self.cur_desktop_entry.getName()
 	else:
 	    heading = _('Sorry, the program "%s" closed unexpectedly.') % os.path.basename(self.report['ExecutablePath'])
-	label = self.w('label_heading')
-	label.set_markup(self.str_heading % heading)
-	self.w('dialog_crash').show_all()
+	if self.cur_desktop_entry and \
+	    subprocess.call(['pidof', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
+	    label = self.w('label_heading_reopen')
+	    label.set_markup(self.str_heading % heading)
+	    self.w('dialog_crash_reopen').show_all()
+	else:
+	    label = self.w('label_heading')
+	    label.set_markup(self.str_heading % heading)
+	    self.w('dialog_crash').show_all()
 
     def on_button_reportbug_clicked(self, widget):
 	'''Open bug page in browser and ask to file a bug.'''
