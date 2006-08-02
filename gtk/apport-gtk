@@ -77,8 +77,9 @@ class ApportGTK:
 
 	# update dialog
 	label = self.w('label_heading')
-	label.set_markup(self.str_heading %
-	    os.path.basename(self.report['ExecutablePath']))
+	label.set_markup(self.str_heading % (
+	    _('Sorry, the program "%s" closed unexpectedly.') %
+	    os.path.basename(self.report['ExecutablePath'])))
 
 	self.w('dialog_crash').show_all()
 
