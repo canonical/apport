@@ -40,7 +40,7 @@ class ApportGTK:
 	    if os.path.getsize(r) > 0 and os.access(r, os.R_OK)]
 	if len(self.reports) == 0:
 	    print >> sys.stderr, 'No crash reports found, aborting'
-	    gtk.main_quit()
+	    sys.exit(1)
 
 	# initialize tree model and view
 	self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)
@@ -71,8 +71,7 @@ class ApportGTK:
 	'''Move on to the next report.'''
 
 	# delete the current report
-	#open(self.reports.pop(0), 'w').truncate(0)
-	self.reports.pop(0)
+	open(self.reports.pop(0), 'w').truncate(0)
 	self.report = None
 
 	if len(self.reports) > 0:

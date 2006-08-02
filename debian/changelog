@@ -1,3 +1,10 @@
+apport (0.5) UNRELEASED; urgency=low
+
+  * apport-gtk: Remove the crash report after it got displayed.
+  * apport-gtk: Fix exception on startup if no readable crash reports exist.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  2 Aug 2006 23:42:34 +0200
+
 apport (0.4) edgy; urgency=low
 
   * Implement completely new UI according to the design described at
