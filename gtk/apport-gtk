@@ -100,18 +100,18 @@ class ApportGTK:
 
 	# try to get a matching .desktop file
 	desktop_file = find_package_desktopfile(package)
-	self.cur_desktop_entry = None
+	self.desktop_entry = None
 	if desktop_file:
 	    try:
-		self.cur_desktop_entry = xdg.DesktopEntry.DesktopEntry(desktop_file)
+		self.desktop_entry = xdg.DesktopEntry.DesktopEntry(desktop_file)
 	    except: pass
 
 	# update dialog
-	if self.cur_desktop_entry:
-	    heading = _('Sorry, %s closed unexpectedly.') % self.cur_desktop_entry.getName()
+	if self.desktop_entry:
+	    heading = _('Sorry, %s closed unexpectedly.') % self.desktop_entry.getName()
 	else:
 	    heading = _('Sorry, the program "%s" closed unexpectedly.') % os.path.basename(self.report['ExecutablePath'])
-	if self.cur_desktop_entry and \
+	if self.desktop_entry and \
 	    subprocess.call(['pidof', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
 	    label = self.w('label_heading_reopen')
 	    label.set_markup(self.str_heading % heading)
@@ -167,6 +167,26 @@ class ApportGTK:
 
     def on_window_bugreport_delete_event(self, widget, event):
 	self.w('window_bugreport').hide()
+	self.next()
+	return True
+
+    def on_button_reopen_clicked(self, widget):
+	'''Reopen the crashed application.'''
+
+
+	self.w('dialog_crash').hide()
+	self.w('dialog_crash_reopen').hide()
+
+	assert self.desktop_entry
+
+	executable = self.desktop_entry.getExec().split()[0]
+	print 'Reopening', executable
+
+	if os.fork() == 0:
+	    os.setsid()
+	    os.execlp(executable, executable)
+	    sys.exit(1)
+
 	self.next()
 	return True
 
