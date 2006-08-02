@@ -3,8 +3,10 @@ apport (0.4) UNRELEASED; urgency=low
   * Implement completely new UI according to the design described at
     https://wiki.ubuntu.com/CrashReporting. Many thanks to Matthew Paul
     Thomas!
+  * po/Makefile: Fix default target to not just break. Now it builds the .pot
+    file.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  2 Aug 2006 22:44:29 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  2 Aug 2006 22:47:38 +0200
 
 apport (0.3) edgy; urgency=low
 

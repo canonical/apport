@@ -3,7 +3,7 @@ DOMAIN=apport
 PO_FILES := $(wildcard *.po)
 CONTACT=martin.pitt@ubuntu.com
 
-all: update-po
+all: $(DOMAIN).pot
 
 clean:
 	rm -rf mo/
