@@ -247,8 +247,8 @@ if subprocess.call(['fgrep', '-qx', exename] + glob.glob('/var/lib/dpkg/info/*.l
 
 try:
     report = '%s/%s.%i.crash' % (apport_utils.report_dir, exename.replace('/', '_'), pidstat.st_uid)
-    if os.path.exists(report) and os.path.getsize(report) > 0:
-	error_log('apport: report %s already exists, doing nothing to avoid disk usage DoS' % report)
+    if os.path.exists(report) and not apport_utils.seen_report(report):
+	error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
 	sys.exit(1)
     reportfile = open(report, 'w')
     os.chmod(report, 0600)
