@@ -1,6 +1,6 @@
 apport (0.8) UNRELEASED; urgency=low
 
-  * apport-utils.py:
+  * apport_utils.py:
     - Add two new functions seen_report() and mark_report_seen().
     - get_new_reports(): Only return unseen reports, add function
       get_all_reports() for the old behaviour.
@@ -16,7 +16,7 @@ apport (0.8) UNRELEASED; urgency=low
 
 apport (0.7) edgy; urgency=low
 
-  * Add apport-utils.py: Factorize out some common code of apport-gtk,
+  * Add apport_utils.py: Factorize out some common code of apport-gtk,
     possible future frontends, and some backend tools.
   * Add apport-checkreports: Test if there are new crash reports for the
     invoking user. This factorizes out the tests we currently do in
