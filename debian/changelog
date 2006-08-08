@@ -1,3 +1,10 @@
+apport (0.7) UNRELEASED; urgency=low
+
+  * Add apport-utils.py: Factorize out some common code of apport-gtk,
+    possible future frontends, and some backend tools.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 17:13:06 +0200
+
 apport (0.6) edgy; urgency=low
 
   * Add missing intltool build dependency to fix FTBFS.

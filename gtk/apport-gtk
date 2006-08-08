@@ -7,28 +7,10 @@ import xdg.DesktopEntry
 
 from problem_report import ProblemReport
 
+sys.path.append(os.path.abspath(os.path.dirname(sys.argv[0])))
+import apport_utils
+
 gettext_domain = 'apport'
-
-def find_package_desktopfile(package):
-    '''If given package is installed and has a single .desktop file, return the
-    path to it, otherwise return None.'''
-
-    dpkg = subprocess.Popen(['dpkg', '-L', package], stdout=subprocess.PIPE,
-	stderr=subprocess.PIPE)
-    out = dpkg.communicate(input)[0]
-    if dpkg.returncode != 0:
-	return None
-
-    desktopfile = None
-
-    for line in out.splitlines():
-	if line.endswith('.desktop'):
-	    if desktopfile:
-		return None # more than one
-	    else:
-		desktopfile = line
-
-    return desktopfile
 
 class ApportGTK:
     def __init__(self):
@@ -36,8 +18,7 @@ class ApportGTK:
 	    'apport-gtk.glade'))
         self.widgets.signal_autoconnect(self)
 
-	self.reports = [r for r in glob.glob('/var/crash/*.crash') 
-	    if os.path.getsize(r) > 0 and os.access(r, os.R_OK)]
+	self.reports = apport_utils.get_new_reports()
 	if len(self.reports) == 0:
 	    print >> sys.stderr, 'No crash reports found, aborting'
 	    sys.exit(1)
@@ -70,8 +51,7 @@ class ApportGTK:
     def next(self):
 	'''Move on to the next report.'''
 
-	# delete the current report
-	open(self.reports.pop(0), 'w').truncate(0)
+	apport_utils.delete_report(self.reports.pop(0))
 	self.report = None
 
 	if len(self.reports) > 0:
@@ -98,7 +78,7 @@ class ApportGTK:
 	    self.cur_source = package
 
 	# try to get a matching .desktop file
-	desktop_file = find_package_desktopfile(package)
+	desktop_file = apport_utils.find_package_desktopfile(package)
 	self.desktop_entry = None
 	if desktop_file:
 	    try:
