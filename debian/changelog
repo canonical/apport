@@ -8,8 +8,10 @@ apport (0.8) UNRELEASED; urgency=low
     way, we do not need to add another button to save the report (which is
     considered evil UI-wise), but still retain the report for filing and
     examining later.
+  * Replace all usages of '/var/crash' to a new global variable in
+    apport_utils; this is particularly useful for test suites.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 18:11:16 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 18:25:21 +0200
 
 apport (0.7) edgy; urgency=low
 

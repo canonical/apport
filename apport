@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-# Collect information about a crash and create a report in /var/crash/.
+# Collect information about a crash and create a report in the directory
+# specified by apport_utils.report_dir.
 # See https://wiki.ubuntu.com/AutomatedProblemReports for details.
 #
 # Copyright (c) 2006 Canonical Ltd.
@@ -17,6 +18,8 @@ import tempfile, shutil, glob, apt
 
 import problem_report
 
+sys.path.append(os.path.abspath(os.path.dirname(sys.argv[0])))
+import apport_utils
 
 #################################################################
 #
@@ -227,7 +230,7 @@ error_log('called with: ' + str(sys.argv))
 (pid, signum) = sys.argv[1:]
 
 # Create crash report file descriptor. We prefer to create the report in
-# /var/crash/ if we can create a file there; if not, we just use stderr.
+# report_dir if we can create a file there; if not, we just use stderr.
 
 try:
     pidstat = os.stat('/proc/' + pid)
@@ -243,7 +246,7 @@ if subprocess.call(['fgrep', '-qx', exename] + glob.glob('/var/lib/dpkg/info/*.l
     sys.exit(0)
 
 try:
-    report = '/var/crash/%s.%i.crash' % (exename.replace('/', '_'), pidstat.st_uid)
+    report = '%s/%s.%i.crash' % (apport_utils.report_dir, exename.replace('/', '_'), pidstat.st_uid)
     if os.path.exists(report) and os.path.getsize(report) > 0:
 	error_log('apport: report %s already exists, doing nothing to avoid disk usage DoS' % report)
 	sys.exit(1)

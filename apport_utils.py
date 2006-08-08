@@ -12,6 +12,8 @@ the full text of the license.
 
 import subprocess, os, os.path, glob
 
+report_dir = '/var/crash'
+
 def find_package_desktopfile(package):
     '''If given package is installed and has a single .desktop file, return the
     path to it, otherwise return None.'''
@@ -49,7 +51,7 @@ def get_all_reports():
     '''Return a list with all report files which are accessible to the calling
     user.'''
 
-    return [r for r in glob.glob('/var/crash/*.crash') 
+    return [r for r in glob.glob(os.path.join(report_dir, '*.crash')) 
 	    if os.path.getsize(r) > 0 and os.access(r, os.R_OK)]
 
 def get_new_reports():
@@ -61,7 +63,7 @@ def get_new_reports():
 def delete_report(report):
     '''Delete the given report file.
 
-    This will not actually unlink the file, since /var/crash is not writable to
+    This will not actually unlink the file, since report_dir is not writable to
     normal users; instead, the file will be truncated to 0 bytes.'''
 
     open(report, 'w').truncate(0)
