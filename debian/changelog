@@ -1,3 +1,11 @@
+apport (0.9) edgy; urgency=low
+
+  * apport: Call objcopy to throw out READONLY/CODE sections from the core
+    dump, which drastically reduces its (uncompressed) size (factor 2 to 10).
+    This has little effect on the bzip2'ed core dump, though.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 23:32:18 +0200
+
 apport (0.8) edgy; urgency=low
 
   * apport_utils.py:

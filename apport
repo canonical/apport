@@ -208,7 +208,14 @@ class InformationCollector:
 	    'bt full', self.info['ExecutablePath'], self.pid], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
 	if os.path.exists(corefile):
-	    self.info['CoreDump'] = (corefile,)
+	    # try to shrink the core file
+	    shrinkcorefile = corefile + '.shrink'
+	    if subprocess.call(['objcopy', corefile, shrinkcorefile],
+		stderr=subprocess.PIPE) == 0 \
+		and os.path.exists(shrinkcorefile):
+		self.info['CoreDump'] = (shrinkcorefile,)
+	    else:
+		self.info['CoreDump'] = (corefile,)
 	self.info['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
 	    'thread apply all bt full', self.info['ExecutablePath'], self.pid], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
