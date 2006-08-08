@@ -1,0 +1,24 @@
+#!/usr/bin/python
+
+# Check if there are new reports for the invoking user. Exit with 0 if new
+# reports are available, or with 1 if not.
+#
+# Copyright (c) 2006 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/pgl.html for
+# the full text of the license.
+
+import sys, os.path
+
+sys.path.append(os.path.abspath(os.path.dirname(sys.argv[0])))
+
+from apport_utils import get_new_reports
+
+if len(get_new_reports()) > 0:
+    sys.exit(0)
+else:
+    sys.exit(1)

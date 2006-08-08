@@ -2,8 +2,12 @@ apport (0.7) UNRELEASED; urgency=low
 
   * Add apport-utils.py: Factorize out some common code of apport-gtk,
     possible future frontends, and some backend tools.
+  * Add apport-checkreports: Test if there are new crash reports for the
+    invoking user. This factorizes out the tests we currently do in
+    update-notifier and makes them easier to change and keep in sync with
+    apport itself. Ship the script in the apport package.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 17:13:06 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 17:24:46 +0200
 
 apport (0.6) edgy; urgency=low
 
