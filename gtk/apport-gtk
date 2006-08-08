@@ -51,7 +51,7 @@ class ApportGTK:
     def next(self):
 	'''Move on to the next report.'''
 
-	apport_utils.delete_report(self.reports.pop(0))
+	self.reports.pop(0)
 	self.report = None
 
 	if len(self.reports) > 0:

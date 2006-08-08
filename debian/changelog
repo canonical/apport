@@ -1,3 +1,16 @@
+apport (0.8) UNRELEASED; urgency=low
+
+  * apport-utils.py:
+    - Add two new functions seen_report() and mark_report_seen().
+    - get_new_reports(): Only return unseen reports, add function
+      get_all_reports() for the old behaviour.
+  * gtk/apport-gtk.py: Do not delete reports after notifying about them. This
+    way, we do not need to add another button to save the report (which is
+    considered evil UI-wise), but still retain the report for filing and
+    examining later.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 18:11:16 +0200
+
 apport (0.7) edgy; urgency=low
 
   * Add apport-utils.py: Factorize out some common code of apport-gtk,

@@ -33,12 +33,30 @@ def find_package_desktopfile(package):
 
     return desktopfile
 
+def seen_report(report):
+    '''Check whether the given report file has already been processed
+    earlier.'''
+
+    st = os.stat(report)
+    return (st.st_atime > st.st_mtime) or (st.st_size == 0)
+
+def mark_report_seen(report):
+    '''Mark given report file as seen.'''
+
+    pass # nothing to be done with current stat atime implementation
+
+def get_all_reports():
+    '''Return a list with all report files which are accessible to the calling
+    user.'''
+
+    return [r for r in glob.glob('/var/crash/*.crash') 
+	    if os.path.getsize(r) > 0 and os.access(r, os.R_OK)]
+
 def get_new_reports():
     '''Return a list with all report files which have not yet been processed
     and are accessible to the calling user.'''
 
-    return [r for r in glob.glob('/var/crash/*.crash') 
-	    if os.path.getsize(r) > 0 and os.access(r, os.R_OK)]
+    return [r for r in get_all_reports() if not seen_report(r)]
 
 def delete_report(report):
     '''Delete the given report file.
