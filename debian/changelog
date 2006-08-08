@@ -11,8 +11,9 @@ apport (0.8) UNRELEASED; urgency=low
   * Replace all usages of '/var/crash' to a new global variable in
     apport_utils; this is particularly useful for test suites.
   * apport.py: Overwrite old reports if they are seen.
+  * apport-utils.py: Add a test suite for all exported functions.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 18:29:31 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 19:29:23 +0200
 
 apport (0.7) edgy; urgency=low
 
