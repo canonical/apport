@@ -3,7 +3,7 @@ apport (0.9) edgy; urgency=low
   * apport: Call objcopy to throw out READONLY/CODE sections from the core
     dump, which drastically reduces its (uncompressed) size (factor 2 to 10).
     This has little effect on the bzip2'ed core dump, though.
-  * apport: 
+  * apport:
     - Support an optional third command line argument which specifies the
       location of a core dump.
     - If a core dump is given, call gdb on the core dump instead of the
@@ -19,7 +19,7 @@ apport (0.9) edgy; urgency=low
   * Ship preloadlib/* as examples in package 'apport' for people who want to
     play with it until the new kernel arrives.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 Aug 2006 11:58:24 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 Aug 2006 12:11:54 +0200
 
 apport (0.8) edgy; urgency=low
 
