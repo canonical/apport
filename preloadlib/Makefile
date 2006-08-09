@@ -4,7 +4,7 @@ LIBNAME=crashrep
 LIB=lib$(LIBNAME).so
 
 ifeq ($(CRASHREPPATH),)
-CRASHREPPATH=./apport
+CRASHREPPATH=/usr/share/apport/apport
 endif
 
 $(LIB): lib$(LIBNAME).c
