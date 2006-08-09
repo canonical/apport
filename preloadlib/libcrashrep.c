@@ -53,7 +53,7 @@ void sighandler( int signum )
 
     pid = fork();
     if( pid == 0 ) {
-	if( execl( CRASHREPPATH, CRASHREPPATH, ssig, spid, corepath, NULL ) == -1 )
+	if( execl( CRASHREPPATH, CRASHREPPATH, spid, ssig, corepath, NULL ) == -1 )
 	    perror( "Error: could not execute " CRASHREPPATH );
 	exit( 1 );
     }
