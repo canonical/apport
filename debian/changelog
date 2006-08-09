@@ -16,8 +16,10 @@ apport (0.9) edgy; urgency=low
     emulates the future kernel behaviour. This is ONLY for testing and
     development purposes. It uses unsafe temporary file handling and thus must
     not be used on production boxes!
+  * Ship preloadlib/* as examples in package 'apport' for people who want to
+    play with it until the new kernel arrives.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 Aug 2006 11:55:22 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 Aug 2006 11:58:24 +0200
 
 apport (0.8) edgy; urgency=low
 

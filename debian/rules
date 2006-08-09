@@ -24,6 +24,7 @@ binary-indep: build-indep
 
 	dh_installchangelogs 
 	dh_installdocs
+	dh_installexamples
 
 	./setup.py install --root debian/tmp/ --install-scripts usr/share/apport --no-compile
 
