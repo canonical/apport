@@ -3,8 +3,17 @@ apport (0.9) edgy; urgency=low
   * apport: Call objcopy to throw out READONLY/CODE sections from the core
     dump, which drastically reduces its (uncompressed) size (factor 2 to 10).
     This has little effect on the bzip2'ed core dump, though.
+  * apport: 
+    - Support an optional third command line argument which specifies the
+      location of a core dump.
+    - If a core dump is given, call gdb on the core dump instead of the
+      crashed process. We cannot attach to the latter if we are called by the
+      kernel (since the crashed process is in uninterruptible kernel sleep).
+    - If no core dump is given, do not attempt to do anything gdb related.
+    - This matches the future behaviour of the kernel crash dump helper while
+      remaining compatible to the previous call semantics.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  8 Aug 2006 23:32:18 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 Aug 2006 11:45:43 +0200
 
 apport (0.8) edgy; urgency=low
 

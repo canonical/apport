@@ -129,12 +129,13 @@ class InformationCollector:
     TODO: StackFrame
     '''
 
-    def __init__(self, pid, signum):
+    def __init__(self, pid, signum, coredump = None):
 	'Collects all information and stores them in the appropriate fields.'
 
 	self.info = problem_report.ProblemReport('Crash')
 	self.info['Signal'] = signum
 	self.pid = pid
+	self.coredump = coredump
 
 	# determine program name
 	self.info['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
@@ -200,25 +201,30 @@ class InformationCollector:
 	self.info['Uname'] = _command_output(['uname', '-a']).strip()
 
     def _get_gdb(self):
-	'''Get information from gdb.'''
+	'''Get information from gdb.
+	
+	This only works if we have a core dump. We cannot generate a core dump
+	on our own if we are called by the kernel, since the target process is
+	in uninterruptible kernel sleep.'''
 
-	corefile = os.path.join(self.workdir, 'core')
+	if not self.coredump:
+	    return
+
 	self.info['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'generate-core-file %s' % corefile, '--ex',
-	    'bt full', self.info['ExecutablePath'], self.pid], 
+	    'bt full', self.info['ExecutablePath'], self.coredump], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
-	if os.path.exists(corefile):
-	    # try to shrink the core file
-	    shrinkcorefile = corefile + '.shrink'
-	    if subprocess.call(['objcopy', corefile, shrinkcorefile],
-		stderr=subprocess.PIPE) == 0 \
-		and os.path.exists(shrinkcorefile):
-		self.info['CoreDump'] = (shrinkcorefile,)
-	    else:
-		self.info['CoreDump'] = (corefile,)
 	self.info['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'thread apply all bt full', self.info['ExecutablePath'], self.pid], 
+	    'thread apply all bt full', self.info['ExecutablePath'], self.coredump], 
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+
+	# try to shrink the core file
+	shrinkcorefile = os.path.join(self.workdir, 'core.shrink')
+	if subprocess.call(['objcopy', self.coredump, shrinkcorefile],
+	    stderr=subprocess.PIPE) == 0 \
+	    and os.path.exists(shrinkcorefile):
+	    self.info['CoreDump'] = (shrinkcorefile,)
+	else:
+	    self.info['CoreDump'] = (self.coredump,)
 
 #################################################################
 #
@@ -228,13 +234,18 @@ class InformationCollector:
 
 init_error_log()
 
-if len(sys.argv) != 3:
-    print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number>'
+if len(sys.argv) < 3 or len(sys.argv) > 4:
+    print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> [<path to core dump>]'
     sys.exit(-1)
 
 error_log('called with: ' + str(sys.argv))
 
-(pid, signum) = sys.argv[1:]
+pid = sys.argv[1]
+signum = sys.argv[2]
+if len(sys.argv) == 4 and os.path.exists(sys.argv[3]):
+    coredump = sys.argv[3]
+else:
+    coredump = None
 
 # Create crash report file descriptor. We prefer to create the report in
 # report_dir if we can create a file there; if not, we just use stderr.
@@ -264,7 +275,7 @@ except (OSError, IOError):
     reportfile = sys.stderr
 
 try:
-    ic = InformationCollector(pid, signum)
+    ic = InformationCollector(pid, signum, coredump)
     ic.info.write(reportfile)
 except Exception, e:
     error_log('Unhandled exception:')
