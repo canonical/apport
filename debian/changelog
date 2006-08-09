@@ -12,8 +12,12 @@ apport (0.9) edgy; urgency=low
     - If no core dump is given, do not attempt to do anything gdb related.
     - This matches the future behaviour of the kernel crash dump helper while
       remaining compatible to the previous call semantics.
+  * Add preloadlib/{Makefile,libapport.c}: LD_PRELOADable library which
+    emulates the future kernel behaviour. This is ONLY for testing and
+    development purposes. It uses unsafe temporary file handling and thus must
+    not be used on production boxes!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 Aug 2006 11:45:43 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 Aug 2006 11:55:22 +0200
 
 apport (0.8) edgy; urgency=low
 
