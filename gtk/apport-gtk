@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import gobject, gtk, gtk.glade
-import glob, sys, gettext, os.path
+import glob, sys, gettext, os.path, locale
 from gettext import gettext as _
 import webbrowser, subprocess
 import xdg.DesktopEntry
@@ -11,6 +11,15 @@ sys.path.append(os.path.abspath(os.path.dirname(sys.argv[0])))
 import apport_utils
 
 gettext_domain = 'apport'
+
+def format_filesize(size):
+    '''Format the given integer as humanly readable and i18n'ed file size.'''
+
+    if size < 1048576:
+        return locale.format('%.1f KB', size/1024.)
+    if size < 1024 * 1048576:
+        return locale.format('%.1f MB', size / 1048576.)
+    return locale.format('%.1f GB', size / float(1024 * 1048576)) 
 
 class ApportGTK:
     def __init__(self):
@@ -116,6 +125,8 @@ class ApportGTK:
 
 	self.w('label_reportfile').set_text(self.reports[0])
 	self.w('label_reportfile').set_selectable(True)
+	self.w('label_reportsize').set_text('(%s)' % 
+	    format_filesize(os.path.getsize(self.reports[0])))
 
 	self.tree_model.clear()
 	for key, row in zip(self.report, xrange(sys.maxint)):
@@ -172,7 +183,6 @@ class ApportGTK:
 if __name__ == '__main__':
     gettext.textdomain(gettext_domain)
     gtk.glade.textdomain(gettext_domain)
-
     app = ApportGTK()
     gtk.main()
 
