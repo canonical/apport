@@ -7,8 +7,10 @@ apport (0.10) UNRELEASED; urgency=low
     - If core dump file is not specified as argument, look in the default
       location (cwd/core).
   * Fix the GPL URLs in source file's copyright comments.
+  * debian/apport.cron.daily: Add -mindepth 1 to find commands to avoid
+    attempting to remove the /var/crash/ directory. Closes: LP#55107
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 Aug 2006 14:49:19 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 Aug 2006 14:55:51 +0200
 
 apport (0.9) edgy; urgency=low
 
