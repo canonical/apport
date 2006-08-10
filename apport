@@ -238,14 +238,25 @@ if len(sys.argv) < 3 or len(sys.argv) > 4:
     print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> [<path to core dump>]'
     sys.exit(-1)
 
-error_log('called with: ' + str(sys.argv))
 
 pid = sys.argv[1]
 signum = sys.argv[2]
-if len(sys.argv) == 4 and os.path.exists(sys.argv[3]):
+
+# try to find the core dump file
+if len(sys.argv) == 4:
     coredump = sys.argv[3]
 else:
+    # if not given, try the default core pattern
+    coredump = 'core'
+
+# if path is relative, prepend cwd of crashed process
+if coredump and len(coredump) > 0 and coredump[0] != '/':
+    coredump = os.path.join(os.readlink('/proc/' + pid + '/cwd'), coredump)
+
+if coredump and not os.path.exists(coredump):
     coredump = None
+
+error_log('called with: ' + str(sys.argv) + ', using core file ' + str(coredump))
 
 # Create crash report file descriptor. We prefer to create the report in
 # report_dir if we can create a file there; if not, we just use stderr.
