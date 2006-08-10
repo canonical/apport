@@ -246,8 +246,7 @@ signum = sys.argv[2]
 if len(sys.argv) == 4:
     coredump = sys.argv[3]
 else:
-    # if not given, try the default core pattern
-    coredump = 'core'
+    coredump = None
 
 # if path is relative, prepend cwd of crashed process
 if coredump and len(coredump) > 0 and coredump[0] != '/':

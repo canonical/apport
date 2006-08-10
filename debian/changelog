@@ -1,11 +1,8 @@
 apport (0.10) UNRELEASED; urgency=low
 
   * apport-gtk: Show report file size in bug report window.
-  * apport:
-    - Correctly handle relative paths to core dumps (use crashed process'
-      cwd).
-    - If core dump file is not specified as argument, look in the default
-      location (cwd/core).
+  * apport: Correctly handle relative paths to core dumps (use crashed
+    process' cwd).
   * Fix the GPL URLs in source file's copyright comments.
   * debian/apport.cron.daily: Add -mindepth 1 to find commands to avoid
     attempting to remove the /var/crash/ directory. Closes: LP#55107
