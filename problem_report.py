@@ -10,9 +10,9 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import bz2, base64, time
+import bz2, base64, time, UserDict
 
-class ProblemReport:
+class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
 	'''Initialize a fresh problem report.
 	
@@ -21,7 +21,7 @@ class ProblemReport:
 
 	if date == None:
 	    date = time.asctime()
-	self.info = {'ProblemType': type, 'Date': date}
+	self.data = {'ProblemType': type, 'Date': date}
 
     def	load(self, file, binary=True):
 	'''Initialize problem report from a file-like object, using Debian
@@ -30,7 +30,7 @@ class ProblemReport:
 	if binary is False, binary data is not loaded; the dictionary key is
 	created, but its value will be an empty string.'''
 
-	self.info.clear()
+	self.data.clear()
 	key = None
 	value = None
         b64_block = False
@@ -52,7 +52,7 @@ class ProblemReport:
 		    bd = None
 		if key:
 		    assert value != None
-		    self.info[key] = value
+		    self.data[key] = value
 		(key, value) = line.split(':', 1)
 		value = value.strip()
 		if value == 'base64':
@@ -62,7 +62,7 @@ class ProblemReport:
 			bd = bz2.BZ2Decompressor()
 
 	if key != None:
-	    self.info[key] = value
+	    self.data[key] = value
 
     def _is_binary(self, string):
 	'''Check if the given strings contains binary data.'''
@@ -81,12 +81,12 @@ class ProblemReport:
 	which will be read, bzip2'ed, and base64-encoded.
 	'''
 
-	keys = self.info.keys()
+	keys = self.data.keys()
 	keys.remove('ProblemType')
 	keys.sort()
 	keys.insert(0, 'ProblemType')
 	for k in keys:
-	    v = self.info[k]
+	    v = self.data[k]
 	    # if it's a string, copy it
 	    if hasattr(v, 'find'):
 		if self._is_binary(v):
@@ -122,9 +122,6 @@ class ProblemReport:
 			file.write('\n')
 			break
 
-    def __getitem__(self, k):
-	return self.info.__getitem__(k)
-
     def __setitem__(self, k, v):
 	assert hasattr(k, 'isalnum')
 	assert k.isalnum()
@@ -133,19 +130,8 @@ class ProblemReport:
 	    (hasattr(v, '__getitem__') and len(v) == 1 
 	    and hasattr(v[0], 'isalnum')))
 
-	return self.info.__setitem__(k, v)
+	return self.data.__setitem__(k, v)
 
-    def __delitem__(self, k):
-	return self.info.__delitem__(k)
-
-    def __iter__(self):
-	return self.info.__iter__()
-
-    def has_key(self,k):
-	return self.info.has_key(k)
-
-    def keys(self):
-	return self.info.keys()
 
 #
 # Unit test

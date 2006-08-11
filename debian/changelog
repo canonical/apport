@@ -12,8 +12,10 @@ apport (0.10) UNRELEASED; urgency=low
       back.
     - Fix writing back binary data, adapt test suite to check it.
     - Fixed ProblemReport.load() to clean up old data, added selftest.
+    - Restructure class to inherit from IterableUserDict and throw away all
+      the now obsolete dictionary wrapper methods.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 Aug 2006 15:17:37 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 Aug 2006 15:23:49 +0200
 
 apport (0.9) edgy; urgency=low
 
