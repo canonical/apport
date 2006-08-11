@@ -129,7 +129,8 @@ class ApportGTK:
 	    format_filesize(os.path.getsize(self.reports[0])))
 
 	self.tree_model.clear()
-	for key, row in zip(self.report, xrange(sys.maxint)):
+	row = 0
+	for key in self.report:
 	    keyiter = self.tree_model.insert_before(None, None)
 	    self.tree_model.set_value(keyiter, 0, key)
 
@@ -142,6 +143,7 @@ class ApportGTK:
 	    # expand the row if the value has less than 5 lines
 	    if len(filter(lambda c: c == '\n', self.report[key])) < 4:
 		self.w('treeview_reportdetails').expand_row(row, False)
+	    row += 1
 
 	self.w('window_bugreport').show_all()
 
