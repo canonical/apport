@@ -16,8 +16,12 @@ apport (0.10) UNRELEASED; urgency=low
       the now obsolete dictionary wrapper methods.
   * debian/apport.init: Add colon to description to make output less
     confusing.
+  * Add apport-retrace and install it into apport: This tool takes a crash
+    report and refreshes the stack traces in it. This is particularly useful
+    if debug symbols are installed now, but haven't been at the time the crash
+    occured.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 Aug 2006 15:39:06 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 Aug 2006 15:40:05 +0200
 
 apport (0.9) edgy; urgency=low
 

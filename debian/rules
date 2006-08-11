@@ -30,7 +30,7 @@ binary-indep: build-indep
 
 	dh_pysupport
 	dh_python
-	dh_install --sourcedir=debian/tmp --autodest --fail-missing
+	dh_install --sourcedir=debian/tmp --fail-missing
 	dh_installinit -u'defaults 01'
 	dh_installcron
 

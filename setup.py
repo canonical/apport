@@ -23,5 +23,5 @@ setup(name='apport',
       description='read, write, and modify problem reports',
       py_modules=['problem_report'],
       data_files=[('share/apport', ['gtk/apport-gtk.glade', 'gtk/apport-gtk.png', 'apport_utils.py'])]+mo_files,
-      scripts=['apport', 'apport-checkreports', 'gtk/apport-gtk'],
+      scripts=['apport', 'apport-checkreports', 'apport-retrace', 'gtk/apport-gtk'],
       )
