@@ -42,7 +42,9 @@ class ProblemReport:
 		if b64_block:
 		    value += bd.decompress(base64.b64decode(line))
 		else:
-		    value += line[1:]
+		    if len(value) > 0:
+			value += '\n'
+		    value += line[1:-1]
 	    else:
 		if b64_block:
 		    b64_block = False
@@ -194,7 +196,46 @@ WhiteSpace:
 	self.assertEqual(pr['ProblemType'], 'Crash')
 	self.assertEqual(pr['Date'], 'now!')
 	self.assertEqual(pr['Simple'], 'bar')
+	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
+
+	# test last field a bit more
+	pr.load(StringIO.StringIO(
+'''ProblemType: Crash
+Date: now!
+Simple: bar
+WhiteSpace:
+  foo   bar
+ baz
+   blip  
+ 
+'''))
+	self.assertEqual(pr['ProblemType'], 'Crash')
+	self.assertEqual(pr['Date'], 'now!')
+	self.assertEqual(pr['Simple'], 'bar')
 	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  \n')
+	pr = ProblemReport()
+	pr.load(StringIO.StringIO(
+'''ProblemType: Crash
+WhiteSpace:
+  foo   bar
+ baz
+   blip  
+Last: foo
+'''))
+	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
+	self.assertEqual(pr['Last'], 'foo')
+
+	pr.load(StringIO.StringIO(
+'''ProblemType: Crash
+WhiteSpace:
+  foo   bar
+ baz
+   blip  
+Last: foo
+ 
+'''))
+	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
+	self.assertEqual(pr['Last'], 'foo\n')
 
     def test_write_file(self):
 	'''Test writing a report with binary file data.'''
@@ -275,6 +316,41 @@ Foo: Bar
 	self.assertEqual(' '.join(keys), 'Date ProblemType foo')
 
 	self.assertEqual(len([k for k in pr if k != 'foo']), 2)
+
+    def test_modify(self):
+	'''Test reading, modifying fields, and writing back.'''
+
+	report = '''ProblemType: Crash
+Date: now!
+Long:
+ xxx
+ .
+ yyy
+Short: Bar
+'''
+
+	pr = ProblemReport()
+	pr.load(StringIO.StringIO(report))
+
+	self.assertEqual(pr['Long'], 'xxx\n.\nyyy')
+
+	# write back unmodified
+	io = StringIO.StringIO()
+	pr.write(io)
+	self.assertEqual(io.getvalue(), report)
+
+	pr['Short'] = 'aaa\nbbb'
+	pr['Long'] = '123'
+	io = StringIO.StringIO()
+	pr.write(io)
+	self.assertEqual(io.getvalue(), 
+'''ProblemType: Crash
+Date: now!
+Long: 123
+Short:
+ aaa
+ bbb
+''')
 
 if __name__ == '__main__':
     unittest.main()
