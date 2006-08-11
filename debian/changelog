@@ -11,8 +11,9 @@ apport (0.10) UNRELEASED; urgency=low
     - Add selftest for reading a report, modifying fields, and writing it
       back.
     - Fix writing back binary data, adapt test suite to check it.
+    - Fixed ProblemReport.load() to clean up old data, added selftest.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 Aug 2006 15:06:35 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 Aug 2006 15:17:37 +0200
 
 apport (0.9) edgy; urgency=low
 

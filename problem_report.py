@@ -30,6 +30,7 @@ class ProblemReport:
 	if binary is False, binary data is not loaded; the dictionary key is
 	created, but its value will be an empty string.'''
 
+	self.info.clear()
 	key = None
 	value = None
         b64_block = False
@@ -143,6 +144,9 @@ class ProblemReport:
     def has_key(self,k):
 	return self.info.has_key(k)
 
+    def keys(self):
+	return self.info.keys()
+
 #
 # Unit test
 #
@@ -253,6 +257,10 @@ Last: foo
 '''))
 	self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
 	self.assertEqual(pr['Last'], 'foo\n')
+
+	# test that load() cleans up properly
+	pr.load(StringIO.StringIO('ProblemType: Crash'))
+	self.assertEqual(pr.keys(), ['ProblemType'])
 
     def test_write_file(self):
 	'''Test writing a report with binary file data.'''
