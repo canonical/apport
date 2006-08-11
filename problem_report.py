@@ -63,6 +63,14 @@ class ProblemReport:
 	if key != None:
 	    self.info[key] = value
 
+    def _is_binary(self, string):
+	'''Check if the given strings contains binary data.'''
+
+	for c in string:
+	    if c < ' ' and not c.isspace():
+		return True
+	return False
+
     def write(self, file):
 	'''Write information into the given file-like object, using Debian
 	control file format.
@@ -80,7 +88,16 @@ class ProblemReport:
 	    v = self.info[k]
 	    # if it's a string, copy it
 	    if hasattr(v, 'find'):
-		if v.find('\n') >= 0:
+		if self._is_binary(v):
+		    file.write (k + ': base64\n ')
+		    bc = bz2.BZ2Compressor(9)
+		    outblock = bc.compress(v)
+		    if outblock:
+			file.write(base64.b64encode(outblock))
+			file.write('\n ')
+		    file.write(base64.b64encode(bc.flush()))
+		    file.write('\n')
+		elif v.find('\n') >= 0:
 		    assert v.find('\n\n') < 0
 		    print >> file, k + ':'
 		    print >> file, '', v.replace('\n', '\n ')
@@ -303,6 +320,11 @@ Foo: Bar
 	self.assertEqual(pr['Before'], 'xtestx')
 	self.assertEqual(pr['ZAfter'], 'ytesty')
 
+	# write it again
+	io2 = StringIO.StringIO()
+	pr.write(io2)
+	self.assertEqual(io.getvalue(), io2.getvalue())
+
     def test_iter(self):
 	'''Test ProblemReport iteration.'''
 
@@ -322,6 +344,8 @@ Foo: Bar
 
 	report = '''ProblemType: Crash
 Date: now!
+File: base64
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 Long:
  xxx
  .
@@ -346,6 +370,8 @@ Short: Bar
 	self.assertEqual(io.getvalue(), 
 '''ProblemType: Crash
 Date: now!
+File: base64
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 Long: 123
 Short:
  aaa
