@@ -79,6 +79,7 @@ def init_error_log():
 	    return
 	os.dup2(f.fileno(), sys.stderr.fileno())
 	os.dup2(f.fileno(), sys.stdout.fileno())
+	f.close()
 
 def error_log(msg):
     '''Output something to the error log.'''

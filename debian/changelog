@@ -6,8 +6,9 @@ apport (0.11) UNRELEASED; urgency=low
       collect_runtime_information() (fast, privileged, crashed process must
       exist) and collect_static_information() (slow, unprivileged, crashed
       process does not need to exist). This allows a cleaner design.
+    - Add missing close() call in init_error_log().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 15:44:10 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 22:37:21 +0200
 
 apport (0.10) edgy; urgency=low
 
