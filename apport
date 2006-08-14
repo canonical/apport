@@ -305,6 +305,8 @@ try:
     ic.collect_static_information()
 
     ic.info.write(reportfile)
+except SystemExit:
+    raise
 except Exception, e:
     error_log('Unhandled exception:')
     traceback.print_exc()

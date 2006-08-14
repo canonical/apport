@@ -7,8 +7,10 @@ apport (0.11) UNRELEASED; urgency=low
       exist) and collect_static_information() (slow, unprivileged, crashed
       process does not need to exist). This allows a cleaner design.
     - Add missing close() call in init_error_log().
+    - Do not catch SystemExit in the final catch-all-and-log clause (will
+      become important once we switch to master/slave processes).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 22:37:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 22:44:06 +0200
 
 apport (0.10) edgy; urgency=low
 
