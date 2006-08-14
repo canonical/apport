@@ -14,7 +14,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback
-import tempfile, shutil, glob, apt
+import tempfile, glob, apt
 
 import problem_report
 
@@ -136,8 +136,9 @@ class InformationCollector:
 	self.info = problem_report.ProblemReport('Crash')
 	self.info['Signal'] = signum
 	self.pid = pid
-	self.coredump = coredump
-	self.workdir = None
+	if coredump:
+	    self.info['CoreDump'] = (coredump,)
+	self.unlink_coredump = False
 
 	# determine program name
 	self.info['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
@@ -157,14 +158,13 @@ class InformationCollector:
 	The process does not need to exist any more, and no special privileges
 	are required.'''
 
-	self.workdir = tempfile.mkdtemp()
 	self._get_pkg()
 	self._get_os()
 	self._get_gdb()
 
     def __del__(self):
-	if self.workdir:
-	    shutil.rmtree(self.workdir)
+	if self.unlink_coredump:
+	    os.unlink(self.info['CoreDump'][0])
 
     def _get_proc(self):
 	'''Collect information from /proc.'''
@@ -218,24 +218,35 @@ class InformationCollector:
 	on our own if we are called by the kernel, since the target process is
 	in uninterruptible kernel sleep.'''
 
-	if not self.coredump:
+	if not self.info.has_key('CoreDump'):
 	    return
+	core = self.info['CoreDump'][0]
 
 	self.info['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'bt full', self.info['ExecutablePath'], self.coredump], 
+	    'bt full', self.info['ExecutablePath'], core],
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
 	self.info['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'thread apply all bt full', self.info['ExecutablePath'], self.coredump], 
+	    'thread apply all bt full', self.info['ExecutablePath'], core],
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
 
-	# try to shrink the core file
-	shrinkcorefile = os.path.join(self.workdir, 'core.shrink')
-	if subprocess.call(['objcopy', self.coredump, shrinkcorefile],
+	self._copy_shrink_corefile()
+
+    def _copy_shrink_corefile(self):
+	'''Copy the core file and redue its size.
+	
+	The original core dump will be removed by the kernel once the
+	kernel-invoked apport instance exits.'''
+
+	if not self.info.has_key('CoreDump'):
+	    return
+
+	shrinkcorefile = tempfile.NamedTemporaryFile()
+	shrinkcorefile.close()
+	if subprocess.call(['objcopy', self.info['CoreDump'][0], shrinkcorefile.name],
 	    stderr=subprocess.PIPE) == 0 \
 	    and os.path.exists(shrinkcorefile):
-	    self.info['CoreDump'] = (shrinkcorefile,)
-	else:
-	    self.info['CoreDump'] = (self.coredump,)
+	    self.info['CoreDump'] = (shrinkcorefile.name,)
+	    self.unlink_coredump = True
 
 #################################################################
 #

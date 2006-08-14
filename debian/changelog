@@ -9,8 +9,9 @@ apport (0.11) UNRELEASED; urgency=low
     - Add missing close() call in init_error_log().
     - Do not catch SystemExit in the final catch-all-and-log clause (will
       become important once we switch to master/slave processes).
+    - Clean up handling of temporary files.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 22:44:06 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 23:07:40 +0200
 
 apport (0.10) edgy; urgency=low
 
