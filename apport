@@ -244,7 +244,7 @@ class InformationCollector:
 	shrinkcorefile.close()
 	if subprocess.call(['objcopy', self.info['CoreDump'][0], shrinkcorefile.name],
 	    stderr=subprocess.PIPE) == 0 \
-	    and os.path.exists(shrinkcorefile):
+	    and os.path.exists(shrinkcorefile.name):
 	    self.info['CoreDump'] = (shrinkcorefile.name,)
 	    self.unlink_coredump = True
 
