@@ -10,8 +10,10 @@ apport (0.11) UNRELEASED; urgency=low
     - Do not catch SystemExit in the final catch-all-and-log clause (will
       become important once we switch to master/slave processes).
     - Clean up handling of temporary files.
+    - Log successful report creation with file and package name, to ease
+      debugging.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 23:07:40 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 23:33:40 +0200
 
 apport (0.10) edgy; urgency=low
 

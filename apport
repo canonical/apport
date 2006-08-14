@@ -315,6 +315,8 @@ try:
     ic.collect_static_information()
 
     ic.info.write(reportfile)
+    if reportfile != sys.stderr:
+	error_log('wrote report %s for package %s' % (report, ic.info['Package']))
 except SystemExit:
     raise
 except Exception, e:

@@ -1,7 +1,6 @@
 apport:
  - exit first instance quickly so that the crashed app can die instead
    of lingering on the desktop for a long time
- - more debugging to log file (package name)
  - cache[package]._pkg.CurrentVer might be None (for pure virtual
    packages, like liblocale-gettext-perl dependency perlapi)
 
