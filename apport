@@ -130,21 +130,31 @@ class InformationCollector:
     '''
 
     def __init__(self, pid, signum, coredump = None):
-	'Collects all information and stores them in the appropriate fields.'
+	'''Initialize object, but do not collect information yet.'''
 
 	self.info = problem_report.ProblemReport('Crash')
 	self.info['Signal'] = signum
 	self.pid = pid
 	self.coredump = coredump
+	self.workdir = None
 
 	# determine program name
 	self.info['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
 
-	# reading /proc after drop_privileges() (when called from the kernel)
-	# does not work, so do this with original privileges.
+    def collect_runtime_information(self):
+	'''Collect information about the process runtime (mainly from /proc).
+
+	This requires that the target process still exists and needs root
+	privileges.'''
+
 	self._get_proc()
 
-	drop_privileges(pid)
+    def collect_static_information(self):
+	'''Collect information about the process' environment and other static
+	data.
+
+	The process does not need to exist any more, and no special privileges
+	are required.'''
 
 	self.workdir = tempfile.mkdtemp()
 	self._get_pkg()
@@ -286,6 +296,13 @@ except (OSError, IOError):
 
 try:
     ic = InformationCollector(pid, signum, coredump)
+
+    # reading /proc after drop_privileges() (when called from the kernel)
+    # does not work, so do this with original privileges.
+    ic.collect_runtime_information()
+    drop_privileges(pid)
+    ic.collect_static_information()
+
     ic.info.write(reportfile)
 except Exception, e:
     error_log('Unhandled exception:')

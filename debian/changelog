@@ -1,8 +1,13 @@
 apport (0.11) UNRELEASED; urgency=low
 
   * gtk/apport-gtk.glade: Remove separators from dialogs. Closes: LP#56326
+  * apport:
+    - Move information collection from ctor to two new separate functions
+      collect_runtime_information() (fast, privileged, crashed process must
+      exist) and collect_static_information() (slow, unprivileged, crashed
+      process does not need to exist). This allows a cleaner design.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 15:03:25 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 15:44:10 +0200
 
 apport (0.10) edgy; urgency=low
 
