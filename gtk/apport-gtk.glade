@@ -18,7 +18,7 @@
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
-  <property name="has_separator">True</property>
+  <property name="has_separator">False</property>
   <signal name="delete_event" handler="ignore" last_modification_time="Tue, 01 Aug 2006 20:17:49 GMT"/>
 
   <child internal-child="vbox">
@@ -196,7 +196,7 @@
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
-  <property name="has_separator">True</property>
+  <property name="has_separator">False</property>
   <signal name="delete_event" handler="ignore" last_modification_time="Tue, 01 Aug 2006 19:34:41 GMT"/>
 
   <child internal-child="vbox">
