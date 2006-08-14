@@ -12,8 +12,10 @@ apport (0.11) UNRELEASED; urgency=low
     - Clean up handling of temporary files.
     - Log successful report creation with file and package name, to ease
       debugging.
+    - transitive_dependencies(): Do not break on pure virtual dependencies
+      (like perl-api-XXX).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 23:33:40 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 23:40:21 +0200
 
 apport (0.10) edgy; urgency=low
 

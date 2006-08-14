@@ -95,6 +95,8 @@ def transitive_dependencies(package, depends_set, cache):
 	cur_ver = cache[package]._pkg.CurrentVer
     except (AttributeError, KeyError):
 	return
+    if not cur_ver:
+	return
     for p in cur_ver.DependsList.get('Depends', []) + cur_ver.DependsList.get('PreDepends', []):
 	name = p[0].TargetPkg.Name
 	if not name in depends_set:
