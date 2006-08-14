@@ -279,9 +279,6 @@ if coredump and not os.path.exists(coredump):
 
 error_log('called with: ' + str(sys.argv) + ', using core file ' + str(coredump))
 
-# Create crash report file descriptor. We prefer to create the report in
-# report_dir if we can create a file there; if not, we just use stderr.
-
 try:
     pidstat = os.stat('/proc/' + pid)
 except OSError:
@@ -295,6 +292,8 @@ if subprocess.call(['fgrep', '-qx', exename] + glob.glob('/var/lib/dpkg/info/*.l
     error_log('executable does not belong to a package, ignoring')
     sys.exit(0)
 
+# Create crash report file descriptor. We prefer to create the report in
+# report_dir if we can create a file there; if not, we just use stderr.
 try:
     report = '%s/%s.%i.crash' % (apport_utils.report_dir, exename.replace('/', '_'), pidstat.st_uid)
     if os.path.exists(report) and not apport_utils.seen_report(report):
