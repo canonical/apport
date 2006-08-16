@@ -14,8 +14,11 @@ apport (0.11) UNRELEASED; urgency=low
       debugging.
     - transitive_dependencies(): Do not break on pure virtual dependencies
       (like perl-api-XXX).
+  * Add debian/apport.default: Default file to disable apport entirely and to
+    change the maximum size of kernel created core dumps.
+  * debian/apport.init: Evaluate new default file.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Aug 2006 23:40:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 16 Aug 2006 17:05:19 +0200
 
 apport (0.10) edgy; urgency=low
 

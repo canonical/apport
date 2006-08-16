@@ -22,6 +22,12 @@ PROCFILE=/proc/sys/kernel/crashdump-helper
 # Exit if we do not use a kernel which provides the hook
 [ -e "$PROCFILE" ] || exit 0
 
+# read default file
+enabled=1
+[ -e /etc/default/$NAME ] && . /etc/default/$NAME || true
+
+[ "$enabled" = "1" ] || exit 0
+
 # Define LSB log_* functions.
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
 . /lib/lsb/init-functions
@@ -61,10 +67,19 @@ do_stop()
 	fi
 }
 
+# Set max core dump size, if specified in the default file
+set_maxsize()
+{
+    if [ -n "$maxsize" ] && [ -e /proc/sys/kernel/crashdump-size ]; then
+	echo "$maxsize" > /proc/sys/kernel/crashdump-size
+    fi
+}
+
 case "$1" in
   start)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC:" "$NAME"
 	do_start
+	set_maxsize
 	case "$?" in
 		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
 		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
@@ -79,6 +94,7 @@ case "$1" in
 	esac
 	;;
   restart|reload|force-reload)
+	set_maxsize
 	;;
   *)
 	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
