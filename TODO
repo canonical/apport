@@ -5,7 +5,6 @@ apport:
 problem_report.py:
 
 apport-gtk:
- - have window stay on top when browser opens
 
 kernel hook:
  - first call crashdump-helper and only create core dump if it exits
