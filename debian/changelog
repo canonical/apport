@@ -1,3 +1,10 @@
+apport (0.13) UNRELEASED; urgency=low
+
+  * Do not run the test suite on build since on the buildds modifying
+    file atimes does not work.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 18 Aug 2006 00:59:26 +0200
+
 apport (0.12) edgy; urgency=low
 
   * apport-gtk: Make bug report window resizable when the details are

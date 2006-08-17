@@ -10,16 +10,12 @@ clean:
 	./setup.py clean -a
 	make -C po clean
 	find -name '*.pyc' -exec rm '{}' \;
-	rm -f build-indep-stamp
 
 build: build-indep
 
-build-indep: build-indep-stamp
-build-indep-stamp:
+build-indep:
 	dh_testdir
 	make -C po
-	./run-tests
-	touch build-indep-stamp
 
 binary-indep: build-indep
 	dh_testdir
