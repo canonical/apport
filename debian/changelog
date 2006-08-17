@@ -3,8 +3,12 @@ apport (0.12) UNRELEASED; urgency=low
   * apport-gtk: Make bug report window resizable when the details are
     expanded. Closes: LP#56672
   * apport_utils.py: Add get_recent_crashes() and a test suite check for it.
+  * apport: If the same binary produced more than 5 crashes in the last 24
+    hours, ignore the crash. This is a hideous and pretty ad-hoc band-aid to
+    avoid flooding users with reports for continuously crashing respawning
+    processes. Closes: LP#56362
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 17 Aug 2006 15:42:49 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 17 Aug 2006 15:55:41 +0200
 
 apport (0.11) edgy; urgency=low
 
