@@ -182,6 +182,11 @@ class ApportGTK:
 	self.next()
 	return True
 
+    def on_expander_details_activate(self, widget):
+	# signal is sent before actually expanding/collapsing, thus this
+	# requires negation
+	self.w('window_bugreport').set_resizable(not self.w('expander_details').get_expanded())
+
 if __name__ == '__main__':
     gettext.textdomain(gettext_domain)
     gtk.glade.textdomain(gettext_domain)

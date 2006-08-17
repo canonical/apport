@@ -477,12 +477,13 @@ Then attach this file:</property>
       </child>
 
       <child>
-	<widget class="GtkExpander" id="expander1">
+	<widget class="GtkExpander" id="expander_details">
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
 	  <property name="has_focus">True</property>
 	  <property name="expanded">False</property>
 	  <property name="spacing">0</property>
+	  <signal name="activate" handler="on_expander_details_activate" last_modification_time="Thu, 17 Aug 2006 12:29:11 GMT"/>
 
 	  <child>
 	    <widget class="GtkScrolledWindow" id="scrolledwindow4">
