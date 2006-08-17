@@ -11,8 +11,11 @@ apport (0.12) UNRELEASED; urgency=low
     with 1 otherwise (to become more compatible to proposed future kernel
     behaviour, where core dumps are only generated on demand).
   * Add run-tests script which calls all available selftests.
+  * debian/rules: Run run-tests during build to have the package FTBFS on
+    regressions. Add python build dependency for this (it is already there
+    implicitly anyway).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 17 Aug 2006 16:03:15 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 17 Aug 2006 16:06:41 +0200
 
 apport (0.11) edgy; urgency=low
 
