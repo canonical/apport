@@ -10,7 +10,8 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, os, os.path, glob
+import subprocess, os, os.path, glob, time
+from problem_report import ProblemReport
 
 report_dir = '/var/crash'
 
@@ -84,11 +85,30 @@ def delete_report(report):
 
     open(report, 'w').truncate(0)
 
+def get_recent_crashes(report):
+    '''Return the number of recent crashes for the given report file.
+    
+    Return the number of recent crashes (currently, crashes which happened more
+    than 24 hours ago are discarded).'''
+
+    pr = ProblemReport()
+    pr.load(report, False)
+    try:
+	count = int(pr['CrashCounter'])
+	report_time = time.mktime(time.strptime(pr['Date']))
+	cur_time = time.mktime(time.localtime())
+	# discard reports which are older than 24 hours
+	if cur_time - report_time > 24*3600:
+	    return 0
+	return count
+    except (ValueError, KeyError):
+	return 0
+
 #
 # Unit test
 #
 
-import unittest, tempfile, os, shutil, sys, time
+import unittest, tempfile, os, shutil, sys, time, StringIO
 
 class ApportUtilsTest(unittest.TestCase):
     def setUp(self):
@@ -178,6 +198,35 @@ class ApportUtilsTest(unittest.TestCase):
 	self.assertNotEqual(d, None, 'one-desktop package %s' % onedesktop)
 	self.assert_(os.path.exists(d))
 	self.assert_(d.endswith('.desktop'))
+
+    def test_get_recent_crashes(self):
+	'''Test get_recent_crashes() behaviour.'''
+
+	# incomplete fields
+	r = StringIO.StringIO('''ProblemType: Crash''')
+	self.assertEqual(get_recent_crashes(r), 0)
+
+	r = StringIO.StringIO('''ProblemType: Crash
+Date: Wed Aug 01 00:00:01 1990''')
+	self.assertEqual(get_recent_crashes(r), 0)
+
+	# ancient report
+	r = StringIO.StringIO('''ProblemType: Crash
+Date: Wed Aug 01 00:00:01 1990
+CrashCounter: 3''')
+	self.assertEqual(get_recent_crashes(r), 0)
+
+	# old report (one day + one hour ago)
+	r = StringIO.StringIO('''ProblemType: Crash
+Date: %s
+CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-25*3600))
+	self.assertEqual(get_recent_crashes(r), 0)
+
+	# current report (one hour ago)
+	r = StringIO.StringIO('''ProblemType: Crash
+Date: %s
+CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
+	self.assertEqual(get_recent_crashes(r), 3)
 
 if __name__ == '__main__':
     unittest.main()
