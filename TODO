@@ -11,3 +11,5 @@ kernel hook:
    with 0; this will avoid I/O trashing for core dumps which are just
    thrown away anyway (non-packaged binaries, repeatedly crashing
    programs, etc.)
+ - core cannot be written for programs which cannot write into cwd
+   (like many daemons) -> ask crashdump-helper for the path?
