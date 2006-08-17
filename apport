@@ -260,7 +260,7 @@ init_error_log()
 
 if len(sys.argv) < 3 or len(sys.argv) > 4:
     print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> [<path to core dump>]'
-    sys.exit(-1)
+    sys.exit(1)
 
 
 pid = sys.argv[1]
@@ -292,7 +292,7 @@ exename = os.readlink('/proc/' + pid + '/exe')
 # ignore non-package binaries
 if subprocess.call(['fgrep', '-qx', exename] + glob.glob('/var/lib/dpkg/info/*.list')) != 0:
     error_log('executable does not belong to a package, ignoring')
-    sys.exit(0)
+    sys.exit(1)
 
 crash_counter = 0
 
