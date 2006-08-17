@@ -10,8 +10,9 @@ apport (0.12) UNRELEASED; urgency=low
   * apport: Clean up exit codes to only exit with 0 if report was created, and
     with 1 otherwise (to become more compatible to proposed future kernel
     behaviour, where core dumps are only generated on demand).
+  * Add run-tests script which calls all available selftests.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 17 Aug 2006 15:59:58 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 17 Aug 2006 16:03:15 +0200
 
 apport (0.11) edgy; urgency=low
 
