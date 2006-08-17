@@ -1,6 +1,8 @@
 apport:
  - exit first instance quickly so that the crashed app can die instead
    of lingering on the desktop for a long time
+ - clean up exit codes to only exit with 0 if report was created (to
+   become more compatible to proposed future kernel behaviour)
 
 problem_report.py:
 
