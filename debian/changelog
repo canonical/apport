@@ -5,8 +5,9 @@ apport (0.14) UNRELEASED; urgency=low
   * apport_utils.py: Check APPORT_REPORT_DIR environment variable for an
     alternate crash report directory. This is mainly useful for a local test
     suite.
+  * apport: Quiesce the apt module's FutureWarning.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 18 Aug 2006 11:10:16 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 18 Aug 2006 12:32:59 +0200
 
 apport (0.13) edgy; urgency=low
 

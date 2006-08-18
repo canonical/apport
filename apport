@@ -13,8 +13,11 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, time, traceback
-import tempfile, glob, apt
+import sys, os, os.path, subprocess, time, traceback, tempfile, glob
+
+import warnings
+warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
+import apt
 
 import problem_report
 
