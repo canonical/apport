@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import tempfile, shutil, os.path, os, subprocess, signal, time, stat
+import tempfile, shutil, os.path, os, subprocess, signal, time, stat, sys
 
 import problem_report
 
@@ -13,7 +13,7 @@ required_fields = ['ProblemType', 'CoreDump', 'Date', 'Dependencies',
     'DistroRelease', 'ExecutablePath', 'Package', 'ProcCmdline', 'ProcEnviron',
     'ProcMaps', 'Signal', 'SourcePackage', 'Stacktrace', 'ThreadStacktrace']
 
-reportdir = None
+local_reportdir = None
 
 def run(argv, msg=None, stdout=False):
     '''Execute the given program with arguments and verify that it exits
@@ -37,7 +37,7 @@ def build_preload_lib():
     print '* Building preload library with local parameters'
     run(['make', '-C', 'preloadlib', 'AGENTPATH=%s' % os.path.join(os.getcwd(), 'apport')], 'Building preloadlib')
 
-def enable_apport():
+def enable_preloadlib():
     assert os.access('preloadlib/libapport.so', os.X_OK)
     os.environ['LD_PRELOAD'] = os.path.join(os.getcwd(), 'preloadlib', 'libapport.so')
 
@@ -54,13 +54,13 @@ def kill_wait(pid, signal=signal.SIGSEGV):
     os.kill(pid, signal)
     return os.waitpid(pid, 0)[1]
 
-def check_crash():
+def check_crash(expect_core=True):
     pid = create_test_process()
     result = kill_wait(pid)
     print '* (exited with status %i)' % result
     assert not os.WIFEXITED(result), 'test process did not exit normally'
     assert os.WIFSIGNALED(result), 'test process died due to signal'
-    assert not os.WCOREDUMP(result), 'test process did not dump core'
+    assert expect_core and os.WCOREDUMP(result) or not os.WCOREDUMP(result), 'test process core dump'
     assert os.WSTOPSIG(result) == 0, 'test process was not signaled to stop'
     assert os.WTERMSIG(result) == signal.SIGSEGV, 'test process died due to SIGSEGV'
 
@@ -68,31 +68,46 @@ def check_crash():
 # main
 #
 
+if len(sys.argv) != 2 or sys.argv[1] not in ('lib', 'kernel'):
+    print 'Usage: %s lib|kernel'
+    sys.exit(1)
+mode = sys.argv[1]
+
 try:
     # check if kernel crashdump helper is already active
-    assert not os.path.exists(crashdump_helper_sysctl) or not open(crashdump_helper_sysctl).read().strip(), \
-	    'kernel crash dump helper is still active; please disable before running this test.'
+    if mode == 'lib':
+	assert not os.path.exists(crashdump_helper_sysctl) or not open(crashdump_helper_sysctl).read().strip(), \
+		'kernel crash dump helper is still active; please disable before running this test.'
 
-    # set up temporary report directory
-    reportdir = tempfile.mkdtemp()
-    os.environ['APPORT_REPORT_DIR'] = reportdir
-    print '* Setting up temporary report directory', reportdir
+	# set up temporary report directory
+	local_reportdir = tempfile.mkdtemp()
+	os.environ['APPORT_REPORT_DIR'] = local_reportdir
+	print '* Setting up temporary report directory', local_reportdir
 
+	# setup preload library
+	clean_preload_lib()
+	build_preload_lib()
+    else:
+	assert os.path.exists(crashdump_helper_sysctl) and open(crashdump_helper_sysctl).read().strip(), \
+		'kernel crash dump helper is not active; please enable before running this test.'
+
+    # must not be imported before setting up $APPORT_REPORT_DIR
     import apport_utils
 
-    clean_preload_lib()
-    build_preload_lib()
+    assert apport_utils.get_all_reports() == [], 'no reports already present'
 
-    print '* Check test process creation/killing without apport'
-    check_crash()
-    assert apport_utils.get_all_reports() == [], 'no report created without apport'
+    if mode == 'lib':
+	print '* Check test process creation/killing without apport'
+	check_crash(False)
+	assert apport_utils.get_all_reports() == [], 'no report created without apport'
 
     print '* Check test process creation/killing with apport'
-    enable_apport()
+    if mode == 'lib':
+	enable_preloadlib()
     check_crash()
 
     # check crash report
-    report = os.path.join(reportdir, '%s.%i.crash' %
+    report = os.path.join(apport_utils.report_dir, '%s.%i.crash' %
 	(test_executable.replace('/', '_'), os.getuid()))
     assert apport_utils.get_all_reports() == [report], 'report was created'
     st = os.stat(report)
@@ -121,7 +136,8 @@ try:
 
 finally:
     # clean up temporary work directory
-    if reportdir:
-	print '* Removing temporary report directory', reportdir
-	shutil.rmtree(reportdir)
-    clean_preload_lib()
+    if local_reportdir:
+	print '* Removing temporary report directory', local_reportdir
+	shutil.rmtree(local_reportdir)
+    if mode == 'lib':
+	clean_preload_lib()

@@ -1,4 +1,4 @@
 #!/bin/sh -ex
 python problem_report.py -v
 python apport_utils.py -v
-./test-apport
+./test-apport lib
