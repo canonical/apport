@@ -45,7 +45,7 @@ void sighandler( int signum )
     if( pid == 0 ) {
 	if( execl( "/usr/bin/gcore", "/usr/bin/gcore", "-o", "core", spid, NULL ) == -1 )
 	    perror( "Error: could not execute gcore" );
-	exit( -1 );
+	goto out;
     }
 
     snprintf( corepath, sizeof(corepath), "%s.%s", "core", spid );
@@ -60,12 +60,14 @@ void sighandler( int signum )
     if( pid == 0 ) {
 	if( execl( AGENTPATH, AGENTPATH, spid, ssig, core, NULL ) == -1 )
 	    perror( "Error: could not execute " AGENTPATH );
-	exit( 1 );
+	goto out;
     }
 
     wait( &status );
+
+out:
     unlink( corepath );
-    exit(1);
+    raise( signum );
 }
 
 /**
@@ -79,7 +81,7 @@ void init()
     struct sigaction sa;
     sa.sa_handler = sighandler;
     sigemptyset( &sa.sa_mask );
-    sa.sa_flags = SA_ONESHOT;
+    sa.sa_flags = SA_RESETHAND;
     if( sigaction( SIGILL, &sa, NULL ) == -1 ||
 	    sigaction( SIGFPE, &sa, NULL ) == -1 ||
 	    sigaction( SIGSEGV, &sa, NULL ) == -1 )
