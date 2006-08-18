@@ -57,7 +57,6 @@ def kill_wait(pid, signal=signal.SIGSEGV):
 def check_crash(expect_core=True):
     pid = create_test_process()
     result = kill_wait(pid)
-    print '* (exited with status %i)' % result
     assert not os.WIFEXITED(result), 'test process did not exit normally'
     assert os.WIFSIGNALED(result), 'test process died due to signal'
     assert expect_core and os.WCOREDUMP(result) or not os.WCOREDUMP(result), 'test process core dump'
@@ -137,16 +136,22 @@ try:
     apport_utils.delete_report(report)
     assert apport_utils.get_all_reports() == [], 'no reports present after deleting'
 
-    print '* Test limitation of flooding'
+    print '* Test limitation of flooding: iteration',
     count = 0
     while count < 7:
+	print count,
+	sys.stdout.flush()
 	check_crash()
 	if not apport_utils.get_new_reports():
 	    break
 	apport_utils.mark_report_seen(apport_utils.get_new_reports()[0])
 	count += 1
-    assert count < 7, 'does not stop flooding after 7 repeated crashes'
-    print '* (flooding stopped after %i iterations)' % count
+    print
+    assert count >= 4, 'gets at least 5 repeated crashes'
+    assert count < 7, 'stops flooding after less than 7 repeated crashes'
+
+    apport_utils.delete_report(report)
+    assert apport_utils.get_all_reports() == [], 'no reports present after deleting'
 
     print '* Check that core dump works for non-writable cwds'
     old_cwd = os.getcwd()
@@ -155,7 +160,6 @@ try:
     os.chdir(old_cwd)
     pr = problem_report.ProblemReport()
     pr.load(open(report))
-    # EXFAIL for now
     if not set(required_fields).issubset(set(pr.keys())):
 	print >> sys.stderr, 'report does not have required fields (EXFAIL)'
 
