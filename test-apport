@@ -134,6 +134,20 @@ try:
     assert pr['SourcePackage'] == test_source
     assert pr['Signal'] == '%i' % signal.SIGSEGV
 
+    apport_utils.delete_report(report)
+    assert apport_utils.get_all_reports() == [], 'no reports present after deleting'
+
+    print '* Test limitation of flooding'
+    count = 0
+    while count < 7:
+	check_crash()
+	if not apport_utils.get_new_reports():
+	    break
+	apport_utils.mark_report_seen(apport_utils.get_new_reports()[0])
+	count += 1
+    assert count < 7, 'does not stop flooding after 7 repeated crashes'
+    print '* (flooding stopped after %i iterations)' % count
+
 finally:
     # clean up temporary work directory
     if local_reportdir:
