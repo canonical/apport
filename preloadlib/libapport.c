@@ -43,6 +43,7 @@ void sighandler( int signum )
     // generate core file
     pid_t pid = fork();
     if( pid == 0 ) {
+	close(1);
 	if( execl( "/usr/bin/gcore", "/usr/bin/gcore", "-o", "core", spid, NULL ) == -1 )
 	    perror( "Error: could not execute gcore" );
 	goto out;
