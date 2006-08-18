@@ -37,23 +37,28 @@ void sighandler( int signum )
     sprintf( ssig, "%i", signum );
     sprintf( spid, "%i", getpid() );
     char corepath[PATH_MAX];
+    char *core = NULL;
     int status;
 
     // generate core file
     pid_t pid = fork();
     if( pid == 0 ) {
-	if( execl( "/usr/bin/gcore", "/usr/bin/gcore", "-o", "/tmp/core", spid, NULL ) == -1 )
+	if( execl( "/usr/bin/gcore", "/usr/bin/gcore", "-o", "core", spid, NULL ) == -1 )
 	    perror( "Error: could not execute gcore" );
 	exit( -1 );
     }
 
+    snprintf( corepath, sizeof(corepath), "%s.%s", "core", spid );
+
     wait( &status );
 
-    snprintf(corepath, sizeof(corepath), "%s.%s", "/tmp/core", spid);
+    /* only pass the core file if gcore succeeded */
+    if( WIFEXITED( status ) && WEXITSTATUS( status ) == 0 )
+	core = corepath;
 
     pid = fork();
     if( pid == 0 ) {
-	if( execl( AGENTPATH, AGENTPATH, spid, ssig, corepath, NULL ) == -1 )
+	if( execl( AGENTPATH, AGENTPATH, spid, ssig, core, NULL ) == -1 )
 	    perror( "Error: could not execute " AGENTPATH );
 	exit( 1 );
     }

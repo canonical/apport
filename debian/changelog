@@ -1,3 +1,10 @@
+apport (0.14) UNRELEASED; urgency=low
+
+  * preloadlib/libapport.c: Write core dump into cwd instead of /tmp to act
+    like the current kernel.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 18 Aug 2006 11:01:02 +0200
+
 apport (0.13) edgy; urgency=low
 
   * Do not run the test suite on build since on the buildds modifying
