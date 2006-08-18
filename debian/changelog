@@ -15,8 +15,9 @@ apport (0.14) UNRELEASED; urgency=low
     this script to run-tests.
   * apport_utils.py, delete_report(): Actually try to unlink the report before
     falling back to truncating it to zero bytes.
+  * preloadlib/libapport.c: Close stderr for apport process.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 18 Aug 2006 15:16:10 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 18 Aug 2006 15:46:37 +0200
 
 apport (0.13) edgy; urgency=low
 

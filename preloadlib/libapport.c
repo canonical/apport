@@ -16,6 +16,7 @@
 */
 
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <signal.h>
@@ -59,6 +60,9 @@ void sighandler( int signum )
 
     pid = fork();
     if( pid == 0 ) {
+	int devnull = open( "/dev/null", O_WRONLY );
+	if( devnull > 0 )
+	    dup2(devnull, 2);
 	if( execl( AGENTPATH, AGENTPATH, spid, ssig, core, NULL ) == -1 )
 	    perror( "Error: could not execute " AGENTPATH );
 	goto out;
