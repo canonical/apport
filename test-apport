@@ -1,0 +1,127 @@
+#!/usr/bin/python
+
+import tempfile, shutil, os.path, os, subprocess, signal, time, stat
+
+import problem_report
+
+crashdump_helper_sysctl = '/proc/sys/kernel/crashdump-helper'
+test_executable = '/bin/cat'
+test_package = 'coreutils'
+test_source = 'coreutils'
+
+required_fields = ['ProblemType', 'CoreDump', 'Date', 'Dependencies',
+    'DistroRelease', 'ExecutablePath', 'Package', 'ProcCmdline', 'ProcEnviron',
+    'ProcMaps', 'Signal', 'SourcePackage', 'Stacktrace', 'ThreadStacktrace']
+
+reportdir = None
+
+def run(argv, msg=None, stdout=False):
+    '''Execute the given program with arguments and verify that it exits
+    successfully. 
+    
+    Set stdout to True to see the program's standard output. msg is the
+    assertion error message in case of failure.'''
+
+    if stdout:
+	result = subprocess.call(argv)
+    else:
+	result = subprocess.call(argv, stdout=subprocess.PIPE)
+    assert result == 0, msg
+
+
+def clean_preload_lib():
+    print '* Cleaning preloadlib directory'
+    run(['make', '-C', 'preloadlib', 'clean'], 'Cleaning preloadlib directory')
+
+def build_preload_lib():
+    print '* Building preload library with local parameters'
+    run(['make', '-C', 'preloadlib', 'AGENTPATH=%s' % os.path.join(os.getcwd(), 'apport')], 'Building preloadlib')
+
+def enable_apport():
+    assert os.access('preloadlib/libapport.so', os.X_OK)
+    os.environ['LD_PRELOAD'] = os.path.join(os.getcwd(), 'preloadlib', 'libapport.so')
+
+def create_test_process():
+    assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
+    pid = os.fork()
+    if pid == 0:
+	os.setsid()
+	os.execv(test_executable, [test_executable])
+	assert False, 'Could not execute ' + test_executable
+    return pid
+
+def kill_wait(pid, signal=signal.SIGSEGV):
+    os.kill(pid, signal)
+    return os.waitpid(pid, 0)[1]
+
+def check_crash():
+    pid = create_test_process()
+    result = kill_wait(pid)
+    print '* (exited with status %i)' % result
+    assert not os.WIFEXITED(result), 'test process did not exit normally'
+    assert os.WIFSIGNALED(result), 'test process died due to signal'
+    assert not os.WCOREDUMP(result), 'test process did not dump core'
+    assert os.WSTOPSIG(result) == 0, 'test process was not signaled to stop'
+    assert os.WTERMSIG(result) == signal.SIGSEGV, 'test process died due to SIGSEGV'
+
+#
+# main
+#
+
+try:
+    # check if kernel crashdump helper is already active
+    assert not os.path.exists(crashdump_helper_sysctl) or not open(crashdump_helper_sysctl).read().strip(), \
+	    'kernel crash dump helper is still active; please disable before running this test.'
+
+    # set up temporary report directory
+    reportdir = tempfile.mkdtemp()
+    os.environ['APPORT_REPORT_DIR'] = reportdir
+    print '* Setting up temporary report directory', reportdir
+
+    import apport_utils
+
+    clean_preload_lib()
+    build_preload_lib()
+
+    print '* Check test process creation/killing without apport'
+    check_crash()
+    assert apport_utils.get_all_reports() == [], 'no report created without apport'
+
+    print '* Check test process creation/killing with apport'
+    enable_apport()
+    check_crash()
+
+    # check crash report
+    report = os.path.join(reportdir, '%s.%i.crash' %
+	(test_executable.replace('/', '_'), os.getuid()))
+    assert apport_utils.get_all_reports() == [report], 'report was created'
+    st = os.stat(report)
+    assert stat.S_IMODE(st.st_mode) == 0600, 'report has correct permissions'
+
+    print '* Check that a subsequent crash does not alter unseen report'
+    check_crash()
+    st2 = os.stat(report)
+    assert st == st2, 'original unread report did not change'
+
+    print '* Check that a subsequent crash alters seen report'
+    apport_utils.mark_report_seen(report)
+    check_crash()
+    st2 = os.stat(report)
+    assert st != st2, 'original read report changed'
+
+    print '* Check that report has required fields'
+    pr = problem_report.ProblemReport()
+    pr.load(open(report))
+    assert set(required_fields).issubset(set(pr.keys())), 'report has required fields'
+    assert pr['ExecutablePath'] == test_executable
+    assert pr['ProcCmdline'] == test_executable
+    assert pr['Package'].startswith(test_package)
+    assert pr['SourcePackage'] == test_source
+    assert pr['Signal'] == '%i' % signal.SIGSEGV
+
+finally:
+    # clean up temporary work directory
+    if reportdir:
+	print '* Removing temporary report directory', reportdir
+	shutil.rmtree(reportdir)
+    clean_preload_lib()
