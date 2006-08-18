@@ -148,6 +148,17 @@ try:
     assert count < 7, 'does not stop flooding after 7 repeated crashes'
     print '* (flooding stopped after %i iterations)' % count
 
+    print '* Check that core dump works for non-writable cwds'
+    old_cwd = os.getcwd()
+    os.chdir('/')
+    check_crash()
+    os.chdir(old_cwd)
+    pr = problem_report.ProblemReport()
+    pr.load(open(report))
+    # EXFAIL for now
+    if not set(required_fields).issubset(set(pr.keys())):
+	print >> sys.stderr, 'report does not have required fields (EXFAIL)'
+
 finally:
     # clean up temporary work directory
     if local_reportdir:
