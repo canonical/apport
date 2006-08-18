@@ -13,7 +13,7 @@ the full text of the license.
 import subprocess, os, os.path, glob, time
 from problem_report import ProblemReport
 
-report_dir = '/var/crash'
+report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
 def find_package_desktopfile(package):
     '''If given package is installed and has a single .desktop file, return the
