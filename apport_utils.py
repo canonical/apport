@@ -80,10 +80,13 @@ def get_new_reports():
 def delete_report(report):
     '''Delete the given report file.
 
-    This will not actually unlink the file, since report_dir is not writable to
-    normal users; instead, the file will be truncated to 0 bytes.'''
+    If unlinking the file fails due to a permission error (if report_dir is not
+    writable to normal users), the file will be truncated to 0 bytes instead.'''
 
-    open(report, 'w').truncate(0)
+    try:
+	os.unlink(report)
+    except OSError:
+	open(report, 'w').truncate(0)
 
 def get_recent_crashes(report):
     '''Return the number of recent crashes for the given report file.

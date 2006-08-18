@@ -13,8 +13,10 @@ apport (0.14) UNRELEASED; urgency=low
   * Add test-apport: Use preloadlib/ and APPORT_REPORT_DIR to create a
     sandboxed environment and run various apport functionality tests. Also add
     this script to run-tests.
+  * apport_utils.py, delete_report(): Actually try to unlink the report before
+    falling back to truncating it to zero bytes.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 18 Aug 2006 14:31:35 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 18 Aug 2006 15:16:10 +0200
 
 apport (0.13) edgy; urgency=low
 
