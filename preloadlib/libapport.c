@@ -41,18 +41,25 @@ void sighandler( int signum )
     char *core = NULL;
     int status;
 
+    snprintf( corepath, sizeof(corepath), "%s.%s", "core", spid );
+
     // generate core file
     pid_t pid = fork();
+    if( pid < 0 ) {
+	perror( "fork" );
+	goto out;
+    }
     if( pid == 0 ) {
 	close(1);
-	if( execl( "/usr/bin/gcore", "/usr/bin/gcore", "-o", "core", spid, NULL ) == -1 )
-	    perror( "Error: could not execute gcore" );
+	execl( "/usr/bin/gcore", "/usr/bin/gcore", "-o", "core", spid, NULL );
+	perror( "Error: could not execute gcore" );
 	goto out;
     }
 
-    snprintf( corepath, sizeof(corepath), "%s.%s", "core", spid );
-
-    wait( &status );
+    if( wait( &status ) < 0 ) {
+	perror( "wait() on gdb" );
+	goto out;
+    }
 
     /* only pass the core file if gcore succeeded */
     if( WIFEXITED( status ) && WEXITSTATUS( status ) == 0 )
@@ -68,7 +75,10 @@ void sighandler( int signum )
 	goto out;
     }
 
-    wait( &status );
+    if( wait( &status ) < 0 ) {
+	perror( "wait() on agent" );
+	goto out;
+    }
 
 out:
     unlink( corepath );

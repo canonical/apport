@@ -11,8 +11,9 @@ apport (0.15) UNRELEASED; urgency=low
     kernel-mode test can be run multiple times without manual cleanup.
   * test-apport: Check for running apport and test executable processes in
     check_crash().
+  * preloadlib/libapport.c: Improve error checking, some robustification.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 Aug 2006 16:03:50 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 Aug 2006 16:17:36 +0200
 
 apport (0.14) edgy; urgency=low
 
