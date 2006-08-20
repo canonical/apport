@@ -5,8 +5,10 @@ apport (0.15) UNRELEASED; urgency=low
     compressed binary data like the core dump.
   * test-apport: Check that dumped environment only contains security
     insensitive variables.
+  * apport: Filter out all environment variables but $SHELL, $PATH, and
+    locale/language related ones. Closes: LP#56846
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 Aug 2006 15:31:58 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 Aug 2006 15:43:59 +0200
 
 apport (0.14) edgy; urgency=low
 

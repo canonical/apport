@@ -174,8 +174,18 @@ class InformationCollector:
     def _get_proc(self):
 	'''Collect information from /proc.'''
 
-	self.info['ProcEnviron'] = _read_file('/proc/'+ self.pid + '/environ'). \
-	    replace('\n', '\\n').replace('\0', '\n').strip()
+	allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
+	    'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
+	    'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
+	    'LC_IDENTIFICATION', 'LOCPATH']
+
+	self.info['ProcEnviron'] = ''
+	env = _read_file('/proc/'+ self.pid + '/environ').replace('\n', '\\n')
+	for l in env.split('\0'):
+	    if l.split('=', 1)[0] in allowed_vars:
+		if self.info['ProcEnviron']:
+		    self.info['ProcEnviron'] += '\n'
+		self.info['ProcEnviron'] += l
 	self.info['ProcStatus'] = _read_file('/proc/' + self.pid + '/status')
 	self.info['ProcCmdline'] = _read_file('/proc/' + self.pid + '/cmdline').rstrip('\0')
 	self.info['ProcMaps'] = _read_file('/proc/' + self.pid + '/maps')
