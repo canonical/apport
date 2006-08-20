@@ -9,8 +9,10 @@ apport (0.15) UNRELEASED; urgency=low
     locale/language related ones. Closes: LP#56846
   * test-apport: Delete test report in the cleanup handler so that the
     kernel-mode test can be run multiple times without manual cleanup.
+  * test-apport: Check for running apport and test executable processes in
+    check_crash().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 Aug 2006 15:46:59 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 Aug 2006 16:03:50 +0200
 
 apport (0.14) edgy; urgency=low
 

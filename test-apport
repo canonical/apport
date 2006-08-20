@@ -43,6 +43,7 @@ def enable_preloadlib():
 
 def create_test_process():
     assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
+    assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
     pid = os.fork()
     if pid == 0:
 	os.setsid()
@@ -62,6 +63,8 @@ def check_crash(expect_core=True):
     assert expect_core and os.WCOREDUMP(result) or not os.WCOREDUMP(result), 'test process core dump'
     assert os.WSTOPSIG(result) == 0, 'test process was not signaled to stop'
     assert os.WTERMSIG(result) == signal.SIGSEGV, 'test process died due to SIGSEGV'
+    assert subprocess.call(['pidof', 'apport']) == 1, 'no running apport processes'
+    assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
 
 def check_safe_environment(env):
     allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
