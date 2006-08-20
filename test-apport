@@ -178,6 +178,10 @@ try:
 
 finally:
     # clean up temporary work directory
+    try:
+	apport_utils.delete_report(report)
+    except:
+	pass
     if local_reportdir:
 	print '* Removing temporary report directory', local_reportdir
 	shutil.rmtree(local_reportdir)
