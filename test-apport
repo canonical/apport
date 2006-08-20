@@ -158,6 +158,8 @@ try:
 	print count,
 	sys.stdout.flush()
 	check_crash()
+	if mode == 'lib':
+	    time.sleep(1)
 	if not apport_utils.get_new_reports():
 	    break
 	apport_utils.mark_report_seen(apport_utils.get_new_reports()[0])
