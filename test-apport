@@ -63,6 +63,16 @@ def check_crash(expect_core=True):
     assert os.WSTOPSIG(result) == 0, 'test process was not signaled to stop'
     assert os.WTERMSIG(result) == signal.SIGSEGV, 'test process died due to SIGSEGV'
 
+def check_safe_environment(env):
+    allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
+	'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
+	'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
+	'LC_IDENTIFICATION', 'LOCPATH']
+
+    for l in env.splitlines():
+	(k, v) = l.split('=', 1)
+	assert k in allowed_vars, '%s is insensitive environment variable' % k
+
 #
 # main
 #
@@ -132,6 +142,9 @@ try:
     assert pr['Package'].startswith(test_package)
     assert pr['SourcePackage'] == test_source
     assert pr['Signal'] == '%i' % signal.SIGSEGV
+
+    print '* Check that dumped environment only has insensitive variables'
+    check_safe_environment(pr['ProcEnviron'])
 
     apport_utils.delete_report(report)
     assert apport_utils.get_all_reports() == [], 'no reports present after deleting'
