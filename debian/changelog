@@ -1,3 +1,11 @@
+apport (0.15) UNRELEASED; urgency=low
+
+  * Add apport-unpack: Script to extract the fields of a problem report into
+    separate files into a new or empty directory. Mainly useful for extracting
+    compressed binary data like the core dump.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 Aug 2006 15:17:38 +0200
+
 apport (0.14) edgy; urgency=low
 
   * preloadlib/libapport.c: Write core dump into cwd instead of /tmp to act
