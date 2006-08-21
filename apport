@@ -188,7 +188,7 @@ class InformationCollector:
 		    self.info['ProcEnviron'] += '\n'
 		self.info['ProcEnviron'] += l
 	self.info['ProcStatus'] = _read_file('/proc/' + self.pid + '/status')
-	self.info['ProcCmdline'] = _read_file('/proc/' + self.pid + '/cmdline').rstrip('\0')
+	self.info['ProcCmdline'] = _read_file('/proc/' + self.pid + '/cmdline').rstrip('\0').replace('\0', ' ')
 	self.info['ProcMaps'] = _read_file('/proc/' + self.pid + '/maps')
 
     def _get_pkg(self):
