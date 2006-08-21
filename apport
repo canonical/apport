@@ -304,7 +304,11 @@ except OSError:
 exename = os.readlink('/proc/' + pid + '/exe')
 
 # ignore non-package binaries
-pkg = apport_utils.find_file_package(exename)
+pkg = None
+if exename.startswith('/home') or exename.startswith('/tmp'):
+    pkg = None
+else:
+    pkg = apport_utils.find_file_package(exename)
 if not pkg:
     error_log('executable does not belong to a package, ignoring')
     sys.exit(1)

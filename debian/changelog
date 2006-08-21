@@ -7,8 +7,10 @@ apport (0.16) edgy; urgency=low
   * apport: Use find_file_package() instead of direct dpkg -S call and pass
     the result to the InformationCollector ctor to avoid grepping the dpkg
     lists twice.
+  * apport: Immediately exit if the executable name starts with /home or /tmp,
+    to avoid grepping the dpkg database in the common developer case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 Aug 2006 12:44:41 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 Aug 2006 14:06:38 +0200
 
 apport (0.15) edgy; urgency=low
 

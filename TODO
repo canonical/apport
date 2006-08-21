@@ -1,7 +1,6 @@
 apport:
  - exit first instance quickly so that the crashed app can die instead
    of lingering on the desktop for a long time
- - blacklist /home and /tmp before calling dpkg -S to get some speedup
 
 problem_report.py:
 
