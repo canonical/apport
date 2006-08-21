@@ -6,6 +6,7 @@ apport:
 problem_report.py:
 
 apport-gtk:
+ - offer an alternative small report file without the core dump
 
 kernel hook:
  - first call crashdump-helper and only create core dump if it exits
