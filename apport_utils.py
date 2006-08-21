@@ -41,7 +41,8 @@ def find_file_package(file):
     ships it).'''
 
     p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
-	glob.glob('/var/lib/dpkg/info/*.list'), stdout=subprocess.PIPE)
+	glob.glob('/var/lib/dpkg/info/*.list'), stdin=subprocess.PIPE,
+	stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
     out = p.communicate()[0]
     if p.returncode != 0:
 	return None
