@@ -36,6 +36,18 @@ def find_package_desktopfile(package):
 
     return desktopfile
 
+def find_file_package(file):
+    '''Return the package that ships the given file (or None if no package
+    ships it).'''
+
+    p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
+	glob.glob('/var/lib/dpkg/info/*.list'), stdout=subprocess.PIPE)
+    out = p.communicate()[0]
+    if p.returncode != 0:
+	return None
+
+    return os.path.splitext(os.path.basename(out))[0]
+
 def seen_report(report):
     '''Check whether the given report file has already been processed
     earlier.'''
@@ -230,6 +242,12 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-25*3600))
 Date: %s
 CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	self.assertEqual(get_recent_crashes(r), 3)
+
+    def test_find_file_package(self):
+	'''Test find_file_package() behaviour.'''
+
+	self.assertEqual(find_file_package('/bin/cat'), 'coreutils')
+	self.assertEqual(find_file_package('/nonexisting'), None)
 
 if __name__ == '__main__':
     unittest.main()
