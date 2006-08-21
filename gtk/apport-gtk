@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import gobject, gtk, gtk.glade
-import glob, sys, gettext, os.path, locale
+import glob, sys, gettext, os.path, locale, tempfile
 from gettext import gettext as _
 import webbrowser, subprocess
 import xdg.DesktopEntry
@@ -80,6 +80,12 @@ class ApportGTK:
 	self.report = ProblemReport()
 	self.report.load(open(self.reports[0]), binary=False)
 
+	# create reduced report
+	(fd, self.reduced_file) = tempfile.mkstemp('.crash', 
+	    self.report['ExecutablePath'].replace('/', '_') + '.')
+	os.close(fd)
+	self.report.write(open(self.reduced_file, 'w'))
+
 	package = self.report['Package'].split()[0]
 	try:
 	    self.cur_source = self.report['SourcePackage']
@@ -123,10 +129,8 @@ class ApportGTK:
 	self.w('window_bugreport').set_title(self.str_bugreport_title %
 	    self.report['Package'].split()[0])
 
-	self.w('label_reportfile').set_text(self.reports[0])
 	self.w('label_reportfile').set_selectable(True)
-	self.w('label_reportsize').set_text('(%s)' % 
-	    format_filesize(os.path.getsize(self.reports[0])))
+	self.update_reportfile_size()
 
 	self.tree_model.clear()
 	row = 0
@@ -159,6 +163,7 @@ class ApportGTK:
 
     def on_window_bugreport_delete_event(self, widget, event):
 	self.w('window_bugreport').hide()
+	os.unlink(self.reduced_file)
 	self.next()
 	return True
 
@@ -186,6 +191,18 @@ class ApportGTK:
 	# signal is sent before actually expanding/collapsing, thus this
 	# requires negation
 	self.w('window_bugreport').set_resizable(not self.w('expander_details').get_expanded())
+
+    def update_reportfile_size(self):
+	if self.w('radiobutton_complete').get_active():
+	    f = self.reports[0]
+	else:
+	    f = self.reduced_file
+	self.w('label_reportfile').set_text(f)
+	self.w('label_reportsize').set_text('(%s)' % 
+	    format_filesize(os.path.getsize(f)))
+
+    def on_radiobutton_complete_toggled(self, widget):
+	self.update_reportfile_size()
 
 if __name__ == '__main__':
     gettext.textdomain(gettext_domain)

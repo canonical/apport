@@ -10,8 +10,10 @@ apport (0.16) edgy; urgency=low
   * apport: Immediately exit if the executable name starts with /home or /tmp,
     to avoid grepping the dpkg database in the common developer case.
   * apport: Replace 0-bytes in ProcCmdline with spaces to keep them readable.
+  * apport-gtk: Offer an alternative small report (without the core dump) for
+    users with slow internet connection.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 Aug 2006 14:35:15 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 Aug 2006 19:34:47 +0200
 
 apport (0.15) edgy; urgency=low
 
