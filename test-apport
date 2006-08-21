@@ -150,7 +150,20 @@ try:
     check_safe_environment(pr['ProcEnviron'])
 
     apport_utils.delete_report(report)
-    assert apport_utils.get_all_reports() == [], 'no reports present after deleting'
+    assert apport_utils.get_all_reports() == [], \
+	'no reports present after deleting (present: %s)' % str(apport_utils.get_all_reports())
+
+    print '* Check that non-packaged executables do not create a report'
+    orig_test_executable = test_executable
+    (fd, test_executable) = tempfile.mkstemp()
+    os.write(fd, open(orig_test_executable).read())
+    os.close(fd)
+    os.chmod(test_executable, 0755)
+    check_crash()
+    test_executable = orig_test_executable
+    assert apport_utils.get_all_reports() == [], \
+	'no reports present after a non-packaged crashed process (present: %s)' % \
+	str(apport_utils.get_all_reports())
 
     print '* Test limitation of flooding: iteration',
     count = 0
@@ -169,7 +182,8 @@ try:
     assert count < 7, 'stops flooding after less than 7 repeated crashes'
 
     apport_utils.delete_report(report)
-    assert apport_utils.get_all_reports() == [], 'no reports present after deleting'
+    assert apport_utils.get_all_reports() == [], \
+	'no reports present after deleting (present: %s)' % str(apport_utils.get_all_reports())
 
     print '* Check that core dump works for non-writable cwds'
     old_cwd = os.getcwd()
