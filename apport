@@ -135,12 +135,13 @@ class InformationCollector:
     TODO: StackFrame
     '''
 
-    def __init__(self, pid, signum, coredump = None):
+    def __init__(self, pid, signum, coredump = None, pkg = None):
 	'''Initialize object, but do not collect information yet.'''
 
 	self.info = problem_report.ProblemReport('Crash')
 	self.info['Signal'] = signum
 	self.pid = pid
+	self.pkg = pkg
 	if coredump:
 	    self.info['CoreDump'] = (coredump,)
 	self.unlink_coredump = False
@@ -194,20 +195,20 @@ class InformationCollector:
 	'''Check whether executable belongs to a package and determine its
 	name, version, and the versions of its dependencies.'''
 
-	# get dpkg -s <package> output
-	out = _command_output(['dpkg', '-S', self.info['ExecutablePath']])
-	if out.startswith('Error:'):
+	# get package, if we do not yet have it
+	if not self.pkg:
+	    self.pkg = apport_utils.find_file_package(self.info['ExecutablePath'])
+	if not self.pkg:
 	    return 
-	pkg = out.split(':', 1)[0]
 
 	cache = apt.Cache()
 
-	self.info['Package'] = '%s %s' % (pkg, cache[pkg].installedVersion)
-	self.info['SourcePackage'] = cache[pkg].sourcePackageName
+	self.info['Package'] = '%s %s' % (self.pkg, cache[self.pkg].installedVersion)
+	self.info['SourcePackage'] = cache[self.pkg].sourcePackageName
 
 	# get set of all transitive dependencies
 	dependencies = set([])
-	transitive_dependencies(pkg, dependencies, cache)
+	transitive_dependencies(self.pkg, dependencies, cache)
 
 	# get dependency versions
 	self.info['Dependencies'] = ''
@@ -303,7 +304,8 @@ except OSError:
 exename = os.readlink('/proc/' + pid + '/exe')
 
 # ignore non-package binaries
-if subprocess.call(['fgrep', '-qx', exename] + glob.glob('/var/lib/dpkg/info/*.list')) != 0:
+pkg = apport_utils.find_file_package(exename)
+if not pkg:
     error_log('executable does not belong to a package, ignoring')
     sys.exit(1)
 
@@ -330,7 +332,7 @@ except (OSError, IOError):
     reportfile = sys.stderr
 
 try:
-    ic = InformationCollector(pid, signum, coredump)
+    ic = InformationCollector(pid, signum, coredump, pkg=pkg)
 
     # reading /proc after drop_privileges() (when called from the kernel)
     # does not work, so do this with original privileges.
