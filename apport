@@ -150,8 +150,7 @@ class InformationCollector:
 	if not self.pkg:
 	    return 
 	apport_utils.report_add_package_info(self.info, self.pkg)
-
-	self._get_os()
+	apport_utils.report_add_os_info(self.info)
 	self._get_gdb()
 
     def __del__(self):
@@ -176,12 +175,6 @@ class InformationCollector:
 	self.info['ProcStatus'] = _read_file('/proc/' + self.pid + '/status')
 	self.info['ProcCmdline'] = _read_file('/proc/' + self.pid + '/cmdline').rstrip('\0').replace('\0', ' ')
 	self.info['ProcMaps'] = _read_file('/proc/' + self.pid + '/maps')
-
-    def _get_os(self):
-	'''Collect information about system.'''
-
-	self.info['DistroRelease'] = _command_output(['lsb_release', '-sir']).strip().replace('\n', ' ')
-	self.info['Uname'] = _command_output(['uname', '-a']).strip()
 
     def _get_gdb(self):
 	'''Get information from gdb.

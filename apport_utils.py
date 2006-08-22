@@ -170,6 +170,20 @@ def report_add_package_info(report, package):
 	    report['Dependencies'] += '\n'
 	report['Dependencies'] += '%s %s' % (dep, cur_ver.VerStr)
 
+def report_add_os_info(report):
+    '''Add operating system information to the given report.
+
+    This adds:
+    - DistroRelease: lsb_release -sir output
+    - Uname: uname -a output'''
+
+    p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
+	stderr=subprocess.STDOUT, close_fds=True)
+    report['DistroRelease'] = p.communicate()[0].strip().replace('\n', ' ')
+
+    p = subprocess.Popen(['uname', '-a'], stdout=subprocess.PIPE,
+	stderr=subprocess.STDOUT, close_fds=True)
+    report['Uname'] = p.communicate()[0].strip()
 
 #
 # Unit test
@@ -326,6 +340,14 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
 	self.assertEqual(pr['SourcePackage'], 'bash')
 	self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
+
+    def test_report_add_os_info(self):
+	'''Test report_add_os_info() behaviour.'''
+
+	pr = ProblemReport()
+	report_add_os_info(pr)
+	self.assert_(pr['Uname'].startswith('Linux'))
+	self.assert_(type(pr['DistroRelease']) == type(''))
 
 if __name__ == '__main__':
     unittest.main()
