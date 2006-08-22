@@ -230,6 +230,23 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
     report['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0').replace('\0', ' ')
     report['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
 
+def make_report_path(report, uid=None):
+    '''Construct a canonical pathname for the given report.
+    
+    If uid is not given, it defaults to the uid of the current process.'''
+
+    if report.has_key('ExecutablePath'):
+	subject = report['ExecutablePath'].replace('/', '_')
+    elif report.has_key('Package'):
+	subject = report['Package'].split(None, 1)[0]
+    else:
+	raise ValueError, 'report has neither ExecutablePath nor Package attribute'
+
+    if not uid:
+	uid = os.getuid()
+
+    return os.path.join(report_dir, '%s.%i.crash' % (subject, uid))
+
 #
 # Unit test
 #
@@ -423,6 +440,17 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	report_add_proc_info(pr, pid=1)
 	self.assert_(pr['ProcStatus'].find('init') >= 0, pr['ProcStatus'])
 	self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
+
+    def test_make_report_path(self):
+	'''Test make_report_path() behaviour.'''
+
+	pr = ProblemReport()
+	self.assertRaises(ValueError, make_report_path, pr)
+
+	pr['Package'] = 'bash 1'
+	self.assert_(make_report_path(pr).startswith('%s/bash' % report_dir))
+	pr['ExecutablePath'] = '/bin/bash';
+	self.assert_(make_report_path(pr).startswith('%s/_bin_bash' % report_dir))
 
 if __name__ == '__main__':
     unittest.main()
