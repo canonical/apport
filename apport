@@ -26,16 +26,6 @@ import apport_utils
 #
 #################################################################
 
-def _read_file(f):
-    '''Try to read given file and return its contents, or return a textual
-    error if it failed.'''
-
-    try:
-	return open(f).read().strip()
-    except IOError, e:
-	error_log('_read_file %s: %s' % (f, str(e)))
-	return 'Error: ' + str(e)
-
 def _command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout, or return
     a textual error if it failed.'''
@@ -135,7 +125,7 @@ class InformationCollector:
 	This requires that the target process still exists and needs root
 	privileges.'''
 
-	self._get_proc()
+	apport_utils.report_add_proc_info(self.info, self.pid)
 
     def collect_static_information(self):
 	'''Collect information about the process' environment and other static
@@ -156,25 +146,6 @@ class InformationCollector:
     def __del__(self):
 	if self.unlink_coredump:
 	    os.unlink(self.info['CoreDump'][0])
-
-    def _get_proc(self):
-	'''Collect information from /proc.'''
-
-	allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
-	    'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
-	    'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
-	    'LC_IDENTIFICATION', 'LOCPATH']
-
-	self.info['ProcEnviron'] = ''
-	env = _read_file('/proc/'+ self.pid + '/environ').replace('\n', '\\n')
-	for l in env.split('\0'):
-	    if l.split('=', 1)[0] in allowed_vars:
-		if self.info['ProcEnviron']:
-		    self.info['ProcEnviron'] += '\n'
-		self.info['ProcEnviron'] += l
-	self.info['ProcStatus'] = _read_file('/proc/' + self.pid + '/status')
-	self.info['ProcCmdline'] = _read_file('/proc/' + self.pid + '/cmdline').rstrip('\0').replace('\0', ' ')
-	self.info['ProcMaps'] = _read_file('/proc/' + self.pid + '/maps')
 
     def _get_gdb(self):
 	'''Get information from gdb.

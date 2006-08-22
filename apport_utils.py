@@ -185,6 +185,51 @@ def report_add_os_info(report):
 	stderr=subprocess.STDOUT, close_fds=True)
     report['Uname'] = p.communicate()[0].strip()
 
+def _read_file(f):
+    '''Try to read given file and return its contents, or return a textual
+    error if it failed.'''
+
+    try:
+	return open(f).read().strip()
+    except (OSError, IOError), e:
+	return 'Error: ' + str(e)
+
+def report_add_proc_info(report, pid=None, extraenv=[]):
+    '''Add /proc/pid information to the given report.
+
+    If pid is not given, it defaults to the process' current pid.
+    
+    This adds the following fields:
+    - ProcEnviron: A subset of the process' environment (only some standard
+      variables that do not disclose potentially sensitive information, plus
+      the ones mentioned in extraenv)
+    - ProcCmdline: /proc/pid/cmdline contents
+    - ProcStatus: /proc/pid/status contents
+    - ProcMaps: /proc/pid/maps contents'''
+
+    safe_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
+	'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
+	'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
+	'LC_IDENTIFICATION', 'LOCPATH'] + extraenv
+
+    if not pid:
+	pid = os.getpid()
+    pid = str(pid)
+
+    report['ProcEnviron'] = ''
+    env = _read_file('/proc/'+ pid + '/environ').replace('\n', '\\n')
+    if env.startswith('Error:'):
+	report['ProcEnviron'] = env
+    else:
+	for l in env.split('\0'):
+	    if l.split('=', 1)[0] in safe_vars:
+		if report['ProcEnviron']:
+		    report['ProcEnviron'] += '\n'
+		report['ProcEnviron'] += l
+    report['ProcStatus'] = _read_file('/proc/' + pid + '/status')
+    report['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0').replace('\0', ' ')
+    report['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
+
 #
 # Unit test
 #
@@ -348,6 +393,36 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	report_add_os_info(pr)
 	self.assert_(pr['Uname'].startswith('Linux'))
 	self.assert_(type(pr['DistroRelease']) == type(''))
+
+    def test_report_add_proc_info(self):
+	'''Test report_add_proc_info() behaviour.'''
+
+	# set test environment
+	assert os.environ.has_key('LANG'), 'please set $LANG for this test'
+	assert os.environ.has_key('USER'), 'please set $USER for this test'
+	assert os.environ.has_key('PWD'), '$PWD is not set'
+
+	# check without additional safe environment variables
+	pr = ProblemReport()
+	report_add_proc_info(pr)
+	self.assert_(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
+	    'ProcMaps']).issubset(set(pr.keys())), 'report has required fields')
+	self.assert_(pr['ProcEnviron'].find('LANG='+os.environ['LANG']) >= 0)
+	self.assert_(pr['ProcEnviron'].find('USER') < 0)
+	self.assert_(pr['ProcEnviron'].find('PWD') < 0)
+
+	# check with one additional safe environment variable
+	pr = ProblemReport()
+	report_add_proc_info(pr, extraenv=['PWD'])
+	self.assert_(pr['ProcEnviron'].find('USER') < 0)
+	self.assert_(pr['ProcEnviron'].find('PWD='+os.environ['PWD']) >= 0)
+
+	# check with one additional safe environment variable
+	assert os.getuid() != 0, 'please do not run this test as root for this check.'
+	pr = ProblemReport()
+	report_add_proc_info(pr, pid=1)
+	self.assert_(pr['ProcStatus'].find('init') >= 0, pr['ProcStatus'])
+	self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
 
 if __name__ == '__main__':
     unittest.main()

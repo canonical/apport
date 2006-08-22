@@ -4,8 +4,11 @@ apport (0.17) UNRELEASED; urgency=low
     report_add_package_info() in apport_utils.py, add test suite check.
   * Move operating system information collection from apport to new function
     report_add_os_info() in apport_utils.py, add test suite check.
+  * Move /proc information collection from apport to new function
+    report_add_proc_info() in apport_utils.py, add test suite check, and fix
+    handling of failed /proc/$$/environ reading.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 Aug 2006 15:44:44 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 Aug 2006 16:41:58 +0200
 
 apport (0.16) edgy; urgency=low
 
