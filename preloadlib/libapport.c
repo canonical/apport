@@ -50,7 +50,10 @@ void sighandler( int signum )
 	goto out;
     }
     if( pid == 0 ) {
-	close(1);
+	int devnull = open( "/dev/null", O_WRONLY );
+	if( devnull > 0 )
+	    dup2(devnull, 1);
+	    dup2(devnull, 2);
 	execl( "/usr/bin/gcore", "/usr/bin/gcore", "-o", "core", spid, NULL );
 	perror( "Error: could not execute gcore" );
 	goto out;
