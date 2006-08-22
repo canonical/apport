@@ -14,8 +14,6 @@
 
 import sys, os.path
 
-sys.path.append(os.path.abspath(os.path.dirname(sys.argv[0])))
-
 from apport_utils import get_new_reports
 
 if len(get_new_reports()) > 0:

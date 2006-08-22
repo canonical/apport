@@ -15,10 +15,7 @@
 
 import sys, os, os.path, subprocess, time, traceback, tempfile, glob
 
-import problem_report
-
-sys.path.append(os.path.abspath(os.path.dirname(sys.argv[0])))
-import apport_utils
+import problem_report, apport_utils
 
 #################################################################
 #

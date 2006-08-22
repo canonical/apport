@@ -6,8 +6,6 @@ import webbrowser, subprocess
 import xdg.DesktopEntry
 
 from problem_report import ProblemReport
-
-sys.path.append(os.path.abspath(os.path.dirname(sys.argv[0])))
 import apport_utils
 
 gettext_domain = 'apport'

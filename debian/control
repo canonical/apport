@@ -7,7 +7,7 @@ Standards-Version: 3.7.2
 
 Package: apport
 Architecture: all
-Depends: python (>= 2.4), python-problem-report, lsb-base (>= 3.0-6)
+Depends: python (>= 2.4), python-problem-report, python-apport-utils, lsb-base (>= 3.0-6)
 Description: automatically generate crash reports for debugging
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump
@@ -19,7 +19,7 @@ Description: automatically generate crash reports for debugging
 Package: apport-gtk
 Section: gnome
 Architecture: all
-Depends: python (>= 2.4), python-problem-report (>= 0.3), python-gtk2, python-glade2, python-xdg, apport
+Depends: python (>= 2.4), python-problem-report (>= 0.3), python-apport-utils, python-gtk2, python-glade2, python-xdg, apport
 Description: GTK frontend for the apport crash report system
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump
@@ -44,3 +44,16 @@ Description: python library to handle problem reports
  .
  These problem reports use standard Debian control format syntax
  (RFC822).
+
+Package: python-apport-utils
+XB-Python-Version: ${python:Versions}
+Section: python
+Architecture: all
+Depends: ${python:Depends}, python-problem-report, python-apt
+Description: apport crash report handling functions
+ This python library provides high-level functions for creating and
+ handling apport crash reports:
+ .
+  * Query available and new reports.
+  * Add OS, packaging, and process runtime information to a report.
+  * Various frontend utility functions.
