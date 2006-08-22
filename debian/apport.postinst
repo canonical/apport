@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+# clean up .pyc so that the programs actually use the new library in the python
+# path
+if dpkg --compare-versions "$2" le-nl 0.17; then
+    rm -f /usr/share/apport/apport_utils.pyc
+fi
+
+#DEBHELPER#

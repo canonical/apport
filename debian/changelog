@@ -18,8 +18,11 @@ apport (0.17) UNRELEASED; urgency=low
     that they do not appear in the help() output.
   * apport_utils.py: Add make_report_path(), which constructs the canonical
     crash report pathname for a given report.
+  * Add debian/apport.postinst: Remove /usr/share/apport/apport_utils.pyc when
+    upgrading from an earlier version, so that the programs in
+    /usr/share/apport actually use the version from p-apport-utils.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 Aug 2006 18:06:45 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 Aug 2006 18:14:00 +0200
 
 apport (0.16) edgy; urgency=low
 
