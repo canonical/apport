@@ -139,7 +139,7 @@ class ProblemReport(UserDict.IterableUserDict):
 
 import unittest, StringIO, tempfile, os
 
-class ProblemReportTest(unittest.TestCase):
+class _ProblemReportTest(unittest.TestCase):
     def test_basic_operations(self):
 	'''Test basic creation and operation.'''
 

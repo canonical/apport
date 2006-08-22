@@ -236,7 +236,7 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
 
 import unittest, tempfile, os, shutil, sys, time, StringIO
 
-class ApportUtilsTest(unittest.TestCase):
+class _ApportUtilsTest(unittest.TestCase):
     def setUp(self):
 	global report_dir
 	self.orig_report_dir = report_dir
