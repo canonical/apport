@@ -11,6 +11,11 @@ the full text of the license.
 '''
 
 import subprocess, os, os.path, glob, time
+
+import warnings
+warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
+import apt
+
 from problem_report import ProblemReport
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
@@ -119,6 +124,52 @@ def get_recent_crashes(report):
 	return count
     except (ValueError, KeyError):
 	return 0
+
+def _transitive_dependencies(package, depends_set, cache):
+    '''Recursively add dependencies of package to depends_set, using the given
+    apt cache.'''
+
+    try:
+	cur_ver = cache[package]._pkg.CurrentVer
+    except (AttributeError, KeyError):
+	return
+    if not cur_ver:
+	return
+    for p in cur_ver.DependsList.get('Depends', []) + cur_ver.DependsList.get('PreDepends', []):
+	name = p[0].TargetPkg.Name
+	if not name in depends_set:
+	    depends_set.add(name)
+	    _transitive_dependencies(name, depends_set, cache)
+
+def report_add_package_info(report, package):
+    '''Add packaging information to the given report.
+
+    This adds:
+    - Package: package name and installed version
+    - SourcePackage: source package name
+    - Dependencies: package names and versions of all dependencies and
+      pre-dependencies'''
+
+    cache = apt.Cache()
+
+    report['Package'] = '%s %s' % (package, cache[package].installedVersion)
+    report['SourcePackage'] = cache[package].sourcePackageName
+
+    # get set of all transitive dependencies
+    dependencies = set([])
+    _transitive_dependencies(package, dependencies, cache)
+
+    # get dependency versions
+    report['Dependencies'] = ''
+    for dep in dependencies:
+	try:
+	    cur_ver = cache[dep]._pkg.CurrentVer
+	except (KeyError, AttributeError):
+	    continue
+	if report['Dependencies']:
+	    report['Dependencies'] += '\n'
+	report['Dependencies'] += '%s %s' % (dep, cur_ver.VerStr)
+
 
 #
 # Unit test
@@ -249,6 +300,32 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 
 	self.assertEqual(find_file_package('/bin/cat'), 'coreutils')
 	self.assertEqual(find_file_package('/nonexisting'), None)
+
+    def test_report_add_package_info(self):
+	'''Test report_add_package_info() behaviour.'''
+
+	# determine bash version
+	p = subprocess.Popen('dpkg -s bash | grep ^Version: | cut -f2 -d\ ',
+	    shell=True, stdout=subprocess.PIPE)
+	bashversion = p.communicate()[0]
+	assert p.returncode == 0
+	assert bashversion
+
+	# determine libc version
+	p = subprocess.Popen('dpkg -s libc6 | grep ^Version: | cut -f2 -d\ ',
+	    shell=True, stdout=subprocess.PIPE)
+	libcversion = p.communicate()[0]
+	assert p.returncode == 0
+	assert libcversion
+
+	pr = ProblemReport()
+
+	self.assertRaises(KeyError, report_add_package_info, pr, 'nonexistant_package')
+
+	report_add_package_info(pr, 'bash')
+	self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
+	self.assertEqual(pr['SourcePackage'], 'bash')
+	self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
 
 if __name__ == '__main__':
     unittest.main()

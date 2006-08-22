@@ -15,10 +15,6 @@
 
 import sys, os, os.path, subprocess, time, traceback, tempfile, glob
 
-import warnings
-warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
-import apt
-
 import problem_report
 
 sys.path.append(os.path.abspath(os.path.dirname(sys.argv[0])))
@@ -90,22 +86,6 @@ def error_log(msg):
     print >> sys.stderr, 'apport (pid %s) %s:' % (os.getpid(),
 	time.asctime()), msg
 
-def transitive_dependencies(package, depends_set, cache):
-    '''Recursively add dependencies of package to depends_set, using the given
-    apt cache.'''
-
-    try:
-	cur_ver = cache[package]._pkg.CurrentVer
-    except (AttributeError, KeyError):
-	return
-    if not cur_ver:
-	return
-    for p in cur_ver.DependsList.get('Depends', []) + cur_ver.DependsList.get('PreDepends', []):
-	name = p[0].TargetPkg.Name
-	if not name in depends_set:
-	    depends_set.add(name)
-	    transitive_dependencies(name, depends_set, cache)
-
 #################################################################
 #
 # classes
@@ -164,7 +144,13 @@ class InformationCollector:
 	The process does not need to exist any more, and no special privileges
 	are required.'''
 
-	self._get_pkg()
+	# get package, if we do not yet have it
+	if not self.pkg:
+	    self.pkg = apport_utils.find_file_package(self.info['ExecutablePath'])
+	if not self.pkg:
+	    return 
+	apport_utils.report_add_package_info(self.info, self.pkg)
+
 	self._get_os()
 	self._get_gdb()
 
@@ -190,36 +176,6 @@ class InformationCollector:
 	self.info['ProcStatus'] = _read_file('/proc/' + self.pid + '/status')
 	self.info['ProcCmdline'] = _read_file('/proc/' + self.pid + '/cmdline').rstrip('\0').replace('\0', ' ')
 	self.info['ProcMaps'] = _read_file('/proc/' + self.pid + '/maps')
-
-    def _get_pkg(self):
-	'''Check whether executable belongs to a package and determine its
-	name, version, and the versions of its dependencies.'''
-
-	# get package, if we do not yet have it
-	if not self.pkg:
-	    self.pkg = apport_utils.find_file_package(self.info['ExecutablePath'])
-	if not self.pkg:
-	    return 
-
-	cache = apt.Cache()
-
-	self.info['Package'] = '%s %s' % (self.pkg, cache[self.pkg].installedVersion)
-	self.info['SourcePackage'] = cache[self.pkg].sourcePackageName
-
-	# get set of all transitive dependencies
-	dependencies = set([])
-	transitive_dependencies(self.pkg, dependencies, cache)
-
-	# get dependency versions
-	self.info['Dependencies'] = ''
-	for dep in dependencies:
-	    try:
-		cur_ver = cache[dep]._pkg.CurrentVer
-	    except (KeyError, AttributeError):
-		continue
-	    if self.info['Dependencies']:
-		self.info['Dependencies'] += '\n'
-	    self.info['Dependencies'] += '%s %s' % (dep, cur_ver.VerStr)
 
     def _get_os(self):
 	'''Collect information about system.'''

@@ -1,3 +1,10 @@
+apport (0.17) UNRELEASED; urgency=low
+
+  * Move packaging information collection from apport to new function
+    report_add_package_info() in apport_utils.py, add test suite check.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 Aug 2006 15:28:45 +0200
+
 apport (0.16) edgy; urgency=low
 
   *  test-apport: Check that non-packaged binaries do not generate a report.
