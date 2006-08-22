@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2006-08-02 23:15+0200\n"
+"POT-Creation-Date: 2006-08-22 17:38+0200\n"
 "PO-Revision-Date: 2006-07-27 16:49+0200\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -15,17 +15,21 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../gtk/apport-gtk:113
+#: ../gtk/apport-gtk:103
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
 msgstr "Entschuldigung, %s wurde unerwartet beendet."
 
-#: ../gtk/apport-gtk:115
+#: ../gtk/apport-gtk:105
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
 msgstr "Entschuldigung, das Programm \"%s\" wurde unerwartet beendet."
 
 #: ../gtk/apport-gtk.glade.h:1
+msgid "Complete report (recommended)"
+msgstr "Vollständiger Bericht (empfohlen)"
+
+#: ../gtk/apport-gtk.glade.h:2
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help improve the application by reporting a "
@@ -35,11 +39,11 @@ msgstr ""
 "Passwörtern oder anderen privaten Informationen), können Sie bei der "
 "Verbesserung der Anwendung helfen, indem Sie einen Fehler melden."
 
-#: ../gtk/apport-gtk.glade.h:2
+#: ../gtk/apport-gtk.glade.h:3
 msgid "Leave closed"
 msgstr "Geschlossen lassen"
 
-#: ../gtk/apport-gtk.glade.h:3
+#: ../gtk/apport-gtk.glade.h:4
 msgid ""
 "Please check the list for an already existing bug report about this problem. "
 "If there is none, or you are in doubt, please create a new report.\n"
@@ -52,23 +56,37 @@ msgstr ""
 "\n"
 "Danach hängen Sie bitte diese Datei an:"
 
-#: ../gtk/apport-gtk.glade.h:7
+#: ../gtk/apport-gtk.glade.h:8
 #, python-format
 msgid "Problem report for %s"
 msgstr "Problembericht für %s"
 
-#: ../gtk/apport-gtk.glade.h:8
+#: ../gtk/apport-gtk.glade.h:9
 msgid "Program crash detected"
 msgstr "Programmabsturz gemeldet"
 
-#: ../gtk/apport-gtk.glade.h:9
+#: ../gtk/apport-gtk.glade.h:10
+msgid "Reduced report (smaller upload)"
+msgstr "Reduzierter Bericht (kleinerer Upload)"
+
+#: ../gtk/apport-gtk.glade.h:11
 msgid "Reopen"
 msgstr "Erneut öffnen"
 
-#: ../gtk/apport-gtk.glade.h:10
+#: ../gtk/apport-gtk.glade.h:12
 msgid "Report a bug..."
 msgstr "Fehler melden..."
 
-#: ../gtk/apport-gtk.glade.h:11
+#: ../gtk/apport-gtk.glade.h:13
+msgid ""
+"This will remove the memory snapshot from the report. This snapshot is very "
+"useful for developers to debug the problem, but it might be too big for you "
+"to upload if you have a slow internet connection."
+msgstr ""
+"Dies wird den Speicherabzug aus dem Bericht entfernen. Dieser ist für die "
+"Entwickler sehr hilfreich um das Problem zu untersuchen, aber er könnte zu "
+"groß zum hochladen sein, wenn Sie eine langsame Internetverbindung haben."
+
+#: ../gtk/apport-gtk.glade.h:14
 msgid "What does this file contain?"
 msgstr "Was enthält diese Datei?"
