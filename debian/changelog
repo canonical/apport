@@ -3,8 +3,10 @@ apport (0.18) UNRELEASED; urgency=low
   * apport-gtk:
     - Use pidof's -x option in the detection whether the program is already
       running to correctly handle scripts.
+    - Do not assume the presence of the ExecutablePath key in reports, but
+      gracefully fall back to Package.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 09:00:03 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 09:18:34 +0200
 
 apport (0.17) edgy; urgency=low
 

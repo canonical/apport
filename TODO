@@ -11,7 +11,6 @@ apport-gtk:
  - BugDisplayMode: file | list (default)
  - only show reduced report mode if there is something to be thrown
    out
- - do not assume the presence of ExecutablePath
  - check for DesktopFile field; probably add it by default in apport
  - implement desktop Exec properly
 

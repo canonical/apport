@@ -78,9 +78,13 @@ class ApportGTK:
 	self.report = ProblemReport()
 	self.report.load(open(self.reports[0]), binary=False)
 
+	subject = self.report.get('ExecutablePath', None)
+	if not subject:
+	    subject = self.report['Package'].split()[0]
+
 	# create reduced report
 	(fd, self.reduced_file) = tempfile.mkstemp('.crash', 
-	    self.report['ExecutablePath'].replace('/', '_') + '.')
+	    subject.replace('/', '_') + '.')
 	os.close(fd)
 	self.report.write(open(self.reduced_file, 'w'))
 
@@ -101,9 +105,11 @@ class ApportGTK:
 	# update dialog
 	if self.desktop_entry:
 	    heading = _('Sorry, %s closed unexpectedly.') % self.desktop_entry.getName()
-	else:
+	elif self.report.has_key('ExecutablePath'):
 	    heading = _('Sorry, the program "%s" closed unexpectedly.') % os.path.basename(self.report['ExecutablePath'])
-	if self.desktop_entry and \
+	else:
+	    heading = _('Sorry, %s closed unexpectedly.') % self.report['Package'].split()[0]
+	if self.desktop_entry and self.report.has_key('ExecutablePath') and \
 	    subprocess.call(['pidof', '-x', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
 	    label = self.w('label_heading_reopen')
 	    label.set_markup(self.str_heading % heading)
