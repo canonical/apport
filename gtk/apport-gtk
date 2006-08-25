@@ -199,18 +199,14 @@ there is none, or you are in doubt, please create a new report.'))
     def on_button_reopen_clicked(self, widget):
 	'''Reopen the crashed application.'''
 
-
 	self.w('dialog_crash').hide()
 	self.w('dialog_crash_reopen').hide()
 
-	assert self.desktop_entry
-
-	executable = self.desktop_entry.getExec().split()[0]
-	print 'Reopening', executable
+	assert self.report.has_key('ProcCmdline')
 
 	if os.fork() == 0:
 	    os.setsid()
-	    os.execlp(executable, executable)
+	    os.execlp('sh', 'sh', '-c', self.report['ProcCmdline'])
 	    sys.exit(1)
 
 	self.next()
