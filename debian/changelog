@@ -17,8 +17,10 @@ apport (0.18) UNRELEASED; urgency=low
       instructions accordingly.
   * problem_report.py: Add method has_removed_fields() to check whether load()
     skipped any fields due to binary=False. Add test suite check.
+  * apport_utils.py: Fix the quoting in ProcCmdline so that it is fully shell
+    compatible.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 10:51:46 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 11:49:40 +0200
 
 apport (0.17) edgy; urgency=low
 

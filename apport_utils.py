@@ -227,7 +227,7 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
 		    report['ProcEnviron'] += '\n'
 		report['ProcEnviron'] += l
     report['ProcStatus'] = _read_file('/proc/' + pid + '/status')
-    report['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0').replace('\0', ' ')
+    report['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0').replace('\\', '\\\\').replace(' ', '\\ ').replace('\0', ' ')
     report['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
 
 def make_report_path(report, uid=None):
@@ -440,6 +440,19 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	report_add_proc_info(pr, pid=1)
 	self.assert_(pr['ProcStatus'].find('init') >= 0, pr['ProcStatus'])
 	self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
+
+	# check escaping of ProcCmdline
+	p = subprocess.Popen(['cat', '/foo bar', '\\h', '\\ \\', '-'],
+	    stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+	    stderr=subprocess.PIPE, close_fds=True)
+	assert p.pid
+	# wait until /proc/pid/cmdline exists
+	while not open('/proc/%i/cmdline' % p.pid).read():
+	    time.sleep(0.1)
+	pr = ProblemReport()
+	report_add_proc_info(pr, pid=p.pid)
+	p.communicate('\n')
+	self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
 
     def test_make_report_path(self):
 	'''Test make_report_path() behaviour.'''
