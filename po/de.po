@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2006-08-25 10:32+0200\n"
+"POT-Creation-Date: 2006-08-25 10:58+0200\n"
 "PO-Revision-Date: 2006-07-27 16:49+0200\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -24,6 +24,24 @@ msgstr "Entschuldigung, %s wurde unerwartet beendet."
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
 msgstr "Entschuldigung, das Programm \"%s\" wurde unerwartet beendet."
+
+#: ../gtk/apport-gtk:140
+msgid ""
+"Please fill out the bug report form in your web browser and give some "
+"details about what you did just before the crash."
+msgstr ""
+"Bitte füllen Sie das Fehlermeldungs-Formular im Webbrowser aus und fügen "
+"einige Details hinzu, was Sie direkt vor dem Absturz getan haben."
+
+#: ../gtk/apport-gtk:145
+msgid ""
+"Please check the list in your web browser for an already existing bug report "
+"about this problem. If there is none, or you are in doubt, please create a "
+"new report."
+msgstr ""
+"Bitte prüfen Sie die Liste in Ihrem Webbrowser auf einen schon vorhandenen "
+"Bericht über dieses Problem. Wenn noch keiner existiert, oder Sie Zweifel "
+"haben, erstellen Sie bitte einen neuen Bericht."
 
 #: ../gtk/apport-gtk.glade.h:1
 msgid "Complete report (recommended)"
@@ -43,41 +61,32 @@ msgstr ""
 msgid "Leave closed"
 msgstr "Geschlossen lassen"
 
-#: ../gtk/apport-gtk.glade.h:4
-msgid ""
-"Please check the list for an already existing bug report about this problem. "
-"If there is none, or you are in doubt, please create a new report.\n"
-"\n"
-"Then attach this file:"
-msgstr ""
-"Bitte prüfen Sie die Liste auf einen schon vorhandenen Bericht über dieses "
-"Problem. Wenn noch keiner existiert, oder Sie Zweifel haben, erstellen Sie "
-"bitte einen neuen Bericht\n"
-"\n"
-"Danach hängen Sie bitte diese Datei an:"
-
-#: ../gtk/apport-gtk.glade.h:8
+#: ../gtk/apport-gtk.glade.h:5
 #, python-format
 msgid "Problem report for %s"
 msgstr "Problembericht für %s"
 
-#: ../gtk/apport-gtk.glade.h:9
+#: ../gtk/apport-gtk.glade.h:6
 msgid "Program crash detected"
 msgstr "Programmabsturz gemeldet"
 
-#: ../gtk/apport-gtk.glade.h:10
+#: ../gtk/apport-gtk.glade.h:7
 msgid "Reduced report (smaller upload)"
 msgstr "Reduzierter Bericht (kleinerer Upload)"
 
-#: ../gtk/apport-gtk.glade.h:11
+#: ../gtk/apport-gtk.glade.h:8
 msgid "Reopen"
 msgstr "Erneut öffnen"
 
-#: ../gtk/apport-gtk.glade.h:12
+#: ../gtk/apport-gtk.glade.h:9
 msgid "Report a bug..."
 msgstr "Fehler melden..."
 
-#: ../gtk/apport-gtk.glade.h:13
+#: ../gtk/apport-gtk.glade.h:10
+msgid "Then attach this file:"
+msgstr "Danach hängen Sie bitte diese Datei an:"
+
+#: ../gtk/apport-gtk.glade.h:11
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -87,6 +96,6 @@ msgstr ""
 "Entwickler sehr hilfreich um das Problem zu untersuchen, aber sie könnten zu "
 "groß zum hochladen sein, wenn Sie eine langsame Internetverbindung haben."
 
-#: ../gtk/apport-gtk.glade.h:14
+#: ../gtk/apport-gtk.glade.h:12
 msgid "What does this file contain?"
 msgstr "Was enthält diese Datei?"

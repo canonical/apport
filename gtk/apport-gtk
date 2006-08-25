@@ -132,8 +132,19 @@ class ApportGTK:
 
 	self.w('dialog_crash').hide()
 	self.w('dialog_crash_reopen').hide()
+	
+	mode = self.report.get('BugDisplayMode', 'list')
 
-	url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_source
+	if mode == 'file':
+	    url = 'https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.cur_source
+	    self.w('label_bug_instructions').set_text(_('Please fill out the bug \
+report form in your web browser and give some details about what you did just \
+before the crash.'))
+	else:
+	    url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_source
+	    self.w('label_bug_instructions').set_text(_('Please check the list \
+in your web browser for an already existing bug report about this problem. If \
+there is none, or you are in doubt, please create a new report.'))
 
 	# update details
 	self.w('window_bugreport').set_title(self.str_bugreport_title %
