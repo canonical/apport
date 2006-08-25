@@ -82,11 +82,14 @@ class ApportGTK:
 	if not subject:
 	    subject = self.report['Package'].split()[0]
 
-	# create reduced report
-	(fd, self.reduced_file) = tempfile.mkstemp('.crash', 
-	    subject.replace('/', '_') + '.')
-	os.close(fd)
-	self.report.write(open(self.reduced_file, 'w'))
+	# create reduced report if there are any removed fields
+	if self.report.has_removed_fields():
+	    (fd, self.reduced_file) = tempfile.mkstemp('.crash', 
+		subject.replace('/', '_') + '.')
+	    os.close(fd)
+	    self.report.write(open(self.reduced_file, 'w'))
+	else:
+	    self.reduced_file = None
 
 	package = self.report['Package'].split()[0]
 	try:
@@ -156,7 +159,14 @@ class ApportGTK:
 		self.w('treeview_reportdetails').expand_row(row, False)
 	    row += 1
 
-	self.w('window_bugreport').show_all()
+	if self.reduced_file:
+	    self.w('radiobutton_complete').show()
+	    self.w('radiobutton_reduced').show()
+	else:
+	    self.w('radiobutton_complete').hide()
+	    self.w('radiobutton_reduced').hide()
+
+	self.w('window_bugreport').show()
 
 	# prefer gnome-open if it exists
 	try:
@@ -170,7 +180,8 @@ class ApportGTK:
 
     def on_window_bugreport_delete_event(self, widget, event):
 	self.w('window_bugreport').hide()
-	os.unlink(self.reduced_file)
+	if self.reduced_file:
+	    os.unlink(self.reduced_file)
 	self.next()
 	return True
 
@@ -200,7 +211,7 @@ class ApportGTK:
 	self.w('window_bugreport').set_resizable(not self.w('expander_details').get_expanded())
 
     def update_reportfile_size(self):
-	if self.w('radiobutton_complete').get_active():
+	if not self.reduced_file or self.w('radiobutton_complete').get_active():
 	    f = self.reports[0]
 	else:
 	    f = self.reduced_file
