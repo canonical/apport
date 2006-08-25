@@ -1,3 +1,11 @@
+apport (0.18) UNRELEASED; urgency=low
+
+  * apport-gtk:
+    - Use pidof's -x option in the detection whether the program is already
+      running to correctly handle scripts.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 09:00:03 +0200
+
 apport (0.17) edgy; urgency=low
 
   * Move packaging information collection from apport to new function

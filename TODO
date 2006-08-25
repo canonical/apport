@@ -13,7 +13,6 @@ apport-gtk:
    out
  - do not assume the presence of ExecutablePath
  - check for DesktopFile field; probably add it by default in apport
- - pidof -x
  - implement desktop Exec properly
 
 kernel hook:
