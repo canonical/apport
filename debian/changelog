@@ -17,6 +17,7 @@ apport (0.18) UNRELEASED; urgency=low
       instructions accordingly.
     - Use the ProcCmdline attibute to restart an application; correctly
       parsing of all the desktop file is just not possible at this point.
+    - Support new field 'RespawnCommand' to use custom respawning command.
   * problem_report.py: Add method has_removed_fields() to check whether load()
     skipped any fields due to binary=False. Add test suite check.
   * apport_utils.py: Fix the quoting in ProcCmdline so that it is fully shell
@@ -24,7 +25,7 @@ apport (0.18) UNRELEASED; urgency=low
   * run-tests: Check if kernel crash dump helper is active, and if so, run
     test-apport in kernel mode.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 12:45:38 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 13:02:11 +0200
 
 apport (0.17) edgy; urgency=low
 

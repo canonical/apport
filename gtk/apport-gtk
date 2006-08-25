@@ -206,7 +206,7 @@ there is none, or you are in doubt, please create a new report.'))
 
 	if os.fork() == 0:
 	    os.setsid()
-	    os.execlp('sh', 'sh', '-c', self.report['ProcCmdline'])
+	    os.execlp('sh', 'sh', '-c', self.report.get('RespawnCommand', self.report['ProcCmdline']))
 	    sys.exit(1)
 
 	self.next()
