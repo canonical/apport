@@ -64,6 +64,12 @@ class ProblemReport(UserDict.IterableUserDict):
 	if key != None:
 	    self.data[key] = value
 
+    def has_removed_fields(self):
+	'''Check whether the report has any keys which were not loaded in load()
+	due to being compressed binary.'''
+
+	return ('' in self.itervalues())
+
     def _is_binary(self, string):
 	'''Check if the given strings contains binary data.'''
 
@@ -282,10 +288,12 @@ Foo: Bar
 	pr = ProblemReport()
 	pr.load(StringIO.StringIO(bin_report))
 	self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
+	self.assertEqual(pr.has_removed_fields(), False)
 
 	# test with skipping binary data
 	pr.load(StringIO.StringIO(bin_report), binary=False)
 	self.assertEqual(pr['File'], '')
+	self.assertEqual(pr.has_removed_fields(), True)
 
     def test_big_file(self):
 	'''Test writing and re-decoding a big random file.'''

@@ -7,8 +7,10 @@ apport (0.18) UNRELEASED; urgency=low
       gracefully fall back to Package.
     - If the report specifies an explicit DesktopFile, use that instead of
       trying to figure it out.
+  * problem_report.py: Add method has_removed_fields() to check whether load()
+    skipped any fields due to binary=False. Add test suite check.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 09:49:33 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 10:05:04 +0200
 
 apport (0.17) edgy; urgency=low
 
