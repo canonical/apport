@@ -82,9 +82,13 @@ class ProblemReport(UserDict.IterableUserDict):
 	'''Write information into the given file-like object, using Debian
 	control file format.
 
-	If a value is a string, it is written directly. Otherwise it must be an
-	one-element tuple containing a string; this is interpreted as a file name,
-	which will be read, bzip2'ed, and base64-encoded.
+	If a value is a string, it is written directly. Otherwise it must be a
+	tuple containing a string, and an optional boolean value (in that
+	order); the first argument is interpreted as a file name, which will be
+	read and its content will become the value of this key.
+
+	The second argument specifies whether the contents will be
+	bzip2'ed and base64-encoded (this defaults to True).
 	'''
 
 	keys = self.data.keys()
@@ -111,29 +115,40 @@ class ProblemReport(UserDict.IterableUserDict):
 		else:
 		    print >> file, k + ':', v
 	    # if it's a tuple, it contains a file name, bzip2/base64-encode it
+	    # (unless explicitly forced not to)
 	    else:
 		f = open(v[0])
-		print >> file, k + ': base64'
-		file.write(' ')
-		bc = bz2.BZ2Compressor(9)
-		while True:
-		    block = f.read(512*1024)
-		    if block:
-			outblock = bc.compress(block)
-			if outblock:
-			    file.write(base64.b64encode(outblock))
-			    file.write('\n ')
+		if len(v) >= 2 and not v[1]: # force uncompressed
+		    v = f.read()
+		    if v.find('\n') >= 0:
+			assert v.find('\n\n') < 0
+			print >> file, k + ':'
+			print >> file, '', v.replace('\n', '\n ')
 		    else:
-			file.write(base64.b64encode(bc.flush()))
-			file.write('\n')
-			break
+			print >> file, k + ':', v
+		else:
+		    print >> file, k + ': base64'
+		    file.write(' ')
+		    bc = bz2.BZ2Compressor(9)
+		    while True:
+			block = f.read(512*1024)
+			if block:
+			    outblock = bc.compress(block)
+			    if outblock:
+				file.write(base64.b64encode(outblock))
+				file.write('\n ')
+			else:
+			    file.write(base64.b64encode(bc.flush()))
+			    file.write('\n')
+			    break
 
     def __setitem__(self, k, v):
 	assert hasattr(k, 'isalnum')
 	assert k.isalnum()
-	# value must be a string or a one-element tuple with a string
+	# value must be a string or a file reference (tuple (string [, bool]))
 	assert (hasattr(v, 'isalnum') or 
-	    (hasattr(v, '__getitem__') and len(v) == 1 
+	    (hasattr(v, '__getitem__') and (
+	    len(v) == 1 or (len(v) == 2 and v[1] in (True, False)))
 	    and hasattr(v[0], 'isalnum')))
 
 	return self.data.__setitem__(k, v)
@@ -273,6 +288,33 @@ Date: now!
 File: base64
  QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 ''')
+
+	# force compression/encoding bool
+	temp = tempfile.NamedTemporaryFile()
+	temp.write('foo\0bar')
+	temp.flush()
+	pr = ProblemReport(date = 'now!')
+	pr['File'] = (temp.name, False)
+	io = StringIO.StringIO()
+	pr.write(io)
+
+	self.assertEqual(io.getvalue(), 
+'''ProblemType: Crash
+Date: now!
+File: foo\0bar
+''')
+
+	pr['File'] = (temp.name, True)
+	io = StringIO.StringIO()
+	pr.write(io)
+
+	self.assertEqual(io.getvalue(), 
+'''ProblemType: Crash
+Date: now!
+File: base64
+ QlpoOTFBWSZTWQ7a+J8AAAHBgEAAMQCQACAAIhhoMAsZAwu5IpwoSAdtfE+A
+''')
+	temp.close()
 
     def test_read_file(self):
 	'''Test reading a report with binary data.'''

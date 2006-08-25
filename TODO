@@ -1,8 +1,6 @@
 apport:
  - exit first instance quickly so that the crashed app can die instead
    of lingering on the desktop for a long time
- - discuss whether or not to always encode/compress file references:
-   add boolean as optional second argument
 
 problem_report.py:
 

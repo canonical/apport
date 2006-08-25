@@ -24,8 +24,11 @@ apport (0.18) UNRELEASED; urgency=low
     compatible.
   * run-tests: Check if kernel crash dump helper is active, and if so, run
     test-apport in kernel mode.
+  * problem_report.py: Support an optional second argument of file references
+    which controls whether or not the file contents will be compressed/encoded
+    (defaults to True for backwards compatibility). Add test suite checks.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 13:02:11 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 14:01:47 +0200
 
 apport (0.17) edgy; urgency=low
 
