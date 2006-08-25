@@ -5,8 +5,10 @@ apport (0.18) UNRELEASED; urgency=low
       running to correctly handle scripts.
     - Do not assume the presence of the ExecutablePath key in reports, but
       gracefully fall back to Package.
+    - If the report specifies an explicit DesktopFile, use that instead of
+      trying to figure it out.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 09:18:34 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 09:49:33 +0200
 
 apport (0.17) edgy; urgency=low
 

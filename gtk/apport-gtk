@@ -95,7 +95,10 @@ class ApportGTK:
 	    self.cur_source = package
 
 	# try to get a matching .desktop file
-	desktop_file = apport_utils.find_package_desktopfile(package)
+	if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
+	    desktop_file = self.report['DesktopFile']
+	else:
+	    desktop_file = apport_utils.find_package_desktopfile(package)
 	self.desktop_entry = None
 	if desktop_file:
 	    try:
