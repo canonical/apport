@@ -1,4 +1,8 @@
 #!/bin/sh -ex
 python problem_report.py -v
 python apport_utils.py -v
-./test-apport lib
+if [ -e /proc/sys/kernel/crashdump-helper ] && [ -n "`cat /proc/sys/kernel/crashdump-helper`" ]; then
+    ./test-apport kernel
+else
+    ./test-apport lib
+fi
