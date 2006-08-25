@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2006-08-22 17:38+0200\n"
+"POT-Creation-Date: 2006-08-25 10:32+0200\n"
 "PO-Revision-Date: 2006-07-27 16:49+0200\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -15,12 +15,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../gtk/apport-gtk:103
+#: ../gtk/apport-gtk:113 ../gtk/apport-gtk:117
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
 msgstr "Entschuldigung, %s wurde unerwartet beendet."
 
-#: ../gtk/apport-gtk:105
+#: ../gtk/apport-gtk:115
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
 msgstr "Entschuldigung, das Programm \"%s\" wurde unerwartet beendet."
@@ -79,12 +79,12 @@ msgstr "Fehler melden..."
 
 #: ../gtk/apport-gtk.glade.h:13
 msgid ""
-"This will remove the memory snapshot from the report. This snapshot is very "
-"useful for developers to debug the problem, but it might be too big for you "
-"to upload if you have a slow internet connection."
+"This will remove some large items from the report. These are very useful for "
+"developers to debug the problem, but might be too big for you to upload if "
+"you have a slow internet connection."
 msgstr ""
-"Dies wird den Speicherabzug aus dem Bericht entfernen. Dieser ist für die "
-"Entwickler sehr hilfreich um das Problem zu untersuchen, aber er könnte zu "
+"Dies wird einige große Teile aus dem Bericht entfernen. Diese sind für die "
+"Entwickler sehr hilfreich um das Problem zu untersuchen, aber sie könnten zu "
 "groß zum hochladen sein, wenn Sie eine langsame Internetverbindung haben."
 
 #: ../gtk/apport-gtk.glade.h:14

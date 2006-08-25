@@ -564,7 +564,7 @@ Then attach this file:</property>
       <child>
 	<widget class="GtkRadioButton" id="radiobutton_reduced">
 	  <property name="visible">True</property>
-	  <property name="tooltip" translatable="yes">This will remove the memory snapshot from the report. This snapshot is very useful for developers to debug the problem, but it might be too big for you to upload if you have a slow internet connection.</property>
+	  <property name="tooltip" translatable="yes">This will remove some large items from the report. These are very useful for developers to debug the problem, but might be too big for you to upload if you have a slow internet connection.</property>
 	  <property name="can_focus">True</property>
 	  <property name="label" translatable="yes">Reduced report (smaller upload)</property>
 	  <property name="use_underline">True</property>

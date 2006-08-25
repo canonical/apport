@@ -9,10 +9,13 @@ apport (0.18) UNRELEASED; urgency=low
       trying to figure it out.
     - Only created reduced report and show the radio buttons if there are
       actually removed fields.
+    - Change tooltip of 'reduced report' radio button to be more generic (do
+      not refer to the memory dump, but to 'large items', since this is what
+      apport-gtk currently does).
   * problem_report.py: Add method has_removed_fields() to check whether load()
     skipped any fields due to binary=False. Add test suite check.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 10:27:07 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Aug 2006 10:32:52 +0200
 
 apport (0.17) edgy; urgency=low
 
