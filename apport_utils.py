@@ -10,7 +10,9 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, os, os.path, glob, time
+import subprocess, os, os.path, glob, time, urllib, re
+import xml.dom, xml.dom.minidom
+from xml.parsers.expat import ExpatError
 
 import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
@@ -247,6 +249,70 @@ def make_report_path(report, uid=None):
 
     return os.path.join(report_dir, '%s.%i.crash' % (subject, uid))
 
+def _check_bug_pattern(report, pattern):
+    '''Check if given report matches the given bug pattern XML DOM node; return the
+    bug URL on match, otherwise None.'''
+
+    if not pattern.attributes.has_key('url'):
+	return None
+
+    for c in pattern.childNodes:
+	# regular expression condition
+	if c.nodeType == xml.dom.Node.ELEMENT_NODE and c.nodeName == 're' and \
+	    c.attributes.has_key('key'):
+	    key = c.attributes['key'].nodeValue
+	    if not report.has_key(key):
+		return None
+	    c.normalize()
+	    if c.hasChildNodes() and \
+		c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
+		regexp = c.childNodes[0].nodeValue.encode('UTF-8')
+		if not re.search(regexp, report[key]):
+		    return None
+
+    return pattern.attributes['url'].nodeValue.encode('UTF-8')
+
+def report_search_bug_patterns(report, baseurl):
+    '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
+    None otherwise.
+
+    The pattern file must be valid XML and has the following syntax:
+    root element := <patterns>
+    patterns := <pattern url="http://bug.url"> *
+    pattern := <re key="report_key">regular expression*</re> +
+
+    For example:
+    <?xml version="1.0"?>
+    <patterns>
+	<pattern url="https://launchpad.net/bugs/1">
+	    <re key="Foo">ba.*r</re>
+	</pattern>
+	<pattern url="https://launchpad.net/bugs/2">
+	    <re key="Foo">write_(hello|goodbye)</re>
+	    <re key="Package">^\S* 1-2$</re> <!-- test for a particular version -->
+	</pattern>
+    </patterns>
+    '''
+
+    assert report.has_key('Package')
+    package = report['Package'].split()[0]
+    try:
+	patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
+    except IOError:
+	return None
+
+    try:
+	dom = xml.dom.minidom.parseString(patterns)
+    except ExpatError:
+	return None
+
+    for pattern in dom.getElementsByTagName('pattern'):
+	m = _check_bug_pattern(report, pattern)
+	if m:
+	    return m
+
+    return None
+
 #
 # Unit test
 #
@@ -464,6 +530,85 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	self.assert_(make_report_path(pr).startswith('%s/bash' % report_dir))
 	pr['ExecutablePath'] = '/bin/bash';
 	self.assert_(make_report_path(pr).startswith('%s/_bin_bash' % report_dir))
+
+    def test_report_search_bug_patterns(self):
+	'''Test report_search_bug_patterns() behaviour.'''
+
+	pdir = None
+	try:
+	    pdir = tempfile.mkdtemp()
+
+	    # create some test patterns
+	    open(os.path.join(pdir, 'bash.xml'), 'w').write('''<?xml version="1.0"?>
+<patterns>
+    <pattern url="https://launchpad.net/bugs/1">
+        <re key="Foo">ba.*r</re>
+    </pattern>
+    <pattern url="https://launchpad.net/bugs/2">
+        <re key="Foo">write_(hello|goodbye)</re>
+        <re key="Package">^\S* 1-2$</re>
+    </pattern>
+</patterns>''')
+
+	    open(os.path.join(pdir, 'coreutils.xml'), 'w').write('''<?xml version="1.0"?>
+<patterns>
+    <pattern url="https://launchpad.net/bugs/3">
+        <re key="Bar">^1$</re>
+    </pattern>
+</patterns>''')
+
+	    # invalid XML
+	    open(os.path.join(pdir, 'invalid.xml'), 'w').write('''<?xml version="1.0"?>
+</patterns>''')
+
+	    # create some reports
+	    r_bash = ProblemReport()
+	    r_bash['Package'] = 'bash 1-2'
+	    r_bash['Foo'] = 'bazaar'
+
+	    r_coreutils = ProblemReport()
+	    r_coreutils['Package'] = 'coreutils 1'
+	    r_coreutils['Bar'] = '1'
+
+	    r_invalid = ProblemReport()
+	    r_invalid['Package'] = 'invalid 1'
+
+	    # positive match cases
+	    self.assertEqual(report_search_bug_patterns(r_bash, pdir), 'https://launchpad.net/bugs/1')
+	    r_bash['Foo'] = 'write_goodbye'
+	    self.assertEqual(report_search_bug_patterns(r_bash, pdir), 'https://launchpad.net/bugs/2')
+	    self.assertEqual(report_search_bug_patterns(r_coreutils, pdir), 'https://launchpad.net/bugs/3')
+
+	    # negative match cases
+	    r_bash['Package'] = 'bash 1-21'
+	    self.assertEqual(report_search_bug_patterns(r_bash, pdir), None, 
+		'does not match on wrong bash version')
+	    r_bash['Foo'] = 'zz'
+	    self.assertEqual(report_search_bug_patterns(r_bash, pdir), None, 
+		'does not match on wrong Foo value')
+	    r_coreutils['Bar'] = '11'
+	    self.assertEqual(report_search_bug_patterns(r_coreutils, pdir), None, 
+		'does not match on wrong Bar value')
+
+	    # various errors to check for robustness (no exceptions, just None
+	    # return value)
+	    del r_coreutils['Bar']
+	    self.assertEqual(report_search_bug_patterns(r_coreutils, pdir), None, 
+		'does not match on nonexisting key')
+	    self.assertEqual(report_search_bug_patterns(r_invalid, pdir), None, 
+		'gracefully handles invalid XML')
+	    r_coreutils['Package'] = 'other 2'
+	    self.assertEqual(report_search_bug_patterns(r_coreutils, pdir), None, 
+		'gracefully handles nonexisting package XML file')
+	    self.assertEqual(report_search_bug_patterns(r_bash, 'file:///nonexisting/directory/'), None, 
+		'gracefully handles nonexisting base path')
+	    self.assertEqual(report_search_bug_patterns(r_bash, 'http://archive.ubuntu.com/'), None, 
+		'gracefully handles base path without bug patterns')
+	    self.assertEqual(report_search_bug_patterns(r_bash, 'http://nonexisting.domain/'), None, 
+		'gracefully handles nonexisting URL domain')
+	finally:
+	    if pdir:
+		shutil.rmtree(pdir)
 
 if __name__ == '__main__':
     unittest.main()
