@@ -81,7 +81,7 @@ def check_safe_environment(env):
 #
 
 if len(sys.argv) != 2 or sys.argv[1] not in ('lib', 'kernel'):
-    print 'Usage: %s lib|kernel'
+    print 'Usage: %s lib|kernel' % sys.argv[0]
     sys.exit(1)
 mode = sys.argv[1]
 
