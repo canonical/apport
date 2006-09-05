@@ -19,7 +19,7 @@ Description: automatically generate crash reports for debugging
 Package: apport-gtk
 Section: gnome
 Architecture: all
-Depends: python (>= 2.4), python-problem-report (>= 0.18), python-apport-utils, python-gtk2, python-glade2, python-xdg, apport
+Depends: python (>= 2.4), python-problem-report (>= 0.18), python-apport-utils (>= 0.19), python-gtk2, python-glade2, python-xdg, apport
 Description: GTK frontend for the apport crash report system
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump

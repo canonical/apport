@@ -10,6 +10,8 @@ import apport_utils
 
 gettext_domain = 'apport'
 
+bugpattern_baseurl = 'http://people.ubuntu.com/~pitti/bugpatterns'
+
 def format_filesize(size):
     '''Format the given integer as humanly readable and i18n'ed file size.'''
 
@@ -135,7 +137,14 @@ class ApportGTK:
 	
 	mode = self.report.get('BugDisplayMode', 'list')
 
-	if mode == 'file':
+	# check for existing bug patterns
+	url = apport_utils.report_search_bug_patterns(self.report, bugpattern_baseurl)
+	if url:
+	    self.w('label_bug_instructions').set_text(_('This problem was \
+already reported in the bug report displayed in your web browser. Please check \
+if you can add any further information that might be helpful for the \
+developers.'))
+	elif mode == 'file': 
 	    url = 'https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.cur_source
 	    self.w('label_bug_instructions').set_text(_('Please fill out the bug \
 report form in your web browser and give some details about what you did just \
