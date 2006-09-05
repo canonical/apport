@@ -267,7 +267,10 @@ def _check_bug_pattern(report, pattern):
 	    if c.hasChildNodes() and \
 		c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
 		regexp = c.childNodes[0].nodeValue.encode('UTF-8')
-		if not re.search(regexp, report[key]):
+		try:
+		    if not re.search(regexp, report[key]):
+			return None
+		except:
 		    return None
 
     return pattern.attributes['url'].nodeValue.encode('UTF-8')
@@ -554,6 +557,9 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 <patterns>
     <pattern url="https://launchpad.net/bugs/3">
         <re key="Bar">^1$</re>
+    </pattern>
+    <pattern url="https://launchpad.net/bugs/4">
+        <re key="Bar">*</re> <!-- invalid RE -->
     </pattern>
 </patterns>''')
 
