@@ -2,8 +2,10 @@ apport (0.20) UNRELEASED; urgency=low
 
   * apport: Renice ourself to priority 5 to not slow down the user's processes
     so heavily.
+  * Add manpages for apport-retrace(1) and apport-unpack(1) and install them
+    into apport. Closes: LP#58463
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  8 Sep 2006 16:02:44 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  8 Sep 2006 16:40:46 +0200
 
 apport (0.19) edgy; urgency=low
 

@@ -1,0 +1,28 @@
+.TH apport\-unpack 1 "September 09, 2006" "Martin Pitt"
+
+.SH NAME
+
+apport\-unpack \- extract the fields of a problem report to separate files
+
+.SH SYNOPSIS
+
+.B apport\-unpack
+.I report target\-directory
+
+.SH DESCRIPTION
+
+A problem report, as produced by
+.B apport
+is a single file with a set of key/value pairs in the Debian control
+syntax. This tool disassembles a report such that the value of each entry
+is written into a separate file, with the key as file name. This is
+particularly useful for large binary data like the core dump.
+
+The 
+.I target\-directory
+must either be nonexisting or empty.
+
+.SH AUTHOR
+.B apport
+and the accompanying tools are developed by Martin Pitt
+<martin.pitt@ubuntu.com>.
