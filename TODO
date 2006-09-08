@@ -1,6 +1,7 @@
 apport:
  - exit first instance quickly so that the crashed app can die instead
    of lingering on the desktop for a long time
+ - lower priority
 
 problem_report.py:
  - place binary attachments last
