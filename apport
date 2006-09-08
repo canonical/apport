@@ -113,9 +113,6 @@ class InformationCollector:
 	    self.info['CoreDump'] = (coredump,)
 	self.unlink_coredump = False
 
-	# determine program name
-	self.info['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
-
     def collect_runtime_information(self):
 	'''Collect information about the process runtime (mainly from /proc).
 

@@ -10,8 +10,11 @@ apport (0.20) UNRELEASED; urgency=low
     the report. This makes reports easier to read, and also shows relevant
     information more quickly when progressively loading them in a web browser.
     Adapted regression tests accordingly.
+  * Move setting of ExecutablePath from apport's InformationCollector ctor to
+    apport_utils' report_add_proc_info(), where it belongs to. Check
+    ExecutablePath in apport_utils' regression tests.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  8 Sep 2006 17:13:18 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  8 Sep 2006 21:55:45 +0200
 
 apport (0.19) edgy; urgency=low
 

@@ -202,6 +202,8 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
     If pid is not given, it defaults to the process' current pid.
     
     This adds the following fields:
+    - ExecutablePath: /proc/pid/exe contents; if the crashed program is 
+      interpreted, this contains the script path instead
     - ProcEnviron: A subset of the process' environment (only some standard
       variables that do not disclose potentially sensitive information, plus
       the ones mentioned in extraenv)
@@ -218,6 +220,10 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
 	pid = os.getpid()
     pid = str(pid)
 
+    try:
+	report['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+    except OSError:
+	pass
     report['ProcEnviron'] = ''
     env = _read_file('/proc/'+ pid + '/environ').replace('\n', '\\n')
     if env.startswith('Error:'):
@@ -503,7 +509,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	self.assert_(pr['ProcEnviron'].find('USER') < 0)
 	self.assert_(pr['ProcEnviron'].find('PWD='+os.environ['PWD']) >= 0)
 
-	# check with one additional safe environment variable
+	# check process from other user
 	assert os.getuid() != 0, 'please do not run this test as root for this check.'
 	pr = ProblemReport()
 	report_add_proc_info(pr, pid=1)
@@ -522,6 +528,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	report_add_proc_info(pr, pid=p.pid)
 	p.communicate('\n')
 	self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
+	self.assertEqual(pr['ExecutablePath'], '/bin/cat')
 
     def test_make_report_path(self):
 	'''Test make_report_path() behaviour.'''
