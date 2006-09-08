@@ -91,56 +91,73 @@ class ProblemReport(UserDict.IterableUserDict):
 	bzip2'ed and base64-encoded (this defaults to True).
 	'''
 
-	keys = self.data.keys()
-	keys.remove('ProblemType')
-	keys.sort()
-	keys.insert(0, 'ProblemType')
-	for k in keys:
+	# sort keys into ASCII non-ASCII/binary attachment ones, so that
+	# the base64 ones appear last in the report
+	asckeys = []
+	binkeys = []
+	for k in self.data.keys():
 	    v = self.data[k]
-	    # if it's a string, copy it
 	    if hasattr(v, 'find'):
 		if self._is_binary(v):
-		    file.write (k + ': base64\n ')
-		    bc = bz2.BZ2Compressor(9)
-		    outblock = bc.compress(v)
-		    if outblock:
-			file.write(base64.b64encode(outblock))
-			file.write('\n ')
-		    file.write(base64.b64encode(bc.flush()))
-		    file.write('\n')
-		elif v.find('\n') >= 0:
-		    assert v.find('\n\n') < 0
-		    print >> file, k + ':'
-		    print >> file, '', v.replace('\n', '\n ')
+		    binkeys.append(k)
 		else:
-		    print >> file, k + ':', v
-	    # if it's a tuple, it contains a file name, bzip2/base64-encode it
-	    # (unless explicitly forced not to)
+		    asckeys.append(k)
+	    else:
+		if len(v) >= 2 and not v[1]: # force uncompressed
+		    asckeys.append(k)
+		else:
+		    binkeys.append(k)
+
+	asckeys.remove('ProblemType')
+	asckeys.sort()
+	asckeys.insert(0, 'ProblemType')
+	binkeys.sort()
+
+	# write the ASCII keys first
+	for k in asckeys:
+	    v = self.data[k]
+
+	    # if it's a tuple, we have a file reference; read the contents
+	    if not hasattr(v, 'find'):
+		v = open(v[0]).read()
+
+	    if v.find('\n') >= 0:
+		# multiline value
+		assert v.find('\n\n') < 0
+		print >> file, k + ':'
+		print >> file, '', v.replace('\n', '\n ')
+	    else:
+		# single line value
+		print >> file, k + ':', v
+
+	# now write the binary keys with bzip2 compression and base64 encoding
+	for k in binkeys:
+	    v = self.data[k]
+
+	    file.write (k + ': base64\n ')
+	    bc = bz2.BZ2Compressor(9)
+	    # direct value
+	    if hasattr(v, 'find'):
+		outblock = bc.compress(v)
+		if outblock:
+		    file.write(base64.b64encode(outblock))
+		    file.write('\n ')
+	    # file reference
 	    else:
 		f = open(v[0])
-		if len(v) >= 2 and not v[1]: # force uncompressed
-		    v = f.read()
-		    if v.find('\n') >= 0:
-			assert v.find('\n\n') < 0
-			print >> file, k + ':'
-			print >> file, '', v.replace('\n', '\n ')
+		while True:
+		    block = f.read(512*1024)
+		    if block:
+			outblock = bc.compress(block)
+			if outblock:
+			    file.write(base64.b64encode(outblock))
+			    file.write('\n ')
 		    else:
-			print >> file, k + ':', v
-		else:
-		    print >> file, k + ': base64'
-		    file.write(' ')
-		    bc = bz2.BZ2Compressor(9)
-		    while True:
-			block = f.read(512*1024)
-			if block:
-			    outblock = bc.compress(block)
-			    if outblock:
-				file.write(base64.b64encode(outblock))
-				file.write('\n ')
-			else:
-			    file.write(base64.b64encode(bc.flush()))
-			    file.write('\n')
-			    break
+			break
+
+	    # flush compressor and write the rest
+	    file.write(base64.b64encode(bc.flush()))
+	    file.write('\n')
 
     def __setitem__(self, k, v):
 	assert hasattr(k, 'isalnum')
@@ -285,9 +302,9 @@ Last: foo
 
 	self.assertEqual(io.getvalue(), 
 '''ProblemType: Crash
+Date: now!
 Afile: base64
  QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
-Date: now!
 File: base64
  QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 ''')
@@ -391,13 +408,13 @@ Foo: Bar
 
 	report = '''ProblemType: Crash
 Date: now!
-File: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 Long:
  xxx
  .
  yyy
 Short: Bar
+File: base64
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 '''
 
 	pr = ProblemReport()
@@ -417,12 +434,12 @@ Short: Bar
 	self.assertEqual(io.getvalue(), 
 '''ProblemType: Crash
 Date: now!
-File: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 Long: 123
 Short:
  aaa
  bbb
+File: base64
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 ''')
 
 if __name__ == '__main__':

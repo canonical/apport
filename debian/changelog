@@ -6,8 +6,12 @@ apport (0.20) UNRELEASED; urgency=low
     into apport. Closes: LP#58463
   * problem_report.py: Test attaching two files instead of one in the
     test_write_file() regression check to assert correct key sorting.
+  * problem_report.py: Alter write() method to sort binary data to the end of
+    the report. This makes reports easier to read, and also shows relevant
+    information more quickly when progressively loading them in a web browser.
+    Adapted regression tests accordingly.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  8 Sep 2006 16:47:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  8 Sep 2006 17:13:18 +0200
 
 apport (0.19) edgy; urgency=low
 
