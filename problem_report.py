@@ -278,12 +278,15 @@ Last: foo
 
 	pr = ProblemReport(date = 'now!')
 	pr['File'] = (temp.name,)
+	pr['Afile'] = (temp.name,)
 	io = StringIO.StringIO()
 	pr.write(io)
 	temp.close()
 
 	self.assertEqual(io.getvalue(), 
 '''ProblemType: Crash
+Afile: base64
+ QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 Date: now!
 File: base64
  QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
