@@ -13,8 +13,9 @@ apport (0.20) UNRELEASED; urgency=low
   * Move setting of ExecutablePath from apport's InformationCollector ctor to
     apport_utils' report_add_proc_info(), where it belongs to. Check
     ExecutablePath in apport_utils' regression tests.
+  * apport-unpack: Support '-' as report argument to read from stdin.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  8 Sep 2006 21:55:45 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  8 Sep 2006 22:09:52 +0200
 
 apport (0.19) edgy; urgency=low
 

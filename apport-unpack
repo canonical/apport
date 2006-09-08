@@ -32,6 +32,9 @@ except OSError:
 	sys.exit(1)
 
 pr = problem_report.ProblemReport()
-pr.load(open(report))
+if report == '-':
+    pr.load(sys.stdin)
+else:
+    pr.load(open(report))
 for k in pr:
     open(os.path.join(dir, k), 'w').write(pr[k])
