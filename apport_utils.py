@@ -202,8 +202,10 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
     If pid is not given, it defaults to the process' current pid.
     
     This adds the following fields:
-    - ExecutablePath: /proc/pid/exe contents; if the crashed program is 
+    - ExecutablePath: /proc/pid/exe contents; if the crashed process is 
       interpreted, this contains the script path instead
+    - InterpreterPath: /proc/pid/exe contents if the crashed process is
+      interpreted; otherwise this key does not exist
     - ProcEnviron: A subset of the process' environment (only some standard
       variables that do not disclose potentially sensitive information, plus
       the ones mentioned in extraenv)
@@ -237,6 +239,26 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
     report['ProcStatus'] = _read_file('/proc/' + pid + '/status')
     report['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0').replace('\\', '\\\\').replace(' ', '\\ ').replace('\0', ' ')
     report['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
+
+    # check if we have an interpreted program
+    # first, determine process name
+    name = None
+    for l in report['ProcStatus'].splitlines():
+	try:
+	    (k, v) = l.split('\t', 1)
+	except ValueError:
+	    continue
+	if k == 'Name:':
+	    name = v
+	    break
+    if not name:
+	return
+
+    cmdargs = _read_file('/proc/' + pid + '/cmdline').split('\0', 2)
+    if len(cmdargs) >= 2 and os.path.basename(cmdargs[1]) == name and \
+	os.access(cmdargs[1], os.X_OK):
+	report['InterpreterPath'] = report['ExecutablePath']
+	report['ExecutablePath'] = os.path.realpath(cmdargs[1])
 
 def make_report_path(report, uid=None):
     '''Construct a canonical pathname for the given report.
@@ -515,6 +537,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	report_add_proc_info(pr, pid=1)
 	self.assert_(pr['ProcStatus'].find('init') >= 0, pr['ProcStatus'])
 	self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
+	self.assert_(not pr.has_key('InterpreterPath'))
 
 	# check escaping of ProcCmdline
 	p = subprocess.Popen(['cat', '/foo bar', '\\h', '\\ \\', '-'],
@@ -529,6 +552,35 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	p.communicate('\n')
 	self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
 	self.assertEqual(pr['ExecutablePath'], '/bin/cat')
+	self.assert_(not pr.has_key('InterpreterPath'))
+
+	# check correct handling of interpreted executables: shell
+	p = subprocess.Popen(['/bin/zgrep', 'foo'], stdin=subprocess.PIPE,
+	    close_fds=True)
+	assert p.pid
+	# wait until /proc/pid/cmdline exists
+	while not open('/proc/%i/cmdline' % p.pid).read():
+	    time.sleep(0.1)
+	pr = ProblemReport()
+	report_add_proc_info(pr, pid=p.pid)
+	p.communicate('\n')
+	self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+	self.assertEqual(pr['InterpreterPath'], os.path.realpath('/bin/sh'))
+
+	# check correct handling of interpreted executables: python 
+	assert not os.path.exists('./testsuite-unpack'), 'Directory ./testsuite-unpack must not exist'
+	p = subprocess.Popen(['./apport-unpack', '-', 'testsuite-unpack'], stdin=subprocess.PIPE,
+	    stderr=subprocess.PIPE, close_fds=True)
+	assert p.pid
+	# wait until /proc/pid/cmdline exists
+	while not open('/proc/%i/cmdline' % p.pid).read():
+	    time.sleep(0.1)
+	pr = ProblemReport()
+	report_add_proc_info(pr, pid=p.pid)
+	p.communicate('\n')
+	os.rmdir('testsuite-unpack')
+	self.assertEqual(pr['ExecutablePath'], os.path.realpath('./apport-unpack'))
+	self.assert_(pr['InterpreterPath'].find('python') >= 0)
 
     def test_make_report_path(self):
 	'''Test make_report_path() behaviour.'''
