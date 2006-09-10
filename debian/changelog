@@ -24,8 +24,10 @@ apport (0.20) UNRELEASED; urgency=low
     - Test this with a shell (/bin/zgrep) and a Python (./apport-unpack)
       script in the test suite.
     - Closes: LP#58859
+  * Add debian/apport.logrotate to add a daily 7-step /var/log/apport
+    log rotation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 10 Sep 2006 22:41:30 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 10 Sep 2006 22:58:47 +0200
 
 apport (0.19) edgy; urgency=low
 

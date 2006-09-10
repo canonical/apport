@@ -34,6 +34,7 @@ binary-indep: build-indep
 	dh_install --sourcedir=debian/tmp --fail-missing
 	dh_installinit -u'defaults 01'
 	dh_installcron
+	dh_installlogrotate
 
 	-rmdir -p debian/python-problem-report/usr/lib/python2.4/site-packages/ 2>/dev/null
 
