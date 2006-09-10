@@ -27,8 +27,11 @@ apport (0.20) UNRELEASED; urgency=low
   * Add debian/apport.logrotate to add a daily 7-step /var/log/apport
     log rotation.
   * test-apport: Fix WCOREDUMP() and pidof checks in check_crash().
+  * apport: Install a signal handler for all 'crashy' signals, which just logs
+    the signal and stack info and exits. This should avoid a crashing apport
+    examining itself, possibly in an endless loop. Closes: LP#58873
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 10 Sep 2006 23:42:53 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 11 Sep 2006 00:27:02 +0200
 
 apport (0.19) edgy; urgency=low
 

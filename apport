@@ -14,6 +14,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback, tempfile, glob
+import signal, inspect
 
 import problem_report, apport_utils
 
@@ -72,6 +73,28 @@ def error_log(msg):
 
     print >> sys.stderr, 'apport (pid %s) %s:' % (os.getpid(),
 	time.asctime()), msg
+
+def _log_signal_handler(signal, frame):
+    '''Internal apport signal handler. Just log the signal handler and exit.'''
+
+    try:
+	error_log('Got signal %i, aborting; frame:' % signal)
+	for s in inspect.stack():
+	    error_log(str(s))
+    except:
+	pass
+    sys.exit(1)
+
+def setup_signals():
+    '''Install a signal handler for all crash-like signals, so that apport is
+    not called on itself when apport crashed.'''
+
+    signal.signal(signal.SIGILL, _log_signal_handler)
+    signal.signal(signal.SIGABRT, _log_signal_handler)
+    signal.signal(signal.SIGFPE, _log_signal_handler)
+    signal.signal(signal.SIGSEGV, _log_signal_handler)
+    signal.signal(signal.SIGPIPE, _log_signal_handler)
+    signal.signal(signal.SIGBUS, _log_signal_handler)
 
 #################################################################
 #
@@ -185,6 +208,7 @@ class InformationCollector:
 #################################################################
 
 init_error_log()
+setup_signals()
 
 if len(sys.argv) < 3 or len(sys.argv) > 4:
     print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> [<path to core dump>]'
