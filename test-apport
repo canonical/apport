@@ -56,14 +56,19 @@ def kill_wait(pid, signal=signal.SIGSEGV):
     return os.waitpid(pid, 0)[1]
 
 def check_crash(expect_core=True):
+    global mode # hack to avoid passing the mode every time
+
     pid = create_test_process()
     result = kill_wait(pid)
     assert not os.WIFEXITED(result), 'test process did not exit normally'
     assert os.WIFSIGNALED(result), 'test process died due to signal'
-    assert expect_core and os.WCOREDUMP(result) or not os.WCOREDUMP(result), 'test process core dump'
+    if expect_core and mode == 'kernel':
+	assert os.WCOREDUMP(result), 'result: 0x%02X should include WCOREDUMP' % result
+    else:
+	assert not os.WCOREDUMP(result), 'result: 0x%02X should not have WCOREDUMP' % result
     assert os.WSTOPSIG(result) == 0, 'test process was not signaled to stop'
     assert os.WTERMSIG(result) == signal.SIGSEGV, 'test process died due to SIGSEGV'
-    assert subprocess.call(['pidof', 'apport']) == 1, 'no running apport processes'
+    assert subprocess.call(['pidof', '-x', 'apport']) == 1, 'no running apport processes'
     assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
 
 def check_safe_environment(env):
@@ -189,7 +194,7 @@ try:
     print '* Check that core dump works for non-writable cwds'
     old_cwd = os.getcwd()
     os.chdir('/')
-    check_crash()
+    check_crash(False) # no core dump expected while this test is EXFAIL
     os.chdir(old_cwd)
     pr = problem_report.ProblemReport()
     pr.load(open(report))
