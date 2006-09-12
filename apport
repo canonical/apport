@@ -208,79 +208,79 @@ class InformationCollector:
 #################################################################
 
 init_error_log()
-setup_signals()
-
-if len(sys.argv) < 3 or len(sys.argv) > 4:
-    print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> [<path to core dump>]'
-    sys.exit(1)
-
-
-pid = sys.argv[1]
-signum = sys.argv[2]
-
-# drop our process priority level to not disturb userspace so much
 try:
-    subprocess.call(['renice', '5', str(os.getpid())], stdout=subprocess.PIPE)
-except OSError:
-    pass # *shrug*, at least we tried to be nice
+    setup_signals()
 
-# try to find the core dump file
-if len(sys.argv) == 4:
-    coredump = sys.argv[3]
-else:
-    coredump = None
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+	print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> [<path to core dump>]'
+	sys.exit(1)
 
-# if path is relative, prepend cwd of crashed process
-if coredump and len(coredump) > 0 and coredump[0] != '/':
-    coredump = os.path.join(os.readlink('/proc/' + pid + '/cwd'), coredump)
 
-if coredump and not os.path.exists(coredump):
-    coredump = None
+    pid = sys.argv[1]
+    signum = sys.argv[2]
 
-exename = os.readlink('/proc/' + pid + '/exe')
+    # drop our process priority level to not disturb userspace so much
+    try:
+	subprocess.call(['renice', '5', str(os.getpid())], stdout=subprocess.PIPE)
+    except OSError:
+	pass # *shrug*, at least we tried to be nice
 
-error_log('called with: ' + str(sys.argv) + ', using core file ' +
-    str(coredump) + ', executable ' + exename)
+    # try to find the core dump file
+    if len(sys.argv) == 4:
+	coredump = sys.argv[3]
+    else:
+	coredump = None
 
-try:
-    pidstat = os.stat('/proc/' + pid)
-except OSError:
-    error_log('Invalid PID')
-    sys.exit(1)
+    # if path is relative, prepend cwd of crashed process
+    if coredump and len(coredump) > 0 and coredump[0] != '/':
+	coredump = os.path.join(os.readlink('/proc/' + pid + '/cwd'), coredump)
 
-# ignore non-package binaries
-pkg = None
-if exename.startswith('/home') or exename.startswith('/tmp'):
+    if coredump and not os.path.exists(coredump):
+	coredump = None
+
+    exename = os.readlink('/proc/' + pid + '/exe')
+
+    error_log('called with: ' + str(sys.argv) + ', using core file ' +
+	str(coredump) + ', executable ' + exename)
+
+    try:
+	pidstat = os.stat('/proc/' + pid)
+    except OSError:
+	error_log('Invalid PID')
+	sys.exit(1)
+
+    # ignore non-package binaries
     pkg = None
-else:
-    pkg = apport_utils.find_file_package(exename)
-if not pkg:
-    error_log('executable does not belong to a package, ignoring')
-    sys.exit(1)
+    if exename.startswith('/home') or exename.startswith('/tmp'):
+	pkg = None
+    else:
+	pkg = apport_utils.find_file_package(exename)
+    if not pkg:
+	error_log('executable does not belong to a package, ignoring')
+	sys.exit(1)
 
-crash_counter = 0
+    crash_counter = 0
 
-# Create crash report file descriptor. We prefer to create the report in
-# report_dir if we can create a file there; if not, we just use stderr.
-try:
-    report = '%s/%s.%i.crash' % (apport_utils.report_dir, exename.replace('/', '_'), pidstat.st_uid)
-    if os.path.exists(report):
-	if apport_utils.seen_report(report):
-	    # do not flood the logs and the user with repeated crashes
-	    crash_counter = apport_utils.get_recent_crashes(open(report))
-	    crash_counter += 1
-	    if crash_counter > 4:
+    # Create crash report file descriptor. We prefer to create the report in
+    # report_dir if we can create a file there; if not, we just use stderr.
+    try:
+	report = '%s/%s.%i.crash' % (apport_utils.report_dir, exename.replace('/', '_'), pidstat.st_uid)
+	if os.path.exists(report):
+	    if apport_utils.seen_report(report):
+		# do not flood the logs and the user with repeated crashes
+		crash_counter = apport_utils.get_recent_crashes(open(report))
+		crash_counter += 1
+		if crash_counter > 4:
+		    sys.exit(1)
+	    else:
+		error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
 		sys.exit(1)
-	else:
-	    error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
-	    sys.exit(1)
-    reportfile = open(report, 'w')
-    os.chmod(report, 0000)
-    os.chown(report, pidstat.st_uid, pidstat.st_gid)
-except (OSError, IOError):
-    reportfile = sys.stderr
+	reportfile = open(report, 'w')
+	os.chmod(report, 0000)
+	os.chown(report, pidstat.st_uid, pidstat.st_gid)
+    except (OSError, IOError):
+	reportfile = sys.stderr
 
-try:
     ic = InformationCollector(pid, signum, coredump, pkg=pkg)
 
     # reading /proc after drop_privileges() (when called from the kernel)
