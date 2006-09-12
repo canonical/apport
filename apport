@@ -237,15 +237,16 @@ if coredump and len(coredump) > 0 and coredump[0] != '/':
 if coredump and not os.path.exists(coredump):
     coredump = None
 
-error_log('called with: ' + str(sys.argv) + ', using core file ' + str(coredump))
+exename = os.readlink('/proc/' + pid + '/exe')
+
+error_log('called with: ' + str(sys.argv) + ', using core file ' +
+    str(coredump) + ', executable ' + exename)
 
 try:
     pidstat = os.stat('/proc/' + pid)
 except OSError:
     error_log('Invalid PID')
     sys.exit(1)
-
-exename = os.readlink('/proc/' + pid + '/exe')
 
 # ignore non-package binaries
 pkg = None

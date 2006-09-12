@@ -4,8 +4,9 @@ apport (0.21) edgy; urgency=low
     chmod it to 0600 when it is fully written. This stops update-notifier from
     picking up half-written reports and get activated several times. 
     Closes: LP#59988
+  * apport: Add the executable path to the first line of logging.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Sep 2006 18:48:07 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Sep 2006 00:01:16 +0200
 
 apport (0.20) edgy; urgency=low
 
