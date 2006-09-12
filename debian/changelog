@@ -1,3 +1,12 @@
+apport (0.21) edgy; urgency=low
+
+  * apport: Keep a partially written report with '000' permissions, and only
+    chmod it to 0600 when it is fully written. This stops update-notifier from
+    picking up half-written reports and get activated several times. 
+    Closes: LP#59988
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Sep 2006 18:48:07 +0200
+
 apport (0.20) edgy; urgency=low
 
   * apport: Renice ourself to priority 5 to not slow down the user's processes
