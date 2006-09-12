@@ -7,8 +7,10 @@ apport (0.21) edgy; urgency=low
   * apport: Add the executable path to the first line of logging.
   * apport: Run the complete code under control of the general exception
     fallback handler.
+  * debian/apport.default: Increase maximum core size to 200 MB, to also catch
+    Firefox and Evolution core dumps.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Sep 2006 00:05:14 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Sep 2006 00:08:08 +0200
 
 apport (0.20) edgy; urgency=low
 
