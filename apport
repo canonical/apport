@@ -241,7 +241,11 @@ try:
     exename = os.readlink('/proc/' + pid + '/exe')
 
     error_log('called with: ' + str(sys.argv) + ', using core file ' +
-	str(coredump) + ', executable ' + exename)
+	str(coredump) + ', executable ' + str(exename))
+
+    if type(exename) != type(''):
+	error_log('/proc/pid/exe could not be read properly, aborting')
+	sys.exit(1)
 
     try:
 	pidstat = os.stat('/proc/' + pid)
