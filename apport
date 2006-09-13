@@ -250,11 +250,7 @@ try:
 	sys.exit(1)
 
     # ignore non-package binaries
-    pkg = None
-    if exename.startswith('/home') or exename.startswith('/tmp'):
-	pkg = None
-    else:
-	pkg = apport_utils.find_file_package(exename)
+    pkg = apport_utils.find_file_package(exename)
     if not pkg:
 	error_log('executable does not belong to a package, ignoring')
 	sys.exit(1)

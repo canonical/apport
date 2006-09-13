@@ -1,8 +1,6 @@
 apport:
  - exit first instance quickly so that the crashed app can die instead
    of lingering on the desktop for a long time
- - change dpkg -S blacklist to whitelist: /bin, /boot, /etc/, /initrd,
-   /lib*, /sbin/, /usr, /var; except /usr/local, /var/local
 
 problem_report.py:
 

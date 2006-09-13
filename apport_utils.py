@@ -47,6 +47,17 @@ def find_file_package(file):
     '''Return the package that ships the given file (or None if no package
     ships it).'''
 
+    # first apply some heuristics to avoid the expensive dpkg database grepping
+    pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
+    '/usr/', '/var'] # packages only ship files in these directories
+    whitelist_match = False
+    for i in pkg_whitelist:
+	if file.startswith(i):
+	    whitelist_match = True
+	    break
+    if file.startswith('/usr/local/') or not whitelist_match:
+	return None
+
     p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
 	glob.glob('/var/lib/dpkg/info/*.list'), stdin=subprocess.PIPE,
 	stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)

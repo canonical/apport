@@ -9,8 +9,12 @@ apport (0.21) edgy; urgency=low
     fallback handler.
   * debian/apport.default: Increase maximum core size to 200 MB, to also catch
     Firefox and Evolution core dumps.
+  * apport_utils.py, find_file_package(): Before searching the dpkg database
+    (which is expensive), check if the executable path matches a whitelist of
+    path prefixes. This replaces the weaker blacklist (/tmp and /home) in
+    apport itself.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Sep 2006 00:08:08 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Sep 2006 14:12:06 +0200
 
 apport (0.20) edgy; urgency=low
 
