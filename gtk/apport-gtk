@@ -2,7 +2,7 @@
 import gobject, gtk, gtk.glade
 import glob, sys, gettext, os.path, locale, tempfile
 from gettext import gettext as _
-import webbrowser, subprocess
+import webbrowser, subprocess, threading
 import xdg.DesktopEntry
 
 from problem_report import ProblemReport
@@ -11,6 +11,14 @@ import apport_utils
 gettext_domain = 'apport'
 
 bugpattern_baseurl = 'http://people.ubuntu.com/~pitti/bugpatterns'
+
+def thread_check_bugpatterns(report, baseurl):
+    '''Encapsulate call to apport_utils.report_search_bug_patterns() and return
+    the result in a global variable, so that it is suitable for threading.'''
+
+    global thread_check_bugpatterns_result
+    thread_check_bugpatterns_result = \
+	apport_utils.report_search_bug_patterns(report, baseurl)
 
 def format_filesize(size):
     '''Format the given integer as humanly readable and i18n'ed file size.'''
@@ -137,8 +145,22 @@ class ApportGTK:
 	
 	mode = self.report.get('BugDisplayMode', 'list')
 
-	# check for existing bug patterns
-	url = apport_utils.report_search_bug_patterns(self.report, bugpattern_baseurl)
+	# check for existing bug patterns; since this might take a while,
+	# create a separate thread and display a progress dialog
+	self.w('progressbar_bugpatterns').set_fraction(0)
+	self.w('window_bugpattern_download').show()
+	bpthread = threading.Thread(target=thread_check_bugpatterns,
+	    args=(self.report, bugpattern_baseurl))
+	bpthread.start()
+	while bpthread.isAlive():
+	    while gtk.events_pending():
+		gtk.main_iteration(False)
+	    bpthread.join(0.1)
+	    self.w('progressbar_bugpatterns').pulse()
+	global thread_check_bugpatterns_result
+	url = thread_check_bugpatterns_result
+	self.w('window_bugpattern_download').hide()
+
 	if url:
 	    self.w('label_bug_instructions').set_text(_('This problem was \
 already reported in the bug report displayed in your web browser. Please check \

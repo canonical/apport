@@ -13,8 +13,11 @@ apport (0.21) edgy; urgency=low
     (which is expensive), check if the executable path matches a whitelist of
     path prefixes. This replaces the weaker blacklist (/tmp and /home) in
     apport itself.
+  * gtk/apport-gtk: Show a progress dialog while checking for bug patterns and
+    execute report_search_bug_patterns() in a separate thread, so that the UI
+    is not potentially blocked for a long time.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Sep 2006 14:12:06 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Sep 2006 15:33:07 +0200
 
 apport (0.20) edgy; urgency=low
 
