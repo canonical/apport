@@ -32,7 +32,7 @@ binary-indep: build-indep
 	dh_pysupport
 	dh_python
 	dh_install --sourcedir=debian/tmp --fail-missing
-	dh_installinit -u'defaults 01'
+	dh_installinit -u'multiuser 01'
 	dh_installcron
 	dh_installlogrotate
 

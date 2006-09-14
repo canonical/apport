@@ -18,8 +18,11 @@ apport (0.21) edgy; urgency=low
     is not potentially blocked for a long time.
   * apport: Gracefully abort if we cannot readlink /proc/pid/exe, instead of
     falling over with an exception. Closes: LP#59993
+  * debian/rules: Use 'multiuser' instead of 'defaults' for dh_installinit.
+    Clean up the unnecessary rc symlinks in postinst and add appropriate
+    sysv-rc dependency.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Sep 2006 16:43:38 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Sep 2006 23:16:26 +0200
 
 apport (0.20) edgy; urgency=low
 
