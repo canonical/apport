@@ -171,6 +171,19 @@ try:
 	'no reports present after a non-packaged crashed process (present: %s)' % \
 	str(apport_utils.get_all_reports())
 
+    print '* Check that non-packaged scripts do not create a report'
+    orig_test_executable = test_executable
+    (fd, test_executable) = tempfile.mkstemp()
+    os.write(fd, '#!/bin/sh\nkill -SEGV $$')
+    os.close(fd)
+    os.chmod(test_executable, 0755)
+    check_crash()
+    os.unlink(test_executable)
+    test_executable = orig_test_executable
+    assert apport_utils.get_all_reports() == [], \
+	'no reports present after a non-packaged crashed script (present: %s)' % \
+	str(apport_utils.get_all_reports())
+
     print '* Test limitation of flooding: iteration',
     count = 0
     while count < 7:
