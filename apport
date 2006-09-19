@@ -289,7 +289,7 @@ try:
 		# do not flood the logs and the user with repeated crashes
 		crash_counter = apport_utils.get_recent_crashes(open(report))
 		crash_counter += 1
-		if crash_counter > 4:
+		if crash_counter > 1:
 		    sys.exit(1)
 	    else:
 		error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)

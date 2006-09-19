@@ -12,8 +12,11 @@ apport (0.22) UNRELEASED; urgency=low
   * apport_utils.py, find_file_package(): First grep the package lists whose
     names are a substring of the crashed binary name (or vice versa), to
     immensely speed up the package name determination in many cases.
+  * apport: Drop the maximum number of consecutive crashes per executable
+    from 5 to 2. 5 creates a too bad user experience and creates the
+    impression that it will never stop. Closes: LP#61078
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Sep 2006 16:02:35 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Sep 2006 16:16:46 +0200
 
 apport (0.21) edgy; urgency=low
 

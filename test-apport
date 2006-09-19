@@ -207,7 +207,7 @@ try:
 	apport_utils.mark_report_seen(apport_utils.get_new_reports()[0])
 	count += 1
     print
-    assert count >= 4, 'gets at least 5 repeated crashes'
+    assert count >= 1, 'gets at least 2 repeated crashes'
     assert count < 7, 'stops flooding after less than 7 repeated crashes'
 
     apport_utils.delete_report(report)
