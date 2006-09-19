@@ -125,13 +125,13 @@ class InformationCollector:
     TODO: StackFrame
     '''
 
-    def __init__(self, pid, signum, coredump = None, pkg = None):
+    def __init__(self, pid, signum, coredump = None):
 	'''Initialize object, but do not collect information yet.'''
 
 	self.info = problem_report.ProblemReport('Crash')
 	self.info['Signal'] = signum
 	self.pid = pid
-	self.pkg = pkg
+	self.pkg = None
 	if coredump:
 	    self.info['CoreDump'] = (coredump,)
 	self.unlink_coredump = False
@@ -144,6 +144,15 @@ class InformationCollector:
 
 	apport_utils.report_add_proc_info(self.info, self.pid)
 
+    def find_package(self):
+	'''Find the package that ships ExecutableName.
+	
+	As a side effect, set self.pkg so that collect_static_information()
+	does not need to call this again.'''
+
+	self.pkg = apport_utils.find_file_package(self.info['ExecutablePath'])
+	return self.pkg
+
     def collect_static_information(self):
 	'''Collect information about the process' environment and other static
 	data.
@@ -153,7 +162,7 @@ class InformationCollector:
 
 	# get package, if we do not yet have it
 	if not self.pkg:
-	    self.pkg = apport_utils.find_file_package(self.info['ExecutablePath'])
+	    self.find_package()
 	if not self.pkg:
 	    return 
 	apport_utils.report_add_package_info(self.info, self.pkg)
@@ -238,14 +247,8 @@ try:
     if coredump and not os.path.exists(coredump):
 	coredump = None
 
-    exename = os.readlink('/proc/' + pid + '/exe')
-
     error_log('called with: ' + str(sys.argv) + ', using core file ' +
-	str(coredump) + ', executable ' + str(exename))
-
-    if type(exename) != type(''):
-	error_log('/proc/pid/exe could not be read properly, aborting')
-	sys.exit(1)
+	str(coredump))
 
     try:
 	pidstat = os.stat('/proc/' + pid)
@@ -253,9 +256,25 @@ try:
 	error_log('Invalid PID')
 	sys.exit(1)
 
+    ic = InformationCollector(pid, signum, coredump)
+    # We already need this here to figure out the ExecutableName (for scripts,
+    # etc).
+    ic.collect_runtime_information()
+
+    if not ic.info.has_key('ExecutablePath'):
+	error_log('could not determine ExecutablePath, aborting')
+	sys.exit(1)
+
+    if ic.info.has_key('InterpreterPath'):
+	error_log('script: %s, interpreted by %s (command line "%s")' %
+	    (ic.info['ExecutablePath'], ic.info['InterpreterPath'],
+	    ic.info['ProcCmdline']))
+    else:
+	error_log('executable: %s (command line "%s")' %
+	    (ic.info['ExecutablePath'], ic.info['ProcCmdline']))
+
     # ignore non-package binaries
-    pkg = apport_utils.find_file_package(exename)
-    if not pkg:
+    if not ic.find_package():
 	error_log('executable does not belong to a package, ignoring')
 	sys.exit(1)
 
@@ -264,7 +283,7 @@ try:
     # Create crash report file descriptor. We prefer to create the report in
     # report_dir if we can create a file there; if not, we just use stderr.
     try:
-	report = '%s/%s.%i.crash' % (apport_utils.report_dir, exename.replace('/', '_'), pidstat.st_uid)
+	report = '%s/%s.%i.crash' % (apport_utils.report_dir, ic.info['ExecutablePath'].replace('/', '_'), pidstat.st_uid)
 	if os.path.exists(report):
 	    if apport_utils.seen_report(report):
 		# do not flood the logs and the user with repeated crashes
@@ -281,11 +300,6 @@ try:
     except (OSError, IOError):
 	reportfile = sys.stderr
 
-    ic = InformationCollector(pid, signum, coredump, pkg=pkg)
-
-    # reading /proc after drop_privileges() (when called from the kernel)
-    # does not work, so do this with original privileges.
-    ic.collect_runtime_information()
     drop_privileges(pid)
     ic.collect_static_information()
 

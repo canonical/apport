@@ -3,8 +3,12 @@ apport (0.22) UNRELEASED; urgency=low
   * apport_utils.py, report_add_proc_info(): Make 'interpreted script'
     detection more general to also work for mono programs.
   * test-apport: Check that non-packaged scripts do not generate a report.
+  * apport: Call ic.collect_runtime_information() earlier and drop the local
+    /proc/pid/exe examination, so that we get proper script detection. This
+    avoids getting crash reports for non-packaged scripts (see test case
+    change from above).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Sep 2006 14:20:07 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Sep 2006 14:57:43 +0200
 
 apport (0.21) edgy; urgency=low
 
