@@ -187,12 +187,12 @@ try:
     os.chdir(os.path.dirname(test_executable))
     test_executable = './' + os.path.basename(test_executable)
     check_crash()
+    os.unlink(test_executable)
+    test_executable = orig_test_executable
     os.chdir(old_cwd)
     assert apport_utils.get_all_reports() == [], \
 	'no reports present after a non-packaged crashed script with relative path(present: %s)' % \
 	str(apport_utils.get_all_reports())
-    os.unlink(test_executable)
-    test_executable = orig_test_executable
 
     print '* Test limitation of flooding: iteration',
     count = 0

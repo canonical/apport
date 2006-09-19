@@ -266,10 +266,13 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
 	return
 
     cmdargs = _read_file('/proc/' + pid + '/cmdline').split('\0', 2)
-    if len(cmdargs) >= 2 and os.path.basename(cmdargs[0]) != name and \
-	os.access(cmdargs[1], os.R_OK):
-	report['InterpreterPath'] = report['ExecutablePath']
-	report['ExecutablePath'] = os.path.realpath(cmdargs[1])
+    if len(cmdargs) >= 2:
+	# ensure that cmdargs[1] is an absolute path 
+	if cmdargs[1].startswith('.'):
+	    cmdargs[1] = os.path.join(os.readlink('/proc/' + pid + '/cwd'), cmdargs[1])
+	if os.path.basename(cmdargs[0]) != name and os.access(cmdargs[1], os.R_OK):
+	    report['InterpreterPath'] = report['ExecutablePath']
+	    report['ExecutablePath'] = os.path.realpath(cmdargs[1])
 
 def make_report_path(report, uid=None):
     '''Construct a canonical pathname for the given report.
