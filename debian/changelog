@@ -7,8 +7,10 @@ apport (0.22) UNRELEASED; urgency=low
     /proc/pid/exe examination, so that we get proper script detection. This
     avoids getting crash reports for non-packaged scripts (see test case
     change from above).
+  * apport: Do not try to chmod the report file if we could not create it and
+    output to stderr instead (this mainly affects local testing only).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Sep 2006 14:57:43 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Sep 2006 15:00:06 +0200
 
 apport (0.21) edgy; urgency=low
 

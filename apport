@@ -298,6 +298,7 @@ try:
 	os.chmod(report, 0000)
 	os.chown(report, pidstat.st_uid, pidstat.st_gid)
     except (OSError, IOError):
+	report = None
 	reportfile = sys.stderr
 
     drop_privileges(pid)
@@ -307,7 +308,8 @@ try:
 	ic.info['CrashCounter'] = '%i' % crash_counter
 
     ic.info.write(reportfile)
-    os.chmod(report, 0600)
+    if report:
+	os.chmod(report, 0600)
     if reportfile != sys.stderr:
 	error_log('wrote report %s for package %s' % (report, ic.info['Package']))
 except SystemExit:
