@@ -266,8 +266,8 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
 	return
 
     cmdargs = _read_file('/proc/' + pid + '/cmdline').split('\0', 2)
-    if len(cmdargs) >= 2 and os.path.basename(cmdargs[1]) == name and \
-	os.access(cmdargs[1], os.X_OK):
+    if len(cmdargs) >= 2 and os.path.basename(cmdargs[0]) != name and \
+	os.access(cmdargs[1], os.R_OK):
 	report['InterpreterPath'] = report['ExecutablePath']
 	report['ExecutablePath'] = os.path.realpath(cmdargs[1])
 
