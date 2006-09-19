@@ -9,8 +9,11 @@ apport (0.22) UNRELEASED; urgency=low
     change from above).
   * apport: Do not try to chmod the report file if we could not create it and
     output to stderr instead (this mainly affects local testing only).
+  * apport_utils.py, find_file_package(): First grep the package lists whose
+    names are a substring of the crashed binary name (or vice versa), to
+    immensely speed up the package name determination in many cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Sep 2006 15:00:06 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Sep 2006 16:02:35 +0200
 
 apport (0.21) edgy; urgency=low
 

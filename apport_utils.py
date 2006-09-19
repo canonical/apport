@@ -58,12 +58,29 @@ def find_file_package(file):
     if file.startswith('/usr/local/') or not whitelist_match:
 	return None
 
+    fname = os.path.splitext(os.path.basename(file))[0]
+
+    all_lists = []
+    likely_lists = []
+    for f in glob.glob('/var/lib/dpkg/info/*.list'):
+	p = os.path.splitext(os.path.basename(f))[0]
+	if fname.find(p) >= 0 or p.find(fname) >= 0:
+	    likely_lists.append(f)
+	else:
+	    all_lists.append(f)
+
+    # first check the likely packages
     p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
-	glob.glob('/var/lib/dpkg/info/*.list'), stdin=subprocess.PIPE,
+	likely_lists, stdin=subprocess.PIPE,
 	stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
     out = p.communicate()[0]
     if p.returncode != 0:
-	return None
+	p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
+	    all_lists, stdin=subprocess.PIPE,
+	    stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+	out = p.communicate()[0]
+	if p.returncode != 0:
+	    return None
 
     return os.path.splitext(os.path.basename(out))[0]
 
@@ -485,6 +502,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
     def test_find_file_package(self):
 	'''Test find_file_package() behaviour.'''
 
+	self.assertEqual(find_file_package('/bin/bash'), 'bash')
 	self.assertEqual(find_file_package('/bin/cat'), 'coreutils')
 	self.assertEqual(find_file_package('/nonexisting'), None)
 
