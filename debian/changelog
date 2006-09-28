@@ -6,8 +6,11 @@ apport (0.24) edgy; urgency=low
     large core dumps.
   * Move InformationCollector._get_gdb() from apport to apport_utils.py
     report_add_gdb_info(), and add a test case for it.
+  * apport_utils.py, report_add_package_info(): Support calling without a
+    package name, then it will be figured out from ExecutableName. Extend test
+    case accordingly.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 00:05:22 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 00:14:10 +0200
 
 apport (0.23) edgy; urgency=low
 

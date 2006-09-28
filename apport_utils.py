@@ -171,14 +171,20 @@ def _transitive_dependencies(package, depends_set, cache):
 	    depends_set.add(name)
 	    _transitive_dependencies(name, depends_set, cache)
 
-def report_add_package_info(report, package):
+def report_add_package_info(report, package = None):
     '''Add packaging information to the given report.
 
+    If package is not given, the report must have ExecutableName.
     This adds:
     - Package: package name and installed version
     - SourcePackage: source package name
     - Dependencies: package names and versions of all dependencies and
       pre-dependencies'''
+
+    if not package:
+	package = find_file_package(report['ExecutablePath'])
+	if not package:
+	    return
 
     cache = apt.Cache()
 
@@ -570,6 +576,20 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
 	self.assertEqual(pr['SourcePackage'], 'bash')
 	self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
+
+	# test without specifying a package, but with ExecutablePath
+	pr = ProblemReport()
+	self.assertRaises(KeyError, report_add_package_info, pr)
+	pr['ExecutablePath'] = '/bin/bash'
+	report_add_package_info(pr)
+	self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
+	self.assertEqual(pr['SourcePackage'], 'bash')
+	self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
+
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/nonexisting'
+	report_add_package_info(pr)
+	self.assert_(not pr.has_key('Package'))
 
     def test_report_add_os_info(self):
 	'''Test report_add_os_info() behaviour.'''
