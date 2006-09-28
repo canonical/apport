@@ -51,15 +51,12 @@ def create_test_process():
 	assert False, 'Could not execute ' + test_executable
     return pid
 
-def kill_wait(pid, signal=signal.SIGSEGV):
-    os.kill(pid, signal)
-    return os.waitpid(pid, 0)[1]
-
-def check_crash(expect_core=True):
+def check_crash(expect_core=True, sig=signal.SIGSEGV):
     global mode # hack to avoid passing the mode every time
 
     pid = create_test_process()
-    result = kill_wait(pid)
+    os.kill(pid, sig)
+    result = os.waitpid(pid, 0)[1]
     assert not os.WIFEXITED(result), 'test process did not exit normally'
     assert os.WIFSIGNALED(result), 'test process died due to signal'
     if expect_core and mode == 'kernel':
@@ -67,7 +64,7 @@ def check_crash(expect_core=True):
     else:
 	assert not os.WCOREDUMP(result), 'result: 0x%02X should not have WCOREDUMP' % result
     assert os.WSTOPSIG(result) == 0, 'test process was not signaled to stop'
-    assert os.WTERMSIG(result) == signal.SIGSEGV, 'test process died due to SIGSEGV'
+    assert os.WTERMSIG(result) == sig, 'test process died due to proper signal'
     assert subprocess.call(['pidof', '-x', 'apport']) == 1, 'no running apport processes'
     assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
 
@@ -169,6 +166,12 @@ try:
     test_executable = orig_test_executable
     assert apport_utils.get_all_reports() == [], \
 	'no reports present after a non-packaged crashed process (present: %s)' % \
+	str(apport_utils.get_all_reports())
+
+    print '* Check that apport ignores SIGQUIT'
+    check_crash(sig=signal.SIGQUIT)
+    assert apport_utils.get_all_reports() == [], \
+	'no reports present after SIGQUIT (present: %s)' % \
 	str(apport_utils.get_all_reports())
 
     print '* Check that non-packaged scripts do not create a report'
