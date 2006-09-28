@@ -74,11 +74,13 @@ def error_log(msg):
     print >> sys.stderr, 'apport (pid %s) %s:' % (os.getpid(),
 	time.asctime()), msg
 
-def _log_signal_handler(signal, frame):
+def _log_signal_handler(sgn, frame):
     '''Internal apport signal handler. Just log the signal handler and exit.'''
 
+    # reset handler so that we do not get stuck in loops
+    signal.signal(sgn, signal.SIG_IGN)
     try:
-	error_log('Got signal %i, aborting; frame:' % signal)
+	error_log('Got signal %i, aborting; frame:' % sgn)
 	for s in inspect.stack():
 	    error_log(str(s))
     except:
