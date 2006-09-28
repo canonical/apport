@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, os, os.path, glob, time, urllib, re
+import subprocess, os, os.path, glob, time, urllib, re, signal
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
@@ -290,6 +290,45 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
 	if os.path.basename(cmdargs[0]) != name and os.access(cmdargs[1], os.R_OK):
 	    report['InterpreterPath'] = report['ExecutablePath']
 	    report['ExecutablePath'] = os.path.realpath(cmdargs[1])
+
+def _command_output(command, input = None, stderr = subprocess.STDOUT):
+    '''Try to execute given command (array) and return its stdout, or return
+    a textual error if it failed.'''
+
+    try:
+       sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
+    except OSError, e:
+       error_log('_command_output Popen(%s): %s' % (str(command), str(e)))
+       return 'Error: ' + str(e)
+
+    out = sp.communicate(input)[0]
+    if sp.returncode == 0:
+       return out
+    else:
+       error_log('_command_output %s failed with exit code %i: %s' % (
+           str(command), sp.returncode, out))
+       return 'Error: command %s failed with exit code %i: %s' % (
+           str(command), sp.returncode, out)
+
+def report_add_gdb_info(report):
+    '''Add information from gdb to the given report.
+
+    This requires that the report has a CoreDump (file ref) and an
+    ExecutablePath. This adds the following fields:
+    - Stacktrace: Output of gdb's 'bt full' command
+    - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
+    '''
+
+    if not report.has_key('CoreDump') or not report.has_key('ExecutablePath'):
+	return
+
+    core = report['CoreDump'][0]
+    report['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	'bt full', report['ExecutablePath'], core],
+	stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+    report['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	'thread apply all bt full', report['ExecutablePath'], core],
+	stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
 
 def make_report_path(report, uid=None):
     '''Construct a canonical pathname for the given report.
@@ -613,6 +652,49 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	os.rmdir('testsuite-unpack')
 	self.assertEqual(pr['ExecutablePath'], os.path.realpath('./apport-unpack'))
 	self.assert_(pr['InterpreterPath'].find('python') >= 0)
+
+    def test_report_add_gdb_info(self):
+	'''Test report_add_gdb_info() behaviour.'''
+
+	pr = ProblemReport()
+	# should not throw an exception for missing fields
+	report_add_gdb_info(pr)
+
+	# create a test executable
+	test_executable = '/bin/cat'
+	assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
+	pid = os.fork()
+	if pid == 0:
+	    os.setsid()
+	    os.execv(test_executable, [test_executable])
+	    assert False, 'Could not execute ' + test_executable
+
+	# generate a core dump
+	(fd, coredump) = tempfile.mkstemp()
+	try:
+	    os.close(fd)
+	    assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
+		+ coredump, test_executable, str(pid)], stdout=subprocess.PIPE) == 0
+
+	    # verify that it's a proper ELF file
+	    assert subprocess.call(['readelf', '-n', coredump],
+		stdout=subprocess.PIPE) == 0
+
+	    # kill test executable
+	    os.kill(pid, signal.SIGKILL)
+
+	    pr['ExecutablePath'] = test_executable
+	    pr['CoreDump'] = (coredump,)
+
+	    report_add_gdb_info(pr)
+	finally:
+	    os.unlink(coredump)
+
+	self.assert_(pr.has_key('Stacktrace'))
+	self.assert_(pr.has_key('ThreadStacktrace'))
+	self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
+	self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
+	self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
 
     def test_make_report_path(self):
 	'''Test make_report_path() behaviour.'''

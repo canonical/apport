@@ -24,25 +24,6 @@ import problem_report, apport_utils
 #
 #################################################################
 
-def _command_output(command, input = None, stderr = subprocess.STDOUT):
-    '''Try to execute given command (array) and return its stdout, or return
-    a textual error if it failed.'''
-
-    try:
-	sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
-    except OSError, e:
-	error_log('_command_output Popen(%s): %s' % (str(command), str(e)))
-	return 'Error: ' + str(e)
-
-    out = sp.communicate(input)[0]
-    if sp.returncode == 0:
-	return out
-    else:
-	error_log('_command_output %s failed with exit code %i: %s' % (
-	    str(command), sp.returncode, out))
-	return 'Error: command %s failed with exit code %i: %s' % (
-	    str(command), sp.returncode, out)
-
 def drop_privileges(pid):
     '''Change user and group to match the given target process.'''
 
@@ -168,25 +149,7 @@ class InformationCollector:
 	    return 
 	apport_utils.report_add_package_info(self.info, self.pkg)
 	apport_utils.report_add_os_info(self.info)
-	self._get_gdb()
-
-    def _get_gdb(self):
-	'''Get information from gdb.
-	
-	This only works if we have a core dump. We cannot generate a core dump
-	on our own if we are called by the kernel, since the target process is
-	in uninterruptible kernel sleep.'''
-
-	if not self.info.has_key('CoreDump'):
-	    return
-	core = self.info['CoreDump'][0]
-
-	self.info['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'bt full', self.info['ExecutablePath'], core],
-	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
-	self.info['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'thread apply all bt full', self.info['ExecutablePath'], core],
-	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+	apport_utils.report_add_gdb_info(self.info)
 
 #################################################################
 #
