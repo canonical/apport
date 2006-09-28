@@ -9,9 +9,8 @@ test_executable = '/bin/cat'
 test_package = 'coreutils'
 test_source = 'coreutils'
 
-required_fields = ['ProblemType', 'CoreDump', 'Date', 'Dependencies',
-    'DistroRelease', 'ExecutablePath', 'Package', 'ProcCmdline', 'ProcEnviron',
-    'ProcMaps', 'Signal', 'SourcePackage', 'Stacktrace', 'ThreadStacktrace']
+required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
+    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal']
 
 local_reportdir = None
 
@@ -144,8 +143,6 @@ try:
     assert set(required_fields).issubset(set(pr.keys())), 'report has required fields'
     assert pr['ExecutablePath'] == test_executable
     assert pr['ProcCmdline'] == test_executable
-    assert pr['Package'].startswith(test_package)
-    assert pr['SourcePackage'] == test_source
     assert pr['Signal'] == '%i' % signal.SIGSEGV
 
     print '* Check that dumped environment only has insensitive variables'

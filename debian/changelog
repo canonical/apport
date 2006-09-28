@@ -9,8 +9,10 @@ apport (0.24) edgy; urgency=low
   * apport_utils.py, report_add_package_info(): Support calling without a
     package name, then it will be figured out from ExecutableName. Extend test
     case accordingly.
+  * test-apport: Do not require apport reports to contain gdb, packaging, and
+    OS information, since we are going to move them out of apport.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 00:14:10 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 00:20:14 +0200
 
 apport (0.23) edgy; urgency=low
 
