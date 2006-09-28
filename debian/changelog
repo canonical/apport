@@ -5,7 +5,7 @@ apport (0.23) UNRELEASED; urgency=low
   * debian/apport.init: Do not let the script run with set -e, so that
     do_{start,stop} can deliver their return codes for proper evaluation,
     instead of immediately existing. Closes: LP#61796
-  * test-apport: Check that SIGQUIT does not generate a report. (Check for 
+  * test-apport: Check that SIGQUIT does not generate a report. (Check for
     bug #62511).
   * apport: Ignore SIGQUIT. Closes: LP#62511
 
