@@ -1,4 +1,4 @@
-apport (0.23) UNRELEASED; urgency=low
+apport (0.23) edgy; urgency=low
 
   * apport: Reset signal handler to SIG_IGN in the crash signal handler, to
     avoid an endless crash/handler loop (noticed during debugging LP#61708).
