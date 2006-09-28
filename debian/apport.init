@@ -1,4 +1,4 @@
-#! /bin/sh -e
+#! /bin/sh
 
 ### BEGIN INIT INFO
 # Provides:          apport
@@ -79,11 +79,11 @@ case "$1" in
   start)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC:" "$NAME"
 	do_start
-	set_maxsize
 	case "$?" in
 		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
 		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 	esac
+	set_maxsize
 	;;
   stop)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC:" "$NAME"
