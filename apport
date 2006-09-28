@@ -136,7 +136,6 @@ class InformationCollector:
 	self.pkg = None
 	if coredump:
 	    self.info['CoreDump'] = (coredump,)
-	self.unlink_coredump = False
 
     def collect_runtime_information(self):
 	'''Collect information about the process runtime (mainly from /proc).
@@ -171,10 +170,6 @@ class InformationCollector:
 	apport_utils.report_add_os_info(self.info)
 	self._get_gdb()
 
-    def __del__(self):
-	if self.unlink_coredump:
-	    os.unlink(self.info['CoreDump'][0])
-
     def _get_gdb(self):
 	'''Get information from gdb.
 	
@@ -192,25 +187,6 @@ class InformationCollector:
 	self.info['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
 	    'thread apply all bt full', self.info['ExecutablePath'], core],
 	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
-
-	self._copy_shrink_corefile()
-
-    def _copy_shrink_corefile(self):
-	'''Copy the core file and redue its size.
-	
-	The original core dump will be removed by the kernel once the
-	kernel-invoked apport instance exits.'''
-
-	if not self.info.has_key('CoreDump'):
-	    return
-
-	shrinkcorefile = tempfile.NamedTemporaryFile()
-	shrinkcorefile.close()
-	if subprocess.call(['objcopy', self.info['CoreDump'][0], shrinkcorefile.name],
-	    stderr=subprocess.PIPE) == 0 \
-	    and os.path.exists(shrinkcorefile.name):
-	    self.info['CoreDump'] = (shrinkcorefile.name,)
-	    self.unlink_coredump = True
 
 #################################################################
 #

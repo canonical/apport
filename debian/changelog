@@ -1,3 +1,12 @@
+apport (0.24) edgy; urgency=low
+
+  * apport: Remove _copy_shrink_corefile(): While this has an enormous impact
+    on the size of an uncompressed core dump, it only causes a negligible size
+    reduction of the bzip2'ed core, but it needs a lot of I/O resources for
+    large core dumps.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Sep 2006 23:20:19 +0200
+
 apport (0.23) edgy; urgency=low
 
   * apport: Reset signal handler to SIG_IGN in the crash signal handler, to
