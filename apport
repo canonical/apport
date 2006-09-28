@@ -81,78 +81,6 @@ def setup_signals():
 
 #################################################################
 #
-# classes
-#
-#################################################################
-
-class InformationCollector:
-    '''Collect and store information about the crash.
-    
-    Fields with acquired data:
-    - Signal: signal that caused the crash
-    - ExecutablePath: path to the crashed executable
-    - Stacktrace: stack trace
-    - ThreadStacktrace: thread apply all bt full
-    - Package: package name and version; not present if info['ExecutablePath'] does
-      not belong to a package
-    - SourcePackage: source package name
-    - Dependencies: names and versions of depending packages; not present if
-      Package is not present
-    - ProcCmdline: /proc/<pid>/cmdline
-    - ProcEnviron: /proc/<pid>/environ
-    - ProcStatus: /proc/<pid>/status
-    - ProcMaps: /proc/<pid>/maps
-    - DistroRelease: lsb_release -sir
-    - Uname: uname -a
-
-    TODO: StackFrame
-    '''
-
-    def __init__(self, pid, signum, coredump = None):
-	'''Initialize object, but do not collect information yet.'''
-
-	self.info = problem_report.ProblemReport('Crash')
-	self.info['Signal'] = signum
-	self.pid = pid
-	self.pkg = None
-	if coredump:
-	    self.info['CoreDump'] = (coredump,)
-
-    def collect_runtime_information(self):
-	'''Collect information about the process runtime (mainly from /proc).
-
-	This requires that the target process still exists and needs root
-	privileges.'''
-
-	apport_utils.report_add_proc_info(self.info, self.pid)
-
-    def find_package(self):
-	'''Find the package that ships ExecutableName.
-	
-	As a side effect, set self.pkg so that collect_static_information()
-	does not need to call this again.'''
-
-	self.pkg = apport_utils.find_file_package(self.info['ExecutablePath'])
-	return self.pkg
-
-    def collect_static_information(self):
-	'''Collect information about the process' environment and other static
-	data.
-
-	The process does not need to exist any more, and no special privileges
-	are required.'''
-
-	# get package, if we do not yet have it
-	if not self.pkg:
-	    self.find_package()
-	if not self.pkg:
-	    return 
-	apport_utils.report_add_package_info(self.info, self.pkg)
-	apport_utils.report_add_os_info(self.info)
-	apport_utils.report_add_gdb_info(self.info)
-
-#################################################################
-#
 # main
 #
 #################################################################
@@ -201,25 +129,29 @@ try:
 	error_log('Invalid PID')
 	sys.exit(1)
 
-    ic = InformationCollector(pid, signum, coredump)
+    info = problem_report.ProblemReport('Crash')
+    info['Signal'] = signum
+    if coredump:
+	info['CoreDump'] = (coredump,)
+
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
-    ic.collect_runtime_information()
+    apport_utils.report_add_proc_info(info, pid)
 
-    if not ic.info.has_key('ExecutablePath'):
+    if not info.has_key('ExecutablePath'):
 	error_log('could not determine ExecutablePath, aborting')
 	sys.exit(1)
 
-    if ic.info.has_key('InterpreterPath'):
+    if info.has_key('InterpreterPath'):
 	error_log('script: %s, interpreted by %s (command line "%s")' %
-	    (ic.info['ExecutablePath'], ic.info['InterpreterPath'],
-	    ic.info['ProcCmdline']))
+	    (info['ExecutablePath'], info['InterpreterPath'],
+	    info['ProcCmdline']))
     else:
 	error_log('executable: %s (command line "%s")' %
-	    (ic.info['ExecutablePath'], ic.info['ProcCmdline']))
+	    (info['ExecutablePath'], info['ProcCmdline']))
 
     # ignore non-package binaries
-    if not ic.find_package():
+    if not apport_utils.find_file_package(info['ExecutablePath']):
 	error_log('executable does not belong to a package, ignoring')
 	sys.exit(1)
 
@@ -228,7 +160,7 @@ try:
     # Create crash report file descriptor. We prefer to create the report in
     # report_dir if we can create a file there; if not, we just use stderr.
     try:
-	report = '%s/%s.%i.crash' % (apport_utils.report_dir, ic.info['ExecutablePath'].replace('/', '_'), pidstat.st_uid)
+	report = '%s/%s.%i.crash' % (apport_utils.report_dir, info['ExecutablePath'].replace('/', '_'), pidstat.st_uid)
 	if os.path.exists(report):
 	    if apport_utils.seen_report(report):
 		# do not flood the logs and the user with repeated crashes
@@ -247,16 +179,15 @@ try:
 	reportfile = sys.stderr
 
     drop_privileges(pid)
-    ic.collect_static_information()
 
     if crash_counter > 0:
-	ic.info['CrashCounter'] = '%i' % crash_counter
+	info['CrashCounter'] = '%i' % crash_counter
 
-    ic.info.write(reportfile)
+    info.write(reportfile)
     if report:
 	os.chmod(report, 0600)
     if reportfile != sys.stderr:
-	error_log('wrote report %s for package %s' % (report, ic.info['Package']))
+	error_log('wrote report %s' % report)
 except SystemExit:
     raise
 except Exception, e:

@@ -11,8 +11,13 @@ apport (0.24) edgy; urgency=low
     case accordingly.
   * test-apport: Do not require apport reports to contain gdb, packaging, and
     OS information, since we are going to move them out of apport.
+  * apport: Do not collect static information. It requires a lot of CPU and
+    I/O resources and slows down the machine a lot, and it can be added to
+    the report later in the frontend. This also gets rid of the entire
+    InformationCollector class, since everything has been moved to
+    apport_utils.py now. Closes: LP#62542
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 00:20:14 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 00:38:15 +0200
 
 apport (0.23) edgy; urgency=low
 
