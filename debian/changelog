@@ -30,8 +30,10 @@ apport (0.24) edgy; urgency=low
     report, fix write() function to not rely on an existing ProblemType key.
   * problem_report.py: Add new method ProblemReport.add_to_existing() to
     update an already existing problem report with new data. Add test case.
+  * apport_utils.py, mark_report_seen(): Use os.utime() instead of
+    open()/read() and a timeout for simpler and faster operation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 13:14:51 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 14:54:05 +0200
 
 apport (0.23) edgy; urgency=low
 
