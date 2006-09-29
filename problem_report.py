@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import bz2, base64, time, UserDict
+import bz2, zlib, base64, time, UserDict, sys
 
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
@@ -33,7 +33,8 @@ class ProblemReport(UserDict.IterableUserDict):
 	self.data.clear()
 	key = None
 	value = None
-        b64_block = False
+	b64_block = False
+	bd = None
 	for line in file:
 	    # continuation line
 	    if line.startswith(' '):
@@ -41,13 +42,28 @@ class ProblemReport(UserDict.IterableUserDict):
 		    continue
 		assert (key != None and value != None)
 		if b64_block:
-		    value += bd.decompress(base64.b64decode(line))
+		    l = base64.b64decode(line)
+		    if bd:
+			value += bd.decompress(l)
+		    else:
+			# lazy initialization of bd; fall back to bzip2 if gzip
+			# fails
+			bd = zlib.decompressobj()
+			try:
+			    value += bd.decompress(l)
+			except zlib.error:
+			    bd = bz2.BZ2Decompressor()
+			    value += bd.decompress(l)
 		else:
 		    if len(value) > 0:
 			value += '\n'
 		    value += line[1:-1]
 	    else:
 		if b64_block:
+		    try:
+			value += bd.flush()
+		    except AttributeError:
+			pass # bz2 decompressor has no flush()
 		    b64_block = False
 		    bd = None
 		if key:
@@ -58,8 +74,6 @@ class ProblemReport(UserDict.IterableUserDict):
 		if value == 'base64':
 		    value = ''
 		    b64_block = True
-		    if binary:
-			bd = bz2.BZ2Decompressor()
 
 	if key != None:
 	    self.data[key] = value
@@ -135,7 +149,7 @@ class ProblemReport(UserDict.IterableUserDict):
 	    v = self.data[k]
 
 	    file.write (k + ': base64\n ')
-	    bc = bz2.BZ2Compressor(9)
+	    bc = zlib.compressobj()
 	    # direct value
 	    if hasattr(v, 'find'):
 		outblock = bc.compress(v)
@@ -146,7 +160,7 @@ class ProblemReport(UserDict.IterableUserDict):
 	    else:
 		f = open(v[0])
 		while True:
-		    block = f.read(512*1024)
+		    block = f.read(1048576)
 		    if block:
 			outblock = bc.compress(block)
 			if outblock:
@@ -304,9 +318,11 @@ Last: foo
 '''ProblemType: Crash
 Date: now!
 Afile: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
+ eJw=
+ c3RyxIAMcBAFAG55BXk=
 File: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
+ eJw=
+ c3RyxIAMcBAFAG55BXk=
 ''')
 
 	# force compression/encoding bool
@@ -332,12 +348,35 @@ File: foo\0bar
 '''ProblemType: Crash
 Date: now!
 File: base64
- QlpoOTFBWSZTWQ7a+J8AAAHBgEAAMQCQACAAIhhoMAsZAwu5IpwoSAdtfE+A
+ eJw=
+ S8vPZ0hKLAIACfACeg==
 ''')
 	temp.close()
 
     def test_read_file(self):
 	'''Test reading a report with binary data.'''
+
+	bin_report = '''ProblemType: Crash
+Date: now!
+File: base64
+ eJw=
+ c3RyxIAMcBAFAG55BXk=
+Foo: Bar
+'''
+
+	# test with reading everything
+	pr = ProblemReport()
+	pr.load(StringIO.StringIO(bin_report))
+	self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
+	self.assertEqual(pr.has_removed_fields(), False)
+
+	# test with skipping binary data
+	pr.load(StringIO.StringIO(bin_report), binary=False)
+	self.assertEqual(pr['File'], '')
+	self.assertEqual(pr.has_removed_fields(), True)
+
+    def test_read_file_bzip2(self):
+	'''Test reading a report with binary data (legacy bzip2 compression).'''
 
 	bin_report = '''ProblemType: Crash
 Date: now!
@@ -387,7 +426,7 @@ Foo: Bar
 	# write it again
 	io2 = StringIO.StringIO()
 	pr.write(io2)
-	self.assertEqual(io.getvalue(), io2.getvalue())
+	self.assert_(io.getvalue() == io2.getvalue())
 
     def test_iter(self):
 	'''Test ProblemReport iteration.'''
@@ -414,7 +453,8 @@ Long:
  yyy
 Short: Bar
 File: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
+ eJw=
+ c3RyxIAMcBAFAG55BXk=
 '''
 
 	pr = ProblemReport()
@@ -439,7 +479,8 @@ Short:
  aaa
  bbb
 File: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
+ eJw=
+ c3RyxIAMcBAFAG55BXk=
 ''')
 
 if __name__ == '__main__':

@@ -4,6 +4,14 @@ apport (0.24) edgy; urgency=low
     on the size of an uncompressed core dump, it only causes a negligible size
     reduction of the bzip2'ed core, but it needs a lot of I/O resources for
     large core dumps.
+  * problem_report.py:
+    - Use zlib instead of bzip2 for compressing the binary data (in
+      particular, core dumps). This results in slightly bigger files, but speeds
+      up compression a lot (30 seconds vs. ~2:45 minutes for a Firefox core dump
+      on my slow iBook). Closes: LP#61538
+    - ProblemReport.read(): Support both bzip2 and zlib compression to be able
+      to read existing reports, too.
+    - Add/Adapt test cases.
   * Move InformationCollector._get_gdb() from apport to apport_utils.py
     report_add_gdb_info(), and add a test case for it.
   * apport_utils.py, report_add_package_info(): Support calling without a
@@ -19,7 +27,7 @@ apport (0.24) edgy; urgency=low
   * apport: Do not intercept KeyboardInterrupt as unhandled exception (only
     useful for command line debugging, though).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 09:22:54 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 10:50:03 +0200
 
 apport (0.23) edgy; urgency=low
 
