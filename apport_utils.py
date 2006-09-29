@@ -328,13 +328,26 @@ def report_add_gdb_info(report):
     if not report.has_key('CoreDump') or not report.has_key('ExecutablePath'):
 	return
 
-    core = report['CoreDump'][0]
-    report['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	'bt full', report['ExecutablePath'], core],
-	stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
-    report['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	'thread apply all bt full', report['ExecutablePath'], core],
-	stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+    
+    unlink_core = False
+    try:
+	if hasattr(report['CoreDump'], 'find'):
+	    (fd, core) = tempfile.mkstemp()
+	    os.write(fd, report['CoreDump'])
+	    os.close(fd)
+	    unlink_core = True
+	else:
+	    core = report['CoreDump'][0]
+
+	report['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	    'bt full', report['ExecutablePath'], core],
+	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+	report['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
+	    'thread apply all bt full', report['ExecutablePath'], core],
+	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+    finally:
+	if unlink_core:
+	    os.unlink(core)
 
 def make_report_path(report, uid=None):
     '''Construct a canonical pathname for the given report.
@@ -674,7 +687,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	self.assert_(pr['InterpreterPath'].find('python') >= 0)
 
     def test_report_add_gdb_info(self):
-	'''Test report_add_gdb_info() behaviour.'''
+	'''Test report_add_gdb_info() behaviour with core dump file reference.'''
 
 	pr = ProblemReport()
 	# should not throw an exception for missing fields
@@ -712,6 +725,55 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 
 	self.assert_(pr.has_key('Stacktrace'))
 	self.assert_(pr.has_key('ThreadStacktrace'))
+	self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
+	self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
+	self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
+
+    def test_report_add_gdb_info_load(self):
+	'''Test report_add_gdb_info() behaviour with inline core dump.'''
+
+	pr = ProblemReport()
+	# should not throw an exception for missing fields
+	report_add_gdb_info(pr)
+
+	# create a test executable
+	test_executable = '/bin/cat'
+	assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
+	pid = os.fork()
+	if pid == 0:
+	    os.setsid()
+	    os.execv(test_executable, [test_executable])
+	    assert False, 'Could not execute ' + test_executable
+
+	# generate a core dump
+	(fd, coredump) = tempfile.mkstemp()
+	try:
+	    os.close(fd)
+	    assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
+		+ coredump, test_executable, str(pid)], stdout=subprocess.PIPE) == 0
+
+	    # verify that it's a proper ELF file
+	    assert subprocess.call(['readelf', '-n', coredump],
+		stdout=subprocess.PIPE) == 0
+
+	    # kill test executable
+	    os.kill(pid, signal.SIGKILL)
+
+	    pr['ExecutablePath'] = test_executable
+	    pr['CoreDump'] = (coredump,)
+	    rep = tempfile.NamedTemporaryFile()
+	    pr.write(rep)
+	    rep.flush()
+	finally:
+	    os.unlink(coredump)
+
+	pr = ProblemReport()
+	pr.load(open(rep.name))
+	report_add_gdb_info(pr)
+
+	self.assert_(pr.has_key('Stacktrace'))
+	self.assert_(pr.has_key('ThreadStacktrace'))
+	self.assert_(pr['CoreDump'].find('') == 0)
 	self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
 	self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
 	self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
