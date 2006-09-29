@@ -174,6 +174,25 @@ class ProblemReport(UserDict.IterableUserDict):
 	    file.write(base64.b64encode(bc.flush()))
 	    file.write('\n')
 
+    def add_to_existing(self, reportfile, keep_times=False):
+	'''Add the fields of this report to an already existing report
+	file.
+	
+	The file will be temporarily chmod'ed to 000 to prevent frontends
+	from picking up a hal-updated report file. If keep_times
+	is True, then the file's atime and mtime restored after updating.'''
+
+	st = os.stat(reportfile)
+	try:
+	    f = open(reportfile, 'a')
+	    os.chmod(reportfile, 0)
+	    self.write(f)
+	    f.close()
+	finally:
+	    if keep_times:
+		os.utime(reportfile, (st.st_atime, st.st_mtime))
+	    os.chmod(reportfile, st.st_mode)
+
     def __setitem__(self, k, v):
 	assert hasattr(k, 'isalnum')
 	assert k.isalnum()
@@ -530,6 +549,68 @@ File: base64
  eJw=
  c3RyxIAMcBAFAG55BXk=
 ''')
+
+    def test_add_to_existing(self):
+	'''Test adding information to an existing report.'''
+
+	# original report
+	pr = ProblemReport()
+	pr['old1'] = '11'
+	pr['old2'] = '22'
+
+	(fd, rep) = tempfile.mkstemp()
+	os.close(fd)
+	pr.write(open(rep, 'w'))
+
+	origstat = os.stat(rep)
+
+	# create a new one and add it
+	pr = ProblemReport()
+	pr.clear()
+	pr['new1'] = '33'
+
+	pr.add_to_existing(rep, keep_times=True)
+
+	# check keep_times
+	newstat = os.stat(rep)
+	self.assertEqual(origstat.st_mode, newstat.st_mode)
+	self.assertEqual(origstat.st_atime, newstat.st_atime)
+	self.assertEqual(origstat.st_mtime, newstat.st_mtime)
+
+	# check report contents
+	newpr = ProblemReport()
+	newpr.load(open(rep))
+	self.assertEqual(newpr['old1'], '11')
+	self.assertEqual(newpr['old2'], '22')
+	self.assertEqual(newpr['new1'], '33')
+
+	# create a another new one and add it, but make sure mtime must be
+	# different
+	time.sleep(1)
+	open(rep).read() # bump atime
+	time.sleep(1)
+
+	pr = ProblemReport()
+	pr.clear()
+	pr['new2'] = '44'
+
+	pr.add_to_existing(rep)
+
+	# check that timestamps have been updates
+	newstat = os.stat(rep)
+	self.assertEqual(origstat.st_mode, newstat.st_mode)
+	self.assertNotEqual(origstat.st_mtime, newstat.st_mtime)
+	self.assertNotEqual(origstat.st_atime, newstat.st_atime)
+
+	# check report contents
+	newpr = ProblemReport()
+	newpr.load(open(rep))
+	self.assertEqual(newpr['old1'], '11')
+	self.assertEqual(newpr['old2'], '22')
+	self.assertEqual(newpr['new1'], '33')
+	self.assertEqual(newpr['new2'], '44')
+
+	os.unlink(rep)
 
 if __name__ == '__main__':
     unittest.main()
