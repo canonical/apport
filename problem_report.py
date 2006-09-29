@@ -122,9 +122,10 @@ class ProblemReport(UserDict.IterableUserDict):
 		else:
 		    binkeys.append(k)
 
-	asckeys.remove('ProblemType')
 	asckeys.sort()
-	asckeys.insert(0, 'ProblemType')
+	if 'ProblemType' in asckeys:
+	    asckeys.remove('ProblemType')
+	    asckeys.insert(0, 'ProblemType')
 	binkeys.sort()
 
 	# write the ASCII keys first
@@ -238,6 +239,53 @@ WhiteSpace:
   foo   bar
  baz
    blip  
+''')
+
+    def test_write_append(self):
+	'''Test write() with appending to an existing file.'''
+
+	pr = ProblemReport(date = 'now!')
+	pr['Simple'] = 'bar'
+	pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  '
+	io = StringIO.StringIO()
+	pr.write(io)
+
+	pr.clear()
+	pr['Extra'] = 'appended'
+	pr.write(io)
+
+	self.assertEqual(io.getvalue(), 
+'''ProblemType: Crash
+Date: now!
+Simple: bar
+WhiteSpace:
+  foo   bar
+ baz
+   blip  
+Extra: appended
+''')
+
+	temp = tempfile.NamedTemporaryFile()
+	temp.write('AB' * 10 + '\0' * 10 + 'Z')
+	temp.flush()
+
+	pr = ProblemReport(date = 'now!')
+	pr['File'] = (temp.name,)
+	io = StringIO.StringIO()
+	pr.write(io)
+	temp.close()
+
+	pr.clear()
+	pr['Extra'] = 'appended'
+	pr.write(io)
+
+	self.assertEqual(io.getvalue(), 
+'''ProblemType: Crash
+Date: now!
+File: base64
+ eJw=
+ c3RyxIAMcBAFAG55BXk=
+Extra: appended
 ''')
 
     def test_load(self):
