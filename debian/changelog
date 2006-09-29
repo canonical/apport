@@ -1,5 +1,7 @@
 apport (0.24) edgy; urgency=low
 
+  The "Need for speed" release -- rrrroarrr!
+
   * apport: Remove _copy_shrink_corefile(): While this has an enormous impact
     on the size of an uncompressed core dump, it only causes a negligible size
     reduction of the bzip2'ed core, but it needs a lot of I/O resources for
