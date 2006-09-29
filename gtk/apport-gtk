@@ -151,8 +151,8 @@ class ApportGTK:
 	# collect additional crash information and check for existing bug
 	# patterns; since this might take a while, create separate threads and
 	# display a progress dialog
-	self.w('progressbar_bugpatterns').set_fraction(0)
-	self.w('window_bugpattern_download').show()
+	self.w('progressbar_information_collection').set_fraction(0)
+	self.w('window_information_collection').show()
 
 	if not self.report.has_key('Package'):
 	    icthread = threading.Thread(target=thread_collect_info,
@@ -162,7 +162,7 @@ class ApportGTK:
 		while gtk.events_pending():
 		    gtk.main_iteration(False)
 		icthread.join(0.1)
-		self.w('progressbar_bugpatterns').pulse()
+		self.w('progressbar_information_collection').pulse()
 
 	bpthread = threading.Thread(target=thread_check_bugpatterns,
 	    args=(self.report, bugpattern_baseurl))
@@ -171,10 +171,10 @@ class ApportGTK:
 	    while gtk.events_pending():
 		gtk.main_iteration(False)
 	    bpthread.join(0.1)
-	    self.w('progressbar_bugpatterns').pulse()
+	    self.w('progressbar_information_collection').pulse()
 	global thread_check_bugpatterns_result
 	url = thread_check_bugpatterns_result
-	self.w('window_bugpattern_download').hide()
+	self.w('window_information_collection').hide()
 
 	# check that we were able to determine package names
 	if not self.report.has_key('SourcePackage') or not self.report.has_key('Package'):

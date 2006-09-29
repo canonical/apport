@@ -35,8 +35,10 @@ apport (0.24) edgy; urgency=low
   * gtk/apport-gtk:
     - Collect gdb/packaging/operating system information when the user chooses
       to file a bug and update the apport report.
+    - Change the 'Downloading bug patterns...' progress dialog to 'Collecting
+      information about the crash...'.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 15:10:58 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 15:23:47 +0200
 
 apport (0.23) edgy; urgency=low
 

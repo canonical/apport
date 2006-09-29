@@ -609,7 +609,7 @@
   </child>
 </widget>
 
-<widget class="GtkWindow" id="window_bugpattern_download">
+<widget class="GtkWindow" id="window_information_collection">
   <property name="title" translatable="yes">Please wait</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ALWAYS</property>
@@ -634,7 +634,9 @@
       <child>
 	<widget class="GtkLabel" id="label21">
 	  <property name="visible">True</property>
-	  <property name="label" translatable="yes">Downloading bug patterns for checking whether the problem already has been reported...</property>
+	  <property name="label" translatable="yes">Collecting information about the crash...
+
+This will take a while, please be patient.</property>
 	  <property name="use_underline">False</property>
 	  <property name="use_markup">False</property>
 	  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -657,7 +659,7 @@
       </child>
 
       <child>
-	<widget class="GtkProgressBar" id="progressbar_bugpatterns">
+	<widget class="GtkProgressBar" id="progressbar_information_collection">
 	  <property name="visible">True</property>
 	  <property name="orientation">GTK_PROGRESS_LEFT_TO_RIGHT</property>
 	  <property name="fraction">0</property>
