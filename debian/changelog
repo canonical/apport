@@ -16,8 +16,10 @@ apport (0.24) edgy; urgency=low
     the report later in the frontend. This also gets rid of the entire
     InformationCollector class, since everything has been moved to
     apport_utils.py now. Closes: LP#62542
+  * apport: Do not intercept KeyboardInterrupt as unhandled exception (only
+    useful for command line debugging, though).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 00:38:15 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 09:22:54 +0200
 
 apport (0.23) edgy; urgency=low
 

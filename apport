@@ -188,7 +188,7 @@ try:
 	os.chmod(report, 0600)
     if reportfile != sys.stderr:
 	error_log('wrote report %s' % report)
-except SystemExit:
+except (SystemExit, KeyboardInterrupt):
     raise
 except Exception, e:
     error_log('Unhandled exception:')
