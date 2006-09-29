@@ -12,6 +12,22 @@ gettext_domain = 'apport'
 
 bugpattern_baseurl = 'http://people.ubuntu.com/~pitti/bugpatterns'
 
+def thread_collect_info(report, reportfile, package):
+    '''Encapsulate call to apport_utils.report_add_*() and update given report,
+    so that this function is suitable for threading.'''
+
+    apport_utils.report_add_gdb_info(report)
+    apport_utils.report_add_package_info(report, package)
+    apport_utils.report_add_os_info(report)
+    f = open(reportfile, 'w')
+    os.chmod (reportfile, 0)
+    report.write(f)
+    f.close()
+    os.chmod (reportfile, 0600)
+    apport_utils.mark_report_seen(reportfile)
+    if report.has_key('CoreDump'):
+	report['CoreDump'] = ''
+
 def thread_check_bugpatterns(report, baseurl):
     '''Encapsulate call to apport_utils.report_search_bug_patterns() and return
     the result in a global variable, so that it is suitable for threading.'''
@@ -53,7 +69,6 @@ class ApportGTK:
 	self.str_heading_reopen = self.w('label_heading_reopen').get_label()
 	self.str_bugreport_title = self.w('window_bugreport').get_title()
 
-	self.cur_source = None
 	self.report = None
 	self.update_report()
 
@@ -86,32 +101,20 @@ class ApportGTK:
 
 	# load problem report
 	self.report = ProblemReport()
-	self.report.load(open(self.reports[0]), binary=False)
+	self.report.load(open(self.reports[0]))
 
-	subject = self.report.get('ExecutablePath', None)
-	if not subject:
-	    subject = self.report['Package'].split()[0]
-
-	# create reduced report if there are any removed fields
-	if self.report.has_removed_fields():
-	    (fd, self.reduced_file) = tempfile.mkstemp('.crash', 
-		subject.replace('/', '_') + '.')
-	    os.close(fd)
-	    self.report.write(open(self.reduced_file, 'w'))
+	if self.report.has_key('Package'):
+	    self.cur_package = self.report['Package'].split()[0]
 	else:
-	    self.reduced_file = None
+	    self.cur_package = apport_utils.find_file_package(self.report.get('ExecutablePath', ''))
 
-	package = self.report['Package'].split()[0]
-	try:
-	    self.cur_source = self.report['SourcePackage']
-	except KeyError:
-	    self.cur_source = package
+	subject = self.report.get('ExecutablePath', self.cur_package)
 
 	# try to get a matching .desktop file
 	if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
 	    desktop_file = self.report['DesktopFile']
 	else:
-	    desktop_file = apport_utils.find_package_desktopfile(package)
+	    desktop_file = apport_utils.find_package_desktopfile(self.cur_package)
 	self.desktop_entry = None
 	if desktop_file:
 	    try:
@@ -124,7 +127,7 @@ class ApportGTK:
 	elif self.report.has_key('ExecutablePath'):
 	    heading = _('Sorry, the program "%s" closed unexpectedly.') % os.path.basename(self.report['ExecutablePath'])
 	else:
-	    heading = _('Sorry, %s closed unexpectedly.') % self.report['Package'].split()[0]
+	    heading = _('Sorry, %s closed unexpectedly.') % self.cur_package
 	if self.desktop_entry and self.report.has_key('ExecutablePath') and \
 	    subprocess.call(['pidof', '-x', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
 	    label = self.w('label_heading_reopen')
@@ -145,10 +148,22 @@ class ApportGTK:
 	
 	mode = self.report.get('BugDisplayMode', 'list')
 
-	# check for existing bug patterns; since this might take a while,
-	# create a separate thread and display a progress dialog
+	# collect additional crash information and check for existing bug
+	# patterns; since this might take a while, create separate threads and
+	# display a progress dialog
 	self.w('progressbar_bugpatterns').set_fraction(0)
 	self.w('window_bugpattern_download').show()
+
+	if not self.report.has_key('Package'):
+	    icthread = threading.Thread(target=thread_collect_info,
+		args=(self.report, self.reports[0], self.cur_package))
+	    icthread.start()
+	    while icthread.isAlive():
+		while gtk.events_pending():
+		    gtk.main_iteration(False)
+		icthread.join(0.1)
+		self.w('progressbar_bugpatterns').pulse()
+
 	bpthread = threading.Thread(target=thread_check_bugpatterns,
 	    args=(self.report, bugpattern_baseurl))
 	bpthread.start()
@@ -161,18 +176,38 @@ class ApportGTK:
 	url = thread_check_bugpatterns_result
 	self.w('window_bugpattern_download').hide()
 
+	# check that we were able to determine package names
+	if not self.report.has_key('SourcePackage') or not self.report.has_key('Package'):
+	    md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+		buttons=gtk.BUTTONS_CLOSE, 
+		message_format=_('Could not determine the package or source package name.'))
+	    md.set_title(_('Invalid crash report'))
+	    md.run()
+	    self.next()
+	    return True
+
+	# create reduced report if there are any removed fields
+	subject = self.report.get('ExecutablePath', self.cur_package)
+	if self.report.has_removed_fields():
+	    (fd, self.reduced_file) = tempfile.mkstemp('.crash', 
+		subject.replace('/', '_') + '.')
+	    os.close(fd)
+	    self.report.write(open(self.reduced_file, 'w'))
+	else:
+	    self.reduced_file = None
+
 	if url:
 	    self.w('label_bug_instructions').set_text(_('This problem was \
 already reported in the bug report displayed in your web browser. Please check \
 if you can add any further information that might be helpful for the \
 developers.'))
 	elif mode == 'file': 
-	    url = 'https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.cur_source
+	    url = 'https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage']
 	    self.w('label_bug_instructions').set_text(_('Please fill out the bug \
 report form in your web browser and give some details about what you did just \
 before the crash.'))
 	else:
-	    url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.cur_source
+	    url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.report['SourcePackage']
 	    self.w('label_bug_instructions').set_text(_('Please check the list \
 in your web browser for an already existing bug report about this problem. If \
 there is none, or you are in doubt, please create a new report.'))

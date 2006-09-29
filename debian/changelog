@@ -32,8 +32,11 @@ apport (0.24) edgy; urgency=low
     update an already existing problem report with new data. Add test case.
   * apport_utils.py, mark_report_seen(): Use os.utime() instead of
     open()/read() and a timeout for simpler and faster operation.
+  * gtk/apport-gtk:
+    - Collect gdb/packaging/operating system information when the user chooses
+      to file a bug and update the apport report.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 14:54:05 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Sep 2006 15:10:58 +0200
 
 apport (0.23) edgy; urgency=low
 
