@@ -53,6 +53,7 @@ def create_test_process():
 def check_crash(expect_core=True, sig=signal.SIGSEGV):
     global mode # hack to avoid passing the mode every time
 
+    assert not os.path.exists('core'), 'no core dump in current directory'
     pid = create_test_process()
     os.kill(pid, sig)
     result = os.waitpid(pid, 0)[1]
@@ -66,6 +67,7 @@ def check_crash(expect_core=True, sig=signal.SIGSEGV):
     assert os.WTERMSIG(result) == sig, 'test process died due to proper signal'
     assert subprocess.call(['pidof', '-x', 'apport']) == 1, 'no running apport processes'
     assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
+    assert not os.path.exists('core'), 'does not leave core file behind'
 
 def check_safe_environment(env):
     allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
@@ -216,9 +218,11 @@ try:
 
     print '* Check that core dump works for non-writable cwds'
     old_cwd = os.getcwd()
-    os.chdir('/')
-    check_crash(False) # no core dump expected while this test is EXFAIL
-    os.chdir(old_cwd)
+    try:
+	os.chdir('/')
+	check_crash(False) # no core dump expected while this test is EXFAIL
+    finally:
+	os.chdir(old_cwd)
     pr = problem_report.ProblemReport()
     pr.load(open(report))
     if not set(required_fields).issubset(set(pr.keys())):

@@ -4,8 +4,10 @@ apport (0.25) UNRELEASED; urgency=low
   * apport_utils.py, report_add_gdb_info(): Add register dump and disassembly
     of the last 32 bytes, they might be useful to see what's going on
     sometimes. Thanks to Kees Cook for the idea and the patch.
+  * test-apport, check_crash(): Verify that a crash does not leave a core file
+    behind. (Test for LP#62972)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 13:12:53 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 13:16:52 +0200
 
 apport (0.24) edgy; urgency=low
 
