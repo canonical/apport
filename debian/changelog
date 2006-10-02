@@ -4,8 +4,10 @@ apport (0.26) UNRELEASED; urgency=low
     - Move option parsing to separate function.
     - Use apport_utils' report_add_gdb_info() instead of duplicating the gdb
       code.
+  * apport_utils.py, report_add_gdb_info(): Add optional parameter 'debugdir'
+    to specify an alternate debug file symbol root directory.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 21:16:01 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 23:12:28 +0200
 
 apport (0.25) edgy; urgency=low
 

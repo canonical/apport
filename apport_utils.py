@@ -302,19 +302,21 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
        return 'Error: command %s failed with exit code %i: %s' % (
            str(command), sp.returncode, out)
 
-def report_add_gdb_info(report):
+def report_add_gdb_info(report, debugdir=None):
     '''Add information from gdb to the given report.
 
     This requires that the report has a CoreDump (file ref) and an
     ExecutablePath. This adds the following fields:
     - Stacktrace: Output of gdb's 'bt full' command
     - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
+
+    The optional debugdir can specify an alternative debug symbol root
+    directory.
     '''
 
     if not report.has_key('CoreDump') or not report.has_key('ExecutablePath'):
 	return
 
-    
     unlink_core = False
     try:
 	if hasattr(report['CoreDump'], 'find'):
@@ -331,9 +333,14 @@ def report_add_gdb_info(report):
 	               'Stacktrace': 'bt full',
 	               'ThreadStacktrace': 'thread apply all bt full',
 		      }
-	for field, command in gdb_reports.iteritems():
-	    report[field] = _command_output(['gdb', '--batch', '--ex',
-		command, report['ExecutablePath'], core],
+
+	command = ['gdb', '--batch']
+	if debugdir:
+	    command += ['--ex', 'set debug-file-directory ' + debugdir]
+	command += ['--ex', 'file ' + report['ExecutablePath'], '--ex',
+	'core-file ' + core]
+	for field, gdbcommand in gdb_reports.iteritems():
+	    report[field] = _command_output(command + ['--ex', gdbcommand],
 		stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
     finally:
 	if unlink_core:
