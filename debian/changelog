@@ -6,8 +6,11 @@ apport (0.25) UNRELEASED; urgency=low
     sometimes. Thanks to Kees Cook for the idea and the patch.
   * test-apport, check_crash(): Verify that a crash does not leave a core file
     behind. (Test for LP#62972)
+  * preloadlib/libapport.c: Do not unlink the core file after calling apport,
+    but set REMOVE_CORE=1 environment instead. This matches the current
+    kernel behaviour.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 13:16:52 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 14:06:03 +0200
 
 apport (0.24) edgy; urgency=low
 

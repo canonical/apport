@@ -65,8 +65,10 @@ void sighandler( int signum )
     }
 
     /* only pass the core file if gcore succeeded */
-    if( WIFEXITED( status ) && WEXITSTATUS( status ) == 0 )
+    if( WIFEXITED( status ) && WEXITSTATUS( status ) == 0 ) {
 	core = corepath;
+	setenv("REMOVE_CORE", "1", 1);
+    }
 
     pid = fork();
     if( pid == 0 ) {
@@ -84,7 +86,6 @@ void sighandler( int signum )
     }
 
 out:
-    unlink( corepath );
     raise( signum );
 }
 
