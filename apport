@@ -104,7 +104,7 @@ try:
 
     # drop our process priority level to not disturb userspace so much
     try:
-	subprocess.call(['renice', '5', str(os.getpid())], stdout=subprocess.PIPE)
+	subprocess.call(['renice', '10', str(os.getpid())], stdout=subprocess.PIPE)
     except OSError:
 	pass # *shrug*, at least we tried to be nice
 

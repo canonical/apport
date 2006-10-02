@@ -11,8 +11,9 @@ apport (0.25) UNRELEASED; urgency=low
     kernel behaviour.
   * apport: Register an atexit handler as early as possible for unlinking the
     core dump if REMOVE_CORE environment is set. Closes: LP#62972
+  * apport: Set nice level 10 instead of 5. Closes: LP#63099
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 14:07:38 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 14:21:53 +0200
 
 apport (0.24) edgy; urgency=low
 
