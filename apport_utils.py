@@ -325,12 +325,16 @@ def report_add_gdb_info(report):
 	else:
 	    core = report['CoreDump'][0]
 
-	report['Stacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'bt full', report['ExecutablePath'], core],
-	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
-	report['ThreadStacktrace'] = _command_output(['gdb', '--batch', '--ex',
-	    'thread apply all bt full', report['ExecutablePath'], core],
-	    stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+	gdb_reports = {
+		       'Registers': 'info registers',
+	               'Disassembly': 'disassemble $pc $pc+32',
+	               'Stacktrace': 'bt full',
+	               'ThreadStacktrace': 'thread apply all bt full',
+		      }
+	for field, command in gdb_reports.iteritems():
+	    report[field] = _command_output(['gdb', '--batch', '--ex',
+		command, report['ExecutablePath'], core],
+		stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
     finally:
 	if unlink_core:
 	    os.unlink(core)
