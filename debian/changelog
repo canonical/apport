@@ -9,8 +9,10 @@ apport (0.25) UNRELEASED; urgency=low
   * preloadlib/libapport.c: Do not unlink the core file after calling apport,
     but set REMOVE_CORE=1 environment instead. This matches the current
     kernel behaviour.
+  * apport: Register an atexit handler as early as possible for unlinking the
+    core dump if REMOVE_CORE environment is set. Closes: LP#62972
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 14:06:03 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 14:07:38 +0200
 
 apport (0.24) edgy; urgency=low
 
