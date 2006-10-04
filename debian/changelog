@@ -6,8 +6,13 @@ apport (0.26) UNRELEASED; urgency=low
       code.
   * apport_utils.py, report_add_gdb_info(): Add optional parameter 'debugdir'
     to specify an alternate debug file symbol root directory.
+  * apport-retrace: Add option -d/--download-debug to automatically download
+    available ddebs, create a temporary debug symbol directory from already
+    installed and downloaded ddebs, and point gdb to use that. Also add option
+    -C/--cache-dir to specify a permanent ddeb cache directory (by default, a
+    temporary one is used). Update the manpage accordingly.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Oct 2006 23:12:28 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Oct 2006 15:58:50 +0200
 
 apport (0.25) edgy; urgency=low
 

@@ -43,6 +43,22 @@ the report.
 Write modified report to given file instead of changing the original
 report.
 
+.TP
+.B \-d, \-\-download\-debug
+Use apt to automatically download missing debug symbol packages
+(.ddebs) and use them for creating a better stack trace. Please note
+that this does not actually install these ddebs, thus no special
+privileges are required. However, your
+.B /etc/apt/sources.list
+must contain an appropriate apt source for this to work.
+
+.TP
+.B \-C, \-\-cache\-dir \fIDIRECTORY
+If using option 
+.B\-\-download\-debug
+to download ddebs, use the given directory as package cache. If not
+given, a temporary directory is used.
+
 .SH AUTHOR
 .B apport
 and the accompanying tools are developed by Martin Pitt
