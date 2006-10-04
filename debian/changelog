@@ -11,8 +11,11 @@ apport (0.26) UNRELEASED; urgency=low
     installed and downloaded ddebs, and point gdb to use that. Also add option
     -C/--cache-dir to specify a permanent ddeb cache directory (by default, a
     temporary one is used). Update the manpage accordingly.
+  * apport-retrace: Make the best out of a report without packaging
+    information (which can happen if the user does not click on 'report bug'
+    in apport-gtk).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Oct 2006 15:58:50 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Oct 2006 16:40:33 +0200
 
 apport (0.25) edgy; urgency=low
 

@@ -164,16 +164,17 @@ report.load(open(reportfile))
 if not report.has_key('CoreDump'):
     print >> sys.stderr, 'report file does not contain a core dump'
     sys.exit(1)
+
+assert os.path.exists(report['ExecutablePath'])
+
 if not report.has_key('Package'):
-    print >> sys.stderr, 'report file does not have Package attribute'
-    sys.exit(1)
+    print >> sys.stderr, 'WARNING: report file does not have Package attribute; adding it now, but cannot verify version'
+    apport_utils.report_add_package_info(report)
 
 package = report['Package'].split()[0]
 if subprocess.call(['dpkg', '-s', package], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0:
     print >> sys.stderr, 'crash is in package %s which is not installed' % package
     sys.exit(1)
-
-assert os.path.exists(report['ExecutablePath'])
 
 debug_dir = '/usr/lib/debug'
 remove_debug_dir = False
