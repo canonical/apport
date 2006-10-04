@@ -160,7 +160,7 @@ def _transitive_dependencies(package, depends_set, cache):
 def report_add_package_info(report, package = None):
     '''Add packaging information to the given report.
 
-    If package is not given, the report must have ExecutableName.
+    If package is not given, the report must have ExecutablePath.
     This adds:
     - Package: package name and installed version
     - SourcePackage: source package name
