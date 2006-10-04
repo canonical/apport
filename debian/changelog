@@ -14,8 +14,14 @@ apport (0.26) UNRELEASED; urgency=low
   * apport-retrace: Make the best out of a report without packaging
     information (which can happen if the user does not click on 'report bug'
     in apport-gtk).
+  * apport_utils, report_add_proc_info():
+    - Move heuristics for detecting interpreted scripts to a separate function
+      to be able to provide separate test cases for it. Check a few more
+      special cases for mono programs.
+    - Make interpreter heuristics even scarier to detect some more mono corner
+      cases (like banshee and beagled-helper). Closes: LP#58859
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Oct 2006 16:40:33 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Oct 2006 19:10:47 +0200
 
 apport (0.25) edgy; urgency=low
 

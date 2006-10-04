@@ -216,6 +216,45 @@ def _read_file(f):
     except (OSError, IOError), e:
 	return 'Error: ' + str(e)
 
+def _report_proc_info_check_interpreted(report):
+    '''Check ExecutablePath, ProcStatus and ProcCmdline if the process is
+    interpreted.'''
+
+    if not report.has_key('ExecutablePath'):
+	return
+
+    # first, determine process name
+    name = None
+    for l in report['ProcStatus'].splitlines():
+	try:
+	    (k, v) = l.split('\t', 1)
+	except ValueError:
+	    continue
+	if k == 'Name:':
+	    name = v
+	    break
+    if not name:
+	return
+    if name == os.path.basename(report['ExecutablePath']):
+	return
+
+    cmdargs = report['ProcCmdline'].split('\0', 2)
+    bindirs = ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']
+
+    argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
+    if argvexes and os.path.basename(cmdargs[0]) == name:
+	report['InterpreterPath'] = report['ExecutablePath']
+	report['ExecutablePath'] = argvexes[0]
+	return
+
+    if len(cmdargs) >= 2:
+	# ensure that cmdargs[1] is an absolute path 
+	if cmdargs[1].startswith('.') and report.has_key('ProcCwd'):
+	    cmdargs[1] = os.path.join(report['ProcCwd'], cmdargs[1])
+	if os.path.basename(cmdargs[0]) != name and os.access(cmdargs[1], os.R_OK):
+	    report['InterpreterPath'] = report['ExecutablePath']
+	    report['ExecutablePath'] = os.path.realpath(cmdargs[1])
+
 def report_add_proc_info(report, pid=None, extraenv=[]):
     '''Add /proc/pid information to the given report.
 
@@ -244,6 +283,7 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
 
     try:
 	report['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+	report['ProcCwd'] = os.readlink('/proc/' + pid + '/cwd')
     except OSError:
 	pass
     report['ProcEnviron'] = ''
@@ -257,31 +297,14 @@ def report_add_proc_info(report, pid=None, extraenv=[]):
 		    report['ProcEnviron'] += '\n'
 		report['ProcEnviron'] += l
     report['ProcStatus'] = _read_file('/proc/' + pid + '/status')
-    report['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0').replace('\\', '\\\\').replace(' ', '\\ ').replace('\0', ' ')
+    report['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
     report['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
 
     # check if we have an interpreted program
-    # first, determine process name
-    name = None
-    for l in report['ProcStatus'].splitlines():
-	try:
-	    (k, v) = l.split('\t', 1)
-	except ValueError:
-	    continue
-	if k == 'Name:':
-	    name = v
-	    break
-    if not name:
-	return
+    _report_proc_info_check_interpreted(report)
 
-    cmdargs = _read_file('/proc/' + pid + '/cmdline').split('\0', 2)
-    if len(cmdargs) >= 2:
-	# ensure that cmdargs[1] is an absolute path 
-	if cmdargs[1].startswith('.'):
-	    cmdargs[1] = os.path.join(os.readlink('/proc/' + pid + '/cwd'), cmdargs[1])
-	if os.path.basename(cmdargs[0]) != name and os.access(cmdargs[1], os.R_OK):
-	    report['InterpreterPath'] = report['ExecutablePath']
-	    report['ExecutablePath'] = os.path.realpath(cmdargs[1])
+    # make ProcCmdline ASCII friendly, do shell escaping
+    report['ProcCmdline'] = report['ProcCmdline'].replace('\\', '\\\\').replace(' ', '\\ ').replace('\0', ' ')
 
 def _command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout, or return
@@ -682,6 +705,65 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	os.rmdir('testsuite-unpack')
 	self.assertEqual(pr['ExecutablePath'], os.path.realpath('./apport-unpack'))
 	self.assert_(pr['InterpreterPath'].find('python') >= 0)
+
+    def test_report_proc_info_check_interpreted(self):
+	'''Test _report_proc_info_check_interpreted() behaviour.'''
+	
+	# standard ELF binary
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/gedit'
+	pr['ProcStatus'] = 'Name:\tgedit'
+	pr['ProcCmdline'] = 'gedit\0/tmp/foo.txt'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/usr/bin/gedit')
+	self.failIf(pr.has_key('InterpreterPath'))
+
+	# bogus argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/bin/dash'
+	pr['ProcStatus'] = 'Name:\tznonexisting'
+	pr['ProcCmdline'] = 'nonexisting\0/foo'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/bin/dash')
+	self.failIf(pr.has_key('InterpreterPath'))
+
+	# standard sh script
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/bin/dash'
+	pr['ProcStatus'] = 'Name:\tzgrep'
+	pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+	self.assertEqual(pr['InterpreterPath'], '/bin/dash')
+
+	# standard sh script (this is also the common mono scheme)
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/bin/dash'
+	pr['ProcStatus'] = 'Name:\tzgrep'
+	pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+	self.assertEqual(pr['InterpreterPath'], '/bin/dash')
+
+	# special case mono scheme: beagled-helper (use zgrep to make the test
+	# suite work if mono or beagle are not installed)
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/mono'
+	pr['ProcStatus'] = 'Name:\tzgrep'
+	pr['ProcCmdline'] = 'zgrep\0--debug\0/bin/zgrep'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+	self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
+
+	# special case mono scheme: banshee (use zgrep to make the test
+	# suite work if mono or beagle are not installed)
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/mono'
+	pr['ProcStatus'] = 'Name:\tzgrep'
+	pr['ProcCmdline'] = 'zgrep\0/bin/zgrep'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+	self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
 
     def test_report_add_gdb_info(self):
 	'''Test report_add_gdb_info() behaviour with core dump file reference.'''
