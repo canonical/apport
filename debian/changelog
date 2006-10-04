@@ -1,6 +1,6 @@
 apport (0.26) UNRELEASED; urgency=low
 
-  * apport-retrace: Clean up code a bit: 
+  * apport-retrace: Clean up code a bit:
     - Move option parsing to separate function.
     - Use apport_utils' report_add_gdb_info() instead of duplicating the gdb
       code.
