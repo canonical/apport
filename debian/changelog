@@ -3,8 +3,11 @@ apport (0.27) UNRELEASED; urgency=low
   * apport: Ignore SIGABRT for now; it's usually signalled from abort() or
     assertion failures and we only get reports with unusable stack traces for
     it (see #61938).
+  * gtk/apport-gtk: If gnome-open is not available, fall back to x-www-browser
+    instead of using webbrowser.py, to respect default browser in XFCE.
+    Closes: LP#64209
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  6 Oct 2006 16:39:54 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  6 Oct 2006 16:48:31 +0200
 
 apport (0.26) edgy; urgency=low
 
