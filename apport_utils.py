@@ -58,12 +58,12 @@ def find_file_package(file):
     if file.startswith('/usr/local/') or not whitelist_match:
 	return None
 
-    fname = os.path.splitext(os.path.basename(file))[0]
+    fname = os.path.splitext(os.path.basename(file))[0].lower()
 
     all_lists = []
     likely_lists = []
     for f in glob.glob('/var/lib/dpkg/info/*.list'):
-	p = os.path.splitext(os.path.basename(f))[0]
+	p = os.path.splitext(os.path.basename(f))[0].lower()
 	if fname.find(p) >= 0 or p.find(fname) >= 0:
 	    likely_lists.append(f)
 	else:

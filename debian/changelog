@@ -8,8 +8,11 @@ apport (0.27) UNRELEASED; urgency=low
     Closes: LP#64209
   * apport: use os.nice() instead of executing 'renice'. Thanks to Benoit
     Boissinot for noticing.
+  * apport_utils.py, find_file_package(): Lower() both strings in the speedup
+    heuristics to match e. g. /usr/bin/Xorg -> xserver-xorg. Thanks to Kees
+    Cook!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  6 Oct 2006 16:57:17 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  6 Oct 2006 17:01:14 +0200
 
 apport (0.26) edgy; urgency=low
 
