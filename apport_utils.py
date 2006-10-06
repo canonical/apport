@@ -188,6 +188,9 @@ def report_add_package_info(report, package = None):
 	    cur_ver = cache[dep]._pkg.CurrentVer
 	except (KeyError, AttributeError):
 	    continue
+	if not cur_ver:
+	    # can happen with uninstalled alternate dependencies
+	    continue
 	if report['Dependencies']:
 	    report['Dependencies'] += '\n'
 	report['Dependencies'] += '%s %s' % (dep, cur_ver.VerStr)

@@ -11,8 +11,11 @@ apport (0.27) UNRELEASED; urgency=low
   * apport_utils.py, find_file_package(): Lower() both strings in the speedup
     heuristics to match e. g. /usr/bin/Xorg -> xserver-xorg. Thanks to Kees
     Cook!
+  * apport_utils.py, report_add_package_info(): Do not crash if we encounter a
+    'None' current version, which can happen with uninstalled alternative
+    dependencies. Thanks to Kees Cook for tracking this down!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  6 Oct 2006 17:01:14 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  6 Oct 2006 17:15:08 +0200
 
 apport (0.26) edgy; urgency=low
 
