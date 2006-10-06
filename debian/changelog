@@ -1,4 +1,4 @@
-apport (0.27) UNRELEASED; urgency=low
+apport (0.27) edgy; urgency=low
 
   * apport: Ignore SIGABRT for now; it's usually signalled from abort() or
     assertion failures and we only get reports with unusable stack traces for
