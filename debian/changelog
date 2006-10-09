@@ -1,3 +1,12 @@
+apport (0.28) UNRELEASED; urgency=low
+
+  "No core - ignore!"
+
+  * apport: Do not create a report for crashes which we do not get a core dump
+    for. The reports are useless and only clutter our bug tracker.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  9 Oct 2006 15:22:32 +0200
+
 apport (0.27) edgy; urgency=low
 
   * apport: Ignore SIGABRT for now; it's usually signalled from abort() or

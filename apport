@@ -117,9 +117,13 @@ try:
     # if path is relative, prepend cwd of crashed process
     if coredump and len(coredump) > 0 and coredump[0] != '/':
 	coredump = os.path.join(os.readlink('/proc/' + pid + '/cwd'), coredump)
-
     if coredump and not os.path.exists(coredump):
 	coredump = None
+
+    # abort if we do not have a core dump to avoid useless reports
+    if not coredump:
+	error_log('called with: ' + str(sys.argv) + ', but no core dump available, ignoring')
+	sys.exit(1)
 
     if coredump and os.environ.get('REMOVE_CORE', False):
 	atexit.register(cleanup, coredump)
