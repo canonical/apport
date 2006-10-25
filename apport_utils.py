@@ -59,7 +59,7 @@ def find_file_package(file):
 	return None
 
     # check if the file is a diversion
-    dpkg = subprocess.Popen(['dpkg-divert', '--list', file],
+    dpkg = subprocess.Popen(['/usr/sbin/dpkg-divert', '--list', file],
 	stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out = dpkg.communicate()[0]
     if dpkg.returncode == 0 and out:
