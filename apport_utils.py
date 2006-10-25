@@ -58,6 +58,13 @@ def find_file_package(file):
     if file.startswith('/usr/local/') or not whitelist_match:
 	return None
 
+    # check if the file is a diversion
+    dpkg = subprocess.Popen(['dpkg-divert', '--list', file],
+	stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = dpkg.communicate()[0]
+    if dpkg.returncode == 0 and out:
+	return out.split()[-1]
+
     fname = os.path.splitext(os.path.basename(file))[0].lower()
 
     all_lists = []
@@ -586,6 +593,21 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	self.assertEqual(find_file_package('/bin/bash'), 'bash')
 	self.assertEqual(find_file_package('/bin/cat'), 'coreutils')
 	self.assertEqual(find_file_package('/nonexisting'), None)
+
+    def test_find_file_package_diversion(self):
+	'''Test find_file_package() behaviour for a diverted file.'''
+
+	# pick first diversion we have
+	p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',
+	    shell=True, stdout=subprocess.PIPE)
+	out = p.communicate()[0]
+	assert p.returncode == 0
+	assert out
+	fields = out.split()
+	file = fields[2]
+	pkg = fields[-1]
+
+	self.assertEqual(find_file_package(file), pkg)
 
     def test_report_add_package_info(self):
 	'''Test report_add_package_info() behaviour.'''

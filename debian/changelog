@@ -2,8 +2,13 @@ apport (0.29) UNRELEASED; urgency=low
 
   * apport-retrace: Do not crash if a linked library is not a dependency.
     Closes: LP#65914
+  * apport_utils.py:
+    - Add test_find_file_package_diversion() selftest to check diversion
+      handling.
+    - find_file_package(): Check for and respect diversions.
+    - Closes: LP#65917
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Oct 2006 10:46:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Oct 2006 11:17:55 +0200
 
 apport (0.28) edgy; urgency=low
 
