@@ -144,7 +144,8 @@ def prepare_debugdir(report, cache_dir):
 	    os.symlink(libdbg, ddir + lib)
 	else:
 	    pkg = apport_utils.find_file_package(lib)
-	    needed_deps.add((pkg, dependency_versions[pkg]))
+	    if pkg and pkg in dependency_versions:
+		needed_deps.add((pkg, dependency_versions[pkg]))
 
     # download and install the rest
     install_ddebs(needed_deps, ddir, cache_dir)
