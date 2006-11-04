@@ -263,7 +263,10 @@ try:
     finally:
 	os.chdir(old_cwd)
     pr = problem_report.ProblemReport()
-    pr.load(open(report))
+    if os.path.exists(report):
+	pr.load(open(report))
+    else:
+	print >> sys.stderr, 'no report created (EXFAIL)'
     if not set(required_fields).issubset(set(pr.keys())):
 	print >> sys.stderr, 'report does not have required fields (EXFAIL)'
 
