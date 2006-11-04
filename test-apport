@@ -25,7 +25,7 @@ def run(argv, msg=None, stdout=False):
 	result = subprocess.call(argv)
     else:
 	result = subprocess.call(argv, stdout=subprocess.PIPE)
-    assert result == 0, msg
+    assert result == 0, msg + ' [cwd: %s]' % os.getcwd()
 
 
 def clean_preload_lib():
@@ -186,12 +186,14 @@ try:
 
     # relative path case
     old_cwd = os.getcwd()
-    os.chdir(os.path.dirname(test_executable))
-    test_executable = './' + os.path.basename(test_executable)
-    check_crash()
-    os.unlink(test_executable)
-    test_executable = orig_test_executable
-    os.chdir(old_cwd)
+    try:
+	os.chdir(os.path.dirname(test_executable))
+	test_executable = './' + os.path.basename(test_executable)
+	check_crash()
+	os.unlink(test_executable)
+	test_executable = orig_test_executable
+    finally:
+	os.chdir(old_cwd)
     assert apport_utils.get_all_reports() == [], \
 	'no reports present after a non-packaged crashed script with relative path(present: %s)' % \
 	str(apport_utils.get_all_reports())

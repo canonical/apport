@@ -9,8 +9,9 @@ apport (0.29) UNRELEASED; urgency=low
     - Closes: LP#65917
   * debian/apport.init, test-apport, use-local: Adapt to 'crashdump-helper' ->
     'crashdump' sysctl renaming in 2.6.19.
+  * test-apport: Restore cwd even when failing a test.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 09:02:30 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 09:13:24 -0800
 
 apport (0.28) edgy; urgency=low
 
