@@ -30,8 +30,10 @@ apport (0.29) UNRELEASED; urgency=low
     apport, and clean it up.
   * apport-retrace: Add new mode -g/--gdb which starts an interactive gdb
     session with the report's core dump. Add this to man/apport-retrace.1, too.
+  * apport-retrace: If -c is given, completely remove the CoreDump field from
+    the report instead of setting it to 'removed'.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:53:23 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:55:43 -0800
 
 apport (0.28) edgy; urgency=low
 

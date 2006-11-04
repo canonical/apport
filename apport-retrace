@@ -212,7 +212,7 @@ if remove_cache_dir:
 modified = False
 
 if options.removecore:
-    report['CoreDump'] = 'removed'
+    del report['CoreDump']
     modified = True
 
 if options.stdout:
