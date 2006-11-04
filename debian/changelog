@@ -13,8 +13,11 @@ apport (0.29) UNRELEASED; urgency=low
   * problem_report.py, ProblemReport.write(): Support file-like objects as
     argument of file references to support direct reading from pipes. Add test
     case test_write_fileobj().
+  * apport: Support '-' as core file argument, in which case the core will be
+    read from stdin. This paves the way for using Linux 2.6.19's 'pipe
+    core_pattern' feature.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 09:46:37 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 10:03:32 -0800
 
 apport (0.28) edgy; urgency=low
 
