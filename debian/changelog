@@ -25,8 +25,11 @@ apport (0.29) UNRELEASED; urgency=low
   * apport_utils.py, find_file_package(): Terminate fgrep options with '--' to
     avoid problems with funny file names. Thanks to Kees Cook for spotting
     this!
+  * test-apport: Automatically detect whether ULIMIT_CORE is nonzero, and
+    adapt tests accordingly: check that core still exists after invoking
+    apport, and clean it up.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:17:59 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:34:07 -0800
 
 apport (0.28) edgy; urgency=low
 
