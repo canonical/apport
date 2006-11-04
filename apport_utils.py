@@ -77,12 +77,12 @@ def find_file_package(file):
 	    all_lists.append(f)
 
     # first check the likely packages
-    p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
+    p = subprocess.Popen(['fgrep', '-lxm', '1', '--', file] +
 	likely_lists, stdin=subprocess.PIPE,
 	stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
     out = p.communicate()[0]
     if p.returncode != 0:
-	p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
+	p = subprocess.Popen(['fgrep', '-lxm', '1', '--', file] +
 	    all_lists, stdin=subprocess.PIPE,
 	    stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
 	out = p.communicate()[0]

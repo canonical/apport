@@ -22,8 +22,11 @@ apport (0.29) UNRELEASED; urgency=low
     tests, so that normal users cannot verify the existence of a given
     inaccessible file. Add comprehensive tests to apport_utils' test suite and
     test-apport. Thanks to Kees Cook for this patch!
+  * apport_utils.py, find_file_package(): Terminate fgrep options with '--' to
+    avoid problems with funny file names. Thanks to Kees Cook for spotting
+    this!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:13:51 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:17:59 -0800
 
 apport (0.28) edgy; urgency=low
 
