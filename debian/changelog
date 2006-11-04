@@ -18,8 +18,12 @@ apport (0.29) UNRELEASED; urgency=low
     core_pattern' feature. Bump python-problem-report dependency to >= 0.29
     for this.
   * apport: Confine permissions of log file to root:adm 0640, just in case.
+  * apport: Temporarily drop real u/gid to target user for the os.access()
+    tests, so that normal users cannot verify the existence of a given
+    inaccessible file. Add comprehensive tests to apport_utils' test suite and
+    test-apport. Thanks to Kees Cook for this patch!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 10:51:46 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:13:51 -0800
 
 apport (0.28) edgy; urgency=low
 

@@ -29,7 +29,7 @@ def cleanup(coredump):
 
     os.unlink(coredump)
 
-def drop_privileges(pid):
+def drop_privileges(pid, partial=False):
     '''Change user and group to match the given target process.'''
 
     stat = None
@@ -38,24 +38,38 @@ def drop_privileges(pid):
     except OSError:
 	raise ValueError, 'Invalid process ID'
 
-    os.setgid(stat.st_gid)
-    os.setuid(stat.st_uid)
+    if partial:
+	effective_gid = 0
+	effective_uid = 0
+    else:
+	effective_gid = stat.st_gid
+	effective_uid = stat.st_uid
+
+    os.setregid(stat.st_gid,effective_gid)
+    os.setreuid(stat.st_uid,effective_uid)
+    assert os.getegid() == effective_gid
+    assert os.getgid() == stat.st_gid
+    assert os.geteuid() == effective_uid
     assert os.getuid() == stat.st_uid
 
 def init_error_log():
     '''Open a suitable error log if sys.stderr is not a tty.'''
 
     if not os.isatty(sys.stderr.fileno()):
+	log = os.environ.get('APPORT_LOG_FILE', '/var/log/apport.log')
+	mask = os.umask(0077)
 	try:
-	    f = open('/var/log/apport.log', 'a')
-	    os.chmod('/var/log/apport.log', 0640)
+	    f = open(log, 'a')
+	    os.chmod(log, 0640)
 	    try:
 		admgid = grp.getgrnam('adm')[2]
-		os.chown('/var/log/apport.log', -1, admgid)
+		os.chown(log, -1, admgid)
 	    except KeyError:
 		pass # if group adm doesn't exist, just leave it as root
 	except IOError: # on a permission error, don't touch stderr
+	    os.umask(mask)
 	    return
+	os.umask(mask)
 	os.dup2(f.fileno(), sys.stderr.fileno())
 	os.dup2(f.fileno(), sys.stdout.fileno())
 	f.close()
@@ -113,6 +127,9 @@ try:
 	os.nice(10)
     except OSError:
 	pass # *shrug*, we tried
+
+    # Partially drop privs to gain proper os.access() checks
+    drop_privileges(pid,True)
 
     # try to find the core dump file
     if len(sys.argv) == 4:
@@ -201,6 +218,7 @@ try:
 	report = None
 	reportfile = sys.stderr
 
+    # Totally drop privs before writing out the reportfile.
     drop_privileges(pid)
 
     if crash_counter > 0:

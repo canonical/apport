@@ -790,6 +790,42 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
 	self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
 
+	# fail on files we shouldn't have access to when name!=argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/python'
+	pr['ProcStatus'] = 'Name:\tznonexisting'
+	pr['ProcCmdline'] = 'python\0/etc/shadow'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+	self.failIf(pr.has_key('InterpreterPath'))
+
+	# succeed on files we should have access to when name!=argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/python'
+	pr['ProcStatus'] = 'Name:\tznonexisting'
+	pr['ProcCmdline'] = 'python\0/etc/passwd'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+	self.assertEqual(pr['ExecutablePath'], '/etc/passwd')
+
+	# fail on files we shouldn't have access to when name==argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/python'
+	pr['ProcStatus'] = 'Name:\tshadow'
+	pr['ProcCmdline'] = '../etc/shadow'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+	self.failIf(pr.has_key('InterpreterPath'))
+
+	# succeed on files we should have access to when name==argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/python'
+	pr['ProcStatus'] = 'Name:\tpasswd'
+	pr['ProcCmdline'] = '../etc/passwd'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+	self.assertEqual(pr['ExecutablePath'], '/bin/../etc/passwd')
+
     def test_report_add_gdb_info(self):
 	'''Test report_add_gdb_info() behaviour with core dump file reference.'''
 
