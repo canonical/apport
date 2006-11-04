@@ -180,12 +180,12 @@ try:
     print '* Check that existence of user-inaccessible files does not leak'
     orig_test_executable = test_executable
     dir = tempfile.mkdtemp()
-    test_executable = dir+"/python" # set name to existing tool != self
-    exec_file = open(test_executable,'a')
+    test_executable = os.path.join(dir, 'python') # set name to existing tool != self
+    exec_file = open(test_executable, 'w')
     exec_file.write('#!/usr/bin/perl\nsystem("mv $0 $0.exe");\nsystem("ln -sf /etc/shadow $0");\n$0="..$0";\nsleep(10);\n')
     exec_file.close()
     os.chmod(test_executable, 0755)
-    check_crash(check_running=False,sleep=2)
+    check_crash(check_running=False, sleep=2)
     os.unlink(test_executable)
     os.unlink(test_executable+".exe")
     os.rmdir(dir)
@@ -195,7 +195,7 @@ try:
     pr.load(open(leak))
     # On a leak, no report is created since the executable path will be replaced
     # by the symlink path, and it doesn't belong to any package.
-    assert pr['ExecutablePath'] == "/usr/bin/perl"
+    assert pr['ExecutablePath'] == '/usr/bin/perl'
     assert not pr.has_key('InterpreterPath')
     apport_utils.delete_report(leak)
     test_executable = orig_test_executable
