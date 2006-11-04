@@ -4,7 +4,7 @@ import tempfile, shutil, os.path, os, subprocess, signal, time, stat, sys
 
 import problem_report
 
-crashdump_helper_sysctl = '/proc/sys/kernel/crashdump-helper'
+crashdump_helper_sysctl = '/proc/sys/kernel/crashdump'
 test_executable = '/bin/cat'
 test_package = 'coreutils'
 test_source = 'coreutils'

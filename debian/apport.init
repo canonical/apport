@@ -20,6 +20,7 @@ PROCFILE=/proc/sys/kernel/crashdump-helper
 [ -x "$AGENT" ] || exit 0
 
 # Exit if we do not use a kernel which provides the hook
+[ -e "$PROCFILE" ] || PROCFILE=/proc/sys/kernel/crashdump
 [ -e "$PROCFILE" ] || exit 0
 
 # read default file
