@@ -32,6 +32,9 @@ def parse_options():
     optparser.add_option('-s', '--stdout', 
 	help='Do not put the new traces into the report, but write them to stdout.',
 	action='store_true', dest='stdout', default=False)
+    optparser.add_option('-g', '--gdb', 
+	help="Start an interactive gdb session with the report's core dump",
+	action='store_true', dest='gdb', default=False)
     optparser.add_option('-d', '--download-debug', 
 	help='Attempt to download required debug symbol packages',
 	action='store_true', dest='download_debug', default=False)
@@ -190,8 +193,16 @@ if options.download_debug:
     debug_dir = prepare_debugdir(report, options.cache_dir)
     remove_debug_dir = True
 
-# regenerate gdb info
-apport_utils.report_add_gdb_info(report, debugdir=debug_dir)
+# interactive gdb session
+if options.gdb:
+    core = tempfile.NamedTemporaryFile()
+    core.write(report['CoreDump'])
+    core.flush()
+    subprocess.call(['gdb', report['ExecutablePath'], core.name])
+    core.close()
+else:
+    # regenerate gdb info
+    apport_utils.report_add_gdb_info(report, debugdir=debug_dir)
 
 if remove_debug_dir:
     shutil.rmtree(debug_dir)
@@ -210,7 +221,8 @@ if options.stdout:
     print '--- thread stack trace ---'
     print report['ThreadStacktrace']
 else:
-    modified = True
+    if not options.gdb:
+	modified = True
 
 if modified:
     if options.output == None:

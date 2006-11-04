@@ -28,8 +28,10 @@ apport (0.29) UNRELEASED; urgency=low
   * test-apport: Automatically detect whether ULIMIT_CORE is nonzero, and
     adapt tests accordingly: check that core still exists after invoking
     apport, and clean it up.
+  * apport-retrace: Add new mode -g/--gdb which starts an interactive gdb
+    session with the report's core dump. Add this to man/apport-retrace.1, too.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:34:07 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 11:53:23 -0800
 
 apport (0.28) edgy; urgency=low
 
