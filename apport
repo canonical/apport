@@ -39,14 +39,14 @@ def drop_privileges(pid, partial=False):
 	raise ValueError, 'Invalid process ID'
 
     if partial:
-	effective_gid = 0
-	effective_uid = 0
+	effective_gid = os.getegid()
+	effective_uid = os.geteuid()
     else:
 	effective_gid = stat.st_gid
 	effective_uid = stat.st_uid
 
-    os.setregid(stat.st_gid,effective_gid)
-    os.setreuid(stat.st_uid,effective_uid)
+    os.setregid(stat.st_gid, effective_gid)
+    os.setreuid(stat.st_uid, effective_uid)
     assert os.getegid() == effective_gid
     assert os.getgid() == stat.st_gid
     assert os.geteuid() == effective_uid
