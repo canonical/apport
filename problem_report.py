@@ -97,10 +97,9 @@ class ProblemReport(UserDict.IterableUserDict):
 	control file format.
 
 	If a value is a string, it is written directly. Otherwise it must be a
-	tuple containing a string, and an optional boolean value (in that
-	order); the first argument is interpreted as a file name, which will be
-	read and its content will become the value of this key.
-
+	tuple containing the source file and an optional boolean value (in that
+	order); the first argument can be a file name or a file-like object,
+	which will be read and its content will become the value of this key.
 	The second argument specifies whether the contents will be
 	bzip2'ed and base64-encoded (this defaults to True).
 	'''
@@ -134,7 +133,10 @@ class ProblemReport(UserDict.IterableUserDict):
 
 	    # if it's a tuple, we have a file reference; read the contents
 	    if not hasattr(v, 'find'):
-		v = open(v[0]).read()
+		if hasattr(v[0], 'read'):
+		    v = v[0].read() # file-like object
+		else:
+		    v = open(v[0]).read() # file name
 
 	    if v.find('\n') >= 0:
 		# multiline value
@@ -159,7 +161,10 @@ class ProblemReport(UserDict.IterableUserDict):
 		    file.write('\n ')
 	    # file reference
 	    else:
-		f = open(v[0])
+		if hasattr(v[0], 'read'):
+		    f = v[0] # file-like object
+		else:
+		    f = open(v[0]) # file name
 		while True:
 		    block = f.read(1048576)
 		    if block:
@@ -196,11 +201,11 @@ class ProblemReport(UserDict.IterableUserDict):
     def __setitem__(self, k, v):
 	assert hasattr(k, 'isalnum')
 	assert k.isalnum()
-	# value must be a string or a file reference (tuple (string [, bool]))
+	# value must be a string or a file reference (tuple (string|file [, bool]))
 	assert (hasattr(v, 'isalnum') or 
 	    (hasattr(v, '__getitem__') and (
 	    len(v) == 1 or (len(v) == 2 and v[1] in (True, False)))
-	    and hasattr(v[0], 'isalnum')))
+	    and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
 
 	return self.data.__setitem__(k, v)
 
@@ -419,6 +424,27 @@ File: base64
  S8vPZ0hKLAIACfACeg==
 ''')
 	temp.close()
+
+    def test_write_fileobj(self):
+	'''Test writing a report with a pointer to a file-like object.'''
+
+	tempbin = StringIO.StringIO('AB' * 10 + '\0' * 10 + 'Z')
+	tempasc = StringIO.StringIO('Hello World')
+
+	pr = ProblemReport(date = 'now!')
+	pr['BinFile'] = (tempbin,)
+	pr['AscFile'] = (tempasc, False)
+	io = StringIO.StringIO()
+	pr.write(io)
+
+	self.assertEqual(io.getvalue(), 
+'''ProblemType: Crash
+AscFile: Hello World
+Date: now!
+BinFile: base64
+ eJw=
+ c3RyxIAMcBAFAG55BXk=
+''')
 
     def test_read_file(self):
 	'''Test reading a report with binary data.'''

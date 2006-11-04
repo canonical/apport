@@ -10,8 +10,11 @@ apport (0.29) UNRELEASED; urgency=low
   * debian/apport.init, test-apport, use-local: Adapt to 'crashdump-helper' ->
     'crashdump' sysctl renaming in 2.6.19.
   * test-apport: Restore cwd even when failing a test.
+  * problem_report.py, ProblemReport.write(): Support file-like objects as
+    argument of file references to support direct reading from pipes. Add test
+    case test_write_fileobj().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 09:13:24 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 09:46:37 -0800
 
 apport (0.28) edgy; urgency=low
 
