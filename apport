@@ -14,7 +14,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback, tempfile, glob
-import signal, inspect, atexit
+import signal, inspect, atexit, grp
 
 import problem_report, apport_utils
 
@@ -48,6 +48,12 @@ def init_error_log():
     if not os.isatty(sys.stderr.fileno()):
 	try:
 	    f = open('/var/log/apport.log', 'a')
+	    os.chmod('/var/log/apport.log', 0640)
+	    try:
+		admgid = grp.getgrnam('adm')[2]
+		os.chown('/var/log/apport.log', -1, admgid)
+	    except KeyError:
+		pass # if group adm doesn't exist, just leave it as root
 	except IOError: # on a permission error, don't touch stderr
 	    return
 	os.dup2(f.fileno(), sys.stderr.fileno())

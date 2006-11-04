@@ -16,8 +16,9 @@ apport (0.29) UNRELEASED; urgency=low
   * apport: Support '-' as core file argument, in which case the core will be
     read from stdin. This paves the way for using Linux 2.6.19's 'pipe
     core_pattern' feature.
+  * apport: Confine permissions of log file to root:adm 0640, just in case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 10:03:32 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  4 Nov 2006 10:48:26 -0800
 
 apport (0.28) edgy; urgency=low
 
