@@ -98,6 +98,8 @@ if len(sys.argv) != 2 or sys.argv[1] not in ('lib', 'kernel'):
     sys.exit(1)
 mode = sys.argv[1]
 
+all_passed = False
+
 try:
     # check if kernel crashdump helper is already active
     if mode == 'lib':
@@ -107,6 +109,8 @@ try:
 	# set up temporary report directory
 	local_reportdir = tempfile.mkdtemp()
 	os.environ['APPORT_REPORT_DIR'] = local_reportdir
+	(fd, os.environ['APPORT_LOG_FILE']) = tempfile.mkstemp()
+	os.close(fd)
 	print '* Setting up temporary report directory', local_reportdir
 
 	# setup preload library
@@ -263,6 +267,8 @@ try:
     if not set(required_fields).issubset(set(pr.keys())):
 	print >> sys.stderr, 'report does not have required fields (EXFAIL)'
 
+    all_passed = True
+
 finally:
     # clean up temporary work directory
     try:
@@ -274,3 +280,8 @@ finally:
 	shutil.rmtree(local_reportdir)
     if mode == 'lib':
 	clean_preload_lib()
+    if os.environ.has_key('APPORT_LOG_FILE'):
+	if not all_passed:
+	    print '----- apport log file -----'
+	    print open(os.environ['APPORT_LOG_FILE']).read()
+	os.unlink(os.environ['APPORT_LOG_FILE'])
