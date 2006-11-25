@@ -850,7 +850,8 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         try:
             os.close(fd)
             assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE) == 0
+                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE) == 0
 
             # verify that it's a proper ELF file
             assert subprocess.call(['readelf', '-n', coredump],
@@ -893,7 +894,8 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         try:
             os.close(fd)
             assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE) == 0
+                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE) == 0
 
             # verify that it's a proper ELF file
             assert subprocess.call(['readelf', '-n', coredump],
