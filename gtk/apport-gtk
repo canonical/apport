@@ -107,6 +107,10 @@ class ApportGTK:
             self.cur_package = self.report['Package'].split()[0]
         else:
             self.cur_package = apport_utils.find_file_package(self.report.get('ExecutablePath', ''))
+        if not self.cur_package:
+            print >> sys.stderr, 'Crash report is for a non-packaged program.'
+            sys.exit(1)
+            return
 
         subject = self.report.get('ExecutablePath', self.cur_package)
 

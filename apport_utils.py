@@ -26,6 +26,9 @@ def find_package_desktopfile(package):
     '''If given package is installed and has a single .desktop file, return the
     path to it, otherwise return None.'''
 
+    if package is None:
+        return None
+
     dpkg = subprocess.Popen(['dpkg', '-L', package], stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
     out = dpkg.communicate(input)[0]
