@@ -1,3 +1,10 @@
+apport (0.30) UNRELEASED; urgency=low
+
+  * test-apport, use-local: Support both kernel 2.6.17 and 2.6.19 sysctl names
+    (crashdump-helper vs. crashdump).
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 09:15:43 +0100
+
 apport (0.29) feisty; urgency=low
 
   * apport-retrace: Do not crash if a linked library is not a dependency.

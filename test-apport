@@ -6,6 +6,8 @@ import resource
 import problem_report
 
 crashdump_helper_sysctl = '/proc/sys/kernel/crashdump'
+if not os.path.exists(crashdump_helper_sysctl):
+    crashdump_helper_sysctl = '/proc/sys/kernel/crashdump-helper'
 test_executable = '/bin/cat'
 test_package = 'coreutils'
 test_source = 'coreutils'
