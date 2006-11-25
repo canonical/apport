@@ -721,7 +721,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 
         # check correct handling of interpreted executables: python 
         assert not os.path.exists('./testsuite-unpack'), 'Directory ./testsuite-unpack must not exist'
-        p = subprocess.Popen(['./apport-unpack', '-', 'testsuite-unpack'], stdin=subprocess.PIPE,
+        p = subprocess.Popen(['./bin/apport-unpack', '-', 'testsuite-unpack'], stdin=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
@@ -731,7 +731,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         report_add_proc_info(pr, pid=p.pid)
         p.communicate('\n')
         os.rmdir('testsuite-unpack')
-        self.assertEqual(pr['ExecutablePath'], os.path.realpath('./apport-unpack'))
+        self.assertEqual(pr['ExecutablePath'], os.path.realpath('./bin/apport-unpack'))
         self.assert_(pr['InterpreterPath'].find('python') >= 0)
 
     def test_report_proc_info_check_interpreted(self):
