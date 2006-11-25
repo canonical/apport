@@ -4,8 +4,11 @@ apport (0.30) UNRELEASED; urgency=low
     (crashdump-helper vs. crashdump).
   * gtk/apport-gtk.glade: Improve dialog title capitalization. 
     Closes: LP#70652.
+  * debian/apport.cron.daily: Immediately exit if /var/crash does not exist.
+    Create /var/crash in debian/apport.init if it does not exist.
+    Closes: LP#71599
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 09:19:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 09:34:25 +0100
 
 apport (0.29) feisty; urgency=low
 
