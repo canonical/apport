@@ -7,8 +7,10 @@ apport (0.31) UNRELEASED; urgency=low
   * Add new package python-apport to ship the new Python package 'apport'.
     This includes the python crash hook for now, but in the near future
     apport-utils will get redesigned and put into this package, too.
+  * debian/control: apport now depends on python-apport instead of
+    python-apport-utils.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 12:15:58 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 12:25:23 +0100
 
 apport (0.30) feisty; urgency=low
 
