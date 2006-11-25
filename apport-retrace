@@ -27,29 +27,29 @@ def parse_options():
 
     optparser = optparse.OptionParser('%prog [options] <apport problem report>')
     optparser.add_option('-c', '--remove-core', 
-	help='Remove the core dump from the report after stack trace regeneration',
-	action='store_true', dest='removecore', default=False)
+        help='Remove the core dump from the report after stack trace regeneration',
+        action='store_true', dest='removecore', default=False)
     optparser.add_option('-s', '--stdout', 
-	help='Do not put the new traces into the report, but write them to stdout.',
-	action='store_true', dest='stdout', default=False)
+        help='Do not put the new traces into the report, but write them to stdout.',
+        action='store_true', dest='stdout', default=False)
     optparser.add_option('-g', '--gdb', 
-	help="Start an interactive gdb session with the report's core dump",
-	action='store_true', dest='gdb', default=False)
+        help="Start an interactive gdb session with the report's core dump",
+        action='store_true', dest='gdb', default=False)
     optparser.add_option('-d', '--download-debug', 
-	help='Attempt to download required debug symbol packages',
-	action='store_true', dest='download_debug', default=False)
+        help='Attempt to download required debug symbol packages',
+        action='store_true', dest='download_debug', default=False)
     optparser.add_option('-C', '--cache-dir', 
-	help='Directory to use for caching downloaded .ddebs. If not given, a temporary directory is used.',
-	action='store', type='string', dest='cache_dir', metavar='DIR', default=None)
+        help='Directory to use for caching downloaded .ddebs. If not given, a temporary directory is used.',
+        action='store', type='string', dest='cache_dir', metavar='DIR', default=None)
     optparser.add_option('-o', '--output', 
-	help='Write modified report to given file instead of changing the original report',
-	action='store', type='string', dest='output', metavar='FILE', default=None)
+        help='Write modified report to given file instead of changing the original report',
+        action='store', type='string', dest='output', metavar='FILE', default=None)
 
     (opts, args) = optparser.parse_args()
 
     if len(args) != 1:
-	optparser.error('incorrect number of arguments; use --help for a short online help')
-	sys.exit(1)
+        optparser.error('incorrect number of arguments; use --help for a short online help')
+        sys.exit(1)
 
     return (args[0], opts)
 
@@ -57,40 +57,40 @@ def install_ddebs(packages, debug_dir, cache_dir):
 
     d = os.path.join(cache_dir, 'archives', 'partial')
     if not os.path.isdir(d):
-	os.makedirs(d)
+        os.makedirs(d)
 
     apt.apt_pkg.Config.Set('Dir::Cache', cache_dir)
     cache = apt.Cache()
 
     for pkg, version in packages:
-	# check that we have the necessary version installed
-	if cache[pkg].installedVersion != version:
-	    print >> sys.stderr, 'WARNING: version %s of dependency package %s is installed, but version %s is required for retrace. Skipping.' % (
-		cache[pkg].installedVersion, pkg, version)
-	    continue
-	if not cache.has_key(pkg + '-dbgsym'):
-	    print >> sys.stderr, 'WARNING: package %s-dbgsym not available' % pkg
-	    continue
-	p = cache[pkg+'-dbgsym']
-	if p.candidateVersion != version:
-	    print >> sys.stderr, 'WARNING: version %s of package %s-dbgsym not available' % (version, pkg)
-	    continue
-	
-	p.markInstall()
+        # check that we have the necessary version installed
+        if cache[pkg].installedVersion != version:
+            print >> sys.stderr, 'WARNING: version %s of dependency package %s is installed, but version %s is required for retrace. Skipping.' % (
+                cache[pkg].installedVersion, pkg, version)
+            continue
+        if not cache.has_key(pkg + '-dbgsym'):
+            print >> sys.stderr, 'WARNING: package %s-dbgsym not available' % pkg
+            continue
+        p = cache[pkg+'-dbgsym']
+        if p.candidateVersion != version:
+            print >> sys.stderr, 'WARNING: version %s of package %s-dbgsym not available' % (version, pkg)
+            continue
+        
+        p.markInstall()
 
     # fetch
     fetcher = apt.apt_pkg.GetAcquire(apt.progress.FetchProgress())
     pm = apt.apt_pkg.GetPackageManager(cache._depcache)
     try:
-	res = cache._fetchArchives(fetcher, pm)
+        res = cache._fetchArchives(fetcher, pm)
     except IOError, e:
-	print >> sys.stderr, 'Could not fetch all archives: ' + e
+        print >> sys.stderr, 'Could not fetch all archives: ' + e
 
 
     # make ddeb extraction use the debug_dir, not debug_dir/usr/lib/debug
     d = os.path.join(debug_dir, 'usr', 'lib')
     if not os.path.isdir(d):
-	os.makedirs(d)
+        os.makedirs(d)
     os.symlink(debug_dir, os.path.join(d, 'debug'))
 
     # extract
@@ -98,10 +98,10 @@ def install_ddebs(packages, debug_dir, cache_dir):
 
     archivedir = os.path.join(cache_dir, 'archives')
     for pkg, version in packages:
-	f = glob.glob(os.path.join(archivedir, '%s-dbgsym_%s_*.ddeb' % (pkg, version)))
-	assert len(f) <= 1
-	if len(f) == 1:
-	    apt_inst.debExtractArchive(open(f[0]), debug_dir)
+        f = glob.glob(os.path.join(archivedir, '%s-dbgsym_%s_*.ddeb' % (pkg, version)))
+        assert len(f) <= 1
+        if len(f) == 1:
+            apt_inst.debExtractArchive(open(f[0]), debug_dir)
 
     os.chdir(orig_cwd)
 
@@ -116,39 +116,39 @@ def prepare_debugdir(report, cache_dir):
     # create map of dependency package versions
     dependency_versions = {}
     for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
-	if not l.strip():
-	    continue
-	(pkg, version) = l.split()
-	dependency_versions[pkg] = version
+        if not l.strip():
+            continue
+        (pkg, version) = l.split()
+        dependency_versions[pkg] = version
 
     ddir = tempfile.mkdtemp()
 
     # get list of depending libraries
     needed_deps = set([])
     ldd = subprocess.Popen(['ldd', report['ExecutablePath']],
-	stdout=subprocess.PIPE)
+        stdout=subprocess.PIPE)
     out = ldd.communicate()[0]
     out += '\n' + report['ExecutablePath']
     assert ldd.returncode == 0
     for l in out.splitlines():
-	if not l.strip():
-	    continue
-	if l.find('=>') > 0:
-	    lib = os.path.realpath(l.split()[2])
-	else:
-	    lib = os.path.realpath(l.split()[0])
+        if not l.strip():
+            continue
+        if l.find('=>') > 0:
+            lib = os.path.realpath(l.split()[2])
+        else:
+            lib = os.path.realpath(l.split()[0])
 
-	# symlink already existing dbg files
-	libdbg = '/usr/lib/debug' + lib
-	if os.path.exists(libdbg):
-	    destdir = ddir + os.path.dirname(lib)
-	    if not os.path.isdir(destdir):
-		os.makedirs(destdir)
-	    os.symlink(libdbg, ddir + lib)
-	else:
-	    pkg = apport_utils.find_file_package(lib)
-	    if pkg and pkg in dependency_versions:
-		needed_deps.add((pkg, dependency_versions[pkg]))
+        # symlink already existing dbg files
+        libdbg = '/usr/lib/debug' + lib
+        if os.path.exists(libdbg):
+            destdir = ddir + os.path.dirname(lib)
+            if not os.path.isdir(destdir):
+                os.makedirs(destdir)
+            os.symlink(libdbg, ddir + lib)
+        else:
+            pkg = apport_utils.find_file_package(lib)
+            if pkg and pkg in dependency_versions:
+                needed_deps.add((pkg, dependency_versions[pkg]))
 
     # download and install the rest
     install_ddebs(needed_deps, ddir, cache_dir)
@@ -187,8 +187,8 @@ remove_debug_dir = False
 remove_cache_dir = False
 if options.download_debug:
     if not options.cache_dir:
-	options.cache_dir = tempfile.mkdtemp()
-	remove_cache_dir = True
+        options.cache_dir = tempfile.mkdtemp()
+        remove_cache_dir = True
 
     debug_dir = prepare_debugdir(report, options.cache_dir)
     remove_debug_dir = True
@@ -222,14 +222,14 @@ if options.stdout:
     print report['ThreadStacktrace']
 else:
     if not options.gdb:
-	modified = True
+        modified = True
 
 if modified:
     if options.output == None:
-	out = open(reportfile, 'w')
+        out = open(reportfile, 'w')
     elif options.output == '-':
-	out = sys.stdout
+        out = sys.stdout
     else:
-	out = open(options.output, 'w')
+        out = open(options.output, 'w')
 
     report.write(out)

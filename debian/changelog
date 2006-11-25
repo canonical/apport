@@ -7,8 +7,10 @@ apport (0.30) UNRELEASED; urgency=low
   * debian/apport.cron.daily: Immediately exit if /var/crash does not exist.
     Create /var/crash in debian/apport.init if it does not exist.
     Closes: LP#71599
+  * Convert all tabs in Python source code files to spaces to comply to PEP 8.
+    Thanks to Robert Collins for pointing this out.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 09:34:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 09:49:01 +0100
 
 apport (0.29) feisty; urgency=low
 

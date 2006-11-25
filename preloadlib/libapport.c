@@ -51,8 +51,8 @@ void sighandler( int signum )
     strcpy( corepath, "/tmp/core.XXXXXX" );
     status = mkstemp( corepath );
     if( status < 0 ) {
-	perror( "mkstemp" );
-	goto out;
+        perror( "mkstemp" );
+        goto out;
     }
     close( status );
 #else
@@ -62,57 +62,57 @@ void sighandler( int signum )
     // generate core file
     pid_t pid = fork();
     if( pid < 0 ) {
-	perror( "fork" );
-	goto out;
+        perror( "fork" );
+        goto out;
     }
     if( pid == 0 ) {
-	int devnull = open( "/dev/null", O_WRONLY );
-	if( devnull > 0 )
-	    dup2(devnull, 1);
-	    dup2(devnull, 2);
-	snprintf( core_arg, sizeof( core_arg ), "generate-core-file %s", corepath );
-	execl( "/usr/bin/gdb", "/usr/bin/gdb", "--batch", "--ex", core_arg, "--pid", spid, NULL );
-	perror( "Error: could not execute gcore" );
-	goto out;
+        int devnull = open( "/dev/null", O_WRONLY );
+        if( devnull > 0 )
+            dup2(devnull, 1);
+            dup2(devnull, 2);
+        snprintf( core_arg, sizeof( core_arg ), "generate-core-file %s", corepath );
+        execl( "/usr/bin/gdb", "/usr/bin/gdb", "--batch", "--ex", core_arg, "--pid", spid, NULL );
+        perror( "Error: could not execute gcore" );
+        goto out;
     }
 
     if( wait( &status ) < 0 ) {
-	perror( "wait() on gdb" );
-	goto out;
+        perror( "wait() on gdb" );
+        goto out;
     }
 
     /* only pass the core file if gcore succeeded */
     if( WIFEXITED( status ) && WEXITSTATUS( status ) == 0 ) {
-	core = corepath;
+        core = corepath;
 #ifndef PIPE_CORE
-	setenv("REMOVE_CORE", "1", 1);
+        setenv("REMOVE_CORE", "1", 1);
 #endif
     }
 
     pid = fork();
     if( pid == 0 ) {
-	int devnull = open( "/dev/null", O_WRONLY );
+        int devnull = open( "/dev/null", O_WRONLY );
 #ifdef PIPE_CORE
-	int corepipe;
-	if( core ) {
-	    corepipe = open( corepath, O_RDONLY );
-	    unlink( corepath );
-	    if( corepipe > 0 ) {
-		dup2( corepipe, 0 );
-		core = "-";
-	    }
-	}
+        int corepipe;
+        if( core ) {
+            corepipe = open( corepath, O_RDONLY );
+            unlink( corepath );
+            if( corepipe > 0 ) {
+                dup2( corepipe, 0 );
+                core = "-";
+            }
+        }
 #endif
-	if( devnull > 0 )
-	    dup2(devnull, 2);
-	if( execl( AGENTPATH, AGENTPATH, spid, ssig, core, NULL ) == -1 )
-	    perror( "Error: could not execute " AGENTPATH );
-	goto out;
+        if( devnull > 0 )
+            dup2(devnull, 2);
+        if( execl( AGENTPATH, AGENTPATH, spid, ssig, core, NULL ) == -1 )
+            perror( "Error: could not execute " AGENTPATH );
+        goto out;
     }
 
     if( wait( &status ) < 0 ) {
-	perror( "wait() on agent" );
-	goto out;
+        perror( "wait() on agent" );
+        goto out;
     }
 
 out:
@@ -132,7 +132,7 @@ void init()
     sigemptyset( &sa.sa_mask );
     sa.sa_flags = SA_RESETHAND;
     if( sigaction( SIGILL, &sa, NULL ) == -1 ||
-	    sigaction( SIGFPE, &sa, NULL ) == -1 ||
-	    sigaction( SIGSEGV, &sa, NULL ) == -1 )
-	perror( "Could not set signal handler" );
+            sigaction( SIGFPE, &sa, NULL ) == -1 ||
+            sigaction( SIGSEGV, &sa, NULL ) == -1 )
+        perror( "Could not set signal handler" );
 }
