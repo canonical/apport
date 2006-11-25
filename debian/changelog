@@ -12,8 +12,10 @@ apport (0.30) UNRELEASED; urgency=low
   * apport_utils.py, gtk/apport-gtk: Do not pass None to subprocess arguments
     if report belongs to a non-packaged program. Thanks to Robert Collins for
     discovering and fixing this! Closes: LP#70942
+  * debian/apport.init: Change /var/crash permissions to 1777, so that custom
+    crash handlers (in Python/Mono/etc.) can put reports there.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 09:56:11 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 10:44:33 +0100
 
 apport (0.29) feisty; urgency=low
 
