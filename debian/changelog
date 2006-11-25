@@ -1,8 +1,14 @@
 apport (0.31) UNRELEASED; urgency=low
 
   * Move scripts to bin/ in source package.
+  * Add apport/python_hook.py: Default exception handler for Python, to create
+    apport reports for unhandled exceptions. Thanks to Robert Collins
+    <robert@ubuntu.com> for this! Closes: LP#70957
+  * Add new package python-apport to ship the new Python package 'apport'.
+    This includes the python crash hook for now, but in the near future
+    apport-utils will get redesigned and put into this package, too.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 11:42:16 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 12:15:58 +0100
 
 apport (0.30) feisty; urgency=low
 

@@ -46,6 +46,20 @@ Description: python library to handle problem reports
  These problem reports use standard Debian control format syntax
  (RFC822).
 
+Package: python-apport
+XB-Python-Version: ${python:Versions}
+Section: python
+Architecture: all
+Depends: ${python:Depends}, python-problem-report, python-apport-utils (= ${Source-Version})
+Description: apport crash report handling library
+ This python package provides high-level functions for creating and
+ handling apport crash reports:
+ .
+  * Query available and new reports.
+  * Add OS, packaging, and process runtime information to a report.
+  * Various frontend utility functions.
+  * Python hook to generate crash reports when Python scripts fail.
+
 Package: python-apport-utils
 XB-Python-Version: ${python:Versions}
 Section: python
