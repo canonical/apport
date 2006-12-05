@@ -77,12 +77,12 @@ def find_file_package(file):
 	    all_lists.append(f)
 
     # first check the likely packages
-    p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
+    p = subprocess.Popen(['fgrep', '-lxm', '1', '--', file] +
 	likely_lists, stdin=subprocess.PIPE,
 	stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
     out = p.communicate()[0]
     if p.returncode != 0:
-	p = subprocess.Popen(['fgrep', '-lxm', '1', file] +
+	p = subprocess.Popen(['fgrep', '-lxm', '1', '--', file] +
 	    all_lists, stdin=subprocess.PIPE,
 	    stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
 	out = p.communicate()[0]
@@ -789,6 +789,42 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
 	_report_proc_info_check_interpreted(pr)
 	self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
 	self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
+
+	# fail on files we shouldn't have access to when name!=argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/python'
+	pr['ProcStatus'] = 'Name:\tznonexisting'
+	pr['ProcCmdline'] = 'python\0/etc/shadow'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+	self.failIf(pr.has_key('InterpreterPath'))
+
+	# succeed on files we should have access to when name!=argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/python'
+	pr['ProcStatus'] = 'Name:\tznonexisting'
+	pr['ProcCmdline'] = 'python\0/etc/passwd'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+	self.assertEqual(pr['ExecutablePath'], '/etc/passwd')
+
+	# fail on files we shouldn't have access to when name==argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/python'
+	pr['ProcStatus'] = 'Name:\tshadow'
+	pr['ProcCmdline'] = '../etc/shadow'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+	self.failIf(pr.has_key('InterpreterPath'))
+
+	# succeed on files we should have access to when name==argv[0]
+	pr = ProblemReport()
+	pr['ExecutablePath'] = '/usr/bin/python'
+	pr['ProcStatus'] = 'Name:\tpasswd'
+	pr['ProcCmdline'] = '../etc/passwd'
+	_report_proc_info_check_interpreted(pr)
+	self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+	self.assertEqual(pr['ExecutablePath'], '/bin/../etc/passwd')
 
     def test_report_add_gdb_info(self):
 	'''Test report_add_gdb_info() behaviour with core dump file reference.'''

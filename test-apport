@@ -40,9 +40,10 @@ def enable_preloadlib():
     assert os.access('preloadlib/libapport.so', os.X_OK)
     os.environ['LD_PRELOAD'] = os.path.join(os.getcwd(), 'preloadlib', 'libapport.so')
 
-def create_test_process():
+def create_test_process(check_running=True):
     assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
-    assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
+    if check_running:
+	assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
     pid = os.fork()
     if pid == 0:
 	os.setsid()
@@ -50,11 +51,13 @@ def create_test_process():
 	assert False, 'Could not execute ' + test_executable
     return pid
 
-def check_crash(expect_core=True, sig=signal.SIGSEGV):
+def check_crash(expect_core=True, sig=signal.SIGSEGV, check_running=True, sleep=0):
     global mode # hack to avoid passing the mode every time
 
     assert not os.path.exists('core'), 'no core dump in current directory'
-    pid = create_test_process()
+    pid = create_test_process(check_running)
+    if sleep > 0:
+	time.sleep(sleep)
     os.kill(pid, sig)
     result = os.waitpid(pid, 0)[1]
     assert not os.WIFEXITED(result), 'test process did not exit normally'
@@ -66,7 +69,8 @@ def check_crash(expect_core=True, sig=signal.SIGSEGV):
     assert os.WSTOPSIG(result) == 0, 'test process was not signaled to stop'
     assert os.WTERMSIG(result) == sig, 'test process died due to proper signal'
     assert subprocess.call(['pidof', '-x', 'apport']) == 1, 'no running apport processes'
-    assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
+    if check_running:
+	assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
     assert not os.path.exists('core'), 'does not leave core file behind'
 
 def check_safe_environment(env):
@@ -172,6 +176,29 @@ try:
     assert apport_utils.get_all_reports() == [], \
 	'no reports present after SIGQUIT (present: %s)' % \
 	str(apport_utils.get_all_reports())
+
+    print '* Check that existence of user-inaccessible files does not leak'
+    orig_test_executable = test_executable
+    dir = tempfile.mkdtemp()
+    test_executable = dir+"/python" # set name to existing tool != self
+    exec_file = open(test_executable,'a')
+    exec_file.write('#!/usr/bin/perl\nsystem("mv $0 $0.exe");\nsystem("ln -sf /etc/shadow $0");\n$0="..$0";\nsleep(10);\n')
+    exec_file.close()
+    os.chmod(test_executable, 0755)
+    check_crash(check_running=False,sleep=2)
+    os.unlink(test_executable)
+    os.unlink(test_executable+".exe")
+    os.rmdir(dir)
+    leak = os.path.join(apport_utils.report_dir, '_usr_bin_perl.%i.crash' %
+	(os.getuid()))
+    pr = problem_report.ProblemReport()
+    pr.load(open(leak))
+    # On a leak, no report is created since the executable path will be replaced
+    # by the symlink path, and it doesn't belong to any package.
+    assert pr['ExecutablePath'] == "/usr/bin/perl"
+    assert not pr.has_key('InterpreterPath')
+    apport_utils.delete_report(leak)
+    test_executable = orig_test_executable
 
     print '* Check that non-packaged scripts do not create a report'
     orig_test_executable = test_executable
