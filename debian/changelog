@@ -1,3 +1,10 @@
+apport (0.32) feisty; urgency=low
+
+  * apport_utils.py: Filter out "no debugging symbols found" warnings from gdb
+    outputs, and add some tests for this. Thanks to Kees Cook for the patch!
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  5 Dec 2006 09:16:11 +0100
+
 apport (0.31) feisty; urgency=low
 
   * Move scripts to bin/ in source package.

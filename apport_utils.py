@@ -377,7 +377,7 @@ def report_add_gdb_info(report, debugdir=None):
         'core-file ' + core]
         for field, gdbcommand in gdb_reports.iteritems():
             report[field] = _command_output(command + ['--ex', gdbcommand],
-                stderr=open('/dev/null')).replace('\n\n', '\n.\n').strip()
+                stderr=open('/dev/null')).replace('(no debugging symbols found)\n','').replace('\n\n', '\n.\n').strip()
     finally:
         if unlink_core:
             os.unlink(core)
@@ -922,6 +922,9 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
+        self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') > 0)
+        self.assert_(pr['Registers'].find('#0  0x') > 0)
+        self.assert_(pr['Registers'].find('(no debugging symbols found)') < 0)
 
     def test_make_report_path(self):
         '''Test make_report_path() behaviour.'''
