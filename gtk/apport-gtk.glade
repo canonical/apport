@@ -4,7 +4,7 @@
 <glade-interface>
 
 <widget class="GtkDialog" id="dialog_crash_reopen">
-  <property name="title" translatable="yes">Program crash detected</property>
+  <property name="title" translatable="yes">Program Crash detected</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -346,7 +346,7 @@
 </widget>
 
 <widget class="GtkWindow" id="window_bugreport">
-  <property name="title" translatable="yes">Problem report for %s</property>
+  <property name="title" translatable="yes">Problem Report for %s</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>

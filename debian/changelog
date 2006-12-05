@@ -1,4 +1,38 @@
-apport (0.29) UNRELEASED; urgency=low
+apport (0.31) feisty; urgency=low
+
+  * Move scripts to bin/ in source package.
+  * Add apport/python_hook.py: Default exception handler for Python, to create
+    apport reports for unhandled exceptions. Thanks to Robert Collins
+    <robert@ubuntu.com> for this! Closes: LP#70957
+  * Add new package python-apport to ship the new Python package 'apport'.
+    This includes the python crash hook for now, but in the near future
+    apport-utils will get redesigned and put into this package, too.
+  * debian/control: apport now depends on python-apport instead of
+    python-apport-utils.
+  * apport_utils.py: Quiesce gdb error messages in test suite.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 12:30:41 +0100
+
+apport (0.30) feisty; urgency=low
+
+  * test-apport, use-local: Support both kernel 2.6.17 and 2.6.19 sysctl names
+    (crashdump-helper vs. crashdump).
+  * gtk/apport-gtk.glade: Improve dialog title capitalization.
+    Closes: LP#70652.
+  * debian/apport.cron.daily: Immediately exit if /var/crash does not exist.
+    Create /var/crash in debian/apport.init if it does not exist.
+    Closes: LP#71599
+  * Convert all tabs in Python source code files to spaces to comply to PEP 8.
+    Thanks to Robert Collins for pointing this out.
+  * apport_utils.py, gtk/apport-gtk: Do not pass None to subprocess arguments
+    if report belongs to a non-packaged program. Thanks to Robert Collins for
+    discovering and fixing this! Closes: LP#70942
+  * debian/apport.init: Change /var/crash permissions to 1777, so that custom
+    crash handlers (in Python/Mono/etc.) can put reports there.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 25 Nov 2006 10:44:33 +0100
+
+apport (0.29) feisty; urgency=low
 
   * apport-retrace: Do not crash if a linked library is not a dependency.
     Closes: LP#65914
@@ -7,8 +41,41 @@ apport (0.29) UNRELEASED; urgency=low
       handling.
     - find_file_package(): Check for and respect diversions.
     - Closes: LP#65917
+  * debian/apport.init, test-apport, use-local: Adapt to 'crashdump-helper' ->
+    'crashdump' sysctl renaming in 2.6.19.
+  * test-apport: Restore cwd even when failing a test.
+  * problem_report.py, ProblemReport.write(): Support file-like objects as
+    argument of file references to support direct reading from pipes. Add test
+    case test_write_fileobj().
+  * apport: Support '-' as core file argument, in which case the core will be
+    read from stdin. This paves the way for using Linux 2.6.19's 'pipe
+    core_pattern' feature. Bump python-problem-report dependency to >= 0.29
+    for this.
+  * apport: Confine permissions of log file to root:adm 0640, just in case.
+  * apport: Temporarily drop real u/gid to target user for the os.access()
+    tests, so that normal users cannot verify the existence of a given
+    inaccessible file. Add comprehensive tests to apport_utils' test suite and
+    test-apport. Thanks to Kees Cook for this patch!
+  * apport_utils.py, find_file_package(): Terminate fgrep options with '--' to
+    avoid problems with funny file names. Thanks to Kees Cook for spotting
+    this!
+  * test-apport: Automatically detect whether ULIMIT_CORE is nonzero, and
+    adapt tests accordingly: check that core still exists after invoking
+    apport, and clean it up.
+  * apport-retrace: Add new mode -g/--gdb which starts an interactive gdb
+    session with the report's core dump. Add this to man/apport-retrace.1, too.
+  * apport-retrace: If -c is given, completely remove the CoreDump field from
+    the report instead of setting it to 'removed'.
+  * test-apport: When using 'lib' mode, point APPORT_LOG_FILE to a temporary
+    file. Print it if the test suite fails.
+  * test-apport: Fix EXFAILure of the 'core dump works for non-writable cwds'
+    test case.
+  * preloadlib: Support -DPIPE_CORE mode which emulates the
+    pipe-in-core_pattern mode of kernel 2.6.19.
+  * test-apport: Build preload library with core piping. No more failed test
+    suite checks in 'lib' mode.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Oct 2006 11:17:55 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun,  5 Nov 2006 07:10:30 -0800
 
 apport (0.28) edgy; urgency=low
 
