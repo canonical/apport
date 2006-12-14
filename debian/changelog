@@ -1,9 +1,11 @@
-apport (0.32) feisty; urgency=low
+apport (0.32) UNRELEASED; urgency=low
 
   * apport_utils.py: Filter out "no debugging symbols found" warnings from gdb
     outputs, and add some tests for this. Thanks to Kees Cook for the patch!
+  * test-apport: Fix AGENTPATH directory when building the preload library
+    (recently moved to bin/).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  5 Dec 2006 09:16:11 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Dec 2006 12:20:45 +0100
 
 apport (0.31) feisty; urgency=low
 

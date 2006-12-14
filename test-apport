@@ -37,8 +37,8 @@ def clean_preload_lib():
 
 def build_preload_lib():
     print '* Building preload library with local parameters'
-    run(['make', '-C', 'preloadlib', 'AGENTPATH=%s' % os.path.join(os.getcwd(), 'apport'), 
-        'PIPE_CORE=1'], 'Building preloadlib')
+    run(['make', '-C', 'preloadlib', 'AGENTPATH=%s' % os.path.join(os.getcwd(),
+        'bin', 'apport'), 'PIPE_CORE=1'], 'Building preloadlib')
 
 def enable_preloadlib():
     assert os.access('preloadlib/libapport.so', os.X_OK)
