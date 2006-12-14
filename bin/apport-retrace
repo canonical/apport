@@ -125,10 +125,11 @@ def prepare_debugdir(report, cache_dir):
 
     # get list of depending libraries
     needed_deps = set([])
-    ldd = subprocess.Popen(['ldd', report['ExecutablePath']],
+    exe_path = report.get('InterpreterPath', report['ExecutablePath'])
+    ldd = subprocess.Popen(['ldd', exe_path],
         stdout=subprocess.PIPE)
     out = ldd.communicate()[0]
-    out += '\n' + report['ExecutablePath']
+    out += '\n' + exe_path
     assert ldd.returncode == 0
     for l in out.splitlines():
         if not l.strip():
