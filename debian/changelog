@@ -1,8 +1,9 @@
 apport (0.33) UNRELEASED; urgency=low
 
-  * debian/rules: Fix dh_pysupport invocation to actually do something.
+  * debian/rules: Convert to cdbs. This fixes the dh_pysupport invocation
+    along the way, too.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 18 Dec 2006 14:28:20 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 18 Dec 2006 14:49:06 +0100
 
 apport (0.32) feisty; urgency=low
 
