@@ -29,12 +29,11 @@ binary-indep: build-indep
 
 	./setup.py install --root debian/tmp/ --install-scripts usr/share/apport --no-compile
 
-	dh_pysupport
-	dh_python
 	dh_install --sourcedir=debian/tmp --fail-missing
 	dh_installinit -u'multiuser 01'
 	dh_installcron
 	dh_installlogrotate
+	dh_pysupport
 
 	-rmdir -p debian/python-problem-report/usr/lib/python2.4/site-packages/ 2>/dev/null
 
