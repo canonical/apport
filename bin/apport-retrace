@@ -16,7 +16,7 @@ import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob
 import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
 import apt, apt_inst
-import problem_report, apport_utils
+import apport, apport.fileutils
 
 #
 # functions
@@ -147,7 +147,7 @@ def prepare_debugdir(report, cache_dir):
                 os.makedirs(destdir)
             os.symlink(libdbg, ddir + lib)
         else:
-            pkg = apport_utils.find_file_package(lib)
+            pkg = apport.fileutils.find_file_package(lib)
             if pkg and pkg in dependency_versions:
                 needed_deps.add((pkg, dependency_versions[pkg]))
 
@@ -162,7 +162,7 @@ def prepare_debugdir(report, cache_dir):
 (reportfile, options) = parse_options()
 
 # load the report
-report = problem_report.ProblemReport()
+report = apport.Report()
 report.load(open(reportfile))
 
 # sanity checks
@@ -174,7 +174,7 @@ assert os.path.exists(report['ExecutablePath'])
 
 if not report.has_key('Package'):
     print >> sys.stderr, 'WARNING: report file does not have Package attribute; adding it now, but cannot verify version'
-    apport_utils.report_add_package_info(report)
+    report.add_package_info()
 
 package = report['Package'].split()[0]
 if subprocess.call(['dpkg', '-s', package], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0:
@@ -203,7 +203,7 @@ if options.gdb:
     core.close()
 else:
     # regenerate gdb info
-    apport_utils.report_add_gdb_info(report, debugdir=debug_dir)
+    report.add_gdb_info(debugdir=debug_dir)
 
 if remove_debug_dir:
     shutil.rmtree(debug_dir)

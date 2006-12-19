@@ -6,8 +6,14 @@ apport (0.33) UNRELEASED; urgency=low
     fall back to firefox-remote, then to webbrowser.open(). Do not call
     x-www-browser any more since this would block if no running browser was
     open before.
+  * Drop the apport_utils module (and with it the python-apport-utils
+    package), it became too much of a dumping ground. The report file handling
+    functions now live in apport.fileutils, and the debugging information
+    collectors are now methods of a new 'Report' class (subclass of
+    ProblemReport) in the new apport.report module. Adjust all programs
+    accordingly.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 18 Dec 2006 15:24:33 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Dec 2006 00:55:34 +0100
 
 apport (0.32) feisty; urgency=low
 

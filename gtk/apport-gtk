@@ -5,8 +5,7 @@ from gettext import gettext as _
 import subprocess, threading, webbrowser
 import xdg.DesktopEntry
 
-from problem_report import ProblemReport
-import apport_utils
+import apport, apport.fileutils
 
 gettext_domain = 'apport'
 
@@ -36,28 +35,28 @@ def open_url(url):
                 md.hide()
 
 def thread_collect_info(report, reportfile, package):
-    '''Encapsulate call to apport_utils.report_add_*() and update given report,
+    '''Encapsulate call to add_*_info() and update given report,
     so that this function is suitable for threading.'''
 
-    apport_utils.report_add_gdb_info(report)
-    apport_utils.report_add_package_info(report, package)
-    apport_utils.report_add_os_info(report)
+    report.add_gdb_info()
+    report.add_package_info(package)
+    report.add_os_info()
     f = open(reportfile, 'w')
     os.chmod (reportfile, 0)
     report.write(f)
     f.close()
     os.chmod (reportfile, 0600)
-    apport_utils.mark_report_seen(reportfile)
+    apport.fileutils.mark_report_seen(reportfile)
     if report.has_key('CoreDump'):
         report['CoreDump'] = ''
 
 def thread_check_bugpatterns(report, baseurl):
-    '''Encapsulate call to apport_utils.report_search_bug_patterns() and return
-    the result in a global variable, so that it is suitable for threading.'''
+    '''Encapsulate call to search_bug_patterns() and return the result in a
+    global variable, so that it is suitable for threading.'''
 
     global thread_check_bugpatterns_result
     thread_check_bugpatterns_result = \
-        apport_utils.report_search_bug_patterns(report, baseurl)
+        report.search_bug_patterns(baseurl)
 
 def format_filesize(size):
     '''Format the given integer as humanly readable and i18n'ed file size.'''
@@ -74,7 +73,7 @@ class ApportGTK:
             'apport-gtk.glade'))
         self.widgets.signal_autoconnect(self)
 
-        self.reports = apport_utils.get_new_reports()
+        self.reports = apport.fileutils.get_new_reports()
         if len(self.reports) == 0:
             print >> sys.stderr, 'No crash reports found, aborting'
             sys.exit(1)
@@ -106,7 +105,7 @@ class ApportGTK:
     def next(self):
         '''Move on to the next report.'''
 
-        apport_utils.mark_report_seen(self.reports.pop(0))
+        apport.fileutils.mark_report_seen(self.reports.pop(0))
         self.report = None
 
         if len(self.reports) > 0:
@@ -123,13 +122,13 @@ class ApportGTK:
         '''Load currently selected report and update UI accordingly.'''
 
         # load problem report
-        self.report = ProblemReport()
+        self.report = apport.Report()
         self.report.load(open(self.reports[0]))
 
         if self.report.has_key('Package'):
             self.cur_package = self.report['Package'].split()[0]
         else:
-            self.cur_package = apport_utils.find_file_package(self.report.get('ExecutablePath', ''))
+            self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
         if not self.cur_package:
             print >> sys.stderr, 'Crash report is for a non-packaged program.'
             sys.exit(1)
@@ -141,7 +140,7 @@ class ApportGTK:
         if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
             desktop_file = self.report['DesktopFile']
         else:
-            desktop_file = apport_utils.find_package_desktopfile(self.cur_package)
+            desktop_file = apport.fileutils.find_package_desktopfile(self.cur_package)
         self.desktop_entry = None
         if desktop_file:
             try:

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # Collect information about a crash and create a report in the directory
-# specified by apport_utils.report_dir.
+# specified by apport.fileutils.report_dir.
 # See https://wiki.ubuntu.com/AutomatedProblemReports for details.
 #
 # Copyright (c) 2006 Canonical Ltd.
@@ -16,7 +16,7 @@
 import sys, os, os.path, subprocess, time, traceback, tempfile, glob
 import signal, inspect, atexit, grp
 
-import problem_report, apport_utils
+import apport, apport.fileutils
 
 #################################################################
 #
@@ -166,7 +166,7 @@ try:
         error_log('Invalid PID')
         sys.exit(1)
 
-    info = problem_report.ProblemReport('Crash')
+    info = apport.Report('Crash')
     info['Signal'] = signum
     if coredump:
         if coredump == '-':
@@ -176,7 +176,7 @@ try:
 
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
-    apport_utils.report_add_proc_info(info, pid)
+    info.add_proc_info(pid)
 
     if not info.has_key('ExecutablePath'):
         error_log('could not determine ExecutablePath, aborting')
@@ -191,7 +191,7 @@ try:
             (info['ExecutablePath'], info['ProcCmdline']))
 
     # ignore non-package binaries
-    if not apport_utils.find_file_package(info['ExecutablePath']):
+    if not apport.fileutils.find_file_package(info['ExecutablePath']):
         error_log('executable does not belong to a package, ignoring')
         sys.exit(1)
 
@@ -200,11 +200,11 @@ try:
     # Create crash report file descriptor. We prefer to create the report in
     # report_dir if we can create a file there; if not, we just use stderr.
     try:
-        report = '%s/%s.%i.crash' % (apport_utils.report_dir, info['ExecutablePath'].replace('/', '_'), pidstat.st_uid)
+        report = '%s/%s.%i.crash' % (apport.fileutils.report_dir, info['ExecutablePath'].replace('/', '_'), pidstat.st_uid)
         if os.path.exists(report):
-            if apport_utils.seen_report(report):
+            if apport.fileutils.seen_report(report):
                 # do not flood the logs and the user with repeated crashes
-                crash_counter = apport_utils.get_recent_crashes(open(report))
+                crash_counter = apport.fileutils.get_recent_crashes(open(report))
                 crash_counter += 1
                 if crash_counter > 1:
                     sys.exit(1)

@@ -16,6 +16,7 @@ the full text of the license.
 import os
 import sys
 
+import report
 
 def apport_excepthook(exc_type, exc_obj, exc_tb):
     '''Catch an uncaught exception and make a traceback.'''
@@ -36,9 +37,8 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
             return
         from cStringIO import StringIO
         import re, tempfile, traceback
-        import apport_utils, problem_report
 
-        pr = problem_report.ProblemReport()
+        pr = report.Report()
         # apport will look up the package from the executable path.
         # if the module has mutated this, we're sunk, but it does not exist yet :(.
         binary = os.path.normpath(os.path.join(os.getcwdu(), sys.argv[0]))
@@ -47,7 +47,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         tb_file = StringIO()
         traceback.print_exception(exc_type, exc_obj, exc_tb, file=tb_file)
         pr['Traceback'] = tb_file.getvalue().strip()
-        apport_utils.report_add_proc_info(pr)
+        pr.add_proc_info()
         # override the ExecutablePath with the script that was actually running.
         pr['ExecutablePath'] = binary
         pr['PythonArgs'] = '%r' % sys.argv
