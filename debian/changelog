@@ -12,8 +12,11 @@ apport (0.33) UNRELEASED; urgency=low
     collectors are now methods of a new 'Report' class (subclass of
     ProblemReport) in the new apport.report module. Adjust all programs
     accordingly.
+  * Add debian/python-apport.postinst: Remove old .pyc and .pyo cruft on
+    upgrades to clean up after our broken dh_pysupport invocation in earlier
+    versions, so that the new modules are actually used.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Dec 2006 00:55:34 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Dec 2006 01:13:08 +0100
 
 apport (0.32) feisty; urgency=low
 
