@@ -98,8 +98,26 @@ def mark_report_seen(report):
     '''Mark given report file as seen.'''
 
     st = os.stat(report)
-    os.utime(report, (st.st_mtime, st.st_mtime-1))
-    return
+    try:
+        os.utime(report, (st.st_mtime, st.st_mtime-1))
+    except OSError:
+        # file is probably not our's, so do it the slow and boring way
+        # change the file's access time until it stat's different than the mtime.
+       # This might take a while if we only have 1-second resolution. Time out
+       # after 1.2 seconds.
+       timeout = 12
+       while timeout > 0:
+          f = open(report)
+          f.read(1)
+          f.close()
+          st = os.stat(report)
+          if st.st_atime > st.st_mtime:
+              break
+          time.sleep(0.1)
+          timeout -= 1
+       
+       if timeout == 0:
+            raise OSError, 'could not modify atime of report file ' + report
 
 def get_all_reports():
     '''Return a list with all report files which are accessible to the calling

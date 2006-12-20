@@ -1,3 +1,14 @@
+apport (0.34) UNRELEASED; urgency=low
+
+  * apport/fileutils.py, mark_report_seen(): Do not bail out if os.utime()
+    fails due to access permissions. This happens if the file does not belong
+    to the user calling apport-gtk, but is world-readable (such as ubiquity
+    crash reports). If utime() fails, repeatedly open()/close() the file for
+    reading until atime != ctime, or the 1.2s timeout is reached. 
+    Closes: LP#72250
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 20 Dec 2006 17:02:47 +0100
+
 apport (0.33) feisty; urgency=low
 
   * debian/rules: Convert to cdbs. This fixes the dh_pysupport invocation
