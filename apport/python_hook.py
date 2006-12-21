@@ -59,6 +59,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         user = os.getuid()
         pr_filename = '/var/crash/%s.%i.crash' % (mangled_program, user)
         report_file = open(pr_filename, 'wt')
+        os.chmod(pr_filename, 0600)
         try:
             pr.write(report_file)
         finally:
