@@ -1,11 +1,13 @@
 #!/bin/sh -ex
 CRASHDUMP=/proc/sys/kernel/crashdump-helper
 [ -e $CRASHDUMP ] || CRASHDUMP=/proc/sys/kernel/crashdump
+export PYTHONPATH=.
 python problem_report.py -v
 python apport/fileutils.py -v
 python apport/report.py -v
+python apport/python_hook.py -v
 if [ -e $CRASHDUMP ] && [ -n "`cat $CRASHDUMP`" ]; then
     ./test-apport kernel
 else
-    PYTHONPATH=. ./test-apport lib
+    ./test-apport lib
 fi

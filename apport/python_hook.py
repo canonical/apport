@@ -73,3 +73,71 @@ def install():
     '''Install the python apport hook.'''
 
     sys.excepthook = apport_excepthook
+
+#
+# Unit test
+#
+
+if __name__ == '__main__':
+    import unittest, tempfile, subprocess, os.path, stat
+    import fileutils, problem_report
+
+    class _PythonHookTest(unittest.TestCase):
+        def test_env(self):
+            '''Check the test environment.'''
+
+            self.assertEqual(fileutils.get_all_reports(), [], 
+                'No crash reports already present')
+
+        def test_general(self):
+            '''Test general operation of the Python crash hook.'''
+
+            # put the script into /var/crash, since that isn't ignored in the
+            # hook
+            (fd, script) = tempfile.mkstemp(dir=fileutils.report_dir)
+            try:
+                os.write(fd, '''#!/usr/bin/python
+def func(x):
+    raise Exception, 'This should happen.'
+
+func(42)
+''')
+                os.close(fd)
+                os.chmod(script, 0755)
+
+                p = subprocess.Popen([script, 'testarg1', 'testarg2'],
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                err = p.communicate()[1]
+                self.assertEqual(p.returncode, 1, 
+                    'crashing test python program exits with failure code')
+                self.assert_('Exception: This should happen.' in err)
+
+            finally:
+                os.unlink(script)
+
+            # did we get a report?
+            reports = fileutils.get_new_reports()
+            pr = None
+            try:
+                self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+                self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
+                    0600, 'report has correct permissions')
+
+                pr = problem_report.ProblemReport()
+                pr.load(open(reports[0]))
+            finally:
+                for r in reports:
+                    os.unlink(r)
+
+            # check report contents
+            expected_keys = ['InterpreterPath', 'ProcCwd', 'PythonArgs',
+                'Traceback', 'ProblemType', 'ProcEnviron', 'ProcStatus',
+                'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps']
+            self.assert_(set(expected_keys).issubset(set(pr.keys())), 
+                'report has necessary fields')
+            self.assert_('bin/python' in pr['InterpreterPath'])
+            self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
+            self.assert_(pr['Traceback'].startswith('Traceback'))
+            self.assert_("func\n    raise Exception, 'This should happen." in pr['Traceback'])
+
+    unittest.main()
