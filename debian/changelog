@@ -1,4 +1,4 @@
-apport (0.34) UNRELEASED; urgency=low
+apport (0.34) feisty; urgency=low
 
   * apport/fileutils.py, mark_report_seen(): Do not bail out if os.utime()
     fails due to access permissions. This happens if the file does not belong
