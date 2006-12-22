@@ -116,6 +116,22 @@ class Report(ProblemReport):
 
         ProblemReport.__init__(self, type, date)
 
+    def _pkg_modified_suffix(self, package):
+        '''Return a string suitable for appending to Package:/Dependencies:
+        fields.
+        
+        If package has only unmodified files, return the empty string. If not,
+        return ' [modified: ...]' with a list of modified files.'''
+
+        sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
+        if not os.path.exists(sumfile):
+            return ''
+        mod = fileutils.check_files_md5(sumfile)
+        if mod:
+            return ' [modified: %s]' % ' '.join(mod)
+        else:
+            return ''
+
     def add_package_info(self, package = None):
         '''Add packaging information.
 
@@ -124,7 +140,8 @@ class Report(ProblemReport):
         - Package: package name and installed version
         - SourcePackage: source package name
         - Dependencies: package names and versions of all dependencies and
-          pre-dependencies'''
+          pre-dependencies; this also checks if the files are unmodified and
+          appends a list of all modified files'''
 
         if not package:
             package = fileutils.find_file_package(self['ExecutablePath'])
@@ -133,7 +150,7 @@ class Report(ProblemReport):
 
         cache = apt.Cache()
 
-        self['Package'] = '%s %s' % (package, cache[package].installedVersion)
+        self['Package'] = '%s %s%s' % (package, cache[package].installedVersion, self._pkg_modified_suffix(package))
         self['SourcePackage'] = cache[package].sourcePackageName
 
         # get set of all transitive dependencies
@@ -152,7 +169,7 @@ class Report(ProblemReport):
                 continue
             if self['Dependencies']:
                 self['Dependencies'] += '\n'
-            self['Dependencies'] += '%s %s' % (dep, cur_ver.VerStr)
+            self['Dependencies'] += '%s %s%s' % (dep, cur_ver.VerStr, self._pkg_modified_suffix(dep))
 
     def add_os_info(self):
         '''Add operating system information.

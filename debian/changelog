@@ -11,8 +11,10 @@ apport (0.34) UNRELEASED; urgency=low
     potentially private data to the world, and to be consistent with other
     crash reports.
   * apport/fileutils.py: Add check_files_md5() and test cases.
+  * apport/report.py, add_package_info(): Append list of modified package
+    files to Package: and Dependencies: value. Closes: LP#70946
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 22 Dec 2006 11:50:46 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 22 Dec 2006 12:24:03 +0100
 
 apport (0.33) feisty; urgency=low
 
