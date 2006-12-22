@@ -118,7 +118,7 @@ def prepare_debugdir(report, cache_dir):
     for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
         if not l.strip():
             continue
-        (pkg, version) = l.split()
+        (pkg, version) = l.split()[:2]
         dependency_versions[pkg] = version
 
     ddir = tempfile.mkdtemp()
