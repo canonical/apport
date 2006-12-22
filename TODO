@@ -1,4 +1,6 @@
 apport:
+ - do not call find_file_package(), split out heuristics function
+ - add_gdb_info(): Call gdb just once for speed optimization
 
 problem_report.py:
 
