@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os, glob, subprocess
+import os, glob, subprocess, os.path
 from problem_report import ProblemReport
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
@@ -179,6 +179,27 @@ def make_report_path(report, uid=None):
 
     return os.path.join(report_dir, '%s.%i.crash' % (subject, uid))
 
+def check_files_md5(sumfile):
+    '''Given a list of MD5 sums in md5sum(1) format (relative to /), check
+    integrity of all files and return a list of files that don't match.'''
+
+    assert os.path.exists(sumfile)
+    m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
+        cwd='/', env={})
+    out = m.communicate()[0]
+
+    # if md5sum succeeded, don't bother parsing the output
+    if m.returncode == 0:
+        return []
+
+    mismatches = []
+    for l in out.splitlines():
+        if l.endswith('FAILED'):
+            mismatches.append(l.rsplit(':', 1)[0])
+
+    return mismatches
+
 #
 # Unit test
 #
@@ -336,6 +357,26 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         pr['ExecutablePath'] = '/bin/bash';
         self.assert_(make_report_path(pr).startswith('%s/_bin_bash' % report_dir))
 
+    def test_check_files_md5(self):
+        '''Test check_files_md5() behaviour.'''
+
+        f1 = os.path.join(report_dir, 'test 1.txt')
+        f2 = os.path.join(report_dir, 'test:2.txt')
+        sumfile = os.path.join(report_dir, 'sums.txt')
+        open(f1, 'w').write('Some stuff')
+        open(f2, 'w').write('More stuff')
+        # use one relative and one absolute path in checksums file
+        open(sumfile, 'w').write('''2e41290da2fa3f68bd3313174467e3b5  %s
+f6423dfbc4faf022e58b4d3f5ff71a70  %s
+''' % (f1[1:], f2))
+        self.assertEqual(check_files_md5(sumfile), [], 'correct md5sums')
+
+        open(f1, 'w').write('Some stuff!')
+        self.assertEqual(check_files_md5(sumfile), [f1[1:]], 'file 1 wrong')
+        open(f2, 'w').write('More stuff!')
+        self.assertEqual(check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
+        open(f1, 'w').write('Some stuff')
+        self.assertEqual(check_files_md5(sumfile), [f2], 'file 2 wrong')
 
 if __name__ == '__main__':
     unittest.main()
