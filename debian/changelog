@@ -2,8 +2,13 @@ apport (0.35) UNRELEASED; urgency=low
 
   * apport/fileutils.py: Split out heuristics for determining whether a file
     belongs to a package to new function likely_packaged() and add test cases.
+  * bin/apport: Do not use the expensive find_file_package() any more, use
+    likely_packaged() instead. This will create initial reports in some 
+    corner cases (like custom non-packaged executables in /usr/bin/), but
+    greatly reduces I/O impact at crash time. We rely on apport-gtk to deal
+    with reports that do not actually belong to a packaged executable.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 23 Dec 2006 22:52:06 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 23 Dec 2006 23:01:40 +0100
 
 apport (0.34) feisty; urgency=low
 

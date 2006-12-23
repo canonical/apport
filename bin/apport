@@ -191,7 +191,7 @@ try:
             (info['ExecutablePath'], info['ProcCmdline']))
 
     # ignore non-package binaries
-    if not apport.fileutils.find_file_package(info['ExecutablePath']):
+    if not apport.fileutils.likely_packaged(info['ExecutablePath']):
         error_log('executable does not belong to a package, ignoring')
         sys.exit(1)
 
