@@ -39,20 +39,30 @@ def find_package_desktopfile(package):
 
     return desktopfile
 
-def find_file_package(file):
-    '''Return the package that ships the given file (or None if no package
-    ships it).'''
+def likely_packaged(file):
+    '''Check whether the given file is likely to belong to a package.
 
-    # first apply some heuristics to avoid the expensive dpkg database grepping
+    This is semi-decidable: A return value of False is definitive, a True value
+    is only a guess which needs to be checked with find_file_package().
+    However, this function is very fast and does not access the dpkg
+    database.'''
+
     pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
     '/usr/', '/var'] # packages only ship files in these directories
+
     whitelist_match = False
     for i in pkg_whitelist:
         if file.startswith(i):
             whitelist_match = True
             break
-    if file.startswith('/usr/local/') or not whitelist_match:
-        return None
+    return whitelist_match and not file.startswith('/usr/local/')
+
+def find_file_package(file):
+    '''Return the package that ships the given file (or None if no package
+    ships it).'''
+
+    if not likely_packaged(file):
+	return None
 
     # check if the file is a diversion
     dpkg = subprocess.Popen(['/usr/sbin/dpkg-divert', '--list', file],
@@ -256,6 +266,17 @@ class _ApportUtilsTest(unittest.TestCase):
         self.assertNotEqual(d, None, 'one-desktop package %s' % onedesktop)
         self.assert_(os.path.exists(d))
         self.assert_(d.endswith('.desktop'))
+
+    def test_likely_packaged(self):
+        '''Test likely_packaged() behaviour.'''
+
+        self.assertEqual(likely_packaged('/bin/bash'), True)
+        self.assertEqual(likely_packaged('/usr/bin/foo'), True)
+        self.assertEqual(likely_packaged('/usr/local/bin/foo'), False)
+        self.assertEqual(likely_packaged('/home/test/bin/foo'), False)
+        self.assertEqual(likely_packaged('/tmp/foo'), False)
+	# err on the side of caution for /var
+        self.assertEqual(likely_packaged('/var/lib/foo'), True)
 
     def test_find_file_package(self):
         '''Test find_file_package() behaviour.'''
