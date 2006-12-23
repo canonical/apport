@@ -7,8 +7,11 @@ apport (0.35) UNRELEASED; urgency=low
     corner cases (like custom non-packaged executables in /usr/bin/), but
     greatly reduces I/O impact at crash time. We rely on apport-gtk to deal
     with reports that do not actually belong to a packaged executable.
+  * apport/report.py, add_gdb_info(): Call gdb just once and split the output
+    instead of calling it again for each command. This should significantly
+    speed up the gdb stage especially for large programs/core dumps.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 23 Dec 2006 23:01:40 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 23 Dec 2006 23:47:18 +0100
 
 apport (0.34) feisty; urgency=low
 

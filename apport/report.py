@@ -313,9 +313,23 @@ class Report(ProblemReport):
                 command += ['--ex', 'set debug-file-directory ' + debugdir]
             command += ['--ex', 'file ' + self['ExecutablePath'], '--ex',
             'core-file ' + core]
-            for field, gdbcommand in gdb_reports.iteritems():
-                self[field] = _command_output(command + ['--ex', gdbcommand],
-                    stderr=open('/dev/null')).replace('(no debugging symbols found)\n','').replace('\n\n', '\n.\n').strip()
+	    value_keys = []
+            for name, cmd in gdb_reports.iteritems():
+		value_keys.append(name)
+		# append the actual command and something that acts as a separator
+		command += ['--ex', cmd, '--ex', 'p -99']
+	    # remove the very last separator
+	    command.pop()
+	    command.pop()
+
+	    # call gdb
+	    out = _command_output(command, stderr=open('/dev/null')).replace(
+		'(no debugging symbols found)\n','')
+
+	    # split the output into the various fields
+	    part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
+	    for part in part_re.split(out):
+		self[value_keys.pop(0)] = part.replace('\n\n', '\n.\n').strip()
         finally:
             if unlink_core:
                 os.unlink(core)
@@ -625,9 +639,12 @@ class _ApportReportTest(unittest.TestCase):
 
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
+        self.assert_(pr.has_key('Registers'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
+        self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
+        self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_add_gdb_info_load(self):
         '''Test add_gdb_info() behaviour with inline core dump.'''
@@ -674,13 +691,12 @@ class _ApportReportTest(unittest.TestCase):
 
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
-        self.assert_(pr['CoreDump'].find('') == 0)
+        self.assert_(pr.has_key('Registers'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
+        self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
-        self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') > 0)
-        self.assert_(pr['Registers'].find('#0  0x') > 0)
-        self.assert_(pr['Registers'].find('(no debugging symbols found)') < 0)
+        self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_search_bug_patterns(self):
         '''Test search_bug_patterns() behaviour.'''
