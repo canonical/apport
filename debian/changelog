@@ -10,8 +10,11 @@ apport (0.35) UNRELEASED; urgency=low
   * apport/report.py, add_gdb_info(): Call gdb just once and split the output
     instead of calling it again for each command. This should significantly
     speed up the gdb stage especially for large programs/core dumps.
+  * gtk/apport-gtk: Split out crash report initialization to new function
+    show_crashes() so that we can use the frontend for other purposes like bug
+    reporting.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 23 Dec 2006 23:47:18 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 24 Dec 2006 13:27:11 +0100
 
 apport (0.34) feisty; urgency=low
 

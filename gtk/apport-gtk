@@ -73,10 +73,8 @@ class ApportGTK:
             'apport-gtk.glade'))
         self.widgets.signal_autoconnect(self)
 
-        self.reports = apport.fileutils.get_new_reports()
-        if len(self.reports) == 0:
-            print >> sys.stderr, 'No crash reports found, aborting'
-            sys.exit(1)
+	self.report = None # current ProblemReport
+	self.reports = None # list of crash report file names
 
         # initialize tree model and view
         self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)
@@ -90,6 +88,14 @@ class ApportGTK:
         self.str_heading = self.w('label_heading').get_label()
         self.str_heading_reopen = self.w('label_heading_reopen').get_label()
         self.str_bugreport_title = self.w('window_bugreport').get_title()
+
+    def show_crashes(self):
+	'''Load pending crash reports and display the first one.'''
+
+        self.reports = apport.fileutils.get_new_reports()
+        if len(self.reports) == 0:
+            print >> sys.stderr, 'No crash reports found, aborting'
+            sys.exit(1)
 
         self.report = None
         self.update_report()
@@ -319,5 +325,9 @@ if __name__ == '__main__':
     gettext.textdomain(gettext_domain)
     gtk.glade.textdomain(gettext_domain)
     app = ApportGTK()
+
+    # initialize in crash report mode
+    app.show_crashes()
+
     gtk.main()
 
