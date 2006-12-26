@@ -74,7 +74,7 @@ class ApportGTK:
         self.widgets.signal_autoconnect(self)
 
 	self.report = None # current ProblemReport
-	self.reports = None # list of crash report file names
+	self.reports = None # list of report file names
 
         # initialize tree model and view
         self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)
@@ -206,7 +206,7 @@ class ApportGTK:
         
         mode = self.report.get('BugDisplayMode', 'list')
 
-        # collect additional crash information and check for existing bug
+        # collect additional information and check for existing bug
         # patterns; since this might take a while, create separate threads and
         # display a progress dialog
         self.w('progressbar_information_collection').set_fraction(0)
@@ -239,7 +239,7 @@ class ApportGTK:
             md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
                 buttons=gtk.BUTTONS_CLOSE, 
                 message_format=_('Could not determine the package or source package name.'))
-            md.set_title(_('Invalid crash report'))
+            md.set_title(_('Invalid problem report'))
             md.run()
             self.next()
             return True
@@ -247,7 +247,7 @@ class ApportGTK:
         # create reduced report if there are any removed fields
         subject = self.report.get('ExecutablePath', self.cur_package)
         if self.report.has_removed_fields():
-            (fd, self.reduced_file) = tempfile.mkstemp('.crash', 
+            (fd, self.reduced_file) = tempfile.mkstemp('.apport', 
                 subject.replace('/', '_') + '.')
             os.close(fd)
             self.report.write(open(self.reduced_file, 'w'))
@@ -263,7 +263,7 @@ developers.'))
             url = 'https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage']
             self.w('label_bug_instructions').set_text(_('Please fill out the bug \
 report form in your web browser and give some details about what you did just \
-before the crash.'))
+before the problem happened.'))
         else:
             url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.report['SourcePackage']
             self.w('label_bug_instructions').set_text(_('Please check the list \

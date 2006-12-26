@@ -16,6 +16,8 @@ apport (0.35) UNRELEASED; urgency=low
   * gtk/apport-gtk: Add --file-bug, --package, and --pid options; if given,
     create a bug report about the given package instead of viewing crash
     reports. See https://wiki.ubuntu.com/BugReportingTool for details.
+  * gtk/apport-gtk{,.glade}: Generalize some strings to not talk about 'crash'
+    any more, to make them suitable for bug reporting, too.
   * problem_report.py: Add new method write_mime() to encode a problem report
     in MIME/Multipart RFC 2822 format (i. e. an email with attachments). Short
     values are aggregated into the first inline text/plain part, large values,
@@ -24,7 +26,7 @@ apport (0.35) UNRELEASED; urgency=low
     https://wiki.ubuntu.com/BugReportingTool, 'Data submission' for details.
   * Use cStringIO instead of StringIO in modules.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 23:08:43 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 23:17:13 +0100
 
 apport (0.34) feisty; urgency=low
 
