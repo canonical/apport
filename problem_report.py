@@ -1,3 +1,5 @@
+# vim: set fileencoding=UTF-8 :
+
 '''Store, load, and handle problem reports.
 
 Copyright (C) 2006 Canonical Ltd.
@@ -10,7 +12,10 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import bz2, zlib, base64, time, UserDict, sys
+import bz2, zlib, base64, time, UserDict, sys, StringIO, gzip
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
 
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
@@ -23,7 +28,7 @@ class ProblemReport(UserDict.IterableUserDict):
             date = time.asctime()
         self.data = {'ProblemType': type, 'Date': date}
 
-    def        load(self, file, binary=True):
+    def load(self, file, binary=True):
         '''Initialize problem report from a file-like object, using Debian
         control file format.
         
@@ -198,6 +203,91 @@ class ProblemReport(UserDict.IterableUserDict):
                 os.utime(reportfile, (st.st_atime, st.st_mtime))
             os.chmod(reportfile, st.st_mode)
 
+    def write_mime(self, file, attach_treshold = 5):
+        '''Write information into the given file-like object, using
+        MIME/Multipart RFC 2822 format (i. e. an email with attachments).
+
+        If a value is a string, it is written directly. Otherwise it must be a
+        tuple containing the source file and an optional boolean value (in that
+        order); the first argument can be a file name or a file-like object,
+        which will be read and its content will become the value of this key.
+        The file will be gzip compressed.
+
+        attach_treshold specifies the maximum number of lines for a value to be
+        included into the first inline text part. All bigger values (as well as
+        all non-ASCII ones) will become an attachment.
+        '''
+
+        keys = self.data.keys()
+        keys.sort()
+
+        text = ''
+        attachments = []
+
+        if 'ProblemType' in keys:
+            keys.remove('ProblemType')
+            keys.insert(0, 'ProblemType')
+
+        for k in keys:
+            v = self.data[k]
+            attach_value = None
+
+            # if it's a tuple, we have a file reference; read the contents
+            # and gzip it
+            if not hasattr(v, 'find'):
+                attach_value = ''
+                if hasattr(v[0], 'read'):
+                    f = v[0] # file-like object
+                else:
+                    f = open(v[0]) # file name
+                attach_value = StringIO.StringIO()
+                gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
+                while True:
+                    block = f.read(1048576)
+                    if block:
+                        gf.write(block)
+                    else:
+                        gf.close()
+                        break
+
+            # binary value
+            elif self._is_binary(v):
+                attach_value = StringIO.StringIO()
+                gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
+                gf.write(v)
+                gf.close()
+
+            # if we have an attachment value, create an attachment
+            if attach_value:
+                att = MIMEBase('application', 'x-gzip')
+                att.add_header('Content-Disposition', 'attachment', filename=k+'.gz')
+                att.set_payload(attach_value.getvalue())
+                attachments.append(att)
+            else:
+                # plain text value
+                lines = v.splitlines()
+                if len(lines) == 1:
+                    text += '%s: %s\n' % (k, v)
+                elif len(lines) < attach_treshold:
+                    text += '%s:\n ' % k
+                    text += v.replace('\n', '\n ')
+                else:
+                    # too large, separate attachment
+                    att = MIMEText(v, _charset='UTF-8')
+                    att.add_header('Content-Disposition', 'attachment', filename=k+'.txt')
+                    attachments.append(att)
+
+        # create initial text attachment
+        att = MIMEText(text, _charset='UTF-8')
+        att.add_header('Content-Disposition', 'inline')
+        attachments.insert(0, att)
+
+        msg = MIMEMultipart()
+        for a in attachments:
+            msg.attach(a)
+
+        print >> file, msg.as_string()
+
     def __setitem__(self, k, v):
         assert hasattr(k, 'isalnum')
         assert k.isalnum()
@@ -214,7 +304,7 @@ class ProblemReport(UserDict.IterableUserDict):
 # Unit test
 #
 
-import unittest, StringIO, tempfile, os
+import unittest, tempfile, os, email
 
 class _ProblemReportTest(unittest.TestCase):
     def test_basic_operations(self):
@@ -638,5 +728,112 @@ File: base64
 
         os.unlink(rep)
 
+    def test_write_mime_text(self):
+        '''Test write_mime() for text values.'''
+
+        pr = ProblemReport(date = 'now!')
+        pr['Simple'] = 'bar'
+        pr['TwoLine'] = 'first\nsecond\n'
+        pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
+        io = StringIO.StringIO()
+        pr.write_mime(io)
+        io.seek(0)
+
+        msg = email.message_from_file(io)
+        msg_iter = msg.walk()
+
+        # first part is the multipart container
+        part = msg_iter.next()
+        self.assert_(part.is_multipart())
+
+        # second part should be an inline text/plain attachments with all short
+        # fields
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'text/plain')
+        self.assertEqual(part.get_content_charset(), 'utf-8')
+        self.assertEqual(part.get_filename(), None)
+        self.assertEqual(part.get_payload(decode=True), '''ProblemType: Crash
+Date: now!
+Simple: bar
+TwoLine:
+ first
+ second
+ ''')
+
+        # third part should be the Multiline: field as attachment
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'text/plain')
+        self.assertEqual(part.get_content_charset(), 'utf-8')
+        self.assertEqual(part.get_filename(), 'Multiline.txt')
+        self.assertEqual(part.get_payload(decode=True), ''' foo   bar
+baz
+  blip  
+line4
+line♥5!!
+łıµ€ ⅝
+''')
+
+        # no more parts
+        self.assertRaises(StopIteration, msg_iter.next)
+        
+    def test_write_mime_binary(self):
+        '''Test write_mime() for binary values and file references.'''
+
+        bin_value = 'AB' * 10 + '\0' * 10 + 'Z'
+
+        temp = tempfile.NamedTemporaryFile()
+        temp.write(bin_value)
+        temp.flush()
+
+        pr = ProblemReport(date = 'now!')
+        pr['Context'] = 'Test suite'
+        pr['File1'] = (temp.name,)
+        pr['Value1'] = bin_value
+        io = StringIO.StringIO()
+        pr.write_mime(io)
+        io.seek(0)
+
+        msg = email.message_from_file(io)
+        msg_iter = msg.walk()
+
+        # first part is the multipart container
+        part = msg_iter.next()
+        self.assert_(part.is_multipart())
+
+        # second part should be an inline text/plain attachments with all short
+        # fields
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'text/plain')
+        self.assertEqual(part.get_content_charset(), 'utf-8')
+        self.assertEqual(part.get_filename(), None)
+        self.assertEqual(part.get_payload(decode=True), 
+            'ProblemType: Crash\nContext: Test suite\nDate: now!\n')
+
+        # third part should be the File1: file contents as gzip'ed attachment
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'application/x-gzip')
+        self.assertEqual(part.get_filename(), 'File1.gz')
+        f = tempfile.TemporaryFile()
+        f.write(part.get_payload(decode=True))
+        f.seek(0)
+        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
+
+        # fourth part should be the Value1: value as gzip'ed attachment
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'application/x-gzip')
+        self.assertEqual(part.get_filename(), 'Value1.gz')
+        f = tempfile.TemporaryFile()
+        f.write(part.get_payload(decode=True))
+        f.seek(0)
+        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
+
+        # no more parts
+        self.assertRaises(StopIteration, msg_iter.next)
+        
 if __name__ == '__main__':
     unittest.main()
