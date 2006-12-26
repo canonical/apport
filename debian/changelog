@@ -1,5 +1,7 @@
 apport (0.35) UNRELEASED; urgency=low
 
+  Optimizations:
+
   * apport/fileutils.py: Split out heuristics for determining whether a file
     belongs to a package to new function likely_packaged() and add test cases.
   * bin/apport: Do not use the expensive find_file_package() any more, use
@@ -10,23 +12,25 @@ apport (0.35) UNRELEASED; urgency=low
   * apport/report.py, add_gdb_info(): Call gdb just once and split the output
     instead of calling it again for each command. This should significantly
     speed up the gdb stage especially for large programs/core dumps.
+  * Use cStringIO instead of StringIO in modules.
+
+  New feature: Bug reporting tool (https://wiki.ubuntu.com/BugReportingTool)
+
   * gtk/apport-gtk: Split out crash report initialization to new function
     show_crashes() so that we can use the frontend for other purposes like bug
     reporting.
   * gtk/apport-gtk: Add --file-bug, --package, and --pid options; if given,
     create a bug report about the given package instead of viewing crash
-    reports. See https://wiki.ubuntu.com/BugReportingTool for details.
+    reports.
   * gtk/apport-gtk{,.glade}: Generalize some strings to not talk about 'crash'
     any more, to make them suitable for bug reporting, too.
   * problem_report.py: Add new method write_mime() to encode a problem report
     in MIME/Multipart RFC 2822 format (i. e. an email with attachments). Short
     values are aggregated into the first inline text/plain part, large values,
     binary values, and file references get gzip compressed separate
-    attachments. Also add various test cases. See
-    https://wiki.ubuntu.com/BugReportingTool, 'Data submission' for details.
-  * Use cStringIO instead of StringIO in modules.
+    attachments. Also add various test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 23:17:13 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 23:18:32 +0100
 
 apport (0.34) feisty; urgency=low
 
