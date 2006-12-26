@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import gobject, gtk, gtk.glade
-import glob, sys, gettext, os.path, locale, tempfile
+import glob, sys, gettext, os.path, locale, tempfile, optparse
 from gettext import gettext as _
 import subprocess, threading, webbrowser
 import xdg.DesktopEntry
@@ -100,6 +100,31 @@ class ApportGTK:
         self.report = None
         self.update_report()
 
+    def file_bug(self, package, pid):
+	'''File a bug against a package.  
+	
+	At least one of package or pid must be given. If a pid is given, the
+	report will contain runtime debug information.'''
+
+	# create initial report
+	self.report = apport.Report('Bug')
+        self.report['BugDisplayMode'] = 'file'
+	if pid:
+	    self.report.add_proc_info(pid)
+        self.cur_package = package
+
+	# write it into temporary file
+        if package:
+            subject = package
+        else:
+            subject = self.report.get('ExecutablePath', 'unknown')
+	f = tempfile.NamedTemporaryFile(suffix='.bug', prefix=subject.replace('/', '_') + '.')
+	self.report.write(f)
+	self.reports = [f.name]
+	self.on_button_reportbug_clicked(None)
+        f.close()
+        self.reports = []
+
     def ignore(self, widget, *auxargs):
         '''Do nothing with the current report.'''
 
@@ -111,7 +136,8 @@ class ApportGTK:
     def next(self):
         '''Move on to the next report.'''
 
-        apport.fileutils.mark_report_seen(self.reports.pop(0))
+        if len(self.reports) > 0:
+            apport.fileutils.mark_report_seen(self.reports.pop(0))
         self.report = None
 
         if len(self.reports) > 0:
@@ -321,13 +347,34 @@ there is none, or you are in doubt, please create a new report.'))
     def on_radiobutton_complete_toggled(self, widget):
         self.update_reportfile_size()
 
+def parse_options():
+    '''Parse command line options and return (options, args) tuple.'''
+
+    optparser = optparse.OptionParser('%prog [options]')
+    optparser.add_option('-f', '--file-bug',
+        help='Start in bug filing mode. Requires --source and an optional --pid, or just a --pid',
+        action='store_true', dest='filebug', default=False)
+    optparser.add_option('-p', '--package',
+        help='Specify package name in --file-bug mode. This is optional if a --pid is specified.',
+        action='store', type='string', dest='package', default=None)
+    optparser.add_option('-P', '--pid',
+        help='Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information.',
+        action='store', type='string', dest='pid', default=None)
+
+    return optparser.parse_args()
+
 if __name__ == '__main__':
     gettext.textdomain(gettext_domain)
     gtk.glade.textdomain(gettext_domain)
     app = ApportGTK()
 
-    # initialize in crash report mode
-    app.show_crashes()
+    (options, args) = parse_options()
+
+    if options.filebug:
+	app.file_bug(options.package, options.pid)
+    else:
+	# initialize in crash report mode if --file-bug is not specified
+	app.show_crashes()
 
     gtk.main()
 
