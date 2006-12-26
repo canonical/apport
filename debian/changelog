@@ -30,7 +30,11 @@ apport (0.35) UNRELEASED; urgency=low
     binary values, and file references get gzip compressed separate
     attachments. Also add various test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 23:18:32 +0100
+  Bug fixes:
+
+  * po/Makefile: Add top_srcdir to work with current intltool.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 23:24:57 +0100
 
 apport (0.34) feisty; urgency=low
 
