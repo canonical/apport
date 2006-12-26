@@ -214,7 +214,8 @@ def check_files_md5(sumfile):
 # Unit test
 #
 
-import unittest, tempfile, os, shutil, sys, time, StringIO
+import unittest, tempfile, os, shutil, sys, time
+from cStringIO import StringIO
 
 class _ApportUtilsTest(unittest.TestCase):
     def setUp(self):
@@ -327,27 +328,27 @@ class _ApportUtilsTest(unittest.TestCase):
         '''Test get_recent_crashes() behaviour.'''
 
         # incomplete fields
-        r = StringIO.StringIO('''ProblemType: Crash''')
+        r = StringIO('''ProblemType: Crash''')
         self.assertEqual(get_recent_crashes(r), 0)
 
-        r = StringIO.StringIO('''ProblemType: Crash
+        r = StringIO('''ProblemType: Crash
 Date: Wed Aug 01 00:00:01 1990''')
         self.assertEqual(get_recent_crashes(r), 0)
 
         # ancient report
-        r = StringIO.StringIO('''ProblemType: Crash
+        r = StringIO('''ProblemType: Crash
 Date: Wed Aug 01 00:00:01 1990
 CrashCounter: 3''')
         self.assertEqual(get_recent_crashes(r), 0)
 
         # old report (one day + one hour ago)
-        r = StringIO.StringIO('''ProblemType: Crash
+        r = StringIO('''ProblemType: Crash
 Date: %s
 CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-25*3600))
         self.assertEqual(get_recent_crashes(r), 0)
 
         # current report (one hour ago)
-        r = StringIO.StringIO('''ProblemType: Crash
+        r = StringIO('''ProblemType: Crash
 Date: %s
 CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         self.assertEqual(get_recent_crashes(r), 3)

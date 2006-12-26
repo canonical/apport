@@ -12,7 +12,8 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import bz2, zlib, base64, time, UserDict, sys, StringIO, gzip
+import bz2, zlib, base64, time, UserDict, sys, gzip
+from cStringIO import StringIO
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
@@ -106,7 +107,7 @@ class ProblemReport(UserDict.IterableUserDict):
         order); the first argument can be a file name or a file-like object,
         which will be read and its content will become the value of this key.
         The second argument specifies whether the contents will be
-        bzip2'ed and base64-encoded (this defaults to True).
+        zlib compressed and base64-encoded (this defaults to True).
         '''
 
         # sort keys into ASCII non-ASCII/binary attachment ones, so that
@@ -152,7 +153,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 # single line value
                 print >> file, k + ':', v
 
-        # now write the binary keys with bzip2 compression and base64 encoding
+        # now write the binary keys with zlib compression and base64 encoding
         for k in binkeys:
             v = self.data[k]
 
@@ -240,7 +241,7 @@ class ProblemReport(UserDict.IterableUserDict):
                     f = v[0] # file-like object
                 else:
                     f = open(v[0]) # file name
-                attach_value = StringIO.StringIO()
+                attach_value = StringIO()
                 gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
                 while True:
                     block = f.read(1048576)
@@ -252,7 +253,7 @@ class ProblemReport(UserDict.IterableUserDict):
 
             # binary value
             elif self._is_binary(v):
-                attach_value = StringIO.StringIO()
+                attach_value = StringIO()
                 gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
                 gf.write(v)
                 gf.close()
@@ -343,7 +344,7 @@ class _ProblemReportTest(unittest.TestCase):
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  '
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
         self.assertEqual(io.getvalue(), 
 '''ProblemType: Crash
@@ -361,7 +362,7 @@ WhiteSpace:
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  '
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
 
         pr.clear()
@@ -385,7 +386,7 @@ Extra: appended
 
         pr = ProblemReport(date = 'now!')
         pr['File'] = (temp.name,)
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
         temp.close()
 
@@ -405,7 +406,7 @@ Extra: appended
     def test_load(self):
         '''Test load() with various formatting.'''
         pr = ProblemReport()
-        pr.load(StringIO.StringIO(
+        pr.load(StringIO(
 '''ProblemType: Crash
 Date: now!
 Simple: bar
@@ -420,7 +421,7 @@ WhiteSpace:
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
 
         # test last field a bit more
-        pr.load(StringIO.StringIO(
+        pr.load(StringIO(
 '''ProblemType: Crash
 Date: now!
 Simple: bar
@@ -435,7 +436,7 @@ WhiteSpace:
         self.assertEqual(pr['Simple'], 'bar')
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  \n')
         pr = ProblemReport()
-        pr.load(StringIO.StringIO(
+        pr.load(StringIO(
 '''ProblemType: Crash
 WhiteSpace:
   foo   bar
@@ -446,7 +447,7 @@ Last: foo
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
         self.assertEqual(pr['Last'], 'foo')
 
-        pr.load(StringIO.StringIO(
+        pr.load(StringIO(
 '''ProblemType: Crash
 WhiteSpace:
   foo   bar
@@ -459,7 +460,7 @@ Last: foo
         self.assertEqual(pr['Last'], 'foo\n')
 
         # test that load() cleans up properly
-        pr.load(StringIO.StringIO('ProblemType: Crash'))
+        pr.load(StringIO('ProblemType: Crash'))
         self.assertEqual(pr.keys(), ['ProblemType'])
 
     def test_write_file(self):
@@ -472,7 +473,7 @@ Last: foo
         pr = ProblemReport(date = 'now!')
         pr['File'] = (temp.name,)
         pr['Afile'] = (temp.name,)
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
         temp.close()
 
@@ -493,7 +494,7 @@ File: base64
         temp.flush()
         pr = ProblemReport(date = 'now!')
         pr['File'] = (temp.name, False)
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
 
         self.assertEqual(io.getvalue(), 
@@ -503,7 +504,7 @@ File: foo\0bar
 ''')
 
         pr['File'] = (temp.name, True)
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
 
         self.assertEqual(io.getvalue(), 
@@ -518,13 +519,13 @@ File: base64
     def test_write_fileobj(self):
         '''Test writing a report with a pointer to a file-like object.'''
 
-        tempbin = StringIO.StringIO('AB' * 10 + '\0' * 10 + 'Z')
-        tempasc = StringIO.StringIO('Hello World')
+        tempbin = StringIO('AB' * 10 + '\0' * 10 + 'Z')
+        tempasc = StringIO('Hello World')
 
         pr = ProblemReport(date = 'now!')
         pr['BinFile'] = (tempbin,)
         pr['AscFile'] = (tempasc, False)
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
 
         self.assertEqual(io.getvalue(), 
@@ -549,12 +550,12 @@ Foo: Bar
 
         # test with reading everything
         pr = ProblemReport()
-        pr.load(StringIO.StringIO(bin_report))
+        pr.load(StringIO(bin_report))
         self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
         self.assertEqual(pr.has_removed_fields(), False)
 
         # test with skipping binary data
-        pr.load(StringIO.StringIO(bin_report), binary=False)
+        pr.load(StringIO(bin_report), binary=False)
         self.assertEqual(pr['File'], '')
         self.assertEqual(pr.has_removed_fields(), True)
 
@@ -570,12 +571,12 @@ Foo: Bar
 
         # test with reading everything
         pr = ProblemReport()
-        pr.load(StringIO.StringIO(bin_report))
+        pr.load(StringIO(bin_report))
         self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
         self.assertEqual(pr.has_removed_fields(), False)
 
         # test with skipping binary data
-        pr.load(StringIO.StringIO(bin_report), binary=False)
+        pr.load(StringIO(bin_report), binary=False)
         self.assertEqual(pr['File'], '')
         self.assertEqual(pr.has_removed_fields(), True)
 
@@ -593,7 +594,7 @@ Foo: Bar
         pr['File'] = (temp.name,)
         pr['Before'] = 'xtestx'
         pr['ZAfter'] = 'ytesty'
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
         temp.close()
 
@@ -607,7 +608,7 @@ Foo: Bar
         self.assertEqual(pr['ZAfter'], 'ytesty')
 
         # write it again
-        io2 = StringIO.StringIO()
+        io2 = StringIO()
         pr.write(io2)
         self.assert_(io.getvalue() == io2.getvalue())
 
@@ -641,18 +642,18 @@ File: base64
 '''
 
         pr = ProblemReport()
-        pr.load(StringIO.StringIO(report))
+        pr.load(StringIO(report))
 
         self.assertEqual(pr['Long'], 'xxx\n.\nyyy')
 
         # write back unmodified
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
         self.assertEqual(io.getvalue(), report)
 
         pr['Short'] = 'aaa\nbbb'
         pr['Long'] = '123'
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write(io)
         self.assertEqual(io.getvalue(), 
 '''ProblemType: Crash
@@ -735,7 +736,7 @@ File: base64
         pr['Simple'] = 'bar'
         pr['TwoLine'] = 'first\nsecond\n'
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write_mime(io)
         io.seek(0)
 
@@ -791,7 +792,7 @@ line♥5!!
         pr['Context'] = 'Test suite'
         pr['File1'] = (temp.name,)
         pr['Value1'] = bin_value
-        io = StringIO.StringIO()
+        io = StringIO()
         pr.write_mime(io)
         io.seek(0)
 

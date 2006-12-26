@@ -19,8 +19,9 @@ apport (0.35) UNRELEASED; urgency=low
     binary values, and file references get gzip compressed separate
     attachments. Also add various test cases. See
     https://wiki.ubuntu.com/BugReportingTool, 'Data submission' for details.
+  * Use cStringIO instead of StringIO in modules.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 11:38:32 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 11:52:14 +0100
 
 apport (0.34) feisty; urgency=low
 
