@@ -13,6 +13,9 @@ apport (0.35) UNRELEASED; urgency=low
     instead of calling it again for each command. This should significantly
     speed up the gdb stage especially for large programs/core dumps.
   * Use cStringIO instead of StringIO in modules.
+  * gtk/apport-gtk: Code cleanup and refactorization:
+    - Move iteration over crash reports into __main__ to simplify housekeeping
+      in the ApportGTK class and get rid of some functions.
 
   New feature: Bug reporting tool (https://wiki.ubuntu.com/BugReportingTool)
 
@@ -37,7 +40,7 @@ apport (0.35) UNRELEASED; urgency=low
   * po/Makefile: Add top_srcdir to work with current intltool.
   * po/de.po: Unfuzz some strings.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Dec 2006 15:10:16 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Dec 2006 17:10:34 +0100
 
 apport (0.34) feisty; urgency=low
 

@@ -73,13 +73,18 @@ def format_filesize(size):
     return locale.format('%.1f GB', size / float(1024 * 1048576)) 
 
 class ApportGTK:
+    def w(self, widget):
+        '''Shortcut for getting a widget.'''
+
+        return self.widgets.get_widget(widget)
+
     def __init__(self):
         self.widgets = gtk.glade.XML(os.path.join(os.path.dirname(sys.argv[0]),
             'apport-gtk.glade'))
         self.widgets.signal_autoconnect(self)
 
 	self.report = None # current ProblemReport
-	self.reports = None # list of report file names
+	self.reportfile = None # current problem report file
 
         # initialize tree model and view
         self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)
@@ -94,75 +99,14 @@ class ApportGTK:
         self.str_heading_reopen = self.w('label_heading_reopen').get_label()
         self.str_bugreport_title = self.w('window_bugreport').get_title()
 
-    def show_crashes(self):
-	'''Load pending crash reports and display the first one.'''
-
-        self.reports = apport.fileutils.get_new_reports()
-        if len(self.reports) == 0:
-            print >> sys.stderr, 'No crash reports found, aborting'
-            sys.exit(1)
-
-        self.report = None
-        self.update_report()
-
-    def file_bug(self, package, pid):
-	'''File a bug against a package.  
-	
-        If a pid is given, the report will contain runtime debug
-        information. If neither a package or a pid is specified, a generic
-        distro bug is filed.'''
-
-	# create initial report
-	self.report = apport.Report('Bug')
-        self.report['BugDisplayMode'] = 'file'
-	self.report.add_os_info()
-	if pid:
-	    self.report.add_proc_info(pid)
-        self.cur_package = package
-
-	# write it into temporary file
-        if package:
-            subject = package
-        else:
-            subject = self.report.get('ExecutablePath', 'unknown')
-	(fd, f) = tempfile.mkstemp('.bug', subject.replace('/', '_') + '.')
-	os.close(fd)
-	self.report.write(open(f, 'w'))
-	self.reports = [f]
-	self.on_button_reportbug_clicked(None)
-        self.reports = []
-
-    def ignore(self, widget, *auxargs):
-        '''Do nothing with the current report.'''
-
-        self.w('dialog_crash').hide()
-        self.w('dialog_crash_reopen').hide()
-        self.next()
-        return True
-
-    def next(self):
-        '''Move on to the next report.'''
-
-        if len(self.reports) > 0:
-            apport.fileutils.mark_report_seen(self.reports.pop(0))
-        self.report = None
-
-        if len(self.reports) > 0:
-            self.update_report()
-        else:
-            gtk.main_quit()
-
-    def w(self, widget):
-        '''Shortcut for getting a widget.'''
-
-        return self.widgets.get_widget(widget)
-
-    def update_report(self):
-        '''Load currently selected report and update UI accordingly.'''
+    def show_crash(self, reportfile):
+	'''Load given crash report file, inform the user about the crash and
+        ask him what to do.'''
 
         # load problem report
+        self.reportfile = reportfile
         self.report = apport.Report()
-        self.report.load(open(self.reports[0]))
+        self.report.load(open(reportfile))
 
         if self.report.has_key('Package'):
             self.cur_package = self.report['Package'].split()[0]
@@ -186,7 +130,7 @@ class ApportGTK:
                 self.desktop_entry = xdg.DesktopEntry.DesktopEntry(desktop_file)
             except: pass
 
-        # update dialog
+        # adapt dialog heading and label appropriately
         if self.desktop_entry:
             heading = _('Sorry, %s closed unexpectedly.') % self.desktop_entry.getName()
         elif self.report.has_key('ExecutablePath'):
@@ -202,6 +146,41 @@ class ApportGTK:
             label = self.w('label_heading')
             label.set_markup(self.str_heading % heading)
             self.w('dialog_crash').show_all()
+
+        apport.fileutils.mark_report_seen(report)
+
+    def file_bug(self, package, pid):
+	'''File a bug against a package.  
+	
+        If a pid is given, the report will contain runtime debug
+        information. If neither a package or a pid is specified, a generic
+        distro bug is filed.'''
+
+	# create initial report
+	self.report = apport.Report('Bug')
+        self.report['BugDisplayMode'] = 'file'
+	self.report.add_os_info()
+	if pid:
+	    self.report.add_proc_info(pid)
+        self.cur_package = package
+
+	# write it into temporary file
+        if package:
+            subject = package
+        else:
+            subject = self.report.get('ExecutablePath', 'unknown')
+	(fd, self.reportfile) = tempfile.mkstemp('.bug', subject.replace('/', '_') + '.')
+	os.close(fd)
+	self.report.write(open(self.reportfile, 'w'))
+	self.on_button_reportbug_clicked(None)
+
+    def ignore(self, widget, *auxargs):
+        '''Do nothing with the current report.'''
+
+        self.w('dialog_crash').hide()
+        self.w('dialog_crash_reopen').hide()
+        gtk.main_quit()
+        return True
 
     def on_button_reportbug_clicked(self, widget):
         '''Open bug page in browser and ask to file a bug.'''
@@ -228,7 +207,7 @@ class ApportGTK:
 
             if not self.report.has_key('Package'):
                 icthread = threading.Thread(target=thread_collect_info,
-                    args=(self.report, self.reports[0], self.cur_package))
+                    args=(self.report, self.reportfile, self.cur_package))
                 icthread.start()
                 while icthread.isAlive():
                     while gtk.events_pending():
@@ -255,7 +234,7 @@ class ApportGTK:
                     message_format=_('Could not determine the package or source package name.'))
                 md.set_title(_('Invalid problem report'))
                 md.run()
-                self.next()
+                gtk.main_quit()
                 return True
 
             # create reduced report if there are any removed fields
@@ -328,7 +307,7 @@ there is none, or you are in doubt, please create a new report.'))
         self.w('window_bugreport').hide()
         if self.reduced_file:
             os.unlink(self.reduced_file)
-        self.next()
+        gtk.main_quit()
         return True
 
     def on_button_reopen_clicked(self, widget):
@@ -344,7 +323,7 @@ there is none, or you are in doubt, please create a new report.'))
             os.execlp('sh', 'sh', '-c', self.report.get('RespawnCommand', self.report['ProcCmdline']))
             sys.exit(1)
 
-        self.next()
+        gtk.main_quit()
         return True
 
     def on_expander_details_activate(self, widget):
@@ -354,7 +333,7 @@ there is none, or you are in doubt, please create a new report.'))
 
     def update_reportfile_size(self):
         if not self.reduced_file or self.w('radiobutton_complete').get_active():
-            f = self.reports[0]
+            f = self.reportfile
         else:
             f = self.reduced_file
         self.w('label_reportfile').set_text(f)
@@ -389,9 +368,15 @@ if __name__ == '__main__':
 
     if options.filebug:
 	app.file_bug(options.package, options.pid)
+        gtk.main()
     else:
-	# initialize in crash report mode if --file-bug is not specified
-	app.show_crashes()
+	# report crashes if --file-bug is not specified
+        reports = apport.fileutils.get_new_reports()
+        if len(reports) == 0:
+            print >> sys.stderr, 'No crash reports found, aborting'
+            sys.exit(0)
 
-    gtk.main()
+        for report in reports:
+            app.show_crash(report)
+            gtk.main()
 
