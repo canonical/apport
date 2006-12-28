@@ -24,6 +24,8 @@ apport (0.35) UNRELEASED; urgency=low
     reports.
   * gtk/apport-gtk{,.glade}: Generalize some strings to not talk about 'crash'
     any more, to make them suitable for bug reporting, too.
+  * gtk/apport-gtk: Support --file-bug without specifying a package or a PID
+    for filing generic distro bugs.
   * problem_report.py: Add new method write_mime() to encode a problem report
     in MIME/Multipart RFC 2822 format (i. e. an email with attachments). Short
     values are aggregated into the first inline text/plain part, large values,
@@ -35,7 +37,7 @@ apport (0.35) UNRELEASED; urgency=low
   * po/Makefile: Add top_srcdir to work with current intltool.
   * po/de.po: Unfuzz some strings.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 26 Dec 2006 23:28:08 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Dec 2006 15:10:16 +0100
 
 apport (0.34) feisty; urgency=low
 

@@ -39,6 +39,11 @@ def thread_collect_info(report, reportfile, package):
     so that this function is suitable for threading.'''
 
     report.add_gdb_info()
+    if not package:
+        if report.has_key('ExecutablePath'):
+            package = apport.fileutils.find_file_package(report['ExecutablePath'])
+        else:
+            raise KeyError, 'called without a package, and report does not have ExecutablePath'
     report.add_package_info(package)
     report.add_os_info()
     f = open(reportfile, 'w')
@@ -103,12 +108,14 @@ class ApportGTK:
     def file_bug(self, package, pid):
 	'''File a bug against a package.  
 	
-	At least one of package or pid must be given. If a pid is given, the
-	report will contain runtime debug information.'''
+        If a pid is given, the report will contain runtime debug
+        information. If neither a package or a pid is specified, a generic
+        distro bug is filed.'''
 
 	# create initial report
 	self.report = apport.Report('Bug')
         self.report['BugDisplayMode'] = 'file'
+	self.report.add_os_info()
 	if pid:
 	    self.report.add_proc_info(pid)
         self.cur_package = package
@@ -118,11 +125,11 @@ class ApportGTK:
             subject = package
         else:
             subject = self.report.get('ExecutablePath', 'unknown')
-	f = tempfile.NamedTemporaryFile(suffix='.bug', prefix=subject.replace('/', '_') + '.')
-	self.report.write(f)
-	self.reports = [f.name]
+	(fd, f) = tempfile.mkstemp('.bug', subject.replace('/', '_') + '.')
+	os.close(fd)
+	self.report.write(open(f, 'w'))
+	self.reports = [f]
 	self.on_button_reportbug_clicked(None)
-        f.close()
         self.reports = []
 
     def ignore(self, widget, *auxargs):
@@ -206,53 +213,60 @@ class ApportGTK:
         
         mode = self.report.get('BugDisplayMode', 'list')
 
-        # collect additional information and check for existing bug
-        # patterns; since this might take a while, create separate threads and
-        # display a progress dialog
-        self.w('progressbar_information_collection').set_fraction(0)
-        self.w('window_information_collection').show()
+        if not self.cur_package and not self.report.has_key('ExecutablePath'):
+            # this happens if we file a bug without specifying a PID or a
+            # package
+            self.report.add_os_info()
+	    url = None
+	    self.reduced_file = None
+        else:
+            # collect additional information and check for existing bug
+            # patterns; since this might take a while, create separate threads and
+            # display a progress dialog
+            self.w('progressbar_information_collection').set_fraction(0)
+            self.w('window_information_collection').show()
 
-        if not self.report.has_key('Package'):
-            icthread = threading.Thread(target=thread_collect_info,
-                args=(self.report, self.reports[0], self.cur_package))
-            icthread.start()
-            while icthread.isAlive():
+            if not self.report.has_key('Package'):
+                icthread = threading.Thread(target=thread_collect_info,
+                    args=(self.report, self.reports[0], self.cur_package))
+                icthread.start()
+                while icthread.isAlive():
+                    while gtk.events_pending():
+                        gtk.main_iteration(False)
+                    icthread.join(0.1)
+                    self.w('progressbar_information_collection').pulse()
+
+            bpthread = threading.Thread(target=thread_check_bugpatterns,
+                args=(self.report, bugpattern_baseurl))
+            bpthread.start()
+            while bpthread.isAlive():
                 while gtk.events_pending():
                     gtk.main_iteration(False)
-                icthread.join(0.1)
+                bpthread.join(0.1)
                 self.w('progressbar_information_collection').pulse()
+            global thread_check_bugpatterns_result
+            url = thread_check_bugpatterns_result
+            self.w('window_information_collection').hide()
 
-        bpthread = threading.Thread(target=thread_check_bugpatterns,
-            args=(self.report, bugpattern_baseurl))
-        bpthread.start()
-        while bpthread.isAlive():
-            while gtk.events_pending():
-                gtk.main_iteration(False)
-            bpthread.join(0.1)
-            self.w('progressbar_information_collection').pulse()
-        global thread_check_bugpatterns_result
-        url = thread_check_bugpatterns_result
-        self.w('window_information_collection').hide()
+            # check that we were able to determine package names
+            if not self.report.has_key('SourcePackage') or not self.report.has_key('Package'):
+                md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                    buttons=gtk.BUTTONS_CLOSE, 
+                    message_format=_('Could not determine the package or source package name.'))
+                md.set_title(_('Invalid problem report'))
+                md.run()
+                self.next()
+                return True
 
-        # check that we were able to determine package names
-        if not self.report.has_key('SourcePackage') or not self.report.has_key('Package'):
-            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                buttons=gtk.BUTTONS_CLOSE, 
-                message_format=_('Could not determine the package or source package name.'))
-            md.set_title(_('Invalid problem report'))
-            md.run()
-            self.next()
-            return True
-
-        # create reduced report if there are any removed fields
-        subject = self.report.get('ExecutablePath', self.cur_package)
-        if self.report.has_removed_fields():
-            (fd, self.reduced_file) = tempfile.mkstemp('.apport', 
-                subject.replace('/', '_') + '.')
-            os.close(fd)
-            self.report.write(open(self.reduced_file, 'w'))
-        else:
-            self.reduced_file = None
+            # create reduced report if there are any removed fields
+            subject = self.report.get('ExecutablePath', self.cur_package)
+            if self.report.has_removed_fields():
+                (fd, self.reduced_file) = tempfile.mkstemp('.apport', 
+                    subject.replace('/', '_') + '.')
+                os.close(fd)
+                self.report.write(open(self.reduced_file, 'w'))
+            else:
+                self.reduced_file = None
 
         if url:
             self.w('label_bug_instructions').set_text(_('This problem was \
@@ -260,7 +274,10 @@ already reported in the bug report displayed in your web browser. Please check \
 if you can add any further information that might be helpful for the \
 developers.'))
         elif mode == 'file': 
-            url = 'https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage']
+            if self.cur_package:
+                url = 'https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage']
+            else:
+                url = 'https://launchpad.net/distros/ubuntu/+filebug'
             self.w('label_bug_instructions').set_text(_('Please fill out the bug \
 report form in your web browser and give some details about what you did just \
 before the problem happened.'))
@@ -272,7 +289,7 @@ there is none, or you are in doubt, please create a new report.'))
 
         # update details
         self.w('window_bugreport').set_title(self.str_bugreport_title %
-            self.report['Package'].split()[0])
+            self.report.get('Package', 'Ubuntu').split()[0])
 
         self.w('label_reportfile').set_selectable(True)
         self.update_reportfile_size()
