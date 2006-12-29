@@ -85,6 +85,7 @@ class ApportGTK:
 
 	self.report = None # current ProblemReport
 	self.reportfile = None # current problem report file
+	self.reduced_file = None # current problem report file (without large binaries)
 
         # initialize tree model and view
         self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)
@@ -98,6 +99,26 @@ class ApportGTK:
         self.str_heading = self.w('label_heading').get_label()
         self.str_heading_reopen = self.w('label_heading_reopen').get_label()
         self.str_bugreport_title = self.w('window_bugreport').get_title()
+
+    #
+    # Helper functions
+    #
+    def _create_report_file(self):
+        '''Create a temporary file for the current report and return the path.
+
+        The file is not removed automatically.'''
+
+        if self.cur_package:
+            subject = self.cur_package
+        else:
+            subject = self.report.get('ExecutablePath', 'unknown')
+	(fd, f) = tempfile.mkstemp('.apport', subject.replace('/', '_') + '.')
+	self.report.write(os.fdopen(fd, 'w'))
+        return f
+
+    #
+    # Entry points
+    #
 
     def show_crash(self, reportfile):
 	'''Load given crash report file, inform the user about the crash and
@@ -116,8 +137,6 @@ class ApportGTK:
             print >> sys.stderr, 'Crash report is for a non-packaged program.'
             sys.exit(1)
             return
-
-        subject = self.report.get('ExecutablePath', self.cur_package)
 
         # try to get a matching .desktop file
         if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
@@ -165,14 +184,12 @@ class ApportGTK:
         self.cur_package = package
 
 	# write it into temporary file
-        if package:
-            subject = package
-        else:
-            subject = self.report.get('ExecutablePath', 'unknown')
-	(fd, self.reportfile) = tempfile.mkstemp('.bug', subject.replace('/', '_') + '.')
-	os.close(fd)
-	self.report.write(open(self.reportfile, 'w'))
+        self.reportfile = self._create_report_file()
 	self.on_button_reportbug_clicked(None)
+
+    #
+    # Event handlers
+    #
 
     def ignore(self, widget, *auxargs):
         '''Do nothing with the current report.'''
@@ -238,14 +255,8 @@ class ApportGTK:
                 return True
 
             # create reduced report if there are any removed fields
-            subject = self.report.get('ExecutablePath', self.cur_package)
             if self.report.has_removed_fields():
-                (fd, self.reduced_file) = tempfile.mkstemp('.apport', 
-                    subject.replace('/', '_') + '.')
-                os.close(fd)
-                self.report.write(open(self.reduced_file, 'w'))
-            else:
-                self.reduced_file = None
+                self.reduced_file = self._create_report_file()
 
         if url:
             self.w('label_bug_instructions').set_text(_('This problem was \
@@ -307,6 +318,7 @@ there is none, or you are in doubt, please create a new report.'))
         self.w('window_bugreport').hide()
         if self.reduced_file:
             os.unlink(self.reduced_file)
+            self.reduced_file = None
         gtk.main_quit()
         return True
 
