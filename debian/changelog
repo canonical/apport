@@ -46,8 +46,10 @@ apport (0.35) UNRELEASED; urgency=low
 
   * po/Makefile: Add top_srcdir to work with current intltool.
   * po/de.po: Unfuzz some strings.
+  * apport/report.py, add_gdb_info(): Strip away the 'No symbol table info
+    available' messages from stack traces.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  2 Jan 2007 14:25:27 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  2 Jan 2007 18:17:16 +0100
 
 apport (0.34) feisty; urgency=low
 

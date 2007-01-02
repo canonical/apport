@@ -337,7 +337,8 @@ class Report(ProblemReport):
 
 	    # call gdb
 	    out = _command_output(command, stderr=open('/dev/null')).replace(
-		'(no debugging symbols found)\n','')
+		'(no debugging symbols found)\n','').replace(
+		'No symbol table info available.\n','')
 
 	    # split the output into the various fields
 	    part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
@@ -667,6 +668,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
+        self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
         self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
