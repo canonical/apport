@@ -52,8 +52,10 @@ apport (0.35) UNRELEASED; urgency=low
   * po/de.po: Unfuzz some strings.
   * apport/report.py, add_gdb_info(): Strip away the 'No symbol table info
     available' messages from stack traces.
+  * apport/report.py, test_search_bug_patterns(): Use security.u.c. instead
+    of archive.u.c., since the latter times out too often.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  2 Jan 2007 18:32:00 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  2 Jan 2007 18:41:05 +0100
 
 apport (0.34) feisty; urgency=low
 

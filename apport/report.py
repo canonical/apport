@@ -815,7 +815,7 @@ class _ApportReportTest(unittest.TestCase):
                 'gracefully handles nonexisting package XML file')
             self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None, 
                 'gracefully handles nonexisting base path')
-            self.assertEqual(r_bash.search_bug_patterns('http://archive.ubuntu.com/'), None, 
+            self.assertEqual(r_bash.search_bug_patterns('http://security.ubuntu.com/'), None, 
                 'gracefully handles base path without bug patterns')
             self.assertEqual(r_bash.search_bug_patterns('http://nonexisting.domain/'), None, 
                 'gracefully handles nonexisting URL domain')
