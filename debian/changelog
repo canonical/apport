@@ -41,6 +41,10 @@ apport (0.35) UNRELEASED; urgency=low
   * apport/report.py, add_user_info(): Add list of system groups that the user
     belongs to.
   * bin/apport: Call add_user_info(), check functionality in test-apport.
+  * apport/report.py, add_gdb_info(): Add field 'StacktraceTop' with the top
+    five functions on the stack and no local variables. This reduced 'glimpse'
+    is suitable for inline display in bug reports and automatic processing
+    (dup finders, etc).
 
   Bug fixes:
 
@@ -49,7 +53,7 @@ apport (0.35) UNRELEASED; urgency=low
   * apport/report.py, add_gdb_info(): Strip away the 'No symbol table info
     available' messages from stack traces.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  2 Jan 2007 18:17:16 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  2 Jan 2007 18:32:00 +0100
 
 apport (0.34) feisty; urgency=low
 

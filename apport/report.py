@@ -296,6 +296,8 @@ class Report(ProblemReport):
         ExecutablePath. This adds the following fields:
         - Stacktrace: Output of gdb's 'bt full' command
         - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
+        - StacktraceTop: simplified stacktrace (topmost 5 functions) for inline
+          inclusion into bug reports and easier processing
 
         The optional debugdir can specify an alternative debug symbol root
         directory.
@@ -347,6 +349,17 @@ class Report(ProblemReport):
         finally:
             if unlink_core:
                 os.unlink(core)
+
+        # StacktraceTop
+        toptrace = [''] * 5
+        bt_fn_re = re.compile('^#(\d+)\s+0x(?:\w+)\s+in\s+(.*)$')
+        for line in self['Stacktrace'].splitlines():
+            m = bt_fn_re.match(line)
+            if m:
+                depth = int(m.group(1))
+                if depth < len(toptrace):
+                    toptrace[depth] = m.group(2)
+        self['StacktraceTop'] = '\n'.join(toptrace)
 
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
@@ -665,12 +678,15 @@ class _ApportReportTest(unittest.TestCase):
 
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
+        self.assert_(pr.has_key('StacktraceTop'))
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
         self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
+        self.assertEqual(len(pr['StacktraceTop'].splitlines()), 5)
+        self.assert_(pr['StacktraceTop'].startswith('read ('))
         self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_add_gdb_info_load(self):
