@@ -12,7 +12,7 @@ test_package = 'coreutils'
 test_source = 'coreutils'
 
 required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
-    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal']
+    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal', 'UserGroups']
 
 local_reportdir = None
 
@@ -163,6 +163,11 @@ try:
 
     print '* Check that dumped environment only has insensitive variables'
     check_safe_environment(pr['ProcEnviron'])
+
+    print '* Check that collected system groups has nonempty user groups information'
+    assert pr['UserGroups']
+    print '* Check that collected system groups are not those from root'
+    assert 'root' not in pr['UserGroups']
 
     apport.fileutils.delete_report(report)
     assert apport.fileutils.get_all_reports() == [], \

@@ -40,13 +40,14 @@ apport (0.35) UNRELEASED; urgency=low
 
   * apport/report.py, add_user_info(): Add list of system groups that the user
     belongs to.
+  * bin/apport: Call add_user_info(), check functionality in test-apport.
 
   Bug fixes:
 
   * po/Makefile: Add top_srcdir to work with current intltool.
   * po/de.po: Unfuzz some strings.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  2 Jan 2007 14:19:16 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  2 Jan 2007 14:25:27 +0100
 
 apport (0.34) feisty; urgency=low
 

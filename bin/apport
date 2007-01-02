@@ -221,6 +221,8 @@ try:
     # Totally drop privs before writing out the reportfile.
     drop_privileges(pid)
 
+    info.add_user_info()
+
     if crash_counter > 0:
         info['CrashCounter'] = '%i' % crash_counter
 
