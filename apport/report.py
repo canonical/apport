@@ -11,7 +11,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, tempfile, os.path, urllib, re, grp, os
+import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -193,7 +193,9 @@ class Report(ProblemReport):
         - UserGroups: system groups the user is in
 	'''
 
-        groups = [grp.getgrgid(g).gr_name for g in os.getgroups() if g < 1000]
+        user = pwd.getpwuid(os.getuid()).pw_name
+        groups = [name for name, p, gid, memb in grp.getgrall() 
+            if user in memb and gid < 1000]
         groups.sort()
         self['UserGroups'] = ' '.join(groups)
 
