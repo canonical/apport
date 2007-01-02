@@ -11,7 +11,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, tempfile, os.path, urllib, re
+import subprocess, tempfile, os.path, urllib, re, grp, os
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -185,6 +185,17 @@ class Report(ProblemReport):
         p = subprocess.Popen(['uname', '-a'], stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, close_fds=True)
         self['Uname'] = p.communicate()[0].strip()
+
+    def add_user_info(self):
+        '''Add information about the user.
+
+        This adds:
+        - UserGroups: system groups the user is in
+	'''
+
+        groups = [grp.getgrgid(g).gr_name for g in os.getgroups() if g < 1000]
+        groups.sort()
+        self['UserGroups'] = ' '.join(groups)
 
     def _check_interpreted(self):
         '''Check ExecutablePath, ProcStatus and ProcCmdline if the process is
@@ -429,6 +440,18 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_os_info()
         self.assert_(pr['Uname'].startswith('Linux'))
         self.assert_(type(pr['DistroRelease']) == type(''))
+
+    def test_add_user_info(self):
+        '''Test add_user_info behaviour.'''
+
+        pr = Report()
+        pr.add_user_info()
+        self.assert_(pr.has_key('UserGroups'))
+
+        # double-check that user group names are removed
+        for g in pr['UserGroups'].split():
+            self.assert_(grp.getgrnam(g).gr_gid < 1000)
+        self.assert_(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
 
     def test_add_proc_info(self):
         '''Test add_proc_info() behaviour.'''
