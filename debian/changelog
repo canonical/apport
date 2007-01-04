@@ -1,3 +1,119 @@
+apport (0.35) feisty; urgency=low
+
+  Optimizations:
+
+  * apport/fileutils.py: Split out heuristics for determining whether a file
+    belongs to a package to new function likely_packaged() and add test cases.
+  * bin/apport: Do not use the expensive find_file_package() any more, use
+    likely_packaged() instead. This will create initial reports in some
+    corner cases (like custom non-packaged executables in /usr/bin/), but
+    greatly reduces I/O impact at crash time. We rely on apport-gtk to deal
+    with reports that do not actually belong to a packaged executable.
+  * apport/report.py, add_gdb_info(): Call gdb just once and split the output
+    instead of calling it again for each command. This should significantly
+    speed up the gdb stage especially for large programs/core dumps.
+  * Use cStringIO instead of StringIO in modules.
+  * gtk/apport-gtk: Code cleanup and refactorization:
+    - Move iteration over crash reports into __main__ to simplify housekeeping
+      in the ApportGTK class and get rid of some functions.
+    - Refactor creation of temporary report file.
+  * gtk/apport-gtk.glade: Split the text in the progress bar dialog so that we
+    can use it for multiple steps (like uploading data to Malone) while not
+    breaking translations.
+
+  New feature: Bug reporting tool (https://wiki.ubuntu.com/BugReportingTool)
+
+  * gtk/apport-gtk: Split out crash report initialization to new function
+    show_crashes() so that we can use the frontend for other purposes like bug
+    reporting.
+  * gtk/apport-gtk: Add --file-bug, --package, and --pid options; if given,
+    create a bug report about the given package instead of viewing crash
+    reports.
+  * gtk/apport-gtk{,.glade}: Generalize some strings to not talk about 'crash'
+    any more, to make them suitable for bug reporting, too.
+  * gtk/apport-gtk: Support --file-bug without specifying a package or a PID
+    for filing generic distro bugs.
+  * problem_report.py: Add new method write_mime() to encode a problem report
+    in MIME/Multipart RFC 2822 format (i. e. an email with attachments). Short
+    values are aggregated into the first inline text/plain part, large values,
+    binary values, and file references get gzip compressed separate
+    attachments. Also add various test cases.
+
+  Bug/crash information:
+
+  * apport/report.py, add_user_info(): Add list of system groups that the user
+    belongs to.
+  * bin/apport: Call add_user_info(), check functionality in test-apport.
+  * apport/report.py, add_gdb_info(): Add field 'StacktraceTop' with the top
+    five functions on the stack and no local variables. This reduced 'glimpse'
+    is suitable for inline display in bug reports and automatic processing
+    (dup finders, etc).
+
+  Bug fixes:
+
+  * po/Makefile: Add top_srcdir to work with current intltool.
+  * po/de.po: Unfuzz some strings.
+  * apport/report.py, add_gdb_info(): Strip away the 'No symbol table info
+    available' messages from stack traces.
+  * apport/report.py, test_search_bug_patterns(): Use security.u.c. instead
+    of archive.u.c., since the latter times out too often.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  3 Jan 2007 16:45:20 +0100
+
+apport (0.34) feisty; urgency=low
+
+  * apport/fileutils.py, mark_report_seen(): Do not bail out if os.utime()
+    fails due to access permissions. This happens if the file does not belong
+    to the user calling apport-gtk, but is world-readable (such as ubiquity
+    crash reports). If utime() fails, repeatedly open()/close() the file for
+    reading until atime != ctime, or the 1.2s timeout is reached.
+    Closes: LP#72250
+  * apport/python_hook.py: Add unit test, call that in run-tests.
+  * apport/python_hook.py: Chmod the generated report to 0600 to not expose
+    potentially private data to the world, and to be consistent with other
+    crash reports.
+  * apport/fileutils.py: Add check_files_md5() and test cases.
+  * apport/report.py, add_package_info(): Append list of modified package
+    files to Package: and Dependencies: value. Closes: LP#70946
+  * bin/apport-retrace: Get along with Package:/Dependencies: fields with list
+    of modified files.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 22 Dec 2006 12:40:55 +0100
+
+apport (0.33) feisty; urgency=low
+
+  * debian/rules: Convert to cdbs. This fixes the dh_pysupport invocation
+    along the way, too.
+  * gtk/apport-gtk: Rework web browser invocation: Use kfmclient if available,
+    fall back to firefox-remote, then to webbrowser.open(). Do not call
+    x-www-browser any more since this would block if no running browser was
+    open before.
+  * Drop the apport_utils module (and with it the python-apport-utils
+    package), it became too much of a dumping ground. The report file handling
+    functions now live in apport.fileutils, and the debugging information
+    collectors are now methods of a new 'Report' class (subclass of
+    ProblemReport) in the new apport.report module. Adjust all programs
+    accordingly.
+  * Add debian/python-apport.postinst: Remove old .pyc and .pyo cruft on
+    upgrades to clean up after our broken dh_pysupport invocation in earlier
+    versions, so that the new modules are actually used.
+  * Remove debian/apport.postinst: Those cleanups were only necessary for
+    intra-edgy upgrades.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Dec 2006 01:15:27 +0100
+
+apport (0.32) feisty; urgency=low
+
+  * apport_utils.py: Filter out "no debugging symbols found" warnings from gdb
+    outputs, and add some tests for this. Thanks to Kees Cook for the patch!
+  * test-apport: Fix AGENTPATH directory when building the preload library
+    (recently moved to bin/).
+  * use-local: Fix path to apport as well (recently moved to bin/).
+  * apport-retrace: Use ldd on InterpreterPath if present; ldd'ing scripts
+    will not get us very far. Closes: LP#72201
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Dec 2006 13:42:58 +0100
+
 apport (0.31) feisty; urgency=low
 
   * Move scripts to bin/ in source package.

@@ -14,7 +14,7 @@
 
 import sys, os.path
 
-from apport_utils import get_new_reports
+from apport.fileutils import get_new_reports
 
 if len(get_new_reports()) > 0:
     sys.exit(0)

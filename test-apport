@@ -2,8 +2,7 @@
 
 import tempfile, shutil, os.path, os, subprocess, signal, time, stat, sys
 import resource
-
-import problem_report
+import apport.fileutils
 
 crashdump_helper_sysctl = '/proc/sys/kernel/crashdump'
 if not os.path.exists(crashdump_helper_sysctl):
@@ -13,7 +12,7 @@ test_package = 'coreutils'
 test_source = 'coreutils'
 
 required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
-    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal']
+    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal', 'UserGroups']
 
 local_reportdir = None
 
@@ -37,8 +36,8 @@ def clean_preload_lib():
 
 def build_preload_lib():
     print '* Building preload library with local parameters'
-    run(['make', '-C', 'preloadlib', 'AGENTPATH=%s' % os.path.join(os.getcwd(), 'apport'), 
-        'PIPE_CORE=1'], 'Building preloadlib')
+    run(['make', '-C', 'preloadlib', 'AGENTPATH=%s' % os.path.join(os.getcwd(),
+        'bin', 'apport'), 'PIPE_CORE=1'], 'Building preloadlib')
 
 def enable_preloadlib():
     assert os.access('preloadlib/libapport.so', os.X_OK)
@@ -112,6 +111,7 @@ try:
         # set up temporary report directory
         local_reportdir = tempfile.mkdtemp()
         os.environ['APPORT_REPORT_DIR'] = local_reportdir
+        apport.fileutils.report_dir = local_reportdir
         (fd, os.environ['APPORT_LOG_FILE']) = tempfile.mkstemp()
         os.close(fd)
         print '* Setting up temporary report directory', local_reportdir
@@ -123,15 +123,12 @@ try:
         assert os.path.exists(crashdump_helper_sysctl) and open(crashdump_helper_sysctl).read().strip(), \
                 'kernel crash dump helper is not active; please enable before running this test.'
 
-    # must not be imported before setting up $APPORT_REPORT_DIR
-    import apport_utils
-
-    assert apport_utils.get_all_reports() == [], 'no reports already present'
+    assert apport.fileutils.get_all_reports() == [], 'no reports already present'
 
     if mode == 'lib':
         print '* Check test process creation/killing without apport'
         check_crash(False)
-        assert apport_utils.get_all_reports() == [], 'no report created without apport'
+        assert apport.fileutils.get_all_reports() == [], 'no report created without apport'
 
     print '* Check test process creation/killing with apport'
     if mode == 'lib':
@@ -139,9 +136,9 @@ try:
     check_crash()
 
     # check crash report
-    report = os.path.join(apport_utils.report_dir, '%s.%i.crash' %
+    report = os.path.join(apport.fileutils.report_dir, '%s.%i.crash' %
         (test_executable.replace('/', '_'), os.getuid()))
-    assert apport_utils.get_all_reports() == [report], 'report was created'
+    assert apport.fileutils.get_all_reports() == [report], 'report was created'
     st = os.stat(report)
     assert stat.S_IMODE(st.st_mode) == 0600, 'report has correct permissions'
 
@@ -151,13 +148,13 @@ try:
     assert st == st2, 'original unread report did not change'
 
     print '* Check that a subsequent crash alters seen report'
-    apport_utils.mark_report_seen(report)
+    apport.fileutils.mark_report_seen(report)
     check_crash()
     st2 = os.stat(report)
     assert st != st2, 'original read report changed'
 
     print '* Check that report has required fields'
-    pr = problem_report.ProblemReport()
+    pr = apport.Report()
     pr.load(open(report))
     assert set(required_fields).issubset(set(pr.keys())), 'report has required fields'
     assert pr['ExecutablePath'] == test_executable
@@ -167,9 +164,14 @@ try:
     print '* Check that dumped environment only has insensitive variables'
     check_safe_environment(pr['ProcEnviron'])
 
-    apport_utils.delete_report(report)
-    assert apport_utils.get_all_reports() == [], \
-        'no reports present after deleting (present: %s)' % str(apport_utils.get_all_reports())
+    print '* Check that collected system groups has nonempty user groups information'
+    assert pr['UserGroups']
+    print '* Check that collected system groups are not those from root'
+    assert 'root' not in pr['UserGroups']
+
+    apport.fileutils.delete_report(report)
+    assert apport.fileutils.get_all_reports() == [], \
+        'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
 
     print '* Check that non-packaged executables do not create a report'
     orig_test_executable = test_executable
@@ -180,15 +182,15 @@ try:
     check_crash()
     os.unlink(test_executable)
     test_executable = orig_test_executable
-    assert apport_utils.get_all_reports() == [], \
+    assert apport.fileutils.get_all_reports() == [], \
         'no reports present after a non-packaged crashed process (present: %s)' % \
-        str(apport_utils.get_all_reports())
+        str(apport.fileutils.get_all_reports())
 
     print '* Check that apport ignores SIGQUIT'
     check_crash(sig=signal.SIGQUIT)
-    assert apport_utils.get_all_reports() == [], \
+    assert apport.fileutils.get_all_reports() == [], \
         'no reports present after SIGQUIT (present: %s)' % \
-        str(apport_utils.get_all_reports())
+        str(apport.fileutils.get_all_reports())
 
     print '* Check that existence of user-inaccessible files does not leak'
     orig_test_executable = test_executable
@@ -202,38 +204,15 @@ try:
     os.unlink(test_executable)
     os.unlink(test_executable+".exe")
     os.rmdir(dir)
-    leak = os.path.join(apport_utils.report_dir, '_usr_bin_perl.%i.crash' %
+    leak = os.path.join(apport.fileutils.report_dir, '_usr_bin_perl.%i.crash' %
         (os.getuid()))
-    pr = problem_report.ProblemReport()
+    pr = apport.Report()
     pr.load(open(leak))
     # On a leak, no report is created since the executable path will be replaced
     # by the symlink path, and it doesn't belong to any package.
     assert pr['ExecutablePath'] == '/usr/bin/perl'
     assert not pr.has_key('InterpreterPath')
-    apport_utils.delete_report(leak)
-    test_executable = orig_test_executable
-
-    print '* Check that existence of user-inaccessible files does not leak'
-    orig_test_executable = test_executable
-    dir = tempfile.mkdtemp()
-    test_executable = dir+"/python" # set name to existing tool != self
-    exec_file = open(test_executable,'a')
-    exec_file.write('#!/usr/bin/perl\nsystem("mv $0 $0.exe");\nsystem("ln -sf /etc/shadow $0");\n$0="..$0";\nsleep(10);\n')
-    exec_file.close()
-    os.chmod(test_executable, 0755)
-    check_crash(check_running=False,sleep=2)
-    os.unlink(test_executable)
-    os.unlink(test_executable+".exe")
-    os.rmdir(dir)
-    leak = os.path.join(apport_utils.report_dir, '_usr_bin_perl.%i.crash' %
-	(os.getuid()))
-    pr = problem_report.ProblemReport()
-    pr.load(open(leak))
-    # On a leak, no report is created since the executable path will be replaced
-    # by the symlink path, and it doesn't belong to any package.
-    assert pr['ExecutablePath'] == "/usr/bin/perl"
-    assert not pr.has_key('InterpreterPath')
-    apport_utils.delete_report(leak)
+    apport.fileutils.delete_report(leak)
     test_executable = orig_test_executable
 
     print '* Check that non-packaged scripts do not create a report'
@@ -243,9 +222,9 @@ try:
     os.close(fd)
     os.chmod(test_executable, 0755)
     check_crash()
-    assert apport_utils.get_all_reports() == [], \
+    assert apport.fileutils.get_all_reports() == [], \
         'no reports present after a non-packaged crashed script (present: %s)' % \
-        str(apport_utils.get_all_reports())
+        str(apport.fileutils.get_all_reports())
 
     # relative path case
     old_cwd = os.getcwd()
@@ -257,9 +236,9 @@ try:
         test_executable = orig_test_executable
     finally:
         os.chdir(old_cwd)
-    assert apport_utils.get_all_reports() == [], \
+    assert apport.fileutils.get_all_reports() == [], \
         'no reports present after a non-packaged crashed script with relative path(present: %s)' % \
-        str(apport_utils.get_all_reports())
+        str(apport.fileutils.get_all_reports())
 
     print '* Test limitation of flooding: iteration',
     count = 0
@@ -269,17 +248,17 @@ try:
         check_crash()
         if mode == 'lib':
             time.sleep(1)
-        if not apport_utils.get_new_reports():
+        if not apport.fileutils.get_new_reports():
             break
-        apport_utils.mark_report_seen(apport_utils.get_new_reports()[0])
+        apport.fileutils.mark_report_seen(apport.fileutils.get_new_reports()[0])
         count += 1
     print
     assert count >= 1, 'gets at least 2 repeated crashes'
     assert count < 7, 'stops flooding after less than 7 repeated crashes'
 
-    apport_utils.delete_report(report)
-    assert apport_utils.get_all_reports() == [], \
-        'no reports present after deleting (present: %s)' % str(apport_utils.get_all_reports())
+    apport.fileutils.delete_report(report)
+    assert apport.fileutils.get_all_reports() == [], \
+        'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
 
     print '* Check that core dump works for non-writable cwds'
     old_cwd = os.getcwd()
@@ -288,7 +267,7 @@ try:
         check_crash(False) # no core dump expected while this test is EXFAIL
     finally:
         os.chdir(old_cwd)
-    pr = problem_report.ProblemReport()
+    pr = apport.Report()
     if os.path.exists(report):
         pr.load(open(report))
     else:
@@ -301,7 +280,7 @@ try:
 finally:
     # clean up temporary work directory
     try:
-        apport_utils.delete_report(report)
+        apport.fileutils.delete_report(report)
     except:
         pass
     if local_reportdir:

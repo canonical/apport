@@ -1,51 +1,12 @@
 #!/usr/bin/make -f
 
-#export DH_VERBOSE=1
+DEB_PYTHON_SYSTEM := pysupport
 
-clean:
-	dh_testdir
-	dh_testroot
-	dh_clean 
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/python-distutils.mk
 
-	./setup.py clean -a
+DEB_DH_INSTALL_SOURCEDIR := debian/tmp
+DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-scripts usr/share/apport
+
+clean::
 	make -C po clean
-	find -name '*.pyc' -exec rm '{}' \;
-
-build: build-indep
-
-build-indep:
-	dh_testdir
-	make -C po
-
-binary-indep: build-indep
-	dh_testdir
-	dh_testroot
-	dh_clean -k 
-
-	dh_installchangelogs 
-	dh_installdocs
-	dh_installexamples
-	dh_installman
-
-	./setup.py install --root debian/tmp/ --install-scripts usr/share/apport --no-compile
-
-	dh_pysupport
-	dh_python
-	dh_install --sourcedir=debian/tmp --fail-missing
-	dh_installinit -u'multiuser 01'
-	dh_installcron
-	dh_installlogrotate
-
-	-rmdir -p debian/python-problem-report/usr/lib/python2.4/site-packages/ 2>/dev/null
-
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-
-.PHONY: build clean binary-indep binary-arch binary install

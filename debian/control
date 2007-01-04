@@ -1,13 +1,13 @@
 Source: apport
 Section: utils
 Priority: optional
-Build-Depends: debhelper (>= 5.0.37.2), python-support (>= 0.3), intltool
+Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python-support (>= 0.3), intltool
 Maintainer: Martin Pitt <martin.pitt@ubuntu.com>
 Standards-Version: 3.7.2
 
 Package: apport
 Architecture: all
-Depends: python (>= 2.4), python-problem-report (>= 0.29), python-apport, lsb-base (>= 3.0-6), sysv-rc (>= 2.86.ds1-14.1ubuntu2)
+Depends: python (>= 2.4), python-apport (>= 0.33), lsb-base (>= 3.0-6), sysv-rc (>= 2.86.ds1-14.1ubuntu2)
 Description: automatically generate crash reports for debugging
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump
@@ -19,7 +19,7 @@ Description: automatically generate crash reports for debugging
 Package: apport-gtk
 Section: gnome
 Architecture: all
-Depends: python (>= 2.4), python-problem-report (>= 0.24), python-apport-utils (>= 0.24), python-gtk2, python-glade2, python-xdg, apport (>= 0.24)
+Depends: python (>= 2.4), python-apport (>= 0.33), python-gtk2, python-glade2, python-xdg, apport (>= 0.33)
 Recommends: update-notifier
 Description: GTK frontend for the apport crash report system
  apport automatically collects data from crashed processes and
@@ -50,7 +50,9 @@ Package: python-apport
 XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
-Depends: ${python:Depends}, python-problem-report, python-apport-utils (= ${Source-Version})
+Depends: ${python:Depends}, python-problem-report
+Conflicts: python-apport-utils
+Replaces: python-apport-utils
 Description: apport crash report handling library
  This python package provides high-level functions for creating and
  handling apport crash reports:
@@ -59,16 +61,3 @@ Description: apport crash report handling library
   * Add OS, packaging, and process runtime information to a report.
   * Various frontend utility functions.
   * Python hook to generate crash reports when Python scripts fail.
-
-Package: python-apport-utils
-XB-Python-Version: ${python:Versions}
-Section: python
-Architecture: all
-Depends: ${python:Depends}, python-problem-report, python-apt
-Description: apport crash report handling functions
- This python library provides high-level functions for creating and
- handling apport crash reports:
- .
-  * Query available and new reports.
-  * Add OS, packaging, and process runtime information to a report.
-  * Various frontend utility functions.
