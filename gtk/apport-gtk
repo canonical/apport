@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import gobject, gtk, gtk.glade
-import glob, sys, gettext, os.path, locale, tempfile, optparse, time
+import glob, sys, gettext, os.path, locale, tempfile, optparse, time, traceback
 from gettext import gettext as _
 import subprocess, threading, webbrowser
 import xdg.DesktopEntry
@@ -60,8 +60,13 @@ def thread_check_bugpatterns(report, baseurl):
     global variable, so that it is suitable for threading.'''
 
     global thread_check_bugpatterns_result
-    thread_check_bugpatterns_result = \
-        report.search_bug_patterns(baseurl)
+    try:
+        thread_check_bugpatterns_result = \
+            report.search_bug_patterns(baseurl)
+    except Exception, e:
+        e.backtrace = ''.join(
+            traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
+        thread_check_bugpatterns_result = e
 
 def format_filesize(size):
     '''Format the given integer as humanly readable and i18n'ed file size.'''
@@ -250,6 +255,9 @@ class ApportGTK:
                 bpthread.join(0.1)
                 self.w('progressbar_information_collection').pulse()
             global thread_check_bugpatterns_result
+            if isinstance(thread_check_bugpatterns_result, Exception):
+                raise Exception, 'Exception in thread_check_bugpatterns():\n' + \
+                    thread_check_bugpatterns_result.backtrace
             url = thread_check_bugpatterns_result
             self.w('window_information_collection').hide()
 
