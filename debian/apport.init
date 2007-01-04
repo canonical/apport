@@ -9,7 +9,7 @@
 # Short-Description: automatic crash report generation
 ### END INIT INFO
 
-PATH=/bin
+PATH=/bin:/usr/bin
 DESC="automatic crash report generation"
 NAME=apport
 AGENT=/usr/share/apport/apport
