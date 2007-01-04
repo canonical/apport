@@ -199,7 +199,7 @@ if options.gdb:
     core = tempfile.NamedTemporaryFile()
     core.write(report['CoreDump'])
     core.flush()
-    subprocess.call(['gdb', report['ExecutablePath'], core.name])
+    subprocess.call(['gdb', report.get('InterpreterPath', report['ExecutablePath']), core.name])
     core.close()
 else:
     # regenerate gdb info
