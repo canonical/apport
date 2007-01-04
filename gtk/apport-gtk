@@ -127,7 +127,16 @@ class ApportGTK:
         # load problem report
         self.reportfile = reportfile
         self.report = apport.Report()
-        self.report.load(open(reportfile))
+        try:
+            self.report.load(open(reportfile))
+        except MemoryError:
+            self.report = None
+            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                buttons=gtk.BUTTONS_CLOSE, 
+                message_format=_('Your system does not have enough memory to process this crash report.'))
+            md.set_title(_('Memory exhaustion'))
+            md.run()
+            return
 
         if self.report.has_key('Package'):
             self.cur_package = self.report['Package'].split()[0]

@@ -16,8 +16,10 @@ apport (0.36) UNRELEASED; urgency=low
     not in /bin. Thanks to Kees Cook for catching this.
   * debian/control: Add missing python-apport dependency 'python-apt', which
     is not caught by ${python:Depends}.
+  * gtk/apport-gtk: Catch MemoryError when loading a report and display an
+    error dialog instead of just crashing. Closes: LP#76235
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 21:07:11 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 21:19:36 +0100
 
 apport (0.35) feisty; urgency=low
 
