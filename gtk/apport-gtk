@@ -314,6 +314,11 @@ there is none, or you are in doubt, please create a new report.'))
 
         return True
 
+    def on_window_information_collection_delete_event(self, widget, event):
+        self.w('window_information_collection').hide()
+        sys.exit(0)
+        return True
+
     def on_window_bugreport_delete_event(self, widget, event):
         self.w('window_bugreport').hide()
         if self.reduced_file:

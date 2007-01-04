@@ -2,8 +2,10 @@ apport (0.36) UNRELEASED; urgency=low
 
   * gtk/apport-gtk.glade: Restore pulse step of progress bar (this apparently
     got destroyed when saving with Glade 3).
+  * gtk/apport-gtk{,.glade}: Terminate the program properly when closing the
+    progress dialog instead of exiting with an exception.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 15:49:44 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 18:01:43 +0100
 
 apport (0.35) feisty; urgency=low
 
