@@ -50,7 +50,7 @@ Package: python-apport
 XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
-Depends: ${python:Depends}, python-problem-report
+Depends: ${python:Depends}, python-problem-report, python-apt
 Conflicts: python-apport-utils
 Replaces: python-apport-utils
 Description: apport crash report handling library
