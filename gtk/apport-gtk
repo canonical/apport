@@ -141,7 +141,17 @@ class ApportGTK:
                 message_format=_('Your system does not have enough memory to process this crash report.'))
             md.set_title(_('Memory exhaustion'))
             md.run()
-            return
+            md.hide()
+            return False
+        except (TypeError, ValueError):
+            self.report = None
+            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                buttons=gtk.BUTTONS_CLOSE, 
+                message_format=_('This problem report is damaged and cannot be processed.'))
+            md.set_title(_('Invalid problem report'))
+            md.run()
+            md.hide()
+            return False
 
         if self.report.has_key('Package'):
             self.cur_package = self.report['Package'].split()[0]
@@ -150,7 +160,7 @@ class ApportGTK:
         if not self.cur_package:
             print >> sys.stderr, 'Crash report is for a non-packaged program.'
             sys.exit(1)
-            return
+            return False
 
         # try to get a matching .desktop file
         if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
@@ -181,6 +191,7 @@ class ApportGTK:
             self.w('dialog_crash').show_all()
 
         apport.fileutils.mark_report_seen(report)
+        return True
 
     def file_bug(self, package, pid):
 	'''File a bug against a package.  
@@ -413,6 +424,6 @@ if __name__ == '__main__':
             sys.exit(0)
 
         for report in reports:
-            app.show_crash(report)
-            gtk.main()
+            if app.show_crash(report):
+                gtk.main()
 
