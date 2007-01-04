@@ -7,8 +7,10 @@ apport (0.36) UNRELEASED; urgency=low
   * gtk/apport-gtk: Defer opening of the bug reporting window a bit so that
     it appears on top of the browser window. Also enable the task bar blinking
     for it when it is in the background.
+  * gtk/apport-gtk.glade: Restore vertical padding of bug report dialog labels
+    (another Glade 3 transition regression).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 18:20:18 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 18:30:34 +0100
 
 apport (0.35) feisty; urgency=low
 
