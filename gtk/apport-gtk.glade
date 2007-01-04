@@ -440,7 +440,7 @@
         <child>
           <widget class="GtkProgressBar" id="progressbar_information_collection">
             <property name="visible">True</property>
-            <property name="pulse_step">0</property>
+            <property name="pulse_step">0.1</property>
           </widget>
           <packing>
             <property name="expand">False</property>
