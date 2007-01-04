@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import gobject, gtk, gtk.glade
-import glob, sys, gettext, os.path, locale, tempfile, optparse
+import glob, sys, gettext, os.path, locale, tempfile, optparse, time
 from gettext import gettext as _
 import subprocess, threading, webbrowser
 import xdg.DesktopEntry
@@ -277,6 +277,8 @@ before the problem happened.'))
 in your web browser for an already existing bug report about this problem. If \
 there is none, or you are in doubt, please create a new report.'))
 
+        open_url(url)
+
         # update details
         self.w('window_bugreport').set_title(self.str_bugreport_title %
             self.report.get('Package', 'Ubuntu').split()[0])
@@ -308,9 +310,9 @@ there is none, or you are in doubt, please create a new report.'))
             self.w('radiobutton_complete').hide()
             self.w('radiobutton_reduced').hide()
 
+        # give the browser window some time to open
+        time.sleep(2)
         self.w('window_bugreport').show()
-
-        open_url(url)
 
         return True
 

@@ -4,8 +4,11 @@ apport (0.36) UNRELEASED; urgency=low
     got destroyed when saving with Glade 3).
   * gtk/apport-gtk{,.glade}: Terminate the program properly when closing the
     progress dialog instead of exiting with an exception.
+  * gtk/apport-gtk: Defer opening of the bug reporting window a bit so that
+    it appears on top of the browser window. Also enable the task bar blinking
+    for it when it is in the background.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 18:01:43 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 18:20:18 +0100
 
 apport (0.35) feisty; urgency=low
 
