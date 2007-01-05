@@ -22,8 +22,9 @@ apport (0.36) UNRELEASED; urgency=low
     thread to avoid useless backtraces like in bug #75160.
   * gtk/apport-gtk: Catch exceptions from decoding of damaged reports and
     display an error message instead of crashing. Closes: LP#77149
+  * apport/report.py: Add missing import of 'time' to test suite.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 23:40:07 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  5 Jan 2007 09:49:01 +0100
 
 apport (0.35) feisty; urgency=low
 

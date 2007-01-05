@@ -407,7 +407,7 @@ class Report(ProblemReport):
 # Unit test
 #
 
-import unittest, shutil, signal
+import unittest, shutil, signal, time
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
