@@ -99,11 +99,13 @@ class ApportGTK:
         column = gtk.TreeViewColumn("Report", gtk.CellRendererText(), text=0)
         self.w('treeview_reportdetails').append_column(column)
 
-        # save the original strings of the dialog headings (which contain %s,
+        # save the original strings of the dialogs (those which contain %s,
         # which we replace later)
         self.str_heading = self.w('label_heading').get_label()
         self.str_heading_reopen = self.w('label_heading_reopen').get_label()
-        self.str_bugreport_title = self.w('window_bugreport').get_title()
+        self.str_bugreport_title = self.w('dialog_bugreport').get_title()
+        self.str_radio_complete = self.w('radiobutton_complete').get_label()
+        self.str_radio_reduced = self.w('radiobutton_reduced').get_label()
 
     #
     # Helper functions
@@ -287,32 +289,19 @@ class ApportGTK:
                 self.reduced_file = self._create_report_file()
 
         if url:
-            self.w('label_bug_instructions').set_text(_('This problem was \
-already reported in the bug report displayed in your web browser. Please check \
-if you can add any further information that might be helpful for the \
-developers.'))
-        elif mode == 'file': 
-            if self.cur_package:
-                url = 'https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage']
-            else:
-                url = 'https://launchpad.net/distros/ubuntu/+filebug'
-            self.w('label_bug_instructions').set_text(_('Please fill out the bug \
-report form in your web browser and give some details about what you did just \
-before the problem happened.'))
-        else:
-            url = 'https://launchpad.net/distros/ubuntu/+source/%s/+bugs' % self.report['SourcePackage']
-            self.w('label_bug_instructions').set_text(_('Please check the list \
-in your web browser for an already existing bug report about this problem. If \
-there is none, or you are in doubt, please create a new report.'))
-
-        open_url(url)
+            print 'TODO: message box about already existing bug'
+            #_('This problem was \
+#already reported in the bug report displayed in your web browser. Please check \
+#if you can add any further information that might be helpful for the \
+#developers.'))
 
         # update details
-        self.w('window_bugreport').set_title(self.str_bugreport_title %
+        self.w('dialog_bugreport').set_title(self.str_bugreport_title %
             self.report.get('Package', 'Ubuntu').split()[0])
-
-        self.w('label_reportfile').set_selectable(True)
-        self.update_reportfile_size()
+        self.w('radiobutton_complete').set_label(self.str_radio_complete % 
+            format_filesize(os.path.getsize(self.reportfile)))
+        self.w('radiobutton_reduced').set_label(self.str_radio_reduced % 
+            format_filesize(os.path.getsize(self.reduced_file)))
 
         self.tree_model.clear()
         row = 0
@@ -338,9 +327,7 @@ there is none, or you are in doubt, please create a new report.'))
             self.w('radiobutton_complete').hide()
             self.w('radiobutton_reduced').hide()
 
-        # give the browser window some time to open
-        time.sleep(2)
-        self.w('window_bugreport').show()
+        self.w('dialog_bugreport').show()
 
         return True
 
@@ -349,11 +336,21 @@ there is none, or you are in doubt, please create a new report.'))
         sys.exit(0)
         return True
 
-    def on_window_bugreport_delete_event(self, widget, event):
-        self.w('window_bugreport').hide()
+    def on_dialog_bugreport_cancel(self, widget):
+        self.w('dialog_bugreport').hide()
         if self.reduced_file:
             os.unlink(self.reduced_file)
             self.reduced_file = None
+        gtk.main_quit()
+        return True
+
+    def on_dialog_bugreport_send(self, widget):
+        self.w('dialog_bugreport').hide()
+        if self.reduced_file:
+            os.unlink(self.reduced_file)
+            self.reduced_file = None
+        print 'Sending report...'
+        open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage'])
         gtk.main_quit()
         return True
 
@@ -376,19 +373,7 @@ there is none, or you are in doubt, please create a new report.'))
     def on_expander_details_activate(self, widget):
         # signal is sent before actually expanding/collapsing, thus this
         # requires negation
-        self.w('window_bugreport').set_resizable(not self.w('expander_details').get_expanded())
-
-    def update_reportfile_size(self):
-        if not self.reduced_file or self.w('radiobutton_complete').get_active():
-            f = self.reportfile
-        else:
-            f = self.reduced_file
-        self.w('label_reportfile').set_text(f)
-        self.w('label_reportsize').set_text('(%s)' % 
-            format_filesize(os.path.getsize(f)))
-
-    def on_radiobutton_complete_toggled(self, widget):
-        self.update_reportfile_size()
+        self.w('dialog_bugreport').set_resizable(not self.w('expander_details').get_expanded())
 
 def parse_options():
     '''Parse command line options and return (options, args) tuple.'''

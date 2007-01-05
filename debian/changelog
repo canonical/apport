@@ -1,3 +1,14 @@
+apport (0.37) UNRELEASED; urgency=low
+
+  * gtk/apport-gtk.glade: Redesign bug reporting dialog to have a 'Create bug
+    report' and a 'Cancel' button. Also assign GTK_RESPONSE_* constants to the
+    dialog buttons. Go back to Glade 2 since Glade 3 still sucks too much.
+  * gtk/apport-gtk: Adjust workflow for sending report to Malone cloakroom
+    instead of asking the user to attach the file. Sending is not yet
+    implemented, though.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  5 Jan 2007 13:25:02 +0100
+
 apport (0.36) feisty; urgency=low
 
   * gtk/apport-gtk.glade: Restore pulse step of progress bar (this apparently
