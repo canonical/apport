@@ -128,7 +128,9 @@ class ApportGTK:
         '''Complete information in the report and show a progress dialog
         in the meantime.
         
-        Return the result URL from bug pattern search.'''
+        This also checks if the bug is already known in a bug pattern. If so,
+        handle_duplicate_report() is called and the function returns False. If
+        the bug is not yet known, return True.'''
 
         if not self.cur_package and not self.report.has_key('ExecutablePath'):
             # this happens if we file a bug without specifying a PID or a
@@ -176,13 +178,34 @@ class ApportGTK:
                 md.set_title(_('Invalid problem report'))
                 md.run()
                 self.report = None
-                return
+                return False
 
             # create reduced report if there are any removed fields
             if self.report.has_removed_fields():
                 self.reduced_file = self._create_report_file()
 
-            return url
+            # handle duplicates
+            if url:
+                self.handle_duplicate_report(url)
+                return False
+
+        return True
+
+    def handle_duplicate_report(self, url):
+        '''Bug is already known (at given URL), display a message box and open
+        the bug in the browser.'''
+
+        open_url(url)
+        time.sleep(2)
+        md = gtk.MessageDialog(type=gtk.MESSAGE_INFORMATION,
+            buttons=gtk.BUTTONS_CLOSE, 
+            message_format=_('This problem was \
+already reported in the bug report displayed in the web browser. Please check \
+if you can add any further information that might be helpful for the \
+developers.'))
+        md.set_title(_('Problem already known'))
+        md.run()
+        md.hide()
 
     def setup_bug_dialog(self):
         '''Set up bug report dialog for the current problem report.'''
@@ -292,7 +315,20 @@ class ApportGTK:
         response = d.run()
         d.hide()
         if response == gtk.RESPONSE_YES:
-            self.report_bug()
+            if not self.collect_info():
+                return
+
+            # run bug report dialog
+            self.setup_bug_dialog()
+            response = self.w('dialog_bugreport').run()
+            self.w('dialog_bugreport').hide()
+
+            if response == gtk.RESPONSE_OK:
+                self.send_bug()
+
+            if self.reduced_file:
+                os.unlink(self.reduced_file)
+                self.reduced_file = None
         elif response == gtk.RESPONSE_OK:
             self.reopen()
 
@@ -305,7 +341,6 @@ class ApportGTK:
 
 	# create initial report
 	self.report = apport.Report('Bug')
-        self.report['BugDisplayMode'] = 'file'
 	self.report.add_os_info()
 	if pid:
 	    self.report.add_proc_info(pid)
@@ -313,42 +348,22 @@ class ApportGTK:
 
 	# write it into temporary file
         self.reportfile = self._create_report_file()
-	self.report_bug()
+        if self.collect_info():
+            self.send_bug()
 
     #
     # workflow functions
     #
 
-    def report_bug(self):
-        '''Create complete problem report, ask which (complete/reduced) report
-        to send to Malone cloakroom, and display bug page.'''
+    def send_bug(self):
+        '''Send report to Malone cloakroom and display bug filing page.'''
 
         assert self.report
-        bug_pattern_url = self.collect_info()
-
-        # can happen if collect_info() fails
-        if not self.report:
-            return
-
-        if bug_pattern_url:
-            print 'TODO: message box about already existing bug'
-            #_('This problem was \
-#already reported in the bug report displayed in your web browser. Please check \
-#if you can add any further information that might be helpful for the \
-#developers.'))
-
-        # run bug report dialog
-        self.setup_bug_dialog()
-        response = self.w('dialog_bugreport').run()
-        self.w('dialog_bugreport').hide()
-
-        if response == gtk.RESPONSE_OK:
-            print 'Sending report...'
+        print 'Sending report...'
+        if self.report.has_key('SourcePackage'):
             open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage'])
-
-        if self.reduced_file:
-            os.unlink(self.reduced_file)
-            self.reduced_file = None
+        else:
+            open_url('https://launchpad.net/distros/ubuntu/+filebug')
 
     def reopen(self):
         '''Reopen the crashed application and quit processing the current crash report.'''
