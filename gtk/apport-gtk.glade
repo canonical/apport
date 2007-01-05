@@ -18,7 +18,6 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">False</property>
-  <signal name="delete_event" handler="ignore"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox1">
@@ -41,7 +40,6 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-8</property>
-	      <signal name="clicked" handler="on_button_reportbug_clicked"/>
 	    </widget>
 	  </child>
 
@@ -53,7 +51,6 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-7</property>
-	      <signal name="clicked" handler="ignore"/>
 
 	      <child>
 		<widget class="GtkAlignment" id="alignment2">
@@ -130,7 +127,6 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-5</property>
-	      <signal name="clicked" handler="on_button_reopen_clicked"/>
 
 	      <child>
 		<widget class="GtkAlignment" id="alignment1">
@@ -318,7 +314,6 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">False</property>
-  <signal name="delete_event" handler="ignore"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="vbox10">
@@ -341,7 +336,6 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-8</property>
-	      <signal name="clicked" handler="on_button_reportbug_clicked"/>
 	    </widget>
 	  </child>
 
@@ -356,7 +350,6 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-7</property>
-	      <signal name="clicked" handler="ignore"/>
 	    </widget>
 	  </child>
 	</widget>
@@ -576,7 +569,6 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">False</property>
-  <signal name="delete_event" handler="on_dialog_bugreport_cancel"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox3">
@@ -597,7 +589,6 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-6</property>
-	      <signal name="clicked" handler="on_dialog_bugreport_cancel"/>
 	    </widget>
 	  </child>
 
@@ -611,7 +602,6 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-5</property>
-	      <signal name="clicked" handler="on_dialog_bugreport_send"/>
 	    </widget>
 	  </child>
 	</widget>

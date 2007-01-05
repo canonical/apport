@@ -110,6 +110,7 @@ class ApportGTK:
     #
     # Helper functions
     #
+
     def _create_report_file(self):
         '''Create a temporary file for the current report and return the path.
 
@@ -122,6 +123,103 @@ class ApportGTK:
 	(fd, f) = tempfile.mkstemp('.apport', subject.replace('/', '_') + '.')
 	self.report.write(os.fdopen(fd, 'w'))
         return f
+
+    def collect_info(self):
+        '''Complete information in the report and show a progress dialog
+        in the meantime.
+        
+        Return the result URL from bug pattern search.'''
+
+        if not self.cur_package and not self.report.has_key('ExecutablePath'):
+            # this happens if we file a bug without specifying a PID or a
+            # package
+            self.report.add_os_info()
+	    url = None
+	    self.reduced_file = None
+        else:
+            # collect additional information and check for existing bug
+            # patterns; since this might take a while, create separate threads and
+            # display a progress dialog
+            self.w('progressbar_information_collection').set_fraction(0)
+            self.w('window_information_collection').show()
+
+            if not self.report.has_key('Package'):
+                icthread = threading.Thread(target=thread_collect_info,
+                    args=(self.report, self.reportfile, self.cur_package))
+                icthread.start()
+                while icthread.isAlive():
+                    while gtk.events_pending():
+                        gtk.main_iteration(False)
+                    icthread.join(0.1)
+                    self.w('progressbar_information_collection').pulse()
+
+            bpthread = threading.Thread(target=thread_check_bugpatterns,
+                args=(self.report, bugpattern_baseurl))
+            bpthread.start()
+            while bpthread.isAlive():
+                while gtk.events_pending():
+                    gtk.main_iteration(False)
+                bpthread.join(0.1)
+                self.w('progressbar_information_collection').pulse()
+            global thread_check_bugpatterns_result
+            if isinstance(thread_check_bugpatterns_result, Exception):
+                raise Exception, 'Exception in thread_check_bugpatterns():\n' + \
+                    thread_check_bugpatterns_result.backtrace
+            url = thread_check_bugpatterns_result
+            self.w('window_information_collection').hide()
+
+            # check that we were able to determine package names
+            if not self.report.has_key('SourcePackage') or not self.report.has_key('Package'):
+                md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                    buttons=gtk.BUTTONS_CLOSE, 
+                    message_format=_('Could not determine the package or source package name.'))
+                md.set_title(_('Invalid problem report'))
+                md.run()
+                self.report = None
+                return
+
+            # create reduced report if there are any removed fields
+            if self.report.has_removed_fields():
+                self.reduced_file = self._create_report_file()
+
+            return url
+
+    def setup_bug_dialog(self):
+        '''Set up bug report dialog for the current problem report.'''
+
+        # dialog title
+        self.w('dialog_bugreport').set_title(self.str_bugreport_title %
+            self.report.get('Package', 'Ubuntu').split()[0])
+
+        # report contents in expander
+        self.tree_model.clear()
+        row = 0
+        for key in self.report:
+            keyiter = self.tree_model.insert_before(None, None)
+            self.tree_model.set_value(keyiter, 0, key)
+
+            valiter = self.tree_model.insert_before(keyiter, None)
+            if self.report[key]:
+                self.tree_model.set_value(valiter, 0, self.report[key])
+            else:
+                self.tree_model.set_value(valiter, 0, '(binary data)')
+
+            # expand the row if the value has less than 5 lines
+            if len(filter(lambda c: c == '\n', self.report[key])) < 4:
+                self.w('treeview_reportdetails').expand_row(row, False)
+            row += 1
+
+        # complete/reduced radio buttons
+        if self.reduced_file:
+            self.w('radiobutton_complete').set_label(self.str_radio_complete % 
+                format_filesize(os.path.getsize(self.reportfile)))
+            self.w('radiobutton_reduced').set_label(self.str_radio_reduced % 
+                format_filesize(os.path.getsize(self.reduced_file)))
+            self.w('radiobutton_complete').show()
+            self.w('radiobutton_reduced').show()
+        else:
+            self.w('radiobutton_complete').hide()
+            self.w('radiobutton_reduced').hide()
 
     #
     # Entry points
@@ -184,16 +282,19 @@ class ApportGTK:
             heading = _('Sorry, %s closed unexpectedly.') % self.cur_package
         if self.desktop_entry and self.report.has_key('ExecutablePath') and \
             subprocess.call(['pidof', '-x', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
-            label = self.w('label_heading_reopen')
-            label.set_markup(self.str_heading % heading)
-            self.w('dialog_crash_reopen').show_all()
+            self.w('label_heading_reopen').set_markup(self.str_heading % heading)
+            d = self.w('dialog_crash_reopen')
         else:
-            label = self.w('label_heading')
-            label.set_markup(self.str_heading % heading)
-            self.w('dialog_crash').show_all()
+            self.w('label_heading').set_markup(self.str_heading % heading)
+            d = self.w('dialog_crash')
 
-        apport.fileutils.mark_report_seen(report)
-        return True
+        # show crash notification dialog
+        response = d.run()
+        d.hide()
+        if response == gtk.RESPONSE_YES:
+            self.report_bug()
+        elif response == gtk.RESPONSE_OK:
+            self.reopen()
 
     def file_bug(self, package, pid):
 	'''File a bug against a package.  
@@ -212,153 +313,45 @@ class ApportGTK:
 
 	# write it into temporary file
         self.reportfile = self._create_report_file()
-	self.on_button_reportbug_clicked(None)
+	self.report_bug()
 
     #
-    # Event handlers
+    # workflow functions
     #
 
-    def ignore(self, widget, *auxargs):
-        '''Do nothing with the current report.'''
-
-        self.w('dialog_crash').hide()
-        self.w('dialog_crash_reopen').hide()
-        gtk.main_quit()
-        return True
-
-    def on_button_reportbug_clicked(self, widget):
-        '''Open bug page in browser and ask to file a bug.'''
+    def report_bug(self):
+        '''Create complete problem report, ask which (complete/reduced) report
+        to send to Malone cloakroom, and display bug page.'''
 
         assert self.report
+        bug_pattern_url = self.collect_info()
 
-        self.w('dialog_crash').hide()
-        self.w('dialog_crash_reopen').hide()
-        
-        mode = self.report.get('BugDisplayMode', 'list')
+        # can happen if collect_info() fails
+        if not self.report:
+            return
 
-        if not self.cur_package and not self.report.has_key('ExecutablePath'):
-            # this happens if we file a bug without specifying a PID or a
-            # package
-            self.report.add_os_info()
-	    url = None
-	    self.reduced_file = None
-        else:
-            # collect additional information and check for existing bug
-            # patterns; since this might take a while, create separate threads and
-            # display a progress dialog
-            self.w('progressbar_information_collection').set_fraction(0)
-            self.w('window_information_collection').show()
-
-            if not self.report.has_key('Package'):
-                icthread = threading.Thread(target=thread_collect_info,
-                    args=(self.report, self.reportfile, self.cur_package))
-                icthread.start()
-                while icthread.isAlive():
-                    while gtk.events_pending():
-                        gtk.main_iteration(False)
-                    icthread.join(0.1)
-                    self.w('progressbar_information_collection').pulse()
-
-            bpthread = threading.Thread(target=thread_check_bugpatterns,
-                args=(self.report, bugpattern_baseurl))
-            bpthread.start()
-            while bpthread.isAlive():
-                while gtk.events_pending():
-                    gtk.main_iteration(False)
-                bpthread.join(0.1)
-                self.w('progressbar_information_collection').pulse()
-            global thread_check_bugpatterns_result
-            if isinstance(thread_check_bugpatterns_result, Exception):
-                raise Exception, 'Exception in thread_check_bugpatterns():\n' + \
-                    thread_check_bugpatterns_result.backtrace
-            url = thread_check_bugpatterns_result
-            self.w('window_information_collection').hide()
-
-            # check that we were able to determine package names
-            if not self.report.has_key('SourcePackage') or not self.report.has_key('Package'):
-                md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                    buttons=gtk.BUTTONS_CLOSE, 
-                    message_format=_('Could not determine the package or source package name.'))
-                md.set_title(_('Invalid problem report'))
-                md.run()
-                gtk.main_quit()
-                return True
-
-            # create reduced report if there are any removed fields
-            if self.report.has_removed_fields():
-                self.reduced_file = self._create_report_file()
-
-        if url:
+        if bug_pattern_url:
             print 'TODO: message box about already existing bug'
             #_('This problem was \
 #already reported in the bug report displayed in your web browser. Please check \
 #if you can add any further information that might be helpful for the \
 #developers.'))
 
-        # update details
-        self.w('dialog_bugreport').set_title(self.str_bugreport_title %
-            self.report.get('Package', 'Ubuntu').split()[0])
-        self.w('radiobutton_complete').set_label(self.str_radio_complete % 
-            format_filesize(os.path.getsize(self.reportfile)))
-        self.w('radiobutton_reduced').set_label(self.str_radio_reduced % 
-            format_filesize(os.path.getsize(self.reduced_file)))
-
-        self.tree_model.clear()
-        row = 0
-        for key in self.report:
-            keyiter = self.tree_model.insert_before(None, None)
-            self.tree_model.set_value(keyiter, 0, key)
-
-            valiter = self.tree_model.insert_before(keyiter, None)
-            if self.report[key]:
-                self.tree_model.set_value(valiter, 0, self.report[key])
-            else:
-                self.tree_model.set_value(valiter, 0, '(binary data)')
-
-            # expand the row if the value has less than 5 lines
-            if len(filter(lambda c: c == '\n', self.report[key])) < 4:
-                self.w('treeview_reportdetails').expand_row(row, False)
-            row += 1
-
-        if self.reduced_file:
-            self.w('radiobutton_complete').show()
-            self.w('radiobutton_reduced').show()
-        else:
-            self.w('radiobutton_complete').hide()
-            self.w('radiobutton_reduced').hide()
-
-        self.w('dialog_bugreport').show()
-
-        return True
-
-    def on_window_information_collection_delete_event(self, widget, event):
-        self.w('window_information_collection').hide()
-        sys.exit(0)
-        return True
-
-    def on_dialog_bugreport_cancel(self, widget):
+        # run bug report dialog
+        self.setup_bug_dialog()
+        response = self.w('dialog_bugreport').run()
         self.w('dialog_bugreport').hide()
+
+        if response == gtk.RESPONSE_OK:
+            print 'Sending report...'
+            open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage'])
+
         if self.reduced_file:
             os.unlink(self.reduced_file)
             self.reduced_file = None
-        gtk.main_quit()
-        return True
 
-    def on_dialog_bugreport_send(self, widget):
-        self.w('dialog_bugreport').hide()
-        if self.reduced_file:
-            os.unlink(self.reduced_file)
-            self.reduced_file = None
-        print 'Sending report...'
-        open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage'])
-        gtk.main_quit()
-        return True
-
-    def on_button_reopen_clicked(self, widget):
-        '''Reopen the crashed application.'''
-
-        self.w('dialog_crash').hide()
-        self.w('dialog_crash_reopen').hide()
+    def reopen(self):
+        '''Reopen the crashed application and quit processing the current crash report.'''
 
         assert self.report.has_key('ProcCmdline')
 
@@ -367,13 +360,20 @@ class ApportGTK:
             os.execlp('sh', 'sh', '-c', self.report.get('RespawnCommand', self.report['ProcCmdline']))
             sys.exit(1)
 
-        gtk.main_quit()
+    #
+    # Event handlers
+    #
+
+    def on_window_information_collection_delete_event(self, widget, event):
+        self.w('window_information_collection').hide()
+        sys.exit(0)
         return True
 
     def on_expander_details_activate(self, widget):
         # signal is sent before actually expanding/collapsing, thus this
         # requires negation
         self.w('dialog_bugreport').set_resizable(not self.w('expander_details').get_expanded())
+        return True
 
 def parse_options():
     '''Parse command line options and return (options, args) tuple.'''
@@ -400,7 +400,6 @@ if __name__ == '__main__':
 
     if options.filebug:
 	app.file_bug(options.package, options.pid)
-        gtk.main()
     else:
 	# report crashes if --file-bug is not specified
         reports = apport.fileutils.get_new_reports()
@@ -409,6 +408,5 @@ if __name__ == '__main__':
             sys.exit(0)
 
         for report in reports:
-            if app.show_crash(report):
-                gtk.main()
+            app.show_crash(report)
 

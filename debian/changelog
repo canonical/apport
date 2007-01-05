@@ -6,8 +6,10 @@ apport (0.37) UNRELEASED; urgency=low
   * gtk/apport-gtk: Adjust workflow for sending report to Malone cloakroom
     instead of asking the user to attach the file. Sending is not yet
     implemented, though.
+  * gtk/apport-gtk: Major refactorization to use modal dialogs and run()
+    instead of loosely coupled event handlers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  5 Jan 2007 13:25:02 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  5 Jan 2007 14:21:23 +0100
 
 apport (0.36) feisty; urgency=low
 
