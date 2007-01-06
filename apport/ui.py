@@ -267,6 +267,10 @@ class UserInterface:
         '''Upload the current report to the tracking system and guide the user
         through its user interface.'''
 
+        print 'sending bug to Malone...'
+        print self.report.keys()
+        self.report.write(sys.stdout)
+
         if self.report.has_key('SourcePackage'):
             self.open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage'])
         else:
