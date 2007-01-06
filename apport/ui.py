@@ -341,12 +341,12 @@ might be helpful for the developers.'))
     # abstract UI methods that must be implemented in derived classes
     #
 
-    def ui_present_crash(self, desktopfile):
+    def ui_present_crash(self, desktopentry):
         '''Inform that a crash has happened for self.report and
         self.cur_package and ask about an action.
 
-        If the package can be mapped to a desktop file, this is passed as an
-        argument; this can be used for enhancing strings, etc. 
+        If the package can be mapped to a desktop file, an xdg.DesktopEntry is
+        passed as an argument; this can be used for enhancing strings, etc. 
         
         Return the action: ignore the crash ('cancel'), restart the crashed
         application ('restart'), or report a bug about the crash ('report').'''
@@ -432,7 +432,7 @@ if  __name__ == '__main__':
             self.msg_text = None
             self.msg_severity = None # 'warning' or 'error'
 
-        def ui_present_crash(self, desktopfile):
+        def ui_present_crash(self, desktopentry):
             return self.present_crash_response
 
         def ui_present_report_details(self):
