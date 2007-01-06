@@ -20,8 +20,10 @@ apport (0.37) UNRELEASED; urgency=low
     or CLI, and also makes the code automatically testable. Add an extensive
     testsuite.
   * run-tests: Add ui.py testsuite.
+  * gtk/apport-gtk: Port to ui.py's UserInterface (which means moving 1/3 of
+    the code into the new ui_*() methods and throwing away the rest).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  6 Jan 2007 22:19:46 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  6 Jan 2007 23:06:45 +0100
 
 apport (0.36) feisty; urgency=low
 

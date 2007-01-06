@@ -1,96 +1,38 @@
 #!/usr/bin/python
+
+'''GTK Apport user interface. 
+
+Copyright (C) 2007 Canonical Ltd.
+Author: Martin Pitt <martin.pitt@ubuntu.com>
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+the full text of the license.
+'''
+
+import os.path, sys
 import gobject, gtk, gtk.glade
-import glob, sys, gettext, os.path, locale, tempfile, optparse, time, traceback
 from gettext import gettext as _
-import subprocess, threading, webbrowser
-import xdg.DesktopEntry
+import apport.ui
 
-import apport, apport.fileutils
+class GTKUserInterface(apport.ui.UserInterface):
+    '''GTK UserInterface.'''
 
-gettext_domain = 'apport'
-
-bugpattern_baseurl = 'http://people.ubuntu.com/~pitti/bugpatterns'
-
-def open_url(url):
-    '''Open the given URL in a new browser window.
-    
-    Display an error dialog if everything fails.'''
-
-    # figure out appropriate web browser
-    try:
-        subprocess.call(['kfmclient', 'openURL', url])
-    except OSError:
-        try:
-            if subprocess.call(['firefox', '-remote', 'openURL(%s, new-window)' % url]) != 0:
-                raise OSError, 'firefox -remote failed'
-        except OSError:
-            try:
-                webbrowser.open(url, new=True, autoraise=True)
-            except Exception, e:
-                md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                    buttons=gtk.BUTTONS_CLOSE, 
-                    message_format=str(e))
-                md.set_title(_('Could not start web browser to open %s' % url))
-                md.run()
-                md.hide()
-
-def thread_collect_info(report, reportfile, package):
-    '''Encapsulate call to add_*_info() and update given report,
-    so that this function is suitable for threading.'''
-
-    report.add_gdb_info()
-    if not package:
-        if report.has_key('ExecutablePath'):
-            package = apport.fileutils.find_file_package(report['ExecutablePath'])
-        else:
-            raise KeyError, 'called without a package, and report does not have ExecutablePath'
-    report.add_package_info(package)
-    report.add_os_info()
-    f = open(reportfile, 'w')
-    os.chmod (reportfile, 0)
-    report.write(f)
-    f.close()
-    os.chmod (reportfile, 0600)
-    apport.fileutils.mark_report_seen(reportfile)
-    if report.has_key('CoreDump'):
-        report['CoreDump'] = ''
-
-def thread_check_bugpatterns(report, baseurl):
-    '''Encapsulate call to search_bug_patterns() and return the result in a
-    global variable, so that it is suitable for threading.'''
-
-    global thread_check_bugpatterns_result
-    try:
-        thread_check_bugpatterns_result = \
-            report.search_bug_patterns(baseurl)
-    except Exception, e:
-        e.backtrace = ''.join(
-            traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
-        thread_check_bugpatterns_result = e
-
-def format_filesize(size):
-    '''Format the given integer as humanly readable and i18n'ed file size.'''
-
-    if size < 1048576:
-        return locale.format('%.1f KB', size/1024.)
-    if size < 1024 * 1048576:
-        return locale.format('%.1f MB', size / 1048576.)
-    return locale.format('%.1f GB', size / float(1024 * 1048576)) 
-
-class ApportGTK:
     def w(self, widget):
         '''Shortcut for getting a widget.'''
 
         return self.widgets.get_widget(widget)
 
     def __init__(self):
+        apport.ui.UserInterface.__init__(self)
+
+        # load UI
+        gtk.glade.textdomain(self.gettext_domain)
         self.widgets = gtk.glade.XML(os.path.join(os.path.dirname(sys.argv[0]),
             'apport-gtk.glade'))
         self.widgets.signal_autoconnect(self)
-
-	self.report = None # current ProblemReport
-	self.reportfile = None # current problem report file
-	self.reduced_file = None # current problem report file (without large binaries)
 
         # initialize tree model and view
         self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)
@@ -108,108 +50,36 @@ class ApportGTK:
         self.str_radio_reduced = self.w('radiobutton_reduced').get_label()
 
     #
-    # Helper functions
+    # ui_* implementation of abstract UserInterface classes
     #
 
-    def _create_report_file(self):
-        '''Create a temporary file for the current report and return the path.
-
-        The file is not removed automatically.'''
-
-        if self.cur_package:
-            subject = self.cur_package
+    def ui_present_crash(self, desktop_entry): 
+        # adapt dialog heading and label appropriately
+        if desktop_entry:
+            heading = _('Sorry, %s closed unexpectedly.') % desktop_entry.getName()
+        elif self.report.has_key('ExecutablePath'):
+            heading = _('Sorry, the program "%s" closed unexpectedly.') % os.path.basename(self.report['ExecutablePath'])
         else:
-            subject = self.report.get('ExecutablePath', 'unknown')
-	(fd, f) = tempfile.mkstemp('.apport', subject.replace('/', '_') + '.')
-	self.report.write(os.fdopen(fd, 'w'))
-        return f
-
-    def collect_info(self):
-        '''Complete information in the report and show a progress dialog
-        in the meantime.
-        
-        This also checks if the bug is already known in a bug pattern. If so,
-        handle_duplicate_report() is called and the function returns False. If
-        the bug is not yet known, return True.'''
-
-        if not self.cur_package and not self.report.has_key('ExecutablePath'):
-            # this happens if we file a bug without specifying a PID or a
-            # package
-            self.report.add_os_info()
-	    url = None
-	    self.reduced_file = None
+            heading = _('Sorry, %s closed unexpectedly.') % self.cur_package
+        if desktop_entry and self.report.has_key('ExecutablePath') and \
+            subprocess.call(['pidof', '-x', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
+            self.w('label_heading_reopen').set_markup(self.str_heading % heading)
+            d = self.w('dialog_crash_reopen')
         else:
-            # collect additional information and check for existing bug
-            # patterns; since this might take a while, create separate threads and
-            # display a progress dialog
-            self.w('progressbar_information_collection').set_fraction(0)
-            self.w('window_information_collection').show()
+            self.w('label_heading').set_markup(self.str_heading % heading)
+            d = self.w('dialog_crash')
 
-            if not self.report.has_key('Package'):
-                icthread = threading.Thread(target=thread_collect_info,
-                    args=(self.report, self.reportfile, self.cur_package))
-                icthread.start()
-                while icthread.isAlive():
-                    while gtk.events_pending():
-                        gtk.main_iteration(False)
-                    icthread.join(0.1)
-                    self.w('progressbar_information_collection').pulse()
+        # show crash notification dialog
+        response = d.run()
+        d.hide()
+        if response == gtk.RESPONSE_YES:
+            return 'report'
+        elif response == gtk.RESPONSE_OK:
+            return 'reopen'
+        else:
+            return 'cancel'
 
-            bpthread = threading.Thread(target=thread_check_bugpatterns,
-                args=(self.report, bugpattern_baseurl))
-            bpthread.start()
-            while bpthread.isAlive():
-                while gtk.events_pending():
-                    gtk.main_iteration(False)
-                bpthread.join(0.1)
-                self.w('progressbar_information_collection').pulse()
-            global thread_check_bugpatterns_result
-            if isinstance(thread_check_bugpatterns_result, Exception):
-                raise Exception, 'Exception in thread_check_bugpatterns():\n' + \
-                    thread_check_bugpatterns_result.backtrace
-            url = thread_check_bugpatterns_result
-            self.w('window_information_collection').hide()
-
-            # check that we were able to determine package names
-            if not self.report.has_key('SourcePackage') or not self.report.has_key('Package'):
-                md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                    buttons=gtk.BUTTONS_CLOSE, 
-                    message_format=_('Could not determine the package or source package name.'))
-                md.set_title(_('Invalid problem report'))
-                md.run()
-                self.report = None
-                return False
-
-            # create reduced report if there are any removed fields
-            if self.report.has_removed_fields():
-                self.reduced_file = self._create_report_file()
-
-            # handle duplicates
-            if url:
-                self.handle_duplicate_report(url)
-                return False
-
-        return True
-
-    def handle_duplicate_report(self, url):
-        '''Bug is already known (at given URL), display a message box and open
-        the bug in the browser.'''
-
-        open_url(url)
-        time.sleep(2)
-        md = gtk.MessageDialog(type=gtk.MESSAGE_INFORMATION,
-            buttons=gtk.BUTTONS_CLOSE, 
-            message_format=_('This problem was \
-already reported in the bug report displayed in the web browser. Please check \
-if you can add any further information that might be helpful for the \
-developers.'))
-        md.set_title(_('Problem already known'))
-        md.run()
-        md.hide()
-
-    def setup_bug_dialog(self):
-        '''Set up bug report dialog for the current problem report.'''
-
+    def ui_present_report_details(self):
         # dialog title
         self.w('dialog_bugreport').set_title(self.str_bugreport_title %
             self.report.get('Package', 'Ubuntu').split()[0])
@@ -233,147 +103,53 @@ developers.'))
             row += 1
 
         # complete/reduced radio buttons
-        if self.reduced_file:
+        if self.report.has_key('CoreDump'):
             self.w('radiobutton_complete').set_label(self.str_radio_complete % 
-                format_filesize(os.path.getsize(self.reportfile)))
+                self.format_filesize(self.get_complete_size()))
             self.w('radiobutton_reduced').set_label(self.str_radio_reduced % 
-                format_filesize(os.path.getsize(self.reduced_file)))
+                self.format_filesize(self.get_reduced_size()))
             self.w('radiobutton_complete').show()
             self.w('radiobutton_reduced').show()
         else:
             self.w('radiobutton_complete').hide()
             self.w('radiobutton_reduced').hide()
 
-    #
-    # Entry points
-    #
+        response = self.w('dialog_bugreport').run()
+        self.w('dialog_bugreport').hide()
 
-    def show_crash(self, reportfile):
-	'''Load given crash report file, inform the user about the crash and
-        ask him what to do.'''
-
-        # load problem report
-        self.reportfile = reportfile
-        self.report = apport.Report()
-        try:
-            self.report.load(open(reportfile))
-        except MemoryError:
-            self.report = None
-            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                buttons=gtk.BUTTONS_CLOSE, 
-                message_format=_('Your system does not have enough memory to process this crash report.'))
-            md.set_title(_('Memory exhaustion'))
-            md.run()
-            md.hide()
-            return False
-        except (TypeError, ValueError):
-            self.report = None
-            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                buttons=gtk.BUTTONS_CLOSE, 
-                message_format=_('This problem report is damaged and cannot be processed.'))
-            md.set_title(_('Invalid problem report'))
-            md.run()
-            md.hide()
-            return False
-
-        if self.report.has_key('Package'):
-            self.cur_package = self.report['Package'].split()[0]
+        if response == gtk.RESPONSE_OK:
+            if self.w('radiobutton_complete').get_active():
+                return 'full'
+            else:
+                return 'reduced'
         else:
-            self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
-        if not self.cur_package:
-            print >> sys.stderr, 'Crash report is for a non-packaged program.'
-            sys.exit(1)
-            return False
+            return 'cancel'
 
-        # try to get a matching .desktop file
-        if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
-            desktop_file = self.report['DesktopFile']
-        else:
-            desktop_file = apport.fileutils.find_package_desktopfile(self.cur_package)
-        self.desktop_entry = None
-        if desktop_file:
-            try:
-                self.desktop_entry = xdg.DesktopEntry.DesktopEntry(desktop_file)
-            except: pass
+    def ui_info_message(self, title, text):
+        md = gtk.MessageDialog(type=gtk.MESSAGE_INFORMATION,
+            buttons=gtk.BUTTONS_CLOSE, message_format=text)
+        md.set_title(title)
+        md.run()
+        md.hide()
 
-        # adapt dialog heading and label appropriately
-        if self.desktop_entry:
-            heading = _('Sorry, %s closed unexpectedly.') % self.desktop_entry.getName()
-        elif self.report.has_key('ExecutablePath'):
-            heading = _('Sorry, the program "%s" closed unexpectedly.') % os.path.basename(self.report['ExecutablePath'])
-        else:
-            heading = _('Sorry, %s closed unexpectedly.') % self.cur_package
-        if self.desktop_entry and self.report.has_key('ExecutablePath') and \
-            subprocess.call(['pidof', '-x', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
-            self.w('label_heading_reopen').set_markup(self.str_heading % heading)
-            d = self.w('dialog_crash_reopen')
-        else:
-            self.w('label_heading').set_markup(self.str_heading % heading)
-            d = self.w('dialog_crash')
+    def ui_error_message(self, title, text):
+        md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+            buttons=gtk.BUTTONS_CLOSE, message_format=text)
+        md.set_title(title)
+        md.run()
+        md.hide()
 
-        # show crash notification dialog
-        response = d.run()
-        d.hide()
-        if response == gtk.RESPONSE_YES:
-            if not self.collect_info():
-                return
+    def ui_start_info_collection_progress(self):
+        self.w('progressbar_information_collection').set_fraction(0)
+        self.w('window_information_collection').show()
 
-            # run bug report dialog
-            self.setup_bug_dialog()
-            response = self.w('dialog_bugreport').run()
-            self.w('dialog_bugreport').hide()
+    def ui_pulse_info_collection_progress(self):
+        self.w('progressbar_information_collection').pulse()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
-            if response == gtk.RESPONSE_OK:
-                self.send_bug()
-
-            if self.reduced_file:
-                os.unlink(self.reduced_file)
-                self.reduced_file = None
-        elif response == gtk.RESPONSE_OK:
-            self.reopen()
-
-    def file_bug(self, package, pid):
-	'''File a bug against a package.  
-	
-        If a pid is given, the report will contain runtime debug
-        information. If neither a package or a pid is specified, a generic
-        distro bug is filed.'''
-
-	# create initial report
-	self.report = apport.Report('Bug')
-	self.report.add_os_info()
-	if pid:
-	    self.report.add_proc_info(pid)
-        self.cur_package = package
-
-	# write it into temporary file
-        self.reportfile = self._create_report_file()
-        if self.collect_info():
-            self.send_bug()
-
-    #
-    # workflow functions
-    #
-
-    def send_bug(self):
-        '''Send report to Malone cloakroom and display bug filing page.'''
-
-        assert self.report
-        print 'Sending report...'
-        if self.report.has_key('SourcePackage'):
-            open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage'])
-        else:
-            open_url('https://launchpad.net/distros/ubuntu/+filebug')
-
-    def reopen(self):
-        '''Reopen the crashed application and quit processing the current crash report.'''
-
-        assert self.report.has_key('ProcCmdline')
-
-        if os.fork() == 0:
-            os.setsid()
-            os.execlp('sh', 'sh', '-c', self.report.get('RespawnCommand', self.report['ProcCmdline']))
-            sys.exit(1)
+    def ui_stop_info_collection_progress(self):
+        self.w('window_information_collection').hide()
 
     #
     # Event handlers
@@ -390,38 +166,6 @@ developers.'))
         self.w('dialog_bugreport').set_resizable(not self.w('expander_details').get_expanded())
         return True
 
-def parse_options():
-    '''Parse command line options and return (options, args) tuple.'''
-
-    optparser = optparse.OptionParser('%prog [options]')
-    optparser.add_option('-f', '--file-bug',
-        help='Start in bug filing mode. Requires --source and an optional --pid, or just a --pid',
-        action='store_true', dest='filebug', default=False)
-    optparser.add_option('-p', '--package',
-        help='Specify package name in --file-bug mode. This is optional if a --pid is specified.',
-        action='store', type='string', dest='package', default=None)
-    optparser.add_option('-P', '--pid',
-        help='Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information.',
-        action='store', type='string', dest='pid', default=None)
-
-    return optparser.parse_args()
-
 if __name__ == '__main__':
-    gettext.textdomain(gettext_domain)
-    gtk.glade.textdomain(gettext_domain)
-    app = ApportGTK()
-
-    (options, args) = parse_options()
-
-    if options.filebug:
-	app.file_bug(options.package, options.pid)
-    else:
-	# report crashes if --file-bug is not specified
-        reports = apport.fileutils.get_new_reports()
-        if len(reports) == 0:
-            print >> sys.stderr, 'No crash reports found, aborting'
-            sys.exit(0)
-
-        for report in reports:
-            app.show_crash(report)
-
+    app = GTKUserInterface()
+    app.run_argv()
