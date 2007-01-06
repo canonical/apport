@@ -243,7 +243,7 @@ class UserInterface:
                 self.ui_shutdown()
                 sys.exit(1)
 
-    def open_url(url):
+    def open_url(self, url):
         '''Open the given URL in a new browser window.
         
         Display an error dialog if everything fails.'''
