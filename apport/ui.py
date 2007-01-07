@@ -465,6 +465,14 @@ if  __name__ == '__main__':
         def open_url(self, url):
             self.opened_url = url
 
+        def file_report(self):
+            # the report can be accessed as self.ui.report, thus we do not do
+            # anything about sending it anywhere
+            if self.report.has_key('SourcePackage'):
+                self.open_url('https://bug.tracker/%s' % self.report['SourcePackage'])
+            else:
+                self.open_url('https://bug.tracker')
+
     class _UserInterfaceTest(unittest.TestCase):
         def setUp(self):
             self.orig_report_dir = apport.fileutils.report_dir
