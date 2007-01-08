@@ -359,7 +359,7 @@ class Report(ProblemReport):
                 depth = int(m.group(1))
                 if depth < len(toptrace):
                     toptrace[depth] = m.group(2)
-        self['StacktraceTop'] = '\n'.join(toptrace)
+        self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
@@ -407,7 +407,7 @@ class Report(ProblemReport):
 # Unit test
 #
 
-import unittest, shutil, signal
+import unittest, shutil, signal, time, resource
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
@@ -645,36 +645,41 @@ class _ApportReportTest(unittest.TestCase):
         # should not throw an exception for missing fields
         pr.add_gdb_info()
 
-        # create a test executable
-        test_executable = '/bin/cat'
-        assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
-        pid = os.fork()
-        if pid == 0:
-            os.setsid()
-            os.execv(test_executable, [test_executable])
-            assert False, 'Could not execute ' + test_executable
-
-        # generate a core dump
-        (fd, coredump) = tempfile.mkstemp()
+        workdir = None
+        orig_cwd = os.getcwd()
+        orig_ulimitc = resource.getrlimit(resource.RLIMIT_CORE)
+        pr = Report()
         try:
-            os.close(fd)
-            assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE) == 0
+            workdir = tempfile.mkdtemp()
+            os.chdir(workdir)
 
-            # verify that it's a proper ELF file
-            assert subprocess.call(['readelf', '-n', coredump],
+            # create a test executable
+            open('crash.c', 'w').write('''
+int f(x) {
+    int* p = 0; *p = x;
+    return x+1;
+}
+int main() { return f(42); }
+''')
+            assert subprocess.call(['gcc', '-g', 'crash.c', '-o', 'crash']) == 0
+            assert os.path.exists('crash')
+
+            # call it and verify that it dumped core
+            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+            subprocess.call(['./crash'])
+            assert os.path.exists('core')
+            assert subprocess.call(['readelf', '-n', 'core'],
                 stdout=subprocess.PIPE) == 0
 
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
-
-            pr['ExecutablePath'] = test_executable
-            pr['CoreDump'] = (coredump,)
+            pr['ExecutablePath'] = os.path.join(workdir, 'crash')
+            pr['CoreDump'] = (os.path.join(workdir, 'core'),)
 
             pr.add_gdb_info()
         finally:
-            os.unlink(coredump)
+            resource.setrlimit(resource.RLIMIT_CORE, orig_ulimitc)
+            os.chdir(orig_cwd)
+            if workdir:
+                shutil.rmtree(workdir)
 
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
@@ -682,11 +687,9 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
-        self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
-        self.assertEqual(len(pr['StacktraceTop'].splitlines()), 5)
-        self.assert_(pr['StacktraceTop'].startswith('read ('))
+        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process') > 0)
+        self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
         self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_add_gdb_info_load(self):
@@ -737,6 +740,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
+        self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
         self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
@@ -784,7 +788,8 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('StacktraceTop'))
         self.assert_(pr.has_key('Registers'))
-        self.assert_('from /lib/libc.so' in pr['Stacktrace'])
+        self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
+        self.assert_('libc.so' in pr['Stacktrace'])
 
     def test_search_bug_patterns(self):
         '''Test search_bug_patterns() behaviour.'''

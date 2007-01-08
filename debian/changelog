@@ -1,4 +1,19 @@
-apport (0.36) UNRELEASED; urgency=low
+apport (0.37) feisty; urgency=low
+
+  * problem_report.py: Remove the requirement that values must not contain
+    empty lines. Add test cases that reading and writing values with empty
+    lines works, and add a test case that load() properly complains about
+    empty lines in debcontrol encoding (empty lines in values are encoded with
+    a single space). Closes: LP#78094
+  * apport/report.py test suite: Do not rely on a particular structure of the
+    'cat' stacktrace; apparently this is not consistent across architectures.
+    Instead, compile a segfaulting mini C program, let it dump core, and test
+    add_gdb_info() on it instead. This also allows us for a more rigid check
+    of StacktraceTop.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  8 Jan 2007 14:44:08 +0100
+
+apport (0.36) feisty; urgency=low
 
   * gtk/apport-gtk.glade: Restore pulse step of progress bar (this apparently
     got destroyed when saving with Glade 3).
@@ -14,8 +29,17 @@ apport (0.36) UNRELEASED; urgency=low
     case to report.py.
   * debian/apport.init: Use mkdir -p instead of install -d, since install is
     not in /bin. Thanks to Kees Cook for catching this.
+  * debian/control: Add missing python-apport dependency 'python-apt', which
+    is not caught by ${python:Depends}.
+  * gtk/apport-gtk: Catch MemoryError when loading a report and display an
+    error dialog instead of just crashing. Closes: LP#76235
+  * gtk/apport-gtk: Properly catch exceptions from the bug pattern check
+    thread to avoid useless backtraces like in bug #75160.
+  * gtk/apport-gtk: Catch exceptions from decoding of damaged reports and
+    display an error message instead of crashing. Closes: LP#77149
+  * apport/report.py: Add missing import of 'time' to test suite.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  4 Jan 2007 20:11:46 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  5 Jan 2007 09:49:01 +0100
 
 apport (0.35) feisty; urgency=low
 

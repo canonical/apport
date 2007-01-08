@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import gobject, gtk, gtk.glade
-import glob, sys, gettext, os.path, locale, tempfile, optparse, time
+import glob, sys, gettext, os.path, locale, tempfile, optparse, time, traceback
 from gettext import gettext as _
 import subprocess, threading, webbrowser
 import xdg.DesktopEntry
@@ -60,8 +60,13 @@ def thread_check_bugpatterns(report, baseurl):
     global variable, so that it is suitable for threading.'''
 
     global thread_check_bugpatterns_result
-    thread_check_bugpatterns_result = \
-        report.search_bug_patterns(baseurl)
+    try:
+        thread_check_bugpatterns_result = \
+            report.search_bug_patterns(baseurl)
+    except Exception, e:
+        e.backtrace = ''.join(
+            traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
+        thread_check_bugpatterns_result = e
 
 def format_filesize(size):
     '''Format the given integer as humanly readable and i18n'ed file size.'''
@@ -127,7 +132,26 @@ class ApportGTK:
         # load problem report
         self.reportfile = reportfile
         self.report = apport.Report()
-        self.report.load(open(reportfile))
+        try:
+            self.report.load(open(reportfile))
+        except MemoryError:
+            self.report = None
+            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                buttons=gtk.BUTTONS_CLOSE, 
+                message_format=_('Your system does not have enough memory to process this crash report.'))
+            md.set_title(_('Memory exhaustion'))
+            md.run()
+            md.hide()
+            return False
+        except (TypeError, ValueError):
+            self.report = None
+            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                buttons=gtk.BUTTONS_CLOSE, 
+                message_format=_('This problem report is damaged and cannot be processed.'))
+            md.set_title(_('Invalid problem report'))
+            md.run()
+            md.hide()
+            return False
 
         if self.report.has_key('Package'):
             self.cur_package = self.report['Package'].split()[0]
@@ -136,7 +160,7 @@ class ApportGTK:
         if not self.cur_package:
             print >> sys.stderr, 'Crash report is for a non-packaged program.'
             sys.exit(1)
-            return
+            return False
 
         # try to get a matching .desktop file
         if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
@@ -167,6 +191,7 @@ class ApportGTK:
             self.w('dialog_crash').show_all()
 
         apport.fileutils.mark_report_seen(report)
+        return True
 
     def file_bug(self, package, pid):
 	'''File a bug against a package.  
@@ -241,6 +266,9 @@ class ApportGTK:
                 bpthread.join(0.1)
                 self.w('progressbar_information_collection').pulse()
             global thread_check_bugpatterns_result
+            if isinstance(thread_check_bugpatterns_result, Exception):
+                raise Exception, 'Exception in thread_check_bugpatterns():\n' + \
+                    thread_check_bugpatterns_result.backtrace
             url = thread_check_bugpatterns_result
             self.w('window_information_collection').hide()
 
@@ -396,6 +424,6 @@ if __name__ == '__main__':
             sys.exit(0)
 
         for report in reports:
-            app.show_crash(report)
-            gtk.main()
+            if app.show_crash(report):
+                gtk.main()
 
