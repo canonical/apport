@@ -5,8 +5,13 @@ apport (0.37) UNRELEASED; urgency=low
     lines works, and add a test case that load() properly complains about
     empty lines in debcontrol encoding (empty lines in values are encoded with
     a single space). Closes: LP#78094
+  * apport/report.py test suite: Do not rely on a particular structure of the
+    'cat' stacktrace; apparently this is not consistent across architectures.
+    Instead, compile a segfaulting mini C program, let it dump core, and test
+    add_gdb_info() on it instead. This also allows us for a more rigid check
+    of StacktraceTop.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  8 Jan 2007 13:52:21 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  8 Jan 2007 14:44:08 +0100
 
 apport (0.36) feisty; urgency=low
 
