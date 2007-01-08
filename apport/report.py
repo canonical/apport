@@ -318,7 +318,7 @@ class Report(ProblemReport):
 
             gdb_reports = {
                            'Registers': 'info registers',
-                           'Disassembly': 'disassemble $pc $pc+32',
+                           'Disassembly': 'x/16i $pc',
                            'Stacktrace': 'bt full',
                            'ThreadStacktrace': 'thread apply all bt full',
                           }
