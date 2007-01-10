@@ -14,8 +14,11 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
+import re, tempfile
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
+
+import MultipartPostHandler, urllib2
 
 import apport, apport.fileutils
 
@@ -56,6 +59,34 @@ def thread_check_bugpatterns(report, baseurl):
         e.backtrace = ''.join(
             traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
         thread_check_bugpatterns_result = e
+
+def upload_launchpad_blob(report):
+    '''Upload given problem report to Malone and return the ticket for it.
+
+    Return None on error.'''
+
+    ticket = None
+
+    # write MIME/Multipart version into temporary file
+    mime = tempfile.TemporaryFile()
+    report.write_mime(mime)
+    mime.flush()
+    mime.seek(0)
+
+    opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
+    try:
+        result = opener.open('https://launchpad.net/+storeblob', 
+            { 'FORM_SUBMIT': '1', 'field.blob': mime }).read()
+    except:
+        return None
+    mime.close()
+
+    if result:
+        m = re.search('Your ticket is "([^"]+)"', result)
+        if m:
+            ticket = m.group(1)
+
+    return ticket
 
 class UserInterface:
     '''Abstract base class for encapsulating the workflow and common code for
@@ -267,13 +298,15 @@ class UserInterface:
         '''Upload the current report to the tracking system and guide the user
         through its user interface.'''
 
-        print 'sending bug to Malone...'
-        print self.report.keys()
+        ticket = upload_launchpad_blob(self.report)
 
-        if self.report.has_key('SourcePackage'):
-            self.open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug' % self.report['SourcePackage'])
+        if ticket:
+            if self.report.has_key('SourcePackage'):
+                self.open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug?extra_info=%s' % (self.report['SourcePackage'], ticket))
+            else:
+                self.open_url('https://launchpad.net/distros/ubuntu/+filebug?extra_info=%s' % ticket)
         else:
-            self.open_url('https://launchpad.net/distros/ubuntu/+filebug')
+            self.ui_error_message('Could not upload report data to Launchpad')
 
     def load_report(self, path):
         '''Load report from given path and do some consistency checks.
@@ -409,7 +442,7 @@ might be helpful for the developers.'))
 #
 
 if  __name__ == '__main__':
-    import unittest, tempfile, shutil, signal
+    import unittest, shutil, signal
 
     class _TestSuiteUserInterface(UserInterface):
         '''Concrete UserInterface suitable for automatic testing.'''

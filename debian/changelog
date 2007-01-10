@@ -9,6 +9,13 @@ apport (0.37) UNRELEASED; urgency=low
     instead of asking the user to attach the file. Sending is not yet
     implemented, though.
   * gtk/apport-gtk: Do not show any dialogs any more when filing a bug.
+  * Add apport/MultipartPostHandler.py: This module provides an urllib2 opener
+    for uploading file attachments to forms over HTTP POST. This module is
+    (C) 2006 Will Holcomb <wholcomb@gmail.com> and was taken from
+    http://odin.himinbi.org/MultipartPostHandler.py. (This is a serious hole
+    of the Python standard library IMHO.)
+  * apport/ui.py, file_report(): Upload blob to Malone, retrieve the ticket,
+    and submit it to +filebug as extra_info= parameter.
 
   Refactorizations:
 
@@ -23,7 +30,7 @@ apport (0.37) UNRELEASED; urgency=low
   * gtk/apport-gtk: Port to ui.py's UserInterface (which means moving 1/3 of
     the code into the new ui_*() methods and throwing away the rest).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  6 Jan 2007 23:06:45 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 10 Jan 2007 19:27:12 +0100
 
 apport (0.36) feisty; urgency=low
 
