@@ -33,13 +33,16 @@ apport (0.37) UNRELEASED; urgency=low
     the return value and uncaught exceptions of run() to the calling thread.
   * apport/ui.py: Get rid of thread_check_bugpatterns() and hackish exception
     handling, rewrite using REThread.
+  * apport/ui.py, gtk/apport-gtk: Add progress bar to report upload. It is
+    indefinite for now, because neither urllib2 nor httplib support upload
+    progress.
 
   Bug fixes:
-  
+
   * gtk/apport-gtk.glade: Merged Gnome HIG fixes from Sebastian Heinlein,
     thank you!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 11 Jan 2007 14:59:23 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 11 Jan 2007 16:05:03 +0100
 
 apport (0.36) feisty; urgency=low
 

@@ -281,9 +281,19 @@ class UserInterface:
 
     def file_report(self):
         '''Upload the current report to the tracking system and guide the user
-        through its user interface.'''
+        to its web page.'''
 
-        ticket = upload_launchpad_blob(self.report)
+        self.ui_start_upload_progress()
+        upthread = REThread.REThread(target=upload_launchpad_blob,
+            args=(self.report,))
+        upthread.start()
+        while upthread.isAlive():
+            self.ui_set_upload_progress(None)
+            upthread.join(0.1)
+        upthread.exc_raise()
+
+        ticket = upthread.return_value()
+        self.ui_stop_upload_progress()
 
         if ticket:
             if self.report.has_key('SourcePackage'):
@@ -413,6 +423,26 @@ might be helpful for the developers.'))
 
     def ui_stop_info_collection_progress(self):
         '''Close debug data collection progress window.'''
+
+        raise Exception, 'this function must be overridden by subclasses'
+
+    def ui_start_upload_progress(self):
+        '''Open a window with an definite progress bar, telling the user to
+        wait while debug information is being uploaded.'''
+
+        raise Exception, 'this function must be overridden by subclasses'
+
+    def ui_set_upload_progress(self, progress):
+        '''Set the progress bar in the debug data upload progress
+        window to the given ratio (between 0 and 1, or None for indefinite
+        progress).
+        
+        This function is called every 100 ms.'''
+
+        raise Exception, 'this function must be overridden by subclasses'
+
+    def ui_stop_upload_progress(self):
+        '''Close debug data upload progress window.'''
 
         raise Exception, 'this function must be overridden by subclasses'
 
