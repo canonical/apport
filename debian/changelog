@@ -34,7 +34,12 @@ apport (0.37) UNRELEASED; urgency=low
   * apport/ui.py: Get rid of thread_check_bugpatterns() and hackish exception
     handling, rewrite using REThread.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 11 Jan 2007 14:44:25 +0100
+  Bug fixes:
+  
+  * gtk/apport-gtk.glade: Merged Gnome HIG fixes from Sebastian Heinlein,
+    thank you!
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 11 Jan 2007 14:59:23 +0100
 
 apport (0.36) feisty; urgency=low
 
