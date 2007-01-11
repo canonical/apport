@@ -346,7 +346,7 @@
   <property name="default_height">115</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">True</property>
-  <property name="icon_name">gtk-dialog-info</property>
+  <property name="icon_name"></property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -455,7 +455,7 @@
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
-	      <signal name="clicked" handler="on_button_cancel_collecting_clicked" last_modification_time="Thu, 11 Jan 2007 09:41:02 GMT"/>
+	      <signal name="clicked" handler="on_window_information_collection_delete_event" last_modification_time="Thu, 11 Jan 2007 10:09:25 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
