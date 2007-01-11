@@ -20,7 +20,7 @@ from gettext import gettext as _
 
 import MultipartPostHandler, urllib2
 
-import apport, apport.fileutils
+import apport, apport.fileutils, REThread
 
 bugpattern_baseurl = 'http://people.ubuntu.com/~pitti/bugpatterns'
 
@@ -46,19 +46,6 @@ def thread_collect_info(report, reportfile, package):
         f.close()
         os.chmod (reportfile, 0600)
         apport.fileutils.mark_report_seen(reportfile)
-
-def thread_check_bugpatterns(report, baseurl):
-    '''Encapsulate call to search_bug_patterns() and return the result in a
-    global variable, so that it is suitable for threading.'''
-
-    global thread_check_bugpatterns_result
-    try:
-        thread_check_bugpatterns_result = \
-            report.search_bug_patterns(baseurl)
-    except Exception, e:
-        e.backtrace = ''.join(
-            traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
-        thread_check_bugpatterns_result = e
 
 def upload_launchpad_blob(report):
     '''Upload given problem report to Malone and return the ticket for it.
@@ -252,19 +239,16 @@ class UserInterface:
                     self.ui_pulse_info_collection_progress()
                     icthread.join(0.1)
 
-            bpthread = threading.Thread(target=thread_check_bugpatterns,
-                args=(self.report, bugpattern_baseurl))
+            bpthread = REThread.REThread(target=self.report.search_bug_patterns,
+                args=(bugpattern_baseurl,))
             bpthread.start()
             while bpthread.isAlive():
                 self.ui_pulse_info_collection_progress()
                 bpthread.join(0.1)
-            global thread_check_bugpatterns_result
-            if isinstance(thread_check_bugpatterns_result, Exception):
-                raise Exception, 'Exception in thread_check_bugpatterns():\n' + \
-                    thread_check_bugpatterns_result.backtrace
+            bpthread.exc_raise()
 
-            if thread_check_bugpatterns_result:
-                self.report['BugPatternURL'] = thread_check_bugpatterns_result
+            if bpthread.return_value():
+                self.report['BugPatternURL'] = bpthread.return_value()
             self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
