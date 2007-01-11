@@ -149,7 +149,8 @@ class UserInterface:
         self.cur_package = self.options.package
 
         self.collect_info()
-        self.file_report()
+        if not self.handle_duplicate():
+            self.file_report()
 
     def run_argv(self):
         '''Call appopriate run_* method according to command line arguments.'''
