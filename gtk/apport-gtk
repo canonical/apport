@@ -126,7 +126,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             return 'cancel'
 
     def ui_info_message(self, title, text):
-        md = gtk.MessageDialog(type=gtk.MESSAGE_INFORMATION,
+        md = gtk.MessageDialog(type=gtk.MESSAGE_INFO,
             buttons=gtk.BUTTONS_CLOSE, message_format=text)
         md.set_title(title)
         md.run()
