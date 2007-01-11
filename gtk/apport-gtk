@@ -29,6 +29,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         apport.ui.UserInterface.__init__(self)
 
         # load UI
+        gtk.window_set_default_icon_name("apport")
         gtk.glade.textdomain(self.gettext_domain)
         self.widgets = gtk.glade.XML(os.path.join(os.path.dirname(sys.argv[0]),
             'apport-gtk.glade'))
