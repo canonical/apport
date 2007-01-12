@@ -8,8 +8,14 @@ apport (0.38) UNRELEASED; urgency=low
     Adapt the other tests to get along with running the tests as root.
   * bin/apport-checkreports: Add option --system to check for system crash
     reports. Closes: LP#62316
+  * gtk/apport-gtk: If called through sudo to process system crashes, drop
+    privileges to the original user in open_url() so that we get the web
+    browser correctly. (LP#62316) Caveat: The user cannot actually attach the
+    crash report file directly since it is not accessible to the user; this
+    will get fixed once Malone is able to link a bug report with uploaded
+    blobs.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Jan 2007 12:08:05 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Jan 2007 14:29:44 +0100
 
 apport (0.37) feisty; urgency=low
 
