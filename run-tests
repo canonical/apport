@@ -7,6 +7,7 @@ python apport/fileutils.py -v
 python apport/report.py -v
 python apport/python_hook.py -v
 python apport/ui.py -v
+python apport/REThread.py -v
 if [ -e $CRASHDUMP ] && [ -n "`cat $CRASHDUMP`" ]; then
     ./test-apport kernel
 else

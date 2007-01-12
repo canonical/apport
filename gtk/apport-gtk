@@ -126,7 +126,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             return 'cancel'
 
     def ui_info_message(self, title, text):
-        md = gtk.MessageDialog(type=gtk.MESSAGE_INFORMATION,
+        md = gtk.MessageDialog(type=gtk.MESSAGE_INFO,
             buttons=gtk.BUTTONS_CLOSE, message_format=text)
         md.set_title(title)
         md.run()
@@ -151,11 +151,38 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_stop_info_collection_progress(self):
         self.w('window_information_collection').hide()
 
+    def ui_start_upload_progress(self):
+        '''Open a window with an definite progress bar, telling the user to
+        wait while debug information is being uploaded.'''
+
+        self.w('progressbar_upload').set_fraction(0)
+        self.w('window_report_upload').show()
+
+    def ui_set_upload_progress(self, progress):
+        '''Set the progress bar in the debug data upload progress
+        window to the given ratio (between 0 and 1, or None for indefinite
+        progress).
+        
+        This function is called every 100 ms.'''
+
+        if progress:
+            self.w('progressbar_upload').set_fraction(progress)
+        else:
+            self.w('progressbar_upload').set_pulse_step(0.1)
+            self.w('progressbar_upload').pulse()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
+
+    def ui_stop_upload_progress(self):
+        '''Close debug data upload progress window.'''
+
+        self.w('window_report_upload').hide()
+
     #
     # Event handlers
     #
 
-    def on_window_information_collection_delete_event(self, widget, event):
+    def on_window_information_collection_delete_event(self, widget, event=None):
         self.w('window_information_collection').hide()
         sys.exit(0)
         return True
