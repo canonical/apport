@@ -142,6 +142,19 @@ def get_new_reports():
 
     return [r for r in get_all_reports() if not seen_report(r)]
 
+def get_all_system_reports():
+    '''Return a list with all report files which belong to a system user (i. e.
+    uid < 500 according to LSB).'''
+
+    return [r for r in glob.glob(os.path.join(report_dir, '*.crash')) 
+            if os.path.getsize(r) > 0 and os.stat(r).st_uid < 500]
+
+def get_new_system_reports():
+    '''Return a list with all report files which have not yet been processed
+    and belong to a system user (i. e. uid < 500 according to LSB).'''
+
+    return [r for r in get_all_system_reports() if not seen_report(r)]
+
 def delete_report(report):
     '''Delete the given report file.
 
@@ -290,7 +303,10 @@ class _ApportUtilsTest(unittest.TestCase):
         '''Test get_new_reports() and seen_report() behaviour.'''
 
         self.assertEqual(get_new_reports(), [])
-        tr = [r for r in self._create_reports(True) if r.find('inaccessible') == -1]
+        if os.getuid() == 0:
+            tr = self._create_reports(True)
+        else:
+            tr = [r for r in self._create_reports(True) if r.find('inaccessible') == -1]
         self.assertEqual(set(get_new_reports()), set(tr))
 
         # now mark them as seen and check again
@@ -306,7 +322,10 @@ class _ApportUtilsTest(unittest.TestCase):
         '''Test get_all_reports() behaviour.'''
 
         self.assertEqual(get_all_reports(), [])
-        tr = [r for r in self._create_reports(True) if r.find('inaccessible') == -1]
+        if os.getuid() == 0:
+            tr = self._create_reports(True)
+        else:
+            tr = [r for r in self._create_reports(True) if r.find('inaccessible') == -1]
         self.assertEqual(set(get_all_reports()), set(tr))
 
         # now mark them as seen and check again
@@ -314,6 +333,27 @@ class _ApportUtilsTest(unittest.TestCase):
             mark_report_seen(r)
 
         self.assertEqual(set(get_all_reports()), set(tr))
+
+    def test_get_system_reports(self):
+        '''Test get_all_system_reports() and get_new_system_reports() behaviour.'''
+
+        self.assertEqual(get_all_reports(), [])
+        self.assertEqual(get_all_system_reports(), [])
+        if os.getuid() == 0:
+            tr = self._create_reports(True)
+            self.assertEqual(set(get_all_system_reports()), set(tr))
+            self.assertEqual(set(get_new_system_reports()), set(tr))
+
+            # now mark them as seen and check again
+            for r in tr:
+                mark_report_seen(r)
+
+            self.assertEqual(set(get_all_system_reports()), set(tr))
+            self.assertEqual(set(get_new_system_reports()), set([]))
+        else:
+            tr = [r for r in self._create_reports(True) if r.find('inaccessible') == -1]
+            self.assertEqual(set(get_all_system_reports()), set([]))
+            self.assertEqual(set(get_new_system_reports()), set([]))
 
     def test_delete_report(self):
         '''Test delete_report() behaviour.'''
