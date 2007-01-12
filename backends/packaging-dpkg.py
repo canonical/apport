@@ -154,6 +154,8 @@ class DpkgPackageInfo:
 
         return mismatches
 
+impl = DpkgPackageInfo()
+
 #
 # Unit test
 #
@@ -162,8 +164,6 @@ if __name__ == '__main__':
     import unittest, tempfile, shutil
 
     class _DpkgPackageInfoTest(unittest.TestCase):
-        def setUp(self):
-            self.i = DpkgPackageInfo()
 
         def test_get_field(self):
             '''Test _get_field().'''
@@ -177,12 +177,12 @@ Conflicts: fu
 Description: Test
  more
 '''
-            self.assertEqual(self.i._get_field(data, 'Nonexisting'), None)
-            self.assertEqual(self.i._get_field(data, 'Version'), '1.2-3')
-            self.assertEqual(self.i._get_field(data, 'Conflicts'), 'fu')
-            self.assertEqual(self.i._get_field(data, 'Description'), 
+            self.assertEqual(impl._get_field(data, 'Nonexisting'), None)
+            self.assertEqual(impl._get_field(data, 'Version'), '1.2-3')
+            self.assertEqual(impl._get_field(data, 'Conflicts'), 'fu')
+            self.assertEqual(impl._get_field(data, 'Description'), 
                 'Test more')
-            self.assertEqual(self.i._get_field(data, 'Depends'), 
+            self.assertEqual(impl._get_field(data, 'Depends'), 
                 'libc6 (>= 2.4), libfoo, libbar (<< 3), libbaz')
 
         def test_check_files_md5(self):
@@ -199,49 +199,49 @@ Description: Test
                 open(sumfile, 'w').write('''2e41290da2fa3f68bd3313174467e3b5  %s
         f6423dfbc4faf022e58b4d3f5ff71a70  %s
         ''' % (f1[1:], f2))
-                self.assertEqual(self.i._check_files_md5(sumfile), [], 'correct md5sums')
+                self.assertEqual(impl._check_files_md5(sumfile), [], 'correct md5sums')
 
                 open(f1, 'w').write('Some stuff!')
-                self.assertEqual(self.i._check_files_md5(sumfile), [f1[1:]], 'file 1 wrong')
+                self.assertEqual(impl._check_files_md5(sumfile), [f1[1:]], 'file 1 wrong')
                 open(f2, 'w').write('More stuff!')
-                self.assertEqual(self.i._check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
+                self.assertEqual(impl._check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
                 open(f1, 'w').write('Some stuff')
-                self.assertEqual(self.i._check_files_md5(sumfile), [f2], 'file 2 wrong')
+                self.assertEqual(impl._check_files_md5(sumfile), [f2], 'file 2 wrong')
             finally:
                 shutil.rmtree(td)
 
         def test_get_version(self):
             '''Test get_version().'''
 
-            self.assert_(self.i.get_version('libc6').startswith('2'))
-            self.assertRaises(ValueError, self.i.get_version, 'nonexisting')
+            self.assert_(impl.get_version('libc6').startswith('2'))
+            self.assertRaises(ValueError, impl.get_version, 'nonexisting')
 
         def test_get_dependencies(self):
             '''Test get_dependencies().'''
 
-            d  = self.i.get_dependencies('bash')
+            d  = impl.get_dependencies('bash')
             self.assert_(len(d) > 2)
             self.assert_('libc6' in d)
 
         def test_get_source(self):
             '''Test get_source().'''
 
-            self.assertRaises(ValueError, self.i.get_source, 'nonexisting')
-            self.assertEqual(self.i.get_source('bash'), 'bash')
-            self.assertEqual(self.i.get_source('libc6'), 'glibc')
+            self.assertRaises(ValueError, impl.get_source, 'nonexisting')
+            self.assertEqual(impl.get_source('bash'), 'bash')
+            self.assertEqual(impl.get_source('libc6'), 'glibc')
 
         def test_get_files(self):
             '''Test get_files().'''
 
-            self.assertRaises(ValueError, self.i.get_files, 'nonexisting')
-            self.assert_('/bin/bash' in self.i.get_files('bash'))
+            self.assertRaises(ValueError, impl.get_files, 'nonexisting')
+            self.assert_('/bin/bash' in impl.get_files('bash'))
 
         def test_get_file_package(self):
             '''Test get_file_package() on normal files.'''
 
-            self.assertEqual(self.i.get_file_package('/bin/bash'), 'bash')
-            self.assertEqual(self.i.get_file_package('/bin/cat'), 'coreutils')
-            self.assertEqual(self.i.get_file_package('/nonexisting'), None)
+            self.assertEqual(impl.get_file_package('/bin/bash'), 'bash')
+            self.assertEqual(impl.get_file_package('/bin/cat'), 'coreutils')
+            self.assertEqual(impl.get_file_package('/nonexisting'), None)
 
         def test_get_file_package_diversion(self):
             '''Test get_file_package() behaviour for a diverted file.'''
@@ -256,7 +256,7 @@ Description: Test
             file = fields[2]
             pkg = fields[-1]
 
-            self.assertEqual(self.i.get_file_package(file), pkg)
+            self.assertEqual(impl.get_file_package(file), pkg)
 
     # only execute if dpkg is available
     try:

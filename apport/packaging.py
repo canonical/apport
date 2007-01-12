@@ -43,3 +43,6 @@ class PackageInfo:
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
+import packaging_impl
+
+impl = packaging_impl.impl
