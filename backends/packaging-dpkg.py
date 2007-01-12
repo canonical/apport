@@ -258,4 +258,10 @@ Description: Test
 
             self.assertEqual(self.i.get_file_package(file), pkg)
 
-    unittest.main()
+    # only execute if dpkg is available
+    try:
+        if subprocess.call(['dpkg', '--help'], stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE) == 0:
+            unittest.main()
+    except OSError:
+        pass
