@@ -43,8 +43,10 @@ apport (0.37) UNRELEASED; urgency=low
     thank you!
   * Merge patch from Sebastian Heinlein to properly treat the apport-gtk icon
     the dh_iconcache way and make it themeable. Thank you!
+  * gtk/apport-gtk: Remove periods from primary dialog texts to comply with
+    Gnome HIG standards.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Jan 2007 11:37:08 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Jan 2007 11:38:58 +0100
 
 apport (0.36) feisty; urgency=low
 

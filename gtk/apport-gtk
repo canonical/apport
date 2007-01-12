@@ -57,11 +57,11 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_present_crash(self, desktop_entry): 
         # adapt dialog heading and label appropriately
         if desktop_entry:
-            heading = _('Sorry, %s closed unexpectedly.') % desktop_entry.getName()
+            heading = _('Sorry, %s closed unexpectedly') % desktop_entry.getName()
         elif self.report.has_key('ExecutablePath'):
-            heading = _('Sorry, the program "%s" closed unexpectedly.') % os.path.basename(self.report['ExecutablePath'])
+            heading = _('Sorry, the program "%s" closed unexpectedly') % os.path.basename(self.report['ExecutablePath'])
         else:
-            heading = _('Sorry, %s closed unexpectedly.') % self.cur_package
+            heading = _('Sorry, %s closed unexpectedly') % self.cur_package
         if desktop_entry and self.report.has_key('ExecutablePath') and \
             subprocess.call(['pidof', '-x', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
             self.w('label_heading_reopen').set_markup(self.str_heading % heading)
