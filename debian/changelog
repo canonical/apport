@@ -41,8 +41,10 @@ apport (0.37) UNRELEASED; urgency=low
 
   * gtk/apport-gtk.glade: Merged Gnome HIG fixes from Sebastian Heinlein,
     thank you!
+  * Merge patch from Sebastian Heinlein to properly treat the apport-gtk icon
+    the dh_iconcache way and make it themeable. Thank you!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 11 Jan 2007 16:05:03 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Jan 2007 11:37:08 +0100
 
 apport (0.36) feisty; urgency=low
 

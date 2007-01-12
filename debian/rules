@@ -10,3 +10,9 @@ DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-scripts usr/share/apport
 
 clean::
 	make -C po clean
+
+ifdef _cdbs_rules_debhelper
+$(patsubst %,binary-install/%,apport-gtk) :: binary-install/%:
+	$(if $(wildcard /usr/bin/dh_iconcache),dh_iconcache -p$(cdbs_curpkg) $(DEB_DH_DESKTOP_ARGS))
+endif
+
