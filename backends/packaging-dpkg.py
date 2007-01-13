@@ -27,10 +27,12 @@ class DpkgPackageInfo:
 
         # get Depends: and PreDepends:
         result = []
-        r = self._get_field(self._call_dpkg(['-s', package]), 'Depends') or ''
-        result = [p.split()[0] for p in r.split(',')]
-        r = self._get_field(self._call_dpkg(['-s', package]), 'Pre-Depends') or ''
-        result += [p.split()[0] for p in r.split(',')]
+        r = self._get_field(self._call_dpkg(['-s', package]), 'Depends')
+        if r:
+            result = [p.split()[0] for p in r.split(',')]
+        r = self._get_field(self._call_dpkg(['-s', package]), 'Pre-Depends')
+        if r:
+            result += [p.split()[0] for p in r.split(',')]
 
         return result
 
@@ -219,9 +221,19 @@ Description: Test
         def test_get_dependencies(self):
             '''Test get_dependencies().'''
 
+            # package with both Depends: and Pre-Depends:
             d  = impl.get_dependencies('bash')
             self.assert_(len(d) > 2)
             self.assert_('libc6' in d)
+
+            # Pre-Depends: only
+            d  = impl.get_dependencies('coreutils')
+            self.assert_(len(d) >= 1)
+            self.assert_('libc6' in d)
+
+            # Depends: only
+            d  = impl.get_dependencies('libc6')
+            self.assert_(len(d) >= 1)
 
         def test_get_source(self):
             '''Test get_source().'''
