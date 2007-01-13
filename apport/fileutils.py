@@ -13,6 +13,8 @@ the full text of the license.
 import os, glob, subprocess, os.path
 from problem_report import ProblemReport
 
+import packaging
+
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
 def find_package_desktopfile(package):
@@ -22,15 +24,9 @@ def find_package_desktopfile(package):
     if package is None:
         return None
 
-    dpkg = subprocess.Popen(['dpkg', '-L', package], stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
-    out = dpkg.communicate(input)[0]
-    if dpkg.returncode != 0:
-        return None
-
     desktopfile = None
 
-    for line in out.splitlines():
+    for line in packaging.impl.get_files(package):
         if line.endswith('.desktop'):
             if desktopfile:
                 return None # more than one
@@ -44,7 +40,7 @@ def likely_packaged(file):
 
     This is semi-decidable: A return value of False is definitive, a True value
     is only a guess which needs to be checked with find_file_package().
-    However, this function is very fast and does not access the dpkg
+    However, this function is very fast and does not access the package
     database.'''
 
     pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
@@ -64,38 +60,7 @@ def find_file_package(file):
     if not likely_packaged(file):
 	return None
 
-    # check if the file is a diversion
-    dpkg = subprocess.Popen(['/usr/sbin/dpkg-divert', '--list', file],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out = dpkg.communicate()[0]
-    if dpkg.returncode == 0 and out:
-        return out.split()[-1]
-
-    fname = os.path.splitext(os.path.basename(file))[0].lower()
-
-    all_lists = []
-    likely_lists = []
-    for f in glob.glob('/var/lib/dpkg/info/*.list'):
-        p = os.path.splitext(os.path.basename(f))[0].lower()
-        if fname.find(p) >= 0 or p.find(fname) >= 0:
-            likely_lists.append(f)
-        else:
-            all_lists.append(f)
-
-    # first check the likely packages
-    p = subprocess.Popen(['fgrep', '-lxm', '1', '--', file] +
-        likely_lists, stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-    out = p.communicate()[0]
-    if p.returncode != 0:
-        p = subprocess.Popen(['fgrep', '-lxm', '1', '--', file] +
-            all_lists, stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-        out = p.communicate()[0]
-        if p.returncode != 0:
-            return None
-
-    return os.path.splitext(os.path.basename(out))[0]
+    return packaging.impl.get_file_package(file)
 
 def seen_report(report):
     '''Check whether the given report file has already been processed
@@ -250,16 +215,30 @@ class _ApportUtilsTest(unittest.TestCase):
     def test_find_package_desktopfile(self):
         '''Test find_package_desktopfile() behaviour.'''
 
-        # find a package without any .desktop file
-        sp = subprocess.Popen("grep -c '\.desktop$' /var/lib/dpkg/info/*.list | grep -m 1 ':0$'",
-            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        nodesktop = os.path.splitext(os.path.basename(sp.communicate()[0]))[0]
-        sp = subprocess.Popen("grep -c '\.desktop$' /var/lib/dpkg/info/*.list | grep -m 1 ':1$'",
-            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        onedesktop = os.path.splitext(os.path.basename(sp.communicate()[0]))[0]
-        sp = subprocess.Popen("grep -c '\.desktop$' /var/lib/dpkg/info/*.list | grep -m 1 -v ':\(0\|1\)$'",
-            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        multidesktop = os.path.splitext(os.path.basename(sp.communicate()[0]))[0]
+        # package without any .desktop file
+        nodesktop = 'bash'
+        assert len([f for f in packaging.impl.get_files(nodesktop) 
+            if f.endswith('.desktop')]) == 0
+
+        # find a package with one and a package with multiple .desktop files
+        onedesktop = None
+        multidesktop = None
+        for d in os.listdir('/usr/share/applications/'):
+            if not d.endswith('.desktop'):
+                continue
+            pkg = packaging.impl.get_file_package(
+                os.path.join('/usr/share/applications/', d))
+            num = len([f for f in packaging.impl.get_files(pkg) 
+                if f.endswith('.desktop')]) 
+            if not onedesktop and num == 1:
+                onedesktop = pkg
+            elif not multidesktop and num > 1:
+                multidesktop = pkg
+
+            if onedesktop and multidesktop:
+                break
+
+        assert nodesktop and onedesktop and multidesktop
 
         self.assertEqual(find_package_desktopfile(nodesktop), None, 'no-desktop package %s' % nodesktop)
         self.assertEqual(find_package_desktopfile(multidesktop), None, 'multi-desktop package %s' % multidesktop)
@@ -352,21 +331,6 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-25*3600))
 Date: %s
 CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         self.assertEqual(get_recent_crashes(r), 3)
-
-    def test_find_file_package_diversion(self):
-        '''Test find_file_package() behaviour for a diverted file.'''
-
-        # pick first diversion we have
-        p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',
-            shell=True, stdout=subprocess.PIPE)
-        out = p.communicate()[0]
-        assert p.returncode == 0
-        assert out
-        fields = out.split()
-        file = fields[2]
-        pkg = fields[-1]
-
-        self.assertEqual(find_file_package(file), pkg)
 
     def test_make_report_path(self):
         '''Test make_report_path() behaviour.'''

@@ -16,32 +16,24 @@ import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
-import warnings
-warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
-import apt
-
 from problem_report import ProblemReport
-import fileutils
+import fileutils, packaging
 
 #
 # helper functions
 #
 
-def _transitive_dependencies(package, depends_set, cache):
-    '''Recursively add dependencies of package to depends_set, using the given
-    apt cache.'''
+def _transitive_dependencies(package, depends_set):
+    '''Recursively add dependencies of package to depends_set.'''
 
     try:
-        cur_ver = cache[package]._pkg.CurrentVer
-    except (AttributeError, KeyError):
+        cur_ver = packaging.impl.get_version(package)
+    except ValueError:
         return
-    if not cur_ver:
-        return
-    for p in cur_ver.DependsList.get('Depends', []) + cur_ver.DependsList.get('PreDepends', []):
-        name = p[0].TargetPkg.Name
-        if not name in depends_set:
-            depends_set.add(name)
-            _transitive_dependencies(name, depends_set, cache)
+    for d in packaging.impl.get_dependencies(package):
+        if not d in depends_set:
+            depends_set.add(d)
+            _transitive_dependencies(d, depends_set)
 
 def _read_file(f):
     '''Try to read given file and return its contents, or return a textual
@@ -123,10 +115,7 @@ class Report(ProblemReport):
         If package has only unmodified files, return the empty string. If not,
         return ' [modified: ...]' with a list of modified files.'''
 
-        sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
-        if not os.path.exists(sumfile):
-            return ''
-        mod = fileutils.check_files_md5(sumfile)
+        mod = packaging.impl.get_modified_files(package)
         if mod:
             return ' [modified: %s]' % ' '.join(mod)
         else:
@@ -148,28 +137,27 @@ class Report(ProblemReport):
             if not package:
                 return
 
-        cache = apt.Cache()
-
-        self['Package'] = '%s %s%s' % (package, cache[package].installedVersion, self._pkg_modified_suffix(package))
-        self['SourcePackage'] = cache[package].sourcePackageName
+        self['Package'] = '%s %s%s' % (package,
+            packaging.impl.get_version(package),
+            self._pkg_modified_suffix(package))
+        self['SourcePackage'] = packaging.impl.get_source(package)
 
         # get set of all transitive dependencies
         dependencies = set([])
-        _transitive_dependencies(package, dependencies, cache)
+        _transitive_dependencies(package, dependencies)
 
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
             try:
-                cur_ver = cache[dep]._pkg.CurrentVer
-            except (KeyError, AttributeError):
-                continue
-            if not cur_ver:
+                if self['Dependencies']:
+                    self['Dependencies'] += '\n'
+                self['Dependencies'] += '%s %s%s' % (dep,
+                    packaging.impl.get_version(dep),
+                    self._pkg_modified_suffix(dep))
+            except ValueError:
                 # can happen with uninstalled alternate dependencies
-                continue
-            if self['Dependencies']:
-                self['Dependencies'] += '\n'
-            self['Dependencies'] += '%s %s%s' % (dep, cur_ver.VerStr, self._pkg_modified_suffix(dep))
+                pass
 
     def add_os_info(self):
         '''Add operating system information.
@@ -414,21 +402,11 @@ class _ApportReportTest(unittest.TestCase):
         '''Test add_package_info() behaviour.'''
 
         # determine bash version
-        p = subprocess.Popen('dpkg -s bash | grep ^Version: | cut -f2 -d\ ',
-            shell=True, stdout=subprocess.PIPE)
-        bashversion = p.communicate()[0]
-        assert p.returncode == 0
-        assert bashversion
-
-        # determine libc version
-        p = subprocess.Popen('dpkg -s libc6 | grep ^Version: | cut -f2 -d\ ',
-            shell=True, stdout=subprocess.PIPE)
-        libcversion = p.communicate()[0]
-        assert p.returncode == 0
-        assert libcversion
+        bashversion = packaging.impl.get_version('bash')
+        libcversion = packaging.impl.get_version('libc6')
 
         pr = Report()
-        self.assertRaises(KeyError, pr.add_package_info, 'nonexistant_package')
+        self.assertRaises(ValueError, pr.add_package_info, 'nonexistant_package')
 
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
