@@ -1,3 +1,21 @@
+apport (0.39) UNRELEASED; urgency=low
+
+  * Introduce abstract packaging interface and move all dpkg/apt specific bits
+    to a dpkg implementation of this packaging interface (merge
+    apport/abstract-pkg branch):
+    - Add apport/packaging.py: Abstract packaging system query interface.
+    - Add backends/packaging-dpkg.py: dpkg implementation of abstract
+      packaging interface.
+    - run-tests: Run tests of all backends.
+    - apport/fileutils.py, apport/report.py: Port to packaging.py interface.
+    - debian/control: Drop python-apport's 'python-apt' dependency since the
+      backend only uses dpkg now (without measurable performance penalty since
+      it uses internal caching).
+    - debian/rules: Install backends/packaging-dpkg.py as our packaging
+      backend to apport/packaging_impl.py and remove it again on clean.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 13 Jan 2007 15:53:08 +0100
+
 apport (0.38) feisty; urgency=low
 
   * Add ./COPYING: GPL license.
