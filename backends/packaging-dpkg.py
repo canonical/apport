@@ -13,24 +13,30 @@ the full text of the license.
 
 import subprocess, os, glob
 
-class DpkgPackageInfo:
+class __DpkgPackageInfo:
     '''Concrete apport.PackageInfo class implementation for dpkg, as
     found on Debian and derivatives such as Ubuntu.'''
+
+    def __init__(self):
+        # initialize status cache
+        self.__status_cache = {}
 
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._get_field(self._call_dpkg(['-s', package]), 'Version')
+        return self._get_field(self._status(package), 'Version')
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
+        status = self._status(package)
+
         # get Depends: and PreDepends:
         result = []
-        r = self._get_field(self._call_dpkg(['-s', package]), 'Depends')
+        r = self._get_field(status, 'Depends')
         if r:
             result = [p.split()[0] for p in r.split(',')]
-        r = self._get_field(self._call_dpkg(['-s', package]), 'Pre-Depends')
+        r = self._get_field(status, 'Pre-Depends')
         if r:
             result += [p.split()[0] for p in r.split(',')]
 
@@ -39,7 +45,7 @@ class DpkgPackageInfo:
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-        status = self._call_dpkg(['-s', package])
+        status = self._status(package)
         if status:
             return self._get_field(status, 'Source') or package
         else:
@@ -103,6 +109,17 @@ class DpkgPackageInfo:
     # Internal helper methods
     #
 
+    def _status(self, package):
+        '''Return package status.
+
+        Uses an internal cache to minimize dpkg calls.'''
+
+        try:
+            return self.__status_cache[package]
+        except KeyError:
+            return self.__status_cache.setdefault(package, 
+                self._call_dpkg(['-s', package]))
+
     def _call_dpkg(self, args):
         '''Call dpkg with given arguments and return output, or return None on
         error.'''
@@ -156,7 +173,7 @@ class DpkgPackageInfo:
 
         return mismatches
 
-impl = DpkgPackageInfo()
+impl = __DpkgPackageInfo()
 
 #
 # Unit test
