@@ -16,32 +16,24 @@ import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
-import warnings
-warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
-import apt
-
 from problem_report import ProblemReport
-import fileutils
+import fileutils, packaging
 
 #
 # helper functions
 #
 
-def _transitive_dependencies(package, depends_set, cache):
-    '''Recursively add dependencies of package to depends_set, using the given
-    apt cache.'''
+def _transitive_dependencies(package, depends_set):
+    '''Recursively add dependencies of package to depends_set.'''
 
     try:
-        cur_ver = cache[package]._pkg.CurrentVer
-    except (AttributeError, KeyError):
+        cur_ver = packaging.impl.get_version(package)
+    except ValueError:
         return
-    if not cur_ver:
-        return
-    for p in cur_ver.DependsList.get('Depends', []) + cur_ver.DependsList.get('PreDepends', []):
-        name = p[0].TargetPkg.Name
-        if not name in depends_set:
-            depends_set.add(name)
-            _transitive_dependencies(name, depends_set, cache)
+    for d in packaging.impl.get_dependencies(package):
+        if not d in depends_set:
+            depends_set.add(d)
+            _transitive_dependencies(d, depends_set)
 
 def _read_file(f):
     '''Try to read given file and return its contents, or return a textual
@@ -123,10 +115,7 @@ class Report(ProblemReport):
         If package has only unmodified files, return the empty string. If not,
         return ' [modified: ...]' with a list of modified files.'''
 
-        sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
-        if not os.path.exists(sumfile):
-            return ''
-        mod = fileutils.check_files_md5(sumfile)
+        mod = packaging.impl.get_modified_files(package)
         if mod:
             return ' [modified: %s]' % ' '.join(mod)
         else:
@@ -148,28 +137,27 @@ class Report(ProblemReport):
             if not package:
                 return
 
-        cache = apt.Cache()
-
-        self['Package'] = '%s %s%s' % (package, cache[package].installedVersion, self._pkg_modified_suffix(package))
-        self['SourcePackage'] = cache[package].sourcePackageName
+        self['Package'] = '%s %s%s' % (package,
+            packaging.impl.get_version(package),
+            self._pkg_modified_suffix(package))
+        self['SourcePackage'] = packaging.impl.get_source(package)
 
         # get set of all transitive dependencies
         dependencies = set([])
-        _transitive_dependencies(package, dependencies, cache)
+        _transitive_dependencies(package, dependencies)
 
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
             try:
-                cur_ver = cache[dep]._pkg.CurrentVer
-            except (KeyError, AttributeError):
-                continue
-            if not cur_ver:
+                if self['Dependencies']:
+                    self['Dependencies'] += '\n'
+                self['Dependencies'] += '%s %s%s' % (dep,
+                    packaging.impl.get_version(dep),
+                    self._pkg_modified_suffix(dep))
+            except ValueError:
                 # can happen with uninstalled alternate dependencies
-                continue
-            if self['Dependencies']:
-                self['Dependencies'] += '\n'
-            self['Dependencies'] += '%s %s%s' % (dep, cur_ver.VerStr, self._pkg_modified_suffix(dep))
+                pass
 
     def add_os_info(self):
         '''Add operating system information.
@@ -359,7 +347,7 @@ class Report(ProblemReport):
                 depth = int(m.group(1))
                 if depth < len(toptrace):
                     toptrace[depth] = m.group(2)
-        self['StacktraceTop'] = '\n'.join(toptrace)
+        self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
@@ -407,28 +395,18 @@ class Report(ProblemReport):
 # Unit test
 #
 
-import unittest, shutil, signal, time
+import unittest, shutil, signal, time, resource
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
         '''Test add_package_info() behaviour.'''
 
         # determine bash version
-        p = subprocess.Popen('dpkg -s bash | grep ^Version: | cut -f2 -d\ ',
-            shell=True, stdout=subprocess.PIPE)
-        bashversion = p.communicate()[0]
-        assert p.returncode == 0
-        assert bashversion
-
-        # determine libc version
-        p = subprocess.Popen('dpkg -s libc6 | grep ^Version: | cut -f2 -d\ ',
-            shell=True, stdout=subprocess.PIPE)
-        libcversion = p.communicate()[0]
-        assert p.returncode == 0
-        assert libcversion
+        bashversion = packaging.impl.get_version('bash')
+        libcversion = packaging.impl.get_version('libc6')
 
         pr = Report()
-        self.assertRaises(KeyError, pr.add_package_info, 'nonexistant_package')
+        self.assertRaises(ValueError, pr.add_package_info, 'nonexistant_package')
 
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
@@ -645,36 +623,41 @@ class _ApportReportTest(unittest.TestCase):
         # should not throw an exception for missing fields
         pr.add_gdb_info()
 
-        # create a test executable
-        test_executable = '/bin/cat'
-        assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
-        pid = os.fork()
-        if pid == 0:
-            os.setsid()
-            os.execv(test_executable, [test_executable])
-            assert False, 'Could not execute ' + test_executable
-
-        # generate a core dump
-        (fd, coredump) = tempfile.mkstemp()
+        workdir = None
+        orig_cwd = os.getcwd()
+        orig_ulimitc = resource.getrlimit(resource.RLIMIT_CORE)
+        pr = Report()
         try:
-            os.close(fd)
-            assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE) == 0
+            workdir = tempfile.mkdtemp()
+            os.chdir(workdir)
 
-            # verify that it's a proper ELF file
-            assert subprocess.call(['readelf', '-n', coredump],
+            # create a test executable
+            open('crash.c', 'w').write('''
+int f(x) {
+    int* p = 0; *p = x;
+    return x+1;
+}
+int main() { return f(42); }
+''')
+            assert subprocess.call(['gcc', '-g', 'crash.c', '-o', 'crash']) == 0
+            assert os.path.exists('crash')
+
+            # call it and verify that it dumped core
+            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+            subprocess.call(['./crash'])
+            assert os.path.exists('core')
+            assert subprocess.call(['readelf', '-n', 'core'],
                 stdout=subprocess.PIPE) == 0
 
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
-
-            pr['ExecutablePath'] = test_executable
-            pr['CoreDump'] = (coredump,)
+            pr['ExecutablePath'] = os.path.join(workdir, 'crash')
+            pr['CoreDump'] = (os.path.join(workdir, 'core'),)
 
             pr.add_gdb_info()
         finally:
-            os.unlink(coredump)
+            resource.setrlimit(resource.RLIMIT_CORE, orig_ulimitc)
+            os.chdir(orig_cwd)
+            if workdir:
+                shutil.rmtree(workdir)
 
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
@@ -682,11 +665,9 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
-        self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
-        self.assertEqual(len(pr['StacktraceTop'].splitlines()), 5)
-        self.assert_(pr['StacktraceTop'].startswith('read ('))
+        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process') > 0)
+        self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
         self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_add_gdb_info_load(self):
@@ -737,6 +718,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
+        self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
         self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
@@ -784,7 +766,8 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('StacktraceTop'))
         self.assert_(pr.has_key('Registers'))
-        self.assert_('from /lib/libc.so' in pr['Stacktrace'])
+        self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
+        self.assert_('libc.so' in pr['Stacktrace'])
 
     def test_search_bug_patterns(self):
         '''Test search_bug_patterns() behaviour.'''

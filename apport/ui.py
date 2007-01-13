@@ -264,20 +264,49 @@ class UserInterface:
         
         Display an error dialog if everything fails.'''
 
+        if os.fork() > 0:
+            return
+
+        os.setsid()
+
+        # If we are called through sudo, drop privileges to original
+        # user to get correct web browser settings.
+        try:
+            uid = int(os.getenv('SUDO_UID'))
+            gid = int(os.getenv('SUDO_GID'))
+            if uid and gid:
+                os.setgroups([gid])
+                os.setgid(gid)
+                os.setuid(uid)
+                os.unsetenv('SUDO_USER') # to make firefox not croak
+                os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
+        except (TypeError, OSError):
+            pass
+
         # figure out appropriate web browser
         try:
-            subprocess.call(['kfmclient', 'openURL', url])
-        except OSError:
             try:
-                if subprocess.call(['firefox', '-remote', 'openURL(%s, new-window)' % url]) != 0:
-                    raise OSError, 'firefox -remote failed'
+                subprocess.call(['kfmclient', 'openURL', url])
             except OSError:
                 try:
-                    webbrowser.open(url, new=True, autoraise=True)
-                except Exception, e:
-                    self.ui_error_message(_('Could not start web browser'), str(e))
-                    self.ui_shutdown()
-                    sys.exit(1)
+                    if subprocess.call(['firefox', '-remote', 'openURL(%s, new-window)' % url]) != 0:
+                        raise OSError, 'firefox -remote failed'
+                except OSError:
+                    try:
+                        if subprocess.call(['gnome-open', url]) != 0:
+                            raise OSError, 'gnome-open failed'
+                    except Exception, e:
+                        try:
+                            webbrowser.open(url, new=True, autoraise=True)
+                        except Exception, e:
+                            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                                buttons=gtk.BUTTONS_CLOSE, 
+                                message_format=str(e))
+                            md.set_title(_('Could not start web browser to open %s' % url))
+                            md.run()
+                            md.hide()
+        finally:
+            sys.exit(0)
 
     def file_report(self):
         '''Upload the current report to the tracking system and guide the user

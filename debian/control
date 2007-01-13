@@ -36,7 +36,7 @@ Package: python-problem-report
 XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
-Depends: ${python:Depends}, python-apt
+Depends: ${python:Depends}
 Description: python library to handle problem reports
  This python library provides an interface for creating, modifying,
  and accessing standardized problem reports for program and kernel

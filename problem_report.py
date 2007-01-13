@@ -146,7 +146,6 @@ class ProblemReport(UserDict.IterableUserDict):
 
             if v.find('\n') >= 0:
                 # multiline value
-                assert v.find('\n\n') < 0
                 print >> file, k + ':'
                 print >> file, '', v.replace('\n', '\n ')
             else:
@@ -343,7 +342,7 @@ class _ProblemReportTest(unittest.TestCase):
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
-        pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  '
+        pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  \n\nafteremptyline'
         io = StringIO()
         pr.write(io)
         self.assertEqual(io.getvalue(), 
@@ -354,6 +353,8 @@ WhiteSpace:
   foo   bar
  baz
    blip  
+ 
+ afteremptyline
 ''')
 
     def test_write_append(self):
@@ -435,16 +436,18 @@ WhiteSpace:
         self.assertEqual(pr['Date'], 'now!')
         self.assertEqual(pr['Simple'], 'bar')
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  \n')
+
         pr = ProblemReport()
         pr.load(StringIO(
 '''ProblemType: Crash
 WhiteSpace:
   foo   bar
  baz
+ 
    blip  
 Last: foo
 '''))
-        self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
+        self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n\n  blip  ')
         self.assertEqual(pr['Last'], 'foo')
 
         pr.load(StringIO(
@@ -458,6 +461,15 @@ Last: foo
 '''))
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
         self.assertEqual(pr['Last'], 'foo\n')
+
+        # empty lines in values must have a leading space in coding
+        invalid_spacing = StringIO('''WhiteSpace:
+ first
+
+ second
+''')
+        pr = ProblemReport()
+        self.assertRaises(ValueError, pr.load, invalid_spacing)
 
         # test that load() cleans up properly
         pr.load(StringIO('ProblemType: Crash'))

@@ -8,6 +8,9 @@ python apport/report.py -v
 python apport/python_hook.py -v
 python apport/ui.py -v
 python apport/REThread.py -v
+for b in backends/*; do
+    python $b -v
+done
 if [ -e $CRASHDUMP ] && [ -n "`cat $CRASHDUMP`" ]; then
     ./test-apport kernel
 else
