@@ -68,6 +68,25 @@ class __DpkgPackageInfo:
             return []
         return self._check_files_md5(sumfile)
 
+    def __fgrep_files(self, pattern, file_list):
+	'''Call fgrep for a pattern on given file list and return the first
+	matching file, or None if no file matches.'''
+
+	match = None
+	slice_size = 100
+	i = 0
+
+	while not match and i < len(file_list):
+	    p = subprocess.Popen(['fgrep', '-lxm', '1', '--', pattern] +
+		file_list[i:i+slice_size], stdin=subprocess.PIPE,
+		stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+	    out = p.communicate()[0]
+	    if p.returncode == 0:
+		match = out
+	    i += slice_size
+
+	return match
+
     def get_file_package(self, file):
         '''Return the package a file belongs to, or None if the file is not
         shipped by any package.'''
@@ -91,19 +110,14 @@ class __DpkgPackageInfo:
                 all_lists.append(f)
 
         # first check the likely packages
-        p = subprocess.Popen(['fgrep', '-lxm', '1', '--', file] +
-            likely_lists, stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-        out = p.communicate()[0]
-        if p.returncode != 0:
-            p = subprocess.Popen(['fgrep', '-lxm', '1', '--', file] +
-                all_lists, stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-            out = p.communicate()[0]
-            if p.returncode != 0:
-                return None
+	match = self.__fgrep_files(file, likely_lists)
+	if not match:
+	    match = self.__fgrep_files(file, all_lists)
 
-        return os.path.splitext(os.path.basename(out))[0]
+	if match:
+	    return os.path.splitext(os.path.basename(match))[0]
+	else:
+	    return None
 
     #
     # Internal helper methods
