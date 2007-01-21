@@ -63,7 +63,10 @@ class GTKUserInterface(apport.ui.UserInterface):
         else:
             heading = _('Sorry, %s closed unexpectedly') % self.cur_package
         if desktop_entry and self.report.has_key('ExecutablePath') and \
-            subprocess.call(['pidof', '-x', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
+	    os.path.dirname(self.report['ExecutablePath']) in os.environ['PATH'].split(':') and \
+	    subprocess.call(['pgrep', '-x',
+		os.path.basename(self.report['ExecutablePath']), 
+		'-u', str(os.geteuid())], stdout=subprocess.PIPE) != 0:
             self.w('label_heading_reopen').set_markup(self.str_heading % heading)
             d = self.w('dialog_crash_reopen')
         else:

@@ -306,7 +306,7 @@ class Report(ProblemReport):
 
             gdb_reports = {
                            'Registers': 'info registers',
-                           'Disassembly': 'disassemble $pc $pc+32',
+                           'Disassembly': 'x/16i $pc',
                            'Stacktrace': 'bt full',
                            'ThreadStacktrace': 'thread apply all bt full',
                           }
@@ -663,12 +663,12 @@ int main() { return f(42); }
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('StacktraceTop'))
         self.assert_(pr.has_key('Registers'))
+        self.assert_(pr.has_key('Disassembly'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process') > 0)
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
-        self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_add_gdb_info_load(self):
         '''Test add_gdb_info() behaviour with inline core dump.'''
@@ -716,12 +716,12 @@ int main() { return f(42); }
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('Registers'))
+        self.assert_(pr.has_key('Disassembly'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
         self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
-        self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_add_gdb_info_script(self):
         '''Test add_gdb_info() behaviour with a script.'''

@@ -1,7 +1,7 @@
 Source: apport
 Section: utils
 Priority: optional
-Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python-support (>= 0.3), intltool
+Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python-support (>= 0.3), python-dev (>= 2.4), intltool
 Maintainer: Martin Pitt <martin.pitt@ubuntu.com>
 Standards-Version: 3.7.2
 
@@ -19,7 +19,7 @@ Description: automatically generate crash reports for debugging
 Package: apport-gtk
 Section: gnome
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.33), python-gtk2, python-glade2, python-xdg, apport (>= 0.33)
+Depends: python (>= 2.4), python-apport (>= 0.33), python-gtk2, python-glade2, python-xdg, apport (>= 0.33), procps
 Recommends: update-notifier
 Description: GTK frontend for the apport crash report system
  apport automatically collects data from crashed processes and
