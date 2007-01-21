@@ -208,7 +208,9 @@ class ApportGTK:
         else:
             heading = _('Sorry, %s closed unexpectedly.') % self.cur_package
         if self.desktop_entry and self.report.has_key('ExecutablePath') and \
-            subprocess.call(['pidof', '-x', self.report['ExecutablePath']], stdout=subprocess.PIPE) != 0:
+	    subprocess.call(['pgrep', '-x',
+		os.path.basename(self.report['ExecutablePath']), 
+		'-u', str(os.geteuid())], stdout=subprocess.PIPE) != 0:
             label = self.w('label_heading_reopen')
             label.set_markup(self.str_heading % heading)
             self.w('dialog_crash_reopen').show_all()
