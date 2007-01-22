@@ -19,13 +19,15 @@ apport (0.42) UNRELEASED; urgency=low
     all the space when resizing the window. Closes: LP#80987
   * problem_report.py, write_mime(): Make sure that multi-line values that go
     to the summary are terminated with a newline.
+  * apport/ui.py: Fix error message invocation for reporting cloakroom upload
+    failure.
 
   Minor improvements:
 
   * apport/ui.py: Get the cloakroom ticket number from the
     X-Launchpad-Blob-Token HTTP header instead of parsing the resulting page.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 17:52:03 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 17:55:06 +0100
 
 apport (0.41) feisty; urgency=low
 

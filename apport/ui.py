@@ -327,7 +327,8 @@ class UserInterface:
             else:
                 self.open_url('https://edge.launchpad.net/ubuntu/+filebug/%s' % ticket)
         else:
-            self.ui_error_message('Could not upload report data to Launchpad')
+            self.ui_error_message(_('Network problem'), 
+		_('Could not upload report data to Launchpad'))
 
     def load_report(self, path):
         '''Load report from given path and do some consistency checks.
