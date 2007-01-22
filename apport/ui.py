@@ -62,7 +62,7 @@ def upload_launchpad_blob(report):
 
     opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
     try:
-        result = opener.open('https://launchpad.net/+storeblob', 
+        result = opener.open('https://edge.launchpad.net/+storeblob', 
             { 'FORM_SUBMIT': '1', 'field.blob': mime }).read()
     except:
         return None
@@ -326,9 +326,9 @@ class UserInterface:
 
         if ticket:
             if self.report.has_key('SourcePackage'):
-                self.open_url('https://launchpad.net/distros/ubuntu/+source/%s/+filebug?extra_info=%s' % (self.report['SourcePackage'], ticket))
+                self.open_url('https://edge.launchpad.net/ubuntu/+source/%s/+filebug/%s' % (self.report['SourcePackage'], ticket))
             else:
-                self.open_url('https://launchpad.net/distros/ubuntu/+filebug?extra_info=%s' % ticket)
+                self.open_url('https://edge.launchpad.net/ubuntu/+filebug/%s' % ticket)
         else:
             self.ui_error_message('Could not upload report data to Launchpad')
 
