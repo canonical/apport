@@ -11,3 +11,5 @@ apport-gtk:
 kernel hook:
 
 general:
+ - apport-retrace: fetch comment and attachments from bug URL
+   (bughelper already has code for that)
