@@ -114,13 +114,23 @@ init_error_log()
 try:
     setup_signals()
 
-    if len(sys.argv) < 3 or len(sys.argv) > 4:
-        print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> [<path to core dump>]'
+    if len(sys.argv) not in (1, 3, 4):
+        print >> sys.stderr, 'Usage:'
+	print >> sys.stderr, sys.argv[0], '<pid> <signal number> [<path to core dump>]'
+	print >> sys.stderr, sys.argv[0], '(reading environment variables CORE_PID, CORE_SIGNAL, and reading core dump from stdin)'
         sys.exit(1)
 
-
-    pid = sys.argv[1]
-    signum = sys.argv[2]
+    if len(sys.argv) >= 3:
+	pid = sys.argv[1]
+	signum = sys.argv[2]
+	if len(sys.argv) == 4:
+	    coredump = sys.argv[3]
+	else:
+	    coredump = None
+    else:
+	pid = os.environ['CORE_PID']
+	signum = os.environ['CORE_SIGNAL']
+	coredump = '-'
 
     # drop our process priority level to not disturb userspace so much
     try:
@@ -131,13 +141,8 @@ try:
     # Partially drop privs to gain proper os.access() checks
     drop_privileges(pid,True)
 
-    # try to find the core dump file
-    if len(sys.argv) == 4:
-        coredump = sys.argv[3]
-    else:
-        coredump = None
-
-    # if path is relative, prepend cwd of crashed process
+    # try to find the core dump file; if path is relative, prepend cwd of
+    # crashed process
     if coredump and len(coredump) > 0 and coredump[0] not in ('/', '-'):
         coredump = os.path.join(os.readlink('/proc/' + pid + '/cwd'), coredump)
     if coredump and not coredump == '-' and not os.path.exists(coredump):

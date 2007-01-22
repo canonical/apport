@@ -2,6 +2,10 @@ apport (0.42) UNRELEASED; urgency=low
 
   * bin/apport-retrace: Beautify error message when report file is not
     accessible. Closes: LP#79568
+  * bin/apport: Support calling without arguments, to support new semantics
+    agreed in the ApportImprovements spec: macro values (in particular, pid
+    and signal number) are passed as environment variables.
+  * preloadlib/libapport.c: Simulate new kernel behaviour described above.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 11:53:49 +0100
 
