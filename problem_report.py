@@ -265,11 +265,13 @@ class ProblemReport(UserDict.IterableUserDict):
                 attachments.append(att)
             else:
                 # plain text value
-                lines = v.splitlines()
-                if len(lines) == 1:
+                lines = len(v.splitlines())
+                if lines == 1:
                     text += '%s: %s\n' % (k, v)
-                elif len(lines) < attach_treshold:
+                elif lines < attach_treshold:
                     text += '%s:\n ' % k
+		    if not v.endswith('\n'):
+			v += '\n'
                     text += v.replace('\n', '\n ')
                 else:
                     # too large, separate attachment
