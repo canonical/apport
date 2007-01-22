@@ -1,5 +1,50 @@
 apport (0.41) UNRELEASED; urgency=low
 
+  New feature: Use Malone cloakroom for uploading reports. Closes: LP#70919
+
+  * gtk/apport-gtk.glade: Redesign bug reporting dialog to have a 'Create bug
+    report' and a 'Cancel' button. Also assign GTK_RESPONSE_* constants to the
+    dialog buttons. Go back to Glade 2 since Glade 3 still sucks too much.
+  * gtk/apport-gtk: Adjust workflow for sending report to Malone cloakroom
+    instead of asking the user to attach the file. Sending is not yet
+    implemented, though.
+  * gtk/apport-gtk: Do not show any dialogs any more when filing a bug.
+  * Add apport/MultipartPostHandler.py: This module provides an urllib2 opener
+    for uploading file attachments to forms over HTTP POST. This module is
+    (C) 2006 Will Holcomb <wholcomb@gmail.com> and was taken from
+    http://odin.himinbi.org/MultipartPostHandler.py. (This is a serious hole
+    of the Python standard library IMHO.)
+  * apport/ui.py, file_report(): Upload blob to Malone (edge.launchpad.net for
+    now), retrieve the ticket, and pass it to +filebug.
+
+  Refactorizations:
+
+  * gtk/apport-gtk: Major refactorization to use modal dialogs and run()
+    instead of loosely coupled event handlers.
+  * Add apport/ui.py: Abstract frontend which encapsulates the logic, workflow
+    and UI independent bits and provides UI hooks for concrete
+    implementations. This both makes it easy to write more frontends like Qt
+    or CLI, and also makes the code automatically testable. Add an extensive
+    testsuite.
+  * run-tests: Add ui.py testsuite.
+  * gtk/apport-gtk: Port to ui.py's UserInterface (which means moving 1/3 of
+    the code into the new ui_*() methods and throwing away the rest).
+  * Add apport/REThread.py: Enhanced threading.Thread class that can propagate
+    the return value and uncaught exceptions of run() to the calling thread.
+  * apport/ui.py: Get rid of thread_check_bugpatterns() and hackish exception
+    handling, rewrite using REThread.
+  * apport/ui.py, gtk/apport-gtk: Add progress bar to report upload. It is
+    indefinite for now, because neither urllib2 nor httplib support upload
+    progress.
+
+  Bug fixes:
+
+  * gtk/apport-gtk.glade: Merged Gnome HIG fixes from Sebastian Heinlein,
+    thank you!
+  * Merge patch from Sebastian Heinlein to properly treat the apport-gtk icon
+    the dh_iconcache way and make it themeable. Thank you!
+  * gtk/apport-gtk: Remove periods from primary dialog texts to comply with
+    Gnome HIG standards.
   * backends/packaging-dpkg.py, get_file_package(): Process list files in
     chunks of 100, so that we do not exceed the maximum command line length if
     there is a large number of packages installed. Closes: LP#64839
@@ -13,7 +58,7 @@ apport (0.41) UNRELEASED; urgency=low
     become independent of the instruction size. Thanks to Kees Cook for the
     patch!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 21 Jan 2007 17:04:59 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 10:47:33 +0100
 
 apport (0.40) feisty; urgency=low
 
