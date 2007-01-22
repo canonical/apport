@@ -14,7 +14,7 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import re, tempfile
+import tempfile
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
@@ -63,15 +63,11 @@ def upload_launchpad_blob(report):
     opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
     try:
         result = opener.open('https://edge.launchpad.net/+storeblob', 
-            { 'FORM_SUBMIT': '1', 'field.blob': mime }).read()
+            { 'FORM_SUBMIT': '1', 'field.blob': mime })
+	ticket = result.info().get('X-Launchpad-Blob-Token')
     except:
         return None
     mime.close()
-
-    if result:
-        m = re.search('Your ticket is "([^"]+)"', result)
-        if m:
-            ticket = m.group(1)
 
     return ticket
 
