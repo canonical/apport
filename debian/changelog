@@ -14,8 +14,9 @@ apport (0.42) UNRELEASED; urgency=low
     accessible. Closes: LP#79568
   * apport/ui.py: Fix crash in the bug pattern search thread if we could
     not determine a package name. Closes: LP#77872
+  * bin/apport: Only unlink the core dump if it still exists. Closes: LP#80866
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 16:46:47 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 16:51:42 +0100
 
 apport (0.41) feisty; urgency=low
 

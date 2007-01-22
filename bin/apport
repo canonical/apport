@@ -27,7 +27,8 @@ import apport, apport.fileutils
 def cleanup(coredump):
     '''atexit handler to clean up.'''
 
-    os.unlink(coredump)
+    if os.path.exists(coredump):
+	os.unlink(coredump)
 
 def drop_privileges(pid, partial=False):
     '''Change user and group to match the given target process.'''
