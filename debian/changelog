@@ -15,8 +15,10 @@ apport (0.42) UNRELEASED; urgency=low
   * apport/ui.py: Fix crash in the bug pattern search thread if we could
     not determine a package name. Closes: LP#77872
   * bin/apport: Only unlink the core dump if it still exists. Closes: LP#80866
+  * gtk/apport-gtk.glade: Fix expand/fill attributes so that the expander gets
+    all the space when resizing the window. Closes: LP#80987
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 16:51:42 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 17:19:20 +0100
 
 apport (0.41) feisty; urgency=low
 
