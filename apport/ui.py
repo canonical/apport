@@ -240,16 +240,17 @@ class UserInterface:
                     self.ui_pulse_info_collection_progress()
                     icthread.join(0.1)
 
-            bpthread = REThread.REThread(target=self.report.search_bug_patterns,
-                args=(bugpattern_baseurl,))
-            bpthread.start()
-            while bpthread.isAlive():
-                self.ui_pulse_info_collection_progress()
-                bpthread.join(0.1)
-            bpthread.exc_raise()
+	    if self.report.has_key('Package'):
+		bpthread = REThread.REThread(target=self.report.search_bug_patterns,
+		    args=(bugpattern_baseurl,))
+		bpthread.start()
+		while bpthread.isAlive():
+		    self.ui_pulse_info_collection_progress()
+		    bpthread.join(0.1)
+		bpthread.exc_raise()
+		if bpthread.return_value():
+		    self.report['BugPatternURL'] = bpthread.return_value()
 
-            if bpthread.return_value():
-                self.report['BugPatternURL'] = bpthread.return_value()
             self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
