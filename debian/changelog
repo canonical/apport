@@ -1,3 +1,10 @@
+apport (0.44) UNRELEASED; urgency=low
+
+  * backends/packaging-dpkg.py, _check_files_md5(): Also accept a md5sum
+    string in addition to a md5sum file.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 17:11:41 +0100
+
 apport (0.43) feisty; urgency=low
 
   * apport/ui.py: Add method create_crash_bug_title() to construct a

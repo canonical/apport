@@ -172,9 +172,16 @@ class __DpkgPackageInfo:
         This is separate from get_modified_files so that it is automatically
         testable.'''
 
-        m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile], stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
-        out = m.communicate()[0]
+	if os.path.exists(sumfile):
+	    m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
+		stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
+		cwd='/', env={})
+	    out = m.communicate()[0]
+	else:
+	    m = subprocess.Popen(['/usr/bin/md5sum', '-c'],
+		stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+		stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
+	    out = m.communicate(sumfile)[0]
         
         # if md5sum succeeded, don't bother parsing the output
         if m.returncode == 0:
@@ -240,6 +247,11 @@ Description: Test
                 self.assertEqual(impl._check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
                 open(f1, 'w').write('Some stuff')
                 self.assertEqual(impl._check_files_md5(sumfile), [f2], 'file 2 wrong')
+
+		# check using a direct md5 list as argument
+		self.assertEqual(impl._check_files_md5(open(sumfile).read()),
+		    [f2], 'file 2 wrong')
+
             finally:
                 shutil.rmtree(td)
 
