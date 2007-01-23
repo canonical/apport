@@ -14,7 +14,7 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import tempfile
+import tempfile, pwd
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 

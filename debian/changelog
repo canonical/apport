@@ -30,13 +30,14 @@ apport (0.42) UNRELEASED; urgency=low
   * gtk/apport-gtk: Add missing 'import subprocess.'. Closes: LP#81007
   * debian/control: Bump apport's and apport-gtk's dependency to python-apport
     to make sure that apport.ui is available. Closes: LP#81019
+  * apport/ui.py: Add missing 'import pwd'. Closes: LP#81033
 
   Minor improvements:
 
   * apport/ui.py: Get the cloakroom ticket number from the
     X-Launchpad-Blob-Token HTTP header instead of parsing the resulting page.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 11:22:56 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 11:27:20 +0100
 
 apport (0.41) feisty; urgency=low
 
