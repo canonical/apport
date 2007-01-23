@@ -18,7 +18,7 @@ import tempfile, pwd
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
-import MultipartPostHandler, urllib2
+import MultipartPostHandler, urllib, urllib2
 
 import apport, apport.fileutils, REThread
 
@@ -366,10 +366,17 @@ class UserInterface:
         self.ui_stop_upload_progress()
 
         if ticket:
+	    args = {}
+	    title = self.create_crash_bug_title()
+	    if title:
+		args['field.title'] = title
+
             if self.report.has_key('SourcePackage'):
-                self.open_url('https://edge.launchpad.net/ubuntu/+source/%s/+filebug/%s' % (self.report['SourcePackage'], ticket))
+                self.open_url('https://edge.launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
+		    self.report['SourcePackage'], ticket, urllib.urlencode(args)))
             else:
-                self.open_url('https://edge.launchpad.net/ubuntu/+filebug/%s' % ticket)
+                self.open_url('https://edge.launchpad.net/ubuntu/+filebug/%s?%s' % (
+		    ticket, urllib.urlencode(args)))
         else:
             self.ui_error_message(_('Network problem'), 
 		_('Could not upload report data to Launchpad'))

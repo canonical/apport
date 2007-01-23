@@ -4,8 +4,10 @@ apport (0.43) UNRELEASED; urgency=low
     reasonable standard bug title for crash reports, so that the automatic
     duplicate detection actually has a chance to work. Also add test cases for
     various signal crashes and an unhandled Python exception.
+  * apport/ui.py, file_report(): Submit a default bug title for crash reports.
+    Closes: LP#79657
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 15:56:56 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 16:26:40 +0100
 
 apport (0.42) feisty; urgency=low
 
