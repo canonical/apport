@@ -11,7 +11,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, os, glob
+import subprocess, os, glob, stat
 
 class __DpkgPackageInfo:
     '''Concrete apport.PackageInfo class implementation for dpkg, as
@@ -62,11 +62,37 @@ class __DpkgPackageInfo:
     def get_modified_files(self, package):
         '''Return list of all modified files of a package.'''
 
+	# get the maximum mtime of package files that we consider unmodified
+        listfile = '/var/lib/dpkg/info/%s.list' % package
+	try:
+	    s = os.stat(listfile)
+	    if not stat.S_ISREG(s.st_mode):
+		raise OSError
+	    max_time = max(s.st_mtime, s.st_ctime)
+	except OSError:
+	    return [statfile]
+
+	# create a list of files with a newer timestamp for md5sum'ing
+	sums = ''
         sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
         # some packages do not ship md5sums, shrug on them
         if not os.path.exists(sumfile):
             return []
-        return self._check_files_md5(sumfile)
+
+	for line in open(sumfile):
+	    try:
+		s = os.stat('/' + line.split()[-1])
+		if max(s.st_mtime, s.st_ctime) <= max_time:
+		    continue
+	    except OSError:
+		pass
+
+	    sums += line
+
+	if sums:
+	    return self._check_files_md5(sums)
+	else:
+	    return []
 
     def __fgrep_files(self, pattern, file_list):
 	'''Call fgrep for a pattern on given file list and return the first
