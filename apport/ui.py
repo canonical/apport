@@ -256,6 +256,50 @@ class UserInterface:
                 self.ui_shutdown()
                 sys.exit(1)
 
+    def create_crash_bug_title(self):
+	'''Create an appropriate standard bug title for a crash report.
+
+	This contains the topmost function name from the stack trace and the
+	signal (for signal crashes) or the Python exception (for unhandled
+	Python exceptions).
+	
+	Return None if the report is not a crash or a default title could not
+	be generated.'''
+
+	# signal crash
+	if self.report.has_key('Signal') and \
+	    self.report.has_key('ExecutablePath') and \
+	    self.report.has_key('StacktraceTop'):
+
+	    signal_names = {
+		'4': 'SIGILL',
+		'6': 'SIGABRT',
+		'8': 'SIGFPE',
+		'11': 'SIGSEGV',
+		'13': 'SIGPIPE'
+	    }
+
+	    return '[apport] %s crashed with %s in %s()' % (
+		os.path.basename(self.report['ExecutablePath']),
+		signal_names.get(self.report.get('Signal'), 
+		    'signal ' + self.report.get('Signal')),
+		self.report['StacktraceTop'].split()[0].split('(')[0].strip()
+	    )
+
+	# Python exception
+	if self.report.has_key('Traceback') and \
+	    self.report.has_key('ExecutablePath'):
+
+	    trace = self.report['Traceback'].split('\n')
+	    
+	    return '[apport] %s crashed with %s in %s()' % (
+		os.path.basename(self.report['ExecutablePath']),
+		trace[-1].split(':')[0],
+		trace[-3].split()[-1]
+	    )
+
+	return None
+
     def open_url(self, url):
         '''Open the given URL in a new browser window.
         
@@ -715,6 +759,45 @@ CoreDump: base64
                 'progress dialog for package bug info collection')
             self.assertEqual(self.ui.ic_progress_active, False,
                 'progress dialog for package bug info collection finished')
+
+	def test_create_crash_bug_title(self):
+	    '''Test create_crash_bug_title().'''
+
+            self.ui.report = apport.Report()
+	    self.assertEqual(self.ui.create_crash_bug_title(), None)
+
+	    # named signal crash
+	    self.ui.report['Signal'] = '11'
+	    self.ui.report['ExecutablePath'] = '/bin/bash'
+	    self.ui.report['StacktraceTop'] = '''foo()
+bar(x=3)
+baz()
+'''
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with SIGSEGV in foo()')
+
+	    # unnamed signal crash
+	    self.ui.report['Signal'] = '42'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with signal 42 in foo()')
+
+	    # Python crash
+            self.ui.report = apport.Report()
+	    self.ui.report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
+	    self.ui.report['Traceback'] = '''Traceback (most recent call last):
+  File "/usr/share/apport/apport-gtk", line 202, in <module>
+    app.run_argv()
+  File "/var/lib/python-support/python2.5/apport/ui.py", line 161, in run_argv
+    self.run_crashes()
+  File "/var/lib/python-support/python2.5/apport/ui.py", line 104, in run_crashes
+    self.run_crash(f)
+  File "/var/lib/python-support/python2.5/apport/ui.py", line 115, in run_crash
+    response = self.ui_present_crash(desktop_entry)
+  File "/usr/share/apport/apport-gtk", line 67, in ui_present_crash
+    subprocess.call(['pgrep', '-x',
+NameError: global name 'subprocess' is not defined'''
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] apport-gtk crashed with NameError in ui_present_crash()')
 
         def test_handle_duplicate(self):
             '''Test handle_duplicate().'''
