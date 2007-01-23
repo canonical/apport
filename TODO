@@ -1,4 +1,6 @@
 apport:
+ - speed up integrity check: only md5sum files whose ctime or mtime >
+   package .list mtime
 
 problem_report.py:
 
