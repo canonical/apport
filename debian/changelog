@@ -27,13 +27,14 @@ apport (0.42) UNRELEASED; urgency=low
     text' treshold, so that apport's StacktraceTop field appears in bug
     summaries. Also fix a corner case in CR line ending handling. Check both
     things in the test suite.
+  * gtk/apport-gtk: Add missing 'import subprocess.'. Closes: LP#81007
 
   Minor improvements:
 
   * apport/ui.py: Get the cloakroom ticket number from the
     X-Launchpad-Blob-Token HTTP header instead of parsing the resulting page.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 11:12:19 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 11:19:15 +0100
 
 apport (0.41) feisty; urgency=low
 

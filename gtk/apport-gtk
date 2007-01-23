@@ -12,7 +12,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os.path, sys
+import os.path, sys, subprocess
 import gobject, gtk, gtk.glade
 from gettext import gettext as _
 import apport.ui
