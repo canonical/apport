@@ -16,7 +16,7 @@ the full text of the license.
 import os
 import sys
 
-import report
+import report, fileutils
 
 def apport_excepthook(exc_type, exc_obj, exc_tb):
     '''Catch an uncaught exception and make a traceback.'''
@@ -52,7 +52,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         pr['ExecutablePath'] = binary
         pr['PythonArgs'] = '%r' % sys.argv
         # filter out binaries in user accessible paths
-        if binary.startswith('/home') or binary.startswith('/tmp'):
+        if not fileutils.likely_packaged(binary):
             return
         mangled_program = re.sub('/', '_', binary)
         # get the uid for now, user name later
