@@ -6,8 +6,10 @@ apport (0.44) UNRELEASED; urgency=low
     ctime and mtime against the package list file's mtime and only md5sum the
     files that are newer. This drastically reduces the amount of md5suming
     (usually to zero) and thus speeds up the information collection.
+  * apport/report.py: Add some more test cases for _check_interpreted() for
+    Python scripts.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 17:41:37 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 10:41:03 +0100
 
 apport (0.43) feisty; urgency=low
 

@@ -616,6 +616,24 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/../etc/passwd')
 
+	# interactive python process
+	pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python'
+        pr['ProcStatus'] = 'Name:\tpython'
+        pr['ProcCmdline'] = 'python'
+        pr._check_interpreted()
+        self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+        self.failIf(pr.has_key('InterpreterPath'))
+
+	# python script in /usr/local/bin
+	pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python'
+        pr['ProcStatus'] = 'Name:\ttest.py'
+        pr['ProcCmdline'] = 'python\0/usr/local/bin/test.py'
+        pr._check_interpreted()
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+        self.assertEqual(pr['ExecutablePath'], '/usr/local/bin/test.py')
+
     def test_add_gdb_info(self):
         '''Test add_gdb_info() behaviour with core dump file reference.'''
 
