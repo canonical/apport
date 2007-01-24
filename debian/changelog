@@ -21,8 +21,9 @@ apport (0.44) UNRELEASED; urgency=low
   * apport/report.py: Add method add_hooks_info() which executes a function
     add_info(report) from /usr/share/apport/<package>.py. Also add
     appropriate test cases. This provides per-package hooks for apport.
+  * apport/ui.py: Call add_hooks_info() in the information collection thread.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 15:20:57 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 16:20:41 +0100
 
 apport (0.43) feisty; urgency=low
 
