@@ -8,8 +8,10 @@ apport (0.44) UNRELEASED; urgency=low
     (usually to zero) and thus speeds up the information collection.
   * apport/report.py: Add some more test cases for _check_interpreted() for
     Python scripts.
+  * apport/python_hook.py: Check for a correct ExecutablePath in
+    test_general().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 10:41:03 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 10:47:24 +0100
 
 apport (0.43) feisty; urgency=low
 

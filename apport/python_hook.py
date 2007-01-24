@@ -137,6 +137,7 @@ func(42)
             self.assert_(set(expected_keys).issubset(set(pr.keys())), 
                 'report has necessary fields')
             self.assert_('bin/python' in pr['InterpreterPath'])
+            self.assertEqual(pr['ExecutablePath'], script)
             self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
             self.assert_(pr['Traceback'].startswith('Traceback'))
             self.assert_("func\n    raise Exception, 'This should happen." in pr['Traceback'])
