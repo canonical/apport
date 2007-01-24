@@ -13,8 +13,13 @@ apport (0.44) UNRELEASED; urgency=low
   * apport/python_hook.py: Use fileutils.likely_packaged() instead of
     checking for /tmp and home, so that we ignore stuff in /usr/local, too.
     Closes: LP#81244
+  * apport/python_hook.py: If we figure out an ExecutablePath which is not
+    actually an executable, do not create a report. This particularly affects
+    interactive python sessions where sys.argv[0] is empty and thus
+    ExecutablePath ends up being the current directory. Add test cases.
+    Closes: LP#81237
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 11:45:17 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 12:07:06 +0100
 
 apport (0.43) feisty; urgency=low
 
