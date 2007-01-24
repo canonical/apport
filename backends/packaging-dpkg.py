@@ -18,18 +18,36 @@ class __DpkgPackageInfo:
     found on Debian and derivatives such as Ubuntu.'''
 
     def __init__(self):
-        # initialize status cache
-        self.__status_cache = {}
+        # fill status cache since calling dpkg -s on every package is just way
+	# too slow
+        self.status = {}
+	dpkg = subprocess.Popen(['dpkg-query', '--show', 
+	    '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends:${Depends}\nSource: ${Source}\n\n',
+	    '*'], stdout=subprocess.PIPE)
+
+	record = ''
+	for l in dpkg.stdout:
+	    if l == '\n':
+		if self._get_field(record, 'Version'):
+		    self.status[self._get_field(record, 'Package')] = record
+		record = ''
+	    else:
+		record += l
+	
+	assert dpkg.wait() == 0
 
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._get_field(self._status(package), 'Version')
+        return self._get_field(self.status.get(package), 'Version')
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
-        status = self._status(package)
+	try:
+	    status = self.status.get(package)
+	except KeyError:
+            raise ValueError, 'package does not exist'
 
         # get Depends: and PreDepends:
         result = []
@@ -45,11 +63,7 @@ class __DpkgPackageInfo:
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-        status = self._status(package)
-        if status:
-            return self._get_field(status, 'Source') or package
-        else:
-            return None
+	return self._get_field(self.status.get(package), 'Source') or package
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -149,17 +163,6 @@ class __DpkgPackageInfo:
     # Internal helper methods
     #
 
-    def _status(self, package):
-        '''Return package status.
-
-        Uses an internal cache to minimize dpkg calls.'''
-
-        try:
-            return self.__status_cache[package]
-        except KeyError:
-            return self.__status_cache.setdefault(package, 
-                self._call_dpkg(['-s', package]))
-
     def _call_dpkg(self, args):
         '''Call dpkg with given arguments and return output, or return None on
         error.'''
@@ -177,7 +180,7 @@ class __DpkgPackageInfo:
         it.'''
 
         if data is None:
-            return None
+            raise ValueError, 'package does not exist'
 
         value = None
         for l in data.splitlines():

@@ -22,8 +22,13 @@ apport (0.44) UNRELEASED; urgency=low
     add_info(report) from /usr/share/apport/<package>.py. Also add
     appropriate test cases. This provides per-package hooks for apport.
   * apport/ui.py: Call add_hooks_info() in the information collection thread.
+  * backends/packaging-dpkg.py: Use a single hackish 'dpkg-query --show *'
+    as a portable variant of 'cat /var/lib/dpkg/status' to pre-fill the status
+    cache with all packages instead of calling dpkg -s on every single package
+    we query. This changes the time for figuring out dependencies and their
+    versions from 'unbearable for many packages' to 'barely noticeable'.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 16:20:41 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 17:16:04 +0100
 
 apport (0.43) feisty; urgency=low
 
