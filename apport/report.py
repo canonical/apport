@@ -643,14 +643,14 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
         self.failIf(pr.has_key('InterpreterPath'))
 
-	# python script in /usr/local/bin
+	# python script (abuse /bin/bash since it must exist)
 	pr = Report()
         pr['ExecutablePath'] = '/usr/bin/python'
-        pr['ProcStatus'] = 'Name:\ttest.py'
-        pr['ProcCmdline'] = 'python\0/usr/local/bin/test.py'
+        pr['ProcStatus'] = 'Name:\tbash'
+        pr['ProcCmdline'] = 'python\0/bin/bash'
         pr._check_interpreted()
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
-        self.assertEqual(pr['ExecutablePath'], '/usr/local/bin/test.py')
+        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
     def test_add_gdb_info(self):
         '''Test add_gdb_info() behaviour with core dump file reference.'''
