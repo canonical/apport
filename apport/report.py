@@ -11,13 +11,15 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
+import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
 from problem_report import ProblemReport
 import fileutils, packaging
+
+_hook_dir = '/usr/share/apport/'
 
 #
 # helper functions
@@ -348,6 +350,22 @@ class Report(ProblemReport):
                 if depth < len(toptrace):
                     toptrace[depth] = m.group(2)
         self['StacktraceTop'] = '\n'.join(toptrace).strip()
+
+    def add_hooks_info(self):
+	'''Check for an existing hook script and run it to add additional
+	package specific information.
+	
+	A hook script needs to be in _hook_dir/<Package>.py and has to
+	contain a function 'add_info(report)' that takes and modifies a
+	Report.'''
+
+	assert self.has_key('Package')
+	sys.path.append(_hook_dir)
+	try:
+	    m = __import__(self['Package'])
+	    m.add_info(self)
+	except (ImportError, AttributeError, TypeError):
+	    pass
 
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
@@ -868,6 +886,37 @@ int main() { return f(42); }
         finally:
             if pdir:
                 shutil.rmtree(pdir)
+
+    def test_add_hooks_info(self):
+	'''Test add_hooks_info().'''
+
+	global _hook_dir
+	orig_hook_dir = _hook_dir
+	_hook_dir = tempfile.mkdtemp()
+	try:
+	    open(os.path.join(_hook_dir, 'foo.py'), 'w').write('''
+def add_info(report):
+    report['Field1'] = 'Field 1'
+    report['Field2'] = 'Field 2\\nBla'
+''')
+	    r = Report()
+	    self.assertRaises(AssertionError, r.add_hooks_info)
+
+	    r['Package'] = 'bar'
+	    # should not throw any exceptions
+	    r.add_hooks_info()
+	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+		'Package']), 'report has required fields')
+
+	    r['Package'] = 'foo'
+	    r.add_hooks_info()
+	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+		'Package', 'Field1', 'Field2']), 'report has required fields')
+	    self.assertEqual(r['Field1'], 'Field 1')
+	    self.assertEqual(r['Field2'], 'Field 2\nBla')
+	finally:
+	    shutil.rmtree(_hook_dir)
+	    _hook_dir = orig_hook_dir
 
 if __name__ == '__main__':
     unittest.main()
