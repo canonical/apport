@@ -21,6 +21,9 @@ import fileutils, packaging
 
 _hook_dir = '/usr/share/apport/'
 
+# path of the ignore file
+_ignore_file = '~/.apport-ignore.xml'
+
 #
 # helper functions
 #
@@ -90,6 +93,16 @@ def _check_bug_pattern(report, pattern):
                     return None
 
     return pattern.attributes['url'].nodeValue.encode('UTF-8')
+
+def _dom_remove_space(node):
+    '''Recursively remove whitespace from given XML DOM node.'''
+
+    for c in node.childNodes:
+	if c.nodeType == xml.dom.Node.TEXT_NODE and c.nodeValue.strip() == '':
+	    c.unlink()
+	    node.removeChild(c)
+	else:
+	    _dom_remove_space(c)
 
 #
 # Report class
@@ -408,6 +421,83 @@ class Report(ProblemReport):
 
         return None
 
+    def _get_ignore_dom(self):
+	'''Read ignore list XML file and return a DOM tree, or an empty DOM
+	tree if file does not exist.
+
+	Raises ValueError if the file exists but is invalid XML.'''
+
+	ifpath = os.path.expanduser(_ignore_file)
+	if not os.access(ifpath, os.R_OK):
+	    # create a document from scratch
+	    dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)
+	else:
+	    try:
+		dom = xml.dom.minidom.parse(ifpath)
+	    except ExpatError, e:
+		raise ValueError, '%s has invalid format: %s' % (_ignore_file, str(e))
+
+	# remove whitespace so that writing back the XML does not accumulate
+	# whitespace
+	dom.documentElement.normalize()
+	_dom_remove_space(dom.documentElement)
+
+	return dom
+
+    def check_ignored(self):
+	'''Check ~/.apport-ignore.xml (in the real UID's home) if the current
+	report should not be presented to the user.
+	
+	This requires the ExecutablePath attribute. Function can throw a
+	ValueError if the file has an invalid format.'''
+
+	assert self.has_key('ExecutablePath')
+	dom = self._get_ignore_dom()
+
+	try:
+	    cur_mtime = float(os.stat(self['ExecutablePath']).st_mtime)
+	except OSError:
+	    # if it does not exist any more, do nothing
+	    return False
+
+	# search for existing entry and update it
+        for ignore in dom.getElementsByTagName('ignore'):
+	    if ignore.getAttribute('program') == self['ExecutablePath']:
+		if float(ignore.getAttribute('mtime')) >= cur_mtime:
+		    return True
+
+	return False
+
+    def mark_ignore(self):
+	'''Add a ignore list entry for this report to ~/.apport-ignore.xml, so
+	that future reports for this ExecutablePath are not presented to the
+	user any more.
+	
+	Function can throw a ValueError if the file already exists and has an
+	invalid format.'''
+
+	assert self.has_key('ExecutablePath')
+
+	dom = self._get_ignore_dom()
+	mtime = str(int(os.stat(self['ExecutablePath']).st_mtime))
+
+	# search for existing entry and update it
+        for ignore in dom.getElementsByTagName('ignore'):
+	    if ignore.getAttribute('program') == self['ExecutablePath']:
+		ignore.setAttribute('mtime', mtime)
+		break
+	else:
+	    # none exists yet, create new ignore node if none exists yet
+	    e = dom.createElement('ignore')
+	    e.setAttribute('program', self['ExecutablePath'])
+	    e.setAttribute('mtime', mtime)
+	    dom.documentElement.appendChild(e)
+
+	# write back file
+	dom.writexml(open(os.path.expanduser(_ignore_file), 'w'), 
+	    addindent='  ', newl='\n')
+
+	dom.unlink()
 
 #
 # Unit test
@@ -917,6 +1007,53 @@ def add_info(report):
 	finally:
 	    shutil.rmtree(_hook_dir)
 	    _hook_dir = orig_hook_dir
+
+    def test_ignoring(self):
+	'''Test mark_ignore() and check_ignored().'''
+
+	global _ignore_file
+	orig_ignore_file = _ignore_file
+	workdir = tempfile.mkdtemp()
+	_ignore_file = os.path.join(workdir, 'ignore.xml')
+	try:
+	    open(os.path.join(workdir, 'bash'), 'w').write('bash')
+	    open(os.path.join(workdir, 'crap'), 'w').write('crap')
+
+	    bash_rep = Report()
+	    bash_rep['ExecutablePath'] = os.path.join(workdir, 'bash')
+	    crap_rep = Report()
+	    crap_rep['ExecutablePath'] = os.path.join(workdir, 'crap')
+	    # must be able to deal with executables that do not exist any more
+	    cp_rep = Report()
+	    cp_rep['ExecutablePath'] = os.path.join(workdir, 'cp')
+
+	    # no ignores initially
+	    self.assertEqual(bash_rep.check_ignored(), False)
+	    self.assertEqual(crap_rep.check_ignored(), False)
+	    self.assertEqual(cp_rep.check_ignored(), False)
+
+	    # ignore crap now
+	    crap_rep.mark_ignore()
+	    self.assertEqual(bash_rep.check_ignored(), False)
+	    self.assertEqual(crap_rep.check_ignored(), True)
+	    self.assertEqual(cp_rep.check_ignored(), False)
+
+	    # ignore bash now
+	    bash_rep.mark_ignore()
+	    self.assertEqual(bash_rep.check_ignored(), True)
+	    self.assertEqual(crap_rep.check_ignored(), True)
+	    self.assertEqual(cp_rep.check_ignored(), False)
+
+	    # poke crap so that it has a newer timestamp
+	    time.sleep(1)
+	    open(os.path.join(workdir, 'crap'), 'w').write('crapnew')
+	    self.assertEqual(bash_rep.check_ignored(), True)
+	    self.assertEqual(crap_rep.check_ignored(), False)
+	    self.assertEqual(cp_rep.check_ignored(), False)
+
+	finally:
+	    shutil.rmtree(workdir)
+	    _ignore_file = orig_ignore_file
 
 if __name__ == '__main__':
     unittest.main()
