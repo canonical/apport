@@ -46,8 +46,6 @@ pr = apport.Report('Package')
 pr['Package'] = options.package
 pr['SourcePackage'] = apport.packaging.impl.get_source(options.package)
 pr['ErrorMessage'] = (sys.stdin, False)
-pr.add_os_info()
-pr.add_hooks_info()
 for l in options.logs:
     if os.path.isfile(l):
 	pr[mkattrname(l)] = (l,)
