@@ -1,5 +1,7 @@
 apport (0.45) UNRELEASED; urgency=low
 
+  New feature: Infrastructure for package install/upgrade failures:
+
   * Add bin/package_hook: Script for creating a report for a package
     installation/upgrade failure. It receives a package name, a number of log
     files, and an ErrorMessage: from stdin. This will be called from e.g.
@@ -9,6 +11,9 @@ apport (0.45) UNRELEASED; urgency=low
     self.ui_present_package_error() instead of presenting a crash. Add test
     suite checks for the package error report workflow.
   * gtk/apport-gtk{,.glade}: GTK implementation of ui_present_package_error().
+
+  Bug fixes:
+
   * gtk/apport-gtk: Fix return code for restarting the application ('reopen' ->
     'restart'). Closes: LP#81422
 
