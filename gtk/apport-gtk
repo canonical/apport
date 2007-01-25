@@ -79,7 +79,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         if response == gtk.RESPONSE_YES:
             return 'report'
         elif response == gtk.RESPONSE_OK:
-            return 'reopen'
+            return 'restart'
         else:
             return 'cancel'
 

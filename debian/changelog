@@ -5,8 +5,10 @@ apport (0.45) UNRELEASED; urgency=low
     files, and an ErrorMessage: from stdin. This will be called from e.g.
     dist-upgrader.
   * setup.py, debian/apport.install: Ship package_hook.
+  * gtk/apport-gtk: Fix return code for restarting the application ('reopen' ->
+    'restart'). Closes: LP#81422
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 25 Jan 2007 11:16:31 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 25 Jan 2007 11:18:26 +0100
 
 apport (0.44) feisty; urgency=low
 
