@@ -4,9 +4,6 @@ import tempfile, shutil, os.path, os, subprocess, signal, time, stat, sys
 import resource
 import apport.fileutils
 
-crashdump_helper_sysctl = '/proc/sys/kernel/crashdump'
-if not os.path.exists(crashdump_helper_sysctl):
-    crashdump_helper_sysctl = '/proc/sys/kernel/crashdump-helper'
 test_executable = '/bin/cat'
 test_package = 'coreutils'
 test_source = 'coreutils'
@@ -71,6 +68,13 @@ def check_crash(expect_core=True, sig=signal.SIGSEGV, check_running=True, sleep=
         assert not os.WCOREDUMP(result), 'result: 0x%02X should not have WCOREDUMP' % result
     assert os.WSTOPSIG(result) == 0, 'test process was not signaled to stop'
     assert os.WTERMSIG(result) == sig, 'test process died due to proper signal'
+    # wait max 10 seconds for apport to finish
+    timeout = 50
+    while timeout >= 0:
+	if subprocess.call(['pidof', '-x', 'apport'], stdout=subprocess.PIPE) != 0:
+	    break
+	time.sleep(0.2)
+	timeout -= 1
     assert subprocess.call(['pidof', '-x', 'apport']) == 1, 'no running apport processes'
     if check_running:
         assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
@@ -105,7 +109,7 @@ all_passed = False
 try:
     # check if kernel crashdump helper is already active
     if mode == 'lib':
-        assert not os.path.exists(crashdump_helper_sysctl) or not open(crashdump_helper_sysctl).read().strip(), \
+        assert open('/proc/sys/kernel/core_pattern').read(1) != '|', \
                 'kernel crash dump helper is still active; please disable before running this test.'
 
         # set up temporary report directory
@@ -120,7 +124,7 @@ try:
         clean_preload_lib()
         build_preload_lib()
     else:
-        assert os.path.exists(crashdump_helper_sysctl) and open(crashdump_helper_sysctl).read().strip(), \
+        assert open('/proc/sys/kernel/core_pattern').read(1) == '|', \
                 'kernel crash dump helper is not active; please enable before running this test.'
 
     assert apport.fileutils.get_all_reports() == [], 'no reports already present'
@@ -264,16 +268,13 @@ try:
     old_cwd = os.getcwd()
     try:
         os.chdir('/')
-        check_crash(False) # no core dump expected while this test is EXFAIL
+        check_crash()
     finally:
         os.chdir(old_cwd)
     pr = apport.Report()
-    if os.path.exists(report):
-        pr.load(open(report))
-    else:
-        print >> sys.stderr, 'no report created (EXFAIL)'
-    if not set(required_fields).issubset(set(pr.keys())):
-        print >> sys.stderr, 'report does not have required fields (EXFAIL)'
+    assert os.path.exists(report)
+    pr.load(open(report))
+    assert set(required_fields).issubset(set(pr.keys()))
 
     all_passed = True
 
