@@ -108,8 +108,10 @@ class UserInterface:
             return
 
         # ask the user about what to do with the current crash
-        desktop_entry = self.get_desktop_entry()
-        response = self.ui_present_crash(desktop_entry)
+	if self.report.get('ProblemType') == 'Package':
+	    response = self.ui_present_package_error()
+	else:
+	    response = self.ui_present_crash(self.get_desktop_entry())
         if response == 'cancel':
             return
         if response == 'restart':
@@ -123,13 +125,14 @@ class UserInterface:
         if self.handle_duplicate():
             return
 
-        response = self.ui_present_report_details()
-        if response == 'cancel':
-            return
-        if response == 'reduced':
-            del self.report['CoreDump']
-        else:
-            assert response == 'full'
+	if self.report.get('ProblemType') == 'Crash':
+	    response = self.ui_present_report_details()
+	    if response == 'cancel':
+		return
+	    if response == 'reduced':
+		del self.report['CoreDump']
+	    else:
+		assert response == 'full'
 
         self.file_report()
 
@@ -463,6 +466,15 @@ might be helpful for the developers.'))
 
         raise Exception, 'this function must be overridden by subclasses'
 
+    def ui_present_package_error(self, desktopentry):
+	'''Inform that a package installation/upgrade failure has happened for
+	self.report and self.cur_package and ask about an action.
+
+	Return the action: ignore ('cancel'), or report a bug about the problem
+	('report').'''
+
+        raise Exception, 'this function must be overridden by subclasses'
+
     def ui_present_report_details(self):
         '''Show details of the bug report and choose between sending a complete
         or reduced report.
@@ -550,6 +562,7 @@ if  __name__ == '__main__':
 
             # these store the choices the ui_present_* calls do
             self.present_crash_response = None
+            self.present_package_error_response = None
             self.present_details_response = None
 
             self.opened_url = None
@@ -564,6 +577,9 @@ if  __name__ == '__main__':
 
         def ui_present_crash(self, desktopentry):
             return self.present_crash_response
+
+        def ui_present_package_error(self):
+            return self.present_package_error_response
 
         def ui_present_report_details(self):
             return self.present_details_response
@@ -967,6 +983,43 @@ NameError: global name 'subprocess' is not defined'''
             self.assert_('Stacktrace' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
             self.assert_(not self.ui.report.has_key('CoreDump'))
+
+        def test_run_crash_package(self):
+            '''Test run_crash() for a package error.'''
+
+            # generate crash report
+            r = apport.Report('Package')
+            r['Package'] = 'libfoo1'
+            r['SourcePackage'] = 'foo'
+            r['ErrorMessage'] = 'It broke'
+            r['VarLogPackagerlog'] = 'foo\nbar'
+            r.add_os_info()
+
+            # write crash report
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+
+            # cancel crash notification dialog
+            r.write(open(report_file, 'w'))
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_package_error_response = 'cancel'
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.ic_progress_pulses, 0)
+
+            # report in crash notification dialog, send report
+            r.write(open(report_file, 'w'))
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_package_error_response = 'report'
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertNotEqual(self.ui.opened_url, None)
+
+            self.assert_('SourcePackage' in self.ui.report.keys())
+            self.assert_('Package' in self.ui.report.keys())
+            self.assertEqual(self.ui.report['ProblemType'], 'Package')
 
     unittest.main()
 
