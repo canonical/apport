@@ -1,15 +1,14 @@
-apport:
-
-problem_report.py:
-
 apport-gtk:
  - drag&drop URL
  - add gksudo wrapper for disabling apport, and checkbox to crash
    dialog
  - check delay of progress dialog when filing a bug
 
-kernel hook:
+ui.py:
+ - create standard bug title for package failure reports:
+   [apport] package <package name> does not install/upgrade: <last line of ErrorMessage>
 
-general:
- - apport-retrace: fetch comment and attachments from bug URL
-   (bughelper already has code for that)
+apport-retrace:
+ - fetch comment and attachments from bug URL (bughelper already has
+   code for that)
+
