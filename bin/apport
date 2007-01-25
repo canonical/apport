@@ -36,8 +36,8 @@ def drop_privileges(pid, partial=False):
     stat = None
     try:
         stat = os.stat('/proc/' + pid)
-    except OSError:
-        raise ValueError, 'Invalid process ID'
+    except OSError, e:
+        raise ValueError, 'Invalid process ID: ' + str(e)
 
     if partial:
         effective_gid = os.getegid()
@@ -140,7 +140,7 @@ try:
         pass # *shrug*, we tried
 
     # Partially drop privs to gain proper os.access() checks
-    drop_privileges(pid,True)
+    drop_privileges(pid, True)
 
     # try to find the core dump file; if path is relative, prepend cwd of
     # crashed process
@@ -163,8 +163,7 @@ try:
     if signum == str(signal.SIGQUIT) or signum == str(signal.SIGABRT):
         sys.exit(0)
 
-    error_log('called with: ' + str(sys.argv) + ', using core file ' +
-        str(coredump))
+    error_log('called for pid %s, signal %s' % (pid, signum))
 
     try:
         pidstat = os.stat('/proc/' + pid)
@@ -244,3 +243,4 @@ except Exception, e:
     traceback.print_exc()
     print >> sys.stderr, 'pid: %i, uid: %i, gid: %i, euid: %i, egid: %i' % (
        os.getpid(), os.getuid(), os.getgid(), os.geteuid(), os.getegid())
+    print >> sys.stderr, 'environment:', os.environ
