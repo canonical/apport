@@ -1,0 +1,60 @@
+#!/usr/bin/python
+#
+# Collect information about a package installation/upgrade failure.
+#
+# Copyright (c) 2007 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+import sys, optparse, os.path, os
+import apport, apport.fileutils, apport.packaging
+
+def mkattrname(path):
+    '''Convert a file path to a problem report attribute name.'''
+
+    name = ''
+    for dir in path.split(os.sep):
+	if dir:
+	    name += ''.join([c for c in dir[0].upper() + dir[1:] if c.isalnum()])
+    return name
+    
+#
+# main
+#
+
+# parse command line arguments
+optparser = optparse.OptionParser('%prog [options]')
+optparser.add_option('-p', '--package', 
+    help='Specify the package name which failed to upgrade (mandatory)',
+    action='store', type='string', dest='package')
+optparser.add_option('-l', '--log', 
+    help='Append given log file, or, if it is a directory, all files in it (can be specified multiple times)',
+    action='append', type='string', dest='logs')
+options = optparser.parse_args()[0]
+
+if not options.package:
+    print >> sys.stderr, 'Error: You need to specify a package name with --package'
+    sys.exit(1)
+
+# create report
+pr = apport.Report('Package')
+pr['Package'] = options.package
+pr['SourcePackage'] = apport.packaging.impl.get_source(options.package)
+pr['ErrorMessage'] = (sys.stdin, False)
+pr.add_os_info()
+pr.add_hooks_info()
+for l in options.logs:
+    if os.path.isfile(l):
+	pr[mkattrname(l)] = (l,)
+    elif os.path.isdir(l):
+	for f in os.listdir(l):
+	    path = os.path.join(l, f)
+	    pr[mkattrname(path)] = (path,)
+
+# write report
+pr.write(open(apport.fileutils.make_report_path(pr), 'w'))
