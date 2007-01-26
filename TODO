@@ -12,3 +12,7 @@ apport-retrace:
  - fetch comment and attachments from bug URL (bughelper already has
    code for that)
 
+add_package_info():
+ - test what happens on missing dependencies
+
+bug title: do not include unknown topmost stack function
