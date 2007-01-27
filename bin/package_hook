@@ -44,7 +44,7 @@ if not options.package:
 # create report
 pr = apport.Report('Package')
 pr['Package'] = options.package
-pr['SourcePackage'] = apport.packaging.impl.get_source(options.package)
+pr['SourcePackage'] = apport.packaging.get_source(options.package)
 pr['ErrorMessage'] = (sys.stdin, False)
 for l in options.logs:
     if os.path.isfile(l):

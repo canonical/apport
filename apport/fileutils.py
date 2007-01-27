@@ -13,7 +13,7 @@ the full text of the license.
 import os, glob, subprocess, os.path
 from problem_report import ProblemReport
 
-import packaging
+from packaging_impl import impl as packaging
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
@@ -26,7 +26,7 @@ def find_package_desktopfile(package):
 
     desktopfile = None
 
-    for line in packaging.impl.get_files(package):
+    for line in packaging.get_files(package):
         if line.endswith('.desktop'):
             if desktopfile:
                 return None # more than one
@@ -60,7 +60,7 @@ def find_file_package(file):
     if not likely_packaged(file):
 	return None
 
-    return packaging.impl.get_file_package(file)
+    return packaging.get_file_package(file)
 
 def seen_report(report):
     '''Check whether the given report file has already been processed
@@ -230,7 +230,7 @@ class _ApportUtilsTest(unittest.TestCase):
 
         # package without any .desktop file
         nodesktop = 'bash'
-        assert len([f for f in packaging.impl.get_files(nodesktop) 
+        assert len([f for f in packaging.get_files(nodesktop) 
             if f.endswith('.desktop')]) == 0
 
         # find a package with one and a package with multiple .desktop files
@@ -239,9 +239,9 @@ class _ApportUtilsTest(unittest.TestCase):
         for d in os.listdir('/usr/share/applications/'):
             if not d.endswith('.desktop'):
                 continue
-            pkg = packaging.impl.get_file_package(
+            pkg = packaging.get_file_package(
                 os.path.join('/usr/share/applications/', d))
-            num = len([f for f in packaging.impl.get_files(pkg) 
+            num = len([f for f in packaging.get_files(pkg) 
                 if f.endswith('.desktop')]) 
             if not onedesktop and num == 1:
                 onedesktop = pkg

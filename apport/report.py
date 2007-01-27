@@ -17,7 +17,8 @@ import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
 from problem_report import ProblemReport
-import fileutils, packaging
+import fileutils
+from packaging_impl import impl as packaging
 
 _hook_dir = '/usr/share/apport/'
 
@@ -32,10 +33,10 @@ def _transitive_dependencies(package, depends_set):
     '''Recursively add dependencies of package to depends_set.'''
 
     try:
-        cur_ver = packaging.impl.get_version(package)
+        cur_ver = packaging.get_version(package)
     except ValueError:
         return
-    for d in packaging.impl.get_dependencies(package):
+    for d in packaging.get_dependencies(package):
         if not d in depends_set:
             depends_set.add(d)
             _transitive_dependencies(d, depends_set)
@@ -130,7 +131,7 @@ class Report(ProblemReport):
         If package has only unmodified files, return the empty string. If not,
         return ' [modified: ...]' with a list of modified files.'''
 
-        mod = packaging.impl.get_modified_files(package)
+        mod = packaging.get_modified_files(package)
         if mod:
             return ' [modified: %s]' % ' '.join(mod)
         else:
@@ -153,9 +154,9 @@ class Report(ProblemReport):
                 return
 
         self['Package'] = '%s %s%s' % (package,
-            packaging.impl.get_version(package),
+            packaging.get_version(package),
             self._pkg_modified_suffix(package))
-        self['SourcePackage'] = packaging.impl.get_source(package)
+        self['SourcePackage'] = packaging.get_source(package)
 
         # get set of all transitive dependencies
         dependencies = set([])
@@ -165,7 +166,7 @@ class Report(ProblemReport):
         self['Dependencies'] = ''
         for dep in dependencies:
 	    try:
-		v = packaging.impl.get_version(dep)
+		v = packaging.get_version(dep)
 	    except ValueError:
                 # can happen with uninstalled alternate dependencies
                 pass
@@ -511,8 +512,8 @@ class _ApportReportTest(unittest.TestCase):
         '''Test add_package_info() behaviour.'''
 
         # determine bash version
-        bashversion = packaging.impl.get_version('bash')
-        libcversion = packaging.impl.get_version('libc6')
+        bashversion = packaging.get_version('bash')
+        libcversion = packaging.get_version('libc6')
 
         pr = Report()
         self.assertRaises(ValueError, pr.add_package_info, 'nonexistant_package')
