@@ -742,12 +742,12 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
-    def test_add_gdb_info(self):
-        '''Test add_gdb_info() behaviour with core dump file reference.'''
-
-        pr = Report()
-        # should not throw an exception for missing fields
-        pr.add_gdb_info()
+    def _generate_sigsegv_report(self, file=None):
+	'''Create a test executable which will die with a SIGSEGV, generate a
+	core dump for it, create a problem report with those two arguments
+	(ExecutablePath and CoreDump) and call add_gdb_info().
+	
+	If file is given, the report is written into it. Return the Report.'''
 
         workdir = None
         orig_cwd = os.getcwd()
@@ -778,11 +778,24 @@ int main() { return f(42); }
             pr['CoreDump'] = (os.path.join(workdir, 'core'),)
 
             pr.add_gdb_info()
+	    if file:
+		pr.write(file)
+		file.flush()
         finally:
             os.chdir(orig_cwd)
             if workdir:
                 shutil.rmtree(workdir)
 
+	return pr
+
+    def test_add_gdb_info(self):
+        '''Test add_gdb_info() behaviour with core dump file reference.'''
+
+        pr = Report()
+        # should not throw an exception for missing fields
+        pr.add_gdb_info()
+
+	pr = self._generate_sigsegv_report()
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('StacktraceTop'))
@@ -797,41 +810,9 @@ int main() { return f(42); }
     def test_add_gdb_info_load(self):
         '''Test add_gdb_info() behaviour with inline core dump.'''
 
-        pr = Report()
-        # should not throw an exception for missing fields
-        pr.add_gdb_info()
-
-        # create a test executable
-        test_executable = '/bin/cat'
-        assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
-        pid = os.fork()
-        if pid == 0:
-            os.setsid()
-            os.execv(test_executable, [test_executable])
-            assert False, 'Could not execute ' + test_executable
-
-        # generate a core dump
-        (fd, coredump) = tempfile.mkstemp()
-        try:
-            os.close(fd)
-            assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE) == 0
-
-            # verify that it's a proper ELF file
-            assert subprocess.call(['readelf', '-n', coredump],
-                stdout=subprocess.PIPE) == 0
-
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
-
-            pr['ExecutablePath'] = test_executable
-            pr['CoreDump'] = (coredump,)
-            rep = tempfile.NamedTemporaryFile()
-            pr.write(rep)
-            rep.flush()
-        finally:
-            os.unlink(coredump)
+	rep = tempfile.NamedTemporaryFile()
+	self._generate_sigsegv_report(rep)
+	rep.seek(0)
 
         pr = Report()
         pr.load(open(rep.name))
@@ -845,7 +826,7 @@ int main() { return f(42); }
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
         self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
+        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process') > 0)
 
     def test_add_gdb_info_script(self):
         '''Test add_gdb_info() behaviour with a script.'''
