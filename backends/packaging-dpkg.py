@@ -84,7 +84,7 @@ class __DpkgPackageInfo:
 		raise OSError
 	    max_time = max(s.st_mtime, s.st_ctime)
 	except OSError:
-	    return [statfile]
+	    return [listfile]
 
 	# create a list of files with a newer timestamp for md5sum'ing
 	sums = ''
