@@ -834,41 +834,30 @@ int main() { return f(42); }
     def test_add_gdb_info_script(self):
         '''Test add_gdb_info() behaviour with a script.'''
 
-        pr = Report()
-        # should not throw an exception for missing fields
-        pr.add_gdb_info()
-
-        # create a test executable
-        test_executable = '/bin/zgrep'
-        assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
-        pid = os.fork()
-        if pid == 0:
-            os.setsid()
-            os.execv(test_executable, [test_executable, 'x'])
-            assert False, 'Could not execute ' + test_executable
-
-        # generate a core dump
         (fd, coredump) = tempfile.mkstemp()
+        (fd2, script) = tempfile.mkstemp()
         try:
             os.close(fd)
-            assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE) == 0
+            os.close(fd2)
 
-            # verify that it's a proper ELF file
+	    # create a test script which produces a core dump for us
+	    open(script, 'w').write('''#!/bin/sh
+gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
+	    os.chmod(script, 0755)
+
+	    # call script and verify that it gives us a proper ELF core dump
+            assert subprocess.call([script]) == 0
             assert subprocess.call(['readelf', '-n', coredump],
                 stdout=subprocess.PIPE) == 0
 
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
-
+	    pr = Report()
             pr['InterpreterPath'] = '/bin/sh'
-            pr['ExecutablePath'] = test_executable
+            pr['ExecutablePath'] = script
             pr['CoreDump'] = (coredump,)
-
             pr.add_gdb_info()
         finally:
             os.unlink(coredump)
+            os.unlink(script)
 
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))

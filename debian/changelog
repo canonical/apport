@@ -42,8 +42,10 @@ apport (0.45) UNRELEASED; urgency=low
     dpkg .list file is missing.
   * apport/report.py, add_package_info(): Do not produce stray empty lines for
     uninstalled alternative dependencies.
+  * apport/report.py: Fix test_add_gdb_info_script() to not leave behind a
+    stray gzip process which randomly blocks stdin.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 13:32:18 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 14:09:27 +0100
 
 apport (0.44) feisty; urgency=low
 
