@@ -301,7 +301,7 @@ class UserInterface:
 	if self.report.has_key('Traceback') and \
 	    self.report.has_key('ExecutablePath'):
 
-	    trace = self.report['Traceback'].split('\n')
+	    trace = self.report['Traceback'].splitlines()
 	    
 	    return '[apport] %s crashed with %s in %s()' % (
 		os.path.basename(self.report['ExecutablePath']),
