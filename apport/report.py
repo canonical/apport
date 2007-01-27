@@ -503,7 +503,7 @@ class Report(ProblemReport):
 # Unit test
 #
 
-import unittest, shutil, signal, time, resource
+import unittest, shutil, signal, time
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
@@ -751,7 +751,6 @@ class _ApportReportTest(unittest.TestCase):
 
         workdir = None
         orig_cwd = os.getcwd()
-        orig_ulimitc = resource.getrlimit(resource.RLIMIT_CORE)
         pr = Report()
         try:
             workdir = tempfile.mkdtemp()
@@ -768,9 +767,9 @@ int main() { return f(42); }
             assert subprocess.call(['gcc', '-g', 'crash.c', '-o', 'crash']) == 0
             assert os.path.exists('crash')
 
-            # call it and verify that it dumped core
-            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            subprocess.call(['./crash'])
+            # call it through gdb and dump core
+            subprocess.call(['gdb', '--batch', '--ex', 'run', '--ex',
+		'generate-core-file core', './crash'], stdout=subprocess.PIPE)
             assert os.path.exists('core')
             assert subprocess.call(['readelf', '-n', 'core'],
                 stdout=subprocess.PIPE) == 0
@@ -780,7 +779,6 @@ int main() { return f(42); }
 
             pr.add_gdb_info()
         finally:
-            resource.setrlimit(resource.RLIMIT_CORE, orig_ulimitc)
             os.chdir(orig_cwd)
             if workdir:
                 shutil.rmtree(workdir)
