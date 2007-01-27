@@ -163,7 +163,11 @@ def prepare_debugdir(report, cache_dir):
 
 # load the report
 report = apport.Report()
-report.load(open(reportfile))
+try:
+    report.load(open(reportfile))
+except IOError, e:
+    print >> sys.stderr, 'Cannot open report file:', e
+    sys.exit(1)
 
 # sanity checks
 if not report.has_key('CoreDump'):

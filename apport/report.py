@@ -11,37 +11,34 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
+import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
-import warnings
-warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
-import apt
-
 from problem_report import ProblemReport
-import fileutils
+import fileutils, packaging
+
+_hook_dir = '/usr/share/apport/'
+
+# path of the ignore file
+_ignore_file = '~/.apport-ignore.xml'
 
 #
 # helper functions
 #
 
-def _transitive_dependencies(package, depends_set, cache):
-    '''Recursively add dependencies of package to depends_set, using the given
-    apt cache.'''
+def _transitive_dependencies(package, depends_set):
+    '''Recursively add dependencies of package to depends_set.'''
 
     try:
-        cur_ver = cache[package]._pkg.CurrentVer
-    except (AttributeError, KeyError):
+        cur_ver = packaging.impl.get_version(package)
+    except ValueError:
         return
-    if not cur_ver:
-        return
-    for p in cur_ver.DependsList.get('Depends', []) + cur_ver.DependsList.get('PreDepends', []):
-        name = p[0].TargetPkg.Name
-        if not name in depends_set:
-            depends_set.add(name)
-            _transitive_dependencies(name, depends_set, cache)
+    for d in packaging.impl.get_dependencies(package):
+        if not d in depends_set:
+            depends_set.add(d)
+            _transitive_dependencies(d, depends_set)
 
 def _read_file(f):
     '''Try to read given file and return its contents, or return a textual
@@ -97,6 +94,16 @@ def _check_bug_pattern(report, pattern):
 
     return pattern.attributes['url'].nodeValue.encode('UTF-8')
 
+def _dom_remove_space(node):
+    '''Recursively remove whitespace from given XML DOM node.'''
+
+    for c in node.childNodes:
+	if c.nodeType == xml.dom.Node.TEXT_NODE and c.nodeValue.strip() == '':
+	    c.unlink()
+	    node.removeChild(c)
+	else:
+	    _dom_remove_space(c)
+
 #
 # Report class
 #
@@ -123,10 +130,7 @@ class Report(ProblemReport):
         If package has only unmodified files, return the empty string. If not,
         return ' [modified: ...]' with a list of modified files.'''
 
-        sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
-        if not os.path.exists(sumfile):
-            return ''
-        mod = fileutils.check_files_md5(sumfile)
+        mod = packaging.impl.get_modified_files(package)
         if mod:
             return ' [modified: %s]' % ' '.join(mod)
         else:
@@ -148,28 +152,27 @@ class Report(ProblemReport):
             if not package:
                 return
 
-        cache = apt.Cache()
-
-        self['Package'] = '%s %s%s' % (package, cache[package].installedVersion, self._pkg_modified_suffix(package))
-        self['SourcePackage'] = cache[package].sourcePackageName
+        self['Package'] = '%s %s%s' % (package,
+            packaging.impl.get_version(package),
+            self._pkg_modified_suffix(package))
+        self['SourcePackage'] = packaging.impl.get_source(package)
 
         # get set of all transitive dependencies
         dependencies = set([])
-        _transitive_dependencies(package, dependencies, cache)
+        _transitive_dependencies(package, dependencies)
 
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
             try:
-                cur_ver = cache[dep]._pkg.CurrentVer
-            except (KeyError, AttributeError):
-                continue
-            if not cur_ver:
+                if self['Dependencies']:
+                    self['Dependencies'] += '\n'
+                self['Dependencies'] += '%s %s%s' % (dep,
+                    packaging.impl.get_version(dep),
+                    self._pkg_modified_suffix(dep))
+            except ValueError:
                 # can happen with uninstalled alternate dependencies
-                continue
-            if self['Dependencies']:
-                self['Dependencies'] += '\n'
-            self['Dependencies'] += '%s %s%s' % (dep, cur_ver.VerStr, self._pkg_modified_suffix(dep))
+                pass
 
     def add_os_info(self):
         '''Add operating system information.
@@ -361,6 +364,22 @@ class Report(ProblemReport):
                     toptrace[depth] = m.group(2)
         self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
+    def add_hooks_info(self):
+	'''Check for an existing hook script and run it to add additional
+	package specific information.
+	
+	A hook script needs to be in _hook_dir/<Package>.py and has to
+	contain a function 'add_info(report)' that takes and modifies a
+	Report.'''
+
+	assert self.has_key('Package')
+	sys.path.append(_hook_dir)
+	try:
+	    m = __import__(self['Package'])
+	    m.add_info(self)
+	except (ImportError, AttributeError, TypeError):
+	    pass
+
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
         None otherwise.
@@ -402,6 +421,83 @@ class Report(ProblemReport):
 
         return None
 
+    def _get_ignore_dom(self):
+	'''Read ignore list XML file and return a DOM tree, or an empty DOM
+	tree if file does not exist.
+
+	Raises ValueError if the file exists but is invalid XML.'''
+
+	ifpath = os.path.expanduser(_ignore_file)
+	if not os.access(ifpath, os.R_OK):
+	    # create a document from scratch
+	    dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)
+	else:
+	    try:
+		dom = xml.dom.minidom.parse(ifpath)
+	    except ExpatError, e:
+		raise ValueError, '%s has invalid format: %s' % (_ignore_file, str(e))
+
+	# remove whitespace so that writing back the XML does not accumulate
+	# whitespace
+	dom.documentElement.normalize()
+	_dom_remove_space(dom.documentElement)
+
+	return dom
+
+    def check_ignored(self):
+	'''Check ~/.apport-ignore.xml (in the real UID's home) if the current
+	report should not be presented to the user.
+	
+	This requires the ExecutablePath attribute. Function can throw a
+	ValueError if the file has an invalid format.'''
+
+	assert self.has_key('ExecutablePath')
+	dom = self._get_ignore_dom()
+
+	try:
+	    cur_mtime = float(os.stat(self['ExecutablePath']).st_mtime)
+	except OSError:
+	    # if it does not exist any more, do nothing
+	    return False
+
+	# search for existing entry and update it
+        for ignore in dom.getElementsByTagName('ignore'):
+	    if ignore.getAttribute('program') == self['ExecutablePath']:
+		if float(ignore.getAttribute('mtime')) >= cur_mtime:
+		    return True
+
+	return False
+
+    def mark_ignore(self):
+	'''Add a ignore list entry for this report to ~/.apport-ignore.xml, so
+	that future reports for this ExecutablePath are not presented to the
+	user any more.
+	
+	Function can throw a ValueError if the file already exists and has an
+	invalid format.'''
+
+	assert self.has_key('ExecutablePath')
+
+	dom = self._get_ignore_dom()
+	mtime = str(int(os.stat(self['ExecutablePath']).st_mtime))
+
+	# search for existing entry and update it
+        for ignore in dom.getElementsByTagName('ignore'):
+	    if ignore.getAttribute('program') == self['ExecutablePath']:
+		ignore.setAttribute('mtime', mtime)
+		break
+	else:
+	    # none exists yet, create new ignore node if none exists yet
+	    e = dom.createElement('ignore')
+	    e.setAttribute('program', self['ExecutablePath'])
+	    e.setAttribute('mtime', mtime)
+	    dom.documentElement.appendChild(e)
+
+	# write back file
+	dom.writexml(open(os.path.expanduser(_ignore_file), 'w'), 
+	    addindent='  ', newl='\n')
+
+	dom.unlink()
 
 #
 # Unit test
@@ -414,21 +510,11 @@ class _ApportReportTest(unittest.TestCase):
         '''Test add_package_info() behaviour.'''
 
         # determine bash version
-        p = subprocess.Popen('dpkg -s bash | grep ^Version: | cut -f2 -d\ ',
-            shell=True, stdout=subprocess.PIPE)
-        bashversion = p.communicate()[0]
-        assert p.returncode == 0
-        assert bashversion
-
-        # determine libc version
-        p = subprocess.Popen('dpkg -s libc6 | grep ^Version: | cut -f2 -d\ ',
-            shell=True, stdout=subprocess.PIPE)
-        libcversion = p.communicate()[0]
-        assert p.returncode == 0
-        assert libcversion
+        bashversion = packaging.impl.get_version('bash')
+        libcversion = packaging.impl.get_version('libc6')
 
         pr = Report()
-        self.assertRaises(KeyError, pr.add_package_info, 'nonexistant_package')
+        self.assertRaises(ValueError, pr.add_package_info, 'nonexistant_package')
 
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
@@ -638,6 +724,24 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/../etc/passwd')
 
+	# interactive python process
+	pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python'
+        pr['ProcStatus'] = 'Name:\tpython'
+        pr['ProcCmdline'] = 'python'
+        pr._check_interpreted()
+        self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+        self.failIf(pr.has_key('InterpreterPath'))
+
+	# python script (abuse /bin/bash since it must exist)
+	pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python'
+        pr['ProcStatus'] = 'Name:\tbash'
+        pr['ProcCmdline'] = 'python\0/bin/bash'
+        pr._check_interpreted()
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+
     def test_add_gdb_info(self):
         '''Test add_gdb_info() behaviour with core dump file reference.'''
 
@@ -685,12 +789,12 @@ int main() { return f(42); }
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('StacktraceTop'))
         self.assert_(pr.has_key('Registers'))
+        self.assert_(pr.has_key('Disassembly'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process') > 0)
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
-        self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_add_gdb_info_load(self):
         '''Test add_gdb_info() behaviour with inline core dump.'''
@@ -738,12 +842,12 @@ int main() { return f(42); }
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('Registers'))
+        self.assert_(pr.has_key('Disassembly'))
         self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
         self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
         self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
         self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
         self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
-        self.assert_(pr['Disassembly'].find('Dump of assembler code from 0x') >= 0)
 
     def test_add_gdb_info_script(self):
         '''Test add_gdb_info() behaviour with a script.'''
@@ -872,6 +976,84 @@ int main() { return f(42); }
         finally:
             if pdir:
                 shutil.rmtree(pdir)
+
+    def test_add_hooks_info(self):
+	'''Test add_hooks_info().'''
+
+	global _hook_dir
+	orig_hook_dir = _hook_dir
+	_hook_dir = tempfile.mkdtemp()
+	try:
+	    open(os.path.join(_hook_dir, 'foo.py'), 'w').write('''
+def add_info(report):
+    report['Field1'] = 'Field 1'
+    report['Field2'] = 'Field 2\\nBla'
+''')
+	    r = Report()
+	    self.assertRaises(AssertionError, r.add_hooks_info)
+
+	    r['Package'] = 'bar'
+	    # should not throw any exceptions
+	    r.add_hooks_info()
+	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+		'Package']), 'report has required fields')
+
+	    r['Package'] = 'foo'
+	    r.add_hooks_info()
+	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+		'Package', 'Field1', 'Field2']), 'report has required fields')
+	    self.assertEqual(r['Field1'], 'Field 1')
+	    self.assertEqual(r['Field2'], 'Field 2\nBla')
+	finally:
+	    shutil.rmtree(_hook_dir)
+	    _hook_dir = orig_hook_dir
+
+    def test_ignoring(self):
+	'''Test mark_ignore() and check_ignored().'''
+
+	global _ignore_file
+	orig_ignore_file = _ignore_file
+	workdir = tempfile.mkdtemp()
+	_ignore_file = os.path.join(workdir, 'ignore.xml')
+	try:
+	    open(os.path.join(workdir, 'bash'), 'w').write('bash')
+	    open(os.path.join(workdir, 'crap'), 'w').write('crap')
+
+	    bash_rep = Report()
+	    bash_rep['ExecutablePath'] = os.path.join(workdir, 'bash')
+	    crap_rep = Report()
+	    crap_rep['ExecutablePath'] = os.path.join(workdir, 'crap')
+	    # must be able to deal with executables that do not exist any more
+	    cp_rep = Report()
+	    cp_rep['ExecutablePath'] = os.path.join(workdir, 'cp')
+
+	    # no ignores initially
+	    self.assertEqual(bash_rep.check_ignored(), False)
+	    self.assertEqual(crap_rep.check_ignored(), False)
+	    self.assertEqual(cp_rep.check_ignored(), False)
+
+	    # ignore crap now
+	    crap_rep.mark_ignore()
+	    self.assertEqual(bash_rep.check_ignored(), False)
+	    self.assertEqual(crap_rep.check_ignored(), True)
+	    self.assertEqual(cp_rep.check_ignored(), False)
+
+	    # ignore bash now
+	    bash_rep.mark_ignore()
+	    self.assertEqual(bash_rep.check_ignored(), True)
+	    self.assertEqual(crap_rep.check_ignored(), True)
+	    self.assertEqual(cp_rep.check_ignored(), False)
+
+	    # poke crap so that it has a newer timestamp
+	    time.sleep(1)
+	    open(os.path.join(workdir, 'crap'), 'w').write('crapnew')
+	    self.assertEqual(bash_rep.check_ignored(), True)
+	    self.assertEqual(crap_rep.check_ignored(), False)
+	    self.assertEqual(cp_rep.check_ignored(), False)
+
+	finally:
+	    shutil.rmtree(workdir)
+	    _ignore_file = orig_ignore_file
 
 if __name__ == '__main__':
     unittest.main()

@@ -265,12 +265,14 @@ class ProblemReport(UserDict.IterableUserDict):
                 attachments.append(att)
             else:
                 # plain text value
-                lines = v.splitlines()
-                if len(lines) == 1:
+                lines = len(v.splitlines())
+                if lines == 1:
                     text += '%s: %s\n' % (k, v)
-                elif len(lines) < attach_treshold:
+                elif lines <= attach_treshold:
                     text += '%s:\n ' % k
-                    text += v.replace('\n', '\n ')
+		    if not v.endswith('\n'):
+			v += '\n'
+                    text += v.strip().replace('\n', '\n ') + '\n'
                 else:
                     # too large, separate attachment
                     att = MIMEText(v, _charset='UTF-8')
@@ -747,6 +749,7 @@ File: base64
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
         pr['TwoLine'] = 'first\nsecond\n'
+        pr['InlineMargin'] = 'first\nsecond\nthird\nfourth\nfifth\n'
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
         io = StringIO()
         pr.write_mime(io)
@@ -768,11 +771,17 @@ File: base64
         self.assertEqual(part.get_filename(), None)
         self.assertEqual(part.get_payload(decode=True), '''ProblemType: Crash
 Date: now!
+InlineMargin:
+ first
+ second
+ third
+ fourth
+ fifth
 Simple: bar
 TwoLine:
  first
  second
- ''')
+''')
 
         # third part should be the Multiline: field as attachment
         part = msg_iter.next()

@@ -12,11 +12,23 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os.path
+import sys, os.path, optparse
 
-from apport.fileutils import get_new_reports
+from apport.fileutils import get_new_reports, get_new_system_reports
 
-if len(get_new_reports()) > 0:
+# parse command line options
+optparser = optparse.OptionParser('%prog [options]')
+optparser.add_option('-s', '--system',
+    help='Check for crash reports from system users.', action='store_true',
+        dest='system', default=False)
+options, args = optparser.parse_args()
+
+if options.system:
+    reports = get_new_system_reports()
+else:
+    reports = get_new_reports()
+
+if len(reports) > 0:
     sys.exit(0)
 else:
     sys.exit(1)

@@ -1,3 +1,238 @@
+apport (0.45) UNRELEASED; urgency=low
+
+  New feature: Infrastructure for package install/upgrade failures:
+
+  * Add bin/package_hook: Script for creating a report for a package
+    installation/upgrade failure. It receives a package name, a number of log
+    files, and an ErrorMessage: from stdin. This will be called from e.g.
+    dist-upgrader.
+  * setup.py, debian/apport.install: Ship package_hook.
+  * apport/ui.py: If ProblemType is 'Package', call a new function
+    self.ui_present_package_error() instead of presenting a crash. Add test
+    suite checks for the package error report workflow.
+  * gtk/apport-gtk{,.glade}: GTK implementation of ui_present_package_error().
+
+  New feature: Maintain a per-binary blacklist to inhibit apport crash reports
+  until the binary changes. Closes: LP#79408
+
+  * apport/report.py: Add new Report methods check_ignored() and mark_ignore()
+    to check for/set ignore list entries. Add test cases.
+
+  Bug fixes:
+
+  * gtk/apport-gtk: Fix return code for restarting the application ('reopen' ->
+    'restart'). Closes: LP#81422
+  * test-apport: Adapt to new core_pattern kernel interface mode:
+    - Check core_pattern instead of the obsolete crashdump sysctl to determine
+      whether or not apport is running.
+    - Give apport max. 10 seconds to complete. The current kernel reaps the
+      crashed process as soon as writing the core dump to the pipe is
+      finished, but apport still needs to write the report file.
+    - Do not EXFAIL the test for crashes in nonwriteable cwd any more, since
+      it is now supposed to work (we do not write a core dump to the disk any
+      more).
+  * use-local: Adapt to new core_pattern kernel interface.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 25 Jan 2007 17:40:14 +0100
+
+apport (0.44) feisty; urgency=low
+
+  Some more 'Need for Speed' optimizations:
+
+  * backends/packaging-dpkg.py, _check_files_md5(): Also accept a md5sum
+    string in addition to a md5sum file.
+  * backends/packaging-dpkg.py, get_modified_files(): Compare package file's
+    ctime and mtime against the package list file's mtime and only md5sum the
+    files that are newer. This drastically reduces the amount of md5suming
+    (usually to zero) and thus speeds up the information collection.
+  * backends/packaging-dpkg.py: Use a single hackish 'dpkg-query --show *'
+    as a portable variant of 'cat /var/lib/dpkg/status' to pre-fill the status
+    cache with all packages instead of calling dpkg -s on every single package
+    we query. This changes the time for figuring out dependencies and their
+    versions from 'unbearable for many packages' to 'barely noticeable'.
+
+  New feature: per-package apport hooks to collect additional information:
+
+  * apport/report.py: Add method add_hooks_info() which executes a function
+    add_info(report) from /usr/share/apport/<package>.py. Also add
+    appropriate test cases. This provides per-package hooks for apport.
+  * apport/ui.py: Call add_hooks_info() in the information collection thread.
+
+  Bug fixes:
+
+  * apport/report.py: Add some more test cases for _check_interpreted() for
+    Python scripts.
+  * apport/python_hook.py: Check for a correct ExecutablePath in
+    test_general().
+  * apport/python_hook.py: Use fileutils.likely_packaged() instead of
+    checking for /tmp and home, so that we ignore stuff in /usr/local, too.
+    Closes: LP#81244
+  * apport/python_hook.py: If we figure out an ExecutablePath which is not
+    actually an executable, do not create a report. This particularly affects
+    interactive python sessions where sys.argv[0] is empty and thus
+    ExecutablePath ends up being the current directory. Add test cases.
+    Closes: LP#81237
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 24 Jan 2007 17:16:04 +0100
+
+apport (0.43) feisty; urgency=low
+
+  * apport/ui.py: Add method create_crash_bug_title() to construct a
+    reasonable standard bug title for crash reports, so that the automatic
+    duplicate detection actually has a chance to work. Also add test cases for
+    various signal crashes and an unhandled Python exception.
+  * apport/ui.py, file_report(): Submit a default bug title for crash reports.
+    Closes: LP#79657
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 16:26:40 +0100
+
+apport (0.42) feisty; urgency=low
+
+  New feature: https://wiki.ubuntu.com/ApportImprovements (kernel interface
+  change):
+
+  * bin/apport: Support calling without arguments, to support new semantics
+    agreed in the ApportImprovements spec: macro values (in particular, pid
+    and signal number) are passed as environment variables.
+  * preloadlib/libapport.c: Simulate new kernel behaviour described above.
+  * debian/apport.init: Set the kernel's core_pattern sysctl to pipe to apport
+    if the edgy-style 'crashdump-helper' sysctl helper does not exist.
+
+  Bug fixes:
+
+  * bin/apport-retrace: Beautify error message when report file is not
+    accessible. Closes: LP#79568
+  * apport/ui.py: Fix crash in the bug pattern search thread if we could
+    not determine a package name. Closes: LP#77872
+  * bin/apport: Only unlink the core dump if it still exists. Closes: LP#80866
+  * gtk/apport-gtk.glade: Fix expand/fill attributes so that the expander gets
+    all the space when resizing the window. Closes: LP#80987
+  * problem_report.py, write_mime(): Make sure that multi-line values that go
+    to the summary are terminated with a newline.
+  * apport/ui.py: Fix error message invocation for reporting cloakroom upload
+    failure.
+  * problem_report.py, write_mime(): Fix off-by-one comparison of the 'inline
+    text' treshold, so that apport's StacktraceTop field appears in bug
+    summaries. Also fix a corner case in CR line ending handling. Check both
+    things in the test suite.
+  * gtk/apport-gtk: Add missing 'import subprocess.'. Closes: LP#81007
+  * debian/control: Bump apport's and apport-gtk's dependency to python-apport
+    to make sure that apport.ui is available. Closes: LP#81019
+  * apport/ui.py: Add missing 'import pwd'. Closes: LP#81033
+
+  Minor improvements:
+
+  * apport/ui.py: Get the cloakroom ticket number from the
+    X-Launchpad-Blob-Token HTTP header instead of parsing the resulting page.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jan 2007 11:27:20 +0100
+
+apport (0.41) feisty; urgency=low
+
+  New feature: Use Malone cloakroom for uploading reports. Closes: LP#70919
+
+  * gtk/apport-gtk.glade: Redesign bug reporting dialog to have a 'Create bug
+    report' and a 'Cancel' button. Also assign GTK_RESPONSE_* constants to the
+    dialog buttons. Go back to Glade 2 since Glade 3 still sucks too much.
+  * gtk/apport-gtk: Adjust workflow for sending report to Malone cloakroom
+    instead of asking the user to attach the file. Sending is not yet
+    implemented, though.
+  * gtk/apport-gtk: Do not show any dialogs any more when filing a bug.
+  * Add apport/MultipartPostHandler.py: This module provides an urllib2 opener
+    for uploading file attachments to forms over HTTP POST. This module is
+    (C) 2006 Will Holcomb <wholcomb@gmail.com> and was taken from
+    http://odin.himinbi.org/MultipartPostHandler.py. (This is a serious hole
+    of the Python standard library IMHO.)
+  * apport/ui.py, file_report(): Upload blob to Malone (edge.launchpad.net for
+    now), retrieve the ticket, and pass it to +filebug.
+
+  Refactorizations:
+
+  * gtk/apport-gtk: Major refactorization to use modal dialogs and run()
+    instead of loosely coupled event handlers.
+  * Add apport/ui.py: Abstract frontend which encapsulates the logic, workflow
+    and UI independent bits and provides UI hooks for concrete
+    implementations. This both makes it easy to write more frontends like Qt
+    or CLI, and also makes the code automatically testable. Add an extensive
+    testsuite.
+  * run-tests: Add ui.py testsuite.
+  * gtk/apport-gtk: Port to ui.py's UserInterface (which means moving 1/3 of
+    the code into the new ui_*() methods and throwing away the rest).
+  * Add apport/REThread.py: Enhanced threading.Thread class that can propagate
+    the return value and uncaught exceptions of run() to the calling thread.
+  * apport/ui.py: Get rid of thread_check_bugpatterns() and hackish exception
+    handling, rewrite using REThread.
+  * apport/ui.py, gtk/apport-gtk: Add progress bar to report upload. It is
+    indefinite for now, because neither urllib2 nor httplib support upload
+    progress.
+
+  Bug fixes:
+
+  * gtk/apport-gtk.glade: Merged Gnome HIG fixes from Sebastian Heinlein,
+    thank you!
+  * Merge patch from Sebastian Heinlein to properly treat the apport-gtk icon
+    the dh_iconcache way and make it themeable. Thank you!
+  * gtk/apport-gtk: Remove periods from primary dialog texts to comply with
+    Gnome HIG standards.
+  * backends/packaging-dpkg.py, get_file_package(): Process list files in
+    chunks of 100, so that we do not exceed the maximum command line length if
+    there is a large number of packages installed. Closes: LP#64839
+  * gtk/apport-gtk: Use pgrep with -u instead of pidof for testing whether the
+    crashed process is already running again, so that we do not match
+    processes of other users. Add procps package dependency for this.
+  * gtk/apport-gtk: Only offer to restart programs that are in the $PATH. E.
+    g. /usr/lib/firefox/firefox-bin cannot be called directly.
+    Closes: LP#79623
+  * apport/report.py: Disassemble 16 instructions instead of 32 bytes to
+    become independent of the instruction size. Thanks to Kees Cook for the
+    patch!
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 22 Jan 2007 10:47:33 +0100
+
+apport (0.40) feisty; urgency=low
+
+  * debian/control: Add missing python-dev build dependency, which is
+    apparently required for 2.5 now.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 15 Jan 2007 11:06:20 +0100
+
+apport (0.39) feisty; urgency=low
+
+  * Introduce abstract packaging interface and move all dpkg/apt specific bits
+    to a dpkg implementation of this packaging interface (merge
+    apport/abstract-pkg branch):
+    - Add apport/packaging.py: Abstract packaging system query interface.
+    - Add backends/packaging-dpkg.py: dpkg implementation of abstract
+      packaging interface.
+    - run-tests: Run tests of all backends.
+    - apport/fileutils.py, apport/report.py: Port to packaging.py interface.
+    - debian/control: Drop python-apport's 'python-apt' dependency since the
+      backend only uses dpkg now (without measurable performance penalty since
+      it uses internal caching).
+    - debian/rules: Install backends/packaging-dpkg.py as our packaging
+      backend to apport/packaging_impl.py and remove it again on clean.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 13 Jan 2007 15:53:08 +0100
+
+apport (0.38) feisty; urgency=low
+
+  * Add ./COPYING: GPL license.
+  * debian/rules: Build POT file again.
+  * apport/fileutils.py: Add get_all_system_reports() and
+    get_new_system_reports() and added test cases. Now the test suite can also
+    be run as root to be able to actually check their complete behaviour.
+    Adapt the other tests to get along with running the tests as root.
+  * bin/apport-checkreports: Add option --system to check for system crash
+    reports. Closes: LP#62316
+  * gtk/apport-gtk: If called through sudo to process system crashes, drop
+    privileges to the original user in open_url() so that we get the web
+    browser correctly. (LP#62316) Caveat: The user cannot actually attach the
+    crash report file directly since it is not accessible to the user; this
+    will get fixed once Malone is able to link a bug report with uploaded
+    blobs.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Jan 2007 14:29:44 +0100
+
 apport (0.37) feisty; urgency=low
 
   * problem_report.py: Remove the requirement that values must not contain

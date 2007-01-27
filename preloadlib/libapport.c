@@ -34,6 +34,16 @@
 #endif
 
 /**
+ * setenv() for int values.
+ */
+void setenv_int(const char* name, int value, int overwrite)
+{
+    static char buffer[20];
+    snprintf(buffer, sizeof(buffer), "%i", value);
+    setenv(name, buffer, overwrite);
+}
+
+/**
  * Common signal handler. This collects all information, writes them into a
  * temporary file and calls an interactive frontend.
  */
@@ -84,8 +94,13 @@ void sighandler( int signum )
     /* only pass the core file if gcore succeeded */
     if( WIFEXITED( status ) && WEXITSTATUS( status ) == 0 ) {
         core = corepath;
-#ifndef PIPE_CORE
-        setenv("REMOVE_CORE", "1", 1);
+#ifdef PIPE_CORE
+	setenv( "CORE_PID", spid, 1 );
+	setenv_int( "CORE_UID", getuid(), 1 );
+	setenv_int( "CORE_GID", getgid(), 1 );
+	setenv( "CORE_SIGNAL", ssig, 1 );
+#else
+        setenv( "REMOVE_CORE", "1", 1 );
 #endif
     }
 
@@ -97,15 +112,17 @@ void sighandler( int signum )
         if( core ) {
             corepipe = open( corepath, O_RDONLY );
             unlink( corepath );
-            if( corepipe > 0 ) {
+            if( corepipe > 0 )
                 dup2( corepipe, 0 );
-                core = "-";
-            }
         }
 #endif
         if( devnull > 0 )
             dup2(devnull, 2);
+#ifdef PIPE_CORE
+        if( execl( AGENTPATH, AGENTPATH, NULL ) == -1 )
+#else
         if( execl( AGENTPATH, AGENTPATH, spid, ssig, core, NULL ) == -1 )
+#endif
             perror( "Error: could not execute " AGENTPATH );
         goto out;
     }

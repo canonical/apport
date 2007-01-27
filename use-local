@@ -1,6 +1,2 @@
 #!/bin/sh -e
-if [ -e /proc/sys/kernel/crashdump ]; then
-    echo $(readlink -f $(dirname $0)/bin/apport) > /proc/sys/kernel/crashdump
-else
-    echo $(readlink -f $(dirname $0)/bin/apport) > /proc/sys/kernel/crashdump-helper
-fi
+echo "|$(readlink -f $(dirname $0)/bin/apport)" > /proc/sys/kernel/core_pattern

@@ -8,5 +8,20 @@ include /usr/share/cdbs/1/class/python-distutils.mk
 DEB_DH_INSTALL_SOURCEDIR := debian/tmp
 DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-scripts usr/share/apport
 
+pre-build::
+	# install appropriate backends
+	cp backends/packaging-dpkg.py apport/packaging_impl.py
+
+common-post-build-indep::
+	make -C po
+
 clean::
+	# remove backend copies
+	rm -f apport/packaging_impl.py
 	make -C po clean
+
+ifdef _cdbs_rules_debhelper
+$(patsubst %,binary-install/%,apport-gtk) :: binary-install/%:
+	$(if $(wildcard /usr/bin/dh_iconcache),dh_iconcache -p$(cdbs_curpkg) $(DEB_DH_DESKTOP_ARGS))
+endif
+
