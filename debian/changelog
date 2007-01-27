@@ -36,8 +36,6 @@ apport (0.45) UNRELEASED; urgency=low
   * apport/report.py test suite: Use gdb to generate a test core dump, do not
     rely on kill(SIGSEGV) and the kernel to do it (since we now use a pipe in
     core_pattern).
-  * apport/report.py test suite: Refactorize generation of test crash program
-    and core dump generation.
   * backends/packaging-dpkg.py: Fix return value of get_modified_files() if
     dpkg .list file is missing.
   * apport/report.py, add_package_info(): Do not produce stray empty lines for
@@ -46,6 +44,8 @@ apport (0.45) UNRELEASED; urgency=low
     stray gzip process which randomly blocks stdin.
 
   Code cleanups:
+  * apport/report.py test suite: Refactorize generation of test crash program
+    and core dump generation.
   * Consistently use 'in'/'not in' instead of find() for substring searches.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 15:26:11 +0100
