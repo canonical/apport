@@ -430,7 +430,7 @@ class Report(ProblemReport):
 	Raises ValueError if the file exists but is invalid XML.'''
 
 	ifpath = os.path.expanduser(_ignore_file)
-	if not os.access(ifpath, os.R_OK):
+	if not os.access(ifpath, os.R_OK) or os.path.getsize(ifpath) == 0:
 	    # create a document from scratch
 	    dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)
 	else:
@@ -1023,6 +1023,11 @@ def add_info(report):
 	    self.assertEqual(crap_rep.check_ignored(), False)
 	    self.assertEqual(cp_rep.check_ignored(), False)
 
+	    # do not complain about an empty ignore file
+	    open(_ignore_file, 'w').write('')
+	    self.assertEqual(bash_rep.check_ignored(), False)
+	    self.assertEqual(crap_rep.check_ignored(), False)
+	    self.assertEqual(cp_rep.check_ignored(), False)
 	finally:
 	    shutil.rmtree(workdir)
 	    _ignore_file = orig_ignore_file
