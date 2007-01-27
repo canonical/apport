@@ -520,7 +520,7 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
+        self.assert_('libc6 ' + libcversion in pr['Dependencies'])
 
         # test without specifying a package, but with ExecutablePath
         pr = Report()
@@ -529,7 +529,7 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_package_info()
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
+        self.assert_('libc6 ' + libcversion in pr['Dependencies'])
 	# check for stray empty lines
         self.assert_('\n\n' not in pr['Dependencies'])
 
@@ -571,21 +571,21 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_proc_info()
         self.assert_(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
             'ProcMaps']).issubset(set(pr.keys())), 'report has required fields')
-        self.assert_(pr['ProcEnviron'].find('LANG='+os.environ['LANG']) >= 0)
-        self.assert_(pr['ProcEnviron'].find('USER') < 0)
-        self.assert_(pr['ProcEnviron'].find('PWD') < 0)
+        self.assert_('LANG='+os.environ['LANG'] in pr['ProcEnviron'])
+        self.assert_('USER' not in pr['ProcEnviron'])
+        self.assert_('PWD' not in pr['ProcEnviron'])
 
         # check with one additional safe environment variable
         pr = Report()
         pr.add_proc_info(extraenv=['PWD'])
-        self.assert_(pr['ProcEnviron'].find('USER') < 0)
-        self.assert_(pr['ProcEnviron'].find('PWD='+os.environ['PWD']) >= 0)
+        self.assert_('USER' not in pr['ProcEnviron'])
+        self.assert_('PWD='+os.environ['PWD'] in pr['ProcEnviron'])
 
         # check process from other user
         assert os.getuid() != 0, 'please do not run this test as root for this check.'
         pr = Report()
         pr.add_proc_info(pid=1)
-        self.assert_(pr['ProcStatus'].find('init') >= 0, pr['ProcStatus'])
+        self.assert_('init' in pr['ProcStatus'], pr['ProcStatus'])
         self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
         self.assert_(not pr.has_key('InterpreterPath'))
 
@@ -630,7 +630,7 @@ class _ApportReportTest(unittest.TestCase):
         p.communicate('\n')
         os.rmdir('testsuite-unpack')
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('./bin/apport-unpack'))
-        self.assert_(pr['InterpreterPath'].find('python') >= 0)
+        self.assert_('python' in pr['InterpreterPath'])
 
     def test_check_interpreted(self):
         '''Test _check_interpreted() behaviour.'''
@@ -804,10 +804,10 @@ int main() { return f(42); }
         self.assert_(pr.has_key('StacktraceTop'))
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr.has_key('Disassembly'))
-        self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
-        self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process') > 0)
+        self.assert_('#0  0x' in pr['Stacktrace'])
+        self.assert_('(no debugging symbols found)' not in pr['Stacktrace'])
+        self.assert_('#0  0x' in pr['ThreadStacktrace'])
+        self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
 
     def test_add_gdb_info_load(self):
@@ -825,11 +825,11 @@ int main() { return f(42); }
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr.has_key('Disassembly'))
-        self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
-        self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
-        self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process') > 0)
+        self.assert_('#0  0x' in pr['Stacktrace'])
+        self.assert_('(no debugging symbols found)' not in pr['Stacktrace'])
+        self.assert_('No symbol table info available' not in pr['Stacktrace'])
+        self.assert_('#0  0x' in pr['ThreadStacktrace'])
+        self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
 
     def test_add_gdb_info_script(self):
         '''Test add_gdb_info() behaviour with a script.'''

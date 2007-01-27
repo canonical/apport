@@ -144,7 +144,7 @@ class __DpkgPackageInfo:
         likely_lists = []
         for f in glob.glob('/var/lib/dpkg/info/*.list'):
             p = os.path.splitext(os.path.basename(f))[0].lower()
-            if fname.find(p) >= 0 or p.find(fname) >= 0:
+            if p in fname or fname in p:
                 likely_lists.append(f)
             else:
                 all_lists.append(f)

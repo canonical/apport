@@ -144,7 +144,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 else:
                     v = open(v[0]).read() # file name
 
-            if v.find('\n') >= 0:
+            if '\n' in v:
                 # multiline value
                 print >> file, k + ':'
                 print >> file, '', v.replace('\n', '\n ')

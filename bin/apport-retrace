@@ -134,7 +134,7 @@ def prepare_debugdir(report, cache_dir):
     for l in out.splitlines():
         if not l.strip():
             continue
-        if l.find('=>') > 0:
+        if '=>' in l:
             lib = os.path.realpath(l.split()[2])
         else:
             lib = os.path.realpath(l.split()[0])

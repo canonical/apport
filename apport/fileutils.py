@@ -285,7 +285,7 @@ class _ApportUtilsTest(unittest.TestCase):
         if os.getuid() == 0:
             tr = self._create_reports(True)
         else:
-            tr = [r for r in self._create_reports(True) if r.find('inaccessible') == -1]
+            tr = [r for r in self._create_reports(True) if not 'inaccessible' in r]
         self.assertEqual(set(get_new_reports()), set(tr))
 
         # now mark them as seen and check again
@@ -304,7 +304,7 @@ class _ApportUtilsTest(unittest.TestCase):
         if os.getuid() == 0:
             tr = self._create_reports(True)
         else:
-            tr = [r for r in self._create_reports(True) if r.find('inaccessible') == -1]
+            tr = [r for r in self._create_reports(True) if not 'inaccessible' in r]
         self.assertEqual(set(get_all_reports()), set(tr))
 
         # now mark them as seen and check again
@@ -330,7 +330,7 @@ class _ApportUtilsTest(unittest.TestCase):
             self.assertEqual(set(get_all_system_reports()), set(tr))
             self.assertEqual(set(get_new_system_reports()), set([]))
         else:
-            tr = [r for r in self._create_reports(True) if r.find('inaccessible') == -1]
+            tr = [r for r in self._create_reports(True) if not 'inaccessible' in r]
             self.assertEqual(set(get_all_system_reports()), set([]))
             self.assertEqual(set(get_new_system_reports()), set([]))
 
