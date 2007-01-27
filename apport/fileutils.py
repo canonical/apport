@@ -13,7 +13,7 @@ the full text of the license.
 import os, glob, subprocess, os.path
 from problem_report import ProblemReport
 
-import packaging
+#import packaging
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 

@@ -33,11 +33,14 @@ def parse_options():
         help='Do not put the new traces into the report, but write them to stdout.',
         action='store_true', dest='stdout', default=False)
     optparser.add_option('-g', '--gdb', 
-        help="Start an interactive gdb session with the report's core dump",
+        help="Start an interactive gdb session with the report's core dump (-o ignored; does not rewrite report)",
         action='store_true', dest='gdb', default=False)
     optparser.add_option('-d', '--download-debug', 
         help='Attempt to download required debug symbol packages',
         action='store_true', dest='download_debug', default=False)
+    optparser.add_option('-v', '--verbose', 
+        help='Report download progress when fetching debug symbol packages',
+        action='store_true', dest='verbose', default=False)
     optparser.add_option('-C', '--cache-dir', 
         help='Directory to use for caching downloaded .ddebs. If not given, a temporary directory is used.',
         action='store', type='string', dest='cache_dir', metavar='DIR', default=None)
@@ -53,7 +56,7 @@ def parse_options():
 
     return (args[0], opts)
 
-def install_ddebs(packages, debug_dir, cache_dir):
+def install_ddebs(packages, debug_dir, cache_dir, progress=False):
 
     d = os.path.join(cache_dir, 'archives', 'partial')
     if not os.path.isdir(d):
@@ -79,12 +82,16 @@ def install_ddebs(packages, debug_dir, cache_dir):
         p.markInstall()
 
     # fetch
-    fetcher = apt.apt_pkg.GetAcquire(apt.progress.FetchProgress())
+    if progress:
+        reporter = apt.progress.TextFetchProgress()
+    else:
+        reporter = apt.progress.FetchProgress()
+    fetcher = apt.apt_pkg.GetAcquire(reporter)
     pm = apt.apt_pkg.GetPackageManager(cache._depcache)
     try:
         res = cache._fetchArchives(fetcher, pm)
     except IOError, e:
-        print >> sys.stderr, 'Could not fetch all archives: ' + e
+        print >> sys.stderr, 'Could not fetch all archives:', e
 
 
     # make ddeb extraction use the debug_dir, not debug_dir/usr/lib/debug
@@ -105,7 +112,7 @@ def install_ddebs(packages, debug_dir, cache_dir):
 
     os.chdir(orig_cwd)
 
-def prepare_debugdir(report, cache_dir):
+def prepare_debugdir(report, cache_dir, progress=False):
     '''Generate temporary directory with necessary debug symbols for the given
     package report.
     
@@ -152,7 +159,7 @@ def prepare_debugdir(report, cache_dir):
                 needed_deps.add((pkg, dependency_versions[pkg]))
 
     # download and install the rest
-    install_ddebs(needed_deps, ddir, cache_dir)
+    install_ddebs(needed_deps, ddir, cache_dir, progress)
     return ddir
 
 #
@@ -192,10 +199,12 @@ remove_debug_dir = False
 remove_cache_dir = False
 if options.download_debug:
     if not options.cache_dir:
+        options.cache_dir = os.environ.get('APPORT_DDEB_DIR')
+    if not options.cache_dir:
         options.cache_dir = tempfile.mkdtemp()
         remove_cache_dir = True
 
-    debug_dir = prepare_debugdir(report, options.cache_dir)
+    debug_dir = prepare_debugdir(report, options.cache_dir, options.verbose)
     remove_debug_dir = True
 
 # interactive gdb session
@@ -203,7 +212,10 @@ if options.gdb:
     core = tempfile.NamedTemporaryFile()
     core.write(report['CoreDump'])
     core.flush()
-    subprocess.call(['gdb', report.get('InterpreterPath', report['ExecutablePath']), core.name])
+    subprocess.call(['gdb',
+        '--ex', 'set debug-file-directory ' + debug_dir,
+        '--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath']),
+        '--ex', 'core-file ' + core.name])
     core.close()
 else:
     # regenerate gdb info
