@@ -283,11 +283,18 @@ class UserInterface:
 		'13': 'SIGPIPE'
 	    }
 
-	    return '[apport] %s crashed with %s in %s()' % (
+	    fn = ''
+	    for l in self.report['StacktraceTop'].splitlines():
+		fname = l.split('(')[0].strip()
+		if fname != '??':
+		    fn = ' in %s()' % fname
+		    break
+
+	    return '[apport] %s crashed with %s%s' % (
 		os.path.basename(self.report['ExecutablePath']),
 		signal_names.get(self.report.get('Signal'), 
 		    'signal ' + self.report.get('Signal')),
-		self.report['StacktraceTop'].split()[0].split('(')[0].strip()
+		fn
 	    )
 
 	# Python exception
@@ -804,6 +811,21 @@ baz()
 	    self.ui.report['Signal'] = '42'
 	    self.assertEqual(self.ui.create_crash_bug_title(), 
 		'[apport] bash crashed with signal 42 in foo()')
+
+	    # do not crash on empty StacktraceTop
+	    self.ui.report['StacktraceTop'] = ''
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with signal 42')
+
+	    # do not create bug title with unknown function name
+	    self.ui.report['StacktraceTop'] = '??()\nfoo()'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with signal 42 in foo()')
+
+	    # if we do not know any function name, don't mention ??
+	    self.ui.report['StacktraceTop'] = '??()\n??()'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with signal 42')
 
 	    # Python crash
             self.ui.report = apport.Report()

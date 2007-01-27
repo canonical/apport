@@ -47,15 +47,22 @@ apport (0.45) UNRELEASED; urgency=low
     function. This avoids imposing the dpkg-query overhead for programs that
     import the apport package without doing package queries (such as any
     Python program under Ubuntu, due to the Python crash hook).
+  * apport/ui.py, create_crash_bug_title():
+    - Do not crash on an empty StacktraceTop. Closes: LP#81677
+    - Do not mention an unknown function name ('??') in the bug title;
+      instead, use the topmost function with a known name, or leave it out
+      at all.
+    - Add test cases for these situations.
 
   Code cleanups:
+
   * apport/report.py test suite: Refactorize generation of test crash program
     and core dump generation.
   * Consistently use 'in'/'not in' instead of find() for substring searches.
   * Changed the packaging backend import, so that its methods can now be
     accessed at apport.packaging instead of apport.packging.impl.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 16:12:36 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 16:25:59 +0100
 
 apport (0.44) feisty; urgency=low
 

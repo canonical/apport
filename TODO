@@ -15,8 +15,6 @@ apport-retrace:
 add_package_info():
  - test what happens on missing dependencies
 
-bug title: do not include unknown topmost stack function
-
 add kernel oops backend /usr/share/apport/kernel_hook:
  - /proc/version_signature
  - /proc/cpuinfo
