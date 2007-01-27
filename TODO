@@ -4,10 +4,6 @@ apport-gtk:
    dialog
  - check delay of progress dialog when filing a bug
 
-ui.py:
- - create standard bug title for package failure reports:
-   [apport] package <package name> does not install/upgrade: <last line of ErrorMessage>
-
 apport-retrace:
  - fetch comment and attachments from bug URL (bughelper already has
    code for that)

@@ -10,6 +10,8 @@ apport (0.45) UNRELEASED; urgency=low
   * apport/ui.py: If ProblemType is 'Package', call a new function
     self.ui_present_package_error() instead of presenting a crash. Add test
     suite checks for the package error report workflow.
+  * apport/ui.py, create_crash_bug_title(): Create default bug title for
+    package reports. Add various test cases.
   * gtk/apport-gtk{,.glade}: GTK implementation of ui_present_package_error().
 
   New feature: Maintain a per-binary blacklist to inhibit apport crash reports
@@ -62,7 +64,7 @@ apport (0.45) UNRELEASED; urgency=low
   * Changed the packaging backend import, so that its methods can now be
     accessed at apport.packaging instead of apport.packging.impl.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 16:25:59 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 16:41:21 +0100
 
 apport (0.44) feisty; urgency=low
 

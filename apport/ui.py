@@ -309,6 +309,17 @@ class UserInterface:
 		trace[-3].split()[-1]
 	    )
 
+	# package problem
+	if self.report.get('ProblemType') == 'Package' and \
+	    self.report.has_key('Package'):
+
+	    title = '[apport] package %s failed to install/upgrade' % \
+		self.report['Package']
+	    if self.report.get('ErrorMessage'):
+		title += ': ' + self.report['ErrorMessage'].splitlines()[-1]
+
+	    return title
+
 	return None
 
     def open_url(self, url):
@@ -844,6 +855,24 @@ baz()
 NameError: global name 'subprocess' is not defined'''
 	    self.assertEqual(self.ui.create_crash_bug_title(), 
 		'[apport] apport-gtk crashed with NameError in ui_present_crash()')
+
+	    # package install problem
+	    self.ui.report = apport.Report('Package')
+	    self.ui.report['Package'] = 'bash'
+
+	    # no ErrorMessage
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] package bash failed to install/upgrade')
+
+	    # empty ErrorMessage
+	    self.ui.report['ErrorMessage'] = ''
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] package bash failed to install/upgrade')
+
+	    # nonempty ErrorMessage
+	    self.ui.report['ErrorMessage'] = 'botched\nnot found\n'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] package bash failed to install/upgrade: not found')
 
         def test_handle_duplicate(self):
             '''Test handle_duplicate().'''
