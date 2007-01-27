@@ -40,8 +40,10 @@ apport (0.45) UNRELEASED; urgency=low
     and core dump generation.
   * backends/packaging-dpkg.py: Fix return value of get_modified_files() if
     dpkg .list file is missing.
+  * apport/report.py, add_package_info(): Do not produce stray empty lines for
+    uninstalled alternative dependencies.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 13:31:02 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 13:32:18 +0100
 
 apport (0.44) feisty; urgency=low
 

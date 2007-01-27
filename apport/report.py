@@ -164,15 +164,16 @@ class Report(ProblemReport):
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
-            try:
-                if self['Dependencies']:
-                    self['Dependencies'] += '\n'
-                self['Dependencies'] += '%s %s%s' % (dep,
-                    packaging.impl.get_version(dep),
-                    self._pkg_modified_suffix(dep))
-            except ValueError:
+	    try:
+		v = packaging.impl.get_version(dep)
+	    except ValueError:
                 # can happen with uninstalled alternate dependencies
                 pass
+
+	    if self['Dependencies']:
+		self['Dependencies'] += '\n'
+	    self['Dependencies'] += '%s %s%s' % (dep, v,
+		self._pkg_modified_suffix(dep))
 
     def add_os_info(self):
         '''Add operating system information.
@@ -529,6 +530,8 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
         self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
+	# check for stray empty lines
+        self.assert_('\n\n' not in pr['Dependencies'])
 
         pr = Report()
         pr['ExecutablePath'] = '/nonexisting'
