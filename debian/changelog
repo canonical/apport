@@ -19,6 +19,9 @@ apport (0.45) UNRELEASED; urgency=low
 
   * apport/report.py: Add new Report methods check_ignored() and mark_ignore()
     to check for/set ignore list entries. Add test cases.
+  * apport/ui.py: Add another return value of ui_present_crash() to specify
+    whether or not to blacklist the current crash's executable. Check workflow
+    of both responses in the test suite.
 
   Bug fixes:
 
@@ -65,9 +68,8 @@ apport (0.45) UNRELEASED; urgency=low
   * Consistently use 'in'/'not in' instead of find() for substring searches.
   * Changed the packaging backend import, so that its methods can now be
     accessed at apport.packaging instead of apport.packging.impl.
-  * 
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 17:35:09 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 17:42:17 +0100
 
 apport (0.44) feisty; urgency=low
 
