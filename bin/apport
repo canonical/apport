@@ -200,6 +200,11 @@ try:
         error_log('executable does not belong to a package, ignoring')
         sys.exit(1)
 
+    # ignore blacklisted binaries
+    if info.check_ignored():
+        error_log('executable version is blacklisted, ignoring')
+        sys.exit(1)
+
     crash_counter = 0
 
     # Create crash report file descriptor. We prefer to create the report in
