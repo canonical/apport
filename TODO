@@ -24,5 +24,3 @@ add kernel oops backend /usr/share/apport/kernel_hook:
  - lspci -vv
  - lspci -vvm
  - lsmod
-
-dpkg package backend: lazily initialize cache

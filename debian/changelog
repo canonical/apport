@@ -42,13 +42,18 @@ apport (0.45) UNRELEASED; urgency=low
     uninstalled alternative dependencies.
   * apport/report.py: Fix test_add_gdb_info_script() to not leave behind a
     stray gzip process which randomly blocks stdin.
+  * backends/packaging-dpkg.py: Do not read the dpkg status in the
+    constructor, but lazily initialize it when actually calling a query
+    function. This avoids imposing the dpkg-query overhead for programs that
+    import the apport package without doing package queries (such as any
+    Python program under Ubuntu, due to the Python crash hook).
 
   Code cleanups:
   * apport/report.py test suite: Refactorize generation of test crash program
     and core dump generation.
   * Consistently use 'in'/'not in' instead of find() for substring searches.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 15:26:11 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jan 2007 15:40:07 +0100
 
 apport (0.44) feisty; urgency=low
 

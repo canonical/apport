@@ -18,6 +18,14 @@ class __DpkgPackageInfo:
     found on Debian and derivatives such as Ubuntu.'''
 
     def __init__(self):
+	self.status = None
+
+    def __init_status(self):
+	'''Initialize the self.status dictionary.
+	
+	This is not done in the constructor to avoid adding the overhead of
+	dpkg-query to any program that merely imports the apport package.'''
+
         # fill status cache since calling dpkg -s on every package is just way
 	# too slow
         self.status = {}
@@ -36,16 +44,23 @@ class __DpkgPackageInfo:
 	
 	assert dpkg.wait() == 0
 
+    def __get_status(self, package):
+	'''Return the status of a package.'''
+
+	if not self.status:
+	    self.__init_status()
+	return self.status.get(package)
+
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._get_field(self.status.get(package), 'Version')
+        return self._get_field(self.__get_status(package), 'Version')
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
 	try:
-	    status = self.status.get(package)
+	    status = self.__get_status(package)
 	except KeyError:
             raise ValueError, 'package does not exist'
 
@@ -63,7 +78,7 @@ class __DpkgPackageInfo:
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-	return self._get_field(self.status.get(package), 'Source') or package
+	return self._get_field(self.__get_status(package), 'Source') or package
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
