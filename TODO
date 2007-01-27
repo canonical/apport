@@ -8,9 +8,6 @@ apport-retrace:
  - fetch comment and attachments from bug URL (bughelper already has
    code for that)
 
-add_package_info():
- - test what happens on missing dependencies
-
 add kernel oops backend /usr/share/apport/kernel_hook:
  - /proc/version_signature
  - /proc/cpuinfo
