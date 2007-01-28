@@ -49,7 +49,7 @@ apport (0.45) UNRELEASED; urgency=low
   * apport/report.py, add_package_info(): Do not produce stray empty lines for
     uninstalled alternative dependencies.
   * apport/report.py: Fix test_add_gdb_info_script() to not leave behind a
-    stray gzip process which randomly blocks stdin.
+    stray gzip process which randomly blocks stdin. Closes: LP#78421
   * backends/packaging-dpkg.py: Do not read the dpkg status in the
     constructor, but lazily initialize it when actually calling a query
     function. This avoids imposing the dpkg-query overhead for programs that
