@@ -35,6 +35,15 @@ def parse_options():
     optparser.add_option('-g', '--gdb', 
         help="Start an interactive gdb session with the report's core dump (-o ignored; does not rewrite report)",
         action='store_true', dest='gdb', default=False)
+    optparser.add_option('-r', '--core-file', 
+        help="Override report's CoreFile",
+        action='store', type='string', dest='core_file', metavar='CORE', default=None)
+    optparser.add_option('-x', '--executable', 
+        help="Override report's ExecutablePath",
+        action='store', type='string', dest='executable', metavar='EXE', default=None)
+    optparser.add_option('-m', '--procmaps', 
+        help="Override report's ProcMaps",
+        action='store', type='string', dest='procmaps', metavar='MAPS', default=None)
     optparser.add_option('-d', '--download-debug', 
         help='Attempt to download required debug symbol packages',
         action='store_true', dest='download_debug', default=False)
@@ -130,7 +139,9 @@ def prepare_debugdir(report, cache_dir, progress=False):
 
     ddir = tempfile.mkdtemp()
 
-    # get list of depending libraries
+    libs = set([])
+
+    # get list of ldd libraries
     needed_deps = set([])
     exe_path = report.get('InterpreterPath', report['ExecutablePath'])
     ldd = subprocess.Popen(['ldd', exe_path],
@@ -142,10 +153,23 @@ def prepare_debugdir(report, cache_dir, progress=False):
         if not l.strip():
             continue
         if l.find('=>') > 0:
-            lib = os.path.realpath(l.split()[2])
+            if l.find('not found') > 0 or l.find('=>  (0x') > 0:
+                print >> sys.stderr, 'WARNING: library %s not available to ldd -- ignoring' % l.split()[0]
+            else:
+                libs.add(os.path.realpath(l.split()[2]))
         else:
-            lib = os.path.realpath(l.split()[0])
+            libs.add(os.path.realpath(l.split()[0]))
 
+    # get list of libraries during runtime
+    if report.has_key('ProcMaps'):
+        for l in report['ProcMaps'].splitlines():
+            if not l.strip():
+                continue
+            cols = l.split()
+            if 'x' in cols[1] and len(cols) == 6 and cols[5].endswith('.so'):
+                libs.add(os.path.realpath(cols[5]))
+
+    for lib in libs:
         # symlink already existing dbg files
         libdbg = '/usr/lib/debug' + lib
         if os.path.exists(libdbg):
@@ -157,6 +181,8 @@ def prepare_debugdir(report, cache_dir, progress=False):
             pkg = apport.fileutils.find_file_package(lib)
             if pkg and pkg in dependency_versions:
                 needed_deps.add((pkg, dependency_versions[pkg]))
+            else:
+                print >> sys.stderr, 'WARNING: library %s not known to a package -- ignoring' % lib
 
     # download and install the rest
     install_ddebs(needed_deps, ddir, cache_dir, progress)
@@ -175,6 +201,13 @@ try:
 except IOError, e:
     print >> sys.stderr, 'Cannot open report file:', e
     sys.exit(1)
+
+if options.core_file:
+    report['CoreDump'] = file(options.core_file).read()
+if options.executable:
+    report['ExecutablePath'] = options.executable
+if options.procmaps:
+    report['ProcMaps'] = file(options.procmaps).read()
 
 # sanity checks
 if not report.has_key('CoreDump'):
