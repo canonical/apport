@@ -70,19 +70,22 @@ class GTKUserInterface(apport.ui.UserInterface):
 		'-u', str(os.geteuid())], stdout=subprocess.PIPE) != 0:
             self.w('label_heading_reopen').set_markup(self.str_heading % heading)
             d = self.w('dialog_crash_reopen')
+	    bl_checkbox = self.w('checkbutton_blacklist_reopen')
         else:
             self.w('label_heading').set_markup(self.str_heading % heading)
             d = self.w('dialog_crash')
+	    bl_checkbox = self.w('checkbutton_blacklist')
 
         # show crash notification dialog
         response = d.run()
         d.hide()
+	blacklist = bl_checkbox.get_active()
         if response == gtk.RESPONSE_YES:
-            return 'report'
+            return {'action': 'report', 'blacklist': blacklist}
         elif response == gtk.RESPONSE_OK:
-            return 'restart'
+            return {'action': 'restart', 'blacklist': blacklist}
         else:
-            return 'cancel'
+            return {'action': 'cancel', 'blacklist': blacklist}
 
     def ui_present_package_error(self):
 	self.w('label_heading_package_error').set_markup(

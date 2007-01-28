@@ -1,6 +1,4 @@
 #!/bin/sh -ex
-CRASHDUMP=/proc/sys/kernel/crashdump-helper
-[ -e $CRASHDUMP ] || CRASHDUMP=/proc/sys/kernel/crashdump
 export PYTHONPATH=.
 python problem_report.py -v
 python apport/fileutils.py -v
@@ -11,7 +9,7 @@ python apport/REThread.py -v
 for b in backends/*; do
     python $b -v
 done
-if [ -e $CRASHDUMP ] && [ -n "`cat $CRASHDUMP`" ]; then
+if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" = "|" ]; then
     ./test-apport kernel
 else
     ./test-apport lib

@@ -10,6 +10,8 @@ apport (0.45) UNRELEASED; urgency=low
   * apport/ui.py: If ProblemType is 'Package', call a new function
     self.ui_present_package_error() instead of presenting a crash. Add test
     suite checks for the package error report workflow.
+  * apport/ui.py, create_crash_bug_title(): Create default bug title for
+    package reports. Add various test cases.
   * gtk/apport-gtk{,.glade}: GTK implementation of ui_present_package_error().
 
   New feature: Maintain a per-binary blacklist to inhibit apport crash reports
@@ -17,6 +19,13 @@ apport (0.45) UNRELEASED; urgency=low
 
   * apport/report.py: Add new Report methods check_ignored() and mark_ignore()
     to check for/set ignore list entries. Add test cases.
+  * apport/ui.py: Add another return value of ui_present_crash() to specify
+    whether or not to blacklist the current crash's executable. Check workflow
+    of both responses in the test suite.
+  * gtk/apport-gtk{,.glade}: Add a blacklist checkbox to the crash
+    notification dialogs.
+  * bin/apport: Do nothing if the current crash is blacklisted.
+  * test-apport: Test blacklisting.
 
   Bug fixes:
 
@@ -31,9 +40,40 @@ apport (0.45) UNRELEASED; urgency=low
     - Do not EXFAIL the test for crashes in nonwriteable cwd any more, since
       it is now supposed to work (we do not write a core dump to the disk any
       more).
-  * use-local: Adapt to new core_pattern kernel interface.
+  * run-tests, use-local: Adapt to new core_pattern kernel interface.
+  * apport: Improve logging of exceptions, include environment variables.
+  * apport/report.py test suite: Use gdb to generate a test core dump, do not
+    rely on kill(SIGSEGV) and the kernel to do it (since we now use a pipe in
+    core_pattern).
+  * backends/packaging-dpkg.py: Fix return value of get_modified_files() if
+    dpkg .list file is missing.
+  * apport/report.py, add_package_info(): Do not produce stray empty lines for
+    uninstalled alternative dependencies.
+  * apport/report.py: Fix test_add_gdb_info_script() to not leave behind a
+    stray gzip process which randomly blocks stdin. Closes: LP#78421
+  * backends/packaging-dpkg.py: Do not read the dpkg status in the
+    constructor, but lazily initialize it when actually calling a query
+    function. This avoids imposing the dpkg-query overhead for programs that
+    import the apport package without doing package queries (such as any
+    Python program under Ubuntu, due to the Python crash hook).
+  * apport/ui.py, create_crash_bug_title():
+    - Do not crash on an empty StacktraceTop. Closes: LP#81677
+    - Do not mention an unknown function name ('??') in the bug title;
+      instead, use the topmost function with a known name, or leave it out
+      at all.
+    - Add test cases for these situations.
+  * apport/report.py, _get_ignore_dom(): Do not throw an error for an empty
+    ignore list file.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 25 Jan 2007 17:40:14 +0100
+  Code cleanups:
+
+  * apport/report.py test suite: Refactorize generation of test crash program
+    and core dump generation.
+  * Consistently use 'in'/'not in' instead of find() for substring searches.
+  * Changed the packaging backend import, so that its methods can now be
+    accessed at apport.packaging instead of apport.packging.impl.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 28 Jan 2007 12:34:05 +0100
 
 apport (0.44) feisty; urgency=low
 

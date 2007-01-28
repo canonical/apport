@@ -152,8 +152,8 @@ def prepare_debugdir(report, cache_dir, progress=False):
     for l in out.splitlines():
         if not l.strip():
             continue
-        if l.find('=>') > 0:
-            if l.find('not found') > 0 or l.find('=>  (0x') > 0:
+        if '=>' in l:
+            if 'not found' in l 0 or '=>  (0x' in l:
                 print >> sys.stderr, 'WARNING: library %s not available to ldd -- skipping' % l.split()[0]
             else:
                 libs.add(os.path.realpath(l.split()[2]))

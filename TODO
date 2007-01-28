@@ -1,15 +1,17 @@
-apport:
-
-problem_report.py:
-
 apport-gtk:
  - drag&drop URL
  - add gksudo wrapper for disabling apport, and checkbox to crash
    dialog
  - check delay of progress dialog when filing a bug
 
-kernel hook:
+apport-retrace:
+ - fetch comment and attachments from bug URL (bughelper already has
+   code for that)
 
-general:
- - apport-retrace: fetch comment and attachments from bug URL
-   (bughelper already has code for that)
+add kernel oops backend /usr/share/apport/kernel_hook:
+ - /proc/version_signature
+ - /proc/cpuinfo
+ - dmesg
+ - lspci -vv
+ - lspci -vvm
+ - lsmod

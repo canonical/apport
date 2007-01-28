@@ -110,14 +110,23 @@ class UserInterface:
         # ask the user about what to do with the current crash
 	if self.report.get('ProblemType') == 'Package':
 	    response = self.ui_present_package_error()
+	    if response == 'cancel':
+		return
+	    assert response == 'report'
 	else:
 	    response = self.ui_present_crash(self.get_desktop_entry())
-        if response == 'cancel':
-            return
-        if response == 'restart':
-            self.restart()
-            return
-        assert response == 'report'
+	    assert response.has_key('action')
+	    assert response.has_key('blacklist')
+
+	    if response['blacklist']:
+		self.report.mark_ignore()
+
+	    if response['action'] == 'cancel':
+		return
+	    if response['action'] == 'restart':
+		self.restart()
+		return
+	    assert response['action'] == 'report'
 
         # we want to file a bug now
         self.collect_info()
@@ -283,24 +292,42 @@ class UserInterface:
 		'13': 'SIGPIPE'
 	    }
 
-	    return '[apport] %s crashed with %s in %s()' % (
+	    fn = ''
+	    for l in self.report['StacktraceTop'].splitlines():
+		fname = l.split('(')[0].strip()
+		if fname != '??':
+		    fn = ' in %s()' % fname
+		    break
+
+	    return '[apport] %s crashed with %s%s' % (
 		os.path.basename(self.report['ExecutablePath']),
 		signal_names.get(self.report.get('Signal'), 
 		    'signal ' + self.report.get('Signal')),
-		self.report['StacktraceTop'].split()[0].split('(')[0].strip()
+		fn
 	    )
 
 	# Python exception
 	if self.report.has_key('Traceback') and \
 	    self.report.has_key('ExecutablePath'):
 
-	    trace = self.report['Traceback'].split('\n')
+	    trace = self.report['Traceback'].splitlines()
 	    
 	    return '[apport] %s crashed with %s in %s()' % (
 		os.path.basename(self.report['ExecutablePath']),
 		trace[-1].split(':')[0],
 		trace[-3].split()[-1]
 	    )
+
+	# package problem
+	if self.report.get('ProblemType') == 'Package' and \
+	    self.report.has_key('Package'):
+
+	    title = '[apport] package %s failed to install/upgrade' % \
+		self.report['Package']
+	    if self.report.get('ErrorMessage'):
+		title += ': ' + self.report['ErrorMessage'].splitlines()[-1]
+
+	    return title
 
 	return None
 
@@ -461,8 +488,13 @@ might be helpful for the developers.'))
         If the package can be mapped to a desktop file, an xdg.DesktopEntry is
         passed as an argument; this can be used for enhancing strings, etc. 
         
-        Return the action: ignore the crash ('cancel'), restart the crashed
-        application ('restart'), or report a bug about the crash ('report').'''
+        Return the action and options as a dictionary: 
+	
+	- Valid values for the 'action' key: ignore the crash ('cancel'), restart
+	  the crashed application ('restart'), or report a bug about the crash
+	  ('report').
+	- Valid values for the 'blacklist' key: True or False (True will cause
+	  the invocation of report.mark_ignore()).'''
 
         raise Exception, 'this function must be overridden by subclasses'
 
@@ -620,6 +652,10 @@ if  __name__ == '__main__':
         def setUp(self):
             self.orig_report_dir = apport.fileutils.report_dir
             apport.fileutils.report_dir = tempfile.mkdtemp()
+	    self.orig_ignore_file = apport.report._ignore_file
+	    (fd, apport.report._ignore_file) = tempfile.mkstemp()
+	    os.close(fd)
+
             # need to do this to not break ui's ctor
             self.orig_argv = sys.argv
             sys.argv = ['ui-test']
@@ -647,6 +683,10 @@ if  __name__ == '__main__':
             shutil.rmtree(apport.fileutils.report_dir)
             apport.fileutils.report_dir = self.orig_report_dir
             self.orig_report_dir = None
+
+	    os.unlink(apport.report._ignore_file)
+	    apport.report._ignore_file = self.orig_ignore_file
+
             self.ui = None
             self.report_file.close()
 
@@ -805,6 +845,21 @@ baz()
 	    self.assertEqual(self.ui.create_crash_bug_title(), 
 		'[apport] bash crashed with signal 42 in foo()')
 
+	    # do not crash on empty StacktraceTop
+	    self.ui.report['StacktraceTop'] = ''
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with signal 42')
+
+	    # do not create bug title with unknown function name
+	    self.ui.report['StacktraceTop'] = '??()\nfoo()'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with signal 42 in foo()')
+
+	    # if we do not know any function name, don't mention ??
+	    self.ui.report['StacktraceTop'] = '??()\n??()'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with signal 42')
+
 	    # Python crash
             self.ui.report = apport.Report()
 	    self.ui.report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
@@ -822,6 +877,24 @@ baz()
 NameError: global name 'subprocess' is not defined'''
 	    self.assertEqual(self.ui.create_crash_bug_title(), 
 		'[apport] apport-gtk crashed with NameError in ui_present_crash()')
+
+	    # package install problem
+	    self.ui.report = apport.Report('Package')
+	    self.ui.report['Package'] = 'bash'
+
+	    # no ErrorMessage
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] package bash failed to install/upgrade')
+
+	    # empty ErrorMessage
+	    self.ui.report['ErrorMessage'] = ''
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] package bash failed to install/upgrade')
+
+	    # nonempty ErrorMessage
+	    self.ui.report['ErrorMessage'] = 'botched\nnot found\n'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] package bash failed to install/upgrade: not found')
 
         def test_handle_duplicate(self):
             '''Test handle_duplicate().'''
@@ -932,7 +1005,7 @@ NameError: global name 'subprocess' is not defined'''
             # cancel crash notification dialog
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = 'cancel'
+            self.ui.present_crash_response = {'action': 'cancel', 'blacklist': False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
@@ -942,7 +1015,7 @@ NameError: global name 'subprocess' is not defined'''
             # report in crash notification dialog, cancel details report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = 'report'
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
             self.ui.present_details_response = 'cancel'
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
@@ -953,7 +1026,7 @@ NameError: global name 'subprocess' is not defined'''
             # report in crash notification dialog, send full report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = 'report'
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
             self.ui.present_details_response = 'full'
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
@@ -970,7 +1043,7 @@ NameError: global name 'subprocess' is not defined'''
             # report in crash notification dialog, send reduced report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = 'report'
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
             self.ui.present_details_response = 'reduced'
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
@@ -983,6 +1056,21 @@ NameError: global name 'subprocess' is not defined'''
             self.assert_('Stacktrace' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
             self.assert_(not self.ui.report.has_key('CoreDump'))
+
+	    # so far we did not blacklist, verify that
+	    self.assert_(not self.ui.report.check_ignored())
+
+            # cancel crash notification dialog and blacklist
+            r.write(open(report_file, 'w'))
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_crash_response = {'action': 'cancel', 'blacklist': True }
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.ic_progress_pulses, 0)
+
+	    self.assert_(self.ui.report.check_ignored())
 
         def test_run_crash_package(self):
             '''Test run_crash() for a package error.'''

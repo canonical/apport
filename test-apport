@@ -12,6 +12,8 @@ required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
     'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal', 'UserGroups']
 
 local_reportdir = None
+ifpath = os.path.expanduser(apport.report._ignore_file)
+orig_ignore_file = None
 
 def run(argv, msg=None, stdout=False):
     '''Execute the given program with arguments and verify that it exits
@@ -128,6 +130,11 @@ try:
                 'kernel crash dump helper is not active; please enable before running this test.'
 
     assert apport.fileutils.get_all_reports() == [], 'no reports already present'
+
+    # move aside current ignore file
+    if os.path.exists(ifpath):
+	orig_ignore_file = ifpath + '.apporttest'
+	os.rename(ifpath, orig_ignore_file)
 
     if mode == 'lib':
         print '* Check test process creation/killing without apport'
@@ -275,10 +282,25 @@ try:
     assert os.path.exists(report)
     pr.load(open(report))
     assert set(required_fields).issubset(set(pr.keys()))
+    apport.fileutils.delete_report(report)
+    assert apport.fileutils.get_all_reports() == [], \
+        'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
+
+    print '* Check that binary blacklisting works'
+    pr.mark_ignore()
+    check_crash()
+    assert apport.fileutils.get_all_reports() == [], \
+        'no reports present for ignored binary'
 
     all_passed = True
 
 finally:
+    # clean up our ignore file
+    if os.path.exists(ifpath):
+	os.unlink(ifpath)
+    if orig_ignore_file:
+	os.rename(orig_ignore_file, ifpath)
+
     # clean up temporary work directory
     try:
         apport.fileutils.delete_report(report)

@@ -18,7 +18,8 @@ import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
 from problem_report import ProblemReport
-import fileutils, packaging
+import fileutils
+from packaging_impl import impl as packaging
 
 _hook_dir = '/usr/share/apport/'
 
@@ -33,10 +34,10 @@ def _transitive_dependencies(package, depends_set):
     '''Recursively add dependencies of package to depends_set.'''
 
     try:
-        cur_ver = packaging.impl.get_version(package)
+        cur_ver = packaging.get_version(package)
     except ValueError:
         return
-    for d in packaging.impl.get_dependencies(package):
+    for d in packaging.get_dependencies(package):
         if not d in depends_set:
             depends_set.add(d)
             _transitive_dependencies(d, depends_set)
@@ -131,7 +132,7 @@ class Report(ProblemReport):
         If package has only unmodified files, return the empty string. If not,
         return ' [modified: ...]' with a list of modified files.'''
 
-        mod = packaging.impl.get_modified_files(package)
+        mod = packaging.get_modified_files(package)
         if mod:
             return ' [modified: %s]' % ' '.join(mod)
         else:
@@ -154,9 +155,9 @@ class Report(ProblemReport):
                 return
 
         self['Package'] = '%s %s%s' % (package,
-            packaging.impl.get_version(package),
+            packaging.get_version(package),
             self._pkg_modified_suffix(package))
-        self['SourcePackage'] = packaging.impl.get_source(package)
+        self['SourcePackage'] = packaging.get_source(package)
 
         # get set of all transitive dependencies
         dependencies = set([])
@@ -165,15 +166,16 @@ class Report(ProblemReport):
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
-            try:
-                if self['Dependencies']:
-                    self['Dependencies'] += '\n'
-                self['Dependencies'] += '%s %s%s' % (dep,
-                    packaging.impl.get_version(dep),
-                    self._pkg_modified_suffix(dep))
-            except ValueError:
+	    try:
+		v = packaging.get_version(dep)
+	    except ValueError:
                 # can happen with uninstalled alternate dependencies
                 pass
+
+	    if self['Dependencies']:
+		self['Dependencies'] += '\n'
+	    self['Dependencies'] += '%s %s%s' % (dep, v,
+		self._pkg_modified_suffix(dep))
 
     def add_os_info(self):
         '''Add operating system information.
@@ -432,7 +434,7 @@ class Report(ProblemReport):
 	Raises ValueError if the file exists but is invalid XML.'''
 
 	ifpath = os.path.expanduser(_ignore_file)
-	if not os.access(ifpath, os.R_OK):
+	if not os.access(ifpath, os.R_OK) or os.path.getsize(ifpath) == 0:
 	    # create a document from scratch
 	    dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)
 	else:
@@ -507,15 +509,15 @@ class Report(ProblemReport):
 # Unit test
 #
 
-import unittest, shutil, signal, time, resource
+import unittest, shutil, signal, time
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
         '''Test add_package_info() behaviour.'''
 
         # determine bash version
-        bashversion = packaging.impl.get_version('bash')
-        libcversion = packaging.impl.get_version('libc6')
+        bashversion = packaging.get_version('bash')
+        libcversion = packaging.get_version('libc6')
 
         pr = Report()
         self.assertRaises(ValueError, pr.add_package_info, 'nonexistant_package')
@@ -523,7 +525,7 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
+        self.assert_('libc6 ' + libcversion in pr['Dependencies'])
 
         # test without specifying a package, but with ExecutablePath
         pr = Report()
@@ -532,7 +534,9 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_package_info()
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assert_(pr['Dependencies'].find('libc6 ' + libcversion) >= 0)
+        self.assert_('libc6 ' + libcversion in pr['Dependencies'])
+	# check for stray empty lines
+        self.assert_('\n\n' not in pr['Dependencies'])
 
         pr = Report()
         pr['ExecutablePath'] = '/nonexisting'
@@ -572,21 +576,21 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_proc_info()
         self.assert_(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
             'ProcMaps']).issubset(set(pr.keys())), 'report has required fields')
-        self.assert_(pr['ProcEnviron'].find('LANG='+os.environ['LANG']) >= 0)
-        self.assert_(pr['ProcEnviron'].find('USER') < 0)
-        self.assert_(pr['ProcEnviron'].find('PWD') < 0)
+        self.assert_('LANG='+os.environ['LANG'] in pr['ProcEnviron'])
+        self.assert_('USER' not in pr['ProcEnviron'])
+        self.assert_('PWD' not in pr['ProcEnviron'])
 
         # check with one additional safe environment variable
         pr = Report()
         pr.add_proc_info(extraenv=['PWD'])
-        self.assert_(pr['ProcEnviron'].find('USER') < 0)
-        self.assert_(pr['ProcEnviron'].find('PWD='+os.environ['PWD']) >= 0)
+        self.assert_('USER' not in pr['ProcEnviron'])
+        self.assert_('PWD='+os.environ['PWD'] in pr['ProcEnviron'])
 
         # check process from other user
         assert os.getuid() != 0, 'please do not run this test as root for this check.'
         pr = Report()
         pr.add_proc_info(pid=1)
-        self.assert_(pr['ProcStatus'].find('init') >= 0, pr['ProcStatus'])
+        self.assert_('init' in pr['ProcStatus'], pr['ProcStatus'])
         self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
         self.assert_(not pr.has_key('InterpreterPath'))
 
@@ -631,7 +635,7 @@ class _ApportReportTest(unittest.TestCase):
         p.communicate('\n')
         os.rmdir('testsuite-unpack')
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('./bin/apport-unpack'))
-        self.assert_(pr['InterpreterPath'].find('python') >= 0)
+        self.assert_('python' in pr['InterpreterPath'])
 
     def test_check_interpreted(self):
         '''Test _check_interpreted() behaviour.'''
@@ -746,16 +750,15 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
-    def test_add_gdb_info(self):
-        '''Test add_gdb_info() behaviour with core dump file reference.'''
-
-        pr = Report()
-        # should not throw an exception for missing fields
-        pr.add_gdb_info()
+    def _generate_sigsegv_report(self, file=None):
+	'''Create a test executable which will die with a SIGSEGV, generate a
+	core dump for it, create a problem report with those two arguments
+	(ExecutablePath and CoreDump) and call add_gdb_info().
+	
+	If file is given, the report is written into it. Return the Report.'''
 
         workdir = None
         orig_cwd = os.getcwd()
-        orig_ulimitc = resource.getrlimit(resource.RLIMIT_CORE)
         pr = Report()
         try:
             workdir = tempfile.mkdtemp()
@@ -772,9 +775,9 @@ int main() { return f(42); }
             assert subprocess.call(['gcc', '-g', 'crash.c', '-o', 'crash']) == 0
             assert os.path.exists('crash')
 
-            # call it and verify that it dumped core
-            resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-            subprocess.call(['./crash'])
+            # call it through gdb and dump core
+            subprocess.call(['gdb', '--batch', '--ex', 'run', '--ex',
+		'generate-core-file core', './crash'], stdout=subprocess.PIPE)
             assert os.path.exists('core')
             assert subprocess.call(['readelf', '-n', 'core'],
                 stdout=subprocess.PIPE) == 0
@@ -783,61 +786,41 @@ int main() { return f(42); }
             pr['CoreDump'] = (os.path.join(workdir, 'core'),)
 
             pr.add_gdb_info()
+	    if file:
+		pr.write(file)
+		file.flush()
         finally:
-            resource.setrlimit(resource.RLIMIT_CORE, orig_ulimitc)
             os.chdir(orig_cwd)
             if workdir:
                 shutil.rmtree(workdir)
 
-        self.assert_(pr.has_key('Stacktrace'))
-        self.assert_(pr.has_key('ThreadStacktrace'))
-        self.assert_(pr.has_key('StacktraceTop'))
-        self.assert_(pr.has_key('Registers'))
-        self.assert_(pr.has_key('Disassembly'))
-        self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
-        self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process') > 0)
-        self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
+	return pr
 
-    def test_add_gdb_info_load(self):
-        '''Test add_gdb_info() behaviour with inline core dump.'''
+    def test_add_gdb_info(self):
+        '''Test add_gdb_info() behaviour with core dump file reference.'''
 
         pr = Report()
         # should not throw an exception for missing fields
         pr.add_gdb_info()
 
-        # create a test executable
-        test_executable = '/bin/cat'
-        assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
-        pid = os.fork()
-        if pid == 0:
-            os.setsid()
-            os.execv(test_executable, [test_executable])
-            assert False, 'Could not execute ' + test_executable
+	pr = self._generate_sigsegv_report()
+        self.assert_(pr.has_key('Stacktrace'))
+        self.assert_(pr.has_key('ThreadStacktrace'))
+        self.assert_(pr.has_key('StacktraceTop'))
+        self.assert_(pr.has_key('Registers'))
+        self.assert_(pr.has_key('Disassembly'))
+        self.assert_('#0  0x' in pr['Stacktrace'])
+        self.assert_('(no debugging symbols found)' not in pr['Stacktrace'])
+        self.assert_('#0  0x' in pr['ThreadStacktrace'])
+        self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
+        self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
 
-        # generate a core dump
-        (fd, coredump) = tempfile.mkstemp()
-        try:
-            os.close(fd)
-            assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE) == 0
+    def test_add_gdb_info_load(self):
+        '''Test add_gdb_info() behaviour with inline core dump.'''
 
-            # verify that it's a proper ELF file
-            assert subprocess.call(['readelf', '-n', coredump],
-                stdout=subprocess.PIPE) == 0
-
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
-
-            pr['ExecutablePath'] = test_executable
-            pr['CoreDump'] = (coredump,)
-            rep = tempfile.NamedTemporaryFile()
-            pr.write(rep)
-            rep.flush()
-        finally:
-            os.unlink(coredump)
+	rep = tempfile.NamedTemporaryFile()
+	self._generate_sigsegv_report(rep)
+	rep.seek(0)
 
         pr = Report()
         pr.load(open(rep.name))
@@ -847,50 +830,39 @@ int main() { return f(42); }
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr.has_key('Disassembly'))
-        self.assert_(pr['Stacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['Stacktrace'].find('(no debugging symbols found)') < 0)
-        self.assert_(pr['Stacktrace'].find('No symbol table info available') < 0)
-        self.assert_(pr['ThreadStacktrace'].find('#0  0x') > 0)
-        self.assert_(pr['ThreadStacktrace'].find('Thread 1 (process %i)' % pid) > 0)
+        self.assert_('#0  0x' in pr['Stacktrace'])
+        self.assert_('(no debugging symbols found)' not in pr['Stacktrace'])
+        self.assert_('No symbol table info available' not in pr['Stacktrace'])
+        self.assert_('#0  0x' in pr['ThreadStacktrace'])
+        self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
 
     def test_add_gdb_info_script(self):
         '''Test add_gdb_info() behaviour with a script.'''
 
-        pr = Report()
-        # should not throw an exception for missing fields
-        pr.add_gdb_info()
-
-        # create a test executable
-        test_executable = '/bin/zgrep'
-        assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
-        pid = os.fork()
-        if pid == 0:
-            os.setsid()
-            os.execv(test_executable, [test_executable, 'x'])
-            assert False, 'Could not execute ' + test_executable
-
-        # generate a core dump
         (fd, coredump) = tempfile.mkstemp()
+        (fd2, script) = tempfile.mkstemp()
         try:
             os.close(fd)
-            assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE) == 0
+            os.close(fd2)
 
-            # verify that it's a proper ELF file
+	    # create a test script which produces a core dump for us
+	    open(script, 'w').write('''#!/bin/sh
+gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
+	    os.chmod(script, 0755)
+
+	    # call script and verify that it gives us a proper ELF core dump
+            assert subprocess.call([script]) == 0
             assert subprocess.call(['readelf', '-n', coredump],
                 stdout=subprocess.PIPE) == 0
 
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
-
+	    pr = Report()
             pr['InterpreterPath'] = '/bin/sh'
-            pr['ExecutablePath'] = test_executable
+            pr['ExecutablePath'] = script
             pr['CoreDump'] = (coredump,)
-
             pr.add_gdb_info()
         finally:
             os.unlink(coredump)
+            os.unlink(script)
 
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
@@ -1055,6 +1027,11 @@ def add_info(report):
 	    self.assertEqual(crap_rep.check_ignored(), False)
 	    self.assertEqual(cp_rep.check_ignored(), False)
 
+	    # do not complain about an empty ignore file
+	    open(_ignore_file, 'w').write('')
+	    self.assertEqual(bash_rep.check_ignored(), False)
+	    self.assertEqual(crap_rep.check_ignored(), False)
+	    self.assertEqual(cp_rep.check_ignored(), False)
 	finally:
 	    shutil.rmtree(workdir)
 	    _ignore_file = orig_ignore_file
