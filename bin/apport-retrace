@@ -16,7 +16,7 @@ import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob
 import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
 import apt, apt_inst
-import apport, apport.fileutils
+import apport, apport.fileutils, apport.packaging
 
 #
 # functions
@@ -141,7 +141,7 @@ def prepare_debugdir(report, cache_dir, progress=False):
 
     libs = set([])
 
-    # get list of ldd libraries
+    # get list of base ldd libraries
     needed_deps = set([])
     exe_path = report.get('InterpreterPath', report['ExecutablePath'])
     ldd = subprocess.Popen(['ldd', exe_path],
@@ -154,13 +154,13 @@ def prepare_debugdir(report, cache_dir, progress=False):
             continue
         if l.find('=>') > 0:
             if l.find('not found') > 0 or l.find('=>  (0x') > 0:
-                print >> sys.stderr, 'WARNING: library %s not available to ldd -- ignoring' % l.split()[0]
+                print >> sys.stderr, 'WARNING: library %s not available to ldd -- skipping' % l.split()[0]
             else:
                 libs.add(os.path.realpath(l.split()[2]))
         else:
             libs.add(os.path.realpath(l.split()[0]))
 
-    # get list of libraries during runtime
+    # get list of libraries at runtime
     if report.has_key('ProcMaps'):
         for l in report['ProcMaps'].splitlines():
             if not l.strip():
@@ -182,7 +182,14 @@ def prepare_debugdir(report, cache_dir, progress=False):
             if pkg and pkg in dependency_versions:
                 needed_deps.add((pkg, dependency_versions[pkg]))
             else:
-                print >> sys.stderr, 'WARNING: library %s not known to a package -- ignoring' % lib
+                try:
+                    ver = apport.packaging.impl.get_version(pkg)
+                except ValueError:
+                    print >> sys.stderr, 'WARNING: library %s not found in system packages -- ignoring' % lib
+                else:
+                    if not (pkg, ver) in needed_deps:
+                        print >> sys.stderr, 'WARNING: library %s not known to %s dependencies (using %s %s)' % (lib, report['Package'], pkg, ver)
+                        needed_deps.add((pkg, ver))
 
     # download and install the rest
     install_ddebs(needed_deps, ddir, cache_dir, progress)

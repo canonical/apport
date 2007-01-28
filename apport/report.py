@@ -18,7 +18,7 @@ import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
 from problem_report import ProblemReport
-import fileutils #, packaging
+import fileutils, packaging
 
 _hook_dir = '/usr/share/apport/'
 
