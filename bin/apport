@@ -232,6 +232,7 @@ try:
     drop_privileges(pid)
 
     info.add_user_info()
+    info.add_os_info()
 
     if crash_counter > 0:
         info['CrashCounter'] = '%i' % crash_counter

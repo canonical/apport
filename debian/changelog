@@ -21,8 +21,10 @@ apport (0.47) UNRELEASED; urgency=low
     (see bug-reporting-tool spec). Also add a Makefile to do the
     intltool-merge dance, add it to POTFILES.in, and ship it in
     debian/apport-gtk.install.
+  * bin/apport: Call add_os_info(), so that we get architecture information
+    even for 'naked' reports which didn't go through UI enrichment.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 15:52:35 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 16:08:31 +0100
 
 apport (0.46) feisty; urgency=low
 
