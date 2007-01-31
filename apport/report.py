@@ -377,7 +377,7 @@ class Report(ProblemReport):
 	assert self.has_key('Package')
 	sys.path.append(_hook_dir)
 	try:
-	    m = __import__(self['Package'])
+	    m = __import__(self['Package'].split(' ')[0])
 	    m.add_info(self)
 	except (ImportError, AttributeError, TypeError):
 	    pass
@@ -964,13 +964,30 @@ def add_info(report):
 	    r = Report()
 	    self.assertRaises(AssertionError, r.add_hooks_info)
 
+	    r = Report()
 	    r['Package'] = 'bar'
 	    # should not throw any exceptions
 	    r.add_hooks_info()
 	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
 		'Package']), 'report has required fields')
 
+	    r = Report()
+	    r['Package'] = 'baz 1.2-3'
+	    # should not throw any exceptions
+	    r.add_hooks_info()
+	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+		'Package']), 'report has required fields')
+
+	    r = Report()
 	    r['Package'] = 'foo'
+	    r.add_hooks_info()
+	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+		'Package', 'Field1', 'Field2']), 'report has required fields')
+	    self.assertEqual(r['Field1'], 'Field 1')
+	    self.assertEqual(r['Field2'], 'Field 2\nBla')
+
+	    r = Report()
+	    r['Package'] = 'foo 4.5-6'
 	    r.add_hooks_info()
 	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
 		'Package', 'Field1', 'Field2']), 'report has required fields')
