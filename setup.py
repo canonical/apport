@@ -13,7 +13,6 @@ for filepath in glob.glob("po/mo/*/LC_MESSAGES/*.mo"):
     mo_files.append((targetpath, [filepath]))
 
 setup(name='apport',
-      version='0.1',
       author='Martin Pitt',
       author_email='martin.pitt@ubuntu.com',
       maintainer='Martin Pitt',
