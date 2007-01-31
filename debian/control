@@ -7,7 +7,7 @@ Standards-Version: 3.7.2
 
 Package: apport
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.41), lsb-base (>= 3.0-6), sysv-rc (>= 2.86.ds1-14.1ubuntu2)
+Depends: python (>= 2.4), python-apport (>= 0.45), lsb-base (>= 3.0-6), sysv-rc (>= 2.86.ds1-14.1ubuntu2)
 Description: automatically generate crash reports for debugging
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump
@@ -19,7 +19,7 @@ Description: automatically generate crash reports for debugging
 Package: apport-gtk
 Section: gnome
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.41), python-gtk2, python-glade2, python-xdg, apport (>= 0.41), procps
+Depends: python (>= 2.4), python-apport (>= 0.45), python-gtk2, python-glade2, python-xdg, apport (>= 0.41), procps
 Recommends: update-notifier
 Description: GTK frontend for the apport crash report system
  apport automatically collects data from crashed processes and
