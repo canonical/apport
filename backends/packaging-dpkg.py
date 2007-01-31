@@ -30,7 +30,7 @@ class __DpkgPackageInfo:
 	# too slow
         self.status = {}
 	dpkg = subprocess.Popen(['dpkg-query', '--show', 
-	    '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends:${Depends}\nSource: ${Source}\n\n',
+	    '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\n\n',
 	    '*'], stdout=subprocess.PIPE)
 
 	record = ''
@@ -312,15 +312,21 @@ Description: Test
             d  = impl.get_dependencies('bash')
             self.assert_(len(d) > 2)
             self.assert_('libc6' in d)
+            for dep in d:
+                self.assert_(impl.get_version(dep))
 
             # Pre-Depends: only
             d  = impl.get_dependencies('coreutils')
             self.assert_(len(d) >= 1)
             self.assert_('libc6' in d)
+            for dep in d:
+                self.assert_(impl.get_version(dep))
 
             # Depends: only
             d  = impl.get_dependencies('libc6')
             self.assert_(len(d) >= 1)
+            for dep in d:
+                self.assert_(impl.get_version(dep))
 
         def test_get_source(self):
             '''Test get_source().'''
