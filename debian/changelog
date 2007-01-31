@@ -9,8 +9,9 @@ apport (0.47) UNRELEASED; urgency=low
       libraries loaded at runtime (plugins).
     - Set correct debug file directory when starting an interactive gdb
       session with -g.
+  * debian/control: Add gdb dependency to python-apport.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 09:28:43 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 09:44:41 +0100
 
 apport (0.46) feisty; urgency=low
 
