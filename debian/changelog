@@ -2,8 +2,11 @@ apport (0.46) UNRELEASED; urgency=low
 
   * debian/control: Bump dependencies to python-apport due to recent changes
     in expected return values in some UI functions. Closes: LP#82267
+  * bin/package_hook: Remove erroneous 'import apport.packaging', which
+    shadows the packaging variable in the apport package. This unbreaks the
+    package problem hook. Closes: LP#82297
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 07:43:06 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 07:51:24 +0100
 
 apport (0.45) feisty; urgency=low
 
