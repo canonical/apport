@@ -24,8 +24,10 @@ apport (0.47) UNRELEASED; urgency=low
   * bin/apport: Call add_os_info(), so that we get architecture information
     even for 'naked' reports which didn't go through UI enrichment.
   * setup.py: Remove version attribute, we do not update and use it anyway.
+  * Add ./test-hooks: Test suite for the various package hooks shipped with
+    apport. Test the package problem hook for now.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 16:14:56 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 17:31:49 +0100
 
 apport (0.46) feisty; urgency=low
 
