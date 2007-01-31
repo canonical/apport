@@ -14,11 +14,13 @@ pre-build::
 
 common-post-build-indep::
 	make -C po
+	make -C gtk
 
 clean::
 	# remove backend copies
 	rm -f apport/packaging_impl.py
 	make -C po clean
+	make -C gtk clean
 
 ifdef _cdbs_rules_debhelper
 $(patsubst %,binary-install/%,apport-gtk) :: binary-install/%:
