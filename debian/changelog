@@ -1,3 +1,17 @@
+apport (0.47) UNRELEASED; urgency=low
+
+  * debian/control: Add missing python-apt dependency to apport
+    (apport-retrace needs it). Thanks to Kees Cook for noticing.
+  * Merged various apport-retrace improvements from Kees' branch:
+    - Add various options to override some report fields with local values.
+    - Add --verbose option and be quiet by default.
+    - Read ProcMaps for additional library dependencies, to also catch
+      libraries loaded at runtime (plugins).
+    - Set correct debug file directory when starting an interactive gdb
+      session with -g.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 09:28:43 +0100
+
 apport (0.46) feisty; urgency=low
 
   * debian/control: Bump dependencies to python-apport due to recent changes
