@@ -12,7 +12,6 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
-import random
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -322,9 +321,6 @@ class Report(ProblemReport):
             else:
                 core = self['CoreDump'][0]
 
-            # choose random separator
-            separator = random.randrange(-999999,-999,100)
-
             gdb_reports = {
                            'Registers': 'info registers',
                            'Disassembly': 'x/16i $pc',
@@ -341,7 +337,7 @@ class Report(ProblemReport):
             for name, cmd in gdb_reports.iteritems():
 		value_keys.append(name)
 		# append the actual command and something that acts as a separator
-		command += ['--ex', cmd, '--ex', 'p %s' % separator]
+		command += ['--ex', cmd, '--ex', 'p -99']
 	    # remove the very last separator
 	    command.pop()
 	    command.pop()
@@ -352,7 +348,7 @@ class Report(ProblemReport):
 		'No symbol table info available.\n','')
 
 	    # split the output into the various fields
-	    part_re = re.compile('^\$\d+\s*=\s*%s$' % separator, re.MULTILINE)
+	    part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
 	    for part in part_re.split(out):
 		self[value_keys.pop(0)] = part.replace('\n\n', '\n.\n').strip()
         finally:

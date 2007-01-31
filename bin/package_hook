@@ -12,7 +12,7 @@
 # the full text of the license.
 
 import sys, optparse, os.path, os
-import apport, apport.fileutils, apport.packaging
+import apport, apport.fileutils
 
 def mkattrname(path):
     '''Convert a file path to a problem report attribute name.'''

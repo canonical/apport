@@ -16,7 +16,7 @@ import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob
 import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
 import apt, apt_inst
-import apport, apport.fileutils, apport.packaging
+import apport, apport.fileutils
 
 #
 # functions
@@ -183,7 +183,7 @@ def prepare_debugdir(report, cache_dir, progress=False):
                 needed_deps.add((pkg, dependency_versions[pkg]))
             else:
                 try:
-                    ver = apport.packaging.impl.get_version(pkg)
+                    ver = apport.packaging.get_version(pkg)
                 except ValueError:
                     print >> sys.stderr, 'WARNING: library %s not found in system packages -- ignoring' % lib
                 else:
