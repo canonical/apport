@@ -19,3 +19,6 @@ add kernel oops backend /usr/share/apport/kernel_hook:
 
 python-apport:
  - Add API/report attribute for doing upstream problem reports
+
+apport:
+ - ignore mono crashes
