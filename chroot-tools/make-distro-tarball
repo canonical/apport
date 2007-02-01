@@ -1,0 +1,42 @@
+#!/bin/sh
+RELEASE="$1"
+TARBALL="$2"
+MIRROR="$3"
+SCRIPT="$4"
+
+[ "$RELEASE" ] && [ "$TARBALL" ] && [ "$MIRROR" ] || {
+    echo "Usage: $0 <release> <tarball> <mirror> [<script>]"
+    exit 1
+}
+
+# make absolute path
+TARBALL=`readlink -f "$TARBALL"`
+
+D=`mktemp -d`
+trap "cd /; rm -rf $D" 0 1 2 3 4 5 6 7 8 10 11 12 13 14 15
+
+fakeroot fakechroot debootstrap "$RELEASE" "$D" "$MIRROR" $SCRIPT
+
+# fix symlinks
+cd "$D"
+find -type l | while read f; do 
+    target=`readlink $f`
+    newtarget=${target#$D}
+    if [ "$target" != "$newtarget" ]; then
+        rm $f
+        ln -s "$newtarget" "$f"
+    fi
+done
+
+# set up default apt sources
+echo "deb $MIRROR $RELEASE main"
+
+fakeroot fakechroot chroot "$D" apt-get update
+
+# clean up cruft
+rm -f var/cache/apt/archives/partial/* 2>/dev/null
+rm -f var/cache/apt/archives/* 2>/dev/null
+rm -rf tmp/* 2>/dev/null
+
+echo "Building $TARBALL..."
+tar cp . | gzip -9 > "$TARBALL"
