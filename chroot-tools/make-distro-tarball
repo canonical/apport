@@ -3,9 +3,10 @@ RELEASE="$1"
 TARBALL="$2"
 MIRROR="$3"
 SCRIPT="$4"
+APTSOURCES="$5"
 
 [ "$RELEASE" ] && [ "$TARBALL" ] && [ "$MIRROR" ] || {
-    echo "Usage: $0 <release> <tarball> <mirror> [<script>]"
+    echo "Usage: $0 <release> <tarball> <mirror> [<script>] [<additional apt sources>]"
     exit 1
 }
 
@@ -29,7 +30,7 @@ find -type l | while read f; do
 done
 
 # set up default apt sources
-echo "deb $MIRROR $RELEASE main"
+echo "deb $MIRROR $RELEASE main\n$APTSOURCES" > "$D/etc/apt/sources.list"
 
 fakeroot fakechroot chroot "$D" apt-get update
 
