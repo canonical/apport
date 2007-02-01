@@ -28,8 +28,11 @@ apport (0.48) UNRELEASED; urgency=low
     apport. Test the package problem hook for now.
   * Add bin/kernel_hook and ship it in /usr/share/apport. The kernel can call
     this on an Oops. Add a test suite for it to test-hooks.
+  * apport/ui.py: Do not crash if Package: specifies a nonexisting package.
+    Display a proper error message instead. Add test_run_crash_errors() test
+    case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 10:08:23 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 11:45:11 +0100
 
 apport (0.47) feisty; urgency=low
 

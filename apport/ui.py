@@ -114,7 +114,15 @@ class UserInterface:
 		return
 	    assert response == 'report'
 	else:
-	    response = self.ui_present_crash(self.get_desktop_entry())
+            try:
+                desktop_entry = self.get_desktop_entry()
+            except ValueError: # package does not exist
+                self.ui_error_message(_('Invalid problem report'), 
+                    _('The report belongs to a package that is not installed.'))
+                self.ui_shutdown()
+                return
+
+	    response = self.ui_present_crash(desktop_entry)
 	    assert response.has_key('action')
 	    assert response.has_key('blacklist')
 
@@ -1071,6 +1079,22 @@ NameError: global name 'subprocess' is not defined'''
             self.assertEqual(self.ui.ic_progress_pulses, 0)
 
 	    self.assert_(self.ui.report.check_ignored())
+
+        def test_run_crash_errors(self):
+            '''Test run_crash() on various error conditions.'''
+
+            # crash report with invalid Package name
+            r = apport.Report()
+            r['ExecutablePath'] = '/bin/bash'
+            r['Package'] = 'foobarbaz'
+            r['SourcePackage'] = 'foobarbaz'
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+
+            self.ui.run_crash(report_file)
+
+            self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
+            self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_crash_package(self):
             '''Test run_crash() for a package error.'''
