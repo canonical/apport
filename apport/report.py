@@ -165,12 +165,11 @@ class Report(ProblemReport):
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
-	    v = ''
 	    try:
 		v = packaging.get_version(dep)
 	    except ValueError:
                 # can happen with uninstalled alternate dependencies
-                pass
+                continue
 
 	    if self['Dependencies']:
 		self['Dependencies'] += '\n'

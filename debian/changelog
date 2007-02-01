@@ -42,8 +42,10 @@ apport (0.48) UNRELEASED; urgency=low
   * apport/ui.py: Do not crash if Package: specifies a nonexisting package.
     Display a proper error message instead. Add test_run_crash_errors() test
     case.
+  * apport/report.py, add_package_info(): Fix crash when the first dependency
+    is not installed. Closes: LP#82561
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 12:11:35 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 12:26:16 +0100
 
 apport (0.47) feisty; urgency=low
 
