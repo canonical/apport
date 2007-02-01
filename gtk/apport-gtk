@@ -97,6 +97,14 @@ class GTKUserInterface(apport.ui.UserInterface):
         else:
             return 'cancel'
 
+    def ui_present_kernel_error(self):
+        response = self.w('dialog_kernel_error').run()
+        self.w('dialog_kernel_error').hide()
+        if response == gtk.RESPONSE_YES:
+            return 'report'
+        else:
+            return 'cancel'
+
     def ui_present_report_details(self):
         # dialog title
         self.w('dialog_bugreport').set_title(self.str_bugreport_title %

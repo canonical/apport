@@ -30,11 +30,12 @@ apport (0.48) UNRELEASED; urgency=low
     this on an Oops. Add a test suite for it to test-hooks.
   * apport/ui.py: Add support for reporting ProblemType: Kernel reports, and
     add test suite for the workflow.
+  * gtk/apport-gtk{,.glade}: Add implementation for ui_present_kernel_error().
   * apport/ui.py: Do not crash if Package: specifies a nonexisting package.
     Display a proper error message instead. Add test_run_crash_errors() test
     case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 11:54:38 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 12:11:35 +0100
 
 apport (0.47) feisty; urgency=low
 
