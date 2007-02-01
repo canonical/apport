@@ -8,6 +8,8 @@ apport-gtk:
 apport-retrace:
  - fetch comment and attachments from bug URL (bughelper already has
    code for that)
+ - add stack rewinding to step back through crash handlers
+ - add heuristics for more crash types (SEGV on read/write/exec & mem region)
 
 add kernel oops backend /usr/share/apport/kernel_hook:
  - /proc/version_signature
