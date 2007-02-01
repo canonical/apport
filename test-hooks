@@ -74,4 +74,26 @@ class _HooksTest(unittest.TestCase):
         self.assertEqual(r[log1key], 'Log 1\nbla')
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
 
+    def test_kernel_hook(self):
+        '''Test kernel_hook.'''
+
+        self.assertEqual(subprocess.call('bin/kernel_hook'), 0,
+            'kernel_hook finished successfully')
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, 'kernel_hook created a report')
+
+        r = apport.Report()
+        r.load(open(reps[0]))
+
+        self.assertEqual(set(r.keys()), set(['Date', 'Dmesg', 'LsMod',
+            'LsPciVV', 'LsPciVVM', 'Package', 'ProblemType', 'ProcCpuInfo',
+            'ProcVersion', 'ProcVersionSignature', 'SourcePackage']))
+
+        self.assertEqual(r['ProblemType'], 'Kernel')
+
+        self.assert_(os.uname()[2].split('-')[0] in r['SourcePackage'])
+        self.assertEqual(r['ProcVersionSignature'],
+            open('/proc/version_signature').read().strip())
+
 unittest.main()

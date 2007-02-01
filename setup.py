@@ -24,6 +24,6 @@ setup(name='apport',
       data_files=[('share/apport', ['gtk/apport-gtk.glade']),
                   ('share/icons/hicolor/48x48/apps', ['gtk/apport.png'])]+mo_files,
       scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
-	  'bin/apport-unpack', 'bin/package_hook', 'gtk/apport-gtk'],
+	  'bin/apport-unpack', 'bin/package_hook', 'bin/kernel_hook', 'gtk/apport-gtk'],
       packages=['apport']
       )

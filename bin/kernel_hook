@@ -1,0 +1,57 @@
+#!/usr/bin/python
+#
+# Collect information about a kernel oops.
+#
+# Copyright (c) 2007 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+import subprocess
+import apport, apport.fileutils
+
+def _command_output(command, input = None, stderr = subprocess.STDOUT):
+    '''Try to execute given command (array) and return its stdout, or return
+    a textual error if it failed.'''
+
+    try:
+       sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
+    except OSError, e:
+       return 'Error: ' + str(e)
+
+    out = sp.communicate(input)[0]
+    if sp.returncode == 0:
+       return out.strip()
+    else:
+       return 'Error: command %s failed with exit code %i: %s' % (
+           str(command), sp.returncode, out)
+
+def read_file(file):
+    try:
+        return open(file).read().strip()
+    except Exception, e:
+        return 'Error: ' + str(e)
+
+pr = apport.Report('Kernel')
+pr['ProcVersion'] = read_file('/proc/version')
+pr['ProcVersionSignature'] = read_file('/proc/version_signature')
+
+kernel_ver = pr['ProcVersionSignature'].split()[1].split('-')[0]
+if kernel_ver.startswith('2.'):
+    pr['SourcePackage'] = 'linux-source-'+kernel_ver
+else:
+    pr['SourcePackage'] = 'linux-meta'
+pr['Package'] = 'linux' # needed for creating the report file name
+
+pr['ProcCpuInfo'] = read_file('/proc/cpuinfo')
+pr['Dmesg'] = _command_output('dmesg')
+pr['LsPciVV'] = _command_output(['lspci', '-vv'])
+pr['LsPciVVM'] = _command_output(['lspci', '-vvm'])
+pr['LsMod'] = _command_output('lsmod')
+
+# write report
+pr.write(open(apport.fileutils.make_report_path(pr), 'w'))

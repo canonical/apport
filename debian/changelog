@@ -26,8 +26,10 @@ apport (0.48) UNRELEASED; urgency=low
   * setup.py: Remove version attribute, we do not update and use it anyway.
   * Add ./test-hooks: Test suite for the various package hooks shipped with
     apport. Test the package problem hook for now.
+  * Add bin/kernel_hook and ship it in /usr/share/apport. The kernel can call
+    this on an Oops. Add a test suite for it to test-hooks.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 17:31:49 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 10:08:23 +0100
 
 apport (0.47) feisty; urgency=low
 
