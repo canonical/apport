@@ -1,7 +1,15 @@
 apport (0.48) UNRELEASED; urgency=low
 
-  * debian/control: Add missing python-apt dependency to apport
-    (apport-retrace needs it). Thanks to Kees Cook for noticing.
+  New feature: Infrastructure for reporting kernel Oopses:
+
+  * Add bin/kernel_hook and ship it in /usr/share/apport. The kernel can call
+    this on an Oops. Add a test suite for it to test-hooks.
+  * apport/ui.py: Add support for reporting ProblemType: Kernel reports, and
+    add test suite for the workflow.
+  * gtk/apport-gtk{,.glade}: Add implementation for ui_present_kernel_error().
+
+  Improvements:
+
   * Merged various apport-retrace improvements from Kees' branch:
     - Add various options to override some report fields with local values.
     - Add --verbose option and be quiet by default.
@@ -9,13 +17,6 @@ apport (0.48) UNRELEASED; urgency=low
       libraries loaded at runtime (plugins).
     - Set correct debug file directory when starting an interactive gdb
       session with -g.
-  * debian/control: Add gdb dependency to python-apport.
-  * backends/packaging-dpkg.py test suite: Verify that packages returned by
-    get_dependencies() actually exist. This catches the 'chops off first
-    letter of package name sometimes' bug.
-  * backends/packaging-dpkg.py, _init_status(): Add missing space to Depends:
-    field format in dpkg-query call. This fixes the chopped-off first letters
-    in the 'Dependencies' report field.
   * Add gtk/apport-gtk.desktop.in: Desktop file for calling apport-gtk in
     'file a distro bug' mode, to be displayed in gnome-panel's System menu
     (see bug-reporting-tool spec). Also add a Makefile to do the
@@ -23,14 +24,21 @@ apport (0.48) UNRELEASED; urgency=low
     debian/apport-gtk.install.
   * bin/apport: Call add_os_info(), so that we get architecture information
     even for 'naked' reports which didn't go through UI enrichment.
-  * setup.py: Remove version attribute, we do not update and use it anyway.
   * Add ./test-hooks: Test suite for the various package hooks shipped with
     apport. Test the package problem hook for now.
-  * Add bin/kernel_hook and ship it in /usr/share/apport. The kernel can call
-    this on an Oops. Add a test suite for it to test-hooks.
-  * apport/ui.py: Add support for reporting ProblemType: Kernel reports, and
-    add test suite for the workflow.
-  * gtk/apport-gtk{,.glade}: Add implementation for ui_present_kernel_error().
+
+  Bug fixes:
+
+  * debian/control: Add missing python-apt dependency to apport
+    (apport-retrace needs it). Thanks to Kees Cook for noticing.
+  * debian/control: Add gdb dependency to python-apport.
+  * backends/packaging-dpkg.py test suite: Verify that packages returned by
+    get_dependencies() actually exist. This catches the 'chops off first
+    letter of package name sometimes' bug.
+  * backends/packaging-dpkg.py, _init_status(): Add missing space to Depends:
+    field format in dpkg-query call. This fixes the chopped-off first letters
+    in the 'Dependencies' report field.
+  * setup.py: Remove version attribute, we do not update and use it anyway.
   * apport/ui.py: Do not crash if Package: specifies a nonexisting package.
     Display a proper error message instead. Add test_run_crash_errors() test
     case.
