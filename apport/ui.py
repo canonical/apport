@@ -113,8 +113,21 @@ class UserInterface:
 	    if response == 'cancel':
 		return
 	    assert response == 'report'
+	elif self.report.get('ProblemType') == 'Kernel':
+	    response = self.ui_present_kernel_error()
+	    if response == 'cancel':
+		return
+	    assert response == 'report'
 	else:
-	    response = self.ui_present_crash(self.get_desktop_entry())
+            try:
+                desktop_entry = self.get_desktop_entry()
+            except ValueError: # package does not exist
+                self.ui_error_message(_('Invalid problem report'), 
+                    _('The report belongs to a package that is not installed.'))
+                self.ui_shutdown()
+                return
+
+	    response = self.ui_present_crash(desktop_entry)
 	    assert response.has_key('action')
 	    assert response.has_key('blacklist')
 
@@ -134,7 +147,7 @@ class UserInterface:
         if self.handle_duplicate():
             return
 
-	if self.report.get('ProblemType') == 'Crash':
+	if self.report.get('ProblemType') in ['Crash', 'Kernel']:
 	    response = self.ui_present_report_details()
 	    if response == 'cancel':
 		return
@@ -241,7 +254,7 @@ class UserInterface:
             # display a progress dialog
             self.ui_start_info_collection_progress()
 
-            if not self.report.has_key('Package'):
+            if self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package'):
                 icthread = threading.Thread(target=thread_collect_info,
                     args=(self.report, self.report_file, self.cur_package))
                 icthread.start()
@@ -249,7 +262,7 @@ class UserInterface:
                     self.ui_pulse_info_collection_progress()
                     icthread.join(0.1)
 
-	    if self.report.has_key('Package'):
+	    if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
 		bpthread = REThread.REThread(target=self.report.search_bug_patterns,
 		    args=(bugpattern_baseurl,))
 		bpthread.start()
@@ -263,7 +276,8 @@ class UserInterface:
             self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
-            if not self.report.has_key('SourcePackage') or not self.report.has_key('Package'):
+            if not self.report.has_key('SourcePackage') or \
+                (self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package')):
                 self.ui_error_message(_('Invalid problem report'), 
                     _('Could not determine the package or source package name.'))
                 self.ui_shutdown()
@@ -437,7 +451,7 @@ class UserInterface:
             self.cur_package = self.report['Package'].split()[0]
         else:
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
-        if not self.cur_package:
+        if not self.cur_package and self.report['ProblemType'] != 'Kernel':
             self.report = None
             self.ui_info_message(_('Invalid problem report'),
                 _('This problem report does not apply to a packaged program.'))
@@ -501,6 +515,15 @@ might be helpful for the developers.'))
     def ui_present_package_error(self, desktopentry):
 	'''Inform that a package installation/upgrade failure has happened for
 	self.report and self.cur_package and ask about an action.
+
+	Return the action: ignore ('cancel'), or report a bug about the problem
+	('report').'''
+
+        raise Exception, 'this function must be overridden by subclasses'
+
+    def ui_present_kernel_error(self, desktopentry):
+        '''Inform that a kernel Oops has happened for self.report and
+        ask about an action.
 
 	Return the action: ignore ('cancel'), or report a bug about the problem
 	('report').'''
@@ -595,6 +618,7 @@ if  __name__ == '__main__':
             # these store the choices the ui_present_* calls do
             self.present_crash_response = None
             self.present_package_error_response = None
+            self.present_kernel_error_response = None
             self.present_details_response = None
 
             self.opened_url = None
@@ -612,6 +636,9 @@ if  __name__ == '__main__':
 
         def ui_present_package_error(self):
             return self.present_package_error_response
+
+        def ui_present_kernel_error(self):
+            return self.present_kernel_error_response
 
         def ui_present_report_details(self):
             return self.present_details_response
@@ -1072,6 +1099,22 @@ NameError: global name 'subprocess' is not defined'''
 
 	    self.assert_(self.ui.report.check_ignored())
 
+        def test_run_crash_errors(self):
+            '''Test run_crash() on various error conditions.'''
+
+            # crash report with invalid Package name
+            r = apport.Report()
+            r['ExecutablePath'] = '/bin/bash'
+            r['Package'] = 'foobarbaz'
+            r['SourcePackage'] = 'foobarbaz'
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+
+            self.ui.run_crash(report_file)
+
+            self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
+            self.assertEqual(self.ui.msg_severity, 'error')
+
         def test_run_crash_package(self):
             '''Test run_crash() for a package error.'''
 
@@ -1108,6 +1151,41 @@ NameError: global name 'subprocess' is not defined'''
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Package' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Package')
+
+        def test_run_crash_kernel(self):
+            '''Test run_crash() for a kernel error.'''
+
+            # generate crash report
+            r = apport.Report('Kernel')
+            r['SourcePackage'] = 'linux-source-2.6.20'
+            r.add_os_info()
+
+            # write crash report
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+
+            # cancel crash notification dialog
+            r.write(open(report_file, 'w'))
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_kernel_error_response = 'cancel'
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None, 'error: %s - %s' %
+                (self.ui.msg_title, self.ui.msg_text))
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.ic_progress_pulses, 0)
+
+            # report in crash notification dialog, send report
+            r.write(open(report_file, 'w'))
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_kernel_error_response = 'report'
+            self.ui.present_details_response = 'full'
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertNotEqual(self.ui.opened_url, None)
+
+            self.assert_('SourcePackage' in self.ui.report.keys())
+            self.assertEqual(self.ui.report['ProblemType'], 'Kernel')
 
     unittest.main()
 

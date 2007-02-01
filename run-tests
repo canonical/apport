@@ -1,16 +1,15 @@
 #!/bin/sh -ex
 export PYTHONPATH=.
-for b in backends/*; do
-    python $b -v
-done
-ln -s backends/packaging-dpkg.py packaging_impl.py
-trap "rm -f packaging_impl.py" 0 1 2 3 4 5 6 7 8 10 11 12 13 14 15
+python problem_report.py -v
 python apport/fileutils.py -v
 python apport/report.py -v
 python apport/python_hook.py -v
 python apport/ui.py -v
 python apport/REThread.py -v
-python problem_report.py -v
+for b in backends/*; do
+    python $b -v
+done
+./test-hooks -v
 if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" = "|" ]; then
     ./test-apport kernel
 else

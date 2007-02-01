@@ -165,12 +165,11 @@ class Report(ProblemReport):
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
-	    v = ''
 	    try:
 		v = packaging.get_version(dep)
 	    except ValueError:
                 # can happen with uninstalled alternate dependencies
-                pass
+                continue
 
 	    if self['Dependencies']:
 		self['Dependencies'] += '\n'
@@ -378,7 +377,7 @@ class Report(ProblemReport):
 	assert self.has_key('Package')
 	sys.path.append(_hook_dir)
 	try:
-	    m = __import__(self['Package'].split(' ')[0])
+	    m = __import__(self['Package'].split()[0])
 	    m.add_info(self)
 	except (ImportError, AttributeError, TypeError):
 	    pass

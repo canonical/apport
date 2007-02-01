@@ -13,7 +13,6 @@ for filepath in glob.glob("po/mo/*/LC_MESSAGES/*.mo"):
     mo_files.append((targetpath, [filepath]))
 
 setup(name='apport',
-      version='0.1',
       author='Martin Pitt',
       author_email='martin.pitt@ubuntu.com',
       maintainer='Martin Pitt',
@@ -25,6 +24,6 @@ setup(name='apport',
       data_files=[('share/apport', ['gtk/apport-gtk.glade']),
                   ('share/icons/hicolor/48x48/apps', ['gtk/apport.png'])]+mo_files,
       scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
-	  'bin/apport-unpack', 'bin/package_hook', 'gtk/apport-gtk'],
+	  'bin/apport-unpack', 'bin/package_hook', 'bin/kernel_hook', 'gtk/apport-gtk'],
       packages=['apport']
       )
