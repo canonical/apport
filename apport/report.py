@@ -165,6 +165,7 @@ class Report(ProblemReport):
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
+	    v = ''
 	    try:
 		v = packaging.get_version(dep)
 	    except ValueError:
