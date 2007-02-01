@@ -1,4 +1,4 @@
-apport (0.47) UNRELEASED; urgency=low
+apport (0.48) UNRELEASED; urgency=low
 
   * debian/control: Add missing python-apt dependency to apport
     (apport-retrace needs it). Thanks to Kees Cook for noticing.
@@ -18,6 +18,12 @@ apport (0.47) UNRELEASED; urgency=low
     in the 'Dependencies' report field.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 31 Jan 2007 10:19:17 +0100
+
+apport (0.47) feisty; urgency=low
+
+  * apport/report.py: quick fix for Herd 3, strip out Package suffixes
+
+ -- Kees Cook <kees@ubuntu.com>  Wed, 31 Jan 2007 15:37:11 -0800
 
 apport (0.46) feisty; urgency=low
 
