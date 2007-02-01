@@ -45,6 +45,10 @@ def create_chroot(rootdir, tarball, apt_sources=None, cache_dir=None):
     print 'Unpacking', tarball, '...'
     assert subprocess.call(['fakeroot', 'tar', '-C', rootdir, '-xzf', opts.tarball]) == 0
 
+    # copy resolv.conf from main system
+    open(os.path.join(rootdir, 'etc', 'resolv.conf'), 'w').write(
+        open('/etc/resolv.conf').read())
+
     # setup apt.sources
     if apt_sources:
         open(os.path.join(rootdir, 'etc', 'apt', 'sources.list'),
