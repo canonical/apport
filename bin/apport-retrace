@@ -12,7 +12,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob
+import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob, urllib
 import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
 import apt, apt_inst
@@ -114,7 +114,7 @@ def install_ddebs(packages, debug_dir, cache_dir, progress=False):
 
     archivedir = os.path.join(cache_dir, 'archives')
     for pkg, version in packages:
-        f = glob.glob(os.path.join(archivedir, '%s-dbgsym_%s_*.ddeb' % (pkg, version)))
+        f = glob.glob(os.path.join(archivedir, '%s-dbgsym_%s_*.ddeb' % (pkg, urllib.quote(version).lower())))
         assert len(f) <= 1
         if len(f) == 1:
             apt_inst.debExtractArchive(open(f[0]), debug_dir)
