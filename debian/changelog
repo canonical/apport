@@ -1,4 +1,4 @@
-apport (0.48) UNRELEASED; urgency=low
+apport (0.48) feisty; urgency=low
 
   New feature: Infrastructure for reporting kernel Oopses:
 
@@ -44,8 +44,10 @@ apport (0.48) UNRELEASED; urgency=low
     case.
   * apport/report.py, add_package_info(): Fix crash when the first dependency
     is not installed. Closes: LP#82561
+  * gtk/apport-gtk.glade: Remove window titles in alert dialogs to comply with
+    Gnome HIG. Closes: LP#83123
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 12:26:16 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Feb 2007 12:19:35 +0100
 
 apport (0.47) feisty; urgency=low
 
