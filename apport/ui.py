@@ -326,6 +326,12 @@ class UserInterface:
 
 	    trace = self.report['Traceback'].splitlines()
 	    
+            if len(trace) < 1:
+                return Nonr
+            if len(trace) < 3:
+                return '[apport] %s crashed with %s' % (
+                    os.path.basename(self.report['ExecutablePath']),
+                    trace[0])
 	    return '[apport] %s crashed with %s in %s()' % (
 		os.path.basename(self.report['ExecutablePath']),
 		trace[-1].split(':')[0],
@@ -904,6 +910,14 @@ baz()
 NameError: global name 'subprocess' is not defined'''
 	    self.assertEqual(self.ui.create_crash_bug_title(), 
 		'[apport] apport-gtk crashed with NameError in ui_present_crash()')
+
+            # slightly weird Python crash
+            self.ui.report = apport.Report()
+	    self.ui.report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
+	    self.ui.report['Traceback'] = '''TypeError: Cannot create a consistent method resolution
+order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] apport-gtk crashed with TypeError: Cannot create a consistent method resolution')
 
 	    # package install problem
 	    self.ui.report = apport.Report('Package')
