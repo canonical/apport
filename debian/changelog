@@ -3,8 +3,10 @@ apport (0.49) UNRELEASED; urgency=low
   * gtk/apport-gtk.glade: Fix s/send/sent/ typo. Closes: LP#83061
   * apport/ui.py, create_crash_bug_title(): Cope with odd Tracebacks that are
     shorter than three lines. Add test case from the bug. Closes: LP#83556
+  * apport/python_hook: Do not create a report if the binary is ignored. Add
+    test case. Closes: LP#83566
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Feb 2007 15:53:36 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Feb 2007 16:42:19 +0100
 
 apport (0.48) feisty; urgency=low
 
