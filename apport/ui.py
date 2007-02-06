@@ -397,11 +397,9 @@ class UserInterface:
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
                     if subprocess.call('gconftool --get /desktop/gnome/url-handlers/http/command | grep -qw ^firefox',
                         shell=True, stderr=subprocess.PIPE) == 0:
-                            print 'firefox'
                             subprocess.call(['strace', '-f', '-o', '/tmp/trace', 'firefox', '-new-window', url])
                             sys.exit(0)
                     else:
-                        print 'gnome-open'
                         if subprocess.call(['gnome-ope', url]) == 0:
                             sys.exit(0)
             except OSError:
@@ -409,7 +407,6 @@ class UserInterface:
 
             # fall back to webbrowser
             try:
-                print 'webbrowser' 
                 webbrowser.open(url, new=True, autoraise=True)
             except Exception, e:
                 md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
