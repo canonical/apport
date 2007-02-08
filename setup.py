@@ -21,9 +21,10 @@ setup(name='apport',
       license='gpl',
       description='read, write, and modify problem reports',
       py_modules=['problem_report'],
-      data_files=[('share/apport', ['gtk/apport-gtk.glade']),
+      data_files=[('share/apport', ['gtk/apport-gtk.glade'] + glob.glob('qt4/*.ui')),
                   ('share/icons/hicolor/48x48/apps', ['gtk/apport.png'])]+mo_files,
       scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
-	  'bin/apport-unpack', 'bin/package_hook', 'bin/kernel_hook', 'gtk/apport-gtk'],
+	  'bin/apport-unpack', 'bin/package_hook', 'bin/kernel_hook',
+          'gtk/apport-gtk', 'qt4/apport-qt'],
       packages=['apport']
       )

@@ -5,8 +5,10 @@ apport (0.51) UNRELEASED; urgency=low
   * Added qt4/: Qt4 implementation of the abstract user interface. Thanks to
     Michael Hofmann <mh21@piware.de> for that!
   * debian/copyright: Add Michael as copyright holder.
+  * setup.py, debian/control, debian/apport-qt.install: Packaging bits for
+    apport-qt.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:11:55 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:34:30 +0100
 
 apport (0.50) feisty; urgency=low
 
