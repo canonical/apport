@@ -7,8 +7,12 @@ apport (0.51) UNRELEASED; urgency=low
   * debian/copyright: Add Michael as copyright holder.
   * setup.py, debian/control, debian/apport-qt.install: Packaging bits for
     apport-qt.
+  * Move translations from apport-gtk to apport, since they are shared between
+    frontends. Add appropriate Conflicts/Replaces (we don't strictly need it
+    here because we strip them anyway, but we need that for the moving icon
+    anyway).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:34:30 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:39:14 +0100
 
 apport (0.50) feisty; urgency=low
 
