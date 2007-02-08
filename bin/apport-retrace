@@ -28,7 +28,7 @@ from launchpadBugs.HTMLOperations import Bug
 def parse_options():
     '''Parse command line options and return (reportfile, options) tuple.'''
 
-    optparser = optparse.OptionParser('%prog [options] <apport problem report>')
+    optparser = optparse.OptionParser('%prog [options] <apport problem report | Launchpad bug number>')
     optparser.add_option('-c', '--remove-core', 
         help='Remove the core dump from the report after stack trace regeneration',
         action='store_true', dest='removecore', default=False)
