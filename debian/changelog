@@ -1,3 +1,19 @@
+apport (0.49) feisty; urgency=low
+
+  * gtk/apport-gtk.glade: Fix s/send/sent/ typo. Closes: LP#83061
+  * apport/ui.py, create_crash_bug_title(): Cope with odd Tracebacks that are
+    shorter than three lines. Add test case from the bug. Closes: LP#83556
+  * apport/python_hook: Do not create a report if the binary is ignored. Add
+    test case. Closes: LP#83566
+  * gtk/apport-gtk: Do not save/alter crash dialog title any more, it's empty
+    now.
+  * apport/ui.py, open_url(): Check the user's session for
+    ksmserver/gnome-session to decide whether to prefer kfmclient or
+    gnome-open. Also, only call Firefox directly if gconf's prefered browser
+    is actually Firefox. Closes: LP#82007
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Feb 2007 18:33:15 +0100
+
 apport (0.48) feisty; urgency=low
 
   New feature: Infrastructure for reporting kernel Oopses:

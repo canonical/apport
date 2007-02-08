@@ -186,7 +186,7 @@ class QT4UserInterface(apport.ui.UserInterface):
 
         sendbutton = dialog.addbutton(_('&Send'))
 
-        # report contents in expander
+        # report contents
         details = dialog.findChild (QTreeWidget, 'details')
         for key in self.report:
             keyitem = QTreeWidgetItem([key]);
@@ -200,6 +200,7 @@ class QT4UserInterface(apport.ui.UserInterface):
                     keyitem.setExpanded(True)
             else:
                 QTreeWidgetItem (keyitem, [_('(binary data)')])
+	details.header().hide()
 
         # complete/reduced radio buttons
         if self.report.has_key('CoreDump'):

@@ -58,6 +58,8 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # filter out binaries in user accessible paths
         if not fileutils.likely_packaged(binary):
             return
+        if pr.check_ignored():
+            return
         mangled_program = re.sub('/', '_', binary)
         # get the uid for now, user name later
         user = os.getuid()
@@ -175,5 +177,58 @@ func(42)
 		    self._assert_no_reports()
 	    finally:
 		os.chdir(orig_cwd)
+
+        def test_ignoring(self):
+            '''Test that the Python crash hook respects the ignore list.'''
+
+            # put the script into /var/crash, since that isn't ignored in the
+            # hook
+            (fd, script) = tempfile.mkstemp(dir=fileutils.report_dir)
+            ifpath = os.path.expanduser(report._ignore_file)
+            orig_ignore_file = None
+            try:
+                os.write(fd, '''#!/usr/bin/python
+def func(x):
+    raise Exception, 'This should happen.'
+
+func(42)
+''')
+                os.close(fd)
+                os.chmod(script, 0755)
+
+                # move aside current ignore file
+                if os.path.exists(ifpath):
+                    orig_ignore_file = ifpath + '.apporttest'
+                    os.rename(ifpath, orig_ignore_file)
+
+                # ignore
+                r = report.Report()
+                r['ExecutablePath'] = script
+                r.mark_ignore()
+                r = None
+
+                p = subprocess.Popen([script, 'testarg1', 'testarg2'],
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                err = p.communicate()[1]
+                self.assertEqual(p.returncode, 1, 
+                    'crashing test python program exits with failure code')
+                self.assert_('Exception: This should happen.' in err)
+
+            finally:
+                os.unlink(script)
+                # clean up our ignore file
+                if os.path.exists(ifpath):
+                    os.unlink(ifpath)
+                if orig_ignore_file:
+                    os.rename(orig_ignore_file, ifpath)
+
+            # did we get a report?
+            reports = fileutils.get_new_reports()
+            pr = None
+            try:
+                self.assertEqual(len(reports), 0)
+            finally:
+                for r in reports:
+                    os.unlink(r)
 
     unittest.main()
