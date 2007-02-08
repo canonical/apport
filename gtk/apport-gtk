@@ -116,7 +116,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             if self.report[key]:
                 self.tree_model.set_value(valiter, 0, self.report[key])
             else:
-                self.tree_model.set_value(valiter, 0, '(binary data)')
+                self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
             # expand the row if the value has less than 5 lines
             if len(filter(lambda c: c == '\n', self.report[key])) < 4:

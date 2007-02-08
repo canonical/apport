@@ -4,8 +4,9 @@ apport (0.50) UNRELEASED; urgency=low
   * bin/apport-retrace: Use python-launchpad-bugs to create a Report object
     from a given Launchpad bug number (given as argument instead of the report
     file path). Add appropriate p-l-b dependency.
+  * gtk/apport-gtk: Mark '(binary data)' string as translatable.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 13:58:27 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 15:15:47 +0100
 
 apport (0.49) feisty; urgency=low
 
