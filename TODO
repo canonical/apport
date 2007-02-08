@@ -4,6 +4,8 @@ apport-gtk:
    dialog
  - check delay of progress dialog when filing a bug
  - add /usr/bin symlink for invoking a-g in bug filing mode
+ - CoreDump: display as '(binary data)', not as incomprehensible
+   gibberish
 
 apport-retrace:
  - fetch comment and attachments from bug URL (bughelper already has
