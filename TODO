@@ -4,6 +4,8 @@ apport-gtk:
    dialog
  - check delay of progress dialog when filing a bug
  - add /usr/bin symlink for invoking a-g in bug filing mode
+ - CoreDump: display as '(binary data)', not as incomprehensible
+   gibberish
 
 apport-retrace:
  - fetch comment and attachments from bug URL (bughelper already has
@@ -13,6 +15,12 @@ apport-retrace:
 
 python-apport:
  - Add API/report attribute for doing upstream problem reports
+ - support /etc/apport/blacklist.d/ for check_ignored(): one exe
+   per line
 
 add firefox apport hook to suppress crash reports when restart is
 necessary
+
+add documentation about per-package hooks
+
+check why bc crash doesn't show modified files

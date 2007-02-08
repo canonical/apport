@@ -326,6 +326,12 @@ class UserInterface:
 
 	    trace = self.report['Traceback'].splitlines()
 	    
+            if len(trace) < 1:
+                return Nonr
+            if len(trace) < 3:
+                return '[apport] %s crashed with %s' % (
+                    os.path.basename(self.report['ExecutablePath']),
+                    trace[0])
 	    return '[apport] %s crashed with %s in %s()' % (
 		os.path.basename(self.report['ExecutablePath']),
 		trace[-1].split(':')[0],
@@ -357,6 +363,7 @@ class UserInterface:
 
         # If we are called through sudo, drop privileges to original
         # user to get correct web browser settings.
+        uid = None
         try:
             uid = int(os.getenv('SUDO_UID'))
             gid = int(os.getenv('SUDO_GID'))
@@ -369,28 +376,45 @@ class UserInterface:
         except (TypeError, OSError):
             pass
 
+        if not uid:
+            uid = os.getuid()
+
         # figure out appropriate web browser
         try:
+            # if ksmserver is running, try kfmclient
             try:
-                subprocess.call(['kfmclient', 'openURL', url])
+                if subprocess.call(['pgrep', '-u', str(uid), 'ksmserver'],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+                    subprocess.call(['kfmclient', 'openURL', url])
+                    sys.exit(0)
             except OSError:
-                try:
-                    if subprocess.call(['firefox', '-remote', 'openURL(%s, new-window)' % url]) != 0:
-                        raise OSError, 'firefox -remote failed'
-                except OSError:
-                    try:
-                        if subprocess.call(['gnome-open', url]) != 0:
-                            raise OSError, 'gnome-open failed'
-                    except Exception, e:
-                        try:
-                            webbrowser.open(url, new=True, autoraise=True)
-                        except Exception, e:
-                            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                                buttons=gtk.BUTTONS_CLOSE, 
-                                message_format=str(e))
-                            md.set_title(_('Could not start web browser to open %s' % url))
-                            md.run()
-                            md.hide()
+                pass
+
+            # if gnome-session is running, try gnome-open; special-case firefox
+            # to open a new window
+            try:
+                if subprocess.call(['pgrep', '-u', str(uid), 'gnome-session'],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+                    if subprocess.call('gconftool --get /desktop/gnome/url-handlers/http/command | grep -qw ^firefox',
+                        shell=True, stderr=subprocess.PIPE) == 0:
+                            subprocess.call(['strace', '-f', '-o', '/tmp/trace', 'firefox', '-new-window', url])
+                            sys.exit(0)
+                    else:
+                        if subprocess.call(['gnome-ope', url]) == 0:
+                            sys.exit(0)
+            except OSError:
+                pass
+
+            # fall back to webbrowser
+            try:
+                webbrowser.open(url, new=True, autoraise=True)
+            except Exception, e:
+                md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                    buttons=gtk.BUTTONS_CLOSE, 
+                    message_format=str(e))
+                md.set_title(_('Could not start web browser to open %s' % url))
+                md.run()
+                md.hide()
         finally:
             sys.exit(0)
 
@@ -904,6 +928,14 @@ baz()
 NameError: global name 'subprocess' is not defined'''
 	    self.assertEqual(self.ui.create_crash_bug_title(), 
 		'[apport] apport-gtk crashed with NameError in ui_present_crash()')
+
+            # slightly weird Python crash
+            self.ui.report = apport.Report()
+	    self.ui.report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
+	    self.ui.report['Traceback'] = '''TypeError: Cannot create a consistent method resolution
+order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] apport-gtk crashed with TypeError: Cannot create a consistent method resolution')
 
 	    # package install problem
 	    self.ui.report = apport.Report('Package')

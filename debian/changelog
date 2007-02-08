@@ -1,3 +1,55 @@
+apport (0.51) feisty; urgency=low
+
+  New feature: Qt4 GUI implementation:
+
+  * Added qt4/: Qt4 implementation of the abstract user interface. Thanks to
+    Michael Hofmann <mh21@piware.de> for that!
+  * debian/copyright: Add Michael as copyright holder.
+  * setup.py, debian/control, debian/apport-qt.install: Packaging bits for
+    apport-qt.
+  * Move translations from apport-gtk to apport, since they are shared between
+    frontends. Add appropriate Conflicts/Replaces (we don't strictly need it
+    here because we strip them anyway, but we need that for the moving icon
+    anyway).
+  * Move icon from apport-gtk to apport, since it is/can be shared between
+    frontends.
+
+  Improvements:
+
+  * Replaced old apport.png icon stolen from bug-buddy with nice SVG one.
+    Thanks to Troy Sobotka for this!
+  * debian/copyright: Add Troy as copyright holder for the icon.
+  * bin/apport-retrace, man/apport-retrace.1: Document that report can now be
+    a LP bug number.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 20:01:12 +0100
+
+apport (0.50) feisty; urgency=low
+
+  * gtk/apport-gtk.glade: Fix 'prolem' typo.
+  * bin/apport-retrace: Use python-launchpad-bugs to create a Report object
+    from a given Launchpad bug number (given as argument instead of the report
+    file path). Add appropriate p-l-b dependency.
+  * gtk/apport-gtk: Mark '(binary data)' string as translatable.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 15:15:47 +0100
+
+apport (0.49) feisty; urgency=low
+
+  * gtk/apport-gtk.glade: Fix s/send/sent/ typo. Closes: LP#83061
+  * apport/ui.py, create_crash_bug_title(): Cope with odd Tracebacks that are
+    shorter than three lines. Add test case from the bug. Closes: LP#83556
+  * apport/python_hook: Do not create a report if the binary is ignored. Add
+    test case. Closes: LP#83566
+  * gtk/apport-gtk: Do not save/alter crash dialog title any more, it's empty
+    now.
+  * apport/ui.py, open_url(): Check the user's session for
+    ksmserver/gnome-session to decide whether to prefer kfmclient or
+    gnome-open. Also, only call Firefox directly if gconf's prefered browser
+    is actually Firefox. Closes: LP#82007
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Feb 2007 18:33:15 +0100
+
 apport (0.48) feisty; urgency=low
 
   New feature: Infrastructure for reporting kernel Oopses:

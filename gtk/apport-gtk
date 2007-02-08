@@ -47,7 +47,6 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.str_heading = self.w('label_heading').get_label()
         self.str_heading_reopen = self.w('label_heading_reopen').get_label()
         self.str_heading_package_error = self.w('label_heading_package_error').get_label()
-        self.str_bugreport_title = self.w('dialog_bugreport').get_title()
         self.str_radio_complete = self.w('radiobutton_complete').get_label()
         self.str_radio_reduced = self.w('radiobutton_reduced').get_label()
 
@@ -106,10 +105,6 @@ class GTKUserInterface(apport.ui.UserInterface):
             return 'cancel'
 
     def ui_present_report_details(self):
-        # dialog title
-        self.w('dialog_bugreport').set_title(self.str_bugreport_title %
-            self.report.get('Package', 'Ubuntu').split()[0])
-
         # report contents in expander
         self.tree_model.clear()
         row = 0
@@ -121,7 +116,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             if self.report[key]:
                 self.tree_model.set_value(valiter, 0, self.report[key])
             else:
-                self.tree_model.set_value(valiter, 0, '(binary data)')
+                self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
             # expand the row if the value has less than 5 lines
             if len(filter(lambda c: c == '\n', self.report[key])) < 4:
