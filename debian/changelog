@@ -14,7 +14,13 @@ apport (0.51) UNRELEASED; urgency=low
   * Move icon from apport-gtk to apport, since it is/can be shared between
     frontends.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:44:45 +0100
+  Improvements:
+  
+  * Replaced old apport.png icon stolen from bug-buddy with nice SVG one.
+    Thanks to Troy Sobotka for this!
+  * debian/copyright: Add Troy as copyright holder for the icon.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:54:00 +0100
 
 apport (0.50) feisty; urgency=low
 
