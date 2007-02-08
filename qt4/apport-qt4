@@ -199,7 +199,7 @@ class QT4UserInterface(apport.ui.UserInterface):
                 if len(lines) < 4:
                     keyitem.setExpanded(True)
             else:
-                QTreeWidgetItem (keyitem, _('(binary data)'))
+                QTreeWidgetItem (keyitem, [_('(binary data)')])
 
         # complete/reduced radio buttons
         if self.report.has_key('CoreDump'):
