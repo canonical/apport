@@ -11,8 +11,10 @@ apport (0.51) UNRELEASED; urgency=low
     frontends. Add appropriate Conflicts/Replaces (we don't strictly need it
     here because we strip them anyway, but we need that for the moving icon
     anyway).
+  * Move icon from apport-gtk to apport, since it is/can be shared between
+    frontends.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:39:14 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:44:45 +0100
 
 apport (0.50) feisty; urgency=low
 
