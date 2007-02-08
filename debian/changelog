@@ -1,3 +1,13 @@
+apport (0.51) UNRELEASED; urgency=low
+
+  New feature: Qt4 GUI implementation:
+
+  * Added qt4/: Qt4 implementation of the abstract user interface. Thanks to
+    Michael Hofmann <mh21@piware.de> for that!
+  * debian/copyright: Add Michael as copyright holder.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 19:11:55 +0100
+
 apport (0.50) feisty; urgency=low
 
   * gtk/apport-gtk.glade: Fix 'prolem' typo.
