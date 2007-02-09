@@ -2,8 +2,10 @@ apport (0.52) UNRELEASED; urgency=low
 
   * apport/report.py: Fix hook directory to be
     /usr/share/apport/package-hooks/,  not /u/s/apport/.
+  * Add doc/package-hooks.txt: Document per-package hooks, ship in package
+    apport.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  9 Feb 2007 15:46:36 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  9 Feb 2007 16:01:33 +0100
 
 apport (0.51) feisty; urgency=low
 
