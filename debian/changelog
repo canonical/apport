@@ -11,9 +11,9 @@ apport (0.52) UNRELEASED; urgency=low
   * bin/apport-retrace: --verbose can now be specified multiple times to
     increase verbosity and debug package installation. Also, fix some quoting
     bugs. Thanks to Kees Cook for this!
-  * qt4/apport-qt: Fix restart button handling. Closes: LP#84202
+  * qt4/apport-qt: Fix restart button handling. (LP: #84202)
   * qt4/apport-qt: Do not try to call splitlines() on a report value that is a
-    file reference; just display the reference instead. Closes: LP#84196
+    file reference; just display the reference instead. (LP: #84196)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  9 Feb 2007 17:34:00 +0100
 
