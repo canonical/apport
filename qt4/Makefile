@@ -1,6 +1,6 @@
 top_srcdir = ..
 
-all: apport-qt4.desktop
+all: apport-qt.desktop
 
 %.desktop : %.desktop.in
 	intltool-merge -d ${top_srcdir}/po/ $< $@
