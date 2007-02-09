@@ -4,6 +4,7 @@ apport (0.52) UNRELEASED; urgency=low
     /usr/share/apport/package-hooks/,  not /u/s/apport/.
   * Add doc/package-hooks.txt: Document per-package hooks, ship in package
     apport.
+  * Add debian/apport.dirs: Ship package-hooks/ directory.
   * gtk/apport-gtk, qt4/apport-qt: Fix detection of binary data so that the
     CoreDump is not displayed as incomprehensible gibberish any more.
   * Add qt4/apport-qt.desktop.in and add it to POTFILES.in.
@@ -12,7 +13,7 @@ apport (0.52) UNRELEASED; urgency=low
     bugs. Thanks to Kees Cook for this!
   * qt4/apport-qt: Fix restart button handling. Closes: LP#84202
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  9 Feb 2007 17:23:30 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  9 Feb 2007 17:27:32 +0100
 
 apport (0.51) feisty; urgency=low
 
