@@ -12,7 +12,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob, urllib
+import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob
 import gzip, re
 import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
@@ -51,8 +51,8 @@ def parse_options():
         help='Attempt to download required debug symbol packages',
         action='store_true', dest='download_debug', default=False)
     optparser.add_option('-v', '--verbose', 
-        help='Report download progress when fetching debug symbol packages',
-        action='store_true', dest='verbose', default=False)
+        help='Report download progress when fetching debug symbol packages (twice to report on package install)',
+        action='count', dest='verbose', default=0)
     optparser.add_option('-C', '--cache-dir', 
         help='Directory to use for caching downloaded .ddebs. If not given, a temporary directory is used.',
         action='store', type='string', dest='cache_dir', metavar='DIR', default=None)
@@ -68,7 +68,9 @@ def parse_options():
 
     return (args[0], opts)
 
-def install_ddebs(packages, debug_dir, cache_dir, progress=False):
+def install_ddebs(packages, debug_dir, cache_dir, verbose=0):
+
+    missing_dbgsym = {}
 
     d = os.path.join(cache_dir, 'archives', 'partial')
     if not os.path.isdir(d):
@@ -85,16 +87,18 @@ def install_ddebs(packages, debug_dir, cache_dir, progress=False):
             continue
         if not cache.has_key(pkg + '-dbgsym'):
             print >> sys.stderr, 'WARNING: package %s-dbgsym not available' % pkg
+            missing_dbgsym[pkg] = 1
             continue
         p = cache[pkg+'-dbgsym']
         if p.candidateVersion != version:
             print >> sys.stderr, 'WARNING: version %s of package %s-dbgsym not available' % (version, pkg)
+            missing_dbgsym[pkg] = 1
             continue
         
         p.markInstall()
 
     # fetch
-    if progress:
+    if verbose:
         reporter = apt.progress.TextFetchProgress()
     else:
         reporter = apt.progress.FetchProgress()
@@ -117,14 +121,22 @@ def install_ddebs(packages, debug_dir, cache_dir, progress=False):
 
     archivedir = os.path.join(cache_dir, 'archives')
     for pkg, version in packages:
-        f = glob.glob(os.path.join(archivedir, '%s-dbgsym_%s_*.ddeb' % (pkg, urllib.quote(version).lower())))
+        # There must be a proper function to perform the on-disk filename mangling
+        # Must not "tolower" -- some packages have capitals
+        # Must replace ":", but not "+"
+        match = os.path.join(archivedir, '%s-dbgsym_%s_*.ddeb' % (pkg, version.replace(':','%3a')))
+        f = glob.glob(match)
         assert len(f) <= 1
         if len(f) == 1:
+            if verbose>1:
+                print >> sys.stderr, 'DEBUG: installing %s for %s' % (f[0], pkg)
             apt_inst.debExtractArchive(open(f[0]), debug_dir)
+        elif not missing_dbgsym.has_key(pkg):
+            print >> sys.stderr, 'WARNING: dbgsym for %s %s not found by glob "%s"' % (pkg, version, match)
 
     os.chdir(orig_cwd)
 
-def prepare_debugdir(report, cache_dir, progress=False):
+def prepare_debugdir(report, cache_dir, verbose=0):
     '''Generate temporary directory with necessary debug symbols for the given
     package report.
     
@@ -158,10 +170,15 @@ def prepare_debugdir(report, cache_dir, progress=False):
         if '=>' in l:
             if 'not found' in l or '=>  (0x' in l:
                 print >> sys.stderr, 'WARNING: library %s not available to ldd -- skipping' % l.split()[0]
+                continue
             else:
-                libs.add(os.path.realpath(l.split()[2]))
+                lib = l.split()[2]
         else:
-            libs.add(os.path.realpath(l.split()[0]))
+            lib = l.split()[0]
+        lib = os.path.realpath(lib)
+        if verbose>1:
+            print >> sys.stderr, 'DEBUG: ldd needs %s' % lib
+        libs.add(lib)
 
     # get list of libraries at runtime
     if report.has_key('ProcMaps'):
@@ -170,7 +187,12 @@ def prepare_debugdir(report, cache_dir, progress=False):
                 continue
             cols = l.split()
             if 'x' in cols[1] and len(cols) == 6 and cols[5].endswith('.so'):
-                libs.add(os.path.realpath(cols[5]))
+                lib = os.path.realpath(cols[5])
+                if lib in libs:
+                    continue
+                if verbose>1:
+                    print >> sys.stderr, 'DEBUG: maps needs %s' % lib
+                libs.add(lib)
 
     for lib in libs:
         # symlink already existing dbg files
@@ -180,9 +202,13 @@ def prepare_debugdir(report, cache_dir, progress=False):
             if not os.path.isdir(destdir):
                 os.makedirs(destdir)
             os.symlink(libdbg, ddir + lib)
+            if verbose>1:
+                print >> sys.stderr, 'DEBUG: %s available in /usr/lib/debug' % lib
         else:
             pkg = apport.fileutils.find_file_package(lib)
             if pkg and pkg in dependency_versions:
+                if verbose>1:
+                    print >> sys.stderr, 'DEBUG: %s available from %s' % (lib, pkg)
                 needed_deps.add((pkg, dependency_versions[pkg]))
             else:
                 try:
@@ -195,7 +221,7 @@ def prepare_debugdir(report, cache_dir, progress=False):
                         needed_deps.add((pkg, ver))
 
     # download and install the rest
-    install_ddebs(needed_deps, ddir, cache_dir, progress)
+    install_ddebs(needed_deps, ddir, cache_dir, verbose)
     return ddir
 
 def report_from_launchpad(bugid):
