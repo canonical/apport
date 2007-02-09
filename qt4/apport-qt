@@ -11,7 +11,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-# FIXME: taskbar entry, header for problem details treewidget, binary data
+# FIXME: taskbar entry, header for problem details treewidget
 
 import os.path, sys, subprocess
 from PyQt4.QtCore import *
@@ -192,7 +192,7 @@ class QT4UserInterface(apport.ui.UserInterface):
             keyitem = QTreeWidgetItem([key]);
             details.addTopLevelItem (keyitem)
 
-            if self.report[key]:
+            if not self.report._is_binary(self.report[key]):
                 lines = self.report[key].splitlines()
                 for line in lines:
                     QTreeWidgetItem(keyitem, [line])

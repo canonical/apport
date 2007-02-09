@@ -113,7 +113,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.tree_model.set_value(keyiter, 0, key)
 
             valiter = self.tree_model.insert_before(keyiter, None)
-            if self.report[key]:
+            if not self.report._is_binary(self.report[key]):
                 self.tree_model.set_value(valiter, 0, self.report[key])
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
