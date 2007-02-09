@@ -397,10 +397,10 @@ class UserInterface:
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
                     if subprocess.call('gconftool --get /desktop/gnome/url-handlers/http/command | grep -qw ^firefox',
                         shell=True, stderr=subprocess.PIPE) == 0:
-                            subprocess.call(['strace', '-f', '-o', '/tmp/trace', 'firefox', '-new-window', url])
+                            subprocess.call(['firefox', '-new-window', url])
                             sys.exit(0)
                     else:
-                        if subprocess.call(['gnome-ope', url]) == 0:
+                        if subprocess.call(['gnome-open', url]) == 0:
                             sys.exit(0)
             except OSError:
                 pass
