@@ -14,8 +14,10 @@ apport (0.52) UNRELEASED; urgency=low
   * qt4/apport-qt: Fix restart button handling. (LP: #84202)
   * qt4/apport-qt: Do not try to call splitlines() on a report value that is a
     file reference; just display the reference instead. (LP: #84196)
+  * bin/apport: Disable for now, since the current kernel produces cropped
+    core dumps and thus we get totally useless crash reports
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  9 Feb 2007 17:34:00 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  9 Feb 2007 18:58:08 +0100
 
 apport (0.51) feisty; urgency=low
 

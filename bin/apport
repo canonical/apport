@@ -112,6 +112,8 @@ def setup_signals():
 #################################################################
 
 init_error_log()
+error_log('apport is disabled for now until the kernel gets fixed')
+sys.exit(0)
 try:
     setup_signals()
 
