@@ -135,7 +135,7 @@ class QT4UserInterface(apport.ui.UserInterface):
             return {'action': 'cancel', 'blacklist': blacklist}
         if dialog.actionButton == reportbutton:
             return {'action': 'report', 'blacklist': blacklist}
-        if dialog.actionButton == restartbutton:
+        if dialog.actionButton == restartButton:
             return {'action': 'restart', 'blacklist': blacklist}
         # Fallback
         return {'action': 'cancel', 'blacklist': blacklist}
