@@ -171,6 +171,8 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_stop_info_collection_progress(self):
         self.w('window_information_collection').hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
     def ui_start_upload_progress(self):
         '''Open a window with an definite progress bar, telling the user to
