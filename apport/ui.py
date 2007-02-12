@@ -356,6 +356,8 @@ class UserInterface:
         
         Display an error dialog if everything fails.'''
 
+        print 'open_url: opening', url
+
         if os.fork() > 0:
             return
 
