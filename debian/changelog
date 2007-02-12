@@ -4,8 +4,10 @@ apport (0.53) UNRELEASED; urgency=low
     junk.
   * gtk/apport-gtk: Process pending GTK events after hiding the info
     collection window to avoid a hanging dead dialog.
+  * gtk/apport-gtk: Do not count the lines of fields with binary data. This
+    particularly avoids long delays with huge core dumps. (LP: #81979)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 12 Feb 2007 12:36:34 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 12 Feb 2007 12:40:10 +0100
 
 apport (0.52) feisty; urgency=low
 

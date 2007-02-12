@@ -115,12 +115,12 @@ class GTKUserInterface(apport.ui.UserInterface):
             valiter = self.tree_model.insert_before(keyiter, None)
             if not self.report._is_binary(self.report[key]):
                 self.tree_model.set_value(valiter, 0, self.report[key])
+                # expand the row if the value has less than 5 lines
+                if len(filter(lambda c: c == '\n', self.report[key])) < 4:
+                    self.w('treeview_reportdetails').expand_row(row, False)
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
-            # expand the row if the value has less than 5 lines
-            if len(filter(lambda c: c == '\n', self.report[key])) < 4:
-                self.w('treeview_reportdetails').expand_row(row, False)
             row += 1
 
         # complete/reduced radio buttons
