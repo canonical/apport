@@ -1,3 +1,10 @@
+apport (0.54) UNRELEASED; urgency=low
+
+  * bin/apport: Re-enable, now that our kernel has been fixed to pipe complete
+    core dumps to us.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 13 Feb 2007 09:33:38 +0100
+
 apport (0.53) feisty; urgency=low
 
   * apport/ui.py, open_url(): Remove some accidentally left-over debugging
