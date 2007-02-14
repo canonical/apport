@@ -5,8 +5,10 @@ apport (0.55) UNRELEASED; urgency=low
     filing mode. This makes it convenient for shell users and is also required
     for proper Firefox 'Report a bug...' menu integration (see bug #85041).
   * debian/apport.install: Install ubuntu-bug to /usr/bin.
+  * gtk/apport-gtk: Generously add some gtk.main_iteration() calls to avoid
+    hanging dialogs, since we do not have a main loop.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 13:07:35 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 13:19:49 +0100
 
 apport (0.54) feisty; urgency=low
 

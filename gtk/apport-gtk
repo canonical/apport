@@ -78,6 +78,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         # show crash notification dialog
         response = d.run()
         d.hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 	blacklist = bl_checkbox.get_active()
         if response == gtk.RESPONSE_YES:
             return {'action': 'report', 'blacklist': blacklist}
@@ -91,6 +93,8 @@ class GTKUserInterface(apport.ui.UserInterface):
 	    self.str_heading_package_error % self.report['Package'])
         response = self.w('dialog_package_error').run()
         self.w('dialog_package_error').hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
         if response == gtk.RESPONSE_YES:
             return 'report'
         else:
@@ -99,6 +103,8 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_present_kernel_error(self):
         response = self.w('dialog_kernel_error').run()
         self.w('dialog_kernel_error').hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
         if response == gtk.RESPONSE_YES:
             return 'report'
         else:
@@ -137,6 +143,8 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         response = self.w('dialog_bugreport').run()
         self.w('dialog_bugreport').hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
         if response == gtk.RESPONSE_OK:
             if self.w('radiobutton_complete').get_active():
@@ -152,6 +160,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         md.set_title(title)
         md.run()
         md.hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
     def ui_error_message(self, title, text):
         md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
@@ -159,10 +169,14 @@ class GTKUserInterface(apport.ui.UserInterface):
         md.set_title(title)
         md.run()
         md.hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
     def ui_start_info_collection_progress(self):
         self.w('progressbar_information_collection').set_fraction(0)
         self.w('window_information_collection').show()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
     def ui_pulse_info_collection_progress(self):
         self.w('progressbar_information_collection').pulse()
@@ -180,6 +194,8 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         self.w('progressbar_upload').set_fraction(0)
         self.w('window_report_upload').show()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
     def ui_set_upload_progress(self, progress):
         '''Set the progress bar in the debug data upload progress
@@ -200,6 +216,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         '''Close debug data upload progress window.'''
 
         self.w('window_report_upload').hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
     #
     # Event handlers
@@ -214,6 +232,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         # signal is sent before actually expanding/collapsing, thus this
         # requires negation
         self.w('dialog_bugreport').set_resizable(not self.w('expander_details').get_expanded())
+        while gtk.events_pending():
+            gtk.main_iteration(False)
         return True
 
 if __name__ == '__main__':
