@@ -7,8 +7,11 @@ apport (0.55) UNRELEASED; urgency=low
   * debian/apport.install: Install ubuntu-bug to /usr/bin.
   * gtk/apport-gtk: Generously add some gtk.main_iteration() calls to avoid
     hanging dialogs, since we do not have a main loop.
+  * apport/ui.py: Do not silently ignore exceptions while uploading data to
+    Launchpad, but intercept them and display their message in the error
+    dialog. (Part of LP: #84992)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 13:19:49 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 13:34:40 +0100
 
 apport (0.54) feisty; urgency=low
 

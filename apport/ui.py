@@ -62,12 +62,9 @@ def upload_launchpad_blob(report):
     mime.seek(0)
 
     opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
-    try:
-        result = opener.open('https://edge.launchpad.net/+storeblob', 
-            { 'FORM_SUBMIT': '1', 'field.blob': mime })
-	ticket = result.info().get('X-Launchpad-Blob-Token')
-    except:
-        return None
+    result = opener.open('https://edge.launchpad.net/+storeblob', 
+        { 'FORM_SUBMIT': '1', 'field.blob': mime })
+    ticket = result.info().get('X-Launchpad-Blob-Token')
     mime.close()
 
     return ticket
@@ -431,7 +428,13 @@ class UserInterface:
         while upthread.isAlive():
             self.ui_set_upload_progress(None)
             upthread.join(0.1)
-        upthread.exc_raise()
+        if upthread.exc_info():
+            self.ui_error_message(_('Network problem'), 
+                "%s:\n\n%s" % (
+                    _('Could not upload report data to Launchpad'),
+                    str(upthread.exc_info()[1])
+                ))
+            return
 
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
@@ -449,8 +452,8 @@ class UserInterface:
                 self.open_url('https://edge.launchpad.net/ubuntu/+filebug/%s?%s' % (
 		    ticket, urllib.urlencode(args)))
         else:
-            self.ui_error_message(_('Network problem'), 
-		_('Could not upload report data to Launchpad'))
+            self.ui_error_message(_('Launchpad problem'), 
+		_('Launchpad did not  return a ticket number for the uploaded data.'))
 
     def load_report(self, path):
         '''Load report from given path and do some consistency checks.
