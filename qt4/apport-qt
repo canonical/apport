@@ -135,7 +135,7 @@ class QT4UserInterface(apport.ui.UserInterface):
             return {'action': 'cancel', 'blacklist': blacklist}
         if dialog.actionButton == reportbutton:
             return {'action': 'report', 'blacklist': blacklist}
-        if dialog.actionButton == restartbutton:
+        if dialog.actionButton == restartButton:
             return {'action': 'restart', 'blacklist': blacklist}
         # Fallback
         return {'action': 'cancel', 'blacklist': blacklist}
@@ -192,14 +192,19 @@ class QT4UserInterface(apport.ui.UserInterface):
             keyitem = QTreeWidgetItem([key]);
             details.addTopLevelItem (keyitem)
 
-            if self.report[key]:
-                lines = self.report[key].splitlines()
-                for line in lines:
-                    QTreeWidgetItem(keyitem, [line])
-                if len(lines) < 4:
-                    keyitem.setExpanded(True)
+            if hasattr(self.report[key], 'splitlines'):
+                # string value
+                if not self.report._is_binary(self.report[key]):
+                    lines = self.report[key].splitlines()
+                    for line in lines:
+                        QTreeWidgetItem(keyitem, [line])
+                    if len(lines) < 4:
+                        keyitem.setExpanded(True)
+                else:
+                    QTreeWidgetItem (keyitem, [_('(binary data)')])
             else:
-                QTreeWidgetItem (keyitem, [_('(binary data)')])
+                # file attachment
+                QTreeWidgetItem(keyitem, [str(self.report[key])])
 	details.header().hide()
 
         # complete/reduced radio buttons

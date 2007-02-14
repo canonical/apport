@@ -62,12 +62,9 @@ def upload_launchpad_blob(report):
     mime.seek(0)
 
     opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
-    try:
-        result = opener.open('https://edge.launchpad.net/+storeblob', 
-            { 'FORM_SUBMIT': '1', 'field.blob': mime })
-	ticket = result.info().get('X-Launchpad-Blob-Token')
-    except:
-        return None
+    result = opener.open('https://launchpad.net/+storeblob', 
+        { 'FORM_SUBMIT': '1', 'field.blob': mime })
+    ticket = result.info().get('X-Launchpad-Blob-Token')
     mime.close()
 
     return ticket
@@ -356,36 +353,31 @@ class UserInterface:
         
         Display an error dialog if everything fails.'''
 
+        print 'open_url: opening', url
+
         if os.fork() > 0:
             return
 
         os.setsid()
 
-        # If we are called through sudo, drop privileges to original
-        # user to get correct web browser settings.
-        uid = None
+        # If we are called through sudo, determine the real user id and run the
+        # browser with it to get the user's web browser settings.
         try:
             uid = int(os.getenv('SUDO_UID'))
             gid = int(os.getenv('SUDO_GID'))
-            if uid and gid:
-                os.setgroups([gid])
-                os.setgid(gid)
-                os.setuid(uid)
-                os.unsetenv('SUDO_USER') # to make firefox not croak
-                os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
-        except (TypeError, OSError):
-            pass
-
-        if not uid:
+            sudo_prefix = ['sudo', '-H', '-u', '#'+str(uid)]
+        except (TypeError):
             uid = os.getuid()
+            gid = None
+            sudo_prefix = []
 
         # figure out appropriate web browser
         try:
             # if ksmserver is running, try kfmclient
             try:
-                if subprocess.call(['pgrep', '-u', str(uid), 'ksmserver'],
+                if subprocess.call(['pgrep', '-x', '-u', str(uid), 'ksmserver'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    subprocess.call(['kfmclient', 'openURL', url])
+                    subprocess.call(sudo_prefix + ['kfmclient', 'openURL', url])
                     sys.exit(0)
             except OSError:
                 pass
@@ -393,20 +385,29 @@ class UserInterface:
             # if gnome-session is running, try gnome-open; special-case firefox
             # to open a new window
             try:
-                if subprocess.call(['pgrep', '-u', str(uid), 'gnome-session'],
+                if subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-session'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    if subprocess.call('gconftool --get /desktop/gnome/url-handlers/http/command | grep -qw ^firefox',
-                        shell=True, stderr=subprocess.PIPE) == 0:
-                            subprocess.call(['strace', '-f', '-o', '/tmp/trace', 'firefox', '-new-window', url])
-                            sys.exit(0)
+                    gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
+                        '/desktop/gnome/url-handlers/http/command'],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    if 'firefox' in gct.communicate()[0] and gct.returncode == 0:
+                        subprocess.call(sudo_prefix + ['firefox', '-new-window', url])
+                        sys.exit(0)
                     else:
-                        if subprocess.call(['gnome-ope', url]) == 0:
+                        if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
                             sys.exit(0)
             except OSError:
                 pass
 
             # fall back to webbrowser
             try:
+                if uid and gid:
+                    os.setgroups([gid])
+                    os.setgid(gid)
+                    os.setuid(uid)
+                    os.unsetenv('SUDO_USER') # to make firefox not croak
+                    os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
+
                 webbrowser.open(url, new=True, autoraise=True)
             except Exception, e:
                 md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
@@ -429,7 +430,13 @@ class UserInterface:
         while upthread.isAlive():
             self.ui_set_upload_progress(None)
             upthread.join(0.1)
-        upthread.exc_raise()
+        if upthread.exc_info():
+            self.ui_error_message(_('Network problem'), 
+                "%s:\n\n%s" % (
+                    _('Could not upload report data to Launchpad'),
+                    str(upthread.exc_info()[1])
+                ))
+            return
 
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
@@ -441,14 +448,14 @@ class UserInterface:
 		args['field.title'] = title
 
             if self.report.has_key('SourcePackage'):
-                self.open_url('https://edge.launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
+                self.open_url('https://launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
 		    self.report['SourcePackage'], ticket, urllib.urlencode(args)))
             else:
-                self.open_url('https://edge.launchpad.net/ubuntu/+filebug/%s?%s' % (
+                self.open_url('https://launchpad.net/ubuntu/+filebug/%s?%s' % (
 		    ticket, urllib.urlencode(args)))
         else:
-            self.ui_error_message(_('Network problem'), 
-		_('Could not upload report data to Launchpad'))
+            self.ui_error_message(_('Launchpad problem'), 
+		_('Launchpad did not  return a ticket number for the uploaded data.'))
 
     def load_report(self, path):
         '''Load report from given path and do some consistency checks.

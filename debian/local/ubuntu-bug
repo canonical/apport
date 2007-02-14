@@ -1,0 +1,23 @@
+#!/bin/sh -e
+
+[ -n "$DISPLAY" ] || {
+    echo "\$DISPLAY is not set. This program needs a running X session." >&2
+    exit 1
+}
+
+# first, check for a running Gnome/KDE session
+if pgrep -u `id -u` -x gnome-session >/dev/null && \
+    [ -x /usr/share/apport/apport-gtk ]; then
+    /usr/share/apport/apport-gtk -f "$@"
+elif pgrep -u `id -u` -x ksmserver >/dev/null && \
+    [ -x /usr/share/apport/apport-qt ]; then
+        /usr/share/apport/apport-qt -f "$@"
+# fall back to calling whichever is available
+elif [ -x /usr/share/apport/apport-gtk ]; then
+    /usr/share/apport/apport-gtk -f "$@"
+elif [ -x /usr/share/apport/apport-qt ]; then
+    /usr/share/apport/apport-qt -f "$@"
+else
+    echo "Neither apport-gtk nor apport-qt is installed. Install either to make this program work." >&2
+    exit 1
+fi

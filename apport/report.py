@@ -20,7 +20,7 @@ from problem_report import ProblemReport
 import fileutils
 from packaging_impl import impl as packaging
 
-_hook_dir = '/usr/share/apport/'
+_hook_dir = '/usr/share/apport/package-hooks/'
 
 # path of the ignore file
 _ignore_file = '~/.apport-ignore.xml'

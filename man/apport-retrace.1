@@ -26,6 +26,15 @@ installing all the debug symbols, the regenerated stack trace will
 be fully symbolic and thus become much more useful for developers to
 fix the problem.
 
+.I report
+is either the path to a .crash file, or a Launchpad bug number. In the
+latter case, the information is downloaded from the bug report, and
+you cannot change the report 'in-place'. You have to use one of the
+options
+.B \-g\fR,
+.B \-s\fR, or
+.B \-o\fR.
+
 .SH OPTIONS
 
 .TP

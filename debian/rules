@@ -15,15 +15,17 @@ pre-build::
 common-post-build-indep::
 	make -C po
 	make -C gtk
+	make -C qt4
 
 clean::
 	# remove backend copies
 	rm -f apport/packaging_impl.py
 	make -C po clean
 	make -C gtk clean
+	make -C qt4 clean
 
 ifdef _cdbs_rules_debhelper
-$(patsubst %,binary-install/%,apport-gtk) :: binary-install/%:
+$(patsubst %,binary-install/%,apport) :: binary-install/%:
 	$(if $(wildcard /usr/bin/dh_iconcache),dh_iconcache -p$(cdbs_curpkg) $(DEB_DH_DESKTOP_ARGS))
 endif
 
