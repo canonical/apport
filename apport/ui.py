@@ -62,7 +62,7 @@ def upload_launchpad_blob(report):
     mime.seek(0)
 
     opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
-    result = opener.open('https://edge.launchpad.net/+storeblob', 
+    result = opener.open('https://launchpad.net/+storeblob', 
         { 'FORM_SUBMIT': '1', 'field.blob': mime })
     ticket = result.info().get('X-Launchpad-Blob-Token')
     mime.close()
@@ -446,10 +446,10 @@ class UserInterface:
 		args['field.title'] = title
 
             if self.report.has_key('SourcePackage'):
-                self.open_url('https://edge.launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
+                self.open_url('https://launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
 		    self.report['SourcePackage'], ticket, urllib.urlencode(args)))
             else:
-                self.open_url('https://edge.launchpad.net/ubuntu/+filebug/%s?%s' % (
+                self.open_url('https://launchpad.net/ubuntu/+filebug/%s?%s' % (
 		    ticket, urllib.urlencode(args)))
         else:
             self.ui_error_message(_('Launchpad problem'), 

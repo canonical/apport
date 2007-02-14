@@ -10,8 +10,10 @@ apport (0.55) UNRELEASED; urgency=low
   * apport/ui.py: Do not silently ignore exceptions while uploading data to
     Launchpad, but intercept them and display their message in the error
     dialog. (Part of LP: #84992)
+  * apport/ui.py: Switch from edge.launchpad.net to production launchpad.net,
+    since the necessary bits are now there. (LP: #84992)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 13:34:40 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 13:37:52 +0100
 
 apport (0.54) feisty; urgency=low
 
