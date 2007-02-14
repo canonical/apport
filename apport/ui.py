@@ -360,31 +360,24 @@ class UserInterface:
 
         os.setsid()
 
-        # If we are called through sudo, drop privileges to original
-        # user to get correct web browser settings.
-        uid = None
+        # If we are called through sudo, determine the real user id and run the
+        # browser with it to get the user's web browser settings.
         try:
             uid = int(os.getenv('SUDO_UID'))
             gid = int(os.getenv('SUDO_GID'))
-            if uid and gid:
-                os.setgroups([gid])
-                os.setgid(gid)
-                os.setuid(uid)
-                os.unsetenv('SUDO_USER') # to make firefox not croak
-                os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
-        except (TypeError, OSError):
-            pass
-
-        if not uid:
+            sudo_prefix = ['sudo', '-H', '-u', '#'+str(uid)]
+        except (TypeError):
             uid = os.getuid()
+            gid = None
+            sudo_prefix = []
 
         # figure out appropriate web browser
         try:
             # if ksmserver is running, try kfmclient
             try:
-                if subprocess.call(['pgrep', '-u', str(uid), 'ksmserver'],
+                if subprocess.call(['pgrep', '-x', '-u', str(uid), 'ksmserver'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    subprocess.call(['kfmclient', 'openURL', url])
+                    subprocess.call(sudo_prefix + ['kfmclient', 'openURL', url])
                     sys.exit(0)
             except OSError:
                 pass
@@ -392,20 +385,29 @@ class UserInterface:
             # if gnome-session is running, try gnome-open; special-case firefox
             # to open a new window
             try:
-                if subprocess.call(['pgrep', '-u', str(uid), 'gnome-session'],
+                if subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-session'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    if subprocess.call('gconftool --get /desktop/gnome/url-handlers/http/command | grep -qw ^firefox',
-                        shell=True, stderr=subprocess.PIPE) == 0:
-                            subprocess.call(['firefox', '-new-window', url])
-                            sys.exit(0)
+                    gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
+                        '/desktop/gnome/url-handlers/http/command'],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    if 'firefox' in gct.communicate()[0] and gct.returncode == 0:
+                        subprocess.call(sudo_prefix + ['firefox', '-new-window', url])
+                        sys.exit(0)
                     else:
-                        if subprocess.call(['gnome-open', url]) == 0:
+                        if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
                             sys.exit(0)
             except OSError:
                 pass
 
             # fall back to webbrowser
             try:
+                if uid and gid:
+                    os.setgroups([gid])
+                    os.setgid(gid)
+                    os.setuid(uid)
+                    os.unsetenv('SUDO_USER') # to make firefox not croak
+                    os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
+
                 webbrowser.open(url, new=True, autoraise=True)
             except Exception, e:
                 md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
