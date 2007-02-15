@@ -1,4 +1,4 @@
-apport (0.56) UNRELEASED; urgency=low
+apport (0.56) feisty; urgency=low
 
   * apport/ui.py, open_url(): When being invoked as root, call gnome-open or
     firefox as root through sudo instead of dropping our uid/gid and calling
