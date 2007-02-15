@@ -4,8 +4,10 @@ apport (0.56) UNRELEASED; urgency=low
     firefox as root through sudo instead of dropping our uid/gid and calling
     it normally. The latter does not work for Firefox for some  mysterious
     reason. Thanks to Mika Fischer for this trick. (LP: #81207)
+  * Add debian/local/ubuntu-bug.1: Manpage for ubuntu-bug. Add it to
+    debian/apport.manpages.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 15:33:48 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Feb 2007 09:16:46 +0100
 
 apport (0.55) feisty; urgency=low
 
