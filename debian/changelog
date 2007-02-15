@@ -6,8 +6,12 @@ apport (0.56) UNRELEASED; urgency=low
     reason. Thanks to Mika Fischer for this trick. (LP: #81207)
   * Add debian/local/ubuntu-bug.1: Manpage for ubuntu-bug. Add it to
     debian/apport.manpages.
+  * qt4/apport-qt: Add some missing features that are present in the GTK UI:
+    - Do not show details by default, add a button to show them.
+    - Add complete/reduced bug report radio buttons.
+    - Thanks to Michael Hofmann for this!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Feb 2007 09:16:46 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Feb 2007 14:59:07 +0100
 
 apport (0.55) feisty; urgency=low
 
