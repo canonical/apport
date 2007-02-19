@@ -13,8 +13,10 @@ apport (0.57) UNRELEASED; urgency=low
   * apport/ui.py: If the problem report does not apply to a packaged program,
     and we have an ExecutablePath, mention it in the error message for easier
     debugging.
+  * apport/python_hook.py: Resolve symbolic links in ExecutablePath.
+    (LP: #85529)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Feb 2007 14:18:37 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Feb 2007 14:22:53 +0100
 
 apport (0.56) feisty; urgency=low
 
