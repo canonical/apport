@@ -15,8 +15,10 @@ apport (0.57) UNRELEASED; urgency=low
     debugging.
   * apport/python_hook.py: Resolve symbolic links in ExecutablePath.
     (LP: #85529)
+  * apport/ui.py, open_url(): Remove debugging print statement again, now
+    that we tracked down bug #83974.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Feb 2007 14:22:53 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Feb 2007 14:40:29 +0100
 
 apport (0.56) feisty; urgency=low
 
