@@ -1,3 +1,8 @@
+apport:
+ - write core to cwd for unpackaged programs if ulimit permits
+   <BenC>  So, if CORE_REAL_RLIM is not set in the env, always write out all of the core file to cwd
+   <BenC>  if it is set, write out only up to that amount, if 0, write nothing
+
 apport-gtk:
  - drag&drop URL
  - add gksudo wrapper for disabling apport, and checkbox to crash
