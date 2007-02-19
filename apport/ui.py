@@ -14,7 +14,7 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import tempfile, pwd
+import tempfile, pwd, errno
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
@@ -101,59 +101,67 @@ class UserInterface:
         '''Present given crash report to the user, ask him what to do about it,
         and offer to file a bug for it.'''
 
-        if not self.load_report(report_file):
-            return
-
-        # ask the user about what to do with the current crash
-	if self.report.get('ProblemType') == 'Package':
-	    response = self.ui_present_package_error()
-	    if response == 'cancel':
-		return
-	    assert response == 'report'
-	elif self.report.get('ProblemType') == 'Kernel':
-	    response = self.ui_present_kernel_error()
-	    if response == 'cancel':
-		return
-	    assert response == 'report'
-	else:
-            try:
-                desktop_entry = self.get_desktop_entry()
-            except ValueError: # package does not exist
-                self.ui_error_message(_('Invalid problem report'), 
-                    _('The report belongs to a package that is not installed.'))
-                self.ui_shutdown()
+        try:
+            if not self.load_report(report_file):
                 return
 
-	    response = self.ui_present_crash(desktop_entry)
-	    assert response.has_key('action')
-	    assert response.has_key('blacklist')
+            # ask the user about what to do with the current crash
+            if self.report.get('ProblemType') == 'Package':
+                response = self.ui_present_package_error()
+                if response == 'cancel':
+                    return
+                assert response == 'report'
+            elif self.report.get('ProblemType') == 'Kernel':
+                response = self.ui_present_kernel_error()
+                if response == 'cancel':
+                    return
+                assert response == 'report'
+            else:
+                try:
+                    desktop_entry = self.get_desktop_entry()
+                except ValueError: # package does not exist
+                    self.ui_error_message(_('Invalid problem report'), 
+                        _('The report belongs to a package that is not installed.'))
+                    self.ui_shutdown()
+                    return
 
-	    if response['blacklist']:
-		self.report.mark_ignore()
+                response = self.ui_present_crash(desktop_entry)
+                assert response.has_key('action')
+                assert response.has_key('blacklist')
 
-	    if response['action'] == 'cancel':
-		return
-	    if response['action'] == 'restart':
-		self.restart()
-		return
-	    assert response['action'] == 'report'
+                if response['blacklist']:
+                    self.report.mark_ignore()
 
-        # we want to file a bug now
-        self.collect_info()
+                if response['action'] == 'cancel':
+                    return
+                if response['action'] == 'restart':
+                    self.restart()
+                    return
+                assert response['action'] == 'report'
 
-        if self.handle_duplicate():
-            return
+            # we want to file a bug now
+            self.collect_info()
 
-	if self.report.get('ProblemType') in ['Crash', 'Kernel']:
-	    response = self.ui_present_report_details()
-	    if response == 'cancel':
-		return
-	    if response == 'reduced':
-		del self.report['CoreDump']
-	    else:
-		assert response == 'full'
+            if self.handle_duplicate():
+                return
 
-        self.file_report()
+            if self.report.get('ProblemType') in ['Crash', 'Kernel']:
+                response = self.ui_present_report_details()
+                if response == 'cancel':
+                    return
+                if response == 'reduced':
+                    del self.report['CoreDump']
+                else:
+                    assert response == 'full'
+
+            self.file_report()
+        except OSError, e:
+            # fail gracefully on ENOMEM
+            if e.errno == errno.ENOMEM:
+                print >> sys.stderr, 'Out of memory, aborting'
+                sys.exit(1)
+            else:
+                raise
 
     def run_report_bug(self):
         '''Report a bug.
