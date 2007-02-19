@@ -3,8 +3,11 @@ apport (0.57) UNRELEASED; urgency=low
   * apport/ui.py: Intercept ENOMEM and fail gracefully; there is little else
     we can do at that point, and there is no point in presenting a crash
     report for this. (LP: #85155)
+  * apport/ui.py: Ignore KeyError when deleting the CoreDump field on sending
+    a reduced report. This Should Not Happen™, but nevertheless did. 
+    (LP: #86007)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Feb 2007 13:41:15 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Feb 2007 13:50:45 +0100
 
 apport (0.56) feisty; urgency=low
 

@@ -150,7 +150,10 @@ class UserInterface:
                 if response == 'cancel':
                     return
                 if response == 'reduced':
-                    del self.report['CoreDump']
+                    try:
+                        del self.report['CoreDump']
+                    except KeyError:
+                        pass # Huh? Should not happen, but did in https://launchpad.net/bugs/86007
                 else:
                     assert response == 'full'
 
