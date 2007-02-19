@@ -5,7 +5,7 @@ apport (0.57) UNRELEASED; urgency=low
     report for this. (LP: #85155)
   * apport/ui.py: Ignore KeyError when deleting the CoreDump field on sending
     a reduced report. This Should Not Happen™, but nevertheless did.
-    (LP: #86007)
+    (LP: #86083)
   * gtk/apport-gtk, qt4/apport-qt: Intercept ImportError for the non-builtin
     Python modules. This usually happens for crashes when there is a
     dist-upgrade active and some Python packages have not been configured yet.
