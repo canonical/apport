@@ -13,9 +13,14 @@ the full text of the license.
 '''
 
 import os.path, sys, subprocess
-import gobject, gtk, gtk.glade
 from gettext import gettext as _
-import apport.ui
+try:
+    import gobject, gtk, gtk.glade
+    import apport.ui
+except ImportError, e:
+    # this can happen while upgrading python packages
+    print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
+    sys.exit(1)
 
 class GTKUserInterface(apport.ui.UserInterface):
     '''GTK UserInterface.'''
