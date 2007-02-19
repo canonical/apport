@@ -1,4 +1,4 @@
-apport (0.57) UNRELEASED; urgency=low
+apport (0.57) feisty; urgency=low
 
   * apport/ui.py: Intercept ENOMEM and fail gracefully; there is little else
     we can do at that point, and there is no point in presenting a crash
