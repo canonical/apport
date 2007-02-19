@@ -494,9 +494,11 @@ class UserInterface:
         else:
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
         if not self.cur_package and self.report['ProblemType'] != 'Kernel':
+            msg = _('This problem report does not apply to a packaged program.')
+            if self.report.has_key('ExecutablePath'):
+                msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
             self.report = None
-            self.ui_info_message(_('Invalid problem report'),
-                _('This problem report does not apply to a packaged program.'))
+            self.ui_info_message(_('Invalid problem report'), msg)
             return False
 
         self.complete_size = os.path.getsize(path)
