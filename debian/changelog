@@ -16,8 +16,13 @@ apport (0.59) UNRELEASED; urgency=low
     uncovers kernel bugs like #87065
   * problem_report.py test suite: Use assertAlmostEqual() when comparing stat
     times, since they are floats on some systems.
+  * apport/report.py, add_gdb_info():
+    - Remove all the initial gdb output, which gets rid of the duplicated #0
+      line.
+    - Replace some stray tabs with spaces.
+    - Thanks to Kees Cook for this!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 19:36:29 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 19:52:52 +0100
 
 apport (0.58) feisty; urgency=low
 
