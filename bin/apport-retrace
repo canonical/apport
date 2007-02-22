@@ -70,7 +70,7 @@ def parse_options():
 
 def install_ddebs(packages, debug_dir, cache_dir, verbose=0):
 
-    missing_dbgsym = {}
+    missing_dbgsym = set()
 
     d = os.path.join(cache_dir, 'archives', 'partial')
     if not os.path.isdir(d):
@@ -87,12 +87,12 @@ def install_ddebs(packages, debug_dir, cache_dir, verbose=0):
             continue
         if not cache.has_key(pkg + '-dbgsym'):
             print >> sys.stderr, 'WARNING: package %s-dbgsym not available' % pkg
-            missing_dbgsym[pkg] = 1
+            missing_dbgsym.add(pkg)
             continue
         p = cache[pkg+'-dbgsym']
         if p.candidateVersion != version:
             print >> sys.stderr, 'WARNING: version %s of package %s-dbgsym not available' % (version, pkg)
-            missing_dbgsym[pkg] = 1
+            missing_dbgsym.add(pkg)
             continue
         
         p.markInstall()
@@ -131,7 +131,7 @@ def install_ddebs(packages, debug_dir, cache_dir, verbose=0):
             if verbose>1:
                 print >> sys.stderr, 'DEBUG: installing %s for %s' % (f[0], pkg)
             apt_inst.debExtractArchive(open(f[0]), debug_dir)
-        elif not missing_dbgsym.has_key(pkg):
+        elif not pkg in missing_dbgsym:
             print >> sys.stderr, 'WARNING: dbgsym for %s %s not found by glob "%s"' % (pkg, version, match)
 
     os.chdir(orig_cwd)

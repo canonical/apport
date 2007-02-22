@@ -1,0 +1,19 @@
+Apport per-package hooks
+========================
+
+Binary packages can add additional fields (or even modify existing
+fields, if they want) of Apport crash or bug reports by placing a
+Python code snippet into
+
+  /usr/share/apport/package-hooks/<packagename>.py
+
+Apport will import this and call a function
+
+  add_info(report)
+
+and pass the currently processed problem report. This is an instance
+of apport.Report, and should mainly be used as a dictionary. Please
+see the Python help of this class for details:
+
+  >>> import apport
+  >>> help(apport.Report)

@@ -14,7 +14,7 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import tempfile, pwd
+import tempfile, pwd, errno
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
@@ -62,12 +62,9 @@ def upload_launchpad_blob(report):
     mime.seek(0)
 
     opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
-    try:
-        result = opener.open('https://edge.launchpad.net/+storeblob', 
-            { 'FORM_SUBMIT': '1', 'field.blob': mime })
-	ticket = result.info().get('X-Launchpad-Blob-Token')
-    except:
-        return None
+    result = opener.open('https://launchpad.net/+storeblob', 
+        { 'FORM_SUBMIT': '1', 'field.blob': mime })
+    ticket = result.info().get('X-Launchpad-Blob-Token')
     mime.close()
 
     return ticket
@@ -104,59 +101,70 @@ class UserInterface:
         '''Present given crash report to the user, ask him what to do about it,
         and offer to file a bug for it.'''
 
-        if not self.load_report(report_file):
-            return
-
-        # ask the user about what to do with the current crash
-	if self.report.get('ProblemType') == 'Package':
-	    response = self.ui_present_package_error()
-	    if response == 'cancel':
-		return
-	    assert response == 'report'
-	elif self.report.get('ProblemType') == 'Kernel':
-	    response = self.ui_present_kernel_error()
-	    if response == 'cancel':
-		return
-	    assert response == 'report'
-	else:
-            try:
-                desktop_entry = self.get_desktop_entry()
-            except ValueError: # package does not exist
-                self.ui_error_message(_('Invalid problem report'), 
-                    _('The report belongs to a package that is not installed.'))
-                self.ui_shutdown()
+        try:
+            if not self.load_report(report_file):
                 return
 
-	    response = self.ui_present_crash(desktop_entry)
-	    assert response.has_key('action')
-	    assert response.has_key('blacklist')
+            # ask the user about what to do with the current crash
+            if self.report.get('ProblemType') == 'Package':
+                response = self.ui_present_package_error()
+                if response == 'cancel':
+                    return
+                assert response == 'report'
+            elif self.report.get('ProblemType') == 'Kernel':
+                response = self.ui_present_kernel_error()
+                if response == 'cancel':
+                    return
+                assert response == 'report'
+            else:
+                try:
+                    desktop_entry = self.get_desktop_entry()
+                except ValueError: # package does not exist
+                    self.ui_error_message(_('Invalid problem report'), 
+                        _('The report belongs to a package that is not installed.'))
+                    self.ui_shutdown()
+                    return
 
-	    if response['blacklist']:
-		self.report.mark_ignore()
+                response = self.ui_present_crash(desktop_entry)
+                assert response.has_key('action')
+                assert response.has_key('blacklist')
 
-	    if response['action'] == 'cancel':
-		return
-	    if response['action'] == 'restart':
-		self.restart()
-		return
-	    assert response['action'] == 'report'
+                if response['blacklist']:
+                    self.report.mark_ignore()
 
-        # we want to file a bug now
-        self.collect_info()
+                if response['action'] == 'cancel':
+                    return
+                if response['action'] == 'restart':
+                    self.restart()
+                    return
+                assert response['action'] == 'report'
 
-        if self.handle_duplicate():
-            return
+            # we want to file a bug now
+            self.collect_info()
 
-	if self.report.get('ProblemType') in ['Crash', 'Kernel']:
-	    response = self.ui_present_report_details()
-	    if response == 'cancel':
-		return
-	    if response == 'reduced':
-		del self.report['CoreDump']
-	    else:
-		assert response == 'full'
+            if self.handle_duplicate():
+                return
 
-        self.file_report()
+            if self.report.get('ProblemType') in ['Crash', 'Kernel']:
+                response = self.ui_present_report_details()
+                if response == 'cancel':
+                    return
+                if response == 'reduced':
+                    try:
+                        del self.report['CoreDump']
+                    except KeyError:
+                        pass # Huh? Should not happen, but did in https://launchpad.net/bugs/86007
+                else:
+                    assert response == 'full'
+
+            self.file_report()
+        except OSError, e:
+            # fail gracefully on ENOMEM
+            if e.errno == errno.ENOMEM:
+                print >> sys.stderr, 'Out of memory, aborting'
+                sys.exit(1)
+            else:
+                raise
 
     def run_report_bug(self):
         '''Report a bug.
@@ -361,31 +369,24 @@ class UserInterface:
 
         os.setsid()
 
-        # If we are called through sudo, drop privileges to original
-        # user to get correct web browser settings.
-        uid = None
+        # If we are called through sudo, determine the real user id and run the
+        # browser with it to get the user's web browser settings.
         try:
             uid = int(os.getenv('SUDO_UID'))
             gid = int(os.getenv('SUDO_GID'))
-            if uid and gid:
-                os.setgroups([gid])
-                os.setgid(gid)
-                os.setuid(uid)
-                os.unsetenv('SUDO_USER') # to make firefox not croak
-                os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
-        except (TypeError, OSError):
-            pass
-
-        if not uid:
+            sudo_prefix = ['sudo', '-H', '-u', '#'+str(uid)]
+        except (TypeError):
             uid = os.getuid()
+            gid = None
+            sudo_prefix = []
 
         # figure out appropriate web browser
         try:
             # if ksmserver is running, try kfmclient
             try:
-                if subprocess.call(['pgrep', '-u', str(uid), 'ksmserver'],
+                if subprocess.call(['pgrep', '-x', '-u', str(uid), 'ksmserver'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    subprocess.call(['kfmclient', 'openURL', url])
+                    subprocess.call(sudo_prefix + ['kfmclient', 'openURL', url])
                     sys.exit(0)
             except OSError:
                 pass
@@ -393,20 +394,29 @@ class UserInterface:
             # if gnome-session is running, try gnome-open; special-case firefox
             # to open a new window
             try:
-                if subprocess.call(['pgrep', '-u', str(uid), 'gnome-session'],
+                if subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-session'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    if subprocess.call('gconftool --get /desktop/gnome/url-handlers/http/command | grep -qw ^firefox',
-                        shell=True, stderr=subprocess.PIPE) == 0:
-                            subprocess.call(['strace', '-f', '-o', '/tmp/trace', 'firefox', '-new-window', url])
-                            sys.exit(0)
+                    gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
+                        '/desktop/gnome/url-handlers/http/command'],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    if 'firefox' in gct.communicate()[0] and gct.returncode == 0:
+                        subprocess.call(sudo_prefix + ['firefox', '-new-window', url])
+                        sys.exit(0)
                     else:
-                        if subprocess.call(['gnome-ope', url]) == 0:
+                        if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
                             sys.exit(0)
             except OSError:
                 pass
 
             # fall back to webbrowser
             try:
+                if uid and gid:
+                    os.setgroups([gid])
+                    os.setgid(gid)
+                    os.setuid(uid)
+                    os.unsetenv('SUDO_USER') # to make firefox not croak
+                    os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
+
                 webbrowser.open(url, new=True, autoraise=True)
             except Exception, e:
                 md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
@@ -429,7 +439,13 @@ class UserInterface:
         while upthread.isAlive():
             self.ui_set_upload_progress(None)
             upthread.join(0.1)
-        upthread.exc_raise()
+        if upthread.exc_info():
+            self.ui_error_message(_('Network problem'), 
+                "%s:\n\n%s" % (
+                    _('Could not upload report data to Launchpad'),
+                    str(upthread.exc_info()[1])
+                ))
+            return
 
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
@@ -441,14 +457,14 @@ class UserInterface:
 		args['field.title'] = title
 
             if self.report.has_key('SourcePackage'):
-                self.open_url('https://edge.launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
+                self.open_url('https://launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
 		    self.report['SourcePackage'], ticket, urllib.urlencode(args)))
             else:
-                self.open_url('https://edge.launchpad.net/ubuntu/+filebug/%s?%s' % (
+                self.open_url('https://launchpad.net/ubuntu/+filebug/%s?%s' % (
 		    ticket, urllib.urlencode(args)))
         else:
-            self.ui_error_message(_('Network problem'), 
-		_('Could not upload report data to Launchpad'))
+            self.ui_error_message(_('Launchpad problem'), 
+		_('Launchpad did not  return a ticket number for the uploaded data.'))
 
     def load_report(self, path):
         '''Load report from given path and do some consistency checks.
@@ -476,9 +492,11 @@ class UserInterface:
         else:
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
         if not self.cur_package and self.report['ProblemType'] != 'Kernel':
+            msg = _('This problem report does not apply to a packaged program.')
+            if self.report.has_key('ExecutablePath'):
+                msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
             self.report = None
-            self.ui_info_message(_('Invalid problem report'),
-                _('This problem report does not apply to a packaged program.'))
+            self.ui_info_message(_('Invalid problem report'), msg)
             return False
 
         self.complete_size = os.path.getsize(path)

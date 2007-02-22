@@ -1,0 +1,59 @@
+.TH ubuntu\-bug 1 "February 15, 2007" "Martin Pitt"
+
+.SH NAME
+
+ubuntu\-bug \- file a bug against an Ubuntu package
+
+.SH SYNOPSIS
+
+.B ubuntu\-bug
+
+.B ubuntu\-bug \-p
+.I packagename
+
+.B ubuntu\-bug \-P
+.I PID
+
+.SH DESCRIPTION
+
+.B ubuntu\-bug 
+is a command-line interface for filing bugs in Ubuntu.
+
+To report a bug against a particular package, use the
+.B \-p
+option with the source package name, e. g.
+
+.RS 4
+.nf
+ubuntu\-bug \-p firefox
+.fi
+.RE
+
+In order to add more information to the bug report that could
+help the developers to fix the problem, you can also specify a process
+ID instead of (or in addition to) a package name:
+
+.RS 4
+.nf
+$ pidof gnome-terminal
+5139
+$ ubuntu-bug -P 5139
+.fi
+.RE
+
+If you want to report a problem that is not tied to a particular
+package, a generic distribution bug can be filed without specifying
+any arguments at all.
+
+.B ubuntu\-bug
+needs a running graphical desktop environment. It detects whether KDE
+or Gnome is running and calls
+.B apport\-gtk
+or 
+.B apport\-qt
+accordingly.
+
+.SH AUTHOR
+.B apport
+and the accompanying tools are developed by Martin Pitt
+<martin.pitt@ubuntu.com>.
