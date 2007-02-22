@@ -80,10 +80,9 @@ def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV,
     assert subprocess.call(['pidof', '-x', 'apport']) == 1, 'no running apport processes'
     if check_running:
         assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
-    if resource.getrlimit(resource.RLIMIT_CORE)[0]:
-        if expect_corefile:
-            assert os.path.exists('core'), 'leaves wanted core file'
-            os.unlink('core')
+    if expect_corefile:
+        assert os.path.exists('core'), 'leaves wanted core file'
+        os.unlink('core')
     else:
         assert not os.path.exists('core'), 'does not leave core file behind'
 
@@ -130,6 +129,9 @@ try:
                 'kernel crash dump helper is not active; please enable before running this test.'
 
     assert apport.fileutils.get_all_reports() == [], 'no reports already present'
+
+    # do not write core files for the first tests
+    resource.setrlimit(resource.RLIMIT_CORE, (0, -1))
 
     # move aside current ignore file
     if os.path.exists(ifpath):
@@ -190,7 +192,7 @@ try:
     os.write(fd, open(orig_test_executable).read())
     os.close(fd)
     os.chmod(test_executable, 0755)
-    check_crash(expect_corefile=True)
+    check_crash()
     os.unlink(test_executable)
     test_executable = orig_test_executable
     assert apport.fileutils.get_all_reports() == [], \
@@ -232,7 +234,7 @@ try:
     os.write(fd, '#!/bin/sh\nkill -SEGV $$')
     os.close(fd)
     os.chmod(test_executable, 0755)
-    check_crash(expect_corefile=True)
+    check_crash()
     assert apport.fileutils.get_all_reports() == [], \
         'no reports present after a non-packaged crashed script (present: %s)' % \
         str(apport.fileutils.get_all_reports())
@@ -242,7 +244,7 @@ try:
     try:
         os.chdir(os.path.dirname(test_executable))
         test_executable = './' + os.path.basename(test_executable)
-        check_crash(expect_corefile=True)
+        check_crash()
         os.unlink(test_executable)
         test_executable = orig_test_executable
     finally:
@@ -286,6 +288,23 @@ try:
     assert apport.fileutils.get_all_reports() == [], \
         'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
 
+    print '* Check that non-packaged executables create core dumps on proper ulimits'
+    orig_test_executable = test_executable
+    (fd, test_executable) = tempfile.mkstemp()
+    os.write(fd, open(orig_test_executable).read())
+    os.close(fd)
+    os.chmod(test_executable, 0755)
+    resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
+    check_crash(expect_corefile=False)
+    resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
+    check_crash(expect_corefile=False)
+    resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
+    check_crash(expect_corefile=True)
+    resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+    check_crash(expect_corefile=True)
+    os.unlink(test_executable)
+
+    test_executable = orig_test_executable
     print '* Check that binary blacklisting works'
     pr.mark_ignore()
     check_crash()

@@ -8,8 +8,12 @@ apport (0.59) UNRELEASED; urgency=low
   * test-apport, check_crash(): Differ between expecting the program dumping
     core and finding a core dump on disk, because this is not equivalent any
     more with core pipelining.
+  * bin/apport: Write core files into a process' cwd if the process' ulimit
+    requests and permits it and the crashes process is not packaged, so that
+    developers get happy again. Test this behaviour with various ulimits in
+    test-apport.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 16:17:41 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 17:56:11 +0100
 
 apport (0.58) feisty; urgency=low
 
