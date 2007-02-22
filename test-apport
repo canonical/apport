@@ -82,7 +82,16 @@ def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV,
         assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
     if expect_corefile:
         assert os.path.exists('core'), 'leaves wanted core file'
-        os.unlink('core')
+        try:
+            # check that core file is valid
+            gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'bt',
+                test_executable, 'core'], stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+            (out, err) = gdb.communicate()
+            assert gdb.returncode == 0
+            assert err == '', err
+        finally:
+            os.unlink('core')
     else:
         assert not os.path.exists('core'), 'does not leave core file behind'
 
