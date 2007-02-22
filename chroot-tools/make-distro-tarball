@@ -29,6 +29,13 @@ find -type l | while read f; do
     fi
 done
 
+# create symlink to mirror dir for file:// mirrors
+mirror_dir="${MIRROR#file://}"
+if [ "$mirror_dir" != "$MIRROR" ]; then
+    mkdir -p .`dirname "$mirror_dir"`
+    ln -s "$mirror_dir" ."${mirror_dir%/}"
+fi
+
 # set up default apt sources
 echo "deb $MIRROR $RELEASE main\n$APTSOURCES" > "$D/etc/apt/sources.list"
 
