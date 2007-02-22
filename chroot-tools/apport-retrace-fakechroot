@@ -141,7 +141,7 @@ try:
     # write core dump into chroot
     open(os.path.join(workdir, 'core'), 'w').write(report['CoreDump'])
 
-    install_packages(rootdir, report)
+    #install_packages(rootdir, report)
 
     subprocess.call(['fakeroot', 'fakechroot', 'chroot', rootdir])
 
