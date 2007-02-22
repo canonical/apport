@@ -1,3 +1,24 @@
+apport (0.59) UNRELEASED; urgency=low
+
+  * apport/report.py: Check that interpreter options are discarded in
+    test_check_interpreted_script(). This replicates bug #87005.
+  * apport/report.py, _check_interpreted_script(): Filter out interpreter
+    command line options. This should make the detection of interpreted
+    scripts more robust. (LP: #87005)
+  * test-apport, check_crash(): Differ between expecting the program dumping
+    core and finding a core dump on disk, because this is not equivalent any
+    more with core pipelining.
+  * bin/apport: Write core files into a process' cwd if the process' ulimit
+    requests and permits it and the crashes process is not packaged, so that
+    developers get happy again. Test this behaviour with various ulimits in
+    test-apport.
+  * test-apport: Check that the core file written by apport is valid. This
+    uncovers kernel bugs like #87065
+  * problem_report.py test suite: Use assertAlmostEqual() when comparing stat
+    times, since they are floats on some systems.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 19:36:29 +0100
+
 apport (0.58) feisty; urgency=low
 
   * qt4/apport-qt.desktop.in  move to System menu

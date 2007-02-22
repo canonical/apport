@@ -226,7 +226,7 @@ class Report(ProblemReport):
         if name == os.path.basename(self['ExecutablePath']):
             return
 
-        cmdargs = self['ProcCmdline'].split('\0', 2)
+        cmdargs = self['ProcCmdline'].split('\0')
         bindirs = ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']
 
         argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
@@ -234,6 +234,10 @@ class Report(ProblemReport):
             self['InterpreterPath'] = self['ExecutablePath']
             self['ExecutablePath'] = argvexes[0]
             return
+
+        # filter out interpreter options
+        while len(cmdargs) >= 2 and cmdargs[1].startswith('-'):
+            del cmdargs[1]
 
         if len(cmdargs) >= 2:
             # ensure that cmdargs[1] is an absolute path 
@@ -748,6 +752,15 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
+	# python script with options (abuse /bin/bash since it must exist)
+	pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python'
+        pr['ProcStatus'] = 'Name:\tbash'
+        pr['ProcCmdline'] = 'python\0-OO\0/bin/bash'
+        pr._check_interpreted()
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+
     def _generate_sigsegv_report(self, file=None):
 	'''Create a test executable which will die with a SIGSEGV, generate a
 	core dump for it, create a problem report with those two arguments
@@ -805,7 +818,9 @@ int main() { return f(42); }
         self.assert_(not re.match(r"(?s)(^|.*\n)#0  [^\n]+\n#0  ",
                                   pr['Stacktrace']))
         self.assert_('#0  0x' in pr['Stacktrace'])
+        self.assert_('#1  0x' in pr['Stacktrace'])
         self.assert_('#0  0x' in pr['ThreadStacktrace'])
+        self.assert_('#1  0x' in pr['ThreadStacktrace'])
         self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
         self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
 
