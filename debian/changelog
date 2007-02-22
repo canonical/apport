@@ -1,3 +1,10 @@
+apport (0.59) UNRELEASED; urgency=low
+
+  * apport/report.py: Check that interpreter options are discarded in
+    test_check_interpreted_script(). This replicates bug #87005.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 12:07:18 +0100
+
 apport (0.58) feisty; urgency=low
 
   * qt4/apport-qt.desktop.in  move to System menu

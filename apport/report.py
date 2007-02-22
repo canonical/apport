@@ -746,6 +746,15 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
+	# python script with options (abuse /bin/bash since it must exist)
+	pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python'
+        pr['ProcStatus'] = 'Name:\tbash'
+        pr['ProcCmdline'] = 'python\0-OO\0/bin/bash'
+        pr._check_interpreted()
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+
     def _generate_sigsegv_report(self, file=None):
 	'''Create a test executable which will die with a SIGSEGV, generate a
 	core dump for it, create a problem report with those two arguments
