@@ -2,8 +2,11 @@ apport (0.59) UNRELEASED; urgency=low
 
   * apport/report.py: Check that interpreter options are discarded in
     test_check_interpreted_script(). This replicates bug #87005.
+  * apport/report.py, _check_interpreted_script(): Filter out interpreter
+    command line options. This should make the detection of interpreted
+    scripts more robust. (LP: #87005)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 12:07:18 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 13:31:03 +0100
 
 apport (0.58) feisty; urgency=low
 

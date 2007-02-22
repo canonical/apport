@@ -226,7 +226,7 @@ class Report(ProblemReport):
         if name == os.path.basename(self['ExecutablePath']):
             return
 
-        cmdargs = self['ProcCmdline'].split('\0', 2)
+        cmdargs = self['ProcCmdline'].split('\0')
         bindirs = ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']
 
         argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
@@ -234,6 +234,10 @@ class Report(ProblemReport):
             self['InterpreterPath'] = self['ExecutablePath']
             self['ExecutablePath'] = argvexes[0]
             return
+
+        # filter out interpreter options
+        while len(cmdargs) >= 2 and cmdargs[1].startswith('-'):
+            del cmdargs[1]
 
         if len(cmdargs) >= 2:
             # ensure that cmdargs[1] is an absolute path 
