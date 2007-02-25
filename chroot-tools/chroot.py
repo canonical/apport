@@ -38,7 +38,7 @@ class Chroot:
 		'-xzf', root]) == 0
 
     def __del__(self):
-	if self.remove:
+	if hasattr(self, 'remove') and self.remove:
 	    shutil.rmtree(self.root)
 
     def tar(self, tarball=None):
