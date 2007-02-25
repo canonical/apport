@@ -14,23 +14,32 @@ apport\-retrace \- regenerate a crash report's stack trace
 
 .SH DESCRIPTION
 
-.B apport-retrace
+.B apport\-retrace
 regenerates the stack traces (both the simple and the threaded one) in
-an apport crash report from the included core dump. This requires the
-affected package to be installed, of course, and the installed version
-has to exactly match the version from the crash report.
+an apport crash report from the included core dump. For this it
+figures out the set of necessary packages and their accompanying debug
+symbol packages (\fIpackage\fB\-dbgsym\fR), so that the regenerated
+stack trace will be fully symbolic and thus become much more useful
+for developers to fix the problem.
 
-This is particularly useful if debug symbols were not available at the
-time of the report generation, which is the common case. After 
-installing all the debug symbols, the regenerated stack trace will
-be fully symbolic and thus become much more useful for developers to
-fix the problem.
+.B apport\-retrace 
+attempts to install the missing packages with apt. This requires root
+privileges, but will work fine in a chroot with the
+.B fakeroot
+and
+.B fakechroot
+tools, so that the entire process can be performed with just normal
+user privileges.
+
+If this tool is run as normal user, then it will merely print out the
+missing packages as a warning and continue the retracing process. It
+will yield worse up to unusable results, though.
 
 .I report
 is either the path to a .crash file, or a Launchpad bug number. In the
 latter case, the information is downloaded from the bug report, and
-you cannot change the report 'in-place'. You have to use one of the
-options
+you cannot change the report 'in-place'; instead, you have to use one
+of the options
 .B \-g\fR,
 .B \-s\fR, or
 .B \-o\fR.
@@ -55,22 +64,6 @@ the report.
 .B \-o \fIFILE\fR, \fB\-\-output=\fIFILE
 Write modified report to given file instead of changing the original
 report.
-
-.TP
-.B \-d, \-\-download\-debug
-Use apt to automatically download missing debug symbol packages
-(.ddebs) and use them for creating a better stack trace. Please note
-that this does not actually install these ddebs, thus no special
-privileges are required. However, your
-.B /etc/apt/sources.list
-must contain an appropriate apt source for this to work.
-
-.TP
-.B \-C, \-\-cache\-dir \fIDIRECTORY
-If using option 
-.B\-\-download\-debug
-to download ddebs, use the given directory as package cache. If not
-given, a temporary directory is used.
 
 .SH AUTHOR
 .B apport
