@@ -38,7 +38,7 @@ will yield worse up to unusable results, though.
 .I report
 is either the path to a .crash file, or a Launchpad bug number. In the
 latter case, the information is downloaded from the bug report, and
-you cannot change the report 'in-place'; instead, you have to use one
+you cannot change the report 'in\-place'; instead, you have to use one
 of the options
 .B \-g\fR,
 .B \-s\fR, or
@@ -64,6 +64,14 @@ the report.
 .B \-o \fIFILE\fR, \fB\-\-output=\fIFILE
 Write modified report to given file instead of changing the original
 report.
+
+.TP
+.B \-v, \-\-verbose
+Report download/install progress when installing additional packages.
+
+.TP
+.B \-h, \-\-help
+Print a short online help that documents all options.
 
 .SH AUTHOR
 .B apport
