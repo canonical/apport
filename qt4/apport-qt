@@ -1,0 +1,322 @@
+#!/usr/bin/python
+
+'''QT4 Apport user interface.
+
+Copyright (C) 2007 Michael Hofmann <mh21@piware.de>
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+the full text of the license.
+'''
+
+# FIXME: taskbar entry
+
+import os.path, sys, subprocess
+
+try:
+    from gettext import gettext as _
+    from PyQt4.QtCore import *
+    from PyQt4.QtGui import *
+    from PyQt4 import uic
+    import apport.ui
+except ImportError, e:
+    # this can happen while upgrading python packages
+    print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
+    sys.exit(1)
+
+class QT4Dialog(QDialog):
+    '''QT4 dialog wrapper.'''
+
+    def __init__(self, ui, title, heading, text):
+        QDialog.__init__(self)
+
+        uic.loadUi(os.path.join(os.path.dirname(sys.argv[0]), ui), self)
+
+        self.setWindowTitle (title)
+        self.findChild(QLabel, 'heading').setText('<h2>%s</h2>' % heading)
+        self.findChild(QLabel, 'text').setText(text)
+
+    def on_buttons_clicked(self, button):
+        self.actionbutton = button
+        if self.sender().buttonRole(button) == QDialogButtonBox.ActionRole:
+            button.window().done (2)
+
+    def addbutton(self, button):
+        return self.findChild(QDialogButtonBox, 'buttons').addButton(
+                button, QDialogButtonBox.ActionRole)
+
+class QT4ErrorDialog(QT4Dialog):
+    '''QT4 Error dialog wrapper.'''
+
+    def __init__(self, title, heading, text, checker = None):
+        QT4Dialog.__init__(self, 'error.ui', title, heading, text)
+
+        self.setMaximumSize(1, 1)
+        self.findChild(QLabel, 'icon').setPixmap(QMessageBox.standardIcon
+                (QMessageBox.Critical))
+
+        self.checker = self.findChild(QCheckBox, 'checker')
+        if checker:
+            self.checker.setText(checker)
+        else:
+            self.checker.hide()
+
+    def checked(self):
+        return self.checker.isChecked()
+
+class QT4ProgressDialog(QT4Dialog):
+    '''QT4 Progress dialog wrapper.'''
+
+    def __init__(self, title, heading, text):
+        QT4Dialog.__init__(self, 'progress.ui', title, heading, text)
+
+        self.setMaximumSize(1, 1)
+
+    def on_buttons_clicked(self, button):
+        QT4Dialog.on_buttons_clicked(self, button)
+        if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
+            sys.exit(0)
+
+    def set(self, value = None):
+        progress = self.findChild(QProgressBar, 'progress')
+        if not value:
+            progress.setRange(0, 0)
+            progress.setValue(0)
+        else:
+            progress.setRange(0, 1000)
+            progress.setValue(value * 1000)
+
+class QT4ReportDialog(QT4Dialog):
+    '''QT4 report dialog wrapper.'''
+
+    def __init__(self, title, heading, text):
+        QT4Dialog.__init__(self, 'bugreport.ui', title, heading, text)
+
+        self.details = self.addbutton(_("&Details..."))
+        self.details.setCheckable(True)
+
+        self.treeview = self.findChild(QTreeWidget, 'details')
+        self.showtree(False)
+
+    def on_buttons_clicked(self, button):
+        if self.details == button:
+            self.showtree(button.isChecked())
+        else:
+            QT4Dialog.on_buttons_clicked(self, button)
+
+    def showtree(self, visible):
+        self.treeview.setVisible(visible)
+        if visible:
+            self.setMaximumSize(16777215, 16777215)
+        else:
+            self.setMaximumSize(1, 1)
+
+
+class QT4UserInterface(apport.ui.UserInterface):
+    '''QT4 UserInterface.'''
+
+    def w(self, widget):
+        '''Shortcut for getting a widget.'''
+
+        return self.widgets.get_widget(widget)
+
+    def __init__(self):
+        apport.ui.UserInterface.__init__(self)
+
+        self.app = QApplication([])
+
+    #
+    # ui_* implementation of abstract UserInterface classes
+    #
+
+    def ui_present_crash(self, desktop_entry):
+        # adapt dialog heading and label appropriately
+        if desktop_entry:
+            name = desktop_entry.getName()
+            heading = _('Sorry, %s closed unexpectedly.') % name
+        elif self.report.has_key('ExecutablePath'):
+            name = os.path.basename(self.report['ExecutablePath'])
+            heading = _('Sorry, the program "%s" closed unexpectedly.') % name
+        else:
+            name = self.cur_package
+            heading = _('Sorry, %s closed unexpectedly.') % name
+
+        dialog = QT4ErrorDialog (name, heading,
+                _('If you were not doing anything confidential (entering '
+                'passwords or other private information), you can help to '
+                'improve the application by reporting the problem.'), 
+                _('&Ignore future crashes of this program version'))
+
+        reportbutton = dialog.addbutton(_('&Report Problem...'))
+
+        if desktop_entry and self.report.has_key('ExecutablePath') and \
+            os.path.dirname(self.report['ExecutablePath']) in \
+            os.environ['PATH'].split(':') and \
+            subprocess.call(['pgrep', '-x',
+                os.path.basename(self.report['ExecutablePath']),
+                '-u', str(os.geteuid())], stdout=subprocess.PIPE) != 0:
+            restartbutton = dialog.addbutton(_('Restart &Program'))
+
+        # show crash notification dialog
+        response = dialog.exec_()
+        blacklist = dialog.checked()
+
+        if response == QDialog.Rejected:
+            return {'action': 'cancel', 'blacklist': blacklist}
+        if dialog.actionbutton == reportbutton:
+            return {'action': 'report', 'blacklist': blacklist}
+        if dialog.actionbutton == restartbutton:
+            return {'action': 'restart', 'blacklist': blacklist}
+        # Fallback
+        return {'action': 'cancel', 'blacklist': blacklist}
+
+    def ui_present_package_error(self):
+        dialog = QT4ErrorDialog (self.report['Package'], 
+                _('Sorry, the package "%s" failed to install or upgrade.') % 
+                name,
+                _('You can help the developers to fix the package by '
+                    'reporting the problem.'))
+
+        reportbutton = dialog.addbutton(_('&Report Problem...'))
+
+        response = dialog.exec_()
+
+        if response == QDialog.Rejected:
+            return 'cancel'
+        if dialog.actionbutton == reportbutton:
+            return 'report'
+        # Fallback
+        return 'cancel'
+
+    def ui_present_kernel_error(self):
+        dialog = QT4ErrorDialog (_('Kernel Error'),
+                _('Sorry, the kernel encountered a serious problem'),
+                _('Your system might become unstable now and might need to be '
+                    'restarted.\n\nYou can help the developers to fix the '
+                    'problem by reporting it.'))
+
+        reportbutton = dialog.addbutton(_('&Report Problem...'))
+
+        response = dialog.exec_()
+
+        if response == QDialog.Rejected:
+            return 'cancel'
+        if dialog.actionbutton == reportbutton:
+            return 'report'
+        # Fallback
+        return 'cancel'
+
+    def ui_present_report_details(self):
+        # Let's get the dialog and modify it to our needs
+        dialog = QT4ReportDialog (self.report.get('Package', 'Ubuntu').split()[0],
+                _('Send problem report to the developers?'),
+                _('After the problem report has been sent, please fill out '
+                    'the form in the automatically opening web browser.'))
+
+        sendbutton = dialog.addbutton(_('&Send'))
+        sendbutton.setDefault(True)
+
+        # report contents
+        details = dialog.findChild (QTreeWidget, 'details')
+        for key in self.report:
+            keyitem = QTreeWidgetItem([key]);
+            details.addTopLevelItem (keyitem)
+
+            if hasattr(self.report[key], 'splitlines'):
+                # string value
+                if not self.report._is_binary(self.report[key]):
+                    lines = self.report[key].splitlines()
+                    for line in lines:
+                        QTreeWidgetItem(keyitem, [line])
+                    if len(lines) < 4:
+                        keyitem.setExpanded(True)
+                else:
+                    QTreeWidgetItem (keyitem, [_('(binary data)')])
+            else:
+                # file attachment
+                QTreeWidgetItem(keyitem, [str(self.report[key])])
+        details.header().hide()
+
+        # complete/reduced radio buttons
+        if self.report.has_key('CoreDump'):
+            dialog.findChild(QRadioButton, 'complete').setText(
+                    _('Complete report (recommended; %s)') % 
+                    self.format_filesize(self.get_complete_size()))
+            dialog.findChild(QRadioButton, 'reduced').setText(
+                    _('Reduced report (slow Internet connection; %s)') % 
+                    self.format_filesize(self.get_reduced_size()))
+        else:
+            dialog.findChild(QFrame, 'options').hide()
+
+        response = dialog.exec_()
+
+        if response == QDialog.Rejected:
+            return 'cancel'
+        # Fallback
+        if dialog.actionbutton != sendbutton:
+            return 'cancel'
+        if dialog.findChild(QRadioButton, 'reduced').isChecked():
+            return 'reduced'
+        if dialog.findChild(QRadioButton, 'complete').isChecked():
+            return 'full'
+        # Fallback
+        return 'undefined'
+
+    def ui_info_message(self, title, text):
+        QMessageBox.information (None, title, text, 
+                QMessageBox.Close, QMessageBox.Close)
+
+    def ui_error_message(self, title, text):
+        QMessageBox.critical (None, title, text, 
+                QMessageBox.Close, QMessageBox.Close)
+
+    def ui_start_info_collection_progress(self):
+        self.progress = QT4ProgressDialog (
+                _('Collecting Problem Information'), 
+                _('Collecting problem information'), 
+                _('The collected information can be send to the developers to '
+                    'improve the application. This might take some minutes.'))
+        self.progress.set()
+        self.progress.show()
+
+    def ui_pulse_info_collection_progress(self):
+        self.progress.set()
+        QCoreApplication.processEvents()
+
+    def ui_stop_info_collection_progress(self):
+        self.progress.hide()
+
+    def ui_start_upload_progress(self):
+        '''Open a window with an definite progress bar, telling the user to
+        wait while debug information is being uploaded.'''
+
+        self.progress = QT4ProgressDialog (
+                _('Uploading Problem Information'), 
+                _('Uploading problem information'), 
+                _('The collected information is sent to the bug tracking '
+                    'system. This might take some minutes.'))
+        self.progress.show()
+
+    def ui_set_upload_progress(self, progress):
+        '''Set the progress bar in the debug data upload progress
+        window to the given ratio (between 0 and 1, or None for indefinite
+        progress).
+
+        This function is called every 100 ms.'''
+
+        if progress:
+            self.progress.set(progress)
+        else:
+            self.progress.set()
+        QCoreApplication.processEvents()
+
+    def ui_stop_upload_progress(self):
+        '''Close debug data upload progress window.'''
+
+        self.progress.hide()
+
+if __name__ == '__main__':
+    app = QT4UserInterface()
+    app.run_argv()

@@ -2,17 +2,15 @@ apport-gtk:
  - drag&drop URL
  - add gksudo wrapper for disabling apport, and checkbox to crash
    dialog
- - check delay of progress dialog when filing a bug
- - add /usr/bin symlink for invoking a-g in bug filing mode
 
 apport-retrace:
- - fetch comment and attachments from bug URL (bughelper already has
-   code for that)
  - add stack rewinding to step back through crash handlers
  - add heuristics for more crash types (SEGV on read/write/exec & mem region)
 
 python-apport:
  - Add API/report attribute for doing upstream problem reports
+ - support /etc/apport/blacklist.d/ for check_ignored(): one exe
+   per line
 
-apport:
- - ignore mono crashes
+add firefox apport hook to suppress crash reports when restart is
+necessary

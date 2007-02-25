@@ -1,4 +1,183 @@
-apport (0.48) UNRELEASED; urgency=low
+apport (0.59) feisty; urgency=low
+
+  * apport/report.py: Check that interpreter options are discarded in
+    test_check_interpreted_script(). This replicates bug #87005.
+  * apport/report.py, _check_interpreted_script(): Filter out interpreter
+    command line options. This should make the detection of interpreted
+    scripts more robust. (LP: #87005)
+  * test-apport, check_crash(): Differ between expecting the program dumping
+    core and finding a core dump on disk, because this is not equivalent any
+    more with core pipelining.
+  * bin/apport: Write core files into a process' cwd if the process' ulimit
+    requests and permits it and the crashes process is not packaged, so that
+    developers get happy again. Test this behaviour with various ulimits in
+    test-apport.
+  * test-apport: Check that the core file written by apport is valid. This
+    uncovers kernel bugs like #87065
+  * problem_report.py test suite: Use assertAlmostEqual() when comparing stat
+    times, since they are floats on some systems.
+  * apport/report.py, add_gdb_info():
+    - Remove all the initial gdb output, which gets rid of the duplicated #0
+      line.
+    - Replace some stray tabs with spaces.
+    - Thanks to Kees Cook for this!
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 19:52:52 +0100
+
+apport (0.58) feisty; urgency=low
+
+  * qt4/apport-qt.desktop.in  move to System menu
+
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Tue, 20 Feb 2007 11:35:17 +0000
+
+apport (0.57) feisty; urgency=low
+
+  * apport/ui.py: Intercept ENOMEM and fail gracefully; there is little else
+    we can do at that point, and there is no point in presenting a crash
+    report for this. (LP: #85155)
+  * apport/ui.py: Ignore KeyError when deleting the CoreDump field on sending
+    a reduced report. This Should Not Happen™, but nevertheless did.
+    (LP: #86083)
+  * gtk/apport-gtk, qt4/apport-qt: Intercept ImportError for the non-builtin
+    Python modules. This usually happens for crashes when there is a
+    dist-upgrade active and some Python packages have not been configured yet.
+    (LP: #86007)
+  * apport/ui.py: If the problem report does not apply to a packaged program,
+    and we have an ExecutablePath, mention it in the error message for easier
+    debugging.
+  * apport/python_hook.py: Resolve symbolic links in ExecutablePath.
+    (LP: #85529)
+  * apport/ui.py, open_url(): Remove debugging print statement again, now
+    that we tracked down bug #83974.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Feb 2007 14:40:29 +0100
+
+apport (0.56) feisty; urgency=low
+
+  * apport/ui.py, open_url(): When being invoked as root, call gnome-open or
+    firefox as root through sudo instead of dropping our uid/gid and calling
+    it normally. The latter does not work for Firefox for some  mysterious
+    reason. Thanks to Mika Fischer for this trick. (LP: #81207)
+  * Add debian/local/ubuntu-bug.1: Manpage for ubuntu-bug. Add it to
+    debian/apport.manpages.
+  * qt4/apport-qt: Add some missing features that are present in the GTK UI:
+    - Do not show details by default, add a button to show them.
+    - Add complete/reduced bug report radio buttons.
+    - Thanks to Michael Hofmann for this!
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Feb 2007 14:59:07 +0100
+
+apport (0.55) feisty; urgency=low
+
+  * Add debian/local/ubuntu-bug: Check for a running KDE or Gnome session,
+    availability of apport-gtk and -qt, and open the appropriate GUI in bug
+    filing mode. This makes it convenient for shell users and is also required
+    for proper Firefox 'Report a bug...' menu integration (see bug #85041).
+  * debian/apport.install: Install ubuntu-bug to /usr/bin.
+  * gtk/apport-gtk: Generously add some gtk.main_iteration() calls to avoid
+    hanging dialogs, since we do not have a main loop.
+  * apport/ui.py: Do not silently ignore exceptions while uploading data to
+    Launchpad, but intercept them and display their message in the error
+    dialog. (Part of LP: #84992)
+  * apport/ui.py: Switch from edge.launchpad.net to production launchpad.net,
+    since the necessary bits are now there. (LP: #84992)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 13:37:52 +0100
+
+apport (0.54) feisty; urgency=low
+
+  * bin/apport: Re-enable, now that our kernel has been fixed to pipe complete
+    core dumps to us.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 13 Feb 2007 09:33:38 +0100
+
+apport (0.53) feisty; urgency=low
+
+  * apport/ui.py, open_url(): Remove some accidentally left-over debugging
+    junk.
+  * gtk/apport-gtk: Process pending GTK events after hiding the info
+    collection window to avoid a hanging dead dialog.
+  * gtk/apport-gtk: Do not count the lines of fields with binary data. This
+    particularly avoids long delays with huge core dumps. (LP: #81979)
+  * apport/ui.py, open_url(): Print URL to stdout, so that we can debug the
+    weirdness in #83974.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 12 Feb 2007 16:57:05 +0100
+
+apport (0.52) feisty; urgency=low
+
+  * apport/report.py: Fix hook directory to be
+    /usr/share/apport/package-hooks/,  not /u/s/apport/.
+  * Add doc/package-hooks.txt: Document per-package hooks, ship in package
+    apport.
+  * Add debian/apport.dirs: Ship package-hooks/ directory.
+  * gtk/apport-gtk, qt4/apport-qt: Fix detection of binary data so that the
+    CoreDump is not displayed as incomprehensible gibberish any more.
+  * Add qt4/apport-qt.desktop.in and add it to POTFILES.in.
+  * bin/apport-retrace: --verbose can now be specified multiple times to
+    increase verbosity and debug package installation. Also, fix some quoting
+    bugs. Thanks to Kees Cook for this!
+  * qt4/apport-qt: Fix restart button handling. (LP: #84202)
+  * qt4/apport-qt: Do not try to call splitlines() on a report value that is a
+    file reference; just display the reference instead. (LP: #84196)
+  * bin/apport: Disable for now, since the current kernel produces cropped
+    core dumps and thus we get totally useless crash reports
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  9 Feb 2007 18:58:08 +0100
+
+apport (0.51) feisty; urgency=low
+
+  New feature: Qt4 GUI implementation:
+
+  * Added qt4/: Qt4 implementation of the abstract user interface. Thanks to
+    Michael Hofmann <mh21@piware.de> for that!
+  * debian/copyright: Add Michael as copyright holder.
+  * setup.py, debian/control, debian/apport-qt.install: Packaging bits for
+    apport-qt.
+  * Move translations from apport-gtk to apport, since they are shared between
+    frontends. Add appropriate Conflicts/Replaces (we don't strictly need it
+    here because we strip them anyway, but we need that for the moving icon
+    anyway).
+  * Move icon from apport-gtk to apport, since it is/can be shared between
+    frontends.
+
+  Improvements:
+
+  * Replaced old apport.png icon stolen from bug-buddy with nice SVG one.
+    Thanks to Troy Sobotka for this!
+  * debian/copyright: Add Troy as copyright holder for the icon.
+  * bin/apport-retrace, man/apport-retrace.1: Document that report can now be
+    a LP bug number.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 20:01:12 +0100
+
+apport (0.50) feisty; urgency=low
+
+  * gtk/apport-gtk.glade: Fix 'prolem' typo.
+  * bin/apport-retrace: Use python-launchpad-bugs to create a Report object
+    from a given Launchpad bug number (given as argument instead of the report
+    file path). Add appropriate p-l-b dependency.
+  * gtk/apport-gtk: Mark '(binary data)' string as translatable.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  8 Feb 2007 15:15:47 +0100
+
+apport (0.49) feisty; urgency=low
+
+  * gtk/apport-gtk.glade: Fix s/send/sent/ typo. Closes: LP#83061
+  * apport/ui.py, create_crash_bug_title(): Cope with odd Tracebacks that are
+    shorter than three lines. Add test case from the bug. Closes: LP#83556
+  * apport/python_hook: Do not create a report if the binary is ignored. Add
+    test case. Closes: LP#83566
+  * gtk/apport-gtk: Do not save/alter crash dialog title any more, it's empty
+    now.
+  * apport/ui.py, open_url(): Check the user's session for
+    ksmserver/gnome-session to decide whether to prefer kfmclient or
+    gnome-open. Also, only call Firefox directly if gconf's prefered browser
+    is actually Firefox. Closes: LP#82007
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Feb 2007 18:33:15 +0100
+
+apport (0.48) feisty; urgency=low
 
   New feature: Infrastructure for reporting kernel Oopses:
 
@@ -44,8 +223,10 @@ apport (0.48) UNRELEASED; urgency=low
     case.
   * apport/report.py, add_package_info(): Fix crash when the first dependency
     is not installed. Closes: LP#82561
+  * gtk/apport-gtk.glade: Remove window titles in alert dialogs to comply with
+    Gnome HIG. Closes: LP#83123
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Feb 2007 12:26:16 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Feb 2007 12:19:35 +0100
 
 apport (0.47) feisty; urgency=low
 

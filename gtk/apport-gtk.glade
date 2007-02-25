@@ -5,7 +5,7 @@
 
 <widget class="GtkDialog" id="dialog_crash_reopen">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">Program Closed Unexpectedly</property>
+  <property name="title" translatable="yes"></property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -197,7 +197,7 @@
 
 <widget class="GtkDialog" id="dialog_crash">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">Program Closed Unexpectedly</property>
+  <property name="title" translatable="yes"></property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -434,7 +434,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="label1">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">The collected information can be send to the developers to improve the application. This might take some minutes.</property>
+	      <property name="label" translatable="yes">The collected information can be sent to the developers to improve the application. This might take some minutes.</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -509,7 +509,7 @@
 
 <widget class="GtkDialog" id="dialog_bugreport">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">Send Problem Report for %s</property>
+  <property name="title" translatable="yes"></property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">True</property>
@@ -866,7 +866,7 @@ After the problem report has been sent, please fill out the form in the automati
 
 <widget class="GtkDialog" id="dialog_package_error">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">Package failed to install</property>
+  <property name="title" translatable="yes"></property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -1026,7 +1026,7 @@ After the problem report has been sent, please fill out the form in the automati
 
 <widget class="GtkDialog" id="dialog_kernel_error">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">Kernel crash detected</property>
+  <property name="title" translatable="yes"></property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -1147,7 +1147,7 @@ After the problem report has been sent, please fill out the form in the automati
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">Your system might become unstable now and might need to be restarted.
 
-You can help the developers to fix the prolem by reporting it.</property>
+You can help the developers to fix the problem by reporting it.</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">False</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
