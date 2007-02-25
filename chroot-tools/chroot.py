@@ -21,7 +21,7 @@ class Chroot:
 	If a tarball is given, then it gets unpacked into a temporary directory
 	which is cleaned up at program termination.'''
 
-	self.exec_prefix = ['fakeroot', 'fakechroot']
+	self.exec_prefix = ['fakechroot', '-s', 'fakeroot']
 	self.remove = False
 
 	if root is None:

@@ -16,7 +16,7 @@ TARBALL=`readlink -f "$TARBALL"`
 D=`mktemp -d`
 trap "cd /; rm -rf $D" 0 1 2 3 4 5 6 7 8 10 11 12 13 14 15
 
-fakeroot fakechroot debootstrap "$RELEASE" "$D" "$MIRROR" $SCRIPT
+fakechroot -s fakeroot debootstrap "$RELEASE" "$D" "$MIRROR" $SCRIPT
 
 # fix symlinks
 cd "$D"
@@ -39,7 +39,7 @@ fi
 # set up default apt sources
 echo "deb $MIRROR $RELEASE main\n$APTSOURCES" > "$D/etc/apt/sources.list"
 
-fakeroot fakechroot chroot "$D" apt-get update
+fakechroot -s fakeroot chroot "$D" apt-get update
 
 # clean up cruft
 rm -f var/cache/apt/archives/partial/* 2>/dev/null
