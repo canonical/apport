@@ -10,7 +10,7 @@ apport (0.60) UNRELEASED; urgency=low
     package installed on amd64).
   * backends/packaging-dpkg.py: Implement get_architecture() and add test
     case.
-  * apport/report.py, add_package_info(): Add Architecture: field. 
+  * apport/report.py, add_package_info(): Add Architecture: field.
     (LP: #87424)
   * apport/ui.py: Already mark report as seen when we load it, not just in the
     information collection thread. That way, reports will only be shown once
