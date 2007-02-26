@@ -4,8 +4,14 @@ apport (0.60) UNRELEASED; urgency=low
     notifications are like alerts, title have been removed recently to comply
     with Gnome HIG standards, but then the user will get 'nameless window'
     buttons in the task bar. Let's have the smaller evil then. (LP: #87164)
+  * apport/packaging.py: Add get_architecture() interface for determining the
+    architecture of a particular package (which might not match the overall
+    system architecture on multiarch-capable systems, e. g. an i386 Firefox
+    package installed on amd64).
+  * backends/packaging-dpkg.py: Implement get_architecture() and add test
+    case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 18:13:33 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 18:27:40 +0100
 
 apport (0.59) feisty; urgency=low
 
