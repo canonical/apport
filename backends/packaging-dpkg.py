@@ -30,7 +30,7 @@ class __DpkgPackageInfo:
 	# too slow
         self.status = {}
 	dpkg = subprocess.Popen(['dpkg-query', '--show', 
-	    '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\n\n',
+	    '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\nArchitecture: ${Architecture}\n\n',
 	    '*'], stdout=subprocess.PIPE)
 
 	record = ''
@@ -79,6 +79,18 @@ class __DpkgPackageInfo:
         '''Return the source package name for a package.'''
 
 	return self._get_field(self.__get_status(package), 'Source') or package
+
+    def get_architecture(self, package):
+        '''Return the architecture of a package.
+        
+        This might differ on multiarch architectures (e. g.  an i386 Firefox
+        package on a x86_64 system)'''
+
+	try:
+	    status = self.__get_status(package)
+	except KeyError:
+            raise ValueError, 'package does not exist'
+        return self._get_field(status, 'Architecture')
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -334,6 +346,17 @@ Description: Test
             self.assertRaises(ValueError, impl.get_source, 'nonexisting')
             self.assertEqual(impl.get_source('bash'), 'bash')
             self.assertEqual(impl.get_source('libc6'), 'glibc')
+
+        def test_get_architecture(self):
+            '''Test get_architecture().'''
+
+            self.assertRaises(ValueError, impl.get_architecture, 'nonexisting')
+            # just assume that bash uses the native architecture
+            d = subprocess.Popen(['dpkg', '--print-architecture'],
+                stdout=subprocess.PIPE)
+            system_arch = d.communicate()[0].strip()
+            assert d.returncode == 0
+            self.assertEqual(impl.get_architecture('bash'), system_arch)
 
         def test_get_files(self):
             '''Test get_files().'''

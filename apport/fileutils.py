@@ -92,7 +92,8 @@ def mark_report_seen(report):
           timeout -= 1
        
        if timeout == 0:
-            raise OSError, 'could not modify atime of report file ' + report
+            # happens on noatime mounted partitions; just give up and delete
+            delete_report(report)
 
 def get_all_reports():
     '''Return a list with all report files which are accessible to the calling
