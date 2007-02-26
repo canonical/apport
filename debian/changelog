@@ -10,8 +10,10 @@ apport (0.60) UNRELEASED; urgency=low
     package installed on amd64).
   * backends/packaging-dpkg.py: Implement get_architecture() and add test
     case.
+  * apport/report.py, add_package_info(): Add Architecture: field. 
+    (LP: #87424)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 18:27:40 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 18:32:21 +0100
 
 apport (0.59) feisty; urgency=low
 
