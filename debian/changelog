@@ -19,8 +19,10 @@ apport (0.60) UNRELEASED; urgency=low
     the report file for reading does not change the atime (happens with
     noatime mount option), don't throw an exception, just delete the report.
     (other aspect of LP: #85809)
+  * qt4/apport-qt: Wrap gettext() into an unicode(str, 'UTF-8') call,
+    otherwise all non-ASCII unicode strings are broken. (LP: #87757)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 20:06:42 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 20:55:40 +0100
 
 apport (0.59) feisty; urgency=low
 
