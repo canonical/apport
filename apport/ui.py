@@ -46,7 +46,6 @@ def thread_collect_info(report, reportfile, package):
         report.write(f)
         f.close()
         os.chmod (reportfile, 0600)
-        apport.fileutils.mark_report_seen(reportfile)
 
 def upload_launchpad_blob(report):
     '''Upload given problem report to Malone and return the ticket for it.
@@ -102,6 +101,7 @@ class UserInterface:
         and offer to file a bug for it.'''
 
         try:
+            apport.fileutils.mark_report_seen(report_file)
             if not self.load_report(report_file):
                 return
 

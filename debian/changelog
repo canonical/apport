@@ -12,8 +12,15 @@ apport (0.60) UNRELEASED; urgency=low
     case.
   * apport/report.py, add_package_info(): Add Architecture: field. 
     (LP: #87424)
+  * apport/ui.py: Already mark report as seen when we load it, not just in the
+    information collection thread. That way, reports will only be shown once
+    on systems which have /var/crash mounted noatime, too. (LP: #85809)
+  * apport/fileutils.py, mark_report_seen(): If os.utime() fails, and opening
+    the report file for reading does not change the atime (happens with
+    noatime mount option), don't throw an exception, just delete the report.
+    (other aspect of LP: #85809)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 18:32:21 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 20:06:42 +0100
 
 apport (0.59) feisty; urgency=low
 
