@@ -121,6 +121,13 @@ def write_user_coredump(pid, cwd, limit):
     else:
         assert limit is None
 
+    # limit -1 means 'unlimited'
+    if limit < 0:
+        limit = None
+    else:
+        # ulimit specifies kB
+        limit *= 1024
+
     core_path = os.path.join(cwd, 'core')
     try:
         if open('/proc/sys/kernel/core_uses_pid').read().strip() != '0':

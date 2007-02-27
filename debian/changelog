@@ -1,3 +1,13 @@
+apport (0.61) UNRELEASED; urgency=low
+
+  * bin/apport:
+    - Kernel 2.6.20-9 now sets CORE_REAL_RLIM to -1 instead of not setting it;
+      handle this case correctly. (LP: #87065)
+    - Add forgotten multiplication of CORE_REAL_RLIM with 1024, since ulimit
+      sets kB, not bytes.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 27 Feb 2007 16:06:11 +0100
+
 apport (0.60) feisty; urgency=low
 
   * gtk/apport-gtk.glade: Reintroduce window titles. Since the crash
