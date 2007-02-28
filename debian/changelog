@@ -15,8 +15,10 @@ apport (0.62) UNRELEASED; urgency=low
     'PackageArchitecture:' for clarity.
   * apport/report.py, add_os_info(): Add system architecture as
     'Architecture:' field.
+  * apport/ui.py, create_crash_bug_title(): Append warning about non-native
+    package if package architecture does not match the system's one.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 10:54:43 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 11:15:56 +0100
 
 apport (0.61) feisty; urgency=low
 
