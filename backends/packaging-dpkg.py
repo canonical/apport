@@ -186,6 +186,17 @@ class __DpkgPackageInfo:
 	else:
 	    return None
 
+    def get_system_architecture(self):
+        '''Return the architecture of the system, in the notation used by the
+        particular distribution.'''
+
+        dpkg = subprocess.Popen(['dpkg', '--print-architecture'],
+            stdout=subprocess.PIPE)
+        arch = dpkg.communicate()[0].strip()
+        assert dpkg.returncode == 0
+        assert arch
+        return arch
+
     #
     # Internal helper methods
     #
@@ -385,6 +396,14 @@ Description: Test
             pkg = fields[-1]
 
             self.assertEqual(impl.get_file_package(file), pkg)
+
+        def test_get_system_architecture(self):
+            '''Test get_system_architecture().'''
+
+            arch = impl.get_system_architecture()
+            # must be nonempty without line breaks
+            self.assertNotEqual(arch, '')
+            self.assert_('\n' not in arch)
 
     # only execute if dpkg is available
     try:

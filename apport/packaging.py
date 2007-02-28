@@ -51,4 +51,10 @@ class PackageInfo:
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
+    def get_system_architecture(self):
+        '''Return the architecture of the system, in the notation used by the
+        particular distribution.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
 import packaging_impl
