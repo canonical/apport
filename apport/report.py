@@ -144,7 +144,8 @@ class Report(ProblemReport):
         This adds:
         - Package: package name and installed version
         - SourcePackage: source package name
-        - Architecture: processor architecture this package was built for
+        - PackageArchitecture: processor architecture this package was built
+          for
         - Dependencies: package names and versions of all dependencies and
           pre-dependencies; this also checks if the files are unmodified and
           appends a list of all modified files'''
@@ -158,7 +159,7 @@ class Report(ProblemReport):
             packaging.get_version(package),
             self._pkg_modified_suffix(package))
         self['SourcePackage'] = packaging.get_source(package)
-        self['Architecture'] = packaging.get_architecture(package)
+        self['PackageArchitecture'] = packaging.get_architecture(package)
 
         # get set of all transitive dependencies
         dependencies = set([])
@@ -542,7 +543,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_('libc6 ' + libcversion in pr['Dependencies'])
 	# check for stray empty lines
         self.assert_('\n\n' not in pr['Dependencies'])
-        self.assert_(pr.has_key('Architecture'))
+        self.assert_(pr.has_key('PackageArchitecture'))
 
         pr = Report()
         pr['ExecutablePath'] = '/nonexisting'
