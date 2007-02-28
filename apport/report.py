@@ -184,6 +184,7 @@ class Report(ProblemReport):
 
         This adds:
         - DistroRelease: lsb_release -sir output
+        - Architecture: system architecture in distro specific notation
         - Uname: uname -a output'''
 
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
@@ -193,6 +194,7 @@ class Report(ProblemReport):
         p = subprocess.Popen(['uname', '-a'], stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, close_fds=True)
         self['Uname'] = p.communicate()[0].strip()
+        self['Architecture'] = packaging.get_system_architecture()
 
     def add_user_info(self):
         '''Add information about the user.
@@ -557,6 +559,7 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_os_info()
         self.assert_(pr['Uname'].startswith('Linux'))
         self.assert_(type(pr['DistroRelease']) == type(''))
+        self.assert_(pr['Architecture'])
 
     def test_add_user_info(self):
         '''Test add_user_info behaviour.'''
