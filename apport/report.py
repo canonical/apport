@@ -633,8 +633,14 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], os.path.realpath('/bin/sh'))
 
         # check correct handling of interpreted executables: python 
-        assert not os.path.exists('./testsuite-unpack'), 'Directory ./testsuite-unpack must not exist'
-        p = subprocess.Popen(['./bin/apport-unpack', '-', 'testsuite-unpack'], stdin=subprocess.PIPE,
+        (fd, testscript) = tempfile.mkstemp()
+        os.write(fd, '''#!/usr/bin/python
+import sys
+sys.stdin.readline()
+''')
+        os.close(fd)
+        os.chmod(testscript, 0755)
+        p = subprocess.Popen([testscript], stdin=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
@@ -643,9 +649,12 @@ class _ApportReportTest(unittest.TestCase):
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate('\n')
-        os.rmdir('testsuite-unpack')
-        self.assertEqual(pr['ExecutablePath'], os.path.realpath('./bin/apport-unpack'))
+        os.unlink(testscript)
+        self.assertEqual(pr['ExecutablePath'], testscript)
         self.assert_('python' in pr['InterpreterPath'])
+
+        # test process is gone, should complain about nonexisting PID
+        self.assertRaises(OSError, pr.add_proc_info, p.pid)
 
     def test_check_interpreted(self):
         '''Test _check_interpreted().'''
