@@ -26,8 +26,11 @@ apport (0.62) UNRELEASED; urgency=low
   * run-tests: Add a 'local' command line option which runs tests on the files
     and modules in the build tree. Run tests on system files/modules by
     default.
+  * setup.py, debian/apport.install: Ship test-hooks, test-apport, and
+    run-tests in /usr/share/apport/testsuite/, so that the full test suite can
+    be run in the installed system.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 13:52:55 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 14:01:28 +0100
 
 apport (0.61) feisty; urgency=low
 
