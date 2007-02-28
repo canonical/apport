@@ -21,7 +21,7 @@ apport (0.62) UNRELEASED; urgency=low
   * test-hooks: Run tests on installed hooks in /usr/share/apport by default
     and add a '--local' switch to test the hooks in the source tree instead.
     Use this option in run-tests.
-  * apport/report.py, test_add_proc_info(): Change the python script test 
+  * apport/report.py, test_add_proc_info(): Change the python script test
     so that it does not depend on being run in the source tree.
   * run-tests: Add a 'local' command line option which runs tests on the files
     and modules in the build tree. Run tests on system files/modules by
