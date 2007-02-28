@@ -23,8 +23,11 @@ apport (0.62) UNRELEASED; urgency=low
     Use this option in run-tests.
   * apport/report.py, test_add_proc_info(): Change the python script test 
     so that it does not depend on being run in the source tree.
+  * run-tests: Add a 'local' command line option which runs tests on the files
+    and modules in the build tree. Run tests on system files/modules by
+    default.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 13:50:07 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 13:52:55 +0100
 
 apport (0.61) feisty; urgency=low
 
