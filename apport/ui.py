@@ -263,12 +263,14 @@ class UserInterface:
             self.ui_start_info_collection_progress()
 
             if self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package'):
-                icthread = threading.Thread(target=thread_collect_info,
+                icthread = REThread.REThread(target=thread_collect_info,
+                    name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package))
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
                     icthread.join(0.1)
+		icthread.exc_raise()
 
 	    if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
 		bpthread = REThread.REThread(target=self.report.search_bug_patterns,
