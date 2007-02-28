@@ -276,7 +276,6 @@ class Report(ProblemReport):
         pid = str(pid)
 
         try:
-            self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
             self['ProcCwd'] = os.readlink('/proc/' + pid + '/cwd')
         except OSError:
             pass
@@ -293,6 +292,8 @@ class Report(ProblemReport):
         self['ProcStatus'] = _read_file('/proc/' + pid + '/status')
         self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
         self['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
+        self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+        assert os.path.exists(self['ExecutablePath'])
 
         # check if we have an interpreted program
         self._check_interpreted()
@@ -594,7 +595,7 @@ class _ApportReportTest(unittest.TestCase):
         # check process from other user
         assert os.getuid() != 0, 'please do not run this test as root for this check.'
         pr = Report()
-        pr.add_proc_info(pid=1)
+        self.assertRaises(OSError, pr.add_proc_info, 1) # EPERM for init process
         self.assert_('init' in pr['ProcStatus'], pr['ProcStatus'])
         self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
         self.assert_(not pr.has_key('InterpreterPath'))

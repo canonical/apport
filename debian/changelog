@@ -3,8 +3,11 @@ apport (0.62) UNRELEASED; urgency=low
   * apport/ui.py, collect_info(): Use REThread instead of Thread and raise
     exceptions from it, so that errors during info collection actually become
     visible.
+  * apport/report.py, add_proc_info(): Check that ExecutablePath actually
+    exists, so that invalid values from transient error conditions are ignored
+    (such as '/usr/bin/gnome-panel\x00\x00\x8b (deleted)').
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 08:52:29 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 10:15:50 +0100
 
 apport (0.61) feisty; urgency=low
 
