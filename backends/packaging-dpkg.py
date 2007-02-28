@@ -293,7 +293,7 @@ Description: Test
                 'libc6 (>= 2.4), libfoo, libbar (<< 3), libbaz')
 
         def test_check_files_md5(self):
-            '''Test _check_files_md5() behaviour.'''
+            '''Test _check_files_md5().'''
 
             td = tempfile.mkdtemp()
             try:
@@ -383,7 +383,7 @@ Description: Test
             self.assertEqual(impl.get_file_package('/nonexisting'), None)
 
         def test_get_file_package_diversion(self):
-            '''Test get_file_package() behaviour for a diverted file.'''
+            '''Test get_file_package() for a diverted file.'''
 
             # pick first diversion we have
             p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',

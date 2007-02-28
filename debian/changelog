@@ -17,8 +17,9 @@ apport (0.62) UNRELEASED; urgency=low
     'Architecture:' field.
   * apport/ui.py, create_crash_bug_title(): Append warning about non-native
     package if package architecture does not match the system's one.
+  * All test suites: Remove redundant word 'behaviour' from test descriptions.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 11:15:56 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Feb 2007 13:08:05 +0100
 
 apport (0.61) feisty; urgency=low
 

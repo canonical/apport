@@ -521,7 +521,7 @@ import unittest, shutil, signal, time
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
-        '''Test add_package_info() behaviour.'''
+        '''Test add_package_info().'''
 
         # determine bash version
         bashversion = packaging.get_version('bash')
@@ -553,7 +553,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(not pr.has_key('Package'))
 
     def test_add_os_info(self):
-        '''Test add_os_info() behaviour.'''
+        '''Test add_os_info().'''
 
         pr = Report()
         pr.add_os_info()
@@ -562,7 +562,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr['Architecture'])
 
     def test_add_user_info(self):
-        '''Test add_user_info behaviour.'''
+        '''Test add_user_info().'''
 
         pr = Report()
         pr.add_user_info()
@@ -574,7 +574,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
 
     def test_add_proc_info(self):
-        '''Test add_proc_info() behaviour.'''
+        '''Test add_proc_info().'''
 
         # set test environment
         assert os.environ.has_key('LANG'), 'please set $LANG for this test'
@@ -648,7 +648,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_('python' in pr['InterpreterPath'])
 
     def test_check_interpreted(self):
-        '''Test _check_interpreted() behaviour.'''
+        '''Test _check_interpreted().'''
         
         # standard ELF binary
         pr = Report()
@@ -831,7 +831,7 @@ int main() { return f(42); }
         self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
 
     def test_add_gdb_info(self):
-        '''Test add_gdb_info() behaviour with core dump file reference.'''
+        '''Test add_gdb_info() with core dump file reference.'''
 
         pr = Report()
         # should not throw an exception for missing fields
@@ -842,7 +842,7 @@ int main() { return f(42); }
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
 
     def test_add_gdb_info_load(self):
-        '''Test add_gdb_info() behaviour with inline core dump.'''
+        '''Test add_gdb_info() with inline core dump.'''
 
         rep = tempfile.NamedTemporaryFile()
         self._generate_sigsegv_report(rep)
@@ -855,7 +855,7 @@ int main() { return f(42); }
         self._validate_gdb_fields(pr)
 
     def test_add_gdb_info_script(self):
-        '''Test add_gdb_info() behaviour with a script.'''
+        '''Test add_gdb_info() with a script.'''
 
         (fd, coredump) = tempfile.mkstemp()
         (fd2, script) = tempfile.mkstemp()
@@ -886,7 +886,7 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
         self.assert_('libc.so' in pr['Stacktrace'])
 
     def test_search_bug_patterns(self):
-        '''Test search_bug_patterns() behaviour.'''
+        '''Test search_bug_patterns().'''
 
         pdir = None
         try:
