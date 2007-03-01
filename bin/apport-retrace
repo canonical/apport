@@ -56,6 +56,9 @@ def parse_options():
     optparser.add_option('-u', '--unpack-only', 
         help='Only unpack the additionally required packages, do not configure them',
         action='store_true', dest='unpack_only', default=False)
+    optparser.add_option('-t', '--temporary', 
+        help='Purge installed packages after retracing.',
+        action='store_true', dest='temporary', default=False)
 
     (opts, args) = optparser.parse_args()
 
@@ -114,16 +117,22 @@ def fetch_unpack(cache, fetchProgress, verbosity=0):
         so = sys.stderr
     else:
         so = subprocess.PIPE
-    subprocess.call(['dpkg', '--unpack'] + [i.DestFile for i in fetcher.Items],
-        stdout=so)
+    res = subprocess.call(['dpkg', '--unpack'] + [i.DestFile for i in
+        fetcher.Items], stdout=so)
+    if res != 0:
+        raise IOError, 'dpkg failed to unpack archives'
 
 def install_missing_packages(report, verbosity = 0, unpack_only=False):
     '''Install packages which are required to retrace the given report.
     
     If package installation fails (e. g. because the user does not have root
-    privileges), the list of required packages is printed out instead.'''
+    privileges), the list of required packages is printed out instead.
+    
+    Return a list of installed packages.'''
 
     c = apt.Cache()
+
+    installed = []
 
     # create map of dependency package versions as specified in report
     dependency_versions = {}
@@ -167,6 +176,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False):
 	    # after commit(), the Cache object does not empty the pending
 	    # changes, so we need to reinitialize it to avoid applying the same
 	    # changes again below
+            installed = [p.name for p in c.getChanges()]
 	    c = apt.Cache()
     except IOError, e:
 	pass # we will complain to the user later
@@ -209,10 +219,13 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False):
                 fetch_unpack(c, fetchProgress, verbosity)
             else:
                 c.commit(fetchProgress, installProgress)
+        installed += [p.name for p in c.getChanges()]
     except IOError, e:
 	print >> sys.stderr, 'WARNING: could not install missing packages:', e
 	for p in c.getChanges():
 	    print >> sys.stderr, '  %s %s' % (p.name, p.candidateVersion)
+
+    return installed
 
 #
 # main
@@ -251,7 +264,7 @@ if not required_fields.issubset(set(report.keys())):
 	' '.join(required_fields)
     sys.exit(1)
 
-install_missing_packages(report, options.verbose, options.unpack_only)
+installed = install_missing_packages(report, options.verbose, options.unpack_only)
 
 # interactive gdb session
 if options.gdb:
@@ -293,3 +306,10 @@ if modified:
         out = open(options.output, 'w')
 
     report.write(out)
+
+if options.temporary and installed:
+    if options.verbose:
+        so = sys.stderr
+    else:
+        so = subprocess.PIPE
+    subprocess.call(['dpkg', '-P'] + installed, stdout=so)
