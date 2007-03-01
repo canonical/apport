@@ -15,8 +15,13 @@ apport (0.60) UNRELEASED; urgency=low
   * man/apport-retrace.1: Update description for the new behaviour, drop
     documentation of the -d and -C options, and add documentation of -u and
     -t.
+  * Add chroot-tools/chroot.py: Class for representing and working with
+    chroots, using fakeroot and fakechroot.
+  * Add chroot-tools/apport-chroot: CLI frontend for doing various things with
+    fakechroots. For now, this implements retracing a bug or Apport report
+    file, and dist-upgrading.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Mar 2007 21:16:26 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Mar 2007 22:02:50 +0100
 
 apport (0.59) feisty; urgency=low
 

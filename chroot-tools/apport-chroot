@@ -1,0 +1,133 @@
+#!/usr/bin/python
+
+# Execute operations on/in apport chroots.
+#
+# Copyright (c) 2007 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+import optparse, os.path, sys, urllib, re
+
+import problem_report
+from chroot import Chroot
+
+#
+# functions
+#
+
+def parse_options():
+    '''Parse command line options and return (options, args) tuple.'''
+
+    optparser = optparse.OptionParser('''%prog [options] upgrade <chroot path>|<chroot release name>|all
+%prog [options] retrace <bugnumber>|<report file>''')
+
+    optparser.add_option('-m', '--chroot-map', 
+        help='Path to chroot map. This is a file that defines a Python dictionary, mapping DistroRelease: values to chroot paths',
+        action='store', type='string', dest='chroot_map', metavar='FILE', default=None)
+
+    (opts, args) = optparser.parse_args()
+
+    if len(args) < 1:
+        optparser.error('no command specified (use --help for a short online help)')
+        sys.exit(1)
+
+    if not opts.chroot_map or not os.path.exists(opts.chroot_map):
+        optparser.error('You must specify a chroot map with -m (use --help for a short online help)')
+        sys.exit(1)
+
+    # load chroot map and resolve relative paths
+    map_file_dir = os.path.dirname(opts.chroot_map)
+    opts.chroot_map = eval(open(opts.chroot_map).read(), {}, {})
+    for n, p in opts.chroot_map.iteritems():
+        if not p.startswith('/'):
+            opts.chroot_map[n] = os.path.join(map_file_dir, p)
+
+    return (opts, args)
+
+def release_from_bug(url):
+    '''Open the given URL, parse out 'DistroRelease: <release>' and return
+    it.'''
+
+    dr = re.compile('DistroRelease: ([-a-zA-Z0-9.+/ ]+)')
+    for line in urllib.urlopen(url):
+        m = dr.search(line)
+        if m:
+            return m.group(1)
+    else:
+        raise ValueError, 'URL does not contain DistroRelease: field'
+
+def release_from_report(file):
+    '''Return the distro release from the given Apport report.'''
+
+    pr = problem_report.ProblemReport()
+    pr.load(open(file), binary=False)
+    return pr['DistroRelease']
+
+def upgrade_chroot(chroot):
+    '''Update a chroot to the latest apt lists and packages.
+    
+    If run from a tarball and the dist-upgrade succeeds, then the tarball
+    is updated as well. If the dist-upgrade fails, an assertion is raised.'''
+
+    assert chroot.run(['apt-get', '-qq', 'update']) == 0
+    assert chroot.run(['apt-get', '-qqy', '--allow-unauthenticated', 'dist-upgrade']) == 0
+    if chroot.root_tarball:
+        chroot.tar()
+
+#
+# commands
+#
+
+def command_upgrade(opts, args):
+    '''Upgrade one or all chroots.'''
+
+    if len(args) != 1:
+        print >> sys.stderr, 'upgrade needs exactly one argument (use --help for a short online help'
+        sys.exit(1)
+
+    if args[0] == 'all':
+        for c in opts.chroot_map.itervalues():
+            print 'Upgrading %s...' % c
+            upgrade_chroot(Chroot(c))
+    elif opts.chroot_map.has_key(args[0]):
+        c = opts.chroot_map[args[0]]
+        print 'Upgrading %s...' % c
+        upgrade_chroot(Chroot(c))
+    else:
+        upgrade_chroot(Chroot(args[0]))
+
+def command_retrace(opts, args):
+    '''Retrace a Launchpad bug or report file.'''
+
+    if len(args) != 1:
+        print >> sys.stderr, 'retrace needs exactly one argument (use --help for a short online help)'
+        sys.exit(1)
+
+    if args[0].isdigit():
+        release = release_from_bug('https://launchpad.net/bugs/' + args[0])
+        c = Chroot(opts.chroot_map[release])
+        c.run(['apport-retrace', '-stu', args[0]])
+    else:
+        # symlink the report into the chroot
+        release = release_from_report(args[0])
+        c = Chroot(opts.chroot_map[release])
+        chroot_report = os.path.join(c.root, 'tmp', os.path.basename(args[0]))
+        os.symlink(os.path.realpath(args[0]), chroot_report)
+        c.run(['apport-retrace', '-stuv', chroot_report])
+        os.unlink(chroot_report)
+
+#
+# main
+#
+
+opts, args = parse_options()
+try:
+    globals()['command_' + args[0]](opts, args[1:])
+except KeyError:
+    print >> sys.stderr, 'unknown command (use --help for a short online help)'
+    sys.exit(1)
