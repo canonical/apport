@@ -16,7 +16,7 @@ the full text of the license.
 import os.path, sys, subprocess
 
 try:
-    from gettext import gettext as _
+    from gettext import gettext
     from PyQt4.QtCore import *
     from PyQt4.QtGui import *
     from PyQt4 import uic
@@ -25,6 +25,10 @@ except ImportError, e:
     # this can happen while upgrading python packages
     print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
     sys.exit(1)
+
+# PyQt needs this weirdness
+def _(str):
+    return unicode(gettext(str), 'UTF-8')
 
 class QT4Dialog(QDialog):
     '''QT4 dialog wrapper.'''

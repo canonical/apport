@@ -27,6 +27,14 @@ class PackageInfo:
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
+    def get_architecture(self, package):
+        '''Return the architecture of a package.
+        
+        This might differ on multiarch architectures (e. g.  an i386 Firefox
+        package on a x86_64 system)'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
 
@@ -40,6 +48,12 @@ class PackageInfo:
     def get_file_package(self, file):
         '''Return the package a file belongs to, or None if the file is not
         shipped by any package.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
+    def get_system_architecture(self):
+        '''Return the architecture of the system, in the notation used by the
+        particular distribution.'''
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 

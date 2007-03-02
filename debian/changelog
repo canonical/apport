@@ -1,4 +1,4 @@
-apport (0.60) UNRELEASED; urgency=low
+apport (0.63fakeroot) UNRELEASED; urgency=low
 
   * bin/apport-retrace:
     - Simplify program design and throw away the complicated debug symbol
@@ -24,6 +24,78 @@ apport (0.60) UNRELEASED; urgency=low
     - apport-retrace a bug or Apport report file
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  2 Mar 2007 18:37:51 +0100
+
+apport (0.62) UNRELEASED; urgency=low
+
+  * apport/ui.py, collect_info(): Use REThread instead of Thread and raise
+    exceptions from it, so that errors during info collection actually become
+    visible.
+  * apport/report.py, add_proc_info(): Check that ExecutablePath actually
+    exists, so that invalid values from transient error conditions are ignored
+    (such as '/usr/bin/gnome-panel\x00\x00\x8b (deleted)').
+  * apport/packaging.py: Add interface get_system_architecture() to return the
+    system architecture in the distro specific notation. This can differ from
+    get_architecture(package) on multiarch platforms such as amd64.
+  * backends/packaging-dpkg.py: Implement get_system_architecture() to return
+    dpkg --print-architecture, add a shallo test case.
+  * apport/report.py, add_package_info(): Rename key 'Architecture:' to
+    'PackageArchitecture:' for clarity.
+  * apport/report.py, add_os_info(): Add system architecture as
+    'Architecture:' field.
+  * apport/ui.py, create_crash_bug_title(): Append warning about non-native
+    package if package architecture does not match the system's one.
+  * All test suites: Remove redundant word 'behaviour' from test descriptions.
+  * test-hooks: Run tests on installed hooks in /usr/share/apport by default
+    and add a '--local' switch to test the hooks in the source tree instead.
+    Use this option in run-tests.
+  * apport/report.py, test_add_proc_info(): Change the python script test
+    so that it does not depend on being run in the source tree.
+  * run-tests: Add a 'local' command line option which runs tests on the files
+    and modules in the build tree. Run tests on system files/modules by
+    default.
+  * setup.py, debian/apport.install: Ship test-hooks, test-apport, and
+    run-tests in /usr/share/apport/testsuite/, so that the full test suite can
+    be run in the installed system.
+  * gtk/apport-gtk.desktop.in: Only show in Gnome and Xfce.
+  * qt4/apport-qt.desktop.in: Only show in KDE.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Mar 2007 10:43:29 +0100
+
+apport (0.61) feisty; urgency=low
+
+  * bin/apport:
+    - Kernel 2.6.20-9 now sets CORE_REAL_RLIM to -1 instead of not setting it;
+      handle this case correctly. (LP: #87065)
+    - Add forgotten multiplication of CORE_REAL_RLIM with 1024, since ulimit
+      sets kB, not bytes.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 27 Feb 2007 16:06:11 +0100
+
+apport (0.60) feisty; urgency=low
+
+  * gtk/apport-gtk.glade: Reintroduce window titles. Since the crash
+    notifications are like alerts, title have been removed recently to comply
+    with Gnome HIG standards, but then the user will get 'nameless window'
+    buttons in the task bar. Let's have the smaller evil then. (LP: #87164)
+  * apport/packaging.py: Add get_architecture() interface for determining the
+    architecture of a particular package (which might not match the overall
+    system architecture on multiarch-capable systems, e. g. an i386 Firefox
+    package installed on amd64).
+  * backends/packaging-dpkg.py: Implement get_architecture() and add test
+    case.
+  * apport/report.py, add_package_info(): Add Architecture: field.
+    (LP: #87424)
+  * apport/ui.py: Already mark report as seen when we load it, not just in the
+    information collection thread. That way, reports will only be shown once
+    on systems which have /var/crash mounted noatime, too. (LP: #85809)
+  * apport/fileutils.py, mark_report_seen(): If os.utime() fails, and opening
+    the report file for reading does not change the atime (happens with
+    noatime mount option), don't throw an exception, just delete the report.
+    (other aspect of LP: #85809)
+  * qt4/apport-qt: Wrap gettext() into an unicode(str, 'UTF-8') call,
+    otherwise all non-ASCII unicode strings are broken. (LP: #87757)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 20:55:40 +0100
 
 apport (0.59) feisty; urgency=low
 

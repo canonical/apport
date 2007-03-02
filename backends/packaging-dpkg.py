@@ -30,7 +30,7 @@ class __DpkgPackageInfo:
 	# too slow
         self.status = {}
 	dpkg = subprocess.Popen(['dpkg-query', '--show', 
-	    '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\n\n',
+	    '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\nArchitecture: ${Architecture}\n\n',
 	    '*'], stdout=subprocess.PIPE)
 
 	record = ''
@@ -79,6 +79,18 @@ class __DpkgPackageInfo:
         '''Return the source package name for a package.'''
 
 	return self._get_field(self.__get_status(package), 'Source') or package
+
+    def get_architecture(self, package):
+        '''Return the architecture of a package.
+        
+        This might differ on multiarch architectures (e. g.  an i386 Firefox
+        package on a x86_64 system)'''
+
+	try:
+	    status = self.__get_status(package)
+	except KeyError:
+            raise ValueError, 'package does not exist'
+        return self._get_field(status, 'Architecture')
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -173,6 +185,17 @@ class __DpkgPackageInfo:
 	    return os.path.splitext(os.path.basename(match))[0]
 	else:
 	    return None
+
+    def get_system_architecture(self):
+        '''Return the architecture of the system, in the notation used by the
+        particular distribution.'''
+
+        dpkg = subprocess.Popen(['dpkg', '--print-architecture'],
+            stdout=subprocess.PIPE)
+        arch = dpkg.communicate()[0].strip()
+        assert dpkg.returncode == 0
+        assert arch
+        return arch
 
     #
     # Internal helper methods
@@ -270,7 +293,7 @@ Description: Test
                 'libc6 (>= 2.4), libfoo, libbar (<< 3), libbaz')
 
         def test_check_files_md5(self):
-            '''Test _check_files_md5() behaviour.'''
+            '''Test _check_files_md5().'''
 
             td = tempfile.mkdtemp()
             try:
@@ -335,6 +358,17 @@ Description: Test
             self.assertEqual(impl.get_source('bash'), 'bash')
             self.assertEqual(impl.get_source('libc6'), 'glibc')
 
+        def test_get_architecture(self):
+            '''Test get_architecture().'''
+
+            self.assertRaises(ValueError, impl.get_architecture, 'nonexisting')
+            # just assume that bash uses the native architecture
+            d = subprocess.Popen(['dpkg', '--print-architecture'],
+                stdout=subprocess.PIPE)
+            system_arch = d.communicate()[0].strip()
+            assert d.returncode == 0
+            self.assertEqual(impl.get_architecture('bash'), system_arch)
+
         def test_get_files(self):
             '''Test get_files().'''
 
@@ -349,7 +383,7 @@ Description: Test
             self.assertEqual(impl.get_file_package('/nonexisting'), None)
 
         def test_get_file_package_diversion(self):
-            '''Test get_file_package() behaviour for a diverted file.'''
+            '''Test get_file_package() for a diverted file.'''
 
             # pick first diversion we have
             p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',
@@ -362,6 +396,14 @@ Description: Test
             pkg = fields[-1]
 
             self.assertEqual(impl.get_file_package(file), pkg)
+
+        def test_get_system_architecture(self):
+            '''Test get_system_architecture().'''
+
+            arch = impl.get_system_architecture()
+            # must be nonempty without line breaks
+            self.assertNotEqual(arch, '')
+            self.assert_('\n' not in arch)
 
     # only execute if dpkg is available
     try:

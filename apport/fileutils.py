@@ -92,7 +92,8 @@ def mark_report_seen(report):
           timeout -= 1
        
        if timeout == 0:
-            raise OSError, 'could not modify atime of report file ' + report
+            # happens on noatime mounted partitions; just give up and delete
+            delete_report(report)
 
 def get_all_reports():
     '''Return a list with all report files which are accessible to the calling
@@ -226,7 +227,7 @@ class _ApportUtilsTest(unittest.TestCase):
             return [r1, r2]
 
     def test_find_package_desktopfile(self):
-        '''Test find_package_desktopfile() behaviour.'''
+        '''Test find_package_desktopfile().'''
 
         # package without any .desktop file
         nodesktop = 'bash'
@@ -261,7 +262,7 @@ class _ApportUtilsTest(unittest.TestCase):
         self.assert_(d.endswith('.desktop'))
 
     def test_likely_packaged(self):
-        '''Test likely_packaged() behaviour.'''
+        '''Test likely_packaged().'''
 
         self.assertEqual(likely_packaged('/bin/bash'), True)
         self.assertEqual(likely_packaged('/usr/bin/foo'), True)
@@ -272,14 +273,14 @@ class _ApportUtilsTest(unittest.TestCase):
         self.assertEqual(likely_packaged('/var/lib/foo'), True)
 
     def test_find_file_package(self):
-        '''Test find_file_package() behaviour.'''
+        '''Test find_file_package().'''
 
         self.assertEqual(find_file_package('/bin/bash'), 'bash')
         self.assertEqual(find_file_package('/bin/cat'), 'coreutils')
         self.assertEqual(find_file_package('/nonexisting'), None)
 
     def test_seen(self):
-        '''Test get_new_reports() and seen_report() behaviour.'''
+        '''Test get_new_reports() and seen_report().'''
 
         self.assertEqual(get_new_reports(), [])
         if os.getuid() == 0:
@@ -298,7 +299,7 @@ class _ApportUtilsTest(unittest.TestCase):
             self.assertEqual(set(get_new_reports()), nr)
 
     def test_get_all_reports(self):
-        '''Test get_all_reports() behaviour.'''
+        '''Test get_all_reports().'''
 
         self.assertEqual(get_all_reports(), [])
         if os.getuid() == 0:
@@ -314,7 +315,7 @@ class _ApportUtilsTest(unittest.TestCase):
         self.assertEqual(set(get_all_reports()), set(tr))
 
     def test_get_system_reports(self):
-        '''Test get_all_system_reports() and get_new_system_reports() behaviour.'''
+        '''Test get_all_system_reports() and get_new_system_reports().'''
 
         self.assertEqual(get_all_reports(), [])
         self.assertEqual(get_all_system_reports(), [])
@@ -335,7 +336,7 @@ class _ApportUtilsTest(unittest.TestCase):
             self.assertEqual(set(get_new_system_reports()), set([]))
 
     def test_delete_report(self):
-        '''Test delete_report() behaviour.'''
+        '''Test delete_report().'''
 
         tr = self._create_reports()
 
@@ -344,7 +345,7 @@ class _ApportUtilsTest(unittest.TestCase):
             delete_report(tr.pop())
 
     def test_get_recent_crashes(self):
-        '''Test get_recent_crashes() behaviour.'''
+        '''Test get_recent_crashes().'''
 
         # incomplete fields
         r = StringIO('''ProblemType: Crash''')
@@ -373,7 +374,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         self.assertEqual(get_recent_crashes(r), 3)
 
     def test_make_report_path(self):
-        '''Test make_report_path() behaviour.'''
+        '''Test make_report_path().'''
 
         pr = ProblemReport()
         self.assertRaises(ValueError, make_report_path, pr)
@@ -384,7 +385,7 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         self.assert_(make_report_path(pr).startswith('%s/_bin_bash' % report_dir))
 
     def test_check_files_md5(self):
-        '''Test check_files_md5() behaviour.'''
+        '''Test check_files_md5().'''
 
         f1 = os.path.join(report_dir, 'test 1.txt')
         f2 = os.path.join(report_dir, 'test:2.txt')

@@ -1,18 +1,45 @@
-#!/bin/sh -ex
-export PYTHONPATH=.
-python problem_report.py -v
-python apport/fileutils.py -v
-python apport/report.py -v
-python apport/python_hook.py -v
-python apport/ui.py -v
-python apport/REThread.py -v
-python apport/chroot.py -v
-for b in backends/*; do
-    python $b -v
-done
-./test-hooks -v
-if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" = "|" ]; then
-    ./test-apport kernel
+#!/bin/sh -e
+
+if [ "$1" = local ]; then
+    export PYTHONPATH=.
+    basedir=.
+    local=1
 else
-    ./test-apport lib
+    basedir="/usr/share/python-support/*"
+    unset local
+fi
+
+mydir=`dirname "$0"`
+
+set -x
+python $basedir/problem_report.py -v
+python $basedir/apport/fileutils.py -v
+python $basedir/apport/report.py -v
+python $basedir/apport/python_hook.py -v
+python $basedir/apport/ui.py -v
+python $basedir/apport/REThread.py -v
+python $basedir/apport/chroot.py -v
+if [ "$local" ]; then
+    for b in backends/*; do
+        python $b -v
+    done
+else
+    python $basedir/apport/packaging_impl.py -v
+fi
+
+if [ "$local" ]; then
+    $mydir/test-hooks -l
+else
+    $mydir/test-hooks
+fi
+
+if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" = "|" ]; then
+    $mydir/test-apport kernel
+else
+    if [ "$local" ]; then
+        $mydir/test-apport lib
+    else
+        echo 'apport is not enabled; run "sudo /etc/init.d/apport start" to do so' >&2
+        exit 1
+    fi
 fi
