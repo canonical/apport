@@ -2,11 +2,10 @@
 RELEASE="$1"
 TARBALL="$2"
 MIRROR="$3"
-SCRIPT="$4"
-APTSOURCES="$5"
+APTSOURCES="$4"
 
 [ "$RELEASE" ] && [ "$TARBALL" ] && [ "$MIRROR" ] || {
-    echo "Usage: $0 <release> <tarball> <mirror> [<script>] [<additional apt sources>]"
+    echo "Usage: $0 <release> <tarball> <mirror> [<additional apt sources>]"
     exit 1
 }
 
@@ -16,7 +15,7 @@ TARBALL=`readlink -f "$TARBALL"`
 D=`mktemp -d`
 trap "cd /; rm -rf $D" 0 1 2 3 4 5 6 7 8 10 11 12 13 14 15
 
-fakechroot -s fakeroot debootstrap "$RELEASE" "$D" "$MIRROR" $SCRIPT
+fakechroot -s fakeroot debootstrap --variant=fakechroot "$RELEASE" "$D" "$MIRROR"
 
 # fix symlinks
 cd "$D"
