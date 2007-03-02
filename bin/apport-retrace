@@ -117,7 +117,7 @@ def fetch_unpack(cache, fetchProgress, verbosity=0):
         so = sys.stderr
     else:
         so = subprocess.PIPE
-    res = subprocess.call(['dpkg', '--unpack'] + [i.DestFile for i in
+    res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + [i.DestFile for i in
         fetcher.Items], stdout=so)
     if res != 0:
         raise IOError, 'dpkg failed to unpack archives'
