@@ -14,7 +14,7 @@
 import optparse, os.path, sys, urllib, re
 
 import problem_report
-from chroot import Chroot
+from apport.chroot import Chroot
 
 #
 # functions

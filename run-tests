@@ -6,6 +6,7 @@ python apport/report.py -v
 python apport/python_hook.py -v
 python apport/ui.py -v
 python apport/REThread.py -v
+python apport/chroot.py -v
 for b in backends/*; do
     python $b -v
 done
