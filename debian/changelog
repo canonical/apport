@@ -1,6 +1,6 @@
 apport (0.60) UNRELEASED; urgency=low
 
-  * bin/apport-retrace: 
+  * bin/apport-retrace:
     - Simplify program design and throw away the complicated debug symbol
       sandbox generation, along with the -d and -C options.  Instead, directly
       install the missing packages and ddebs with apt. This makes the tool more
@@ -18,10 +18,12 @@ apport (0.60) UNRELEASED; urgency=low
   * Add apport/chroot.py: Class for representing and working with chroots,
     using fakeroot and fakechroot.
   * Add bin/apport-chroot: CLI frontend for doing various things with
-    fakechroots. For now, this implements retracing a bug or Apport report
-    file, and dist-upgrading.
+    fakechroots. For now, this implements:
+    - create a chroot (tarball or directory)
+    - dist-upgrade a particular or all chroots
+    - apport-retrace a bug or Apport report file
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Mar 2007 22:02:50 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri,  2 Mar 2007 18:37:51 +0100
 
 apport (0.59) feisty; urgency=low
 
