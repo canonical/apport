@@ -263,12 +263,14 @@ class UserInterface:
             self.ui_start_info_collection_progress()
 
             if self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package'):
-                icthread = threading.Thread(target=thread_collect_info,
+                icthread = REThread.REThread(target=thread_collect_info,
+                    name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package))
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
                     icthread.join(0.1)
+		icthread.exc_raise()
 
 	    if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
 		bpthread = REThread.REThread(target=self.report.search_bug_patterns,
@@ -321,11 +323,18 @@ class UserInterface:
 		    fn = ' in %s()' % fname
 		    break
 
-	    return '[apport] %s crashed with %s%s' % (
+            arch_mismatch = ''
+            if self.report.has_key('Architecture') and \
+                self.report.has_key('PackageArchitecture') and \
+                self.report['Architecture'] != self.report['PackageArchitecture'] and \
+                self.report['PackageArchitecture'] != 'all':
+                arch_mismatch = ' [non-native %s package]' % self.report['PackageArchitecture']
+
+	    return '[apport] %s crashed with %s%s%s' % (
 		os.path.basename(self.report['ExecutablePath']),
 		signal_names.get(self.report.get('Signal'), 
 		    'signal ' + self.report.get('Signal')),
-		fn
+		fn, arch_mismatch
 	    )
 
 	# Python exception
@@ -972,6 +981,28 @@ order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
 	    self.ui.report['ErrorMessage'] = 'botched\nnot found\n'
 	    self.assertEqual(self.ui.create_crash_bug_title(), 
 		'[apport] package bash failed to install/upgrade: not found')
+
+            # matching package/system architectures
+	    self.ui.report['Signal'] = '11'
+	    self.ui.report['ExecutablePath'] = '/bin/bash'
+	    self.ui.report['StacktraceTop'] = '''foo()
+bar(x=3)
+baz()
+'''
+            self.ui.report['PackageArchitecture'] = 'amd64'
+            self.ui.report['Architecture'] = 'amd64'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with SIGSEGV in foo()')
+
+            # non-native package (on multiarch)
+            self.ui.report['PackageArchitecture'] = 'i386'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with SIGSEGV in foo() [non-native i386 package]')
+
+            # Arch: all package (matches every system architecture)
+            self.ui.report['PackageArchitecture'] = 'all'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with SIGSEGV in foo()')
 
         def test_handle_duplicate(self):
             '''Test handle_duplicate().'''

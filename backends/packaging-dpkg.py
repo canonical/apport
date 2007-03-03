@@ -186,6 +186,17 @@ class __DpkgPackageInfo:
 	else:
 	    return None
 
+    def get_system_architecture(self):
+        '''Return the architecture of the system, in the notation used by the
+        particular distribution.'''
+
+        dpkg = subprocess.Popen(['dpkg', '--print-architecture'],
+            stdout=subprocess.PIPE)
+        arch = dpkg.communicate()[0].strip()
+        assert dpkg.returncode == 0
+        assert arch
+        return arch
+
     #
     # Internal helper methods
     #
@@ -282,7 +293,7 @@ Description: Test
                 'libc6 (>= 2.4), libfoo, libbar (<< 3), libbaz')
 
         def test_check_files_md5(self):
-            '''Test _check_files_md5() behaviour.'''
+            '''Test _check_files_md5().'''
 
             td = tempfile.mkdtemp()
             try:
@@ -372,7 +383,7 @@ Description: Test
             self.assertEqual(impl.get_file_package('/nonexisting'), None)
 
         def test_get_file_package_diversion(self):
-            '''Test get_file_package() behaviour for a diverted file.'''
+            '''Test get_file_package() for a diverted file.'''
 
             # pick first diversion we have
             p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',
@@ -385,6 +396,14 @@ Description: Test
             pkg = fields[-1]
 
             self.assertEqual(impl.get_file_package(file), pkg)
+
+        def test_get_system_architecture(self):
+            '''Test get_system_architecture().'''
+
+            arch = impl.get_system_architecture()
+            # must be nonempty without line breaks
+            self.assertNotEqual(arch, '')
+            self.assert_('\n' not in arch)
 
     # only execute if dpkg is available
     try:

@@ -144,7 +144,8 @@ class Report(ProblemReport):
         This adds:
         - Package: package name and installed version
         - SourcePackage: source package name
-        - Architecture: processor architecture this package was built for
+        - PackageArchitecture: processor architecture this package was built
+          for
         - Dependencies: package names and versions of all dependencies and
           pre-dependencies; this also checks if the files are unmodified and
           appends a list of all modified files'''
@@ -158,7 +159,7 @@ class Report(ProblemReport):
             packaging.get_version(package),
             self._pkg_modified_suffix(package))
         self['SourcePackage'] = packaging.get_source(package)
-        self['Architecture'] = packaging.get_architecture(package)
+        self['PackageArchitecture'] = packaging.get_architecture(package)
 
         # get set of all transitive dependencies
         dependencies = set([])
@@ -183,6 +184,7 @@ class Report(ProblemReport):
 
         This adds:
         - DistroRelease: lsb_release -sir output
+        - Architecture: system architecture in distro specific notation
         - Uname: uname -a output'''
 
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
@@ -192,6 +194,7 @@ class Report(ProblemReport):
         p = subprocess.Popen(['uname', '-a'], stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, close_fds=True)
         self['Uname'] = p.communicate()[0].strip()
+        self['Architecture'] = packaging.get_system_architecture()
 
     def add_user_info(self):
         '''Add information about the user.
@@ -276,7 +279,6 @@ class Report(ProblemReport):
         pid = str(pid)
 
         try:
-            self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
             self['ProcCwd'] = os.readlink('/proc/' + pid + '/cwd')
         except OSError:
             pass
@@ -293,6 +295,8 @@ class Report(ProblemReport):
         self['ProcStatus'] = _read_file('/proc/' + pid + '/status')
         self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
         self['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
+        self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+        assert os.path.exists(self['ExecutablePath'])
 
         # check if we have an interpreted program
         self._check_interpreted()
@@ -517,7 +521,7 @@ import unittest, shutil, signal, time
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
-        '''Test add_package_info() behaviour.'''
+        '''Test add_package_info().'''
 
         # determine bash version
         bashversion = packaging.get_version('bash')
@@ -541,7 +545,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_('libc6 ' + libcversion in pr['Dependencies'])
 	# check for stray empty lines
         self.assert_('\n\n' not in pr['Dependencies'])
-        self.assert_(pr.has_key('Architecture'))
+        self.assert_(pr.has_key('PackageArchitecture'))
 
         pr = Report()
         pr['ExecutablePath'] = '/nonexisting'
@@ -549,15 +553,16 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(not pr.has_key('Package'))
 
     def test_add_os_info(self):
-        '''Test add_os_info() behaviour.'''
+        '''Test add_os_info().'''
 
         pr = Report()
         pr.add_os_info()
         self.assert_(pr['Uname'].startswith('Linux'))
         self.assert_(type(pr['DistroRelease']) == type(''))
+        self.assert_(pr['Architecture'])
 
     def test_add_user_info(self):
-        '''Test add_user_info behaviour.'''
+        '''Test add_user_info().'''
 
         pr = Report()
         pr.add_user_info()
@@ -569,7 +574,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
 
     def test_add_proc_info(self):
-        '''Test add_proc_info() behaviour.'''
+        '''Test add_proc_info().'''
 
         # set test environment
         assert os.environ.has_key('LANG'), 'please set $LANG for this test'
@@ -594,7 +599,7 @@ class _ApportReportTest(unittest.TestCase):
         # check process from other user
         assert os.getuid() != 0, 'please do not run this test as root for this check.'
         pr = Report()
-        pr.add_proc_info(pid=1)
+        self.assertRaises(OSError, pr.add_proc_info, 1) # EPERM for init process
         self.assert_('init' in pr['ProcStatus'], pr['ProcStatus'])
         self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
         self.assert_(not pr.has_key('InterpreterPath'))
@@ -628,8 +633,14 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], os.path.realpath('/bin/sh'))
 
         # check correct handling of interpreted executables: python 
-        assert not os.path.exists('./testsuite-unpack'), 'Directory ./testsuite-unpack must not exist'
-        p = subprocess.Popen(['./bin/apport-unpack', '-', 'testsuite-unpack'], stdin=subprocess.PIPE,
+        (fd, testscript) = tempfile.mkstemp()
+        os.write(fd, '''#!/usr/bin/python
+import sys
+sys.stdin.readline()
+''')
+        os.close(fd)
+        os.chmod(testscript, 0755)
+        p = subprocess.Popen([testscript], stdin=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
@@ -638,12 +649,15 @@ class _ApportReportTest(unittest.TestCase):
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate('\n')
-        os.rmdir('testsuite-unpack')
-        self.assertEqual(pr['ExecutablePath'], os.path.realpath('./bin/apport-unpack'))
+        os.unlink(testscript)
+        self.assertEqual(pr['ExecutablePath'], testscript)
         self.assert_('python' in pr['InterpreterPath'])
 
+        # test process is gone, should complain about nonexisting PID
+        self.assertRaises(OSError, pr.add_proc_info, p.pid)
+
     def test_check_interpreted(self):
-        '''Test _check_interpreted() behaviour.'''
+        '''Test _check_interpreted().'''
         
         # standard ELF binary
         pr = Report()
@@ -828,7 +842,7 @@ int main() { return f(42); }
         self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
 
     def test_add_gdb_info(self):
-        '''Test add_gdb_info() behaviour with core dump file reference.'''
+        '''Test add_gdb_info() with core dump file reference.'''
 
         pr = Report()
         # should not throw an exception for missing fields
@@ -839,7 +853,7 @@ int main() { return f(42); }
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
 
     def test_add_gdb_info_load(self):
-        '''Test add_gdb_info() behaviour with inline core dump.'''
+        '''Test add_gdb_info() with inline core dump.'''
 
         rep = tempfile.NamedTemporaryFile()
         self._generate_sigsegv_report(rep)
@@ -852,7 +866,7 @@ int main() { return f(42); }
         self._validate_gdb_fields(pr)
 
     def test_add_gdb_info_script(self):
-        '''Test add_gdb_info() behaviour with a script.'''
+        '''Test add_gdb_info() with a script.'''
 
         (fd, coredump) = tempfile.mkstemp()
         (fd2, script) = tempfile.mkstemp()
@@ -883,7 +897,7 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
         self.assert_('libc.so' in pr['Stacktrace'])
 
     def test_search_bug_patterns(self):
-        '''Test search_bug_patterns() behaviour.'''
+        '''Test search_bug_patterns().'''
 
         pdir = None
         try:
