@@ -191,7 +191,7 @@ def command_retrace(opts, args):
         print >> sys.stderr, 'retrace needs exactly one argument (use --help for a short online help)'
         sys.exit(1)
     if not opts.chroot_map:
-        optparser.error('You must specify a chroot map with -m (use --help for a short online help)')
+        print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
         sys.exit(1)
 
     if args[0].isdigit():
