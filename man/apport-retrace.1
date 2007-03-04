@@ -72,12 +72,9 @@ Report download/install progress when installing additional packages.
 .TP
 .B \-u, \-\-unpack\-only
 Only unpack the additionally required packages, do not configure them.
-This is particularly useful when running this program with fakechroot,
-when not every package can be cleanly installed completely.
-
-.TP
-.B \-t, \-\-temporary
-Purge packages installed by this program after retracing is complete.
+The additional packages are purged again after retracing. This is
+particularly useful when running this program with fakechroot, when
+not every package can be cleanly installed completely.
 
 .TP
 .B \-h, \-\-help

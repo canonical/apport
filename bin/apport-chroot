@@ -204,7 +204,7 @@ def command_retrace(opts, args):
         c = Chroot(opts.chroot_map[release])
         chroot_report = os.path.join(c.root, 'tmp', os.path.basename(args[0]))
         os.symlink(os.path.realpath(args[0]), chroot_report)
-        c.run(['apport-retrace', '-stuv', chroot_report])
+        c.run(['apport-retrace', '-su', chroot_report])
         os.unlink(chroot_report)
 
 #

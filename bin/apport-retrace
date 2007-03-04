@@ -54,11 +54,8 @@ def parse_options():
         help='Write modified report to given file instead of changing the original report',
         action='store', type='string', dest='output', metavar='FILE', default=None)
     optparser.add_option('-u', '--unpack-only', 
-        help='Only unpack the additionally required packages, do not configure them',
+        help='Only unpack the additionally required packages, do not configure them; purge packages again after retracing',
         action='store_true', dest='unpack_only', default=False)
-    optparser.add_option('-t', '--temporary', 
-        help='Purge installed packages after retracing.',
-        action='store_true', dest='temporary', default=False)
 
     (opts, args) = optparser.parse_args()
 
@@ -365,7 +362,7 @@ if modified:
 
     report.write(out)
 
-if options.temporary and installed:
+if options.unpack_only and installed:
     if options.verbose:
         so = sys.stderr
     else:

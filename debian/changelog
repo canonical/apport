@@ -6,15 +6,12 @@ apport (0.63fakeroot) UNRELEASED; urgency=low
       install the missing packages and ddebs with apt. This makes the tool more
       suitable for running in chroots and has often been requested anyway.
     - Add option -u/--unpack-only which causes additionally installed packages
-      to be unpacked without being configured. This allows apport-retrace to
-      work under fakechroot and has the nice side effect of speeding up
-      package installation (we do not care about configuration for retracing
-      anyway).
-    - Add option -t/--temporary which purges the additionally installed
-      packages after retracing.
+      to be unpacked without being configured and purged again after
+      retracing. This allows apport-retrace to work under fakechroot and has
+      the nice side effect of speeding up package installation (we do not care
+      about configuration for retracing anyway).
   * man/apport-retrace.1: Update description for the new behaviour, drop
-    documentation of the -d and -C options, and add documentation of -u and
-    -t.
+    documentation of the -d and -C options, and add documentation of -u.
   * Add apport/chroot.py: Class for representing and working with chroots,
     using fakeroot and fakechroot.
   * Add bin/apport-chroot: CLI frontend for doing various things with
