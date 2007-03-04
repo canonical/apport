@@ -98,6 +98,56 @@ def report_from_launchpad(bugid):
     finally:
         shutil.rmtree(attachment_dir)
 
+def deb_without_preinst(deb):
+    '''If given .deb file has a preinst script, generate a <name>_noscript.deb
+    file without it and return that name; otherwise, return deb.
+    
+    If the modified deb already exists, its name is returned without recreating
+    it.'''
+
+    ndeb = '/var/cache/apt/archives/%s_noscript%s' % os.path.splitext(os.path.basename(deb))
+
+    if os.path.exists(ndeb):
+        return ndeb
+
+    # get control.tar.gz    
+    ar = subprocess.Popen(['ar', 'p', deb, 'control.tar.gz'], stdout=subprocess.PIPE)
+    control_tar = ar.communicate()[0]
+    assert ar.returncode == 0
+
+    # check if package has a preinst
+    tar = subprocess.Popen(['tar', 'tz', './preinst'], stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    tar.communicate(control_tar)
+    if tar.returncode != 0:
+        return deb
+
+    # unpack control.tar.gz and remove scripts
+    d = tempfile.mkdtemp()
+    d2 = tempfile.mkdtemp()
+    try:
+        tar = subprocess.Popen(['tar', '-C', d, '-xz'], stdin=subprocess.PIPE)
+        tar.communicate(control_tar)
+        assert tar.returncode == 0
+        for s in ('preinst', 'postinst', 'prerm', 'postrm'):
+            path = os.path.join(d, s)
+            if os.path.exists(path):
+                os.unlink(path)
+
+        control_tar_new = os.path.join(d2, 'control.tar.gz')
+        tar = subprocess.Popen(['tar', '-C', d, '-cz', '.'],
+            stdin=subprocess.PIPE, stdout=open(control_tar_new, 'w'))
+        assert tar.wait() == 0
+
+        shutil.copy(deb, ndeb)
+        r = subprocess.Popen(['ar', 'r', ndeb, control_tar_new])
+        assert r.wait() == 0
+    finally:
+        shutil.rmtree(d)
+        shutil.rmtree(d2)
+
+    return ndeb
+
 def fetch_unpack(cache, fetchProgress, verbosity=0):
     '''Fetch the packages marked to be installed in the given apt.Cache()
     object and unpack them.
@@ -117,10 +167,18 @@ def fetch_unpack(cache, fetchProgress, verbosity=0):
         so = sys.stderr
     else:
         so = subprocess.PIPE
-    res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + [i.DestFile for i in
-        fetcher.Items], stdout=so)
+    res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
+        [deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
     if res != 0:
         raise IOError, 'dpkg failed to unpack archives'
+
+    # remove other maintainer scripts
+    for c in cache.getChanges():
+        for script in ('postinst', 'prerm', 'postrm'):
+            try:
+                os.unlink('/var/lib/dpkg/info/%s.%s' % (c.name, script))
+            except OSError:
+                pass
 
 def install_missing_packages(report, verbosity = 0, unpack_only=False):
     '''Install packages which are required to retrace the given report.
