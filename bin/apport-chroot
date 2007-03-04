@@ -168,19 +168,21 @@ def command_upgrade(opts, args):
         print >> sys.stderr, 'upgrade needs exactly one argument (use --help for a short online help)'
         sys.exit(1)
     if not opts.chroot_map and not os.path.isdir(args[0]):
-        optparser.error('You must specify a chroot map with -m (use --help for a short online help)')
+        print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
         sys.exit(1)
 
     if args[0] == 'all':
         for c in opts.chroot_map.itervalues():
             print 'Upgrading %s...' % c
             upgrade_chroot(Chroot(c))
+    elif os.path.exists(args[0]):
+        upgrade_chroot(Chroot(args[0]))
     elif opts.chroot_map.has_key(args[0]):
         c = opts.chroot_map[args[0]]
         print 'Upgrading %s...' % c
         upgrade_chroot(Chroot(c))
     else:
-        upgrade_chroot(Chroot(args[0]))
+        print >> sys.stderr, 'invalid chroot'
 
 def command_retrace(opts, args):
     '''Retrace a Launchpad bug or report file.'''
