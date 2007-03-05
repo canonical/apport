@@ -147,9 +147,10 @@ def command_create(opts, args):
         print >> f, s
     f.close()
 
-    # apt-get update
+    # set up apt-get and required packages
     chroot = Chroot(root)
     assert chroot.run(['apt-get', 'update']) == 0
+    chroot.run(['apt-get', 'install', 'apport-retrace'])
 
     # clean up cruft
     for path, dirs, files in os.walk(os.path.join(root, 'var', 'cache', 'apt', 'archives')):
