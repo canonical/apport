@@ -20,6 +20,8 @@ from problem_report import ProblemReport
 import fileutils
 from packaging_impl import impl as packaging
 
+import ctypes, ctypes.util
+
 _hook_dir = '/usr/share/apport/package-hooks/'
 
 # path of the ignore file
@@ -49,6 +51,27 @@ def _read_file(f):
         return open(f).read().strip()
     except (OSError, IOError), e:
         return 'Error: ' + str(e)
+
+def _read_maps(pid):
+    '''
+    Since /proc/$pid/maps may become unreadable unless we are
+    ptracing the process, detect this, and attempt to attach/detach
+    '''
+
+    maps = 'Error: unable to read /proc maps file'
+    try:
+        maps = file('/proc/%d/maps' % pid).read().strip()
+    except (OSError,IOError), e:
+        try:
+            libc = ctypes.CDLL(ctypes.util.find_library("c"))
+            # PT_ATTACH
+            libc.ptrace(16, pid, 0, 0)
+            maps = _read_file('/proc/%d/maps' % pid)
+            # PT_DETACH
+            libc.ptrace(17, pid, 0, 0)
+        except (OSError, IOError), e:
+            return 'Error: ' + str(e)
+    return maps
 
 def _command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout, or return
@@ -294,7 +317,7 @@ class Report(ProblemReport):
                     self['ProcEnviron'] += l
         self['ProcStatus'] = _read_file('/proc/' + pid + '/status')
         self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
-        self['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
+        self['ProcMaps'] = _read_maps(int(pid))
         self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
         assert os.path.exists(self['ExecutablePath'])
 
@@ -618,6 +641,8 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
         self.assertEqual(pr['ExecutablePath'], '/bin/cat')
         self.assert_(not pr.has_key('InterpreterPath'))
+        self.assertTrue('/bin/cat' in pr['ProcMaps'])
+        self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # check correct handling of interpreted executables: shell
         p = subprocess.Popen(['/bin/zgrep', 'foo'], stdin=subprocess.PIPE,
@@ -631,6 +656,7 @@ class _ApportReportTest(unittest.TestCase):
         p.communicate('\n')
         self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
         self.assertEqual(pr['InterpreterPath'], os.path.realpath('/bin/sh'))
+        self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # check correct handling of interpreted executables: python 
         (fd, testscript) = tempfile.mkstemp()
@@ -652,6 +678,8 @@ sys.stdin.readline()
         os.unlink(testscript)
         self.assertEqual(pr['ExecutablePath'], testscript)
         self.assert_('python' in pr['InterpreterPath'])
+        self.assertTrue('python' in pr['ProcMaps'])
+        self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # test process is gone, should complain about nonexisting PID
         self.assertRaises(OSError, pr.add_proc_info, p.pid)
