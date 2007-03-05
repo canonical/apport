@@ -26,6 +26,7 @@ def parse_options():
 
     optparser = optparse.OptionParser('''%prog [options] create <release> <chroot path>
 %prog [options] upgrade <chroot path>|<chroot release name>|all
+%prog [options] login <chroot path>|<chroot release name>
 %prog [options] retrace <bugnumber>|<report file>''')
 
     optparser.add_option('--mirror', 
@@ -182,6 +183,24 @@ def command_upgrade(opts, args):
         c = opts.chroot_map[args[0]]
         print 'Upgrading %s...' % c
         upgrade_chroot(Chroot(c))
+    else:
+        print >> sys.stderr, 'invalid chroot'
+
+def command_login(opts, args):
+    '''Start a shell in a chroot.'''
+
+    if len(args) != 1:
+        print >> sys.stderr, 'login needs exactly one argument (use --help for a short online help)'
+        sys.exit(1)
+    if not opts.chroot_map and not os.path.isdir(args[0]):
+        print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
+        sys.exit(1)
+
+    if os.path.exists(args[0]):
+        Chroot(args[0]).run([os.environ.get('SHELL', 'bash')])
+    elif opts.chroot_map.has_key(args[0]):
+        c = opts.chroot_map[args[0]]
+        Chroot(c).run([os.environ.get('SHELL', 'bash')])
     else:
         print >> sys.stderr, 'invalid chroot'
 
