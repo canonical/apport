@@ -5,7 +5,7 @@
 
 <widget class="GtkDialog" id="dialog_crash_reopen">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes"></property>
+  <property name="title" translatable="yes">Application problem</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -17,7 +17,7 @@
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <property name="urgency_hint">False</property>
+  <property name="urgency_hint">True</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">
@@ -197,7 +197,7 @@
 
 <widget class="GtkDialog" id="dialog_crash">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes"></property>
+  <property name="title" translatable="yes">Application problem</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -209,7 +209,7 @@
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <property name="urgency_hint">False</property>
+  <property name="urgency_hint">True</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">
@@ -866,7 +866,7 @@ After the problem report has been sent, please fill out the form in the automati
 
 <widget class="GtkDialog" id="dialog_package_error">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes"></property>
+  <property name="title" translatable="yes">Package problem</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -878,7 +878,7 @@ After the problem report has been sent, please fill out the form in the automati
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <property name="urgency_hint">False</property>
+  <property name="urgency_hint">True</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">
@@ -1026,7 +1026,7 @@ After the problem report has been sent, please fill out the form in the automati
 
 <widget class="GtkDialog" id="dialog_kernel_error">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes"></property>
+  <property name="title" translatable="yes">Kernel problem</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -1038,7 +1038,7 @@ After the problem report has been sent, please fill out the form in the automati
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <property name="urgency_hint">False</property>
+  <property name="urgency_hint">True</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">

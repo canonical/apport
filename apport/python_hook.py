@@ -41,7 +41,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         pr = report.Report()
         # apport will look up the package from the executable path.
         # if the module has mutated this, we're sunk, but it does not exist yet :(.
-        binary = os.path.normpath(os.path.join(os.getcwdu(), sys.argv[0]))
+        binary = os.path.realpath(os.path.join(os.getcwdu(), sys.argv[0]))
 	# for interactive python sessions, sys.argv[0] == ''; catch that and
 	# other irregularities
 	if not os.access(binary, os.X_OK) or not os.path.isfile(binary):

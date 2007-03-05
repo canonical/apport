@@ -1,0 +1,73 @@
+#!/bin/sh -e
+
+rm -rf *
+
+RELEASE=feisty
+
+# create directories
+mkdir -p bin fakelibs chroots
+
+# apport source
+OUT=`wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/source/Sources.gz | gunzip | grep-dctrl -n -sDirectory,Files -P apport`
+DIR=`echo "$OUT" | head -n 1`
+ORIG=`echo "$OUT" | grep '.tar.gz$' | awk '{print $3}'`
+wget -q http://archive.ubuntu.com/ubuntu/$DIR/$ORIG
+tar xzf $ORIG
+cp apport/backends/packaging-dpkg.py apport/apport/packaging_impl.py
+rm $ORIG
+ln -s ../apport/bin/apport-chroot bin/apport-chroot
+
+# debootstrap
+P=`wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-i386/Packages.gz | gunzip | grep-dctrl -n -sFilename -P debootstrap`
+wget -q http://archive.ubuntu.com/ubuntu/$P
+T=`mktemp -d`
+dpkg -x debootstrap_*.deb $T
+rm debootstrap_*.deb
+mv $T/usr/lib/debootstrap/ .
+sed "1 s_\$_\\nDEBOOTSTRAP\_DIR=`pwd`/debootstrap_" $T/usr/sbin/debootstrap > bin/debootstrap
+chmod 755 bin/debootstrap
+rm -rf $T
+
+# fake{chroot,root} libraries
+dpkg -s fakeroot >/dev/null 2>/dev/null || {
+    wget -q http://archive.ubuntu.com/ubuntu/`apt-cache show fakeroot|grep ^Filename | cut -f 2 -d\ `
+    ar p fakeroot_*.deb data.tar.gz | tar xzO ./usr/lib/libfakeroot-sysv.so > fakelibs/libfakeroot.so
+    rm fakeroot_*.deb
+}
+
+wget -q http://archive.ubuntu.com/ubuntu/`apt-cache show fakechroot|grep ^Filename | cut -f 2 -d\ `
+ar p fakechroot_*.deb data.tar.gz | tar xzO ./usr/lib/fakechroot/libfakechroot.so > fakelibs/libfakechroot.so
+rm fakechroot_*.deb
+
+# create file with environment variables
+if dpkg -s fakeroot >/dev/null 2>/dev/null; then
+    cat <<EOF > environ
+PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
+PYTHONPATH=`pwd`/apport:\$PYTHONPATH
+APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
+
+export PATH PYTHONPATH APPORT_LIBFAKECHROOT
+EOF
+else
+    cat <<EOF > environ
+PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
+PYTHONPATH=`pwd`/apport:\$PYTHONPATH
+APPORT_LIBFAKEROOT=`pwd`/fakelibs/libfakeroot.so
+APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
+
+export PATH PYTHONPATH APPORT_LIBFAKEROOT APPORT_LIBFAKECHROOT
+EOF
+fi
+
+. environ
+
+# create chroots
+apport-chroot -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main' create feisty chroots/feisty
+chmod -R g+w chroots/
+
+# chroot map
+cat <<EOF >> chrootmap
+{
+    'Ubuntu 7.04': 'chroots/feisty',
+}
+EOF

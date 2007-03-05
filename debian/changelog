@@ -1,11 +1,190 @@
-apport (0.56) UNRELEASED; urgency=low
+apport (0.64) UNRELEASED; urgency=low
+
+  * bin/apport-chroot: Add 'login' command.
+  * bin/apport-chroot: Install apport-retrace into a newly created chroot.
+  * Add debian/local/setup-apport-retracer: Script to install local versions
+    of apport, debootstrap, fake{,ch}root libraries, and a feisty apport
+    fakechroot. This works OOTB on ronne's amd64 and i386 feisty chroots. The
+    script is not shipped in any package yet, but it's convenient to ship it
+    in revision control and in the source.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Mar 2007 17:01:22 +0100
+
+apport (0.63) feisty; urgency=low
+
+  New feature: fakechroot support for apport-retrace
+
+  * bin/apport-retrace:
+    - Simplify program design and throw away the complicated debug symbol
+      sandbox generation, along with the -d and -C options.  Instead, directly
+      install the missing packages and ddebs with apt. This makes the tool more
+      suitable for running in chroots and has often been requested anyway.
+    - Add option -u/--unpack-only which causes additionally installed packages
+      to be unpacked without being configured and purged again after
+      retracing. This allows apport-retrace to work under fakechroot and has
+      the nice side effect of speeding up package installation (we do not care
+      about configuration for retracing anyway).
+  * man/apport-retrace.1: Update description for the new behaviour, drop
+    documentation of the -d and -C options, and add documentation of -u.
+  * Add apport/chroot.py: Class for representing and working with chroots;
+    this uses the fakeroot and fakechroot libraries when being called as
+    non-root.
+  * Add bin/apport-chroot: CLI frontend for doing various things with
+    chroots (including fakeroot/fakechroot support from the Chroot class). For
+    now, this implements:
+    - create a chroot (tarball or directory)
+    - dist-upgrade a particular or all chroots
+    - apport-retrace a bug or Apport report file
+  * setup.py: Ship apport-chroot in scripts directory.
+  * Add a new package apport-retrace which ships apport-retrace and
+    apport-chroot and carries all the heavier dependencies (binutils,
+    python-launchpad-bugs, python-apt, etc.). Drop the latter two dependencies
+    from the apport package. This allows us to install the apport-retrace
+    package in fakechroots (not possible with apport itself) and avoid
+    unnecessary dependencies on normal desktop installations.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Mar 2007 11:20:36 +0100
+
+apport (0.62) feisty; urgency=low
+
+  * apport/ui.py, collect_info(): Use REThread instead of Thread and raise
+    exceptions from it, so that errors during info collection actually become
+    visible.
+  * apport/report.py, add_proc_info(): Check that ExecutablePath actually
+    exists, so that invalid values from transient error conditions are ignored
+    (such as '/usr/bin/gnome-panel\x00\x00\x8b (deleted)').
+  * apport/packaging.py: Add interface get_system_architecture() to return the
+    system architecture in the distro specific notation. This can differ from
+    get_architecture(package) on multiarch platforms such as amd64.
+  * backends/packaging-dpkg.py: Implement get_system_architecture() to return
+    dpkg --print-architecture, add a shallow test case.
+  * apport/report.py, add_package_info(): Rename key 'Architecture:' to
+    'PackageArchitecture:' for clarity.
+  * apport/report.py, add_os_info(): Add system architecture as
+    'Architecture:' field.
+  * apport/ui.py, create_crash_bug_title(): Append warning about non-native
+    package if package architecture does not match the system's one.
+  * All test suites: Remove redundant word 'behaviour' from test descriptions.
+  * test-hooks: Run tests on installed hooks in /usr/share/apport by default
+    and add a '--local' switch to test the hooks in the source tree instead.
+    Use this option in run-tests.
+  * apport/report.py, test_add_proc_info(): Change the python script test
+    so that it does not depend on being run in the source tree.
+  * run-tests: Add a 'local' command line option which runs tests on the files
+    and modules in the build tree. Run tests on system files/modules by
+    default.
+  * setup.py, debian/apport.install: Ship test-hooks, test-apport, and
+    run-tests in /usr/share/apport/testsuite/, so that the full test suite can
+    be run in the installed system.
+  * gtk/apport-gtk.desktop.in: Only show in Gnome and Xfce.
+  * qt4/apport-qt.desktop.in: Only show in KDE.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu,  1 Mar 2007 10:43:29 +0100
+
+apport (0.61) feisty; urgency=low
+
+  * bin/apport:
+    - Kernel 2.6.20-9 now sets CORE_REAL_RLIM to -1 instead of not setting it;
+      handle this case correctly. (LP: #87065)
+    - Add forgotten multiplication of CORE_REAL_RLIM with 1024, since ulimit
+      sets kB, not bytes.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 27 Feb 2007 16:06:11 +0100
+
+apport (0.60) feisty; urgency=low
+
+  * gtk/apport-gtk.glade: Reintroduce window titles. Since the crash
+    notifications are like alerts, title have been removed recently to comply
+    with Gnome HIG standards, but then the user will get 'nameless window'
+    buttons in the task bar. Let's have the smaller evil then. (LP: #87164)
+  * apport/packaging.py: Add get_architecture() interface for determining the
+    architecture of a particular package (which might not match the overall
+    system architecture on multiarch-capable systems, e. g. an i386 Firefox
+    package installed on amd64).
+  * backends/packaging-dpkg.py: Implement get_architecture() and add test
+    case.
+  * apport/report.py, add_package_info(): Add Architecture: field.
+    (LP: #87424)
+  * apport/ui.py: Already mark report as seen when we load it, not just in the
+    information collection thread. That way, reports will only be shown once
+    on systems which have /var/crash mounted noatime, too. (LP: #85809)
+  * apport/fileutils.py, mark_report_seen(): If os.utime() fails, and opening
+    the report file for reading does not change the atime (happens with
+    noatime mount option), don't throw an exception, just delete the report.
+    (other aspect of LP: #85809)
+  * qt4/apport-qt: Wrap gettext() into an unicode(str, 'UTF-8') call,
+    otherwise all non-ASCII unicode strings are broken. (LP: #87757)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Feb 2007 20:55:40 +0100
+
+apport (0.59) feisty; urgency=low
+
+  * apport/report.py: Check that interpreter options are discarded in
+    test_check_interpreted_script(). This replicates bug #87005.
+  * apport/report.py, _check_interpreted_script(): Filter out interpreter
+    command line options. This should make the detection of interpreted
+    scripts more robust. (LP: #87005)
+  * test-apport, check_crash(): Differ between expecting the program dumping
+    core and finding a core dump on disk, because this is not equivalent any
+    more with core pipelining.
+  * bin/apport: Write core files into a process' cwd if the process' ulimit
+    requests and permits it and the crashes process is not packaged, so that
+    developers get happy again. Test this behaviour with various ulimits in
+    test-apport.
+  * test-apport: Check that the core file written by apport is valid. This
+    uncovers kernel bugs like #87065
+  * problem_report.py test suite: Use assertAlmostEqual() when comparing stat
+    times, since they are floats on some systems.
+  * apport/report.py, add_gdb_info():
+    - Remove all the initial gdb output, which gets rid of the duplicated #0
+      line.
+    - Replace some stray tabs with spaces.
+    - Thanks to Kees Cook for this!
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Feb 2007 19:52:52 +0100
+
+apport (0.58) feisty; urgency=low
+
+  * qt4/apport-qt.desktop.in  move to System menu
+
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Tue, 20 Feb 2007 11:35:17 +0000
+
+apport (0.57) feisty; urgency=low
+
+  * apport/ui.py: Intercept ENOMEM and fail gracefully; there is little else
+    we can do at that point, and there is no point in presenting a crash
+    report for this. (LP: #85155)
+  * apport/ui.py: Ignore KeyError when deleting the CoreDump field on sending
+    a reduced report. This Should Not Happen™, but nevertheless did.
+    (LP: #86083)
+  * gtk/apport-gtk, qt4/apport-qt: Intercept ImportError for the non-builtin
+    Python modules. This usually happens for crashes when there is a
+    dist-upgrade active and some Python packages have not been configured yet.
+    (LP: #86007)
+  * apport/ui.py: If the problem report does not apply to a packaged program,
+    and we have an ExecutablePath, mention it in the error message for easier
+    debugging.
+  * apport/python_hook.py: Resolve symbolic links in ExecutablePath.
+    (LP: #85529)
+  * apport/ui.py, open_url(): Remove debugging print statement again, now
+    that we tracked down bug #83974.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Feb 2007 14:40:29 +0100
+
+apport (0.56) feisty; urgency=low
 
   * apport/ui.py, open_url(): When being invoked as root, call gnome-open or
     firefox as root through sudo instead of dropping our uid/gid and calling
     it normally. The latter does not work for Firefox for some  mysterious
     reason. Thanks to Mika Fischer for this trick. (LP: #81207)
+  * Add debian/local/ubuntu-bug.1: Manpage for ubuntu-bug. Add it to
+    debian/apport.manpages.
+  * qt4/apport-qt: Add some missing features that are present in the GTK UI:
+    - Do not show details by default, add a button to show them.
+    - Add complete/reduced bug report radio buttons.
+    - Thanks to Michael Hofmann for this!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Feb 2007 15:33:48 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Feb 2007 14:59:07 +0100
 
 apport (0.55) feisty; urgency=low
 

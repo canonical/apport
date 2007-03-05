@@ -14,11 +14,21 @@ the full text of the license.
 # FIXME: taskbar entry
 
 import os.path, sys, subprocess
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4 import uic
-from gettext import gettext as _
-import apport.ui
+
+try:
+    from gettext import gettext
+    from PyQt4.QtCore import *
+    from PyQt4.QtGui import *
+    from PyQt4 import uic
+    import apport.ui
+except ImportError, e:
+    # this can happen while upgrading python packages
+    print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
+    sys.exit(1)
+
+# PyQt needs this weirdness
+def _(str):
+    return unicode(gettext(str), 'UTF-8')
 
 class QT4Dialog(QDialog):
     '''QT4 dialog wrapper.'''

@@ -705,8 +705,8 @@ File: base64
         # check keep_times
         newstat = os.stat(rep)
         self.assertEqual(origstat.st_mode, newstat.st_mode)
-        self.assertEqual(origstat.st_atime, newstat.st_atime)
-        self.assertEqual(origstat.st_mtime, newstat.st_mtime)
+        self.assertAlmostEqual(origstat.st_atime, newstat.st_atime, 1)
+        self.assertAlmostEqual(origstat.st_mtime, newstat.st_mtime, 1)
 
         # check report contents
         newpr = ProblemReport()

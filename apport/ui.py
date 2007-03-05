@@ -14,7 +14,7 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import tempfile, pwd
+import tempfile, pwd, errno
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
@@ -46,7 +46,6 @@ def thread_collect_info(report, reportfile, package):
         report.write(f)
         f.close()
         os.chmod (reportfile, 0600)
-        apport.fileutils.mark_report_seen(reportfile)
 
 def upload_launchpad_blob(report):
     '''Upload given problem report to Malone and return the ticket for it.
@@ -101,59 +100,71 @@ class UserInterface:
         '''Present given crash report to the user, ask him what to do about it,
         and offer to file a bug for it.'''
 
-        if not self.load_report(report_file):
-            return
-
-        # ask the user about what to do with the current crash
-	if self.report.get('ProblemType') == 'Package':
-	    response = self.ui_present_package_error()
-	    if response == 'cancel':
-		return
-	    assert response == 'report'
-	elif self.report.get('ProblemType') == 'Kernel':
-	    response = self.ui_present_kernel_error()
-	    if response == 'cancel':
-		return
-	    assert response == 'report'
-	else:
-            try:
-                desktop_entry = self.get_desktop_entry()
-            except ValueError: # package does not exist
-                self.ui_error_message(_('Invalid problem report'), 
-                    _('The report belongs to a package that is not installed.'))
-                self.ui_shutdown()
+        try:
+            apport.fileutils.mark_report_seen(report_file)
+            if not self.load_report(report_file):
                 return
 
-	    response = self.ui_present_crash(desktop_entry)
-	    assert response.has_key('action')
-	    assert response.has_key('blacklist')
+            # ask the user about what to do with the current crash
+            if self.report.get('ProblemType') == 'Package':
+                response = self.ui_present_package_error()
+                if response == 'cancel':
+                    return
+                assert response == 'report'
+            elif self.report.get('ProblemType') == 'Kernel':
+                response = self.ui_present_kernel_error()
+                if response == 'cancel':
+                    return
+                assert response == 'report'
+            else:
+                try:
+                    desktop_entry = self.get_desktop_entry()
+                except ValueError: # package does not exist
+                    self.ui_error_message(_('Invalid problem report'), 
+                        _('The report belongs to a package that is not installed.'))
+                    self.ui_shutdown()
+                    return
 
-	    if response['blacklist']:
-		self.report.mark_ignore()
+                response = self.ui_present_crash(desktop_entry)
+                assert response.has_key('action')
+                assert response.has_key('blacklist')
 
-	    if response['action'] == 'cancel':
-		return
-	    if response['action'] == 'restart':
-		self.restart()
-		return
-	    assert response['action'] == 'report'
+                if response['blacklist']:
+                    self.report.mark_ignore()
 
-        # we want to file a bug now
-        self.collect_info()
+                if response['action'] == 'cancel':
+                    return
+                if response['action'] == 'restart':
+                    self.restart()
+                    return
+                assert response['action'] == 'report'
 
-        if self.handle_duplicate():
-            return
+            # we want to file a bug now
+            self.collect_info()
 
-	if self.report.get('ProblemType') in ['Crash', 'Kernel']:
-	    response = self.ui_present_report_details()
-	    if response == 'cancel':
-		return
-	    if response == 'reduced':
-		del self.report['CoreDump']
-	    else:
-		assert response == 'full'
+            if self.handle_duplicate():
+                return
 
-        self.file_report()
+            if self.report.get('ProblemType') in ['Crash', 'Kernel']:
+                response = self.ui_present_report_details()
+                if response == 'cancel':
+                    return
+                if response == 'reduced':
+                    try:
+                        del self.report['CoreDump']
+                    except KeyError:
+                        pass # Huh? Should not happen, but did in https://launchpad.net/bugs/86007
+                else:
+                    assert response == 'full'
+
+            self.file_report()
+        except OSError, e:
+            # fail gracefully on ENOMEM
+            if e.errno == errno.ENOMEM:
+                print >> sys.stderr, 'Out of memory, aborting'
+                sys.exit(1)
+            else:
+                raise
 
     def run_report_bug(self):
         '''Report a bug.
@@ -252,12 +263,14 @@ class UserInterface:
             self.ui_start_info_collection_progress()
 
             if self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package'):
-                icthread = threading.Thread(target=thread_collect_info,
+                icthread = REThread.REThread(target=thread_collect_info,
+                    name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package))
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
                     icthread.join(0.1)
+		icthread.exc_raise()
 
 	    if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
 		bpthread = REThread.REThread(target=self.report.search_bug_patterns,
@@ -310,11 +323,18 @@ class UserInterface:
 		    fn = ' in %s()' % fname
 		    break
 
-	    return '[apport] %s crashed with %s%s' % (
+            arch_mismatch = ''
+            if self.report.has_key('Architecture') and \
+                self.report.has_key('PackageArchitecture') and \
+                self.report['Architecture'] != self.report['PackageArchitecture'] and \
+                self.report['PackageArchitecture'] != 'all':
+                arch_mismatch = ' [non-native %s package]' % self.report['PackageArchitecture']
+
+	    return '[apport] %s crashed with %s%s%s' % (
 		os.path.basename(self.report['ExecutablePath']),
 		signal_names.get(self.report.get('Signal'), 
 		    'signal ' + self.report.get('Signal')),
-		fn
+		fn, arch_mismatch
 	    )
 
 	# Python exception
@@ -352,8 +372,6 @@ class UserInterface:
         '''Open the given URL in a new browser window.
         
         Display an error dialog if everything fails.'''
-
-        print 'open_url: opening', url
 
         if os.fork() > 0:
             return
@@ -483,9 +501,11 @@ class UserInterface:
         else:
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
         if not self.cur_package and self.report['ProblemType'] != 'Kernel':
+            msg = _('This problem report does not apply to a packaged program.')
+            if self.report.has_key('ExecutablePath'):
+                msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
             self.report = None
-            self.ui_info_message(_('Invalid problem report'),
-                _('This problem report does not apply to a packaged program.'))
+            self.ui_info_message(_('Invalid problem report'), msg)
             return False
 
         self.complete_size = os.path.getsize(path)
@@ -961,6 +981,28 @@ order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
 	    self.ui.report['ErrorMessage'] = 'botched\nnot found\n'
 	    self.assertEqual(self.ui.create_crash_bug_title(), 
 		'[apport] package bash failed to install/upgrade: not found')
+
+            # matching package/system architectures
+	    self.ui.report['Signal'] = '11'
+	    self.ui.report['ExecutablePath'] = '/bin/bash'
+	    self.ui.report['StacktraceTop'] = '''foo()
+bar(x=3)
+baz()
+'''
+            self.ui.report['PackageArchitecture'] = 'amd64'
+            self.ui.report['Architecture'] = 'amd64'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with SIGSEGV in foo()')
+
+            # non-native package (on multiarch)
+            self.ui.report['PackageArchitecture'] = 'i386'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with SIGSEGV in foo() [non-native i386 package]')
+
+            # Arch: all package (matches every system architecture)
+            self.ui.report['PackageArchitecture'] = 'all'
+	    self.assertEqual(self.ui.create_crash_bug_title(), 
+		'[apport] bash crashed with SIGSEGV in foo()')
 
         def test_handle_duplicate(self):
             '''Test handle_duplicate().'''

@@ -23,9 +23,10 @@ setup(name='apport',
       py_modules=['problem_report'],
       data_files=[('share/apport', ['gtk/apport-gtk.glade'] + glob.glob('qt4/*.ui')),
                   ('share/icons/hicolor/scalable/apps', ['apport/apport.svg']),
+                  ('share/apport/testsuite/', ['test-apport', 'test-hooks', 'run-tests']),
                   ('share/doc/apport/', glob.glob('doc/*'))]+mo_files,
       scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
-	  'bin/apport-unpack', 'bin/package_hook', 'bin/kernel_hook',
-          'gtk/apport-gtk', 'qt4/apport-qt'],
+          'bin/apport-unpack', 'bin/apport-chroot', 'bin/package_hook',
+          'bin/kernel_hook', 'gtk/apport-gtk', 'qt4/apport-qt'],
       packages=['apport']
       )

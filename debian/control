@@ -7,7 +7,7 @@ Standards-Version: 3.7.2
 
 Package: apport
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.45), python-apt, python-launchpad-bugs (>= 0.1~r72), lsb-base (>= 3.0-6), sysv-rc (>= 2.86.ds1-14.1ubuntu2)
+Depends: python (>= 2.4), python-apport (>= 0.45), lsb-base (>= 3.0-6), sysv-rc (>= 2.86.ds1-14.1ubuntu2)
 Conflicts: apport-gtk (<< 0.51)
 Replaces: apport-gtk (<< 0.51)
 Description: automatically generate crash reports for debugging
@@ -47,6 +47,25 @@ Description: apport crash report handling library
   * Add OS, packaging, and process runtime information to a report.
   * Various frontend utility functions.
   * Python hook to generate crash reports when Python scripts fail.
+
+Package: apport-retrace
+Section: devel
+Architecture: all
+Depends: python (>= 2.4), python-apport (>= 0.63), python-apt, python-launchpad-bugs (>= 0.1~r72), apt, binutils
+Suggests: debootstrap (>= 0.3.3.2ubuntu2), fakeroot, fakechroot
+Conflicts: apport (<< 0.63)
+Replaces: apport (<< 0.63)
+Description: tools for reprocessing Apport crash reports
+ apport-retrace recombines an Apport crash report (either a file or a
+ Launchpad bug) and debug symbol packages (.ddebs) into fully symbolic
+ stack traces.
+ .
+ This package also ships apport-chroot. This tool can create and
+ manage chroots for usage with apport-retrace. If the fakeroot and
+ fakechroot libraries are available (either by installing the packages
+ or by merely putting their libraries somewhere and setting two
+ environment variables), the entire process of retracing crashes in
+ chroots can happen with normal user privileges.
 
 Package: apport-gtk
 Section: gnome

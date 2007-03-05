@@ -53,7 +53,7 @@ def create_test_process(check_running=True):
         assert False, 'Could not execute ' + test_executable
     return pid
 
-def check_crash(expect_core=True, sig=signal.SIGSEGV, check_running=True, sleep=0):
+def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV, check_running=True, sleep=0):
     global mode # hack to avoid passing the mode every time
 
     assert not os.path.exists('core'), 'no core dump in current directory'
@@ -64,7 +64,7 @@ def check_crash(expect_core=True, sig=signal.SIGSEGV, check_running=True, sleep=
     result = os.waitpid(pid, 0)[1]
     assert not os.WIFEXITED(result), 'test process did not exit normally'
     assert os.WIFSIGNALED(result), 'test process died due to signal'
-    if expect_core and mode == 'kernel':
+    if expect_coredump and mode == 'kernel':
         assert os.WCOREDUMP(result), 'result: 0x%02X should include WCOREDUMP' % result
     else:
         assert not os.WCOREDUMP(result), 'result: 0x%02X should not have WCOREDUMP' % result
@@ -80,9 +80,17 @@ def check_crash(expect_core=True, sig=signal.SIGSEGV, check_running=True, sleep=
     assert subprocess.call(['pidof', '-x', 'apport']) == 1, 'no running apport processes'
     if check_running:
         assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
-    if resource.getrlimit(resource.RLIMIT_CORE)[0]:
-        if expect_core:
-            assert os.path.exists('core'), 'leaves wanted core file'
+    if expect_corefile:
+        assert os.path.exists('core'), 'leaves wanted core file'
+        try:
+            # check that core file is valid
+            gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'bt',
+                test_executable, 'core'], stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+            (out, err) = gdb.communicate()
+            assert gdb.returncode == 0
+            assert err == '', err
+        finally:
             os.unlink('core')
     else:
         assert not os.path.exists('core'), 'does not leave core file behind'
@@ -130,6 +138,9 @@ try:
                 'kernel crash dump helper is not active; please enable before running this test.'
 
     assert apport.fileutils.get_all_reports() == [], 'no reports already present'
+
+    # do not write core files for the first tests
+    resource.setrlimit(resource.RLIMIT_CORE, (0, -1))
 
     # move aside current ignore file
     if os.path.exists(ifpath):
@@ -286,6 +297,23 @@ try:
     assert apport.fileutils.get_all_reports() == [], \
         'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
 
+    print '* Check that non-packaged executables create core dumps on proper ulimits'
+    orig_test_executable = test_executable
+    (fd, test_executable) = tempfile.mkstemp()
+    os.write(fd, open(orig_test_executable).read())
+    os.close(fd)
+    os.chmod(test_executable, 0755)
+    resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
+    check_crash(expect_corefile=False)
+    resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
+    check_crash(expect_corefile=False)
+    resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
+    check_crash(expect_corefile=True)
+    resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+    check_crash(expect_corefile=True)
+    os.unlink(test_executable)
+
+    test_executable = orig_test_executable
     print '* Check that binary blacklisting works'
     pr.mark_ignore()
     check_crash()

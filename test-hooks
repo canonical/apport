@@ -1,8 +1,20 @@
 #!/usr/bin/python
 '''Test the various package hooks.'''
 
-import unittest, subprocess, tempfile, os, shutil, os.path, sys
+import unittest, subprocess, tempfile, os, shutil, os.path, sys, optparse
 import apport, apport.fileutils
+
+# parse command line options
+optparser = optparse.OptionParser('%prog [options]')
+optparser.add_option('-l', '--local',
+    help='Test scripts in ./bin/ instead of /usr/share/apport/',
+    action='store_true', dest='local', default=False)
+options, args = optparser.parse_args()
+
+if options.local:
+    basedir = 'bin'
+else:
+    basedir = '/usr/share/apport'
 
 class _HooksTest(unittest.TestCase):
     def setUp(self):
@@ -21,7 +33,7 @@ class _HooksTest(unittest.TestCase):
     def test_package_hook_nologs(self):
         '''Test package_hook without any log files.'''
 
-        ph = subprocess.Popen(['bin/package_hook', '-p', 'bash'],
+        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'bash'],
             stdin=subprocess.PIPE)
         ph.communicate('something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
@@ -43,7 +55,7 @@ class _HooksTest(unittest.TestCase):
         open(os.path.join(self.workdir, 'log_1.log'), 'w').write('Log 1\nbla')
         open(os.path.join(self.workdir, 'log2'), 'w').write('Yet\nanother\nlog')
 
-        ph = subprocess.Popen(['bin/package_hook', '-p', 'bash', '-l',
+        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'bash', '-l',
             os.path.realpath(sys.argv[0]), '-l', self.workdir],
             stdin=subprocess.PIPE)
         ph.communicate('something is wrong')
@@ -77,7 +89,7 @@ class _HooksTest(unittest.TestCase):
     def test_kernel_hook(self):
         '''Test kernel_hook.'''
 
-        self.assertEqual(subprocess.call('bin/kernel_hook'), 0,
+        self.assertEqual(subprocess.call('%s/kernel_hook' % basedir), 0,
             'kernel_hook finished successfully')
 
         reps = apport.fileutils.get_new_reports()
@@ -96,4 +108,10 @@ class _HooksTest(unittest.TestCase):
         self.assertEqual(r['ProcVersionSignature'],
             open('/proc/version_signature').read().strip())
 
-unittest.main()
+# call tests
+
+tl = unittest.TestLoader()
+tests_all = unittest.TestSuite((
+    tl.loadTestsFromName('__main__')
+))
+unittest.TextTestRunner(verbosity=2).run(tests_all)

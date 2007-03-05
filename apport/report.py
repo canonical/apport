@@ -144,6 +144,8 @@ class Report(ProblemReport):
         This adds:
         - Package: package name and installed version
         - SourcePackage: source package name
+        - PackageArchitecture: processor architecture this package was built
+          for
         - Dependencies: package names and versions of all dependencies and
           pre-dependencies; this also checks if the files are unmodified and
           appends a list of all modified files'''
@@ -157,6 +159,7 @@ class Report(ProblemReport):
             packaging.get_version(package),
             self._pkg_modified_suffix(package))
         self['SourcePackage'] = packaging.get_source(package)
+        self['PackageArchitecture'] = packaging.get_architecture(package)
 
         # get set of all transitive dependencies
         dependencies = set([])
@@ -181,6 +184,7 @@ class Report(ProblemReport):
 
         This adds:
         - DistroRelease: lsb_release -sir output
+        - Architecture: system architecture in distro specific notation
         - Uname: uname -a output'''
 
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
@@ -190,6 +194,7 @@ class Report(ProblemReport):
         p = subprocess.Popen(['uname', '-a'], stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, close_fds=True)
         self['Uname'] = p.communicate()[0].strip()
+        self['Architecture'] = packaging.get_system_architecture()
 
     def add_user_info(self):
         '''Add information about the user.
@@ -226,7 +231,7 @@ class Report(ProblemReport):
         if name == os.path.basename(self['ExecutablePath']):
             return
 
-        cmdargs = self['ProcCmdline'].split('\0', 2)
+        cmdargs = self['ProcCmdline'].split('\0')
         bindirs = ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']
 
         argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
@@ -234,6 +239,10 @@ class Report(ProblemReport):
             self['InterpreterPath'] = self['ExecutablePath']
             self['ExecutablePath'] = argvexes[0]
             return
+
+        # filter out interpreter options
+        while len(cmdargs) >= 2 and cmdargs[1].startswith('-'):
+            del cmdargs[1]
 
         if len(cmdargs) >= 2:
             # ensure that cmdargs[1] is an absolute path 
@@ -270,7 +279,6 @@ class Report(ProblemReport):
         pid = str(pid)
 
         try:
-            self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
             self['ProcCwd'] = os.readlink('/proc/' + pid + '/cwd')
         except OSError:
             pass
@@ -287,6 +295,8 @@ class Report(ProblemReport):
         self['ProcStatus'] = _read_file('/proc/' + pid + '/status')
         self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
         self['ProcMaps'] = _read_file('/proc/' + pid + '/maps')
+        self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+        assert os.path.exists(self['ExecutablePath'])
 
         # check if we have an interpreted program
         self._check_interpreted()
@@ -299,6 +309,8 @@ class Report(ProblemReport):
 
         This requires that the report has a CoreDump (file ref) and an
         ExecutablePath. This adds the following fields:
+        - Registers: Output of gdb's 'info registers' command
+        - Disassembly: Output of gdb's 'x/16i $pc' command
         - Stacktrace: Output of gdb's 'bt full' command
         - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
         - StacktraceTop: simplified stacktrace (topmost 5 functions) for inline
@@ -333,24 +345,24 @@ class Report(ProblemReport):
                 command += ['--ex', 'set debug-file-directory ' + debugdir]
             command += ['--ex', 'file ' + self.get('InterpreterPath',
                 self['ExecutablePath']), '--ex', 'core-file ' + core]
-	    value_keys = []
+            value_keys = []
+            # append the actual commands and something that acts as a separator
             for name, cmd in gdb_reports.iteritems():
-		value_keys.append(name)
-		# append the actual command and something that acts as a separator
-		command += ['--ex', cmd, '--ex', 'p -99']
-	    # remove the very last separator
-	    command.pop()
-	    command.pop()
+                value_keys.append(name)
+                command += ['--ex', 'p -99', '--ex', cmd]
 
-	    # call gdb
-	    out = _command_output(command, stderr=open('/dev/null')).replace(
-		'(no debugging symbols found)\n','').replace(
-		'No symbol table info available.\n','')
+            # call gdb
+            out = _command_output(command, stderr=open('/dev/null')).replace(
+                '(no debugging symbols found)\n','').replace(
+                'No symbol table info available.\n','')
 
-	    # split the output into the various fields
-	    part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
-	    for part in part_re.split(out):
-		self[value_keys.pop(0)] = part.replace('\n\n', '\n.\n').strip()
+            # split the output into the various fields
+            part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
+            parts = part_re.split(out)
+            # drop the gdb startup text prior to first separator
+            parts.pop(0)
+            for part in parts:
+                self[value_keys.pop(0)] = part.replace('\n\n', '\n.\n').strip()
         finally:
             if unlink_core:
                 os.unlink(core)
@@ -509,7 +521,7 @@ import unittest, shutil, signal, time
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
-        '''Test add_package_info() behaviour.'''
+        '''Test add_package_info().'''
 
         # determine bash version
         bashversion = packaging.get_version('bash')
@@ -533,6 +545,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_('libc6 ' + libcversion in pr['Dependencies'])
 	# check for stray empty lines
         self.assert_('\n\n' not in pr['Dependencies'])
+        self.assert_(pr.has_key('PackageArchitecture'))
 
         pr = Report()
         pr['ExecutablePath'] = '/nonexisting'
@@ -540,15 +553,16 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(not pr.has_key('Package'))
 
     def test_add_os_info(self):
-        '''Test add_os_info() behaviour.'''
+        '''Test add_os_info().'''
 
         pr = Report()
         pr.add_os_info()
         self.assert_(pr['Uname'].startswith('Linux'))
         self.assert_(type(pr['DistroRelease']) == type(''))
+        self.assert_(pr['Architecture'])
 
     def test_add_user_info(self):
-        '''Test add_user_info behaviour.'''
+        '''Test add_user_info().'''
 
         pr = Report()
         pr.add_user_info()
@@ -560,7 +574,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
 
     def test_add_proc_info(self):
-        '''Test add_proc_info() behaviour.'''
+        '''Test add_proc_info().'''
 
         # set test environment
         assert os.environ.has_key('LANG'), 'please set $LANG for this test'
@@ -585,7 +599,7 @@ class _ApportReportTest(unittest.TestCase):
         # check process from other user
         assert os.getuid() != 0, 'please do not run this test as root for this check.'
         pr = Report()
-        pr.add_proc_info(pid=1)
+        self.assertRaises(OSError, pr.add_proc_info, 1) # EPERM for init process
         self.assert_('init' in pr['ProcStatus'], pr['ProcStatus'])
         self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
         self.assert_(not pr.has_key('InterpreterPath'))
@@ -619,8 +633,14 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], os.path.realpath('/bin/sh'))
 
         # check correct handling of interpreted executables: python 
-        assert not os.path.exists('./testsuite-unpack'), 'Directory ./testsuite-unpack must not exist'
-        p = subprocess.Popen(['./bin/apport-unpack', '-', 'testsuite-unpack'], stdin=subprocess.PIPE,
+        (fd, testscript) = tempfile.mkstemp()
+        os.write(fd, '''#!/usr/bin/python
+import sys
+sys.stdin.readline()
+''')
+        os.close(fd)
+        os.chmod(testscript, 0755)
+        p = subprocess.Popen([testscript], stdin=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
@@ -629,12 +649,15 @@ class _ApportReportTest(unittest.TestCase):
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate('\n')
-        os.rmdir('testsuite-unpack')
-        self.assertEqual(pr['ExecutablePath'], os.path.realpath('./bin/apport-unpack'))
+        os.unlink(testscript)
+        self.assertEqual(pr['ExecutablePath'], testscript)
         self.assert_('python' in pr['InterpreterPath'])
 
+        # test process is gone, should complain about nonexisting PID
+        self.assertRaises(OSError, pr.add_proc_info, p.pid)
+
     def test_check_interpreted(self):
-        '''Test _check_interpreted() behaviour.'''
+        '''Test _check_interpreted().'''
         
         # standard ELF binary
         pr = Report()
@@ -746,6 +769,15 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
+	# python script with options (abuse /bin/bash since it must exist)
+	pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python'
+        pr['ProcStatus'] = 'Name:\tbash'
+        pr['ProcCmdline'] = 'python\0-OO\0/bin/bash'
+        pr._check_interpreted()
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+
     def _generate_sigsegv_report(self, file=None):
 	'''Create a test executable which will die with a SIGSEGV, generate a
 	core dump for it, create a problem report with those two arguments
@@ -792,48 +824,47 @@ int main() { return f(42); }
 
 	return pr
 
-    def test_add_gdb_info(self):
-        '''Test add_gdb_info() behaviour with core dump file reference.'''
-
-        pr = Report()
-        # should not throw an exception for missing fields
-        pr.add_gdb_info()
-
-	pr = self._generate_sigsegv_report()
+    def _validate_gdb_fields(self,pr):
         self.assert_(pr.has_key('Stacktrace'))
         self.assert_(pr.has_key('ThreadStacktrace'))
         self.assert_(pr.has_key('StacktraceTop'))
         self.assert_(pr.has_key('Registers'))
         self.assert_(pr.has_key('Disassembly'))
-        self.assert_('#0  0x' in pr['Stacktrace'])
         self.assert_('(no debugging symbols found)' not in pr['Stacktrace'])
+        self.assert_('Core was generated by' not in pr['Stacktrace'], pr['Stacktrace'])
+        self.assert_(not re.match(r"(?s)(^|.*\n)#0  [^\n]+\n#0  ",
+                                  pr['Stacktrace']))
+        self.assert_('#0  0x' in pr['Stacktrace'])
         self.assert_('#0  0x' in pr['ThreadStacktrace'])
         self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
+        self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
+
+    def test_add_gdb_info(self):
+        '''Test add_gdb_info() with core dump file reference.'''
+
+        pr = Report()
+        # should not throw an exception for missing fields
+        pr.add_gdb_info()
+
+        pr = self._generate_sigsegv_report()
+        self._validate_gdb_fields(pr)
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
 
     def test_add_gdb_info_load(self):
-        '''Test add_gdb_info() behaviour with inline core dump.'''
+        '''Test add_gdb_info() with inline core dump.'''
 
-	rep = tempfile.NamedTemporaryFile()
-	self._generate_sigsegv_report(rep)
-	rep.seek(0)
+        rep = tempfile.NamedTemporaryFile()
+        self._generate_sigsegv_report(rep)
+        rep.seek(0)
 
         pr = Report()
         pr.load(open(rep.name))
         pr.add_gdb_info()
 
-        self.assert_(pr.has_key('Stacktrace'))
-        self.assert_(pr.has_key('ThreadStacktrace'))
-        self.assert_(pr.has_key('Registers'))
-        self.assert_(pr.has_key('Disassembly'))
-        self.assert_('#0  0x' in pr['Stacktrace'])
-        self.assert_('(no debugging symbols found)' not in pr['Stacktrace'])
-        self.assert_('No symbol table info available' not in pr['Stacktrace'])
-        self.assert_('#0  0x' in pr['ThreadStacktrace'])
-        self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
+        self._validate_gdb_fields(pr)
 
     def test_add_gdb_info_script(self):
-        '''Test add_gdb_info() behaviour with a script.'''
+        '''Test add_gdb_info() with a script.'''
 
         (fd, coredump) = tempfile.mkstemp()
         (fd2, script) = tempfile.mkstemp()
@@ -841,17 +872,17 @@ int main() { return f(42); }
             os.close(fd)
             os.close(fd2)
 
-	    # create a test script which produces a core dump for us
-	    open(script, 'w').write('''#!/bin/sh
+            # create a test script which produces a core dump for us
+            open(script, 'w').write('''#!/bin/sh
 gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
-	    os.chmod(script, 0755)
+            os.chmod(script, 0755)
 
-	    # call script and verify that it gives us a proper ELF core dump
+            # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) == 0
             assert subprocess.call(['readelf', '-n', coredump],
                 stdout=subprocess.PIPE) == 0
 
-	    pr = Report()
+            pr = Report()
             pr['InterpreterPath'] = '/bin/sh'
             pr['ExecutablePath'] = script
             pr['CoreDump'] = (coredump,)
@@ -860,15 +891,11 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             os.unlink(coredump)
             os.unlink(script)
 
-        self.assert_(pr.has_key('Stacktrace'))
-        self.assert_(pr.has_key('ThreadStacktrace'))
-        self.assert_(pr.has_key('StacktraceTop'))
-        self.assert_(pr.has_key('Registers'))
-        self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
+        self._validate_gdb_fields(pr)
         self.assert_('libc.so' in pr['Stacktrace'])
 
     def test_search_bug_patterns(self):
-        '''Test search_bug_patterns() behaviour.'''
+        '''Test search_bug_patterns().'''
 
         pdir = None
         try:
