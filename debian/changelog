@@ -22,8 +22,14 @@ apport (0.63fakeroot) UNRELEASED; urgency=low
     - dist-upgrade a particular or all chroots
     - apport-retrace a bug or Apport report file
   * setup.py: Ship apport-chroot in scripts directory.
+  * Add a new package apport-retrace which ships apport-retrace and
+    apport-chroot and carries all the heavier dependencies (binutils,
+    python-launchpad-bugs, python-apt, etc.). Drop the latter two dependencies
+    from the apport package. This allows us to install the apport-retrace
+    package in fakechroots (not possible with apport itself) and avoid
+    unnecessary dependencies on normal desktop installations.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Mar 2007 01:23:18 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Mar 2007 11:20:36 +0100
 
 apport (0.62) UNRELEASED; urgency=low
 
