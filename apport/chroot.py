@@ -9,10 +9,37 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, tempfile, os.path, shutil
+import subprocess, tempfile, os, os.path, shutil
+
+def setup_fakeroot_env():
+    '''Set up a fakeroot/fakechroot environment.
+
+    This needs the libraries /usr/lib/libfakeroot/libfakeroot-sysv.so and
+    /usr/lib/fakechroot/libfakechroot.so; these paths can be overridden
+    with the environment variables APPORT_LIBFAKEROOT and
+    APPORT_LIBFAKECHROOT.'''
+
+    libfakeroot = os.environ.get('APPORT_LIBFAKEROOT',
+        '/usr/lib/libfakeroot/libfakeroot-sysv.so')
+    assert os.path.exists(libfakeroot), \
+        '%s not found; please set APPORT_LIBFAKEROOT correctly' % libfakeroot
+
+    libfakechroot = os.environ.get('APPORT_LIBFAKECHROOT',
+        '/usr/lib/fakechroot/libfakechroot.so')
+    assert os.path.exists(libfakechroot), \
+        '%s not found; please set APPORT_LIBFAKECHROOT correctly' % libfakechroot
+
+    os.environ['LD_PRELOAD'] = '%s %s %s' % (libfakechroot, libfakeroot,
+        os.environ.get('LD_PRELOAD', ''))
+    os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib:/usr/lib:/lib:' + \
+        os.environ.get('LD_LIBRARY_PATH', '')
+    os.environ['FAKECHROOT'] = 'true'
 
 class Chroot:
-    '''Work with a chroot (either in directory or in tarball form).'''
+    '''Work with a chroot (either in directory or in tarball form).
+    
+    If called as non-root user, this calls setup_fakeroot_env() to use the
+    fakeroot/fakechroot libraries.'''
 
     def __init__(self, root):
 	'''Bind to a chroot, which can either be a directory, a tarball, or
@@ -21,8 +48,10 @@ class Chroot:
 	If a tarball is given, then it gets unpacked into a temporary directory
 	which is cleaned up at program termination.'''
 
-	self.exec_prefix = ['fakechroot', '-s', 'fakeroot']
 	self.remove = False
+
+        if os.geteuid() != 0:
+            setup_fakeroot_env()
 
 	self.root_tarball = None
 	if root is None:
@@ -34,7 +63,7 @@ class Chroot:
 	    self.root_tarball = root
 	    self.root = tempfile.mkdtemp()
 	    self.remove = True
-	    assert subprocess.call(self.exec_prefix + ['tar', '-C', self.root,
+	    assert subprocess.call(['tar', '-C', self.root,
 		'-xzf', root]) == 0
 
     def __del__(self):
@@ -83,7 +112,7 @@ class Chroot:
 	exit code.'''
 
 	if self.root:
-	    return subprocess.call(self.exec_prefix + ['chroot', self.root] + argv)
+	    return subprocess.call(['chroot', self.root] + argv)
 	else:
 	    return subprocess.call(argv)
 
@@ -92,11 +121,12 @@ class Chroot:
 	triple (stdout, stderr, exit code).'''
 
 	if self.root:
-            return self._exec_capture(self.exec_prefix + ['chroot', self.root] +
+            return self._exec_capture(['chroot', self.root] +
 	       argv, stdin)
 	else:
 	   return self._exec_capture(argv, stdin)
 	
+
 #
 # Unit test
 #

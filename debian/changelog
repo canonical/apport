@@ -12,10 +12,12 @@ apport (0.63fakeroot) UNRELEASED; urgency=low
       about configuration for retracing anyway).
   * man/apport-retrace.1: Update description for the new behaviour, drop
     documentation of the -d and -C options, and add documentation of -u.
-  * Add apport/chroot.py: Class for representing and working with chroots,
-    using fakeroot and fakechroot.
+  * Add apport/chroot.py: Class for representing and working with chroots;
+    this uses the fakeroot and fakechroot libraries when being called as
+    non-root.
   * Add bin/apport-chroot: CLI frontend for doing various things with
-    fakechroots. For now, this implements:
+    chroots (including fakeroot/fakechroot support from the Chroot class). For
+    now, this implements:
     - create a chroot (tarball or directory)
     - dist-upgrade a particular or all chroots
     - apport-retrace a bug or Apport report file

@@ -24,12 +24,9 @@ for developers to fix the problem.
 
 .B apport\-retrace 
 attempts to install the missing packages with apt. This requires root
-privileges, but will work fine in a chroot with the
-.B fakeroot
-and
-.B fakechroot
-tools, so that the entire process can be performed with just normal
-user privileges.
+privileges, but will work fine in a chroot with the fakeroot and
+fakechroot libraries, so that the entire process can be performed with
+just normal user privileges.
 
 If this tool is run as normal user, then it will merely print out the
 missing packages as a warning and continue the retracing process. It
@@ -73,8 +70,9 @@ Report download/install progress when installing additional packages.
 .B \-u, \-\-unpack\-only
 Only unpack the additionally required packages, do not configure them.
 The additional packages are purged again after retracing. This is
-particularly useful when running this program with fakechroot, when
-not every package can be cleanly installed completely.
+particularly useful when running this program in a fakeroot
+environment, when not every package can be cleanly installed
+completely.
 
 .TP
 .B \-h, \-\-help

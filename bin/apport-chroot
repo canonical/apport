@@ -15,7 +15,7 @@ import optparse, os.path, sys, urllib, re, atexit, shutil, subprocess, tempfile
 from glob import glob
 
 import problem_report
-from apport.chroot import Chroot
+from apport.chroot import Chroot, setup_fakeroot_env
 
 #
 # functions
@@ -118,7 +118,8 @@ def command_create(opts, args):
         os.makedirs(root)
 
     # call debootstrap
-    debootstrap_argv = ['fakechroot', '-s', 'fakeroot', 'debootstrap',
+    setup_fakeroot_env()
+    debootstrap_argv = ['debootstrap',
         '--variant=fakechroot', release, root]
     if opts.mirror:
         debootstrap_argv.append(opts.mirror)
