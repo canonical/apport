@@ -12,12 +12,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob
-import gzip, re
+import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob, gzip, re
+import apport, apport.fileutils
+
 import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
-import apt, apt_inst
-import apport, apport.fileutils
+import apt
 
 from launchpadBugs.HTMLOperations import Bug
 
@@ -47,18 +47,15 @@ def parse_options():
     optparser.add_option('-m', '--procmaps', 
         help="Override report's ProcMaps",
         action='store', type='string', dest='procmaps', metavar='MAPS', default=None)
-    optparser.add_option('-d', '--download-debug', 
-        help='Attempt to download required debug symbol packages',
-        action='store_true', dest='download_debug', default=False)
     optparser.add_option('-v', '--verbose', 
-        help='Report download progress when fetching debug symbol packages (twice to report on package install)',
+        help='Report download/install progress when installing additional packages',
         action='count', dest='verbose', default=0)
-    optparser.add_option('-C', '--cache-dir', 
-        help='Directory to use for caching downloaded .ddebs. If not given, a temporary directory is used.',
-        action='store', type='string', dest='cache_dir', metavar='DIR', default=None)
     optparser.add_option('-o', '--output', 
         help='Write modified report to given file instead of changing the original report',
         action='store', type='string', dest='output', metavar='FILE', default=None)
+    optparser.add_option('-u', '--unpack-only', 
+        help='Only unpack the additionally required packages, do not configure them; purge packages again after retracing',
+        action='store_true', dest='unpack_only', default=False)
 
     (opts, args) = optparser.parse_args()
 
@@ -67,162 +64,6 @@ def parse_options():
         sys.exit(1)
 
     return (args[0], opts)
-
-def install_ddebs(packages, debug_dir, cache_dir, verbose=0):
-
-    missing_dbgsym = set()
-
-    d = os.path.join(cache_dir, 'archives', 'partial')
-    if not os.path.isdir(d):
-        os.makedirs(d)
-
-    apt.apt_pkg.Config.Set('Dir::Cache', cache_dir)
-    cache = apt.Cache()
-
-    for pkg, version in packages:
-        # check that we have the necessary version installed
-        if cache[pkg].installedVersion != version:
-            print >> sys.stderr, 'WARNING: version %s of dependency package %s is installed, but version %s is required for retrace. Skipping.' % (
-                cache[pkg].installedVersion, pkg, version)
-            continue
-        if not cache.has_key(pkg + '-dbgsym'):
-            print >> sys.stderr, 'WARNING: package %s-dbgsym not available' % pkg
-            missing_dbgsym.add(pkg)
-            continue
-        p = cache[pkg+'-dbgsym']
-        if p.candidateVersion != version:
-            print >> sys.stderr, 'WARNING: version %s of package %s-dbgsym not available' % (version, pkg)
-            missing_dbgsym.add(pkg)
-            continue
-        
-        p.markInstall()
-
-    # fetch
-    if verbose:
-        reporter = apt.progress.TextFetchProgress()
-    else:
-        reporter = apt.progress.FetchProgress()
-    fetcher = apt.apt_pkg.GetAcquire(reporter)
-    pm = apt.apt_pkg.GetPackageManager(cache._depcache)
-    try:
-        res = cache._fetchArchives(fetcher, pm)
-    except IOError, e:
-        print >> sys.stderr, 'Could not fetch all archives:', e
-
-
-    # make ddeb extraction use the debug_dir, not debug_dir/usr/lib/debug
-    d = os.path.join(debug_dir, 'usr', 'lib')
-    if not os.path.isdir(d):
-        os.makedirs(d)
-    os.symlink(debug_dir, os.path.join(d, 'debug'))
-
-    # extract
-    orig_cwd = os.getcwd() # apt_inst.debExtractArchive() changes cwd
-
-    archivedir = os.path.join(cache_dir, 'archives')
-    for pkg, version in packages:
-        # There must be a proper function to perform the on-disk filename mangling
-        # Must not "tolower" -- some packages have capitals
-        # Must replace ":", but not "+"
-        match = os.path.join(archivedir, '%s-dbgsym_%s_*.ddeb' % (pkg, version.replace(':','%3a')))
-        f = glob.glob(match)
-        assert len(f) <= 1
-        if len(f) == 1:
-            if verbose>1:
-                print >> sys.stderr, 'DEBUG: installing %s for %s' % (f[0], pkg)
-            apt_inst.debExtractArchive(open(f[0]), debug_dir)
-        elif not pkg in missing_dbgsym:
-            print >> sys.stderr, 'WARNING: dbgsym for %s %s not found by glob "%s"' % (pkg, version, match)
-
-    os.chdir(orig_cwd)
-
-def prepare_debugdir(report, cache_dir, verbose=0):
-    '''Generate temporary directory with necessary debug symbols for the given
-    package report.
-    
-    Return a temporary directory in which all the necessary debug symbols are
-    extracted (from the downloaded .ddebs) or symlinked (from already installed
-    ddebs). This directory must be cleaned up by the caller.'''
-
-    # create map of dependency package versions
-    dependency_versions = {}
-    for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
-        if not l.strip():
-            continue
-        (pkg, version) = l.split()[:2]
-        dependency_versions[pkg] = version
-
-    ddir = tempfile.mkdtemp()
-
-    libs = set([])
-
-    # get list of base ldd libraries
-    needed_deps = set([])
-    exe_path = report.get('InterpreterPath', report['ExecutablePath'])
-    ldd = subprocess.Popen(['ldd', exe_path],
-        stdout=subprocess.PIPE)
-    out = ldd.communicate()[0]
-    out += '\n' + exe_path
-    assert ldd.returncode == 0
-    for l in out.splitlines():
-        if not l.strip():
-            continue
-        if '=>' in l:
-            if 'not found' in l or '=>  (0x' in l:
-                print >> sys.stderr, 'WARNING: library %s not available to ldd -- skipping' % l.split()[0]
-                continue
-            else:
-                lib = l.split()[2]
-        else:
-            lib = l.split()[0]
-        lib = os.path.realpath(lib)
-        if verbose>1:
-            print >> sys.stderr, 'DEBUG: ldd needs %s' % lib
-        libs.add(lib)
-
-    # get list of libraries at runtime
-    if report.has_key('ProcMaps'):
-        for l in report['ProcMaps'].splitlines():
-            if not l.strip():
-                continue
-            cols = l.split()
-            if 'x' in cols[1] and len(cols) == 6 and cols[5].endswith('.so'):
-                lib = os.path.realpath(cols[5])
-                if lib in libs:
-                    continue
-                if verbose>1:
-                    print >> sys.stderr, 'DEBUG: maps needs %s' % lib
-                libs.add(lib)
-
-    for lib in libs:
-        # symlink already existing dbg files
-        libdbg = '/usr/lib/debug' + lib
-        if os.path.exists(libdbg):
-            destdir = ddir + os.path.dirname(lib)
-            if not os.path.isdir(destdir):
-                os.makedirs(destdir)
-            os.symlink(libdbg, ddir + lib)
-            if verbose>1:
-                print >> sys.stderr, 'DEBUG: %s available in /usr/lib/debug' % lib
-        else:
-            pkg = apport.fileutils.find_file_package(lib)
-            if pkg and pkg in dependency_versions:
-                if verbose>1:
-                    print >> sys.stderr, 'DEBUG: %s available from %s' % (lib, pkg)
-                needed_deps.add((pkg, dependency_versions[pkg]))
-            else:
-                try:
-                    ver = apport.packaging.get_version(pkg)
-                except ValueError:
-                    print >> sys.stderr, 'WARNING: library %s not found in system packages -- ignoring' % lib
-                else:
-                    if not (pkg, ver) in needed_deps:
-                        print >> sys.stderr, 'WARNING: library %s not known to %s dependencies (using %s %s)' % (lib, report['Package'], pkg, ver)
-                        needed_deps.add((pkg, ver))
-
-    # download and install the rest
-    install_ddebs(needed_deps, ddir, cache_dir, verbose)
-    return ddir
 
 def report_from_launchpad(bugid):
     '''Construct an Apport report from a Launchpad bug.'''
@@ -253,6 +94,193 @@ def report_from_launchpad(bugid):
         return report
     finally:
         shutil.rmtree(attachment_dir)
+
+def deb_without_preinst(deb):
+    '''If given .deb file has a preinst script, generate a <name>_noscript.deb
+    file without it and return that name; otherwise, return deb.
+    
+    If the modified deb already exists, its name is returned without recreating
+    it.'''
+
+    ndeb = '/var/cache/apt/archives/%s_noscript%s' % os.path.splitext(os.path.basename(deb))
+
+    if os.path.exists(ndeb):
+        return ndeb
+
+    # get control.tar.gz    
+    ar = subprocess.Popen(['ar', 'p', deb, 'control.tar.gz'], stdout=subprocess.PIPE)
+    control_tar = ar.communicate()[0]
+    assert ar.returncode == 0
+
+    # check if package has a preinst
+    tar = subprocess.Popen(['tar', 'tz', './preinst'], stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    tar.communicate(control_tar)
+    if tar.returncode != 0:
+        return deb
+
+    # unpack control.tar.gz and remove scripts
+    d = tempfile.mkdtemp()
+    d2 = tempfile.mkdtemp()
+    try:
+        tar = subprocess.Popen(['tar', '-C', d, '-xz'], stdin=subprocess.PIPE)
+        tar.communicate(control_tar)
+        assert tar.returncode == 0
+        for s in ('preinst', 'postinst', 'prerm', 'postrm'):
+            path = os.path.join(d, s)
+            if os.path.exists(path):
+                os.unlink(path)
+
+        control_tar_new = os.path.join(d2, 'control.tar.gz')
+        tar = subprocess.Popen(['tar', '-C', d, '-cz', '.'],
+            stdin=subprocess.PIPE, stdout=open(control_tar_new, 'w'))
+        assert tar.wait() == 0
+
+        shutil.copy(deb, ndeb)
+        r = subprocess.Popen(['ar', 'r', ndeb, control_tar_new])
+        assert r.wait() == 0
+    finally:
+        shutil.rmtree(d)
+        shutil.rmtree(d2)
+
+    return ndeb
+
+def fetch_unpack(cache, fetchProgress, verbosity=0):
+    '''Fetch the packages marked to be installed in the given apt.Cache()
+    object and unpack them.
+    
+    fetchProgress must be a valid apt.progress.FetchProgress object.'''
+
+    # fetch
+    fetcher = apt.apt_pkg.GetAcquire(fetchProgress)
+    pm = apt.apt_pkg.GetPackageManager(cache._depcache)
+    try:
+        res = cache._fetchArchives(fetcher, pm)
+    except IOError, e:
+        print >> sys.stderr, 'ERROR: could not fetch all archives:', e
+
+    # extract
+    if verbosity:
+        so = sys.stderr
+    else:
+        so = subprocess.PIPE
+    res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
+        [deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
+    if res != 0:
+        raise IOError, 'dpkg failed to unpack archives'
+
+    # remove other maintainer scripts
+    for c in cache.getChanges():
+        for script in ('postinst', 'prerm', 'postrm'):
+            try:
+                os.unlink('/var/lib/dpkg/info/%s.%s' % (c.name, script))
+            except OSError:
+                pass
+
+def install_missing_packages(report, verbosity = 0, unpack_only=False):
+    '''Install packages which are required to retrace the given report.
+    
+    If package installation fails (e. g. because the user does not have root
+    privileges), the list of required packages is printed out instead.
+    
+    Return a list of installed packages.'''
+
+    c = apt.Cache()
+
+    installed = []
+
+    # create map of dependency package versions as specified in report
+    dependency_versions = {}
+    for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
+        if not l.strip():
+            continue
+        (pkg, version) = l.split()[:2]
+        dependency_versions[pkg] = version
+        dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+
+    for pkg, ver in dependency_versions.iteritems():
+	if not c.has_key(pkg):
+	    print >> sys.stderr, 'WARNING: package %s not available' % pkg
+	    continue
+
+	# ignore packages which are already installed in the right version
+	if (ver and c[pkg].installedVersion == ver) or \
+	   (not ver and c[pkg].installedVersion):
+	   continue
+
+	if ver and c[pkg].candidateVersion != ver:
+	    print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
+		pkg, c[pkg].candidateVersion, ver)
+
+	c[pkg].markInstall(False)
+
+    if verbosity:
+        fetchProgress = apt.progress.TextFetchProgress()
+	installProgress = apt.progress.InstallProgress()
+    else:
+        fetchProgress = apt.progress.FetchProgress()
+	installProgress = apt.progress.DumbInstallProgress()
+
+    try:
+	if c.getChanges():
+	    os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
+            if unpack_only:
+                fetch_unpack(c, fetchProgress, verbosity)
+            else:
+                c.commit(fetchProgress, installProgress)
+	    # after commit(), the Cache object does not empty the pending
+	    # changes, so we need to reinitialize it to avoid applying the same
+	    # changes again below
+            installed = [p.name for p in c.getChanges()]
+	    c = apt.Cache()
+    except IOError, e:
+	pass # we will complain to the user later
+
+    # check list of libraries that the crashed process referenced at
+    # runtime and warn about those which are not available
+    libs = set()
+    if report.has_key('ProcMaps'):
+        for l in report['ProcMaps'].splitlines():
+            if not l.strip():
+                continue
+            cols = l.split()
+            if 'x' in cols[1] and len(cols) == 6 and '.so' in cols[5]:
+                lib = os.path.realpath(cols[5])
+                libs.add(lib)
+
+    # grab as much as we can
+    for l in libs:
+	if not os.path.exists(l):
+	    print >> sys.stderr, 'WARNING: %s was loaded at runtime, but is not available' % l
+	    continue
+
+	ldbg = '/usr/lib/debug' + l
+	if os.path.exists(ldbg):
+	    continue
+
+	pkg = apport.fileutils.find_file_package(l)
+	if pkg:
+	    if c.has_key(pkg+'-dbgsym'):
+		c[pkg+'-dbgsym'].markInstall(False)
+	    else:
+		print >> sys.stderr, 'WARNING: %s-dbgsym is not available' % pkg
+	else:
+		print >> sys.stderr, 'WARNING: %s is needed, but cannot be mapped to a package' % l
+
+    try:
+	if c.getChanges():
+	    os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
+            if unpack_only:
+                fetch_unpack(c, fetchProgress, verbosity)
+            else:
+                c.commit(fetchProgress, installProgress)
+        installed += [p.name for p in c.getChanges()]
+    except IOError, e:
+	print >> sys.stderr, 'WARNING: could not install missing packages:', e
+	for p in c.getChanges():
+	    print >> sys.stderr, '  %s %s' % (p.name, p.candidateVersion)
+
+    return installed
 
 #
 # main
@@ -285,35 +313,13 @@ if options.procmaps:
     report['ProcMaps'] = file(options.procmaps).read()
 
 # sanity checks
-if not report.has_key('CoreDump'):
-    print >> sys.stderr, 'report file does not contain a core dump'
+required_fields = set(['CoreDump', 'ExecutablePath', 'Package'])
+if not required_fields.issubset(set(report.keys())):
+    print >> sys.stderr, 'report file does not contain required fields: ' + \
+	' '.join(required_fields)
     sys.exit(1)
 
-assert os.path.exists(report['ExecutablePath'])
-
-if not report.has_key('Package'):
-    print >> sys.stderr, 'WARNING: report file does not have Package attribute; adding it now, but cannot verify version'
-    report.add_package_info()
-
-package = report['Package'].split()[0]
-if subprocess.call(['dpkg', '-s', package], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0:
-    print >> sys.stderr, 'crash is in package %s which is not installed' % package
-    sys.exit(1)
-
-debug_dir = '/usr/lib/debug'
-remove_debug_dir = False
-
-# download ddebs
-remove_cache_dir = False
-if options.download_debug:
-    if not options.cache_dir:
-        options.cache_dir = os.environ.get('APPORT_DDEB_DIR')
-    if not options.cache_dir:
-        options.cache_dir = tempfile.mkdtemp()
-        remove_cache_dir = True
-
-    debug_dir = prepare_debugdir(report, options.cache_dir, options.verbose)
-    remove_debug_dir = True
+installed = install_missing_packages(report, options.verbose, options.unpack_only)
 
 # interactive gdb session
 if options.gdb:
@@ -321,18 +327,12 @@ if options.gdb:
     core.write(report['CoreDump'])
     core.flush()
     subprocess.call(['gdb',
-        '--ex', 'set debug-file-directory ' + debug_dir,
         '--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath']),
         '--ex', 'core-file ' + core.name])
     core.close()
 else:
     # regenerate gdb info
-    report.add_gdb_info(debugdir=debug_dir)
-
-if remove_debug_dir:
-    shutil.rmtree(debug_dir)
-if remove_cache_dir:
-    shutil.rmtree(options.cache_dir)
+    report.add_gdb_info()
 
 modified = False
 
@@ -351,7 +351,7 @@ else:
 
 if modified:
     if not reportfile and not options.output:
-        print >> sys.stderr, 'Report cannot be updated in this mode. Please use -s or -g'
+        print >> sys.stderr, 'Report cannot be updated in this mode. Please use -s, -g, or -o'
         sys.exit(1)
     if options.output == None:
         out = open(reportfile, 'w')
@@ -361,3 +361,10 @@ if modified:
         out = open(options.output, 'w')
 
     report.write(out)
+
+if options.unpack_only and installed:
+    if options.verbose:
+        so = sys.stderr
+    else:
+        so = subprocess.PIPE
+    subprocess.call(['dpkg', '-P'] + installed, stdout=so)

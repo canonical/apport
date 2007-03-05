@@ -18,6 +18,7 @@ python $basedir/apport/report.py -v
 python $basedir/apport/python_hook.py -v
 python $basedir/apport/ui.py -v
 python $basedir/apport/REThread.py -v
+python $basedir/apport/chroot.py -v
 if [ "$local" ]; then
     for b in backends/*; do
         python $b -v
