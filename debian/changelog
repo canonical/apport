@@ -1,4 +1,51 @@
-apport (0.62) UNRELEASED; urgency=low
+apport (0.64) UNRELEASED; urgency=low
+
+  * bin/apport-chroot: Add 'login' command.
+  * bin/apport-chroot: Install apport-retrace into a newly created chroot.
+  * Add debian/local/setup-apport-retracer: Script to install local versions
+    of apport, debootstrap, fake{,ch}root libraries, and a feisty apport
+    fakechroot. This works OOTB on ronne's amd64 and i386 feisty chroots. The
+    script is not shipped in any package yet, but it's convenient to ship it
+    in revision control and in the source.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Mar 2007 17:01:22 +0100
+
+apport (0.63) feisty; urgency=low
+
+  New feature: fakechroot support for apport-retrace
+
+  * bin/apport-retrace:
+    - Simplify program design and throw away the complicated debug symbol
+      sandbox generation, along with the -d and -C options.  Instead, directly
+      install the missing packages and ddebs with apt. This makes the tool more
+      suitable for running in chroots and has often been requested anyway.
+    - Add option -u/--unpack-only which causes additionally installed packages
+      to be unpacked without being configured and purged again after
+      retracing. This allows apport-retrace to work under fakechroot and has
+      the nice side effect of speeding up package installation (we do not care
+      about configuration for retracing anyway).
+  * man/apport-retrace.1: Update description for the new behaviour, drop
+    documentation of the -d and -C options, and add documentation of -u.
+  * Add apport/chroot.py: Class for representing and working with chroots;
+    this uses the fakeroot and fakechroot libraries when being called as
+    non-root.
+  * Add bin/apport-chroot: CLI frontend for doing various things with
+    chroots (including fakeroot/fakechroot support from the Chroot class). For
+    now, this implements:
+    - create a chroot (tarball or directory)
+    - dist-upgrade a particular or all chroots
+    - apport-retrace a bug or Apport report file
+  * setup.py: Ship apport-chroot in scripts directory.
+  * Add a new package apport-retrace which ships apport-retrace and
+    apport-chroot and carries all the heavier dependencies (binutils,
+    python-launchpad-bugs, python-apt, etc.). Drop the latter two dependencies
+    from the apport package. This allows us to install the apport-retrace
+    package in fakechroots (not possible with apport itself) and avoid
+    unnecessary dependencies on normal desktop installations.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Mar 2007 11:20:36 +0100
+
+apport (0.62) feisty; urgency=low
 
   * apport/ui.py, collect_info(): Use REThread instead of Thread and raise
     exceptions from it, so that errors during info collection actually become
@@ -10,7 +57,7 @@ apport (0.62) UNRELEASED; urgency=low
     system architecture in the distro specific notation. This can differ from
     get_architecture(package) on multiarch platforms such as amd64.
   * backends/packaging-dpkg.py: Implement get_system_architecture() to return
-    dpkg --print-architecture, add a shallo test case.
+    dpkg --print-architecture, add a shallow test case.
   * apport/report.py, add_package_info(): Rename key 'Architecture:' to
     'PackageArchitecture:' for clarity.
   * apport/report.py, add_os_info(): Add system architecture as
