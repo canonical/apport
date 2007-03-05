@@ -198,7 +198,7 @@ def command_retrace(opts, args):
     if args[0].isdigit():
         release = release_from_bug('https://launchpad.net/bugs/' + args[0])
         c = Chroot(opts.chroot_map[release])
-        c.run(['apport-retrace', '-stu', args[0]])
+        c.run(['apport-retrace', '-su', args[0]])
     else:
         # symlink the report into the chroot
         release = release_from_report(args[0])
