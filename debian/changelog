@@ -1,4 +1,4 @@
-apport (0.62) UNRELEASED; urgency=low
+apport (0.62) feisty; urgency=low
 
   * apport/ui.py, collect_info(): Use REThread instead of Thread and raise
     exceptions from it, so that errors during info collection actually become
@@ -10,7 +10,7 @@ apport (0.62) UNRELEASED; urgency=low
     system architecture in the distro specific notation. This can differ from
     get_architecture(package) on multiarch platforms such as amd64.
   * backends/packaging-dpkg.py: Implement get_system_architecture() to return
-    dpkg --print-architecture, add a shallo test case.
+    dpkg --print-architecture, add a shallow test case.
   * apport/report.py, add_package_info(): Rename key 'Architecture:' to
     'PackageArchitecture:' for clarity.
   * apport/report.py, add_os_info(): Add system architecture as
