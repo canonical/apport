@@ -7,8 +7,11 @@ apport (0.64) UNRELEASED; urgency=low
     fakechroot. This works OOTB on ronne's amd64 and i386 feisty chroots. The
     script is not shipped in any package yet, but it's convenient to ship it
     in revision control and in the source.
+  * apport/report.py, _check_interpreted(): When calling an interpreter with a
+    script name as argument, set ExecutablePath to the script instead of the
+    interpreter. Add test case. (LP: #88794)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Mar 2007 17:01:22 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 14:15:08 +0100
 
 apport (0.63) feisty; urgency=low
 
