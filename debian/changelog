@@ -15,8 +15,10 @@ apport (0.64) UNRELEASED; urgency=low
     (LP: #89589)
   * bin/apport-retrace: Give some additional explanation when installing
     packages fails. (LP: #89916)
+  * apport/fileutils.py, get_all_{system_,}reports(): Fix file access race
+    condition. (LP: #89977)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 14:24:54 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 14:43:55 +0100
 
 apport (0.63) feisty; urgency=low
 
