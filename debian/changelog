@@ -10,8 +10,11 @@ apport (0.64) UNRELEASED; urgency=low
   * apport/report.py, _check_interpreted(): When calling an interpreter with a
     script name as argument, set ExecutablePath to the script instead of the
     interpreter. Add test case. (LP: #88794)
+  * apport/report.py, search_bug_patterns(): Catch all exceptions from
+    urlopen(), not just IOError. Sometimes this fails with funnier errors.
+    (LP: #89589)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 14:15:08 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 14:18:25 +0100
 
 apport (0.63) feisty; urgency=low
 

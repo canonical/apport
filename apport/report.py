@@ -422,7 +422,7 @@ class Report(ProblemReport):
         package = self['Package'].split()[0]
         try:
             patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
-        except IOError:
+        except:
             return None
 
         try:
