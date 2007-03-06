@@ -17,8 +17,11 @@ apport (0.64) UNRELEASED; urgency=low
     packages fails. (LP: #89916)
   * apport/fileutils.py, get_all_{system_,}reports(): Fix file access race
     condition. (LP: #89977)
+  * bin/apport-retrace: Add option -p/--extra-package to install an additional
+    package for retracing. May be specified multiple times. Document new
+    option in man/apport-retrace.1. (LP: #90077)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 14:43:55 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 15:13:11 +0100
 
 apport (0.63) feisty; urgency=low
 
