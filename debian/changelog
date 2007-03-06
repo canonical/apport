@@ -24,8 +24,10 @@ apport (0.64) UNRELEASED; urgency=low
     those in the 'create' command and simply pass it to apport-retrace in the
     'retrace' command. (LP: #90077)
   * bin/apport-chroot: Add a -v/--verbose option.
+  * bin/apport-retrace: Do not complain about missing ddebs for Arch: all
+    packages.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 15:53:11 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 16:20:41 +0100
 
 apport (0.63) feisty; urgency=low
 
