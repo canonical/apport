@@ -277,6 +277,8 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False):
         installed += [p.name for p in c.getChanges()]
     except IOError, e:
 	print >> sys.stderr, 'WARNING: could not install missing packages:', e
+        if os.geteuid() != 0:
+            print >> sys.stderr, 'You either need to call this program as root or install these packages manually:'
 	for p in c.getChanges():
 	    print >> sys.stderr, '  %s %s' % (p.name, p.candidateVersion)
 

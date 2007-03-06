@@ -13,8 +13,10 @@ apport (0.64) UNRELEASED; urgency=low
   * apport/report.py, search_bug_patterns(): Catch all exceptions from
     urlopen(), not just IOError. Sometimes this fails with funnier errors.
     (LP: #89589)
+  * bin/apport-retrace: Give some additional explanation when installing
+    packages fails. (LP: #89916)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 14:18:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 14:24:54 +0100
 
 apport (0.63) feisty; urgency=low
 
