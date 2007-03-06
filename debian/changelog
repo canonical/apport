@@ -20,8 +20,11 @@ apport (0.64) UNRELEASED; urgency=low
   * bin/apport-retrace: Add option -p/--extra-package to install an additional
     package for retracing. May be specified multiple times. Document new
     option in man/apport-retrace.1. (LP: #90077)
+  * bin/apport-chroot: Add a similar option -p/--extra-package and install
+    those in the 'create' command and simply pass it to apport-retrace in the
+    'retrace' command. (LP: #90077)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 15:13:11 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 15:44:49 +0100
 
 apport (0.63) feisty; urgency=low
 
