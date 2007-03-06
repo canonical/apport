@@ -44,6 +44,9 @@ def parse_options():
     optparser.add_option('-p', '--extra-package', 
         help='Install an extra package (can be specified multiple times)',
         action='append', type='string', dest='extra_packages', metavar='PACKAGE', default=[])
+    optparser.add_option('-v', '--verbose', 
+        help='Verbose operation (also passed to apport-retrace)',
+        action='store_true', dest='verbose', default=False)
 
     (opts, args) = optparser.parse_args()
 
@@ -84,14 +87,18 @@ def release_from_report(file):
     pr.load(open(file), binary=False)
     return pr['DistroRelease']
 
-def upgrade_chroot(chroot):
+def upgrade_chroot(chroot, verbose=False):
     '''Update a chroot to the latest apt lists and packages.
     
     If run from a tarball and the dist-upgrade succeeds, then the tarball
     is updated as well. If the dist-upgrade fails, an assertion is raised.'''
 
-    assert chroot.run(['apt-get', '-qq', 'update']) == 0
-    assert chroot.run(['apt-get', '-qqy', '--allow-unauthenticated', 'dist-upgrade']) == 0
+    if verbose:
+        assert chroot.run(['apt-get', 'update']) == 0
+        assert chroot.run(['apt-get', '--allow-unauthenticated', 'dist-upgrade']) == 0
+    else:
+        assert chroot.run(['apt-get', '-qq', 'update']) == 0
+        assert chroot.run(['apt-get', '-qqy', '--allow-unauthenticated', 'dist-upgrade']) == 0
     if chroot.root_tarball:
         chroot.tar()
 
@@ -180,7 +187,7 @@ def command_upgrade(opts, args):
     if args[0] == 'all':
         for c in opts.chroot_map.itervalues():
             print 'Upgrading %s...' % c
-            upgrade_chroot(Chroot(c))
+            upgrade_chroot(Chroot(c), opts.verbose)
     elif os.path.exists(args[0]):
         upgrade_chroot(Chroot(args[0]))
     elif opts.chroot_map.has_key(args[0]):
@@ -219,6 +226,8 @@ def command_retrace(opts, args):
         sys.exit(1)
 
     apport_retrace_argv = ['apport-retrace', '-su']
+    if opts.verbose:
+        apport_retrace_argv.append('-v')
     for p in opts.extra_packages:
 	apport_retrace_argv += ['-p', p]
 
