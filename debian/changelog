@@ -1,3 +1,13 @@
+apport (0.65) UNRELEASED; urgency=low
+
+  * debian/local/setup-apport-retracer:
+    - Replace grep-dctrl with grep call, since grep-dctrl is not installed in
+      all the DC chroots.
+    - Do not download apport source from archive.u.c., instead require that
+      this script lives in the unpacked apport source tree.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  7 Mar 2007 10:53:16 +0100
+
 apport (0.64) feisty; urgency=low
 
   * bin/apport-chroot: Add 'login' command.
