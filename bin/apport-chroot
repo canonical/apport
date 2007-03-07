@@ -160,7 +160,7 @@ def command_create(opts, args):
     # set up apt-get and required packages
     chroot = Chroot(root)
     assert chroot.run(['apt-get', 'update']) == 0
-    chroot.run(['apt-get', 'install', 'apport-retrace'] + opts.extra_packages)
+    chroot.run(['apt-get', 'install', '-y', '--allow-unauthenticated', 'apport-retrace'] + opts.extra_packages)
 
     # clean up cruft
     for path, dirs, files in os.walk(os.path.join(root, 'var', 'cache', 'apt', 'archives')):
