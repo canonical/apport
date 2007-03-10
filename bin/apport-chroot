@@ -38,6 +38,9 @@ def parse_options():
     optparser.add_option('-t', '--tar', 
         help='Create chroot tarball instead of directory',
         action='store_true', dest='tar', default=False)
+    optparser.add_option('--save', 
+        help='When logging in to a chroot tarball, update the tarball afterwards to save modifications.',
+        action='store_true', dest='tar_save', default=False)
     optparser.add_option('-m', '--chroot-map', 
         help='Path to chroot map. This is a file that defines a Python dictionary, mapping DistroRelease: values to chroot paths',
         action='store', type='string', dest='chroot_map', metavar='FILE', default=None)
@@ -215,12 +218,17 @@ def command_login(opts, args):
         sys.exit(1)
 
     if os.path.exists(args[0]):
-        Chroot(args[0]).run([os.environ.get('SHELL', 'bash')])
+        chroot = Chroot(args[0])
     elif opts.chroot_map.has_key(args[0]):
         c = opts.chroot_map[args[0]]
-        Chroot(c).run([os.environ.get('SHELL', 'bash')])
+        chroot = Chroot(c)
     else:
         print >> sys.stderr, 'invalid chroot'
+
+    chroot.run([os.environ.get('SHELL', 'bash')])
+
+    if chroot.root_tarball and opts.tar_save:
+        chroot.tar()
 
 def command_retrace(opts, args):
     '''Retrace a Launchpad bug or report file.'''
