@@ -17,8 +17,11 @@ apport (0.65) UNRELEASED; urgency=low
     since it's only a waste of time there.
   * bin/apport-chroot: Call apport-retrace with --no-purge when retracing in a
     chroot tarball.
+  * apport/chroot.py: Add fix_symlinks() method to remove the chroot root
+    directory prefix from symbolic links; they prevent function of tarball
+    chroots and moving around directory chroots. Add test case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 19:54:44 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 20:56:13 +0100
 
 apport (0.64) feisty; urgency=low
 
