@@ -4,8 +4,14 @@ apport (0.66) UNRELEASED; urgency=low
     python-launchpad-bugs now. Add a dependency to that package.
   * apport/ui.py, upload_launchpad_blob(): Use the shiny new
     launchpadBugs.storeblob.upload().
+  * bin/apport-retrace: Attach retraced stack traces back to the Launchpad bug
+    report if no other output option is given (This corresponds to the
+    in-place editing when a report file is specified). Add option --cookie to
+    specify a Mozilla-style cookie file for the necessary Launchpad
+    authentication.
+  * man/apport-retrace.1: Document above apport-retrace changes.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 13:53:09 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 14:42:53 +0100
 
 apport (0.65) UNRELEASED; urgency=low
 
