@@ -87,7 +87,7 @@ def release_from_report(file):
     pr.load(open(file), binary=False)
     return pr['DistroRelease']
 
-def upgrade_chroot(chroot, verbose=False):
+def upgrade_chroot(chroot, verbose=False, extra_packages=[]):
     '''Update a chroot to the latest apt lists and packages.
     
     If run from a tarball and the dist-upgrade succeeds, then the tarball
@@ -99,6 +99,8 @@ def upgrade_chroot(chroot, verbose=False):
     else:
         assert chroot.run(['apt-get', '-qq', 'update']) == 0
         assert chroot.run(['apt-get', '-qqy', '--allow-unauthenticated', 'dist-upgrade']) == 0
+    if extra_packages:
+        assert chroot.run(['apt-get', 'install', '-y', '--allow-unauthenticated'] + extra_packages) == 0
     if chroot.root_tarball:
         chroot.tar()
 
@@ -187,13 +189,13 @@ def command_upgrade(opts, args):
     if args[0] == 'all':
         for c in opts.chroot_map.itervalues():
             print 'Upgrading %s...' % c
-            upgrade_chroot(Chroot(c), opts.verbose)
+            upgrade_chroot(Chroot(c), opts.verbose, opts.extra_packages)
     elif os.path.exists(args[0]):
-        upgrade_chroot(Chroot(args[0]))
+        upgrade_chroot(Chroot(args[0]), opts.verbose, opts.extra_packages)
     elif opts.chroot_map.has_key(args[0]):
         c = opts.chroot_map[args[0]]
         print 'Upgrading %s...' % c
-        upgrade_chroot(Chroot(c))
+        upgrade_chroot(Chroot(c), opts.verbose, opts.extra_packages)
     else:
         print >> sys.stderr, 'invalid chroot'
 

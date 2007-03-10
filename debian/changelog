@@ -7,8 +7,10 @@ apport (0.65) UNRELEASED; urgency=low
       this script lives in the unpacked apport source tree.
   * bin/apport-chroot: Use apt-get options -y and --allow-unauthenticated when
     installing additional packages.
+  * bin/apport-chroot: Handle --extra-package for 'upgrade', too, to provide a
+    simple way of adding a package to an existing chroot tarball.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  7 Mar 2007 10:56:06 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 19:46:03 +0100
 
 apport (0.64) feisty; urgency=low
 
