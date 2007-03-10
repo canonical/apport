@@ -10,8 +10,10 @@ apport (0.66) UNRELEASED; urgency=low
     specify a Mozilla-style cookie file for the necessary Launchpad
     authentication.
   * man/apport-retrace.1: Document above apport-retrace changes.
+  * bin/apport-chroot: Add --cookie option: temporarily symlink cookie into
+    the chroot and pass it to apport-retrace in retrace mode.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 14:42:53 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 15:01:57 +0100
 
 apport (0.65) UNRELEASED; urgency=low
 

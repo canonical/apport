@@ -47,6 +47,9 @@ def parse_options():
     optparser.add_option('-v', '--verbose', 
         help='Verbose operation (also passed to apport-retrace)',
         action='store_true', dest='verbose', default=False)
+    optparser.add_option('--cookie', 
+        help='Passed on to apport-retrace in "retrace" mode',
+        action='store', type='string', dest='cookie_file', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -225,7 +228,7 @@ def command_retrace(opts, args):
         print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
         sys.exit(1)
 
-    apport_retrace_argv = ['apport-retrace', '-su']
+    apport_retrace_argv = ['apport-retrace', '-u']
     if opts.verbose:
         apport_retrace_argv.append('-v')
     for p in opts.extra_packages:
@@ -234,14 +237,25 @@ def command_retrace(opts, args):
     if args[0].isdigit():
         release = release_from_bug('https://launchpad.net/bugs/' + args[0])
         c = Chroot(opts.chroot_map[release])
+        if opts.cookie_file:
+            # symlink the file into the chroot
+            chroot_cookie = os.path.join(c.root, 'tmp', 'cookie')
+            os.symlink(opts.cookie_file, chroot_cookie)
+            apport_retrace_argv += ['--cookie', chroot_cookie]
+        else:
+            apport_retrace_argv += ['-s']
+            chroot_cookie = None
         apport_retrace_argv.append(args[0])
         c.run(apport_retrace_argv)
+        if chroot_cookie:
+            os.unlink(chroot_cookie)
     else:
         # symlink the report into the chroot
         release = release_from_report(args[0])
         c = Chroot(opts.chroot_map[release])
         chroot_report = os.path.join(c.root, 'tmp', os.path.basename(args[0]))
         os.symlink(os.path.realpath(args[0]), chroot_report)
+        apport_retrace_argv.append('-s')
         apport_retrace_argv.append(chroot_report)
         c.run(apport_retrace_argv)
         os.unlink(chroot_report)
