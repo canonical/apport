@@ -101,6 +101,9 @@ def upgrade_chroot(chroot, verbose=False, extra_packages=[]):
         assert chroot.run(['apt-get', '-qqy', '--allow-unauthenticated', 'dist-upgrade']) == 0
     if extra_packages:
         assert chroot.run(['apt-get', 'install', '-y', '--allow-unauthenticated'] + extra_packages) == 0
+
+    chroot.fix_symlinks()
+
     if chroot.root_tarball:
         chroot.tar()
 
@@ -163,6 +166,8 @@ def command_create(opts, args):
     chroot = Chroot(root)
     assert chroot.run(['apt-get', 'update']) == 0
     chroot.run(['apt-get', 'install', '-y', '--allow-unauthenticated', 'apport-retrace'] + opts.extra_packages)
+
+    chroot.fix_symlinks()
 
     # clean up cruft
     for path, dirs, files in os.walk(os.path.join(root, 'var', 'cache', 'apt', 'archives')):
