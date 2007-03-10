@@ -113,16 +113,16 @@ def attach_to_launchpad_bug(bugnumber, report, cookie_file, comment=''):
     t.write(report['Stacktrace'])
     t.flush()
     t.seek(0)
-    open('/tmp/st.out', 'w').write(bug.add_comment('Symbolic stack trace', comment, t, 
-        'Stacktrace.txt (retraced)').read())
+    bug.add_comment('Symbolic stack trace', comment, t, 
+        'Stacktrace.txt (retraced)')
     t.close()
 
     t = tempfile.TemporaryFile()
     t.write(report['ThreadStacktrace'])
     t.flush()
     t.seek(0)
-    open('/tmp/tst.out', 'w').write(bug.add_comment('Symbolic threaded stack trace', '', t, 
-        'ThreadStacktrace.txt (retraced)').read())
+    bug.add_comment('Symbolic threaded stack trace', '', t, 
+        'ThreadStacktrace.txt (retraced)')
     t.close()
 
 def deb_without_preinst(deb):
