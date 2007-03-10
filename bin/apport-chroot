@@ -235,13 +235,19 @@ def command_retrace(opts, args):
 
     if args[0].isdigit():
         release = release_from_bug('https://launchpad.net/bugs/' + args[0])
-        c = Chroot(opts.chroot_map[release])
+        chroot_path = opts.chroot_map[release]
+        if os.path.isfile(chroot_path):
+            apport_retrace_argv.append('--no-purge')
+        c = Chroot(chroot_path)
         apport_retrace_argv.append(args[0])
         c.run(apport_retrace_argv)
     else:
         # symlink the report into the chroot
         release = release_from_report(args[0])
-        c = Chroot(opts.chroot_map[release])
+        chroot_path = opts.chroot_map[release]
+        if os.path.isfile(chroot_path):
+            apport_retrace_argv.append('--no-purge')
+        c = Chroot(chroot_path)
         chroot_report = os.path.join(c.root, 'tmp', os.path.basename(args[0]))
         os.symlink(os.path.realpath(args[0]), chroot_report)
         apport_retrace_argv.append(chroot_report)
