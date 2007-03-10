@@ -12,8 +12,11 @@ apport (0.65) UNRELEASED; urgency=low
   * debian/local/setup-apport-retracer: Create tarball chroots by default.
     It only imposes a negligible overhead, and sharing unpacked directories
     with multiple people is just too brittle.
+  * bin/apport-retrace: Add option --no-purge to not purge unpacked packages
+    after retracing. This is (only) useful with temporarily unpacked chroots,
+    since it's only a waste of time there.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 19:48:31 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 19:52:10 +0100
 
 apport (0.64) feisty; urgency=low
 
