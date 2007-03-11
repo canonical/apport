@@ -38,9 +38,18 @@ def parse_options():
     optparser.add_option('-t', '--tar', 
         help='Create chroot tarball instead of directory',
         action='store_true', dest='tar', default=False)
+    optparser.add_option('--save', 
+        help='When logging in to a chroot tarball, update the tarball afterwards to save modifications.',
+        action='store_true', dest='tar_save', default=False)
     optparser.add_option('-m', '--chroot-map', 
         help='Path to chroot map. This is a file that defines a Python dictionary, mapping DistroRelease: values to chroot paths',
         action='store', type='string', dest='chroot_map', metavar='FILE', default=None)
+    optparser.add_option('-p', '--extra-package', 
+        help='Install an extra package (can be specified multiple times)',
+        action='append', type='string', dest='extra_packages', metavar='PACKAGE', default=[])
+    optparser.add_option('-v', '--verbose', 
+        help='Verbose operation (also passed to apport-retrace)',
+        action='store_true', dest='verbose', default=False)
 
     (opts, args) = optparser.parse_args()
 
@@ -81,14 +90,23 @@ def release_from_report(file):
     pr.load(open(file), binary=False)
     return pr['DistroRelease']
 
-def upgrade_chroot(chroot):
+def upgrade_chroot(chroot, verbose=False, extra_packages=[]):
     '''Update a chroot to the latest apt lists and packages.
     
     If run from a tarball and the dist-upgrade succeeds, then the tarball
     is updated as well. If the dist-upgrade fails, an assertion is raised.'''
 
-    assert chroot.run(['apt-get', '-qq', 'update']) == 0
-    assert chroot.run(['apt-get', '-qqy', '--allow-unauthenticated', 'dist-upgrade']) == 0
+    if verbose:
+        assert chroot.run(['apt-get', 'update']) == 0
+        assert chroot.run(['apt-get', '--allow-unauthenticated', 'dist-upgrade']) == 0
+    else:
+        assert chroot.run(['apt-get', '-qq', 'update']) == 0
+        assert chroot.run(['apt-get', '-qqy', '--allow-unauthenticated', 'dist-upgrade']) == 0
+    if extra_packages:
+        assert chroot.run(['apt-get', 'install', '-y', '--allow-unauthenticated'] + extra_packages) == 0
+
+    chroot.fix_symlinks()
+
     if chroot.root_tarball:
         chroot.tar()
 
@@ -150,7 +168,9 @@ def command_create(opts, args):
     # set up apt-get and required packages
     chroot = Chroot(root)
     assert chroot.run(['apt-get', 'update']) == 0
-    chroot.run(['apt-get', 'install', 'apport-retrace'])
+    chroot.run(['apt-get', 'install', '-y', '--allow-unauthenticated', 'apport-retrace'] + opts.extra_packages)
+
+    chroot.fix_symlinks()
 
     # clean up cruft
     for path, dirs, files in os.walk(os.path.join(root, 'var', 'cache', 'apt', 'archives')):
@@ -177,13 +197,13 @@ def command_upgrade(opts, args):
     if args[0] == 'all':
         for c in opts.chroot_map.itervalues():
             print 'Upgrading %s...' % c
-            upgrade_chroot(Chroot(c))
+            upgrade_chroot(Chroot(c), opts.verbose, opts.extra_packages)
     elif os.path.exists(args[0]):
-        upgrade_chroot(Chroot(args[0]))
+        upgrade_chroot(Chroot(args[0]), opts.verbose, opts.extra_packages)
     elif opts.chroot_map.has_key(args[0]):
         c = opts.chroot_map[args[0]]
         print 'Upgrading %s...' % c
-        upgrade_chroot(Chroot(c))
+        upgrade_chroot(Chroot(c), opts.verbose, opts.extra_packages)
     else:
         print >> sys.stderr, 'invalid chroot'
 
@@ -198,12 +218,17 @@ def command_login(opts, args):
         sys.exit(1)
 
     if os.path.exists(args[0]):
-        Chroot(args[0]).run([os.environ.get('SHELL', 'bash')])
+        chroot = Chroot(args[0])
     elif opts.chroot_map.has_key(args[0]):
         c = opts.chroot_map[args[0]]
-        Chroot(c).run([os.environ.get('SHELL', 'bash')])
+        chroot = Chroot(c)
     else:
         print >> sys.stderr, 'invalid chroot'
+
+    chroot.run([os.environ.get('SHELL', 'bash')])
+
+    if chroot.root_tarball and opts.tar_save:
+        chroot.tar()
 
 def command_retrace(opts, args):
     '''Retrace a Launchpad bug or report file.'''
@@ -215,17 +240,31 @@ def command_retrace(opts, args):
         print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
         sys.exit(1)
 
+    apport_retrace_argv = ['apport-retrace', '-su']
+    if opts.verbose:
+        apport_retrace_argv.append('-v')
+    for p in opts.extra_packages:
+	apport_retrace_argv += ['-p', p]
+
     if args[0].isdigit():
         release = release_from_bug('https://launchpad.net/bugs/' + args[0])
-        c = Chroot(opts.chroot_map[release])
-        c.run(['apport-retrace', '-su', args[0]])
+        chroot_path = opts.chroot_map[release]
+        if os.path.isfile(chroot_path):
+            apport_retrace_argv.append('--no-purge')
+        c = Chroot(chroot_path)
+        apport_retrace_argv.append(args[0])
+        c.run(apport_retrace_argv)
     else:
         # symlink the report into the chroot
         release = release_from_report(args[0])
-        c = Chroot(opts.chroot_map[release])
+        chroot_path = opts.chroot_map[release]
+        if os.path.isfile(chroot_path):
+            apport_retrace_argv.append('--no-purge')
+        c = Chroot(chroot_path)
         chroot_report = os.path.join(c.root, 'tmp', os.path.basename(args[0]))
         os.symlink(os.path.realpath(args[0]), chroot_report)
-        c.run(['apport-retrace', '-su', chroot_report])
+        apport_retrace_argv.append(chroot_report)
+        c.run(apport_retrace_argv)
         os.unlink(chroot_report)
 
 #

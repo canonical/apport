@@ -56,6 +56,12 @@ def parse_options():
     optparser.add_option('-u', '--unpack-only', 
         help='Only unpack the additionally required packages, do not configure them; purge packages again after retracing',
         action='store_true', dest='unpack_only', default=False)
+    optparser.add_option('--no-purge', 
+        help='Do not purge packages when using -u. This should only be used for temporarily unpacked chroot tarballs where it would just be a waste of time.',
+        action='store_true', dest='no_purge', default=False)
+    optparser.add_option('-p', '--extra-package', 
+        help='Install an extra package (can be specified multiple times)',
+        action='append', type='string', dest='extra_packages', default=[])
 
     (opts, args) = optparser.parse_args()
 
@@ -177,7 +183,7 @@ def fetch_unpack(cache, fetchProgress, verbosity=0):
             except OSError:
                 pass
 
-def install_missing_packages(report, verbosity = 0, unpack_only=False):
+def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_packages = []):
     '''Install packages which are required to retrace the given report.
     
     If package installation fails (e. g. because the user does not have root
@@ -196,7 +202,9 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False):
             continue
         (pkg, version) = l.split()[:2]
         dependency_versions[pkg] = version
-        dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+        assert c[pkg]._lookupRecord()
+        if not 'Architecture: all' in c[pkg]._records.Record:
+            dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
 
     for pkg, ver in dependency_versions.iteritems():
 	if not c.has_key(pkg):
@@ -213,6 +221,10 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False):
 		pkg, c[pkg].candidateVersion, ver)
 
 	c[pkg].markInstall(False)
+
+    # extra packages
+    for p in extra_packages:
+        c[p].markInstall(False)
 
     if verbosity:
         fetchProgress = apt.progress.TextFetchProgress()
@@ -277,6 +289,8 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False):
         installed += [p.name for p in c.getChanges()]
     except IOError, e:
 	print >> sys.stderr, 'WARNING: could not install missing packages:', e
+        if os.geteuid() != 0:
+            print >> sys.stderr, 'You either need to call this program as root or install these packages manually:'
 	for p in c.getChanges():
 	    print >> sys.stderr, '  %s %s' % (p.name, p.candidateVersion)
 
@@ -319,7 +333,8 @@ if not required_fields.issubset(set(report.keys())):
 	' '.join(required_fields)
     sys.exit(1)
 
-installed = install_missing_packages(report, options.verbose, options.unpack_only)
+installed = install_missing_packages(report, options.verbose,
+    options.unpack_only, options.extra_packages)
 
 # interactive gdb session
 if options.gdb:
@@ -362,7 +377,7 @@ if modified:
 
     report.write(out)
 
-if options.unpack_only and installed:
+if options.unpack_only and installed and not options.no_purge:
     if options.verbose:
         so = sys.stderr
     else:

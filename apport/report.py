@@ -228,29 +228,31 @@ class Report(ProblemReport):
                 break
         if not name:
             return
-        if name == os.path.basename(self['ExecutablePath']):
-            return
 
         cmdargs = self['ProcCmdline'].split('\0')
         bindirs = ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']
-
-        argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
-        if argvexes and os.path.basename(cmdargs[0]) == name:
-            self['InterpreterPath'] = self['ExecutablePath']
-            self['ExecutablePath'] = argvexes[0]
-            return
 
         # filter out interpreter options
         while len(cmdargs) >= 2 and cmdargs[1].startswith('-'):
             del cmdargs[1]
 
+        # catch scripts explicitly called with interpreter
         if len(cmdargs) >= 2:
             # ensure that cmdargs[1] is an absolute path 
             if cmdargs[1].startswith('.') and self.has_key('ProcCwd'):
                 cmdargs[1] = os.path.join(self['ProcCwd'], cmdargs[1])
-            if os.path.basename(cmdargs[0]) != name and os.access(cmdargs[1], os.R_OK):
+            if os.access(cmdargs[1], os.R_OK):
                 self['InterpreterPath'] = self['ExecutablePath']
                 self['ExecutablePath'] = os.path.realpath(cmdargs[1])
+                return
+
+        # catch directly executed scripts
+        if name != os.path.basename(self['ExecutablePath']):
+            argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
+            if argvexes and os.path.basename(cmdargs[0]) == name:
+                self['InterpreterPath'] = self['ExecutablePath']
+                self['ExecutablePath'] = argvexes[0]
+                return
 
     def add_proc_info(self, pid=None, extraenv=[]):
         '''Add /proc/pid information.
@@ -420,7 +422,7 @@ class Report(ProblemReport):
         package = self['Package'].split()[0]
         try:
             patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
-        except IOError:
+        except:
             return None
 
         try:
@@ -686,10 +688,10 @@ sys.stdin.readline()
         self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
         self.assertEqual(pr['InterpreterPath'], '/bin/dash')
 
-        # standard sh script (this is also the common mono scheme)
+        # standard sh script when being called explicitly with interpreter
         pr = Report()
         pr['ExecutablePath'] = '/bin/dash'
-        pr['ProcStatus'] = 'Name:\tzgrep'
+        pr['ProcStatus'] = 'Name:\tdash'
         pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')

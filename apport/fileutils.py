@@ -99,8 +99,16 @@ def get_all_reports():
     '''Return a list with all report files which are accessible to the calling
     user.'''
 
-    return [r for r in glob.glob(os.path.join(report_dir, '*.crash')) 
-            if os.path.getsize(r) > 0 and os.access(r, os.R_OK)]
+    reports = []
+    for r in glob.glob(os.path.join(report_dir, '*.crash')):
+        try:
+            if os.path.getsize(r) > 0 and os.access(r, os.R_OK):
+                reports.append(r)
+        except OSError:
+            # race condition, can happen if report disappears between glob and
+            # stat
+            pass
+    return reports
 
 def get_new_reports():
     '''Return a list with all report files which have not yet been processed
@@ -112,8 +120,16 @@ def get_all_system_reports():
     '''Return a list with all report files which belong to a system user (i. e.
     uid < 500 according to LSB).'''
 
-    return [r for r in glob.glob(os.path.join(report_dir, '*.crash')) 
-            if os.path.getsize(r) > 0 and os.stat(r).st_uid < 500]
+    reports = []
+    for r in glob.glob(os.path.join(report_dir, '*.crash')):
+        try:
+            if os.path.getsize(r) > 0 and os.stat(r).st_uid < 500:
+                reports.append(r)
+        except OSError:
+            # race condition, can happen if report disappears between glob and
+            # stat
+            pass
+    return reports
 
 def get_new_system_reports():
     '''Return a list with all report files which have not yet been processed

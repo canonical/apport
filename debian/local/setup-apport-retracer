@@ -7,18 +7,18 @@ RELEASE=feisty
 # create directories
 mkdir -p bin fakelibs chroots
 
-# apport source
-OUT=`wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/source/Sources.gz | gunzip | grep-dctrl -n -sDirectory,Files -P apport`
-DIR=`echo "$OUT" | head -n 1`
-ORIG=`echo "$OUT" | grep '.tar.gz$' | awk '{print $3}'`
-wget -q http://archive.ubuntu.com/ubuntu/$DIR/$ORIG
-tar xzf $ORIG
+# we assume that we are in the unpacked apport source
+D=$(readlink -f $(dirname $0)/../..)
+test -e $D/bin/apport-chroot || {
+    echo "This script must live in an unpacked apport source tree" >&2
+    exit 1
+}
+cp -r $D apport
 cp apport/backends/packaging-dpkg.py apport/apport/packaging_impl.py
-rm $ORIG
 ln -s ../apport/bin/apport-chroot bin/apport-chroot
 
 # debootstrap
-P=`wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-i386/Packages.gz | gunzip | grep-dctrl -n -sFilename -P debootstrap`
+P=`wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-i386/Packages.gz | gunzip | grep '^Filename:.*debootstrap_.*deb' | cut -f 2 -d\ `
 wget -q http://archive.ubuntu.com/ubuntu/$P
 T=`mktemp -d`
 dpkg -x debootstrap_*.deb $T
@@ -62,12 +62,12 @@ fi
 . environ
 
 # create chroots
-apport-chroot -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main' create feisty chroots/feisty
+apport-chroot -t -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main' create feisty chroots/feisty.tar.gz
 chmod -R g+w chroots/
 
 # chroot map
 cat <<EOF >> chrootmap
 {
-    'Ubuntu 7.04': 'chroots/feisty',
+    'Ubuntu 7.04': 'chroots/feisty.tar.gz',
 }
 EOF
