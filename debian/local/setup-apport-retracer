@@ -62,12 +62,12 @@ fi
 . environ
 
 # create chroots
-apport-chroot -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main' create feisty chroots/feisty
+apport-chroot -t -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main' create feisty chroots/feisty.tar.gz
 chmod -R g+w chroots/
 
 # chroot map
 cat <<EOF >> chrootmap
 {
-    'Ubuntu 7.04': 'chroots/feisty',
+    'Ubuntu 7.04': 'chroots/feisty.tar.gz',
 }
 EOF

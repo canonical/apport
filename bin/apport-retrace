@@ -56,6 +56,9 @@ def parse_options():
     optparser.add_option('-u', '--unpack-only', 
         help='Only unpack the additionally required packages, do not configure them; purge packages again after retracing',
         action='store_true', dest='unpack_only', default=False)
+    optparser.add_option('--no-purge', 
+        help='Do not purge packages when using -u. This should only be used for temporarily unpacked chroot tarballs where it would just be a waste of time.',
+        action='store_true', dest='no_purge', default=False)
     optparser.add_option('-p', '--extra-package', 
         help='Install an extra package (can be specified multiple times)',
         action='append', type='string', dest='extra_packages', default=[])
@@ -406,7 +409,7 @@ if modified:
 
         report.write(out)
 
-if options.unpack_only and installed:
+if options.unpack_only and installed and not options.no_purge:
     if options.verbose:
         so = sys.stderr
     else:
