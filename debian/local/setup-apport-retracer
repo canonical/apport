@@ -62,7 +62,7 @@ fi
 . environ
 
 # create chroots
-apport-chroot -t -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main' create feisty chroots/feisty.tar.gz
+apport-chroot -t -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main restricted universe multiverse' -a 'deb http://archive.ubuntu.com/ubuntu feisty restricted universe multiverse' create feisty chroots/feisty.tar.gz
 chmod -R g+w chroots/
 
 # chroot map
