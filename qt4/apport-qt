@@ -119,11 +119,6 @@ class QT4ReportDialog(QT4Dialog):
 class QT4UserInterface(apport.ui.UserInterface):
     '''QT4 UserInterface.'''
 
-    def w(self, widget):
-        '''Shortcut for getting a widget.'''
-
-        return self.widgets.get_widget(widget)
-
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
 
