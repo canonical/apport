@@ -11,8 +11,6 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-# FIXME: taskbar entry
-
 import os.path, sys, subprocess
 
 try:
@@ -34,7 +32,7 @@ class QT4Dialog(QDialog):
     '''QT4 dialog wrapper.'''
 
     def __init__(self, ui, title, heading, text):
-        QDialog.__init__(self)
+        QDialog.__init__(self, None, Qt.Window)
 
         uic.loadUi(os.path.join(os.path.dirname(sys.argv[0]), ui), self)
 
@@ -120,11 +118,6 @@ class QT4ReportDialog(QT4Dialog):
 
 class QT4UserInterface(apport.ui.UserInterface):
     '''QT4 UserInterface.'''
-
-    def w(self, widget):
-        '''Shortcut for getting a widget.'''
-
-        return self.widgets.get_widget(widget)
 
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
