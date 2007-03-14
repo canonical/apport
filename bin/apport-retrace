@@ -343,8 +343,8 @@ elif reportfile.isdigit():
     lpbug = reportfile
     reportfile = None
 else:
-    print >> sys.stderr, 'ERROR: %s is neither an existing report file nor a \
-Launchpad bug numer' % reportfile
+    print >> sys.stderr, 'ERROR: "%s" is neither an existing report file nor a \
+Launchpad bug number' % reportfile
     sys.exit(1)
 
 if options.core_file:
