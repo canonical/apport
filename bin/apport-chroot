@@ -53,6 +53,9 @@ def parse_options():
     optparser.add_option('--cookie', 
         help='Passed on to apport-retrace in "retrace" mode',
         action='store', type='string', dest='cookie_file', default=None)
+    optparser.add_option('--confirm-attach', 
+        help='Display retraced stack traces and ask for confirmation before uploading them as bug attachments.',
+        action='store_true', dest='confirm_attach', default=False)
 
     (opts, args) = optparser.parse_args()
 
@@ -263,6 +266,8 @@ def command_retrace(opts, args):
         else:
             apport_retrace_argv += ['-s']
             chroot_cookie = None
+        if opts.confirm_attach:
+            apport_retrace_argv.append('--confirm')
         apport_retrace_argv.append(args[0])
         c.run(apport_retrace_argv)
         if chroot_cookie:

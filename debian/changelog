@@ -8,8 +8,10 @@ apport (0.68) UNRELEASED; urgency=low
   * apport-retrace: Add option --confirm to display the retraced stack traces
     and ask for confirmation before uploading them as LP bug attachments.
     (LP: #91878)
+  * apport-chroot: Add option --confirm-attach; if given, call apport-retrace
+    with --confirm.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 00:01:58 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 00:05:18 +0100
 
 apport (0.67) feisty; urgency=low
 
