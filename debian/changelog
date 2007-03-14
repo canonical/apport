@@ -15,8 +15,10 @@ apport (0.67) UNRELEASED; urgency=low
       repeat the text content.
     - Improve wording a bit.
     - LP: #92114
+  * gtk/apport-gtk{,.glade}: Fix signal handler name of the Cancel button in
+    the upload progress dialog, so that it actually works. (LP: #92115)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 17:12:31 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 17:34:57 +0100
 
 apport (0.66) feisty; urgency=low
 
