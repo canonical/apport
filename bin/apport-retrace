@@ -13,6 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob, gzip, re
+import tty, termios
 import apport, apport.fileutils
 
 import warnings
@@ -65,6 +66,9 @@ def parse_options():
     optparser.add_option('--cookie',
         help='Path to a Mozilla-style cookie file; this is used when specifying a Launchpad bug number to attach the retraced stack traces (only if neither -g, -o, nor -s are specified)',
         action='store', type='string', dest='cookie_file', default=None)
+    optparser.add_option('--confirm',
+        help='Display retraced stack traces and ask for confirmation before adding them as Launchpad bug attachments.',
+        action='store_true', dest='confirm', default=False)
 
     (opts, args) = optparser.parse_args()
 
@@ -323,6 +327,37 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
 
     return installed
 
+def getch():
+    '''Read a single character from stdin.'''
+
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
+def confirm_traces(report):
+    '''Display the retraced stack traces and ask the user whether or not to
+    upload tem as Launchpad bug attachments.
+    
+    Return True if the user agrees.'''
+
+    print '--- stack trace ---'
+    print report['Stacktrace']
+    print '--- thread stack trace ---'
+    print report['ThreadStacktrace']
+    print '---'
+
+    ch = None
+    while ch not in ['y', 'n']:
+        print 'OK to send these as bug attachments? [y/n]'
+        ch = getch().lower()
+
+    return ch == 'y'
+
 #
 # main
 #
@@ -397,8 +432,9 @@ if modified:
         if not options.cookie_file:
             print >> sys.stderr, 'You need to specify --cookie for attaching retraced results back to a Launchpad bug.'
             sys.exit(1)
-        attach_to_launchpad_bug(lpbug, report, options.cookie_file)
-        print 'New attachments uploaded to Launchpad bug ' + lpbug
+        if not options.confirm or confirm_traces(report):
+            attach_to_launchpad_bug(lpbug, report, options.cookie_file)
+            print 'New attachments uploaded to Launchpad bug ' + lpbug
     else:
         if options.output == None:
             out = open(reportfile, 'w')
