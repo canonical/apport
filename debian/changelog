@@ -6,8 +6,12 @@ apport (0.67) UNRELEASED; urgency=low
   * apport/report.py: Remove undefined call to error_log() in
     _command_output(), replace it with raising proper exceptions.
   * bin/apport-retrace: Fix 'numer' typo. (LP: #91680)
+  * test-apport: Check that non-packaged executables generate a core dump on
+    SIGABRT, too (test case for bug #92029).
+  * bin/apport: Move check for ignoring SIGABRT below the core dump file
+    writing for non-packaged binaries. (LP: #92029)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 13:22:29 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 16:35:52 +0100
 
 apport (0.66) feisty; urgency=low
 
