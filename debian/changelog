@@ -10,8 +10,13 @@ apport (0.67) UNRELEASED; urgency=low
     SIGABRT, too (test case for bug #92029).
   * bin/apport: Move check for ignoring SIGABRT below the core dump file
     writing for non-packaged binaries. (LP: #92029)
+  * gtk/apport-gtk.glade:
+    - Remove titles from the progress windows to comply with Gnome HIG and not
+      repeat the text content.
+    - Improve wording a bit.
+    - LP: #92114
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 16:35:52 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 17:12:31 +0100
 
 apport (0.66) feisty; urgency=low
 
