@@ -54,20 +54,14 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout, or return
     a textual error if it failed.'''
 
-    try:
-       sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
-    except OSError, e:
-       error_log('_command_output Popen(%s): %s' % (str(command), str(e)))
-       return 'Error: ' + str(e)
+    sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
 
-    out = sp.communicate(input)[0]
+    (out, err) = sp.communicate(input)
     if sp.returncode == 0:
-       return out
+        return out
     else:
-       error_log('_command_output %s failed with exit code %i: %s' % (
-           str(command), sp.returncode, out))
-       return 'Error: command %s failed with exit code %i: %s' % (
-           str(command), sp.returncode, out)
+       raise OSError, 'Error: command %s failed with exit code %i: %s' % (
+           str(command), sp.returncode, err)
 
 def _check_bug_pattern(report, pattern):
     '''Check if given report matches the given bug pattern XML DOM node; return the

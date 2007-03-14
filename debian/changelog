@@ -3,8 +3,10 @@ apport (0.67) UNRELEASED; urgency=low
   * debian/local/setup-apport-retracer: Add apt sources for restricted,
     universe, and multiverse, too.
   * po/de.po: Update from Rosetta.
+  * apport/report.py: Remove undefined call to error_log() in
+    _command_output(), replace it with raising proper exceptions.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 13 Mar 2007 12:57:31 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 11:57:33 +0100
 
 apport (0.66) feisty; urgency=low
 
