@@ -14,11 +14,11 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import tempfile, pwd, errno
+import tempfile, pwd, errno, urllib
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
-import MultipartPostHandler, urllib, urllib2
+import launchpadBugs.storeblob
 
 import apport, apport.fileutils, REThread
 
@@ -60,13 +60,7 @@ def upload_launchpad_blob(report):
     mime.flush()
     mime.seek(0)
 
-    opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
-    result = opener.open('https://launchpad.net/+storeblob', 
-        { 'FORM_SUBMIT': '1', 'field.blob': mime })
-    ticket = result.info().get('X-Launchpad-Blob-Token')
-    mime.close()
-
-    return ticket
+    return launchpadBugs.storeblob.upload(mime)
 
 class UserInterface:
     '''Abstract base class for encapsulating the workflow and common code for

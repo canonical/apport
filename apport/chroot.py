@@ -126,6 +126,19 @@ class Chroot:
 	else:
 	   return self._exec_capture(argv, stdin)
 	
+    def fix_symlinks(self):
+        '''Remove root prefix from symbolic links in chroot directory,
+        otherwise chroot tarballs don't work at all, and we cannot move/rename
+        chroot directories.'''
+
+        for r, dirs, files in os.walk(self.root):
+            for f in files:
+                path = os.path.join(r, f)
+                if os.path.islink(path):
+                    target = os.readlink(path)
+                    if target.startswith(self.root):
+                        os.unlink(path)
+                        os.symlink(target[len(self.root):], path)
 
 #
 # Unit test
@@ -248,5 +261,22 @@ int main() { return 42; }
 		    'tarball chroot should delete the temporary chroot')
 	    finally:
 		os.unlink(tar)
+
+	def test_fix_symlinks(self):
+	    '''Test symlink fixing in chroots.'''
+
+	    d = self._mkchroot() 
+	    try:
+                os.symlink(os.path.join(d, 'bin', '42'), os.path.join(d, 'bin', '42prefix'))
+                os.symlink(os.path.join('/bin/42'), os.path.join(d, 'bin', '42noprefix'))
+
+		c = Chroot(d)
+                c.fix_symlinks()
+
+                self.assertEqual(os.readlink(os.path.join(d, 'bin', '42prefix')), '/bin/42')
+                self.assertEqual(os.readlink(os.path.join(d, 'bin', '42noprefix')), '/bin/42')
+
+	    finally:
+		shutil.rmtree(d)
 
     unittest.main()

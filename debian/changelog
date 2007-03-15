@@ -1,4 +1,95 @@
-apport (0.64) UNRELEASED; urgency=low
+apport (0.69) UNRELEASED; urgency=low
+
+  * apport-chroot: Add command 'installdeb' to conveniently install a bunch of
+    .debs into a chroot.
+  * apport-chroot: Fix 'login' and 'upgrade' commands to not require
+    specifying a chroot map when giving a chroot tarball path as argument.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 12:17:57 +0100
+
+apport (0.68) feisty; urgency=low
+
+  [ Michael Hofmann ]
+  * qt4/apport-qt: Fix taskbar entry, remove an unused method.
+  * qt4/error.ui: Fix icon spacing.
+
+  [ Martin Pitt ]
+  * apport-retrace: Add option --confirm to display the retraced stack traces
+    and ask for confirmation before uploading them as LP bug attachments.
+    (LP: #91878)
+  * apport-chroot: Add option --confirm-attach; if given, call apport-retrace
+    with --confirm.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 00:05:18 +0100
+
+apport (0.67) feisty; urgency=low
+
+  * debian/local/setup-apport-retracer: Add apt sources for restricted,
+    universe, and multiverse, too.
+  * po/de.po: Update from Rosetta.
+  * apport/report.py: Remove undefined call to error_log() in
+    _command_output(), replace it with raising proper exceptions.
+  * bin/apport-retrace: Fix 'numer' typo. (LP: #91680)
+  * test-apport: Check that non-packaged executables generate a core dump on
+    SIGABRT, too (test case for bug #92029).
+  * bin/apport: Move check for ignoring SIGABRT below the core dump file
+    writing for non-packaged binaries. (LP: #92029)
+  * gtk/apport-gtk.glade:
+    - Remove titles from the progress windows to comply with Gnome HIG and not
+      repeat the text content.
+    - Improve wording a bit.
+    - LP: #92114
+  * gtk/apport-gtk{,.glade}: Fix signal handler name of the Cancel button in
+    the upload progress dialog, so that it actually works. (LP: #92115)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 17:34:57 +0100
+
+apport (0.66) feisty; urgency=low
+
+  * Remove apport/MultipartPostHandler.py, this functionality moved to
+    python-launchpad-bugs now. Add a dependency to that package.
+  * apport/ui.py, upload_launchpad_blob(): Use the shiny new
+    launchpadBugs.storeblob.upload().
+  * bin/apport-retrace: Attach retraced stack traces back to the Launchpad bug
+    report if no other output option is given (This corresponds to the
+    in-place editing when a report file is specified). Add option --cookie to
+    specify a Mozilla-style cookie file for the necessary Launchpad
+    authentication.
+  * man/apport-retrace.1: Document above apport-retrace changes.
+  * bin/apport-chroot: Add --cookie option: temporarily symlink cookie into
+    the chroot and pass it to apport-retrace in retrace mode.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 15:01:57 +0100
+
+apport (0.65) feisty; urgency=low
+
+  * debian/local/setup-apport-retracer:
+    - Replace grep-dctrl with grep call, since grep-dctrl is not installed in
+      all the DC chroots.
+    - Do not download apport source from archive.u.c., instead require that
+      this script lives in the unpacked apport source tree.
+  * bin/apport-chroot: Use apt-get options -y and --allow-unauthenticated when
+    installing additional packages.
+  * bin/apport-chroot: Handle --extra-package for 'upgrade', too, to provide a
+    simple way of adding a package to an existing chroot tarball.
+  * debian/local/setup-apport-retracer: Create tarball chroots by default.
+    It only imposes a negligible overhead, and sharing unpacked directories
+    with multiple people is just too brittle.
+  * bin/apport-retrace: Add option --no-purge to not purge unpacked packages
+    after retracing. This is (only) useful with temporarily unpacked chroots,
+    since it's only a waste of time there.
+  * bin/apport-chroot: Call apport-retrace with --no-purge when retracing in a
+    chroot tarball.
+  * apport/chroot.py: Add fix_symlinks() method to remove the chroot root
+    directory prefix from symbolic links; they prevent function of tarball
+    chroots and moving around directory chroots. Add test case.
+  * bin/apport: Fix symlinks after creating and upgrading a chroot.
+  * bin/apport-chroot: Add option --save to update a tarball after logging
+    in to it.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 10 Mar 2007 21:21:25 +0100
+
+apport (0.64) feisty; urgency=low
 
   * bin/apport-chroot: Add 'login' command.
   * bin/apport-chroot: Install apport-retrace into a newly created chroot.
@@ -7,8 +98,27 @@ apport (0.64) UNRELEASED; urgency=low
     fakechroot. This works OOTB on ronne's amd64 and i386 feisty chroots. The
     script is not shipped in any package yet, but it's convenient to ship it
     in revision control and in the source.
+  * apport/report.py, _check_interpreted(): When calling an interpreter with a
+    script name as argument, set ExecutablePath to the script instead of the
+    interpreter. Add test case. (LP: #88794)
+  * apport/report.py, search_bug_patterns(): Catch all exceptions from
+    urlopen(), not just IOError. Sometimes this fails with funnier errors.
+    (LP: #89589)
+  * bin/apport-retrace: Give some additional explanation when installing
+    packages fails. (LP: #89916)
+  * apport/fileutils.py, get_all_{system_,}reports(): Fix file access race
+    condition. (LP: #89977)
+  * bin/apport-retrace: Add option -p/--extra-package to install an additional
+    package for retracing. May be specified multiple times. Document new
+    option in man/apport-retrace.1. (LP: #90077)
+  * bin/apport-chroot: Add a similar option -p/--extra-package and install
+    those in the 'create' command and simply pass it to apport-retrace in the
+    'retrace' command. (LP: #90077)
+  * bin/apport-chroot: Add a -v/--verbose option.
+  * bin/apport-retrace: Do not complain about missing ddebs for Arch: all
+    packages.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  5 Mar 2007 17:01:22 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue,  6 Mar 2007 16:20:41 +0100
 
 apport (0.63) feisty; urgency=low
 

@@ -77,20 +77,14 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout, or return
     a textual error if it failed.'''
 
-    try:
-       sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
-    except OSError, e:
-       error_log('_command_output Popen(%s): %s' % (str(command), str(e)))
-       return 'Error: ' + str(e)
+    sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
 
-    out = sp.communicate(input)[0]
+    (out, err) = sp.communicate(input)
     if sp.returncode == 0:
-       return out
+        return out
     else:
-       error_log('_command_output %s failed with exit code %i: %s' % (
-           str(command), sp.returncode, out))
-       return 'Error: command %s failed with exit code %i: %s' % (
-           str(command), sp.returncode, out)
+       raise OSError, 'Error: command %s failed with exit code %i: %s' % (
+           str(command), sp.returncode, err)
 
 def _check_bug_pattern(report, pattern):
     '''Check if given report matches the given bug pattern XML DOM node; return the
@@ -251,29 +245,31 @@ class Report(ProblemReport):
                 break
         if not name:
             return
-        if name == os.path.basename(self['ExecutablePath']):
-            return
 
         cmdargs = self['ProcCmdline'].split('\0')
         bindirs = ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']
-
-        argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
-        if argvexes and os.path.basename(cmdargs[0]) == name:
-            self['InterpreterPath'] = self['ExecutablePath']
-            self['ExecutablePath'] = argvexes[0]
-            return
 
         # filter out interpreter options
         while len(cmdargs) >= 2 and cmdargs[1].startswith('-'):
             del cmdargs[1]
 
+        # catch scripts explicitly called with interpreter
         if len(cmdargs) >= 2:
             # ensure that cmdargs[1] is an absolute path 
             if cmdargs[1].startswith('.') and self.has_key('ProcCwd'):
                 cmdargs[1] = os.path.join(self['ProcCwd'], cmdargs[1])
-            if os.path.basename(cmdargs[0]) != name and os.access(cmdargs[1], os.R_OK):
+            if os.access(cmdargs[1], os.R_OK):
                 self['InterpreterPath'] = self['ExecutablePath']
                 self['ExecutablePath'] = os.path.realpath(cmdargs[1])
+                return
+
+        # catch directly executed scripts
+        if name != os.path.basename(self['ExecutablePath']):
+            argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
+            if argvexes and os.path.basename(cmdargs[0]) == name:
+                self['InterpreterPath'] = self['ExecutablePath']
+                self['ExecutablePath'] = argvexes[0]
+                return
 
     def add_proc_info(self, pid=None, extraenv=[]):
         '''Add /proc/pid information.
@@ -443,7 +439,7 @@ class Report(ProblemReport):
         package = self['Package'].split()[0]
         try:
             patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
-        except IOError:
+        except:
             return None
 
         try:
@@ -714,10 +710,10 @@ sys.stdin.readline()
         self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
         self.assertEqual(pr['InterpreterPath'], '/bin/dash')
 
-        # standard sh script (this is also the common mono scheme)
+        # standard sh script when being called explicitly with interpreter
         pr = Report()
         pr['ExecutablePath'] = '/bin/dash'
-        pr['ProcStatus'] = 'Name:\tzgrep'
+        pr['ProcStatus'] = 'Name:\tdash'
         pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
