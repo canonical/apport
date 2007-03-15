@@ -2,8 +2,10 @@ apport (0.69) UNRELEASED; urgency=low
 
   * apport-retrace: Remove function getch() again, since the termios ioctls do
     not always work. This requires users to press Enter after y/n.
+  * apport-chroot: Add command 'installdeb' to conveniently install a bunch of
+    .debs into a chroot.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 11:59:22 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 12:16:13 +0100
 
 apport (0.68) feisty; urgency=low
 
