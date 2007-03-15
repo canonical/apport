@@ -327,6 +327,18 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
 
     return installed
 
+def getch():
+    '''Read a single character from stdin.'''
+
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
 def confirm_traces(report):
     '''Display the retraced stack traces and ask the user whether or not to
     upload tem as Launchpad bug attachments.
@@ -341,8 +353,8 @@ def confirm_traces(report):
 
     ch = None
     while ch not in ['y', 'n']:
-        print 'OK to send these as bug attachments? [y/n] ',
-        ch = sys.stdin.readline()[0].lower()
+        print 'OK to send these as bug attachments? [y/n]'
+        ch = getch().lower()
 
     return ch == 'y'
 
