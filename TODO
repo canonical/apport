@@ -6,7 +6,6 @@ apport-gtk:
 apport-retrace:
  - add stack rewinding to step back through crash handlers
  - add heuristics for more crash types (SEGV on read/write/exec & mem region)
- - stuck on 91756
 
 python-apport:
  - Add API/report attribute for doing upstream problem reports
