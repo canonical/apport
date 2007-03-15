@@ -170,7 +170,8 @@ class QT4UserInterface(apport.ui.UserInterface):
         return {'action': 'cancel', 'blacklist': blacklist}
 
     def ui_present_package_error(self):
-        dialog = QT4ErrorDialog (self.report['Package'], 
+        name = self.report['Package']
+        dialog = QT4ErrorDialog (name,
                 _('Sorry, the package "%s" failed to install or upgrade.') % 
                 name,
                 _('You can help the developers to fix the package by '
@@ -259,7 +260,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         if dialog.findChild(QRadioButton, 'complete').isChecked():
             return 'full'
         # Fallback
-        return 'undefined'
+        return 'cancel'
 
     def ui_info_message(self, title, text):
         QMessageBox.information (None, title, text, 
