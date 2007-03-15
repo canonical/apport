@@ -197,7 +197,7 @@ def command_upgrade(opts, args):
     if len(args) != 1:
         print >> sys.stderr, 'upgrade needs exactly one argument (use --help for a short online help)'
         sys.exit(1)
-    if not opts.chroot_map and not os.path.isdir(args[0]):
+    if not opts.chroot_map and not os.path.exists(args[0]):
         print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
         sys.exit(1)
 
@@ -250,7 +250,7 @@ def command_login(opts, args):
     if len(args) != 1:
         print >> sys.stderr, 'login needs exactly one argument (use --help for a short online help)'
         sys.exit(1)
-    if not opts.chroot_map and not os.path.isdir(args[0]):
+    if not opts.chroot_map and not os.path.exists(args[0]):
         print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
         sys.exit(1)
 

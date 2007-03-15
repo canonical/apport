@@ -4,8 +4,10 @@ apport (0.69) UNRELEASED; urgency=low
     not always work. This requires users to press Enter after y/n.
   * apport-chroot: Add command 'installdeb' to conveniently install a bunch of
     .debs into a chroot.
+  * apport-chroot: Fix 'login' and 'upgrade' commands to not require
+    specifying a chroot map when giving a chroot tarball path as argument.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 12:16:13 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 12:17:57 +0100
 
 apport (0.68) feisty; urgency=low
 
