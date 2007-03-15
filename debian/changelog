@@ -1,3 +1,10 @@
+apport (0.69) UNRELEASED; urgency=low
+
+  * apport-retrace: Remove function getch() again, since the termios ioctls do
+    not always work. This requires users to press Enter after y/n.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 11:59:22 +0100
+
 apport (0.68) feisty; urgency=low
 
   [ Michael Hofmann ]
