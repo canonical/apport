@@ -1,0 +1,281 @@
+#!/usr/bin/python
+
+'''Command line Apport user interface.
+
+Copyright (C) 2007 Michael Hofmann <mh21@piware.de>
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+the full text of the license.
+'''
+
+import os.path, sys, subprocess, re
+
+# FIXME:
+# more elaborate text like dpkg, time and date for crashes
+# info collections shows too many dots
+# Provide cancel for progress dialogs, some handler magic for ^C,
+#    output a message so the user knows
+
+
+try:
+    from gettext import gettext as _
+    import apport.ui
+except ImportError, e:
+    # this can happen while upgrading python packages
+    print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
+    sys.exit(1)
+
+class CLIDialog:
+    '''Command line dialog wrapper.'''
+
+    def __init__(self, heading, text):
+        self.heading = '\n*** %s\n' % heading
+        self.text = text
+        self.keys = []
+        self.buttons = []
+        self.visible = False
+
+    def show(self):
+        self.visible = True
+        print self.heading
+        print self.text
+
+    def run(self):
+        if not self.visible:
+            self.show()
+
+        # TODO look at dpkg to get some ideas for text
+        for index, button in enumerate(self.buttons):
+            print '  %s: %s' % (self.keys[index], button)
+
+        while True:
+            response = raw_input(_('Choose NOW (%s):') % ('/'.join(self.keys)))
+            if not len(response):
+                continue
+
+            try:
+                return self.keys.index(response[0].upper()) + 1
+            except ValueError:
+                pass
+
+    def addbutton(self, button):
+        self.keys.append(re.search('&(.)', button).group(1).upper())
+        self.buttons.append(re.sub('&', '', button))
+        return len(self.keys)
+
+
+class CLIErrorDialog(CLIDialog):
+    '''Command line error dialog wrapper.'''
+
+    def __init__(self, heading, text, checker = None):
+        CLIDialog.__init__(self, heading, text)
+
+class CLIProgressDialog(CLIDialog):
+    '''Command line progress dialog wrapper.'''
+
+    def __init__(self, heading, text):
+        CLIDialog.__init__(self, heading, text)
+
+    def set(self):
+        sys.stdout.write('.')
+        sys.stdout.flush()
+
+class CLIReportDialog(CLIDialog):
+    '''Command line report dialog wrapper.'''
+
+    def __init__(self, heading, text):
+        CLIDialog.__init__(self, heading, text)
+
+class CLIUserInterface(apport.ui.UserInterface):
+    '''Command line Apport user interface'''
+
+    def __init__(self):
+        apport.ui.UserInterface.__init__(self)
+
+    #
+    # ui_* implementation of abstract UserInterface classes
+    #
+
+    def ui_present_crash(self, desktop_entry):
+        # adapt dialog heading and label appropriately
+        if desktop_entry:
+            name = desktop_entry.getName()
+            heading = _('%s closed unexpectedly.') % name
+        elif self.report.has_key('ExecutablePath'):
+            name = os.path.basename(self.report['ExecutablePath'])
+            heading = _('The program "%s" closed unexpectedly.') % name
+        else:
+            name = self.cur_package
+            heading = _('%s closed unexpectedly.') % name
+
+        dialog = CLIErrorDialog(
+                heading,
+                _('If you were not doing anything confidential (entering passwords or other\n'
+                  'private information), you can help to improve the application by reporting\n'
+                  'the problem.'))
+        report = dialog.addbutton(_('&Report Problem...'))
+        ignore = dialog.addbutton(_('Cancel and &ignore future crashes of this program version'))
+        dialog.addbutton(_('&Cancel'))
+
+        # show crash notification dialog
+        response = dialog.run()
+
+        if response == report:
+            return {'action': 'report', 'blacklist': False}
+        if response == ignore:
+            return {'action': 'cancel', 'blacklist': True}
+        # Fallback
+        return {'action': 'cancel', 'blacklist': False}
+
+    def ui_present_package_error(self):
+        name = self.report['Package']
+        dialog = CLIErrorDialog(
+                _('The package "%s" failed to install or upgrade.') % name,
+                _('You can help the developers to fix the package by reporting the problem.'))
+        report = dialog.addbutton(_('&Report Problem...'))
+        dialog.addbutton(_('&Cancel'))
+
+        response = run()
+
+        if response == report:
+            return 'report'
+        # Fallback
+        return 'cancel'
+
+    def ui_present_kernel_error(self):
+        dialog = CLIErrorDialog (
+                _('The kernel encountered a serious problem'),
+                _('Your system might become unstable now and might need to be restarted.\n'
+                  'You can help the developers to fix the problem by reporting it.'))
+        report = dialog.addbutton(_('&Report Problem...'))
+        dialog.addbutton(_('&Cancel'))
+
+        response = dialog.run()
+
+        if response == report:
+            return 'report'
+        # Fallback
+        return 'cancel'
+
+    def ui_present_report_details(self):
+        name = self.report.get('Package', 'Ubuntu').split()[0]
+        dialog = CLIReportDialog (
+                _('Send problem report to the developers?'),
+                _('After the problem report has been sent, please fill out the form in the\n'
+                  'automatically opening web browser.'))
+        complete = dialog.addbutton(_('&Send complete report (recommended; %s)') %
+                    self.format_filesize(self.get_complete_size()))
+        reduced = dialog.addbutton(_('Send &reduced report (slow Internet connection; %s)') %
+                    self.format_filesize(self.get_reduced_size()))
+        view = dialog.addbutton(_('&View report'))
+        dialog.addbutton(_('&Cancel'))
+
+        # report contents
+        # TODO
+#        details = dialog.findChild (QTreeWidget, 'details')
+#        for key in self.report:
+#            keyitem = QTreeWidgetItem([key]);
+#            details.addTopLevelItem (keyitem)
+#
+#            if hasattr(self.report[key], 'splitlines'):
+#                # string value
+#                if not self.report._is_binary(self.report[key]):
+#                    lines = self.report[key].splitlines()
+#                    for line in lines:
+#                        QTreeWidgetItem(keyitem, [line])
+#                    if len(lines) < 4:
+#                        keyitem.setExpanded(True)
+#                else:
+#                    QTreeWidgetItem (keyitem, [_('(binary data)')])
+#            else:
+#                # file attachment
+#                QTreeWidgetItem(keyitem, [str(self.report[key])])
+#        details.header().hide()
+#
+#        # complete/reduced radio buttons
+#        if self.report.has_key('CoreDump'):
+#            dialog.findChild(QRadioButton, 'complete').setText(
+#                    _('Complete report (recommended; %s)') %
+#                    self.format_filesize(self.get_complete_size()))
+#            dialog.findChild(QRadioButton, 'reduced').setText(
+#                    _('Reduced report (slow Internet connection; %s)') %
+#                    self.format_filesize(self.get_reduced_size()))
+#        else:
+#            dialog.findChild(QFrame, 'options').hide()
+#
+        while True:
+            response = dialog.run()
+
+            if response == complete:
+                return 'full'
+            if response == reduced:
+                return 'reduced'
+            if response == view:
+                # FIXME
+                continue
+            # Fallback
+            return 'cancel'
+
+    def ui_info_message(self, title, text):
+        pass
+        # TODO not to sure what to do about them
+#        QMessageBox.information (None, title, text,
+#                QMessageBox.Close, QMessageBox.Close)
+
+    def ui_error_message(self, title, text):
+        pass
+        # TODO not to sure what to do about them
+#        QMessageBox.critical (None, title, text,
+#                QMessageBox.Close, QMessageBox.Close)
+
+    def ui_start_info_collection_progress(self):
+        self.progress = CLIProgressDialog (
+                _('Collecting problem information'),
+                _('The collected information can be send to the developers to improve the\n'
+                  'application. This might take some minutes.'))
+        self.progress.show()
+
+    def ui_pulse_info_collection_progress(self):
+        self.progress.set()
+
+    def ui_stop_info_collection_progress(self):
+        print
+
+    def ui_start_upload_progress(self):
+        '''Open a window with a definite progress bar, telling the user to
+        wait while debug information is being uploaded.'''
+
+        self.progress = CLIProgressDialog (
+                _('Uploading problem information'),
+                _('The collected information is sent to the bug tracking system.\n'
+                  'This might take some minutes.'))
+        self.progress.show()
+        self.progresscount = 0
+
+    def ui_set_upload_progress(self, progress):
+        '''Set the progress bar in the debug data upload progress
+        window to the given ratio (between 0 and 1, or None for indefinite
+        progress).
+
+        This function is called every 100 ms.'''
+
+        self.progresscount = (self.progresscount + 1) % 10
+        if self.progresscount:
+            return
+
+        if progress:
+            pass
+            # FIXME
+#            self.progress.set(progress)
+        else:
+            self.progress.set()
+
+    def ui_stop_upload_progress(self):
+        pass
+
+if __name__ == '__main__':
+    app = CLIUserInterface()
+    app.run_argv()
