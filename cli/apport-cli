@@ -11,13 +11,15 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os.path, sys, subprocess, re
+import os.path, os, sys, subprocess, re
 
 # FIXME:
 # more elaborate text like dpkg, time and date for crashes
 # info collections shows too many dots
 # Provide cancel for progress dialogs, some handler magic for ^C,
 #    output a message so the user knows
+# not to sure what to do about the message and error boxes
+# progress bar
 
 
 try:
@@ -47,7 +49,7 @@ class CLIDialog:
         if not self.visible:
             self.show()
 
-        # TODO look at dpkg to get some ideas for text
+        # TODO text
         for index, button in enumerate(self.buttons):
             print '  %s: %s' % (self.keys[index], button)
 
@@ -166,46 +168,37 @@ class CLIUserInterface(apport.ui.UserInterface):
                 _('Send problem report to the developers?'),
                 _('After the problem report has been sent, please fill out the form in the\n'
                   'automatically opening web browser.'))
-        complete = dialog.addbutton(_('&Send complete report (recommended; %s)') %
+
+        # report contents
+        details = ''
+        for key in self.report:
+            details += key + ':'
+            if hasattr(self.report[key], 'splitlines'):
+                # string value
+                if not self.report._is_binary(self.report[key]):
+                    lines = self.report[key].splitlines()
+                    for line in lines:
+                        details += '  ' + line + '\n'
+                else:
+                    details += _('(binary data)') + '\n'
+            else:
+                # file attachment
+                details += '  ' + str(self.report[key]) + '\n'
+
+        # complete/reduced reports
+        if self.report.has_key('CoreDump'):
+            complete = dialog.addbutton(_('&Send complete report (recommended; %s)') %
                     self.format_filesize(self.get_complete_size()))
-        reduced = dialog.addbutton(_('Send &reduced report (slow Internet connection; %s)') %
+            reduced = dialog.addbutton(_('Send &reduced report (slow Internet connection; %s)') %
                     self.format_filesize(self.get_reduced_size()))
+        else:
+            complete = dialog.addbutton(_('&Send report (%s)') %
+                    self.format_filesize(self.get_complete_size()))
+            reduced = None
+
         view = dialog.addbutton(_('&View report'))
         dialog.addbutton(_('&Cancel'))
 
-        # report contents
-        # TODO
-#        details = dialog.findChild (QTreeWidget, 'details')
-#        for key in self.report:
-#            keyitem = QTreeWidgetItem([key]);
-#            details.addTopLevelItem (keyitem)
-#
-#            if hasattr(self.report[key], 'splitlines'):
-#                # string value
-#                if not self.report._is_binary(self.report[key]):
-#                    lines = self.report[key].splitlines()
-#                    for line in lines:
-#                        QTreeWidgetItem(keyitem, [line])
-#                    if len(lines) < 4:
-#                        keyitem.setExpanded(True)
-#                else:
-#                    QTreeWidgetItem (keyitem, [_('(binary data)')])
-#            else:
-#                # file attachment
-#                QTreeWidgetItem(keyitem, [str(self.report[key])])
-#        details.header().hide()
-#
-#        # complete/reduced radio buttons
-#        if self.report.has_key('CoreDump'):
-#            dialog.findChild(QRadioButton, 'complete').setText(
-#                    _('Complete report (recommended; %s)') %
-#                    self.format_filesize(self.get_complete_size()))
-#            dialog.findChild(QRadioButton, 'reduced').setText(
-#                    _('Reduced report (slow Internet connection; %s)') %
-#                    self.format_filesize(self.get_reduced_size()))
-#        else:
-#            dialog.findChild(QFrame, 'options').hide()
-#
         while True:
             response = dialog.run()
 
@@ -214,20 +207,22 @@ class CLIUserInterface(apport.ui.UserInterface):
             if response == reduced:
                 return 'reduced'
             if response == view:
-                # FIXME
+                subprocess.Popen(["/usr/bin/sensible-pager"],
+                        stdin=subprocess.PIPE,
+                        close_fds=True).communicate(details)
                 continue
             # Fallback
             return 'cancel'
 
     def ui_info_message(self, title, text):
         pass
-        # TODO not to sure what to do about them
+        # TODO
 #        QMessageBox.information (None, title, text,
 #                QMessageBox.Close, QMessageBox.Close)
 
     def ui_error_message(self, title, text):
         pass
-        # TODO not to sure what to do about them
+        # TODO
 #        QMessageBox.critical (None, title, text,
 #                QMessageBox.Close, QMessageBox.Close)
 
