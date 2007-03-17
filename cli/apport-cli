@@ -11,16 +11,17 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
+# Web browser support:
+#    w3m, lynx: do not work
+#    elinks: works
+
 import os.path, os, sys, subprocess, re
+import tty, termios
 
 # FIXME:
 # more elaborate text like dpkg, time and date for crashes
-# info collections shows too many dots
 # Provide cancel for progress dialogs, some handler magic for ^C,
 #    output a message so the user knows
-# not to sure what to do about the message and error boxes
-# progress bar
-
 
 try:
     from gettext import gettext as _
@@ -34,11 +35,32 @@ class CLIDialog:
     '''Command line dialog wrapper.'''
 
     def __init__(self, heading, text):
-        self.heading = '\n*** %s\n' % heading
+        self.heading = '\n*** ' + heading + '\n'
         self.text = text
         self.keys = []
         self.buttons = []
         self.visible = False
+
+    def raw_input_char(self, text):
+        """ raw_input, but read only one character """
+
+        sys.stdout.write(text + ' ')
+
+        file = sys.stdin.fileno()
+        saved_attributes = termios.tcgetattr(file)
+        attributes = termios.tcgetattr(file)
+        attributes[3] = attributes[3] & ~(termios.ICANON)
+        attributes[6][termios.VMIN] = 1
+        attributes[6][termios.VTIME] = 0
+        termios.tcsetattr(file, termios.TCSANOW, attributes)
+
+        try:
+            ch = str(sys.stdin.read(1))
+        finally:
+            termios.tcsetattr(file, termios.TCSANOW, saved_attributes)
+
+        print
+        return ch
 
     def show(self):
         self.visible = True
@@ -49,15 +71,17 @@ class CLIDialog:
         if not self.visible:
             self.show()
 
+        print
+        if len (self.keys) <= 1:
+            self.raw_input_char(_('Press any key to continue...'))
+            return 0
+
         # TODO text
-        for index, button in enumerate(self.buttons):
-            print '  %s: %s' % (self.keys[index], button)
-
         while True:
-            response = raw_input(_('Choose NOW (%s):') % ('/'.join(self.keys)))
-            if not len(response):
-                continue
+            for index, button in enumerate(self.buttons):
+                print '  %s: %s' % (self.keys[index], button)
 
+            response = self.raw_input_char(_('Choose NOW (%s):') % ('/'.join(self.keys)))
             try:
                 return self.keys.index(response[0].upper()) + 1
             except ValueError:
@@ -69,27 +93,23 @@ class CLIDialog:
         return len(self.keys)
 
 
-class CLIErrorDialog(CLIDialog):
-    '''Command line error dialog wrapper.'''
-
-    def __init__(self, heading, text, checker = None):
-        CLIDialog.__init__(self, heading, text)
-
 class CLIProgressDialog(CLIDialog):
     '''Command line progress dialog wrapper.'''
 
     def __init__(self, heading, text):
         CLIDialog.__init__(self, heading, text)
+        self.progresscount = 0
 
-    def set(self):
-        sys.stdout.write('.')
+    def set(self, progress = None):
+        self.progresscount = (self.progresscount + 1) % 5
+        if self.progresscount:
+            return
+
+        if progress != None:
+            sys.stdout.write('\r%u%%' % (progress * 100))
+        else:
+            sys.stdout.write('.')
         sys.stdout.flush()
-
-class CLIReportDialog(CLIDialog):
-    '''Command line report dialog wrapper.'''
-
-    def __init__(self, heading, text):
-        CLIDialog.__init__(self, heading, text)
 
 class CLIUserInterface(apport.ui.UserInterface):
     '''Command line Apport user interface'''
@@ -113,7 +133,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             name = self.cur_package
             heading = _('%s closed unexpectedly.') % name
 
-        dialog = CLIErrorDialog(
+        dialog = CLIDialog(
                 heading,
                 _('If you were not doing anything confidential (entering passwords or other\n'
                   'private information), you can help to improve the application by reporting\n'
@@ -134,7 +154,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def ui_present_package_error(self):
         name = self.report['Package']
-        dialog = CLIErrorDialog(
+        dialog = CLIDialog(
                 _('The package "%s" failed to install or upgrade.') % name,
                 _('You can help the developers to fix the package by reporting the problem.'))
         report = dialog.addbutton(_('&Report Problem...'))
@@ -148,7 +168,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         return 'cancel'
 
     def ui_present_kernel_error(self):
-        dialog = CLIErrorDialog (
+        dialog = CLIDialog (
                 _('The kernel encountered a serious problem'),
                 _('Your system might become unstable now and might need to be restarted.\n'
                   'You can help the developers to fix the problem by reporting it.'))
@@ -164,7 +184,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def ui_present_report_details(self):
         name = self.report.get('Package', 'Ubuntu').split()[0]
-        dialog = CLIReportDialog (
+        dialog = CLIDialog (
                 _('Send problem report to the developers?'),
                 _('After the problem report has been sent, please fill out the form in the\n'
                   'automatically opening web browser.'))
@@ -215,16 +235,14 @@ class CLIUserInterface(apport.ui.UserInterface):
             return 'cancel'
 
     def ui_info_message(self, title, text):
-        pass
-        # TODO
-#        QMessageBox.information (None, title, text,
-#                QMessageBox.Close, QMessageBox.Close)
+        dialog = CLIDialog(title, text)
+        dialog.addbutton(_('&Confirm'))
+        dialog.run()
 
     def ui_error_message(self, title, text):
-        pass
-        # TODO
-#        QMessageBox.critical (None, title, text,
-#                QMessageBox.Close, QMessageBox.Close)
+        dialog = CLIDialog(_('Error: %s') % title, text)
+        dialog.addbutton(_('&Confirm'))
+        dialog.run()
 
     def ui_start_info_collection_progress(self):
         self.progress = CLIProgressDialog (
@@ -240,36 +258,17 @@ class CLIUserInterface(apport.ui.UserInterface):
         print
 
     def ui_start_upload_progress(self):
-        '''Open a window with a definite progress bar, telling the user to
-        wait while debug information is being uploaded.'''
-
         self.progress = CLIProgressDialog (
                 _('Uploading problem information'),
                 _('The collected information is sent to the bug tracking system.\n'
                   'This might take some minutes.'))
         self.progress.show()
-        self.progresscount = 0
 
     def ui_set_upload_progress(self, progress):
-        '''Set the progress bar in the debug data upload progress
-        window to the given ratio (between 0 and 1, or None for indefinite
-        progress).
-
-        This function is called every 100 ms.'''
-
-        self.progresscount = (self.progresscount + 1) % 10
-        if self.progresscount:
-            return
-
-        if progress:
-            pass
-            # FIXME
-#            self.progress.set(progress)
-        else:
-            self.progress.set()
+        self.progress.set(progress)
 
     def ui_stop_upload_progress(self):
-        pass
+        print
 
 if __name__ == '__main__':
     app = CLIUserInterface()
