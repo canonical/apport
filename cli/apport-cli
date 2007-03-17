@@ -197,13 +197,17 @@ class CLIUserInterface(apport.ui.UserInterface):
                 # string value
                 if not self.report._is_binary(self.report[key]):
                     lines = self.report[key].splitlines()
-                    for line in lines:
-                        details += '  ' + line + '\n'
+                    if len(lines) <= 1:
+                        details += ' ' + self.report[key] + '\n'
+                    else:
+                        details += '\n'
+                        for line in lines:
+                            details += '  ' + line + '\n'
                 else:
-                    details += _('(binary data)') + '\n'
+                    details += ' ' + _('(binary data)') + '\n'
             else:
                 # file attachment
-                details += '  ' + str(self.report[key]) + '\n'
+                details += ' ' + str(self.report[key]) + '\n'
 
         # complete/reduced reports
         if self.report.has_key('CoreDump'):
