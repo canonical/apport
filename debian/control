@@ -99,3 +99,18 @@ Description: Qt4 frontend for the apport crash report system
  See https://wiki.ubuntu.com/AutomatedProblemReports for more
  information.
 
+Package: apport-cli
+Section: utils
+Architecture: all
+Depends: python (>= 2.4), python-apport (>= 0.45), python-xdg, apport (>= 0.41), procps, debianutils
+Description: Command line frontend for the apport crash report system
+ apport automatically collects data from crashed processes and
+ compiles a problem report in /var/crash/. This utilizes the crashdump
+ helper hook provided by the Ubuntu kernel.
+ .
+ This package provides a command line frontend for browsing and handling the
+ crash reports.
+ .
+ See https://wiki.ubuntu.com/AutomatedProblemReports for more
+ information.
+
