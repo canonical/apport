@@ -209,10 +209,10 @@ class UserInterface:
         '''Format the given integer as humanly readable and i18n'ed file size.'''
 
         if size < 1048576:
-            return locale.format('%.1f KB', size/1024.)
+            return locale.format('%.1f KiB', size/1024.)
         if size < 1024 * 1048576:
-            return locale.format('%.1f MB', size / 1048576.)
-        return locale.format('%.1f GB', size / float(1024 * 1048576)) 
+            return locale.format('%.1f MiB', size / 1048576.)
+        return locale.format('%.1f GiB', size / float(1024 * 1048576)) 
 
     def get_complete_size(self):
         '''Return the size of the complete report.'''
@@ -765,14 +765,14 @@ if  __name__ == '__main__':
         def test_format_filesize(self):
             '''Test format_filesize().'''
 
-            self.assertEqual(self.ui.format_filesize(0), '0.0 KB')
-            self.assertEqual(self.ui.format_filesize(2048), '2.0 KB')
-            self.assertEqual(self.ui.format_filesize(2560), '2.5 KB')
-            self.assertEqual(self.ui.format_filesize(1000000), '976.6 KB')
-            self.assertEqual(self.ui.format_filesize(1048576), '1.0 MB')
-            self.assertEqual(self.ui.format_filesize(2.7*1048576), '2.7 MB')
-            self.assertEqual(self.ui.format_filesize(1024*1048576), '1.0 GB')
-            self.assertEqual(self.ui.format_filesize(2560*1048576), '2.5 GB')
+            self.assertEqual(self.ui.format_filesize(0), '0.0 KiB')
+            self.assertEqual(self.ui.format_filesize(2048), '2.0 KiB')
+            self.assertEqual(self.ui.format_filesize(2560), '2.5 KiB')
+            self.assertEqual(self.ui.format_filesize(1000000), '976.6 KiB')
+            self.assertEqual(self.ui.format_filesize(1048576), '1.0 MiB')
+            self.assertEqual(self.ui.format_filesize(2.7*1048576), '2.7 MiB')
+            self.assertEqual(self.ui.format_filesize(1024*1048576), '1.0 GiB')
+            self.assertEqual(self.ui.format_filesize(2560*1048576), '2.5 GiB')
 
         def test_get_size(self):
             '''Test get_complete_size() and get_reduced_size().'''
