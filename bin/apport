@@ -106,8 +106,7 @@ def setup_signals():
     signal.signal(signal.SIGBUS, _log_signal_handler)
 
 def write_user_coredump(pid, cwd, limit):
-    '''Called for crashes of non-packaged programs; write the core into the
-    current directory if ulimit requests it.'''
+    '''Write the core into the current directory if ulimit requests it.'''
 
     # three cases:
     # limit == 0: do not write anything
@@ -260,6 +259,11 @@ try:
     # ignore SIGABRT (we currently have no way of extracting abort() messages
     # or mono's stderr for stack traces).
     if signum == str(signal.SIGABRT):
+        # check if the user wants a core dump if we use the new-style piping
+        # method
+        if os.environ.has_key('CORE_PID'):
+            drop_privileges(pid)
+            write_user_coredump(pid, cwd, os.environ.get('CORE_REAL_RLIM'))
         sys.exit(0)
 
     # ignore blacklisted binaries
@@ -292,6 +296,11 @@ try:
 
     # Totally drop privs before writing out the reportfile.
     drop_privileges(pid)
+
+    # check if the user wants a core dump if we use the new-style piping
+    # method
+    if os.environ.has_key('CORE_PID'):
+        write_user_coredump(pid, cwd, os.environ.get('CORE_REAL_RLIM'))
 
     info.add_user_info()
     info.add_os_info()

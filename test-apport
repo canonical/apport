@@ -306,26 +306,60 @@ try:
     os.chmod(test_executable, 0755)
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
     check_crash(expect_corefile=False)
+    apport.fileutils.delete_report(report)
     resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
     check_crash(expect_corefile=False)
+    apport.fileutils.delete_report(report)
     resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
     check_crash(expect_corefile=True)
+    apport.fileutils.delete_report(report)
     resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
     check_crash(expect_corefile=True)
+    apport.fileutils.delete_report(report)
 
     print '* Check that non-packaged executables create core dumps on proper ulimits for SIGABRT'
     os.chmod(test_executable, 0755)
+    resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
+    check_crash(expect_corefile=False, sig=signal.SIGABRT)
+    apport.fileutils.delete_report(report)
+    resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
+    check_crash(expect_corefile=False, sig=signal.SIGABRT)
+    apport.fileutils.delete_report(report)
+    resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
+    check_crash(expect_corefile=True, sig=signal.SIGABRT)
+    apport.fileutils.delete_report(report)
+    resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+    check_crash(expect_corefile=True, sig=signal.SIGABRT)
+    apport.fileutils.delete_report(report)
+
+    os.unlink(test_executable)
+    test_executable = orig_test_executable
+
+    print '* Check that packaged executables create core dumps on proper ulimits'
+    resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
+    check_crash(expect_corefile=False)
+    apport.fileutils.delete_report(report)
+    resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
+    check_crash(expect_corefile=False)
+    apport.fileutils.delete_report(report)
+    resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
+    check_crash(expect_corefile=True)
+    apport.fileutils.delete_report(report)
+    resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+    check_crash(expect_corefile=True)
+    apport.fileutils.delete_report(report)
+
+    print '* Check that packaged executables create core dumps on proper ulimits for SIGABRT'
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
     check_crash(expect_corefile=False, sig=signal.SIGABRT)
     resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
     check_crash(expect_corefile=False, sig=signal.SIGABRT)
     resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
     check_crash(expect_corefile=True, sig=signal.SIGABRT)
+    apport.fileutils.delete_report(report)
     resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
     check_crash(expect_corefile=True, sig=signal.SIGABRT)
-
-    os.unlink(test_executable)
-    test_executable = orig_test_executable
+    apport.fileutils.delete_report(report)
 
     print '* Check that binary blacklisting works'
     pr.mark_ignore()

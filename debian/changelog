@@ -4,8 +4,12 @@ apport (0.69) UNRELEASED; urgency=low
     .debs into a chroot.
   * apport-chroot: Fix 'login' and 'upgrade' commands to not require
     specifying a chroot map when giving a chroot tarball path as argument.
+  * test-apport: Check that core dumps are written for packaged programs as
+    well, if ulimits want them. (Test for #92029)
+  * bin/apport: Call write_user_coredump() for packaged program crashes and
+    SIGABRT as well. (LP: #92029)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 12:17:57 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Mar 2007 17:37:23 +0100
 
 apport (0.68) feisty; urgency=low
 
