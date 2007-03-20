@@ -5,8 +5,11 @@ apport (0.70) UNRELEASED; urgency=low
   * debian/control: Bump python-launchpad-bugs dependency to ensure that we
     have Bug.[gs]et_metadata().
   * man/apport-retrace.1: Add documentation for --confirm and --remove-tag.
+  * apport/chroot.py, fix_symlinks(): Convert chroot path prefixed absolute
+    symlinks to relative symlinks to avoid fakechroot's weird handling of
+    absolute symlinks.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 10:51:12 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 12:10:18 +0100
 
 apport (0.69) feisty; urgency=low
 
