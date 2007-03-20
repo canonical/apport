@@ -411,13 +411,29 @@ class UserInterface:
         # fall back to webbrowser
         try:
             if uid and gid:
+                oldgroups = os.getgroups()
+                oldgid = os.getgid()
+                olduid = os.getuid()
+                sudouser = os.environ['SUDO_USER']
+                homedir = os.environ['HOME']
+
                 os.setgroups([gid])
                 os.setgid(gid)
                 os.setuid(uid)
                 os.unsetenv('SUDO_USER') # to make firefox not croak
                 os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
 
-            webbrowser.open(url, new=True, autoraise=True)
+            try:
+                webbrowser.open(url, new=True, autoraise=True)
+            finally: 
+                # TODO does not work, this should go inside, 
+                # the except after the suid
+                if uid and gid:
+                    os.setgroups(oldgroups)
+                    os.setgid(oldgid)
+                    os.setuid(olduid)
+                    os.environ['SUDO_USER'] = sudouser
+                    os.environ['HOME'] = homedir
         except Exception, e:
             self.ui_error_message(
                 _('Could not start web browser to open %s' % url),
