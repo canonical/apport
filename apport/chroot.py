@@ -35,6 +35,26 @@ def setup_fakeroot_env():
         os.environ.get('LD_LIBRARY_PATH', '')
     os.environ['FAKECHROOT'] = 'true'
 
+def pathsplit(p, rest=[]):
+    (h,t) = os.path.split(p)
+    if len(h) < 1: return [t]+rest
+    if len(t) < 1: return [h]+rest
+    return pathsplit(h,[t]+rest)
+
+def commonpath(l1, l2, common=[]):
+    if len(l1) < 1: return (common, l1, l2)
+    if len(l2) < 1: return (common, l1, l2)
+    if l1[0] != l2[0]: return (common, l1, l2)
+    return commonpath(l1[1:], l2[1:], common+[l1[0]])
+
+def relpath(p1, p2):
+    (common,l1,l2) = commonpath(pathsplit(p1), pathsplit(p2))
+    p = []
+    if len(l1) > 0:
+        p = [ '../' * len(l1) ]
+    p = p + l2
+    return os.path.join( *p )
+
 class Chroot:
     '''Work with a chroot (either in directory or in tarball form).
     
@@ -138,7 +158,7 @@ class Chroot:
                     target = os.readlink(path)
                     if target.startswith(self.root):
                         os.unlink(path)
-                        os.symlink(target[len(self.root):], path)
+                        os.symlink(relpath(os.path.dirname(path), target), path)
 
 #
 # Unit test
@@ -269,11 +289,13 @@ int main() { return 42; }
 	    try:
                 os.symlink(os.path.join(d, 'bin', '42'), os.path.join(d, 'bin', '42prefix'))
                 os.symlink(os.path.join('/bin/42'), os.path.join(d, 'bin', '42noprefix'))
+                os.symlink(os.path.join('bin/42'), os.path.join(d, '42rel'))
 
 		c = Chroot(d)
                 c.fix_symlinks()
 
-                self.assertEqual(os.readlink(os.path.join(d, 'bin', '42prefix')), '/bin/42')
+		self.assertEqual(c.run(['/42rel']), 42)
+		self.assertEqual(c.run(['/bin/42prefix']), 42)
                 self.assertEqual(os.readlink(os.path.join(d, 'bin', '42noprefix')), '/bin/42')
 
 	    finally:

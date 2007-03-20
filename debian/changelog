@@ -1,11 +1,36 @@
-apport (0.69) UNRELEASED; urgency=low
+apport (0.70) UNRELEASED; urgency=low
+
+  * bin/apport-retrace: Add option --remove-tag to remove a Launchpad bug
+    tag. This is intended for an automatic Malone crash retracing system.
+  * debian/control: Bump python-launchpad-bugs dependency to ensure that we
+    have Bug.[gs]et_metadata().
+  * man/apport-retrace.1: Add documentation for --confirm and --remove-tag.
+  * bin/apport-chroot: Add option --remove-tag and pass it to apport-retrace.
+  * apport/chroot.py, fix_symlinks(): Convert chroot path prefixed absolute
+    symlinks to relative symlinks to avoid fakechroot's weird handling of
+    absolute symlinks.
+  * Add bin/launchpad-crash-digger: Daemon for watching out for
+    need-$ARCH-retrace tagged Ubuntu bugs in Launchpad and calling
+    apport-retrace on them.
+  * bin/apport-retrace: Mangle bug comment with StacktraceTop to not contain
+    invalid UTF-8, to avoid getting Internal Server Errors from LP.
+  * debian/local/setup-apport-retracer: Install libc6-i686{,-dbgsym} into an
+    x86 chroot, to get sane x86 backtraces for crashes in libc.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 20:14:57 +0100
+
+apport (0.69) feisty; urgency=low
 
   * apport-chroot: Add command 'installdeb' to conveniently install a bunch of
     .debs into a chroot.
   * apport-chroot: Fix 'login' and 'upgrade' commands to not require
     specifying a chroot map when giving a chroot tarball path as argument.
+  * test-apport: Check that core dumps are written for packaged programs as
+    well, if ulimits want them. (Test for #92029)
+  * bin/apport: Call write_user_coredump() for packaged program crashes and
+    SIGABRT as well. (LP: #92029)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 12:17:57 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Mar 2007 17:37:23 +0100
 
 apport (0.68) feisty; urgency=low
 

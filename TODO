@@ -6,12 +6,14 @@ apport-gtk:
 apport-retrace:
  - add stack rewinding to step back through crash handlers
  - add heuristics for more crash types (SEGV on read/write/exec & mem region)
- - stuck on 91756
 
 python-apport:
  - Add API/report attribute for doing upstream problem reports
  - support /etc/apport/blacklist.d/ for check_ignored(): one exe
    per line
+
+apport-chroot:
+ - better error message if chroot path does not exist
 
 add firefox apport hook to suppress crash reports when restart is
 necessary
