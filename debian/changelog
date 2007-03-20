@@ -9,8 +9,11 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/chroot.py, fix_symlinks(): Convert chroot path prefixed absolute
     symlinks to relative symlinks to avoid fakechroot's weird handling of
     absolute symlinks.
+  * Add bin/launchpad-crash-digger: Daemon for watching out for
+    need-$ARCH-retrace tagged Ubuntu bugs in Launchpad and calling
+    apport-retrace on them.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 12:51:34 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 13:28:20 +0100
 
 apport (0.69) feisty; urgency=low
 

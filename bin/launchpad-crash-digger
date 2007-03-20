@@ -1,0 +1,113 @@
+#!/usr/bin/python
+
+import os, time, optparse, subprocess
+
+from launchpadBugs.HTMLOperations import Bug, BugList
+
+arch_tag_map = {
+    'i386': 'need-i386-retrace',
+    'i686': 'need-i386-retrace',
+    'x86_64': 'need-amd64-retrace',
+    'ppc': 'need-ppc-retrace',
+    'ppc64': 'need-ppc-retrace',
+}
+
+#
+# classes
+#
+
+class Struct:
+    '''Convenience class for creating on-the-fly anonymous objects.'''
+
+    def __init__(self, **entries): 
+        self.__dict__.update(entries)
+
+class CrashDigger:
+    def __init__(self, chroot_map, cookie_file, verbose=False, sleep_time=600):
+        '''Initialize work pool.'''
+
+        self.arch_tag = arch_tag_map[os.uname()[4]]
+        self.list_url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + self.arch_tag
+        self.work_pool = set()
+        self.verbose = verbose
+        self.chroot_map = chroot_map
+        self.cookie_file = cookie_file
+        self.sleep_time = sleep_time
+        self.log('Initializing crash digger to process bugs on %s, using chroot map %s' % (
+            self.list_url, self.chroot_map))
+
+    def log(self, str):
+        '''If verbosity is enabled, log the given string to stdout, and prepend
+        the current date and time.'''
+
+        if self.verbose:
+            print '%s: %s' % (time.strftime('%x %X'), str)
+
+    def fill_pool(self):
+        '''Query Launchpad for new crash bugs for our processor
+        architecture.'''
+
+        bugs = BugList(Struct(url = self.list_url, upstream = None, 
+            minbug = None, filterbug = None, status = '', importance = '')).bugs
+        self.work_pool.update(bugs)
+
+        self.log('fill_pool: got new bugs %s' % str(bugs))
+        self.log('fill_pool: work pool now: %s' % str(self.work_pool))
+
+    def retrace_next(self):
+        '''Grab a bug from the work pool and retrace it.'''
+
+        bug = self.work_pool.pop()
+        self.log('retracing bug %i' % bug)
+        result = subprocess.call(['apport-chroot', '-m', self.chroot_map, '--cookie',
+            self.cookie_file, '--remove-tag', self.arch_tag, 'retrace', str(bug)])
+        self.log('retracing bug %i exit status: %i' % (bug, result))
+
+    def run(self):
+        '''Process the entire work pool until it is empty and get new entries
+        afterwards.
+
+        Sleep if no new items are available. This function never returns.'''
+
+        while True:
+            while self.work_pool:
+                self.retrace_next()
+            self.fill_pool()
+            if not self.work_pool:
+                self.log('work pool empty, sleeping for %i seconds' % self.sleep_time)
+                time.sleep(self.sleep_time)
+
+#
+# functions
+#
+
+def parse_options():
+    '''Parse command line options and return (options, args) tuple.'''
+
+    optparser = optparse.OptionParser('%prog [options]')
+    optparser.add_option('-m', '--chroot-map',
+        help='Path to chroot map. This is a file that defines a Python dictionary, mapping DistroRelease: values to chroot paths',
+        action='store', type='string', dest='chroot_map', metavar='FILE', default=None)
+    optparser.add_option('-c', '--cookie',
+        help='Path to a Mozilla-style cookie file, for doing Launchpad bug changes',
+        action='store', type='string', dest='cookie_file', default=None)
+    optparser.add_option('-s', '--sleep',
+        help='Number of seconds to sleep when the work queue is empty (default: 600)',
+        action='store', type='int', dest='sleep', metavar='SECONDS', default=600)
+    optparser.add_option('-v', '--verbose',
+        help='Verbose operation (also passed to apport-retrace)',
+        action='store_true', dest='verbose', default=False)
+
+    (opts, args) = optparser.parse_args()
+
+    assert opts.chroot_map
+    assert opts.cookie_file
+
+    return (opts, args)
+
+#
+# main
+#
+
+opts, args = parse_options()
+CrashDigger(opts.chroot_map, opts.cookie_file, opts.verbose, opts.sleep).run()
