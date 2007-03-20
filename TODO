@@ -12,5 +12,8 @@ python-apport:
  - support /etc/apport/blacklist.d/ for check_ignored(): one exe
    per line
 
+apport-chroot:
+ - better error message if chroot path does not exist
+
 add firefox apport hook to suppress crash reports when restart is
 necessary
