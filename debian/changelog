@@ -14,8 +14,10 @@ apport (0.70) UNRELEASED; urgency=low
     apport-retrace on them.
   * bin/apport-retrace: Mangle bug comment with StacktraceTop to not contain
     invalid UTF-8, to avoid getting Internal Server Errors from LP.
+  * debian/local/setup-apport-retracer: Install libc6-i686{,-dbgsym} into an
+    x86 chroot, to get sane x86 backtraces for crashes in libc.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 16:55:49 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 20:14:57 +0100
 
 apport (0.69) feisty; urgency=low
 
