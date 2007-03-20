@@ -1,3 +1,13 @@
+apport (0.70) UNRELEASED; urgency=low
+
+  * bin/apport-retrace: Add option --remove-tag to remove a Launchpad bug
+    tag. This is intended for an automatic Malone crash retracing system.
+  * debian/control: Bump python-launchpad-bugs dependency to ensure that we
+    have Bug.[gs]et_metadata().
+  * man/apport-retrace.1: Add documentation for --confirm and --remove-tag.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 10:51:12 +0100
+
 apport (0.69) feisty; urgency=low
 
   * apport-chroot: Add command 'installdeb' to conveniently install a bunch of

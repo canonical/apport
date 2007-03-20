@@ -87,7 +87,7 @@ times.
 Print a short online help that documents all options.
 
 .TP
-.B \-\-cookie
+.B \-\-cookie=\fIcookiefile
 If a bug number is given without any of the options
 .B \-g\fR,
 .B \-s\fR, or
@@ -97,6 +97,21 @@ Since this needs authentication, a Mozilla-style cookie file
 must be specified. This can be the standard
 .B cookies.txt
 from Firefox' profile directory.
+
+.TP
+.B \-\-confirm
+Display retraced stack traces and ask for confirmation before adding
+them as Launchpad bug attachments. This option is ignored when
+retracing report files.
+
+.TP
+.B \-\-remove\-tag=\fItagname
+Remove the given tag from the Launchpad bug. This happens immediately
+after reading the report from the bug, thus even if the retracing
+fails or the user does not confirm the result (with
+\fB\-\-confirm\fR). This is intended for automatic retracing systems,
+to avoid repeatedly retracing the same bug in error cases. This option
+is ignored when retracing report files.
 
 .SH AUTHOR
 .B apport

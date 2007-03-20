@@ -69,6 +69,9 @@ def parse_options():
     optparser.add_option('--confirm',
         help='Display retraced stack traces and ask for confirmation before adding them as Launchpad bug attachments.',
         action='store_true', dest='confirm', default=False)
+    optparser.add_option('--remove-tag',
+        help='Remove a tag from the Launchpad bug (in all cases, even if retracing fails)',
+        action='store', type='string', dest='remove_tag', metavar='TAG', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -78,14 +81,17 @@ def parse_options():
 
     return (args[0], opts)
 
-def report_from_launchpad(bugid):
-    '''Construct an Apport report from a Launchpad bug.'''
+def report_from_launchpad(bugid, cookie_file, remove_tag):
+    '''Construct an Apport report from a Launchpad bug.
+    
+    If cookie_file and remove_tag are given, remove that tag from the bug.'''
 
     report = apport.Report()
     attachment_dir = tempfile.mkdtemp()
     try:
         b = Bug(bugid, None, attachment_dir, ['application/x-gzip'],
-            'Dependencies.txt|CoreDump.gz|ProcMaps.txt')
+            'Dependencies.txt|CoreDump.gz|ProcMaps.txt',
+            cookie_file=cookie_file)
 
         for att in b.attachments:
             if not att.filename:
@@ -103,6 +109,14 @@ def report_from_launchpad(bugid):
         # parse out other fields from summary
         for m in re.finditer('^([a-zA-Z]+): (.*)<', b.text, re.M):
             report[m.group(1)] = m.group(2)
+
+        if remove_tag:
+            b.get_metadata()
+            if remove_tag in b.tags:
+                b.tags.remove(remove_tag)
+                b.set_metadata()
+            else:
+                print >> sys.stderr, 'WARNING: bug does not have tag "%s"' % remove_tag
 
         return report
     finally:
@@ -374,7 +388,11 @@ if os.path.exists(reportfile):
         sys.exit(1)
 elif reportfile.isdigit():
     # Launchpad bug number
-    report = report_from_launchpad(reportfile)
+    if options.remove_tag and not options.cookie_file:
+        print >> sys.stderr, 'You need to specify --cookie for removing a tag from a Launchpad bug.'
+        sys.exit(1)
+    report = report_from_launchpad(reportfile, options.cookie_file,
+        options.remove_tag)
     lpbug = reportfile
     reportfile = None
 else:
