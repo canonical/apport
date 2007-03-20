@@ -29,6 +29,7 @@ class CrashDigger:
         self.arch_tag = arch_tag_map[os.uname()[4]]
         self.list_url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + self.arch_tag
         self.work_pool = set()
+        self.fail_pool = set()
         self.verbose = verbose
         self.chroot_map = chroot_map
         self.cookie_file = cookie_file
@@ -47,12 +48,17 @@ class CrashDigger:
         '''Query Launchpad for new crash bugs for our processor
         architecture.'''
 
-        bugs = BugList(Struct(url = self.list_url, upstream = None, 
-            minbug = None, filterbug = None, status = '', importance = '')).bugs
+        bugs = set()
+        # get set of bug list integers (.bugs is a list of Bug objects)
+        for b in BugList(Struct(url = self.list_url, upstream = None, 
+            minbug = None, filterbug = None, status = '', importance = '')).bugs:
+            bugs.add(int(b))
+        bugs -= self.fail_pool
         self.work_pool.update(bugs)
 
         self.log('fill_pool: got new bugs %s' % str(bugs))
         self.log('fill_pool: work pool now: %s' % str(self.work_pool))
+        self.log('fill_pool: fail pool now: %s' % str(self.fail_pool))
 
     def retrace_next(self):
         '''Grab a bug from the work pool and retrace it.'''
@@ -62,6 +68,8 @@ class CrashDigger:
         result = subprocess.call(['apport-chroot', '-m', self.chroot_map, '--cookie',
             self.cookie_file, '--remove-tag', self.arch_tag, 'retrace', str(bug)])
         self.log('retracing bug %i exit status: %i' % (bug, result))
+        if result != 0:
+            self.fail_pool.add(bug)
 
     def run(self):
         '''Process the entire work pool until it is empty and get new entries
