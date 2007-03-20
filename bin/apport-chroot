@@ -57,6 +57,9 @@ def parse_options():
     optparser.add_option('--confirm-attach', 
         help='Display retraced stack traces and ask for confirmation before uploading them as bug attachments.',
         action='store_true', dest='confirm_attach', default=False)
+    optparser.add_option('--remove-tag',
+        help='Remove a tag from the Launchpad bug (in all cases, even if retracing fails); passed to apport-retrace in "retrace" mode',
+        action='store', type='string', dest='remove_tag', metavar='TAG', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -294,6 +297,8 @@ def command_retrace(opts, args):
             chroot_cookie = os.path.join(c.root, 'tmp', 'cookie')
             os.symlink(opts.cookie_file, chroot_cookie)
             apport_retrace_argv += ['--cookie', chroot_cookie]
+            if opts.remove_tag:
+                apport_retrace_argv += ['--remove-tag', opts.remove_tag]
         else:
             apport_retrace_argv += ['-s']
             chroot_cookie = None
