@@ -12,8 +12,10 @@ apport (0.70) UNRELEASED; urgency=low
   * Add bin/launchpad-crash-digger: Daemon for watching out for
     need-$ARCH-retrace tagged Ubuntu bugs in Launchpad and calling
     apport-retrace on them.
+  * bin/apport-retrace: Mangle bug comment with StacktraceTop to not contain
+    invalid UTF-8, to avoid getting Internal Server Errors from LP.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 13:28:20 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 16:55:49 +0100
 
 apport (0.69) feisty; urgency=low
 

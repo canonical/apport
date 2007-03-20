@@ -128,7 +128,8 @@ def attach_to_launchpad_bug(bugnumber, report, cookie_file, comment=''):
 
     bug = Bug(bugnumber, cookie_file=cookie_file)
 
-    comment += '\n\nStacktraceTop:' + report['StacktraceTop']
+    comment += '\n\nStacktraceTop:' + report['StacktraceTop'].decode('utf-8',
+        'replace').encode('utf-8')
 
     t = tempfile.TemporaryFile()
     t.write(report['Stacktrace'])
