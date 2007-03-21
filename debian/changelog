@@ -1,5 +1,6 @@
 apport (0.70) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * bin/apport-retrace: Add option --remove-tag to remove a Launchpad bug
     tag. This is intended for an automatic Malone crash retracing system.
   * debian/control: Bump python-launchpad-bugs dependency to ensure that we
@@ -16,8 +17,18 @@ apport (0.70) UNRELEASED; urgency=low
     invalid UTF-8, to avoid getting Internal Server Errors from LP.
   * debian/local/setup-apport-retracer: Install libc6-i686{,-dbgsym} into an
     x86 chroot, to get sane x86 backtraces for crashes in libc.
+  * debian/local/setup-apport-retracer: 
+    - Unpack and install python-launchpad-bugs locally if the package is not
+      installed.
+    - Link launchpad-crash-digger into the retracer's bin/ dir.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Mar 2007 20:14:57 +0100
+  [ Kees Cook ]
+  * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
+    ptrace() the target process to make it readable (proposed security
+    improvement in future kernels).
+  * bin/apport-retrace: Fix crash for packages unknown to the apt cache.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 21 Mar 2007 12:10:53 +0100
 
 apport (0.69) feisty; urgency=low
 
