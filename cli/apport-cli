@@ -17,11 +17,7 @@ the full text of the license.
 
 import os.path, os, sys, subprocess, re
 import tty, termios
-
-# FIXME:
-# more elaborate text like dpkg, time and date for crashes
-# Provide cancel for progress dialogs, some handler magic for ^C,
-#    output a message so the user knows
+from datetime import datetime
 
 try:
     from gettext import gettext as _
@@ -72,20 +68,25 @@ class CLIDialog:
             self.show()
 
         print
-        if len (self.keys) <= 1:
-            self.raw_input_char(_('Press any key to continue...'))
-            return 0
+        try:
+            # Only one button
+            if len (self.keys) <= 1:
+                self.raw_input_char(_('Press any key to continue...'))
+                return 0
+            # Multiple choices
+            while True:
+                print _('What would you like to do? Your options are:')
+                for index, button in enumerate(self.buttons):
+                    print '  %s: %s' % (self.keys[index], button)
 
-        # TODO text
-        while True:
-            for index, button in enumerate(self.buttons):
-                print '  %s: %s' % (self.keys[index], button)
-
-            response = self.raw_input_char(_('Choose NOW (%s):') % ('/'.join(self.keys)))
-            try:
-                return self.keys.index(response[0].upper()) + 1
-            except ValueError:
-                pass
+                response = self.raw_input_char(_('Please choose (%s):') % ('/'.join(self.keys)))
+                try:
+                    return self.keys.index(response[0].upper()) + 1
+                except ValueError:
+                    pass
+        except KeyboardInterrupt:
+            print
+            sys.exit(1)
 
     def addbutton(self, button):
         self.keys.append(re.search('&(.)', button).group(1).upper())
@@ -122,16 +123,17 @@ class CLIUserInterface(apport.ui.UserInterface):
     #
 
     def ui_present_crash(self, desktop_entry):
+        date = datetime.strptime(self.report['Date'], '%a %b %d %H:%M:%S %Y')
         # adapt dialog heading and label appropriately
         if desktop_entry:
             name = desktop_entry.getName()
-            heading = _('%s closed unexpectedly.') % name
+            heading = _('%s closed unexpectedly on %s at %s.') % (name, date.date(), date.time())
         elif self.report.has_key('ExecutablePath'):
             name = os.path.basename(self.report['ExecutablePath'])
-            heading = _('The program "%s" closed unexpectedly.') % name
+            heading = _('The program "%s" closed unexpectedly on %s at %s.') % (name, date.date(), date.time())
         else:
             name = self.cur_package
-            heading = _('%s closed unexpectedly.') % name
+            heading = _('%s closed unexpectedly on %s at %s.') % (name, date.date(), date.time())
 
         dialog = CLIDialog(
                 heading,

@@ -263,7 +263,10 @@ class UserInterface:
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
-                    icthread.join(0.1)
+                    try:
+                        icthread.join(0.1)
+                    except KeyboardInterrupt:
+                        sys.exit(1)
                 icthread.exc_raise()
 
             if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
@@ -272,7 +275,10 @@ class UserInterface:
                 bpthread.start()
                 while bpthread.isAlive():
                     self.ui_pulse_info_collection_progress()
-                    bpthread.join(0.1)
+                    try:
+                        bpthread.join(0.1)
+                    except KeyboardInterrupt:
+                        sys.exit(1)
                 bpthread.exc_raise()
                 if bpthread.return_value():
                     self.report['BugPatternURL'] = bpthread.return_value()
@@ -284,6 +290,7 @@ class UserInterface:
                 (self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package')):
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
+                # TODO This is not called consistently, is it really needed?
                 self.ui_shutdown()
                 sys.exit(1)
 
@@ -449,7 +456,10 @@ class UserInterface:
         upthread.start()
         while upthread.isAlive():
             self.ui_set_upload_progress(None)
-            upthread.join(0.1)
+            try:
+                upthread.join(0.1)
+            except KeyboardInterrupt:
+                sys.exit(1)
         if upthread.exc_info():
             self.ui_error_message(_('Network problem'),
                 "%s:\n\n%s" % (
