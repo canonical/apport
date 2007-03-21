@@ -248,9 +248,12 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
             continue
         (pkg, version) = l.split()[:2]
         dependency_versions[pkg] = version
-        assert c[pkg]._lookupRecord()
-        if not 'Architecture: all' in c[pkg]._records.Record:
-            dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+        try:
+            assert c[pkg]._lookupRecord()
+            if not 'Architecture: all' in c[pkg]._records.Record:
+                dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+        except KeyError:
+            print >> sys.stderr, 'WARNING: package %s not known to package cache' % pkg
 
     for pkg, ver in dependency_versions.iteritems():
 	if not c.has_key(pkg):
