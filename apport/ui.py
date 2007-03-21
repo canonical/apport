@@ -367,6 +367,22 @@ class UserInterface:
 
         Display an error dialog if everything fails.'''
 
+        (r, w) = os.pipe()
+        if os.fork() > 0:
+            os.close(w)
+            (pid, status) = os.wait()
+            if status:
+                title = _('Unable to start web browser')
+                error = _('Unable to start web browser to open %s.' % url)
+                message = os.fdopen(r).readline()
+                if message:
+                    error += '\n' + message
+                self.ui_error_message(title, error)
+            os.close(r)
+            return
+
+        os.setsid()
+
         # If we are called through sudo, determine the real user id and run the
         # browser with it to get the user's web browser settings.
         try:
@@ -379,65 +395,49 @@ class UserInterface:
             sudo_prefix = []
 
         # figure out appropriate web browser
-
-        # if ksmserver is running, try kfmclient
         try:
-            if os.getenv('DISPLAY') and \
-                    subprocess.call(['pgrep', '-x', '-u', str(uid), 'ksmserver'],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                subprocess.call(sudo_prefix + ['kfmclient', 'openURL', url])
-                return
-        except OSError:
-            pass
+            # if ksmserver is running, try kfmclient
+            try:
+                if os.getenv('DISPLAY') and \
+                        subprocess.call(['pgrep', '-x', '-u', str(uid), 'ksmserver'],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+                    subprocess.call(sudo_prefix + ['kfmclient', 'openURL', url])
+                    sys.exit(0)
+            except OSError:
+                pass
 
-        # if gnome-session is running, try gnome-open; special-case firefox
-        # to open a new window
-        try:
-            if os.getenv('DISPLAY') and \
-                    subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-session'],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
-                    '/desktop/gnome/url-handlers/http/command'],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                if 'firefox' in gct.communicate()[0] and gct.returncode == 0:
-                    subprocess.Popen(sudo_prefix + ['firefox', '-new-window', url])
-                    return
-                else:
-                    if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
-                        return
-        except OSError:
-            pass
+            # if gnome-session is running, try gnome-open; special-case firefox
+            # to open a new window
+            try:
+                if os.getenv('DISPLAY') and \
+                        subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-session'],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+                    gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
+                        '/desktop/gnome/url-handlers/http/command'],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    if 'firefox' in gct.communicate()[0] and gct.returncode == 0:
+                        subprocess.call(sudo_prefix + ['firefox', '-new-window', url])
+                        sys.exit(0)
+                    else:
+                        if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
+                            sys.exit(0)
+            except OSError:
+                pass
 
-        # fall back to webbrowser
-        try:
+            # fall back to webbrowser
             if uid and gid:
-                oldgroups = os.getgroups()
-                oldgid = os.getgid()
-                olduid = os.getuid()
-                sudouser = os.environ['SUDO_USER']
-                homedir = os.environ['HOME']
-
                 os.setgroups([gid])
                 os.setgid(gid)
                 os.setuid(uid)
                 os.unsetenv('SUDO_USER') # to make firefox not croak
                 os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
 
-            try:
-                webbrowser.open(url, new=True, autoraise=True)
-            finally: 
-                # TODO does not work, this should go inside, 
-                # the except after the suid
-                if uid and gid:
-                    os.setgroups(oldgroups)
-                    os.setgid(oldgid)
-                    os.setuid(olduid)
-                    os.environ['SUDO_USER'] = sudouser
-                    os.environ['HOME'] = homedir
+            webbrowser.open(url, new=True, autoraise=True)
+            sys.exit(0)
+
         except Exception, e:
-            self.ui_error_message(
-                _('Could not start web browser to open %s' % url),
-                str(e))
+            os.write(w, str(e))
+            sys.exit(1)
 
     def file_report(self):
         '''Upload the current report to the tracking system and guide the user
