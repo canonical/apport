@@ -17,6 +17,10 @@ apport (0.70) UNRELEASED; urgency=low
     invalid UTF-8, to avoid getting Internal Server Errors from LP.
   * debian/local/setup-apport-retracer: Install libc6-i686{,-dbgsym} into an
     x86 chroot, to get sane x86 backtraces for crashes in libc.
+  * debian/local/setup-apport-retracer: 
+    - Unpack and install python-launchpad-bugs locally if the package is not
+      installed.
+    - Link launchpad-crash-digger into the retracer's bin/ dir.
 
   [ Kees Cook ]
   * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
@@ -24,7 +28,7 @@ apport (0.70) UNRELEASED; urgency=low
     improvement in future kernels).
   * bin/apport-retrace: Fix crash for packages unknown to the apt cache.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 21 Mar 2007 09:07:05 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 21 Mar 2007 12:10:53 +0100
 
 apport (0.69) feisty; urgency=low
 
