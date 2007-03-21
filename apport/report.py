@@ -364,6 +364,8 @@ class Report(ProblemReport):
                 command += ['--ex', 'set debug-file-directory ' + debugdir]
             command += ['--ex', 'file ' + self.get('InterpreterPath',
                 self['ExecutablePath']), '--ex', 'core-file ' + core]
+            # limit maximum backtrace depth (to avoid looped stacks)
+            command += ['--ex', 'set backtrace limit 2000']
             value_keys = []
             # append the actual commands and something that acts as a separator
             for name, cmd in gdb_reports.iteritems():
