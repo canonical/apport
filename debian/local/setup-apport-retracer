@@ -16,16 +16,27 @@ test -e $D/bin/apport-chroot || {
 cp -r $D apport
 cp apport/backends/packaging-dpkg.py apport/apport/packaging_impl.py
 ln -s ../apport/bin/apport-chroot bin/apport-chroot
+ln -s ../apport/bin/launchpad-crash-digger bin/launchpad-crash-digger
 
 # debootstrap
-P=`wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-i386/Packages.gz | gunzip | grep '^Filename:.*debootstrap_.*deb' | cut -f 2 -d\ `
-wget -q http://archive.ubuntu.com/ubuntu/$P
 T=`mktemp -d`
+wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-i386/Packages.gz | gunzip > $T/Packages
+P=`grep '^Filename:.*debootstrap_.*deb' $T/Packages | cut -f 2 -d\ `
+wget -q http://archive.ubuntu.com/ubuntu/$P
 dpkg -x debootstrap_*.deb $T
 rm debootstrap_*.deb
 mv $T/usr/lib/debootstrap/ .
 sed "1 s_\$_\\nDEBOOTSTRAP\_DIR=`pwd`/debootstrap_" $T/usr/sbin/debootstrap > bin/debootstrap
 chmod 755 bin/debootstrap
+
+# python-launchpad-bugs
+dpkg -s python-launchpad-bugs >/dev/null 2>/dev/null || {
+    P=`grep '^Filename:.*python-launchpad-bugs_.*deb' $T/Packages | cut -f 2 -d\ `
+    wget -q http://archive.ubuntu.com/ubuntu/$P
+    dpkg -x python-launchpad-bugs_*.deb $T
+    rm python-launchpad-bugs_*.deb
+    mv $T/usr/share/pycentral/python-launchpad-bugs/site-packages/launchpadBugs apport/
+}
 rm -rf $T
 
 # fake{chroot,root} libraries
@@ -62,7 +73,11 @@ fi
 . environ
 
 # create chroots
-apport-chroot -t -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main restricted universe multiverse' -a 'deb http://archive.ubuntu.com/ubuntu feisty restricted universe multiverse' create feisty chroots/feisty.tar.gz
+if [ "`uname -m`" = i686 ]; then
+    apport-chroot -t -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main restricted universe multiverse' -a 'deb http://archive.ubuntu.com/ubuntu feisty restricted universe multiverse' -p libc6-i686 -p libc6-i686-dbgsym create feisty chroots/feisty.tar.gz
+else
+    apport-chroot -t -a 'deb http://people.ubuntu.com/~pitti/ddebs feisty main restricted universe multiverse' -a 'deb http://archive.ubuntu.com/ubuntu feisty restricted universe multiverse' create feisty chroots/feisty.tar.gz
+fi
 chmod -R g+w chroots/
 
 # chroot map

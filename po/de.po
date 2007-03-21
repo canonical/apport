@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2007-03-10 21:30+0000\n"
+"POT-Creation-Date: 2007-03-14 17:14+0100\n"
 "PO-Revision-Date: 2007-03-13 11:29+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -54,20 +54,16 @@ msgstr "<big><b>Übermittle Probleminformationen</b></big>"
 msgid "Application problem"
 msgstr "Anwendungsproblem"
 
-#: ../gtk/apport-gtk.glade.h:7 ../qt4/apport-qt:281
-msgid "Collecting Problem Information"
-msgstr "Sammeln von Informationen über das Problem"
-
-#: ../gtk/apport-gtk.glade.h:9 ../qt4/apport-qt:249
+#: ../gtk/apport-gtk.glade.h:8 ../qt4/apport-qt:249
 #, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "Vollständiger Bericht (empfohlen; %s)"
 
-#: ../gtk/apport-gtk.glade.h:10
+#: ../gtk/apport-gtk.glade.h:9
 msgid "Content of the report"
 msgstr "Inhalt des Berichts"
 
-#: ../gtk/apport-gtk.glade.h:11 ../qt4/apport-qt:151
+#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt:151
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -76,6 +72,14 @@ msgstr ""
 "Sofern Sie nicht etwas vertrauliches durchgeführt haben (Eingabe von "
 "Passwörtern oder anderen privaten Informationen), können Sie bei der "
 "Verbesserung der Anwendung helfen, indem Sie einen Fehler melden."
+
+#: ../gtk/apport-gtk.glade.h:11
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr ""
+"Es werden Informationen gesammelt, die den Entwicklern beim Lösen des "
+"Problems helfen können."
 
 #: ../gtk/apport-gtk.glade.h:12
 msgid "Kernel problem"
@@ -96,21 +100,13 @@ msgstr "_Programm neustarten"
 
 #: ../gtk/apport-gtk.glade.h:17
 msgid ""
-"The collected information can be sent to the developers to improve the "
-"application. This might take some minutes."
-msgstr ""
-"Die gesammelten Informationen können zu den Entwicklern gesendet werden, um "
-"das Programm zu verbessern. Dies kann einige Minuten dauern."
-
-#: ../gtk/apport-gtk.glade.h:18 ../qt4/apport-qt:302
-msgid ""
 "The collected information is sent to the bug tracking system. This might "
-"take some minutes."
+"take a few minutes."
 msgstr ""
 "Die gesammelten Informationen werden zum Bug Tracking System gesendet. Dies "
 "kann einige Minuten dauern."
 
-#: ../gtk/apport-gtk.glade.h:19
+#: ../gtk/apport-gtk.glade.h:18
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -120,18 +116,14 @@ msgstr ""
 "Entwickler sehr hilfreich um das Problem zu untersuchen, aber sie könnten zu "
 "groß zum hochladen sein, wenn Sie eine langsame Internetverbindung haben."
 
-#: ../gtk/apport-gtk.glade.h:20 ../qt4/apport-qt:300
-msgid "Uploading Problem Information"
-msgstr "Übermittle Probleminformationen"
-
-#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt:183
+#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt:183
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
 "Sie können den Entwicklern helfen das Paket zu korrigieren, indem sie das "
 "Problem melden."
 
-#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt:200
+#: ../gtk/apport-gtk.glade.h:20 ../qt4/apport-qt:200
 msgid ""
 "Your system might become unstable now and might need to be restarted.\n"
 "\n"
@@ -143,15 +135,15 @@ msgstr ""
 "Sie können den Entwicklern helfen das Problem zu beheben, indem sie es "
 "melden."
 
-#: ../gtk/apport-gtk.glade.h:25
+#: ../gtk/apport-gtk.glade.h:23
 msgid "_Ignore future crashes of this program version"
 msgstr "_Ignoriere zukünftige Abstürze dieser Programmversion"
 
-#: ../gtk/apport-gtk.glade.h:26
+#: ../gtk/apport-gtk.glade.h:24
 msgid "_Report Problem..."
 msgstr "_Fehler melden..."
 
-#: ../gtk/apport-gtk.glade.h:27
+#: ../gtk/apport-gtk.glade.h:25
 msgid "_Send Report"
 msgstr "_Bericht senden"
 
@@ -220,6 +212,10 @@ msgstr ""
 msgid "&Send"
 msgstr "&Senden"
 
+#: ../qt4/apport-qt:281
+msgid "Collecting Problem Information"
+msgstr "Sammeln von Informationen über das Problem"
+
 #: ../qt4/apport-qt:282
 msgid "Collecting problem information"
 msgstr "Sammle Probleminformationen"
@@ -232,70 +228,83 @@ msgstr ""
 "Die gesammelten Informationen können an die Entwickler gesendet werden um "
 "die Anwendung zu verbessern. Dies kann einige Minuten dauern."
 
+#: ../qt4/apport-qt:300
+msgid "Uploading Problem Information"
+msgstr "Übermittle Probleminformationen"
+
 #: ../qt4/apport-qt:301
 msgid "Uploading problem information"
 msgstr "Übermittle Probleminformationen"
 
-#: ../apport/ui.py:123 ../apport/ui.py:291 ../apport/ui.py:495
-#: ../apport/ui.py:508 ../apport/ui.py:809 ../apport/ui.py:826
-#: ../apport/ui.py:1196
+#: ../qt4/apport-qt:302
+msgid ""
+"The collected information is sent to the bug tracking system. This might "
+"take some minutes."
+msgstr ""
+"Die gesammelten Informationen werden zum Bug Tracking System gesendet. Dies "
+"kann einige Minuten dauern."
+
+#. package does not exist
+#: ../apport/ui.py:117 ../apport/ui.py:285 ../apport/ui.py:489
+#: ../apport/ui.py:502 ../apport/ui.py:803 ../apport/ui.py:820
+#: ../apport/ui.py:1190
 msgid "Invalid problem report"
 msgstr "Ungültiger Problemmbericht"
 
-#: ../apport/ui.py:124
+#: ../apport/ui.py:118
 msgid "The report belongs to a package that is not installed."
 msgstr "Der Bericht gehört zu einem nicht installierten Paket."
 
-#: ../apport/ui.py:292
+#: ../apport/ui.py:286
 msgid "Could not determine the package or source package name."
 msgstr "Konnte Paket- oder Quellpaket-Namen nicht bestimmen."
 
-#: ../apport/ui.py:434
+#: ../apport/ui.py:428
 #, python-format
 msgid "Could not start web browser to open %s"
 msgstr "Konnte Web-Browser nicht starten um %s zu öffnen"
 
-#: ../apport/ui.py:452
+#: ../apport/ui.py:446
 msgid "Network problem"
 msgstr "Netzwerkproblem"
 
-#: ../apport/ui.py:454
+#: ../apport/ui.py:448
 msgid "Could not upload report data to Launchpad"
 msgstr "Konnte Bericht nicht an Launchpad übermitteln"
 
-#: ../apport/ui.py:475
+#: ../apport/ui.py:469
 msgid "Launchpad problem"
 msgstr "Problem mit Launchpad"
 
-#: ../apport/ui.py:476
+#: ../apport/ui.py:470
 msgid "Launchpad did not  return a ticket number for the uploaded data."
 msgstr ""
 "Launchpad hat für die hochgeladenen Daten keine Ticketnummer zurückgesandt."
 
-#: ../apport/ui.py:490
+#: ../apport/ui.py:484
 msgid "Memory exhaustion"
 msgstr "Kein Speicher mehr verfügbar"
 
-#: ../apport/ui.py:491
+#: ../apport/ui.py:485
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Ihr System besitzt nicht genug Speicher, um den Absturzbericht zu "
 "verarbeiten."
 
-#: ../apport/ui.py:496
+#: ../apport/ui.py:490
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 "Dieser Problembericht ist beschädigt und kann nicht verarbeitet werden."
 
-#: ../apport/ui.py:504
+#: ../apport/ui.py:498
 msgid "This problem report does not apply to a packaged program."
 msgstr "Dieser Problembericht gehört nicht zu einem paketierten Programm."
 
-#: ../apport/ui.py:537
+#: ../apport/ui.py:531
 msgid "Problem already known"
 msgstr "Dieses Problem ist bereits bekannt."
 
-#: ../apport/ui.py:538
+#: ../apport/ui.py:532
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "

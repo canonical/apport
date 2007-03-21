@@ -26,6 +26,7 @@ def parse_options():
 
     optparser = optparse.OptionParser('''%prog [options] create <release> <chroot path>
 %prog [options] upgrade <chroot path>|<chroot release name>|all
+%prog [options] installdeb <chroot path>|<chroot release name> <path to .deb> [...]
 %prog [options] login <chroot path>|<chroot release name>
 %prog [options] retrace <bugnumber>|<report file>''')
 
@@ -53,6 +54,12 @@ def parse_options():
     optparser.add_option('--cookie', 
         help='Passed on to apport-retrace in "retrace" mode',
         action='store', type='string', dest='cookie_file', default=None)
+    optparser.add_option('--confirm-attach', 
+        help='Display retraced stack traces and ask for confirmation before uploading them as bug attachments.',
+        action='store_true', dest='confirm_attach', default=False)
+    optparser.add_option('--remove-tag',
+        help='Remove a tag from the Launchpad bug (in all cases, even if retracing fails); passed to apport-retrace in "retrace" mode',
+        action='store', type='string', dest='remove_tag', metavar='TAG', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -193,7 +200,7 @@ def command_upgrade(opts, args):
     if len(args) != 1:
         print >> sys.stderr, 'upgrade needs exactly one argument (use --help for a short online help)'
         sys.exit(1)
-    if not opts.chroot_map and not os.path.isdir(args[0]):
+    if not opts.chroot_map and not os.path.exists(args[0]):
         print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
         sys.exit(1)
 
@@ -210,13 +217,43 @@ def command_upgrade(opts, args):
     else:
         print >> sys.stderr, 'invalid chroot'
 
+def command_installdeb(opts, args):
+    '''Install a bunch of .debs into the chroot.'''
+
+    if len(args) < 2:
+        print >> sys.stderr, 'installdeb needs more arguments (use --help for a short online help)'
+        sys.exit(1)
+    if not opts.chroot_map and not os.path.exists(args[0]):
+        print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
+        sys.exit(1)
+
+    if os.path.exists(args[0]):
+        chroot = Chroot(args[0])
+    elif opts.chroot_map.has_key(args[0]):
+        c = opts.chroot_map[args[0]]
+        chroot = Chroot(c)
+    else:
+        print >> sys.stderr, 'invalid chroot'
+
+    # symlink the debs into the chroot
+    chroot_deb_dir = os.path.join(chroot.root, 'installdebs')
+    os.makedirs(chroot_deb_dir)
+    for deb in args[1:]:
+        os.symlink(deb, os.path.join(chroot_deb_dir, os.path.basename(deb)))
+
+    result = chroot.run(['dpkg', '-i'] + ['/installdebs/' + os.path.basename(d) for d in args[1:]])
+    shutil.rmtree(chroot_deb_dir)
+
+    if chroot.root_tarball and result == 0:
+        chroot.tar()
+
 def command_login(opts, args):
     '''Start a shell in a chroot.'''
 
     if len(args) != 1:
         print >> sys.stderr, 'login needs exactly one argument (use --help for a short online help)'
         sys.exit(1)
-    if not opts.chroot_map and not os.path.isdir(args[0]):
+    if not opts.chroot_map and not os.path.exists(args[0]):
         print >> sys.stderr, 'you must specify a chroot map with -m (use --help for a short online help)'
         sys.exit(1)
 
@@ -260,9 +297,13 @@ def command_retrace(opts, args):
             chroot_cookie = os.path.join(c.root, 'tmp', 'cookie')
             os.symlink(opts.cookie_file, chroot_cookie)
             apport_retrace_argv += ['--cookie', chroot_cookie]
+            if opts.remove_tag:
+                apport_retrace_argv += ['--remove-tag', opts.remove_tag]
         else:
             apport_retrace_argv += ['-s']
             chroot_cookie = None
+        if opts.confirm_attach:
+            apport_retrace_argv.append('--confirm')
         apport_retrace_argv.append(args[0])
         c.run(apport_retrace_argv)
         if chroot_cookie:

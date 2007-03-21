@@ -13,6 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, optparse, shutil, tempfile, glob, gzip, re
+import tty, termios
 import apport, apport.fileutils
 
 import warnings
@@ -65,6 +66,12 @@ def parse_options():
     optparser.add_option('--cookie',
         help='Path to a Mozilla-style cookie file; this is used when specifying a Launchpad bug number to attach the retraced stack traces (only if neither -g, -o, nor -s are specified)',
         action='store', type='string', dest='cookie_file', default=None)
+    optparser.add_option('--confirm',
+        help='Display retraced stack traces and ask for confirmation before adding them as Launchpad bug attachments.',
+        action='store_true', dest='confirm', default=False)
+    optparser.add_option('--remove-tag',
+        help='Remove a tag from the Launchpad bug (in all cases, even if retracing fails)',
+        action='store', type='string', dest='remove_tag', metavar='TAG', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -74,14 +81,17 @@ def parse_options():
 
     return (args[0], opts)
 
-def report_from_launchpad(bugid):
-    '''Construct an Apport report from a Launchpad bug.'''
+def report_from_launchpad(bugid, cookie_file, remove_tag):
+    '''Construct an Apport report from a Launchpad bug.
+    
+    If cookie_file and remove_tag are given, remove that tag from the bug.'''
 
     report = apport.Report()
     attachment_dir = tempfile.mkdtemp()
     try:
         b = Bug(bugid, None, attachment_dir, ['application/x-gzip'],
-            'Dependencies.txt|CoreDump.gz|ProcMaps.txt')
+            'Dependencies.txt|CoreDump.gz|ProcMaps.txt',
+            cookie_file=cookie_file)
 
         for att in b.attachments:
             if not att.filename:
@@ -100,6 +110,14 @@ def report_from_launchpad(bugid):
         for m in re.finditer('^([a-zA-Z]+): (.*)<', b.text, re.M):
             report[m.group(1)] = m.group(2)
 
+        if remove_tag:
+            b.get_metadata()
+            if remove_tag in b.tags:
+                b.tags.remove(remove_tag)
+                b.set_metadata()
+            else:
+                print >> sys.stderr, 'WARNING: bug does not have tag "%s"' % remove_tag
+
         return report
     finally:
         shutil.rmtree(attachment_dir)
@@ -110,7 +128,8 @@ def attach_to_launchpad_bug(bugnumber, report, cookie_file, comment=''):
 
     bug = Bug(bugnumber, cookie_file=cookie_file)
 
-    comment += '\n\nStacktraceTop:' + report['StacktraceTop']
+    comment += '\n\nStacktraceTop:' + report['StacktraceTop'].decode('utf-8',
+        'replace').encode('utf-8')
 
     t = tempfile.TemporaryFile()
     t.write(report['Stacktrace'])
@@ -229,9 +248,12 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
             continue
         (pkg, version) = l.split()[:2]
         dependency_versions[pkg] = version
-        assert c[pkg]._lookupRecord()
-        if not 'Architecture: all' in c[pkg]._records.Record:
-            dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+        try:
+            assert c[pkg]._lookupRecord()
+            if not 'Architecture: all' in c[pkg]._records.Record:
+                dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+        except KeyError:
+            print >> sys.stderr, 'WARNING: package %s not known to package cache' % pkg
 
     for pkg, ver in dependency_versions.iteritems():
 	if not c.has_key(pkg):
@@ -323,6 +345,37 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
 
     return installed
 
+def getch():
+    '''Read a single character from stdin.'''
+
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
+def confirm_traces(report):
+    '''Display the retraced stack traces and ask the user whether or not to
+    upload tem as Launchpad bug attachments.
+    
+    Return True if the user agrees.'''
+
+    print '--- stack trace ---'
+    print report['Stacktrace']
+    print '--- thread stack trace ---'
+    print report['ThreadStacktrace']
+    print '---'
+
+    ch = None
+    while ch not in ['y', 'n']:
+        print 'OK to send these as bug attachments? [y/n]'
+        ch = getch().lower()
+
+    return ch == 'y'
+
 #
 # main
 #
@@ -339,12 +392,16 @@ if os.path.exists(reportfile):
         sys.exit(1)
 elif reportfile.isdigit():
     # Launchpad bug number
-    report = report_from_launchpad(reportfile)
+    if options.remove_tag and not options.cookie_file:
+        print >> sys.stderr, 'You need to specify --cookie for removing a tag from a Launchpad bug.'
+        sys.exit(1)
+    report = report_from_launchpad(reportfile, options.cookie_file,
+        options.remove_tag)
     lpbug = reportfile
     reportfile = None
 else:
-    print >> sys.stderr, 'ERROR: %s is neither an existing report file nor a \
-Launchpad bug numer' % reportfile
+    print >> sys.stderr, 'ERROR: "%s" is neither an existing report file nor a \
+Launchpad bug number' % reportfile
     sys.exit(1)
 
 if options.core_file:
@@ -397,8 +454,9 @@ if modified:
         if not options.cookie_file:
             print >> sys.stderr, 'You need to specify --cookie for attaching retraced results back to a Launchpad bug.'
             sys.exit(1)
-        attach_to_launchpad_bug(lpbug, report, options.cookie_file)
-        print 'New attachments uploaded to Launchpad bug ' + lpbug
+        if not options.confirm or confirm_traces(report):
+            attach_to_launchpad_bug(lpbug, report, options.cookie_file)
+            print 'New attachments uploaded to Launchpad bug ' + lpbug
     else:
         if options.output == None:
             out = open(reportfile, 'w')

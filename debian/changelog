@@ -1,10 +1,84 @@
-apport (0.67) UNRELEASED; urgency=low
+apport (0.70) UNRELEASED; urgency=low
+
+  [ Martin Pitt ]
+  * bin/apport-retrace: Add option --remove-tag to remove a Launchpad bug
+    tag. This is intended for an automatic Malone crash retracing system.
+  * debian/control: Bump python-launchpad-bugs dependency to ensure that we
+    have Bug.[gs]et_metadata().
+  * man/apport-retrace.1: Add documentation for --confirm and --remove-tag.
+  * bin/apport-chroot: Add option --remove-tag and pass it to apport-retrace.
+  * apport/chroot.py, fix_symlinks(): Convert chroot path prefixed absolute
+    symlinks to relative symlinks to avoid fakechroot's weird handling of
+    absolute symlinks.
+  * Add bin/launchpad-crash-digger: Daemon for watching out for
+    need-$ARCH-retrace tagged Ubuntu bugs in Launchpad and calling
+    apport-retrace on them.
+  * bin/apport-retrace: Mangle bug comment with StacktraceTop to not contain
+    invalid UTF-8, to avoid getting Internal Server Errors from LP.
+  * debian/local/setup-apport-retracer: Install libc6-i686{,-dbgsym} into an
+    x86 chroot, to get sane x86 backtraces for crashes in libc.
+  * debian/local/setup-apport-retracer: 
+    - Unpack and install python-launchpad-bugs locally if the package is not
+      installed.
+    - Link launchpad-crash-digger into the retracer's bin/ dir.
+
+  [ Kees Cook ]
+  * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
+    ptrace() the target process to make it readable (proposed security
+    improvement in future kernels).
+  * bin/apport-retrace: Fix crash for packages unknown to the apt cache.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 21 Mar 2007 12:10:53 +0100
+
+apport (0.69) feisty; urgency=low
+
+  * apport-chroot: Add command 'installdeb' to conveniently install a bunch of
+    .debs into a chroot.
+  * apport-chroot: Fix 'login' and 'upgrade' commands to not require
+    specifying a chroot map when giving a chroot tarball path as argument.
+  * test-apport: Check that core dumps are written for packaged programs as
+    well, if ulimits want them. (Test for #92029)
+  * bin/apport: Call write_user_coredump() for packaged program crashes and
+    SIGABRT as well. (LP: #92029)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Mar 2007 17:37:23 +0100
+
+apport (0.68) feisty; urgency=low
+
+  [ Michael Hofmann ]
+  * qt4/apport-qt: Fix taskbar entry, remove an unused method.
+  * qt4/error.ui: Fix icon spacing.
+
+  [ Martin Pitt ]
+  * apport-retrace: Add option --confirm to display the retraced stack traces
+    and ask for confirmation before uploading them as LP bug attachments.
+    (LP: #91878)
+  * apport-chroot: Add option --confirm-attach; if given, call apport-retrace
+    with --confirm.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 15 Mar 2007 00:05:18 +0100
+
+apport (0.67) feisty; urgency=low
 
   * debian/local/setup-apport-retracer: Add apt sources for restricted,
     universe, and multiverse, too.
   * po/de.po: Update from Rosetta.
+  * apport/report.py: Remove undefined call to error_log() in
+    _command_output(), replace it with raising proper exceptions.
+  * bin/apport-retrace: Fix 'numer' typo. (LP: #91680)
+  * test-apport: Check that non-packaged executables generate a core dump on
+    SIGABRT, too (test case for bug #92029).
+  * bin/apport: Move check for ignoring SIGABRT below the core dump file
+    writing for non-packaged binaries. (LP: #92029)
+  * gtk/apport-gtk.glade:
+    - Remove titles from the progress windows to comply with Gnome HIG and not
+      repeat the text content.
+    - Improve wording a bit.
+    - LP: #92114
+  * gtk/apport-gtk{,.glade}: Fix signal handler name of the Cancel button in
+    the upload progress dialog, so that it actually works. (LP: #92115)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 13 Mar 2007 12:57:31 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Mar 2007 17:34:57 +0100
 
 apport (0.66) feisty; urgency=low
 

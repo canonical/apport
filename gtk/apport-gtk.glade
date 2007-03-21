@@ -376,7 +376,7 @@
 
 <widget class="GtkWindow" id="window_information_collection">
   <property name="border_width">12</property>
-  <property name="title" translatable="yes">Collecting Problem Information</property>
+  <property name="title"></property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ALWAYS</property>
   <property name="modal">False</property>
@@ -392,7 +392,7 @@
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
-  <signal name="delete_event" handler="on_window_information_collection_delete_event"/>
+  <signal name="delete_event" handler="on_progress_window_close_event"/>
 
   <child>
     <widget class="GtkVBox" id="vbox15">
@@ -434,7 +434,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="label1">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">The collected information can be sent to the developers to improve the application. This might take some minutes.</property>
+	      <property name="label" translatable="yes">Information is being collected that may help the developers fix the problem you report.</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -493,7 +493,7 @@
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
-	      <signal name="clicked" handler="on_window_information_collection_delete_event" last_modification_time="Thu, 11 Jan 2007 10:09:25 GMT"/>
+	      <signal name="clicked" handler="on_progress_window_close_event" last_modification_time="Thu, 11 Jan 2007 10:09:25 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
@@ -733,7 +733,7 @@ After the problem report has been sent, please fill out the form in the automati
 
 <widget class="GtkWindow" id="window_report_upload">
   <property name="border_width">12</property>
-  <property name="title" translatable="yes">Uploading Problem Information</property>
+  <property name="title"></property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ALWAYS</property>
   <property name="modal">False</property>
@@ -749,7 +749,7 @@ After the problem report has been sent, please fill out the form in the automati
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
-  <signal name="delete_event" handler="on_window_information_collection_delete_event"/>
+  <signal name="delete_event" handler="on_progress_window_close_event"/>
 
   <child>
     <widget class="GtkVBox" id="vbox16">
@@ -791,7 +791,7 @@ After the problem report has been sent, please fill out the form in the automati
 	  <child>
 	    <widget class="GtkLabel" id="label17">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">The collected information is sent to the bug tracking system. This might take some minutes.</property>
+	      <property name="label" translatable="yes">The collected information is sent to the bug tracking system. This might take a few minutes.</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -850,7 +850,7 @@ After the problem report has been sent, please fill out the form in the automati
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
-	      <signal name="clicked" handler="on_window_report_upload_delete_event" last_modification_time="Thu, 11 Jan 2007 14:44:39 GMT"/>
+	      <signal name="clicked" handler="on_progress_window_close_event" last_modification_time="Thu, 11 Jan 2007 10:09:25 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
