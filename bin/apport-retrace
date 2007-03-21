@@ -280,10 +280,10 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
 
     if verbosity:
         fetchProgress = apt.progress.TextFetchProgress()
-	installProgress = apt.progress.InstallProgress()
+        installProgress = apt.progress.InstallProgress()
     else:
         fetchProgress = apt.progress.FetchProgress()
-	installProgress = apt.progress.DumbInstallProgress()
+        installProgress = apt.progress.DumbInstallProgress()
 
     try:
 	if c.getChanges():
