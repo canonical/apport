@@ -35,6 +35,8 @@ apport (0.70) UNRELEASED; urgency=low
     the added information, so that it becomes useful for local evaluation,
     too. Bump python-problem-report dependency to ensure write()'s only_new
     availability. (LP: #94678)
+  * apport-chroot: Add forgotten sys.exit(1) after printing the error message
+    about an invalid chroot specification.
 
   [ Kees Cook ]
   * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
@@ -61,7 +63,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 21:17:00 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 21:24:27 +0100
 
 apport (0.69) feisty; urgency=low
 

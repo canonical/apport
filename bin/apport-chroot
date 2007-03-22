@@ -264,6 +264,7 @@ def command_login(opts, args):
         chroot = Chroot(c)
     else:
         print >> sys.stderr, 'invalid chroot'
+        sys.exit(1)
 
     chroot.run([os.environ.get('SHELL', 'bash')])
 
