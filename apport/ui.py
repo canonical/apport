@@ -41,9 +41,9 @@ def thread_collect_info(report, reportfile, package):
     report.add_os_info()
 
     if reportfile:
-        f = open(reportfile, 'w')
+        f = open(reportfile, 'a')
         os.chmod (reportfile, 0)
-        report.write(f)
+        report.write(f, only_new=True)
         f.close()
         os.chmod (reportfile, 0600)
 
@@ -93,6 +93,8 @@ class UserInterface:
     def run_crash(self, report_file):
         '''Present given crash report to the user, ask him what to do about it,
         and offer to file a bug for it.'''
+
+        self.report_file = report_file
 
         try:
             apport.fileutils.mark_report_seen(report_file)
