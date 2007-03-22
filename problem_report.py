@@ -29,6 +29,9 @@ class ProblemReport(UserDict.IterableUserDict):
             date = time.asctime()
         self.data = {'ProblemType': type, 'Date': date}
 
+        # keeps track of keys which were added since the last ctor or load()
+        self.old_keys = set()
+
     def load(self, file, binary=True):
         '''Initialize problem report from a file-like object, using Debian
         control file format.
@@ -83,6 +86,8 @@ class ProblemReport(UserDict.IterableUserDict):
 
         if key != None:
             self.data[key] = value
+
+        self.old_keys = set(self.data.keys())
 
     def has_removed_fields(self):
         '''Check whether the report has any keys which were not loaded in load()
@@ -300,6 +305,12 @@ class ProblemReport(UserDict.IterableUserDict):
             and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
 
         return self.data.__setitem__(k, v)
+
+    def new_keys(self):
+        '''Return the set of keys which have been added to the report since it
+        was constructed or loaded.'''
+
+        return set(self.data.keys()) - self.old_keys
 
 
 #
@@ -856,6 +867,25 @@ line♥5!!
 
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)
+
+    def test_new_keys(self):
+        '''Test new_keys().'''
+
+        pr = ProblemReport()
+        self.assertEqual(pr.new_keys(), set(['ProblemType', 'Date']))
+        pr.load(StringIO(
+'''ProblemType: Crash
+Date: now!
+Foo: bar
+Baz: blob
+'''))
+
+        self.assertEqual(pr.new_keys(), set())
+
+        pr['Foo'] = 'changed'
+        pr['NewKey'] = 'new new'
+
+        self.assertEqual(pr.new_keys(), set(['NewKey']))
 
 if __name__ == '__main__':
     unittest.main()
