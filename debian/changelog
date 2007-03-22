@@ -27,6 +27,10 @@ apport (0.70) UNRELEASED; urgency=low
     ptrace() the target process to make it readable (proposed security
     improvement in future kernels).
   * bin/apport-retrace: Fix crash for packages unknown to the apt cache.
+  * apport/report.py, add_gdb_info(): Limit maximum backtrace depth to 2000 to
+    avoid infinitely looped stacks and gdb crashes. (LP: #94455)
+  * bin/apport-retrace: Add option -R/--rebuild-package-info, so that
+    apport-retrace works on unprocessed crash dumps in /var/crash.
 
   [ Michael Hofmann ]
   * Add cli/apport-cli, setup.py, debian/apport-cli.install, debian/control:
@@ -41,7 +45,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 08:43:00 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 09:58:53 +0100
 
 apport (0.69) feisty; urgency=low
 
