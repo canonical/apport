@@ -57,95 +57,95 @@ def relpath(p1, p2):
 
 class Chroot:
     '''Work with a chroot (either in directory or in tarball form).
-    
+
     If called as non-root user, this calls setup_fakeroot_env() to use the
     fakeroot/fakechroot libraries.'''
 
     def __init__(self, root):
-	'''Bind to a chroot, which can either be a directory, a tarball, or
-	None to work in the main system.
+        '''Bind to a chroot, which can either be a directory, a tarball, or
+        None to work in the main system.
 
-	If a tarball is given, then it gets unpacked into a temporary directory
-	which is cleaned up at program termination.'''
+        If a tarball is given, then it gets unpacked into a temporary directory
+        which is cleaned up at program termination.'''
 
-	self.remove = False
+        self.remove = False
 
         if os.geteuid() != 0:
             setup_fakeroot_env()
 
-	self.root_tarball = None
-	if root is None:
-	    self.root = None
-	elif os.path.isdir(root):
-	    self.root = root
-	else:
-	    assert os.path.isfile(root)
-	    self.root_tarball = root
-	    self.root = tempfile.mkdtemp()
-	    self.remove = True
-	    assert subprocess.call(['tar', '-C', self.root,
-		'-xzf', root]) == 0
+        self.root_tarball = None
+        if root is None:
+            self.root = None
+        elif os.path.isdir(root):
+            self.root = root
+        else:
+            assert os.path.isfile(root)
+            self.root_tarball = root
+            self.root = tempfile.mkdtemp()
+            self.remove = True
+            assert subprocess.call(['tar', '-C', self.root,
+                '-xzf', root]) == 0
 
     def __del__(self):
-	if hasattr(self, 'remove') and self.remove:
-	    shutil.rmtree(self.root)
+        if hasattr(self, 'remove') and self.remove:
+            shutil.rmtree(self.root)
 
     def tar(self, tarball=None):
-	'''Create a tarball from the chroot.
+        '''Create a tarball from the chroot.
 
-	If tarball does not specify a .tar.gz path, then the Chroot must have
-	been created from a tarball, and that tarball is updated.'''
+        If tarball does not specify a .tar.gz path, then the Chroot must have
+        been created from a tarball, and that tarball is updated.'''
 
-	if not tarball:
-	    assert self.root_tarball
-	    tarball = self.root_tarball
+        if not tarball:
+            assert self.root_tarball
+            tarball = self.root_tarball
 
-	f = open(tarball, 'w')
+        f = open(tarball, 'w')
 
-	orig_cwd = os.getcwd()
-	try:
-	    os.chdir(self.root)
-	    tar = subprocess.Popen(['tar', 'cp', '.'], stdout=subprocess.PIPE)
-	    gz = subprocess.Popen(['gzip', '-9'], stdin=tar.stdout, stdout=f)
-	    assert tar.wait() == 0
-	    assert gz.wait() == 0
-	    f.close()
-	finally:
-	    os.chdir(orig_cwd)
-    
+        orig_cwd = os.getcwd()
+        try:
+            os.chdir(self.root)
+            tar = subprocess.Popen(['tar', 'cp', '.'], stdout=subprocess.PIPE)
+            gz = subprocess.Popen(['gzip', '-9'], stdin=tar.stdout, stdout=f)
+            assert tar.wait() == 0
+            assert gz.wait() == 0
+            f.close()
+        finally:
+            os.chdir(orig_cwd)
+
     def _exec_capture(self, argv, stdin=None):
-	'''Internal helper function to wrap subprocess.Popen() and return a
-	triple (stdout, stderr, returncode).'''
+        '''Internal helper function to wrap subprocess.Popen() and return a
+        triple (stdout, stderr, returncode).'''
 
-	if stdin:
-	    p = subprocess.Popen(argv, stdin=subprocess.PIPE,
-		stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	    (out, err) = p.communicate(stdin)
-	else:
-	    p = subprocess.Popen(argv, stdin=subprocess.PIPE,
-		stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	    (out, err) = p.communicate()
-	return (out, err, p.returncode)
-	    
+        if stdin:
+            p = subprocess.Popen(argv, stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            (out, err) = p.communicate(stdin)
+        else:
+            p = subprocess.Popen(argv, stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            (out, err) = p.communicate()
+        return (out, err, p.returncode)
+
     def run(self, argv):
-	'''Execute the given commandline vector in the chroot and return the
-	exit code.'''
+        '''Execute the given commandline vector in the chroot and return the
+        exit code.'''
 
-	if self.root:
-	    return subprocess.call(['chroot', self.root] + argv)
-	else:
-	    return subprocess.call(argv)
+        if self.root:
+            return subprocess.call(['chroot', self.root] + argv)
+        else:
+            return subprocess.call(argv)
 
     def run_capture(self, argv, stdin=None):
-	'''Execute the given command line vector in the chroot and return a
-	triple (stdout, stderr, exit code).'''
+        '''Execute the given command line vector in the chroot and return a
+        triple (stdout, stderr, exit code).'''
 
-	if self.root:
+        if self.root:
             return self._exec_capture(['chroot', self.root] +
-	       argv, stdin)
-	else:
-	   return self._exec_capture(argv, stdin)
-	
+               argv, stdin)
+        else:
+           return self._exec_capture(argv, stdin)
+
     def fix_symlinks(self):
         '''Remove root prefix from symbolic links in chroot directory,
         otherwise chroot tarballs don't work at all, and we cannot move/rename
@@ -168,137 +168,137 @@ if __name__ == '__main__':
     import unittest, os, tarfile
 
     class ChrootTest(unittest.TestCase):
-	def test_null(self):
-	    '''Test null chroot (working in the main system)'''
+        def test_null(self):
+            '''Test null chroot (working in the main system)'''
 
-	    c = Chroot(None)
-	    self.assertEqual(c.root_tarball, None)
-	    self.assertEqual(c.run(['/bin/sh', '-c', 'exit 42']), 42)
+            c = Chroot(None)
+            self.assertEqual(c.root_tarball, None)
+            self.assertEqual(c.run(['/bin/sh', '-c', 'exit 42']), 42)
 
-	    (out, err, ret) = c.run_capture(['/bin/ls', '/bin/ls'])
-	    self.assertEqual(ret, 0)
-	    self.assertEqual(out, '/bin/ls\n')
-	    self.assertEqual(err, '')
+            (out, err, ret) = c.run_capture(['/bin/ls', '/bin/ls'])
+            self.assertEqual(ret, 0)
+            self.assertEqual(out, '/bin/ls\n')
+            self.assertEqual(err, '')
 
-	    (out, err, ret) = c.run_capture(['/bin/ls', '/nonexisting/gibberish'])
-	    self.assertNotEqual(ret, 0)
-	    self.assertEqual(out, '')
-	    self.assertNotEqual(err, '')
+            (out, err, ret) = c.run_capture(['/bin/ls', '/nonexisting/gibberish'])
+            self.assertNotEqual(ret, 0)
+            self.assertEqual(out, '')
+            self.assertNotEqual(err, '')
 
-	def _mkchroot(self):
-	    '''Return a test chroot dir with /bin/hello and /bin/42.'''
+        def _mkchroot(self):
+            '''Return a test chroot dir with /bin/hello and /bin/42.'''
 
-	    d = tempfile.mkdtemp()
-	    bindir = os.path.join(d, 'bin')
-	    os.mkdir(bindir)
-	    open(os.path.join(d, 'hello.c'), 'w').write('''
+            d = tempfile.mkdtemp()
+            bindir = os.path.join(d, 'bin')
+            os.mkdir(bindir)
+            open(os.path.join(d, 'hello.c'), 'w').write('''
 #include <stdio.h>
 int main() { puts("hello"); return 0; }
 ''')
-	    open(os.path.join(d, '42.c'), 'w').write('''
+            open(os.path.join(d, '42.c'), 'w').write('''
 int main() { return 42; }
 ''')
-	    assert subprocess.call(['cc', '-static', os.path.join(d,
-		'hello.c'), '-o', os.path.join(bindir, 'hello')]) == 0
-	    assert subprocess.call(['cc', '-static', os.path.join(d,
-		'42.c'), '-o', os.path.join(bindir, '42')]) == 0
+            assert subprocess.call(['cc', '-static', os.path.join(d,
+                'hello.c'), '-o', os.path.join(bindir, 'hello')]) == 0
+            assert subprocess.call(['cc', '-static', os.path.join(d,
+                '42.c'), '-o', os.path.join(bindir, '42')]) == 0
 
-	    return d
+            return d
 
-	def test_dir(self):
-	    '''Test directory chroot.'''
+        def test_dir(self):
+            '''Test directory chroot.'''
 
-	    d = self._mkchroot() 
-	    tarpath = None
-	    try:
-		c = Chroot(d)
-		self.assertEqual(c.root_tarball, None)
+            d = self._mkchroot()
+            tarpath = None
+            try:
+                c = Chroot(d)
+                self.assertEqual(c.root_tarball, None)
 
-		# test running
-		self.assertEqual(c.run(['/bin/42']), 42)
-		(out, err, ret) = c.run_capture(['/bin/hello'])
-		self.assertEqual(ret, 0)
-		self.assertEqual(out, 'hello\n')
-		self.assertEqual(err, '')
+                # test running
+                self.assertEqual(c.run(['/bin/42']), 42)
+                (out, err, ret) = c.run_capture(['/bin/hello'])
+                self.assertEqual(ret, 0)
+                self.assertEqual(out, 'hello\n')
+                self.assertEqual(err, '')
 
-		# test tar'ing
-		open(os.path.join(c.root, 'newfile'), 'w')
-		self.assertRaises(AssertionError, c.tar)
-		(fd, tarpath) = tempfile.mkstemp()
-		os.close(fd)
-		c.tar(tarpath)
-		t = tarfile.open(tarpath)
-		self.assert_(set(['./bin/42', './bin/hello',
-		    './newfile']).issubset(set(t.getnames())))
+                # test tar'ing
+                open(os.path.join(c.root, 'newfile'), 'w')
+                self.assertRaises(AssertionError, c.tar)
+                (fd, tarpath) = tempfile.mkstemp()
+                os.close(fd)
+                c.tar(tarpath)
+                t = tarfile.open(tarpath)
+                self.assert_(set(['./bin/42', './bin/hello',
+                    './newfile']).issubset(set(t.getnames())))
 
-		# test cleanup
-		del c
-		self.assert_(os.path.exists(os.path.join(d, 'bin', '42')),
-		    'directory chroot should not delete the chroot')
+                # test cleanup
+                del c
+                self.assert_(os.path.exists(os.path.join(d, 'bin', '42')),
+                    'directory chroot should not delete the chroot')
 
-	    finally:
-		shutil.rmtree(d)
-		if tarpath:
-		    os.unlink(tarpath)
+            finally:
+                shutil.rmtree(d)
+                if tarpath:
+                    os.unlink(tarpath)
 
-	def test_tarball(self):
-	    '''Test tarball chroot.'''
+        def test_tarball(self):
+            '''Test tarball chroot.'''
 
-	    d = self._mkchroot() 
-	    try:
-		(fd, tar) = tempfile.mkstemp()
-		os.close(fd)
-		orig_cwd = os.getcwd()
-		os.chdir(d)
-		assert subprocess.call(['tar', 'czPf', tar, '.']) == 0
-		assert os.path.exists(tar)
-		os.chdir(orig_cwd)
-	    finally:
-		shutil.rmtree(d)
+            d = self._mkchroot()
+            try:
+                (fd, tar) = tempfile.mkstemp()
+                os.close(fd)
+                orig_cwd = os.getcwd()
+                os.chdir(d)
+                assert subprocess.call(['tar', 'czPf', tar, '.']) == 0
+                assert os.path.exists(tar)
+                os.chdir(orig_cwd)
+            finally:
+                shutil.rmtree(d)
 
-	    try:
-		c = Chroot(tar)
-		self.assertEqual(c.root_tarball, tar)
+            try:
+                c = Chroot(tar)
+                self.assertEqual(c.root_tarball, tar)
 
-		# test running
-		self.assertEqual(c.run(['/bin/42']), 42)
-		(out, err, ret) = c.run_capture(['/bin/hello'])
-		self.assertEqual(ret, 0)
-		self.assertEqual(out, 'hello\n')
-		self.assertEqual(err, '')
+                # test running
+                self.assertEqual(c.run(['/bin/42']), 42)
+                (out, err, ret) = c.run_capture(['/bin/hello'])
+                self.assertEqual(ret, 0)
+                self.assertEqual(out, 'hello\n')
+                self.assertEqual(err, '')
 
-		# test tar'ing
-		open(os.path.join(c.root, 'newfile'), 'w')
-		c.tar()
-		t = tarfile.open(tar)
-		self.assert_(set(['./bin/42', './bin/hello',
-		    './newfile']).issubset(set(t.getnames())))
+                # test tar'ing
+                open(os.path.join(c.root, 'newfile'), 'w')
+                c.tar()
+                t = tarfile.open(tar)
+                self.assert_(set(['./bin/42', './bin/hello',
+                    './newfile']).issubset(set(t.getnames())))
 
-		# test cleanup
-		d = c.root
-		del c
-		self.assert_(not os.path.exists(d), 
-		    'tarball chroot should delete the temporary chroot')
-	    finally:
-		os.unlink(tar)
+                # test cleanup
+                d = c.root
+                del c
+                self.assert_(not os.path.exists(d),
+                    'tarball chroot should delete the temporary chroot')
+            finally:
+                os.unlink(tar)
 
-	def test_fix_symlinks(self):
-	    '''Test symlink fixing in chroots.'''
+        def test_fix_symlinks(self):
+            '''Test symlink fixing in chroots.'''
 
-	    d = self._mkchroot() 
-	    try:
+            d = self._mkchroot()
+            try:
                 os.symlink(os.path.join(d, 'bin', '42'), os.path.join(d, 'bin', '42prefix'))
                 os.symlink(os.path.join('/bin/42'), os.path.join(d, 'bin', '42noprefix'))
                 os.symlink(os.path.join('bin/42'), os.path.join(d, '42rel'))
 
-		c = Chroot(d)
+                c = Chroot(d)
                 c.fix_symlinks()
 
-		self.assertEqual(c.run(['/42rel']), 42)
-		self.assertEqual(c.run(['/bin/42prefix']), 42)
+                self.assertEqual(c.run(['/42rel']), 42)
+                self.assertEqual(c.run(['/bin/42prefix']), 42)
                 self.assertEqual(os.readlink(os.path.join(d, 'bin', '42noprefix')), '/bin/42')
 
-	    finally:
-		shutil.rmtree(d)
+            finally:
+                shutil.rmtree(d)
 
     unittest.main()

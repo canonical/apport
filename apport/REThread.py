@@ -56,7 +56,7 @@ class REThread(threading.Thread):
 
     def exc_raise(self):
         '''Raises the exception caught in the thread.
-        
+
         Does nothing if no exception was caught.'''
 
         if self._exception:

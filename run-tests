@@ -12,19 +12,19 @@ fi
 mydir=`dirname "$0"`
 
 set -x
-python $basedir/problem_report.py -v
-python $basedir/apport/fileutils.py -v
-python $basedir/apport/report.py -v
-python $basedir/apport/python_hook.py -v
-python $basedir/apport/ui.py -v
-python $basedir/apport/REThread.py -v
-python $basedir/apport/chroot.py -v
+python -tt $basedir/problem_report.py -v
+python -tt $basedir/apport/fileutils.py -v
+python -tt $basedir/apport/report.py -v
+python -tt $basedir/apport/python_hook.py -v
+python -tt $basedir/apport/ui.py -v
+python -tt $basedir/apport/REThread.py -v
+python -tt $basedir/apport/chroot.py -v
 if [ "$local" ]; then
     for b in backends/*; do
-        python $b -v
+        python -tt $b -v
     done
 else
-    python $basedir/apport/packaging_impl.py -v
+    python -tt $basedir/apport/packaging_impl.py -v
 fi
 
 if [ "$local" ]; then

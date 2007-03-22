@@ -48,6 +48,9 @@ def parse_options():
     optparser.add_option('-m', '--procmaps', 
         help="Override report's ProcMaps",
         action='store', type='string', dest='procmaps', metavar='MAPS', default=None)
+    optparser.add_option('-R', '--rebuild-package-info', 
+        help="Rebuild report's Package information",
+        action='count', dest='rebuild', default=0)
     optparser.add_option('-v', '--verbose', 
         help='Report download/install progress when installing additional packages',
         action='count', dest='verbose', default=0)
@@ -277,10 +280,10 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
 
     if verbosity:
         fetchProgress = apt.progress.TextFetchProgress()
-	installProgress = apt.progress.InstallProgress()
+        installProgress = apt.progress.InstallProgress()
     else:
         fetchProgress = apt.progress.FetchProgress()
-	installProgress = apt.progress.DumbInstallProgress()
+        installProgress = apt.progress.DumbInstallProgress()
 
     try:
 	if c.getChanges():
@@ -410,6 +413,8 @@ if options.executable:
     report['ExecutablePath'] = options.executable
 if options.procmaps:
     report['ProcMaps'] = file(options.procmaps).read()
+if options.rebuild:
+    report.add_package_info()
 
 # sanity checks
 required_fields = set(['CoreDump', 'ExecutablePath', 'Package'])

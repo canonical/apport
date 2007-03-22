@@ -116,11 +116,11 @@ def _dom_remove_space(node):
     '''Recursively remove whitespace from given XML DOM node.'''
 
     for c in node.childNodes:
-	if c.nodeType == xml.dom.Node.TEXT_NODE and c.nodeValue.strip() == '':
-	    c.unlink()
-	    node.removeChild(c)
-	else:
-	    _dom_remove_space(c)
+        if c.nodeType == xml.dom.Node.TEXT_NODE and c.nodeValue.strip() == '':
+            c.unlink()
+            node.removeChild(c)
+        else:
+            _dom_remove_space(c)
 
 #
 # Report class
@@ -128,13 +128,13 @@ def _dom_remove_space(node):
 
 class Report(ProblemReport):
     '''A problem report specific to apport (crash or bug).
-    
+
     This class wraps a standard ProblemReport and adds methods for collecting
     standard debugging data.'''
 
     def __init__(self, type='Crash', date=None):
         '''Initialize a fresh problem report.
-                        
+
            date is the desired date/time string; if None (default), the current
            local time is used.
            '''
@@ -144,7 +144,7 @@ class Report(ProblemReport):
     def _pkg_modified_suffix(self, package):
         '''Return a string suitable for appending to Package:/Dependencies:
         fields.
-        
+
         If package has only unmodified files, return the empty string. If not,
         return ' [modified: ...]' with a list of modified files.'''
 
@@ -185,16 +185,16 @@ class Report(ProblemReport):
         # get dependency versions
         self['Dependencies'] = ''
         for dep in dependencies:
-	    try:
-		v = packaging.get_version(dep)
-	    except ValueError:
+            try:
+                v = packaging.get_version(dep)
+            except ValueError:
                 # can happen with uninstalled alternate dependencies
                 continue
 
-	    if self['Dependencies']:
-		self['Dependencies'] += '\n'
-	    self['Dependencies'] += '%s %s%s' % (dep, v,
-		self._pkg_modified_suffix(dep))
+            if self['Dependencies']:
+                self['Dependencies'] += '\n'
+            self['Dependencies'] += '%s %s%s' % (dep, v,
+                self._pkg_modified_suffix(dep))
 
     def add_os_info(self):
         '''Add operating system information.
@@ -218,10 +218,10 @@ class Report(ProblemReport):
 
         This adds:
         - UserGroups: system groups the user is in
-	'''
+        '''
 
         user = pwd.getpwuid(os.getuid()).pw_name
-        groups = [name for name, p, gid, memb in grp.getgrall() 
+        groups = [name for name, p, gid, memb in grp.getgrall()
             if user in memb and gid < 1000]
         groups.sort()
         self['UserGroups'] = ' '.join(groups)
@@ -255,7 +255,7 @@ class Report(ProblemReport):
 
         # catch scripts explicitly called with interpreter
         if len(cmdargs) >= 2:
-            # ensure that cmdargs[1] is an absolute path 
+            # ensure that cmdargs[1] is an absolute path
             if cmdargs[1].startswith('.') and self.has_key('ProcCwd'):
                 cmdargs[1] = os.path.join(self['ProcCwd'], cmdargs[1])
             if os.access(cmdargs[1], os.R_OK):
@@ -275,9 +275,9 @@ class Report(ProblemReport):
         '''Add /proc/pid information.
 
         If pid is not given, it defaults to the process' current pid.
-        
+
         This adds the following fields:
-        - ExecutablePath: /proc/pid/exe contents; if the crashed process is 
+        - ExecutablePath: /proc/pid/exe contents; if the crashed process is
           interpreted, this contains the script path instead
         - InterpreterPath: /proc/pid/exe contents if the crashed process is
           interpreted; otherwise this key does not exist
@@ -364,6 +364,8 @@ class Report(ProblemReport):
                 command += ['--ex', 'set debug-file-directory ' + debugdir]
             command += ['--ex', 'file ' + self.get('InterpreterPath',
                 self['ExecutablePath']), '--ex', 'core-file ' + core]
+            # limit maximum backtrace depth (to avoid looped stacks)
+            command += ['--ex', 'set backtrace limit 2000']
             value_keys = []
             # append the actual commands and something that acts as a separator
             for name, cmd in gdb_reports.iteritems():
@@ -398,20 +400,20 @@ class Report(ProblemReport):
         self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
     def add_hooks_info(self):
-	'''Check for an existing hook script and run it to add additional
-	package specific information.
-	
-	A hook script needs to be in _hook_dir/<Package>.py and has to
-	contain a function 'add_info(report)' that takes and modifies a
-	Report.'''
+        '''Check for an existing hook script and run it to add additional
+        package specific information.
 
-	assert self.has_key('Package')
-	sys.path.append(_hook_dir)
-	try:
-	    m = __import__(self['Package'].split()[0])
-	    m.add_info(self)
-	except (ImportError, AttributeError, TypeError):
-	    pass
+        A hook script needs to be in _hook_dir/<Package>.py and has to
+        contain a function 'add_info(report)' that takes and modifies a
+        Report.'''
+
+        assert self.has_key('Package')
+        sys.path.append(_hook_dir)
+        try:
+            m = __import__(self['Package'].split()[0])
+            m.add_info(self)
+        except (ImportError, AttributeError, TypeError):
+            pass
 
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
@@ -455,82 +457,82 @@ class Report(ProblemReport):
         return None
 
     def _get_ignore_dom(self):
-	'''Read ignore list XML file and return a DOM tree, or an empty DOM
-	tree if file does not exist.
+        '''Read ignore list XML file and return a DOM tree, or an empty DOM
+        tree if file does not exist.
 
-	Raises ValueError if the file exists but is invalid XML.'''
+        Raises ValueError if the file exists but is invalid XML.'''
 
-	ifpath = os.path.expanduser(_ignore_file)
-	if not os.access(ifpath, os.R_OK) or os.path.getsize(ifpath) == 0:
-	    # create a document from scratch
-	    dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)
-	else:
-	    try:
-		dom = xml.dom.minidom.parse(ifpath)
-	    except ExpatError, e:
-		raise ValueError, '%s has invalid format: %s' % (_ignore_file, str(e))
+        ifpath = os.path.expanduser(_ignore_file)
+        if not os.access(ifpath, os.R_OK) or os.path.getsize(ifpath) == 0:
+            # create a document from scratch
+            dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)
+        else:
+            try:
+                dom = xml.dom.minidom.parse(ifpath)
+            except ExpatError, e:
+                raise ValueError, '%s has invalid format: %s' % (_ignore_file, str(e))
 
-	# remove whitespace so that writing back the XML does not accumulate
-	# whitespace
-	dom.documentElement.normalize()
-	_dom_remove_space(dom.documentElement)
+        # remove whitespace so that writing back the XML does not accumulate
+        # whitespace
+        dom.documentElement.normalize()
+        _dom_remove_space(dom.documentElement)
 
-	return dom
+        return dom
 
     def check_ignored(self):
-	'''Check ~/.apport-ignore.xml (in the real UID's home) if the current
-	report should not be presented to the user.
-	
-	This requires the ExecutablePath attribute. Function can throw a
-	ValueError if the file has an invalid format.'''
+        '''Check ~/.apport-ignore.xml (in the real UID's home) if the current
+        report should not be presented to the user.
 
-	assert self.has_key('ExecutablePath')
-	dom = self._get_ignore_dom()
+        This requires the ExecutablePath attribute. Function can throw a
+        ValueError if the file has an invalid format.'''
 
-	try:
-	    cur_mtime = float(os.stat(self['ExecutablePath']).st_mtime)
-	except OSError:
-	    # if it does not exist any more, do nothing
-	    return False
+        assert self.has_key('ExecutablePath')
+        dom = self._get_ignore_dom()
 
-	# search for existing entry and update it
+        try:
+            cur_mtime = float(os.stat(self['ExecutablePath']).st_mtime)
+        except OSError:
+            # if it does not exist any more, do nothing
+            return False
+
+        # search for existing entry and update it
         for ignore in dom.getElementsByTagName('ignore'):
-	    if ignore.getAttribute('program') == self['ExecutablePath']:
-		if float(ignore.getAttribute('mtime')) >= cur_mtime:
-		    return True
+            if ignore.getAttribute('program') == self['ExecutablePath']:
+                if float(ignore.getAttribute('mtime')) >= cur_mtime:
+                    return True
 
-	return False
+        return False
 
     def mark_ignore(self):
-	'''Add a ignore list entry for this report to ~/.apport-ignore.xml, so
-	that future reports for this ExecutablePath are not presented to the
-	user any more.
-	
-	Function can throw a ValueError if the file already exists and has an
-	invalid format.'''
+        '''Add a ignore list entry for this report to ~/.apport-ignore.xml, so
+        that future reports for this ExecutablePath are not presented to the
+        user any more.
 
-	assert self.has_key('ExecutablePath')
+        Function can throw a ValueError if the file already exists and has an
+        invalid format.'''
 
-	dom = self._get_ignore_dom()
-	mtime = str(int(os.stat(self['ExecutablePath']).st_mtime))
+        assert self.has_key('ExecutablePath')
 
-	# search for existing entry and update it
+        dom = self._get_ignore_dom()
+        mtime = str(int(os.stat(self['ExecutablePath']).st_mtime))
+
+        # search for existing entry and update it
         for ignore in dom.getElementsByTagName('ignore'):
-	    if ignore.getAttribute('program') == self['ExecutablePath']:
-		ignore.setAttribute('mtime', mtime)
-		break
-	else:
-	    # none exists yet, create new ignore node if none exists yet
-	    e = dom.createElement('ignore')
-	    e.setAttribute('program', self['ExecutablePath'])
-	    e.setAttribute('mtime', mtime)
-	    dom.documentElement.appendChild(e)
+            if ignore.getAttribute('program') == self['ExecutablePath']:
+                ignore.setAttribute('mtime', mtime)
+                break
+        else:
+            # none exists yet, create new ignore node if none exists yet
+            e = dom.createElement('ignore')
+            e.setAttribute('program', self['ExecutablePath'])
+            e.setAttribute('mtime', mtime)
+            dom.documentElement.appendChild(e)
 
-	# write back file
-	dom.writexml(open(os.path.expanduser(_ignore_file), 'w'), 
-	    addindent='  ', newl='\n')
+        # write back file
+        dom.writexml(open(os.path.expanduser(_ignore_file), 'w'),
+            addindent='  ', newl='\n')
 
-	dom.unlink()
+        dom.unlink()
 
 #
 # Unit test
@@ -562,7 +564,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
         self.assert_('libc6 ' + libcversion in pr['Dependencies'])
-	# check for stray empty lines
+        # check for stray empty lines
         self.assert_('\n\n' not in pr['Dependencies'])
         self.assert_(pr.has_key('PackageArchitecture'))
 
@@ -654,7 +656,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], os.path.realpath('/bin/sh'))
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
-        # check correct handling of interpreted executables: python 
+        # check correct handling of interpreted executables: python
         (fd, testscript) = tempfile.mkstemp()
         os.write(fd, '''#!/usr/bin/python
 import sys
@@ -682,7 +684,7 @@ sys.stdin.readline()
 
     def test_check_interpreted(self):
         '''Test _check_interpreted().'''
-        
+
         # standard ELF binary
         pr = Report()
         pr['ExecutablePath'] = '/usr/bin/gedit'
@@ -775,8 +777,8 @@ sys.stdin.readline()
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/../etc/passwd')
 
-	# interactive python process
-	pr = Report()
+        # interactive python process
+        pr = Report()
         pr['ExecutablePath'] = '/usr/bin/python'
         pr['ProcStatus'] = 'Name:\tpython'
         pr['ProcCmdline'] = 'python'
@@ -784,8 +786,8 @@ sys.stdin.readline()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
         self.failIf(pr.has_key('InterpreterPath'))
 
-	# python script (abuse /bin/bash since it must exist)
-	pr = Report()
+        # python script (abuse /bin/bash since it must exist)
+        pr = Report()
         pr['ExecutablePath'] = '/usr/bin/python'
         pr['ProcStatus'] = 'Name:\tbash'
         pr['ProcCmdline'] = 'python\0/bin/bash'
@@ -793,8 +795,8 @@ sys.stdin.readline()
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
-	# python script with options (abuse /bin/bash since it must exist)
-	pr = Report()
+        # python script with options (abuse /bin/bash since it must exist)
+        pr = Report()
         pr['ExecutablePath'] = '/usr/bin/python'
         pr['ProcStatus'] = 'Name:\tbash'
         pr['ProcCmdline'] = 'python\0-OO\0/bin/bash'
@@ -803,11 +805,11 @@ sys.stdin.readline()
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
     def _generate_sigsegv_report(self, file=None):
-	'''Create a test executable which will die with a SIGSEGV, generate a
-	core dump for it, create a problem report with those two arguments
-	(ExecutablePath and CoreDump) and call add_gdb_info().
-	
-	If file is given, the report is written into it. Return the Report.'''
+        '''Create a test executable which will die with a SIGSEGV, generate a
+        core dump for it, create a problem report with those two arguments
+        (ExecutablePath and CoreDump) and call add_gdb_info().
+
+        If file is given, the report is written into it. Return the Report.'''
 
         workdir = None
         orig_cwd = os.getcwd()
@@ -829,7 +831,7 @@ int main() { return f(42); }
 
             # call it through gdb and dump core
             subprocess.call(['gdb', '--batch', '--ex', 'run', '--ex',
-		'generate-core-file core', './crash'], stdout=subprocess.PIPE)
+                'generate-core-file core', './crash'], stdout=subprocess.PIPE)
             assert os.path.exists('core')
             assert subprocess.call(['readelf', '-n', 'core'],
                 stdout=subprocess.PIPE) == 0
@@ -838,15 +840,15 @@ int main() { return f(42); }
             pr['CoreDump'] = (os.path.join(workdir, 'core'),)
 
             pr.add_gdb_info()
-	    if file:
-		pr.write(file)
-		file.flush()
+            if file:
+                pr.write(file)
+                file.flush()
         finally:
             os.chdir(orig_cwd)
             if workdir:
                 shutil.rmtree(workdir)
 
-	return pr
+        return pr
 
     def _validate_gdb_fields(self,pr):
         self.assert_(pr.has_key('Stacktrace'))
@@ -973,134 +975,134 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
 
             # negative match cases
             r_bash['Package'] = 'bash 1-21'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_bash.search_bug_patterns(pdir), None,
                 'does not match on wrong bash version')
             r_bash['Foo'] = 'zz'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_bash.search_bug_patterns(pdir), None,
                 'does not match on wrong Foo value')
             r_coreutils['Bar'] = '11'
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
                 'does not match on wrong Bar value')
 
             # various errors to check for robustness (no exceptions, just None
             # return value)
             del r_coreutils['Bar']
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
                 'does not match on nonexisting key')
-            self.assertEqual(r_invalid.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_invalid.search_bug_patterns(pdir), None,
                 'gracefully handles invalid XML')
             r_coreutils['Package'] = 'other 2'
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
                 'gracefully handles nonexisting package XML file')
-            self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None, 
+            self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None,
                 'gracefully handles nonexisting base path')
-            self.assertEqual(r_bash.search_bug_patterns('http://security.ubuntu.com/'), None, 
+            self.assertEqual(r_bash.search_bug_patterns('http://security.ubuntu.com/'), None,
                 'gracefully handles base path without bug patterns')
-            self.assertEqual(r_bash.search_bug_patterns('http://nonexisting.domain/'), None, 
+            self.assertEqual(r_bash.search_bug_patterns('http://nonexisting.domain/'), None,
                 'gracefully handles nonexisting URL domain')
         finally:
             if pdir:
                 shutil.rmtree(pdir)
 
     def test_add_hooks_info(self):
-	'''Test add_hooks_info().'''
+        '''Test add_hooks_info().'''
 
-	global _hook_dir
-	orig_hook_dir = _hook_dir
-	_hook_dir = tempfile.mkdtemp()
-	try:
-	    open(os.path.join(_hook_dir, 'foo.py'), 'w').write('''
+        global _hook_dir
+        orig_hook_dir = _hook_dir
+        _hook_dir = tempfile.mkdtemp()
+        try:
+            open(os.path.join(_hook_dir, 'foo.py'), 'w').write('''
 def add_info(report):
     report['Field1'] = 'Field 1'
     report['Field2'] = 'Field 2\\nBla'
 ''')
-	    r = Report()
-	    self.assertRaises(AssertionError, r.add_hooks_info)
+            r = Report()
+            self.assertRaises(AssertionError, r.add_hooks_info)
 
-	    r = Report()
-	    r['Package'] = 'bar'
-	    # should not throw any exceptions
-	    r.add_hooks_info()
-	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-		'Package']), 'report has required fields')
+            r = Report()
+            r['Package'] = 'bar'
+            # should not throw any exceptions
+            r.add_hooks_info()
+            self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+                'Package']), 'report has required fields')
 
-	    r = Report()
-	    r['Package'] = 'baz 1.2-3'
-	    # should not throw any exceptions
-	    r.add_hooks_info()
-	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-		'Package']), 'report has required fields')
+            r = Report()
+            r['Package'] = 'baz 1.2-3'
+            # should not throw any exceptions
+            r.add_hooks_info()
+            self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+                'Package']), 'report has required fields')
 
-	    r = Report()
-	    r['Package'] = 'foo'
-	    r.add_hooks_info()
-	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-		'Package', 'Field1', 'Field2']), 'report has required fields')
-	    self.assertEqual(r['Field1'], 'Field 1')
-	    self.assertEqual(r['Field2'], 'Field 2\nBla')
+            r = Report()
+            r['Package'] = 'foo'
+            r.add_hooks_info()
+            self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+                'Package', 'Field1', 'Field2']), 'report has required fields')
+            self.assertEqual(r['Field1'], 'Field 1')
+            self.assertEqual(r['Field2'], 'Field 2\nBla')
 
-	    r = Report()
-	    r['Package'] = 'foo 4.5-6'
-	    r.add_hooks_info()
-	    self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-		'Package', 'Field1', 'Field2']), 'report has required fields')
-	    self.assertEqual(r['Field1'], 'Field 1')
-	    self.assertEqual(r['Field2'], 'Field 2\nBla')
-	finally:
-	    shutil.rmtree(_hook_dir)
-	    _hook_dir = orig_hook_dir
+            r = Report()
+            r['Package'] = 'foo 4.5-6'
+            r.add_hooks_info()
+            self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+                'Package', 'Field1', 'Field2']), 'report has required fields')
+            self.assertEqual(r['Field1'], 'Field 1')
+            self.assertEqual(r['Field2'], 'Field 2\nBla')
+        finally:
+            shutil.rmtree(_hook_dir)
+            _hook_dir = orig_hook_dir
 
     def test_ignoring(self):
-	'''Test mark_ignore() and check_ignored().'''
+        '''Test mark_ignore() and check_ignored().'''
 
-	global _ignore_file
-	orig_ignore_file = _ignore_file
-	workdir = tempfile.mkdtemp()
-	_ignore_file = os.path.join(workdir, 'ignore.xml')
-	try:
-	    open(os.path.join(workdir, 'bash'), 'w').write('bash')
-	    open(os.path.join(workdir, 'crap'), 'w').write('crap')
+        global _ignore_file
+        orig_ignore_file = _ignore_file
+        workdir = tempfile.mkdtemp()
+        _ignore_file = os.path.join(workdir, 'ignore.xml')
+        try:
+            open(os.path.join(workdir, 'bash'), 'w').write('bash')
+            open(os.path.join(workdir, 'crap'), 'w').write('crap')
 
-	    bash_rep = Report()
-	    bash_rep['ExecutablePath'] = os.path.join(workdir, 'bash')
-	    crap_rep = Report()
-	    crap_rep['ExecutablePath'] = os.path.join(workdir, 'crap')
-	    # must be able to deal with executables that do not exist any more
-	    cp_rep = Report()
-	    cp_rep['ExecutablePath'] = os.path.join(workdir, 'cp')
+            bash_rep = Report()
+            bash_rep['ExecutablePath'] = os.path.join(workdir, 'bash')
+            crap_rep = Report()
+            crap_rep['ExecutablePath'] = os.path.join(workdir, 'crap')
+            # must be able to deal with executables that do not exist any more
+            cp_rep = Report()
+            cp_rep['ExecutablePath'] = os.path.join(workdir, 'cp')
 
-	    # no ignores initially
-	    self.assertEqual(bash_rep.check_ignored(), False)
-	    self.assertEqual(crap_rep.check_ignored(), False)
-	    self.assertEqual(cp_rep.check_ignored(), False)
+            # no ignores initially
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), False)
+            self.assertEqual(cp_rep.check_ignored(), False)
 
-	    # ignore crap now
-	    crap_rep.mark_ignore()
-	    self.assertEqual(bash_rep.check_ignored(), False)
-	    self.assertEqual(crap_rep.check_ignored(), True)
-	    self.assertEqual(cp_rep.check_ignored(), False)
+            # ignore crap now
+            crap_rep.mark_ignore()
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), True)
+            self.assertEqual(cp_rep.check_ignored(), False)
 
-	    # ignore bash now
-	    bash_rep.mark_ignore()
-	    self.assertEqual(bash_rep.check_ignored(), True)
-	    self.assertEqual(crap_rep.check_ignored(), True)
-	    self.assertEqual(cp_rep.check_ignored(), False)
+            # ignore bash now
+            bash_rep.mark_ignore()
+            self.assertEqual(bash_rep.check_ignored(), True)
+            self.assertEqual(crap_rep.check_ignored(), True)
+            self.assertEqual(cp_rep.check_ignored(), False)
 
-	    # poke crap so that it has a newer timestamp
-	    time.sleep(1)
-	    open(os.path.join(workdir, 'crap'), 'w').write('crapnew')
-	    self.assertEqual(bash_rep.check_ignored(), True)
-	    self.assertEqual(crap_rep.check_ignored(), False)
-	    self.assertEqual(cp_rep.check_ignored(), False)
+            # poke crap so that it has a newer timestamp
+            time.sleep(1)
+            open(os.path.join(workdir, 'crap'), 'w').write('crapnew')
+            self.assertEqual(bash_rep.check_ignored(), True)
+            self.assertEqual(crap_rep.check_ignored(), False)
+            self.assertEqual(cp_rep.check_ignored(), False)
 
-	    # do not complain about an empty ignore file
-	    open(_ignore_file, 'w').write('')
-	    self.assertEqual(bash_rep.check_ignored(), False)
-	    self.assertEqual(crap_rep.check_ignored(), False)
-	    self.assertEqual(cp_rep.check_ignored(), False)
-	finally:
-	    shutil.rmtree(workdir)
-	    _ignore_file = orig_ignore_file
+            # do not complain about an empty ignore file
+            open(_ignore_file, 'w').write('')
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), False)
+            self.assertEqual(cp_rep.check_ignored(), False)
+        finally:
+            shutil.rmtree(workdir)
+            _ignore_file = orig_ignore_file
 
 if __name__ == '__main__':
     unittest.main()
