@@ -29,7 +29,7 @@ class PackageInfo:
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
-        
+
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
