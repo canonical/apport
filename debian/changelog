@@ -21,6 +21,7 @@ apport (0.70) UNRELEASED; urgency=low
     - Unpack and install python-launchpad-bugs locally if the package is not
       installed.
     - Link launchpad-crash-digger into the retracer's bin/ dir.
+  * run-tests: Run tests with python's -tt flag to catch whitespace errors.
 
   [ Kees Cook ]
   * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
@@ -45,7 +46,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 09:58:53 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 10:08:55 +0100
 
 apport (0.69) feisty; urgency=low
 
