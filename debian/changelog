@@ -17,7 +17,7 @@ apport (0.70) UNRELEASED; urgency=low
     invalid UTF-8, to avoid getting Internal Server Errors from LP.
   * debian/local/setup-apport-retracer: Install libc6-i686{,-dbgsym} into an
     x86 chroot, to get sane x86 backtraces for crashes in libc.
-  * debian/local/setup-apport-retracer: 
+  * debian/local/setup-apport-retracer:
     - Unpack and install python-launchpad-bugs locally if the package is not
       installed.
     - Link launchpad-crash-digger into the retracer's bin/ dir.
@@ -28,7 +28,20 @@ apport (0.70) UNRELEASED; urgency=low
     improvement in future kernels).
   * bin/apport-retrace: Fix crash for packages unknown to the apt cache.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 21 Mar 2007 12:10:53 +0100
+  [ Michael Hofmann ]
+  * Add cli/apport-cli, setup.py, debian/apport-cli.install, debian/control:
+    Add command line user interface.
+  * apport/ui.py, format_filesize(): Use MiB and GiB instead of MB and GB;
+    these are the official units. Adapt test cases.
+  * apport/ui.py, collect_info()/file_report(): Do not raise an exception on
+    KeyboardInterrupt in the subthreads.
+  * apport/ui.py, open_url(): Do not use gtk.MessageDialog(), but
+    ui_error_message(), and fix error passing so that the message is
+    displayed in the parent thread.
+  * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
+    the KDE/Gnome web browsers.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 08:43:00 +0100
 
 apport (0.69) feisty; urgency=low
 

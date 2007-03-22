@@ -27,6 +27,6 @@ setup(name='apport',
                   ('share/doc/apport/', glob.glob('doc/*'))]+mo_files,
       scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
           'bin/apport-unpack', 'bin/apport-chroot', 'bin/package_hook',
-          'bin/kernel_hook', 'gtk/apport-gtk', 'qt4/apport-qt'],
+          'bin/kernel_hook', 'gtk/apport-gtk', 'qt4/apport-qt', 'cli/apport-cli'],
       packages=['apport']
       )
