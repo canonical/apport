@@ -22,11 +22,11 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
     '''Catch an uncaught exception and make a traceback.'''
 
     # create and save a problem report. Note that exceptions in this code
-    # are bad, and we probably need a per-thread reentrancy guard to 
+    # are bad, and we probably need a per-thread reentrancy guard to
     # prevent that happening. However, on Ubuntu there should never be
     # a reason for an exception here, other than [say] a read only var
     # or some such. So what we do is use a try - finally to ensure that
-    # the original excepthook is invoked, and until we get bug reports 
+    # the original excepthook is invoked, and until we get bug reports
     # ignore the other issues.
 
     # import locally here so that there is no routine overhead on python
@@ -93,7 +93,7 @@ if __name__ == '__main__':
         def test_env(self):
             '''Check the test environment.'''
 
-            self.assertEqual(fileutils.get_all_reports(), [], 
+            self.assertEqual(fileutils.get_all_reports(), [],
                 'No crash reports already present')
 
         def test_general(self):
@@ -115,7 +115,7 @@ func(42)
                 p = subprocess.Popen([script, 'testarg1', 'testarg2'],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 err = p.communicate()[1]
-                self.assertEqual(p.returncode, 1, 
+                self.assertEqual(p.returncode, 1,
                     'crashing test python program exits with failure code')
                 self.assert_('Exception: This should happen.' in err)
 
@@ -140,7 +140,7 @@ func(42)
             expected_keys = ['InterpreterPath', 'ProcCwd', 'PythonArgs',
                 'Traceback', 'ProblemType', 'ProcEnviron', 'ProcStatus',
                 'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps']
-            self.assert_(set(expected_keys).issubset(set(pr.keys())), 
+            self.assert_(set(expected_keys).issubset(set(pr.keys())),
                 'report has necessary fields')
             self.assert_('bin/python' in pr['InterpreterPath'])
             self.assertEqual(pr['ExecutablePath'], script)
@@ -153,7 +153,7 @@ func(42)
 
             reports = fileutils.get_new_reports()
             try:
-                self.assertEqual(len(reports), 0, 
+                self.assertEqual(len(reports), 0,
                     'no crash reports present (cwd: %s)' % os.getcwd())
             finally:
                 # clean up in case we fail
@@ -210,7 +210,7 @@ func(42)
                 p = subprocess.Popen([script, 'testarg1', 'testarg2'],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 err = p.communicate()[1]
-                self.assertEqual(p.returncode, 1, 
+                self.assertEqual(p.returncode, 1,
                     'crashing test python program exits with failure code')
                 self.assert_('Exception: This should happen.' in err)
 

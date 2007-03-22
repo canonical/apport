@@ -57,7 +57,7 @@ def relpath(p1, p2):
 
 class Chroot:
     '''Work with a chroot (either in directory or in tarball form).
-    
+
     If called as non-root user, this calls setup_fakeroot_env() to use the
     fakeroot/fakechroot libraries.'''
 
@@ -112,7 +112,7 @@ class Chroot:
             f.close()
         finally:
             os.chdir(orig_cwd)
-    
+
     def _exec_capture(self, argv, stdin=None):
         '''Internal helper function to wrap subprocess.Popen() and return a
         triple (stdout, stderr, returncode).'''
@@ -126,7 +126,7 @@ class Chroot:
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             (out, err) = p.communicate()
         return (out, err, p.returncode)
-            
+
     def run(self, argv):
         '''Execute the given commandline vector in the chroot and return the
         exit code.'''
@@ -145,7 +145,7 @@ class Chroot:
                argv, stdin)
         else:
            return self._exec_capture(argv, stdin)
-        
+
     def fix_symlinks(self):
         '''Remove root prefix from symbolic links in chroot directory,
         otherwise chroot tarballs don't work at all, and we cannot move/rename
@@ -208,7 +208,7 @@ int main() { return 42; }
         def test_dir(self):
             '''Test directory chroot.'''
 
-            d = self._mkchroot() 
+            d = self._mkchroot()
             tarpath = None
             try:
                 c = Chroot(d)
@@ -244,7 +244,7 @@ int main() { return 42; }
         def test_tarball(self):
             '''Test tarball chroot.'''
 
-            d = self._mkchroot() 
+            d = self._mkchroot()
             try:
                 (fd, tar) = tempfile.mkstemp()
                 os.close(fd)
@@ -277,7 +277,7 @@ int main() { return 42; }
                 # test cleanup
                 d = c.root
                 del c
-                self.assert_(not os.path.exists(d), 
+                self.assert_(not os.path.exists(d),
                     'tarball chroot should delete the temporary chroot')
             finally:
                 os.unlink(tar)
@@ -285,7 +285,7 @@ int main() { return 42; }
         def test_fix_symlinks(self):
             '''Test symlink fixing in chroots.'''
 
-            d = self._mkchroot() 
+            d = self._mkchroot()
             try:
                 os.symlink(os.path.join(d, 'bin', '42'), os.path.join(d, 'bin', '42prefix'))
                 os.symlink(os.path.join('/bin/42'), os.path.join(d, 'bin', '42noprefix'))

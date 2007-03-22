@@ -22,14 +22,14 @@ class __DpkgPackageInfo:
 
     def __init_status(self):
         '''Initialize the self.status dictionary.
-        
+
         This is not done in the constructor to avoid adding the overhead of
         dpkg-query to any program that merely imports the apport package.'''
 
         # fill status cache since calling dpkg -s on every package is just way
         # too slow
         self.status = {}
-        dpkg = subprocess.Popen(['dpkg-query', '--show', 
+        dpkg = subprocess.Popen(['dpkg-query', '--show',
             '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\nArchitecture: ${Architecture}\n\n',
             '*'], stdout=subprocess.PIPE)
 
@@ -41,7 +41,7 @@ class __DpkgPackageInfo:
                 record = ''
             else:
                 record += l
-        
+
         assert dpkg.wait() == 0
 
     def __get_status(self, package):
@@ -82,7 +82,7 @@ class __DpkgPackageInfo:
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
-        
+
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
@@ -249,11 +249,11 @@ class __DpkgPackageInfo:
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
             out = m.communicate(sumfile)[0]
-        
+
         # if md5sum succeeded, don't bother parsing the output
         if m.returncode == 0:
             return []
-            
+
         mismatches = []
         for l in out.splitlines():
             if l.endswith('FAILED'):
@@ -287,9 +287,9 @@ Description: Test
             self.assertEqual(impl._get_field(data, 'Nonexisting'), None)
             self.assertEqual(impl._get_field(data, 'Version'), '1.2-3')
             self.assertEqual(impl._get_field(data, 'Conflicts'), 'fu')
-            self.assertEqual(impl._get_field(data, 'Description'), 
+            self.assertEqual(impl._get_field(data, 'Description'),
                 'Test more')
-            self.assertEqual(impl._get_field(data, 'Depends'), 
+            self.assertEqual(impl._get_field(data, 'Depends'),
                 'libc6 (>= 2.4), libfoo, libbar (<< 3), libbaz')
 
         def test_check_files_md5(self):

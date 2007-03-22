@@ -128,13 +128,13 @@ def _dom_remove_space(node):
 
 class Report(ProblemReport):
     '''A problem report specific to apport (crash or bug).
-    
+
     This class wraps a standard ProblemReport and adds methods for collecting
     standard debugging data.'''
 
     def __init__(self, type='Crash', date=None):
         '''Initialize a fresh problem report.
-                        
+
            date is the desired date/time string; if None (default), the current
            local time is used.
            '''
@@ -144,7 +144,7 @@ class Report(ProblemReport):
     def _pkg_modified_suffix(self, package):
         '''Return a string suitable for appending to Package:/Dependencies:
         fields.
-        
+
         If package has only unmodified files, return the empty string. If not,
         return ' [modified: ...]' with a list of modified files.'''
 
@@ -221,7 +221,7 @@ class Report(ProblemReport):
         '''
 
         user = pwd.getpwuid(os.getuid()).pw_name
-        groups = [name for name, p, gid, memb in grp.getgrall() 
+        groups = [name for name, p, gid, memb in grp.getgrall()
             if user in memb and gid < 1000]
         groups.sort()
         self['UserGroups'] = ' '.join(groups)
@@ -255,7 +255,7 @@ class Report(ProblemReport):
 
         # catch scripts explicitly called with interpreter
         if len(cmdargs) >= 2:
-            # ensure that cmdargs[1] is an absolute path 
+            # ensure that cmdargs[1] is an absolute path
             if cmdargs[1].startswith('.') and self.has_key('ProcCwd'):
                 cmdargs[1] = os.path.join(self['ProcCwd'], cmdargs[1])
             if os.access(cmdargs[1], os.R_OK):
@@ -275,9 +275,9 @@ class Report(ProblemReport):
         '''Add /proc/pid information.
 
         If pid is not given, it defaults to the process' current pid.
-        
+
         This adds the following fields:
-        - ExecutablePath: /proc/pid/exe contents; if the crashed process is 
+        - ExecutablePath: /proc/pid/exe contents; if the crashed process is
           interpreted, this contains the script path instead
         - InterpreterPath: /proc/pid/exe contents if the crashed process is
           interpreted; otherwise this key does not exist
@@ -402,7 +402,7 @@ class Report(ProblemReport):
     def add_hooks_info(self):
         '''Check for an existing hook script and run it to add additional
         package specific information.
-        
+
         A hook script needs to be in _hook_dir/<Package>.py and has to
         contain a function 'add_info(report)' that takes and modifies a
         Report.'''
@@ -482,7 +482,7 @@ class Report(ProblemReport):
     def check_ignored(self):
         '''Check ~/.apport-ignore.xml (in the real UID's home) if the current
         report should not be presented to the user.
-        
+
         This requires the ExecutablePath attribute. Function can throw a
         ValueError if the file has an invalid format.'''
 
@@ -507,7 +507,7 @@ class Report(ProblemReport):
         '''Add a ignore list entry for this report to ~/.apport-ignore.xml, so
         that future reports for this ExecutablePath are not presented to the
         user any more.
-        
+
         Function can throw a ValueError if the file already exists and has an
         invalid format.'''
 
@@ -529,7 +529,7 @@ class Report(ProblemReport):
             dom.documentElement.appendChild(e)
 
         # write back file
-        dom.writexml(open(os.path.expanduser(_ignore_file), 'w'), 
+        dom.writexml(open(os.path.expanduser(_ignore_file), 'w'),
             addindent='  ', newl='\n')
 
         dom.unlink()
@@ -656,7 +656,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['InterpreterPath'], os.path.realpath('/bin/sh'))
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
-        # check correct handling of interpreted executables: python 
+        # check correct handling of interpreted executables: python
         (fd, testscript) = tempfile.mkstemp()
         os.write(fd, '''#!/usr/bin/python
 import sys
@@ -684,7 +684,7 @@ sys.stdin.readline()
 
     def test_check_interpreted(self):
         '''Test _check_interpreted().'''
-        
+
         # standard ELF binary
         pr = Report()
         pr['ExecutablePath'] = '/usr/bin/gedit'
@@ -808,7 +808,7 @@ sys.stdin.readline()
         '''Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
         (ExecutablePath and CoreDump) and call add_gdb_info().
-        
+
         If file is given, the report is written into it. Return the Report.'''
 
         workdir = None
@@ -975,30 +975,30 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
 
             # negative match cases
             r_bash['Package'] = 'bash 1-21'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_bash.search_bug_patterns(pdir), None,
                 'does not match on wrong bash version')
             r_bash['Foo'] = 'zz'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_bash.search_bug_patterns(pdir), None,
                 'does not match on wrong Foo value')
             r_coreutils['Bar'] = '11'
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
                 'does not match on wrong Bar value')
 
             # various errors to check for robustness (no exceptions, just None
             # return value)
             del r_coreutils['Bar']
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
                 'does not match on nonexisting key')
-            self.assertEqual(r_invalid.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_invalid.search_bug_patterns(pdir), None,
                 'gracefully handles invalid XML')
             r_coreutils['Package'] = 'other 2'
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None, 
+            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
                 'gracefully handles nonexisting package XML file')
-            self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None, 
+            self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None,
                 'gracefully handles nonexisting base path')
-            self.assertEqual(r_bash.search_bug_patterns('http://security.ubuntu.com/'), None, 
+            self.assertEqual(r_bash.search_bug_patterns('http://security.ubuntu.com/'), None,
                 'gracefully handles base path without bug patterns')
-            self.assertEqual(r_bash.search_bug_patterns('http://nonexisting.domain/'), None, 
+            self.assertEqual(r_bash.search_bug_patterns('http://nonexisting.domain/'), None,
                 'gracefully handles nonexisting URL domain')
         finally:
             if pdir:

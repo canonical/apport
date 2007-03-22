@@ -21,7 +21,7 @@ from email.MIMEText import MIMEText
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
         '''Initialize a fresh problem report.
-        
+
         type can be 'Crash', 'Packaging', or 'Kernel'. date is the desired
         date/time string; if None (default), the current local time is used. '''
 
@@ -32,7 +32,7 @@ class ProblemReport(UserDict.IterableUserDict):
     def load(self, file, binary=True):
         '''Initialize problem report from a file-like object, using Debian
         control file format.
-        
+
         if binary is False, binary data is not loaded; the dictionary key is
         created, but its value will be an empty string.'''
 
@@ -187,7 +187,7 @@ class ProblemReport(UserDict.IterableUserDict):
     def add_to_existing(self, reportfile, keep_times=False):
         '''Add the fields of this report to an already existing report
         file.
-        
+
         The file will be temporarily chmod'ed to 000 to prevent frontends
         from picking up a hal-updated report file. If keep_times
         is True, then the file's atime and mtime restored after updating.'''
@@ -294,7 +294,7 @@ class ProblemReport(UserDict.IterableUserDict):
         assert hasattr(k, 'isalnum')
         assert k.isalnum()
         # value must be a string or a file reference (tuple (string|file [, bool]))
-        assert (hasattr(v, 'isalnum') or 
+        assert (hasattr(v, 'isalnum') or
             (hasattr(v, '__getitem__') and (
             len(v) == 1 or (len(v) == 2 and v[1] in (True, False)))
             and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
@@ -397,7 +397,7 @@ Extra: appended
         pr['Extra'] = 'appended'
         pr.write(io)
 
-        self.assertEqual(io.getvalue(), 
+        self.assertEqual(io.getvalue(),
 '''ProblemType: Crash
 Date: now!
 File: base64
@@ -491,7 +491,7 @@ Last: foo
         pr.write(io)
         temp.close()
 
-        self.assertEqual(io.getvalue(), 
+        self.assertEqual(io.getvalue(),
 '''ProblemType: Crash
 Date: now!
 Afile: base64
@@ -511,7 +511,7 @@ File: base64
         io = StringIO()
         pr.write(io)
 
-        self.assertEqual(io.getvalue(), 
+        self.assertEqual(io.getvalue(),
 '''ProblemType: Crash
 Date: now!
 File: foo\0bar
@@ -521,7 +521,7 @@ File: foo\0bar
         io = StringIO()
         pr.write(io)
 
-        self.assertEqual(io.getvalue(), 
+        self.assertEqual(io.getvalue(),
 '''ProblemType: Crash
 Date: now!
 File: base64
@@ -542,7 +542,7 @@ File: base64
         io = StringIO()
         pr.write(io)
 
-        self.assertEqual(io.getvalue(), 
+        self.assertEqual(io.getvalue(),
 '''ProblemType: Crash
 AscFile: Hello World
 Date: now!
@@ -669,7 +669,7 @@ File: base64
         pr['Long'] = '123'
         io = StringIO()
         pr.write(io)
-        self.assertEqual(io.getvalue(), 
+        self.assertEqual(io.getvalue(),
 '''ProblemType: Crash
 Date: now!
 Long: 123
@@ -799,7 +799,7 @@ line♥5!!
 
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)
-        
+
     def test_write_mime_binary(self):
         '''Test write_mime() for binary values and file references.'''
 
@@ -831,7 +831,7 @@ line♥5!!
         self.assertEqual(part.get_content_type(), 'text/plain')
         self.assertEqual(part.get_content_charset(), 'utf-8')
         self.assertEqual(part.get_filename(), None)
-        self.assertEqual(part.get_payload(decode=True), 
+        self.assertEqual(part.get_payload(decode=True),
             'ProblemType: Crash\nContext: Test suite\nDate: now!\n')
 
         # third part should be the File1: file contents as gzip'ed attachment
@@ -856,6 +856,6 @@ line♥5!!
 
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)
-        
+
 if __name__ == '__main__':
     unittest.main()
