@@ -42,10 +42,10 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # apport will look up the package from the executable path.
         # if the module has mutated this, we're sunk, but it does not exist yet :(.
         binary = os.path.realpath(os.path.join(os.getcwdu(), sys.argv[0]))
-	# for interactive python sessions, sys.argv[0] == ''; catch that and
-	# other irregularities
-	if not os.access(binary, os.X_OK) or not os.path.isfile(binary):
-	    return
+        # for interactive python sessions, sys.argv[0] == ''; catch that and
+        # other irregularities
+        if not os.access(binary, os.X_OK) or not os.path.isfile(binary):
+            return
         # append a basic traceback. In future we may want to include
         # additional data such as the local variables, loaded modules etc.
         tb_file = StringIO()
@@ -148,35 +148,35 @@ func(42)
             self.assert_(pr['Traceback'].startswith('Traceback'))
             self.assert_("func\n    raise Exception, 'This should happen." in pr['Traceback'])
 
-	def _assert_no_reports(self):
-	    '''Assert that there are no crash reports.'''
+        def _assert_no_reports(self):
+            '''Assert that there are no crash reports.'''
 
             reports = fileutils.get_new_reports()
             try:
                 self.assertEqual(len(reports), 0, 
-		    'no crash reports present (cwd: %s)' % os.getcwd())
+                    'no crash reports present (cwd: %s)' % os.getcwd())
             finally:
-		# clean up in case we fail
+                # clean up in case we fail
                 for r in reports:
-		    pass
+                    pass
                     #os.unlink(r)
 
         def test_interactive(self):
             '''Test that interactive Python sessions never generate a report.'''
 
-	    orig_cwd = os.getcwd()
-	    try:
-		for d in ('/tmp', '/usr/local', '/usr'):
-		    os.chdir(d)
-		    p = subprocess.Popen(['python'], stdin=subprocess.PIPE,
-			stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		    (out, err) = p.communicate('raise ValueError')
-		    assert p.returncode != 0
-		    assert out == ''
-		    assert 'ValueError' in err
-		    self._assert_no_reports()
-	    finally:
-		os.chdir(orig_cwd)
+            orig_cwd = os.getcwd()
+            try:
+                for d in ('/tmp', '/usr/local', '/usr'):
+                    os.chdir(d)
+                    p = subprocess.Popen(['python'], stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    (out, err) = p.communicate('raise ValueError')
+                    assert p.returncode != 0
+                    assert out == ''
+                    assert 'ValueError' in err
+                    self._assert_no_reports()
+            finally:
+                os.chdir(orig_cwd)
 
         def test_ignoring(self):
             '''Test that the Python crash hook respects the ignore list.'''

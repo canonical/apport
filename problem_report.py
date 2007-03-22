@@ -270,8 +270,8 @@ class ProblemReport(UserDict.IterableUserDict):
                     text += '%s: %s\n' % (k, v)
                 elif lines <= attach_treshold:
                     text += '%s:\n ' % k
-		    if not v.endswith('\n'):
-			v += '\n'
+                    if not v.endswith('\n'):
+                        v += '\n'
                     text += v.strip().replace('\n', '\n ') + '\n'
                 else:
                     # too large, separate attachment

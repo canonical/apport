@@ -58,7 +58,7 @@ def find_file_package(file):
     ships it).'''
 
     if not likely_packaged(file):
-	return None
+        return None
 
     return packaging.get_file_package(file)
 
@@ -285,7 +285,7 @@ class _ApportUtilsTest(unittest.TestCase):
         self.assertEqual(likely_packaged('/usr/local/bin/foo'), False)
         self.assertEqual(likely_packaged('/home/test/bin/foo'), False)
         self.assertEqual(likely_packaged('/tmp/foo'), False)
-	# err on the side of caution for /var
+        # err on the side of caution for /var
         self.assertEqual(likely_packaged('/var/lib/foo'), True)
 
     def test_find_file_package(self):

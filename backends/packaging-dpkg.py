@@ -18,38 +18,38 @@ class __DpkgPackageInfo:
     found on Debian and derivatives such as Ubuntu.'''
 
     def __init__(self):
-	self.status = None
+        self.status = None
 
     def __init_status(self):
-	'''Initialize the self.status dictionary.
-	
-	This is not done in the constructor to avoid adding the overhead of
-	dpkg-query to any program that merely imports the apport package.'''
+        '''Initialize the self.status dictionary.
+        
+        This is not done in the constructor to avoid adding the overhead of
+        dpkg-query to any program that merely imports the apport package.'''
 
         # fill status cache since calling dpkg -s on every package is just way
-	# too slow
+        # too slow
         self.status = {}
-	dpkg = subprocess.Popen(['dpkg-query', '--show', 
-	    '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\nArchitecture: ${Architecture}\n\n',
-	    '*'], stdout=subprocess.PIPE)
+        dpkg = subprocess.Popen(['dpkg-query', '--show', 
+            '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\nArchitecture: ${Architecture}\n\n',
+            '*'], stdout=subprocess.PIPE)
 
-	record = ''
-	for l in dpkg.stdout:
-	    if l == '\n':
-		if self._get_field(record, 'Version'):
-		    self.status[self._get_field(record, 'Package')] = record
-		record = ''
-	    else:
-		record += l
-	
-	assert dpkg.wait() == 0
+        record = ''
+        for l in dpkg.stdout:
+            if l == '\n':
+                if self._get_field(record, 'Version'):
+                    self.status[self._get_field(record, 'Package')] = record
+                record = ''
+            else:
+                record += l
+        
+        assert dpkg.wait() == 0
 
     def __get_status(self, package):
-	'''Return the status of a package.'''
+        '''Return the status of a package.'''
 
-	if not self.status:
-	    self.__init_status()
-	return self.status.get(package)
+        if not self.status:
+            self.__init_status()
+        return self.status.get(package)
 
     def get_version(self, package):
         '''Return the installed version of a package.'''
@@ -59,9 +59,9 @@ class __DpkgPackageInfo:
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
-	try:
-	    status = self.__get_status(package)
-	except KeyError:
+        try:
+            status = self.__get_status(package)
+        except KeyError:
             raise ValueError, 'package does not exist'
 
         # get Depends: and PreDepends:
@@ -78,7 +78,7 @@ class __DpkgPackageInfo:
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-	return self._get_field(self.__get_status(package), 'Source') or package
+        return self._get_field(self.__get_status(package), 'Source') or package
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
@@ -86,9 +86,9 @@ class __DpkgPackageInfo:
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
-	try:
-	    status = self.__get_status(package)
-	except KeyError:
+        try:
+            status = self.__get_status(package)
+        except KeyError:
             raise ValueError, 'package does not exist'
         return self._get_field(status, 'Architecture')
 
@@ -103,56 +103,56 @@ class __DpkgPackageInfo:
     def get_modified_files(self, package):
         '''Return list of all modified files of a package.'''
 
-	# get the maximum mtime of package files that we consider unmodified
+        # get the maximum mtime of package files that we consider unmodified
         listfile = '/var/lib/dpkg/info/%s.list' % package
-	try:
-	    s = os.stat(listfile)
-	    if not stat.S_ISREG(s.st_mode):
-		raise OSError
-	    max_time = max(s.st_mtime, s.st_ctime)
-	except OSError:
-	    return [listfile]
+        try:
+            s = os.stat(listfile)
+            if not stat.S_ISREG(s.st_mode):
+                raise OSError
+            max_time = max(s.st_mtime, s.st_ctime)
+        except OSError:
+            return [listfile]
 
-	# create a list of files with a newer timestamp for md5sum'ing
-	sums = ''
+        # create a list of files with a newer timestamp for md5sum'ing
+        sums = ''
         sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
         # some packages do not ship md5sums, shrug on them
         if not os.path.exists(sumfile):
             return []
 
-	for line in open(sumfile):
-	    try:
-		s = os.stat('/' + line.split()[-1])
-		if max(s.st_mtime, s.st_ctime) <= max_time:
-		    continue
-	    except OSError:
-		pass
+        for line in open(sumfile):
+            try:
+                s = os.stat('/' + line.split()[-1])
+                if max(s.st_mtime, s.st_ctime) <= max_time:
+                    continue
+            except OSError:
+                pass
 
-	    sums += line
+            sums += line
 
-	if sums:
-	    return self._check_files_md5(sums)
-	else:
-	    return []
+        if sums:
+            return self._check_files_md5(sums)
+        else:
+            return []
 
     def __fgrep_files(self, pattern, file_list):
-	'''Call fgrep for a pattern on given file list and return the first
-	matching file, or None if no file matches.'''
+        '''Call fgrep for a pattern on given file list and return the first
+        matching file, or None if no file matches.'''
 
-	match = None
-	slice_size = 100
-	i = 0
+        match = None
+        slice_size = 100
+        i = 0
 
-	while not match and i < len(file_list):
-	    p = subprocess.Popen(['fgrep', '-lxm', '1', '--', pattern] +
-		file_list[i:i+slice_size], stdin=subprocess.PIPE,
-		stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-	    out = p.communicate()[0]
-	    if p.returncode == 0:
-		match = out
-	    i += slice_size
+        while not match and i < len(file_list):
+            p = subprocess.Popen(['fgrep', '-lxm', '1', '--', pattern] +
+                file_list[i:i+slice_size], stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+            out = p.communicate()[0]
+            if p.returncode == 0:
+                match = out
+            i += slice_size
 
-	return match
+        return match
 
     def get_file_package(self, file):
         '''Return the package a file belongs to, or None if the file is not
@@ -177,14 +177,14 @@ class __DpkgPackageInfo:
                 all_lists.append(f)
 
         # first check the likely packages
-	match = self.__fgrep_files(file, likely_lists)
-	if not match:
-	    match = self.__fgrep_files(file, all_lists)
+        match = self.__fgrep_files(file, likely_lists)
+        if not match:
+            match = self.__fgrep_files(file, all_lists)
 
-	if match:
-	    return os.path.splitext(os.path.basename(match))[0]
-	else:
-	    return None
+        if match:
+            return os.path.splitext(os.path.basename(match))[0]
+        else:
+            return None
 
     def get_system_architecture(self):
         '''Return the architecture of the system, in the notation used by the
@@ -239,16 +239,16 @@ class __DpkgPackageInfo:
         This is separate from get_modified_files so that it is automatically
         testable.'''
 
-	if os.path.exists(sumfile):
-	    m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
-		stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
-		cwd='/', env={})
-	    out = m.communicate()[0]
-	else:
-	    m = subprocess.Popen(['/usr/bin/md5sum', '-c'],
-		stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-		stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
-	    out = m.communicate(sumfile)[0]
+        if os.path.exists(sumfile):
+            m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
+                cwd='/', env={})
+            out = m.communicate()[0]
+        else:
+            m = subprocess.Popen(['/usr/bin/md5sum', '-c'],
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
+            out = m.communicate(sumfile)[0]
         
         # if md5sum succeeded, don't bother parsing the output
         if m.returncode == 0:
@@ -315,9 +315,9 @@ Description: Test
                 open(f1, 'w').write('Some stuff')
                 self.assertEqual(impl._check_files_md5(sumfile), [f2], 'file 2 wrong')
 
-		# check using a direct md5 list as argument
-		self.assertEqual(impl._check_files_md5(open(sumfile).read()),
-		    [f2], 'file 2 wrong')
+                # check using a direct md5 list as argument
+                self.assertEqual(impl._check_files_md5(open(sumfile).read()),
+                    [f2], 'file 2 wrong')
 
             finally:
                 shutil.rmtree(td)
