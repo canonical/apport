@@ -24,6 +24,9 @@ apport (0.70) UNRELEASED; urgency=low
   * run-tests: Run tests with python's -tt flag to catch whitespace errors.
   * Replace tabs with spaces in all Python files. (LP: #93561)
   * Remove trailing white space in all Python files.
+  * apport/report.py, add_proc_info(): Do not regard symlinks to executables
+    as interpreted scripts any more (such as Debian alternatives). Add test
+    case. (LP: #94732)
 
   [ Kees Cook ]
   * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
@@ -48,7 +51,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 10:17:24 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 18:59:54 +0100
 
 apport (0.69) feisty; urgency=low
 
