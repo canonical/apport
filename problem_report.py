@@ -103,9 +103,12 @@ class ProblemReport(UserDict.IterableUserDict):
                 return True
         return False
 
-    def write(self, file):
+    def write(self, file, only_new = False):
         '''Write information into the given file-like object, using Debian
         control file format.
+
+        If only_new is True, only keys which have been added since the last
+        load() are written (i. e. those returned by new_keys()).
 
         If a value is a string, it is written directly. Otherwise it must be a
         tuple containing the source file and an optional boolean value (in that
@@ -120,6 +123,8 @@ class ProblemReport(UserDict.IterableUserDict):
         asckeys = []
         binkeys = []
         for k in self.data.keys():
+            if only_new and k in self.old_keys:
+                continue
             v = self.data[k]
             if hasattr(v, 'find'):
                 if self._is_binary(v):
@@ -868,8 +873,8 @@ line♥5!!
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)
 
-    def test_new_keys(self):
-        '''Test new_keys().'''
+    def test_updating(self):
+        '''Test new_keys() and write() with only_new=True.'''
 
         pr = ProblemReport()
         self.assertEqual(pr.new_keys(), set(['ProblemType', 'Date']))
@@ -884,8 +889,11 @@ Baz: blob
 
         pr['Foo'] = 'changed'
         pr['NewKey'] = 'new new'
-
         self.assertEqual(pr.new_keys(), set(['NewKey']))
+
+        out = StringIO()
+        pr.write(out, only_new=True)
+        self.assertEqual(out.getvalue(), 'NewKey: new new\n')
 
 if __name__ == '__main__':
     unittest.main()

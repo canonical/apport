@@ -29,6 +29,8 @@ apport (0.70) UNRELEASED; urgency=low
     case. (LP: #94732)
   * problem_report.py: Add new method get_new() which returns a set of all
     keys which have been added since load() or construction. Add test cases.
+  * problem_report.py: Add optional parameter only_new to write(), which
+    writes only the get_new() keys. Add test case.
 
   [ Kees Cook ]
   * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
@@ -55,7 +57,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 20:36:00 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 21:13:16 +0100
 
 apport (0.69) feisty; urgency=low
 
