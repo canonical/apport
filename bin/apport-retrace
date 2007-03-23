@@ -60,9 +60,9 @@ def parse_options():
     optparser.add_option('-u', '--unpack-only', 
         help='Only unpack the additionally required packages, do not configure them; purge packages again after retracing',
         action='store_true', dest='unpack_only', default=False)
-    optparser.add_option('--no-purge', 
-        help='Do not purge packages when using -u. This should only be used for temporarily unpacked chroot tarballs where it would just be a waste of time.',
-        action='store_true', dest='no_purge', default=False)
+    optparser.add_option('--no-dpkg', 
+        help='Do not use dpkg when using -u and do not purge packages afterwards. This should only be used for temporarily unpacked chroot tarballs where it would just be a waste of time.',
+        action='store_true', dest='no_dpkg', default=False)
     optparser.add_option('-p', '--extra-package', 
         help='Install an extra package (can be specified multiple times)',
         action='append', type='string', dest='extra_packages', default=[])
@@ -200,7 +200,7 @@ def deb_without_preinst(deb):
 
     return ndeb
 
-def fetch_unpack(cache, fetchProgress, verbosity=0):
+def fetch_unpack(cache, fetchProgress, no_dpkg=False, verbosity=0):
     '''Fetch the packages marked to be installed in the given apt.Cache()
     object and unpack them.
     
@@ -219,8 +219,13 @@ def fetch_unpack(cache, fetchProgress, verbosity=0):
         so = sys.stderr
     else:
         so = subprocess.PIPE
-    res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
-        [deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
+    if no_dpkg:
+        for i in fetcher.Items:
+            assert subprocess.call(['dpkg', '-x', i.DestFile, '/'], stdout=so,
+                stderr=subprocess.STDOUT) == 0
+    else:
+        res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
+            [deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
     if res != 0:
         raise IOError, 'dpkg failed to unpack archives'
 
@@ -232,7 +237,8 @@ def fetch_unpack(cache, fetchProgress, verbosity=0):
             except OSError:
                 pass
 
-def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_packages = []):
+def install_missing_packages(report, verbosity = 0, unpack_only=False,
+    no_dpkg=False, extra_packages = []):
     '''Install packages which are required to retrace the given report.
     
     If package installation fails (e. g. because the user does not have root
@@ -289,7 +295,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
 	if c.getChanges():
 	    os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
             if unpack_only:
-                fetch_unpack(c, fetchProgress, verbosity)
+                fetch_unpack(c, fetchProgress, no_dpkg, verbosity)
             else:
                 c.commit(fetchProgress, installProgress)
 	    # after commit(), the Cache object does not empty the pending
@@ -335,7 +341,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False, extra_pac
 	if c.getChanges():
 	    os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
             if unpack_only:
-                fetch_unpack(c, fetchProgress, verbosity)
+                fetch_unpack(c, fetchProgress, no_dpkg, verbosity)
             else:
                 c.commit(fetchProgress, installProgress)
         installed += [p.name for p in c.getChanges()]
@@ -424,7 +430,7 @@ if not required_fields.issubset(set(report.keys())):
     sys.exit(1)
 
 installed = install_missing_packages(report, options.verbose,
-    options.unpack_only, options.extra_packages)
+    options.unpack_only, options.no_dpkg, options.extra_packages)
 
 # interactive gdb session
 if options.gdb:
@@ -472,7 +478,7 @@ if modified:
 
         report.write(out)
 
-if options.unpack_only and installed and not options.no_purge:
+if options.unpack_only and installed and not options.no_dpkg:
     if options.verbose:
         so = sys.stderr
     else:

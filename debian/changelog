@@ -53,6 +53,9 @@ apport (0.70) UNRELEASED; urgency=low
     scripts.
   * bin/apport-chroot: Fixed command function selection to not abort with
     'unknown command' if the DistroRelease: was unknown.
+  * bin/apport-retrace: Replace --no-purge with --no-dpkg. With this option,
+    do not call dpkg --unpack any more, but dpkg -x, to avoid any fchmod() and
+    other calls which cause problems in fakechroots.
 
   [ Kees Cook ]
   * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
@@ -82,7 +85,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 23 Mar 2007 12:26:04 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 23 Mar 2007 13:24:39 +0100
 
 apport (0.69) feisty; urgency=low
 

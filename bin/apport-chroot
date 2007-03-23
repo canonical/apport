@@ -296,7 +296,7 @@ def command_retrace(opts, args):
         release = release_from_bug('https://launchpad.net/bugs/' + args[0])
         chroot_path = opts.chroot_map[release]
         if os.path.isfile(chroot_path):
-            apport_retrace_argv.append('--no-purge')
+            apport_retrace_argv.append('--no-dpkg')
         c = Chroot(chroot_path)
         if opts.cookie_file:
             # symlink the file into the chroot
@@ -319,7 +319,7 @@ def command_retrace(opts, args):
         release = release_from_report(args[0])
         chroot_path = opts.chroot_map[release]
         if os.path.isfile(chroot_path):
-            apport_retrace_argv.append('--no-purge')
+            apport_retrace_argv.append('--no-dpkg')
         c = Chroot(chroot_path)
         chroot_report = os.path.join(c.root, 'tmp', os.path.basename(args[0]))
         os.symlink(os.path.realpath(args[0]), chroot_report)
