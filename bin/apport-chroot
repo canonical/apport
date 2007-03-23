@@ -40,7 +40,7 @@ def parse_options():
         help='Create chroot tarball instead of directory',
         action='store_true', dest='tar', default=False)
     optparser.add_option('--save', 
-        help='When logging in to a chroot tarball, update the tarball afterwards to save modifications.',
+        help='When logging in to a chroot tarball, update the tarball afterwards to save modifications if the shell exits with status 0.',
         action='store_true', dest='tar_save', default=False)
     optparser.add_option('-m', '--chroot-map', 
         help='Path to chroot map. This is a file that defines a Python dictionary, mapping DistroRelease: values to chroot paths',
@@ -175,6 +175,11 @@ def command_create(opts, args):
         print >> f, s
     f.close()
 
+    # disable invoke-rc.d
+    policyrc = os.path.join(root, 'usr', 'sbin', 'policy-rc.d')
+    open(policyrc, 'w').write('#!/bin/sh\nexit 101')
+    os.chmod(policyrc, 0755)
+
     # set up apt-get and required packages
     chroot = Chroot(root)
     assert chroot.run(['apt-get', 'update']) == 0
@@ -266,9 +271,9 @@ def command_login(opts, args):
         print >> sys.stderr, 'invalid chroot'
         sys.exit(1)
 
-    chroot.run([os.environ.get('SHELL', 'bash')])
+    ret = chroot.run([os.environ.get('SHELL', 'bash')])
 
-    if chroot.root_tarball and opts.tar_save:
+    if chroot.root_tarball and opts.tar_save and ret == 0:
         chroot.tar()
 
 def command_retrace(opts, args):
