@@ -60,6 +60,8 @@ apport (0.70) UNRELEASED; urgency=low
   * bin/apport-retrace: Add option -R/--rebuild-package-info, so that
     apport-retrace works on unprocessed crash dumps in /var/crash.
   * Some grammar corrections.
+  * Add package-hooks/source_apport.py: Package hook for apport itself.
+    Include /var/log/apport.log and the status of files in /var/crash.
 
   [ Michael Hofmann ]
   * Add cli/apport-cli, setup.py, debian/apport-cli.install, debian/control:
@@ -74,7 +76,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 23 Mar 2007 10:00:15 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 23 Mar 2007 10:16:41 +0100
 
 apport (0.69) feisty; urgency=low
 
