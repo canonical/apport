@@ -45,6 +45,7 @@ def thread_collect_info(report, reportfile, package):
         os.chmod (reportfile, 0)
         report.write(f, only_new=True)
         f.close()
+        apport.fileutils.mark_report_seen(reportfile)
         os.chmod (reportfile, 0600)
 
 def upload_launchpad_blob(report):
