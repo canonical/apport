@@ -407,13 +407,20 @@ class Report(ProblemReport):
         contain a function 'add_info(report)' that takes and modifies a
         Report.'''
 
+        symb = {}
         assert self.has_key('Package')
-        sys.path.append(_hook_dir)
         try:
-            m = __import__(self['Package'].split()[0])
-            m.add_info(self)
-        except (ImportError, AttributeError, TypeError):
+            execfile('%s/%s.py' % (_hook_dir, self['Package'].split()[0]), symb)
+            symb['add_info'](self)
+        except:
             pass
+
+        if self.has_key('SourcePackage'):
+            try:
+                execfile('%s/source_%s.py' % (_hook_dir, self['SourcePackage'].split()[0]), symb)
+                symb['add_info'](self)
+            except:
+                pass
 
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
@@ -1062,6 +1069,23 @@ def add_info(report):
                 'Package', 'Field1', 'Field2']), 'report has required fields')
             self.assertEqual(r['Field1'], 'Field 1')
             self.assertEqual(r['Field2'], 'Field 2\nBla')
+
+            # source package hook
+            open(os.path.join(_hook_dir, 'source_foo.py'), 'w').write('''
+def add_info(report):
+    report['Field1'] = 'Field 1'
+    report['Field2'] = 'Field 2\\nBla'
+''')
+            r = Report()
+            r['SourcePackage'] = 'foo'
+            r['Package'] = 'libfoo 3'
+            r.add_hooks_info()
+            self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
+                'Package', 'SourcePackage', 'Field1', 'Field2']), 
+                'report has required fields')
+            self.assertEqual(r['Field1'], 'Field 1')
+            self.assertEqual(r['Field2'], 'Field 2\nBla')
+
         finally:
             shutil.rmtree(_hook_dir)
             _hook_dir = orig_hook_dir
