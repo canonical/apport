@@ -101,6 +101,20 @@ class UserInterface:
             if not self.load_report(report_file):
                 return
 
+            # check unsupportable flag
+            if self.report.has_key('UnsupportableReason'):
+                if self.report.get('ProblemType') == 'Kernel':
+                    subject = _('kernel')
+                elif self.report.get('ProblemType') == 'Package':
+                    subject = self.report['Package']
+                else:
+                    subject = os.path.basename(self.report.get(
+                        'ExecutablePath', _('unknown program')))
+                self.ui_info_message(_('Problem in %s') % subject,
+                    _('The current configuration cannot be supported:\n\n%s') %
+                    self.report['UnsupportableReason'])
+                return
+
             # ask the user about what to do with the current crash
             if self.report.get('ProblemType') == 'Package':
                 response = self.ui_present_package_error()
@@ -1193,6 +1207,20 @@ baz()
             self.assertEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_(self.ui.report.check_ignored())
+
+        def test_run_crash_unsupportable(self):
+            '''Test run_crash() on a crash with the UnsupportableReason
+            field.'''
+
+            self.report['UnsupportableReason'] = 'It stinks.'
+            self.report['Package'] = 'bash'
+            self.update_report_file()
+
+            self.ui.run_crash(self.report_file.name)
+
+            self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
+            self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_errors(self):
             '''Test run_crash() on various error conditions.'''
