@@ -334,7 +334,8 @@ def command_retrace(opts, args):
 
 opts, args = parse_options()
 try:
-    globals()['command_' + args[0]](opts, args[1:])
+    command = globals()['command_' + args[0]]
 except KeyError:
     print >> sys.stderr, 'unknown command (use --help for a short online help)'
     sys.exit(1)
+command(opts, args[1:])
