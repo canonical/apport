@@ -276,7 +276,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
 
 	if ver and c[pkg].candidateVersion != ver:
 	    print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
-		pkg, c[pkg].candidateVersion, ver)
+		pkg, ver, c[pkg].candidateVersion)
 
 	c[pkg].markInstall(False)
 
