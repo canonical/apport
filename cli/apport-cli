@@ -266,7 +266,7 @@ class CLIUserInterface(apport.ui.UserInterface):
     def ui_start_upload_progress(self):
         self.progress = CLIProgressDialog (
                 _('Uploading problem information'),
-                _('The collected information is sent to the bug tracking system.\n'
+                _('The collected information is being sent to the bug tracking system.\n'
                   'This might take some minutes.'))
         self.progress.show()
 

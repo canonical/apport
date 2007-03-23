@@ -292,7 +292,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         self.progress = QT4ProgressDialog (
                 _('Uploading Problem Information'), 
                 _('Uploading problem information'), 
-                _('The collected information is sent to the bug tracking '
+                _('The collected information is being sent to the bug tracking '
                     'system. This might take some minutes.'))
         self.progress.show()
 
