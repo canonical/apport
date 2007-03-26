@@ -57,6 +57,7 @@ apport (0.70) UNRELEASED; urgency=low
     do not call dpkg --unpack any more, but dpkg -x, to avoid any fchmod() and
     other calls which cause problems in fakechroots.
   * bin/apport-retrace: Fix ordering of version numbers in warning message.
+  * doc/package-hooks.txt: Add some examples, document source package hook.
 
   [ Kees Cook ]
   * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
@@ -86,7 +87,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 23 Mar 2007 14:00:00 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 09:41:03 +0200
 
 apport (0.69) feisty; urgency=low
 

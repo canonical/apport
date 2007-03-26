@@ -1,11 +1,15 @@
 Apport per-package hooks
 ========================
 
-Binary packages can add additional fields (or even modify existing
-fields, if they want) of Apport crash or bug reports by placing a
-Python code snippet into
+Packages can add additional fields (or even modify existing fields, if
+they want) of Apport crash or bug reports by placing a Python code
+snippet into
 
   /usr/share/apport/package-hooks/<packagename>.py
+
+or
+
+  /usr/share/apport/package-hooks/source_<sourcepackagename>.py
 
 Apport will import this and call a function
 
@@ -17,3 +21,29 @@ see the Python help of this class for details:
 
   >>> import apport
   >>> help(apport.Report)
+
+Examples
+========
+
+Trivial example: To attach a log file /var/log/foo.log for crashes in
+binary package foo, put this into /usr/share/apport/package-hooks/foo.py:
+
+------------ 8< ----------------
+import os.path
+
+def add_info(report):
+    if os.path.exists('/var/log/foo.log'):
+        report['FooLog'] = open('/var/log/foo.log').read()
+------------ 8< ----------------
+
+Apport itself ships a source package hook, see
+/usr/share/apport/package-hooks/source_apport.py.
+
+An interesting use case of hooks is to detect situations which should
+not be reported as bugs, because they happen on known-bad hardware or
+other situations. This can be achieved by adding a field
+
+  report['UnsupportableReason'] = _('explanation')
+
+Such reports are displayed by the apport frontends as unsupportable
+with the given explanation. Please ensure proper i18n for the text.
