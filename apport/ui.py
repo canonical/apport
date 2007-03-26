@@ -193,8 +193,16 @@ class UserInterface:
         generic distro bug is filed.'''
 
         self.report = apport.Report('Bug')
-        if self.options.pid:
-            self.report.add_proc_info(self.options.pid)
+        try:
+            if self.options.pid:
+                self.report.add_proc_info(self.options.pid)
+        except OSError, e:
+            # silently ignore nonexisting PIDs; the user must not close the
+            # application prematurely
+            if e.errno == errno.ENOENT:
+                return
+            else:
+                raise
         self.cur_package = self.options.package
 
         self.collect_info()
@@ -1114,6 +1122,25 @@ baz()
             self.assertEqual(self.ui.msg_title, None)
             self.assertNotEqual(self.ui.opened_url, None)
             self.assert_(self.ui.ic_progress_pulses > 0)
+
+        def test_run_report_bug_wrong_pid(self):
+            '''Test run_report_bug() for a nonexisting pid.'''
+
+            # search an unused pid
+            pid = 1
+            while True:
+                pid += 1
+                try:
+                    os.kill(pid, 0)
+                except OSError, e:
+                    if e.errno == errno.ESRCH:
+                        break
+
+            # silently ignore missing PID; this happens when the user closes
+            # the application prematurely
+            sys.argv = ['ui-test', '-f', '-P', str(pid)]
+            self.ui = _TestSuiteUserInterface()
+            self.ui.run_argv()
 
         def test_run_crash(self):
             '''Test run_crash().'''

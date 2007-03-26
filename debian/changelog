@@ -11,8 +11,11 @@ apport (0.71) UNRELEASED; urgency=low
   * bin/apport-retrace: Do not fall over errors of dpkg -x (which happens e.
     g. on udev, where it cannot unpack /dev, since this is a symlink to the
     real /dev). Merely print out a warning about it.
+  * apport/ui.py, run_report_bug(): Ignore ENOENT from add_proc_info(). This
+    happens if the user closes the application prematurely, so that /proc/pid
+    does not exist any more. Add test case. (LP: #95954)
 
- -- Martin Pitt <mpitt@debian.org>  Mon, 26 Mar 2007 15:22:18 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 16:37:34 +0200
 
 apport (0.70) feisty; urgency=low
 
