@@ -40,6 +40,22 @@ def thread_collect_info(report, reportfile, package):
     report.add_hooks_info()
     report.add_os_info()
 
+    # determine package origin
+    try:
+        this_os = report['DistroRelease'].split()[0]
+        import warnings
+        warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
+        import apt
+        os_origin = False
+        for o in apt.Cache()[report['Package'].split()[0]].candidateOrigin:
+            if o.origin == this_os:
+                os_origin = True
+                break
+        if not os_origin:
+            report['UnreportableReason'] = _('This is not a genuine %s package') % this_os
+    except ImportError, KeyError:
+        pass
+
     if reportfile:
         f = open(reportfile, 'a')
         os.chmod (reportfile, 0)

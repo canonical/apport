@@ -21,8 +21,12 @@ apport (0.71) UNRELEASED; urgency=low
     "UnreportableReason: <text>" and display an information box that the
     current crash cannot be reported because of <text>. Add test case.
     Document the new field.
+  * apport/ui.py: Check package origin, compare it to DistroRelease:, and
+    report crash as unreportable if they do not match. This particularly saves
+    the user from uploading large reports for e. g. opera crashes, and avoids
+    filing Ubuntu bugs from Debian installations. (LP: #75513)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 17:50:10 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 18:01:24 +0200
 
 apport (0.70) feisty; urgency=low
 
