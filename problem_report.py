@@ -213,7 +213,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 os.utime(reportfile, (st.st_atime, st.st_mtime))
             os.chmod(reportfile, st.st_mode)
 
-    def write_mime(self, file, attach_treshold = 5):
+    def write_mime(self, file, attach_treshold = 5, preamble=None):
         '''Write information into the given file-like object, using
         MIME/Multipart RFC 2822 format (i. e. an email with attachments).
 
@@ -226,6 +226,8 @@ class ProblemReport(UserDict.IterableUserDict):
         attach_treshold specifies the maximum number of lines for a value to be
         included into the first inline text part. All bigger values (as well as
         all non-ASCII ones) will become an attachment.
+
+        A MIME preamble can be specified, too.
         '''
 
         keys = self.data.keys()
@@ -295,6 +297,8 @@ class ProblemReport(UserDict.IterableUserDict):
         attachments.insert(0, att)
 
         msg = MIMEMultipart()
+        if preamble:
+            msg.preamble = preamble
         for a in attachments:
             msg.attach(a)
 
@@ -869,6 +873,34 @@ line♥5!!
         f.write(part.get_payload(decode=True))
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
+
+        # no more parts
+        self.assertRaises(StopIteration, msg_iter.next)
+
+    def test_write_mime_preamble(self):
+        '''Test write_mime() with a preamble.'''
+
+        pr = ProblemReport(date = 'now!')
+        pr['Simple'] = 'bar'
+        pr['TwoLine'] = 'first\nsecond\n'
+        io = StringIO()
+        pr.write_mime(io, preamble='hello world')
+        io.seek(0)
+
+        msg = email.message_from_file(io)
+        self.assertEqual(msg.preamble, 'hello world')
+        msg_iter = msg.walk()
+
+        # first part is the multipart container
+        part = msg_iter.next()
+        self.assert_(part.is_multipart())
+
+        # second part should be an inline text/plain attachments with all short
+        # fields
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'text/plain')
+        self.assert_('Simple: bar' in part.get_payload(decode=True))
 
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)

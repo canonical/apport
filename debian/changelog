@@ -1,9 +1,11 @@
 apport (0.71) UNRELEASED; urgency=low
 
-  * cli/apport-cli, qt4/apport-qt: Fix bad grammar 'some minutes'. 
+  * cli/apport-cli, qt4/apport-qt: Fix bad grammar 'some minutes'.
     (LP: #95296)
+  * problem_report.py, write_mime(): Add optional 'preamble' parameter. Add
+    test case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 13:59:14 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 14:11:36 +0200
 
 apport (0.70) feisty; urgency=low
 
