@@ -14,8 +14,11 @@ apport (0.71) UNRELEASED; urgency=low
   * apport/ui.py, run_report_bug(): Ignore ENOENT from add_proc_info(). This
     happens if the user closes the application prematurely, so that /proc/pid
     does not exist any more. Add test case. (LP: #95954)
+  * backends/packaging-dpkg.py, get_modified_files(): Ignore lines in .md5sums
+    files which contain a NUL byte. This Should Not Happen™, but nevertheless
+    did. (LP: #96050)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 16:37:34 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 16:56:03 +0200
 
 apport (0.70) feisty; urgency=low
 
