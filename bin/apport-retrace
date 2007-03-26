@@ -223,8 +223,9 @@ def fetch_unpack(cache, fetchProgress, no_dpkg=False, verbosity=0):
         for i in fetcher.Items:
             if verbosity:
                 print 'Extracting', i.DestFile
-            assert subprocess.call(['dpkg', '-x', i.DestFile, '/'], stdout=so,
-                stderr=subprocess.STDOUT) == 0
+            if subprocess.call(['dpkg', '-x', i.DestFile, '/'], stdout=so,
+                stderr=subprocess.STDOUT) != 0:
+                print >> sys.stderr, 'WARNING: %s failed to extract' % i.DestFile
     else:
         res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
             [deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
