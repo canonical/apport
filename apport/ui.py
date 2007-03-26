@@ -55,9 +55,17 @@ def upload_launchpad_blob(report):
 
     ticket = None
 
+    # set retracing tag
+    preamble = None
+    if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
+        a = report['PackageArchitecture']
+        if a == 'powerpc':
+            a = 'ppc'
+        preamble = 'Tags: need-%s-retrace' % a
+
     # write MIME/Multipart version into temporary file
     mime = tempfile.TemporaryFile()
-    report.write_mime(mime)
+    report.write_mime(mime, preamble=preamble)
     mime.flush()
     mime.seek(0)
 

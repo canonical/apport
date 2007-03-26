@@ -4,13 +4,15 @@ apport (0.71) UNRELEASED; urgency=low
     (LP: #95296)
   * problem_report.py, write_mime(): Add optional 'preamble' parameter. Add
     test case.
+  * apport/ui.py, upload_launchpad_blob(): Set need-$ARCH-retrace tag in MIME
+    preamble. Bump p-problem-report dependency. (LP: #94790)
   * bin/apport-retrace: In verbose mode, display the path of currently
     extracting deb.
   * bin/apport-retrace: Do not fall over errors of dpkg -x (which happens e.
     g. on udev, where it cannot unpack /dev, since this is a symlink to the
     real /dev). Merely print out a warning about it.
 
- -- Martin Pitt <mpitt@debian.org>  Mon, 26 Mar 2007 15:08:12 +0200
+ -- Martin Pitt <mpitt@debian.org>  Mon, 26 Mar 2007 15:22:18 +0200
 
 apport (0.70) feisty; urgency=low
 
