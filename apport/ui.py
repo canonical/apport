@@ -161,6 +161,13 @@ class UserInterface:
             # we want to file a bug now
             self.collect_info()
 
+            # check unreportable flag
+            if self.report.has_key('UnreportableReason'):
+                self.ui_info_message(_('Problem in %s') % self.report['Package'].split()[0],
+                    _('The problem cannot be reported:\n\n%s') %
+                    self.report['UnreportableReason'])
+                return
+
             if self.handle_duplicate():
                 return
 
@@ -1251,6 +1258,23 @@ baz()
             self.report['UnsupportableReason'] = 'It stinks.'
             self.report['Package'] = 'bash'
             self.update_report_file()
+
+            self.ui.run_crash(self.report_file.name)
+
+            self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
+            self.assertEqual(self.ui.msg_severity, 'info')
+
+        def test_run_crash_unreportable(self):
+            '''Test run_crash() on a crash with the UnreportableReason
+            field.'''
+
+            self.report['UnreportableReason'] = 'It stinks.'
+            self.report['ExecutablePath'] = '/bin/bash'
+            self.report['Package'] = 'bash 1'
+            self.update_report_file()
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.present_details_response = 'full'
 
             self.ui.run_crash(self.report_file.name)
 

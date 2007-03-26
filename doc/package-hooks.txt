@@ -45,5 +45,12 @@ other situations. This can be achieved by adding a field
 
   report['UnsupportableReason'] = _('explanation')
 
-Such reports are displayed by the apport frontends as unsupportable
-with the given explanation. Please ensure proper i18n for the text.
+A similar case are bugs which cannot be reported. For example, the
+apport UI checks whether the package comes from a third-party
+repository. This is indicated with
+
+  report['UnreportableReason'] = _('explanation')
+
+Such reports are displayed by the apport frontends as
+unsupportable/unreportable with the given explanation. Please ensure
+proper i18n for the texts.
