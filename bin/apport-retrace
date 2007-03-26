@@ -221,6 +221,8 @@ def fetch_unpack(cache, fetchProgress, no_dpkg=False, verbosity=0):
         so = subprocess.PIPE
     if no_dpkg:
         for i in fetcher.Items:
+            if verbosity:
+                print 'Extracting', i.DestFile
             assert subprocess.call(['dpkg', '-x', i.DestFile, '/'], stdout=so,
                 stderr=subprocess.STDOUT) == 0
     else:

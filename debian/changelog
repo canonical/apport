@@ -4,8 +4,10 @@ apport (0.71) UNRELEASED; urgency=low
     (LP: #95296)
   * problem_report.py, write_mime(): Add optional 'preamble' parameter. Add
     test case.
+  * bin/apport-retrace: In verbose mode, display the path of currently
+    extracting deb.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 14:11:36 +0200
+ -- Martin Pitt <mpitt@debian.org>  Mon, 26 Mar 2007 15:01:58 +0200
 
 apport (0.70) feisty; urgency=low
 
