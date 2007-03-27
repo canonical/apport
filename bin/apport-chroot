@@ -183,7 +183,7 @@ def command_create(opts, args):
     # set up apt-get and required packages
     chroot = Chroot(root)
     assert chroot.run(['apt-get', 'update']) == 0
-    chroot.run(['apt-get', 'install', '-y', '--allow-unauthenticated', 'apport-retrace'] + opts.extra_packages)
+    chroot.run(['apt-get', 'install', '-y', '--allow-unauthenticated', 'gpgv', 'apport-retrace'] + opts.extra_packages)
 
     chroot.fix_symlinks()
 
