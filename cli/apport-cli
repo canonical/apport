@@ -254,7 +254,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.progress = CLIProgressDialog (
                 _('Collecting problem information'),
                 _('The collected information can be send to the developers to improve the\n'
-                  'application. This might take some minutes.'))
+                  'application. This might take a few minutes.'))
         self.progress.show()
 
     def ui_pulse_info_collection_progress(self):
@@ -266,8 +266,8 @@ class CLIUserInterface(apport.ui.UserInterface):
     def ui_start_upload_progress(self):
         self.progress = CLIProgressDialog (
                 _('Uploading problem information'),
-                _('The collected information is sent to the bug tracking system.\n'
-                  'This might take some minutes.'))
+                _('The collected information is being sent to the bug tracking system.\n'
+                  'This might take a few minutes.'))
         self.progress.show()
 
     def ui_set_upload_progress(self, progress):

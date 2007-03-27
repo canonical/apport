@@ -40,7 +40,7 @@ def parse_options():
         help='Create chroot tarball instead of directory',
         action='store_true', dest='tar', default=False)
     optparser.add_option('--save', 
-        help='When logging in to a chroot tarball, update the tarball afterwards to save modifications.',
+        help='When logging in to a chroot tarball, update the tarball afterwards to save modifications if the shell exits with status 0.',
         action='store_true', dest='tar_save', default=False)
     optparser.add_option('-m', '--chroot-map', 
         help='Path to chroot map. This is a file that defines a Python dictionary, mapping DistroRelease: values to chroot paths',
@@ -175,6 +175,11 @@ def command_create(opts, args):
         print >> f, s
     f.close()
 
+    # disable invoke-rc.d
+    policyrc = os.path.join(root, 'usr', 'sbin', 'policy-rc.d')
+    open(policyrc, 'w').write('#!/bin/sh\nexit 101')
+    os.chmod(policyrc, 0755)
+
     # set up apt-get and required packages
     chroot = Chroot(root)
     assert chroot.run(['apt-get', 'update']) == 0
@@ -264,10 +269,11 @@ def command_login(opts, args):
         chroot = Chroot(c)
     else:
         print >> sys.stderr, 'invalid chroot'
+        sys.exit(1)
 
-    chroot.run([os.environ.get('SHELL', 'bash')])
+    ret = chroot.run([os.environ.get('SHELL', 'bash')])
 
-    if chroot.root_tarball and opts.tar_save:
+    if chroot.root_tarball and opts.tar_save and ret == 0:
         chroot.tar()
 
 def command_retrace(opts, args):
@@ -290,7 +296,7 @@ def command_retrace(opts, args):
         release = release_from_bug('https://launchpad.net/bugs/' + args[0])
         chroot_path = opts.chroot_map[release]
         if os.path.isfile(chroot_path):
-            apport_retrace_argv.append('--no-purge')
+            apport_retrace_argv.append('--no-dpkg')
         c = Chroot(chroot_path)
         if opts.cookie_file:
             # symlink the file into the chroot
@@ -313,7 +319,7 @@ def command_retrace(opts, args):
         release = release_from_report(args[0])
         chroot_path = opts.chroot_map[release]
         if os.path.isfile(chroot_path):
-            apport_retrace_argv.append('--no-purge')
+            apport_retrace_argv.append('--no-dpkg')
         c = Chroot(chroot_path)
         chroot_report = os.path.join(c.root, 'tmp', os.path.basename(args[0]))
         os.symlink(os.path.realpath(args[0]), chroot_report)
@@ -328,7 +334,8 @@ def command_retrace(opts, args):
 
 opts, args = parse_options()
 try:
-    globals()['command_' + args[0]](opts, args[1:])
+    command = globals()['command_' + args[0]]
 except KeyError:
     print >> sys.stderr, 'unknown command (use --help for a short online help)'
     sys.exit(1)
+command(opts, args[1:])

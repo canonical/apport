@@ -29,6 +29,9 @@ class ProblemReport(UserDict.IterableUserDict):
             date = time.asctime()
         self.data = {'ProblemType': type, 'Date': date}
 
+        # keeps track of keys which were added since the last ctor or load()
+        self.old_keys = set()
+
     def load(self, file, binary=True):
         '''Initialize problem report from a file-like object, using Debian
         control file format.
@@ -84,6 +87,8 @@ class ProblemReport(UserDict.IterableUserDict):
         if key != None:
             self.data[key] = value
 
+        self.old_keys = set(self.data.keys())
+
     def has_removed_fields(self):
         '''Check whether the report has any keys which were not loaded in load()
         due to being compressed binary.'''
@@ -98,9 +103,12 @@ class ProblemReport(UserDict.IterableUserDict):
                 return True
         return False
 
-    def write(self, file):
+    def write(self, file, only_new = False):
         '''Write information into the given file-like object, using Debian
         control file format.
+
+        If only_new is True, only keys which have been added since the last
+        load() are written (i. e. those returned by new_keys()).
 
         If a value is a string, it is written directly. Otherwise it must be a
         tuple containing the source file and an optional boolean value (in that
@@ -115,6 +123,8 @@ class ProblemReport(UserDict.IterableUserDict):
         asckeys = []
         binkeys = []
         for k in self.data.keys():
+            if only_new and k in self.old_keys:
+                continue
             v = self.data[k]
             if hasattr(v, 'find'):
                 if self._is_binary(v):
@@ -203,7 +213,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 os.utime(reportfile, (st.st_atime, st.st_mtime))
             os.chmod(reportfile, st.st_mode)
 
-    def write_mime(self, file, attach_treshold = 5):
+    def write_mime(self, file, attach_treshold = 5, preamble=None):
         '''Write information into the given file-like object, using
         MIME/Multipart RFC 2822 format (i. e. an email with attachments).
 
@@ -216,6 +226,8 @@ class ProblemReport(UserDict.IterableUserDict):
         attach_treshold specifies the maximum number of lines for a value to be
         included into the first inline text part. All bigger values (as well as
         all non-ASCII ones) will become an attachment.
+
+        A MIME preamble can be specified, too.
         '''
 
         keys = self.data.keys()
@@ -285,6 +297,8 @@ class ProblemReport(UserDict.IterableUserDict):
         attachments.insert(0, att)
 
         msg = MIMEMultipart()
+        if preamble:
+            msg.preamble = preamble
         for a in attachments:
             msg.attach(a)
 
@@ -300,6 +314,12 @@ class ProblemReport(UserDict.IterableUserDict):
             and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
 
         return self.data.__setitem__(k, v)
+
+    def new_keys(self):
+        '''Return the set of keys which have been added to the report since it
+        was constructed or loaded.'''
+
+        return set(self.data.keys()) - self.old_keys
 
 
 #
@@ -856,6 +876,56 @@ line♥5!!
 
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)
+
+    def test_write_mime_preamble(self):
+        '''Test write_mime() with a preamble.'''
+
+        pr = ProblemReport(date = 'now!')
+        pr['Simple'] = 'bar'
+        pr['TwoLine'] = 'first\nsecond\n'
+        io = StringIO()
+        pr.write_mime(io, preamble='hello world')
+        io.seek(0)
+
+        msg = email.message_from_file(io)
+        self.assertEqual(msg.preamble, 'hello world')
+        msg_iter = msg.walk()
+
+        # first part is the multipart container
+        part = msg_iter.next()
+        self.assert_(part.is_multipart())
+
+        # second part should be an inline text/plain attachments with all short
+        # fields
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'text/plain')
+        self.assert_('Simple: bar' in part.get_payload(decode=True))
+
+        # no more parts
+        self.assertRaises(StopIteration, msg_iter.next)
+
+    def test_updating(self):
+        '''Test new_keys() and write() with only_new=True.'''
+
+        pr = ProblemReport()
+        self.assertEqual(pr.new_keys(), set(['ProblemType', 'Date']))
+        pr.load(StringIO(
+'''ProblemType: Crash
+Date: now!
+Foo: bar
+Baz: blob
+'''))
+
+        self.assertEqual(pr.new_keys(), set())
+
+        pr['Foo'] = 'changed'
+        pr['NewKey'] = 'new new'
+        self.assertEqual(pr.new_keys(), set(['NewKey']))
+
+        out = StringIO()
+        pr.write(out, only_new=True)
+        self.assertEqual(out.getvalue(), 'NewKey: new new\n')
 
 if __name__ == '__main__':
     unittest.main()

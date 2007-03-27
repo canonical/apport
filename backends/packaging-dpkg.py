@@ -11,7 +11,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, os, glob, stat
+import subprocess, os, glob, stat, sys
 
 class __DpkgPackageInfo:
     '''Concrete apport.PackageInfo class implementation for dpkg, as
@@ -122,6 +122,10 @@ class __DpkgPackageInfo:
 
         for line in open(sumfile):
             try:
+                # ignore lines with NUL bytes (happens, LP#96050)
+                if '\0' in line:
+                    print >> sys.stderr, 'WARNING:', sumfile, 'contains NUL character, ignoring line'
+                    continue
                 s = os.stat('/' + line.split()[-1])
                 if max(s.st_mtime, s.st_ctime) <= max_time:
                     continue

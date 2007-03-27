@@ -40,11 +40,28 @@ def thread_collect_info(report, reportfile, package):
     report.add_hooks_info()
     report.add_os_info()
 
+    # determine package origin
+    try:
+        this_os = report['DistroRelease'].split()[0]
+        import warnings
+        warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
+        import apt
+        os_origin = False
+        for o in apt.Cache()[report['Package'].split()[0]].candidateOrigin:
+            if o.origin == this_os:
+                os_origin = True
+                break
+        if not os_origin:
+            report['UnreportableReason'] = _('This is not a genuine %s package') % this_os
+    except ImportError, KeyError:
+        pass
+
     if reportfile:
-        f = open(reportfile, 'w')
+        f = open(reportfile, 'a')
         os.chmod (reportfile, 0)
-        report.write(f)
+        report.write(f, only_new=True)
         f.close()
+        apport.fileutils.mark_report_seen(reportfile)
         os.chmod (reportfile, 0600)
 
 def upload_launchpad_blob(report):
@@ -54,9 +71,17 @@ def upload_launchpad_blob(report):
 
     ticket = None
 
+    # set retracing tag
+    preamble = None
+    if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
+        a = report['PackageArchitecture']
+        if a == 'powerpc':
+            a = 'ppc'
+        preamble = 'Tags: need-%s-retrace' % a
+
     # write MIME/Multipart version into temporary file
     mime = tempfile.TemporaryFile()
-    report.write_mime(mime)
+    report.write_mime(mime, preamble=preamble)
     mime.flush()
     mime.seek(0)
 
@@ -94,9 +119,25 @@ class UserInterface:
         '''Present given crash report to the user, ask him what to do about it,
         and offer to file a bug for it.'''
 
+        self.report_file = report_file
+
         try:
             apport.fileutils.mark_report_seen(report_file)
             if not self.load_report(report_file):
+                return
+
+            # check unsupportable flag
+            if self.report.has_key('UnsupportableReason'):
+                if self.report.get('ProblemType') == 'Kernel':
+                    subject = _('kernel')
+                elif self.report.get('ProblemType') == 'Package':
+                    subject = self.report['Package']
+                else:
+                    subject = os.path.basename(self.report.get(
+                        'ExecutablePath', _('unknown program')))
+                self.ui_info_message(_('Problem in %s') % subject,
+                    _('The current configuration cannot be supported:\n\n%s') %
+                    self.report['UnsupportableReason'])
                 return
 
             # ask the user about what to do with the current crash
@@ -136,6 +177,13 @@ class UserInterface:
             # we want to file a bug now
             self.collect_info()
 
+            # check unreportable flag
+            if self.report.has_key('UnreportableReason'):
+                self.ui_info_message(_('Problem in %s') % self.report['Package'].split()[0],
+                    _('The problem cannot be reported:\n\n%s') %
+                    self.report['UnreportableReason'])
+                return
+
             if self.handle_duplicate():
                 return
 
@@ -168,8 +216,16 @@ class UserInterface:
         generic distro bug is filed.'''
 
         self.report = apport.Report('Bug')
-        if self.options.pid:
-            self.report.add_proc_info(self.options.pid)
+        try:
+            if self.options.pid:
+                self.report.add_proc_info(self.options.pid)
+        except OSError, e:
+            # silently ignore nonexisting PIDs; the user must not close the
+            # application prematurely
+            if e.errno == errno.ENOENT:
+                return
+            else:
+                raise
         self.cur_package = self.options.package
 
         self.collect_info()
@@ -1090,6 +1146,25 @@ baz()
             self.assertNotEqual(self.ui.opened_url, None)
             self.assert_(self.ui.ic_progress_pulses > 0)
 
+        def test_run_report_bug_wrong_pid(self):
+            '''Test run_report_bug() for a nonexisting pid.'''
+
+            # search an unused pid
+            pid = 1
+            while True:
+                pid += 1
+                try:
+                    os.kill(pid, 0)
+                except OSError, e:
+                    if e.errno == errno.ESRCH:
+                        break
+
+            # silently ignore missing PID; this happens when the user closes
+            # the application prematurely
+            sys.argv = ['ui-test', '-f', '-P', str(pid)]
+            self.ui = _TestSuiteUserInterface()
+            self.ui.run_argv()
+
         def test_run_crash(self):
             '''Test run_crash().'''
 
@@ -1191,6 +1266,37 @@ baz()
             self.assertEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_(self.ui.report.check_ignored())
+
+        def test_run_crash_unsupportable(self):
+            '''Test run_crash() on a crash with the UnsupportableReason
+            field.'''
+
+            self.report['UnsupportableReason'] = 'It stinks.'
+            self.report['Package'] = 'bash'
+            self.update_report_file()
+
+            self.ui.run_crash(self.report_file.name)
+
+            self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
+            self.assertEqual(self.ui.msg_severity, 'info')
+
+        def test_run_crash_unreportable(self):
+            '''Test run_crash() on a crash with the UnreportableReason
+            field.'''
+
+            self.report['UnreportableReason'] = 'It stinks.'
+            self.report['ExecutablePath'] = '/bin/bash'
+            self.report['Package'] = 'bash 1'
+            self.update_report_file()
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.present_details_response = 'full'
+
+            self.ui.run_crash(self.report_file.name)
+
+            self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
+            self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_errors(self):
             '''Test run_crash() on various error conditions.'''
