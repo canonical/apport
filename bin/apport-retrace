@@ -229,8 +229,8 @@ def fetch_unpack(cache, fetchProgress, no_dpkg=False, verbosity=0):
     else:
         res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
             [deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
-    if res != 0:
-        raise IOError, 'dpkg failed to unpack archives'
+        if res != 0:
+            raise IOError, 'dpkg failed to unpack archives'
 
     # remove other maintainer scripts
     for c in cache.getChanges():

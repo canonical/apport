@@ -1,8 +1,9 @@
 apport (0.72) UNRELEASED; urgency=low
 
   * bin/apport-chroot, command_create(): Install gpgv.
+  * bin/apport-retrace: Fix error handling in fetch_unpack().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 27 Mar 2007 11:07:40 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 27 Mar 2007 11:14:54 +0200
 
 apport (0.71) feisty; urgency=low
 
