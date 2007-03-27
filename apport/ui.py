@@ -75,8 +75,6 @@ def upload_launchpad_blob(report):
     preamble = None
     if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
         a = report['PackageArchitecture']
-        if a == 'powerpc':
-            a = 'ppc'
         preamble = 'Tags: need-%s-retrace' % a
 
     # write MIME/Multipart version into temporary file
