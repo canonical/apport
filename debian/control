@@ -104,6 +104,7 @@ Package: apport-cli
 Section: utils
 Architecture: all
 Depends: python (>= 2.4), python-apport (>= 0.45), python-xdg, apport (>= 0.41), procps, debianutils
+Recommends: elinks
 Description: Command line frontend for the apport crash report system
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump

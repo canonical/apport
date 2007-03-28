@@ -1,5 +1,6 @@
 apport (0.72) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * bin/apport-chroot, command_create(): Install gpgv.
   * bin/apport-retrace: Fix error handling in fetch_unpack().
   * Move apport-retrace.1 manpage from package apport to apport-retrace. Bump
@@ -9,7 +10,16 @@ apport (0.72) UNRELEASED; urgency=low
   * debian/control: Add XS-Vcs-Bzr: header.
   * apport/ui.py: Fix wrong parameter name in help message.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Mar 2007 09:19:43 +0200
+  [ Michael Hofmann ]
+  * debian/local/ubuntu-bug: Try to use apport-cli, if we do not have a
+    $DISPLAY, or neither Gnome nor KDE are running.
+  * debian/control: Recommend elinks, since it is the only text browser so far
+    that works with Launchpad (see #59510)
+  * Add debian/apport-cli.README.Debian: Describe how to integrate
+    apport-checkreports and apport-cli into .bashrc for crash notification on
+    servers.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Mar 2007 11:09:04 +0200
 
 apport (0.71) feisty; urgency=low
 
