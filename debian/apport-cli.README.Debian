@@ -1,0 +1,25 @@
+You can use sth. like
+
+if [ -x /usr/bin/apport-cli ]; then 
+    case " $(groups) " in
+	*\ admin\ *)
+	    if /usr/share/apport/apport-checkreports -s; then 
+		cat <<-EOF
+		You have new problem reports waiting in /var/crash. 
+		To take a look at them, run "sudo apport-cli".
+
+		EOF
+	    fi
+	    ;;
+	*)
+	    if /usr/share/apport/apport-checkreports; then 
+		cat <<-EOF
+		You have new problem reports waiting in /var/crash. 
+		To take a look at them, run "apport-cli".
+
+		EOF
+	    fi
+    esac
+fi
+
+in your .bashrc to get automatic notification of problem reports.
