@@ -1,8 +1,3 @@
-apport-gtk:
- - drag&drop URL
- - add gksudo wrapper for disabling apport, and checkbox to crash
-   dialog
-
 apport-retrace:
  - add stack rewinding to step back through crash handlers
  - add heuristics for more crash types (SEGV on read/write/exec & mem region)
@@ -13,4 +8,4 @@ python-apport:
    per line
 
 add firefox apport hook to suppress crash reports when restart is
-necessary
+necessary, and to not file crashes with flash installed

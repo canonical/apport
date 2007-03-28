@@ -35,11 +35,14 @@ will yield worse up to unusable results, though.
 .I report
 is either the path to a .crash file, or a Launchpad bug number. In the
 latter case, the information is downloaded from the bug report, and
-you cannot change the report 'in\-place'; instead, you have to use one
-of the options
+either one of the options
 .B \-g\fR,
 .B \-s\fR, or
-.B \-o\fR.
+.B \-o\fR
+have to be used to process the report locally, or 
+.B \-\-cookie
+needs to be specified to attach the resulting stack traces back to the
+bug report.
 
 .SH OPTIONS
 
@@ -82,6 +85,33 @@ times.
 .TP
 .B \-h, \-\-help
 Print a short online help that documents all options.
+
+.TP
+.B \-\-cookie=\fIcookiefile
+If a bug number is given without any of the options
+.B \-g\fR,
+.B \-s\fR, or
+.B \-o\fR,
+then the retraced stack traces are attached to the Launchpad bug.
+Since this needs authentication, a Mozilla-style cookie file
+must be specified. This can be the standard
+.B cookies.txt
+from Firefox' profile directory.
+
+.TP
+.B \-\-confirm
+Display retraced stack traces and ask for confirmation before adding
+them as Launchpad bug attachments. This option is ignored when
+retracing report files.
+
+.TP
+.B \-\-remove\-tag=\fItagname
+Remove the given tag from the Launchpad bug. This happens immediately
+after reading the report from the bug, thus even if the retracing
+fails or the user does not confirm the result (with
+\fB\-\-confirm\fR). This is intended for automatic retracing systems,
+to avoid repeatedly retracing the same bug in error cases. This option
+is ignored when retracing report files.
 
 .SH AUTHOR
 .B apport

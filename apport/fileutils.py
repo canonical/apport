@@ -58,7 +58,7 @@ def find_file_package(file):
     ships it).'''
 
     if not likely_packaged(file):
-	return None
+        return None
 
     return packaging.get_file_package(file)
 
@@ -90,7 +90,7 @@ def mark_report_seen(report):
               break
           time.sleep(0.1)
           timeout -= 1
-       
+
        if timeout == 0:
             # happens on noatime mounted partitions; just give up and delete
             delete_report(report)
@@ -150,7 +150,7 @@ def delete_report(report):
 
 def get_recent_crashes(report):
     '''Return the number of recent crashes for the given report file.
-    
+
     Return the number of recent crashes (currently, crashes which happened more
     than 24 hours ago are discarded).'''
 
@@ -169,7 +169,7 @@ def get_recent_crashes(report):
 
 def make_report_path(report, uid=None):
     '''Construct a canonical pathname for the given report.
-    
+
     If uid is not given, it defaults to the uid of the current process.'''
 
     if report.has_key('ExecutablePath'):
@@ -247,7 +247,7 @@ class _ApportUtilsTest(unittest.TestCase):
 
         # package without any .desktop file
         nodesktop = 'bash'
-        assert len([f for f in packaging.get_files(nodesktop) 
+        assert len([f for f in packaging.get_files(nodesktop)
             if f.endswith('.desktop')]) == 0
 
         # find a package with one and a package with multiple .desktop files
@@ -258,8 +258,8 @@ class _ApportUtilsTest(unittest.TestCase):
                 continue
             pkg = packaging.get_file_package(
                 os.path.join('/usr/share/applications/', d))
-            num = len([f for f in packaging.get_files(pkg) 
-                if f.endswith('.desktop')]) 
+            num = len([f for f in packaging.get_files(pkg)
+                if f.endswith('.desktop')])
             if not onedesktop and num == 1:
                 onedesktop = pkg
             elif not multidesktop and num > 1:
@@ -285,7 +285,7 @@ class _ApportUtilsTest(unittest.TestCase):
         self.assertEqual(likely_packaged('/usr/local/bin/foo'), False)
         self.assertEqual(likely_packaged('/home/test/bin/foo'), False)
         self.assertEqual(likely_packaged('/tmp/foo'), False)
-	# err on the side of caution for /var
+        # err on the side of caution for /var
         self.assertEqual(likely_packaged('/var/lib/foo'), True)
 
     def test_find_file_package(self):

@@ -1,12 +1,15 @@
 #!/bin/sh -e
 
-[ -n "$DISPLAY" ] || {
-    echo "\$DISPLAY is not set. This program needs a running X session." >&2
-    exit 1
-}
-
-# first, check for a running Gnome/KDE session
-if pgrep -u `id -u` -x gnome-session >/dev/null && \
+# check for X
+if [ -z "$DISPLAY" ]; then
+    if [ -x /usr/bin/apport-cli ]; then
+        /usr/bin/apport-cli -f "$@"
+    else
+        echo "\$DISPLAY is not set. You need apport-cli to make this program work." >&2
+        exit 1
+    fi
+# do we have a running Gnome/KDE session
+elif pgrep -u `id -u` -x gnome-session >/dev/null && \
     [ -x /usr/share/apport/apport-gtk ]; then
     /usr/share/apport/apport-gtk -f "$@"
 elif pgrep -u `id -u` -x ksmserver >/dev/null && \
@@ -17,7 +20,14 @@ elif [ -x /usr/share/apport/apport-gtk ]; then
     /usr/share/apport/apport-gtk -f "$@"
 elif [ -x /usr/share/apport/apport-qt ]; then
     /usr/share/apport/apport-qt -f "$@"
+elif [ -x /usr/bin/apport-cli ]; then
+    if [ -z "$TERM" ]; then
+        x-terminal-emulator -e /usr/bin/apport-cli -f "$@"
+    else
+        /usr/bin/apport-cli -f "$@"
+    fi
 else
-    echo "Neither apport-gtk nor apport-qt is installed. Install either to make this program work." >&2
+    echo "Neither apport-gtk, apport-qt or apport-cli is installed. Install either to make this program work." >&2
     exit 1
 fi
+

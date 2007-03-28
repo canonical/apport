@@ -228,8 +228,9 @@ class GTKUserInterface(apport.ui.UserInterface):
     # Event handlers
     #
 
-    def on_window_information_collection_delete_event(self, widget, event=None):
+    def on_progress_window_close_event(self, widget, event=None):
         self.w('window_information_collection').hide()
+        self.w('window_report_upload').hide()
         sys.exit(0)
         return True
 
