@@ -1,4 +1,57 @@
-apport (0.70) UNRELEASED; urgency=low
+apport (0.72) UNRELEASED; urgency=low
+
+  [ Martin Pitt ]
+  * bin/apport-chroot, command_create(): Install gpgv.
+  * bin/apport-retrace: Fix error handling in fetch_unpack().
+  * Move apport-retrace.1 manpage from package apport to apport-retrace. Bump
+    Conflicts/Replaces accordingly.
+  * bin/launchpad-crash-digger, apport/ui.py: Remove the special case
+    'powerpc'->'ppc' and use need-powerpc-retrace uniformly.
+  * debian/control: Add XS-Vcs-Bzr: header.
+  * apport/ui.py: Fix wrong parameter name in help message.
+
+  [ Michael Hofmann ]
+  * debian/local/ubuntu-bug: Try to use apport-cli, if we do not have a
+    $DISPLAY, or neither Gnome nor KDE are running.
+  * debian/control: Recommend elinks, since it is the only text browser so far
+    that works with Launchpad (see #59510)
+  * Add debian/apport-cli.README.Debian: Describe how to integrate
+    apport-checkreports and apport-cli into .bashrc for crash notification on
+    servers.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Mar 2007 11:09:04 +0200
+
+apport (0.71) feisty; urgency=low
+
+  * cli/apport-cli, qt4/apport-qt: Fix bad grammar 'some minutes'.
+    (LP: #95296)
+  * problem_report.py, write_mime(): Add optional 'preamble' parameter. Add
+    test case.
+  * apport/ui.py, upload_launchpad_blob(): Set need-$ARCH-retrace tag in MIME
+    preamble. Bump p-problem-report dependency. (LP: #94790)
+  * bin/apport-retrace: In verbose mode, display the path of currently
+    extracting deb.
+  * bin/apport-retrace: Do not fall over errors of dpkg -x (which happens e.
+    g. on udev, where it cannot unpack /dev, since this is a symlink to the
+    real /dev). Merely print out a warning about it.
+  * apport/ui.py, run_report_bug(): Ignore ENOENT from add_proc_info(). This
+    happens if the user closes the application prematurely, so that /proc/pid
+    does not exist any more. Add test case. (LP: #95954)
+  * backends/packaging-dpkg.py, get_modified_files(): Ignore lines in .md5sums
+    files which contain a NUL byte. This Should Not Happen™, but nevertheless
+    did. (LP: #96050)
+  * apport/ui.py, doc/package-hooks.txt: Check for a field
+    "UnreportableReason: <text>" and display an information box that the
+    current crash cannot be reported because of <text>. Add test case.
+    Document the new field.
+  * apport/ui.py: Check package origin, compare it to DistroRelease:, and
+    report crash as unreportable if they do not match. This particularly saves
+    the user from uploading large reports for e. g. opera crashes, and avoids
+    filing Ubuntu bugs from Debian installations. (LP: #75513)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 18:01:24 +0200
+
+apport (0.70) feisty; urgency=low
 
   [ Martin Pitt ]
   * bin/apport-retrace: Add option --remove-tag to remove a Launchpad bug
@@ -24,6 +77,40 @@ apport (0.70) UNRELEASED; urgency=low
   * run-tests: Run tests with python's -tt flag to catch whitespace errors.
   * Replace tabs with spaces in all Python files. (LP: #93561)
   * Remove trailing white space in all Python files.
+  * apport/report.py, add_proc_info(): Do not regard symlinks to executables
+    as interpreted scripts any more (such as Debian alternatives). Add test
+    case. (LP: #94732)
+  * problem_report.py: Add new method get_new() which returns a set of all
+    keys which have been added since load() or construction. Add test cases.
+  * problem_report.py: Add optional parameter only_new to write(), which
+    writes only the get_new() keys. Add test case.
+  * apport/ui.py: Remember currently processed report file and update it with
+    the added information, so that it becomes useful for local evaluation,
+    too. Bump python-problem-report dependency to ensure write()'s only_new
+    availability. (LP: #94678)
+  * apport-chroot: Add forgotten sys.exit(1) after printing the error message
+    about an invalid chroot specification.
+  * apport/ui.py, run_crash(): Check for a field "UnsupportableReason: <text>"
+    and display an information box that the current configuration cannot be
+    supported because of <text>, instead of processing and reporting the
+    crash. Add test case for this workflow. With special regards to our
+    Firefox crash triagers who want to get rid of the hundreds of
+    flash-related crashes. :)
+  * apport/report.py, add_hooks_info(): Use execfile() instead of
+    __import__(), since package names might conflict with module names already
+    imported into apport's namespace. Also search for hook named after the
+    source package name (prefixed with 'source_'). Add test cases.
+  * bin/apport-chroot: When specifying --save for login, only save the tarball
+    if the exit status is 0.
+  * bin/apport-chroot, create: Install /usr/sbin/policy-rc.d to disable init
+    scripts.
+  * bin/apport-chroot: Fixed command function selection to not abort with
+    'unknown command' if the DistroRelease: was unknown.
+  * bin/apport-retrace: Replace --no-purge with --no-dpkg. With this option,
+    do not call dpkg --unpack any more, but dpkg -x, to avoid any fchmod() and
+    other calls which cause problems in fakechroots.
+  * bin/apport-retrace: Fix ordering of version numbers in warning message.
+  * doc/package-hooks.txt: Add some examples, document source package hook.
 
   [ Kees Cook ]
   * apport/report.py, add_proc_info(): If reading /proc/pid/maps fails,
@@ -32,8 +119,13 @@ apport (0.70) UNRELEASED; urgency=low
   * bin/apport-retrace: Fix crash for packages unknown to the apt cache.
   * apport/report.py, add_gdb_info(): Limit maximum backtrace depth to 2000 to
     avoid infinitely looped stacks and gdb crashes. (LP: #94455)
+    This also caps the maximum size of information that we add to reports.
+    (LP: #92653)
   * bin/apport-retrace: Add option -R/--rebuild-package-info, so that
     apport-retrace works on unprocessed crash dumps in /var/crash.
+  * Some grammar corrections.
+  * Add package-hooks/source_apport.py: Package hook for apport itself.
+    Include /var/log/apport.log and the status of files in /var/crash.
 
   [ Michael Hofmann ]
   * Add cli/apport-cli, setup.py, debian/apport-cli.install, debian/control:
@@ -48,7 +140,7 @@ apport (0.70) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Check that $DISPLAY is set before considering
     the KDE/Gnome web browsers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 22 Mar 2007 10:17:24 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Mar 2007 09:41:03 +0200
 
 apport (0.69) feisty; urgency=low
 

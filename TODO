@@ -1,8 +1,3 @@
-apport-gtk:
- - drag&drop URL
- - add gksudo wrapper for disabling apport, and checkbox to crash
-   dialog
-
 apport-retrace:
  - add stack rewinding to step back through crash handlers
  - add heuristics for more crash types (SEGV on read/write/exec & mem region)
@@ -12,8 +7,5 @@ python-apport:
  - support /etc/apport/blacklist.d/ for check_ignored(): one exe
    per line
 
-apport-chroot:
- - better error message if chroot path does not exist
-
 add firefox apport hook to suppress crash reports when restart is
-necessary
+necessary, and to not file crashes with flash installed

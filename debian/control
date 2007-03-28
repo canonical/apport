@@ -4,6 +4,7 @@ Priority: optional
 Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python-support (>= 0.3), python-dev (>= 2.4), intltool
 Maintainer: Martin Pitt <martin.pitt@ubuntu.com>
 Standards-Version: 3.7.2
+XS-Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/apport/ubuntu
 
 Package: apport
 Architecture: all
@@ -36,7 +37,7 @@ Package: python-apport
 XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
-Depends: ${python:Depends}, python-problem-report, python-launchpad-bugs (>= 0.1.2), gdb
+Depends: ${python:Depends}, python-problem-report (>= 0.71), python-launchpad-bugs (>= 0.1.2), gdb
 Conflicts: python-apport-utils
 Replaces: python-apport-utils
 Description: apport crash report handling library
@@ -53,8 +54,8 @@ Section: devel
 Architecture: all
 Depends: python (>= 2.4), python-apport (>= 0.63), python-apt, python-launchpad-bugs (>= 0.1.3), apt, binutils
 Suggests: debootstrap (>= 0.3.3.2ubuntu2), fakeroot, fakechroot
-Conflicts: apport (<< 0.63)
-Replaces: apport (<< 0.63)
+Conflicts: apport (<< 0.72)
+Replaces: apport (<< 0.72)
 Description: tools for reprocessing Apport crash reports
  apport-retrace recombines an Apport crash report (either a file or a
  Launchpad bug) and debug symbol packages (.ddebs) into fully symbolic
@@ -103,6 +104,7 @@ Package: apport-cli
 Section: utils
 Architecture: all
 Depends: python (>= 2.4), python-apport (>= 0.45), python-xdg, apport (>= 0.41), procps, debianutils
+Recommends: elinks
 Description: Command line frontend for the apport crash report system
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump

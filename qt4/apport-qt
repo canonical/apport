@@ -274,7 +274,7 @@ class QT4UserInterface(apport.ui.UserInterface):
                 _('Collecting Problem Information'), 
                 _('Collecting problem information'), 
                 _('The collected information can be send to the developers to '
-                    'improve the application. This might take some minutes.'))
+                    'improve the application. This might take a few minutes.'))
         self.progress.set()
         self.progress.show()
 
@@ -293,7 +293,7 @@ class QT4UserInterface(apport.ui.UserInterface):
                 _('Uploading Problem Information'), 
                 _('Uploading problem information'), 
                 _('The collected information is being sent to the bug tracking '
-                    'system. This might take some minutes.'))
+                    'system. This might take a few minutes.'))
         self.progress.show()
 
     def ui_set_upload_progress(self, progress):
