@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
-touch /tmp/washere
-
 # check for X
 if [ -z "$DISPLAY" ]; then
     if [ -x /usr/bin/apport-cli ]; then
