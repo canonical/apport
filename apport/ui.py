@@ -248,7 +248,7 @@ class UserInterface:
 
         optparser = optparse.OptionParser('%prog [options]')
         optparser.add_option('-f', '--file-bug',
-            help='Start in bug filing mode. Requires --source and an optional --pid, or just a --pid',
+            help='Start in bug filing mode. Requires --package and an optional --pid, or just a --pid',
             action='store_true', dest='filebug', default=False)
         optparser.add_option('-p', '--package',
             help='Specify package name in --file-bug mode. This is optional if a --pid is specified.',
