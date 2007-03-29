@@ -19,8 +19,10 @@ apport (0.72) UNRELEASED; urgency=low
   * Add debian/apport-cli.README.Debian: Describe how to integrate
     apport-checkreports and apport-cli into .bashrc for crash notification on
     servers.
+  * qt4/apport-qt: Fix undefined symbol in ui_present_package_error(). 
+    (LP: #97282)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 29 Mar 2007 09:21:39 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 29 Mar 2007 11:41:39 +0200
 
 apport (0.71) feisty; urgency=low
 
