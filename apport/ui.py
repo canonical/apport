@@ -124,6 +124,17 @@ class UserInterface:
             if not self.load_report(report_file):
                 return
 
+            # check for absent CoreDumps (removed if they exceed size limit)
+            if self.report.get('ProblemType') == 'Crash' and \
+                self.report.has_key('Signal') and not self.report.has_key('CoreDump'):
+                subject = os.path.basename(self.report.get('ExecutablePath',
+                    _('unknown program')))
+                heading = _('Sorry, the program "%s" closed unexpectedly') % subject
+                self.ui_error_message(_('Problem in %s') % subject,
+                    "%s\n\n%s" % (heading, _('Your computer does not have enough \
+free memory to automatically analyze the problem and send a report to the developers.')))
+                return
+
             # check unsupportable flag
             if self.report.has_key('UnsupportableReason'):
                 if self.report.get('ProblemType') == 'Kernel':
@@ -1295,6 +1306,40 @@ baz()
             self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
+
+        def test_run_crash_nocore(self):
+            '''Test run_crash() for a crash dump without CoreDump.'''
+
+            # create a test executable
+            test_executable = '/bin/cat'
+            assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
+            pid = os.fork()
+            if pid == 0:
+                os.setsid()
+                os.execv(test_executable, [test_executable])
+                assert False, 'Could not execute ' + test_executable
+
+            # generate crash report
+            r = apport.Report()
+            r['ExecutablePath'] = test_executable
+            r['Signal'] = '42'
+            r.add_proc_info(pid)
+            r.add_user_info()
+
+            # kill test executable
+            os.kill(pid, signal.SIGKILL)
+            os.waitpid(pid, 0)
+
+            # write crash report
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+
+            # run
+            self.ui = _TestSuiteUserInterface()
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, 'error')
+            self.assert_('memory' in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
 
         def test_run_crash_errors(self):
             '''Test run_crash() on various error conditions.'''

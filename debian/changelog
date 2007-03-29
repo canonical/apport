@@ -8,8 +8,11 @@ apport (0.73) UNRELEASED; urgency=low
     on huge core dumps. Bump dependencies on python-problem-report. Create an
     expensive, but realistic check for this in test-apport.
     (LP: #71560)
+  * apport/ui.py, run_crash(): If a signal crash report does not have a core
+    dump, explain that the computer has too little memory for an automatic
+    analysis/report of the crash. Add test suite check.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 29 Mar 2007 19:08:09 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 29 Mar 2007 23:23:32 +0200
 
 apport (0.72) feisty; urgency=low
 
