@@ -1,3 +1,11 @@
+apport (0.73) UNRELEASED; urgency=low
+
+  * problem_report.py, write(): Allow a third optional argument in tuple
+    values, which specify a maximum file size. Above it, the entire key gets
+    removed. Add testsuite checks for all boundary cases.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 29 Mar 2007 17:22:40 +0200
+
 apport (0.72) feisty; urgency=low
 
   [ Martin Pitt ]

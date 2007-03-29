@@ -111,11 +111,12 @@ class ProblemReport(UserDict.IterableUserDict):
         load() are written (i. e. those returned by new_keys()).
 
         If a value is a string, it is written directly. Otherwise it must be a
-        tuple containing the source file and an optional boolean value (in that
-        order); the first argument can be a file name or a file-like object,
+        tuple of the form (file, encode=True, limit=None).
+        The first argument can be a file name or a file-like object,
         which will be read and its content will become the value of this key.
-        The second argument specifies whether the contents will be
-        zlib compressed and base64-encoded (this defaults to True).
+        'encode' specifies whether the contents will be
+        zlib compressed and base64-encoded (this defaults to True). If limit is
+        set to a positive integer, the entire key will be removed.
         '''
 
         # sort keys into ASCII non-ASCII/binary attachment ones, so that
@@ -149,10 +150,19 @@ class ProblemReport(UserDict.IterableUserDict):
 
             # if it's a tuple, we have a file reference; read the contents
             if not hasattr(v, 'find'):
+                if len(v) >= 3 and v[2] != None:
+                    limit = v[2]
+                else:
+                    limit = None
+
                 if hasattr(v[0], 'read'):
                     v = v[0].read() # file-like object
                 else:
                     v = open(v[0]).read() # file name
+
+                if limit != None and len(v) > limit:
+                    del self.data[k]
+                    continue
 
             if '\n' in v:
                 # multiline value
@@ -165,7 +175,10 @@ class ProblemReport(UserDict.IterableUserDict):
         # now write the binary keys with zlib compression and base64 encoding
         for k in binkeys:
             v = self.data[k]
+            limit = None
+            size = 0
 
+            curr_pos = file.tell()
             file.write (k + ': base64\n ')
             bc = zlib.compressobj()
             # direct value
@@ -176,12 +189,23 @@ class ProblemReport(UserDict.IterableUserDict):
                     file.write('\n ')
             # file reference
             else:
+                if len(v) >= 3 and v[2] != None:
+                    limit = v[2]
+
                 if hasattr(v[0], 'read'):
                     f = v[0] # file-like object
                 else:
                     f = open(v[0]) # file name
                 while True:
                     block = f.read(1048576)
+                    if limit != None:
+                        size += len(block)
+                        if size > limit:
+                            # roll back
+                            file.seek(curr_pos)
+                            file.truncate(curr_pos)
+                            del self.data[k]
+                            break
                     if block:
                         outblock = bc.compress(block)
                         if outblock:
@@ -191,8 +215,9 @@ class ProblemReport(UserDict.IterableUserDict):
                         break
 
             # flush compressor and write the rest
-            file.write(base64.b64encode(bc.flush()))
-            file.write('\n')
+            if not limit or size <= limit:
+                file.write(base64.b64encode(bc.flush()))
+                file.write('\n')
 
     def add_to_existing(self, reportfile, keep_times=False):
         '''Add the fields of this report to an already existing report
@@ -310,7 +335,7 @@ class ProblemReport(UserDict.IterableUserDict):
         # value must be a string or a file reference (tuple (string|file [, bool]))
         assert (hasattr(v, 'isalnum') or
             (hasattr(v, '__getitem__') and (
-            len(v) == 1 or (len(v) == 2 and v[1] in (True, False)))
+            len(v) == 1 or (len(v) >= 2 and v[1] in (True, False)))
             and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
 
         return self.data.__setitem__(k, v)
@@ -645,6 +670,41 @@ Foo: Bar
         io2 = StringIO()
         pr.write(io2)
         self.assert_(io.getvalue() == io2.getvalue())
+
+    def test_size_limit(self):
+        '''Test writing and a big random file with a size limit key.'''
+
+        # create 1 MB random file
+        temp = tempfile.NamedTemporaryFile()
+        data = os.urandom(1048576)
+        temp.write(data)
+        temp.flush()
+
+        # write it into problem report
+        pr = ProblemReport()
+        pr['FileSmallLimit'] = (temp.name, True, 100)
+        pr['FileLimitMinus1'] = (temp.name, True, 1048575)
+        pr['FileExactLimit'] = (temp.name, True, 1048576)
+        pr['FileLimitPlus1'] = (temp.name, True, 1048577)
+        pr['FileLimitNone'] = (temp.name, True, None)
+        pr['Before'] = 'xtestx'
+        pr['ZAfter'] = 'ytesty'
+        io = StringIO()
+        pr.write(io)
+        temp.close()
+
+        # read it again
+        io.seek(0)
+        pr = ProblemReport()
+        pr.load(io)
+
+        self.failIf(pr.has_key('FileSmallLimit'))
+        self.failIf(pr.has_key('FileLimitMinus1'))
+        self.assert_(pr['FileExactLimit'] == data)
+        self.assert_(pr['FileLimitPlus1'] == data)
+        self.assert_(pr['FileLimitNone'] == data)
+        self.assertEqual(pr['Before'], 'xtestx')
+        self.assertEqual(pr['ZAfter'], 'ytesty')
 
     def test_iter(self):
         '''Test ProblemReport iteration.'''
