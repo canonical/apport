@@ -210,7 +210,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         dialog = QT4ReportDialog (self.report.get('Package', 'Ubuntu').split()[0],
                 _('Send problem report to the developers?'),
                 _('After the problem report has been sent, please fill out '
-                    'the form in the automatically opening web browser.'))
+                    'the form in the automatically opened web browser.'))
 
         sendbutton = dialog.addbutton(_('&Send'))
         sendbutton.setDefault(True)

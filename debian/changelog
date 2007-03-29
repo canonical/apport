@@ -9,6 +9,7 @@ apport (0.72) UNRELEASED; urgency=low
     'powerpc'->'ppc' and use need-powerpc-retrace uniformly.
   * debian/control: Add XS-Vcs-Bzr: header.
   * apport/ui.py: Fix wrong parameter name in help message.
+  * Another grammar fix, thanks to Brian Murray!
 
   [ Michael Hofmann ]
   * debian/local/ubuntu-bug: Try to use apport-cli, if we do not have a
@@ -19,7 +20,7 @@ apport (0.72) UNRELEASED; urgency=low
     apport-checkreports and apport-cli into .bashrc for crash notification on
     servers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 28 Mar 2007 11:09:04 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 29 Mar 2007 09:21:39 +0200
 
 apport (0.71) feisty; urgency=low
 
