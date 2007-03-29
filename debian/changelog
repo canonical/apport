@@ -3,8 +3,13 @@ apport (0.73) UNRELEASED; urgency=low
   * problem_report.py, write(): Allow a third optional argument in tuple
     values, which specify a maximum file size. Above it, the entire key gets
     removed. Add testsuite checks for all boundary cases.
+  * bin/apport: Limit core dump size to 75% of usable RAM
+    (MemFree+Cached-Writeback). This should avoid trashing people's boxes hard
+    on huge core dumps. Bump dependencies on python-problem-report. Create an
+    expensive, but realistic check for this in test-apport.
+    (LP: #71560)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 29 Mar 2007 17:22:40 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 29 Mar 2007 19:08:09 +0200
 
 apport (0.72) feisty; urgency=low
 

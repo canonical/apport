@@ -157,6 +157,21 @@ def write_user_coredump(pid, cwd, limit):
 
     os.close(core_file)
 
+def usable_ram():
+    '''Return how many bytes of RAM is currently available that can be
+    allocated without causing major trashing.'''
+
+    # abuse our excellent RFC822 parser to parse /proc/meminfo
+    r = apport.Report()
+    r.load(open('/proc/meminfo'))
+
+    memfree = long(r['MemFree'].split()[0])
+    cached = long(r['Cached'].split()[0])
+    writeback = long(r['Writeback'].split()[0])
+    
+    return (memfree+cached-writeback) * 1024
+
+
 #################################################################
 #
 # main
@@ -226,7 +241,7 @@ try:
     info['Signal'] = signum
     if coredump:
         if coredump == '-':
-            info['CoreDump'] = (sys.stdin,)
+            info['CoreDump'] = (sys.stdin, True, usable_ram()*3/4)
         else:
             info['CoreDump'] = (coredump,)
 

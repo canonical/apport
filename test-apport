@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import tempfile, shutil, os.path, os, subprocess, signal, time, stat, sys
-import resource
+import resource, errno
 import apport.fileutils
 
 test_executable = '/bin/cat'
@@ -48,6 +48,7 @@ def create_test_process(check_running=True):
         assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
     pid = os.fork()
     if pid == 0:
+        sys.stdin.close()
         os.setsid()
         os.execv(test_executable, [test_executable])
         assert False, 'Could not execute ' + test_executable
@@ -117,9 +118,10 @@ mode = sys.argv[1]
 all_passed = False
 
 try:
+    core_pattern = open('/proc/sys/kernel/core_pattern').read().strip()
     # check if kernel crashdump helper is already active
     if mode == 'lib':
-        assert open('/proc/sys/kernel/core_pattern').read(1) != '|', \
+        assert core_pattern[0] != '|', \
                 'kernel crash dump helper is still active; please disable before running this test.'
 
         # set up temporary report directory
@@ -133,9 +135,12 @@ try:
         # setup preload library
         clean_preload_lib()
         build_preload_lib()
+
+        apport_path = 'bin/apport'
     else:
-        assert open('/proc/sys/kernel/core_pattern').read(1) == '|', \
+        assert core_pattern[0] == '|', \
                 'kernel crash dump helper is not active; please enable before running this test.'
+        apport_path = core_pattern[1:]
 
     assert apport.fileutils.get_all_reports() == [], 'no reports already present'
 
@@ -360,6 +365,57 @@ try:
     resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
     check_crash(expect_corefile=True, sig=signal.SIGABRT)
     apport.fileutils.delete_report(report)
+
+    print '* Check that core dumps are capped on available memory size',
+    # determine how much data we have to pump into apport in order to make sure
+    # that it will refuse the core dump
+    r = apport.Report()
+    r.load(open('/proc/meminfo'))
+    totalmb = long(r['MemFree'].split()[0]) + long(r['Cached'].split()[0])
+    totalmb /= 1024
+    r = None
+
+    test_proc = create_test_process()
+    try:
+        app = subprocess.Popen([apport_path], env={'CORE_PID': str(test_proc),
+            'CORE_SIGNAL': '42', 'CORE_REAL_RLIM': '0'}, close_fds=True,
+            stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        # pipe an entire total memory size worth of spaces into it, which must be
+        # bigger than the 'usable' memory size. apport should digest that and the
+        # report should not have a core dump; NB that this should error out
+        # with a SIGPIPE when apport aborts reading from stdin
+        onemb = ' ' * 1048576
+        while totalmb > 0:
+            if totalmb & 31 == 0:
+                sys.stdout.write('.')
+                sys.stdout.flush()
+            try:
+                app.stdin.write(onemb)
+            except IOError, e:
+                if e.errno == errno.EPIPE:
+                    break
+                else:
+                    raise
+            totalmb -= 1
+        print
+        app.stdin.close()
+        assert app.wait() == 0, app.stderr.read()
+        onemb = None
+    finally:
+        os.kill(test_proc, 9)
+        os.waitpid(test_proc, 0)
+
+    reports = apport.fileutils.get_all_reports()
+    assert len(reports) == 1, 'report was created'
+
+    pr = apport.Report()
+    pr.load(open(reports[0]))
+    os.unlink(reports[0])
+
+    assert pr['Signal'] == '42'
+    assert pr['ExecutablePath'] == test_executable
+    assert not pr.has_key('CoreDump'), 'report does not have core dump'
+
 
     print '* Check that binary blacklisting works'
     pr.mark_ignore()
