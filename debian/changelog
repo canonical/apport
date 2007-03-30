@@ -1,3 +1,10 @@
+apport (0.74) UNRELEASED; urgency=low
+
+  * debian/apport-{gtk,qt}.install: Do not install .desktop files for now,
+    until we get a proper guided bug reporting.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 30 Mar 2007 08:59:07 +0200
+
 apport (0.73) feisty; urgency=low
 
   * problem_report.py, write(): Allow a third optional argument in tuple
