@@ -246,7 +246,7 @@ class ProblemReport(UserDict.IterableUserDict):
         tuple containing the source file and an optional boolean value (in that
         order); the first argument can be a file name or a file-like object,
         which will be read and its content will become the value of this key.
-        The file will be gzip compressed.
+        The file will be gzip compressed, unless the key already ends in .gz.
 
         attach_treshold specifies the maximum number of lines for a value to be
         included into the first inline text part. All bigger values (as well as
@@ -277,27 +277,37 @@ class ProblemReport(UserDict.IterableUserDict):
                     f = v[0] # file-like object
                 else:
                     f = open(v[0]) # file name
-                attach_value = StringIO()
-                gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
-                while True:
-                    block = f.read(1048576)
-                    if block:
-                        gf.write(block)
-                    else:
-                        gf.close()
-                        break
+                if k.endswith('.gz'):
+                    attach_value = StringIO(f.read())
+                else:
+                    attach_value = StringIO()
+                    gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
+                    while True:
+                        block = f.read(1048576)
+                        if block:
+                            gf.write(block)
+                        else:
+                            gf.close()
+                            break
+                f.close()
 
             # binary value
             elif self._is_binary(v):
-                attach_value = StringIO()
-                gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
-                gf.write(v)
-                gf.close()
+                if k.endswith('.gz'):
+                    attach_value = StringIO(v)
+                else:
+                    attach_value = StringIO()
+                    gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
+                    gf.write(v)
+                    gf.close()
 
             # if we have an attachment value, create an attachment
             if attach_value:
                 att = MIMEBase('application', 'x-gzip')
-                att.add_header('Content-Disposition', 'attachment', filename=k+'.gz')
+                if k.endswith('.gz'):
+                    att.add_header('Content-Disposition', 'attachment', filename=k)
+                else:
+                    att.add_header('Content-Disposition', 'attachment', filename=k+'.gz')
                 att.set_payload(attach_value.getvalue())
                 attachments.append(att)
             else:
@@ -331,7 +341,7 @@ class ProblemReport(UserDict.IterableUserDict):
 
     def __setitem__(self, k, v):
         assert hasattr(k, 'isalnum')
-        assert k.isalnum()
+        assert k.replace('.', '').isalnum()
         # value must be a string or a file reference (tuple (string|file [, bool]))
         assert (hasattr(v, 'isalnum') or
             (hasattr(v, '__getitem__') and (
@@ -889,10 +899,18 @@ line♥5!!
         temp.write(bin_value)
         temp.flush()
 
+        tempgz = tempfile.NamedTemporaryFile()
+        gz = gzip.GzipFile('File1', 'w', fileobj=tempgz)
+        gz.write(bin_value)
+        gz.close()
+        tempgz.flush()
+
         pr = ProblemReport(date = 'now!')
         pr['Context'] = 'Test suite'
         pr['File1'] = (temp.name,)
+        pr['File1.gz'] = (tempgz.name,)
         pr['Value1'] = bin_value
+        pr['Value1.gz'] = open(tempgz.name).read()
         io = StringIO()
         pr.write_mime(io)
         io.seek(0)
@@ -924,7 +942,29 @@ line♥5!!
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
 
-        # fourth part should be the Value1: value as gzip'ed attachment
+        # fourth part should be the File1.gz: file contents as gzip'ed
+        # attachment; write_mime() should not compress it again
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'application/x-gzip')
+        self.assertEqual(part.get_filename(), 'File1.gz')
+        f = tempfile.TemporaryFile()
+        f.write(part.get_payload(decode=True))
+        f.seek(0)
+        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
+
+        # fifth part should be the Value1: value as gzip'ed attachment
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'application/x-gzip')
+        self.assertEqual(part.get_filename(), 'Value1.gz')
+        f = tempfile.TemporaryFile()
+        f.write(part.get_payload(decode=True))
+        f.seek(0)
+        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
+
+        # sixth part should be the Value1: value as gzip'ed attachment;
+        # write_mime should not compress it again
         part = msg_iter.next()
         self.assert_(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'application/x-gzip')

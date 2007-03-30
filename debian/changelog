@@ -2,8 +2,10 @@ apport (0.74) UNRELEASED; urgency=low
 
   * debian/apport-{gtk,qt}.install: Do not install .desktop files for now,
     until we get a proper guided bug reporting.
+  * problem_report.py, write_mime(): Do not re-compress keys which already end
+    in .gz. Add test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 30 Mar 2007 08:59:07 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 30 Mar 2007 14:02:46 +0200
 
 apport (0.73) feisty; urgency=low
 
