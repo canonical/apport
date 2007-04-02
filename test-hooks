@@ -49,6 +49,26 @@ class _HooksTest(unittest.TestCase):
         self.assertEqual(r['SourcePackage'], 'bash')
         self.assertEqual(r['ErrorMessage'], 'something is wrong')
 
+    def test_package_hook_uninstalled(self):
+        '''Test package_hook on an uninstalled package (might fail to install).'''
+
+        #FIXME: This is a really Debian/Ubuntu specific dodgy test case
+        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'libdb4.3-tcl'],
+            stdin=subprocess.PIPE)
+        ph.communicate('something is wrong')
+        self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, 'package_hook created a report')
+
+        r = apport.Report()
+        r.load(open(reps[0]))
+
+        self.assertEqual(r['ProblemType'], 'Package')
+        self.assertEqual(r['Package'], 'libdb4.3-tcl')
+        self.assertEqual(r['SourcePackage'], 'db4.3')
+        self.assertEqual(r['ErrorMessage'], 'something is wrong')
+
     def test_package_hook_logs(self):
         '''Test package_hook with a log dir and a log file.'''
 

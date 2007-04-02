@@ -78,7 +78,22 @@ class __DpkgPackageInfo:
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-        return self._get_field(self.__get_status(package), 'Source') or package
+        st = self.__get_status(package)
+        if st:
+            return self._get_field(self.__get_status(package), 'Source') or package
+        
+        # FIXME: dodgy fallback, clean up
+        apt_cache = subprocess.Popen(['apt-cache', 'show', package],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out = apt_cache.communicate()[0]
+        if apt_cache.returncode != 0:
+            raise ValueError, 'package %s does not exist, apt-cache show failed' % package
+        for line in out.splitlines():
+            if line.strip() == '':
+                break
+            if line.startswith('Source:'):
+                return line.split()[1]
+        return package
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
