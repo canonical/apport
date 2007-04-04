@@ -53,7 +53,7 @@ def thread_collect_info(report, reportfile, package):
                 break
         if not os_origin:
             report['UnreportableReason'] = _('This is not a genuine %s package') % this_os
-    except ImportError, KeyError:
+    except (ImportError, KeyError, SystemError):
         pass
 
     if reportfile:
