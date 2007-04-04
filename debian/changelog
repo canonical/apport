@@ -1,4 +1,4 @@
-apport (0.75) UNRELEASED; urgency=low
+apport (0.75) feisty; urgency=low
 
   * apport/report.py, add_proc_info(): Chop off /rofs/ prefix from
     ExecutablePath, so that crashes work on the live system, too. Arguably a
