@@ -47,10 +47,12 @@ def thread_collect_info(report, reportfile, package):
         warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
         import apt
         os_origin = False
-        for o in apt.Cache()[report['Package'].split()[0]].candidateOrigin:
-            if o.origin == this_os:
-                os_origin = True
-                break
+        origins = apt.Cache()[report['Package'].split()[0]].candidateOrigin
+        if origins:
+            for o in origins:
+                if o.origin == this_os:
+                    os_origin = True
+                    break
         if not os_origin:
             report['UnreportableReason'] = _('This is not a genuine %s package') % this_os
     except (ImportError, KeyError, SystemError):
