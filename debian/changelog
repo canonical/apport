@@ -11,8 +11,10 @@ apport (0.74) UNRELEASED; urgency=low
     to apt if the queried package is not installed. This needs to be
     generalized and cleaned up later, but now is the time for unintrusive
     small patches. (LP: #97636)
+  * test-apport: Do not fail on non-empty gdb stderr if it only consists of a
+    single warning (as happens on powerpc).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Apr 2007 13:22:41 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Apr 2007 13:18:34 +0200
 
 apport (0.73) feisty; urgency=low
 

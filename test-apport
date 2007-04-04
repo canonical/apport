@@ -90,7 +90,9 @@ def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV,
                 stderr=subprocess.PIPE)
             (out, err) = gdb.communicate()
             assert gdb.returncode == 0
-            assert err == '', err
+            err = err.strip()
+            assert err == '' or \
+                (err.startswith('warning') and len(err.splitlines()) == 1) , err
         finally:
             os.unlink('core')
     else:
