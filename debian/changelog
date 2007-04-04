@@ -15,8 +15,10 @@ apport (0.74) UNRELEASED; urgency=low
     single warning (as happens on powerpc).
   * apport/report.py, test_check_interpreted(): Run gedit test on an actually
     existing file, reproducing the interpreter confusion reported in #102056.
+  * apport/report.py, _check_interpreted(): Add a whitelist of common
+    interpreters and check ExecutablePath against it. (LP: #102056)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Apr 2007 13:36:31 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Apr 2007 13:52:03 +0200
 
 apport (0.73) feisty; urgency=low
 

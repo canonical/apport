@@ -12,6 +12,7 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
+import ctypes, ctypes.util, fnmatch
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -20,12 +21,14 @@ from problem_report import ProblemReport
 import fileutils
 from packaging_impl import impl as packaging
 
-import ctypes, ctypes.util
-
 _hook_dir = '/usr/share/apport/package-hooks/'
 
 # path of the ignore file
 _ignore_file = '~/.apport-ignore.xml'
+
+# programs that we consider interpreters
+interpreters = ['sh', 'bash', 'dash', 'csh', 'tcsh', 'python*',
+    'ruby*', 'php', 'perl*', 'mono*', 'awk']
 
 #
 # helper functions
@@ -233,6 +236,14 @@ class Report(ProblemReport):
         if not self.has_key('ExecutablePath'):
             return
 
+        exebasename = os.path.basename(self['ExecutablePath'])
+
+        # check if we consider ExecutablePath an interpreter; we have to do
+        # this, otherwise 'gedit /tmp/foo.txt' would be detected as interpreted
+        # script as well
+        if not any([fnmatch.fnmatch(exebasename, i) for i in interpreters]):
+            return
+
         # first, determine process name
         name = None
         for l in self['ProcStatus'].splitlines():
@@ -264,7 +275,7 @@ class Report(ProblemReport):
                 return
 
         # catch directly executed scripts
-        if name != os.path.basename(self['ExecutablePath']):
+        if name != exebasename:
             argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
             if argvexes and os.path.basename(os.path.realpath(argvexes[0])) == name:
                 self['InterpreterPath'] = self['ExecutablePath']
