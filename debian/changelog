@@ -3,8 +3,10 @@ apport (0.75) UNRELEASED; urgency=low
   * apport/report.py, add_proc_info(): Chop off /rofs/ prefix from
     ExecutablePath, so that crashes work on the live system, too. Arguably a
     kernel bug, but probably too hard to fix at this time. (LP: #102909)
+  * backends/packaging-dpkg.py, get_modified_files(): Ignore empty lines in
+    broken .md5sums file rather than crashing on them. (LP: #102906)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Apr 2007 21:41:14 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Apr 2007 21:51:28 +0200
 
 apport (0.74) feisty; urgency=low
 

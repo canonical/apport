@@ -141,7 +141,11 @@ class __DpkgPackageInfo:
                 if '\0' in line:
                     print >> sys.stderr, 'WARNING:', sumfile, 'contains NUL character, ignoring line'
                     continue
-                s = os.stat('/' + line.split()[-1])
+                words  = line.split()
+                if len(line) < 1:
+                    print >> sys.stderr, 'WARNING:', sumfile, 'contains empty line, ignoring line'
+                    continue
+                s = os.stat('/' + words[-1])
                 if max(s.st_mtime, s.st_ctime) <= max_time:
                     continue
             except OSError:
