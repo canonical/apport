@@ -707,13 +707,15 @@ sys.stdin.readline()
         '''Test _check_interpreted().'''
 
         # standard ELF binary
+        f = tempfile.NamedTemporaryFile()
         pr = Report()
         pr['ExecutablePath'] = '/usr/bin/gedit'
         pr['ProcStatus'] = 'Name:\tgedit'
-        pr['ProcCmdline'] = 'gedit\0/tmp/foo.txt'
+        pr['ProcCmdline'] = 'gedit\0/' + f.name
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/gedit')
         self.failIf(pr.has_key('InterpreterPath'))
+        f.close()
 
         # bogus argv[0]
         pr = Report()

@@ -13,8 +13,10 @@ apport (0.74) UNRELEASED; urgency=low
     small patches. (LP: #97636)
   * test-apport: Do not fail on non-empty gdb stderr if it only consists of a
     single warning (as happens on powerpc).
+  * apport/report.py, test_check_interpreted(): Run gedit test on an actually
+    existing file, reproducing the interpreter confusion reported in #102056.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Apr 2007 13:18:34 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  4 Apr 2007 13:36:31 +0200
 
 apport (0.73) feisty; urgency=low
 
