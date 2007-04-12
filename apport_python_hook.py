@@ -16,8 +16,6 @@ the full text of the license.
 import os
 import sys
 
-import report, fileutils
-
 def apport_excepthook(exc_type, exc_obj, exc_tb):
     '''Catch an uncaught exception and make a traceback.'''
 
@@ -29,6 +27,8 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
     # the original excepthook is invoked, and until we get bug reports
     # ignore the other issues.
 
+    import apport.report, apport.fileutils
+
     # import locally here so that there is no routine overhead on python
     # startup time - only when a traceback occurs will this trigger.
     try:
@@ -38,7 +38,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         from cStringIO import StringIO
         import re, tempfile, traceback
 
-        pr = report.Report()
+        pr = apport.report.Report()
         # apport will look up the package from the executable path.
         # if the module has mutated this, we're sunk, but it does not exist yet :(.
         binary = os.path.realpath(os.path.join(os.getcwdu(), sys.argv[0]))
@@ -56,7 +56,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         pr['ExecutablePath'] = binary
         pr['PythonArgs'] = '%r' % sys.argv
         # filter out binaries in user accessible paths
-        if not fileutils.likely_packaged(binary):
+        if not apport.fileutils.likely_packaged(binary):
             return
         if pr.check_ignored():
             return
@@ -87,13 +87,13 @@ def install():
 
 if __name__ == '__main__':
     import unittest, tempfile, subprocess, os.path, stat
-    import fileutils, problem_report
+    import apport.fileutils, problem_report
 
     class _PythonHookTest(unittest.TestCase):
         def test_env(self):
             '''Check the test environment.'''
 
-            self.assertEqual(fileutils.get_all_reports(), [],
+            self.assertEqual(apport.fileutils.get_all_reports(), [],
                 'No crash reports already present')
 
         def test_general(self):
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
             # put the script into /var/crash, since that isn't ignored in the
             # hook
-            (fd, script) = tempfile.mkstemp(dir=fileutils.report_dir)
+            (fd, script) = tempfile.mkstemp(dir=apport.fileutils.report_dir)
             try:
                 os.write(fd, '''#!/usr/bin/python
 def func(x):
@@ -123,7 +123,7 @@ func(42)
                 os.unlink(script)
 
             # did we get a report?
-            reports = fileutils.get_new_reports()
+            reports = apport.fileutils.get_new_reports()
             pr = None
             try:
                 self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
@@ -151,7 +151,7 @@ func(42)
         def _assert_no_reports(self):
             '''Assert that there are no crash reports.'''
 
-            reports = fileutils.get_new_reports()
+            reports = apport.fileutils.get_new_reports()
             try:
                 self.assertEqual(len(reports), 0,
                     'no crash reports present (cwd: %s)' % os.getcwd())
@@ -183,8 +183,8 @@ func(42)
 
             # put the script into /var/crash, since that isn't ignored in the
             # hook
-            (fd, script) = tempfile.mkstemp(dir=fileutils.report_dir)
-            ifpath = os.path.expanduser(report._ignore_file)
+            (fd, script) = tempfile.mkstemp(dir=apport.fileutils.report_dir)
+            ifpath = os.path.expanduser(apport.report._ignore_file)
             orig_ignore_file = None
             try:
                 os.write(fd, '''#!/usr/bin/python
@@ -202,7 +202,7 @@ func(42)
                     os.rename(ifpath, orig_ignore_file)
 
                 # ignore
-                r = report.Report()
+                r = apport.report.Report()
                 r['ExecutablePath'] = script
                 r.mark_ignore()
                 r = None
@@ -223,7 +223,7 @@ func(42)
                     os.rename(orig_ignore_file, ifpath)
 
             # did we get a report?
-            reports = fileutils.get_new_reports()
+            reports = apport.fileutils.get_new_reports()
             pr = None
             try:
                 self.assertEqual(len(reports), 0)

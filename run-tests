@@ -15,7 +15,7 @@ set -x
 python -tt $basedir/problem_report.py -v
 python -tt $basedir/apport/fileutils.py -v
 python -tt $basedir/apport/report.py -v
-python -tt $basedir/apport/python_hook.py -v
+python -tt $basedir/apport_python_hook.py -v
 python -tt $basedir/apport/ui.py -v
 python -tt $basedir/apport/REThread.py -v
 python -tt $basedir/apport/chroot.py -v

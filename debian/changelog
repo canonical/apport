@@ -1,3 +1,14 @@
+apport (0.76) UNRELEASED; urgency=low
+
+  * Move python_hook.py out of the apport module to apport_python_hook.py, so
+    that it does not inflict the expensive import of all apport related
+    modules to every python program. Adapt module prefixes accordingly.
+    (LP: #105764)
+  * setup.py, debian/python-apport.install: Install apport_python_hook.py into
+    the python-apport binary package.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Apr 2007 11:30:53 +0200
+
 apport (0.75) feisty; urgency=low
 
   * apport/report.py, add_proc_info(): Chop off /rofs/ prefix from
