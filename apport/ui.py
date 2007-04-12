@@ -807,6 +807,13 @@ if  __name__ == '__main__':
 
     class _UserInterfaceTest(unittest.TestCase):
         def setUp(self):
+            # we test a few strings, don't get confused by translations
+            for v in ['LANG', 'LANGUAGE', 'LC_MESSAGES', 'LC_ALL']:
+                try:
+                    del os.environ[v]
+                except KeyError:
+                    pass
+
             self.orig_report_dir = apport.fileutils.report_dir
             apport.fileutils.report_dir = tempfile.mkdtemp()
             self.orig_ignore_file = apport.report._ignore_file

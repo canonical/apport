@@ -6,8 +6,10 @@ apport (0.76) UNRELEASED; urgency=low
     (LP: #105764)
   * setup.py, debian/python-apport.install: Install apport_python_hook.py into
     the python-apport binary package.
+  * apport/ui.py test suite: Unset locale related environment variables so
+    that the tests which check strings are not invalidated by translations.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Apr 2007 11:30:53 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Apr 2007 11:47:50 +0200
 
 apport (0.75) feisty; urgency=low
 
