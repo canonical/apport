@@ -241,7 +241,7 @@ class Report(ProblemReport):
         # check if we consider ExecutablePath an interpreter; we have to do
         # this, otherwise 'gedit /tmp/foo.txt' would be detected as interpreted
         # script as well
-        if not any([fnmatch.fnmatch(exebasename, i) for i in interpreters]):
+        if not filter(lambda i: fnmatch.fnmatch(exebasename, i), interpreters):
             return
 
         # first, determine process name

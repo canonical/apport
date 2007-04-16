@@ -1,3 +1,10 @@
+apport (0.77) UNRELEASED; urgency=low
+
+  * apport/report.py: Replace any() call with a list comprehension to work
+    with Python < 2.5. (LP: #104864)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 16 Apr 2007 19:37:40 +0200
+
 apport (0.76) feisty; urgency=low
 
   * Move python_hook.py out of the apport module to apport_python_hook.py, so
