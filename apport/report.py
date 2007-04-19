@@ -12,7 +12,7 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
-import ctypes, ctypes.util, fnmatch
+import fnmatch
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -66,13 +66,14 @@ def _read_maps(pid):
         maps = file('/proc/%d/maps' % pid).read().strip()
     except (OSError,IOError), e:
         try:
+            import ctypes, ctypes.util
             libc = ctypes.CDLL(ctypes.util.find_library("c"))
             # PT_ATTACH
             libc.ptrace(16, pid, 0, 0)
             maps = _read_file('/proc/%d/maps' % pid)
             # PT_DETACH
             libc.ptrace(17, pid, 0, 0)
-        except (OSError, IOError), e:
+        except (OSError, IOError, ImportError), e:
             return 'Error: ' + str(e)
     return maps
 

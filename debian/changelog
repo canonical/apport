@@ -2,8 +2,12 @@ apport (0.77) UNRELEASED; urgency=low
 
   * apport/report.py: Replace any() call with a list comprehension to work
     with Python < 2.5. (LP: #104864)
+  * apport/report.py: Move the ctypes import to the one place where we
+    actually need it, and do not entirely fail if they do not exist (such as
+    in Python 2.4). It is only required for non-default Feisty kernels anyway.
+    (LP: #107662)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 16 Apr 2007 19:37:40 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Apr 2007 13:10:29 +0200
 
 apport (0.76) feisty; urgency=low
 
