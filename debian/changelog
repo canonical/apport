@@ -6,8 +6,10 @@ apport (0.77) UNRELEASED; urgency=low
     actually need it, and do not entirely fail if they do not exist (such as
     in Python 2.4). It is only required for non-default Feisty kernels anyway.
     (LP: #107662)
+  * apport/chroot.py: Fix test suite to work with Python 2.4's tarfile module
+    output format.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Apr 2007 13:10:29 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Apr 2007 13:18:41 +0200
 
 apport (0.76) feisty; urgency=low
 

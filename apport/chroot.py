@@ -228,8 +228,12 @@ int main() { return 42; }
                 os.close(fd)
                 c.tar(tarpath)
                 t = tarfile.open(tarpath)
-                self.assert_(set(['./bin/42', './bin/hello',
-                    './newfile']).issubset(set(t.getnames())))
+                self.assert_(
+                    # python 2.5's tarfile
+                    set(['./bin/42', './bin/hello', './newfile']).issubset(set(t.getnames())) or
+                    # python 2.4's tarfile
+                    set(['bin/42', 'bin/hello', 'newfile']).issubset(set(t.getnames()))
+                )
 
                 # test cleanup
                 del c
@@ -271,8 +275,12 @@ int main() { return 42; }
                 open(os.path.join(c.root, 'newfile'), 'w')
                 c.tar()
                 t = tarfile.open(tar)
-                self.assert_(set(['./bin/42', './bin/hello',
-                    './newfile']).issubset(set(t.getnames())))
+                self.assert_(
+                    # python 2.5's tarfile
+                    set(['./bin/42', './bin/hello', './newfile']).issubset(set(t.getnames())) or
+                    # python 2.4's tarfile
+                    set(['bin/42', 'bin/hello', 'newfile']).issubset(set(t.getnames()))
+                )
 
                 # test cleanup
                 d = c.root
