@@ -1,5 +1,5 @@
-'''An apport.PackageInfo class implementation for dpkg, as found on Debian and
-derivatives such as Ubuntu.
+'''An apport.PackageInfo class implementation for python-apt and dpkg, as found
+on Debian and derivatives such as Ubuntu.
 
 Copyright (C) 2007 Canonical Ltd.
 Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -13,103 +13,52 @@ the full text of the license.
 
 import subprocess, os, glob, stat, sys
 
-class __DpkgPackageInfo:
-    '''Concrete apport.PackageInfo class implementation for dpkg, as
-    found on Debian and derivatives such as Ubuntu.'''
+import warnings
+warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
+import apt
+
+class __AptDpkgPackageInfo:
+    '''Concrete apport.PackageInfo class implementation for python-apt and
+    dpkg, as found on Debian and derivatives such as Ubuntu.'''
 
     def __init__(self):
-        self.status = None
+        self._apt_cache = None
 
-    def __init_status(self):
-        '''Initialize the self.status dictionary.
+    def _cache(self, package):
+        '''Return apt.Cache()[package] (initialized lazily).
+        
+        Throw a ValueError if the package does not exist.'''
 
-        This is not done in the constructor to avoid adding the overhead of
-        dpkg-query to any program that merely imports the apport package.'''
-
-        # fill status cache since calling dpkg -s on every package is just way
-        # too slow
-        self.status = {}
-        dpkg = subprocess.Popen(['dpkg-query', '--show',
-            '-f=Package: ${Package}\nVersion: ${Version}\nPre-Depends: ${Pre-Depends}\nDepends: ${Depends}\nSource: ${Source}\nArchitecture: ${Architecture}\n\n',
-            '*'], stdout=subprocess.PIPE)
-
-        record = ''
-        for l in dpkg.stdout:
-            if l == '\n':
-                if self._get_field(record, 'Version'):
-                    self.status[self._get_field(record, 'Package')] = record
-                record = ''
-            else:
-                record += l
-
-        assert dpkg.wait() == 0
-
-    def __get_status(self, package):
-        '''Return the status of a package.'''
-
-        if not self.status:
-            self.__init_status()
-        return self.status.get(package)
+        if not self._apt_cache:
+            self._apt_cache = apt.Cache()
+        try:
+            return self._apt_cache[package]
+        except KeyError:
+            raise ValueError, 'package does not exist'
 
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._get_field(self.__get_status(package), 'Version')
+        return self._cache(package)._pkg.CurrentVer.VerStr
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
-        try:
-            status = self.__get_status(package)
-        except KeyError:
-            raise ValueError, 'package does not exist'
-
-        # get Depends: and PreDepends:
-        result = []
-        r = self._get_field(status, 'Depends')
-        if r:
-            result = [p.split()[0] for p in r.split(',')]
-        r = self._get_field(status, 'Pre-Depends')
-        if r:
-            result += [p.split()[0] for p in r.split(',')]
-
-        return result
+        cur_ver = self._cache(package)._pkg.CurrentVer
+        return [d[0].TargetPkg.Name for d in cur_ver.DependsList.get('Depends', []) +
+            cur_ver.DependsList.get('PreDepends', [])]
 
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-        st = self.__get_status(package)
-        if st:
-            return self._get_field(self.__get_status(package), 'Source') or package
-        
-        # FIXME: dodgy fallback, clean up
-        apt_cache = subprocess.Popen(['apt-cache', 'show', package],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out = apt_cache.communicate()[0]
-        if apt_cache.returncode != 0:
-            raise ValueError, 'package %s does not exist, apt-cache show failed' % package
-        for line in out.splitlines():
-            if line.strip() == '':
-                break
-            if line.startswith('Source:'):
-                return line.split()[1]
-        return package
+        return self._cache(package).sourcePackageName
 
     def get_origins(self, package):
         '''Return a list of origins (distribution/vendor/repository names) for
           a package (there might be more than one configured repository
           providing that package).'''
 
-        # FIXME: dodgy hack, clean up (use python-apt consistently)
-        try:
-            import warnings
-            warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
-            import apt
-            return [o.origin for o in apt.Cache()[package].candidateOrigin]
-        except KeyError:
-            raise ValueError, 'package does not exist'
-        except (ImportError, SystemError):
-            return []
+        return [o.origin for o in self._cache(package).candidateOrigin]
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
@@ -117,11 +66,7 @@ class __DpkgPackageInfo:
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
-        try:
-            status = self.__get_status(package)
-        except KeyError:
-            raise ValueError, 'package does not exist'
-        return self._get_field(status, 'Architecture')
+        return self._cache(package).architecture
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -252,26 +197,6 @@ class __DpkgPackageInfo:
         else:
             raise ValueError, 'package does not exist'
 
-    def _get_field(self, data, field):
-        '''Extract a particular field from given debcontrol data and return
-        it.'''
-
-        if data is None:
-            raise ValueError, 'package does not exist'
-
-        value = None
-        for l in data.splitlines():
-            if l.startswith(field + ':'):
-                value = l[len(field)+2:]
-                continue
-            if value:
-                if l.startswith(' '):
-                    value += l
-                else:
-                    break
-
-        return value
-
     def _check_files_md5(self, sumfile):
         '''Internal function for calling md5sum.
 
@@ -300,7 +225,7 @@ class __DpkgPackageInfo:
 
         return mismatches
 
-impl = __DpkgPackageInfo()
+impl = __AptDpkgPackageInfo()
 
 #
 # Unit test
@@ -309,27 +234,7 @@ impl = __DpkgPackageInfo()
 if __name__ == '__main__':
     import unittest, tempfile, shutil
 
-    class _DpkgPackageInfoTest(unittest.TestCase):
-
-        def test_get_field(self):
-            '''Test _get_field().'''
-
-            data = '''Package: foo
-Version: 1.2-3
-Depends: libc6 (>= 2.4), libfoo,
- libbar (<< 3),
- libbaz
-Conflicts: fu
-Description: Test
- more
-'''
-            self.assertEqual(impl._get_field(data, 'Nonexisting'), None)
-            self.assertEqual(impl._get_field(data, 'Version'), '1.2-3')
-            self.assertEqual(impl._get_field(data, 'Conflicts'), 'fu')
-            self.assertEqual(impl._get_field(data, 'Description'),
-                'Test more')
-            self.assertEqual(impl._get_field(data, 'Depends'),
-                'libc6 (>= 2.4), libfoo, libbar (<< 3), libbaz')
+    class _AptDpkgPackageInfoTest(unittest.TestCase):
 
         def test_check_files_md5(self):
             '''Test _check_files_md5().'''

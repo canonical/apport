@@ -14,7 +14,7 @@ test -e $D/bin/apport-chroot || {
     exit 1
 }
 cp -r $D apport
-cp apport/backends/packaging-dpkg.py apport/apport/packaging_impl.py
+cp apport/backends/packaging-apt-dpkg.py apport/apport/packaging_impl.py
 ln -s ../apport/bin/apport-chroot bin/apport-chroot
 ln -s ../apport/bin/launchpad-crash-digger bin/launchpad-crash-digger
 
