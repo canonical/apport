@@ -103,7 +103,7 @@ Description: Qt4 frontend for the apport crash report system
 Package: apport-cli
 Section: utils
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.45), python-xdg, apport (>= 0.41), procps, debianutils
+Depends: python (>= 2.4), python-apport (>= 0.45), python-xdg, apport (>= 0.41), procps
 Recommends: elinks
 Description: Command line frontend for the apport crash report system
  apport automatically collects data from crashed processes and
