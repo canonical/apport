@@ -1,3 +1,13 @@
+apport (0.78) UNRELEASED; urgency=low
+
+  * apport/packaging.py, backends/packaging-dpkg.py: Add new interface
+    get_origins(package) which determines the origins (distribution/vendor/
+    repository names) for a given package. Move the dodgy hack from
+    apport/ui.py to the backend, where it belongs to. Also add a test case.
+  * debian/control: Add python-apt dependency to python-apport.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 27 Apr 2007 18:23:25 +0200
+
 apport (0.77) gutsy; urgency=low
 
   * apport/report.py: Replace any() call with a list comprehension to work

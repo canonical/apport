@@ -27,6 +27,13 @@ class PackageInfo:
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
+    def get_origins(self, package):
+        '''Return a list of origins (distribution/vendor/repository names) for
+          a package (there might be more than one configured repository
+          providing that package).'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
     def get_architecture(self, package):
         '''Return the architecture of a package.
 

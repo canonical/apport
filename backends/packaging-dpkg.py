@@ -95,6 +95,22 @@ class __DpkgPackageInfo:
                 return line.split()[1]
         return package
 
+    def get_origins(self, package):
+        '''Return a list of origins (distribution/vendor/repository names) for
+          a package (there might be more than one configured repository
+          providing that package).'''
+
+        # FIXME: dodgy hack, clean up (use python-apt consistently)
+        try:
+            import warnings
+            warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
+            import apt
+            return [o.origin for o in apt.Cache()[package].candidateOrigin]
+        except KeyError:
+            raise ValueError, 'package does not exist'
+        except (ImportError, SystemError):
+            return []
+
     def get_architecture(self, package):
         '''Return the architecture of a package.
 
@@ -380,6 +396,17 @@ Description: Test
             self.assertRaises(ValueError, impl.get_source, 'nonexisting')
             self.assertEqual(impl.get_source('bash'), 'bash')
             self.assertEqual(impl.get_source('libc6'), 'glibc')
+
+        def test_get_origins(self):
+            '''Test get_origins().'''
+
+            lsb_release = subprocess.Popen(['lsb_release', '-i', '-s'],
+                stdout=subprocess.PIPE)
+            this_os = lsb_release.communicate()[0].strip()
+            assert lsb_release.returncode == 0
+
+            self.assertRaises(ValueError, impl.get_origins, 'nonexisting')
+            self.assert_(this_os in impl.get_origins('bash'))
 
         def test_get_architecture(self):
             '''Test get_architecture().'''
