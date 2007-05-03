@@ -6,7 +6,6 @@ python-apport:
  - Add API/report attribute for doing upstream problem reports
  - support /etc/apport/blacklist.d/ for check_ignored(): one exe
    per line
- - get_origins(self, package) -> is_distro_package(self, package)
 
 add firefox apport hook to suppress crash reports when restart is
 necessary, and to not file crashes with flash installed

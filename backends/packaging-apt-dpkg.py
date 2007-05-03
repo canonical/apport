@@ -53,12 +53,19 @@ class __AptDpkgPackageInfo:
 
         return self._cache(package).sourcePackageName
 
-    def get_origins(self, package):
-        '''Return a list of origins (distribution/vendor/repository names) for
-          a package (there might be more than one configured repository
-          providing that package).'''
+    def is_distro_package(self, package):
+        '''Check if a package is a genuine distro package (True) or comes from
+        a third-party source.'''
 
-        return [o.origin for o in self._cache(package).candidateOrigin]
+        lsb_release = subprocess.Popen(['lsb_release', '-i', '-s'],
+            stdout=subprocess.PIPE)
+        this_os = lsb_release.communicate()[0].strip()
+        assert lsb_release.returncode == 0
+
+        for o in self._cache(package).candidateOrigin:
+            if o.origin == this_os:
+                return True
+        return False
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
@@ -302,16 +309,12 @@ if __name__ == '__main__':
             self.assertEqual(impl.get_source('bash'), 'bash')
             self.assertEqual(impl.get_source('libc6'), 'glibc')
 
-        def test_get_origins(self):
-            '''Test get_origins().'''
+        def test_is_distro_package(self):
+            '''Test is_distro_package().'''
 
-            lsb_release = subprocess.Popen(['lsb_release', '-i', '-s'],
-                stdout=subprocess.PIPE)
-            this_os = lsb_release.communicate()[0].strip()
-            assert lsb_release.returncode == 0
-
-            self.assertRaises(ValueError, impl.get_origins, 'nonexisting')
-            self.assert_(this_os in impl.get_origins('bash'))
+            self.assertRaises(ValueError, impl.is_distro_package, 'nonexisting')
+            self.assert_(impl.is_distro_package('bash'))
+            # no False test here, hard to come up with a generic one
 
         def test_get_architecture(self):
             '''Test get_architecture().'''

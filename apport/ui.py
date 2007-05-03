@@ -41,9 +41,9 @@ def thread_collect_info(report, reportfile, package):
     report.add_os_info()
 
     # check package origin
-    this_os = report['DistroRelease'].split()[0]
-    if this_os not in apport.packaging.get_origins(report['Package'].split()[0]):
-        report['UnreportableReason'] = _('This is not a genuine %s package') % this_os
+    if not apport.packaging.is_distro_package(report['Package'].split()[0]):
+        report['UnreportableReason'] = _('This is not a genuine %s package') % \
+            report['DistroRelease'].split()[0]
 
     if reportfile:
         f = open(reportfile, 'a')
