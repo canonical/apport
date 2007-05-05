@@ -42,6 +42,7 @@ def thread_collect_info(report, reportfile, package):
 
     # check package origin
     if not apport.packaging.is_distro_package(report['Package'].split()[0]):
+        #TRANS: %s is the name of the operating system
         report['UnreportableReason'] = _('This is not a genuine %s package') % \
             report['DistroRelease'].split()[0]
 
