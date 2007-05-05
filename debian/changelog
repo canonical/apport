@@ -11,8 +11,10 @@ apport (0.78) UNRELEASED; urgency=low
     Since we have to give up on that idea, implement a new clean packaging
     backend 'packaging-apt-dpkg.py' which now uses python-apt and dpkg in a
     clean way.
+  * apport/report.py, add_gdb_info(): Fix crash when Stacktrace could not be
+    created. (LP: #107853)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 03 May 2007 19:15:02 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 16:04:24 +0200
 
 apport (0.77) gutsy; urgency=low
 

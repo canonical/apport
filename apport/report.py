@@ -403,15 +403,16 @@ class Report(ProblemReport):
                 os.unlink(core)
 
         # StacktraceTop
-        toptrace = [''] * 5
-        bt_fn_re = re.compile('^#(\d+)\s+0x(?:\w+)\s+in\s+(.*)$')
-        for line in self['Stacktrace'].splitlines():
-            m = bt_fn_re.match(line)
-            if m:
-                depth = int(m.group(1))
-                if depth < len(toptrace):
-                    toptrace[depth] = m.group(2)
-        self['StacktraceTop'] = '\n'.join(toptrace).strip()
+        if self.has_key('Stacktrace'):
+            toptrace = [''] * 5
+            bt_fn_re = re.compile('^#(\d+)\s+0x(?:\w+)\s+in\s+(.*)$')
+            for line in self['Stacktrace'].splitlines():
+                m = bt_fn_re.match(line)
+                if m:
+                    depth = int(m.group(1))
+                    if depth < len(toptrace):
+                        toptrace[depth] = m.group(2)
+            self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
     def add_hooks_info(self):
         '''Check for an existing hook script and run it to add additional
