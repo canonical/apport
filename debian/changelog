@@ -13,8 +13,12 @@ apport (0.78) UNRELEASED; urgency=low
     clean way.
   * apport/report.py, add_gdb_info(): Fix crash when Stacktrace could not be
     created. (LP: #107853)
+  * ./test-apport: Check that crashes create a core dump (with proper ulimits)
+    when an unseen crash report exists already. This reproduces LP #105976.
+  * bin/apport: Create core dump file if aborting because an unseen crash
+    report already exists. (LP: #105976)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 16:04:24 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 16:19:18 +0200
 
 apport (0.77) gutsy; urgency=low
 

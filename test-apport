@@ -354,6 +354,9 @@ try:
     apport.fileutils.delete_report(report)
     resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
     check_crash(expect_corefile=True)
+
+    print '* Check that crashes create core dumps with an existing crash report'
+    check_crash(expect_corefile=True)
     apport.fileutils.delete_report(report)
 
     print '* Check that packaged executables create core dumps on proper ulimits for SIGABRT'

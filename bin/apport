@@ -298,9 +298,15 @@ try:
                 crash_counter = apport.fileutils.get_recent_crashes(open(report))
                 crash_counter += 1
                 if crash_counter > 1:
+                    if os.environ.has_key('CORE_PID'):
+                        drop_privileges(pid)
+                        write_user_coredump(pid, cwd, os.environ.get('CORE_REAL_RLIM'))
                     sys.exit(1)
             else:
                 error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
+                if os.environ.has_key('CORE_PID'):
+                    drop_privileges(pid)
+                    write_user_coredump(pid, cwd, os.environ.get('CORE_REAL_RLIM'))
                 sys.exit(1)
         reportfile = open(report, 'w')
         os.chmod(report, 0000)
