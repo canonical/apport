@@ -20,8 +20,13 @@ apport (0.78) UNRELEASED; urgency=low
   * apport/ui.py: Add a comment for translators. (LP: #104703)
   * apport/ui.py, load_report(): Also catch zlib.error on invalid reports.
     (LP: #103547)
+  * apport/report.py: Add method has_useful_stacktrace() to determine whether
+    the stack trace can be considered useful. The current heuristic is to
+    consider it useless if it either is shorter than three lines and has any
+    unknown function, or for longer traces, a minority of known functions. Add
+    test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 16:33:36 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 17:37:09 +0200
 
 apport (0.77) gutsy; urgency=low
 

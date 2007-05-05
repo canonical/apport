@@ -556,6 +556,24 @@ class Report(ProblemReport):
 
         dom.unlink()
 
+    def has_useful_stacktrace(self):
+        '''Check whether this report has a stacktrace that can be considered
+        'useful'.
+
+        The current heuristic is to consider it useless if it either is shorter
+        than three lines and has any unknown function, or for longer traces, a
+        minority of known functions.'''
+        
+        if not self.get('StacktraceTop'):
+            return False
+        
+        unknown_fn = [f.startswith('??') for f in self['StacktraceTop'].splitlines()]
+
+        if len(unknown_fn) < 3:
+            return unknown_fn.count(True) == 0
+
+        return unknown_fn.count(True) <= len(unknown_fn)/2.
+
 #
 # Unit test
 #
@@ -1158,6 +1176,39 @@ def add_info(report):
         finally:
             shutil.rmtree(workdir)
             _ignore_file = orig_ignore_file
+
+    def test_has_useful_stacktrace(self):
+        '''Test has_useful_stacktrace().'''
+
+        r = Report()
+        self.failIf(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = ''
+        self.failIf(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = '?? ()'
+        self.failIf(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = '?? ()\n?? ()'
+        self.failIf(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = 'read () from /lib/libc.6.so\n?? ()'
+        self.failIf(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = 'read () from /lib/libc.6.so\n?? ()\n?? ()\n?? ()'
+        self.failIf(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
+        self.assert_(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()'
+        self.assert_(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()\n?? ()'
+        self.assert_(r.has_useful_stacktrace())
+
+        r['StacktraceTop'] = 'read () from /lib/libc.6.so\n?? ()\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()\n?? ()'
+        self.failIf(r.has_useful_stacktrace())
 
 if __name__ == '__main__':
     unittest.main()
