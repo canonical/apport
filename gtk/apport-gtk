@@ -140,8 +140,13 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.format_filesize(self.get_complete_size()))
             self.w('radiobutton_reduced').set_label(self.str_radio_reduced % 
                 self.format_filesize(self.get_reduced_size()))
-            self.w('radiobutton_complete').show()
-            self.w('radiobutton_reduced').show()
+            if self.report.has_useful_stacktrace():
+                self.w('radiobutton_complete').set_sensitive(True)
+                self.w('radiobutton_complete').show()
+                self.w('radiobutton_reduced').show()
+            else:
+                self.w('radiobutton_complete').set_sensitive(False)
+                self.w('radiobutton_reduced').hide()
         else:
             self.w('radiobutton_complete').hide()
             self.w('radiobutton_reduced').hide()

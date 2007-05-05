@@ -238,7 +238,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         details.header().hide()
 
         # complete/reduced radio buttons
-        if self.report.has_key('CoreDump'):
+        if self.report.has_key('CoreDump') and self.report.has_useful_stacktrace():
             dialog.findChild(QRadioButton, 'complete').setText(
                     _('Complete report (recommended; %s)') % 
                     self.format_filesize(self.get_complete_size()))

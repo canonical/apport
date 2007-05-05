@@ -25,8 +25,12 @@ apport (0.78) UNRELEASED; urgency=low
     consider it useless if it either is shorter than three lines and has any
     unknown function, or for longer traces, a minority of known functions. Add
     test cases.
+  * gtk/apport-gtk, qt4/apport-qt, cli/apport-cli: Do not offer 'reduced
+    report' option if the stack trace is useless. (LP: #87430) Bump the
+    python-apport dependencies of the frontend packages to ensure that we have
+    has_useful_stacktrace().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 17:37:09 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 17:53:42 +0200
 
 apport (0.77) gutsy; urgency=low
 

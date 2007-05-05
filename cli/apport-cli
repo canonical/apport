@@ -212,7 +212,7 @@ class CLIUserInterface(apport.ui.UserInterface):
                 details += ' ' + str(self.report[key]) + '\n'
 
         # complete/reduced reports
-        if self.report.has_key('CoreDump'):
+        if self.report.has_key('CoreDump') and self.report.has_useful_stacktrace():
             complete = dialog.addbutton(_('&Send complete report (recommended; %s)') %
                     self.format_filesize(self.get_complete_size()))
             reduced = dialog.addbutton(_('Send &reduced report (slow Internet connection; %s)') %
