@@ -18,8 +18,10 @@ apport (0.78) UNRELEASED; urgency=low
   * bin/apport: Create core dump file if aborting because an unseen crash
     report already exists. (LP: #105976)
   * apport/ui.py: Add a comment for translators. (LP: #104703)
+  * apport/ui.py, load_report(): Also catch zlib.error on invalid reports.
+    (LP: #103547)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 16:27:15 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat,  5 May 2007 16:33:36 +0200
 
 apport (0.77) gutsy; urgency=low
 

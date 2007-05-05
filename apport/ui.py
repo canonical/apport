@@ -14,7 +14,7 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import tempfile, pwd, errno, urllib
+import tempfile, pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
@@ -557,7 +557,7 @@ free memory to automatically analyze the problem and send a report to the develo
             self.ui_error_message(_('Memory exhaustion'),
                 _('Your system does not have enough memory to process this crash report.'))
             return False
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, zlib.error):
             self.report = None
             self.ui_error_message(_('Invalid problem report'),
                 _('This problem report is damaged and cannot be processed.'))
