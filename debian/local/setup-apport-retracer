@@ -70,7 +70,7 @@ export PATH PYTHONPATH APPORT_LIBFAKEROOT APPORT_LIBFAKECHROOT
 EOF
 fi
 
-. environ
+source environ
 
 # create chroots
 if [ "`uname -m`" = i686 ]; then
