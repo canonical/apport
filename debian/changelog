@@ -13,6 +13,7 @@ apport (0.79) UNRELEASED; urgency=low
     an artificial ones to avoid the impression that it is LP specific.
   * backends/packaging-apt-dpkg.py: Formally make this a subclass of
     apport.packaging.PackageInfo.
+  * po/de.po: Update.
 
   Collect all Launchpad specific bits in a separate class and provide an
   abstract base class. This will greatly help for getting upstream acceptance
@@ -27,7 +28,7 @@ apport (0.79) UNRELEASED; urgency=low
   * debian/rules: Install the crashdb implementations in backends/ into
     apport/, and remove them again on clean.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 00:31:16 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 00:43:34 +0200
 
 apport (0.78) gutsy; urgency=low
 
