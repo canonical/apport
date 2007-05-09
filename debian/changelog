@@ -1,5 +1,7 @@
 apport (0.79) UNRELEASED; urgency=low
 
+  Bug fixes:
+
   * debian/local/setup-apport-retracer: Fix '.' bashism, replace it with
     'source'.
   * problem_report.py, write_mime(): Drop preamble argument, replace it with
@@ -12,7 +14,20 @@ apport (0.79) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py: Formally make this a subclass of
     apport.packaging.PackageInfo.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 00:05:19 +0200
+  Collect all Launchpad specific bits in a separate class and provide an
+  abstract base class. This will greatly help for getting upstream acceptance
+  and the possibility of automatically forwarding crashes upstream:
+
+  * Add apport/crashdb.py: Abstract crash database interface.
+  * Add backends/crashdb_launchpad.py: Launchpad implementation of crash
+    database interface.
+  * apport/ui.py: Drop LP specific bits and move towards new CrashDatabase
+    interface. Keep the hardcoded instantiation of LaunchpadCrashDatabase for
+    now.
+  * debian/rules: Install the crashdb implementations in backends/ into
+    apport/, and remove them again on clean.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 00:31:16 +0200
 
 apport (0.78) gutsy; urgency=low
 

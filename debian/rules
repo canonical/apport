@@ -11,6 +11,7 @@ DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-scripts usr/share/apport
 pre-build::
 	# install appropriate backends
 	cp backends/packaging-apt-dpkg.py apport/packaging_impl.py
+	cp backends/crashdb_launchpad.py apport/
 
 common-post-build-indep::
 	make -C po
@@ -19,7 +20,7 @@ common-post-build-indep::
 
 clean::
 	# remove backend copies
-	rm -f apport/packaging_impl.py
+	rm -f apport/packaging_impl.py apport/crashdb_*.py
 	make -C po clean
 	make -C gtk clean
 	make -C qt4 clean

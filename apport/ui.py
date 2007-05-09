@@ -14,14 +14,14 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import tempfile, pwd, errno, urllib, zlib
+import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
-import launchpadBugs.storeblob
-
 import apport, apport.fileutils, REThread
 
+# FIXME: make Ubuntu independent
+from apport.crashdb_launchpad import LaunchpadCrashDatabase as CrashDatabase
 bugpattern_baseurl = 'http://people.ubuntu.com/~pitti/bugpatterns'
 
 def thread_collect_info(report, reportfile, package):
@@ -54,27 +54,6 @@ def thread_collect_info(report, reportfile, package):
         apport.fileutils.mark_report_seen(reportfile)
         os.chmod (reportfile, 0600)
 
-def upload_launchpad_blob(report):
-    '''Upload given problem report to Malone and return the ticket for it.
-
-    Return None on error.'''
-
-    ticket = None
-
-    # set retracing tag
-    hdr = {}
-    if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
-        a = report['PackageArchitecture']
-        hdr['Tags'] = 'need-%s-retrace' % a
-
-    # write MIME/Multipart version into temporary file
-    mime = tempfile.TemporaryFile()
-    report.write_mime(mime, extra_headers=hdr)
-    mime.flush()
-    mime.seek(0)
-
-    return launchpadBugs.storeblob.upload(mime)
-
 class UserInterface:
     '''Abstract base class for encapsulating the workflow and common code for
        any user interface implementation (like GTK, Qt, or CLI).
@@ -88,6 +67,9 @@ class UserInterface:
         self.report = None
         self.report_file = None
         self.cur_package = None
+
+        # FIXME: Get this from somewhere else
+        self.crashdb = CrashDatabase()
 
         gettext.textdomain(self.gettext_domain)
         self.parse_argv()
@@ -506,7 +488,7 @@ free memory to automatically analyze the problem and send a report to the develo
         to its web page.'''
 
         self.ui_start_upload_progress()
-        upthread = REThread.REThread(target=upload_launchpad_blob,
+        upthread = REThread.REThread(target=self.crashdb.upload,
             args=(self.report,))
         upthread.start()
         while upthread.isAlive():
@@ -518,7 +500,7 @@ free memory to automatically analyze the problem and send a report to the develo
         if upthread.exc_info():
             self.ui_error_message(_('Network problem'),
                 "%s:\n\n%s" % (
-                    _('Could not upload report data to Launchpad'),
+                    _('Could not upload report data to crash database'),
                     str(upthread.exc_info()[1])
                 ))
             return
@@ -526,21 +508,9 @@ free memory to automatically analyze the problem and send a report to the develo
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
 
-        if ticket:
-            args = {}
-            title = self.create_crash_bug_title()
-            if title:
-                args['field.title'] = title
-
-            if self.report.has_key('SourcePackage'):
-                self.open_url('https://launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
-                    self.report['SourcePackage'], ticket, urllib.urlencode(args)))
-            else:
-                self.open_url('https://launchpad.net/ubuntu/+filebug/%s?%s' % (
-                    ticket, urllib.urlencode(args)))
-        else:
-            self.ui_error_message(_('Launchpad problem'),
-                _('Launchpad did not return a ticket number for the uploaded data.'))
+        url = self.crashdb.get_comment_url(report, ticket)
+        if url:
+            self.open_url(url)
 
     def load_report(self, path):
         '''Load report from given path and do some consistency checks.
@@ -721,7 +691,7 @@ might be helpful for the developers.'))
 #
 
 if  __name__ == '__main__':
-    import unittest, shutil, signal
+    import unittest, shutil, signal, tempfile
 
     class _TestSuiteUserInterface(UserInterface):
         '''Concrete UserInterface suitable for automatic testing.'''
