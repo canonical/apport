@@ -449,10 +449,10 @@ class Report(ProblemReport):
         For example:
         <?xml version="1.0"?>
         <patterns>
-            <pattern url="https://launchpad.net/bugs/1">
+            <pattern url="http://bugtracker.net/bugs/1">
                 <re key="Foo">ba.*r</re>
             </pattern>
-            <pattern url="https://launchpad.net/bugs/2">
+            <pattern url="http://bugtracker.net/bugs/2">
                 <re key="Foo">write_(hello|goodbye)</re>
                 <re key="Package">^\S* 1-2$</re> <!-- test for a particular version -->
             </pattern>
@@ -988,10 +988,10 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             # create some test patterns
             open(os.path.join(pdir, 'bash.xml'), 'w').write('''<?xml version="1.0"?>
 <patterns>
-    <pattern url="https://launchpad.net/bugs/1">
+    <pattern url="http://bugtracker.net/bugs/1">
         <re key="Foo">ba.*r</re>
     </pattern>
-    <pattern url="https://launchpad.net/bugs/2">
+    <pattern url="http://bugtracker.net/bugs/2">
         <re key="Foo">write_(hello|goodbye)</re>
         <re key="Package">^\S* 1-2$</re>
     </pattern>
@@ -999,10 +999,10 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
 
             open(os.path.join(pdir, 'coreutils.xml'), 'w').write('''<?xml version="1.0"?>
 <patterns>
-    <pattern url="https://launchpad.net/bugs/3">
+    <pattern url="http://bugtracker.net/bugs/3">
         <re key="Bar">^1$</re>
     </pattern>
-    <pattern url="https://launchpad.net/bugs/4">
+    <pattern url="http://bugtracker.net/bugs/4">
         <re key="Bar">*</re> <!-- invalid RE -->
     </pattern>
 </patterns>''')
@@ -1024,10 +1024,10 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             r_invalid['Package'] = 'invalid 1'
 
             # positive match cases
-            self.assertEqual(r_bash.search_bug_patterns(pdir), 'https://launchpad.net/bugs/1')
+            self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/1')
             r_bash['Foo'] = 'write_goodbye'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), 'https://launchpad.net/bugs/2')
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), 'https://launchpad.net/bugs/3')
+            self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/2')
+            self.assertEqual(r_coreutils.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/3')
 
             # negative match cases
             r_bash['Package'] = 'bash 1-21'
