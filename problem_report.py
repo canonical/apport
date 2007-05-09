@@ -238,7 +238,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 os.utime(reportfile, (st.st_atime, st.st_mtime))
             os.chmod(reportfile, st.st_mode)
 
-    def write_mime(self, file, attach_treshold = 5, preamble=None):
+    def write_mime(self, file, attach_treshold = 5, extra_headers={}):
         '''Write information into the given file-like object, using
         MIME/Multipart RFC 2822 format (i. e. an email with attachments).
 
@@ -252,7 +252,7 @@ class ProblemReport(UserDict.IterableUserDict):
         included into the first inline text part. All bigger values (as well as
         all non-ASCII ones) will become an attachment.
 
-        A MIME preamble can be specified, too.
+        Extra MIME preamble headers can be specified, too, as a dictionary.
         '''
 
         keys = self.data.keys()
@@ -332,8 +332,8 @@ class ProblemReport(UserDict.IterableUserDict):
         attachments.insert(0, att)
 
         msg = MIMEMultipart()
-        if preamble:
-            msg.preamble = preamble
+        for k, v in extra_headers.iteritems():
+            msg.add_header(k, v)
         for a in attachments:
             msg.attach(a)
 
@@ -977,18 +977,20 @@ line♥5!!
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)
 
-    def test_write_mime_preamble(self):
-        '''Test write_mime() with a preamble.'''
+    def test_write_mime_extra_headers(self):
+        '''Test write_mime() with extra headers.'''
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
         pr['TwoLine'] = 'first\nsecond\n'
         io = StringIO()
-        pr.write_mime(io, preamble='hello world')
+        pr.write_mime(io, extra_headers={'Greeting': 'hello world', 
+            'Foo': 'Bar'})
         io.seek(0)
 
         msg = email.message_from_file(io)
-        self.assertEqual(msg.preamble, 'hello world')
+        self.assertEqual(msg['Greeting'], 'hello world')
+        self.assertEqual(msg['Foo'], 'Bar')
         msg_iter = msg.walk()
 
         # first part is the multipart container

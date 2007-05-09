@@ -2,8 +2,10 @@ apport (0.79) UNRELEASED; urgency=low
 
   * debian/local/setup-apport-retracer: Fix '.' bashism, replace it with
     'source'.
+  * problem_report.py, write_mime(): Drop preamble argument, replace it with
+    an extra_headers dictionary. This is much easier to evaluate on clients.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  7 May 2007 14:55:34 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 May 2007 15:50:21 +0200
 
 apport (0.78) gutsy; urgency=low
 
