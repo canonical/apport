@@ -9,8 +9,10 @@ apport (0.79) UNRELEASED; urgency=low
     p-problem-report dependency of python-apport for this.
   * apport/report.py: Change example URLs in the testsuite from launchpad to
     an artificial ones to avoid the impression that it is LP specific.
+  * backends/packaging-apt-dpkg.py: Formally make this a subclass of
+    apport.packaging.PackageInfo.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 May 2007 17:39:25 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 00:05:19 +0200
 
 apport (0.78) gutsy; urgency=low
 

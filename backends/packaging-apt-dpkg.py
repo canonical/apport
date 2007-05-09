@@ -17,7 +17,9 @@ import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 
-class __AptDpkgPackageInfo:
+from apport.packaging import PackageInfo
+
+class __AptDpkgPackageInfo(PackageInfo):
     '''Concrete apport.PackageInfo class implementation for python-apt and
     dpkg, as found on Debian and derivatives such as Ubuntu.'''
 
