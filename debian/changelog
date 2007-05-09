@@ -4,8 +4,11 @@ apport (0.79) UNRELEASED; urgency=low
     'source'.
   * problem_report.py, write_mime(): Drop preamble argument, replace it with
     an extra_headers dictionary. This is much easier to evaluate on clients.
+  * apport/ui.py: Convert to new write_mime() interface from above. This
+    finally automatically tags bugs with need-$ARCH-retrace. Bump
+    p-problem-report dependency of python-apport for this.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 May 2007 15:50:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed,  9 May 2007 15:52:17 +0200
 
 apport (0.78) gutsy; urgency=low
 
