@@ -508,7 +508,7 @@ free memory to automatically analyze the problem and send a report to the develo
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
 
-        url = self.crashdb.get_comment_url(report, ticket)
+        url = self.crashdb.get_comment_url(self.report, ticket)
         if url:
             self.open_url(url)
 
@@ -692,6 +692,30 @@ might be helpful for the developers.'))
 
 if  __name__ == '__main__':
     import unittest, shutil, signal, tempfile
+    import apport.crashdb
+
+    class _TestSuiteCrashDb(apport.crashdb.CrashDatabase):
+        '''Dummy CrashDatabase for the test suite.'''
+
+        def __init__(self):
+            self.handle = 0
+
+        def upload(self, report):
+            '''Store the report and return a handle number (starting from 1).'''
+
+            self.report = report
+            self.handle += 1
+            return self.handle
+
+        def get_comment_url(self, report, handle):
+            '''Return http://<sourcepackage>.bug.net/<handle> for package bugs
+            or http://bug.net/<handle> for reports without a SourcePackage.'''
+
+            if report.has_key('SourcePackage'):
+                return 'http://%s.bug.net/%i' % (report['SourcePackage'],
+                    handle)
+            else:
+                return 'http://bug.net/%i' % handle
 
     class _TestSuiteUserInterface(UserInterface):
         '''Concrete UserInterface suitable for automatic testing.'''
@@ -699,9 +723,14 @@ if  __name__ == '__main__':
         def __init__(self):
             UserInterface.__init__(self)
 
-            # state of info collection progress dialog
+            # use our dummy crashdb
+            self.crashdb = _TestSuiteCrashDb()
+
+            # state of progress dialogs
             self.ic_progress_active = False
             self.ic_progress_pulses = 0 # count the pulses
+            self.upload_progress_active = False
+            self.upload_progress_pulses = 0
 
             # these store the choices the ui_present_* calls do
             self.present_crash_response = None
@@ -752,16 +781,19 @@ if  __name__ == '__main__':
         def ui_stop_info_collection_progress(self):
             self.ic_progress_active = False
 
+        def ui_start_upload_progress(self):
+            self.upload_progress_pulses = 0
+            self.upload_progress_active = True
+
+        def ui_set_upload_progress(self):
+            assert self.upload_progress_active
+            self.upload_progress_pulses += 1
+
+        def ui_stop_upload_progress(self):
+            self.upload_progress_active = False
+
         def open_url(self, url):
             self.opened_url = url
-
-        def file_report(self):
-            # the report can be accessed as self.ui.report, thus we do not do
-            # anything about sending it anywhere
-            if self.report.has_key('SourcePackage'):
-                self.open_url('https://bug.tracker/%s' % self.report['SourcePackage'])
-            else:
-                self.open_url('https://bug.tracker')
 
     class _UserInterfaceTest(unittest.TestCase):
         def setUp(self):
@@ -1070,7 +1102,7 @@ baz()
             self.ui.run_report_bug()
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://bug.net/%i' % self.ui.crashdb.handle)
 
             self.assert_(set(['Date', 'Uname', 'DistroRelease', 'ProblemType']).issubset(
                 set(self.ui.report.keys())), 'report has required fields')
@@ -1084,7 +1116,7 @@ baz()
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://bash.bug.net/%i' % self.ui.crashdb.handle)
 
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
@@ -1119,7 +1151,7 @@ baz()
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.handle)
             self.assert_(self.ui.ic_progress_pulses > 0)
 
         def test_run_report_bug_wrong_pid(self):
@@ -1202,7 +1234,7 @@ baz()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.handle)
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
@@ -1219,7 +1251,7 @@ baz()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.handle)
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
@@ -1355,7 +1387,7 @@ baz()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://foo.bug.net/%i' % self.ui.crashdb.handle)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Package' in self.ui.report.keys())
@@ -1391,7 +1423,7 @@ baz()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://linux-source-2.6.20.bug.net/%i' % self.ui.crashdb.handle)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Kernel')

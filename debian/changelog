@@ -25,10 +25,14 @@ apport (0.79) UNRELEASED; urgency=low
   * apport/ui.py: Drop LP specific bits and move towards new CrashDatabase
     interface. Keep the hardcoded instantiation of LaunchpadCrashDatabase for
     now.
+  * apport/ui.py, test suite: Do not overwrite file_report() any more, but
+    use a dummy CrashDatabase. This will test the actual file_report()
+    implementation and allows the test suite to check the precise value of
+    opened URLs.
   * debian/rules: Install the crashdb implementations in backends/ into
     apport/, and remove them again on clean.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 00:43:34 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 01:08:11 +0200
 
 apport (0.78) gutsy; urgency=low
 
