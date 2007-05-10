@@ -48,10 +48,11 @@ else:
 pr['Package'] = 'linux' # needed for creating the report file name
 
 pr['ProcCpuInfo'] = read_file('/proc/cpuinfo')
+pr['ProcModules'] = _read_file('/proc/modules')
+pr['ProcCmdline'] = _read_file('/proc/cmdline')
 pr['Dmesg'] = _command_output('dmesg')
 pr['LsPciVV'] = _command_output(['lspci', '-vv'])
-pr['LsPciVVM'] = _command_output(['lspci', '-vvm'])
-pr['LsMod'] = _command_output('lsmod')
+pr['LsPciVVN'] = _command_output(['lspci', '-vvn'])
 
 # write report
 pr.write(open(apport.fileutils.make_report_path(pr), 'w'))

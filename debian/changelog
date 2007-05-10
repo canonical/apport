@@ -12,8 +12,12 @@ apport (0.79) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py: Formally make this a subclass of
     apport.packaging.PackageInfo.
   * debian/control: Use code.lp.net instead of bazaar.lp.net VCS URL.
+  * bin/kernel_hook: Fix/improve the collected information:
+    - Read /proc/modules instead of lsmod.
+    - Fix lspci argument: -n instead of -m.
+    - Add /proc/cmdline.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 09:35:55 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 12:04:50 +0200
 
 apport (0.78) gutsy; urgency=low
 
