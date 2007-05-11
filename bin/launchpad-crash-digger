@@ -65,8 +65,16 @@ class CrashDigger:
 
         bug = self.work_pool.pop()
         self.log('retracing bug %i' % bug)
+
+        # remove tag
+        b = Bug(bug, None, cookie_file=self.cookie_file)
+        b.get_metadata()
+        if self.arch_tag in b.tags:
+            b.tags.remove(self.arch_tag)
+            b.set_metadata()
+
         result = subprocess.call(['apport-chroot', '-m', self.chroot_map, '--cookie',
-            self.cookie_file, '--remove-tag', self.arch_tag, 'retrace', str(bug)])
+            self.cookie_file, 'retrace', str(bug)])
         self.log('retracing bug %i exit status: %i' % (bug, result))
         if result != 0:
             self.fail_pool.add(bug)

@@ -38,8 +38,11 @@ apport (0.79) UNRELEASED; urgency=low
     interface. Keep the hardcoded instantiation of LaunchpadCrashDatabase for
     now. Remove the --remove-tag option, we really should not have it here;
     remove it from man/apport-retrace.1 as well.
+  * bin/launchpad-crash-digger: Remove retracing tag directly instead of
+    passing --remove-tag to apport-chroot. This is a much cleaner design and
+    avoids infinitely looping on some weirdly failing retraces.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 May 2007 16:05:25 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 May 2007 16:09:53 +0200
 
 apport (0.78) gutsy; urgency=low
 
