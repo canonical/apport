@@ -11,6 +11,15 @@ the full text of the license.
 '''
 
 class CrashDatabase:
+    def __init__(self, auth_file):
+        '''Initialize Launchpad crash database connection. 
+        
+        You need to specify an implementation specific file with the
+        authentication credentials for retracing access for download() and
+        update(). For upload() and get_comment_url() you can use None.'''
+
+        self.auth_file = auth_file
+
     def upload(self, report):
         '''Upload given problem report return a handle for it. 
         
@@ -25,5 +34,17 @@ class CrashDatabase:
         Should return None if no URL should be opened (anonymous filing without
         user comments); in that case this function should do whichever
         interactive steps it wants to perform.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
+    def download(self, id):
+        '''Download the problem report from given ID and return a Report.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
+    def update(self, id, report, comment):
+        '''Update the given report ID with the retraced results from the report
+        (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
+        desired) and an optional comment.'''
 
         raise Exception, 'this method must be implemented by a concrete subclass'
