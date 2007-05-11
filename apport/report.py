@@ -574,6 +574,81 @@ class Report(ProblemReport):
 
         return unknown_fn.count(True) <= len(unknown_fn)/2.
 
+    def standard_title(self):
+        '''Create an appropriate title for a crash database entry.
+
+        This contains the topmost function name from the stack trace and the
+        signal (for signal crashes) or the Python exception (for unhandled
+        Python exceptions).
+
+        Return None if the report is not a crash or a default title could not
+        be generated.'''
+
+        # signal crash
+        if self.has_key('Signal') and \
+            self.has_key('ExecutablePath') and \
+            self.has_key('StacktraceTop'):
+
+            signal_names = {
+                '4': 'SIGILL',
+                '6': 'SIGABRT',
+                '8': 'SIGFPE',
+                '11': 'SIGSEGV',
+                '13': 'SIGPIPE'
+            }
+
+            fn = ''
+            for l in self['StacktraceTop'].splitlines():
+                fname = l.split('(')[0].strip()
+                if fname != '??':
+                    fn = ' in %s()' % fname
+                    break
+
+            arch_mismatch = ''
+            if self.has_key('Architecture') and \
+                self.has_key('PackageArchitecture') and \
+                self['Architecture'] != self['PackageArchitecture'] and \
+                self['PackageArchitecture'] != 'all':
+                arch_mismatch = ' [non-native %s package]' % self['PackageArchitecture']
+
+            return '[apport] %s crashed with %s%s%s' % (
+                os.path.basename(self['ExecutablePath']),
+                signal_names.get(self.get('Signal'),
+                    'signal ' + self.get('Signal')),
+                fn, arch_mismatch
+            )
+
+        # Python exception
+        if self.has_key('Traceback') and \
+            self.has_key('ExecutablePath'):
+
+            trace = self['Traceback'].splitlines()
+
+            if len(trace) < 1:
+                return Nonr
+            if len(trace) < 3:
+                return '[apport] %s crashed with %s' % (
+                    os.path.basename(self['ExecutablePath']),
+                    trace[0])
+            return '[apport] %s crashed with %s in %s()' % (
+                os.path.basename(self['ExecutablePath']),
+                trace[-1].split(':')[0],
+                trace[-3].split()[-1]
+            )
+
+        # package problem
+        if self.get('ProblemType') == 'Package' and \
+            self.has_key('Package'):
+
+            title = '[apport] package %s failed to install/upgrade' % \
+                self['Package']
+            if self.get('ErrorMessage'):
+                title += ': ' + self['ErrorMessage'].splitlines()[-1]
+
+            return title
+
+        return None
+
 #
 # Unit test
 #
@@ -1209,6 +1284,108 @@ def add_info(report):
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\n?? ()\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()\n?? ()'
         self.failIf(r.has_useful_stacktrace())
+
+    def test_standard_title(self):
+        '''Test standard_title().'''
+
+        report = Report()
+        self.assertEqual(report.standard_title(), None)
+
+        # named signal crash
+        report['Signal'] = '11'
+        report['ExecutablePath'] = '/bin/bash'
+        report['StacktraceTop'] = '''foo()
+bar(x=3)
+baz()
+'''
+        self.assertEqual(report.standard_title(),
+            '[apport] bash crashed with SIGSEGV in foo()')
+
+        # unnamed signal crash
+        report['Signal'] = '42'
+        self.assertEqual(report.standard_title(),
+            '[apport] bash crashed with signal 42 in foo()')
+
+        # do not crash on empty StacktraceTop
+        report['StacktraceTop'] = ''
+        self.assertEqual(report.standard_title(),
+            '[apport] bash crashed with signal 42')
+
+        # do not create bug title with unknown function name
+        report['StacktraceTop'] = '??()\nfoo()'
+        self.assertEqual(report.standard_title(),
+            '[apport] bash crashed with signal 42 in foo()')
+
+        # if we do not know any function name, don't mention ??
+        report['StacktraceTop'] = '??()\n??()'
+        self.assertEqual(report.standard_title(),
+            '[apport] bash crashed with signal 42')
+
+        # Python crash
+        report = Report()
+        report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
+        report['Traceback'] = '''Traceback (most recent call last):
+File "/usr/share/apport/apport-gtk", line 202, in <module>
+app.run_argv()
+File "/var/lib/python-support/python2.5/apport/ui.py", line 161, in run_argv
+self.run_crashes()
+File "/var/lib/python-support/python2.5/apport/ui.py", line 104, in run_crashes
+self.run_crash(f)
+File "/var/lib/python-support/python2.5/apport/ui.py", line 115, in run_crash
+response = self.ui_present_crash(desktop_entry)
+File "/usr/share/apport/apport-gtk", line 67, in ui_present_crash
+subprocess.call(['pgrep', '-x',
+NameError: global name 'subprocess' is not defined'''
+        self.assertEqual(report.standard_title(),
+            '[apport] apport-gtk crashed with NameError in ui_present_crash()')
+
+        # slightly weird Python crash
+        report = Report()
+        report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
+        report['Traceback'] = '''TypeError: Cannot create a consistent method resolution
+order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
+        self.assertEqual(report.standard_title(),
+            '[apport] apport-gtk crashed with TypeError: Cannot create a consistent method resolution')
+
+        # package install problem
+        report = Report('Package')
+        report['Package'] = 'bash'
+
+        # no ErrorMessage
+        self.assertEqual(report.standard_title(),
+            '[apport] package bash failed to install/upgrade')
+
+        # empty ErrorMessage
+        report['ErrorMessage'] = ''
+        self.assertEqual(report.standard_title(),
+            '[apport] package bash failed to install/upgrade')
+
+        # nonempty ErrorMessage
+        report['ErrorMessage'] = 'botched\nnot found\n'
+        self.assertEqual(report.standard_title(),
+            '[apport] package bash failed to install/upgrade: not found')
+
+        # matching package/system architectures
+        report['Signal'] = '11'
+        report['ExecutablePath'] = '/bin/bash'
+        report['StacktraceTop'] = '''foo()
+bar(x=3)
+baz()
+'''
+        report['PackageArchitecture'] = 'amd64'
+        report['Architecture'] = 'amd64'
+        self.assertEqual(report.standard_title(),
+            '[apport] bash crashed with SIGSEGV in foo()')
+
+        # non-native package (on multiarch)
+        report['PackageArchitecture'] = 'i386'
+        self.assertEqual(report.standard_title(),
+            '[apport] bash crashed with SIGSEGV in foo() [non-native i386 package]')
+
+        # Arch: all package (matches every system architecture)
+        report['PackageArchitecture'] = 'all'
+        self.assertEqual(report.standard_title(),
+            '[apport] bash crashed with SIGSEGV in foo()')
 
 if __name__ == '__main__':
     unittest.main()
