@@ -104,15 +104,6 @@ Display retraced stack traces and ask for confirmation before adding
 them as Launchpad bug attachments. This option is ignored when
 retracing report files.
 
-.TP
-.B \-\-remove\-tag=\fItagname
-Remove the given tag from the Launchpad bug. This happens immediately
-after reading the report from the bug, thus even if the retracing
-fails or the user does not confirm the result (with
-\fB\-\-confirm\fR). This is intended for automatic retracing systems,
-to avoid repeatedly retracing the same bug in error cases. This option
-is ignored when retracing report files.
-
 .SH AUTHOR
 .B apport
 and the accompanying tools are developed by Martin Pitt

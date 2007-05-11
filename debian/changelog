@@ -34,8 +34,12 @@ apport (0.79) UNRELEASED; urgency=low
   * apport/{report,ui}.py: Move UserInterface.create_crash_bug_title() and its
     test cases to Report.standard_title(). It is much more appropriate there
     and can be used in the retracer as well.
+  * bin/apport-retrace: Drop LP specific bits and move to CrashDatabase
+    interface. Keep the hardcoded instantiation of LaunchpadCrashDatabase for
+    now. Remove the --remove-tag option, we really should not have it here;
+    remove it from man/apport-retrace.1 as well.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 May 2007 15:30:25 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 May 2007 16:05:25 +0200
 
 apport (0.78) gutsy; urgency=low
 

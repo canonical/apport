@@ -20,7 +20,8 @@ import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
 import apt
 
-from launchpadBugs.HTMLOperations import Bug
+# FIXME: make Ubuntu indepentent
+from apport.crashdb_launchpad import LaunchpadCrashDatabase as CrashDatabase
 
 #
 # functions
@@ -29,7 +30,7 @@ from launchpadBugs.HTMLOperations import Bug
 def parse_options():
     '''Parse command line options and return (reportfile, options) tuple.'''
 
-    optparser = optparse.OptionParser('%prog [options] <apport problem report | Launchpad bug number>')
+    optparser = optparse.OptionParser('%prog [options] <apport problem report | bug number>')
     optparser.add_option('-c', '--remove-core', 
         help='Remove the core dump from the report after stack trace regeneration',
         action='store_true', dest='removecore', default=False)
@@ -66,15 +67,12 @@ def parse_options():
     optparser.add_option('-p', '--extra-package', 
         help='Install an extra package (can be specified multiple times)',
         action='append', type='string', dest='extra_packages', default=[])
-    optparser.add_option('--cookie',
-        help='Path to a Mozilla-style cookie file; this is used when specifying a Launchpad bug number to attach the retraced stack traces (only if neither -g, -o, nor -s are specified)',
-        action='store', type='string', dest='cookie_file', default=None)
+    optparser.add_option('--auth',
+        help='Path to a file with the crash database authentication information. This is used when specifying a bug number to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)',
+        action='store', type='string', dest='auth_file', default=None)
     optparser.add_option('--confirm',
-        help='Display retraced stack traces and ask for confirmation before adding them as Launchpad bug attachments.',
+        help='Display retraced stack traces and ask for confirmation before sending them to the crash database.',
         action='store_true', dest='confirm', default=False)
-    optparser.add_option('--remove-tag',
-        help='Remove a tag from the Launchpad bug (in all cases, even if retracing fails)',
-        action='store', type='string', dest='remove_tag', metavar='TAG', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -83,72 +81,6 @@ def parse_options():
         sys.exit(1)
 
     return (args[0], opts)
-
-def report_from_launchpad(bugid, cookie_file, remove_tag):
-    '''Construct an Apport report from a Launchpad bug.
-    
-    If cookie_file and remove_tag are given, remove that tag from the bug.'''
-
-    report = apport.Report()
-    attachment_dir = tempfile.mkdtemp()
-    try:
-        b = Bug(bugid, None, attachment_dir, ['application/x-gzip'],
-            'Dependencies.txt|CoreDump.gz|ProcMaps.txt',
-            cookie_file=cookie_file)
-
-        for att in b.attachments:
-            if not att.filename:
-                continue # ignored attachments
-
-            key = os.path.splitext(os.path.basename(att.filename))[0]
-
-            if att.filename.endswith('.txt'):
-                report[key] = open(att.filename).read()
-            elif att.filename.endswith('.gz'):
-                report[key] = gzip.open(att.filename).read()
-            else:
-                raise Exception, 'Unknown attachment type: ' + att.filename
-
-        # parse out other fields from summary
-        for m in re.finditer('^([a-zA-Z]+): (.*)<', b.text, re.M):
-            report[m.group(1)] = m.group(2)
-
-        if remove_tag:
-            b.get_metadata()
-            if remove_tag in b.tags:
-                b.tags.remove(remove_tag)
-                b.set_metadata()
-            else:
-                print >> sys.stderr, 'WARNING: bug does not have tag "%s"' % remove_tag
-
-        return report
-    finally:
-        shutil.rmtree(attachment_dir)
-
-def attach_to_launchpad_bug(bugnumber, report, cookie_file, comment=''):
-    '''Attach the retraced stack traces of report to the given Launchpad bug,
-    using a Mozilla-style cookie file.'''
-
-    bug = Bug(bugnumber, cookie_file=cookie_file)
-
-    comment += '\n\nStacktraceTop:' + report['StacktraceTop'].decode('utf-8',
-        'replace').encode('utf-8')
-
-    t = tempfile.TemporaryFile()
-    t.write(report['Stacktrace'])
-    t.flush()
-    t.seek(0)
-    bug.add_comment('Symbolic stack trace', comment, t, 
-        'Stacktrace.txt (retraced)')
-    t.close()
-
-    t = tempfile.TemporaryFile()
-    t.write(report['ThreadStacktrace'])
-    t.flush()
-    t.seek(0)
-    bug.add_comment('Symbolic threaded stack trace', '', t, 
-        'ThreadStacktrace.txt (retraced)')
-    t.close()
 
 def deb_without_preinst(deb):
     '''If given .deb file has a preinst script, generate a <name>_noscript.deb
@@ -371,7 +303,7 @@ def getch():
 
 def confirm_traces(report):
     '''Display the retraced stack traces and ask the user whether or not to
-    upload tem as Launchpad bug attachments.
+    upload them to the crash database.
     
     Return True if the user agrees.'''
 
@@ -394,6 +326,8 @@ def confirm_traces(report):
 
 (reportfile, options) = parse_options()
 
+crashdb = CrashDatabase(options.auth_file)
+
 # load the report
 if os.path.exists(reportfile):
     try:
@@ -403,17 +337,13 @@ if os.path.exists(reportfile):
         print >> sys.stderr, 'Cannot open report file:', e
         sys.exit(1)
 elif reportfile.isdigit():
-    # Launchpad bug number
-    if options.remove_tag and not options.cookie_file:
-        print >> sys.stderr, 'You need to specify --cookie for removing a tag from a Launchpad bug.'
-        sys.exit(1)
-    report = report_from_launchpad(reportfile, options.cookie_file,
-        options.remove_tag)
-    lpbug = reportfile
+    # bug number
+    report = crashdb.download(int(reportfile))
+    bugid = reportfile
     reportfile = None
 else:
     print >> sys.stderr, 'ERROR: "%s" is neither an existing report file nor a \
-Launchpad bug number' % reportfile
+bug number' % reportfile
     sys.exit(1)
 
 if options.core_file:
@@ -465,12 +395,12 @@ else:
 
 if modified:
     if not reportfile and not options.output:
-        if not options.cookie_file:
-            print >> sys.stderr, 'You need to specify --cookie for attaching retraced results back to a Launchpad bug.'
+        if not options.auth_file:
+            print >> sys.stderr, 'You need to specify --auth for uploading retraced results back to the crash database.'
             sys.exit(1)
         if not options.confirm or confirm_traces(report):
-            attach_to_launchpad_bug(lpbug, report, options.cookie_file)
-            print 'New attachments uploaded to Launchpad bug ' + lpbug
+            crashdb.update(bugid, report)
+            print 'New attachments uploaded to crash database #' + bugid
     else:
         if options.output == None:
             out = open(reportfile, 'w')
