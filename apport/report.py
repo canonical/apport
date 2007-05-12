@@ -459,6 +459,10 @@ class Report(ProblemReport):
         </patterns>
         '''
 
+        # some distros might not want to support these
+        if not baseurl:
+            return
+
         assert self.has_key('Package')
         package = self['Package'].split()[0]
         try:

@@ -22,7 +22,6 @@ import apport, apport.fileutils, REThread
 
 # FIXME: make Ubuntu independent
 from apport.crashdb_launchpad import LaunchpadCrashDatabase as CrashDatabase
-bugpattern_baseurl = 'http://people.ubuntu.com/~pitti/bugpatterns'
 
 def thread_collect_info(report, reportfile, package):
     '''Encapsulate call to add_*_info() and update given report,
@@ -308,7 +307,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
             if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
                 bpthread = REThread.REThread(target=self.report.search_bug_patterns,
-                    args=(bugpattern_baseurl,))
+                    args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
                 while bpthread.isAlive():
                     self.ui_pulse_info_collection_progress()

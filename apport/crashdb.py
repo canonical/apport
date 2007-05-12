@@ -48,3 +48,11 @@ class CrashDatabase:
         desired) and an optional comment.'''
 
         raise Exception, 'this method must be implemented by a concrete subclass'
+
+    def get_bugpattern_baseurl(self):
+        '''Return the base URL for bug patterns.
+
+        See apport.report.Report.search_bug_patterns() for details. If this
+        function returns None, bug patterns are disabled.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'

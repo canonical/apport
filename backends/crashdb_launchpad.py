@@ -127,6 +127,13 @@ class LaunchpadCrashDatabase(CrashDatabase):
             'ThreadStacktrace.txt (retraced)')
         t.close()
 
+    def get_bugpattern_baseurl(self):
+        '''Return the base URL for bug patterns.
+
+        See apport.report.Report.search_bug_patterns() for details. If this
+        function returns None, bug patterns are disabled.'''
+
+        return 'http://people.ubuntu.com/~pitti/bugpatterns'
 
 # some test code for future usage:
 
