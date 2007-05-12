@@ -12,7 +12,7 @@ the full text of the license.
 
 class CrashDatabase:
     def __init__(self, auth_file):
-        '''Initialize Launchpad crash database connection. 
+        '''Initialize crash database connection. 
         
         You need to specify an implementation specific file with the
         authentication credentials for retracing access for download() and

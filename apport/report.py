@@ -1127,8 +1127,10 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
                 'gracefully handles nonexisting package XML file')
             self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None,
                 'gracefully handles nonexisting base path')
+            # existing host, but no bug patterns
             self.assertEqual(r_bash.search_bug_patterns('http://security.ubuntu.com/'), None,
                 'gracefully handles base path without bug patterns')
+            # nonexisting host
             self.assertEqual(r_bash.search_bug_patterns('http://nonexisting.domain/'), None,
                 'gracefully handles nonexisting URL domain')
         finally:

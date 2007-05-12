@@ -274,7 +274,7 @@ def command_login(opts, args):
         chroot.tar()
 
 def command_retrace(opts, args):
-    '''Retrace a Launchpad bug or report file.'''
+    '''Retrace a bug or report file.'''
 
     if len(args) != 1:
         print >> sys.stderr, 'retrace needs exactly one argument (use --help for a short online help)'
