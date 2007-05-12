@@ -49,6 +49,12 @@ class CrashDatabase:
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
+    def get_distro_release(self, id):
+        '''Get 'DistroRelease: <release>' from the given report ID and return
+        it.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
     def get_bugpattern_baseurl(self):
         '''Return the base URL for bug patterns.
 

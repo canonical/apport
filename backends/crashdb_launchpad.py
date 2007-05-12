@@ -127,6 +127,18 @@ class LaunchpadCrashDatabase(CrashDatabase):
             'ThreadStacktrace.txt (retraced)')
         t.close()
 
+    def get_distro_release(self, id):
+        '''Get 'DistroRelease: <release>' from the given report ID and return
+        it.'''
+
+        dr = re.compile('DistroRelease: ([-a-zA-Z0-9.+/ ]+)')
+        for line in urllib.urlopen('https://launchpad.net/bugs/' + str(id)):
+            m = dr.search(line)
+            if m:
+                return m.group(1)
+        else:
+            raise ValueError, 'URL does not contain DistroRelease: field'
+
     def get_bugpattern_baseurl(self):
         '''Return the base URL for bug patterns.
 
