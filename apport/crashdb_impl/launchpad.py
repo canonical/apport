@@ -21,13 +21,16 @@ import apport
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
 
-    def __init__(self, cookie_file, bugpattern_baseurl):
+    def __init__(self, cookie_file, bugpattern_baseurl, options):
         '''Initialize Launchpad crash database connection. 
         
         You need to specify a Mozilla-style cookie file for download() and
         update(). For upload() and get_comment_url() you can use None.'''
 
-        apport.crashdb.CrashDatabase.__init__(self, cookie_file, bugpattern_baseurl)
+        apport.crashdb.CrashDatabase.__init__(self, cookie_file,
+            bugpattern_baseurl, options)
+
+        self.distro = options['distro']
 
     def upload(self, report):
         '''Upload given problem report return a handle for it. 
@@ -64,11 +67,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             args['field.title'] = title
 
         if report.has_key('SourcePackage'):
-            return 'https://launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
-                report['SourcePackage'], handle, urllib.urlencode(args))
+            return 'https://launchpad.net/%s/+source/%s/+filebug/%s?%s' % (
+                self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
         else:
-            return 'https://launchpad.net/ubuntu/+filebug/%s?%s' % (
-                handle, urllib.urlencode(args))
+            return 'https://launchpad.net/%s/+filebug/%s?%s' % (
+                self.distro, handle, urllib.urlencode(args))
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''

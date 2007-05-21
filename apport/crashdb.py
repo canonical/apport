@@ -13,14 +13,18 @@ the full text of the license.
 import os
 
 class CrashDatabase:
-    def __init__(self, auth_file, bugpattern_baseurl):
+    def __init__(self, auth_file, bugpattern_baseurl, options):
         '''Initialize crash database connection. 
         
         You need to specify an implementation specific file with the
         authentication credentials for retracing access for download() and
-        update(). For upload() and get_comment_url() you can use None.'''
+        update(). For upload() and get_comment_url() you can use None.
+        
+        options is a dictionary with additional settings from crashdb.conf; see
+        get_crashdb() for details'''
 
         self.auth_file = auth_file
+        self.options = options
         self.bugpattern_baseurl = bugpattern_baseurl
 
     def upload(self, report):
@@ -101,5 +105,5 @@ def get_crashdb(auth_file, name = None, conf = None):
     db = settings['databases'][name]
 
     m = __import__('apport.crashdb_impl.' + db['impl'], globals(), locals(), ['CrashDatabase'], -1)
-    return m.CrashDatabase(auth_file, db['bug_pattern_base'])
+    return m.CrashDatabase(auth_file, db['bug_pattern_base'], db)
 

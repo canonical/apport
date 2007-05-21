@@ -620,7 +620,7 @@ if  __name__ == '__main__':
         '''Dummy CrashDatabase for the test suite.'''
 
         def __init__(self):
-            apport.crashdb.CrashDatabase.__init__(self, None, None)
+            apport.crashdb.CrashDatabase.__init__(self, None, None, {})
             self.handle = 0
 
         def upload(self, report):
