@@ -19,12 +19,16 @@ apport (0.79) UNRELEASED; urgency=low
   abstract base class. This will greatly help for getting upstream acceptance
   and the possibility of automatically forwarding crashes upstream:
 
-  * Add apport/crashdb.py: Abstract crash database interface.
-  * Add backends/crashdb_launchpad.py: Launchpad implementation of crash
+  * Add apport/crashdb.py: Abstract crash database interface. This also offers
+    a factory function get_crashdb() which reads a configuration file to find
+    the default crash database to be used.
+  * Add ./crashdb.conf: Crash database configuration file, for Ubuntu on
+    Launchpad. Modify setup.py and debian/python-apport.install to ship it in
+    python-apport.
+  * Add apport/crashdb_impl/launchpad.py: Launchpad implementation of crash
     database interface.
   * apport/ui.py: Drop LP specific bits and move towards new CrashDatabase
-    interface. Keep the hardcoded instantiation of LaunchpadCrashDatabase for
-    now.
+    interface.
   * apport/ui.py, test suite: Do not overwrite file_report() any more, but
     use a dummy CrashDatabase. This will test the actual file_report()
     implementation and allows the test suite to check the precise value of
@@ -35,15 +39,16 @@ apport (0.79) UNRELEASED; urgency=low
     test cases to Report.standard_title(). It is much more appropriate there
     and can be used in the retracer as well.
   * bin/apport-retrace: Drop LP specific bits and move to CrashDatabase
-    interface. Keep the hardcoded instantiation of LaunchpadCrashDatabase for
-    now. Remove the --remove-tag option, we really should not have it here;
-    remove it from man/apport-retrace.1 as well.
+    interface. Remove the --remove-tag option, we really should not have it
+    here; remove it from man/apport-retrace.1 as well.
+  * bin/apport-chroot: Drop LP specific bits and move to CrashDatabase
+    interface.
   * bin/launchpad-crash-digger: Remove retracing tag directly instead of
     passing --remove-tag to apport-chroot. This is a much cleaner design and
     avoids infinitely looping on some weirdly failing retraces.
   * bin/apport-chroot: Drop --remove-tag option here, too.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 May 2007 16:13:53 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 May 2007 22:30:30 +0200
 
 apport (0.78) gutsy; urgency=low
 

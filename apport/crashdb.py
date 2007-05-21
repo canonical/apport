@@ -10,8 +10,10 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
+import os
+
 class CrashDatabase:
-    def __init__(self, auth_file):
+    def __init__(self, auth_file, bugpattern_baseurl):
         '''Initialize crash database connection. 
         
         You need to specify an implementation specific file with the
@@ -19,6 +21,7 @@ class CrashDatabase:
         update(). For upload() and get_comment_url() you can use None.'''
 
         self.auth_file = auth_file
+        self.bugpattern_baseurl = bugpattern_baseurl
 
     def upload(self, report):
         '''Upload given problem report return a handle for it. 
@@ -61,4 +64,42 @@ class CrashDatabase:
         See apport.report.Report.search_bug_patterns() for details. If this
         function returns None, bug patterns are disabled.'''
 
-        raise Exception, 'this method must be implemented by a concrete subclass'
+        return self.bugpattern_baseurl
+
+#
+# factory 
+#
+
+def get_crashdb(auth_file, name = None, conf = None):
+    '''Return a CrashDatabase object for the given crash db name, as specified
+    in the configuration file 'conf'.
+    
+    If name is None, it defaults to the 'default' value in conf.
+
+    If conf is None, it defaults to the environment variable
+    APPORT_CRASHDB_CONF; if that does not exist, the hardcoded default is
+    /etc/apport/crashdb.conf. This Python syntax file needs to specify:
+
+    - A string variable 'default', giving a default value for 'name' if that is
+      None.
+
+    - A dictionary 'databases' which maps names to crash db configuration
+      dictionaries. These need to have at least the keys 'impl' (Python module
+      in apport.crashdb_impl which contains a concrete 'CrashDatabase' class
+      implementation for that crash db type) and 'bug_pattern_base', which
+      specifies an URL for bug patterns (or None if those are not used for that
+      crash db).'''
+
+    if not conf:
+        conf = os.environ.get('APPORT_CRASHDB_CONF', '/etc/apport/crashdb.conf')
+    settings = {}
+    execfile(conf, settings)
+
+    if not name:
+        name = settings['default']
+
+    db = settings['databases'][name]
+
+    m = __import__('apport.crashdb_impl.' + db['impl'], globals(), locals(), ['CrashDatabase'], -1)
+    return m.CrashDatabase(auth_file, db['bug_pattern_base'])
+

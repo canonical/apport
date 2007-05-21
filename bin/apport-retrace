@@ -20,8 +20,7 @@ import warnings
 warnings.filterwarnings("ignore", "apt API not stable yet", FutureWarning)
 import apt
 
-# FIXME: make Ubuntu indepentent
-from apport.crashdb_launchpad import LaunchpadCrashDatabase as CrashDatabase
+from apport.crashdb import get_crashdb
 
 #
 # functions
@@ -326,7 +325,7 @@ def confirm_traces(report):
 
 (reportfile, options) = parse_options()
 
-crashdb = CrashDatabase(options.auth_file)
+crashdb = get_crashdb(options.auth_file)
 
 # load the report
 if os.path.exists(reportfile):

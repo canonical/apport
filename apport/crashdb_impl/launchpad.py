@@ -15,19 +15,19 @@ import urllib, tempfile, shutil, os.path, re, gzip
 import launchpadBugs.storeblob
 from launchpadBugs.HTMLOperations import Bug
 
-from apport.crashdb import CrashDatabase
+import apport.crashdb
 import apport
 
-class LaunchpadCrashDatabase(CrashDatabase):
+class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
 
-    def __init__(self, cookie_file):
+    def __init__(self, cookie_file, bugpattern_baseurl):
         '''Initialize Launchpad crash database connection. 
         
         You need to specify a Mozilla-style cookie file for download() and
         update(). For upload() and get_comment_url() you can use None.'''
 
-        CrashDatabase.__init__(self, cookie_file)
+        apport.crashdb.CrashDatabase.__init__(self, cookie_file, bugpattern_baseurl)
 
     def upload(self, report):
         '''Upload given problem report return a handle for it. 
@@ -138,14 +138,6 @@ class LaunchpadCrashDatabase(CrashDatabase):
                 return m.group(1)
         else:
             raise ValueError, 'URL does not contain DistroRelease: field'
-
-    def get_bugpattern_baseurl(self):
-        '''Return the base URL for bug patterns.
-
-        See apport.report.Report.search_bug_patterns() for details. If this
-        function returns None, bug patterns are disabled.'''
-
-        return 'http://people.ubuntu.com/~pitti/bugpatterns'
 
 # some test code for future usage:
 

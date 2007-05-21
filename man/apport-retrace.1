@@ -40,7 +40,7 @@ one of the options
 .B \-s\fR, or
 .B \-o\fR
 have to be used to process the report locally, or 
-.B \-\-cookie
+.B \-\-auth
 needs to be specified to attach the resulting stack traces back to the
 bug report.
 
@@ -93,10 +93,11 @@ If a bug number is given without any of the options
 .B \-s\fR, or
 .B \-o\fR,
 then the retraced stack traces are attached to the bug.
-Since this needs authentication, a Mozilla-style cookie file
-must be specified. This can be the standard
+Since this needs authentication, an authentication file for the crash
+database must be specified. This could e. g. be the standard
 .B cookies.txt
-from Firefox' profile directory.
+from Firefox' profile directory if the crash database uses
+cookie based authentication.
 
 .TP
 .B \-\-confirm

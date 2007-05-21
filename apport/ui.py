@@ -20,8 +20,7 @@ from gettext import gettext as _
 
 import apport, apport.fileutils, REThread
 
-# FIXME: make Ubuntu independent
-from apport.crashdb_launchpad import LaunchpadCrashDatabase as CrashDatabase
+from apport.crashdb import get_crashdb
 
 def thread_collect_info(report, reportfile, package):
     '''Encapsulate call to add_*_info() and update given report,
@@ -67,8 +66,7 @@ class UserInterface:
         self.report_file = None
         self.cur_package = None
 
-        # FIXME: Get this from somewhere else
-        self.crashdb = CrashDatabase()
+        self.crashdb = get_crashdb(None)
 
         gettext.textdomain(self.gettext_domain)
         self.parse_argv()
@@ -622,6 +620,7 @@ if  __name__ == '__main__':
         '''Dummy CrashDatabase for the test suite.'''
 
         def __init__(self):
+            apport.crashdb.CrashDatabase.__init__(self, None, None)
             self.handle = 0
 
         def upload(self, report):
