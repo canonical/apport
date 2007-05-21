@@ -1,4 +1,4 @@
-apport (0.80) UNRELEASED; urgency=low
+apport (0.81) UNRELEASED; urgency=low
 
   Collect all Launchpad specific bits in a separate class and provide an
   abstract base class. This will greatly help for getting upstream acceptance
@@ -37,6 +37,18 @@ apport (0.80) UNRELEASED; urgency=low
   * po/de.po: Update.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 May 2007 22:30:30 +0200
+
+apport (0.80) UNRELEASED; urgency=low
+
+  Some debranding:
+
+  * setup.py: Use apport wiki home page for 'url'.
+  * Remove 'X-Ubuntu-Gettext-Domain' from *.desktop.in, since langpack.mk will
+    add it automatically now.
+  * *.desktop.in: Remove 'in Ubuntu' from comment.
+  * cli/apport-cli, qt4/apport-qt: Generalize window titles.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 16:33:58 +0200
 
 apport (0.79) gutsy; urgency=low
 

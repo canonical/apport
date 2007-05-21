@@ -1,4 +1,4 @@
-include Makevars
+GETTEXT_PACKAGE=apport
 PO_FILES := $(wildcard *.po)
 CONTACT=martin.pitt@ubuntu.com
 top_srcdir = ..

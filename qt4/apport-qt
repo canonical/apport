@@ -208,7 +208,7 @@ class QT4UserInterface(apport.ui.UserInterface):
 
     def ui_present_report_details(self):
         # Let's get the dialog and modify it to our needs
-        dialog = QT4ReportDialog (self.report.get('Package', 'Ubuntu').split()[0],
+        dialog = QT4ReportDialog (self.report.get('Package', _('Generic error')).split()[0],
                 _('Send problem report to the developers?'),
                 _('After the problem report has been sent, please fill out '
                     'the form in the automatically opened web browser.'))
