@@ -614,40 +614,26 @@ might be helpful for the developers.'))
 
 if  __name__ == '__main__':
     import unittest, shutil, signal, tempfile
-    import apport.crashdb
-
-    class _TestSuiteCrashDb(apport.crashdb.CrashDatabase):
-        '''Dummy CrashDatabase for the test suite.'''
-
-        def __init__(self):
-            apport.crashdb.CrashDatabase.__init__(self, None, None, {})
-            self.handle = 0
-
-        def upload(self, report):
-            '''Store the report and return a handle number (starting from 1).'''
-
-            self.report = report
-            self.handle += 1
-            return self.handle
-
-        def get_comment_url(self, report, handle):
-            '''Return http://<sourcepackage>.bug.net/<handle> for package bugs
-            or http://bug.net/<handle> for reports without a SourcePackage.'''
-
-            if report.has_key('SourcePackage'):
-                return 'http://%s.bug.net/%i' % (report['SourcePackage'],
-                    handle)
-            else:
-                return 'http://bug.net/%i' % handle
 
     class _TestSuiteUserInterface(UserInterface):
         '''Concrete UserInterface suitable for automatic testing.'''
 
         def __init__(self):
-            UserInterface.__init__(self)
-
             # use our dummy crashdb
-            self.crashdb = _TestSuiteCrashDb()
+            self.crashdb_conf = tempfile.NamedTemporaryFile()
+            print >> self.crashdb_conf, '''default = 'testsuite'
+databases = {
+    'testsuite': { 
+        'impl': 'memory',
+        'bug_pattern_base': None
+    }
+}
+'''
+            self.crashdb_conf.flush()
+
+            os.environ['APPORT_CRASHDB_CONF'] = self.crashdb_conf.name
+
+            UserInterface.__init__(self)
 
             # state of progress dialogs
             self.ic_progress_active = False
@@ -923,7 +909,7 @@ CoreDump: base64
             self.ui.run_report_bug()
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://bug.net/%i' % self.ui.crashdb.handle)
+            self.assertEqual(self.ui.opened_url, 'http://bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_(set(['Date', 'Uname', 'DistroRelease', 'ProblemType']).issubset(
                 set(self.ui.report.keys())), 'report has required fields')
@@ -937,7 +923,7 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://bash.bug.net/%i' % self.ui.crashdb.handle)
+            self.assertEqual(self.ui.opened_url, 'http://bash.bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
@@ -972,7 +958,7 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.handle)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
             self.assert_(self.ui.ic_progress_pulses > 0)
 
         def test_run_report_bug_wrong_pid(self):
@@ -1055,7 +1041,7 @@ CoreDump: base64
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.handle)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
@@ -1072,7 +1058,7 @@ CoreDump: base64
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.handle)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
@@ -1208,7 +1194,7 @@ CoreDump: base64
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://foo.bug.net/%i' % self.ui.crashdb.handle)
+            self.assertEqual(self.ui.opened_url, 'http://foo.bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Package' in self.ui.report.keys())
@@ -1244,7 +1230,7 @@ CoreDump: base64
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://linux-source-2.6.20.bug.net/%i' % self.ui.crashdb.handle)
+            self.assertEqual(self.ui.opened_url, 'http://linux-source-2.6.20.bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Kernel')

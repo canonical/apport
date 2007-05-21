@@ -10,12 +10,14 @@ apport (0.81) UNRELEASED; urgency=low
   * Add ./crashdb.conf: Crash database configuration file, for Ubuntu on
     Launchpad. Modify setup.py and debian/python-apport.install to ship it in
     python-apport.
+  * Add apport/crashdb_impl/memory.py: Simple in-memory implementation of
+    crash database interface for testing.
   * Add apport/crashdb_impl/launchpad.py: Launchpad implementation of crash
     database interface.
   * apport/ui.py: Drop LP specific bits and move towards new CrashDatabase
     interface.
   * apport/ui.py, test suite: Do not overwrite file_report() any more, but
-    use a dummy CrashDatabase. This will test the actual file_report()
+    use the memory CrashDatabase. This will test the actual file_report()
     implementation and allows the test suite to check the precise value of
     opened URLs.
   * debian/rules: Install the crashdb implementations in backends/ into
@@ -36,7 +38,7 @@ apport (0.81) UNRELEASED; urgency=low
   Other fixes:
   * po/de.po: Update.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 May 2007 22:30:30 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 17:22:54 +0200
 
 apport (0.80) UNRELEASED; urgency=low
 
