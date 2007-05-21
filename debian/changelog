@@ -2,7 +2,8 @@ apport (0.81) UNRELEASED; urgency=low
 
   Collect all Launchpad specific bits in a separate class and provide an
   abstract base class. This will greatly help for getting upstream acceptance
-  and the possibility of automatically forwarding crashes upstream:
+  and the possibility of automatically forwarding crashes upstream
+  (apport-for-upstreams specification):
 
   * Add apport/crashdb.py: Abstract crash database interface. This also offers
     a factory function get_crashdb() which reads a configuration file to find
