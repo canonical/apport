@@ -1,5 +1,39 @@
 apport (0.80) UNRELEASED; urgency=low
 
+  Collect all Launchpad specific bits in a separate class and provide an
+  abstract base class. This will greatly help for getting upstream acceptance
+  and the possibility of automatically forwarding crashes upstream
+  (apport-for-upstreams specification):
+
+  * Add apport/crashdb.py: Abstract crash database interface. This also offers
+    a factory function get_crashdb() which reads a configuration file to find
+    the default crash database to be used.
+  * Add ./crashdb.conf: Crash database configuration file, for Ubuntu on
+    Launchpad. Modify setup.py and debian/python-apport.install to ship it in
+    python-apport.
+  * Add apport/crashdb_impl/memory.py: Simple in-memory implementation of
+    crash database interface for testing.
+  * Add apport/crashdb_impl/launchpad.py: Launchpad implementation of crash
+    database interface.
+  * apport/ui.py: Drop LP specific bits and move towards new CrashDatabase
+    interface.
+  * apport/ui.py, test suite: Do not overwrite file_report() any more, but
+    use the memory CrashDatabase. This will test the actual file_report()
+    implementation and allows the test suite to check the precise value of
+    opened URLs.
+  * apport/{report,ui}.py: Move UserInterface.create_crash_bug_title() and its
+    test cases to Report.standard_title(). It is much more appropriate there
+    and can be used in the retracer as well.
+  * bin/apport-retrace: Drop LP specific bits and move to CrashDatabase
+    interface. Remove the --remove-tag option, we really should not have it
+    here; remove it from man/apport-retrace.1 as well.
+  * bin/apport-chroot: Drop --remove-tag option here, too.
+  * bin/apport-chroot: Drop LP specific bits and move to CrashDatabase
+    interface.
+  * bin/launchpad-crash-digger: Remove retracing tag directly instead of
+    passing --remove-tag to apport-chroot. This is a much cleaner design and
+    avoids infinitely looping on some weirdly failing retraces.
+
   Some debranding:
 
   * setup.py: Use apport wiki home page for 'url'.
@@ -7,6 +41,9 @@ apport (0.80) UNRELEASED; urgency=low
     add it automatically now.
   * *.desktop.in: Remove 'in Ubuntu' from comment.
   * cli/apport-cli, qt4/apport-qt: Generalize window titles.
+
+  Other fixes:
+  * po/de.po: Update.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 16:33:58 +0200
 

@@ -16,6 +16,7 @@ from glob import glob
 
 import problem_report
 from apport.chroot import Chroot, setup_fakeroot_env
+from apport.crashdb import get_crashdb
 
 #
 # functions
@@ -51,15 +52,12 @@ def parse_options():
     optparser.add_option('-v', '--verbose', 
         help='Verbose operation (also passed to apport-retrace)',
         action='store_true', dest='verbose', default=False)
-    optparser.add_option('--cookie', 
+    optparser.add_option('--auth', 
         help='Passed on to apport-retrace in "retrace" mode',
-        action='store', type='string', dest='cookie_file', default=None)
+        action='store', type='string', dest='auth_file', default=None)
     optparser.add_option('--confirm-attach', 
         help='Display retraced stack traces and ask for confirmation before uploading them as bug attachments.',
         action='store_true', dest='confirm_attach', default=False)
-    optparser.add_option('--remove-tag',
-        help='Remove a tag from the Launchpad bug (in all cases, even if retracing fails); passed to apport-retrace in "retrace" mode',
-        action='store', type='string', dest='remove_tag', metavar='TAG', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -80,18 +78,6 @@ def parse_options():
                 opts.chroot_map[n] = os.path.join(map_file_dir, p)
 
     return (opts, args)
-
-def release_from_bug(url):
-    '''Open the given URL, parse out 'DistroRelease: <release>' and return
-    it.'''
-
-    dr = re.compile('DistroRelease: ([-a-zA-Z0-9.+/ ]+)')
-    for line in urllib.urlopen(url):
-        m = dr.search(line)
-        if m:
-            return m.group(1)
-    else:
-        raise ValueError, 'URL does not contain DistroRelease: field'
 
 def release_from_report(file):
     '''Return the distro release from the given Apport report.'''
@@ -277,7 +263,7 @@ def command_login(opts, args):
         chroot.tar()
 
 def command_retrace(opts, args):
-    '''Retrace a Launchpad bug or report file.'''
+    '''Retrace a bug or report file.'''
 
     if len(args) != 1:
         print >> sys.stderr, 'retrace needs exactly one argument (use --help for a short online help)'
@@ -293,27 +279,26 @@ def command_retrace(opts, args):
 	apport_retrace_argv += ['-p', p]
 
     if args[0].isdigit():
-        release = release_from_bug('https://launchpad.net/bugs/' + args[0])
+        crashdb = get_crashdb(options.auth_file)
+        release = crashdb.get_distro_release(args[0])
         chroot_path = opts.chroot_map[release]
         if os.path.isfile(chroot_path):
             apport_retrace_argv.append('--no-dpkg')
         c = Chroot(chroot_path)
-        if opts.cookie_file:
+        if opts.auth_file:
             # symlink the file into the chroot
-            chroot_cookie = os.path.join(c.root, 'tmp', 'cookie')
-            os.symlink(opts.cookie_file, chroot_cookie)
-            apport_retrace_argv += ['--cookie', chroot_cookie]
-            if opts.remove_tag:
-                apport_retrace_argv += ['--remove-tag', opts.remove_tag]
+            chroot_auth = os.path.join(c.root, 'tmp', 'auth')
+            os.symlink(opts.auth_file, chroot_auth)
+            apport_retrace_argv += ['--auth', chroot_auth]
         else:
             apport_retrace_argv += ['-s']
-            chroot_cookie = None
+            chroot_auth = None
         if opts.confirm_attach:
             apport_retrace_argv.append('--confirm')
         apport_retrace_argv.append(args[0])
         c.run(apport_retrace_argv)
-        if chroot_cookie:
-            os.unlink(chroot_cookie)
+        if chroot_auth:
+            os.unlink(chroot_auth)
     else:
         # symlink the report into the chroot
         release = release_from_report(args[0])

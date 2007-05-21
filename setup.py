@@ -25,9 +25,10 @@ setup(name='apport',
                   ('share/icons/hicolor/scalable/apps', ['apport/apport.svg']),
                   ('share/apport/testsuite/', ['test-apport', 'test-hooks', 'run-tests']),
                   ('share/doc/apport/', glob.glob('doc/*')),
-                  ('share/apport/package-hooks/', glob.glob('package-hooks/*'))]+mo_files,
+                  ('share/apport/package-hooks/', glob.glob('package-hooks/*')),
+                  ('/etc/apport/', ['crashdb.conf'])]+mo_files,
       scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
           'bin/apport-unpack', 'bin/apport-chroot', 'bin/package_hook',
           'bin/kernel_hook', 'gtk/apport-gtk', 'qt4/apport-qt', 'cli/apport-cli'],
-      packages=['apport']
+      packages=['apport', 'apport.crashdb_impl']
       )

@@ -14,15 +14,13 @@ the full text of the license.
 '''
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
-import tempfile, pwd, errno, urllib, zlib
+import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser, xdg.DesktopEntry
 from gettext import gettext as _
 
-import launchpadBugs.storeblob
-
 import apport, apport.fileutils, REThread
 
-bugpattern_baseurl = 'http://people.ubuntu.com/~pitti/bugpatterns'
+from apport.crashdb import get_crashdb
 
 def thread_collect_info(report, reportfile, package):
     '''Encapsulate call to add_*_info() and update given report,
@@ -54,27 +52,6 @@ def thread_collect_info(report, reportfile, package):
         apport.fileutils.mark_report_seen(reportfile)
         os.chmod (reportfile, 0600)
 
-def upload_launchpad_blob(report):
-    '''Upload given problem report to Malone and return the ticket for it.
-
-    Return None on error.'''
-
-    ticket = None
-
-    # set retracing tag
-    hdr = {}
-    if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
-        a = report['PackageArchitecture']
-        hdr['Tags'] = 'need-%s-retrace' % a
-
-    # write MIME/Multipart version into temporary file
-    mime = tempfile.TemporaryFile()
-    report.write_mime(mime, extra_headers=hdr)
-    mime.flush()
-    mime.seek(0)
-
-    return launchpadBugs.storeblob.upload(mime)
-
 class UserInterface:
     '''Abstract base class for encapsulating the workflow and common code for
        any user interface implementation (like GTK, Qt, or CLI).
@@ -88,6 +65,8 @@ class UserInterface:
         self.report = None
         self.report_file = None
         self.cur_package = None
+
+        self.crashdb = get_crashdb(None)
 
         gettext.textdomain(self.gettext_domain)
         self.parse_argv()
@@ -326,7 +305,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
             if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
                 bpthread = REThread.REThread(target=self.report.search_bug_patterns,
-                    args=(bugpattern_baseurl,))
+                    args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
                 while bpthread.isAlive():
                     self.ui_pulse_info_collection_progress()
@@ -348,81 +327,6 @@ free memory to automatically analyze the problem and send a report to the develo
                 # TODO This is not called consistently, is it really needed?
                 self.ui_shutdown()
                 sys.exit(1)
-
-    def create_crash_bug_title(self):
-        '''Create an appropriate standard bug title for a crash report.
-
-        This contains the topmost function name from the stack trace and the
-        signal (for signal crashes) or the Python exception (for unhandled
-        Python exceptions).
-
-        Return None if the report is not a crash or a default title could not
-        be generated.'''
-
-        # signal crash
-        if self.report.has_key('Signal') and \
-            self.report.has_key('ExecutablePath') and \
-            self.report.has_key('StacktraceTop'):
-
-            signal_names = {
-                '4': 'SIGILL',
-                '6': 'SIGABRT',
-                '8': 'SIGFPE',
-                '11': 'SIGSEGV',
-                '13': 'SIGPIPE'
-            }
-
-            fn = ''
-            for l in self.report['StacktraceTop'].splitlines():
-                fname = l.split('(')[0].strip()
-                if fname != '??':
-                    fn = ' in %s()' % fname
-                    break
-
-            arch_mismatch = ''
-            if self.report.has_key('Architecture') and \
-                self.report.has_key('PackageArchitecture') and \
-                self.report['Architecture'] != self.report['PackageArchitecture'] and \
-                self.report['PackageArchitecture'] != 'all':
-                arch_mismatch = ' [non-native %s package]' % self.report['PackageArchitecture']
-
-            return '[apport] %s crashed with %s%s%s' % (
-                os.path.basename(self.report['ExecutablePath']),
-                signal_names.get(self.report.get('Signal'),
-                    'signal ' + self.report.get('Signal')),
-                fn, arch_mismatch
-            )
-
-        # Python exception
-        if self.report.has_key('Traceback') and \
-            self.report.has_key('ExecutablePath'):
-
-            trace = self.report['Traceback'].splitlines()
-
-            if len(trace) < 1:
-                return Nonr
-            if len(trace) < 3:
-                return '[apport] %s crashed with %s' % (
-                    os.path.basename(self.report['ExecutablePath']),
-                    trace[0])
-            return '[apport] %s crashed with %s in %s()' % (
-                os.path.basename(self.report['ExecutablePath']),
-                trace[-1].split(':')[0],
-                trace[-3].split()[-1]
-            )
-
-        # package problem
-        if self.report.get('ProblemType') == 'Package' and \
-            self.report.has_key('Package'):
-
-            title = '[apport] package %s failed to install/upgrade' % \
-                self.report['Package']
-            if self.report.get('ErrorMessage'):
-                title += ': ' + self.report['ErrorMessage'].splitlines()[-1]
-
-            return title
-
-        return None
 
     def open_url(self, url):
         '''Open the given URL in a new browser window.
@@ -506,7 +410,7 @@ free memory to automatically analyze the problem and send a report to the develo
         to its web page.'''
 
         self.ui_start_upload_progress()
-        upthread = REThread.REThread(target=upload_launchpad_blob,
+        upthread = REThread.REThread(target=self.crashdb.upload,
             args=(self.report,))
         upthread.start()
         while upthread.isAlive():
@@ -518,7 +422,7 @@ free memory to automatically analyze the problem and send a report to the develo
         if upthread.exc_info():
             self.ui_error_message(_('Network problem'),
                 "%s:\n\n%s" % (
-                    _('Could not upload report data to Launchpad'),
+                    _('Could not upload report data to crash database'),
                     str(upthread.exc_info()[1])
                 ))
             return
@@ -526,21 +430,9 @@ free memory to automatically analyze the problem and send a report to the develo
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
 
-        if ticket:
-            args = {}
-            title = self.create_crash_bug_title()
-            if title:
-                args['field.title'] = title
-
-            if self.report.has_key('SourcePackage'):
-                self.open_url('https://launchpad.net/ubuntu/+source/%s/+filebug/%s?%s' % (
-                    self.report['SourcePackage'], ticket, urllib.urlencode(args)))
-            else:
-                self.open_url('https://launchpad.net/ubuntu/+filebug/%s?%s' % (
-                    ticket, urllib.urlencode(args)))
-        else:
-            self.ui_error_message(_('Launchpad problem'),
-                _('Launchpad did not return a ticket number for the uploaded data.'))
+        url = self.crashdb.get_comment_url(self.report, ticket)
+        if url:
+            self.open_url(url)
 
     def load_report(self, path):
         '''Load report from given path and do some consistency checks.
@@ -721,17 +613,33 @@ might be helpful for the developers.'))
 #
 
 if  __name__ == '__main__':
-    import unittest, shutil, signal
+    import unittest, shutil, signal, tempfile
 
     class _TestSuiteUserInterface(UserInterface):
         '''Concrete UserInterface suitable for automatic testing.'''
 
         def __init__(self):
+            # use our dummy crashdb
+            self.crashdb_conf = tempfile.NamedTemporaryFile()
+            print >> self.crashdb_conf, '''default = 'testsuite'
+databases = {
+    'testsuite': { 
+        'impl': 'memory',
+        'bug_pattern_base': None
+    }
+}
+'''
+            self.crashdb_conf.flush()
+
+            os.environ['APPORT_CRASHDB_CONF'] = self.crashdb_conf.name
+
             UserInterface.__init__(self)
 
-            # state of info collection progress dialog
+            # state of progress dialogs
             self.ic_progress_active = False
             self.ic_progress_pulses = 0 # count the pulses
+            self.upload_progress_active = False
+            self.upload_progress_pulses = 0
 
             # these store the choices the ui_present_* calls do
             self.present_crash_response = None
@@ -782,16 +690,19 @@ if  __name__ == '__main__':
         def ui_stop_info_collection_progress(self):
             self.ic_progress_active = False
 
+        def ui_start_upload_progress(self):
+            self.upload_progress_pulses = 0
+            self.upload_progress_active = True
+
+        def ui_set_upload_progress(self):
+            assert self.upload_progress_active
+            self.upload_progress_pulses += 1
+
+        def ui_stop_upload_progress(self):
+            self.upload_progress_active = False
+
         def open_url(self, url):
             self.opened_url = url
-
-        def file_report(self):
-            # the report can be accessed as self.ui.report, thus we do not do
-            # anything about sending it anywhere
-            if self.report.has_key('SourcePackage'):
-                self.open_url('https://bug.tracker/%s' % self.report['SourcePackage'])
-            else:
-                self.open_url('https://bug.tracker')
 
     class _UserInterfaceTest(unittest.TestCase):
         def setUp(self):
@@ -976,108 +887,6 @@ CoreDump: base64
             self.assertEqual(self.ui.ic_progress_active, False,
                 'progress dialog for package bug info collection finished')
 
-        def test_create_crash_bug_title(self):
-            '''Test create_crash_bug_title().'''
-
-            self.ui.report = apport.Report()
-            self.assertEqual(self.ui.create_crash_bug_title(), None)
-
-            # named signal crash
-            self.ui.report['Signal'] = '11'
-            self.ui.report['ExecutablePath'] = '/bin/bash'
-            self.ui.report['StacktraceTop'] = '''foo()
-bar(x=3)
-baz()
-'''
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] bash crashed with SIGSEGV in foo()')
-
-            # unnamed signal crash
-            self.ui.report['Signal'] = '42'
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] bash crashed with signal 42 in foo()')
-
-            # do not crash on empty StacktraceTop
-            self.ui.report['StacktraceTop'] = ''
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] bash crashed with signal 42')
-
-            # do not create bug title with unknown function name
-            self.ui.report['StacktraceTop'] = '??()\nfoo()'
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] bash crashed with signal 42 in foo()')
-
-            # if we do not know any function name, don't mention ??
-            self.ui.report['StacktraceTop'] = '??()\n??()'
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] bash crashed with signal 42')
-
-            # Python crash
-            self.ui.report = apport.Report()
-            self.ui.report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
-            self.ui.report['Traceback'] = '''Traceback (most recent call last):
-  File "/usr/share/apport/apport-gtk", line 202, in <module>
-    app.run_argv()
-  File "/var/lib/python-support/python2.5/apport/ui.py", line 161, in run_argv
-    self.run_crashes()
-  File "/var/lib/python-support/python2.5/apport/ui.py", line 104, in run_crashes
-    self.run_crash(f)
-  File "/var/lib/python-support/python2.5/apport/ui.py", line 115, in run_crash
-    response = self.ui_present_crash(desktop_entry)
-  File "/usr/share/apport/apport-gtk", line 67, in ui_present_crash
-    subprocess.call(['pgrep', '-x',
-NameError: global name 'subprocess' is not defined'''
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] apport-gtk crashed with NameError in ui_present_crash()')
-
-            # slightly weird Python crash
-            self.ui.report = apport.Report()
-            self.ui.report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
-            self.ui.report['Traceback'] = '''TypeError: Cannot create a consistent method resolution
-order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] apport-gtk crashed with TypeError: Cannot create a consistent method resolution')
-
-            # package install problem
-            self.ui.report = apport.Report('Package')
-            self.ui.report['Package'] = 'bash'
-
-            # no ErrorMessage
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] package bash failed to install/upgrade')
-
-            # empty ErrorMessage
-            self.ui.report['ErrorMessage'] = ''
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] package bash failed to install/upgrade')
-
-            # nonempty ErrorMessage
-            self.ui.report['ErrorMessage'] = 'botched\nnot found\n'
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] package bash failed to install/upgrade: not found')
-
-            # matching package/system architectures
-            self.ui.report['Signal'] = '11'
-            self.ui.report['ExecutablePath'] = '/bin/bash'
-            self.ui.report['StacktraceTop'] = '''foo()
-bar(x=3)
-baz()
-'''
-            self.ui.report['PackageArchitecture'] = 'amd64'
-            self.ui.report['Architecture'] = 'amd64'
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] bash crashed with SIGSEGV in foo()')
-
-            # non-native package (on multiarch)
-            self.ui.report['PackageArchitecture'] = 'i386'
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] bash crashed with SIGSEGV in foo() [non-native i386 package]')
-
-            # Arch: all package (matches every system architecture)
-            self.ui.report['PackageArchitecture'] = 'all'
-            self.assertEqual(self.ui.create_crash_bug_title(),
-                '[apport] bash crashed with SIGSEGV in foo()')
-
         def test_handle_duplicate(self):
             '''Test handle_duplicate().'''
 
@@ -1100,7 +909,7 @@ baz()
             self.ui.run_report_bug()
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_(set(['Date', 'Uname', 'DistroRelease', 'ProblemType']).issubset(
                 set(self.ui.report.keys())), 'report has required fields')
@@ -1114,7 +923,7 @@ baz()
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://bash.bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
@@ -1149,7 +958,7 @@ baz()
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
             self.assert_(self.ui.ic_progress_pulses > 0)
 
         def test_run_report_bug_wrong_pid(self):
@@ -1232,7 +1041,7 @@ baz()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
@@ -1249,7 +1058,7 @@ baz()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
@@ -1385,7 +1194,7 @@ baz()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://foo.bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Package' in self.ui.report.keys())
@@ -1421,7 +1230,7 @@ baz()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertNotEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.opened_url, 'http://linux-source-2.6.20.bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Kernel')
