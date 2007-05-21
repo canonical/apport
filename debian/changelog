@@ -1,19 +1,4 @@
-apport (0.79) UNRELEASED; urgency=low
-
-  Bug fixes:
-
-  * debian/local/setup-apport-retracer: Fix '.' bashism, replace it with
-    'source'.
-  * problem_report.py, write_mime(): Drop preamble argument, replace it with
-    an extra_headers dictionary. This is much easier to evaluate on clients.
-  * apport/ui.py: Convert to new write_mime() interface from above. This
-    finally automatically tags bugs with need-$ARCH-retrace. Bump
-    p-problem-report dependency of python-apport for this.
-  * apport/report.py: Change example URLs in the testsuite from launchpad to
-    an artificial ones to avoid the impression that it is LP specific.
-  * backends/packaging-apt-dpkg.py: Formally make this a subclass of
-    apport.packaging.PackageInfo.
-  * po/de.po: Update.
+apport (0.80) UNRELEASED; urgency=low
 
   Collect all Launchpad specific bits in a separate class and provide an
   abstract base class. This will greatly help for getting upstream acceptance
@@ -48,7 +33,36 @@ apport (0.79) UNRELEASED; urgency=low
     avoids infinitely looping on some weirdly failing retraces.
   * bin/apport-chroot: Drop --remove-tag option here, too.
 
+  Other fixes:
+  * po/de.po: Update.
+
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 20 May 2007 22:30:30 +0200
+
+apport (0.79) gutsy; urgency=low
+
+  * debian/local/setup-apport-retracer: Fix '.' bashism, replace it with
+    'source'.
+  * problem_report.py, write_mime(): Drop preamble argument, replace it with
+    an extra_headers dictionary. This is much easier to evaluate on clients.
+  * apport/ui.py: Convert to new write_mime() interface from above. This
+    finally automatically tags bugs with need-$ARCH-retrace. Bump
+    p-problem-report dependency of python-apport for this.
+  * apport/report.py: Change example URLs in the testsuite from launchpad to
+    an artificial ones to avoid the impression that it is LP specific.
+  * backends/packaging-apt-dpkg.py: Formally make this a subclass of
+    apport.packaging.PackageInfo.
+  * debian/control: Use code.lp.net instead of bazaar.lp.net VCS URL.
+  * bin/kernel_hook: Fix/improve the collected information:
+    - Read /proc/modules instead of lsmod.
+    - Fix lspci argument: -n instead of -m.
+    - Add /proc/cmdline.
+  * debian/rules: Use langpack.mk for updating the .desktop files.
+  * Add po/Makevars to specify the domain, to make intltool figure out the
+    gettext domain automatically.
+  * bin/kernel_hook, ./test-hooks: Do not rely on /proc/version_signature any
+    more, it's gone in the gutsy kernel.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 15:55:10 +0200
 
 apport (0.78) gutsy; urgency=low
 

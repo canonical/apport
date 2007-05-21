@@ -1,5 +1,4 @@
-
-DOMAIN=apport
+include Makevars
 PO_FILES := $(wildcard *.po)
 CONTACT=martin.pitt@ubuntu.com
 top_srcdir = ..
@@ -12,11 +11,11 @@ clean:
 
 # update the pot
 $(DOMAIN).pot:
-	XGETTEXT_ARGS='--msgid-bugs-address=$(CONTACT) --language=python' intltool-update -p -g $(DOMAIN)
+	XGETTEXT_ARGS='--msgid-bugs-address=$(CONTACT) --language=python' intltool-update -p
 
 # merge the new stuff into the po files
 merge-po: $(PO_FILES) $(DOMAIN.pot)
-	XGETTEXT_ARGS='--msgid-bugs-address=$(CONTACT) --language=python' intltool-update -r -g $(DOMAIN)
+	XGETTEXT_ARGS='--msgid-bugs-address=$(CONTACT) --language=python' intltool-update -r
 
 # create mo from the pos
 %.mo : %.po
