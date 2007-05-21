@@ -118,9 +118,9 @@ class _HooksTest(unittest.TestCase):
         r = apport.Report()
         r.load(open(reps[0]))
 
-        self.assertEqual(set(r.keys()), set(['Date', 'Dmesg', 'LsMod',
-            'LsPciVV', 'LsPciVVM', 'Package', 'ProblemType', 'ProcCpuInfo',
-            'ProcVersion', 'ProcVersionSignature', 'SourcePackage']))
+        self.assertEqual(set(r.keys()), set(['Date', 'Dmesg', 'ProcModules',
+            'LsPciVV', 'LsPciVVN', 'Package', 'ProblemType', 'ProcCpuInfo',
+            'ProcVersion', 'ProcVersionSignature', 'ProcCmdline', 'SourcePackage']))
 
         self.assertEqual(r['ProblemType'], 'Kernel')
 
