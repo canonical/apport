@@ -52,7 +52,7 @@ Description: apport crash report handling library
 Package: apport-retrace
 Section: devel
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.63), python-apt, python-launchpad-bugs (>= 0.1.3), apt, binutils
+Depends: python (>= 2.4), python-apport (>= 0.80), python-apt, python-launchpad-bugs (>= 0.1.3), apt, binutils
 Suggests: debootstrap (>= 0.3.3.2ubuntu2), fakeroot, fakechroot
 Conflicts: apport (<< 0.72)
 Replaces: apport (<< 0.72)
@@ -71,7 +71,7 @@ Description: tools for reprocessing Apport crash reports
 Package: apport-gtk
 Section: gnome
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.78), python-gtk2, python-glade2, python-xdg, apport (>= 0.41), procps
+Depends: python (>= 2.4), python-apport (>= 0.80), python-gtk2, python-glade2, python-xdg, apport (>= 0.41), procps
 Recommends: update-notifier
 Description: GTK frontend for the apport crash report system
  apport automatically collects data from crashed processes and
@@ -87,7 +87,7 @@ Description: GTK frontend for the apport crash report system
 Package: apport-qt
 Section: kde
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.78), python-qt4, python-xdg, apport (>= 0.41), procps
+Depends: python (>= 2.4), python-apport (>= 0.80), python-qt4, python-xdg, apport (>= 0.41), procps
 Recommends: adept-notifier
 Description: Qt4 frontend for the apport crash report system
  apport automatically collects data from crashed processes and
@@ -103,7 +103,7 @@ Description: Qt4 frontend for the apport crash report system
 Package: apport-cli
 Section: utils
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.78), python-xdg, apport (>= 0.41), procps
+Depends: python (>= 2.4), python-apport (>= 0.80), python-xdg, apport (>= 0.41), procps
 Recommends: elinks
 Description: Command line frontend for the apport crash report system
  apport automatically collects data from crashed processes and
