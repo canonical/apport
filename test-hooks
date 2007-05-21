@@ -125,8 +125,8 @@ class _HooksTest(unittest.TestCase):
         self.assertEqual(r['ProblemType'], 'Kernel')
 
         self.assert_(os.uname()[2].split('-')[0] in r['SourcePackage'])
-        self.assertEqual(r['ProcVersionSignature'],
-            open('/proc/version_signature').read().strip())
+        self.assertEqual(r['ProcVersion'],
+            open('/proc/version').read().strip())
 
 # call tests
 

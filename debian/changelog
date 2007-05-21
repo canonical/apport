@@ -19,8 +19,10 @@ apport (0.79) UNRELEASED; urgency=low
   * debian/rules: Use langpack.mk for updating the .desktop files.
   * Add po/Makevars to specify the domain, to make intltool figure out the
     gettext domain automatically.
+  * bin/kernel_hook, ./test-hooks: Do not rely on /proc/version_signature any
+    more, it's gone in the gutsy kernel.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 15:33:24 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 15:55:10 +0200
 
 apport (0.78) gutsy; urgency=low
 
