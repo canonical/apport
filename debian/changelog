@@ -16,8 +16,9 @@ apport (0.79) UNRELEASED; urgency=low
     - Read /proc/modules instead of lsmod.
     - Fix lspci argument: -n instead of -m.
     - Add /proc/cmdline.
+  * debian/rules: Use langpack.mk for updating the .desktop files.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 10 May 2007 12:04:50 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 09:36:39 +0200
 
 apport (0.78) gutsy; urgency=low
 
