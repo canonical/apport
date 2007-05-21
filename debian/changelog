@@ -6,8 +6,9 @@ apport (0.80) UNRELEASED; urgency=low
   * Remove 'X-Ubuntu-Gettext-Domain' from *.desktop.in, since langpack.mk will
     add it automatically now.
   * *.desktop.in: Remove 'in Ubuntu' from comment.
+  * cli/apport-cli, qt4/apport-qt: Generalize window titles.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 16:31:28 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 21 May 2007 16:33:58 +0200
 
 apport (0.79) gutsy; urgency=low
 
