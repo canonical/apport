@@ -1,8 +1,10 @@
 apport (0.81) UNRELEASED; urgency=low
 
   * apport/report.py: Remove '[apport]' default bug title prefix. (LP: #94819)
+  * apport/crashdb_impl/launchpad.py: Tag new bugs with 'apport'. This
+    replaces the former '[apport]' prefixing.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 May 2007 22:36:38 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 May 2007 22:38:33 +0200
 
 apport (0.80) gutsy; urgency=low
 

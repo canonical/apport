@@ -41,7 +41,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         hdr = {}
         if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
             a = report['PackageArchitecture']
-            hdr['Tags'] = 'need-%s-retrace' % a
+            hdr['Tags'] = 'apport need-%s-retrace' % a
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
