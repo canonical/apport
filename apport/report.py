@@ -615,7 +615,7 @@ class Report(ProblemReport):
                 self['PackageArchitecture'] != 'all':
                 arch_mismatch = ' [non-native %s package]' % self['PackageArchitecture']
 
-            return '[apport] %s crashed with %s%s%s' % (
+            return '%s crashed with %s%s%s' % (
                 os.path.basename(self['ExecutablePath']),
                 signal_names.get(self.get('Signal'),
                     'signal ' + self.get('Signal')),
@@ -631,10 +631,10 @@ class Report(ProblemReport):
             if len(trace) < 1:
                 return Nonr
             if len(trace) < 3:
-                return '[apport] %s crashed with %s' % (
+                return '%s crashed with %s' % (
                     os.path.basename(self['ExecutablePath']),
                     trace[0])
-            return '[apport] %s crashed with %s in %s()' % (
+            return '%s crashed with %s in %s()' % (
                 os.path.basename(self['ExecutablePath']),
                 trace[-1].split(':')[0],
                 trace[-3].split()[-1]
@@ -644,7 +644,7 @@ class Report(ProblemReport):
         if self.get('ProblemType') == 'Package' and \
             self.has_key('Package'):
 
-            title = '[apport] package %s failed to install/upgrade' % \
+            title = 'package %s failed to install/upgrade' % \
                 self['Package']
             if self.get('ErrorMessage'):
                 title += ': ' + self['ErrorMessage'].splitlines()[-1]
@@ -1305,27 +1305,27 @@ bar(x=3)
 baz()
 '''
         self.assertEqual(report.standard_title(),
-            '[apport] bash crashed with SIGSEGV in foo()')
+            'bash crashed with SIGSEGV in foo()')
 
         # unnamed signal crash
         report['Signal'] = '42'
         self.assertEqual(report.standard_title(),
-            '[apport] bash crashed with signal 42 in foo()')
+            'bash crashed with signal 42 in foo()')
 
         # do not crash on empty StacktraceTop
         report['StacktraceTop'] = ''
         self.assertEqual(report.standard_title(),
-            '[apport] bash crashed with signal 42')
+            'bash crashed with signal 42')
 
         # do not create bug title with unknown function name
         report['StacktraceTop'] = '??()\nfoo()'
         self.assertEqual(report.standard_title(),
-            '[apport] bash crashed with signal 42 in foo()')
+            'bash crashed with signal 42 in foo()')
 
         # if we do not know any function name, don't mention ??
         report['StacktraceTop'] = '??()\n??()'
         self.assertEqual(report.standard_title(),
-            '[apport] bash crashed with signal 42')
+            'bash crashed with signal 42')
 
         # Python crash
         report = Report()
@@ -1343,7 +1343,7 @@ File "/usr/share/apport/apport-gtk", line 67, in ui_present_crash
 subprocess.call(['pgrep', '-x',
 NameError: global name 'subprocess' is not defined'''
         self.assertEqual(report.standard_title(),
-            '[apport] apport-gtk crashed with NameError in ui_present_crash()')
+            'apport-gtk crashed with NameError in ui_present_crash()')
 
         # slightly weird Python crash
         report = Report()
@@ -1351,7 +1351,7 @@ NameError: global name 'subprocess' is not defined'''
         report['Traceback'] = '''TypeError: Cannot create a consistent method resolution
 order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
         self.assertEqual(report.standard_title(),
-            '[apport] apport-gtk crashed with TypeError: Cannot create a consistent method resolution')
+            'apport-gtk crashed with TypeError: Cannot create a consistent method resolution')
 
         # package install problem
         report = Report('Package')
@@ -1359,17 +1359,17 @@ order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
 
         # no ErrorMessage
         self.assertEqual(report.standard_title(),
-            '[apport] package bash failed to install/upgrade')
+            'package bash failed to install/upgrade')
 
         # empty ErrorMessage
         report['ErrorMessage'] = ''
         self.assertEqual(report.standard_title(),
-            '[apport] package bash failed to install/upgrade')
+            'package bash failed to install/upgrade')
 
         # nonempty ErrorMessage
         report['ErrorMessage'] = 'botched\nnot found\n'
         self.assertEqual(report.standard_title(),
-            '[apport] package bash failed to install/upgrade: not found')
+            'package bash failed to install/upgrade: not found')
 
         # matching package/system architectures
         report['Signal'] = '11'
@@ -1381,17 +1381,17 @@ baz()
         report['PackageArchitecture'] = 'amd64'
         report['Architecture'] = 'amd64'
         self.assertEqual(report.standard_title(),
-            '[apport] bash crashed with SIGSEGV in foo()')
+            'bash crashed with SIGSEGV in foo()')
 
         # non-native package (on multiarch)
         report['PackageArchitecture'] = 'i386'
         self.assertEqual(report.standard_title(),
-            '[apport] bash crashed with SIGSEGV in foo() [non-native i386 package]')
+            'bash crashed with SIGSEGV in foo() [non-native i386 package]')
 
         # Arch: all package (matches every system architecture)
         report['PackageArchitecture'] = 'all'
         self.assertEqual(report.standard_title(),
-            '[apport] bash crashed with SIGSEGV in foo()')
+            'bash crashed with SIGSEGV in foo()')
 
 if __name__ == '__main__':
     unittest.main()
