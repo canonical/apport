@@ -6,8 +6,10 @@ apport (0.81) UNRELEASED; urgency=low
   * debian/local/setup-apport-retracer: Specify a path in '.' command and
     use sh again. Yay for me needing three attempts before actually RTFMing
     how '.' works (which is really nasty and strange IMHO).
+  * bin/apport-chroot: Fix symlinks before repackaging the chroot tarball in
+    'install' and 'installdeb' modes.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 10:57:51 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 15:27:08 +0200
 
 apport (0.80) gutsy; urgency=low
 

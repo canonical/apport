@@ -235,6 +235,8 @@ def command_installdeb(opts, args):
     result = chroot.run(['dpkg', '-i'] + ['/installdebs/' + os.path.basename(d) for d in args[1:]])
     shutil.rmtree(chroot_deb_dir)
 
+    chroot.fix_symlinks()
+
     if chroot.root_tarball and result == 0:
         chroot.tar()
 
@@ -260,6 +262,7 @@ def command_login(opts, args):
     ret = chroot.run([os.environ.get('SHELL', 'bash')])
 
     if chroot.root_tarball and opts.tar_save and ret == 0:
+        chroot.fix_symlinks()
         chroot.tar()
 
 def command_retrace(opts, args):
