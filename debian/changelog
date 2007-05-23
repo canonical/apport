@@ -8,8 +8,9 @@ apport (0.81) UNRELEASED; urgency=low
     how '.' works (which is really nasty and strange IMHO).
   * bin/apport-chroot: Fix symlinks before repackaging the chroot tarball in
     'install' and 'installdeb' modes.
+  * debian/local/setup-apport-retracer: Install python-libxml2 and python-apt.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 15:27:08 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 16:26:09 +0200
 
 apport (0.80) gutsy; urgency=low
 

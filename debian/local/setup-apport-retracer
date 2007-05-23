@@ -20,7 +20,7 @@ ln -s ../apport/bin/launchpad-crash-digger bin/launchpad-crash-digger
 
 # debootstrap
 T=`mktemp -d`
-wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-i386/Packages.gz | gunzip > $T/Packages
+wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-`dpkg --print-architecture`/Packages.gz | gunzip > $T/Packages
 P=`grep '^Filename:.*debootstrap_.*deb' $T/Packages | cut -f 2 -d\ `
 wget -q http://archive.ubuntu.com/ubuntu/$P
 dpkg -x debootstrap_*.deb $T
@@ -37,6 +37,26 @@ dpkg -s python-launchpad-bugs >/dev/null 2>/dev/null || {
     rm python-launchpad-bugs_*.deb
     mv $T/usr/share/pycentral/python-launchpad-bugs/site-packages/launchpadBugs apport/
 }
+
+# python-apt
+dpkg -s python-apt >/dev/null 2>/dev/null || {
+    P=`grep '^Filename:.*python-apt_.*deb' $T/Packages | cut -f 2 -d\ `
+    wget -q http://archive.ubuntu.com/ubuntu/$P
+    dpkg -x python-apt*.deb $T
+    rm python-apt*.deb
+    mv $T/usr/lib/python2.5/site-packages/* apport/
+}
+
+# python-libxml2
+dpkg -s python-libxml2 >/dev/null 2>/dev/null || {
+    P=`grep '^Filename:.*python-libxml2_.*.deb' $T/Packages | cut -f 2 -d\ `
+    wget -q http://archive.ubuntu.com/ubuntu/$P
+    dpkg -x python-libxml2*.deb $T
+    rm python-libxml2*.deb
+    mv $T/usr/share/python-support/python-libxml2/* apport/
+    mv $T/usr/lib/python-support/python-libxml2/python2.5/* apport/
+}
+
 rm -rf $T
 
 # fake{chroot,root} libraries
