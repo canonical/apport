@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -e
 
 rm -rf *
 
@@ -70,7 +70,7 @@ export PATH PYTHONPATH APPORT_LIBFAKEROOT APPORT_LIBFAKECHROOT
 EOF
 fi
 
-. environ
+. ./environ
 
 # create chroots
 if [ "`uname -m`" = i686 ]; then

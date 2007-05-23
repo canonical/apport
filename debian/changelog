@@ -3,8 +3,11 @@ apport (0.81) UNRELEASED; urgency=low
   * apport/report.py: Remove '[apport]' default bug title prefix. (LP: #94819)
   * apport/crashdb_impl/launchpad.py: Tag new bugs with 'apport'. This
     replaces the former '[apport]' prefixing.
+  * debian/local/setup-apport-retracer: Specify a path in '.' command and
+    use sh again. Yay for me needing three attempts before actually RTFMing
+    how '.' works (which is really nasty and strange IMHO).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 May 2007 22:38:33 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 10:57:51 +0200
 
 apport (0.80) gutsy; urgency=low
 
