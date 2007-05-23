@@ -15,8 +15,11 @@ apport (0.81) UNRELEASED; urgency=low
   * debian/local/setup-apport-retracer: Set APPORT_CRASHDB_CONF to the local
     crashdb.conf.
   * bin/apport-chroot: Unset APPORT_CRASHDB_CONF for login and retrace.
+  * bin/launchpad-crash-digger: Check the release of a bug and whether we have
+    a chroot for it before untagging it. This avoids loosing tags for bugs we
+    do not yet have a working retracer chroot for.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 17:14:51 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 17:36:41 +0200
 
 apport (0.80) gutsy; urgency=low
 

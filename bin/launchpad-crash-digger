@@ -3,6 +3,7 @@
 import os, time, optparse, subprocess
 
 from launchpadBugs.HTMLOperations import Bug, BugList
+from apport.crashdb import get_crashdb
 
 arch_tag_map = {
     'i386': 'need-i386-retrace',
@@ -37,6 +38,13 @@ class CrashDigger:
         self.log('Initializing crash digger to process bugs on %s, using chroot map %s' % (
             self.list_url, self.chroot_map))
 
+	# read chroot map and get available releases
+	m = eval(open(self.chroot_map).read(), {}, {})
+	self.releases = m.keys()
+	self.log('Available releases: %s' % str(self.releases))
+
+	self.crashdb = get_crashdb(cookie_file)
+
     def log(self, str):
         '''If verbosity is enabled, log the given string to stdout, and prepend
         the current date and time.'''
@@ -65,6 +73,17 @@ class CrashDigger:
 
         bug = self.work_pool.pop()
         self.log('retracing bug %i' % bug)
+
+        try:
+            rel = self.crashdb.get_distro_release(bug)
+        except ValueError:
+	    self.log('could not determine release of bug -- no DistroRelease field?')
+            self.fail_pool.add(bug)
+	    return
+	if rel not in self.releases:
+	    self.log('bug is release %s which does not have a chroot available, skipping' % rel)
+            self.fail_pool.add(bug)
+	    return
 
         # remove tag
         b = Bug(bug, None, cookie_file=self.cookie_file)
