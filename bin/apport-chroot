@@ -282,7 +282,7 @@ def command_retrace(opts, args):
 	apport_retrace_argv += ['-p', p]
 
     if args[0].isdigit():
-        crashdb = get_crashdb(options.auth_file)
+        crashdb = get_crashdb(opts.auth_file)
         release = crashdb.get_distro_release(args[0])
         chroot_path = opts.chroot_map[release]
         if os.path.isfile(chroot_path):

@@ -11,8 +11,9 @@ apport (0.81) UNRELEASED; urgency=low
   * debian/local/setup-apport-retracer: Install python-libxml2 and python-apt.
   * bin/launchpad-crash-digger: Supply --auth instead of the deprecated
     --cookie to apport-chroot.
+  * bin/apport-chroot: Fix identifier name in command_retrace().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 16:28:39 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 16:29:59 +0200
 
 apport (0.80) gutsy; urgency=low
 
