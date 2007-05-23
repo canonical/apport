@@ -73,7 +73,7 @@ class CrashDigger:
             b.tags.remove(self.arch_tag)
             b.set_metadata()
 
-        result = subprocess.call(['apport-chroot', '-m', self.chroot_map, '--cookie',
+        result = subprocess.call(['apport-chroot', '-m', self.chroot_map, '--auth',
             self.cookie_file, 'retrace', str(bug)])
         self.log('retracing bug %i exit status: %i' % (bug, result))
         if result != 0:
