@@ -76,8 +76,9 @@ if dpkg -s fakeroot >/dev/null 2>/dev/null; then
 PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
 PYTHONPATH=`pwd`/apport:\$PYTHONPATH
 APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
+APPORT_CRASHDB_CONF=`pwd`/apport/crashdb.conf
 
-export PATH PYTHONPATH APPORT_LIBFAKECHROOT
+export PATH PYTHONPATH APPORT_LIBFAKECHROOT APPORT_CRASHDB_CONF
 EOF
 else
     cat <<EOF > environ
@@ -85,8 +86,9 @@ PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
 PYTHONPATH=`pwd`/apport:\$PYTHONPATH
 APPORT_LIBFAKEROOT=`pwd`/fakelibs/libfakeroot.so
 APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
+APPORT_CRASHDB_CONF=`pwd`/apport/crashdb.conf
 
-export PATH PYTHONPATH APPORT_LIBFAKEROOT APPORT_LIBFAKECHROOT
+export PATH PYTHONPATH APPORT_LIBFAKEROOT APPORT_LIBFAKECHROOT APPORT_CRASHDB_CONF
 EOF
 fi
 

@@ -259,6 +259,7 @@ def command_login(opts, args):
         print >> sys.stderr, 'invalid chroot'
         sys.exit(1)
 
+    del os.environ['APPORT_CRASHDB_CONF']
     ret = chroot.run([os.environ.get('SHELL', 'bash')])
 
     if chroot.root_tarball and opts.tar_save and ret == 0:
@@ -299,6 +300,8 @@ def command_retrace(opts, args):
         if opts.confirm_attach:
             apport_retrace_argv.append('--confirm')
         apport_retrace_argv.append(args[0])
+
+        del os.environ['APPORT_CRASHDB_CONF']
         c.run(apport_retrace_argv)
         if chroot_auth:
             os.unlink(chroot_auth)
