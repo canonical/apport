@@ -36,8 +36,12 @@ apport (0.81) UNRELEASED; urgency=low
     (which might be segfaulting itself) and just do not put any gdb output
     into the report. The automatic retracers can try their luck again.
     (LP: #112501)
+  * bin/apport-retrace: Fix handling of packages which are still known to
+    /var/lib/dpkg/status, but do not have an apt record any more; treat them
+    like virtual packages and just issue a warning instead of falling over.
+    (LP: #107474)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 11:53:36 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 12:12:54 +0200
 
 apport (0.80) gutsy; urgency=low
 
