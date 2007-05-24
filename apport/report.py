@@ -425,9 +425,12 @@ class Report(ProblemReport):
                 command += ['--ex', 'p -99', '--ex', cmd]
 
             # call gdb
-            out = _command_output(command, stderr=open('/dev/null')).replace(
-                '(no debugging symbols found)\n','').replace(
-                'No symbol table info available.\n','')
+            try:
+                out = _command_output(command, stderr=open('/dev/null')).replace(
+                    '(no debugging symbols found)\n','').replace(
+                    'No symbol table info available.\n','')
+            except OSError:
+                return
 
             # split the output into the various fields
             part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)

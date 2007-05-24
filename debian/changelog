@@ -32,8 +32,12 @@ apport (0.81) UNRELEASED; urgency=low
     apport.report and creating a Report object for non-packaged scripts. This
     makes the entire code more efficient and robust against errors in the
     apport modules. (LP: #109955)
+  * apport/report.py, add_gdb_info(): Intercept OSError from gdb invocation
+    (which might be segfaulting itself) and just do not put any gdb output
+    into the report. The automatic retracers can try their luck again.
+    (LP: #112501)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 11:35:59 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 11:53:36 +0200
 
 apport (0.80) gutsy; urgency=low
 
