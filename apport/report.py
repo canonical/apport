@@ -126,6 +126,39 @@ def _dom_remove_space(node):
         else:
             _dom_remove_space(c)
 
+def get_module_license(module):
+    '''Return the license for a given kernel module.'''
+
+    try:
+        modinfo = subprocess.Popen(['/sbin/modinfo', module], stdout=subprocess.PIPE)
+    except OSError:
+        return None
+    for l in modinfo.stdout:
+        fields = l.split(':', 1)
+        if len(fields) < 2:
+            continue
+        if fields[0] == 'license':
+            return fields[1].strip()
+
+    return None
+
+def nonfree_modules():
+    '''Check loaded modules and return a list of those which are not free.'''
+    try:
+        mods = [l.split()[0] for l in open('/proc/modules')]
+    except IOError:
+        return []
+
+    nonfree = []
+    for m in mods:
+        l = get_module_license(m)
+        if l and ('GPL' in l or 'BSD' in l or 'MPL' in l or 'MIT' in l):
+            pass
+        else:
+            nonfree.append(m)
+
+    return nonfree
+
 #
 # Report class
 #
@@ -206,7 +239,9 @@ class Report(ProblemReport):
         This adds:
         - DistroRelease: lsb_release -sir output
         - Architecture: system architecture in distro specific notation
-        - Uname: uname -a output'''
+        - Uname: uname -a output
+        - NonfreeKernelModules: loaded kernel modules which are not free (if
+            there are none, this field will not be present)'''
 
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, close_fds=True)
@@ -216,6 +251,9 @@ class Report(ProblemReport):
             stderr=subprocess.STDOUT, close_fds=True)
         self['Uname'] = p.communicate()[0].strip()
         self['Architecture'] = packaging.get_system_architecture()
+        nm = nonfree_modules()
+        if nm:
+            self['NonfreeKernelModules'] = ' '.join(nonfree_modules())
 
     def add_user_info(self):
         '''Add information about the user.

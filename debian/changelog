@@ -23,8 +23,12 @@ apport (0.81) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py, update(): Create a temporary directory
     and use proper file names for the new attachments. With TemporaryFile(),
     attachment file names ended up as '<fdopen>'. (LP: #115347)
+  * apport/report.py, add_os_info(): Add field 'NonfreeKernelModules' which
+    lists loaded kernel modules which do not have a FOSS license. This is
+    particularly helpful for quickly checking for restricted graphics drivers.
+    (LP: #103239)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 10:22:59 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 11:08:21 +0200
 
 apport (0.80) gutsy; urgency=low
 
