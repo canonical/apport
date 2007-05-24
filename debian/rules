@@ -17,6 +17,7 @@ common-post-build-indep::
 	make -C po
 	make -C gtk
 	make -C qt4
+	make -C doc
 
 clean::
 	# remove backend copies
@@ -24,6 +25,7 @@ clean::
 	make -C po clean
 	make -C gtk clean
 	make -C qt4 clean
+	make -C doc clean
 
 ifdef _cdbs_rules_debhelper
 $(patsubst %,binary-install/%,apport) :: binary-install/%:
