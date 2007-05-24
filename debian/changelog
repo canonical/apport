@@ -27,8 +27,13 @@ apport (0.81) UNRELEASED; urgency=low
     lists loaded kernel modules which do not have a FOSS license. This is
     particularly helpful for quickly checking for restricted graphics drivers.
     (LP: #103239)
+  * apport_python_hook.py: Move the apport.* imports into the try: block and
+    move the likely_packaged() test to the top, to avoid importing
+    apport.report and creating a Report object for non-packaged scripts. This
+    makes the entire code more efficient and robust against errors in the
+    apport modules. (LP: #109955)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 11:08:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 11:35:59 +0200
 
 apport (0.80) gutsy; urgency=low
 

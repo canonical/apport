@@ -27,8 +27,6 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
     # the original excepthook is invoked, and until we get bug reports
     # ignore the other issues.
 
-    import apport.report, apport.fileutils
-
     # import locally here so that there is no routine overhead on python
     # startup time - only when a traceback occurs will this trigger.
     try:
@@ -37,15 +35,24 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
             return
         from cStringIO import StringIO
         import re, tempfile, traceback
+        from apport.fileutils import likely_packaged
 
-        pr = apport.report.Report()
         # apport will look up the package from the executable path.
         # if the module has mutated this, we're sunk, but it does not exist yet :(.
         binary = os.path.realpath(os.path.join(os.getcwdu(), sys.argv[0]))
+
         # for interactive python sessions, sys.argv[0] == ''; catch that and
         # other irregularities
         if not os.access(binary, os.X_OK) or not os.path.isfile(binary):
             return
+
+        # filter out binaries in user accessible paths
+        if not likely_packaged(binary):
+            return
+
+        import apport.report
+
+        pr = apport.report.Report()
         # append a basic traceback. In future we may want to include
         # additional data such as the local variables, loaded modules etc.
         tb_file = StringIO()
@@ -55,9 +62,6 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # override the ExecutablePath with the script that was actually running.
         pr['ExecutablePath'] = binary
         pr['PythonArgs'] = '%r' % sys.argv
-        # filter out binaries in user accessible paths
-        if not apport.fileutils.likely_packaged(binary):
-            return
         if pr.check_ignored():
             return
         mangled_program = re.sub('/', '_', binary)
