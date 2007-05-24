@@ -231,7 +231,12 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
             if unpack_only:
                 fetch_unpack(c, fetchProgress, no_dpkg, verbosity)
             else:
-                c.commit(fetchProgress, installProgress)
+                try:
+                    c.commit(fetchProgress, installProgress)
+                except SystemError:
+                    print >> sys.stderr, 'Error: Could not install all archives. If you use this tool on a production system, it is recommended to use the -u option. See --help for details.'
+                    sys.exit(1)
+
 	    # after commit(), the Cache object does not empty the pending
 	    # changes, so we need to reinitialize it to avoid applying the same
 	    # changes again below
@@ -279,7 +284,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
             else:
                 c.commit(fetchProgress, installProgress)
         installed += [p.name for p in c.getChanges()]
-    except IOError, e:
+    except (SystemError, IOError), e:
 	print >> sys.stderr, 'WARNING: could not install missing packages:', e
         if os.geteuid() != 0:
             print >> sys.stderr, 'You either need to call this program as root or install these packages manually:'

@@ -18,8 +18,10 @@ apport (0.81) UNRELEASED; urgency=low
   * bin/launchpad-crash-digger: Check the release of a bug and whether we have
     a chroot for it before untagging it. This avoids loosing tags for bugs we
     do not yet have a working retracer chroot for.
+  * bin/apport-retrace: Do not abort with an exception if package installation
+    fails. Give a proper error message instead and point to -u. (LP: #115681)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 May 2007 17:36:41 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 09:37:43 +0200
 
 apport (0.80) gutsy; urgency=low
 
