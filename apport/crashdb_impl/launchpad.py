@@ -115,21 +115,27 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         comment += '\n\nStacktraceTop:' + report['StacktraceTop'].decode('utf-8',
             'replace').encode('utf-8')
 
-        t = tempfile.TemporaryFile()
-        t.write(report['Stacktrace'])
-        t.flush()
-        t.seek(0)
-        bug.add_comment('Symbolic stack trace', comment, t, 
-            'Stacktrace.txt (retraced)')
-        t.close()
+        # we need properly named files here, otherwise they will be displayed
+        # as '<fdopen>'
+        tmpdir = tempfile.mkdtemp()
+        try:
+            t = open(os.path.join(tmpdir, 'Stacktrace.txt'), 'w+')
+            t.write(report['Stacktrace'])
+            t.flush()
+            t.seek(0)
+            bug.add_comment('Symbolic stack trace', comment, t, 
+                'Stacktrace.txt (retraced)')
+            t.close()
 
-        t = tempfile.TemporaryFile()
-        t.write(report['ThreadStacktrace'])
-        t.flush()
-        t.seek(0)
-        bug.add_comment('Symbolic threaded stack trace', '', t, 
-            'ThreadStacktrace.txt (retraced)')
-        t.close()
+            t = open(os.path.join(tmpdir, 'ThreadStacktrace.txt'), 'w+')
+            t.write(report['ThreadStacktrace'])
+            t.flush()
+            t.seek(0)
+            bug.add_comment('Symbolic threaded stack trace', '', t, 
+                'ThreadStacktrace.txt (retraced)')
+            t.close()
+        finally:
+            shutil.rmtree(tmpdir)
 
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
