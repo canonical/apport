@@ -40,8 +40,11 @@ apport (0.81) gutsy; urgency=low
     /var/lib/dpkg/status, but do not have an apt record any more; treat them
     like virtual packages and just issue a warning instead of falling over.
     (LP: #107474)
+  * Add doc/data-format.tex: Documentation of the structure, encoding, and
+    standard keys of the Apport report file format. [apport-for-upstreams
+    blueprint]
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 12:12:54 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 May 2007 19:24:27 +0200
 
 apport (0.80) gutsy; urgency=low
 

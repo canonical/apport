@@ -1,0 +1,283 @@
+\documentclass[DIV12,halfparskip]{scrartcl}
+\usepackage{booktabs}
+
+\title{The Apport crash report format\\
+  \vspace{1ex}\large Version 0.1}
+\author{Martin Pitt \texttt{<martin.pitt@ubuntu.com>}}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\newpage
+\section{Introduction}
+
+Apport is a system for automatic problem reporting and feedback, with the
+following features:
+
+\begin{itemize}
+    \item intercept program crashes right when they happen the first time
+    \item collect potentially useful information about the crash and the OS environment
+    \item can be automatically invoked for unhandled exceptions in other programming languages (e. g. for Python)
+    \item can be automatically invoked for other problems that can be
+        detected mechanically (such as package installation/upgrade failures from update-manager)
+    \item easy to understand UI that informs the user about the crash and instructs them on how to proceed,
+    \item written in a very modular way: user interfaces (such as Gtk/Qt),
+    crash databases (such as Launchpad/Bugzilla), packaging systems
+    (apt/dpkg/rpm), are all factorized
+    \item independent of a particular desktop environment, Linux
+    distribution, etc.
+    \item very robust due to exhaustive test suite coverage
+    \item includes tools for post-processing crashes, such as post-mortem
+    generation of symbolic stack traces, tools to create and work in chroots
+    with only user privileges (using \verb!fakeroot! and \verb!fakechroot!)
+\end{itemize}
+
+The Apport home page\footnote{https://wiki.ubuntu.com/Apport} has some more
+information.
+
+All components of apport (crash interception, enrichment with information, UI
+presentation, crash database up/download, crash post-processing) work on a
+common report file format. This allows adopters of Apport to use only some
+parts and combine it with existing project specific solutions like as Gnome's
+bug-buddy, and get the option to eventually merge such systems.
+
+This document describes the structure of the report files and the pre-defined data
+fields.
+
+\section{File format}
+
+\subsection{Structure}
+
+Apport report files consist of key/value pairs encoded with the standard
+RFC822\footnote{http://www.ietf.org/rfc/rfc0822.txt} header format. Key name
+and value are separated by a dot and a space (``\verb!: !'' ).
+
+There must not be any blank lines and no lines that start with a non-whitespace
+character and do not start with a key name and a colon.
+
+\subsection{Keys}
+
+Key names consist of numbers (\verb!0! -- \verb!9!), English letters (\verb!a!
+-- \verb!z! and \verb!A! -- \verb!Z!) and dots (\verb!.!).
+
+\subsection{Textual values}
+
+Single line textual values directly follow the key name, colon and dot without
+any further encoding or escaping. There is no line length limit.
+
+In multi-line textual values, the line feed character (\verb!\n!, ASCII Code
+10) is escaped by appending a single space (ASCII code 32). In other words,
+every line of a multi-line value but the first one must be indented by a single
+space which is not part of the value.
+
+\subsection{Binary values}
+
+This is a compressed format intended for binary data such as memory dumps. It
+can optionally be used for long textual values like large log files if they
+should be compressed.
+
+A binary value is introduced by the text ``\verb!base64!'' and a line break
+following the key name, colon, and space. After that, the binary data is
+encoded as follows:
+
+\begin{itemize}
+    \item Initialize a zlib compressor object.
+    \item Read a block of (at most) 1 MiB (1,048,576 Bytes) of binary data.
+    \item Compress this block with the zlib compressor.
+    \item Generate the base64-encoding of the compressed block
+    \item Write a space and the base64-encoded block to the report file.
+    \item If there is more source data to be encoded, go to 2.
+    \item flush the zlib compressor, base64-encode the tail and write it to the
+    report file, again with a space prefix.
+\end{itemize}
+
+With this algorithm the binary encoding format obeys the same text line folding
+convention than the textual values.
+
+\subsection{Ordering}
+
+In order to keep the report files readable by humans, the following conventions
+should be met:
+
+\begin{itemize}
+    \item The textual values should be at the top, the binary values at the
+    bottom of the file. This eases their inspection in web browsers, even with
+    partial downloads.
+    \item Within each group (textual/binary), the keys should appear in
+    ascending alphabetical order.
+\end{itemize}
+
+Software that processes Apport crash report files must not rely on those
+conventions. It is acceptable to not follow them for performance reasons.
+
+\subsection{Example}
+
+This table shows an example data set:
+
+\begin{tabular}{lp{10cm}}\toprule
+\textbf{Key} & \textbf{Value}\\
+\midrule
+Short1 & \verb!Single line value!\\
+Date & \verb!December 24, 2000!\\
+Long & \verb!Multiple lines!\par\verb! with leading!\par\verb!space!\\
+TestBin & \verb!ABABABABABABABABABAB\0\0\0\0\0\0\0\0\0\0ZZZZZZZZZZ!\\
+\bottomrule
+\end{tabular}
+
+This would be encoded as:
+
+\begin{verbatim}
+Date: December 24, 2000
+Long: Multiple lines
+  with leading
+ space
+Short1: Single line value
+TestBin: base64
+ eJw=
+ c3RyxIAMcBAFAG55BXk=
+\end{verbatim}
+
+\section{Standard keys}
+
+In order to provide a basic level of interoperability between all systems using
+the Apport report format, a number of standard key names and semantics are
+defined. This is particularly important for tools which automatically reprocess
+problem reports.
+
+Implementations can add additional fields at will, especially if these are
+mainly aimed at human examination. Field names which will be processed
+mechanically should be added to this standard document eventually.
+
+\subsection{Generic fields}
+
+The following keys apply to all types of problem reports. They classify the
+problem type and give information about the date, Linux distribution and user
+environment.
+
+\begin{description}
+    \item [ProblemType:] (required) Classification of the problem type;
+    Currently defined values are \verb!Crash!, \verb!Kernel!, \verb!Package!
+    (for failed install/upgrade of a distribution package), and \verb!Bug! (for
+    general bug reports)
+
+    \item [Date:] (required) Date and time of the problem report in ISO format
+    (see \verb!asctime(3)!)
+
+    \item [Uname:] (required) Output of \verb!uname -a!
+
+    \item [DistroRelease:] (optional) Output of \verb!lsb_release -sir!
+
+    \item [Architecture:] (optional) Distribution specific notation of
+    processor/system architecture (e. g. \verb!i386!)
+
+    \item [UserGroups:] (optional) System groups of the user reporting the
+    problem; for privacy reasons this should only include IDs smaller than 500,
+    no groups which belong to other real users.
+\end{description}
+
+\subsection{Process specific data fields}
+
+The following fields describe interesting properties of a particular process.
+This always applies to \verb!ProblemType!s \verb!Crash! and also to \verb!Bug!
+if the bug is reported against a running process (as opposed to just a
+package).
+
+\begin{description}
+    \item [ExecutablePath:] (required) Contents of \verb!/proc/pid/exe! for ELF
+    files; if the process is an interpreted script, this is the script path instead
+
+    \item [InterpreterPath:] (required for scripts) Contents of
+    \verb!/proc/pid/exe! if the process is an interpreted script
+
+    \item [ProcEnviron:] (required) A subset of the process' environment, from
+    \verb!/proc/pid/env!; this should only show some standard variables that do
+    not disclose potentially sensitive information, like \verb!$SHELL!,
+    \verb!$PATH!, \verb!$LANG!, and \verb!$LC_*!.
+
+    \item [ProcCmdline:] (required) Contents of \verb!/proc/pid/cmdline!
+
+    \item [ProcStatus:] (required) Contents of \verb!/proc/pid/status!
+
+    \item [ProcMaps:] (required) Contents of \verb!/proc/pid/maps!
+\end{description}
+
+\subsection{Signal crash specific data fields}
+
+The following fields describe properties of a process that crashed due to a
+signal. This applies to \verb!ProblemType! \verb!Crash! if a core dump is
+available. Note that \verb!Crash! is also used for unhandled exceptions of
+programs written in scripting languages, in which case there is no core dump.
+
+\begin{description}
+    \item [CoreDump:] (optional) core dump (binary value)
+
+    \item [Stacktrace:] (optional) Stack trace as produced by gdb's \verb!bt full!
+    command
+
+    \item [ThreadStacktrace:] (optional) Threaded stack trace as produced by
+    gdb's \verb!thread apply all bt full! command
+
+    \item [StacktraceTop:] (optional) First five frames of \verb!Stacktrace!
+    with the leading addresses and local variables removed; this is intended to
+    be evaluated for automatic duplicate detection 
+
+    \item [Registers:] (optional) Register dump as produced by gdb's 
+    \verb!info registers! command
+
+    \item [Disassembly:] (optional) Disassembly of the code leading to the
+    crash as produced by gdb's \verb!x/16i $pc! command
+\end{description}
+
+Note that every crash report must contain \verb!CoreDump! or a symbolic
+\verb!Stacktrace! in order to be useful at all. The recommended approach is to
+include the stack trace for the initial report, and drop it once it has been
+recombined with debug symbols to produce a full Stacktrace.
+
+\subsection{Package specific data fields}
+
+The following fields describe properties of a package and its dependencies.
+This applies to \verb!ProblemType!s \verb!Crash!, \verb!Package!, and
+\verb!Bug! if the bug applies to a particular package (as opposed to being a
+generic distribution bug).
+
+\begin{description}
+    \item [Package:] (required) Package name and version, separated by space
+
+    \item [PackageArchitecture:] (required) Processor architecture the package
+    was built for; there are some architectures (like \verb!x86_64! or
+    \verb!sparc64!) which support multiple package architectures
+
+    \item [Dependencies:] (required) Package names and versions of all
+    transitive dependencies of the package; one line per package
+
+    \item [SourcePackage:] (optional) The name of the corresponding source package
+\end{description}
+
+Optionally, the name and version in \verb!Package! and \verb!Dependencies! can
+be followed by a list of modified files in that package, enclosed in brackets.
+Example:
+
+\begin{verbatim}
+Package: bash 3.2-1
+Dependencies: libreadline5 5.2-3 [modified: /lib/libreadline.so.5]
+ libc6 2.5-1 [modified: /etc/ld.so.conf]
+\end{verbatim}
+
+\subsection{Kernel specific data fields}
+
+The following fields describe properties of a kernel oops/crash.
+This applies to \verb!ProblemType! \verb!Kernel!.
+
+\begin{description}
+    \item [ProcVersion:] (required) Contents of \verb!/proc/version!
+    \item [ProcCpuinfo:] (required) Contents of \verb!/proc/cpuinfo!
+    \item [ProcModules:] (required) Contents of \verb!/proc/modules!
+    \item [ProcCmdline:] (required) Contents of \verb!/proc/cmdline!
+    \item [Dmesg:] (required) Output of \verb!dmesg!
+    \item [LsPciVV:] (optional) Output of \verb!lspci -vv!
+    \item [LsPciVVN:] (optional) Output of \verb!lspci -vvn!
+\end{description}
+
+\end{document}
