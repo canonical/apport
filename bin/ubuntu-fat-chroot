@@ -18,4 +18,5 @@ apt-get install -y --allow-unauthenticated gconf2
 /bin/echo -e '#!/bin/sh\nexit 0' > /usr/sbin/update-gconf-defaults
 
 apt-get install -y --allow-unauthenticated libgnome2-0 firefox mozilla-thunderbird libqt3-mt
+apt-get clean
 EOF
