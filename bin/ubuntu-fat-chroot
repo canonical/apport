@@ -1,0 +1,21 @@
+#!/bin/sh -ex
+
+# Install a set of commonly needed packages into a minimal Ubuntu chroot as
+# created by apport-chroot.
+
+[ -f "$1" ] || [ -d "$1" ] || {
+    echo "Usage: $0 <chroot path>"
+    exit 1
+}
+
+cat <<EOF | apport-chroot --save login "$1"
+set -ex
+apt-get update
+apt-get install -y --allow-unauthenticated ucf
+sed -i '/if.*-w.*hashfile/,/fi/ s/exit/echo/' /usr/bin/ucf
+
+apt-get install -y --allow-unauthenticated gconf2
+/bin/echo -e '#!/bin/sh\nexit 0' > /usr/sbin/update-gconf-defaults
+
+apt-get install -y --allow-unauthenticated libgnome2-0 firefox mozilla-thunderbird libqt3-mt
+EOF

@@ -1,3 +1,12 @@
+apport (0.82) UNRELEASED; urgency=low
+
+  * Add bin/ubuntu-fat-chroot: Script to install a set of commonly needed
+    packages into a minimal Ubuntu chroot (as created by apport-chroot). This
+    requires some hacking of postinst and /usr/sbin/ files in between the
+    installation stages and thus deserves a script on its own.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 27 May 2007 18:12:03 +0200
+
 apport (0.81) gutsy; urgency=low
 
   * apport/report.py: Remove '[apport]' default bug title prefix. (LP: #94819)
