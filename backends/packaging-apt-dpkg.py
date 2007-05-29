@@ -311,7 +311,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # zgrep is magnitudes faster than a 'gzip.open/split() loop'
         package = None
         zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
-            stdout=subprocess.PIPE)
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = zgrep.communicate()[0]
         if zgrep.returncode == 0:
             package = out.split()[1].split('/')[1]
