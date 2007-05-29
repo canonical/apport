@@ -4,7 +4,7 @@ apport (0.82) UNRELEASED; urgency=low
     packages into a minimal Ubuntu chroot (as created by apport-chroot). This
     requires some hacking of postinst and /usr/sbin/ files in between the
     installation stages and thus deserves a script on its own.
-  * apport/packaging.py: 
+  * apport/packaging.py:
     - Add "uninstalled" option to get_file_package(). If set to True, this
       will do an expensive search of files/packages which are not installed.
     - Add interface "set_mirror(URL)" for functions which need to retrieve
