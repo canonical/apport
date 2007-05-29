@@ -262,16 +262,17 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
 
     # grab as much as we can
     for l in libs:
-	if not os.path.exists(l):
-	    print >> sys.stderr, 'WARNING: %s was loaded at runtime, but is not available' % l
-	    continue
+        if os.path.exists('/usr/lib/debug' + l):
+            continue
 
-	ldbg = '/usr/lib/debug' + l
-	if os.path.exists(ldbg):
-	    continue
-
-	pkg = apport.fileutils.find_file_package(l)
+        pkg = apport.packaging.get_file_package(l, True)
 	if pkg:
+            if not os.path.exists(l):
+                if c.has_key(pkg):
+                    c[pkg].markInstall(False)
+                else:
+                    print >> sys.stderr, 'WARNING: %s was loaded at runtime, but its package %s is not available' % (l, pkg)
+
 	    if c.has_key(pkg+'-dbgsym'):
 		c[pkg+'-dbgsym'].markInstall(False)
 	    else:
