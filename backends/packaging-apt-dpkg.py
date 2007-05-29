@@ -25,6 +25,16 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def __init__(self):
         self._apt_cache = None
+        self._contents_dir = None
+        self._mirror = None
+
+    def __del__(self):
+        try:
+            if self._contents_dir:
+                import shutil
+                shutil.rmtree(self._contents_dir)
+        except AttributeError:
+            pass
 
     def _cache(self, package):
         '''Return apt.Cache()[package] (initialized lazily).
@@ -147,9 +157,15 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return match
 
-    def get_file_package(self, file):
+    def get_file_package(self, file, uninstalled=False, map_cachedir=None):
         '''Return the package a file belongs to, or None if the file is not
-        shipped by any package.'''
+        shipped by any package.
+        
+        If uninstalled is True, this will also find files of uninstalled
+        packages; this is very expensive, though, and needs network access and
+        lots of CPU and I/O resources. In this case, map_cachedir can be set to
+        an existing directory which will be used to permanently store the
+        downloaded maps. If it is not set, a temporary directory will be used.'''
 
         # check if the file is a diversion
         dpkg = subprocess.Popen(['/usr/sbin/dpkg-divert', '--list', file],
@@ -176,6 +192,9 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         if match:
             return os.path.splitext(os.path.basename(match))[0]
+
+        if uninstalled:
+            return self._search_contents(file, map_cachedir)
         else:
             return None
 
@@ -189,6 +208,15 @@ class __AptDpkgPackageInfo(PackageInfo):
         assert dpkg.returncode == 0
         assert arch
         return arch
+
+    def set_mirror(self, url):
+        '''Explicitly set a distribution mirror URL for operations that need to
+        fetch distribution files/packages from the network.
+
+        By default, the mirror will be read from the system configuration
+        files.'''
+
+        self._mirror = url
 
     #
     # Internal helper methods
@@ -234,6 +262,62 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return mismatches
 
+    def _get_mirror(self):
+        '''Return the distribution mirror URL.
+
+        If it has not been set yet, it will be read from the system
+        configuration.'''
+
+        if not self._mirror:
+            for l in open('/etc/apt/sources.list'):
+                fields = l.split()
+                if len(fields) >= 3 and fields[0] == 'deb':
+                    self._mirror = fields[1]
+                    break
+            else:
+                raise SystemError, 'cannot determine default mirror: /etc/apt/sources.list does not contain a valid deb line'
+
+        return self._mirror
+
+    def _search_contents(self, file, map_cachedir):
+        '''Internal function for searching file in Contents.gz.'''
+
+        if map_cachedir:
+            dir = map_cachedir
+        else:
+            if not self._contents_dir:
+                self._contents_dir = tempfile.mkdtemp()
+            dir = self._contents_dir
+
+        arch = self.get_system_architecture()
+        map = os.path.join(dir, 'Contents-%s.gz' % arch)
+
+        if not os.path.exists(map):
+            import urllib
+
+            # determine distro release code name
+            lsb_release = subprocess.Popen(['lsb_release', '-sc'],
+                stdout=subprocess.PIPE)
+            release_name = lsb_release.communicate()[0].strip()
+            assert lsb_release.returncode == 0
+
+            url = '%s/dists/%s/Contents-%s.gz' % (self._get_mirror(), release_name, arch)
+            urllib.urlretrieve(url, map)
+            assert os.path.exists(map)
+
+        if file.startswith('/'):
+            file = file[1:]
+
+        # zgrep is magnitudes faster than a 'gzip.open/split() loop'
+        package = None
+        zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
+            stdout=subprocess.PIPE)
+        out = zgrep.communicate()[0]
+        if zgrep.returncode == 0:
+            package = out.split()[1].split('/')[1]
+
+        return package
+
 impl = __AptDpkgPackageInfo()
 
 #
@@ -241,7 +325,7 @@ impl = __AptDpkgPackageInfo()
 #
 
 if __name__ == '__main__':
-    import unittest, tempfile, shutil
+    import unittest, tempfile, gzip, shutil
 
     class _AptDpkgPackageInfoTest(unittest.TestCase):
 
@@ -336,11 +420,58 @@ if __name__ == '__main__':
             self.assert_('/bin/bash' in impl.get_files('bash'))
 
         def test_get_file_package(self):
-            '''Test get_file_package() on normal files.'''
+            '''Test get_file_package() on installed files.'''
 
             self.assertEqual(impl.get_file_package('/bin/bash'), 'bash')
             self.assertEqual(impl.get_file_package('/bin/cat'), 'coreutils')
             self.assertEqual(impl.get_file_package('/nonexisting'), None)
+
+        def test_get_file_package_uninstalled(self):
+            '''Test get_file_package() on uninstalled packages.'''
+
+            # determine distro release code name
+            lsb_release = subprocess.Popen(['lsb_release', '-sc'],
+                stdout=subprocess.PIPE)
+            release_name = lsb_release.communicate()[0].strip()
+            assert lsb_release.returncode == 0
+
+            # generate a test Contents.gz
+            basedir = tempfile.mkdtemp()
+            try:
+                mapdir = os.path.join(basedir, 'dists', release_name)
+                os.makedirs(mapdir)
+                print >> gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
+                    impl.get_system_architecture()), 'w'), '''
+ foo header
+FILE                                                    LOCATION
+usr/bin/frobnicate                                      foo/frob
+usr/bin/frob                                            foo/frob-utils
+bo/gu/s                                                 na/mypackage
+'''
+
+                self.assertEqual(impl.get_file_package('usr/bin/frob', False, mapdir), None)
+                # must not match frob (same file name prefix)
+                self.assertEqual(impl.get_file_package('usr/bin/frob', True, mapdir), 'frob-utils')
+                self.assertEqual(impl.get_file_package('/usr/bin/frob', True, mapdir), 'frob-utils')
+
+                # invalid mirror
+                impl.set_mirror('file:///foo/nonexisting')
+                self.assertRaises(IOError, impl.get_file_package, 'usr/bin/frob', True)
+
+                # valid mirror, no cache directory
+                impl.set_mirror('file://' + basedir)
+                self.assertEqual(impl.get_file_package('usr/bin/frob', True), 'frob-utils')
+                self.assertEqual(impl.get_file_package('/usr/bin/frob', True), 'frob-utils')
+
+                # valid mirror, test caching
+                cache_dir = os.path.join(basedir, 'cache')
+                os.mkdir(cache_dir)
+                self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir), 'frob-utils')
+                self.assertEqual(len(os.listdir(cache_dir)), 1)
+                self.assert_(os.listdir(cache_dir)[0].startswith('Contents-'))
+                self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
+            finally:
+                shutil.rmtree(basedir)
 
         def test_get_file_package_diversion(self):
             '''Test get_file_package() for a diverted file.'''

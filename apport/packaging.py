@@ -51,15 +51,30 @@ class PackageInfo:
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
-    def get_file_package(self, file):
+    def get_file_package(self, file, uninstalled=False, map_cachedir=None):
         '''Return the package a file belongs to, or None if the file is not
-        shipped by any package.'''
+        shipped by any package.
+        
+        If uninstalled is True, this will also find files of uninstalled
+        packages; this is very expensive, though, and needs network access and
+        lots of CPU and I/O resources. In this case, map_cachedir can be set to
+        an existing directory which will be used to permanently store the
+        downloaded maps. If it is not set, a temporary directory will be used.'''
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
     def get_system_architecture(self):
         '''Return the architecture of the system, in the notation used by the
         particular distribution.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
+    def set_mirror(self, url):
+        '''Explicitly set a distribution mirror URL for operations that need to
+        fetch distribution files/packages from the network.
+
+        By default, the mirror will be read from the system configuration
+        files.'''
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
