@@ -11,7 +11,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, os, glob, stat, sys
+import subprocess, os, glob, stat, sys, tempfile
 
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
@@ -325,7 +325,7 @@ impl = __AptDpkgPackageInfo()
 #
 
 if __name__ == '__main__':
-    import unittest, tempfile, gzip, shutil
+    import unittest, gzip, shutil
 
     class _AptDpkgPackageInfoTest(unittest.TestCase):
 
