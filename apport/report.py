@@ -694,6 +694,19 @@ class Report(ProblemReport):
 
         return None
 
+    def obsolete_packages(self):
+        '''Check Package: and Dependencies: for obsolete packages and return a
+        list of them.'''
+
+        obsolete = []
+        for l in (self['Package'] + '\n' + self.get('Dependencies', '')).splitlines():
+            if not l:
+                continue
+            pkg, ver = l.split()[:2]
+            if ver != packaging.get_available_version(pkg):
+                obsolete.append(pkg)
+        return obsolete
+
 #
 # Unit test
 #
@@ -1434,5 +1447,30 @@ baz()
         self.assertEqual(report.standard_title(),
             'bash crashed with SIGSEGV in foo()')
 
+    def test_obsolete_packages(self):
+        '''Test obsolete_packages().'''
+
+        report = Report()
+        self.assertRaises(KeyError, report.obsolete_packages)
+
+        # should work without Dependencies
+        report['Package'] = 'bash 0'
+        self.assertEqual(report.obsolete_packages(), ['bash'])
+        report['Package'] = 'bash 0 [modified: /bin/bash]'
+        self.assertEqual(report.obsolete_packages(), ['bash'])
+        report['Package'] = 'bash ' + packaging.get_available_version('bash')
+        self.assertEqual(report.obsolete_packages(), [])
+
+        report['Dependencies'] = 'coreutils 0\ncron 0\n'
+        self.assertEqual(report.obsolete_packages(), ['coreutils', 'cron'])
+
+        report['Dependencies'] = 'coreutils %s [modified: /bin/mount]\ncron 0\n' % \
+            packaging.get_available_version('coreutils')
+        self.assertEqual(report.obsolete_packages(), ['cron'])
+
+        report['Dependencies'] = 'coreutils %s\ncron %s\n' % (
+            packaging.get_available_version('coreutils'),
+            packaging.get_available_version('cron'))
+        self.assertEqual(report.obsolete_packages(), [])
 if __name__ == '__main__':
     unittest.main()
