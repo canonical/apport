@@ -14,8 +14,11 @@ apport (0.82) UNRELEASED; urgency=low
   * bin/apport-retrace: Use "uninstalled" option now to install packages and
     corresponding -dbgsyms for uninstalled files mentioned in ProcMaps
     (Point 1 of apport-better-retracing spec). Bump python-apport dependency.
+  * apport/packaging.py: Add interface get_available_version(package).
+  * backends/packaging-apt-dpkg.py: Implement get_available_version(), add
+    shallow test case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 29 May 2007 13:11:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 31 May 2007 15:55:22 +0200
 
 apport (0.81) gutsy; urgency=low
 

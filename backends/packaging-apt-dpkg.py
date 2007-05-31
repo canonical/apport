@@ -53,6 +53,11 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return self._cache(package)._pkg.CurrentVer.VerStr
 
+    def get_available_version(self, package):
+        '''Return the latest available version of a package.'''
+
+        return self._cache(package).candidateVersion
+
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
@@ -364,6 +369,12 @@ if __name__ == '__main__':
 
             self.assert_(impl.get_version('libc6').startswith('2'))
             self.assertRaises(ValueError, impl.get_version, 'nonexisting')
+
+        def test_get_available_version(self):
+            '''Test get_available_version().'''
+
+            self.assert_(impl.get_available_version('libc6').startswith('2'))
+            self.assertRaises(ValueError, impl.get_available_version, 'nonexisting')
 
         def test_get_dependencies(self):
             '''Test get_dependencies().'''

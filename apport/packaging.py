@@ -17,6 +17,11 @@ class PackageInfo:
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
+    def get_available_version(self, package):
+        '''Return the latest available version of a package.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
