@@ -51,7 +51,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._cache(package)._pkg.CurrentVer.VerStr
+        return self._cache(package).installedVersion
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
