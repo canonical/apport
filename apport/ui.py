@@ -699,7 +699,7 @@ databases = {
             self.upload_progress_pulses = 0
             self.upload_progress_active = True
 
-        def ui_set_upload_progress(self):
+        def ui_set_upload_progress(self, progress):
             assert self.upload_progress_active
             self.upload_progress_pulses += 1
 
