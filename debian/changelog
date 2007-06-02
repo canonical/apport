@@ -19,8 +19,11 @@ apport (0.82) UNRELEASED; urgency=low
     shallow test case.
   * apport/report.py: Add function obsolete_packages() to return packages in
     Package: and Depends: which are not up to date. Add test cases.
+  * apport/ui.py, thread_collect_info(): call standard_title() and add it to
+    the report as 'Title' field. This is useful if reporters modify the
+    default title (per request of Brian Murray, thanks). Add test case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 31 May 2007 17:00:18 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 02 Jun 2007 09:31:41 +0200
 
 apport (0.81) gutsy; urgency=low
 

@@ -38,6 +38,11 @@ def thread_collect_info(report, reportfile, package):
     report.add_hooks_info()
     report.add_os_info()
 
+    # add title
+    title = report.standard_title()
+    if title:
+        report['Title'] = title
+
     # check package origin
     if not apport.packaging.is_distro_package(report['Package'].split()[0]):
         #TRANS: %s is the name of the operating system
@@ -1003,6 +1008,7 @@ CoreDump: base64
             r = apport.Report()
             r['ExecutablePath'] = test_executable
             r['CoreDump'] = (coredump,)
+            r['Signal'] = '11'
             r.add_proc_info(pid)
             r.add_user_info()
 
@@ -1049,6 +1055,7 @@ CoreDump: base64
             self.assert_('Stacktrace' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
             self.assert_(len(self.ui.report['CoreDump']) > 10000)
+            self.assert_(self.ui.report['Title'].startswith('cat crashed with SIGSEGV'))
 
             # report in crash notification dialog, send reduced report
             r.write(open(report_file, 'w'))
