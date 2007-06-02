@@ -24,8 +24,14 @@ apport (0.82) UNRELEASED; urgency=low
     default title (per request of Brian Murray, thanks). Add test case.
   * apport/ui.py: Fix declaration of the test suite's
     ui_set_upload_progress(). Funny that this has never been triggered before.
+  * apport/report.py, add_gdb_info(): Split out StacktraceTop generation into
+    separate funtion _gen_stacktrace_top(), so that we can test it separately.
+  * apport/report.py, _gen_stacktrace_top(): Step back from the crashed
+    program's own signal handlers, since those are generally not useful for
+    the purposes of StacktraceTop and only impede duplicate matching
+    (part of apport-better-retracing spec). Add various test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 02 Jun 2007 09:35:50 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 02 Jun 2007 10:44:31 +0200
 
 apport (0.81) gutsy; urgency=low
 

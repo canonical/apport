@@ -443,17 +443,36 @@ class Report(ProblemReport):
             if unlink_core:
                 os.unlink(core)
 
-        # StacktraceTop
         if self.has_key('Stacktrace'):
-            toptrace = [''] * 5
-            bt_fn_re = re.compile('^#(\d+)\s+0x(?:\w+)\s+in\s+(.*)$')
-            for line in self['Stacktrace'].splitlines():
-                m = bt_fn_re.match(line)
+            self._gen_stacktrace_top()
+
+    def _gen_stacktrace_top(self):
+        '''Build field StacktraceTop as the top five functions of Stacktrace. 
+
+        Signal handler invocations and related functions are skipped since they
+        are generally not useful for triaging and duplicate detection.'''
+        
+        toptrace = [''] * 5
+        depth = 0
+        unwound = False
+        unwind_re = re.compile('^#(\d+)\s+<signal handler called>\s*$')
+        bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+(.*)|(<signal handler called>)\s*)$')
+
+        for line in self['Stacktrace'].splitlines():
+            if not unwound:
+                m = unwind_re.match(line)
                 if m:
-                    depth = int(m.group(1))
-                    if depth < len(toptrace):
-                        toptrace[depth] = m.group(2)
-            self['StacktraceTop'] = '\n'.join(toptrace).strip()
+                    depth = 0
+                    toptrace = [''] * 5
+                    unwound = True
+                    continue
+
+            m = bt_fn_re.match(line)
+            if m:
+                if depth < len(toptrace):
+                    toptrace[depth] = m.group(2) or m.group(3)
+                    depth += 1
+        self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
     def add_hooks_info(self):
         '''Check for an existing hook script and run it to add additional
@@ -1472,5 +1491,61 @@ baz()
             packaging.get_available_version('coreutils'),
             packaging.get_available_version('cron'))
         self.assertEqual(report.obsolete_packages(), [])
+
+    def test_gen_stacktrace_top(self):
+        '''Test _gen_stacktrace_top().'''
+        
+        # nothing to chop off
+        r = Report()
+        r['Stacktrace'] = '''#0  0x10000488 in h (p=0x0) at crash.c:25
+#1  0x100004c8 in g (x=1, y=42) at crash.c:26
+#2  0x10000514 in f (x=1) at crash.c:27
+#3  0x10000530 in e (x=1) at crash.c:28
+#4  0x10000530 in d (x=1) at crash.c:29
+#5  0x10000530 in c (x=1) at crash.c:30
+#6  0x10000550 in main () at crash.c:31
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''h (p=0x0) at crash.c:25
+g (x=1, y=42) at crash.c:26
+f (x=1) at crash.c:27
+e (x=1) at crash.c:28
+d (x=1) at crash.c:29''')
+
+        # single signal handler invocation
+        r = Report()
+        r['Stacktrace'] = '''#0  0x10000488 in raise () from /lib/libpthread.so.0
+#1  0x100004c8 in ??
+#2  <signal handler called>
+#3  0x10000530 in e (x=1) at crash.c:28
+#4  0x10000530 in d (x=1) at crash.c:29
+#5  0x10000530 in c (x=1) at crash.c:30
+#6  0x10000550 in main () at crash.c:31
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''e (x=1) at crash.c:28
+d (x=1) at crash.c:29
+c (x=1) at crash.c:30
+main () at crash.c:31''')
+
+        # stacked signal handler; should only cut the first one
+        r = Report()
+        r['Stacktrace'] = '''#0  0x10000488 in raise () from /lib/libpthread.so.0
+#1  0x100004c8 in ??
+#2  <signal handler called>
+#3  0x10000530 in e (x=1) at crash.c:28
+#4  0x10000530 in d (x=1) at crash.c:29
+#5  0x10000123 in raise () from /lib/libpthread.so.0
+#6  <signal handler called>
+#7  0x10000530 in c (x=1) at crash.c:30
+#8  0x10000550 in main () at crash.c:31
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''e (x=1) at crash.c:28
+d (x=1) at crash.c:29
+raise () from /lib/libpthread.so.0
+<signal handler called>
+c (x=1) at crash.c:30''')
+
 if __name__ == '__main__':
     unittest.main()
