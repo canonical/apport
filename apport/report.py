@@ -689,7 +689,7 @@ class Report(ProblemReport):
             trace = self['Traceback'].splitlines()
 
             if len(trace) < 1:
-                return Nonr
+                return None
             if len(trace) < 3:
                 return '%s crashed with %s' % (
                     os.path.basename(self['ExecutablePath']),
@@ -725,6 +725,51 @@ class Report(ProblemReport):
             if ver != packaging.get_available_version(pkg):
                 obsolete.append(pkg)
         return obsolete
+
+    def crash_signature(self):
+        '''Calculate a signature string for a crash suitable for identifying
+        duplicates.
+
+        For signal crashes this the concatenation of ExecutablePath, Signal
+        number, and StacktraceTop function names, separated by a colon. If
+        StacktraceTop has unknown functions or the report lacks any of those
+        fields, return None.
+        
+        For Python crashes, this concatenates the ExecutablePath, exception
+        name, and Traceback function names, again separated by a colon.'''
+
+        if not self.has_key('ExecutablePath'):
+            return None
+
+        # signal crashes
+        if self.has_key('StacktraceTop') and self.has_key('Signal'):
+            sig = '%s:%s' % (self['ExecutablePath'], self['Signal'])
+            bt_fn_re = re.compile('^(?:([_\w]+).*|(<signal handler called>)\s*)$')
+
+            for line in self['StacktraceTop'].splitlines():
+                m = bt_fn_re.match(line)
+                if m:
+                    sig += ':' + (m.group(1) or m.group(2))
+                else:
+                    # this will also catch ??
+                    return None
+            return sig
+
+        # Python crashes
+        if self.has_key('Traceback'):
+            trace = self['Traceback'].splitlines()
+
+            sig = ''
+            if len(trace) < 3:
+                return None
+
+            for l in trace:
+                if l.startswith('  File'):
+                    sig += ':' + l.split()[-1]
+
+            return self['ExecutablePath'] + ':' + trace[-1].split(':')[0] + sig
+
+        return None
 
 #
 # Unit test
@@ -1546,6 +1591,46 @@ d (x=1) at crash.c:29
 raise () from /lib/libpthread.so.0
 <signal handler called>
 c (x=1) at crash.c:30''')
+
+    def test_crash_signature(self):
+        '''Test crash_signature().'''
+
+        r = Report()
+        self.assertEqual(r.crash_signature(), None)
+
+        # signal crashes
+        r['Signal'] = '42'
+        r['ExecutablePath'] = '/bin/crash'
+
+        r['StacktraceTop'] = '''foo_bar (x=1) at crash.c:28
+d01 (x=1) at crash.c:29
+raise () from /lib/libpthread.so.0
+<signal handler called>
+__frob (x=1) at crash.c:30'''
+
+        self.assertEqual(r.crash_signature(), '/bin/crash:42:foo_bar:d01:raise:<signal handler called>:__frob')
+
+        r['StacktraceTop'] = '''foo_bar (x=1) at crash.c:28
+??
+raise () from /lib/libpthread.so.0
+<signal handler called>
+__frob (x=1) at crash.c:30'''
+        self.assertEqual(r.crash_signature(), None)
+
+        # Python crashes
+        del r['Signal']
+        r['Traceback'] = '''Traceback (most recent call last):
+  File "test.py", line 7, in <module>
+    print _f(5)
+  File "test.py", line 5, in _f
+    return g_foo00(x+1)
+  File "test.py", line 2, in g_foo00
+    return x/0
+ZeroDivisionError: integer division or modulo by zero'''
+        self.assertEqual(r.crash_signature(), '/bin/crash:ZeroDivisionError:<module>:_f:g_foo00')
+
+        r['Traceback'] = 'FooBar'
+        self.assertEqual(r.crash_signature(), None)
 
 if __name__ == '__main__':
     unittest.main()

@@ -30,8 +30,11 @@ apport (0.82) UNRELEASED; urgency=low
     program's own signal handlers, since those are generally not useful for
     the purposes of StacktraceTop and only impede duplicate matching
     (part of apport-better-retracing spec). Add various test cases.
+  * apport/report.py: Add method crash_signature() to calculate an unique
+    identifier of a signal or Python crash, to be used for duplicate
+    detection. Add various test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 02 Jun 2007 10:44:31 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 03 Jun 2007 14:02:34 +0200
 
 apport (0.81) gutsy; urgency=low
 
