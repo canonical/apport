@@ -49,6 +49,14 @@ def thread_collect_info(report, reportfile, package):
         report['UnreportableReason'] = _('This is not a genuine %s package') % \
             report['DistroRelease'].split()[0]
 
+    # check obsolete packages
+    if report['ProblemType'] == 'Crash':
+        old_pkgs = report.obsolete_packages()
+        if old_pkgs:
+            report['UnreportableReason'] = _('You have some obsolete package \
+versions installed. Please upgrade the following packages and check if the \
+problem still occurs:\n\n%s') % ', '.join(old_pkgs)
+
     if reportfile:
         f = open(reportfile, 'a')
         os.chmod (reportfile, 0)

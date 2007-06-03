@@ -19,6 +19,8 @@ apport (0.82) UNRELEASED; urgency=low
     shallow test case.
   * apport/report.py: Add function obsolete_packages() to return packages in
     Package: and Depends: which are not up to date. Add test cases.
+  * apport/ui.py, thread_collect_info(): For crashes, call obsolete_packages()
+    and set UnreportableReason: if there are any.
   * apport/ui.py, thread_collect_info(): call standard_title() and add it to
     the report as 'Title' field. This is useful if reporters modify the
     default title (per request of Brian Murray, thanks). Add test case.
@@ -34,7 +36,7 @@ apport (0.82) UNRELEASED; urgency=low
     identifier of a signal or Python crash, to be used for duplicate
     detection. Add various test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 03 Jun 2007 14:02:34 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 03 Jun 2007 14:20:37 +0200
 
 apport (0.81) gutsy; urgency=low
 
