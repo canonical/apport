@@ -83,4 +83,20 @@ class PackageInfo:
 
         raise Exception, 'this method must be implemented by a concrete subclass'
 
+    def get_source_tree(self, srcpackage, dir, version=None):
+        '''Download given source package and unpack it into dir (which should
+        be empty).
+
+        This also has to care about applying patches etc., so that dir will
+        eventually contain the actually compiled source.
+
+        If version is given, this particular version will be retrieved.
+        Otherwise this will fetch the latest available version.
+
+        Return the directory that contains the actual source root directory
+        (which might be a subdirectory of dir). Return None if the source is
+        not available.'''
+
+        raise Exception, 'this method must be implemented by a concrete subclass'
+
 import packaging_impl

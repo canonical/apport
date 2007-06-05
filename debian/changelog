@@ -35,8 +35,15 @@ apport (0.82) UNRELEASED; urgency=low
   * apport/report.py: Add method crash_signature() to calculate an unique
     identifier of a signal or Python crash, to be used for duplicate
     detection. Add various test cases.
+  * apport/packaging.py: Add interface get_source_tree() to fetch and unpack a
+    source package to a given directory, optionally specifying a particular
+    version.
+  * backends/packaging-apt-dpkg.py: Implement get_source_tree(). This has a
+    rather crude 'call apt-get source and guess about directories'
+    implementation until python-apt learns about doing this directly and more
+    elegantly (see LP #118788).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 03 Jun 2007 14:20:37 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Jun 2007 17:42:15 +0200
 
 apport (0.81) gutsy; urgency=low
 

@@ -11,7 +11,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, os, glob, stat, sys, tempfile
+import subprocess, os, glob, stat, sys, tempfile, glob
 
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
@@ -222,6 +222,50 @@ class __AptDpkgPackageInfo(PackageInfo):
         files.'''
 
         self._mirror = url
+
+    def get_source_tree(self, srcpackage, dir, version=None):
+        '''Download given source package and unpack it into dir (which should
+        be empty).
+
+        This also has to care about applying patches etc., so that dir will
+        eventually contain the actually compiled source.
+
+        If version is given, this particular version will be retrieved.
+        Otherwise this will fetch the latest available version.
+
+        Return the directory that contains the actual source root directory
+        (which might be a subdirectory of dir). Return None if the source is
+        not available.'''
+
+        # fetch source tree
+        argv = ['apt-get', 'source', srcpackage]
+        if version:
+            argv[-1] += '=' + version
+        try:
+            if subprocess.call(argv, stdout=subprocess.PIPE,
+                cwd=dir) != 0:
+                return None
+        except OSError:
+            return None
+
+        # find top level directory
+        root = None
+        for d in glob.glob(os.path.join(dir, srcpackage + '-*')):
+            if os.path.isdir(d):
+                root = d
+        assert root, 'could not determine source tree root directory'
+
+        # apply patches on a best-effort basis 
+        try:
+            subprocess.call('debian/rules setup || debian/rules patch || \
+                debian/rules apply-patches ||  debian/rules apply-dpatches || \
+                debian/rules unpack || debian/rules patch-stamp', 
+                shell=True, cwd=root, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+        except OSError:
+            pass
+
+        return root
 
     #
     # Internal helper methods
