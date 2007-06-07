@@ -51,8 +51,10 @@ apport (0.82) UNRELEASED; urgency=low
     bug if it exists.
   * apport/crashdb_impl/launchpad.py: Check PackageArchitecture for 'all', to
     not set a retracer tag 'need-all-retrace'.
+  * test-apport: Clarify assertion failure message when an unexpected core
+    dump is present.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 07 Jun 2007 14:47:08 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 07 Jun 2007 14:58:27 +0200
 
 apport (0.81) gutsy; urgency=low
 

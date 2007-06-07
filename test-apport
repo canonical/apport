@@ -96,7 +96,7 @@ def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV,
         finally:
             os.unlink('core')
     else:
-        assert not os.path.exists('core'), 'does not leave core file behind'
+        assert not os.path.exists('core'), 'leaves unexpected core file behind'
 
 def check_safe_environment(env):
     allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
