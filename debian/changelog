@@ -49,8 +49,10 @@ apport (0.82) UNRELEASED; urgency=low
     apport-better-retracing spec).
   * apport/crashdb_impl/launchpad.py, update(): Attach StacktraceSource to the
     bug if it exists.
+  * apport/crashdb_impl/launchpad.py: Check PackageArchitecture for 'all', to
+    not set a retracer tag 'need-all-retrace'.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 07 Jun 2007 14:32:28 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 07 Jun 2007 14:47:08 +0200
 
 apport (0.81) gutsy; urgency=low
 
