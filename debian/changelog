@@ -42,8 +42,14 @@ apport (0.82) UNRELEASED; urgency=low
     rather crude 'call apt-get source and guess about directories'
     implementation until python-apt learns about doing this directly and more
     elegantly (see LP #118788).
+  * bin/apport-retrace: Add gen_source_stacktrace() and a few helper functions
+    to construct a field 'StacktraceSource' with the source code around the
+    affected lines in the stack trace (as available). (Point 5 of
+    apport-better-retracing spec).
+  * apport/crashdb_impl/launchpad.py, update(): Attach StacktraceSource to the
+    bug if it exists.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Jun 2007 17:42:15 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 07 Jun 2007 14:32:28 +0200
 
 apport (0.81) gutsy; urgency=low
 

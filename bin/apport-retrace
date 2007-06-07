@@ -328,6 +328,75 @@ def confirm_traces(report):
 
     return ch == 'y'
 
+def find_file_dir(name, dir, limit=None):
+    '''Return a path list of all files with given name which are in or below
+    dir.
+    
+    If limit is not None, the search will be stopped after finding the given
+    number of hits.'''
+
+    result = []
+    for root, dirs, files in os.walk(dir):
+        if name in files:
+            result.append(os.path.join(root, name))
+            if limit and len(result) >= limit:
+                break
+    return result
+
+def get_code(srcdir, filename, line, context=5):
+    '''Find the given filename in the srcdir directory and return the code
+    lines around the given line number.'''
+
+    files = find_file_dir(filename, srcdir, 1)
+    if not files:
+        return '  [Error: %s was not found in source tree]\n' % filename
+
+    result = ''
+    lineno = 0
+    # make enough room for all line numbers
+    format = '  %%%ii: %%s' % len(str(line+context))
+
+    for l in open(files[0]):
+        lineno += 1
+        if lineno >= line-context and lineno <= line+context:
+            result += format % (lineno, l)
+
+    return result
+
+def gen_source_stacktrace(report):
+    '''Generate StacktraceSource, a version of Stacktrace with the surrounding
+    code lines (where available) and with local variables removed.'''
+
+    if not report.has_key('Stacktrace') or not report.has_key('SourcePackage'):
+        return
+
+    workdir = tempfile.mkdtemp()
+    try:
+        try:
+            version = report['Package'].split()[1]
+        except (IndexError, KeyError):
+            version = None
+        srcdir = apport.packaging.get_source_tree(report['SourcePackage'], workdir, version)
+        if not srcdir:
+            return
+
+        src_frame = re.compile('^#\d+\s.* at (.*):(\d+)$')
+        other_frame = re.compile('^#\d+')
+        result = ''
+        for frame in report['Stacktrace'].splitlines():
+            m = src_frame.match(frame)
+            if m:
+                result += frame + '\n' + get_code(srcdir, m.group(1), int(m.group(2)))
+            else:
+                m = other_frame.search(frame)
+                if m:
+                    result += frame + '\n'
+
+        report['StacktraceSource'] = result
+    finally:
+        shutil.rmtree(workdir)
+        pass
+
 #
 # main
 #
@@ -385,6 +454,7 @@ if options.gdb:
 else:
     # regenerate gdb info
     report.add_gdb_info()
+    gen_source_stacktrace(report)
 
 modified = False
 
@@ -397,6 +467,9 @@ if options.stdout:
     print report['Stacktrace']
     print '--- thread stack trace ---'
     print report['ThreadStacktrace']
+    if report.has_key('StacktraceSource'):
+        print '--- source code stack trace ---'
+        print report['StacktraceSource']
 else:
     if not options.gdb:
         modified = True

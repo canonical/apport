@@ -134,6 +134,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bug.add_comment('Symbolic threaded stack trace', '', t, 
                 'ThreadStacktrace.txt (retraced)')
             t.close()
+
+            if report.has_key('StacktraceSource'):
+                t = open(os.path.join(tmpdir, 'StacktraceSource.txt'), 'w+')
+                t.write(report['StacktraceSource'])
+                t.flush()
+                t.seek(0)
+                bug.add_comment('Stack trace with source code', '', t, 
+                    'StacktraceSource.txt')
+                t.close()
         finally:
             shutil.rmtree(tmpdir)
 
