@@ -3,8 +3,12 @@ apport (0.83) UNRELEASED; urgency=low
   * apport/crashdb.py: Separate abstract from implemented functions.
   * apport/crashdb.py, apport/packaging.py, apport/ui.py: Use
     NotImplementedError instead of Exception in the abstract methods.
+  * apport/packaging.py: Add interface compare_versions() for comparing
+    package version numbers.
+  * backends/packaging-apt-dpkg.py: Implement compare_versions() using
+    apt.VersionCompare(), add some test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 08 Jun 2007 13:28:40 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 08 Jun 2007 19:07:51 +0200
 
 apport (0.82) gutsy; urgency=low
 
