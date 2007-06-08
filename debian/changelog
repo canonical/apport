@@ -1,6 +1,8 @@
 apport (0.83) UNRELEASED; urgency=low
 
   * apport/crashdb.py: Separate abstract from implemented functions.
+  * apport/crashdb.py, apport/packaging.py, apport/ui.py: Use
+    NotImplementedError instead of Exception in the abstract methods.
   * apport/crashdb.py: Add method interfaces for crash duplicate detection.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 08 Jun 2007 13:22:57 +0200
