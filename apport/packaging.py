@@ -99,4 +99,11 @@ class PackageInfo:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def compare_versions(self, ver1, ver2):
+        '''Compare two package versions.
+
+        Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
 import packaging_impl

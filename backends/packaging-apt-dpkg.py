@@ -367,6 +367,13 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return package
 
+    def compare_versions(self, ver1, ver2):
+        '''Compare two package versions.
+
+        Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
+
+        return apt.VersionCompare(ver1, ver2)
+
 impl = __AptDpkgPackageInfo()
 
 #
@@ -550,6 +557,16 @@ bo/gu/s                                                 na/mypackage
             # must be nonempty without line breaks
             self.assertNotEqual(arch, '')
             self.assert_('\n' not in arch)
+
+        def test_compare_versions(self):
+            '''Test compare_versions.'''
+
+            self.assertEqual(impl.compare_versions('1', '2'), -1)
+            self.assertEqual(impl.compare_versions('1.0-1ubuntu1', '1.0-1ubuntu2'), -1)
+            self.assertEqual(impl.compare_versions('1.0-1ubuntu1', '1.0-1ubuntu1'), 0)
+            self.assertEqual(impl.compare_versions('1.0-1ubuntu2', '1.0-1ubuntu1'), 1)
+            self.assertEqual(impl.compare_versions('1:1.0-1', '2007-2'), 1)
+            self.assertEqual(impl.compare_versions('1:1.0-1~1', '1:1.0-1'), -1)
 
     # only execute if dpkg is available
     try:
