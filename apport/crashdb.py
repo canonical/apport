@@ -44,7 +44,7 @@ class CrashDatabase:
         
         This should happen noninteractively.'''
 
-        raise Exception, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_comment_url(self, report, handle):
         '''Return an URL that should be opened after report has been uploaded
@@ -54,25 +54,25 @@ class CrashDatabase:
         user comments); in that case this function should do whichever
         interactive steps it wants to perform.'''
 
-        raise Exception, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
 
-        raise Exception, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def update(self, id, report, comment):
         '''Update the given report ID with the retraced results from the report
         (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
         desired) and an optional comment.'''
 
-        raise Exception, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
 
-        raise Exception, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
 #
 # factory 

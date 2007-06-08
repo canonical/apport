@@ -533,7 +533,7 @@ might be helpful for the developers.'))
         - Valid values for the 'blacklist' key: True or False (True will cause
           the invocation of report.mark_ignore()).'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_present_package_error(self, desktopentry):
         '''Inform that a package installation/upgrade failure has happened for
@@ -542,7 +542,7 @@ might be helpful for the developers.'))
         Return the action: ignore ('cancel'), or report a bug about the problem
         ('report').'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_present_kernel_error(self, desktopentry):
         '''Inform that a kernel Oops has happened for self.report and
@@ -551,7 +551,7 @@ might be helpful for the developers.'))
         Return the action: ignore ('cancel'), or report a bug about the problem
         ('report').'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_present_report_details(self):
         '''Show details of the bug report and choose between sending a complete
@@ -564,23 +564,23 @@ might be helpful for the developers.'))
         Return the action: send full report ('full'), send reduced report
         ('reduced'), or do not send anything ('cancel').'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_info_message(self, title, text):
         '''Show an information message box with given title and text.'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_error_message(self, title, text):
         '''Show an error message box with given title and text.'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_start_info_collection_progress(self):
         '''Open a window with an indefinite progress bar, telling the user to
         wait while debug information is being collected.'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_pulse_info_collection_progress(self):
         '''Advance the progress bar in the debug data collection progress
@@ -588,18 +588,18 @@ might be helpful for the developers.'))
 
         This function is called every 100 ms.'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_stop_info_collection_progress(self):
         '''Close debug data collection progress window.'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_start_upload_progress(self):
         '''Open a window with an definite progress bar, telling the user to
         wait while debug information is being uploaded.'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_set_upload_progress(self, progress):
         '''Set the progress bar in the debug data upload progress
@@ -608,12 +608,12 @@ might be helpful for the developers.'))
 
         This function is called every 100 ms.'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_stop_upload_progress(self):
         '''Close debug data upload progress window.'''
 
-        raise Exception, 'this function must be overridden by subclasses'
+        raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_shutdown(self):
         '''This is called right before terminating the program and can be used
