@@ -131,9 +131,12 @@ def get_module_license(module):
 
     try:
         modinfo = subprocess.Popen(['/sbin/modinfo', module], stdout=subprocess.PIPE)
+        out = modinfo.communicate()[0]
+        if modinfo.returncode != 0:
+            return none
     except OSError:
         return None
-    for l in modinfo.stdout:
+    for l in out.splitlines():
         fields = l.split(':', 1)
         if len(fields) < 2:
             continue
