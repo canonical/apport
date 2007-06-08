@@ -27,6 +27,18 @@ class CrashDatabase:
         self.options = options
         self.bugpattern_baseurl = bugpattern_baseurl
 
+    def get_bugpattern_baseurl(self):
+        '''Return the base URL for bug patterns.
+
+        See apport.report.Report.search_bug_patterns() for details. If this
+        function returns None, bug patterns are disabled.'''
+
+        return self.bugpattern_baseurl
+
+    #
+    # Abstract functions that need to be implemented by subclasses
+    #
+
     def upload(self, report):
         '''Upload given problem report return a handle for it. 
         
@@ -61,14 +73,6 @@ class CrashDatabase:
         it.'''
 
         raise Exception, 'this method must be implemented by a concrete subclass'
-
-    def get_bugpattern_baseurl(self):
-        '''Return the base URL for bug patterns.
-
-        See apport.report.Report.search_bug_patterns() for details. If this
-        function returns None, bug patterns are disabled.'''
-
-        return self.bugpattern_baseurl
 
 #
 # factory 
