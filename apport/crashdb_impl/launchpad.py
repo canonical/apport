@@ -13,7 +13,7 @@ the full text of the license.
 import urllib, tempfile, shutil, os.path, re, gzip
 
 import launchpadBugs.storeblob
-from launchpadBugs.HTMLOperations import Bug
+from launchpadBugs.HTMLOperations import Bug, BugList
 
 import apport.crashdb
 import apport
@@ -159,10 +159,46 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             raise ValueError, 'URL does not contain DistroRelease: field'
 
+    def get_status_list(self):
+        '''Return a mapping 'id -> fixed_version' of all currently tracked crashes.
+
+        The keys are integers (crash IDs), the values are 'None' for unfixed
+        crashes or the package version the crash was fixed in for resolved
+        crashes. The list must not contain bugs which were rejected or manually
+        marked as duplicate.
+        
+        This is a very expensive operation and should not be used too often.
+        
+        This function should make sure that the returned map is consistent. If
+        there are any errors with connecting to the crash database, it should
+        raise an exception (preferably IOError).'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
+    def close_duplicate(self, id, master):
+        '''Mark a crash id as duplicate of given master ID.'''
+
+        bug = Bug(id, cookie_file=self.auth_file)
+        bug.add_comment('Duplicate of #%i' % master,
+            'This crash has the same stack trace characteristics as bug #%i and \
+is most likely a duplicate. In the future duplicate bugs will be closed \
+automatically once python-launchpad-bugs supports this.' % master)
+
+    def mark_regression(self, id, master):
+        '''Mark a crash id as reintroducing an earlier crash which is
+        already marked as fixed (having ID 'master').'''
+        
+        bug = Bug(id, cookie_file=self.auth_file)
+        bug.add_comment('Possible regression detected', 
+            'This crash has the same stack trace characteristics as bug #%i. \
+However, the latter was already fixed in an earlier package version than the \
+one in this report. This might be a regression or because the problem \
+in a dependent package.' % master)
+
 # some test code for future usage:
 
-#from apport.crashdb_launchpad import LaunchpadCrashDatabase as CrashDatabase
-#c = CrashDatabase('/home/martin/.mozilla/firefox/ifhuf9go.default/cookies.txt')
+#c = CrashDatabase('/home/martin/txt/lp-apport.cookie', '', {'distro': 'ubuntu'})
+
 #r=c.download(89040)
 #r['StacktraceTop'] = 'This is an invalid test StacktraceTop\nYes, Really!\nfoo'
 #r['Stacktrace'] = 'long\ntrace'
@@ -173,3 +209,5 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 #t=c.upload(r)
 #print 'ticket:', t
 #print c.get_comment_url(r, t)
+
+#c.mark_regression(89040, 1)
