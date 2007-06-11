@@ -65,24 +65,41 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return self.reports[id]['report']['DistroRelease']
 
-    def get_status_list(self):
-        '''Return a mapping 'id -> fixed_version' of all currently tracked crashes.
+    def get_unfixed(self):
+        '''Return an ID set of all crashes which are not yet fixed.
 
-        The keys are integers (crash IDs), the values are 'None' for unfixed
-        crashes or the package version the crash was fixed in for resolved
-        crashes. The list must not contain bugs which were rejected or manually
-        marked as duplicate.
+        The list must not contain bugs which were rejected or duplicate.
         
-        This function should make sure that the returned map is consistent. If
+        This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
-        result = {}
+        result = set()
         for i in xrange(len(self.reports)):
-            if self.reports[i]['dup_of'] is None:
-                result[i] = self.reports[i]['fixed_version']
+            if self.reports[i]['dup_of'] is None and \
+                self.reports[i]['fixed_version'] == None:
+                result.add(i)
 
         return result
+
+    def get_fixed_version(self, id):
+        '''Return the package version that fixes a given crash.
+
+        Return None if the crash is not yet fixed, or an empty string if the
+        crash is fixed, but it cannot be determined by which version. Return
+        'invalid' if the crash report got invalidated, such as closed a
+        duplicate or rejected.
+
+        This function should make sure that the returned result is correct. If
+        there are any errors with connecting to the crash database, it should
+        raise an exception (preferably IOError).'''
+
+        try:
+            if self.reports[id]['dup_of'] != None:
+                return 'invalid'
+            return self.reports[id]['fixed_version']
+        except IndexError:
+            return 'invalid'
 
     def close_duplicate(self, id, master):
         '''Mark a crash id as duplicate of given master ID.'''
@@ -236,14 +253,18 @@ ZeroDivisionError: integer division or modulo by zero'''
 
             self.assertEqual(self.crashes.get_distro_release(0), 'FooLinux Pi/2')
 
-        def test_get_status_list(self):
-            '''Test get_status_list() and close_duplicate().'''
+        def test_status(self):
+            '''Test get_unfixed(), get_fixed_version() and close_duplicate().'''
 
-            self.assertEqual(self.crashes.get_status_list(), 
-                {0: None, 1: None, 2: None, 3: '4.1', 4: None})
+            self.assertEqual(self.crashes.get_unfixed(), set([0, 1, 2, 4]))
+            self.assertEqual(self.crashes.get_fixed_version(0), None)
+            self.assertEqual(self.crashes.get_fixed_version(1), None)
+            self.assertEqual(self.crashes.get_fixed_version(3), '4.1')
             self.crashes.close_duplicate(1, 0)
-            self.assertEqual(self.crashes.get_status_list(),
-                {0: None, 2: None, 3: '4.1', 4: None})
+            self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
+            self.assertEqual(self.crashes.get_fixed_version(1), 'invalid')
+
+            self.assertEqual(self.crashes.get_fixed_version(99), 'invalid')
 
         def test_mark_regression(self):
             '''Test mark_regression().'''
@@ -315,8 +336,7 @@ ZeroDivisionError: integer division or modulo by zero'''
 
             # check current states of real world; ID#1 is a dup and thus does
             # not appear
-            self.assertEqual(self.crashes.get_status_list(), 
-                {0: None, 2: None, 3: '4.1', 4: None})
+            self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
 
             # ID#4: dup of ID#3, and a regression (fixed in 4.1, happened in 5)
             self.assertEqual(self.crashes.check_duplicate(4,
@@ -324,8 +344,7 @@ ZeroDivisionError: integer division or modulo by zero'''
 
             # check crash states again; ID#4 is a regression of ID#3 in version
             # 5, so it's not a real duplicate
-            self.assertEqual(self.crashes.get_status_list(), 
-                {0: None, 2: None, 3: '4.1', 4: None})
+            self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
 
             # check DB consistency; ID#1 is a dup and does not appear
             self.assertEqual(self.crashes._duplicate_db_dump(), 
@@ -362,8 +381,7 @@ ZeroDivisionError: integer division or modulo by zero'''
 
             # manually kill #2
             self.crashes.close_duplicate(2, 0)
-            self.assertEqual(self.crashes.get_status_list(), 
-                {0: None, 1: None, 3: '4.1', 4: None})
+            self.assertEqual(self.crashes.get_unfixed(), set([0, 1, 4]))
 
             # no fixed version for #3 yet, and obsolete #2 is still there
             self.assertEqual(self.crashes._duplicate_db_dump(), 

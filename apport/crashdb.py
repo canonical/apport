@@ -158,27 +158,39 @@ class CrashDatabase:
     def duplicate_db_consolidate(self):
         '''Update the duplicate database status to the reality of the crash
         database.
-
-        This uses get_status_list() to get the status of all crashes. IDs which
-        do not occur there any more are removed from the duplicate db, and
+        
+        This uses get_unfixed() and get_fixed_version() to get the status of
+        particular crashes. Invalid IDs get removed from the duplicate db, and
         crashes which got fixed since the last run are marked as such in the
-        database.'''
+        database.
+
+        This is a very expensive operation and should not be used too often.'''
 
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
-        real_status = self.get_status_list()
+        unfixed = self.get_unfixed()
 
         cur = self.duplicate_db.cursor()
         cur.execute('SELECT crash_id, fixed_version FROM crashes')
 
         cur2 = self.duplicate_db.cursor()
         for (id, ver) in cur:
-            if not real_status.has_key(id):
+            # crash got reopened
+            if id in unfixed:
+                if ver != None:
+                    cur2.execute('UPDATE crashes SET fixed_version = NULL WHERE crash_id = ?', [id])
+                continue
+
+            if ver != None:
+                continue # skip get_fixed_version(), we already know its fixed
+
+            # crash got fixed/rejected
+            fixed_ver = self.get_fixed_version(id)
+            if fixed_ver == 'invalid':
                 cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
             else:
-                if real_status[id] != ver:
-                    cur2.execute('UPDATE crashes SET fixed_version = ? WHERE crash_id = ?',
-                        (real_status[id], id))
+                cur2.execute('UPDATE crashes SET fixed_version = ? WHERE crash_id = ?',
+                    (fixed_ver, id))
 
         self.duplicate_db.commit()
 
@@ -247,17 +259,26 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def get_status_list(self):
-        '''Return a mapping 'id -> fixed_version' of all currently tracked crashes.
+    def get_unfixed(self):
+        '''Return an ID set of all crashes which are not yet fixed.
 
-        The keys are integers (crash IDs), the values are 'None' for unfixed
-        crashes or the package version the crash was fixed in for resolved
-        crashes. The list must not contain bugs which were rejected or manually
-        marked as duplicate.
+        The list must not contain bugs which were rejected or duplicate.
         
-        This is a very expensive operation and should not be used too often.
-        
-        This function should make sure that the returned map is consistent. If
+        This function should make sure that the returned list is correct. If
+        there are any errors with connecting to the crash database, it should
+        raise an exception (preferably IOError).'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
+    def get_fixed_version(self, id):
+        '''Return the package version that fixes a given crash.
+
+        Return None if the crash is not yet fixed, or an empty string if the
+        crash is fixed, but it cannot be determined by which version. Return
+        'invalid' if the crash report got invalidated, such as closed a
+        duplicate or rejected.
+
+        This function should make sure that the returned result is correct. If
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
