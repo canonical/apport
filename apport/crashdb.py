@@ -12,6 +12,8 @@ the full text of the license.
 
 import os
 
+from packaging_impl import impl as packaging
+
 class CrashDatabase:
     def __init__(self, auth_file, bugpattern_baseurl, options):
         '''Initialize crash database connection. 
@@ -39,6 +41,7 @@ class CrashDatabase:
     #
     # API for duplicate detection
     #
+    # Tests are in apport/crashdb_impl/memory.py.
 
     def init_duplicate_db(self, path):
         '''Initialize duplicate database.
@@ -46,42 +49,101 @@ class CrashDatabase:
         path specifies an SQLite database. It will be created if it does not
         exist yet.'''
 
-        from pysqlite2 import dbapi2
+        import sqlite3 as dbapi2
 
         assert dbapi2.paramstyle == 'qmark', \
             'this module assumes qmark dbapi parameter style'
 
-        init = not os.path.exists(path)
+        init = not os.path.exists(path) or path == ':memory:'
         self.duplicate_db = dbapi2.connect(path)
 
         if init:
-            cur = db.cursor()
+            cur = self.duplicate_db.cursor()
             cur.execute('''CREATE TABLE crashes (
                 signature VARCHAR(255) NOT NULL,
                 crash_id INTEGER NOT NULL,
                 fixed_version VARCHAR(50))''')
             self.duplicate_db.commit()
 
-    def check_duplicate(self, report):
-        '''Check whether the crash is already known.
+    def check_duplicate(self, id, report):
+        '''Check whether a crash is already known.
 
         If the crash is new, it will be added to the duplicate database and the
         function returns None. If the crash is already known, the function
         returns a pair (crash_id, fixed_version), where fixed_version might be
-        None if the crash is not fixed in the latest version yet.'''
+        None if the crash is not fixed in the latest version yet. Depending on
+        whether the version in report is smaller than/equal to the fixed
+        version or larger, this calls close_duplicate() or crash_regression().
+        
+        If the report does not have a valid crash signature, this function does
+        nothing and just returns None.'''
 
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
-        raise Exception, 'not yet implemented'
+        sig = report.crash_signature()
+        if not sig:
+            return None
+
+        existing = self._duplicate_search_signature(sig)
+
+        # sort existing in ascending order, with unfixed last, so that
+        # version comparisons find the closest fix first
+        def cmp(x, y):
+            if x == None and y == None:
+                return 0
+            if x == None:
+                return 1
+            if y == None:
+                return -1
+            return packaging.compare_versions(x, y)
+
+        existing.sort(cmp, lambda k: k[1])
+
+        if not existing:
+            # add a new entry
+            cur = self.duplicate_db.cursor()
+            cur.execute('INSERT INTO crashes VALUES (?, ?, ?)', (sig, id, None))
+            self.duplicate_db.commit()
+            return None
+
+        try:
+            report_package_version = report['Package'].split()[1]
+        except (KeyError, IndexError):
+            report_package_version = None
+
+        # search the newest fixed id or an unfixed id to check whether there is
+        # a regression (crash happening on a later version than the latest
+        # fixed one)
+        for (ex_id, ex_ver) in existing:
+            if not ex_ver or \
+               not report_package_version or \
+                packaging.compare_versions(report_package_version, ex_ver) < 0: 
+                self.close_duplicate(id, ex_id)
+                break
+        else:
+            # regression, mark it as such in the crash db
+            self.crash_regression(id, ex_id)
+
+            # create a new record
+            cur = self.duplicate_db.cursor()
+            cur.execute('INSERT INTO crashes VALUES (?, ?, ?)', (sig, id, None))
+            self.duplicate_db.commit()
+
+        return (ex_id, ex_ver)
 
     def duplicate_db_fixed(self, id, version):
         '''Mark given crash ID as fixed in the duplicate database.
         
-        version specifies the package version the crash was fixed in.'''
+        version specifies the package version the crash was fixed in (None for
+        'still unfixed').'''
 
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
-        raise Exception, 'not yet implemented'
+        cur = self.duplicate_db.cursor()
+        n = cur.execute('UPDATE crashes SET fixed_version = ? WHERE crash_id = ?',
+            (version, id))
+        assert n.rowcount == 1
+        self.duplicate_db.commit()
 
     def duplicate_db_remove(self, id):
         '''Remove crash from the duplicate database (because it got rejected or
@@ -89,7 +151,9 @@ class CrashDatabase:
 
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
-        raise Exception, 'not yet implemented'
+        cur = self.duplicate_db.cursor()
+        cur.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
+        self.duplicate_db.commit()
 
     def duplicate_db_consolidate(self):
         '''Update the duplicate database status to the reality of the crash
@@ -102,7 +166,47 @@ class CrashDatabase:
 
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
-        raise Exception, 'not yet implemented'
+        real_status = self.get_status_list()
+
+        cur = self.duplicate_db.cursor()
+        cur.execute('SELECT crash_id, fixed_version FROM crashes')
+
+        cur2 = self.duplicate_db.cursor()
+        for (id, ver) in cur:
+            if not real_status.has_key(id):
+                cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
+            else:
+                if real_status[id] != ver:
+                    cur2.execute('UPDATE crashes SET fixed_version = ? WHERE crash_id = ?',
+                        (real_status[id], id))
+
+        self.duplicate_db.commit()
+
+    def _duplicate_search_signature(self, sig):
+        '''Look up signature in the duplicate db and return an [(id,
+        fixed_version)] tuple list.
+        
+        There might be several matches if a crash has been reintroduced in a
+        later version.'''
+
+        cur = self.duplicate_db.cursor()
+        cur.execute('SELECT crash_id, fixed_version FROM crashes WHERE signature = ?', [sig])
+        return cur.fetchall()
+
+    def _duplicate_db_dump(self):
+        '''Return the entire duplicate database as a dictionary signature ->
+           (crash_id, fixed_version).
+
+           This is mainly useful for debugging and test suites.'''
+
+        assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
+
+        dump = {}
+        cur = self.duplicate_db.cursor()
+        cur.execute('SELECT signature, crash_id, fixed_version FROM crashes')
+        for (sig, id, ver) in cur:
+            dump[sig] = (id, ver)
+        return dump
 
     #
     # Abstract functions that need to be implemented by subclasses
@@ -164,14 +268,10 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def crash_regression(self, id, report, master):
-        '''Mark a crash id/report as reintroducing an earlier crash which is
-        already marked as fixed (having ID 'master').
+    def crash_regression(self, id, master):
+        '''Mark a crash id as reintroducing an earlier crash which is
+        already marked as fixed (having ID 'master').'''
         
-        This should either reopen master, add the information from report, and
-        mark id as duplicate, or mark master as duplicate of id.
-        Return the ID that will track the given report in the future.'''
-
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
 #

@@ -89,19 +89,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         self.reports[id]['dup_of'] = master
 
-    def crash_regression(self, id, report, master):
-        '''Mark a crash id/report as reintroducing an earlier crash which is
-        already marked as fixed (having ID 'master').
-        
-        This should either reopen master, add the information from report, and
-        mark id as duplicate, or mark master as duplicate of id.
-        Return the ID that will track the given report in the future.'''
+    def crash_regression(self, id, master):
+        '''Mark a crash id as reintroducing an earlier crash which is
+        already marked as fixed (having ID 'master').'''
 
         assert self.reports[master]['fixed_version'] != None
-        self.close_duplicate(id, master)
-        self.reports[master]['report'] = report
-
-        return master
+        self.reports[id]['comment'] = 'regression, already fixed in #%i' % master
 
     def latest_id(self):
         '''Return the ID of the most recently filed report.'''
@@ -109,11 +102,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return len(self.reports)-1
 
 #
-# Unit test
+# Unit test (this also tests the dup detection API from apport/crashdb.py)
 #
 
 if __name__ == '__main__':
-    import unittest
+    import unittest, copy
 
     class _MemoryCrashDBTest(unittest.TestCase):
         def setUp(self):
@@ -170,6 +163,7 @@ d (x=1) at crash.c:29'''
             r = apport.Report()
             r['Package'] = 'python-goo 3epsilon1'
             r['SourcePackage'] = 'pygoo'
+            r['ExecutablePath'] = '/usr/bin/pygoo'
             r['Traceback'] = '''Traceback (most recent call last):
   File "test.py", line 7, in <module>
     print _f(5)
@@ -188,6 +182,7 @@ ZeroDivisionError: integer division or modulo by zero'''
             r = apport.Report()
             r['Package'] = 'python-goo 5'
             r['SourcePackage'] = 'pygoo'
+            r['ExecutablePath'] = '/usr/bin/pygoo'
             r['Traceback'] = '''Traceback (most recent call last):
   File "test.py", line 7, in <module>
     print _f(5)
@@ -199,8 +194,19 @@ ZeroDivisionError: integer division or modulo by zero'''
             self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
                 'http://pygoo.bug.net/4')
 
+            # test-suite internal consistency check: Python signatures are
+            # indeed equal and exist
+            assert self.crashes.download(3).crash_signature(), \
+                'test-suite internal check: Python crash sigs exist'
+            self.assertEqual(self.crashes.download(3).crash_signature(),
+                self.crashes.download(4).crash_signature())
+
             # we should have 5 crashes
             self.assertEqual(self.crashes.latest_id(), 4)
+
+        #
+        # Test memory.py implementation
+        #
 
         def test_submit(self):
             '''Test crash uploading and downloading.'''
@@ -242,7 +248,133 @@ ZeroDivisionError: integer division or modulo by zero'''
         def test_crash_regression(self):
             '''Test crash_regression().'''
 
-            self.assertEqual(self.crashes.crash_regression(4,
-                self.crashes.download(4), 3), 3)
+            self.crashes.crash_regression(4, 3)
+            self.assertEqual(self.crashes.reports[4]['comment'], 
+                'regression, already fixed in #3')
+
+        #
+        # Test crash duplication detection API of crashdb.py
+        #
+
+        def test_duplicate_db_fixed(self):
+            '''Test duplicate_db_fixed().'''
+
+            self.crashes.init_duplicate_db(':memory:')
+            self.assertEqual(self.crashes.check_duplicate(0,
+                self.crashes.download(0)), None)
+
+            self.assertEqual(self.crashes._duplicate_db_dump(), 
+                {self.crashes.download(0).crash_signature(): (0, None)})
+
+            self.crashes.duplicate_db_fixed(0, '42')
+
+            self.assertEqual(self.crashes._duplicate_db_dump(), 
+                {self.crashes.download(0).crash_signature(): (0, '42')})
+
+        def test_duplicate_db_remove(self):
+            '''Test duplicate_db_remove().'''
+
+            self.crashes.init_duplicate_db(':memory:')
+            self.assertEqual(self.crashes.check_duplicate(0,
+                self.crashes.download(0)), None)
+
+            self.crashes.duplicate_db_remove(0)
+
+            self.assertEqual(self.crashes._duplicate_db_dump(), {})
+
+        def test_check_duplicate(self):
+            '''Test check_duplicate().'''
+
+            # db not yet initialized
+            self.assertRaises(AssertionError, self.crashes.check_duplicate, 0,
+                self.crashes.download(0))
+
+            self.crashes.init_duplicate_db(':memory:')
+
+            self.assertEqual(self.crashes._duplicate_db_dump(), {})
+
+            # ID#0 -> no dup
+            self.assertEqual(self.crashes.check_duplicate(0,
+                self.crashes.download(0)), None)
+
+            # ID#1 -> dup of #0
+            self.assertEqual(self.crashes.check_duplicate(1,
+                self.crashes.download(1)), (0, None))
+
+            # ID#2 is unrelated, no dup
+            self.assertEqual(self.crashes.check_duplicate(2,
+                self.crashes.download(2)), None)
+
+            # ID#3: no dup, master of ID#4
+            self.assertEqual(self.crashes.check_duplicate(3,
+                self.crashes.download(3)), None)
+            # manually poke the fixed version into the dup db; this will
+            # normally be done by duplicate_db_consolidate(), but let's test
+            # this separately
+            self.crashes.duplicate_db_fixed(3, '4.1')
+
+            # check current states of real world; ID#1 is a dup and thus does
+            # not appear
+            self.assertEqual(self.crashes.get_status_list(), 
+                {0: None, 2: None, 3: '4.1', 4: None})
+
+            # ID#4: dup of ID#3, and a regression (fixed in 4.1, happened in 5)
+            self.assertEqual(self.crashes.check_duplicate(4,
+                self.crashes.download(4)), (3, '4.1'))
+
+            # check crash states again; ID#4 is a regression of ID#3 in version
+            # 5, so it's not a real duplicate
+            self.assertEqual(self.crashes.get_status_list(), 
+                {0: None, 2: None, 3: '4.1', 4: None})
+
+            # check DB consistency; ID#1 is a dup and does not appear
+            self.assertEqual(self.crashes._duplicate_db_dump(), 
+                {self.crashes.download(0).crash_signature(): (0, None),
+                 self.crashes.download(2).crash_signature(): (2, None),
+                 self.crashes.download(3).crash_signature(): (3, '4.1'),
+                 self.crashes.download(4).crash_signature(): (4, None)})
+
+            # add two more  Python crash dups and verify that they are dup'ed
+            # to the correct ID
+            r = copy.copy(self.crashes.download(3))
+            self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
+                'http://pygoo.bug.net/5')
+            self.assertEqual(self.crashes.check_duplicate(5,
+                self.crashes.download(5)), (3, '4.1'))
+
+            r = copy.copy(self.crashes.download(3))
+            r['Package'] = 'python-goo 5.1'
+            self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
+                'http://pygoo.bug.net/6')
+            self.assertEqual(self.crashes.check_duplicate(6,
+                self.crashes.download(6)), (4, None))
+
+        def test_duplicate_db_consolidate(self):
+            '''Test duplicate_db_consolidate().'''
+
+            self.crashes.init_duplicate_db(':memory:')
+            self.assertEqual(self.crashes.check_duplicate(0,
+                self.crashes.download(0)), None)
+            self.assertEqual(self.crashes.check_duplicate(2,
+                self.crashes.download(2)), None)
+            self.assertEqual(self.crashes.check_duplicate(3,
+                self.crashes.download(3)), None)
+
+            # manually kill #2
+            self.crashes.close_duplicate(2, 0)
+            self.assertEqual(self.crashes.get_status_list(), 
+                {0: None, 1: None, 3: '4.1', 4: None})
+
+            # no fixed version for #3 yet, and obsolete #2 is still there
+            self.assertEqual(self.crashes._duplicate_db_dump(), 
+                {self.crashes.download(0).crash_signature(): (0, None),
+                 self.crashes.download(2).crash_signature(): (2, None),
+                 self.crashes.download(3).crash_signature(): (3, None)})
+
+            self.crashes.duplicate_db_consolidate()
+
+            self.assertEqual(self.crashes._duplicate_db_dump(), 
+                {self.crashes.download(0).crash_signature(): (0, None),
+                 self.crashes.download(3).crash_signature(): (3, '4.1')})
 
     unittest.main()
