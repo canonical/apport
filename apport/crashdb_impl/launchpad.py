@@ -14,9 +14,16 @@ import urllib, tempfile, shutil, os.path, re, gzip
 
 import launchpadBugs.storeblob
 from launchpadBugs.HTMLOperations import Bug, BugList
+from launchpadBugs.BughelperError import LPUrlError
 
 import apport.crashdb
 import apport
+
+class _Struct:
+    '''Convenience class for creating on-the-fly anonymous objects.'''
+
+    def __init__(self, **entries): 
+        self.__dict__.update(entries)
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
@@ -159,21 +166,47 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             raise ValueError, 'URL does not contain DistroRelease: field'
 
-    def get_status_list(self):
-        '''Return a mapping 'id -> fixed_version' of all currently tracked crashes.
+    def get_unfixed(self):
+        '''Return an ID set of all crashes which are not yet fixed.
 
-        The keys are integers (crash IDs), the values are 'None' for unfixed
-        crashes or the package version the crash was fixed in for resolved
-        crashes. The list must not contain bugs which were rejected or manually
-        marked as duplicate.
+        The list must not contain bugs which were rejected or duplicate.
         
-        This is a very expensive operation and should not be used too often.
-        
-        This function should make sure that the returned map is consistent. If
+        This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        return set(BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport', 
+            upstream = None, minbug = None, filterbug = None, status = '',
+            importance = '', lastcomment = '')).bugs)
+
+    def get_fixed_version(self, id):
+        '''Return the package version that fixes a given crash.
+
+        Return None if the crash is not yet fixed, or an empty string if the
+        crash is fixed, but it cannot be determined by which version. Return
+        'invalid' if the crash report got invalidated, such as closed a
+        duplicate or rejected.
+
+        This function should make sure that the returned result is correct. If
+        there are any errors with connecting to the crash database, it should
+        raise an exception (preferably IOError).'''
+
+        # do not do version tracking yet; for that, we need to get the current
+        # distrorelease and the current package version in that distrorelease
+        # (or, of course, proper version tracking in Launchpad itself)
+        try:
+            b = Bug(id)
+        except LPUrlError, e:
+            if e.value.startswith('Page not found'):
+                return 'invalid'
+            else:
+                raise
+
+        if b.status == 'Fix Released':
+            return ''
+        if b.status == 'Rejected' or b.duplicate_of:
+            return 'invalid'
+        return None
 
     def close_duplicate(self, id, master):
         '''Mark a crash id as duplicate of given master ID.'''
@@ -211,3 +244,10 @@ in a dependent package.' % master)
 #print c.get_comment_url(r, t)
 
 #c.mark_regression(89040, 1)
+
+#print c.get_unfixed()
+#print '89040', c.get_fixed_version(89040)
+#print '114036', c.get_fixed_version(114036)
+#print '116026', c.get_fixed_version(116026)
+#print '118955 (dup)', c.get_fixed_version(118955)
+#print '999999 (N/E)', c.get_fixed_version(999999)
