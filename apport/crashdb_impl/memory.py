@@ -368,6 +368,20 @@ ZeroDivisionError: integer division or modulo by zero'''
             self.assertEqual(self.crashes.check_duplicate(6,
                 self.crashes.download(6)), (4, None))
 
+            # check with unknown fixed version
+            self.crashes.reports[3]['fixed_version'] = ''
+            self.crashes.duplicate_db_fixed(3, '')
+
+            r = copy.copy(self.crashes.download(3))
+            r['Package'] = 'python-goo 5.1'
+            self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
+                'http://pygoo.bug.net/7')
+            self.assertEqual(self.crashes.check_duplicate(7,
+                self.crashes.download(7)), (3, ''))
+
+            # final consistency check
+            self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
+
         def test_duplicate_db_consolidate(self):
             '''Test duplicate_db_consolidate().'''
 

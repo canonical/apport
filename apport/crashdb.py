@@ -89,8 +89,18 @@ class CrashDatabase:
         # sort existing in ascending order, with unfixed last, so that
         # version comparisons find the closest fix first
         def cmp(x, y):
-            if x == None and y == None:
+            if x == y:
                 return 0
+            if x == '':
+                if y == None:
+                    return -1
+                else:
+                    return 1
+            if y == '':
+                if x == None:
+                    return 1
+                else:
+                    return -1
             if x == None:
                 return 1
             if y == None:
