@@ -89,7 +89,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         self.reports[id]['dup_of'] = master
 
-    def crash_regression(self, id, master):
+    def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
 
@@ -245,10 +245,10 @@ ZeroDivisionError: integer division or modulo by zero'''
             self.assertEqual(self.crashes.get_status_list(),
                 {0: None, 2: None, 3: '4.1', 4: None})
 
-        def test_crash_regression(self):
-            '''Test crash_regression().'''
+        def test_mark_regression(self):
+            '''Test mark_regression().'''
 
-            self.crashes.crash_regression(4, 3)
+            self.crashes.mark_regression(4, 3)
             self.assertEqual(self.crashes.reports[4]['comment'], 
                 'regression, already fixed in #3')
 

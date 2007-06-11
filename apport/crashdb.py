@@ -73,7 +73,7 @@ class CrashDatabase:
         returns a pair (crash_id, fixed_version), where fixed_version might be
         None if the crash is not fixed in the latest version yet. Depending on
         whether the version in report is smaller than/equal to the fixed
-        version or larger, this calls close_duplicate() or crash_regression().
+        version or larger, this calls close_duplicate() or mark_regression().
         
         If the report does not have a valid crash signature, this function does
         nothing and just returns None.'''
@@ -122,7 +122,7 @@ class CrashDatabase:
                 break
         else:
             # regression, mark it as such in the crash db
-            self.crash_regression(id, ex_id)
+            self.mark_regression(id, ex_id)
 
             # create a new record
             cur = self.duplicate_db.cursor()
@@ -268,7 +268,7 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def crash_regression(self, id, master):
+    def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
         
