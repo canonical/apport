@@ -12,3 +12,8 @@ necessary, and to not file crashes with flash installed
 
 apport:
  - check crashes of root processes with dropped privs in test suite
+
+dup detection:
+ - add merging of two databases -> needs time stamp of last change
+ - crash-digger should regularly consolidate the db -> track last date
+   in db itself (new table)
