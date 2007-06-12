@@ -65,7 +65,7 @@ class CrashDatabase:
                 fixed_version VARCHAR(50))''')
             self.duplicate_db.commit()
 
-    def check_duplicate(self, id, report):
+    def check_duplicate(self, id, report=None):
         '''Check whether a crash is already known.
 
         If the crash is new, it will be added to the duplicate database and the
@@ -76,9 +76,15 @@ class CrashDatabase:
         version or larger, this calls close_duplicate() or mark_regression().
         
         If the report does not have a valid crash signature, this function does
-        nothing and just returns None.'''
+        nothing and just returns None.
+        
+        By default, the report gets download()ed, but for performance reasons
+        it can be explicitly passed to this function if it is already available.'''
 
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
+
+        if not report:
+            report = self.download(id)
 
         sig = report.crash_signature()
         if not sig:

@@ -281,8 +281,7 @@ ZeroDivisionError: integer division or modulo by zero'''
             '''Test duplicate_db_fixed().'''
 
             self.crashes.init_duplicate_db(':memory:')
-            self.assertEqual(self.crashes.check_duplicate(0,
-                self.crashes.download(0)), None)
+            self.assertEqual(self.crashes.check_duplicate(0), None)
 
             self.assertEqual(self.crashes._duplicate_db_dump(), 
                 {self.crashes.download(0).crash_signature(): (0, None)})
@@ -296,8 +295,7 @@ ZeroDivisionError: integer division or modulo by zero'''
             '''Test duplicate_db_remove().'''
 
             self.crashes.init_duplicate_db(':memory:')
-            self.assertEqual(self.crashes.check_duplicate(0,
-                self.crashes.download(0)), None)
+            self.assertEqual(self.crashes.check_duplicate(0), None)
 
             self.crashes.duplicate_db_remove(0)
 
@@ -309,26 +307,23 @@ ZeroDivisionError: integer division or modulo by zero'''
             # db not yet initialized
             self.assertRaises(AssertionError, self.crashes.check_duplicate, 0,
                 self.crashes.download(0))
+            self.assertRaises(AssertionError, self.crashes.check_duplicate, 0)
 
             self.crashes.init_duplicate_db(':memory:')
 
             self.assertEqual(self.crashes._duplicate_db_dump(), {})
 
             # ID#0 -> no dup
-            self.assertEqual(self.crashes.check_duplicate(0,
-                self.crashes.download(0)), None)
+            self.assertEqual(self.crashes.check_duplicate(0), None)
 
             # ID#1 -> dup of #0
-            self.assertEqual(self.crashes.check_duplicate(1,
-                self.crashes.download(1)), (0, None))
+            self.assertEqual(self.crashes.check_duplicate(1), (0, None))
 
             # ID#2 is unrelated, no dup
-            self.assertEqual(self.crashes.check_duplicate(2,
-                self.crashes.download(2)), None)
+            self.assertEqual(self.crashes.check_duplicate(2), None)
 
             # ID#3: no dup, master of ID#4
-            self.assertEqual(self.crashes.check_duplicate(3,
-                self.crashes.download(3)), None)
+            self.assertEqual(self.crashes.check_duplicate(3), None)
             # manually poke the fixed version into the dup db; this will
             # normally be done by duplicate_db_consolidate(), but let's test
             # this separately
@@ -339,8 +334,7 @@ ZeroDivisionError: integer division or modulo by zero'''
             self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
 
             # ID#4: dup of ID#3, and a regression (fixed in 4.1, happened in 5)
-            self.assertEqual(self.crashes.check_duplicate(4,
-                self.crashes.download(4)), (3, '4.1'))
+            self.assertEqual(self.crashes.check_duplicate(4), (3, '4.1'))
 
             # check crash states again; ID#4 is a regression of ID#3 in version
             # 5, so it's not a real duplicate
@@ -358,15 +352,13 @@ ZeroDivisionError: integer division or modulo by zero'''
             r = copy.copy(self.crashes.download(3))
             self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
                 'http://pygoo.bug.net/5')
-            self.assertEqual(self.crashes.check_duplicate(5,
-                self.crashes.download(5)), (3, '4.1'))
+            self.assertEqual(self.crashes.check_duplicate(5), (3, '4.1'))
 
             r = copy.copy(self.crashes.download(3))
             r['Package'] = 'python-goo 5.1'
             self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
                 'http://pygoo.bug.net/6')
-            self.assertEqual(self.crashes.check_duplicate(6,
-                self.crashes.download(6)), (4, None))
+            self.assertEqual(self.crashes.check_duplicate(6), (4, None))
 
             # check with unknown fixed version
             self.crashes.reports[3]['fixed_version'] = ''
@@ -376,11 +368,25 @@ ZeroDivisionError: integer division or modulo by zero'''
             r['Package'] = 'python-goo 5.1'
             self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
                 'http://pygoo.bug.net/7')
-            self.assertEqual(self.crashes.check_duplicate(7,
-                self.crashes.download(7)), (3, ''))
+            self.assertEqual(self.crashes.check_duplicate(7), (3, ''))
 
             # final consistency check
             self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
+
+        def test_check_duplicate_report_arg(self):
+            '''Test check_duplicate() with explicitly passing report.'''
+
+            self.crashes.init_duplicate_db(':memory:')
+
+            # ID#0 -> no dup
+            self.assertEqual(self.crashes.check_duplicate(0), None)
+
+            # ID#2 is unrelated, no dup
+            self.assertEqual(self.crashes.check_duplicate(2), None)
+
+            # report from ID#1 is a dup of #0
+            self.assertEqual(self.crashes.check_duplicate(2,
+                self.crashes.download(1)), (0, None))
 
         def test_duplicate_db_consolidate(self):
             '''Test duplicate_db_consolidate().'''
