@@ -31,8 +31,7 @@ def setup_fakeroot_env():
 
     os.environ['LD_PRELOAD'] = '%s %s %s' % (libfakechroot, libfakeroot,
         os.environ.get('LD_PRELOAD', ''))
-    os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib:/usr/lib:/lib:' + \
-        os.environ.get('LD_LIBRARY_PATH', '')
+    os.environ['LD_LIBRARY_PATH'] = '/lib:' + os.environ.get('LD_LIBRARY_PATH', '')
     os.environ['FAKECHROOT'] = 'true'
 
 def pathsplit(p, rest=[]):
