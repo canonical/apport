@@ -8,8 +8,11 @@ apport (0.83) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py: Implement compare_versions() using
     apt.VersionCompare(), add some test cases.
   * apport/report.py: Fix typo: 'none' -> 'None'.
+  * apport/chroot.py: Do not include /usr/local/lib and /usr/lib in
+    LD_LIBRARY_PATH, just /lib, so that we still use the libc from outside,
+    but e. g. libxml2 from inside the chroot.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 11 Jun 2007 15:59:53 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Jun 2007 23:48:36 +0200
 
 apport (0.82) gutsy; urgency=low
 
