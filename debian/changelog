@@ -16,14 +16,12 @@ apport (0.83) UNRELEASED; urgency=low
   * debian/pyversions: Bump minimal Python version to 2.5, since this starts
     providing the sqlite3 module.
   * apport/crashdb_impl/launchpad.py: Implement new methods required for crash
-    duplicate detection, with the following restrictions:
-    - close_duplicate() does not actually dup the bug, just points to the
-      master bug in a comment, until python-launchpad-bugs actually
-      supports duplicate marking (see LP #119874).
-    - get_fixed_version() does not approximate version tracking yet. It just
-      returns '' for fixed bugs (which means 'fixed, but unknown version').
+    duplicate detection. get_fixed_version() does not approximate version
+    tracking yet; it just returns '' for fixed bugs (which means 'fixed, but
+    unknown version'). Bump python-launchpad-bugs dependency for this to
+    ensure the availability of Bug.mark_duplicate().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 11 Jun 2007 17:32:03 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Jun 2007 17:20:41 +0200
 
 apport (0.82) gutsy; urgency=low
 

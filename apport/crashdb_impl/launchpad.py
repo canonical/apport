@@ -212,10 +212,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Mark a crash id as duplicate of given master ID.'''
 
         bug = Bug(id, cookie_file=self.auth_file)
-        bug.add_comment('Duplicate of #%i' % master,
-            'This crash has the same stack trace characteristics as bug #%i and \
-is most likely a duplicate. In the future duplicate bugs will be closed \
-automatically once python-launchpad-bugs supports this.' % master)
+        bug.mark_duplicate(master)
 
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
@@ -244,6 +241,7 @@ in a dependent package.' % master)
 #print c.get_comment_url(r, t)
 
 #c.mark_regression(89040, 1)
+#c.close_duplicate(89040, 1)
 
 #print c.get_unfixed()
 #print '89040', c.get_fixed_version(89040)
