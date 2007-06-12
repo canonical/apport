@@ -55,6 +55,9 @@ def parse_options():
     optparser.add_option('--auth', 
         help='Passed on to apport-retrace in "retrace" mode',
         action='store', type='string', dest='auth_file', default=None)
+    optparser.add_option('--duplicate-db', 
+        help='Passed on to apport-retrace in "retrace" mode',
+        action='store', type='string', dest='dup_db', default=None)
     optparser.add_option('--confirm-attach', 
         help='Display retraced stack traces and ask for confirmation before uploading them as bug attachments.',
         action='store_true', dest='confirm_attach', default=False)
@@ -297,6 +300,11 @@ def command_retrace(opts, args):
         else:
             apport_retrace_argv += ['-s']
             chroot_auth = None
+        if opts.dup_db:
+            # symlink the file into the chroot
+            chroot_dupdb = os.path.join(c.root, 'tmp', 'dup.db')
+            os.symlink(opts.dup_db, chroot_dupdb)
+            apport_retrace_argv += ['--duplicate-db', chroot_dupdb]
         if opts.confirm_attach:
             apport_retrace_argv.append('--confirm')
         apport_retrace_argv.append(args[0])
