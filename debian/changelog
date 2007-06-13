@@ -31,8 +31,12 @@ apport (0.83) UNRELEASED; urgency=low
     it into the chroot and pass --duplicate-db to apport-retrace.
   * bin/launchpad-crash-digger: Add --duplicate-db and pass it to
     apport-chroot.
+  * apport/crashdb.py: Track last run of duplicate_db_consolidate() in an
+    extra table and add a method duplicate_db_needs_consolidation() which
+    returns True if the last run was more than a given number of seconds ago.
+    Add test cases to apport/crashdb_impl/memory.py.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Jun 2007 23:45:07 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Jun 2007 12:03:27 +0200
 
 apport (0.82) gutsy; urgency=low
 

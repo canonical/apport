@@ -123,7 +123,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 #
 
 if __name__ == '__main__':
-    import unittest, copy
+    import unittest, copy, time
 
     class _MemoryCrashDBTest(unittest.TestCase):
         def setUp(self):
@@ -414,5 +414,25 @@ ZeroDivisionError: integer division or modulo by zero'''
             self.assertEqual(self.crashes._duplicate_db_dump(), 
                 {self.crashes.download(0).crash_signature(): (0, None),
                  self.crashes.download(3).crash_signature(): (3, '4.1')})
+
+        def test_duplicate_db_needs_consolidation(self):
+            '''Test duplicate_db_needs_consolidation().'''
+
+            self.crashes.init_duplicate_db(':memory:')
+
+            # a fresh and empty db does not need consolidation
+            self.failIf(self.crashes.duplicate_db_needs_consolidation())
+
+            time.sleep(1.1)
+            # for an one-day interval we do not need consolidation
+            self.failIf(self.crashes.duplicate_db_needs_consolidation())
+            # neither for a ten second one (check timezone offset errors)
+            self.failIf(self.crashes.duplicate_db_needs_consolidation(10))
+            # but for an one second interval
+            self.assert_(self.crashes.duplicate_db_needs_consolidation(1))
+
+            self.crashes.duplicate_db_consolidate()
+
+            self.failIf(self.crashes.duplicate_db_needs_consolidation(1))
 
     unittest.main()

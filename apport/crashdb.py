@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os
+import os, os.path, datetime
 
 from packaging_impl import impl as packaging
 
@@ -64,6 +64,10 @@ class CrashDatabase:
                 crash_id INTEGER NOT NULL,
                 fixed_version VARCHAR(50),
                 last_change TIMESTAMP)''')
+
+            cur.execute('''CREATE TABLE consolidation (
+                last_update TIMESTAMP)''')
+            cur.execute('''INSERT INTO consolidation VALUES (CURRENT_TIMESTAMP)''')
             self.duplicate_db.commit()
 
     def check_duplicate(self, id, report=None):
@@ -209,7 +213,22 @@ class CrashDatabase:
                 cur2.execute('UPDATE crashes SET fixed_version = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
                     (fixed_ver, id))
 
+        # poke consolidation.last_update
+        cur.execute('UPDATE consolidation SET last_update = CURRENT_TIMESTAMP')
         self.duplicate_db.commit()
+
+    def duplicate_db_needs_consolidation(self, interval=86400):
+        '''Check whether the last duplicate_db_consolidate() happened more than
+        'interval' seconds ago (default: one day).'''
+
+        assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
+
+        cur = self.duplicate_db.cursor()
+        cur.execute('SELECT last_update FROM consolidation')
+        last_run = datetime.datetime.strptime(cur.fetchone()[0], 
+            '%Y-%m-%d %H:%M:%S')
+
+        return (datetime.datetime.utcnow() - last_run).seconds >= interval
 
     def _duplicate_search_signature(self, sig):
         '''Look up signature in the duplicate db and return an [(id,
