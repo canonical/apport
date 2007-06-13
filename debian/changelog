@@ -35,8 +35,11 @@ apport (0.83) UNRELEASED; urgency=low
     extra table and add a method duplicate_db_needs_consolidation() which
     returns True if the last run was more than a given number of seconds ago.
     Add test cases to apport/crashdb_impl/memory.py.
+  * bin/launchpad-crash-digger, fill_pool(): Check whether the duplicate
+    database needs consolidation (i. e. updating the bug states to the reality
+    in the bug tracker) and if so, trigger it.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Jun 2007 12:03:27 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Jun 2007 12:33:25 +0200
 
 apport (0.82) gutsy; urgency=low
 

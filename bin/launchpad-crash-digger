@@ -47,6 +47,9 @@ class CrashDigger:
 
 	self.crashdb = get_crashdb(cookie_file)
 
+        if self.dup_db:
+            self.crashdb.init_duplicate_db(self.dup_db)
+
     def log(self, str):
         '''If verbosity is enabled, log the given string to stdout, and prepend
         the current date and time.'''
@@ -56,7 +59,21 @@ class CrashDigger:
 
     def fill_pool(self):
         '''Query Launchpad for new crash bugs for our processor
-        architecture.'''
+        architecture.
+        
+        This function also takes care of regularly consolidating the duplicate
+        database.'''
+
+        if self.dup_db:
+            if self.crashdb.duplicate_db_needs_consolidation():
+                self.log('Consolidating duplicate database...')
+                self.crashdb.duplicate_db_consolidate()
+                if self.verbose:
+                    print 'duplicate db is now:'
+                    print '-------------'
+                    for k, v in self.crashdb._duplicate_db_dump(True):
+                        print k, v
+                    print '-------------'
 
         bugs = set()
         # get set of bug list integers (.bugs is a list of Bug objects)
