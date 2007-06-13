@@ -301,6 +301,12 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def get_unretraced(self):
+        '''Return an ID set of all crashes which have not been retraced yet and
+        which happened on the current host architecture.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
 
@@ -335,6 +341,11 @@ class CrashDatabase:
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
         
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
+    def mark_retraced(self, id):
+        '''Mark crash id as retraced.'''
+
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
 #

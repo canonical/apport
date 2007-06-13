@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import urllib, tempfile, shutil, os.path, re, gzip
+import urllib, tempfile, shutil, os.path, re, gzip, os
 
 import launchpadBugs.storeblob
 from launchpadBugs.HTMLOperations import Bug, BugList
@@ -18,6 +18,14 @@ from launchpadBugs.BughelperError import LPUrlError
 
 import apport.crashdb
 import apport
+
+arch_tag_map = {
+    'i386': 'need-i386-retrace',
+    'i686': 'need-i386-retrace',
+    'x86_64': 'need-amd64-retrace',
+    'ppc': 'need-powerpc-retrace',
+    'ppc64': 'need-powerpc-retrace',
+}
 
 class _Struct:
     '''Convenience class for creating on-the-fly anonymous objects.'''
@@ -38,6 +46,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bugpattern_baseurl, options)
 
         self.distro = options['distro']
+        self.arch_tag = arch_tag_map[os.uname()[4]]
 
     def upload(self, report):
         '''Upload given problem report return a handle for it. 
@@ -166,6 +175,18 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             raise ValueError, 'URL does not contain DistroRelease: field'
 
+    def get_unretraced(self):
+        '''Return an ID set of all crashes which have not been retraced yet and
+        which happened on the current host architecture.'''
+
+        result = set()
+        for b in BugList(Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + 
+            self.arch_tag, upstream = None, tag=None, minbug = None, 
+            filterbug = None, status = '', importance = '', closed_bugs=None,
+            duplicates = None, lastcomment = None)).bugs:
+            result.add(int(b))
+        return result
+
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
 
@@ -225,6 +246,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem \
 in a dependent package.' % master)
+
+    def mark_retraced(self, id):
+        '''Mark crash id as retraced.'''
+
+        b = Bug(id, cookie_file=self.auth_file)
+        b.get_metadata()
+        if self.arch_tag in b.tags:
+            b.tags.remove(self.arch_tag)
+            b.set_metadata()
 
 # some test code for future usage:
 

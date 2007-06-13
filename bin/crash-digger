@@ -2,50 +2,32 @@
 
 import os, time, optparse, subprocess
 
-from launchpadBugs.HTMLOperations import Bug, BugList
 from apport.crashdb import get_crashdb
-
-arch_tag_map = {
-    'i386': 'need-i386-retrace',
-    'i686': 'need-i386-retrace',
-    'x86_64': 'need-amd64-retrace',
-    'ppc': 'need-powerpc-retrace',
-    'ppc64': 'need-powerpc-retrace',
-}
 
 #
 # classes
 #
 
-class Struct:
-    '''Convenience class for creating on-the-fly anonymous objects.'''
-
-    def __init__(self, **entries): 
-        self.__dict__.update(entries)
-
 class CrashDigger:
-    def __init__(self, chroot_map, cookie_file, verbose=False, sleep_time=600,
+    def __init__(self, chroot_map, auth_file, verbose=False, sleep_time=600,
         dup_db=None):
         '''Initialize work pool.'''
 
-        self.arch_tag = arch_tag_map[os.uname()[4]]
-        self.list_url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + self.arch_tag
         self.work_pool = set()
         self.fail_pool = set()
         self.verbose = verbose
         self.chroot_map = chroot_map
-        self.cookie_file = cookie_file
+        self.auth_file = auth_file
         self.sleep_time = sleep_time
         self.dup_db = dup_db
-        self.log('Initializing crash digger to process bugs on %s, using chroot map %s' % (
-            self.list_url, self.chroot_map))
+        self.log('Initializing crash digger, using chroot map %s' % self.chroot_map)
 
 	# read chroot map and get available releases
 	m = eval(open(self.chroot_map).read(), {}, {})
 	self.releases = m.keys()
 	self.log('Available releases: %s' % str(self.releases))
 
-	self.crashdb = get_crashdb(cookie_file)
+	self.crashdb = get_crashdb(auth_file)
 
         if self.dup_db:
             self.crashdb.init_duplicate_db(self.dup_db)
@@ -58,8 +40,7 @@ class CrashDigger:
             print '%s: %s' % (time.strftime('%x %X'), str)
 
     def fill_pool(self):
-        '''Query Launchpad for new crash bugs for our processor
-        architecture.
+        '''Query crash db for new crash bugs.
         
         This function also takes care of regularly consolidating the duplicate
         database.'''
@@ -75,13 +56,7 @@ class CrashDigger:
                         print k, v
                     print '-------------'
 
-        bugs = set()
-        # get set of bug list integers (.bugs is a list of Bug objects)
-        for b in BugList(Struct(url = self.list_url, upstream = None, tag=None,
-            minbug = None, filterbug = None, status = '', importance = '',
-	    closed_bugs=None, duplicates=None, lastcomment=None)).bugs:
-            bugs.add(int(b))
-        bugs -= self.fail_pool
+        bugs = self.crashdb.get_unretraced() - self.fail_pool
         self.work_pool.update(bugs)
 
         self.log('fill_pool: got new bugs %s' % str(bugs))
@@ -105,15 +80,11 @@ class CrashDigger:
             self.fail_pool.add(bug)
 	    return
 
-        # remove tag
-        b = Bug(bug, None, cookie_file=self.cookie_file)
-        b.get_metadata()
-        if self.arch_tag in b.tags:
-            b.tags.remove(self.arch_tag)
-            b.set_metadata()
+        # do it now already to avoid endless loops if apport-retrace fails
+        self.crashdb.mark_retraced(bug)
 
         argv = ['apport-chroot', '-m', self.chroot_map, '--auth',
-            self.cookie_file]
+            self.auth_file]
         if self.dup_db:
             argv += ['--duplicate-db', self.dup_db]
         argv += ['retrace', str(bug)]
@@ -148,9 +119,9 @@ def parse_options():
     optparser.add_option('-m', '--chroot-map',
         help='Path to chroot map. This is a file that defines a Python dictionary, mapping DistroRelease: values to chroot paths',
         action='store', type='string', dest='chroot_map', metavar='FILE', default=None)
-    optparser.add_option('-c', '--cookie',
-        help='Path to a Mozilla-style cookie file, for doing Launchpad bug changes',
-        action='store', type='string', dest='cookie_file', default=None)
+    optparser.add_option('-a', '--auth',
+        help='Path to a file with the crash database authentication information.',
+        action='store', type='string', dest='auth_file', default=None)
     optparser.add_option('-s', '--sleep',
         help='Number of seconds to sleep when the work queue is empty (default: 600)',
         action='store', type='int', dest='sleep', metavar='SECONDS', default=600)
@@ -165,7 +136,7 @@ def parse_options():
     (opts, args) = optparser.parse_args()
 
     assert opts.chroot_map
-    assert opts.cookie_file
+    assert opts.auth_file
 
     return (opts, args)
 
@@ -174,5 +145,5 @@ def parse_options():
 #
 
 opts, args = parse_options()
-CrashDigger(opts.chroot_map, opts.cookie_file, opts.verbose, opts.sleep,
+CrashDigger(opts.chroot_map, opts.auth_file, opts.verbose, opts.sleep,
     opts.dup_db).run()
