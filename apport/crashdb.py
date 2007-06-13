@@ -62,7 +62,8 @@ class CrashDatabase:
             cur.execute('''CREATE TABLE crashes (
                 signature VARCHAR(255) NOT NULL,
                 crash_id INTEGER NOT NULL,
-                fixed_version VARCHAR(50))''')
+                fixed_version VARCHAR(50),
+                last_change TIMESTAMP)''')
             self.duplicate_db.commit()
 
     def check_duplicate(self, id, report=None):
@@ -118,7 +119,7 @@ class CrashDatabase:
         if not existing:
             # add a new entry
             cur = self.duplicate_db.cursor()
-            cur.execute('INSERT INTO crashes VALUES (?, ?, ?)', (sig, id, None))
+            cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (sig, id, None))
             self.duplicate_db.commit()
             return None
 
@@ -142,7 +143,7 @@ class CrashDatabase:
 
             # create a new record
             cur = self.duplicate_db.cursor()
-            cur.execute('INSERT INTO crashes VALUES (?, ?, ?)', (sig, id, None))
+            cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (sig, id, None))
             self.duplicate_db.commit()
 
         return (ex_id, ex_ver)
@@ -156,7 +157,7 @@ class CrashDatabase:
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
         cur = self.duplicate_db.cursor()
-        n = cur.execute('UPDATE crashes SET fixed_version = ? WHERE crash_id = ?',
+        n = cur.execute('UPDATE crashes SET fixed_version = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
             (version, id))
         assert n.rowcount == 1
         self.duplicate_db.commit()
@@ -194,7 +195,7 @@ class CrashDatabase:
             # crash got reopened
             if id in unfixed:
                 if ver != None:
-                    cur2.execute('UPDATE crashes SET fixed_version = NULL WHERE crash_id = ?', [id])
+                    cur2.execute('UPDATE crashes SET fixed_version = NULL, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?', [id])
                 continue
 
             if ver != None:
@@ -205,7 +206,7 @@ class CrashDatabase:
             if fixed_ver == 'invalid':
                 cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
             else:
-                cur2.execute('UPDATE crashes SET fixed_version = ? WHERE crash_id = ?',
+                cur2.execute('UPDATE crashes SET fixed_version = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
                     (fixed_ver, id))
 
         self.duplicate_db.commit()
@@ -221,9 +222,12 @@ class CrashDatabase:
         cur.execute('SELECT crash_id, fixed_version FROM crashes WHERE signature = ?', [sig])
         return cur.fetchall()
 
-    def _duplicate_db_dump(self):
+    def _duplicate_db_dump(self, with_timestamps=False):
         '''Return the entire duplicate database as a dictionary signature ->
            (crash_id, fixed_version).
+
+           If with_timestamps is True, then the map will contain triples
+           (crash_id, fixed_version, last_change) instead.
 
            This is mainly useful for debugging and test suites.'''
 
@@ -231,9 +235,12 @@ class CrashDatabase:
 
         dump = {}
         cur = self.duplicate_db.cursor()
-        cur.execute('SELECT signature, crash_id, fixed_version FROM crashes')
-        for (sig, id, ver) in cur:
-            dump[sig] = (id, ver)
+        cur.execute('SELECT * FROM crashes')
+        for (sig, id, ver, last_change) in cur:
+            if with_timestamps:
+                dump[sig] = (id, ver, last_change)
+            else:
+                dump[sig] = (id, ver)
         return dump
 
     #
