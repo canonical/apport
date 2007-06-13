@@ -177,7 +177,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return set(BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport', 
             upstream = None, minbug = None, filterbug = None, status = '',
-            importance = '', lastcomment = '')).bugs)
+            importance = '', lastcomment = '', tag = None, closed_bugs=None,
+	    duplicates=None)).bugs)
 
     def get_fixed_version(self, id):
         '''Return the package version that fixes a given crash.
