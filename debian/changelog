@@ -12,7 +12,37 @@ apport (0.83) UNRELEASED; urgency=low
     LD_LIBRARY_PATH, just /lib, so that we still use the libc from outside,
     but e. g. libxml2 from inside the chroot.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Jun 2007 23:48:36 +0200
+  https://blueprints.launchpad.net/ubuntu/+spec/apport-crash-duplicates: Merge
+  crash-dups branch, which implements automatic crash duplicate detection:
+
+  * apport/crashdb.py: Add methods for crash duplicate detection.
+  * apport/crashdb_impl/memory.py: Change internal data management to track
+    fixed version and duplicates.
+  * apport/crashdb_impl/memory.py: Add a test suite for all methods, including
+    the duplicate detection API of the base CrashDatabase (since it is
+    much easier to test it here, on an actual implementation).
+  * debian/pyversions: Bump minimal Python version to 2.5, since this starts
+    providing the sqlite3 module.
+  * apport/crashdb_impl/launchpad.py: Implement new methods required for crash
+    duplicate detection. get_fixed_version() does not approximate version
+    tracking yet; it just returns '' for fixed bugs (which means 'fixed, but
+    unknown version'). Bump python-launchpad-bugs dependency for this to
+    ensure the availability of Bug.mark_duplicate().
+  * bin/apport-retrace: Add option --duplicate-db which specifies the path to
+    the duplicate sqlite database and enables duplicate detection.
+  * Abin/apport-chroot: Add option --duplicate-db. If a file is given, symlink
+    it into the chroot and pass --duplicate-db to apport-retrace.
+  * bin/launchpad-crash-digger: Add --duplicate-db and pass it to
+    apport-chroot.
+  * apport/crashdb.py: Track last run of duplicate_db_consolidate() in an
+    extra table and add a method duplicate_db_needs_consolidation() which
+    returns True if the last run was more than a given number of seconds ago.
+    Add test cases to apport/crashdb_impl/memory.py.
+  * bin/launchpad-crash-digger, fill_pool(): Check whether the duplicate
+    database needs consolidation (i. e. updating the bug states to the reality
+    in the bug tracker) and if so, trigger it.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Jun 2007 13:09:57 +0200
 
 apport (0.82) gutsy; urgency=low
 

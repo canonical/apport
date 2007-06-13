@@ -72,6 +72,9 @@ def parse_options():
     optparser.add_option('--confirm',
         help='Display retraced stack traces and ask for confirmation before sending them to the crash database.',
         action='store_true', dest='confirm', default=False)
+    optparser.add_option('--duplicate-db',
+        help='Path to the duplicate sqlite database (default: no duplicate checking)',
+        action='store', type='string', dest='dup_db', metavar='PATH', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -482,6 +485,20 @@ if modified:
         if not options.confirm or confirm_traces(report):
             crashdb.update(bugid, report)
             print 'New attachments uploaded to crash database #' + bugid
+
+            # check for duplicates
+            if options.dup_db:
+                crashdb.init_duplicate_db(options.dup_db)
+                res = crashdb.check_duplicate(int(bugid), report)
+                if res:
+                    if res[1] == None:
+                        print 'Report is a duplicate of bug %i (not fixed yet)' % res[0]
+                    elif res[1] == '':
+                        print 'Report is a duplicate of bug %i (fixed in latest version)' % res[0]
+                    else:
+                        print 'Report is a duplicate of bug %i (fixed in version %s)' % res
+                else:
+                    print 'Duplicate check negative'
     else:
         if options.output == None:
             out = open(reportfile, 'w')
