@@ -101,7 +101,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         attachment_dir = tempfile.mkdtemp()
         try:
             b = Bug(id, None, attachment_dir, ['application/x-gzip'],
-                'Dependencies.txt|CoreDump.gz|ProcMaps.txt',
+                'Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt',
                 cookie_file=self.auth_file)
 
             for att in b.attachments:

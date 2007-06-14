@@ -11,11 +11,13 @@ apport (0.84) UNRELEASED; urgency=low
     (moving the code from bin/launchpad-crash-digger).
   * apport/crashdb_impl/launchpad.py: Set "need-duplicate-check" tag for
     Python crashes.
+  * apport/crashdb_impl/launchpad.py, download(): Fetch Traceback.txt, too, so
+    that we can do duplicate checking for Python crashes.
   * bin/launchpad-crash-digger: Drop Launchpad specific code and replace it
     with calls to above new functions. Rename to bin/crash-digger. Also rename
     all 'cookie' to 'auth' (as happened with the other applications earlier).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Jun 2007 18:59:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Jun 2007 19:36:26 +0200
 
 apport (0.83) gutsy; urgency=low
 
