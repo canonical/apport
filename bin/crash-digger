@@ -121,11 +121,11 @@ class CrashDigger:
         Sleep if no new items are available. This function never returns.'''
 
         while True:
-            self.fill_pool()
             while self.dupcheck_pool:
                 self.dupcheck_next()
             while self.retrace_pool:
                 self.retrace_next()
+            self.fill_pool()
             if not self.retrace_pool and not self.dupcheck_pool:
                 self.log('work pools empty, sleeping for %i seconds' % self.sleep_time)
                 time.sleep(self.sleep_time)
