@@ -307,6 +307,16 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def get_dup_unchecked(self):
+        '''Return an ID set of all crashes which have not been checked for
+        being a duplicate.
+
+        This is mainly useful for crashes of scripting languages such as
+        Python, since they do not need to be retraced. It should not return
+        bugs that are covered by get_unretraced().'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
 
@@ -348,6 +358,10 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def mark_dup_checked(self, id):
+        '''Mark crash id as checked for being a duplicate.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 #
 # factory 
 #

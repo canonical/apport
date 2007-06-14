@@ -187,6 +187,22 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             result.add(int(b))
         return result
 
+    def get_dup_unchecked(self):
+        '''Return an ID set of all crashes which have not been checked for
+        being a duplicate.
+
+        This is mainly useful for crashes of scripting languages such as
+        Python, since they do not need to be retraced. It should not return
+        bugs that are covered by get_unretraced().'''
+
+        result = set()
+        for b in BugList(Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check',
+            upstream = None, tag=None, minbug = None, 
+            filterbug = None, status = '', importance = '', closed_bugs=None,
+            duplicates = None, lastcomment = None)).bugs:
+            result.add(int(b))
+        return result
+
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
 
@@ -254,6 +270,15 @@ in a dependent package.' % master)
         b.get_metadata()
         if self.arch_tag in b.tags:
             b.tags.remove(self.arch_tag)
+            b.set_metadata()
+
+    def mark_dup_checked(self, id):
+        '''Mark crash id as checked for being a duplicate.'''
+
+        b = Bug(id, cookie_file=self.auth_file)
+        b.get_metadata()
+        if 'need-duplicate-check' in b.tags:
+            b.tags.remove('need-duplicate-check')
             b.set_metadata()
 
 # some test code for future usage:

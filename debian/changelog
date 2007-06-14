@@ -1,15 +1,19 @@
 apport (0.84) UNRELEASED; urgency=low
 
-  * apport/crashdb.py: Add two new abstract methods get_unretraced() and
-    mark_retraced(id) to get a list of crashes that need to be processed
-    (retraced) and chalk them off.
+  * apport/crashdb.py: Add new abstract methods:
+    - get_unretraced() and mark_retraced(id) to get a list of crashes that
+      need to be retraced and chalk them off.
+    - get_dup_unchecked() and mark_dup_checked() to get a list of crashes that
+      need to be checked for being a duplicate and chalk them off. This is
+      aimed at crashes which do not need retracing, such as unhandled Python
+      exceptions.
   * apport/crashdb_impl/launchpad.py: Implement above methods for launchpad
     (moving the code from bin/launchpad-crash-digger).
   * bin/launchpad-crash-digger: Drop Launchpad specific code and replace it
     with calls to above new functions. Rename to bin/crash-digger. Also rename
     all 'cookie' to 'auth' (as happened with the other applications earlier).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Jun 2007 00:57:42 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Jun 2007 18:29:36 +0200
 
 apport (0.83) gutsy; urgency=low
 
