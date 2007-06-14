@@ -183,7 +183,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         which happened on the current host architecture.'''
 
         result = set()
-        for b in BugList(Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + 
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + 
             self.arch_tag, upstream = None, tag=None, minbug = None, 
             filterbug = None, status = '', importance = '', closed_bugs=None,
             duplicates = None, lastcomment = None)).bugs:
@@ -199,7 +199,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         bugs that are covered by get_unretraced().'''
 
         result = set()
-        for b in BugList(Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check',
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check',
             upstream = None, tag=None, minbug = None, 
             filterbug = None, status = '', importance = '', closed_bugs=None,
             duplicates = None, lastcomment = None)).bugs:
