@@ -11,9 +11,10 @@ from apport.crashdb import get_crashdb
 class CrashDigger:
     def __init__(self, chroot_map, auth_file, verbose=False, sleep_time=600,
         dup_db=None):
-        '''Initialize work pool.'''
+        '''Initialize pools.'''
 
-        self.work_pool = set()
+        self.retrace_pool = set()
+        self.dupcheck_pool = set()
         self.fail_pool = set()
         self.verbose = verbose
         self.chroot_map = chroot_map
@@ -40,7 +41,7 @@ class CrashDigger:
             print '%s: %s' % (time.strftime('%x %X'), str)
 
     def fill_pool(self):
-        '''Query crash db for new crash bugs.
+        '''Query crash db for new IDs to process.
         
         This function also takes care of regularly consolidating the duplicate
         database.'''
@@ -56,17 +57,17 @@ class CrashDigger:
                         print k, v
                     print '-------------'
 
-        bugs = self.crashdb.get_unretraced() - self.fail_pool
-        self.work_pool.update(bugs)
+        self.retrace_pool.update(self.crashdb.get_unretraced() - self.fail_pool)
+        self.dupcheck_pool.update(self.crashdb.get_dup_unchecked() - self.fail_pool)
 
-        self.log('fill_pool: got new bugs %s' % str(bugs))
-        self.log('fill_pool: work pool now: %s' % str(self.work_pool))
+        self.log('fill_pool: dup check pool now: %s' % str(self.dupcheck_pool))
+        self.log('fill_pool: retrace pool now: %s' % str(self.retrace_pool))
         self.log('fill_pool: fail pool now: %s' % str(self.fail_pool))
 
     def retrace_next(self):
-        '''Grab a bug from the work pool and retrace it.'''
+        '''Grab a bug from the retrace pool and retrace it.'''
 
-        bug = self.work_pool.pop()
+        bug = self.retrace_pool.pop()
         self.log('retracing bug %i' % bug)
 
         try:
@@ -94,18 +95,39 @@ class CrashDigger:
         if result != 0:
             self.fail_pool.add(bug)
 
+    def dupcheck_next(self):
+        '''Grab an ID from the dupcheck pool and process it.'''
+
+        id = self.dupcheck_pool.pop()
+        self.log('checking #%i for duplicate' % id)
+
+        res = self.crashdb.check_duplicate(id)
+        if res:
+            if res[1] == None:
+                print 'Report is a duplicate of bug %i (not fixed yet)' % res[0]
+            elif res[1] == '':
+                print 'Report is a duplicate of bug %i (fixed in latest version)' % res[0]
+            else:
+                print 'Report is a duplicate of bug %i (fixed in version %s)' % res
+        else:
+            print 'Duplicate check negative'
+
+        self.crashdb.mark_dup_checked(id)
+
     def run(self):
-        '''Process the entire work pool until it is empty and get new entries
+        '''Process the work pools until they are empty and get new entries
         afterwards.
 
         Sleep if no new items are available. This function never returns.'''
 
         while True:
-            while self.work_pool:
-                self.retrace_next()
             self.fill_pool()
-            if not self.work_pool:
-                self.log('work pool empty, sleeping for %i seconds' % self.sleep_time)
+            while self.dupcheck_pool:
+                self.dupcheck_next()
+            while self.retrace_pool:
+                self.retrace_next()
+            if not self.retrace_pool and not self.dupcheck_pool:
+                self.log('work pools empty, sleeping for %i seconds' % self.sleep_time)
                 time.sleep(self.sleep_time)
 
 #
