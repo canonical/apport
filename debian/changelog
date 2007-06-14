@@ -18,8 +18,10 @@ apport (0.84) UNRELEASED; urgency=low
     all 'cookie' to 'auth' (as happened with the other applications earlier).
   * bin/crash-digger: Do duplicate checking for needs-duplicate-check crash
     bugs (such as Python crashes).
+  * bin/apport-retrace, bin/crash-digger: More language cleanup; we should
+    stop talking about 'bugs' and use 'crash' consistently.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Jun 2007 19:42:42 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Jun 2007 19:50:24 +0200
 
 apport (0.83) gutsy; urgency=low
 

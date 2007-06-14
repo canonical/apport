@@ -29,7 +29,7 @@ from apport.crashdb import get_crashdb
 def parse_options():
     '''Parse command line options and return (reportfile, options) tuple.'''
 
-    optparser = optparse.OptionParser('%prog [options] <apport problem report | bug number>')
+    optparser = optparse.OptionParser('%prog [options] <apport problem report | crash ID>')
     optparser.add_option('-c', '--remove-core', 
         help='Remove the core dump from the report after stack trace regeneration',
         action='store_true', dest='removecore', default=False)
@@ -67,7 +67,7 @@ def parse_options():
         help='Install an extra package (can be specified multiple times)',
         action='append', type='string', dest='extra_packages', default=[])
     optparser.add_option('--auth',
-        help='Path to a file with the crash database authentication information. This is used when specifying a bug number to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)',
+        help='Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)',
         action='store', type='string', dest='auth_file', default=None)
     optparser.add_option('--confirm',
         help='Display retraced stack traces and ask for confirmation before sending them to the crash database.',
@@ -326,7 +326,7 @@ def confirm_traces(report):
 
     ch = None
     while ch not in ['y', 'n']:
-        print 'OK to send these as bug attachments? [y/n]'
+        print 'OK to send these as attachments? [y/n]'
         ch = getch().lower()
 
     return ch == 'y'
@@ -417,13 +417,13 @@ if os.path.exists(reportfile):
         print >> sys.stderr, 'Cannot open report file:', e
         sys.exit(1)
 elif reportfile.isdigit():
-    # bug number
+    # crash ID
     report = crashdb.download(int(reportfile))
-    bugid = reportfile
+    crashid = reportfile
     reportfile = None
 else:
     print >> sys.stderr, 'ERROR: "%s" is neither an existing report file nor a \
-bug number' % reportfile
+crash ID' % reportfile
     sys.exit(1)
 
 if options.core_file:
@@ -483,20 +483,20 @@ if modified:
             print >> sys.stderr, 'You need to specify --auth for uploading retraced results back to the crash database.'
             sys.exit(1)
         if not options.confirm or confirm_traces(report):
-            crashdb.update(bugid, report)
-            print 'New attachments uploaded to crash database #' + bugid
+            crashdb.update(crashid, report)
+            print 'New attachments uploaded to crash database #' + crashid
 
             # check for duplicates
             if options.dup_db:
                 crashdb.init_duplicate_db(options.dup_db)
-                res = crashdb.check_duplicate(int(bugid), report)
+                res = crashdb.check_duplicate(int(crashid), report)
                 if res:
                     if res[1] == None:
-                        print 'Report is a duplicate of bug %i (not fixed yet)' % res[0]
+                        print 'Report is a duplicate of #%i (not fixed yet)' % res[0]
                     elif res[1] == '':
-                        print 'Report is a duplicate of bug %i (fixed in latest version)' % res[0]
+                        print 'Report is a duplicate of #%i (fixed in latest version)' % res[0]
                     else:
-                        print 'Report is a duplicate of bug %i (fixed in version %s)' % res
+                        print 'Report is a duplicate of #%i (fixed in version %s)' % res
                 else:
                     print 'Duplicate check negative'
     else:
