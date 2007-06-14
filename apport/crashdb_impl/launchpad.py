@@ -53,13 +53,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         
         This should happen noninteractively.'''
 
-        # set retracing tag
+        # set reprocessing tags
         hdr = {}
+        hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
         if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
             a = report['PackageArchitecture']
             if a != 'all':
-                hdr['Tags'] = 'apport-%s need-%s-retrace' % (
-                    report['ProblemType'].lower(), a)
+                hdr['Tags'] += ' need-%s-retrace' % a
+        # set dup checking tag for Python crashes
+        elif report.has_key('Traceback'):
+            hdr['Tags'] += ' need-duplicate-check'
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
