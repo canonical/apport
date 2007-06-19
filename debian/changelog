@@ -6,8 +6,11 @@ apport (0.85) UNRELEASED; urgency=low
     dpkg-source.
   * apport/report.py, crash_signature(): Allow ':' and '~' as part of function
     names to cover C++. Adapt test case to cover this.
+  * apport/report.py test suite: Do not assume that /bin/zgrep uses /bin/sh,
+    it was recently changed to use bash. Directly read the interpreter from
+    the shebang line.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Jun 2007 23:09:23 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Jun 2007 23:10:51 +0200
 
 apport (0.84) gutsy; urgency=low
 
