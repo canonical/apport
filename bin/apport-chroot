@@ -97,7 +97,7 @@ def upgrade_chroot(chroot, verbose=False, extra_packages=[]):
 
     if verbose:
         assert chroot.run(['apt-get', 'update']) == 0
-        assert chroot.run(['apt-get', '--allow-unauthenticated', 'dist-upgrade']) == 0
+        assert chroot.run(['apt-get', '-y', '--allow-unauthenticated', 'dist-upgrade']) == 0
     else:
         assert chroot.run(['apt-get', '-qq', 'update']) == 0
         assert chroot.run(['apt-get', '-qqy', '--allow-unauthenticated', 'dist-upgrade']) == 0
