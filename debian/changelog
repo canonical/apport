@@ -2,8 +2,10 @@ apport (0.85) UNRELEASED; urgency=low
 
   * apport/crashdb_impl/launchpad.py: BugList.bugs is already a set, simplify
     code a bit.
+  * debian/control: Add dpkg-dev dependency to apport-retrace, for getting
+    dpkg-source.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 18 Jun 2007 09:07:44 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Jun 2007 22:54:27 +0200
 
 apport (0.84) gutsy; urgency=low
 
