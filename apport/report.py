@@ -747,7 +747,7 @@ class Report(ProblemReport):
         # signal crashes
         if self.has_key('StacktraceTop') and self.has_key('Signal'):
             sig = '%s:%s' % (self['ExecutablePath'], self['Signal'])
-            bt_fn_re = re.compile('^(?:([_\w]+).*|(<signal handler called>)\s*)$')
+            bt_fn_re = re.compile('^(?:([\w:~]+).*|(<signal handler called>)\s*)$')
 
             for line in self['StacktraceTop'].splitlines():
                 m = bt_fn_re.match(line)
@@ -1609,9 +1609,9 @@ c (x=1) at crash.c:30''')
 d01 (x=1) at crash.c:29
 raise () from /lib/libpthread.so.0
 <signal handler called>
-__frob (x=1) at crash.c:30'''
+__frob::~frob (x=1) at crash.c:30'''
 
-        self.assertEqual(r.crash_signature(), '/bin/crash:42:foo_bar:d01:raise:<signal handler called>:__frob')
+        self.assertEqual(r.crash_signature(), '/bin/crash:42:foo_bar:d01:raise:<signal handler called>:__frob::~frob')
 
         r['StacktraceTop'] = '''foo_bar (x=1) at crash.c:28
 ??
