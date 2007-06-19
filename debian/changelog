@@ -11,8 +11,10 @@ apport (0.85) UNRELEASED; urgency=low
     the shebang line.
   * bin/apport-chroot, command_upgrade(): Supply -y to 'apt-get upgrade' also
     in verbose mode.
+  * bin/apport-chroot, command_upgrade(): Run 'apt-get clean' before
+    regenerating the chroot tarball.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Jun 2007 23:18:51 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Jun 2007 23:23:43 +0200
 
 apport (0.84) gutsy; urgency=low
 

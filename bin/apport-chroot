@@ -107,6 +107,7 @@ def upgrade_chroot(chroot, verbose=False, extra_packages=[]):
     chroot.fix_symlinks()
 
     if chroot.root_tarball:
+        assert chroot.run(['apt-get', 'clean']) == 0
         chroot.tar()
 
 #
