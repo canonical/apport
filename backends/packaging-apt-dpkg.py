@@ -62,6 +62,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''Return a list of packages a package depends on.'''
 
         cur_ver = self._cache(package)._pkg.CurrentVer
+        if not cur_ver:
+            # happens with virtual packages
+            return []
         return [d[0].TargetPkg.Name for d in cur_ver.DependsList.get('Depends', []) +
             cur_ver.DependsList.get('PreDepends', [])]
 
