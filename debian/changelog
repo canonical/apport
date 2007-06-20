@@ -15,8 +15,10 @@ apport (0.85) UNRELEASED; urgency=low
     regenerating the chroot tarball.
   * backends/packaging-apt-dpkg.py, get_dependencies(): Fix crash when
     encountering a virtual package.
+  * apport/report.py, obsolete_packages(): Do not consider virtual packages as
+    obsolete.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 20 Jun 2007 10:35:24 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 20 Jun 2007 10:41:16 +0200
 
 apport (0.84) gutsy; urgency=low
 
