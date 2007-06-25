@@ -48,6 +48,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.distro = options['distro']
         self.arch_tag = arch_tag_map[os.uname()[4]]
 
+	# FIXME: do an authenticated Bug() call to initialize cookie handler in
+	# p-lp-bugs; after that, BugList will return private bugs, too
+	try:
+	    self.download(2)
+	except LPUrlError:
+	    pass
+
     def upload(self, report):
         '''Upload given problem report return a handle for it. 
         
