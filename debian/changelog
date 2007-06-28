@@ -1,3 +1,22 @@
+apport (0.86) gutsy; urgency=low
+
+  * test-apport: Check that apport does not create reports for emtpy core
+    dumps.
+  * problem_report.py: Introduce a fourth optional parameter "fail_on_empty"
+    to file pointer tuples which causes write() to raise an IOError if no data
+    was read. Add test cases.
+  * bin/apport: Enforce non-emptyness of CoreDump.
+  * problem_report.py: Add test case for delayed piping of data passed as file
+    object pointers. This was supposed to explain the reason for getting bugs
+    with zero-byte core dumps, but already works correctly.
+  * apport/report.py, check_ignored(): round the mtime to an int (just like
+    mark_ignore() does), to not get wrong results on file systems that support
+    subsecond file timestamps. This fixes running the test suite on the live
+    CD.
+  * test-apport: Clarify assertion message if /var/crash is not empty.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Jun 2007 19:14:36 +0200
+
 apport (0.85) gutsy; urgency=low
 
   * apport/crashdb_impl/launchpad.py: BugList.bugs is already a set, simplify

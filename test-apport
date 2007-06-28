@@ -144,7 +144,7 @@ try:
                 'kernel crash dump helper is not active; please enable before running this test.'
         apport_path = core_pattern[1:]
 
-    assert apport.fileutils.get_all_reports() == [], 'no reports already present'
+    assert apport.fileutils.get_all_reports() == [], 'please remove all crash reports from /var/crash/ for this test suite'
 
     # do not write core files for the first tests
     resource.setrlimit(resource.RLIMIT_CORE, (0, -1))
@@ -153,6 +153,19 @@ try:
     if os.path.exists(ifpath):
 	orig_ignore_file = ifpath + '.apporttest'
 	os.rename(ifpath, orig_ignore_file)
+
+    print '* Check that empty core dumps do not generate a report'
+    test_proc = create_test_process()
+    try:
+        app = subprocess.Popen([apport_path], env={'CORE_PID': str(test_proc),
+            'CORE_SIGNAL': '42', 'CORE_REAL_RLIM': '0'}, close_fds=True,
+            stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        app.stdin.close()
+        assert app.wait() == 0, app.stderr.read()
+    finally:
+        os.kill(test_proc, 9)
+        os.waitpid(test_proc, 0)
+    assert apport.fileutils.get_all_reports() == [], 'no report created for empty core dump'
 
     if mode == 'lib':
         print '* Check test process creation/killing without apport'

@@ -271,7 +271,7 @@ try:
     info['Signal'] = signum
     if coredump:
         if coredump == '-':
-            info['CoreDump'] = (sys.stdin, True, usable_ram()*3/4)
+            info['CoreDump'] = (sys.stdin, True, usable_ram()*3/4, True)
         else:
             info['CoreDump'] = (coredump,)
 
@@ -363,7 +363,12 @@ try:
     if crash_counter > 0:
         info['CrashCounter'] = '%i' % crash_counter
 
-    info.write(reportfile)
+    try:
+        info.write(reportfile)
+    except IOError:
+        if reportfile != sys.stderr:
+            os.unlink(report)
+        raise
     if report:
         os.chmod(report, 0600)
     if reportfile != sys.stderr:
