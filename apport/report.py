@@ -579,7 +579,7 @@ class Report(ProblemReport):
         dom = self._get_ignore_dom()
 
         try:
-            cur_mtime = float(os.stat(self['ExecutablePath']).st_mtime)
+            cur_mtime = int(os.stat(self['ExecutablePath']).st_mtime)
         except OSError:
             # if it does not exist any more, do nothing
             return False
