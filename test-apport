@@ -144,7 +144,7 @@ try:
                 'kernel crash dump helper is not active; please enable before running this test.'
         apport_path = core_pattern[1:]
 
-    assert apport.fileutils.get_all_reports() == [], 'no reports already present'
+    assert apport.fileutils.get_all_reports() == [], 'please remove all crash reports from /var/crash/ for this test suite'
 
     # do not write core files for the first tests
     resource.setrlimit(resource.RLIMIT_CORE, (0, -1))
