@@ -5,8 +5,9 @@ apport (0.86) UNRELEASED; urgency=low
   * problem_report.py: Introduce a fourth optional parameter "fail_on_empty"
     to file pointer tuples which causes write() to raise an IOError if no data
     was read. Add test cases.
+  * bin/apport: Enforce non-emptyness of CoreDump.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Jun 2007 11:43:45 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Jun 2007 11:46:49 +0200
 
 apport (0.85) gutsy; urgency=low
 
