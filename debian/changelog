@@ -1,3 +1,10 @@
+apport (0.86) UNRELEASED; urgency=low
+
+  * test-apport: Check that apport does not create reports for emtpy core
+    dumps.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Jun 2007 10:41:21 +0200
+
 apport (0.85) gutsy; urgency=low
 
   * apport/crashdb_impl/launchpad.py: BugList.bugs is already a set, simplify
