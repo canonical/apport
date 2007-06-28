@@ -632,6 +632,37 @@ BinFile: base64
         io = StringIO()
         self.assertRaises(IOError, pr.write, io)
 
+    def test_write_delayed_fileobj(self):
+        '''Test writing a report with file pointers and delayed data.'''
+
+        (fout, fin) = os.pipe()
+
+        if os.fork() == 0:
+            os.close(fout)
+            time.sleep(0.3)
+            os.write(fin, 'ab' * 512*1024)
+            time.sleep(0.3)
+            os.write(fin, 'hello')
+            time.sleep(0.3)
+            os.write(fin, ' world')
+            os.close(fin)
+            os._exit(0)
+
+        os.close(fin)
+
+        pr = ProblemReport(date = 'now!')
+        pr['BinFile'] = (os.fdopen(fout),)
+        io = StringIO()
+        pr.write(io)
+        assert os.wait()[1] == 0
+
+        io.seek(0)
+
+        pr2 = ProblemReport()
+        pr2.load(io)
+        self.assert_(pr2['BinFile'].endswith('abhello world'))
+        self.assertEqual(len(pr2['BinFile']), 1048576 + len('hello world'))
+
     def test_read_file(self):
         '''Test reading a report with binary data.'''
 

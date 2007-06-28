@@ -6,8 +6,11 @@ apport (0.86) UNRELEASED; urgency=low
     to file pointer tuples which causes write() to raise an IOError if no data
     was read. Add test cases.
   * bin/apport: Enforce non-emptyness of CoreDump.
+  * problem_report.py: Add test case for delayed piping of data passed as file
+    object pointers. This was supposed to explain the reason for getting bugs
+    with zero-byte core dumps, but already works correctly.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Jun 2007 11:46:49 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Jun 2007 15:55:16 +0200
 
 apport (0.85) gutsy; urgency=low
 
