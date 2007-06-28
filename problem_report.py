@@ -111,12 +111,13 @@ class ProblemReport(UserDict.IterableUserDict):
         load() are written (i. e. those returned by new_keys()).
 
         If a value is a string, it is written directly. Otherwise it must be a
-        tuple of the form (file, encode=True, limit=None).
+        tuple of the form (file, encode=True, limit=None, fail_on_empty=False).
         The first argument can be a file name or a file-like object,
         which will be read and its content will become the value of this key.
         'encode' specifies whether the contents will be
         zlib compressed and base64-encoded (this defaults to True). If limit is
-        set to a positive integer, the entire key will be removed.
+        set to a positive integer, the entire key will be removed. If
+        fail_on_empty is True, reading zero bytes will cause an IOError.
         '''
 
         # sort keys into ASCII non-ASCII/binary attachment ones, so that
@@ -155,10 +156,15 @@ class ProblemReport(UserDict.IterableUserDict):
                 else:
                     limit = None
 
+                fail_on_empty = len(v) >= 4 and v[3]
+
                 if hasattr(v[0], 'read'):
                     v = v[0].read() # file-like object
                 else:
                     v = open(v[0]).read() # file name
+
+                if fail_on_empty and len(v) == 0:
+                    raise IOError, 'did not get any data for field ' + k
 
                 if limit != None and len(v) > limit:
                     del self.data[k]
@@ -213,6 +219,10 @@ class ProblemReport(UserDict.IterableUserDict):
                             file.write('\n ')
                     else:
                         break
+
+                if len(v) >= 4 and v[3]:
+                    if size == 0:
+                        raise IOError, 'did not get any data for field %s from %s' % (k, str(v[0]))
 
             # flush compressor and write the rest
             if not limit or size <= limit:
@@ -605,6 +615,22 @@ BinFile: base64
  eJw=
  c3RyxIAMcBAFAG55BXk=
 ''')
+
+    def test_write_empty_fileobj(self):
+        '''Test writing a report with a pointer to a file-like object with enforcing non-emptyness.'''
+
+        tempbin = StringIO('')
+        tempasc = StringIO('')
+
+        pr = ProblemReport(date = 'now!')
+        pr['BinFile'] = (tempbin, True, None, True)
+        io = StringIO()
+        self.assertRaises(IOError, pr.write, io)
+
+        pr = ProblemReport(date = 'now!')
+        pr['AscFile'] = (tempasc, False, None, True)
+        io = StringIO()
+        self.assertRaises(IOError, pr.write, io)
 
     def test_read_file(self):
         '''Test reading a report with binary data.'''

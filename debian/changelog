@@ -2,8 +2,11 @@ apport (0.86) UNRELEASED; urgency=low
 
   * test-apport: Check that apport does not create reports for emtpy core
     dumps.
+  * problem_report.py: Introduce a fourth optional parameter "fail_on_empty"
+    to file pointer tuples which causes write() to raise an IOError if no data
+    was read. Add test cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Jun 2007 10:41:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 28 Jun 2007 11:43:45 +0200
 
 apport (0.85) gutsy; urgency=low
 
