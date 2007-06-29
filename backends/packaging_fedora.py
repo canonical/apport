@@ -56,8 +56,12 @@ class __FedoraPackageInfo(RPMPackageInfo):
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
         # used in report.py, which is used by the frontends
+        (epoch, name, ver, rel, arch) = self._split_envra(package)
+        package_ver = '%s-%s' % (ver,rel)
+        if epoch: 
+            package_ver = "%s:%s" % (epoch, package_ver)
         # FIXME STUB
-        return package
+        return package_ver
 
     def get_source_tree(self, srcpackage, dir, version=None):
         '''Download given source package and unpack it into dir (which should
