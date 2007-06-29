@@ -13,7 +13,7 @@
 # The location of the core pattern file
 PATFILE=/proc/sys/kernel/core_pattern
 # The location of the apport binary
-APPORT=/usr/bin/apport
+APPORT=/usr/share/apport/apport
 # Location to save the old core_pattern
 OLDPAT=/var/tmp/core_pattern
 
@@ -63,12 +63,18 @@ case "$1" in
         exit 1
 	fi
 	;;
+  condrestart)
+    if [ -f /var/lock/subsys/apport ]; then
+        stop
+        start
+    fi
+    ;;
   restart|reload)
 	stop
 	start
 	;;
   *)
-	echo $"Usage: $0 {start|stop|status|restart|reload}"
+	echo $"Usage: $0 {start|stop|status|condrestart|restart|reload}"
 	exit 1
 esac
 
