@@ -19,7 +19,8 @@ OLDPAT=/var/tmp/core_pattern
 
 # Return success if apport is already enabled
 apport_is_enabled() {
-    grep -q "$APPORT" $PATFILE
+    # XXX check the lock here too?
+    grep -q "^|.*apport" $PATFILE
 }
 
 enable_apport() {
