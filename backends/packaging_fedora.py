@@ -11,6 +11,7 @@ the full text of the license.
 '''
 
 from packaging_rpm import RPMPackageInfo
+from rpmUtils.miscutils import compareEVR, stringToVersion
 
 class __FedoraPackageInfo(RPMPackageInfo):
     '''Concrete apport.PackageInfo class implementation for Fedora.'''
@@ -51,5 +52,35 @@ class __FedoraPackageInfo(RPMPackageInfo):
                hdr['distribution'].startswith("Red Hat"):
                 return True
         return False
+
+    def get_available_version(self, package):
+        '''Return the latest available version of a package.'''
+        # used in report.py, which is used by the frontends
+        # FIXME STUB
+        return package
+
+    def get_source_tree(self, srcpackage, dir, version=None):
+        '''Download given source package and unpack it into dir (which should
+        be empty).
+
+        This also has to care about applying patches etc., so that dir will
+        eventually contain the actually compiled source.
+
+        If version is given, this particular version will be retrieved.
+        Otherwise this will fetch the latest available version.
+
+        Return the directory that contains the actual source root directory
+        (which might be a subdirectory of dir). Return None if the source is
+        not available.'''
+        # Used only by apport-retrace.
+        # FIXME STUB
+        return None
+
+    def compare_versions(self, ver1, ver2):
+        '''Compare two package versions.
+
+        Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
+        # Used by crashdb.py (i.e. the frontends)
+        return compareEVR(stringToVersion(ver1),stringToVersion(ver2)) 
 
 impl = __FedoraPackageInfo()

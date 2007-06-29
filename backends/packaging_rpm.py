@@ -33,12 +33,18 @@ class RPMPackageInfo:
 
     def __init__(self):
         self.ts = rpm.TransactionSet() # connect to the rpmdb
+        self._mirror = None
 
     def get_version(self, package):
         '''Return the installed version of a package.'''
         hdr = self._get_header(package)
         # Note - "version" here seems to refer to the full EVR, so..
         return hdr.dsOfHeader().EVR()
+
+    def get_available_version(self, package):
+        '''Return the latest available version of a package.'''
+        # used in report.py, which is used by the frontends
+        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
@@ -136,7 +142,7 @@ class RPMPackageInfo:
     def get_system_architecture(self):
         '''Return the architecture of the system, in the notation used by the
         particular distribution.'''
-        # FIXME is there an rpmlib method for this?
+        # XXX is there an rpmlib method for this?
         f = open('/etc/rpm/platform')
         line = f.readline()
         f.close()
@@ -158,6 +164,42 @@ class RPMPackageInfo:
             if keyid in self.official_keylist:
                 return True
         return False
+
+    def set_mirror(self, url):
+        '''Explicitly set a distribution mirror URL for operations that need to
+        fetch distribution files/packages from the network.
+
+        By default, the mirror will be read from the system configuration
+        files.'''
+        # FIXME C&P from apt-dpkg implementation, might move to subclass
+        self._mirror = url
+
+    def get_source_tree(self, srcpackage, dir, version=None):
+        '''Download given source package and unpack it into dir (which should
+        be empty).
+
+        This also has to care about applying patches etc., so that dir will
+        eventually contain the actually compiled source.
+
+        If version is given, this particular version will be retrieved.
+        Otherwise this will fetch the latest available version.
+
+        Return the directory that contains the actual source root directory
+        (which might be a subdirectory of dir). Return None if the source is
+        not available.'''
+        # Used only by apport-retrace.
+        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
+
+    def compare_versions(self, ver1, ver2):
+        '''Compare two package versions.
+
+        Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
+        # Used by crashdb.py (i.e. the frontends)
+        # I could duplicate stringToVersion/compareEVR from rpmUtils.misc,
+        # but I hate duplicating code. So if you don't want to require rpmUtils
+        # you can implement this function yourself. Probably you've got
+        # equivalent code in whatever your distro uses instead of yum anyway.
+        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
 
     #
     # Internal helper methods. These are only single-underscore, so you can use
