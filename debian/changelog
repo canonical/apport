@@ -1,3 +1,13 @@
+apport (0.87) UNRELEASED; urgency=low
+
+  * apport/report.py:
+    - test_gen_stacktrace_top(): Add test case for unwinding a Gnome assertion
+      (g_logv(), g_assert_warning() and similar), see LP #123462.
+    - _gen_stacktrace_top(): Generalize for unwinding multiple functions and a
+      set of function names, and add the Gnome assertion ones.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Jul 2007 11:00:44 +0200
+
 apport (0.86) gutsy; urgency=low
 
   * test-apport: Check that apport does not create reports for emtpy core

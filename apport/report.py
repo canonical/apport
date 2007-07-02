@@ -455,26 +455,36 @@ class Report(ProblemReport):
         Signal handler invocations and related functions are skipped since they
         are generally not useful for triaging and duplicate detection.'''
         
+        unwind_functions = set(['g_logv', 'g_log', 'IA__g_log', 'IA__g_logv',
+            'g_assert_warning', 'IA__g_assert_warning'])
         toptrace = [''] * 5
         depth = 0
         unwound = False
-        unwind_re = re.compile('^#(\d+)\s+<signal handler called>\s*$')
+        unwinding = False
         bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+(.*)|(<signal handler called>)\s*)$')
 
         for line in self['Stacktrace'].splitlines():
-            if not unwound:
-                m = unwind_re.match(line)
-                if m:
+            m = bt_fn_re.match(line)
+            if not m:
+                continue
+
+            if not unwound or unwinding:
+                if m.group(2):
+                    fn = m.group(2).split()[0].split('(')[0]
+                else:
+                    fn = None
+                if m.group(3) or fn in unwind_functions:
+                    unwinding = True
                     depth = 0
                     toptrace = [''] * 5
                     unwound = True
                     continue
+                else:
+                    unwinding = False
 
-            m = bt_fn_re.match(line)
-            if m:
-                if depth < len(toptrace):
-                    toptrace[depth] = m.group(2) or m.group(3)
-                    depth += 1
+            if depth < len(toptrace):
+                toptrace[depth] = m.group(2) or m.group(3)
+                depth += 1
         self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
     def add_hooks_info(self):
@@ -1594,6 +1604,37 @@ d (x=1) at crash.c:29
 raise () from /lib/libpthread.so.0
 <signal handler called>
 c (x=1) at crash.c:30''')
+
+        # Gnome assertion; should unwind the logs and assert call
+        r = Report()
+        r['Stacktrace'] = '''#0  0xb7d39cab in IA__g_logv (log_domain=<value optimized out>, log_level=G_LOG_LEVEL_ERROR, 
+    format=0xb7d825f0 "file %s: line %d (%s): assertion failed: (%s)", args1=0xbfee8e3c "xxx") at /build/buildd/glib2.0-2.13.5/glib/gmessages.c:493
+#1  0xb7d39f29 in IA__g_log (log_domain=0xb7edbfd0 "libgnomevfs", log_level=G_LOG_LEVEL_ERROR, 
+    format=0xb7d825f0 "file %s: line %d (%s): assertion failed: (%s)") at /build/buildd/glib2.0-2.13.5/glib/gmessages.c:517
+#2  0xb7d39fa6 in IA__g_assert_warning (log_domain=0xb7edbfd0 "libgnomevfs", file=0xb7ee1a26 "gnome-vfs-volume.c", line=254, 
+    pretty_function=0xb7ee1920 "gnome_vfs_volume_unset_drive_private", expression=0xb7ee1a39 "volume->priv->drive == drive")
+    at /build/buildd/glib2.0-2.13.5/glib/gmessages.c:552
+No locals.
+#3  0xb7ec6c11 in gnome_vfs_volume_unset_drive_private (volume=0x8081a30, drive=0x8078f00) at gnome-vfs-volume.c:254
+        __PRETTY_FUNCTION__ = "gnome_vfs_volume_unset_drive_private"
+#4  0x08054db8 in _gnome_vfs_volume_monitor_disconnected (volume_monitor=0x8070400, drive=0x8078f00) at gnome-vfs-volume-monitor.c:963
+        vol_list = (GList *) 0x8096d30
+        current_vol = (GList *) 0x8097470
+#5  0x0805951e in _hal_device_removed (hal_ctx=0x8074da8, udi=0x8093be4 "/org/freedesktop/Hal/devices/volume_uuid_92FC9DFBFC9DDA35")
+    at gnome-vfs-hal-mounts.c:1316
+        backing_udi = <value optimized out>
+#6  0xb7ef1ead in filter_func (connection=0x8075288, message=0x80768d8, user_data=0x8074da8) at libhal.c:820
+        udi = <value optimized out>
+        object_path = 0x8076d40 "/org/freedesktop/Hal/Manager"
+        error = {name = 0x0, message = 0x0, dummy1 = 1, dummy2 = 0, dummy3 = 0, dummy4 = 1, dummy5 = 0, padding1 = 0xb7e50c00}
+#7  0xb7e071d2 in dbus_connection_dispatch (connection=0x8075288) at dbus-connection.c:4267
+#8  0xb7e33dfd in ?? () from /usr/lib/libdbus-glib-1.so.2'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''gnome_vfs_volume_unset_drive_private (volume=0x8081a30, drive=0x8078f00) at gnome-vfs-volume.c:254
+_gnome_vfs_volume_monitor_disconnected (volume_monitor=0x8070400, drive=0x8078f00) at gnome-vfs-volume-monitor.c:963
+_hal_device_removed (hal_ctx=0x8074da8, udi=0x8093be4 "/org/freedesktop/Hal/devices/volume_uuid_92FC9DFBFC9DDA35")
+filter_func (connection=0x8075288, message=0x80768d8, user_data=0x8074da8) at libhal.c:820
+dbus_connection_dispatch (connection=0x8075288) at dbus-connection.c:4267''')
 
     def test_crash_signature(self):
         '''Test crash_signature().'''
