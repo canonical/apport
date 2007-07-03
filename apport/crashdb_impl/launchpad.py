@@ -173,6 +173,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         finally:
             shutil.rmtree(tmpdir)
 
+        # remove core dump if stack trace is usable
+        if report.crash_signature():
+            bug.delete_attachment('^CoreDump.gz$')
+
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
