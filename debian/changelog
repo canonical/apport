@@ -10,8 +10,11 @@ apport (0.88) UNRELEASED; urgency=low
     with --assume-yes to not block on VCS confirmations.
   * apport/crashdb.py: Add interface mark_retrace_failed(). Implement it in
     apport/crashdb_impl/launchpad.py.
+  * bin/apport-retrace: If retraced report does not have a crash signature,
+    mark it as failed with above new function. Bump python-apport dependency
+    for this.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 19:33:17 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 21:18:16 +0200
 
 apport (0.87) gutsy; urgency=low
 

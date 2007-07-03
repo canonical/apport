@@ -485,6 +485,9 @@ if modified:
         if not options.confirm or confirm_traces(report):
             crashdb.update(crashid, report)
             print 'New attachments uploaded to crash database #' + crashid
+            if not report.crash_signature():
+                print 'Report has no crash signature, so retrace is flawed'
+                crashdb.mark_retrace_failed(crashid)
 
             # check for duplicates
             if options.dup_db:
