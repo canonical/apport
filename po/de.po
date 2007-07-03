@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2007-05-21 16:44+0200\n"
+"POT-Creation-Date: 2007-07-03 09:58+0200\n"
 "PO-Revision-Date: 2007-05-10 00:43+0200\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 msgid "Sorry, %s closed unexpectedly"
 msgstr "Entschuldigung, %s wurde unerwartet beendet"
 
-#: ../gtk/apport-gtk:67 ../apport/ui.py:101
+#: ../gtk/apport-gtk:67 ../apport/ui.py:114
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Entschuldigung, das Programm \"%s\" wurde unerwartet beendet"
@@ -240,21 +240,35 @@ msgid "Uploading problem information"
 msgstr "Übermittle Probleminformationen"
 
 #. TRANS: %s is the name of the operating system
-#: ../apport/ui.py:44
+#: ../apport/ui.py:49
 #, python-format
 msgid "This is not a genuine %s package"
 msgstr "Dies ist kein %s-Paket"
 
-#: ../apport/ui.py:100 ../apport/ui.py:115
+#: ../apport/ui.py:56
+#, python-format
+msgid ""
+"You have some obsolete package versions installed. Please upgrade the "
+"following packages and check if the problem still occurs:\n"
+"\n"
+"%s"
+msgstr ""
+"Sie haben einige veraltete Paketversionen installiert. Bitte aktualisieren "
+"Sie die folgenen Pakete und prüfen Sie, ob das Problem danach noch "
+"auftritt:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:113 ../apport/ui.py:128
 msgid "unknown program"
 msgstr "unbekanntes Programm"
 
-#: ../apport/ui.py:102 ../apport/ui.py:116 ../apport/ui.py:160
+#: ../apport/ui.py:115 ../apport/ui.py:129 ../apport/ui.py:173
 #, python-format
 msgid "Problem in %s"
 msgstr "Problem in %s"
 
-#: ../apport/ui.py:103
+#: ../apport/ui.py:116
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -262,11 +276,11 @@ msgstr ""
 "Ihr System besitzt nicht genug Speicher, um den Absturzbericht zu "
 "verarbeiten und einen Bericht an die Entwickler zu senden."
 
-#: ../apport/ui.py:110
+#: ../apport/ui.py:123
 msgid "kernel"
 msgstr "Kernel"
 
-#: ../apport/ui.py:117
+#: ../apport/ui.py:130
 #, python-format
 msgid ""
 "The current configuration cannot be supported:\n"
@@ -278,17 +292,17 @@ msgstr ""
 "%s"
 
 #. package does not exist
-#: ../apport/ui.py:136 ../apport/ui.py:325 ../apport/ui.py:454
-#: ../apport/ui.py:467 ../apport/ui.py:808 ../apport/ui.py:825
-#: ../apport/ui.py:1177
+#: ../apport/ui.py:149 ../apport/ui.py:338 ../apport/ui.py:467
+#: ../apport/ui.py:480 ../apport/ui.py:807 ../apport/ui.py:824
+#: ../apport/ui.py:1178
 msgid "Invalid problem report"
 msgstr "Ungültiger Problemmbericht"
 
-#: ../apport/ui.py:137
+#: ../apport/ui.py:150
 msgid "The report belongs to a package that is not installed."
 msgstr "Der Bericht gehört zu einem nicht installierten Paket."
 
-#: ../apport/ui.py:161
+#: ../apport/ui.py:174
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -299,51 +313,51 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:326
+#: ../apport/ui.py:339
 msgid "Could not determine the package or source package name."
 msgstr "Konnte Paket- oder Quellpaket-Namen nicht bestimmen."
 
-#: ../apport/ui.py:341
+#: ../apport/ui.py:354
 msgid "Unable to start web browser"
 msgstr "Konnte Web-Browser nicht starten"
 
-#: ../apport/ui.py:342
+#: ../apport/ui.py:355
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Konnte Web-Browser nicht starten um %s zu öffnen."
 
-#: ../apport/ui.py:423
+#: ../apport/ui.py:436
 msgid "Network problem"
 msgstr "Netzwerkproblem"
 
-#: ../apport/ui.py:425
+#: ../apport/ui.py:438
 msgid "Could not upload report data to crash database"
 msgstr "Konnte Bericht nicht an Absturz-Datenbank übermitteln"
 
-#: ../apport/ui.py:449
+#: ../apport/ui.py:462
 msgid "Memory exhaustion"
 msgstr "Kein Speicher mehr verfügbar"
 
-#: ../apport/ui.py:450
+#: ../apport/ui.py:463
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Ihr System besitzt nicht genug Speicher, um den Absturzbericht zu "
 "verarbeiten."
 
-#: ../apport/ui.py:455
+#: ../apport/ui.py:468
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 "Dieser Problembericht ist beschädigt und kann nicht verarbeitet werden."
 
-#: ../apport/ui.py:463
+#: ../apport/ui.py:476
 msgid "This problem report does not apply to a packaged program."
 msgstr "Dieser Problembericht gehört nicht zu einem paketierten Programm."
 
-#: ../apport/ui.py:496
+#: ../apport/ui.py:509
 msgid "Problem already known"
 msgstr "Dieses Problem ist bereits bekannt."
 
-#: ../apport/ui.py:497
+#: ../apport/ui.py:510
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
