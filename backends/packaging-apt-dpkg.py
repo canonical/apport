@@ -241,7 +241,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         not available.'''
 
         # fetch source tree
-        argv = ['apt-get', 'source', srcpackage]
+        argv = ['apt-get', '--assume-yes', 'source', srcpackage]
         if version:
             argv[-1] += '=' + version
         try:
