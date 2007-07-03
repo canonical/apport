@@ -4,8 +4,10 @@ apport (0.88) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py, _search_contents(): Do not check the
     return value of zgrep. It usually errors out with 'stdout: broken pipe'
     when called with -m1.
+  * bin/crash-digger: Mark a bug as retraced if DistroRelease: cannot be
+    determined. Those are bugs apport cannot handle.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 16:36:47 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 16:43:45 +0200
 
 apport (0.87) gutsy; urgency=low
 
