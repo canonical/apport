@@ -67,7 +67,7 @@ apport (0.85) gutsy; urgency=low
   * bin/apport-chroot, command_upgrade(): Run 'apt-get clean' before
     regenerating the chroot tarball.
   * backends/packaging-apt-dpkg.py, get_dependencies(): Fix crash when
-    encountering a virtual package.
+    encountering a virtual package. LP: #122274
   * apport/report.py, obsolete_packages(): Do not consider virtual packages as
     obsolete.
   * apport/crashdb_impl/launchpad.py: Do a bogus call to Bug() in the ctor.
