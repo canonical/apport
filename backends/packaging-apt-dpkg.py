@@ -365,7 +365,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = zgrep.communicate()[0]
-        if zgrep.returncode == 0:
+        # we do not check the return code, since zgrep -m1 often errors out
+        # with 'stdout: broken pipe'
+        if out:
             package = out.split()[1].split('/')[1]
 
         return package
