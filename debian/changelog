@@ -15,8 +15,12 @@ apport (0.88) UNRELEASED; urgency=low
     for this.
   * apport/crashdb_impl/launchpad.py, update(): Delete CoreDump.gz attachment
     if the retrace was successful (i. e. if the report has a crash signature).
+  * apport/ui.py, test_run_crash(): Set the message box title, text, and
+    severity as assertion message if the run_crash() test fails, so that you
+    know why it fails. This usually happens if libc6 or another dependency of
+    the test crash is out of date.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 21:19:29 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 21:26:07 +0200
 
 apport (0.87) gutsy; urgency=low
 
