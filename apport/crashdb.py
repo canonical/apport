@@ -358,6 +358,13 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def mark_retrace_failed(self, id):
+        '''Mark crash id as 'failed to retrace'.
+        
+        This can be a no-op if you are not interested in this, of course.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
     def mark_dup_checked(self, id):
         '''Mark crash id as checked for being a duplicate.'''
 

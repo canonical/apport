@@ -8,8 +8,10 @@ apport (0.88) UNRELEASED; urgency=low
     determined. Those are bugs apport cannot handle.
   * backends/packaging-apt-dpkg.py, get_source_tree(): Call apt-get source
     with --assume-yes to not block on VCS confirmations.
+  * apport/crashdb.py: Add interface mark_retrace_failed(). Implement it in
+    apport/crashdb_impl/launchpad.py.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 17:27:26 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 19:33:17 +0200
 
 apport (0.87) gutsy; urgency=low
 

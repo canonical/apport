@@ -276,6 +276,15 @@ in a dependent package.' % master)
             b.tags.remove(self.arch_tag)
             b.set_metadata()
 
+    def mark_retrace_failed(self, id):
+        '''Mark crash id as 'failed to retrace'.'''
+
+        b = Bug(id, cookie_file=self.auth_file)
+        b.get_metadata()
+        if 'apport-failed-retrace' not in b.tags:
+            b.tags.append('apport-failed-retrace')
+            b.set_metadata()
+
     def mark_dup_checked(self, id):
         '''Mark crash id as checked for being a duplicate.'''
 
@@ -302,6 +311,7 @@ in a dependent package.' % master)
 
 #c.mark_regression(89040, 1)
 #c.close_duplicate(89040, 1)
+#c.mark_retrace_failed(89040)
 
 #print c.get_unfixed()
 #print '89040', c.get_fixed_version(89040)
