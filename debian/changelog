@@ -3,8 +3,11 @@ apport (0.89) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py: Revert simplification change of 0.85:
     BugList returns a set of strings, not integers; due to non-identity they
     do not work with the usual set operations.
+  * apport/crashdb_impl/launchpad.py: Add function get_source_component() to
+    query Launchpad for the component of a given distribution and source
+    package. (This will be required for implementing crash-reporting).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 04 Jul 2007 08:32:32 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 04 Jul 2007 15:32:53 +0200
 
 apport (0.88) gutsy; urgency=low
 

@@ -27,6 +27,16 @@ arch_tag_map = {
     'ppc64': 'need-powerpc-retrace',
 }
 
+def get_source_component(distro, package):
+    '''Return the component of given source package in the latest release of
+    given distribution.'''
+
+    result = urllib.urlopen('https://launchpad.net/%s/+source/%s' % (distro, package)).read()
+    m = re.search('<td>Published</td>.*?<td>.*?<td>.*?<td>(\w+)</td>', result, re.S)
+    if not m:
+        raise ValueError, 'source package %s does not exist in %s' % (package, distro)
+    return m.group(1)
+
 class _Struct:
     '''Convenience class for creating on-the-fly anonymous objects.'''
 
