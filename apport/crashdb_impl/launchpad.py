@@ -193,10 +193,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
 
-        return BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + 
+        result = set()
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + 
             self.arch_tag, upstream = None, tag=None, minbug = None, 
             filterbug = None, status = '', importance = '', closed_bugs=None,
-            duplicates = None, lastcomment = None)).bugs
+            duplicates = None, lastcomment = None)).bugs:
+            # BugList returns a set of strings, which is bad set-wise, so we
+            # have to convert them to ints.
+            result.add(int(b))
+        return result
 
     def get_dup_unchecked(self):
         '''Return an ID set of all crashes which have not been checked for
@@ -206,10 +211,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
 
-        return BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check',
+        result = set()
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check',
             upstream = None, tag=None, minbug = None, 
             filterbug = None, status = '', importance = '', closed_bugs=None,
-            duplicates = None, lastcomment = None)).bugs
+            duplicates = None, lastcomment = None)).bugs:
+            result.add(int(b))
+        return result
 
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
@@ -220,10 +228,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
-        return BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport', 
+        result = set()
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport', 
             upstream = None, minbug = None, filterbug = None, status = '',
             importance = '', lastcomment = '', tag = None, closed_bugs=None,
-	    duplicates=None)).bugs
+	    duplicates=None)).bugs:
+            result.add(int(b))
+        return result
 
     def get_fixed_version(self, id):
         '''Return the package version that fixes a given crash.
