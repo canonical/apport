@@ -77,9 +77,17 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             a = report['PackageArchitecture']
             if a != 'all':
                 hdr['Tags'] += ' need-%s-retrace' % a
+                # FIXME: ugly Ubuntu specific hack until LP has a real crash db
+                if report['DistroRelease'].split()[0] == 'Ubuntu':
+                    hdr['Private'] = 'yes'
+                    hdr['Subscribers'] = 'apport'
         # set dup checking tag for Python crashes
         elif report.has_key('Traceback'):
             hdr['Tags'] += ' need-duplicate-check'
+            # FIXME: ugly Ubuntu specific hack until LP has a real crash db
+            if report['DistroRelease'].split()[0] == 'Ubuntu':
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
@@ -186,6 +194,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # remove core dump if stack trace is usable
         if report.crash_signature():
             bug.delete_attachment('^CoreDump.gz$')
+
+        self._subscribe_triaging_team(bug, report)
 
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
@@ -318,6 +328,27 @@ in a dependent package.' % master)
         if 'need-duplicate-check' in b.tags:
             b.tags.remove('need-duplicate-check')
             b.set_metadata()
+
+        self._subscribe_triaging_team(b, report)
+
+    def _subscribe_triaging_team(self, bug, report):
+        '''Subscribe the right triaging team to the bug.'''
+
+        #FIXME: this entire function is an ugly Ubuntu specific hack until LP
+        #gets a real crash db; see https://wiki.ubuntu.com/CrashReporting
+
+        if report['DistroRelease'].split()[0] != 'Ubuntu':
+            return # only Ubuntu bugs are filed private
+
+        try:
+            component = get_source_component('ubuntu', report['SourcePackage'])
+        except ValueError:
+            component = 'fallback'
+
+        if component in ['main', 'restricted']:
+            bug.add_subscriber('ubuntu-crashes-main')
+        else:
+            bug.add_subscriber('ubuntu-crashes-universe')
 
 # some test code for future usage:
 

@@ -19,8 +19,21 @@ apport (0.89) UNRELEASED; urgency=low
     report parameter, since we will need it there in the future. Remove
     explicit call from bin/crash-digger and instead change check_duplicate()
     to call it on its own.
- 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 19:37:49 +0200
+  * apport/crashdb_impl/launchpad.py: Implement private crash bug handling,
+    according to https://wiki.ubuntu.com/CrashReporting:
+    - upload(): If we have an Ubuntu bug, mark it as private and only
+      subscribe 'apport' (the 'Apport retracing service' user).
+    - Add function _subscribe_triaging_team() which subscribes
+      ubuntu-crashes-main for source packages in Ubuntu main or restricted, or
+      ubuntu-crashes-universe for other packages. It does not touch non-Ubuntu
+      bugs, since these are not marked private by default and are outside of
+      the scope of this spec.
+    - update(), _mark_dup_checked(): Call _subscribe_triaging_team().
+    - Note: This entire spec is a gross hack, and Ubuntu derivatives do not
+      benefit from it at all. We have to live with this until LP grows a real
+      crash database.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 19:42:43 +0200
 
 apport (0.88) gutsy; urgency=low
 
