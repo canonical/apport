@@ -113,8 +113,6 @@ class CrashDigger:
         else:
             print 'Duplicate check negative'
 
-        self.crashdb.mark_dup_checked(id)
-
     def run(self):
         '''Process the work pools until they are empty and get new entries
         afterwards.
