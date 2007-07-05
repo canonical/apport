@@ -91,6 +91,8 @@ class CrashDatabase:
         if not report:
             report = self.download(id)
 
+        self._mark_dup_checked(id, report)
+
         sig = report.crash_signature()
         if not sig:
             return None
@@ -365,8 +367,10 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def mark_dup_checked(self, id):
-        '''Mark crash id as checked for being a duplicate.'''
+    def _mark_dup_checked(self, id, report):
+        '''Mark crash id as checked for being a duplicate
+        
+        This is an internal method that should not be called from outside.'''
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 #

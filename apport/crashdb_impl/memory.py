@@ -113,6 +113,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         assert self.reports[master]['fixed_version'] != None
         self.reports[id]['comment'] = 'regression, already fixed in #%i' % master
 
+    def _mark_dup_checked(self, id, report):
+        '''Mark crash id as checked for being a duplicate.'''
+
+        pass
+
     def latest_id(self):
         '''Return the ID of the most recently filed report.'''
 

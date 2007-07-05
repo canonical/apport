@@ -310,7 +310,7 @@ in a dependent package.' % master)
             b.tags.append('apport-failed-retrace')
             b.set_metadata()
 
-    def mark_dup_checked(self, id):
+    def _mark_dup_checked(self, id, report):
         '''Mark crash id as checked for being a duplicate.'''
 
         b = Bug(id, cookie_file=self.auth_file)
