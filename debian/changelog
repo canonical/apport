@@ -6,8 +6,11 @@ apport (0.89) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py: Add function get_source_component() to
     query Launchpad for the component of a given distribution and source
     package. (This will be required for implementing crash-reporting).
+  * backends/packaging-apt-dpkg.py, _search_contents(): Package list is
+    actually comma separated, only take the first item. This fixes retracing
+    of e. g. #124139.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 04 Jul 2007 15:32:53 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 11:19:02 +0200
 
 apport (0.88) gutsy; urgency=low
 

@@ -368,7 +368,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # we do not check the return code, since zgrep -m1 often errors out
         # with 'stdout: broken pipe'
         if out:
-            package = out.split()[1].split('/')[1]
+            package = out.split()[1].split(',')[0].split('/')[1]
 
         return package
 

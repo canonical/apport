@@ -20,7 +20,6 @@ retracers:
  - cache Contents.gz
 
 retrace failures:
- - #124139: /usr/lib/compiz/libring.so was loaded at runtime, but its package compiz-fusion-plugins-main,universe is not available
  - #124111: /usr/lib/libfaac.so.0.0.0 was loaded at runtime, but its package libs is not available
  - #124150: /lib/tls/i686/cmov/libm-2.6.so is needed, but cannot be mapped to a package
  - #124082: CoreDump.gz not removed
