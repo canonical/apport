@@ -65,16 +65,7 @@ def _read_maps(pid):
     try:
         maps = file('/proc/%d/maps' % pid).read().strip()
     except (OSError,IOError), e:
-        try:
-            import ctypes, ctypes.util
-            libc = ctypes.CDLL(ctypes.util.find_library("c"))
-            # PT_ATTACH
-            libc.ptrace(16, pid, 0, 0)
-            maps = _read_file('/proc/%d/maps' % pid)
-            # PT_DETACH
-            libc.ptrace(17, pid, 0, 0)
-        except (OSError, IOError, ImportError), e:
-            return 'Error: ' + str(e)
+        return 'Error: ' + str(e)
     return maps
 
 def _command_output(command, input = None, stderr = subprocess.STDOUT):

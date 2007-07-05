@@ -11,8 +11,10 @@ apport (0.89) UNRELEASED; urgency=low
     of e. g. #124139.
   * backends/packaging-apt-dpkg.py, _search_contents(): Fix package name
     parsing for non-main components. This fixes retracing of e. g. #124111.
+  * apport/report.py, _read_maps(): Revert ptrace hack when maps cannot be
+    read. maps file is now protected based on process ownership, not ptracing.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 11:26:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 12:15:35 +0200
 
 apport (0.88) gutsy; urgency=low
 
