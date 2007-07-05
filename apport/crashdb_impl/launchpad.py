@@ -11,6 +11,7 @@ the full text of the license.
 '''
 
 import urllib, tempfile, shutil, os.path, re, gzip, os
+from cStringIO import StringIO
 
 import launchpadBugs.storeblob
 from launchpadBugs.HTMLOperations import Bug, BugList
@@ -129,6 +130,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 'Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt',
                 cookie_file=self.auth_file)
 
+            # parse out fields from summary
+            m = re.search('(ProblemType:.*?)</p>', b.text, re.S)
+            assert m, 'bug description must contain standard apport format data'
+            description = m.group(1).replace('<br />', '').replace('<wbr></wbr>', '')
+            report.load(StringIO(description))
+
             for att in b.attachments:
                 if not att.filename:
                     continue # ignored attachments
@@ -141,10 +148,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     report[key] = gzip.open(att.filename).read()
                 else:
                     raise Exception, 'Unknown attachment type: ' + att.filename
-
-            # parse out other fields from summary
-            for m in re.finditer('^([a-zA-Z]+): (.*)<', b.text, re.M):
-                report[m.group(1)] = m.group(2)
 
             return report
         finally:
