@@ -9,8 +9,10 @@ apport (0.89) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py, _search_contents(): Package list is
     actually comma separated, only take the first item. This fixes retracing
     of e. g. #124139.
+  * backends/packaging-apt-dpkg.py, _search_contents(): Fix package name
+    parsing for non-main components. This fixes retracing of e. g. #124111.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 11:19:02 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 11:26:21 +0200
 
 apport (0.88) gutsy; urgency=low
 
