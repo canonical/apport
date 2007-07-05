@@ -960,7 +960,7 @@ After the problem report has been sent, please fill out the form in the automati
 	      <child>
 		<widget class="GtkLabel" id="label_heading_package_error">
 		  <property name="visible">True</property>
-		  <property name="label">&lt;span weight=&quot;bold&quot; size=&quot;larger&quot;&gt;Sorry, the package &quot;%s&quot; failed to install or upgrade.&lt;/span&gt;</property>
+		  <property name="label" translatable="yes">&lt;span weight=&quot;bold&quot; size=&quot;larger&quot;&gt;Sorry, the package &quot;%s&quot; failed to install or upgrade.&lt;/span&gt;</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">True</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>

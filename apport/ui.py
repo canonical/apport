@@ -1042,7 +1042,8 @@ CoreDump: base64
             self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
             self.ui.present_details_response = 'cancel'
             self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None)
+            self.assertEqual(self.ui.msg_severity, None, 'has %s message: %s: %s' % (
+                self.ui.msg_severity, str(self.ui.msg_title), str(self.ui.msg_text)))
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)

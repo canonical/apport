@@ -1,3 +1,46 @@
+apport (0.89) UNRELEASED; urgency=low
+
+  * apport/crashdb_impl/launchpad.py: Revert simplification change of 0.85:
+    BugList returns a set of strings, not integers; due to non-identity they
+    do not work with the usual set operations.
+  * apport/crashdb_impl/launchpad.py: Add function get_source_component() to
+    query Launchpad for the component of a given distribution and source
+    package. (This will be required for implementing crash-reporting).
+  * backends/packaging-apt-dpkg.py, _search_contents(): Package list is
+    actually comma separated, only take the first item. This fixes retracing
+    of e. g. #124139.
+  * backends/packaging-apt-dpkg.py, _search_contents(): Fix package name
+    parsing for non-main components. This fixes retracing of e. g. #124111.
+  * apport/report.py, _read_maps(): Revert ptrace hack when maps cannot be
+    read. maps file is now protected based on process ownership, not ptracing.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 12:15:35 +0200
+
+apport (0.88) gutsy; urgency=low
+
+  * po/de.po: Update.
+  * backends/packaging-apt-dpkg.py, _search_contents(): Do not check the
+    return value of zgrep. It usually errors out with 'stdout: broken pipe'
+    when called with -m1.
+  * bin/crash-digger: Mark a bug as retraced if DistroRelease: cannot be
+    determined. Those are bugs apport cannot handle.
+  * backends/packaging-apt-dpkg.py, get_source_tree(): Call apt-get source
+    with --assume-yes to not block on VCS confirmations.
+  * apport/crashdb.py: Add interface mark_retrace_failed(). Implement it in
+    apport/crashdb_impl/launchpad.py.
+  * bin/apport-retrace: If retraced report does not have a crash signature,
+    mark it as failed with above new function. Bump python-apport dependency
+    for this.
+  * apport/crashdb_impl/launchpad.py, update(): Delete CoreDump.gz attachment
+    if the retrace was successful (i. e. if the report has a crash signature).
+  * apport/ui.py, test_run_crash(): Set the message box title, text, and
+    severity as assertion message if the run_crash() test fails, so that you
+    know why it fails. This usually happens if libc6 or another dependency of
+    the test crash is out of date.
+  * gtk/apport-gtk.glade: Mark string as translatable. LP: #119621
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 03 Jul 2007 21:38:05 +0200
+
 apport (0.87) gutsy; urgency=low
 
   * apport/report.py:
@@ -43,7 +86,7 @@ apport (0.85) gutsy; urgency=low
   * bin/apport-chroot, command_upgrade(): Run 'apt-get clean' before
     regenerating the chroot tarball.
   * backends/packaging-apt-dpkg.py, get_dependencies(): Fix crash when
-    encountering a virtual package.
+    encountering a virtual package. LP: #122274
   * apport/report.py, obsolete_packages(): Do not consider virtual packages as
     obsolete.
   * apport/crashdb_impl/launchpad.py: Do a bogus call to Bug() in the ctor.

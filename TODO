@@ -15,3 +15,10 @@ apport:
 
 dup detection:
  - add merging of two databases -> needs time stamp of last change
+
+retracers:
+ - cache Contents.gz
+
+retrace failures:
+ - #124150: /lib/tls/i686/cmov/libm-2.6.so is needed, but cannot be mapped to a package
+ - #124082: CoreDump.gz not removed

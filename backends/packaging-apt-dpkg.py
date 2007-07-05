@@ -241,7 +241,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         not available.'''
 
         # fetch source tree
-        argv = ['apt-get', 'source', srcpackage]
+        argv = ['apt-get', '--assume-yes', 'source', srcpackage]
         if version:
             argv[-1] += '=' + version
         try:
@@ -365,8 +365,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = zgrep.communicate()[0]
-        if zgrep.returncode == 0:
-            package = out.split()[1].split('/')[1]
+        # we do not check the return code, since zgrep -m1 often errors out
+        # with 'stdout: broken pipe'
+        if out:
+            package = out.split()[1].split(',')[0].split('/')[-1]
 
         return package
 

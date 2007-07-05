@@ -27,6 +27,16 @@ arch_tag_map = {
     'ppc64': 'need-powerpc-retrace',
 }
 
+def get_source_component(distro, package):
+    '''Return the component of given source package in the latest release of
+    given distribution.'''
+
+    result = urllib.urlopen('https://launchpad.net/%s/+source/%s' % (distro, package)).read()
+    m = re.search('<td>Published</td>.*?<td>.*?<td>.*?<td>(\w+)</td>', result, re.S)
+    if not m:
+        raise ValueError, 'source package %s does not exist in %s' % (package, distro)
+    return m.group(1)
+
 class _Struct:
     '''Convenience class for creating on-the-fly anonymous objects.'''
 
@@ -173,6 +183,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         finally:
             shutil.rmtree(tmpdir)
 
+        # remove core dump if stack trace is usable
+        if report.crash_signature():
+            bug.delete_attachment('^CoreDump.gz$')
+
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
@@ -189,10 +203,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
 
-        return BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + 
+        result = set()
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + 
             self.arch_tag, upstream = None, tag=None, minbug = None, 
             filterbug = None, status = '', importance = '', closed_bugs=None,
-            duplicates = None, lastcomment = None)).bugs
+            duplicates = None, lastcomment = None)).bugs:
+            # BugList returns a set of strings, which is bad set-wise, so we
+            # have to convert them to ints.
+            result.add(int(b))
+        return result
 
     def get_dup_unchecked(self):
         '''Return an ID set of all crashes which have not been checked for
@@ -202,10 +221,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
 
-        return BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check',
+        result = set()
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check',
             upstream = None, tag=None, minbug = None, 
             filterbug = None, status = '', importance = '', closed_bugs=None,
-            duplicates = None, lastcomment = None)).bugs
+            duplicates = None, lastcomment = None)).bugs:
+            result.add(int(b))
+        return result
 
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
@@ -216,10 +238,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
-        return BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport', 
+        result = set()
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport', 
             upstream = None, minbug = None, filterbug = None, status = '',
             importance = '', lastcomment = '', tag = None, closed_bugs=None,
-	    duplicates=None)).bugs
+	    duplicates=None)).bugs:
+            result.add(int(b))
+        return result
 
     def get_fixed_version(self, id):
         '''Return the package version that fixes a given crash.
@@ -276,6 +301,15 @@ in a dependent package.' % master)
             b.tags.remove(self.arch_tag)
             b.set_metadata()
 
+    def mark_retrace_failed(self, id):
+        '''Mark crash id as 'failed to retrace'.'''
+
+        b = Bug(id, cookie_file=self.auth_file)
+        b.get_metadata()
+        if 'apport-failed-retrace' not in b.tags:
+            b.tags.append('apport-failed-retrace')
+            b.set_metadata()
+
     def mark_dup_checked(self, id):
         '''Mark crash id as checked for being a duplicate.'''
 
@@ -302,6 +336,7 @@ in a dependent package.' % master)
 
 #c.mark_regression(89040, 1)
 #c.close_duplicate(89040, 1)
+#c.mark_retrace_failed(89040)
 
 #print c.get_unfixed()
 #print '89040', c.get_fixed_version(89040)

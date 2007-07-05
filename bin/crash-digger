@@ -75,6 +75,7 @@ class CrashDigger:
         except ValueError:
 	    self.log('could not determine release -- no DistroRelease field?')
             self.fail_pool.add(id)
+            self.crashdb.mark_retraced(id)
 	    return
 	if rel not in self.releases:
 	    self.log('crash is release %s which does not have a chroot available, skipping' % rel)
