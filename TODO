@@ -18,6 +18,9 @@ dup detection:
 
 retracers:
  - cache Contents.gz
+ - consolidation is not called automatically
+ - write small CLI for managing dup db: consolidation, dump, change
+   master bug #
 
 retrace failures:
  - #124150: /lib/tls/i686/cmov/libm-2.6.so is needed, but cannot be mapped to a package
