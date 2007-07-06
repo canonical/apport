@@ -11,9 +11,10 @@ the full text of the license.
 '''
 
 import urllib, tempfile, shutil, os.path, re, gzip, os
+from cStringIO import StringIO
 
 import launchpadBugs.storeblob
-from launchpadBugs.HTMLOperations import Bug, BugList
+from launchpadBugs.HTMLOperations import Bug, BugList, safe_urlopen
 from launchpadBugs.BughelperError import LPUrlError
 
 import apport.crashdb
@@ -129,6 +130,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 'Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt',
                 cookie_file=self.auth_file)
 
+            # parse out fields from summary
+            m = re.search('(ProblemType:.*?)</div>', b.text, re.S)
+            assert m, 'bug description must contain standard apport format data'
+            description = m.group(1).replace('<br />',
+                '').replace('<wbr></wbr>', '').replace('</p>',
+                '').replace('<p>', '')
+            report.load(StringIO(description))
+
             for att in b.attachments:
                 if not att.filename:
                     continue # ignored attachments
@@ -141,10 +150,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     report[key] = gzip.open(att.filename).read()
                 else:
                     raise Exception, 'Unknown attachment type: ' + att.filename
-
-            # parse out other fields from summary
-            for m in re.finditer('^([a-zA-Z]+): (.*)<', b.text, re.M):
-                report[m.group(1)] = m.group(2)
 
             return report
         finally:
@@ -201,13 +206,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
 
-        dr = re.compile('DistroRelease: ([-a-zA-Z0-9.+/ ]+)')
-        for line in urllib.urlopen('https://launchpad.net/bugs/' + str(id)):
-            m = dr.search(line)
+        result = safe_urlopen('https://launchpad.net/bugs/' + str(id))
+        if not result['error']:
+            m = re.search('DistroRelease: ([-a-zA-Z0-9.+/ ]+)', result['text'])
             if m:
                 return m.group(1)
-        else:
-            raise ValueError, 'URL does not contain DistroRelease: field'
+
+        raise ValueError, 'URL does not contain DistroRelease: field'
 
     def get_unretraced(self):
         '''Return an ID set of all crashes which have not been retraced yet and

@@ -1,4 +1,30 @@
-apport (0.89) UNRELEASED; urgency=low
+apport (0.90) UNRELEASED; urgency=low
+
+  * apport/ui.py, load_report(): Catch IOError, too. LP: #118827
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Jul 2007 13:30:09 +0200
+
+apport (0.89) gutsy; urgency=low
+
+  Implement private crash bug handling, according to
+  https://wiki.ubuntu.com/CrashReporting:
+
+  * apport/crashdb_impl/launchpad.py:
+    - upload(): If we have an Ubuntu bug, mark it as private and only
+      subscribe 'apport' (the 'Apport retracing service' user).
+    - Add function _subscribe_triaging_team() which subscribes
+      ubuntu-crashes-main for source packages in Ubuntu main or restricted, or
+      ubuntu-crashes-universe for other packages. It does not touch non-Ubuntu
+      bugs, since these are not marked private by default and are outside of
+      the scope of this spec.
+    - update(), _mark_dup_checked(): Call _subscribe_triaging_team().
+    - Note: This entire spec is a gross hack, and Ubuntu derivatives do not
+      benefit from it at all. We have to live with this until LP grows a real
+      crash database.
+    - get_distro_release(): Make this function work with private bugs, too, by
+      using p-lp-bugs' safe_urlopen().
+
+  Bug fixes:
 
   * apport/crashdb_impl/launchpad.py: Revert simplification change of 0.85:
     BugList returns a set of strings, not integers; due to non-identity they
@@ -19,21 +45,11 @@ apport (0.89) UNRELEASED; urgency=low
     report parameter, since we will need it there in the future. Remove
     explicit call from bin/crash-digger and instead change check_duplicate()
     to call it on its own.
-  * apport/crashdb_impl/launchpad.py: Implement private crash bug handling,
-    according to https://wiki.ubuntu.com/CrashReporting:
-    - upload(): If we have an Ubuntu bug, mark it as private and only
-      subscribe 'apport' (the 'Apport retracing service' user).
-    - Add function _subscribe_triaging_team() which subscribes
-      ubuntu-crashes-main for source packages in Ubuntu main or restricted, or
-      ubuntu-crashes-universe for other packages. It does not touch non-Ubuntu
-      bugs, since these are not marked private by default and are outside of
-      the scope of this spec.
-    - update(), _mark_dup_checked(): Call _subscribe_triaging_team().
-    - Note: This entire spec is a gross hack, and Ubuntu derivatives do not
-      benefit from it at all. We have to live with this until LP grows a real
-      crash database.
+  * apport/crashdb_impl/launchpad.py, download(): Replace dodgy parsing of
+    fields from the description with proper code, so that multi-line fields
+    are read correctly, too.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 19:42:43 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Jul 2007 11:19:22 +0200
 
 apport (0.88) gutsy; urgency=low
 
