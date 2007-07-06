@@ -131,9 +131,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 cookie_file=self.auth_file)
 
             # parse out fields from summary
-            m = re.search('(ProblemType:.*?)</p>', b.text, re.S)
+            m = re.search('(ProblemType:.*?)</div>', b.text, re.S)
             assert m, 'bug description must contain standard apport format data'
-            description = m.group(1).replace('<br />', '').replace('<wbr></wbr>', '')
+            description = m.group(1).replace('<br />',
+                '').replace('<wbr></wbr>', '').replace('</p>',
+                '').replace('<p>', '')
             report.load(StringIO(description))
 
             for att in b.attachments:
