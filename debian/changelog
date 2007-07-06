@@ -22,6 +22,8 @@ apport (0.89) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py, download(): Replace dodgy parsing of
     fields from the description with proper code, so that multi-line fields
     are read correctly, too.
+  * apport/crashdb_impl/launchpad.py, get_distro_release(): Make this function
+    work with private bugs, too, by using p-lp-bugs' safe_urlopen().
   * apport/crashdb_impl/launchpad.py: Implement private crash bug handling,
     according to https://wiki.ubuntu.com/CrashReporting:
     - upload(): If we have an Ubuntu bug, mark it as private and only
@@ -36,7 +38,7 @@ apport (0.89) UNRELEASED; urgency=low
       benefit from it at all. We have to live with this until LP grows a real
       crash database.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Jul 2007 23:04:26 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Jul 2007 11:19:22 +0200
 
 apport (0.88) gutsy; urgency=low
 

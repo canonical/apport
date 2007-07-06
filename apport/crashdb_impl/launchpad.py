@@ -14,7 +14,7 @@ import urllib, tempfile, shutil, os.path, re, gzip, os
 from cStringIO import StringIO
 
 import launchpadBugs.storeblob
-from launchpadBugs.HTMLOperations import Bug, BugList
+from launchpadBugs.HTMLOperations import Bug, BugList, safe_urlopen
 from launchpadBugs.BughelperError import LPUrlError
 
 import apport.crashdb
@@ -206,13 +206,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
 
-        dr = re.compile('DistroRelease: ([-a-zA-Z0-9.+/ ]+)')
-        for line in urllib.urlopen('https://launchpad.net/bugs/' + str(id)):
-            m = dr.search(line)
+        result = safe_urlopen('https://launchpad.net/bugs/' + str(id))
+        if not result['error']:
+            m = re.search('DistroRelease: ([-a-zA-Z0-9.+/ ]+)', result['text'])
             if m:
                 return m.group(1)
-        else:
-            raise ValueError, 'URL does not contain DistroRelease: field'
+
+        raise ValueError, 'URL does not contain DistroRelease: field'
 
     def get_unretraced(self):
         '''Return an ID set of all crashes which have not been retraced yet and
