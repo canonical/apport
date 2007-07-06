@@ -462,7 +462,7 @@ free memory to automatically analyze the problem and send a report to the develo
             self.ui_error_message(_('Memory exhaustion'),
                 _('Your system does not have enough memory to process this crash report.'))
             return False
-        except (TypeError, ValueError, zlib.error):
+        except (TypeError, ValueError, IOError, zlib.error):
             self.report = None
             self.ui_error_message(_('Invalid problem report'),
                 _('This problem report is damaged and cannot be processed.'))

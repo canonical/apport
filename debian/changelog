@@ -1,3 +1,9 @@
+apport (0.90) UNRELEASED; urgency=low
+
+  * apport/ui.py, load_report(): Catch IOError, too. LP: #118827
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Jul 2007 13:30:09 +0200
+
 apport (0.89) gutsy; urgency=low
 
   Implement private crash bug handling, according to
