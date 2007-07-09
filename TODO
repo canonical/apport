@@ -24,3 +24,14 @@ retracers:
 
 retrace failures:
  - #124082: CoreDump.gz not removed
+ - http://launchpadlibrarian.net/8320761/StacktraceSource.txt: dd.c not found
+ - does not find files with complete path
+
+server needs:
+- run UI with .crash file
+- add UI option to only collect data without filing, print path to
+  .crash file
+- if you say no to crash bug filing, print path
+- add MIME type
+- run generic crash directory
+- hook directory for scripts which are always executed
