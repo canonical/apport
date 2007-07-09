@@ -726,8 +726,8 @@ class Report(ProblemReport):
             if not l:
                 continue
             pkg, ver = l.split()[:2]
-            avail = packaging.get_available_version(pkg)
-            if ver != None and ver != 'None' and packaging.compare_versions(ver,avail) < 0:
+            if ver != None and ver != 'None' and packaging.compare_versions(ver,
+                packaging.get_available_version(pkg)) < 0:
                 obsolete.append(pkg)
         return obsolete
 

@@ -4,8 +4,14 @@ apport (0.90) UNRELEASED; urgency=low
   * Merge apport-cli package into apport itself. The program itself is just 3
     kB compressed, and it's not worth wasting another 34 kB compressed
     changelog for this tiny bit.
+  * apport/report.py, obsolete_packages(): Use the version comparison from the
+    packaging system instead of just testing for inequality. This catches zero
+    epochs. Thanks to Will Woods <wwoods@redhat.com>!
+  * apport/ui.py: Add option -c/--crash-file to run the UI with a particular
+    crash file (which can be anywhere) instead of all pending crashes in
+    /var/crash/.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 09 Jul 2007 12:39:59 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 09 Jul 2007 18:23:13 +0100
 
 apport (0.89) gutsy; urgency=low
 

@@ -228,6 +228,11 @@ free memory to automatically analyze the problem and send a report to the develo
 
         if self.options.filebug:
             self.run_report_bug()
+        elif self.options.crash_file:
+            try:
+                self.run_crash(self.options.crash_file)
+            except OSError, e:
+                self.ui_error_message(_('Invalid problem report'), str(e))
         else:
             self.run_crashes()
 
@@ -249,6 +254,9 @@ free memory to automatically analyze the problem and send a report to the develo
         optparser.add_option('-P', '--pid',
             help='Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information.',
             action='store', type='string', dest='pid', default=None)
+        optparser.add_option('-c', '--crash-file',
+            help='Report the crash from given .crash file instead of the pending ones in ' + apport.fileutils.report_dir,
+            action='store', type='string', dest='crash_file', default=None, metavar='PATH')
 
         (self.options, self.args) = optparser.parse_args()
 
@@ -1097,6 +1105,28 @@ CoreDump: base64
             self.assertEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_(self.ui.report.check_ignored())
+
+        def test_run_crash_argv_file(self):
+            '''Test run_crash() through a file specified on the command line.'''
+
+            self.report['Package'] = 'bash'
+            self.report['UnsupportableReason'] = 'It stinks.'
+            self.update_report_file()
+
+            sys.argv = ['ui-test', '-c', self.report_file.name]
+            self.ui = _TestSuiteUserInterface()
+            self.ui.run_argv()
+
+            self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
+            self.assertEqual(self.ui.msg_severity, 'info')
+
+            # should not die with an exception on an invalid name
+            sys.argv = ['ui-test', '-c', '/nonexisting.crash' ]
+            self.ui = _TestSuiteUserInterface()
+            self.ui.run_argv()
+            self.assertEqual(self.ui.msg_severity, 'error')
+            self.assert_('/nonexisting.crash' in self.ui.msg_text, self.ui.msg_text)
 
         def test_run_crash_unsupportable(self):
             '''Test run_crash() on a crash with the UnsupportableReason
