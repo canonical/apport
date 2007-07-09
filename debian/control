@@ -9,12 +9,17 @@ XS-Vcs-Bzr: https://code.launchpad.net/~ubuntu-core-dev/apport/ubuntu
 Package: apport
 Architecture: all
 Depends: python (>= 2.4), python-apport (>= 0.43), lsb-base (>= 3.0-6), sysv-rc (>= 2.86.ds1-14.1ubuntu2)
-Conflicts: apport-gtk (<< 0.51)
-Replaces: apport-gtk (<< 0.51)
+Conflicts: apport-gtk (<< 0.51), apport-cli
+Replaces: apport-gtk (<< 0.51), apport-cli
+Suggests: apport-gtk | apport-qt
 Description: automatically generate crash reports for debugging
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump
  helper hook provided by the Ubuntu kernel.
+ .
+ This package also provides a command line frontend for browsing and
+ handling the crash reports. For desktops, you should consider
+ installing the GTK or Qt user interface (apport-gtk or apport-qt).
  .
  See https://wiki.ubuntu.com/AutomatedProblemReports for more
  information.
@@ -95,22 +100,6 @@ Description: Qt4 frontend for the apport crash report system
  helper hook provided by the Ubuntu kernel.
  .
  This package provides a Qt4 frontend for browsing and handling the
- crash reports.
- .
- See https://wiki.ubuntu.com/AutomatedProblemReports for more
- information.
-
-Package: apport-cli
-Section: utils
-Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.80), python-xdg, apport (>= 0.41), procps
-Recommends: elinks
-Description: Command line frontend for the apport crash report system
- apport automatically collects data from crashed processes and
- compiles a problem report in /var/crash/. This utilizes the crashdump
- helper hook provided by the Ubuntu kernel.
- .
- This package provides a command line frontend for browsing and handling the
  crash reports.
  .
  See https://wiki.ubuntu.com/AutomatedProblemReports for more

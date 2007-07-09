@@ -1,8 +1,11 @@
 apport (0.90) UNRELEASED; urgency=low
 
   * apport/ui.py, load_report(): Catch IOError, too. LP: #118827
+  * Merge apport-cli package into apport itself. The program itself is just 3
+    kB compressed, and it's not worth wasting another 34 kB compressed
+    changelog for this tiny bit.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Jul 2007 13:30:09 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 09 Jul 2007 12:39:59 +0100
 
 apport (0.89) gutsy; urgency=low
 
