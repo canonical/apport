@@ -1,3 +1,11 @@
+apport (0.91) UNRELEASED; urgency=low
+
+  * bin/apport: Remove code that supported the Edgy kernel way of core dump
+    passing. Also factorize the CORE_REAL_RLIM evaluation, since it is likely
+    to change in the near future.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 22:36:41 +0100
+
 apport (0.90) gutsy; urgency=low
 
   * apport/ui.py, load_report(): Catch IOError, too. LP: #118827
