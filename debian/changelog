@@ -21,8 +21,10 @@ apport (0.90) UNRELEASED; urgency=low
   * cli/apport-cli: Add option for keeping the report file without sending it,
     and to display its path. This is for sending the report later, copying
     it from a server to a workstation with internet connection, etc.
+  * apport/crashdb_impl/launchpad.py: Simplify _subscribe_triaging_team(), now
+    that we do not differ between main and universe policies any more.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 14:19:17 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 17:59:41 +0100
 
 apport (0.89) gutsy; urgency=low
 

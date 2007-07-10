@@ -345,15 +345,7 @@ in a dependent package.' % master)
         if report['DistroRelease'].split()[0] != 'Ubuntu':
             return # only Ubuntu bugs are filed private
 
-        try:
-            component = get_source_component('ubuntu', report['SourcePackage'])
-        except ValueError:
-            component = 'fallback'
-
-        if component in ['main', 'restricted']:
-            bug.add_subscriber('ubuntu-crashes-main')
-        else:
-            bug.add_subscriber('ubuntu-crashes-universe')
+        bug.add_subscriber('ubuntu-crashes-universe')
 
 # some test code for future usage:
 
