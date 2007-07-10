@@ -222,6 +222,8 @@ class CLIUserInterface(apport.ui.UserInterface):
             reduced = None
 
         view = dialog.addbutton(_('&View report'))
+        save = dialog.addbutton(_('&Keep report file for sending later or copying to somewhere else'))
+        
         dialog.addbutton(_('&Cancel'))
 
         while True:
@@ -236,6 +238,10 @@ class CLIUserInterface(apport.ui.UserInterface):
                         stdin=subprocess.PIPE,
                         close_fds=True).communicate(details)
                 continue
+            if response == save:
+                print _('Problem report file:'), self.report_file
+                return 'cancel'
+
             # Fallback
             return 'cancel'
 

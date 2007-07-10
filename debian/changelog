@@ -18,8 +18,11 @@ apport (0.90) UNRELEASED; urgency=low
     question when being invoked with --crash-file.
   * po/POTFILES.in: Add missing cli/apport-cli.
   * po/de.po: Updated for apport-cli.
+  * cli/apport-cli: Add option for keeping the report file without sending it,
+    and to display its path. This is for sending the report later, copying
+    it from a server to a workstation with internet connection, etc.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 13:53:20 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 14:19:17 +0100
 
 apport (0.89) gutsy; urgency=low
 
