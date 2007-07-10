@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+	<mime-type type="text/x-apport">
+		<sub-class-of type="text/plain"/>
+		<comment>Apport crash file</comment>
+		<glob pattern="*.crash"/>
+                <magic priority="20">
+                  <match value="ProblemType: " type="string" offset="0"/>
+                </magic>
+	</mime-type>
+</mime-info>

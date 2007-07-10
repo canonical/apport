@@ -10,10 +10,11 @@ apport (0.90) UNRELEASED; urgency=low
   * apport/ui.py: Add option -c/--crash-file to run the UI with a particular
     crash file (which can be anywhere) instead of all pending crashes in
     /var/crash/.
+  * Add xdg-mime/apport.xml: XDG MIME type definition for .crash files.
   * Add gtk/apport-gtk-mime.desktop.in: Link text/x-apport MIME type to
     apport-gtk -c, so that .crash files can be reported with Gnome.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 12:14:48 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 12:34:03 +0100
 
 apport (0.89) gutsy; urgency=low
 
