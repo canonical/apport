@@ -23,8 +23,14 @@ apport (0.90) UNRELEASED; urgency=low
     it from a server to a workstation with internet connection, etc.
   * apport/crashdb_impl/launchpad.py: Simplify _subscribe_triaging_team(), now
     that we do not differ between main and universe policies any more.
+  * apport/report.py: Support another hook directory
+    /usr/share/apport/general-hooks/ for scripts which are run for every
+    problem report. This was requested for adding e. g. AppArmor logs, etc.
+    Add test cases.
+  * Add debian/apport.dirs again to ship that hook directory.
+  * doc/package-hooks.txt: Document the general hooks.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 17:59:41 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 21:10:19 +0100
 
 apport (0.89) gutsy; urgency=low
 

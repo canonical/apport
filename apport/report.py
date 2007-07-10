@@ -12,7 +12,7 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
-import fnmatch
+import fnmatch, glob
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -22,6 +22,7 @@ import fileutils
 from packaging_impl import impl as packaging
 
 _hook_dir = '/usr/share/apport/package-hooks/'
+_common_hook_dir = '/usr/share/apport/general-hooks/'
 
 # path of the ignore file
 _ignore_file = '~/.apport-ignore.xml'
@@ -482,18 +483,29 @@ class Report(ProblemReport):
         '''Check for an existing hook script and run it to add additional
         package specific information.
 
-        A hook script needs to be in _hook_dir/<Package>.py and has to
-        contain a function 'add_info(report)' that takes and modifies a
-        Report.'''
+        A hook script needs to be in _hook_dir/<Package>.py or in
+        _common_hook_dir/*.py and has to contain a function 'add_info(report)'
+        that takes and modifies a Report.'''
 
         symb = {}
         assert self.has_key('Package')
+
+        # common hooks
+        for hook in glob.glob(_common_hook_dir + '/*.py'):
+            try:
+                execfile(hook, symb)
+                symb['add_info'](self)
+            except:
+                pass
+
+        # binary package hook
         try:
             execfile('%s/%s.py' % (_hook_dir, self['Package'].split()[0]), symb)
             symb['add_info'](self)
         except:
             pass
 
+        # source package hook
         if self.has_key('SourcePackage'):
             try:
                 execfile('%s/source_%s.py' % (_hook_dir, self['SourcePackage'].split()[0]), symb)
@@ -1268,13 +1280,31 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
         '''Test add_hooks_info().'''
 
         global _hook_dir
+        global _common_hook_dir
         orig_hook_dir = _hook_dir
         _hook_dir = tempfile.mkdtemp()
+        orig_common_hook_dir = _common_hook_dir
+        _common_hook_dir = tempfile.mkdtemp()
         try:
             open(os.path.join(_hook_dir, 'foo.py'), 'w').write('''
 def add_info(report):
     report['Field1'] = 'Field 1'
     report['Field2'] = 'Field 2\\nBla'
+''')
+
+            open(os.path.join(_common_hook_dir, 'foo1.py'), 'w').write('''
+def add_info(report):
+    report['CommonField1'] = 'CommonField 1'
+''')
+            open(os.path.join(_common_hook_dir, 'foo2.py'), 'w').write('''
+def add_info(report):
+    report['CommonField2'] = 'CommonField 2'
+''')
+
+            # should only catch .py files
+            open(os.path.join(_common_hook_dir, 'notme'), 'w').write('''
+def add_info(report):
+    report['BadField'] = 'XXX'
 ''')
             r = Report()
             self.assertRaises(AssertionError, r.add_hooks_info)
@@ -1284,30 +1314,38 @@ def add_info(report):
             # should not throw any exceptions
             r.add_hooks_info()
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package']), 'report has required fields')
+                'Package', 'CommonField1', 'CommonField2']), 
+                'report has required fields')
 
             r = Report()
             r['Package'] = 'baz 1.2-3'
             # should not throw any exceptions
             r.add_hooks_info()
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package']), 'report has required fields')
+                'Package', 'CommonField1', 'CommonField2']), 
+                'report has required fields')
 
             r = Report()
             r['Package'] = 'foo'
             r.add_hooks_info()
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package', 'Field1', 'Field2']), 'report has required fields')
+                'Package', 'Field1', 'Field2', 'CommonField1',
+                'CommonField2']), 'report has required fields')
             self.assertEqual(r['Field1'], 'Field 1')
             self.assertEqual(r['Field2'], 'Field 2\nBla')
+            self.assertEqual(r['CommonField1'], 'CommonField 1')
+            self.assertEqual(r['CommonField2'], 'CommonField 2')
 
             r = Report()
             r['Package'] = 'foo 4.5-6'
             r.add_hooks_info()
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package', 'Field1', 'Field2']), 'report has required fields')
+                'Package', 'Field1', 'Field2', 'CommonField1',
+                'CommonField2']), 'report has required fields')
             self.assertEqual(r['Field1'], 'Field 1')
             self.assertEqual(r['Field2'], 'Field 2\nBla')
+            self.assertEqual(r['CommonField1'], 'CommonField 1')
+            self.assertEqual(r['CommonField2'], 'CommonField 2')
 
             # source package hook
             open(os.path.join(_hook_dir, 'source_foo.py'), 'w').write('''
@@ -1320,14 +1358,18 @@ def add_info(report):
             r['Package'] = 'libfoo 3'
             r.add_hooks_info()
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package', 'SourcePackage', 'Field1', 'Field2']), 
-                'report has required fields')
+                'Package', 'SourcePackage', 'Field1', 'Field2', 'CommonField1',
+                'CommonField2']), 'report has required fields')
             self.assertEqual(r['Field1'], 'Field 1')
             self.assertEqual(r['Field2'], 'Field 2\nBla')
+            self.assertEqual(r['CommonField1'], 'CommonField 1')
+            self.assertEqual(r['CommonField2'], 'CommonField 2')
 
         finally:
             shutil.rmtree(_hook_dir)
+            shutil.rmtree(_common_hook_dir)
             _hook_dir = orig_hook_dir
+            _common_hook_dir = orig_common_hook_dir
 
     def test_ignoring(self):
         '''Test mark_ignore() and check_ignored().'''

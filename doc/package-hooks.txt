@@ -22,6 +22,19 @@ see the Python help of this class for details:
   >>> import apport
   >>> help(apport.Report)
 
+Package independent hooks
+=========================
+
+Similarly to per-package hooks, you can also have additional
+information collected for any crash or bug. For example, you might
+want to include violation logs from SELinux or AppArmor for every
+crash. The interface and file format is identical to the per-package
+hooks, except that they need to be put into
+
+  /usr/share/apport/general-hooks/<hookname>.py
+
+The <hookname> can be arbitrary and should describe the functionality.
+
 Examples
 ========
 
