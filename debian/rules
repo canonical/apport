@@ -19,6 +19,9 @@ common-post-build-indep::
 	make -C qt4
 	make -C doc
 
+binary-install/apport-gtk::
+	dh_desktop -p $(cdbs_curpkg)
+
 clean::
 	# remove backend copies
 	rm -f apport/packaging_impl.py

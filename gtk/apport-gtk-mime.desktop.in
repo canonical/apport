@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+_Name=Report a problem...
+_Comment=Report a malfunction to the developers
+Exec=/usr/share/apport/apport-gtk -c %f
+Icon=apport
+Terminal=false
+Type=Application
+MimeType=text/x-apport
+Categories=GNOME;Application;Core;
+NoDisplay=True
+StartupNotify=true
