@@ -16,8 +16,9 @@ apport (0.90) UNRELEASED; urgency=low
   * Add debian/apport.links: Install an icon symlink for the MIME type.
   * apport/ui.py: Do not ask the initial "Do you want to report this?"
     question when being invoked with --crash-file.
+  * po/POTFILES.in: Add missing cli/apport-cli.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 13:34:21 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 13:47:30 +0100
 
 apport (0.89) gutsy; urgency=low
 
