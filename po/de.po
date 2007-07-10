@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2007-07-10 13:37+0100\n"
+"POT-Creation-Date: 2007-07-10 13:53+0100\n"
 "PO-Revision-Date: 2007-07-03 21:39+0200\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -24,7 +24,7 @@ msgstr "Entschuldigung, %s wurde unerwartet beendet"
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Entschuldigung, das Programm \"%s\" wurde unerwartet beendet"
 
-#: ../gtk/apport-gtk:133 ../qt4/apport-qt:234
+#: ../gtk/apport-gtk:133 ../qt4/apport-qt:234 ../cli/apport-cli:208
 msgid "(binary data)"
 msgstr "(binäre Daten)"
 
@@ -123,7 +123,7 @@ msgstr ""
 "Entwickler sehr hilfreich um das Problem zu untersuchen, aber sie könnten zu "
 "groß zum hochladen sein, wenn Sie eine langsame Internetverbindung haben."
 
-#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt:177
+#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt:177 ../cli/apport-cli:161
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
@@ -181,6 +181,7 @@ msgid "&Ignore future crashes of this program version"
 msgstr "&Ignoriere zukünftige Abstürze dieser Programmversion"
 
 #: ../qt4/apport-qt:149 ../qt4/apport-qt:180 ../qt4/apport-qt:198
+#: ../cli/apport-cli:143 ../cli/apport-cli:162 ../cli/apport-cli:177
 msgid "&Report Problem..."
 msgstr "&Fehler melden..."
 
@@ -208,7 +209,7 @@ msgstr "Entschuldigung, der Kernel erlitt ein ernstes Problem"
 msgid "Generic error"
 msgstr "Allgemeiner Fehler"
 
-#: ../qt4/apport-qt:212
+#: ../qt4/apport-qt:212 ../cli/apport-cli:189
 msgid "Send problem report to the developers?"
 msgstr "Problembericht an die Entwickler senden?"
 
@@ -228,7 +229,7 @@ msgstr "&Senden"
 msgid "Collecting Problem Information"
 msgstr "Sammeln von Informationen über das Problem"
 
-#: ../qt4/apport-qt:276
+#: ../qt4/apport-qt:276 ../cli/apport-cli:254
 msgid "Collecting problem information"
 msgstr "Sammle Probleminformationen"
 
@@ -244,9 +245,123 @@ msgstr ""
 msgid "Uploading Problem Information"
 msgstr "Übermittle Probleminformationen"
 
-#: ../qt4/apport-qt:295
+#: ../qt4/apport-qt:295 ../cli/apport-cli:267
 msgid "Uploading problem information"
 msgstr "Übermittle Probleminformationen"
+
+#: ../cli/apport-cli:74
+msgid "Press any key to continue..."
+msgstr "Eine Taste drücken um fortzufahren..."
+
+#: ../cli/apport-cli:78
+msgid "What would you like to do? Your options are:"
+msgstr "Was möchten Sie tun? Ihre Möglichkeiten sind:"
+
+#: ../cli/apport-cli:82
+#, python-format
+msgid "Please choose (%s):"
+msgstr "Bitte wählen Sie (%s):"
+
+#: ../cli/apport-cli:130 ../cli/apport-cli:136
+#, python-format
+msgid "%s closed unexpectedly on %s at %s."
+msgstr "%s wurde unerwartet beendet am %s um %s."
+
+#: ../cli/apport-cli:133
+#, python-format
+msgid "The program \"%s\" closed unexpectedly on %s at %s."
+msgstr "Das Programm \"%s\" wurde unerwartet beendet am %s um %s."
+
+#: ../cli/apport-cli:140
+msgid ""
+"If you were not doing anything confidential (entering passwords or other\n"
+"private information), you can help to improve the application by reporting\n"
+"the problem."
+msgstr ""
+"Sofern Sie nicht etwas vertrauliches durchgeführt haben (Eingabe von "
+"Passwörtern oder anderen privaten Informationen), können Sie bei der "
+"Verbesserung der Anwendung helfen, indem Sie einen Fehler melden."
+
+#: ../cli/apport-cli:144
+msgid "Cancel and &ignore future crashes of this program version"
+msgstr "&Ignoriere zukünftige Abstürze dieser Programmversion"
+
+#: ../cli/apport-cli:145 ../cli/apport-cli:163 ../cli/apport-cli:178
+#: ../cli/apport-cli:225
+msgid "&Cancel"
+msgstr "&Abbruch"
+
+#: ../cli/apport-cli:160
+#, python-format
+msgid "The package \"%s\" failed to install or upgrade."
+msgstr "Das Paket \"%s\" lies sich nicht installieren oder aktualisieren."
+
+#: ../cli/apport-cli:174
+msgid "The kernel encountered a serious problem"
+msgstr "Der Kernel erlitt ein ernstes Problem"
+
+#: ../cli/apport-cli:175
+msgid ""
+"Your system might become unstable now and might need to be restarted.\n"
+"You can help the developers to fix the problem by reporting it."
+msgstr ""
+"Ihr System könnte nun instabil werden, und muss eventuell neu gestartet "
+"werden.\n"
+"\n"
+"Sie können den Entwicklern helfen das Problem zu beheben, indem sie es "
+"melden."
+
+#: ../cli/apport-cli:190
+msgid ""
+"After the problem report has been sent, please fill out the form in the\n"
+"automatically opened web browser."
+msgstr ""
+"Bitte füllen Sie, nachdem der Problembericht versandt wurde, das Formular "
+"aus, welches sich automatisch in ihrem Browser öffnen wird."
+
+#: ../cli/apport-cli:215
+#, python-format
+msgid "&Send complete report (recommended; %s)"
+msgstr "&Vollständiger Bericht (empfohlen; %s)"
+
+#: ../cli/apport-cli:217
+#, python-format
+msgid "Send &reduced report (slow Internet connection; %s)"
+msgstr "&Reduzierter Bericht (langsame Internetverbindung; %s)"
+
+#: ../cli/apport-cli:220
+#, python-format
+msgid "&Send report (%s)"
+msgstr "Bericht &senden"
+
+#: ../cli/apport-cli:224
+msgid "&View report"
+msgstr "Bericht &ansehen"
+
+#: ../cli/apport-cli:244 ../cli/apport-cli:249
+msgid "&Confirm"
+msgstr "&OK"
+
+#: ../cli/apport-cli:248
+#, python-format
+msgid "Error: %s"
+msgstr "Fehler: %s"
+
+#: ../cli/apport-cli:255
+msgid ""
+"The collected information can be send to the developers to improve the\n"
+"application. This might take a few minutes."
+msgstr ""
+"Die gesammelten Informationen können an die Entwickler gesendet werden\n"
+"um die Anwendung zu verbessern. Dies kann einige Minuten dauern."
+
+#: ../cli/apport-cli:268
+msgid ""
+"The collected information is being sent to the bug tracking system.\n"
+"This might take a few minutes."
+msgstr ""
+"Die gesammelten Informationen werden zum Bug Tracking System gesendet.\n"
+"Dies kann einige Minuten dauern."
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:49
