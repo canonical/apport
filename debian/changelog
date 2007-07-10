@@ -4,7 +4,23 @@ apport (0.91) UNRELEASED; urgency=low
     passing. Also factorize the CORE_REAL_RLIM evaluation, since it is likely
     to change in the near future.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 22:36:41 +0100
+  Merge the fedora branch, thanks a lot to Will Woods wwoods@redhat.com>:
+
+  * Add apport.init.fedora: Fedora specific init script.
+  * Add apport.spec: RPM build recipe.
+  * Add backends/packaging_rpm.py: Partial implementation of the packaging
+    backend for RPM which applies to all RPM-based distros.
+  * Add backends/packaging_fedora.py: Concrete packaging backend
+    implementation for Fedora.
+  * apport/elfcore.py: Classes for parsing general ELF files, and information
+    from core dumps.
+  * bin/apport: Fall back to reading signal number and PID directly from the
+    core file (via elfcore.py) if CORE_SIGNAL and CORE_PID are not defined (i.
+    e. when running on a non-Ubuntu kernel).
+  * crashdb.conf: Add stanzas for Fedora and a 'debug' database which uses the
+    'memory' crashdb implementation.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 23:10:59 +0100
 
 apport (0.90) gutsy; urgency=low
 
