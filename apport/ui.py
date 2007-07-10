@@ -95,9 +95,12 @@ class UserInterface:
         for f in apport.fileutils.get_new_reports():
             self.run_crash(f)
 
-    def run_crash(self, report_file):
+    def run_crash(self, report_file, confirm=True):
         '''Present given crash report to the user, ask him what to do about it,
-        and offer to file a bug for it.'''
+        and offer to file a bug for it.
+        
+        If confirm is False, the user will not be asked whether to report the
+        problem.'''
 
         self.report_file = report_file
 
@@ -132,7 +135,9 @@ free memory to automatically analyze the problem and send a report to the develo
                 return
 
             # ask the user about what to do with the current crash
-            if self.report.get('ProblemType') == 'Package':
+            if not confirm:
+                pass
+            elif self.report.get('ProblemType') == 'Package':
                 response = self.ui_present_package_error()
                 if response == 'cancel':
                     return
@@ -230,7 +235,7 @@ free memory to automatically analyze the problem and send a report to the develo
             self.run_report_bug()
         elif self.options.crash_file:
             try:
-                self.run_crash(self.options.crash_file)
+                self.run_crash(self.options.crash_file, False)
             except OSError, e:
                 self.ui_error_message(_('Invalid problem report'), str(e))
         else:

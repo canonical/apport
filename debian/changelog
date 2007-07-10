@@ -14,8 +14,10 @@ apport (0.90) UNRELEASED; urgency=low
   * Add gtk/apport-gtk-mime.desktop.in: Link text/x-apport MIME type to
     apport-gtk -c, so that .crash files can be reported with Gnome.
   * Add debian/apport.links: Install an icon symlink for the MIME type.
+  * apport/ui.py: Do not ask the initial "Do you want to report this?"
+    question when being invoked with --crash-file.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 13:16:09 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 13:34:21 +0100
 
 apport (0.89) gutsy; urgency=low
 
