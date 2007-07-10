@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2007-07-10 13:53+0100\n"
+"POT-Creation-Date: 2007-07-10 14:23+0100\n"
 "PO-Revision-Date: 2007-07-03 21:39+0200\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -229,7 +229,7 @@ msgstr "&Senden"
 msgid "Collecting Problem Information"
 msgstr "Sammeln von Informationen über das Problem"
 
-#: ../qt4/apport-qt:276 ../cli/apport-cli:254
+#: ../qt4/apport-qt:276 ../cli/apport-cli:260
 msgid "Collecting problem information"
 msgstr "Sammle Probleminformationen"
 
@@ -245,7 +245,7 @@ msgstr ""
 msgid "Uploading Problem Information"
 msgstr "Übermittle Probleminformationen"
 
-#: ../qt4/apport-qt:295 ../cli/apport-cli:267
+#: ../qt4/apport-qt:295 ../cli/apport-cli:273
 msgid "Uploading problem information"
 msgstr "Übermittle Probleminformationen"
 
@@ -287,7 +287,7 @@ msgid "Cancel and &ignore future crashes of this program version"
 msgstr "&Ignoriere zukünftige Abstürze dieser Programmversion"
 
 #: ../cli/apport-cli:145 ../cli/apport-cli:163 ../cli/apport-cli:178
-#: ../cli/apport-cli:225
+#: ../cli/apport-cli:227
 msgid "&Cancel"
 msgstr "&Abbruch"
 
@@ -338,16 +338,26 @@ msgstr "Bericht &senden (%s)"
 msgid "&View report"
 msgstr "&Bericht anzeigen"
 
-#: ../cli/apport-cli:244 ../cli/apport-cli:249
+#: ../cli/apport-cli:225
+msgid "&Keep report file for sending later or copying to somewhere else"
+msgstr ""
+"Bericht-&Datei behalten für spätere Meldung oder um sie an einen anderen Ort "
+"zu kopieren."
+
+#: ../cli/apport-cli:242
+msgid "Problem report file:"
+msgstr "Datei mit Problembericht:"
+
+#: ../cli/apport-cli:250 ../cli/apport-cli:255
 msgid "&Confirm"
 msgstr "&OK"
 
-#: ../cli/apport-cli:248
+#: ../cli/apport-cli:254
 #, python-format
 msgid "Error: %s"
 msgstr "Fehler: %s"
 
-#: ../cli/apport-cli:255
+#: ../cli/apport-cli:261
 msgid ""
 "The collected information can be send to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -355,7 +365,7 @@ msgstr ""
 "Die gesammelten Informationen können an die Entwickler gesendet werden\n"
 "um die Anwendung zu verbessern. Dies kann einige Minuten dauern."
 
-#: ../cli/apport-cli:268
+#: ../cli/apport-cli:274
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
