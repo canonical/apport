@@ -295,6 +295,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         bug = Bug(id, cookie_file=self.auth_file)
         bug.mark_duplicate(master)
+        bug.delete_attachment('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|Disassembly.txt$)')
+        if bug.private:
+            bug.set_secrecy()
 
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is

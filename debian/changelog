@@ -3,6 +3,9 @@ apport (0.91) UNRELEASED; urgency=low
   * bin/apport: Remove code that supported the Edgy kernel way of core dump
     passing. Also factorize the CORE_REAL_RLIM evaluation, since it is likely
     to change in the near future.
+  * apport/crashdb_impl/launchpad.py, close_duplicate(): Delete some
+    attachments, as specified in apport-crash-duplicates spec, and make the
+    bug public afterwards.
 
   Merge the fedora branch, thanks a lot to Will Woods wwoods@redhat.com>:
 
@@ -20,7 +23,7 @@ apport (0.91) UNRELEASED; urgency=low
   * crashdb.conf: Add stanzas for Fedora and a 'debug' database which uses the
     'memory' crashdb implementation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Jul 2007 23:10:59 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Jul 2007 15:21:53 +0100
 
 apport (0.90) gutsy; urgency=low
 
