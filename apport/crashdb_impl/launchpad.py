@@ -294,6 +294,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Mark a crash id as duplicate of given master ID.'''
 
         bug = Bug(id, cookie_file=self.auth_file)
+
+        # check whether the master itself is a dup
+        m = Bug(master, cookie_file=self.auth_file)
+        if m.duplicate_of:
+            master = m.duplicate_of
+
         bug.mark_duplicate(master)
         bug.delete_attachment('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|Disassembly.txt$)')
         if bug.private:
