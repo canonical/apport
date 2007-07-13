@@ -9,6 +9,9 @@ apport (0.91) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py, close_duplicate(): If the master bug is
     already duped to yet another bug, mark the bug to that one instead of the
     master.
+  * apport/crashdb.py: Split out duplicate_db_last_consolidation() for getting
+    the date (or seconds since) the last consolidation, so that we can use it
+    externally.
 
   Merge the fedora branch, thanks a lot to Will Woods wwoods@redhat.com>:
 
@@ -26,7 +29,7 @@ apport (0.91) UNRELEASED; urgency=low
   * crashdb.conf: Add stanzas for Fedora and a 'debug' database which uses the
     'memory' crashdb implementation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Jul 2007 17:26:27 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 13 Jul 2007 17:23:00 +0100
 
 apport (0.90) gutsy; urgency=low
 

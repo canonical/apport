@@ -219,18 +219,28 @@ class CrashDatabase:
         cur.execute('UPDATE consolidation SET last_update = CURRENT_TIMESTAMP')
         self.duplicate_db.commit()
 
-    def duplicate_db_needs_consolidation(self, interval=86400):
-        '''Check whether the last duplicate_db_consolidate() happened more than
-        'interval' seconds ago (default: one day).'''
+    def duplicate_db_last_consolidation(self, absolute=False):
+        '''Return the date and time of last consolidation.
+        
+        By default, this returns the number of seconds since the last
+        consolidation. If absolute is True, the date and time of last
+        consolidation will be returned as a string instead.'''
 
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
         cur = self.duplicate_db.cursor()
         cur.execute('SELECT last_update FROM consolidation')
-        last_run = datetime.datetime.strptime(cur.fetchone()[0], 
-            '%Y-%m-%d %H:%M:%S')
+        if absolute:
+            return cur.fetchone()[0]
+        else:
+            last_run = datetime.datetime.strptime(cur.fetchone()[0], '%Y-%m-%d %H:%M:%S')
+            return (datetime.datetime.utcnow() - last_run).seconds
 
-        return (datetime.datetime.utcnow() - last_run).seconds >= interval
+    def duplicate_db_needs_consolidation(self, interval=86400):
+        '''Check whether the last duplicate_db_consolidate() happened more than
+        'interval' seconds ago (default: one day).'''
+
+        return self.duplicate_db_last_consolidation() >= interval
 
     def _duplicate_search_signature(self, sig):
         '''Look up signature in the duplicate db and return an [(id,
