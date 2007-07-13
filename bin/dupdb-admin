@@ -1,0 +1,62 @@
+#!/usr/bin/python
+
+# CLI for maintaining the duplicate database
+#
+# Copyright (c) 2007 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+import optparse, sys, os.path
+
+from apport.crashdb import CrashDatabase
+
+def command_status(crashdb, opts, args):
+    '''Give general status.'''
+
+    print 'Last consolidation: %s (%s seconds ago)' % (
+        crashdb.duplicate_db_last_consolidation(True),
+        crashdb.duplicate_db_last_consolidation())
+
+def command_dump(crashdb, opts, args):
+    '''Print out all entries.'''
+
+    for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(True).iteritems():
+        print '%7i: %s ' % (id, sig),
+        if version:
+            print '[fixed in: %s]' % version,
+        else:
+            print '[open]',
+        print 'last change:', lastchange
+
+#
+# main
+#
+
+# parse command line options
+optparser = optparse.OptionParser('''%prog [options] status
+%prog [options] dump''')
+
+optparser.add_option('-f', '--database-file',
+    help='Location of the database file', action='store', metavar='PATH',
+        type='string', dest='db_file', default='apport_duplicates.db')
+options, args = optparser.parse_args()
+
+if not os.path.exists(options.db_file):
+    print >> sys.stderr, 'file does not exist:', options.db_file
+    sys.exit(1)
+
+crashdb = CrashDatabase(None, None, {})
+crashdb.init_duplicate_db(options.db_file)
+
+try:
+    command = globals()['command_' + args.pop()]
+except KeyError:
+    print >> sys.stderr, 'unknown command (use --help for a short online help)'
+    sys.exit(1)
+command(crashdb, options, args)
+
