@@ -15,6 +15,8 @@ apport (0.91) UNRELEASED; urgency=low
   * Add bin/dupdb-admin: Initial version of duplicate db CLI app; can only
     dump the db and display consolidation state for now, but will grow more
     features later. Ship it in apport-retrace.
+  * apport/crashdb.py, duplicate_db_last_consolidation(): Fix timedelta
+    seconds calculation to actually take the days into account, too.
 
   Merge the fedora branch, thanks a lot to Will Woods wwoods@redhat.com>:
 
@@ -32,7 +34,7 @@ apport (0.91) UNRELEASED; urgency=low
   * crashdb.conf: Add stanzas for Fedora and a 'debug' database which uses the
     'memory' crashdb implementation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 13 Jul 2007 17:26:50 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 13 Jul 2007 17:39:20 +0100
 
 apport (0.90) gutsy; urgency=low
 

@@ -234,7 +234,8 @@ class CrashDatabase:
             return cur.fetchone()[0]
         else:
             last_run = datetime.datetime.strptime(cur.fetchone()[0], '%Y-%m-%d %H:%M:%S')
-            return (datetime.datetime.utcnow() - last_run).seconds
+            delta = (datetime.datetime.utcnow() - last_run)
+            return delta.days * 86400 + delta.seconds
 
     def duplicate_db_needs_consolidation(self, interval=86400):
         '''Check whether the last duplicate_db_consolidate() happened more than
