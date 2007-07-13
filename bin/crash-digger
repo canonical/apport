@@ -53,7 +53,7 @@ class CrashDigger:
                 if self.verbose:
                     print 'duplicate db is now:'
                     print '-------------'
-                    for k, v in self.crashdb._duplicate_db_dump(True):
+                    for k, v in self.crashdb._duplicate_db_dump(True).iteritems():
                         print k, v
                     print '-------------'
 
