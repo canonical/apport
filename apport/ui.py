@@ -224,7 +224,15 @@ free memory to automatically analyze the problem and send a report to the develo
                 raise
         self.cur_package = self.options.package
 
-        self.collect_info()
+        try:
+            self.collect_info()
+        except ValueError, e:
+            if e.message == 'package does not exist':
+                self.ui_error_message(_('Invalid problem report'), 
+                    _('Package %s does not exist') % self.cur_package)
+            else:
+                raise
+
         if not self.handle_duplicate():
             self.file_report()
 
@@ -955,6 +963,13 @@ CoreDump: base64
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
             self.assert_('Dependencies' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
+
+            # should not crash on nonexisting package
+            sys.argv = ['ui-test', '-f', '-p', 'nonexisting_gibberish']
+            self.ui = _TestSuiteUserInterface()
+            self.ui.run_argv()
+
+            self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_report_bug_pid(self):
             '''Test run_report_bug() for a pid.'''
