@@ -33,7 +33,7 @@ apport (0.91) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Intercept weird race condition for os.close()
     trying to close an already invalidated fd. (LP: #123180)
 
-  Merge the fedora branch, thanks a lot to Will Woods wwoods@redhat.com>:
+  Merge the fedora branch, thanks to Will Woods <wwoods@redhat.com>:
 
   * Add apport.init.fedora: Fedora specific init script.
   * Add apport.spec: RPM build recipe.
