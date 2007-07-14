@@ -30,6 +30,8 @@ apport (0.91) UNRELEASED; urgency=low
     test_run_report_bug_noperm_pid(). (LP: #121121)
   * apport/fileutils.py, likely_packaged(): Ignore /var/lib/schroot. Add test
     case. (LP: #122859)
+  * apport/ui.py, open_url(): Intercept weird race condition for os.close()
+    trying to close an already invalidated fd. (LP: #123180)
 
   Merge the fedora branch, thanks a lot to Will Woods wwoods@redhat.com>:
 
@@ -47,7 +49,7 @@ apport (0.91) UNRELEASED; urgency=low
   * crashdb.conf: Add stanzas for Fedora and a 'debug' database which uses the
     'memory' crashdb implementation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 14 Jul 2007 13:26:43 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 14 Jul 2007 13:38:04 +0100
 
 apport (0.90) gutsy; urgency=low
 

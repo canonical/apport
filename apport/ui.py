@@ -383,10 +383,14 @@ free memory to automatically analyze the problem and send a report to the develo
                 if message:
                     error += '\n' + message
                 self.ui_error_message(title, error)
-            os.close(r)
+            try:
+                os.close(r)
+            except OSError:
+                pass
             return
 
         os.setsid()
+        os.close(r)
 
         # If we are called through sudo, determine the real user id and run the
         # browser with it to get the user's web browser settings.
