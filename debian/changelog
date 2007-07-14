@@ -14,9 +14,9 @@ apport (0.91) UNRELEASED; urgency=low
     externally.
   * apport/crashdb.py: Add duplicate_db_change_master_id() to change the
     master ID of a crash. Add test case to apport/crashdb_impl/memory.py.
-  * Add bin/dupdb-admin: Initial version of duplicate db CLI app; can only
-    dump the db and display consolidation state for now, but will grow more
-    features later. Ship it in apport-retrace.
+  * Add bin/dupdb-admin: Initial version of duplicate db CLI app; can dump the
+    db, display consolidation state, and change master bug IDs for now. Ship
+    it in apport-retrace.
   * apport/crashdb.py, duplicate_db_last_consolidation(): Fix timedelta
     seconds calculation to actually take the days into account, too.
   * bin/crash-digger: Fix dumping of dup db after consolidation.
@@ -51,7 +51,7 @@ apport (0.91) UNRELEASED; urgency=low
   * crashdb.conf: Add stanzas for Fedora and a 'debug' database which uses the
     'memory' crashdb implementation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 14 Jul 2007 14:55:51 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 14 Jul 2007 15:08:35 +0200
 
 apport (0.90) gutsy; urgency=low
 
