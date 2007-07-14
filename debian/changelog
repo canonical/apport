@@ -23,6 +23,8 @@ apport (0.91) UNRELEASED; urgency=low
       filing mode with an invalid package name.
     - run_report_bug(): Do not crash on invalid package name, generate an
       error message instead. (LP: #123644)
+  * apport/fileutils.py, mark_report_seen(): Do not crash if the file has
+    already been deleted underneath us. (LP: #122347)
 
   Merge the fedora branch, thanks a lot to Will Woods wwoods@redhat.com>:
 
@@ -40,7 +42,7 @@ apport (0.91) UNRELEASED; urgency=low
   * crashdb.conf: Add stanzas for Fedora and a 'debug' database which uses the
     'memory' crashdb implementation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 14 Jul 2007 11:31:05 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 14 Jul 2007 11:37:38 +0100
 
 apport (0.90) gutsy; urgency=low
 
