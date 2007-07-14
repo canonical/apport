@@ -51,7 +51,8 @@ def likely_packaged(file):
         if file.startswith(i):
             whitelist_match = True
             break
-    return whitelist_match and not file.startswith('/usr/local/')
+    return whitelist_match and not file.startswith('/usr/local/') and not \
+        file.startswith('/var/lib/schroot')
 
 def find_file_package(file):
     '''Return the package that ships the given file (or None if no package
@@ -291,6 +292,9 @@ class _ApportUtilsTest(unittest.TestCase):
         self.assertEqual(likely_packaged('/tmp/foo'), False)
         # err on the side of caution for /var
         self.assertEqual(likely_packaged('/var/lib/foo'), True)
+        # but ignore temporary schroot session chroots
+        # (https://launchpad.net/bugs/122859)
+        self.assertEqual(likely_packaged('/var/lib/schroot/bin/bash'), False)
 
     def test_find_file_package(self):
         '''Test find_file_package().'''
