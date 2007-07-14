@@ -243,6 +243,15 @@ class CrashDatabase:
 
         return self.duplicate_db_last_consolidation() >= interval
 
+    def duplicate_db_change_master_id(self, old_id, new_id):
+        '''Change a crash ID.'''
+
+        assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
+
+        cur = self.duplicate_db.cursor()
+        n = cur.execute('UPDATE crashes SET crash_id = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
+            [new_id, old_id])
+
     def _duplicate_search_signature(self, sig):
         '''Look up signature in the duplicate db and return an [(id,
         fixed_version)] tuple list.
