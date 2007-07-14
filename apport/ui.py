@@ -220,6 +220,10 @@ free memory to automatically analyze the problem and send a report to the develo
             # application prematurely
             if e.errno == errno.ENOENT:
                 return
+            elif e.errno == errno.EACCES:
+                self.ui_error_message(_('Permission denied'), 
+                    _('The specified process does not belong to you. Please run this program as the process owner or as root.'))
+                return
             else:
                 raise
         self.cur_package = self.options.package
@@ -230,6 +234,7 @@ free memory to automatically analyze the problem and send a report to the develo
             if e.message == 'package does not exist':
                 self.ui_error_message(_('Invalid problem report'), 
                     _('Package %s does not exist') % self.cur_package)
+                return
             else:
                 raise
 
@@ -1020,6 +1025,19 @@ CoreDump: base64
             sys.argv = ['ui-test', '-f', '-P', str(pid)]
             self.ui = _TestSuiteUserInterface()
             self.ui.run_argv()
+
+        def test_run_report_bug_noperm_pid(self):
+            '''Test run_report_bug() for a pid which runs as a different user.'''
+
+            assert os.getuid() > 0, 'this test must not be run as root'
+
+            # silently ignore missing PID; this happens when the user closes
+            # the application prematurely
+            sys.argv = ['ui-test', '-f', '-P', '1']
+            self.ui = _TestSuiteUserInterface()
+            self.ui.run_argv()
+
+            self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_crash(self):
             '''Test run_crash().'''

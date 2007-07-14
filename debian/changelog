@@ -25,6 +25,9 @@ apport (0.91) UNRELEASED; urgency=low
       error message instead. (LP: #123644)
   * apport/fileutils.py, mark_report_seen(): Do not crash if the file has
     already been deleted underneath us. (LP: #122347)
+  * apport/ui.py, run_report_bug(): Do not crash if the target process runs as
+    a different user. Print a proper error message instead. Add test case
+    test_run_report_bug_noperm_pid(). (LP: #121121)
 
   Merge the fedora branch, thanks a lot to Will Woods wwoods@redhat.com>:
 
@@ -42,7 +45,7 @@ apport (0.91) UNRELEASED; urgency=low
   * crashdb.conf: Add stanzas for Fedora and a 'debug' database which uses the
     'memory' crashdb implementation.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 14 Jul 2007 11:37:38 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 14 Jul 2007 13:20:30 +0100
 
 apport (0.90) gutsy; urgency=low
 
