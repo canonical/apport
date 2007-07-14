@@ -1,4 +1,4 @@
-apport (0.91) UNRELEASED; urgency=low
+apport (0.91) gutsy; urgency=low
 
   * bin/apport: Remove code that supported the Edgy kernel way of core dump
     passing. Also factorize the CORE_REAL_RLIM evaluation, since it is likely
