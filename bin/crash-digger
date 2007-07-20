@@ -49,13 +49,19 @@ class CrashDigger:
         if self.dup_db:
             if self.crashdb.duplicate_db_needs_consolidation():
                 self.log('Consolidating duplicate database...')
-                self.crashdb.duplicate_db_consolidate()
-                if self.verbose:
-                    print 'duplicate db is now:'
-                    print '-------------'
-                    for k, v in self.crashdb._duplicate_db_dump(True).iteritems():
-                        print k, v
-                    print '-------------'
+                try:
+                    self.crashdb.duplicate_db_consolidate()
+                    if self.verbose:
+                        print 'duplicate db is now:'
+                        print '-------------'
+                        for k, v in self.crashdb._duplicate_db_dump(True).iteritems():
+                            print k, v
+                        print '-------------'
+                except Exception, e:
+                    if 'database is locked' in e.message:
+                        self.log('DB is already locked, skipping')
+                    else:
+                        raise
 
         self.retrace_pool.update(self.crashdb.get_unretraced() - self.fail_pool)
         self.dupcheck_pool.update(self.crashdb.get_dup_unchecked() - self.fail_pool)
