@@ -10,7 +10,7 @@ from apport.crashdb import get_crashdb
 
 class CrashDigger:
     def __init__(self, chroot_map, auth_file, verbose=False, sleep_time=600,
-        dup_db=None):
+        dup_db=None, arch_indep_dupcheck=False):
         '''Initialize pools.'''
 
         self.retrace_pool = set()
@@ -21,6 +21,7 @@ class CrashDigger:
         self.auth_file = auth_file
         self.sleep_time = sleep_time
         self.dup_db = dup_db
+        self.arch_indep_dupcheck = arch_indep_dupcheck
         self.log('Initializing crash digger, using chroot map %s' % self.chroot_map)
 
 	# read chroot map and get available releases
@@ -64,9 +65,10 @@ class CrashDigger:
                         raise
 
         self.retrace_pool.update(self.crashdb.get_unretraced() - self.fail_pool)
-        self.dupcheck_pool.update(self.crashdb.get_dup_unchecked() - self.fail_pool)
+        if self.arch_indep_dupcheck:
+            self.dupcheck_pool.update(self.crashdb.get_dup_unchecked() - self.fail_pool)
+            self.log('fill_pool: dup check pool now: %s' % str(self.dupcheck_pool))
 
-        self.log('fill_pool: dup check pool now: %s' % str(self.dupcheck_pool))
         self.log('fill_pool: retrace pool now: %s' % str(self.retrace_pool))
         self.log('fill_pool: fail pool now: %s' % str(self.fail_pool))
 
@@ -156,6 +158,9 @@ def parse_options():
         help='Path to the duplicate sqlite database (default: disabled)',
         action='store', type='string', dest='dup_db', metavar='PATH',
         default=None)
+    optparser.add_option('-i', '--arch-indep-dupcheck',
+        help='Check duplicates for architecture independent crashes (like Python exceptions)',
+        action='store_true', dest='arch_indep_dupcheck', default=False)
     optparser.add_option('-v', '--verbose',
         help='Verbose operation (also passed to apport-retrace)',
         action='store_true', dest='verbose', default=False)
@@ -173,4 +178,4 @@ def parse_options():
 
 opts, args = parse_options()
 CrashDigger(opts.chroot_map, opts.auth_file, opts.verbose, opts.sleep,
-    opts.dup_db).run()
+    opts.dup_db, opts.arch_indep_dupcheck).run()
