@@ -12,10 +12,10 @@ cat <<EOF | apport-chroot --save login "$1"
 set -ex
 apt-get update
 apt-get install -y --allow-unauthenticated ucf
-sed -i '/if.*-w.*hashfile/,/fi/ s/exit/echo/' /usr/bin/ucf
-
-apt-get install -y --allow-unauthenticated gconf2
+dpkg-divert --divert /usr/bin/ucf.disabled --rename /usr/bin/ucf
+dpkg-divert --divert /usr/sbin/update-gconf-defaults.disabled --rename /usr/sbin/update-gconf-defaults
 /bin/echo -e '#!/bin/sh\nexit 0' > /usr/sbin/update-gconf-defaults
+/bin/echo -e '#!/bin/sh\nexit 0' > /usr/bin/ucf
 
 apt-get install -y --allow-unauthenticated libgnome2-0 firefox mozilla-thunderbird libqt3-mt
 apt-get clean
