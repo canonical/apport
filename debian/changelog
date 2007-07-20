@@ -3,8 +3,10 @@ apport (0.92) UNRELEASED; urgency=low
   * bin/crash-digger: Do not crash if duplicate db is locked when attempting
     to consolidate it. This happens often because in the DC we have two
     parallel instances (for amd64 and i386).
+  * Move ubuntu-fat-chroot from bin/ to debian/local/, since it is so heavily
+    Ubuntu specific.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Jul 2007 13:00:58 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Jul 2007 13:09:00 +0200
 
 apport (0.91) gutsy; urgency=low
 
