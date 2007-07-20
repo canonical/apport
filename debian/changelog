@@ -7,8 +7,10 @@ apport (0.92) UNRELEASED; urgency=low
     Ubuntu specific.
   * debian/local/ubuntu-fat-chroot: Use diversions for the binaries we want to
     disable, so that chroot upgrades do not trash the modifications.
+  * debian/local/setup-apport-retracer: launchpad-crash-digger ->
+    crash-digger.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Jul 2007 13:15:44 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Jul 2007 13:30:08 +0200
 
 apport (0.91) gutsy; urgency=low
 
