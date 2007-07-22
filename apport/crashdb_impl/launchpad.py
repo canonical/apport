@@ -254,7 +254,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         raise an exception (preferably IOError).'''
 
         result = set()
-        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport', 
+        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport-crash', 
             upstream = None, minbug = None, filterbug = None, status = '',
             importance = '', lastcomment = '', tag = None, closed_bugs=None,
 	    duplicates=None)).bugs:
