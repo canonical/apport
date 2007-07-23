@@ -15,8 +15,9 @@ apport (0.92) UNRELEASED; urgency=low
     duplicate database.
   * apport/crashdb_impl/launchpad.py, get_unfixed(): Search for 'apport-crash'
     tag, not 'apport'.
+  * bin/apport-unpack: Fix format string in error message.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 22 Jul 2007 12:43:23 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Jul 2007 08:25:05 +0200
 
 apport (0.91) gutsy; urgency=low
 

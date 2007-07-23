@@ -28,7 +28,7 @@ try:
     os.mkdir(dir)
 except OSError:
     if os.listdir(dir):
-        print >> sys.stderr, 'Destination directory %s exists and is not empty.'
+        print >> sys.stderr, 'Destination directory exists and is not empty.'
         sys.exit(1)
 
 pr = problem_report.ProblemReport()
