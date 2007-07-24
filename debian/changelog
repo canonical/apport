@@ -43,8 +43,10 @@ apport (0.92) UNRELEASED; urgency=low
   * apport/report.py, crash_signature(): Generate a signature for one-line
     Python tracebacks, too. This sometimes seems to happen, e. g. LP#124588.
     (LP: #125020)
+  * apport/crashdb_impl/launchpad.py, update(): Set bug importance to Medium
+    if retracing was successful. (LP: #106379)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Jul 2007 20:15:25 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Jul 2007 21:50:34 +0200
 
 apport (0.91) gutsy; urgency=low
 

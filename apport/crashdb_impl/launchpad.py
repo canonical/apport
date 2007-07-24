@@ -200,6 +200,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # remove core dump if stack trace is usable
         if report.crash_signature():
             bug.delete_attachment('^CoreDump.gz$')
+            bug.set_status(importance='Medium')
 
         self._subscribe_triaging_team(bug, report)
 
