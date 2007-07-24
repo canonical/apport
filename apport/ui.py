@@ -79,7 +79,12 @@ class UserInterface:
         self.report_file = None
         self.cur_package = None
 
-        self.crashdb = get_crashdb(None)
+        try:
+            self.crashdb = get_crashdb(None)
+        except ImportError, e:
+            # this can happen while upgrading python packages
+            print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
+            sys.exit(1)
 
         gettext.textdomain(self.gettext_domain)
         self.parse_argv()
