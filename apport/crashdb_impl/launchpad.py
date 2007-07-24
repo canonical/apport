@@ -61,10 +61,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
 	# FIXME: do an authenticated Bug() call to initialize cookie handler in
 	# p-lp-bugs; after that, BugList will return private bugs, too
-	try:
-	    self.download(2)
-	except LPUrlError:
-	    pass
+        if cookie_file:
+            try:
+                self.download(2)
+            except LPUrlError:
+                pass
 
     def upload(self, report):
         '''Upload given problem report return a handle for it. 
