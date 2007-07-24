@@ -1,15 +1,14 @@
 /**
  * @file libapport.c
- * Installs a signal handler for SIGILL, SIGFPE and SIGSEGV and
- * calls 'AGENTPATH <signal> <pid> <core dump>' upon them.
+ * Installs a signal handler for SIGILL, SIGFPE, SIGABRT, and SIGSEGV and
+ * calls 'AGENTPATH' upon them.
  * This library can either be linked to a program or used with
  * LD_PRELOAD=libapport.so.
  * 
- * If PIPE_CORE is defined, the core dump is piped to the agent's STDIN
- * (similar to the pipe-in-core_pattern feature of Linux 2.6.19), otherwise the
- * path is passed to the agent and the REMOVE_CORE environment variable is set.
+ * The core dump is piped to the agent's STDIN (similar to the
+ * pipe-in-core_pattern feature of Linux 2.6.19).
  *
- * Copyright (c) 2006 Canonical Ltd.
+ * Copyright (c) 2007 Canonical Ltd.
  * Author: Martin Pitt <martin.pitt@ubuntu.com>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,12 +25,15 @@
 #include <limits.h>
 #include <signal.h>
 #include <sys/types.h>
+#include <sys/resource.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
 #ifndef AGENTPATH
 #error AGENTPATH must be defined
 #endif
+
+static int core_limit;
 
 /**
  * setenv() for int values.
@@ -57,7 +59,6 @@ void sighandler( int signum )
     char *core = NULL;
     int status;
 
-#ifdef PIPE_CORE
     strcpy( corepath, "/tmp/core.XXXXXX" );
     status = mkstemp( corepath );
     if( status < 0 ) {
@@ -65,9 +66,6 @@ void sighandler( int signum )
         goto out;
     }
     close( status );
-#else
-    snprintf( corepath, sizeof(corepath), "core.%s", spid );
-#endif
 
     // generate core file
     pid_t pid = fork();
@@ -93,21 +91,18 @@ void sighandler( int signum )
 
     /* only pass the core file if gcore succeeded */
     if( WIFEXITED( status ) && WEXITSTATUS( status ) == 0 ) {
+
         core = corepath;
-#ifdef PIPE_CORE
 	setenv( "CORE_PID", spid, 1 );
 	setenv_int( "CORE_UID", getuid(), 1 );
 	setenv_int( "CORE_GID", getgid(), 1 );
 	setenv( "CORE_SIGNAL", ssig, 1 );
-#else
-        setenv( "REMOVE_CORE", "1", 1 );
-#endif
+	setenv_int( "CORE_REAL_RLIM", core_limit, 1 );
     }
 
     pid = fork();
     if( pid == 0 ) {
         int devnull = open( "/dev/null", O_WRONLY );
-#ifdef PIPE_CORE
         int corepipe;
         if( core ) {
             corepipe = open( corepath, O_RDONLY );
@@ -115,14 +110,9 @@ void sighandler( int signum )
             if( corepipe > 0 )
                 dup2( corepipe, 0 );
         }
-#endif
         if( devnull > 0 )
             dup2(devnull, 2);
-#ifdef PIPE_CORE
         if( execl( AGENTPATH, AGENTPATH, NULL ) == -1 )
-#else
-        if( execl( AGENTPATH, AGENTPATH, spid, ssig, core, NULL ) == -1 )
-#endif
             perror( "Error: could not execute " AGENTPATH );
         goto out;
     }
@@ -143,6 +133,24 @@ out:
 __attribute__ ((constructor))
 void init()
 {
+    struct rlimit core_rlim;
+
+    /* get current core limit, we need to pass it to apport */
+    if( getrlimit( RLIMIT_CORE, &core_rlim ) < 0 ) {
+        perror( "getrlimit(RLIMIT_CORE)" );
+        exit(1);
+    }
+    core_limit = core_rlim.rlim_cur;
+
+    /* disable core rlimit, since we do not want the kernel to produce a core
+     * file */
+    core_rlim.rlim_cur = 0;
+    core_rlim.rlim_max = 0;
+    if( setrlimit( RLIMIT_CORE, &core_rlim ) < 0 ) {
+        perror( "setrlimit(RLIMIT_CORE)" );
+        exit(1);
+    }
+
     /* install signal handler */
     struct sigaction sa;
     sa.sa_handler = sighandler;
@@ -150,6 +158,7 @@ void init()
     sa.sa_flags = SA_RESETHAND;
     if( sigaction( SIGILL, &sa, NULL ) == -1 ||
             sigaction( SIGFPE, &sa, NULL ) == -1 ||
+            sigaction( SIGABRT, &sa, NULL ) == -1 ||
             sigaction( SIGSEGV, &sa, NULL ) == -1 )
         perror( "Could not set signal handler" );
 }

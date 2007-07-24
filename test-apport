@@ -36,7 +36,7 @@ def clean_preload_lib():
 def build_preload_lib():
     print '* Building preload library with local parameters'
     run(['make', '-C', 'preloadlib', 'AGENTPATH=%s' % os.path.join(os.getcwd(),
-        'bin', 'apport'), 'PIPE_CORE=1'], 'Building preloadlib')
+        'bin', 'apport')], 'Building preloadlib')
 
 def enable_preloadlib():
     assert os.access('preloadlib/libapport.so', os.X_OK)
@@ -395,8 +395,10 @@ try:
 
     test_proc = create_test_process()
     try:
-        app = subprocess.Popen([apport_path], env={'CORE_PID': str(test_proc),
-            'CORE_SIGNAL': '42', 'CORE_REAL_RLIM': '0'}, close_fds=True,
+        env = {'CORE_PID': str(test_proc), 'CORE_SIGNAL': '42', 'CORE_REAL_RLIM': '0' }
+        if local_reportdir:
+            env['APPORT_REPORT_DIR'] = local_reportdir
+        app = subprocess.Popen([apport_path], env=env, close_fds=True,
             stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         # pipe an entire total memory size worth of spaces into it, which must be
         # bigger than the 'usable' memory size. apport should digest that and the

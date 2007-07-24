@@ -27,8 +27,18 @@ apport (0.92) UNRELEASED; urgency=low
     reports collect additional information, too.
   * apport/ui.py, collect_info(): Collect additional information for 'Package'
     problem reports, too.
+  * Revive preloadlib/:
+    - Remove PIPE_CORE #ifdefs and make them the default. We do not need to
+      support the Edgy kernel patches in this version any more.
+    - Install signal handler for SIGABRT, too.
+    - Read core ulimit, pass it to apport in CORE_REAL_RLIM, and set it to
+      zero for the program, since we do not actually want the kernel to write
+      core files when we pipe the core dump to apport.
+    - test-apport: Pass APPORT_REPORT_DIR to the manually called apport
+      instance in the memory clipping test; otherwise it'll write into
+      /var/crash/, which we do not consider in library mode.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Jul 2007 16:44:58 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Jul 2007 19:32:03 +0200
 
 apport (0.91) gutsy; urgency=low
 
