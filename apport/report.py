@@ -777,7 +777,14 @@ class Report(ProblemReport):
             trace = self['Traceback'].splitlines()
 
             sig = ''
-            if len(trace) < 3:
+            if len(trace) == 1:
+                # sometimes, Python exceptions do not have file references
+                m = re.match('(\w+): ', trace[0])
+                if m:
+                    return self['ExecutablePath'] + ':' + m.group(1)
+                else:
+                    return None
+            elif len(trace) < 3:
                 return None
 
             for l in trace:
@@ -1706,6 +1713,10 @@ __frob (x=1) at crash.c:30'''
     return x/0
 ZeroDivisionError: integer division or modulo by zero'''
         self.assertEqual(r.crash_signature(), '/bin/crash:ZeroDivisionError:<module>:_f:g_foo00')
+
+        # sometimes Python traces do not have file references
+        r['Traceback'] = 'TypeError: function takes exactly 0 arguments (1 given)'
+        self.assertEqual(r.crash_signature(), '/bin/crash:TypeError')
 
         r['Traceback'] = 'FooBar'
         self.assertEqual(r.crash_signature(), None)
