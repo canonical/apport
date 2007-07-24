@@ -334,7 +334,7 @@ free memory to automatically analyze the problem and send a report to the develo
             # display a progress dialog
             self.ui_start_info_collection_progress()
 
-            if self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package'):
+            if self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Stacktrace'):
                 icthread = REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package))
@@ -1261,8 +1261,8 @@ CoreDump: base64
 
             # generate crash report
             r = apport.Report('Package')
-            r['Package'] = 'libfoo1'
-            r['SourcePackage'] = 'foo'
+            r['Package'] = 'bash'
+            r['SourcePackage'] = 'bash'
             r['ErrorMessage'] = 'It broke'
             r['VarLogPackagerlog'] = 'foo\nbar'
             r.add_os_info()
@@ -1287,7 +1287,7 @@ CoreDump: base64
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://foo.bug.net/%i' % self.ui.crashdb.latest_id())
+            self.assertEqual(self.ui.opened_url, 'http://bash.bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Package' in self.ui.report.keys())

@@ -25,6 +25,8 @@ apport (0.92) UNRELEASED; urgency=low
     the hooks). Hooks should use UnreportableReason only.
   * apport/ui.py, test_run_crash_package(): Check that 'Package' problem
     reports collect additional information, too.
+  * apport/ui.py, collect_info(): Collect additional information for 'Package'
+    problem reports, too.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Jul 2007 16:44:58 +0200
 
