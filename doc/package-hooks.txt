@@ -53,14 +53,9 @@ Apport itself ships a source package hook, see
 /usr/share/apport/package-hooks/source_apport.py.
 
 An interesting use case of hooks is to detect situations which should
-not be reported as bugs, because they happen on known-bad hardware or
-other situations. This can be achieved by adding a field
-
-  report['UnsupportableReason'] = _('explanation')
-
-A similar case are bugs which cannot be reported. For example, the
-apport UI checks whether the package comes from a third-party
-repository. This is indicated with
+not be reported as bugs, because they happen on known-bad hardware,
+from a third-party repository, or other situations. This can be
+achieved by adding a field
 
   report['UnreportableReason'] = _('explanation')
 
