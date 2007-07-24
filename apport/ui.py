@@ -1293,6 +1293,11 @@ CoreDump: base64
             self.assert_('Package' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Package')
 
+            # verify that additional information has been collected
+            self.assert_('PackageArchitecture' in self.ui.report.keys())
+            self.assert_('DistroRelease' in self.ui.report.keys())
+            self.assert_('Uname' in self.ui.report.keys())
+
         def test_run_crash_kernel(self):
             '''Test run_crash() for a kernel error.'''
 
