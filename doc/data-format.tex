@@ -2,7 +2,7 @@
 \usepackage{booktabs}
 
 \title{The Apport crash report format\\
-  \vspace{1ex}\large Version 0.1}
+  \vspace{1ex}\large Version 0.2}
 \author{Martin Pitt \texttt{<martin.pitt@ubuntu.com>}}
 
 \begin{document}
@@ -26,8 +26,7 @@ following features:
     \item written in a very modular way: user interfaces (such as Gtk/Qt),
     crash databases (such as Launchpad/Bugzilla), packaging systems
     (apt/dpkg/rpm), are all factorized
-    \item independent of a particular desktop environment, Linux
-    distribution, etc.
+    \item independent of a particular desktop environment, Linux flavour, etc.
     \item very robust due to exhaustive test suite coverage
     \item includes tools for post-processing crashes, such as post-mortem
     generation of symbolic stack traces, tools to create and work in chroots
@@ -153,13 +152,13 @@ mechanically should be added to this standard document eventually.
 \subsection{Generic fields}
 
 The following keys apply to all types of problem reports. They classify the
-problem type and give information about the date, Linux distribution and user
+problem type and give information about the date, operating system and user
 environment.
 
 \begin{description}
     \item [ProblemType:] (required) Classification of the problem type;
     Currently defined values are \verb!Crash!, \verb!Kernel!, \verb!Package!
-    (for failed install/upgrade of a distribution package), and \verb!Bug! (for
+    (for failed install/upgrade of a software package), and \verb!Bug! (for
     general bug reports)
 
     \item [Date:] (required) Date and time of the problem report in ISO format
@@ -167,9 +166,13 @@ environment.
 
     \item [Uname:] (required) Output of \verb!uname -a!
 
-    \item [DistroRelease:] (optional) Output of \verb!lsb_release -sir!
+    \item [OS:] (optional) Name of the operating system. On LSB compliant
+    systems, this can be determined with \verb!lsb_release -si!.
 
-    \item [Architecture:] (optional) Distribution specific notation of
+    \item [OSRelease:] (optional) Release version of the operating system. On
+    LSB compliant systems, this can be determined with \verb!lsb_release -sr!.
+
+    \item [Architecture:] (optional) OS specific notation of
     processor/system architecture (e. g. \verb!i386!)
 
     \item [UserGroups:] (optional) System groups of the user reporting the
@@ -211,23 +214,24 @@ available. Note that \verb!Crash! is also used for unhandled exceptions of
 programs written in scripting languages, in which case there is no core dump.
 
 \begin{description}
-    \item [CoreDump:] (optional) core dump (binary value)
+    \item [CoreDump:] (optional) core dump (binary value); this can also be a
+    'minidump' format or any other useful image of the stack.
 
-    \item [Stacktrace:] (optional) Stack trace as produced by gdb's \verb!bt full!
-    command
+    \item [Stacktrace:] (optional) Stack trace (e. g. produced by gdb's
+    \verb!bt full! command or minidump processor)
 
-    \item [ThreadStacktrace:] (optional) Threaded stack trace as produced by
-    gdb's \verb!thread apply all bt full! command
+    \item [ThreadStacktrace:] (optional) Threaded stack trace (e. g. produced
+    by the gdb command \verb!thread apply all bt full! or minidump processor)
 
     \item [StacktraceTop:] (optional) First five frames of \verb!Stacktrace!
     with the leading addresses and local variables removed; this is intended to
     be evaluated for automatic duplicate detection 
 
-    \item [Registers:] (optional) Register dump as produced by gdb's 
-    \verb!info registers! command
+    \item [Registers:] (optional) Register dump (e. g. produced by gdb's 
+    \verb!info registers! command)
 
     \item [Disassembly:] (optional) Disassembly of the code leading to the
-    crash as produced by gdb's \verb!x/16i $pc! command
+    crash (e. g. produced by gdb's \verb!x/16i $pc! command)
 \end{description}
 
 Note that every crash report must contain \verb!CoreDump! or a symbolic
@@ -240,7 +244,7 @@ recombined with debug symbols to produce a full Stacktrace.
 The following fields describe properties of a package and its dependencies.
 This applies to \verb!ProblemType!s \verb!Crash!, \verb!Package!, and
 \verb!Bug! if the bug applies to a particular package (as opposed to being a
-generic distribution bug).
+generic OS bug).
 
 \begin{description}
     \item [Package:] (required) Package name and version, separated by space

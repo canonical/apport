@@ -1,3 +1,16 @@
+apport (0.94) UNRELEASED; urgency=low
+
+  * doc/data-format.tex: Some updates to incorporate feedback from Gnome
+    upstream:
+    - Do not talk about "Distributions" any more, but "Operating systems".
+      Gnome is used on non-Linux OSs, too.
+    - Split "DistroRelease:" field into "OS:" and "OSRelease:".
+    - Explicitly mention that CoreDump, StackTrace etc. can also contain
+      minidump output.
+    - Increase document version to 0.2.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Jul 2007 18:21:36 +0200
+
 apport (0.93) gutsy; urgency=low
 
   * apport/crashdb.py: Set sqlite connect timeout to two hours, instead of the
