@@ -28,15 +28,18 @@ arch_tag_map = {
     'ppc64': 'need-powerpc-retrace',
 }
 
-def get_source_component(distro, package):
-    '''Return the component of given source package in the latest release of
-    given distribution.'''
+def get_source_info(distro, package):
+    '''Return information about given source package in the latest release of
+    given distribution.
+    
+    This returns a dictionary with the following keys: distrorelease,
+    component, version.'''
 
     result = urllib.urlopen('https://launchpad.net/%s/+source/%s' % (distro, package)).read()
-    m = re.search('<td>Published</td>.*?<td>.*?<td>.*?<td>(\w+)</td>', result, re.S)
+    m = re.search('<td>Published</td>.*?<td><a.*?>(\w+).*?<td>.*?<td>(\w+)</td>.*?<td>.*?</td>.*?<td><a.*?>([^<]+)<', result, re.S)
     if not m:
         raise ValueError, 'source package %s does not exist in %s' % (package, distro)
-    return m.group(1)
+    return { 'distrorelease': m.group(1), 'component': m.group(2), 'version': m.group(3)}
 
 class _Struct:
     '''Convenience class for creating on-the-fly anonymous objects.'''
@@ -287,6 +290,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 raise
 
         if b.status == 'Fix Released':
+            if b.sourcepackage:
+                return get_source_info(self.distro, b.sourcepackage)['version']
             return ''
         if b.status == 'Rejected' or b.duplicate_of:
             return 'invalid'

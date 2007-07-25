@@ -6,8 +6,15 @@ apport (0.93) UNRELEASED; urgency=low
   * bin/dupdb-admin, command_dump(): Correctly interpret empty version strings
     as 'fixed in unknown verrsion', not 'unfixed'.
   * apport/crashdb_impl/launchpad.py: Fix typo in bug comment string.
+  * apport/crashdb_impl/launchpad.py: Add function get_source_info() which
+    parses out release, version, and component from
+    https://launchpad.net/$DISTRO/+source/$PACKAGE.
+  * apport/crashdb_impl/launchpad.py, get_fixed_version(): If a bug is fixed,
+    return the current version (as approximation of the version where the bug
+    was fixed), instead of an empty string (which meant 'fixed in unknown
+    version'). [apport-crash-duplicates spec]
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Jul 2007 14:12:11 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Jul 2007 17:04:27 +0200
 
 apport (0.92) gutsy; urgency=low
 
