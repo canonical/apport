@@ -1,4 +1,4 @@
-apport (0.93) UNRELEASED; urgency=low
+apport (0.93) gutsy; urgency=low
 
   * apport/crashdb.py: Set sqlite connect timeout to two hours, instead of the
     default 5 seconds. Previously, one retracer always crashed when the other
