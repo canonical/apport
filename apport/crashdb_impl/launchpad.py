@@ -315,7 +315,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         bug.add_comment('Possible regression detected', 
             'This crash has the same stack trace characteristics as bug #%i. \
 However, the latter was already fixed in an earlier package version than the \
-one in this report. This might be a regression or because the problem \
+one in this report. This might be a regression or because the problem is \
 in a dependent package.' % master)
 
     def mark_retraced(self, id):
