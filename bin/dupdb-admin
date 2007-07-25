@@ -27,7 +27,9 @@ def command_dump(crashdb, opts, args):
 
     for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(True).iteritems():
         print '%7i: %s ' % (id, sig),
-        if version:
+        if version == '':
+            print '[fixed]'
+        elif version:
             print '[fixed in: %s]' % version,
         else:
             print '[open]',
