@@ -55,7 +55,7 @@ class CrashDatabase:
             'this module assumes qmark dbapi parameter style'
 
         init = not os.path.exists(path) or path == ':memory:'
-        self.duplicate_db = dbapi2.connect(path)
+        self.duplicate_db = dbapi2.connect(path, timeout=7200)
 
         if init:
             cur = self.duplicate_db.cursor()
