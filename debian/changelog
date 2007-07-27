@@ -12,8 +12,10 @@ apport (0.94) UNRELEASED; urgency=low
     available version of a package. (LP: #128176)
   * test-apport: Add check that apport aborts immediately if another apport
     instance is already running.
+  * bin/apport: Implement lock file checking to avoid running several apport
+    instances at the same time. (LP: #119622)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 27 Jul 2007 18:55:16 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 27 Jul 2007 19:52:11 +0200
 
 apport (0.93) gutsy; urgency=low
 

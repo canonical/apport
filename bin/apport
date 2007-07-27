@@ -14,7 +14,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback, tempfile, glob
-import signal, inspect, atexit, grp
+import signal, inspect, atexit, grp, fcntl
 
 import apport, apport.fileutils
 
@@ -23,6 +23,21 @@ import apport, apport.fileutils
 # functions
 #
 #################################################################
+
+def check_lock():
+    '''Abort if another instance of apport is already running.
+
+    This avoids bringing down the system to its knees if there is a series of
+    crashes.'''
+
+    # create a lock file
+    try:
+        check_lock.fd = open(os.path.join(apport.fileutils.report_dir, '.lock'), 'w')
+        fcntl.lockf(check_lock.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+        error_log('another apport instance is already running, aborting')
+        # another process has it already, abort
+        sys.exit(1)
 
 def drop_privileges(pid, partial=False):
     '''Change user and group to match the given target process.'''
@@ -181,6 +196,7 @@ def usable_ram():
 #################################################################
 
 init_error_log()
+check_lock()
 elfhead = None
 
 try:
