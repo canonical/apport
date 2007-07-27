@@ -8,8 +8,10 @@ apport (0.94) UNRELEASED; urgency=low
     - Explicitly mention that CoreDump, StackTrace etc. can also contain
       minidump output.
     - Increase document version to 0.2.
+  * apport/report.py, obsolete_packages(): Fix crash when apt does not know an
+    available version of a package. (LP: #128176)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Jul 2007 18:21:36 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 27 Jul 2007 17:28:04 +0200
 
 apport (0.93) gutsy; urgency=low
 
