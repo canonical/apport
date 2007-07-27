@@ -14,7 +14,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback, tempfile, glob
-import signal, inspect, atexit, grp, fcntl
+import signal, inspect, grp, fcntl
 
 import apport, apport.fileutils
 
@@ -31,12 +31,17 @@ def check_lock():
     crashes.'''
 
     # create a lock file
+    lockfile = os.path.join(apport.fileutils.report_dir, '.lock')
     try:
-        check_lock.fd = open(os.path.join(apport.fileutils.report_dir, '.lock'), 'w')
-        fcntl.lockf(check_lock.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        fd = os.open(lockfile, os.O_WRONLY|os.O_CREAT|os.O_NOFOLLOW)
+    except OSError, e:
+        error_log('cannot create lock file (uid %i): ' % os.getuid() + e.message)
+        raise
+
+    try:
+        fcntl.lockf(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except IOError:
         error_log('another apport instance is already running, aborting')
-        # another process has it already, abort
         sys.exit(1)
 
 def drop_privileges(pid, partial=False):
