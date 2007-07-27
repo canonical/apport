@@ -139,8 +139,8 @@ try:
                 'kernel crash dump helper is still active; please disable before running this test.'
 
         # set up temporary report directory
-        os.environ['APPORT_REPORT_DIR'] = temp_reportdir
-        apport.fileutils.report_dir = temp_reportdir
+        os.environ['APPORT_REPORT_DIR'] = temp_report_dir
+        apport.fileutils.report_dir = temp_report_dir
         (fd, os.environ['APPORT_LOG_FILE']) = tempfile.mkstemp()
         os.close(fd)
 
