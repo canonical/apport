@@ -10,8 +10,10 @@ apport (0.94) UNRELEASED; urgency=low
     - Increase document version to 0.2.
   * apport/report.py, obsolete_packages(): Fix crash when apt does not know an
     available version of a package. (LP: #128176)
+  * test-apport: Add check that apport aborts immediately if another apport
+    instance is already running.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 27 Jul 2007 17:28:04 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 27 Jul 2007 18:55:16 +0200
 
 apport (0.93) gutsy; urgency=low
 

@@ -215,6 +215,50 @@ try:
     assert apport.fileutils.get_all_reports() == [], \
         'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
 
+    print '* Check that only one apport instance is run at a time'
+    test_proc = create_test_process()
+    test_executable = '/bin/dd'
+    test_proc2 = create_test_process(False)
+    test_executable = '/bin/cat'
+    try:
+        env = {'CORE_PID': str(test_proc), 'CORE_SIGNAL': '42', 'CORE_REAL_RLIM': '0' }
+        if local_reportdir:
+            env['APPORT_REPORT_DIR'] = local_reportdir
+
+        app = subprocess.Popen([apport_path], env=env, close_fds=True,
+            stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        env['CORE_PID'] = str(test_proc2)
+        app2 = subprocess.Popen([apport_path], env=env, close_fds=True,
+            stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # app should wait indefinitely for stdin, while app2 should terminate
+        # immediately (give it 5 seconds)
+        timeout = 50
+        while timeout >= 0:
+            if app2.poll():
+                break
+
+            time.sleep(0.1)
+            timeout -= 1
+
+        assert timeout > 0, 'second apport instance terminates immediately'
+        assert not app.poll(), 'first apport instance is still running'
+
+        # properly terminate app and app2
+        app2.stdin.close()
+        app.stdin.write('boo')
+        app.stdin.close()
+
+        assert app.wait() == 0, app.stderr.read()
+    finally:
+        os.kill(test_proc, 9)
+        os.waitpid(test_proc, 0)
+        os.kill(test_proc2, 9)
+        os.waitpid(test_proc2, 0)
+    for r in apport.fileutils.get_all_reports():
+        apport.fileutils.delete_report(r)
+
     print '* Check that non-packaged executables do not create a report'
     orig_test_executable = test_executable
     (fd, test_executable) = tempfile.mkstemp()
