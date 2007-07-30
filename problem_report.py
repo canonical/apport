@@ -12,7 +12,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import bz2, zlib, base64, time, UserDict, sys, gzip
+import zlib, base64, time, UserDict, sys, gzip
 from cStringIO import StringIO
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
@@ -55,24 +55,17 @@ class ProblemReport(UserDict.IterableUserDict):
                     if bd:
                         value += bd.decompress(l)
                     else:
-                        # lazy initialization of bd; fall back to bzip2 if gzip
-                        # fails
+                        # lazy initialization of bd
                         bd = zlib.decompressobj()
-                        try:
-                            value += bd.decompress(l)
-                        except zlib.error:
-                            bd = bz2.BZ2Decompressor()
-                            value += bd.decompress(l)
+                        value += bd.decompress(l)
                 else:
                     if len(value) > 0:
                         value += '\n'
                     value += line[1:-1]
             else:
                 if b64_block:
-                    try:
+                    if bd:
                         value += bd.flush()
-                    except AttributeError:
-                        pass # bz2 decompressor has no flush()
                     b64_block = False
                     bd = None
                 if key:
@@ -671,27 +664,6 @@ Date: now!
 File: base64
  eJw=
  c3RyxIAMcBAFAG55BXk=
-Foo: Bar
-'''
-
-        # test with reading everything
-        pr = ProblemReport()
-        pr.load(StringIO(bin_report))
-        self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
-        self.assertEqual(pr.has_removed_fields(), False)
-
-        # test with skipping binary data
-        pr.load(StringIO(bin_report), binary=False)
-        self.assertEqual(pr['File'], '')
-        self.assertEqual(pr.has_removed_fields(), True)
-
-    def test_read_file_bzip2(self):
-        '''Test reading a report with binary data (legacy bzip2 compression).'''
-
-        bin_report = '''ProblemType: Crash
-Date: now!
-File: base64
- QlpoOTFBWSZTWc5ays4AAAdGAEEAMAAAECAAMM0AkR6fQsBSDhdyRThQkM5ays4=
 Foo: Bar
 '''
 
