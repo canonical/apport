@@ -457,12 +457,19 @@ free memory to automatically analyze the problem and send a report to the develo
         '''Upload the current report to the tracking system and guide the user
         to its web page.'''
 
+        global __upload_progress
+        __upload_progress = None
+
+        def progress_callback(sent, total):
+            global __upload_progress
+            __upload_progress = float(sent)/total
+
         self.ui_start_upload_progress()
         upthread = REThread.REThread(target=self.crashdb.upload,
-            args=(self.report,))
+            args=(self.report, progress_callback))
         upthread.start()
         while upthread.isAlive():
-            self.ui_set_upload_progress(None)
+            self.ui_set_upload_progress(__upload_progress)
             try:
                 upthread.join(0.1)
             except KeyboardInterrupt:

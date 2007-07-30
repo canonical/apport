@@ -70,10 +70,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             except LPUrlError:
                 pass
 
-    def upload(self, report):
+    def upload(self, report, progress_callback = None):
         '''Upload given problem report return a handle for it. 
         
-        This should happen noninteractively.'''
+        This should happen noninteractively. 
+        
+        If the implementation supports it, and a function progress_callback is
+        passed, that is called repeatedly with two arguments: the number of
+        bytes already sent, and the total number of bytes to send. This can be
+        used to provide a proper upload progress indication on frontends.'''
 
         # set reprocessing tags
         hdr = {}
@@ -100,7 +105,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         mime.flush()
         mime.seek(0)
 
-        ticket = launchpadBugs.storeblob.upload(mime)
+        ticket = launchpadBugs.storeblob.upload(mime, progress_callback)
         assert ticket
         return ticket
 

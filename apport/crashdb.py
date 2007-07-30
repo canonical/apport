@@ -289,10 +289,15 @@ class CrashDatabase:
     # Abstract functions that need to be implemented by subclasses
     #
 
-    def upload(self, report):
+    def upload(self, report, progress_callback = None):
         '''Upload given problem report return a handle for it. 
         
-        This should happen noninteractively.'''
+        This should happen noninteractively. 
+        
+        If the implementation supports it, and a function progress_callback is
+        passed, that is called repeatedly with two arguments: the number of
+        bytes already sent, and the total number of bytes to send. This can be
+        used to provide a proper upload progress indication on frontends.'''
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 

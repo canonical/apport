@@ -21,8 +21,17 @@ apport (0.94) UNRELEASED; urgency=low
   * run-tests: In 'local' mode, only explicitly run the apt/dpkg
     implementation instead of backends/*, since the RPM ones don't have tests
     yet.
+  * apport/crashdb.py: Add a second optional parameter to upload() to specify
+    an upload progress callback function. Adapt the declarations in the
+    Launchpad and Memory implementations, too.
+  * apport/crashdb_impl/launchpad.py, upload(): Pass upload progress callback
+    handler to launchpadBugs.storeblob.upload(), which supports this since
+    version 0.2~39. Bump dependency to it accordingly.
+  * apport/ui.py, file_report(): Define an upload progress callback handler,
+    pass it to the crashdb upload(), and feed ui_set_upload_progress() with
+    some actual data. (LP: #91521)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 30 Jul 2007 09:59:05 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 30 Jul 2007 13:44:04 +0200
 
 apport (0.93) gutsy; urgency=low
 

@@ -29,8 +29,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         self.reports = [] # list of dictionaries with keys: report, fixed_version, dup_of, comment
 
-    def upload(self, report):
-        '''Store the report and return a handle number (starting from 0).'''
+    def upload(self, report, progress_callback = None):
+        '''Store the report and return a handle number (starting from 0).
+        
+        This does not support (nor need) progress callbacks.'''
 
         self.reports.append({'report': report, 'fixed_version': None, 'dup_of':
             None, 'comment:': ''})
