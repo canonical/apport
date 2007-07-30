@@ -373,7 +373,7 @@ class Report(ProblemReport):
     def add_gdb_info(self, debugdir=None):
         '''Add information from gdb.
 
-        This requires that the report has a CoreDump (file ref) and an
+        This requires that the report has a CoreDump and an
         ExecutablePath. This adds the following fields:
         - Registers: Output of gdb's 'info registers' command
         - Disassembly: Output of gdb's 'x/16i $pc' command
