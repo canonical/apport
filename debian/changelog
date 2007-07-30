@@ -18,8 +18,11 @@ apport (0.94) UNRELEASED; urgency=low
   * Add bin/gcc_ice_hook: Script to create an apport report for a gcc ICE
     (internal compiler exception). Add test cases to test-hooks, and ship it
     in the 'apport' package. (LP: #125551)
+  * run-tests: In 'local' mode, only explicitly run the apt/dpkg
+    implementation instead of backends/*, since the RPM ones don't have tests
+    yet.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 30 Jul 2007 09:41:57 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 30 Jul 2007 09:59:05 +0200
 
 apport (0.93) gutsy; urgency=low
 

@@ -22,9 +22,7 @@ python -tt $basedir/apport/REThread.py -v
 python -tt $basedir/apport/chroot.py -v
 python -tt $basedir/apport/crashdb_impl/memory.py -v
 if [ "$local" ]; then
-    for b in backends/*; do
-        python -tt $b -v
-    done
+    python -tt backends/packaging-apt-dpkg.py -v
 else
     python -tt $basedir/apport/packaging_impl.py -v
 fi
