@@ -299,6 +299,10 @@ try:
     assert not os.path.exists(trappath), 'dangling .lock symlink created ' + trappath
     # remove our trap again
     os.unlink(lockpath)
+    # remove crash reports about apport itself (when the packaged version is
+    # ran from the test suite)
+    for r in apport.fileutils.get_all_reports():
+        apport.fileutils.delete_report(r)
 
     print '* Check that non-packaged executables do not create a report'
     orig_test_executable = test_executable
