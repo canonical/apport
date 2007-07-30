@@ -2,6 +2,7 @@
 '''Test the various package hooks.'''
 
 import unittest, subprocess, tempfile, os, shutil, os.path, sys, optparse
+from cStringIO import StringIO
 import apport, apport.fileutils
 
 # parse command line options
@@ -127,6 +128,78 @@ class _HooksTest(unittest.TestCase):
         self.assert_(os.uname()[2].split('-')[0] in r['SourcePackage'])
         self.assertEqual(r['ProcVersion'],
             open('/proc/version').read().strip())
+
+    @classmethod
+    def _gcc_version_path(klass):
+        '''Determine a valid version and executable path of gcc and return it
+        as a tuple.'''
+
+        gcc = subprocess.Popen(['gcc', '--version'], stdout=subprocess.PIPE)
+        out = gcc.communicate()[0]
+        assert gcc.returncode == 0, '"gcc --version" must work for this test suite'
+
+        gcc_ver = '.'.join(out.splitlines()[0].split()[2].split('.')[:2])
+        gcc_path = '/usr/bin/gcc-' + gcc_ver
+
+        assert subprocess.call([gcc_path, '--version'], stdout=subprocess.PIPE) == 0, \
+            gcc_path + ' must exist and work for this test suite'
+
+        return (gcc_ver, gcc_path)
+ 
+    def test_gcc_ide_hook_file(self):
+        '''Test gcc_ice_hook with a temporary file.'''
+
+        (gcc_version, gcc_path) = self._gcc_version_path()
+
+        test_source = tempfile.NamedTemporaryFile()
+        test_source.write('int f(int x);')
+        test_source.flush()
+        test_source.seek(0)
+
+        self.assertEqual(subprocess.call(['%s/gcc_ice_hook' % basedir,
+            gcc_path, test_source.name]), 0, 'gcc_ice_hook finished successfully')
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, 'gcc_ice_hook created a report')
+
+        r = apport.Report()
+        r.load(open(reps[0]))
+
+        self.assertEqual(r['ProblemType'], 'Crash')
+        self.assertEqual(r['ExecutablePath'], gcc_path)
+        self.assertEqual(r['PreprocessedSource'], test_source.read())
+
+        r.add_package_info()
+
+        self.assert_(r['Package'].startswith('gcc-' + gcc_version))
+        self.assert_(r['SourcePackage'].startswith('gcc'))
+
+    def test_gcc_ide_hook_pipe(self):
+        '''Test gcc_ice_hook with piping.'''
+
+        (gcc_version, gcc_path) = self._gcc_version_path()
+
+        test_source = 'int f(int x);'
+
+        hook = subprocess.Popen(['%s/gcc_ice_hook' % basedir, gcc_path, '-'], 
+            stdin=subprocess.PIPE)
+        hook.communicate(test_source)
+        self.assertEqual(hook.returncode, 0, 'gcc_ice_hook finished successfully')
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, 'gcc_ice_hook created a report')
+
+        r = apport.Report()
+        r.load(open(reps[0]))
+
+        self.assertEqual(r['ProblemType'], 'Crash')
+        self.assertEqual(r['ExecutablePath'], gcc_path)
+        self.assertEqual(r['PreprocessedSource'], test_source)
+
+        r.add_package_info()
+
+        self.assert_(r['Package'].startswith('gcc-' + gcc_version))
+        self.assert_(r['SourcePackage'].startswith('gcc'))
 
 # call tests
 
