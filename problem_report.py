@@ -21,17 +21,25 @@ from email.MIMEText import MIMEText
 class CompressedValue():
     '''Represent a ProblemReport value which is gzip compressed.'''
 
-    def __init__(self, gzipvalue, name=None):
-        '''Initialize a CompressedValue object with given value (which must be
-        a valid gzip string).'''
+    def __init__(self, name=None):
+        '''Initialize an empty CompressedValue object with an optional name.'''
 
-        self.gzipvalue = gzipvalue
+        self.gzipvalue = None
         self.name = name
 
-    def value(self):
+    def set_value(self, value):
+        '''Set uncompressed value.'''
+
+        out = StringIO()
+        gzip.GzipFile(self.name, mode='wb', fileobj=out).write(value)
+        self.gzipvalue = out.getvalue()
+
+    def get_value(self):
         '''Return uncompressed value.'''
 
         return gzip.GzipFile(fileobj=StringIO(self.gzipvalue)).read()
+
+    value = property(get_value, set_value, doc='Uncompressed value')
 
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
@@ -105,7 +113,8 @@ class ProblemReport(UserDict.IterableUserDict):
                 value = value.strip()
                 if value == 'base64':
                     if binary == 'compressed':
-                        value = CompressedValue('', key)
+                        value = CompressedValue(key)
+                        value.gzipvalue = ''
                     else:
                         value = ''
                     b64_block = True
@@ -396,8 +405,9 @@ class ProblemReport(UserDict.IterableUserDict):
     def __setitem__(self, k, v):
         assert hasattr(k, 'isalnum')
         assert k.replace('.', '').isalnum()
-        # value must be a string or a file reference (tuple (string|file [, bool]))
-        assert (hasattr(v, 'isalnum') or
+        # value must be a string or a CompressedValue or a file reference
+        # (tuple (string|file [, bool]))
+        assert (isinstance(v, CompressedValue) or hasattr(v, 'isalnum') or
             (hasattr(v, '__getitem__') and (
             len(v) == 1 or (len(v) >= 2 and v[1] in (True, False)))
             and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
@@ -447,6 +457,21 @@ class _ProblemReportTest(unittest.TestCase):
         self.assertRaises(AssertionError, pr.__setitem__, 'a', (1,))
         self.assertRaises(AssertionError, pr.__setitem__, 'a', ('/tmp/nonexistant', ''))
         self.assertRaises(KeyError, pr.__getitem__, 'Nonexistant')
+
+    def test_compressed_values(self):
+        '''Test handling of CompressedValue values.'''
+
+        pr = ProblemReport()
+        pr['Foo'] = CompressedValue()
+        pr['Bin'] = CompressedValue()
+
+        pr['Foo'].value = 'FooFoo!'
+        pr['Bin'].value = 'AB' * 10 + '\0' * 10 + 'Z'
+
+        self.assert_(isinstance(pr['Foo'], CompressedValue))
+        self.assert_(isinstance(pr['Bin'], CompressedValue))
+        self.assertEqual(pr['Foo'].value, 'FooFoo!')
+        self.assertEqual(pr['Bin'].value, 'AB' * 10 + '\0' * 10 + 'Z')
 
     def test_write(self):
         '''Test write() and proper formatting.'''
@@ -731,7 +756,7 @@ Foo: Bar
         self.assertEqual(pr.has_removed_fields(), False)
         self.assert_(isinstance(pr['File'], CompressedValue))
 
-        self.assertEqual(pr['File'].value(), 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr['File'].value, 'AB' * 10 + '\0' * 10 + 'Z')
 
     def test_read_file_legacy(self):
         '''Test reading a report with binary data in legacy format without gzip
@@ -792,7 +817,7 @@ Foo: Bar
         io.seek(0)
         pr = ProblemReport()
         pr.load(io, binary='compressed')
-        self.assertEqual(pr['File'].value(), data)
+        self.assertEqual(pr['File'].value, data)
 
     def test_size_limit(self):
         '''Test writing and a big random file with a size limit key.'''
