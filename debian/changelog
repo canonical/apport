@@ -47,8 +47,12 @@ apport (0.94) UNRELEASED; urgency=low
     values. Add test case.
   * apport/report.py, add_gdb_info(): Make function work if CoreDump is a
     compressed value.
+  * apport/ui.py: Load crash report with keeping compressed binaries. This
+    avoids loading the entire uncompressed core dump into memory, and avoids
+    recompressing it all over again for generating the crash database upload
+    MIME document. This greatly speeds up crash reporting, too. (LP: #98562)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 31 Jul 2007 21:26:57 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 31 Jul 2007 21:32:00 +0200
 
 apport (0.93) gutsy; urgency=low
 

@@ -194,21 +194,17 @@ class CLIUserInterface(apport.ui.UserInterface):
         details = ''
         for key in self.report:
             details += key + ':'
-            if hasattr(self.report[key], 'splitlines'):
-                # string value
-                if not self.report._is_binary(self.report[key]):
-                    lines = self.report[key].splitlines()
-                    if len(lines) <= 1:
-                        details += ' ' + self.report[key] + '\n'
-                    else:
-                        details += '\n'
-                        for line in lines:
-                            details += '  ' + line + '\n'
+            # string value
+            if not hasattr(self.report[key], 'gzipvalue') and not self.report._is_binary(self.report[key]):
+                lines = self.report[key].splitlines()
+                if len(lines) <= 1:
+                    details += ' ' + self.report[key] + '\n'
                 else:
-                    details += ' ' + _('(binary data)') + '\n'
+                    details += '\n'
+                    for line in lines:
+                        details += '  ' + line + '\n'
             else:
-                # file attachment
-                details += ' ' + str(self.report[key]) + '\n'
+                details += ' ' + _('(binary data)') + '\n'
 
         # complete/reduced reports
         if self.report.has_key('CoreDump') and self.report.has_useful_stacktrace():

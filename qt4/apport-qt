@@ -222,19 +222,16 @@ class QT4UserInterface(apport.ui.UserInterface):
             keyitem = QTreeWidgetItem([key]);
             details.addTopLevelItem (keyitem)
 
-            if hasattr(self.report[key], 'splitlines'):
-                # string value
-                if not self.report._is_binary(self.report[key]):
-                    lines = self.report[key].splitlines()
-                    for line in lines:
-                        QTreeWidgetItem(keyitem, [line])
-                    if len(lines) < 4:
-                        keyitem.setExpanded(True)
-                else:
-                    QTreeWidgetItem (keyitem, [_('(binary data)')])
+            # string value
+            if not hasattr(self.report[key], 'gzipvalue') and not self.report._is_binary(self.report[key]):
+                lines = self.report[key].splitlines()
+                for line in lines:
+                    QTreeWidgetItem(keyitem, [line])
+                if len(lines) < 4:
+                    keyitem.setExpanded(True)
             else:
-                # file attachment
-                QTreeWidgetItem(keyitem, [str(self.report[key])])
+                QTreeWidgetItem (keyitem, [_('(binary data)')])
+
         details.header().hide()
 
         # complete/reduced radio buttons

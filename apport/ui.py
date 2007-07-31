@@ -498,7 +498,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
         try:
             self.report = apport.Report()
-            self.report.load(open(path))
+            self.report.load(open(path), binary='compressed')
         except MemoryError:
             self.report = None
             self.ui_error_message(_('Memory exhaustion'),
