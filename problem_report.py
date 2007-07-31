@@ -39,9 +39,21 @@ class CompressedValue():
     def get_value(self):
         '''Return uncompressed value.'''
 
+        if not self.gzipvalue:
+            return None
+
         return gzip.GzipFile(fileobj=StringIO(self.gzipvalue)).read()
 
-    value = property(get_value, set_value, doc='Uncompressed value')
+    def write(self, file):
+        '''Write uncompressed value into given file-like object.'''
+
+        assert self.gzipvalue
+        gz = gzip.GzipFile(fileobj=StringIO(self.gzipvalue))
+        while True:
+            block = gz.read(1048576)
+            if not block:
+                break
+            file.write(block)
 
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
@@ -466,15 +478,26 @@ class _ProblemReportTest(unittest.TestCase):
     def test_compressed_values(self):
         '''Test handling of CompressedValue values.'''
 
+        large_val = 'A' * 5000000
+
         pr = ProblemReport()
         pr['Foo'] = CompressedValue('FooFoo!')
         pr['Bin'] = CompressedValue()
-        pr['Bin'].value = 'AB' * 10 + '\0' * 10 + 'Z'
+        pr['Bin'].set_value('AB' * 10 + '\0' * 10 + 'Z')
+        pr['Large'] = CompressedValue(large_val)
 
         self.assert_(isinstance(pr['Foo'], CompressedValue))
         self.assert_(isinstance(pr['Bin'], CompressedValue))
-        self.assertEqual(pr['Foo'].value, 'FooFoo!')
-        self.assertEqual(pr['Bin'].value, 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr['Foo'].get_value(), 'FooFoo!')
+        self.assertEqual(pr['Bin'].get_value(), 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr['Large'].get_value(), large_val)
+
+        io = StringIO()
+        pr['Bin'].write(io)
+        self.assertEqual(io.getvalue(), 'AB' * 10 + '\0' * 10 + 'Z')
+        io = StringIO()
+        pr['Large'].write(io)
+        self.assertEqual(io.getvalue(), large_val)
 
     def test_write(self):
         '''Test write() and proper formatting.'''
@@ -759,7 +782,7 @@ Foo: Bar
         self.assertEqual(pr.has_removed_fields(), False)
         self.assert_(isinstance(pr['File'], CompressedValue))
 
-        self.assertEqual(pr['File'].value, 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr['File'].get_value(), 'AB' * 10 + '\0' * 10 + 'Z')
 
     def test_read_file_legacy(self):
         '''Test reading a report with binary data in legacy format without gzip
@@ -820,7 +843,7 @@ Foo: Bar
         io.seek(0)
         pr = ProblemReport()
         pr.load(io, binary='compressed')
-        self.assertEqual(pr['File'].value, data)
+        self.assertEqual(pr['File'].get_value(), data)
 
     def test_size_limit(self):
         '''Test writing and a big random file with a size limit key.'''
