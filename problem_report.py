@@ -343,10 +343,10 @@ class ProblemReport(UserDict.IterableUserDict):
                 else:
                     f = open(v[0]) # file name
                 if k.endswith('.gz'):
-                    attach_value = StringIO(f.read())
+                    attach_value = f.read()
                 else:
-                    attach_value = StringIO()
-                    gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
+                    io = StringIO()
+                    gf = gzip.GzipFile(k, mode='wb', fileobj=io)
                     while True:
                         block = f.read(1048576)
                         if block:
@@ -354,17 +354,15 @@ class ProblemReport(UserDict.IterableUserDict):
                         else:
                             gf.close()
                             break
+                    attach_value = io.getvalue()
                 f.close()
 
             # binary value
             elif self._is_binary(v):
                 if k.endswith('.gz'):
-                    attach_value = StringIO(v)
+                    attach_value = v
                 else:
-                    attach_value = StringIO()
-                    gf = gzip.GzipFile(k, mode='wb', fileobj=attach_value)
-                    gf.write(v)
-                    gf.close()
+                    attach_value = CompressedValue(v, k).gzipvalue
 
             # if we have an attachment value, create an attachment
             if attach_value:
@@ -373,7 +371,7 @@ class ProblemReport(UserDict.IterableUserDict):
                     att.add_header('Content-Disposition', 'attachment', filename=k)
                 else:
                     att.add_header('Content-Disposition', 'attachment', filename=k+'.gz')
-                att.set_payload(attach_value.getvalue())
+                att.set_payload(attach_value)
                 attachments.append(att)
             else:
                 # plain text value
