@@ -18,6 +18,21 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 
+class CompressedValue():
+    '''Represent a ProblemReport value which is gzip compressed.'''
+
+    def __init__(self, gzipvalue, name=None):
+        '''Initialize a CompressedValue object with given value (which must be
+        a valid gzip string).'''
+
+        self.gzipvalue = gzipvalue
+        self.name = name
+
+    def value(self):
+        '''Return uncompressed value.'''
+
+        return gzip.GzipFile(fileobj=StringIO(self.gzipvalue)).read()
+
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
         '''Initialize a fresh problem report.
@@ -37,7 +52,12 @@ class ProblemReport(UserDict.IterableUserDict):
         control file format.
 
         if binary is False, binary data is not loaded; the dictionary key is
-        created, but its value will be an empty string.'''
+        created, but its value will be an empty string. If it is true, it is
+        transparently uncompressed and available as dictionary string values.
+        If binary is 'compressed', the compressed value is retained, and the
+        dictionary value will be a CompressedValue object. This is useful if
+        the compressed value is still useful (to avoid recompression if the
+        file needs to be written back).'''
 
         self.data.clear()
         key = None
@@ -55,13 +75,19 @@ class ProblemReport(UserDict.IterableUserDict):
                     if bd:
                         value += bd.decompress(l)
                     else:
-                        # lazy initialization of bd
-                        bd = zlib.decompressobj()
-                        # skip gzip header, if present
-                        if l.startswith('\037\213\010'): 
-                            value = ''
+                        if binary == 'compressed':
+                            value.gzipvalue += l
                         else:
-                            value += bd.decompress(l)
+                            # lazy initialization of bd
+                            # skip gzip header, if present
+                            if l.startswith('\037\213\010'): 
+                                bd = zlib.decompressobj(-zlib.MAX_WBITS)
+                                value = ''
+                            else:
+                                # legacy zlib-only format used default block
+                                # size
+                                bd = zlib.decompressobj()
+                                value += bd.decompress(l)
                 else:
                     if len(value) > 0:
                         value += '\n'
@@ -78,7 +104,10 @@ class ProblemReport(UserDict.IterableUserDict):
                 (key, value) = line.split(':', 1)
                 value = value.strip()
                 if value == 'base64':
-                    value = ''
+                    if binary == 'compressed':
+                        value = CompressedValue('', key)
+                    else:
+                        value = ''
                     b64_block = True
 
         if key != None:
@@ -185,12 +214,13 @@ class ProblemReport(UserDict.IterableUserDict):
             file.write (k + ': base64\n ')
 
             # write gzip header
-            gzip_header = '\037\213\010\010\000\000\000\000\002\037' + k + '\000'
+            gzip_header = '\037\213\010\010\000\000\000\000\002\377' + k + '\000'
             file.write(base64.b64encode(gzip_header))
             file.write('\n ')
             crc = zlib.crc32('')
 
-            bc = zlib.compressobj()
+            bc = zlib.compressobj(9, zlib.DEFLATED, -zlib.MAX_WBITS,
+                zlib.DEF_MEM_LEVEL, 0)
             # direct value
             if hasattr(v, 'find'):
                 size += len(v)
@@ -573,13 +603,11 @@ Last: foo
 '''ProblemType: Crash
 Date: now!
 Afile: base64
- H4sICAAAAAACH0FmaWxlAA==
- eJw=
- c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
+ H4sICAAAAAAC/0FmaWxlAA==
+ c3RyxIAMcBAFAK/2p9MfAAAA
 File: base64
- H4sICAAAAAACH0ZpbGUA
- eJw=
- c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
+ H4sICAAAAAAC/0ZpbGUA
+ c3RyxIAMcBAFAK/2p9MfAAAA
 ''')
 
         # force compression/encoding bool
@@ -605,9 +633,8 @@ File: foo\0bar
 '''ProblemType: Crash
 Date: now!
 File: base64
- H4sICAAAAAACH0ZpbGUA
- eJw=
- S8vPZ0hKLAIACfACegqudB4HAAAA
+ H4sICAAAAAAC/0ZpbGUA
+ S8vPZ0hKLAIACq50HgcAAAA=
 ''')
         temp.close()
 
@@ -682,9 +709,8 @@ File: base64
         bin_report = '''ProblemType: Crash
 Date: now!
 File: base64
- H4sIADgAAAAAAh9GaWxlAA==
- eJw=
- c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
+ H4sICAAAAAAC/0ZpbGUA
+ c3RyxIAMcBAFAK/2p9MfAAAA
 Foo: Bar
 '''
 
@@ -698,6 +724,14 @@ Foo: Bar
         pr.load(StringIO(bin_report), binary=False)
         self.assertEqual(pr['File'], '')
         self.assertEqual(pr.has_removed_fields(), True)
+
+        # test with keeping compressed binary data
+        pr.load(StringIO(bin_report), binary='compressed')
+        self.assertEqual(pr['Foo'], 'Bar')
+        self.assertEqual(pr.has_removed_fields(), False)
+        self.assert_(isinstance(pr['File'], CompressedValue))
+
+        self.assertEqual(pr['File'].value(), 'AB' * 10 + '\0' * 10 + 'Z')
 
     def test_read_file_legacy(self):
         '''Test reading a report with binary data in legacy format without gzip
@@ -753,6 +787,12 @@ Foo: Bar
         io2 = StringIO()
         pr.write(io2)
         self.assert_(io.getvalue() == io2.getvalue())
+
+        # check gzip compatibility
+        io.seek(0)
+        pr = ProblemReport()
+        pr.load(io, binary='compressed')
+        self.assertEqual(pr['File'].value(), data)
 
     def test_size_limit(self):
         '''Test writing and a big random file with a size limit key.'''
@@ -816,9 +856,8 @@ Long:
  yyy
 Short: Bar
 File: base64
- H4sICAAAAAACH0ZpbGUA
- eJw=
- c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
+ H4sICAAAAAAC/0ZpbGUA
+ c3RyxIAMcBAFAK/2p9MfAAAA
 '''
 
         pr = ProblemReport()
@@ -843,9 +882,8 @@ Short:
  aaa
  bbb
 File: base64
- H4sICAAAAAACH0ZpbGUA
- eJw=
- c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
+ H4sICAAAAAAC/0ZpbGUA
+ c3RyxIAMcBAFAK/2p9MfAAAA
 ''')
 
     def test_add_to_existing(self):
