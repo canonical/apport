@@ -55,6 +55,12 @@ class CompressedValue():
                 break
             file.write(block)
 
+    def __len__(self):
+        '''Return length of uncompressed value.'''
+
+        assert self.gzipvalue
+        return struct.unpack("<L", self.gzipvalue[-4:])[0]
+
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
         '''Initialize a fresh problem report.
@@ -491,6 +497,9 @@ class _ProblemReportTest(unittest.TestCase):
         self.assertEqual(pr['Foo'].get_value(), 'FooFoo!')
         self.assertEqual(pr['Bin'].get_value(), 'AB' * 10 + '\0' * 10 + 'Z')
         self.assertEqual(pr['Large'].get_value(), large_val)
+        self.assertEqual(len(pr['Foo']), 7)
+        self.assertEqual(len(pr['Bin']), 31)
+        self.assertEqual(len(pr['Large']), len(large_val))
 
         io = StringIO()
         pr['Bin'].write(io)
