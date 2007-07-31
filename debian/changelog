@@ -45,8 +45,10 @@ apport (0.94) UNRELEASED; urgency=low
   * problem_report, write_mime(): Eliminate unnecessary usage of StringIO.
   * problem_report, write_mime(): Make function work for compressed binary
     values. Add test case.
+  * apport/report.py, add_gdb_info(): Make function work if CoreDump is a
+    compressed value.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 31 Jul 2007 20:05:02 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 31 Jul 2007 21:26:57 +0200
 
 apport (0.93) gutsy; urgency=low
 

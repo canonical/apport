@@ -396,6 +396,11 @@ class Report(ProblemReport):
                 os.write(fd, self['CoreDump'])
                 os.close(fd)
                 unlink_core = True
+            elif hasattr(self['CoreDump'], 'gzipvalue'):
+                (fd, core) = tempfile.mkstemp()
+                os.close(fd)
+                self['CoreDump'].write(open(core, 'w'))
+                unlink_core = True
             else:
                 core = self['CoreDump'][0]
 
