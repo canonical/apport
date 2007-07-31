@@ -21,11 +21,13 @@ from email.MIMEText import MIMEText
 class CompressedValue():
     '''Represent a ProblemReport value which is gzip compressed.'''
 
-    def __init__(self, name=None):
+    def __init__(self, value=None, name=None):
         '''Initialize an empty CompressedValue object with an optional name.'''
 
         self.gzipvalue = None
         self.name = name
+        if value:
+            self.set_value(value)
 
     def set_value(self, value):
         '''Set uncompressed value.'''
@@ -462,10 +464,8 @@ class _ProblemReportTest(unittest.TestCase):
         '''Test handling of CompressedValue values.'''
 
         pr = ProblemReport()
-        pr['Foo'] = CompressedValue()
+        pr['Foo'] = CompressedValue('FooFoo!')
         pr['Bin'] = CompressedValue()
-
-        pr['Foo'].value = 'FooFoo!'
         pr['Bin'].value = 'AB' * 10 + '\0' * 10 + 'Z'
 
         self.assert_(isinstance(pr['Foo'], CompressedValue))
