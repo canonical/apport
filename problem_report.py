@@ -307,11 +307,12 @@ class ProblemReport(UserDict.IterableUserDict):
         '''Write information into the given file-like object, using
         MIME/Multipart RFC 2822 format (i. e. an email with attachments).
 
-        If a value is a string, it is written directly. Otherwise it must be a
-        tuple containing the source file and an optional boolean value (in that
-        order); the first argument can be a file name or a file-like object,
-        which will be read and its content will become the value of this key.
-        The file will be gzip compressed, unless the key already ends in .gz.
+        If a value is a string or a CompressedValue, it is written directly.
+        Otherwise it must be a tuple containing the source file and an optional
+        boolean value (in that order); the first argument can be a file name or
+        a file-like object, which will be read and its content will become the
+        value of this key.  The file will be gzip compressed, unless the key
+        already ends in .gz.
 
         attach_treshold specifies the maximum number of lines for a value to be
         included into the first inline text part. All bigger values (as well as
@@ -334,9 +335,13 @@ class ProblemReport(UserDict.IterableUserDict):
             v = self.data[k]
             attach_value = None
 
+            # compressed values are ready for attaching in gzip form
+            if isinstance(v, CompressedValue):
+                attach_value = v.gzipvalue
+
             # if it's a tuple, we have a file reference; read the contents
             # and gzip it
-            if not hasattr(v, 'find'):
+            elif not hasattr(v, 'find'):
                 attach_value = ''
                 if hasattr(v[0], 'read'):
                     f = v[0] # file-like object
@@ -1049,6 +1054,7 @@ line♥5!!
         pr['File1.gz'] = (tempgz.name,)
         pr['Value1'] = bin_value
         pr['Value1.gz'] = open(tempgz.name).read()
+        pr['ZValue'] = CompressedValue(bin_value)
         io = StringIO()
         pr.write_mime(io)
         io.seek(0)
@@ -1107,6 +1113,17 @@ line♥5!!
         self.assert_(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'application/x-gzip')
         self.assertEqual(part.get_filename(), 'Value1.gz')
+        f = tempfile.TemporaryFile()
+        f.write(part.get_payload(decode=True))
+        f.seek(0)
+        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
+
+        # seventh part should be the ZValue: value as gzip'ed attachment;
+        # write_mime should not compress it again
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'application/x-gzip')
+        self.assertEqual(part.get_filename(), 'ZValue.gz')
         f = tempfile.TemporaryFile()
         f.write(part.get_payload(decode=True))
         f.seek(0)

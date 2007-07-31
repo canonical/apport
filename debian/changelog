@@ -43,8 +43,10 @@ apport (0.94) UNRELEASED; urgency=low
     'compressed', which retains gzip compressed binary values instead of
     unpacking them transparently. Add test cases.
   * problem_report, write_mime(): Eliminate unnecessary usage of StringIO.
+  * problem_report, write_mime(): Make function work for compressed binary
+    values. Add test case.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 31 Jul 2007 20:01:25 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 31 Jul 2007 20:05:02 +0200
 
 apport (0.93) gutsy; urgency=low
 
