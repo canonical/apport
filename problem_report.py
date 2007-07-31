@@ -12,7 +12,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import zlib, base64, time, UserDict, sys, gzip
+import zlib, base64, time, UserDict, sys, gzip, struct
 from cStringIO import StringIO
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
@@ -57,7 +57,11 @@ class ProblemReport(UserDict.IterableUserDict):
                     else:
                         # lazy initialization of bd
                         bd = zlib.decompressobj()
-                        value += bd.decompress(l)
+                        # skip gzip header, if present
+                        if l.startswith('\037\213\010'): 
+                            value = ''
+                        else:
+                            value += bd.decompress(l)
                 else:
                     if len(value) > 0:
                         value += '\n'
@@ -108,7 +112,7 @@ class ProblemReport(UserDict.IterableUserDict):
         The first argument can be a file name or a file-like object,
         which will be read and its content will become the value of this key.
         'encode' specifies whether the contents will be
-        zlib compressed and base64-encoded (this defaults to True). If limit is
+        gzip compressed and base64-encoded (this defaults to True). If limit is
         set to a positive integer, the entire key will be removed. If
         fail_on_empty is True, reading zero bytes will cause an IOError.
         '''
@@ -171,7 +175,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 # single line value
                 print >> file, k + ':', v
 
-        # now write the binary keys with zlib compression and base64 encoding
+        # now write the binary keys with gzip compression and base64 encoding
         for k in binkeys:
             v = self.data[k]
             limit = None
@@ -179,9 +183,18 @@ class ProblemReport(UserDict.IterableUserDict):
 
             curr_pos = file.tell()
             file.write (k + ': base64\n ')
+
+            # write gzip header
+            gzip_header = '\037\213\010\010\000\000\000\000\002\037' + k + '\000'
+            file.write(base64.b64encode(gzip_header))
+            file.write('\n ')
+            crc = zlib.crc32('')
+
             bc = zlib.compressobj()
             # direct value
             if hasattr(v, 'find'):
+                size += len(v)
+                crc = zlib.crc32(v, crc)
                 outblock = bc.compress(v)
                 if outblock:
                     file.write(base64.b64encode(outblock))
@@ -197,13 +210,15 @@ class ProblemReport(UserDict.IterableUserDict):
                     f = open(v[0]) # file name
                 while True:
                     block = f.read(1048576)
+                    size += len(block)
+                    crc = zlib.crc32(block, crc)
                     if limit != None:
-                        size += len(block)
                         if size > limit:
                             # roll back
                             file.seek(curr_pos)
                             file.truncate(curr_pos)
                             del self.data[k]
+                            crc = None
                             break
                     if block:
                         outblock = bc.compress(block)
@@ -219,7 +234,13 @@ class ProblemReport(UserDict.IterableUserDict):
 
             # flush compressor and write the rest
             if not limit or size <= limit:
-                file.write(base64.b64encode(bc.flush()))
+                block = bc.flush()
+                # append gzip trailer: crc (32 bit) and size (32 bit)
+                if crc:
+                    block += struct.pack("<L", crc & 0xFFFFFFFFL)
+                    block += struct.pack("<L", size & 0xFFFFFFFFL)
+
+                file.write(base64.b64encode(block))
                 file.write('\n')
 
     def add_to_existing(self, reportfile, keep_times=False):
@@ -455,14 +476,13 @@ Extra: appended
         pr['Extra'] = 'appended'
         pr.write(io)
 
-        self.assertEqual(io.getvalue(),
-'''ProblemType: Crash
-Date: now!
-File: base64
- eJw=
- c3RyxIAMcBAFAG55BXk=
-Extra: appended
-''')
+        io.seek(0)
+        pr = ProblemReport()
+        pr.load(io)
+
+        self.assertEqual(pr['Date'], 'now!')
+        self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr['Extra'], 'appended')
 
     def test_load(self):
         '''Test load() with various formatting.'''
@@ -553,11 +573,13 @@ Last: foo
 '''ProblemType: Crash
 Date: now!
 Afile: base64
+ H4sICAAAAAACH0FmaWxlAA==
  eJw=
- c3RyxIAMcBAFAG55BXk=
+ c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
 File: base64
+ H4sICAAAAAACH0ZpbGUA
  eJw=
- c3RyxIAMcBAFAG55BXk=
+ c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
 ''')
 
         # force compression/encoding bool
@@ -583,8 +605,9 @@ File: foo\0bar
 '''ProblemType: Crash
 Date: now!
 File: base64
+ H4sICAAAAAACH0ZpbGUA
  eJw=
- S8vPZ0hKLAIACfACeg==
+ S8vPZ0hKLAIACfACegqudB4HAAAA
 ''')
         temp.close()
 
@@ -599,15 +622,12 @@ File: base64
         pr['AscFile'] = (tempasc, False)
         io = StringIO()
         pr.write(io)
+        io.seek(0)
 
-        self.assertEqual(io.getvalue(),
-'''ProblemType: Crash
-AscFile: Hello World
-Date: now!
-BinFile: base64
- eJw=
- c3RyxIAMcBAFAG55BXk=
-''')
+        pr = ProblemReport()
+        pr.load(io)
+        self.assertEqual(pr['BinFile'], tempbin.getvalue())
+        self.assertEqual(pr['AscFile'], tempasc.getvalue())
 
     def test_write_empty_fileobj(self):
         '''Test writing a report with a pointer to a file-like object with enforcing non-emptyness.'''
@@ -658,6 +678,30 @@ BinFile: base64
 
     def test_read_file(self):
         '''Test reading a report with binary data.'''
+
+        bin_report = '''ProblemType: Crash
+Date: now!
+File: base64
+ H4sIADgAAAAAAh9GaWxlAA==
+ eJw=
+ c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
+Foo: Bar
+'''
+
+        # test with reading everything
+        pr = ProblemReport()
+        pr.load(StringIO(bin_report))
+        self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr.has_removed_fields(), False)
+
+        # test with skipping binary data
+        pr.load(StringIO(bin_report), binary=False)
+        self.assertEqual(pr['File'], '')
+        self.assertEqual(pr.has_removed_fields(), True)
+
+    def test_read_file_legacy(self):
+        '''Test reading a report with binary data in legacy format without gzip
+        header.'''
 
         bin_report = '''ProblemType: Crash
 Date: now!
@@ -732,6 +776,8 @@ Foo: Bar
         pr.write(io)
         temp.close()
 
+        open('/tmp/r', 'w').write(io.getvalue())
+
         # read it again
         io.seek(0)
         pr = ProblemReport()
@@ -770,8 +816,9 @@ Long:
  yyy
 Short: Bar
 File: base64
+ H4sICAAAAAACH0ZpbGUA
  eJw=
- c3RyxIAMcBAFAG55BXk=
+ c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
 '''
 
         pr = ProblemReport()
@@ -796,8 +843,9 @@ Short:
  aaa
  bbb
 File: base64
+ H4sICAAAAAACH0ZpbGUA
  eJw=
- c3RyxIAMcBAFAG55BXk=
+ c3RyxIAMcBAFAG55BXmv9qfTHwAAAA==
 ''')
 
     def test_add_to_existing(self):

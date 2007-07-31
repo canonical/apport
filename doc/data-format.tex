@@ -82,14 +82,15 @@ following the key name, colon, and space. After that, the binary data is
 encoded as follows:
 
 \begin{itemize}
+    \item Write a gzip header
     \item Initialize a zlib compressor object.
     \item Read a block of (at most) 1 MiB (1,048,576 Bytes) of binary data.
     \item Compress this block with the zlib compressor.
     \item Generate the base64-encoding of the compressed block
     \item Write a space and the base64-encoded block to the report file.
     \item If there is more source data to be encoded, go to 2.
-    \item flush the zlib compressor, base64-encode the tail and write it to the
-    report file, again with a space prefix.
+    \item flush the zlib compressor, append the gzip trailer, base64-encode the
+    tail and write it to the report file, again with a space prefix.
 \end{itemize}
 
 With this algorithm the binary encoding format obeys the same text line folding

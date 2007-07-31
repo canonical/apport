@@ -34,8 +34,13 @@ apport (0.94) UNRELEASED; urgency=low
     That was only relevant during edgy's development cycle.
   * apport/report.py, test_add_proc_info(): Fix determination of /bin/zgrep
     interpreter.
+  * problem_report.py: Switch encoding of binary values from bare zlib to
+    proper gzip format, since this is much more useful when reusing the
+    compressed value. Retain support for zlib-only reports. Add test cases for
+    both old and new encodings, and adapt the other test cases for the new
+    format. Update doc/data-format.tex accordingly.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 31 Jul 2007 10:16:36 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 31 Jul 2007 12:23:27 +0200
 
 apport (0.93) gutsy; urgency=low
 
