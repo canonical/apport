@@ -42,7 +42,7 @@ Package: python-apport
 XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
-Depends: ${python:Depends}, python-apt, python-problem-report (>= 0.79), python-launchpad-bugs (>= 0.2~r39), gdb
+Depends: ${python:Depends}, python-apt, python-problem-report (>= 0.94), python-launchpad-bugs (>= 0.2~r39), gdb
 Conflicts: python-apport-utils
 Replaces: python-apport-utils
 Description: apport crash report handling library
