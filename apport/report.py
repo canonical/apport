@@ -929,7 +929,8 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_proc_info(pid=p.pid)
         p.communicate('\n')
         self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
-        self.assertEqual(pr['InterpreterPath'], open('/bin/zgrep').readline().strip()[2:])
+        self.assertEqual(pr['InterpreterPath'],
+            os.path.realpath(open('/bin/zgrep').readline().strip()[2:]))
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # check correct handling of interpreted executables: python
