@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 '''Do not send any crashes when automatix is or was installed, since it usually
 causes a mess in the system and causes a lot of package installation failures.
 
