@@ -13,12 +13,16 @@ the full text of the license.
 import urllib, tempfile, shutil, os.path, re, gzip, os
 from cStringIO import StringIO
 
-import launchpadBugs.storeblob
-from launchpadBugs.HTMLOperations import Bug, BugList, safe_urlopen
-from launchpadBugs.BughelperError import LPUrlError
+import launchpadbugs.storeblob
+import launchpadbugs.connector as Connector
+#from launchpadBugs.HTMLOperations import Bug, BugList, safe_urlopen
+#from launchpadBugs.BughelperError import LPUrlError
 
 import apport.crashdb
 import apport
+
+Bug = Connector.ConnectBug()
+BugList = Connector.ConnectBugList()
 
 arch_tag_map = {
     'i386': 'need-i386-retrace',
@@ -62,13 +66,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.distro = options['distro']
         self.arch_tag = arch_tag_map[os.uname()[4]]
 
-	# FIXME: do an authenticated Bug() call to initialize cookie handler in
-	# p-lp-bugs; after that, BugList will return private bugs, too
+    # FIXME: do an authenticated Bug() call to initialize cookie handler in
+    # p-lp-bugs; after that, BugList will return private bugs, too
         if cookie_file:
-            try:
-                self.download(2)
-            except LPUrlError:
-                pass
+            Bug.authentification = cookie_file
+            BugList.authentification = cookie_file
 
     def upload(self, report, progress_callback = None):
         '''Upload given problem report return a handle for it. 
@@ -105,7 +107,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         mime.flush()
         mime.seek(0)
 
-        ticket = launchpadBugs.storeblob.upload(mime, progress_callback)
+        ticket = launchpadbugs.storeblob.upload(mime, progress_callback)
         assert ticket
         return ticket
 
@@ -135,30 +137,31 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         report = apport.Report()
         attachment_dir = tempfile.mkdtemp()
         try:
-            b = Bug(id, None, attachment_dir, ['application/x-gzip'],
-                'Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt',
-                cookie_file=self.auth_file)
+            b = Bug(id) #TODO:
+                        # attachment_dir: not needed anymore
+                        # content_type ['application/x-gzip']
+                        # attachment_regex: use filter instead
 
             # parse out fields from summary
-            m = re.search('(ProblemType:.*?)</div>', b.text, re.S)
+            m = re.search('(ProblemType:.*?)</div>', b.description, re.S)
             assert m, 'bug description must contain standard apport format data'
             description = m.group(1).replace('<br />',
                 '').replace('<wbr></wbr>', '').replace('</p>',
                 '').replace('<p>', '')
             report.load(StringIO(description))
 
-            for att in b.attachments:
-                if not att.filename:
-                    continue # ignored attachments
+            for att in b.attachments.filter(lambda a: re.match(
+                    "Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt",
+                    a.lp_filename)):
 
-                key = os.path.splitext(os.path.basename(att.filename))[0]
+                key = os.path.splitext(os.path.basename(att.lp_filename))[0]
 
-                if att.filename.endswith('.txt'):
-                    report[key] = open(att.filename).read()
-                elif att.filename.endswith('.gz'):
-                    report[key] = gzip.open(att.filename).read()
+                if att.lp_filename.endswith('.txt'):
+                    report[key] = open(att.lp_filename).read()
+                elif att.lp_filename.endswith('.gz'):
+                    report[key] = gzip.open(att.lp_filename).read()
                 else:
-                    raise Exception, 'Unknown attachment type: ' + att.filename
+                    raise Exception, 'Unknown attachment type: ' + att.lp_filename
 
             return report
         finally:
@@ -169,7 +172,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
         desired) and an optional comment.'''
 
-        bug = Bug(id, cookie_file=self.auth_file)
+        bug = Bug(id)
 
         comment += '\n\nStacktraceTop:' + report['StacktraceTop'].decode('utf-8',
             'replace').encode('utf-8')
@@ -182,16 +185,22 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             t.write(report['Stacktrace'])
             t.flush()
             t.seek(0)
-            bug.add_comment('Symbolic stack trace', comment, t, 
-                'Stacktrace.txt (retraced)')
+            att = Bug.NewAttachment(localfileobject=t,
+                    description='Stacktrace.txt (retraced)')
+            new_comment = Bug.NewComment(subject='Symbolic stack trace',
+                    text=comment, attachment=att)
+            bug.comments.add(new_comment)
             t.close()
 
             t = open(os.path.join(tmpdir, 'ThreadStacktrace.txt'), 'w+')
             t.write(report['ThreadStacktrace'])
             t.flush()
             t.seek(0)
-            bug.add_comment('Symbolic threaded stack trace', '', t, 
-                'ThreadStacktrace.txt (retraced)')
+            att = Bug.NewAttachment(localfileobject=t,
+                    description='ThreadStacktrace.txt (retraced)')
+            new_comment = Bug.NewComment(subject='Symbolic threaded stack trace',
+                    attachment=att)
+            bug.comments.add(new_comment)
             t.close()
 
             if report.has_key('StacktraceSource'):
@@ -199,17 +208,21 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 t.write(report['StacktraceSource'])
                 t.flush()
                 t.seek(0)
-                bug.add_comment('Stack trace with source code', '', t, 
-                    'StacktraceSource.txt')
+                att = Bug.NewAttachment(localfileobject=t,
+                        description='StacktraceSource.txt')
+                new_comment = Bug.NewComment(subject='Stack trace with source code',
+                        attachment=att)
+                bug.comments.add(new_comment)
                 t.close()
         finally:
             shutil.rmtree(tmpdir)
 
         # remove core dump if stack trace is usable
         if report.crash_signature():
-            bug.delete_attachment('^CoreDump.gz$')
-            bug.set_status(importance='Medium')
-
+            bug.attachments.remove(bug.attachments.filter(
+                    lambda a: re.match('^CoreDump.gz$', a.lp_filename)))
+            bug.importance='Medium'
+        bug.commit()
         self._subscribe_triaging_team(bug, report)
 
     def get_distro_release(self, id):
@@ -267,7 +280,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport-crash', 
             upstream = None, minbug = None, filterbug = None, status = '',
             importance = '', lastcomment = '', tag = None, closed_bugs=None,
-	    duplicates=None)).bugs:
+        duplicates=None)).bugs:
             result.add(int(b))
         return result
 
