@@ -138,28 +138,26 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         attachment_dir = tempfile.mkdtemp()
         try:
             b = Bug(id) #TODO:
-                        # attachment_dir: not needed anymore
+                        # attachment_dir: 
                         # content_type ['application/x-gzip']
                         # attachment_regex: use filter instead
 
             # parse out fields from summary
-            m = re.search('(ProblemType:.*?)</div>', b.description, re.S)
-            assert m, 'bug description must contain standard apport format data'
-            description = m.group(1).replace('<br />',
-                '').replace('<wbr></wbr>', '').replace('</p>',
-                '').replace('<p>', '')
-            report.load(StringIO(description))
+            description = bug.description.split("ProblemType: ")
+            assert len(description) == 2, 'bug description must contain standard apport format data'
+            
+            report.load(StringIO(description[1]))
 
             for att in b.attachments.filter(lambda a: re.match(
                     "Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt",
                     a.lp_filename)):
 
-                key = os.path.splitext(os.path.basename(att.lp_filename))[0]
+                key = os.path.splitext(att.lp_filename)[0]
 
                 if att.lp_filename.endswith('.txt'):
-                    report[key] = open(att.lp_filename).read()
+                    report[key] = att.text
                 elif att.lp_filename.endswith('.gz'):
-                    report[key] = gzip.open(att.lp_filename).read()
+                    report[key] = gzip.GzipFile(fileobj=StringIO(att.text)).read()#TODO: is this the best solution?
                 else:
                     raise Exception, 'Unknown attachment type: ' + att.lp_filename
 
