@@ -135,12 +135,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Download the problem report from given ID and return a Report.'''
 
         report = apport.Report()
-        attachment_dir = tempfile.mkdtemp()
+        Bug.attachment_path = tempfile.mkdtemp()
+        Bug.content_types.append('application/x-gzip')
         try:
-            b = Bug(id) #TODO:
-                        # attachment_dir: 
-                        # content_type ['application/x-gzip']
-                        # attachment_regex: use filter instead
+            b = Bug(id) 
 
             # parse out fields from summary
             description = bug.description.split("ProblemType: ")
@@ -217,8 +215,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # remove core dump if stack trace is usable
         if report.crash_signature():
-            bug.attachments.remove([i for i in bug.attachments.filter(
-                    lambda a: re.match('^CoreDump.gz$', a.lp_filename))])
+            bug.attachments.remove(
+                    func=lambda a: re.match('^CoreDump.gz$', a.lp_filename))
             bug.importance='Medium'
         bug.commit()
         self._subscribe_triaging_team(bug, report)
@@ -305,7 +303,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             master = m.duplicate_of
 
         bug.duplicate_of = int(master)
-        bug.attachments.remove([i for i in bug.attachments.filter(lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|Disassembly.txt$)', a.lp_filename))])
+        bug.attachments.remove(
+            func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
+Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
+Disassembly.txt$)', a.lp_filename))
         if bug.private:
             bug.private = None
         bug.commit()
