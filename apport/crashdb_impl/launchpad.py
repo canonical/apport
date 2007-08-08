@@ -16,7 +16,7 @@ from cStringIO import StringIO
 import launchpadbugs.storeblob
 import launchpadbugs.connector as Connector
 #from launchpadBugs.HTMLOperations import Bug, BugList, safe_urlopen
-#from launchpadBugs.BughelperError import LPUrlError
+from launchpadbugs.BughelperError import LPUrlError
 
 import apport.crashdb
 import apport
@@ -217,8 +217,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # remove core dump if stack trace is usable
         if report.crash_signature():
-            bug.attachments.remove(bug.attachments.filter(
-                    lambda a: re.match('^CoreDump.gz$', a.lp_filename)))
+            bug.attachments.remove([i for i in bug.attachments.filter(
+                    lambda a: re.match('^CoreDump.gz$', a.lp_filename))])
             bug.importance='Medium'
         bug.commit()
         self._subscribe_triaging_team(bug, report)
@@ -226,28 +226,19 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
-
-        result = safe_urlopen('https://launchpad.net/bugs/' + str(id))
-        if not result['error']:
-            m = re.search('DistroRelease: ([-a-zA-Z0-9.+/ ]+)', result['text'])
-            if m:
-                return m.group(1)
-
+        #using py-lp-bugs
+        bug = Bug(url='https://launchpad.net/bugs/' + str(id))
+        m = re.search('DistroRelease: ([-a-zA-Z0-9.+/ ]+)', bug.description)
+        if m:
+            return m.group(1)
         raise ValueError, 'URL does not contain DistroRelease: field'
 
     def get_unretraced(self):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
 
-        result = set()
-        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=' + 
-            self.arch_tag, upstream = None, tag=None, minbug = None, 
-            filterbug = None, status = '', importance = '', closed_bugs=None,
-            duplicates = None, lastcomment = None)).bugs:
-            # BugList returns a set of strings, which is bad set-wise, so we
-            # have to convert them to ints.
-            result.add(int(b))
-        return result
+        bugs = BugList('https://launchpad.net/ubuntu/+bugs?field.tag=' + self.arch_tag)
+        return set(int(i) for i in bugs)
 
     def get_dup_unchecked(self):
         '''Return an ID set of all crashes which have not been checked for
@@ -257,13 +248,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
 
-        result = set()
-        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check',
-            upstream = None, tag=None, minbug = None, 
-            filterbug = None, status = '', importance = '', closed_bugs=None,
-            duplicates = None, lastcomment = None)).bugs:
-            result.add(int(b))
-        return result
+        bugs = BugList('https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check')
+        return set(int(i) for i in bugs)
 
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
@@ -274,13 +260,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
-        result = set()
-        for b in BugList(_Struct(url = 'https://launchpad.net/ubuntu/+bugs?field.tag=apport-crash', 
-            upstream = None, minbug = None, filterbug = None, status = '',
-            importance = '', lastcomment = '', tag = None, closed_bugs=None,
-        duplicates=None)).bugs:
-            result.add(int(b))
-        return result
+        bugs = BugList('https://launchpad.net/ubuntu/+bugs?field.tag=apport-crash')
+        return set(int(i) for i in bugs)
 
     def get_fixed_version(self, id):
         '''Return the package version that fixes a given crash.
@@ -316,57 +297,57 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def close_duplicate(self, id, master):
         '''Mark a crash id as duplicate of given master ID.'''
 
-        bug = Bug(id, cookie_file=self.auth_file)
+        bug = Bug(id)
 
         # check whether the master itself is a dup
-        m = Bug(master, cookie_file=self.auth_file)
+        m = Bug(master)
         if m.duplicate_of:
             master = m.duplicate_of
 
-        bug.mark_duplicate(master)
-        bug.delete_attachment('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|Disassembly.txt$)')
+        bug.duplicate_of = int(master)
+        bug.attachments.remove([i for i in bug.attachments.filter(lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|Disassembly.txt$)', a.lp_filename))])
         if bug.private:
-            bug.set_secrecy()
+            bug.private = None
+        bug.commit()
 
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
         
-        bug = Bug(id, cookie_file=self.auth_file)
-        bug.add_comment('Possible regression detected', 
-            'This crash has the same stack trace characteristics as bug #%i. \
+        bug = Bug(id)
+        comment = Bug.NewComment(subject='Possible regression detected',
+            text='This crash has the same stack trace characteristics as bug #%i. \
 However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem is \
 in a dependent package.' % master)
+        bug.comments.add(comment)
+        bug.commit()
 
     def mark_retraced(self, id):
         '''Mark crash id as retraced.'''
 
-        b = Bug(id, cookie_file=self.auth_file)
-        b.get_metadata()
+        b = Bug(id)
         if self.arch_tag in b.tags:
             b.tags.remove(self.arch_tag)
-            b.set_metadata()
+        b.commit()
 
     def mark_retrace_failed(self, id):
         '''Mark crash id as 'failed to retrace'.'''
 
-        b = Bug(id, cookie_file=self.auth_file)
-        b.get_metadata()
+        b = Bug(id)
         if 'apport-failed-retrace' not in b.tags:
             b.tags.append('apport-failed-retrace')
-            b.set_metadata()
+        b.commit()
 
     def _mark_dup_checked(self, id, report):
         '''Mark crash id as checked for being a duplicate.'''
 
-        b = Bug(id, cookie_file=self.auth_file)
-        b.get_metadata()
+        b = Bug(id)
         if 'need-duplicate-check' in b.tags:
             b.tags.remove('need-duplicate-check')
-            b.set_metadata()
-
+        
         self._subscribe_triaging_team(b, report)
+        b.commit()
 
     def _subscribe_triaging_team(self, bug, report):
         '''Subscribe the right triaging team to the bug.'''
@@ -377,7 +358,7 @@ in a dependent package.' % master)
         if report['DistroRelease'].split()[0] != 'Ubuntu':
             return # only Ubuntu bugs are filed private
 
-        bug.add_subscriber('ubuntu-crashes-universe')
+        bug.subscribtions.add('ubuntu-crashes-universe')
 
 # some test code for future usage:
 
