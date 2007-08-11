@@ -27,6 +27,9 @@ _common_hook_dir = '/usr/share/apport/general-hooks/'
 # path of the ignore file
 _ignore_file = '~/.apport-ignore.xml'
 
+# system-wide blacklist
+_blacklist_dir = '/etc/apport/blacklist.d'
+
 # programs that we consider interpreters
 interpreters = ['sh', 'bash', 'dash', 'csh', 'tcsh', 'python*',
     'ruby*', 'php', 'perl*', 'mono*', 'awk']
@@ -587,13 +590,28 @@ class Report(ProblemReport):
         return dom
 
     def check_ignored(self):
-        '''Check ~/.apport-ignore.xml (in the real UID's home) if the current
-        report should not be presented to the user.
+        '''Check ~/.apport-ignore.xml (in the real UID's home) and
+        /etc/apport/blacklist.d/ if the current report should not be presented
+        to the user.
 
         This requires the ExecutablePath attribute. Function can throw a
         ValueError if the file has an invalid format.'''
 
         assert self.has_key('ExecutablePath')
+
+        # check blacklist
+        try:
+            for f in os.listdir(_blacklist_dir):
+                try:
+                    fd = open(os.path.join(_blacklist_dir, f))
+                except IOError:
+                    continue
+                for line in fd:
+                    if line.strip() == self['ExecutablePath']:
+                        return True
+        except OSError:
+            pass
+
         dom = self._get_ignore_dom()
 
         try:
@@ -1435,6 +1453,51 @@ def add_info(report):
             self.assertEqual(cp_rep.check_ignored(), False)
         finally:
             shutil.rmtree(workdir)
+            _ignore_file = orig_ignore_file
+
+    def test_blacklisting(self):
+        '''Test check_ignored() for system-wise blacklist.'''
+
+        global _blacklist_dir
+        global _ignore_file
+        orig_blacklist_dir = _blacklist_dir
+        _blacklist_dir = tempfile.mkdtemp()
+        orig_ignore_file = _ignore_file
+        _ignore_file = '/nonexistant'
+        try:
+            bash_rep = Report()
+            bash_rep['ExecutablePath'] = '/bin/bash'
+            crap_rep = Report()
+            crap_rep['ExecutablePath'] = '/bin/crap'
+
+            # no ignores initially
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), False)
+
+            # should not stumble over comments
+            open(os.path.join(_blacklist_dir, 'README'), 'w').write(
+                '# Ignore file\n#/bin/bash\n')
+
+            # no ignores on nonmatching paths
+            open(os.path.join(_blacklist_dir, 'bl1'), 'w').write(
+                '/bin/bas\n/bin/bashh\nbash\nbin/bash\n')
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), False)
+
+            # ignore crap now
+            open(os.path.join(_blacklist_dir, 'bl_2'), 'w').write(
+                '/bin/crap\n')
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), True)
+
+            # ignore bash now
+            open(os.path.join(_blacklist_dir, 'bl1'), 'a').write(
+                '/bin/bash\n')
+            self.assertEqual(bash_rep.check_ignored(), True)
+            self.assertEqual(crap_rep.check_ignored(), True)
+        finally:
+            shutil.rmtree(_blacklist_dir)
+            _blacklist_dir = orig_blacklist_dir
             _ignore_file = orig_ignore_file
 
     def test_has_useful_stacktrace(self):
