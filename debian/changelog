@@ -6,8 +6,11 @@ apport (0.95) UNRELEASED; urgency=low
     /etc/apport/blacklist.d/. Add test cases.
   * Add doc/README.blacklist: Document blacklist.d/, install it there in
     setup.py.
+  * debian/rules: Blacklist wine-preloader, so that we ignore wine crashes
+    until an appropriate way is found to deal with them. (Point 6 of
+    apport-better-retracing spec.)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 11 Aug 2007 18:03:48 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 11 Aug 2007 18:10:54 +0200
 
 apport (0.94) gutsy; urgency=low
 
