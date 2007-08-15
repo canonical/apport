@@ -1,8 +1,10 @@
 apport (0.96) UNRELEASED; urgency=low
 
   * Create man pages for apport-cli, dupdb-admin.
+  * apport/fileutils.py, find_file_package(): Try to resolve symlinks in the
+    directory path. (LP: #125551)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 12 Aug 2007 21:48:59 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 15 Aug 2007 10:22:45 +0200
 
 apport (0.95) gutsy; urgency=low
 
