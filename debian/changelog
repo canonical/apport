@@ -3,8 +3,11 @@ apport (0.96) UNRELEASED; urgency=low
   * Create man pages for apport-cli, dupdb-admin.
   * apport/fileutils.py, find_file_package(): Try to resolve symlinks in the
     directory path. (LP: #125551)
+  * apport/crashdb_impl/launchpad.py, debian/local/setup-apport-retracer: Use
+    packaging.get_system_architecture() (which is dpkg --print-architecture on
+    Debian/Ubuntu) instead of uname, so that this does the right thing on lpia.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 15 Aug 2007 10:22:45 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 15 Aug 2007 11:18:16 +0200
 
 apport (0.95) gutsy; urgency=low
 
