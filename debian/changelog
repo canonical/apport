@@ -1,3 +1,10 @@
+apport (0.97) UNRELEASED; urgency=low
+
+  * problem_report.py: Coerce CompressedValue.__len__() to return an int to
+    work on Python 2.4, too.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 21 Aug 2007 14:33:04 +0200
+
 apport (0.96) gutsy; urgency=low
 
   * Create man pages for apport-cli, apport-chroot, and dupdb-admin.

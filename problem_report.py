@@ -60,7 +60,7 @@ class CompressedValue:
         '''Return length of uncompressed value.'''
 
         assert self.gzipvalue
-        return struct.unpack("<L", self.gzipvalue[-4:])[0]
+        return int(struct.unpack("<L", self.gzipvalue[-4:])[0])
 
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
