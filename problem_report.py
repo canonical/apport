@@ -14,6 +14,7 @@ the full text of the license.
 
 import zlib, base64, time, UserDict, sys, gzip, struct
 from cStringIO import StringIO
+from email.Encoders import encode_base64
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
@@ -395,6 +396,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 else:
                     att.add_header('Content-Disposition', 'attachment', filename=k+'.gz')
                 att.set_payload(attach_value)
+                encode_base64(att)
                 attachments.append(att)
             else:
                 # plain text value
