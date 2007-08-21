@@ -9,8 +9,10 @@ apport (0.96) UNRELEASED; urgency=low
   * problem_report.py, write_mime(): Use base64 encoding for gzipped
     attachments, to not screw up mail servers. Thanks to Tim Yamin for this
     patch!
+  * apport/crashdb.py: Drop the last argument (-1), since it is the default
+    anyway and did not yet exist on Python 2.4.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 21 Aug 2007 14:09:16 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 21 Aug 2007 14:11:48 +0200
 
 apport (0.95) gutsy; urgency=low
 
