@@ -18,7 +18,7 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 
-class CompressedValue():
+class CompressedValue:
     '''Represent a ProblemReport value which is gzip compressed.'''
 
     def __init__(self, value=None, name=None):
