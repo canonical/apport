@@ -2,8 +2,10 @@ apport (0.97) UNRELEASED; urgency=low
 
   * problem_report.py: Coerce CompressedValue.__len__() to return an int to
     work on Python 2.4, too.
+  * debian/local/setup-apport-retracer: Adapt ddeb apt source for the move
+    from ~pitti to ~ubuntu-archive.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 21 Aug 2007 14:33:04 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 22 Aug 2007 15:31:19 +0200
 
 apport (0.96) gutsy; urgency=low
 
