@@ -16,7 +16,7 @@ from cStringIO import StringIO
 import launchpadbugs.storeblob
 import launchpadbugs.connector as Connector
 #from launchpadBugs.HTMLOperations import Bug, BugList, safe_urlopen
-from launchpadbugs.BughelperError import LPUrlError
+from launchpadbugs.bughelper_error import LPUrlError
 
 import apport.crashdb
 import apport
@@ -141,7 +141,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             b = Bug(id) 
 
             # parse out fields from summary
-            description = bug.description.split("ProblemType: ")
+            description = b.description.split("ProblemType: ")
             assert len(description) == 2, 'bug description must contain standard apport format data'
             
             report.load(StringIO(description[1]))
@@ -161,7 +161,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
             return report
         finally:
-            shutil.rmtree(attachment_dir)
+            shutil.rmtree(Bug.attachment_path)
 
     def update(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
