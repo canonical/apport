@@ -1,0 +1,76 @@
+.TH apport\-cli 1 "August 01, 2007" "Martin Pitt"
+
+.SH NAME
+
+apport\-cli \- Command line client for reporting problems
+
+.SH SYNOPSIS
+
+.B apport\-cli
+
+.B apport\-cli \-c
+.I report
+
+.B apport\-cli \-f \-p
+.I package
+
+.B apport\-cli \-f \-P
+.I pid
+
+.SH DESCRIPTION
+
+.B apport 
+automatically collects data from crashed processes and compiles a problem
+report in 
+.I /var/crash/\fR. This is a command line frontend for reporting
+those crashes to the developers. It can also be used to report bugs
+about packages or running processes.
+
+For desktop systems with a graphical user interface, you should
+consider installing the GTK or Qt user interface (apport-gtk or
+apport-qt).
+.B apport\-cli
+is mainly intended to be used on servers.
+
+When called without any options, it processes the pending crash
+reports and offers to report them one by one. You can also display the
+entire report to see what is sent to the software developers.
+
+.SH OPTIONS
+
+.TP
+.B \-c \fIreport\fR, \fB\-\-crash\-file\fR=\fIreport
+Instead of walking over the new crash reports in
+.I /var/crash/\fR,
+report a particular report in an arbitrary file location.
+This is useful for copying a crash report to a machine with internet
+connection and reporting it from there.
+
+.TP
+.B \-f, \-\-file\-bug
+Report a (non-crash) problem. Requires specifying
+.B \-\-package
+or
+.B \-\-pid\fR.
+This will automatically attach information about your operating sytem
+and the package version etc. to the bug report, so that the developers
+have some important context.
+
+.TP
+.B \-p \fIpackage\fR, \fB\-\-package\fR=\fIpackage
+When being used in
+.B \-\-file\-bug
+mode, specify the package to report the problem against.
+
+.TP
+.B \-P \fIpid\fR, \fB\-\-pid\fR=\fIpid
+When being used in
+.B \-\-file\-bug
+mode, specify the PID (process ID) of a running program to report the
+problem against. This can be determined with e. g.
+.B ps -ux\fR.
+
+.SH AUTHOR
+.B apport
+and the accompanying tools are developed by Martin Pitt
+<martin.pitt@ubuntu.com>.

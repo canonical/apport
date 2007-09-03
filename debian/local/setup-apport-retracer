@@ -95,10 +95,10 @@ fi
 . ./environ
 
 # create chroots
-if [ "`uname -m`" = i686 ]; then
-    apport-chroot -t -a "deb http://people.ubuntu.com/~pitti/ddebs $RELEASE main restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main restricted universe multiverse" -a "deb http://security.ubuntu.com/ubuntu $RELEASE-security main restricted universe multiverse" -p libc6-i686 -p libc6-i686-dbgsym create $RELEASE chroots/$RELEASE.tar.gz
+if [ "`dpkg --print-architecture`" = i386 ]; then
+    apport-chroot -t -a "deb http://people.ubuntu.com/~ubuntu-archive/ddebs $RELEASE main restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main restricted universe multiverse" -a "deb http://security.ubuntu.com/ubuntu $RELEASE-security main restricted universe multiverse" -p libc6-i686 -p libc6-i686-dbgsym create $RELEASE chroots/$RELEASE.tar.gz
 else
-    apport-chroot -t -a "deb http://people.ubuntu.com/~pitti/ddebs $RELEASE main restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main restricted universe multiverse" -a "deb http://security.ubuntu.com/ubuntu $RELEASE-security main restricted universe multiverse" create $RELEASE chroots/$RELEASE.tar.gz
+    apport-chroot -t -a "deb http://people.ubuntu.com/~ubuntu-archive/ddebs $RELEASE main restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main restricted universe multiverse" -a "deb http://security.ubuntu.com/ubuntu $RELEASE-security main restricted universe multiverse" create $RELEASE chroots/$RELEASE.tar.gz
 fi
 chmod -R g+w chroots/
 

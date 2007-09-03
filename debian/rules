@@ -25,6 +25,11 @@ binary-install/apport-gtk::
 binary-install/apport::
 	dh_installmime -p $(cdbs_curpkg)
 
+	# ignore wine crashes by default, until we found a way to
+	# handle them appropriately
+	install -d debian/$(cdbs_curpkg)/etc/apport/blacklist.d
+	echo '/usr/bin/wine-preloader' > debian/$(cdbs_curpkg)/etc/apport/blacklist.d/apport
+
 clean::
 	# remove backend copies
 	rm -f apport/packaging_impl.py

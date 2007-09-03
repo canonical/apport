@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import urllib, tempfile, shutil, os.path, re, gzip, os
+import urllib, tempfile, shutil, os.path, re, gzip
 from cStringIO import StringIO
 
 import launchpadbugs.storeblob
@@ -64,7 +64,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bugpattern_baseurl, options)
 
         self.distro = options['distro']
-        self.arch_tag = arch_tag_map[os.uname()[4]]
+        self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
 
     # FIXME: do an authenticated Bug() call to initialize cookie handler in
     # p-lp-bugs; after that, BugList will return private bugs, too
