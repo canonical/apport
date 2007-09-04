@@ -15,8 +15,6 @@ from cStringIO import StringIO
 
 import launchpadbugs.storeblob
 import launchpadbugs.connector as Connector
-#from launchpadBugs.HTMLOperations import Bug, BugList, safe_urlopen
-from launchpadbugs.bughelper_error import LPUrlError
 
 import apport.crashdb
 import apport
@@ -45,12 +43,6 @@ def get_source_info(distro, package):
         raise ValueError, 'source package %s does not exist in %s' % (package, distro)
     return { 'distrorelease': m.group(1), 'component': m.group(2), 'version': m.group(3)}
 
-class _Struct:
-    '''Convenience class for creating on-the-fly anonymous objects.'''
-
-    def __init__(self, **entries): 
-        self.__dict__.update(entries)
-
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
 
@@ -69,8 +61,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     # FIXME: do an authenticated Bug() call to initialize cookie handler in
     # p-lp-bugs; after that, BugList will return private bugs, too
         if cookie_file:
-            Bug.authentification = cookie_file
-            BugList.authentification = cookie_file
+            Bug.authentication = cookie_file
+            BugList.authentication = cookie_file
 
     def upload(self, report, progress_callback = None):
         '''Upload given problem report return a handle for it. 
@@ -141,10 +133,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             b = Bug(id) 
 
             # parse out fields from summary
-            description = b.description.split("ProblemType: ")
-            assert len(description) == 2, 'bug description must contain standard apport format data'
+            m = re.search(r"(ProblemType:.*)$", b.description, re.S)
+            assert m, 'bug description must contain standard apport format data'
+            description = m.group(1).replace("\xc2\xa0", " ")
             
-            report.load(StringIO(description[1]))
+            report.load(StringIO(description))
 
             for att in b.attachments.filter(lambda a: re.match(
                     "Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt",
@@ -176,49 +169,49 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # we need properly named files here, otherwise they will be displayed
         # as '<fdopen>'
         tmpdir = tempfile.mkdtemp()
+        t = {}
         try:
-            t = open(os.path.join(tmpdir, 'Stacktrace.txt'), 'w+')
-            t.write(report['Stacktrace'])
-            t.flush()
-            t.seek(0)
-            att = Bug.NewAttachment(localfileobject=t,
+            t[0] = open(os.path.join(tmpdir, 'Stacktrace.txt'), 'w+')
+            t[0].write(report['Stacktrace'])
+            t[0].flush()
+            t[0].seek(0)
+            att = Bug.NewAttachment(localfileobject=t[0],
                     description='Stacktrace.txt (retraced)')
             new_comment = Bug.NewComment(subject='Symbolic stack trace',
                     text=comment, attachment=att)
             bug.comments.add(new_comment)
-            t.close()
 
-            t = open(os.path.join(tmpdir, 'ThreadStacktrace.txt'), 'w+')
-            t.write(report['ThreadStacktrace'])
-            t.flush()
-            t.seek(0)
-            att = Bug.NewAttachment(localfileobject=t,
+            t[1] = open(os.path.join(tmpdir, 'ThreadStacktrace.txt'), 'w+')
+            t[1].write(report['ThreadStacktrace'])
+            t[1].flush()
+            t[1].seek(0)
+            att = Bug.NewAttachment(localfileobject=t[1],
                     description='ThreadStacktrace.txt (retraced)')
             new_comment = Bug.NewComment(subject='Symbolic threaded stack trace',
                     attachment=att)
             bug.comments.add(new_comment)
-            t.close()
 
             if report.has_key('StacktraceSource'):
-                t = open(os.path.join(tmpdir, 'StacktraceSource.txt'), 'w+')
-                t.write(report['StacktraceSource'])
-                t.flush()
-                t.seek(0)
-                att = Bug.NewAttachment(localfileobject=t,
+                t[2] = open(os.path.join(tmpdir, 'StacktraceSource.txt'), 'w+')
+                t[2].write(report['StacktraceSource'])
+                t[2].flush()
+                t[2].seek(0)
+                att = Bug.NewAttachment(localfileobject=t[2],
                         description='StacktraceSource.txt')
                 new_comment = Bug.NewComment(subject='Stack trace with source code',
                         attachment=att)
                 bug.comments.add(new_comment)
-                t.close()
         finally:
             shutil.rmtree(tmpdir)
 
         # remove core dump if stack trace is usable
         if report.crash_signature():
             bug.attachments.remove(
-                    func=lambda a: re.match('^CoreDump.gz$', a.lp_filename))
+                    func=lambda a: re.match('^CoreDump.gz$', a.lp_filename or a.description))
             bug.importance='Medium'
         bug.commit()
+        for x in t.itervalues():
+            x.close()
         self._subscribe_triaging_team(bug, report)
 
     def get_distro_release(self, id):
@@ -278,7 +271,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # (or, of course, proper version tracking in Launchpad itself)
         try:
             b = Bug(id)
-        except LPUrlError, e:
+        except Bug.Error.LPUrlError, e:
             if e.value.startswith('Page not found'):
                 return 'invalid'
             else:
