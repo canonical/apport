@@ -123,7 +123,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             b = Bug(id) 
 
             # parse out fields from summary
-            m = re.search(r"(ProblemType:.*)$", b.description, re.S)
+            m = re.search(r"(ProblemType:.*)$", b.description_raw, re.S)
             assert m, 'bug description must contain standard apport format data'
             description = m.group(1).replace("\xc2\xa0", " ")
             
