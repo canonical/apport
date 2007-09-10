@@ -359,8 +359,8 @@ in a dependent package.' % master)
 #print 'ticket:', t
 #print c.get_comment_url(r, t)
 
-#c.mark_regression(89040, 1)
-#c.close_duplicate(89040, 1)
+#c.mark_regression(89040, 116026)
+#c.close_duplicate(89040, 116026)
 #c.mark_retrace_failed(89040)
 
 #print c.get_unfixed()
