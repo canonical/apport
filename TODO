@@ -10,6 +10,7 @@ necessary, and to not file crashes with flash installed
 
 apport:
  - check crashes of root processes with dropped privs in test suite
+ - if CORE_REAL_RLIM is not set, do not write core dump; add test case
 
 dup detection:
  - add merging of two databases -> needs time stamp of last change
