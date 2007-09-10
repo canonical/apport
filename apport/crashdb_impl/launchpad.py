@@ -285,13 +285,17 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if m.duplicate_of:
             master = m.duplicate_of
 
-        bug.duplicate_of = int(master)
         bug.attachments.remove(
             func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
 Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
 Disassembly.txt$)', a.lp_filename))
         if bug.private:
             bug.private = None
+        bug.commit()
+
+        # set duplicate last, since we cannot modify already dup'ed bugs
+        bug = Bug(id)
+        bug.duplicate_of = int(master)
         bug.commit()
 
     def mark_regression(self, id, master):
