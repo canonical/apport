@@ -35,7 +35,7 @@ dpkg -s python-launchpad-bugs >/dev/null 2>/dev/null || {
     wget -q http://archive.ubuntu.com/ubuntu/$P
     dpkg -x python-launchpad-bugs_*.deb $T
     rm python-launchpad-bugs_*.deb
-    mv $T/usr/share/pycentral/python-launchpad-bugs/site-packages/launchpadBugs apport/
+    mv $T/usr/share/pycentral/python-launchpad-bugs/site-packages/launchpadbugs apport/
 }
 
 # python-apt
