@@ -9,8 +9,10 @@ apport (0.98) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py, close_duplicate(): Explicitly set the
     duplicate after removing attachments, since the new LP does not allow any
     modification of duplicate bugs.
+  * bin/crash-digger: Only consolidate the duplicate DB when -i is given (i.
+    e. usually only on one running instance).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 10 Sep 2007 16:32:56 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Oct 2007 14:35:07 +0200
 
 apport (0.97) gutsy; urgency=low
 
