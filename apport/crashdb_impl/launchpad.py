@@ -107,10 +107,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             args['field.title'] = title
 
         if report.has_key('SourcePackage'):
-            return 'https://launchpad.net/%s/+source/%s/+filebug/%s?%s' % (
+            return 'https://bugs.launchpad.net/%s/+source/%s/+filebug/%s?%s' % (
                 self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
         else:
-            return 'https://launchpad.net/%s/+filebug/%s?%s' % (
+            return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
                 self.distro, handle, urllib.urlencode(args))
 
     def download(self, id):
@@ -218,7 +218,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
 
-        bugs = BugList('https://launchpad.net/ubuntu/+bugs?field.tag=' + self.arch_tag)
+        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=' + self.arch_tag)
         return set(int(i) for i in bugs)
 
     def get_dup_unchecked(self):
@@ -229,7 +229,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
 
-        bugs = BugList('https://launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check')
+        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check')
         return set(int(i) for i in bugs)
 
     def get_unfixed(self):
@@ -241,7 +241,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
-        bugs = BugList('https://launchpad.net/ubuntu/+bugs?field.tag=apport-crash')
+        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=apport-crash')
         return set(int(i) for i in bugs)
 
     def get_fixed_version(self, id):

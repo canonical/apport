@@ -1,5 +1,6 @@
 apport (0.98) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * debian/local/setup-apport-retracer: launchpadBugs -> launchpadbugs
     (recently renamed Python package in python-launchpad-bugs).
   * apport/crashdb_impl/launchpad.py, test examples: Do not duplicate to bug
@@ -11,6 +12,9 @@ apport (0.98) UNRELEASED; urgency=low
     modification of duplicate bugs.
   * bin/crash-digger: Only consolidate the duplicate DB when -i is given (i.
     e. usually only on one running instance).
+
+  [ Colin Watson ]
+  * Use bugs.launchpad.net for +filebug and +bugs requests. (LP: #138090)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Oct 2007 14:35:07 +0200
 
