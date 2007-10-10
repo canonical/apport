@@ -3,8 +3,6 @@ apport-retrace:
 
 python-apport:
  - Add API/report attribute for doing upstream problem reports
- - support /etc/apport/blacklist.d/ for check_ignored(): one exe
-   per line
  - add field for nonstandard apt sources.list[.d/] lines
 
 add firefox apport hook to suppress crash reports when restart is
@@ -12,6 +10,7 @@ necessary, and to not file crashes with flash installed
 
 apport:
  - check crashes of root processes with dropped privs in test suite
+ - if CORE_REAL_RLIM is not set, do not write core dump; add test case
 
 dup detection:
  - add merging of two databases -> needs time stamp of last change

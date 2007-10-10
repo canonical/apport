@@ -1,3 +1,70 @@
+apport (0.98) gutsy; urgency=low
+
+  [ Martin Pitt ]
+  * debian/local/setup-apport-retracer: launchpadBugs -> launchpadbugs
+    (recently renamed Python package in python-launchpad-bugs).
+  * apport/crashdb_impl/launchpad.py, test examples: Do not duplicate to bug
+    #1, that generates a huge amount of spam. Use another test bug.
+  * apport/crashdb_impl/launchpad.py, download(): Use Bug.description_raw,
+    since LP mangles spaces in .description. Bump p-lp-bugs dependency.
+  * apport/crashdb_impl/launchpad.py, close_duplicate(): Explicitly set the
+    duplicate after removing attachments, since the new LP does not allow any
+    modification of duplicate bugs.
+  * bin/crash-digger: Only consolidate the duplicate DB when -i is given (i.
+    e. usually only on one running instance).
+
+  [ Colin Watson ]
+  * Use bugs.launchpad.net for +filebug and +bugs requests. (LP: #138090)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Oct 2007 14:35:07 +0200
+
+apport (0.97) gutsy; urgency=low
+
+  [Martin Pitt]
+  * problem_report.py: Coerce CompressedValue.__len__() to return an int to
+    work on Python 2.4, too.
+  * debian/local/setup-apport-retracer: Adapt ddeb apt source for the move
+    from ~pitti to ~ubuntu-archive.
+
+  [Markus Korn]
+  * port to new python-launchpad-bugs API.
+
+  [Daniel Holbach]
+  * small fixes to the port.
+  * debian/control: bumped python-launchpad-bugs Depends to >= 0.2.2.
+
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Tue, 04 Sep 2007 11:24:28 +0200
+
+apport (0.96) gutsy; urgency=low
+
+  * Create man pages for apport-cli, apport-chroot, and dupdb-admin.
+  * apport/fileutils.py, find_file_package(): Try to resolve symlinks in the
+    directory path. (LP: #125551)
+  * apport/crashdb_impl/launchpad.py, debian/local/setup-apport-retracer: Use
+    packaging.get_system_architecture() (which is dpkg --print-architecture on
+    Debian/Ubuntu) instead of uname, so that this does the right thing on lpia.
+  * problem_report.py, write_mime(): Use base64 encoding for gzipped
+    attachments, to not screw up mail servers. Thanks to Tim Yamin for this
+    patch!
+  * apport/crashdb.py: Drop the last argument (-1), since it is the default
+    anyway and did not yet exist on Python 2.4.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 21 Aug 2007 14:11:48 +0200
+
+apport (0.95) gutsy; urgency=low
+
+  * general-hooks/automatix.py: Remove hashbang, it's not an executable
+    script.
+  * apport/report.py: Support system-wide blacklisting:
+    /etc/apport/blacklist.d/. Add test cases.
+  * Add doc/README.blacklist: Document blacklist.d/, install it there in
+    setup.py.
+  * debian/rules: Blacklist wine-preloader, so that we ignore wine crashes
+    until an appropriate way is found to deal with them. (Point 6 of
+    apport-better-retracing spec.)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 11 Aug 2007 18:10:54 +0200
+
 apport (0.94) gutsy; urgency=low
 
   * doc/data-format.tex: Some updates to incorporate feedback from Gnome

@@ -1,0 +1,71 @@
+.TH dupdp\-admin 1 "August 01, 2007" "Martin Pitt"
+
+.SH NAME
+
+dupdb\-admin \- Manage the duplicate database for apport\-retrace.
+
+.SH SYNOPSIS
+
+.B dupdb\-admin \-f
+.I dbpath
+.B status
+
+.B dupdb\-admin \-f
+.I dbpath
+.B dump
+
+.B dupdb\-admin \-f
+.I dbpath
+.B changeid
+.I oldid newid
+
+.SH DESCRIPTION
+
+.BR apport\-retrace (1)
+has the capability of checking for duplicate bugs (amonst other
+things). It uses an SQLite database for keeping track of master bugs.
+.B dupdb\-admin
+is a small tool to manage that database.
+
+The central concept in that database is a "crash signature", a string
+that uniquely identifies a particular crash. It is built from the
+executable path name, the signal number or exception name, and the
+topmost functions of the stack trace.
+
+The database maps crash signatures to the 'master' crash id and thus
+can close duplicate crash reports with a reference to that master ID.
+It also tracks the status of crashes (open/fixed in a particular
+version) to be able to identify regressions.
+
+.SH MODES
+
+.TP
+.B status
+Print general status of the duplicate db. For now, it only shows the
+time when the database was "consolidated" last, i. e. when the bug
+states (open/fixed) in the SQLite database where updated to the actual
+states in the bug tracking system.
+
+.TP
+.B dump
+Print a list of all database entries.
+
+.TP
+.B changeid
+Change the associated crash ID for a particular crash.
+
+.SH OPTIONS
+
+.TP
+.B \-f \fIpath\fR, \fB\-\-database-file\fR=\fIpath
+Instead of processing the new crash reports in
+.I /var/crash/\fR,
+report a particular report in an arbitrary file location.
+This is useful for copying a crash report to a machine with internet
+connection and reporting it from there. This defaults to
+.I ~./apport_duplicates.db\fR.
+
+.SH AUTHOR
+.B apport
+and the accompanying tools are developed by Martin Pitt
+<martin.pitt@ubuntu.com>.

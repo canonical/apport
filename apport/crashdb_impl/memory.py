@@ -130,7 +130,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 #
 
 if __name__ == '__main__':
-    import unittest, copy, time
+    import unittest, copy, time, os
 
     class _MemoryCrashDBTest(unittest.TestCase):
         def setUp(self):
@@ -394,6 +394,74 @@ ZeroDivisionError: integer division or modulo by zero'''
             # report from ID#1 is a dup of #0
             self.assertEqual(self.crashes.check_duplicate(2,
                 self.crashes.download(1)), (0, None))
+
+        # FIXME: fix locking and enable this test
+        def __test_duplicate_db_consolidate_race(self):
+            '''Test two parallel instances of duplicate_db_consolidate().
+            
+            One should immediately throw a 'locked' exception.'''
+
+            # create db with 1000 unfixed crashes
+            self.crashes = CrashDatabase(None, None, {})
+            self.crashes.init_duplicate_db(':memory:')
+
+            for bug in xrange(1000):
+                r = apport.Report()
+                r['Package'] = 'python-goo 3'
+                r['SourcePackage'] = 'pygoo'
+                r['ExecutablePath'] = '/usr/bin/pygoo'
+                r['Traceback'] = '''Traceback (most recent call last):
+  File "test.py", line 7, in <module>
+    print _f(5)
+  File "test.py", line 5, in _f
+    return g_foo00(x+1)
+  File "test.py", line 2, in g_foo00
+    return x/0
+ZeroDivisionError%i: integer division or modulo by zero''' % bug
+                self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
+                    'http://pygoo.bug.net/%i' % bug)
+                self.crashes.check_duplicate(bug)
+                # mark crash as fixed now
+                self.crashes.reports[bug]['fixed_version'] = str(bug)
+
+            locked_exceptions = 0
+
+            # run two consolidations in parallel; the child returns 0 when
+            # consolidation finished properly, 42 on 'db locked' exception, or
+            # 1 on another exception
+            pid = os.fork() 
+            if pid == 0:
+                try:
+                    self.crashes.duplicate_db_consolidate()
+                except Exception, e:
+                    if 'database is locked' in e.message:
+                        os._exit(42)
+                    else:
+                        raise
+                os._exit(0)
+
+            try:
+                self.crashes.duplicate_db_consolidate()
+            except Exception, e:
+                if 'database is locked' in e.message:
+                    locked_exceptions += 1
+                else:
+                    raise
+
+            # wait on child, examine status
+            status = os.wait()[1]
+            self.assert_(os.WIFEXITED(status))
+            status = os.WEXITSTATUS(status)
+            if status == 42:
+                locked_exceptions += 1
+            else:
+                self.assertEqual(status, 0)
+
+            self.assertEqual(locked_exceptions, 1)
+
+            # check consistency
+            for (sig, (bug, version)) in self.crashes._duplicate_db_dump().iteritems():
+                self.assertEqual(str(bug), version)
 
         def test_duplicate_db_consolidate(self):
             '''Test duplicate_db_consolidate().'''

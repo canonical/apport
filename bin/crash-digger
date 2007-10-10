@@ -47,7 +47,7 @@ class CrashDigger:
         This function also takes care of regularly consolidating the duplicate
         database.'''
 
-        if self.dup_db:
+        if self.dup_db and self.arch_indep_dupcheck:
             if self.crashdb.duplicate_db_needs_consolidation():
                 self.log('Consolidating duplicate database...')
                 try:

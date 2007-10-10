@@ -14,11 +14,12 @@ the full text of the license.
 
 import zlib, base64, time, UserDict, sys, gzip, struct
 from cStringIO import StringIO
+from email.Encoders import encode_base64
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 
-class CompressedValue():
+class CompressedValue:
     '''Represent a ProblemReport value which is gzip compressed.'''
 
     def __init__(self, value=None, name=None):
@@ -59,7 +60,7 @@ class CompressedValue():
         '''Return length of uncompressed value.'''
 
         assert self.gzipvalue
-        return struct.unpack("<L", self.gzipvalue[-4:])[0]
+        return int(struct.unpack("<L", self.gzipvalue[-4:])[0])
 
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
@@ -395,6 +396,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 else:
                     att.add_header('Content-Disposition', 'attachment', filename=k+'.gz')
                 att.set_payload(attach_value)
+                encode_base64(att)
                 attachments.append(att)
             else:
                 # plain text value

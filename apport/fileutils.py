@@ -58,6 +58,12 @@ def find_file_package(file):
     '''Return the package that ships the given file (or None if no package
     ships it).'''
 
+    # resolve symlinks in directories
+    (dir, name) = os.path.split(file)
+    resolved_dir = os.path.realpath(dir)
+    if os.path.isdir(resolved_dir):
+        file = os.path.join(resolved_dir, name)
+
     if not likely_packaged(file):
         return None
 
