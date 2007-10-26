@@ -184,6 +184,7 @@ __frob (x=1) at crash.c:30'''
         r = apport.Report()
         r['Package'] = 'libfoo1 1.2-4'
         r['SourcePackage'] = 'foo'
+        r['DistroRelease'] = 'Testux 1.0'
         r['Signal'] = '11'
         r['ExecutablePath'] = '/bin/crash'
 
@@ -198,6 +199,7 @@ __frob (x=4) at crash.c:30'''
         r = apport.Report()
         r['Package'] = 'bar 42-4'
         r['SourcePackage'] = 'bar'
+        r['DistroRelease'] = 'Testux 1.0'
         r['Signal'] = '11'
         r['ExecutablePath'] = '/usr/bin/broken'
 
@@ -212,6 +214,7 @@ d (x=1) at crash.c:29'''
         r = apport.Report()
         r['Package'] = 'python-goo 3epsilon1'
         r['SourcePackage'] = 'pygoo'
+        r['DistroRelease'] = 'Testux 2.2'
         r['ExecutablePath'] = '/usr/bin/pygoo'
         r['Traceback'] = '''Traceback (most recent call last):
 File "test.py", line 7, in <module>
@@ -230,6 +233,7 @@ ZeroDivisionError: integer division or modulo by zero'''
         r = apport.Report()
         r['Package'] = 'python-goo 5'
         r['SourcePackage'] = 'pygoo'
+        r['DistroRelease'] = 'Testux 2.2'
         r['ExecutablePath'] = '/usr/bin/pygoo'
         r['Traceback'] = '''Traceback (most recent call last):
 File "test.py", line 7, in <module>
