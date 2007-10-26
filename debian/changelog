@@ -2,8 +2,10 @@ apport (0.99) UNRELEASED; urgency=low
 
   * cli/apport-cli, qt4/apport-qt: Fix typo 'send' -> 'sent'.
     (LP: #139288)
+  * apport_python_hook.py: Add user info, too. Also add check for this to the
+    test suite. (LP: #145109)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 16:23:48 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 16:27:38 +0200
 
 apport (0.98) gutsy; urgency=low
 
