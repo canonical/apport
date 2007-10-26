@@ -201,6 +201,14 @@ free memory to automatically analyze the problem and send a report to the develo
                     assert response == 'full'
 
             self.file_report()
+        except IOError, e:
+            # fail gracefully if file is not readable for us
+            if e.errno in (errno.EPERM, errno.EACCES):
+                self.ui_error_message(_('Invalid problem report'),
+                    _('You are not allowed to access this problem report.'))
+                sys.exit(1)
+            else:
+                raise
         except OSError, e:
             # fail gracefully on ENOMEM
             if e.errno == errno.ENOMEM:

@@ -4,8 +4,11 @@ apport (0.99) UNRELEASED; urgency=low
     (LP: #139288)
   * apport_python_hook.py: Add user info, too. Also add check for this to the
     test suite. (LP: #145109)
+  * apport/ui.py, run_crash(): Show a proper UI error message instead of just
+    crashing with an exception if the crash report is inaccessible for the
+    invoking user. (LP: #146464)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 16:27:38 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 10:45:31 -0400
 
 apport (0.98) gutsy; urgency=low
 
