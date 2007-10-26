@@ -32,6 +32,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.unretraced = set()
         self.dup_unchecked = set()
 
+        if 'dummy_data' in options:
+            self.add_dummy_data()
+
     def upload(self, report, progress_callback = None):
         '''Store the report and return a handle number (starting from 0).
         
@@ -156,13 +159,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return len(self.reports)-1
 
-#
-# Unit test (this also tests the dup detection API from apport/crashdb.py)
-#
+    def add_dummy_data(self):
+        '''Add some dummy crash reports.
 
-class _MemoryCrashDBTest(unittest.TestCase):
-    def setUp(self):
-        self.crashes = CrashDatabase(None, None, {})
+        This is mostly useful for test suites.'''
 
         # signal crash with source package and complete stack trace
         r = apport.Report()
@@ -177,8 +177,7 @@ d01 (x=1) at crash.c:29
 raise () from /lib/libpthread.so.0
 <signal handler called>
 __frob (x=1) at crash.c:30'''
-        self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-            'http://foo.bug.net/0')
+        self.upload(r)
 
         # duplicate of above crash (slightly different arguments and
         # package version)
@@ -193,8 +192,7 @@ d01 (x=3) at crash.c:29
 raise () from /lib/libpthread.so.0
 <signal handler called>
 __frob (x=4) at crash.c:30'''
-        self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-            'http://foo.bug.net/1')
+        self.upload(r)
 
         # unrelated signal crash
         r = apport.Report()
@@ -208,8 +206,7 @@ g (x=1, y=42) at crash.c:26
 f (x=1) at crash.c:27
 e (x=1) at crash.c:28
 d (x=1) at crash.c:29'''
-        self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-            'http://bar.bug.net/2')
+        self.upload(r)
 
         # Python crash
         r = apport.Report()
@@ -224,11 +221,10 @@ return g_foo00(x+1)
 File "test.py", line 2, in g_foo00
 return x/0
 ZeroDivisionError: integer division or modulo by zero'''
-        self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-            'http://pygoo.bug.net/3')
+        self.upload(r)
 
         # mark the python crash as fixed
-        self.crashes.reports[3]['fixed_version'] = '4.1'
+        self.reports[3]['fixed_version'] = '4.1'
 
         # Python crash reoccurs in a later version (regression)
         r = apport.Report()
@@ -243,8 +239,18 @@ return g_foo00(x+1)
 File "test.py", line 2, in g_foo00
 return x/0
 ZeroDivisionError: integer division or modulo by zero'''
-        self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-            'http://pygoo.bug.net/4')
+        self.upload(r)
+
+#
+# Unit test (this also tests the dup detection API from apport/crashdb.py)
+#
+
+class _MemoryCrashDBTest(unittest.TestCase):
+    def setUp(self):
+        self.crashes = CrashDatabase(None, None, {'dummy_data': '1'})
+
+        self.assertEqual(self.crashes.get_comment_url(self.crashes.download(0),
+            0), 'http://foo.bug.net/0')
 
         # test-suite internal consistency check: Python signatures are
         # indeed equal and exist
@@ -255,6 +261,13 @@ ZeroDivisionError: integer division or modulo by zero'''
 
         # we should have 5 crashes
         self.assertEqual(self.crashes.latest_id(), 4)
+
+    def test_no_dummy_data(self):
+        '''Test that no dummy data is added by default.'''
+
+        self.crashes = CrashDatabase(None, None, {})
+        self.assertEqual(self.crashes.latest_id(), -1)
+        self.assertRaises(IndexError, self.crashes.download, 0)
 
     def test_retrace_markers(self):
         '''Test bookkeeping in get_unretraced()/mark_retraced() and

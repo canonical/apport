@@ -12,8 +12,12 @@ apport (0.99) UNRELEASED; urgency=low
     _MemoryCrashDBTest also when not running file as __main__. This makes the
     class useful for higher-level test suites. Add test cases for the new
     functions.
+  * apport/crashdb_impl/memory.py: Support 'dummy_data' option which adds a
+    few dummy crashes by default. This is useful for external test suites
+    which cannot otherwise pre-fill the in-memory db. Add checks that this
+    works properly.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 16:54:29 -0400
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 17:32:53 -0400
 
 apport (0.98) gutsy; urgency=low
 
