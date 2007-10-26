@@ -7,8 +7,13 @@ apport (0.99) UNRELEASED; urgency=low
   * apport/ui.py, run_crash(): Show a proper UI error message instead of just
     crashing with an exception if the crash report is inaccessible for the
     invoking user. (LP: #146464)
+  * apport/crashdb_impl/memory.py: Implement mark_retraced(),
+    get_unretraced(), and get_dup_unchecked() for completeness, and define
+    _MemoryCrashDBTest also when not running file as __main__. This makes the
+    class useful for higher-level test suites. Add test cases for the new
+    functions.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 10:45:31 -0400
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 16:54:29 -0400
 
 apport (0.98) gutsy; urgency=low
 
