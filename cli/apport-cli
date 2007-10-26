@@ -254,7 +254,7 @@ class CLIUserInterface(apport.ui.UserInterface):
     def ui_start_info_collection_progress(self):
         self.progress = CLIProgressDialog (
                 _('Collecting problem information'),
-                _('The collected information can be send to the developers to improve the\n'
+                _('The collected information can be sent to the developers to improve the\n'
                   'application. This might take a few minutes.'))
         self.progress.show()
 
