@@ -260,12 +260,12 @@ class QT4UserInterface(apport.ui.UserInterface):
         return 'cancel'
 
     def ui_info_message(self, title, text):
-        QMessageBox.information (None, title, text, 
-                QMessageBox.Close, QMessageBox.Close)
+        QMessageBox.information (None, unicode(title, 'UTF-8'),
+                unicode(text, 'UTF-8'), QMessageBox.Close, QMessageBox.Close)
 
     def ui_error_message(self, title, text):
-        QMessageBox.critical (None, title, text, 
-                QMessageBox.Close, QMessageBox.Close)
+        QMessageBox.critical (None, unicode(title, 'UTF-8'),
+                unicode(text, 'UTF-8'), QMessageBox.Close, QMessageBox.Close)
 
     def ui_start_info_collection_progress(self):
         self.progress = QT4ProgressDialog (
