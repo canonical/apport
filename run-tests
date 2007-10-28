@@ -33,7 +33,9 @@ else
     $mydir/test-hooks
 fi
 
-$mydir/test-crash-digger
+if [ "$local" ]; then
+    $mydir/test-crash-digger
+fi
 
 if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" = "|" ]; then
     $mydir/test-apport kernel
