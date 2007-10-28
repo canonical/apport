@@ -279,14 +279,15 @@ class _ApportUtilsTest(unittest.TestCase):
             if onedesktop and multidesktop:
                 break
 
-        assert nodesktop and onedesktop and multidesktop
-
-        self.assertEqual(find_package_desktopfile(nodesktop), None, 'no-desktop package %s' % nodesktop)
-        self.assertEqual(find_package_desktopfile(multidesktop), None, 'multi-desktop package %s' % multidesktop)
-        d = find_package_desktopfile(onedesktop)
-        self.assertNotEqual(d, None, 'one-desktop package %s' % onedesktop)
-        self.assert_(os.path.exists(d))
-        self.assert_(d.endswith('.desktop'))
+        if nodesktop:
+            self.assertEqual(find_package_desktopfile(nodesktop), None, 'no-desktop package %s' % nodesktop)
+        if multidesktop:
+            self.assertEqual(find_package_desktopfile(multidesktop), None, 'multi-desktop package %s' % multidesktop)
+        if onedesktop:
+            d = find_package_desktopfile(onedesktop)
+            self.assertNotEqual(d, None, 'one-desktop package %s' % onedesktop)
+            self.assert_(os.path.exists(d))
+            self.assert_(d.endswith('.desktop'))
 
     def test_likely_packaged(self):
         '''Test likely_packaged().'''

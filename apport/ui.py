@@ -15,7 +15,7 @@ the full text of the license.
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext
 import pwd, errno, urllib, zlib
-import subprocess, threading, webbrowser, xdg.DesktopEntry
+import subprocess, threading, webbrowser
 from gettext import gettext as _
 
 import apport, apport.fileutils, REThread
@@ -558,6 +558,7 @@ free memory to automatically analyze the problem and send a report to the develo
             desktop_file = apport.fileutils.find_package_desktopfile(self.cur_package)
         if desktop_file:
             try:
+                import xdg.DesktopEntry
                 return xdg.DesktopEntry.DesktopEntry(desktop_file)
             except:
                 return None
