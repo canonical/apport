@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, time, optparse, subprocess
+import os, time, optparse, subprocess, sys
 
 from apport.crashdb import get_crashdb
 
@@ -40,6 +40,7 @@ class CrashDigger:
 
         if self.verbose:
             print '%s: %s' % (time.strftime('%x %X'), str)
+            sys.stdout.flush()
 
     def fill_pool(self):
         '''Query crash db for new IDs to process.
@@ -113,13 +114,13 @@ class CrashDigger:
         res = self.crashdb.check_duplicate(id)
         if res:
             if res[1] == None:
-                print 'Report is a duplicate of #%i (not fixed yet)' % res[0]
+                self.log('Report is a duplicate of #%i (not fixed yet)' % res[0])
             elif res[1] == '':
-                print 'Report is a duplicate of #%i (fixed in latest version)' % res[0]
+                self.log('Report is a duplicate of #%i (fixed in latest version)' % res[0])
             else:
-                print 'Report is a duplicate of #%i (fixed in version %s)' % res
+                self.log('Report is a duplicate of #%i (fixed in version %s)' % res)
         else:
-            print 'Duplicate check negative'
+            self.log('Duplicate check negative')
 
     def run(self):
         '''Process the work pools until they are empty and get new entries

@@ -16,8 +16,10 @@ apport (0.99) UNRELEASED; urgency=low
     few dummy crashes by default. This is useful for external test suites
     which cannot otherwise pre-fill the in-memory db. Add checks that this
     works properly.
+  * bin/crash-digger: Use self.log() more consistently, and flush stdout in
+    log(), so that we do not lose logs on output redirection.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Oct 2007 17:32:53 -0400
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 28 Oct 2007 09:09:31 -0400
 
 apport (0.98) gutsy; urgency=low
 
