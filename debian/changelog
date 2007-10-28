@@ -25,8 +25,10 @@ apport (0.99) UNRELEASED; urgency=low
     reporting package problems with apport-cli actually works. (LP: #136369)
   * apport/ui.py, run_crash(): Intercept ENOSPC and present a proper error
     message. (LP: #145100)
+  * gtk/apport-gtk.glade: Fix title of upload progress window to comply to
+    HIG. Thanks, Bruce Cowan. (LP: #144782)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 28 Oct 2007 17:53:22 -0400
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 28 Oct 2007 17:57:30 -0400
 
 apport (0.98) gutsy; urgency=low
 

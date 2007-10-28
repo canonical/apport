@@ -733,7 +733,7 @@ After the problem report has been sent, please fill out the form in the automati
 
 <widget class="GtkWindow" id="window_report_upload">
   <property name="border_width">12</property>
-  <property name="title">Apport</property>
+  <property name="title" translatable="yes">Uploading problem information</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ALWAYS</property>
   <property name="modal">False</property>
