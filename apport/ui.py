@@ -217,6 +217,10 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_error_message(_('Invalid problem report'),
                     _('You are not allowed to access this problem report.'))
                 sys.exit(1)
+            elif e.errno == errno.ENOSPC:
+                self.ui_error_message(_('Error'),
+                    _('There is not enough disk space available to process this report.'))
+                sys.exit(1)
             else:
                 raise
         except OSError, e:

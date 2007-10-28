@@ -23,8 +23,10 @@ apport (0.99) UNRELEASED; urgency=low
     thread, which happens on broken core dumps. (LP: #132212)
   * cli/apport-cli, ui_present_package_error(): Fix running of dialog, so that
     reporting package problems with apport-cli actually works. (LP: #136369)
+  * apport/ui.py, run_crash(): Intercept ENOSPC and present a proper error
+    message. (LP: #145100)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 28 Oct 2007 17:38:13 -0400
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 28 Oct 2007 17:53:22 -0400
 
 apport (0.98) gutsy; urgency=low
 
