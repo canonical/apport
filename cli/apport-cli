@@ -162,7 +162,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         report = dialog.addbutton(_('&Report Problem...'))
         dialog.addbutton(_('&Cancel'))
 
-        response = run()
+        response = dialog.run()
 
         if response == report:
             return 'report'
