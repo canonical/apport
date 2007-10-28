@@ -43,8 +43,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.reports.append({'report': report, 'fixed_version': None, 'dup_of':
             None, 'comment:': ''})
         id = len(self.reports)-1
-        self.dup_unchecked.add(id)
-        if 'Traceback' not in report:
+        if 'Traceback' in report:
+            self.dup_unchecked.add(id)
+        else:
             self.unretraced.add(id)
         return id
 
@@ -278,7 +279,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         get_dup_unchecked() and _mark_dup_checked().'''
 
         self.assertEqual(self.crashes.get_unretraced(), set([0, 1, 2]))
-        self.assertEqual(self.crashes.get_dup_unchecked(), set(range(5)))
+        self.assertEqual(self.crashes.get_dup_unchecked(), set([3, 4]))
 
     #
     # Test memory.py implementation
