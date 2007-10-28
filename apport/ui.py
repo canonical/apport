@@ -176,7 +176,17 @@ free memory to automatically analyze the problem and send a report to the develo
                 assert response['action'] == 'report'
 
             # we want to file a bug now
-            self.collect_info()
+            try:
+                self.collect_info()
+            except IOError, e:
+                # can happen with broken core dumps
+                if 'CRC check' in e.message:
+                    self.report = None
+                    self.ui_error_message(_('Invalid problem report'),
+                        _('This problem report is damaged and cannot be processed.'))
+                    return
+                else:
+                    raise
 
             # check unreportable flag
             if self.report.has_key('UnreportableReason'):
