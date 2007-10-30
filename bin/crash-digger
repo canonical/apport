@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, time, optparse, subprocess, sys
+import os, time, optparse, subprocess, sys, signal
 
 from apport.crashdb import get_crashdb
 
@@ -10,7 +10,7 @@ from apport.crashdb import get_crashdb
 
 class CrashDigger:
     def __init__(self, chroot_map, auth_file, verbose=False, sleep_time=600,
-        dup_db=None, arch_indep_dupcheck=False):
+        dup_db=None, arch_indep_dupcheck=False, logfile=None, pidfile=None):
         '''Initialize pools.'''
 
         self.retrace_pool = set()
@@ -22,6 +22,22 @@ class CrashDigger:
         self.sleep_time = sleep_time
         self.dup_db = dup_db
         self.arch_indep_dupcheck = arch_indep_dupcheck
+        if logfile:
+            self.logfile = open(logfile, 'a')
+        else:
+            self.logfile = None
+
+        # daemonize if a pid file is given
+        if pidfile:
+            p = os.fork()
+            if p:
+                open(pidfile, 'w').write('%i' % p)
+                sys.exit(0)
+            os.close(0)
+            os.dup2(self.logfile.fileno(), sys.stdout.fileno())
+            os.dup2(self.logfile.fileno(), sys.stderr.fileno())
+            os.setsid()
+
         self.log('Initializing crash digger, using chroot map %s' % self.chroot_map)
 
 	# read chroot map and get available releases
@@ -39,8 +55,8 @@ class CrashDigger:
         the current date and time.'''
 
         if self.verbose:
-            print '%s: %s' % (time.strftime('%x %X'), str)
-            sys.stdout.flush()
+            print >> (self.logfile or sys.stdout), '%s: %s' % (time.strftime('%x %X'), str)
+            (self.logfile or sys.stdout).flush()
 
     def fill_pool(self):
         '''Query crash db for new IDs to process.
@@ -54,11 +70,10 @@ class CrashDigger:
                 try:
                     self.crashdb.duplicate_db_consolidate()
                     if self.verbose:
-                        print 'duplicate db is now:'
-                        print '-------------'
+                        self.log('duplicate db is now:\n-------------')
                         for k, v in self.crashdb._duplicate_db_dump(True).iteritems():
-                            print k, v
-                        print '-------------'
+                            self.log('%s %s' % (k, v))
+                        self.log('-------------')
                 except Exception, e:
                     if 'database is locked' in e.message:
                         self.log('DB is already locked, skipping')
@@ -165,12 +180,32 @@ def parse_options():
     optparser.add_option('-v', '--verbose',
         help='Verbose operation (also passed to apport-retrace)',
         action='store_true', dest='verbose', default=False)
+    optparser.add_option('-l', '--log',
+        help='Write messages to given log file)',
+        action='store', type='string', dest='logfile', metavar='LOGFILE',
+        default=None)
+    optparser.add_option('-p', '--pidfile',
+        help='Daemonize and write PID to given file)',
+        action='store', type='string', dest='pidfile', metavar='PIDFILE',
+        default=None)
+    optparser.add_option('-S', '--stop',
+        help='Stop a running daemon (needs --pidfile)', 
+        action='store_true', dest='stop', default=False)
 
     (opts, args) = optparser.parse_args()
 
-    assert opts.chroot_map
-    assert opts.auth_file
-
+    if opts.stop:
+        if not opts.pidfile:
+            print >> sys.stderr, 'Error: -p/--pidfile needs to be specified'
+            sys.exit(1)
+    else:
+        if not opts.chroot_map:
+            print >> sys.stderr, 'Error: -m/--chroot-map needs to be specified'
+            sys.exit(1)
+        if not opts.auth_file:
+            print >> sys.stderr, 'Error: -a/--auth needs to be specified'
+            sys.exit(1)
+    
     return (opts, args)
 
 #
@@ -178,5 +213,12 @@ def parse_options():
 #
 
 opts, args = parse_options()
+
+if opts.stop:
+    pid = int(open(opts.pidfile).read().strip())
+    os.kill(pid, signal.SIGTERM)
+    print 'Killed daemon with PID %i' % pid
+    sys.exit(0)
+
 CrashDigger(opts.chroot_map, opts.auth_file, opts.verbose, opts.sleep,
-    opts.dup_db, opts.arch_indep_dupcheck).run()
+    opts.dup_db, opts.arch_indep_dupcheck, opts.logfile, opts.pidfile).run()

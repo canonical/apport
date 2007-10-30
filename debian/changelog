@@ -1,3 +1,10 @@
+apport (0.100) UNRELEASED; urgency=low
+
+  * bin/crash-digger: Add option --log for logging to a file, and
+    --pidfile/--stop for daemonization. Add test cases to test-crash-digger.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 30 Oct 2007 11:50:29 -0400
+
 apport (0.99) hardy; urgency=low
 
   * cli/apport-cli, qt4/apport-qt: Fix typo 'send' -> 'sent'.

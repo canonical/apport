@@ -33,16 +33,17 @@ echo "$@" >> %s''' % self.apport_chroot_log)
     def tearDown(self):
         shutil.rmtree(self.workdir)
 
-    def call(self, args, timeout = 2):
+    def call(self, args, timeout=None):
         '''Call crash-digger with given arguments, terminate it after given
         number of seconds, and return a pair (stdout, stderr).'''
 
         out = tempfile.TemporaryFile()
         err = tempfile.TemporaryFile()
         s = subprocess.Popen(['crash-digger'] + args, stdout=out, stderr=err)
-        time.sleep(timeout)
-        self.assertEqual(s.poll(), None, 'crash-digger is still running')
-        os.kill(s.pid, signal.SIGTERM)
+        if timeout:
+            time.sleep(timeout)
+            self.assertEqual(s.poll(), None, 'crash-digger is still running')
+            os.kill(s.pid, signal.SIGTERM)
         s.wait()
         out.seek(0)
         err.seek(0)
@@ -52,7 +53,7 @@ echo "$@" >> %s''' % self.apport_chroot_log)
         '''Test operation in foreground without -i'''
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vs1'])
+            os.path.join(self.workdir, 'dup.db'), '-vs1'], timeout=2)
         self.assertEqual(err, '', 'no error messages')
         self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
         self.assert_('crash is release FooLinux Pi/2 which does not have a chroot available' in out)
@@ -65,7 +66,7 @@ echo "$@" >> %s''' % self.apport_chroot_log)
         '''Test operation in foreground with -i'''
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vis1'])
+            os.path.join(self.workdir, 'dup.db'), '-vis1'], timeout=2)
         self.assertEqual(err, '', 'no error messages')
         self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
         self.assert_('crash is release FooLinux Pi/2 which does not have a chroot available' in out)
@@ -75,6 +76,48 @@ echo "$@" >> %s''' % self.apport_chroot_log)
         self.assert_('checking #3 for duplicate' in out)
         self.assert_('checking #4 for duplicate' in out)
         self.assert_('Report is a duplicate of #3 (not fixed yet)' in out)
+
+    def test_daemon(self):
+        '''Test operation in daemon mode'''
+
+        log = tempfile.NamedTemporaryFile()
+        (fd, pidfile) = tempfile.mkstemp()
+        os.close(fd)
+
+        try:
+            (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+                os.path.join(self.workdir, 'dup.db'), '-vs1', '-l', log.name,
+                '-p', pidfile])
+            self.assertEqual(err, '', 'no error messages: ' + err)
+            self.assertEqual(out, '', 'no output messages: ' + out)
+            # let it grind for a while and then shut it down
+            time.sleep(2)
+            (out, err) = self.call(['--stop', '-p', pidfile])
+            self.assertEqual(err, '', 'no error messages')
+
+            log.seek(0)
+            out = log.read()
+            self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
+            self.assert_('crash is release FooLinux Pi/2 which does not have a chroot available' in out)
+            self.assert_('retracing #1 exit status: 0' in out)
+            self.assert_('retracing #2 exit status: 0' in out)
+            self.assert_('fill_pool: fail pool now: set([0])' in out)
+            self.assert_('#3' not in out, 'Python crashes are not retraced')
+        finally:
+            os.unlink(pidfile)
+
+    def test_daemon_exception(self):
+        '''Test exception logging in daemon mode'''
+
+        log = tempfile.NamedTemporaryFile()
+
+        (out, err) = self.call(['-m', '/etc/passwd', '-a', '/dev/zero', '-vs1',
+            '-l', log.name, '-p', '/dev/null'])
+        self.assertEqual(err, '', 'no error messages: ' + err)
+        self.assertEqual(out, '', 'no output messages: ' + out)
+        log.seek(0)
+        out = log.read()
+        self.assert_('SyntaxError' in out)
 
 tl = unittest.TestLoader()
 tests_all = unittest.TestSuite((
