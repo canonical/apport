@@ -2,8 +2,11 @@ apport (0.100) UNRELEASED; urgency=low
 
   * bin/crash-digger: Add option --log for logging to a file, and
     --pidfile/--stop for daemonization. Add test cases to test-crash-digger.
+  * bin/apport: Do not re-raise exceptions about failure to create the lock
+    file, to avoid crashing in the case that another apport instance tries to
+    lock at exactly the same moment. (LP: #147237)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 30 Oct 2007 11:50:29 -0400
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 30 Oct 2007 22:09:38 -0400
 
 apport (0.99) hardy; urgency=low
 
