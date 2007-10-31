@@ -62,6 +62,11 @@ class CompressedValue:
         assert self.gzipvalue
         return int(struct.unpack("<L", self.gzipvalue[-4:])[0])
 
+    def splitlines(self):
+        '''Behaves like splitlines() for a normal string.'''
+
+        return self.get_value().splitlines()
+
 class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
         '''Initialize a fresh problem report.
@@ -509,6 +514,10 @@ class _ProblemReportTest(unittest.TestCase):
         io = StringIO()
         pr['Large'].write(io)
         self.assertEqual(io.getvalue(), large_val)
+
+        pr['Multiline'] = CompressedValue('\1\1\1\n\2\2\n\3\3\3')
+        self.assertEqual(pr['Multiline'].splitlines(), 
+            ['\1\1\1', '\2\2', '\3\3\3'])
 
     def test_write(self):
         '''Test write() and proper formatting.'''

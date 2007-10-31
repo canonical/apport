@@ -824,6 +824,7 @@ class Report(ProblemReport):
 #
 
 import unittest, shutil, signal, time
+from cStringIO import StringIO
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
@@ -1790,6 +1791,31 @@ ZeroDivisionError: integer division or modulo by zero'''
 
         r['Traceback'] = 'FooBar'
         self.assertEqual(r.crash_signature(), None)
+
+    def test_binary_data(self):
+        '''Test that methods get along with binary data.'''
+
+        pr = Report()
+        pr['Signal'] = '11'
+        pr['ExecutablePath'] = '/bin/foo'
+        pr['Stacktrace'] = '''#0  0x10000488 in h (p="\0\0\0\1\2") at crash.c:25
+#1  0x10000550 in main () at crash.c:31
+'''
+        pr['ThreadStacktrace'] = pr['Stacktrace']
+        pr['ProcCmdline'] = 'python\0-OO\011\0/bin/bash'
+        pr._gen_stacktrace_top()
+
+        io = StringIO()
+        pr.write(io)
+        io.seek(0)
+        pr = Report()
+        pr.load(io, binary='compressed')
+
+        assert hasattr(pr['StacktraceTop'], 'get_value')
+
+        self.assertEqual(pr.has_useful_stacktrace(), True)
+        self.assertEqual(pr.crash_signature(), '/bin/foo:11:h:main')
+        self.assertEqual(pr.standard_title(), 'foo crashed with SIGSEGV in h()')
 
 if __name__ == '__main__':
     unittest.main()

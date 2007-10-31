@@ -5,8 +5,13 @@ apport (0.100) UNRELEASED; urgency=low
   * bin/apport: Do not re-raise exceptions about failure to create the lock
     file, to avoid crashing in the case that another apport instance tries to
     lock at exactly the same moment. (LP: #147237)
+  * apport/report.py testsuite: Check that our methods get along with binary
+    data which turn into CompressedValue objects after loading them from a
+    file. This reproduces LP #148305.
+  * problem_report.py, CompressedValue: Add method splitlines() since we need
+    it very often. Add test case to test_compressed_values(). (LP: #148305)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 30 Oct 2007 22:09:38 -0400
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 30 Oct 2007 23:24:35 -0400
 
 apport (0.99) hardy; urgency=low
 
