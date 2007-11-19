@@ -10,8 +10,11 @@ apport (0.100) UNRELEASED; urgency=low
     file. This reproduces LP #148305.
   * problem_report.py, CompressedValue: Add method splitlines() since we need
     it very often. Add test case to test_compressed_values(). (LP: #148305)
+  * problem_report.py: Add test case to check that update() works and does the
+    right thing with binary values and overwriting. This confirms that
+    importing a dictionary works.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 30 Oct 2007 23:24:35 -0400
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Nov 2007 09:55:04 +0100
 
 apport (0.99) hardy; urgency=low
 

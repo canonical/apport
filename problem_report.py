@@ -1227,5 +1227,25 @@ Baz: blob
         pr.write(out, only_new=True)
         self.assertEqual(out.getvalue(), 'NewKey: new new\n')
 
+    def test_import_dict(self):
+        '''Test importing a dictionary with update().'''
+
+        pr = ProblemReport()
+        pr['oldtext'] = 'Hello world'
+        pr['oldbin'] = 'AB' * 10 + '\0' * 10 + 'Z'
+        pr['overwrite'] = 'I am crap'
+
+        d = {}
+        d['newtext'] = 'Goodbye world'
+        d['newbin'] = '11\000\001\002\xFFZZ'
+        d['overwrite'] = 'I am good' 
+
+        pr.update(d)
+        self.assertEqual(pr['oldtext'], 'Hello world')
+        self.assertEqual(pr['oldbin'], 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr['newtext'], 'Goodbye world')
+        self.assertEqual(pr['newbin'], '11\000\001\002\xFFZZ')
+        self.assertEqual(pr['overwrite'], 'I am good')
+
 if __name__ == '__main__':
     unittest.main()
