@@ -13,8 +13,9 @@ apport (0.100) UNRELEASED; urgency=low
   * problem_report.py: Add test case to check that update() works and does the
     right thing with binary values and overwriting. This confirms that
     importing a dictionary works.
+  * debian/local/setup-apport-retracer: Update for hardy.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Nov 2007 09:55:04 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 27 Nov 2007 13:17:47 +0100
 
 apport (0.99) hardy; urgency=low
 
