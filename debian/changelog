@@ -14,8 +14,14 @@ apport (0.100) UNRELEASED; urgency=low
     right thing with binary values and overwriting. This confirms that
     importing a dictionary works.
   * debian/local/setup-apport-retracer: Update for hardy.
+  * apport/crashdb_impl/launchpad.py: get_source_info() does not work any more
+    due to HTML changes in Launchpad, and not showing the component any more
+    on /distro/+source/package. Since we do not actually need component and
+    release name any more, rename it to get_source_version(), fix the regular
+    expression to just get the version, and adapt get_fixed_version()
+    accordingly.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 27 Nov 2007 13:17:47 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 27 Nov 2007 13:50:03 +0100
 
 apport (0.99) hardy; urgency=low
 

@@ -22,18 +22,15 @@ import apport
 Bug = Connector.ConnectBug()
 BugList = Connector.ConnectBugList()
 
-def get_source_info(distro, package):
-    '''Return information about given source package in the latest release of
-    given distribution.
-    
-    This returns a dictionary with the following keys: distrorelease,
-    component, version.'''
+def get_source_version(distro, package):
+    '''Return the version of given source package in the latest release of
+    given distribution.'''
 
     result = urllib.urlopen('https://launchpad.net/%s/+source/%s' % (distro, package)).read()
-    m = re.search('<td>Published</td>.*?<td><a.*?>(\w+).*?<td>.*?<td>(\w+)</td>.*?<td>.*?</td>.*?<td><a.*?>([^<]+)<', result, re.S)
+    m = re.search('href="/%s/\w+/\+source/%s/([^"]+)"' % (distro, package), result)
     if not m:
         raise ValueError, 'source package %s does not exist in %s' % (package, distro)
-    return { 'distrorelease': m.group(1), 'component': m.group(2), 'version': m.group(3)}
+    return m.group(1)
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
@@ -269,7 +266,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         if b.status == 'Fix Released':
             if b.sourcepackage:
-                return get_source_info(self.distro, b.sourcepackage)['version']
+                return get_source_version(self.distro, b.sourcepackage)
             return ''
         if b.status == 'Rejected' or b.duplicate_of:
             return 'invalid'
