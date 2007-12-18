@@ -23,7 +23,14 @@ apport (0.100) UNRELEASED; urgency=low
   * debian/local/setup-apport-retracer: Update default apt sources to
     http://ddebs.ubuntu.com.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 30 Nov 2007 13:55:10 +0100
+  [dAniel hAhler]
+  * .crash file integration for KDE3 (LP: #177055)
+    - debian/apport-qt.install: install added files qt4/apport-qt-mime.desktop
+      and qt4/apport-qt-mimelnk.desktop
+  * Fixed minor warnings/errors from desktop-file-validate in
+    gtk/apport-gtk-mime.desktop.in and qt4/apport-qt.desktop.in
+
+ -- dAniel hAhler <ubuntu@thequod.de>  Tue, 18 Dec 2007 02:28:34 +0100
 
 apport (0.99) hardy; urgency=low
 

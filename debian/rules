@@ -22,6 +22,9 @@ common-post-build-indep::
 binary-install/apport-gtk::
 	dh_desktop -p $(cdbs_curpkg)
 
+binary-install/apport-qt::
+	dh_desktop -p $(cdbs_curpkg)
+
 binary-install/apport::
 	dh_installmime -p $(cdbs_curpkg)
 
