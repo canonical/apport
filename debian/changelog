@@ -23,8 +23,10 @@ apport (0.100) UNRELEASED; urgency=low
   * debian/local/setup-apport-retracer: Update default apt sources to
     http://ddebs.ubuntu.com.
   * apport/ui.py: Robostify cleanup of forked test processes.
+  * apport/ui.py: Sleep for 0.5 seconds after creating the test process in the
+    test suite to give /proc some time to settle down.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 21 Dec 2007 00:48:09 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 21 Dec 2007 00:57:15 +0100
 
 apport (0.99) hardy; urgency=low
 

@@ -1256,6 +1256,7 @@ CoreDump: base64
                 assert False, 'Could not execute ' + test_executable
 
             try:
+                time.sleep(0.5)
                 # generate crash report
                 r = apport.Report()
                 r['ExecutablePath'] = test_executable
