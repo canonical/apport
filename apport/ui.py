@@ -831,6 +831,9 @@ databases = {
             self.ui = None
             self.report_file.close()
 
+            self.assertEqual(subprocess.call(['pidof', '/bin/cat']), 1, 'no stray cats')
+            self.assertEqual(subprocess.call(['pidof', '/bin/sleep']), 1, 'no stray sleeps')
+
         def test_format_filesize(self):
             '''Test format_filesize().'''
 
@@ -1026,13 +1029,15 @@ CoreDump: base64
 
             time.sleep(0.5)
 
-            # report a bug on cat process
-            sys.argv = ['ui-test', '-f', '-P', str(pid)]
-            self.ui = _TestSuiteUserInterface()
-            self.ui.run_argv()
-
-            # kill test process
-            os.kill(pid, signal.SIGKILL)
+            try:
+                # report a bug on cat process
+                sys.argv = ['ui-test', '-f', '-P', str(pid)]
+                self.ui = _TestSuiteUserInterface()
+                self.ui.run_argv()
+            finally:
+                # kill test process
+                os.kill(pid, signal.SIGKILL)
+                os.waitpid(pid, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Dependencies' in self.ui.report.keys())
@@ -1090,23 +1095,25 @@ CoreDump: base64
                 os.execv(test_executable, [test_executable])
                 assert False, 'Could not execute ' + test_executable
 
-            # generate a core dump
-            time.sleep(0.5)
-            coredump = os.path.join(apport.fileutils.report_dir, 'core')
-            assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE) == 0
+            try:
+                # generate a core dump
+                time.sleep(0.5)
+                coredump = os.path.join(apport.fileutils.report_dir, 'core')
+                assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
+                    + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE) == 0
 
-            # generate crash report
-            r = apport.Report()
-            r['ExecutablePath'] = test_executable
-            r['CoreDump'] = (coredump,)
-            r['Signal'] = '11'
-            r.add_proc_info(pid)
-            r.add_user_info()
-
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
+                # generate crash report
+                r = apport.Report()
+                r['ExecutablePath'] = test_executable
+                r['CoreDump'] = (coredump,)
+                r['Signal'] = '11'
+                r.add_proc_info(pid)
+                r.add_user_info()
+            finally:
+                # kill test executable
+                os.kill(pid, signal.SIGKILL)
+                os.waitpid(pid, 0)
 
             # write crash report
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
@@ -1248,16 +1255,17 @@ CoreDump: base64
                 os.execv(test_executable, [test_executable])
                 assert False, 'Could not execute ' + test_executable
 
-            # generate crash report
-            r = apport.Report()
-            r['ExecutablePath'] = test_executable
-            r['Signal'] = '42'
-            r.add_proc_info(pid)
-            r.add_user_info()
-
-            # kill test executable
-            os.kill(pid, signal.SIGKILL)
-            os.waitpid(pid, 0)
+            try:
+                # generate crash report
+                r = apport.Report()
+                r['ExecutablePath'] = test_executable
+                r['Signal'] = '42'
+                r.add_proc_info(pid)
+                r.add_user_info()
+            finally:
+                # kill test executable
+                os.kill(pid, signal.SIGKILL)
+                os.waitpid(pid, 0)
 
             # write crash report
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
