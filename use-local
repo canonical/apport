@@ -1,2 +1,2 @@
 #!/bin/sh -e
-echo "|$(readlink -f $(dirname $0)/bin/apport)" > /proc/sys/kernel/core_pattern
+echo "|$(readlink -f $(dirname $0)/bin/apport) %p %s %c" > /proc/sys/kernel/core_pattern

@@ -28,8 +28,10 @@ apport (0.100) UNRELEASED; urgency=low
   * bin/apport: Drop evaluation of CORE_* environment variables and mandate
     calling with <pid> <signal> <core ulimit>. Drop the now obsolete
     apport/elfcore.py. Adapt test-apport accordingly.
+  * debian/apport.init, use-local: Now call apport with %p, %s, and %c kernel
+    macros (since 2.6.24). Drop Edgy support from init script.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 21 Dec 2007 02:09:50 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 21 Dec 2007 02:18:48 +0100
 
 apport (0.99) hardy; urgency=low
 

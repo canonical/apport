@@ -24,3 +24,6 @@ retracers:
 retrace failures:
  - Bug #124360: http://launchpadlibrarian.net/8320761/StacktraceSource.txt: dd.c not found
  - does not find files with complete path
+
+packaging:
+ - ensure that uname -r >= 2.6.24 in init script
