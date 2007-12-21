@@ -152,7 +152,7 @@ try:
     else:
         assert core_pattern[0] == '|', \
                 'kernel crash dump helper is not active; please enable before running this test.'
-        apport_path = core_pattern[1:]
+        apport_path = core_pattern[1:].split()[0]
 
     assert apport.fileutils.get_all_reports() == [], 'please remove all crash reports from /var/crash/ for this test suite'
 
@@ -167,10 +167,9 @@ try:
     print '* Check that empty core dumps do not generate a report'
     test_proc = create_test_process()
     try:
-        app = subprocess.Popen([apport_path], env={'CORE_PID': str(test_proc),
-            'CORE_SIGNAL': '42', 'CORE_REAL_RLIM': '0', 'APPORT_REPORT_DIR':
-            temp_report_dir}, close_fds=True, stdin=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
+            env={'APPORT_REPORT_DIR': temp_report_dir}, close_fds=True,
+            stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         app.stdin.close()
         assert app.wait() == 0, app.stderr.read()
     finally:
@@ -233,14 +232,12 @@ try:
     test_proc2 = create_test_process(False)
     test_executable = '/bin/cat'
     try:
-        env = {'CORE_PID': str(test_proc), 'CORE_SIGNAL': '42',
-            'CORE_REAL_RLIM': '0', 'APPORT_REPORT_DIR': temp_report_dir }
-
-        app = subprocess.Popen([apport_path], env=env, close_fds=True,
+        app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
+            env={'APPORT_REPORT_DIR': temp_report_dir}, close_fds=True,
             stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        env['CORE_PID'] = str(test_proc2)
-        app2 = subprocess.Popen([apport_path], env=env, close_fds=True,
+        app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0'], 
+            env={'APPORT_REPORT_DIR': temp_report_dir}, close_fds=True,
             stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # app should wait indefinitely for stdin, while app2 should terminate
@@ -281,11 +278,10 @@ try:
 
     # now call apport
     test_proc = create_test_process()
-    env = {'CORE_PID': str(test_proc), 'CORE_SIGNAL': '42',
-        'CORE_REAL_RLIM': '0', 'APPORT_REPORT_DIR': temp_report_dir }
 
     try:
-        app = subprocess.Popen([apport_path], env=env, close_fds=True,
+        app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
+            env={'APPORT_REPORT_DIR': temp_report_dir}, close_fds=True,
             stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         app.stdin.write('boo')
         app.stdin.close()
@@ -484,9 +480,8 @@ try:
 
     test_proc = create_test_process()
     try:
-        env = {'CORE_PID': str(test_proc), 'CORE_SIGNAL': '42',
-            'CORE_REAL_RLIM': '0', 'APPORT_REPORT_DIR': temp_report_dir }
-        app = subprocess.Popen([apport_path], env=env, close_fds=True,
+        app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
+            env={'APPORT_REPORT_DIR': temp_report_dir}, close_fds=True,
             stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         # pipe an entire total memory size worth of spaces into it, which must be
         # bigger than the 'usable' memory size. apport should digest that and the

@@ -119,7 +119,7 @@ def setup_signals():
     signal.signal(signal.SIGPIPE, _log_signal_handler)
     signal.signal(signal.SIGBUS, _log_signal_handler)
 
-def write_user_coredump(pid, cwd, limit, elfhead = None):
+def write_user_coredump(pid, cwd, limit):
     '''Write the core into the current directory if ulimit requests it.'''
 
     # three cases:
@@ -154,10 +154,7 @@ def write_user_coredump(pid, cwd, limit, elfhead = None):
     written = 0
 
     # Priming read
-    if elfhead: 
-        block = elfhead.rawdata
-    else:
-        block = sys.stdin.read(1048576)
+    block = sys.stdin.read(1048576)
 
     while True:
         size = len(block)
@@ -202,44 +199,16 @@ def usable_ram():
 
 init_error_log()
 check_lock()
-elfhead = None
 
 try:
     setup_signals()
 
-    if len(sys.argv) not in (1, 3):
-        print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number>'
-        print >> sys.stderr, 'if pid and signal are not given, \
-they are read from environment variables CORE_PID and CORE_SIGNAL, or, if those \
-are not present either, they are extracted from the core dump; the core dump \
-is read from stdin'
+    if len(sys.argv) != 4:
+        print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> <core file ulimit>'
+        print >> sys.stderr, 'The core dump is read from stdin.'
         sys.exit(1)
 
-    core_ulimit = os.environ.get('CORE_REAL_RLIM')
-
-    if len(sys.argv) == 3:
-	pid = sys.argv[1]
-	signum = sys.argv[2]
-    else:
-        try: 
-            # Ubuntu kernel patches put this info in the environment when
-            # dumping to a pipe
-            pid = os.environ['CORE_PID']
-            signum = os.environ['CORE_SIGNAL']
-        except KeyError:
-            # No kernel patch? Okay, we can just read the info from the
-            # core file itself. 
-
-            # First we parse the elf headers:
-            import apport.elfcore
-            elfhead = apport.elfcore.ElfCore()
-            elfhead.file = sys.stdin # read from stdin
-            elfhead.parse() # parse the header (save data in rawdata)
-
-            pid = str(elfhead.prstatus.pid)
-            signum = str(elfhead.prstatus.signo)
-            # N.B. we need to concatenate elfhead.rawdata and sys.stdin to get
-            # a full and valid core dump after this.
+    (pid, signum, core_ulimit) = sys.argv[1:]
 
     # drop our process priority level to not disturb userspace so much
     try:
@@ -291,7 +260,7 @@ is read from stdin'
         error_log('executable does not belong to a package, ignoring')
         # check if the user wants a core dump
         drop_privileges(pid)
-        write_user_coredump(pid, cwd, core_ulimit, elfhead)
+        write_user_coredump(pid, cwd, core_ulimit)
         sys.exit(1)
 
     # ignore SIGABRT (we currently have no way of extracting abort() messages
@@ -299,7 +268,7 @@ is read from stdin'
     if signum == str(signal.SIGABRT):
         # check if the user wants a core dump
         drop_privileges(pid)
-        write_user_coredump(pid, cwd, core_ulimit, elfhead)
+        write_user_coredump(pid, cwd, core_ulimit)
         sys.exit(0)
 
     # ignore blacklisted binaries
@@ -319,15 +288,13 @@ is read from stdin'
                 crash_counter = apport.fileutils.get_recent_crashes(open(report))
                 crash_counter += 1
                 if crash_counter > 1:
-                    if os.environ.has_key('CORE_PID'):
-                        drop_privileges(pid)
-                        write_user_coredump(pid, cwd, core_ulimit)
+                    drop_privileges(pid)
+                    write_user_coredump(pid, cwd, core_ulimit)
                     sys.exit(1)
             else:
                 error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
-                if os.environ.has_key('CORE_PID'):
-                    drop_privileges(pid)
-                    write_user_coredump(pid, cwd, core_ulimit)
+                drop_privileges(pid)
+                write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
         reportfile = open(report, 'w')
         os.chmod(report, 0000)
@@ -340,7 +307,7 @@ is read from stdin'
     drop_privileges(pid)
 
     # check if the user wants a core dump
-    coredump = write_user_coredump(pid, cwd, core_ulimit, elfhead)
+    coredump = write_user_coredump(pid, cwd, core_ulimit)
     # Now that we've written it, it's no longer on stdin, so we need
     # to change the CoreDump info if we want it in the crash report.
     if coredump:
