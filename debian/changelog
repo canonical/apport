@@ -1,3 +1,10 @@
+apport (0.101) UNRELEASED; urgency=low
+
+  * debian/control: Add python-xdg dependency to apport, since apport-cli
+    needs it. (LP: #177095)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 27 Dec 2007 09:22:48 +0100
+
 apport (0.100) hardy; urgency=low
 
   * bin/crash-digger: Add option --log for logging to a file, and
