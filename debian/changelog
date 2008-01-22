@@ -2,8 +2,13 @@ apport (0.101) UNRELEASED; urgency=low
 
   * debian/control: Add python-xdg dependency to apport, since apport-cli
     needs it. (LP: #177095)
+  * apport/ui.py: Add test case for reporting a report which has been
+    preprocessed by apport-retrace, i. e. has a stack trace, but no core dump
+    any more (reproducing LP #185084).
+  * apport/ui.py, run_crash(): Do not reject reports which have a stack trace,
+    but no core dump. (LP: #185084)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 27 Dec 2007 09:22:48 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 22 Jan 2008 14:46:09 +0000
 
 apport (0.100) hardy; urgency=low
 

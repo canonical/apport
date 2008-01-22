@@ -116,7 +116,8 @@ class UserInterface:
 
             # check for absent CoreDumps (removed if they exceed size limit)
             if self.report.get('ProblemType') == 'Crash' and \
-                self.report.has_key('Signal') and not self.report.has_key('CoreDump'):
+                'Signal' in self.report and 'CoreDump' not in self.report and \
+                'Stacktrace' not in self.report:
                 subject = os.path.basename(self.report.get('ExecutablePath',
                     _('unknown program')))
                 heading = _('Sorry, the program "%s" closed unexpectedly') % subject
@@ -352,6 +353,10 @@ free memory to automatically analyze the problem and send a report to the develo
             # package
             self.report.add_os_info()
         else:
+            # report might already be pre-processed by apport-retrace
+            if self.report['ProblemType'] == 'Crash' and 'Stacktrace' in self.report:
+                return
+
             # since this might take a while, create separate threads and
             # display a progress dialog
             self.ui_start_info_collection_progress()
@@ -1083,8 +1088,8 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, 'error')
 
-        def test_run_crash(self):
-            '''Test run_crash().'''
+        def _gen_test_crash(self):
+            '''Generate a Report with real crash data.'''
 
             # create a test executable
             test_executable = '/bin/cat'
@@ -1114,6 +1119,13 @@ CoreDump: base64
                 # kill test executable
                 os.kill(pid, signal.SIGKILL)
                 os.waitpid(pid, 0)
+
+            return r
+
+        def test_run_crash(self):
+            '''Test run_crash().'''
+
+            r = self._gen_test_crash()
 
             # write crash report
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
@@ -1279,6 +1291,33 @@ CoreDump: base64
             self.assert_('memory' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
 
+        def test_run_crash_preretraced(self):
+            '''Test run_crash() pre-retraced reports.
+            
+            This happens with crashes which are pre-processed by
+            apport-retrace.'''
+
+            r = self._gen_test_crash()
+
+            #  effect of apport-retrace -c
+            r.add_gdb_info()
+            del r['CoreDump']
+
+            # write crash report
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+
+            # report in crash notification dialog, cancel details report
+            r.write(open(report_file, 'w'))
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.present_details_response = 'cancel'
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None, 'has %s message: %s: %s' % (
+                self.ui.msg_severity, str(self.ui.msg_title), str(self.ui.msg_text)))
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+            self.assertEqual(self.ui.ic_progress_pulses, 0)
+           
         def test_run_crash_errors(self):
             '''Test run_crash() on various error conditions.'''
 
