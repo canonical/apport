@@ -12,7 +12,7 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
-import fnmatch, glob
+import fnmatch, glob, atexit
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -426,6 +426,8 @@ class Report(ProblemReport):
             for name, cmd in gdb_reports.iteritems():
                 value_keys.append(name)
                 command += ['--ex', 'p -99', '--ex', cmd]
+
+            assert os.path.exists(self.get('InterpreterPath', self['ExecutablePath']))
 
             # call gdb
             try:
@@ -1119,6 +1121,7 @@ sys.stdin.readline()
         pr = Report()
         try:
             workdir = tempfile.mkdtemp()
+            atexit.register(shutil.rmtree, workdir)
             os.chdir(workdir)
 
             # create a test executable
@@ -1148,8 +1151,6 @@ int main() { return f(42); }
                 file.flush()
         finally:
             os.chdir(orig_cwd)
-            if workdir:
-                shutil.rmtree(workdir)
 
         return pr
 
