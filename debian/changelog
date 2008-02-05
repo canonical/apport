@@ -1,5 +1,6 @@
 apport (0.102) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * problem_report.py: Support reading reports with legacy zlib
     compression in 'retain compressed values' mode (as used nowadays by
     apport when reporting a crash). Add a test case, too. (LP: #129616)
@@ -10,6 +11,13 @@ apport (0.102) UNRELEASED; urgency=low
   * debian/apport.init: Do not stop apport in any runlevel (LSB header).
   * apport/ui.py, run_crash(): Catch zlib.error on invalidly compressed core
     dumps. (LP: #176977)
+
+  [ Daniel Hahler ]
+  * .crash file integration for KDE3 (LP: #177055)
+    - debian/apport-qt.install: install added files qt4/apport-qt-mime.desktop
+      and qt4/apport-qt-mimelnk.desktop
+  * Fixed minor warnings/errors from desktop-file-validate in
+    gtk/apport-gtk-mime.desktop.in and qt4/apport-qt.desktop.in (LP: #146957)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Feb 2008 14:40:40 +0100
 
