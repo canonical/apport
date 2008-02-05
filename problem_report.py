@@ -24,9 +24,14 @@ class CompressedValue:
 
     def __init__(self, value=None, name=None):
         '''Initialize an empty CompressedValue object with an optional name.'''
-
+        
         self.gzipvalue = None
         self.name = name
+        # By default, compressed values are in gzip format. Earlier versions of
+        # problem_report used zlib format (without gzip header). If you have such
+        # a case, set legacy_zlib to True.
+        self.legacy_zlib = False
+
         if value:
             self.set_value(value)
 
@@ -36,6 +41,7 @@ class CompressedValue:
         out = StringIO()
         gzip.GzipFile(self.name, mode='wb', fileobj=out).write(value)
         self.gzipvalue = out.getvalue()
+        self.legacy_zlib = False
 
     def get_value(self):
         '''Return uncompressed value.'''
@@ -43,12 +49,19 @@ class CompressedValue:
         if not self.gzipvalue:
             return None
 
+        if self.legacy_zlib:
+            return zlib.decompress(self.gzipvalue)
         return gzip.GzipFile(fileobj=StringIO(self.gzipvalue)).read()
 
     def write(self, file):
         '''Write uncompressed value into given file-like object.'''
 
         assert self.gzipvalue
+
+        if self.legacy_zlib:
+            file.write(zlib.decompress(self.gzipvalue))
+            return
+
         gz = gzip.GzipFile(fileobj=StringIO(self.gzipvalue))
         while True:
             block = gz.read(1048576)
@@ -60,6 +73,8 @@ class CompressedValue:
         '''Return length of uncompressed value.'''
 
         assert self.gzipvalue
+        if self.legacy_zlib:
+            return len(self.get_value())
         return int(struct.unpack("<L", self.gzipvalue[-4:])[0])
 
     def splitlines(self):
@@ -110,6 +125,10 @@ class ProblemReport(UserDict.IterableUserDict):
                         value += bd.decompress(l)
                     else:
                         if binary == 'compressed':
+                            # check gzip header; if absent, we have legacy zlib
+                            # data
+                            if value.gzipvalue == '' and not l.startswith('\037\213\010'): 
+                                value.legacy_zlib = True
                             value.gzipvalue += l
                         else:
                             # lazy initialization of bd
@@ -816,16 +835,28 @@ File: base64
 Foo: Bar
 '''
 
+        data = 'AB' * 10 + '\0' * 10 + 'Z'
+
         # test with reading everything
         pr = ProblemReport()
         pr.load(StringIO(bin_report))
-        self.assertEqual(pr['File'], 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr['File'], data)
         self.assertEqual(pr.has_removed_fields(), False)
 
         # test with skipping binary data
         pr.load(StringIO(bin_report), binary=False)
         self.assertEqual(pr['File'], '')
         self.assertEqual(pr.has_removed_fields(), True)
+
+        # test with keeping CompressedValues
+        pr.load(StringIO(bin_report), binary='compressed')
+        self.assertEqual(pr.has_removed_fields(), False)
+        self.assertEqual(len(pr['File']), len(data))
+        self.assertEqual(pr['File'].get_value(), data)
+        io = StringIO()
+        pr['File'].write(io)
+        io.seek(0)
+        self.assertEqual(io.read(), data)
 
     def test_big_file(self):
         '''Test writing and re-decoding a big random file.'''
