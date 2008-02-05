@@ -185,6 +185,11 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_error_message(_('Invalid problem report'),
                     _('This problem report is damaged and cannot be processed.'))
                 return False
+            except ValueError: # package does not exist
+                self.ui_error_message(_('Invalid problem report'),
+                    _('The report belongs to a package that is not installed.'))
+                self.ui_shutdown()
+                return
 
             # check unreportable flag
             if self.report.has_key('UnreportableReason'):
