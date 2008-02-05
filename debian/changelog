@@ -8,8 +8,10 @@ apport (0.102) UNRELEASED; urgency=low
     upgrades, too. (LP: #121341)
   * debian/rules: Use dh_icons instead of dh_iconcache.
   * debian/apport.init: Do not stop apport in any runlevel (LSB header).
+  * apport/ui.py, run_crash(): Catch zlib.error on invalidly compressed core
+    dumps. (LP: #176977)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Feb 2008 13:41:58 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Feb 2008 14:40:40 +0100
 
 apport (0.101) hardy; urgency=low
 
