@@ -3,8 +3,11 @@ apport (0.102) UNRELEASED; urgency=low
   * problem_report.py: Support reading reports with legacy zlib
     compression in 'retain compressed values' mode (as used nowadays by
     apport when reporting a crash). Add a test case, too. (LP: #129616)
+  * debian/control, debian/rules: Switch from python-support to
+    python-central, and use 'nomove' option so that apport works during
+    upgrades, too. (LP: #121341)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Feb 2008 13:13:46 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Feb 2008 13:29:24 +0100
 
 apport (0.101) hardy; urgency=low
 

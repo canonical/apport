@@ -6,7 +6,7 @@ if [ "$1" = local ]; then
     basedir=.
     local=1
 else
-    basedir="/usr/share/python-support/*"
+    basedir="/usr/lib/python2.5/site-packages"
     unset local
 fi
 
