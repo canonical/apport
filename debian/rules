@@ -25,6 +25,7 @@ binary-install/apport-gtk::
 
 binary-install/apport::
 	dh_installmime -p $(cdbs_curpkg)
+	dh_icons
 
 	# ignore wine crashes by default, until we found a way to
 	# handle them appropriately
@@ -38,9 +39,3 @@ clean::
 	make -C gtk clean
 	make -C qt4 clean
 	make -C doc clean
-
-ifdef _cdbs_rules_debhelper
-$(patsubst %,binary-install/%,apport) :: binary-install/%:
-	$(if $(wildcard /usr/bin/dh_iconcache),dh_iconcache -p$(cdbs_curpkg) $(DEB_DH_DESKTOP_ARGS))
-endif
-
