@@ -269,6 +269,12 @@ free memory to automatically analyze the problem and send a report to the develo
                 raise
 
         if not self.handle_duplicate():
+            # we do not confirm contents of bug reports, this might have
+            # sensitive data
+            try:
+                del self.report['ProcCmdline']
+            except KeyError:
+                pass
             self.file_report()
 
     def run_argv(self):
@@ -1050,7 +1056,7 @@ CoreDump: base64
             self.assert_('Dependencies' in self.ui.report.keys())
             self.assert_('ProcMaps' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ExecutablePath'], '/bin/sleep')
-            self.assertEqual(self.ui.report['ProcCmdline'], 'sleep 10000')
+            self.failIf(self.ui.report.has_key('ProcCmdline')) # privacy!
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
 
             self.assertEqual(self.ui.msg_severity, None)
