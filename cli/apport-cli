@@ -15,7 +15,7 @@ the full text of the license.
 #    w3m, lynx: do not work
 #    elinks: works
 
-import os.path, os, sys, subprocess, re
+import os.path, os, sys, subprocess, re, errno
 import tty, termios
 from datetime import datetime
 
@@ -230,9 +230,16 @@ class CLIUserInterface(apport.ui.UserInterface):
             if response == reduced:
                 return 'reduced'
             if response == view:
-                subprocess.Popen(["/usr/bin/sensible-pager"],
-                        stdin=subprocess.PIPE,
-                        close_fds=True).communicate(details)
+                try:
+                    subprocess.Popen(["/usr/bin/sensible-pager"],
+                            stdin=subprocess.PIPE,
+                            close_fds=True).communicate(details)
+                except IOError, e:
+                    # ignore broken pipe (premature quit)
+                    if e.errno == errno.EPIPE:
+                        pass
+                    else:
+                        raise
                 continue
             if response == save:
                 print _('Problem report file:'), self.report_file
