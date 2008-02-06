@@ -22,6 +22,8 @@ apport (0.102) UNRELEASED; urgency=low
     executable/interpreter path do not exist any more. (LP: #186684)
   * cli/apport-cli: Intercept SIGPIPE when calling sensible-pager, to avoid
     crash when quitting it prematurely. (LP: #153872)
+  * bin/apport-checkreports: Print out a list of program names/packages which
+    have a pending crash report. (LP: #145117)
 
   [ Daniel Hahler ]
   * .crash file integration for KDE3 (LP: #177055)
@@ -30,7 +32,7 @@ apport (0.102) UNRELEASED; urgency=low
   * Fixed minor warnings/errors from desktop-file-validate in
     gtk/apport-gtk-mime.desktop.in and qt4/apport-qt.desktop.in (LP: #146957)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 06 Feb 2008 11:11:03 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 06 Feb 2008 11:16:14 +0100
 
 apport (0.101) hardy; urgency=low
 

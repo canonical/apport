@@ -29,6 +29,8 @@ else:
     reports = get_new_reports()
 
 if len(reports) > 0:
+    for r in reports:
+        print r.split('.')[0].split('_')[-1]
     sys.exit(0)
 else:
     sys.exit(1)
