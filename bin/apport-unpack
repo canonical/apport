@@ -25,16 +25,24 @@ dir = sys.argv[2]
 
 # ensure that the directory does not yet exist or is empty
 try:
-    os.mkdir(dir)
-except OSError:
-    if os.listdir(dir):
-        print >> sys.stderr, 'Destination directory exists and is not empty.'
-        sys.exit(1)
+    if os.path.isdir(dir):
+        if os.listdir(dir):
+            print >> sys.stderr, 'Destination directory exists and is not empty.'
+            sys.exit(1)
+    else:
+        os.mkdir(dir)
+except OSError, e:
+    print >> sys.stderr, e
+    sys.exit(1)
 
 pr = problem_report.ProblemReport()
 if report == '-':
     pr.load(sys.stdin)
 else:
-    pr.load(open(report))
+    try:
+        pr.load(open(report))
+    except IOError, e:
+        print >> sys.stderr, e
+        sys.exit(1)
 for k in pr:
     open(os.path.join(dir, k), 'w').write(pr[k])
