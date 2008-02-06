@@ -549,7 +549,10 @@ free memory to automatically analyze the problem and send a report to the develo
             self.cur_package = self.report['Package'].split()[0]
         else:
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
-        if not self.cur_package and self.report['ProblemType'] != 'Kernel':
+
+        exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
+        if not self.cur_package and self.report['ProblemType'] != 'Kernel' or (
+            exe_path and not os.path.exists(exe_path)):
             msg = _('This problem report does not apply to a packaged program.')
             if self.report.has_key('ExecutablePath'):
                 msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
@@ -1341,6 +1344,44 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
             self.assertEqual(self.ui.msg_severity, 'error')
+
+        def test_run_crash_uninstalled(self):
+            '''Test run_crash() on reports with subsequently uninstalled packages'''
+
+            # program got uninstalled between crash and report
+            r = self._gen_test_crash()
+            r['ExecutablePath'] = '/bin/nonexisting'
+            r['Package'] = 'bash'
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.run_crash(report_file)
+
+            self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
+            self.assertEqual(self.ui.msg_severity, 'info')
+
+            # interpreted program got uninstalled between crash and report
+            r = apport.Report()
+            r['ExecutablePath'] = '/bin/nonexisting'
+            r['InterpreterPath'] = '/usr/bin/python'
+            r['Traceback'] = 'ZeroDivisionError: integer division or modulo by zero'
+
+            self.ui.run_crash(report_file)
+
+            self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
+            self.assertEqual(self.ui.msg_severity, 'info')
+
+            # interpreter got uninstalled between crash and report
+            r = apport.Report()
+            r['ExecutablePath'] = '/bin/sh'
+            r['InterpreterPath'] = '/usr/bin/nonexisting'
+            r['Traceback'] = 'ZeroDivisionError: integer division or modulo by zero'
+
+            self.ui.run_crash(report_file)
+
+            self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
+            self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_package(self):
             '''Test run_crash() for a package error.'''

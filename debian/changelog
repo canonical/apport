@@ -15,6 +15,11 @@ apport (0.102) UNRELEASED; urgency=low
     package for a crash report is not installed any more. (LP: #149739)
   * apport/ui.py: Do not include ProcCmdline in bug reports, since these are
     not ack'ed by the user and might contain sensitive data. (LP: #132800)
+  * apport/ui.py: Add various test cases for crash reports whose packages have
+    been uninstalled between the crash and the report. This reproduces
+    LP #186684.
+  * apport/ui.py, load_report(): Produce proper error message if
+    executable/interpreter path do not exist any more. (LP: #186684)
 
   [ Daniel Hahler ]
   * .crash file integration for KDE3 (LP: #177055)
@@ -23,7 +28,7 @@ apport (0.102) UNRELEASED; urgency=low
   * Fixed minor warnings/errors from desktop-file-validate in
     gtk/apport-gtk-mime.desktop.in and qt4/apport-qt.desktop.in (LP: #146957)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 06 Feb 2008 09:55:50 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 06 Feb 2008 10:55:47 +0100
 
 apport (0.101) hardy; urgency=low
 
