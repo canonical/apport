@@ -50,7 +50,8 @@ def thread_collect_info(report, reportfile, package):
             report['DistroRelease'].split()[0]
 
     # check obsolete packages
-    if report['ProblemType'] == 'Crash':
+    if report['ProblemType'] == 'Crash' and \
+        'APPORT_IGNORE_OBSOLETE_PACKAGES' not in os.environ:
         old_pkgs = report.obsolete_packages()
         if old_pkgs:
             report['UnreportableReason'] = _('You have some obsolete package \

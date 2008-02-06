@@ -28,6 +28,9 @@ apport (0.102) UNRELEASED; urgency=low
     report has been processed.
   * cli/apport-cli: If no pending crash reports are present, say so and refer
     to --help. (LP: #182985)
+  * apport/ui.py: Waive check for obsolete packages if environment defines
+    $APPORT_IGNORE_OBSOLETE_PACKAGES. Document this in the apport-cli manpage.
+    (LP: #148064)
 
   [ Daniel Hahler ]
   * .crash file integration for KDE3 (LP: #177055)
@@ -36,7 +39,7 @@ apport (0.102) UNRELEASED; urgency=low
   * Fixed minor warnings/errors from desktop-file-validate in
     gtk/apport-gtk-mime.desktop.in and qt4/apport-qt.desktop.in (LP: #146957)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 06 Feb 2008 12:30:03 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 06 Feb 2008 12:55:53 +0100
 
 apport (0.101) hardy; urgency=low
 
