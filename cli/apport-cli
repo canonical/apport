@@ -286,4 +286,5 @@ class CLIUserInterface(apport.ui.UserInterface):
 
 if __name__ == '__main__':
     app = CLIUserInterface()
-    app.run_argv()
+    if not app.run_argv():
+        print >> sys.stderr, _('No pending crash reports. Try --help for more information.')

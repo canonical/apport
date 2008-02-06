@@ -95,10 +95,18 @@ class UserInterface:
 
     def run_crashes(self):
         '''Present all currently pending crash reports to the user, ask him
-        what to do about them, and offer to file bugs for them.'''
+        what to do about them, and offer to file bugs for them.
+        
+        Return True if at least one crash report was processed, False
+        otherwise.'''
+
+        result = False
 
         for f in apport.fileutils.get_new_reports():
             self.run_crash(f)
+            result = True
+
+        return result
 
     def run_crash(self, report_file, confirm=True):
         '''Present given crash report to the user, ask him what to do about it,
@@ -278,17 +286,22 @@ free memory to automatically analyze the problem and send a report to the develo
             self.file_report()
 
     def run_argv(self):
-        '''Call appopriate run_* method according to command line arguments.'''
+        '''Call appopriate run_* method according to command line arguments.
+        
+        Return True if at least one report has been processed, and False
+        otherwise.'''
 
         if self.options.filebug:
             self.run_report_bug()
+            return True
         elif self.options.crash_file:
             try:
                 self.run_crash(self.options.crash_file, False)
             except OSError, e:
                 self.ui_error_message(_('Invalid problem report'), str(e))
+            return True
         else:
-            self.run_crashes()
+            return self.run_crashes()
 
     #
     # functions that implement workflow bits
@@ -1000,6 +1013,13 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'info')
             self.assertEqual(self.ui.opened_url, demo_url)
 
+        def test_run_nopending(self):
+            '''Test running the frontend without any pending reports.'''
+
+            sys.argv = []
+            self.ui = _TestSuiteUserInterface()
+            self.assertEqual(self.ui.run_argv(), False)
+
         def test_run_report_bug_distro(self):
             '''Test run_report_bug() for a general distro bug.'''
 
@@ -1016,7 +1036,7 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-f', '-p', 'bash']
             self.ui = _TestSuiteUserInterface()
-            self.ui.run_argv()
+            self.assertEqual(self.ui.run_argv(), True)
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
@@ -1049,7 +1069,7 @@ CoreDump: base64
                 # report a bug on cat process
                 sys.argv = ['ui-test', '-f', '-P', str(pid)]
                 self.ui = _TestSuiteUserInterface()
-                self.ui.run_argv()
+                self.assertEqual(self.ui.run_argv(), True)
             finally:
                 # kill test process
                 os.kill(pid, signal.SIGKILL)
@@ -1222,7 +1242,7 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-c', self.report_file.name]
             self.ui = _TestSuiteUserInterface()
-            self.ui.run_argv()
+            self.assertEqual(self.ui.run_argv(), True)
 
             self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
@@ -1231,7 +1251,7 @@ CoreDump: base64
             # should not die with an exception on an invalid name
             sys.argv = ['ui-test', '-c', '/nonexisting.crash' ]
             self.ui = _TestSuiteUserInterface()
-            self.ui.run_argv()
+            self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, 'error')
             self.assert_('/nonexisting.crash' in self.ui.msg_text, self.ui.msg_text)
 
