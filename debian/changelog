@@ -2,8 +2,11 @@ apport (0.103) UNRELEASED; urgency=low
 
   * bin/apport-unpack: Print error messages instead of crashing for problems
     like nonexisting file names passed as arguments. (LP: #185273)
+  * backends/packaging-apt-dpkg.py, is_distro_package(): Explicitly check site
+    for "ppa", so that we do not automatically file bugs for PPA packages.
+    This works around Soyuz bug LP #140412 for the time being.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 06 Feb 2008 15:14:14 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 12:24:06 +0100
 
 apport (0.102) hardy; urgency=low
 

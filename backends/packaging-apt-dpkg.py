@@ -83,7 +83,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         assert lsb_release.returncode == 0
 
         for o in self._cache(package).candidateOrigin:
-            if o.origin == this_os:
+            # note: checking site for ppa is a hack until LP #140412 gets fixed
+            if o.origin == this_os and not o.site.startswith('ppa'):
                 return True
         return False
 
