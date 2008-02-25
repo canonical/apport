@@ -483,13 +483,12 @@ if modified:
             print >> sys.stderr, 'You need to specify --auth for uploading retraced results back to the crash database.'
             sys.exit(1)
         if not options.confirm or confirm_traces(report):
-            crashdb.update(crashid, report)
-            print 'New attachments uploaded to crash database #' + crashid
             if not report.crash_signature():
                 print 'Report has no crash signature, so retrace is flawed'
                 crashdb.mark_retrace_failed(crashid)
 
             # check for duplicates
+            update_bug = True
             if options.dup_db:
                 crashdb.init_duplicate_db(options.dup_db)
                 res = crashdb.check_duplicate(int(crashid), report)
@@ -500,8 +499,13 @@ if modified:
                         print 'Report is a duplicate of #%i (fixed in latest version)' % res[0]
                     else:
                         print 'Report is a duplicate of #%i (fixed in version %s)' % res
+                    update_bug = False
                 else:
                     print 'Duplicate check negative'
+
+            if update_bug:
+                crashdb.update(crashid, report)
+                print 'New attachments uploaded to crash database #' + crashid
     else:
         if options.output == None:
             out = open(reportfile, 'w')

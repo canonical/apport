@@ -24,8 +24,10 @@ apport (0.103) UNRELEASED; urgency=low
     strings with generic ones.
   * apport/ui.py, thread_collect_info(): Call anonymize() on the report.
     (LP: #192786)
+  * bin/apport-retrace: Only update a bug report with new attachments if it is
+    not a duplicate. (LP: #172792)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 17:18:52 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 17:33:51 +0100
 
 apport (0.102) hardy; urgency=low
 
