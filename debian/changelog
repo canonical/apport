@@ -13,10 +13,10 @@ apport (0.103) UNRELEASED; urgency=low
     (LP: #190947)
   * apport/ui.py, parse_argv(): Specify that --pid/-P argument must be an
     integer, to avoid exceptions when it's not. (LP: #193494)
-  * apport/report.py: Use uname -srmo, not -a, to hide the hostname. (part of
-    LP #192786)
+  * apport/report.py: Use uname -srm, not -a, to hide the hostname. (part of
+    LP #192786); also use os.uname() instead of calling the system program.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 13:56:06 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 15:41:01 +0100
 
 apport (0.102) hardy; urgency=low
 
