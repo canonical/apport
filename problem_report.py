@@ -135,7 +135,7 @@ class ProblemReport(UserDict.IterableUserDict):
                             # skip gzip header, if present
                             if l.startswith('\037\213\010'): 
                                 bd = zlib.decompressobj(-zlib.MAX_WBITS)
-                                value = ''
+                                value = bd.decompress(self._strip_gzip_header(l))
                             else:
                                 # legacy zlib-only format used default block
                                 # size
@@ -214,7 +214,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 else:
                     asckeys.append(k)
             else:
-                if len(v) >= 2 and not v[1]: # force uncompressed
+                if not isinstance(v, CompressedValue) and len(v) >= 2 and not v[1]: # force uncompressed
                     asckeys.append(k)
                 else:
                     binkeys.append(k)
@@ -266,6 +266,12 @@ class ProblemReport(UserDict.IterableUserDict):
 
             curr_pos = file.tell()
             file.write (k + ': base64\n ')
+
+            # CompressedValue
+            if isinstance(v, CompressedValue):
+                file.write(base64.b64encode(v.gzipvalue))
+                file.write('\n')
+                continue
 
             # write gzip header
             gzip_header = '\037\213\010\010\000\000\000\000\002\377' + k + '\000'
@@ -469,6 +475,26 @@ class ProblemReport(UserDict.IterableUserDict):
 
         return set(self.data.keys()) - self.old_keys
 
+    @classmethod
+    def _strip_gzip_header(klass, line):
+        '''Strip gzip header from line and return the rest.'''
+
+        flags = ord(line[3])
+        offset = 10
+        if flags & 4: # FLG.FEXTRA
+            offset += line[offset] + 1
+        if flags & 8: # FLG.FNAME
+            while ord(line[offset]) != 0:
+                offset += 1
+            offset += 1
+        if flags & 16: # FLG.FCOMMENT
+            while ord(line[offset]) != 0:
+                offset += 1
+            offset += 1
+        if flags & 2: # FLG.FHCRC
+            offset += 2
+
+        return line[offset:]
 
 #
 # Unit test
@@ -537,6 +563,16 @@ class _ProblemReportTest(unittest.TestCase):
         pr['Multiline'] = CompressedValue('\1\1\1\n\2\2\n\3\3\3')
         self.assertEqual(pr['Multiline'].splitlines(), 
             ['\1\1\1', '\2\2', '\3\3\3'])
+
+        # test writing of reports with CompressedValues
+        io = StringIO()
+        pr.write(io)
+        io.seek(0)
+        pr = ProblemReport()
+        pr.load(io)
+        self.assertEqual(pr['Foo'], 'FooFoo!')
+        self.assertEqual(pr['Bin'], 'AB' * 10 + '\0' * 10 + 'Z')
+        self.assertEqual(pr['Large'], large_val)
 
     def test_write(self):
         '''Test write() and proper formatting.'''
