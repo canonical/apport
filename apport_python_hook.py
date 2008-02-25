@@ -142,7 +142,7 @@ func(42)
                     os.unlink(r)
 
             # check report contents
-            expected_keys = ['InterpreterPath', 'ProcCwd', 'PythonArgs',
+            expected_keys = ['InterpreterPath', 'PythonArgs',
                 'Traceback', 'ProblemType', 'ProcEnviron', 'ProcStatus',
                 'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps',
                 'UserGroups']

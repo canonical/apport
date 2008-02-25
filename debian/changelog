@@ -17,8 +17,15 @@ apport (0.103) UNRELEASED; urgency=low
     LP #192786); also use os.uname() instead of calling the system program.
   * problem_report.py(): Make write() work for reports with CompressedValues.
     Add test case.
+  * apport/ui.py: Add test case test_run_crash_anonymity() which asserts that
+    the crash dump does not contain strings which can identify the user, such
+    as the user name, login name, host name, and current directory.
+  * apport/report.py: Add method anonymize() which replaces user specific
+    strings with generic ones.
+  * apport/ui.py, thread_collect_info(): Call anonymize() on the report.
+    (LP: #192786)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 17:18:08 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 17:18:52 +0100
 
 apport (0.102) hardy; urgency=low
 

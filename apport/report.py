@@ -831,6 +831,38 @@ class Report(ProblemReport):
 
         return None
 
+    def anonymize(self):
+        '''Remove user identifying strings from the report.
+
+        This particularly removes the user name, host name, and IPs
+        from attributes which contain data read from the environment, and
+        removes the ProcCwd attribute completely.
+        '''
+
+        p = pwd.getpwuid(os.getuid())
+        replacements = {
+            p[0]: 'username',
+            p[4]: 'User Name',
+            p[5]: '/home/username',
+            os.uname()[1]: 'hostname',
+        }
+
+        for s in p[4].split(','):
+            s = s.strip()
+            if len(s) > 2:
+                replacements[s] = 'GECOS'
+
+        try:
+            del self['ProcCwd']
+        except KeyError:
+            pass
+
+        for k in self:
+            if k == 'CoreDump':
+                continue
+            for old, new in replacements.iteritems():
+                self[k] = self[k].replace(old, new)
+
 #
 # Unit test
 #

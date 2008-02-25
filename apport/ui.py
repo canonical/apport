@@ -58,6 +58,8 @@ def thread_collect_info(report, reportfile, package):
 versions installed. Please upgrade the following packages and check if the \
 problem still occurs:\n\n%s') % ', '.join(old_pkgs)
 
+    report.anonymize()
+
     if reportfile:
         f = open(reportfile, 'a')
         os.chmod (reportfile, 0)
@@ -722,6 +724,7 @@ might be helpful for the developers.'))
 
 if  __name__ == '__main__':
     import unittest, shutil, signal, tempfile
+    from cStringIO import StringIO
 
     class _TestSuiteUserInterface(UserInterface):
         '''Concrete UserInterface suitable for automatic testing.'''
@@ -1480,6 +1483,29 @@ CoreDump: base64
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Kernel')
+
+        def test_run_crash_anonymity(self):
+            '''Test run_crash() anonymization.'''
+
+            r = self._gen_test_crash()
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.present_details_response = 'cancel'
+            self.ui.run_crash(report_file)
+
+            self.failIf('ProcCwd' in self.ui.report)
+
+            dump = StringIO()
+            self.ui.report.write(dump)
+
+            p = pwd.getpwuid(os.getuid())
+            bad_strings = [os.uname()[1], p[0], p[4], p[5], os.getcwd()]
+
+            for s in bad_strings:
+                self.failIf(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
+
 
     unittest.main()
 
