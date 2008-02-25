@@ -237,7 +237,7 @@ class Report(ProblemReport):
         This adds:
         - DistroRelease: lsb_release -sir output
         - Architecture: system architecture in distro specific notation
-        - Uname: uname -a output
+        - Uname: uname -srmo output
         - NonfreeKernelModules: loaded kernel modules which are not free (if
             there are none, this field will not be present)'''
 
@@ -245,7 +245,7 @@ class Report(ProblemReport):
             stderr=subprocess.STDOUT, close_fds=True)
         self['DistroRelease'] = p.communicate()[0].strip().replace('\n', ' ')
 
-        p = subprocess.Popen(['uname', '-a'], stdout=subprocess.PIPE,
+        p = subprocess.Popen(['uname', '-srmo'], stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, close_fds=True)
         self['Uname'] = p.communicate()[0].strip()
         self['Architecture'] = packaging.get_system_architecture()
