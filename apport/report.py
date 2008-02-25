@@ -735,10 +735,21 @@ class Report(ProblemReport):
                 return '%s crashed with %s' % (
                     os.path.basename(self['ExecutablePath']),
                     trace[0])
+
+            trace_re = re.compile('^\s*File.* in (.+)$')
+            i = len(trace)-1
+            function = 'unknown'
+            while i >= 0:
+                m = trace_re.match(trace[i])
+                if m:
+                    function = m.group(1)
+                    break
+                i -= 1
+
             return '%s crashed with %s in %s()' % (
                 os.path.basename(self['ExecutablePath']),
                 trace[-1].split(':')[0],
-                trace[-3].split()[-1]
+                function
             )
 
         # package problem
@@ -1596,6 +1607,30 @@ NameError: global name 'subprocess' is not defined'''
 order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
         self.assertEqual(report.standard_title(),
             'apport-gtk crashed with TypeError: Cannot create a consistent method resolution')
+
+        # Python crash with custom message
+        report = Report()
+        report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
+        report['Traceback'] = '''Traceback (most recent call last):
+  File "/x/foo.py", line 242, in setup_chooser
+    raise "Moo"
+Moo'''
+
+        self.assertEqual(report.standard_title(), 'apport-gtk crashed with Moo in setup_chooser()')
+
+        # Python crash with custom message with newlines (LP #190947)
+        report = Report()
+        report['ExecutablePath'] = '/usr/share/apport/apport-gtk'
+        report['Traceback'] = '''Traceback (most recent call last):
+  File "/x/foo.py", line 242, in setup_chooser
+    raise "\nKey: "+key+" isn't set.\nRestarting AWN usually solves this issue\n"
+ 
+Key: /apps/avant-window-navigator/app/active_png isn't set.
+Restarting AWN usually solves this issue'''
+
+        t = report.standard_title()
+        self.assert_(t.startswith('apport-gtk crashed with'))
+        self.assert_(t.endswith('setup_chooser()'))
 
         # package install problem
         report = Report('Package')

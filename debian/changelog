@@ -5,8 +5,14 @@ apport (0.103) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py, is_distro_package(): Explicitly check site
     for "ppa", so that we do not automatically file bugs for PPA packages.
     This works around Soyuz bug LP #140412 for the time being.
+  * apport/report.py: Add standard_title() test cases for Python crashes with
+    a custom message, and a custom message with newlines. The latter
+    reproduces LP #190947.
+  * apport/report.py, standard_title(): Do not rely on a fixed position of the
+    topmost function; use iteration and regular expression matching instead.
+    (LP: #190947)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 12:24:06 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 13:09:25 +0100
 
 apport (0.102) hardy; urgency=low
 
