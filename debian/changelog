@@ -11,8 +11,10 @@ apport (0.103) UNRELEASED; urgency=low
   * apport/report.py, standard_title(): Do not rely on a fixed position of the
     topmost function; use iteration and regular expression matching instead.
     (LP: #190947)
+  * apport/ui.py, parse_argv(): Specify that --pid/-P argument must be an
+    integer, to avoid exceptions when it's not. (LP: #193494)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 13:09:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 25 Feb 2008 13:22:53 +0100
 
 apport (0.102) hardy; urgency=low
 

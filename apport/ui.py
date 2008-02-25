@@ -321,7 +321,7 @@ free memory to automatically analyze the problem and send a report to the develo
             action='store', type='string', dest='package', default=None)
         optparser.add_option('-P', '--pid',
             help='Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information.',
-            action='store', type='string', dest='pid', default=None)
+            action='store', type='int', dest='pid', default=None)
         optparser.add_option('-c', '--crash-file',
             help='Report the crash from given .crash file instead of the pending ones in ' + apport.fileutils.report_dir,
             action='store', type='string', dest='crash_file', default=None, metavar='PATH')
