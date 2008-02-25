@@ -30,15 +30,18 @@ def parse_options():
     '''Parse command line options and return (reportfile, options) tuple.'''
 
     optparser = optparse.OptionParser('%prog [options] <apport problem report | crash ID>')
-    optparser.add_option('-c', '--remove-core', 
-        help='Remove the core dump from the report after stack trace regeneration',
-        action='store_true', dest='removecore', default=False)
     optparser.add_option('-s', '--stdout', 
         help='Do not put the new traces into the report, but write them to stdout.',
         action='store_true', dest='stdout', default=False)
     optparser.add_option('-g', '--gdb', 
         help="Start an interactive gdb session with the report's core dump (-o ignored; does not rewrite report)",
         action='store_true', dest='gdb', default=False)
+    optparser.add_option('-o', '--output', 
+        help='Write modified report to given file instead of changing the original report',
+        action='store', type='string', dest='output', metavar='FILE', default=None)
+    optparser.add_option('-c', '--remove-core', 
+        help='Remove the core dump from the report after stack trace regeneration',
+        action='store_true', dest='removecore', default=False)
     optparser.add_option('-r', '--core-file', 
         help="Override report's CoreFile",
         action='store', type='string', dest='core_file', metavar='CORE', default=None)
@@ -54,9 +57,6 @@ def parse_options():
     optparser.add_option('-v', '--verbose', 
         help='Report download/install progress when installing additional packages',
         action='count', dest='verbose', default=0)
-    optparser.add_option('-o', '--output', 
-        help='Write modified report to given file instead of changing the original report',
-        action='store', type='string', dest='output', metavar='FILE', default=None)
     optparser.add_option('-u', '--unpack-only', 
         help='Only unpack the additionally required packages, do not configure them; purge packages again after retracing',
         action='store_true', dest='unpack_only', default=False)
@@ -80,6 +80,10 @@ def parse_options():
 
     if len(args) != 1:
         optparser.error('incorrect number of arguments; use --help for a short online help')
+        sys.exit(1)
+
+    if not (opts.auth_file or opts.output or opts.stdout or opts.gdb):
+        optparser.error('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short online help')
         sys.exit(1)
 
     return (args[0], opts)
