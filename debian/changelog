@@ -1,3 +1,12 @@
+apport (0.104) UNRELEASED; urgency=low
+
+  * apport/report.py: fix module license checking logic (LP: #199927).
+    - nonfree_modules: being unable to find a module should not mean the
+      module is non-free.
+    - test_module_license_evaluation: check modinfo reporting.
+
+ -- Kees Cook <kees@ubuntu.com>  Sat, 08 Mar 2008 14:25:45 -0800
+
 apport (0.103) hardy; urgency=low
 
   * bin/apport-unpack: Print error messages instead of crashing for problems

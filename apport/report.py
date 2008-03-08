@@ -140,19 +140,17 @@ def get_module_license(module):
 
     return None
 
-def nonfree_modules():
+def nonfree_modules(module_list = '/proc/modules'):
     '''Check loaded modules and return a list of those which are not free.'''
     try:
-        mods = [l.split()[0] for l in open('/proc/modules')]
+        mods = [l.split()[0] for l in open(module_list)]
     except IOError:
         return []
 
     nonfree = []
     for m in mods:
         l = get_module_license(m)
-        if l and ('GPL' in l or 'BSD' in l or 'MPL' in l or 'MIT' in l):
-            pass
-        else:
+        if l and not ('GPL' in l or 'BSD' in l or 'MPL' in l or 'MIT' in l):
             nonfree.append(m)
 
     return nonfree
@@ -1883,6 +1881,45 @@ ZeroDivisionError: integer division or modulo by zero'''
         self.assertEqual(pr.has_useful_stacktrace(), True)
         self.assertEqual(pr.crash_signature(), '/bin/foo:11:h:main')
         self.assertEqual(pr.standard_title(), 'foo crashed with SIGSEGV in h()')
+
+    def test_module_license_evaluation(self):
+        '''Test that module licenses can be validated correctly.'''
+
+        def _build_ko(license):
+            asm = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
+                                              suffix='.S')
+            asm.write('.section .modinfo\n.string "license=%s"\n' % (license))
+            asm.flush()
+            ko = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
+                                             suffix='.ko')
+            subprocess.call(['/usr/bin/as',asm.name,'-o',ko.name])
+            return ko
+        
+        good_ko = _build_ko('GPL')
+        bad_ko  = _build_ko('BAD')
+
+        # test:
+        #  - loaded real module
+        #  - unfindable module
+        #  - fake GPL module
+        #  - fake BAD module
+
+        # direct license check
+        self.assertTrue('GPL' in get_module_license('usbcore'))
+        self.assertTrue(get_module_license('does-not-exist') == None)
+        self.assertTrue('GPL' in get_module_license(good_ko.name))
+        self.assertTrue('BAD' in get_module_license(bad_ko.name))
+
+        # check via nonfree_modules logic
+        f = tempfile.NamedTemporaryFile()
+        f.write('usbcore\ndoes-not-exist\n%s\n%s\n' %
+                (good_ko.name,bad_ko.name))
+        f.flush()
+        nonfree = nonfree_modules(f.name)
+        self.assertFalse('usbcore' in nonfree)
+        self.assertFalse('does-not-exist' in nonfree)
+        self.assertFalse(good_ko.name in nonfree)
+        self.assertTrue(bad_ko.name in nonfree)
 
 if __name__ == '__main__':
     unittest.main()
