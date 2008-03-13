@@ -17,6 +17,9 @@ apport (0.104) UNRELEASED; urgency=low
   * apport/ui.py, test_collect_info_exepath(): Add a tuple argument and a
     CompressedValue to the test report. This reproduces LP #199349.
   * apport/report.py, anonymize(): Only work on string values. (LP: #199349)
+  * apport/ui.py: If a report has a field "Ignore", entirely ignore the report
+    without even presenting an explanatory error dialog (as
+    "UnsupportableReason" does). Document this in doc/package-hooks.txt.
 
   [ Kees Cook ]
   * apport/report.py: fix module license checking logic (LP: #199927).
@@ -25,7 +28,7 @@ apport (0.104) UNRELEASED; urgency=low
     - test_module_license_evaluation: check modinfo reporting.
   * problem_report.py: Skip atime test case if file system is mounted noatime.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 13:42:51 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 13:53:02 +0100
 
 apport (0.103) hardy; urgency=low
 

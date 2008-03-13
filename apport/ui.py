@@ -130,6 +130,9 @@ class UserInterface:
             if not self.load_report(report_file):
                 return
 
+            if 'Ignore' in self.report:
+                return
+
             # check for absent CoreDumps (removed if they exceed size limit)
             if self.report.get('ProblemType') == 'Crash' and \
                 'Signal' in self.report and 'CoreDump' not in self.report and \
@@ -1303,6 +1306,17 @@ CoreDump: base64
             self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
+
+        def test_run_crash_ignore(self):
+            '''Test run_crash() on a crash with the Ignore field.'''
+
+            self.report['Ignore'] = 'True'
+            self.report['ExecutablePath'] = '/bin/bash'
+            self.report['Package'] = 'bash 1'
+            self.update_report_file()
+
+            self.ui.run_crash(self.report_file.name)
+            self.assertEqual(self.ui.msg_severity, None)
 
         def test_run_crash_nocore(self):
             '''Test run_crash() for a crash dump without CoreDump.'''

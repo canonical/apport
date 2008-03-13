@@ -62,3 +62,11 @@ achieved by adding a field
 Such reports are displayed by the apport frontends as
 unsupportable/unreportable with the given explanation. Please ensure
 proper i18n for the texts.
+
+If you want to entirely ignore a crash without presenting an
+explanatory error dialog box, use "Ignore" instead of
+"UnreportableReason":
+
+  report['Ignore'] = 'True'
+
+(the actual value does not matter, it just must be a string).
