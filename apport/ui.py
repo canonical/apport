@@ -121,7 +121,12 @@ class UserInterface:
         self.report_file = report_file
 
         try:
-            apport.fileutils.mark_report_seen(report_file)
+            try:
+                apport.fileutils.mark_report_seen(report_file)
+            except OSError:
+                # not there any more? no problem, then it won't be regarded as
+                # "seen" any more anyway
+                pass
             if not self.load_report(report_file):
                 return
 
@@ -1262,7 +1267,6 @@ CoreDump: base64
             self.ui = _TestSuiteUserInterface()
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, 'error')
-            self.assert_('/nonexisting.crash' in self.ui.msg_text, self.ui.msg_text)
 
         def test_run_crash_unsupportable(self):
             '''Test run_crash() on a crash with the UnsupportableReason

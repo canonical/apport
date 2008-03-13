@@ -12,6 +12,8 @@ apport (0.104) UNRELEASED; urgency=low
   * apport/ui.py, run_report_bug(): Add ProcEnviron if we do not have a pid to
     file a bug against. This way, bugs filed against packages or distro also
     get locale information. (LP: #198514)
+  * apport/fileutils.py, mark_report_seen(): Do not crash if the file does not
+    exist any more, because it was removed underneath us. (LP: #199932)
 
   [ Kees Cook ]
   * apport/report.py: fix module license checking logic (LP: #199927).
@@ -20,7 +22,7 @@ apport (0.104) UNRELEASED; urgency=low
     - test_module_license_evaluation: check modinfo reporting.
   * problem_report.py: Skip atime test case if file system is mounted noatime.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 11:55:28 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 12:08:32 +0100
 
 apport (0.103) hardy; urgency=low
 
