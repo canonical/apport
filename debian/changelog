@@ -20,6 +20,7 @@ apport (0.104) UNRELEASED; urgency=low
   * apport/ui.py: If a report has a field "Ignore", entirely ignore the report
     without even presenting an explanatory error dialog (as
     "UnsupportableReason" does). Document this in doc/package-hooks.txt.
+  * debian/control: Bump Standards-Version (no changes necessary).
 
   [ Kees Cook ]
   * apport/report.py: fix module license checking logic (LP: #199927).
@@ -28,7 +29,7 @@ apport (0.104) UNRELEASED; urgency=low
     - test_module_license_evaluation: check modinfo reporting.
   * problem_report.py: Skip atime test case if file system is mounted noatime.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 13:53:02 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 13:54:37 +0100
 
 apport (0.103) hardy; urgency=low
 
