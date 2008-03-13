@@ -1032,7 +1032,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://bug.net/%i' % self.ui.crashdb.latest_id())
 
-            self.assert_(set(['Date', 'Uname', 'DistroRelease', 'ProblemType']).issubset(
+            self.assert_(set(['Date', 'Uname', 'DistroRelease', 'ProblemType', 'ProcEnviron']).issubset(
                 set(self.ui.report.keys())), 'report has required fields')
 
         def test_run_report_bug_package(self):
@@ -1049,6 +1049,7 @@ CoreDump: base64
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
             self.assert_('Dependencies' in self.ui.report.keys())
+            self.assert_('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
 
             # should not crash on nonexisting package
@@ -1084,6 +1085,7 @@ CoreDump: base64
             self.assert_('ProcMaps' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ExecutablePath'], '/bin/sleep')
             self.failIf(self.ui.report.has_key('ProcCmdline')) # privacy!
+            self.assert_('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
 
             self.assertEqual(self.ui.msg_severity, None)
@@ -1201,6 +1203,7 @@ CoreDump: base64
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Dependencies' in self.ui.report.keys())
             self.assert_('Stacktrace' in self.ui.report.keys())
+            self.assert_('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
             self.assert_(len(self.ui.report['CoreDump']) > 10000)
             self.assert_(self.ui.report['Title'].startswith('cat crashed with SIGSEGV'))

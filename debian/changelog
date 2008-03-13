@@ -3,6 +3,10 @@ apport (0.104) UNRELEASED; urgency=low
   [ Martin Pitt ]
   * apport/crashdb_impl/launchpad.py, get_source_version(): re-escape the
     package name so that it doesn't stumble over '+' and similar characters.
+  * apport/ui.py tests: assert that ProcEnviron is also included into bug
+    reports where we do not have a PID, since having the local information is
+    interesting and important (and acceptable in terms of personal
+    information).
 
   [ Kees Cook ]
   * apport/report.py: fix module license checking logic (LP: #199927).
@@ -11,7 +15,7 @@ apport (0.104) UNRELEASED; urgency=low
     - test_module_license_evaluation: check modinfo reporting.
   * problem_report.py: Skip atime test case if file system is mounted noatime.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 11:19:35 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 11:47:53 +0100
 
 apport (0.103) hardy; urgency=low
 
