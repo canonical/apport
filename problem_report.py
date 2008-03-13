@@ -1,4 +1,4 @@
-# vim: set fileencoding=UTF-8 :
+# vim: set encoding=UTF-8 fileencoding=UTF-8 :
 
 '''Store, load, and handle problem reports.
 
@@ -1074,7 +1074,20 @@ File: base64
         newstat = os.stat(rep)
         self.assertEqual(origstat.st_mode, newstat.st_mode)
         self.assertNotEqual(origstat.st_mtime, newstat.st_mtime)
-        self.assertNotEqual(origstat.st_atime, newstat.st_atime)
+        # skip atime check if filesystem is mounted noatime
+        skip_atime = False
+        dir = rep
+        while len(dir)>1:
+            dir, filename = os.path.split(dir)
+            if os.path.ismount(dir):
+                for line in open('/proc/mounts'):
+                    mount, fs, options = line.split(' ')[1:4]
+                    if mount == dir and 'noatime' in options.split(','):
+                        skip_atime = True
+                        break
+                break
+        if not skip_atime:
+            self.assertNotEqual(origstat.st_atime, newstat.st_atime)
 
         # check report contents
         newpr = ProblemReport()
