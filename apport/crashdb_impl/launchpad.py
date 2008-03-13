@@ -27,7 +27,7 @@ def get_source_version(distro, package):
     given distribution.'''
 
     result = urllib.urlopen('https://launchpad.net/%s/+source/%s' % (distro, package)).read()
-    m = re.search('href="/%s/\w+/\+source/%s/([^"]+)"' % (distro, package), result)
+    m = re.search('href="/%s/\w+/\+source/%s/([^"]+)"' % (distro, re.escape(package)), result)
     if not m:
         raise ValueError, 'source package %s does not exist in %s' % (package, distro)
     return m.group(1)
