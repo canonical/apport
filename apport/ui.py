@@ -732,6 +732,7 @@ might be helpful for the developers.'))
 if  __name__ == '__main__':
     import unittest, shutil, signal, tempfile
     from cStringIO import StringIO
+    import problem_report
 
     class _TestSuiteUserInterface(UserInterface):
         '''Concrete UserInterface suitable for automatic testing.'''
@@ -984,6 +985,10 @@ CoreDump: base64
             self.report['ExecutablePath'] = '/bin/bash'
             self.update_report_file()
             self.ui.load_report(self.report_file.name)
+            # add some tuple values, for robustness testing (might be added by
+            # apport hooks)
+            self.ui.report['Fstab'] = ('/etc/fstab', True)
+            self.ui.report['CompressedValue'] = problem_report.CompressedValue('Test')
             self.ui.collect_info()
             self.assert_(set(['SourcePackage', 'Package', 'ProblemType',
                 'Uname', 'Dependencies', 'DistroRelease', 'Date',

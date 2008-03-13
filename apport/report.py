@@ -875,7 +875,8 @@ class Report(ProblemReport):
             if k == 'CoreDump':
                 continue
             for old, new in replacements.iteritems():
-                self[k] = self[k].replace(old, new)
+                if hasattr(self[k], 'isspace'):
+                    self[k] = self[k].replace(old, new)
 
 #
 # Unit test
