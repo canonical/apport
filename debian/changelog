@@ -20,6 +20,7 @@ apport (0.104) hardy; urgency=low
   * apport/ui.py: If a report has a field "Ignore", entirely ignore the report
     without even presenting an explanatory error dialog (as
     "UnsupportableReason" does). Document this in doc/package-hooks.txt.
+    (LP: #198863)
   * debian/control: Bump Standards-Version (no changes necessary).
   * debian/control: Fix wrongly spelt project names (Python and GTK+). Thanks
     to lintian's scrutiny.
