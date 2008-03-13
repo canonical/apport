@@ -256,6 +256,8 @@ free memory to automatically analyze the problem and send a report to the develo
         try:
             if self.options.pid:
                 self.report.add_proc_info(self.options.pid)
+            else:
+                self.report.add_proc_environ()
         except OSError, e:
             # silently ignore nonexisting PIDs; the user must not close the
             # application prematurely

@@ -333,11 +333,6 @@ class Report(ProblemReport):
         - ProcStatus: /proc/pid/status contents
         - ProcMaps: /proc/pid/maps contents'''
 
-        safe_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
-            'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
-            'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
-            'LC_IDENTIFICATION', 'LOCPATH'] + extraenv
-
         if not pid:
             pid = os.getpid()
         pid = str(pid)
@@ -346,16 +341,7 @@ class Report(ProblemReport):
             self['ProcCwd'] = os.readlink('/proc/' + pid + '/cwd')
         except OSError:
             pass
-        self['ProcEnviron'] = ''
-        env = _read_file('/proc/'+ pid + '/environ').replace('\n', '\\n')
-        if env.startswith('Error:'):
-            self['ProcEnviron'] = env
-        else:
-            for l in env.split('\0'):
-                if l.split('=', 1)[0] in safe_vars:
-                    if self['ProcEnviron']:
-                        self['ProcEnviron'] += '\n'
-                    self['ProcEnviron'] += l
+        self.add_proc_environ(pid, extraenv)
         self['ProcStatus'] = _read_file('/proc/' + pid + '/status')
         self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
         self['ProcMaps'] = _read_maps(int(pid))
@@ -369,6 +355,36 @@ class Report(ProblemReport):
 
         # make ProcCmdline ASCII friendly, do shell escaping
         self['ProcCmdline'] = self['ProcCmdline'].replace('\\', '\\\\').replace(' ', '\\ ').replace('\0', ' ')
+
+    def add_proc_environ(self, pid=None, extraenv=[]):
+        '''Add environment information.
+
+        If pid is not given, it defaults to the process' current pid.
+
+        This adds the following fields:
+        - ProcEnviron: A subset of the process' environment (only some standard
+          variables that do not disclose potentially sensitive information, plus
+          the ones mentioned in extraenv)
+        '''
+        safe_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
+            'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
+            'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
+            'LC_IDENTIFICATION', 'LOCPATH'] + extraenv
+
+        if not pid:
+            pid = os.getpid()
+        pid = str(pid)
+
+        self['ProcEnviron'] = ''
+        env = _read_file('/proc/'+ pid + '/environ').replace('\n', '\\n')
+        if env.startswith('Error:'):
+            self['ProcEnviron'] = env
+        else:
+            for l in env.split('\0'):
+                if l.split('=', 1)[0] in safe_vars:
+                    if self['ProcEnviron']:
+                        self['ProcEnviron'] += '\n'
+                    self['ProcEnviron'] += l
 
     def add_gdb_info(self, debugdir=None):
         '''Add information from gdb.
