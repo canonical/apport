@@ -23,7 +23,7 @@ Description: automatically generate crash reports for debugging
  .
  This package also provides a command line frontend for browsing and
  handling the crash reports. For desktops, you should consider
- installing the GTK or Qt user interface (apport-gtk or apport-qt).
+ installing the GTK+ or Qt user interface (apport-gtk or apport-qt).
  .
  See https://wiki.ubuntu.com/AutomatedProblemReports for more
  information.
@@ -33,8 +33,8 @@ XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
 Depends: ${python:Depends}
-Description: python library to handle problem reports
- This python library provides an interface for creating, modifying,
+Description: Python library to handle problem reports
+ This Python library provides an interface for creating, modifying,
  and accessing standardized problem reports for program and kernel
  crashes and packaging bugs (for details, see
  https://wiki.ubuntu.com/AutomatedProblemReports).
@@ -50,7 +50,7 @@ Depends: ${python:Depends}, python-apt, python-problem-report (>= 0.94), python-
 Conflicts: python-apport-utils
 Replaces: python-apport-utils
 Description: apport crash report handling library
- This python package provides high-level functions for creating and
+ This Python package provides high-level functions for creating and
  handling apport crash reports:
  .
   * Query available and new reports.
@@ -84,12 +84,12 @@ Section: gnome
 Architecture: all
 Depends: python (>= 2.4), python-apport (>= 0.80), python-gtk2, python-glade2, python-xdg, apport (>= 0.41), procps
 Recommends: update-notifier
-Description: GTK frontend for the apport crash report system
+Description: GTK+ frontend for the apport crash report system
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump
  helper hook provided by the Ubuntu kernel.
  .
- This package provides a GTK frontend for browsing and handling the
+ This package provides a GTK+ frontend for browsing and handling the
  crash reports.
  .
  See https://wiki.ubuntu.com/AutomatedProblemReports for more

@@ -21,6 +21,8 @@ apport (0.104) UNRELEASED; urgency=low
     without even presenting an explanatory error dialog (as
     "UnsupportableReason" does). Document this in doc/package-hooks.txt.
   * debian/control: Bump Standards-Version (no changes necessary).
+  * debian/control: Fix wrongly spelt project names (Python and GTK+). Thanks
+    to lintian's scrutiny.
 
   [ Kees Cook ]
   * apport/report.py: fix module license checking logic (LP: #199927).
@@ -29,7 +31,7 @@ apport (0.104) UNRELEASED; urgency=low
     - test_module_license_evaluation: check modinfo reporting.
   * problem_report.py: Skip atime test case if file system is mounted noatime.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 13:54:37 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 13 Mar 2008 13:58:48 +0100
 
 apport (0.103) hardy; urgency=low
 
