@@ -343,7 +343,11 @@ in a dependent package.' % master)
         if report['DistroRelease'].split()[0] != 'Ubuntu':
             return # only Ubuntu bugs are filed private
 
-        bug.subscribtions.add('ubuntu-crashes-universe')
+        try:
+            bug.subscribtions.add('ubuntu-crashes-universe')
+        except ValueError:
+            # already subscribed
+            pass
 
 # some test code for future usage:
 
