@@ -94,7 +94,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
-        return self._cache(package).architecture
+        return self._cache(package).architecture or 'unknown'
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
