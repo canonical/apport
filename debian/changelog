@@ -10,8 +10,12 @@ apport (0.105) UNRELEASED; urgency=low
     (LP: #198548)
   * apport/ui.py, run_crash(): Intercept other IOErrors, too (such as EISDIR)
     and print out proper error message instead of crashing. (LP: #201819)
+  * apport_python_hook.py: If the Python script has mutilated sys.argv so that
+    even sys.argv[0] does not exist any more, fall back into readlink()ing
+    /proc/pid/exe and gracefully handle the failure of that, instead of
+    crashing in the crash handler (ugh). Add test case. (LP: #198183)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 18 Mar 2008 22:39:41 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 18 Mar 2008 23:04:57 +0100
 
 apport (0.104) hardy; urgency=low
 

@@ -38,8 +38,14 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         from apport.fileutils import likely_packaged
 
         # apport will look up the package from the executable path.
-        # if the module has mutated this, we're sunk, but it does not exist yet :(.
-        binary = os.path.realpath(os.path.join(os.getcwdu(), sys.argv[0]))
+        try:
+            binary = os.path.realpath(os.path.join(os.getcwdu(), sys.argv[0]))
+        except (TypeError, AttributeError):
+            # the module has mutated sys.argv, plan B
+            try:
+                binary = os.readlink('/proc/%i/exe' % os.getpid())
+            except OSError:
+                return
 
         # for interactive python sessions, sys.argv[0] == ''; catch that and
         # other irregularities
@@ -101,8 +107,8 @@ if __name__ == '__main__':
             self.assertEqual(apport.fileutils.get_all_reports(), [],
                 'No crash reports already present')
 
-        def test_general(self):
-            '''Test general operation of the Python crash hook.'''
+        def _test_crash(self, extracode=''):
+            '''Create a test crash.'''
 
             # put the script into /var/crash, since that isn't ignored in the
             # hook
@@ -112,8 +118,9 @@ if __name__ == '__main__':
 def func(x):
     raise Exception, 'This should happen.'
 
+%s
 func(42)
-''')
+''' % extracode)
                 os.close(fd)
                 os.chmod(script, 0755)
 
@@ -126,6 +133,13 @@ func(42)
 
             finally:
                 os.unlink(script)
+
+            return script
+
+        def test_general(self):
+            '''Test general operation of the Python crash hook.'''
+
+            script = self._test_crash()
 
             # did we get a report?
             reports = apport.fileutils.get_new_reports()
@@ -153,6 +167,35 @@ func(42)
             self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
             self.assert_(pr['Traceback'].startswith('Traceback'))
             self.assert_("func\n    raise Exception, 'This should happen." in pr['Traceback'])
+
+        def test_no_argv(self):
+            '''Test with zapped sys.argv.'''
+
+            self._test_crash('import sys\nsys.argv = None')
+
+            # did we get a report?
+            reports = apport.fileutils.get_new_reports()
+            pr = None
+            try:
+                self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+                self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
+                    0600, 'report has correct permissions')
+
+                pr = problem_report.ProblemReport()
+                pr.load(open(reports[0]))
+            finally:
+                for r in reports:
+                    os.unlink(r)
+
+            # check report contents
+            expected_keys = ['InterpreterPath',
+                'Traceback', 'ProblemType', 'ProcEnviron', 'ProcStatus',
+                'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps',
+                'UserGroups']
+            self.assert_(set(expected_keys).issubset(set(pr.keys())),
+                'report has necessary fields')
+            self.assert_('bin/python' in pr['InterpreterPath'])
+            self.assert_(pr['Traceback'].startswith('Traceback'))
 
         def _assert_no_reports(self):
             '''Assert that there are no crash reports.'''
