@@ -244,7 +244,8 @@ free memory to automatically analyze the problem and send a report to the develo
                     _('There is not enough disk space available to process this report.'))
                 sys.exit(1)
             else:
-                raise
+                self.ui_error_message(_('Invalid problem report'), e.strerror)
+                sys.exit(1)
         except OSError, e:
             # fail gracefully on ENOMEM
             if e.errno == errno.ENOMEM:
