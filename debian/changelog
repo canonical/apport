@@ -2,8 +2,11 @@ apport (0.105) UNRELEASED; urgency=low
 
   * apport/crashdb_impl/launchpad.py: Ignore ValueErrors when subscribing a
     team, since these are usually due to the team already being subscribed.
+  * apport/report.py, anonymize(): Be robust against empty user names and only
+    anonymize fields which can potentially contain user specific data.
+    (LP: #195706)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 18 Mar 2008 08:53:36 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 18 Mar 2008 14:36:57 +0100
 
 apport (0.104) hardy; urgency=low
 

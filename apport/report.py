@@ -856,7 +856,6 @@ class Report(ProblemReport):
         p = pwd.getpwuid(os.getuid())
         replacements = {
             p[0]: 'username',
-            p[4]: 'User Name',
             p[5]: '/home/username',
             os.uname()[1]: 'hostname',
         }
@@ -864,7 +863,7 @@ class Report(ProblemReport):
         for s in p[4].split(','):
             s = s.strip()
             if len(s) > 2:
-                replacements[s] = 'GECOS'
+                replacements[s] = 'User Name'
 
         try:
             del self['ProcCwd']
@@ -872,11 +871,11 @@ class Report(ProblemReport):
             pass
 
         for k in self:
-            if k == 'CoreDump':
-                continue
-            for old, new in replacements.iteritems():
-                if hasattr(self[k], 'isspace'):
-                    self[k] = self[k].replace(old, new)
+            if k.startswith('Proc') or 'Stacktrace' in k or \
+                k in ['Traceback', 'PythonArgs']:
+                for old, new in replacements.iteritems():
+                    if hasattr(self[k], 'isspace'):
+                        self[k] = self[k].replace(old, new)
 
 #
 # Unit test
