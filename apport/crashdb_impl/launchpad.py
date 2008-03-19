@@ -344,7 +344,7 @@ in a dependent package.' % master)
             return # only Ubuntu bugs are filed private
 
         try:
-            bug.subscribtions.add('ubuntu-crashes-universe')
+            bug.subscriptions.add('ubuntu-crashes-universe')
         except ValueError:
             # already subscribed
             pass
