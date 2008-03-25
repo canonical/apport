@@ -1,14 +1,17 @@
 apport (0.106) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * apport/crashdb_impl/launchpad.py: Fix spelling mistake in p-lp-bugs API
     (now corrected there).
+  * apport_python_hook.py: Catch IndexError for invalid sys.argv[0], too.
+    (LP: #204940)
 
-  [Sebastien Bacher]
+  [ Sebastien Bacher ]
   * po/Makevars: add the --language=python xgettext option so the translations
     template is correctly updated on build since cdbs is using intltool-update
     directly and not the corresponding makefile target
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 19 Mar 2008 08:36:58 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 25 Mar 2008 19:22:25 +0100
 
 apport (0.105) hardy; urgency=low
 

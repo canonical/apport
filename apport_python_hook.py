@@ -40,7 +40,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # apport will look up the package from the executable path.
         try:
             binary = os.path.realpath(os.path.join(os.getcwdu(), sys.argv[0]))
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError, IndexError):
             # the module has mutated sys.argv, plan B
             try:
                 binary = os.readlink('/proc/%i/exe' % os.getpid())
