@@ -44,7 +44,8 @@ def thread_collect_info(report, reportfile, package):
         report['Title'] = title
 
     # check package origin
-    if not apport.packaging.is_distro_package(report['Package'].split()[0]):
+    if 'Package' not in report or \
+        not apport.packaging.is_distro_package(report['Package'].split()[0]):
         #TRANS: %s is the name of the operating system
         report['UnreportableReason'] = _('This is not a genuine %s package') % \
             report['DistroRelease'].split()[0]
@@ -1133,11 +1134,29 @@ CoreDump: base64
 
             assert os.getuid() > 0, 'this test must not be run as root'
 
-            # silently ignore missing PID; this happens when the user closes
-            # the application prematurely
             sys.argv = ['ui-test', '-f', '-P', '1']
             self.ui = _TestSuiteUserInterface()
             self.ui.run_argv()
+
+            self.assertEqual(self.ui.msg_severity, 'error')
+
+        def test_run_report_bug_unpackaged_pid(self):
+            '''Test run_report_bug() for a pid of an unpackaged program.'''
+
+            # unpackaged test process
+            pid = os.fork()
+            if pid == 0:
+                sys.argv = ['/tmp/foo']
+                time.sleep(3600)
+                os._exit(0)
+
+            try:
+                sys.argv = ['ui-test', '-f', '-P', str(pid)]
+                self.ui = _TestSuiteUserInterface()
+                self.assertRaises(SystemExit, self.ui.run_argv)
+            finally:
+                os.kill(pid, signal.SIGKILL)
+                os.wait()
 
             self.assertEqual(self.ui.msg_severity, 'error')
 

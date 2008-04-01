@@ -510,8 +510,9 @@ class Report(ProblemReport):
         _common_hook_dir/*.py and has to contain a function 'add_info(report)'
         that takes and modifies a Report.'''
 
+        if 'Package' not in self:
+            return
         symb = {}
-        assert self.has_key('Package')
 
         # common hooks
         for hook in glob.glob(_common_hook_dir + '/*.py'):
@@ -1396,9 +1397,6 @@ def add_info(report):
 def add_info(report):
     report['BadField'] = 'XXX'
 ''')
-            r = Report()
-            self.assertRaises(AssertionError, r.add_hooks_info)
-
             r = Report()
             r['Package'] = 'bar'
             # should not throw any exceptions

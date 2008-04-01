@@ -5,13 +5,21 @@ apport (0.106) UNRELEASED; urgency=low
     (now corrected there).
   * apport_python_hook.py: Catch IndexError for invalid sys.argv[0], too.
     (LP: #204940)
+  * apport/ui.py: Add test_run_report_bug_unpackaged_pid() test case which
+    reports a bug against a pid which belongs to an unpackaged program. This
+    reproduces LP #203764.
+  * apport/report.py: Drop add_hooks_info() assertion on nonexisting Package
+    field, return silently instead. This conforms to the behaviour of the
+    other add_*_info() functions and avoids nasty error handling.
+  * apport/ui.py: Generate proper error message when calling with -f -p PID
+    and PID belongs to an unpackaged program. (LP: #203764).
 
   [ Sebastien Bacher ]
   * po/Makevars: add the --language=python xgettext option so the translations
     template is correctly updated on build since cdbs is using intltool-update
     directly and not the corresponding makefile target
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 25 Mar 2008 19:22:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 01 Apr 2008 16:02:46 +0200
 
 apport (0.105) hardy; urgency=low
 
