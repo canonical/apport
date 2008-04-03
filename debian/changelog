@@ -2,8 +2,13 @@ apport (0.107) UNRELEASED; urgency=low
 
   * cli/apport-cli: Add translator comment for difficult string. (LP: #210948)
   * Update German translations.
+  * po/Make{vars,file}: Remove the --language=python option again, since it
+    breaks extracting strings from the glade. intltool-update currently does
+    not seem to have a way to tag a file as "language python", so add an ugly
+    workaround: Create temporary .py symlinks for gtk/apport-gtk & friends,
+    and have intltool extract them.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 03 Apr 2008 12:55:54 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 03 Apr 2008 12:59:32 +0200
 
 apport (0.106) hardy; urgency=low
 
