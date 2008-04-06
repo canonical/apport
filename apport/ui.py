@@ -259,9 +259,12 @@ free memory to automatically analyze the problem and send a report to the develo
         '''Report a bug.
 
         If a pid is given on the command line, the report will contain runtime
-        debug information. If neither a package or a pid is specified, a
-        generic distro bug is filed.'''
+        debug information. Either a package or a pid must be specified.'''
 
+        if not self.options.package and not self.options.pid:
+            self.ui_error_message(_('No package specified'), 
+                _('You need to specify a package or a PID. See --help for more information.'))
+            return False
         self.report = apport.Report('Bug')
         try:
             if self.options.pid:
@@ -272,11 +275,11 @@ free memory to automatically analyze the problem and send a report to the develo
             # silently ignore nonexisting PIDs; the user must not close the
             # application prematurely
             if e.errno == errno.ENOENT:
-                return
+                return False
             elif e.errno == errno.EACCES:
                 self.ui_error_message(_('Permission denied'), 
                     _('The specified process does not belong to you. Please run this program as the process owner or as root.'))
-                return
+                return False
             else:
                 raise
         self.cur_package = self.options.package
@@ -287,7 +290,7 @@ free memory to automatically analyze the problem and send a report to the develo
             if e.message == 'package does not exist':
                 self.ui_error_message(_('Invalid problem report'), 
                     _('Package %s does not exist') % self.cur_package)
-                return
+                return False
             else:
                 raise
 
@@ -300,6 +303,8 @@ free memory to automatically analyze the problem and send a report to the develo
                 pass
             self.file_report()
 
+        return True
+
     def run_argv(self):
         '''Call appopriate run_* method according to command line arguments.
         
@@ -307,8 +312,7 @@ free memory to automatically analyze the problem and send a report to the develo
         otherwise.'''
 
         if self.options.filebug:
-            self.run_report_bug()
-            return True
+            return self.run_report_bug()
         elif self.options.crash_file:
             try:
                 self.run_crash(self.options.crash_file, False)
@@ -1041,16 +1045,13 @@ CoreDump: base64
             self.ui = _TestSuiteUserInterface()
             self.assertEqual(self.ui.run_argv(), False)
 
-        def test_run_report_bug_distro(self):
-            '''Test run_report_bug() for a general distro bug.'''
+        def test_run_report_bug_noargs(self):
+            '''Test run_report_bug() without specifying arguments.'''
 
-            self.ui.run_report_bug()
-            self.assertEqual(self.ui.msg_severity, None)
-            self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://bug.net/%i' % self.ui.crashdb.latest_id())
-
-            self.assert_(set(['Date', 'Uname', 'DistroRelease', 'ProblemType', 'ProcEnviron']).issubset(
-                set(self.ui.report.keys())), 'report has required fields')
+            sys.argv = ['ui-test', '-f']
+            self.ui = _TestSuiteUserInterface()
+            self.assertEqual(self.ui.run_argv(), False)
+            self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_report_bug_package(self):
             '''Test run_report_bug() for a package.'''

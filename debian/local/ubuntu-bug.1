@@ -6,8 +6,6 @@ ubuntu\-bug \- file a bug against an Ubuntu package
 
 .SH SYNOPSIS
 
-.B ubuntu\-bug
-
 .B ubuntu\-bug \-p
 .I packagename
 
@@ -41,17 +39,15 @@ $ ubuntu-bug -P 5139
 .fi
 .RE
 
-If you want to report a problem that is not tied to a particular
-package, a generic distribution bug can be filed without specifying
-any arguments at all.
-
 .B ubuntu\-bug
-needs a running graphical desktop environment. It detects whether KDE
-or Gnome is running and calls
+detects whether KDE or Gnome is running and calls
 .B apport\-gtk
 or 
 .B apport\-qt
-accordingly.
+accordingly. If neither is available, or the session does not run
+under X11, it calls
+.B apport\-cli
+for a command-line client.
 
 .SH AUTHOR
 .B apport
