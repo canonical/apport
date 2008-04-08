@@ -2,8 +2,10 @@ apport (0.108) UNRELEASED; urgency=low
 
   * backends/packaging_rpm.py: Fix dependency resolution of uname(*) in the
     RPM backend. Thanks to Patryk Zawadzki! (LP: #213018)
+  * backends/packaging_rpm.py: Fix RPM platform parsing, thanks to Patryk
+    Zawadzki! (LP: #213015)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 08 Apr 2008 16:44:10 -0500
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 08 Apr 2008 16:47:17 -0500
 
 apport (0.107) hardy; urgency=low
 

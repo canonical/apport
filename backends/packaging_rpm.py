@@ -145,6 +145,8 @@ class RPMPackageInfo:
         # XXX is there an rpmlib method for this?
         f = open('/etc/rpm/platform')
         line = f.readline()
+        while line == '' or line[0] == '#':
+            line = f.readline()
         f.close()
         (arch,vendor,os) = line.split('-')
         return arch 
