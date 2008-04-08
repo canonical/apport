@@ -52,7 +52,7 @@ class RPMPackageInfo:
         # parse this package's Requires
         reqs=[]
         for r in hdr['requires']:
-            if r.startswith('rpmlib'):
+            if r.startswith('rpmlib') or r.startswith('uname('):
                 continue # we've got rpmlib, thanks
             if r[0] == '/': # file requires
                 req_heads = self._get_headers_by_tag('basenames',r)
