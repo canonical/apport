@@ -9,6 +9,11 @@ apport (0.108) UNRELEASED; urgency=low
   [ Daniel Hahler ]
   * bin/apport-retrace: catch the same exceptions from Report.load() like
     ui.load_report() does (LP: #211899)
+  * Fix uncaught exceptions in apport itself (LP: #215929):
+    - apport/REThread.py: check if "sys" exists in the except block of
+      REThread.run()
+    - apport_python_hook.py: check if "sys" exists in the finally block of
+      apport_excepthook
 
  -- Daniel Hahler <ubuntu@thequod.de>  Fri, 11 Apr 2008 00:30:43 +0200
 
