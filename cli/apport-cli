@@ -125,14 +125,14 @@ class CLIUserInterface(apport.ui.UserInterface):
     def ui_present_crash(self, desktop_entry):
         date = datetime.strptime(self.report['Date'], '%a %b %d %H:%M:%S %Y')
         # adapt dialog heading and label appropriately
-        # translators: first %s: application name, second %s: date, third %s: time
-        heading = _('%s closed unexpectedly on %s at %s.') % (name, date.date(), date.time())
         if desktop_entry:
             name = desktop_entry.getName()
         elif self.report.has_key('ExecutablePath'):
             name = os.path.basename(self.report['ExecutablePath'])
         else:
             name = self.cur_package
+        # translators: first %s: application name, second %s: date, third %s: time
+        heading = _('%s closed unexpectedly on %s at %s.') % (name, date.date(), date.time())
 
         dialog = CLIDialog(
                 heading,
