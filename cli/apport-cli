@@ -194,7 +194,9 @@ class CLIUserInterface(apport.ui.UserInterface):
         for key in self.report:
             details += key + ':'
             # string value
-            if not hasattr(self.report[key], 'gzipvalue') and not self.report._is_binary(self.report[key]):
+            if not hasattr(self.report[key], 'gzipvalue') and \
+                hasattr(self.report[key], 'isspace') and \
+                not self.report._is_binary(self.report[key]):
                 lines = self.report[key].splitlines()
                 if len(lines) <= 1:
                     details += ' ' + self.report[key] + '\n'

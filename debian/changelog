@@ -1,6 +1,8 @@
 apport (0.108) UNRELEASED; urgency=low
 
   [ Martin Pitt ]
+  * apport-{gtk,qt,cli}: Fix handling of file references added by package
+    hooks. (LP: #205163)
   * backends/packaging_rpm.py: Fix dependency resolution of uname(*) in the
     RPM backend. Thanks to Patryk Zawadzki! (LP: #213018)
   * backends/packaging_rpm.py: Fix RPM platform parsing, thanks to Patryk
@@ -18,7 +20,7 @@ apport (0.108) UNRELEASED; urgency=low
   * cli/apport-cli: Fix UnboundLocalError in ui_present_crash, which rendered
     apport-cli useless (for reporting crashes) (LP: #216151)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 16 Apr 2008 11:50:08 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 16 Apr 2008 12:20:21 +0200
 
 apport (0.107) hardy; urgency=low
 

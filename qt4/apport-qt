@@ -223,7 +223,9 @@ class QT4UserInterface(apport.ui.UserInterface):
             details.addTopLevelItem (keyitem)
 
             # string value
-            if not hasattr(self.report[key], 'gzipvalue') and not self.report._is_binary(self.report[key]):
+            if not hasattr(self.report[key], 'gzipvalue') and \
+                hasattr(self.report[key], 'isspace') and \
+                not self.report._is_binary(self.report[key]):
                 lines = self.report[key].splitlines()
                 for line in lines:
                     QTreeWidgetItem(keyitem, [line])
