@@ -8,6 +8,10 @@ apport (0.108) UNRELEASED; urgency=low
   * backends/packaging_rpm.py: Fix RPM platform parsing, thanks to Patryk
     Zawadzki! (LP: #213015)
   * po/de.po: Fix typo (missing space).
+  * debian/apport.default: Disable Apport for the final Hardy release, since
+    it is less useful in stable releases, and drains a lot of CPU and I/O
+    power on crashes. Disabling it here instead of in update-notifier/adept is
+    more discoverable and more centralized.
 
   [ Daniel Hahler ]
   * bin/apport-retrace: catch the same exceptions from Report.load() like
@@ -20,7 +24,7 @@ apport (0.108) UNRELEASED; urgency=low
   * cli/apport-cli: Fix UnboundLocalError in ui_present_crash, which rendered
     apport-cli useless (for reporting crashes) (LP: #216151)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 16 Apr 2008 12:20:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 16 Apr 2008 12:24:32 +0200
 
 apport (0.107) hardy; urgency=low
 
