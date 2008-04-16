@@ -83,8 +83,10 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
             report_file.close()
 
     finally:
-        # resume original processing to get the default behaviour.
-        sys.__excepthook__(exc_type, exc_obj, exc_tb)
+        # resume original processing to get the default behaviour,
+        # but do not trigger an AttributeError on interpreter shutdown.
+        if sys:
+            sys.__excepthook__(exc_type, exc_obj, exc_tb)
 
 
 def install():

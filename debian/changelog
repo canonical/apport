@@ -1,10 +1,22 @@
 apport (0.108) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * backends/packaging_rpm.py: Fix dependency resolution of uname(*) in the
     RPM backend. Thanks to Patryk Zawadzki! (LP: #213018)
   * backends/packaging_rpm.py: Fix RPM platform parsing, thanks to Patryk
     Zawadzki! (LP: #213015)
   * po/de.po: Fix typo (missing space).
+
+  [ Daniel Hahler ]
+  * bin/apport-retrace: catch the same exceptions from Report.load() like
+    ui.load_report() does (LP: #211899)
+  * Fix uncaught exceptions in apport itself (LP: #215929):
+    - apport/REThread.py: check if "sys" exists in the except block of
+      REThread.run()
+    - apport_python_hook.py: check if "sys" exists in the finally block of
+      apport_excepthook
+  * cli/apport-cli: Fix UnboundLocalError in ui_present_crash, which rendered
+    apport-cli useless (for reporting crashes) (LP: #216151)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 16 Apr 2008 11:50:08 +0200
 

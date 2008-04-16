@@ -36,7 +36,8 @@ class REThread(threading.Thread):
             try:
                 self._retval = self.__target(*self.__args, **self.__kwargs)
             except:
-                self._exception = sys.exc_info()
+                if sys:
+                    self._exception = sys.exc_info()
 
     def return_value(self):
         '''Return value from target function.
