@@ -35,7 +35,7 @@ dpkg -s python-launchpad-bugs >/dev/null 2>/dev/null || {
     wget -q http://archive.ubuntu.com/ubuntu/$P
     dpkg -x python-launchpad-bugs_*.deb $T
     rm python-launchpad-bugs_*.deb
-    mv $T/usr/share/pycentral/python-launchpad-bugs/site-packages/launchpadbugs apport/
+    mv $T/usr/share/pyshared/launchpadbugs apport/
 }
 
 # python-apt
@@ -60,9 +60,9 @@ dpkg -s python-libxml2 >/dev/null 2>/dev/null || {
 rm -rf $T
 
 # fake{chroot,root} libraries
-dpkg -s fakeroot >/dev/null 2>/dev/null || {
+type fakeroot >/dev/null 2>/dev/null || {
     wget -q http://archive.ubuntu.com/ubuntu/`apt-cache show fakeroot|grep ^Filename | cut -f 2 -d\ `
-    ar p fakeroot_*.deb data.tar.gz | tar xzO ./usr/lib/libfakeroot-sysv.so > fakelibs/libfakeroot.so
+    ar p fakeroot_*.deb data.tar.gz | tar xzO ./usr/lib/libfakeroot/libfakeroot-sysv.so > fakelibs/libfakeroot.so
     rm fakeroot_*.deb
 }
 
@@ -71,7 +71,7 @@ ar p fakechroot_*.deb data.tar.gz | tar xzO ./usr/lib/fakechroot/libfakechroot.s
 rm fakechroot_*.deb
 
 # create file with environment variables
-if dpkg -s fakeroot >/dev/null 2>/dev/null; then
+if type fakeroot >/dev/null 2>/dev/null; then
     cat <<EOF > environ
 PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
 PYTHONPATH=`pwd`/apport:\$PYTHONPATH
