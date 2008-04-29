@@ -1,6 +1,16 @@
 apport (0.109) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * debian/local/setup-apport-retracer: Update for some changes in Hardy.
+
+  [ Loic Minier ]
+  * apport/report.py, add_proc_info(): also strip pathnames starting with
+    'cow', 'squashmnt', and 'persistmnt' to allow apport to locate the
+    executable pathname, additionally to 'rofs' added in 0.75.  This fixes
+    apport for packages installed on the read-write part of the unionfs mounts
+    and under UME which uses different names for the mount points.  Proper fix
+    is to rewrite the pathnames in the kernel.
+
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 Apr 2008 14:30:03 +0200
 
