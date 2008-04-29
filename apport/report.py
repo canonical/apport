@@ -346,8 +346,10 @@ class Report(ProblemReport):
         self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
         self['ProcMaps'] = _read_maps(int(pid))
         self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
-        if self['ExecutablePath'].startswith('/rofs/'):
-            self['ExecutablePath'] = self['ExecutablePath'][5:]
+        for p in ('rofs', 'rwfs', 'squashmnt', 'persistmnt'):
+            if self['ExecutablePath'].startswith('/%s/' % p):
+                self['ExecutablePath'] = self['ExecutablePath'][len('/%s' % p):]
+                break
         assert os.path.exists(self['ExecutablePath'])
 
         # check if we have an interpreted program
