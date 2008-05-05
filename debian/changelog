@@ -9,8 +9,7 @@ apport (0.109) UNRELEASED; urgency=low
     executable pathname, additionally to 'rofs' added in 0.75.  This fixes
     apport for packages installed on the read-write part of the unionfs mounts
     and under UME which uses different names for the mount points.  Proper fix
-    is to rewrite the pathnames in the kernel.
-
+    is to rewrite the pathnames in the kernel. (LP: #224168)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 Apr 2008 14:30:03 +0200
 
