@@ -344,7 +344,7 @@ int main() { return 42; }
             assert subprocess.call('cp -a /lib/*.so ' + ldir, shell=True) == 0
             try:
                 for cmd in ('bash', 'echo', 'cat', 'cp', 'ln', 'ls', 'rm',
-                    'mkdir', 'rmdir'):
+                    'mkdir', 'rmdir', 'chmod', 'chown'):
                     self._install_exe('/bin/' + cmd, d)
                 self._install_exe('/usr/bin/stat', d)
 
@@ -378,6 +378,9 @@ cat test/link
 stat -c '%f %s %n' test/file
 stat -c '%f %n' test/link
 stat -L -c '%f %s %n' test/link
+chmod 600 test/file
+chown 0:0 test/file
+stat -c '%f %s %n' test/file
 rm test/link
 rm test/file
 rmdir test
@@ -385,7 +388,7 @@ mkdir test
 echo world > test/file
 rm -r test
 ! test -e test
-'''), ('world\nworld\n81a4 6 test/file\na1ff test/link\n81a4 6 test/link\n', '', 0))
+'''), ('world\nworld\n81a4 6 test/file\na1ff test/link\n81a4 6 test/link\n8180 6 test/file\n', '', 0))
 
                 # complex shell commands: relative symlink to executable
                 self.assertEqual(c.run_capture(['bash'], '''set -e
@@ -407,6 +410,9 @@ cat /test/link
 stat -c '%f %s %n' /test/file
 stat -c '%f %n' /test/link
 stat -L -c '%f %s %n' /test/link
+chmod 600 /test/file
+chown 0:0 /test/file
+stat -c '%f %s %n' /test/file
 rm /test/link
 rm /test/file
 rmdir /test
@@ -414,7 +420,7 @@ mkdir /test
 echo world > /test/file
 rm -r /test
 ! test -e test
-'''), ('world\nworld\n81a4 6 /test/file\na1ff /test/link\n81a4 6 /test/link\n', '', 0))
+'''), ('world\nworld\n81a4 6 /test/file\na1ff /test/link\n81a4 6 /test/link\n8180 6 /test/file\n', '', 0))
 
                 # complex shell commands: absolute symlink to executable
                 self.assertEqual(c.run_capture(['bash'], '''set -e
