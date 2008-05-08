@@ -1,3 +1,12 @@
+apport (0.110) UNRELEASED; urgency=low
+
+  * apport/chroot.py: In the test suite, copy some system binaries/libraries
+    into a fakechroot and exercise a lot of standard shell commands (cp, ln
+    -s, rm, mkdir, echo, etc.) with absolute/relative paths. This reproduces
+    the total breakage of rm'ing absolute paths in hardy fakechroots.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 May 2008 19:27:45 +0200
+
 apport (0.109) intrepid; urgency=low
 
   [ Martin Pitt ]

@@ -1,6 +1,6 @@
 '''Class for representing and working with chroots.'''
 
-# (c) 2007 Canonical Ltd.
+# (c) 2007, 2008 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -164,7 +164,7 @@ class Chroot:
 #
 
 if __name__ == '__main__':
-    import unittest, os, tarfile
+    import unittest, os, tarfile, re, shutil
 
     class ChrootTest(unittest.TestCase):
         def test_null(self):
@@ -304,6 +304,139 @@ int main() { return 42; }
                 self.assertEqual(c.run(['/42rel']), 42)
                 self.assertEqual(c.run(['/bin/42prefix']), 42)
                 self.assertEqual(os.readlink(os.path.join(d, 'bin', '42noprefix')), '/bin/42')
+
+            finally:
+                shutil.rmtree(d)
+
+        @classmethod
+        def _install_file(klass, path, root):
+            '''Install given file into a chroot, preserving the path.
+            
+            Do nothing if the target file already exists.'''
+
+            destpath = root + os.path.abspath(path)
+            if os.path.exists(destpath):
+                return
+            destdir = os.path.dirname(destpath)
+            if not os.path.isdir(destdir):
+                os.makedirs(destdir)
+            shutil.copy(path, destdir)
+
+        @classmethod
+        def _install_exe(klass, exepath, root):
+            '''Install an executable and all linked shlibs into a chroot.'''
+
+            klass._install_file(exepath, root)
+            ldd = subprocess.Popen(['ldd', exepath], stdout=subprocess.PIPE)
+            out = ldd.communicate()[0]
+            assert ldd.returncode == 0
+            for m in re.finditer(' => (/[^ ]+)', out):
+                klass._install_file(m.group(1), root)
+            for m in re.finditer('^\s*(/[^ ]+)', out, re.M):
+                klass._install_file(m.group(1), root)
+
+        def test_shell_ops(self):
+            '''Test various shell operations in the chroot.'''
+
+            d = tempfile.mkdtemp()
+            ldir = os.path.join(d, 'lib')
+            os.mkdir(ldir)
+            assert subprocess.call('cp -a /lib/*.so ' + ldir, shell=True) == 0
+            try:
+                for cmd in ('bash', 'echo', 'cat', 'cp', 'ln', 'ls', 'rm',
+                    'mkdir', 'rmdir'):
+                    self._install_exe('/bin/' + cmd, d)
+                self._install_exe('/usr/bin/stat', d)
+
+                c = Chroot(d)
+
+                self.assertEqual(c.run_capture(['echo', 'hello']),
+                    ('hello\n', '', 0))
+                self.assertEqual(c.run_capture(['cat'], 'hello'),
+                    ('hello', '', 0))
+                self.assertEqual(c.run_capture(['/bin/bash'], 'type echo'),
+                    ('echo is a shell builtin\n', '', 0))
+                self.assertEqual(c.run_capture(['/bin/bash'], 'set -e; false'),
+                    ('', '', 1))
+
+                # check ls
+                (out, err, result) = c.run_capture(['ls'])
+                self.assertEqual(err, '')
+                self.assertEqual(result, 0)
+                files = out.splitlines()
+                self.assert_('bin' in files)
+                self.assert_('lib' in files)
+
+                # complex shell commands: relative symlinks and paths
+                self.assertEqual(c.run_capture(['bash'], '''set -e
+cd /
+mkdir test
+echo world > test/file
+ln -s file test/link
+cat test/file
+cat test/link
+stat -c '%f %s %n' test/file
+stat -c '%f %n' test/link
+stat -L -c '%f %s %n' test/link
+rm test/link
+rm test/file
+rmdir test
+'''), ('world\nworld\n81a4 6 test/file\na1ff test/link\n81a4 6 test/link\n', '', 0))
+
+                # complex shell commands: relative symlink to executable
+                self.assertEqual(c.run_capture(['bash'], '''set -e
+cd /
+ln -s echo bin/eco
+stat -c '%f %n' bin/eco
+stat -L -c '%f %n' bin/eco
+eco -n hello
+rm bin/eco
+'''), ('a1ff bin/eco\n81ed bin/eco\nhello', '', 0))
+
+                # complex shell commands: absolute symlinks and paths
+                self.assertEqual(c.run_capture(['bash'], '''set -e
+mkdir /test
+echo world > /test/file
+ln -s /test/file /test/link
+cat /test/file
+cat /test/link
+stat -c '%f %s %n' /test/file
+stat -c '%f %n' /test/link
+stat -L -c '%f %s %n' /test/link
+rm /test/link
+rm /test/file
+rmdir /test
+'''), ('world\nworld\n81a4 6 /test/file\na1ff /test/link\n81a4 6 /test/link\n', '', 0))
+
+                # complex shell commands: absolute symlink to executable
+                self.assertEqual(c.run_capture(['bash'], '''set -e
+ln -s /bin/echo /bin/eco
+/bin/eco -n hello
+rm /bin/eco
+'''), ('hello', '', 0))
+
+                # complex shell commands: cp/cat/rm of relative paths
+                self.assertEqual(c.run_capture(['bash'], '''set -e
+cd /
+mkdir etc
+echo "/bin/bash" > etc/shells
+cp etc/shells etc/shells.tmp
+cat etc/shells.tmp
+rm etc/shells.tmp
+rm etc/shells
+rmdir etc
+'''), ('/bin/bash\n', '', 0))
+
+                # complex shell commands: cp/cat/rm of absolute paths
+                self.assertEqual(c.run_capture(['bash'], '''set -e
+mkdir /etc
+echo "/bin/bash" > /etc/shells
+cp /etc/shells /etc/shells.tmp
+cat /etc/shells.tmp
+rm /etc/shells.tmp
+rm /etc/shells
+rmdir /etc
+'''), ('/bin/bash\n', '', 0))
 
             finally:
                 shutil.rmtree(d)
