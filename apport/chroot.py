@@ -381,6 +381,10 @@ stat -L -c '%f %s %n' test/link
 rm test/link
 rm test/file
 rmdir test
+mkdir test
+echo world > test/file
+rm -r test
+! test -e test
 '''), ('world\nworld\n81a4 6 test/file\na1ff test/link\n81a4 6 test/link\n', '', 0))
 
                 # complex shell commands: relative symlink to executable
@@ -406,6 +410,10 @@ stat -L -c '%f %s %n' /test/link
 rm /test/link
 rm /test/file
 rmdir /test
+mkdir /test
+echo world > /test/file
+rm -r /test
+! test -e test
 '''), ('world\nworld\n81a4 6 /test/file\na1ff /test/link\n81a4 6 /test/link\n', '', 0))
 
                 # complex shell commands: absolute symlink to executable
