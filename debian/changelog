@@ -5,8 +5,11 @@ apport (0.110) UNRELEASED; urgency=low
     -s, rm, rm -r, mkdir, echo, chmod, chown, etc.) with absolute/relative
     paths.  This reproduces the total breakage of rm'ing, chmod'ing, and
     chown'ing absolute paths in hardy fakechroots.
+  * bin/crash-digger: Intercept exceptions when downloading crash reports for
+    duplicate checking, so that the retracer does not crash on malformed bug
+    reports. (LP: #205178)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 May 2008 22:07:35 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 09 May 2008 13:32:00 +0200
 
 apport (0.109) intrepid; urgency=low
 
