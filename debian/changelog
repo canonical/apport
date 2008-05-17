@@ -15,8 +15,10 @@ apport (0.110) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py: Provide implementation for
     PackageInfo.enabled() for Debian/Ubuntu by evaluating /etc/default/apport.
     Add various test cases for different configuration files and absent files.
+  * apport_python_hook.py: Do not create reports if Apport is disabled (in
+    /etc/default/apport). (LP: #222260)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 17 May 2008 12:35:36 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 17 May 2008 12:44:21 +0200
 
 apport (0.109) intrepid; urgency=low
 

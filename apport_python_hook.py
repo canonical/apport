@@ -33,6 +33,12 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # ignore 'safe' exit types.
         if exc_type in (KeyboardInterrupt, ):
             return
+
+        # do not do anything if apport was disabled
+        from apport.packaging_impl import impl as packaging
+        if not packaging.enabled():
+            return
+
         from cStringIO import StringIO
         import re, tempfile, traceback
         from apport.fileutils import likely_packaged
