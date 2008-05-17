@@ -106,4 +106,17 @@ class PackageInfo:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def enabled(self):
+        '''Return whether Apport should generate crash reports.
+
+        Signal crashes are controlled by /proc/sys/kernel/core_pattern, but
+        some init script needs to set that value based on a configuration file.
+        This also determines whether Apport generates reports for Python,
+        package, or kernel crashes.
+        
+        Implementations should parse the configuration file which controls
+        Apport (such as /etc/default/apport in Debian/Ubuntu).
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
 import packaging_impl

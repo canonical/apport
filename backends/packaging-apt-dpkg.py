@@ -11,7 +11,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import subprocess, os, glob, stat, sys, tempfile, glob
+import subprocess, os, glob, stat, sys, tempfile, glob, re
 
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
@@ -27,6 +27,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._apt_cache = None
         self._contents_dir = None
         self._mirror = None
+
+        self.configuration = '/etc/default/apport'
 
     def __del__(self):
         try:
@@ -380,6 +382,26 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return apt.VersionCompare(ver1, ver2)
 
+    def enabled(self):
+        '''Return whether Apport should generate crash reports.
+
+        Signal crashes are controlled by /proc/sys/kernel/core_pattern, but
+        some init script needs to set that value based on a configuration file.
+        This also determines whether Apport generates reports for Python,
+        package, or kernel crashes.
+        
+        Implementations should parse the configuration file which controls
+        Apport (such as /etc/default/apport in Debian/Ubuntu).
+        '''
+
+        try:
+            conf = open(self.configuration).read()
+        except IOError:
+            # if the file does not exist, assume it's enabled
+            return True
+
+        return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
+
 impl = __AptDpkgPackageInfo()
 
 #
@@ -390,6 +412,13 @@ if __name__ == '__main__':
     import unittest, gzip, shutil
 
     class _AptDpkgPackageInfoTest(unittest.TestCase):
+
+        def setUp(self):
+            # save and restore configuration file
+            self.orig_conf = impl.configuration
+
+        def tearDown(self):
+            impl.configuration = self.orig_conf
 
         def test_check_files_md5(self):
             '''Test _check_files_md5().'''
@@ -573,6 +602,34 @@ bo/gu/s                                                 na/mypackage
             self.assertEqual(impl.compare_versions('1.0-1ubuntu2', '1.0-1ubuntu1'), 1)
             self.assertEqual(impl.compare_versions('1:1.0-1', '2007-2'), 1)
             self.assertEqual(impl.compare_versions('1:1.0-1~1', '1:1.0-1'), -1)
+
+        def test_enabled(self):
+            '''Test enabled.'''
+
+            impl.configuration = '/nonexisting'
+            self.assertEqual(impl.enabled(), True)
+
+            f = tempfile.NamedTemporaryFile()
+            impl.configuration = f.name
+            f.write('# configuration file\nenabled = 1')
+            f.flush()
+            self.assertEqual(impl.enabled(), True)
+            f.close()
+
+            f = tempfile.NamedTemporaryFile()
+            impl.configuration = f.name
+            f.write('# configuration file\n  enabled =0  ')
+            f.flush()
+            self.assertEqual(impl.enabled(), False)
+            f.close()
+
+            f = tempfile.NamedTemporaryFile()
+            impl.configuration = f.name
+            f.write('# configuration file\nnothing here')
+            f.flush()
+            self.assertEqual(impl.enabled(), True)
+            f.close()
+
 
     # only execute if dpkg is available
     try:
