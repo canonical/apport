@@ -1144,12 +1144,16 @@ CoreDump: base64
         def test_run_report_bug_unpackaged_pid(self):
             '''Test run_report_bug() for a pid of an unpackaged program.'''
 
+            # create unpackaged test program
+            (fd, exename) = tempfile.mkstemp()
+            os.write(fd, open('/bin/cat').read())
+            os.close(fd)
+            os.chmod(exename, 0755)
+
             # unpackaged test process
             pid = os.fork()
             if pid == 0:
-                sys.argv = ['/tmp/foo']
-                time.sleep(3600)
-                os._exit(0)
+                os.execv(exename, [exename])
 
             try:
                 sys.argv = ['ui-test', '-f', '-P', str(pid)]
@@ -1158,6 +1162,7 @@ CoreDump: base64
             finally:
                 os.kill(pid, signal.SIGKILL)
                 os.wait()
+                os.unlink(exename)
 
             self.assertEqual(self.ui.msg_severity, 'error')
 
