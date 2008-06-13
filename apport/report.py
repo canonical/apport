@@ -331,7 +331,8 @@ class Report(ProblemReport):
           the ones mentioned in extraenv)
         - ProcCmdline: /proc/pid/cmdline contents
         - ProcStatus: /proc/pid/status contents
-        - ProcMaps: /proc/pid/maps contents'''
+        - ProcMaps: /proc/pid/maps contents
+        - ProcAttrCurrent: /proc/pid/attr/current contents'''
 
         if not pid:
             pid = os.getpid()
@@ -357,6 +358,13 @@ class Report(ProblemReport):
 
         # make ProcCmdline ASCII friendly, do shell escaping
         self['ProcCmdline'] = self['ProcCmdline'].replace('\\', '\\\\').replace(' ', '\\ ').replace('\0', ' ')
+
+        # grab AppArmor or SELinux context
+        # If no LSM is loaded, reading will return -EINVAL
+        try:
+            self['ProcAttrCurrent'] = open('/proc/' + pid + '/attr/current').read().strip()
+        except (IOError, OSError):
+            pass
 
     def add_proc_environ(self, pid=None, extraenv=[]):
         '''Add environment information.

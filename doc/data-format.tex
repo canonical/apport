@@ -205,6 +205,12 @@ package).
     \item [ProcStatus:] (required) Contents of \verb!/proc/pid/status!
 
     \item [ProcMaps:] (required) Contents of \verb!/proc/pid/maps!
+
+    \item [ProcAttrCurrent:] (optional) Contents of
+    \verb!/proc/pid/attr/current!; this contains the process' security
+    context if there is a Linux Security module enabled that makes use
+    of that interface (e.g. SELinux, AppArmor).
+
 \end{description}
 
 \subsection{Signal crash specific data fields}
