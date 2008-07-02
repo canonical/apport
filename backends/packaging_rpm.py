@@ -142,10 +142,9 @@ class RPMPackageInfo:
     def get_system_architecture(self):
         '''Return the architecture of the system, in the notation used by the
         particular distribution.'''
-        rpmarch = subprocess.Popen(['/bin/rpm', '--eval', '%_target_cpu'],
+        rpmarch = subprocess.Popen(['rpm', '--eval', '%_target_cpu'],
                 stdout=subprocess.PIPE)
         arch = rpmarch.communicate()[0].strip()
-                
         return arch 
 
     def is_distro_package(self, package):
@@ -216,7 +215,9 @@ class RPMPackageInfo:
     def _get_header(self,envra):
         '''Get the RPM header that matches the given ENVRA.'''
         (e,n,v,r,a) = self._split_envra(envra)
+        print (e,n,v,r,a)
         mi = self.ts.dbMatch('name',n) # First, find stuff with the right name
+        print mi
         # Now we narrow using the EVRA
         args = {'epoch':e,'version':v,'release':r,'arch':a}
         for name,val in args.items():
@@ -288,6 +289,24 @@ if __name__ == '__main__':
             # must be nonempty without line breaks
             self.assertNotEqual(arch, '')
             self.assert_('\n' not in arch)
+
+        def test_get_headers_by_tag(self):
+            '''Test _get_headers_by_tag().'''
+            
+            headerByTag = impl._get_headers_by_tag('basenames','/bin/bash')
+            print headerByTag
+        
+        def test_get_file_package(self):
+            '''Test get_file_package().'''
+            
+            package = impl.get_file_package('/bin/bash') 
+            print package        
+            
+        def test_get_header(self):
+            '''Test _get_header().'''
+            
+            header = impl._get_header('bash-3.2-112.x86_64')
+            print header      
 
     # only execute if rpm is available
     try:

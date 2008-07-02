@@ -23,8 +23,6 @@ Requires: kernel-default >= 2.6.24
 # FIXME there's probably scads more requires here, need to do some testing
 # on a minimal system
 Requires: rpm-python lsb
-# we use it temporarily until there will be an openSUSE backend
-Requires: yum
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
@@ -92,9 +90,8 @@ make -C gtk
 make -C qt4
 make -C doc
 # set up the packaging backend
-# we use it temporarily until there will be an openSUSE backend
-cp backends/packaging_rpm.py backends/packaging_fedora.py apport
-ln -s packaging_fedora.py apport/packaging_impl.py
+cp backends/packaging_rpm.py backends/packaging_opensuse.py apport
+ln -s packaging_opensuse.py apport/packaging_impl.py
 
 %install
 rm -rf $RPM_BUILD_ROOT # clean up before we begin
