@@ -21,7 +21,7 @@ the full text of the license.
 
 # It'd be convenient to use rpmUtils from yum, but I'm trying to keep this
 # class distro-agnostic.
-import rpm, md5, os, stat
+import rpm, md5, os, stat, subprocess
 
 class RPMPackageInfo:
     '''Partial apport.PackageInfo class implementation for RPM, as
@@ -142,13 +142,10 @@ class RPMPackageInfo:
     def get_system_architecture(self):
         '''Return the architecture of the system, in the notation used by the
         particular distribution.'''
-        # XXX is there an rpmlib method for this?
-        f = open('/etc/rpm/platform')
-        line = f.readline()
-        while line == '' or line[0] == '#':
-            line = f.readline()
-        f.close()
-        (arch,vendor,os) = line.split('-')
+        rpmarch = subprocess.Popen(['/bin/rpm', '--eval', '%_target_cpu'],
+                stdout=subprocess.PIPE)
+        arch = rpmarch.communicate()[0].strip()
+                
         return arch 
 
     def is_distro_package(self, package):
@@ -272,7 +269,30 @@ class RPMPackageInfo:
         m.update(data)
         return (filemd5 == m.hexdigest())
 
+impl = RPMPackageInfo()
+
 #
 # Unit test
-# FIXME write something similar to the unittests in the dpkg/apt impl
+# FIXME: WIP
 #
+
+if __name__ == '__main__':
+    import unittest
+
+    class RPMPackageInfoTest(unittest.TestCase):
+
+        def test_get_system_architecture(self):
+            '''Test get_system_architecture().'''
+
+            arch = impl.get_system_architecture()
+            # must be nonempty without line breaks
+            self.assertNotEqual(arch, '')
+            self.assert_('\n' not in arch)
+
+    # only execute if rpm is available
+    try:
+        if subprocess.call(['rpm', '--help'], stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE) == 0:
+            unittest.main()
+    except OSError:
+        pass

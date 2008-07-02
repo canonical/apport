@@ -2,8 +2,15 @@ apport (0.111) UNRELEASED; urgency=low
 
   * apport/ui.py: Fix test_run_report_bug_unpackaged_pid() to work with the
     installed run-tests from the package as well.
+  * apport/crashdb_impl/launchpad.py: Ignore broken LP bug tasks instead of
+    crashing on them.
+  * apport/report.py, add_proc_info(): Report the AppArmor or SELinux context
+    in a new ProcAttrCurrent field, read from /proc/pid/attr/current.
+    Document it in doc/data-format.tex. The field will not be added if the
+    proc attribute cannot be read or isn't present. Thanks to Steve Beattie
+    for the patch and the suggestion!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 17 May 2008 17:54:04 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 13 Jun 2008 12:16:49 +0200
 
 apport (0.110) intrepid; urgency=low
 

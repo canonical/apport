@@ -266,7 +266,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         if b.status == 'Fix Released':
             if b.sourcepackage:
-                return get_source_version(self.distro, b.sourcepackage)
+                try:
+                    return get_source_version(self.distro, b.sourcepackage)
+                except ValueError:
+                    return '' # broken bug
             return ''
         if b.status == 'Rejected' or b.duplicate_of:
             return 'invalid'
