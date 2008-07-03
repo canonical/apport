@@ -10,11 +10,54 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
+import rpm
 from packaging_rpm import RPMPackageInfo
-from rpmUtils.miscutils import compareEVR, stringToVersion
 
 class __SUSEPackageInfo(RPMPackageInfo):
     '''Concrete apport.PackageInfo class implementation for openSUSE.'''
+    
+    # some helper functions from rpmUtils.miscutils (yum)
+    
+    def compareEVR(self, (e1, v1, r1), (e2, v2, r2)):
+        # return 1: a is newer than b
+        # 0: a and b are the same version
+        # -1: b is newer than a
+        e1 = str(e1)
+        v1 = str(v1)
+        r1 = str(r1)
+        e2 = str(e2)
+        v2 = str(v2)
+        r2 = str(r2)
+        rc = rpm.labelCompare((e1, v1, r1), (e2, v2, r2))
+        return rc
+    
+    def stringToVersion(self, verstring):
+        if verstring in [None, '']:
+            return (None, None, None)
+        i = verstring.find(':')
+        if i != -1:
+            try:
+                epoch = str(long(verstring[:i]))
+            except ValueError:
+                # look, garbage in the epoch field, how fun, kill it
+                epoch = '0' # this is our fallback, deal
+        else:
+            epoch = '0'
+        j = verstring.find('-')
+        if j != -1:
+            if verstring[i + 1:j] == '':
+                version = None
+            else:
+                version = verstring[i + 1:j]
+            release = verstring[j + 1:]
+        else:
+            if verstring[i + 1:] == '':
+                version = None
+            else:
+                version = verstring[i + 1:]
+            release = None
+        return (epoch, version, release)
+        
 
     # A list of ids of official keys used by the openSUSE
     official_keylist = ('9c800aca') # SUSE LINUX Products GmbH
@@ -61,7 +104,7 @@ class __SUSEPackageInfo(RPMPackageInfo):
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
         # Used by crashdb.py (i.e. the frontends)
-        return compareEVR(stringToVersion(ver1),stringToVersion(ver2))
+        return self.compareEVR(self.stringToVersion(ver1), self.stringToVersion(ver2))
         
     def get_file_package(self, file):
         '''Return the package a file belongs to, or None if the file is not
@@ -73,11 +116,9 @@ class __SUSEPackageInfo(RPMPackageInfo):
         
         hdrs = self._get_headers_by_tag('basenames',file)
         h = None
-        if len(hdrs) > 1: # The file belongs to multiple packages,
-        # not possible unless there is some --force package installation
+        if len(hdrs) == 1: # If the file belongs to multiple packages
+        # there is some --force package installation
         # FIXME: implement some more smart hadling 
-            break              
-        else:
             h = hdrs[0]
         return self._make_envra_from_header(h)  
 
@@ -97,6 +138,11 @@ if __name__ == '__main__':
 
             self.assert_(impl.is_distro_package('bash-3.2-112.x86_64'))
             # no False test here, hard to come up with a generic one
+            
+        def test_compare_versions(self):
+            '''Test is_distro_package().'''
+            
+            self.assertEqual(impl.compare_versions('1', '2'), -1)
             
     unittest.main()
          
