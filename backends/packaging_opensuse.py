@@ -61,7 +61,25 @@ class __SUSEPackageInfo(RPMPackageInfo):
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
         # Used by crashdb.py (i.e. the frontends)
-        return compareEVR(stringToVersion(ver1),stringToVersion(ver2)) 
+        return compareEVR(stringToVersion(ver1),stringToVersion(ver2))
+        
+    def get_file_package(self, file):
+        '''Return the package a file belongs to, or None if the file is not
+        shipped by any package.
+        
+        Under normal use, the 'file' argument will always be the executable
+        that crashed.
+        '''  
+        
+        hdrs = self._get_headers_by_tag('basenames',file)
+        h = None
+        if len(hdrs) > 1: # The file belongs to multiple packages,
+        # not possible unless there is some --force package installation
+        # FIXME: implement some more smart hadling 
+            break              
+        else:
+            h = hdrs[0]
+        return self._make_envra_from_header(h)  
 
 impl = __SUSEPackageInfo()
 
@@ -77,7 +95,6 @@ if __name__ == '__main__':
         def test_is_distro_package(self):
             '''Test is_distro_package().'''
 
-#            self.assertRaises(ValueError, impl.is_distro_package, 'nonexisting')
             self.assert_(impl.is_distro_package('bash-3.2-112.x86_64'))
             # no False test here, hard to come up with a generic one
             

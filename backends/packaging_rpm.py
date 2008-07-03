@@ -119,25 +119,9 @@ class RPMPackageInfo:
         
         Under normal use, the 'file' argument will always be the executable
         that crashed.
-        '''
-        # In debian-land, the name of the package is unique enough to identify
-        # it, but here in RPMville we have multilib. So we need to identify
-        # packages by ENVRA to guarantee uniqueness.
-        # Here's the sad part - one quirk of our multilib implementation is
-        # that a file can belong to multiple packages. So which one do we
-        # choose? If we had context from the crash dump we might know which
-        # arch was the important one, but for now.. let's just use the system
-        # arch.
-        # TODO: provide extra context info (arch?) from the crash dump
-        hdrs = self._get_headers_by_tag('basenames',file)
-        h = None
-        if len(hdrs) > 1: # Multiple files own this package - multiarch!
-            for h in hdrs:
-                if h['arch'] == self.get_system_architecture():
-                    break
-        else:
-            h = hdrs[0]
-        return self._make_envra_from_header(h) 
+        '''  
+        # The policy for handling files which belong to multiple packages depends on the distro
+        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
 
     def get_system_architecture(self):
         '''Return the architecture of the system, in the notation used by the
@@ -215,9 +199,7 @@ class RPMPackageInfo:
     def _get_header(self,envra):
         '''Get the RPM header that matches the given ENVRA.'''
         (e,n,v,r,a) = self._split_envra(envra)
-        print (e,n,v,r,a)
         mi = self.ts.dbMatch('name',n) # First, find stuff with the right name
-        print mi
         # Now we narrow using the EVRA
         args = {'epoch':e,'version':v,'release':r,'arch':a}
         for name,val in args.items():

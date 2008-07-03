@@ -11,7 +11,7 @@
 # norootforbuild
 
 Name:    apport
-Version: 0.0.1
+Version: 0.0.2
 Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
@@ -28,7 +28,6 @@ Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
 Requires(postun): /sbin/service
 Source0: %{name}-%{version}.tar.bz2
-Patch0: apport-%{version}-opensuse.patch
 Group: System/Monitoring
 Summary: Automatic crash handler
 
@@ -44,7 +43,7 @@ See https://wiki.ubuntu.com/AutomatedProblemReports for more information.
 %package gtk
 Summary: GTK frontend for the apport crash report system
 Group: Applications/System
-Requires: pygtk2 pygtk2-libglade pyxdg procps
+Requires: python-gtk procps
 %description gtk
 apport automatically collects data from crashed processes and compiles a
 problem report in /var/crash/. 
@@ -55,7 +54,7 @@ crash reports.
 %package qt
 Summary: Qt4 frontend for the apport crash report system
 Group: Applications/System
-Requires: PyQT pyxdg procps
+Requires: python-qt4 procps
 %description qt
 apport automatically collects data from crashed processes and compiles a
 problem report in /var/crash/.
@@ -80,8 +79,7 @@ environment variables), the entire process of retracing crashes in
 chroots can happen with normal user privileges.
 
 %prep
-%setup -n apport
-%patch0 -p1 -b .opensuse
+%setup -n apport-%{version}
 
 %build
 python setup.py build
@@ -169,6 +167,9 @@ fi
 /usr/share/apport/apport-chroot
 
 %changelog
+* Wed Jul 02 2008 - Nikolay Derkach <nderkach@gmail.com>
+- Added opensuse packaging backend, improved general rpm backend
+
 * Thu May 22 2008 - Nikolay Derkach <nderkach@gmail.com>
 - Added lsb to requirements
 

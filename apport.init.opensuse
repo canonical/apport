@@ -88,6 +88,7 @@ case "$1" in
 	  ## running or not, start it again.
 	  $0 stop
 	  $0 start
+	  rc_status
 
 	# Remember status and be quiet
 	rc_status
@@ -108,16 +109,7 @@ case "$1" in
 		echo "Apport is disabled"
         exit 3
 	  fi
-	;;
-	condrestart)
-      if [ -f /var/lock/subsys/apport ]; then
-        stop
-        start
-    fi
-    ;;
-    restart|reload)
-	  stop
-	  start
+	  rc_status -v
 	;;
     *)
 	  echo "Usage: $0 {start|stop|status|restart}"
