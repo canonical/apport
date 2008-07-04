@@ -10,12 +10,14 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os, glob, subprocess, os.path
+import os, glob, subprocess, os.path, ConfigParser
 from problem_report import ProblemReport
 
 from packaging_impl import impl as packaging
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
+
+_config_file = '~/.apport'
 
 def find_package_desktopfile(package):
     '''If given package is installed and has a single .desktop file, return the
@@ -215,6 +217,26 @@ def check_files_md5(sumfile):
             mismatches.append(l.rsplit(':', 1)[0])
 
     return mismatches
+    
+def check_developer_mode():
+    '''Check ~/.apport (in the real UID's home) 
+       about the developer mode status.
+
+    0 - disabled (only crashes of packaged files are reported)
+    1 - enabled (all crashes are reported) '''
+
+    # check config file
+    config = ConfigParser.ConfigParser()
+    mode = False # disabled by default
+
+    try:
+        config.read(os.path.expanduser(_config_file))
+    except OSError:
+        pass 
+
+    mode = config.getint('main','developer_mode')
+    
+    return mode    
 
 #
 # Unit test
@@ -434,7 +456,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         open(f2, 'w').write('More stuff!')
         self.assertEqual(check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
         open(f1, 'w').write('Some stuff')
-        self.assertEqual(check_files_md5(sumfile), [f2], 'file 2 wrong')
+        self.assertEqual(check_files_md5(sumfile), [f2], 'file 2 wrong')     
 
 if __name__ == '__main__':
     unittest.main()
