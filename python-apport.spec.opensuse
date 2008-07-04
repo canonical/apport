@@ -18,7 +18,7 @@ URL:     http://opensuse.org/Interactive_Crash_Analysis
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires: python-devel
 Requires: rpm-python lsb
-Source0: %{name}-%{version}.tar.bz2
+Source0: apport-%{version}.tar.bz2
 Group: Development/Libraries/Python
 Summary: Automatic crash handler - Python libraries
 
