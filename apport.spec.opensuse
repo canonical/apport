@@ -16,13 +16,13 @@ Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-BuildArchitectures: noarch
+BuildArch: noarch
 BuildRequires: python-devel intltool texlive-latex
 # Need the ability to use pipes in /proc/sys/kernel/core_pattern
 Requires: kernel-default >= 2.6.24
 # FIXME there's probably scads more requires here, need to do some testing
 # on a minimal system
-Requires: rpm-python lsb
+Requires: python-apport = %{version} rpm-python lsb
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
@@ -35,10 +35,7 @@ Summary: Automatic crash handler
 Apport automatically collects data from crashed processes and compiles a
 problem report in /var/crash/.
 
-This package also provides apport's python libraries and a command line
-frontend for browsing and handling the crash reports.
-
-See https://wiki.ubuntu.com/AutomatedProblemReports for more information.
+See http://opensuse.org/Interactive_Crash_Analysis for more information.
 
 %package gtk
 Summary: GTK frontend for the apport crash report system
@@ -62,7 +59,7 @@ problem report in /var/crash/.
 This package provides a Qt4 frontend for browsing and handling the
 crash reports.
 
-# Yes, this is kind of useless in Fedora right now. Alas.
+# Doesn't work yet.
 %package retrace
 Summary: tools for reprocessing Apport crash reports
 Group: Applications/System
@@ -92,7 +89,6 @@ cp backends/packaging_rpm.py backends/packaging_opensuse.py apport
 ln -s packaging_opensuse.py apport/packaging_impl.py
 
 %install
-rm -rf $RPM_BUILD_ROOT # clean up before we begin
 python setup.py install --root=$RPM_BUILD_ROOT \
                         --install-scripts usr/share/apport \
                         --prefix=/usr
@@ -109,6 +105,10 @@ install -d -m1777 $RPM_BUILD_ROOT/var/crash
 # install initscript
 mkdir -p $RPM_BUILD_ROOT/etc/init.d
 install -m755 apport.init.opensuse $RPM_BUILD_ROOT/etc/init.d/apport
+# remove unneeded files
+rm -rf $RPM_BUILD_ROOT/%py_sitedir \
+       $RPM_BUILD_ROOT/etc/apport/crashdb.conf \
+       $RPM_BUILD_ROOT/etc/apport/blacklist.d/README.blacklist
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -134,26 +134,14 @@ fi
 %doc %{_mandir}/man1/apport-unpack.1*
 %doc doc/*
 /usr/share/apport/*
-%_libdir/python*/site-packages/apport-0.0.0-py2.5.egg-info
-# This is the hook for catching python crashes
-%_libdir/python*/site-packages/apport_python_hook.py*
-# In Ubuntu these are in a separate 'python-apport' package
-%_libdir/python*/site-packages/apport/*
-# In Ubuntu this library is in 'python-problem-report' 
-%_libdir/python*/site-packages/problem_report*
 # /etc files
 /etc/cron.daily/apport
 /etc/init.d/apport
-# Not (noreplace) - generally users won't be modifying this file. Sorry devs,
-# I guess you'll just have to deal with it clobbering your config..
-%config /etc/apport/crashdb.conf
-/etc/apport/blacklist.d/README.blacklist
 /usr/share/icons/hicolor/scalable/apps/apport.svg
 /usr/share/locale/*
 /usr/share/man/man1/apport-chroot.1.gz
 /usr/share/man/man1/apport-cli.1.gz
 /usr/share/mime/packages/apport.xml
-
 
 %files gtk
 /usr/share/apport/apport-gtk*
@@ -167,6 +155,9 @@ fi
 /usr/share/apport/apport-chroot
 
 %changelog
+* Fri Jul 04 2008 - Nikolay Derkach <nderkach@gmail.com>
+- Added python-apport to the requirements, some spec clean-up
+
 * Wed Jul 02 2008 - Nikolay Derkach <nderkach@gmail.com>
 - Added opensuse packaging backend, improved general rpm backend
 
