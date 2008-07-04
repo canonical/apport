@@ -23,7 +23,7 @@ the full text of the license.
 # class distro-agnostic.
 import rpm, md5, os, stat, subprocess
 
-class RPMPackageInfo(PackageInfo):
+class RPMPackageInfo:
     '''Partial apport.PackageInfo class implementation for RPM, as
     found in Fedora, RHEL, CentOS, etc.'''
 
