@@ -22,7 +22,7 @@ import apport, apport.fileutils, REThread
 
 from apport.crashdb import get_crashdb
 
-from apport.packaging_impl import *
+#from apport.packaging_impl import *
 
 def thread_collect_info(report, reportfile, package):
     '''Encapsulate call to add_*_info() and update given report,
@@ -47,7 +47,7 @@ def thread_collect_info(report, reportfile, package):
 
     # check package origin
     if 'Package' not in report or \
-        not impl.is_distro_package(report['Package'].split()[0]):
+        not apport.packaging.is_distro_package(report['Package'].split()[0]):
         #TRANS: %s is the name of the operating system
         report['UnreportableReason'] = _('This is not a genuine %s package') % \
             report['DistroRelease'].split()[0]
