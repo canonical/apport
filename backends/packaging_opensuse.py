@@ -65,7 +65,7 @@ class __SUSEPackageInfo(RPMPackageInfo):
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
         a third-party source.'''
-        if RPMPackageInfo.is_distro_package(self,package):
+        if RPMPackageInfo.is_distro_package(self, package):
             # GPG key id checks out OK. Yay!
             return True
         else:
@@ -137,7 +137,7 @@ if __name__ == '__main__':
             '''Test is_distro_package().'''
 
             self.assert_(impl.is_distro_package('bash-3.2-112.x86_64'))
-            # no False test here, hard to come up with a generic one
+            self.assert_(not impl.is_distro_package('nonexisting'))
             
         def test_compare_versions(self):
             '''Test is_distro_package().'''

@@ -138,6 +138,8 @@ class RPMPackageInfo:
         if not self.official_keylist:
             raise Exception, 'Subclass the RPM implementation for your distro!'
         hdr = self._get_header(package)
+        if not hdr:
+            return False
         # Check the GPG sig and key ID to see if this package was signed 
         # with an official key.
         if hdr['siggpg']:
@@ -209,6 +211,8 @@ class RPMPackageInfo:
         # Unless there's some rpmdb breakage, you should have one header
         # here. If you do manage to have two rpms with the same ENVRA,
         # who cares which one you get?
+        if len(hdrs) < 1:
+            return None
         return hdrs[0]
 
     def _make_envra_from_header(self,h):
