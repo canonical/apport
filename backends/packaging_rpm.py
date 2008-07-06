@@ -358,7 +358,12 @@ if __name__ == '__main__':
             
 #            deps = impl.get_dependencies('bash')              
 #            for d in deps:
-#                print d            
+#                print d      
+
+        def test_get_vendor(self):
+            '''Test get_vendor().'''
+            
+#            print impl.get_vendor('apport')      
         
 
     # only execute if rpm is available

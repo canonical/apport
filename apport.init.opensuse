@@ -6,6 +6,7 @@
 # Required-Stop:     $local_fs
 # Default-Start:     2 3 5
 # Default-Stop:      0 1 6
+# Short-Description: Apport crash handling
 # Description:       Starts and stops apport crash handling
 ### END INIT INFO
 
@@ -83,7 +84,7 @@ case "$1" in
 	  # Remember status and be verbose
 	  rc_status -v
 	;;
-    restart)
+    restart|reload)
 	  ## Stop the service and regardless of whether it was
 	  ## running or not, start it again.
 	  $0 stop
@@ -111,14 +112,14 @@ case "$1" in
 	  fi
 	  rc_status -v
 	;;
-    condrestart)
+    try-restart|condrestart)
       if [ -f /var/lock/subsys/apport ]; then
 	    $0 stop
 	    $0 start
       fi
     ;;	
     *)
-	  echo "Usage: $0 {start|stop|status|restart}"
+	  echo "Usage: $0 {start|stop|status|restart|reload|try-restart|condrestart}"
 	  exit 1
 	;;
 esac

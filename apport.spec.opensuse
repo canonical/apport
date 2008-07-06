@@ -29,6 +29,7 @@ Requires(preun): /sbin/service
 Requires(postun): /sbin/service
 Source0: %{name}-%{version}.tar.bz2
 Group: System/Monitoring
+Packager: Nikolay Derkach <nderkach@gmail.com>
 Summary: Automatic crash handler
 
 %description
@@ -61,7 +62,7 @@ crash reports.
 
 # Doesn't work yet.
 %package retrace
-Summary: tools for reprocessing Apport crash reports
+Summary: Tools for reprocessing Apport crash reports
 Group: Applications/System
 %description retrace
 apport-retrace recombines an Apport crash report (either a file or a
@@ -85,8 +86,8 @@ make -C gtk
 make -C qt4
 make -C doc
 # set up the packaging backend
-cp backends/packaging_rpm.py backends/packaging_opensuse.py apport
-ln -s packaging_opensuse.py apport/packaging_impl.py
+cp backends/packaging_rpm.py apport
+cp backends/packaging_opensuse.py apport/packaging_impl.py
 
 %install
 python setup.py install --root=$RPM_BUILD_ROOT \
@@ -116,16 +117,19 @@ rm -rf $RPM_BUILD_ROOT
 %post
 # Add proper symlinks in /etc/init.d/rc*.d
 /sbin/chkconfig --add apport
+
 %preun
 # Really uninstalling? Stop the service and remove its links
 if [ "$1" == "0" ]; then
-    /sbin/service apport stop > /dev/null
+    %stop_on_removal apport
     /sbin/chkconfig --del apport
 fi
+
 %postun
 # Upgrading? Restart the service, if it's running
 if [ "$1" -ge "1" ]; then
-    /sbin/service apport condrestart > /dev/null || :
+    %restart_on_update apport
+    %insserv_cleanup
 fi
 
 %files
@@ -144,12 +148,15 @@ fi
 /usr/share/mime/packages/apport.xml
 
 %files gtk
+%defattr(-,root,root)
 /usr/share/apport/apport-gtk*
 
 %files qt
+%defattr(-,root,root)
 /usr/share/apport/apport-qt
 
 %files retrace
+%defattr(-,root,root)
 %doc %{_mandir}/man1/apport-retrace.1*
 /usr/share/apport/apport-retrace
 /usr/share/apport/apport-chroot

@@ -20,6 +20,7 @@ BuildRequires: python-devel
 Requires: rpm-python lsb
 Source0: apport-%{version}.tar.bz2
 Group: Development/Libraries/Python
+Packager: Nikolay Derkach <nderkach@gmail.com>
 Summary: Automatic crash handler - Python libraries
 
 %description
@@ -36,8 +37,8 @@ See http://opensuse.org/Interactive_Crash_Analysis for more information.
 %build
 python setup.py build
 # set up the packaging backend
-cp backends/packaging_rpm.py backends/packaging_opensuse.py apport
-ln -s packaging_opensuse.py apport/packaging_impl.py
+cp backends/packaging_rpm.py apport
+cp backends/packaging_opensuse.py apport/packaging_impl.py
 
 %install
 python setup.py install --root=$RPM_BUILD_ROOT \
