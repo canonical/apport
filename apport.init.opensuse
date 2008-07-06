@@ -111,6 +111,12 @@ case "$1" in
 	  fi
 	  rc_status -v
 	;;
+    condrestart)
+      if [ -f /var/lock/subsys/apport ]; then
+	    $0 stop
+	    $0 start
+      fi
+    ;;	
     *)
 	  echo "Usage: $0 {start|stop|status|restart}"
 	  exit 1

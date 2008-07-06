@@ -11,7 +11,7 @@
 # norootforbuild
 
 Name:    apport
-Version: 0.0.2
+Version: 0.0.4
 Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
@@ -155,6 +155,14 @@ fi
 /usr/share/apport/apport-chroot
 
 %changelog
+* Sun Jul 06 2008 - Nikolay Derkach <nderkach@gmail.com>
+- add_package_info() now works with just package names
+- some packaging backend cleanups
+- fixes for init script
+
+* Sat Jul 05 2008 - Nikolay Derkach <nderkach@gmail.com>
+- Introduced developer mode
+
 * Fri Jul 04 2008 - Nikolay Derkach <nderkach@gmail.com>
 - Added python-apport to the requirements, some spec clean-up
 

@@ -38,8 +38,15 @@ class RPMPackageInfo:
     def get_version(self, package):
         '''Return the installed version of a package.'''
         hdr = self._get_header(package)
+        if hdr == None:
+            raise ValueError
         # Note - "version" here seems to refer to the full EVR, so..
-        return hdr.dsOfHeader().EVR()
+        if not hdr['e']:
+            return hdr['v'] + '-' + hdr['r']
+        if not hdr['v'] or not hdr['r']:
+            return None       
+        else:
+            return hdr['e'] + ':' + hdr['v'] + '-' + hdr['r']     
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
@@ -78,6 +85,11 @@ class RPMPackageInfo:
         # to do this the right way (in case we change what 'package' is)
         hdr = self._get_header(package)
         return hdr['arch']
+        
+    def get_vendor(self, package):
+        '''Return the vendor of a package.'''
+        hdr = self._get_header(package)
+        return hdr['vendor']    
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -90,7 +102,7 @@ class RPMPackageInfo:
 
     def get_modified_files(self, package):
         '''Return list of all modified files of a package.'''
-        hdr = self._get_header(package)
+        hdr = self._get_header(package)   
 
         files  = hdr['filenames']
         mtimes = hdr['filemtimes']
@@ -211,8 +223,8 @@ class RPMPackageInfo:
         # Unless there's some rpmdb breakage, you should have one header
         # here. If you do manage to have two rpms with the same ENVRA,
         # who cares which one you get?
-        if len(hdrs) < 1:
-            return None
+        if not len(hdrs) == 1:
+            raise ValueError, 'No headers found for this envra: %s' % envra
         return hdrs[0]
 
     def _make_envra_from_header(self,h):
@@ -229,20 +241,36 @@ class RPMPackageInfo:
         evolution-2.8.3-2.fc6.i386 -> 0, evolution, 2.8.3, 2.fc6, i386
         2:gaim-2.0.0-0.31.beta6.fc6.i386 -> 2, gaim, 2.0.0, 0.31.beta6.fc6, i386
         This code comes from yum's rpmUtils/miscutils.py. Thanks, Seth!'''
-        archIndex = envra.rfind('.')
-        arch = envra[archIndex+1:]
-    
-        relIndex = envra[:archIndex].rfind('-')
-        rel = envra[relIndex+1:archIndex]
-    
-        verIndex = envra[:relIndex].rfind('-')
-        ver = envra[verIndex+1:relIndex]
-    
+        
+        # works with fully quilified names like 'bash-3.2-112.x86_64'
+        # and with short names like 'bash'
+          
+        archIndex = relIndex = verIndex = len(envra)
+        epochIndex = -1
+        
+        if not envra.rfind('.') == -1:
+            archIndex = envra.rfind('.')
+            arch = envra[archIndex+1:]
+        else:
+            arch = None        
+
+        if not envra.rfind('-') == -1:
+            relIndex = envra[:archIndex].rfind('-')
+            rel = envra[relIndex+1:archIndex]
+        else:
+            rel = None  
+        
+        if not envra.rfind('-') == -1:
+            verIndex = envra[:relIndex].rfind('-')
+            ver = envra[verIndex+1:relIndex]
+        else:
+            ver = None  
+
         epochIndex = envra.find(':')
         if epochIndex == -1:
             epoch = None
         else:
-            epoch = envra[:epochIndex]
+            epoch = envra[:epochIndex]     
     
         name = envra[epochIndex + 1:verIndex]
         return epoch, name, ver, rel, arch
@@ -255,6 +283,24 @@ class RPMPackageInfo:
         f.close()
         m.update(data)
         return (filemd5 == m.hexdigest())
+        
+    def _make_envra_from_name(self, name):
+        '''Make an ENVRA from package name. e.g.:
+           bash -> bash-3.2-112.x86_64'''
+#        hdrl = self._get_headers_by_tag('version', name)
+#        if not len(hdrl) == 1: # multiple packages provide this file
+#            return None
+#        hdr = hdrl[0]    
+
+# probably try to make a more smart envra splitting
+
+#        mi = self.ts.dbMatch()
+#        print 'name: ' + name
+#        mi.pattern('name', rpm.RPMMIRE_DEFAULT, name +)
+#        for h in mi:
+#            print h['name']
+
+#        return self._make_envra_from_header(hdr)
 
 impl = RPMPackageInfo()
 
@@ -280,19 +326,40 @@ if __name__ == '__main__':
             '''Test _get_headers_by_tag().'''
             
             headerByTag = impl._get_headers_by_tag('basenames','/bin/bash')
-            print headerByTag
-        
-        def test_get_file_package(self):
-            '''Test get_file_package().'''
+#            print headerByTag  
+
+        def test_split_envra(self):
+            '''Test _split_envra().'''
             
-            package = impl.get_file_package('/bin/bash') 
-            print package        
+#            print impl._split_envra('bash-3.2-112.x86_64')
+#            print impl._split_envra('bash')      
             
         def test_get_header(self):
             '''Test _get_header().'''
             
-            header = impl._get_header('bash-3.2-112.x86_64')
-            print header      
+            hdr = impl._get_header('bash-3.2-112.x86_64')
+#            print hdr['n']
+            hdr = impl._get_header('bash')
+#            print hdr['n']
+            
+        def test_get_version(self):
+            '''Test get_version().'''
+            
+            print impl.get_version('bash')
+#            print impl.get_version('libQtCore.so.4')
+            
+        def test_make_envra_from_name(self):
+            '''Test _make_envra_from_name().'''
+            
+#            impl._make_envra_from_name('bash-3.2-112.x86_64') 
+
+        def test_get_dependencies(self):
+            '''Test get_dependencies().'''
+            
+#            deps = impl.get_dependencies('bash')              
+#            for d in deps:
+#                print d            
+        
 
     # only execute if rpm is available
     try:

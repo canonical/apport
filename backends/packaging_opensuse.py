@@ -65,21 +65,19 @@ class __SUSEPackageInfo(RPMPackageInfo):
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
         a third-party source.'''
-        if RPMPackageInfo.is_distro_package(self, package):
-            # GPG key id checks out OK. Yay!
-            return True
+        if self.get_vendor(package) == 'SUSE LINUX Products GmbH, Nuernberg, Germany':
+            if RPMPackageInfo.is_distro_package(self, package):
+                # GPG key id checks out OK. Yay!
+                return True
         else:
-            # GPG key check failed.
             return False
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
         # used in report.py, which is used by the frontends
+        # Epoch tag is not used in SUSE
         (epoch, name, ver, rel, arch) = self._split_envra(package)
         package_ver = '%s-%s' % (ver,rel)
-        if epoch: 
-            package_ver = "%s:%s" % (epoch, package_ver)
-        # FIXME STUB
         return package_ver
 
     def get_source_tree(self, srcpackage, dir, version=None):
@@ -136,13 +134,25 @@ if __name__ == '__main__':
         def test_is_distro_package(self):
             '''Test is_distro_package().'''
 
-            self.assert_(impl.is_distro_package('bash-3.2-112.x86_64'))
-            self.assert_(not impl.is_distro_package('nonexisting'))
+            self.assert_(impl.is_distro_package('bash'))
+            self.assert_(not impl.is_distro_package('libxine1'))
+            self.assertRaises(ValueError, impl.is_distro_package, 'nonexistant_package')
+            
+        def test_get_available_version(self):
+            '''Test get_available version().'''
+            
+#            print impl.get_available_version('bash-3.2-112.x86_64')  
             
         def test_compare_versions(self):
             '''Test is_distro_package().'''
             
             self.assertEqual(impl.compare_versions('1', '2'), -1)
+            
+        def test_get_file_package(self):
+            '''Test get_file_package().'''
+            
+            package = impl.get_file_package('/bin/bash') 
+ #           print package              
             
     unittest.main()
          

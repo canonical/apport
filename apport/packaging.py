@@ -45,6 +45,11 @@ class PackageInfo:
         package on a x86_64 system)'''
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        
+    def get_vendor(self, package):
+        '''Return the vendor of a package.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
