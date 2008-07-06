@@ -1,8 +1,9 @@
 '''A partial apport.PackageInfo class implementation for RPM, as found in 
-Fedora, RHEL, SuSE, and many other distributions.
+Fedora, RHEL, openSUSE, SUSE Linux, and many other distributions.
 
 Copyright (C) 2007 Red Hat Inc.
-Author: Will Woods <wwoods@redhat.com>
+Copyright (C) 2008 Nikolay Derkach
+Author: Will Woods <wwoods@redhat.com>, Nikolay Derkach <nderkach@gmail.com>
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -283,24 +284,6 @@ class RPMPackageInfo:
         f.close()
         m.update(data)
         return (filemd5 == m.hexdigest())
-        
-    def _make_envra_from_name(self, name):
-        '''Make an ENVRA from package name. e.g.:
-           bash -> bash-3.2-112.x86_64'''
-#        hdrl = self._get_headers_by_tag('version', name)
-#        if not len(hdrl) == 1: # multiple packages provide this file
-#            return None
-#        hdr = hdrl[0]    
-
-# probably try to make a more smart envra splitting
-
-#        mi = self.ts.dbMatch()
-#        print 'name: ' + name
-#        mi.pattern('name', rpm.RPMMIRE_DEFAULT, name +)
-#        for h in mi:
-#            print h['name']
-
-#        return self._make_envra_from_header(hdr)
 
 impl = RPMPackageInfo()
 
@@ -341,17 +324,14 @@ if __name__ == '__main__':
 #            print hdr['n']
             hdr = impl._get_header('bash')
 #            print hdr['n']
+            hdr = impl._get_header('yast2-metapackage-handler')
+            print hdr['n']
             
         def test_get_version(self):
             '''Test get_version().'''
             
-            print impl.get_version('bash')
-#            print impl.get_version('libQtCore.so.4')
-            
-        def test_make_envra_from_name(self):
-            '''Test _make_envra_from_name().'''
-            
-#            impl._make_envra_from_name('bash-3.2-112.x86_64') 
+#            print impl.get_version('bash')
+#            print impl.get_version('libQtCore.so.4')        
 
         def test_get_dependencies(self):
             '''Test get_dependencies().'''

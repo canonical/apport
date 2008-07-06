@@ -72,14 +72,6 @@ class __SUSEPackageInfo(RPMPackageInfo):
         else:
             return False
 
-    def get_available_version(self, package):
-        '''Return the latest available version of a package.'''
-        # used in report.py, which is used by the frontends
-        # Epoch tag is not used in SUSE
-        (epoch, name, ver, rel, arch) = self._split_envra(package)
-        package_ver = '%s-%s' % (ver,rel)
-        return package_ver
-
     def get_source_tree(self, srcpackage, dir, version=None):
         '''Download given source package and unpack it into dir (which should
         be empty).
@@ -118,7 +110,7 @@ class __SUSEPackageInfo(RPMPackageInfo):
         # there is some --force package installation
         # FIXME: implement some more smart hadling 
             h = hdrs[0]
-        return self._make_envra_from_header(h)  
+        return h['n']
 
 impl = __SUSEPackageInfo()
 
@@ -136,12 +128,7 @@ if __name__ == '__main__':
 
             self.assert_(impl.is_distro_package('bash'))
             self.assert_(not impl.is_distro_package('libxine1'))
-            self.assertRaises(ValueError, impl.is_distro_package, 'nonexistant_package')
-            
-        def test_get_available_version(self):
-            '''Test get_available version().'''
-            
-#            print impl.get_available_version('bash-3.2-112.x86_64')  
+            self.assertRaises(ValueError, impl.is_distro_package, 'nonexistant_package') 
             
         def test_compare_versions(self):
             '''Test is_distro_package().'''
@@ -152,7 +139,7 @@ if __name__ == '__main__':
             '''Test get_file_package().'''
             
             package = impl.get_file_package('/bin/bash') 
- #           print package              
+#            print package              
             
     unittest.main()
          
