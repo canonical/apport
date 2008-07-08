@@ -33,6 +33,6 @@ setup(name='apport',
       scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
           'bin/apport-unpack', 'bin/apport-chroot', 'bin/package_hook',
           'bin/kernel_hook', 'bin/gcc_ice_hook', 'gtk/apport-gtk',
-          'qt4/apport-qt', 'cli/apport-cli', 'bin/dupdb-admin'],
+          'qt4/apport-qt', 'cli/apport-cli', 'bin/dupdb-admin', 'bin/apport-monitor'],
       packages=['apport', 'apport.crashdb_impl']
       )

@@ -66,7 +66,7 @@ stop_apport()
         cat $OLDPAT > $PATFILE
         rm -f $OLDPAT
         # stop a monitoring daemon
-        kill -TERM `cat /var/lock/subsys/apport-monitor`
+        [ -e /var/lock/subsys/apport-monitor ] && kill -TERM `cat /var/lock/subsys/apport-monitor`
         rm -f /var/lock/subsys/apport-monitor
     fi
 }
