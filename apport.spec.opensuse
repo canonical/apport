@@ -11,7 +11,7 @@
 # norootforbuild
 
 Name:    apport
-Version: 0.0.4
+Version: 1.0.0
 Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
@@ -22,7 +22,7 @@ BuildRequires: python-devel intltool texlive-latex
 Requires: kernel-default >= 2.6.24
 # FIXME there's probably scads more requires here, need to do some testing
 # on a minimal system
-Requires: python-apport = %{version} rpm-python lsb
+Requires: python-apport = %{version} rpm-python lsb python-pyinotify
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
@@ -162,6 +162,11 @@ fi
 /usr/share/apport/apport-chroot
 
 %changelog
+* Tue Jul 08 2008 - Nikolay Derkach <nderkach@gmail.com>
+- complete rewrite of package search methods
+- packaging backend code cleanup
+- initial implementation of a monitoring daemon 
+
 * Sun Jul 06 2008 - Nikolay Derkach <nderkach@gmail.com>
 - add_package_info() now works with just package names
 - some packaging backend cleanups

@@ -11,13 +11,13 @@
 # norootforbuild
 
 Name:    python-apport
-Version: 0.0.4
+Version: 1.0.0
 Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires: python-devel
-Requires: rpm-python lsb
+Requires: rpm-python lsb python-pyinotify
 Source0: apport-%{version}.tar.bz2
 Group: Development/Libraries/Python
 Packager: Nikolay Derkach <nderkach@gmail.com>
@@ -67,6 +67,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jul 08 2008 - Nikolay Derkach <nderkach@gmail.com>
+- complete rewrite of package search methods
+- packaging backend code cleanup
+- initial implementation of a monitoring daemon 
+
 * Sun Jul 06 2008 - Nikolay Derkach <nderkach@gmail.com>
 - add_package_info() now works with just package names
 - some packaging backend cleanups
