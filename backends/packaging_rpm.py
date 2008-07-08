@@ -213,20 +213,27 @@ class RPMPackageInfo:
 
     def _get_header(self,envra):
         '''Get the RPM header that matches the given ENVRA.'''
-        (e,n,v,r,a) = self._split_envra(envra)
-        mi = self.ts.dbMatch('name',n) # First, find stuff with the right name
-        # Now we narrow using the EVRA
-        args = {'epoch':e,'version':v,'release':r,'arch':a}
-        for name,val in args.items():
-            if val:
-                mi.pattern(name,rpm.RPMMIRE_STRCMP,val)
-        hdrs = [m for m in mi]
-        # Unless there's some rpmdb breakage, you should have one header
-        # here. If you do manage to have two rpms with the same ENVRA,
-        # who cares which one you get?
-        if not len(hdrs) == 1:
+
+        querystr = envra
+        qlen = len(envra) 
+        while qlen > 0:
+            mi = impl.ts.dbMatch('name', querystr)
+            hdrs = [m for m in mi]
+            if len(hdrs) > 0:
+                # yay! we found something
+                # Unless there's some rpmdb breakage, you should have one header
+                # here. If you do manage to have two rpms with the same ENVRA,
+                # who cares which one you get?
+                h = hdrs[0]
+                break
+                
+            # remove the last char of querystr and retry the search
+            querystr = querystr[0:len(querystr)-1]
+            qlen = qlen - 1
+
+        if qlen == 0:
             raise ValueError, 'No headers found for this envra: %s' % envra
-        return hdrs[0]
+        return h
 
     def _make_envra_from_header(self,h):
         '''Generate an ENVRA string from an rpm header'''
@@ -236,45 +243,6 @@ class RPMPackageInfo:
         else:
             envra = nvra
         return envra
-
-    def _split_envra(self,envra):
-        '''Split an ENVRA string into its component parts. e.g.:
-        evolution-2.8.3-2.fc6.i386 -> 0, evolution, 2.8.3, 2.fc6, i386
-        2:gaim-2.0.0-0.31.beta6.fc6.i386 -> 2, gaim, 2.0.0, 0.31.beta6.fc6, i386
-        This code comes from yum's rpmUtils/miscutils.py. Thanks, Seth!'''
-        
-        # works with fully quilified names like 'bash-3.2-112.x86_64'
-        # and with short names like 'bash'
-          
-        archIndex = relIndex = verIndex = len(envra)
-        epochIndex = -1
-        
-        if not envra.rfind('.') == -1:
-            archIndex = envra.rfind('.')
-            arch = envra[archIndex+1:]
-        else:
-            arch = None        
-
-        if not envra.rfind('-') == -1:
-            relIndex = envra[:archIndex].rfind('-')
-            rel = envra[relIndex+1:archIndex]
-        else:
-            rel = None  
-        
-        if not envra.rfind('-') == -1:
-            verIndex = envra[:relIndex].rfind('-')
-            ver = envra[verIndex+1:relIndex]
-        else:
-            ver = None  
-
-        epochIndex = envra.find(':')
-        if epochIndex == -1:
-            epoch = None
-        else:
-            epoch = envra[:epochIndex]     
-    
-        name = envra[epochIndex + 1:verIndex]
-        return epoch, name, ver, rel, arch
     
     def _checkmd5(self,filename,filemd5):
         '''Internal function to check a file's md5sum'''
@@ -309,23 +277,17 @@ if __name__ == '__main__':
             '''Test _get_headers_by_tag().'''
             
             headerByTag = impl._get_headers_by_tag('basenames','/bin/bash')
-#            print headerByTag  
-
-        def test_split_envra(self):
-            '''Test _split_envra().'''
-            
-#            print impl._split_envra('bash-3.2-112.x86_64')
-#            print impl._split_envra('bash')      
+#            print headerByTag      
             
         def test_get_header(self):
             '''Test _get_header().'''
             
             hdr = impl._get_header('bash-3.2-112.x86_64')
 #            print hdr['n']
-            hdr = impl._get_header('bash')
+            hdr = impl._get_header('bash-3.2')
 #            print hdr['n']
             hdr = impl._get_header('yast2-metapackage-handler')
-            print hdr['n']
+#            print hdr['n']
             
         def test_get_version(self):
             '''Test get_version().'''
