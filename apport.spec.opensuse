@@ -22,7 +22,8 @@ BuildRequires: python-devel intltool texlive-latex
 Requires: kernel-default >= 2.6.24
 # FIXME there's probably scads more requires here, need to do some testing
 # on a minimal system
-Requires: python-apport = %{version} rpm-python lsb python-pyinotify
+Requires: python-apport = %{version} rpm-python python-pyinotify
+Requires: lsb #probably we can remove it later
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
@@ -117,6 +118,8 @@ rm -rf $RPM_BUILD_ROOT
 %post
 # Add proper symlinks in /etc/init.d/rc*.d
 /sbin/chkconfig --add apport
+# start apport service
+/sbin/service apport start
 
 %preun
 # Really uninstalling? Stop the service and remove its links

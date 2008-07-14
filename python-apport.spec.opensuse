@@ -17,7 +17,8 @@ License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires: python-devel
-Requires: rpm-python lsb python-pyinotify
+Requires: rpm-python python-pyinotify
+Requires: lsb #probably we can remove it later
 Source0: apport-%{version}.tar.bz2
 Group: Development/Libraries/Python
 Packager: Nikolay Derkach <nderkach@gmail.com>
