@@ -23,7 +23,8 @@ Requires: kernel-default >= 2.6.24
 # FIXME there's probably scads more requires here, need to do some testing
 # on a minimal system
 Requires: python-apport = %{version} rpm-python python-pyinotify
-Requires: lsb #probably we can remove it later
+#probably we can remove it later
+Requires: lsb
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
