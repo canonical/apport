@@ -2,7 +2,7 @@
 
 rm -rf *
 
-RELEASE=hardy
+RELEASE=intrepid
 
 # create directories
 mkdir -p bin fakelibs chroots
@@ -105,8 +105,7 @@ chmod -R g+w chroots/
 # chroot map
 cat <<EOF > chrootmap
 {
-    'Ubuntu 7.04': 'chroots/feisty.tar.gz',
-    'Ubuntu 7.10': 'chroots/gutsy.tar.gz',
     'Ubuntu 8.04': 'chroots/hardy.tar.gz',
+    'Ubuntu 8.10': 'chroots/intrepid.tar.gz',
 }
 EOF
