@@ -10,8 +10,10 @@ apport (0.111) UNRELEASED; urgency=low
     proc attribute cannot be read or isn't present. Thanks to Steve Beattie
     for the patch and the suggestion!
   * debian/local/setup-apport-retracer: Switch to intrepid.
+  * debian/local/setup-apport-retracer: Fix installation of python-apt. Also
+    install apt, to avoid library version mismatches to python-apt.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 15 Jul 2008 10:03:49 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 15 Jul 2008 10:29:56 +0100
 
 apport (0.110) intrepid; urgency=low
 

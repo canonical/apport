@@ -21,6 +21,7 @@ ln -s ../apport/bin/crash-digger bin/crash-digger
 # debootstrap
 T=`mktemp -d`
 wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-`dpkg --print-architecture`/Packages.gz | gunzip > $T/Packages
+wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/universe/binary-`dpkg --print-architecture`/Packages.gz | gunzip > $T/Packages-universe
 P=`grep '^Filename:.*debootstrap_.*deb' $T/Packages | cut -f 2 -d\ `
 wget -q http://archive.ubuntu.com/ubuntu/$P
 dpkg -x debootstrap_*.deb $T
@@ -39,7 +40,13 @@ dpkg -s python-launchpad-bugs >/dev/null 2>/dev/null || {
 }
 
 # python-apt
-dpkg -s python-apt >/dev/null 2>/dev/null || {
+dpkg -s python-apt | grep -q ' installed$' 2>/dev/null || {
+    P=`grep '^Filename:.*/apt_.*deb' $T/Packages | cut -f 2 -d\ `
+    wget -q http://archive.ubuntu.com/ubuntu/$P
+    dpkg -x apt*.deb $T
+    rm apt*.deb
+    cp $T/usr/lib/libapt*.so.* apport/
+
     P=`grep '^Filename:.*python-apt_.*deb' $T/Packages | cut -f 2 -d\ `
     wget -q http://archive.ubuntu.com/ubuntu/$P
     dpkg -x python-apt*.deb $T
@@ -57,38 +64,40 @@ dpkg -s python-libxml2 >/dev/null 2>/dev/null || {
     mv $T/usr/lib/python-support/python-libxml2/python2.5/* apport/
 }
 
-rm -rf $T
-
 # fake{chroot,root} libraries
 type fakeroot >/dev/null 2>/dev/null || {
-    wget -q http://archive.ubuntu.com/ubuntu/`apt-cache show fakeroot|grep ^Filename | cut -f 2 -d\ `
+    wget -q http://archive.ubuntu.com/ubuntu/`grep '^Filename:.*fakeroot_.*.deb' $T/Packages | cut -f 2 -d\ `
     ar p fakeroot_*.deb data.tar.gz | tar xzO ./usr/lib/libfakeroot/libfakeroot-sysv.so > fakelibs/libfakeroot.so
     rm fakeroot_*.deb
 }
 
-wget -q http://archive.ubuntu.com/ubuntu/`apt-cache show fakechroot|grep ^Filename | cut -f 2 -d\ `
+wget -q http://archive.ubuntu.com/ubuntu/`grep '^Filename:.*fakechroot_.*.deb' $T/Packages-universe | cut -f 2 -d\ `
 ar p fakechroot_*.deb data.tar.gz | tar xzO ./usr/lib/fakechroot/libfakechroot.so > fakelibs/libfakechroot.so
 rm fakechroot_*.deb
+
+rm -rf $T
 
 # create file with environment variables
 if type fakeroot >/dev/null 2>/dev/null; then
     cat <<EOF > environ
 PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
 PYTHONPATH=`pwd`/apport:\$PYTHONPATH
+LD_LIBRARY_PATH=`pwd`/apport:$LD_LIBRARY_PATH
 APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
 APPORT_CRASHDB_CONF=`pwd`/apport/crashdb.conf
 
-export PATH PYTHONPATH APPORT_LIBFAKECHROOT APPORT_CRASHDB_CONF
+export PATH PYTHONPATH LD_LIBRARY_PATH APPORT_LIBFAKECHROOT APPORT_CRASHDB_CONF
 EOF
 else
     cat <<EOF > environ
 PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
 PYTHONPATH=`pwd`/apport:\$PYTHONPATH
+LD_LIBRARY_PATH=`pwd`/apport:$LD_LIBRARY_PATH
 APPORT_LIBFAKEROOT=`pwd`/fakelibs/libfakeroot.so
 APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
 APPORT_CRASHDB_CONF=`pwd`/apport/crashdb.conf
 
-export PATH PYTHONPATH APPORT_LIBFAKEROOT APPORT_LIBFAKECHROOT APPORT_CRASHDB_CONF
+export PATH PYTHONPATH LD_LIBRARY_PATH APPORT_LIBFAKEROOT APPORT_LIBFAKECHROOT APPORT_CRASHDB_CONF
 EOF
 fi
 
