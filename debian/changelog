@@ -12,8 +12,10 @@ apport (0.111) UNRELEASED; urgency=low
   * debian/local/setup-apport-retracer: Switch to intrepid.
   * debian/local/setup-apport-retracer: Fix installation of python-apt. Also
     install apt, to avoid library version mismatches to python-apt.
+  * debian/apport.default: Enable apport by default again, now that we have
+    working retracers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 15 Jul 2008 10:29:56 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 Jul 2008 23:13:29 +0200
 
 apport (0.110) intrepid; urgency=low
 
