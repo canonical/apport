@@ -14,8 +14,11 @@ apport (0.111) UNRELEASED; urgency=low
     install apt, to avoid library version mismatches to python-apt.
   * debian/apport.default: Enable apport by default again, now that we have
     working retracers.
+  * apport/report.py, test_add_gdb_info_script(): Use bash, not dash as test
+    program for core dumping; stack trace is awkwardly bad with dash, so that
+    the test case cannot really work any more.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 23 Jul 2008 23:13:29 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 Jul 2008 17:59:43 +0200
 
 apport (0.110) intrepid; urgency=low
 
