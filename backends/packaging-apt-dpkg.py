@@ -273,6 +273,14 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return root
 
+    def get_kernel_package(self):
+        '''Return the actual Linux kernel package name.
+
+        This is used when the user reports a bug against the "linux" package.
+        '''
+        # TODO: Ubuntu specific
+        return 'linux-image-' + os.uname()[2]
+
     #
     # Internal helper methods
     #
@@ -630,6 +638,10 @@ bo/gu/s                                                 na/mypackage
             self.assertEqual(impl.enabled(), True)
             f.close()
 
+        def test_get_kernel_pacakge(self):
+            '''Test get_kernel_package().'''
+
+            self.assert_('linux' in impl.get_kernel_package())
 
     # only execute if dpkg is available
     try:

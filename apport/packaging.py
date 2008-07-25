@@ -119,4 +119,11 @@ class PackageInfo:
         '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def get_kernel_package(self):
+        '''Return the actual Linux kernel package name.
+
+        This is used when the user reports a bug against the "linux" package.
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
 import packaging_impl

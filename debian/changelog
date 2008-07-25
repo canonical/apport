@@ -21,8 +21,11 @@ apport (0.111) UNRELEASED; urgency=low
     related information. By Matt Zimmerman, thank you! (LP: #251441)
   * debian/local/ubuntu-bug.1: Fix documentation of -p, it  specifies the
     binary package name, not the source.
+  * apport/packaging.py: Add get_kernel_package() to return the actual Linux
+    kernel package name; useful if the user reports a bug against just
+    "linux". Implement it in backends/packaging-apt-dpkg.py.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 Jul 2008 18:56:30 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Jul 2008 19:22:44 +0200
 
 apport (0.110) intrepid; urgency=low
 
