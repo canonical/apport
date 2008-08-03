@@ -53,13 +53,13 @@ def thread_collect_info(report, reportfile, package):
             report['DistroRelease'].split()[0]
 
     # check obsolete packages
-    if report['ProblemType'] == 'Crash' and \
-        'APPORT_IGNORE_OBSOLETE_PACKAGES' not in os.environ:
-        old_pkgs = report.obsolete_packages()
-        if old_pkgs:
-            report['UnreportableReason'] = _('You have some obsolete package \
-versions installed. Please upgrade the following packages and check if the \
-problem still occurs:\n\n%s') % ', '.join(old_pkgs)
+#    if report['ProblemType'] == 'Crash' and \
+#        'APPORT_IGNORE_OBSOLETE_PACKAGES' not in os.environ:
+#        old_pkgs = report.obsolete_packages()
+#        if old_pkgs:
+#            report['UnreportableReason'] = _('You have some obsolete package \
+#versions installed. Please upgrade the following packages and check if the \
+#problem still occurs:\n\n%s') % ', '.join(old_pkgs)
 
     report.anonymize()
 

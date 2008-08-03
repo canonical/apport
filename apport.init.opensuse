@@ -53,7 +53,7 @@ start_apport()
         cat $PATFILE > $OLDPAT        
         echo "|$AGENT %p %s %c" > /proc/sys/kernel/core_pattern
         # start a monitoring daemon
-        python /usr/share/apport/apport-monitor
+#        python /usr/share/apport/apport-monitor
     fi
 }
 
@@ -66,8 +66,8 @@ stop_apport()
         cat $OLDPAT > $PATFILE
         rm -f $OLDPAT
         # stop a monitoring daemon
-        [ -e /var/lock/subsys/apport-monitor ] && kill -TERM `cat /var/lock/subsys/apport-monitor`
-        rm -f /var/lock/subsys/apport-monitor
+#        [ -e /var/lock/subsys/apport-monitor ] && kill -TERM `cat /var/lock/subsys/apport-monitor`
+#        rm -f /var/lock/subsys/apport-monitor
     fi
 }
 

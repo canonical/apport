@@ -22,7 +22,7 @@ BuildRequires: python-devel intltool texlive-latex
 Requires: kernel-default >= 2.6.24
 # FIXME there's probably scads more requires here, need to do some testing
 # on a minimal system
-Requires: python-apport = %{version} rpm-python python-pyinotify
+Requires: python-apport = %{version} rpm-python
 #probably we can remove it later
 Requires: lsb
 Requires(post): /sbin/chkconfig
@@ -31,7 +31,6 @@ Requires(preun): /sbin/service
 Requires(postun): /sbin/service
 Source0: %{name}-%{version}.tar.bz2
 Group: System/Monitoring
-Packager: Nikolay Derkach <nderkach@gmail.com>
 Summary: Automatic crash handler
 
 %description
@@ -62,21 +61,6 @@ problem report in /var/crash/.
 This package provides a Qt4 frontend for browsing and handling the
 crash reports.
 
-# Doesn't work yet.
-%package retrace
-Summary: Tools for reprocessing Apport crash reports
-Group: Applications/System
-%description retrace
-apport-retrace recombines an Apport crash report (either a file or a
-Launchpad bug) and debug symbol packages (.ddebs) into fully symbolic
-stack traces.
-
-This package also ships apport-chroot. This tool can create and
-manage chroots for usage with apport-retrace. If the fakeroot and
-fakechroot libraries are available (either by installing the packages
-or by merely putting their libraries somewhere and setting two
-environment variables), the entire process of retracing crashes in
-chroots can happen with normal user privileges.
 
 %prep
 %setup -n apport-%{version}
@@ -159,13 +143,16 @@ fi
 %defattr(-,root,root)
 /usr/share/apport/apport-qt
 
-%files retrace
-%defattr(-,root,root)
-%doc %{_mandir}/man1/apport-retrace.1*
-/usr/share/apport/apport-retrace
-/usr/share/apport/apport-chroot
+#%files retrace
+#%defattr(-,root,root)
+#%doc %{_mandir}/man1/apport-retrace.1*
+#/usr/share/apport/apport-retrace
+#/usr/share/apport/apport-chroot
 
 %changelog
+* Sun Aug 03 2008 - Nikolay Derkach <nderkach@gmail.com>
+- removed pynotify dependency, python apport monitor is not used anymore
+
 * Tue Jul 08 2008 - Nikolay Derkach <nderkach@gmail.com>
 - complete rewrite of package search methods
 - packaging backend code cleanup

@@ -1,5 +1,5 @@
 #
-# spec file for package apport
+# spec file for package python-apport
 #
 # Copyright (c) 2007-2008 Nikolay Derkach <nderkach@gmail.com>
 # This file and all modifications and additions to the pristine
@@ -17,12 +17,11 @@ License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires: python-devel
-Requires: rpm-python python-pyinotify
+Requires: rpm-python
 #probably we can remove it later
 Requires: lsb
 Source0: apport-%{version}.tar.bz2
 Group: Development/Libraries/Python
-Packager: Nikolay Derkach <nderkach@gmail.com>
 Summary: Automatic crash handler - Python libraries
 
 %description
@@ -69,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Aug 03 2008 - Nikolay Derkach <nderkach@gmail.com>
+- removed pynotify dependency, python apport monitor is not used anymore
+
 * Tue Jul 08 2008 - Nikolay Derkach <nderkach@gmail.com>
 - complete rewrite of package search methods
 - packaging backend code cleanup
