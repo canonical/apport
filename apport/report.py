@@ -1280,7 +1280,7 @@ int main() { return f(42); }
             os.close(fd2)
 
             # create a test script which produces a core dump for us
-            open(script, 'w').write('''#!/bin/sh
+            open(script, 'w').write('''#!/bin/bash
 gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             os.chmod(script, 0755)
 
@@ -1290,7 +1290,7 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
                 stdout=subprocess.PIPE) == 0
 
             pr = Report()
-            pr['InterpreterPath'] = '/bin/sh'
+            pr['InterpreterPath'] = '/bin/bash'
             pr['ExecutablePath'] = script
             pr['CoreDump'] = (coredump,)
             pr.add_gdb_info()
