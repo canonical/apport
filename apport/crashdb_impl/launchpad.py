@@ -82,7 +82,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
-        report.write_mime(mime, extra_headers=hdr)
+        report.write_mime(mime, extra_headers=hdr, skip_keys=['Date'])
         mime.flush()
         mime.seek(0)
 
@@ -125,6 +125,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             description = m.group(1).replace("\xc2\xa0", " ")
             
             report.load(StringIO(description))
+
+            report['Date'] = b.date.ctime()
 
             for att in b.attachments.filter(lambda a: re.match(
                     "Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt",

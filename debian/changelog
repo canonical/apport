@@ -33,8 +33,10 @@ apport (0.111) UNRELEASED; urgency=low
     fall back to Architecture, and mention the change in doc/data-format.tex.
   * problem_report.py, write_mime(): Add new "skip_keys" argument to filter
     out keys. Add test cases.
+  * apport/crashdb_impl/launchpad.py: Do not write the "Date:" field on
+    upload(), and fetch it from the bug metadata in download().
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 15:13:10 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 15:24:59 +0200
 
 apport (0.110) intrepid; urgency=low
 
