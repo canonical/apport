@@ -17,7 +17,6 @@ import subprocess
 
 attach_files = { 'BootDmesg' : '/var/log/dmesg',
                  'ProcInterrupts' : '/proc/interrupts',
-                 'ProcVersion' : '/proc/version',
                  'ProcVersionSignature' : '/proc/version_signature',
                  'ProcCpuInfo' : '/proc/cpuinfo',
                  'ProcCmdLine' : '/proc/cmdline',
@@ -61,12 +60,15 @@ def add_info(report):
         output = _command_output(command)
         report[name] = output
 
-    version_signature = report.get('ProcVersionSignature','')
-    if version_signature.startswith('Ubuntu '):
-        package_version = version_signature.split(' ', 1)[1]
-        report['RunningKernelVersion'] = package_version
-    else:
+    version_signature = report.get('ProcVersionSignature', '')
+    if not version_signature.startswith('Ubuntu '):
         report['UnreportableReason'] = _('The running kernel is not an Ubuntu kernel')
+
+    try:
+        # already covered in ProcVersionSignature
+        del report['Uname']
+    except KeyError:
+        pass
 
 if __name__ == '__main__':
     report = {}

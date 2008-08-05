@@ -38,8 +38,11 @@ apport (0.111) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py, download(): Support reading bugs with
     the "--- " separator instead of "ProblemType: ". Launchpad doesn't create
     bugs that way ATM, but at least we have the reading part implemented now.
+  * package-hooks/source_linux.py: Drop Uname, ProcVersion, and
+    RunningKernelVersion fields, since they are all subsumed in the
+    ProcVersionSignature field.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 15:49:31 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 16:03:55 +0200
 
 apport (0.110) intrepid; urgency=low
 
