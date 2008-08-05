@@ -41,8 +41,9 @@ apport (0.111) UNRELEASED; urgency=low
   * package-hooks/source_linux.py: Drop Uname, ProcVersion, and
     RunningKernelVersion fields, since they are all subsumed in the
     ProcVersionSignature field.
+  * apport/ui.py, run_report_bug(): Strip spaces from package argument.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 16:03:55 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 16:15:30 +0200
 
 apport (0.110) intrepid; urgency=low
 
