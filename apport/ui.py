@@ -528,6 +528,13 @@ free memory to automatically analyze the problem and send a report to the develo
         '''Upload the current report to the tracking system and guide the user
         to its web page.'''
 
+        # drop PackageArchitecture if equal to Architecture
+        if self.report.get('PackageArchitecture') == self.report.get('Architecture'):
+            try:
+                del self.report['PackageArchitecture']
+            except KeyError:
+                pass
+
         global __upload_progress
         __upload_progress = None
 
@@ -1503,7 +1510,7 @@ CoreDump: base64
             self.assertEqual(self.ui.report['ProblemType'], 'Package')
 
             # verify that additional information has been collected
-            self.assert_('PackageArchitecture' in self.ui.report.keys())
+            self.assert_('Architecture' in self.ui.report.keys())
             self.assert_('DistroRelease' in self.ui.report.keys())
             self.assert_('Uname' in self.ui.report.keys())
 

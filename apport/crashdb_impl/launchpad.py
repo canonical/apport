@@ -64,8 +64,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # set reprocessing tags
         hdr = {}
         hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
-        if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
-            a = report['PackageArchitecture']
+        a = report.get('PackageArchitecture', report.get('Architecture'))
+        if 'CoreDump' in report and a:
             if a != 'all':
                 hdr['Tags'] += ' need-%s-retrace' % a
                 # FIXME: ugly Ubuntu specific hack until LP has a real crash db
