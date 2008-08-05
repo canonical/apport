@@ -24,8 +24,10 @@ apport (0.111) UNRELEASED; urgency=low
   * apport/packaging.py: Add get_kernel_package() to return the actual Linux
     kernel package name; useful if the user reports a bug against just
     "linux". Implement it in backends/packaging-apt-dpkg.py.
+  * apport/ui.py: "Do what I mean" when filing a bug against "linux" and
+    report it against the actual kernel package.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Jul 2008 19:22:44 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 12:46:08 +0200
 
 apport (0.110) intrepid; urgency=low
 

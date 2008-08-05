@@ -282,7 +282,11 @@ free memory to automatically analyze the problem and send a report to the develo
                 return False
             else:
                 raise
-        self.cur_package = self.options.package
+        # "Do what I mean" for filing against "linux"
+        if self.options.package == 'linux':
+            self.cur_package = apport.packaging.get_kernel_package()
+        else:
+            self.cur_package = self.options.package
 
         try:
             self.collect_info()
