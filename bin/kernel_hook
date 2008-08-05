@@ -11,48 +11,26 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess
+import os, sys
 import apport, apport.fileutils
 
-def _command_output(command, input = None, stderr = subprocess.STDOUT):
-    '''Try to execute given command (array) and return its stdout, or return
-    a textual error if it failed.'''
+vmcore_path = os.path.join(apport.fileutils.report_dir, 'vmcore')
 
-    try:
-       sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
-    except OSError, e:
-       return 'Error: ' + str(e)
-
-    out = sp.communicate(input)[0]
-    if sp.returncode == 0:
-       return out.strip()
-    else:
-       return 'Error: command %s failed with exit code %i: %s' % (
-           str(command), sp.returncode, out)
-
-def read_file(file):
-    try:
-        return open(file).read().strip()
-    except Exception, e:
-        return 'Error: ' + str(e)
+if not os.path.exists(vmcore_path):
+    sys.exit(0)
 
 pr = apport.Report('Kernel')
-pr['ProcVersion'] = read_file('/proc/version')
-pr['ProcVersionSignature'] = read_file('/proc/version_signature')
+pr['Package'] = 'linux-image-' + os.uname()[2]
+pr['SourcePackage'] = 'linux'
 
-kernel_ver = pr['ProcVersion'].split()[2].split('-')[0]
-if kernel_ver.startswith('2.'):
-    pr['SourcePackage'] = 'linux-source-'+kernel_ver
-else:
-    pr['SourcePackage'] = 'linux-meta'
-pr['Package'] = 'linux' # needed for creating the report file name
-
-pr['ProcCpuInfo'] = read_file('/proc/cpuinfo')
-pr['ProcModules'] = read_file('/proc/modules')
-pr['ProcCmdline'] = read_file('/proc/cmdline')
-pr['Dmesg'] = _command_output('dmesg')
-pr['LsPciVV'] = _command_output(['lspci', '-vv'])
-pr['LsPciVVN'] = _command_output(['lspci', '-vvn'])
+pr['VmCore'] = (vmcore_path,)
+if os.path.exists(vmcore_path + '.log'):
+    pr['VmCoreLog'] = (vmcore_path + '.log',)
 
 # write report
 pr.write(open(apport.fileutils.make_report_path(pr), 'w'))
+
+# clean up the core files
+os.unlink(vmcore_path)
+os.unlink(vmcore_path + '.log')
+

@@ -110,6 +110,13 @@ class _HooksTest(unittest.TestCase):
     def test_kernel_hook(self):
         '''Test kernel_hook.'''
 
+        f = open(os.path.join(apport.fileutils.report_dir, 'vmcore'), 'w')
+        f.write('\x01' * 100)
+        f.close()
+        f = open(os.path.join(apport.fileutils.report_dir, 'vmcore.log'), 'w')
+        f.write('vmcore successfully dumped')
+        f.close()
+
         self.assertEqual(subprocess.call('%s/kernel_hook' % basedir), 0,
             'kernel_hook finished successfully')
 
@@ -119,15 +126,20 @@ class _HooksTest(unittest.TestCase):
         r = apport.Report()
         r.load(open(reps[0]))
 
-        self.assertEqual(set(r.keys()), set(['Date', 'Dmesg', 'ProcModules',
-            'LsPciVV', 'LsPciVVN', 'Package', 'ProblemType', 'ProcCpuInfo',
-            'ProcVersion', 'ProcVersionSignature', 'ProcCmdline', 'SourcePackage']))
-
+        self.assertEqual(set(r.keys()), set(['Date', 'SourcePackage',
+            'Package', 'ProblemType', 'VmCore', 'VmCoreLog']))
         self.assertEqual(r['ProblemType'], 'Kernel')
+        self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
+        self.assertEqual(r['VmCore'], '\x01' * 100)
+        self.assertEqual(r['SourcePackage'], 'linux')
 
-        self.assert_(os.uname()[2].split('-')[0] in r['SourcePackage'])
-        self.assertEqual(r['ProcVersion'],
-            open('/proc/version').read().strip())
+        self.assert_(os.uname()[2].split('-')[0] in r['Package'])
+
+        r.add_package_info(r['Package'])
+        self.assert_(' ' in r['Package']) # appended version number
+        r.add_hooks_info()
+        self.assert_('ProcModules' in r)
+        self.assert_('Lspci' in r)
 
     @classmethod
     def _gcc_version_path(klass):
