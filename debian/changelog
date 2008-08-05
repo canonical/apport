@@ -54,8 +54,11 @@ apport (0.111) UNRELEASED; urgency=low
   * apport/ui.py: Collect information for "ProblemType: Kernel" as well, so
     that we run the package hook. Adapt test suite to cover this.
   * debian/control: Bump Standards-Version (no required changes).
+  * gtk/apport-gtk.glade, qt4/apport-qt: Generalize notification of kernel
+    crash, since it now happens after a boot, not right after the BUG/OOPS.
+    But in the future we want to cover both cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 17:51:36 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 17:58:09 +0200
 
 apport (0.110) intrepid; urgency=low
 

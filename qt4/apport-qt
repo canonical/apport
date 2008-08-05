@@ -189,11 +189,10 @@ class QT4UserInterface(apport.ui.UserInterface):
         return 'cancel'
 
     def ui_present_kernel_error(self):
-        dialog = QT4ErrorDialog (_('Kernel Error'),
-                _('Sorry, the kernel encountered a serious problem'),
-                _('Your system might become unstable now and might need to be '
-                    'restarted.\n\nYou can help the developers to fix the '
-                    'problem by reporting it.'))
+        dialog = QT4ErrorDialog (_('Kernel problem'), 
+                _('Your system encountered a serious kernel problem which '
+                  'caused it to crash.'),
+                _('You can help the developers to fix the problem by reporting it.'))
 
         reportbutton = dialog.addbutton(_('&Report Problem...'))
 
