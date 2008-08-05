@@ -51,8 +51,10 @@ apport (0.111) UNRELEASED; urgency=low
     /var/crash/vmcore{,.log} and turning that into an apport report.
   * debian/apport.init: Call kernel_hook if /var/crash/vmcore exists.
     (LP: #241322)
+  * apport/ui.py: Collect information for "ProblemType: Kernel" as well, so
+    that we run the package hook. Adapt test suite to cover this.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 16:58:24 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 17:27:09 +0200
 
 apport (0.110) intrepid; urgency=low
 
