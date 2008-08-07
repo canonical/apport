@@ -2,8 +2,11 @@ apport (0.112) UNRELEASED; urgency=low
 
   * apport/crashdb_impl/launchpad.py: Update attachment handling to current
     python-launchpad-bugs API, thanks Markus Korn!
+  * apport/ui.py: Use gnome-panel as indicator for a running GNOME session;
+    'gnome-session' now calls itself x-session-manager, which isn't useful
+    to tell apart session types.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 07 Aug 2008 11:41:29 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 07 Aug 2008 17:08:49 +0200
 
 apport (0.111) intrepid; urgency=low
 
