@@ -114,7 +114,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Download the problem report from given ID and return a Report.'''
 
         report = apport.Report()
-        Bug.attachment_path = tempfile.mkdtemp()
+        attachment_path = tempfile.mkdtemp()
         Bug.content_types.append('application/x-gzip')
         try:
             b = Bug(id) 
@@ -147,7 +147,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     a.lp_filename)):
 
                 key = os.path.splitext(att.lp_filename)[0]
-
+                
+                att.download(os.path.join(attachment_path, att.lp_filename))
                 if att.lp_filename.endswith('.txt'):
                     report[key] = att.text
                 elif att.lp_filename.endswith('.gz'):
@@ -157,7 +158,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
             return report
         finally:
-            shutil.rmtree(Bug.attachment_path)
+            shutil.rmtree(attachment_path)
 
     def update(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
