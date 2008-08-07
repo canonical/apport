@@ -352,7 +352,8 @@ class ProblemReport(UserDict.IterableUserDict):
                 os.utime(reportfile, (st.st_atime, st.st_mtime))
             os.chmod(reportfile, st.st_mode)
 
-    def write_mime(self, file, attach_treshold = 5, extra_headers={}):
+    def write_mime(self, file, attach_treshold = 5, extra_headers={},
+        skip_keys=None):
         '''Write information into the given file-like object, using
         MIME/Multipart RFC 2822 format (i. e. an email with attachments).
 
@@ -368,6 +369,9 @@ class ProblemReport(UserDict.IterableUserDict):
         all non-ASCII ones) will become an attachment.
 
         Extra MIME preamble headers can be specified, too, as a dictionary.
+
+        skip_keys is a set/list specifying keys which are filtered out and not
+        written to the destination file.
         '''
 
         keys = self.data.keys()
@@ -381,6 +385,8 @@ class ProblemReport(UserDict.IterableUserDict):
             keys.insert(0, 'ProblemType')
 
         for k in keys:
+            if skip_keys and k in skip_keys:
+                continue
             v = self.data[k]
             attach_value = None
 
@@ -1281,6 +1287,50 @@ line♥5!!
         self.assert_(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'text/plain')
         self.assert_('Simple: bar' in part.get_payload(decode=True))
+
+        # no more parts
+        self.assertRaises(StopIteration, msg_iter.next)
+
+    def test_write_mime_filter(self):
+        '''Test write_mime() with key filters.'''
+
+        bin_value = 'AB' * 10 + '\0' * 10 + 'Z'
+
+        pr = ProblemReport(date = 'now!')
+        pr['GoodText'] = 'Hi'
+        pr['BadText'] = 'YouDontSeeMe'
+        pr['GoodBin'] = bin_value
+        pr['BadBin'] = 'Y' + '\x05' * 10 + '-'
+        io = StringIO()
+        pr.write_mime(io, skip_keys=['BadText', 'BadBin'])
+        io.seek(0)
+
+        msg = email.message_from_file(io)
+        msg_iter = msg.walk()
+
+        # first part is the multipart container
+        part = msg_iter.next()
+        self.assert_(part.is_multipart())
+
+        # second part should be an inline text/plain attachments with all short
+        # fields
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'text/plain')
+        self.assertEqual(part.get_content_charset(), 'utf-8')
+        self.assertEqual(part.get_filename(), None)
+        self.assertEqual(part.get_payload(decode=True), '''ProblemType: Crash
+Date: now!
+GoodText: Hi
+''')
+
+        # third part should be the GoodBin: field as attachment
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        f = tempfile.TemporaryFile()
+        f.write(part.get_payload(decode=True))
+        f.seek(0)
+        self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
 
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)

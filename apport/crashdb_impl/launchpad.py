@@ -64,8 +64,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # set reprocessing tags
         hdr = {}
         hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
-        if report.has_key('CoreDump') and report.has_key('PackageArchitecture'):
-            a = report['PackageArchitecture']
+        a = report.get('PackageArchitecture', report.get('Architecture'))
+        if 'CoreDump' in report and a:
             if a != 'all':
                 hdr['Tags'] += ' need-%s-retrace' % a
                 # FIXME: ugly Ubuntu specific hack until LP has a real crash db
@@ -82,7 +82,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
-        report.write_mime(mime, extra_headers=hdr)
+        report.write_mime(mime, extra_headers=hdr, skip_keys=['Date'])
         mime.flush()
         mime.seek(0)
 
@@ -121,10 +121,26 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
             # parse out fields from summary
             m = re.search(r"(ProblemType:.*)$", b.description_raw, re.S)
+            if not m:
+                m = re.search(r"^--- \r?$[\r\n]*(.*)", b.description_raw, re.M | re.S)
             assert m, 'bug description must contain standard apport format data'
+
             description = m.group(1).replace("\xc2\xa0", " ")
             
             report.load(StringIO(description))
+
+            report['Date'] = b.date.ctime()
+            if 'ProblemType' not in report:
+                if 'apport-bug' in b.tags:
+                    report['ProblemType'] = 'Bug'
+                elif 'apport-crash' in b.tags:
+                    report['ProblemType'] = 'Crash'
+                elif 'apport-kernel' in b.tags:
+                    report['ProblemType'] = 'Kernel'
+                elif 'apport-package' in b.tags:
+                    report['ProblemType'] = 'Package'
+                else:
+                    raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
 
             for att in b.attachments.filter(lambda a: re.match(
                     "Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt",

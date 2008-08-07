@@ -37,8 +37,8 @@ def thread_collect_info(report, reportfile, package):
         else:
             raise KeyError, 'called without a package, and report does not have ExecutablePath'
     report.add_package_info(package)
-    report.add_hooks_info()
     report.add_os_info()
+    report.add_hooks_info()
 
     # add title
     title = report.standard_title()
@@ -285,7 +285,13 @@ free memory to automatically analyze the problem and send a report to the develo
                 return False
             else:
                 raise
-        self.cur_package = self.options.package
+        if self.options.package:
+            self.options.package = self.options.package.strip()
+        # "Do what I mean" for filing against "linux"
+        if self.options.package == 'linux':
+            self.cur_package = apport.packaging.get_kernel_package()
+        else:
+            self.cur_package = self.options.package
 
         try:
             self.collect_info()
@@ -404,7 +410,7 @@ free memory to automatically analyze the problem and send a report to the develo
             # display a progress dialog
             self.ui_start_info_collection_progress()
 
-            if self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Stacktrace'):
+            if not self.report.has_key('Stacktrace'):
                 icthread = REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package))
@@ -527,6 +533,13 @@ free memory to automatically analyze the problem and send a report to the develo
     def file_report(self):
         '''Upload the current report to the tracking system and guide the user
         to its web page.'''
+
+        # drop PackageArchitecture if equal to Architecture
+        if self.report.get('PackageArchitecture') == self.report.get('Architecture'):
+            try:
+                del self.report['PackageArchitecture']
+            except KeyError:
+                pass
 
         global __upload_progress
         __upload_progress = None
@@ -1503,7 +1516,7 @@ CoreDump: base64
             self.assertEqual(self.ui.report['ProblemType'], 'Package')
 
             # verify that additional information has been collected
-            self.assert_('PackageArchitecture' in self.ui.report.keys())
+            self.assert_('Architecture' in self.ui.report.keys())
             self.assert_('DistroRelease' in self.ui.report.keys())
             self.assert_('Uname' in self.ui.report.keys())
 
@@ -1512,8 +1525,8 @@ CoreDump: base64
 
             # generate crash report
             r = apport.Report('Kernel')
-            r['SourcePackage'] = 'linux-source-2.6.20'
-            r.add_os_info()
+            r['Package'] = apport.packaging.get_kernel_package()
+            r['SourcePackage'] = 'linux'
 
             # write crash report
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
@@ -1535,11 +1548,15 @@ CoreDump: base64
             self.ui.present_kernel_error_response = 'report'
             self.ui.present_details_response = 'full'
             self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None)
+            self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) + 
+                ' ' + str(self.ui.msg_text))
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://linux-source-2.6.20.bug.net/%i' % self.ui.crashdb.latest_id())
+            self.assertEqual(self.ui.opened_url, 'http://linux.bug.net/%i' % self.ui.crashdb.latest_id())
 
             self.assert_('SourcePackage' in self.ui.report.keys())
+            # did we run the hooks properly?
+            self.assert_('ProcModules' in self.ui.report.keys())
+            self.assert_('Lspci' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Kernel')
 
         def test_run_crash_anonymity(self):

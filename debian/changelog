@@ -1,4 +1,6 @@
-apport (0.111) UNRELEASED; urgency=low
+apport (0.111) intrepid; urgency=low
+
+  The "(Kernel) OOPS, I dumped it again!" release.
 
   * apport/ui.py: Fix test_run_report_bug_unpackaged_pid() to work with the
     installed run-tests from the package as well.
@@ -21,8 +23,44 @@ apport (0.111) UNRELEASED; urgency=low
     related information. By Matt Zimmerman, thank you! (LP: #251441)
   * debian/local/ubuntu-bug.1: Fix documentation of -p, it  specifies the
     binary package name, not the source.
+  * apport/packaging.py: Add get_kernel_package() to return the actual Linux
+    kernel package name; useful if the user reports a bug against just
+    "linux". Implement it in backends/packaging-apt-dpkg.py.
+  * apport/ui.py: "Do what I mean" when filing a bug against "linux" and
+    report it against the actual kernel package.
+  * debian/local/ubuntu-bug: If just one argument is given, infer -p/-P from
+    the type of the argument.
+  * apport/ui.py: Drop the PackageArchitecture field for the uploaded report
+    if it is equal to Architecture. Adapt apport/crashdb_impl/launchpad.py to
+    fall back to Architecture, and mention the change in doc/data-format.tex.
+  * problem_report.py, write_mime(): Add new "skip_keys" argument to filter
+    out keys. Add test cases.
+  * apport/crashdb_impl/launchpad.py: Do not write the "Date:" field on
+    upload(), and fetch it from the bug metadata in download().
+  * apport/crashdb_impl/launchpad.py, download(): Support reading bugs with
+    the "--- " separator instead of "ProblemType: ". Launchpad doesn't create
+    bugs that way ATM, but at least we have the reading part implemented now.
+  * package-hooks/source_linux.py: Drop Uname, ProcVersion, and
+    RunningKernelVersion fields, since they are all subsumed in the
+    ProcVersionSignature field.
+  * apport/ui.py, run_report_bug(): Strip spaces from package argument.
+  * apport/ui.py, add_hooks_info(): Collect OS info first, then call the
+    package hooks, so that the linux hook actually has a chance to delete the
+    Uname field.
+  * bin/kernel_hook, test-hooks: Throw away the original kernel hook which
+    we never used (and got superseded by the proper source_linux.py package
+    hook now). Replace it with the new logic of looking for
+    /var/crash/vmcore{,.log} and turning that into an apport report.
+  * debian/apport.init: Call kernel_hook if /var/crash/vmcore exists.
+    (LP: #241322)
+  * apport/ui.py: Collect information for "ProblemType: Kernel" as well, so
+    that we run the package hook. Adapt test suite to cover this.
+  * debian/control: Bump Standards-Version (no required changes).
+  * gtk/apport-gtk.glade, qt4/apport-qt: Generalize notification of kernel
+    crash, since it now happens after a boot, not right after the BUG/OOPS.
+    But in the future we want to cover both cases.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 24 Jul 2008 18:56:30 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 05 Aug 2008 18:13:24 +0200
 
 apport (0.110) intrepid; urgency=low
 
