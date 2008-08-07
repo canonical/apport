@@ -257,7 +257,7 @@ try:
 
     # ignore non-package binaries (unless in developer mode)
     if not apport.fileutils.likely_packaged(info['ExecutablePath']):
-        if not check_developer_mode():   
+        if not apport.fileutils.check_developer_mode():   
             error_log('executable does not belong to a package, ignoring')
             # check if the user wants a core dump
             drop_privileges(pid)

@@ -11,7 +11,7 @@
 # norootforbuild
 
 Name:    python-apport
-Version: 1.0.0
+Version: 1.0.1
 Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
@@ -68,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Aug 07 2008 - Nikolay Derkach <nderkach@gmail.com>
+- 1.0.1: fixes for the developer mode
+
 * Sun Aug 03 2008 - Nikolay Derkach <nderkach@gmail.com>
 - removed pynotify dependency, python apport monitor is not used anymore
 

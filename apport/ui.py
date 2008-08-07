@@ -46,8 +46,9 @@ def thread_collect_info(report, reportfile, package):
         report['Title'] = title
 
     # check package origin
-    if 'Package' not in report or \
-        not packaging.is_distro_package(report['Package'].split()[0]):
+    if ('Package' not in report or \
+        not packaging.is_distro_package(report['Package'].split()[0])) and \
+        not apport.fileutils.check_developer_mode():
         #TRANS: %s is the name of the operating system
         report['UnreportableReason'] = _('This is not a genuine %s package') % \
             report['DistroRelease'].split()[0]
@@ -433,8 +434,9 @@ free memory to automatically analyze the problem and send a report to the develo
             self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
-            if not self.report.has_key('SourcePackage') or \
-                (self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package')):
+            if (not self.report.has_key('SourcePackage') or \
+                (self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package'))) and \
+                not apport.fileutils.check_developer_mode():
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
                 # TODO This is not called consistently, is it really needed?
@@ -585,8 +587,8 @@ free memory to automatically analyze the problem and send a report to the develo
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
 
         exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
-        if not self.cur_package and self.report['ProblemType'] != 'Kernel' or (
-            exe_path and not os.path.exists(exe_path)):
+        if (not self.cur_package and self.report['ProblemType'] != 'Kernel' or (
+            exe_path and not os.path.exists(exe_path))) and not apport.fileutils.check_developer_mode():
             msg = _('This problem report does not apply to a packaged program.')
             if self.report.has_key('ExecutablePath'):
                 msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
