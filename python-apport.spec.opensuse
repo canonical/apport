@@ -11,7 +11,7 @@
 # norootforbuild
 
 Name:    python-apport
-Version: 1.0.1
+Version: 0.112
 Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
@@ -68,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Aug 13 2008 - Nikolay Derkach <nderkach@gmail.com>
+- 0.112: version changed to correspond with the upstream versioning
+
 * Thu Aug 07 2008 - Nikolay Derkach <nderkach@gmail.com>
 - 1.0.1: fixes for the developer mode
 
