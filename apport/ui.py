@@ -13,7 +13,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import glob, sys, os.path, optparse, time, traceback, locale, gettext
+import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser
 from gettext import gettext as _
@@ -494,7 +494,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 pass
 
             # if gnome-session is running, try gnome-open; special-case firefox
-            # to open a new window
+            # (and more generally, mozilla browsers) to open a new window
             try:
                 if os.getenv('DISPLAY') and \
                         subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-panel'],
@@ -502,8 +502,9 @@ free memory to automatically analyze the problem and send a report to the develo
                     gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
                         '/desktop/gnome/url-handlers/http/command'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    if 'firefox' in gct.communicate()[0] and gct.returncode == 0:
-                        subprocess.call(sudo_prefix + ['firefox', '-new-window', url])
+                    browser = re.compile("((firefox|seamonkey|flock)[^\s]*)").match(gct.communicate()[0])
+                    if browser and gct.returncode == 0:
+                        subprocess.call(sudo_prefix + [browser.group(0), '-new-window', url])
                         sys.exit(0)
                     else:
                         if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
