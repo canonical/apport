@@ -494,7 +494,8 @@ free memory to automatically analyze the problem and send a report to the develo
                 pass
 
             # if gnome-session is running, try gnome-open; special-case firefox
-            # (and more generally, mozilla browsers) to open a new window
+            # (and more generally, mozilla browsers) and epiphany to open a new window
+            # with respectively -new-window and --new-window
             try:
                 if os.getenv('DISPLAY') and \
                         subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-panel'],
@@ -502,13 +503,18 @@ free memory to automatically analyze the problem and send a report to the develo
                     gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
                         '/desktop/gnome/url-handlers/http/command'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    browser = re.compile("((firefox|seamonkey|flock)[^\s]*)").match(gct.communicate()[0])
-                    if browser and gct.returncode == 0:
-                        subprocess.call(sudo_prefix + [browser.group(0), '-new-window', url])
-                        sys.exit(0)
-                    else:
-                        if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
+                    if gct.returncode == 0:
+                        preferred_browser = gct.communicate()[0]
+                        browser = re.compile("((firefox|seamonkey|flock)[^\s]*)").match(preferred_browser)
+                        if browser:
+                            subprocess.call(sudo_prefix + [browser.group(0), '-new-window', url])
                             sys.exit(0)
+                        browser = re.compile("(epiphany)").match(preferred_browser)
+                        if browser:
+                            subprocess.call(sudo_prefix + [browser.group(0), '--new-window', url])
+                            sys.exit(0)
+                    if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
+                        sys.exit(0)
             except OSError:
                 pass
 
