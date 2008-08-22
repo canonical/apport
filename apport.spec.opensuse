@@ -16,7 +16,6 @@ Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-BuildArch: noarch
 BuildRequires: python-devel intltool texlive-latex
 # Need the ability to use pipes in /proc/sys/kernel/core_pattern
 Requires: kernel-default >= 2.6.24
@@ -61,7 +60,6 @@ problem report in /var/crash/.
 This package provides a Qt4 frontend for browsing and handling the
 crash reports.
 
-
 %prep
 %setup -n apport-%{version}
 
@@ -76,32 +74,44 @@ cp backends/packaging_rpm.py apport
 cp backends/packaging_opensuse.py apport/packaging_impl.py
 
 %install
-python setup.py install --root=$RPM_BUILD_ROOT \
-                        --install-scripts usr/share/apport \
-                        --prefix=/usr
-# We'll handle the docs in the %files section
-rm -rf $RPM_BUILD_ROOT/usr/share/doc/apport
-# Do the man pages
-install -d -m755 $RPM_BUILD_ROOT%{_mandir}/man1
-install -m644 man/apport-*.1 $RPM_BUILD_ROOT%{_mandir}/man1
+# apport main binary
+%__install -d -m755 %{buildroot}/usr/sbin
+install -m755 bin/apport %{buildroot}/usr/sbin
+# apport report handlers
+%__install -d -m755 %{buildroot}/usr/bin
+%__install -m755 cli/apport-cli %{buildroot}/usr/bin
+%__install -m755 gtk/apport-gtk %{buildroot}/usr/bin
+%__install -m755 qt4/apport-qt %{buildroot}/usr/bin
+# locale
+# fixme: there has to be a way to do this for multiple locales
+%__install -d -m755 %{buildroot}/usr/share/locale/de/LC_MESSAGES
+%__install -m644 po/mo/de/LC_MESSAGES/*.mo %{buildroot}/usr/share/locale/de/LC_MESSAGES
+%find_lang %{name}
+# man
+%__install -d -m755 %{buildroot}%{_mandir}/man1
+%__install -m644 man/apport-cli.1 %{buildroot}%{_mandir}/man1/apport-cli.1
+%__install -m644 man/apport-unpack.1 %{buildroot}%{_mandir}/man1/apport-unpack.1
 # cron job
-install -d -m755 $RPM_BUILD_ROOT/etc/cron.daily
-install -m755 debian/apport.cron.daily $RPM_BUILD_ROOT/etc/cron.daily/apport
-# create the dir for crash reports
-install -d -m1777 $RPM_BUILD_ROOT/var/crash
+%__install -d -m755 %{buildroot}/etc/cron.daily
+%__install -m755 debian/apport.cron.daily %{buildroot}/etc/cron.daily/apport
 # install initscript
-mkdir -p $RPM_BUILD_ROOT/etc/init.d
-install -m755 apport.init.opensuse $RPM_BUILD_ROOT/etc/init.d/apport
-# remove unneeded files
-rm -rf $RPM_BUILD_ROOT/%py_sitedir \
-       $RPM_BUILD_ROOT/etc/apport/crashdb.conf \
-       $RPM_BUILD_ROOT/etc/apport/blacklist.d/README.blacklist \
-       $RPM_BUILD_ROOT/usr/share/man/man1/apport-chroot.1 \
-       $RPM_BUILD_ROOT/usr/share/man/man1/apport-retrace.1 \
-       $RPM_BUILD_ROOT/usr/share/man/man1/apport-unpack.1
+%__install -d -m755 %{buildroot}/etc/init.d
+%__install -m755 apport.init.opensuse %{buildroot}/etc/init.d/apport
+# others
+%__install -m755 bin/apport-checkreports %{buildroot}/usr/bin
+%__install -d -m755 %{buildroot}/usr/share/mime/packages
+%__install -m644 xdg-mime/apport.xml %{buildroot}/usr/share/mime/packages
+%__install -d -m755 %{buildroot}/usr/share/icons/hicolor/scalable/apps
+%__install -m755 apport/apport.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps
+# python libs
+%__install -d -m755 %{buildroot}%py_sitedir/apport
+%__install -m755 apport/*.py* %{buildroot}%py_sitedir/apport
+%__install -d -m755 %{buildroot}/etc/apport/blacklist.d/
+%__install -m644 crashdb.conf %{buildroot}/etc/apport
+%__install -m644 doc/README.blacklist %{buildroot}/etc/apport/blacklist.d
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+%__rm -rf %{buildroot}
 
 %post
 # Add proper symlinks in /etc/init.d/rc*.d
@@ -123,34 +133,37 @@ if [ "$1" -ge "1" ]; then
     %insserv_cleanup
 fi
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root)
-%dir /var/crash
+/usr/sbin/apport
+/usr/bin/apport-cli
+/usr/bin/apport-checkreports
 %doc %{_mandir}/man1/apport-cli.1.gz
+%doc %{_mandir}/man1/apport-unpack.1.gz
 %doc doc/*
-/usr/share/apport/*
-# /etc files
 /etc/cron.daily/apport
 /etc/init.d/apport
 /usr/share/icons/hicolor/scalable/apps/apport.svg
-/usr/share/locale/*
 /usr/share/mime/packages/apport.xml
+# Main python modules
+%py_sitedir/apport/*
+%config /etc/apport/crashdb.conf
+/etc/apport/blacklist.d/README.blacklist
 
 %files gtk
 %defattr(-,root,root)
-/usr/share/apport/apport-gtk*
+/usr/bin/apport-gtk
 
 %files qt
 %defattr(-,root,root)
-/usr/share/apport/apport-qt
-
-#%files retrace
-#%defattr(-,root,root)
-#%doc %{_mandir}/man1/apport-retrace.1*
-#/usr/share/apport/apport-retrace
-#/usr/share/apport/apport-chroot
+/usr/bin/apport-qt
 
 %changelog
+* Wed Aug 20 2008 - Nikolay Derkach <nderkach@gmail.com>
+- switched to manual installtion of files
+- removed /var/crash directory installation
+- merged python libraries spec
+
 * Wed Aug 13 2008 - Nikolay Derkach <nderkach@gmail.com>
 - 0.112: version changed to correspond with the upstream versioning
 

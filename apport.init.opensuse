@@ -25,7 +25,7 @@ rc_reset
 
 DESC="apport crash handling"
 # The location of the apport binary
-AGENT=/usr/share/apport/apport
+AGENT=/usr/sbin/apport
 # The location of the core pattern file
 PATFILE=/proc/sys/kernel/core_pattern
 # Location to save the old core_pattern
@@ -48,8 +48,7 @@ apport_is_enabled() {
 start_apport()
 {
     if ! apport_is_enabled; then 
-        [ -e /var/crash ] || mkdir -p /var/crash
-        chmod 1777 /var/crash
+        [ -e /var/crash ] || echo "There is /var/crash directory missing in your system, unable to start Apport monitoring"
         cat $PATFILE > $OLDPAT        
         echo "|$AGENT %p %s %c" > /proc/sys/kernel/core_pattern
     fi
