@@ -54,7 +54,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         apport.crashdb.CrashDatabase.__init__(self, cookie_file,
             bugpattern_baseurl, options)
 
-        if options.has_key['distro']:
+        if options.has_key('distro'):
             self.distro = options['distro']
         else :
             self.distro = None
@@ -116,7 +116,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if title:
             args['field.title'] = title
         
-        if self.distro :
+        if not report.has_key('NonUbuntu') :
 	        if report.has_key('SourcePackage'):
 	            return 'https://bugs.launchpad.net/%s/+source/%s/+filebug/%s?%s' % (
 	                self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
@@ -124,9 +124,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 	            return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
 	                self.distro, handle, urllib.urlencode(args))
         else :
-            if report.has_key('SourcePackage'):
+            if report.has_key('Package'):
                 return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
-                    report['SourcePackage'], handle, urllib.urlencode(args))
+                    report['Package'], handle, urllib.urlencode(args))
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
