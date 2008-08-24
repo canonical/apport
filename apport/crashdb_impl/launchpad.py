@@ -24,12 +24,22 @@ BugList = Connector.ConnectBugList()
 
 def get_source_version(distro, package):
     '''Return the version of given source package in the latest release of
-    given distribution.'''
+    given distribution.
+    If 'distro' is None, we will look for a launchpad project . 
+    '''
 
-    result = urllib.urlopen('https://launchpad.net/%s/+source/%s' % (distro, package)).read()
-    m = re.search('href="/%s/\w+/\+source/%s/([^"]+)"' % (distro, re.escape(package)), result)
-    if not m:
-        raise ValueError, 'source package %s does not exist in %s' % (package, distro)
+    if distro :
+	    result = urllib.urlopen('https://launchpad.net/%s/+source/%s' % (distro, package)).read()
+	    m = re.search('href="/%s/\w+/\+source/%s/([^"]+)"' % (distro, re.escape(package)), result)
+	    if not m:
+	        raise ValueError, 'source package %s does not exist in %s' % (package, distro)
+    else:
+        # non distro packages
+        result = urllib.urlopen('https://launchpad.net/%s/+series' % (package)).read()
+        m = re.search('href="/%s/([^"]+)"' % (re.escape(package)), result)
+        if not m:
+            raise ValueError, 'Series for %s does not exist in Launchpad' % (package)
+        
     return m.group(1)
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
@@ -44,7 +54,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         apport.crashdb.CrashDatabase.__init__(self, cookie_file,
             bugpattern_baseurl, options)
 
-        self.distro = options['distro']
+        if options.has_key['distro']:
+            self.distro = options['distro']
+        else :
+            self.distro = None
         self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
 
         if cookie_file:
@@ -102,13 +115,18 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         title = report.standard_title()
         if title:
             args['field.title'] = title
-
-        if report.has_key('SourcePackage'):
-            return 'https://bugs.launchpad.net/%s/+source/%s/+filebug/%s?%s' % (
-                self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
-        else:
-            return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
-                self.distro, handle, urllib.urlencode(args))
+        
+        if self.distro :
+	        if report.has_key('SourcePackage'):
+	            return 'https://bugs.launchpad.net/%s/+source/%s/+filebug/%s?%s' % (
+	                self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
+	        else:
+	            return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
+	                self.distro, handle, urllib.urlencode(args))
+        else :
+            if report.has_key('SourcePackage'):
+                return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
+                    report['SourcePackage'], handle, urllib.urlencode(args))
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''

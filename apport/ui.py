@@ -44,11 +44,11 @@ def thread_collect_info(report, reportfile, package):
         report['Title'] = title
 
     # check package origin
-    if 'Package' not in report or \
-        not apport.packaging.is_distro_package(report['Package'].split()[0]):
-        #TRANS: %s is the name of the operating system
-        report['UnreportableReason'] = _('This is not a genuine %s package') % \
-            report['DistroRelease'].split()[0]
+#    if 'Package' not in report or \
+#        not apport.packaging.is_distro_package(report['Package'].split()[0]):
+#        #TRANS: %s is the name of the operating system
+#        report['UnreportableReason'] = _('This is not a genuine %s package') % \
+#            report['DistroRelease'].split()[0]
 
     # check obsolete packages
     if report['ProblemType'] == 'Crash' and \
