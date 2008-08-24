@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os, os.path, datetime
+import os, os.path, datetime, re
 
 from packaging_impl import impl as packaging
 
@@ -428,6 +428,20 @@ def get_crashdb(auth_file, name = None, conf = None):
     settings = {}
     execfile(conf, settings)
 
+    # Load Third parties crashdb.conf
+    confdDir = '/etc/apport/conf.d'
+    if os.path.exists(confdDir) and os.path.isdir(confdDir) :
+        confRE = re.compile("crashdb-([0-9A-z]+?)\.conf")
+        for cf in os.listdir(confdDir) :
+            if os.path.isfile(os.sep.join([confdDir,cf])) :
+                m = confRE.match(cf)
+                if m :  
+                    try :
+                        execfile(os.sep.join([confdDir,cf]),settings['databases'])
+                    except :
+                        # No third parties shoud stop apport
+                        pass
+    
     if not name:
         name = settings['default']
 

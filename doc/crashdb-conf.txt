@@ -1,0 +1,72 @@
+Principal CrashDB conf file
+=================
+
+The file is located in /etc/apport/crashdb.conf .
+
+This file contains information about the Crash Databases to use when sending a crash report.
+Here is an excerpt of the file.
+
++-----------------
+
+default = 'ubuntu'
+
+databases = {
+    'ubuntu': { 
+        'impl': 'launchpad',
+        'bug_pattern_base': 'http://people.ubuntu.com/~pitti/bugpatterns',
+	'distro': 'ubuntu'
+    },
+    }
++-----------------
+
+The 'default' parameter is used to specify the default database to use when getting a crash report.
+It's one of the names used as a label in the databases dictionary.
+
+Third Parties crashdb databases
+=====================
+
+Third parties can also set a set of databases to use with Apport. Their configuration files should be 
+located in '/etc/apport/conf.d' and the name of the files must match the following regexp : 
+    crashdb-([0-9A-z]+?)\.conf  
+
+Here is an excerpt of one crashdb-test.conf file :
+
++-----------------
+
+mydatabase = { 
+        'impl': 'mycrashdb_impl',
+	    'option1': 'myoption1',
+	    'option2': 'myoption2'
+    }
+mydatabase1 = { 
+        'impl': 'mycrashdb_impl',
+	    'option1': 'myoption3',
+	    'option2': 'myoption4'
+    }   
++-----------------
+
+The databases specified in this file will be merged into the 'databases' dictionary. The result is the 
+equivalent of having the principal  file :
+
++-----------------------
+
+default = 'ubuntu'
+
+databases = {
+    'ubuntu': { 
+        'impl': 'launchpad',
+        'bug_pattern_base': 'http://people.ubuntu.com/~pitti/bugpatterns',
+	'distro': 'ubuntu'
+    },
+    'mydatabase': { 
+        'impl': 'mycrashdb_impl',
+	    'option1': 'myoption1',
+	    'option2': 'myoption2'
+    },
+    'mydatabase1': { 
+        'impl': 'mycrashdb_impl',
+	    'option1': 'myoption3',
+	    'option2': 'myoption4'
+    }
+    }
++-----------------------
