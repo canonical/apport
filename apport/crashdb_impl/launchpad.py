@@ -124,9 +124,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 	            return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
 	                self.distro, handle, urllib.urlencode(args))
         else :
-            if report.has_key('Package'):
+            if report.has_key('SourcePackage'):
                 return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
-                    report['Package'], handle, urllib.urlencode(args))
+                    report['SourcePackage'], handle, urllib.urlencode(args))
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''

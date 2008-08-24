@@ -47,7 +47,7 @@ def thread_collect_info(report, reportfile, package):
     if 'Package' not in report or \
         not apport.packaging.is_distro_package(report['Package'].split()[0]):
         if "APPORT_REPORT_NON_UBUNTU_PACKAGES" in os.environ:
-            report['NonUbuntu'] = True
+            report['NonUbuntu'] = "True"
         else :
             #TRANS: %s is the name of the operating system
             report['UnreportableReason'] = _('This is not a genuine %s package') % \
