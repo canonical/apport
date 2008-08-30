@@ -105,10 +105,15 @@ install -m755 bin/apport %{buildroot}/usr/sbin
 %__install -m755 apport/apport.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps
 # python libs
 %__install -d -m755 %{buildroot}%py_sitedir/apport
-%__install -m755 apport/*.py* %{buildroot}%py_sitedir/apport
+%__install -m755 apport/*.py %{buildroot}%py_sitedir/apport
+%__install -d -m755 %{buildroot}%py_sitedir/apport/crashdb_impl
+%__install -m755 apport/crashdb_impl/__init__.py %{buildroot}%py_sitedir/apport/crashdb_impl
+%__install -m755 apport/crashdb_impl/memory.py %{buildroot}%py_sitedir/apport/crashdb_impl
+%__install -m755 problem_report.py %{buildroot}%py_sitedir
 %__install -d -m755 %{buildroot}/etc/apport/blacklist.d/
 %__install -m644 crashdb.conf %{buildroot}/etc/apport
 %__install -m644 doc/README.blacklist %{buildroot}/etc/apport/blacklist.d
+
 
 %clean
 %__rm -rf %{buildroot}
@@ -145,8 +150,9 @@ fi
 /etc/init.d/apport
 /usr/share/icons/hicolor/scalable/apps/apport.svg
 /usr/share/mime/packages/apport.xml
-# Main python modules
+# python modules
 %py_sitedir/apport/*
+%py_sitedir/problem_report.py
 %config /etc/apport/crashdb.conf
 /etc/apport/blacklist.d/README.blacklist
 

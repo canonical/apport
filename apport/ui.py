@@ -22,7 +22,7 @@ import apport, apport.fileutils, REThread
 
 from apport.crashdb import get_crashdb
 
-#from apport.packaging_impl import impl as packaging
+from apport.packaging_impl import impl as packaging
 
 def thread_collect_info(report, reportfile, package):
     '''Encapsulate call to add_*_info() and update given report,
