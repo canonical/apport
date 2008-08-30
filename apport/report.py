@@ -900,39 +900,35 @@ class _ApportReportTest(unittest.TestCase):
         '''Test add_package_info().'''
 
         # determine bash version
-        bashversion = packaging.get_version('bash')
-        glibcpackage = packaging.get_version('glibc')
+        coreutilsversion = packaging.get_version('coreutils')
+        bashpackage = packaging.get_version('bash')
 
         pr = Report()
         self.assertRaises(ValueError, pr.add_package_info, 'nonexistant_package')
 
-        pr.add_package_info('bash')
+        pr.add_package_info('coreutils')
         self.assert_(pr.has_key('Dependencies'))
-        self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
-        self.assert_(pr['SourcePackage'].startswith('bash'))
+        self.assertEqual(pr['Package'], 'coreutils ' + coreutilsversion.strip())
+        self.assert_(pr['SourcePackage'].startswith('coreutils'))
 
-#        self.assert_(glibcpackage in pr['Dependencies'])
+        self.assert_(bashpackage in pr['Dependencies'])
 
         # test without specifying a package, but with ExecutablePath
         pr = Report()
         self.assertRaises(KeyError, pr.add_package_info)
-        pr['ExecutablePath'] = '/bin/bash'
+        pr['ExecutablePath'] = '/bin/ls'
         pr.add_package_info()
-#        self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
-        self.assert_(pr['SourcePackage'].startswith('bash'))
-        self.assert_(glibcpackage in pr['Dependencies'])
+        self.assertEqual(pr['Package'], 'coreutils ' + coreutilsversion.strip())
+        self.assert_(pr['SourcePackage'].startswith('coreutils'))
+        self.assert_(bashpackage in pr['Dependencies'])
         # check for stray empty lines
-#        self.assert_('\n\n' not in pr['Dependencies'])
+        self.assert_('\n\n' not in pr['Dependencies'])
         self.assert_(pr.has_key('PackageArchitecture'))
 
         pr = Report()
         pr['ExecutablePath'] = '/nonexisting'
         pr.add_package_info()
         self.assert_(not pr.has_key('Package'))
-        
-        pr = Report()
-        pr.add_package_info('bash')
-        self.assert_(pr['Vendor'] == 'SUSE LINUX Products GmbH, Nuernberg, Germany')
 
     def test_add_os_info(self):
         '''Test add_os_info().'''
@@ -1018,7 +1014,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('/bin/sh'))
 
         # check correct handling of interpreted executables: shell
-        p = subprocess.Popen(['/usr/bin/zgrep', 'foo'], stdin=subprocess.PIPE,
+        p = subprocess.Popen(['zgrep', 'foo'], stdin=subprocess.PIPE,
             close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
@@ -1027,9 +1023,9 @@ class _ApportReportTest(unittest.TestCase):
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate('\n')
-        self.assertEqual(pr['ExecutablePath'], '/usr/bin/zgrep')
+        self.assert_(pr['ExecutablePath'].endswith('bin/zgrep'))
         self.assertEqual(pr['InterpreterPath'],
-            os.path.realpath(open('/usr/bin/zgrep').readline().strip()[2:]))
+            os.path.realpath(open(pr['ExecutablePath']).readline().strip()[2:]))
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # check correct handling of interpreted executables: python
@@ -1297,6 +1293,7 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             os.unlink(script)  
 
         self._validate_gdb_fields(pr)
+        print pr['Stacktrace']
 #        self.assert_('libc.so' in pr['Stacktrace']) ?
 
     def test_search_bug_patterns(self):

@@ -456,7 +456,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         open(f2, 'w').write('More stuff!')
         self.assertEqual(check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
         open(f1, 'w').write('Some stuff')
-        self.assertEqual(check_files_md5(sumfile), [f2], 'file 2 wrong')     
-
+        self.assertEqual(check_files_md5(sumfile), [f2], 'file 2 wrong')
+        
 if __name__ == '__main__':
     unittest.main()
