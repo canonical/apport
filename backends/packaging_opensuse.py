@@ -65,7 +65,8 @@ class __SUSEPackageInfo(RPMPackageInfo):
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
         a third-party source.'''
-        if self.get_vendor(package) == 'SUSE LINUX Products GmbH, Nuernberg, Germany':
+        if self._get_header(package)['vendor'] == 'SUSE LINUX Products GmbH, Nuernberg, Germany':
+            print 'test'
             if RPMPackageInfo.is_distro_package(self, package):
                 # GPG key id checks out OK. Yay!
                 return True
@@ -126,7 +127,7 @@ if __name__ == '__main__':
         def test_is_distro_package(self):
             '''Test is_distro_package().'''
 
-            self.assert_(impl.is_distro_package('bash'))
+            self.assert_(impl.is_distro_package('kernel-default'))
             self.assert_(not impl.is_distro_package('libxine1'))
             self.assertRaises(ValueError, impl.is_distro_package, 'nonexistant_package') 
             

@@ -85,12 +85,7 @@ class RPMPackageInfo:
         # Yeah, this is kind of redundant, as package is ENVRA, but I want
         # to do this the right way (in case we change what 'package' is)
         hdr = self._get_header(package)
-        return hdr['arch']
-        
-    def get_vendor(self, package):
-        '''Return the vendor of a package.'''
-        hdr = self._get_header(package)
-        return hdr['vendor']    
+        return hdr['arch'] 
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -159,7 +154,7 @@ class RPMPackageInfo:
             # Package is signed
             keyid = hdr['siggpg'][13:17].encode('hex')
             if keyid in self.official_keylist:
-                return True
+                return True      
         return False
 
     def set_mirror(self, url):

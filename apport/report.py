@@ -193,7 +193,6 @@ class Report(ProblemReport):
         If package is not given, the report must have ExecutablePath.
         This adds:
         - Package: package name and installed version
-        - Vendor: package vendor
         - SourcePackage: source package name
         - PackageArchitecture: processor architecture this package was built
           for
@@ -209,7 +208,6 @@ class Report(ProblemReport):
         self['Package'] = '%s %s%s' % (package,
             packaging.get_version(package),
             self._pkg_modified_suffix(package))
-        self['Vendor'] = packaging.get_vendor(package)
         self['SourcePackage'] = packaging.get_source(package)
         self['PackageArchitecture'] = packaging.get_architecture(package)
 
