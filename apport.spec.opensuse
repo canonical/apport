@@ -74,46 +74,9 @@ cp backends/packaging_rpm.py apport
 cp backends/packaging_opensuse.py apport/packaging_impl.py
 
 %install
-# apport main binary
-%__install -d -m755 %{buildroot}/usr/sbin
-install -m755 bin/apport %{buildroot}/usr/sbin
-# apport report handlers
-%__install -d -m755 %{buildroot}/usr/bin
-%__install -m755 cli/apport-cli %{buildroot}/usr/bin
-%__install -m755 gtk/apport-gtk %{buildroot}/usr/bin
-%__install -m755 qt4/apport-qt %{buildroot}/usr/bin
-# locale
-# fixme: there has to be a way to do this for multiple locales
-%__install -d -m755 %{buildroot}/usr/share/locale/de/LC_MESSAGES
-%__install -m644 po/mo/de/LC_MESSAGES/*.mo %{buildroot}/usr/share/locale/de/LC_MESSAGES
-%find_lang %{name}
-# man
-%__install -d -m755 %{buildroot}%{_mandir}/man1
-%__install -m644 man/apport-cli.1 %{buildroot}%{_mandir}/man1/apport-cli.1
-%__install -m644 man/apport-unpack.1 %{buildroot}%{_mandir}/man1/apport-unpack.1
-# cron job
-%__install -d -m755 %{buildroot}/etc/cron.daily
-%__install -m755 debian/apport.cron.daily %{buildroot}/etc/cron.daily/apport
-# install initscript
-%__install -d -m755 %{buildroot}/etc/init.d
-%__install -m755 apport.init.opensuse %{buildroot}/etc/init.d/apport
-# others
-%__install -m755 bin/apport-checkreports %{buildroot}/usr/bin
-%__install -d -m755 %{buildroot}/usr/share/mime/packages
-%__install -m644 xdg-mime/apport.xml %{buildroot}/usr/share/mime/packages
-%__install -d -m755 %{buildroot}/usr/share/icons/hicolor/scalable/apps
-%__install -m755 apport/apport.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps
-# python libs
-%__install -d -m755 %{buildroot}%py_sitedir/apport
-%__install -m755 apport/*.py %{buildroot}%py_sitedir/apport
-%__install -d -m755 %{buildroot}%py_sitedir/apport/crashdb_impl
-%__install -m755 apport/crashdb_impl/__init__.py %{buildroot}%py_sitedir/apport/crashdb_impl
-%__install -m755 apport/crashdb_impl/memory.py %{buildroot}%py_sitedir/apport/crashdb_impl
-%__install -m755 problem_report.py %{buildroot}%py_sitedir
-%__install -d -m755 %{buildroot}/etc/apport/blacklist.d/
-%__install -m644 crashdb.conf %{buildroot}/etc/apport
-%__install -m644 doc/README.blacklist %{buildroot}/etc/apport/blacklist.d
-
+python setup.py install --root=%{buildroot} \
+                        --prefix=/usr
+%find_lang %{name}                        
 
 %clean
 %__rm -rf %{buildroot}
@@ -165,6 +128,9 @@ fi
 /usr/bin/apport-qt
 
 %changelog
+* Sun Aug 31 2008 - Nikolay Derkach <nderkach@gmail.com>
+- and back again to automatic installation
+
 * Sat Aug 30 2008 - Nikolay Derkach <nderkach@gmail.com>
 - some code cleanup for adapting the branch to upstream
 
