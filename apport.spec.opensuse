@@ -21,7 +21,7 @@ BuildRequires: python-devel intltool texlive-latex
 Requires: kernel-default >= 2.6.24
 # FIXME there's probably scads more requires here, need to do some testing
 # on a minimal system
-Requires: rpm-python
+Requires: rpm-python cron
 #probably we can remove it later
 Requires: lsb
 Requires(post): /sbin/chkconfig
@@ -74,9 +74,27 @@ cp backends/packaging_rpm.py apport
 cp backends/packaging_opensuse.py apport/packaging_impl.py
 
 %install
-python setup.py install --root=%{buildroot} \
-                        --prefix=/usr
-%find_lang %{name}                        
+python setup.py install --root=%{buildroot} --prefix=/usr
+%find_lang %{name}
+
+# install init script 
+%__install -d -m755 %{buildroot}/etc/init.d 
+%__install -m755 apport.init.opensuse %{buildroot}/etc/init.d/apport
+
+# install man pages
+%__install -d -m755 %{buildroot}%{_mandir}/man1
+%__install -m644 man/apport-{cli,unpack}.1 %{buildroot}%{_mandir}/man1
+
+# cron job
+%__install -d -m755 %{buildroot}/etc/cron.daily
+%__install -m755 debian/apport.cron.daily %{buildroot}/etc/cron.daily/apport
+
+# rm unneeded files
+%__rm -f %{buildroot}/usr/bin/{apport-chroot,apport-retrace}
+%__rm -rf %{buildroot}/usr/share/apport/general-hooks/
+%__rm -rf %{buildroot}/usr/share/apport/testsuite/
+# We'll handle the docs in the %files section
+%__rm -rf %{buildroot}/usr/share/doc/apport                      
 
 %clean
 %__rm -rf %{buildroot}
@@ -106,16 +124,24 @@ fi
 /usr/sbin/apport
 /usr/bin/apport-cli
 /usr/bin/apport-checkreports
+/usr/bin/apport-unpack
+/usr/bin/dupdb-admin
+/usr/bin/gcc_ice_hook
+/usr/bin/kernel_hook
+/usr/bin/package_hook
 %doc %{_mandir}/man1/apport-cli.1.gz
 %doc %{_mandir}/man1/apport-unpack.1.gz
 %doc doc/*
 /etc/cron.daily/apport
 /etc/init.d/apport
+/usr/share/apport/*
 /usr/share/icons/hicolor/scalable/apps/apport.svg
 /usr/share/mime/packages/apport.xml
 # python modules
 %py_sitedir/apport/*
-%py_sitedir/problem_report.py
+%py_sitedir/problem_report.py*
+%py_sitedir/apport_python_hook.py*
+%py_sitedir/*egg-info
 %config /etc/apport/crashdb.conf
 /etc/apport/blacklist.d/README.blacklist
 
