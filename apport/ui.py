@@ -13,7 +13,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import glob, sys, os.path, optparse, time, traceback, locale, gettext
+import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser
 from gettext import gettext as _
@@ -142,7 +142,7 @@ class UserInterface:
                     _('unknown program')))
                 heading = _('Sorry, the program "%s" closed unexpectedly') % subject
                 self.ui_error_message(_('Problem in %s') % subject,
-                    "%s\n\n%s" % (heading, _('Your computer does not have enough \
+                    '%s\n\n%s' % (heading, _('Your computer does not have enough \
 free memory to automatically analyze the problem and send a report to the developers.')))
                 return
 
@@ -494,7 +494,8 @@ free memory to automatically analyze the problem and send a report to the develo
                 pass
 
             # if gnome-session is running, try gnome-open; special-case firefox
-            # to open a new window
+            # (and more generally, mozilla browsers) and epiphany to open a new window
+            # with respectively -new-window and --new-window
             try:
                 if os.getenv('DISPLAY') and \
                         subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-panel'],
@@ -502,12 +503,18 @@ free memory to automatically analyze the problem and send a report to the develo
                     gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
                         '/desktop/gnome/url-handlers/http/command'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    if 'firefox' in gct.communicate()[0] and gct.returncode == 0:
-                        subprocess.call(sudo_prefix + ['firefox', '-new-window', url])
-                        sys.exit(0)
-                    else:
-                        if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
+                    if gct.returncode == 0:
+                        preferred_browser = gct.communicate()[0]
+                        browser = re.match('((firefox|seamonkey|flock)[^\s]*)', preferred_browser)
+                        if browser:
+                            subprocess.call(sudo_prefix + [browser.group(0), '-new-window', url])
                             sys.exit(0)
+                        browser = re.match('(epiphany[^\s]*)', preferred_browser)
+                        if browser:
+                            subprocess.call(sudo_prefix + [browser.group(0), '--new-window', url])
+                            sys.exit(0)
+                    if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
+                        sys.exit(0)
             except OSError:
                 pass
 
@@ -556,7 +563,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 sys.exit(1)
         if upthread.exc_info():
             self.ui_error_message(_('Network problem'),
-                "%s:\n\n%s" % (
+                '%s:\n\n%s' % (
                     _('Could not upload report data to crash database'),
                     str(upthread.exc_info()[1])
                 ))
