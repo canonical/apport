@@ -428,6 +428,18 @@ def get_crashdb(auth_file, name = None, conf = None):
     settings = {}
     execfile(conf, settings)
 
+    # Load third parties crashdb.conf
+    confdDir = conf + '.d'
+    if os.path.isdir(confdDir):
+        for cf in os.listdir(confdDir):
+            cfpath = os.path.join(confdDir, cf)
+            if os.path.isfile(cfpath) and cf.endswith('.conf'):
+                try:
+                    execfile(cfpath, settings['databases'])
+                except:
+                    # ignore broken files
+                    pass
+    
     if not name:
         name = settings['default']
 

@@ -420,6 +420,9 @@ free memory to automatically analyze the problem and send a report to the develo
                         sys.exit(1)
                 icthread.exc_raise()
 
+            if self.report.has_key('CrashDB'):
+                self.crashdb = get_crashdb(None, self.report['CrashDB']) 
+
             if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
                 bpthread = REThread.REThread(target=self.report.search_bug_patterns,
                     args=(self.crashdb.get_bugpattern_baseurl(),))

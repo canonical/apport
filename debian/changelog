@@ -1,9 +1,16 @@
 apport (0.114) UNRELEASED; urgency=low
 
+  [ Fabien Tassin ]
   * apport/ui.py: Use preferred browser when it's recognized as a
     Mozilla browser (firefox, seamonkey, flock) or Epiphany (LP: #131350)
 
- -- Fabien Tassin <fta@sofaraway.org>  Sat, 16 Aug 2008 18:58:34 +0200
+  [ Oumar Aziz OUATTARA ]
+  * apport/crashdb.py: Add support for /etc/apport/crashdb.conf.d/*.conf crash
+    database configuration files. Document it in doc/crashdb-conf.txt.
+  * apport/ui.py: Support a new field "CrashDB" in apport reports which select
+    a non-default crash database. Document this in doc/package-hooks.txt.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Sep 2008 16:35:53 +0200
 
 apport (0.113) intrepid; urgency=low
 
