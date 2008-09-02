@@ -116,7 +116,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if title:
             args['field.title'] = title
         
-        if not report.has_key('NonUbuntu') :
+        if not report.has_key('ThirdParty') :
 	        if report.has_key('SourcePackage'):
 	            return 'https://bugs.launchpad.net/%s/+source/%s/+filebug/%s?%s' % (
 	                self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
