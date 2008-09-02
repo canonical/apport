@@ -10,7 +10,11 @@ apport (0.114) UNRELEASED; urgency=low
   * apport/ui.py: Support a new field "CrashDB" in apport reports which select
     a non-default crash database. Document this in doc/package-hooks.txt.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Sep 2008 16:35:53 +0200
+  [ Martin Pitt ]
+  * apport/report.py: If a hook crashes with an exception, print it to
+    stderr, for easier debugging of hooks.
+
+ -- Martin Pitt <mpitt@debian.org>  Tue, 02 Sep 2008 17:05:13 +0200
 
 apport (0.113) intrepid; urgency=low
 
