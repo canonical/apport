@@ -64,14 +64,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # set reprocessing tags
         hdr = {}
         hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
-        a = report.get('PackageArchitecture', report.get('Architecture'))
+        a = report.get('PackageArchitecture')
+        if not a or a == 'all':
+            a = report.get('Architecture')
         if 'CoreDump' in report and a:
-            if a != 'all':
-                hdr['Tags'] += ' need-%s-retrace' % a
-                # FIXME: ugly Ubuntu specific hack until LP has a real crash db
-                if report['DistroRelease'].split()[0] == 'Ubuntu':
-                    hdr['Private'] = 'yes'
-                    hdr['Subscribers'] = 'apport'
+            hdr['Tags'] += ' need-%s-retrace' % a
+            # FIXME: ugly Ubuntu specific hack until LP has a real crash db
+            if report['DistroRelease'].split()[0] == 'Ubuntu':
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
         # set dup checking tag for Python crashes
         elif report.has_key('Traceback'):
             hdr['Tags'] += ' need-duplicate-check'

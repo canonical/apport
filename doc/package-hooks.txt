@@ -35,6 +35,14 @@ hooks, except that they need to be put into
 
 The <hookname> can be arbitrary and should describe the functionality.
 
+Customize the crash DB to use
+=============================
+
+To use another crash database than the default one, you should create
+an hook that adds a 'CrashDB' field with the name of the database to
+use. See /etc/apport/crashdb.conf and
+/etc/apport/crashdb.conf.d/*.conf for available databases.
+
 Examples
 ========
 

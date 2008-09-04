@@ -93,6 +93,7 @@ python setup.py install --root=%{buildroot} --prefix=/usr
 %__rm -f %{buildroot}/usr/bin/{apport-chroot,apport-retrace}
 %__rm -rf %{buildroot}/usr/share/apport/general-hooks/
 %__rm -rf %{buildroot}/usr/share/apport/testsuite/
+%__rm -f %{buildroot}/usr/bin/*_hook
 # We'll handle the docs in the %files section
 %__rm -rf %{buildroot}/usr/share/doc/apport                      
 
@@ -122,13 +123,10 @@ fi
 %files -f %{name}.lang
 %defattr(-,root,root)
 /usr/sbin/apport
+/usr/sbin/dupdb-admin
 /usr/bin/apport-cli
 /usr/bin/apport-checkreports
 /usr/bin/apport-unpack
-/usr/bin/dupdb-admin
-/usr/bin/gcc_ice_hook
-/usr/bin/kernel_hook
-/usr/bin/package_hook
 %doc %{_mandir}/man1/apport-cli.1.gz
 %doc %{_mandir}/man1/apport-unpack.1.gz
 %doc doc/*

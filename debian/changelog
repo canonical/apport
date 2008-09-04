@@ -1,3 +1,25 @@
+apport (0.114) intrepid; urgency=low
+
+  [ Fabien Tassin ]
+  * apport/ui.py: Use preferred browser when it's recognized as a
+    Mozilla browser (firefox, seamonkey, flock) or Epiphany (LP: #131350)
+
+  [ Oumar Aziz OUATTARA ]
+  * apport/crashdb.py: Add support for /etc/apport/crashdb.conf.d/*.conf crash
+    database configuration files. Document it in doc/crashdb-conf.txt.
+  * apport/ui.py: Support a new field "CrashDB" in apport reports which select
+    a non-default crash database. Document this in doc/package-hooks.txt.
+
+  [ Martin Pitt ]
+  * apport/report.py: If a hook crashes with an exception, print it to
+    stderr, for easier debugging of hooks.
+  * apport/crashdb_impl/launchpad.py: If PackageArchitecture is 'all', fall
+    back to looking at Architecture instead of not adding a
+    needs-$ARCH-retrace tag at all. This prevented signal crashes originating
+    from e. g. Python packages from being automatically retraced.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 04 Sep 2008 10:51:24 +0200
+
 apport (0.113) intrepid; urgency=low
 
   * apport-qt recommends update-notifier-kde instead of adept-notifier

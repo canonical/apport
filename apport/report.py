@@ -12,7 +12,7 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
-import fnmatch, glob, atexit
+import fnmatch, glob, atexit, traceback
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -530,6 +530,8 @@ class Report(ProblemReport):
                 execfile(hook, symb)
                 symb['add_info'](self)
             except:
+                print >> sys.stderr, 'hook %s crashed:' % hook
+                traceback.print_exc()
                 pass
 
         # binary package hook
