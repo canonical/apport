@@ -66,7 +66,6 @@ class __SUSEPackageInfo(RPMPackageInfo):
         '''Check if a package is a genuine distro package (True) or comes from
         a third-party source.'''
         if self._get_header(package)['vendor'] == 'SUSE LINUX Products GmbH, Nuernberg, Germany':
-            print 'test'
             if RPMPackageInfo.is_distro_package(self, package):
                 # GPG key id checks out OK. Yay!
                 return True
@@ -140,7 +139,15 @@ if __name__ == '__main__':
             '''Test get_file_package().'''
             
             package = impl.get_file_package('/bin/bash') 
-#            print package              
+            self.assert_(package.startswith('bash'))
+
+        def test_get_header(self):
+            '''Test _get_header().'''
+            
+            hdr = impl._get_header('bash-3.2-112.x86_64')
+            self.assertEqual(hdr['n'], 'bash')
+            hdr = impl._get_header('bash-3.2')
+            self.assertEqual(hdr['n'], 'bash')             
             
     unittest.main()
          

@@ -252,14 +252,32 @@ impl = RPMPackageInfo()
 
 #
 # Unit test
-# FIXME: WIP
 #
 
 if __name__ == '__main__':
     import unittest
 
     class RPMPackageInfoTest(unittest.TestCase):
+    
+        def test_get_dependencies(self):
+            '''Test get_dependencies().'''
+            
+            deps = impl.get_dependencies('bash')              
+            self.assertNotEqual(deps, [])                   
 
+        def test_get_header(self):
+            '''Test _get_header().'''
+            
+            hdr = impl._get_header('alsa-utils')
+            self.assertEqual(hdr['n'], 'alsa-utils')
+
+        def test_get_headers_by_tag(self):
+            '''Test _get_headers_by_tag().'''
+            
+            headersByTag = impl._get_headers_by_tag('basenames','/bin/bash')
+            self.assertEqual(len(headersByTag), 1)
+            self.assert_(headersByTag[0]['n'].startswith('bash'))      
+            
         def test_get_system_architecture(self):
             '''Test get_system_architecture().'''
 
@@ -267,41 +285,15 @@ if __name__ == '__main__':
             # must be nonempty without line breaks
             self.assertNotEqual(arch, '')
             self.assert_('\n' not in arch)
-
-        def test_get_headers_by_tag(self):
-            '''Test _get_headers_by_tag().'''
-            
-            headerByTag = impl._get_headers_by_tag('basenames','/bin/bash')
-#            print headerByTag      
-            
-        def test_get_header(self):
-            '''Test _get_header().'''
-            
-            hdr = impl._get_header('bash-3.2-112.x86_64')
-#            print hdr['n']
-            hdr = impl._get_header('bash-3.2')
-#            print hdr['n']
-            hdr = impl._get_header('yast2-metapackage-handler')
-#            print hdr['n']
             
         def test_get_version(self):
             '''Test get_version().'''
             
-#            print impl.get_version('bash')
-#            print impl.get_version('libQtCore.so.4')        
+            ver = impl.get_version('bash')
+            self.assertNotEqual(ver, None)
+            ver = impl.get_version('alsa-utils')
+            self.assertNotEqual(ver, None)        
 
-        def test_get_dependencies(self):
-            '''Test get_dependencies().'''
-            
-#            deps = impl.get_dependencies('bash')              
-#            for d in deps:
-#                print d      
-
-        def test_get_vendor(self):
-            '''Test get_vendor().'''
-            
-#            print impl.get_vendor('apport')      
-        
 
     # only execute if rpm is available
     try:
