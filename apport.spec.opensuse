@@ -11,7 +11,7 @@
 # norootforbuild
 
 Name:    apport
-Version: 0.112
+Version: 0.114
 Release: 0
 License: GPL
 URL:     http://opensuse.org/Interactive_Crash_Analysis
@@ -89,9 +89,13 @@ python setup.py install --root=%{buildroot} --prefix=/usr
 %__install -d -m755 %{buildroot}/etc/cron.daily
 %__install -m755 debian/apport.cron.daily %{buildroot}/etc/cron.daily/apport
 
+# make soft links so that apport Qt and GTK reports tools are in $PATH
+ln -s %{buildroot}/usr/share/apport/apport-gtk %{buildroot}/usr/bin/apport-gtk
+ln -s %{buildroot}/usr/share/apport/apport-qt %{buildroot}/usr/bin/apport-qt
+
 # rm unneeded files
 %__rm -f %{buildroot}/usr/bin/{apport-chroot,apport-retrace}
-%__rm -rf %{buildroot}/usr/share/apport/general-hooks/
+%__rm -f %{buildroot}/usr/share/apport/general-hooks/automatix.py
 %__rm -rf %{buildroot}/usr/share/apport/testsuite/
 %__rm -f %{buildroot}/usr/bin/*_hook
 # We'll handle the docs in the %files section
@@ -122,8 +126,8 @@ fi
 
 %files -f %{name}.lang
 %defattr(-,root,root)
-/usr/sbin/apport
-/usr/sbin/dupdb-admin
+/usr/share/apport/apport
+/usr/bin/dupdb-admin
 /usr/bin/apport-cli
 /usr/bin/apport-checkreports
 /usr/bin/apport-unpack
@@ -132,7 +136,11 @@ fi
 %doc doc/*
 /etc/cron.daily/apport
 /etc/init.d/apport
-/usr/share/apport/*
+# data files
+/usr/share/apport/apport-gtk.glade
+/usr/share/apport/*.ui
+/usr/share/apport/general-hooks/*
+/usr/share/apport/package-hooks/*
 /usr/share/icons/hicolor/scalable/apps/apport.svg
 /usr/share/mime/packages/apport.xml
 # python modules
@@ -146,12 +154,18 @@ fi
 %files gtk
 %defattr(-,root,root)
 /usr/bin/apport-gtk
+/usr/share/apport/apport-gtk
 
 %files qt
 %defattr(-,root,root)
 /usr/bin/apport-qt
+/usr/share/apport/apport-qt
 
 %changelog
+* Thu Sep 04 2008 - Nikolay Derkach <nderkach@gmail.com>
+- update to 0.114
+- removed some unneeded files from the package
+
 * Sun Aug 31 2008 - Nikolay Derkach <nderkach@gmail.com>
 - and back again to automatic installation
 

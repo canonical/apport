@@ -22,8 +22,6 @@ import apport, apport.fileutils, REThread
 
 from apport.crashdb import get_crashdb
 
-from apport.packaging_impl import impl as packaging
-
 def thread_collect_info(report, reportfile, package):
     '''Encapsulate call to add_*_info() and update given report,
     so that this function is suitable for threading.
@@ -47,20 +45,20 @@ def thread_collect_info(report, reportfile, package):
 
     # check package origin
     if ('Package' not in report or \
-        not packaging.is_distro_package(report['Package'].split()[0])) and \
+        not apport.packaging.is_distro_package(report['Package'].split()[0])) and \
         not apport.fileutils.check_developer_mode():
         #TRANS: %s is the name of the operating system
         report['UnreportableReason'] = _('This is not a genuine %s package') % \
             report['DistroRelease'].split()[0]
 
     # check obsolete packages
-#    if report['ProblemType'] == 'Crash' and \
-#        'APPORT_IGNORE_OBSOLETE_PACKAGES' not in os.environ:
-#        old_pkgs = report.obsolete_packages()
-#        if old_pkgs:
-#            report['UnreportableReason'] = _('You have some obsolete package \
-#versions installed. Please upgrade the following packages and check if the \
-#problem still occurs:\n\n%s') % ', '.join(old_pkgs)
+    if report['ProblemType'] == 'Crash' and \
+        'APPORT_IGNORE_OBSOLETE_PACKAGES' not in os.environ:
+        old_pkgs = report.obsolete_packages()
+        if old_pkgs:
+            report['UnreportableReason'] = _('You have some obsolete package \
+versions installed. Please upgrade the following packages and check if the \
+problem still occurs:\n\n%s') % ', '.join(old_pkgs)
 
     report.anonymize()
 
@@ -445,7 +443,7 @@ free memory to automatically analyze the problem and send a report to the develo
             # check that we were able to determine package names
             if (not self.report.has_key('SourcePackage') or \
                 (self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package'))) and \
-                not apport.fileutils.check_developer_mode():
+                not apport.fileutils.check_developer_mode() == 2:
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
                 # TODO This is not called consistently, is it really needed?
@@ -611,7 +609,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
         exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
         if (not self.cur_package and self.report['ProblemType'] != 'Kernel' or (
-            exe_path and not os.path.exists(exe_path))) and not apport.fileutils.check_developer_mode():
+            exe_path and not os.path.exists(exe_path))) and not apport.fileutils.check_developer_mode() == 2:
             msg = _('This problem report does not apply to a packaged program.')
             if self.report.has_key('ExecutablePath'):
                 msg = '%s (%s)' % (msg, self.report['ExecutablePath'])

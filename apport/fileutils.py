@@ -222,8 +222,9 @@ def check_developer_mode():
     '''Check ~/.apport (in the real UID's home) 
        about the developer mode status.
 
-    0 - disabled (only crashes of packaged files are reported)
-    1 - enabled (all crashes are reported) '''
+    0 - disabled (only crashes of genuine distro packaged files are reported)
+    1 - enabled (report about all packaged applications crashes, even 3rd party)
+    2 - enabled (report'em all mode) '''
 
     # check config file
     config = ConfigParser.ConfigParser()
@@ -457,6 +458,11 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         self.assertEqual(check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
         open(f1, 'w').write('Some stuff')
         self.assertEqual(check_files_md5(sumfile), [f2], 'file 2 wrong')
+        
+    def test_check_developer_mode(self):
+        '''Test check_developer_mode().'''
+        
+        self.assertEqual(type(check_developer_mode()), type(1))    
         
 if __name__ == '__main__':
     unittest.main()

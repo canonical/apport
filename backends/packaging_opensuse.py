@@ -111,6 +111,12 @@ class __SUSEPackageInfo(RPMPackageInfo):
         # FIXME: implement some more smart hadling 
             h = hdrs[0]
         return h['n']
+        
+    def get_available_version(self, package):
+        '''Return the latest available version of a package.'''
+        
+        # FIXME: not implemented yet
+        return None
 
 impl = __SUSEPackageInfo()
 
