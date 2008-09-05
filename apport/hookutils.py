@@ -15,15 +15,21 @@ import md5
 import os
 import datetime
 
-def attach_file_if_exists(report, path, key=path_to_key(path)):
+def path_to_key(path):
+	return path.replace('/', '.')
+
+def attach_file_if_exists(report, path, key=None):
+	if not key:
+		key = path_to_key(path)
+
 	if os.path.exists(path):
 		attach_file(report, path, key)
 
-def attach_file(report, path, key=path_to_key(path)):
-	report[key] = open(path).read()
+def attach_file(report, path, key=None):
+	if not key:
+		key = path_to_key(path)
 
-def path_to_key(path):
-	return path.replace('/', '.')
+	report[key] = open(path).read()
 
 def attach_conffiles(report, package, conffiles=None):
 	'''Attach information about any modified or deleted conffiles'''
@@ -66,8 +72,13 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
        return 'Error: command %s failed with exit code %i: %s' % (
            str(command), sp.returncode, out)
 
-def recent_syslog(search):
-	pass
+def recent_syslog(pattern):
+	'''Extract recent messages from syslog which match pattern (eg. re object)'''
+	lines = ''
+	for line in open('/var/log/syslog'):
+		if pattern.search(line):
+			lines += line
+	return lines
 
 PCI_MASS_STORAGE = 0x01
 PCI_NETWORK = 0x02
