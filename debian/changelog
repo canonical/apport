@@ -2,8 +2,10 @@ apport (0.115) UNRELEASED; urgency=low
 
   * Add apport/hookutils.py with some convenience functions for writing hook
     scripts (work in progress)
+  * Extend ubuntu-bug to accept a path as an argument and look up the package
+    name
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Fri, 05 Sep 2008 12:30:54 +0100
+ -- Matt Zimmerman <mdz@ubuntu.com>  Fri, 05 Sep 2008 16:21:19 +0100
 
 apport (0.114) intrepid; urgency=low
 
