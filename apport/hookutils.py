@@ -34,7 +34,8 @@ def attach_file(report, path, key=None):
 def attach_conffiles(report, package, conffiles=None):
 	'''Attach information about any modified or deleted conffiles'''
 
-	output = command_output(['dpkg-query','-W','--showformat=${Conffiles}',package])
+	output = command_output(['dpkg-query','-W','--showformat=${Conffiles}',
+                             package])
 	for line in output.split('\n'):
 		path, default_md5sum = line.strip().split()
 
@@ -52,7 +53,8 @@ def attach_conffiles(report, package, conffiles=None):
 				report[key] = contents
 				statinfo = os.stat(path)
 				mtime = datetime.datetime.fromtimestamp(statinfo.st_mtime)
-				report['mtime.conffile.' + path_to_key(path)] = mtime.isoformat()
+				mtime_key = 'mtime.conffile.' + path_to_key(path)
+				report[mtime_key] = mtime.isoformat()
 		else:
 			report[key] = '[deleted]'
 
@@ -61,7 +63,8 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
     a textual error if it failed.'''
 
     try:
-       sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
+       sp = subprocess.Popen(command, stdout=subprocess.PIPE,
+                             stderr=stderr, close_fds=True)
     except OSError, e:
        return 'Error: ' + str(e)
 
@@ -73,7 +76,9 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
            str(command), sp.returncode, out)
 
 def recent_syslog(pattern):
-	'''Extract recent messages from syslog which match pattern (eg. re object)'''
+	'''Extract recent messages from syslog which match pattern
+    (eg. re object)'''
+
 	lines = ''
 	for line in open('/var/log/syslog'):
 		if pattern.search(line):
@@ -129,7 +134,8 @@ def usb_devices():
 	return command_output(['lsusb','-v'])
 
 def hal_find_by_capability(capability):
-    output = command_output(['hal-find-by-capability','--capability',capability])
+    output = command_output(['hal-find-by-capability',
+                             '--capability',capability])
     return output.split('\n')
 
 def hal_dump_udi(udi):
