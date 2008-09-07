@@ -7,6 +7,17 @@ args="$@"
 if [ "$#" = 1 ]; then
     if test "$1" -gt 0 2>/dev/null; then
         args="-P $1"
+    elif expr "$1" : ".*/.*" >/dev/null; then
+        output=$(dpkg-query --search "$1" || echo '')
+		if expr "$output" : ".*,.*" >/dev/null; then
+			echo "Path '$1' matches more than one package" >&2
+			exit 1
+		elif [ -z "$output" ]; then
+			echo "Path '$1' does not match any package" >&2
+		fi
+
+		package=${output%%:*}
+        args="-p $package"
     else
         args="-p $1"
     fi
