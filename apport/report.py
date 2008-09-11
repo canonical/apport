@@ -580,7 +580,14 @@ class Report(ProblemReport):
         try:
             patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
         except:
-            return None
+            # try if there is one for the source package
+            if self.has_key('SourcePackage'):
+                try:
+                    patterns = urllib.urlopen('%s/%s.xml' % (baseurl, self['SourcePackage'])).read()
+                except:
+                    return None
+            else:
+                return None
 
         try:
             dom = xml.dom.minidom.parseString(patterns)
@@ -1345,6 +1352,12 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             r_bash['Foo'] = 'write_goodbye'
             self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/2')
             self.assertEqual(r_coreutils.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/3')
+
+            # match on source package
+            r_bash['Package'] = 'bash-static 1-2'
+            self.assertEqual(r_bash.search_bug_patterns(pdir), None)
+            r_bash['SourcePackage'] = 'bash'
+            self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/2')
 
             # negative match cases
             r_bash['Package'] = 'bash 1-21'

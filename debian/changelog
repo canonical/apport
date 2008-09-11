@@ -9,8 +9,10 @@ apport (0.115) UNRELEASED; urgency=low
   [ Martin Pitt ]
   * Add AUTHORS file for collecting the list of major contributors and
     copyright holders.
+  * apport/report.py: If we do not find a bug pattern file for the binary
+    package, fall back to looking for one with the source package name.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 08 Sep 2008 14:02:21 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 11 Sep 2008 10:52:12 +0200
 
 apport (0.114) intrepid; urgency=low
 
