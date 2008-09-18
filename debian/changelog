@@ -12,7 +12,12 @@ apport (0.115) UNRELEASED; urgency=low
   * apport/report.py: If we do not find a bug pattern file for the binary
     package, fall back to looking for one with the source package name.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 11 Sep 2008 10:52:12 +0200
+  [ Brian Murray ]
+  * apport/crashdb_impl/launchpad.py: Add regression-retracer tag to bugs
+    which seem to be a regression (duplicate, and crash happens in a later
+    version than the fix). (LP: #271876)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 18 Sep 2008 13:29:17 -0700
 
 apport (0.114) intrepid; urgency=low
 

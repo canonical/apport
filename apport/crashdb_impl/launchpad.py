@@ -327,6 +327,7 @@ However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem is \
 in a dependent package.' % master)
         bug.comments.add(comment)
+        bug.tags.append('regression-retracer')
         bug.commit()
 
     def mark_retraced(self, id):
