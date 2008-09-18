@@ -148,8 +148,8 @@ free memory to automatically analyze the problem and send a report to the develo
 
             # check unsupportable flag
             if self.report.has_key('UnsupportableReason'):
-                if self.report.get('ProblemType') == 'Kernel':
-                    subject = _('kernel')
+                if self.report.get('ProblemType') == 'KernelCrash':
+                    subject = _('kernelcrash')
                 elif self.report.get('ProblemType') == 'Package':
                     subject = self.report['Package']
                 else:
@@ -168,7 +168,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 if response == 'cancel':
                     return
                 assert response == 'report'
-            elif self.report.get('ProblemType') == 'Kernel':
+            elif self.report.get('ProblemType') == 'KernelCrash':
                 response = self.ui_present_kernel_error()
                 if response == 'cancel':
                     return
@@ -221,7 +221,7 @@ free memory to automatically analyze the problem and send a report to the develo
             if self.handle_duplicate():
                 return
 
-            if self.report.get('ProblemType') in ['Crash', 'Kernel']:
+            if self.report.get('ProblemType') in ['Crash', 'KernelCrash']:
                 response = self.ui_present_report_details()
                 if response == 'cancel':
                     return
@@ -423,7 +423,7 @@ free memory to automatically analyze the problem and send a report to the develo
             if self.report.has_key('CrashDB'):
                 self.crashdb = get_crashdb(None, self.report['CrashDB']) 
 
-            if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
+            if self.report['ProblemType'] == 'KernelCrash' or self.report.has_key('Package'):
                 bpthread = REThread.REThread(target=self.report.search_bug_patterns,
                     args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
@@ -441,7 +441,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
             # check that we were able to determine package names
             if not self.report.has_key('SourcePackage') or \
-                (self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package')):
+                (self.report['ProblemType'] != 'KernelCrash' and not self.report.has_key('Package')):
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
                 # TODO This is not called consistently, is it really needed?
@@ -606,7 +606,7 @@ free memory to automatically analyze the problem and send a report to the develo
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
 
         exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
-        if not self.cur_package and self.report['ProblemType'] != 'Kernel' or (
+        if not self.cur_package and self.report['ProblemType'] != 'KernelCrash' or (
             exe_path and not os.path.exists(exe_path)):
             msg = _('This problem report does not apply to a packaged program.')
             if self.report.has_key('ExecutablePath'):
@@ -681,7 +681,7 @@ might be helpful for the developers.'))
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_present_kernel_error(self, desktopentry):
-        '''Inform that a kernel Oops has happened for self.report and
+        '''Inform that a kernel crash has happened for self.report and
         ask about an action.
 
         Return the action: ignore ('cancel'), or report a bug about the problem
@@ -1530,7 +1530,7 @@ CoreDump: base64
             '''Test run_crash() for a kernel error.'''
 
             # generate crash report
-            r = apport.Report('Kernel')
+            r = apport.Report('KernelCrash')
             r['Package'] = apport.packaging.get_kernel_package()
             r['SourcePackage'] = 'linux'
 
@@ -1563,7 +1563,7 @@ CoreDump: base64
             # did we run the hooks properly?
             self.assert_('ProcModules' in self.ui.report.keys())
             self.assert_('Lspci' in self.ui.report.keys())
-            self.assertEqual(self.ui.report['ProblemType'], 'Kernel')
+            self.assertEqual(self.ui.report['ProblemType'], 'KernelCrash')
 
         def test_run_crash_anonymity(self):
             '''Test run_crash() anonymization.'''

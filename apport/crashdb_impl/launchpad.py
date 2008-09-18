@@ -136,8 +136,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     report['ProblemType'] = 'Bug'
                 elif 'apport-crash' in b.tags:
                     report['ProblemType'] = 'Crash'
-                elif 'apport-kernel' in b.tags:
-                    report['ProblemType'] = 'Kernel'
+                elif 'apport-kernelcrash' in b.tags:
+                    report['ProblemType'] = 'KernelCrash'
                 elif 'apport-package' in b.tags:
                     report['ProblemType'] = 'Package'
                 else:
