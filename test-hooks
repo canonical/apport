@@ -107,8 +107,8 @@ class _HooksTest(unittest.TestCase):
         self.assertEqual(r[log1key], 'Log 1\nbla')
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
 
-    def test_kernel_hook(self):
-        '''Test kernel_hook.'''
+    def test_kernel_crashdump(self):
+        '''Test kernel_crashdump.'''
 
         f = open(os.path.join(apport.fileutils.report_dir, 'vmcore'), 'w')
         f.write('\x01' * 100)
@@ -117,11 +117,11 @@ class _HooksTest(unittest.TestCase):
         f.write('vmcore successfully dumped')
         f.close()
 
-        self.assertEqual(subprocess.call('%s/kernel_hook' % basedir), 0,
-            'kernel_hook finished successfully')
+        self.assertEqual(subprocess.call('%s/kernel_crashdump' % basedir), 0,
+            'kernel_crashdump finished successfully')
 
         reps = apport.fileutils.get_new_reports()
-        self.assertEqual(len(reps), 1, 'kernel_hook created a report')
+        self.assertEqual(len(reps), 1, 'kernel_crashdump created a report')
 
         r = apport.Report()
         r.load(open(reps[0]))

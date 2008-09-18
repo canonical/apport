@@ -43,7 +43,7 @@ do_start()
 
         # check for kernel crash dump, convert it to apport report
         if [ -e /var/crash/vmcore ]; then
-            /usr/share/apport/kernel_hook || true
+            /usr/share/apport/kernel_crashdump || true
         fi
 
         echo "|$AGENT %p %s %c" > /proc/sys/kernel/core_pattern
