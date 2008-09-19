@@ -796,6 +796,17 @@ class Report(ProblemReport):
 
             return title
 
+        if self.get('ProblemType') == 'KernelOops' and \
+            self.has_key('OopsText'):
+
+            oops = self['OopsText']
+            if oops.startswith('------------[ cut here ]------------'):
+                title = oops.split('\n', 2)[1]
+            else:
+                title = oops.split('\n', 1)[0]
+
+            return title
+
         return None
 
     def obsolete_packages(self):
@@ -1739,6 +1750,10 @@ baz()
         report['PackageArchitecture'] = 'all'
         self.assertEqual(report.standard_title(),
             'bash crashed with SIGSEGV in foo()')
+
+        report = Report('KernelOops')
+        report['OopsText'] = '------------[ cut here ]------------\nkernel BUG at /tmp/oops.c:5!\ninvalid opcode: 0000 [#1] SMP'
+        self.assertEqual(report.standard_title(),'kernel BUG at /tmp/oops.c:5!')
 
     def test_obsolete_packages(self):
         '''Test obsolete_packages().'''
