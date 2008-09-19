@@ -152,6 +152,8 @@ free memory to automatically analyze the problem and send a report to the develo
                     subject = _('kernelcrash')
                 elif self.report.get('ProblemType') == 'Package':
                     subject = self.report['Package']
+                elif self.report.get('ProblemType') == 'KernelOops':
+                    subject = _('kerneloops')
                 else:
                     subject = os.path.basename(self.report.get(
                         'ExecutablePath', _('unknown program')))
@@ -169,6 +171,12 @@ free memory to automatically analyze the problem and send a report to the develo
                     return
                 assert response == 'report'
             elif self.report.get('ProblemType') == 'KernelCrash':
+                response = self.ui_present_kernel_error()
+                if response == 'cancel':
+                    return
+                assert response == 'report'
+            elif self.report.get('ProblemType') == 'KernelOops':
+                # XXX the string doesn't quite match this case
                 response = self.ui_present_kernel_error()
                 if response == 'cancel':
                     return
@@ -221,7 +229,8 @@ free memory to automatically analyze the problem and send a report to the develo
             if self.handle_duplicate():
                 return
 
-            if self.report.get('ProblemType') in ['Crash', 'KernelCrash']:
+            if self.report.get('ProblemType') in ['Crash', 'KernelCrash',
+                                                  'KernelOops']:
                 response = self.ui_present_report_details()
                 if response == 'cancel':
                     return
@@ -423,7 +432,7 @@ free memory to automatically analyze the problem and send a report to the develo
             if self.report.has_key('CrashDB'):
                 self.crashdb = get_crashdb(None, self.report['CrashDB']) 
 
-            if self.report['ProblemType'] == 'KernelCrash' or self.report.has_key('Package'):
+            if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or self.report.has_key('Package'):
                 bpthread = REThread.REThread(target=self.report.search_bug_patterns,
                     args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
@@ -441,7 +450,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
             # check that we were able to determine package names
             if not self.report.has_key('SourcePackage') or \
-                (self.report['ProblemType'] != 'KernelCrash' and not self.report.has_key('Package')):
+                self.report['ProblemType'] != 'KernelCrash' and self.report['ProblemType'] != 'KernelOops' and not self.report.has_key('Package'):
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
                 # TODO This is not called consistently, is it really needed?
@@ -606,7 +615,7 @@ free memory to automatically analyze the problem and send a report to the develo
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
 
         exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
-        if not self.cur_package and self.report['ProblemType'] != 'KernelCrash' or (
+        if not self.cur_package and self.report['ProblemType'] != 'KernelCrash' and self.report['ProblemType'] != 'KernelOops' or (
             exe_path and not os.path.exists(exe_path)):
             msg = _('This problem report does not apply to a packaged program.')
             if self.report.has_key('ExecutablePath'):

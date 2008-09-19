@@ -86,8 +86,9 @@ class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
         '''Initialize a fresh problem report.
 
-        type can be 'Crash', 'Packaging', or 'KernelCrash'. date is the desired
-        date/time string; if None (default), the current local time is used. '''
+        type can be 'Crash', 'Packaging', 'KernelCrash' or 'KernelOops'.
+        date is the desired date/time string; if None (default), the
+        current local time is used. '''
 
         if date == None:
             date = time.asctime()

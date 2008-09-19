@@ -796,6 +796,17 @@ class Report(ProblemReport):
 
             return title
 
+        if self.get('ProblemType') == 'KernelOops' and \
+            self.has_key('OopsText'):
+
+            oops = self['OopsText']
+            if oops.startswith('------------[ cut here ]------------'):
+                title = oops.split('\n', 2)[1]
+            else:
+                title = oops.split('\n', 1)[0]
+
+            return title
+
         return None
 
     def obsolete_packages(self):
