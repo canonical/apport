@@ -1751,6 +1751,10 @@ baz()
         self.assertEqual(report.standard_title(),
             'bash crashed with SIGSEGV in foo()')
 
+        report = Report('KernelOops')
+        report['OopsText'] = '------------[ cut here ]------------\nkernel BUG at /tmp/oops.c:5!\ninvalid opcode: 0000 [#1] SMP'
+        self.assertEqual(report.standard_title(),'kernel BUG at /tmp/oops.c:5!')
+
     def test_obsolete_packages(self):
         '''Test obsolete_packages().'''
 
