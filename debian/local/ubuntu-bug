@@ -26,7 +26,7 @@ fi
 # check for X
 if [ -z "$DISPLAY" ]; then
     if [ -x /usr/bin/apport-cli ]; then
-        /usr/bin/apport-cli -f "$args"
+        /usr/bin/apport-cli -f $args
     else
         echo "\$DISPLAY is not set. You need apport-cli to make this program work." >&2
         exit 1
@@ -34,20 +34,20 @@ if [ -z "$DISPLAY" ]; then
 # do we have a running Gnome/KDE session
 elif pgrep -u `id -u` -x gnome-session >/dev/null && \
     [ -x /usr/share/apport/apport-gtk ]; then
-    /usr/share/apport/apport-gtk -f "$args"
+    /usr/share/apport/apport-gtk -f $args
 elif pgrep -u `id -u` -x ksmserver >/dev/null && \
     [ -x /usr/share/apport/apport-qt ]; then
-        /usr/share/apport/apport-qt -f "$args"
+        /usr/share/apport/apport-qt -f $args
 # fall back to calling whichever is available
 elif [ -x /usr/share/apport/apport-gtk ]; then
-    /usr/share/apport/apport-gtk -f "$args"
+    /usr/share/apport/apport-gtk -f $args
 elif [ -x /usr/share/apport/apport-qt ]; then
-    /usr/share/apport/apport-qt -f "$args"
+    /usr/share/apport/apport-qt -f $args
 elif [ -x /usr/bin/apport-cli ]; then
     if [ -z "$TERM" ]; then
-        x-terminal-emulator -e /usr/bin/apport-cli -f "$args"
+        x-terminal-emulator -e /usr/bin/apport-cli -f $args
     else
-        /usr/bin/apport-cli -f "$args"
+        /usr/bin/apport-cli -f $args
     fi
 else
     echo "Neither apport-gtk, apport-qt or apport-cli is installed. Install either to make this program work." >&2
