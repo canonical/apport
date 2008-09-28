@@ -77,14 +77,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # set reprocessing tags
         hdr = {}
         hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
-        a = report.get('PackageArchitecture', report.get('Architecture'))
+        a = report.get('PackageArchitecture')
+        if not a or a == 'all':
+            a = report.get('Architecture')
         if 'CoreDump' in report and a:
-            if a != 'all':
-                hdr['Tags'] += ' need-%s-retrace' % a
-                # FIXME: ugly Ubuntu specific hack until LP has a real crash db
-                if report['DistroRelease'].split()[0] == 'Ubuntu':
-                    hdr['Private'] = 'yes'
-                    hdr['Subscribers'] = 'apport'
+            hdr['Tags'] += ' need-%s-retrace' % a
+            # FIXME: ugly Ubuntu specific hack until LP has a real crash db
+            if report['DistroRelease'].split()[0] == 'Ubuntu':
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
         # set dup checking tag for Python crashes
         elif report.has_key('Traceback'):
             hdr['Tags'] += ' need-duplicate-check'
@@ -153,8 +154,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     report['ProblemType'] = 'Bug'
                 elif 'apport-crash' in b.tags:
                     report['ProblemType'] = 'Crash'
-                elif 'apport-kernel' in b.tags:
-                    report['ProblemType'] = 'Kernel'
+                elif 'apport-kernelcrash' in b.tags:
+                    report['ProblemType'] = 'KernelCrash'
                 elif 'apport-package' in b.tags:
                     report['ProblemType'] = 'Package'
                 else:
@@ -344,6 +345,7 @@ However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem is \
 in a dependent package.' % master)
         bug.comments.add(comment)
+        bug.tags.append('regression-retracer')
         bug.commit()
 
     def mark_retraced(self, id):

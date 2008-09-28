@@ -64,11 +64,9 @@ def add_info(report):
     if not version_signature.startswith('Ubuntu '):
         report['UnreportableReason'] = _('The running kernel is not an Ubuntu kernel')
 
-    try:
+    if 'Uname' in report:
         # already covered in ProcVersionSignature
         del report['Uname']
-    except KeyError:
-        pass
 
 if __name__ == '__main__':
     report = {}

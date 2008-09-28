@@ -19,7 +19,7 @@ vmcore_path = os.path.join(apport.fileutils.report_dir, 'vmcore')
 if not os.path.exists(vmcore_path):
     sys.exit(0)
 
-pr = apport.Report('Kernel')
+pr = apport.Report('KernelCrash')
 pr['Package'] = 'linux-image-' + os.uname()[2]
 pr['SourcePackage'] = 'linux'
 

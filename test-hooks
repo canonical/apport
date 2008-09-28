@@ -107,8 +107,8 @@ class _HooksTest(unittest.TestCase):
         self.assertEqual(r[log1key], 'Log 1\nbla')
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
 
-    def test_kernel_hook(self):
-        '''Test kernel_hook.'''
+    def test_kernel_crashdump(self):
+        '''Test kernel_crashdump.'''
 
         f = open(os.path.join(apport.fileutils.report_dir, 'vmcore'), 'w')
         f.write('\x01' * 100)
@@ -117,18 +117,18 @@ class _HooksTest(unittest.TestCase):
         f.write('vmcore successfully dumped')
         f.close()
 
-        self.assertEqual(subprocess.call('%s/kernel_hook' % basedir), 0,
-            'kernel_hook finished successfully')
+        self.assertEqual(subprocess.call('%s/kernel_crashdump' % basedir), 0,
+            'kernel_crashdump finished successfully')
 
         reps = apport.fileutils.get_new_reports()
-        self.assertEqual(len(reps), 1, 'kernel_hook created a report')
+        self.assertEqual(len(reps), 1, 'kernel_crashdump created a report')
 
         r = apport.Report()
         r.load(open(reps[0]))
 
         self.assertEqual(set(r.keys()), set(['Date', 'SourcePackage',
             'Package', 'ProblemType', 'VmCore', 'VmCoreLog']))
-        self.assertEqual(r['ProblemType'], 'Kernel')
+        self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
         self.assertEqual(r['VmCore'], '\x01' * 100)
         self.assertEqual(r['SourcePackage'], 'linux')
@@ -212,6 +212,30 @@ class _HooksTest(unittest.TestCase):
 
         self.assert_(r['Package'].startswith('gcc-' + gcc_version))
         self.assert_(r['SourcePackage'].startswith('gcc'))
+
+    def test_kernel_oops_hook(self):
+	test_source = '''------------[ cut here ]------------
+kernel BUG at /tmp/oops.c:5!
+invalid opcode: 0000 [#1] SMP 
+Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT iptable_filter ip_tables nf_conntrack_ipv6 xt_state nf_conntrack xt_tcpudp ip6t_ipv6header ip6t_REJECT ip6table_filter ip6_tables x_tables ipv6 loop dm_multipath rtc_cmos iTCO_wdt iTCO_vendor_support pcspkr i2c_i801 i2c_core battery video ac output power_supply button sg joydev usb_storage dm_snapshot dm_zero dm_mirror dm_mod ahci pata_acpi ata_generic ata_piix libata sd_mod scsi_mod ext3 jbd mbcache uhci_hcd ohci_hcd ehci_hcd
+'''
+        hook = subprocess.Popen(['%s/kernel_oops' % basedir],
+            stdin=subprocess.PIPE)
+        hook.communicate(test_source)
+        self.assertEqual(hook.returncode, 0, 'kernel_oops finished successfully')
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, 'kernel_oops created a report')
+
+        r = apport.Report()
+        r.load(open(reps[0]))
+
+        self.assertEqual(r['ProblemType'], 'KernelOops')
+        self.assertEqual(r['OopsText'], test_source)
+
+        r.add_package_info(r['Package'])
+
+        self.assert_(r['Package'].startswith('linux-image-'))
 
 # call tests
 

@@ -1,3 +1,70 @@
+apport (0.116) intrepid; urgency=low
+
+  * Update AUTHORS and debian/copyright, Michael and Troy released their
+    copyright to Canonical. Properly attribute them as authors in the
+    respective files.
+  * debian/local/ubuntu-bug: Fix quoting of the command line arguments, so
+    that several options do not end up as one big argument when being passed
+    to apport-{cli,gtk,qt}. This also repairs launchpad-integration.
+    (LP: #260242)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 26 Sep 2008 10:32:45 +0200
+
+apport (0.115) intrepid; urgency=low
+
+  [ Matt Zimmerman ]
+  * Add apport/hookutils.py with some convenience functions for writing hook
+    scripts (work in progress)
+  * Extend ubuntu-bug to accept a path as an argument and look up the package
+    name
+  * Rename kernel_hook to kernel_crashdump (there are other kernel hooks)
+  * Change kernel crash report type to KernelCrash
+  * Fix automatix.py to not crash when automatix isn't installed (LP: #267004)
+  * Add bin/kernel_oops hook to capture a kernel oops (eg. via kerneloops)
+
+  [ Martin Pitt ]
+  * Add AUTHORS file for collecting the list of major contributors and
+    copyright holders.
+  * apport/report.py: If we do not find a bug pattern file for the binary
+    package, fall back to looking for one with the source package name.
+  * run-tests: Provide a better error message if apport/packaging_impl.py does
+    not exist.
+
+  [ Brian Murray ]
+  * apport/crashdb_impl/launchpad.py: Add regression-retracer tag to bugs
+    which seem to be a regression (duplicate, and crash happens in a later
+    version than the fix). (LP: #271876)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 18 Sep 2008 18:18:03 -0700
+
+apport (0.114) intrepid; urgency=low
+
+  [ Fabien Tassin ]
+  * apport/ui.py: Use preferred browser when it's recognized as a
+    Mozilla browser (firefox, seamonkey, flock) or Epiphany (LP: #131350)
+
+  [ Oumar Aziz OUATTARA ]
+  * apport/crashdb.py: Add support for /etc/apport/crashdb.conf.d/*.conf crash
+    database configuration files. Document it in doc/crashdb-conf.txt.
+  * apport/ui.py: Support a new field "CrashDB" in apport reports which select
+    a non-default crash database. Document this in doc/package-hooks.txt.
+
+  [ Martin Pitt ]
+  * apport/report.py: If a hook crashes with an exception, print it to
+    stderr, for easier debugging of hooks.
+  * apport/crashdb_impl/launchpad.py: If PackageArchitecture is 'all', fall
+    back to looking at Architecture instead of not adding a
+    needs-$ARCH-retrace tag at all. This prevented signal crashes originating
+    from e. g. Python packages from being automatically retraced.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 04 Sep 2008 10:51:24 +0200
+
+apport (0.113) intrepid; urgency=low
+
+  * apport-qt recommends update-notifier-kde instead of adept-notifier
+
+ -- Anthony Mercatante <tonio@ubuntu.com>  Thu, 28 Aug 2008 15:02:20 +0200
+
 apport (0.112) intrepid; urgency=low
 
   * apport/crashdb_impl/launchpad.py: Update attachment handling to current

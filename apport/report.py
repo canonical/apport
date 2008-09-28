@@ -12,7 +12,7 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
-import fnmatch, glob, atexit
+import fnmatch, glob, atexit, traceback
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -530,6 +530,8 @@ class Report(ProblemReport):
                 execfile(hook, symb)
                 symb['add_info'](self)
             except:
+                print >> sys.stderr, 'hook %s crashed:' % hook
+                traceback.print_exc()
                 pass
 
         # binary package hook
@@ -578,7 +580,14 @@ class Report(ProblemReport):
         try:
             patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
         except:
-            return None
+            # try if there is one for the source package
+            if self.has_key('SourcePackage'):
+                try:
+                    patterns = urllib.urlopen('%s/%s.xml' % (baseurl, self['SourcePackage'])).read()
+                except:
+                    return None
+            else:
+                return None
 
         try:
             dom = xml.dom.minidom.parseString(patterns)
@@ -784,6 +793,17 @@ class Report(ProblemReport):
                 self['Package']
             if self.get('ErrorMessage'):
                 title += ': ' + self['ErrorMessage'].splitlines()[-1]
+
+            return title
+
+        if self.get('ProblemType') == 'KernelOops' and \
+            self.has_key('OopsText'):
+
+            oops = self['OopsText']
+            if oops.startswith('------------[ cut here ]------------'):
+                title = oops.split('\n', 2)[1]
+            else:
+                title = oops.split('\n', 1)[0]
 
             return title
 
@@ -1344,6 +1364,12 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/2')
             self.assertEqual(r_coreutils.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/3')
 
+            # match on source package
+            r_bash['Package'] = 'bash-static 1-2'
+            self.assertEqual(r_bash.search_bug_patterns(pdir), None)
+            r_bash['SourcePackage'] = 'bash'
+            self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/2')
+
             # negative match cases
             r_bash['Package'] = 'bash 1-21'
             self.assertEqual(r_bash.search_bug_patterns(pdir), None,
@@ -1724,6 +1750,10 @@ baz()
         report['PackageArchitecture'] = 'all'
         self.assertEqual(report.standard_title(),
             'bash crashed with SIGSEGV in foo()')
+
+        report = Report('KernelOops')
+        report['OopsText'] = '------------[ cut here ]------------\nkernel BUG at /tmp/oops.c:5!\ninvalid opcode: 0000 [#1] SMP'
+        self.assertEqual(report.standard_title(),'kernel BUG at /tmp/oops.c:5!')
 
     def test_obsolete_packages(self):
         '''Test obsolete_packages().'''

@@ -86,8 +86,9 @@ class ProblemReport(UserDict.IterableUserDict):
     def __init__(self, type = 'Crash', date = None):
         '''Initialize a fresh problem report.
 
-        type can be 'Crash', 'Packaging', or 'Kernel'. date is the desired
-        date/time string; if None (default), the current local time is used. '''
+        type can be 'Crash', 'Packaging', 'KernelCrash' or 'KernelOops'.
+        date is the desired date/time string; if None (default), the
+        current local time is used. '''
 
         if date == None:
             date = time.asctime()
@@ -523,8 +524,8 @@ class _ProblemReportTest(unittest.TestCase):
     def test_ctor_arguments(self):
         '''Test non-default constructor arguments.'''
 
-        pr = ProblemReport('Kernel')
-        self.assertEqual(pr['ProblemType'], 'Kernel')
+        pr = ProblemReport('KernelCrash')
+        self.assertEqual(pr['ProblemType'], 'KernelCrash')
         pr = ProblemReport(date = '19801224 12:34')
         self.assertEqual(pr['Date'], '19801224 12:34')
 

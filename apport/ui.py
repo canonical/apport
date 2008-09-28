@@ -13,7 +13,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import glob, sys, os.path, optparse, time, traceback, locale, gettext
+import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser
 from gettext import gettext as _
@@ -145,16 +145,18 @@ class UserInterface:
                     _('unknown program')))
                 heading = _('Sorry, the program "%s" closed unexpectedly') % subject
                 self.ui_error_message(_('Problem in %s') % subject,
-                    "%s\n\n%s" % (heading, _('Your computer does not have enough \
+                    '%s\n\n%s' % (heading, _('Your computer does not have enough \
 free memory to automatically analyze the problem and send a report to the developers.')))
                 return
 
             # check unsupportable flag
             if self.report.has_key('UnsupportableReason'):
-                if self.report.get('ProblemType') == 'Kernel':
-                    subject = _('kernel')
+                if self.report.get('ProblemType') == 'KernelCrash':
+                    subject = _('kernelcrash')
                 elif self.report.get('ProblemType') == 'Package':
                     subject = self.report['Package']
+                elif self.report.get('ProblemType') == 'KernelOops':
+                    subject = _('kerneloops')
                 else:
                     subject = os.path.basename(self.report.get(
                         'ExecutablePath', _('unknown program')))
@@ -171,7 +173,13 @@ free memory to automatically analyze the problem and send a report to the develo
                 if response == 'cancel':
                     return
                 assert response == 'report'
-            elif self.report.get('ProblemType') == 'Kernel':
+            elif self.report.get('ProblemType') == 'KernelCrash':
+                response = self.ui_present_kernel_error()
+                if response == 'cancel':
+                    return
+                assert response == 'report'
+            elif self.report.get('ProblemType') == 'KernelOops':
+                # XXX the string doesn't quite match this case
                 response = self.ui_present_kernel_error()
                 if response == 'cancel':
                     return
@@ -224,7 +232,8 @@ free memory to automatically analyze the problem and send a report to the develo
             if self.handle_duplicate():
                 return
 
-            if self.report.get('ProblemType') in ['Crash', 'Kernel']:
+            if self.report.get('ProblemType') in ['Crash', 'KernelCrash',
+                                                  'KernelOops']:
                 response = self.ui_present_report_details()
                 if response == 'cancel':
                     return
@@ -423,7 +432,10 @@ free memory to automatically analyze the problem and send a report to the develo
                         sys.exit(1)
                 icthread.exc_raise()
 
-            if self.report['ProblemType'] == 'Kernel' or self.report.has_key('Package'):
+            if self.report.has_key('CrashDB'):
+                self.crashdb = get_crashdb(None, self.report['CrashDB']) 
+
+            if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or self.report.has_key('Package'):
                 bpthread = REThread.REThread(target=self.report.search_bug_patterns,
                     args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
@@ -441,7 +453,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
             # check that we were able to determine package names
             if not self.report.has_key('SourcePackage') or \
-                (self.report['ProblemType'] != 'Kernel' and not self.report.has_key('Package')):
+                self.report['ProblemType'] != 'KernelCrash' and self.report['ProblemType'] != 'KernelOops' and not self.report.has_key('Package'):
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
                 # TODO This is not called consistently, is it really needed?
@@ -497,7 +509,8 @@ free memory to automatically analyze the problem and send a report to the develo
                 pass
 
             # if gnome-session is running, try gnome-open; special-case firefox
-            # to open a new window
+            # (and more generally, mozilla browsers) and epiphany to open a new window
+            # with respectively -new-window and --new-window
             try:
                 if os.getenv('DISPLAY') and \
                         subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-panel'],
@@ -505,12 +518,18 @@ free memory to automatically analyze the problem and send a report to the develo
                     gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
                         '/desktop/gnome/url-handlers/http/command'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    if 'firefox' in gct.communicate()[0] and gct.returncode == 0:
-                        subprocess.call(sudo_prefix + ['firefox', '-new-window', url])
-                        sys.exit(0)
-                    else:
-                        if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
+                    if gct.returncode == 0:
+                        preferred_browser = gct.communicate()[0]
+                        browser = re.match('((firefox|seamonkey|flock)[^\s]*)', preferred_browser)
+                        if browser:
+                            subprocess.call(sudo_prefix + [browser.group(0), '-new-window', url])
                             sys.exit(0)
+                        browser = re.match('(epiphany[^\s]*)', preferred_browser)
+                        if browser:
+                            subprocess.call(sudo_prefix + [browser.group(0), '--new-window', url])
+                            sys.exit(0)
+                    if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
+                        sys.exit(0)
             except OSError:
                 pass
 
@@ -559,7 +578,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 sys.exit(1)
         if upthread.exc_info():
             self.ui_error_message(_('Network problem'),
-                "%s:\n\n%s" % (
+                '%s:\n\n%s' % (
                     _('Could not upload report data to crash database'),
                     str(upthread.exc_info()[1])
                 ))
@@ -599,7 +618,7 @@ free memory to automatically analyze the problem and send a report to the develo
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
 
         exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
-        if not self.cur_package and self.report['ProblemType'] != 'Kernel' or (
+        if not self.cur_package and self.report['ProblemType'] != 'KernelCrash' and self.report['ProblemType'] != 'KernelOops' or (
             exe_path and not os.path.exists(exe_path)):
             msg = _('This problem report does not apply to a packaged program.')
             if self.report.has_key('ExecutablePath'):
@@ -674,7 +693,7 @@ might be helpful for the developers.'))
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_present_kernel_error(self, desktopentry):
-        '''Inform that a kernel Oops has happened for self.report and
+        '''Inform that a kernel crash has happened for self.report and
         ask about an action.
 
         Return the action: ignore ('cancel'), or report a bug about the problem
@@ -1523,7 +1542,7 @@ CoreDump: base64
             '''Test run_crash() for a kernel error.'''
 
             # generate crash report
-            r = apport.Report('Kernel')
+            r = apport.Report('KernelCrash')
             r['Package'] = apport.packaging.get_kernel_package()
             r['SourcePackage'] = 'linux'
 
@@ -1556,7 +1575,7 @@ CoreDump: base64
             # did we run the hooks properly?
             self.assert_('ProcModules' in self.ui.report.keys())
             self.assert_('Lspci' in self.ui.report.keys())
-            self.assertEqual(self.ui.report['ProblemType'], 'Kernel')
+            self.assertEqual(self.ui.report['ProblemType'], 'KernelCrash')
 
         def test_run_crash_anonymity(self):
             '''Test run_crash() anonymization.'''
