@@ -84,10 +84,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         this_os = lsb_release.communicate()[0].strip()
         assert lsb_release.returncode == 0
 
-        for o in self._cache(package).candidateOrigin:
-            # note: checking site for ppa is a hack until LP #140412 gets fixed
-            if o.origin == this_os and not o.site.startswith('ppa'):
-                return True
+        origins = self._cache(package).candidateOrigin
+        if origins: # might be None
+            for o in origins:
+                # note: checking site for ppa is a hack until LP #140412 gets fixed
+                if o.origin == this_os and not o.site.startswith('ppa'):
+                    return True
         return False
 
     def get_architecture(self, package):
