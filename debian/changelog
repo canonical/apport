@@ -4,8 +4,11 @@ apport (0.117) UNRELEASED; urgency=low
     apt.Cache()[pkg].origins is None. (LP: #279353)
   * bin/apport: Log that we are ignoring SIGABRT, since it is a common cause
     of confusion.
+  * test-apport, create_test_process(): Fix race condition: wait until the
+    child process has fully execve()ed, to avoid coredumping it while it is
+    still running as test-apport process.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 07 Oct 2008 12:55:28 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 07 Oct 2008 13:24:23 +0200
 
 apport (0.116) intrepid; urgency=low
 
