@@ -267,6 +267,7 @@ try:
     # or mono's stderr for stack traces).
     if signum == str(signal.SIGABRT):
         # check if the user wants a core dump
+        error_log('Ignoring SIGABRT')
         drop_privileges(pid)
         write_user_coredump(pid, cwd, core_ulimit)
         sys.exit(0)

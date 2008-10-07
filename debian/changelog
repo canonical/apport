@@ -2,8 +2,10 @@ apport (0.117) UNRELEASED; urgency=low
 
   * backends/packaging-apt-dpkg.py, is_distro_package(): Fix crash if
     apt.Cache()[pkg].origins is None. (LP: #279353)
+  * bin/apport: Log that we are ignoring SIGABRT, since it is a common cause
+    of confusion.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 07 Oct 2008 10:13:00 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 07 Oct 2008 12:55:28 +0200
 
 apport (0.116) intrepid; urgency=low
 
