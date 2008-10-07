@@ -206,6 +206,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 new_comment = Bug.NewComment(subject='Stack trace with source code',
                         attachment=att)
                 bug.comments.add(new_comment)
+
+            if report.has_key('SourcePackage') and bug.sourcepackage == 'ubuntu':
+                bug.set_sourcepackage(report['SourcePackage'])
         finally:
             shutil.rmtree(tmpdir)
 
