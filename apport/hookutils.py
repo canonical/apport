@@ -14,6 +14,11 @@ import subprocess
 import md5
 import os
 import datetime
+import glob
+
+import xml.dom, xml.dom.minidom
+from xml.parsers.expat import ExpatError
+
 
 def path_to_key(path):
 	return path.replace('/', '.')
@@ -140,3 +145,57 @@ def hal_find_by_capability(capability):
 
 def hal_dump_udi(udi):
 	return command_output(['lshal','-u',udi])
+
+def files_in_package(package, globpat=None):
+	output = command_output(['dpkg-query','--listfiles',package])
+	files = []
+	for path in output.split('\n'):
+		if globpat is None or glob.fnmatch.fnmatch(path, globpat):
+			files.append(path)
+	return files
+
+def attach_gconf(report, package):
+	import gconf
+	import glib
+
+	client = gconf.client_get_default()
+
+	non_defaults = {}
+	for schema_file in files_in_package(package,
+                                    '/usr/share/gconf/schemas/*.schemas'):
+
+		for key, default_value in _parse_gconf_schema(schema_file).items():
+			try:
+				value = client.get(key).to_string()
+				if value != default_value:
+					non_defaults[key] = value
+			except glib.GError:
+				# Fall back to gconftool-2 and string comparison
+				value = command_output(['gconftool-2','-g',key])
+
+				if value != default_value:
+					non_defaults[key] = value
+
+	if non_defaults:
+		s = ''
+		keys = non_defaults.keys()
+		keys.sort()
+		for key in keys:
+			value = non_defaults[key]
+			print key, value
+			s += '%s=%s\n' % (key, value)
+
+		report['GConfNonDefault'] = s
+
+def _parse_gconf_schema(schema_file):
+	ret = {}
+
+	dom = xml.dom.minidom.parse(schema_file)
+	for gconfschemafile in dom.getElementsByTagName('gconfschemafile'):
+		for schemalist in gconfschemafile.getElementsByTagName('schemalist'):
+			for schema in schemalist.getElementsByTagName('schema'):
+				key = schema.getElementsByTagName('applyto')[0].childNodes[0].data
+				default = schema.getElementsByTagName('default')[0].childNodes[0].data
+				ret[key] = default
+
+	return ret

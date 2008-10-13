@@ -1,3 +1,10 @@
+apport (0.118) intrepid; urgency=low
+
+  * apport/hookutils.py: add attach_gconf() function to add non-default gconf
+    settings to a report
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Mon, 13 Oct 2008 20:10:33 +0100
+
 apport (0.117) intrepid; urgency=low
 
   * backends/packaging-apt-dpkg.py, is_distro_package(): Fix crash if
