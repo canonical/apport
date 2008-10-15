@@ -17,8 +17,6 @@ import datetime
 import glob
 
 import xml.dom, xml.dom.minidom
-from xml.parsers.expat import ExpatError
-
 
 def path_to_key(path):
 	return path.replace('/', '.')
