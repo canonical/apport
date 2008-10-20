@@ -19,9 +19,15 @@ import glob
 import xml.dom, xml.dom.minidom
 
 def path_to_key(path):
+	'''Generate a suitable report key from the specified path, meeting
+	apport's restrictions on the characters used in keys.'''
+
 	return path.replace('/', '.')
 
 def attach_file_if_exists(report, path, key=None):
+	'''If the specified path exists, attach its contents, otherwise do nothing.
+	'''
+
 	if not key:
 		key = path_to_key(path)
 
@@ -29,13 +35,19 @@ def attach_file_if_exists(report, path, key=None):
 		attach_file(report, path, key)
 
 def read_file(path):
-    try:
-        return open(path).read().strip()
-    except Exception, e:
-        return 'Error: ' + str(e)
+	'''Return the contents of the specified path, or upon error, a text
+	representation of the error.'''
+
+	try:
+		return open(path).read().strip()
+	except Exception, e:
+		return 'Error: ' + str(e)
 
 
 def attach_file(report, path, key=None):
+	'''Attach the contents of the specified path to the report, optionally
+	using the specified key.'''
+
 	if not key:
 		key = path_to_key(path)
 
@@ -69,6 +81,8 @@ def attach_conffiles(report, package, conffiles=None):
 			report[key] = '[deleted]'
 
 def attach_dmesg(report):
+	'''Attach information from the kernel ring buffer (dmesg).'''
+
 	report['BootDmesg'] = open('/var/log/dmesg').read()
 	report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 /var/log/dmesg -'])
 
@@ -130,6 +144,8 @@ PCI_PROCESSORS = 0x0b
 PCI_SERIAL_BUS = 0x0c
 
 def pci_devices(*pci_classes):
+	'''Return a text dump of PCI devices attached to the system.'''
+
 	if not pci_classes:
 		return command_output(['lspci', '-vvnn'])
 
@@ -161,18 +177,27 @@ def pci_devices(*pci_classes):
 	return command_output(cmd)
 
 def usb_devices():
+	'''Return a text dump of USB devices attached to the system.'''
+
 	# TODO: would be nice to be able to filter by interface class
 	return command_output(['lsusb','-v'])
 
 def hal_find_by_capability(capability):
-    output = command_output(['hal-find-by-capability',
+	'''Retrieve a list of UDIs for hal objects having the specified capability.
+	'''
+
+	output = command_output(['hal-find-by-capability',
                              '--capability',capability])
-    return output.split('\n')
+	return output.split('\n')
 
 def hal_dump_udi(udi):
+	'''Dump the properties of a HAL object, specified by its UDI.'''
+
 	return command_output(['lshal','-u',udi])
 
 def files_in_package(package, globpat=None):
+	'''Retrieve a list of files owned by package, optionally matching globpat'''
+
 	output = command_output(['dpkg-query','--listfiles',package])
 	files = []
 	for path in output.split('\n'):
@@ -181,6 +206,8 @@ def files_in_package(package, globpat=None):
 	return files
 
 def attach_gconf(report, package):
+	'''Attach information about gconf keys set to non-default values.'''
+
 	import gconf
 	import glib
 
