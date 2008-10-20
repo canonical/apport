@@ -103,6 +103,37 @@ def attach_hardware(report):
 		# already covered in ProcVersionSignature
 		del report['Uname']
 
+def attach_alsa(report):
+	'''Attach ALSA subsystem information to the report.
+	(loosely based on http://www.alsa-project.org/alsa-info.sh)'''
+
+	attach_file_if_exists(report, os.path.expanduser('~/.asoundrc'),
+                          'UserAsoundrc')
+	attach_file_if_exists(report, os.path.expanduser('~/.asoundrc.asoundconf'),
+                          'UserAsoundrcAsoundconf')
+	attach_file_if_exists(report, '/etc/asound.conf')
+
+	report['AlsaDevices'] = command_output(['ls','-l','/dev/snd/'])
+	report['AplayDevices'] = command_output(['aplay','-l'])
+	report['ArecordDevices'] = command_output(['arecord','-l'])
+
+	report['PciMultimedia'] = pci_devices(PCI_MULTIMEDIA)
+
+	cards = []
+	for line in open('/proc/asound/cards'):
+		if ']:' in line:
+			fields = line.lstrip().split()
+			cards.append(fields[0])
+
+	for card in cards:
+		key = 'Amixer.%s.info' % card
+		report[key] = command_output(['amixer', '-c', card, 'info'])
+		key = 'Amixer.%s.values' % card
+		report[key] = command_output(['amixer', '-c', card])
+
+	# This seems redundant with the amixer info, do we need it?
+	#report['AlsactlStore'] = command-output(['alsactl', '-f', '-', 'store'])
+
 def command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout, or return
     a textual error if it failed.'''
