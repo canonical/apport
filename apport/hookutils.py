@@ -28,11 +28,18 @@ def attach_file_if_exists(report, path, key=None):
 	if os.path.exists(path):
 		attach_file(report, path, key)
 
+def read_file(path):
+    try:
+        return open(path).read().strip()
+    except Exception, e:
+        return 'Error: ' + str(e)
+
+
 def attach_file(report, path, key=None):
 	if not key:
 		key = path_to_key(path)
 
-	report[key] = open(path).read()
+	report[key] = read_file(path)
 
 def attach_conffiles(report, package, conffiles=None):
 	'''Attach information about any modified or deleted conffiles'''
@@ -60,6 +67,27 @@ def attach_conffiles(report, package, conffiles=None):
 				report[mtime_key] = mtime.isoformat()
 		else:
 			report[key] = '[deleted]'
+
+def attach_dmesg(report):
+	report['BootDmesg'] = open('/var/log/dmesg').read()
+	report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 /var/log/dmesg -'])
+
+def attach_hardware(report):
+	attach_dmesg(report)
+
+	attach_file(report, '/proc/interrupts', 'ProcInterrupts')
+	attach_file(report, '/proc/version_signature', 'ProcVersionSignature')
+	attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
+	attach_file(report, '/proc/cmdline', 'ProcCmdLine')
+	attach_file(report, '/proc/modules', 'ProcModules')
+
+	report['LsPci'] = command_output(['lspci','-vvnn'])
+	report['LsUsb'] = command_output(['lsusb'])
+	report['HalComputerInfo'] = hal_dump_udi('/org/freedesktop/Hal/devices/computer')
+
+	if 'Uname' in report:
+		# already covered in ProcVersionSignature
+		del report['Uname']
 
 def command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout, or return
