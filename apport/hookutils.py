@@ -152,8 +152,8 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
            str(command), sp.returncode, out)
 
 def recent_syslog(pattern):
-	'''Extract recent messages from syslog which match pattern
-    (eg. re object)'''
+	'''Extract recent messages from syslog where pattern.search(str) is True
+    (typically an re object)'''
 
 	lines = ''
 	for line in open('/var/log/syslog'):
@@ -270,6 +270,17 @@ def attach_gconf(report, package):
 			s += '%s=%s\n' % (key, value)
 
 		report['GConfNonDefault'] = s
+
+def attach_network(report):
+	'''Attach network-related information to report.'''
+
+	report['IpRoute'] = command_output(['ip','route'])
+	report['IpAddr'] = command_output(['ip','addr'])
+	report['PciNetwork'] = pci_devices(PCI_NETWORK)
+
+	for var in ('http_proxy', 'ftp_proxy', 'no_proxy'):
+		if var in os.environ:
+			report[var] = os.environ[var]
 
 def _parse_gconf_schema(schema_file):
 	ret = {}
