@@ -1,3 +1,9 @@
+apport (0.119) UNRELEASED; urgency=low
+
+  * debian/apport.default: Disable Apport by default for the final release.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 23 Oct 2008 09:33:42 +0200
+
 apport (0.118) intrepid; urgency=low
 
   * apport/hookutils.py: add attach_gconf() function to add non-default gconf
