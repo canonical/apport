@@ -449,8 +449,8 @@ free memory to automatically analyze the problem and send a report to the develo
             self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
-            if not self.report.has_key('SourcePackage') or \
-                self.report['ProblemType'] != 'KernelCrash' and self.report['ProblemType'] != 'KernelOops' and not self.report.has_key('Package'):
+            if 'SourcePackage' not in self.report or \
+                (not self.report['ProblemType'].startswith('Kernel') and 'Package' not in self.report):
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
                 # TODO This is not called consistently, is it really needed?

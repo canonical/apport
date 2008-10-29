@@ -8,8 +8,10 @@ apport (0.120) UNRELEASED; urgency=low
   * bin/apport: Check config option "unpackaged", and if it is set to True,
     create a crash dump for unpackaged programs, too. Bump apport package
     dependency to python-apport for this.
+  * apport/ui.py: Fix regression introduced in in 0.115 for checking
+    successful package name determination.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 29 Oct 2008 21:42:21 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 29 Oct 2008 22:14:57 +0100
 
 apport (0.119) intrepid; urgency=low
 
