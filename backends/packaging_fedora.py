@@ -85,6 +85,32 @@ class __FedoraPackageInfo(RPMPackageInfo):
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
         # Used by crashdb.py (i.e. the frontends)
-        return compareEVR(stringToVersion(ver1),stringToVersion(ver2)) 
+        return compareEVR(stringToVersion(ver1),stringToVersion(ver2))
+        
+    def get_file_package(self, file):
+        '''Return the package a file belongs to, or None if the file is not
+        shipped by any package.
+        
+        Under normal use, the 'file' argument will always be the executable
+        that crashed.
+        '''
+        # In debian-land, the name of the package is unique enough to identify
+        # it, but here in RPMville we have multilib. So we need to identify
+        # packages by ENVRA to guarantee uniqueness.
+        # Here's the sad part - one quirk of our multilib implementation is
+        # that a file can belong to multiple packages. So which one do we
+        # choose? If we had context from the crash dump we might know which
+        # arch was the important one, but for now.. let's just use the system
+        # arch.
+        # TODO: provide extra context info (arch?) from the crash dump
+        hdrs = self._get_headers_by_tag('basenames',file)
+        h = None
+        if len(hdrs) > 1: # Multiple files own this package - multiarch!
+            for h in hdrs:
+                if h['arch'] == self.get_system_architecture():
+                    break
+        else:
+            h = hdrs[0]
+        return self._make_envra_from_header(h)          
 
 impl = __FedoraPackageInfo()

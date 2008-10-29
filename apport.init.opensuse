@@ -1,0 +1,119 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          apport
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 5
+# Default-Stop:      0 1 6
+# Description:       Starts and stops apport crash handling
+### END INIT INFO
+
+# Source LSB init functions
+# providing start_daemon, killproc, pidofproc, 
+# log_success_msg, log_failure_msg and log_warning_msg.
+# This is currently not used by UnitedLinux based distributions and
+# not needed for init scripts for UnitedLinux only. If it is used,
+# the functions from rc.status should not be sourced or used.
+#. /lib/lsb/init-functions
+
+. /etc/rc.status
+
+# Reset status of this service
+rc_reset
+
+DESC="apport crash handling"
+# The location of the apport binary
+AGENT=/usr/share/apport/apport
+# The location of the core pattern file
+PATFILE=/proc/sys/kernel/core_pattern
+# Location to save the old core_pattern
+OLDPAT=/var/tmp/core_pattern
+
+# Check for missing binaries (stale symlinks should not happen)
+# Note: Special treatment of stop for LSB conformance
+test -x $AGENT || { echo "$AGENT not installed"; 
+	if [ "$1" = "stop" ]; then exit 0;
+	else exit 5; fi; }
+
+# Return success if apport is already enabled
+apport_is_enabled() {
+    grep -q "^|.*apport" $PATFILE
+}
+
+#
+# Function that starts the daemon/service
+#
+start_apport()
+{
+    if ! apport_is_enabled; then 
+        [ -e /var/crash ] || mkdir -p /var/crash
+        chmod 1777 /var/crash
+        cat $PATFILE > $OLDPAT        
+        echo "|$AGENT %p %s %c" > /proc/sys/kernel/core_pattern
+    fi
+}
+
+#
+# Function that stops the daemon/service
+#
+stop_apport()
+{
+    if apport_is_enabled; then
+        cat $OLDPAT > $PATFILE
+        rm -f $OLDPAT
+    fi
+}
+
+case "$1" in
+    start)
+	  echo -n "Starting $DESC"
+	    start_apport
+	    touch /var/lock/subsys/apport
+
+	  # Remember status and be verbose
+  	  rc_status -v
+	;;
+	
+    stop)
+	  echo -n "Stopping $DESC"
+	    stop_apport
+	    rm -f /var/lock/subsys/apport
+
+	  # Remember status and be verbose
+	  rc_status -v
+	;;
+    restart)
+	  ## Stop the service and regardless of whether it was
+	  ## running or not, start it again.
+	  $0 stop
+	  $0 start
+	  rc_status
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    status)
+  	  # Return value is slightly different for the status command:
+	  # 0 - service up and running
+	  # 1 - service dead, but /var/run/  pid  file exists
+	  # 2 - service dead, but /var/lock/ lock file exists
+	  # 3 - service not running (unused)
+	  # 4 - service status unknown :-(
+	  # 5--199 reserved (5--99 LSB, 100--149 distro, 150--199 appl.)
+	
+      if grep -q 'apport' $PATFILE; then
+		echo "Apport is enabled"
+        exit 0
+	  else
+		echo "Apport is disabled"
+        exit 3
+	  fi
+	  rc_status -v
+	;;
+    *)
+	  echo "Usage: $0 {start|stop|status|restart}"
+	  exit 1
+	;;
+esac
+rc_exit

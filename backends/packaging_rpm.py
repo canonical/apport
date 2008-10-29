@@ -21,7 +21,7 @@ the full text of the license.
 
 # It'd be convenient to use rpmUtils from yum, but I'm trying to keep this
 # class distro-agnostic.
-import rpm, md5, os, stat
+import rpm, md5, os, stat, subprocess
 
 class RPMPackageInfo:
     '''Partial apport.PackageInfo class implementation for RPM, as
@@ -119,36 +119,16 @@ class RPMPackageInfo:
         
         Under normal use, the 'file' argument will always be the executable
         that crashed.
-        '''
-        # In debian-land, the name of the package is unique enough to identify
-        # it, but here in RPMville we have multilib. So we need to identify
-        # packages by ENVRA to guarantee uniqueness.
-        # Here's the sad part - one quirk of our multilib implementation is
-        # that a file can belong to multiple packages. So which one do we
-        # choose? If we had context from the crash dump we might know which
-        # arch was the important one, but for now.. let's just use the system
-        # arch.
-        # TODO: provide extra context info (arch?) from the crash dump
-        hdrs = self._get_headers_by_tag('basenames',file)
-        h = None
-        if len(hdrs) > 1: # Multiple files own this package - multiarch!
-            for h in hdrs:
-                if h['arch'] == self.get_system_architecture():
-                    break
-        else:
-            h = hdrs[0]
-        return self._make_envra_from_header(h) 
+        '''  
+        # The policy for handling files which belong to multiple packages depends on the distro
+        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
 
     def get_system_architecture(self):
         '''Return the architecture of the system, in the notation used by the
         particular distribution.'''
-        # XXX is there an rpmlib method for this?
-        f = open('/etc/rpm/platform')
-        line = f.readline()
-        while line == '' or line[0] == '#':
-            line = f.readline()
-        f.close()
-        (arch,vendor,os) = line.split('-')
+        rpmarch = subprocess.Popen(['rpm', '--eval', '%_target_cpu'],
+                stdout=subprocess.PIPE)
+        arch = rpmarch.communicate()[0].strip()
         return arch 
 
     def is_distro_package(self, package):
@@ -158,6 +138,8 @@ class RPMPackageInfo:
         if not self.official_keylist:
             raise Exception, 'Subclass the RPM implementation for your distro!'
         hdr = self._get_header(package)
+        if not hdr:
+            return False
         # Check the GPG sig and key ID to see if this package was signed 
         # with an official key.
         if hdr['siggpg']:
@@ -229,6 +211,8 @@ class RPMPackageInfo:
         # Unless there's some rpmdb breakage, you should have one header
         # here. If you do manage to have two rpms with the same ENVRA,
         # who cares which one you get?
+        if len(hdrs) < 1:
+            return None
         return hdrs[0]
 
     def _make_envra_from_header(self,h):
@@ -272,7 +256,48 @@ class RPMPackageInfo:
         m.update(data)
         return (filemd5 == m.hexdigest())
 
+impl = RPMPackageInfo()
+
 #
 # Unit test
-# FIXME write something similar to the unittests in the dpkg/apt impl
+# FIXME: WIP
 #
+
+if __name__ == '__main__':
+    import unittest
+
+    class RPMPackageInfoTest(unittest.TestCase):
+
+        def test_get_system_architecture(self):
+            '''Test get_system_architecture().'''
+
+            arch = impl.get_system_architecture()
+            # must be nonempty without line breaks
+            self.assertNotEqual(arch, '')
+            self.assert_('\n' not in arch)
+
+        def test_get_headers_by_tag(self):
+            '''Test _get_headers_by_tag().'''
+            
+            headerByTag = impl._get_headers_by_tag('basenames','/bin/bash')
+            print headerByTag
+        
+        def test_get_file_package(self):
+            '''Test get_file_package().'''
+            
+            package = impl.get_file_package('/bin/bash') 
+            print package        
+            
+        def test_get_header(self):
+            '''Test _get_header().'''
+            
+            header = impl._get_header('bash-3.2-112.x86_64')
+            print header      
+
+    # only execute if rpm is available
+    try:
+        if subprocess.call(['rpm', '--help'], stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE) == 0:
+            unittest.main()
+    except OSError:
+        pass
