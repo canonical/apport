@@ -1,8 +1,12 @@
 apport (0.120) UNRELEASED; urgency=low
 
   * man/apport-cli.1: Fix "sytem" typo. (LP: #288977)
+  * apport/fileutils.py: Add new function get_options() to read
+    ~/.config/apport/settings. In the future, the apport-ignore.xml file will
+    move to this directory, too. Based on idea and initial patch from Nikolay
+    Derkach.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 28 Oct 2008 10:01:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 29 Oct 2008 21:39:37 +0100
 
 apport (0.119) intrepid; urgency=low
 

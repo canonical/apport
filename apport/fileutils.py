@@ -10,12 +10,14 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os, glob, subprocess, os.path
+import os, glob, subprocess, os.path, ConfigParser
 from problem_report import ProblemReport
 
 from packaging_impl import impl as packaging
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
+
+_config_file = '~/.config/apport/settings'
 
 def find_package_desktopfile(package):
     '''If given package is installed and has a single .desktop file, return the
@@ -216,6 +218,22 @@ def check_files_md5(sumfile):
 
     return mismatches
 
+def get_config(section, setting, default=None):
+    '''Return a setting from user configuration.
+
+    This is read from ~/.config/apport/settings.
+    '''
+    if not get_config.config:
+        get_config.config = ConfigParser.ConfigParser()
+        get_config.config.read(os.path.expanduser(_config_file))
+
+    try:
+        return get_config.config.get(section, setting)
+    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
+        return default
+
+get_config.config = None
+
 #
 # Unit test
 #
@@ -226,14 +244,18 @@ from cStringIO import StringIO
 class _ApportUtilsTest(unittest.TestCase):
     def setUp(self):
         global report_dir
+        global _config_file
         self.orig_report_dir = report_dir
         report_dir = tempfile.mkdtemp()
+        self.orig_config_file = _config_file
 
     def tearDown(self):
         global report_dir
+        global _config_file
         shutil.rmtree(report_dir)
         report_dir = self.orig_report_dir
         self.orig_report_dir = None
+        _config_file = self.orig_config_file
 
     def _create_reports(self, create_inaccessible = False):
         '''Create some test reports.'''
@@ -435,6 +457,40 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         self.assertEqual(check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
         open(f1, 'w').write('Some stuff')
         self.assertEqual(check_files_md5(sumfile), [f2], 'file 2 wrong')
+
+    def test_get_config(self):
+        '''Test get_config().'''
+
+        global _config_file
+
+        # nonexisting
+        _config_file = '/nonexisting'
+        self.assertEqual(get_config('main', 'foo'), None)
+        self.assertEqual(get_config('main', 'foo', 'moo'), 'moo')
+        get_config.config = None # trash cache
+
+        # empty
+        f = tempfile.NamedTemporaryFile()
+        _config_file = f.name
+        self.assertEqual(get_config('main', 'foo'), None)
+        self.assertEqual(get_config('main', 'foo', 'moo'), 'moo')
+        get_config.config = None # trash cache
+
+        # nonempty
+        f.write('[main]\none=1\ntwo = TWO\n\n[spethial]\none= 99\n')
+        f.flush()
+        self.assertEqual(get_config('main', 'foo'), None)
+        self.assertEqual(get_config('main', 'foo', 'moo'), 'moo')
+        self.assertEqual(get_config('main', 'one'), '1')
+        self.assertEqual(get_config('main', 'one', default='moo'), '1')
+        self.assertEqual(get_config('main', 'two'), 'TWO')
+        self.assertEqual(get_config('spethial', 'one'), '99')
+        self.assertEqual(get_config('spethial', 'two'), None)
+        self.assertEqual(get_config('spethial', 'one', 'moo'), '99')
+        self.assertEqual(get_config('spethial', 'nope', 'moo'), 'moo')
+        get_config.config = None # trash cache
+
+        f.close()
 
 if __name__ == '__main__':
     unittest.main()
