@@ -255,13 +255,15 @@ try:
         error_log('executable: %s (command line "%s")' %
             (info['ExecutablePath'], info['ProcCmdline']))
 
-    # ignore non-package binaries
+    # ignore non-package binaries (unless configured otherwise)
     if not apport.fileutils.likely_packaged(info['ExecutablePath']):
-        error_log('executable does not belong to a package, ignoring')
-        # check if the user wants a core dump
-        drop_privileges(pid)
-        write_user_coredump(pid, cwd, core_ulimit)
-        sys.exit(1)
+        if apport.fileutils.get_config('main', 'unpackaged', 'False').lower() not in [
+                                       '1', 'true', 'yes', 'on']:
+            error_log('executable does not belong to a package, ignoring')
+            # check if the user wants a core dump
+            drop_privileges(pid)
+            write_user_coredump(pid, cwd, core_ulimit)
+            sys.exit(1)
 
     # ignore SIGABRT (we currently have no way of extracting abort() messages
     # or mono's stderr for stack traces).
