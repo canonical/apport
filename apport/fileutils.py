@@ -218,17 +218,21 @@ def check_files_md5(sumfile):
 
     return mismatches
 
-def get_config(section, setting, default=None):
+def get_config(section, setting, default=None, bool=False):
     '''Return a setting from user configuration.
 
-    This is read from ~/.config/apport/settings.
+    This is read from ~/.config/apport/settings. If bool is True, the value is
+    interpreted as a boolean.
     '''
     if not get_config.config:
         get_config.config = ConfigParser.ConfigParser()
         get_config.config.read(os.path.expanduser(_config_file))
 
     try:
-        return get_config.config.get(section, setting)
+        if bool:
+            return get_config.config.getboolean(section, setting)
+        else:
+            return get_config.config.get(section, setting)
     except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
         return default
 
@@ -477,13 +481,17 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         get_config.config = None # trash cache
 
         # nonempty
-        f.write('[main]\none=1\ntwo = TWO\n\n[spethial]\none= 99\n')
+        f.write('[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n[spethial]\none= 99\n')
         f.flush()
         self.assertEqual(get_config('main', 'foo'), None)
         self.assertEqual(get_config('main', 'foo', 'moo'), 'moo')
         self.assertEqual(get_config('main', 'one'), '1')
         self.assertEqual(get_config('main', 'one', default='moo'), '1')
         self.assertEqual(get_config('main', 'two'), 'TWO')
+        self.assertEqual(get_config('main', 'b1', bool=True), True)
+        self.assertEqual(get_config('main', 'b2', bool=True), False)
+        self.assertEqual(get_config('main', 'b3', bool=True), None)
+        self.assertEqual(get_config('main', 'b3', default=False, bool=True), False)
         self.assertEqual(get_config('spethial', 'one'), '99')
         self.assertEqual(get_config('spethial', 'two'), None)
         self.assertEqual(get_config('spethial', 'one', 'moo'), '99')
