@@ -1,8 +1,9 @@
 '''A partial apport.PackageInfo class implementation for RPM, as found in 
-Fedora, RHEL, SuSE, and many other distributions.
+Fedora, RHEL, openSUSE, SUSE Linux, and many other distributions.
 
 Copyright (C) 2007 Red Hat Inc.
-Author: Will Woods <wwoods@redhat.com>
+Copyright (C) 2008 Nikolay Derkach
+Author: Will Woods <wwoods@redhat.com>, Nikolay Derkach <nderkach@gmail.com>
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -38,8 +39,15 @@ class RPMPackageInfo:
     def get_version(self, package):
         '''Return the installed version of a package.'''
         hdr = self._get_header(package)
+        if hdr == None:
+            raise ValueError
         # Note - "version" here seems to refer to the full EVR, so..
-        return hdr.dsOfHeader().EVR()
+        if not hdr['e']:
+            return hdr['v'] + '-' + hdr['r']
+        if not hdr['v'] or not hdr['r']:
+            return None       
+        else:
+            return hdr['e'] + ':' + hdr['v'] + '-' + hdr['r']     
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
@@ -77,7 +85,7 @@ class RPMPackageInfo:
         # Yeah, this is kind of redundant, as package is ENVRA, but I want
         # to do this the right way (in case we change what 'package' is)
         hdr = self._get_header(package)
-        return hdr['arch']
+        return hdr['arch'] 
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -90,7 +98,7 @@ class RPMPackageInfo:
 
     def get_modified_files(self, package):
         '''Return list of all modified files of a package.'''
-        hdr = self._get_header(package)
+        hdr = self._get_header(package)   
 
         files  = hdr['filenames']
         mtimes = hdr['filemtimes']
@@ -146,7 +154,7 @@ class RPMPackageInfo:
             # Package is signed
             keyid = hdr['siggpg'][13:17].encode('hex')
             if keyid in self.official_keylist:
-                return True
+                return True      
         return False
 
     def set_mirror(self, url):
@@ -200,20 +208,27 @@ class RPMPackageInfo:
 
     def _get_header(self,envra):
         '''Get the RPM header that matches the given ENVRA.'''
-        (e,n,v,r,a) = self._split_envra(envra)
-        mi = self.ts.dbMatch('name',n) # First, find stuff with the right name
-        # Now we narrow using the EVRA
-        args = {'epoch':e,'version':v,'release':r,'arch':a}
-        for name,val in args.items():
-            if val:
-                mi.pattern(name,rpm.RPMMIRE_STRCMP,val)
-        hdrs = [m for m in mi]
-        # Unless there's some rpmdb breakage, you should have one header
-        # here. If you do manage to have two rpms with the same ENVRA,
-        # who cares which one you get?
-        if len(hdrs) < 1:
-            return None
-        return hdrs[0]
+
+        querystr = envra
+        qlen = len(envra) 
+        while qlen > 0:
+            mi = impl.ts.dbMatch('name', querystr)
+            hdrs = [m for m in mi]
+            if len(hdrs) > 0:
+                # yay! we found something
+                # Unless there's some rpmdb breakage, you should have one header
+                # here. If you do manage to have two rpms with the same ENVRA,
+                # who cares which one you get?
+                h = hdrs[0]
+                break
+                
+            # remove the last char of querystr and retry the search
+            querystr = querystr[0:len(querystr)-1]
+            qlen = qlen - 1
+
+        if qlen == 0:
+            raise ValueError, 'No headers found for this envra: %s' % envra
+        return h
 
     def _make_envra_from_header(self,h):
         '''Generate an ENVRA string from an rpm header'''
@@ -223,29 +238,6 @@ class RPMPackageInfo:
         else:
             envra = nvra
         return envra
-
-    def _split_envra(self,envra):
-        '''Split an ENVRA string into its component parts. e.g.:
-        evolution-2.8.3-2.fc6.i386 -> 0, evolution, 2.8.3, 2.fc6, i386
-        2:gaim-2.0.0-0.31.beta6.fc6.i386 -> 2, gaim, 2.0.0, 0.31.beta6.fc6, i386
-        This code comes from yum's rpmUtils/miscutils.py. Thanks, Seth!'''
-        archIndex = envra.rfind('.')
-        arch = envra[archIndex+1:]
-    
-        relIndex = envra[:archIndex].rfind('-')
-        rel = envra[relIndex+1:archIndex]
-    
-        verIndex = envra[:relIndex].rfind('-')
-        ver = envra[verIndex+1:relIndex]
-    
-        epochIndex = envra.find(':')
-        if epochIndex == -1:
-            epoch = None
-        else:
-            epoch = envra[:epochIndex]
-    
-        name = envra[epochIndex + 1:verIndex]
-        return epoch, name, ver, rel, arch
     
     def _checkmd5(self,filename,filemd5):
         '''Internal function to check a file's md5sum'''
@@ -260,14 +252,32 @@ impl = RPMPackageInfo()
 
 #
 # Unit test
-# FIXME: WIP
 #
 
 if __name__ == '__main__':
     import unittest
 
     class RPMPackageInfoTest(unittest.TestCase):
+    
+        def test_get_dependencies(self):
+            '''Test get_dependencies().'''
+            
+            deps = impl.get_dependencies('bash')              
+            self.assertNotEqual(deps, [])                   
 
+        def test_get_header(self):
+            '''Test _get_header().'''
+            
+            hdr = impl._get_header('alsa-utils')
+            self.assertEqual(hdr['n'], 'alsa-utils')
+
+        def test_get_headers_by_tag(self):
+            '''Test _get_headers_by_tag().'''
+            
+            headersByTag = impl._get_headers_by_tag('basenames','/bin/bash')
+            self.assertEqual(len(headersByTag), 1)
+            self.assert_(headersByTag[0]['n'].startswith('bash'))      
+            
         def test_get_system_architecture(self):
             '''Test get_system_architecture().'''
 
@@ -275,24 +285,15 @@ if __name__ == '__main__':
             # must be nonempty without line breaks
             self.assertNotEqual(arch, '')
             self.assert_('\n' not in arch)
+            
+        def test_get_version(self):
+            '''Test get_version().'''
+            
+            ver = impl.get_version('bash')
+            self.assertNotEqual(ver, None)
+            ver = impl.get_version('alsa-utils')
+            self.assertNotEqual(ver, None)        
 
-        def test_get_headers_by_tag(self):
-            '''Test _get_headers_by_tag().'''
-            
-            headerByTag = impl._get_headers_by_tag('basenames','/bin/bash')
-            print headerByTag
-        
-        def test_get_file_package(self):
-            '''Test get_file_package().'''
-            
-            package = impl.get_file_package('/bin/bash') 
-            print package        
-            
-        def test_get_header(self):
-            '''Test _get_header().'''
-            
-            header = impl._get_header('bash-3.2-112.x86_64')
-            print header      
 
     # only execute if rpm is available
     try:

@@ -65,22 +65,12 @@ class __SUSEPackageInfo(RPMPackageInfo):
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
         a third-party source.'''
-        if RPMPackageInfo.is_distro_package(self, package):
-            # GPG key id checks out OK. Yay!
-            return True
+        if self._get_header(package)['vendor'] == 'SUSE LINUX Products GmbH, Nuernberg, Germany':
+            if RPMPackageInfo.is_distro_package(self, package):
+                # GPG key id checks out OK. Yay!
+                return True
         else:
-            # GPG key check failed.
             return False
-
-    def get_available_version(self, package):
-        '''Return the latest available version of a package.'''
-        # used in report.py, which is used by the frontends
-        (epoch, name, ver, rel, arch) = self._split_envra(package)
-        package_ver = '%s-%s' % (ver,rel)
-        if epoch: 
-            package_ver = "%s:%s" % (epoch, package_ver)
-        # FIXME STUB
-        return package_ver
 
     def get_source_tree(self, srcpackage, dir, version=None):
         '''Download given source package and unpack it into dir (which should
@@ -120,7 +110,13 @@ class __SUSEPackageInfo(RPMPackageInfo):
         # there is some --force package installation
         # FIXME: implement some more smart hadling 
             h = hdrs[0]
-        return self._make_envra_from_header(h)  
+        return h['n']
+        
+    def get_available_version(self, package):
+        '''Return the latest available version of a package.'''
+        
+        # FIXME: not implemented yet
+        return None
 
 impl = __SUSEPackageInfo()
 
@@ -136,13 +132,28 @@ if __name__ == '__main__':
         def test_is_distro_package(self):
             '''Test is_distro_package().'''
 
-            self.assert_(impl.is_distro_package('bash-3.2-112.x86_64'))
-            self.assert_(not impl.is_distro_package('nonexisting'))
+            self.assert_(impl.is_distro_package('kernel-default'))
+            self.assert_(not impl.is_distro_package('libxine1'))
+            self.assertRaises(ValueError, impl.is_distro_package, 'nonexistant_package') 
             
         def test_compare_versions(self):
             '''Test is_distro_package().'''
             
             self.assertEqual(impl.compare_versions('1', '2'), -1)
+            
+        def test_get_file_package(self):
+            '''Test get_file_package().'''
+            
+            package = impl.get_file_package('/bin/bash') 
+            self.assert_(package.startswith('bash'))
+
+        def test_get_header(self):
+            '''Test _get_header().'''
+            
+            hdr = impl._get_header('bash-3.2-112.x86_64')
+            self.assertEqual(hdr['n'], 'bash')
+            hdr = impl._get_header('bash-3.2')
+            self.assertEqual(hdr['n'], 'bash')             
             
     unittest.main()
          

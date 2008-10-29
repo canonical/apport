@@ -921,7 +921,6 @@ class _ApportReportTest(unittest.TestCase):
 
         # determine bash version
         bashversion = packaging.get_version('bash')
-        libcversion = packaging.get_version('libc6')
 
         pr = Report()
         self.assertRaises(ValueError, pr.add_package_info, 'nonexistant_package')
@@ -929,7 +928,7 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assert_('libc6 ' + libcversion in pr['Dependencies'])
+        self.assert_('libc' in pr['Dependencies'])
 
         # test without specifying a package, but with ExecutablePath
         pr = Report()
@@ -938,7 +937,7 @@ class _ApportReportTest(unittest.TestCase):
         pr.add_package_info()
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assert_('libc6 ' + libcversion in pr['Dependencies'])
+        self.assert_('libc' in pr['Dependencies'])
         # check for stray empty lines
         self.assert_('\n\n' not in pr['Dependencies'])
         self.assert_(pr.has_key('PackageArchitecture'))
@@ -1032,7 +1031,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('/bin/sh'))
 
         # check correct handling of interpreted executables: shell
-        p = subprocess.Popen(['/bin/zgrep', 'foo'], stdin=subprocess.PIPE,
+        p = subprocess.Popen(['zgrep', 'foo'], stdin=subprocess.PIPE,
             close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
@@ -1041,9 +1040,9 @@ class _ApportReportTest(unittest.TestCase):
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate('\n')
-        self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+        self.assert_(pr['ExecutablePath'].endswith('bin/zgrep'))
         self.assertEqual(pr['InterpreterPath'],
-            os.path.realpath(open('/bin/zgrep').readline().strip()[2:]))
+            os.path.realpath(open(pr['ExecutablePath']).readline().strip()[2:]))
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # check correct handling of interpreted executables: python

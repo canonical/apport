@@ -10,8 +10,12 @@ apport (0.120) UNRELEASED; urgency=low
     dependency to python-apport for this.
   * apport/ui.py: Fix regression introduced in in 0.115 for checking
     successful package name determination.
+  * apport/report.py: Some distro portability fixes in the test suite, thanks
+    to Nikolay Derkach!
+  * Add OpenSUSE spec file, init script, and RPM packaging backend. Thanks to
+    Nikolay Derkach!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 29 Oct 2008 22:14:57 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 29 Oct 2008 22:54:52 +0100
 
 apport (0.119) intrepid; urgency=low
 

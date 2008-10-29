@@ -2,25 +2,16 @@
 
 ### BEGIN INIT INFO
 # Provides:          apport
-# Required-Start:    $local_fs
-# Required-Stop:     $local_fs
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
 # Default-Start:     2 3 5
 # Default-Stop:      0 1 6
+# Short-Description: Apport crash handling
 # Description:       Starts and stops apport crash handling
 ### END INIT INFO
 
 # Source LSB init functions
-# providing start_daemon, killproc, pidofproc, 
-# log_success_msg, log_failure_msg and log_warning_msg.
-# This is currently not used by UnitedLinux based distributions and
-# not needed for init scripts for UnitedLinux only. If it is used,
-# the functions from rc.status should not be sourced or used.
-#. /lib/lsb/init-functions
-
-. /etc/rc.status
-
-# Reset status of this service
-rc_reset
+. /lib/lsb/init-functions
 
 DESC="apport crash handling"
 # The location of the apport binary
@@ -32,7 +23,7 @@ OLDPAT=/var/tmp/core_pattern
 
 # Check for missing binaries (stale symlinks should not happen)
 # Note: Special treatment of stop for LSB conformance
-test -x $AGENT || { echo "$AGENT not installed"; 
+[ -x $AGENT ] || { log_failure_msg "$AGENT not installed";
 	if [ "$1" = "stop" ]; then exit 0;
 	else exit 5; fi; }
 
@@ -47,8 +38,9 @@ apport_is_enabled() {
 start_apport()
 {
     if ! apport_is_enabled; then 
-        [ -e /var/crash ] || mkdir -p /var/crash
-        chmod 1777 /var/crash
+        [ -e /var/crash ] || {
+            log_failure_msg "There is /var/crash directory missing in your system";
+            exit 2; }
         cat $PATFILE > $OLDPAT        
         echo "|$AGENT %p %s %c" > /proc/sys/kernel/core_pattern
     fi
@@ -67,31 +59,21 @@ stop_apport()
 
 case "$1" in
     start)
-	  echo -n "Starting $DESC"
-	    start_apport
-	    touch /var/lock/subsys/apport
-
-	  # Remember status and be verbose
-  	  rc_status -v
+	  start_apport
+	  touch /var/lock/subsys/apport
+	  log_success_msg "Starting $DESC"
 	;;
 	
     stop)
-	  echo -n "Stopping $DESC"
-	    stop_apport
-	    rm -f /var/lock/subsys/apport
-
-	  # Remember status and be verbose
-	  rc_status -v
+	  stop_apport
+	  rm -f /var/lock/subsys/apport
+  	  log_success_msg "Stopping $DESC"
 	;;
-    restart)
+    restart|reload)
 	  ## Stop the service and regardless of whether it was
 	  ## running or not, start it again.
 	  $0 stop
 	  $0 start
-	  rc_status
-
-	# Remember status and be quiet
-	rc_status
 	;;
     status)
   	  # Return value is slightly different for the status command:
@@ -111,9 +93,16 @@ case "$1" in
 	  fi
 	  rc_status -v
 	;;
+    try-restart|condrestart)
+      if [ -f /var/lock/subsys/apport ]; then
+	    $0 stop
+	    $0 start
+      fi
+    ;;	
     *)
-	  echo "Usage: $0 {start|stop|status|restart}"
+	  echo "Usage: $0 {start|stop|status|restart|reload|try-restart|condrestart}"
 	  exit 1
 	;;
 esac
-rc_exit
+
+exit 0
