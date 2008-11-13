@@ -961,8 +961,6 @@ Foo: Bar
         pr.write(io)
         temp.close()
 
-        open('/tmp/r', 'w').write(io.getvalue())
-
         # read it again
         io.seek(0)
         pr = ProblemReport()

@@ -298,7 +298,8 @@ try:
                 drop_privileges(pid)
                 write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
-        reportfile = open(report, 'w')
+        reportfile = os.fdopen(os.open(report,
+            os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
         os.chmod(report, 0000)
         os.chown(report, pidstat.st_uid, pidstat.st_gid)
     except (OSError, IOError):
