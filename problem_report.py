@@ -961,7 +961,7 @@ Foo: Bar
         pr.write(io)
         temp.close()
 
-        open('/tmp/r', 'w').write(io.getvalue())
+        open('/tmp/r', os.O_WRONLY | os.O_CREAT | os.O_EXCL ).write(io.getvalue())
 
         # read it again
         io.seek(0)

@@ -81,7 +81,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # get the uid for now, user name later
         user = os.getuid()
         pr_filename = '/var/crash/%s.%i.crash' % (mangled_program, user)
-        report_file = open(pr_filename, 'wt')
+        report_file = open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL )
         os.chmod(pr_filename, 0600)
         try:
             pr.write(report_file)
