@@ -1094,7 +1094,7 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://bash.bug.net/%i' % self.ui.crashdb.latest_id())
+            self.assertEqual(self.ui.opened_url, 'http://bash.bugs.example.com/%i' % self.ui.crashdb.latest_id())
 
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
@@ -1140,7 +1140,7 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
             self.assert_(self.ui.ic_progress_pulses > 0)
 
         def test_run_report_bug_wrong_pid(self):
@@ -1270,7 +1270,7 @@ CoreDump: base64
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
@@ -1289,7 +1289,7 @@ CoreDump: base64
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://coreutils.bug.net/%i' % self.ui.crashdb.latest_id())
+            self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
@@ -1524,7 +1524,7 @@ CoreDump: base64
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://bash.bug.net/%i' % self.ui.crashdb.latest_id())
+            self.assertEqual(self.ui.opened_url, 'http://bash.bugs.example.com/%i' % self.ui.crashdb.latest_id())
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Package' in self.ui.report.keys())
@@ -1566,7 +1566,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) + 
                 ' ' + str(self.ui.msg_text))
             self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://linux.bug.net/%i' % self.ui.crashdb.latest_id())
+            self.assertEqual(self.ui.opened_url, 'http://linux.bugs.example.com/%i' % self.ui.crashdb.latest_id())
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             # did we run the hooks properly?

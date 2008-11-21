@@ -50,14 +50,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return id
 
     def get_comment_url(self, report, handle):
-        '''Return http://<sourcepackage>.bug.net/<handle> for package bugs
-        or http://bug.net/<handle> for reports without a SourcePackage.'''
+        '''Return http://<sourcepackage>.bugs.example.com/<handle> for package bugs
+        or http://bugs.example.com/<handle> for reports without a SourcePackage.'''
 
         if report.has_key('SourcePackage'):
-            return 'http://%s.bug.net/%i' % (report['SourcePackage'],
+            return 'http://%s.bugs.example.com/%i' % (report['SourcePackage'],
                 handle)
         else:
-            return 'http://bug.net/%i' % handle
+            return 'http://bugs.example.com/%i' % handle
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
@@ -255,7 +255,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.crashes = CrashDatabase(None, None, {'dummy_data': '1'})
 
         self.assertEqual(self.crashes.get_comment_url(self.crashes.download(0),
-            0), 'http://foo.bug.net/0')
+            0), 'http://foo.bugs.example.com/0')
 
         # test-suite internal consistency check: Python signatures are
         # indeed equal and exist
@@ -411,13 +411,13 @@ class _MemoryCrashDBTest(unittest.TestCase):
         # to the correct ID
         r = copy.copy(self.crashes.download(3))
         self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-            'http://pygoo.bug.net/5')
+            'http://pygoo.bugs.example.com/5')
         self.assertEqual(self.crashes.check_duplicate(5), (3, '4.1'))
 
         r = copy.copy(self.crashes.download(3))
         r['Package'] = 'python-goo 5.1'
         self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-            'http://pygoo.bug.net/6')
+            'http://pygoo.bugs.example.com/6')
         self.assertEqual(self.crashes.check_duplicate(6), (4, None))
 
         # check with unknown fixed version
@@ -427,7 +427,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         r = copy.copy(self.crashes.download(3))
         r['Package'] = 'python-goo 5.1'
         self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-            'http://pygoo.bug.net/7')
+            'http://pygoo.bugs.example.com/7')
         self.assertEqual(self.crashes.check_duplicate(7), (3, ''))
 
         # final consistency check
@@ -472,7 +472,7 @@ File "test.py", line 2, in g_foo00
 return x/0
 ZeroDivisionError%i: integer division or modulo by zero''' % bug
             self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
-                'http://pygoo.bug.net/%i' % bug)
+                'http://pygoo.bugs.example.com/%i' % bug)
             self.crashes.check_duplicate(bug)
             # mark crash as fixed now
             self.crashes.reports[bug]['fixed_version'] = str(bug)
