@@ -1,4 +1,4 @@
-apport (0.120) UNRELEASED; urgency=low
+apport (0.120) jaunty; urgency=low
 
   * man/apport-cli.1: Fix "sytem" typo. (LP: #288977)
   * apport/fileutils.py: Add new function get_options() to read
@@ -32,7 +32,7 @@ apport (0.120) UNRELEASED; urgency=low
     package hook does not exist.
   * apport/hookutils.py, _parse_gconf_schema(): Correctly handle bool values.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Nov 2008 18:11:41 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Nov 2008 19:24:23 +0100
 
 apport (0.119) intrepid; urgency=low
 
