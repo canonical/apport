@@ -271,7 +271,6 @@ def attach_gconf(report, package):
         keys.sort()
         for key in keys:
             value = non_defaults[key]
-            print key, value
             s += '%s=%s\n' % (key, value)
 
         report['GConfNonDefault'] = s
@@ -295,7 +294,14 @@ def _parse_gconf_schema(schema_file):
         for schemalist in gconfschemafile.getElementsByTagName('schemalist'):
             for schema in schemalist.getElementsByTagName('schema'):
                 key = schema.getElementsByTagName('applyto')[0].childNodes[0].data
+                type = schema.getElementsByTagName('type')[0].childNodes[0].data
                 default = schema.getElementsByTagName('default')[0].childNodes[0].data
-                ret[key] = default
+                if type == 'bool':
+                    if default:
+                        ret[key] = 'true'
+                    else:
+                        ret[key] = 'false'
+                else:
+                    ret[key] = default
 
     return ret
