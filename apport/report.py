@@ -539,6 +539,8 @@ class Report(ProblemReport):
             execfile('%s/%s.py' % (_hook_dir, self['Package'].split()[0]), symb)
             symb['add_info'](self)
         except:
+            print >> sys.stderr, 'hook %s crashed:' % hook
+            traceback.print_exc()
             pass
 
         # source package hook
@@ -547,6 +549,8 @@ class Report(ProblemReport):
                 execfile('%s/source_%s.py' % (_hook_dir, self['SourcePackage'].split()[0]), symb)
                 symb['add_info'](self)
             except:
+                print >> sys.stderr, 'hook %s crashed:' % hook
+                traceback.print_exc()
                 pass
 
     def search_bug_patterns(self, baseurl):

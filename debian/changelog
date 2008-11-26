@@ -26,8 +26,10 @@ apport (0.120) UNRELEASED; urgency=low
     the branch!
   * source_linux.py hook: Use above tool functions, which greatly simplifies
     the hook.
+  * apport/report.py: Also print exceptions from binary and source package
+    hooks, not just from common ones.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Nov 2008 13:26:06 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Nov 2008 17:45:05 +0100
 
 apport (0.119) intrepid; urgency=low
 
