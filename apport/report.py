@@ -545,13 +545,15 @@ class Report(ProblemReport):
 
         # source package hook
         if self.has_key('SourcePackage'):
-            try:
-                execfile('%s/source_%s.py' % (_hook_dir, self['SourcePackage'].split()[0]), symb)
-                symb['add_info'](self)
-            except:
-                print >> sys.stderr, 'hook %s crashed:' % hook
-                traceback.print_exc()
-                pass
+            src_hook = '%s/source_%s.py' % (_hook_dir, self['SourcePackage'].split()[0])
+            if os.path.exists(src_hook):
+                try:
+                    execfile(src_hook, symb)
+                    symb['add_info'](self)
+                except:
+                    print >> sys.stderr, 'hook %s crashed:' % hook
+                    traceback.print_exc()
+                    pass
 
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
