@@ -21,8 +21,13 @@ apport (0.120) UNRELEASED; urgency=low
     behind.
   * apport/crashdb_impl/memory.py: Use example.com, not bug.net, since the
     latter actually exists now.
+  * apport/hookutils.py: Add attach_network(), attach_alsa(), and
+    attach_hardware(), and add proper docstrings. Thanks to Matt Zimmerman for
+    the branch!
+  * source_linux.py hook: Use above tool functions, which greatly simplifies
+    the hook.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 21 Nov 2008 21:37:48 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Nov 2008 13:26:06 +0100
 
 apport (0.119) intrepid; urgency=low
 

@@ -19,52 +19,130 @@ import glob
 import xml.dom, xml.dom.minidom
 
 def path_to_key(path):
-	return path.replace('/', '.')
+    '''Generate a valid report key name from a file path.
+        
+    This will meet apport's restrictions on the characters used in keys.
+    '''
+    return path.replace('/', '.')
 
 def attach_file_if_exists(report, path, key=None):
-	if not key:
-		key = path_to_key(path)
+    '''Attach file contents if file exists.'''
 
-	if os.path.exists(path):
-		attach_file(report, path, key)
+    if not key:
+        key = path_to_key(path)
+
+    if os.path.exists(path):
+        attach_file(report, path, key)
+
+def read_file(path):
+    '''Return the contents of the specified path. 
+        
+    Upon error, this will deliver a a text representation of the error,
+    instead of failing.
+    '''
+    try:
+        return open(path).read().strip()
+    except Exception, e:
+        return 'Error: ' + str(e)
 
 def attach_file(report, path, key=None):
-	if not key:
-		key = path_to_key(path)
+    '''Attach a file to the report.
 
-	report[key] = open(path).read()
+    If key is not specified, the key name will be derived from the file
+    name with path_to_key().
+    '''
+    if not key:
+        key = path_to_key(path)
+
+    report[key] = read_file(path)
 
 def attach_conffiles(report, package, conffiles=None):
-	'''Attach information about any modified or deleted conffiles'''
+    '''Attach information about any modified or deleted conffiles'''
 
-	output = command_output(['dpkg-query','-W','--showformat=${Conffiles}',
+    output = command_output(['dpkg-query','-W','--showformat=${Conffiles}',
                              package])
-	for line in output.split('\n'):
-		path, default_md5sum = line.strip().split()
+    for line in output.split('\n'):
+        path, default_md5sum = line.strip().split()
 
-		if conffiles and path not in conffiles: continue
+        if conffiles and path not in conffiles: continue
 
-		key = 'modified.conffile.' + path_to_key(path)
+        key = 'modified.conffile.' + path_to_key(path)
 
-		if os.path.exists(path):
-			contents = open(path).read()
-			m = md5.new()
-			m.update(contents)
-			calculated_md5sum = m.hexdigest()
+        if os.path.exists(path):
+            contents = open(path).read()
+            m = md5.new()
+            m.update(contents)
+            calculated_md5sum = m.hexdigest()
 
-			if calculated_md5sum != default_md5sum:
-				report[key] = contents
-				statinfo = os.stat(path)
-				mtime = datetime.datetime.fromtimestamp(statinfo.st_mtime)
-				mtime_key = 'mtime.conffile.' + path_to_key(path)
-				report[mtime_key] = mtime.isoformat()
-		else:
-			report[key] = '[deleted]'
+            if calculated_md5sum != default_md5sum:
+                report[key] = contents
+                statinfo = os.stat(path)
+                mtime = datetime.datetime.fromtimestamp(statinfo.st_mtime)
+                mtime_key = 'mtime.conffile.' + path_to_key(path)
+                report[mtime_key] = mtime.isoformat()
+        else:
+            report[key] = '[deleted]'
+
+def attach_dmesg(report):
+    '''Attach information from the kernel ring buffer (dmesg).'''
+
+    report['BootDmesg'] = open('/var/log/dmesg').read()
+    report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 /var/log/dmesg -'])
+
+def attach_hardware(report):
+    attach_dmesg(report)
+
+    attach_file(report, '/proc/interrupts', 'ProcInterrupts')
+    attach_file(report, '/proc/version_signature', 'ProcVersionSignature')
+    attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
+    attach_file(report, '/proc/cmdline', 'ProcCmdLine')
+    attach_file(report, '/proc/modules', 'ProcModules')
+
+    report['LsPci'] = command_output(['lspci','-vvnn'])
+    report['LsUsb'] = command_output(['lsusb'])
+    report['HalComputerInfo'] = hal_dump_udi('/org/freedesktop/Hal/devices/computer')
+
+    if 'Uname' in report:
+        # already covered in ProcVersionSignature
+        del report['Uname']
+
+def attach_alsa(report):
+    '''Attach ALSA subsystem information to the report.
+
+    (loosely based on http://www.alsa-project.org/alsa-info.sh)
+        '''
+    attach_file_if_exists(report, os.path.expanduser('~/.asoundrc'),
+                          'UserAsoundrc')
+    attach_file_if_exists(report, os.path.expanduser('~/.asoundrc.asoundconf'),
+                          'UserAsoundrcAsoundconf')
+    attach_file_if_exists(report, '/etc/asound.conf')
+
+    report['AlsaDevices'] = command_output(['ls','-l','/dev/snd/'])
+    report['AplayDevices'] = command_output(['aplay','-l'])
+    report['ArecordDevices'] = command_output(['arecord','-l'])
+
+    report['PciMultimedia'] = pci_devices(PCI_MULTIMEDIA)
+
+    cards = []
+    for line in open('/proc/asound/cards'):
+        if ']:' in line:
+            fields = line.lstrip().split()
+            cards.append(fields[0])
+
+    for card in cards:
+        key = 'Amixer.%s.info' % card
+        report[key] = command_output(['amixer', '-c', card, 'info'])
+        key = 'Amixer.%s.values' % card
+        report[key] = command_output(['amixer', '-c', card])
+
+    # This seems redundant with the amixer info, do we need it?
+    #report['AlsactlStore'] = command-output(['alsactl', '-f', '-', 'store'])
 
 def command_output(command, input = None, stderr = subprocess.STDOUT):
-    '''Try to execute given command (array) and return its stdout, or return
-    a textual error if it failed.'''
-
+    '''Try to execute given command (array) and return its stdout. 
+    
+    In case of failure, a textual error gets returned.
+    '''
     try:
        sp = subprocess.Popen(command, stdout=subprocess.PIPE,
                              stderr=stderr, close_fds=True)
@@ -79,14 +157,15 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
            str(command), sp.returncode, out)
 
 def recent_syslog(pattern):
-	'''Extract recent messages from syslog which match pattern
-    (eg. re object)'''
-
-	lines = ''
-	for line in open('/var/log/syslog'):
-		if pattern.search(line):
-			lines += line
-	return lines
+    '''Extract recent messages from syslog which match a regex.
+        
+    pattern should be a "re" object.
+    '''
+    lines = ''
+    for line in open('/var/log/syslog'):
+        if pattern.search(line):
+            lines += line
+    return lines
 
 PCI_MASS_STORAGE = 0x01
 PCI_NETWORK = 0x02
@@ -102,98 +181,121 @@ PCI_PROCESSORS = 0x0b
 PCI_SERIAL_BUS = 0x0c
 
 def pci_devices(*pci_classes):
-	if not pci_classes:
-		return command_output(['lspci', '-vvnn'])
+    '''Return a text dump of PCI devices attached to the system.'''
 
-	slots = []
-	output = command_output(['lspci','-vvmmnn'])
-	for paragraph in output.split('\n\n'):
-		pci_class = None
-		pci_subclass = None
-		slot = None
+    if not pci_classes:
+        return command_output(['lspci', '-vvnn'])
 
-		for line in paragraph.split('\n'):
-			key, value = line.split(':',1)
-			value = value.strip()
-			key = key.strip()
-			if key == 'Class':
-				n = int(value[-5:-1],16)
-				pci_class = (n & 0xff00) >> 8
-				pci_subclass = (n & 0x00ff)
-			elif key == 'Slot':
-				slot = value
+    slots = []
+    output = command_output(['lspci','-vvmmnn'])
+    for paragraph in output.split('\n\n'):
+        pci_class = None
+        pci_subclass = None
+        slot = None
 
-		if pci_class and slot and pci_class in pci_classes:
-			slots.append(slot)
+        for line in paragraph.split('\n'):
+            key, value = line.split(':',1)
+            value = value.strip()
+            key = key.strip()
+            if key == 'Class':
+                n = int(value[-5:-1],16)
+                pci_class = (n & 0xff00) >> 8
+                pci_subclass = (n & 0x00ff)
+            elif key == 'Slot':
+                slot = value
 
-	cmd = ['lspci','-vvnn']
-	for slot in slots:
-		cmd.extend(['-s',slot])
+        if pci_class and slot and pci_class in pci_classes:
+            slots.append(slot)
 
-	return command_output(cmd)
+    cmd = ['lspci','-vvnn']
+    for slot in slots:
+        cmd.extend(['-s',slot])
+
+    return command_output(cmd)
 
 def usb_devices():
-	# TODO: would be nice to be able to filter by interface class
-	return command_output(['lsusb','-v'])
+    '''Return a text dump of USB devices attached to the system.'''
+
+    # TODO: would be nice to be able to filter by interface class
+    return command_output(['lsusb','-v'])
 
 def hal_find_by_capability(capability):
+    '''Retrieve a list of UDIs for hal objects having the specified capability.'''
+
     output = command_output(['hal-find-by-capability',
                              '--capability',capability])
     return output.split('\n')
 
 def hal_dump_udi(udi):
-	return command_output(['lshal','-u',udi])
+    '''Dump the properties of a HAL object, specified by its UDI.'''
+
+    return command_output(['lshal','-u',udi])
 
 def files_in_package(package, globpat=None):
-	output = command_output(['dpkg-query','--listfiles',package])
-	files = []
-	for path in output.split('\n'):
-		if globpat is None or glob.fnmatch.fnmatch(path, globpat):
-			files.append(path)
-	return files
+    '''Retrieve a list of files owned by package, optionally matching globpat'''
+
+    output = command_output(['dpkg-query','--listfiles',package])
+    files = []
+    for path in output.split('\n'):
+        if globpat is None or glob.fnmatch.fnmatch(path, globpat):
+            files.append(path)
+    return files
 
 def attach_gconf(report, package):
-	import gconf
-	import glib
+    '''Attach information about gconf keys set to non-default values.'''
 
-	client = gconf.client_get_default()
+    import gconf
+    import glib
 
-	non_defaults = {}
-	for schema_file in files_in_package(package,
+    client = gconf.client_get_default()
+
+    non_defaults = {}
+    for schema_file in files_in_package(package,
                                     '/usr/share/gconf/schemas/*.schemas'):
 
-		for key, default_value in _parse_gconf_schema(schema_file).items():
-			try:
-				value = client.get(key).to_string()
-				if value != default_value:
-					non_defaults[key] = value
-			except glib.GError:
-				# Fall back to gconftool-2 and string comparison
-				value = command_output(['gconftool-2','-g',key])
+        for key, default_value in _parse_gconf_schema(schema_file).items():
+            try:
+                value = client.get(key).to_string()
+                if value != default_value:
+                    non_defaults[key] = value
+            except glib.GError:
+                # Fall back to gconftool-2 and string comparison
+                value = command_output(['gconftool-2','-g',key])
 
-				if value != default_value:
-					non_defaults[key] = value
+                if value != default_value:
+                    non_defaults[key] = value
 
-	if non_defaults:
-		s = ''
-		keys = non_defaults.keys()
-		keys.sort()
-		for key in keys:
-			value = non_defaults[key]
-			print key, value
-			s += '%s=%s\n' % (key, value)
+    if non_defaults:
+        s = ''
+        keys = non_defaults.keys()
+        keys.sort()
+        for key in keys:
+            value = non_defaults[key]
+            print key, value
+            s += '%s=%s\n' % (key, value)
 
-		report['GConfNonDefault'] = s
+        report['GConfNonDefault'] = s
+
+def attach_network(report):
+    '''Attach network-related information to report.'''
+
+    report['IpRoute'] = command_output(['ip','route'])
+    report['IpAddr'] = command_output(['ip','addr'])
+    report['PciNetwork'] = pci_devices(PCI_NETWORK)
+
+    for var in ('http_proxy', 'ftp_proxy', 'no_proxy'):
+        if var in os.environ:
+            report[var] = os.environ[var]
 
 def _parse_gconf_schema(schema_file):
-	ret = {}
+    ret = {}
 
-	dom = xml.dom.minidom.parse(schema_file)
-	for gconfschemafile in dom.getElementsByTagName('gconfschemafile'):
-		for schemalist in gconfschemafile.getElementsByTagName('schemalist'):
-			for schema in schemalist.getElementsByTagName('schema'):
-				key = schema.getElementsByTagName('applyto')[0].childNodes[0].data
-				default = schema.getElementsByTagName('default')[0].childNodes[0].data
-				ret[key] = default
+    dom = xml.dom.minidom.parse(schema_file)
+    for gconfschemafile in dom.getElementsByTagName('gconfschemafile'):
+        for schemalist in gconfschemafile.getElementsByTagName('schemalist'):
+            for schema in schemalist.getElementsByTagName('schema'):
+                key = schema.getElementsByTagName('applyto')[0].childNodes[0].data
+                default = schema.getElementsByTagName('default')[0].childNodes[0].data
+                ret[key] = default
 
-	return ret
+    return ret
