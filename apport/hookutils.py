@@ -98,8 +98,8 @@ def attach_hardware(report):
     attach_file(report, '/proc/cmdline', 'ProcCmdLine')
     attach_file(report, '/proc/modules', 'ProcModules')
 
-    report['LsPci'] = command_output(['lspci','-vvnn'])
-    report['LsUsb'] = command_output(['lsusb'])
+    report['Lspci'] = command_output(['lspci','-vvnn'])
+    report['Lsusb'] = command_output(['lsusb'])
     report['HalComputerInfo'] = hal_dump_udi('/org/freedesktop/Hal/devices/computer')
 
     if 'Uname' in report:
