@@ -535,20 +535,22 @@ class Report(ProblemReport):
                 pass
 
         # binary package hook
-        try:
-            execfile('%s/%s.py' % (_hook_dir, self['Package'].split()[0]), symb)
-            symb['add_info'](self)
-        except:
-            print >> sys.stderr, 'hook %s crashed:' % hook
-            traceback.print_exc()
-            pass
+        hook = '%s/%s.py' % (_hook_dir, self['Package'].split()[0])
+        if os.path.exists(hook):
+            try:
+                execfile(hook, symb)
+                symb['add_info'](self)
+            except:
+                print >> sys.stderr, 'hook %s crashed:' % hook
+                traceback.print_exc()
+                pass
 
         # source package hook
         if self.has_key('SourcePackage'):
-            src_hook = '%s/source_%s.py' % (_hook_dir, self['SourcePackage'].split()[0])
-            if os.path.exists(src_hook):
+            hook = '%s/source_%s.py' % (_hook_dir, self['SourcePackage'].split()[0])
+            if os.path.exists(hook):
                 try:
-                    execfile(src_hook, symb)
+                    execfile(hook, symb)
                     symb['add_info'](self)
                 except:
                     print >> sys.stderr, 'hook %s crashed:' % hook
