@@ -198,7 +198,10 @@ package).
     \item [ProcEnviron:] (required) A subset of the process' environment, from
     \verb!/proc/pid/env!; this should only show some standard variables that do
     not disclose potentially sensitive information, like \verb!$SHELL!,
-    \verb!$PATH!, \verb!$LANG!, and \verb!$LC_*!.
+    \verb!$LANG!, and \verb!$LC_*!. \verb!$PATH! should only be examined for
+    being the vendor default (not mentioned at all then), containing
+    nonstandard system directories ("'custom, no user"'), or containing paths
+    from /home ("'custom, user"').
 
     \item [ProcCmdline:] (required) Contents of \verb!/proc/pid/cmdline!
 

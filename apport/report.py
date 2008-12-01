@@ -376,7 +376,7 @@ class Report(ProblemReport):
           variables that do not disclose potentially sensitive information, plus
           the ones mentioned in extraenv)
         '''
-        safe_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
+        safe_vars = ['SHELL', 'LANGUAGE', 'LANG', 'LC_CTYPE',
             'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
             'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
             'LC_IDENTIFICATION', 'LOCPATH'] + extraenv
@@ -395,6 +395,16 @@ class Report(ProblemReport):
                     if self['ProcEnviron']:
                         self['ProcEnviron'] += '\n'
                     self['ProcEnviron'] += l
+                elif l.startswith('PATH='):
+                    p = l.split('=', 1)[1]
+                    if '/home' in p or '/tmp' in p:
+                        if self['ProcEnviron']:
+                            self['ProcEnviron'] += '\n'
+                        self['ProcEnviron'] += 'PATH: custom, user'
+                    elif p != '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games':
+                        if self['ProcEnviron']:
+                            self['ProcEnviron'] += '\n'
+                        self['ProcEnviron'] += 'PATH: custom, no user'
 
     def add_gdb_info(self, debugdir=None):
         '''Add information from gdb.
@@ -1078,6 +1088,39 @@ sys.stdin.readline()
 
         # test process is gone, should complain about nonexisting PID
         self.assertRaises(OSError, pr.add_proc_info, p.pid)
+
+    def test_add_path_classification(self):
+        '''Test classification of $PATH.'''
+
+        # system default
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, 
+            env={'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games'})
+        time.sleep(0.1)
+        r = Report()
+        r.add_proc_environ(pid=p.pid)
+        p.communicate('')
+        self.failIf('PATH' in r['ProcEnviron'], 
+            'system default $PATH should be filtered out')
+
+        # no user paths
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, 
+            env={'PATH': '/usr/sbin:/usr/bin:/sbin:/bin'})
+        time.sleep(0.1)
+        r = Report()
+        r.add_proc_environ(pid=p.pid)
+        p.communicate('')
+        self.assert_('PATH: custom, no user' in r['ProcEnviron'], 
+            'PATH is customized without user paths')
+
+        # user paths
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, 
+            env={'PATH': '/home/pitti:/usr/sbin:/usr/bin:/sbin:/bin'})
+        time.sleep(0.1)
+        r = Report()
+        r.add_proc_environ(pid=p.pid)
+        p.communicate('')
+        self.assert_('PATH: custom, user' in r['ProcEnviron'], 
+            'PATH is customized with user paths')
 
     def test_check_interpreted(self):
         '''Test _check_interpreted().'''

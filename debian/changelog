@@ -35,8 +35,12 @@ apport (0.120) jaunty; urgency=low
     /proc/sys/kernel/crashdump-size.
   * debian/apport.init: Make restart actually work if the default file was
     changed. (LP: #292402)
+  * apport/report.py, add_proc_environ(): Do not include verbatim $PATH, only
+    classify it as "default" (does not appear at all then), "custom,
+    user" (/home or /tmp in $PATH), or "custom, no user". Add appropriate test
+    case. Update the data format documentation accordingly. (LP: #245263)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Dec 2008 10:08:29 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Dec 2008 10:39:50 -0800
 
 apport (0.119) intrepid; urgency=low
 
