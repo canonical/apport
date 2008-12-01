@@ -22,8 +22,6 @@ SCRIPTNAME=/etc/init.d/$NAME
 enabled=1
 [ -e /etc/default/$NAME ] && . /etc/default/$NAME || true
 
-[ "$enabled" = "1" ] || exit 0
-
 # Define LSB log_* functions.
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
 . /lib/lsb/init-functions
@@ -69,6 +67,7 @@ do_stop()
 
 case "$1" in
   start)
+        [ "$enabled" = "1" ] || exit 0
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC:" "$NAME"
 	do_start
 	case "$?" in
@@ -84,10 +83,12 @@ case "$1" in
 		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 	esac
 	;;
-  restart|reload|force-reload)
+  restart|force-reload)
+        $0 stop || true
+        $0 start
 	;;
   *)
-	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
+	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
 	exit 3
 	;;
 esac

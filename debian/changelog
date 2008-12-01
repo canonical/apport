@@ -33,8 +33,10 @@ apport (0.120) jaunty; urgency=low
   * apport/hookutils.py, _parse_gconf_schema(): Correctly handle bool values.
   * debian/apport.init: Drop long obsolete setting of
     /proc/sys/kernel/crashdump-size.
+  * debian/apport.init: Make restart actually work if the default file was
+    changed. (LP: #292402)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Dec 2008 10:02:52 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Dec 2008 10:08:29 -0800
 
 apport (0.119) intrepid; urgency=low
 
