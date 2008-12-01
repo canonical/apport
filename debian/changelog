@@ -31,8 +31,10 @@ apport (0.120) jaunty; urgency=low
   * apport/report.py, add_hooks_info(): Do not print an error if a source
     package hook does not exist.
   * apport/hookutils.py, _parse_gconf_schema(): Correctly handle bool values.
+  * debian/apport.init: Drop long obsolete setting of
+    /proc/sys/kernel/crashdump-size.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Nov 2008 19:24:23 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Dec 2008 10:02:52 -0800
 
 apport (0.119) intrepid; urgency=low
 

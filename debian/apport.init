@@ -67,14 +67,6 @@ do_stop()
 	fi
 }
 
-# Set max core dump size, if specified in the default file
-set_maxsize()
-{
-    if [ -n "$maxsize" ] && [ -e /proc/sys/kernel/crashdump-size ]; then
-	echo "$maxsize" > /proc/sys/kernel/crashdump-size
-    fi
-}
-
 case "$1" in
   start)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC:" "$NAME"
@@ -83,7 +75,6 @@ case "$1" in
 		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
 		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 	esac
-	set_maxsize
 	;;
   stop)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC:" "$NAME"
@@ -94,7 +85,6 @@ case "$1" in
 	esac
 	;;
   restart|reload|force-reload)
-	set_maxsize
 	;;
   *)
 	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
