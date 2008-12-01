@@ -1,3 +1,16 @@
+apport (0.121) UNRELEASED; urgency=low
+
+  * debian/apport.init: Drop long obsolete setting of
+    /proc/sys/kernel/crashdump-size.
+  * debian/apport.init: Make restart actually work if the default file was
+    changed. (LP: #292402)
+  * apport/report.py, add_proc_environ(): Do not include verbatim $PATH, only
+    classify it as "default" (does not appear at all then), "custom,
+    user" (/home or /tmp in $PATH), or "custom, no user". Add appropriate test
+    case. Update the data format documentation accordingly. (LP: #245263)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Dec 2008 15:45:19 -0800
+
 apport (0.120) jaunty; urgency=low
 
   * man/apport-cli.1: Fix "sytem" typo. (LP: #288977)
@@ -31,16 +44,8 @@ apport (0.120) jaunty; urgency=low
   * apport/report.py, add_hooks_info(): Do not print an error if a source
     package hook does not exist.
   * apport/hookutils.py, _parse_gconf_schema(): Correctly handle bool values.
-  * debian/apport.init: Drop long obsolete setting of
-    /proc/sys/kernel/crashdump-size.
-  * debian/apport.init: Make restart actually work if the default file was
-    changed. (LP: #292402)
-  * apport/report.py, add_proc_environ(): Do not include verbatim $PATH, only
-    classify it as "default" (does not appear at all then), "custom,
-    user" (/home or /tmp in $PATH), or "custom, no user". Add appropriate test
-    case. Update the data format documentation accordingly. (LP: #245263)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 01 Dec 2008 10:39:50 -0800
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Nov 2008 19:24:23 +0100
 
 apport (0.119) intrepid; urgency=low
 
