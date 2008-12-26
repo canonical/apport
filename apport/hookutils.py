@@ -87,6 +87,19 @@ def attach_dmesg(report):
 	report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 /var/log/dmesg -'])
 
 def attach_hardware(report):
+	'''Attach a standard set of hardware-related data to the report, including:
+
+	- kernel dmesg (boot and current)
+	- /proc/interrupts
+	- /proc/version_signature
+	- /proc/cpuinfo
+	- /proc/cmdline
+	- /proc/modules
+	- lspci -vvnn
+	- lsusb
+	- devices/computer from HAL
+	'''
+
 	attach_dmesg(report)
 
 	attach_file(report, '/proc/interrupts', 'ProcInterrupts')
