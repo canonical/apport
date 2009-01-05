@@ -8,8 +8,11 @@ apport (0.123) UNRELEASED; urgency=low
     /proc/pid/attr/current if we are root. This works around Python
     segfaulting regression when encountering EPERM on read() (see 
     LP #314065).
+  * apport/report.py testsuite: Use "isofs" for module license check
+    testing instead of "usbcore", since the latter is more likely to
+    get built into the kernel.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 15:07:50 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 15:17:04 +0100
 
 apport (0.122) jaunty; urgency=low
 

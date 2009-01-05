@@ -2012,18 +2012,18 @@ ZeroDivisionError: integer division or modulo by zero'''
         #  - fake BAD module
 
         # direct license check
-        self.assert_('GPL' in get_module_license('usbcore'))
+        self.assert_('GPL' in get_module_license('isofs'))
         self.assert_(get_module_license('does-not-exist') == None)
         self.assert_('GPL' in get_module_license(good_ko.name))
         self.assert_('BAD' in get_module_license(bad_ko.name))
 
         # check via nonfree_modules logic
         f = tempfile.NamedTemporaryFile()
-        f.write('usbcore\ndoes-not-exist\n%s\n%s\n' %
+        f.write('isofs\ndoes-not-exist\n%s\n%s\n' %
                 (good_ko.name,bad_ko.name))
         f.flush()
         nonfree = nonfree_modules(f.name)
-        self.failIf('usbcore' in nonfree)
+        self.failIf('isofs' in nonfree)
         self.failIf('does-not-exist' in nonfree)
         self.failIf(good_ko.name in nonfree)
         self.assert_(bad_ko.name in nonfree)
