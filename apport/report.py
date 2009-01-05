@@ -403,11 +403,11 @@ class Report(ProblemReport):
                     if '/home' in p or '/tmp' in p:
                         if self['ProcEnviron']:
                             self['ProcEnviron'] += '\n'
-                        self['ProcEnviron'] += 'PATH: custom, user'
+                        self['ProcEnviron'] += 'PATH=(custom, user)'
                     elif p != '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games':
                         if self['ProcEnviron']:
                             self['ProcEnviron'] += '\n'
-                        self['ProcEnviron'] += 'PATH: custom, no user'
+                        self['ProcEnviron'] += 'PATH=(custom, no user)'
 
     def add_gdb_info(self, debugdir=None):
         '''Add information from gdb.
@@ -1112,7 +1112,7 @@ sys.stdin.readline()
         r = Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate('')
-        self.assert_('PATH: custom, no user' in r['ProcEnviron'], 
+        self.assert_('PATH=(custom, no user)' in r['ProcEnviron'], 
             'PATH is customized without user paths')
 
         # user paths
@@ -1122,7 +1122,7 @@ sys.stdin.readline()
         r = Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate('')
-        self.assert_('PATH: custom, user' in r['ProcEnviron'], 
+        self.assert_('PATH=(custom, user)' in r['ProcEnviron'], 
             'PATH is customized with user paths')
 
     def test_check_interpreted(self):
