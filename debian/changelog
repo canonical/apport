@@ -2,8 +2,10 @@ apport (0.123) UNRELEASED; urgency=low
 
   * bin/apport: Do not write the report into the log file if opening
     the report file failed; just log the error.
+  * bin/apport: Remove a previously seen report file, so that the
+    following creation with O_EXCL actually works.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 14:14:48 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 14:28:21 +0100
 
 apport (0.122) jaunty; urgency=low
 
