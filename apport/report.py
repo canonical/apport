@@ -362,7 +362,10 @@ class Report(ProblemReport):
         # grab AppArmor or SELinux context
         # If no LSM is loaded, reading will return -EINVAL
         try:
-            self['ProcAttrCurrent'] = open('/proc/' + pid + '/attr/current').read().strip()
+            # On Linux 2.6.28+, 'current' is world readable, but read() gives
+            # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
+            if os.getuid() == 0:
+                self['ProcAttrCurrent'] = open('/proc/' + pid + '/attr/current').read().strip()
         except (IOError, OSError):
             pass
 

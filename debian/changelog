@@ -4,8 +4,12 @@ apport (0.123) UNRELEASED; urgency=low
     the report file failed; just log the error.
   * bin/apport: Remove a previously seen report file, so that the
     following creation with O_EXCL actually works.
+  * apport/report.py, add_proc_info(): Only try to attach
+    /proc/pid/attr/current if we are root. This works around Python
+    segfaulting regression when encountering EPERM on read() (see 
+    LP #314065).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 14:28:21 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 15:07:50 +0100
 
 apport (0.122) jaunty; urgency=low
 
