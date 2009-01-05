@@ -64,6 +64,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # set reprocessing tags
         hdr = {}
         hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
+        # append tags defined in the report
+        if report.has_key('Tags'):
+            hdr['Tags'] += ' ' + report['Tags']
         a = report.get('PackageArchitecture')
         if not a or a == 'all':
             a = report.get('Architecture')
