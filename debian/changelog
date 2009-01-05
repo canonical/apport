@@ -1,3 +1,10 @@
+apport (0.123) UNRELEASED; urgency=low
+
+  * bin/apport: Do not write the report into the log file if opening
+    the report file failed; just log the error.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 14:14:48 +0100
+
 apport (0.122) jaunty; urgency=low
 
   * apport/crashdb_impl/launchpad.py: Support extra tags in the
