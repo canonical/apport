@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, time, optparse, subprocess, sys, signal, zlib
+import os, time, optparse, subprocess, sys, signal, zlib, errno
 
 from apport.crashdb import get_crashdb
 
@@ -150,6 +150,10 @@ def parse_options():
     optparser.add_option('-a', '--auth',
         help='Path to a file with the crash database authentication information.',
         action='store', type='string', dest='auth_file', default=None)
+    optparser.add_option('-l', '--lock',
+        help='Lock file; will be created and removed on successful exit, and '
+            'program immediately aborts if it already exists',
+        action='store', dest='lockfile', default=None)
     optparser.add_option('-d', '--duplicate-db',
         help='Path to the duplicate sqlite database (default: disabled)',
         action='store', type='string', dest='dup_db', metavar='PATH',
@@ -178,5 +182,18 @@ def parse_options():
 
 opts, args = parse_options()
 
+if opts.lockfile:
+    try:
+        f = os.open(opts.lockfile, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0x777)
+        os.close(f)
+    except OSError, e:
+        if e.errno == errno.EEXIST:
+            sys.exit(0)
+        else:
+            raise
+
 CrashDigger(opts.chroot_map, opts.auth_file, opts.verbose, opts.dup_db,
     opts.dupcheck_mode).run()
+
+if opts.lockfile:
+    os.unlink(opts.lockfile)

@@ -26,6 +26,8 @@ databases = { 'memory': {
 echo "$@" >> %s''' % self.apport_chroot_log)
         os.chmod(self.apport_chroot, 0755)
 
+        self.lock_file = os.path.join(self.workdir, 'lock')
+
         os.environ['APPORT_CRASHDB_CONF'] = crashdb_conf
         os.environ['PYTHONPATH'] = '.'
         os.environ['PATH'] = '%s:%s:%s' % (self.workdir, './bin', os.environ.get('PATH', ''))
@@ -49,8 +51,8 @@ echo "$@" >> %s''' % self.apport_chroot_log)
         '''Test crash retracing.'''
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-v'])
-        self.assertEqual(err, '', 'no error messages')
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
         self.assert_('retracing #0' in out)
         self.assert_('retracing #1' in out)
@@ -63,11 +65,13 @@ echo "$@" >> %s''' % self.apport_chroot_log)
         chroot_log = open(self.apport_chroot_log).read()
         self.assert_('retrace 1\n' in chroot_log)
         self.assert_('retrace 2\n' in chroot_log)
+        self.failIf (os.path.exists(self.lock_file))
 
     def test_crashes_error(self):
         '''Test crash retracing if apport-chroot fails on bug #1.'''
 
         # make apport-retrace fail on bug 1
+        os.rename(self.apport_chroot, self.apport_chroot + '.bak')
         open(self.apport_chroot, 'w').write('''#!/bin/sh
 echo "$@" >> %s
 while [ -n "$2" ]; do shift; done
@@ -76,9 +80,10 @@ if [ "$1" = 1 ]; then
     exit 1
 fi
 ''' % self.apport_chroot_log)
+        os.chmod(self.apport_chroot, 0755)
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-v'])
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assert_('Traceback' in err)
         self.assert_('SystemError: retracing #1 failed' in err)
         self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
@@ -95,12 +100,31 @@ fi
         self.assert_('retrace 1\n' in chroot_log)
         self.failIf('retrace 2\n' in chroot_log)
 
+        self.assert_(os.path.exists(self.lock_file))
+
+        os.rename(self.apport_chroot + '.bak', self.apport_chroot)
+
+        # subsequent start should not do anything until the lock file is cleaned up
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assertEqual(out, '')
+        self.assertEqual(err, '')
+
+        os.unlink(self.lock_file)
+
+        # now it should run again
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assert_('retracing #2' in out)
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.failIf (os.path.exists(self.lock_file))
+
     def test_dupcheck(self):
         '''Test duplicate checking.'''
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vD'])
-        self.assertEqual(err, '', 'no error messages')
+            os.path.join(self.workdir, 'dup.db'), '-vDl', self.lock_file])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
         self.failIf('#1' in out, 'signal crashes are not retraced')
         self.failIf('#2' in out, 'signal crashes are not retraced')
@@ -108,6 +132,7 @@ fi
         self.assert_('checking #4 for duplicate' in out)
         self.assert_('Report is a duplicate of #3 (not fixed yet)' in out)
         self.failIf(os.path.exists(self.apport_chroot_log))
+        self.failIf (os.path.exists(self.lock_file))
 
 
 tl = unittest.TestLoader()
