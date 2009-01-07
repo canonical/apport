@@ -4,39 +4,24 @@ import os, time, optparse, subprocess, sys, signal, zlib
 
 from apport.crashdb import get_crashdb
 
+# TODO: permanently save a set for crashes which aren't for our chroot map
+
 #
 # classes
 #
 
 class CrashDigger:
-    def __init__(self, chroot_map, auth_file, verbose=False, sleep_time=600,
-        dup_db=None, arch_indep_dupcheck=False, logfile=None, pidfile=None):
+    def __init__(self, chroot_map, auth_file, verbose=False,
+        dup_db=None, dupcheck_mode=False):
         '''Initialize pools.'''
 
         self.retrace_pool = set()
         self.dupcheck_pool = set()
-        self.fail_pool = set()
         self.verbose = verbose
         self.chroot_map = chroot_map
         self.auth_file = auth_file
-        self.sleep_time = sleep_time
         self.dup_db = dup_db
-        self.arch_indep_dupcheck = arch_indep_dupcheck
-        if logfile:
-            self.logfile = open(logfile, 'a')
-        else:
-            self.logfile = None
-
-        # daemonize if a pid file is given
-        if pidfile:
-            p = os.fork()
-            if p:
-                open(pidfile, 'w').write('%i' % p)
-                sys.exit(0)
-            os.close(0)
-            os.dup2(self.logfile.fileno(), sys.stdout.fileno())
-            os.dup2(self.logfile.fileno(), sys.stderr.fileno())
-            os.setsid()
+        self.dupcheck_mode = dupcheck_mode
 
         self.log('Initializing crash digger, using chroot map %s' % self.chroot_map)
 
@@ -55,8 +40,8 @@ class CrashDigger:
         the current date and time.'''
 
         if self.verbose:
-            print >> (self.logfile or sys.stdout), '%s: %s' % (time.strftime('%x %X'), str)
-            (self.logfile or sys.stdout).flush()
+            print >> sys.stdout, '%s: %s' % (time.strftime('%x %X'), str)
+            sys.stdout.flush()
 
     def fill_pool(self):
         '''Query crash db for new IDs to process.
@@ -64,29 +49,28 @@ class CrashDigger:
         This function also takes care of regularly consolidating the duplicate
         database.'''
 
-        if self.dup_db and self.arch_indep_dupcheck:
+        if self.dup_db and self.dupcheck_mode:
             if self.crashdb.duplicate_db_needs_consolidation():
                 self.log('Consolidating duplicate database...')
                 try:
                     self.crashdb.duplicate_db_consolidate()
-                    if self.verbose:
-                        self.log('duplicate db is now:\n-------------')
-                        for k, v in self.crashdb._duplicate_db_dump(True).iteritems():
-                            self.log('%s %s' % (k, v))
-                        self.log('-------------')
+                    #if self.verbose:
+                    #    self.log('duplicate db is now:\n-------------')
+                    #    for k, v in self.crashdb._duplicate_db_dump(True).iteritems():
+                    #        self.log('%s %s' % (k, v))
+                    #    self.log('-------------')
                 except Exception, e:
                     if 'database is locked' in e.message:
                         self.log('DB is already locked, skipping')
                     else:
                         raise
 
-        self.retrace_pool.update(self.crashdb.get_unretraced() - self.fail_pool)
-        if self.arch_indep_dupcheck:
-            self.dupcheck_pool.update(self.crashdb.get_dup_unchecked() - self.fail_pool)
+        if self.dupcheck_mode:
+            self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
             self.log('fill_pool: dup check pool now: %s' % str(self.dupcheck_pool))
-
-        self.log('fill_pool: retrace pool now: %s' % str(self.retrace_pool))
-        self.log('fill_pool: fail pool now: %s' % str(self.fail_pool))
+        else:
+            self.retrace_pool.update(self.crashdb.get_unretraced())
+            self.log('fill_pool: retrace pool now: %s' % str(self.retrace_pool))
 
     def retrace_next(self):
         '''Grab an ID from the retrace pool and retrace it.'''
@@ -98,12 +82,11 @@ class CrashDigger:
             rel = self.crashdb.get_distro_release(id)
         except ValueError:
 	    self.log('could not determine release -- no DistroRelease field?')
-            self.fail_pool.add(id)
             self.crashdb.mark_retraced(id)
 	    return
 	if rel not in self.releases:
 	    self.log('crash is release %s which does not have a chroot available, skipping' % rel)
-            self.fail_pool.add(id)
+            # TODO: self.no_chroot_pool.add(id)
 	    return
 
         # do it now already to avoid endless loops if apport-retrace fails
@@ -115,10 +98,10 @@ class CrashDigger:
             argv += ['--duplicate-db', self.dup_db]
         argv += ['retrace', str(id)]
 
-        result = subprocess.call(argv)
-        self.log('retracing #%i exit status: %i' % (id, result))
+        result = subprocess.call(argv, stderr=subprocess.STDOUT)
         if result != 0:
-            self.fail_pool.add(id)
+            self.log('retracing #%i failed with status: %i' % (id, result))
+            raise SystemError, 'retracing #%i failed' % id
 
     def dupcheck_next(self):
         '''Grab an ID from the dupcheck pool and process it.'''
@@ -130,6 +113,7 @@ class CrashDigger:
             report = self.crashdb.download(id)
         except (MemoryError, TypeError, ValueError, IOError, zlib.error), e:
             self.log('Cannot download report: ' + e.message)
+            print >> sys.stderr, 'Cannot download report %i:' % id, e.message
             return
 
         res = self.crashdb.check_duplicate(id, report)
@@ -144,20 +128,13 @@ class CrashDigger:
             self.log('Duplicate check negative')
 
     def run(self):
-        '''Process the work pools until they are empty and get new entries
-        afterwards.
+        '''Process the work pools until they are empty.'''
 
-        Sleep if no new items are available. This function never returns.'''
-
-        while True:
-            while self.dupcheck_pool:
-                self.dupcheck_next()
-            while self.retrace_pool:
-                self.retrace_next()
-            self.fill_pool()
-            if not self.retrace_pool and not self.dupcheck_pool:
-                self.log('work pools empty, sleeping for %i seconds' % self.sleep_time)
-                time.sleep(self.sleep_time)
+        self.fill_pool()
+        while self.dupcheck_pool:
+            self.dupcheck_next()
+        while self.retrace_pool:
+            self.retrace_next()
 
 #
 # functions
@@ -173,44 +150,25 @@ def parse_options():
     optparser.add_option('-a', '--auth',
         help='Path to a file with the crash database authentication information.',
         action='store', type='string', dest='auth_file', default=None)
-    optparser.add_option('-s', '--sleep',
-        help='Number of seconds to sleep when the work queue is empty (default: 600)',
-        action='store', type='int', dest='sleep', metavar='SECONDS', default=600)
     optparser.add_option('-d', '--duplicate-db',
         help='Path to the duplicate sqlite database (default: disabled)',
         action='store', type='string', dest='dup_db', metavar='PATH',
         default=None)
-    optparser.add_option('-i', '--arch-indep-dupcheck',
-        help='Check duplicates for architecture independent crashes (like Python exceptions)',
-        action='store_true', dest='arch_indep_dupcheck', default=False)
+    optparser.add_option('-D', '--dupcheck',
+        help='Only check duplicates for architecture independent crashes (like Python exceptions)',
+        action='store_true', dest='dupcheck_mode', default=False)
     optparser.add_option('-v', '--verbose',
         help='Verbose operation (also passed to apport-retrace)',
         action='store_true', dest='verbose', default=False)
-    optparser.add_option('-l', '--log',
-        help='Write messages to given log file)',
-        action='store', type='string', dest='logfile', metavar='LOGFILE',
-        default=None)
-    optparser.add_option('-p', '--pidfile',
-        help='Daemonize and write PID to given file)',
-        action='store', type='string', dest='pidfile', metavar='PIDFILE',
-        default=None)
-    optparser.add_option('-S', '--stop',
-        help='Stop a running daemon (needs --pidfile)', 
-        action='store_true', dest='stop', default=False)
 
     (opts, args) = optparser.parse_args()
 
-    if opts.stop:
-        if not opts.pidfile:
-            print >> sys.stderr, 'Error: -p/--pidfile needs to be specified'
-            sys.exit(1)
-    else:
-        if not opts.chroot_map:
-            print >> sys.stderr, 'Error: -m/--chroot-map needs to be specified'
-            sys.exit(1)
-        if not opts.auth_file:
-            print >> sys.stderr, 'Error: -a/--auth needs to be specified'
-            sys.exit(1)
+    if not opts.chroot_map and not opts.dupcheck_mode:
+        print >> sys.stderr, 'Error: --chroot-map or --dupcheck needs to be given'
+        sys.exit(1)
+    if not opts.auth_file:
+        print >> sys.stderr, 'Error: -a/--auth needs to be given'
+        sys.exit(1)
     
     return (opts, args)
 
@@ -220,11 +178,5 @@ def parse_options():
 
 opts, args = parse_options()
 
-if opts.stop:
-    pid = int(open(opts.pidfile).read().strip())
-    os.kill(pid, signal.SIGTERM)
-    print 'Killed daemon with PID %i' % pid
-    sys.exit(0)
-
-CrashDigger(opts.chroot_map, opts.auth_file, opts.verbose, opts.sleep,
-    opts.dup_db, opts.arch_indep_dupcheck, opts.logfile, opts.pidfile).run()
+CrashDigger(opts.chroot_map, opts.auth_file, opts.verbose, opts.dup_db,
+    opts.dupcheck_mode).run()
