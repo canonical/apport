@@ -349,12 +349,18 @@ in a dependent package.' % master)
             b.tags.remove(self.arch_tag)
         b.commit()
 
-    def mark_retrace_failed(self, id):
+    def mark_retrace_failed(self, id, invalid_msg=None):
         '''Mark crash id as 'failed to retrace'.'''
 
         b = Bug(id)
-        if 'apport-failed-retrace' not in b.tags:
-            b.tags.append('apport-failed-retrace')
+        if invalid_msg:
+            comment = Bug.NewComment(subject='Crash report cannot be processed',
+                text=invalid_msg)
+            b.comments.add(comment)
+            b.status = 'Invalid'
+        else:
+            if 'apport-failed-retrace' not in b.tags:
+                b.tags.append('apport-failed-retrace')
         b.commit()
 
     def _mark_dup_checked(self, id, report):
@@ -401,6 +407,8 @@ in a dependent package.' % master)
 #c.mark_regression(89040, 116026)
 #c.close_duplicate(89040, 116026)
 #c.mark_retrace_failed(89040)
+## OR:
+#c.mark_retrace_failed(89040, 'not properly frobnicated')
 
 #print c.get_unfixed()
 #print '89040', c.get_fixed_version(89040)

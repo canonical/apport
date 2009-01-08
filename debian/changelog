@@ -6,8 +6,12 @@ apport (0.124) UNRELEASED; urgency=low
     fakechroot. Also disable gconf-schemas and polkit-auth, since they
     do not work in fakechroots.
   * apport/crashdb_impl/launchpad.py: Allow using staging for testing.
+  * apport/crashdb.py, mark_retrace_failed(): Add new optional
+    argument "invalid_msg", intended for crashes which cannot be
+    retraced properly (e. g. due to outdated packages). Implement this
+    in apport/crashdb_impl/launchpad.py.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 12:36:58 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 12:48:57 +0100
 
 apport (0.123) jaunty; urgency=low
 

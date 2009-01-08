@@ -386,10 +386,13 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def mark_retrace_failed(self, id):
+    def mark_retrace_failed(self, id, invalid_msg=None):
         '''Mark crash id as 'failed to retrace'.
+
+        If invalid_msg is given, the bug should be closed as invalid with given
+        message, otherwise just marked as a failed retrace.
         
-        This can be a no-op if you are not interested in this, of course.'''
+        This can be a no-op if you are not interested in this.'''
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
