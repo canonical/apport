@@ -10,8 +10,11 @@ apport (0.124) UNRELEASED; urgency=low
     argument "invalid_msg", intended for crashes which cannot be
     retraced properly (e. g. due to outdated packages). Implement this
     in apport/crashdb_impl/launchpad.py.
+  * bin/apport-retrace: If we do not have an usable stack trace, and
+    encounter outdated package versions in the crash, close the report
+    as invalid with an appropriate comment. (LP: #308917)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 12:48:57 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 13:36:23 +0100
 
 apport (0.123) jaunty; urgency=low
 

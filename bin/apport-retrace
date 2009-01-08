@@ -186,11 +186,12 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
     If package installation fails (e. g. because the user does not have root
     privileges), the list of required packages is printed out instead.
     
-    Return a list of installed packages.'''
+    Return a tuple (list of installed packages, string with outdated packages).'''
 
     c = apt.Cache()
 
     installed = []
+    outdated = ''
 
     # create map of dependency package versions as specified in report
     dependency_versions = {}
@@ -220,6 +221,8 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
 	   continue
 
 	if ver and c[pkg].candidateVersion != ver:
+            outdated += '%s: installed version %s, latest version: %s\n' % (
+                pkg, ver, c[pkg].candidateVersion)
 	    print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
 		pkg, ver, c[pkg].candidateVersion)
 
@@ -303,7 +306,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
 	for p in c.getChanges():
 	    print >> sys.stderr, '  %s %s' % (p.name, p.candidateVersion)
 
-    return installed
+    return (installed, outdated)
 
 def getch():
     '''Read a single character from stdin.'''
@@ -447,7 +450,7 @@ if not required_fields.issubset(set(report.keys())):
 	' '.join(required_fields)
     sys.exit(1)
 
-installed = install_missing_packages(report, options.verbose,
+(installed, outdated_msg) = install_missing_packages(report, options.verbose,
     options.unpack_only, options.no_dpkg, options.extra_packages)
 
 # interactive gdb session
@@ -488,10 +491,6 @@ if modified:
             print >> sys.stderr, 'You need to specify --auth for uploading retraced results back to the crash database.'
             sys.exit(1)
         if not options.confirm or confirm_traces(report):
-            if not report.crash_signature():
-                print 'Report has no crash signature, so retrace is flawed'
-                crashdb.mark_retrace_failed(crashid)
-
             # check for duplicates
             update_bug = True
             if options.dup_db:
@@ -511,6 +510,29 @@ if modified:
             if update_bug:
                 crashdb.update(crashid, report)
                 print 'New attachments uploaded to crash database #' + crashid
+
+            if not report.crash_signature():
+                if outdated_msg:
+                    invalid_msg = '''Thank you for your report! 
+
+However, processing it in order to get sufficient information for the
+developers failed (it does not generate an useful symbolic stack trace). This
+might be caused by some outdated packages which were installed on your system
+at the time of the report:
+
+%s
+
+Please upgrade your system to the latest package versions. If you still
+encounter the crash, please file a new report.
+
+Thank you for your understanding, and sorry for the inconvenience!
+''' % outdated_msg
+                    print 'No crash signature and outdated packages, invalidating report'
+                    crashdb.mark_retrace_failed(crashid, invalid_msg)
+                else:
+                    print 'Report has no crash signature, so retrace is flawed'
+                    crashdb.mark_retrace_failed(crashid)
+
     else:
         if options.output == None:
             out = open(reportfile, 'w')
