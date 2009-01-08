@@ -15,8 +15,10 @@ apport (0.124) UNRELEASED; urgency=low
     as invalid with an appropriate comment. (LP: #308917)
   * bin/apport-retrace: Update the apt cache before looking for, and
     installing packages. (Part of UbuntuSpec:apport-retracer-maintenance)
+  * debian/apport.default: Enable by default again for Jaunty. Let the
+    flood begin!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 13:47:59 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 14:01:01 +0100
 
 apport (0.123) jaunty; urgency=low
 
