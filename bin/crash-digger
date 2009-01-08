@@ -43,7 +43,8 @@ class CrashDigger:
         # upgrade tarball chroots if necessary
         if outdated_chroots:
             assert subprocess.call(['apport-chroot', '-vm', self.chroot_map,
-                'upgrade', 'all'], stderr=subprocess.STDOUT) == 0
+                'upgrade', 'all'], stdout=sys.stdout, 
+                stderr=subprocess.STDOUT) == 0
 
 	self.crashdb = get_crashdb(auth_file)
 
@@ -113,7 +114,8 @@ class CrashDigger:
             argv += ['--duplicate-db', self.dup_db]
         argv += ['retrace', str(id)]
 
-        result = subprocess.call(argv, stderr=subprocess.STDOUT)
+        result = subprocess.call(argv, stdout=sys.stdout,
+            stderr=subprocess.STDOUT)
         if result != 0:
             self.log('retracing #%i failed with status: %i' % (id, result))
             raise SystemError, 'retracing #%i failed' % id

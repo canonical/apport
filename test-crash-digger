@@ -166,6 +166,17 @@ fi
         self.assert_('retrace 1\n' in chroot_log)
         self.failIf (os.path.exists(self.lock_file))
 
+    def test_stderr_redirection(self):
+        '''apport-chroot's stderr is redirected to stdout'''
+
+        open(self.apport_chroot, 'w').write('''#!/bin/sh
+echo ApportChrootError >&2''')
+        # check that it was upgraded
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.assert_('ApportChrootError' in out)
+
 tl = unittest.TestLoader()
 tests_all = unittest.TestSuite((
     tl.loadTestsFromName('__main__')
