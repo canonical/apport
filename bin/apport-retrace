@@ -522,7 +522,7 @@ if modified:
                 crashdb.update(crashid, report)
                 print 'New attachments uploaded to crash database #' + crashid
 
-            if not report.crash_signature():
+            if not report.has_useful_stacktrace():
                 if outdated_msg:
                     invalid_msg = '''Thank you for your report! 
 
