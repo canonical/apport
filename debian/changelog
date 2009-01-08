@@ -2,8 +2,10 @@ apport (0.125) UNRELEASED; urgency=low
 
   * bin/apport-chroot: Exit with apport-retraces' exit status, to
     propagate errors upwards to crash-digger.
+  * bin/apport-retrace: Do not put outdated -dbgsym comments into the
+    bug comments.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 17:22:33 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 21:06:45 +0100
 
 apport (0.124) jaunty; urgency=low
 

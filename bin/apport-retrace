@@ -232,8 +232,9 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
 	   continue
 
 	if ver and c[pkg].candidateVersion != ver:
-            outdated += '%s: installed version %s, latest version: %s\n' % (
-                pkg, ver, c[pkg].candidateVersion)
+            if not pkg.endswith('-dbgsym'):
+                outdated += '%s: installed version %s, latest version: %s\n' % (
+                    pkg, ver, c[pkg].candidateVersion)
 	    print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
 		pkg, ver, c[pkg].candidateVersion)
 
