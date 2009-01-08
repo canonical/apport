@@ -51,7 +51,7 @@ echo "$@" >> %s''' % self.apport_chroot_log)
         return (out.read(), err.read())
 
     def test_crashes(self):
-        '''Test crash retracing.'''
+        '''Crash retracing'''
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
             os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
@@ -71,7 +71,7 @@ echo "$@" >> %s''' % self.apport_chroot_log)
         self.failIf (os.path.exists(self.lock_file))
 
     def test_crashes_error(self):
-        '''Test crash retracing if apport-chroot fails on bug #1.'''
+        '''Crash retracing if apport-chroot fails on bug #1'''
 
         # make apport-retrace fail on bug 1
         os.rename(self.apport_chroot, self.apport_chroot + '.bak')
@@ -123,7 +123,7 @@ fi
         self.failIf (os.path.exists(self.lock_file))
 
     def test_dupcheck(self):
-        '''Test duplicate checking.'''
+        '''Duplicate checking'''
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
             os.path.join(self.workdir, 'dup.db'), '-vDl', self.lock_file])
@@ -138,7 +138,7 @@ fi
         self.failIf (os.path.exists(self.lock_file))
 
     def test_missing_chroot(self):
-        '''Test missing chroot.'''
+        '''Detection of missing chroot'''
 
         os.unlink(self.testux1_chroot)
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
