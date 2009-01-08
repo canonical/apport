@@ -1,3 +1,10 @@
+apport (0.125) UNRELEASED; urgency=low
+
+  * bin/apport-chroot: Exit with apport-retraces' exit status, to
+    propagate errors upwards to crash-digger.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 17:22:33 +0100
+
 apport (0.124) jaunty; urgency=low
 
   * debian/local/ubuntu-fat-chroot: Divert touch to touch.real and

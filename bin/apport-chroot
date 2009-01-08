@@ -311,7 +311,7 @@ def command_retrace(opts, args):
         apport_retrace_argv.append(args[0])
 
         del os.environ['APPORT_CRASHDB_CONF']
-        c.run(apport_retrace_argv)
+        ret = c.run(apport_retrace_argv)
         if chroot_auth:
             os.unlink(chroot_auth)
     else:
@@ -325,8 +325,10 @@ def command_retrace(opts, args):
         os.symlink(os.path.realpath(args[0]), chroot_report)
         apport_retrace_argv.append('-s')
         apport_retrace_argv.append(chroot_report)
-        c.run(apport_retrace_argv)
+        ret = c.run(apport_retrace_argv)
         os.unlink(chroot_report)
+
+    sys.exit(ret)
 
 #
 # main
