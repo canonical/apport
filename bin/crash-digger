@@ -199,7 +199,7 @@ opts, args = parse_options()
 
 if opts.lockfile:
     try:
-        f = os.open(opts.lockfile, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0x777)
+        f = os.open(opts.lockfile, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0666)
         os.close(f)
     except OSError, e:
         if e.errno == errno.EEXIST:
