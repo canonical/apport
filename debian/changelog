@@ -1,4 +1,4 @@
-apport (0.124) UNRELEASED; urgency=low
+apport (0.124) jaunty; urgency=low
 
   * debian/local/ubuntu-fat-chroot: Divert touch to touch.real and
     wrap it into a shell wrapper which ignores failures. Some packages
@@ -18,7 +18,7 @@ apport (0.124) UNRELEASED; urgency=low
   * debian/apport.default: Enable by default again for Jaunty. Let the
     flood begin!
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 14:01:01 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 14:05:07 +0100
 
 apport (0.123) jaunty; urgency=low
 
