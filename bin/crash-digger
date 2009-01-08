@@ -25,8 +25,13 @@ class CrashDigger:
 
         self.log('Initializing crash digger, using chroot map %s' % self.chroot_map)
 
-	# read chroot map and get available releases
+	# read chroot map, verify it, and get available releases
 	m = eval(open(self.chroot_map).read(), {}, {})
+        for r, chroot in m.iteritems():
+            if not os.path.exists(chroot):
+                print >> sys.stderr, 'Error: chroot %s for %s does not exist' % \
+                    (chroot, r)
+                sys.exit(1)
 	self.releases = m.keys()
 	self.log('Available releases: %s' % str(self.releases))
 

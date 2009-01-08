@@ -17,7 +17,10 @@ databases = { 'memory': {
 }''')
 
         self.chroot_map = os.path.join(self.workdir, 'chroot_map')
-        open(self.chroot_map, 'w').write('{"Testux 1.0": "/", "Testux 2.2": "/"}')
+        self.testux1_chroot = os.path.join(self.workdir, 'testux1.tar.gz')
+        open(self.testux1_chroot, 'w').close()
+        open(self.chroot_map, 'w').write('{"Testux 1.0": "%s", "Testux 2.2": "/"}' % 
+            self.testux1_chroot)
 
         self.apport_chroot_log = os.path.join(self.workdir, 'apport-chroot.log')
 
@@ -133,6 +136,16 @@ fi
         self.assert_('Report is a duplicate of #3 (not fixed yet)' in out)
         self.failIf(os.path.exists(self.apport_chroot_log))
         self.failIf (os.path.exists(self.lock_file))
+
+    def test_missing_chroot(self):
+        '''Test missing chroot.'''
+
+        os.unlink(self.testux1_chroot)
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assert_('Error: chroot' in err)
+        self.assert_('for Testux 1.0' in err)
+        self.assert_(os.path.exists(self.lock_file))
 
 
 tl = unittest.TestLoader()
