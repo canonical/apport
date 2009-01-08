@@ -47,6 +47,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.distro = options['distro']
         self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
 
+        if options.get('staging', False):
+            from launchpadbugs.lpconstants import HTTPCONNECTION
+            Bug.set_connection_mode(HTTPCONNECTION.MODE.STAGING)
+            BugList.set_connection_mode(HTTPCONNECTION.MODE.STAGING)
+
         if cookie_file:
             Bug.authentication = cookie_file
             BugList.authentication = cookie_file
@@ -379,7 +384,8 @@ in a dependent package.' % master)
 
 # some test code for future usage:
 
-#c = CrashDatabase('/home/martin/txt/lp-apport.cookie', '', {'distro': 'ubuntu'})
+#c = CrashDatabase(os.path.expanduser('~/.lpcookie.txt'), '', 
+#    {'distro': 'ubuntu', 'staging': False})
 
 #r=c.download(89040)
 #r['StacktraceTop'] = 'This is an invalid test StacktraceTop\nYes, Really!\nfoo'
