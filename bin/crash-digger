@@ -42,8 +42,8 @@ class CrashDigger:
 
         # upgrade tarball chroots if necessary
         if outdated_chroots:
-            assert subprocess.call(['apport-chroot', '-m', self.chroot_map,
-                'upgrade', 'all']) == 0
+            assert subprocess.call(['apport-chroot', '-vm', self.chroot_map,
+                'upgrade', 'all'], stderr=subprocess.STDOUT) == 0
 
 	self.crashdb = get_crashdb(auth_file)
 
