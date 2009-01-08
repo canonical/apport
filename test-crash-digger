@@ -18,6 +18,7 @@ databases = { 'memory': {
 
         self.chroot_map = os.path.join(self.workdir, 'chroot_map')
         self.testux1_chroot = os.path.join(self.workdir, 'testux1.tar.gz')
+        self.testux2_chroot = os.path.join(self.workdir, 'testux2.tar.gz')
         open(self.testux1_chroot, 'w').close()
         open(self.chroot_map, 'w').write('{"Testux 1.0": "%s", "Testux 2.2": "/"}' % 
             self.testux1_chroot)
@@ -66,6 +67,7 @@ echo "$@" >> %s''' % self.apport_chroot_log)
         self.failIf('#4' in out, 'dupcheck crashes are not retraced')
 
         chroot_log = open(self.apport_chroot_log).read()
+        self.failIf('upgrade' in chroot_log, 'current chroots are not upgraded')
         self.assert_('retrace 1\n' in chroot_log)
         self.assert_('retrace 2\n' in chroot_log)
         self.failIf (os.path.exists(self.lock_file))
@@ -147,6 +149,22 @@ fi
         self.assert_('for Testux 1.0' in err)
         self.assert_(os.path.exists(self.lock_file))
 
+    def test_chroot_upgrade(self):
+        '''Chroots are upgraded daily'''
+
+        # make testux chroot older than one day
+        st = os.stat(self.testux1_chroot)
+        os.utime(self.testux1_chroot, (st.st_atime, st.st_mtime - 24*3600 - 1))
+
+        # check that it was upgraded
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.assert_('retracing #1' in out)
+        chroot_log = open(self.apport_chroot_log).read()
+        self.assert_('chroot_map upgrade all\n' in chroot_log)
+        self.assert_('retrace 1\n' in chroot_log)
+        self.failIf (os.path.exists(self.lock_file))
 
 tl = unittest.TestLoader()
 tests_all = unittest.TestSuite((
