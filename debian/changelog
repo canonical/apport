@@ -4,8 +4,27 @@ apport (0.125) UNRELEASED; urgency=low
     propagate errors upwards to crash-digger.
   * bin/apport-retrace: Do not put outdated -dbgsym comments into the
     bug comments.
+  * Rewrite bin/crash-digger to become much more robust and easier for
+    retracer maintainers:
+    - Now designed around cron-based maintenance: start, process all
+      pending bugs, exit. This makes memory leaks irrelevant, and gets
+      rid of all the logging, daemonizing, and looping code.
+    - Adapt stdout/stderr reporting to be suitable for cron and
+      redirecting stdout to a log file.
+    - Use lock files to avoid overlapping instances and avoid damaging
+      bugs with broken retracers after crash-digger failed.
+    - Handle chroot upgrading, so that this does not need separate
+      cronjobs any more.
+    - Drop old -i option, replace with -D/--dupcheck which is a mode
+      which *only* checks duplicates of Python crashes (no fakechroot
+      handling).
+    - Mark bug as retraced after apport-chroot retrace finished
+      successfully; the process is robust enough now to avoid enless
+      loops even if retracing fails.
+    - Adapt test-crash-digger accordingly.
+    - UbuntuSpec:apport-retracer-maintenance
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 21:06:45 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 09 Jan 2009 12:09:53 +0100
 
 apport (0.124) jaunty; urgency=low
 
