@@ -3,8 +3,10 @@ apport (0.126) UNRELEASED; urgency=low
   * bin/apport-chroot: If --auth is specified in "login" mode, symlink
     the file into /tmp/auth in the fakechroot. This makes it much
     easier to interactively debug retracing.
+  * bin/apport-retrace: Exit with zero for bugs which do not have a
+    core dump, so that it does not completely stop the retracers.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 09 Jan 2009 16:26:49 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 09 Jan 2009 22:49:09 +0100
 
 apport (0.125) jaunty; urgency=low
 

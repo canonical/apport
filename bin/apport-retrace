@@ -460,7 +460,7 @@ required_fields = set(['CoreDump', 'ExecutablePath', 'Package'])
 if not required_fields.issubset(set(report.keys())):
     print >> sys.stderr, 'report file does not contain required fields: ' + \
 	' '.join(required_fields)
-    sys.exit(1)
+    sys.exit(0)
 
 (installed, outdated_msg) = install_missing_packages(report, options.verbose,
     options.unpack_only, options.no_dpkg, options.extra_packages)
