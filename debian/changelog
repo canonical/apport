@@ -1,4 +1,4 @@
-apport (0.125) UNRELEASED; urgency=low
+apport (0.125) jaunty; urgency=low
 
   * bin/apport-chroot: Exit with apport-retraces' exit status, to
     propagate errors upwards to crash-digger.
@@ -24,7 +24,7 @@ apport (0.125) UNRELEASED; urgency=low
     - Adapt test-crash-digger accordingly.
     - UbuntuSpec:apport-retracer-maintenance
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 09 Jan 2009 12:09:53 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 09 Jan 2009 12:14:44 +0100
 
 apport (0.124) jaunty; urgency=low
 
