@@ -106,9 +106,6 @@ class CrashDigger:
             # TODO: self.no_chroot_pool.add(id)
 	    return
 
-        # do it now already to avoid endless loops if apport-retrace fails
-        self.crashdb.mark_retraced(id)
-
         argv = ['apport-chroot', '-m', self.chroot_map, '--auth',
             self.auth_file]
         if self.dup_db:
@@ -120,6 +117,8 @@ class CrashDigger:
         if result != 0:
             self.log('retracing #%i failed with status: %i' % (id, result))
             raise SystemError, 'retracing #%i failed' % id
+
+        self.crashdb.mark_retraced(id)
 
     def dupcheck_next(self):
         '''Grab an ID from the dupcheck pool and process it.'''
