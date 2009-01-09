@@ -406,16 +406,25 @@ in a dependent package.' % master,
             bug.tags = x
             bug.lp_save()
 
-    def mark_retrace_failed(self, id):
+    def mark_retrace_failed(self, id, invalid_msg=None):
         '''Mark crash id as 'failed to retrace'.'''
 
         bug = self.launchpad.bugs[id]
-        if 'apport-failed-retrace' not in bug.tags:
-            # TODO: workaround LP #254901:
-            #   bug.tags.append('apport-failed-retrace')
-            # is not working
-            bug.tags = bug.tags + ['apport-failed-retrace']
-            bug.lp_save()
+        if invalid_msg:
+            try:
+                task = get_distro_tasks(bug.bug_tasks).next()
+            except StopIteration:
+                raise ValueError("no distro taks found")
+            task.transitionToStatus(status='Invalid')
+            bug.newMessage(content=invalid_msg,
+                    subject='Crash report cannot be processed')
+        else:
+            if 'apport-failed-retrace' not in bug.tags:
+                # TODO: workaround LP #254901:
+                #   bug.tags.append('apport-failed-retrace')
+                # is not working
+                bug.tags = bug.tags + ['apport-failed-retrace']
+                bug.lp_save()
 
     def _mark_dup_checked(self, id, report):
         '''Mark crash id as checked for being a duplicate.'''
@@ -461,7 +470,10 @@ c = CrashDatabase('/home/martin/txt/lp-apport.cookie', '', {'distro': 'ubuntu'})
 
 #c.mark_regression(89040, 116026)
 #c.close_duplicate(89040, 116026)
-#~ c.mark_retrace_failed(89040)
+
+#c.mark_retrace_failed(89040)
+## OR:
+#c.mark_retrace_failed(89040, 'not properly frobnicated')
 
 #~ print c.get_unfixed()
 print '89040', c.get_fixed_version(89040)
