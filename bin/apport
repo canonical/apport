@@ -280,8 +280,8 @@ try:
 
     crash_counter = 0
 
-    # Create crash report file descriptor. We prefer to create the report in
-    # report_dir if we can create a file there; if not, we just use stderr.
+    # Create crash report file descriptor for writing the report into
+    # report_dir
     try:
         report = '%s/%s.%i.crash' % (apport.fileutils.report_dir, info['ExecutablePath'].replace('/', '_'), pidstat.st_uid)
         if os.path.exists(report):
@@ -292,7 +292,11 @@ try:
                 if crash_counter > 1:
                     drop_privileges(pid)
                     write_user_coredump(pid, cwd, core_ulimit)
+                    error_log('this executable already crashed %i times, ignoring' % crash_counter)
                     sys.exit(1)
+                # remove the old file, so that we can create the new one with
+                # os.O_CREAT|os.O_EXCL
+                os.unlink(report)
             else:
                 error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
                 drop_privileges(pid)
@@ -300,11 +304,12 @@ try:
                 sys.exit(1)
         reportfile = os.fdopen(os.open(report,
             os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
+        assert reportfile.fileno() > sys.stderr.fileno()
         os.chmod(report, 0000)
         os.chown(report, pidstat.st_uid, pidstat.st_gid)
-    except (OSError, IOError):
-        report = None
-        reportfile = sys.stderr
+    except (OSError, IOError), e:
+        error_log('Could not create report file: %s' % str(e))
+        sys.exit(1)
 
     # Totally drop privs before writing out the reportfile.
     drop_privileges(pid)

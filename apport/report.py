@@ -362,7 +362,10 @@ class Report(ProblemReport):
         # grab AppArmor or SELinux context
         # If no LSM is loaded, reading will return -EINVAL
         try:
-            self['ProcAttrCurrent'] = open('/proc/' + pid + '/attr/current').read().strip()
+            # On Linux 2.6.28+, 'current' is world readable, but read() gives
+            # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
+            if os.getuid() == 0:
+                self['ProcAttrCurrent'] = open('/proc/' + pid + '/attr/current').read().strip()
         except (IOError, OSError):
             pass
 
@@ -400,11 +403,11 @@ class Report(ProblemReport):
                     if '/home' in p or '/tmp' in p:
                         if self['ProcEnviron']:
                             self['ProcEnviron'] += '\n'
-                        self['ProcEnviron'] += 'PATH: custom, user'
+                        self['ProcEnviron'] += 'PATH=(custom, user)'
                     elif p != '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games':
                         if self['ProcEnviron']:
                             self['ProcEnviron'] += '\n'
-                        self['ProcEnviron'] += 'PATH: custom, no user'
+                        self['ProcEnviron'] += 'PATH=(custom, no user)'
 
     def add_gdb_info(self, debugdir=None):
         '''Add information from gdb.
@@ -1109,7 +1112,7 @@ sys.stdin.readline()
         r = Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate('')
-        self.assert_('PATH: custom, no user' in r['ProcEnviron'], 
+        self.assert_('PATH=(custom, no user)' in r['ProcEnviron'], 
             'PATH is customized without user paths')
 
         # user paths
@@ -1119,7 +1122,7 @@ sys.stdin.readline()
         r = Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate('')
-        self.assert_('PATH: custom, user' in r['ProcEnviron'], 
+        self.assert_('PATH=(custom, user)' in r['ProcEnviron'], 
             'PATH is customized with user paths')
 
     def test_check_interpreted(self):
@@ -2009,18 +2012,18 @@ ZeroDivisionError: integer division or modulo by zero'''
         #  - fake BAD module
 
         # direct license check
-        self.assert_('GPL' in get_module_license('usbcore'))
+        self.assert_('GPL' in get_module_license('isofs'))
         self.assert_(get_module_license('does-not-exist') == None)
         self.assert_('GPL' in get_module_license(good_ko.name))
         self.assert_('BAD' in get_module_license(bad_ko.name))
 
         # check via nonfree_modules logic
         f = tempfile.NamedTemporaryFile()
-        f.write('usbcore\ndoes-not-exist\n%s\n%s\n' %
+        f.write('isofs\ndoes-not-exist\n%s\n%s\n' %
                 (good_ko.name,bad_ko.name))
         f.flush()
         nonfree = nonfree_modules(f.name)
-        self.failIf('usbcore' in nonfree)
+        self.failIf('isofs' in nonfree)
         self.failIf('does-not-exist' in nonfree)
         self.failIf(good_ko.name in nonfree)
         self.assert_(bad_ko.name in nonfree)

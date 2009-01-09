@@ -1,3 +1,60 @@
+apport (0.125) UNRELEASED; urgency=low
+
+  * bin/apport-chroot: Exit with apport-retraces' exit status, to
+    propagate errors upwards to crash-digger.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 17:22:33 +0100
+
+apport (0.124) jaunty; urgency=low
+
+  * debian/local/ubuntu-fat-chroot: Divert touch to touch.real and
+    wrap it into a shell wrapper which ignores failures. Some packages
+    use "touch -m" which fails with EPERM on directories under
+    fakechroot. Also disable gconf-schemas and polkit-auth, since they
+    do not work in fakechroots.
+  * apport/crashdb_impl/launchpad.py: Allow using staging for testing.
+  * apport/crashdb.py, mark_retrace_failed(): Add new optional
+    argument "invalid_msg", intended for crashes which cannot be
+    retraced properly (e. g. due to outdated packages). Implement this
+    in apport/crashdb_impl/launchpad.py.
+  * bin/apport-retrace: If we do not have an usable stack trace, and
+    encounter outdated package versions in the crash, close the report
+    as invalid with an appropriate comment. (LP: #308917)
+  * bin/apport-retrace: Update the apt cache before looking for, and
+    installing packages. (Part of UbuntuSpec:apport-retracer-maintenance)
+  * debian/apport.default: Enable by default again for Jaunty. Let the
+    flood begin!
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 14:05:07 +0100
+
+apport (0.123) jaunty; urgency=low
+
+  * bin/apport: Do not write the report into the log file if opening
+    the report file failed; just log the error.
+  * bin/apport: Remove a previously seen report file, so that the
+    following creation with O_EXCL actually works.
+  * apport/report.py, add_proc_info(): Only try to attach
+    /proc/pid/attr/current if we are root. This works around Python
+    segfaulting regression when encountering EPERM on read() (see 
+    LP #314065).
+  * apport/report.py testsuite: Use "isofs" for module license check
+    testing instead of "usbcore", since the latter is more likely to
+    get built into the kernel.
+  * apport/report.py, add_proc_environ(): Use "PATH=(...)" instead of
+    "PATH: ..." notation, to be consistent with other environment
+    variables. Unbreaks the apport test suite.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 18:05:38 +0100
+
+apport (0.122) jaunty; urgency=low
+
+  * apport/crashdb_impl/launchpad.py: Support extra tags in the
+    report's "Tags:" field, and set them in the Launchpad bug.
+    Document this in doc/data-format.tex. Thanks to Steve Conklin for
+    the patch!
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 05 Jan 2009 10:06:49 +0100
+
 apport (0.121) jaunty; urgency=low
 
   * debian/apport.init: Drop long obsolete setting of
