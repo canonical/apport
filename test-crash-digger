@@ -127,10 +127,9 @@ fi
     def test_dupcheck(self):
         '''Duplicate checking'''
 
-        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+        (out, err) = self.call(['-a', '/dev/zero', '-d',
             os.path.join(self.workdir, 'dup.db'), '-vDl', self.lock_file])
         self.assertEqual(err, '', 'no error messages:\n' + err)
-        self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
         self.failIf('#1' in out, 'signal crashes are not retraced')
         self.failIf('#2' in out, 'signal crashes are not retraced')
         self.assert_('checking #3 for duplicate' in out)

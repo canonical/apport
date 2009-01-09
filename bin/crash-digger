@@ -26,25 +26,26 @@ class CrashDigger:
         self.log('Initializing crash digger, using chroot map %s' % self.chroot_map)
 
 	# read chroot map, verify it, and get available releases
-        now = time.time()
-        outdated_chroots = False
-	m = eval(open(self.chroot_map).read(), {}, {})
-        for r, chroot in m.iteritems():
-            if not os.path.exists(chroot):
-                print >> sys.stderr, 'Error: chroot %s for %s does not exist' % \
-                    (chroot, r)
-                sys.exit(1)
-            st = os.stat(chroot)
-            if now - st.st_mtime > 86400 and not stat.S_ISDIR(st.st_mode):
-                outdated_chroots = True
-	self.releases = m.keys()
-	self.log('Available releases: %s' % str(self.releases))
+        if self.chroot_map:
+            now = time.time()
+            outdated_chroots = False
+            m = eval(open(self.chroot_map).read(), {}, {})
+            for r, chroot in m.iteritems():
+                if not os.path.exists(chroot):
+                    print >> sys.stderr, 'Error: chroot %s for %s does not exist' % \
+                        (chroot, r)
+                    sys.exit(1)
+                st = os.stat(chroot)
+                if now - st.st_mtime > 86400 and not stat.S_ISDIR(st.st_mode):
+                    outdated_chroots = True
+            self.releases = m.keys()
+            self.log('Available releases: %s' % str(self.releases))
 
-        # upgrade tarball chroots if necessary
-        if outdated_chroots:
-            assert subprocess.call(['apport-chroot', '-vm', self.chroot_map,
-                'upgrade', 'all'], stdout=sys.stdout, 
-                stderr=subprocess.STDOUT) == 0
+            # upgrade tarball chroots if necessary
+            if outdated_chroots:
+                assert subprocess.call(['apport-chroot', '-vm', self.chroot_map,
+                    'upgrade', 'all'], stdout=sys.stdout, 
+                    stderr=subprocess.STDOUT) == 0
 
 	self.crashdb = get_crashdb(auth_file)
 
