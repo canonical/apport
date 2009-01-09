@@ -13,14 +13,14 @@ the full text of the license.
 TODO:
     * missing API:
         - storeblob LP: #315358
-        - deleting attachments
-        - changing target of task
+        - deleting attachments LP #315387
+        - changing target of task LP #309182
         
     * related bugs
         - setting bug privacy LP #308374
         - date related data are strings not datetime objects, working
           around this using api_time_parser.parse_time() LP: #309950
-        - 
+        - adding/removing tags LP #254901
         
     * remove all tempfiles (apport does not need local files, correct?)
 
