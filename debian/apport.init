@@ -44,6 +44,13 @@ do_start()
             /usr/share/apport/kernel_crashdump || true
         fi
 
+	# check for incomplete suspend/resume or hibernate
+	export PATH="$PATH:/usr/bin"
+	if [ -e /var/lib/pm-utils/status ]; then
+		/usr/share/apport/apportcheckresume || true
+		rm -f /var/lib/pm-utils/status
+	fi
+
         echo "|$AGENT %p %s %c" > /proc/sys/kernel/core_pattern
 }
 
