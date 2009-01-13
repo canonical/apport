@@ -1,3 +1,11 @@
+apport (0.127) jaunty; urgency=low
+
+  * bin/apportcheckresume, debian/apport.init: integrate with pm-utils to
+    detect suspend/resume failures.  Thanks to Steve Conklin and Andy
+    Whitcroft.  LP: #316419.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Tue, 13 Jan 2009 12:54:12 -0800
+
 apport (0.126) jaunty; urgency=low
 
   * bin/apport-chroot: If --auth is specified in "login" mode, symlink

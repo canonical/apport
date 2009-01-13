@@ -1,0 +1,61 @@
+#!/usr/bin/python
+import os
+import os.path
+import sys
+import datetime
+import commands
+
+def main(argv=None):
+
+    if argv is None:
+        argv = sys.argv
+
+    try:
+        from apport.packaging_impl import impl as packaging
+        if not packaging.enabled():
+            return -1
+
+        import apport.report
+        pr = apport.report.Report(type='KernelOops')
+
+        flagfile = '/var/lib/pm-utils/status'
+
+
+        pr.add_os_info()
+        pr.add_proc_info()
+        pr.add_user_info()
+        pr['Package'] = 'linux-image-' + os.uname()[2]
+        pr['Originator'] = 'Steve Conklin <sconklin@canonical.com>'
+        pr['OopsText'] = 'Suspend/Resume or hibernate problem\n'
+
+        # grab the contents of the suspend/resume flag file
+        try:
+            if os.path.isfile(flagfile):
+                f = open(flagfile, 'r')
+                pr['FlagFile'] = f.read()
+                f.close()
+        except:
+            pr['FlagFile'] = 'Unable to read flag file: ' + flagfile 
+
+        pr['Tags'] = 'suspend resume hibernate'
+
+        if pr.check_ignored():
+            return 0
+
+        nowtime = datetime.datetime.now()
+        pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(" ","_"))
+        report_file = os.fdopen(os.open(pr_filename, os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
+        os.chmod(pr_filename, 0600)
+        try:
+            pr.write(report_file)
+        finally:
+            report_file.close()
+        return 0
+    except:
+        print "apportcheckresume failed"
+        raise
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+
