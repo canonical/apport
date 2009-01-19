@@ -451,7 +451,12 @@ However, processing it in order to get sufficient information for the
 developers failed, since the report is ill-formed. Perhaps the report data got
 modified?
 
-%s''' % str(e))
+  %s
+
+If you encounter the crash again, please file a new report.
+
+Thank you for your understanding, and sorry for the inconvenience!
+''' % str(e))
             sys.exit(0)
         else:
             raise
