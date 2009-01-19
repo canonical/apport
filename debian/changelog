@@ -1,4 +1,4 @@
-apport (0.128) UNRELEASED; urgency=low
+apport (0.128) jaunty; urgency=low
 
   * apport/ui.py: Introduce new configuration option "thirdparty" and
   * ignore the is_distro_package() check if it is set to true.
@@ -11,7 +11,7 @@ apport (0.128) UNRELEASED; urgency=low
     recovering broken descriptions as in LP #315728 (intermediate
     blank lines, and non-apport data append).
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Jan 2009 17:40:12 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Jan 2009 17:49:55 +0100
 
 apport (0.127) jaunty; urgency=low
 
