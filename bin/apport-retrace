@@ -195,6 +195,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
             c.update(apt.progress.TextFetchProgress())
         else:
             c.update()
+        c.open(apt.progress.OpProgress())
     except apt.cache.LockFailedException:
         if os.geteuid() != 0:
             print >> sys.stderr, 'WARNING: Could not update apt, you need to be root'
