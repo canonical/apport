@@ -134,8 +134,20 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 m = re.search(r"^--- \r?$[\r\n]*(.*)", b.description_raw, re.M | re.S)
             assert m, 'bug description must contain standard apport format data'
 
-            description = m.group(1).replace("\xc2\xa0", " ")
-            
+            description = m.group(1).replace('\xc2\xa0', ' ')
+
+            if '\r\n\r\n' in description:
+                # this often happens, remove all empty lines between top and
+                # "Uname"
+                if 'Uname:' in description:
+                    # this will take care of bugs like LP #315728 where stuff
+                    # is added after the apport data
+                    (part1, part2) = description.split('Uname:', 1)
+                    description = part1.replace('\r\n\r\n', '\r\n') + 'Uname:' \
+                        + part2.split('\r\n\r\n', 1)[0]
+                else:
+                    description = description.replace('\r\n\r\n', '\r\n')
+
             report.load(StringIO(description))
 
             report['Date'] = b.date.ctime()
