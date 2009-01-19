@@ -18,8 +18,9 @@ def main(argv=None):
         import apport.report
         pr = apport.report.Report(type='KernelOops')
 
-        flagfile = '/var/lib/pm-utils/status'
-
+        libdir = '/var/lib/pm-utils'
+        flagfile = libdir + '/status'
+        stresslog = libdir + '/stress.log'
 
         pr.add_os_info()
         pr.add_proc_info()
@@ -36,6 +37,15 @@ def main(argv=None):
                 f.close()
         except:
             pr['FlagFile'] = 'Unable to read flag file: ' + flagfile 
+
+        # grab the contents of the suspend/resume stress test log if present.
+        try:
+            if os.path.isfile(stresslog):
+                f = open(stresslog, 'r')
+                pr['StressLog'] = f.read()
+                f.close()
+        except:
+            pass
 
         pr['Tags'] = 'suspend resume hibernate'
 
