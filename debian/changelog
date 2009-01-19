@@ -3,8 +3,12 @@ apport (0.128) UNRELEASED; urgency=low
   * apport/ui.py: Introduce new configuration option "thirdparty" and
   * ignore the is_distro_package() check if it is set to true.
   * bin/apport-retrace: Call Cache.open() after Cache.update().
+  * bin/apport-retrace: If downloading a report fails (e. g. the
+    description was invalidly modified), mark the bug as invalid with
+    a proper explanation instead of crashing, unless we are in
+    "stdout" or "output file" mode.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Jan 2009 15:07:38 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Jan 2009 17:37:51 +0100
 
 apport (0.127) jaunty; urgency=low
 
