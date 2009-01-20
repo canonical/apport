@@ -445,6 +445,7 @@ elif reportfile.isdigit():
         # if we process the report automatically, and it is invalid, close it with
         # an informative message and exit cleanly to not break crash-digger
         if options.auth_file and not options.output and not options.stdout:
+            print >> sys.stderr, 'Broken report:', str(e), 'closing as invalid'
             crashdb.mark_retrace_failed(reportfile, '''Thank you for your report! 
             
 However, processing it in order to get sufficient information for the
