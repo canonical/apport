@@ -78,3 +78,13 @@ explanatory error dialog box, use "Ignore" instead of
   report['Ignore'] = 'True'
 
 (the actual value does not matter, it just must be a string).
+
+If you write hooks, please have a look at the apport.hookutils
+module first: 
+
+ python -c 'import apport.hookutils; help(apport.hookutils)'
+
+It provides readymade and safe functions many standard situations, 
+such as getting a command's output, attaching a file's contents, 
+attaching hardware related information, etc.
+

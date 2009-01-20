@@ -9,8 +9,9 @@ apport (0.129) UNRELEASED; urgency=low
   * bin/apport: Move argv length/usage help before lock check, so that
     it works if the user cannot lock /var/crash/.lock. Thanks to Kees
     Cook!
+  * doc/package-hooks.txt: Point out apport.hookutils.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Jan 2009 20:24:59 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Jan 2009 20:33:14 +0100
 
 apport (0.128) jaunty; urgency=low
 
