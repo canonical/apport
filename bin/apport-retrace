@@ -546,9 +546,9 @@ if modified:
                 crashdb.update(crashid, report)
                 print 'New attachments uploaded to crash database #' + crashid
 
-            if not report.has_useful_stacktrace():
-                if outdated_msg:
-                    invalid_msg = '''Thank you for your report! 
+                if not report.has_useful_stacktrace():
+                    if outdated_msg:
+                        invalid_msg = '''Thank you for your report! 
 
 However, processing it in order to get sufficient information for the
 developers failed (it does not generate an useful symbolic stack trace). This
@@ -562,11 +562,11 @@ encounter the crash, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 ''' % outdated_msg
-                    print 'No crash signature and outdated packages, invalidating report'
-                    crashdb.mark_retrace_failed(crashid, invalid_msg)
-                else:
-                    print 'Report has no crash signature, so retrace is flawed'
-                    crashdb.mark_retrace_failed(crashid)
+                        print 'No crash signature and outdated packages, invalidating report'
+                        crashdb.mark_retrace_failed(crashid, invalid_msg)
+                    else:
+                        print 'Report has no crash signature, so retrace is flawed'
+                        crashdb.mark_retrace_failed(crashid)
 
     else:
         if options.output == None:

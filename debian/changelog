@@ -1,8 +1,11 @@
 apport (0.129) UNRELEASED; urgency=low
 
   * bin/apport-retrace: Log broken reports.
+  * bin/apport-retrace: Do not mark bugs as invalid after they are
+    already marked as a duplicate, since that does not work in
+    Launchpad.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Jan 2009 09:05:05 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 20 Jan 2009 12:18:54 +0100
 
 apport (0.128) jaunty; urgency=low
 
