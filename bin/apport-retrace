@@ -435,7 +435,7 @@ if os.path.exists(reportfile):
         report = apport.Report()
         report.load(open(reportfile))
     except (MemoryError, TypeError, ValueError, IOError, zlib.error), e:
-        print >> sys.strerr, 'Cannot open report file:', e
+        print >> sys.stderr, 'Cannot open report file:', e
         sys.exit(1)
 elif reportfile.isdigit():
     # crash ID
