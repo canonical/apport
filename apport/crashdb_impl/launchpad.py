@@ -283,7 +283,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
 
-        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check')
+        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check&batch=300')
         return set(int(i) for i in bugs)
 
     def get_unfixed(self):
@@ -295,7 +295,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
-        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=apport-crash')
+        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=apport-crash&batch=300')
         return set(int(i) for i in bugs)
 
     def get_fixed_version(self, id):
