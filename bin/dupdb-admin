@@ -13,7 +13,7 @@
 
 import optparse, sys, os.path
 
-from apport.crashdb import CrashDatabase
+from apport.crashdb import get_crashdb
 
 def command_status(crashdb, opts, args):
     '''Give general status.'''
@@ -45,6 +45,9 @@ def command_changeid(crashdb, opts, args):
 
     crashdb.duplicate_db_change_master_id(oldid, newid)
 
+def command_consolidate(crashdb, opts, args):
+    crashdb.duplicate_db_consolidate()
+
 #
 # main
 #
@@ -52,7 +55,8 @@ def command_changeid(crashdb, opts, args):
 # parse command line options
 optparser = optparse.OptionParser('''%prog [options] status
 %prog [options] dump
-%prog [options] changeid <old ID> <new ID>''')
+%prog [options] changeid <old ID> <new ID>
+%prog [options] consolidate''')
 
 optparser.add_option('-f', '--database-file',
     help='Location of the database file', action='store', metavar='PATH',
@@ -63,7 +67,7 @@ if not os.path.exists(options.db_file):
     print >> sys.stderr, 'file does not exist:', options.db_file
     sys.exit(1)
 
-crashdb = CrashDatabase(None, None, {})
+crashdb = get_crashdb(None, None, {})
 crashdb.init_duplicate_db(options.db_file)
 
 try:
