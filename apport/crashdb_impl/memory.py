@@ -595,5 +595,34 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (99, None)})
 
+    def test_db_corruption(self):
+        '''Test detection of DB file corruption.'''
+
+        try:
+            (fd, db) = tempfile.mkstemp()
+            os.close(fd)
+            self.crashes.init_duplicate_db(db)
+            self.assertEqual(self.crashes.check_duplicate(0), None)
+            self.assertEqual(self.crashes._duplicate_db_dump(), 
+                {self.crashes.download(0).crash_signature(): (0, None)})
+            self.crashes.duplicate_db_fixed(0, '42')
+            self.assertEqual(self.crashes._duplicate_db_dump(), 
+                {self.crashes.download(0).crash_signature(): (0, '42')})
+
+            self.failIf(self.crashes.duplicate_db_needs_consolidation())
+            del self.crashes
+
+            # damage file
+            f = open(db, 'r+')
+            f.truncate(os.path.getsize(db)*2/3)
+            f.close()
+
+            self.crashes = CrashDatabase(None, None, {})
+            self.assertRaises(SystemError, self.crashes.init_duplicate_db, db)
+
+        finally:
+            os.unlink(db)
+
 if __name__ == '__main__':
+    import tempfile
     unittest.main()

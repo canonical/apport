@@ -54,7 +54,8 @@ class CrashDatabase:
         assert dbapi2.paramstyle == 'qmark', \
             'this module assumes qmark dbapi parameter style'
 
-        init = not os.path.exists(path) or path == ':memory:'
+        init = not os.path.exists(path) or path == ':memory:' or \
+            os.path.getsize(path) == 0
         self.duplicate_db = dbapi2.connect(path, timeout=7200)
 
         if init:
@@ -69,6 +70,13 @@ class CrashDatabase:
                 last_update TIMESTAMP)''')
             cur.execute('''INSERT INTO consolidation VALUES (CURRENT_TIMESTAMP)''')
             self.duplicate_db.commit()
+
+        # verify integrity
+        cur = self.duplicate_db.cursor()
+        cur.execute('PRAGMA integrity_check');
+        result = cur.fetchall() 
+        if result != [('ok',)]:
+            raise SystemError, 'Corrupt duplicate db:' + str(result)
 
     def check_duplicate(self, id, report=None):
         '''Check whether a crash is already known.
