@@ -17,8 +17,11 @@ apport (0.129) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py: In third-party mode, report bugs
     against Launchpad projects. Thanks to Oumar
     Aziz OUATTARA for his branch! (LP: #213454)
+  * bin/apportcheckresume: Include /var/lib/pm-utils/stress.log, too.
+    Thanks to Andy Whitcroft for the initial patch, rewrote to use
+    apport.hookutils.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Jan 2009 12:30:03 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Jan 2009 12:41:12 +0100
 
 apport (0.128) jaunty; urgency=low
 

@@ -5,6 +5,8 @@ import sys
 import datetime
 import commands
 
+import apport.hookutils
+
 def main(argv=None):
 
     if argv is None:
@@ -18,8 +20,9 @@ def main(argv=None):
         import apport.report
         pr = apport.report.Report(type='KernelOops')
 
-        flagfile = '/var/lib/pm-utils/status'
-
+        libdir = '/var/lib/pm-utils'
+        flagfile = libdir + '/status'
+        stresslog = libdir + '/stress.log'
 
         pr.add_os_info()
         pr.add_proc_info()
@@ -29,13 +32,10 @@ def main(argv=None):
         pr['OopsText'] = 'Suspend/Resume or hibernate problem\n'
 
         # grab the contents of the suspend/resume flag file
-        try:
-            if os.path.isfile(flagfile):
-                f = open(flagfile, 'r')
-                pr['FlagFile'] = f.read()
-                f.close()
-        except:
-            pr['FlagFile'] = 'Unable to read flag file: ' + flagfile 
+        apport.hookutils.attach_file(pr, flagfile, 'FlagFile')
+
+        # grab the contents of the suspend/resume stress test log if present.
+        apport.hookutils.attach_file(pr, stresslog, 'StressLog')
 
         pr['Tags'] = 'suspend resume hibernate'
 
