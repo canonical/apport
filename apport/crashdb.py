@@ -219,6 +219,8 @@ class CrashDatabase:
             fixed_ver = self.get_fixed_version(id)
             if fixed_ver == 'invalid':
                 cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
+            elif not fixed_ver:
+                print 'WARNING: inconsistency detected: bug #%i does not appear in get_unfixed(), but is not fixed yet' % id
             else:
                 cur2.execute('UPDATE crashes SET fixed_version = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
                     (fixed_ver, id))

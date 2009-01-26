@@ -29,8 +29,13 @@ apport (0.129) UNRELEASED; urgency=low
   * dupdb-admin: Add new command "consolidate".
   * apport/crashdb_impl/launchpad.py: Request bug lists with batch
     size 300, for slight speedup of consolidation.
+  * apport/crashdb.py, duplicate_db_consolidate(): Warn about a bug
+    which is not yet fixed, but does not appear in get_unfixed(). In
+    Launchpad, this means that the bug does not have the
+    'apport-crash' tag any more; if there are many, those would be a
+    huge time/bandwidth waste.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Jan 2009 15:11:35 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Jan 2009 15:34:02 +0100
 
 apport (0.128) jaunty; urgency=low
 
