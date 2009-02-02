@@ -32,5 +32,6 @@ pr.write(open(apport.fileutils.make_report_path(pr), 'w'))
 
 # clean up the core files
 os.unlink(vmcore_path)
-os.unlink(vmcore_path + '.log')
+if os.path.exists(vmcore_path + '.log'):
+    os.unlink(vmcore_path + '.log')
 

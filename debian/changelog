@@ -1,3 +1,9 @@
+apport (0.130) UNRELEASED; urgency=low
+
+  * bin/kernel_crashdump: Don't crash if vmcore.log does not exist.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Feb 2009 14:45:27 +0100
+
 apport (0.129) jaunty; urgency=low
 
   * bin/apport-retrace: Log broken reports.
