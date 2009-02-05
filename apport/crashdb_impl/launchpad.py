@@ -86,6 +86,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         a = report.get('PackageArchitecture')
         if not a or a == 'all':
             a = report.get('Architecture')
+        if a:
+            hdr['Tags'] += ' ' + a
         if 'CoreDump' in report and a:
             hdr['Tags'] += ' need-%s-retrace' % a
             # FIXME: ugly Ubuntu specific hack until LP has a real crash db
