@@ -36,8 +36,12 @@ def main(argv=None):
         # grab the contents of the suspend/resume stress test log if present.
         apport.hookutils.attach_file(pr, stresslog, 'StressLog')
 
-        # Title the report with suspend or hibernate as appropriate.
-        pr['OopsText'] = pr['FlagFile'] + '/resume problem\n'
+        # Title the report with suspend or hibernate as appropriate, and mention
+        # any non-free modules loaded up front.
+        pr['OopsText'] = pr['FlagFile'] + '/resume problem'
+        if 'NonfreeKernelModules' in pr:
+            pr['OopsText'] += ' [non-free: ' + pr['NonfreeKernelModules'] + ']'
+        pr['OopsText'] += '\n'
 
         pr['Tags'] = 'resume ' + pr['FlagFile']
 

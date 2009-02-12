@@ -11,8 +11,9 @@ apport (0.130) UNRELEASED; urgency=low
   * bin/apportcheckresume: modify the tags tobin/apportcheckresume:
     modify the oops title and thereby the launchpad be resume+suspend or
     resume+hibernate as appropriate.
+  * bin/apportcheckresume: include any non-free modules in the bug title.
 
- -- Andy Whitcroft <apw@canonical.com>  Thu, 12 Feb 2009 11:00:44 +0000
+ -- Andy Whitcroft <apw@canonical.com>  Thu, 12 Feb 2009 19:29:53 +0000
 
 apport (0.129) jaunty; urgency=low
 
