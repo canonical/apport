@@ -8,8 +8,11 @@ apport (0.130) UNRELEASED; urgency=low
   [ Andy Whitcroft ]
   * bin/apportcheckresume: modify the oops title and thereby the launchpad
     bug title to say suspend or hibernate.
+  * bin/apportcheckresume: modify the tags tobin/apportcheckresume:
+    modify the oops title and thereby the launchpad be resume+suspend or
+    resume+hibernate as appropriate.
 
- -- Andy Whitcroft <apw@canonical.com>  Thu, 12 Feb 2009 10:57:49 +0000
+ -- Andy Whitcroft <apw@canonical.com>  Thu, 12 Feb 2009 11:00:44 +0000
 
 apport (0.129) jaunty; urgency=low
 

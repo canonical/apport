@@ -39,7 +39,7 @@ def main(argv=None):
         # Title the report with suspend or hibernate as appropriate.
         pr['OopsText'] = pr['FlagFile'] + '/resume problem\n'
 
-        pr['Tags'] = 'suspend resume hibernate'
+        pr['Tags'] = 'resume ' + pr['FlagFile']
 
         if pr.check_ignored():
             return 0
