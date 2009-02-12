@@ -1,4 +1,4 @@
-apport (0.130) UNRELEASED; urgency=low
+apport (0.130) jaunty; urgency=low
 
   [ Martin Pitt ]
   * bin/kernel_crashdump: Don't crash if vmcore.log does not exist.
@@ -19,7 +19,7 @@ apport (0.130) UNRELEASED; urgency=low
     resume+hibernate as appropriate.
   * bin/apportcheckresume: include any non-free modules in the bug title.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 22:03:47 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 22:09:35 +0100
 
 apport (0.129) jaunty; urgency=low
 
