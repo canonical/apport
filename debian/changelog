@@ -1,5 +1,6 @@
 apport (0.130) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * bin/kernel_crashdump: Don't crash if vmcore.log does not exist.
   * crashdb_impl/launchpad.py: Tag bugs with the architecture they are
     being reported on.
@@ -9,6 +10,14 @@ apport (0.130) UNRELEASED; urgency=low
   * bin/apport-retrace: Do not try to install -dbgsym packages with
     nonmatching versions, unless --unpack-only is used. Thanks to
     hggdh for the initial patch! (LP: #309208)
+
+  [ Andy Whitcroft ]
+  * bin/apportcheckresume: modify the oops title and thereby the launchpad
+    bug title to say suspend or hibernate.
+  * bin/apportcheckresume: modify the tags to bin/apportcheckresume:
+    modify the oops title and thereby the launchpad be resume+suspend or
+    resume+hibernate as appropriate.
+  * bin/apportcheckresume: include any non-free modules in the bug title.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 22:03:47 +0100
 
