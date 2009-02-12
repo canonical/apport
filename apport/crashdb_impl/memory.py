@@ -268,15 +268,14 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.latest_id(), 4)
 
     def test_no_dummy_data(self):
-        '''Test that no dummy data is added by default.'''
+        '''No dummy data is added by default'''
 
         self.crashes = CrashDatabase(None, None, {})
         self.assertEqual(self.crashes.latest_id(), -1)
         self.assertRaises(IndexError, self.crashes.download, 0)
 
     def test_retrace_markers(self):
-        '''Test bookkeeping in get_unretraced()/mark_retraced() and
-        get_dup_unchecked() and _mark_dup_checked().'''
+        '''Bookkeeping in retraced and dupchecked bugs'''
 
         self.assertEqual(self.crashes.get_unretraced(), set([0, 1, 2]))
         self.assertEqual(self.crashes.get_dup_unchecked(), set([3, 4]))
@@ -286,7 +285,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
     #
 
     def test_submit(self):
-        '''Test crash uploading and downloading.'''
+        '''Crash uploading and downloading'''
 
         # setUp() already checks upload() and get_comment_url()
         r = self.crashes.download(0)
@@ -297,7 +296,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertRaises(IndexError, self.crashes.download, 5)
 
     def test_update(self):
-        '''Test update().'''
+        '''update()'''
 
         r = apport.Report()
         r['Package'] = 'new'
@@ -309,12 +308,12 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertRaises(IndexError, self.crashes.update, 5, None)
 
     def test_get_distro_release(self):
-        '''Test get_distro_release().'''
+        '''get_distro_release()'''
 
         self.assertEqual(self.crashes.get_distro_release(0), 'FooLinux Pi/2')
 
     def test_status(self):
-        '''Test get_unfixed(), get_fixed_version() and close_duplicate().'''
+        '''get_unfixed(), get_fixed_version(), close_duplicate()'''
 
         self.assertEqual(self.crashes.get_unfixed(), set([0, 1, 2, 4]))
         self.assertEqual(self.crashes.get_fixed_version(0), None)
@@ -327,7 +326,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.get_fixed_version(99), 'invalid')
 
     def test_mark_regression(self):
-        '''Test mark_regression().'''
+        '''mark_regression()'''
 
         self.crashes.mark_regression(4, 3)
         self.assertEqual(self.crashes.reports[4]['comment'], 
@@ -338,7 +337,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
     #
 
     def test_duplicate_db_fixed(self):
-        '''Test duplicate_db_fixed().'''
+        '''duplicate_db_fixed()'''
 
         self.crashes.init_duplicate_db(':memory:')
         self.assertEqual(self.crashes.check_duplicate(0), None)
@@ -352,7 +351,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
             {self.crashes.download(0).crash_signature(): (0, '42')})
 
     def test_duplicate_db_remove(self):
-        '''Test duplicate_db_remove().'''
+        '''duplicate_db_remove()'''
 
         self.crashes.init_duplicate_db(':memory:')
         self.assertEqual(self.crashes.check_duplicate(0), None)
@@ -362,7 +361,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes._duplicate_db_dump(), {})
 
     def test_check_duplicate(self):
-        '''Test check_duplicate().'''
+        '''check_duplicate()'''
 
         # db not yet initialized
         self.assertRaises(AssertionError, self.crashes.check_duplicate, 0,
@@ -434,7 +433,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
 
     def test_check_duplicate_report_arg(self):
-        '''Test check_duplicate() with explicitly passing report.'''
+        '''check_duplicate() with explicitly passing report'''
 
         self.crashes.init_duplicate_db(':memory:')
 
@@ -450,10 +449,10 @@ class _MemoryCrashDBTest(unittest.TestCase):
 
     # FIXME: fix locking and enable this test
     def __test_duplicate_db_consolidate_race(self):
-        '''Test two parallel instances of duplicate_db_consolidate().
+        '''Two parallel instances of duplicate_db_consolidate()
         
-        One should immediately throw a 'locked' exception.'''
-
+        One should immediately throw a 'locked' exception.
+        '''
         # create db with 1000 unfixed crashes
         self.crashes = CrashDatabase(None, None, {})
         self.crashes.init_duplicate_db(':memory:')
@@ -517,7 +516,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
             self.assertEqual(str(bug), version)
 
     def test_duplicate_db_consolidate(self):
-        '''Test duplicate_db_consolidate().'''
+        '''duplicate_db_consolidate()'''
 
         self.crashes.init_duplicate_db(':memory:')
         self.assertEqual(self.crashes.check_duplicate(0,
@@ -544,7 +543,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
              self.crashes.download(3).crash_signature(): (3, '4.1')})
 
     def test_duplicate_db_needs_consolidation(self):
-        '''Test duplicate_db_needs_consolidation().'''
+        '''duplicate_db_needs_consolidation()'''
 
         self.crashes.init_duplicate_db(':memory:')
 
@@ -564,7 +563,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
         self.failIf(self.crashes.duplicate_db_needs_consolidation(1))
 
     def test_change_master_id(self):
-        '''Test duplicate_db_change_master_id().'''
+        '''duplicate_db_change_master_id()'''
 
         # db not yet initialized
         self.assertRaises(AssertionError, self.crashes.check_duplicate, 0)
@@ -596,7 +595,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
              self.crashes.download(2).crash_signature(): (99, None)})
 
     def test_db_corruption(self):
-        '''Test detection of DB file corruption.'''
+        '''Detection of DB file corruption'''
 
         try:
             (fd, db) = tempfile.mkstemp()

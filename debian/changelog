@@ -5,8 +5,9 @@ apport (0.130) UNRELEASED; urgency=low
     being reported on.
   * bin/crash-digger: Revert catching "database is locked" errors
     during consolidation, since it just hides more fundamental errors.
+  * apport/crashdb_impl/memory.py: Improve docstrings of test suite.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 13:04:06 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 13:08:00 +0100
 
 apport (0.129) jaunty; urgency=low
 
