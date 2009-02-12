@@ -203,6 +203,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
             raise
 
     installed = []
+    uninstallable = []
     outdated = ''
 
     # create map of dependency package versions as specified in report
@@ -238,6 +239,9 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
                     pkg, ver, c[pkg].candidateVersion)
 	    print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
 		pkg, ver, c[pkg].candidateVersion)
+            if not unpack_only:
+                uninstallable.append (c[pkg].name)
+                continue
 
 	c[pkg].markInstall(False)
 
@@ -292,15 +296,18 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
         pkg = apport.packaging.get_file_package(l, True)
 	if pkg:
             if not os.path.exists(l):
+		if pkg in uninstallable:
+		    print >> sys.stderr, 'WARNING: %s cannot be installed (incompatible version)' % pkg
+		    continue
                 if c.has_key(pkg):
                     c[pkg].markInstall(False)
                 else:
                     print >> sys.stderr, 'WARNING: %s was loaded at runtime, but its package %s is not available' % (l, pkg)
 
-	    if c.has_key(pkg+'-dbgsym'):
+	    if c.has_key(pkg+'-dbgsym') and pkg+'-dbgsym' not in uninstallable :
 		c[pkg+'-dbgsym'].markInstall(False)
 	    else:
-		print >> sys.stderr, 'WARNING: %s-dbgsym is not available' % pkg
+		print >> sys.stderr, 'WARNING: %s-dbgsym is not available or is incompatible' % pkg
 	else:
 		print >> sys.stderr, 'WARNING: %s is needed, but cannot be mapped to a package' % l
 

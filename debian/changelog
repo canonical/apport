@@ -6,8 +6,11 @@ apport (0.130) UNRELEASED; urgency=low
   * bin/crash-digger: Revert catching "database is locked" errors
     during consolidation, since it just hides more fundamental errors.
   * apport/crashdb_impl/memory.py: Improve docstrings of test suite.
+  * bin/apport-retrace: Do not try to install -dbgsym packages with
+    nonmatching versions, unless --unpack-only is used. Thanks to
+    hggdh for the initial patch! (LP: #309208)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 13:08:00 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 22:03:47 +0100
 
 apport (0.129) jaunty; urgency=low
 
