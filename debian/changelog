@@ -1,10 +1,15 @@
 apport (0.130) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * bin/kernel_crashdump: Don't crash if vmcore.log does not exist.
   * crashdb_impl/launchpad.py: Tag bugs with the architecture they are
     being reported on.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Feb 2009 09:25:04 +0100
+  [ Andy Whitcroft ]
+  * bin/apportcheckresume: modify the oops title and thereby the launchpad
+    bug title to say suspend or hibernate.
+
+ -- Andy Whitcroft <apw@canonical.com>  Thu, 12 Feb 2009 10:57:49 +0000
 
 apport (0.129) jaunty; urgency=low
 

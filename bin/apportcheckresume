@@ -29,13 +29,15 @@ def main(argv=None):
         pr.add_user_info()
         pr['Package'] = 'linux-image-' + os.uname()[2]
         pr['Originator'] = 'Steve Conklin <sconklin@canonical.com>'
-        pr['OopsText'] = 'Suspend/Resume or hibernate problem\n'
 
         # grab the contents of the suspend/resume flag file
         apport.hookutils.attach_file(pr, flagfile, 'FlagFile')
 
         # grab the contents of the suspend/resume stress test log if present.
         apport.hookutils.attach_file(pr, stresslog, 'StressLog')
+
+        # Title the report with suspend or hibernate as appropriate.
+        pr['OopsText'] = pr['FlagFile'] + '/resume problem\n'
 
         pr['Tags'] = 'suspend resume hibernate'
 
