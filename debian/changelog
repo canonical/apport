@@ -3,8 +3,10 @@ apport (0.130) UNRELEASED; urgency=low
   * bin/kernel_crashdump: Don't crash if vmcore.log does not exist.
   * crashdb_impl/launchpad.py: Tag bugs with the architecture they are
     being reported on.
+  * bin/crash-digger: Revert catching "database is locked" errors
+    during consolidation, since it just hides more fundamental errors.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Feb 2009 09:25:04 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 13:04:06 +0100
 
 apport (0.129) jaunty; urgency=low
 

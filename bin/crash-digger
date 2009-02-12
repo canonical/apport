@@ -71,18 +71,7 @@ class CrashDigger:
         if self.dup_db and self.dupcheck_mode:
             if self.crashdb.duplicate_db_needs_consolidation():
                 self.log('Consolidating duplicate database...')
-                try:
-                    self.crashdb.duplicate_db_consolidate()
-                    #if self.verbose:
-                    #    self.log('duplicate db is now:\n-------------')
-                    #    for k, v in self.crashdb._duplicate_db_dump(True).iteritems():
-                    #        self.log('%s %s' % (k, v))
-                    #    self.log('-------------')
-                except Exception, e:
-                    if 'database is locked' in e.message:
-                        self.log('DB is already locked, skipping')
-                    else:
-                        raise
+                self.crashdb.duplicate_db_consolidate()
 
         if self.dupcheck_mode:
             self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
