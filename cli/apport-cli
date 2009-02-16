@@ -170,7 +170,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         return 'cancel'
 
     def ui_present_kernel_error(self):
-        message = _('Your system has encountered a serious kernel problem.')
+        message = _('Your system encountered a serious kernel problem.')
         annotation = ''
         if self.report.has_key('Annotation'):
             annotation += self.report['Annotation'] + '\n\n'

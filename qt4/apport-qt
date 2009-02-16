@@ -190,7 +190,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         return 'cancel'
 
     def ui_present_kernel_error(self):
-        message = _('Your system has encountered a serious kernel problem.')
+        message = _('Your system encountered a serious kernel problem.')
         annotate = ''
         if self.report.has_key('Annotation'):
             annotate = self.report['Annotation'] + '\n\n'
