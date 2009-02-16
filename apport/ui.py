@@ -152,16 +152,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
             # check unsupportable flag
             if self.report.has_key('UnsupportableReason'):
-                if self.report.get('ProblemType') == 'KernelCrash':
-                    subject = _('kernelcrash')
-                elif self.report.get('ProblemType') == 'Package':
-                    subject = self.report['Package']
-                elif self.report.get('ProblemType') == 'KernelOops':
-                    subject = _('kerneloops')
-                else:
-                    subject = os.path.basename(self.report.get(
-                        'ExecutablePath', _('unknown program')))
-                self.ui_info_message(_('Problem in %s') % subject,
+                self.ui_info_message(_('Unreportable problem'),
                     _('The current configuration cannot be supported:\n\n%s') %
                     self.report['UnsupportableReason'])
                 return
