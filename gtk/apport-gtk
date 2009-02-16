@@ -52,6 +52,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.str_heading = self.w('label_heading').get_label()
         self.str_heading_reopen = self.w('label_heading_reopen').get_label()
         self.str_heading_package_error = self.w('label_heading_package_error').get_label()
+        self.str_heading_kernel_error = self.w('label_heading_kernel_error').get_label()
         self.str_radio_complete = self.w('radiobutton_complete').get_label()
         self.str_radio_reduced = self.w('radiobutton_reduced').get_label()
 
@@ -106,6 +107,15 @@ class GTKUserInterface(apport.ui.UserInterface):
             return 'cancel'
 
     def ui_present_kernel_error(self):
+        message = _('Your system encountered a serious kernel problem.')
+        annotation = ''
+        if self.report.has_key('Annotation'):
+            annotation += self.report['Annotation'] + '\n\n'
+        annotation += _('You can help the developers to fix the problem by reporting it.')
+
+        label = self.str_heading_kernel_error % (message, annotation)
+        self.w('label_heading_kernel_error').set_markup(label)
+
         response = self.w('dialog_kernel_error').run()
         self.w('dialog_kernel_error').hide()
         while gtk.events_pending():

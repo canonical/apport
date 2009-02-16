@@ -170,10 +170,13 @@ class CLIUserInterface(apport.ui.UserInterface):
         return 'cancel'
 
     def ui_present_kernel_error(self):
-        dialog = CLIDialog (
-                _('The kernel encountered a serious problem'),
-                _('Your system might become unstable now and might need to be restarted.\n'
-                  'You can help the developers to fix the problem by reporting it.'))
+        message = _('Your system has encountered a serious kernel problem.')
+        annotation = ''
+        if self.report.has_key('Annotation'):
+            annotation += self.report['Annotation'] + '\n\n'
+        annotation += _('You can help the developers to fix the problem by reporting it.')
+
+        dialog = CLIDialog (message, annotation)
         report = dialog.addbutton(_('&Report Problem...'))
         dialog.addbutton(_('&Cancel'))
 

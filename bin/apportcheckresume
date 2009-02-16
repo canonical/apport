@@ -7,6 +7,8 @@ import commands
 
 import apport.hookutils
 
+from gettext import gettext as _
+
 def main(argv=None):
 
     if argv is None:
@@ -31,19 +33,25 @@ def main(argv=None):
         pr['Originator'] = 'Steve Conklin <sconklin@canonical.com>'
 
         # grab the contents of the suspend/resume flag file
-        apport.hookutils.attach_file(pr, flagfile, 'FlagFile')
+        apport.hookutils.attach_file(pr, flagfile, 'Failure')
 
         # grab the contents of the suspend/resume stress test log if present.
         apport.hookutils.attach_file(pr, stresslog, 'StressLog')
 
         # Title the report with suspend or hibernate as appropriate, and mention
         # any non-free modules loaded up front.
-        pr['OopsText'] = pr['FlagFile'] + '/resume problem'
+        pr['OopsText'] = pr['Failure'] + '/resume problem'
         if 'NonfreeKernelModules' in pr:
             pr['OopsText'] += ' [non-free: ' + pr['NonfreeKernelModules'] + ']'
         pr['OopsText'] += '\n'
 
-        pr['Tags'] = 'resume ' + pr['FlagFile']
+        pr['Tags'] = 'resume ' + pr['Failure']
+
+        # Generate a sensible report message.
+        if pr['Failure'] == 'suspend':
+            pr['Annotation'] = _('This occured during a previous suspend and prevented it from resuming properly.')
+        else:
+            pr['Annotation'] = _('This occured during a previous hibernate and prevented it from resuming properly.')
 
         if pr.check_ignored():
             return 0
