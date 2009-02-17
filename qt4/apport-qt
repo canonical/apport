@@ -124,6 +124,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         apport.ui.UserInterface.__init__(self)
 
         self.app = QApplication([])
+        self.app.setWindowIcon(QIcon("/usr/share/icons/hicolor/scalable/mimetypes/text-x-apport.svg"))
 
     #
     # ui_* implementation of abstract UserInterface classes
