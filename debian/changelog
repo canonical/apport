@@ -2,8 +2,10 @@ apport (0.132) UNRELEASED; urgency=low
 
   * apport/hookutils.py: define and include a machine type from the hardware
     information in the report, using HAL information where available.
+  * bin/apportcheckresume: include the machine type in the suspend/hibernate
+    report title.  They are generally machine specific.
 
- -- Andy Whitcroft <apw@canonical.com>  Thu, 19 Feb 2009 13:10:43 +0000
+ -- Andy Whitcroft <apw@canonical.com>  Thu, 19 Feb 2009 13:12:40 +0000
 
 apport (0.131) jaunty; urgency=low
 
