@@ -38,9 +38,15 @@ def main(argv=None):
         # grab the contents of the suspend/resume stress test log if present.
         apport.hookutils.attach_file(pr, stresslog, 'StressLog')
 
+        # We need the hardware information to get a machine type.
+        apport.hookutils.attach_hardware(pr)
+
         # Title the report with suspend or hibernate as appropriate, and mention
         # any non-free modules loaded up front.
-        pr['OopsText'] = pr['Failure'] + '/resume problem'
+        pr['OopsText'] = ''
+        if 'MachineType' in pr:
+            pr['OopsText'] += '[' + pr['MachineType'] + '] '
+        pr['OopsText'] += pr['Failure'] + '/resume problem'
         if 'NonfreeKernelModules' in pr:
             pr['OopsText'] += ' [non-free: ' + pr['NonfreeKernelModules'] + ']'
         pr['OopsText'] += '\n'

@@ -15,6 +15,7 @@ import md5
 import os
 import datetime
 import glob
+import re
 
 import xml.dom, xml.dom.minidom
 
@@ -89,6 +90,23 @@ def attach_dmesg(report):
     report['BootDmesg'] = open('/var/log/dmesg').read()
     report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 /var/log/dmesg -'])
 
+def attach_machinetype(report):
+    '''Calculate and attach a specific machine type if possible.'''
+
+    if 'HalComputerInfo' in report:
+	system = ''
+	vendor = re.compile(r"system.hardware.vendor\s*=\s*'(.*)'\s*\(string\)")
+	match = vendor.search(report['HalComputerInfo'])
+	if match:
+	    system += match.group(1).rstrip() + ' '
+	product = re.compile(r"system.hardware.product\s*=\s*'(.*)'\s*\(string\)")
+	match = product.search(report['HalComputerInfo'])
+	if match:
+	    system += match.group(1).rstrip() + ' '
+
+	if system != '':
+            report['MachineType'] = system.rstrip()
+
 def attach_hardware(report):
     attach_dmesg(report)
 
@@ -105,6 +123,9 @@ def attach_hardware(report):
     if 'Uname' in report:
         # already covered in ProcVersionSignature
         del report['Uname']
+
+    # Use the hardware information to create a machine type.
+    attach_machinetype(report)
 
 def attach_alsa(report):
     '''Attach ALSA subsystem information to the report.
