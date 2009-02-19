@@ -1,0 +1,134 @@
+#!/usr/bin/python
+
+# Download a Launchpad bug report, get its source package, check if it has
+# apport hooks, and if so, run and upload them.
+#
+# Copyright (c) 2009 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+import sys, os.path, optparse, tempfile, atexit, shutil, re, email
+from glob import glob
+
+import apport
+
+bug_target_re = re.compile(
+    r'/ubuntu/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$')
+
+try:
+    from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
+    from launchpadlib.credentials import Credentials
+except ImportError:
+    print >> sys.stderr, 'Please install the package "python-launchpadlib".'
+    sys.exit(1)
+
+def login(launchpad_instance=EDGE_SERVICE_ROOT):
+    '''Log into Launchpad.
+    
+    This reads/saves credentials, and returns a Launchpad instance.
+    '''
+    cache_dir = tempfile.mkdtemp()
+    atexit.register(shutil.rmtree, cache_dir)
+
+    cred_dir = os.path.expanduser('~/.cache/apport')
+    if not os.path.isdir(cred_dir):
+        os.makedirs(cred_dir)
+    cred = os.path.join(cred_dir, 'launchpad.credentials')
+
+    if os.path.exists(cred):
+        # use existing credentials
+        credentials = Credentials()
+        credentials.load(open(cred))
+        launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
+    else:
+        # get credentials and save them
+        launchpad = Launchpad.get_token_and_login('apport-collect', launchpad_instance,
+            cache_dir)
+        f = open(cred, 'w')
+        os.chmod(cred, 0600)
+        launchpad.credentials.save(f)
+        f.close()
+
+    return launchpad
+
+def upload(report, bug):
+    '''Upload collected information to Launchpad bug.'''
+
+    print 'Uploading additional information to Launchpad bug...'
+
+    # we want to reuse the knowledge of write_mime() with all its different input
+    # types and output formatting; however, we have to dissect the mime ourselves,
+    # since we can't just upload it as a blob
+    mime = tempfile.TemporaryFile()
+    report.write_mime(mime)
+    mime.flush()
+    mime.seek(0)
+    msg = email.message_from_file(mime)
+    msg_iter = msg.walk()
+
+    # first part is the multipart container
+    part = msg_iter.next()
+    assert part.is_multipart()
+
+    # second part should be an inline text/plain attachments with all short
+    # fields
+    part = msg_iter.next()
+    assert not part.is_multipart()
+    assert part.get_content_type() == 'text/plain'
+    
+    print'   short text data...'
+    bug.newMessage(content=part.get_payload(decode=True), 
+        subject='apport-collect data')
+
+    # other parts are the attachments:
+    for part in msg_iter:
+        print '   attachment: %s...' % part.get_filename()
+        bug.addAttachment(comment='', data=part.get_payload(decode=True),
+        filename=part.get_filename(), is_patch=False)
+
+#
+# main
+#
+
+if len(sys.argv) != 2:
+    print >> sys.stderr, 'Usage: %s <Launchpad bug number>' % sys.argv[0]
+    sys.exit(1)
+
+(bug_number,) = sys.argv[1:]
+
+print 'Logging into Launchpad...'
+lp = login()
+
+print 'Downloading bug...'
+bug =  lp.bugs[int(bug_number)]
+
+report = apport.Report('Bug')
+
+print 'Bug title:', bug.title
+for task in bug.bug_tasks:
+    match = bug_target_re.search(task.target.self_link)
+    if not match:
+        print 'Ignoring task', task.target
+        continue
+    src = match.group('source')
+    report['SourcePackage'] = src
+    report['Package'] = src # no way to find this out
+    print 'Collecting apport hooks information for source package %s...' % src
+    report.add_hooks_info()
+
+# delete the uninteresting keys
+del report['ProblemType']
+del report['Date']
+del report['SourcePackage']
+del report['Package']
+
+if len(report.keys()) == 0:
+    print 'No additional information collected.'
+    sys.exit(0)
+
+upload(report, bug)

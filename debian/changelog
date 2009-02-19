@@ -1,8 +1,19 @@
 apport (0.132) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
+  * Add debian/local/apport-collect: Download a Launchpad bug report,
+    get its source package, check if it has apport hooks, and if so,
+    run and upload them. Add manpage, too. (LP: #124338)
+  * debian/control: Add Suggests: python-launchpadlib; this is only
+    needed by apport-collect, thus we don't need to pull that into
+    every default installation; if it's not installed apport-collect
+    will detect and point this out.
+
+
+  [ Jonathan Riddell ]
   * Set window icon in apport-qt
 
- -- Jonathan Riddell <jriddell@ubuntu.com>  Tue, 17 Feb 2009 14:19:38 +0000
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Feb 2009 13:25:29 +0100
 
 apport (0.131) jaunty; urgency=low
 

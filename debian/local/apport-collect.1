@@ -1,0 +1,53 @@
+.TH apport\-collect 1 "February 19, 2009" "Martin Pitt"
+
+.SH NAME
+
+apport\-collect \- Add apport hooks information to existing Launchpad bug reports
+
+.SH SYNOPSIS
+
+.B apport\-collect
+.I bug_number
+
+.SH DESCRIPTION
+
+.B apport\-collect
+is a tool for using Apport hooks with existing Launchpad bug reports.
+
+Apport hooks are scripts which packages can ship to collect arbitrary
+package specific information, which then automatically gets attached
+to newly created bug reports. Please see
+https://wiki.ubuntu.com/Apport/DeveloperHowTo for further information
+about hooks.
+
+If a crash or bug report was not sent through apport originally, you
+can ask the submitter to run this script with the bug number of his
+report, to ease data collection and debugging.
+
+This requires the package python-launchpadlib.
+.B apport\-collect
+will point out if the package is not installed.
+
+.SH FILES
+
+.TP
+.I ~/.cache/apport/launchpad.credentials
+In order to add new information to the bug report, the user needs to
+log into Launchpad. The first time you run 
+.B apport\-collect
+you will be directed to the Launchpad login page in your web browser.
+Allow the script to change all data (write access), and just follow
+the instructions.
+
+The credentials are written to this cache file so if you run
+apport\-collect the next time you do not need to log in any more.
+
+.SH AUTHOR
+.B apport
+and the accompanying tools are developed by Martin Pitt
+<martin.pitt@ubuntu.com>.
+
+.SH SEE ALSO
+.BR ubuntu\-bug (1),
+https://wiki.ubuntu.com/Apport,
+https://wiki.ubuntu.com/Apport/DeveloperHowTo
