@@ -8,12 +8,12 @@ apport (0.132) UNRELEASED; urgency=low
     needed by apport-collect, thus we don't need to pull that into
     every default installation; if it's not installed apport-collect
     will detect and point this out.
-
+  * debian/control: Add ${misc:Depends} dependencies.
 
   [ Jonathan Riddell ]
   * Set window icon in apport-qt
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Feb 2009 13:25:29 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Feb 2009 13:48:28 +0100
 
 apport (0.131) jaunty; urgency=low
 

@@ -12,8 +12,9 @@ Vcs-Bzr: https://code.launchpad.net/~ubuntu-core-dev/apport/ubuntu
 Package: apport
 XB-Python-Version: ${python:Versions}
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.120), lsb-base (>= 3.0-6), sysv-rc (>= 2.86.ds1-14.1ubuntu2), python-xdg
-Conflicts: apport-gtk (<< 0.51), apport-cli
+Depends: python (>= 2.4), python-apport (>= 0.120), lsb-base (>= 3.0-6),
+ sysv-rc (>= 2.86.ds1-14.1ubuntu2), python-xdg, ${misc:Depends}
+Conflicts: apport-gtk (<< 0.51), apport-cli 
 Replaces: apport-gtk (<< 0.51), apport-cli
 Suggests: apport-gtk | apport-qt, python-launchpadlib
 Description: automatically generate crash reports for debugging
@@ -32,7 +33,7 @@ Package: python-problem-report
 XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
-Depends: ${python:Depends}
+Depends: ${python:Depends}, ${misc:Depends}
 Description: Python library to handle problem reports
  This Python library provides an interface for creating, modifying,
  and accessing standardized problem reports for program and kernel
@@ -46,7 +47,8 @@ Package: python-apport
 XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
-Depends: ${python:Depends}, python-apt, python-problem-report (>= 0.94), python-launchpad-bugs (>= 0.2.11), gdb
+Depends: ${python:Depends}, python-apt, python-problem-report (>= 0.94),
+ python-launchpad-bugs (>= 0.2.11), gdb, ${misc:Depends}
 Conflicts: python-apport-utils
 Replaces: python-apport-utils
 Description: apport crash report handling library
@@ -62,7 +64,8 @@ Package: apport-retrace
 XB-Python-Version: ${python:Versions}
 Section: devel
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.124), python-apt, python-launchpad-bugs (>= 0.2.11), apt, binutils, dpkg-dev
+Depends: python (>= 2.4), python-apport (>= 0.124), python-apt,
+ python-launchpad-bugs (>= 0.2.11), apt, binutils, dpkg-dev, ${misc:Depends}
 Suggests: debootstrap (>= 0.3.3.2ubuntu2), fakeroot, fakechroot
 Conflicts: apport (<< 0.72)
 Replaces: apport (<< 0.72)
@@ -82,7 +85,8 @@ Package: apport-gtk
 XB-Python-Version: ${python:Versions}
 Section: gnome
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.80), python-gtk2, python-glade2, python-xdg, apport (>= 0.41), procps
+Depends: python (>= 2.4), python-apport (>= 0.80), python-gtk2, python-glade2,
+ python-xdg, apport (>= 0.41), procps, ${misc:Depends}
 Recommends: update-notifier
 Description: GTK+ frontend for the apport crash report system
  apport automatically collects data from crashed processes and
@@ -99,7 +103,8 @@ Package: apport-qt
 XB-Python-Version: ${python:Versions}
 Section: kde
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.80), python-qt4, python-xdg, apport (>= 0.41), procps
+Depends: python (>= 2.4), python-apport (>= 0.80), python-qt4, python-xdg,
+ apport (>= 0.41), procps, ${misc:Depends}
 Recommends: update-notifier-kde
 Description: Qt4 frontend for the apport crash report system
  apport automatically collects data from crashed processes and
