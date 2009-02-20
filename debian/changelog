@@ -1,4 +1,4 @@
-apport (0.134) UNRELEASED; urgency=low
+apport (0.134) jaunty; urgency=low
 
   * debian/local/apport-collect: Do not collect information for closed
     tasks. Thanks for Brian Murray for the initial patch! (LP: #331839)
@@ -10,7 +10,7 @@ apport (0.134) UNRELEASED; urgency=low
     package names. (LP: #328751)
   * apport/hookutils.py: Replace tabs with spaces.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Feb 2009 11:21:56 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Feb 2009 11:22:15 +0100
 
 apport (0.133) jaunty; urgency=low
 
