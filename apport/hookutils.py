@@ -94,17 +94,17 @@ def attach_machinetype(report):
     '''Calculate and attach a specific machine type if possible.'''
 
     if 'HalComputerInfo' in report:
-	system = ''
-	vendor = re.compile(r"system.hardware.vendor\s*=\s*'(.*)'\s*\(string\)")
-	match = vendor.search(report['HalComputerInfo'])
-	if match:
-	    system += match.group(1).rstrip() + ' '
-	product = re.compile(r"system.hardware.product\s*=\s*'(.*)'\s*\(string\)")
-	match = product.search(report['HalComputerInfo'])
-	if match:
-	    system += match.group(1).rstrip() + ' '
+        system = ''
+        vendor = re.compile(r"system.hardware.vendor\s*=\s*'(.*)'\s*\(string\)")
+        match = vendor.search(report['HalComputerInfo'])
+        if match:
+            system += match.group(1).rstrip() + ' '
+        product = re.compile(r"system.hardware.product\s*=\s*'(.*)'\s*\(string\)")
+        match = product.search(report['HalComputerInfo'])
+        if match:
+            system += match.group(1).rstrip() + ' '
 
-	if system != '':
+        if system != '':
             report['MachineType'] = system.rstrip()
 
 def attach_hardware(report):
