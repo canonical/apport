@@ -115,6 +115,9 @@ for task in bug.bug_tasks:
     if not match:
         print 'Ignoring task', task.target
         continue
+    if task.status in ('Invalid', "Won't Fix", 'Fix Released'):
+        print 'Ignoring task %s because it is closed' % task.target
+        continue
     src = match.group('source')
     report['SourcePackage'] = src
     report['Package'] = src # no way to find this out
@@ -124,8 +127,11 @@ for task in bug.bug_tasks:
 # delete the uninteresting keys
 del report['ProblemType']
 del report['Date']
-del report['SourcePackage']
-del report['Package']
+try:
+    del report['SourcePackage']
+    del report['Package']
+except KeyError:
+    pass
 
 if len(report.keys()) == 0:
     print 'No additional information collected.'
