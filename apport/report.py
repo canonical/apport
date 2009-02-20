@@ -600,6 +600,7 @@ class Report(ProblemReport):
         package = self['Package'].split()[0]
         try:
             patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
+            assert '<title>404 Not Found' not in patterns
         except:
             # try if there is one for the source package
             if self.has_key('SourcePackage'):
