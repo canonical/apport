@@ -2,8 +2,10 @@ apport (0.134) UNRELEASED; urgency=low
 
   * debian/local/apport-collect: Do not collect information for closed
     tasks. Thanks for Brian Murray for the initial patch! (LP: #331839)
+  * apport/crashdb_impl/launchpad.py, download(): Download
+    DpkgTerminalLog.txt attachment as well.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Feb 2009 09:26:16 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Feb 2009 10:46:08 +0100
 
 apport (0.133) jaunty; urgency=low
 

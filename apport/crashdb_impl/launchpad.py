@@ -182,7 +182,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
 
             for att in b.attachments.filter(lambda a: re.match(
-                    "Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt",
+                    'Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt|DpkgTerminalLog.txt',
                     a.lp_filename)):
 
                 key = os.path.splitext(att.lp_filename)[0]
