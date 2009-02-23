@@ -89,7 +89,7 @@ def upload(report, bug):
     for part in msg_iter:
         print '   attachment: %s...' % part.get_filename()
         bug.addAttachment(comment='', data=part.get_payload(decode=True),
-        filename=part.get_filename(), is_patch=False)
+            filename=part.get_filename(), is_patch=False)
 
 #
 # main
@@ -121,15 +121,18 @@ for task in bug.bug_tasks:
     src = match.group('source')
     report['SourcePackage'] = src
     report['Package'] = src # no way to find this out
-    print 'Collecting apport hooks information for source package %s...' % src
+    print 'Collecting apport information for source package %s...' % src
+    report.add_package_info(src)
     report.add_hooks_info()
+
+report.add_os_info()
+report.add_user_info()
 
 # delete the uninteresting keys
 del report['ProblemType']
 del report['Date']
 try:
     del report['SourcePackage']
-    del report['Package']
 except KeyError:
     pass
 

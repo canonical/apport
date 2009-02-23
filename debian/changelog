@@ -4,8 +4,10 @@ apport (0.135) UNRELEASED; urgency=low
     single-line and two-line UTF-8 values, single-line and two-line
     Unicode values and a single-line LF-terminated value. Fix handling
     of the latter two.
+  * debian/local/apport-collect: Collect package, OS, and user
+    information as well. (LP: #332578)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Feb 2009 12:40:55 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Feb 2009 12:56:50 +0100
 
 apport (0.134) jaunty; urgency=low
 
