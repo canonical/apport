@@ -6,8 +6,10 @@ apport (0.135) UNRELEASED; urgency=low
     of the latter two.
   * debian/local/apport-collect: Collect package, OS, and user
     information as well. (LP: #332578)
+  * package-hooks/source_apport.py: Robustify by using hookutils, and
+    avoid stat errors if /var/crash/* does not exist.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Feb 2009 12:56:50 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Feb 2009 12:59:41 +0100
 
 apport (0.134) jaunty; urgency=low
 
