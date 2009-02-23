@@ -251,6 +251,10 @@ class ProblemReport(UserDict.IterableUserDict):
                     del self.data[k]
                     continue
 
+            if type(v) == type(u''):
+                # unicode → str
+                v = v.encode('UTF-8')
+
             if '\n' in v:
                 # multiline value
                 print >> file, k + ':'
@@ -591,6 +595,10 @@ class _ProblemReportTest(unittest.TestCase):
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
+        pr['SimpleUTF8'] = '1äö2Φ3'
+        pr['SimpleUnicode'] = u'1äö2Φ3'
+        pr['TwoLineUTF8'] = 'pi-π\nnu-η'
+        pr['TwoLineUnicode'] = u'pi-π\nnu-η'
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  \n\nafteremptyline'
         io = StringIO()
         pr.write(io)
@@ -598,6 +606,14 @@ class _ProblemReportTest(unittest.TestCase):
 '''ProblemType: Crash
 Date: now!
 Simple: bar
+SimpleUTF8: 1äö2Φ3
+SimpleUnicode: 1äö2Φ3
+TwoLineUTF8:
+ pi-π
+ nu-η
+TwoLineUnicode:
+ pi-π
+ nu-η
 WhiteSpace:
   foo   bar
  baz
