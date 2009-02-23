@@ -11,8 +11,10 @@ apport (0.135) UNRELEASED; urgency=low
     information as well. (LP: #332578)
   * package-hooks/source_apport.py: Robustify by using hookutils, and
     avoid stat errors if /var/crash/* does not exist.
+  * test-hooks: Update dodgy test for uninstalled package,
+    libdb4.3-tcl is not available in Jaunty any more.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Feb 2009 13:07:53 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Feb 2009 13:13:54 +0100
 
 apport (0.134) jaunty; urgency=low
 

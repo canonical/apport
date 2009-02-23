@@ -54,7 +54,7 @@ class _HooksTest(unittest.TestCase):
         '''Test package_hook on an uninstalled package (might fail to install).'''
 
         #FIXME: This is a really Debian/Ubuntu specific dodgy test case
-        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'libdb4.3-tcl'],
+        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'libdb4.7-tcl'],
             stdin=subprocess.PIPE)
         ph.communicate('something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
@@ -66,8 +66,8 @@ class _HooksTest(unittest.TestCase):
         r.load(open(reps[0]))
 
         self.assertEqual(r['ProblemType'], 'Package')
-        self.assertEqual(r['Package'], 'libdb4.3-tcl')
-        self.assertEqual(r['SourcePackage'], 'db4.3')
+        self.assertEqual(r['Package'], 'libdb4.7-tcl')
+        self.assertEqual(r['SourcePackage'], 'db')
         self.assertEqual(r['ErrorMessage'], 'something is wrong')
 
     def test_package_hook_logs(self):
