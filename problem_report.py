@@ -437,8 +437,13 @@ class ProblemReport(UserDict.IterableUserDict):
                 attachments.append(att)
             else:
                 # plain text value
+                if type(v) == type(u''):
+                    # convert unicode to UTF-8 str
+                    v = v.encode('UTF-8')
+
                 lines = len(v.splitlines())
                 if lines == 1:
+                    v = v.rstrip()
                     text += '%s: %s\n' % (k, v)
                 elif lines <= attach_treshold:
                     text += '%s:\n ' % k
@@ -1109,7 +1114,12 @@ File: base64
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
+        pr['SimpleUTF8'] = '1äö2Φ3'
+        pr['SimpleUnicode'] = u'1äö2Φ3'
+        pr['SimpleLineEnd'] = 'bar\n'
         pr['TwoLine'] = 'first\nsecond\n'
+        pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'
+        pr['TwoLineUnicode'] = u'pi-π\nnu-η\n'
         pr['InlineMargin'] = 'first\nsecond\nthird\nfourth\nfifth\n'
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
         io = StringIO()
@@ -1139,9 +1149,18 @@ InlineMargin:
  fourth
  fifth
 Simple: bar
+SimpleLineEnd: bar
+SimpleUTF8: 1äö2Φ3
+SimpleUnicode: 1äö2Φ3
 TwoLine:
  first
  second
+TwoLineUTF8:
+ pi-π
+ nu-η
+TwoLineUnicode:
+ pi-π
+ nu-η
 ''')
 
         # third part should be the Multiline: field as attachment

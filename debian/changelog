@@ -1,3 +1,12 @@
+apport (0.135) UNRELEASED; urgency=low
+
+  * problem_report.py, test_write_mime_text(): Add test cases for
+    single-line and two-line UTF-8 values, single-line and two-line
+    Unicode values and a single-line LF-terminated value. Fix handling
+    of the latter two.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Feb 2009 12:40:55 +0100
+
 apport (0.134) jaunty; urgency=low
 
   * debian/local/apport-collect: Do not collect information for closed
