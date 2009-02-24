@@ -829,6 +829,22 @@ class Report(ProblemReport):
 
             return title
 
+        if self.get('ProblemType') == 'KernelOops' and \
+            self.has_key('Failure'):
+            
+            # Title the report with suspend or hibernate as appropriate,
+            # and mention any non-free modules loaded up front.
+            title = ''
+            if 'MachineType' in self:
+                title += '[' + self['MachineType'] + '] '
+            title += self['Failure'] + ' failure'
+            if 'NonfreeKernelModules' in self:
+                title += ' [non-free: ' + self['NonfreeKernelModules'] + ']'
+            title += '\n'
+
+            return title
+
+
         return None
 
     def obsolete_packages(self):
