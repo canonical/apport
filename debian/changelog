@@ -1,5 +1,6 @@
 apport (0.136) UNRELEASED; urgency=low
 
+  [ Andy Whitcroft ]
   * bin/apportcheckresume: remove originator in suspend/hibernate/resume
     reporting.  This was intended for debugging only and is now redundant.
   * bin/apportcheckresume, apport/report.py: when collecting resume failures
@@ -7,7 +8,11 @@ apport (0.136) UNRELEASED; urgency=low
     the machine type information.  Move title generation to the reporting
     engine.
 
- -- Andy Whitcroft <apw@canonical.com>  Tue, 24 Feb 2009 12:40:54 +0000
+  [ Martin Pitt ]
+  * debian/local/apport-collect: Add user environment information, too
+    (LANG, PATH, SHELL). (LP: #332578)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 14:24:33 +0100
 
 apport (0.135) jaunty; urgency=low
 

@@ -127,6 +127,7 @@ for task in bug.bug_tasks:
 
 report.add_os_info()
 report.add_user_info()
+report.add_proc_environ()
 
 # delete the uninteresting keys
 del report['ProblemType']
