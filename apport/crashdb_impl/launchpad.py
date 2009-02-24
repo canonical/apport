@@ -251,7 +251,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             shutil.rmtree(tmpdir)
 
         # remove core dump if stack trace is usable
-        if report.crash_signature():
+        if report.has_useful_stacktrace():
             bug.attachments.remove(
                     func=lambda a: re.match('^CoreDump.gz$', a.lp_filename or a.description))
             bug.importance='Medium'

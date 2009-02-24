@@ -1,3 +1,13 @@
+apport (0.137) UNRELEASED; urgency=low
+
+  * apport/crashdb_impl/launchpad.py: Consider an useful stack trace
+    sufficient for automatically removing the core dump, it doesn't
+    need to be perfect. This is in accordance with not setting the
+    apport-failed-retrace tag for useful, but non-perfect retraces any
+    more.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 20:47:10 +0100
+
 apport (0.136) jaunty; urgency=low
 
   [ Andy Whitcroft ]
