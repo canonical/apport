@@ -1,4 +1,4 @@
-apport (0.138) UNRELEASED; urgency=low
+apport (0.138) jaunty; urgency=low
 
   * apport/crashdb_impl/launchpad.py: Consider an useful stack trace
     sufficient for automatically removing the core dump, it doesn't
@@ -12,7 +12,7 @@ apport (0.138) UNRELEASED; urgency=low
   * apport/hookutils.py: Add attach_printing(). Thanks to Brian Murray
     for the initial patch! (LP: #333582)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 22:22:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 22:24:31 +0100
 
 apport (0.137) jaunty; urgency=low
 
