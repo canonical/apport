@@ -1,3 +1,10 @@
+apport (0.136) UNRELEASED; urgency=low
+
+  * bin/apportcheckresume: remove originator in suspend/hibernate/resume
+    reporting.  This was intended for debugging only and is now redundant.
+
+ -- Andy Whitcroft <apw@canonical.com>  Tue, 24 Feb 2009 12:39:33 +0000
+
 apport (0.135) jaunty; urgency=low
 
   * problem_report.py, test_write_mime_text(): Add test cases for
