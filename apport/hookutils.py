@@ -11,7 +11,7 @@ the full text of the license.
 '''
 
 import subprocess
-import md5
+import hashlib
 import os
 import datetime
 import glob
@@ -71,7 +71,7 @@ def attach_conffiles(report, package, conffiles=None):
 
         if os.path.exists(path):
             contents = open(path).read()
-            m = md5.new()
+            m = hashlib.md5()
             m.update(contents)
             calculated_md5sum = m.hexdigest()
 

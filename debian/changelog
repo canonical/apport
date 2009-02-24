@@ -5,8 +5,10 @@ apport (0.138) UNRELEASED; urgency=low
     need to be perfect. This is in accordance with not setting the
     apport-failed-retrace tag for useful, but non-perfect retraces any
     more.
+  * apport/hookutils.py, backends/packaging_rpm.py: Convert usage of
+    md5 module (which is deprecated in 2.6) to hashlib.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 20:47:10 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 22:06:08 +0100
 
 apport (0.137) jaunty; urgency=low
 

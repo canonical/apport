@@ -22,7 +22,7 @@ the full text of the license.
 
 # It'd be convenient to use rpmUtils from yum, but I'm trying to keep this
 # class distro-agnostic.
-import rpm, md5, os, stat, subprocess
+import rpm, hashlib, os, stat, subprocess
 
 class RPMPackageInfo:
     '''Partial apport.PackageInfo class implementation for RPM, as
@@ -241,7 +241,7 @@ class RPMPackageInfo:
     
     def _checkmd5(self,filename,filemd5):
         '''Internal function to check a file's md5sum'''
-        m = md5.new()
+        m = hashlib.md5()
         f = open(filename)
         data = f.read() 
         f.close()
