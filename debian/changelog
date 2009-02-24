@@ -9,8 +9,10 @@ apport (0.138) UNRELEASED; urgency=low
     md5 module (which is deprecated in 2.6) to hashlib.
   * Replace all instances of using an exception's .message attribute
     with str(exception), since message is deprecated in Python 2.6.
+  * apport/hookutils.py: Add attach_printing(). Thanks to Brian Murray
+    for the initial patch! (LP: #333582)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 22:11:39 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 22:22:25 +0100
 
 apport (0.137) jaunty; urgency=low
 

@@ -1,7 +1,8 @@
 '''Convenience functions for use in package hooks.
 
-Copyright (C) 2008 Canonical Ltd.
+Copyright (C) 2008-2009 Canonical Ltd.
 Author: Matt Zimmerman <mdz@canonical.com>
+Contributor: Brian Murray <brian@ubuntu.com>
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -18,6 +19,8 @@ import glob
 import re
 
 import xml.dom, xml.dom.minidom
+
+from packaging_impl import impl as packaging
 
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
@@ -306,6 +309,39 @@ def attach_network(report):
     for var in ('http_proxy', 'ftp_proxy', 'no_proxy'):
         if var in os.environ:
             report[var] = os.environ[var]
+
+def attach_printing(report):
+    '''Attach printing information to the report.
+
+    Based on http://wiki.ubuntu.com/PrintingBugInfoScript.
+    '''
+    attach_file_if_exists(report, '/etc/papersize', 'Papersize')
+    report['Locale'] = command_output(['locale'])
+    report['Lpstat'] = command_output(['lpstat', '-v'])
+
+    nicknames = command_output(['fgrep', '-H', '*NickName'] + glob.glob('/etc/cups/ppd/*.ppd'))
+    report['PpdFiles'] = re.sub('/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', '\g<1>: \g<2>', nicknames)
+
+    packages = ['foo2zjs', 'foomatic-db', 'foomatic-db-engine',
+        'foomatic-db-gutenprint', 'foomatic-db-hpijs', 'foomatic-filters',
+        'foomatic-gui', 'hpijs', 'hplip', 'm2300w', 'min12xxw', 'c2050',
+        'hpoj', 'pxljr', 'pnm2ppa', 'splix', 'hp-ppd', 'hpijs-ppds',
+        'linuxprinting.org-ppds', 'openprinting-ppds',
+        'openprinting-ppds-extra', 'ghostscript', 'cups',
+        'cups-driver-gutenprint', 'foomatic-db-gutenprint', 'ijsgutenprint',
+        'cupsys-driver-gutenprint', 'gimp-gutenprint', 'gutenprint-doc',
+        'gutenprint-locales', 'system-config-printer-common', 'kdeprint'] 
+
+    versions = ''
+    for package in packages:
+        try:
+            version = packaging.get_version(package)
+        except ValueError:
+            version = 'N/A'
+        if version is None:
+            version = 'N/A'
+        versions += '%s %s\n' % (package, version)
+    report['PrintingPackages'] = versions
 
 def _parse_gconf_schema(schema_file):
     ret = {}
