@@ -1,4 +1,4 @@
-apport (0.137) UNRELEASED; urgency=low
+apport (0.138) UNRELEASED; urgency=low
 
   * apport/crashdb_impl/launchpad.py: Consider an useful stack trace
     sufficient for automatically removing the core dump, it doesn't
@@ -7,6 +7,12 @@ apport (0.137) UNRELEASED; urgency=low
     more.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 20:47:10 +0100
+
+apport (0.137) jaunty; urgency=low
+
+  * Set python-version to all, include symlinks in the package.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue, 24 Feb 2009 21:22:36 +0100
 
 apport (0.136) jaunty; urgency=low
 
