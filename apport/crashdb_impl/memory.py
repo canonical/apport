@@ -486,7 +486,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
             try:
                 self.crashes.duplicate_db_consolidate()
             except Exception, e:
-                if 'database is locked' in e.message:
+                if 'database is locked' in str(e):
                     os._exit(42)
                 else:
                     raise
@@ -495,7 +495,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
         try:
             self.crashes.duplicate_db_consolidate()
         except Exception, e:
-            if 'database is locked' in e.message:
+            if 'database is locked' in str(e):
                 locked_exceptions += 1
             else:
                 raise

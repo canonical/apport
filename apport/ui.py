@@ -297,7 +297,7 @@ free memory to automatically analyze the problem and send a report to the develo
         try:
             self.collect_info()
         except ValueError, e:
-            if e.message == 'package does not exist':
+            if str(e) == 'package does not exist':
                 self.ui_error_message(_('Invalid problem report'), 
                     _('Package %s does not exist') % self.cur_package)
                 return False

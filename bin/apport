@@ -35,7 +35,7 @@ def check_lock():
     try:
         fd = os.open(lockfile, os.O_WRONLY|os.O_CREAT|os.O_NOFOLLOW)
     except OSError, e:
-        error_log('cannot create lock file (uid %i): ' % os.getuid() + e.message)
+        error_log('cannot create lock file (uid %i): %s' % (os.getuid(), str(e)))
         sys.exit(1)
 
     try:

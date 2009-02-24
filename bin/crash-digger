@@ -120,8 +120,8 @@ class CrashDigger:
         try:
             report = self.crashdb.download(id)
         except (MemoryError, TypeError, ValueError, IOError, zlib.error), e:
-            self.log('Cannot download report: ' + e.message)
-            print >> sys.stderr, 'Cannot download report %i:' % id, e.message
+            self.log('Cannot download report: ' + str(e))
+            print >> sys.stderr, 'Cannot download report %i:' % id, str(e)
             return
 
         res = self.crashdb.check_duplicate(id, report)
