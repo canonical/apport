@@ -2,8 +2,12 @@ apport (0.136) UNRELEASED; urgency=low
 
   * bin/apportcheckresume: remove originator in suspend/hibernate/resume
     reporting.  This was intended for debugging only and is now redundant.
+  * bin/apportcheckresume, apport/report.py: when collecting resume failures
+    in very early boot hal may not be running and we thus unable to obtain
+    the machine type information.  Move title generation to the reporting
+    engine.
 
- -- Andy Whitcroft <apw@canonical.com>  Tue, 24 Feb 2009 12:39:33 +0000
+ -- Andy Whitcroft <apw@canonical.com>  Tue, 24 Feb 2009 12:40:54 +0000
 
 apport (0.135) jaunty; urgency=low
 
