@@ -922,12 +922,14 @@ class Report(ProblemReport):
         removes the ProcCwd attribute completely.
         '''
 
-        p = pwd.getpwuid(os.getuid())
-        replacements = {
-            p[0]: 'username',
-            p[5]: '/home/username',
-            os.uname()[1]: 'hostname',
-        }
+        if (os.getuid() > 0):
+            # do not replace "root"
+            p = pwd.getpwuid(os.getuid())
+            replacements = {
+                p[0]: 'username',
+                p[5]: '/home/username',
+            }
+        replacements[os.uname()[1]] = 'hostname'
 
         for s in p[4].split(','):
             s = s.strip()
