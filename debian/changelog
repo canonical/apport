@@ -2,8 +2,9 @@ apport (0.139) UNRELEASED; urgency=low
 
   * apport/report.py, anonymize(): Do not anonymize "root". (Side
     issue in LP #333542)
+  * debian/rules: Supply --install-layout=deb to setup.py.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Feb 2009 10:06:30 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Feb 2009 12:47:00 +0100
 
 apport (0.138) jaunty; urgency=low
 
