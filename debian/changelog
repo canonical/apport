@@ -3,8 +3,11 @@ apport (0.139) UNRELEASED; urgency=low
   * apport/report.py, anonymize(): Do not anonymize "root". (Side
     issue in LP #333542)
   * debian/rules: Supply --install-layout=deb to setup.py.
+  * debian/local/apport-collect: Attach new info to
+    staging.launchpad.net if $APPORT_STAGING is defined. This makes
+    testing easier. Describe in debian/local/apport-collect.1.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 25 Feb 2009 12:47:00 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 26 Feb 2009 12:17:03 +0100
 
 apport (0.138) jaunty; urgency=low
 

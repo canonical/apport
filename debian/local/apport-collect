@@ -102,7 +102,10 @@ if len(sys.argv) != 2:
 (bug_number,) = sys.argv[1:]
 
 print 'Logging into Launchpad...'
-lp = login()
+if os.getenv('APPORT_STAGING'):
+    lp = login(STAGING_SERVICE_ROOT)
+else:
+    lp = login()
 
 print 'Downloading bug...'
 bug =  lp.bugs[int(bug_number)]
