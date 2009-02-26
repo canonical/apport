@@ -125,7 +125,12 @@ for task in bug.bug_tasks:
     report['SourcePackage'] = src
     report['Package'] = src # no way to find this out
     print 'Collecting apport information for source package %s...' % src
-    report.add_package_info(src)
+    try:
+        report.add_package_info(src)
+    except ValueError:
+        # this happens for source package tasks which do not have an identical
+        # binary package name
+        pass
     report.add_hooks_info()
 
 report.add_os_info()
