@@ -1,3 +1,10 @@
+apport (0.140) UNRELEASED; urgency=low
+
+  * debian/python-{apport,problem-report}.install: Fix site-packages →
+    *-packages.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 11:51:53 +0100
+
 apport (0.139) jaunty; urgency=low
 
   * apport/report.py, anonymize(): Do not anonymize "root". (Side
