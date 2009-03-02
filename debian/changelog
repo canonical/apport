@@ -1,4 +1,4 @@
-apport (0.139) UNRELEASED; urgency=low
+apport (0.139) jaunty; urgency=low
 
   * apport/report.py, anonymize(): Do not anonymize "root". (Side
     issue in LP #333542)
@@ -15,7 +15,7 @@ apport (0.139) UNRELEASED; urgency=low
   * apport/hookutils.py, hal_dump_udi(): Filter out serial numbers. 
     (Mentioned in LP #107103)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 10:41:07 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 11:36:18 +0100
 
 apport (0.138) jaunty; urgency=low
 
