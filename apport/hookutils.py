@@ -325,6 +325,7 @@ def attach_printing(report):
     Based on http://wiki.ubuntu.com/PrintingBugInfoScript.
     '''
     attach_file_if_exists(report, '/etc/papersize', 'Papersize')
+    attach_file_if_exists(report, '/var/log/cups/error-log', 'CupsErrorLog')
     report['Locale'] = command_output(['locale'])
     report['Lpstat'] = command_output(['lpstat', '-v'])
 
