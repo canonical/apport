@@ -253,7 +253,16 @@ def hal_find_by_capability(capability):
 def hal_dump_udi(udi):
     '''Dump the properties of a HAL object, specified by its UDI.'''
 
-    return command_output(['lshal','-u',udi])
+    out = command_output(['lshal','-u',udi])
+
+    # filter out serial numbers
+    result = ''
+    for l in out.splitlines():
+        if '.serial =' in l:
+            continue
+        result += l + '\n'
+
+    return result
 
 def files_in_package(package, globpat=None):
     '''Retrieve a list of files owned by package, optionally matching globpat'''

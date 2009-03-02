@@ -12,8 +12,10 @@ apport (0.139) UNRELEASED; urgency=low
     Slightly ugly, but it's nontrivial to do that in a sensible
     manner; let's just fix the crash for now, since the focus of this
     tool is to collect information from hooks. (LP: #334823)
+  * apport/hookutils.py, hal_dump_udi(): Filter out serial numbers. 
+    (Mentioned in LP #107103)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 26 Feb 2009 12:23:51 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 10:41:07 +0100
 
 apport (0.138) jaunty; urgency=low
 
