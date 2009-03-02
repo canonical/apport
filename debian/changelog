@@ -2,8 +2,10 @@ apport (0.140) UNRELEASED; urgency=low
 
   * debian/python-{apport,problem-report}.install: Fix site-packages →
     *-packages.
+  * run-tests: Only check for local packaging_impl.py if running local tests.
+    This unbreaks running tests from /usr/share/apport/testsuite/.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 11:51:53 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 11:53:40 +0100
 
 apport (0.139) jaunty; urgency=low
 
