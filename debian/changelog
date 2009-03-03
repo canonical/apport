@@ -1,3 +1,10 @@
+apport (0.142) UNRELEASED; urgency=low
+
+  * apport/report.py: Do not include lsb_release's stderr in the
+    DistroRelease: output.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 13:54:57 +0100
+
 apport (0.141) jaunty; urgency=low
 
   * apport/hookutils.py: Add cups error log to attach_printing()

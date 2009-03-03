@@ -240,7 +240,7 @@ class Report(ProblemReport):
             there are none, this field will not be present)'''
 
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT, close_fds=True)
+            stderr=subprocess.PIPE, close_fds=True)
         self['DistroRelease'] = p.communicate()[0].strip().replace('\n', ' ')
 
         u = os.uname()
