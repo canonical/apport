@@ -28,8 +28,13 @@ apport (0.142) UNRELEASED; urgency=low
   * apport/report.py, anonymize(): Do not anonymize single-character user and
     host names, since they create an utter mess in bug reports, and also are
     very low-sensitive.
+  * debian/apport.init: Also start apport if force_start=1 is given. This
+    provides a convenient method of starting apport just for a session without
+    changing the default file. Add a comment to debian/apport.default about
+    this possibility. Thanks to Milan for the suggestion and the initial
+    patch! (LP: #320467)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 12:37:17 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 15:41:33 +0100
 
 apport (0.141) jaunty; urgency=low
 

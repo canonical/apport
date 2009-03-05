@@ -74,7 +74,7 @@ do_stop()
 
 case "$1" in
   start)
-        [ "$enabled" = "1" ] || exit 0
+        [ "$enabled" = "1" ] || [ "$force_start" = "1" ] || exit 0
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC:" "$NAME"
 	do_start
 	case "$?" in
