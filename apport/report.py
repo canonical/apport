@@ -928,7 +928,7 @@ class Report(ProblemReport):
         if (os.getuid() > 0):
             # do not replace "root"
             p = pwd.getpwuid(os.getuid())
-            if len(p[0] >= 2):
+            if len(p[0]) >= 2:
                 replacements[p[0]] = 'username'
             replacements[p[5]] = '/home/username'
 
