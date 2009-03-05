@@ -311,7 +311,11 @@ free memory to automatically analyze the problem and send a report to the develo
                 del self.report['ProcCmdline']
             except KeyError:
                 pass
-            self.file_report()
+
+            # show what's being sent
+            response = self.ui_present_report_details()
+            if response != 'cancel':
+                self.file_report()
 
         return True
 

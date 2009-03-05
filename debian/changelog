@@ -8,8 +8,13 @@ apport (0.142) UNRELEASED; urgency=low
       that hangs forever.
   * apport/report.py, _gen_stacktrace_top(): Fix parsing of stacktraces
     with some addresses missing. Add test cases. (LP: #269133)
+  * apport/ui.py, run_report_bug(): Show details of collected information and
+    give the user a chance to cancel. Previously, collected data was sent
+    directly to Launchpad. Nowadays lots of packages have hooks, so we cannot
+    guarantee any more that bug reports only have non-sensitive information.
+    (LP: #195514)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 09:50:20 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 10:06:36 +0100
 
 apport (0.141) jaunty; urgency=low
 
