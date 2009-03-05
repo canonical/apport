@@ -2,8 +2,12 @@ apport (0.142) UNRELEASED; urgency=low
 
   * apport/report.py: Do not include lsb_release's stderr in the
     DistroRelease: output.
+  * apport/hookutils.py: Fix attach_printing():
+    - Correct spelling or "error_log".
+    - Do not call fgrep with no file names (if /etc/cups/ppd/ is empty), since
+      that hangs forever.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 13:54:57 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 09:09:13 +0100
 
 apport (0.141) jaunty; urgency=low
 

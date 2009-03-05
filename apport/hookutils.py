@@ -325,12 +325,14 @@ def attach_printing(report):
     Based on http://wiki.ubuntu.com/PrintingBugInfoScript.
     '''
     attach_file_if_exists(report, '/etc/papersize', 'Papersize')
-    attach_file_if_exists(report, '/var/log/cups/error-log', 'CupsErrorLog')
+    attach_file_if_exists(report, '/var/log/cups/error_log', 'CupsErrorLog')
     report['Locale'] = command_output(['locale'])
     report['Lpstat'] = command_output(['lpstat', '-v'])
 
-    nicknames = command_output(['fgrep', '-H', '*NickName'] + glob.glob('/etc/cups/ppd/*.ppd'))
-    report['PpdFiles'] = re.sub('/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', '\g<1>: \g<2>', nicknames)
+    ppds = glob.glob('/etc/cups/ppd/*.ppd')
+    if ppds:
+        nicknames = command_output(['fgrep', '-H', '*NickName'] + ppds)
+        report['PpdFiles'] = re.sub('/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', '\g<1>: \g<2>', nicknames)
 
     packages = ['foo2zjs', 'foomatic-db', 'foomatic-db-engine',
         'foomatic-db-gutenprint', 'foomatic-db-hpijs', 'foomatic-filters',
