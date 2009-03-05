@@ -1386,7 +1386,7 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             os.unlink(script)
 
         self._validate_gdb_fields(pr)
-        self.assert_('libc.so' in pr['Stacktrace'])
+        self.assert_('libc.so' in pr['Stacktrace'] or 'in execute_command' in pr['Stacktrace'])
 
     def test_search_bug_patterns(self):
         '''Test search_bug_patterns().'''
