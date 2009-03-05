@@ -431,7 +431,7 @@ if __name__ == '__main__':
             impl.configuration = self.orig_conf
 
         def test_check_files_md5(self):
-            '''Test _check_files_md5().'''
+            '''_check_files_md5().'''
 
             td = tempfile.mkdtemp()
             try:
@@ -461,19 +461,19 @@ if __name__ == '__main__':
                 shutil.rmtree(td)
 
         def test_get_version(self):
-            '''Test get_version().'''
+            '''get_version().'''
 
             self.assert_(impl.get_version('libc6').startswith('2'))
             self.assertRaises(ValueError, impl.get_version, 'nonexisting')
 
         def test_get_available_version(self):
-            '''Test get_available_version().'''
+            '''get_available_version().'''
 
             self.assert_(impl.get_available_version('libc6').startswith('2'))
             self.assertRaises(ValueError, impl.get_available_version, 'nonexisting')
 
         def test_get_dependencies(self):
-            '''Test get_dependencies().'''
+            '''get_dependencies().'''
 
             # package with both Depends: and Pre-Depends:
             d  = impl.get_dependencies('bash')
@@ -496,21 +496,21 @@ if __name__ == '__main__':
                 self.assert_(impl.get_version(dep))
 
         def test_get_source(self):
-            '''Test get_source().'''
+            '''get_source().'''
 
             self.assertRaises(ValueError, impl.get_source, 'nonexisting')
             self.assertEqual(impl.get_source('bash'), 'bash')
             self.assertEqual(impl.get_source('libc6'), 'glibc')
 
         def test_is_distro_package(self):
-            '''Test is_distro_package().'''
+            '''is_distro_package().'''
 
             self.assertRaises(ValueError, impl.is_distro_package, 'nonexisting')
             self.assert_(impl.is_distro_package('bash'))
             # no False test here, hard to come up with a generic one
 
         def test_get_architecture(self):
-            '''Test get_architecture().'''
+            '''get_architecture().'''
 
             self.assertRaises(ValueError, impl.get_architecture, 'nonexisting')
             # just assume that bash uses the native architecture
@@ -521,20 +521,20 @@ if __name__ == '__main__':
             self.assertEqual(impl.get_architecture('bash'), system_arch)
 
         def test_get_files(self):
-            '''Test get_files().'''
+            '''get_files().'''
 
             self.assertRaises(ValueError, impl.get_files, 'nonexisting')
             self.assert_('/bin/bash' in impl.get_files('bash'))
 
         def test_get_file_package(self):
-            '''Test get_file_package() on installed files.'''
+            '''get_file_package() on installed files.'''
 
             self.assertEqual(impl.get_file_package('/bin/bash'), 'bash')
             self.assertEqual(impl.get_file_package('/bin/cat'), 'coreutils')
             self.assertEqual(impl.get_file_package('/nonexisting'), None)
 
         def test_get_file_package_uninstalled(self):
-            '''Test get_file_package() on uninstalled packages.'''
+            '''get_file_package() on uninstalled packages.'''
 
             # determine distro release code name
             lsb_release = subprocess.Popen(['lsb_release', '-sc'],
@@ -581,7 +581,7 @@ bo/gu/s                                                 na/mypackage
                 shutil.rmtree(basedir)
 
         def test_get_file_package_diversion(self):
-            '''Test get_file_package() for a diverted file.'''
+            '''get_file_package() for a diverted file.'''
 
             # pick first diversion we have
             p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',
@@ -596,7 +596,7 @@ bo/gu/s                                                 na/mypackage
             self.assertEqual(impl.get_file_package(file), pkg)
 
         def test_get_system_architecture(self):
-            '''Test get_system_architecture().'''
+            '''get_system_architecture().'''
 
             arch = impl.get_system_architecture()
             # must be nonempty without line breaks
@@ -604,7 +604,7 @@ bo/gu/s                                                 na/mypackage
             self.assert_('\n' not in arch)
 
         def test_compare_versions(self):
-            '''Test compare_versions.'''
+            '''compare_versions.'''
 
             self.assertEqual(impl.compare_versions('1', '2'), -1)
             self.assertEqual(impl.compare_versions('1.0-1ubuntu1', '1.0-1ubuntu2'), -1)
@@ -614,7 +614,7 @@ bo/gu/s                                                 na/mypackage
             self.assertEqual(impl.compare_versions('1:1.0-1~1', '1:1.0-1'), -1)
 
         def test_enabled(self):
-            '''Test enabled.'''
+            '''enabled.'''
 
             impl.configuration = '/nonexisting'
             self.assertEqual(impl.enabled(), True)
@@ -641,7 +641,7 @@ bo/gu/s                                                 na/mypackage
             f.close()
 
         def test_get_kernel_pacakge(self):
-            '''Test get_kernel_package().'''
+            '''get_kernel_package().'''
 
             self.assert_('linux' in impl.get_kernel_package())
 

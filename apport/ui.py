@@ -928,7 +928,7 @@ databases = {
             self.assertEqual(subprocess.call(['pidof', '/bin/sleep']), 1, 'no stray sleeps')
 
         def test_format_filesize(self):
-            '''Test format_filesize().'''
+            '''format_filesize().'''
 
             self.assertEqual(self.ui.format_filesize(0), '0.0 KiB')
             self.assertEqual(self.ui.format_filesize(2048), '2.0 KiB')
@@ -940,7 +940,7 @@ databases = {
             self.assertEqual(self.ui.format_filesize(2560*1048576), '2.5 GiB')
 
         def test_get_size_loaded(self):
-            '''Test get_complete_size() and get_reduced_size() for loaded Reports.'''
+            '''get_complete_size() and get_reduced_size() for loaded Reports.'''
 
             self.ui.load_report(self.report_file.name)
 
@@ -951,7 +951,7 @@ databases = {
             self.assert_(rs < 10000)
 
         def test_get_size_constructed(self):
-            '''Test get_complete_size() and get_reduced_size() for on-the-fly Reports.'''
+            '''get_complete_size() and get_reduced_size() for on-the-fly Reports.'''
 
             self.ui.report = apport.Report('Bug')
             self.ui.report['Hello'] = 'World'
@@ -963,7 +963,7 @@ databases = {
             self.assertEqual(s, self.ui.get_reduced_size())
 
         def test_load_report(self):
-            '''Test load_report().'''
+            '''load_report().'''
 
             # valid report
             self.ui.load_report(self.report_file.name)
@@ -998,7 +998,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_restart(self):
-            '''Test restart().'''
+            '''restart().'''
 
             # test with only ProcCmdline
             p = os.path.join(apport.fileutils.report_dir, 'ProcCmdline')
@@ -1031,7 +1031,7 @@ CoreDump: base64
             self.ui.load_report(self.report_file.name)
 
         def test_collect_info_distro(self):
-            '''Test collect_info() on report without information (distro bug).'''
+            '''collect_info() on report without information (distro bug).'''
 
             # report without any information (distro bug)
             self.ui.report = apport.Report()
@@ -1042,7 +1042,7 @@ CoreDump: base64
                 'no progress dialog for distro bug info collection')
 
         def test_collect_info_exepath(self):
-            '''Test collect_info() on report with only ExecutablePath.'''
+            '''collect_info() on report with only ExecutablePath.'''
 
             # report with only package information
             self.report = apport.Report()
@@ -1063,7 +1063,7 @@ CoreDump: base64
                 'progress dialog for package bug info collection finished')
 
         def test_collect_info_package(self):
-            '''Test collect_info() on report with a package.'''
+            '''collect_info() on report with a package.'''
 
             # report with only package information
             self.ui.report = apport.Report()
@@ -1078,7 +1078,7 @@ CoreDump: base64
                 'progress dialog for package bug info collection finished')
 
         def test_handle_duplicate(self):
-            '''Test handle_duplicate().'''
+            '''handle_duplicate().'''
 
             self.ui.load_report(self.report_file.name)
             self.assertEqual(self.ui.handle_duplicate(), False)
@@ -1094,14 +1094,14 @@ CoreDump: base64
             self.assertEqual(self.ui.opened_url, demo_url)
 
         def test_run_nopending(self):
-            '''Test running the frontend without any pending reports.'''
+            '''running the frontend without any pending reports.'''
 
             sys.argv = []
             self.ui = _TestSuiteUserInterface()
             self.assertEqual(self.ui.run_argv(), False)
 
         def test_run_report_bug_noargs(self):
-            '''Test run_report_bug() without specifying arguments.'''
+            '''run_report_bug() without specifying arguments.'''
 
             sys.argv = ['ui-test', '-f']
             self.ui = _TestSuiteUserInterface()
@@ -1109,7 +1109,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_report_bug_package(self):
-            '''Test run_report_bug() for a package.'''
+            '''run_report_bug() for a package.'''
 
             sys.argv = ['ui-test', '-f', '-p', 'bash']
             self.ui = _TestSuiteUserInterface()
@@ -1133,7 +1133,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_report_bug_pid(self):
-            '''Test run_report_bug() for a pid.'''
+            '''run_report_bug() for a pid.'''
 
             # fork a test process
             pid = os.fork()
@@ -1167,7 +1167,7 @@ CoreDump: base64
             self.assert_(self.ui.ic_progress_pulses > 0)
 
         def test_run_report_bug_wrong_pid(self):
-            '''Test run_report_bug() for a nonexisting pid.'''
+            '''run_report_bug() for a nonexisting pid.'''
 
             # search an unused pid
             pid = 1
@@ -1186,7 +1186,7 @@ CoreDump: base64
             self.ui.run_argv()
 
         def test_run_report_bug_noperm_pid(self):
-            '''Test run_report_bug() for a pid which runs as a different user.'''
+            '''run_report_bug() for a pid which runs as a different user.'''
 
             assert os.getuid() > 0, 'this test must not be run as root'
 
@@ -1197,7 +1197,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_report_bug_unpackaged_pid(self):
-            '''Test run_report_bug() for a pid of an unpackaged program.'''
+            '''run_report_bug() for a pid of an unpackaged program.'''
 
             # create unpackaged test program
             (fd, exename) = tempfile.mkstemp()
@@ -1256,7 +1256,7 @@ CoreDump: base64
             return r
 
         def test_run_crash(self):
-            '''Test run_crash().'''
+            '''run_crash().'''
 
             r = self._gen_test_crash()
 
@@ -1337,7 +1337,7 @@ CoreDump: base64
             self.assert_(self.ui.report.check_ignored())
 
         def test_run_crash_argv_file(self):
-            '''Test run_crash() through a file specified on the command line.'''
+            '''run_crash() through a file specified on the command line.'''
 
             self.report['Package'] = 'bash'
             self.report['UnsupportableReason'] = 'It stinks.'
@@ -1358,7 +1358,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_crash_unsupportable(self):
-            '''Test run_crash() on a crash with the UnsupportableReason
+            '''run_crash() on a crash with the UnsupportableReason
             field.'''
 
             self.report['UnsupportableReason'] = 'It stinks.'
@@ -1372,7 +1372,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_unreportable(self):
-            '''Test run_crash() on a crash with the UnreportableReason
+            '''run_crash() on a crash with the UnreportableReason
             field.'''
 
             self.report['UnreportableReason'] = 'It stinks.'
@@ -1389,7 +1389,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_ignore(self):
-            '''Test run_crash() on a crash with the Ignore field.'''
+            '''run_crash() on a crash with the Ignore field.'''
 
             self.report['Ignore'] = 'True'
             self.report['ExecutablePath'] = '/bin/bash'
@@ -1400,7 +1400,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None)
 
         def test_run_crash_nocore(self):
-            '''Test run_crash() for a crash dump without CoreDump.'''
+            '''run_crash() for a crash dump without CoreDump.'''
 
             # create a test executable
             test_executable = '/bin/cat'
@@ -1436,7 +1436,7 @@ CoreDump: base64
                 (self.ui.msg_title, self.ui.msg_text))
 
         def test_run_crash_preretraced(self):
-            '''Test run_crash() pre-retraced reports.
+            '''run_crash() pre-retraced reports.
             
             This happens with crashes which are pre-processed by
             apport-retrace.'''
@@ -1463,7 +1463,7 @@ CoreDump: base64
             self.assertEqual(self.ui.ic_progress_pulses, 0)
            
         def test_run_crash_errors(self):
-            '''Test run_crash() on various error conditions.'''
+            '''run_crash() on various error conditions.'''
 
             # crash report with invalid Package name
             r = apport.Report()
@@ -1479,7 +1479,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'error')
 
         def test_run_crash_uninstalled(self):
-            '''Test run_crash() on reports with subsequently uninstalled packages'''
+            '''run_crash() on reports with subsequently uninstalled packages'''
 
             # program got uninstalled between crash and report
             r = self._gen_test_crash()
@@ -1517,7 +1517,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_package(self):
-            '''Test run_crash() for a package error.'''
+            '''run_crash() for a package error.'''
 
             # generate crash report
             r = apport.Report('Package')
@@ -1559,7 +1559,7 @@ CoreDump: base64
             self.assert_('Uname' in self.ui.report.keys())
 
         def test_run_crash_kernel(self):
-            '''Test run_crash() for a kernel error.'''
+            '''run_crash() for a kernel error.'''
 
             # generate crash report
             r = apport.Report('KernelCrash')
@@ -1598,7 +1598,7 @@ CoreDump: base64
             self.assertEqual(self.ui.report['ProblemType'], 'KernelCrash')
 
         def test_run_crash_anonymity(self):
-            '''Test run_crash() anonymization.'''
+            '''run_crash() anonymization.'''
 
             r = self._gen_test_crash()
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')

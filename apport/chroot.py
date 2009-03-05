@@ -168,7 +168,7 @@ if __name__ == '__main__':
 
     class ChrootTest(unittest.TestCase):
         def test_null(self):
-            '''Test null chroot (working in the main system)'''
+            '''null chroot (working in the main system)'''
 
             c = Chroot(None)
             self.assertEqual(c.root_tarball, None)
@@ -205,7 +205,7 @@ int main() { return 42; }
             return d
 
         def test_dir(self):
-            '''Test directory chroot.'''
+            '''directory chroot.'''
 
             d = self._mkchroot()
             tarpath = None
@@ -245,7 +245,7 @@ int main() { return 42; }
                     os.unlink(tarpath)
 
         def test_tarball(self):
-            '''Test tarball chroot.'''
+            '''tarball chroot.'''
 
             d = self._mkchroot()
             try:
@@ -290,7 +290,7 @@ int main() { return 42; }
                 os.unlink(tar)
 
         def test_fix_symlinks(self):
-            '''Test symlink fixing in chroots.'''
+            '''symlink fixing in chroots.'''
 
             d = self._mkchroot()
             try:
@@ -336,7 +336,7 @@ int main() { return 42; }
                 klass._install_file(m.group(1), root)
 
         def test_shell_ops(self):
-            '''Test various shell operations in the chroot.'''
+            '''various shell operations in the chroot.'''
 
             d = tempfile.mkdtemp()
             ldir = os.path.join(d, 'lib')

@@ -21,8 +21,9 @@ apport (0.142) UNRELEASED; urgency=low
   * debian/local/ubuntu-bug: Fix invocation with "--help". (LP: #305841)
   * apport/ui.py, load_report(): Clearer error message if report file does not
     exist. (LP: #204198)
+  * Remove redundant verbiage from test suite docstrings.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 10:33:25 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 10:49:55 +0100
 
 apport (0.141) jaunty; urgency=low
 

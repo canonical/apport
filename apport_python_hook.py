@@ -146,7 +146,7 @@ func(42)
             return script
 
         def test_general(self):
-            '''Test general operation of the Python crash hook.'''
+            '''general operation of the Python crash hook.'''
 
             script = self._test_crash()
 
@@ -178,7 +178,7 @@ func(42)
             self.assert_("func\n    raise Exception, 'This should happen." in pr['Traceback'])
 
         def test_no_argv(self):
-            '''Test with zapped sys.argv.'''
+            '''with zapped sys.argv.'''
 
             self._test_crash('import sys\nsys.argv = None')
 
@@ -220,7 +220,7 @@ func(42)
                     #os.unlink(r)
 
         def test_interactive(self):
-            '''Test that interactive Python sessions never generate a report.'''
+            '''interactive Python sessions never generate a report.'''
 
             orig_cwd = os.getcwd()
             try:
@@ -237,7 +237,7 @@ func(42)
                 os.chdir(orig_cwd)
 
         def test_ignoring(self):
-            '''Test that the Python crash hook respects the ignore list.'''
+            '''the Python crash hook respects the ignore list.'''
 
             # put the script into /var/crash, since that isn't ignored in the
             # hook

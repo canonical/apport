@@ -960,7 +960,7 @@ from cStringIO import StringIO
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
-        '''Test add_package_info().'''
+        '''add_package_info().'''
 
         # determine bash version
         bashversion = packaging.get_version('bash')
@@ -991,7 +991,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(not pr.has_key('Package'))
 
     def test_add_os_info(self):
-        '''Test add_os_info().'''
+        '''add_os_info().'''
 
         pr = Report()
         pr.add_os_info()
@@ -1000,7 +1000,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr['Architecture'])
 
     def test_add_user_info(self):
-        '''Test add_user_info().'''
+        '''add_user_info().'''
 
         pr = Report()
         pr.add_user_info()
@@ -1012,7 +1012,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
 
     def test_add_proc_info(self):
-        '''Test add_proc_info().'''
+        '''add_proc_info().'''
 
         # set test environment
         assert os.environ.has_key('LANG'), 'please set $LANG for this test'
@@ -1115,7 +1115,7 @@ sys.stdin.readline()
         self.assertRaises(OSError, pr.add_proc_info, p.pid)
 
     def test_add_path_classification(self):
-        '''Test classification of $PATH.'''
+        '''classification of $PATH.'''
 
         # system default
         p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, 
@@ -1148,7 +1148,7 @@ sys.stdin.readline()
             'PATH is customized with user paths')
 
     def test_check_interpreted(self):
-        '''Test _check_interpreted().'''
+        '''_check_interpreted().'''
 
         # standard ELF binary
         f = tempfile.NamedTemporaryFile()
@@ -1334,7 +1334,7 @@ int main() { return f(42); }
         self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
 
     def test_add_gdb_info(self):
-        '''Test add_gdb_info() with core dump file reference.'''
+        '''add_gdb_info() with core dump file reference.'''
 
         pr = Report()
         # should not throw an exception for missing fields
@@ -1345,7 +1345,7 @@ int main() { return f(42); }
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
 
     def test_add_gdb_info_load(self):
-        '''Test add_gdb_info() with inline core dump.'''
+        '''add_gdb_info() with inline core dump.'''
 
         rep = tempfile.NamedTemporaryFile()
         self._generate_sigsegv_report(rep)
@@ -1358,7 +1358,7 @@ int main() { return f(42); }
         self._validate_gdb_fields(pr)
 
     def test_add_gdb_info_script(self):
-        '''Test add_gdb_info() with a script.'''
+        '''add_gdb_info() with a script.'''
 
         (fd, coredump) = tempfile.mkstemp()
         (fd2, script) = tempfile.mkstemp()
@@ -1389,7 +1389,7 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
         self.assert_('libc.so' in pr['Stacktrace'] or 'in execute_command' in pr['Stacktrace'])
 
     def test_search_bug_patterns(self):
-        '''Test search_bug_patterns().'''
+        '''search_bug_patterns().'''
 
         pdir = None
         try:
@@ -1479,7 +1479,7 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
                 shutil.rmtree(pdir)
 
     def test_add_hooks_info(self):
-        '''Test add_hooks_info().'''
+        '''add_hooks_info().'''
 
         global _hook_dir
         global _common_hook_dir
@@ -1571,7 +1571,7 @@ def add_info(report):
             _common_hook_dir = orig_common_hook_dir
 
     def test_ignoring(self):
-        '''Test mark_ignore() and check_ignored().'''
+        '''mark_ignore() and check_ignored().'''
 
         global _ignore_file
         orig_ignore_file = _ignore_file
@@ -1623,7 +1623,7 @@ def add_info(report):
             _ignore_file = orig_ignore_file
 
     def test_blacklisting(self):
-        '''Test check_ignored() for system-wise blacklist.'''
+        '''check_ignored() for system-wise blacklist.'''
 
         global _blacklist_dir
         global _ignore_file
@@ -1668,7 +1668,7 @@ def add_info(report):
             _ignore_file = orig_ignore_file
 
     def test_has_useful_stacktrace(self):
-        '''Test has_useful_stacktrace().'''
+        '''has_useful_stacktrace().'''
 
         r = Report()
         self.failIf(r.has_useful_stacktrace())
@@ -1701,7 +1701,7 @@ def add_info(report):
         self.failIf(r.has_useful_stacktrace())
 
     def test_standard_title(self):
-        '''Test standard_title().'''
+        '''standard_title().'''
 
         report = Report()
         self.assertEqual(report.standard_title(), None)
@@ -1831,7 +1831,7 @@ baz()
         self.assertEqual(report.standard_title(),'kernel BUG at /tmp/oops.c:5!')
 
     def test_obsolete_packages(self):
-        '''Test obsolete_packages().'''
+        '''obsolete_packages().'''
 
         report = Report()
         self.assertRaises(KeyError, report.obsolete_packages)
@@ -1857,7 +1857,7 @@ baz()
         self.assertEqual(report.obsolete_packages(), [])
 
     def test_gen_stacktrace_top(self):
-        '''Test _gen_stacktrace_top().'''
+        '''_gen_stacktrace_top().'''
         
         # nothing to chop off
         r = Report()
@@ -1976,7 +1976,7 @@ filter_func (connection=0x8075288, message=0x80768d8, user_data=0x8074da8) at li
 dbus_connection_dispatch (connection=0x8075288) at dbus-connection.c:4267''')
 
     def test_crash_signature(self):
-        '''Test crash_signature().'''
+        '''crash_signature().'''
 
         r = Report()
         self.assertEqual(r.crash_signature(), None)
@@ -2020,7 +2020,7 @@ ZeroDivisionError: integer division or modulo by zero'''
         self.assertEqual(r.crash_signature(), None)
 
     def test_binary_data(self):
-        '''Test that methods get along with binary data.'''
+        '''methods get along with binary data.'''
 
         pr = Report()
         pr['Signal'] = '11'
@@ -2045,7 +2045,7 @@ ZeroDivisionError: integer division or modulo by zero'''
         self.assertEqual(pr.standard_title(), 'foo crashed with SIGSEGV in h()')
 
     def test_module_license_evaluation(self):
-        '''Test that module licenses can be validated correctly.'''
+        '''module licenses can be validated correctly.'''
 
         def _build_ko(license):
             asm = tempfile.NamedTemporaryFile(prefix='%s-' % (license),

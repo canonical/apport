@@ -130,25 +130,25 @@ if __name__ == '__main__':
     class __SUSEPackageInfoTest(unittest.TestCase):
 
         def test_is_distro_package(self):
-            '''Test is_distro_package().'''
+            '''is_distro_package().'''
 
             self.assert_(impl.is_distro_package('kernel-default'))
             self.assert_(not impl.is_distro_package('libxine1'))
             self.assertRaises(ValueError, impl.is_distro_package, 'nonexistant_package') 
             
         def test_compare_versions(self):
-            '''Test is_distro_package().'''
+            '''is_distro_package().'''
             
             self.assertEqual(impl.compare_versions('1', '2'), -1)
             
         def test_get_file_package(self):
-            '''Test get_file_package().'''
+            '''get_file_package().'''
             
             package = impl.get_file_package('/bin/bash') 
             self.assert_(package.startswith('bash'))
 
         def test_get_header(self):
-            '''Test _get_header().'''
+            '''_get_header().'''
             
             hdr = impl._get_header('bash-3.2-112.x86_64')
             self.assertEqual(hdr['n'], 'bash')
