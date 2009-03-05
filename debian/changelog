@@ -18,8 +18,9 @@ apport (0.142) UNRELEASED; urgency=low
     reports). Fixes displaying of report in apport-cli.
   * apport/report.py: Slight robustification of test_add_gdb_info_script()
     test case.
+  * debian/local/ubuntu-bug: Fix invocation with "--help". (LP: #305841)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 10:24:41 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 10:26:56 +0100
 
 apport (0.141) jaunty; urgency=low
 
