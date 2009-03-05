@@ -336,7 +336,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if not self._mirror:
             for l in open('/etc/apt/sources.list'):
                 fields = l.split()
-                if len(fields) >= 3 and fields[0] == 'deb':
+                if len(fields) >= 3 and fields[0] == 'deb' and fields[1].startswith('http://'):
                     self._mirror = fields[1]
                     break
             else:

@@ -33,8 +33,10 @@ apport (0.142) UNRELEASED; urgency=low
     changing the default file. Add a comment to debian/apport.default about
     this possibility. Thanks to Milan for the suggestion and the initial
     patch! (LP: #320467)
+  * backends/packaging-apt-dpkg.py, _get_mirror(): Only consider http://
+    mirrors for fetching Contents.gz. (LP: #315797)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 15:41:33 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 16:18:02 +0100
 
 apport (0.141) jaunty; urgency=low
 
