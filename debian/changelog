@@ -6,8 +6,10 @@ apport (0.142) UNRELEASED; urgency=low
     - Correct spelling or "error_log".
     - Do not call fgrep with no file names (if /etc/cups/ppd/ is empty), since
       that hangs forever.
+  * apport/report.py, _gen_stacktrace_top(): Fix parsing of stacktraces
+    with some addresses missing. Add test cases. (LP: #269133)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 09:09:13 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 09:50:20 +0100
 
 apport (0.141) jaunty; urgency=low
 

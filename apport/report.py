@@ -500,11 +500,14 @@ class Report(ProblemReport):
         unwound = False
         unwinding = False
         bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+(.*)|(<signal handler called>)\s*)$')
+        bt_fn_noaddr_re = re.compile('^#(\d+)\s+(?:(.*)|(<signal handler called>)\s*)$')
 
         for line in self['Stacktrace'].splitlines():
             m = bt_fn_re.match(line)
             if not m:
-                continue
+                m = bt_fn_noaddr_re.match(line)
+                if not m:
+                    continue
 
             if not unwound or unwinding:
                 if m.group(2):
@@ -1873,6 +1876,23 @@ f (x=1) at crash.c:27
 e (x=1) at crash.c:28
 d (x=1) at crash.c:29''')
 
+        # nothing to chop off: some addresses missing (LP #269133)
+        r = Report()
+        r['Stacktrace'] = '''#0 h (p=0x0) at crash.c:25
+#1  0x100004c8 in g (x=1, y=42) at crash.c:26
+#2 f (x=1) at crash.c:27
+#3  0x10000530 in e (x=1) at crash.c:28
+#4  0x10000530 in d (x=1) at crash.c:29
+#5  0x10000530 in c (x=1) at crash.c:30
+#6  0x10000550 in main () at crash.c:31
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''h (p=0x0) at crash.c:25
+g (x=1, y=42) at crash.c:26
+f (x=1) at crash.c:27
+e (x=1) at crash.c:28
+d (x=1) at crash.c:29''')
+
         # single signal handler invocation
         r = Report()
         r['Stacktrace'] = '''#0  0x10000488 in raise () from /lib/libpthread.so.0
@@ -1880,6 +1900,22 @@ d (x=1) at crash.c:29''')
 #2  <signal handler called>
 #3  0x10000530 in e (x=1) at crash.c:28
 #4  0x10000530 in d (x=1) at crash.c:29
+#5  0x10000530 in c (x=1) at crash.c:30
+#6  0x10000550 in main () at crash.c:31
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''e (x=1) at crash.c:28
+d (x=1) at crash.c:29
+c (x=1) at crash.c:30
+main () at crash.c:31''')
+
+        # single signal handler invocation: some addresses missing
+        r = Report()
+        r['Stacktrace'] = '''#0  0x10000488 in raise () from /lib/libpthread.so.0
+#1  ??
+#2  <signal handler called>
+#3  0x10000530 in e (x=1) at crash.c:28
+#4  d (x=1) at crash.c:29
 #5  0x10000530 in c (x=1) at crash.c:30
 #6  0x10000550 in main () at crash.c:31
 '''
