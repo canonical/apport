@@ -372,7 +372,15 @@ free memory to automatically analyze the problem and send a report to the develo
     def get_complete_size(self):
         '''Return the size of the complete report.'''
 
-        return self.complete_size
+        try:
+            return self.complete_size
+        except AttributeError:
+            # report wasn't loaded, so count manually
+            size = 0
+            for k in self.report:
+                if self.report[k]:
+                    size += len(self.report[k])
+            return size
 
     def get_reduced_size(self):
         '''Return the size of the reduced report.'''
@@ -927,8 +935,8 @@ databases = {
             self.assertEqual(self.ui.format_filesize(1024*1048576), '1.0 GiB')
             self.assertEqual(self.ui.format_filesize(2560*1048576), '2.5 GiB')
 
-        def test_get_size(self):
-            '''Test get_complete_size() and get_reduced_size().'''
+        def test_get_size_loaded(self):
+            '''Test get_complete_size() and get_reduced_size() for loaded Reports.'''
 
             self.ui.load_report(self.report_file.name)
 
@@ -937,6 +945,18 @@ databases = {
             rs = self.ui.get_reduced_size()
             self.assert_(rs > 1000)
             self.assert_(rs < 10000)
+
+        def test_get_size_constructed(self):
+            '''Test get_complete_size() and get_reduced_size() for on-the-fly Reports.'''
+
+            self.ui.report = apport.Report('Bug')
+            self.ui.report['Hello'] = 'World'
+
+            s = self.ui.get_complete_size()
+            self.assert_(s > 5)
+            self.assert_(s < 100)
+
+            self.assertEqual(s, self.ui.get_reduced_size())
 
         def test_load_report(self):
             '''Test load_report().'''

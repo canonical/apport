@@ -13,8 +13,11 @@ apport (0.142) UNRELEASED; urgency=low
     directly to Launchpad. Nowadays lots of packages have hooks, so we cannot
     guarantee any more that bug reports only have non-sensitive information.
     (LP: #195514)
+  * apport/ui.py: Fix crash in get_complete_size() for reports that are
+    constructed on the fly instead of loaded from a file (i. e. for bug
+    reports). Fixes displaying of report in apport-cli.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 10:06:36 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 10:17:45 +0100
 
 apport (0.141) jaunty; urgency=low
 
