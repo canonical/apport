@@ -12,7 +12,8 @@ apport (0.142) UNRELEASED; urgency=low
     give the user a chance to cancel. Previously, collected data was sent
     directly to Launchpad. Nowadays lots of packages have hooks, so we cannot
     guarantee any more that bug reports only have non-sensitive information.
-    (LP: #195514)
+    (LP: #195514) This also allows the user to cancel if (s)he inadvertedly
+    clicked on "Report a problem". (LP: #279033)
   * apport/ui.py: Fix crash in get_complete_size() for reports that are
     constructed on the fly instead of loaded from a file (i. e. for bug
     reports). Fixes displaying of report in apport-cli.
