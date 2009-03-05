@@ -924,17 +924,17 @@ class Report(ProblemReport):
         from attributes which contain data read from the environment, and
         removes the ProcCwd attribute completely.
         '''
+        replacements = {}
         if (os.getuid() > 0):
             # do not replace "root"
             p = pwd.getpwuid(os.getuid())
-            replacements = {
-                p[0]: 'username',
-                p[5]: '/home/username',
-            }
-        else:
-            replacements = {}
+            if len(p[0] >= 2):
+                replacements[p[0]] = 'username'
+            replacements[p[5]] = '/home/username'
 
-        replacements[os.uname()[1]] = 'hostname'
+        hostname = os.uname()[1]
+        if len(hostname) >= 2:
+            replacements[hostname] = 'hostname'
 
         for s in p[4].split(','):
             s = s.strip()

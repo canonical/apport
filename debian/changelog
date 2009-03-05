@@ -24,8 +24,11 @@ apport (0.142) UNRELEASED; urgency=low
   * Remove redundant verbiage from test suite docstrings.
   * apport/report.py, anonymize(): Fix crash when processing root-owned
     reports. (LP: #338033)
+  * apport/report.py, anonymize(): Do not anonymize single-character user and
+    host names, since they create an utter mess in bug reports, and also are
+    very low-sensitive.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 11:50:57 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 12:37:17 +0100
 
 apport (0.141) jaunty; urgency=low
 
