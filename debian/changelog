@@ -2,8 +2,11 @@ apport (0.143) UNRELEASED; urgency=low
 
   * debian/apport.README.Debian: Document how to temporarily and permanently
     enable crash interception.
+  * backends/packaging-apt-dpkg.py, is_distro_package(): Do not consider a
+    package a native distro one if installed version is "None". This happens
+    with some PPA packages. (LP: #252734)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Mar 2009 09:11:49 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Mar 2009 09:33:35 +0100
 
 apport (0.142) jaunty; urgency=low
 

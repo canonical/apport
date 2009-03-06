@@ -84,6 +84,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         this_os = lsb_release.communicate()[0].strip()
         assert lsb_release.returncode == 0
 
+        if self._cache(package).installedVersion is None:
+            return False # LP#252734
+
         origins = self._cache(package).candidateOrigin
         if origins: # might be None
             for o in origins:
