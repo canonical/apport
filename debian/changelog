@@ -1,3 +1,10 @@
+apport (0.143) UNRELEASED; urgency=low
+
+  * debian/apport.README.Debian: Document how to temporarily and permanently
+    enable crash interception.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Mar 2009 09:11:49 +0100
+
 apport (0.142) jaunty; urgency=low
 
   * apport/report.py: Do not include lsb_release's stderr in the
