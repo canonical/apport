@@ -5,6 +5,8 @@ apport (0.143) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py, is_distro_package(): Do not consider a
     package a native distro one if installed version is "None". This happens
     with some PPA packages. (LP: #252734)
+  * apport/report.py, anonymize(): Move user name anonymization into the
+    "non-root" case as well; fixes uninitialized variable. (LP: #338847)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Mar 2009 09:33:35 +0100
 

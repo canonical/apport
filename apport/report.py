@@ -932,14 +932,14 @@ class Report(ProblemReport):
                 replacements[p[0]] = 'username'
             replacements[p[5]] = '/home/username'
 
+            for s in p[4].split(','):
+                s = s.strip()
+                if len(s) > 2:
+                    replacements[s] = 'User Name'
+
         hostname = os.uname()[1]
         if len(hostname) >= 2:
             replacements[hostname] = 'hostname'
-
-        for s in p[4].split(','):
-            s = s.strip()
-            if len(s) > 2:
-                replacements[s] = 'User Name'
 
         try:
             del self['ProcCwd']
