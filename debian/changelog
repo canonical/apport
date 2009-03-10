@@ -1,3 +1,10 @@
+apport (0.144) UNRELEASED; urgency=low
+
+  * apport/crashdb_impl/launchpad.py, mark_retrace_failed(): If report is
+    invalid, remove CoreDump.gz and other attachments.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Mar 2009 10:07:48 +0100
+
 apport (0.143) jaunty; urgency=low
 
   * debian/apport.README.Debian: Document how to temporarily and permanently
