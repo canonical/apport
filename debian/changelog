@@ -8,6 +8,8 @@ apport (0.145) UNRELEASED; urgency=low
     behaviour equivalent to bin/apport: Silently exit for existing unseen
     crash report, and overwrite existing seen crash report. Add test cases.
     (LP: #323714)
+  * general-hooks/automatix.py: Refuse to send bug reports when ultamatix is
+    installed.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Mar 2009 13:02:43 +0100
 
