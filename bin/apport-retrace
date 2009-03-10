@@ -506,8 +506,16 @@ if options.gdb:
     core.close()
 else:
     # regenerate gdb info
-    report.add_gdb_info()
-    gen_source_stacktrace(report)
+    try:
+        report.add_gdb_info()
+        gen_source_stacktrace(report)
+    except AssertionError:
+        if outdated_msg:
+            # we did not find ExecutablePath, and have outdated packages, close
+            # as invalid (will be caught below)
+            pass
+        else:
+            raise
 
 modified = False
 

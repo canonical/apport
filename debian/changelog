@@ -2,6 +2,9 @@ apport (0.144) UNRELEASED; urgency=low
 
   * apport/crashdb_impl/launchpad.py, mark_retrace_failed(): If report is
     invalid, remove CoreDump.gz and other attachments.
+  * bin/apport-retrace: If we didn't find the ExecutablePath on the system
+    because the package is out of date, don't crash, but close the bug as
+    invalid.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Mar 2009 10:07:48 +0100
 
