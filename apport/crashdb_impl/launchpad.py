@@ -389,7 +389,7 @@ in a dependent package.' % master)
             b.comments.add(comment)
             b.status = 'Invalid'
 
-            bug.attachments.remove(
+            b.attachments.remove(
                 func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
 Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
 Disassembly.txt$)', a.lp_filename))
