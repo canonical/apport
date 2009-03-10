@@ -21,6 +21,7 @@ bug_target_re = re.compile(
     r'/ubuntu/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$')
 
 try:
+    import launchpadlib.errors
     from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
     from launchpadlib.credentials import Credentials
 except ImportError:
@@ -47,8 +48,12 @@ def login(launchpad_instance=EDGE_SERVICE_ROOT):
         launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
     else:
         # get credentials and save them
-        launchpad = Launchpad.get_token_and_login('apport-collect', launchpad_instance,
-            cache_dir)
+        try:
+            launchpad = Launchpad.get_token_and_login('apport-collect',
+                    launchpad_instance, cache_dir)
+        except launchpadlib.errors.HTTPError, e:
+            print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
+            sys.exit(1)
         f = open(cred, 'w')
         os.chmod(cred, 0600)
         launchpad.credentials.save(f)
@@ -149,4 +154,8 @@ if len(report.keys()) == 0:
     print 'No additional information collected.'
     sys.exit(0)
 
-upload(report, bug)
+try:
+    upload(report, bug)
+except launchpadlib.errors.HTTPError, e:
+    print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
+    sys.exit(1)
