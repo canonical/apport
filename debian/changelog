@@ -4,6 +4,10 @@ apport (0.145) UNRELEASED; urgency=low
   * debian/local/apport-collect: Do not crash on
     launchpadlib.errors.HTTPError, but give a proper error message and point
     out that this script needs "change anything" privileges. (LP: #338201)
+  * apport_python_hook.py: Fix crash for already existing reports, and make
+    behaviour equivalent to bin/apport: Silently exit for existing unseen
+    crash report, and overwrite existing seen crash report. Add test cases.
+    (LP: #323714)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Mar 2009 13:02:43 +0100
 

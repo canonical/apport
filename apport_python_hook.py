@@ -81,6 +81,14 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # get the uid for now, user name later
         user = os.getuid()
         pr_filename = '/var/crash/%s.%i.crash' % (mangled_program, user)
+        if os.path.exists(pr_filename):
+            if apport.fileutils.seen_report(pr_filename):
+                # remove the old file, so that we can create the new one with
+                # os.O_CREAT|os.O_EXCL
+                os.unlink(pr_filename)
+            else:
+                # don't clobber existing report
+                return
         report_file = os.fdopen(os.open(pr_filename,
             os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
         os.chmod(pr_filename, 0600)
@@ -116,12 +124,16 @@ if __name__ == '__main__':
             self.assertEqual(apport.fileutils.get_all_reports(), [],
                 'No crash reports already present')
 
-        def _test_crash(self, extracode=''):
+        def _test_crash(self, extracode='', scriptname=None):
             '''Create a test crash.'''
 
             # put the script into /var/crash, since that isn't ignored in the
             # hook
-            (fd, script) = tempfile.mkstemp(dir=apport.fileutils.report_dir)
+            if scriptname:
+                script = scriptname
+                fd = os.open(scriptname, os.O_CREAT|os.O_WRONLY)
+            else:
+                (fd, script) = tempfile.mkstemp(dir=apport.fileutils.report_dir)
             try:
                 os.write(fd, '''#!/usr/bin/python
 def func(x):
@@ -139,7 +151,7 @@ func(42)
                 self.assertEqual(p.returncode, 1,
                     'crashing test python program exits with failure code')
                 self.assert_('Exception: This should happen.' in err)
-
+                self.failIf('OSError' in err, err)
             finally:
                 os.unlink(script)
 
@@ -176,6 +188,41 @@ func(42)
             self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
             self.assert_(pr['Traceback'].startswith('Traceback'))
             self.assert_("func\n    raise Exception, 'This should happen." in pr['Traceback'])
+
+        def test_existing(self):
+            '''Python crash hook overwrites seen existing files.'''
+
+            script = self._test_crash()
+
+            # did we get a report?
+            to_del = set()
+            try:
+                reports = apport.fileutils.get_new_reports()
+                to_del.update(reports)
+                self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+                self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
+                    0600, 'report has correct permissions')
+
+                # touch report -> "seen" case
+                apport.fileutils.mark_report_seen(reports[0])
+
+                reports = apport.fileutils.get_new_reports()
+                to_del.update(reports)
+                self.assertEqual(len(reports), 0)
+
+                script = self._test_crash(scriptname=script)
+                reports = apport.fileutils.get_new_reports()
+                to_del.update(reports)
+                self.assertEqual(len(reports), 1)
+
+                # "unseen" case
+                script = self._test_crash(scriptname=script)
+                reports = apport.fileutils.get_new_reports()
+                self.assertEqual(len(reports), 1)
+                to_del.update(reports)
+            finally:
+                for r in to_del:
+                    os.unlink(r)
 
         def test_no_argv(self):
             '''with zapped sys.argv.'''
