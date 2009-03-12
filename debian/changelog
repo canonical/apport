@@ -8,6 +8,13 @@ apport (0.146) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py: Add initial test suite, performing data
     upload, bug reporting, report download, and report updating. This happens
     on staging.launchpad.net.
+  * apport/crashdb.py: Add new interface duplicate_of(id) to return the master
+    bug of a duplicate. Also document that close_duplicate() with "None"
+    master bug will un-duplicate the bug.
+  * apport/crashdb_impl/{launchpad,memory}.py: Implement duplicate_of() and
+    add test cases. The Launchpad test case reproduces the
+    "duplicate-of-a-duplicate" regression, which now got fixed in
+    python-launchpad-bugs bzr head.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 

@@ -114,9 +114,18 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         except IndexError:
             return 'invalid'
 
-    def close_duplicate(self, id, master):
-        '''Mark a crash id as duplicate of given master ID.'''
+    def duplicate_of(self, id):
+        '''Return master ID for a duplicate bug.
 
+        If the bug is not a duplicate, return None.
+        '''
+        return self.reports[id]['dup_of']
+
+    def close_duplicate(self, id, master):
+        '''Mark a crash id as duplicate of given master ID.
+        
+        If master is None, id gets un-duplicated.
+        '''
         self.reports[id]['dup_of'] = master
 
     def mark_regression(self, id, master):
@@ -313,13 +322,19 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.get_distro_release(0), 'FooLinux Pi/2')
 
     def test_status(self):
-        '''get_unfixed(), get_fixed_version(), close_duplicate()'''
+        '''get_unfixed(), get_fixed_version(), duplicate_of(), close_duplicate()'''
 
         self.assertEqual(self.crashes.get_unfixed(), set([0, 1, 2, 4]))
         self.assertEqual(self.crashes.get_fixed_version(0), None)
         self.assertEqual(self.crashes.get_fixed_version(1), None)
         self.assertEqual(self.crashes.get_fixed_version(3), '4.1')
+
+        self.assertEqual(self.crashes.duplicate_of(0), None)
+        self.assertEqual(self.crashes.duplicate_of(1), None)
         self.crashes.close_duplicate(1, 0)
+        self.assertEqual(self.crashes.duplicate_of(0), None)
+        self.assertEqual(self.crashes.duplicate_of(1), 0)
+
         self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
         self.assertEqual(self.crashes.get_fixed_version(1), 'invalid')
 

@@ -340,27 +340,40 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return 'invalid'
         return None
 
-    def close_duplicate(self, id, master):
-        '''Mark a crash id as duplicate of given master ID.'''
+    def duplicate_of(self, id):
+        '''Return master ID for a duplicate bug.
 
+        If the bug is not a duplicate, return None.
+        '''
+        b =  Bug(id)
+        return b.duplicate_of
+
+    def close_duplicate(self, id, master):
+        '''Mark a crash id as duplicate of given master ID.
+        
+        If master is None, id gets un-duplicated.
+        '''
         bug = Bug(id)
 
         # check whether the master itself is a dup
-        m = Bug(master)
-        if m.duplicate_of:
-            master = m.duplicate_of
+        if master:
+            m = Bug(master)
+            if m.duplicate_of:
+                master = m.duplicate_of
 
-        bug.attachments.remove(
-            func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
+            bug.attachments.remove(
+                func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
 Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
 Disassembly.txt$)', a.lp_filename))
-        if bug.private:
-            bug.private = None
-        bug.commit()
+            if bug.private:
+                bug.private = None
+            bug.commit()
 
-        # set duplicate last, since we cannot modify already dup'ed bugs
-        bug = Bug(id)
-        bug.duplicate_of = int(master)
+            # set duplicate last, since we cannot modify already dup'ed bugs
+            bug = Bug(id)
+            bug.duplicate_of = int(master)
+        else:
+            bug.duplicate_of = None
         bug.commit()
 
     def mark_regression(self, id, master):
@@ -444,6 +457,8 @@ if __name__ == '__main__':
         # binary package "coreutils"
         test_package = 'coreutils'
         test_srcpackage = 'coreutils'
+        known_test_id = 89040
+        known_test_id2 = 302779
 
         #
         # Generic tests, should work for all CrashDB implementations
@@ -483,7 +498,7 @@ if __name__ == '__main__':
             global sigv_report
             sigv_report = id
 
-        def test_download(self):
+        def test_2_download(self):
             '''download()'''
 
             r = self.crashdb.download(sigv_report)
@@ -504,7 +519,7 @@ if __name__ == '__main__':
             self.assert_(len(r['CoreDump']) > 1000)
             self.assert_('Dependencies' in r)
 
-        def test_update(self):
+        def test_3_update(self):
             '''update()'''
 
             r = self.crashdb.download(sigv_report)
@@ -530,6 +545,33 @@ if __name__ == '__main__':
 
             self.assertEqual(self.crashdb.get_distro_release(sigv_report),
                     self.ref_report['DistroRelease'])
+
+        def test_duplicates(self):
+            '''duplicate handling'''
+
+            # initially we have no dups
+            self.assertEqual(self.crashdb.duplicate_of(sigv_report), None)
+
+            # dupe our sigv_report and check that it worked; then undupe it
+            self.crashdb.close_duplicate(sigv_report, self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(sigv_report), self.known_test_id)
+            self.crashdb.close_duplicate(sigv_report, None)
+            self.assertEqual(self.crashdb.duplicate_of(sigv_report), None)
+
+            # this should have removed attachments
+            r = self.crashdb.download(sigv_report)
+            self.failIf('CoreDump' in r)
+
+            # now try duplicating to a duplicate bug; this should automatically
+            # transition to the master bug
+            self.crashdb.close_duplicate(self.known_test_id,
+                    self.known_test_id2)
+            self.crashdb.close_duplicate(sigv_report, self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(sigv_report),
+                    self.known_test_id2)
+
+            self.crashdb.close_duplicate(self.known_test_id, None)
+            self.crashdb.close_duplicate(self.known_test_id2, None)
 
         #
         # Launchpad specific implementation and tests

@@ -380,9 +380,18 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def close_duplicate(self, id, master):
-        '''Mark a crash id as duplicate of given master ID.'''
+    def duplicate_of(self, id):
+        '''Return master ID for a duplicate bug.
 
+        If the bug is not a duplicate, return None.
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
+    def close_duplicate(self, id, master):
+        '''Mark a crash id as duplicate of given master ID.
+        
+        If master is None, id gets un-duplicated.
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def mark_regression(self, id, master):
