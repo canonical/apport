@@ -429,31 +429,160 @@ Disassembly.txt$)', a.lp_filename))
             # already subscribed
             pass
 
-# some test code for future usage:
+#
+# Unit tests
+#
 
-#c = CrashDatabase(os.path.expanduser('~/.lpcookie.txt'), '', 
-#    {'distro': 'ubuntu', 'staging': False})
+if __name__ == '__main__':
+    import unittest, urllib2, cookielib
 
-#r=c.download(89040)
-#r['StacktraceTop'] = 'This is an invalid test StacktraceTop\nYes, Really!\nfoo'
-#r['Stacktrace'] = 'long\ntrace'
-#r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
+    crashdb = None
+    sigv_report = None
 
-#c.update(89040, r, 'arbitrary comment\nhere.')
+    class _Tests(unittest.TestCase):
+        # this assumes that a source package "coreutils" exists and builds a
+        # binary package "coreutils"
+        test_package = 'coreutils'
+        test_srcpackage = 'coreutils'
 
-#t=c.upload(r)
-#print 'ticket:', t
-#print c.get_comment_url(r, t)
+        #
+        # Generic tests, should work for all CrashDB implementations
+        #
 
-#c.mark_regression(89040, 116026)
-#c.close_duplicate(89040, 116026)
-#c.mark_retrace_failed(89040)
-## OR:
-#c.mark_retrace_failed(89040, 'not properly frobnicated')
+        def setUp(self):
+            global crashdb
+            if not crashdb:
+                crashdb = self._get_instance()
+            self.crashdb = crashdb
 
-#print c.get_unfixed()
-#print '89040', c.get_fixed_version(89040)
-#print '114036', c.get_fixed_version(114036)
-#print '116026', c.get_fixed_version(116026)
-#print '118955 (dup)', c.get_fixed_version(118955)
-#print '999999 (N/E)', c.get_fixed_version(999999)
+            # create a local reference report so that we can compare
+            # DistroRelease, Architecture, etc.
+            self.ref_report = apport.Report()
+            self.ref_report.add_os_info()
+            self.ref_report.add_user_info()
+
+        def test_1_report(self):
+            '''upload() and get_comment_url()
+            
+            This needs to run first, since it sets sigv_report.
+            '''
+            r = apport.report._ApportReportTest._generate_sigsegv_report()
+            r.add_package_info(self.test_package)
+            r.add_os_info()
+            r.add_gdb_info()
+            r.add_user_info()
+            self.assertEqual(r.standard_title(), 'crash crashed with SIGSEGV in f()')
+
+            handle = self.crashdb.upload(r)
+            self.assert_(handle)
+            url = self.crashdb.get_comment_url(r, handle)
+            self.assert_(url)
+
+            id = self._fill_bug_form(url)
+            self.assert_(id > 0)
+            global sigv_report
+            sigv_report = id
+
+        def test_download(self):
+            '''download()'''
+
+            r = self.crashdb.download(sigv_report)
+            self.assertEqual(r['ProblemType'], 'Crash')
+            self.assertEqual(r['DistroRelease'], self.ref_report['DistroRelease'])
+            self.assertEqual(r['Architecture'], self.ref_report['Architecture'])
+            self.assertEqual(r['Uname'], self.ref_report['Uname'])
+            self.assertEqual(r.get('NonfreeKernelModules'),
+                self.ref_report.get('NonfreeKernelModules'))
+            self.assertEqual(r.get('UserGroups'), self.ref_report.get('UserGroups'))
+
+            self.assertEqual(r['Signal'], '11')
+            self.assert_(r['ExecutablePath'].endswith('/crash'))
+            self.assertEqual(r['SourcePackage'], self.test_srcpackage)
+            self.assert_(r['Package'].startswith(self.test_package + ' '))
+            self.assert_('f (x=42)' in r['Stacktrace'])
+            self.assert_('f (x=42)' in r['StacktraceTop'])
+            self.assert_(len(r['CoreDump']) > 1000)
+            self.assert_('Dependencies' in r)
+
+        def test_update(self):
+            '''update()'''
+
+            r = self.crashdb.download(sigv_report)
+
+            # updating with an useless stack trace retains core dump
+            r['StacktraceTop'] = '?? ()'
+            r['Stacktrace'] = 'long\ntrace'
+            r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
+            self.crashdb.update(sigv_report, r, 'I can has a better retrace?')
+            r = self.crashdb.download(sigv_report)
+            self.assert_('CoreDump' in r)
+
+            # updating with an useful stack trace removes core dump
+            r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
+            r['Stacktrace'] = 'long\ntrace'
+            r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
+            self.crashdb.update(sigv_report, r, 'good retrace!')
+            r = self.crashdb.download(sigv_report)
+            self.failIf('CoreDump' in r)
+
+        def test_get_distro_release(self):
+            '''get_distro_release()'''
+
+            self.assertEqual(self.crashdb.get_distro_release(sigv_report),
+                    self.ref_report['DistroRelease'])
+
+        #
+        # Launchpad specific implementation and tests
+        #
+
+        @classmethod
+        def _get_instance(klass):
+            '''Create a CrashDB instance'''
+
+            return CrashDatabase(os.path.expanduser('~/.lpcookie.txt'), 
+                    '', {'distro': 'ubuntu', 'staging': True})
+
+        def _fill_bug_form(self, url):
+            '''Fill bug form and commit the bug.
+
+            Return the report ID.
+            '''
+            cj = cookielib.MozillaCookieJar()
+            cj.load(self.crashdb.cookie_file)
+            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+
+            re_pkg = re.compile('<input type="text" value="([^"]+)" id="field.packagename"')
+            re_title = re.compile('<input.*id="field.title".*value="([^"]+)"')
+            re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
+
+            # parse default field values from reporting page
+            url = url.replace('+filebug/', '+filebug-advanced/')
+            
+            res = opener.open(url)
+            self.assertEqual(res.getcode(), 200)
+            content = res.read()
+
+            m_pkg = re_pkg.search(content)
+            m_title = re_title.search(content)
+            m_tags = re_tags.search(content)
+
+            # strip off GET arguments from URL
+            url = url.split('?')[0]
+
+            # create request to file bug
+            args = {
+                'packagename_option': 'choose',
+                'field.packagename': m_pkg.group(1),
+                'field.title': m_title.group(1),
+                'field.tags': m_tags.group(1),
+                'field.comment': 'ZOMG!',
+                'field.actions.submit_bug': '1',
+            }
+
+            res = opener.open(url, data=urllib.urlencode(args))
+            self.assertEqual(res.getcode(), 200)
+            self.assert_('+source/%s/+bug/' % m_pkg.group(1) in res.geturl())
+            id = res.geturl().split('/')[-1]
+            return int(id)
+
+    unittest.main()

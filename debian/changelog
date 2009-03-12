@@ -5,6 +5,9 @@ apport (0.146) UNRELEASED; urgency=low
     missing Signal field.
   * apport/crashdb_impl/launchpad.py: Fully enable operation with
     staging.launchpad.net.
+  * apport/crashdb_impl/launchpad.py: Add initial test suite, performing data
+    upload, bug reporting, report download, and report updating. This happens
+    on staging.launchpad.net.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 
