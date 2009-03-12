@@ -17,7 +17,6 @@ TODO:
         
     * related bugs
         - setting bug privacy LP #308374
-        - adding/removing tags LP #254901
 '''
 
 import urllib, tempfile, shutil, os.path, re, gzip
