@@ -22,7 +22,7 @@ import apport
 Bug = Connector.ConnectBug()
 BugList = Connector.ConnectBugList()
 
-def get_source_version(distro, package):
+def get_source_version(distro, package, hostname):
     '''Return the version of given source package in the latest release of
     given distribution.
 
@@ -30,13 +30,13 @@ def get_source_version(distro, package):
     '''
 
     if distro:
-        result = urllib.urlopen('https://launchpad.net/%s/+source/%s' % (distro, package)).read()
+        result = urllib.urlopen('https://%s/%s/+source/%s' % (hostname, distro, package)).read()
         m = re.search('href="/%s/\w+/\+source/%s/([^"]+)"' % (distro, re.escape(package)), result)
         if not m:
             raise ValueError, 'source package %s does not exist in %s' % (package, distro)
     else:
         # non distro packages
-        result = urllib.urlopen('https://launchpad.net/%s/+series' % (package)).read()
+        result = urllib.urlopen('https://%s/%s/+series' % (hostname, package)).read()
         m = re.search('href="/%s/([^"]+)"' % (re.escape(package)), result)
         if not m:
             raise ValueError, 'Series for %s does not exist in Launchpad' % (package)
@@ -57,15 +57,20 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         self.distro = options.get('distro')
         self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
+        self.options = options
+        self.cookie_file = cookie_file
 
-        if options.get('staging', False):
+        if self.options.get('staging', False):
             from launchpadbugs.lpconstants import HTTPCONNECTION
             Bug.set_connection_mode(HTTPCONNECTION.MODE.STAGING)
             BugList.set_connection_mode(HTTPCONNECTION.MODE.STAGING)
+            self.hostname = 'staging.launchpad.net'
+        else:
+            self.hostname = 'launchpad.net'
 
-        if cookie_file:
-            Bug.authentication = cookie_file
-            BugList.authentication = cookie_file
+        if self.cookie_file:
+            Bug.authentication = self.cookie_file
+            BugList.authentication = self.cookie_file
 
     def upload(self, report, progress_callback = None):
         '''Upload given problem report return a handle for it. 
@@ -108,7 +113,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         mime.flush()
         mime.seek(0)
 
-        ticket = launchpadbugs.storeblob.upload(mime, progress_callback)
+        ticket = launchpadbugs.storeblob.upload(mime, progress_callback, 
+                staging=self.options.get('staging', False))
         assert ticket
         return ticket
 
@@ -127,15 +133,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         
         if not report.has_key('ThirdParty'):
             if report.has_key('SourcePackage'):
-                return 'https://bugs.launchpad.net/%s/+source/%s/+filebug/%s?%s' % (
-                    self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
+                return 'https://bugs.%s/%s/+source/%s/+filebug/%s?%s' % (
+                    self.hostname, self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
             else:
-                return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
-                    self.distro, handle, urllib.urlencode(args))
+                return 'https://bugs.%s/%s/+filebug/%s?%s' % (
+                    self.hostname, self.distro, handle, urllib.urlencode(args))
         else:
             assert report.has_key('SourcePackage')
-            return 'https://bugs.launchpad.net/%s/+filebug/%s?%s' % (
-                report['SourcePackage'], handle, urllib.urlencode(args))
+            return 'https://bugs.%s/%s/+filebug/%s?%s' % (
+                self.hostname, report['SourcePackage'], handle, urllib.urlencode(args))
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
@@ -264,7 +270,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
         #using py-lp-bugs
-        bug = Bug(url='https://launchpad.net/bugs/' + str(id))
+        bug = Bug(url='https://%s/bugs/%s' % (self.hostname, str(id)))
         m = re.search('DistroRelease: ([-a-zA-Z0-9.+/ ]+)', bug.description)
         if m:
             return m.group(1)
@@ -274,7 +280,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
 
-        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=' + self.arch_tag)
+        bugs = BugList('https://bugs.%s/ubuntu/+bugs?field.tag=%s' % (self.hostname, self.arch_tag))
         return set(int(i) for i in bugs)
 
     def get_dup_unchecked(self):
@@ -285,7 +291,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
 
-        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=need-duplicate-check&batch=300')
+        bugs = BugList('https://bugs.%s/ubuntu/+bugs?field.tag=need-duplicate-check&batch=300' % self.hostname)
         return set(int(i) for i in bugs)
 
     def get_unfixed(self):
@@ -297,7 +303,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
 
-        bugs = BugList('https://bugs.launchpad.net/ubuntu/+bugs?field.tag=apport-crash&batch=300')
+        bugs = BugList('https://bugs.%s/ubuntu/+bugs?field.tag=apport-crash&batch=300' % self.hostname)
         return set(int(i) for i in bugs)
 
     def get_fixed_version(self, id):
@@ -326,7 +332,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if b.status == 'Fix Released':
             if b.sourcepackage:
                 try:
-                    return get_source_version(self.distro, b.sourcepackage)
+                    return get_source_version(self.distro, b.sourcepackage, self.hostname)
                 except ValueError:
                     return '' # broken bug
             return ''
