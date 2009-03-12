@@ -24,10 +24,6 @@ from cStringIO import StringIO
 
 import launchpadbugs.storeblob
 
-# (thekorn) need this for testing
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
 import apport.crashdb
 import apport
 from utils import get_launchpad, HTTPError
