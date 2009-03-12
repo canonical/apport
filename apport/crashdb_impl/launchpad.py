@@ -377,7 +377,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         If the bug is not a duplicate, return None.
         '''
-        return self.launchpad.bugs[id].duplicate_of
+        b = self.launchpad.bugs[id].duplicate_of
+        if b:
+            return b.id
+        else:
+            return None
 
     def close_duplicate(self, id, master):
         '''Mark a crash id as duplicate of given master ID.
@@ -386,8 +390,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''
         bug = self.launchpad.bugs[id]
 
-        # check whether the master itself is a dup
         if master:
+            # check whether the master itself is a dup
             master = self.launchpad.bugs[master]
             if master.duplicate_of:
                 master = master.duplicate_of
@@ -406,11 +410,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 #~ bug.lp_save()
 
             # set duplicate last, since we cannot modify already dup'ed bugs
-            bug.duplicate_of = master
-            bug.lp_save()
+            if not bug.duplicate_of:
+                bug.duplicate_of = master
+                bug.lp_save()
         else:
-            bug.duplicate_of = None
-        bug.lp_save()
+            if bug.duplicate_of:
+                bug.duplicate_of = None
+                bug.lp_save()
 
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
@@ -507,8 +513,8 @@ if __name__ == '__main__':
         # binary package "coreutils"
         test_package = 'coreutils'
         test_srcpackage = 'coreutils'
-        known_test_id = 89040
-        known_test_id2 = 302779
+        known_test_id = 302779
+        known_test_id2 = 89040
 
         #
         # Generic tests, should work for all CrashDB implementations
@@ -593,7 +599,7 @@ if __name__ == '__main__':
             self.assert_('Dependencies' in r)
             self.assert_('Disassembly' in r)
             self.assert_('Registers' in r)
-            self.assert_('Stacktrace' in r)
+            self.assert_('Stacktrace' in r) # TODO: ascertain that it's the updated one
             self.assert_('ThreadStacktrace' in r)
 
             # updating with an useful stack trace removes core dump
@@ -625,15 +631,20 @@ if __name__ == '__main__':
             # dupe our sigv_report and check that it worked; then undupe it
             self.crashdb.close_duplicate(sigv_report, self.known_test_id)
             self.assertEqual(self.crashdb.duplicate_of(sigv_report), self.known_test_id)
+
+            # this should be a no-op
+            self.crashdb.close_duplicate(sigv_report, self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(sigv_report), self.known_test_id)
+
             self.assertEqual(self.crashdb.get_fixed_version(sigv_report), 'invalid')
             self.crashdb.close_duplicate(sigv_report, None)
             self.assertEqual(self.crashdb.duplicate_of(sigv_report), None)
             self.assertEqual(self.crashdb.get_fixed_version(sigv_report), None)
 
-            # this should have removed attachments
+            # this should have removed attachments; note that Stacktrace is
+            # short, and thus inline
             r = self.crashdb.download(sigv_report)
             self.failIf('CoreDump' in r)
-            self.failIf('Stacktrace' in r)
             self.failIf('ThreadStacktrace' in r)
             self.failIf('Dependencies' in r)
             self.failIf('Disassembly' in r)
@@ -649,6 +660,10 @@ if __name__ == '__main__':
 
             self.crashdb.close_duplicate(self.known_test_id, None)
             self.crashdb.close_duplicate(self.known_test_id2, None)
+
+            # this should be a no-op
+            self.crashdb.close_duplicate(self.known_test_id, None)
+            self.assertEqual(self.crashdb.duplicate_of(self.known_test_id), None)
 
         #
         # Launchpad specific implementation and tests
