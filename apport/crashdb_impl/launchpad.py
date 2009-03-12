@@ -19,9 +19,6 @@ TODO:
     * related bugs
         - setting bug privacy LP #308374
         - adding/removing tags LP #254901
-        
-    * remove all tempfiles (apport does not need local files, correct?)
-
 """
 
 import urllib, tempfile, shutil, os.path, re, gzip
@@ -184,56 +181,52 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Download the problem report from given ID and return a Report.'''
 
         report = apport.Report()
-        attachment_path = tempfile.mkdtemp() #not needed anymore
-        try:
-            b = self.launchpad.bugs[id]
+        b = self.launchpad.bugs[id]
 
-            # parse out fields from summary
-            m = re.search(r"(ProblemType:.*)$", b.description, re.S)
-            if not m:
-                m = re.search(r"^--- \r?$[\r\n]*(.*)", b.description, re.M | re.S)
-            assert m, 'bug description must contain standard apport format data'
+        # parse out fields from summary
+        m = re.search(r"(ProblemType:.*)$", b.description, re.S)
+        if not m:
+            m = re.search(r"^--- \r?$[\r\n]*(.*)", b.description, re.M | re.S)
+        assert m, 'bug description must contain standard apport format data'
 
-            description = m.group(1).encode("UTF-8").replace("\xc2\xa0", " ")
-            
-            if '\r\n\r\n' in description:
-                # this often happens, remove all empty lines between top and
-                # "Uname"
-                if 'Uname:' in description:
-                    # this will take care of bugs like LP #315728 where stuff
-                    # is added after the apport data
-                    (part1, part2) = description.split('Uname:', 1)
-                    description = part1.replace('\r\n\r\n', '\r\n') + 'Uname:' \
-                        + part2.split('\r\n\r\n', 1)[0]
-                else:
-                    description = description.replace('\r\n\r\n', '\r\n')
+        description = m.group(1).encode("UTF-8").replace("\xc2\xa0", " ")
+        
+        if '\r\n\r\n' in description:
+            # this often happens, remove all empty lines between top and
+            # "Uname"
+            if 'Uname:' in description:
+                # this will take care of bugs like LP #315728 where stuff
+                # is added after the apport data
+                (part1, part2) = description.split('Uname:', 1)
+                description = part1.replace('\r\n\r\n', '\r\n') + 'Uname:' \
+                    + part2.split('\r\n\r\n', 1)[0]
+            else:
+                description = description.replace('\r\n\r\n', '\r\n')
 
-            report.load(StringIO(description))
+        report.load(StringIO(description))
 
-            report['Date'] = b.date_created.ctime()
-            if 'ProblemType' not in report:
-                if 'apport-bug' in b.tags:
-                    report['ProblemType'] = 'Bug'
-                elif 'apport-crash' in b.tags:
-                    report['ProblemType'] = 'Crash'
-                elif 'apport-kernelcrash' in b.tags:
-                    report['ProblemType'] = 'KernelCrash'
-                elif 'apport-package' in b.tags:
-                    report['ProblemType'] = 'Package'
-                else:
-                    raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
+        report['Date'] = b.date_created.ctime()
+        if 'ProblemType' not in report:
+            if 'apport-bug' in b.tags:
+                report['ProblemType'] = 'Bug'
+            elif 'apport-crash' in b.tags:
+                report['ProblemType'] = 'Crash'
+            elif 'apport-kernelcrash' in b.tags:
+                report['ProblemType'] = 'KernelCrash'
+            elif 'apport-package' in b.tags:
+                report['ProblemType'] = 'Package'
+            else:
+                raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
 
-            for attachment in filter_filename(b.attachments):
-                key, ext = os.path.splitext(attachment.filename)
-                if ext == '.txt':
-                    report[key] = attachment.read()
-                elif ext == '.gz':
-                    report[key] = gzip.GzipFile(fileobj=attachment).read()#TODO: is this the best solution?
-                else:
-                    raise Exception, 'Unknown attachment type: ' + attachment.filename
-            return report
-        finally:
-            shutil.rmtree(attachment_path)
+        for attachment in filter_filename(b.attachments):
+            key, ext = os.path.splitext(attachment.filename)
+            if ext == '.txt':
+                report[key] = attachment.read()
+            elif ext == '.gz':
+                report[key] = gzip.GzipFile(fileobj=attachment).read()#TODO: is this the best solution?
+            else:
+                raise Exception, 'Unknown attachment type: ' + attachment.filename
+        return report
 
     def update(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
@@ -247,34 +240,30 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # we need properly named files here, otherwise they will be displayed
         # as '<fdopen>'
-        tmpdir = tempfile.mkdtemp()
-        try:
-            bug.addAttachment(comment=comment,
-                    #content_type=?
-                    data=report['Stacktrace'],
-                    description='Stacktrace.txt (retraced)',
-                    filename='Stacktrace.txt',
-                    is_patch=False)
-                    
+        bug.addAttachment(comment=comment,
+                #content_type=?
+                data=report['Stacktrace'],
+                description='Stacktrace.txt (retraced)',
+                filename='Stacktrace.txt',
+                is_patch=False)
+                
+        bug.addAttachment(comment="", #some other comment here?
+                #content_type=?
+                data=report['ThreadStacktrace'],
+                description='ThreadStacktrace.txt (retraced)',
+                filename='ThreadStacktrace.txt',
+                is_patch=False)
+
+        if report.has_key('StacktraceSource'):
             bug.addAttachment(comment="", #some other comment here?
                     #content_type=?
-                    data=report['ThreadStacktrace'],
-                    description='ThreadStacktrace.txt (retraced)',
-                    filename='ThreadStacktrace.txt',
+                    data=report['StacktraceSource'],
+                    description='StacktraceSource.txt',
+                    filename='StacktraceSource.txt',
                     is_patch=False)
 
-            if report.has_key('StacktraceSource'):
-                bug.addAttachment(comment="", #some other comment here?
-                        #content_type=?
-                        data=report['StacktraceSource'],
-                        description='StacktraceSource.txt',
-                        filename='StacktraceSource.txt',
-                        is_patch=False)
-
-            #~ if report.has_key('SourcePackage') and bug.sourcepackage == 'ubuntu':
-                #~ bug.set_sourcepackage(report['SourcePackage']) #No API -->TODO
-        finally:
-            shutil.rmtree(tmpdir)
+        #~ if report.has_key('SourcePackage') and bug.sourcepackage == 'ubuntu':
+            #~ bug.set_sourcepackage(report['SourcePackage']) #No API -->TODO
 
         # remove core dump if stack trace is usable
         if report.has_useful_stacktrace():
