@@ -195,6 +195,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
             c.update(apt.progress.TextFetchProgress())
         else:
             c.update()
+        c.open(apt.progress.OpProgress())
     except apt.cache.LockFailedException:
         if os.geteuid() != 0:
             print >> sys.stderr, 'WARNING: Could not update apt, you need to be root'
@@ -202,6 +203,7 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
             raise
 
     installed = []
+    uninstallable = []
     outdated = ''
 
     # create map of dependency package versions as specified in report
@@ -232,10 +234,14 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
 	   continue
 
 	if ver and c[pkg].candidateVersion != ver:
-            outdated += '%s: installed version %s, latest version: %s\n' % (
-                pkg, ver, c[pkg].candidateVersion)
+            if not pkg.endswith('-dbgsym'):
+                outdated += '%s: installed version %s, latest version: %s\n' % (
+                    pkg, ver, c[pkg].candidateVersion)
 	    print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
 		pkg, ver, c[pkg].candidateVersion)
+            if not unpack_only:
+                uninstallable.append (c[pkg].name)
+                continue
 
 	c[pkg].markInstall(False)
 
@@ -290,15 +296,18 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
         pkg = apport.packaging.get_file_package(l, True)
 	if pkg:
             if not os.path.exists(l):
+		if pkg in uninstallable:
+		    print >> sys.stderr, 'WARNING: %s cannot be installed (incompatible version)' % pkg
+		    continue
                 if c.has_key(pkg):
                     c[pkg].markInstall(False)
                 else:
                     print >> sys.stderr, 'WARNING: %s was loaded at runtime, but its package %s is not available' % (l, pkg)
 
-	    if c.has_key(pkg+'-dbgsym'):
+	    if c.has_key(pkg+'-dbgsym') and pkg+'-dbgsym' not in uninstallable :
 		c[pkg+'-dbgsym'].markInstall(False)
 	    else:
-		print >> sys.stderr, 'WARNING: %s-dbgsym is not available' % pkg
+		print >> sys.stderr, 'WARNING: %s-dbgsym is not available or is incompatible' % pkg
 	else:
 		print >> sys.stderr, 'WARNING: %s is needed, but cannot be mapped to a package' % l
 
@@ -433,11 +442,33 @@ if os.path.exists(reportfile):
         report = apport.Report()
         report.load(open(reportfile))
     except (MemoryError, TypeError, ValueError, IOError, zlib.error), e:
-        print >> sys.strerr, 'Cannot open report file:', e
+        print >> sys.stderr, 'Cannot open report file:', e
         sys.exit(1)
 elif reportfile.isdigit():
     # crash ID
-    report = crashdb.download(int(reportfile))
+    try:
+        report = crashdb.download(int(reportfile))
+    except (MemoryError, TypeError, ValueError, IOError, zlib.error), e:
+        # if we process the report automatically, and it is invalid, close it with
+        # an informative message and exit cleanly to not break crash-digger
+        if options.auth_file and not options.output and not options.stdout:
+            print >> sys.stderr, 'Broken report:', str(e), 'closing as invalid'
+            crashdb.mark_retrace_failed(reportfile, '''Thank you for your report! 
+            
+However, processing it in order to get sufficient information for the
+developers failed, since the report is ill-formed. Perhaps the report data got
+modified?
+
+  %s
+
+If you encounter the crash again, please file a new report.
+
+Thank you for your understanding, and sorry for the inconvenience!
+''' % str(e))
+            sys.exit(0)
+        else:
+            raise
+
     crashid = reportfile
     reportfile = None
 else:
@@ -459,7 +490,7 @@ required_fields = set(['CoreDump', 'ExecutablePath', 'Package'])
 if not required_fields.issubset(set(report.keys())):
     print >> sys.stderr, 'report file does not contain required fields: ' + \
 	' '.join(required_fields)
-    sys.exit(1)
+    sys.exit(0)
 
 (installed, outdated_msg) = install_missing_packages(report, options.verbose,
     options.unpack_only, options.no_dpkg, options.extra_packages)
@@ -475,8 +506,16 @@ if options.gdb:
     core.close()
 else:
     # regenerate gdb info
-    report.add_gdb_info()
-    gen_source_stacktrace(report)
+    try:
+        report.add_gdb_info()
+        gen_source_stacktrace(report)
+    except AssertionError:
+        if outdated_msg:
+            # we did not find ExecutablePath, and have outdated packages, close
+            # as invalid (will be caught below)
+            pass
+        else:
+            raise
 
 modified = False
 
@@ -522,9 +561,9 @@ if modified:
                 crashdb.update(crashid, report)
                 print 'New attachments uploaded to crash database #' + crashid
 
-            if not report.has_useful_stacktrace():
-                if outdated_msg:
-                    invalid_msg = '''Thank you for your report! 
+                if not report.has_useful_stacktrace():
+                    if outdated_msg:
+                        invalid_msg = '''Thank you for your report! 
 
 However, processing it in order to get sufficient information for the
 developers failed (it does not generate an useful symbolic stack trace). This
@@ -538,11 +577,11 @@ encounter the crash, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 ''' % outdated_msg
-                    print 'No crash signature and outdated packages, invalidating report'
-                    crashdb.mark_retrace_failed(crashid, invalid_msg)
-                else:
-                    print 'Report has no crash signature, so retrace is flawed'
-                    crashdb.mark_retrace_failed(crashid)
+                        print 'No crash signature and outdated packages, invalidating report'
+                        crashdb.mark_retrace_failed(crashid, invalid_msg)
+                    else:
+                        print 'Report has no crash signature, so retrace is flawed'
+                        crashdb.mark_retrace_failed(crashid)
 
     else:
         if options.output == None:

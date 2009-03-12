@@ -1,7 +1,8 @@
 '''Convenience functions for use in package hooks.
 
-Copyright (C) 2008 Canonical Ltd.
+Copyright (C) 2008-2009 Canonical Ltd.
 Author: Matt Zimmerman <mdz@canonical.com>
+Contributor: Brian Murray <brian@ubuntu.com>
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -11,12 +12,15 @@ the full text of the license.
 '''
 
 import subprocess
-import md5
+import hashlib
 import os
 import datetime
 import glob
+import re
 
 import xml.dom, xml.dom.minidom
+
+from packaging_impl import impl as packaging
 
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
@@ -70,7 +74,7 @@ def attach_conffiles(report, package, conffiles=None):
 
         if os.path.exists(path):
             contents = open(path).read()
-            m = md5.new()
+            m = hashlib.md5()
             m.update(contents)
             calculated_md5sum = m.hexdigest()
 
@@ -89,6 +93,23 @@ def attach_dmesg(report):
     report['BootDmesg'] = open('/var/log/dmesg').read()
     report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 /var/log/dmesg -'])
 
+def attach_machinetype(report):
+    '''Calculate and attach a specific machine type if possible.'''
+
+    if 'HalComputerInfo' in report:
+        system = ''
+        vendor = re.compile(r"system.hardware.vendor\s*=\s*'(.*)'\s*\(string\)")
+        match = vendor.search(report['HalComputerInfo'])
+        if match:
+            system += match.group(1).rstrip() + ' '
+        product = re.compile(r"system.hardware.product\s*=\s*'(.*)'\s*\(string\)")
+        match = product.search(report['HalComputerInfo'])
+        if match:
+            system += match.group(1).rstrip() + ' '
+
+        if system != '':
+            report['MachineType'] = system.rstrip()
+
 def attach_hardware(report):
     attach_dmesg(report)
 
@@ -105,6 +126,9 @@ def attach_hardware(report):
     if 'Uname' in report:
         # already covered in ProcVersionSignature
         del report['Uname']
+
+    # Use the hardware information to create a machine type.
+    attach_machinetype(report)
 
 def attach_alsa(report):
     '''Attach ALSA subsystem information to the report.
@@ -229,7 +253,16 @@ def hal_find_by_capability(capability):
 def hal_dump_udi(udi):
     '''Dump the properties of a HAL object, specified by its UDI.'''
 
-    return command_output(['lshal','-u',udi])
+    out = command_output(['lshal','-u',udi])
+
+    # filter out serial numbers
+    result = ''
+    for l in out.splitlines():
+        if '.serial =' in l:
+            continue
+        result += l + '\n'
+
+    return result
 
 def files_in_package(package, globpat=None):
     '''Retrieve a list of files owned by package, optionally matching globpat'''
@@ -285,6 +318,42 @@ def attach_network(report):
     for var in ('http_proxy', 'ftp_proxy', 'no_proxy'):
         if var in os.environ:
             report[var] = os.environ[var]
+
+def attach_printing(report):
+    '''Attach printing information to the report.
+
+    Based on http://wiki.ubuntu.com/PrintingBugInfoScript.
+    '''
+    attach_file_if_exists(report, '/etc/papersize', 'Papersize')
+    attach_file_if_exists(report, '/var/log/cups/error_log', 'CupsErrorLog')
+    report['Locale'] = command_output(['locale'])
+    report['Lpstat'] = command_output(['lpstat', '-v'])
+
+    ppds = glob.glob('/etc/cups/ppd/*.ppd')
+    if ppds:
+        nicknames = command_output(['fgrep', '-H', '*NickName'] + ppds)
+        report['PpdFiles'] = re.sub('/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', '\g<1>: \g<2>', nicknames)
+
+    packages = ['foo2zjs', 'foomatic-db', 'foomatic-db-engine',
+        'foomatic-db-gutenprint', 'foomatic-db-hpijs', 'foomatic-filters',
+        'foomatic-gui', 'hpijs', 'hplip', 'm2300w', 'min12xxw', 'c2050',
+        'hpoj', 'pxljr', 'pnm2ppa', 'splix', 'hp-ppd', 'hpijs-ppds',
+        'linuxprinting.org-ppds', 'openprinting-ppds',
+        'openprinting-ppds-extra', 'ghostscript', 'cups',
+        'cups-driver-gutenprint', 'foomatic-db-gutenprint', 'ijsgutenprint',
+        'cupsys-driver-gutenprint', 'gimp-gutenprint', 'gutenprint-doc',
+        'gutenprint-locales', 'system-config-printer-common', 'kdeprint'] 
+
+    versions = ''
+    for package in packages:
+        try:
+            version = packaging.get_version(package)
+        except ValueError:
+            version = 'N/A'
+        if version is None:
+            version = 'N/A'
+        versions += '%s %s\n' % (package, version)
+    report['PrintingPackages'] = versions
 
 def _parse_gconf_schema(schema_file):
     ret = {}

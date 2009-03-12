@@ -251,6 +251,10 @@ class ProblemReport(UserDict.IterableUserDict):
                     del self.data[k]
                     continue
 
+            if type(v) == type(u''):
+                # unicode → str
+                v = v.encode('UTF-8')
+
             if '\n' in v:
                 # multiline value
                 print >> file, k + ':'
@@ -437,8 +441,13 @@ class ProblemReport(UserDict.IterableUserDict):
                 attachments.append(att)
             else:
                 # plain text value
+                if type(v) == type(u''):
+                    # convert unicode to UTF-8 str
+                    v = v.encode('UTF-8')
+
                 lines = len(v.splitlines())
                 if lines == 1:
+                    v = v.rstrip()
                     text += '%s: %s\n' % (k, v)
                 elif lines <= attach_treshold:
                     text += '%s:\n ' % k
@@ -511,7 +520,7 @@ import unittest, tempfile, os, email
 
 class _ProblemReportTest(unittest.TestCase):
     def test_basic_operations(self):
-        '''Test basic creation and operation.'''
+        '''basic creation and operation.'''
 
         pr = ProblemReport()
         pr['foo'] = 'bar'
@@ -522,7 +531,7 @@ class _ProblemReportTest(unittest.TestCase):
         self.assert_(time.strptime(pr['Date']))
 
     def test_ctor_arguments(self):
-        '''Test non-default constructor arguments.'''
+        '''non-default constructor arguments.'''
 
         pr = ProblemReport('KernelCrash')
         self.assertEqual(pr['ProblemType'], 'KernelCrash')
@@ -530,7 +539,7 @@ class _ProblemReportTest(unittest.TestCase):
         self.assertEqual(pr['Date'], '19801224 12:34')
 
     def test_sanity_checks(self):
-        '''Test various error conditions.'''
+        '''various error conditions.'''
 
         pr = ProblemReport()
         self.assertRaises(AssertionError, pr.__setitem__, 'a b', '1')
@@ -541,7 +550,7 @@ class _ProblemReportTest(unittest.TestCase):
         self.assertRaises(KeyError, pr.__getitem__, 'Nonexistant')
 
     def test_compressed_values(self):
-        '''Test handling of CompressedValue values.'''
+        '''handling of CompressedValue values.'''
 
         large_val = 'A' * 5000000
 
@@ -582,10 +591,14 @@ class _ProblemReportTest(unittest.TestCase):
         self.assertEqual(pr['Large'], large_val)
 
     def test_write(self):
-        '''Test write() and proper formatting.'''
+        '''write() and proper formatting.'''
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
+        pr['SimpleUTF8'] = '1äö2Φ3'
+        pr['SimpleUnicode'] = u'1äö2Φ3'
+        pr['TwoLineUTF8'] = 'pi-π\nnu-η'
+        pr['TwoLineUnicode'] = u'pi-π\nnu-η'
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  \n\nafteremptyline'
         io = StringIO()
         pr.write(io)
@@ -593,6 +606,14 @@ class _ProblemReportTest(unittest.TestCase):
 '''ProblemType: Crash
 Date: now!
 Simple: bar
+SimpleUTF8: 1äö2Φ3
+SimpleUnicode: 1äö2Φ3
+TwoLineUTF8:
+ pi-π
+ nu-η
+TwoLineUnicode:
+ pi-π
+ nu-η
 WhiteSpace:
   foo   bar
  baz
@@ -602,7 +623,7 @@ WhiteSpace:
 ''')
 
     def test_write_append(self):
-        '''Test write() with appending to an existing file.'''
+        '''write() with appending to an existing file.'''
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
@@ -648,7 +669,7 @@ Extra: appended
         self.assertEqual(pr['Extra'], 'appended')
 
     def test_load(self):
-        '''Test load() with various formatting.'''
+        '''load() with various formatting.'''
         pr = ProblemReport()
         pr.load(StringIO(
 '''ProblemType: Crash
@@ -719,7 +740,7 @@ Last: foo
         self.assertEqual(pr.keys(), ['ProblemType'])
 
     def test_write_file(self):
-        '''Test writing a report with binary file data.'''
+        '''writing a report with binary file data.'''
 
         temp = tempfile.NamedTemporaryFile()
         temp.write('AB' * 10 + '\0' * 10 + 'Z')
@@ -772,7 +793,7 @@ File: base64
         temp.close()
 
     def test_write_fileobj(self):
-        '''Test writing a report with a pointer to a file-like object.'''
+        '''writing a report with a pointer to a file-like object.'''
 
         tempbin = StringIO('AB' * 10 + '\0' * 10 + 'Z')
         tempasc = StringIO('Hello World')
@@ -790,7 +811,7 @@ File: base64
         self.assertEqual(pr['AscFile'], tempasc.getvalue())
 
     def test_write_empty_fileobj(self):
-        '''Test writing a report with a pointer to a file-like object with enforcing non-emptyness.'''
+        '''writing a report with a pointer to a file-like object with enforcing non-emptyness.'''
 
         tempbin = StringIO('')
         tempasc = StringIO('')
@@ -806,7 +827,7 @@ File: base64
         self.assertRaises(IOError, pr.write, io)
 
     def test_write_delayed_fileobj(self):
-        '''Test writing a report with file pointers and delayed data.'''
+        '''writing a report with file pointers and delayed data.'''
 
         (fout, fin) = os.pipe()
 
@@ -837,7 +858,7 @@ File: base64
         self.assertEqual(len(pr2['BinFile']), 1048576 + len('hello world'))
 
     def test_read_file(self):
-        '''Test reading a report with binary data.'''
+        '''reading a report with binary data.'''
 
         bin_report = '''ProblemType: Crash
 Date: now!
@@ -867,7 +888,7 @@ Foo: Bar
         self.assertEqual(pr['File'].get_value(), 'AB' * 10 + '\0' * 10 + 'Z')
 
     def test_read_file_legacy(self):
-        '''Test reading a report with binary data in legacy format without gzip
+        '''reading a report with binary data in legacy format without gzip
         header.'''
 
         bin_report = '''ProblemType: Crash
@@ -902,7 +923,7 @@ Foo: Bar
         self.assertEqual(io.read(), data)
 
     def test_big_file(self):
-        '''Test writing and re-decoding a big random file.'''
+        '''writing and re-decoding a big random file.'''
 
         # create 1 MB random file
         temp = tempfile.NamedTemporaryFile()
@@ -940,7 +961,7 @@ Foo: Bar
         self.assertEqual(pr['File'].get_value(), data)
 
     def test_size_limit(self):
-        '''Test writing and a big random file with a size limit key.'''
+        '''writing and a big random file with a size limit key.'''
 
         # create 1 MB random file
         temp = tempfile.NamedTemporaryFile()
@@ -975,7 +996,7 @@ Foo: Bar
         self.assertEqual(pr['ZAfter'], 'ytesty')
 
     def test_iter(self):
-        '''Test ProblemReport iteration.'''
+        '''ProblemReport iteration.'''
 
         pr = ProblemReport()
         pr['foo'] = 'bar'
@@ -989,7 +1010,7 @@ Foo: Bar
         self.assertEqual(len([k for k in pr if k != 'foo']), 2)
 
     def test_modify(self):
-        '''Test reading, modifying fields, and writing back.'''
+        '''reading, modifying fields, and writing back.'''
 
         report = '''ProblemType: Crash
 Date: now!
@@ -1030,7 +1051,7 @@ File: base64
 ''')
 
     def test_add_to_existing(self):
-        '''Test adding information to an existing report.'''
+        '''adding information to an existing report.'''
 
         # original report
         pr = ProblemReport()
@@ -1105,11 +1126,16 @@ File: base64
         os.unlink(rep)
 
     def test_write_mime_text(self):
-        '''Test write_mime() for text values.'''
+        '''write_mime() for text values.'''
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
+        pr['SimpleUTF8'] = '1äö2Φ3'
+        pr['SimpleUnicode'] = u'1äö2Φ3'
+        pr['SimpleLineEnd'] = 'bar\n'
         pr['TwoLine'] = 'first\nsecond\n'
+        pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'
+        pr['TwoLineUnicode'] = u'pi-π\nnu-η\n'
         pr['InlineMargin'] = 'first\nsecond\nthird\nfourth\nfifth\n'
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
         io = StringIO()
@@ -1139,9 +1165,18 @@ InlineMargin:
  fourth
  fifth
 Simple: bar
+SimpleLineEnd: bar
+SimpleUTF8: 1äö2Φ3
+SimpleUnicode: 1äö2Φ3
 TwoLine:
  first
  second
+TwoLineUTF8:
+ pi-π
+ nu-η
+TwoLineUnicode:
+ pi-π
+ nu-η
 ''')
 
         # third part should be the Multiline: field as attachment
@@ -1162,7 +1197,7 @@ line♥5!!
         self.assertRaises(StopIteration, msg_iter.next)
 
     def test_write_mime_binary(self):
-        '''Test write_mime() for binary values and file references.'''
+        '''write_mime() for binary values and file references.'''
 
         bin_value = 'AB' * 10 + '\0' * 10 + 'Z'
 
@@ -1261,7 +1296,7 @@ line♥5!!
         self.assertRaises(StopIteration, msg_iter.next)
 
     def test_write_mime_extra_headers(self):
-        '''Test write_mime() with extra headers.'''
+        '''write_mime() with extra headers.'''
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
@@ -1291,7 +1326,7 @@ line♥5!!
         self.assertRaises(StopIteration, msg_iter.next)
 
     def test_write_mime_filter(self):
-        '''Test write_mime() with key filters.'''
+        '''write_mime() with key filters.'''
 
         bin_value = 'AB' * 10 + '\0' * 10 + 'Z'
 
@@ -1335,7 +1370,7 @@ GoodText: Hi
         self.assertRaises(StopIteration, msg_iter.next)
 
     def test_updating(self):
-        '''Test new_keys() and write() with only_new=True.'''
+        '''new_keys() and write() with only_new=True.'''
 
         pr = ProblemReport()
         self.assertEqual(pr.new_keys(), set(['ProblemType', 'Date']))
@@ -1357,7 +1392,7 @@ Baz: blob
         self.assertEqual(out.getvalue(), 'NewKey: new new\n')
 
     def test_import_dict(self):
-        '''Test importing a dictionary with update().'''
+        '''importing a dictionary with update().'''
 
         pr = ProblemReport()
         pr['oldtext'] = 'Hello world'

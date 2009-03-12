@@ -29,7 +29,7 @@ def run(argv, msg=None, stdout=False):
 
 
 def clean_preload_lib():
-    print '* Cleaning preloadlib directory'
+    print '* cleaning preloadlib directory'
     run(['make', '-C', 'preloadlib', 'clean'], 'Cleaning preloadlib directory')
 
 def build_preload_lib():
@@ -168,7 +168,7 @@ try:
 	orig_ignore_file = ifpath + '.apporttest'
 	os.rename(ifpath, orig_ignore_file)
 
-    print '* Check that empty core dumps do not generate a report'
+    print '* empty core dumps do not generate a report'
     test_proc = create_test_process()
     try:
         app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
@@ -183,11 +183,11 @@ try:
     assert get_tempdir_reports(temp_report_dir) == [], 'no report created for empty core dump'
 
     if mode == 'lib':
-        print '* Check test process creation/killing without apport'
+        print '* check test process creation/killing without apport'
         check_crash(False)
         assert apport.fileutils.get_all_reports() == [], 'no report created without apport'
 
-    print '* Check test process creation/killing with apport'
+    print '* check test process creation/killing with apport'
     if mode == 'lib':
         enable_preloadlib()
     check_crash()
@@ -199,18 +199,18 @@ try:
     st = os.stat(report)
     assert stat.S_IMODE(st.st_mode) == 0600, 'report has correct permissions'
 
-    print '* Check that a subsequent crash does not alter unseen report'
+    print '* a subsequent crash does not alter unseen report'
     check_crash()
     st2 = os.stat(report)
     assert st == st2, 'original unread report did not change'
 
-    print '* Check that a subsequent crash alters seen report'
+    print '* a subsequent crash alters seen report'
     apport.fileutils.mark_report_seen(report)
     check_crash()
     st2 = os.stat(report)
     assert st != st2, 'original read report changed'
 
-    print '* Check that report has required fields'
+    print '* report has required fields'
     pr = apport.Report()
     pr.load(open(report))
     assert set(required_fields).issubset(set(pr.keys())), 'report has required fields'
@@ -218,19 +218,19 @@ try:
     assert pr['ProcCmdline'] == test_executable
     assert pr['Signal'] == '%i' % signal.SIGSEGV
 
-    print '* Check that dumped environment only has insensitive variables'
+    print '* dumped environment only has insensitive variables'
     check_safe_environment(pr['ProcEnviron'])
 
-    print '* Check that collected system groups has nonempty user groups information'
+    print '* collected system groups has nonempty user groups information'
     assert pr['UserGroups']
-    print '* Check that collected system groups are not those from root'
+    print '* collected system groups are not those from root'
     assert 'root' not in pr['UserGroups']
 
     apport.fileutils.delete_report(report)
     assert apport.fileutils.get_all_reports() == [], \
         'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
 
-    print '* Check that only one apport instance is ran at a time'
+    print '* only one apport instance is ran at a time'
     test_proc = create_test_process()
     test_executable = '/bin/dd'
     test_proc2 = create_test_process(False)
@@ -272,7 +272,7 @@ try:
     for r in get_tempdir_reports(temp_report_dir):
         apport.fileutils.delete_report(r)
 
-    print '* Check that existing .lock file as dangling symlink does not create the file'
+    print '* existing .lock file as dangling symlink does not create the file'
     # prepare a symlink trap
     lockpath = os.path.join(temp_report_dir, '.lock')
     trappath = os.path.join(temp_report_dir, '0wned')
@@ -304,7 +304,7 @@ try:
     for r in apport.fileutils.get_all_reports():
         apport.fileutils.delete_report(r)
 
-    print '* Check that non-packaged executables do not create a report'
+    print '* non-packaged executables do not create a report'
     orig_test_executable = test_executable
     (fd, test_executable) = tempfile.mkstemp()
     os.write(fd, open(orig_test_executable).read())
@@ -317,13 +317,13 @@ try:
         'no reports present after a non-packaged crashed process (present: %s)' % \
         str(apport.fileutils.get_all_reports())
 
-    print '* Check that apport ignores SIGQUIT'
+    print '* apport ignores SIGQUIT'
     check_crash(sig=signal.SIGQUIT)
     assert apport.fileutils.get_all_reports() == [], \
         'no reports present after SIGQUIT (present: %s)' % \
         str(apport.fileutils.get_all_reports())
 
-    print '* Check that existence of user-inaccessible files does not leak'
+    print '* existence of user-inaccessible files does not leak'
     orig_test_executable = test_executable
     dir = tempfile.mkdtemp()
     test_executable = os.path.join(dir, 'python') # set name to existing tool != self
@@ -346,7 +346,7 @@ try:
     apport.fileutils.delete_report(leak)
     test_executable = orig_test_executable
 
-    print '* Check that non-packaged scripts do not create a report'
+    print '* non-packaged scripts do not create a report'
     orig_test_executable = test_executable
     (fd, test_executable) = tempfile.mkstemp()
     os.write(fd, '#!/bin/sh\nkill -SEGV $$')
@@ -371,7 +371,7 @@ try:
         'no reports present after a non-packaged crashed script with relative path(present: %s)' % \
         str(apport.fileutils.get_all_reports())
 
-    print '* Test limitation of flooding: iteration',
+    print '* limitation of flooding: iteration',
     count = 0
     while count < 7:
         print count,
@@ -391,7 +391,7 @@ try:
     assert apport.fileutils.get_all_reports() == [], \
         'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
 
-    print '* Check that core dump works for non-writable cwds'
+    print '* core dump works for non-writable cwds'
     old_cwd = os.getcwd()
     try:
         os.chdir('/')
@@ -406,7 +406,7 @@ try:
     assert apport.fileutils.get_all_reports() == [], \
         'no reports present after deleting (present: %s)' % str(apport.fileutils.get_all_reports())
 
-    print '* Check that non-packaged executables create core dumps on proper ulimits'
+    print '* non-packaged executables create core dumps on proper ulimits'
     orig_test_executable = test_executable
     (fd, test_executable) = tempfile.mkstemp()
     os.write(fd, open(orig_test_executable).read())
@@ -426,7 +426,7 @@ try:
     check_crash(expect_corefile=True)
     apport.fileutils.delete_report(report)
 
-    print '* Check that non-packaged executables create core dumps on proper ulimits for SIGABRT'
+    print '* non-packaged executables create core dumps on proper ulimits for SIGABRT'
     os.chmod(test_executable, 0755)
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
     check_crash(expect_corefile=False, sig=signal.SIGABRT)
@@ -444,7 +444,7 @@ try:
     os.unlink(test_executable)
     test_executable = orig_test_executable
 
-    print '* Check that packaged executables create core dumps on proper ulimits'
+    print '* packaged executables create core dumps on proper ulimits'
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
     check_crash(expect_corefile=False)
     apport.fileutils.delete_report(report)
@@ -457,11 +457,11 @@ try:
     resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
     check_crash(expect_corefile=True)
 
-    print '* Check that crashes create core dumps with an existing crash report'
+    print '* crashes create core dumps with an existing crash report'
     check_crash(expect_corefile=True)
     apport.fileutils.delete_report(report)
 
-    print '* Check that packaged executables create core dumps on proper ulimits for SIGABRT'
+    print '* packaged executables create core dumps on proper ulimits for SIGABRT'
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
     check_crash(expect_corefile=False, sig=signal.SIGABRT)
     resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
@@ -473,7 +473,7 @@ try:
     check_crash(expect_corefile=True, sig=signal.SIGABRT)
     apport.fileutils.delete_report(report)
 
-    print '* Check that core dumps are capped on available memory size',
+    print '* core dumps are capped on available memory size',
     # determine how much data we have to pump into apport in order to make sure
     # that it will refuse the core dump
     r = apport.Report()
@@ -524,7 +524,7 @@ try:
     assert not pr.has_key('CoreDump'), 'report does not have core dump'
 
 
-    print '* Check that binary blacklisting works'
+    print '* binary blacklisting works'
     pr.mark_ignore()
     check_crash()
     assert apport.fileutils.get_all_reports() == [], \

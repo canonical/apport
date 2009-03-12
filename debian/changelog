@@ -1,9 +1,370 @@
-apport (0.125) UNRELEASED; urgency=low
+apport (0.146) UNRELEASED; urgency=low
+
+  * apport/report.py, _generate_sigsegv_report(): Turn into a class method, so
+    that it can be used by test cases in other modules as well. Also add
+    missing Signal field.
+  * apport/crashdb_impl/launchpad.py: Fully enable operation with
+    staging.launchpad.net.
+  * apport/crashdb_impl/launchpad.py: Add initial test suite, performing data
+    upload, bug reporting, report download, and report updating. This happens
+    on staging.launchpad.net.
+  * apport/crashdb.py: Add new interface duplicate_of(id) to return the master
+    bug of a duplicate. Also document that close_duplicate() with "None"
+    master bug will un-duplicate the bug.
+  * apport/crashdb_impl/{launchpad,memory}.py: Implement duplicate_of() and
+    add test cases. The Launchpad test case reproduces the
+    "duplicate-of-a-duplicate" regression, which now got fixed in
+    python-launchpad-bugs bzr head.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
+
+apport (0.145) jaunty; urgency=low
+
+  * apport/crashdb_impl/launchpad.py: Fix typo in previous upload.
+  * debian/local/apport-collect: Do not crash on
+    launchpadlib.errors.HTTPError, but give a proper error message and point
+    out that this script needs "change anything" privileges. (LP: #338201)
+  * apport_python_hook.py: Fix crash for already existing reports, and make
+    behaviour equivalent to bin/apport: Silently exit for existing unseen
+    crash report, and overwrite existing seen crash report. Add test cases.
+    (LP: #323714)
+  * general-hooks/automatix.py: Refuse to send bug reports when ultamatix is
+    installed.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Mar 2009 18:45:34 +0100
+
+apport (0.144) jaunty; urgency=low
+
+  * apport/crashdb_impl/launchpad.py, mark_retrace_failed(): If report is
+    invalid, remove CoreDump.gz and other attachments.
+  * bin/apport-retrace: If we didn't find the ExecutablePath on the system
+    because the package is out of date, don't crash, but close the bug as
+    invalid.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 10 Mar 2009 10:45:56 +0100
+
+apport (0.143) jaunty; urgency=low
+
+  * debian/apport.README.Debian: Document how to temporarily and permanently
+    enable crash interception.
+  * backends/packaging-apt-dpkg.py, is_distro_package(): Do not consider a
+    package a native distro one if installed version is "None". This happens
+    with some PPA packages. (LP: #252734)
+  * apport/report.py, anonymize(): Move user name anonymization into the
+    "non-root" case as well; fixes uninitialized variable. (LP: #338847)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 09 Mar 2009 12:16:49 +0100
+
+apport (0.142) jaunty; urgency=low
+
+  * apport/report.py: Do not include lsb_release's stderr in the
+    DistroRelease: output.
+  * apport/hookutils.py: Fix attach_printing():
+    - Correct spelling or "error_log".
+    - Do not call fgrep with no file names (if /etc/cups/ppd/ is empty), since
+      that hangs forever.
+  * apport/report.py, _gen_stacktrace_top(): Fix parsing of stacktraces
+    with some addresses missing. Add test cases. (LP: #269133)
+  * apport/ui.py, run_report_bug(): Show details of collected information and
+    give the user a chance to cancel. Previously, collected data was sent
+    directly to Launchpad. Nowadays lots of packages have hooks, so we cannot
+    guarantee any more that bug reports only have non-sensitive information.
+    (LP: #195514) This also allows the user to cancel if (s)he inadvertedly
+    clicked on "Report a problem". (LP: #279033)
+  * apport/ui.py: Fix crash in get_complete_size() for reports that are
+    constructed on the fly instead of loaded from a file (i. e. for bug
+    reports). Fixes displaying of report in apport-cli.
+  * apport/report.py: Slight robustification of test_add_gdb_info_script()
+    test case.
+  * debian/local/ubuntu-bug: Fix invocation with "--help". (LP: #305841)
+  * apport/ui.py, load_report(): Clearer error message if report file does not
+    exist. (LP: #204198)
+  * Remove redundant verbiage from test suite docstrings.
+  * apport/report.py, anonymize(): Fix crash when processing root-owned
+    reports. (LP: #338033)
+  * apport/report.py, anonymize(): Do not anonymize single-character user and
+    host names, since they create an utter mess in bug reports, and also are
+    very low-sensitive.
+  * debian/apport.init: Also start apport if force_start=1 is given. This
+    provides a convenient method of starting apport just for a session without
+    changing the default file. Add a comment to debian/apport.default about
+    this possibility. Thanks to Milan for the suggestion and the initial
+    patch! (LP: #320467)
+  * backends/packaging-apt-dpkg.py, _get_mirror(): Only consider http://
+    mirrors for fetching Contents.gz. (LP: #315797)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 05 Mar 2009 17:01:05 +0100
+
+apport (0.141) jaunty; urgency=low
+
+  * apport/hookutils.py: Add cups error log to attach_printing()
+
+ -- Brian Murray <brian@ubuntu.com>  Mon, 02 Mar 2009 10:55:53 -0800
+
+apport (0.140) jaunty; urgency=low
+
+  * debian/python-{apport,problem-report}.install: Fix site-packages →
+    *-packages.
+  * run-tests: Only check for local packaging_impl.py if running local tests.
+    This unbreaks running tests from /usr/share/apport/testsuite/.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 11:56:59 +0100
+
+apport (0.139) jaunty; urgency=low
+
+  * apport/report.py, anonymize(): Do not anonymize "root". (Side
+    issue in LP #333542)
+  * debian/rules: Supply --install-layout=deb to setup.py.
+  * debian/local/apport-collect: Attach new info to
+    staging.launchpad.net if $APPORT_STAGING is defined. This makes
+    testing easier. Describe in debian/local/apport-collect.1.
+  * debian/local/apport-collect: Ignore ValueErrors from
+    add_package_info(), which happens if the bug has a source package
+    task which does not have an identically named binary package name.
+    Slightly ugly, but it's nontrivial to do that in a sensible
+    manner; let's just fix the crash for now, since the focus of this
+    tool is to collect information from hooks. (LP: #334823)
+  * apport/hookutils.py, hal_dump_udi(): Filter out serial numbers. 
+    (Mentioned in LP #107103)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 02 Mar 2009 11:36:18 +0100
+
+apport (0.138) jaunty; urgency=low
+
+  * apport/crashdb_impl/launchpad.py: Consider an useful stack trace
+    sufficient for automatically removing the core dump, it doesn't
+    need to be perfect. This is in accordance with not setting the
+    apport-failed-retrace tag for useful, but non-perfect retraces any
+    more.
+  * apport/hookutils.py, backends/packaging_rpm.py: Convert usage of
+    md5 module (which is deprecated in 2.6) to hashlib.
+  * Replace all instances of using an exception's .message attribute
+    with str(exception), since message is deprecated in Python 2.6.
+  * apport/hookutils.py: Add attach_printing(). Thanks to Brian Murray
+    for the initial patch! (LP: #333582)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 22:24:31 +0100
+
+apport (0.137) jaunty; urgency=low
+
+  * Set python-version to all, include symlinks in the package.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue, 24 Feb 2009 21:22:36 +0100
+
+apport (0.136) jaunty; urgency=low
+
+  [ Andy Whitcroft ]
+  * bin/apportcheckresume: remove originator in suspend/hibernate/resume
+    reporting.  This was intended for debugging only and is now redundant.
+  * bin/apportcheckresume, apport/report.py: when collecting resume failures
+    in very early boot hal may not be running and we thus unable to obtain
+    the machine type information.  Move title generation to the reporting
+    engine.
+
+  [ Martin Pitt ]
+  * debian/local/apport-collect: Add user environment information, too
+    (LANG, PATH, SHELL). (LP: #332578)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 24 Feb 2009 14:25:21 +0100
+
+apport (0.135) jaunty; urgency=low
+
+  * problem_report.py, test_write_mime_text(): Add test cases for
+    single-line and two-line UTF-8 values, single-line and two-line
+    Unicode values and a single-line LF-terminated value. Fix handling
+    of the latter two.
+  * problem_report.py, test_write(): Add test cases for single-line
+    and two-line UTF-8 and Unicode values, and fix handling of these
+    in write().
+  * debian/local/apport-collect: Collect package, OS, and user
+    information as well. (LP: #332578)
+  * package-hooks/source_apport.py: Robustify by using hookutils, and
+    avoid stat errors if /var/crash/* does not exist.
+  * test-hooks: Update dodgy test for uninstalled package,
+    libdb4.3-tcl is not available in Jaunty any more.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 23 Feb 2009 13:14:24 +0100
+
+apport (0.134) jaunty; urgency=low
+
+  * debian/local/apport-collect: Do not collect information for closed
+    tasks. Thanks for Brian Murray for the initial patch! (LP: #331839)
+  * apport/crashdb_impl/launchpad.py, download(): Download
+    DpkgTerminalLog.txt attachment as well.
+  * apport/report.py: If downloading a nonexisting bug pattern file
+    name succeeds and returns a HTML snippet with "404 Not Found",
+    consider this as failure. This repairs falling back to source
+    package names. (LP: #328751)
+  * apport/hookutils.py: Replace tabs with spaces.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 20 Feb 2009 11:22:15 +0100
+
+apport (0.133) jaunty; urgency=low
+
+  [ Andy Whitcroft ]
+  * apport/hookutils.py: define and include a machine type from the hardware
+    information in the report, using HAL information where available.
+  * bin/apportcheckresume: include the machine type in the suspend/hibernate
+    report title.  They are generally machine specific.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Feb 2009 17:49:03 +0100
+
+apport (0.132) jaunty; urgency=low
+
+  [ Martin Pitt ]
+  * Add debian/local/apport-collect: Download a Launchpad bug report,
+    get its source package, check if it has apport hooks, and if so,
+    run and upload them. Add manpage, too. (LP: #124338)
+  * debian/control: Add Suggests: python-launchpadlib; this is only
+    needed by apport-collect, thus we don't need to pull that into
+    every default installation; if it's not installed apport-collect
+    will detect and point this out.
+  * debian/control: Add ${misc:Depends} dependencies.
+
+  [ Jonathan Riddell ]
+  * Set window icon in apport-qt
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 19 Feb 2009 13:50:34 +0100
+
+apport (0.131) jaunty; urgency=low
+
+  [ Andy Whitcroft ]
+  * bin/apportcheckresume, bin/kernel_oops, cli/apport-cli, gtk/apport-gtk,
+    gtk/apport-gtk.glade, qt4/apport-qt: generalised the KernelOops
+    dialog and handling to allow suspend and hibernate failures present
+    more accurate reasons for the report.  Also commonises all messages
+    in the three implementations to simplify internationalisation.
+
+  [ Martin Pitt ]
+  * po/Makefile: Fix merge-po rule to actually work again.
+  * cli/apport-cli, qt4/apport-qt: Unify string with apport-gtk.
+  * apport/ui.py: Drop some bogus translatable strings.
+  * Update German translations.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 16 Feb 2009 19:31:41 +0100
+
+apport (0.130) jaunty; urgency=low
+
+  [ Martin Pitt ]
+  * bin/kernel_crashdump: Don't crash if vmcore.log does not exist.
+  * crashdb_impl/launchpad.py: Tag bugs with the architecture they are
+    being reported on.
+  * bin/crash-digger: Revert catching "database is locked" errors
+    during consolidation, since it just hides more fundamental errors.
+  * apport/crashdb_impl/memory.py: Improve docstrings of test suite.
+  * bin/apport-retrace: Do not try to install -dbgsym packages with
+    nonmatching versions, unless --unpack-only is used. Thanks to
+    hggdh for the initial patch! (LP: #309208)
+
+  [ Andy Whitcroft ]
+  * bin/apportcheckresume: modify the oops title and thereby the launchpad
+    bug title to say suspend or hibernate.
+  * bin/apportcheckresume: modify the tags to bin/apportcheckresume:
+    modify the oops title and thereby the launchpad be resume+suspend or
+    resume+hibernate as appropriate.
+  * bin/apportcheckresume: include any non-free modules in the bug title.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Feb 2009 22:09:35 +0100
+
+apport (0.129) jaunty; urgency=low
+
+  * bin/apport-retrace: Log broken reports.
+  * bin/apport-retrace: Do not mark bugs as invalid after they are
+    already marked as a duplicate, since that does not work in
+    Launchpad.
+  * debian/local/ubuntu-fat-chroot: Symlink /target -> /, to work
+    for crashes which appear in /target during installation.
+  * bin/apport: Move argv length/usage help before lock check, so that
+    it works if the user cannot lock /var/crash/.lock. Thanks to Kees
+    Cook!
+  * doc/package-hooks.txt: Point out apport.hookutils.
+  * apport/ui.py: Check environment variable APPORT_REPORT_THIRDPARTY
+    in addition to the 'thirdparty' configuration file option for
+    overriding the "genuine distro package" check. Thanks to Oumar
+    Aziz OUATTARA!
+  * apport/crashdb_impl/launchpad.py: In third-party mode, report bugs
+    against Launchpad projects. Thanks to Oumar
+    Aziz OUATTARA for his branch! (LP: #213454)
+  * bin/apportcheckresume: Include /var/lib/pm-utils/stress.log, too.
+    Thanks to Andy Whitcroft for the initial patch, rewrote to use
+    apport.hookutils.
+  * apport/crashdb.py, init_duplicate_db(): Run an integrity check and
+    raise exception if it fails, to avoid running the retracers on a
+    corrupt duplicate db. Add test case to
+    apport/crashdb_impl/memory.py.
+  * bin/crash-digger: Create a backup of the duplicates database right
+    after initializing it (which verifies integrity).
+  * dupdb-admin: Add new command "consolidate".
+  * apport/crashdb_impl/launchpad.py: Request bug lists with batch
+    size 300, for slight speedup of consolidation.
+  * apport/crashdb.py, duplicate_db_consolidate(): Warn about a bug
+    which is not yet fixed, but does not appear in get_unfixed(). In
+    Launchpad, this means that the bug does not have the
+    'apport-crash' tag any more; if there are many, those would be a
+    huge time/bandwidth waste.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 26 Jan 2009 16:04:16 +0100
+
+apport (0.128) jaunty; urgency=low
+
+  * apport/ui.py: Introduce new configuration option "thirdparty" and
+    ignore the is_distro_package() check if it is set to true.
+  * bin/apport-retrace: Call Cache.open() after Cache.update().
+  * bin/apport-retrace: If downloading a report fails (e. g. the
+    description was invalidly modified), mark the bug as invalid with
+    a proper explanation instead of crashing, unless we are in
+    "stdout" or "output file" mode.
+  * apport/crashdb_impl/launchpad.py: Apply some heuristics to attempt
+    recovering broken descriptions as in LP #315728 (intermediate
+    blank lines, and non-apport data append).
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 19 Jan 2009 17:49:55 +0100
+
+apport (0.127) jaunty; urgency=low
+
+  * bin/apportcheckresume, debian/apport.init: integrate with pm-utils to
+    detect suspend/resume failures.  Thanks to Steve Conklin and Andy
+    Whitcroft.  LP: #316419.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Tue, 13 Jan 2009 12:54:12 -0800
+
+apport (0.126) jaunty; urgency=low
+
+  * bin/apport-chroot: If --auth is specified in "login" mode, symlink
+    the file into /tmp/auth in the fakechroot. This makes it much
+    easier to interactively debug retracing.
+  * bin/apport-retrace: Exit with zero for bugs which do not have a
+    core dump, so that it does not completely stop the retracers.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 09 Jan 2009 22:49:48 +0100
+
+apport (0.125) jaunty; urgency=low
 
   * bin/apport-chroot: Exit with apport-retraces' exit status, to
     propagate errors upwards to crash-digger.
+  * bin/apport-retrace: Do not put outdated -dbgsym comments into the
+    bug comments.
+  * Rewrite bin/crash-digger to become much more robust and easier for
+    retracer maintainers:
+    - Now designed around cron-based maintenance: start, process all
+      pending bugs, exit. This makes memory leaks irrelevant, and gets
+      rid of all the logging, daemonizing, and looping code.
+    - Adapt stdout/stderr reporting to be suitable for cron and
+      redirecting stdout to a log file.
+    - Use lock files to avoid overlapping instances and avoid damaging
+      bugs with broken retracers after crash-digger failed.
+    - Handle chroot upgrading, so that this does not need separate
+      cronjobs any more.
+    - Drop old -i option, replace with -D/--dupcheck which is a mode
+      which *only* checks duplicates of Python crashes (no fakechroot
+      handling).
+    - Mark bug as retraced after apport-chroot retrace finished
+      successfully; the process is robust enough now to avoid enless
+      loops even if retracing fails.
+    - Adapt test-crash-digger accordingly.
+    - UbuntuSpec:apport-retracer-maintenance
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 08 Jan 2009 17:22:33 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 09 Jan 2009 12:14:44 +0100
 
 apport (0.124) jaunty; urgency=low
 

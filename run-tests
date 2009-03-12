@@ -1,15 +1,15 @@
 #!/bin/sh -e
 
-if [ ! -e apport/packaging_impl.py ]; then
-    echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py" >&2
-    exit 1
-fi
-
 if [ "$1" = local ]; then
     export PYTHONPATH=.
     export APPORT_CRASHDB_CONF=./crashdb.conf
     basedir=.
     local=1
+
+    if [ ! -e apport/packaging_impl.py ]; then
+	echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py" >&2
+	exit 1
+    fi
 else
     basedir="/usr/lib/python2.5/site-packages"
     unset local

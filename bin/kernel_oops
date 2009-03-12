@@ -14,9 +14,14 @@
 import os, sys
 import apport, apport.fileutils
 
+from gettext import gettext as _
+
 oops = sys.stdin.read()
 
 pr = apport.Report('KernelOops')
+pr['Failure'] = 'oops'
+pr['Annotation'] = _('Your system might become unstable now and might need to be restarted.')
+
 pr['Package'] = 'linux-image-' + os.uname()[2]
 pr['SourcePackage'] = 'linux'
 

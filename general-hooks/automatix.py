@@ -16,8 +16,9 @@ import apport.packaging
 def add_info(report):
     try:
         if apport.packaging.get_version('automatix') or \
-            apport.packaging.get_version('automatix2'):
-            report['UnreportableReason'] = 'You have installed automatix on your \
+            apport.packaging.get_version('automatix2') or \
+            apport.packaging.get_version('ultamatix'):
+            report['UnreportableReason'] = 'You have installed automatix or ultamatix on your \
 system. This is known to cause a lot of instability, thus problem reports \
 will not be sent to the %s developers.' % report.get('DistroRelease',
     'distribution').split()[0]

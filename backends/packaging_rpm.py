@@ -22,7 +22,7 @@ the full text of the license.
 
 # It'd be convenient to use rpmUtils from yum, but I'm trying to keep this
 # class distro-agnostic.
-import rpm, md5, os, stat, subprocess
+import rpm, hashlib, os, stat, subprocess
 
 class RPMPackageInfo:
     '''Partial apport.PackageInfo class implementation for RPM, as
@@ -241,7 +241,7 @@ class RPMPackageInfo:
     
     def _checkmd5(self,filename,filemd5):
         '''Internal function to check a file's md5sum'''
-        m = md5.new()
+        m = hashlib.md5()
         f = open(filename)
         data = f.read() 
         f.close()
@@ -260,26 +260,26 @@ if __name__ == '__main__':
     class RPMPackageInfoTest(unittest.TestCase):
     
         def test_get_dependencies(self):
-            '''Test get_dependencies().'''
+            '''get_dependencies().'''
             
             deps = impl.get_dependencies('bash')              
             self.assertNotEqual(deps, [])                   
 
         def test_get_header(self):
-            '''Test _get_header().'''
+            '''_get_header().'''
             
             hdr = impl._get_header('alsa-utils')
             self.assertEqual(hdr['n'], 'alsa-utils')
 
         def test_get_headers_by_tag(self):
-            '''Test _get_headers_by_tag().'''
+            '''_get_headers_by_tag().'''
             
             headersByTag = impl._get_headers_by_tag('basenames','/bin/bash')
             self.assertEqual(len(headersByTag), 1)
             self.assert_(headersByTag[0]['n'].startswith('bash'))      
             
         def test_get_system_architecture(self):
-            '''Test get_system_architecture().'''
+            '''get_system_architecture().'''
 
             arch = impl.get_system_architecture()
             # must be nonempty without line breaks
@@ -287,7 +287,7 @@ if __name__ == '__main__':
             self.assert_('\n' not in arch)
             
         def test_get_version(self):
-            '''Test get_version().'''
+            '''get_version().'''
             
             ver = impl.get_version('bash')
             self.assertNotEqual(ver, None)

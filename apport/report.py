@@ -240,7 +240,7 @@ class Report(ProblemReport):
             there are none, this field will not be present)'''
 
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT, close_fds=True)
+            stderr=subprocess.PIPE, close_fds=True)
         self['DistroRelease'] = p.communicate()[0].strip().replace('\n', ' ')
 
         u = os.uname()
@@ -500,11 +500,14 @@ class Report(ProblemReport):
         unwound = False
         unwinding = False
         bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+(.*)|(<signal handler called>)\s*)$')
+        bt_fn_noaddr_re = re.compile('^#(\d+)\s+(?:(.*)|(<signal handler called>)\s*)$')
 
         for line in self['Stacktrace'].splitlines():
             m = bt_fn_re.match(line)
             if not m:
-                continue
+                m = bt_fn_noaddr_re.match(line)
+                if not m:
+                    continue
 
             if not unwound or unwinding:
                 if m.group(2):
@@ -600,6 +603,7 @@ class Report(ProblemReport):
         package = self['Package'].split()[0]
         try:
             patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
+            assert '<title>404 Not Found' not in patterns
         except:
             # try if there is one for the source package
             if self.has_key('SourcePackage'):
@@ -828,6 +832,22 @@ class Report(ProblemReport):
 
             return title
 
+        if self.get('ProblemType') == 'KernelOops' and \
+            self.has_key('Failure'):
+            
+            # Title the report with suspend or hibernate as appropriate,
+            # and mention any non-free modules loaded up front.
+            title = ''
+            if 'MachineType' in self:
+                title += '[' + self['MachineType'] + '] '
+            title += self['Failure'] + ' failure'
+            if 'NonfreeKernelModules' in self:
+                title += ' [non-free: ' + self['NonfreeKernelModules'] + ']'
+            title += '\n'
+
+            return title
+
+
         return None
 
     def obsolete_packages(self):
@@ -904,18 +924,22 @@ class Report(ProblemReport):
         from attributes which contain data read from the environment, and
         removes the ProcCwd attribute completely.
         '''
+        replacements = {}
+        if (os.getuid() > 0):
+            # do not replace "root"
+            p = pwd.getpwuid(os.getuid())
+            if len(p[0]) >= 2:
+                replacements[p[0]] = 'username'
+            replacements[p[5]] = '/home/username'
 
-        p = pwd.getpwuid(os.getuid())
-        replacements = {
-            p[0]: 'username',
-            p[5]: '/home/username',
-            os.uname()[1]: 'hostname',
-        }
+            for s in p[4].split(','):
+                s = s.strip()
+                if len(s) > 2:
+                    replacements[s] = 'User Name'
 
-        for s in p[4].split(','):
-            s = s.strip()
-            if len(s) > 2:
-                replacements[s] = 'User Name'
+        hostname = os.uname()[1]
+        if len(hostname) >= 2:
+            replacements[hostname] = 'hostname'
 
         try:
             del self['ProcCwd']
@@ -938,7 +962,7 @@ from cStringIO import StringIO
 
 class _ApportReportTest(unittest.TestCase):
     def test_add_package_info(self):
-        '''Test add_package_info().'''
+        '''add_package_info().'''
 
         # determine bash version
         bashversion = packaging.get_version('bash')
@@ -969,7 +993,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(not pr.has_key('Package'))
 
     def test_add_os_info(self):
-        '''Test add_os_info().'''
+        '''add_os_info().'''
 
         pr = Report()
         pr.add_os_info()
@@ -978,7 +1002,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(pr['Architecture'])
 
     def test_add_user_info(self):
-        '''Test add_user_info().'''
+        '''add_user_info().'''
 
         pr = Report()
         pr.add_user_info()
@@ -990,7 +1014,7 @@ class _ApportReportTest(unittest.TestCase):
         self.assert_(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
 
     def test_add_proc_info(self):
-        '''Test add_proc_info().'''
+        '''add_proc_info().'''
 
         # set test environment
         assert os.environ.has_key('LANG'), 'please set $LANG for this test'
@@ -1093,7 +1117,7 @@ sys.stdin.readline()
         self.assertRaises(OSError, pr.add_proc_info, p.pid)
 
     def test_add_path_classification(self):
-        '''Test classification of $PATH.'''
+        '''classification of $PATH.'''
 
         # system default
         p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, 
@@ -1126,7 +1150,7 @@ sys.stdin.readline()
             'PATH is customized with user paths')
 
     def test_check_interpreted(self):
-        '''Test _check_interpreted().'''
+        '''_check_interpreted().'''
 
         # standard ELF binary
         f = tempfile.NamedTemporaryFile()
@@ -1249,7 +1273,8 @@ sys.stdin.readline()
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
-    def _generate_sigsegv_report(self, file=None):
+    @classmethod
+    def _generate_sigsegv_report(klass, file=None):
         '''Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
         (ExecutablePath and CoreDump) and call add_gdb_info().
@@ -1284,6 +1309,7 @@ int main() { return f(42); }
 
             pr['ExecutablePath'] = os.path.join(workdir, 'crash')
             pr['CoreDump'] = (os.path.join(workdir, 'core'),)
+            pr['Signal'] = '11'
 
             pr.add_gdb_info()
             if file:
@@ -1312,7 +1338,7 @@ int main() { return f(42); }
         self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
 
     def test_add_gdb_info(self):
-        '''Test add_gdb_info() with core dump file reference.'''
+        '''add_gdb_info() with core dump file reference.'''
 
         pr = Report()
         # should not throw an exception for missing fields
@@ -1323,7 +1349,7 @@ int main() { return f(42); }
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
 
     def test_add_gdb_info_load(self):
-        '''Test add_gdb_info() with inline core dump.'''
+        '''add_gdb_info() with inline core dump.'''
 
         rep = tempfile.NamedTemporaryFile()
         self._generate_sigsegv_report(rep)
@@ -1336,7 +1362,7 @@ int main() { return f(42); }
         self._validate_gdb_fields(pr)
 
     def test_add_gdb_info_script(self):
-        '''Test add_gdb_info() with a script.'''
+        '''add_gdb_info() with a script.'''
 
         (fd, coredump) = tempfile.mkstemp()
         (fd2, script) = tempfile.mkstemp()
@@ -1364,10 +1390,10 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
             os.unlink(script)
 
         self._validate_gdb_fields(pr)
-        self.assert_('libc.so' in pr['Stacktrace'])
+        self.assert_('libc.so' in pr['Stacktrace'] or 'in execute_command' in pr['Stacktrace'])
 
     def test_search_bug_patterns(self):
-        '''Test search_bug_patterns().'''
+        '''search_bug_patterns().'''
 
         pdir = None
         try:
@@ -1457,7 +1483,7 @@ gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
                 shutil.rmtree(pdir)
 
     def test_add_hooks_info(self):
-        '''Test add_hooks_info().'''
+        '''add_hooks_info().'''
 
         global _hook_dir
         global _common_hook_dir
@@ -1549,7 +1575,7 @@ def add_info(report):
             _common_hook_dir = orig_common_hook_dir
 
     def test_ignoring(self):
-        '''Test mark_ignore() and check_ignored().'''
+        '''mark_ignore() and check_ignored().'''
 
         global _ignore_file
         orig_ignore_file = _ignore_file
@@ -1601,7 +1627,7 @@ def add_info(report):
             _ignore_file = orig_ignore_file
 
     def test_blacklisting(self):
-        '''Test check_ignored() for system-wise blacklist.'''
+        '''check_ignored() for system-wise blacklist.'''
 
         global _blacklist_dir
         global _ignore_file
@@ -1646,7 +1672,7 @@ def add_info(report):
             _ignore_file = orig_ignore_file
 
     def test_has_useful_stacktrace(self):
-        '''Test has_useful_stacktrace().'''
+        '''has_useful_stacktrace().'''
 
         r = Report()
         self.failIf(r.has_useful_stacktrace())
@@ -1679,7 +1705,7 @@ def add_info(report):
         self.failIf(r.has_useful_stacktrace())
 
     def test_standard_title(self):
-        '''Test standard_title().'''
+        '''standard_title().'''
 
         report = Report()
         self.assertEqual(report.standard_title(), None)
@@ -1809,7 +1835,7 @@ baz()
         self.assertEqual(report.standard_title(),'kernel BUG at /tmp/oops.c:5!')
 
     def test_obsolete_packages(self):
-        '''Test obsolete_packages().'''
+        '''obsolete_packages().'''
 
         report = Report()
         self.assertRaises(KeyError, report.obsolete_packages)
@@ -1835,13 +1861,30 @@ baz()
         self.assertEqual(report.obsolete_packages(), [])
 
     def test_gen_stacktrace_top(self):
-        '''Test _gen_stacktrace_top().'''
+        '''_gen_stacktrace_top().'''
         
         # nothing to chop off
         r = Report()
         r['Stacktrace'] = '''#0  0x10000488 in h (p=0x0) at crash.c:25
 #1  0x100004c8 in g (x=1, y=42) at crash.c:26
 #2  0x10000514 in f (x=1) at crash.c:27
+#3  0x10000530 in e (x=1) at crash.c:28
+#4  0x10000530 in d (x=1) at crash.c:29
+#5  0x10000530 in c (x=1) at crash.c:30
+#6  0x10000550 in main () at crash.c:31
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''h (p=0x0) at crash.c:25
+g (x=1, y=42) at crash.c:26
+f (x=1) at crash.c:27
+e (x=1) at crash.c:28
+d (x=1) at crash.c:29''')
+
+        # nothing to chop off: some addresses missing (LP #269133)
+        r = Report()
+        r['Stacktrace'] = '''#0 h (p=0x0) at crash.c:25
+#1  0x100004c8 in g (x=1, y=42) at crash.c:26
+#2 f (x=1) at crash.c:27
 #3  0x10000530 in e (x=1) at crash.c:28
 #4  0x10000530 in d (x=1) at crash.c:29
 #5  0x10000530 in c (x=1) at crash.c:30
@@ -1861,6 +1904,22 @@ d (x=1) at crash.c:29''')
 #2  <signal handler called>
 #3  0x10000530 in e (x=1) at crash.c:28
 #4  0x10000530 in d (x=1) at crash.c:29
+#5  0x10000530 in c (x=1) at crash.c:30
+#6  0x10000550 in main () at crash.c:31
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''e (x=1) at crash.c:28
+d (x=1) at crash.c:29
+c (x=1) at crash.c:30
+main () at crash.c:31''')
+
+        # single signal handler invocation: some addresses missing
+        r = Report()
+        r['Stacktrace'] = '''#0  0x10000488 in raise () from /lib/libpthread.so.0
+#1  ??
+#2  <signal handler called>
+#3  0x10000530 in e (x=1) at crash.c:28
+#4  d (x=1) at crash.c:29
 #5  0x10000530 in c (x=1) at crash.c:30
 #6  0x10000550 in main () at crash.c:31
 '''
@@ -1921,7 +1980,7 @@ filter_func (connection=0x8075288, message=0x80768d8, user_data=0x8074da8) at li
 dbus_connection_dispatch (connection=0x8075288) at dbus-connection.c:4267''')
 
     def test_crash_signature(self):
-        '''Test crash_signature().'''
+        '''crash_signature().'''
 
         r = Report()
         self.assertEqual(r.crash_signature(), None)
@@ -1965,7 +2024,7 @@ ZeroDivisionError: integer division or modulo by zero'''
         self.assertEqual(r.crash_signature(), None)
 
     def test_binary_data(self):
-        '''Test that methods get along with binary data.'''
+        '''methods get along with binary data.'''
 
         pr = Report()
         pr['Signal'] = '11'
@@ -1990,7 +2049,7 @@ ZeroDivisionError: integer division or modulo by zero'''
         self.assertEqual(pr.standard_title(), 'foo crashed with SIGSEGV in h()')
 
     def test_module_license_evaluation(self):
-        '''Test that module licenses can be validated correctly.'''
+        '''module licenses can be validated correctly.'''
 
         def _build_ko(license):
             asm = tempfile.NamedTemporaryFile(prefix='%s-' % (license),

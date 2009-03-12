@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     class _REThreadTest(unittest.TestCase):
         def test_return_value(self):
-            '''Test that return value works properly.'''
+            '''return value works properly.'''
 
             t = REThread(target=div, args=(42, 2))
             t.start()
@@ -93,7 +93,7 @@ if __name__ == '__main__':
             self.assertEqual(t.exc_info(), None)
 
         def test_no_return_value(self):
-            '''Test that REThread works if run() does not return anything.'''
+            '''REThread works if run() does not return anything.'''
 
             t = REThread(target=idle, args=(0.5,))
             t.start()
@@ -104,7 +104,7 @@ if __name__ == '__main__':
             self.assertEqual(t.exc_info(), None)
 
         def test_exception(self):
-            '''Test that exception in thread is caught and passed.'''
+            '''exception in thread is caught and passed.'''
 
             t = REThread(target=div, args=(1, 0))
             t.start()
@@ -118,7 +118,7 @@ if __name__ == '__main__':
             self.assert_(exc[-2].endswith('return x / y\n'))
 
         def test_exc_raise(self):
-            '''Test that exc_raise() raises caught thread exception.'''
+            '''exc_raise() raises caught thread exception.'''
 
             t = REThread(target=div, args=(1, 0))
             t.start()

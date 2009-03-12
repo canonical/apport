@@ -124,6 +124,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         apport.ui.UserInterface.__init__(self)
 
         self.app = QApplication([])
+        self.app.setWindowIcon(QIcon("/usr/share/icons/hicolor/scalable/mimetypes/text-x-apport.svg"))
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -190,10 +191,13 @@ class QT4UserInterface(apport.ui.UserInterface):
         return 'cancel'
 
     def ui_present_kernel_error(self):
-        dialog = QT4ErrorDialog (_('Kernel problem'), 
-                _('Your system encountered a serious kernel problem which '
-                  'caused it to crash.'),
-                _('You can help the developers to fix the problem by reporting it.'))
+        message = _('Your system encountered a serious kernel problem.')
+        annotate = ''
+        if self.report.has_key('Annotation'):
+            annotate = self.report['Annotation'] + '\n\n'
+        annotate += _('You can help the developers to fix the problem by reporting it.')
+
+        dialog = QT4ErrorDialog (_('Kernel problem'), message, annotate)
 
         reportbutton = dialog.addbutton(_('&Report Problem...'))
 

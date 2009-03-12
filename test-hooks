@@ -1,5 +1,5 @@
 #!/usr/bin/python
-'''Test the various package hooks.'''
+'''the various package hooks.'''
 
 import unittest, subprocess, tempfile, os, shutil, os.path, sys, optparse
 from cStringIO import StringIO
@@ -32,7 +32,7 @@ class _HooksTest(unittest.TestCase):
         shutil.rmtree(self.workdir)
 
     def test_package_hook_nologs(self):
-        '''Test package_hook without any log files.'''
+        '''package_hook without any log files.'''
 
         ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'bash'],
             stdin=subprocess.PIPE)
@@ -51,10 +51,10 @@ class _HooksTest(unittest.TestCase):
         self.assertEqual(r['ErrorMessage'], 'something is wrong')
 
     def test_package_hook_uninstalled(self):
-        '''Test package_hook on an uninstalled package (might fail to install).'''
+        '''package_hook on an uninstalled package (might fail to install).'''
 
         #FIXME: This is a really Debian/Ubuntu specific dodgy test case
-        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'libdb4.3-tcl'],
+        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'libdb4.7-tcl'],
             stdin=subprocess.PIPE)
         ph.communicate('something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
@@ -66,12 +66,12 @@ class _HooksTest(unittest.TestCase):
         r.load(open(reps[0]))
 
         self.assertEqual(r['ProblemType'], 'Package')
-        self.assertEqual(r['Package'], 'libdb4.3-tcl')
-        self.assertEqual(r['SourcePackage'], 'db4.3')
+        self.assertEqual(r['Package'], 'libdb4.7-tcl')
+        self.assertEqual(r['SourcePackage'], 'db')
         self.assertEqual(r['ErrorMessage'], 'something is wrong')
 
     def test_package_hook_logs(self):
-        '''Test package_hook with a log dir and a log file.'''
+        '''package_hook with a log dir and a log file.'''
 
         open(os.path.join(self.workdir, 'log_1.log'), 'w').write('Log 1\nbla')
         open(os.path.join(self.workdir, 'log2'), 'w').write('Yet\nanother\nlog')
@@ -108,7 +108,7 @@ class _HooksTest(unittest.TestCase):
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
 
     def test_kernel_crashdump(self):
-        '''Test kernel_crashdump.'''
+        '''kernel_crashdump.'''
 
         f = open(os.path.join(apport.fileutils.report_dir, 'vmcore'), 'w')
         f.write('\x01' * 100)
@@ -159,7 +159,7 @@ class _HooksTest(unittest.TestCase):
         return (gcc_ver, gcc_path)
  
     def test_gcc_ide_hook_file(self):
-        '''Test gcc_ice_hook with a temporary file.'''
+        '''gcc_ice_hook with a temporary file.'''
 
         (gcc_version, gcc_path) = self._gcc_version_path()
 
@@ -187,7 +187,7 @@ class _HooksTest(unittest.TestCase):
         self.assert_(r['SourcePackage'].startswith('gcc'))
 
     def test_gcc_ide_hook_pipe(self):
-        '''Test gcc_ice_hook with piping.'''
+        '''gcc_ice_hook with piping.'''
 
         (gcc_version, gcc_path) = self._gcc_version_path()
 

@@ -1,0 +1,71 @@
+#!/usr/bin/python
+import os
+import os.path
+import sys
+import datetime
+import commands
+
+import apport.hookutils
+
+from gettext import gettext as _
+
+def main(argv=None):
+
+    if argv is None:
+        argv = sys.argv
+
+    try:
+        from apport.packaging_impl import impl as packaging
+        if not packaging.enabled():
+            return -1
+
+        import apport.report
+        pr = apport.report.Report(type='KernelOops')
+
+        libdir = '/var/lib/pm-utils'
+        flagfile = libdir + '/status'
+        stresslog = libdir + '/stress.log'
+
+        pr.add_os_info()
+        pr.add_proc_info()
+        pr.add_user_info()
+        pr['Package'] = 'linux-image-' + os.uname()[2]
+
+        # grab the contents of the suspend/resume flag file
+        apport.hookutils.attach_file(pr, flagfile, 'Failure')
+
+        # grab the contents of the suspend/resume stress test log if present.
+        apport.hookutils.attach_file(pr, stresslog, 'StressLog')
+
+        # Ensure we are appropriatly tagged.
+        pr['Tags'] = 'resume ' + pr['Failure']
+
+        # Record the failure mode.
+        pr['Failure'] += '/resume'
+
+        # Generate a sensible report message.
+        if pr['Failure'] == 'suspend/resume':
+            pr['Annotation'] = _('This occured during a previous suspend and prevented it from resuming properly.')
+        else:
+            pr['Annotation'] = _('This occured during a previous hibernate and prevented it from resuming properly.')
+
+        if pr.check_ignored():
+            return 0
+
+        nowtime = datetime.datetime.now()
+        pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(" ","_"))
+        report_file = os.fdopen(os.open(pr_filename, os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
+        os.chmod(pr_filename, 0600)
+        try:
+            pr.write(report_file)
+        finally:
+            report_file.close()
+        return 0
+    except:
+        print "apportcheckresume failed"
+        raise
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+

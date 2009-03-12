@@ -263,6 +263,10 @@ def command_login(opts, args):
         print >> sys.stderr, 'invalid chroot'
         sys.exit(1)
 
+    if opts.auth_file:
+        # symlink the file into the chroot
+        os.symlink(opts.auth_file, os.path.join(chroot.root, 'tmp', 'auth'))
+
     del os.environ['APPORT_CRASHDB_CONF']
     ret = chroot.run([os.environ.get('SHELL', 'bash')])
 

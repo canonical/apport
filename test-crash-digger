@@ -17,14 +17,20 @@ databases = { 'memory': {
 }''')
 
         self.chroot_map = os.path.join(self.workdir, 'chroot_map')
-        open(self.chroot_map, 'w').write('{"Testux 1.0": "/", "Testux 2.2": "/"}')
+        self.testux1_chroot = os.path.join(self.workdir, 'testux1.tar.gz')
+        self.testux2_chroot = os.path.join(self.workdir, 'testux2.tar.gz')
+        open(self.testux1_chroot, 'w').close()
+        open(self.chroot_map, 'w').write('{"Testux 1.0": "%s", "Testux 2.2": "/"}' % 
+            self.testux1_chroot)
 
         self.apport_chroot_log = os.path.join(self.workdir, 'apport-chroot.log')
 
-        apport_chroot = os.path.join(self.workdir, 'apport-chroot')
-        open(apport_chroot, 'w').write('''#!/bin/sh
+        self.apport_chroot = os.path.join(self.workdir, 'apport-chroot')
+        open(self.apport_chroot, 'w').write('''#!/bin/sh
 echo "$@" >> %s''' % self.apport_chroot_log)
-        os.chmod(apport_chroot, 0755)
+        os.chmod(self.apport_chroot, 0755)
+
+        self.lock_file = os.path.join(self.workdir, 'lock')
 
         os.environ['APPORT_CRASHDB_CONF'] = crashdb_conf
         os.environ['PYTHONPATH'] = '.'
@@ -33,91 +39,142 @@ echo "$@" >> %s''' % self.apport_chroot_log)
     def tearDown(self):
         shutil.rmtree(self.workdir)
 
-    def call(self, args, timeout=None):
-        '''Call crash-digger with given arguments, terminate it after given
-        number of seconds, and return a pair (stdout, stderr).'''
-
+    def call(self, args):
+        '''Call crash-digger with given arguments.
+        
+        Return a pair (stdout, stderr).
+        '''
         out = tempfile.TemporaryFile()
         err = tempfile.TemporaryFile()
-        s = subprocess.Popen(['crash-digger'] + args, stdout=out, stderr=err)
-        if timeout:
-            time.sleep(timeout)
-            self.assertEqual(s.poll(), None, 'crash-digger is still running')
-            os.kill(s.pid, signal.SIGTERM)
-        s.wait()
+        s = subprocess.call(['crash-digger'] + args, stdout=out, stderr=err)
         out.seek(0)
         err.seek(0)
         return (out.read(), err.read())
 
-    def test_foreground_nopython(self):
-        '''Test operation in foreground without -i'''
+    def test_crashes(self):
+        '''Crash retracing'''
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vs1'], timeout=2)
-        self.assertEqual(err, '', 'no error messages')
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
+        self.assert_('retracing #0' in out)
+        self.assert_('retracing #1' in out)
+        self.assert_('retracing #2' in out)
         self.assert_('crash is release FooLinux Pi/2 which does not have a chroot available' in out)
-        self.assert_('retracing #1 exit status: 0' in out)
-        self.assert_('retracing #2 exit status: 0' in out)
-        self.assert_('fill_pool: fail pool now: set([0])' in out)
-        self.assert_('#3' not in out, 'Python crashes are not retraced')
+        self.failIf('failed with status' in out)
+        self.failIf('#3' in out, 'dupcheck crashes are not retraced')
+        self.failIf('#4' in out, 'dupcheck crashes are not retraced')
 
-    def test_foreground_python(self):
-        '''Test operation in foreground with -i'''
+        chroot_log = open(self.apport_chroot_log).read()
+        self.failIf('upgrade' in chroot_log, 'current chroots are not upgraded')
+        self.assert_('retrace 1\n' in chroot_log)
+        self.assert_('retrace 2\n' in chroot_log)
+        self.failIf (os.path.exists(self.lock_file))
+
+    def test_crashes_error(self):
+        '''Crash retracing if apport-chroot fails on bug #1'''
+
+        # make apport-retrace fail on bug 1
+        os.rename(self.apport_chroot, self.apport_chroot + '.bak')
+        open(self.apport_chroot, 'w').write('''#!/bin/sh
+echo "$@" >> %s
+while [ -n "$2" ]; do shift; done
+if [ "$1" = 1 ]; then
+    echo "cannot frobnicate chroot" >&2
+    exit 1
+fi
+''' % self.apport_chroot_log)
+        os.chmod(self.apport_chroot, 0755)
 
         (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vis1'], timeout=2)
-        self.assertEqual(err, '', 'no error messages')
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assert_('Traceback' in err)
+        self.assert_('SystemError: retracing #1 failed' in err)
         self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
+        self.assert_('retracing #0' in out)
+        self.assert_('retracing #1' in out)
+        self.failIf('retracing #2' in out, 'should not continue after errors')
         self.assert_('crash is release FooLinux Pi/2 which does not have a chroot available' in out)
-        self.assert_('retracing #1 exit status: 0' in out)
-        self.assert_('retracing #2 exit status: 0' in out)
-        self.assert_('fill_pool: fail pool now: set([0])' in out)
+        self.failIf('#0 failed with status' in out)
+        self.assert_('#1 failed with status: 1' in out)
+        self.failIf('#3' in out, 'dupcheck crashes are not retraced')
+        self.failIf('#4' in out, 'dupcheck crashes are not retraced')
+
+        chroot_log = open(self.apport_chroot_log).read()
+        self.assert_('retrace 1\n' in chroot_log)
+        self.failIf('retrace 2\n' in chroot_log)
+
+        self.assert_(os.path.exists(self.lock_file))
+
+        os.rename(self.apport_chroot + '.bak', self.apport_chroot)
+
+        # subsequent start should not do anything until the lock file is cleaned up
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assertEqual(out, '')
+        self.assertEqual(err, '')
+
+        os.unlink(self.lock_file)
+
+        # now it should run again
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assert_('retracing #2' in out)
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.failIf (os.path.exists(self.lock_file))
+
+    def test_dupcheck(self):
+        '''Duplicate checking'''
+
+        (out, err) = self.call(['-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vDl', self.lock_file])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.failIf('#1' in out, 'signal crashes are not retraced')
+        self.failIf('#2' in out, 'signal crashes are not retraced')
         self.assert_('checking #3 for duplicate' in out)
         self.assert_('checking #4 for duplicate' in out)
         self.assert_('Report is a duplicate of #3 (not fixed yet)' in out)
+        self.failIf(os.path.exists(self.apport_chroot_log))
+        self.failIf (os.path.exists(self.lock_file))
 
-    def test_daemon(self):
-        '''Test operation in daemon mode'''
+    def test_missing_chroot(self):
+        '''Detection of missing chroot'''
 
-        log = tempfile.NamedTemporaryFile()
-        (fd, pidfile) = tempfile.mkstemp()
-        os.close(fd)
+        os.unlink(self.testux1_chroot)
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assert_('Error: chroot' in err)
+        self.assert_('for Testux 1.0' in err)
+        self.assert_(os.path.exists(self.lock_file))
 
-        try:
-            (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
-                os.path.join(self.workdir, 'dup.db'), '-vs1', '-l', log.name,
-                '-p', pidfile])
-            self.assertEqual(err, '', 'no error messages: ' + err)
-            self.assertEqual(out, '', 'no output messages: ' + out)
-            # let it grind for a while and then shut it down
-            time.sleep(2)
-            (out, err) = self.call(['--stop', '-p', pidfile])
-            self.assertEqual(err, '', 'no error messages')
+    def test_chroot_upgrade(self):
+        '''Chroots are upgraded daily'''
 
-            log.seek(0)
-            out = log.read()
-            self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
-            self.assert_('crash is release FooLinux Pi/2 which does not have a chroot available' in out)
-            self.assert_('retracing #1 exit status: 0' in out)
-            self.assert_('retracing #2 exit status: 0' in out)
-            self.assert_('fill_pool: fail pool now: set([0])' in out)
-            self.assert_('#3' not in out, 'Python crashes are not retraced')
-        finally:
-            os.unlink(pidfile)
+        # make testux chroot older than one day
+        st = os.stat(self.testux1_chroot)
+        os.utime(self.testux1_chroot, (st.st_atime, st.st_mtime - 24*3600 - 1))
 
-    def test_daemon_exception(self):
-        '''Test exception logging in daemon mode'''
+        # check that it was upgraded
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.assert_('retracing #1' in out)
+        chroot_log = open(self.apport_chroot_log).read()
+        self.assert_('chroot_map upgrade all\n' in chroot_log)
+        self.assert_('retrace 1\n' in chroot_log)
+        self.failIf (os.path.exists(self.lock_file))
 
-        log = tempfile.NamedTemporaryFile()
+    def test_stderr_redirection(self):
+        '''apport-chroot's stderr is redirected to stdout'''
 
-        (out, err) = self.call(['-m', '/etc/passwd', '-a', '/dev/zero', '-vs1',
-            '-l', log.name, '-p', '/dev/null'])
-        self.assertEqual(err, '', 'no error messages: ' + err)
-        self.assertEqual(out, '', 'no output messages: ' + out)
-        log.seek(0)
-        out = log.read()
-        self.assert_('SyntaxError' in out)
+        open(self.apport_chroot, 'w').write('''#!/bin/sh
+echo ApportChrootError >&2''')
+        # check that it was upgraded
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.assert_('ApportChrootError' in out)
 
 tl = unittest.TestLoader()
 tests_all = unittest.TestSuite((

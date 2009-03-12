@@ -54,7 +54,8 @@ class CrashDatabase:
         assert dbapi2.paramstyle == 'qmark', \
             'this module assumes qmark dbapi parameter style'
 
-        init = not os.path.exists(path) or path == ':memory:'
+        init = not os.path.exists(path) or path == ':memory:' or \
+            os.path.getsize(path) == 0
         self.duplicate_db = dbapi2.connect(path, timeout=7200)
 
         if init:
@@ -69,6 +70,13 @@ class CrashDatabase:
                 last_update TIMESTAMP)''')
             cur.execute('''INSERT INTO consolidation VALUES (CURRENT_TIMESTAMP)''')
             self.duplicate_db.commit()
+
+        # verify integrity
+        cur = self.duplicate_db.cursor()
+        cur.execute('PRAGMA integrity_check');
+        result = cur.fetchall() 
+        if result != [('ok',)]:
+            raise SystemError, 'Corrupt duplicate db:' + str(result)
 
     def check_duplicate(self, id, report=None):
         '''Check whether a crash is already known.
@@ -211,6 +219,8 @@ class CrashDatabase:
             fixed_ver = self.get_fixed_version(id)
             if fixed_ver == 'invalid':
                 cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
+            elif not fixed_ver:
+                print 'WARNING: inconsistency detected: bug #%i does not appear in get_unfixed(), but is not fixed yet' % id
             else:
                 cur2.execute('UPDATE crashes SET fixed_version = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
                     (fixed_ver, id))
@@ -370,9 +380,18 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def close_duplicate(self, id, master):
-        '''Mark a crash id as duplicate of given master ID.'''
+    def duplicate_of(self, id):
+        '''Return master ID for a duplicate bug.
 
+        If the bug is not a duplicate, return None.
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
+    def close_duplicate(self, id, master):
+        '''Mark a crash id as duplicate of given master ID.
+        
+        If master is None, id gets un-duplicated.
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def mark_regression(self, id, master):
