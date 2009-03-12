@@ -551,12 +551,15 @@ if __name__ == '__main__':
 
             # initially we have no dups
             self.assertEqual(self.crashdb.duplicate_of(sigv_report), None)
+            self.assertEqual(self.crashdb.get_fixed_version(sigv_report), None)
 
             # dupe our sigv_report and check that it worked; then undupe it
             self.crashdb.close_duplicate(sigv_report, self.known_test_id)
             self.assertEqual(self.crashdb.duplicate_of(sigv_report), self.known_test_id)
+            self.assertEqual(self.crashdb.get_fixed_version(sigv_report), 'invalid')
             self.crashdb.close_duplicate(sigv_report, None)
             self.assertEqual(self.crashdb.duplicate_of(sigv_report), None)
+            self.assertEqual(self.crashdb.get_fixed_version(sigv_report), None)
 
             # this should have removed attachments
             r = self.crashdb.download(sigv_report)
