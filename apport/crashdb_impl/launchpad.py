@@ -13,7 +13,6 @@ the full text of the license.
 TODO:
     * missing API:
         - storeblob LP: #315358
-        - deleting attachments LP #315387
         - changing target of task LP #309182
         
     * related bugs
@@ -269,9 +268,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # remove core dump if stack trace is usable
         if report.has_useful_stacktrace():
-            #~ bug.attachments.remove(
-                    #~ func=lambda a: re.match('^CoreDump.gz$', a.lp_filename or a.description))
-                    #No API -->TODO
+            for a in bug.attachments:
+                if a.title == 'CoreDump.gz':
+                    try:
+                        a.removeFromBug()
+                    except HTTPError:
+                        pass # workaround for 404 error, see LP #315387
             try:
                 task = get_distro_tasks(bug.bug_tasks).next()
             except StopIteration:
@@ -390,11 +392,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if master.duplicate_of:
                 master = master.duplicate_of
             
-            # TODO: removing attachments
-            #~ bug.attachments.remove(
-                #~ func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
-#~ Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
-#~ Disassembly.txt$)', a.lp_filename))
+            for a in bug.attachments:
+                if a.title in ('CoreDump.gz', 'Stacktrace.txt',
+                    'ThreadStacktrace.txt', 'Dependencies.txt', 'ProcMaps.txt',
+                    'ProcStatus.txt', 'Registers.txt', 'Disassembly.txt'):
+                    try:
+                        a.removeFromBug()
+                    except HTTPError:
+                        pass # workaround for 404 error, see LP #315387
             # TODO: bug in API does not allow setting privacy
             #~ if bug.private:
                 #~ bug.private = False
@@ -628,6 +633,11 @@ if __name__ == '__main__':
             # this should have removed attachments
             r = self.crashdb.download(sigv_report)
             self.failIf('CoreDump' in r)
+            self.failIf('Stacktrace' in r)
+            self.failIf('ThreadStacktrace' in r)
+            self.failIf('Dependencies' in r)
+            self.failIf('Disassembly' in r)
+            self.failIf('Registers' in r)
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
