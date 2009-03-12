@@ -36,7 +36,9 @@ from utils import get_launchpad, HTTPError
 
 CONSUMER = "apport-collect"
 
-APPORT_FILES = ("Dependencies.txt", "CoreDump.gz", "ProcMaps.txt", "Traceback.txt")
+APPORT_FILES = ("Dependencies.txt", "CoreDump.gz", "ProcMaps.txt",
+        "Traceback.txt", "Disassembly.txt", "Registers.txt", "Stacktrace.txt",
+        "ThreadStacktrace.txt")
 def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
@@ -559,13 +561,22 @@ if __name__ == '__main__':
             self.assert_(r['Package'].startswith(self.test_package + ' '))
             self.assert_('f (x=42)' in r['Stacktrace'])
             self.assert_('f (x=42)' in r['StacktraceTop'])
+            self.assert_('f (x=42)' in r['ThreadStacktrace'])
             self.assert_(len(r['CoreDump']) > 1000)
             self.assert_('Dependencies' in r)
+            self.assert_('Disassembly' in r)
+            self.assert_('Registers' in r)
 
         def test_3_update(self):
             '''update()'''
 
             r = self.crashdb.download(sigv_report)
+            self.assert_('CoreDump' in r)
+            self.assert_('Dependencies' in r)
+            self.assert_('Disassembly' in r)
+            self.assert_('Registers' in r)
+            self.assert_('Stacktrace' in r)
+            self.assert_('ThreadStacktrace' in r)
 
             # updating with an useless stack trace retains core dump
             r['StacktraceTop'] = '?? ()'
@@ -574,6 +585,11 @@ if __name__ == '__main__':
             self.crashdb.update(sigv_report, r, 'I can has a better retrace?')
             r = self.crashdb.download(sigv_report)
             self.assert_('CoreDump' in r)
+            self.assert_('Dependencies' in r)
+            self.assert_('Disassembly' in r)
+            self.assert_('Registers' in r)
+            self.assert_('Stacktrace' in r)
+            self.assert_('ThreadStacktrace' in r)
 
             # updating with an useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
@@ -582,6 +598,11 @@ if __name__ == '__main__':
             self.crashdb.update(sigv_report, r, 'good retrace!')
             r = self.crashdb.download(sigv_report)
             self.failIf('CoreDump' in r)
+            self.assert_('Dependencies' in r)
+            self.assert_('Disassembly' in r)
+            self.assert_('Registers' in r)
+            self.assert_('Stacktrace' in r)
+            self.assert_('ThreadStacktrace' in r)
 
         def test_get_distro_release(self):
             '''get_distro_release()'''
