@@ -1273,7 +1273,8 @@ sys.stdin.readline()
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
-    def _generate_sigsegv_report(self, file=None):
+    @classmethod
+    def _generate_sigsegv_report(klass, file=None):
         '''Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
         (ExecutablePath and CoreDump) and call add_gdb_info().
@@ -1308,6 +1309,7 @@ int main() { return f(42); }
 
             pr['ExecutablePath'] = os.path.join(workdir, 'crash')
             pr['CoreDump'] = (os.path.join(workdir, 'core'),)
+            pr['Signal'] = '11'
 
             pr.add_gdb_info()
             if file:

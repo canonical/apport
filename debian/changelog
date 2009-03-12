@@ -1,3 +1,11 @@
+apport (0.146) UNRELEASED; urgency=low
+
+  * apport/report.py, _generate_sigsegv_report(): Turn into a class method, so
+    that it can be used by test cases in other modules as well. Also add
+    missing Signal field.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
+
 apport (0.145) jaunty; urgency=low
 
   * apport/crashdb_impl/launchpad.py: Fix typo in previous upload.
