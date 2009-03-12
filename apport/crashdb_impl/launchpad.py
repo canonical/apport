@@ -18,8 +18,6 @@ TODO:
         
     * related bugs
         - setting bug privacy LP #308374
-        - date related data are strings not datetime objects, working
-          around this using api_time_parser.parse_time() LP: #309950
         - adding/removing tags LP #254901
         
     * remove all tempfiles (apport does not need local files, correct?)
@@ -38,7 +36,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import apport.crashdb
 import apport
 from utils import get_launchpad, HTTPError
-from api_time_parser import parse_time
 
 CONSUMER = "apport-collect"
 
@@ -213,9 +210,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
             report.load(StringIO(description))
 
-            # Workaroud LP #309950
-            date = parse_time(b.date_created)
-            report['Date'] = date.ctime()
+            report['Date'] = b.date_created.ctime()
             if 'ProblemType' not in report:
                 if 'apport-bug' in b.tags:
                     report['ProblemType'] = 'Bug'
