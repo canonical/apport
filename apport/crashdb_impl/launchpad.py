@@ -9,7 +9,7 @@ Free Software Foundation; either version 2 of the License, or (at your
 option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
-"""
+'''
 TODO:
     * missing API:
         - storeblob LP: #315358
@@ -18,7 +18,7 @@ TODO:
     * related bugs
         - setting bug privacy LP #308374
         - adding/removing tags LP #254901
-"""
+'''
 
 import urllib, tempfile, shutil, os.path, re, gzip
 from cStringIO import StringIO
@@ -33,11 +33,11 @@ import apport.crashdb
 import apport
 from utils import get_launchpad, HTTPError
 
-CONSUMER = "apport-collect"
+CONSUMER = 'apport-collect'
 
-APPORT_FILES = ("Dependencies.txt", "CoreDump.gz", "ProcMaps.txt",
-        "Traceback.txt", "Disassembly.txt", "Registers.txt", "Stacktrace.txt",
-        "ThreadStacktrace.txt")
+APPORT_FILES = ('Dependencies.txt', 'CoreDump.gz', 'ProcMaps.txt',
+        'Traceback.txt', 'Disassembly.txt', 'Registers.txt', 'Stacktrace.txt',
+        'ThreadStacktrace.txt')
 def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
@@ -47,13 +47,13 @@ def filter_filename(attachments):
             
 def id_set(tasks):
     # same as set(int(i.bug.id) for i in tasks) but faster
-    return set(int(i.self_link.split("/").pop()) for i in tasks)
+    return set(int(i.self_link.split('/').pop()) for i in tasks)
     
 def get_distro_tasks(tasks, distro=None):
-    distro = distro or "ubuntu"
+    distro = distro or 'ubuntu'
     for t in tasks:
         if t.bug_target_name.lower() == distro or \
-                re.match("^.+\(%s.*\)$" %distro, t.bug_target_name.lower()):
+                re.match('^.+\(%s.*\)$' %distro, t.bug_target_name.lower()):
             yield t
     
 
@@ -102,7 +102,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     @property
     def ubuntu(self):
         if self.__ubuntu is None:
-            self.__ubuntu = self.launchpad.distributions["ubuntu"]
+            self.__ubuntu = self.launchpad.distributions['ubuntu']
         return self.__ubuntu
 
     def upload(self, report, progress_callback = None):
@@ -185,16 +185,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         b = self.launchpad.bugs[id]
 
         # parse out fields from summary
-        m = re.search(r"(ProblemType:.*)$", b.description, re.S)
+        m = re.search(r'(ProblemType:.*)$', b.description, re.S)
         if not m:
-            m = re.search(r"^--- \r?$[\r\n]*(.*)", b.description, re.M | re.S)
+            m = re.search(r'^--- \r?$[\r\n]*(.*)', b.description, re.M | re.S)
         assert m, 'bug description must contain standard apport format data'
 
-        description = m.group(1).encode("UTF-8").replace("\xc2\xa0", " ")
+        description = m.group(1).encode('UTF-8').replace('\xc2\xa0', ' ')
         
         if '\r\n\r\n' in description:
             # this often happens, remove all empty lines between top and
-            # "Uname"
+            # 'Uname'
             if 'Uname:' in description:
                 # this will take care of bugs like LP #315728 where stuff
                 # is added after the apport data
@@ -248,7 +248,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 filename='Stacktrace.txt',
                 is_patch=False)
                 
-        bug.addAttachment(comment="", #some other comment here?
+        bug.addAttachment(comment='', #some other comment here?
                 #content_type=?
                 data=report['ThreadStacktrace'],
                 description='ThreadStacktrace.txt (retraced)',
@@ -256,7 +256,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 is_patch=False)
 
         if report.has_key('StacktraceSource'):
-            bug.addAttachment(comment="", #some other comment here?
+            bug.addAttachment(comment='', #some other comment here?
                     #content_type=?
                     data=report['StacktraceSource'],
                     description='StacktraceSource.txt',
@@ -277,7 +277,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             try:
                 task = get_distro_tasks(bug.bug_tasks).next()
             except StopIteration:
-                raise ValueError("no distro taks found")
+                raise ValueError('no distro taks found')
             task.transitionToImportance(importance='Medium')
         self._subscribe_triaging_team(bug, report)
 
@@ -336,7 +336,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # (or, of course, proper version tracking in Launchpad itself)
         
         #TODO:
-        #   * the launchpadlib version does not consider the case of "rejected" tasks
+        #   * the launchpadlib version does not consider the case of 'rejected' tasks
         #     which status is meant here, did this ever work?
         #   * it is now possible to have multibel fixed task per distro. ATM, this raises an AssertionError
         
@@ -348,12 +348,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if b.duplicate_of:
             return 'invalid'
             
-        distro_identifier = "(%s)" %self.distro.lower()
-        fixed_tasks = filter(lambda task: task.status == "Fix Released" and \
+        distro_identifier = '(%s)' %self.distro.lower()
+        fixed_tasks = filter(lambda task: task.status == 'Fix Released' and \
                 distro_identifier in task.bug_target_display_name.lower(), b.bug_tasks)
         
         if not fixed_tasks:
-            fixed_distro = filter(lambda task: task.status == "Fix Released" and \
+            fixed_distro = filter(lambda task: task.status == 'Fix Released' and \
                     task.bug_target_name.lower() == self.distro.lower(), b.bug_tasks)
             if fixed_distro:
                 # fixed in distro inself (without source package)
@@ -363,7 +363,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 return None
             
         # the version using py-lp-bugs did not consider the following case
-        assert len(fixed_tasks) == 1, "There is more than one task fixed in %s" %self.distro
+        assert len(fixed_tasks) == 1, 'There is more than one task fixed in %s' %self.distro
 
         task = fixed_tasks.pop()
         
@@ -455,7 +455,7 @@ in a dependent package.' % master,
             try:
                 task = get_distro_tasks(bug.bug_tasks).next()
             except StopIteration:
-                raise ValueError("no distro taks found")
+                raise ValueError('no distro taks found')
             task.transitionToStatus(status='Invalid')
             bug.newMessage(content=invalid_msg,
                     subject='Crash report cannot be processed')
@@ -495,7 +495,7 @@ in a dependent package.' % master,
             return # only Ubuntu bugs are filed private
         
         #use a url hack here, it is faster
-        person = "%s~ubuntu-crashes-universe" %self.launchpad._root_uri
+        person = '%s~ubuntu-crashes-universe' %self.launchpad._root_uri
         bug.subscribe(person=person)
 
 #
@@ -509,8 +509,8 @@ if __name__ == '__main__':
     sigv_report = None
 
     class _Tests(unittest.TestCase):
-        # this assumes that a source package "coreutils" exists and builds a
-        # binary package "coreutils"
+        # this assumes that a source package 'coreutils' exists and builds a
+        # binary package 'coreutils'
         test_package = 'coreutils'
         test_srcpackage = 'coreutils'
         known_test_id = 302779
