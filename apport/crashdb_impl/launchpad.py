@@ -331,7 +331,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         sources = self.lp_distro.main_archive.getPublishedSources(
             exact_match=True,
             source_name=package,
-            distro_series=distro.current_series
+            distro_series=self.lp_distro.current_series
         )
         # first element is the latest one
         return sources[0].source_package_version
@@ -352,11 +352,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # distrorelease and the current package version in that distrorelease
         # (or, of course, proper version tracking in Launchpad itself)
         
-        #TODO:
-        #   * the launchpadlib version does not consider the case of 'rejected' tasks
-        #     which status is meant here, did this ever work?
-        #   * it is now possible to have multibel fixed task per distro. ATM, this raises an AssertionError
-        
         try:
             b = self.launchpad.bugs[id]
         except KeyError:
@@ -364,30 +359,33 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             
         if b.duplicate_of:
             return 'invalid'
+
+        tasks = list(b.bug_tasks) # just fetch it once
             
         distro_identifier = '(%s)' %self.distro.lower()
         fixed_tasks = filter(lambda task: task.status == 'Fix Released' and \
-                distro_identifier in task.bug_target_display_name.lower(), b.bug_tasks)
+                distro_identifier in task.bug_target_display_name.lower(), tasks)
         
         if not fixed_tasks:
             fixed_distro = filter(lambda task: task.status == 'Fix Released' and \
-                    task.bug_target_name.lower() == self.distro.lower(), b.bug_tasks)
+                    task.bug_target_name.lower() == self.distro.lower(), tasks)
             if fixed_distro:
                 # fixed in distro inself (without source package)
                 return ''
-            else:
-                # not fixed in distro
-                return None
             
         # the version using py-lp-bugs did not consider the following case
-        assert len(fixed_tasks) == 1, 'There is more than one task fixed in %s' %self.distro
+        assert len(fixed_tasks) <= 1, 'There is more than one task fixed in %s' % self.distro
 
-        task = fixed_tasks.pop()
-        
-        try:
+        if fixed_tasks:
+            task = fixed_tasks.pop()
             return self._get_source_version(task.bug_target_display_name.split()[0])
-        except ValueError: #TODO not sure about the error here
-            return '' # broken bug
+
+        # check if there any invalid ones
+        if filter(lambda task: task.status == 'Invalid' and \
+                distro_identifier in task.bug_target_display_name.lower(), tasks):
+            return 'invalid'
+
+        return None
 
     def duplicate_of(self, id):
         '''Return master ID for a duplicate bug.
@@ -844,6 +842,19 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(self.crashdb.get_fixed_version(python_report),
                     None)
 
+        def test_get_fixed_version(self):
+            '''get_fixed_version() for fixed bugs
+
+            Other cases are already checked in test_marking_segv() (invalid
+            bugs) and test_duplicates (duplicate bugs) for efficiency.
+            '''
+            self._mark_report_fixed(segv_report)
+            fixed_ver = self.crashdb.get_fixed_version(segv_report)
+            self.assertNotEqual(fixed_ver, None)
+            self.assert_(fixed_ver[0].isdigit())
+            self._mark_report_new(segv_report)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+
         #
         # Launchpad specific implementation and tests
         #
@@ -913,5 +924,21 @@ NameError: global name 'weird' is not defined'''
             if 'need-duplicate-check' not in bug.tags:
                 bug.tags = bug.tags + ['need-duplicate-check']
                 bug.lp_save()
+
+        def _mark_report_fixed(self, id):
+            '''Close a report ID as "fixed".'''
+
+            bug = self.crashdb.launchpad.bugs[id]
+            tasks = list(bug.bug_tasks)
+            assert len(tasks) == 1
+            tasks[0].transitionToStatus(status='Fix Released')
+
+        def _mark_report_new(self, id):
+            '''Reopen a report ID as "new".'''
+
+            bug = self.crashdb.launchpad.bugs[id]
+            tasks = list(bug.bug_tasks)
+            assert len(tasks) == 1
+            tasks[0].transitionToStatus(status='New')
 
     unittest.main()
