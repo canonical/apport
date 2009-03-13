@@ -1,7 +1,7 @@
 '''Crash database implementation for Launchpad.
 
-Copyright (C) 2007 Canonical Ltd.
-Author: Martin Pitt <martin.pitt@ubuntu.com>
+Copyright (C) 2007, 2009 Canonical Ltd.
+Authors: Martin Pitt <martin.pitt@ubuntu.com> and Markus Korn <thekorn@gmx.de>
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
