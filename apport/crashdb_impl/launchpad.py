@@ -18,7 +18,7 @@ TODO:
         - setting bug privacy LP #308374
 '''
 
-import urllib, tempfile, atexit, shutil, os.path, re, gzip
+import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
@@ -658,6 +658,7 @@ if __name__ == '__main__':
             self.assert_(id > 0)
             global sigv_report
             sigv_report = id
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
 
         def test_2_download(self):
             '''download()'''
