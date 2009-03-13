@@ -13,8 +13,6 @@ the full text of the license.
 TODO:
     * missing API:
         - changing target of task LP #309182
-    
-    * replace ubuntu() with _distro()
 '''
 
 import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys
@@ -42,13 +40,6 @@ def filter_filename(attachments):
 def id_set(tasks):
     # same as set(int(i.bug.id) for i in tasks) but faster
     return set(int(i.self_link.split('/').pop()) for i in tasks)
-    
-def get_distro_tasks(tasks, distro=None):
-    distro = distro or 'ubuntu'
-    for t in tasks:
-        if t.bug_target_name.lower() == distro or \
-                re.match('^.+\(%s.*\)$' %distro, t.bug_target_name.lower()):
-            yield t
     
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
@@ -102,13 +93,19 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             self.launchpad.credentials.save(f)
             f.close()
 
-        self.__ubuntu = None
+        self.__lp_distro = None
         
+    def _get_distro_tasks(self, tasks):
+        for t in tasks:
+            if t.bug_target_name.lower() == self.distro or \
+                    re.match('^.+\(%s.*\)$' % self.distro, t.bug_target_name.lower()):
+                yield t
+    
     @property
-    def ubuntu(self):
-        if self.__ubuntu is None:
-            self.__ubuntu = self.launchpad.distributions['ubuntu']
-        return self.__ubuntu
+    def lp_distro(self):
+        if self.__lp_distro is None:
+            self.__lp_distro = self.launchpad.distributions[self.distro]
+        return self.__lp_distro
 
     def upload(self, report, progress_callback = None):
         '''Upload given problem report return a handle for it. 
@@ -280,9 +277,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     except HTTPError:
                         pass # workaround for 404 error, see LP #315387
             try:
-                task = get_distro_tasks(bug.bug_tasks).next()
+                task = self._get_distro_tasks(bug.bug_tasks).next()
             except StopIteration:
-                raise ValueError('no distro taks found')
+                raise ValueError('no distro tasks found')
             task.transitionToImportance(importance='Medium')
         self._subscribe_triaging_team(bug, report)
 
@@ -298,7 +295,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_unretraced(self):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
-        bugs = self.ubuntu.searchTasks(tags=self.arch_tag)
+        bugs = self.lp_distro.searchTasks(tags=self.arch_tag)
         return id_set(bugs)
 
     def get_dup_unchecked(self):
@@ -309,7 +306,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
         
-        bugs = self.ubuntu.searchTasks(tags='need-duplicate-check')
+        bugs = self.lp_distro.searchTasks(tags='need-duplicate-check')
         return id_set(bugs)
 
     def get_unfixed(self):
@@ -321,7 +318,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
         
-        bugs = self.ubuntu.searchTasks(tags='apport-crash')
+        bugs = self.lp_distro.searchTasks(tags='apport-crash')
         return id_set(bugs)
 
     def _get_source_version(self, package):
@@ -331,8 +328,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         If 'distro' is None, we will look for a launchpad project . 
         '''
         # TODO: look for LP project if distro == None
-        distro = self.launchpad.distributions[self.distro.lower()]
-        sources = distro.main_archive.getPublishedSources(
+        sources = self.lp_distro.main_archive.getPublishedSources(
             exact_match=True,
             source_name=package,
             distro_series=distro.current_series
@@ -475,9 +471,9 @@ in a dependent package.' % master,
         bug = self.launchpad.bugs[id]
         if invalid_msg:
             try:
-                task = get_distro_tasks(bug.bug_tasks).next()
+                task = self._get_distro_tasks(bug.bug_tasks).next()
             except StopIteration:
-                raise ValueError('no distro taks found')
+                raise ValueError('no distro tasks found')
             task.transitionToStatus(status='Invalid')
             bug.newMessage(content=invalid_msg,
                     subject='Crash report cannot be processed')
