@@ -789,6 +789,7 @@ NameError: global name 'weird' is not defined'''
 
             self.crashdb.close_duplicate(self.known_test_id, None)
             self.crashdb.close_duplicate(self.known_test_id2, None)
+            self.crashdb.close_duplicate(segv_report, None)
 
             # this should be a no-op
             self.crashdb.close_duplicate(self.known_test_id, None)
@@ -799,7 +800,6 @@ NameError: global name 'weird' is not defined'''
 
             # mark_retraced()
             unretraced_before = self.crashdb.get_unretraced()
-            print segv_report, unretraced_before
             self.assert_(segv_report in unretraced_before)
             self.failIf(python_report in unretraced_before)
             self.crashdb.mark_retraced(segv_report)
