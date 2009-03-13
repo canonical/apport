@@ -507,7 +507,6 @@ in a dependent package.' % master,
 #
 
 import multipartpost_handler, urllib2, time, httplib
-import socket
 
 _https_upload_callback = None
 
@@ -562,12 +561,6 @@ def upload_blob(blob, progress_callback = None, staging=False):
     By default this uses the production Launchpad instance. Set staging=True to
     use staging.launchpad.net (for testing).
     '''
-    # working around LP: #314212
-    # python-apt sets a 2 seconds timeout in jaunty which results in
-    # failing uploads. To workaround this temporary set timeout to None
-    # (no timeout)
-    old_timeout = socket.getdefaulttimeout()
-    socket.setdefaulttimeout(30)
     ticket = None
 
     global _https_upload_callback
@@ -581,7 +574,6 @@ def upload_blob(blob, progress_callback = None, staging=False):
     result = opener.open(url,
         { 'FORM_SUBMIT': '1', 'field.blob': blob })
     ticket = result.info().get('X-Launchpad-Blob-Token')
-    socket.setdefaulttimeout(old_timeout)
 
     return ticket
 
