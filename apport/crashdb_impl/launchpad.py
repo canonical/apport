@@ -19,16 +19,19 @@ TODO:
         - setting bug privacy LP #308374
 '''
 
-import urllib, tempfile, shutil, os.path, re, gzip
+import urllib, tempfile, atexit, shutil, os.path, re, gzip
 from cStringIO import StringIO
+
+from launchpadlib.errors import HTTPError
+from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
+from launchpadlib.credentials import Credentials
 
 import launchpadbugs.storeblob
 
 import apport.crashdb
 import apport
-from utils import get_launchpad, HTTPError
 
-CONSUMER = 'apport-collect'
+default_credentials_path = os.path.expanduser('~/.cache/apport/launchpad.credentials')
 
 APPORT_FILES = ('Dependencies.txt', 'CoreDump.gz', 'ProcMaps.txt',
         'Traceback.txt', 'Disassembly.txt', 'Registers.txt', 'Stacktrace.txt',
@@ -52,46 +55,57 @@ def get_distro_tasks(tasks, distro=None):
             yield t
     
 
-def get_source_version(distro, package, launchpad=None):
-    '''Return the version of given source package in the latest release of
-    given distribution.
-
-    If 'distro' is None, we will look for a launchpad project . 
-    '''
-    
-    if launchpad is None:
-        launchpad = get_launchpad(CONSUMER)
-    # TODO: look for LP project if distro == None
-    distro = launchpad.distributions[distro.lower()]
-    sources = distro.main_archive.getPublishedSources(
-        exact_match=True,
-        source_name=package,
-        distro_series=distro.current_series
-    )
-    # first element is the latest one
-    return sources[0].source_package_version
-
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
 
-    def __init__(self, cookie_file, bugpattern_baseurl, options, cache=None):
-        '''Initialize Launchpad crash database connection. 
+    def __init__(self, auth, bugpattern_baseurl, options):
+        '''Initialize Launchpad crash database. 
         
         You need to specify a launchpadlib-style credentials file to
-        access launchpad'''
-        # TODO: rename cookie_file->credentials_file
-
-        apport.crashdb.CrashDatabase.__init__(self, cookie_file,
+        access launchpad. If you supply None, it will use
+        default_credentials_path (~/.cache/apport/launchpad.credentials).
+        '''
+        if not auth:
+            auth = default_credentials_path
+        apport.crashdb.CrashDatabase.__init__(self, auth,
             bugpattern_baseurl, options)
 
         self.distro = options.get('distro')
         self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
         self.options = options
-        self.cookie_file = cookie_file
+        self.auth = auth
+        assert self.auth
 
-        if cookie_file is None:
-            raise RunTimeError
-        self.launchpad = get_launchpad(CONSUMER, cred_file=cookie_file)
+        # Log into Launchpad
+        cache_dir = tempfile.mkdtemp()
+        atexit.register(shutil.rmtree, cache_dir)
+        if options.get('staging'):
+            launchpad_instance = STAGING_SERVICE_ROOT
+        else:
+            launchpad_instance = EDGE_SERVICE_ROOT
+
+        auth_dir = os.path.dirname(auth)
+        if not os.path.isdir(auth_dir):
+            os.makedirs(auth_dir)
+
+        if os.path.exists(auth):
+            # use existing credentials
+            credentials = Credentials()
+            credentials.load(open(auth))
+            self.launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
+        else:
+            # get credentials and save them
+            try:
+                self.launchpad = Launchpad.get_token_and_login('apport-collect',
+                        launchpad_instance, cache_dir)
+            except launchpadlib.errors.HTTPError, e:
+                print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
+                sys.exit(1)
+            f = open(auth, 'w')
+            os.chmod(auth, 0600)
+            self.launchpad.credentials.save(f)
+            f.close()
+
         self.__ubuntu = None
         
     @property
@@ -314,6 +328,22 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         bugs = self.ubuntu.searchTasks(tags='apport-crash')
         return id_set(bugs)
 
+    def _get_source_version(self, package):
+        '''Return the version of given source package in the latest release of
+        given distribution.
+
+        If 'distro' is None, we will look for a launchpad project . 
+        '''
+        # TODO: look for LP project if distro == None
+        distro = self.launchpad.distributions[self.distro.lower()]
+        sources = distro.main_archive.getPublishedSources(
+            exact_match=True,
+            source_name=package,
+            distro_series=distro.current_series
+        )
+        # first element is the latest one
+        return sources[0].source_package_version
+
     def get_fixed_version(self, id):
         '''Return the package version that fixes a given crash.
 
@@ -363,7 +393,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         task = fixed_tasks.pop()
         
         try:
-            return get_source_version(self.distro, task.bug_target_display_name.split()[0])
+            return self._get_source_version(task.bug_target_display_name.split()[0])
         except ValueError: #TODO not sure about the error here
             return '' # broken bug
 
@@ -668,8 +698,8 @@ if __name__ == '__main__':
         def _get_instance(klass):
             '''Create a CrashDB instance'''
 
-            return CrashDatabase(os.path.expanduser('~/.lpcookie.txt'), 
-                    '', {'distro': 'ubuntu', 'staging': True})
+            return CrashDatabase(None, '', 
+                    {'distro': 'ubuntu', 'staging': True})
 
         def _fill_bug_form(self, url):
             '''Fill bug form and commit the bug.
@@ -677,7 +707,7 @@ if __name__ == '__main__':
             Return the report ID.
             '''
             cj = cookielib.MozillaCookieJar()
-            cj.load(self.crashdb.cookie_file)
+            cj.load(os.path.expanduser('~/.lpcookie.txt'))
             opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
             re_pkg = re.compile('<input type="text" value="([^"]+)" id="field.packagename"')

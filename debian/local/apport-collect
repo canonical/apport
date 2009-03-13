@@ -12,54 +12,14 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os.path, optparse, tempfile, atexit, shutil, re, email
+import sys, os.path, optparse, tempfile, re, email
 from glob import glob
 
 import apport
+from apport.crashdb_impl.launchpad import CrashDatabase
 
 bug_target_re = re.compile(
     r'/ubuntu/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$')
-
-try:
-    import launchpadlib.errors
-    from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
-    from launchpadlib.credentials import Credentials
-except ImportError:
-    print >> sys.stderr, 'Please install the package "python-launchpadlib".'
-    sys.exit(1)
-
-def login(launchpad_instance=EDGE_SERVICE_ROOT):
-    '''Log into Launchpad.
-    
-    This reads/saves credentials, and returns a Launchpad instance.
-    '''
-    cache_dir = tempfile.mkdtemp()
-    atexit.register(shutil.rmtree, cache_dir)
-
-    cred_dir = os.path.expanduser('~/.cache/apport')
-    if not os.path.isdir(cred_dir):
-        os.makedirs(cred_dir)
-    cred = os.path.join(cred_dir, 'launchpad.credentials')
-
-    if os.path.exists(cred):
-        # use existing credentials
-        credentials = Credentials()
-        credentials.load(open(cred))
-        launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
-    else:
-        # get credentials and save them
-        try:
-            launchpad = Launchpad.get_token_and_login('apport-collect',
-                    launchpad_instance, cache_dir)
-        except launchpadlib.errors.HTTPError, e:
-            print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
-            sys.exit(1)
-        f = open(cred, 'w')
-        os.chmod(cred, 0600)
-        launchpad.credentials.save(f)
-        f.close()
-
-    return launchpad
 
 def upload(report, bug):
     '''Upload collected information to Launchpad bug.'''
@@ -107,13 +67,13 @@ if len(sys.argv) != 2:
 (bug_number,) = sys.argv[1:]
 
 print 'Logging into Launchpad...'
+options = {}
 if os.getenv('APPORT_STAGING'):
-    lp = login(STAGING_SERVICE_ROOT)
-else:
-    lp = login()
+    options['staging'] = 'True'
+crashdb = CrashDatabase(None, None, options)
 
 print 'Downloading bug...'
-bug =  lp.bugs[int(bug_number)]
+bug = crashdb.launchpad.bugs[int(bug_number)]
 
 report = apport.Report('Bug')
 
