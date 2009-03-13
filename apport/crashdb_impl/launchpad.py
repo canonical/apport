@@ -450,7 +450,7 @@ if __name__ == '__main__':
     import unittest, urllib2, cookielib
 
     crashdb = None
-    sigv_report = None
+    segv_report = None
 
     class _Tests(unittest.TestCase):
         # this assumes that a source package "coreutils" exists and builds a
@@ -479,7 +479,7 @@ if __name__ == '__main__':
         def test_1_report(self):
             '''upload() and get_comment_url()
             
-            This needs to run first, since it sets sigv_report.
+            This needs to run first, since it sets segv_report.
             '''
             r = apport.report._ApportReportTest._generate_sigsegv_report()
             r.add_package_info(self.test_package)
@@ -495,13 +495,13 @@ if __name__ == '__main__':
 
             id = self._fill_bug_form(url)
             self.assert_(id > 0)
-            global sigv_report
-            sigv_report = id
+            global segv_report
+            segv_report = id
 
         def test_2_download(self):
             '''download()'''
 
-            r = self.crashdb.download(sigv_report)
+            r = self.crashdb.download(segv_report)
             self.assertEqual(r['ProblemType'], 'Crash')
             self.assertEqual(r['DistroRelease'], self.ref_report['DistroRelease'])
             self.assertEqual(r['Architecture'], self.ref_report['Architecture'])
@@ -522,55 +522,55 @@ if __name__ == '__main__':
         def test_3_update(self):
             '''update()'''
 
-            r = self.crashdb.download(sigv_report)
+            r = self.crashdb.download(segv_report)
 
             # updating with an useless stack trace retains core dump
             r['StacktraceTop'] = '?? ()'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
-            self.crashdb.update(sigv_report, r, 'I can has a better retrace?')
-            r = self.crashdb.download(sigv_report)
+            self.crashdb.update(segv_report, r, 'I can has a better retrace?')
+            r = self.crashdb.download(segv_report)
             self.assert_('CoreDump' in r)
 
             # updating with an useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
-            self.crashdb.update(sigv_report, r, 'good retrace!')
-            r = self.crashdb.download(sigv_report)
+            self.crashdb.update(segv_report, r, 'good retrace!')
+            r = self.crashdb.download(segv_report)
             self.failIf('CoreDump' in r)
 
         def test_get_distro_release(self):
             '''get_distro_release()'''
 
-            self.assertEqual(self.crashdb.get_distro_release(sigv_report),
+            self.assertEqual(self.crashdb.get_distro_release(segv_report),
                     self.ref_report['DistroRelease'])
 
         def test_duplicates(self):
             '''duplicate handling'''
 
             # initially we have no dups
-            self.assertEqual(self.crashdb.duplicate_of(sigv_report), None)
-            self.assertEqual(self.crashdb.get_fixed_version(sigv_report), None)
+            self.assertEqual(self.crashdb.duplicate_of(segv_report), None)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
 
-            # dupe our sigv_report and check that it worked; then undupe it
-            self.crashdb.close_duplicate(sigv_report, self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(sigv_report), self.known_test_id)
-            self.assertEqual(self.crashdb.get_fixed_version(sigv_report), 'invalid')
-            self.crashdb.close_duplicate(sigv_report, None)
-            self.assertEqual(self.crashdb.duplicate_of(sigv_report), None)
-            self.assertEqual(self.crashdb.get_fixed_version(sigv_report), None)
+            # dupe our segv_report and check that it worked; then undupe it
+            self.crashdb.close_duplicate(segv_report, self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_report), 'invalid')
+            self.crashdb.close_duplicate(segv_report, None)
+            self.assertEqual(self.crashdb.duplicate_of(segv_report), None)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
 
             # this should have removed attachments
-            r = self.crashdb.download(sigv_report)
+            r = self.crashdb.download(segv_report)
             self.failIf('CoreDump' in r)
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
             self.crashdb.close_duplicate(self.known_test_id,
                     self.known_test_id2)
-            self.crashdb.close_duplicate(sigv_report, self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(sigv_report),
+            self.crashdb.close_duplicate(segv_report, self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_report),
                     self.known_test_id2)
 
             self.crashdb.close_duplicate(self.known_test_id, None)
