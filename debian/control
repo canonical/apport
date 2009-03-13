@@ -16,7 +16,7 @@ Depends: python (>= 2.4), python-apport (>= 0.120), lsb-base (>= 3.0-6),
  sysv-rc (>= 2.86.ds1-14.1ubuntu2), python-xdg, ${misc:Depends}
 Conflicts: apport-gtk (<< 0.51), apport-cli 
 Replaces: apport-gtk (<< 0.51), apport-cli
-Suggests: apport-gtk | apport-qt, python-launchpadlib
+Suggests: apport-gtk | apport-qt
 Description: automatically generate crash reports for debugging
  apport automatically collects data from crashed processes and
  compiles a problem report in /var/crash/. This utilizes the crashdump
@@ -48,7 +48,7 @@ XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
 Depends: ${python:Depends}, python-apt, python-problem-report (>= 0.94),
- python-launchpad-bugs (>= 0.2.11), gdb, ${misc:Depends}
+ python-launchpadlib, gdb, ${misc:Depends}
 Conflicts: python-apport-utils
 Replaces: python-apport-utils
 Description: apport crash report handling library
