@@ -275,7 +275,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     try:
                         a.removeFromBug()
                     except HTTPError:
-                        pass # workaround for 404 error, see LP #315387
+                        pass # LP#315387 workaround
             try:
                 task = self._get_distro_tasks(bug.bug_tasks).next()
             except StopIteration:
@@ -418,9 +418,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     try:
                         a.removeFromBug()
                     except HTTPError:
-                        pass # workaround for 404 error, see LP #315387
+                        pass # LP#315387 workaround
 
-            bug = self.launchpad.bugs[id] # refresh, to avoid "412: Precondition Failed"
+            bug = self.launchpad.bugs[id] # refresh, LP#336866 workaround
             if bug.private:
                 bug.private = False
 
@@ -431,7 +431,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if bug.duplicate_of:
                 bug.duplicate_of = None
 
-        if bug._dirty_attributes: # avoid "412: Precondition Failed"
+        if bug._dirty_attributes: # LP#336866 workaround
             bug.lp_save()
 
     def mark_regression(self, id, master):
@@ -444,10 +444,7 @@ However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem is \
 in a dependent package.' % master,
             subject='Possible regression detected')
-        # TODO: workaround LP #254901:
-        #   bug.tags.append('regression-retracer')
-        # is not working
-        bug.tags = bug.tags + ['regression-retracer']
+        bug.tags = bug.tags + ['regression-retracer'] # LP#254901 workaround
         bug.lp_save()
 
     def mark_retraced(self, id):
@@ -455,10 +452,7 @@ in a dependent package.' % master,
 
         bug = self.launchpad.bugs[id]
         if self.arch_tag in bug.tags:
-            # TODO: workaround LP #254901:
-            #   bug.tags.remove(self.arch_tag)
-            # is not working
-            x = bug.tags[:]
+            x = bug.tags[:] # LP#254901 workaround
             x.remove(self.arch_tag)
             bug.tags = x
             bug.lp_save()
@@ -481,10 +475,7 @@ in a dependent package.' % master,
 #Disassembly.txt$)', a.lp_filename))
         else:
             if 'apport-failed-retrace' not in bug.tags:
-                # TODO: workaround LP #254901:
-                #   bug.tags.append('apport-failed-retrace')
-                # is not working
-                bug.tags = bug.tags + ['apport-failed-retrace']
+                bug.tags = bug.tags + ['apport-failed-retrace'] # LP#254901 workaround
                 bug.lp_save()
 
     def _mark_dup_checked(self, id, report):
@@ -492,10 +483,7 @@ in a dependent package.' % master,
 
         bug = self.launchpad.bugs[id]
         if 'need-duplicate-check' in bug.tags:
-            # TODO: workaround LP #254901:
-            #   bug.tags.remove('need-duplicate-check')
-            # is not working
-            x = bug.tags[:]
+            x = bug.tags[:] # LP#254901 workaround
             x.remove('need-duplicate-check')
             bug.tags = x
             bug.lp_save()        
