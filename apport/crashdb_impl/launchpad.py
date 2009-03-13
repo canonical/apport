@@ -13,9 +13,8 @@ the full text of the license.
 TODO:
     * missing API:
         - changing target of task LP #309182
-        
-    * related bugs
-        - setting bug privacy LP #308374
+    
+    * replace ubuntu() with _distro()
 '''
 
 import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys
@@ -426,19 +425,20 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                         a.removeFromBug()
                     except HTTPError:
                         pass # workaround for 404 error, see LP #315387
-            # TODO: bug in API does not allow setting privacy
-            #~ if bug.private:
-                #~ bug.private = False
-                #~ bug.lp_save()
+
+            bug = self.launchpad.bugs[id] # refresh, to avoid "412: Precondition Failed"
+            if bug.private:
+                bug.private = False
 
             # set duplicate last, since we cannot modify already dup'ed bugs
             if not bug.duplicate_of:
                 bug.duplicate_of = master
-                bug.lp_save()
         else:
             if bug.duplicate_of:
                 bug.duplicate_of = None
-                bug.lp_save()
+
+        if bug._dirty_attributes: # avoid "412: Precondition Failed"
+            bug.lp_save()
 
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
@@ -751,7 +751,6 @@ if __name__ == '__main__':
             # short, and thus inline
             r = self.crashdb.download(sigv_report)
             self.failIf('CoreDump' in r)
-            self.failIf('ThreadStacktrace' in r)
             self.failIf('Dependencies' in r)
             self.failIf('Disassembly' in r)
             self.failIf('Registers' in r)
