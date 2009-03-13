@@ -65,7 +65,7 @@ XB-Python-Version: ${python:Versions}
 Section: devel
 Architecture: all
 Depends: python (>= 2.4), python-apport (>= 0.124), python-apt,
- python-launchpad-bugs (>= 0.2.11), apt, binutils, dpkg-dev, ${misc:Depends}
+ apt, binutils, dpkg-dev, ${misc:Depends}
 Suggests: debootstrap (>= 0.3.3.2ubuntu2), fakeroot, fakechroot
 Conflicts: apport (<< 0.72)
 Replaces: apport (<< 0.72)
