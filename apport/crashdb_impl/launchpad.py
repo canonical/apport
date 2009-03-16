@@ -9,11 +9,6 @@ Free Software Foundation; either version 2 of the License, or (at your
 option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
-'''
-TODO:
-    * missing API:
-        - changing target of task LP #309182
-'''
 
 import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys
 from cStringIO import StringIO
@@ -265,8 +260,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     filename='StacktraceSource.txt',
                     is_patch=False)
 
-        #~ if report.has_key('SourcePackage') and bug.sourcepackage == 'ubuntu':
-            #~ bug.set_sourcepackage(report['SourcePackage']) #No API -->TODO
+        # ensure it's assigned to the right package
+        if report.has_key('SourcePackage') and \
+                '+source' not in str(bug.bug_tasks[0].target):
+            try:
+                bug.bug_tasks[0].transitionToTarget(target=
+                        self.lp_distro.getSourcePackage(name=report['SourcePackage']))
+            except HTTPError:
+                pass # LP#342355 workaround
 
         # remove core dump if stack trace is usable
         if report.has_useful_stacktrace():
