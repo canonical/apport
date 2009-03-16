@@ -844,7 +844,7 @@ NameError: global name 'weird' is not defined'''
         def _get_instance(klass):
             '''Create a CrashDB instance'''
 
-            return CrashDatabase(None, '', 
+            return CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
                     {'distro': 'ubuntu', 'staging': True})
 
         def _fill_bug_form(self, url):
