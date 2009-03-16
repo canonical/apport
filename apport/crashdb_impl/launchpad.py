@@ -864,7 +864,10 @@ NameError: global name 'weird' is not defined'''
             url = url.replace('+filebug/', '+filebug-advanced/')
             
             res = opener.open(url)
-            self.assertEqual(res.getcode(), 200)
+            try:
+                self.assertEqual(res.getcode(), 200)
+            except AttributeError:
+                pass # getcode() is new in Python 2.6
             content = res.read()
 
             m_pkg = re_pkg.search(content)
@@ -885,7 +888,10 @@ NameError: global name 'weird' is not defined'''
             }
 
             res = opener.open(url, data=urllib.urlencode(args))
-            self.assertEqual(res.getcode(), 200)
+            try:
+                self.assertEqual(res.getcode(), 200)
+            except AttributeError:
+                pass # getcode() is new in Python 2.6
             self.assert_('+source/%s/+bug/' % m_pkg.group(1) in res.geturl())
             id = res.geturl().split('/')[-1]
             return int(id)
