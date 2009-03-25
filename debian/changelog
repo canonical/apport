@@ -22,6 +22,9 @@ apport (0.146) UNRELEASED; urgency=low
     (binary) package name instead of guesstimating it from the bug's source
     package tasks. Document new option in debian/local/apport-collect.1.
     (LP: #333875)
+  * apport/crashdb.py, duplicate_db_consolidate(): Add logging about removing
+    invalidated bugs from the duplicate database, now that this actually
+    works.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 

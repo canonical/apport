@@ -218,6 +218,7 @@ class CrashDatabase:
             # crash got fixed/rejected
             fixed_ver = self.get_fixed_version(id)
             if fixed_ver == 'invalid':
+                print 'DEBUG: bug %i was invalidated, removing from database' % id
                 cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
             elif not fixed_ver:
                 print 'WARNING: inconsistency detected: bug #%i does not appear in get_unfixed(), but is not fixed yet' % id
