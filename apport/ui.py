@@ -517,7 +517,7 @@ free memory to automatically analyze the problem and send a report to the develo
             # with respectively -new-window and --new-window
             try:
                 if os.getenv('DISPLAY') and \
-                        subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-panel'],
+                        subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-panel|gconfd-2'],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
                     gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
                         '/desktop/gnome/url-handlers/http/command'],

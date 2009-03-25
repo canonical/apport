@@ -15,6 +15,9 @@ apport (0.146) UNRELEASED; urgency=low
     add test cases. The Launchpad test case reproduces the
     "duplicate-of-a-duplicate" regression, which now got fixed in
     python-launchpad-bugs bzr head.
+  * apport/ui.py, open_url(): Also consider a sesssion as "GNOME" if gconfd-2
+    is running; some variants such as UNR do not have gnome-panel; this fixes
+    using the preferred browser for them. (LP: #322386)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 
