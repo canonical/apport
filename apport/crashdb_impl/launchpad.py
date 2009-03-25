@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import urllib, tempfile, shutil, os.path, re, gzip
+import urllib, tempfile, shutil, os.path, re, gzip, sys
 from cStringIO import StringIO
 
 import launchpadbugs.storeblob
@@ -336,7 +336,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 except ValueError:
                     return '' # broken bug
             return ''
-        if b.status == 'Rejected' or b.duplicate_of:
+        if b.status == 'Invalid' or b.duplicate_of:
             return 'invalid'
         return None
 
@@ -451,6 +451,7 @@ if __name__ == '__main__':
 
     crashdb = None
     segv_report = None
+    python_report = None
 
     class _Tests(unittest.TestCase):
         # this assumes that a source package "coreutils" exists and builds a
@@ -476,8 +477,8 @@ if __name__ == '__main__':
             self.ref_report.add_os_info()
             self.ref_report.add_user_info()
 
-        def test_1_report(self):
-            '''upload() and get_comment_url()
+        def test_1_report_segv(self):
+            '''upload() and get_comment_url() for SEGV crash
             
             This needs to run first, since it sets segv_report.
             '''
@@ -497,6 +498,34 @@ if __name__ == '__main__':
             self.assert_(id > 0)
             global segv_report
             segv_report = id
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+
+        def test_1_report_python(self):
+            '''upload() and get_comment_url() for Python crash
+            
+            This needs to run early, since it sets python_report.
+            '''
+            r = apport.Report('Crash')
+            r['ExecutablePath'] = '/bin/foo'
+            r['Traceback'] = '''Traceback (most recent call last):
+  File "/bin/foo", line 67, in fuzz
+    print weird
+NameError: global name 'weird' is not defined'''
+            r.add_package_info(self.test_package)
+            r.add_os_info()
+            r.add_user_info()
+            self.assertEqual(r.standard_title(), 'foo crashed with NameError in fuzz()')
+
+            handle = self.crashdb.upload(r)
+            self.assert_(handle)
+            url = self.crashdb.get_comment_url(r, handle)
+            self.assert_(url)
+
+            id = self._fill_bug_form(url)
+            self.assert_(id > 0)
+            global python_report
+            python_report = id
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
 
         def test_2_download(self):
             '''download()'''
@@ -575,6 +604,56 @@ if __name__ == '__main__':
 
             self.crashdb.close_duplicate(self.known_test_id, None)
             self.crashdb.close_duplicate(self.known_test_id2, None)
+            self.crashdb.close_duplicate(segv_report, None)
+
+        def test_marking_segv(self):
+            '''processing status markings for signal crashes'''
+
+            # mark_retraced()
+            unretraced_before = self.crashdb.get_unretraced()
+            self.assert_(segv_report in unretraced_before)
+            self.failIf(python_report in unretraced_before)
+            self.crashdb.mark_retraced(segv_report)
+            unretraced_after = self.crashdb.get_unretraced()
+            self.failIf(segv_report in unretraced_after)
+            self.assertEqual(unretraced_before,
+                    unretraced_after.union(set([segv_report])))
+            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+
+            # mark_retrace_failed()
+            self._mark_needs_retrace(segv_report)
+            self.crashdb.mark_retraced(segv_report)
+            self.crashdb.mark_retrace_failed(segv_report)
+            unretraced_after = self.crashdb.get_unretraced()
+            self.failIf(segv_report in unretraced_after)
+            self.assertEqual(unretraced_before,
+                    unretraced_after.union(set([segv_report])))
+            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+
+            # mark_retrace_failed() of invalid bug
+            self._mark_needs_retrace(segv_report)
+            self.crashdb.mark_retraced(segv_report)
+            self.crashdb.mark_retrace_failed(segv_report, "I don't like you")
+            unretraced_after = self.crashdb.get_unretraced()
+            self.failIf(segv_report in unretraced_after)
+            self.assertEqual(unretraced_before,
+                    unretraced_after.union(set([segv_report])))
+            self.assertEqual(self.crashdb.get_fixed_version(segv_report),
+                    'invalid')
+
+        def test_marking_python(self):
+            '''processing status markings for interpreter crashes'''
+
+            unchecked_before = self.crashdb.get_dup_unchecked()
+            self.assert_(python_report in unchecked_before)
+            self.failIf(segv_report in unchecked_before)
+            self.crashdb._mark_dup_checked(python_report, self.ref_report)
+            unchecked_after = self.crashdb.get_dup_unchecked()
+            self.failIf(python_report in unchecked_after)
+            self.assertEqual(unchecked_before,
+                    unchecked_after.union(set([python_report])))
+            self.assertEqual(self.crashdb.get_fixed_version(python_report),
+                    None)
 
         #
         # Launchpad specific implementation and tests
@@ -629,5 +708,21 @@ if __name__ == '__main__':
             self.assert_('+source/%s/+bug/' % m_pkg.group(1) in res.geturl())
             id = res.geturl().split('/')[-1]
             return int(id)
+
+        def _mark_needs_retrace(self, id):
+            '''Mark a report ID as needing retrace.'''
+
+            b = Bug(id)
+            if self.crashdb.arch_tag not in b.tags:
+                b.tags.append(self.crashdb.arch_tag)
+            b.commit()
+
+        def _mark_needs_dupcheck(self, id):
+            '''Mark a report ID as needing duplicate check.'''
+
+            b = Bug(id)
+            if 'need-duplicate-check' not in b.tags:
+                b.tags.append('need-duplicate-check')
+            b.commit()
 
     unittest.main()

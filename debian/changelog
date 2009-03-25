@@ -6,8 +6,8 @@ apport (0.146) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py: Fully enable operation with
     staging.launchpad.net.
   * apport/crashdb_impl/launchpad.py: Add initial test suite, performing data
-    upload, bug reporting, report download, and report updating. This happens
-    on staging.launchpad.net.
+    upload, Python and SEGV bug reporting, report download, report updating,
+    tag and duplicate handling. This happens on staging.launchpad.net.
   * apport/crashdb.py: Add new interface duplicate_of(id) to return the master
     bug of a duplicate. Also document that close_duplicate() with "None"
     master bug will un-duplicate the bug.
