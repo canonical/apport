@@ -18,6 +18,10 @@ apport (0.146) UNRELEASED; urgency=low
   * apport/ui.py, open_url(): Also consider a sesssion as "GNOME" if gconfd-2
     is running; some variants such as UNR do not have gnome-panel; this fixes
     using the preferred browser for them. (LP: #322386)
+  * debian/local/apport-collect: Add new option -p to explicitly specify a
+    (binary) package name instead of guesstimating it from the bug's source
+    package tasks. Document new option in debian/local/apport-collect.1.
+    (LP: #333875)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 

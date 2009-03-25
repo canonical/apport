@@ -96,15 +96,33 @@ def upload(report, bug):
         bug.addAttachment(comment='', data=part.get_payload(decode=True),
             filename=part.get_filename(), is_patch=False)
 
+def collect(report, package):
+    '''Collect information for given package.'''
+
+    print 'Collecting apport information for source package %s...' % package
+    try:
+        report.add_package_info(package)
+    except ValueError:
+        # this happens for source package tasks which do not have an identical
+        # binary package name
+        pass
+    report.add_hooks_info()
+
 #
 # main
 #
 
-if len(sys.argv) != 2:
-    print >> sys.stderr, 'Usage: %s <Launchpad bug number>' % sys.argv[0]
+optparser = optparse.OptionParser('%prog [options] <Launchpad bug number>')
+optparser.add_option('-p', '--package', 
+    help="Collect information for this package. If not given, it will be inferred from the bug report's source package tasks.",
+    type='string', dest='package')
+(opts, args) = optparser.parse_args()
+
+if len(args) != 1:
+    optparser.error('incorrect number of arguments; use --help for a short online help')
     sys.exit(1)
 
-(bug_number,) = sys.argv[1:]
+(bug_number,) = args
 
 print 'Logging into Launchpad...'
 if os.getenv('APPORT_STAGING'):
@@ -118,25 +136,22 @@ bug =  lp.bugs[int(bug_number)]
 report = apport.Report('Bug')
 
 print 'Bug title:', bug.title
-for task in bug.bug_tasks:
-    match = bug_target_re.search(task.target.self_link)
-    if not match:
-        print 'Ignoring task', task.target
-        continue
-    if task.status in ('Invalid', "Won't Fix", 'Fix Released'):
-        print 'Ignoring task %s because it is closed' % task.target
-        continue
-    src = match.group('source')
-    report['SourcePackage'] = src
-    report['Package'] = src # no way to find this out
-    print 'Collecting apport information for source package %s...' % src
-    try:
-        report.add_package_info(src)
-    except ValueError:
-        # this happens for source package tasks which do not have an identical
-        # binary package name
-        pass
-    report.add_hooks_info()
+if opts.package:
+    collect(report, opts.package)
+else:
+    # determine bug tasks and collect for those
+    for task in bug.bug_tasks:
+        match = bug_target_re.search(task.target.self_link)
+        if not match:
+            print 'Ignoring task', task.target
+            continue
+        if task.status in ('Invalid', "Won't Fix", 'Fix Released'):
+            print 'Ignoring task %s because it is closed' % task.target
+            continue
+        src = match.group('source')
+        report['SourcePackage'] = src
+        report['Package'] = src # no way to find this out
+        collect(report, src)
 
 report.add_os_info()
 report.add_user_info()
