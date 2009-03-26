@@ -25,6 +25,9 @@ apport (0.146) UNRELEASED; urgency=low
   * apport/crashdb.py, duplicate_db_consolidate(): Add logging about removing
     invalidated bugs from the duplicate database, now that this actually
     works.
+  * debian/local/ubuntu-bug.1: Update for the possibility to specify a package
+    name or PID without any options. Also document the "ubuntu-bug linux"
+    special case. (LP: #348985)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 

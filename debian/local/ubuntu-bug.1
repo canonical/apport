@@ -6,10 +6,10 @@ ubuntu\-bug \- file a bug against an Ubuntu package
 
 .SH SYNOPSIS
 
-.B ubuntu\-bug \-p
+.B ubuntu\-bug
 .I packagename
 
-.B ubuntu\-bug \-P
+.B ubuntu\-bug 
 .I PID
 
 .SH DESCRIPTION
@@ -17,13 +17,11 @@ ubuntu\-bug \- file a bug against an Ubuntu package
 .B ubuntu\-bug 
 is a command-line interface for filing bugs in Ubuntu.
 
-To report a bug against a particular package, use the
-.B \-p
-option with the binary package name, e. g.
+To report a bug against a particular binary package, supply it as an argument:
 
 .RS 4
 .nf
-ubuntu\-bug \-p firefox
+ubuntu\-bug firefox
 .fi
 .RE
 
@@ -35,9 +33,20 @@ ID instead of (or in addition to) a package name:
 .nf
 $ pidof gnome-terminal
 5139
-$ ubuntu-bug -P 5139
+$ ubuntu-bug 5139
 .fi
 .RE
+
+As a special case, to report a bug against the Linux kernel, you do not need to
+use the full package name (such as linux-image-2.6.28-4-generic); you can just use
+
+.RS 4
+.nf
+ubuntu\-bug linux
+.fi
+.RE
+
+to report a bug against the currently running kernel.
 
 .B ubuntu\-bug
 detects whether KDE or Gnome is running and calls
