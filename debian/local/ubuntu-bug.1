@@ -9,6 +9,9 @@ ubuntu\-bug \- file a bug against an Ubuntu package
 .B ubuntu\-bug
 .I packagename
 
+.B ubuntu\-bug
+.I /path/to/program
+
 .B ubuntu\-bug 
 .I PID
 
@@ -22,6 +25,14 @@ To report a bug against a particular binary package, supply it as an argument:
 .RS 4
 .nf
 ubuntu\-bug firefox
+.fi
+.RE
+
+You can also supply a path to a program instead of a package name for the same result:
+
+.RS 4
+.nf
+ubuntu\-bug /usr/bin/gnome-screensaver
 .fi
 .RE
 
