@@ -30,6 +30,8 @@ apport (0.146) UNRELEASED; urgency=low
     special case. (LP: #348985)
   * debian/local/ubuntu-bug.1: Add missing documentation of the case of
     specifying a path name.
+  * backends/packaging-apt-dpkg.py: When unpacking source trees, try
+    "debian/rules setup" last, since it is the least common variant.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 
