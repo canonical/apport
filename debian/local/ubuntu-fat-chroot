@@ -16,10 +16,13 @@ dpkg-divert --divert /usr/sbin/update-gconf-defaults.disabled --rename /usr/sbin
 dpkg-divert --divert /usr/sbin/gconf-schemas.disabled --rename /usr/sbin/gconf-schemas
 dpkg-divert --divert /usr/bin/touch.real --rename /usr/bin/touch
 dpkg-divert --divert /usr/bin/polkit-auth.disabled --rename /usr/bin/polkit-auth
+dpkg-divert --divert /usr/lib/xulrunner-1.9.1b3/xulrunner-bin.disabled --rename /usr/lib/xulrunner-1.9.1b3/xulrunner-bin
 /bin/echo -e '#!/bin/sh\nexit 0' > /usr/sbin/update-gconf-defaults
 /bin/echo -e '#!/bin/sh\nexit 0' > /usr/sbin/gconf-schemas
 /bin/echo -e '#!/bin/sh\nexit 0' > /usr/bin/ucf
 /bin/echo -e '#!/bin/sh\nexit 0' > /usr/bin/polkit-auth
+mkdir -p /usr/lib/xulrunner-1.9.1b3/
+/bin/echo -e '#!/bin/sh\nexit 0' > /usr/lib/xulrunner-1.9.1b3/xulrunner-bin
 /bin/echo -e '#!/bin/sh\ntouch.real "$@"; exit 0' > /usr/bin/touch
 chmod 755 /usr/bin/touch
 ln -s . /target
