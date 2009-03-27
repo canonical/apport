@@ -5,6 +5,9 @@ apport (0.147) UNRELEASED; urgency=low
     from /var/lib.
   * bin/apportcheckresume: only attempt to attach the stress log if its is
     present.
+  * bin/apportcheckresume, debian/apport.init: add detection for late
+    resume hangs, those where the user thinks the system was working.
+    (LP: #335323)
 
  -- Andy Whitcroft <apw@canonical.com>  Fri, 27 Mar 2009 14:22:10 +0000
 

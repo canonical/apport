@@ -25,6 +25,7 @@ def main(argv=None):
         libdir = '/var/lib/pm-utils'
         flagfile = libdir + '/status'
         stresslog = libdir + '/stress.log'
+        hanglog = libdir + '/resume-hang.log'
 
         pr.add_os_info()
         pr.add_proc_info()
@@ -48,11 +49,23 @@ def main(argv=None):
         # Record the failure mode.
         pr['Failure'] += '/resume'
 
+        # If we had a late hang pull in the resume-hang logfile.  Also
+        # add an additional tag so we can pick these out.
+        if os.path.exists(hanglog):
+            apport.hookutils.attach_file(pr, hanglog, 'ResumeHangLog')
+            pr['Tags'] += ' resume-late-hang'
+
         # Generate a sensible report message.
         if pr['Failure'] == 'suspend/resume':
             pr['Annotation'] = _('This occured during a previous suspend and prevented it from resuming properly.')
         else:
             pr['Annotation'] = _('This occured during a previous hibernate and prevented it from resuming properly.')
+
+        # If we had a late hang make sure the dialog is clear that they may
+        # not have noticed.  Also update the bug title so we notice.
+        if os.path.exists(hanglog):
+            pr['Annotation'] += '  ' + _("The resume processing hung very near the end and will have appeared to have completed normally.")
+            pr['Failure'] = 'late resume'
 
         if pr.check_ignored():
             return 0
