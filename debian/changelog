@@ -51,6 +51,9 @@ apport (0.146) UNRELEASED; urgency=low
   * bin/crash-digger: If apport-retrace exits with 99, consider it a transient
     error and just stop the retracer, but don't leave the lock file behind.
     Add appropriate test case to test-crash-digger.
+  * bin/apport-retrace: If apt update fails due to a "hash sum mismatch", exit
+    with a "transient error" code, to stop (but not break) the retracing
+    cycle.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 
