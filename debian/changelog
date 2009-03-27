@@ -43,6 +43,11 @@ apport (0.146) UNRELEASED; urgency=low
     underneath us. (LP: #349407)
   * apport/crashdb.py, get_crashdb(): Print syntax errors from parsing
     conf.d/*.conf to stderr.
+  * apport/crashdb_impl/launchpad.py: Support new CrashDB option "project"
+    which can be set to a LP project name to file bugs against that project
+    instead of the distribution. Add test case for filing crash bug against a
+    project, updating it, duplicating/unduplicating it, and determining fixed
+    version. (LP: #338835)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 

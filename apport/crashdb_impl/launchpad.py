@@ -130,8 +130,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         title = report.standard_title()
         if title:
             args['field.title'] = title
+
+        project = self.options.get('project')
+        if 'ThirdParty' in report:
+            project = report['SourcePackage']
         
-        if not report.has_key('ThirdParty'):
+        if not project:
             if report.has_key('SourcePackage'):
                 return 'https://bugs.%s/%s/+source/%s/+filebug/%s?%s' % (
                     self.hostname, self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
@@ -139,9 +143,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 return 'https://bugs.%s/%s/+filebug/%s?%s' % (
                     self.hostname, self.distro, handle, urllib.urlencode(args))
         else:
-            assert report.has_key('SourcePackage')
             return 'https://bugs.%s/%s/+filebug/%s?%s' % (
-                self.hostname, report['SourcePackage'], handle, urllib.urlencode(args))
+                self.hostname, project, handle, urllib.urlencode(args))
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
@@ -704,7 +707,7 @@ NameError: global name 'weird' is not defined'''
                     '', {'distro': 'ubuntu', 'staging': True})
 
         def _fill_bug_form(self, url):
-            '''Fill bug form and commit the bug.
+            '''Fill form for a distro bug and commit the bug.
 
             Return the report ID.
             '''
@@ -746,6 +749,49 @@ NameError: global name 'weird' is not defined'''
             id = res.geturl().split('/')[-1]
             return int(id)
 
+        def _fill_bug_form_project(self, url):
+            '''Fill form for a project bug and commit the bug.
+
+            Return the report ID.
+            '''
+            cj = cookielib.MozillaCookieJar()
+            cj.load(self.crashdb.cookie_file)
+            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+
+            m = re.search('launchpad.net/([^/]+)/\+filebug', url)
+            assert m
+            project = m.group(1)
+
+            re_title = re.compile('<input.*id="field.title".*value="([^"]+)"')
+            re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
+
+            # parse default field values from reporting page
+            url = url.replace('+filebug/', '+filebug-advanced/')
+            
+            res = opener.open(url)
+            self.assertEqual(res.getcode(), 200)
+            content = res.read()
+
+            m_title = re_title.search(content)
+            m_tags = re_tags.search(content)
+
+            # strip off GET arguments from URL
+            url = url.split('?')[0]
+
+            # create request to file bug
+            args = {
+                'field.title': m_title.group(1),
+                'field.tags': m_tags.group(1),
+                'field.comment': 'ZOMG!',
+                'field.actions.submit_bug': '1',
+            }
+
+            res = opener.open(url, data=urllib.urlencode(args))
+            self.assertEqual(res.getcode(), 200)
+            self.assert_(('launchpad.net/%s/+bug' % project) in res.geturl())
+            id = res.geturl().split('/')[-1]
+            return int(id)
+
         def _mark_needs_retrace(self, id):
             '''Mark a report ID as needing retrace.'''
 
@@ -761,5 +807,52 @@ NameError: global name 'weird' is not defined'''
             if 'need-duplicate-check' not in b.tags:
                 b.tags.append('need-duplicate-check')
             b.commit()
+
+        def test_project(self):
+            '''reporting crashes against a project instead of a distro'''
+
+            # crash database for langpack-o-matic project (this does not have
+            # packages in any distro)
+            crashdb = CrashDatabase(os.path.expanduser('~/.lpcookie.txt'), 
+                '', {'project': 'langpack-o-matic', 'staging': True})
+            self.assertEqual(crashdb.distro, None)
+
+            # create Python crash report
+            r = apport.Report('Crash')
+            r['ExecutablePath'] = '/bin/foo'
+            r['Traceback'] = '''Traceback (most recent call last):
+  File "/bin/foo", line 67, in fuzz
+    print weird
+NameError: global name 'weird' is not defined'''
+            r.add_os_info()
+            r.add_user_info()
+            self.assertEqual(r.standard_title(), 'foo crashed with NameError in fuzz()')
+
+            # file it
+            handle = crashdb.upload(r)
+            self.assert_(handle)
+            url = crashdb.get_comment_url(r, handle)
+            self.assert_('launchpad.net/langpack-o-matic/+filebug' in url)
+
+            id = self._fill_bug_form_project(url)
+            self.assert_(id > 0)
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+
+            # update
+            r = crashdb.download(id)
+            r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
+            r['Stacktrace'] = 'long\ntrace'
+            r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
+            crashdb.update(id, r, 'good retrace!')
+            r = crashdb.download(id)
+
+            # test fixed version
+            self.assertEqual(crashdb.get_fixed_version(id), None)
+            crashdb.close_duplicate(id, self.known_test_id)
+            self.assertEqual(crashdb.duplicate_of(id), self.known_test_id)
+            self.assertEqual(crashdb.get_fixed_version(id), 'invalid')
+            crashdb.close_duplicate(id, None)
+            self.assertEqual(crashdb.duplicate_of(id), None)
+            self.assertEqual(crashdb.get_fixed_version(id), None)
 
     unittest.main()
