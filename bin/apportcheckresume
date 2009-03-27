@@ -34,6 +34,10 @@ def main(argv=None):
         # grab the contents of the suspend/resume flag file
         apport.hookutils.attach_file(pr, flagfile, 'Failure')
 
+        # grab the contents of the suspend/hibernate log file
+        failurelog = '/var/log/pm-' + pr['Failure'] + '.log'
+        apport.hookutils.attach_file(pr, failurelog, 'SleepLog')
+
         # grab the contents of the suspend/resume stress test log if present.
         apport.hookutils.attach_file(pr, stresslog, 'StressLog')
 
