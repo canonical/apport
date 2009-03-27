@@ -1,4 +1,4 @@
-apport (0.146) UNRELEASED; urgency=low
+apport (0.146) jaunty; urgency=low
 
   * apport/report.py, _generate_sigsegv_report(): Turn into a class method, so
     that it can be used by test cases in other modules as well. Also add
@@ -55,7 +55,7 @@ apport (0.146) UNRELEASED; urgency=low
     with a "transient error" code, to stop (but not break) the retracing
     cycle.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 27 Mar 2009 17:01:08 +0100
 
 apport (0.145) jaunty; urgency=low
 
