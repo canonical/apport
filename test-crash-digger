@@ -124,6 +124,35 @@ fi
         self.assertEqual(err, '', 'no error messages:\n' + err)
         self.failIf (os.path.exists(self.lock_file))
 
+    def test_crashes_transient_error(self):
+        '''Crash retracing if apport-chroot reports a transient error'''
+
+        # make apport-retrace fail on bug 1
+        os.rename(self.apport_chroot, self.apport_chroot + '.bak')
+        open(self.apport_chroot, 'w').write('''#!/bin/sh
+echo "$@" >> %s
+while [ -n "$2" ]; do shift; done
+if [ "$1" = 1 ]; then
+    echo "cannot frobnicate chroot" >&2
+    exit 99
+fi
+''' % self.apport_chroot_log)
+        os.chmod(self.apport_chroot, 0755)
+
+        (out, err) = self.call(['-m', self.chroot_map, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+        self.assert_("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
+        self.assert_('retracing #0' in out)
+        self.assert_('retracing #1' in out)
+        self.failIf('retracing #2' in out, 'should not continue after errors')
+        self.assert_('transient error reported; halting' in out)
+
+        chroot_log = open(self.apport_chroot_log).read()
+        self.assert_('retrace 1\n' in chroot_log)
+        self.failIf('retrace 2\n' in chroot_log)
+
+        self.failIf(os.path.exists(self.lock_file))
+
     def test_dupcheck(self):
         '''Duplicate checking'''
 
