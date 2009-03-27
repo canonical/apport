@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os, os.path, datetime
+import os, os.path, datetime, sys
 
 from packaging_impl import impl as packaging
 
@@ -218,6 +218,7 @@ class CrashDatabase:
             # crash got fixed/rejected
             fixed_ver = self.get_fixed_version(id)
             if fixed_ver == 'invalid':
+                print 'DEBUG: bug %i was invalidated, removing from database' % id
                 cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
             elif not fixed_ver:
                 print 'WARNING: inconsistency detected: bug #%i does not appear in get_unfixed(), but is not fixed yet' % id
@@ -458,10 +459,11 @@ def get_crashdb(auth_file, name = None, conf = None):
             if os.path.isfile(cfpath) and cf.endswith('.conf'):
                 try:
                     execfile(cfpath, settings['databases'])
-                except:
+                except Exception, e:
                     # ignore broken files
+                    print >> sys.stderr, 'Invalid file %s: %s' % (cfpath, str(e))
                     pass
-    
+
     if not name:
         name = settings['default']
 

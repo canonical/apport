@@ -6,8 +6,8 @@ apport (0.146) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py: Fully enable operation with
     staging.launchpad.net.
   * apport/crashdb_impl/launchpad.py: Add initial test suite, performing data
-    upload, bug reporting, report download, and report updating. This happens
-    on staging.launchpad.net.
+    upload, Python and SEGV bug reporting, report download, report updating,
+    tag and duplicate handling. This happens on staging.launchpad.net.
   * apport/crashdb.py: Add new interface duplicate_of(id) to return the master
     bug of a duplicate. Also document that close_duplicate() with "None"
     master bug will un-duplicate the bug.
@@ -15,6 +15,39 @@ apport (0.146) UNRELEASED; urgency=low
     add test cases. The Launchpad test case reproduces the
     "duplicate-of-a-duplicate" regression, which now got fixed in
     python-launchpad-bugs bzr head.
+  * apport/ui.py, open_url(): Also consider a sesssion as "GNOME" if gconfd-2
+    is running; some variants such as UNR do not have gnome-panel; this fixes
+    using the preferred browser for them. (LP: #322386)
+  * debian/local/apport-collect: Add new option -p to explicitly specify a
+    (binary) package name instead of guesstimating it from the bug's source
+    package tasks. Document new option in debian/local/apport-collect.1.
+    (LP: #333875)
+  * apport/crashdb.py, duplicate_db_consolidate(): Add logging about removing
+    invalidated bugs from the duplicate database, now that this actually
+    works.
+  * debian/local/ubuntu-bug.1: Update for the possibility to specify a package
+    name or PID without any options. Also document the "ubuntu-bug linux"
+    special case. (LP: #348985)
+  * debian/local/ubuntu-bug.1: Add missing documentation of the case of
+    specifying a path name.
+  * backends/packaging-apt-dpkg.py: When unpacking source trees, try
+    "debian/rules setup" last, since it is the least common variant.
+  * debian/local/ubuntu-fat-chroot: Divert away
+    /usr/lib/xulrunner-1.9.1b3/xulrunner-bin. It is called on debian/rules
+    patch in xulrunner-1.9.1 and hangs eternally in the fakechroots. This is
+    only a temporary kludge, though, until the next xulrunner version lands.
+  * apport/crashdb_impl/launchpad.py: Add test case: Update a bug report which
+    got marked as a duplicate during processing. This reproduces #349407.
+  * apport/crashdb_impl/launchpad.py, update(): Intercept and ignore IOErrors
+    when changing the bug priority. This happens if a bug gets duplicated
+    underneath us. (LP: #349407)
+  * apport/crashdb.py, get_crashdb(): Print syntax errors from parsing
+    conf.d/*.conf to stderr.
+  * apport/crashdb_impl/launchpad.py: Support new CrashDB option "project"
+    which can be set to a LP project name to file bugs against that project
+    instead of the distribution. Add test case for filing crash bug against a
+    project, updating it, duplicating/unduplicating it, and determining fixed
+    version. (LP: #338835)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 

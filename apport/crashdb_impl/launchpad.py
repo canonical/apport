@@ -91,6 +91,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.__lp_distro = None
         
     def _get_distro_tasks(self, tasks):
+        if not self.distro:
+            raise StopIteration
+
         for t in tasks:
             if t.bug_target_name.lower() == self.distro or \
                     re.match('^.+\(%s.*\)$' % self.distro, t.bug_target_name.lower()):
@@ -98,6 +101,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     
     @property
     def lp_distro(self):
+        if not self.distro:
+            return None
         if self.__lp_distro is None:
             self.__lp_distro = self.launchpad.distributions[self.distro]
         return self.__lp_distro
@@ -162,8 +167,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             hostname = 'staging.launchpad.net'
         else:
             hostname = 'launchpad.net'
+
+        project = self.options.get('project')
+        if 'ThirdParty' in report:
+            project = report['SourcePackage']
         
-        if not report.has_key('ThirdParty'):
+        if not project:
             if report.has_key('SourcePackage'):
                 return 'https://bugs.%s/%s/+source/%s/+filebug/%s?%s' % (
                     hostname, self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
@@ -171,9 +180,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 return 'https://bugs.%s/%s/+filebug/%s?%s' % (
                     hostname, self.distro, handle, urllib.urlencode(args))
         else:
-            assert report.has_key('SourcePackage')
             return 'https://bugs.%s/%s/+filebug/%s?%s' % (
-                hostname, report['SourcePackage'], handle, urllib.urlencode(args))
+                hostname, project, handle, urllib.urlencode(args))
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
@@ -279,9 +287,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                         pass # LP#315387 workaround
             try:
                 task = self._get_distro_tasks(bug.bug_tasks).next()
+                task.transitionToImportance(importance='Medium')
             except StopIteration:
-                raise ValueError('no distro tasks found')
-            task.transitionToImportance(importance='Medium')
+                pass # no distro tasks
         self._subscribe_triaging_team(bug, report)
 
     def get_distro_release(self, id):
@@ -328,7 +336,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         If 'distro' is None, we will look for a launchpad project . 
         '''
-        # TODO: look for LP project if distro == None
         sources = self.lp_distro.main_archive.getPublishedSources(
             exact_match=True,
             source_name=package,
@@ -362,29 +369,38 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return 'invalid'
 
         tasks = list(b.bug_tasks) # just fetch it once
+
+        if self.distro:
+            distro_identifier = '(%s)' %self.distro.lower()
+            fixed_tasks = filter(lambda task: task.status == 'Fix Released' and \
+                    distro_identifier in task.bug_target_display_name.lower(), tasks)
             
-        distro_identifier = '(%s)' %self.distro.lower()
-        fixed_tasks = filter(lambda task: task.status == 'Fix Released' and \
-                distro_identifier in task.bug_target_display_name.lower(), tasks)
-        
-        if not fixed_tasks:
-            fixed_distro = filter(lambda task: task.status == 'Fix Released' and \
-                    task.bug_target_name.lower() == self.distro.lower(), tasks)
-            if fixed_distro:
-                # fixed in distro inself (without source package)
+            if not fixed_tasks:
+                fixed_distro = filter(lambda task: task.status == 'Fix Released' and \
+                        task.bug_target_name.lower() == self.distro.lower(), tasks)
+                if fixed_distro:
+                    # fixed in distro inself (without source package)
+                    return ''
+                
+            assert len(fixed_tasks) <= 1, 'There is more than one task fixed in %s' % self.distro
+
+            if fixed_tasks:
+                task = fixed_tasks.pop()
+                return self._get_source_version(task.bug_target_display_name.split()[0])
+
+            # check if there any invalid ones
+            if filter(lambda task: task.status == 'Invalid' and \
+                    distro_identifier in task.bug_target_display_name.lower(), tasks):
+                return 'invalid'
+        else:
+            fixed_tasks = filter(lambda task: task.status == 'Fix Released',
+                    tasks)
+            if fixed_tasks:
+                # TODO: look for current series
                 return ''
-            
-        # the version using py-lp-bugs did not consider the following case
-        assert len(fixed_tasks) <= 1, 'There is more than one task fixed in %s' % self.distro
-
-        if fixed_tasks:
-            task = fixed_tasks.pop()
-            return self._get_source_version(task.bug_target_display_name.split()[0])
-
-        # check if there any invalid ones
-        if filter(lambda task: task.status == 'Invalid' and \
-                distro_identifier in task.bug_target_display_name.lower(), tasks):
-            return 'invalid'
+            # check if there any invalid ones
+            if filter(lambda task: task.status == 'Invalid', tasks):
+                return 'invalid'
 
         return None
 
@@ -466,7 +482,8 @@ in a dependent package.' % master,
             try:
                 task = self._get_distro_tasks(bug.bug_tasks).next()
             except StopIteration:
-                raise ValueError('no distro tasks found')
+                # no distro task, just use the first one
+                task = bug.bug_tasks[0]
             task.transitionToStatus(status='Invalid')
             bug.newMessage(content=invalid_msg,
                     subject='Crash report cannot be processed')
@@ -613,10 +630,10 @@ if __name__ == '__main__':
             self.ref_report.add_os_info()
             self.ref_report.add_user_info()
 
-        def test_1_report_segv(self):
-            '''upload() and get_comment_url() for SEGV crash
-            
-            This needs to run first, since it sets segv_report.
+        def _file_segv_report(self):
+            '''File a SEGV crash report.
+
+            Return crash ID.
             '''
             r = apport.report._ApportReportTest._generate_sigsegv_report()
             r.add_package_info(self.test_package)
@@ -632,7 +649,15 @@ if __name__ == '__main__':
 
             id = self._fill_bug_form(url)
             self.assert_(id > 0)
+            return id
+
+        def test_1_report_segv(self):
+            '''upload() and get_comment_url() for SEGV crash
+            
+            This needs to run first, since it sets segv_report.
+            '''
             global segv_report
+            id = self._file_segv_report()
             segv_report = id
             print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
 
@@ -823,6 +848,28 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(self.crashdb.get_fixed_version(python_report),
                     None)
 
+        def test_update_invalid(self):
+            '''updating a invalid crash
+            
+            This simulates a race condition where a crash being processed gets
+            invalidated by marking it as a duplicate.
+            '''
+            id = self._file_segv_report()
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+
+            r = self.crashdb.download(id)
+
+            self.crashdb.close_duplicate(id, segv_report)
+
+            # updating with an useful stack trace removes core dump
+            r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
+            r['Stacktrace'] = 'long\ntrace'
+            r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
+            self.crashdb.update(id, r, 'good retrace!')
+
+            r = self.crashdb.download(id)
+            self.failIf('CoreDump' in r)
+
         def test_get_fixed_version(self):
             '''get_fixed_version() for fixed bugs
 
@@ -848,7 +895,7 @@ NameError: global name 'weird' is not defined'''
                     {'distro': 'ubuntu', 'staging': True})
 
         def _fill_bug_form(self, url):
-            '''Fill bug form and commit the bug.
+            '''Fill form for a distro bug and commit the bug.
 
             Return the report ID.
             '''
@@ -896,6 +943,49 @@ NameError: global name 'weird' is not defined'''
             id = res.geturl().split('/')[-1]
             return int(id)
 
+        def _fill_bug_form_project(self, url):
+            '''Fill form for a project bug and commit the bug.
+
+            Return the report ID.
+            '''
+            cj = cookielib.MozillaCookieJar()
+            cj.load(os.path.expanduser('~/.lpcookie.txt'))
+            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+
+            m = re.search('launchpad.net/([^/]+)/\+filebug', url)
+            assert m
+            project = m.group(1)
+
+            re_title = re.compile('<input.*id="field.title".*value="([^"]+)"')
+            re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
+
+            # parse default field values from reporting page
+            url = url.replace('+filebug/', '+filebug-advanced/')
+            
+            res = opener.open(url)
+            self.assertEqual(res.getcode(), 200)
+            content = res.read()
+
+            m_title = re_title.search(content)
+            m_tags = re_tags.search(content)
+
+            # strip off GET arguments from URL
+            url = url.split('?')[0]
+
+            # create request to file bug
+            args = {
+                'field.title': m_title.group(1),
+                'field.tags': m_tags.group(1),
+                'field.comment': 'ZOMG!',
+                'field.actions.submit_bug': '1',
+            }
+
+            res = opener.open(url, data=urllib.urlencode(args))
+            self.assertEqual(res.getcode(), 200)
+            self.assert_(('launchpad.net/%s/+bug' % project) in res.geturl())
+            id = res.geturl().split('/')[-1]
+            return int(id)
+
         def _mark_needs_retrace(self, id):
             '''Mark a report ID as needing retrace.'''
 
@@ -927,5 +1017,52 @@ NameError: global name 'weird' is not defined'''
             tasks = list(bug.bug_tasks)
             assert len(tasks) == 1
             tasks[0].transitionToStatus(status='New')
+
+        def test_project(self):
+            '''reporting crashes against a project instead of a distro'''
+
+            # crash database for langpack-o-matic project (this does not have
+            # packages in any distro)
+            crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
+                {'project': 'langpack-o-matic', 'staging': True})
+            self.assertEqual(crashdb.distro, None)
+
+            # create Python crash report
+            r = apport.Report('Crash')
+            r['ExecutablePath'] = '/bin/foo'
+            r['Traceback'] = '''Traceback (most recent call last):
+  File "/bin/foo", line 67, in fuzz
+    print weird
+NameError: global name 'weird' is not defined'''
+            r.add_os_info()
+            r.add_user_info()
+            self.assertEqual(r.standard_title(), 'foo crashed with NameError in fuzz()')
+
+            # file it
+            handle = crashdb.upload(r)
+            self.assert_(handle)
+            url = crashdb.get_comment_url(r, handle)
+            self.assert_('launchpad.net/langpack-o-matic/+filebug' in url)
+
+            id = self._fill_bug_form_project(url)
+            self.assert_(id > 0)
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+
+            # update
+            r = crashdb.download(id)
+            r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
+            r['Stacktrace'] = 'long\ntrace'
+            r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
+            crashdb.update(id, r, 'good retrace!')
+            r = crashdb.download(id)
+
+            # test fixed version
+            self.assertEqual(crashdb.get_fixed_version(id), None)
+            crashdb.close_duplicate(id, self.known_test_id)
+            self.assertEqual(crashdb.duplicate_of(id), self.known_test_id)
+            self.assertEqual(crashdb.get_fixed_version(id), 'invalid')
+            crashdb.close_duplicate(id, None)
+            self.assertEqual(crashdb.duplicate_of(id), None)
+            self.assertEqual(crashdb.get_fixed_version(id), None)
 
     unittest.main()

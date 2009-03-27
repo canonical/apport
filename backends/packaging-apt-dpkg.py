@@ -268,11 +268,11 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # apply patches on a best-effort basis 
         try:
-            subprocess.call('debian/rules setup || debian/rules patch || \
-                debian/rules apply-patches ||  debian/rules apply-dpatches || \
-                debian/rules unpack || debian/rules patch-stamp', 
-                shell=True, cwd=root, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
+            subprocess.call('debian/rules patch || debian/rules apply-patches ' \
+                '|| debian/rules apply-dpatches || '\
+                'debian/rules unpack || debian/rules patch-stamp || ' \
+                'debian/rules setup', shell=True, cwd=root,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
             pass
 
