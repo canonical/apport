@@ -260,8 +260,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if report.has_useful_stacktrace():
             bug.attachments.remove(
                     func=lambda a: re.match('^CoreDump.gz$', a.lp_filename or a.description))
-            bug.importance='Medium'
-        bug.commit()
+            bug.commit()
+            try:
+                bug.importance='Medium'
+                bug.commit()
+            except IOError:
+                # bug was marked as a duplicate underneath us; LP#349407
+                pass
+        else:
+            bug.commit()
         for x in t.itervalues():
             x.close()
         self._subscribe_triaging_team(bug, report)

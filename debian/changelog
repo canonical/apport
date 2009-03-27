@@ -38,6 +38,9 @@ apport (0.146) UNRELEASED; urgency=low
     only a temporary kludge, though, until the next xulrunner version lands.
   * apport/crashdb_impl/launchpad.py: Add test case: Update a bug report which
     got marked as a duplicate during processing. This reproduces #349407.
+  * apport/crashdb_impl/launchpad.py, update(): Intercept and ignore IOErrors
+    when changing the bug priority. This happens if a bug gets duplicated
+    underneath us. (LP: #349407)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 
