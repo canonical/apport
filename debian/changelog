@@ -3,6 +3,8 @@ apport (0.147) UNRELEASED; urgency=low
   [ Andy Whitcroft ]
   * bin/apportcheckresume: report the pm-suspend.log/pm-hibernate.log
     from /var/lib.
+  * bin/apportcheckresume: only attempt to attach the stress log if its is
+    present.
 
  -- Andy Whitcroft <apw@canonical.com>  Fri, 27 Mar 2009 14:22:10 +0000
 
