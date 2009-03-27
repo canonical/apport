@@ -477,10 +477,10 @@ if __name__ == '__main__':
             self.ref_report.add_os_info()
             self.ref_report.add_user_info()
 
-        def test_1_report_segv(self):
-            '''upload() and get_comment_url() for SEGV crash
-            
-            This needs to run first, since it sets segv_report.
+        def _file_segv_report(self):
+            '''File a SEGV crash report.
+
+            Return crash ID.
             '''
             r = apport.report._ApportReportTest._generate_sigsegv_report()
             r.add_package_info(self.test_package)
@@ -496,7 +496,15 @@ if __name__ == '__main__':
 
             id = self._fill_bug_form(url)
             self.assert_(id > 0)
+            return id
+
+        def test_1_report_segv(self):
+            '''upload() and get_comment_url() for SEGV crash
+            
+            This needs to run first, since it sets segv_report.
+            '''
             global segv_report
+            id = self._file_segv_report()
             segv_report = id
             print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
 
@@ -654,6 +662,28 @@ NameError: global name 'weird' is not defined'''
                     unchecked_after.union(set([python_report])))
             self.assertEqual(self.crashdb.get_fixed_version(python_report),
                     None)
+
+        def test_update_invalid(self):
+            '''updating a invalid crash
+            
+            This simulates a race condition where a crash being processed gets
+            invalidated by marking it as a duplicate.
+            '''
+            id = self._file_segv_report()
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+
+            r = self.crashdb.download(id)
+
+            self.crashdb.close_duplicate(id, segv_report)
+
+            # updating with an useful stack trace removes core dump
+            r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
+            r['Stacktrace'] = 'long\ntrace'
+            r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
+            self.crashdb.update(id, r, 'good retrace!')
+
+            r = self.crashdb.download(id)
+            self.failIf('CoreDump' in r)
 
         #
         # Launchpad specific implementation and tests

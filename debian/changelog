@@ -36,6 +36,8 @@ apport (0.146) UNRELEASED; urgency=low
     /usr/lib/xulrunner-1.9.1b3/xulrunner-bin. It is called on debian/rules
     patch in xulrunner-1.9.1 and hangs eternally in the fakechroots. This is
     only a temporary kludge, though, until the next xulrunner version lands.
+  * apport/crashdb_impl/launchpad.py: Add test case: Update a bug report which
+    got marked as a duplicate during processing. This reproduces #349407.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
 
