@@ -49,6 +49,7 @@ do_start()
 	if [ -e /var/lib/pm-utils/status ]; then
 		/usr/share/apport/apportcheckresume || true
 		rm -f /var/lib/pm-utils/status
+		rm -f /var/lib/pm-utils/resume-hang.log
 	fi
 
         echo "|$AGENT %p %s %c" > /proc/sys/kernel/core_pattern
@@ -64,6 +65,12 @@ do_stop()
 	#   1 if daemon was already stopped
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
+
+	# Check for a hung resume.  If we find one try and grab everything
+	# we can to aid in its discovery.
+	if [ -e /var/lib/pm-utils/status ]; then
+		ps -wwef >/var/lib/pm-utils/resume-hang.log
+	fi
 
 	if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" != "|" ]; then
 	    return 1
