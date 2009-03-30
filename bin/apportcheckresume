@@ -33,15 +33,15 @@ def main(argv=None):
         pr['Package'] = 'linux-image-' + os.uname()[2]
 
         # grab the contents of the suspend/resume flag file
-        apport.hookutils.attach_file(pr, flagfile, 'Failure')
+        apport.hookutils.attach_file_if_exists(pr, flagfile, 'Failure')
 
         # grab the contents of the suspend/hibernate log file
         failurelog = '/var/log/pm-' + pr['Failure'] + '.log'
-        apport.hookutils.attach_file(pr, failurelog, 'SleepLog')
+        apport.hookutils.attach_file_if_exists(pr, failurelog, 'SleepLog')
 
         # grab the contents of the suspend/resume stress test log if present.
         if os.path.exists(stresslog):
-            apport.hookutils.attach_file(pr, stresslog, 'StressLog')
+            apport.hookutils.attach_file_if_exists(pr, stresslog, 'StressLog')
 
         # Ensure we are appropriatly tagged.
         pr['Tags'] = 'resume ' + pr['Failure']
@@ -52,7 +52,7 @@ def main(argv=None):
         # If we had a late hang pull in the resume-hang logfile.  Also
         # add an additional tag so we can pick these out.
         if os.path.exists(hanglog):
-            apport.hookutils.attach_file(pr, hanglog, 'ResumeHangLog')
+            apport.hookutils.attach_file_if_exists(pr, hanglog, 'ResumeHangLog')
             pr['Tags'] += ' resume-late-hang'
 
         # Generate a sensible report message.
