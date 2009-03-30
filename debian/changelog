@@ -1,3 +1,12 @@
+apport (0.148) UNRELEASED; urgency=low
+
+  * apport/hookutils.py: add attach_media_build to include information about
+    the build of installation media in use (i.e. in a casper live CD
+    environment)
+  * general-hooks/ubuntu.py: use attach_media_build (LP: #351781)
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Mon, 30 Mar 2009 20:11:09 +0100
+
 apport (0.147) jaunty; urgency=low
 
   * bin/apportcheckresume: report the pm-suspend.log/pm-hibernate.log
