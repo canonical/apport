@@ -20,6 +20,9 @@ apport (0.148) UNRELEASED; urgency=low
   * bin/apport-retrace: Fix KeyError crash on bugs with an ExecutablePath
     which does not exist any more. Close the bug as invalid instead.
     (LP: #352331)
+  * bin/kernel_oops: Add "kernel-oops" tag. Since both bin/kernel_oops and
+    bin/apportcheckresume use the "kerneloops" bug class, it previously was
+    hard to filter out the bug reports which were real oopses. (LP: #349621)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 01 Apr 2009 15:00:32 +0200
 
