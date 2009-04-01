@@ -565,8 +565,12 @@ if modified:
                     print 'Duplicate check negative'
 
             if update_bug:
-                crashdb.update(crashid, report)
-                print 'New attachments uploaded to crash database #' + crashid
+                if 'Stacktrace' in report:
+                    crashdb.update(crashid, report)
+                    print 'New attachments uploaded to crash database #' + crashid
+                else:
+                    assert outdated_msg
+                    print 'No stack trace, invalid report'
 
                 if not report.has_useful_stacktrace():
                     if outdated_msg:

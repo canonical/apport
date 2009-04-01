@@ -17,6 +17,9 @@ apport (0.148) UNRELEASED; urgency=low
     manpage accordingly.
   * apport/hookutils.py: Move attach_media_build() to
     general-hooks/ubuntu.py, since it is Ubuntu specific.
+  * bin/apport-retrace: Fix KeyError crash on bugs with an ExecutablePath
+    which does not exist any more. Close the bug as invalid instead.
+    (LP: #352331)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 01 Apr 2009 15:00:32 +0200
 
