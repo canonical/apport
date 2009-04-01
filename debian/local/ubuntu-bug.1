@@ -15,6 +15,9 @@ ubuntu\-bug \- file a bug against an Ubuntu package
 .B ubuntu\-bug 
 .I PID
 
+.B ubuntu\-bug 
+.I /var/crash/_my_program.crash
+
 .SH DESCRIPTION
 
 .B ubuntu\-bug 
@@ -58,6 +61,14 @@ ubuntu\-bug linux
 .RE
 
 to report a bug against the currently running kernel.
+
+Finally, you can use ubuntu\-bug to report a crash report:
+
+.RS 4
+.nf
+ubuntu\-bug /var/crash/_bin_bash.1000.crash
+.fi
+.RE
 
 .B ubuntu\-bug
 detects whether KDE or Gnome is running and calls

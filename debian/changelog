@@ -1,13 +1,22 @@
 apport (0.148) UNRELEASED; urgency=low
 
+  [ Matt Zimmerman ]
   * apport/hookutils.py: add attach_media_build to include information about
     the build of installation media in use (i.e. in a casper live CD
     environment)
   * general-hooks/ubuntu.py: use attach_media_build (LP: #351781)
   * bin/apportcheckresume: Use attach_file_if_exists rather than attach_file to
     avoid spurious error messages about non-existent log files (LP: #351973)
+  
+  [ Martin Pitt ]
+  * debian/local/ubuntu-bug: Drop generic passthrough of apport-{cli,gtk,kde}
+    options since this leads to too much confusion. Instead just support a
+    single argument and check whether it is a pid, a package name, a .crash
+    file, or a program path. This does the right thing when calling it with a
+    .crash file (LP: #347392) and fixes the help output (LP: #344923) Update
+    manpage accordingly.
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Mon, 30 Mar 2009 22:35:40 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 01 Apr 2009 15:00:32 +0200
 
 apport (0.147) jaunty; urgency=low
 
