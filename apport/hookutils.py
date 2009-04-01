@@ -374,6 +374,3 @@ def _parse_gconf_schema(schema_file):
                     ret[key] = default
 
     return ret
-
-def attach_media_build(report):
-    attach_file_if_exists(report, '/cdrom/.disk/info', 'MediaBuild')
