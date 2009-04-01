@@ -1,4 +1,4 @@
-apport (0.148) UNRELEASED; urgency=low
+apport (0.148) jaunty; urgency=low
 
   [ Matt Zimmerman ]
   * apport/hookutils.py: add attach_media_build to include information about
@@ -24,7 +24,7 @@ apport (0.148) UNRELEASED; urgency=low
     bin/apportcheckresume use the "kerneloops" bug class, it previously was
     hard to filter out the bug reports which were real oopses. (LP: #349621)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 01 Apr 2009 15:00:32 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 01 Apr 2009 18:10:01 +0200
 
 apport (0.147) jaunty; urgency=low
 
