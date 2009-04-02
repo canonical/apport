@@ -1,3 +1,13 @@
+apport (0.149~launchpadlib1) UNRELEASED; urgency=low
+
+  * apport/crashdb_impl/launchpad.py: Port to python-launchpadlib. Thanks to
+    Markus Korn for his initial work on this!
+  * debian/control: python-launchpad-bugs → python-launchpadlib dependencies.
+  * debian/local/apport-collect: Drop launchpadlib login code, just use the
+    CrashDatabase implementation from apport/crashdb_impl/launchpad.py.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 02 Apr 2009 10:44:31 +0200
+
 apport (0.148) jaunty; urgency=low
 
   [ Matt Zimmerman ]
