@@ -58,38 +58,47 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.auth = auth
         assert self.auth
 
-        # Log into Launchpad
+        self.__launchpad = None
+        self.__lp_distro = None
+        
+    @property
+    def launchpad(self):
+        '''Return Launchpad instance.'''
+
+        if self.__launchpad:
+            return self.__launchpad
+
         cache_dir = tempfile.mkdtemp()
         atexit.register(shutil.rmtree, cache_dir)
-        if options.get('staging'):
+        if self.options.get('staging'):
             launchpad_instance = STAGING_SERVICE_ROOT
         else:
             launchpad_instance = EDGE_SERVICE_ROOT
 
-        auth_dir = os.path.dirname(auth)
+        auth_dir = os.path.dirname(self.auth)
         if not os.path.isdir(auth_dir):
             os.makedirs(auth_dir)
 
-        if os.path.exists(auth):
+        if os.path.exists(self.auth):
             # use existing credentials
             credentials = Credentials()
-            credentials.load(open(auth))
-            self.launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
+            credentials.load(open(self.auth))
+            self.__launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
         else:
             # get credentials and save them
             try:
-                self.launchpad = Launchpad.get_token_and_login('apport-collect',
+                self.__launchpad = Launchpad.get_token_and_login('apport-collect',
                         launchpad_instance, cache_dir)
             except launchpadlib.errors.HTTPError, e:
                 print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
                 sys.exit(1)
-            f = open(auth, 'w')
-            os.chmod(auth, 0600)
-            self.launchpad.credentials.save(f)
+            f = open(self.auth, 'w')
+            os.chmod(self.auth, 0600)
+            self.__launchpad.credentials.save(f)
             f.close()
 
-        self.__lp_distro = None
-        
+        return self.__launchpad
+
     def _get_distro_tasks(self, tasks):
         if not self.distro:
             raise StopIteration
