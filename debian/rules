@@ -1,14 +1,18 @@
 #!/usr/bin/make -f
 
 DEB_PYTHON_SYSTEM := pycentral
-export DH_PYCENTRAL=include-links
+export DH_PYCENTRAL := $(shell if dpkg --compare-versions `dpkg-query -W -f '$${Version}' python-central` gt 0.6.11; then echo include-links; else echo nomove; fi)
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 include /usr/share/cdbs/1/rules/langpack.mk
 
 DEB_DH_INSTALL_SOURCEDIR := debian/tmp
+ifneq (,$(findstring 2.6,$(shell python --version 2>&1)))
 DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-scripts usr/share/apport --install-layout=deb
+else
+DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-scripts usr/share/apport
+endif
 
 pre-build::
 	# install appropriate backends

@@ -5,6 +5,12 @@ apport (0.149~launchpadlib1) UNRELEASED; urgency=low
   * debian/control: python-launchpad-bugs → python-launchpadlib dependencies.
   * debian/local/apport-collect: Drop launchpadlib login code, just use the
     CrashDatabase implementation from apport/crashdb_impl/launchpad.py.
+  * Make package backportable to hardy and intrepid:
+    - debian/control: Relax python-central buil-dependency to 0.5.6.
+    - debian/rules: Determine DH_PYCENTRAL value ("include-links" vs.
+      "nomove") based on the installed pycentral version.
+    - debian/rules: Only supply --install-layout=deb when Python version is
+      2.6.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 02 Apr 2009 10:44:31 +0200
 
