@@ -763,6 +763,11 @@ NameError: global name 'weird' is not defined'''
             self.assert_('Stacktrace' in r)
             self.assert_('ThreadStacktrace' in r)
 
+            # test various situations which caused crashes
+            r['Stacktrace'] = '' # empty file, LP #353784
+            r['ThreadStacktrace'] = '"]\xb6"\n' # not interpretable as UTF-8, LP #353805
+            self.crashdb.update(segv_report, r, 'tests')
+
         def test_get_distro_release(self):
             '''get_distro_release()'''
 
