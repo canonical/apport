@@ -48,7 +48,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         default_credentials_path (~/.cache/apport/launchpad.credentials).
         '''
         if not auth:
-            auth = default_credentials_path
+            if options.get('staging'):
+                auth = default_credentials_path + '.staging'
+            else:
+                auth = default_credentials_path
         apport.crashdb.CrashDatabase.__init__(self, auth,
             bugpattern_baseurl, options)
 
