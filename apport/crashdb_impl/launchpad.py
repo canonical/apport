@@ -261,7 +261,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if report['Stacktrace']: # don't attach empty files
             bug.addAttachment(comment=comment,
                     #content_type=?
-                    data=report['Stacktrace'],
+                    data=report['Stacktrace'].decode('UTF-8', 'replace'), # LP#353805 workaround
                     description='Stacktrace.txt (retraced)',
                     filename='Stacktrace.txt',
                     is_patch=False)
@@ -269,7 +269,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if report['ThreadStacktrace']:
             bug.addAttachment(comment='', #some other comment here?
                     #content_type=?
-                    data=report['ThreadStacktrace'],
+                    data=report['ThreadStacktrace'].decode('UTF-8', 'replace'),
                     description='ThreadStacktrace.txt (retraced)',
                     filename='ThreadStacktrace.txt',
                     is_patch=False)
@@ -277,7 +277,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if report.has_key('StacktraceSource') and report['StacktraceSource']:
             bug.addAttachment(comment='', #some other comment here?
                     #content_type=?
-                    data=report['StacktraceSource'],
+                    data=report['StacktraceSource'].decode('UTF-8', 'replace'),
                     description='StacktraceSource.txt',
                     filename='StacktraceSource.txt',
                     is_patch=False)
