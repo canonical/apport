@@ -1,4 +1,44 @@
-apport (0.146) UNRELEASED; urgency=low
+apport (0.148) jaunty; urgency=low
+
+  [ Matt Zimmerman ]
+  * apport/hookutils.py: add attach_media_build to include information about
+    the build of installation media in use (i.e. in a casper live CD
+    environment)
+  * general-hooks/ubuntu.py: use attach_media_build (LP: #351781)
+  * bin/apportcheckresume: Use attach_file_if_exists rather than attach_file to
+    avoid spurious error messages about non-existent log files (LP: #351973)
+  
+  [ Martin Pitt ]
+  * debian/local/ubuntu-bug: Drop generic passthrough of apport-{cli,gtk,kde}
+    options since this leads to too much confusion. Instead just support a
+    single argument and check whether it is a pid, a package name, a .crash
+    file, or a program path. This does the right thing when calling it with a
+    .crash file (LP: #347392) and fixes the help output (LP: #344923) Update
+    manpage accordingly.
+  * apport/hookutils.py: Move attach_media_build() to
+    general-hooks/ubuntu.py, since it is Ubuntu specific.
+  * bin/apport-retrace: Fix KeyError crash on bugs with an ExecutablePath
+    which does not exist any more. Close the bug as invalid instead.
+    (LP: #352331)
+  * bin/kernel_oops: Add "kernel-oops" tag. Since both bin/kernel_oops and
+    bin/apportcheckresume use the "kerneloops" bug class, it previously was
+    hard to filter out the bug reports which were real oopses. (LP: #349621)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 01 Apr 2009 18:10:01 +0200
+
+apport (0.147) jaunty; urgency=low
+
+  * bin/apportcheckresume: report the pm-suspend.log/pm-hibernate.log
+    from /var/lib.
+  * bin/apportcheckresume: only attempt to attach the stress log if its is
+    present.
+  * bin/apportcheckresume, debian/apport.init: add detection for late
+    resume hangs, those where the user thinks the system was working.
+    (LP: #335323)
+
+ -- Andy Whitcroft <apw@canonical.com>  Mon, 30 Mar 2009 09:47:28 +0200
+
+apport (0.146) jaunty; urgency=low
 
   * apport/report.py, _generate_sigsegv_report(): Turn into a class method, so
     that it can be used by test cases in other modules as well. Also add
@@ -48,8 +88,14 @@ apport (0.146) UNRELEASED; urgency=low
     instead of the distribution. Add test case for filing crash bug against a
     project, updating it, duplicating/unduplicating it, and determining fixed
     version. (LP: #338835)
+  * bin/crash-digger: If apport-retrace exits with 99, consider it a transient
+    error and just stop the retracer, but don't leave the lock file behind.
+    Add appropriate test case to test-crash-digger.
+  * bin/apport-retrace: If apt update fails due to a "hash sum mismatch", exit
+    with a "transient error" code, to stop (but not break) the retracing
+    cycle.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 12 Mar 2009 12:22:50 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 27 Mar 2009 17:01:08 +0100
 
 apport (0.145) jaunty; urgency=low
 

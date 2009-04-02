@@ -196,6 +196,13 @@ def install_missing_packages(report, verbosity = 0, unpack_only=False,
         else:
             c.update()
         c.open(apt.progress.OpProgress())
+    except SystemError, e:
+        if 'Hash Sum mismatch' in str(e):
+            # temporary archive inconsistency
+            print >> sys.stderr, str(e), 'aborting'
+            sys.exit(99) # signal crash digger about transient error
+        else:
+            raise
     except apt.cache.LockFailedException:
         if os.geteuid() != 0:
             print >> sys.stderr, 'WARNING: Could not update apt, you need to be root'
@@ -558,8 +565,12 @@ if modified:
                     print 'Duplicate check negative'
 
             if update_bug:
-                crashdb.update(crashid, report)
-                print 'New attachments uploaded to crash database #' + crashid
+                if 'Stacktrace' in report:
+                    crashdb.update(crashid, report)
+                    print 'New attachments uploaded to crash database #' + crashid
+                else:
+                    assert outdated_msg
+                    print 'No stack trace, invalid report'
 
                 if not report.has_useful_stacktrace():
                     if outdated_msg:

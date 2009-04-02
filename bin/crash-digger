@@ -107,6 +107,10 @@ class CrashDigger:
             stderr=subprocess.STDOUT)
         if result != 0:
             self.log('retracing #%i failed with status: %i' % (id, result))
+            if result == 99:
+                self.retrace_pool = set()
+                self.log('transient error reported; halting')
+                return
             raise SystemError, 'retracing #%i failed' % id
 
         self.crashdb.mark_retraced(id)
