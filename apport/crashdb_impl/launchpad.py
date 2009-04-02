@@ -258,21 +258,23 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # we need properly named files here, otherwise they will be displayed
         # as '<fdopen>'
-        bug.addAttachment(comment=comment,
-                #content_type=?
-                data=report['Stacktrace'],
-                description='Stacktrace.txt (retraced)',
-                filename='Stacktrace.txt',
-                is_patch=False)
+        if report['Stacktrace']: # don't attach empty files
+            bug.addAttachment(comment=comment,
+                    #content_type=?
+                    data=report['Stacktrace'],
+                    description='Stacktrace.txt (retraced)',
+                    filename='Stacktrace.txt',
+                    is_patch=False)
                 
-        bug.addAttachment(comment='', #some other comment here?
-                #content_type=?
-                data=report['ThreadStacktrace'],
-                description='ThreadStacktrace.txt (retraced)',
-                filename='ThreadStacktrace.txt',
-                is_patch=False)
+        if report['ThreadStacktrace']:
+            bug.addAttachment(comment='', #some other comment here?
+                    #content_type=?
+                    data=report['ThreadStacktrace'],
+                    description='ThreadStacktrace.txt (retraced)',
+                    filename='ThreadStacktrace.txt',
+                    is_patch=False)
 
-        if report.has_key('StacktraceSource'):
+        if report.has_key('StacktraceSource') and report['StacktraceSource']:
             bug.addAttachment(comment='', #some other comment here?
                     #content_type=?
                     data=report['StacktraceSource'],
