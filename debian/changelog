@@ -1,9 +1,14 @@
 apport (1.1-0ubuntu2) UNRELEASED; urgency=low
 
+  [ Matt Zimmerman ]
   * package-hooks/source_linux.py: Attach info for linux-restricted-modules
     and linux-backports-modules
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 28 Apr 2009 18:08:41 +0100
+  [ Andy Whitcroft ]
+  * bin/apportcheckresume: the suspend _and_ hibernate logs are both in
+    pm-suspend.log.
+
+ -- Andy Whitcroft <apw@canonical.com>  Wed, 29 Apr 2009 13:10:40 +0100
 
 apport (1.1-0ubuntu1) karmic; urgency=low
 

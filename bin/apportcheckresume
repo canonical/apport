@@ -36,8 +36,7 @@ def main(argv=None):
         apport.hookutils.attach_file_if_exists(pr, flagfile, 'Failure')
 
         # grab the contents of the suspend/hibernate log file
-        failurelog = '/var/log/pm-' + pr['Failure'] + '.log'
-        apport.hookutils.attach_file_if_exists(pr, failurelog, 'SleepLog')
+        apport.hookutils.attach_file_if_exists(pr, '/var/log/pm-suspend.log', 'SleepLog')
 
         # grab the contents of the suspend/resume stress test log if present.
         if os.path.exists(stresslog):
