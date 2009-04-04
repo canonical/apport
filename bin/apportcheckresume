@@ -39,8 +39,7 @@ def main(argv=None):
         apport.hookutils.attach_file_if_exists(pr, '/var/log/pm-suspend.log', 'SleepLog')
 
         # grab the contents of the suspend/resume stress test log if present.
-        if os.path.exists(stresslog):
-            apport.hookutils.attach_file_if_exists(pr, stresslog, 'StressLog')
+        apport.hookutils.attach_file_if_exists(pr, stresslog, 'StressLog')
 
         # Ensure we are appropriatly tagged.
         pr['Tags'] = 'resume ' + pr['Failure']

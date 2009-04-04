@@ -7,6 +7,8 @@ apport (1.1-0ubuntu2) UNRELEASED; urgency=low
   [ Andy Whitcroft ]
   * bin/apportcheckresume: the suspend _and_ hibernate logs are both in
     pm-suspend.log.
+  * bin/apportcheckresume: remove redunant check for file before attaching
+    stress log.
 
  -- Andy Whitcroft <apw@canonical.com>  Wed, 29 Apr 2009 13:10:40 +0100
 
