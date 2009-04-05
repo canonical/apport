@@ -14,6 +14,8 @@ apport (0.149) UNRELEASED; urgency=low
     install_retracing_packages() and remove_packages(), and move the apt/dpkg
     code to backends/packaging-apt-dpkg.py. This removes a major piece of
     apt/dpkg specific code from non-backends.
+  * bin/apport-retrace: Rename option --no-dpkg to --no-pkg and update
+    bin/apport-chroot accordingly.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 04 Apr 2009 10:38:53 -0700
 
