@@ -267,12 +267,12 @@ def hal_dump_udi(udi):
 def files_in_package(package, globpat=None):
     '''Retrieve a list of files owned by package, optionally matching globpat'''
 
-    output = command_output(['dpkg-query','--listfiles',package])
-    files = []
-    for path in output.split('\n'):
-        if globpat is None or glob.fnmatch.fnmatch(path, globpat):
-            files.append(path)
-    return files
+    files = packaging.get_files(package)
+    if globpat:
+        result = [f for f in files if glob.fnmatch.fnmatch(f, globpat)]
+    else:
+        result = files
+    return result
 
 def attach_gconf(report, package):
     '''Attach information about gconf keys set to non-default values.'''

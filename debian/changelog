@@ -18,6 +18,8 @@ apport (0.149) UNRELEASED; urgency=low
     bin/apport-chroot accordingly.
   * Move bin/apport-chroot and man/apport-chroot.1 to debian/local, since they
     are totally Debian/Ubuntu specific.
+  * apport/hookutils.py, files_in_package(): Replace dpkg-query call with
+    packaging.get_files(), to avoid Debianism.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 04 Apr 2009 10:38:53 -0700
 
