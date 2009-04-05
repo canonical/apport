@@ -13,7 +13,7 @@ apport\-unpack \- extract the fields of a problem report to separate files
 
 A problem report, as produced by
 .B apport
-is a single file with a set of key/value pairs in the Debian control
+is a single file with a set of key/value pairs in the RFC822 
 syntax. This tool disassembles a report such that the value of each entry
 is written into a separate file, with the key as file name. This is
 particularly useful for large binary data like the core dump.

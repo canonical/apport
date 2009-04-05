@@ -126,4 +126,30 @@ class PackageInfo:
         '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def install_retracing_packages(self, report, verbosity=0,
+            unpack_only=False, no_pkg=False, extra_packages=[]):
+        '''Install packages which are required to retrace a report.
+        
+        If package installation fails (e. g. because the user does not have root
+        privileges), the list of required packages is printed out instead.
+
+        If unpack_only is True, packages are only temporarily unpacked and
+        purged again after retrace, instead of permanently and fully installed.
+        If no_pkg is True, the package manager is not used at all, but the
+        binary packages are just unpacked with low-level tools; this speeds up
+        operations in fakechroots, but makes it impossible to cleanly remove
+        the package, so only use that in apport-chroot.
+        
+        Return a tuple (list of installed packages, string with outdated packages).
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
+    def remove_packages(self, packages, verbosity=0):
+        '''Remove packages.
+
+        This is called after install_retracing_packages() to clean up again
+        afterwards. packages is a list of package names.
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
 import packaging_impl

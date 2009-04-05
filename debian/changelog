@@ -14,6 +14,31 @@ apport (0.149~launchpadlib1) UNRELEASED; urgency=low
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 02 Apr 2009 10:44:31 +0200
 
+apport (0.149) UNRELEASED; urgency=low
+
+  * problem_report.py, man/apport-unpack.1: Fix description of .crash file
+    syntax (RFC822, not "Debian control").
+  * Move cron.daily, init script, and default file from debian/ to etc/, and
+    install them in setup.py. These files are appropriate for upstream
+    installation.
+  * Move crashdb.conf and doc/README.blacklist to etc/, to simplify setup.py.
+  * setup.py: Move *.mo generation/installation into my_install_data class,
+    for cleanliness.
+  * setup.py: Fix homepage URL.
+  * Move installation of missing packages for retracing from
+    bin/apport-retrace to new abstract interface apport/packaging.py,
+    install_retracing_packages() and remove_packages(), and move the apt/dpkg
+    code to backends/packaging-apt-dpkg.py. This removes a major piece of
+    apt/dpkg specific code from non-backends.
+  * bin/apport-retrace: Rename option --no-dpkg to --no-pkg and update
+    bin/apport-chroot accordingly.
+  * Move bin/apport-chroot and man/apport-chroot.1 to debian/local, since they
+    are totally Debian/Ubuntu specific.
+  * apport/hookutils.py, files_in_package(): Replace dpkg-query call with
+    packaging.get_files(), to avoid Debianism.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 04 Apr 2009 10:38:53 -0700
+
 apport (0.148) jaunty; urgency=low
 
   [ Matt Zimmerman ]
