@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from distutils.core import setup
+import distutils.command.install_data
 
 import subprocess, glob, os.path
 
@@ -11,6 +12,15 @@ for filepath in glob.glob("po/mo/*/LC_MESSAGES/*.mo"):
     lang = filepath[len("po/mo/"):]
     targetpath = os.path.dirname(os.path.join("share/locale",lang))
     mo_files.append((targetpath, [filepath]))
+
+class my_install_data(distutils.command.install_data.install_data):
+    '''Install files from etc/'''
+
+    def run(self):
+        for (root, _, files) in os.walk('etc'):
+            self.data_files.append((os.path.join('/', root), 
+                    [os.path.join(root, f) for f in files]))
+        distutils.command.install_data.install_data.run(self)
 
 setup(name='apport',
       author='Martin Pitt',
@@ -35,5 +45,7 @@ setup(name='apport',
           'bin/kernel_crashdump', 'bin/gcc_ice_hook', 'gtk/apport-gtk',
           'qt4/apport-qt', 'cli/apport-cli', 'bin/dupdb-admin',
           'bin/kernel_oops', 'bin/apportcheckresume'],
-      packages=['apport', 'apport.crashdb_impl']
-      )
+      packages=['apport', 'apport.crashdb_impl'],
+
+      cmdclass = { 'install_data': my_install_data },
+)
