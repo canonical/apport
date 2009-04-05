@@ -98,17 +98,18 @@ class ProblemReport(UserDict.IterableUserDict):
         self.old_keys = set()
 
     def load(self, file, binary=True):
-        '''Initialize problem report from a file-like object, using Debian
-        control file format.
-
-        if binary is False, binary data is not loaded; the dictionary key is
+        '''Initialize problem report from a file-like object.
+        
+        If binary is False, binary data is not loaded; the dictionary key is
         created, but its value will be an empty string. If it is true, it is
         transparently uncompressed and available as dictionary string values.
         If binary is 'compressed', the compressed value is retained, and the
         dictionary value will be a CompressedValue object. This is useful if
         the compressed value is still useful (to avoid recompression if the
-        file needs to be written back).'''
+        file needs to be written back).
 
+        Files are in RFC822 format.
+        '''
         self.data.clear()
         key = None
         value = None
@@ -185,8 +186,7 @@ class ProblemReport(UserDict.IterableUserDict):
         return False
 
     def write(self, file, only_new = False):
-        '''Write information into the given file-like object, using Debian
-        control file format.
+        '''Write information into the given file-like object.
 
         If only_new is True, only keys which have been added since the last
         load() are written (i. e. those returned by new_keys()).
@@ -199,8 +199,9 @@ class ProblemReport(UserDict.IterableUserDict):
         gzip compressed and base64-encoded (this defaults to True). If limit is
         set to a positive integer, the entire key will be removed. If
         fail_on_empty is True, reading zero bytes will cause an IOError.
-        '''
 
+        Files are written in RFC822 format.
+        '''
         # sort keys into ASCII non-ASCII/binary attachment ones, so that
         # the base64 ones appear last in the report
         asckeys = []

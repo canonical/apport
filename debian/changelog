@@ -1,7 +1,7 @@
 apport (0.149) UNRELEASED; urgency=low
 
-  * man/apport-unpack.1: Fix description of .crash file syntax (RFC822, not
-    "Debian control").
+  * problem_report.py, man/apport-unpack.1: Fix description of .crash file
+    syntax (RFC822, not "Debian control").
   * Move cron.daily, init script, and default file from debian/ to etc/, and
     install them in setup.py. These files are appropriate for upstream
     installation.
