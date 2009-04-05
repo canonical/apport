@@ -5,21 +5,20 @@ import distutils.command.install_data
 
 import subprocess, glob, os.path
 
-mo_files = []
-# HACK: make sure that the mo files are generated and up-to-date
-subprocess.call(['make', '-C', 'po', 'build-mo'])
-for filepath in glob.glob("po/mo/*/LC_MESSAGES/*.mo"):
-    lang = filepath[len("po/mo/"):]
-    targetpath = os.path.dirname(os.path.join("share/locale",lang))
-    mo_files.append((targetpath, [filepath]))
-
 class my_install_data(distutils.command.install_data.install_data):
-    '''Install files from etc/'''
+    '''Install files from etc/ and build gettext *.mo'''
 
     def run(self):
         for (root, _, files) in os.walk('etc'):
             self.data_files.append((os.path.join('/', root), 
                     [os.path.join(root, f) for f in files]))
+
+        subprocess.call(['make', '-C', 'po', 'build-mo'])
+        for filepath in glob.glob('po/mo/*/LC_MESSAGES/*.mo'):
+            lang = filepath[len('po/mo/'):]
+            targetpath = os.path.dirname(os.path.join('share/locale',lang))
+            self.data_files.append((targetpath, [filepath]))
+
         distutils.command.install_data.install_data.run(self)
 
 setup(name='apport',
@@ -38,7 +37,7 @@ setup(name='apport',
                   ('share/doc/apport/', glob.glob('doc/*.txt') + glob.glob('doc/*.pdf')),
                   ('share/apport/package-hooks/', glob.glob('package-hooks/*')),
                   ('share/apport/general-hooks/', glob.glob('general-hooks/*')),
-                  ]+mo_files,
+                  ],
       scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
           'bin/apport-unpack', 'bin/apport-chroot', 'bin/package_hook',
           'bin/kernel_crashdump', 'bin/gcc_ice_hook', 'gtk/apport-gtk',
