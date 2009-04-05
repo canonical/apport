@@ -1,7 +1,7 @@
 '''An apport.PackageInfo class implementation for python-apt and dpkg, as found
 on Debian and derivatives such as Ubuntu.
 
-Copyright (C) 2007 Canonical Ltd.
+Copyright (C) 2007, 2009 Canonical Ltd.
 Author: Martin Pitt <martin.pitt@ubuntu.com>
 
 This program is free software; you can redistribute it and/or modify it
@@ -286,6 +286,183 @@ class __AptDpkgPackageInfo(PackageInfo):
         # TODO: Ubuntu specific
         return 'linux-image-' + os.uname()[2]
 
+    def install_retracing_packages(self, report, verbosity=0,
+            unpack_only=False, no_pkg=False, extra_packages=[]):
+        '''Install packages which are required to retrace a report.
+        
+        If package installation fails (e. g. because the user does not have root
+        privileges), the list of required packages is printed out instead.
+
+        If unpack_only is True, packages are only temporarily unpacked and
+        purged again after retrace, instead of permanently and fully installed.
+        If no_pkg is True, the package manager is not used at all, but the
+        binary packages are just unpacked with low-level tools; this speeds up
+        operations in fakechroots, but makes it impossible to cleanly remove
+        the package, so only use that in apport-chroot.
+        
+        Return a tuple (list of installed packages, string with outdated packages).
+        '''
+        self._cache('bash') # ensure that cache is initialized
+        c = self._apt_cache
+
+        try:
+            if verbosity:
+                c.update(apt.progress.TextFetchProgress())
+            else:
+                c.update()
+            c.open(apt.progress.OpProgress())
+        except SystemError, e:
+            if 'Hash Sum mismatch' in str(e):
+                # temporary archive inconsistency
+                print >> sys.stderr, str(e), 'aborting'
+                sys.exit(99) # signal crash digger about transient error
+            else:
+                raise
+        except apt.cache.LockFailedException:
+            if os.geteuid() != 0:
+                print >> sys.stderr, 'WARNING: Could not update apt, you need to be root'
+            else:
+                raise
+
+        installed = []
+        uninstallable = []
+        outdated = ''
+
+        # create map of dependency package versions as specified in report
+        dependency_versions = {}
+        for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
+            if not l.strip():
+                continue
+            (pkg, version) = l.split()[:2]
+            dependency_versions[pkg] = version
+            try:
+                # this fails for packages which are still installed, but gone from
+                # the archive; i. e. /var/lib/dpkg/status still knows about them
+                if not c[pkg]._lookupRecord():
+                    raise KeyError
+                if not 'Architecture: all' in c[pkg]._records.Record:
+                    dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+            except KeyError:
+                print >> sys.stderr, 'WARNING: package %s not known to package cache' % pkg
+
+        for pkg, ver in dependency_versions.iteritems():
+            if not c.has_key(pkg):
+                print >> sys.stderr, 'WARNING: package %s not available' % pkg
+                continue
+
+            # ignore packages which are already installed in the right version
+            if (ver and c[pkg].installedVersion == ver) or \
+               (not ver and c[pkg].installedVersion):
+               continue
+
+            if ver and c[pkg].candidateVersion != ver:
+                if not pkg.endswith('-dbgsym'):
+                    outdated += '%s: installed version %s, latest version: %s\n' % (
+                        pkg, ver, c[pkg].candidateVersion)
+                print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
+                    pkg, ver, c[pkg].candidateVersion)
+                if not unpack_only:
+                    uninstallable.append (c[pkg].name)
+                    continue
+
+            c[pkg].markInstall(False)
+
+        # extra packages
+        for p in extra_packages:
+            c[p].markInstall(False)
+
+        if verbosity:
+            fetchProgress = apt.progress.TextFetchProgress()
+            installProgress = apt.progress.InstallProgress()
+        else:
+            fetchProgress = apt.progress.FetchProgress()
+            installProgress = apt.progress.DumbInstallProgress()
+
+        try:
+            if c.getChanges():
+                os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
+                if unpack_only:
+                    self.fetch_unpack(c, fetchProgress, no_pkg, verbosity)
+                else:
+                    try:
+                        c.commit(fetchProgress, installProgress)
+                    except SystemError:
+                        print >> sys.stderr, 'Error: Could not install all archives. If you use this tool on a production system, it is recommended to use the -u option. See --help for details.'
+                        sys.exit(1)
+
+                # after commit(), the Cache object does not empty the pending
+                # changes, so we need to reinitialize it to avoid applying the same
+                # changes again below
+                installed = [p.name for p in c.getChanges()]
+                c = apt.Cache()
+        except IOError, e:
+            pass # we will complain to the user later
+
+        # check list of libraries that the crashed process referenced at
+        # runtime and warn about those which are not available
+        libs = set()
+        if report.has_key('ProcMaps'):
+            for l in report['ProcMaps'].splitlines():
+                if not l.strip():
+                    continue
+                cols = l.split()
+                if 'x' in cols[1] and len(cols) == 6 and '.so' in cols[5]:
+                    lib = os.path.realpath(cols[5])
+                    libs.add(lib)
+
+        # grab as much as we can
+        for l in libs:
+            if os.path.exists('/usr/lib/debug' + l):
+                continue
+
+            pkg = self.get_file_package(l, True)
+            if pkg:
+                if not os.path.exists(l):
+                    if pkg in uninstallable:
+                        print >> sys.stderr, 'WARNING: %s cannot be installed (incompatible version)' % pkg
+                        continue
+                    if c.has_key(pkg):
+                        c[pkg].markInstall(False)
+                    else:
+                        print >> sys.stderr, 'WARNING: %s was loaded at runtime, but its package %s is not available' % (l, pkg)
+
+                if c.has_key(pkg+'-dbgsym') and pkg+'-dbgsym' not in uninstallable :
+                    c[pkg+'-dbgsym'].markInstall(False)
+                else:
+                    print >> sys.stderr, 'WARNING: %s-dbgsym is not available or is incompatible' % pkg
+            else:
+                    print >> sys.stderr, 'WARNING: %s is needed, but cannot be mapped to a package' % l
+
+        try:
+            if c.getChanges():
+                os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
+                if unpack_only:
+                    self.fetch_unpack(c, fetchProgress, no_pkg, verbosity)
+                else:
+                    c.commit(fetchProgress, installProgress)
+            installed += [p.name for p in c.getChanges()]
+        except (SystemError, IOError), e:
+            print >> sys.stderr, 'WARNING: could not install missing packages:', e
+            if os.geteuid() != 0:
+                print >> sys.stderr, 'You either need to call this program as root or install these packages manually:'
+            for p in c.getChanges():
+                print >> sys.stderr, '  %s %s' % (p.name, p.candidateVersion)
+
+        return (installed, outdated)
+
+    def remove_packages(self, packages, verbosity=0):
+        '''Remove packages.
+
+        This is called after install_retracing_packages() to clean up again
+        afterwards. packages is a list of package names.
+        '''
+        if verbosity > 0:
+            so = sys.stderr
+        else:
+            so = subprocess.PIPE
+        subprocess.call(['dpkg', '-P'] + packages, stdout=so)
+
+
     #
     # Internal helper methods
     #
@@ -414,6 +591,102 @@ class __AptDpkgPackageInfo(PackageInfo):
             return True
 
         return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
+
+    @classmethod
+    def deb_without_preinst(klass, deb):
+        '''Return .deb without a preinst script.
+
+        If given .deb file has a preinst script, generate a <name>_noscript.deb
+        file without it and return that name; otherwise, return deb.
+        
+        If the modified deb already exists, its name is returned without recreating
+        it.
+        '''
+        ndeb = '/var/cache/apt/archives/%s_noscript%s' % os.path.splitext(os.path.basename(deb))
+
+        if os.path.exists(ndeb):
+            return ndeb
+
+        # get control.tar.gz    
+        ar = subprocess.Popen(['ar', 'p', deb, 'control.tar.gz'], stdout=subprocess.PIPE)
+        control_tar = ar.communicate()[0]
+        assert ar.returncode == 0
+
+        # check if package has a preinst
+        tar = subprocess.Popen(['tar', 'tz', './preinst'], stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        tar.communicate(control_tar)
+        if tar.returncode != 0:
+            return deb
+
+        # unpack control.tar.gz and remove scripts
+        d = tempfile.mkdtemp()
+        d2 = tempfile.mkdtemp()
+        try:
+            tar = subprocess.Popen(['tar', '-C', d, '-xz'], stdin=subprocess.PIPE)
+            tar.communicate(control_tar)
+            assert tar.returncode == 0
+            for s in ('preinst', 'postinst', 'prerm', 'postrm'):
+                path = os.path.join(d, s)
+                if os.path.exists(path):
+                    os.unlink(path)
+
+            control_tar_new = os.path.join(d2, 'control.tar.gz')
+            tar = subprocess.Popen(['tar', '-C', d, '-cz', '.'],
+                stdin=subprocess.PIPE, stdout=open(control_tar_new, 'w'))
+            assert tar.wait() == 0
+
+            shutil.copy(deb, ndeb)
+            r = subprocess.Popen(['ar', 'r', ndeb, control_tar_new])
+            assert r.wait() == 0
+        finally:
+            shutil.rmtree(d)
+            shutil.rmtree(d2)
+
+        return ndeb
+
+    @classmethod
+    def fetch_unpack(klass, cache, fetchProgress, no_dpkg=False, verbosity=0):
+        '''Fetch and unpack packages.
+        
+        The packages need to be marked for installation in the given
+        apt.Cache() object.
+        
+        fetchProgress must be a valid apt.progress.FetchProgress object.
+        '''
+        # fetch
+        fetcher = apt.apt_pkg.GetAcquire(fetchProgress)
+        pm = apt.apt_pkg.GetPackageManager(cache._depcache)
+        try:
+            res = cache._fetchArchives(fetcher, pm)
+        except IOError, e:
+            print >> sys.stderr, 'ERROR: could not fetch all archives:', e
+
+        # extract
+        if verbosity:
+            so = sys.stderr
+        else:
+            so = subprocess.PIPE
+        if no_dpkg:
+            for i in fetcher.Items:
+                if verbosity:
+                    print 'Extracting', i.DestFile
+                if subprocess.call(['dpkg', '-x', i.DestFile, '/'], stdout=so,
+                    stderr=subprocess.STDOUT) != 0:
+                    print >> sys.stderr, 'WARNING: %s failed to extract' % i.DestFile
+        else:
+            res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
+                [klass.deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
+            if res != 0:
+                raise IOError, 'dpkg failed to unpack archives'
+
+        # remove other maintainer scripts
+        for c in cache.getChanges():
+            for script in ('postinst', 'prerm', 'postrm'):
+                try:
+                    os.unlink('/var/lib/dpkg/info/%s.%s' % (c.name, script))
+                except OSError:
+                    pass
 
 impl = __AptDpkgPackageInfo()
 
