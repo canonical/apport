@@ -1,4 +1,4 @@
-apport (0.149) UNRELEASED; urgency=low
+apport (0.149) jaunty; urgency=low
 
   Do some internal cleanup of distribution specific stuff:
 
@@ -32,7 +32,7 @@ apport (0.149) UNRELEASED; urgency=low
   * debian/local/apport-chroot: If multiple distro IDs point to the same
     chroot, do not upgrade them more than once with "upgrade all".
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 04 Apr 2009 10:38:53 -0700
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 06 Apr 2009 16:06:33 -0700
 
 apport (0.148) jaunty; urgency=low
 
