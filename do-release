@@ -1,0 +1,32 @@
+#!/bin/sh -e
+
+# This script does all the steps necessary for doing a new upstream release. It
+# should solely be used by upstream developers, distributors do not need to
+# worry about it.
+
+[ -z "`bzr status`" ] || {
+    echo "Uncommitted changes, aborting" >&2
+    exit 1
+}
+
+version="$1"
+[ -n "$version" ] || {
+    echo "Usage: $0 <version>" >&2
+    exit 1
+}
+
+sed -i -r "s/(^[[:space:]]*version[[:space:]]*=[[:space:]]*').*\$/\\1${version}',/" setup.py
+bzr commit -m "release $version"
+bzr tag "$version"
+
+bzr log -v --log-format 'gnu' > ChangeLog
+
+# temporarily add ChangeLog for export
+bzr add ChangeLog
+bzr commit -m 'temporarily add changelog'
+bzr export ../apport-${version}.tar.gz
+bzr uncommit --force
+bzr revert --no-backup
+rm ChangeLog
+
+gpg --armor --sign --detach-sig ../apport-$version.tar.gz
