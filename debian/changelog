@@ -1,3 +1,12 @@
+apport (1.0-0ubuntu1) UNRELEASED; urgency=low
+
+  * Apport has a proper upstream trunk now (lp:apport) and made an 1.0
+    upstream release. Use this as an orig.tar.gz. This does not change any
+    code for Jaunty, just removes the Fedora/OpenSUSE specific .spec and init
+    scripts.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 06 Apr 2009 16:55:59 -0700
+
 apport (0.149) jaunty; urgency=low
 
   Do some internal cleanup of distribution specific stuff:
