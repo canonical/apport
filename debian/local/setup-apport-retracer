@@ -15,7 +15,7 @@ test -e $D/bin/apport-chroot || {
 }
 cp -r $D apport
 cp apport/backends/packaging-apt-dpkg.py apport/apport/packaging_impl.py
-ln -s ../apport/bin/apport-chroot bin/apport-chroot
+ln -s ../apport/debian/local/apport-chroot bin/apport-chroot
 ln -s ../apport/bin/crash-digger bin/crash-digger
 
 # debootstrap
