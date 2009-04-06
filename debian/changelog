@@ -22,6 +22,8 @@ apport (0.149) UNRELEASED; urgency=low
     paths for above changes.
   * apport/hookutils.py, files_in_package(): Replace dpkg-query call with
     packaging.get_files(), to avoid Debianism.
+  * man/apport-retrace.1: Drop reference to "apt", simply talk about package
+    installation.
   * debian/local/apport-chroot: If multiple distro IDs point to the same
     chroot, do not upgrade them more than once with "upgrade all".
 
