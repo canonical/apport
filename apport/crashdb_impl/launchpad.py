@@ -475,6 +475,7 @@ However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem is \
 in a dependent package.' % master,
             subject='Possible regression detected')
+        bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
         bug.tags = bug.tags + ['regression-retracer'] # LP#254901 workaround
         bug.lp_save()
 
@@ -818,6 +819,9 @@ NameError: global name 'weird' is not defined'''
             self.crashdb.close_duplicate(self.known_test_id, None)
             self.assertEqual(self.crashdb.duplicate_of(self.known_test_id), None)
 
+            self.crashdb.mark_regression(segv_report, self.known_test_id)
+            self._verify_marked_regression(segv_report)
+
         def test_marking_segv(self):
             '''processing status markings for signal crashes'''
 
@@ -1036,6 +1040,12 @@ NameError: global name 'weird' is not defined'''
             tasks = list(bug.bug_tasks)
             assert len(tasks) == 1
             tasks[0].transitionToStatus(status='New')
+
+        def _verify_marked_regression(self, id):
+            '''Verify that report ID is marked as regression.'''
+
+            bug = self.crashdb.launchpad.bugs[id]
+            self.assert_('regression-retracer' in bug.tags)
 
         def test_project(self):
             '''reporting crashes against a project instead of a distro'''
