@@ -18,8 +18,8 @@ apport (0.149) UNRELEASED; urgency=low
     bin/apport-chroot accordingly.
   * Move bin/apport-chroot and man/apport-chroot.1 to debian/local, since they
     are totally Debian/Ubuntu specific.
-  * debian/local/setup-apport-retracer: Update apport-chroot path for above
-    change.
+  * debian/local/setup-apport-retracer: Update apport-chroot and crashdb.conf
+    paths for above changes.
   * apport/hookutils.py, files_in_package(): Replace dpkg-query call with
     packaging.get_files(), to avoid Debianism.
 

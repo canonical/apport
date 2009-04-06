@@ -84,7 +84,7 @@ PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
 PYTHONPATH=`pwd`/apport:\$PYTHONPATH
 LD_LIBRARY_PATH=`pwd`/apport:$LD_LIBRARY_PATH
 APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
-APPORT_CRASHDB_CONF=`pwd`/apport/crashdb.conf
+APPORT_CRASHDB_CONF=`pwd`/apport/etc/apport/crashdb.conf
 
 export PATH PYTHONPATH LD_LIBRARY_PATH APPORT_LIBFAKECHROOT APPORT_CRASHDB_CONF
 EOF
