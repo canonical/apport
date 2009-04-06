@@ -200,7 +200,7 @@ def command_upgrade(opts, args):
         sys.exit(1)
 
     if args[0] == 'all':
-        for c in opts.chroot_map.itervalues():
+        for c in set(opts.chroot_map.itervalues()):
             print 'Upgrading %s...' % c
             upgrade_chroot(Chroot(c), opts.verbose, opts.extra_packages)
     elif os.path.exists(args[0]):
