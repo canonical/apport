@@ -15,7 +15,7 @@ test -e $D/bin/apport-chroot || {
 }
 cp -r $D apport
 cp apport/backends/packaging-apt-dpkg.py apport/apport/packaging_impl.py
-ln -s ../apport/bin/apport-chroot bin/apport-chroot
+ln -s ../apport/debian/local/apport-chroot bin/apport-chroot
 ln -s ../apport/bin/crash-digger bin/crash-digger
 
 # debootstrap
@@ -84,7 +84,7 @@ PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
 PYTHONPATH=`pwd`/apport:\$PYTHONPATH
 LD_LIBRARY_PATH=`pwd`/apport:$LD_LIBRARY_PATH
 APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
-APPORT_CRASHDB_CONF=`pwd`/apport/crashdb.conf
+APPORT_CRASHDB_CONF=`pwd`/apport/etc/apport/crashdb.conf
 
 export PATH PYTHONPATH LD_LIBRARY_PATH APPORT_LIBFAKECHROOT APPORT_CRASHDB_CONF
 EOF
