@@ -1,5 +1,10 @@
 #!/bin/sh -e
 
+# filter out -p and -P for backwards compatibility
+if [ "$1" = "-p" ] || [ "$1" = "-P" ]; then
+    shift
+fi
+
 if [ "$#" != 1 ] || [ "$1" = "--help" ]; then
     echo "Usage: $0 <pid>|<packagename>|<program path>|<.crash file>" >&2
     exit 1
