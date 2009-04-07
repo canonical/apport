@@ -396,7 +396,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     # fixed in distro inself (without source package)
                     return ''
                 
-            assert len(fixed_tasks) <= 1, 'There is more than one task fixed in %s' % self.distro
+            if len(fixed_tasks) > 1: 
+                print >> sys.stderr, 'There is more than one task fixed in %s %s, cannot determine fixed version' % (self.distro, id)
+                return ''
 
             if fixed_tasks:
                 task = fixed_tasks.pop()
