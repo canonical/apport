@@ -1,4 +1,4 @@
-apport (0.150~launchpadlib1) UNRELEASED; urgency=low
+apport (1.0+launchpadlib1-0ubuntu1) UNRELEASED; urgency=low
 
   * apport/crashdb_impl/launchpad.py: Port to python-launchpadlib. Thanks to
     Markus Korn for his initial work on this!
@@ -13,6 +13,18 @@ apport (0.150~launchpadlib1) UNRELEASED; urgency=low
       2.6.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 02 Apr 2009 10:44:31 +0200
+
+apport (1.0-0ubuntu1) jaunty; urgency=low
+
+  * Apport has a proper upstream trunk now (lp:apport) and made an 1.0
+    upstream release. Use this as an orig.tar.gz. This does not change any
+    code for Jaunty, just removes the Fedora/OpenSUSE specific .spec and init
+    scripts.
+  * Add bzr-builddeb configuration (merge mode).
+  * Add debian/watch for upstream releases on Launchpad.
+  * Drop debian/python-apport.postinst, obsolete for a long time.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 06 Apr 2009 17:37:48 -0700
 
 apport (0.149) jaunty; urgency=low
 
