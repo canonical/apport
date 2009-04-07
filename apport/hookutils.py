@@ -60,33 +60,6 @@ def attach_file(report, path, key=None):
 
     report[key] = read_file(path)
 
-def attach_conffiles(report, package, conffiles=None):
-    '''Attach information about any modified or deleted conffiles'''
-
-    output = command_output(['dpkg-query','-W','--showformat=${Conffiles}',
-                             package])
-    for line in output.split('\n'):
-        path, default_md5sum = line.strip().split()
-
-        if conffiles and path not in conffiles: continue
-
-        key = 'modified.conffile.' + path_to_key(path)
-
-        if os.path.exists(path):
-            contents = open(path).read()
-            m = hashlib.md5()
-            m.update(contents)
-            calculated_md5sum = m.hexdigest()
-
-            if calculated_md5sum != default_md5sum:
-                report[key] = contents
-                statinfo = os.stat(path)
-                mtime = datetime.datetime.fromtimestamp(statinfo.st_mtime)
-                mtime_key = 'mtime.conffile.' + path_to_key(path)
-                report[mtime_key] = mtime.isoformat()
-        else:
-            report[key] = '[deleted]'
-
 def attach_dmesg(report):
     '''Attach information from the kernel ring buffer (dmesg).'''
 
