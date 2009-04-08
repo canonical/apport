@@ -159,6 +159,13 @@ def attach_alsa(report):
         key = 'Amixer.%s.values' % card
         report[key] = command_output(['amixer', '-c', card])
 
+    report['AudioDevicesInUse'] = command_output(
+        ['fuser','-v'] + glob.glob('/dev/dsp*') 
+            + glob.glob('/dev/snd/*')
+            + glob.glob('/dev/seq*') )
+
+    attach_dmesg(report)
+
     # This seems redundant with the amixer info, do we need it?
     #report['AlsactlStore'] = command-output(['alsactl', '-f', '-', 'store'])
 
