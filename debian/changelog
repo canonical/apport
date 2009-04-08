@@ -1,3 +1,13 @@
+apport (1.0-0ubuntu3) jaunty; urgency=low
+
+  * apport/hookutils.py: Factor out package_versions() to generate a simple
+    text listing of relevant package versions and use it in attach_printing()
+  * apport/hookutils.py: Add new function attach_relevant_packages() to attach
+    version information (and perhaps eventually run hooks?) for related
+    packages
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Wed, 08 Apr 2009 18:49:27 +0100
+
 apport (1.0-0ubuntu2) jaunty; urgency=low
 
   * backends/packaging-apt-dpkg.py: Add missing shutil import.
