@@ -352,17 +352,27 @@ def attach_related_packages(report, packages):
     report['RelatedPackageVersions'] = package_versions(*packages)
 
 def package_versions(*packages):
+    '''Return a text listing of package names and versions for the specified
+    packages.  Arguments may be package names or glob patterns, e.g. "foo*"'''
+
     versions = ''
-    for package in packages:
-        try:
-            version = packaging.get_version(package)
-        except ValueError:
-            version = 'N/A'
-        if version is None:
-            version = 'N/A'
-        versions += '%s %s\n' % (package, version)
+    for package_pattern in packages:
+        for package in package_glob(package_pattern):
+            try:
+                version = packaging.get_version(package)
+            except ValueError:
+                version = 'N/A'
+            if version is None:
+                version = 'N/A'
+            versions += '%s %s\n' % (package, version)
 
     return versions
+
+def package_glob(name):
+    '''Return a list of known packages matching name'''
+
+    all_packages = command_output(['apt-cache', 'pkgnames']).split('\n')
+    return glob.fnmatch.filter(all_packages, name)
 
 def _parse_gconf_schema(schema_file):
     ret = {}

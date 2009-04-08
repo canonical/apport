@@ -5,6 +5,7 @@ apport (1.0-0ubuntu3) jaunty; urgency=low
   * apport/hookutils.py: Add new function attach_relevant_packages() to attach
     version information (and perhaps eventually run hooks?) for related
     packages
+  * apport/hookutils.py: Add glob matching to package_versions()
 
  -- Matt Zimmerman <mdz@ubuntu.com>  Wed, 08 Apr 2009 18:49:27 +0100
 
