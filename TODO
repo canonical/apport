@@ -28,3 +28,6 @@ retrace failures:
 
 packaging:
  - ensure that uname -r >= 2.6.24 in init script
+
+hooks:
+ - add hooks which run during program crash, to collect more runtime data
