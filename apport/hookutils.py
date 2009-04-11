@@ -307,7 +307,8 @@ def attach_printing(report):
         nicknames = command_output(['fgrep', '-H', '*NickName'] + ppds)
         report['PpdFiles'] = re.sub('/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', '\g<1>: \g<2>', nicknames)
 
-    packages = ['foo2zjs', 'foomatic-db', 'foomatic-db-engine',
+    report['PrintingPackages'] = package_versions(
+        'foo2zjs', 'foomatic-db', 'foomatic-db-engine',
         'foomatic-db-gutenprint', 'foomatic-db-hpijs', 'foomatic-filters',
         'foomatic-gui', 'hpijs', 'hplip', 'm2300w', 'min12xxw', 'c2050',
         'hpoj', 'pxljr', 'pnm2ppa', 'splix', 'hp-ppd', 'hpijs-ppds',
@@ -315,8 +316,15 @@ def attach_printing(report):
         'openprinting-ppds-extra', 'ghostscript', 'cups',
         'cups-driver-gutenprint', 'foomatic-db-gutenprint', 'ijsgutenprint',
         'cupsys-driver-gutenprint', 'gimp-gutenprint', 'gutenprint-doc',
-        'gutenprint-locales', 'system-config-printer-common', 'kdeprint'] 
+        'gutenprint-locales', 'system-config-printer-common', 'kdeprint')
 
+def attach_related_packages(report, packages):
+    '''Attach version information for related packages
+
+       In the future, this might also run their hooks.'''
+    report['RelatedPackageVersions'] = package_versions(*packages)
+
+def package_versions(*packages):
     versions = ''
     for package in packages:
         try:
@@ -326,7 +334,8 @@ def attach_printing(report):
         if version is None:
             version = 'N/A'
         versions += '%s %s\n' % (package, version)
-    report['PrintingPackages'] = versions
+
+    return versions
 
 def _parse_gconf_schema(schema_file):
     ret = {}
