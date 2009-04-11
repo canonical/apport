@@ -121,40 +121,6 @@ def _dom_remove_space(node):
         else:
             _dom_remove_space(c)
 
-def get_module_license(module):
-    '''Return the license for a given kernel module.'''
-
-    try:
-        modinfo = subprocess.Popen(['/sbin/modinfo', module], stdout=subprocess.PIPE)
-        out = modinfo.communicate()[0]
-        if modinfo.returncode != 0:
-            return None
-    except OSError:
-        return None
-    for l in out.splitlines():
-        fields = l.split(':', 1)
-        if len(fields) < 2:
-            continue
-        if fields[0] == 'license':
-            return fields[1].strip()
-
-    return None
-
-def nonfree_modules(module_list = '/proc/modules'):
-    '''Check loaded modules and return a list of those which are not free.'''
-    try:
-        mods = [l.split()[0] for l in open(module_list)]
-    except IOError:
-        return []
-
-    nonfree = []
-    for m in mods:
-        l = get_module_license(m)
-        if l and not ('GPL' in l or 'BSD' in l or 'MPL' in l or 'MIT' in l):
-            nonfree.append(m)
-
-    return nonfree
-
 #
 # Report class
 #
@@ -246,9 +212,6 @@ class Report(ProblemReport):
         u = os.uname()
         self['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
         self['Architecture'] = packaging.get_system_architecture()
-        nm = nonfree_modules()
-        if nm:
-            self['NonfreeKernelModules'] = ' '.join(nonfree_modules())
 
     def add_user_info(self):
         '''Add information about the user.
@@ -2047,45 +2010,6 @@ ZeroDivisionError: integer division or modulo by zero'''
         self.assertEqual(pr.has_useful_stacktrace(), True)
         self.assertEqual(pr.crash_signature(), '/bin/foo:11:h:main')
         self.assertEqual(pr.standard_title(), 'foo crashed with SIGSEGV in h()')
-
-    def test_module_license_evaluation(self):
-        '''module licenses can be validated correctly.'''
-
-        def _build_ko(license):
-            asm = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
-                                              suffix='.S')
-            asm.write('.section .modinfo\n.string "license=%s"\n' % (license))
-            asm.flush()
-            ko = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
-                                             suffix='.ko')
-            subprocess.call(['/usr/bin/as',asm.name,'-o',ko.name])
-            return ko
-        
-        good_ko = _build_ko('GPL')
-        bad_ko  = _build_ko('BAD')
-
-        # test:
-        #  - loaded real module
-        #  - unfindable module
-        #  - fake GPL module
-        #  - fake BAD module
-
-        # direct license check
-        self.assert_('GPL' in get_module_license('isofs'))
-        self.assert_(get_module_license('does-not-exist') == None)
-        self.assert_('GPL' in get_module_license(good_ko.name))
-        self.assert_('BAD' in get_module_license(bad_ko.name))
-
-        # check via nonfree_modules logic
-        f = tempfile.NamedTemporaryFile()
-        f.write('isofs\ndoes-not-exist\n%s\n%s\n' %
-                (good_ko.name,bad_ko.name))
-        f.flush()
-        nonfree = nonfree_modules(f.name)
-        self.failIf('isofs' in nonfree)
-        self.failIf('does-not-exist' in nonfree)
-        self.failIf(good_ko.name in nonfree)
-        self.assert_(bad_ko.name in nonfree)
 
 if __name__ == '__main__':
     unittest.main()
