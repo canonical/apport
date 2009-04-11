@@ -11,6 +11,12 @@ apport (1.0+launchpadlib1-0ubuntu1) UNRELEASED; urgency=low
       "nomove") based on the installed pycentral version.
     - debian/rules: Only supply --install-layout=deb when Python version is
       2.6.
+  * Merge from trunk:
+    - Lots of apport.hookutils improvements, thanks to Matt Zimmerman!
+    - Move determination of nonfree kernel modules from core code to generic
+      hook.
+    - Add new field Report.pid which gets set on add_proc_info() and can be
+      used by hooks.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 02 Apr 2009 10:44:31 +0200
 

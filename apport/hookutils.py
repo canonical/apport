@@ -373,12 +373,13 @@ def attach_related_packages(report, packages):
     report['RelatedPackageVersions'] = package_versions(*packages)
 
 def package_versions(*packages):
-    '''Return a text listing of package names and versions for the specified
-    packages.  Arguments may be package names or glob patterns, e.g. "foo*"'''
-
+    '''Return a text listing of package names and versions.
+    
+    Arguments may be package names or globs, e. g. "foo*"
+    '''
     versions = ''
     for package_pattern in packages:
-        for package in package_glob(package_pattern):
+        for package in packaging.package_name_glob(package_pattern):
             try:
                 version = packaging.get_version(package)
             except ValueError:
@@ -389,11 +390,40 @@ def package_versions(*packages):
 
     return versions
 
-def package_glob(name):
-    '''Return a list of known packages matching name'''
+def _get_module_license(module):
+    '''Return the license for a given kernel module.'''
 
-    all_packages = command_output(['apt-cache', 'pkgnames']).split('\n')
-    return glob.fnmatch.filter(all_packages, name)
+    try:
+        modinfo = subprocess.Popen(['/sbin/modinfo', module],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out = modinfo.communicate()[0]
+        if modinfo.returncode != 0:
+            return None
+    except OSError:
+        return None
+    for l in out.splitlines():
+        fields = l.split(':', 1)
+        if len(fields) < 2:
+            continue
+        if fields[0] == 'license':
+            return fields[1].strip()
+
+    return None
+
+def nonfree_kernel_modules(module_list = '/proc/modules'):
+    '''Check loaded modules and return a list of those which are not free.'''
+    try:
+        mods = [l.split()[0] for l in open(module_list)]
+    except IOError:
+        return []
+
+    nonfree = []
+    for m in mods:
+        l = _get_module_license(m)
+        if l and not ('GPL' in l or 'BSD' in l or 'MPL' in l or 'MIT' in l):
+            nonfree.append(m)
+
+    return nonfree
 
 def _parse_gconf_schema(schema_file):
     ret = {}
@@ -414,3 +444,53 @@ def _parse_gconf_schema(schema_file):
                     ret[key] = default
 
     return ret
+
+#
+# Unit test
+#
+
+if __name__ == '__main__':
+
+    import unittest, tempfile
+
+    class _ApportHookutilsTest(unittest.TestCase):
+        def test_module_license_evaluation(self):
+            '''module licenses can be validated correctly.'''
+
+            def _build_ko(license):
+                asm = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
+                                                  suffix='.S')
+                asm.write('.section .modinfo\n.string "license=%s"\n' % (license))
+                asm.flush()
+                ko = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
+                                                 suffix='.ko')
+                subprocess.call(['/usr/bin/as',asm.name,'-o',ko.name])
+                return ko
+            
+            good_ko = _build_ko('GPL')
+            bad_ko  = _build_ko('BAD')
+
+            # test:
+            #  - loaded real module
+            #  - unfindable module
+            #  - fake GPL module
+            #  - fake BAD module
+
+            # direct license check
+            self.assert_('GPL' in _get_module_license('isofs'))
+            self.assertEqual(_get_module_license('does-not-exist'), None)
+            self.assert_('GPL' in _get_module_license(good_ko.name))
+            self.assert_('BAD' in _get_module_license(bad_ko.name))
+
+            # check via nonfree_kernel_modules logic
+            f = tempfile.NamedTemporaryFile()
+            f.write('isofs\ndoes-not-exist\n%s\n%s\n' %
+                    (good_ko.name,bad_ko.name))
+            f.flush()
+            nonfree = nonfree_kernel_modules(f.name)
+            self.failIf('isofs' in nonfree)
+            self.failIf('does-not-exist' in nonfree)
+            self.failIf(good_ko.name in nonfree)
+            self.assert_(bad_ko.name in nonfree)
+
+    unittest.main()
