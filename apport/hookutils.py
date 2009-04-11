@@ -325,15 +325,20 @@ def attach_related_packages(report, packages):
     report['RelatedPackageVersions'] = package_versions(*packages)
 
 def package_versions(*packages):
+    '''Return a text listing of package names and versions.
+    
+    Arguments may be package names or globs, e. g. "foo*"
+    '''
     versions = ''
-    for package in packages:
-        try:
-            version = packaging.get_version(package)
-        except ValueError:
-            version = 'N/A'
-        if version is None:
-            version = 'N/A'
-        versions += '%s %s\n' % (package, version)
+    for package_pattern in packages:
+        for package in packaging.package_name_glob(package_pattern):
+            try:
+                version = packaging.get_version(package)
+            except ValueError:
+                version = 'N/A'
+            if version is None:
+                version = 'N/A'
+            versions += '%s %s\n' % (package, version)
 
     return versions
 
