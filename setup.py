@@ -2,6 +2,8 @@
 
 from distutils.core import setup
 import distutils.command.install_data
+import distutils.command.clean
+from distutils.dir_util import remove_tree
 
 import subprocess, glob, os.path
 
@@ -20,6 +22,15 @@ class my_install_data(distutils.command.install_data.install_data):
             self.data_files.append((targetpath, [filepath]))
 
         distutils.command.install_data.install_data.run(self)
+
+class my_clean(distutils.command.clean.clean):
+    def run(self):
+        distutils.command.clean.clean.run(self)
+
+        # clean po/mo
+        modir = os.path.join('po', 'mo')
+        if os.path.exists(modir):
+            remove_tree(modir, self.dry_run)
 
 setup(name='apport',
       author='Martin Pitt',
@@ -46,5 +57,8 @@ setup(name='apport',
           'bin/kernel_oops', 'bin/apportcheckresume'],
       packages=['apport', 'apport.crashdb_impl'],
 
-      cmdclass = { 'install_data': my_install_data },
+      cmdclass = { 
+          'install_data': my_install_data,
+          'clean': my_clean,
+      },
 )
