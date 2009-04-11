@@ -134,11 +134,14 @@ class Report(ProblemReport):
     def __init__(self, type='Crash', date=None):
         '''Initialize a fresh problem report.
 
-           date is the desired date/time string; if None (default), the current
-           local time is used.
-           '''
+        date is the desired date/time string; if None (default), the current
+        local time is used.
 
+        If the report is attached to a process ID, this should be set in
+        self.pid, so that e. g. hooks can use it to collect additional data.
+        '''
         ProblemReport.__init__(self, type, date)
+        self.pid = None
 
     def _pkg_modified_suffix(self, package):
         '''Return a string suitable for appending to Package:/Dependencies:
@@ -282,7 +285,8 @@ class Report(ProblemReport):
     def add_proc_info(self, pid=None, extraenv=[]):
         '''Add /proc/pid information.
 
-        If pid is not given, it defaults to the process' current pid.
+        If neither pid nor self.pid are given, it defaults to the process'
+        current pid and sets self.pid.
 
         This adds the following fields:
         - ExecutablePath: /proc/pid/exe contents; if the crashed process is
@@ -295,10 +299,12 @@ class Report(ProblemReport):
         - ProcCmdline: /proc/pid/cmdline contents
         - ProcStatus: /proc/pid/status contents
         - ProcMaps: /proc/pid/maps contents
-        - ProcAttrCurrent: /proc/pid/attr/current contents'''
-
+        - ProcAttrCurrent: /proc/pid/attr/current contents
+        '''
         if not pid:
-            pid = os.getpid()
+            pid = self.pid or os.getpid()
+        if not self.pid:
+            self.pid = int(pid)
         pid = str(pid)
 
         try:
@@ -986,7 +992,9 @@ class _ApportReportTest(unittest.TestCase):
 
         # check without additional safe environment variables
         pr = Report()
+        self.assertEqual(pr.pid, None)
         pr.add_proc_info()
+        self.assertEqual(pr.pid, os.getpid())
         self.assert_(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
             'ProcMaps']).issubset(set(pr.keys())), 'report has required fields')
         self.assert_('LANG='+os.environ['LANG'] in pr['ProcEnviron'])
@@ -1003,6 +1011,7 @@ class _ApportReportTest(unittest.TestCase):
         assert os.getuid() != 0, 'please do not run this test as root for this check.'
         pr = Report()
         self.assertRaises(OSError, pr.add_proc_info, 1) # EPERM for init process
+        self.assertEqual(pr.pid, 1)
         self.assert_('init' in pr['ProcStatus'], pr['ProcStatus'])
         self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
         self.assert_(not pr.has_key('InterpreterPath'))
@@ -1017,6 +1026,7 @@ class _ApportReportTest(unittest.TestCase):
             time.sleep(0.1)
         pr = Report()
         pr.add_proc_info(pid=p.pid)
+        self.assertEqual(pr.pid, p.pid)
         p.communicate('\n')
         self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
         self.assertEqual(pr['ExecutablePath'], '/bin/cat')
@@ -1033,7 +1043,8 @@ class _ApportReportTest(unittest.TestCase):
         while not open('/proc/%i/cmdline' % p.pid).read():
             time.sleep(0.1)
         pr = Report()
-        pr.add_proc_info(pid=p.pid)
+        pr.pid = p.pid
+        pr.add_proc_info()
         p.communicate('exit\n')
         self.failIf(pr.has_key('InterpreterPath'), pr.get('InterpreterPath'))
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('/bin/sh'))
