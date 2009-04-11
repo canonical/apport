@@ -1,11 +1,6 @@
 apport-retrace:
  - add heuristics for more crash types (SEGV on read/write/exec & mem region)
 
-python-apport:
- - add field for nonstandard apt sources.list[.d/] lines
- - drop ProblemType: field, replace with tags; needs new anchor for
-   start of apport data
-
 add firefox apport hook to suppress crash reports when restart is
 necessary, and to not file crashes with flash installed
 
@@ -18,13 +13,6 @@ dup detection:
 
 GUI:
  - point out bug privacy and to leave it private by default
-
-retracers:
- - cache Contents.gz
-
-retrace failures:
- - Bug #124360: http://launchpadlibrarian.net/8320761/StacktraceSource.txt: dd.c not found
- - does not find files with complete path
 
 packaging:
  - ensure that uname -r >= 2.6.24 in init script
