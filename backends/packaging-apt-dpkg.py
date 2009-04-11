@@ -38,32 +38,39 @@ class __AptDpkgPackageInfo(PackageInfo):
         except AttributeError:
             pass
 
-    def _cache(self, package):
-        '''Return apt.Cache()[package] (initialized lazily).
+    def _cache(self):
+        '''Return apt.Cache() (initialized lazily).
         
-        Throw a ValueError if the package does not exist.'''
-
+        Throw a ValueError if the package does not exist.
+        '''
         if not self._apt_cache:
             self._apt_cache = apt.Cache()
+        return self._apt_cache
+
+    def _apt_pkg(self, package):
+        '''Return apt.Cache()[package] (initialized lazily).
+        
+        Throw a ValueError if the package does not exist.
+        '''
         try:
-            return self._apt_cache[package]
+            return self._cache()[package]
         except KeyError:
             raise ValueError, 'package does not exist'
 
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._cache(package).installedVersion
+        return self._apt_pkg(package).installedVersion
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
 
-        return self._cache(package).candidateVersion
+        return self._apt_pkg(package).candidateVersion
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
-        cur_ver = self._cache(package)._pkg.CurrentVer
+        cur_ver = self._apt_pkg(package)._pkg.CurrentVer
         if not cur_ver:
             # happens with virtual packages
             return []
@@ -73,7 +80,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-        return self._cache(package).sourcePackageName
+        return self._apt_pkg(package).sourcePackageName
 
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
@@ -84,10 +91,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         this_os = lsb_release.communicate()[0].strip()
         assert lsb_release.returncode == 0
 
-        if self._cache(package).installedVersion is None:
+        if self._apt_pkg(package).installedVersion is None:
             return False # LP#252734
 
-        origins = self._cache(package).candidateOrigin
+        origins = self._apt_pkg(package).candidateOrigin
         if origins: # might be None
             for o in origins:
                 # note: checking site for ppa is a hack until LP #140412 gets fixed
@@ -101,7 +108,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
-        return self._cache(package).architecture or 'unknown'
+        return self._apt_pkg(package).architecture or 'unknown'
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -302,8 +309,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         
         Return a tuple (list of installed packages, string with outdated packages).
         '''
-        self._cache('bash') # ensure that cache is initialized
-        c = self._apt_cache
+        c = self._cache
 
         try:
             if verbosity:
