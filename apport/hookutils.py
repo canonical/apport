@@ -17,17 +17,19 @@ import os
 import datetime
 import glob
 import re
+import string
 
 import xml.dom, xml.dom.minidom
 
 from packaging_impl import impl as packaging
 
+_path_key_trans = string.maketrans('#/-_+','.....')
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
         
     This will meet apport's restrictions on the characters used in keys.
     '''
-    return path.replace('/', '.')
+    return path.translate(_path_key_trans)
 
 def attach_file_if_exists(report, path, key=None):
     '''Attach file contents if file exists.'''
@@ -151,13 +153,32 @@ def attach_alsa(report):
     for line in open('/proc/asound/cards'):
         if ']:' in line:
             fields = line.lstrip().split()
-            cards.append(fields[0])
+            cards.append(int(fields[0]))
 
     for card in cards:
-        key = 'Amixer.%s.info' % card
-        report[key] = command_output(['amixer', '-c', card, 'info'])
-        key = 'Amixer.%s.values' % card
-        report[key] = command_output(['amixer', '-c', card])
+        key = 'Card%d.Amixer.info' % card
+        report[key] = command_output(['amixer', '-c', str(card), 'info'])
+        key = 'Card%d.Amixer.values' % card
+        report[key] = command_output(['amixer', '-c', str(card)])
+
+        for codecpath in glob.glob('/proc/asound/card%d/codec*' % card):
+            if os.path.isfile(codecpath):
+                codec = os.path.basename(codecpath)
+                key = 'Card%d.Codecs.%s' % (card, path_to_key(codec))
+                attach_file(report, codecpath, key=key)
+            elif os.path.isdir(codecpath):
+                codec = os.path.basename(codecpath)
+                for name in os.listdir(codecpath):
+                    path = os.path.join(codecpath, name)
+                    key = 'Card%d.Codecs.%s.%s' % (card, path_to_key(codec), path_to_key(name))
+                    attach_file(report, path, key)
+
+    report['AudioDevicesInUse'] = command_output(
+        ['fuser','-v'] + glob.glob('/dev/dsp*') 
+            + glob.glob('/dev/snd/*')
+            + glob.glob('/dev/seq*') )
+
+    attach_dmesg(report)
 
     # This seems redundant with the amixer info, do we need it?
     #report['AlsactlStore'] = command-output(['alsactl', '-f', '-', 'store'])
@@ -334,7 +355,8 @@ def attach_printing(report):
         nicknames = command_output(['fgrep', '-H', '*NickName'] + ppds)
         report['PpdFiles'] = re.sub('/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', '\g<1>: \g<2>', nicknames)
 
-    packages = ['foo2zjs', 'foomatic-db', 'foomatic-db-engine',
+    report['PrintingPackages'] = package_versions(
+        'foo2zjs', 'foomatic-db', 'foomatic-db-engine',
         'foomatic-db-gutenprint', 'foomatic-db-hpijs', 'foomatic-filters',
         'foomatic-gui', 'hpijs', 'hplip', 'm2300w', 'min12xxw', 'c2050',
         'hpoj', 'pxljr', 'pnm2ppa', 'splix', 'hp-ppd', 'hpijs-ppds',
@@ -342,18 +364,36 @@ def attach_printing(report):
         'openprinting-ppds-extra', 'ghostscript', 'cups',
         'cups-driver-gutenprint', 'foomatic-db-gutenprint', 'ijsgutenprint',
         'cupsys-driver-gutenprint', 'gimp-gutenprint', 'gutenprint-doc',
-        'gutenprint-locales', 'system-config-printer-common', 'kdeprint'] 
+        'gutenprint-locales', 'system-config-printer-common', 'kdeprint')
+
+def attach_related_packages(report, packages):
+    '''Attach version information for related packages
+
+       In the future, this might also run their hooks.'''
+    report['RelatedPackageVersions'] = package_versions(*packages)
+
+def package_versions(*packages):
+    '''Return a text listing of package names and versions for the specified
+    packages.  Arguments may be package names or glob patterns, e.g. "foo*"'''
 
     versions = ''
-    for package in packages:
-        try:
-            version = packaging.get_version(package)
-        except ValueError:
-            version = 'N/A'
-        if version is None:
-            version = 'N/A'
-        versions += '%s %s\n' % (package, version)
-    report['PrintingPackages'] = versions
+    for package_pattern in packages:
+        for package in package_glob(package_pattern):
+            try:
+                version = packaging.get_version(package)
+            except ValueError:
+                version = 'N/A'
+            if version is None:
+                version = 'N/A'
+            versions += '%s %s\n' % (package, version)
+
+    return versions
+
+def package_glob(name):
+    '''Return a list of known packages matching name'''
+
+    all_packages = command_output(['apt-cache', 'pkgnames']).split('\n')
+    return glob.fnmatch.filter(all_packages, name)
 
 def _parse_gconf_schema(schema_file):
     ret = {}

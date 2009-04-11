@@ -14,13 +14,26 @@ apport (1.0+launchpadlib1-0ubuntu1) UNRELEASED; urgency=low
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 02 Apr 2009 10:44:31 +0200
 
-apport (1.0-0ubuntu2) UNRELEASED; urgency=low
+apport (1.0-0ubuntu3) jaunty; urgency=low
+
+  * apport/hookutils.py: Factor out package_versions() to generate a simple
+    text listing of relevant package versions and use it in attach_printing()
+  * apport/hookutils.py: Add new function attach_relevant_packages() to attach
+    version information (and perhaps eventually run hooks?) for related
+    packages
+  * apport/hookutils.py: Add glob matching to package_versions()
+  * apport/hookutils.py: Add fuser info and dmesg to attach_alsa
+  * apport/hookutils.py: Add codec info to attach_alsa
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Thu, 09 Apr 2009 07:36:45 -0700
+
+apport (1.0-0ubuntu2) jaunty; urgency=low
 
   * backends/packaging-apt-dpkg.py: Add missing shutil import.
   * debian/local/ubuntu-bug: Filter out -p and -P, for backwards calling
     compatibility. (LP: #356755)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 06 Apr 2009 22:17:04 -0700
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 06 Apr 2009 23:04:39 -0700
 
 apport (1.0-0ubuntu1) jaunty; urgency=low
 

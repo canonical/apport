@@ -16,3 +16,6 @@ from apport.hookutils import *
 def add_info(report):
     # if we are running from a live system, add the build timestamp
     attach_file_if_exists(report, '/cdrom/.disk/info', 'MediaBuild')
+
+    # XXX - how do we get the package name?
+    # attach_conffiles(report, package)
