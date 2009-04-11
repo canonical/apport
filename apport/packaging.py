@@ -169,4 +169,9 @@ class PackageInfo:
         '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def package_name_glob(self, glob):
+        '''Return known package names which match given glob.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
 import packaging_impl

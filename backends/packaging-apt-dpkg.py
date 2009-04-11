@@ -468,6 +468,10 @@ class __AptDpkgPackageInfo(PackageInfo):
             so = subprocess.PIPE
         subprocess.call(['dpkg', '-P'] + packages, stdout=so)
 
+    def package_name_glob(self, nameglob):
+        '''Return known package names which match given glob.'''
+
+        return glob.fnmatch.filter(self._cache().keys(), nameglob)
 
     #
     # Internal helper methods
@@ -926,6 +930,14 @@ bo/gu/s                                                 na/mypackage
             '''get_kernel_package().'''
 
             self.assert_('linux' in impl.get_kernel_package())
+
+        def test_package_name_glob(self):
+            '''package_name_glob().'''
+
+            self.assert_(len(impl.package_name_glob('a*')) > 5)
+            self.assert_('bash' in impl.package_name_glob('ba*h'))
+            self.assertEqual(impl.package_name_glob('bash'), ['bash'])
+            self.assertEqual(impl.package_name_glob('xzywef*'), [])
 
     # only execute if dpkg is available
     try:
