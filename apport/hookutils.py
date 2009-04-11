@@ -17,17 +17,19 @@ import os
 import datetime
 import glob
 import re
+import string
 
 import xml.dom, xml.dom.minidom
 
 from packaging_impl import impl as packaging
 
+_path_key_trans = string.maketrans('#/-_+','.....')
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
         
     This will meet apport's restrictions on the characters used in keys.
     '''
-    return path.replace('/', '.')
+    return path.translate(_path_key_trans)
 
 def attach_file_if_exists(report, path, key=None):
     '''Attach file contents if file exists.'''
