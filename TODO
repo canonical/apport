@@ -2,11 +2,9 @@ apport-retrace:
  - add heuristics for more crash types (SEGV on read/write/exec & mem region)
 
 python-apport:
- - Add API/report attribute for doing upstream problem reports
  - add field for nonstandard apt sources.list[.d/] lines
  - drop ProblemType: field, replace with tags; needs new anchor for
    start of apport data
- - drop PATH if it is the default
 
 add firefox apport hook to suppress crash reports when restart is
 necessary, and to not file crashes with flash installed
