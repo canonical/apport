@@ -126,13 +126,25 @@ def attach_alsa(report):
     for line in open('/proc/asound/cards'):
         if ']:' in line:
             fields = line.lstrip().split()
-            cards.append(fields[0])
+            cards.append(int(fields[0]))
 
     for card in cards:
-        key = 'Amixer.%s.info' % card
-        report[key] = command_output(['amixer', '-c', card, 'info'])
-        key = 'Amixer.%s.values' % card
-        report[key] = command_output(['amixer', '-c', card])
+        key = 'Card%d.Amixer.info' % card
+        report[key] = command_output(['amixer', '-c', str(card), 'info'])
+        key = 'Card%d.Amixer.values' % card
+        report[key] = command_output(['amixer', '-c', str(card)])
+
+        for codecpath in glob.glob('/proc/asound/card%d/codec*' % card):
+            if os.path.isfile(codecpath):
+                codec = os.path.basename(codecpath)
+                key = 'Card%d.Codecs.%s' % (card, path_to_key(codec))
+                attach_file(report, codecpath, key=key)
+            elif os.path.isdir(codecpath):
+                codec = os.path.basename(codecpath)
+                for name in os.listdir(codecpath):
+                    path = os.path.join(codecpath, name)
+                    key = 'Card%d.Codecs.%s.%s' % (card, path_to_key(codec), path_to_key(name))
+                    attach_file(report, path, key)
 
     report['AudioDevicesInUse'] = command_output(
         ['fuser','-v'] + glob.glob('/dev/dsp*') 
