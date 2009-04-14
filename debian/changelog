@@ -1,3 +1,10 @@
+apport (1.0-0ubuntu4) UNRELEASED; urgency=low
+
+  * etc/default/apport.default: Disable Apport by default for the final
+    release.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 14 Apr 2009 11:47:07 +0200
+
 apport (1.0-0ubuntu3) jaunty; urgency=low
 
   * apport/hookutils.py: Factor out package_versions() to generate a simple
