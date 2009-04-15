@@ -1,18 +1,16 @@
-apport (1.0-0ubuntu6) jaunty; urgency=low
+apport (1.0-0ubuntu5) UNRELEASED; urgency=low
 
-  * package-hooks/source_linux.py: Attach /etc/initramfs-tools/conf.d/resume to
-    show the resume device for hibernation
-
- -- Matt Zimmerman <mdz@ubuntu.com>  Wed, 15 Apr 2009 20:34:45 +0100
-
-apport (1.0-0ubuntu5) jaunty; urgency=low
-
+  [ Martin Pitt ]
   * Rename etc/default/apport.default to etc/default/apport (brown paperbag),
     and add debian/apport.preinst to remove the apport.default file on
     upgrades. (LP: #361543)
   * debian/rules: Call dh_installinit with --onlyscripts, so that the package
     calls update-rc.d again. This fixes the calling of init script again,
     which got broken in 1.0-0ubuntu1. (LP: #361579)
+
+  [ Matt Zimmerman ]
+  * package-hooks/source_linux.py: Attach /etc/initramfs-tools/conf.d/resume to
+    show the resume device for hibernation
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 15 Apr 2009 11:36:06 +0200
 
