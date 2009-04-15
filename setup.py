@@ -8,13 +8,13 @@ from distutils.dir_util import remove_tree
 import subprocess, glob, os.path
 
 class my_install_data(distutils.command.install_data.install_data):
-    '''Install files from etc/ and build gettext *.mo'''
-
     def run(self):
+        # install files from etc/
         for (root, _, files) in os.walk('etc'):
             self.data_files.append((os.path.join('/', root), 
                     [os.path.join(root, f) for f in files]))
 
+        # build gettext *.mo
         subprocess.call(['make', '-C', 'po', 'build-mo'])
         for filepath in glob.glob('po/mo/*/LC_MESSAGES/*.mo'):
             lang = filepath[len('po/mo/'):]
@@ -22,6 +22,15 @@ class my_install_data(distutils.command.install_data.install_data):
             self.data_files.append((targetpath, [filepath]))
 
         distutils.command.install_data.install_data.run(self)
+
+        # symlinks
+        d = os.path.join(self.install_dir, 'share', 'icons', 'hicolor', 'scalable',
+                'mimetypes')
+        self.mkpath(d)
+        l = os.path.join (d, 'text-x-apport.svg')
+        if os.path.exists(l):
+            os.unlink(l)
+        os.symlink(os.path.join('..', 'apps', 'apport.svg'), l)
 
 class my_clean(distutils.command.clean.clean):
     def run(self):
