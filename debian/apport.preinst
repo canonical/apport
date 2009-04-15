@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "upgrade" -o "$1" = "install" ] && \
+    dpkg --compare-versions "$2" lt-nl 1.0-0ubuntu5; then
+    rm -f /etc/default/apport.default
+fi

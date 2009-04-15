@@ -1,3 +1,11 @@
+apport (1.0-0ubuntu5) UNRELEASED; urgency=low
+
+  * Rename etc/default/apport.default to etc/default/apport (brown paperbag),
+    and add debian/apport.preinst to remove the apport.default file on
+    upgrades. (LP: #361543)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 15 Apr 2009 11:05:58 +0200
+
 apport (1.0-0ubuntu4) jaunty; urgency=low
 
   * etc/default/apport.default: Disable Apport by default for the final
