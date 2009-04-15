@@ -19,6 +19,9 @@ from apport.hookutils import *
 def add_info(report):
 	attach_hardware(report)
 
+	attach_file_if_exists(report, "/etc/initramfs-tools/conf.d/resume",
+                          key="HibernationDevice")
+
 	version_signature = report.get('ProcVersionSignature', '')
 	if not version_signature.startswith('Ubuntu '):
 		report['UnreportableReason'] = _('The running kernel is not an Ubuntu kernel')
