@@ -1,4 +1,4 @@
-apport (1.0-0ubuntu5) UNRELEASED; urgency=low
+apport (1.0-0ubuntu5) jaunty; urgency=low
 
   [ Martin Pitt ]
   * Rename etc/default/apport.default to etc/default/apport (brown paperbag),
@@ -12,7 +12,7 @@ apport (1.0-0ubuntu5) UNRELEASED; urgency=low
   * package-hooks/source_linux.py: Attach /etc/initramfs-tools/conf.d/resume to
     show the resume device for hibernation
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 15 Apr 2009 11:36:06 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 15 Apr 2009 22:36:33 +0200
 
 apport (1.0-0ubuntu4) jaunty; urgency=low
 
