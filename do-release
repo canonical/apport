@@ -9,6 +9,11 @@
     exit 1
 }
 
+grep -q '(UNRELEASED)' NEWS | {{
+    echo "no UNRELEASED in NEWS, do you need to update it?" >&2
+    exit 1
+}}
+
 version="$1"
 [ -n "$version" ] || {
     echo "Usage: $0 <version>" >&2
@@ -16,6 +21,7 @@ version="$1"
 }
 
 sed -i -r "s/(^[[:space:]]*version[[:space:]]*=[[:space:]]*').*\$/\\1${version}',/" setup.py
+sed -i "s/(UNRELEASED)/$(date '+(%Y-%m-%d)')/" NEWS
 bzr commit -m "release $version"
 bzr tag "$version"
 
