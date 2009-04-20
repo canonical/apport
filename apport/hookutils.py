@@ -86,6 +86,18 @@ def attach_machinetype(report):
             report['MachineType'] = system.rstrip()
 
 def attach_hardware(report):
+    '''Attach a standard set of hardware-related data to the report, including:
+
+    - kernel dmesg (boot and current)
+    - /proc/interrupts
+    - /proc/version_signature
+    - /proc/cpuinfo
+    - /proc/cmdline
+    - /proc/modules
+    - lspci -vvnn
+    - lsusb
+    - devices/computer from HAL
+    '''
     attach_dmesg(report)
 
     attach_file(report, '/proc/interrupts', 'ProcInterrupts')
@@ -109,7 +121,7 @@ def attach_alsa(report):
     '''Attach ALSA subsystem information to the report.
 
     (loosely based on http://www.alsa-project.org/alsa-info.sh)
-        '''
+    '''
     attach_file_if_exists(report, os.path.expanduser('~/.asoundrc'),
                           'UserAsoundrc')
     attach_file_if_exists(report, os.path.expanduser('~/.asoundrc.asoundconf'),
