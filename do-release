@@ -9,14 +9,9 @@
     exit 1
 }
 
-grep -q '(UNRELEASED)' NEWS | {{
-    echo "no UNRELEASED in NEWS, do you need to update it?" >&2
-    exit 1
-}}
-
-version="$1"
+version=$(grep '(UNRELEASED)' NEWS | cut -f1 -d' ')
 [ -n "$version" ] || {
-    echo "Usage: $0 <version>" >&2
+    echo "no UNRELEASED in NEWS" >&2
     exit 1
 }
 
