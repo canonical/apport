@@ -31,8 +31,6 @@ binary-install/apport::
 	dh_icons
 	# upstream already installs init script
 	dh_installinit -p $(cdbs_curpkg) --onlyscripts
-	# fixed name in trunk, but still in the orig.tar.gz
-	rm debian/$(cdbs_curpkg)/etc/default/apport.default
 
 	# ignore wine crashes by default, until we found a way to
 	# handle them appropriately

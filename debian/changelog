@@ -19,6 +19,8 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
       file (which should just be etc/default/apport).
   * Drop debian/apport.README.Debian, superseded by upstream README.
   * Drop debian/apport.links, done by upstream setup.py now.
+  * debian/rules, debian/apport.preinst: Drop upgrade fix for misnamed default
+    file again, was only necessary for intra-Jaunty upgrades.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 20 Apr 2009 16:20:47 +0200
 
