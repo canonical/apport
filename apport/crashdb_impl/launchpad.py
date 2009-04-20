@@ -767,7 +767,7 @@ NameError: global name 'weird' is not defined'''
             self.assert_('ThreadStacktrace' in r)
 
             # test various situations which caused crashes
-            r['Stacktrace'] = '' # empty file, LP #353784
+            r['Stacktrace'] = '' # empty file
             r['ThreadStacktrace'] = '"]\xb6"\n' # not interpretable as UTF-8, LP #353805
             self.crashdb.update(segv_report, r, 'tests')
 
