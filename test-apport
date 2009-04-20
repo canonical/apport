@@ -28,19 +28,6 @@ def run(argv, msg=None, stdout=False):
     assert result == 0, msg + ' [cwd: %s]' % os.getcwd()
 
 
-def clean_preload_lib():
-    print '* cleaning preloadlib directory'
-    run(['make', '-C', 'preloadlib', 'clean'], 'Cleaning preloadlib directory')
-
-def build_preload_lib():
-    print '* Building preload library with local parameters'
-    run(['make', '-C', 'preloadlib', 'AGENTPATH=%s' % os.path.join(os.getcwd(),
-        'bin', 'apport')], 'Building preloadlib')
-
-def enable_preloadlib():
-    assert os.access('preloadlib/libapport.so', os.X_OK)
-    os.environ['LD_PRELOAD'] = os.path.join(os.getcwd(), 'preloadlib', 'libapport.so')
-
 def create_test_process(check_running=True):
     assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
     if check_running:
@@ -58,8 +45,6 @@ def create_test_process(check_running=True):
     return pid
 
 def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV, check_running=True, sleep=0):
-    global mode # hack to avoid passing the mode every time
-
     assert not os.path.exists('core'), 'no core dump in current directory'
     pid = create_test_process(check_running)
     if sleep > 0:
@@ -68,7 +53,7 @@ def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV,
     result = os.waitpid(pid, 0)[1]
     assert not os.WIFEXITED(result), 'test process did not exit normally'
     assert os.WIFSIGNALED(result), 'test process died due to signal'
-    if expect_coredump and mode == 'kernel':
+    if expect_coredump:
         assert os.WCOREDUMP(result), 'result: 0x%02X should include WCOREDUMP' % result
     else:
         assert not os.WCOREDUMP(result), 'result: 0x%02X should not have WCOREDUMP' % result
@@ -125,11 +110,6 @@ def get_tempdir_reports(dir):
 # main
 #
 
-if len(sys.argv) != 2 or sys.argv[1] not in ('lib', 'kernel'):
-    print 'Usage: %s lib|kernel' % sys.argv[0]
-    sys.exit(1)
-mode = sys.argv[1]
-
 all_passed = False
 
 # we sometimes need a local report dir because we cannot access root's .lock file
@@ -137,26 +117,9 @@ temp_report_dir = tempfile.mkdtemp()
 
 try:
     core_pattern = open('/proc/sys/kernel/core_pattern').read().strip()
-    # check if kernel crashdump helper is already active
-    if mode == 'lib':
-        assert core_pattern[0] != '|', \
-                'kernel crash dump helper is still active; please disable before running this test.'
-
-        # set up temporary report directory
-        os.environ['APPORT_REPORT_DIR'] = temp_report_dir
-        apport.fileutils.report_dir = temp_report_dir
-        (fd, os.environ['APPORT_LOG_FILE']) = tempfile.mkstemp()
-        os.close(fd)
-
-        # setup preload library
-        clean_preload_lib()
-        build_preload_lib()
-
-        apport_path = 'bin/apport'
-    else:
-        assert core_pattern[0] == '|', \
-                'kernel crash dump helper is not active; please enable before running this test.'
-        apport_path = core_pattern[1:].split()[0]
+    assert core_pattern[0] == '|', \
+            'kernel crash dump helper is not active; please enable before running this test.'
+    apport_path = core_pattern[1:].split()[0]
 
     assert apport.fileutils.get_all_reports() == [], 'please remove all crash reports from /var/crash/ for this test suite'
 
@@ -182,14 +145,7 @@ try:
 
     assert get_tempdir_reports(temp_report_dir) == [], 'no report created for empty core dump'
 
-    if mode == 'lib':
-        print '* check test process creation/killing without apport'
-        check_crash(False)
-        assert apport.fileutils.get_all_reports() == [], 'no report created without apport'
-
     print '* check test process creation/killing with apport'
-    if mode == 'lib':
-        enable_preloadlib()
     check_crash()
 
     # check crash report
@@ -377,8 +333,6 @@ try:
         print count,
         sys.stdout.flush()
         check_crash()
-        if mode == 'lib':
-            time.sleep(1)
         if not apport.fileutils.get_new_reports():
             break
         apport.fileutils.mark_report_seen(apport.fileutils.get_new_reports()[0])
@@ -545,8 +499,6 @@ finally:
     except:
         pass
     shutil.rmtree(temp_report_dir)
-    if mode == 'lib':
-        clean_preload_lib()
     if os.environ.has_key('APPORT_LOG_FILE'):
         if not all_passed:
             print '----- apport log file -----'
