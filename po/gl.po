@@ -1,0 +1,518 @@
+# Galician translation for apport
+# Copyright (c) 2006 Rosetta Contributors and Canonical Ltd 2006
+# This file is distributed under the same license as the apport package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apport\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"PO-Revision-Date: 2008-04-28 14:25+0000\n"
+"Last-Translator: Xosé <Unknown>\n"
+"Language-Team: Galician <gl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-04-20 13:20+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../gtk/apport-gtk.py:66 ../gtk/apport-gtk.py:70
+#, python-format
+msgid "Sorry, %s closed unexpectedly"
+msgstr "Perdón, %s pechouse inesperadamente"
+
+#: ../gtk/apport-gtk.py:68 ../apport/ui.py:147
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly"
+msgstr "Perdón, o programa \"%s\" pechouse inesperadamente"
+
+#: ../gtk/apport-gtk.py:110 ../qt4/apport-qt.py:194 ../cli/apport-cli.py:173
+msgid "Your system encountered a serious kernel problem."
+msgstr ""
+
+#: ../gtk/apport-gtk.py:114 ../qt4/apport-qt.py:198 ../cli/apport-cli.py:177
+msgid "You can help the developers to fix the problem by reporting it."
+msgstr ""
+
+#: ../gtk/apport-gtk.py:145 ../qt4/apport-qt.py:239 ../cli/apport-cli.py:212
+msgid "(binary data)"
+msgstr "(datos binarios)"
+
+#: ../gtk/apport-gtk.glade.h:1
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr "<big><b>Recopilando información sobre o problema</b></big>"
+
+#: ../gtk/apport-gtk.glade.h:2
+msgid ""
+"<big><b>Send problem report to the developers?</b></big>\n"
+"\n"
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"<big><b>Enviarlles un informe do problema aos programadores?</b></big>\n"
+"\n"
+"Unha vez enviado o informe sobre o problema, encha o formulario na xanela do "
+"navegador que se abrirá automaticamente."
+
+#: ../gtk/apport-gtk.glade.h:5
+msgid "<big><b>Uploading problem information</b></big>"
+msgstr "<big><b>Enviando información do erro</b></big>"
+
+#: ../gtk/apport-gtk.glade.h:7
+#, no-c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+"install or upgrade.</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Perdón, o paquete \"%s\" non se puido "
+"instalar ou actualizar.</span>."
+
+#: ../gtk/apport-gtk.glade.h:8
+msgid "Application problem"
+msgstr "Problema na aplicación"
+
+#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#, no-c-format, python-format
+msgid "Complete report (recommended; %s)"
+msgstr "Informe completo (recomendado; %s)"
+
+#: ../gtk/apport-gtk.glade.h:11
+msgid "Content of the report"
+msgstr "Contido do informe"
+
+#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+msgid ""
+"If you were not doing anything confidential (entering passwords or other "
+"private information), you can help to improve the application by reporting "
+"the problem."
+msgstr ""
+"Se non estaba  facer nada confidencial (introducindo contrasinais ou outra "
+"información privada) pode axudar a mellora a aplicación informando do "
+"problema."
+
+#: ../gtk/apport-gtk.glade.h:13
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr ""
+"Estase a recoller información que pode axudar aos programadores a arranxar o "
+"problema do que está a informar."
+
+#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+msgid "Kernel problem"
+msgstr "Problema no núcleo"
+
+#: ../gtk/apport-gtk.glade.h:15
+msgid "Package problem"
+msgstr "Problema no paquete"
+
+#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#, no-c-format, python-format
+msgid "Reduced report (slow Internet connection; %s)"
+msgstr "Informe reducido (Conexión a internet lenta; %s)"
+
+#: ../gtk/apport-gtk.glade.h:18
+msgid "Restart _Program"
+msgstr "Reiniciar o _Programa"
+
+#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+msgid ""
+"The collected information is being sent to the bug tracking system. This "
+"might take a few minutes."
+msgstr ""
+"A información recopilada estase a enviar ó sistema de seguimiento de erros. "
+"Esto pode tardar varios minutos."
+
+#: ../gtk/apport-gtk.glade.h:20
+msgid ""
+"This will remove some large items from the report. These are very useful for "
+"developers to debug the problem, but might be too big for you to upload if "
+"you have a slow internet connection."
+msgstr ""
+"Isto eliminará alguns elementos grandes do informe. Istes son moi útiles "
+"para que os desenroladores depuren o problema, pero poden resultarlle moi "
+"grandes para envioalos se dispón dunha conexión lenta a internet."
+
+#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
+#: ../cli/apport-cli.py:281
+msgid "Uploading problem information"
+msgstr "Enviando a información do problema"
+
+#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
+#: ../cli/apport-cli.py:161
+msgid ""
+"You can help the developers to fix the package by reporting the problem."
+msgstr ""
+"Pode axudar aos programadores a arranxar o paquete enviándolles un informe "
+"acerca do problema."
+
+#: ../gtk/apport-gtk.glade.h:23
+msgid "_Ignore future crashes of this program version"
+msgstr "_Ignorar no futuro fallos desta versión do programa"
+
+#: ../gtk/apport-gtk.glade.h:24
+msgid "_Report Problem..."
+msgstr "_Informar do problema..."
+
+#: ../gtk/apport-gtk.glade.h:25
+msgid "_Send Report"
+msgstr "_Enviar informe"
+
+#: ../gtk/apport-gtk.desktop.in.h:1 ../qt4/apport-qt.desktop.in.h:1
+msgid "Report a malfunction to the developers"
+msgstr "Informar dun fallo aos programadores"
+
+#: ../gtk/apport-gtk.desktop.in.h:2 ../qt4/apport-qt.desktop.in.h:2
+msgid "Report a problem..."
+msgstr "Informar dun erro..."
+
+#: ../qt4/apport-qt.py:100
+msgid "&Details..."
+msgstr "&Detalles..."
+
+#: ../qt4/apport-qt.py:137 ../qt4/apport-qt.py:143
+#, python-format
+msgid "Sorry, %s closed unexpectedly."
+msgstr "Perdón, %s cerrouse inesperadamente."
+
+#: ../qt4/apport-qt.py:140
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly."
+msgstr "Perdón, o programa \"%s\" cerrouse inesperadamente."
+
+#: ../qt4/apport-qt.py:149
+msgid "&Ignore future crashes of this program version"
+msgstr "&Ignorar caídas futuras desta versión do programa"
+
+#: ../qt4/apport-qt.py:151 ../qt4/apport-qt.py:182 ../qt4/apport-qt.py:202
+#: ../cli/apport-cli.py:143 ../cli/apport-cli.py:162 ../cli/apport-cli.py:180
+msgid "&Report Problem..."
+msgstr "Info&rmar dun problema..."
+
+#: ../qt4/apport-qt.py:159
+msgid "Restart &Program"
+msgstr "Reiniciar &programa"
+
+#: ../qt4/apport-qt.py:177
+#, python-format
+msgid "Sorry, the package \"%s\" failed to install or upgrade."
+msgstr "Disculpe, o paquete \"%s\" non se puido instalar ou actualizar."
+
+#. Let's get the dialog and modify it to our needs
+#: ../qt4/apport-qt.py:215
+msgid "Generic error"
+msgstr "Erro xenérico"
+
+#: ../qt4/apport-qt.py:216 ../cli/apport-cli.py:192
+msgid "Send problem report to the developers?"
+msgstr "Enviarlle un informe do problema aos programadores?"
+
+#: ../qt4/apport-qt.py:217
+msgid ""
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"Unha vez enviado o problema, encha o formulario no navegador web que se "
+"abrirá automaticamente."
+
+#: ../qt4/apport-qt.py:220
+msgid "&Send"
+msgstr "&Enviar"
+
+#: ../qt4/apport-qt.py:278
+msgid "Collecting Problem Information"
+msgstr "Recopilando información do erro"
+
+#: ../qt4/apport-qt.py:279 ../cli/apport-cli.py:268
+msgid "Collecting problem information"
+msgstr "Recopilando información do erro"
+
+#: ../qt4/apport-qt.py:280
+msgid ""
+"The collected information can be sent to the developers to improve the "
+"application. This might take a few minutes."
+msgstr ""
+"A información recollida pódeselle enviar aos programadores para que melloren "
+"a aplicación. Isto podería levar uns minutos."
+
+#: ../qt4/apport-qt.py:297
+msgid "Uploading Problem Information"
+msgstr "Enviando a información do erro"
+
+#: ../cli/apport-cli.py:75
+msgid "Press any key to continue..."
+msgstr "Prema sobre calquera tecla para seguir..."
+
+#: ../cli/apport-cli.py:79
+msgid "What would you like to do? Your options are:"
+msgstr "Que quere facer? As opcións que ten son:"
+
+#: ../cli/apport-cli.py:83
+#, python-format
+msgid "Please choose (%s):"
+msgstr "Escolla (%s):"
+
+#. translators: first %s: application name, second %s: date, third %s: time
+#: ../cli/apport-cli.py:136
+#, python-format
+msgid "%s closed unexpectedly on %s at %s."
+msgstr "%s fechouse inesperadamente en %s ás %s."
+
+#: ../cli/apport-cli.py:140
+msgid ""
+"If you were not doing anything confidential (entering passwords or other\n"
+"private information), you can help to improve the application by reporting\n"
+"the problem."
+msgstr ""
+"Se non estaba a facer nada confidencial (introducir un contrasinal ou\n"
+"outra información privada), pode axudar a mellorar a aplicación informado\n"
+"do problema."
+
+#: ../cli/apport-cli.py:144
+msgid "Cancel and &ignore future crashes of this program version"
+msgstr "Cancelar e &ignorar fallos futuros desta versión do programa"
+
+#: ../cli/apport-cli.py:145 ../cli/apport-cli.py:163 ../cli/apport-cli.py:181
+#: ../cli/apport-cli.py:228
+msgid "&Cancel"
+msgstr "&Cancelar"
+
+#: ../cli/apport-cli.py:160
+#, python-format
+msgid "The package \"%s\" failed to install or upgrade."
+msgstr "O paquete \"%s\" non se puido instalar ou actualizar."
+
+#: ../cli/apport-cli.py:193
+msgid ""
+"After the problem report has been sent, please fill out the form in the\n"
+"automatically opened web browser."
+msgstr ""
+"Unha vez enviado o informe do problema, encha o formulario no navegador web "
+"que se abrirá automaticamente."
+
+#: ../cli/apport-cli.py:216
+#, python-format
+msgid "&Send complete report (recommended; %s)"
+msgstr "E&nviar un informe completo (recomendado; %s)"
+
+#: ../cli/apport-cli.py:218
+#, python-format
+msgid "Send &reduced report (slow Internet connection; %s)"
+msgstr "Enviar un informe &reducido (conexións lentas á internet; %s)"
+
+#: ../cli/apport-cli.py:221
+#, python-format
+msgid "&Send report (%s)"
+msgstr "E&nviar informe (%s)"
+
+#: ../cli/apport-cli.py:225
+msgid "&View report"
+msgstr "&Ver o informe"
+
+#: ../cli/apport-cli.py:226
+msgid "&Keep report file for sending later or copying to somewhere else"
+msgstr ""
+"&Gardar o ficheiro co informe para envialo máis tarde ou para copialo noutro "
+"sitio"
+
+#: ../cli/apport-cli.py:250
+msgid "Problem report file:"
+msgstr "Ficheiro co informe do problema:"
+
+#: ../cli/apport-cli.py:258 ../cli/apport-cli.py:263
+msgid "&Confirm"
+msgstr "&Confirmar"
+
+#: ../cli/apport-cli.py:262
+#, python-format
+msgid "Error: %s"
+msgstr "Erro: %s"
+
+#: ../cli/apport-cli.py:269
+msgid ""
+"The collected information can be sent to the developers to improve the\n"
+"application. This might take a few minutes."
+msgstr ""
+"Pódeselles enviar a información recollida aos programadores para que\n"
+"melloren a aplicación. Isto pode levar uns minutos."
+
+#: ../cli/apport-cli.py:282
+msgid ""
+"The collected information is being sent to the bug tracking system.\n"
+"This might take a few minutes."
+msgstr ""
+"Estase a enviar a información recollida ao sistema de seguimento de erros.\n"
+"Isto pode levar uns minutos."
+
+#: ../cli/apport-cli.py:295
+msgid "No pending crash reports. Try --help for more information."
+msgstr ""
+"Non hai informes de fallos pendentes. Tente --help para máis información."
+
+#. TRANS: %s is the name of the operating system
+#: ../apport/ui.py:54
+#, python-format
+msgid "This is not a genuine %s package"
+msgstr "Este non é un paquete xenuíno para %s"
+
+#: ../apport/ui.py:62
+#, python-format
+msgid ""
+"You have some obsolete package versions installed. Please upgrade the "
+"following packages and check if the problem still occurs:\n"
+"\n"
+"%s"
+msgstr ""
+"Ten algúns paquetes instalados con versións obsoletas. Por favor, actualice "
+"os seguintes paquetes e verifique se o problema persiste:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:146
+msgid "unknown program"
+msgstr "programa descoñecido"
+
+#: ../apport/ui.py:148 ../apport/ui.py:219
+#, python-format
+msgid "Problem in %s"
+msgstr "Problema en %s"
+
+#: ../apport/ui.py:149
+msgid ""
+"Your computer does not have enough free memory to automatically analyze the "
+"problem and send a report to the developers."
+msgstr ""
+"O seu computador non dispón de memoria libre dabondo para analizar "
+"automaticamente o problema e enviarlles un informe aos programadores."
+
+#: ../apport/ui.py:155
+msgid "Unreportable problem"
+msgstr ""
+
+#: ../apport/ui.py:156
+#, python-format
+msgid ""
+"The current configuration cannot be supported:\n"
+"\n"
+"%s"
+msgstr ""
+"Non se recoñece a configuración actual:\n"
+"\n"
+"%s"
+
+#. package does not exist
+#: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
+#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
+#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
+#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
+#: ../apport/ui.py:1505 ../apport/ui.py:1516
+msgid "Invalid problem report"
+msgstr "Informe de problema non válido"
+
+#: ../apport/ui.py:184 ../apport/ui.py:213
+msgid "The report belongs to a package that is not installed."
+msgstr "O informe refírese a un paquete que non está instalado."
+
+#: ../apport/ui.py:209 ../apport/ui.py:620
+msgid "This problem report is damaged and cannot be processed."
+msgstr "O informe de erro está danado e non pode ser procesado."
+
+#: ../apport/ui.py:220
+#, python-format
+msgid ""
+"The problem cannot be reported:\n"
+"\n"
+"%s"
+msgstr ""
+"Non se pode informar acerca deste problema:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:245
+msgid "You are not allowed to access this problem report."
+msgstr "Non ten permiso para acceder a este informe do problema."
+
+#: ../apport/ui.py:248
+msgid "Error"
+msgstr "Erro"
+
+#: ../apport/ui.py:249
+msgid "There is not enough disk space available to process this report."
+msgstr "Non hai espazo dabondo no disco para procesar este informe."
+
+#: ../apport/ui.py:269
+msgid "No package specified"
+msgstr "Non se especificou ningún paquete"
+
+#: ../apport/ui.py:270
+msgid ""
+"You need to specify a package or a PID. See --help for more information."
+msgstr ""
+"Ten que especificar un paquete ou un PID. Vexa --axuda para máis información."
+
+#: ../apport/ui.py:284
+msgid "Permission denied"
+msgstr "Permiso rexeitado"
+
+#: ../apport/ui.py:285
+msgid ""
+"The specified process does not belong to you. Please run this program as the "
+"process owner or as root."
+msgstr ""
+"O proceso especificado non lle pertence. Execute este programa como "
+"propietario do proceso ou como root."
+
+#: ../apport/ui.py:302
+#, python-format
+msgid "Package %s does not exist"
+msgstr "O paquete %s non existe"
+
+#: ../apport/ui.py:462
+msgid "Could not determine the package or source package name."
+msgstr "Non podo determinar o paquete ou o nome do paquete fonte."
+
+#: ../apport/ui.py:477
+msgid "Unable to start web browser"
+msgstr "Non se pode arrincar o navegador web"
+
+#: ../apport/ui.py:478
+#, python-format
+msgid "Unable to start web browser to open %s."
+msgstr "Non se pode arrincar o navegador para abrir %s."
+
+#: ../apport/ui.py:584
+msgid "Network problem"
+msgstr "Erro de conexión"
+
+#: ../apport/ui.py:586
+msgid "Could not upload report data to crash database"
+msgstr "Non se puideron enviar os datos do informe á base de datos de fallos"
+
+#: ../apport/ui.py:610
+msgid "Memory exhaustion"
+msgstr "Memoria esgotada"
+
+#: ../apport/ui.py:611
+msgid "Your system does not have enough memory to process this crash report."
+msgstr ""
+"O sistema non posúe memoria suficiente para procesar este informe de erro,"
+
+#: ../apport/ui.py:631
+msgid "This problem report does not apply to a packaged program."
+msgstr "O informe de erro non se aplica a un programa empaquetado."
+
+#: ../apport/ui.py:665
+msgid "Problem already known"
+msgstr "Problema coñecido"
+
+#: ../apport/ui.py:666
+msgid ""
+"This problem was already reported in the bug report displayed in the web "
+"browser. Please check if you can add any further information that might be "
+"helpful for the developers."
+msgstr ""
+"Xa se informou deste problema no informe de erros que se mostra no navegador "
+"web. Comprobe se pode engadir información adicional que lle poida resultar "
+"de utilidade aos programadores."

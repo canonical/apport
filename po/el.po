@@ -1,0 +1,532 @@
+# Greek, Modern (1453-) translation for apport
+# Copyright (c) 2006 Rosetta Contributors and Canonical Ltd 2006
+# This file is distributed under the same license as the apport package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apport\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"PO-Revision-Date: 2009-02-27 18:09+0000\n"
+"Last-Translator: Kainourgiakis Giorgos <kaingeo@yahoo.gr>\n"
+"Language-Team: Greek, Modern (1453-) <el@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-04-20 13:20+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../gtk/apport-gtk.py:66 ../gtk/apport-gtk.py:70
+#, python-format
+msgid "Sorry, %s closed unexpectedly"
+msgstr "Συγνώμη, το %s τερματίστηκε απροσδόκητα"
+
+#: ../gtk/apport-gtk.py:68 ../apport/ui.py:147
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly"
+msgstr "Συγνώμη, το πρόγραμμα \"%s\" τερματίστηκε απροσδόκητα"
+
+#: ../gtk/apport-gtk.py:110 ../qt4/apport-qt.py:194 ../cli/apport-cli.py:173
+msgid "Your system encountered a serious kernel problem."
+msgstr "Το σύστημα σας αντιμετώπισε ένα σοβαρό πρόβλημα στον πυρήνα."
+
+#: ../gtk/apport-gtk.py:114 ../qt4/apport-qt.py:198 ../cli/apport-cli.py:177
+msgid "You can help the developers to fix the problem by reporting it."
+msgstr ""
+"Μπορείτε να βοηθήσετε τους υπεύθυνους ανάπτυξης να το φτιάξουν αναφέροντας "
+"το."
+
+#: ../gtk/apport-gtk.py:145 ../qt4/apport-qt.py:239 ../cli/apport-cli.py:212
+msgid "(binary data)"
+msgstr "(δυαδικά δεδομένα)"
+
+#: ../gtk/apport-gtk.glade.h:1
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr "<big><b>Συλλογή πληροφοριών προβλήματος</b></big>"
+
+#: ../gtk/apport-gtk.glade.h:2
+msgid ""
+"<big><b>Send problem report to the developers?</b></big>\n"
+"\n"
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"<big><b>Να αποσταλεί η αναφορά του προβλήματος στους "
+"προγραμματιστές;</b></big>\n"
+"\n"
+"Μετά την αναφορά του προβλήματος, παρακαλώ συμπληρώστε τη φόρμα που θα "
+"ανοίξει αυτόματα στον περιηγητή ιστού."
+
+#: ../gtk/apport-gtk.glade.h:5
+msgid "<big><b>Uploading problem information</b></big>"
+msgstr "<big><b>Αποστολή πληροφοριών του προβλήματος</b></big>"
+
+#: ../gtk/apport-gtk.glade.h:7
+#, no-c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+"install or upgrade.</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\"> Λυπούμαστε, αλλά το πακέτο \"%s\" "
+"απέτυχε να εγκατασταθεί ή να αναβαθμιστεί.</span>"
+
+#: ../gtk/apport-gtk.glade.h:8
+msgid "Application problem"
+msgstr "Πρόβλημα εφαρμογής"
+
+#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#, no-c-format, python-format
+msgid "Complete report (recommended; %s)"
+msgstr "Ολοκληρωμένη αναφορά (προτείνεται το %s)"
+
+#: ../gtk/apport-gtk.glade.h:11
+msgid "Content of the report"
+msgstr "Περιεχόμενο της αναφοράς"
+
+#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+msgid ""
+"If you were not doing anything confidential (entering passwords or other "
+"private information), you can help to improve the application by reporting "
+"the problem."
+msgstr ""
+"Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή κάποιων "
+"άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην βελτίωση της "
+"εφαρμογής, αναφέροντας το πρόβλημα."
+
+#: ../gtk/apport-gtk.glade.h:13
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr ""
+"Οι πληροφορίες που συλλέγονται μπορούν να βοηθήσουν τους υπευθύνους στην "
+"επιδιόρθωση του προβλήματος που αναφέρετε."
+
+#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+msgid "Kernel problem"
+msgstr "Πρόβλημα πυρήνα"
+
+#: ../gtk/apport-gtk.glade.h:15
+msgid "Package problem"
+msgstr "Πρόβλημα πακέτου"
+
+#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#, no-c-format, python-format
+msgid "Reduced report (slow Internet connection; %s)"
+msgstr "Περιορισμένη αναφορά (αργή σύνδεση με το διαδίκτυο: %s)"
+
+#: ../gtk/apport-gtk.glade.h:18
+msgid "Restart _Program"
+msgstr "Επανεκκίνηση_Προγράμματος"
+
+#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+msgid ""
+"The collected information is being sent to the bug tracking system. This "
+"might take a few minutes."
+msgstr ""
+"Οι πληροφορίες που συλλέχθηκαν αποστέλλονται στο σύστημα καταγραφής λαθών. "
+"Αυτό μπορεί να διαρκέσει λίγα λεπτά."
+
+#: ../gtk/apport-gtk.glade.h:20
+msgid ""
+"This will remove some large items from the report. These are very useful for "
+"developers to debug the problem, but might be too big for you to upload if "
+"you have a slow internet connection."
+msgstr ""
+"Αυτό θα αφαιρέσει κάποια ογκώδη στοιχεία από την αναφορά. Τα στοιχεία αυτά "
+"είναι πολύ χρήσιμα στους προγραμματιστές για τον εντοπισμό και την διόρθωση "
+"λαθών, αλλά είναι πολύ μεγάλα για να τα αποστείλετε αν έχετε αργή σύνδεση."
+
+#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
+#: ../cli/apport-cli.py:281
+msgid "Uploading problem information"
+msgstr "Αποστολή πληροφοριών προβλήματος"
+
+#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
+#: ../cli/apport-cli.py:161
+msgid ""
+"You can help the developers to fix the package by reporting the problem."
+msgstr ""
+"Μπορείτε να βοηθήσετε τους προγραμματιστές να διορθώσουν το πακέτο "
+"αναφέροντας το πρόβλημα."
+
+#: ../gtk/apport-gtk.glade.h:23
+msgid "_Ignore future crashes of this program version"
+msgstr ""
+"Να αγνοηθούν μελλοντικές καταρρεύσεις αυτής της έκδοσης του προγράμματος"
+
+#: ../gtk/apport-gtk.glade.h:24
+msgid "_Report Problem..."
+msgstr "_Αναφορά Προβλήματος..."
+
+#: ../gtk/apport-gtk.glade.h:25
+msgid "_Send Report"
+msgstr "Α_ποστολή Αναφοράς"
+
+#: ../gtk/apport-gtk.desktop.in.h:1 ../qt4/apport-qt.desktop.in.h:1
+msgid "Report a malfunction to the developers"
+msgstr "Αναφορά δυσλειτουργίας στους προγραμματιστές"
+
+#: ../gtk/apport-gtk.desktop.in.h:2 ../qt4/apport-qt.desktop.in.h:2
+msgid "Report a problem..."
+msgstr "Αναφορά προβλήματος..."
+
+#: ../qt4/apport-qt.py:100
+msgid "&Details..."
+msgstr "&Λεπτομέρειες..."
+
+#: ../qt4/apport-qt.py:137 ../qt4/apport-qt.py:143
+#, python-format
+msgid "Sorry, %s closed unexpectedly."
+msgstr "Συγνώμη, το %s τερματίστηκε απροσδόκητα."
+
+#: ../qt4/apport-qt.py:140
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly."
+msgstr "Συγνώμη, το πρόγραμμα \"%s\" τερματίστηκε απροσδόκητα."
+
+#: ../qt4/apport-qt.py:149
+msgid "&Ignore future crashes of this program version"
+msgstr "&Αγνοήση μελλοντικών καταρρεύσεων αυτής της έκδοσης του προγράμματος"
+
+#: ../qt4/apport-qt.py:151 ../qt4/apport-qt.py:182 ../qt4/apport-qt.py:202
+#: ../cli/apport-cli.py:143 ../cli/apport-cli.py:162 ../cli/apport-cli.py:180
+msgid "&Report Problem..."
+msgstr "&Αναφορά Προβλήματος..."
+
+#: ../qt4/apport-qt.py:159
+msgid "Restart &Program"
+msgstr "Επανεκκίνηση &Προγράμματος"
+
+#: ../qt4/apport-qt.py:177
+#, python-format
+msgid "Sorry, the package \"%s\" failed to install or upgrade."
+msgstr "Συγνώμη, το πακέτο \"%s\" απέτυχε να εγκατασταθεί ή να αναβαθμιστεί."
+
+#. Let's get the dialog and modify it to our needs
+#: ../qt4/apport-qt.py:215
+msgid "Generic error"
+msgstr "Γενικό σφάλμα"
+
+#: ../qt4/apport-qt.py:216 ../cli/apport-cli.py:192
+msgid "Send problem report to the developers?"
+msgstr "Αποστολή αναφοράς προβλήματος στους προγραμματιστές;"
+
+#: ../qt4/apport-qt.py:217
+msgid ""
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"Μετά την αποστολή της αναφοράς τους προβλήματος, παρακαλούμε συμπληρώστε την "
+"φόρμα στον περιηγητή ιστού που θα ανοίξει αυτόματα."
+
+#: ../qt4/apport-qt.py:220
+msgid "&Send"
+msgstr "&Αποστολή"
+
+#: ../qt4/apport-qt.py:278
+msgid "Collecting Problem Information"
+msgstr "Συλλογή πληροφοριών προβλήματος"
+
+#: ../qt4/apport-qt.py:279 ../cli/apport-cli.py:268
+msgid "Collecting problem information"
+msgstr "Συλλογή πληροφοριών προβλήματος"
+
+#: ../qt4/apport-qt.py:280
+msgid ""
+"The collected information can be sent to the developers to improve the "
+"application. This might take a few minutes."
+msgstr ""
+"Μπορείτε να βοηθήσετε τους προγραμματιστές να διορθώσουν το πακέτο "
+"αναφέροντας το πρόβλημα. Αυτό μπορεί να διαρκέσει λίγα λεπτά."
+
+#: ../qt4/apport-qt.py:297
+msgid "Uploading Problem Information"
+msgstr "Αποστολή Πληροφοριών Προβλήματος"
+
+#: ../cli/apport-cli.py:75
+msgid "Press any key to continue..."
+msgstr "Πατήστε ένα πλήκτρο για να συνεχίσετε..."
+
+#: ../cli/apport-cli.py:79
+msgid "What would you like to do? Your options are:"
+msgstr "Τι θα θέλατε να κάνετε; Οι επιλογές σας είναι:"
+
+#: ../cli/apport-cli.py:83
+#, python-format
+msgid "Please choose (%s):"
+msgstr "Παρακαλούμε επιλέξτε (%s):"
+
+#. translators: first %s: application name, second %s: date, third %s: time
+#: ../cli/apport-cli.py:136
+#, python-format
+msgid "%s closed unexpectedly on %s at %s."
+msgstr "Το %s τερματίστηκε απροσδόκητα στο %s και στο %s."
+
+#: ../cli/apport-cli.py:140
+msgid ""
+"If you were not doing anything confidential (entering passwords or other\n"
+"private information), you can help to improve the application by reporting\n"
+"the problem."
+msgstr ""
+"Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή \n"
+"κάποιων άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην \n"
+"βελτίωση της εφαρμογής, αναφέροντας το πρόβλημα."
+
+#: ../cli/apport-cli.py:144
+msgid "Cancel and &ignore future crashes of this program version"
+msgstr ""
+"Ακύρωση και &αγνόηση μελλοντικών καταρρεύσεων αυτής της έκδοσης του "
+"προγράμματος"
+
+#: ../cli/apport-cli.py:145 ../cli/apport-cli.py:163 ../cli/apport-cli.py:181
+#: ../cli/apport-cli.py:228
+msgid "&Cancel"
+msgstr "&Ακύρωση"
+
+#: ../cli/apport-cli.py:160
+#, python-format
+msgid "The package \"%s\" failed to install or upgrade."
+msgstr "Το πακέτο \"%s\" απέτυχε να εγκατασταθεί ή να ενημερωθεί."
+
+#: ../cli/apport-cli.py:193
+msgid ""
+"After the problem report has been sent, please fill out the form in the\n"
+"automatically opened web browser."
+msgstr ""
+"Μετά την αποστολή της αναφοράς τους προβλήματος, παρακαλούμε\n"
+"συμπληρώστε την φόρμα στον περιηγητή ιστού που θα ανοίξει αυτόματα."
+
+#: ../cli/apport-cli.py:216
+#, python-format
+msgid "&Send complete report (recommended; %s)"
+msgstr "&Αποστολή ολοκληρωμένης αναφοράς (προτείνεται %s)"
+
+#: ../cli/apport-cli.py:218
+#, python-format
+msgid "Send &reduced report (slow Internet connection; %s)"
+msgstr "Απόστολή &περιορισμένης αναφοράς (αργή σύνδεση με το διαδίκτυο %s)"
+
+#: ../cli/apport-cli.py:221
+#, python-format
+msgid "&Send report (%s)"
+msgstr "&Αποστολή αναφοράς (%s)"
+
+#: ../cli/apport-cli.py:225
+msgid "&View report"
+msgstr "&Εμφάνιση αναφοράς"
+
+#: ../cli/apport-cli.py:226
+msgid "&Keep report file for sending later or copying to somewhere else"
+msgstr ""
+"&Κράτηση της αναφοράς για μετέπειτα αποστολή ή αντιγραφή της κάπου αλλού"
+
+#: ../cli/apport-cli.py:250
+msgid "Problem report file:"
+msgstr "Αρχείο αναφοράς προβλήματος:"
+
+#: ../cli/apport-cli.py:258 ../cli/apport-cli.py:263
+msgid "&Confirm"
+msgstr "&Επιβεβαίωση"
+
+#: ../cli/apport-cli.py:262
+#, python-format
+msgid "Error: %s"
+msgstr "Σφάλμα: %s"
+
+#: ../cli/apport-cli.py:269
+msgid ""
+"The collected information can be sent to the developers to improve the\n"
+"application. This might take a few minutes."
+msgstr ""
+"Μπορείτε να βοηθήσετε τους προγραμματιστές να διορθώσουν το πακέτο\n"
+"αναφέροντας το πρόβλημα. Αυτό μπορεί να διαρκέσει λίγα λεπτά."
+
+#: ../cli/apport-cli.py:282
+msgid ""
+"The collected information is being sent to the bug tracking system.\n"
+"This might take a few minutes."
+msgstr ""
+"Οι πληροφορίες που συλλέχθηκαν αποστέλλονται στο σύστημα\n"
+"καταγραφής λαθών. Αυτό μπορεί να διαρκέσει λίγα λεπτά."
+
+#: ../cli/apport-cli.py:295
+msgid "No pending crash reports. Try --help for more information."
+msgstr ""
+"Δεν εκκρεμούν αναφορές καταρρεύσεων. Δοκιμάστε την --help για περισσότερες "
+"πληροφορίες."
+
+#. TRANS: %s is the name of the operating system
+#: ../apport/ui.py:54
+#, python-format
+msgid "This is not a genuine %s package"
+msgstr "Αυτό δεν είναι γνήσιο το πακέτο %s"
+
+#: ../apport/ui.py:62
+#, python-format
+msgid ""
+"You have some obsolete package versions installed. Please upgrade the "
+"following packages and check if the problem still occurs:\n"
+"\n"
+"%s"
+msgstr ""
+"Έχετε εγκατεστημένες κάποιες ξεπερασμένες εκδόσεις ορισμένων πακέτων. "
+"Παρακαλούμε αναβαθμίστε τα παρακάτω πακέτα και ελέγξτε αν το πρόβλημα "
+"συνεχίζει να υφίσταται:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:146
+msgid "unknown program"
+msgstr "άγνωστο πρόγραμμα"
+
+#: ../apport/ui.py:148 ../apport/ui.py:219
+#, python-format
+msgid "Problem in %s"
+msgstr "Πρόβλημα στο %s"
+
+#: ../apport/ui.py:149
+msgid ""
+"Your computer does not have enough free memory to automatically analyze the "
+"problem and send a report to the developers."
+msgstr ""
+"Ο υπολογιστής σας δεν έχει αρκετή ελεύθερη μνήμη για να αναλύσει αυτόνομα το "
+"πρόβλημα και να στείλει την αναφορά στους προγραμματιστές."
+
+#: ../apport/ui.py:155
+msgid "Unreportable problem"
+msgstr "Μη αναφερόμενο πρόβλημα"
+
+#: ../apport/ui.py:156
+#, python-format
+msgid ""
+"The current configuration cannot be supported:\n"
+"\n"
+"%s"
+msgstr ""
+"Η τρέχουσα διαμόρφωση δεν μπορεί να υποστηριχθεί:\n"
+"\n"
+"%s"
+
+#. package does not exist
+#: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
+#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
+#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
+#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
+#: ../apport/ui.py:1505 ../apport/ui.py:1516
+msgid "Invalid problem report"
+msgstr "Μη έγκυρη αναφορά του προβλήματος"
+
+#: ../apport/ui.py:184 ../apport/ui.py:213
+msgid "The report belongs to a package that is not installed."
+msgstr "Η αναφορά ανήκει σε ένα πακέτο το οποίο δεν είναι εγκατεστημένο."
+
+#: ../apport/ui.py:209 ../apport/ui.py:620
+msgid "This problem report is damaged and cannot be processed."
+msgstr ""
+"Αυτή η αναφορά προβλήματος έχει καταστραφεί και δε μπορεί να επεξεργαστεί."
+
+#: ../apport/ui.py:220
+#, python-format
+msgid ""
+"The problem cannot be reported:\n"
+"\n"
+"%s"
+msgstr ""
+"Το πρόβλημα δεν μπορεί να αναφερθεί:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:245
+msgid "You are not allowed to access this problem report."
+msgstr ""
+"Δεν σας επιτρέπεται να αποκτήσετε πρόσβαση στην αναφορά του προβλήματος."
+
+#: ../apport/ui.py:248
+msgid "Error"
+msgstr "Σφάλμα"
+
+#: ../apport/ui.py:249
+msgid "There is not enough disk space available to process this report."
+msgstr ""
+"Δεν υπάρχει αρκετός χώρος στον δίσκο για την επεξεργασία αυτής της αναφοράς."
+
+#: ../apport/ui.py:269
+msgid "No package specified"
+msgstr "Δεν ορίστηκε πακέτο"
+
+#: ../apport/ui.py:270
+msgid ""
+"You need to specify a package or a PID. See --help for more information."
+msgstr ""
+"Χρειάζεται να ορίσετε ένα πακέτο ή ένα PID. Δείτε την --help για "
+"περισσότερες πληροφορίες."
+
+#: ../apport/ui.py:284
+msgid "Permission denied"
+msgstr "Δεν επιτρέπεται η πρόσβαση"
+
+#: ../apport/ui.py:285
+msgid ""
+"The specified process does not belong to you. Please run this program as the "
+"process owner or as root."
+msgstr ""
+"Η συγκεκριμένη διαδικασία δεν ανήκει στην δικαιοδοσία σας. Παρακαλώ τρέξτε "
+"το πρόγραμμα ως  ιδιοκτήτης ή ως root"
+
+#: ../apport/ui.py:302
+#, python-format
+msgid "Package %s does not exist"
+msgstr "Το πακέτο %s δεν υπάρχει"
+
+#: ../apport/ui.py:462
+msgid "Could not determine the package or source package name."
+msgstr ""
+"Αδύνατος ο καθορισμός του πακέτου ή του ονόματος του πακέτου πηγαίου κώδικα."
+
+#: ../apport/ui.py:477
+msgid "Unable to start web browser"
+msgstr "Αδύνατη η εκκίνηση του περιηγητή"
+
+#: ../apport/ui.py:478
+#, python-format
+msgid "Unable to start web browser to open %s."
+msgstr "Αδύνατη η εκκίνηση του περιηγητή για το άνοιγμα του %s."
+
+#: ../apport/ui.py:584
+msgid "Network problem"
+msgstr "Πρόβλημα Δικτύου"
+
+#: ../apport/ui.py:586
+msgid "Could not upload report data to crash database"
+msgstr "Αδύνατο το ανέβασμα πληροφοριών στη βάση δεδομένων των καταρρεύσεων"
+
+#: ../apport/ui.py:610
+msgid "Memory exhaustion"
+msgstr "Εξάντληση μνήμης"
+
+#: ../apport/ui.py:611
+msgid "Your system does not have enough memory to process this crash report."
+msgstr ""
+"Το σύστημα δεν έχει αρκετή ελεύθερη μνήμη για τη διαδικασία αναφοράς "
+"κατάρρευσης."
+
+#: ../apport/ui.py:631
+msgid "This problem report does not apply to a packaged program."
+msgstr ""
+"Αυτή η αναφορά προβλήματος δεν ισχύει για το πακεταρισμένο πρόγραμμα."
+
+#: ../apport/ui.py:665
+msgid "Problem already known"
+msgstr "Πρόβλημα ήδη γνωστό"
+
+#: ../apport/ui.py:666
+msgid ""
+"This problem was already reported in the bug report displayed in the web "
+"browser. Please check if you can add any further information that might be "
+"helpful for the developers."
+msgstr ""
+"Αυτό το πρόβλημα έχει ήδη αναφερθεί στο σύστημα αναφοράς λαθών, στη σελίδα "
+"που βλέπετε. Παρακαλώ εξετάστε, αν μπορείτε να προσθέσετε κάποιες επιπλέον "
+"πληροφορίες, που να είναι χρήσιμες στους προγραμματιστές."
