@@ -9,6 +9,8 @@
     exit 1
 }
 
+bzr clean-tree --ignored
+
 version=$(grep '(UNRELEASED)' NEWS | cut -f1 -d' ')
 [ -n "$version" ] || {
     echo "no UNRELEASED in NEWS" >&2
