@@ -405,7 +405,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 return self._get_source_version(task.bug_target_display_name.split()[0])
 
             # check if there any invalid ones
-            if filter(lambda task: task.status == 'Invalid' and \
+            if filter(lambda task: task.status in ('Invalid', "Won't Fix") and \
                     distro_identifier in task.bug_target_display_name.lower(), tasks):
                 return 'invalid'
         else:
