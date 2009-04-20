@@ -31,6 +31,8 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
       "nomove") based on the installed pycentral version.
     - debian/rules: Only supply --install-layout=deb when Python version is
       2.6.
+  * apport/hookutils.py: Add docstring for attach_hardware, thanks Matt
+    Zimmerman! (Merged from lp:~mdz/apport/hookutils)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 20 Apr 2009 16:20:47 +0200
 
