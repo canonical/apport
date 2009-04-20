@@ -1,0 +1,515 @@
+# Russian translation for apport
+# Copyright (c) (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
+# This file is distributed under the same license as the apport package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apport\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"PO-Revision-Date: 2009-02-22 05:41+0000\n"
+"Last-Translator: Артём Попов <artfwo@gmail.com>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-04-20 13:20+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../gtk/apport-gtk.py:66 ../gtk/apport-gtk.py:70
+#, python-format
+msgid "Sorry, %s closed unexpectedly"
+msgstr "Извините, программа %s неожиданно закрылась"
+
+#: ../gtk/apport-gtk.py:68 ../apport/ui.py:147
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly"
+msgstr "Извините, программа %s аварийно завершила свою работу"
+
+#: ../gtk/apport-gtk.py:110 ../qt4/apport-qt.py:194 ../cli/apport-cli.py:173
+msgid "Your system encountered a serious kernel problem."
+msgstr "В вашей системе обнаружена серьёзная неисправность ядра."
+
+#: ../gtk/apport-gtk.py:114 ../qt4/apport-qt.py:198 ../cli/apport-cli.py:177
+msgid "You can help the developers to fix the problem by reporting it."
+msgstr ""
+"Вы можете помочь разработчикам исправить эту проблему, отправив о ней отчёт."
+
+#: ../gtk/apport-gtk.py:145 ../qt4/apport-qt.py:239 ../cli/apport-cli.py:212
+msgid "(binary data)"
+msgstr "(двоичные данные)"
+
+#: ../gtk/apport-gtk.glade.h:1
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr "<big><b>Сбор информации о неполадке</b></big>"
+
+#: ../gtk/apport-gtk.glade.h:2
+msgid ""
+"<big><b>Send problem report to the developers?</b></big>\n"
+"\n"
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"<big><b>Переслать разработчикам отчёт о неполадке?</b></big>\n"
+"\n"
+"После того, как отчёт будет выслан, заполните, пожалуйста, форму, которая "
+"автоматически откроется в браузере."
+
+#: ../gtk/apport-gtk.glade.h:5
+msgid "<big><b>Uploading problem information</b></big>"
+msgstr "<big><b>Передача сведений о неполадке</b></big>"
+
+#: ../gtk/apport-gtk.glade.h:7
+#, no-c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+"install or upgrade.</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Извините, не удалось установить или "
+"обновить пакет «%s».</span>"
+
+#: ../gtk/apport-gtk.glade.h:8
+msgid "Application problem"
+msgstr "Неполадка в приложении"
+
+#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#, no-c-format, python-format
+msgid "Complete report (recommended; %s)"
+msgstr "Полный отчёт (рекомендуется; %s)"
+
+#: ../gtk/apport-gtk.glade.h:11
+msgid "Content of the report"
+msgstr "Данные отчёта"
+
+#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+msgid ""
+"If you were not doing anything confidential (entering passwords or other "
+"private information), you can help to improve the application by reporting "
+"the problem."
+msgstr ""
+"Если вы не вводили секретную информацию (пароли или личные данные), вы "
+"можете помочь нам улучшить программу, отправив отчёт о неполадке."
+
+#: ../gtk/apport-gtk.glade.h:13
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr ""
+"Производится сбор информации, которая может помочь разработчикам исправить "
+"эту ошибку."
+
+#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+msgid "Kernel problem"
+msgstr "Неполадка в ядре"
+
+#: ../gtk/apport-gtk.glade.h:15
+msgid "Package problem"
+msgstr "Неполадка с пакетом"
+
+#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#, no-c-format, python-format
+msgid "Reduced report (slow Internet connection; %s)"
+msgstr "Краткая версия отчёта (при медленном соединении с Интернетом; %s)"
+
+#: ../gtk/apport-gtk.glade.h:18
+msgid "Restart _Program"
+msgstr "Перезапустить _программу"
+
+#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+msgid ""
+"The collected information is being sent to the bug tracking system. This "
+"might take a few minutes."
+msgstr ""
+"Собранные данные пересылаются в систему учёта ошибок. Это может занять "
+"несколько минут."
+
+#: ../gtk/apport-gtk.glade.h:20
+msgid ""
+"This will remove some large items from the report. These are very useful for "
+"developers to debug the problem, but might be too big for you to upload if "
+"you have a slow internet connection."
+msgstr ""
+"Некоторые большие части вашего сообщения будут удалены. Они очень полезны "
+"разработчикам при устранении неполадки, но могут долго отправляться, если у "
+"вас медленное соединение с Интернетом."
+
+#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
+#: ../cli/apport-cli.py:281
+msgid "Uploading problem information"
+msgstr "Передача информации о неполадке"
+
+#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
+#: ../cli/apport-cli.py:161
+msgid ""
+"You can help the developers to fix the package by reporting the problem."
+msgstr ""
+"Вы можете помочь разработчикам, отправив отчёт о выявленной неполадке."
+
+#: ../gtk/apport-gtk.glade.h:23
+msgid "_Ignore future crashes of this program version"
+msgstr "_Игнорировать будущие сбои в этой версии программы"
+
+#: ../gtk/apport-gtk.glade.h:24
+msgid "_Report Problem..."
+msgstr "_Сообщить о неполадке..."
+
+#: ../gtk/apport-gtk.glade.h:25
+msgid "_Send Report"
+msgstr "_Отправить отчёт"
+
+#: ../gtk/apport-gtk.desktop.in.h:1 ../qt4/apport-qt.desktop.in.h:1
+msgid "Report a malfunction to the developers"
+msgstr "Сообщить о недоработке разработчикам"
+
+#: ../gtk/apport-gtk.desktop.in.h:2 ../qt4/apport-qt.desktop.in.h:2
+msgid "Report a problem..."
+msgstr "Сообщить о неполадке..."
+
+#: ../qt4/apport-qt.py:100
+msgid "&Details..."
+msgstr "&Подробнее..."
+
+#: ../qt4/apport-qt.py:137 ../qt4/apport-qt.py:143
+#, python-format
+msgid "Sorry, %s closed unexpectedly."
+msgstr "Извините, программа %s неожиданно закрылась."
+
+#: ../qt4/apport-qt.py:140
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly."
+msgstr "Извините, программа «%s» неожиданно закрылась."
+
+#: ../qt4/apport-qt.py:149
+msgid "&Ignore future crashes of this program version"
+msgstr "&Игнорировать будущие сбои в этой версии программы"
+
+#: ../qt4/apport-qt.py:151 ../qt4/apport-qt.py:182 ../qt4/apport-qt.py:202
+#: ../cli/apport-cli.py:143 ../cli/apport-cli.py:162 ../cli/apport-cli.py:180
+msgid "&Report Problem..."
+msgstr "&Сообщить о проблеме..."
+
+#: ../qt4/apport-qt.py:159
+msgid "Restart &Program"
+msgstr "&Перезапустить программу"
+
+#: ../qt4/apport-qt.py:177
+#, python-format
+msgid "Sorry, the package \"%s\" failed to install or upgrade."
+msgstr "Извините, не удалось установить или обновить пакет «%s»."
+
+#. Let's get the dialog and modify it to our needs
+#: ../qt4/apport-qt.py:215
+msgid "Generic error"
+msgstr "Общая ошибка"
+
+#: ../qt4/apport-qt.py:216 ../cli/apport-cli.py:192
+msgid "Send problem report to the developers?"
+msgstr "Отправить отчёт об ошибке разработчикам?"
+
+#: ../qt4/apport-qt.py:217
+msgid ""
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"После того, как отчёт будет отправлен, заполните форму в автоматически "
+"открывшемся окне обозревателя."
+
+#: ../qt4/apport-qt.py:220
+msgid "&Send"
+msgstr "&Отправить"
+
+#: ../qt4/apport-qt.py:278
+msgid "Collecting Problem Information"
+msgstr "Сбор информации о проблеме"
+
+#: ../qt4/apport-qt.py:279 ../cli/apport-cli.py:268
+msgid "Collecting problem information"
+msgstr "Сбор информации о проблеме"
+
+#: ../qt4/apport-qt.py:280
+msgid ""
+"The collected information can be sent to the developers to improve the "
+"application. This might take a few minutes."
+msgstr ""
+"Собранную информацию можно отправить разработчикам чтобы улучшить "
+"приложение. Это может занять несколько минут."
+
+#: ../qt4/apport-qt.py:297
+msgid "Uploading Problem Information"
+msgstr "Передача информации о неполадке"
+
+#: ../cli/apport-cli.py:75
+msgid "Press any key to continue..."
+msgstr "Чтобы продолжить, нажмите любую клавишу..."
+
+#: ../cli/apport-cli.py:79
+msgid "What would you like to do? Your options are:"
+msgstr "Что вы хотите сделать? Возможные варианты:"
+
+#: ../cli/apport-cli.py:83
+#, python-format
+msgid "Please choose (%s):"
+msgstr "Пожалуйста, выберите (%s):"
+
+#. translators: first %s: application name, second %s: date, third %s: time
+#: ../cli/apport-cli.py:136
+#, python-format
+msgid "%s closed unexpectedly on %s at %s."
+msgstr "%s неожиданно закрылась %s в %s."
+
+#: ../cli/apport-cli.py:140
+msgid ""
+"If you were not doing anything confidential (entering passwords or other\n"
+"private information), you can help to improve the application by reporting\n"
+"the problem."
+msgstr ""
+"Если вы не вводили секретную информацию (пароли или личные данные),\n"
+"вы можете помочь нам улучшить программу, отправив отчёт о неполадке."
+
+#: ../cli/apport-cli.py:144
+msgid "Cancel and &ignore future crashes of this program version"
+msgstr "Отменить и &игнорировать будущие сбои в этой версии программы"
+
+#: ../cli/apport-cli.py:145 ../cli/apport-cli.py:163 ../cli/apport-cli.py:181
+#: ../cli/apport-cli.py:228
+msgid "&Cancel"
+msgstr "О&тменить"
+
+#: ../cli/apport-cli.py:160
+#, python-format
+msgid "The package \"%s\" failed to install or upgrade."
+msgstr "Не удалось установить или обновить пакет «%s»."
+
+#: ../cli/apport-cli.py:193
+msgid ""
+"After the problem report has been sent, please fill out the form in the\n"
+"automatically opened web browser."
+msgstr ""
+"После того, как отчёт будет отправлен, заполните форму\n"
+"в автоматически открывшемся окне обозревателя."
+
+#: ../cli/apport-cli.py:216
+#, python-format
+msgid "&Send complete report (recommended; %s)"
+msgstr "&Послать полный отчёт (рекомендуется; %s)"
+
+#: ../cli/apport-cli.py:218
+#, python-format
+msgid "Send &reduced report (slow Internet connection; %s)"
+msgstr ""
+"Послать &сокращенную версию отчета (медленное соединение с Интернетом; %s)"
+
+#: ../cli/apport-cli.py:221
+#, python-format
+msgid "&Send report (%s)"
+msgstr "&Отправить отчёт (%s)"
+
+#: ../cli/apport-cli.py:225
+msgid "&View report"
+msgstr "&Просмотреть отчёт"
+
+#: ../cli/apport-cli.py:226
+msgid "&Keep report file for sending later or copying to somewhere else"
+msgstr ""
+"&Сохранить файл отчёта для последующей отправки или копирования куда-либо"
+
+#: ../cli/apport-cli.py:250
+msgid "Problem report file:"
+msgstr "Файл отчёта о проблеме:"
+
+#: ../cli/apport-cli.py:258 ../cli/apport-cli.py:263
+msgid "&Confirm"
+msgstr "&Подтвердить"
+
+#: ../cli/apport-cli.py:262
+#, python-format
+msgid "Error: %s"
+msgstr "Ошибка: %s"
+
+#: ../cli/apport-cli.py:269
+msgid ""
+"The collected information can be sent to the developers to improve the\n"
+"application. This might take a few minutes."
+msgstr ""
+"Собранная информация может быть направлена разработчикам\n"
+"для улучшения приложения. Это может занять несколько минут."
+
+#: ../cli/apport-cli.py:282
+msgid ""
+"The collected information is being sent to the bug tracking system.\n"
+"This might take a few minutes."
+msgstr ""
+"Собранная информация направляется в систему отслеживания ошибок.\n"
+"Это может занять несколько минут."
+
+#: ../cli/apport-cli.py:295
+msgid "No pending crash reports. Try --help for more information."
+msgstr "Нет ожидающих сообщений о сбоях. Попробуйте ключ --help."
+
+#. TRANS: %s is the name of the operating system
+#: ../apport/ui.py:54
+#, python-format
+msgid "This is not a genuine %s package"
+msgstr "Это не оригинальный пакет %s"
+
+#: ../apport/ui.py:62
+#, python-format
+msgid ""
+"You have some obsolete package versions installed. Please upgrade the "
+"following packages and check if the problem still occurs:\n"
+"\n"
+"%s"
+msgstr ""
+"В вашей системе установлены устаревшие версии некоторых пакетов. Обновите "
+"следующие пакеты и проверьте, осталась ли проблема:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:146
+msgid "unknown program"
+msgstr "неизвестная программа"
+
+#: ../apport/ui.py:148 ../apport/ui.py:219
+#, python-format
+msgid "Problem in %s"
+msgstr "Неполадка в %s"
+
+#: ../apport/ui.py:149
+msgid ""
+"Your computer does not have enough free memory to automatically analyze the "
+"problem and send a report to the developers."
+msgstr ""
+"В вашем компьютере недостаточно свободной памяти, чтобы автоматически "
+"проанализировать неполадку и отправить отчет разработчикам."
+
+#: ../apport/ui.py:155
+msgid "Unreportable problem"
+msgstr "Невозможно сообщить о неполадке"
+
+#: ../apport/ui.py:156
+#, python-format
+msgid ""
+"The current configuration cannot be supported:\n"
+"\n"
+"%s"
+msgstr ""
+"Текущая конфигурация не поддерживается:\n"
+"\n"
+"%s"
+
+#. package does not exist
+#: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
+#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
+#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
+#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
+#: ../apport/ui.py:1505 ../apport/ui.py:1516
+msgid "Invalid problem report"
+msgstr "Неверный отчёт об ошибке"
+
+#: ../apport/ui.py:184 ../apport/ui.py:213
+msgid "The report belongs to a package that is not installed."
+msgstr "Отчёт относится к пакету, который не был установлен."
+
+#: ../apport/ui.py:209 ../apport/ui.py:620
+msgid "This problem report is damaged and cannot be processed."
+msgstr "Этот отчёт о неполадке повреждён и не может быть обработан."
+
+#: ../apport/ui.py:220
+#, python-format
+msgid ""
+"The problem cannot be reported:\n"
+"\n"
+"%s"
+msgstr ""
+"Не удаётся сообщить о неполадке:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:245
+msgid "You are not allowed to access this problem report."
+msgstr "У вас нет доступа к отчёту о неполадке."
+
+#: ../apport/ui.py:248
+msgid "Error"
+msgstr "Ошибка"
+
+#: ../apport/ui.py:249
+msgid "There is not enough disk space available to process this report."
+msgstr "Недостаточно места на диске для обработки этого отчёта."
+
+#: ../apport/ui.py:269
+msgid "No package specified"
+msgstr "Не указан пакет"
+
+#: ../apport/ui.py:270
+msgid ""
+"You need to specify a package or a PID. See --help for more information."
+msgstr ""
+"Необходимо указать пакет или PID. Запустите программу с ключом --help для "
+"получения дополнительной информации."
+
+#: ../apport/ui.py:284
+msgid "Permission denied"
+msgstr "В доступе отказано"
+
+#: ../apport/ui.py:285
+msgid ""
+"The specified process does not belong to you. Please run this program as the "
+"process owner or as root."
+msgstr ""
+"Указанный процесс запущен другим пользователем. Запустите эту программу с "
+"правами владельца процесса или администратора системы."
+
+#: ../apport/ui.py:302
+#, python-format
+msgid "Package %s does not exist"
+msgstr "Пакет %s не существует"
+
+#: ../apport/ui.py:462
+msgid "Could not determine the package or source package name."
+msgstr "Не удалось определить имя пакета или имя пакета с исходным кодом."
+
+#: ../apport/ui.py:477
+msgid "Unable to start web browser"
+msgstr "Не удалось запустить веб-браузер"
+
+#: ../apport/ui.py:478
+#, python-format
+msgid "Unable to start web browser to open %s."
+msgstr "Не удалось запустить веб-браузер, чтобы открыть %s."
+
+#: ../apport/ui.py:584
+msgid "Network problem"
+msgstr "Неполадка с сетью"
+
+#: ../apport/ui.py:586
+msgid "Could not upload report data to crash database"
+msgstr "Не удалось передать данные отчета в базу неполадок"
+
+#: ../apport/ui.py:610
+msgid "Memory exhaustion"
+msgstr "Недостаток памяти"
+
+#: ../apport/ui.py:611
+msgid "Your system does not have enough memory to process this crash report."
+msgstr "В системе недостаточно памяти для обработки этого отчёта об ошибке."
+
+#: ../apport/ui.py:631
+msgid "This problem report does not apply to a packaged program."
+msgstr "Этот отчёт об ошибке не относится к упакованной программе."
+
+#: ../apport/ui.py:665
+msgid "Problem already known"
+msgstr "О неполадке уже известно"
+
+#: ../apport/ui.py:666
+msgid ""
+"This problem was already reported in the bug report displayed in the web "
+"browser. Please check if you can add any further information that might be "
+"helpful for the developers."
+msgstr ""
+"Об этой неполадке уже известно. Существующий отчёт о ней открыт в вашем "
+"браузере. Пожалуйста, проверьте, можете ли вы добавить в него иную полезную "
+"информацию, которая могла бы помочь разработчикам."

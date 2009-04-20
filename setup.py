@@ -2,17 +2,19 @@
 
 from distutils.core import setup
 import distutils.command.install_data
+import distutils.command.clean
+from distutils.dir_util import remove_tree
 
 import subprocess, glob, os.path
 
 class my_install_data(distutils.command.install_data.install_data):
-    '''Install files from etc/ and build gettext *.mo'''
-
     def run(self):
+        # install files from etc/
         for (root, _, files) in os.walk('etc'):
             self.data_files.append((os.path.join('/', root), 
                     [os.path.join(root, f) for f in files]))
 
+        # build gettext *.mo
         subprocess.call(['make', '-C', 'po', 'build-mo'])
         for filepath in glob.glob('po/mo/*/LC_MESSAGES/*.mo'):
             lang = filepath[len('po/mo/'):]
@@ -20,6 +22,24 @@ class my_install_data(distutils.command.install_data.install_data):
             self.data_files.append((targetpath, [filepath]))
 
         distutils.command.install_data.install_data.run(self)
+
+        # symlinks
+        d = os.path.join(self.install_dir, 'share', 'icons', 'hicolor', 'scalable',
+                'mimetypes')
+        self.mkpath(d)
+        l = os.path.join (d, 'text-x-apport.svg')
+        if os.path.exists(l):
+            os.unlink(l)
+        os.symlink(os.path.join('..', 'apps', 'apport.svg'), l)
+
+class my_clean(distutils.command.clean.clean):
+    def run(self):
+        distutils.command.clean.clean.run(self)
+
+        # clean po/mo
+        modir = os.path.join('po', 'mo')
+        if os.path.exists(modir):
+            remove_tree(modir, self.dry_run)
 
 setup(name='apport',
       author='Martin Pitt',
@@ -29,7 +49,7 @@ setup(name='apport',
       url='https://wiki.ubuntu.com/Apport',
       license='gpl',
       description='intercept, process, and report crashes and bug reports',
-      version='1.0',
+      version='1.1',
       py_modules=['problem_report', 'apport_python_hook'],
       data_files=[('share/apport', ['gtk/apport-gtk.glade'] + glob.glob('qt4/*.ui')),
                   ('share/icons/hicolor/scalable/apps', ['apport/apport.svg']),
@@ -46,5 +66,8 @@ setup(name='apport',
           'bin/kernel_oops', 'bin/apportcheckresume'],
       packages=['apport', 'apport.crashdb_impl'],
 
-      cmdclass = { 'install_data': my_install_data },
+      cmdclass = { 
+          'install_data': my_install_data,
+          'clean': my_clean,
+      },
 )

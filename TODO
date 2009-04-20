@@ -1,16 +1,6 @@
 apport-retrace:
  - add heuristics for more crash types (SEGV on read/write/exec & mem region)
 
-python-apport:
- - Add API/report attribute for doing upstream problem reports
- - add field for nonstandard apt sources.list[.d/] lines
- - drop ProblemType: field, replace with tags; needs new anchor for
-   start of apport data
- - drop PATH if it is the default
-
-add firefox apport hook to suppress crash reports when restart is
-necessary, and to not file crashes with flash installed
-
 apport:
  - check crashes of root processes with dropped privs in test suite
  - if CORE_REAL_RLIM is not set, do not write core dump; add test case
@@ -21,12 +11,5 @@ dup detection:
 GUI:
  - point out bug privacy and to leave it private by default
 
-retracers:
- - cache Contents.gz
-
-retrace failures:
- - Bug #124360: http://launchpadlibrarian.net/8320761/StacktraceSource.txt: dd.c not found
- - does not find files with complete path
-
-packaging:
- - ensure that uname -r >= 2.6.24 in init script
+hooks:
+ - add hooks which run during program crash, to collect more runtime data

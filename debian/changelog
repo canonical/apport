@@ -1,3 +1,27 @@
+apport (1.1-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release:
+    - Drop some remaining distro specific pieces of code from non-backends.
+    - Add hookutils methods for attaching relevant packages, greatly improve
+      attach_alsa() for sound problem debugging. 
+    - Move launchpad crash database implementation from ever-breaking
+      python-launchpad-bugs (screenscraping) to launchpadlib (official and
+      stable Launchpad API). (LP: #353879)
+    - Add new field Report.pid which gets set on add_proc_info() and can be
+      used by hooks.
+    - setup.py: Properly clean up all generated files, install missing
+      mimetypes/text-x-apport.svg icon symlink.
+    - Add README file.
+    - Add translations from Launchpad.
+    - Remove preloadlib/*; it's undermaintained, and not really useful any more
+      these days.
+    - Various bug fixes; most visible being the misnamed etc/default/apport.default
+      file (which should just be etc/default/apport).
+  * Drop debian/apport.README.Debian, superseded by upstream README.
+  * Drop debian/apport.links, done by upstream setup.py now.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 20 Apr 2009 16:20:47 +0200
+
 apport (1.0-0ubuntu5) jaunty; urgency=low
 
   [ Martin Pitt ]

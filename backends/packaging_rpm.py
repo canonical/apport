@@ -193,6 +193,11 @@ class RPMPackageInfo:
         # equivalent code in whatever your distro uses instead of yum anyway.
         raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
 
+    def package_name_glob(self, glob):
+        '''Return known package names which match given glob.'''
+
+        raise NotImplementedError, 'TODO'
+
     #
     # Internal helper methods. These are only single-underscore, so you can use
     # use them in extending/overriding the methods above in your subclasses

@@ -1,0 +1,521 @@
+# Hungarian translation for apport
+# Copyright (c) (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
+# This file is distributed under the same license as the apport package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apport\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"PO-Revision-Date: 2009-02-20 16:25+0000\n"
+"Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
+"Language-Team: Hungarian <hu@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-04-20 13:20+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../gtk/apport-gtk.py:66 ../gtk/apport-gtk.py:70
+#, python-format
+msgid "Sorry, %s closed unexpectedly"
+msgstr "Elnézést, a következő váratlanul befejeződött: %s"
+
+#: ../gtk/apport-gtk.py:68 ../apport/ui.py:147
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly"
+msgstr "Elnézést, a(z) %s program váratlanul összeomlott."
+
+#: ../gtk/apport-gtk.py:110 ../qt4/apport-qt.py:194 ../cli/apport-cli.py:173
+msgid "Your system encountered a serious kernel problem."
+msgstr "A rendszer súlyos rendszermag-problémát észlelt."
+
+#: ../gtk/apport-gtk.py:114 ../qt4/apport-qt.py:198 ../cli/apport-cli.py:177
+msgid "You can help the developers to fix the problem by reporting it."
+msgstr ""
+"Amennyiben hibajelentést küld, a hiba kijavításában segíti a fejlesztőket."
+
+#: ../gtk/apport-gtk.py:145 ../qt4/apport-qt.py:239 ../cli/apport-cli.py:212
+msgid "(binary data)"
+msgstr "(bináris adatok)"
+
+#: ../gtk/apport-gtk.glade.h:1
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr "<big><b>Információgyűjtés a problémáról</b></big>"
+
+#: ../gtk/apport-gtk.glade.h:2
+msgid ""
+"<big><b>Send problem report to the developers?</b></big>\n"
+"\n"
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"<big><b>Elküldi a hibajelentést a fejlesztőknek?</b></big>\n"
+"\n"
+"A hibajelentés elküldése után töltse ki (angolul) a böngészőben "
+"automatikusan megnyíló űrlapot."
+
+#: ../gtk/apport-gtk.glade.h:5
+msgid "<big><b>Uploading problem information</b></big>"
+msgstr "<big><b>Hibainformációk feltöltése</b></big>"
+
+#: ../gtk/apport-gtk.glade.h:7
+#, no-c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+"install or upgrade.</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Elnézést, a(z)  \"%s\" csomag "
+"telepítése vagy frissítése meghiúsult.</span>"
+
+#: ../gtk/apport-gtk.glade.h:8
+msgid "Application problem"
+msgstr "Alkalmazásprobléma"
+
+#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#, no-c-format, python-format
+msgid "Complete report (recommended; %s)"
+msgstr "Teljes jelentés (ajánlott; %s)"
+
+#: ../gtk/apport-gtk.glade.h:11
+msgid "Content of the report"
+msgstr "A jelentés tartalma"
+
+#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+msgid ""
+"If you were not doing anything confidential (entering passwords or other "
+"private information), you can help to improve the application by reporting "
+"the problem."
+msgstr ""
+"Ha nem csinált semmi bizalmasat (jelszó vagy egyéb személyes információk "
+"beírása), a hiba jelentésével segíthet az alkalmazás továbbfejlesztésében."
+
+#: ../gtk/apport-gtk.glade.h:13
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr ""
+"Információk gyűjtése, amelyek segíthetik a fejlesztőket a jelentendő "
+"probléma megoldásában."
+
+#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+msgid "Kernel problem"
+msgstr "Kernelprobléma"
+
+#: ../gtk/apport-gtk.glade.h:15
+msgid "Package problem"
+msgstr "Csomagprobléma"
+
+#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#, no-c-format, python-format
+msgid "Reduced report (slow Internet connection; %s)"
+msgstr "Egyszerűsített jelentés (lassú internetkapcsolat esetén; %s)"
+
+#: ../gtk/apport-gtk.glade.h:18
+msgid "Restart _Program"
+msgstr "_Program újraindítása"
+
+#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+msgid ""
+"The collected information is being sent to the bug tracking system. This "
+"might take a few minutes."
+msgstr ""
+"Az összegyűjtött információk elküldésre kerülnek a hibakövető rendszerbe. Ez "
+"eltarthat néhány percig."
+
+#: ../gtk/apport-gtk.glade.h:20
+msgid ""
+"This will remove some large items from the report. These are very useful for "
+"developers to debug the problem, but might be too big for you to upload if "
+"you have a slow internet connection."
+msgstr ""
+"Ez eltávolítja a jelentés néhány nagy méretű elemét. Ezek nagyon hasznosak a "
+"fejlesztők számára a hiba megkeresésében, de lassú internetkapcsolat esetén "
+"túl nagyok lehetnek a feltöltéshez."
+
+#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
+#: ../cli/apport-cli.py:281
+msgid "Uploading problem information"
+msgstr "A hibával kapcsolatos információk feltöltése"
+
+#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
+#: ../cli/apport-cli.py:161
+msgid ""
+"You can help the developers to fix the package by reporting the problem."
+msgstr "A hiba jelentésével segítheti a fejlesztőket a csomag javításában."
+
+#: ../gtk/apport-gtk.glade.h:23
+msgid "_Ignore future crashes of this program version"
+msgstr "A program t_ovábbi összeomlásainak figyelmen kívül hagyása"
+
+#: ../gtk/apport-gtk.glade.h:24
+msgid "_Report Problem..."
+msgstr "Hiba _jelentése"
+
+#: ../gtk/apport-gtk.glade.h:25
+msgid "_Send Report"
+msgstr "_Jelentés küldése"
+
+#: ../gtk/apport-gtk.desktop.in.h:1 ../qt4/apport-qt.desktop.in.h:1
+msgid "Report a malfunction to the developers"
+msgstr "Hibás működés jelentése a fejlesztőknek"
+
+#: ../gtk/apport-gtk.desktop.in.h:2 ../qt4/apport-qt.desktop.in.h:2
+msgid "Report a problem..."
+msgstr "Hiba jelentése..."
+
+#: ../qt4/apport-qt.py:100
+msgid "&Details..."
+msgstr "&Részletek..."
+
+#: ../qt4/apport-qt.py:137 ../qt4/apport-qt.py:143
+#, python-format
+msgid "Sorry, %s closed unexpectedly."
+msgstr "Elnézést, a következő váratlanul befejeződött: %s."
+
+#: ../qt4/apport-qt.py:140
+#, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly."
+msgstr "Elnézést, a következő program váratlanul befejeződött: %s"
+
+#: ../qt4/apport-qt.py:149
+msgid "&Ignore future crashes of this program version"
+msgstr "A &programverzió jövőbeli összeomlásainak figyelmen kívül hagyása"
+
+#: ../qt4/apport-qt.py:151 ../qt4/apport-qt.py:182 ../qt4/apport-qt.py:202
+#: ../cli/apport-cli.py:143 ../cli/apport-cli.py:162 ../cli/apport-cli.py:180
+msgid "&Report Problem..."
+msgstr "&Hiba jelentése..."
+
+#: ../qt4/apport-qt.py:159
+msgid "Restart &Program"
+msgstr "&Program újraindítása"
+
+#: ../qt4/apport-qt.py:177
+#, python-format
+msgid "Sorry, the package \"%s\" failed to install or upgrade."
+msgstr ""
+"Elnézést, a(z) \"%s\" csomagot nem sikerült telepíteni vagy frissíteni."
+
+#. Let's get the dialog and modify it to our needs
+#: ../qt4/apport-qt.py:215
+msgid "Generic error"
+msgstr "Általános hiba"
+
+#: ../qt4/apport-qt.py:216 ../cli/apport-cli.py:192
+msgid "Send problem report to the developers?"
+msgstr "Elküldi a hibajelentést a feljesztőknek?"
+
+#: ../qt4/apport-qt.py:217
+msgid ""
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"A hibajelentés elküldése után töltse ki a webböngészőben automatikusan "
+"megnyíló űrlapot."
+
+#: ../qt4/apport-qt.py:220
+msgid "&Send"
+msgstr "&Küldés"
+
+#: ../qt4/apport-qt.py:278
+msgid "Collecting Problem Information"
+msgstr "Információgyűjtés a hibáról"
+
+#: ../qt4/apport-qt.py:279 ../cli/apport-cli.py:268
+msgid "Collecting problem information"
+msgstr "Információgyűjtés a hibáról"
+
+#: ../qt4/apport-qt.py:280
+msgid ""
+"The collected information can be sent to the developers to improve the "
+"application. This might take a few minutes."
+msgstr ""
+"Az összegyűjtött információk elküldhetők a fejlesztőknek az alkalmazás "
+"javítása érdekében. Ez eltarthat néhány percig."
+
+#: ../qt4/apport-qt.py:297
+msgid "Uploading Problem Information"
+msgstr "A hibával kapcsolatos információk feltöltése"
+
+#: ../cli/apport-cli.py:75
+msgid "Press any key to continue..."
+msgstr "A folytatáshoz nyomjon le egy billentyűt..."
+
+#: ../cli/apport-cli.py:79
+msgid "What would you like to do? Your options are:"
+msgstr "Mit szeretne tenni? A lehetőségek:"
+
+#: ../cli/apport-cli.py:83
+#, python-format
+msgid "Please choose (%s):"
+msgstr "Válasszon (%s):"
+
+#. translators: first %s: application name, second %s: date, third %s: time
+#: ../cli/apport-cli.py:136
+#, python-format
+msgid "%s closed unexpectedly on %s at %s."
+msgstr "%s váratlanul befejeződött (%s %s)."
+
+#: ../cli/apport-cli.py:140
+msgid ""
+"If you were not doing anything confidential (entering passwords or other\n"
+"private information), you can help to improve the application by reporting\n"
+"the problem."
+msgstr ""
+"Ha éppen semmi bizalmasat sem végzett (jelszavak vagy egyéb \n"
+"magánjellegű információk bevitele), a hiba bejelentésével segíthet \n"
+"a fejlesztőknek annak javításában."
+
+#: ../cli/apport-cli.py:144
+msgid "Cancel and &ignore future crashes of this program version"
+msgstr ""
+"Mégsem, és ezentúl a programverzió összeomlásainak figyelmen &kívül hagyása"
+
+#: ../cli/apport-cli.py:145 ../cli/apport-cli.py:163 ../cli/apport-cli.py:181
+#: ../cli/apport-cli.py:228
+msgid "&Cancel"
+msgstr "&Mégsem"
+
+#: ../cli/apport-cli.py:160
+#, python-format
+msgid "The package \"%s\" failed to install or upgrade."
+msgstr "A(z) „%s” csomagot nem sikerült telepíteni vagy frissíteni."
+
+#: ../cli/apport-cli.py:193
+msgid ""
+"After the problem report has been sent, please fill out the form in the\n"
+"automatically opened web browser."
+msgstr ""
+"A hibajelentés elküldése után kérjük, töltse ki a kérdőívet az\n"
+"automatikusan megnyíló webböngészőben."
+
+#: ../cli/apport-cli.py:216
+#, python-format
+msgid "&Send complete report (recommended; %s)"
+msgstr "Teljes hibajelentés &küldése (ajánlott; %s)"
+
+#: ../cli/apport-cli.py:218
+#, python-format
+msgid "Send &reduced report (slow Internet connection; %s)"
+msgstr ""
+"&Csökkentett hibajelentés küldése (lassú internetkapcsolat esetén; %s)"
+
+#: ../cli/apport-cli.py:221
+#, python-format
+msgid "&Send report (%s)"
+msgstr "&Hibajelentés küldése (%s)"
+
+#: ../cli/apport-cli.py:225
+msgid "&View report"
+msgstr "Hi&bajelentés megtekintése"
+
+#: ../cli/apport-cli.py:226
+msgid "&Keep report file for sending later or copying to somewhere else"
+msgstr "Hibajelentés megtartása későbbi küldésre, vagy más helyre &másolásra"
+
+#: ../cli/apport-cli.py:250
+msgid "Problem report file:"
+msgstr "Hibajelentésfájl:"
+
+#: ../cli/apport-cli.py:258 ../cli/apport-cli.py:263
+msgid "&Confirm"
+msgstr "Meg&erősítés"
+
+#: ../cli/apport-cli.py:262
+#, python-format
+msgid "Error: %s"
+msgstr "Hiba: %s"
+
+#: ../cli/apport-cli.py:269
+msgid ""
+"The collected information can be sent to the developers to improve the\n"
+"application. This might take a few minutes."
+msgstr ""
+"Az összegyűjtött információkat elküldheti a fejlesztőknek, hogy "
+"javíthassanak\n"
+"az alkalmazáson. A küldés eltarthat pár percig."
+
+#: ../cli/apport-cli.py:282
+msgid ""
+"The collected information is being sent to the bug tracking system.\n"
+"This might take a few minutes."
+msgstr ""
+"Az összegyűjtött információk elküldése a hibakövető rendszernek.\n"
+"Ez eltarthat pár percig."
+
+#: ../cli/apport-cli.py:295
+msgid "No pending crash reports. Try --help for more information."
+msgstr ""
+"Nincs függőben lévő összeomlás jelentés. \r\n"
+"További információkért tekintse meg a --help kapcsoló kimenetét."
+
+#. TRANS: %s is the name of the operating system
+#: ../apport/ui.py:54
+#, python-format
+msgid "This is not a genuine %s package"
+msgstr "Ez nem eredeti %s csomag"
+
+#: ../apport/ui.py:62
+#, python-format
+msgid ""
+"You have some obsolete package versions installed. Please upgrade the "
+"following packages and check if the problem still occurs:\n"
+"\n"
+"%s"
+msgstr ""
+"Néhány csomagból egy elavult verzió van telepítve. Frissítse az alábbi "
+"csomagokat és ellenőrizze, hogy a probléma ezután is fennáll-e: \n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:146
+msgid "unknown program"
+msgstr "ismeretlen program"
+
+#: ../apport/ui.py:148 ../apport/ui.py:219
+#, python-format
+msgid "Problem in %s"
+msgstr "Probléma a következőben: %s"
+
+#: ../apport/ui.py:149
+msgid ""
+"Your computer does not have enough free memory to automatically analyze the "
+"problem and send a report to the developers."
+msgstr ""
+"A számítógépe nem rendelkezik elegendő szabad memóriával a probléma "
+"automatikus elemzéséhez és a jelentés elküldéséhez a fejlesztőknek."
+
+#: ../apport/ui.py:155
+msgid "Unreportable problem"
+msgstr "Nem jelenthető probléma"
+
+#: ../apport/ui.py:156
+#, python-format
+msgid ""
+"The current configuration cannot be supported:\n"
+"\n"
+"%s"
+msgstr ""
+"A jelenlegi konfiguráció nem támogatható:\n"
+"\n"
+"%s"
+
+#. package does not exist
+#: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
+#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
+#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
+#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
+#: ../apport/ui.py:1505 ../apport/ui.py:1516
+msgid "Invalid problem report"
+msgstr "Érvénytelen hibajelentés"
+
+#: ../apport/ui.py:184 ../apport/ui.py:213
+msgid "The report belongs to a package that is not installed."
+msgstr "A jelentés egy nem telepített csomaghoz tartozik."
+
+#: ../apport/ui.py:209 ../apport/ui.py:620
+msgid "This problem report is damaged and cannot be processed."
+msgstr "A hibajelentés megsérült és nem dolgozható fel."
+
+#: ../apport/ui.py:220
+#, python-format
+msgid ""
+"The problem cannot be reported:\n"
+"\n"
+"%s"
+msgstr ""
+"A hiba nem jelenthető:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:245
+msgid "You are not allowed to access this problem report."
+msgstr "A hibajelentés elérése nem engedélyezett"
+
+#: ../apport/ui.py:248
+msgid "Error"
+msgstr "Hiba"
+
+#: ../apport/ui.py:249
+msgid "There is not enough disk space available to process this report."
+msgstr "Nincs elegendő lemezterület a hiba feldolgozásához."
+
+#: ../apport/ui.py:269
+msgid "No package specified"
+msgstr "Nincs megadva csomag"
+
+#: ../apport/ui.py:270
+msgid ""
+"You need to specify a package or a PID. See --help for more information."
+msgstr ""
+"Meg kell adnia egy csomagot vagy PID azonosítót. További információkért "
+"tekintse meg a --help kapcsoló kimenetét."
+
+#: ../apport/ui.py:284
+msgid "Permission denied"
+msgstr "Hozzáférés megtagadva"
+
+#: ../apport/ui.py:285
+msgid ""
+"The specified process does not belong to you. Please run this program as the "
+"process owner or as root."
+msgstr ""
+"A megadott folyamat nem Önhöz tartozik. Ezt a programot a folyamat "
+"tulajdonosaként vagy rendszergazdaként futtassa."
+
+#: ../apport/ui.py:302
+#, python-format
+msgid "Package %s does not exist"
+msgstr "A(z) %s csomag nem létezik"
+
+#: ../apport/ui.py:462
+msgid "Could not determine the package or source package name."
+msgstr "A csomag vagy forrás neve nem állapítható meg."
+
+#: ../apport/ui.py:477
+msgid "Unable to start web browser"
+msgstr "A webböngésző nem indítható."
+
+#: ../apport/ui.py:478
+#, python-format
+msgid "Unable to start web browser to open %s."
+msgstr "A(z) \"%s\" megnyitásához nem lehet elindítani a webböngészőt."
+
+#: ../apport/ui.py:584
+msgid "Network problem"
+msgstr "Hálózati probléma"
+
+#: ../apport/ui.py:586
+msgid "Could not upload report data to crash database"
+msgstr "A jelentés adatai nem tölthetők fel az összeomlás-adatbázisba"
+
+#: ../apport/ui.py:610
+msgid "Memory exhaustion"
+msgstr "Elfogyott a memória"
+
+#: ../apport/ui.py:611
+msgid "Your system does not have enough memory to process this crash report."
+msgstr ""
+"A rendszere nem rendelkezik elegendő memóriával ezen összeomlásjelentés "
+"feldolgozásához."
+
+#: ../apport/ui.py:631
+msgid "This problem report does not apply to a packaged program."
+msgstr "Ez a hibajelentés nem egy csomagból telepített programra vonatkozik."
+
+#: ../apport/ui.py:665
+msgid "Problem already known"
+msgstr "A probléma már ismert."
+
+#: ../apport/ui.py:666
+msgid ""
+"This problem was already reported in the bug report displayed in the web "
+"browser. Please check if you can add any further information that might be "
+"helpful for the developers."
+msgstr ""
+"Ez a probléma már ismert, a webböngészőjében megjelent a hozzátartozó "
+"hibajelentés. Ellenőrizze, hogy tud-e további információkkal szolgálni, "
+"amelyek hasznosak lehetnek a fejlesztők számára."

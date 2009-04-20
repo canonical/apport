@@ -1,0 +1,27 @@
+This file summarizes the major and interesting changes for each release. For a
+detailled list of changes, please see ChangeLog.
+
+1.1 (2009-04-20)
+----------------
+- Drop some remaining distro specific pieces of code.
+- Add hookutils methods for attaching relevant packages, greatly improve
+  attach_alsa() for sound problem debugging. 
+- Move launchpad crash database implementation from ever-breaking
+  python-launchpad-bugs (screenscraping) to launchpadlib (official and stable
+  Launchpad API).
+- Add new field Report.pid which gets set on add_proc_info() and can be used by
+  hooks.
+- setup.py: Properly clean up all generated files, install missing
+  mimetypes/text-x-apport.svg icon symlink.
+- Add README file.
+- Add translations from Launchpad.
+- Remove preloadlib/*; it's undermaintained, and not really useful any more
+  these days.
+- Various bug fixes; most visible being the misnamed etc/default/apport.default
+  file (which should just be etc/default/apport).
+
+1.0 (2009-04-06)
+----------------
+First upstream release, based on Ubuntu packaging branch; that had been the
+de-facto trunk for many years, but this becomes unpractical with several
+distributions using it now.

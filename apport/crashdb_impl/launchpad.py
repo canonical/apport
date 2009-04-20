@@ -1,7 +1,7 @@
 '''Crash database implementation for Launchpad.
 
-Copyright (C) 2007 Canonical Ltd.
-Author: Martin Pitt <martin.pitt@ubuntu.com>
+Copyright (C) 2007, 2009 Canonical Ltd.
+Authors: Martin Pitt <martin.pitt@ubuntu.com> and Markus Korn <thekorn@gmx.de>
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -10,67 +10,114 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import urllib, tempfile, shutil, os.path, re, gzip, sys
+import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys
 from cStringIO import StringIO
 
-import launchpadbugs.storeblob
-import launchpadbugs.connector as Connector
+from launchpadlib.errors import HTTPError
+from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
+from launchpadlib.credentials import Credentials
 
 import apport.crashdb
 import apport
 
-Bug = Connector.ConnectBug()
-BugList = Connector.ConnectBugList()
+default_credentials_path = os.path.expanduser('~/.cache/apport/launchpad.credentials')
 
-def get_source_version(distro, package, hostname):
-    '''Return the version of given source package in the latest release of
-    given distribution.
-
-    If 'distro' is None, we will look for a launchpad project . 
-    '''
-
-    if distro:
-        result = urllib.urlopen('https://%s/%s/+source/%s' % (hostname, distro, package)).read()
-        m = re.search('href="/%s/\w+/\+source/%s/([^"]+)"' % (distro, re.escape(package)), result)
-        if not m:
-            raise ValueError, 'source package %s does not exist in %s' % (package, distro)
-    else:
-        # non distro packages
-        result = urllib.urlopen('https://%s/%s/+series' % (hostname, package)).read()
-        m = re.search('href="/%s/([^"]+)"' % (re.escape(package)), result)
-        if not m:
-            raise ValueError, 'Series for %s does not exist in Launchpad' % (package)
-        
-    return m.group(1)
+APPORT_FILES = ('Dependencies.txt', 'CoreDump.gz', 'ProcMaps.txt',
+        'Traceback.txt', 'Disassembly.txt', 'Registers.txt', 'Stacktrace.txt',
+        'ThreadStacktrace.txt')
+def filter_filename(attachments):
+    for attachment in attachments:
+        f = attachment.data.open()
+        name = f.filename
+        if name in APPORT_FILES:
+            yield f
+            
+def id_set(tasks):
+    # same as set(int(i.bug.id) for i in tasks) but faster
+    return set(int(i.self_link.split('/').pop()) for i in tasks)
+    
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
 
-    def __init__(self, cookie_file, bugpattern_baseurl, options):
-        '''Initialize Launchpad crash database connection. 
+    def __init__(self, auth, bugpattern_baseurl, options):
+        '''Initialize Launchpad crash database. 
         
-        You need to specify a Mozilla-style cookie file for download() and
-        update(). For upload() and get_comment_url() you can use None.'''
-
-        apport.crashdb.CrashDatabase.__init__(self, cookie_file,
+        You need to specify a launchpadlib-style credentials file to
+        access launchpad. If you supply None, it will use
+        default_credentials_path (~/.cache/apport/launchpad.credentials).
+        '''
+        if not auth:
+            if options.get('staging'):
+                auth = default_credentials_path + '.staging'
+            else:
+                auth = default_credentials_path
+        apport.crashdb.CrashDatabase.__init__(self, auth,
             bugpattern_baseurl, options)
 
         self.distro = options.get('distro')
         self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
         self.options = options
-        self.cookie_file = cookie_file
+        self.auth = auth
+        assert self.auth
 
-        if self.options.get('staging', False):
-            from launchpadbugs.lpconstants import HTTPCONNECTION
-            Bug.set_connection_mode(HTTPCONNECTION.MODE.STAGING)
-            BugList.set_connection_mode(HTTPCONNECTION.MODE.STAGING)
-            self.hostname = 'staging.launchpad.net'
+        self.__launchpad = None
+        self.__lp_distro = None
+        
+    @property
+    def launchpad(self):
+        '''Return Launchpad instance.'''
+
+        if self.__launchpad:
+            return self.__launchpad
+
+        cache_dir = tempfile.mkdtemp()
+        atexit.register(shutil.rmtree, cache_dir)
+        if self.options.get('staging'):
+            launchpad_instance = STAGING_SERVICE_ROOT
         else:
-            self.hostname = 'launchpad.net'
+            launchpad_instance = EDGE_SERVICE_ROOT
 
-        if self.cookie_file:
-            Bug.authentication = self.cookie_file
-            BugList.authentication = self.cookie_file
+        auth_dir = os.path.dirname(self.auth)
+        if not os.path.isdir(auth_dir):
+            os.makedirs(auth_dir)
+
+        if os.path.exists(self.auth):
+            # use existing credentials
+            credentials = Credentials()
+            credentials.load(open(self.auth))
+            self.__launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
+        else:
+            # get credentials and save them
+            try:
+                self.__launchpad = Launchpad.get_token_and_login('apport-collect',
+                        launchpad_instance, cache_dir)
+            except launchpadlib.errors.HTTPError, e:
+                print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
+                sys.exit(1)
+            f = open(self.auth, 'w')
+            os.chmod(self.auth, 0600)
+            self.__launchpad.credentials.save(f)
+            f.close()
+
+        return self.__launchpad
+
+    def _get_distro_tasks(self, tasks):
+        if not self.distro:
+            raise StopIteration
+
+        for t in tasks:
+            if t.bug_target_name.lower() == self.distro or \
+                    re.match('^.+\(%s.*\)$' % self.distro, t.bug_target_name.lower()):
+                yield t
+    
+    @property
+    def lp_distro(self):
+        if not self.distro:
+            return None
+        if self.__lp_distro is None:
+            self.__lp_distro = self.launchpad.distributions[self.distro]
+        return self.__lp_distro
 
     def upload(self, report, progress_callback = None):
         '''Upload given problem report return a handle for it. 
@@ -85,9 +132,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # set reprocessing tags
         hdr = {}
         hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
-        # append tags defined in the report
-        if report.has_key('Tags'):
-            hdr['Tags'] += ' ' + report['Tags']
         a = report.get('PackageArchitecture')
         if not a or a == 'all':
             a = report.get('Architecture')
@@ -113,7 +157,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         mime.flush()
         mime.seek(0)
 
-        ticket = launchpadbugs.storeblob.upload(mime, progress_callback, 
+        ticket = upload_blob(mime, progress_callback,
                 staging=self.options.get('staging', False))
         assert ticket
         return ticket
@@ -131,6 +175,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if title:
             args['field.title'] = title
 
+        if self.options.get('staging'):
+            hostname = 'staging.launchpad.net'
+        else:
+            hostname = 'launchpad.net'
+
         project = self.options.get('project')
         if 'ThirdParty' in report:
             project = report['SourcePackage']
@@ -138,149 +187,129 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if not project:
             if report.has_key('SourcePackage'):
                 return 'https://bugs.%s/%s/+source/%s/+filebug/%s?%s' % (
-                    self.hostname, self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
+                    hostname, self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
             else:
                 return 'https://bugs.%s/%s/+filebug/%s?%s' % (
-                    self.hostname, self.distro, handle, urllib.urlencode(args))
+                    hostname, self.distro, handle, urllib.urlencode(args))
         else:
             return 'https://bugs.%s/%s/+filebug/%s?%s' % (
-                self.hostname, project, handle, urllib.urlencode(args))
+                hostname, project, handle, urllib.urlencode(args))
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
 
         report = apport.Report()
-        attachment_path = tempfile.mkdtemp()
-        Bug.content_types.append('application/x-gzip')
-        try:
-            b = Bug(id) 
+        b = self.launchpad.bugs[id]
 
-            # parse out fields from summary
-            m = re.search(r"(ProblemType:.*)$", b.description_raw, re.S)
-            if not m:
-                m = re.search(r"^--- \r?$[\r\n]*(.*)", b.description_raw, re.M | re.S)
-            assert m, 'bug description must contain standard apport format data'
+        # parse out fields from summary
+        m = re.search(r'(ProblemType:.*)$', b.description, re.S)
+        if not m:
+            m = re.search(r'^--- \r?$[\r\n]*(.*)', b.description, re.M | re.S)
+        assert m, 'bug description must contain standard apport format data'
 
-            description = m.group(1).replace('\xc2\xa0', ' ')
+        description = m.group(1).encode('UTF-8').replace('\xc2\xa0', ' ')
+        
+        if '\r\n\r\n' in description:
+            # this often happens, remove all empty lines between top and
+            # 'Uname'
+            if 'Uname:' in description:
+                # this will take care of bugs like LP #315728 where stuff
+                # is added after the apport data
+                (part1, part2) = description.split('Uname:', 1)
+                description = part1.replace('\r\n\r\n', '\r\n') + 'Uname:' \
+                    + part2.split('\r\n\r\n', 1)[0]
+            else:
+                description = description.replace('\r\n\r\n', '\r\n')
 
-            if '\r\n\r\n' in description:
-                # this often happens, remove all empty lines between top and
-                # "Uname"
-                if 'Uname:' in description:
-                    # this will take care of bugs like LP #315728 where stuff
-                    # is added after the apport data
-                    (part1, part2) = description.split('Uname:', 1)
-                    description = part1.replace('\r\n\r\n', '\r\n') + 'Uname:' \
-                        + part2.split('\r\n\r\n', 1)[0]
-                else:
-                    description = description.replace('\r\n\r\n', '\r\n')
+        report.load(StringIO(description))
 
-            report.load(StringIO(description))
+        report['Date'] = b.date_created.ctime()
+        if 'ProblemType' not in report:
+            if 'apport-bug' in b.tags:
+                report['ProblemType'] = 'Bug'
+            elif 'apport-crash' in b.tags:
+                report['ProblemType'] = 'Crash'
+            elif 'apport-kernelcrash' in b.tags:
+                report['ProblemType'] = 'KernelCrash'
+            elif 'apport-package' in b.tags:
+                report['ProblemType'] = 'Package'
+            else:
+                raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
 
-            report['Date'] = b.date.ctime()
-            if 'ProblemType' not in report:
-                if 'apport-bug' in b.tags:
-                    report['ProblemType'] = 'Bug'
-                elif 'apport-crash' in b.tags:
-                    report['ProblemType'] = 'Crash'
-                elif 'apport-kernelcrash' in b.tags:
-                    report['ProblemType'] = 'KernelCrash'
-                elif 'apport-package' in b.tags:
-                    report['ProblemType'] = 'Package'
-                else:
-                    raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
-
-            for att in b.attachments.filter(lambda a: re.match(
-                    'Dependencies.txt|CoreDump.gz|ProcMaps.txt|Traceback.txt|DpkgTerminalLog.txt',
-                    a.lp_filename)):
-
-                key = os.path.splitext(att.lp_filename)[0]
-                
-                att.download(os.path.join(attachment_path, att.lp_filename))
-                if att.lp_filename.endswith('.txt'):
-                    report[key] = att.text
-                elif att.lp_filename.endswith('.gz'):
-                    report[key] = gzip.GzipFile(fileobj=StringIO(att.text)).read()#TODO: is this the best solution?
-                else:
-                    raise Exception, 'Unknown attachment type: ' + att.lp_filename
-
-            return report
-        finally:
-            shutil.rmtree(attachment_path)
+        for attachment in filter_filename(b.attachments):
+            key, ext = os.path.splitext(attachment.filename)
+            if ext == '.txt':
+                report[key] = attachment.read()
+            elif ext == '.gz':
+                report[key] = gzip.GzipFile(fileobj=attachment).read()#TODO: is this the best solution?
+            else:
+                raise Exception, 'Unknown attachment type: ' + attachment.filename
+        return report
 
     def update(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
         (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
         desired) and an optional comment.'''
 
-        bug = Bug(id)
+        bug = self.launchpad.bugs[id]
 
         comment += '\n\nStacktraceTop:' + report['StacktraceTop'].decode('utf-8',
             'replace').encode('utf-8')
 
         # we need properly named files here, otherwise they will be displayed
         # as '<fdopen>'
-        tmpdir = tempfile.mkdtemp()
-        t = {}
-        try:
-            t[0] = open(os.path.join(tmpdir, 'Stacktrace.txt'), 'w+')
-            t[0].write(report['Stacktrace'])
-            t[0].flush()
-            t[0].seek(0)
-            att = Bug.NewAttachment(localfileobject=t[0],
-                    description='Stacktrace.txt (retraced)')
-            new_comment = Bug.NewComment(subject='Symbolic stack trace',
-                    text=comment, attachment=att)
-            bug.comments.add(new_comment)
+        if report['Stacktrace']: # don't attach empty files
+            bug.addAttachment(comment=comment,
+                    #content_type=?
+                    data=report['Stacktrace'].decode('ascii', 'replace').encode('ascii', 'replace'), # LP#353805 workaround
+                    description='Stacktrace.txt (retraced)',
+                    filename='Stacktrace.txt',
+                    is_patch=False)
+                
+        if report['ThreadStacktrace']:
+            bug.addAttachment(comment='', #some other comment here?
+                    #content_type=?
+                    data=report['ThreadStacktrace'].decode('ascii', 'replace').encode('ascii', 'replace'),
+                    description='ThreadStacktrace.txt (retraced)',
+                    filename='ThreadStacktrace.txt',
+                    is_patch=False)
 
-            t[1] = open(os.path.join(tmpdir, 'ThreadStacktrace.txt'), 'w+')
-            t[1].write(report['ThreadStacktrace'])
-            t[1].flush()
-            t[1].seek(0)
-            att = Bug.NewAttachment(localfileobject=t[1],
-                    description='ThreadStacktrace.txt (retraced)')
-            new_comment = Bug.NewComment(subject='Symbolic threaded stack trace',
-                    attachment=att)
-            bug.comments.add(new_comment)
+        if report.has_key('StacktraceSource') and report['StacktraceSource']:
+            bug.addAttachment(comment='', #some other comment here?
+                    #content_type=?
+                    data=report['StacktraceSource'].decode('ascii', 'replace').encode('ascii', 'replace'),
+                    description='StacktraceSource.txt',
+                    filename='StacktraceSource.txt',
+                    is_patch=False)
 
-            if report.has_key('StacktraceSource'):
-                t[2] = open(os.path.join(tmpdir, 'StacktraceSource.txt'), 'w+')
-                t[2].write(report['StacktraceSource'])
-                t[2].flush()
-                t[2].seek(0)
-                att = Bug.NewAttachment(localfileobject=t[2],
-                        description='StacktraceSource.txt')
-                new_comment = Bug.NewComment(subject='Stack trace with source code',
-                        attachment=att)
-                bug.comments.add(new_comment)
-
-            if report.has_key('SourcePackage') and bug.sourcepackage == 'ubuntu':
-                bug.set_sourcepackage(report['SourcePackage'])
-        finally:
-            shutil.rmtree(tmpdir)
+        # ensure it's assigned to the right package
+        if report.has_key('SourcePackage') and \
+                '+source' not in str(bug.bug_tasks[0].target):
+            try:
+                bug.bug_tasks[0].transitionToTarget(target=
+                        self.lp_distro.getSourcePackage(name=report['SourcePackage']))
+            except HTTPError:
+                pass # LP#342355 workaround
 
         # remove core dump if stack trace is usable
         if report.has_useful_stacktrace():
-            bug.attachments.remove(
-                    func=lambda a: re.match('^CoreDump.gz$', a.lp_filename or a.description))
-            bug.commit()
+            for a in bug.attachments:
+                if a.title == 'CoreDump.gz':
+                    try:
+                        a.removeFromBug()
+                    except HTTPError:
+                        pass # LP#315387 workaround
             try:
-                bug.importance='Medium'
-                bug.commit()
-            except IOError:
-                # bug was marked as a duplicate underneath us; LP#349407
-                pass
-        else:
-            bug.commit()
-        for x in t.itervalues():
-            x.close()
+                task = self._get_distro_tasks(bug.bug_tasks).next()
+                task.transitionToImportance(importance='Medium')
+            except StopIteration:
+                pass # no distro tasks
         self._subscribe_triaging_team(bug, report)
 
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
-        #using py-lp-bugs
-        bug = Bug(url='https://%s/bugs/%s' % (self.hostname, str(id)))
+        bug = self.launchpad.bugs[id]
         m = re.search('DistroRelease: ([-a-zA-Z0-9.+/ ]+)', bug.description)
         if m:
             return m.group(1)
@@ -289,9 +318,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_unretraced(self):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
-
-        bugs = BugList('https://bugs.%s/ubuntu/+bugs?field.tag=%s' % (self.hostname, self.arch_tag))
-        return set(int(i) for i in bugs)
+        bugs = self.lp_distro.searchTasks(tags=self.arch_tag)
+        return id_set(bugs)
 
     def get_dup_unchecked(self):
         '''Return an ID set of all crashes which have not been checked for
@@ -300,9 +328,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         This is mainly useful for crashes of scripting languages such as
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
-
-        bugs = BugList('https://bugs.%s/ubuntu/+bugs?field.tag=need-duplicate-check&batch=300' % self.hostname)
-        return set(int(i) for i in bugs)
+        
+        bugs = self.lp_distro.searchTasks(tags='need-duplicate-check')
+        return id_set(bugs)
 
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
@@ -312,9 +340,23 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
+        
+        bugs = self.lp_distro.searchTasks(tags='apport-crash')
+        return id_set(bugs)
 
-        bugs = BugList('https://bugs.%s/ubuntu/+bugs?field.tag=apport-crash&batch=300' % self.hostname)
-        return set(int(i) for i in bugs)
+    def _get_source_version(self, package):
+        '''Return the version of given source package in the latest release of
+        given distribution.
+
+        If 'distro' is None, we will look for a launchpad project . 
+        '''
+        sources = self.lp_distro.main_archive.getPublishedSources(
+            exact_match=True,
+            source_name=package,
+            distro_series=self.lp_distro.current_series
+        )
+        # first element is the latest one
+        return sources[0].source_package_version
 
     def get_fixed_version(self, id):
         '''Return the package version that fixes a given crash.
@@ -331,23 +373,51 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # do not do version tracking yet; for that, we need to get the current
         # distrorelease and the current package version in that distrorelease
         # (or, of course, proper version tracking in Launchpad itself)
+        
         try:
-            b = Bug(id)
-        except Bug.Error.LPUrlError, e:
-            if e.value.startswith('Page not found'):
-                return 'invalid'
-            else:
-                raise
-
-        if b.status == 'Fix Released':
-            if b.sourcepackage:
-                try:
-                    return get_source_version(self.distro, b.sourcepackage, self.hostname)
-                except ValueError:
-                    return '' # broken bug
-            return ''
-        if b.status == 'Invalid' or b.duplicate_of:
+            b = self.launchpad.bugs[id]
+        except KeyError:
             return 'invalid'
+            
+        if b.duplicate_of:
+            return 'invalid'
+
+        tasks = list(b.bug_tasks) # just fetch it once
+
+        if self.distro:
+            distro_identifier = '(%s)' %self.distro.lower()
+            fixed_tasks = filter(lambda task: task.status == 'Fix Released' and \
+                    distro_identifier in task.bug_target_display_name.lower(), tasks)
+            
+            if not fixed_tasks:
+                fixed_distro = filter(lambda task: task.status == 'Fix Released' and \
+                        task.bug_target_name.lower() == self.distro.lower(), tasks)
+                if fixed_distro:
+                    # fixed in distro inself (without source package)
+                    return ''
+                
+            if len(fixed_tasks) > 1: 
+                print >> sys.stderr, 'WARNING: There is more than one task fixed in %s %s, using first one to determine fixed version' % (self.distro, id)
+                return ''
+
+            if fixed_tasks:
+                task = fixed_tasks.pop()
+                return self._get_source_version(task.bug_target_display_name.split()[0])
+
+            # check if there any invalid ones
+            if filter(lambda task: task.status in ('Invalid', "Won't Fix") and \
+                    distro_identifier in task.bug_target_display_name.lower(), tasks):
+                return 'invalid'
+        else:
+            fixed_tasks = filter(lambda task: task.status == 'Fix Released',
+                    tasks)
+            if fixed_tasks:
+                # TODO: look for current series
+                return ''
+            # check if there any invalid ones
+            if filter(lambda task: task.status == 'Invalid', tasks):
+                return 'invalid'
+
         return None
 
     def duplicate_of(self, id):
@@ -355,87 +425,104 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         If the bug is not a duplicate, return None.
         '''
-        b =  Bug(id)
-        return b.duplicate_of
+        b = self.launchpad.bugs[id].duplicate_of
+        if b:
+            return b.id
+        else:
+            return None
 
     def close_duplicate(self, id, master):
         '''Mark a crash id as duplicate of given master ID.
         
         If master is None, id gets un-duplicated.
         '''
-        bug = Bug(id)
+        bug = self.launchpad.bugs[id]
 
-        # check whether the master itself is a dup
         if master:
-            m = Bug(master)
-            if m.duplicate_of:
-                master = m.duplicate_of
+            # check whether the master itself is a dup
+            master = self.launchpad.bugs[master]
+            if master.duplicate_of:
+                master = master.duplicate_of
+            
+            for a in bug.attachments:
+                if a.title in ('CoreDump.gz', 'Stacktrace.txt',
+                    'ThreadStacktrace.txt', 'Dependencies.txt', 'ProcMaps.txt',
+                    'ProcStatus.txt', 'Registers.txt', 'Disassembly.txt'):
+                    try:
+                        a.removeFromBug()
+                    except HTTPError:
+                        pass # LP#315387 workaround
 
-            bug.attachments.remove(
-                func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
-Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
-Disassembly.txt$)', a.lp_filename))
+            bug = self.launchpad.bugs[id] # refresh, LP#336866 workaround
             if bug.private:
-                bug.private = None
-            bug.commit()
+                bug.private = False
 
             # set duplicate last, since we cannot modify already dup'ed bugs
-            bug = Bug(id)
-            bug.duplicate_of = int(master)
+            if not bug.duplicate_of:
+                bug.duplicate_of = master
         else:
-            bug.duplicate_of = None
-        bug.commit()
+            if bug.duplicate_of:
+                bug.duplicate_of = None
+
+        if bug._dirty_attributes: # LP#336866 workaround
+            bug.lp_save()
 
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
         
-        bug = Bug(id)
-        comment = Bug.NewComment(subject='Possible regression detected',
-            text='This crash has the same stack trace characteristics as bug #%i. \
+        bug = self.launchpad.bugs[id]
+        bug.newMessage(content='This crash has the same stack trace characteristics as bug #%i. \
 However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem is \
-in a dependent package.' % master)
-        bug.comments.add(comment)
-        bug.tags.append('regression-retracer')
-        bug.commit()
+in a dependent package.' % master,
+            subject='Possible regression detected')
+        bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
+        bug.tags = bug.tags + ['regression-retracer'] # LP#254901 workaround
+        bug.lp_save()
 
     def mark_retraced(self, id):
         '''Mark crash id as retraced.'''
 
-        b = Bug(id)
-        if self.arch_tag in b.tags:
-            b.tags.remove(self.arch_tag)
-        b.commit()
+        bug = self.launchpad.bugs[id]
+        if self.arch_tag in bug.tags:
+            x = bug.tags[:] # LP#254901 workaround
+            x.remove(self.arch_tag)
+            bug.tags = x
+            bug.lp_save()
 
     def mark_retrace_failed(self, id, invalid_msg=None):
         '''Mark crash id as 'failed to retrace'.'''
 
-        b = Bug(id)
+        bug = self.launchpad.bugs[id]
         if invalid_msg:
-            comment = Bug.NewComment(subject='Crash report cannot be processed',
-                text=invalid_msg)
-            b.comments.add(comment)
-            b.status = 'Invalid'
-
-            b.attachments.remove(
-                func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
-Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
-Disassembly.txt$)', a.lp_filename))
+            try:
+                task = self._get_distro_tasks(bug.bug_tasks).next()
+            except StopIteration:
+                # no distro task, just use the first one
+                task = bug.bug_tasks[0]
+            task.transitionToStatus(status='Invalid')
+            bug.newMessage(content=invalid_msg,
+                    subject='Crash report cannot be processed')
+#            b.attachments.remove(
+#                func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
+#Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
+#Disassembly.txt$)', a.lp_filename))
         else:
-            if 'apport-failed-retrace' not in b.tags:
-                b.tags.append('apport-failed-retrace')
-        b.commit()
+            if 'apport-failed-retrace' not in bug.tags:
+                bug.tags = bug.tags + ['apport-failed-retrace'] # LP#254901 workaround
+                bug.lp_save()
 
     def _mark_dup_checked(self, id, report):
         '''Mark crash id as checked for being a duplicate.'''
 
-        b = Bug(id)
-        if 'need-duplicate-check' in b.tags:
-            b.tags.remove('need-duplicate-check')
-        
-        self._subscribe_triaging_team(b, report)
-        b.commit()
+        bug = self.launchpad.bugs[id]
+        if 'need-duplicate-check' in bug.tags:
+            x = bug.tags[:] # LP#254901 workaround
+            x.remove('need-duplicate-check')
+            bug.tags = x
+            bug.lp_save()        
+        self._subscribe_triaging_team(bug, report)
 
     def _subscribe_triaging_team(self, bug, report):
         '''Subscribe the right triaging team to the bug.'''
@@ -445,12 +532,85 @@ Disassembly.txt$)', a.lp_filename))
 
         if report['DistroRelease'].split()[0] != 'Ubuntu':
             return # only Ubuntu bugs are filed private
+        
+        #use a url hack here, it is faster
+        person = '%s~ubuntu-crashes-universe' %self.launchpad._root_uri
+        bug.subscribe(person=person)
 
-        try:
-            bug.subscriptions.add('ubuntu-crashes-universe')
-        except ValueError:
-            # already subscribed
-            pass
+#
+# Launchpad storeblob API (should go into launchpadlib, see LP #315358)
+#
+
+import multipartpost_handler, urllib2, time, httplib
+
+_https_upload_callback = None
+
+#
+# This progress code is based on KodakLoader by Jason Hildebrand
+# <jason@opensky.ca>. See http://www.opensky.ca/~jdhildeb/software/kodakloader/
+# for details.
+class HTTPSProgressConnection(httplib.HTTPSConnection):
+    '''Implement a HTTPSConnection with an optional callback function for
+    upload progress.'''
+
+    def send(self, data):
+        global _https_upload_callback
+
+        # if callback has not been set, call the old method
+        if not _https_upload_callback:
+            httplib.HTTPSConnection.send(self, data)
+            return
+
+        sent = 0
+        total = len(data)
+        chunksize = 1024
+        while sent < total:
+            _https_upload_callback(sent, total)
+            t1 = time.time()
+            httplib.HTTPSConnection.send(self, data[sent:sent+chunksize])
+            sent += chunksize
+            t2 = time.time()
+
+            # adjust chunksize so that it takes between .5 and 2 
+            # seconds to send a chunk
+            if t2 - t1 < .5:
+                chunksize *= 2
+            elif t2 - t1 > 2:
+                chunksize /= 2
+
+class HTTPSProgressHandler(urllib2.HTTPSHandler):
+
+    def https_open(self, req):
+        return self.do_open(HTTPSProgressConnection, req)
+
+def upload_blob(blob, progress_callback = None, staging=False):
+    '''Upload blob (file-like object) to Launchpad.
+
+    progress_callback can be set to a function(sent, total) which is regularly
+    called with the number of bytes already sent and total number of bytes to
+    send. It is called every 0.5 to 2 seconds (dynamically adapted to upload
+    bandwidth).
+
+    Return None on error, or the ticket number on success.
+
+    By default this uses the production Launchpad instance. Set staging=True to
+    use staging.launchpad.net (for testing).
+    '''
+    ticket = None
+
+    global _https_upload_callback
+    _https_upload_callback = progress_callback
+
+    opener = urllib2.build_opener(HTTPSProgressHandler, multipartpost_handler.MultipartPostHandler)
+    if staging:
+        url = 'https://staging.launchpad.net/+storeblob'
+    else:
+        url = 'https://launchpad.net/+storeblob'
+    result = opener.open(url,
+        { 'FORM_SUBMIT': '1', 'field.blob': blob })
+    ticket = result.info().get('X-Launchpad-Blob-Token')
+
+    return ticket
 
 #
 # Unit tests
@@ -464,12 +624,12 @@ if __name__ == '__main__':
     python_report = None
 
     class _Tests(unittest.TestCase):
-        # this assumes that a source package "coreutils" exists and builds a
-        # binary package "coreutils"
+        # this assumes that a source package 'coreutils' exists and builds a
+        # binary package 'coreutils'
         test_package = 'coreutils'
         test_srcpackage = 'coreutils'
-        known_test_id = 89040
-        known_test_id2 = 302779
+        known_test_id = 302779
+        known_test_id2 = 89040
 
         #
         # Generic tests, should work for all CrashDB implementations
@@ -563,13 +723,22 @@ NameError: global name 'weird' is not defined'''
             self.assert_(r['Package'].startswith(self.test_package + ' '))
             self.assert_('f (x=42)' in r['Stacktrace'])
             self.assert_('f (x=42)' in r['StacktraceTop'])
+            self.assert_('f (x=42)' in r['ThreadStacktrace'])
             self.assert_(len(r['CoreDump']) > 1000)
             self.assert_('Dependencies' in r)
+            self.assert_('Disassembly' in r)
+            self.assert_('Registers' in r)
 
         def test_3_update(self):
             '''update()'''
 
             r = self.crashdb.download(segv_report)
+            self.assert_('CoreDump' in r)
+            self.assert_('Dependencies' in r)
+            self.assert_('Disassembly' in r)
+            self.assert_('Registers' in r)
+            self.assert_('Stacktrace' in r)
+            self.assert_('ThreadStacktrace' in r)
 
             # updating with an useless stack trace retains core dump
             r['StacktraceTop'] = '?? ()'
@@ -578,6 +747,11 @@ NameError: global name 'weird' is not defined'''
             self.crashdb.update(segv_report, r, 'I can has a better retrace?')
             r = self.crashdb.download(segv_report)
             self.assert_('CoreDump' in r)
+            self.assert_('Dependencies' in r)
+            self.assert_('Disassembly' in r)
+            self.assert_('Registers' in r)
+            self.assert_('Stacktrace' in r) # TODO: ascertain that it's the updated one
+            self.assert_('ThreadStacktrace' in r)
 
             # updating with an useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
@@ -586,6 +760,16 @@ NameError: global name 'weird' is not defined'''
             self.crashdb.update(segv_report, r, 'good retrace!')
             r = self.crashdb.download(segv_report)
             self.failIf('CoreDump' in r)
+            self.assert_('Dependencies' in r)
+            self.assert_('Disassembly' in r)
+            self.assert_('Registers' in r)
+            self.assert_('Stacktrace' in r)
+            self.assert_('ThreadStacktrace' in r)
+
+            # test various situations which caused crashes
+            r['Stacktrace'] = '' # empty file
+            r['ThreadStacktrace'] = '"]\xb6"\n' # not interpretable as UTF-8, LP #353805
+            self.crashdb.update(segv_report, r, 'tests')
 
         def test_get_distro_release(self):
             '''get_distro_release()'''
@@ -603,14 +787,23 @@ NameError: global name 'weird' is not defined'''
             # dupe our segv_report and check that it worked; then undupe it
             self.crashdb.close_duplicate(segv_report, self.known_test_id)
             self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
+
+            # this should be a no-op
+            self.crashdb.close_duplicate(segv_report, self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
+
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), 'invalid')
             self.crashdb.close_duplicate(segv_report, None)
             self.assertEqual(self.crashdb.duplicate_of(segv_report), None)
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
 
-            # this should have removed attachments
+            # this should have removed attachments; note that Stacktrace is
+            # short, and thus inline
             r = self.crashdb.download(segv_report)
             self.failIf('CoreDump' in r)
+            self.failIf('Dependencies' in r)
+            self.failIf('Disassembly' in r)
+            self.failIf('Registers' in r)
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
@@ -623,6 +816,13 @@ NameError: global name 'weird' is not defined'''
             self.crashdb.close_duplicate(self.known_test_id, None)
             self.crashdb.close_duplicate(self.known_test_id2, None)
             self.crashdb.close_duplicate(segv_report, None)
+
+            # this should be a no-op
+            self.crashdb.close_duplicate(self.known_test_id, None)
+            self.assertEqual(self.crashdb.duplicate_of(self.known_test_id), None)
+
+            self.crashdb.mark_regression(segv_report, self.known_test_id)
+            self._verify_marked_regression(segv_report)
 
         def test_marking_segv(self):
             '''processing status markings for signal crashes'''
@@ -695,6 +895,19 @@ NameError: global name 'weird' is not defined'''
             r = self.crashdb.download(id)
             self.failIf('CoreDump' in r)
 
+        def test_get_fixed_version(self):
+            '''get_fixed_version() for fixed bugs
+
+            Other cases are already checked in test_marking_segv() (invalid
+            bugs) and test_duplicates (duplicate bugs) for efficiency.
+            '''
+            self._mark_report_fixed(segv_report)
+            fixed_ver = self.crashdb.get_fixed_version(segv_report)
+            self.assertNotEqual(fixed_ver, None)
+            self.assert_(fixed_ver[0].isdigit())
+            self._mark_report_new(segv_report)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+
         #
         # Launchpad specific implementation and tests
         #
@@ -703,8 +916,8 @@ NameError: global name 'weird' is not defined'''
         def _get_instance(klass):
             '''Create a CrashDB instance'''
 
-            return CrashDatabase(os.path.expanduser('~/.lpcookie.txt'), 
-                    '', {'distro': 'ubuntu', 'staging': True})
+            return CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
+                    {'distro': 'ubuntu', 'staging': True})
 
         def _fill_bug_form(self, url):
             '''Fill form for a distro bug and commit the bug.
@@ -712,7 +925,7 @@ NameError: global name 'weird' is not defined'''
             Return the report ID.
             '''
             cj = cookielib.MozillaCookieJar()
-            cj.load(self.crashdb.cookie_file)
+            cj.load(os.path.expanduser('~/.lpcookie.txt'))
             opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
             re_pkg = re.compile('<input type="text" value="([^"]+)" id="field.packagename"')
@@ -723,7 +936,10 @@ NameError: global name 'weird' is not defined'''
             url = url.replace('+filebug/', '+filebug-advanced/')
             
             res = opener.open(url)
-            self.assertEqual(res.getcode(), 200)
+            try:
+                self.assertEqual(res.getcode(), 200)
+            except AttributeError:
+                pass # getcode() is new in Python 2.6
             content = res.read()
 
             m_pkg = re_pkg.search(content)
@@ -744,7 +960,10 @@ NameError: global name 'weird' is not defined'''
             }
 
             res = opener.open(url, data=urllib.urlencode(args))
-            self.assertEqual(res.getcode(), 200)
+            try:
+                self.assertEqual(res.getcode(), 200)
+            except AttributeError:
+                pass # getcode() is new in Python 2.6
             self.assert_('+source/%s/+bug/' % m_pkg.group(1) in res.geturl())
             id = res.geturl().split('/')[-1]
             return int(id)
@@ -755,7 +974,7 @@ NameError: global name 'weird' is not defined'''
             Return the report ID.
             '''
             cj = cookielib.MozillaCookieJar()
-            cj.load(self.crashdb.cookie_file)
+            cj.load(os.path.expanduser('~/.lpcookie.txt'))
             opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
             m = re.search('launchpad.net/([^/]+)/\+filebug', url)
@@ -795,26 +1014,48 @@ NameError: global name 'weird' is not defined'''
         def _mark_needs_retrace(self, id):
             '''Mark a report ID as needing retrace.'''
 
-            b = Bug(id)
-            if self.crashdb.arch_tag not in b.tags:
-                b.tags.append(self.crashdb.arch_tag)
-            b.commit()
+            bug = self.crashdb.launchpad.bugs[id]
+            if self.crashdb.arch_tag not in bug.tags:
+                bug.tags = bug.tags + [self.crashdb.arch_tag]
+                bug.lp_save()
 
         def _mark_needs_dupcheck(self, id):
             '''Mark a report ID as needing duplicate check.'''
 
-            b = Bug(id)
-            if 'need-duplicate-check' not in b.tags:
-                b.tags.append('need-duplicate-check')
-            b.commit()
+            bug = self.crashdb.launchpad.bugs[id]
+            if 'need-duplicate-check' not in bug.tags:
+                bug.tags = bug.tags + ['need-duplicate-check']
+                bug.lp_save()
+
+        def _mark_report_fixed(self, id):
+            '''Close a report ID as "fixed".'''
+
+            bug = self.crashdb.launchpad.bugs[id]
+            tasks = list(bug.bug_tasks)
+            assert len(tasks) == 1
+            tasks[0].transitionToStatus(status='Fix Released')
+
+        def _mark_report_new(self, id):
+            '''Reopen a report ID as "new".'''
+
+            bug = self.crashdb.launchpad.bugs[id]
+            tasks = list(bug.bug_tasks)
+            assert len(tasks) == 1
+            tasks[0].transitionToStatus(status='New')
+
+        def _verify_marked_regression(self, id):
+            '''Verify that report ID is marked as regression.'''
+
+            bug = self.crashdb.launchpad.bugs[id]
+            self.assert_('regression-retracer' in bug.tags)
 
         def test_project(self):
             '''reporting crashes against a project instead of a distro'''
 
             # crash database for langpack-o-matic project (this does not have
             # packages in any distro)
-            crashdb = CrashDatabase(os.path.expanduser('~/.lpcookie.txt'), 
-                '', {'project': 'langpack-o-matic', 'staging': True})
+            crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
+                {'project': 'langpack-o-matic', 'staging': True})
             self.assertEqual(crashdb.distro, None)
 
             # create Python crash report
