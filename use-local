@@ -1,2 +1,7 @@
 #!/bin/sh -e
+# This changes the kernel's core_pattern pipeline to use the local tree's
+# apport program instead of the system version. This is useful if you are
+# making changes to bin/apport and want to test them without copying them to
+# /usr/share/apport/ every time.
+
 echo "|$(readlink -f $(dirname $0)/bin/apport) %p %s %c" > /proc/sys/kernel/core_pattern
