@@ -397,7 +397,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     return ''
                 
             if len(fixed_tasks) > 1: 
-                print >> sys.stderr, 'There is more than one task fixed in %s %s, cannot determine fixed version' % (self.distro, id)
+                print >> sys.stderr, 'WARNING: There is more than one task fixed in %s %s, using first one to determine fixed version' % (self.distro, id)
                 return ''
 
             if fixed_tasks:
