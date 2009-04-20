@@ -13,3 +13,10 @@ GUI:
 
 hooks:
  - add hooks which run during program crash, to collect more runtime data
+
+retracers:
+ - cache Contents.gz
+
+hookutils:
+- run hooks for related packages in attach_related_packages
+
