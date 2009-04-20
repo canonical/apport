@@ -13,10 +13,11 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
       mimetypes/text-x-apport.svg icon symlink.
     - Add README file.
     - Add translations from Launchpad.
-    - Remove preloadlib/*; it's undermaintained, and not really useful any more
-      these days.
-    - Various bug fixes; most visible being the misnamed etc/default/apport.default
-      file (which should just be etc/default/apport).
+    - Remove preloadlib/*; it's undermaintained, and not really useful any
+      more these days.
+    - Various bug fixes; most visible being the misnamed
+      etc/default/apport.default file (which should just be
+      etc/default/apport).
   * Drop debian/apport.README.Debian, superseded by upstream README.
   * Drop debian/apport.links, done by upstream setup.py now.
   * debian/rules, debian/apport.preinst: Drop upgrade fix for misnamed default
