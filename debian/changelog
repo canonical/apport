@@ -33,6 +33,9 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
       2.6.
   * apport/hookutils.py: Add docstring for attach_hardware, thanks Matt
     Zimmerman! (Merged from lp:~mdz/apport/hookutils)
+  * apport/crashdb_impl/launchpad.py: Support older wadllib API
+    where bug.date_created was a string instead of a datetime object.
+    (Cherrypicked from trunk).
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 20 Apr 2009 16:20:47 +0200
 
