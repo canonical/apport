@@ -223,7 +223,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         report.load(StringIO(description))
 
-        report['Date'] = b.date_created.ctime()
+        try:
+            report['Date'] = b.date_created.ctime()
+        except AttributeError:
+            # support older wadllib API which returned strings
+            report['Date'] = b.date_created
         if 'ProblemType' not in report:
             if 'apport-bug' in b.tags:
                 report['ProblemType'] = 'Bug'
