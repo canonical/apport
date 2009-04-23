@@ -48,7 +48,8 @@ XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
 Depends: ${python:Depends}, python-apt, python-problem-report (>= 0.94),
- python-launchpadlib, gdb, ${misc:Depends}
+ python-launchpadlib, ${misc:Depends}
+Recommends: gdb
 Conflicts: python-apport-utils
 Replaces: python-apport-utils
 Description: apport crash report handling library
