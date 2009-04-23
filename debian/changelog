@@ -43,6 +43,10 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
     crashing if the bug number is not an integer. (LP: #351050)
   * debian/local/apport-collect: Change incomplete tasks back to "New" after
     data collection. (LP: #363126)
+  * debian/apport.links: source_linux-meta.py -> source_linux.py package hook,
+    so that apport-collect works on "linux" source bug tasks. These get
+    opportunistically translated into binary packages, but the binary "linux"
+    is built by the source "linux-meta". (LP: #350131)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 20 Apr 2009 16:20:47 +0200
 
