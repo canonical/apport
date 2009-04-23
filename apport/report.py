@@ -513,8 +513,6 @@ class Report(ProblemReport):
         _common_hook_dir/*.py and has to contain a function 'add_info(report)'
         that takes and modifies a Report.'''
 
-        if 'Package' not in self:
-            return
         symb = {}
 
         # common hooks
@@ -528,15 +526,16 @@ class Report(ProblemReport):
                 pass
 
         # binary package hook
-        hook = '%s/%s.py' % (_hook_dir, self['Package'].split()[0])
-        if os.path.exists(hook):
-            try:
-                execfile(hook, symb)
-                symb['add_info'](self)
-            except:
-                print >> sys.stderr, 'hook %s crashed:' % hook
-                traceback.print_exc()
-                pass
+        if self.has_key('Package'):
+            hook = '%s/%s.py' % (_hook_dir, self['Package'].split()[0])
+            if os.path.exists(hook):
+                try:
+                    execfile(hook, symb)
+                    symb['add_info'](self)
+                except:
+                    print >> sys.stderr, 'hook %s crashed:' % hook
+                    traceback.print_exc()
+                    pass
 
         # source package hook
         if self.has_key('SourcePackage'):
