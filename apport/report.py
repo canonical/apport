@@ -12,7 +12,7 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
-import fnmatch, glob, atexit, traceback
+import fnmatch, glob, atexit, traceback, errno
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -315,7 +315,13 @@ class Report(ProblemReport):
         self['ProcStatus'] = _read_file('/proc/' + pid + '/status')
         self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
         self['ProcMaps'] = _read_maps(int(pid))
-        self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+        try:
+            self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+        except OSError, e:
+            if e.errno == errno.ENOENT:
+                raise ValueError, 'invalid process'
+            else:
+                raise
         for p in ('rofs', 'rwfs', 'squashmnt', 'persistmnt'):
             if self['ExecutablePath'].startswith('/%s/' % p):
                 self['ExecutablePath'] = self['ExecutablePath'][len('/%s' % p):]
