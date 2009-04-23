@@ -299,7 +299,7 @@ class Report(ProblemReport):
         - ProcCmdline: /proc/pid/cmdline contents
         - ProcStatus: /proc/pid/status contents
         - ProcMaps: /proc/pid/maps contents
-        - ProcAttrCurrent: /proc/pid/attr/current contents
+        - ProcAttrCurrent: /proc/pid/attr/current contents, if not "unconfined"
         '''
         if not pid:
             pid = self.pid or os.getpid()
@@ -334,7 +334,9 @@ class Report(ProblemReport):
             # On Linux 2.6.28+, 'current' is world readable, but read() gives
             # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
             if os.getuid() == 0:
-                self['ProcAttrCurrent'] = open('/proc/' + pid + '/attr/current').read().strip()
+                val = open('/proc/' + pid + '/attr/current').read().strip()
+                if val != 'unconfined':
+                    self['ProcAttrCurrent'] = val
         except (IOError, OSError):
             pass
 
