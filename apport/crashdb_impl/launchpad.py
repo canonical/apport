@@ -153,7 +153,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
-        report.write_mime(mime, extra_headers=hdr, skip_keys=['Date'])
+        report.write_mime(mime, extra_headers=hdr)
         mime.flush()
         mime.seek(0)
 
@@ -223,11 +223,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         report.load(StringIO(description))
 
-        try:
-            report['Date'] = b.date_created.ctime()
-        except AttributeError:
-            # support older wadllib API which returned strings
-            report['Date'] = b.date_created
+        if 'Date' not in report:
+            # We had not submitted this field for a while, claiming it
+            # redundant. But it is indeed required for up-to-the-minute
+            # comparison with log files, etc. For backwards compatibility with
+            # those reported bugs, read the creation date
+            try:
+                report['Date'] = b.date_created.ctime()
+            except AttributeError:
+                # support older wadllib API which returned strings
+                report['Date'] = b.date_created
         if 'ProblemType' not in report:
             if 'apport-bug' in b.tags:
                 report['ProblemType'] = 'Bug'
