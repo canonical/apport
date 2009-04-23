@@ -1345,19 +1345,22 @@ int main() { return f(42); }
     def test_add_gdb_info_script(self):
         '''add_gdb_info() with a script.'''
 
-        (fd, coredump) = tempfile.mkstemp()
-        (fd2, script) = tempfile.mkstemp()
+        (fd, script) = tempfile.mkstemp()
+        coredump = os.path.join(os.path.dirname(script), 'core')
+        assert not os.path.exists(coredump)
         try:
             os.close(fd)
-            os.close(fd2)
 
             # create a test script which produces a core dump for us
             open(script, 'w').write('''#!/bin/bash
-gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
+cd `dirname $0`
+ulimit -c unlimited
+kill -SEGV $$
+''')
             os.chmod(script, 0755)
 
             # call script and verify that it gives us a proper ELF core dump
-            assert subprocess.call([script]) == 0
+            assert subprocess.call([script]) != 0
             assert subprocess.call(['readelf', '-n', coredump],
                 stdout=subprocess.PIPE) == 0
 
