@@ -36,6 +36,8 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
   * apport/crashdb_impl/launchpad.py: Support older wadllib API
     where bug.date_created was a string instead of a datetime object.
     (Cherrypicked from trunk).
+  * debian/control: Drop apport dependency to python-xdg, it's not required.
+    (LP: #354172)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 20 Apr 2009 16:20:47 +0200
 

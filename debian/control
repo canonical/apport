@@ -13,7 +13,7 @@ Package: apport
 XB-Python-Version: ${python:Versions}
 Architecture: all
 Depends: python (>= 2.4), python-apport (>= 0.120), lsb-base (>= 3.0-6),
- sysv-rc (>= 2.86.ds1-14.1ubuntu2), python-xdg, ${misc:Depends}
+ sysv-rc (>= 2.86.ds1-14.1ubuntu2), ${misc:Depends}
 Conflicts: apport-gtk (<< 0.51), apport-cli 
 Replaces: apport-gtk (<< 0.51), apport-cli
 Suggests: apport-gtk | apport-qt
