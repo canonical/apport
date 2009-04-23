@@ -39,6 +39,8 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
   * debian/control: Drop apport dependency to python-xdg, it's not required.
     (LP: #354172)
   * debian/control: Drop gdb from Depends: to Recommends:. (LP: #354172)
+  * debian/local/apport-collect: Print a friendly error message instead of
+    crashing if the bug number is not an integer. (LP: #351050)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 20 Apr 2009 16:20:47 +0200
 

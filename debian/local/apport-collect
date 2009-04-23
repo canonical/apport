@@ -82,7 +82,11 @@ if len(args) != 1:
     optparser.error('incorrect number of arguments; use --help for a short online help')
     sys.exit(1)
 
-(bug_number,) = args
+try:
+    bug_number = int(args[0])
+except ValueError:
+    optparser.error('invalid bug report number')
+    sys.exit(1)
 
 print 'Logging into Launchpad...'
 options = {}
