@@ -56,6 +56,11 @@ def upload(report, bug):
         bug.addAttachment(comment='', data=part.get_payload(decode=True),
             filename=part.get_filename(), is_patch=False)
 
+    # change bug status from "Incomplete"
+    for task in bug.bug_tasks:
+        if task.status == 'Incomplete':
+            task.transitionToStatus(status='New')
+
 def collect(report, package):
     '''Collect information for given package.'''
 
