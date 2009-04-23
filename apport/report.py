@@ -1095,7 +1095,7 @@ sys.stdin.readline()
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # test process is gone, should complain about nonexisting PID
-        self.assertRaises(OSError, pr.add_proc_info, p.pid)
+        self.assertRaises(ValueError, pr.add_proc_info, p.pid)
 
     def test_add_path_classification(self):
         '''classification of $PATH.'''
