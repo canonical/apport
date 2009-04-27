@@ -47,6 +47,15 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
     so that apport-collect works on "linux" source bug tasks. These get
     opportunistically translated into binary packages, but the binary "linux"
     is built by the source "linux-meta". (LP: #350131)
+  * debian/local/setup-apport-retracer:
+    - Use ports.ubuntu.com for non-{i386,amd64,lpia}.
+    - Set up Jaunty by default.
+    - Fix test for being in local unpackaged apport source tree.
+    - Drop installation of python-launchpad-bugs.
+    - Install bzr branches/packages necessary for launchpad, in a shared
+      ~/launchpadlib/ tree: launchpadlib, wadllib, oauth, lazr.uri, httplib2,
+      simplejson.
+    - Clean up apport-chroot calling for extra packages.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 20 Apr 2009 16:20:47 +0200
 

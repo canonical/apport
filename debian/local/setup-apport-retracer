@@ -2,14 +2,22 @@
 
 rm -rf *
 
-RELEASE=intrepid
+RELEASE=jaunty
+ARCH=`dpkg --print-architecture`
+if [ "$ARCH" = i386 ] || [ "$ARCH" = amd64 ] ; then
+    MIRROR=http://archive.ubuntu.com/ubuntu
+    SECMIRROR=http://security.ubuntu.com/ubuntu
+else
+    MIRROR=http://ports.ubuntu.com
+    SECMIRROR=http://ports.ubuntu.com
+fi
 
 # create directories
 mkdir -p bin fakelibs chroots
 
 # we assume that we are in the unpacked apport source
 D=$(readlink -f $(dirname $0)/../..)
-test -e $D/bin/apport-chroot || {
+test -e $D/debian/local/apport-chroot || {
     echo "This script must live in an unpacked apport source tree" >&2
     exit 1
 }
@@ -20,44 +28,35 @@ ln -s ../apport/bin/crash-digger bin/crash-digger
 
 # debootstrap
 T=`mktemp -d`
-wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/main/binary-`dpkg --print-architecture`/Packages.gz | gunzip > $T/Packages
-wget -O - -q http://archive.ubuntu.com/ubuntu/dists/$RELEASE/universe/binary-`dpkg --print-architecture`/Packages.gz | gunzip > $T/Packages-universe
+wget -O - -q $MIRROR/dists/$RELEASE/main/binary-`dpkg --print-architecture`/Packages.gz | gunzip > $T/Packages
+wget -O - -q $MIRROR/dists/$RELEASE/universe/binary-`dpkg --print-architecture`/Packages.gz | gunzip > $T/Packages-universe
 P=`grep '^Filename:.*debootstrap_.*deb' $T/Packages | cut -f 2 -d\ `
-wget -q http://archive.ubuntu.com/ubuntu/$P
+wget -q $MIRROR/$P
 dpkg -x debootstrap_*.deb $T
 rm debootstrap_*.deb
 mv $T/usr/share/debootstrap/ .
 sed "1 s_\$_\\nDEBOOTSTRAP\_DIR=`pwd`/debootstrap_" $T/usr/sbin/debootstrap > bin/debootstrap
 chmod 755 bin/debootstrap
 
-# python-launchpad-bugs
-dpkg -s python-launchpad-bugs >/dev/null 2>/dev/null || {
-    P=`grep '^Filename:.*python-launchpad-bugs_.*deb' $T/Packages | cut -f 2 -d\ `
-    wget -q http://archive.ubuntu.com/ubuntu/$P
-    dpkg -x python-launchpad-bugs_*.deb $T
-    rm python-launchpad-bugs_*.deb
-    mv $T/usr/share/pyshared/launchpadbugs apport/
-}
-
 # python-apt
-dpkg -s python-apt | grep -q ' installed$' 2>/dev/null || {
+dpkg -s python-apt 2>/dev/null | grep -q ' installed$' || {
     P=`grep '^Filename:.*/apt_.*deb' $T/Packages | cut -f 2 -d\ `
-    wget -q http://archive.ubuntu.com/ubuntu/$P
+    wget -q $MIRROR/$P
     dpkg -x apt*.deb $T
     rm apt*.deb
     cp $T/usr/lib/libapt*.so.* apport/
 
     P=`grep '^Filename:.*python-apt_.*deb' $T/Packages | cut -f 2 -d\ `
-    wget -q http://archive.ubuntu.com/ubuntu/$P
+    wget -q $MIRROR/$P
     dpkg -x python-apt*.deb $T
     rm python-apt*.deb
     mv $T/usr/lib/python2.5/site-packages/* apport/
 }
 
 # python-libxml2
-dpkg -s python-libxml2 >/dev/null 2>/dev/null || {
+dpkg -s python-libxml2 2>/dev/null | grep -q ' installed$' || {
     P=`grep '^Filename:.*python-libxml2_.*.deb' $T/Packages | cut -f 2 -d\ `
-    wget -q http://archive.ubuntu.com/ubuntu/$P
+    wget -q $MIRROR/$P
     dpkg -x python-libxml2*.deb $T
     rm python-libxml2*.deb
     mv $T/usr/share/python-support/python-libxml2/* apport/
@@ -66,14 +65,46 @@ dpkg -s python-libxml2 >/dev/null 2>/dev/null || {
 
 # fake{chroot,root} libraries
 type fakeroot >/dev/null 2>/dev/null || {
-    wget -q http://archive.ubuntu.com/ubuntu/`grep '^Filename:.*fakeroot_.*.deb' $T/Packages | cut -f 2 -d\ `
+    wget -q $MIRROR/`grep '^Filename:.*fakeroot_.*.deb' $T/Packages | cut -f 2 -d\ `
     ar p fakeroot_*.deb data.tar.gz | tar xzO ./usr/lib/libfakeroot/libfakeroot-sysv.so > fakelibs/libfakeroot.so
     rm fakeroot_*.deb
 }
 
-wget -q http://archive.ubuntu.com/ubuntu/`grep '^Filename:.*fakechroot_.*.deb' $T/Packages-universe | cut -f 2 -d\ `
+wget -q $MIRROR/`grep '^Filename:.*fakechroot_.*.deb' $T/Packages-universe | cut -f 2 -d\ `
 ar p fakechroot_*.deb data.tar.gz | tar xzO ./usr/lib/fakechroot/libfakechroot.so > fakelibs/libfakechroot.so
 rm fakechroot_*.deb
+
+# launchpadlib
+if [ ! -d $HOME/launchpadlib ]; then
+    mkdir ~/launchpadlib
+    d=`pwd`
+    cd ~/launchpadlib
+
+    # python-httplib2
+    dpkg -s python-httplib2 2>/dev/null | grep -q ' installed$' || {
+	P=`grep '^Filename:.*python-httplib2_.*.deb' $T/Packages-universe | cut -f 2 -d\ `
+	wget -q $MIRROR/$P
+	dpkg -x python-httplib2*.deb $T
+	rm python-httplib2*.deb
+	mv $T/usr/share/python-support/python-httplib2/httplib2 .
+    }
+
+    # python-simplejson
+    dpkg -s python-simplejson 2>/dev/null | grep -q ' installed$' || {
+	P=`grep '^Filename:.*python-simplejson.*.deb' $T/Packages-universe | cut -f 2 -d\ `
+	wget -q $MIRROR/$P
+	dpkg -x python-simplejson*.deb $T
+	rm python-simplejson*.deb
+	mv $T/usr/share/python-support/python-simplejson/simplejson .
+    }
+
+    bzr get lp:launchpadlib
+    bzr get lp:wadllib
+    bzr get lp:~vcs-imports/oauth/trunk oauth
+    bzr get lp:lazr.uri
+
+    cd "$d"
+fi
 
 rm -rf $T
 
@@ -81,8 +112,8 @@ rm -rf $T
 if type fakeroot >/dev/null 2>/dev/null; then
     cat <<EOF > environ
 PATH=`pwd`/bin:/usr/sbin:/sbin:\$PATH
-PYTHONPATH=`pwd`/apport:\$PYTHONPATH
-LD_LIBRARY_PATH=`pwd`/apport:$LD_LIBRARY_PATH
+PYTHONPATH=`pwd`/apport:`pwd`/apport/libs:\$HOME/launchpadlib/launchpadlib/src:\$HOME/launchpadlib/wadllib/src:$HOME/launchpadlib/lazr.uri/src:$HOME/launchpadlib/oauth:\$HOME/launchpadlib/:\$PYTHONPATH
+LD_LIBRARY_PATH=`pwd`/apport:\$LD_LIBRARY_PATH
 APPORT_LIBFAKECHROOT=`pwd`/fakelibs/libfakechroot.so
 APPORT_CRASHDB_CONF=`pwd`/apport/etc/apport/crashdb.conf
 
@@ -105,16 +136,14 @@ fi
 
 # create chroots
 if [ "`dpkg --print-architecture`" = i386 ]; then
-    apport-chroot -t -a "deb http://ddebs.ubuntu.com/ $RELEASE main restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main restricted universe multiverse" -a "deb http://security.ubuntu.com/ubuntu $RELEASE-security main restricted universe multiverse" -p libc6-i686 -p libc6-i686-dbgsym create $RELEASE chroots/$RELEASE.tar.gz
-else
-    apport-chroot -t -a "deb http://ddebs.ubuntu.com/ $RELEASE main restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE restricted universe multiverse" -a "deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main restricted universe multiverse" -a "deb http://security.ubuntu.com/ubuntu $RELEASE-security main restricted universe multiverse" create $RELEASE chroots/$RELEASE.tar.gz
+    EXTRA_PKG="-p libc6-i686 -p libc6-i686-dbgsym"
 fi
+apport-chroot -t -a "deb $MIRROR $RELEASE restricted universe multiverse" -a "deb $MIRROR $RELEASE-updates main restricted universe multiverse" -a "deb $SECMIRROR $RELEASE-security main restricted universe multiverse" -a "deb http://ddebs.ubuntu.com/ $RELEASE main restricted universe multiverse" -a "deb http://ddebs.ubuntu.com/ $RELEASE-updates main restricted universe multiverse" -a "deb http://ddebs.ubuntu.com/ $RELEASE-proposed main restricted universe multiverse" -a "deb http://ddebs.ubuntu.com/ $RELEASE-security main restricted universe multiverse" -a "deb http://ppa.launchpad.net/pitti/apport-retracer/ubuntu $RELEASE main" $EXTRA_PKG create $RELEASE chroots/$RELEASE.tar.gz
 chmod -R g+w chroots/
 
 # chroot map
 cat <<EOF > chrootmap
 {
-    'Ubuntu 8.04': 'chroots/hardy.tar.gz',
-    'Ubuntu 8.10': 'chroots/intrepid.tar.gz',
+    'Ubuntu 9.04': 'chroots/jaunty.tar.gz',
 }
 EOF
