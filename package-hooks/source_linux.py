@@ -25,6 +25,13 @@ def add_info(report):
 	version_signature = report.get('ProcVersionSignature', '')
 	if not version_signature.startswith('Ubuntu '):
 		report['UnreportableReason'] = _('The running kernel is not an Ubuntu kernel')
+		return
+
+	uname_release = os.uname()[2]
+	lrm_package_name = 'linux-restricted-modules-%s' % uname_release
+	lbm_package_name = 'linux-backports-modules-%s' % uname_release
+
+	attach_related_packages(report, [lrm_package_name, lbm_package_name])
 
 if __name__ == '__main__':
 	report = {}
