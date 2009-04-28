@@ -275,6 +275,10 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.report.add_proc_info(self.options.pid)
             else:
                 self.report.add_proc_environ()
+        except ValueError:
+                self.ui_error_message(_('Invalid PID'), 
+                    _('The specified process ID does not belong to a program.'))
+                return False
         except OSError, e:
             # silently ignore nonexisting PIDs; the user must not close the
             # application prematurely

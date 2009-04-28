@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys
+import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys, socket
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
@@ -82,23 +82,27 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if not os.path.isdir(auth_dir):
             os.makedirs(auth_dir)
 
-        if os.path.exists(self.auth):
-            # use existing credentials
-            credentials = Credentials()
-            credentials.load(open(self.auth))
-            self.__launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
-        else:
-            # get credentials and save them
-            try:
-                self.__launchpad = Launchpad.get_token_and_login('apport-collect',
-                        launchpad_instance, cache_dir)
-            except launchpadlib.errors.HTTPError, e:
-                print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
-                sys.exit(1)
-            f = open(self.auth, 'w')
-            os.chmod(self.auth, 0600)
-            self.__launchpad.credentials.save(f)
-            f.close()
+        try:
+            if os.path.exists(self.auth):
+                # use existing credentials
+                credentials = Credentials()
+                credentials.load(open(self.auth))
+                self.__launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
+            else:
+                # get credentials and save them
+                try:
+                    self.__launchpad = Launchpad.get_token_and_login('apport-collect',
+                            launchpad_instance, cache_dir)
+                except launchpadlib.errors.HTTPError, e:
+                    print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
+                    sys.exit(1)
+                f = open(self.auth, 'w')
+                os.chmod(self.auth, 0600)
+                self.__launchpad.credentials.save(f)
+                f.close()
+        except socket.error, e:
+            print >> sys.stderr, 'Error connecting to Launchpad: %s' % str(e)
+            sys.exit(99) # transient error
 
         return self.__launchpad
 
@@ -153,7 +157,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
-        report.write_mime(mime, extra_headers=hdr, skip_keys=['Date'])
+        report.write_mime(mime, extra_headers=hdr)
         mime.flush()
         mime.seek(0)
 
@@ -223,11 +227,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         report.load(StringIO(description))
 
-        try:
-            report['Date'] = b.date_created.ctime()
-        except AttributeError:
-            # support older wadllib API which returned strings
-            report['Date'] = b.date_created
+        if 'Date' not in report:
+            # We had not submitted this field for a while, claiming it
+            # redundant. But it is indeed required for up-to-the-minute
+            # comparison with log files, etc. For backwards compatibility with
+            # those reported bugs, read the creation date
+            try:
+                report['Date'] = b.date_created.ctime()
+            except AttributeError:
+                # support older wadllib API which returned strings
+                report['Date'] = b.date_created
         if 'ProblemType' not in report:
             if 'apport-bug' in b.tags:
                 report['ProblemType'] = 'Bug'

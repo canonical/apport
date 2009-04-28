@@ -12,7 +12,7 @@ the full text of the license.
 '''
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
-import fnmatch, glob, atexit, traceback
+import fnmatch, glob, atexit, traceback, errno
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -299,7 +299,7 @@ class Report(ProblemReport):
         - ProcCmdline: /proc/pid/cmdline contents
         - ProcStatus: /proc/pid/status contents
         - ProcMaps: /proc/pid/maps contents
-        - ProcAttrCurrent: /proc/pid/attr/current contents
+        - ProcAttrCurrent: /proc/pid/attr/current contents, if not "unconfined"
         '''
         if not pid:
             pid = self.pid or os.getpid()
@@ -315,7 +315,13 @@ class Report(ProblemReport):
         self['ProcStatus'] = _read_file('/proc/' + pid + '/status')
         self['ProcCmdline'] = _read_file('/proc/' + pid + '/cmdline').rstrip('\0')
         self['ProcMaps'] = _read_maps(int(pid))
-        self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+        try:
+            self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
+        except OSError, e:
+            if e.errno == errno.ENOENT:
+                raise ValueError, 'invalid process'
+            else:
+                raise
         for p in ('rofs', 'rwfs', 'squashmnt', 'persistmnt'):
             if self['ExecutablePath'].startswith('/%s/' % p):
                 self['ExecutablePath'] = self['ExecutablePath'][len('/%s' % p):]
@@ -334,7 +340,9 @@ class Report(ProblemReport):
             # On Linux 2.6.28+, 'current' is world readable, but read() gives
             # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
             if os.getuid() == 0:
-                self['ProcAttrCurrent'] = open('/proc/' + pid + '/attr/current').read().strip()
+                val = open('/proc/' + pid + '/attr/current').read().strip()
+                if val != 'unconfined':
+                    self['ProcAttrCurrent'] = val
         except (IOError, OSError):
             pass
 
@@ -505,8 +513,6 @@ class Report(ProblemReport):
         _common_hook_dir/*.py and has to contain a function 'add_info(report)'
         that takes and modifies a Report.'''
 
-        if 'Package' not in self:
-            return
         symb = {}
 
         # common hooks
@@ -520,15 +526,16 @@ class Report(ProblemReport):
                 pass
 
         # binary package hook
-        hook = '%s/%s.py' % (_hook_dir, self['Package'].split()[0])
-        if os.path.exists(hook):
-            try:
-                execfile(hook, symb)
-                symb['add_info'](self)
-            except:
-                print >> sys.stderr, 'hook %s crashed:' % hook
-                traceback.print_exc()
-                pass
+        if self.has_key('Package'):
+            hook = '%s/%s.py' % (_hook_dir, self['Package'].split()[0])
+            if os.path.exists(hook):
+                try:
+                    execfile(hook, symb)
+                    symb['add_info'](self)
+                except:
+                    print >> sys.stderr, 'hook %s crashed:' % hook
+                    traceback.print_exc()
+                    pass
 
         # source package hook
         if self.has_key('SourcePackage'):
@@ -1088,7 +1095,7 @@ sys.stdin.readline()
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # test process is gone, should complain about nonexisting PID
-        self.assertRaises(OSError, pr.add_proc_info, p.pid)
+        self.assertRaises(ValueError, pr.add_proc_info, p.pid)
 
     def test_add_path_classification(self):
         '''classification of $PATH.'''
@@ -1338,19 +1345,22 @@ int main() { return f(42); }
     def test_add_gdb_info_script(self):
         '''add_gdb_info() with a script.'''
 
-        (fd, coredump) = tempfile.mkstemp()
-        (fd2, script) = tempfile.mkstemp()
+        (fd, script) = tempfile.mkstemp()
+        coredump = os.path.join(os.path.dirname(script), 'core')
+        assert not os.path.exists(coredump)
         try:
             os.close(fd)
-            os.close(fd2)
 
             # create a test script which produces a core dump for us
             open(script, 'w').write('''#!/bin/bash
-gdb --batch --ex 'generate-core-file %s' --pid $$ >/dev/null''' % coredump)
+cd `dirname $0`
+ulimit -c unlimited
+kill -SEGV $$
+''')
             os.chmod(script, 0755)
 
             # call script and verify that it gives us a proper ELF core dump
-            assert subprocess.call([script]) == 0
+            assert subprocess.call([script]) != 0
             assert subprocess.call(['readelf', '-n', coredump],
                 stdout=subprocess.PIPE) == 0
 

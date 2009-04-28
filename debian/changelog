@@ -18,6 +18,17 @@ apport (1.1-0ubuntu1) UNRELEASED; urgency=low
     - Various bug fixes; most visible being the misnamed
       etc/default/apport.default file (which should just be
       etc/default/apport).
+  * Merge some bug fixes from trunk:
+    - launchpad.py: Send and read Date: field again, reverting r1128; it is
+      useful after all. (LP: #349139)
+    - report.py, add_proc_info(): Only add ProcAttrCurrent if it is not
+      "unconfined".
+    - ui.py: Detect invalid PIDs (such as for kernel processes) and give a
+      friendly error message. (LP: #360608)
+    - report.py, add_hooks_info(): Always run common hooks, and run source
+      package hooks if we do not have a binary package name. (LP: #350131)
+    - launchpad.py: Consider socket errors when connecting as transient, so
+      that crash-digger doesn't stop completely on them.
   * Drop debian/apport.README.Debian, superseded by upstream README.
   * Drop debian/apport.links, done by upstream setup.py now.
   * debian/rules, debian/apport.preinst: Drop upgrade fix for misnamed default
