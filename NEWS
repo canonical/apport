@@ -1,14 +1,39 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.1.1 (UNRELEASED)
+------------------
+Security fix:
+- etc/cron.daily/apport: Only attempt to remove files and symlinks, do not
+  descend into subdirectories of /var/crash/. Doing so might be exploited by a
+  race condition between find traversing a huge directory tree, changing an
+  existing subdir into a symlink to e. g. /etc/, and finally getting that piped
+  to rm. This also changes the find command to not use GNU extensions.  Thanks
+  to Stephane Chazelas for discovering this! (LP #357024, CVE-2009-1295)
+
+Bug fixes:
+- launchpad.py: Send and read Date: field again, reverting r1128; it is useful
+  after all. (LP #349139)
+- Only add ProcAttrCurrent to reports if it is not "unconfined", to remove some
+  noise from reports.
+- Detect invalid PIDs in the UI (such as for kernel processes) and give a
+  friendly error message instead of silently doing nothing. (LP #360608)
+- Always run common hooks, and run source package hooks if we do not have a
+  binary package name. (LP #350131)
+- launchpad.py: Consider socket errors when connecting as transient, so
+  that crash-digger doesn't stop completely on them.
+
 1.1 (2009-04-20)
 ----------------
-- Drop some remaining distro specific pieces of code.
+New features:
 - Add hookutils methods for attaching relevant packages, greatly improve
   attach_alsa() for sound problem debugging. 
 - Move launchpad crash database implementation from ever-breaking
   python-launchpad-bugs (screenscraping) to launchpadlib (official and stable
   Launchpad API).
+
+Bug fixes:
+- Drop some remaining distro specific pieces of code.
 - Add new field Report.pid which gets set on add_proc_info() and can be used by
   hooks.
 - setup.py: Properly clean up all generated files, install missing
