@@ -17,5 +17,7 @@ def add_info(report):
     # if we are running from a live system, add the build timestamp
     attach_file_if_exists(report, '/cdrom/.disk/info', 'MediaBuild')
 
+    attach_file_if_exists(report, '/proc/version_signature', 'ProcVersionSignature')
+
     # XXX - how do we get the package name?
     # attach_conffiles(report, package)

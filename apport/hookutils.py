@@ -117,7 +117,6 @@ def attach_hardware(report):
 
     - kernel dmesg (boot and current)
     - /proc/interrupts
-    - /proc/version_signature
     - /proc/cpuinfo
     - /proc/cmdline
     - /proc/modules
@@ -128,7 +127,6 @@ def attach_hardware(report):
     attach_dmesg(report)
 
     attach_file(report, '/proc/interrupts', 'ProcInterrupts')
-    attach_file(report, '/proc/version_signature', 'ProcVersionSignature')
     attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
     attach_file(report, '/proc/cmdline', 'ProcCmdLine')
     attach_file(report, '/proc/modules', 'ProcModules')
@@ -136,10 +134,6 @@ def attach_hardware(report):
     report['Lspci'] = command_output(['lspci','-vvnn'])
     report['Lsusb'] = command_output(['lsusb'])
     report['HalComputerInfo'] = hal_dump_udi('/org/freedesktop/Hal/devices/computer')
-
-    if 'Uname' in report:
-        # already covered in ProcVersionSignature
-        del report['Uname']
 
     # Use the hardware information to create a machine type.
     attach_machinetype(report)
