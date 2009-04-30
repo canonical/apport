@@ -1,5 +1,6 @@
 apport (1.1.1-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
   * New upstream security update:
     - etc/cron.daily/apport: Only attempt to remove files and symlinks, do not
       descend into subdirectories of /var/crash/. Doing so might be exploited by
@@ -9,6 +10,10 @@ apport (1.1.1-0ubuntu1) UNRELEASED; urgency=low
       extensions.  Thanks to Stephane Chazelas for discovering this!
       (LP: #357024, CVE-2009-1295)
     - Other fixes were already cherrypicked in the previous upload.
+
+  [ Matt Zimmerman ]
+  * package-hooks/source_linux.py: Attach info for linux-restricted-modules
+    and linux-backports-modules
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 30 Apr 2009 09:02:17 +0200
 
