@@ -19,5 +19,6 @@ def add_info(report):
 
     attach_file_if_exists(report, '/proc/version_signature', 'ProcVersionSignature')
 
-    # XXX - how do we get the package name?
-    # attach_conffiles(report, package)
+    package = report.get('Package', '').split()[0]
+    if package:
+        attach_conffiles(report, package)

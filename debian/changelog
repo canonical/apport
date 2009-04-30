@@ -2,6 +2,7 @@ apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
 
   * hookutils.py: Do not attach /proc/version_signature, it's Ubuntu specific.
     (Merged from trunk). Instead, attach it in general-hooks/ubuntu.py.
+  * general-hooks/ubuntu.py: Attach package conffile information.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 30 Apr 2009 13:37:45 +0200
 
