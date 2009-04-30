@@ -1,5 +1,4 @@
 #!/bin/sh -e
 # clean all crash reports which are older than a week.
 [ -d /var/crash ] || exit 0
-find /var/crash -mindepth 1 -mtime +7 -print0 | xargs -0 rm -f
-find /var/crash -mindepth 1 -empty -print0 | xargs -0 rm -f
+find /var/crash/. ! -name . -prune -type f \( -size 0 -o -mtime +7 \) -exec rm -f -- '{}' \;
