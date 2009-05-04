@@ -93,7 +93,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 try:
                     self.__launchpad = Launchpad.get_token_and_login('apport-collect',
                             launchpad_instance, cache_dir)
-                except launchpadlib.errors.HTTPError, e:
+                except HTTPError, e:
                     print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
                     sys.exit(1)
                 f = open(self.auth, 'w')
