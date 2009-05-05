@@ -67,7 +67,9 @@ def attach_conffiles(report, package, conffiles=None):
 
     output = command_output(['dpkg-query','-W','--showformat=${Conffiles}',
                              package])
-    for line in output.split('\n'):
+    for line in output.splitlines():
+        if not line:
+            continue
         path, default_md5sum = line.strip().split()
 
         if conffiles and path not in conffiles: continue
