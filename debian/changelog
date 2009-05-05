@@ -4,6 +4,8 @@ apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
   * hookutils.py: Do not attach /proc/version_signature, it's Ubuntu specific.
     (Merged from trunk). Instead, attach it in general-hooks/ubuntu.py.
   * general-hooks/ubuntu.py: Attach package conffile information.
+  * debian/local/apport-collect: Add workaround for launchpadlib bug
+    LP#353805, to avoid crashing with non-UTF8 attachments. (LP: #368004)
 
   [ Andy Whitcroft ]
   * bin/apportcheckresume: the suspend _and_ hibernate logs are both in
