@@ -6,6 +6,7 @@ apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
   * general-hooks/ubuntu.py: Attach package conffile information.
   * debian/local/apport-collect: Add workaround for launchpadlib bug
     LP#353805, to avoid crashing with non-UTF8 attachments. (LP: #368004)
+  * debian/local/apport-collect: Fix import of launchpadlib's HTTPError.
 
   [ Andy Whitcroft ]
   * bin/apportcheckresume: the suspend _and_ hibernate logs are both in

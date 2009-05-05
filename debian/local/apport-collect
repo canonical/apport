@@ -16,6 +16,7 @@ import sys, os.path, optparse, tempfile, re, email
 from glob import glob
 
 import apport
+from launchpadlib.errors import HTTPError
 from apport.crashdb_impl.launchpad import CrashDatabase
 
 bug_target_re = re.compile(
@@ -142,6 +143,6 @@ if len(report.keys()) == 0:
 
 try:
     upload(report, bug)
-except launchpadlib.errors.HTTPError, e:
+except HTTPError, e:
     print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
     sys.exit(1)
