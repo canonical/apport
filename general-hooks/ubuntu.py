@@ -14,6 +14,11 @@ import apport.packaging
 from apport.hookutils import *
 
 def add_info(report):
+    # crash reports from live system installer often expose target mount
+    for f in ('ExecutablePath', 'InterpreterPath'):
+        if f in report and report[f].startswith('/target/'):
+            report[f] = report[f][7:]
+
     # if we are running from a live system, add the build timestamp
     attach_file_if_exists(report, '/cdrom/.disk/info', 'MediaBuild')
 

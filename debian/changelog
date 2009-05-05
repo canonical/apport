@@ -9,6 +9,9 @@ apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
   * debian/local/apport-collect: Fix import of launchpadlib's HTTPError.
   * apport/hookutils.py, attach_conffiles(): Ignore empty lines from
     dpkg-query output.
+  * general-hooks/ubuntu.py: Strip off '/target' prefix from ExecutablePath
+    and InterpreterPath, to correctly process crash reports from the live
+    system installer.
 
   [ Andy Whitcroft ]
   * bin/apportcheckresume: the suspend _and_ hibernate logs are both in
