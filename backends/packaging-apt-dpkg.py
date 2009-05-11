@@ -60,7 +60,10 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._apt_pkg(package).installed.version
+        inst = self._apt_pkg(package).installed
+        if not inst:
+            raise ValueError, 'package does not exist'
+        return inst.version
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
@@ -751,6 +754,7 @@ if __name__ == '__main__':
 
             self.assert_(impl.get_version('libc6').startswith('2'))
             self.assertRaises(ValueError, impl.get_version, 'nonexisting')
+            self.assertRaises(ValueError, impl.get_version, 'wukrainian')
 
         def test_get_available_version(self):
             '''get_available_version().'''
