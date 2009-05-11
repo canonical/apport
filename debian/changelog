@@ -15,6 +15,9 @@ apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
   * apport/hookutils.py, attach_conffiles(): Do not use command_output(),
     since that causes error messages to get parsed as conffiles. Use
     subprocess properly.
+  * backends/packaging-apt-dpkg.py: Replace deprecated python-apt properties
+    with current ones (merged from trunk). Update python-apt dependency to 
+    >= 0.7.9.
 
   [ Andy Whitcroft ]
   * bin/apportcheckresume: the suspend _and_ hibernate logs are both in
