@@ -18,6 +18,9 @@ apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
   * backends/packaging-apt-dpkg.py: Replace deprecated python-apt properties
     with current ones (merged from trunk). Update python-apt dependency to 
     >= 0.7.9.
+  * packaging-apt-dpkg.py, get_modified_files(): Do not show package list file
+    as modified if the package is not installed (merged from trunk).
+    (LP: #364533)
 
   [ Andy Whitcroft ]
   * bin/apportcheckresume: the suspend _and_ hibernate logs are both in

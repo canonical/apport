@@ -60,7 +60,10 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._apt_pkg(package).installed.version
+        inst = self._apt_pkg(package).installed
+        if not inst:
+            raise ValueError, 'package does not exist'
+        return inst.version
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
@@ -91,8 +94,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         this_os = lsb_release.communicate()[0].strip()
         assert lsb_release.returncode == 0
 
-        if self._apt_pkg(package).installed.version is None:
-            return False # LP#252734
+        # some PPA packages have installed version None, see LP#252734
+        if self._apt_pkg(package).installed and \
+            self._apt_pkg(package).installed.version is None:
+            return False
 
         origins = self._apt_pkg(package).candidate.origins
         if origins: # might be None
@@ -129,7 +134,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 raise OSError
             max_time = max(s.st_mtime, s.st_ctime)
         except OSError:
-            return [listfile]
+            return []
 
         # create a list of files with a newer timestamp for md5sum'ing
         sums = ''
@@ -751,6 +756,7 @@ if __name__ == '__main__':
 
             self.assert_(impl.get_version('libc6').startswith('2'))
             self.assertRaises(ValueError, impl.get_version, 'nonexisting')
+            self.assertRaises(ValueError, impl.get_version, 'wukrainian')
 
         def test_get_available_version(self):
             '''get_available_version().'''
