@@ -65,9 +65,18 @@ def attach_file(report, path, key=None):
 def attach_conffiles(report, package, conffiles=None):
     '''Attach information about any modified or deleted conffiles'''
 
-    output = command_output(['dpkg-query','-W','--showformat=${Conffiles}',
-                             package])
-    for line in output.splitlines():
+    try:
+       dpkg = subprocess.Popen(['dpkg-query','-W','--showformat=${Conffiles}',
+           package], stdout=subprocess.PIPE, close_fds=True)
+    except OSError, e:
+       return 'Error: ' + str(e)
+
+    out = dpkg.communicate()[0]
+    if dpkg.returncode != 0:
+       return
+
+    for line in out.splitlines():
+        print 'examining line:', line
         if not line:
             continue
         path, default_md5sum = line.strip().split()

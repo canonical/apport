@@ -12,6 +12,9 @@ apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
   * general-hooks/ubuntu.py: Strip off '/target' prefix from ExecutablePath
     and InterpreterPath, to correctly process crash reports from the live
     system installer.
+  * apport/hookutils.py, attach_conffiles(): Do not use command_output(),
+    since that causes error messages to get parsed as conffiles. Use
+    subprocess properly.
 
   [ Andy Whitcroft ]
   * bin/apportcheckresume: the suspend _and_ hibernate logs are both in
