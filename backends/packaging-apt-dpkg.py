@@ -94,8 +94,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         this_os = lsb_release.communicate()[0].strip()
         assert lsb_release.returncode == 0
 
-        if self._apt_pkg(package).installed.version is None:
-            return False # LP#252734
+        # some PPA packages have installed version None, see LP#252734
+        if self._apt_pkg(package).installed and \
+            self._apt_pkg(package).installed.version is None:
+            return False
 
         origins = self._apt_pkg(package).candidate.origins
         if origins: # might be None
