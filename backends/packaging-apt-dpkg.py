@@ -60,12 +60,12 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_version(self, package):
         '''Return the installed version of a package.'''
 
-        return self._apt_pkg(package).installedVersion
+        return self._apt_pkg(package).installed.version
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
 
-        return self._apt_pkg(package).candidateVersion
+        return self._apt_pkg(package).candidate.version
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
@@ -80,7 +80,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-        return self._apt_pkg(package).sourcePackageName
+        return self._apt_pkg(package).candidate.source_name
 
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
@@ -91,10 +91,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         this_os = lsb_release.communicate()[0].strip()
         assert lsb_release.returncode == 0
 
-        if self._apt_pkg(package).installedVersion is None:
+        if self._apt_pkg(package).installed.version is None:
             return False # LP#252734
 
-        origins = self._apt_pkg(package).candidateOrigin
+        origins = self._apt_pkg(package).candidate.origins
         if origins: # might be None
             for o in origins:
                 # note: checking site for ppa is a hack until LP #140412 gets fixed
@@ -108,7 +108,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
-        return self._apt_pkg(package).architecture or 'unknown'
+        return self._apt_pkg(package).candidate.architecture or 'unknown'
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -357,16 +357,16 @@ class __AptDpkgPackageInfo(PackageInfo):
                 continue
 
             # ignore packages which are already installed in the right version
-            if (ver and c[pkg].installedVersion == ver) or \
-               (not ver and c[pkg].installedVersion):
+            if (ver and c[pkg].installed.version == ver) or \
+               (not ver and c[pkg].installed.version):
                continue
 
-            if ver and c[pkg].candidateVersion != ver:
+            if ver and c[pkg].candidate.version != ver:
                 if not pkg.endswith('-dbgsym'):
                     outdated += '%s: installed version %s, latest version: %s\n' % (
-                        pkg, ver, c[pkg].candidateVersion)
+                        pkg, ver, c[pkg].candidate.version)
                 print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
-                    pkg, ver, c[pkg].candidateVersion)
+                    pkg, ver, c[pkg].candidate.version)
                 if not unpack_only:
                     uninstallable.append (c[pkg].name)
                     continue
@@ -452,7 +452,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             if os.geteuid() != 0:
                 print >> sys.stderr, 'You either need to call this program as root or install these packages manually:'
             for p in c.getChanges():
-                print >> sys.stderr, '  %s %s' % (p.name, p.candidateVersion)
+                print >> sys.stderr, '  %s %s' % (p.name, p.candidate.version)
 
         return (installed, outdated)
 
