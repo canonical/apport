@@ -134,7 +134,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 raise OSError
             max_time = max(s.st_mtime, s.st_ctime)
         except OSError:
-            return [listfile]
+            return []
 
         # create a list of files with a newer timestamp for md5sum'ing
         sums = ''
