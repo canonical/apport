@@ -174,10 +174,17 @@ class Report(ProblemReport):
             if not package:
                 return
 
-        self['Package'] = '%s %s%s' % (package,
-            packaging.get_version(package),
+        try:
+            version = packaging.get_version(package)
+        except ValueError:
+            # package not installed
+            version = None
+        self['Package'] = '%s %s%s' % (package, version or '(not installed)',
             self._pkg_modified_suffix(package))
         self['SourcePackage'] = packaging.get_source(package)
+        if not version:
+            return
+
         self['PackageArchitecture'] = packaging.get_architecture(package)
 
         # get set of all transitive dependencies
