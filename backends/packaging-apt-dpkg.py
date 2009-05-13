@@ -362,8 +362,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 continue
 
             # ignore packages which are already installed in the right version
-            if (ver and c[pkg].installed.version == ver) or \
-               (not ver and c[pkg].installed.version):
+            if (ver and c[pkg].installed and c[pkg].installed.version == ver) or \
+               (not ver and c[pkg].installed):
                continue
 
             if ver and c[pkg].candidate.version != ver:
