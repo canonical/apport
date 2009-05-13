@@ -1,4 +1,4 @@
-apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
+apport (1.1.1-0ubuntu2) karmic; urgency=low
 
   [ Martin Pitt ]
   * hookutils.py: Do not attach /proc/version_signature, it's Ubuntu specific.
@@ -30,7 +30,7 @@ apport (1.1.1-0ubuntu2) UNRELEASED; urgency=low
   * bin/apportcheckresume: remove redunant check for file before attaching
     stress log.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 30 Apr 2009 13:37:45 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 May 2009 15:22:53 +0200
 
 apport (1.1.1-0ubuntu1) karmic; urgency=low
 
