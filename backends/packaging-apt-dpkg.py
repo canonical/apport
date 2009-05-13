@@ -351,7 +351,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 # the archive; i. e. /var/lib/dpkg/status still knows about them
                 if not c[pkg].candidate:
                     raise KeyError
-                if not 'Architecture: all' in c[pkg]._records.Record:
+                if c[pkg].candidate.architecture != 'all':
                     dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
             except KeyError:
                 print >> sys.stderr, 'WARNING: package %s not known to package cache' % pkg
