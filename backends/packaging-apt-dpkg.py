@@ -314,7 +314,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         
         Return a tuple (list of installed packages, string with outdated packages).
         '''
-        c = self._cache
+        c = self._cache()
 
         try:
             if verbosity:
