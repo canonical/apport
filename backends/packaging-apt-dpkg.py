@@ -349,7 +349,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 # this fails for packages which are still installed, but gone from
                 # the archive; i. e. /var/lib/dpkg/status still knows about them
-                if not c[pkg]._lookupRecord():
+                if not c[pkg].candidate:
                     raise KeyError
                 if not 'Architecture: all' in c[pkg]._records.Record:
                     dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
