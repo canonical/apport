@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
+"POT-Creation-Date: 2009-05-15 10:35+0200\n"
 "PO-Revision-Date: 2009-04-04 07:51+0000\n"
 "Last-Translator: Ricardo Pérez López <ricpelo@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -33,18 +33,17 @@ msgstr "Su sistema ha encontrado un problema serio del núcleo"
 
 #: ../gtk/apport-gtk.py:114 ../qt4/apport-qt.py:198 ../cli/apport-cli.py:177
 msgid "You can help the developers to fix the problem by reporting it."
-msgstr ""
-"Si lo notifica, ayudará a los desarrolladores a resolver el problema."
+msgstr "Si lo notifica, ayudará a los desarrolladores a resolver el problema."
 
 #: ../gtk/apport-gtk.py:145 ../qt4/apport-qt.py:239 ../cli/apport-cli.py:212
 msgid "(binary data)"
 msgstr "(datos binarios)"
 
-#: ../gtk/apport-gtk.glade.h:1
+#: ../gtk/apport-gtk.ui.h:1
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>Recopilando información del problema</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:2
+#: ../gtk/apport-gtk.ui.h:2
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -56,11 +55,11 @@ msgstr ""
 "Una vez se haya enviado el informe del problema, rellene el formulario que "
 "aparecerá en la ventana del navegador (que se abrirá automáticamente)."
 
-#: ../gtk/apport-gtk.glade.h:5
+#: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Enviando información del problema</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:7
+#: ../gtk/apport-gtk.ui.h:7
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
@@ -69,20 +68,20 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">Lo sentimos; falló la instalación o "
 "actualización del paquete «%s».</span>"
 
-#: ../gtk/apport-gtk.glade.h:8
+#: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
 msgstr "Problema en la aplicación"
 
-#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#: ../gtk/apport-gtk.ui.h:10 ../qt4/apport-qt.py:246
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "Informe completo (recomendado; %s)"
 
-#: ../gtk/apport-gtk.glade.h:11
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "Contenido del informe"
 
-#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+#: ../gtk/apport-gtk.ui.h:12 ../qt4/apport-qt.py:146
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -92,7 +91,7 @@ msgstr ""
 "información privada), puede informar del problema para ayudar a mejorar la "
 "aplicación."
 
-#: ../gtk/apport-gtk.glade.h:13
+#: ../gtk/apport-gtk.ui.h:13
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -100,24 +99,24 @@ msgstr ""
 "La información que se está recopilando puede ayudar a los desarrolladores a "
 "resolver el problema que va a notificar."
 
-#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+#: ../gtk/apport-gtk.ui.h:14 ../qt4/apport-qt.py:200
 msgid "Kernel problem"
 msgstr "Problema en el núcleo"
 
-#: ../gtk/apport-gtk.glade.h:15
+#: ../gtk/apport-gtk.ui.h:15
 msgid "Package problem"
 msgstr "Problema en el paquete"
 
-#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#: ../gtk/apport-gtk.ui.h:17 ../qt4/apport-qt.py:249
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Informe reducido (conexión lenta a Internet; %s)"
 
-#: ../gtk/apport-gtk.glade.h:18
+#: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
 msgstr "Reiniciar el _programa"
 
-#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+#: ../gtk/apport-gtk.ui.h:19 ../qt4/apport-qt.py:299
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -125,7 +124,7 @@ msgstr ""
 "La información recopilada está siendo enviada al sistema de seguimiento de "
 "fallos. Esto puede tardar varios minutos."
 
-#: ../gtk/apport-gtk.glade.h:20
+#: ../gtk/apport-gtk.ui.h:20
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -135,28 +134,26 @@ msgstr ""
 "para que los desarrolladores depuren el problema, pero pueden resultarle muy "
 "grandes para enviarlos si tiene una conexión lenta a Internet."
 
-#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
-#: ../cli/apport-cli.py:281
+#: ../gtk/apport-gtk.ui.h:21 ../qt4/apport-qt.py:298 ../cli/apport-cli.py:281
 msgid "Uploading problem information"
 msgstr "Enviando la información del problema"
 
-#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
-#: ../cli/apport-cli.py:161
+#: ../gtk/apport-gtk.ui.h:22 ../qt4/apport-qt.py:179 ../cli/apport-cli.py:161
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
 "Puede ayudar a los desarrolladores a corregir el paquete informando del "
 "problema."
 
-#: ../gtk/apport-gtk.glade.h:23
+#: ../gtk/apport-gtk.ui.h:23
 msgid "_Ignore future crashes of this program version"
 msgstr "_Ignorar fallos futuros de esta versión del programa"
 
-#: ../gtk/apport-gtk.glade.h:24
+#: ../gtk/apport-gtk.ui.h:24
 msgid "_Report Problem..."
 msgstr "Info_rmar del problema..."
 
-#: ../gtk/apport-gtk.glade.h:25
+#: ../gtk/apport-gtk.ui.h:25
 msgid "_Send Report"
 msgstr "_Enviar informe"
 
@@ -405,11 +402,11 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
-#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
-#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
-#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
-#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
-#: ../apport/ui.py:1505 ../apport/ui.py:1516
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:305
+#: ../apport/ui.py:338 ../apport/ui.py:465 ../apport/ui.py:619
+#: ../apport/ui.py:623 ../apport/ui.py:639 ../apport/ui.py:984
+#: ../apport/ui.py:1001 ../apport/ui.py:1482 ../apport/ui.py:1498
+#: ../apport/ui.py:1509 ../apport/ui.py:1520
 msgid "Invalid problem report"
 msgstr "Informe de problema incorrecto"
 
@@ -417,7 +414,7 @@ msgstr "Informe de problema incorrecto"
 msgid "The report belongs to a package that is not installed."
 msgstr "El informe proviene de un paquete no instalado."
 
-#: ../apport/ui.py:209 ../apport/ui.py:620
+#: ../apport/ui.py:209 ../apport/ui.py:624
 msgid "This problem report is damaged and cannot be processed."
 msgstr "El informe del problema está dañado y no puede procesarse."
 
@@ -456,11 +453,22 @@ msgstr ""
 "Necesita especificar un paquete o un PID. Consulte --help para más "
 "información."
 
-#: ../apport/ui.py:284
+#: ../apport/ui.py:279
+msgid "Invalid PID"
+msgstr ""
+
+#: ../apport/ui.py:280
+#, fuzzy
+msgid "The specified process ID does not belong to a program."
+msgstr ""
+"El proceso especificado no le pertenece. Ejecute este programa como "
+"propietario del proceso o como superusuario."
+
+#: ../apport/ui.py:288
 msgid "Permission denied"
 msgstr "Permiso denegado"
 
-#: ../apport/ui.py:285
+#: ../apport/ui.py:289
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -468,52 +476,52 @@ msgstr ""
 "El proceso especificado no le pertenece. Ejecute este programa como "
 "propietario del proceso o como superusuario."
 
-#: ../apport/ui.py:302
+#: ../apport/ui.py:306
 #, python-format
 msgid "Package %s does not exist"
 msgstr "El paquete %s no existe"
 
-#: ../apport/ui.py:462
+#: ../apport/ui.py:466
 msgid "Could not determine the package or source package name."
 msgstr "No se ha podido determinar el nombre del paquete binario o fuente."
 
-#: ../apport/ui.py:477
+#: ../apport/ui.py:481
 msgid "Unable to start web browser"
 msgstr "No se puede arrancar el navegador web"
 
-#: ../apport/ui.py:478
+#: ../apport/ui.py:482
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "No se puede arrancar el navegador web para abrir %s."
 
-#: ../apport/ui.py:584
+#: ../apport/ui.py:588
 msgid "Network problem"
 msgstr "Problemas con la red"
 
-#: ../apport/ui.py:586
+#: ../apport/ui.py:590
 msgid "Could not upload report data to crash database"
 msgstr ""
 "No se han podido enviar los datos del informe a la base de datos de fallos"
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:614
 msgid "Memory exhaustion"
 msgstr "Memoria agotada"
 
-#: ../apport/ui.py:611
+#: ../apport/ui.py:615
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Su sistema no tiene la memoria suficiente para procesar este informe de "
 "fallo."
 
-#: ../apport/ui.py:631
+#: ../apport/ui.py:635
 msgid "This problem report does not apply to a packaged program."
 msgstr "Este informe de fallo no proviene de un programa empaquetado."
 
-#: ../apport/ui.py:665
+#: ../apport/ui.py:669
 msgid "Problem already known"
 msgstr "Problema ya conocido"
 
-#: ../apport/ui.py:666
+#: ../apport/ui.py:670
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "

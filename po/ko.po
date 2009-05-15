@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
-"Report-Msgid-Bugs-To: Martin Pitt <martin.pitt@ubuntu.com>\n"
-"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
+"POT-Creation-Date: 2009-05-15 10:35+0200\n"
 "PO-Revision-Date: 2009-04-10 01:49+0000\n"
 "Last-Translator: Namhyung Kim <namhyung@gmail.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -33,17 +33,18 @@ msgstr "시스템에 심각한 커널 문제가 발생하였습니다."
 
 #: ../gtk/apport-gtk.py:114 ../qt4/apport-qt.py:198 ../cli/apport-cli.py:177
 msgid "You can help the developers to fix the problem by reporting it."
-msgstr "이 문제를 보고하여 개발자들이 문제를 해결할 수 있도록 도와줄 수 있습니다."
+msgstr ""
+"이 문제를 보고하여 개발자들이 문제를 해결할 수 있도록 도와줄 수 있습니다."
 
 #: ../gtk/apport-gtk.py:145 ../qt4/apport-qt.py:239 ../cli/apport-cli.py:212
 msgid "(binary data)"
 msgstr "(바이너리 데이터)"
 
-#: ../gtk/apport-gtk.glade.h:1
+#: ../gtk/apport-gtk.ui.h:1
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>문제점 정보를 수집하는 중</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:2
+#: ../gtk/apport-gtk.ui.h:2
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -52,101 +53,105 @@ msgid ""
 msgstr ""
 "<big><b>이 문제를 개발자에게 보고하시겠습니까?</b></big>\n"
 "\n"
-"버그 보고서를 보내고 난 후에, 웹 브라우저에 자동으로 열리는 페이지의 정보를 입력해 주십시오."
+"버그 보고서를 보내고 난 후에, 웹 브라우저에 자동으로 열리는 페이지의 정보를 "
+"입력해 주십시오."
 
-#: ../gtk/apport-gtk.glade.h:5
+#: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>문제점 정보를 업로드하는 중</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:7
+#: ../gtk/apport-gtk.ui.h:7
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">죄송합니다. \"%s\" 패키지의 설치 혹은 업그레이드가 "
-"실패했습니다.</span>"
+"<span weight=\"bold\" size=\"larger\">죄송합니다. \"%s\" 패키지의 설치 혹은 "
+"업그레이드가 실패했습니다.</span>"
 
-#: ../gtk/apport-gtk.glade.h:8
+#: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
 msgstr "프로그램 문제점"
 
-#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#: ../gtk/apport-gtk.ui.h:10 ../qt4/apport-qt.py:246
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "보고서 작성 (추천; %s)"
 
-#: ../gtk/apport-gtk.glade.h:11
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "보고서의 내용"
 
-#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+#: ../gtk/apport-gtk.ui.h:12 ../qt4/apport-qt.py:146
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
 "the problem."
 msgstr ""
-"(암호 또는 다른 개인 정보를 입력하는 것과 같은) 보안 작업을 수행하지 않았다면, 문제점을 보고하여 프로그램을 개선하도록 도울 수 "
-"있습니다."
+"(암호 또는 다른 개인 정보를 입력하는 것과 같은) 보안 작업을 수행하지 않았다"
+"면, 문제점을 보고하여 프로그램을 개선하도록 도울 수 있습니다."
 
-#: ../gtk/apport-gtk.glade.h:13
+#: ../gtk/apport-gtk.ui.h:13
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
-msgstr "개발자가 여러분이 보낸 보고서를 통해 문제점을 해결할 수 있도록 정보를 수집하고 있습니다."
+msgstr ""
+"개발자가 여러분이 보낸 보고서를 통해 문제점을 해결할 수 있도록 정보를 수집하"
+"고 있습니다."
 
-#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+#: ../gtk/apport-gtk.ui.h:14 ../qt4/apport-qt.py:200
 msgid "Kernel problem"
 msgstr "커널 문제"
 
-#: ../gtk/apport-gtk.glade.h:15
+#: ../gtk/apport-gtk.ui.h:15
 msgid "Package problem"
 msgstr "패키지 문제"
 
-#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#: ../gtk/apport-gtk.ui.h:17 ../qt4/apport-qt.py:249
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "보고서 경량화 (느린 인터넷 연결: %s)"
 
-#: ../gtk/apport-gtk.glade.h:18
+#: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
 msgstr "프로그램 재시작(_P)"
 
-#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+#: ../gtk/apport-gtk.ui.h:19 ../qt4/apport-qt.py:299
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
-msgstr "수집된 정보를 버그 추적 시스템으로 전송하고 있습니다. 이 작업은 몇 분 정도 걸릴 수 있습니다."
+msgstr ""
+"수집된 정보를 버그 추적 시스템으로 전송하고 있습니다. 이 작업은 몇 분 정도 걸"
+"릴 수 있습니다."
 
-#: ../gtk/apport-gtk.glade.h:20
+#: ../gtk/apport-gtk.ui.h:20
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
 "you have a slow internet connection."
 msgstr ""
-"이것은 보고서에서 많은 항목을 제거합니다. 이 정보들은 개발자가 문제점을 고치는 데에는 매우 유용하지만, 인터넷 접속이 느리다면 "
-"업로드하기에는 너무 클 수 있습니다."
+"이것은 보고서에서 많은 항목을 제거합니다. 이 정보들은 개발자가 문제점을 고치"
+"는 데에는 매우 유용하지만, 인터넷 접속이 느리다면 업로드하기에는 너무 클 수 "
+"있습니다."
 
-#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
-#: ../cli/apport-cli.py:281
+#: ../gtk/apport-gtk.ui.h:21 ../qt4/apport-qt.py:298 ../cli/apport-cli.py:281
 msgid "Uploading problem information"
 msgstr "문제점 정보를 업로드하는 중"
 
-#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
-#: ../cli/apport-cli.py:161
+#: ../gtk/apport-gtk.ui.h:22 ../qt4/apport-qt.py:179 ../cli/apport-cli.py:161
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr "문제점을 보고하여 개발자들이 패키지를 수정하도록 도와줄 수 있습니다."
 
-#: ../gtk/apport-gtk.glade.h:23
+#: ../gtk/apport-gtk.ui.h:23
 msgid "_Ignore future crashes of this program version"
 msgstr "이 버전의 프로그램에 대해 이후의 문제 발생시 무시(_I)"
 
-#: ../gtk/apport-gtk.glade.h:24
+#: ../gtk/apport-gtk.ui.h:24
 msgid "_Report Problem..."
 msgstr "문제점 보고(_R)..."
 
-#: ../gtk/apport-gtk.glade.h:25
+#: ../gtk/apport-gtk.ui.h:25
 msgid "_Send Report"
 msgstr "보고서 보내기(_S)"
 
@@ -203,7 +208,9 @@ msgstr "문제점을 개발자에게 보고하시겠습니까?"
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
-msgstr "문제점 보고서가 전송된 후에, 자동으로 실행되는 웹 브라우저 내의 문항을 입력해 주십시오."
+msgstr ""
+"문제점 보고서가 전송된 후에, 자동으로 실행되는 웹 브라우저 내의 문항을 입력"
+"해 주십시오."
 
 #: ../qt4/apport-qt.py:220
 msgid "&Send"
@@ -221,7 +228,9 @@ msgstr "문제점 정보를 모으는 중"
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
-msgstr "수집된 정보는 프로그램을 개선하기 위해 개발자에게 보낼 수 있습니다. 이 과정은 몇 분 정도 걸립니다."
+msgstr ""
+"수집된 정보는 프로그램을 개선하기 위해 개발자에게 보낼 수 있습니다. 이 과정"
+"은 몇 분 정도 걸립니다."
 
 #: ../qt4/apport-qt.py:297
 msgid "Uploading Problem Information"
@@ -332,7 +341,9 @@ msgstr ""
 
 #: ../cli/apport-cli.py:295
 msgid "No pending crash reports. Try --help for more information."
-msgstr "대기 중인 문제점 보고서가 없습니다. --help 옵션을 이용하여 다른 정보를 볼 수 있습니다."
+msgstr ""
+"대기 중인 문제점 보고서가 없습니다. --help 옵션을 이용하여 다른 정보를 볼 수 "
+"있습니다."
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:54
@@ -348,7 +359,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"오래된 버전의 패키지가 몇 개 설치되어 있습니다. 다음 패키지들을 업그레이드한 후 계속 문제가 발생하는지 점검해 주십시오:\n"
+"오래된 버전의 패키지가 몇 개 설치되어 있습니다. 다음 패키지들을 업그레이드한 "
+"후 계속 문제가 발생하는지 점검해 주십시오:\n"
 "\n"
 "%s"
 
@@ -365,7 +377,9 @@ msgstr "%s 내의 문제"
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
-msgstr "여러분의 컴퓨터에는 자동으로 문제점을 분석하여 개발자에게 보고서를 보낼 수 있을 정도의 충분한 메모리가 없습니다."
+msgstr ""
+"여러분의 컴퓨터에는 자동으로 문제점을 분석하여 개발자에게 보고서를 보낼 수 있"
+"을 정도의 충분한 메모리가 없습니다."
 
 #: ../apport/ui.py:155
 msgid "Unreportable problem"
@@ -384,11 +398,11 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
-#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
-#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
-#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
-#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
-#: ../apport/ui.py:1505 ../apport/ui.py:1516
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:305
+#: ../apport/ui.py:338 ../apport/ui.py:465 ../apport/ui.py:619
+#: ../apport/ui.py:623 ../apport/ui.py:639 ../apport/ui.py:984
+#: ../apport/ui.py:1001 ../apport/ui.py:1482 ../apport/ui.py:1498
+#: ../apport/ui.py:1509 ../apport/ui.py:1520
 msgid "Invalid problem report"
 msgstr "올바르지 않은 문제점 보고서"
 
@@ -396,7 +410,7 @@ msgstr "올바르지 않은 문제점 보고서"
 msgid "The report belongs to a package that is not installed."
 msgstr "보고서가 설치되지 않는 패키지에 속해 있습니다."
 
-#: ../apport/ui.py:209 ../apport/ui.py:620
+#: ../apport/ui.py:209 ../apport/ui.py:624
 msgid "This problem report is damaged and cannot be processed."
 msgstr "문제점 보고서가 손상되어 처리할 수 없습니다."
 
@@ -430,65 +444,80 @@ msgstr "패키지가 지정되지 않음"
 #: ../apport/ui.py:270
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "패키지 혹은 PID를 지정해야 합니다. --help 옵션을 이용하여 정보를 볼 수 있습니다."
+msgstr ""
+"패키지 혹은 PID를 지정해야 합니다. --help 옵션을 이용하여 정보를 볼 수 있습니"
+"다."
 
-#: ../apport/ui.py:284
+#: ../apport/ui.py:279
+msgid "Invalid PID"
+msgstr ""
+
+#: ../apport/ui.py:280
+#, fuzzy
+msgid "The specified process ID does not belong to a program."
+msgstr ""
+"지정된 프로세스는 여러분이 실행한 것이 아닙니다. 이 프로그램을 직접 실행하거"
+"나 root 사용자로 실행하십시오."
+
+#: ../apport/ui.py:288
 msgid "Permission denied"
 msgstr "권한이 없음"
 
-#: ../apport/ui.py:285
+#: ../apport/ui.py:289
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
-msgstr "지정된 프로세스는 여러분이 실행한 것이 아닙니다. 이 프로그램을 직접 실행하거나 root 사용자로 실행하십시오."
+msgstr ""
+"지정된 프로세스는 여러분이 실행한 것이 아닙니다. 이 프로그램을 직접 실행하거"
+"나 root 사용자로 실행하십시오."
 
-#: ../apport/ui.py:302
+#: ../apport/ui.py:306
 #, python-format
 msgid "Package %s does not exist"
 msgstr "%s 패키지가 존재하지 않습니다"
 
-#: ../apport/ui.py:462
+#: ../apport/ui.py:466
 msgid "Could not determine the package or source package name."
 msgstr "패키지나 소스 패키지 이름을 알아낼 수 없습니다."
 
-#: ../apport/ui.py:477
+#: ../apport/ui.py:481
 msgid "Unable to start web browser"
 msgstr "웹 브라우저를 시작할 수 없습니다"
 
-#: ../apport/ui.py:478
+#: ../apport/ui.py:482
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "웹 브라우저를 이용하여 %s을(를) 열 수 없습니다."
 
-#: ../apport/ui.py:584
+#: ../apport/ui.py:588
 msgid "Network problem"
 msgstr "네트워크 문제"
 
-#: ../apport/ui.py:586
+#: ../apport/ui.py:590
 msgid "Could not upload report data to crash database"
 msgstr "충돌 데이터베이스에 보고서 데이터를 업로드할 수 없습니다."
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:614
 msgid "Memory exhaustion"
 msgstr "메모리 부족"
 
-#: ../apport/ui.py:611
+#: ../apport/ui.py:615
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "시스템에 충돌 보고서를 처리할 수 있을 만큼의 여유 메모리가 없습니다."
 
-#: ../apport/ui.py:631
+#: ../apport/ui.py:635
 msgid "This problem report does not apply to a packaged program."
 msgstr "이 문제점 보고서는 패키징된 프로그램에 적용되지 않습니다."
 
-#: ../apport/ui.py:665
+#: ../apport/ui.py:669
 msgid "Problem already known"
 msgstr "이미 알려진 문제"
 
-#: ../apport/ui.py:666
+#: ../apport/ui.py:670
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"이 문제는 웹 브라우저에 표시된 버그 보고서에 이미 보고된 것입니다. 개발자에게 도움이 될 만한 추가적인 정보를 제공할 수 있는지 점검해 "
-"주십시오."
+"이 문제는 웹 브라우저에 표시된 버그 보고서에 이미 보고된 것입니다. 개발자에"
+"게 도움이 될 만한 추가적인 정보를 제공할 수 있는지 점검해 주십시오."

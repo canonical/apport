@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
+"POT-Creation-Date: 2009-05-15 10:35+0200\n"
 "PO-Revision-Date: 2008-09-26 07:46+0000\n"
 "Last-Translator: Jon Intxaurbe <Unknown>\n"
 "Language-Team: Basque <eu@li.org>\n"
@@ -39,11 +39,11 @@ msgstr "Garatzaileei arazo horren berri emanez konpontzen lagundu dezakezu."
 msgid "(binary data)"
 msgstr "(datu bitarrak)"
 
-#: ../gtk/apport-gtk.glade.h:1
+#: ../gtk/apport-gtk.ui.h:1
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>Arazoari buruzko informazioa biltzen</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:2
+#: ../gtk/apport-gtk.ui.h:2
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -55,11 +55,11 @@ msgstr ""
 "Arazoaren txostena bidali ondoren, mesedez, web-arakatzailean automatikoki "
 "irekitako formularioa bete."
 
-#: ../gtk/apport-gtk.glade.h:5
+#: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Arazoari buruzko informazioa bidaltzen</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:7
+#: ../gtk/apport-gtk.ui.h:7
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
@@ -68,20 +68,20 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">Lastima, ezin izan da \"%s\" paketea "
 "instalatu edo eguneratu.</span>"
 
-#: ../gtk/apport-gtk.glade.h:8
+#: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
 msgstr "Aplikazioaren arazoa"
 
-#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#: ../gtk/apport-gtk.ui.h:10 ../qt4/apport-qt.py:246
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "Txosten osoa (gomendatua; %s)"
 
-#: ../gtk/apport-gtk.glade.h:11
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "Txostenaren edukia"
 
-#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+#: ../gtk/apport-gtk.ui.h:12 ../qt4/apport-qt.py:146
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -91,7 +91,7 @@ msgstr ""
 "informazio pribaturik idazten), aplikazioa hobetzen lagundu dezakezu "
 "arazoaren berri emanez."
 
-#: ../gtk/apport-gtk.glade.h:13
+#: ../gtk/apport-gtk.ui.h:13
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -99,24 +99,24 @@ msgstr ""
 "Berri ematen ari zaren arazoari buruzko informazioa biltzen ari da, "
 "garatzaileei arazoa konpontzen laguntzeko."
 
-#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+#: ../gtk/apport-gtk.ui.h:14 ../qt4/apport-qt.py:200
 msgid "Kernel problem"
 msgstr "Kernel arazoa"
 
-#: ../gtk/apport-gtk.glade.h:15
+#: ../gtk/apport-gtk.ui.h:15
 msgid "Package problem"
 msgstr "Pakete arazoa"
 
-#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#: ../gtk/apport-gtk.ui.h:17 ../qt4/apport-qt.py:249
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Txosten laburra (internet konexio geldoa; %s)"
 
-#: ../gtk/apport-gtk.glade.h:18
+#: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
 msgstr "_Programa Berrabiarazi"
 
-#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+#: ../gtk/apport-gtk.ui.h:19 ../qt4/apport-qt.py:299
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -124,7 +124,7 @@ msgstr ""
 "Bildutako informazioa akats-jarraitze sistemara bidalia izaten ari da. "
 "Minutu batzuk behar izan ditzake."
 
-#: ../gtk/apport-gtk.glade.h:20
+#: ../gtk/apport-gtk.ui.h:20
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -134,27 +134,25 @@ msgstr ""
 "dira garatzaileentzat arazoa konpontzeko, baina zuk bidaltzeko handiegiak "
 "izan daitezke, konexio motela badaukazu."
 
-#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
-#: ../cli/apport-cli.py:281
+#: ../gtk/apport-gtk.ui.h:21 ../qt4/apport-qt.py:298 ../cli/apport-cli.py:281
 msgid "Uploading problem information"
 msgstr "Arazoari buruzko informazioa bidaltzen"
 
-#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
-#: ../cli/apport-cli.py:161
+#: ../gtk/apport-gtk.ui.h:22 ../qt4/apport-qt.py:179 ../cli/apport-cli.py:161
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
 "Garatzaileei paketea konpontzen lagun diezaiekezu arazoaren berri emanez."
 
-#: ../gtk/apport-gtk.glade.h:23
+#: ../gtk/apport-gtk.ui.h:23
 msgid "_Ignore future crashes of this program version"
 msgstr "_Ezikusi programa bertsio honen kraskatzeak"
 
-#: ../gtk/apport-gtk.glade.h:24
+#: ../gtk/apport-gtk.ui.h:24
 msgid "_Report Problem..."
 msgstr "Arazoaren _Berri eman..."
 
-#: ../gtk/apport-gtk.glade.h:25
+#: ../gtk/apport-gtk.ui.h:25
 msgid "_Send Report"
 msgstr "Txostena _Bidali"
 
@@ -196,8 +194,7 @@ msgstr "&Programa Berrabiarazi"
 #: ../qt4/apport-qt.py:177
 #, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr ""
-"Lastima, errorea gertatu da \"%s\" paketea instalatu edo eguneratzean."
+msgstr "Lastima, errorea gertatu da \"%s\" paketea instalatu edo eguneratzean."
 
 #. Let's get the dialog and modify it to our needs
 #: ../qt4/apport-qt.py:215
@@ -272,8 +269,7 @@ msgstr ""
 
 #: ../cli/apport-cli.py:144
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
-"Utzi eta baztertu programa bertsio honen kraskatzeak hemendik aurrera"
+msgstr "Utzi eta baztertu programa bertsio honen kraskatzeak hemendik aurrera"
 
 #: ../cli/apport-cli.py:145 ../cli/apport-cli.py:163 ../cli/apport-cli.py:181
 #: ../cli/apport-cli.py:228
@@ -403,11 +399,11 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
-#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
-#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
-#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
-#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
-#: ../apport/ui.py:1505 ../apport/ui.py:1516
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:305
+#: ../apport/ui.py:338 ../apport/ui.py:465 ../apport/ui.py:619
+#: ../apport/ui.py:623 ../apport/ui.py:639 ../apport/ui.py:984
+#: ../apport/ui.py:1001 ../apport/ui.py:1482 ../apport/ui.py:1498
+#: ../apport/ui.py:1509 ../apport/ui.py:1520
 msgid "Invalid problem report"
 msgstr "Arazoaren txosten baliogabea"
 
@@ -415,7 +411,7 @@ msgstr "Arazoaren txosten baliogabea"
 msgid "The report belongs to a package that is not installed."
 msgstr "Instalatuta ez dagoen pakete bati dagokio txostenak."
 
-#: ../apport/ui.py:209 ../apport/ui.py:620
+#: ../apport/ui.py:209 ../apport/ui.py:624
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Txosten hau kalteturik dago eta ezin da prozesatua izan."
 
@@ -453,11 +449,22 @@ msgstr ""
 "Pakete edo PID bat zehaztu behar duzu. Ikusi --help informazio gehiago "
 "izateko."
 
-#: ../apport/ui.py:284
+#: ../apport/ui.py:279
+msgid "Invalid PID"
+msgstr ""
+
+#: ../apport/ui.py:280
+#, fuzzy
+msgid "The specified process ID does not belong to a program."
+msgstr ""
+"Zehaztutako prozesua ez da zurea. Mesedez, prozesuaren jabe modura edo erro "
+"modura exekuta ezazu programa hau."
+
+#: ../apport/ui.py:288
 msgid "Permission denied"
 msgstr "Baimena ukatuta"
 
-#: ../apport/ui.py:285
+#: ../apport/ui.py:289
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -465,50 +472,50 @@ msgstr ""
 "Zehaztutako prozesua ez da zurea. Mesedez, prozesuaren jabe modura edo erro "
 "modura exekuta ezazu programa hau."
 
-#: ../apport/ui.py:302
+#: ../apport/ui.py:306
 #, python-format
 msgid "Package %s does not exist"
 msgstr "%s paketea ez da existitzen"
 
-#: ../apport/ui.py:462
+#: ../apport/ui.py:466
 msgid "Could not determine the package or source package name."
 msgstr "Ezin izan da paketearen edo jatorrizko paketearen izena zehaztu."
 
-#: ../apport/ui.py:477
+#: ../apport/ui.py:481
 msgid "Unable to start web browser"
 msgstr "Ezin izan da web-arakatzailea abiarazi"
 
-#: ../apport/ui.py:478
+#: ../apport/ui.py:482
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Ezin izan da web-arakatzailea abiarazi %s irekitzeko."
 
-#: ../apport/ui.py:584
+#: ../apport/ui.py:588
 msgid "Network problem"
 msgstr "Sarearen arazoa"
 
-#: ../apport/ui.py:586
+#: ../apport/ui.py:590
 msgid "Could not upload report data to crash database"
 msgstr "Ezin izan da txostena bidali erroreen datubasera"
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:614
 msgid "Memory exhaustion"
 msgstr "Memoriaren agortzea"
 
-#: ../apport/ui.py:611
+#: ../apport/ui.py:615
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Zure sistemak ez dauka kraskatzearen txostena prozesatzeko memoria nahiko."
 
-#: ../apport/ui.py:631
+#: ../apport/ui.py:635
 msgid "This problem report does not apply to a packaged program."
 msgstr "Txosten hau ez dagokio paketedun programa bati."
 
-#: ../apport/ui.py:665
+#: ../apport/ui.py:669
 msgid "Problem already known"
 msgstr "Arazoa ezaguna da jadanik"
 
-#: ../apport/ui.py:666
+#: ../apport/ui.py:670
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
