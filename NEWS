@@ -1,6 +1,21 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.2.0 (UNRELEASED)
+------------------
+Moving away from deprecated APIs:
+- packaging-apt-dpkg.py: Use python-apt >= 0.7.9 official API and drop usage of
+  internal symbols.
+- hookutils.py: Drop hal related functions and queries, replace with udev
+  database, udev log file, and DMI information from sysfs.
+- gtk UI: Convert from libglade to gtk.Builder.
+
+Bug fixes:
+- hookutils.py: Drop /proc/version_signature collection, it is Ubuntu specific.
+- apportcheckresume: Fix log collection from pm-utils.
+- Fix various crashes and report properties for reporting against uninstalled
+  packages.
+
 1.1.1 (2009-04-30)
 ------------------
 Security fix:
