@@ -15,7 +15,7 @@ the full text of the license.
 import os.path, sys, subprocess
 from gettext import gettext as _
 try:
-    import gobject, gtk, gtk.glade
+    import gobject, gtk
     import apport.ui
 except ImportError, e:
     # this can happen while upgrading python packages
@@ -28,17 +28,17 @@ class GTKUserInterface(apport.ui.UserInterface):
     def w(self, widget):
         '''Shortcut for getting a widget.'''
 
-        return self.widgets.get_widget(widget)
+        return self.widgets.get_object(widget)
 
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
 
         # load UI
-        gtk.window_set_default_icon_name("apport")
-        gtk.glade.textdomain(self.gettext_domain)
-        self.widgets = gtk.glade.XML(os.path.join(os.path.dirname(sys.argv[0]),
-            'apport-gtk.glade'))
-        self.widgets.signal_autoconnect(self)
+        gtk.window_set_default_icon_name('apport')
+        self.widgets = gtk.Builder()
+        self.widgets.set_translation_domain(self.gettext_domain)
+        self.widgets.add_from_file(os.path.join(os.path.dirname(sys.argv[0]),
+            'apport-gtk.ui'))
 
         # initialize tree model and view
         self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)
