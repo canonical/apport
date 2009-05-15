@@ -1,7 +1,20 @@
-apport (1.1.1-0ubuntu3) UNRELEASED; urgency=low
+apport (1.2.0-0ubuntu1) UNRELEASED; urgency=low
 
-  * backends/packaging-apt-dpkg.py, install_retracing_packages(): Fix crash
-    introduced by conversion to python-apt 0.7.9 in last upload.
+  * New upstream release:
+    - Moving away from deprecated APIs:
+      + packaging-apt-dpkg.py: Use python-apt >= 0.7.9 official API and drop
+        usage of internal symbols.
+      + hookutils.py: Drop hal related functions and queries, replace with
+        udev database, udev log file, and DMI information from sysfs.
+      + gtk UI: Convert from libglade to gtk.Builder.
+    - Bug fixes:
+      + hookutils.py: Drop /proc/version_signature collection, it is Ubuntu
+        specific.
+      + apportcheckresume: Fix log collection from pm-utils.
+      + Fix various crashes and report properties for reporting against
+        uninstalled packages.
+  * debian/control: Drop python-glade2 dependency, bump python-gtk2 dependency
+    to ensure availability of gtk.Builder.
   * hookutils, attach_conffiles(): Remove leftover debugging spew.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 May 2009 15:49:38 +0200

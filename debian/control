@@ -86,7 +86,7 @@ Package: apport-gtk
 XB-Python-Version: ${python:Versions}
 Section: gnome
 Architecture: all
-Depends: python (>= 2.4), python-apport (>= 0.80), python-gtk2, python-glade2,
+Depends: python (>= 2.4), python-apport (>= 0.80), python-gtk2 (>= 2.12),
  python-xdg, apport (>= 0.41), procps, ${misc:Depends}
 Recommends: update-notifier
 Description: GTK+ frontend for the apport crash report system
