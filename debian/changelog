@@ -16,6 +16,8 @@ apport (1.2.1-0ubuntu1) UNRELEASED; urgency=low
   * debian/control: Drop python-glade2 dependency, bump python-gtk2 dependency
     to ensure availability of gtk.Builder.
   * hookutils, attach_conffiles(): Remove leftover debugging spew.
+  * debian/apport-qt.install: Install the individual Qt .ui files instead of
+    *.ui, since GTK's are now also called *.ui.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 May 2009 15:49:38 +0200
 
