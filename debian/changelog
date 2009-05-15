@@ -2,6 +2,7 @@ apport (1.1.1-0ubuntu3) UNRELEASED; urgency=low
 
   * backends/packaging-apt-dpkg.py, install_retracing_packages(): Fix crash
     introduced by conversion to python-apt 0.7.9 in last upload.
+  * hookutils, attach_conffiles(): Remove leftover debugging spew.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 May 2009 15:49:38 +0200
 

@@ -76,7 +76,6 @@ def attach_conffiles(report, package, conffiles=None):
        return
 
     for line in out.splitlines():
-        print 'examining line:', line
         if not line:
             continue
         path, default_md5sum = line.strip().split()
