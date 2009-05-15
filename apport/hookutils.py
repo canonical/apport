@@ -18,6 +18,7 @@ import datetime
 import glob
 import re
 import string
+import stat
 
 import xml.dom, xml.dom.minidom
 
@@ -68,23 +69,6 @@ def attach_dmesg(report):
     report['BootDmesg'] = open('/var/log/dmesg').read()
     report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 /var/log/dmesg -'])
 
-def attach_machinetype(report):
-    '''Calculate and attach a specific machine type if possible.'''
-
-    if 'HalComputerInfo' in report:
-        system = ''
-        vendor = re.compile(r"system.hardware.vendor\s*=\s*'(.*)'\s*\(string\)")
-        match = vendor.search(report['HalComputerInfo'])
-        if match:
-            system += match.group(1).rstrip() + ' '
-        product = re.compile(r"system.hardware.product\s*=\s*'(.*)'\s*\(string\)")
-        match = product.search(report['HalComputerInfo'])
-        if match:
-            system += match.group(1).rstrip() + ' '
-
-        if system != '':
-            report['MachineType'] = system.rstrip()
-
 def attach_hardware(report):
     '''Attach a standard set of hardware-related data to the report, including:
 
@@ -95,7 +79,8 @@ def attach_hardware(report):
     - /proc/modules
     - lspci -vvnn
     - lsusb
-    - devices/computer from HAL
+    - devices from udev
+    - DMI information from /sys
     '''
     attach_dmesg(report)
 
@@ -103,13 +88,34 @@ def attach_hardware(report):
     attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
     attach_file(report, '/proc/cmdline', 'ProcCmdLine')
     attach_file(report, '/proc/modules', 'ProcModules')
+    attach_file(report, '/var/log/udev', 'UdevLog')
 
     report['Lspci'] = command_output(['lspci','-vvnn'])
     report['Lsusb'] = command_output(['lsusb'])
-    report['HalComputerInfo'] = hal_dump_udi('/org/freedesktop/Hal/devices/computer')
+    report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
+
+    dmi_dir = '/sys/class/dmi/id'
+    if os.path.isdir(dmi_dir):
+        for f in os.listdir(dmi_dir):
+            p = '%s/%s' % (dmi_dir, f)
+            st = os.stat(p)
+            # ignore the root-only ones, since they have serial numbers
+            if not stat.S_ISREG(st.st_mode) or (st.st_mode & 4 == 0):
+                continue
+            if f in ('subsystem', 'uevent'):
+                continue
+
+            try:
+                value = open(p).read().strip()
+            except (OSError, IOError):
+                continue
+            if value:
+                report['dmi.' + f.replace('_', '.')] = value
 
     # Use the hardware information to create a machine type.
-    attach_machinetype(report)
+    if 'dmi.sys.vendor' in report and 'dmi.product.name' in report:
+        report['MachineType'] = '%s %s' % (report['dmi.sys.vendor'],
+                report['dmi.product.name'])
 
 def attach_alsa(report):
     '''Attach ALSA subsystem information to the report.
@@ -242,27 +248,6 @@ def usb_devices():
 
     # TODO: would be nice to be able to filter by interface class
     return command_output(['lsusb','-v'])
-
-def hal_find_by_capability(capability):
-    '''Retrieve a list of UDIs for hal objects having the specified capability.'''
-
-    output = command_output(['hal-find-by-capability',
-                             '--capability',capability])
-    return output.split('\n')
-
-def hal_dump_udi(udi):
-    '''Dump the properties of a HAL object, specified by its UDI.'''
-
-    out = command_output(['lshal','-u',udi])
-
-    # filter out serial numbers
-    result = ''
-    for l in out.splitlines():
-        if '.serial =' in l:
-            continue
-        result += l + '\n'
-
-    return result
 
 def files_in_package(package, globpat=None):
     '''Retrieve a list of files owned by package, optionally matching globpat'''
