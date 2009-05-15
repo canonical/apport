@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
+"POT-Creation-Date: 2009-05-15 10:35+0200\n"
 "PO-Revision-Date: 2009-04-05 06:33+0000\n"
 "Last-Translator: Nazo <lovesyao@gmail.com>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -33,17 +33,18 @@ msgstr "あなたのシステムは深刻なカーネルの問題に遭遇しま
 
 #: ../gtk/apport-gtk.py:114 ../qt4/apport-qt.py:198 ../cli/apport-cli.py:177
 msgid "You can help the developers to fix the problem by reporting it."
-msgstr "この問題を報告することで、問題の解決のために開発者を助けることができます。"
+msgstr ""
+"この問題を報告することで、問題の解決のために開発者を助けることができます。"
 
 #: ../gtk/apport-gtk.py:145 ../qt4/apport-qt.py:239 ../cli/apport-cli.py:212
 msgid "(binary data)"
 msgstr "(バイナリデータ)"
 
-#: ../gtk/apport-gtk.glade.h:1
+#: ../gtk/apport-gtk.ui.h:1
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>不具合の情報を集めています</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:2
+#: ../gtk/apport-gtk.ui.h:2
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -52,100 +53,104 @@ msgid ""
 msgstr ""
 "<big><b>開発者に不具合のレポートを送信しますか?</b></big>\n"
 "\n"
-"不具合のレポートが送信された後で、ウェブブラウザが自動的に開かれますのでフォームに入力してください。"
+"不具合のレポートが送信された後で、ウェブブラウザが自動的に開かれますので"
+"フォームに入力してください。"
 
-#: ../gtk/apport-gtk.glade.h:5
+#: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>不具合の情報をアップロードしています</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:7
+#: ../gtk/apport-gtk.ui.h:7
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">申し訳ありません、パッケージ \"%s\" "
-"のインストール(アップグレード)は失敗しました。</span>"
+"<span weight=\"bold\" size=\"larger\">申し訳ありません、パッケージ \"%s\" の"
+"インストール(アップグレード)は失敗しました。</span>"
 
-#: ../gtk/apport-gtk.glade.h:8
+#: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
 msgstr "アプリケーションの不具合"
 
-#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#: ../gtk/apport-gtk.ui.h:10 ../qt4/apport-qt.py:246
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "完全なレポート (推奨; %s)"
 
-#: ../gtk/apport-gtk.glade.h:11
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "レポートの内容"
 
-#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+#: ../gtk/apport-gtk.ui.h:12 ../qt4/apport-qt.py:146
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
 "the problem."
 msgstr ""
-"秘密にしておくべき作業(パスワードや個人情報の入力など)を行っていたのでなければ、不具合を報告してアプリケーションの改善に協力することができます。"
+"秘密にしておくべき作業(パスワードや個人情報の入力など)を行っていたのでなけれ"
+"ば、不具合を報告してアプリケーションの改善に協力することができます。"
 
-#: ../gtk/apport-gtk.glade.h:13
+#: ../gtk/apport-gtk.ui.h:13
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
-msgstr "あなたの報告する不具合を、開発者が修正するのに役立つように情報を収集します。"
+msgstr ""
+"あなたの報告する不具合を、開発者が修正するのに役立つように情報を収集します。"
 
-#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+#: ../gtk/apport-gtk.ui.h:14 ../qt4/apport-qt.py:200
 msgid "Kernel problem"
 msgstr "カーネルの不具合"
 
-#: ../gtk/apport-gtk.glade.h:15
+#: ../gtk/apport-gtk.ui.h:15
 msgid "Package problem"
 msgstr "パッケージの不具合"
 
-#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#: ../gtk/apport-gtk.ui.h:17 ../qt4/apport-qt.py:249
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "簡易レポート (低速回線向け; %s)"
 
-#: ../gtk/apport-gtk.glade.h:18
+#: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
 msgstr "プログラムを再起動(_P)"
 
-#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+#: ../gtk/apport-gtk.ui.h:19 ../qt4/apport-qt.py:299
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
-msgstr "収集された情報はバグトラッキングシステムに送信されます。しばらくお待ちください。"
+msgstr ""
+"収集された情報はバグトラッキングシステムに送信されます。しばらくお待ちくださ"
+"い。"
 
-#: ../gtk/apport-gtk.glade.h:20
+#: ../gtk/apport-gtk.ui.h:20
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
 "you have a slow internet connection."
 msgstr ""
-"これはいくつかの大きな項目をレポートから削除します。開発者がこの不具合をデバッグするのに大変役立ちますが、インターネットの接続スピードが遅い場合、アップロ"
-"ードには大きすぎるかもしれません。"
+"これはいくつかの大きな項目をレポートから削除します。開発者がこの不具合をデ"
+"バッグするのに大変役立ちますが、インターネットの接続スピードが遅い場合、アッ"
+"プロードには大きすぎるかもしれません。"
 
-#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
-#: ../cli/apport-cli.py:281
+#: ../gtk/apport-gtk.ui.h:21 ../qt4/apport-qt.py:298 ../cli/apport-cli.py:281
 msgid "Uploading problem information"
 msgstr "不具合の情報をアップロードしています"
 
-#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
-#: ../cli/apport-cli.py:161
+#: ../gtk/apport-gtk.ui.h:22 ../qt4/apport-qt.py:179 ../cli/apport-cli.py:161
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr "不具合を報告することで、開発者がプログラムを修正するのに役立ちます。"
 
-#: ../gtk/apport-gtk.glade.h:23
+#: ../gtk/apport-gtk.ui.h:23
 msgid "_Ignore future crashes of this program version"
 msgstr "今後このバージョンのプログラムがクラッシュしても無視する(_I)"
 
-#: ../gtk/apport-gtk.glade.h:24
+#: ../gtk/apport-gtk.ui.h:24
 msgid "_Report Problem..."
 msgstr "不具合を報告(_R)..."
 
-#: ../gtk/apport-gtk.glade.h:25
+#: ../gtk/apport-gtk.ui.h:25
 msgid "_Send Report"
 msgstr "レポートを送信(_S)"
 
@@ -187,7 +192,9 @@ msgstr "プログラムを再起動(&P)"
 #: ../qt4/apport-qt.py:177
 #, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "残念ながら、パッケージ \"%s\" のインストールまたはアップグレードに失敗しました。"
+msgstr ""
+"残念ながら、パッケージ \"%s\" のインストールまたはアップグレードに失敗しまし"
+"た。"
 
 #. Let's get the dialog and modify it to our needs
 #: ../qt4/apport-qt.py:215
@@ -202,7 +209,9 @@ msgstr "不具合のレポートを開発者に送信しますか?"
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
-msgstr "不具合のレポートが送信された後で、フォームに入力してください（入力用ページをウェブブラウザで自動的に開きます）。"
+msgstr ""
+"不具合のレポートが送信された後で、フォームに入力してください（入力用ページを"
+"ウェブブラウザで自動的に開きます）。"
 
 #: ../qt4/apport-qt.py:220
 msgid "&Send"
@@ -220,7 +229,9 @@ msgstr "不具合の情報を集めています"
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
-msgstr "収集された情報はアプリケーションを改善するために開発者へ送られます。しばらくお待ちください。"
+msgstr ""
+"収集された情報はアプリケーションを改善するために開発者へ送られます。しばらく"
+"お待ちください。"
 
 #: ../qt4/apport-qt.py:297
 msgid "Uploading Problem Information"
@@ -272,7 +283,9 @@ msgstr "パッケージ \"%s\"のインストールまたはアップグレー�
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
-msgstr "不具合のレポートが送信された後で、フォームに入力してください（入力用ページをウェブブラウザで自動的に開きます）。"
+msgstr ""
+"不具合のレポートが送信された後で、フォームに入力してください（入力用ページを"
+"ウェブブラウザで自動的に開きます）。"
 
 #: ../cli/apport-cli.py:216
 #, python-format
@@ -295,7 +308,8 @@ msgstr "レポートの表示(&V)"
 
 #: ../cli/apport-cli.py:226
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr "後で送信もしくは他の場所にコピーするためにレポートファイルを保持する(&K)"
+msgstr ""
+"後で送信もしくは他の場所にコピーするためにレポートファイルを保持する(&K)"
 
 #: ../cli/apport-cli.py:250
 msgid "Problem report file:"
@@ -328,7 +342,9 @@ msgstr ""
 
 #: ../cli/apport-cli.py:295
 msgid "No pending crash reports. Try --help for more information."
-msgstr "未解決のクラッシュレポートはありません。詳しくは --help を試してみてください。"
+msgstr ""
+"未解決のクラッシュレポートはありません。詳しくは --help を試してみてくださ"
+"い。"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:54
@@ -344,7 +360,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"古いバージョンのパッケージが利用されています。以下のパッケージをアップグレードした上で、それでも問題が発生するかを確認してください:\n"
+"古いバージョンのパッケージが利用されています。以下のパッケージをアップグレー"
+"ドした上で、それでも問題が発生するかを確認してください:\n"
 "\n"
 "%s"
 
@@ -361,7 +378,9 @@ msgstr "%s に問題があります"
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
-msgstr "コンピュータに、不具合を自動的に解析して開発者にレポートを送るための十分な空きメモリがありません。"
+msgstr ""
+"コンピュータに、不具合を自動的に解析して開発者にレポートを送るための十分な空"
+"きメモリがありません。"
 
 #: ../apport/ui.py:155
 msgid "Unreportable problem"
@@ -380,11 +399,11 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
-#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
-#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
-#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
-#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
-#: ../apport/ui.py:1505 ../apport/ui.py:1516
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:305
+#: ../apport/ui.py:338 ../apport/ui.py:465 ../apport/ui.py:619
+#: ../apport/ui.py:623 ../apport/ui.py:639 ../apport/ui.py:984
+#: ../apport/ui.py:1001 ../apport/ui.py:1482 ../apport/ui.py:1498
+#: ../apport/ui.py:1509 ../apport/ui.py:1520
 msgid "Invalid problem report"
 msgstr "無効な不具合のレポートです"
 
@@ -392,7 +411,7 @@ msgstr "無効な不具合のレポートです"
 msgid "The report belongs to a package that is not installed."
 msgstr "この報告はインストールされていないパッケージによるものです"
 
-#: ../apport/ui.py:209 ../apport/ui.py:620
+#: ../apport/ui.py:209 ../apport/ui.py:624
 msgid "This problem report is damaged and cannot be processed."
 msgstr "この不具合の報告は破損しており、処理することができません。"
 
@@ -426,64 +445,82 @@ msgstr "パッケージが特定できません"
 #: ../apport/ui.py:270
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "パッケージまたはプロセスIDを特定する必要があります。詳しくは--helpを見てください。"
+msgstr ""
+"パッケージまたはプロセスIDを特定する必要があります。詳しくは--helpを見てくだ"
+"さい。"
 
-#: ../apport/ui.py:284
+#: ../apport/ui.py:279
+msgid "Invalid PID"
+msgstr ""
+
+#: ../apport/ui.py:280
+#, fuzzy
+msgid "The specified process ID does not belong to a program."
+msgstr ""
+"このプロセスを操作する権限がありません。プロセスの所有者か、もしくはrootユー"
+"ザとして実行してください。"
+
+#: ../apport/ui.py:288
 msgid "Permission denied"
 msgstr "許可がありません"
 
-#: ../apport/ui.py:285
+#: ../apport/ui.py:289
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
-msgstr "このプロセスを操作する権限がありません。プロセスの所有者か、もしくはrootユーザとして実行してください。"
+msgstr ""
+"このプロセスを操作する権限がありません。プロセスの所有者か、もしくはrootユー"
+"ザとして実行してください。"
 
-#: ../apport/ui.py:302
+#: ../apport/ui.py:306
 #, python-format
 msgid "Package %s does not exist"
 msgstr "パッケージ %s は存在しません"
 
-#: ../apport/ui.py:462
+#: ../apport/ui.py:466
 msgid "Could not determine the package or source package name."
 msgstr "パッケージまたはソースパッケージ名を特定できませんでした。"
 
-#: ../apport/ui.py:477
+#: ../apport/ui.py:481
 msgid "Unable to start web browser"
 msgstr "ウェブブラウザを起動することが出来ません"
 
-#: ../apport/ui.py:478
+#: ../apport/ui.py:482
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "%s を開くためのウェブブラウザを起動することが出来ません"
 
-#: ../apport/ui.py:584
+#: ../apport/ui.py:588
 msgid "Network problem"
 msgstr "ネットワークの不具合"
 
-#: ../apport/ui.py:586
+#: ../apport/ui.py:590
 msgid "Could not upload report data to crash database"
 msgstr "クラッシュデータベースにレポートデータをアップロードできません"
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:614
 msgid "Memory exhaustion"
 msgstr "メモリ不足"
 
-#: ../apport/ui.py:611
+#: ../apport/ui.py:615
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "あなたのシステムには、このクラッシュレポートを処理するのに十分なメモリがありません。"
+msgstr ""
+"あなたのシステムには、このクラッシュレポートを処理するのに十分なメモリがあり"
+"ません。"
 
-#: ../apport/ui.py:631
+#: ../apport/ui.py:635
 msgid "This problem report does not apply to a packaged program."
 msgstr "この不具合の報告はパッケージプログラムに適用できません。"
 
-#: ../apport/ui.py:665
+#: ../apport/ui.py:669
 msgid "Problem already known"
 msgstr "不具合は既知のものです"
 
-#: ../apport/ui.py:666
+#: ../apport/ui.py:670
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"この不具合は、すでにブラウザ中に表示されたバグレポートで報告されています。開発者にとって役立つような、さらなる情報を追加できるかチェックしてください。"
+"この不具合は、すでにブラウザ中に表示されたバグレポートで報告されています。開"
+"発者にとって役立つような、さらなる情報を追加できるかチェックしてください。"

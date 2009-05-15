@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-04-17 05:17+0000\n"
+"Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
+"POT-Creation-Date: 2009-05-15 10:35+0200\n"
 "PO-Revision-Date: 2009-02-22 20:33+0000\n"
 "Last-Translator: Daniel Nylander <yeager@ubuntu.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -40,11 +40,11 @@ msgstr ""
 msgid "(binary data)"
 msgstr "(binär data)"
 
-#: ../gtk/apport-gtk.glade.h:1
+#: ../gtk/apport-gtk.ui.h:1
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>Samlar information om problemet</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:2
+#: ../gtk/apport-gtk.ui.h:2
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -56,11 +56,11 @@ msgstr ""
 "Fyll i formuläret i det webbläsarfönster som öppnats automatiskt efter att "
 "problemrapporten har skickats."
 
-#: ../gtk/apport-gtk.glade.h:5
+#: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Skickar probleminformation</b></big>"
 
-#: ../gtk/apport-gtk.glade.h:7
+#: ../gtk/apport-gtk.ui.h:7
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
@@ -69,20 +69,20 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">Tyvärr, misslyckades att installera "
 "eller uppgradera paketet \"%s\".</span>"
 
-#: ../gtk/apport-gtk.glade.h:8
+#: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
 msgstr "Programproblem"
 
-#: ../gtk/apport-gtk.glade.h:10 ../qt4/apport-qt.py:246
+#: ../gtk/apport-gtk.ui.h:10 ../qt4/apport-qt.py:246
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "Komplett rapport (rekommenderas; %s)"
 
-#: ../gtk/apport-gtk.glade.h:11
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "Rapportens innehåll"
 
-#: ../gtk/apport-gtk.glade.h:12 ../qt4/apport-qt.py:146
+#: ../gtk/apport-gtk.ui.h:12 ../qt4/apport-qt.py:146
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -92,7 +92,7 @@ msgstr ""
 "privat information) kan du hjälpa till att förbättra programmet genom att "
 "rapportera problemet."
 
-#: ../gtk/apport-gtk.glade.h:13
+#: ../gtk/apport-gtk.ui.h:13
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -100,24 +100,24 @@ msgstr ""
 "Information samlas in som kan hjälpa utvecklarna att rätta till problemet "
 "som du rapporterar."
 
-#: ../gtk/apport-gtk.glade.h:14 ../qt4/apport-qt.py:200
+#: ../gtk/apport-gtk.ui.h:14 ../qt4/apport-qt.py:200
 msgid "Kernel problem"
 msgstr "Problem i kärnan"
 
-#: ../gtk/apport-gtk.glade.h:15
+#: ../gtk/apport-gtk.ui.h:15
 msgid "Package problem"
 msgstr "Paketproblem"
 
-#: ../gtk/apport-gtk.glade.h:17 ../qt4/apport-qt.py:249
+#: ../gtk/apport-gtk.ui.h:17 ../qt4/apport-qt.py:249
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Reducerad rapport (långsam Internetanslutning; %s)"
 
-#: ../gtk/apport-gtk.glade.h:18
+#: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
 msgstr "Starta om _programmet"
 
-#: ../gtk/apport-gtk.glade.h:19 ../qt4/apport-qt.py:299
+#: ../gtk/apport-gtk.ui.h:19 ../qt4/apport-qt.py:299
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -125,7 +125,7 @@ msgstr ""
 "Den insamlade informationen skickas till felrapporteringssystemet. Det kan "
 "ta några minuter."
 
-#: ../gtk/apport-gtk.glade.h:20
+#: ../gtk/apport-gtk.ui.h:20
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -135,28 +135,26 @@ msgstr ""
 "mycket användbara för utvecklarna för att felsöka problemet, men kan vara "
 "för stora för dig att skicka upp om du har en långsam Internetanslutning."
 
-#: ../gtk/apport-gtk.glade.h:21 ../qt4/apport-qt.py:298
-#: ../cli/apport-cli.py:281
+#: ../gtk/apport-gtk.ui.h:21 ../qt4/apport-qt.py:298 ../cli/apport-cli.py:281
 msgid "Uploading problem information"
 msgstr "Skickar probleminformation"
 
-#: ../gtk/apport-gtk.glade.h:22 ../qt4/apport-qt.py:179
-#: ../cli/apport-cli.py:161
+#: ../gtk/apport-gtk.ui.h:22 ../qt4/apport-qt.py:179 ../cli/apport-cli.py:161
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
 "Du kan hjälpa utvecklarna att rätta till paketet genom att rapportera "
 "problemet."
 
-#: ../gtk/apport-gtk.glade.h:23
+#: ../gtk/apport-gtk.ui.h:23
 msgid "_Ignore future crashes of this program version"
 msgstr "_Ignorera framtida krascher för den här programversionen"
 
-#: ../gtk/apport-gtk.glade.h:24
+#: ../gtk/apport-gtk.ui.h:24
 msgid "_Report Problem..."
 msgstr "_Rapportera problem..."
 
-#: ../gtk/apport-gtk.glade.h:25
+#: ../gtk/apport-gtk.ui.h:25
 msgid "_Send Report"
 msgstr "_Skicka rapport"
 
@@ -198,8 +196,7 @@ msgstr "Starta om &programmet"
 #: ../qt4/apport-qt.py:177
 #, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr ""
-"Tyvärr, paketet \"%s\" misslyckades att installeras eller uppgraderas."
+msgstr "Tyvärr, paketet \"%s\" misslyckades att installeras eller uppgraderas."
 
 #. Let's get the dialog and modify it to our needs
 #: ../qt4/apport-qt.py:215
@@ -403,11 +400,11 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
-#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:301
-#: ../apport/ui.py:334 ../apport/ui.py:461 ../apport/ui.py:615
-#: ../apport/ui.py:619 ../apport/ui.py:635 ../apport/ui.py:980
-#: ../apport/ui.py:997 ../apport/ui.py:1478 ../apport/ui.py:1494
-#: ../apport/ui.py:1505 ../apport/ui.py:1516
+#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:305
+#: ../apport/ui.py:338 ../apport/ui.py:465 ../apport/ui.py:619
+#: ../apport/ui.py:623 ../apport/ui.py:639 ../apport/ui.py:984
+#: ../apport/ui.py:1001 ../apport/ui.py:1482 ../apport/ui.py:1498
+#: ../apport/ui.py:1509 ../apport/ui.py:1520
 msgid "Invalid problem report"
 msgstr "Ogiltig problemrapport"
 
@@ -415,7 +412,7 @@ msgstr "Ogiltig problemrapport"
 msgid "The report belongs to a package that is not installed."
 msgstr "Rapporten tillhör ett paket som inte är installerat."
 
-#: ../apport/ui.py:209 ../apport/ui.py:620
+#: ../apport/ui.py:209 ../apport/ui.py:624
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Den här problemrapporten är skadad och kan inte behandlas."
 
@@ -453,11 +450,22 @@ msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr "DU måste ange ett paket eller en PID. Se --help för mer information."
 
-#: ../apport/ui.py:284
+#: ../apport/ui.py:279
+msgid "Invalid PID"
+msgstr ""
+
+#: ../apport/ui.py:280
+#, fuzzy
+msgid "The specified process ID does not belong to a program."
+msgstr ""
+"Den angivna processen tillhör inte dig. Kör det här programmet som "
+"processägaren eller som root."
+
+#: ../apport/ui.py:288
 msgid "Permission denied"
 msgstr "Åtkomst nekad"
 
-#: ../apport/ui.py:285
+#: ../apport/ui.py:289
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -465,51 +473,51 @@ msgstr ""
 "Den angivna processen tillhör inte dig. Kör det här programmet som "
 "processägaren eller som root."
 
-#: ../apport/ui.py:302
+#: ../apport/ui.py:306
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Paketet %s finns inte"
 
-#: ../apport/ui.py:462
+#: ../apport/ui.py:466
 msgid "Could not determine the package or source package name."
 msgstr "Kunde inte bestämma paketet eller källpaketets namn."
 
-#: ../apport/ui.py:477
+#: ../apport/ui.py:481
 msgid "Unable to start web browser"
 msgstr "Kunde inte starta webbläsaren"
 
-#: ../apport/ui.py:478
+#: ../apport/ui.py:482
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Kunde inte starta webbläsaren för att öppna %s."
 
-#: ../apport/ui.py:584
+#: ../apport/ui.py:588
 msgid "Network problem"
 msgstr "Nätverksproblem"
 
-#: ../apport/ui.py:586
+#: ../apport/ui.py:590
 msgid "Could not upload report data to crash database"
 msgstr "Kunde inte skicka upp rapportdata till kraschdatabasen"
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:614
 msgid "Memory exhaustion"
 msgstr "Slut på minne"
 
-#: ../apport/ui.py:611
+#: ../apport/ui.py:615
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Ditt system har inte tillräckligt mycket minne att behandla den här "
 "kraschrapporten."
 
-#: ../apport/ui.py:631
+#: ../apport/ui.py:635
 msgid "This problem report does not apply to a packaged program."
 msgstr "Den här problemrapporten gäller inte för ett paketerat program."
 
-#: ../apport/ui.py:665
+#: ../apport/ui.py:669
 msgid "Problem already known"
 msgstr "Problemet är redan känt"
 
-#: ../apport/ui.py:666
+#: ../apport/ui.py:670
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
