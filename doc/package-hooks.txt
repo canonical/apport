@@ -16,9 +16,10 @@ Apport will import this and call a function
   add_info(report)
 
 and pass the currently processed problem report. This is an instance
-of apport.Report, and should mainly be used as a dictionary. Please
-see the Python help of this class for details:
+of apport.Report, and should mainly be used as a dictionary
+(added keys have to be alphanumeric and may contain dots).
 
+Please see the Python help of this class for details:
   >>> import apport
   >>> help(apport.Report)
 
