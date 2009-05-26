@@ -301,6 +301,13 @@ free memory to automatically analyze the problem and send a report to the develo
             else:
                 raise
 
+        # check unreportable flag
+        if self.report.has_key('UnreportableReason'):
+            self.ui_info_message(_('Problem in %s') % self.report['Package'].split()[0],
+                _('The problem cannot be reported:\n\n%s') %
+                self.report['UnreportableReason'])
+            return
+
         if not self.handle_duplicate():
             # we do not confirm contents of bug reports, this might have
             # sensitive data
