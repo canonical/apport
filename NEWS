@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.3 (UNRELEASED)
+------------------
+New features:
+- add_info() in package hooks now can (optionally) take a second argument which
+  is the UserInterface instance. This allows interactive hooks.
+
 1.2.1 (2009-05-15)
 ------------------
 Bug fixes:

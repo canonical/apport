@@ -22,7 +22,7 @@ import apport, apport.fileutils, REThread
 
 from apport.crashdb import get_crashdb
 
-def thread_collect_info(report, reportfile, package):
+def thread_collect_info(report, reportfile, package, ui):
     '''Encapsulate call to add_*_info() and update given report,
     so that this function is suitable for threading.
 
@@ -36,7 +36,7 @@ def thread_collect_info(report, reportfile, package):
             raise KeyError, 'called without a package, and report does not have ExecutablePath'
     report.add_package_info(package)
     report.add_os_info()
-    report.add_hooks_info()
+    report.add_hooks_info(ui)
 
     # add title
     title = report.standard_title()
@@ -430,7 +430,7 @@ free memory to automatically analyze the problem and send a report to the develo
             if not self.report.has_key('Stacktrace'):
                 icthread = REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
-                    args=(self.report, self.report_file, self.cur_package))
+                    args=(self.report, self.report_file, self.cur_package, self))
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
