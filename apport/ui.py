@@ -150,13 +150,6 @@ class UserInterface:
 free memory to automatically analyze the problem and send a report to the developers.')))
                 return
 
-            # check unsupportable flag
-            if self.report.has_key('UnsupportableReason'):
-                self.ui_info_message(_('Unreportable problem'),
-                    _('The current configuration cannot be supported:\n\n%s') %
-                    self.report['UnsupportableReason'])
-                return
-
             # ask the user about what to do with the current crash
             if not confirm:
                 pass
@@ -1344,7 +1337,7 @@ CoreDump: base64
             '''run_crash() through a file specified on the command line.'''
 
             self.report['Package'] = 'bash'
-            self.report['UnsupportableReason'] = 'It stinks.'
+            self.report['UnreportableReason'] = 'It stinks.'
             self.update_report_file()
 
             sys.argv = ['ui-test', '-c', self.report_file.name]
@@ -1360,20 +1353,6 @@ CoreDump: base64
             self.ui = _TestSuiteUserInterface()
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, 'error')
-
-        def test_run_crash_unsupportable(self):
-            '''run_crash() on a crash with the UnsupportableReason
-            field.'''
-
-            self.report['UnsupportableReason'] = 'It stinks.'
-            self.report['Package'] = 'bash'
-            self.update_report_file()
-
-            self.ui.run_crash(self.report_file.name)
-
-            self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
-                (self.ui.msg_title, self.ui.msg_text))
-            self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_unreportable(self):
             '''run_crash() on a crash with the UnreportableReason
