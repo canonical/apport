@@ -7,6 +7,10 @@ New features:
 - add_info() in package hooks now can (optionally) take a second argument which
   is the UserInterface instance. This allows interactive hooks.
 
+Bug fixes:
+- Drop "UnsupportableReason" field, it is too similar to UnreportableReason and
+  just confusing.
+
 1.2.1 (2009-05-15)
 ------------------
 Bug fixes:
