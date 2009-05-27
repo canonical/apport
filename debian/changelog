@@ -1,4 +1,4 @@
-apport (1.2.1-0ubuntu1) UNRELEASED; urgency=low
+apport (1.2.1-0ubuntu1) karmic; urgency=low
 
   * New upstream release:
     - Moving away from deprecated APIs:
@@ -19,7 +19,7 @@ apport (1.2.1-0ubuntu1) UNRELEASED; urgency=low
   * debian/apport-qt.install: Install the individual Qt .ui files instead of
     *.ui, since GTK's are now also called *.ui.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 May 2009 15:49:38 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 15 May 2009 11:28:34 +0200
 
 apport (1.1.1-0ubuntu2) karmic; urgency=low
 
