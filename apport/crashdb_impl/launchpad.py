@@ -175,7 +175,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         interactive steps it wants to perform.'''
 
         args = {}
-        title = report.standard_title()
+        title = report.setdefault('Title', report.standard_title())
         if title:
             args['field.title'] = title
 
@@ -248,6 +248,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 report['ProblemType'] = 'Package'
             else:
                 raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
+
+        report['Title'] = b.title
 
         for attachment in filter_filename(b.attachments):
             key, ext = os.path.splitext(attachment.filename)
@@ -723,6 +725,7 @@ NameError: global name 'weird' is not defined'''
 
             r = self.crashdb.download(segv_report)
             self.assertEqual(r['ProblemType'], 'Crash')
+            self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
             self.assertEqual(r['DistroRelease'], self.ref_report['DistroRelease'])
             self.assertEqual(r['Architecture'], self.ref_report['Architecture'])
             self.assertEqual(r['Uname'], self.ref_report['Uname'])
