@@ -781,6 +781,38 @@ might be helpful for the developers.'))
 
         pass
 
+    #
+    # Additional UI dialogs; these are not required by Apport itself, but can
+    # be used by interactive package hooks
+    #
+
+    def ui_yesno_message(self, title, text):
+        '''Show an question message box with given title and text.
+
+        Return True if the user selected "Yes", or False if selected "No" or
+        closed the dialog.
+        '''
+        raise NotImplementedError, 'this function must be overridden by subclasses'
+
+    def ui_choice(self, title, text, options, multiple=False):
+        '''Show an dialog box with predefined choices.
+
+        options is a list of strings to present. If multiple is True, they
+        should be check boxes, if multiple is False they should be radio
+        buttons.
+
+        Return list of selected option indexes, or None if the user cancelled.
+        If multiple == False, the list will always have one element.
+        '''
+        raise NotImplementedError, 'this function must be overridden by subclasses'
+
+    def ui_file_selector(self, title, text):
+        '''Show a file selector dialog with given title and explanatory text.
+
+        Return path if the user selected a file, or None if cancelled.
+        '''
+        raise NotImplementedError, 'this function must be overridden by subclasses'
+
 #
 # Test suite
 #
