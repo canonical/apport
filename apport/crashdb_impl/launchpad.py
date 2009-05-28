@@ -24,7 +24,7 @@ default_credentials_path = os.path.expanduser('~/.cache/apport/launchpad.credent
 
 APPORT_FILES = ('Dependencies.txt', 'CoreDump.gz', 'ProcMaps.txt',
         'Traceback.txt', 'Disassembly.txt', 'Registers.txt', 'Stacktrace.txt',
-        'ThreadStacktrace.txt')
+        'ThreadStacktrace.txt', 'DpkgTerminalLog.txt')
 def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
