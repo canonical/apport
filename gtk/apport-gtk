@@ -247,7 +247,14 @@ class GTKUserInterface(apport.ui.UserInterface):
         Return True if the user selected "Yes", or False if selected "No" or
         closed the dialog.
         '''
-        raise NotImplementedError
+        md = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION,
+            buttons=gtk.BUTTONS_YES_NO, message_format=text)
+        md.set_title(title)
+        result = md.run()
+        md.hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
+        return result == gtk.RESPONSE_YES
 
     def ui_choice(self, title, text, options, multiple=False):
         '''Show an dialog box with predefined choices.
@@ -259,14 +266,53 @@ class GTKUserInterface(apport.ui.UserInterface):
         Return list of selected option indexes, or None if the user cancelled.
         If multiple == False, the list will always have one element.
         '''
-        raise NotImplementedError
+        d = self.w('dialog_choice')
+        d.set_title(title)
+        d.set_default_size(400, -1)
+        self.w('label_choice_text').set_label(text)
+
+        # remove previous choices
+        self.w('vbox_choices').foreach(lambda w, _: w.destroy(), None)
+
+        b = None
+        for option in options:
+            if multiple:
+                b = gtk.CheckButton(option)
+            else:
+                # use previous radio button as group
+                b = gtk.RadioButton(b, option)
+            self.w('vbox_choices').pack_end(b)
+        self.w('vbox_choices').show_all()
+
+        result = d.run()
+        d.hide()
+        if result != gtk.RESPONSE_OK:
+            return None
+
+        index = 0
+        result = []
+        for c in self.w('vbox_choices').get_children():
+            if c.get_active():
+                result.append(index)
+            index += 1
+        return result
 
     def ui_file_selector(self, title, text):
         '''Show a file selector dialog with given title and explanatory text.
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        raise NotImplementedError
+        md = gtk.FileChooserDialog(title,
+                parent=self.w('window_information_collection'),
+                buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        result = md.run()
+        md.hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
+        if result == gtk.RESPONSE_OK:
+            return md.get_filenames()[0]
+        else:
+            return None
 
     #
     # Event handlers
