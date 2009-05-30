@@ -36,6 +36,28 @@ and pass two arguments:
 If you do not need to ask interactive questions, you can ignore ui, or just
 declare "add_info(report)".
 
+Hook behaviour
+==============
+
+If you just add information in hooks, Apport will always proceed with filing
+a report. You can influence this in various ways:
+
+ * The hook detects a situation which should not be reported as a problem,
+   because they happen on known-bad hardware, from a third-party repository, or
+   other situations. This can be achieved by adding a field
+
+      report['UnreportableReason'] = _('explanation')
+
+   Such reports are displayed by the apport frontends as unreportable with the
+   given explanation. Please ensure proper i18n for the texts.
+
+ * The user cancelled an interactive question for which the hook requires an
+   answer. Then you should call
+
+     raise StopIteration
+
+   to cancel the problem report submission.
+
 Package independent hooks
 =========================
 
@@ -73,25 +95,6 @@ def add_info(report):
 
 Apport itself ships a source package hook, see
 /usr/share/apport/package-hooks/source_apport.py.
-
-An interesting use case of hooks is to detect situations which should
-not be reported as bugs, because they happen on known-bad hardware,
-from a third-party repository, or other situations. This can be
-achieved by adding a field
-
-  report['UnreportableReason'] = _('explanation')
-
-Such reports are displayed by the apport frontends as
-unsupportable/unreportable with the given explanation. Please ensure
-proper i18n for the texts.
-
-If you want to entirely ignore a crash without presenting an
-explanatory error dialog box, use "Ignore" instead of
-"UnreportableReason":
-
-  report['Ignore'] = 'True'
-
-(the actual value does not matter, it just must be a string).
 
 If you write hooks, please have a look at the apport.hookutils
 module first: 

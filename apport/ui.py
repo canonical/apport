@@ -36,7 +36,8 @@ def thread_collect_info(report, reportfile, package, ui):
             raise KeyError, 'called without a package, and report does not have ExecutablePath'
     report.add_package_info(package)
     report.add_os_info()
-    report.add_hooks_info(ui)
+    if report.add_hooks_info(ui):
+        sys.exit(0)
 
     # add title
     title = report.standard_title()
