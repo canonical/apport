@@ -13,14 +13,28 @@ or
 
 Apport will import this and call a function
 
-  add_info(report)
+  add_info(report, ui)
 
-and pass the currently processed problem report. This is an instance
-of apport.Report, and should mainly be used as a dictionary. Please
-see the Python help of this class for details:
+and pass two arguments:
 
-  >>> import apport
-  >>> help(apport.Report)
+ - The currently processed problem report. This is an instance of
+   apport.Report, and should mainly be used as a dictionary. Please see the
+   Python help of this class for details:
+
+   >>> import apport
+   >>> help(apport.Report)
+
+ - The Apport user interface. This is an instance of apport.ui.UserInterface
+   and can be used to interactively get more information from the user, such as
+   asking for doing a particular action, yes/no question, multiple choices, or
+   a file selector. Please see the Python help for available functions (in
+   particular, the ui_*() ones):
+
+   >>> import apport.ui
+   >>> help(apport.ui.UserInterface)
+
+If you do not need to ask interactive questions, you can ignore ui, or just
+declare "add_info(report)".
 
 Package independent hooks
 =========================
