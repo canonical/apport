@@ -64,9 +64,11 @@ class CLIDialog:
         print self.heading
         print self.text
 
-    def run(self):
+    def run(self, prompt=None):
         if not self.visible:
             self.show()
+
+        CLIProgressDialog.inhibit = True
 
         print
         try:
@@ -76,7 +78,10 @@ class CLIDialog:
                 return 0
             # Multiple choices
             while True:
-                print _('What would you like to do? Your options are:')
+                if prompt is not None:
+                    print prompt
+                else:
+                    print _('What would you like to do? Your options are:')
                 for index, button in enumerate(self.buttons):
                     print '  %s: %s' % (self.keys[index], button)
 
@@ -89,20 +94,31 @@ class CLIDialog:
             print
             sys.exit(1)
 
-    def addbutton(self, button):
-        self.keys.append(re.search('&(.)', button).group(1).upper())
-        self.buttons.append(re.sub('&', '', button))
+        CLIProgressDialog.inhibit = False
+
+    def addbutton(self, button, hotkey=None):
+        if hotkey:
+            self.keys.append(hotkey)
+            self.buttons.append(button)
+        else:
+            self.keys.append(re.search('&(.)', button).group(1).upper())
+            self.buttons.append(re.sub('&', '', button))
         return len(self.keys)
 
 
 class CLIProgressDialog(CLIDialog):
     '''Command line progress dialog wrapper.'''
 
+    inhibit = False
+
     def __init__(self, heading, text):
         CLIDialog.__init__(self, heading, text)
         self.progresscount = 0
 
     def set(self, progress = None):
+        if CLIProgressDialog.inhibit:
+            return
+
         self.progresscount = (self.progresscount + 1) % 5
         if self.progresscount:
             return
@@ -300,7 +316,10 @@ class CLIUserInterface(apport.ui.UserInterface):
         Return True if the user selected "Yes", or False if selected "No" or
         closed the dialog.
         '''
-        raise NotImplementedError
+        dialog = CLIDialog(title, text)
+        r_yes = dialog.addbutton('&Yes')
+        dialog.addbutton('&No')
+        return dialog.run() == r_yes
 
     def ui_choice(self, title, text, options, multiple=False):
         '''Show an dialog box with predefined choices.
@@ -312,14 +331,66 @@ class CLIUserInterface(apport.ui.UserInterface):
         Return list of selected option indexes, or None if the user cancelled.
         If multiple == False, the list will always have one element.
         '''
-        raise NotImplementedError
+        result = []
+        dialog = CLIDialog(title, text)
+
+        if multiple:
+            while True:
+                dialog = CLIDialog(title, text)
+                index = 0
+                choice_index_map = {}
+                for option in options:
+                    if index not in result:
+                        choice_index_map[dialog.addbutton(option, str(index+1))] = index
+                    index += 1
+                done = dialog.addbutton(_('&Done'))
+                cancel = dialog.addbutton(_('&Cancel'))
+
+                if result:
+                    cur = ', '.join([str(r+1) for r in result])
+                else:
+                    cur = _('none')
+                response = dialog.run(_('Selected: %s. Multiple choices:') % cur)
+                if response == cancel:
+                    return None
+                if response == done:
+                    break
+                result.append(choice_index_map[response])
+
+        else:
+            # single choice (radio button)
+            dialog = CLIDialog(title, text)
+            index = 1
+            for option in options:
+                dialog.addbutton(option, str(index))
+                index += 1
+
+            cancel = dialog.addbutton(_('&Cancel'))
+            response = dialog.run(_('Choices:'))
+            if response == cancel:
+                return None
+            result.append(response-1)
+
+        return result
 
     def ui_file_selector(self, title, text):
         '''Show a file selector dialog with given title and explanatory text.
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        raise NotImplementedError
+        print '\n', title
+        while True:
+            print '\n', text
+            print _('Path to file (Enter to cancel):'), ' ',
+            f = sys.stdin.readline().strip()
+            if not f:
+                return None
+            if not os.path.exists(f):
+                print _('File does not exist.')
+            elif os.path.isdir(f):
+                print _('This is a directory.')
+            else:
+                return f
 
 if __name__ == '__main__':
     app = CLIUserInterface()
