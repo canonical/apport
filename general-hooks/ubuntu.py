@@ -22,7 +22,7 @@ def add_info(report):
     # if we are running from a live system, add the build timestamp
     attach_file_if_exists(report, '/cdrom/.disk/info', 'LiveMediaBuild')
 
-	# This includes the Ubuntu packaged kernel version
+    # This includes the Ubuntu packaged kernel version
     attach_file_if_exists(report, '/proc/version_signature', 'ProcVersionSignature')
 
     package = report.get('Package', '').split()[0]
