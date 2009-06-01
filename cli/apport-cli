@@ -62,7 +62,8 @@ class CLIDialog:
     def show(self):
         self.visible = True
         print self.heading
-        print self.text
+        if self.text:
+            print self.text
 
     def run(self, prompt=None):
         if not self.visible:
@@ -310,19 +311,23 @@ class CLIUserInterface(apport.ui.UserInterface):
     def ui_stop_upload_progress(self):
         print
 
-    def ui_yesno_message(self, title, text):
-        '''Show an question message box with given title and text.
+    def hook_question_yesno(self, text):
+        '''Show a yes/no question.
 
-        Return True if the user selected "Yes", or False if selected "No" or
-        closed the dialog.
+        Return True if the user selected "Yes", False if selected "No" or
+        "None" on cancel/dialog closing.
         '''
-        dialog = CLIDialog(title, text)
+        dialog = CLIDialog(text, None)
         r_yes = dialog.addbutton('&Yes')
         dialog.addbutton('&No')
-        return dialog.run() == r_yes
+        if dialog.run() == r_yes:
+            return True
+        if dialog.run() == r_no:
+            return True
+        return None
 
-    def ui_choice(self, title, text, options, multiple=False):
-        '''Show an dialog box with predefined choices.
+    def hook_question_choice(self, text, options, multiple=False):
+        '''Show an question with predefined choices.
 
         options is a list of strings to present. If multiple is True, they
         should be check boxes, if multiple is False they should be radio
@@ -332,11 +337,11 @@ class CLIUserInterface(apport.ui.UserInterface):
         If multiple == False, the list will always have one element.
         '''
         result = []
-        dialog = CLIDialog(title, text)
+        dialog = CLIDialog(text, None)
 
         if multiple:
             while True:
-                dialog = CLIDialog(title, text)
+                dialog = CLIDialog(text, None)
                 index = 0
                 choice_index_map = {}
                 for option in options:
@@ -359,7 +364,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         else:
             # single choice (radio button)
-            dialog = CLIDialog(title, text)
+            dialog = CLIDialog(text, None)
             index = 1
             for option in options:
                 dialog.addbutton(option, str(index))
@@ -373,14 +378,13 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         return result
 
-    def ui_file_selector(self, title, text):
-        '''Show a file selector dialog with given title and explanatory text.
+    def hook_question_file(self, text):
+        '''Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        print '\n', title
+        print '\n*** ', text
         while True:
-            print '\n', text
             print _('Path to file (Enter to cancel):'), ' ',
             f = sys.stdin.readline().strip()
             if not f:
