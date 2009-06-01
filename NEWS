@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 New features:
 - add_info() in package hooks now can (optionally) take a second argument which
   is the UserInterface instance. This allows interactive hooks.
+- New function apport.hookutils.root_command_output() to run a command as root,
+  through gksu/kdesudo/sudo, depending on the desktop environment.
 
 Bug fixes:
 - Drop "UnsupportableReason" field, it is too similar to UnreportableReason and
