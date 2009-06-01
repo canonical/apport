@@ -3,6 +3,10 @@ detailled list of changes, please see ChangeLog.
 
 1.3 (UNRELEASED)
 ------------------
+New features:
+- New function apport.hookutils.root_command_output() to run a command as root,
+  through gksu/kdesudo/sudo, depending on the desktop environment.
+
 Bug fixes:
 - Drop "UnsupportableReason" field, it is too similar to UnreportableReason and
   just confusing.
