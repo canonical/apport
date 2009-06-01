@@ -1,9 +1,18 @@
 Apport per-package hooks
 ========================
 
-Packages can add additional fields (or even modify existing fields, if
-they want) of Apport crash or bug reports by placing a Python code
-snippet into
+In addition to the generic information apport collects, arbitrary
+package-specific data can be included in the report by adding package hooks.
+For example:
+
+ - Relevant log files
+ - Configuration files
+ - Current system state 
+
+Hooks can also ask interactive questions, cause a crash to be ignored, or the
+problem can be marked as "not reportable" with an explanation. 
+
+This happens by placing a Python code snippet into
 
   /usr/share/apport/package-hooks/<packagename>.py
 
@@ -70,6 +79,15 @@ hooks, except that they need to be put into
   /usr/share/apport/general-hooks/<hookname>.py
 
 The <hookname> can be arbitrary and should describe the functionality.
+
+Tags
+====
+Some bug tracking systems support tags to further categorize bug reports and
+make searching/duplication easier. Hooks can set tags with
+
+  report['Tags'] = 'tag1 tag2'
+
+i. e. a space separated list of tag names.
 
 Customize the crash DB to use
 =============================
