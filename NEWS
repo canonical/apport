@@ -10,6 +10,8 @@ New features:
 Bug fixes:
 - Drop "UnsupportableReason" field, it is too similar to UnreportableReason and
   just confusing.
+- Report key names can now contain dashes ('-') and underscores ('_').
+  (LP #380811)
 
 1.2.1 (2009-05-15)
 ------------------
