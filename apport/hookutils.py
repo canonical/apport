@@ -223,6 +223,34 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
        return 'Error: command %s failed with exit code %i: %s' % (
            str(command), sp.returncode, out)
 
+def root_command_output(command, input = None, stderr = subprocess.STDOUT):
+    '''Try to execute given command (array) as root and return its stdout. 
+
+    This passes the command through gksu, kdesudo, or sudo, depending on the
+    running desktop environment.
+    
+    In case of failure, a textual error gets returned.
+    '''
+
+    if os.getuid() == 0:
+        prefix = []
+    elif os.getenv('DISPLAY') and \
+            subprocess.call(['which', 'kdesudo'], stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE) == 0 and \
+            subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'ksmserver'],
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+        prefix = ['kdesudo', '--']
+    elif os.getenv('DISPLAY') and \
+            subprocess.call(['which', 'gksu'], stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE) == 0 and \
+            subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'gnome-panel|gconfd-2'],
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+        prefix = ['gksu', '-D', 'Apport', '--']
+    else:
+        prefix = ['sudo']
+
+    return command_output(prefix + command, input, stderr)
+
 def recent_syslog(pattern):
     '''Extract recent messages from syslog which match a regex.
         

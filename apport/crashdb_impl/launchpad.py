@@ -24,7 +24,7 @@ default_credentials_path = os.path.expanduser('~/.cache/apport/launchpad.credent
 
 APPORT_FILES = ('Dependencies.txt', 'CoreDump.gz', 'ProcMaps.txt',
         'Traceback.txt', 'Disassembly.txt', 'Registers.txt', 'Stacktrace.txt',
-        'ThreadStacktrace.txt')
+        'ThreadStacktrace.txt', 'DpkgTerminalLog.txt', 'DpkgTerminalLog.gz')
 def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
@@ -154,6 +154,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if report['DistroRelease'].split()[0] == 'Ubuntu':
                 hdr['Private'] = 'yes'
                 hdr['Subscribers'] = 'apport'
+        if report.has_key('Tags'):
+            hdr['Tags'] += ' ' + report['Tags']
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
@@ -175,7 +177,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         interactive steps it wants to perform.'''
 
         args = {}
-        title = report.standard_title()
+        title = report.setdefault('Title', report.standard_title())
         if title:
             args['field.title'] = title
 
@@ -211,19 +213,20 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             m = re.search(r'^--- \r?$[\r\n]*(.*)', b.description, re.M | re.S)
         assert m, 'bug description must contain standard apport format data'
 
-        description = m.group(1).encode('UTF-8').replace('\xc2\xa0', ' ')
+        description = m.group(1).encode('UTF-8').replace('\xc2\xa0', ' ').replace('\r\n', '\n')
         
-        if '\r\n\r\n' in description:
+        if '\n\n' in description:
             # this often happens, remove all empty lines between top and
             # 'Uname'
             if 'Uname:' in description:
                 # this will take care of bugs like LP #315728 where stuff
                 # is added after the apport data
                 (part1, part2) = description.split('Uname:', 1)
-                description = part1.replace('\r\n\r\n', '\r\n') + 'Uname:' \
-                    + part2.split('\r\n\r\n', 1)[0]
+                description = part1.replace('\n\n', '\n') + 'Uname:' \
+                    + part2.split('\n\n', 1)[0]
             else:
-                description = description.replace('\r\n\r\n', '\r\n')
+                # just parse out the Apport block; e. g. LP #269539
+                description = description.split('\n\n', 1)[0]
 
         report.load(StringIO(description))
 
@@ -248,6 +251,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 report['ProblemType'] = 'Package'
             else:
                 raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
+
+        report['Title'] = b.title
 
         for attachment in filter_filename(b.attachments):
             key, ext = os.path.splitext(attachment.filename)
@@ -723,6 +728,7 @@ NameError: global name 'weird' is not defined'''
 
             r = self.crashdb.download(segv_report)
             self.assertEqual(r['ProblemType'], 'Crash')
+            self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
             self.assertEqual(r['DistroRelease'], self.ref_report['DistroRelease'])
             self.assertEqual(r['Architecture'], self.ref_report['Architecture'])
             self.assertEqual(r['Uname'], self.ref_report['Uname'])
@@ -1108,5 +1114,15 @@ NameError: global name 'weird' is not defined'''
             crashdb.close_duplicate(id, None)
             self.assertEqual(crashdb.duplicate_of(id), None)
             self.assertEqual(crashdb.get_fixed_version(id), None)
+
+        def test_download_robustness(self):
+            '''download() of uncommon description formats'''
+
+            # only ProblemType/Architecture/DistroRelease in description
+            r = self.crashdb.download(269539)
+            self.assertEqual(r['ProblemType'], 'Package')
+            self.assertEqual(r['Architecture'], 'amd64')
+            self.assert_(r['DistroRelease'].startswith('Ubuntu '))
+            self.assert_('DpkgTerminalLog' in r)
 
     unittest.main()

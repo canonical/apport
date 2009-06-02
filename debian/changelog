@@ -2,6 +2,23 @@ apport (1.2.1-0ubuntu2) UNRELEASED; urgency=low
 
   * debian/control: Update Vcs-Bzr: for new location (moved from project
     branch to package branch).
+  * Merge bug fixes from trunk:
+    - apport-cli: Fix report saving in "bug report" mode. (LP: #353253)
+    - Drop "UnsupportableReason" field, it is too similar to
+      UnreportableReason and just confusing.
+    - ui.py: Check UnreportableReason for run_report_bug() as well.
+      (LP: #361359)
+    - general-hooks/generic.py: Do not report problems with low free space on
+      / or /home. (LP: #381047)
+    - launchpad.py: Do not overwrite report['Title'].
+    - launchpad.py: Repair support for extra tags.
+    - New function apport.hookutils.root_command_output() to run a command as
+      root, through gksu/kdesudo/sudo, depending on the desktop environment.
+      (Part of UbuntuSpec:desktop-karmic-symptom-based-bug-reporting)
+    - launchpad.py: Fetch DpkgTerminalLog. (LP: #382589)
+    - launchpad.py: More robust download(), fixes other part of (LP: #382589)
+    - problem_report.py: Allow dashes and underscores in key names. Update
+      doc/data-format.tex accordingly. (LP: #380811)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 02 Jun 2009 11:14:36 +0200
 

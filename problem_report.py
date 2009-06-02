@@ -476,7 +476,7 @@ class ProblemReport(UserDict.IterableUserDict):
 
     def __setitem__(self, k, v):
         assert hasattr(k, 'isalnum')
-        assert k.replace('.', '').isalnum()
+        assert k.replace('.', '').replace('-', '').replace('_', '').isalnum()
         # value must be a string or a CompressedValue or a file reference
         # (tuple (string|file [, bool]))
         assert (isinstance(v, CompressedValue) or hasattr(v, 'isalnum') or
@@ -526,10 +526,16 @@ class _ProblemReportTest(unittest.TestCase):
         pr = ProblemReport()
         pr['foo'] = 'bar'
         pr['bar'] = ' foo   bar\nbaz\n   blip  '
+        pr['dash-key'] = '1'
+        pr['dot.key'] = '1'
+        pr['underscore_key'] = '1'
         self.assertEqual(pr['foo'], 'bar')
         self.assertEqual(pr['bar'], ' foo   bar\nbaz\n   blip  ')
         self.assertEqual(pr['ProblemType'], 'Crash')
         self.assert_(time.strptime(pr['Date']))
+        self.assertEqual(pr['dash-key'], '1')
+        self.assertEqual(pr['dot.key'], '1')
+        self.assertEqual(pr['underscore_key'], '1')
 
     def test_ctor_arguments(self):
         '''non-default constructor arguments.'''

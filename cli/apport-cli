@@ -17,7 +17,7 @@ the full text of the license.
 #    elinks: works
 
 import os.path, os, sys, subprocess, re, errno
-import tty, termios
+import tty, termios, tempfile
 from datetime import datetime
 
 try:
@@ -247,6 +247,11 @@ class CLIUserInterface(apport.ui.UserInterface):
                         raise
                 continue
             if response == save:
+                # we do not already have a report file if we report a bug
+                if not self.report_file:
+                    (fd, self.report_file) = tempfile.mkstemp(prefix='apport.', suffix='.txt')
+                    self.report.write(os.fdopen(fd, 'w'))
+
                 print _('Problem report file:'), self.report_file
                 return 'cancel'
 
