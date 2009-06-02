@@ -1,6 +1,8 @@
 apport (1.2.1-0ubuntu3) UNRELEASED; urgency=low
 
   * debian/control: Bump Standards-Version to 3.8.1 (no changes necessary).
+  * debian/control: Bump debhelper dependency for dh_icons, to satisfy
+    lintian.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 02 Jun 2009 12:04:05 +0200
 
