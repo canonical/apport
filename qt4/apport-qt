@@ -318,7 +318,7 @@ class QT4UserInterface(apport.ui.UserInterface):
 
         self.progress.hide()
 
-    def hook_question_yesno(self, text):
+    def ui_question_yesno(self, text):
         '''Show a yes/no question.
 
         Return True if the user selected "Yes", False if selected "No" or
@@ -326,7 +326,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         '''
         raise NotImplementedError
 
-    def hook_question_choice(self, text, options, multiple=False):
+    def ui_question_choice(self, text, options, multiple):
         '''Show an question with predefined choices.
 
         options is a list of strings to present. If multiple is True, they
@@ -338,7 +338,7 @@ class QT4UserInterface(apport.ui.UserInterface):
         '''
         raise NotImplementedError
 
-    def hook_question_file(self, text):
+    def ui_question_file(self, text):
         '''Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.

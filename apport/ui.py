@@ -23,11 +23,15 @@ import apport, apport.fileutils, REThread
 from apport.crashdb import get_crashdb
 
 def thread_collect_info(report, reportfile, package, ui):
-    '''Encapsulate call to add_*_info() and update given report,
-    so that this function is suitable for threading.
+    '''Collect information about report.
 
-    If reportfile is not None, the file is written back with the new data.'''
+    Encapsulate calls to add_*_info() and update given report, so that this
+    function is suitable for threading.
 
+    ui must be a HookUI instance, it gets passed to add_hooks_info().
+
+    If reportfile is not None, the file is written back with the new data.
+    '''
     report.add_gdb_info()
     if not package:
         if report.has_key('ExecutablePath'):
@@ -428,10 +432,12 @@ free memory to automatically analyze the problem and send a report to the develo
             # display a progress dialog
             self.ui_start_info_collection_progress()
 
+            hookui = HookUI(self)
+
             if not self.report.has_key('Stacktrace'):
                 icthread = REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
-                    args=(self.report, self.report_file, self.cur_package, self))
+                    args=(self.report, self.report_file, self.cur_package, hookui))
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
@@ -787,7 +793,7 @@ might be helpful for the developers.'))
     # be used by interactive package hooks
     #
 
-    def hook_question_yesno(self, text):
+    def ui_question_yesno(self, text):
         '''Show a yes/no question.
 
         Return True if the user selected "Yes", False if selected "No" or
@@ -795,7 +801,7 @@ might be helpful for the developers.'))
         '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
-    def hook_question_choice(self, text, options, multiple=False):
+    def ui_question_choice(self, text, options, multiple):
         '''Show an question with predefined choices.
 
         options is a list of strings to present. If multiple is True, they
@@ -807,12 +813,66 @@ might be helpful for the developers.'))
         '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
-    def hook_question_file(self, text):
+    def ui_question_file(self, text):
         '''Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
         '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
+
+class HookUI:
+    '''Interactive functions which can be used in package hooks.
+
+    This provides an interface for package hooks which need to ask interactive
+    questions. Directly passing the UserInterface instance to the hooks needs
+    to be avoided, since we need to call the UI methods in a different thread,
+    and also don't want hooks to be able to poke in the UI.
+    '''
+    def __init__(self, ui):
+        '''Create a HookUI object.
+
+        ui is the UserInterface instance to wrap.
+        '''
+        self.ui = ui
+
+    #
+    # API for hooks
+    #
+
+    def information(self, text):
+        '''Show an information with OK/Cancel buttons.
+
+        This can be used for asking the user to perform a particular action,
+        such as plugging in a device which does not work.
+        '''
+        self.ui.ui_info_message('', text)
+
+    def yesno(self, text):
+        '''Show a yes/no question.
+
+        Return True if the user selected "Yes", False if selected "No" or
+        "None" on cancel/dialog closing.
+        '''
+        return self.ui.ui_question_yesno(text)
+
+    def choice(self, text, options, multiple=False):
+        '''Show an question with predefined choices.
+
+        options is a list of strings to present. If multiple is True, they
+        should be check boxes, if multiple is False they should be radio
+        buttons.
+
+        Return list of selected option indexes, or None if the user cancelled.
+        If multiple == False, the list will always have one element.
+        '''
+        return self.ui.ui_question_choice(text, options, multiple)
+
+    def file(self, text):
+        '''Show a file selector dialog.
+
+        Return path if the user selected a file, or None if cancelled.
+        '''
+        return self.ui.ui_question_file(text)
 
 #
 # Test suite

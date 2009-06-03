@@ -33,17 +33,13 @@ and pass two arguments:
    >>> import apport
    >>> help(apport.Report)
 
- - The Apport user interface. This is an instance of apport.ui.UserInterface
-   and can be used to interactively get more information from the user, such as
-   asking for doing a particular action, yes/no question, multiple choices, or
-   a file selector. Please see the Python help for available functions (in
-   particular, the ui_*() ones):
+ - An instance of apport.ui.HookUI which can be used to interactively get more
+   information from the user, such as asking for doing a particular action,
+   yes/no question, multiple choices, or a file selector. Please see the Python
+   help for available functions:
 
    >>> import apport.ui
-   >>> help(apport.ui.UserInterface)
-
-If you do not need to ask interactive questions, you can ignore ui, or just
-declare "add_info(report)".
+   >>> help(apport.ui.HookUI)
 
 Hook behaviour
 ==============

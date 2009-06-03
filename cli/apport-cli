@@ -311,7 +311,7 @@ class CLIUserInterface(apport.ui.UserInterface):
     def ui_stop_upload_progress(self):
         print
 
-    def hook_question_yesno(self, text):
+    def ui_question_yesno(self, text):
         '''Show a yes/no question.
 
         Return True if the user selected "Yes", False if selected "No" or
@@ -326,7 +326,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             return True
         return None
 
-    def hook_question_choice(self, text, options, multiple=False):
+    def ui_question_choice(self, text, options, multiple):
         '''Show an question with predefined choices.
 
         options is a list of strings to present. If multiple is True, they
@@ -378,7 +378,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         return result
 
-    def hook_question_file(self, text):
+    def ui_question_file(self, text):
         '''Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
