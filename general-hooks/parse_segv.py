@@ -75,6 +75,9 @@ class ParseSegv(object):
             full_insn_str = line.split(':',1)[1].strip()
 
         insn_parts = full_insn_str.split()
+        # Drop call target names "call   0xb7a805af <_Unwind_Find_FDE@plt+111>"
+        if insn_parts[-1].endswith('>') and insn_parts[-1].startswith('<'):
+            insn_parts.pop(-1)
         # Attempt to find arguments
         args_str = ''
         if len(insn_parts)>1:
@@ -411,6 +414,13 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertEquals(segv.pc, 0xb765bb48, segv.pc)
                 self.assertEquals(segv.insn, 'call', segv.insn)
                 self.assertEquals(segv.src, '*0x40(%edi)', segv.src)
+                self.assertEquals(segv.dest, None, segv.dest)
+
+                disasm = '0xb7aae5a0:   call   0xb7a805af <_Unwind_Find_FDE@plt+111>\n'
+                segv = ParseSegv(regs, disasm, '')
+                self.assertEquals(segv.pc, 0xb7aae5a0, segv.pc)
+                self.assertEquals(segv.insn, 'call', segv.insn)
+                self.assertEquals(segv.src, '0xb7a805af', segv.src)
                 self.assertEquals(segv.dest, None, segv.dest)
 
                 disasm = '0x09083540:    mov    0x4(%esp),%es:%ecx\n'
