@@ -25,6 +25,7 @@ def add_info(report):
     # This includes the Ubuntu packaged kernel version
     attach_file_if_exists(report, '/proc/version_signature', 'ProcVersionSignature')
 
-    package = report.get('Package', '').split()[0]
-    if package:
-        attach_conffiles(report, package)
+    if 'Package' in report:
+        package = report['Package'].split()[0]
+        if package and 'attach_conffiles' in dir():
+            attach_conffiles(report, package)
