@@ -147,9 +147,13 @@ class ParseSegv(object):
         # Handle standard offsets
         parts = arg.split('(')
         offset = parts[0]
+        # Handle negative signs
         sign = 1
         if offset.startswith('-'):
             sign = -1
+            offset = offset[1:]
+        # Skip call target dereferences
+        if offset.startswith('*'):
             offset = offset[1:]
         if len(offset)>0:
             if not offset.startswith('0x'):
@@ -158,19 +162,30 @@ class ParseSegv(object):
         else:
             add = 0
 
-        # This is not reachable since the regex in parse_disassembly will not
-        # allow unclosed parens
-        #if not parts[1].endswith(')'):
-        #    raise ValueError, 'Unknown offset expression: %s' % (arg)
-        parens = parts[1][0:-1]
-        reg_list = parens.split(',')
-        value = 1
-        for reg in reg_list:
-            if not reg.startswith('%'):
-                raise ValueError, 'Unknown register: %s' % (reg)
-            value *= self.regs[reg[1:]]
-        value += add
-        return segment + value
+        def _reg_val(self, text, val = 0):
+            if text.startswith('%'):
+                val = self.regs[text[1:]]
+            else:
+                val = int(text)
+            return val
+
+        value = 0
+        if len(parts)>1:
+            parens = parts[1][0:-1]
+            reg_list = parens.split(',')
+
+            base = 0
+            if len(reg_list)>0:
+                base = _reg_val(self, reg_list[0], base)
+            index = 0
+            if len(reg_list)>1:
+                index = _reg_val(self, reg_list[1], index)
+            scale = 1
+            if len(reg_list)>2:
+                scale = _reg_val(self, reg_list[2], scale)
+            value = base + index * scale
+
+        return segment + value + add
 
     def report(self):
         understood = False
@@ -189,26 +204,28 @@ class ParseSegv(object):
             details.append('insn (%s) does not access VMA' % (self.insn))
         else:
             # Verify source is readable
-            if self.src.startswith('%') or self.src.startswith('$') and not ':' in self.src:
-                details.append('source "%s" ok' % (self.src))
-            else:
-                addr = self.calculate_arg(self.src)
-                valid, out, short = self.validate_vma('r', addr, 'source "%s"' % (self.src))
-                details.append(out)
-                if not valid:
-                    reason.append(short)
-                    understood = True
+            if self.src:
+                if not ':' in self.src and (self.src.startswith('%') or self.src.startswith('$')):
+                    details.append('source "%s" ok' % (self.src))
+                else:
+                    addr = self.calculate_arg(self.src)
+                    valid, out, short = self.validate_vma('r', addr, 'source "%s"' % (self.src))
+                    details.append(out)
+                    if not valid:
+                        reason.append(short)
+                        understood = True
 
             # Verify destination is writable
-            if self.dest.startswith('%') and not ':' in self.dest:
-                details.append('destination "%s" ok' % (self.dest))
-            else:
-                addr = self.calculate_arg(self.dest)
-                valid, out, short = self.validate_vma('w', addr, 'destination "%s"' % (self.dest))
-                details.append(out)
-                if not valid:
-                    reason.append(short)
-                    understood = True
+            if self.dest:
+                if self.dest.startswith('%') and not ':' in self.dest:
+                    details.append('destination "%s" ok' % (self.dest))
+                else:
+                    addr = self.calculate_arg(self.dest)
+                    valid, out, short = self.validate_vma('w', addr, 'destination "%s"' % (self.dest))
+                    details.append(out)
+                    if not valid:
+                        reason.append(short)
+                        understood = True
 
         if not understood:
             reason.append('Reason could not be automatically determined.')
@@ -382,49 +399,70 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 disasm = 'monkey'
                 self.assertRaises(ValueError, ParseSegv, regs, disasm, '')
 
+                disasm = '0x8069ff0 <fopen@plt+132220>: cmpb   $0x0,(%eax,%ebx,1)\n'
+                segv = ParseSegv(regs, disasm, '')
+                self.assertEquals(segv.pc, 0x8069ff0, segv.pc)
+                self.assertEquals(segv.insn, 'cmpb', segv.insn)
+                self.assertEquals(segv.src, '$0x0', segv.src)
+                self.assertEquals(segv.dest, '(%eax,%ebx,1)', segv.dest)
+
+                disasm = '0xb765bb48 <_XSend+440>:  call   *0x40(%edi)\n'
+                segv = ParseSegv(regs, disasm, '')
+                self.assertEquals(segv.pc, 0xb765bb48, segv.pc)
+                self.assertEquals(segv.insn, 'call', segv.insn)
+                self.assertEquals(segv.src, '*0x40(%edi)', segv.src)
+                self.assertEquals(segv.dest, None, segv.dest)
+
                 disasm = '0x09083540:    mov    0x4(%esp),%es:%ecx\n'
                 segv = ParseSegv(regs, disasm, '')
-                self.assertEquals(segv.pc, 0x09083540, segv)
-                self.assertEquals(segv.insn, 'mov', segv)
-                self.assertEquals(segv.src, '0x4(%esp)', segv)
-                self.assertEquals(segv.dest, '%es:%ecx', segv)
+                self.assertEquals(segv.pc, 0x09083540, segv.pc)
+                self.assertEquals(segv.insn, 'mov', segv.insn)
+                self.assertEquals(segv.src, '0x4(%esp)', segv.src)
+                self.assertEquals(segv.dest, '%es:%ecx', segv.dest)
 
                 disasm = '0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n'
                 segv = ParseSegv(regs, disasm, '')
-                self.assertEquals(segv.pc, 0x08083540, segv)
-                self.assertEquals(segv.insn, 'lea', segv)
-                self.assertEquals(segv.src, '0x4(%esp)', segv)
-                self.assertEquals(segv.dest, '%ecx', segv)
+                self.assertEquals(segv.pc, 0x08083540, segv.pc)
+                self.assertEquals(segv.insn, 'lea', segv.insn)
+                self.assertEquals(segv.src, '0x4(%esp)', segv.src)
+                self.assertEquals(segv.dest, '%ecx', segv.dest)
 
                 disasm = '''0x404127 <exo_mount_hal_device_mount+167>:    
     repz cmpsb %es:(%rdi),%ds:(%rsi)\n'''
                 segv = ParseSegv(regs, disasm, '')
                 self.assertEquals(segv.pc, 0x0404127, segv.pc)
                 self.assertEquals(segv.insn, 'repz cmpsb', segv.insn)
-                self.assertEquals(segv.src, '%es:(%rdi)', segv)
-                self.assertEquals(segv.dest, '%ds:(%rsi)', segv)
+                self.assertEquals(segv.src, '%es:(%rdi)', segv.src)
+                self.assertEquals(segv.dest, '%ds:(%rsi)', segv.dest)
+
+                disasm = '0xb031765a <hufftab16+570>: add    0x3430433,%eax'
+                segv = ParseSegv(regs, disasm, '')
+                self.assertEquals(segv.pc, 0xb031765a, segv.pc)
+                self.assertEquals(segv.insn, 'add', segv.insn)
+                self.assertEquals(segv.src, '0x3430433', segv.src)
+                self.assertEquals(segv.dest, '%eax', segv.dest)
 
                 disasm = 'Dump ...\n0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n'
                 segv = ParseSegv(regs, disasm, '')
-                self.assertEquals(segv.pc, 0x08083540, segv)
-                self.assertEquals(segv.insn, 'lea', segv)
-                self.assertEquals(segv.src, '0x4(%esp)', segv)
-                self.assertEquals(segv.dest, '%ecx', segv)
+                self.assertEquals(segv.pc, 0x08083540, segv.pc)
+                self.assertEquals(segv.insn, 'lea', segv.insn)
+                self.assertEquals(segv.src, '0x4(%esp)', segv.src)
+                self.assertEquals(segv.dest, '%ecx', segv.dest)
 
                 disasm = '0x08083550 <main+0>:    nop\n'
                 segv = ParseSegv(regs, disasm, '')
-                self.assertEquals(segv.pc, 0x08083550, segv)
-                self.assertEquals(segv.insn, 'nop', segv)
-                self.assertEquals(segv.src, None, segv)
-                self.assertEquals(segv.dest, None, segv)
+                self.assertEquals(segv.pc, 0x08083550, segv.pc)
+                self.assertEquals(segv.insn, 'nop', segv.insn)
+                self.assertEquals(segv.src, None, segv.src)
+                self.assertEquals(segv.dest, None, segv.dest)
 
                 regs = 'esp 0x444'
                 disasm = '0x08083560 <main+0>:    push %ecx\n'
                 segv = ParseSegv(regs, disasm, '')
-                self.assertEquals(segv.pc, 0x08083560, segv)
-                self.assertEquals(segv.insn, 'push', segv)
-                self.assertEquals(segv.src, '%ecx', segv)
-                self.assertEquals(segv.dest, '(%esp)', segv)
+                self.assertEquals(segv.pc, 0x08083560, segv.pc)
+                self.assertEquals(segv.insn, 'push', segv.insn)
+                self.assertEquals(segv.src, '%ecx', segv.src)
+                self.assertEquals(segv.dest, '(%esp)', segv.dest)
 
             def test_invalid_02_maps(self):
                 '''Require valid maps'''
@@ -479,8 +517,9 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertEqual(segv.calculate_arg('0x10(%ecx)'), 0xbfc6af50, segv.regs['ecx'])
                 self.assertEqual(segv.calculate_arg('-0x20(%ecx)'), 0xbfc6af20, segv.regs['ecx'])
                 self.assertEqual(segv.calculate_arg('%fs:(%ecx)'), 0xbfc6af44, segv.regs['ecx'])
-                #self.assertEqual(, segv.regs)
-                #self.assertEqual(, segv.regs)
+                self.assertEqual(segv.calculate_arg('0x3404403'), 0x3404403, '0x3404403')
+                self.assertEqual(segv.calculate_arg('*0x40(%edi)'), 0x80834c0, segv.regs['edi'])
+                self.assertEqual(segv.calculate_arg('(%edx,%ebx,1)'), 0x26eff5, segv.regs['ebx'])
 
             def test_segv_pc_missing(self):
                 '''Handles PC in missing VMA'''
