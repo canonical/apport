@@ -1,4 +1,4 @@
-apport (1.2.1-0ubuntu3) UNRELEASED; urgency=low
+apport (1.2.1-0ubuntu3) karmic; urgency=low
 
   * debian/control: Bump Standards-Version to 3.8.1 (no changes necessary).
   * debian/control: Bump debhelper dependency for dh_icons, to satisfy
@@ -11,7 +11,7 @@ apport (1.2.1-0ubuntu3) UNRELEASED; urgency=low
     - Add segfault analysis hook for quick segv reviews. Thanks to Kees Cook!
     - run-tests: Replace hardcoded Python path with dynamically detected path.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 02 Jun 2009 12:04:05 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 03 Jun 2009 09:52:03 +0200
 
 apport (1.2.1-0ubuntu2) karmic; urgency=low
 
