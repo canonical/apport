@@ -39,9 +39,10 @@ def thread_collect_info(report, reportfile, package):
     report.add_hooks_info()
 
     # add title
-    title = report.standard_title()
-    if title:
-        report['Title'] = title
+    if 'Title' not in report:
+        title = report.standard_title()
+        if title:
+            report['Title'] = title
 
     # check package origin
     if 'Package' not in report or \
