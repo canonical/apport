@@ -11,7 +11,7 @@ if [ "$1" = local ]; then
 	exit 1
     fi
 else
-    basedir="/usr/lib/python2.5/site-packages"
+    basedir=`python -c 'import os.path; import problem_report; print os.path.dirname(problem_report.__file__)'`
     unset local
 fi
 
