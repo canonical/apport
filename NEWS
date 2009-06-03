@@ -6,6 +6,7 @@ detailled list of changes, please see ChangeLog.
 New features:
 - New function apport.hookutils.root_command_output() to run a command as root,
   through gksu/kdesudo/sudo, depending on the desktop environment.
+- Add general hook for analyzing reason of a segfault.
 
 Bug fixes:
 - Drop "UnsupportableReason" field, it is too similar to UnreportableReason and

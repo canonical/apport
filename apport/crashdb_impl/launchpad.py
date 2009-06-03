@@ -177,7 +177,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         interactive steps it wants to perform.'''
 
         args = {}
-        title = report.setdefault('Title', report.standard_title())
+        title = report.get('Title', report.standard_title())
         if title:
             args['field.title'] = title
 

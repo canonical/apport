@@ -37,6 +37,9 @@ fi
 
 if [ "$local" ]; then
     $mydir/test-crash-digger
+    python $mydir/general-hooks/parse_segv.py -v
+else
+    python $mydir/../general-hooks/parse_segv.py -v
 fi
 
 if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" = "|" ]; then

@@ -6,6 +6,9 @@ apport (1.2.1-0ubuntu3) UNRELEASED; urgency=low
   * general-hooks/ubuntu.py: Fix IndexError crash if report does not have a
     Package field. Check whether we actually have attach_conffiles() (which is
     not the case when running the upstream version).
+  * Merge trunk:
+    - launchpad.py: Fix crash for unset titles.
+    - Add segfault analysis hook for quick segv reviews. Thanks to Kees Cook!
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 02 Jun 2009 12:04:05 +0200
 
