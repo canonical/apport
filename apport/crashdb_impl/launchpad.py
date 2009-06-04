@@ -29,7 +29,7 @@ def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
         name = f.filename
-        if name in APPORT_FILES:
+        if name in APPORT_FILES or name.startswith('VarLogDistupgrade'):
             yield f
             
 def id_set(tasks):
