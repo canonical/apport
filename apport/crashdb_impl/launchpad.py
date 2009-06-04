@@ -79,7 +79,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             launchpad_instance = EDGE_SERVICE_ROOT
 
         auth_dir = os.path.dirname(self.auth)
-        if not os.path.isdir(auth_dir):
+        if auth_dir and not os.path.isdir(auth_dir):
             os.makedirs(auth_dir)
 
         try:
