@@ -915,6 +915,9 @@ databases = {
             self.present_package_error_response = None
             self.present_kernel_error_response = None
             self.present_details_response = None
+            self.question_yesno_response = None
+            self.question_choice_response = None
+            self.question_file_response = None
 
             self.opened_url = None
 
@@ -972,6 +975,18 @@ databases = {
 
         def open_url(self, url):
             self.opened_url = url
+
+        def ui_question_yesno(self, text):
+            self.msg_text = text
+            return self.question_yesno_response
+
+        def ui_question_choice(self, text, options, multiple):
+            self.msg_text = text
+            return self.question_choice_response
+
+        def ui_question_file(self, text):
+            self.msg_text = text
+            return self.question_file_response
 
     class _UserInterfaceTest(unittest.TestCase):
         def setUp(self):
@@ -1717,6 +1732,91 @@ CoreDump: base64
             for s in bad_strings:
                 self.failIf(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
 
+        def _run_hook(self, code):
+            f = open(os.path.join(self.hookdir, 'coreutils.py'), 'w')
+            f.write('def add_info(report, ui):\n%s\n' % 
+                    '\n'.join(['    ' + l for l in code.splitlines()]))
+            f.close()
+            self.ui.options.package = 'coreutils'
+            self.ui.run_report_bug()
+
+        def test_interactive_hooks_information(self):
+            '''interactive hooks: HookUI.information()'''
+
+            self._run_hook('''report['begin'] = '1'
+ui.information('InfoText')
+report['end'] = '1'
+''')
+            self.assertEqual(self.ui.report['begin'], '1')
+            self.assertEqual(self.ui.report['end'], '1')
+            self.assertEqual(self.ui.msg_text, 'InfoText')
+
+        def test_interactive_hooks_yesno(self):
+            '''interactive hooks: HookUI.yesno()'''
+
+            self.ui.question_yesno_response = True
+            self._run_hook('''report['begin'] = '1'
+report['answer'] = str(ui.yesno('YesNo?'))
+report['end'] = '1'
+''')
+            self.assertEqual(self.ui.report['begin'], '1')
+            self.assertEqual(self.ui.report['end'], '1')
+            self.assertEqual(self.ui.msg_text, 'YesNo?')
+            self.assertEqual(self.ui.report['answer'], 'True')
+
+            self.ui.question_yesno_response = False
+            self.ui.run_report_bug()
+            self.assertEqual(self.ui.report['answer'], 'False')
+            self.assertEqual(self.ui.report['end'], '1')
+
+            self.ui.question_yesno_response = None
+            self.ui.run_report_bug()
+            self.assertEqual(self.ui.report['answer'], 'None')
+            self.assertEqual(self.ui.report['end'], '1')
+
+        def test_interactive_hooks_file(self):
+            '''interactive hooks: HookUI.file()'''
+
+            self.ui.question_file_response = '/etc/fstab'
+            self._run_hook('''report['begin'] = '1'
+report['answer'] = str(ui.file('YourFile?'))
+report['end'] = '1'
+''')
+            self.assertEqual(self.ui.report['begin'], '1')
+            self.assertEqual(self.ui.report['end'], '1')
+            self.assertEqual(self.ui.msg_text, 'YourFile?')
+            self.assertEqual(self.ui.report['answer'], '/etc/fstab')
+
+            self.ui.question_file_response = None
+            self.ui.run_report_bug()
+            self.assertEqual(self.ui.report['answer'], 'None')
+            self.assertEqual(self.ui.report['end'], '1')
+
+        def test_interactive_hooks_choices(self):
+            '''interactive hooks: HookUI.choice()'''
+
+            self.ui.question_choice_response = [1]
+            self._run_hook('''report['begin'] = '1'
+report['answer'] = str(ui.choice('YourChoice?', ['foo', 'bar']))
+report['end'] = '1'
+''')
+            self.assertEqual(self.ui.report['begin'], '1')
+            self.assertEqual(self.ui.report['end'], '1')
+            self.assertEqual(self.ui.msg_text, 'YourChoice?')
+            self.assertEqual(self.ui.report['answer'], '[1]')
+
+            self.ui.question_choice_response = None
+            self.ui.run_report_bug()
+            self.assertEqual(self.ui.report['answer'], 'None')
+            self.assertEqual(self.ui.report['end'], '1')
+
+        def test_interactive_hooks_cancel(self):
+            '''interactive hooks: user cancels'''
+
+            self.assertRaises(SystemExit, self._run_hook, 
+                '''report['begin'] = '1'
+raise StopIteration
+report['end'] = '1'
+''')
 
     unittest.main()
-
