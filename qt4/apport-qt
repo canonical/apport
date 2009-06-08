@@ -324,7 +324,13 @@ class QT4UserInterface(apport.ui.UserInterface):
         Return True if the user selected "Yes", False if selected "No" or
         "None" on cancel/dialog closing.
         '''
-        raise NotImplementedError
+        response = QMessageBox.question (None, '',
+                unicode(text, 'UTF-8'), QMessageBox.Yes| QMessageBox.No|QMessageBox.Cancel)
+        if response == QMessageBox.Yes:
+            return True
+        if response == QMessageBox.No:
+            return False
+        return None
 
     def ui_question_choice(self, text, options, multiple):
         '''Show an question with predefined choices.
@@ -343,7 +349,10 @@ class QT4UserInterface(apport.ui.UserInterface):
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        raise NotImplementedError
+        response = QFileDialog.getOpenFileName(None, unicode(text, 'UTF-8'))
+        if response.length() == 0:
+            return None
+        return str(response)
 
 if __name__ == '__main__':
     app = QT4UserInterface()
