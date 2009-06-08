@@ -69,8 +69,6 @@ class CLIDialog:
         if not self.visible:
             self.show()
 
-        CLIProgressDialog.inhibit = True
-
         print
         try:
             # Only one button
@@ -95,8 +93,6 @@ class CLIDialog:
             print
             sys.exit(1)
 
-        CLIProgressDialog.inhibit = False
-
     def addbutton(self, button, hotkey=None):
         if hotkey:
             self.keys.append(hotkey)
@@ -110,16 +106,11 @@ class CLIDialog:
 class CLIProgressDialog(CLIDialog):
     '''Command line progress dialog wrapper.'''
 
-    inhibit = False
-
     def __init__(self, heading, text):
         CLIDialog.__init__(self, heading, text)
         self.progresscount = 0
 
     def set(self, progress = None):
-        if CLIProgressDialog.inhibit:
-            return
-
         self.progresscount = (self.progresscount + 1) % 5
         if self.progresscount:
             return
