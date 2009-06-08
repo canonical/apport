@@ -881,6 +881,7 @@ class HookUI:
 if  __name__ == '__main__':
     import unittest, shutil, signal, tempfile
     from cStringIO import StringIO
+    import apport.report
     import problem_report
 
     class _TestSuiteUserInterface(UserInterface):
@@ -1003,6 +1004,11 @@ databases = {
             self.report_file = tempfile.NamedTemporaryFile()
             self.update_report_file()
 
+            # set up our local hook directory
+            self.hookdir = tempfile.mkdtemp()
+            self.orig_hook_dir = apport.report._hook_dir
+            apport.report._hook_dir = self.hookdir
+
         def update_report_file(self):
             self.report_file.seek(0)
             self.report_file.truncate()
@@ -1023,6 +1029,9 @@ databases = {
 
             self.assertEqual(subprocess.call(['pidof', '/bin/cat']), 1, 'no stray cats')
             self.assertEqual(subprocess.call(['pidof', '/bin/sleep']), 1, 'no stray sleeps')
+
+            shutil.rmtree(self.hookdir)
+            apport.report._hook_dir = self.orig_hook_dir
 
         def test_format_filesize(self):
             '''format_filesize().'''
@@ -1644,6 +1653,13 @@ CoreDump: base64
         def test_run_crash_kernel(self):
             '''run_crash() for a kernel error.'''
 
+            # set up hook
+            f = open(os.path.join(self.hookdir, 'source_linux.py'), 'w')
+            f.write('''def add_info(report, ui): 
+    report['KernelDebug'] = 'LotsMoreInfo'
+''')
+            f.close()
+
             # generate crash report
             r = apport.Report('KernelCrash')
             r['Package'] = apport.packaging.get_kernel_package()
@@ -1676,8 +1692,7 @@ CoreDump: base64
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             # did we run the hooks properly?
-            self.assert_('ProcModules' in self.ui.report.keys())
-            self.assert_('Lspci' in self.ui.report.keys())
+            self.assert_('KernelDebug' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'KernelCrash')
 
         def test_run_crash_anonymity(self):
