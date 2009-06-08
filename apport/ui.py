@@ -442,9 +442,11 @@ free memory to automatically analyze the problem and send a report to the develo
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
                     try:
-                        icthread.join(0.1)
+                        hookui.process_event()
                     except KeyboardInterrupt:
                         sys.exit(1)
+
+                icthread.join()
                 icthread.exc_raise()
 
             if self.report.has_key('CrashDB'):
@@ -835,6 +837,13 @@ class HookUI:
         '''
         self.ui = ui
 
+        # variables for communicating with the UI thread
+        self._request_event = threading.Event()
+        self._response_event = threading.Event()
+        self._request_fn = None
+        self._request_args = None
+        self._response = None
+
     #
     # API for hooks
     #
@@ -845,7 +854,7 @@ class HookUI:
         This can be used for asking the user to perform a particular action,
         such as plugging in a device which does not work.
         '''
-        self.ui.ui_info_message('', text)
+        return self._trigger_ui_request('ui_info_message', '', text)
 
     def yesno(self, text):
         '''Show a yes/no question.
@@ -853,7 +862,7 @@ class HookUI:
         Return True if the user selected "Yes", False if selected "No" or
         "None" on cancel/dialog closing.
         '''
-        return self.ui.ui_question_yesno(text)
+        return self._trigger_ui_request('ui_question_yesno', text)
 
     def choice(self, text, options, multiple=False):
         '''Show an question with predefined choices.
@@ -865,14 +874,50 @@ class HookUI:
         Return list of selected option indexes, or None if the user cancelled.
         If multiple == False, the list will always have one element.
         '''
-        return self.ui.ui_question_choice(text, options, multiple)
+        return self._trigger_ui_request('ui_question_choice', text, options, multiple)
 
     def file(self, text):
         '''Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        return self.ui.ui_question_file(text)
+        return self._trigger_ui_request('ui_question_file', text)
+
+    #
+    # internal API for inter-thread communication
+    #
+
+    def _trigger_ui_request(self, fn, *args):
+        '''Called by HookUi functions in info collection thread.'''
+
+        # only one at a time
+        assert not self._request_event.is_set()
+        assert not self._response_event.is_set()
+        assert self._request_fn == None
+
+        self._response = None
+        self._request_fn = fn
+        self._request_args = args
+        self._request_event.set()
+        self._response_event.wait()
+
+        self._request_fn = None
+        self._response_event.clear()
+
+        return self._response
+
+    def process_event(self):
+        '''Called by GUI thread to check and process hook UI requests.'''
+
+        # sleep for 0.1 seconds to wait for events
+        self._request_event.wait(0.1)
+        if not self._request_event.is_set():
+            return
+
+        assert not self._response_event.is_set()
+        self._request_event.clear()
+        self._response = getattr(self.ui, self._request_fn)(*self._request_args)
+        self._response_event.set()
 
 #
 # Test suite
