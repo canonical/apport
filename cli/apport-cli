@@ -319,11 +319,14 @@ class CLIUserInterface(apport.ui.UserInterface):
         '''
         dialog = CLIDialog(text, None)
         r_yes = dialog.addbutton('&Yes')
-        dialog.addbutton('&No')
-        if dialog.run() == r_yes:
+        r_no = dialog.addbutton('&No')
+        r_cancel = dialog.addbutton(_('&Cancel'))
+        result = dialog.run()
+        if result == r_yes:
             return True
-        if dialog.run() == r_no:
-            return True
+        if result == r_no:
+            return False
+        assert result == r_cancel
         return None
 
     def ui_question_choice(self, text, options, multiple):
