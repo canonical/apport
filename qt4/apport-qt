@@ -368,12 +368,10 @@ class QT4UserInterface(apport.ui.UserInterface):
 	if result == QDialog.Rejected:
 	    return None
 
-	index = 0
 	result = []
 	for c in range(0, dialog.vbox_choices.count()):
 	    if dialog.vbox_choices.itemAt(c).widget().isChecked():
-		result.append(index)
-	    index += 1
+		result.append(c)
 
 	return result
 
