@@ -38,7 +38,8 @@ class QT4Dialog(QDialog):
         uic.loadUi(os.path.join(os.path.dirname(sys.argv[0]), ui), self)
 
         self.setWindowTitle (title)
-        self.findChild(QLabel, 'heading').setText('<h2>%s</h2>' % heading)
+	if self.findChild(QLabel, 'heading'):
+	    self.findChild(QLabel, 'heading').setText('<h2>%s</h2>' % heading)
         self.findChild(QLabel, 'text').setText(text)
 
     def on_buttons_clicked(self, button):
@@ -68,6 +69,14 @@ class QT4ErrorDialog(QT4Dialog):
 
     def checked(self):
         return self.checker.isChecked()
+
+class QT4ChoicesDialog(QT4Dialog):
+    '''QT4 Choices dialog wrapper.'''
+
+    def __init__(self, title, heading, text, choices=None):
+	QT4Dialog.__init__(self, 'choices.ui', title, heading, text)
+
+	#FIXME: Need to finish this up
 
 class QT4ProgressDialog(QT4Dialog):
     '''QT4 Progress dialog wrapper.'''
@@ -342,7 +351,35 @@ class QT4UserInterface(apport.ui.UserInterface):
         Return list of selected option indexes, or None if the user cancelled.
         If multiple == False, the list will always have one element.
         '''
-        raise NotImplementedError
+	dialog = QT4ChoicesDialog("Apport", None, text, choices=None)
+	
+	b = None
+	for option in options:
+	    if multiple:
+		#b = QCheckBox(option, dialog.groupbox_choices)
+		b = QCheckBox(option)
+	    else:
+		#b = QRadioButton(option, dialog.groupbox_choices)
+		b = QRadioButton(option)
+	    dialog.vbox_choices.insertWidget(0, b)
+	
+	result = dialog.exec_()
+
+	if result == QDialog.Rejected:
+	    return None
+
+	index = 0
+	result = []
+	for c in range(0, dialog.vbox_choices.count()):
+	    button = dialog.vbox_choices.itemAt(c).widget()
+	    if button.isChecked():
+		result.append(index)
+	    index += 1
+	#for c in dialog.groupbox_choices.get_children():
+	#    if c.get_active():
+	#	result.append(index)
+	#    index += 1
+	return result
 
     def ui_question_file(self, text):
         '''Show a file selector dialog.
