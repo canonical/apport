@@ -371,14 +371,10 @@ class QT4UserInterface(apport.ui.UserInterface):
 	index = 0
 	result = []
 	for c in range(0, dialog.vbox_choices.count()):
-	    button = dialog.vbox_choices.itemAt(c).widget()
-	    if button.isChecked():
+	    if dialog.vbox_choices.itemAt(c).widget().isChecked():
 		result.append(index)
 	    index += 1
-	#for c in dialog.groupbox_choices.get_children():
-	#    if c.get_active():
-	#	result.append(index)
-	#    index += 1
+
 	return result
 
     def ui_question_file(self, text):
