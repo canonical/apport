@@ -1,9 +1,18 @@
 Apport per-package hooks
 ========================
 
-Packages can add additional fields (or even modify existing fields, if
-they want) of Apport crash or bug reports by placing a Python code
-snippet into
+In addition to the generic information apport collects, arbitrary
+package-specific data can be included in the report by adding package hooks.
+For example:
+
+ - Relevant log files
+ - Configuration files
+ - Current system state 
+
+Hooks can also ask interactive questions, cause a crash to be ignored, or the
+problem can be marked as "not reportable" with an explanation. 
+
+This happens by placing a Python code snippet into
 
   /usr/share/apport/package-hooks/<packagename>.py
 
@@ -13,14 +22,44 @@ or
 
 Apport will import this and call a function
 
-  add_info(report)
+  add_info(report, ui)
 
-and pass the currently processed problem report. This is an instance
-of apport.Report, and should mainly be used as a dictionary. Please
-see the Python help of this class for details:
+and pass two arguments:
 
-  >>> import apport
-  >>> help(apport.Report)
+ - The currently processed problem report. This is an instance of
+   apport.Report, and should mainly be used as a dictionary. Please see the
+   Python help of this class for details:
+   
+     python -c 'import apport; help(apport.Report)'
+
+ - An instance of apport.ui.HookUI which can be used to interactively get more
+   information from the user, such as asking for doing a particular action,
+   yes/no question, multiple choices, or a file selector. Please see the Python
+   help for available functions:
+
+     python -c 'import apport.ui; help(apport.ui.HookUI)'
+
+Hook behaviour
+==============
+
+If you just add information in hooks, Apport will always proceed with filing
+a report. You can influence this in various ways:
+
+ * The hook detects a situation which should not be reported as a problem,
+   because they happen on known-bad hardware, from a third-party repository, or
+   other situations. This can be achieved by adding a field
+
+      report['UnreportableReason'] = _('explanation')
+
+   Such reports are displayed by the apport frontends as unreportable with the
+   given explanation. Please ensure proper i18n for the texts.
+
+ * The user cancelled an interactive question for which the hook requires an
+   answer. Then you should call
+
+     raise StopIteration
+
+   to cancel the problem report submission.
 
 Package independent hooks
 =========================
@@ -35,6 +74,15 @@ hooks, except that they need to be put into
 
 The <hookname> can be arbitrary and should describe the functionality.
 
+Tags
+====
+Some bug tracking systems support tags to further categorize bug reports and
+make searching/duplication easier. Hooks can set tags with
+
+  report['Tags'] = 'tag1 tag2'
+
+i. e. a space separated list of tag names.
+
 Customize the crash DB to use
 =============================
 
@@ -42,6 +90,18 @@ To use another crash database than the default one, you should create
 an hook that adds a 'CrashDB' field with the name of the database to
 use. See /etc/apport/crashdb.conf and
 /etc/apport/crashdb.conf.d/*.conf for available databases.
+
+Standard hook functions
+=======================
+
+If you write hooks, please have a look at the apport.hookutils
+module first: 
+
+ python -c 'import apport.hookutils; help(apport.hookutils)'
+
+It provides readymade and safe functions many standard situations, 
+such as getting a command's output, attaching a file's contents, 
+attaching hardware related information, etc.
 
 Examples
 ========
@@ -52,39 +112,31 @@ binary package foo, put this into /usr/share/apport/package-hooks/foo.py:
 ------------ 8< ----------------
 import os.path
 
-def add_info(report):
+def add_info(report, ui):
     if os.path.exists('/var/log/foo.log'):
         report['FooLog'] = open('/var/log/foo.log').read()
 ------------ 8< ----------------
 
+
+Example with an interactive question and attaching sound hardware information:
+
+------------ 8< ----------------
+import apport.hookutils
+
+def add_info(report, ui):
+    apport.hookutils.attach_alsa(report)
+
+    ui.information('Now playing test sound...')
+
+    report['AplayOut'] = apport.hookutils.command_output(['aplay',
+	    '/usr/share/sounds/question.wav'])
+
+    response = ui.yesno('Did you hear the sound?')
+    if response == None: # user cancelled
+        raise StopIteration
+    report['SoundAudible'] = str(response)
+------------ 8< ----------------
+
 Apport itself ships a source package hook, see
 /usr/share/apport/package-hooks/source_apport.py.
-
-An interesting use case of hooks is to detect situations which should
-not be reported as bugs, because they happen on known-bad hardware,
-from a third-party repository, or other situations. This can be
-achieved by adding a field
-
-  report['UnreportableReason'] = _('explanation')
-
-Such reports are displayed by the apport frontends as
-unsupportable/unreportable with the given explanation. Please ensure
-proper i18n for the texts.
-
-If you want to entirely ignore a crash without presenting an
-explanatory error dialog box, use "Ignore" instead of
-"UnreportableReason":
-
-  report['Ignore'] = 'True'
-
-(the actual value does not matter, it just must be a string).
-
-If you write hooks, please have a look at the apport.hookutils
-module first: 
-
- python -c 'import apport.hookutils; help(apport.hookutils)'
-
-It provides readymade and safe functions many standard situations, 
-such as getting a command's output, attaching a file's contents, 
-attaching hardware related information, etc.
 

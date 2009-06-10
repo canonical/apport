@@ -22,12 +22,16 @@ import apport, apport.fileutils, REThread
 
 from apport.crashdb import get_crashdb
 
-def thread_collect_info(report, reportfile, package):
-    '''Encapsulate call to add_*_info() and update given report,
-    so that this function is suitable for threading.
+def thread_collect_info(report, reportfile, package, ui):
+    '''Collect information about report.
 
-    If reportfile is not None, the file is written back with the new data.'''
+    Encapsulate calls to add_*_info() and update given report, so that this
+    function is suitable for threading.
 
+    ui must be a HookUI instance, it gets passed to add_hooks_info().
+
+    If reportfile is not None, the file is written back with the new data.
+    '''
     report.add_gdb_info()
     if not package:
         if report.has_key('ExecutablePath'):
@@ -36,12 +40,14 @@ def thread_collect_info(report, reportfile, package):
             raise KeyError, 'called without a package, and report does not have ExecutablePath'
     report.add_package_info(package)
     report.add_os_info()
-    report.add_hooks_info()
+    if report.add_hooks_info(ui):
+        sys.exit(0)
 
     # add title
-    title = report.standard_title()
-    if title:
-        report['Title'] = title
+    if 'Title' not in report:
+        title = report.standard_title()
+        if title:
+            report['Title'] = title
 
     # check package origin
     if 'Package' not in report or \
@@ -427,17 +433,21 @@ free memory to automatically analyze the problem and send a report to the develo
             # display a progress dialog
             self.ui_start_info_collection_progress()
 
+            hookui = HookUI(self)
+
             if not self.report.has_key('Stacktrace'):
                 icthread = REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
-                    args=(self.report, self.report_file, self.cur_package))
+                    args=(self.report, self.report_file, self.cur_package, hookui))
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
                     try:
-                        icthread.join(0.1)
+                        hookui.process_event()
                     except KeyboardInterrupt:
                         sys.exit(1)
+
+                icthread.join()
                 icthread.exc_raise()
 
             if self.report.has_key('CrashDB'):
@@ -781,6 +791,135 @@ might be helpful for the developers.'))
 
         pass
 
+    #
+    # Additional UI dialogs; these are not required by Apport itself, but can
+    # be used by interactive package hooks
+    #
+
+    def ui_question_yesno(self, text):
+        '''Show a yes/no question.
+
+        Return True if the user selected "Yes", False if selected "No" or
+        "None" on cancel/dialog closing.
+        '''
+        raise NotImplementedError, 'this function must be overridden by subclasses'
+
+    def ui_question_choice(self, text, options, multiple):
+        '''Show an question with predefined choices.
+
+        options is a list of strings to present. If multiple is True, they
+        should be check boxes, if multiple is False they should be radio
+        buttons.
+
+        Return list of selected option indexes, or None if the user cancelled.
+        If multiple == False, the list will always have one element.
+        '''
+        raise NotImplementedError, 'this function must be overridden by subclasses'
+
+    def ui_question_file(self, text):
+        '''Show a file selector dialog.
+
+        Return path if the user selected a file, or None if cancelled.
+        '''
+        raise NotImplementedError, 'this function must be overridden by subclasses'
+
+class HookUI:
+    '''Interactive functions which can be used in package hooks.
+
+    This provides an interface for package hooks which need to ask interactive
+    questions. Directly passing the UserInterface instance to the hooks needs
+    to be avoided, since we need to call the UI methods in a different thread,
+    and also don't want hooks to be able to poke in the UI.
+    '''
+    def __init__(self, ui):
+        '''Create a HookUI object.
+
+        ui is the UserInterface instance to wrap.
+        '''
+        self.ui = ui
+
+        # variables for communicating with the UI thread
+        self._request_event = threading.Event()
+        self._response_event = threading.Event()
+        self._request_fn = None
+        self._request_args = None
+        self._response = None
+
+    #
+    # API for hooks
+    #
+
+    def information(self, text):
+        '''Show an information with OK/Cancel buttons.
+
+        This can be used for asking the user to perform a particular action,
+        such as plugging in a device which does not work.
+        '''
+        return self._trigger_ui_request('ui_info_message', '', text)
+
+    def yesno(self, text):
+        '''Show a yes/no question.
+
+        Return True if the user selected "Yes", False if selected "No" or
+        "None" on cancel/dialog closing.
+        '''
+        return self._trigger_ui_request('ui_question_yesno', text)
+
+    def choice(self, text, options, multiple=False):
+        '''Show an question with predefined choices.
+
+        options is a list of strings to present. If multiple is True, they
+        should be check boxes, if multiple is False they should be radio
+        buttons.
+
+        Return list of selected option indexes, or None if the user cancelled.
+        If multiple == False, the list will always have one element.
+        '''
+        return self._trigger_ui_request('ui_question_choice', text, options, multiple)
+
+    def file(self, text):
+        '''Show a file selector dialog.
+
+        Return path if the user selected a file, or None if cancelled.
+        '''
+        return self._trigger_ui_request('ui_question_file', text)
+
+    #
+    # internal API for inter-thread communication
+    #
+
+    def _trigger_ui_request(self, fn, *args):
+        '''Called by HookUi functions in info collection thread.'''
+
+        # only one at a time
+        assert not self._request_event.is_set()
+        assert not self._response_event.is_set()
+        assert self._request_fn == None
+
+        self._response = None
+        self._request_fn = fn
+        self._request_args = args
+        self._request_event.set()
+        self._response_event.wait()
+
+        self._request_fn = None
+        self._response_event.clear()
+
+        return self._response
+
+    def process_event(self):
+        '''Called by GUI thread to check and process hook UI requests.'''
+
+        # sleep for 0.1 seconds to wait for events
+        self._request_event.wait(0.1)
+        if not self._request_event.is_set():
+            return
+
+        assert not self._response_event.is_set()
+        self._request_event.clear()
+        self._response = getattr(self.ui, self._request_fn)(*self._request_args)
+        self._response_event.set()
+
 #
 # Test suite
 #
@@ -788,6 +927,7 @@ might be helpful for the developers.'))
 if  __name__ == '__main__':
     import unittest, shutil, signal, tempfile
     from cStringIO import StringIO
+    import apport.report
     import problem_report
 
     class _TestSuiteUserInterface(UserInterface):
@@ -821,6 +961,9 @@ databases = {
             self.present_package_error_response = None
             self.present_kernel_error_response = None
             self.present_details_response = None
+            self.question_yesno_response = None
+            self.question_choice_response = None
+            self.question_file_response = None
 
             self.opened_url = None
 
@@ -879,6 +1022,18 @@ databases = {
         def open_url(self, url):
             self.opened_url = url
 
+        def ui_question_yesno(self, text):
+            self.msg_text = text
+            return self.question_yesno_response
+
+        def ui_question_choice(self, text, options, multiple):
+            self.msg_text = text
+            return self.question_choice_response
+
+        def ui_question_file(self, text):
+            self.msg_text = text
+            return self.question_file_response
+
     class _UserInterfaceTest(unittest.TestCase):
         def setUp(self):
             # we test a few strings, don't get confused by translations
@@ -910,6 +1065,11 @@ databases = {
             self.report_file = tempfile.NamedTemporaryFile()
             self.update_report_file()
 
+            # set up our local hook directory
+            self.hookdir = tempfile.mkdtemp()
+            self.orig_hook_dir = apport.report._hook_dir
+            apport.report._hook_dir = self.hookdir
+
         def update_report_file(self):
             self.report_file.seek(0)
             self.report_file.truncate()
@@ -930,6 +1090,9 @@ databases = {
 
             self.assertEqual(subprocess.call(['pidof', '/bin/cat']), 1, 'no stray cats')
             self.assertEqual(subprocess.call(['pidof', '/bin/sleep']), 1, 'no stray sleeps')
+
+            shutil.rmtree(self.hookdir)
+            apport.report._hook_dir = self.orig_hook_dir
 
         def test_format_filesize(self):
             '''format_filesize().'''
@@ -1551,6 +1714,13 @@ CoreDump: base64
         def test_run_crash_kernel(self):
             '''run_crash() for a kernel error.'''
 
+            # set up hook
+            f = open(os.path.join(self.hookdir, 'source_linux.py'), 'w')
+            f.write('''def add_info(report, ui): 
+    report['KernelDebug'] = 'LotsMoreInfo'
+''')
+            f.close()
+
             # generate crash report
             r = apport.Report('KernelCrash')
             r['Package'] = apport.packaging.get_kernel_package()
@@ -1583,8 +1753,7 @@ CoreDump: base64
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             # did we run the hooks properly?
-            self.assert_('ProcModules' in self.ui.report.keys())
-            self.assert_('Lspci' in self.ui.report.keys())
+            self.assert_('KernelDebug' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'KernelCrash')
 
         def test_run_crash_anonymity(self):
@@ -1609,6 +1778,91 @@ CoreDump: base64
             for s in bad_strings:
                 self.failIf(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
 
+        def _run_hook(self, code):
+            f = open(os.path.join(self.hookdir, 'coreutils.py'), 'w')
+            f.write('def add_info(report, ui):\n%s\n' % 
+                    '\n'.join(['    ' + l for l in code.splitlines()]))
+            f.close()
+            self.ui.options.package = 'coreutils'
+            self.ui.run_report_bug()
+
+        def test_interactive_hooks_information(self):
+            '''interactive hooks: HookUI.information()'''
+
+            self._run_hook('''report['begin'] = '1'
+ui.information('InfoText')
+report['end'] = '1'
+''')
+            self.assertEqual(self.ui.report['begin'], '1')
+            self.assertEqual(self.ui.report['end'], '1')
+            self.assertEqual(self.ui.msg_text, 'InfoText')
+
+        def test_interactive_hooks_yesno(self):
+            '''interactive hooks: HookUI.yesno()'''
+
+            self.ui.question_yesno_response = True
+            self._run_hook('''report['begin'] = '1'
+report['answer'] = str(ui.yesno('YesNo?'))
+report['end'] = '1'
+''')
+            self.assertEqual(self.ui.report['begin'], '1')
+            self.assertEqual(self.ui.report['end'], '1')
+            self.assertEqual(self.ui.msg_text, 'YesNo?')
+            self.assertEqual(self.ui.report['answer'], 'True')
+
+            self.ui.question_yesno_response = False
+            self.ui.run_report_bug()
+            self.assertEqual(self.ui.report['answer'], 'False')
+            self.assertEqual(self.ui.report['end'], '1')
+
+            self.ui.question_yesno_response = None
+            self.ui.run_report_bug()
+            self.assertEqual(self.ui.report['answer'], 'None')
+            self.assertEqual(self.ui.report['end'], '1')
+
+        def test_interactive_hooks_file(self):
+            '''interactive hooks: HookUI.file()'''
+
+            self.ui.question_file_response = '/etc/fstab'
+            self._run_hook('''report['begin'] = '1'
+report['answer'] = str(ui.file('YourFile?'))
+report['end'] = '1'
+''')
+            self.assertEqual(self.ui.report['begin'], '1')
+            self.assertEqual(self.ui.report['end'], '1')
+            self.assertEqual(self.ui.msg_text, 'YourFile?')
+            self.assertEqual(self.ui.report['answer'], '/etc/fstab')
+
+            self.ui.question_file_response = None
+            self.ui.run_report_bug()
+            self.assertEqual(self.ui.report['answer'], 'None')
+            self.assertEqual(self.ui.report['end'], '1')
+
+        def test_interactive_hooks_choices(self):
+            '''interactive hooks: HookUI.choice()'''
+
+            self.ui.question_choice_response = [1]
+            self._run_hook('''report['begin'] = '1'
+report['answer'] = str(ui.choice('YourChoice?', ['foo', 'bar']))
+report['end'] = '1'
+''')
+            self.assertEqual(self.ui.report['begin'], '1')
+            self.assertEqual(self.ui.report['end'], '1')
+            self.assertEqual(self.ui.msg_text, 'YourChoice?')
+            self.assertEqual(self.ui.report['answer'], '[1]')
+
+            self.ui.question_choice_response = None
+            self.ui.run_report_bug()
+            self.assertEqual(self.ui.report['answer'], 'None')
+            self.assertEqual(self.ui.report['end'], '1')
+
+        def test_interactive_hooks_cancel(self):
+            '''interactive hooks: user cancels'''
+
+            self.assertRaises(SystemExit, self._run_hook, 
+                '''report['begin'] = '1'
+raise StopIteration
+report['end'] = '1'
+''')
 
     unittest.main()
-

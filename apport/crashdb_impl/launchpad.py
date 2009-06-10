@@ -29,7 +29,7 @@ def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
         name = f.filename
-        if name in APPORT_FILES:
+        if name in APPORT_FILES or name.startswith('VarLogDistupgrade'):
             yield f
             
 def id_set(tasks):
@@ -79,7 +79,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             launchpad_instance = EDGE_SERVICE_ROOT
 
         auth_dir = os.path.dirname(self.auth)
-        if not os.path.isdir(auth_dir):
+        if auth_dir and not os.path.isdir(auth_dir):
             os.makedirs(auth_dir)
 
         try:
@@ -522,10 +522,13 @@ in a dependent package.' % master,
             task.transitionToStatus(status='Invalid')
             bug.newMessage(content=invalid_msg,
                     subject='Crash report cannot be processed')
-#            b.attachments.remove(
-#                func=lambda a: re.match('^(CoreDump.gz$|Stacktrace.txt|ThreadStacktrace.txt|\
-#Dependencies.txt$|ProcMaps.txt$|ProcStatus.txt$|Registers.txt$|\
-#Disassembly.txt$)', a.lp_filename))
+            
+            for a in bug.attachments:
+                if a.title == 'CoreDump.gz':
+                    try:
+                        a.removeFromBug()
+                    except HTTPError:
+                        pass # LP#315387 workaround
         else:
             if 'apport-failed-retrace' not in bug.tags:
                 bug.tags = bug.tags + ['apport-failed-retrace'] # LP#254901 workaround

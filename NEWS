@@ -1,9 +1,15 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.3 (UNRELEASED)
-------------------
+1.3 (2009-06-10)
+----------------
 New features:
+- Interactive package hooks:
+  * Add apport.ui.HookUI class which provides GUI functionality such as yes/no
+    questions or file dialogs to hooks.
+  * add_info() in package hooks now can (optionally) take a second argument which
+    is the HookUI instance.
+  * See doc/package-hooks.txt for details.
 - New function apport.hookutils.root_command_output() to run a command as root,
   through gksu/kdesudo/sudo, depending on the desktop environment.
 - Add general hook for analyzing reason of a segfault.
