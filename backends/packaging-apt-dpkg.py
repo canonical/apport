@@ -27,8 +27,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._apt_cache = None
         self._contents_dir = None
         self._mirror = None
-        # Checking whether we should use the API from python-apt 0.7.9
-        self.apt_078 = hasattr(apt.Package, 'isInstalled')
+        # Checking whether we should use the API from python-apt 0.7.8
+        self.apt_078 = not hasattr(apt.Package, 'installed')
 
         self.configuration = '/etc/default/apport'
 
@@ -119,7 +119,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         origins = None
         if self.apt_078:
-            origins = pkg.cadidateOrigin
+            origins = pkg.candidateOrigin
         else:
             origins = pkg.candidate.origins
         if origins: # might be None
