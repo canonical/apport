@@ -241,6 +241,81 @@ class GTKUserInterface(apport.ui.UserInterface):
         while gtk.events_pending():
             gtk.main_iteration(False)
 
+    def ui_question_yesno(self, text):
+        '''Show a yes/no question.
+
+        Return True if the user selected "Yes", False if selected "No" or
+        "None" on cancel/dialog closing.
+        '''
+        md = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION,
+            buttons=gtk.BUTTONS_YES_NO, message_format=text)
+        result = md.run()
+        md.hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
+        if result == gtk.RESPONSE_YES:
+            return True
+        if result == gtk.RESPONSE_NO:
+            return False
+        return None
+
+    def ui_question_choice(self, text, options, multiple):
+        '''Show an question with predefined choices.
+
+        options is a list of strings to present. If multiple is True, they
+        should be check boxes, if multiple is False they should be radio
+        buttons.
+
+        Return list of selected option indexes, or None if the user cancelled.
+        If multiple == False, the list will always have one element.
+        '''
+        d = self.w('dialog_choice')
+        d.set_default_size(400, -1)
+        self.w('label_choice_text').set_label(text)
+
+        # remove previous choices
+        self.w('vbox_choices').foreach(lambda w, _: w.destroy(), None)
+
+        b = None
+        for option in options:
+            if multiple:
+                b = gtk.CheckButton(option)
+            else:
+                # use previous radio button as group
+                b = gtk.RadioButton(b, option)
+            self.w('vbox_choices').pack_end(b)
+        self.w('vbox_choices').show_all()
+
+        result = d.run()
+        d.hide()
+        if result != gtk.RESPONSE_OK:
+            return None
+
+        index = 0
+        result = []
+        for c in self.w('vbox_choices').get_children():
+            if c.get_active():
+                result.append(index)
+            index += 1
+        return result
+
+    def ui_question_file(self, text):
+        '''Show a file selector dialog.
+
+        Return path if the user selected a file, or None if cancelled.
+        '''
+        md = gtk.FileChooserDialog(text,
+                parent=self.w('window_information_collection'),
+                buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        result = md.run()
+        md.hide()
+        while gtk.events_pending():
+            gtk.main_iteration(False)
+        if result == gtk.RESPONSE_OK:
+            return md.get_filenames()[0]
+        else:
+            return None
+
     #
     # Event handlers
     #

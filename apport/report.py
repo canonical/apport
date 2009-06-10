@@ -512,21 +512,31 @@ class Report(ProblemReport):
                 depth += 1
         self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
-    def add_hooks_info(self):
-        '''Check for an existing hook script and run it to add additional
-        package specific information.
+    def add_hooks_info(self, ui):
+        '''Run hook script for collecting package specific data.
 
         A hook script needs to be in _hook_dir/<Package>.py or in
-        _common_hook_dir/*.py and has to contain a function 'add_info(report)'
-        that takes and modifies a Report.'''
+        _common_hook_dir/*.py and has to contain a function 'add_info(report,
+        ui)' that takes and modifies a Report, and gets an UserInterface
+        reference for interactivity.
 
+        return True if the hook requested to stop the report filing process,
+        False otherwise.
+        '''
         symb = {}
 
         # common hooks
         for hook in glob.glob(_common_hook_dir + '/*.py'):
             try:
                 execfile(hook, symb)
-                symb['add_info'](self)
+                try:
+                    symb['add_info'](self, ui)
+                except TypeError:
+                    # older versions of apport did not pass UI, and hooks that
+                    # do not require it don't need to take it
+                    symb['add_info'](self)
+            except StopIteration:
+                return True
             except:
                 print >> sys.stderr, 'hook %s crashed:' % hook
                 traceback.print_exc()
@@ -538,7 +548,14 @@ class Report(ProblemReport):
             if os.path.exists(hook):
                 try:
                     execfile(hook, symb)
-                    symb['add_info'](self)
+                    try:
+                        symb['add_info'](self, ui)
+                    except TypeError:
+                        # older versions of apport did not pass UI, and hooks that
+                        # do not require it don't need to take it
+                        symb['add_info'](self)
+                except StopIteration:
+                    return True
                 except:
                     print >> sys.stderr, 'hook %s crashed:' % hook
                     traceback.print_exc()
@@ -550,11 +567,20 @@ class Report(ProblemReport):
             if os.path.exists(hook):
                 try:
                     execfile(hook, symb)
-                    symb['add_info'](self)
+                    try:
+                        symb['add_info'](self, ui)
+                    except TypeError:
+                        # older versions of apport did not pass UI, and hooks that
+                        # do not require it don't need to take it
+                        symb['add_info'](self)
+                except StopIteration:
+                    return True
                 except:
                     print >> sys.stderr, 'hook %s crashed:' % hook
                     traceback.print_exc()
                     pass
+
+        return False
 
     def search_bug_patterns(self, baseurl):
         '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
@@ -1484,18 +1510,27 @@ kill -SEGV $$
         _common_hook_dir = tempfile.mkdtemp()
         try:
             open(os.path.join(_hook_dir, 'foo.py'), 'w').write('''
+import sys
 def add_info(report):
     report['Field1'] = 'Field 1'
     report['Field2'] = 'Field 2\\nBla'
+    if 'Spethial' in report:
+        raise StopIteration
 ''')
 
             open(os.path.join(_common_hook_dir, 'foo1.py'), 'w').write('''
 def add_info(report):
     report['CommonField1'] = 'CommonField 1'
+    if report['Package'] == 'commonspethial':
+        raise StopIteration
 ''')
             open(os.path.join(_common_hook_dir, 'foo2.py'), 'w').write('''
 def add_info(report):
     report['CommonField2'] = 'CommonField 2'
+''')
+            open(os.path.join(_common_hook_dir, 'foo3.py'), 'w').write('''
+def add_info(report, ui):
+    report['CommonField3'] = str(ui)
 ''')
 
             # should only catch .py files
@@ -1506,58 +1541,73 @@ def add_info(report):
             r = Report()
             r['Package'] = 'bar'
             # should not throw any exceptions
-            r.add_hooks_info()
+            self.assertEqual(r.add_hooks_info('fake_ui'), False)
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package', 'CommonField1', 'CommonField2']), 
+                'Package', 'CommonField1', 'CommonField2', 'CommonField3']), 
                 'report has required fields')
 
             r = Report()
             r['Package'] = 'baz 1.2-3'
             # should not throw any exceptions
-            r.add_hooks_info()
+            self.assertEqual(r.add_hooks_info('fake_ui'), False)
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package', 'CommonField1', 'CommonField2']), 
+                'Package', 'CommonField1', 'CommonField2', 'CommonField3']), 
                 'report has required fields')
 
             r = Report()
             r['Package'] = 'foo'
-            r.add_hooks_info()
+            self.assertEqual(r.add_hooks_info('fake_ui'), False)
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
                 'Package', 'Field1', 'Field2', 'CommonField1',
-                'CommonField2']), 'report has required fields')
+                'CommonField2', 'CommonField3']), 'report has required fields')
             self.assertEqual(r['Field1'], 'Field 1')
             self.assertEqual(r['Field2'], 'Field 2\nBla')
             self.assertEqual(r['CommonField1'], 'CommonField 1')
             self.assertEqual(r['CommonField2'], 'CommonField 2')
+            self.assertEqual(r['CommonField3'], 'fake_ui')
 
             r = Report()
             r['Package'] = 'foo 4.5-6'
-            r.add_hooks_info()
+            self.assertEqual(r.add_hooks_info('fake_ui'), False)
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
                 'Package', 'Field1', 'Field2', 'CommonField1',
-                'CommonField2']), 'report has required fields')
+                'CommonField2', 'CommonField3']), 'report has required fields')
             self.assertEqual(r['Field1'], 'Field 1')
             self.assertEqual(r['Field2'], 'Field 2\nBla')
             self.assertEqual(r['CommonField1'], 'CommonField 1')
             self.assertEqual(r['CommonField2'], 'CommonField 2')
 
+            # test hook abort
+            r['Spethial'] = '1'
+            self.assertEqual(r.add_hooks_info('fake_ui'), True)
+            r = Report()
+            r['Package'] = 'commonspethial'
+            self.assertEqual(r.add_hooks_info('fake_ui'), True)
+
             # source package hook
             open(os.path.join(_hook_dir, 'source_foo.py'), 'w').write('''
-def add_info(report):
+def add_info(report, ui):
     report['Field1'] = 'Field 1'
     report['Field2'] = 'Field 2\\nBla'
+    if report['Package'] == 'spethial':
+        raise StopIteration
 ''')
             r = Report()
             r['SourcePackage'] = 'foo'
             r['Package'] = 'libfoo 3'
-            r.add_hooks_info()
+            self.assertEqual(r.add_hooks_info('fake_ui'), False)
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
                 'Package', 'SourcePackage', 'Field1', 'Field2', 'CommonField1',
-                'CommonField2']), 'report has required fields')
+                'CommonField2', 'CommonField3']), 'report has required fields')
             self.assertEqual(r['Field1'], 'Field 1')
             self.assertEqual(r['Field2'], 'Field 2\nBla')
             self.assertEqual(r['CommonField1'], 'CommonField 1')
             self.assertEqual(r['CommonField2'], 'CommonField 2')
+            self.assertEqual(r['CommonField3'], 'fake_ui')
+
+            # test hook abort
+            r['Package'] = 'spethial'
+            self.assertEqual(r.add_hooks_info('fake_ui'), True)
 
         finally:
             shutil.rmtree(_hook_dir)

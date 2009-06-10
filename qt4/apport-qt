@@ -38,7 +38,8 @@ class QT4Dialog(QDialog):
         uic.loadUi(os.path.join(os.path.dirname(sys.argv[0]), ui), self)
 
         self.setWindowTitle (title)
-        self.findChild(QLabel, 'heading').setText('<h2>%s</h2>' % heading)
+	if self.findChild(QLabel, 'heading'):
+	    self.findChild(QLabel, 'heading').setText('<h2>%s</h2>' % heading)
         self.findChild(QLabel, 'text').setText(text)
 
     def on_buttons_clicked(self, button):
@@ -68,6 +69,12 @@ class QT4ErrorDialog(QT4Dialog):
 
     def checked(self):
         return self.checker.isChecked()
+
+class QT4ChoicesDialog(QT4Dialog):
+    '''QT4 Choices dialog wrapper.'''
+
+    def __init__(self, title, heading, text, choices=None):
+	QT4Dialog.__init__(self, 'choices.ui', title, heading, text)
 
 class QT4ProgressDialog(QT4Dialog):
     '''QT4 Progress dialog wrapper.'''
@@ -317,6 +324,62 @@ class QT4UserInterface(apport.ui.UserInterface):
         '''Close debug data upload progress window.'''
 
         self.progress.hide()
+
+    def ui_question_yesno(self, text):
+        '''Show a yes/no question.
+
+        Return True if the user selected "Yes", False if selected "No" or
+        "None" on cancel/dialog closing.
+        '''
+        response = QMessageBox.question (None, '',
+                unicode(text, 'UTF-8'), QMessageBox.Yes| QMessageBox.No|QMessageBox.Cancel)
+        if response == QMessageBox.Yes:
+            return True
+        if response == QMessageBox.No:
+            return False
+        return None
+
+    def ui_question_choice(self, text, options, multiple):
+        '''Show an question with predefined choices.
+
+        options is a list of strings to present. If multiple is True, they
+        should be check boxes, if multiple is False they should be radio
+        buttons.
+
+        Return list of selected option indexes, or None if the user cancelled.
+        If multiple == False, the list will always have one element.
+        '''
+	dialog = QT4ChoicesDialog("Apport", None, text, choices=None)
+	
+	b = None
+	for option in options:
+	    if multiple:
+		b = QCheckBox(option)
+	    else:
+		b = QRadioButton(option)
+	    dialog.vbox_choices.insertWidget(0, b)
+	
+	result = dialog.exec_()
+
+	if result == QDialog.Rejected:
+	    return None
+
+	result = []
+	for c in range(0, dialog.vbox_choices.count()):
+	    if dialog.vbox_choices.itemAt(c).widget().isChecked():
+		result.append(c)
+
+	return result
+
+    def ui_question_file(self, text):
+        '''Show a file selector dialog.
+
+        Return path if the user selected a file, or None if cancelled.
+        '''
+        response = QFileDialog.getOpenFileName(None, unicode(text, 'UTF-8'))
+        if response.length() == 0:
+            return None
+        return str(response)
 
 if __name__ == '__main__':
     app = QT4UserInterface()
