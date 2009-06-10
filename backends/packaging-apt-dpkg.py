@@ -27,8 +27,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._apt_cache = None
         self._contents_dir = None
         self._mirror = None
-        # Checking whether we should use the API from python-apt 0.7.8
-        self.apt_078 = not hasattr(apt.Package, 'installed')
+        # Checking whether we should use the API from python-apt 0.7.9
+        self.apt_079 = not hasattr(apt.Package, 'installed')
 
         self.configuration = '/etc/default/apport'
 
@@ -63,7 +63,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''Return the installed version of a package.'''
 
         pkg = self._apt_pkg(package)
-        if self.apt_078:
+        if self.apt_079:
             if not pkg.isInstalled:
                 raise ValueError, 'package does not exist'
             return pkg.installedVersion
@@ -76,7 +76,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
 
-        if self.apt_078:
+        if self.apt_079:
             return self._apt_pkg(package).candidateVersion
         else:
             return self._apt_pkg(package).candidate.version
@@ -94,7 +94,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-        if self.apt_078:
+        if self.apt_079:
             return self._apt_pkg(package).sourcePackageName
         else:
             return self._apt_pkg(package).candidate.source_name
@@ -110,7 +110,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         pkg = self._apt_pkg(package)
         # some PPA packages have installed version None, see LP#252734
-        if self.apt_078:
+        if self.apt_079:
             if pkg.isInstalled and pkg.installedVersion is None:
                 return False
         else:
@@ -118,7 +118,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 return False
 
         origins = None
-        if self.apt_078:
+        if self.apt_079:
             origins = pkg.candidateOrigin
         else:
             origins = pkg.candidate.origins
@@ -135,7 +135,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
-        if self.apt_078:
+        if self.apt_079:
             return self._apt_pkg(package).architecture or 'unknown'
         else:
             return self._apt_pkg(package).candidate.architecture or 'unknown'
@@ -374,7 +374,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 # this fails for packages which are still installed, but gone from
                 # the archive; i. e. /var/lib/dpkg/status still knows about them
-                if self.apt_078:
+                if self.apt_079:
                     if not c[pkg]._lookupRecord:
                         raise KeyError
                     if 'Architecture: all' not in c[pkg]._records.Record:
@@ -393,7 +393,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 continue
 
             # ignore packages which are already installed in the right version
-            if self.apt_078:
+            if self.apt_079:
                 if (ver and c[pkg].isInstalled and c[pkg].installedVersion ==\
                     ver) or (not ver and c[pkg].isInstalled):
                     continue
@@ -403,7 +403,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     continue
 
             candidate_version = None
-            if self.apt_078:
+            if self.apt_079:
                 candidate_version = c[pkg].candidateVersion
             else:
                 candidate_version = c[pkg].candidate.version
@@ -498,7 +498,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             if os.geteuid() != 0:
                 print >> sys.stderr, 'You either need to call this program as root or install these packages manually:'
             for p in c.getChanges():
-                if self.apt_078:
+                if self.apt_079:
                     print >> sys.stderr, '  %s %s' % (p.name,
                                                       p.candidateVersion)
                 else:
