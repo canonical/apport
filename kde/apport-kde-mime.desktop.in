@@ -1,0 +1,11 @@
+[Desktop Entry]
+_Name=Report a problem...
+_Comment=Report a malfunction to the developers
+Exec=/usr/share/apport/apport-kde -c %f
+Icon=apport
+Terminal=false
+Type=Application
+MimeType=text/x-apport;
+Categories=KDE;Core;System;
+NoDisplay=true
+StartupNotify=true

@@ -1,0 +1,9 @@
+[Desktop Entry]
+# This is a deprecated method for KDE3 to make it recognize this MimeType
+Type=MimeType
+_Comment=Apport crash file
+Hidden=false
+Icon=apport
+# This must not have a trailing ";" for KDE3
+MimeType=text/x-apport
+Patterns=*.crash
