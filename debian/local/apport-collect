@@ -74,7 +74,7 @@ def collect(report, package):
         # this happens for source package tasks which do not have an identical
         # binary package name
         pass
-    report.add_hooks_info()
+    report.add_hooks_info(None)
 
 #
 # main
