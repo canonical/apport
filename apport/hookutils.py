@@ -208,11 +208,14 @@ def attach_alsa(report):
 def command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout. 
     
-    In case of failure, a textual error gets returned.
+    In case of failure, a textual error gets returned. This function forces
+    LC_MESSAGES to C, to avoid translated output in bug reports.
     '''
+    env = os.environ
+    env['LC_MESSAGES'] = 'C'
     try:
        sp = subprocess.Popen(command, stdout=subprocess.PIPE,
-                             stderr=stderr, close_fds=True)
+                             stderr=stderr, close_fds=True, env=env)
     except OSError, e:
        return 'Error: ' + str(e)
 

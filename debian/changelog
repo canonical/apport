@@ -3,6 +3,13 @@ apport (1.3-0ubuntu2) UNRELEASED; urgency=low
   * debian/local/apport-collect: Pass None as HookUI object. This will crash
     with interactive hooks, but is a good enough immediate bandaid.
     (LP: #385811)
+  * Merge fixes from trunk:
+    - packaging-apt-dpkg.py: Add backwards compatibility code for python-apt <
+      0.7.9 to not break backportability.
+    - hookutils.py, command_output(): Force LC_MESSAGES=C, to avoid translated
+      output in bug reports. (LP: #383230)
+    - apport-gtk.ui: Make details window resizable, and lower default size, so
+      that it will fit on small screens. (LP: #365517)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Jun 2009 12:41:14 +0200
 

@@ -390,7 +390,6 @@
   <object class="GtkDialog" id="dialog_bugreport">
     <property name="border_width">6</property>
     <property name="title">Apport</property>
-    <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="default_width">309</property>
     <property name="default_height">162</property>
@@ -475,7 +474,7 @@ After the problem report has been sent, please fill out the form in the automati
                     <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkTreeView" id="treeview_reportdetails">
-                        <property name="height_request">400</property>
+                        <property name="height_request">250</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="headers_visible">False</property>
@@ -889,7 +888,7 @@ After the problem report has been sent, please fill out the form in the automati
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
-          <object class="GtkVBox" id="vbox1">
+          <object class="GtkVBox" id="vbox2">
             <property name="visible">True</property>
             <property name="orientation">vertical</property>
             <child>
@@ -930,7 +929,7 @@ After the problem report has been sent, please fill out the form in the automati
             <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="button7">
                 <property name="label" translatable="yes">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -944,7 +943,7 @@ After the problem report has been sent, please fill out the form in the automati
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="button13">
                 <property name="label" translatable="yes">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -967,8 +966,8 @@ After the problem report has been sent, please fill out the form in the automati
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-6">button1</action-widget>
-      <action-widget response="-5">button2</action-widget>
+      <action-widget response="-6">button7</action-widget>
+      <action-widget response="-5">button13</action-widget>
     </action-widgets>
   </object>
 </interface>

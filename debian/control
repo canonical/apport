@@ -47,7 +47,7 @@ Package: python-apport
 XB-Python-Version: ${python:Versions}
 Section: python
 Architecture: all
-Depends: ${python:Depends}, python-apt (>= 0.7.9), python-problem-report (>= 0.94),
+Depends: ${python:Depends}, python-apt, python-problem-report (>= 0.94),
  python-launchpadlib, ${misc:Depends}
 Recommends: gdb
 Conflicts: python-apport-utils
