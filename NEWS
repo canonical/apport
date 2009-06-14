@@ -3,6 +3,9 @@ detailled list of changes, please see ChangeLog.
 
 1.3.1 (UNRELEASED)
 ------------------
+New features:
+ - Replaced Qt4 frontend with a KDE frontend for better KDE integration.
+
 Bug fixes:
  - packaging-apt-dpkg.py: Add backwards compatibility code for python-apt <
    0.7.9 to not break backportability.
