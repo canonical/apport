@@ -1,3 +1,10 @@
+apport (1.3-0ubuntu3) UNRELEASED; urgency=low
+
+  * Drop backends/packaging_rpm.py. We don't use it in the Ubuntu package at
+    all, and it's still in trunk.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jun 2009 16:01:49 +0200
+
 apport (1.3-0ubuntu2) karmic; urgency=low
 
   * debian/local/apport-collect: Pass None as HookUI object. This will crash
