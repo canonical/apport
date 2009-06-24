@@ -393,6 +393,32 @@ class Report(ProblemReport):
                             self['ProcEnviron'] += '\n'
                         self['ProcEnviron'] += 'PATH=(custom, no user)'
 
+    def add_kernel_crash_info(self, debugdir=None):
+        '''Add information from crash
+
+        This needs a VmCore in the Report
+        '''
+        if not self.has_key('VmCore'):
+            return
+        unlink_core = False
+        try:
+            if hasattr(self['VmCore'], 'find'):
+                (fd, core) = tempfile.mkstemp()
+                os.write(fd, self['VmCore'])
+                os.close(fd)
+                unlink_core = True
+            (uname,arch) = self['Uname'].split()[1:]
+            command = ["crash",
+                       "/boot/System.map-%s" % uname,
+                       "/usr/lib/debug/boot/vmlinux-%s" % uname,
+                       core
+                       ]
+            #out = _command_output(command) #, stderr=open('/dev/null'))
+            subprocess.call(command)
+        finally:
+            if unlink_core:
+                os.unlink(core)
+
     def add_gdb_info(self, debugdir=None):
         '''Add information from gdb.
 
