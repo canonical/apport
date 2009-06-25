@@ -243,10 +243,15 @@ if options.rebuild:
 
 # sanity checks
 required_fields = set(['CoreDump', 'ExecutablePath', 'Package'])
-if not required_fields.issubset(set(report.keys())):
+if report['ProblemType'] == 'KernelCrash':
+    if not set(['Package','VmCore']).issubset(set(report.keys())):
+        print >> sys.stderr, 'report file does not contain the required fields'
+        sys.exit(0)
+elif not required_fields.issubset(set(report.keys())):
     print >> sys.stderr, 'report file does not contain required fields: ' + \
 	' '.join(required_fields)
     sys.exit(0)
+
 
 (installed, outdated_msg) = apport.packaging.install_retracing_packages(report,
     options.verbose, options.unpack_only, options.no_pkg,
@@ -265,6 +270,7 @@ else:
     # regenerate gdb info
     try:
         report.add_gdb_info()
+        report.add_kernel_crash_info()
         gen_source_stacktrace(report)
     except AssertionError:
         if outdated_msg:

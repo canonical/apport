@@ -401,16 +401,16 @@ class Report(ProblemReport):
         if not self.has_key('VmCore'):
             return
         unlink_core = False
+        ret = False
         try:
             if hasattr(self['VmCore'], 'find'):
                 (fd, core) = tempfile.mkstemp()
                 os.write(fd, self['VmCore'])
                 os.close(fd)
                 unlink_core = True
-            (uname,arch) = self['Uname'].split()[1:]
+            kver = self['Uname'].split()[1]
             command = ["crash",
-                       "/boot/System.map-%s" % uname,
-                       "/usr/lib/debug/boot/vmlinux-%s" % uname,
+                       "/usr/lib/debug/boot/vmlinux-%s" % kver,
                        core,
                        ]
             p = subprocess.Popen(command, 
@@ -423,11 +423,14 @@ class Report(ProblemReport):
             p.stdin.write("quit\n")
             # FIXME: split it up nicely etc
             out = p.stdout.read()
-            p.wait()
+            print out
+            ret = (p.wait() == 0)
             self["VmCoreRetraced"] = out
+            self["Stacktrace"] = out
         finally:
             if unlink_core:
                 os.unlink(core)
+        return ret
 
     def add_gdb_info(self, debugdir=None):
         '''Add information from gdb.

@@ -6,7 +6,7 @@ import apport.fileutils
 def test_kernel_crashreport(reportfile):
     report = apport.Report()
     report.load(open(reportfile))
-    report.add_kernel_crash_info()
+    preport.add_kernel_crash_info()
 
 
 if __name__ == "__main__":
