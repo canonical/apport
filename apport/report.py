@@ -411,10 +411,20 @@ class Report(ProblemReport):
             command = ["crash",
                        "/boot/System.map-%s" % uname,
                        "/usr/lib/debug/boot/vmlinux-%s" % uname,
-                       core
+                       core,
                        ]
-            #out = _command_output(command) #, stderr=open('/dev/null'))
-            subprocess.call(command)
+            p = subprocess.Popen(command, 
+                                 stdin=subprocess.PIPE,
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT)
+            p.stdin.write("bt -a -f\n")
+            p.stdin.write("ps\n")
+            p.stdin.write("runq\n")
+            p.stdin.write("quit\n")
+            # FIXME: split it up nicely etc
+            out = p.stdout.read()
+            p.wait()
+            self["VmCoreRetraced"] = out
         finally:
             if unlink_core:
                 os.unlink(core)
