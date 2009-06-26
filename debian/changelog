@@ -1,5 +1,15 @@
-apport (1.3-0ubuntu3) UNRELEASED; urgency=low
+apport (1.4-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream release. Compared to our previous snapshot, this changes:
+    - Replace Qt4 frontend with KDE frontend, thanks to Richard Johnson!
+    - apport/ui.py, run_report_bug(): Clean up PID information collection.
+    - gtk/apport-gtk.ui: Drop invalid icon reference. (LP: #389064)
+    - ui.py: Do not reject non-distro package reports if report sets CrashDB
+      (for third-party destination). (LP: #391015)
+    - bin/kernel_crashdump: Use packaging API properly.
+    - apport-gtk.ui: Drop erroneous translatable flag from stock buttons.
+    - Update German translations.
+  * debian/*: qt → kde, add transitional package for apport-qt.
   * Drop backends/packaging_rpm.py. We don't use it in the Ubuntu package at
     all, and it's still in trunk.
 

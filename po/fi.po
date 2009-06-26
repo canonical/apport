@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: martin.pitt@ubuntu.com\n"
-"POT-Creation-Date: 2009-05-15 10:35+0200\n"
+"POT-Creation-Date: 2009-06-14 23:21+0200\n"
 "PO-Revision-Date: 2008-09-20 10:19+0000\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: Finnish <fi@li.org>\n"
@@ -22,20 +22,20 @@ msgstr ""
 msgid "Sorry, %s closed unexpectedly"
 msgstr "Ikävä kyllä %s sulkeutui yllättäen"
 
-#: ../gtk/apport-gtk.py:68 ../apport/ui.py:147
+#: ../gtk/apport-gtk.py:68 ../apport/ui.py:153
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Ikävä kyllä ohjelma \"%s\" sulkeutui yllättäen"
 
-#: ../gtk/apport-gtk.py:110 ../qt4/apport-qt.py:194 ../cli/apport-cli.py:173
+#: ../gtk/apport-gtk.py:110 ../cli/apport-cli.py:181
 msgid "Your system encountered a serious kernel problem."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:114 ../qt4/apport-qt.py:198 ../cli/apport-cli.py:177
+#: ../gtk/apport-gtk.py:114 ../cli/apport-cli.py:185
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr "Voit auttaa kehittäjiä korjaaman ongelman ilmoittamalla siitä."
 
-#: ../gtk/apport-gtk.py:145 ../qt4/apport-qt.py:239 ../cli/apport-cli.py:212
+#: ../gtk/apport-gtk.py:145 ../cli/apport-cli.py:220
 msgid "(binary data)"
 msgstr "(binääritiedot)"
 
@@ -72,8 +72,8 @@ msgstr ""
 msgid "Application problem"
 msgstr "Ongelma sovelluksessa"
 
-#: ../gtk/apport-gtk.ui.h:10 ../qt4/apport-qt.py:246
-#, no-c-format, python-format
+#: ../gtk/apport-gtk.ui.h:10
+#, no-c-format
 msgid "Complete report (recommended; %s)"
 msgstr "Täydellinen raportti (suositus; %s)"
 
@@ -81,7 +81,7 @@ msgstr "Täydellinen raportti (suositus; %s)"
 msgid "Content of the report"
 msgstr "Raportin sisältö"
 
-#: ../gtk/apport-gtk.ui.h:12 ../qt4/apport-qt.py:146
+#: ../gtk/apport-gtk.ui.h:12
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -97,7 +97,7 @@ msgid ""
 "you report."
 msgstr "Kerätään tietoja ongelman korjaamisen helpottamiseksi."
 
-#: ../gtk/apport-gtk.ui.h:14 ../qt4/apport-qt.py:200
+#: ../gtk/apport-gtk.ui.h:14
 msgid "Kernel problem"
 msgstr "Ongelma käyttöjärjestelmän ytimessä"
 
@@ -105,8 +105,8 @@ msgstr "Ongelma käyttöjärjestelmän ytimessä"
 msgid "Package problem"
 msgstr "Ongelma paketissa"
 
-#: ../gtk/apport-gtk.ui.h:17 ../qt4/apport-qt.py:249
-#, no-c-format, python-format
+#: ../gtk/apport-gtk.ui.h:17
+#, no-c-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Pelkistetty raportti (hidas Internet-yhteys; %s)"
 
@@ -114,7 +114,7 @@ msgstr "Pelkistetty raportti (hidas Internet-yhteys; %s)"
 msgid "Restart _Program"
 msgstr "Uudelleenkäynnistä _ohjelma"
 
-#: ../gtk/apport-gtk.ui.h:19 ../qt4/apport-qt.py:299
+#: ../gtk/apport-gtk.ui.h:19
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -132,11 +132,11 @@ msgstr ""
 "ohjelman kehittäjille ongelman selvittämisessä mutta et välttämättä halua "
 "odottaa niiden lähettämistä, jos Internet-yhteytesi on hidas."
 
-#: ../gtk/apport-gtk.ui.h:21 ../qt4/apport-qt.py:298 ../cli/apport-cli.py:281
+#: ../gtk/apport-gtk.ui.h:21 ../cli/apport-cli.py:294
 msgid "Uploading problem information"
 msgstr "Lähetetään tiedot ongelmasta"
 
-#: ../gtk/apport-gtk.ui.h:22 ../qt4/apport-qt.py:179 ../cli/apport-cli.py:161
+#: ../gtk/apport-gtk.ui.h:22 ../cli/apport-cli.py:169
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr "Voi auttaa kehittäjiä korjaamaan ongelman raportoimalla ongelmasta."
@@ -153,107 +153,34 @@ msgstr "_Raportoi ongelma..."
 msgid "_Send Report"
 msgstr "_Lähetä raportti"
 
-#: ../gtk/apport-gtk.desktop.in.h:1 ../qt4/apport-qt.desktop.in.h:1
+#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
 msgid "Report a malfunction to the developers"
 msgstr "Raportoi toimintahäiriöstä sovelluksen kehittäjille"
 
-#: ../gtk/apport-gtk.desktop.in.h:2 ../qt4/apport-qt.desktop.in.h:2
+#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
 msgid "Report a problem..."
 msgstr "Raportoi ongelma"
 
-#: ../qt4/apport-qt.py:100
-msgid "&Details..."
-msgstr "&Yksityiskohdat..."
-
-#: ../qt4/apport-qt.py:137 ../qt4/apport-qt.py:143
-#, python-format
-msgid "Sorry, %s closed unexpectedly."
-msgstr "Ikävä kyllä %s sulkeutui yllättäen."
-
-#: ../qt4/apport-qt.py:140
-#, python-format
-msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "Ikävä kyllä ohjelma \"%s\" sulkeutui yllättäen."
-
-#: ../qt4/apport-qt.py:149
-msgid "&Ignore future crashes of this program version"
-msgstr "Älä huomioi tämän ohjelmaversion kaatumisia jatkossa"
-
-#: ../qt4/apport-qt.py:151 ../qt4/apport-qt.py:182 ../qt4/apport-qt.py:202
-#: ../cli/apport-cli.py:143 ../cli/apport-cli.py:162 ../cli/apport-cli.py:180
-msgid "&Report Problem..."
-msgstr "&Raportoi ongelma..."
-
-#: ../qt4/apport-qt.py:159
-msgid "Restart &Program"
-msgstr "Käynnistä &ohjelma uudelleen"
-
-#: ../qt4/apport-qt.py:177
-#, python-format
-msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "Ikävä kyllä paketin \"%s\" asennus tai päivitys epäonnistui."
-
-#. Let's get the dialog and modify it to our needs
-#: ../qt4/apport-qt.py:215
-msgid "Generic error"
-msgstr "Yleinen virhe"
-
-#: ../qt4/apport-qt.py:216 ../cli/apport-cli.py:192
-msgid "Send problem report to the developers?"
-msgstr "Lähetetäänkö raportti ongelmasta kehittäjille?"
-
-#: ../qt4/apport-qt.py:217
-msgid ""
-"After the problem report has been sent, please fill out the form in the "
-"automatically opened web browser."
-msgstr ""
-"Kun raportti on lähetetty, ole hyvä ja täytä selaimeesi automaattisesti "
-"aukeava lomake."
-
-#: ../qt4/apport-qt.py:220
-msgid "&Send"
-msgstr "&Lähetä"
-
-#: ../qt4/apport-qt.py:278
-msgid "Collecting Problem Information"
-msgstr "Kerätään tietoja ongelmasta"
-
-#: ../qt4/apport-qt.py:279 ../cli/apport-cli.py:268
-msgid "Collecting problem information"
-msgstr "Kerätään tietoja ongelmasta"
-
-#: ../qt4/apport-qt.py:280
-msgid ""
-"The collected information can be sent to the developers to improve the "
-"application. This might take a few minutes."
-msgstr ""
-"Kerätty tieto voidaan lähettää kehittäjille ohjelmiston parantamiseksi. Tämä "
-"voi kestää muutamia minuutteja."
-
-#: ../qt4/apport-qt.py:297
-msgid "Uploading Problem Information"
-msgstr "Lähetetään tiedot ongelmasta"
-
-#: ../cli/apport-cli.py:75
+#: ../cli/apport-cli.py:76
 msgid "Press any key to continue..."
 msgstr "Paina mitä tahansa näppäintä jatkaaksesi..."
 
-#: ../cli/apport-cli.py:79
+#: ../cli/apport-cli.py:83
 msgid "What would you like to do? Your options are:"
 msgstr "Kuinka haluat edetä? Vaihtoehdot ovat:"
 
-#: ../cli/apport-cli.py:83
+#: ../cli/apport-cli.py:87
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Ole hyvä ja valitse (%s):"
 
 #. translators: first %s: application name, second %s: date, third %s: time
-#: ../cli/apport-cli.py:136
+#: ../cli/apport-cli.py:144
 #, python-format
 msgid "%s closed unexpectedly on %s at %s."
 msgstr "%s sulkeutui yllättäen %s:lla %s:ssa."
 
-#: ../cli/apport-cli.py:140
+#: ../cli/apport-cli.py:148
 msgid ""
 "If you were not doing anything confidential (entering passwords or other\n"
 "private information), you can help to improve the application by reporting\n"
@@ -264,21 +191,30 @@ msgstr ""
 "henkilökohtaista tietoa), voit auttaa ohjelman kehittämisessä raportoimalla\n"
 "ongelman."
 
-#: ../cli/apport-cli.py:144
+#: ../cli/apport-cli.py:151 ../cli/apport-cli.py:170 ../cli/apport-cli.py:188
+msgid "&Report Problem..."
+msgstr "&Raportoi ongelma..."
+
+#: ../cli/apport-cli.py:152
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Peru ja &jätä jatkossa huomiotta tämän ohjelmaversion kaatumiset"
 
-#: ../cli/apport-cli.py:145 ../cli/apport-cli.py:163 ../cli/apport-cli.py:181
-#: ../cli/apport-cli.py:228
+#: ../cli/apport-cli.py:153 ../cli/apport-cli.py:171 ../cli/apport-cli.py:189
+#: ../cli/apport-cli.py:236 ../cli/apport-cli.py:314 ../cli/apport-cli.py:346
+#: ../cli/apport-cli.py:367
 msgid "&Cancel"
 msgstr "%Peruuta"
 
-#: ../cli/apport-cli.py:160
+#: ../cli/apport-cli.py:168
 #, python-format
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr "Paketin \"%s\" asennus tai päivitys epäonnistui."
 
-#: ../cli/apport-cli.py:193
+#: ../cli/apport-cli.py:200
+msgid "Send problem report to the developers?"
+msgstr "Lähetetäänkö raportti ongelmasta kehittäjille?"
+
+#: ../cli/apport-cli.py:201
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -286,44 +222,48 @@ msgstr ""
 "Kun raportti ongelmasta on lähetetty, ole ystävällinen ja täytä selaimeesi\n"
 "automaattisesti aukeava lomake."
 
-#: ../cli/apport-cli.py:216
+#: ../cli/apport-cli.py:224
 #, python-format
 msgid "&Send complete report (recommended; %s)"
 msgstr "&Lähetä täydellinen raportti (suositeltavaa; %s)"
 
-#: ../cli/apport-cli.py:218
+#: ../cli/apport-cli.py:226
 #, python-format
 msgid "Send &reduced report (slow Internet connection; %s)"
 msgstr "Lähetä &suppea raportti (hitaille Internet-yhteyksille; %s)"
 
-#: ../cli/apport-cli.py:221
+#: ../cli/apport-cli.py:229
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Lähetä raportti (%s)"
 
-#: ../cli/apport-cli.py:225
+#: ../cli/apport-cli.py:233
 msgid "&View report"
 msgstr "&Tarkastele raporttia"
 
-#: ../cli/apport-cli.py:226
+#: ../cli/apport-cli.py:234
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Säilytä raporttitiedosto myöhemmin lähetettäväksi tai muualle kopioitavaksi"
 
-#: ../cli/apport-cli.py:250
+#: ../cli/apport-cli.py:263
 msgid "Problem report file:"
 msgstr "Ongelmaraporttitiedosto:"
 
-#: ../cli/apport-cli.py:258 ../cli/apport-cli.py:263
+#: ../cli/apport-cli.py:271 ../cli/apport-cli.py:276
 msgid "&Confirm"
 msgstr "&Vahvista"
 
-#: ../cli/apport-cli.py:262
+#: ../cli/apport-cli.py:275
 #, python-format
 msgid "Error: %s"
 msgstr "Virhe: %s"
 
-#: ../cli/apport-cli.py:269
+#: ../cli/apport-cli.py:281
+msgid "Collecting problem information"
+msgstr "Kerätään tietoja ongelmasta"
+
+#: ../cli/apport-cli.py:282
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -331,7 +271,7 @@ msgstr ""
 "Kerätyt tiedot voidaan lähettää kehittäjille ohjelman parantamiseksi.\n"
 "Tähän voi mennä muutama minuutti."
 
-#: ../cli/apport-cli.py:282
+#: ../cli/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -339,18 +279,48 @@ msgstr ""
 "Kerätyt tiedot lähetetään virheseurantajärjestelmään.\n"
 "Tähän voi mennä muutama minuutti."
 
-#: ../cli/apport-cli.py:295
+#: ../cli/apport-cli.py:345
+msgid "&Done"
+msgstr ""
+
+#: ../cli/apport-cli.py:351
+msgid "none"
+msgstr ""
+
+#: ../cli/apport-cli.py:352
+#, python-format
+msgid "Selected: %s. Multiple choices:"
+msgstr ""
+
+#: ../cli/apport-cli.py:368
+msgid "Choices:"
+msgstr ""
+
+#: ../cli/apport-cli.py:382
+msgid "Path to file (Enter to cancel):"
+msgstr ""
+
+#: ../cli/apport-cli.py:387
+#, fuzzy
+msgid "File does not exist."
+msgstr "Paketti %s ei ole olemassa"
+
+#: ../cli/apport-cli.py:389
+msgid "This is a directory."
+msgstr ""
+
+#: ../cli/apport-cli.py:396
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Ei odottavia kaatumisraportteja. Kokeile --help saadaksesi lisäinformaatiota."
 
 #. TRANS: %s is the name of the operating system
-#: ../apport/ui.py:54
+#: ../apport/ui.py:60
 #, python-format
 msgid "This is not a genuine %s package"
 msgstr "Tämä ei ole alkuperäinen %s-paketti"
 
-#: ../apport/ui.py:62
+#: ../apport/ui.py:68
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -363,16 +333,16 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:146
+#: ../apport/ui.py:152
 msgid "unknown program"
 msgstr "tuntematon sovellus"
 
-#: ../apport/ui.py:148 ../apport/ui.py:219
+#: ../apport/ui.py:154 ../apport/ui.py:218 ../apport/ui.py:312
 #, python-format
 msgid "Problem in %s"
 msgstr "Ongelma osan %s kanssa"
 
-#: ../apport/ui.py:149
+#: ../apport/ui.py:155
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -380,40 +350,25 @@ msgstr ""
 "Muistia ei ole vapaana tarpeeksi ongelman automaattiseen analysointiin ja "
 "virheraportin lähettämiseen."
 
-#: ../apport/ui.py:155
-msgid "Unreportable problem"
-msgstr ""
-
-#: ../apport/ui.py:156
-#, python-format
-msgid ""
-"The current configuration cannot be supported:\n"
-"\n"
-"%s"
-msgstr ""
-"Nykyistä kokoonpanoa ei tueta:\n"
-"\n"
-"%s"
-
 #. package does not exist
-#: ../apport/ui.py:183 ../apport/ui.py:208 ../apport/ui.py:212
-#: ../apport/ui.py:244 ../apport/ui.py:252 ../apport/ui.py:305
-#: ../apport/ui.py:338 ../apport/ui.py:465 ../apport/ui.py:619
-#: ../apport/ui.py:623 ../apport/ui.py:639 ../apport/ui.py:984
-#: ../apport/ui.py:1001 ../apport/ui.py:1482 ../apport/ui.py:1498
-#: ../apport/ui.py:1509 ../apport/ui.py:1520
+#: ../apport/ui.py:182 ../apport/ui.py:207 ../apport/ui.py:211
+#: ../apport/ui.py:243 ../apport/ui.py:251 ../apport/ui.py:304
+#: ../apport/ui.py:344 ../apport/ui.py:475 ../apport/ui.py:629
+#: ../apport/ui.py:633 ../apport/ui.py:649 ../apport/ui.py:1147
+#: ../apport/ui.py:1164 ../apport/ui.py:1631 ../apport/ui.py:1647
+#: ../apport/ui.py:1658 ../apport/ui.py:1669
 msgid "Invalid problem report"
 msgstr "Virheellinen ongelmaraportti"
 
-#: ../apport/ui.py:184 ../apport/ui.py:213
+#: ../apport/ui.py:183 ../apport/ui.py:212
 msgid "The report belongs to a package that is not installed."
 msgstr "Raportti liittyy pakettiin, jota ei ole asennettu."
 
-#: ../apport/ui.py:209 ../apport/ui.py:624
+#: ../apport/ui.py:208 ../apport/ui.py:634
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Tämä ongelman raportti on vahingoittunut, eikä sitä voida käsitellä."
 
-#: ../apport/ui.py:220
+#: ../apport/ui.py:219 ../apport/ui.py:313
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -424,45 +379,45 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:245
+#: ../apport/ui.py:244
 msgid "You are not allowed to access this problem report."
 msgstr "Sinulla ei ole lukuoikeuksia tähän ongelmaraporttiin."
 
-#: ../apport/ui.py:248
+#: ../apport/ui.py:247
 msgid "Error"
 msgstr "Virhe"
 
-#: ../apport/ui.py:249
+#: ../apport/ui.py:248
 msgid "There is not enough disk space available to process this report."
 msgstr "Levyllä ei ole tarpeeksi tilaa raportin käsittelyyn."
 
-#: ../apport/ui.py:269
+#: ../apport/ui.py:268
 msgid "No package specified"
 msgstr "Pakettia ei ole määritelty"
 
-#: ../apport/ui.py:270
+#: ../apport/ui.py:269
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Paketti tai PID-tunniste on annettava. Katso lisätietoja käyttämällä "
 "valitsinta --help."
 
-#: ../apport/ui.py:279
+#: ../apport/ui.py:278
 msgid "Invalid PID"
 msgstr ""
 
-#: ../apport/ui.py:280
+#: ../apport/ui.py:279
 #, fuzzy
 msgid "The specified process ID does not belong to a program."
 msgstr ""
 "Kyseinen prosessi ei kuulu sinulle. Aja tämä ohjelma prosessin omistajana "
 "tai pääkäyttäjänä."
 
-#: ../apport/ui.py:288
+#: ../apport/ui.py:287
 msgid "Permission denied"
 msgstr "Lupa evätty"
 
-#: ../apport/ui.py:289
+#: ../apport/ui.py:288
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -470,50 +425,50 @@ msgstr ""
 "Kyseinen prosessi ei kuulu sinulle. Aja tämä ohjelma prosessin omistajana "
 "tai pääkäyttäjänä."
 
-#: ../apport/ui.py:306
+#: ../apport/ui.py:305
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Paketti %s ei ole olemassa"
 
-#: ../apport/ui.py:466
+#: ../apport/ui.py:476
 msgid "Could not determine the package or source package name."
 msgstr "Paketin tai lähdekoodipaketin nimeä ei voi määrittää."
 
-#: ../apport/ui.py:481
+#: ../apport/ui.py:491
 msgid "Unable to start web browser"
 msgstr "Selaimen käynnistäminen epäonnistui"
 
-#: ../apport/ui.py:482
+#: ../apport/ui.py:492
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Ei voitu avata selaimella osoitetta %s."
 
-#: ../apport/ui.py:588
+#: ../apport/ui.py:598
 msgid "Network problem"
 msgstr "Verkko-ongelma"
 
-#: ../apport/ui.py:590
+#: ../apport/ui.py:600
 msgid "Could not upload report data to crash database"
 msgstr "Virhekuvauksen lisääminen tietokantaan ei onnistunut"
 
-#: ../apport/ui.py:614
+#: ../apport/ui.py:624
 msgid "Memory exhaustion"
 msgstr "Muisti ei riitä"
 
-#: ../apport/ui.py:615
+#: ../apport/ui.py:625
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Järjestelmässäsi ei ole tarpeeksi muistia tämän kaatumisraportin käsittelyyn."
 
-#: ../apport/ui.py:635
+#: ../apport/ui.py:645
 msgid "This problem report does not apply to a packaged program."
 msgstr "Tämä ongelmaraportti ei liity paketoituun ohjelmaan."
 
-#: ../apport/ui.py:669
+#: ../apport/ui.py:679
 msgid "Problem already known"
 msgstr "Ongelma on jo tiedossa"
 
-#: ../apport/ui.py:670
+#: ../apport/ui.py:680
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -522,3 +477,56 @@ msgstr ""
 "Tämä ongelma raportoitiin jo virheraportissa, joka on näkyvissä selaimessa. "
 "Olkaa hyvä ja tarkastakaa, voitteko lisätä mitään tietoa, joka voisi auttaa "
 "kehittäjiä."
+
+#~ msgid "&Details..."
+#~ msgstr "&Yksityiskohdat..."
+
+#~ msgid "Sorry, %s closed unexpectedly."
+#~ msgstr "Ikävä kyllä %s sulkeutui yllättäen."
+
+#~ msgid "Sorry, the program \"%s\" closed unexpectedly."
+#~ msgstr "Ikävä kyllä ohjelma \"%s\" sulkeutui yllättäen."
+
+#~ msgid "&Ignore future crashes of this program version"
+#~ msgstr "Älä huomioi tämän ohjelmaversion kaatumisia jatkossa"
+
+#~ msgid "Restart &Program"
+#~ msgstr "Käynnistä &ohjelma uudelleen"
+
+#~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
+#~ msgstr "Ikävä kyllä paketin \"%s\" asennus tai päivitys epäonnistui."
+
+#~ msgid "Generic error"
+#~ msgstr "Yleinen virhe"
+
+#~ msgid ""
+#~ "After the problem report has been sent, please fill out the form in the "
+#~ "automatically opened web browser."
+#~ msgstr ""
+#~ "Kun raportti on lähetetty, ole hyvä ja täytä selaimeesi automaattisesti "
+#~ "aukeava lomake."
+
+#~ msgid "&Send"
+#~ msgstr "&Lähetä"
+
+#~ msgid "Collecting Problem Information"
+#~ msgstr "Kerätään tietoja ongelmasta"
+
+#~ msgid ""
+#~ "The collected information can be sent to the developers to improve the "
+#~ "application. This might take a few minutes."
+#~ msgstr ""
+#~ "Kerätty tieto voidaan lähettää kehittäjille ohjelmiston parantamiseksi. "
+#~ "Tämä voi kestää muutamia minuutteja."
+
+#~ msgid "Uploading Problem Information"
+#~ msgstr "Lähetetään tiedot ongelmasta"
+
+#~ msgid ""
+#~ "The current configuration cannot be supported:\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Nykyistä kokoonpanoa ei tueta:\n"
+#~ "\n"
+#~ "%s"

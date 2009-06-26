@@ -21,13 +21,13 @@ pre-build::
 common-post-build-indep::
 	make -C po
 	make -C gtk
-	make -C qt4
+	make -C kde
 	make -C doc
 
 binary-install/apport-gtk::
 	dh_desktop -p $(cdbs_curpkg)
 
-binary-install/apport-qt::
+binary-install/apport-kde::
 	dh_desktop -p $(cdbs_curpkg)
 
 binary-install/apport::
@@ -46,5 +46,5 @@ clean::
 	rm -f apport/packaging_impl.py
 	make -C po clean
 	make -C gtk clean
-	make -C qt4 clean
+	make -C kde clean
 	make -C doc clean

@@ -879,7 +879,6 @@ After the problem report has been sent, please fill out the form in the automati
   <object class="GtkDialog" id="dialog_choice">
     <property name="border_width">5</property>
     <property name="modal">True</property>
-    <property name="icon">apport</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
@@ -930,7 +929,7 @@ After the problem report has been sent, please fill out the form in the automati
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button7">
-                <property name="label" translatable="yes">gtk-cancel</property>
+                <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -944,7 +943,7 @@ After the problem report has been sent, please fill out the form in the automati
             </child>
             <child>
               <object class="GtkButton" id="button13">
-                <property name="label" translatable="yes">gtk-ok</property>
+                <property name="label" translatable="no">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

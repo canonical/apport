@@ -50,8 +50,9 @@ def thread_collect_info(report, reportfile, package, ui):
             report['Title'] = title
 
     # check package origin
-    if 'Package' not in report or \
-        not apport.packaging.is_distro_package(report['Package'].split()[0]):
+    if ('Package' not in report or \
+          not apport.packaging.is_distro_package(report['Package'].split()[0])) \
+          and 'CrashDB' not in report:
         if 'APPORT_REPORT_THIRDPARTY' in os.environ or \
             apport.fileutils.get_config('main', 'thirdparty', False, bool=True):
             report['ThirdParty'] = 'True'
@@ -262,33 +263,36 @@ free memory to automatically analyze the problem and send a report to the develo
         '''Report a bug.
 
         If a pid is given on the command line, the report will contain runtime
-        debug information. Either a package or a pid must be specified.'''
-
+        debug information. Either a package or a pid must be specified.
+        '''
         if not self.options.package and not self.options.pid:
             self.ui_error_message(_('No package specified'), 
                 _('You need to specify a package or a PID. See --help for more information.'))
             return False
         self.report = apport.Report('Bug')
-        try:
-            if self.options.pid:
+
+        # if PID is given, add info
+        if self.options.pid:
+            try:
                 self.report.add_proc_info(self.options.pid)
-            else:
-                self.report.add_proc_environ()
-        except ValueError:
-                self.ui_error_message(_('Invalid PID'), 
-                    _('The specified process ID does not belong to a program.'))
-                return False
-        except OSError, e:
-            # silently ignore nonexisting PIDs; the user must not close the
-            # application prematurely
-            if e.errno == errno.ENOENT:
-                return False
-            elif e.errno == errno.EACCES:
-                self.ui_error_message(_('Permission denied'), 
-                    _('The specified process does not belong to you. Please run this program as the process owner or as root.'))
-                return False
-            else:
-                raise
+            except ValueError:
+                    self.ui_error_message(_('Invalid PID'), 
+                        _('The specified process ID does not belong to a program.'))
+                    return False
+            except OSError, e:
+                # silently ignore nonexisting PIDs; the user must not close the
+                # application prematurely
+                if e.errno == errno.ENOENT:
+                    return False
+                elif e.errno == errno.EACCES:
+                    self.ui_error_message(_('Permission denied'), 
+                        _('The specified process does not belong to you. Please run this program as the process owner or as root.'))
+                    return False
+                else:
+                    raise
+        else:
+            self.report.add_proc_environ()
+
         if self.options.package:
             self.options.package = self.options.package.strip()
         # "Do what I mean" for filing against "linux"
