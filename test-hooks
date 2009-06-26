@@ -126,12 +126,12 @@ class _HooksTest(unittest.TestCase):
         r = apport.Report()
         r.load(open(reps[0]))
 
-        self.assertEqual(set(r.keys()), set(['Date', 'SourcePackage',
-            'Package', 'ProblemType', 'VmCore', 'VmCoreLog']))
+        self.assertEqual(set(r.keys()), set(['Date', 'Package', 'ProblemType',
+            'VmCore', 'VmCoreLog']))
         self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
         self.assertEqual(r['VmCore'], '\x01' * 100)
-        self.assertEqual(r['SourcePackage'], 'linux')
+        self.assert_('linux' in r['Package'])
 
         self.assert_(os.uname()[2].split('-')[0] in r['Package'])
 
