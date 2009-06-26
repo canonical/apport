@@ -12,6 +12,8 @@ apport (1.4-0ubuntu1) UNRELEASED; urgency=low
   * debian/*: qt → kde, add transitional package for apport-qt.
   * Drop backends/packaging_rpm.py. We don't use it in the Ubuntu package at
     all, and it's still in trunk.
+  * debian/rules: Drop some deprecated dh_* calls, cdbs's debhelper.mk has
+    done them for a long time.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 23 Jun 2009 16:01:49 +0200
 
