@@ -8,6 +8,7 @@ Maintainer: Martin Pitt <martin.pitt@ubuntu.com>
 Standards-Version: 3.8.2
 XS-Python-Version: all
 Vcs-Bzr: https://code.launchpad.net/~ubuntu-core-dev/ubuntu/karmic/apport/ubuntu
+Homepage: https://wiki.ubuntu.com/Apport
 
 Package: apport
 XB-Python-Version: ${python:Versions}
@@ -25,9 +26,6 @@ Description: automatically generate crash reports for debugging
  This package also provides a command line frontend for browsing and
  handling the crash reports. For desktops, you should consider
  installing the GTK+ or Qt user interface (apport-gtk or apport-kde).
- .
- See https://wiki.ubuntu.com/AutomatedProblemReports for more
- information.
 
 Package: python-problem-report
 XB-Python-Version: ${python:Versions}
@@ -37,8 +35,7 @@ Depends: ${python:Depends}, ${misc:Depends}
 Description: Python library to handle problem reports
  This Python library provides an interface for creating, modifying,
  and accessing standardized problem reports for program and kernel
- crashes and packaging bugs (for details, see
- https://wiki.ubuntu.com/AutomatedProblemReports).
+ crashes and packaging bugs.
  .
  These problem reports use standard Debian control format syntax
  (RFC822).
@@ -96,9 +93,6 @@ Description: GTK+ frontend for the apport crash report system
  .
  This package provides a GTK+ frontend for browsing and handling the
  crash reports.
- .
- See https://wiki.ubuntu.com/AutomatedProblemReports for more
- information.
 
 Package: apport-kde
 XB-Python-Version: ${python:Versions}
@@ -117,9 +111,6 @@ Description: KDE frontend for the apport crash report system
  .
  This package provides a KDE frontend for browsing and handling the
  crash reports.
- .
- See https://wiki.ubuntu.com/AutomatedProblemReports for more
- information.
 
 Package: apport-qt
 Section: oldlibs
