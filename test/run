@@ -10,7 +10,7 @@ if [ "$1" = local ]; then
     local=1
 
     if [ ! -e apport/packaging_impl.py ]; then
-	echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py" >&2
+	echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py; run './setup.py build' for auto-detection." >&2
 	exit 1
     fi
 else

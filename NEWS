@@ -11,6 +11,8 @@ New features:
 
 Cleanup:
  - Move all test scripts into test/, to unclutter source tree.
+ - setup.py now auto-detects the required packaging backend if
+   apport/packaging_impl.py is not manually installed.
 
 1.4 (2009-06-26)
 ----------------

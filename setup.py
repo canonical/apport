@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from glob import glob
+import os.path, shutil, sys
 
 try:
     import DistUtilsExtra.auto
@@ -10,6 +11,18 @@ except ImportError:
     sys.exit(1)
 
 assert DistUtilsExtra.auto.__version__ >= '2.2', 'needs DistUtilsExtra.auto >= 2.2'
+
+# try to auto-setup packaging_impl
+if len(sys.argv) >= 2 and sys.argv[1] != 'sdist' and not os.path.exists('apport/packaging_impl.py'):
+    if os.path.exists('/etc/apt/sources.list'):
+        print 'Installing apt/dpkg packaging backend.'
+        shutil.copy('backends/packaging-apt-dpkg.py', 'apport/packaging_impl.py')
+    elif os.path.exists('/usr/bin/rpm'):
+        print 'Installing RPM packaging backend.'
+        shutil.copy('backends/packaging_rpm.py', 'apport/packaging_impl.py')
+    else:
+        print >> sys.stderr, 'Could not determine system package manager. Copy appropriate backends/packaging* to apport/packaging_impl.py'
+        sys.exit(1)
 
 DistUtilsExtra.auto.setup(name='apport',
       author='Martin Pitt',
