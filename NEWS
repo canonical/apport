@@ -1,6 +1,14 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.5 (UNRELEASED)
+----------------
+New features:
+ - Drop all Makefiles, po/POTFILES.in, and most code from setup.py, and use
+   DistUtilsExtras.auto which "just does the right thing" for most build system
+   tasks. This requires python-distutils-extra >= 2.2, see
+   https://launchpad.net/python-distutils-extra
+
 1.4 (2009-06-26)
 ----------------
 New features:
