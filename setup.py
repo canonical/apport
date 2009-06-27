@@ -21,7 +21,7 @@ DistUtilsExtra.auto.setup(name='apport',
 
       data_files=[('share/mime/packages', glob('xdg-mime/*')),
                   ('share/apport', glob('kde/*.ui')), #TODO: use pykdeuic modules
-                  ('share/apport/testsuite/', ['test-apport', 'test-hooks', 'run-tests']),
+                  ('share/apport/testsuite/', glob('test/*')),
                   ('share/doc/apport/', glob('doc/*.txt')),
                   ],
       scripts=['gtk/apport-gtk', 'kde/apport-kde', 'cli/apport-cli'],
