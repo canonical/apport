@@ -92,7 +92,7 @@ class _HooksTest(unittest.TestCase):
         log1key = None
         log2key = None
         for k in r.keys():
-            if k.endswith('Testhooks'):
+            if k.endswith('TestHooks'):
                 filekey = k
             elif k.endswith('Log1log'):
                 log1key = k
