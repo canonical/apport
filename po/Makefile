@@ -17,7 +17,7 @@ $(DOMAIN).pot:
 	ln -s apport-gtk $(top_srcdir)/gtk/apport-gtk.py
 	ln -s apport-kde $(top_srcdir)/kde/apport-kde.py
 	ln -s apport-cli $(top_srcdir)/cli/apport-cli.py
-	XGETTEXT_ARGS='--msgid-bugs-address=$(CONTACT) --keyword=i18n' intltool-update -p --verbose
+	XGETTEXT_ARGS='--msgid-bugs-address=$(CONTACT)' intltool-update -p --verbose
 	rm $(top_srcdir)/gtk/apport-gtk.py $(top_srcdir)/kde/apport-kde.py $(top_srcdir)/cli/apport-cli.py
 
 # merge the new stuff into the po files
