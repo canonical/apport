@@ -71,8 +71,9 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None):
             report['Title'] = title
 
     # check package origin
-    if 'Package' not in report or \
-        not apport.packaging.is_distro_package(report['Package'].split()[0]):
+    if ('Package' not in report or \
+          not apport.packaging.is_distro_package(report['Package'].split()[0])) \
+          and 'CrashDB' not in report:
         if 'APPORT_REPORT_THIRDPARTY' in os.environ or \
             apport.fileutils.get_config('main', 'thirdparty', False, bool=True):
             report['ThirdParty'] = 'True'

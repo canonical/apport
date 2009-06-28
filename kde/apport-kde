@@ -23,7 +23,8 @@ try:
 			     QVBoxLayout, QFileDialog, QDialogButtonBox,
 			     QProgressBar, QGroupBox)
     from PyQt4 import uic
-    from PyKDE4.kdecore import (i18n, ki18n, KAboutData, KCmdLineArgs,
+    from PyKDE4.kdecore import i18n as _
+    from PyKDE4.kdecore import (ki18n, KAboutData, KCmdLineArgs,
 				KLocalizedString)
     from PyKDE4.kdeui import (KApplication, KNotification, KMessageBox, KIcon,
 			      KStandardGuiItem)
@@ -41,7 +42,7 @@ def translate(self, prop):
 	if prop.text is None:
 	    return ""
 	text = prop.text.encode("UTF-8")
-	return i18n(text)
+	return _(text)
 
 uic.properties.Properties._string = translate
 
@@ -127,7 +128,7 @@ class ReportDialog(Dialog):
     def __init__(self, title, heading, text):
 	Dialog.__init__(self, 'bugreport.ui', title, heading, text)
 
-	self.details = self.addbutton(i18n("&Details..."))
+	self.details = self.addbutton(_("&Details..."))
 	self.details.setCheckable(True)
 
 	self.treeview = self.findChild(QTreeWidget, 'details')
@@ -164,28 +165,28 @@ class MainUserInterface(apport.ui.UserInterface):
 	# adapt dialog heading and label appropriately
 	if desktop_entry:
 	    name = desktop_entry.getName()
-	    heading = i18n('Sorry, %s closed unexpectedly') % name
+	    heading = _('Sorry, %s closed unexpectedly') % name
 	elif self.report.has_key('ExecutablePath'):
 	    name = os.path.basename(self.report['ExecutablePath'])
-	    heading = i18n('Sorry, the program "%s" closed unexpectedly.') % name
+	    heading = _('Sorry, the program "%s" closed unexpectedly.') % name
 	else:
 	    name = self.cur_package
-	    heading = i18n('Sorry, %s closed unexpectedly.') % name
+	    heading = _('Sorry, %s closed unexpectedly.') % name
 
 	dialog = ErrorDialog(name, heading,
-		i18n('If you were not doing anything confidential (entering '
+		_('If you were not doing anything confidential (entering '
 		     'passwords or other private information), you can help '
 		     'to improve the application by reporting the problem.'),
-		i18n('&Ignore future crashes of this program version'))
+		_('&Ignore future crashes of this program version'))
 
-	reportbutton = dialog.addbutton(i18n('&Report Problem...'))
+	reportbutton = dialog.addbutton(_('&Report Problem...'))
 
 	if desktop_entry and self.report.has_key('ExecutablePath') and \
 		os.path.dirname(self.report['ExecutablePath']) in \
 		os.environ['PATH'].split(':') and subprocess.call(['pgrep',
 		    '-x', os.path.basename(self.report['ExecutablePath']),
 		    '-u', str(os.getuid())], stdout=subprocess.PIPE) != 0:
-	    restartbutton = dialog.addbutton(i18n('Restart &Program'))
+	    restartbutton = dialog.addbutton(_('Restart &Program'))
 
 	# show crash notification dialog
 	response = dialog.exec_()
@@ -203,12 +204,12 @@ class MainUserInterface(apport.ui.UserInterface):
     def ui_present_package_error(self):
 	name = self.report['Package']
 	dialog = ErrorDialog(name,
-		i18n('Sorry, the package "%s" failed to install or upgrade.') %
+		_('Sorry, the package "%s" failed to install or upgrade.') %
 		name,
-		i18n('You can help the developers to fix the package by '
+		_('You can help the developers to fix the package by '
 		     'reporting the problem.'))
 	
-	reportbutton = dialog.addbutton(i18n('&Report Problem...'))
+	reportbutton = dialog.addbutton(_('&Report Problem...'))
 
 	response = dialog.exec_()
 
@@ -220,16 +221,16 @@ class MainUserInterface(apport.ui.UserInterface):
 	return 'cancel'
 
     def ui_present_kernel_error(self):
-	message = i18n('Your system encountered a serious kernel problem.')
+	message = _('Your system encountered a serious kernel problem.')
 	annotate = ''
 	if self.report.has_key('Annotation'):
 	    annotate = self.report['Annotation'] + '\n\n'
-	annotate += i18n('You can help the developers to fix the problem by '
+	annotate += _('You can help the developers to fix the problem by '
 		         'reporting it.')
 
-	dialog = ErrorDialog(i18n('Kernel problem'), message, annotate)
+	dialog = ErrorDialog(_('Kernel problem'), message, annotate)
 
-	reportbutton = dialog.addbutton(i18n('&Report Problem...'))
+	reportbutton = dialog.addbutton(_('&Report Problem...'))
 
 	response = dialog.exec_()
 
@@ -242,12 +243,12 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_present_report_details(self):
 	dialog = ReportDialog(self.report.get('Package',
-	    i18n('Generic error')).split()[0],
-	    i18n('Send problem report to the developers?'),
-	    i18n('After the problem report has been sent, please fill out '
+	    _('Generic error')).split()[0],
+	    _('Send problem report to the developers?'),
+	    _('After the problem report has been sent, please fill out '
 		 'the form in the automatically opened web browser.'))
 
-	sendbutton = dialog.addbutton(i18n('&Send'))
+	sendbutton = dialog.addbutton(_('&Send'))
 	sendbutton.setDefault(True)
 
 	# report contents
@@ -266,7 +267,7 @@ class MainUserInterface(apport.ui.UserInterface):
 		if len(lines) < 4:
 		    keyitem.setExpanded(True)
 	    else:
-		QTreeWidgetItem(keyitem, [i18n('(binary data)')])
+		QTreeWidgetItem(keyitem, [_('(binary data)')])
 
 	details.header().hide()
 
@@ -274,10 +275,10 @@ class MainUserInterface(apport.ui.UserInterface):
 	if self.report.has_key('CoreDump') and \
 		self.report.has_useful_stacktrace():
 	    dialog.findChild(QRadioButton, 'complete').setText(
-		    i18n('Complete report (recommended; %s)') %
+		    _('Complete report (recommended; %s)') %
 		    self.format_filesize(self.get_complete_size()))
 	    dialog.findChild(QRadioButton, 'reduced').setText(
-		    i18n('Reduced report (slow Internet connection; %s)') %
+		    _('Reduced report (slow Internet connection; %s)') %
 		    self.format_filesize(self.get_reduced_size()))
 	else:
 	    dialog.findChild(QGroupBox, 'options').hide()
@@ -297,16 +298,16 @@ class MainUserInterface(apport.ui.UserInterface):
 	return 'cancel'
 
     def ui_info_message(self, title, text):
-	KMessageBox.information(None, i18n(text), i18n(title))
+	KMessageBox.information(None, _(text), _(title))
 
     def ui_error_message(self, title, text):
-	KMessageBox.information(None, i18n(text), i18n(title))
+	KMessageBox.information(None, _(text), _(title))
 
     def ui_start_info_collection_progress(self):
 	self.progress = ProgressDialog(
-		i18n('Collecting Problem Information'),
-		i18n('Collecting problem information'),
-		i18n('The collected information can be sent to the developers '
+		_('Collecting Problem Information'),
+		_('Collecting problem information'),
+		_('The collected information can be sent to the developers '
 		     'to improve the application. This might take a few '
 		     'minutes.'))
 	self.progress.set()
@@ -321,9 +322,9 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_start_upload_progress(self):
 	self.progress = ProgressDialog(
-		i18n('Uploading Problem Information'),
-		i18n('Uploading problem information'),
-		i18n('The collected information is being sent to the bug '
+		_('Uploading Problem Information'),
+		_('Uploading problem information'),
+		_('The collected information is being sent to the bug '
 		     'tracking system. This might take a few minutes.'))
 	self.progress.show()
 
@@ -338,7 +339,7 @@ class MainUserInterface(apport.ui.UserInterface):
 	self.progress.hide()
 
     def ui_question_yesno(self, text):
-	response = KMessageBox.questionYesNoCancel(None, i18n(text), QString(),
+	response = KMessageBox.questionYesNoCancel(None, _(text), QString(),
 		KStandardGuiItem.yes(), KStandardGuiItem.no(),
 		KStandardGuiItem.cancel())
 	if response == KMessageBox.Yes:
@@ -358,7 +359,7 @@ class MainUserInterface(apport.ui.UserInterface):
 	If multiple is False, the list will always have one element.
 	'''
 
-	dialog = ChoicesDialog(i18n("Apport"), text)
+	dialog = ChoicesDialog(_("Apport"), text)
 
 	b = None
 	for option in options:
