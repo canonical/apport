@@ -1,4 +1,7 @@
 #!/bin/sh -e
+# Run all Apport self tests.
+# Call without arguments to test the system instance, or with "local" to test
+# the sources in the local tree.
 
 if [ "$1" = local ]; then
     export PYTHONPATH=.
@@ -7,7 +10,7 @@ if [ "$1" = local ]; then
     local=1
 
     if [ ! -e apport/packaging_impl.py ]; then
-	echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py" >&2
+	echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py; run './setup.py build' for auto-detection." >&2
 	exit 1
     fi
 else
@@ -30,25 +33,16 @@ python -tt $basedir/apport/crashdb_impl/memory.py -v
 python -tt $basedir/apport/packaging_impl.py -v
 
 if [ "$local" ]; then
-    $mydir/test-hooks -l
+    $mydir/hooks -l
 else
-    $mydir/test-hooks
+    $mydir/hooks
 fi
 
 if [ "$local" ]; then
-    $mydir/test-crash-digger
-    python $mydir/general-hooks/parse_segv.py -v
+    $mydir/crash-digger
+    python $mydir/../data/general-hooks/parse_segv.py -v
 else
     python $mydir/../general-hooks/parse_segv.py -v
 fi
 
-if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" = "|" ]; then
-    $mydir/test-apport kernel
-else
-    if [ "$local" ]; then
-        $mydir/test-apport lib
-    else
-        echo 'apport is not enabled; run "sudo /etc/init.d/apport start" to do so' >&2
-        exit 1
-    fi
-fi
+$mydir/crash

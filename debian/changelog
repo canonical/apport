@@ -1,5 +1,16 @@
-apport (1.4-0ubuntu2) UNRELEASED; urgency=low
+apport (1.5-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream release:
+    - Drop all Makefiles, po/POTFILES.in, and most code from setup.py, and use
+      DistUtilsExtras.auto which "just does the right thing" for most build
+      system tasks. This requires python-distutils-extra >= 2.2, see
+      https://launchpad.net/python-distutils-extra
+    - Move all test scripts into test/, to unclutter source tree.
+    - setup.py now auto-detects the required packaging backend if
+      apport/packaging_impl.py is not manually installed.
+  * debian/control: Add python-distutils-extra build dependency.
+  * debian/rules: Drop stuff which is now properly done by the upstream build
+    system.
   * Drop debian/apport.examples, preloadlib died long ago.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jun 2009 19:43:29 +0200

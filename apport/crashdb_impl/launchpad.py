@@ -420,7 +420,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
             if fixed_tasks:
                 task = fixed_tasks.pop()
-                return self._get_source_version(task.bug_target_display_name.split()[0])
+                try:
+                    return self._get_source_version(task.bug_target_display_name.split()[0])
+                except IndexError:
+                    # source does not exist any more
+                    return 'invalid'
 
             # check if there any invalid ones
             if filter(lambda task: task.status in ('Invalid', "Won't Fix") and \
@@ -507,7 +511,10 @@ in a dependent package.' % master,
             x = bug.tags[:] # LP#254901 workaround
             x.remove(self.arch_tag)
             bug.tags = x
-            bug.lp_save()
+            try:
+                bug.lp_save()
+            except HTTPError:
+                pass # LP#336866 workaround
 
     def mark_retrace_failed(self, id, invalid_msg=None):
         '''Mark crash id as 'failed to retrace'.'''
