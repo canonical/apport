@@ -1,4 +1,4 @@
-apport (1.5-0ubuntu1) UNRELEASED; urgency=low
+apport (1.5-0ubuntu1) karmic; urgency=low
 
   * New upstream release:
     - Drop all Makefiles, po/POTFILES.in, and most code from setup.py, and use
@@ -15,7 +15,7 @@ apport (1.5-0ubuntu1) UNRELEASED; urgency=low
   * Adapt debian/apport-{gtk,kde}.install to new upstream build system, which
     now installs the .desktop files itself.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jun 2009 19:43:29 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 29 Jun 2009 12:00:21 +0200
 
 apport (1.4-0ubuntu1) karmic; urgency=low
 
