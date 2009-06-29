@@ -12,6 +12,8 @@ apport (1.5-0ubuntu1) UNRELEASED; urgency=low
   * debian/rules: Drop stuff which is now properly done by the upstream build
     system.
   * Drop debian/apport.examples, preloadlib died long ago.
+  * Adapt debian/apport-{gtk,kde}.install to new upstream build system, which
+    now installs the .desktop files itself.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 27 Jun 2009 19:43:29 +0200
 
