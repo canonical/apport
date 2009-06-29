@@ -420,7 +420,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
             if fixed_tasks:
                 task = fixed_tasks.pop()
-                return self._get_source_version(task.bug_target_display_name.split()[0])
+                try:
+                    return self._get_source_version(task.bug_target_display_name.split()[0])
+                except IndexError:
+                    # source does not exist any more
+                    return 'invalid'
 
             # check if there any invalid ones
             if filter(lambda task: task.status in ('Invalid', "Won't Fix") and \
