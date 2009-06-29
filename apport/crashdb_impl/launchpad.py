@@ -511,7 +511,10 @@ in a dependent package.' % master,
             x = bug.tags[:] # LP#254901 workaround
             x.remove(self.arch_tag)
             bug.tags = x
-            bug.lp_save()
+            try:
+                bug.lp_save()
+            except HTTPError:
+                pass # LP#336866 workaround
 
     def mark_retrace_failed(self, id, invalid_msg=None):
         '''Mark crash id as 'failed to retrace'.'''
