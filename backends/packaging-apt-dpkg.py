@@ -372,19 +372,9 @@ class __AptDpkgPackageInfo(PackageInfo):
             (pkg, version) = l.split()[:2]
             dependency_versions[pkg] = version
             try:
-                # this fails for packages which are still installed, but gone from
-                # the archive; i. e. /var/lib/dpkg/status still knows about them
-                if self.apt_pre_079:
-                    if not c[pkg]._lookupRecord:
-                        raise KeyError
-                    if 'Architecture: all' not in c[pkg]._records.Record:
-                        dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
-                else:
-                    if not c[pkg].candidate:
-                        raise KeyError
-                    if c[pkg].candidate.architecture != 'all':
-                        dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
-            except KeyError:
+                if self.get_architecture(pkg) != 'all':
+                    dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+            except ValueError:
                 print >> sys.stderr, 'WARNING: package %s not known to package cache' % pkg
 
         for pkg, ver in dependency_versions.iteritems():
