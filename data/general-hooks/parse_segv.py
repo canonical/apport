@@ -54,8 +54,10 @@ class ParseSegv(object):
             raise ValueError, 'Registers not loaded yet!?'
         lines = disassembly.splitlines()
         # Throw away possible 'Dump' gdb report line
-        if lines[0].startswith('Dump'):
+        if len(lines)>0 and lines[0].startswith('Dump'):
             lines.pop(0)
+        if len(lines)<1:
+            raise ValueError, 'Failed to load empty disassembly'
         line = lines[0].strip()
         if self.debug:
             print >>sys.stderr, line
@@ -69,6 +71,9 @@ class ParseSegv(object):
             print >>sys.stderr, 'pc: 0x%08x' % (pc)
 
         full_insn_str = line.split(':',1)[1].strip()
+        # Handle invalid memory
+        if 'Cannot access memory at address' in full_insn_str or (full_insn_str == '' and len(lines)==1):
+            return line, pc, None, None, None
         # Handle wrapped lines
         if full_insn_str == '' and lines[1].startswith(' '):
             line = line + ' ' + lines[1].strip()
@@ -391,16 +396,30 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 regs = 'a 0x10'
 
                 disasm = ''
-                self.assertRaises(IndexError, ParseSegv, regs, disasm, '')
+                self.assertRaises(ValueError, ParseSegv, regs, disasm, '')
 
                 disasm = 'Dump ...'
-                self.assertRaises(IndexError, ParseSegv, regs, disasm, '')
+                self.assertRaises(ValueError, ParseSegv, regs, disasm, '')
 
                 disasm = 'Dump ...\nmonkey'
                 self.assertRaises(ValueError, ParseSegv, regs, disasm, '')
 
                 disasm = 'monkey'
                 self.assertRaises(ValueError, ParseSegv, regs, disasm, '')
+
+                disasm = '0x1111111111: Cannot access memory at address 0x1111111111\n'
+                segv = ParseSegv(regs, disasm, '')
+                self.assertEquals(segv.pc, 0x1111111111, segv.pc)
+                self.assertEquals(segv.insn, None, segv.insn)
+                self.assertEquals(segv.src, None, segv.src)
+                self.assertEquals(segv.dest, None, segv.dest)
+
+                disasm = '0x2111111111: \n'
+                segv = ParseSegv(regs, disasm, '')
+                self.assertEquals(segv.pc, 0x2111111111, segv.pc)
+                self.assertEquals(segv.insn, None, segv.insn)
+                self.assertEquals(segv.src, None, segv.src)
+                self.assertEquals(segv.dest, None, segv.dest)
 
                 disasm = '0x8069ff0 <fopen@plt+132220>: cmpb   $0x0,(%eax,%ebx,1)\n'
                 segv = ParseSegv(regs, disasm, '')
@@ -539,6 +558,13 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 understood, reason, details = segv.report()
                 self.assertTrue(understood, details)
                 self.assertTrue('PC (0x00083540) not located in a known VMA region' in details, details)
+                self.assertTrue('executing unknown VMA' in reason, reason)
+
+                disasm = '''0x00083544:'''
+                segv = ParseSegv(regs, disasm, maps)
+                understood, reason, details = segv.report()
+                self.assertTrue(understood, details)
+                self.assertTrue('PC (0x00083544) not located in a known VMA region' in details, details)
                 self.assertTrue('executing unknown VMA' in reason, reason)
 
             def test_segv_pc_null(self):
