@@ -345,8 +345,16 @@ class __AptDpkgPackageInfo(PackageInfo):
         deb = "%s_%s_%s.ddeb" % (debug_pkgname, ver, arch)
         # FIXME: this package is currently not in Packages.gz
         url = "http://ddebs.ubuntu.com/pool/main/l/linux/%s" % deb
-        if not urllib.urlretrieve(url, os.path.join(target_dir,deb)):
-            return False
+        out = open(os.path.join(target_dir,deb), "w")
+        # urlretrieve does not return 404 in the headers so we use urlopen
+        u = urllib.urlopen(url)
+        if u.getcode() > 400:
+            raise IOError, "urllib returned %s for %s" % (u.getcode(), url)
+        while True:
+            block = u.read(8*1024)
+            if not block:
+                break
+            out.write(block)
         ret = subprocess.call(["dpkg","-i",os.path.join(target_dir,deb)])
         if ret == 0:
             installed.append(deb.split("_")[0])
