@@ -430,7 +430,6 @@ class Report(ProblemReport):
             out = p.stdout.read()
             print out
             ret = (p.wait() == 0)
-            self["VmCoreRetraced"] = out
             self["Stacktrace"] = out
         finally:
             if unlink_core:
