@@ -170,7 +170,12 @@ class Report(ProblemReport):
           appends a list of all modified files'''
 
         if not package:
-            package = fileutils.find_file_package(self['ExecutablePath'])
+            # the kernel does not have a executable path but a package
+            if (not "ExecutablePath" in self and
+                self["ProblemType"] == "KernelCrash"):
+                package = self["Package"]
+            else:
+                package = fileutils.find_file_package(self['ExecutablePath'])
             if not package:
                 return
 
