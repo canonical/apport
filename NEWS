@@ -1,9 +1,25 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.3.1 (UNRELEASED)
-------------------
-Bug fixes:
+1.5 (2009-06-29)
+----------------
+New features:
+ - Drop all Makefiles, po/POTFILES.in, and most code from setup.py, and use
+   DistUtilsExtras.auto which "just does the right thing" for most build system
+   tasks. This requires python-distutils-extra >= 2.2, see
+   https://launchpad.net/python-distutils-extra
+
+Cleanup:
+ - Move all test scripts into test/, to unclutter source tree.
+ - setup.py now auto-detects the required packaging backend if
+   apport/packaging_impl.py is not manually installed.
+
+1.4 (2009-06-26)
+----------------
+New features:
+ - Replaced Qt4 frontend with a KDE frontend for better KDE integration.
+
+Major bug fixes:
  - packaging-apt-dpkg.py: Add backwards compatibility code for python-apt <
    0.7.9 to not break backportability.
 

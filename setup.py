@@ -1,73 +1,41 @@
 #!/usr/bin/python
 
-from distutils.core import setup
-import distutils.command.install_data
-import distutils.command.clean
-from distutils.dir_util import remove_tree
+from glob import glob
+import os.path, shutil, sys
 
-import subprocess, glob, os.path
+try:
+    import DistUtilsExtra.auto
+except ImportError:
+    import sys
+    print >> sys.stderr, 'To build Apport you need https://launchpad.net/python-distutils-extra'
+    sys.exit(1)
 
-class my_install_data(distutils.command.install_data.install_data):
-    def run(self):
-        # install files from etc/
-        for (root, _, files) in os.walk('etc'):
-            self.data_files.append((os.path.join('/', root), 
-                    [os.path.join(root, f) for f in files]))
+assert DistUtilsExtra.auto.__version__ >= '2.2', 'needs DistUtilsExtra.auto >= 2.2'
 
-        # build gettext *.mo
-        subprocess.call(['make', '-C', 'po', 'build-mo'])
-        for filepath in glob.glob('po/mo/*/LC_MESSAGES/*.mo'):
-            lang = filepath[len('po/mo/'):]
-            targetpath = os.path.dirname(os.path.join('share/locale',lang))
-            self.data_files.append((targetpath, [filepath]))
+# try to auto-setup packaging_impl
+if len(sys.argv) >= 2 and sys.argv[1] != 'sdist' and not os.path.exists('apport/packaging_impl.py'):
+    if os.path.exists('/etc/apt/sources.list'):
+        print 'Installing apt/dpkg packaging backend.'
+        shutil.copy('backends/packaging-apt-dpkg.py', 'apport/packaging_impl.py')
+    elif os.path.exists('/usr/bin/rpm'):
+        print 'Installing RPM packaging backend.'
+        shutil.copy('backends/packaging_rpm.py', 'apport/packaging_impl.py')
+    else:
+        print >> sys.stderr, 'Could not determine system package manager. Copy appropriate backends/packaging* to apport/packaging_impl.py'
+        sys.exit(1)
 
-        distutils.command.install_data.install_data.run(self)
-
-        # symlinks
-        d = os.path.join(self.install_dir, 'share', 'icons', 'hicolor', 'scalable',
-                'mimetypes')
-        self.mkpath(d)
-        l = os.path.join (d, 'text-x-apport.svg')
-        if os.path.exists(l):
-            os.unlink(l)
-        os.symlink(os.path.join('..', 'apps', 'apport.svg'), l)
-
-class my_clean(distutils.command.clean.clean):
-    def run(self):
-        distutils.command.clean.clean.run(self)
-
-        # clean po/mo
-        modir = os.path.join('po', 'mo')
-        if os.path.exists(modir):
-            remove_tree(modir, self.dry_run)
-
-setup(name='apport',
+DistUtilsExtra.auto.setup(name='apport',
       author='Martin Pitt',
       author_email='martin.pitt@ubuntu.com',
-      maintainer='Martin Pitt',
-      maintainer_email='martin.pitt@ubuntu.com',
       url='https://wiki.ubuntu.com/Apport',
       license='gpl',
       description='intercept, process, and report crashes and bug reports',
-      version='1.3',
-      py_modules=['problem_report', 'apport_python_hook'],
-      data_files=[('share/apport', ['gtk/apport-gtk.ui'] + glob.glob('qt4/*.ui')),
-                  ('share/icons/hicolor/scalable/apps', ['apport/apport.svg']),
-                  ('share/mime/packages', glob.glob('xdg-mime/*')),
-                  ('share/apport/testsuite/', ['test-apport', 'test-hooks', 'run-tests']),
-                  ('share/doc/apport/', glob.glob('doc/*.txt') + glob.glob('doc/*.pdf')),
-                  ('share/apport/package-hooks/', glob.glob('package-hooks/*')),
-                  ('share/apport/general-hooks/', glob.glob('general-hooks/*')),
-                  ],
-      scripts=['bin/apport', 'bin/apport-checkreports', 'bin/apport-retrace',
-          'bin/apport-unpack', 'bin/package_hook',
-          'bin/kernel_crashdump', 'bin/gcc_ice_hook', 'gtk/apport-gtk',
-          'qt4/apport-qt', 'cli/apport-cli', 'bin/dupdb-admin',
-          'bin/kernel_oops', 'bin/apportcheckresume'],
-      packages=['apport', 'apport.crashdb_impl'],
+      version='1.5',
 
-      cmdclass = { 
-          'install_data': my_install_data,
-          'clean': my_clean,
-      },
+      data_files=[('share/mime/packages', glob('xdg-mime/*')),
+                  ('share/apport', glob('kde/*.ui')), #TODO: use pykdeuic modules
+                  ('share/apport/testsuite/', glob('test/*')),
+                  ('share/doc/apport/', glob('doc/*.txt')),
+                  ],
+      scripts=['gtk/apport-gtk', 'kde/apport-kde', 'cli/apport-cli'],
 )

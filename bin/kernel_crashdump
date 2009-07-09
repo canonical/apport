@@ -21,14 +21,8 @@ if not os.path.exists(vmcore_path):
     sys.exit(0)
 
 pr = apport.Report('KernelCrash')
-package = 'linux-image-%s' % os.uname()[2]
-try:
-    version = packaging.get_version(package)
-except ValueError:
-    # package not installed
-    version = None
-pr['Package'] = '%s %s' % (package, version or '(not installed)')
-pr['SourcePackage'] = 'linux'
+pr['Package'] = apport.packaging.get_kernel_package()
+
 pr['VmCore'] = (vmcore_path,)
 pr.add_os_info()
 if os.path.exists(vmcore_path + '.log'):
