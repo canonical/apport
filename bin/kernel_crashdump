@@ -13,7 +13,6 @@
 
 import os, sys
 import apport, apport.fileutils
-from apport.packaging_impl import impl as packaging
 
 vmcore_path = os.path.join(apport.fileutils.report_dir, 'vmcore')
 
