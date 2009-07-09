@@ -104,8 +104,9 @@ def confirm_traces(report):
 
     print '--- stack trace ---'
     print report['Stacktrace']
-    print '--- thread stack trace ---'
-    print report['ThreadStacktrace']
+    if report.has_key('ThreadedStacktrace'):
+        print '--- thread stack trace ---'
+        print report['ThreadStacktrace']
     print '---'
 
     ch = None
@@ -289,8 +290,9 @@ if options.removecore:
 if options.stdout:
     print '--- stack trace ---'
     print report['Stacktrace']
-    print '--- thread stack trace ---'
-    print report['ThreadStacktrace']
+    if report.has_key('ThreadedStacktrace'):
+        print '--- thread stack trace ---'
+        print report['ThreadStacktrace']
     if report.has_key('StacktraceSource'):
         print '--- source code stack trace ---'
         print report['StacktraceSource']
