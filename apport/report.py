@@ -428,7 +428,6 @@ class Report(ProblemReport):
             p.stdin.write("quit\n")
             # FIXME: split it up nicely etc
             out = p.stdout.read()
-            print out
             ret = (p.wait() == 0)
             self["Stacktrace"] = out
         finally:

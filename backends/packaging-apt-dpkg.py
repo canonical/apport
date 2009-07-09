@@ -339,7 +339,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         debug_pkgname = 'linux-image-debug-%s' % kver
         c = self._cache()
         if c.has_key(debug_pkgname) and c[debug_pkgname].isInstalled:
-            print "kernel ddeb already installed"
+            #print "kernel ddeb already installed"
             return (installed, outdated)
         target_dir = apt_pkg.Config.FindDir("Dir::Cache::archives")+"/partial"
         deb = "%s_%s_%s.ddeb" % (debug_pkgname, ver, arch)
