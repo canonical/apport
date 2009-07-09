@@ -355,6 +355,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             if not block:
                 break
             out.write(block)
+        out.flush()
         ret = subprocess.call(["dpkg","-i",os.path.join(target_dir,deb)])
         if ret == 0:
             installed.append(deb.split("_")[0])
