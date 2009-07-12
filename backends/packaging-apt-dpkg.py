@@ -117,6 +117,16 @@ class __AptDpkgPackageInfo(PackageInfo):
             if pkg.installed and pkg.installed.version is None:
                 return False
 
+        native_origins = [this_os]
+        try:
+            for f in os.listdir('/etc/apport/native-origins.d'):
+                for line in open(f):
+                    line = line.strip()
+                    if line:
+                        native_origins.append(line)
+        except OSError:
+            pass
+
         origins = None
         if self.apt_pre_079:
             origins = pkg.candidateOrigin
@@ -124,7 +134,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             origins = pkg.candidate.origins
         if origins: # might be None
             for o in origins:
-                if o.origin == this_os:
+                if o.origin in native_origins:
                     return True
         return False
 
