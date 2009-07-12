@@ -124,8 +124,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             origins = pkg.candidate.origins
         if origins: # might be None
             for o in origins:
-                # note: checking site for ppa is a hack until LP #140412 gets fixed
-                if o.origin == this_os and not o.site.startswith('ppa'):
+                if o.origin == this_os:
                     return True
         return False
 
