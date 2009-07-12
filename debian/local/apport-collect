@@ -143,6 +143,12 @@ if len(report.keys()) == 0:
 
 try:
     upload(report, bug)
+
+    bug = crashdb.launchpad.bugs[int(bug_number)] # LP#336866 workaround
+    x = bug.tags[:] # LP#254901 workaround
+    x.append('apport-collected')
+    bug.tags = x
+    bug.lp_save()
 except HTTPError, e:
     print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
     sys.exit(1)
