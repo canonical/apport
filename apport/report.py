@@ -928,8 +928,19 @@ class Report(ProblemReport):
         For Python crashes, this concatenates the ExecutablePath, exception
         name, and Traceback function names, again separated by a colon.'''
 
-        if not self.has_key('ExecutablePath'):
+        if (not self.has_key('ExecutablePath') and 
+            not self['ProblemType'] == 'KernelCrash'):
             return None
+
+        # kernel crash
+        if self['ProblemType'] == 'KernelCrash':
+            sig = "kernel"
+            regex = re.compile ('^\s*\#\d+\s\[\w+\]\s(\w+)')
+            for line in self['Stacktrace'].splitlines():
+                m = regex.match(line)
+                if m:
+                    sig += ":" + (m.group(1))
+            return sig
 
         # signal crashes
         if self.has_key('StacktraceTop') and self.has_key('Signal'):
@@ -2105,6 +2116,121 @@ ZeroDivisionError: integer division or modulo by zero'''
 
         r['Traceback'] = 'FooBar'
         self.assertEqual(r.crash_signature(), None)
+
+
+        # kernel 
+        r['ProblemType'] = 'KernelCrash'
+        r['Stacktrace'] = '''
+crash 4.0-8.9
+Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009  Red Hat, Inc.
+Copyright (C) 2004, 2005, 2006  IBM Corporation
+Copyright (C) 1999-2006  Hewlett-Packard Co
+Copyright (C) 2005, 2006  Fujitsu Limited
+Copyright (C) 2006, 2007  VA Linux Systems Japan K.K.
+Copyright (C) 2005  NEC Corporation
+Copyright (C) 1999, 2002, 2007  Silicon Graphics, Inc.
+Copyright (C) 1999, 2000, 2001, 2002  Mission Critical Linux, Inc.
+This program is free software, covered by the GNU General Public License,
+and you are welcome to change it and/or distribute copies of it under
+certain conditions.  Enter "help copying" to see the conditions.
+This program has absolutely no warranty.  Enter "help warranty" for details.
+ 
+NOTE: stdin: not a tty
+
+GNU gdb 6.1
+Copyright 2004 Free Software Foundation, Inc.
+GDB is free software, covered by the GNU General Public License, and you are
+welcome to change it and/or distribute copies of it under certain conditions.
+Type "show copying" to see the conditions.
+There is absolutely no warranty for GDB.  Type "show warranty" for details.
+This GDB was configured as "i686-pc-linux-gnu"...
+
+      KERNEL: /usr/lib/debug/boot/vmlinux-2.6.31-2-generic
+    DUMPFILE: /tmp/tmpRJZy_O
+        CPUS: 1
+        DATE: Thu Jul  9 12:58:08 2009
+      UPTIME: 00:00:57
+LOAD AVERAGE: 0.15, 0.05, 0.02
+       TASKS: 173
+    NODENAME: egon-desktop
+     RELEASE: 2.6.31-2-generic
+     VERSION: #16-Ubuntu SMP Mon Jul 6 20:38:51 UTC 2009
+     MACHINE: i686  (2137 Mhz)
+      MEMORY: 2 GB
+       PANIC: "[   57.879776] Oops: 0002 [#1] SMP " (check log for details)
+         PID: 0
+     COMMAND: "swapper"
+        TASK: c073c180  [THREAD_INFO: c0784000]
+         CPU: 0
+       STATE: TASK_RUNNING (PANIC)
+
+PID: 0      TASK: c073c180  CPU: 0   COMMAND: "swapper"
+ #0 [c0785ba0] sysrq_handle_crash at c03917a3
+    [RA: c03919c6  SP: c0785ba0  FP: c0785ba0  SIZE: 4]
+    c0785ba0: c03919c6  
+ #1 [c0785ba0] __handle_sysrq at c03919c4
+    [RA: c0391a91  SP: c0785ba4  FP: c0785bc8  SIZE: 40]
+    c0785ba4: c06d4bab  c06d42d2  f6534000  00000004  
+    c0785bb4: 00000086  0000002e  00000001  f6534000  
+    c0785bc4: c0785bcc  c0391a91  
+ #2 [c0785bc8] handle_sysrq at c0391a8c
+    [RA: c0389961  SP: c0785bcc  FP: c0785bd0  SIZE: 8]
+    c0785bcc: c0785c0c  c0389961  
+ #3 [c0785bd0] kbd_keycode at c038995c
+    [RA: c0389b8b  SP: c0785bd4  FP: c0785c10  SIZE: 64]
+    c0785bd4: c056f96a  c0785be4  00000096  c07578c0  
+    c0785be4: 00000001  f6ac6e00  f6ac6e00  00000001  
+    c0785bf4: 00000000  00000000  0000002e  0000002e  
+    c0785c04: 00000001  f70d6850  c0785c1c  c0389b8b  
+ #4 [c0785c10] kbd_event at c0389b86
+    [RA: c043140c  SP: c0785c14  FP: c0785c20  SIZE: 16]
+    c0785c14: c0758040  f6910900  c0785c3c  c043140c  
+ #5 [c0785c20] input_pass_event at c0431409
+    [RA: c04332ce  SP: c0785c24  FP: c0785c40  SIZE: 32]
+    c0785c24: 00000001  0000002e  00000001  f70d6000  
+    c0785c34: 00000001  0000002e  c0785c64  c04332ce  
+ #6 [c0785c40] input_handle_event at c04332c9
+    [RA: c0433ac6  SP: c0785c44  FP: c0785c68  SIZE: 40]
+    c0785c44: 00000001  ffff138d  0000003d  00000001  
+    c0785c54: f70d6000  00000001  f70d6000  0000002e  
+    c0785c64: c0785c84  c0433ac6  
+ #7 [c0785c68] input_event at c0433ac1
+    [RA: c0479806  SP: c0785c6c  FP: c0785c88  SIZE: 32]
+    c0785c6c: 00000001  00000092  f70d677c  f70d70b4  
+    c0785c7c: 0000002e  f70d7000  c0785ca8  c0479806  
+ #8 [c0785c88] hidinput_hid_event at c0479801
+    [RA: c0475b31  SP: c0785c8c  FP: c0785cac  SIZE: 36]
+    c0785c8c: 00000001  00000007  c0785c00  f70d6000  
+    c0785c9c: f70d70b4  f70d5000  f70d7000  c0785cc4  
+    c0785cac: c0475b31  
+    [RA: 0  SP: c0785ffc  FP: c0785ffc  SIZE: 0]
+   PID    PPID  CPU   TASK    ST  %MEM     VSZ    RSS  COMM
+>     0      0   0  c073c180  RU   0.0       0      0  [swapper]
+      1      0   1  f7038000  IN   0.1    3096   1960  init
+      2      0   0  f7038c90  IN   0.0       0      0  [kthreadd]
+    271      2   1  f72bf110  IN   0.0       0      0  [bluetooth]
+    325      2   1  f71c25b0  IN   0.0       0      0  [khungtaskd]
+   1404      2   0  f6b5bed0  IN   0.0       0      0  [kpsmoused]
+   1504      2   1  f649cb60  IN   0.0       0      0  [hd-audio0]
+   2055      1   0  f6a18000  IN   0.0    1824    536  getty
+   2056      1   0  f6a1d7f0  IN   0.0    1824    536  getty
+   2061      1   0  f6a1f110  IN   0.1    3132   1604  login
+   2062      1   1  f6a18c90  IN   0.0    1824    540  getty
+   2063      1   1  f6b58c90  IN   0.0    1824    540  getty
+   2130      1   0  f6b5f110  IN   0.0    2200   1032  acpid
+   2169      1   0  f69ebed0  IN   0.0    2040    664  syslogd
+   2192      1   1  f65b3ed0  IN   0.0    1976    532  dd
+   2194      1   1  f6b5a5b0  IN   0.1    3996   2712  klogd
+   2217      1   0  f6b74b60  IN   0.1    3008   1120  dbus-daemon
+   2248      1   0  f65b7110  IN   0.2    6896   4304  hald
+   2251      1   1  f65b3240  IN   0.1   19688   2604  console-kit-dae
+RUNQUEUES[0]: c6002320
+ RT PRIO_ARRAY: c60023c0
+ CFS RB_ROOT: c600237c
+  PID: 9      TASK: f703f110  CPU: 0   COMMAND: "events/0"
+'''
+        self.assertEqual(r.crash_signature(), 'kernel:sysrq_handle_crash:__handle_sysrq:handle_sysrq:kbd_keycode:kbd_event:input_pass_event:input_handle_event:input_event:hidinput_hid_event')
+
 
     def test_binary_data(self):
         '''methods get along with binary data.'''
