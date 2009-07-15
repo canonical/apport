@@ -81,6 +81,11 @@ class GTKUserInterface(apport.ui.UserInterface):
             d = self.w('dialog_crash')
 	    bl_checkbox = self.w('checkbutton_blacklist')
 
+        # don't steal focus when being called without arguments (i. e.
+        # automatically launched)
+        if len(sys.argv) == 1:
+            d.set_focus_on_map(False)
+
         # show crash notification dialog
         response = d.run()
         d.hide()

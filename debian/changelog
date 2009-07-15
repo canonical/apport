@@ -1,17 +1,24 @@
-apport (1.5-0ubuntu3) UNRELEASED; urgency=low
+apport (1.6-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream release:
+    - Add support for kernel crashes, thanks to Michael Vogt!
+    - apport/ui.py, run_crash(): Do not re-collect information if we already
+      have a Dependencies field. This happens when calling apport on an already
+      pre-processed .crash file with -c. (LP: #394497)
+    - apport/hookutils.py, pci_devices(): Deliver all matching devices, not
+      just the last one. (LP: #398906)
+    - hookutils.py, _get_module_license(): Return "invalid" if modinfo fails,
+      so that they do not count as "free". (LP: #341720)
+    - packaging-apt-dpkg.py: Support additional custom native origins in
+      /etc/apport/native-origins.d/ . (LP: #386052)
+    - packaging-apt-dpkg.py: Drop PPA origin hack, launchpad behaves properly
+      now
+    - apport-gtk: Avoid focus stealing when being called without arguments (i.
+      e. auto-launched). LP: #396243)
+    - apport-kde: Use standard gettext again
+    - Fix handling of PC lacking disassembly due to invalid memory location.
   * debian/local/apport-collect: Tag bugs with "apport-collected" on success.
     (LP: #391392)
-  * Add support for kernel crashes, thanks to Michael Vogt for the patches!
-    - apport/report.py: Add add_kernel_crash_info() to reprocess a
-      "KernelCrash" problem type with the "crash" program.
-    - apport/report.py: Add crash signature calculation for kernel crashes.
-    - backends/packaging-apt-dpkg.py: Add _install_debug_kernel() to
-      special-case fetching kernel ddebs, and call it in
-      install_retracing_packages().
-    - bin/apport-retrace: Call add_kernel_crash_info() and update sanity
-      checks for kernel crashes.
-    - bin/kernel_crashdump: Call add_os_info() right in the hook.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 12 Jul 2009 22:18:31 +0200
 

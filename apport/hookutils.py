@@ -284,7 +284,7 @@ def pci_devices(*pci_classes):
     if not pci_classes:
         return command_output(['lspci', '-vvnn'])
 
-    slots = []
+    result = ''
     output = command_output(['lspci','-vvmmnn'])
     for paragraph in output.split('\n\n'):
         pci_class = None
@@ -303,13 +303,11 @@ def pci_devices(*pci_classes):
                 slot = value
 
         if pci_class and slot and pci_class in pci_classes:
-            slots.append(slot)
+            if result:
+                result += '\n\n'
+            result += command_output(['lspci', '-vvnns', slot]).strip()
 
-    cmd = ['lspci','-vvnn']
-    for slot in slots:
-        cmd.extend(['-s',slot])
-
-    return command_output(cmd)
+    return result
 
 def usb_devices():
     '''Return a text dump of USB devices attached to the system.'''
@@ -430,7 +428,7 @@ def _get_module_license(module):
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = modinfo.communicate()[0]
         if modinfo.returncode != 0:
-            return None
+            return 'invalid'
     except OSError:
         return None
     for l in out.splitlines():
@@ -510,7 +508,7 @@ if __name__ == '__main__':
 
             # direct license check
             self.assert_('GPL' in _get_module_license('isofs'))
-            self.assertEqual(_get_module_license('does-not-exist'), None)
+            self.assertEqual(_get_module_license('does-not-exist'), 'invalid')
             self.assert_('GPL' in _get_module_license(good_ko.name))
             self.assert_('BAD' in _get_module_license(bad_ko.name))
 
@@ -521,7 +519,7 @@ if __name__ == '__main__':
             f.flush()
             nonfree = nonfree_kernel_modules(f.name)
             self.failIf('isofs' in nonfree)
-            self.failIf('does-not-exist' in nonfree)
+            self.assert_('does-not-exist' in nonfree)
             self.failIf(good_ko.name in nonfree)
             self.assert_(bad_ko.name in nonfree)
 

@@ -418,10 +418,13 @@ class Report(ProblemReport):
                        '/usr/lib/debug/boot/vmlinux-%s' % kver,
                        core,
                        ]
-            p = subprocess.Popen(command, 
-                                 stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.STDOUT)
+            try:
+                p = subprocess.Popen(command, 
+                                     stdin=subprocess.PIPE,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT)
+            except OSError:
+                return False
             p.stdin.write('bt -a -f\n')
             p.stdin.write('ps\n')
             p.stdin.write('runq\n')
@@ -429,7 +432,8 @@ class Report(ProblemReport):
             # FIXME: split it up nicely etc
             out = p.stdout.read()
             ret = (p.wait() == 0)
-            self['Stacktrace'] = out
+            if ret:
+                self['Stacktrace'] = out
         finally:
             if unlink_core:
                 os.unlink(core)
@@ -1401,7 +1405,7 @@ int main() { return f(42); }
         self.assert_('#1  0x' in pr['Stacktrace'])
         self.assert_('#0  0x' in pr['ThreadStacktrace'])
         self.assert_('#1  0x' in pr['ThreadStacktrace'])
-        self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
+        self.assert_('Thread 1 (' in pr['ThreadStacktrace'])
         self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
 
     def test_add_gdb_info(self):

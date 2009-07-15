@@ -201,7 +201,8 @@ free memory to automatically analyze the problem and send a report to the develo
 
             # we want to file a bug now
             try:
-                self.collect_info()
+                if 'Dependencies' not in self.report:
+                    self.collect_info()
             except (IOError, zlib.error):
                 # can happen with broken core dumps
                 self.report = None
