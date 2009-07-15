@@ -2,6 +2,16 @@ apport (1.5-0ubuntu3) UNRELEASED; urgency=low
 
   * debian/local/apport-collect: Tag bugs with "apport-collected" on success.
     (LP: #391392)
+  * Add support for kernel crashes, thanks to Michael Vogt for the patches!
+    - apport/report.py: Add add_kernel_crash_info() to reprocess a
+      "KernelCrash" problem type with the "crash" program.
+    - apport/report.py: Add crash signature calculation for kernel crashes.
+    - backends/packaging-apt-dpkg.py: Add _install_debug_kernel() to
+      special-case fetching kernel ddebs, and call it in
+      install_retracing_packages().
+    - bin/apport-retrace: Call add_kernel_crash_info() and update sanity
+      checks for kernel crashes.
+    - bin/kernel_crashdump: Call add_os_info() right in the hook.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 12 Jul 2009 22:18:31 +0200
 

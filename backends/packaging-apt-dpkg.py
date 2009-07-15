@@ -323,6 +323,44 @@ class __AptDpkgPackageInfo(PackageInfo):
         # TODO: Ubuntu specific
         return 'linux-image-' + os.uname()[2]
 
+    def _install_debug_kernel(self, report):
+        '''Install kernel debug package 
+
+        Ideally this would be just another package but the kernel is
+        special in various ways currently so we can not use the apt
+        method.
+        '''
+        import urllib, apt_pkg
+        installed = []
+        outdated = []
+        kver = report['Uname'].split()[1]
+        arch = report['Architecture']
+        ver = report['Package'].split()[1]
+        debug_pkgname = 'linux-image-debug-%s' % kver
+        c = self._cache()
+        if c.has_key(debug_pkgname) and c[debug_pkgname].isInstalled:
+            #print 'kernel ddeb already installed'
+            return (installed, outdated)
+        target_dir = apt_pkg.Config.FindDir('Dir::Cache::archives')+'/partial'
+        deb = '%s_%s_%s.ddeb' % (debug_pkgname, ver, arch)
+        # FIXME: this package is currently not in Packages.gz
+        url = 'http://ddebs.ubuntu.com/pool/main/l/linux/%s' % deb
+        out = open(os.path.join(target_dir, deb), 'w')
+        # urlretrieve does not return 404 in the headers so we use urlopen
+        u = urllib.urlopen(url)
+        if u.getcode() > 400:
+            raise IOError, 'urllib returned %s for %s' % (u.getcode(), url)
+        while True:
+            block = u.read(8*1024)
+            if not block:
+                break
+            out.write(block)
+        out.flush()
+        ret = subprocess.call(['dpkg', '-i', os.path.join(target_dir, deb)])
+        if ret == 0:
+            installed.append(deb.split('_')[0])
+        return (installed, outdated)
+
     def install_retracing_packages(self, report, verbosity=0,
             unpack_only=False, no_pkg=False, extra_packages=[]):
         '''Install packages which are required to retrace a report.
@@ -339,6 +377,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         
         Return a tuple (list of installed packages, string with outdated packages).
         '''
+        if (report['ProblemType'] == 'KernelCrash' and 
+            report['Package'].startswith('linux-image')):
+            return self._install_debug_kernel(report)
+
         c = self._cache()
 
         try:
