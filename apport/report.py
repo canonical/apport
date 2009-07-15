@@ -1348,7 +1348,7 @@ int main() { return f(42); }
         self.assert_('#1  0x' in pr['Stacktrace'])
         self.assert_('#0  0x' in pr['ThreadStacktrace'])
         self.assert_('#1  0x' in pr['ThreadStacktrace'])
-        self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
+        self.assert_('Thread 1 (' in pr['ThreadStacktrace'])
         self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
 
     def test_add_gdb_info(self):
