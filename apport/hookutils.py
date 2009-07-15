@@ -247,7 +247,7 @@ def pci_devices(*pci_classes):
     if not pci_classes:
         return command_output(['lspci', '-vvnn'])
 
-    slots = []
+    result = ''
     output = command_output(['lspci','-vvmmnn'])
     for paragraph in output.split('\n\n'):
         pci_class = None
@@ -266,13 +266,11 @@ def pci_devices(*pci_classes):
                 slot = value
 
         if pci_class and slot and pci_class in pci_classes:
-            slots.append(slot)
+            if result:
+                result += '\n\n'
+            result += command_output(['lspci', '-vvnns', slot]).strip()
 
-    cmd = ['lspci','-vvnn']
-    for slot in slots:
-        cmd.extend(['-s',slot])
-
-    return command_output(cmd)
+    return result
 
 def usb_devices():
     '''Return a text dump of USB devices attached to the system.'''
