@@ -393,7 +393,7 @@ def _get_module_license(module):
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = modinfo.communicate()[0]
         if modinfo.returncode != 0:
-            return None
+            return 'invalid'
     except OSError:
         return None
     for l in out.splitlines():
@@ -473,7 +473,7 @@ if __name__ == '__main__':
 
             # direct license check
             self.assert_('GPL' in _get_module_license('isofs'))
-            self.assertEqual(_get_module_license('does-not-exist'), None)
+            self.assertEqual(_get_module_license('does-not-exist'), 'invalid')
             self.assert_('GPL' in _get_module_license(good_ko.name))
             self.assert_('BAD' in _get_module_license(bad_ko.name))
 
@@ -484,7 +484,7 @@ if __name__ == '__main__':
             f.flush()
             nonfree = nonfree_kernel_modules(f.name)
             self.failIf('isofs' in nonfree)
-            self.failIf('does-not-exist' in nonfree)
+            self.assert_('does-not-exist' in nonfree)
             self.failIf(good_ko.name in nonfree)
             self.assert_(bad_ko.name in nonfree)
 
