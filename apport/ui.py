@@ -203,11 +203,13 @@ free memory to automatically analyze the problem and send a report to the develo
             try:
                 if 'Dependencies' not in self.report:
                     self.collect_info()
-            except (IOError, zlib.error):
+            except (IOError, zlib.error), e:
                 # can happen with broken core dumps
                 self.report = None
                 self.ui_error_message(_('Invalid problem report'),
-                    _('This problem report is damaged and cannot be processed.'))
+                    '%s\n\n%s' % (
+                        _('This problem report is damaged and cannot be processed.'),
+                        repr(e)))
                 return False
             except ValueError: # package does not exist
                 self.ui_error_message(_('Invalid problem report'),
@@ -633,10 +635,12 @@ free memory to automatically analyze the problem and send a report to the develo
             self.report = None
             self.ui_error_message(_('Invalid problem report'), e.strerror)
             return False
-        except (TypeError, ValueError, zlib.error):
+        except (TypeError, ValueError, zlib.error), e:
             self.report = None
             self.ui_error_message(_('Invalid problem report'),
-                _('This problem report is damaged and cannot be processed.'))
+                '%s\n\n%s' % (
+                    _('This problem report is damaged and cannot be processed.'),
+                    repr(e)))
             return False
 
         if self.report.has_key('Package'):
