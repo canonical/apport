@@ -20,7 +20,7 @@ from gettext import gettext as _
 
 import apport, apport.fileutils, REThread
 
-from apport.crashdb import get_crashdb
+from apport.crashdb import get_crashdb, NeedsCredentials
 
 def thread_collect_info(report, reportfile, package, ui):
     '''Collect information about report.
@@ -601,6 +601,17 @@ free memory to automatically analyze the problem and send a report to the develo
                 upthread.join(0.1)
             except KeyboardInterrupt:
                 sys.exit(1)
+            except NeedsCredentials, e:
+                message = _('Please enter your account information for the '
+                            '%s bug tracking system')
+                data = self.ui_question_userpass(message % e.message)
+                if data is not None:
+                    user, password = data
+                    self.crashdb.set_credentials(user, password)
+                    upthread = REThread.REThread(target=self.crashdb.upload,
+                                                 args=(self.report,
+                                                       progress_callback))
+                    upthread.start()
         if upthread.exc_info():
             self.ui_error_message(_('Network problem'),
                 '%s:\n\n%s' % (
@@ -831,6 +842,17 @@ might be helpful for the developers.'))
         Return path if the user selected a file, or None if cancelled.
         '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
+
+    def ui_question_userpass(self, message):
+        '''Requests username and password from user.
+
+        message is the text to be presented to the user when requesting for
+        username and password information.
+
+        Return a tuple (username, password),  or None if cancelled.'''
+
+        raise NotImplementedError, 'this function must be overridden by subclasses'
+
 
 class HookUI:
     '''Interactive functions which can be used in package hooks.
