@@ -74,7 +74,7 @@ class CrashDatabase:
 
         # verify integrity
         cur = self.duplicate_db.cursor()
-        cur.execute('PRAGMA integrity_check');
+        cur.execute('PRAGMA integrity_check')
         result = cur.fetchall() 
         if result != [('ok',)]:
             raise SystemError, 'Corrupt duplicate db:' + str(result)
