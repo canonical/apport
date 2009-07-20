@@ -127,7 +127,7 @@ class _HooksTest(unittest.TestCase):
         r.load(open(reps[0]))
 
         self.assertEqual(set(r.keys()), set(['Date', 'Package', 'ProblemType',
-            'VmCore', 'VmCoreLog']))
+            'VmCore', 'VmCoreLog', 'Uname', 'Architecture', 'DistroRelease']))
         self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
         self.assertEqual(r['VmCore'], '\x01' * 100)

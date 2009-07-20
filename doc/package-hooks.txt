@@ -27,7 +27,8 @@ Apport will import this and call a function
 and pass two arguments:
 
  - The currently processed problem report. This is an instance of
-   apport.Report, and should mainly be used as a dictionary. Please see the
+   apport.Report, and should mainly be used as a dictionary (keys have to be
+   alphanumeric and may contain dots, dashes, or underscores). Please see the
    Python help of this class for details:
    
      python -c 'import apport; help(apport.Report)'
