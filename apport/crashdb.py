@@ -12,6 +12,7 @@ the full text of the license.
 
 import os, os.path, datetime, sys
 
+from exceptions import Exception
 from packaging_impl import impl as packaging
 
 class CrashDatabase:
@@ -73,7 +74,7 @@ class CrashDatabase:
 
         # verify integrity
         cur = self.duplicate_db.cursor()
-        cur.execute('PRAGMA integrity_check');
+        cur.execute('PRAGMA integrity_check')
         result = cur.fetchall() 
         if result != [('ok',)]:
             raise SystemError, 'Corrupt duplicate db:' + str(result)
@@ -308,8 +309,10 @@ class CrashDatabase:
         If the implementation supports it, and a function progress_callback is
         passed, that is called repeatedly with two arguments: the number of
         bytes already sent, and the total number of bytes to send. This can be
-        used to provide a proper upload progress indication on frontends.'''
+        used to provide a proper upload progress indication on frontends.
 
+        This method can raise a NeedsCredentials exception in case of failure.
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_comment_url(self, report, handle):
@@ -331,6 +334,11 @@ class CrashDatabase:
         '''Update the given report ID with the retraced results from the report
         (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
         desired) and an optional comment.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
+    def set_credentials(self, username, password):
+        '''Set username and password.'''
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
@@ -472,3 +480,6 @@ def get_crashdb(auth_file, name = None, conf = None):
     m = __import__('apport.crashdb_impl.' + db['impl'], globals(), locals(), ['CrashDatabase'])
     return m.CrashDatabase(auth_file, db['bug_pattern_base'], db)
 
+class NeedsCredentials(Exception):
+    '''This may be raised when unable to log in to the crashdb.'''
+    pass
