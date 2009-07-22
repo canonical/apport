@@ -879,7 +879,7 @@ if __name__ == '__main__':
 
             self.assertRaises(ValueError, impl.get_source, 'nonexisting')
             self.assertEqual(impl.get_source('bash'), 'bash')
-            self.assertEqual(impl.get_source('libc6'), 'glibc')
+            self.assert_('glibc' in impl.get_source('libc6'))
 
         def test_is_distro_package(self):
             '''is_distro_package().'''
