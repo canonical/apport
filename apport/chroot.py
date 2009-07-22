@@ -17,8 +17,8 @@ def setup_fakeroot_env():
     This needs the libraries /usr/lib/libfakeroot/libfakeroot-sysv.so and
     /usr/lib/fakechroot/libfakechroot.so; these paths can be overridden
     with the environment variables APPORT_LIBFAKEROOT and
-    APPORT_LIBFAKECHROOT.'''
-
+    APPORT_LIBFAKECHROOT.
+    '''
     libfakeroot = os.environ.get('APPORT_LIBFAKEROOT',
         '/usr/lib/libfakeroot/libfakeroot-sysv.so')
     assert os.path.exists(libfakeroot), \
@@ -58,15 +58,17 @@ class Chroot:
     '''Work with a chroot (either in directory or in tarball form).
 
     If called as non-root user, this calls setup_fakeroot_env() to use the
-    fakeroot/fakechroot libraries.'''
-
+    fakeroot/fakechroot libraries.
+    '''
     def __init__(self, root):
-        '''Bind to a chroot, which can either be a directory, a tarball, or
-        None to work in the main system.
+        '''Bind to a chroot. 
+        
+        A chroot "root" can either be a directory, a tarball, or None to work
+        in the main system.
 
         If a tarball is given, then it gets unpacked into a temporary directory
-        which is cleaned up at program termination.'''
-
+        which is cleaned up at program termination.
+        '''
         self.remove = False
 
         if os.geteuid() != 0:
@@ -93,8 +95,8 @@ class Chroot:
         '''Create a tarball from the chroot.
 
         If tarball does not specify a .tar.gz path, then the Chroot must have
-        been created from a tarball, and that tarball is updated.'''
-
+        been created from a tarball, and that tarball is updated.
+        '''
         if not tarball:
             assert self.root_tarball
             tarball = self.root_tarball
@@ -113,8 +115,7 @@ class Chroot:
             os.chdir(orig_cwd)
 
     def _exec_capture(self, argv, stdin=None):
-        '''Internal helper function to wrap subprocess.Popen() and return a
-        triple (stdout, stderr, returncode).'''
+        '''Call argv and return (stdout, stderr, returncode).'''
 
         if stdin:
             p = subprocess.Popen(argv, stdin=subprocess.PIPE,
@@ -127,8 +128,7 @@ class Chroot:
         return (out, err, p.returncode)
 
     def run(self, argv):
-        '''Execute the given commandline vector in the chroot and return the
-        exit code.'''
+        '''Execute argv in the chroot and return the exit code.'''
 
         if self.root:
             return subprocess.call(['chroot', self.root] + argv)
@@ -136,8 +136,7 @@ class Chroot:
             return subprocess.call(argv)
 
     def run_capture(self, argv, stdin=None):
-        '''Execute the given command line vector in the chroot and return a
-        triple (stdout, stderr, exit code).'''
+        '''Execute argv in the chroot and return (stdout, stderr, exit code).'''
 
         if self.root:
             return self._exec_capture(['chroot', self.root] +
@@ -146,10 +145,11 @@ class Chroot:
            return self._exec_capture(argv, stdin)
 
     def fix_symlinks(self):
-        '''Remove root prefix from symbolic links in chroot directory,
-        otherwise chroot tarballs don't work at all, and we cannot move/rename
-        chroot directories.'''
+        '''Remove root prefix from symbolic links in chroot directory.
 
+        Otherwise chroot tarballs don't work at all, and we cannot move/rename
+        chroot directories.
+        '''
         for r, dirs, files in os.walk(self.root):
             for f in files:
                 path = os.path.join(r, f)
@@ -312,8 +312,8 @@ int main() { return 42; }
         def _install_file(klass, path, root):
             '''Install given file into a chroot, preserving the path.
             
-            Do nothing if the target file already exists.'''
-
+            Do nothing if the target file already exists.
+            '''
             destpath = root + os.path.abspath(path)
             if os.path.exists(destpath):
                 return

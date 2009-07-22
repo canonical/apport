@@ -81,11 +81,13 @@ problem still occurs:\n\n%s') % ', '.join(old_pkgs)
         os.chmod (reportfile, 0600)
 
 class UserInterface:
-    '''Abstract base class for encapsulating the workflow and common code for
-       any user interface implementation (like GTK, Qt, or CLI).
+    '''Apport user interface API.
 
-       A concrete subclass must implement all the abstract ui_* methods.'''
+    This provides an abstract base class for encapsulating the workflow and
+    common code for any user interface implementation (like GTK, Qt, or CLI).
 
+    A concrete subclass must implement all the abstract ui_* methods.
+    '''
     def __init__(self):
         '''Initialize program state and parse command line options.'''
 
@@ -109,12 +111,13 @@ class UserInterface:
     #
 
     def run_crashes(self):
-        '''Present all currently pending crash reports to the user, ask him
-        what to do about them, and offer to file bugs for them.
+        '''Present all currently pending crash reports.
+        
+        Ask the user what to do about them, and offer to file bugs for them.
         
         Return True if at least one crash report was processed, False
-        otherwise.'''
-
+        otherwise.
+        '''
         result = False
 
         for f in apport.fileutils.get_new_reports():
@@ -124,12 +127,14 @@ class UserInterface:
         return result
 
     def run_crash(self, report_file, confirm=True):
-        '''Present given crash report to the user, ask him what to do about it,
-        and offer to file a bug for it.
-        
-        If confirm is False, the user will not be asked whether to report the
-        problem.'''
+        '''Present and report a particular crash.
 
+        If confirm is True, ask the user what to do about it, and offer to file
+        a bug for it.
+        
+        If confirm is False, the user will not be asked, and the crash is
+        reported right away.
+        '''
         self.report_file = report_file
 
         try:
@@ -340,8 +345,8 @@ free memory to automatically analyze the problem and send a report to the develo
         '''Call appopriate run_* method according to command line arguments.
         
         Return True if at least one report has been processed, and False
-        otherwise.'''
-
+        otherwise.
+        '''
         if self.options.filebug:
             return self.run_report_bug()
         elif self.options.crash_file:
@@ -354,13 +359,14 @@ free memory to automatically analyze the problem and send a report to the develo
             return self.run_crashes()
 
     #
-    # functions that implement workflow bits
+    # methods that implement workflow bits
     #
 
     def parse_argv(self):
-        '''Parse command line options and return (options,
-        args) tuple.'''
-
+        '''Parse command line options.
+        
+        Return (options, args).
+        '''
         optparser = optparse.OptionParser('%prog [options]')
         optparser.add_option('-f', '--file-bug',
             help='Start in bug filing mode. Requires --package and an optional --pid, or just a --pid',
@@ -421,12 +427,14 @@ free memory to automatically analyze the problem and send a report to the develo
             sys.exit(1)
 
     def collect_info(self):
-        '''Collect missing information about the report from the system and
-        display a progress dialog in the meantime.
+        '''Collect additional information.
+
+        Call all the add_*_info() methods and display a progress dialog during
+        this.
 
         In particular, this adds OS, package and gdb information and checks bug
-        patterns.'''
-
+        patterns.
+        '''
         if not self.cur_package and not self.report.has_key('ExecutablePath'):
             # this happens if we file a bug without specifying a PID or a
             # package
@@ -488,8 +496,8 @@ free memory to automatically analyze the problem and send a report to the develo
     def open_url(self, url):
         '''Open the given URL in a new browser window.
 
-        Display an error dialog if everything fails.'''
-
+        Display an error dialog if everything fails.
+        '''
         (r, w) = os.pipe()
         if os.fork() > 0:
             os.close(w)
@@ -574,8 +582,7 @@ free memory to automatically analyze the problem and send a report to the develo
             sys.exit(1)
 
     def file_report(self):
-        '''Upload the current report to the tracking system and guide the user
-        to its web page.'''
+        '''Upload the current report and guide the user to the reporting web page.'''
 
         # drop PackageArchitecture if equal to Architecture
         if self.report.get('PackageArchitecture') == self.report.get('Architecture'):
@@ -632,8 +639,8 @@ free memory to automatically analyze the problem and send a report to the develo
 
         This might issue an error message and return False if the report cannot
         be processed, otherwise self.report is initialized and True is
-        returned.'''
-
+        returned.
+        '''
         try:
             self.report = apport.Report()
             self.report.load(open(path), binary='compressed')
@@ -674,9 +681,10 @@ free memory to automatically analyze the problem and send a report to the develo
         return True
 
     def get_desktop_entry(self):
-        '''Try to get a matching .desktop file entry (xdg.DesktopEntry) for the
-        current self.report and return it.'''
-
+        '''Return a matching xdg.DesktopEntry for the current report.
+        
+        Return None if report cannot be associated to a .desktop file.
+        '''
         if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
             desktop_file = self.report['DesktopFile']
         else:
@@ -689,10 +697,11 @@ free memory to automatically analyze the problem and send a report to the develo
                 return None
 
     def handle_duplicate(self):
-        '''Check whether the current bug report is already known as a bug
-        pattern, and if so, tell the user about it, open the existing bug, and
-        return True.'''
+        '''Check if current report matches a bug pattern.
 
+        If so, tell the user about it, open the existing bug in a browser, and
+        return True.
+        '''
         if not self.report.has_key('BugPatternURL'):
             return False
 
@@ -709,8 +718,10 @@ might be helpful for the developers.'))
     #
 
     def ui_present_crash(self, desktopentry):
-        '''Inform that a crash has happened for self.report and
-        self.cur_package and ask about an action.
+        '''Ask what to do with a crash.
+
+        Inform that a crash has happened for self.report and self.cur_package
+        and ask about an action.
 
         If the package can be mapped to a desktop file, an xdg.DesktopEntry is
         passed as an argument; this can be used for enhancing strings, etc.
@@ -721,39 +732,44 @@ might be helpful for the developers.'))
           the crashed application ('restart'), or report a bug about the crash
           ('report').
         - Valid values for the 'blacklist' key: True or False (True will cause
-          the invocation of report.mark_ignore()).'''
-
+          the invocation of report.mark_ignore()).
+        '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_present_package_error(self, desktopentry):
-        '''Inform that a package installation/upgrade failure has happened for
+        '''Ask what to do with a package failure.
+
+        Inform that a package installation/upgrade failure has happened for
         self.report and self.cur_package and ask about an action.
 
         Return the action: ignore ('cancel'), or report a bug about the problem
-        ('report').'''
-
+        ('report').
+        '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_present_kernel_error(self, desktopentry):
-        '''Inform that a kernel crash has happened for self.report and
-        ask about an action.
+        '''Ask what to do with a kernel error.
+
+        Inform that a kernel crash has happened for self.report and ask about
+        an action.
 
         Return the action: ignore ('cancel'), or report a bug about the problem
-        ('report').'''
-
+        ('report').
+        '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_present_report_details(self):
-        '''Show details of the bug report and choose between sending a complete
-        or reduced report.
+        '''Show details of the bug report.
+        
+        This lets the user choose between sending a complete or reduced report.
 
-        This function can use the get_complete_size() and get_reduced_size()
+        This method can use the get_complete_size() and get_reduced_size()
         methods to determine the respective size of the data to send, and
         format_filesize() to convert it to a humanly readable form.
 
         Return the action: send full report ('full'), send reduced report
-        ('reduced'), or do not send anything ('cancel').'''
-
+        ('reduced'), or do not send anything ('cancel').
+        '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_info_message(self, title, text):
@@ -767,17 +783,18 @@ might be helpful for the developers.'))
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_start_info_collection_progress(self):
-        '''Open a window with an indefinite progress bar, telling the user to
-        wait while debug information is being collected.'''
-
+        '''Open a indefinite progress bar for data collection.
+        
+        This tells the user to wait while debug information is being
+        collected.
+        '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_pulse_info_collection_progress(self):
-        '''Advance the progress bar in the debug data collection progress
-        window.
+        '''Advance the data collection progress bar.
 
-        This function is called every 100 ms.'''
-
+        This function is called every 100 ms.
+        '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_stop_info_collection_progress(self):
@@ -786,18 +803,20 @@ might be helpful for the developers.'))
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_start_upload_progress(self):
-        '''Open a window with an definite progress bar, telling the user to
-        wait while debug information is being uploaded.'''
+        '''Open progress bar for data upload.
 
+        This tells the user to wait while debug information is being uploaded.
+        '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_set_upload_progress(self, progress):
-        '''Set the progress bar in the debug data upload progress
-        window to the given ratio (between 0 and 1, or None for indefinite
-        progress).
+        '''Update data upload progress bar.
 
-        This function is called every 100 ms.'''
+        Set the progress bar in the debug data upload progress window to the
+        given ratio (between 0 and 1, or None for indefinite progress).
 
+        This function is called every 100 ms.
+        '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_stop_upload_progress(self):
@@ -806,9 +825,10 @@ might be helpful for the developers.'))
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
     def ui_shutdown(self):
-        '''This is called right before terminating the program and can be used
-        for cleaning up.'''
-
+        '''Called right before terminating the program.
+        
+        This can be used for for cleaning up.
+        '''
         pass
 
     #

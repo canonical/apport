@@ -50,21 +50,22 @@ def _transitive_dependencies(package, depends_set):
             depends_set.add(d)
             _transitive_dependencies(d, depends_set)
 
-def _read_file(f):
-    '''Try to read given file and return its contents, or return a textual
-    error if it failed.'''
-
+def _read_file(path):
+    '''Read file content.
+    
+    Return its content, or return a textual error if it failed.
+    '''
     try:
-        return open(f).read().strip()
+        return open(path).read().strip()
     except (OSError, IOError), e:
         return 'Error: ' + str(e)
 
 def _read_maps(pid):
-    '''
-    Since /proc/$pid/maps may become unreadable unless we are
-    ptracing the process, detect this, and attempt to attach/detach
-    '''
+    '''Read /proc/pid/maps.
 
+    Since /proc/$pid/maps may become unreadable unless we are ptracing the
+    process, detect this, and attempt to attach/detach.
+    '''
     maps = 'Error: unable to read /proc maps file'
     try:
         maps = file('/proc/%d/maps' % pid).read().strip()
@@ -73,9 +74,11 @@ def _read_maps(pid):
     return maps
 
 def _command_output(command, input = None, stderr = subprocess.STDOUT):
-    '''Try to execute given command (array) and return its stdout, or return
-    a textual error if it failed.'''
+    '''Run command and capture its output.
 
+    Try to execute given command (argv list) and return its stdout, or return
+    a textual error if it failed.
+    '''
     sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
 
     (out, err) = sp.communicate(input)
@@ -86,9 +89,10 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
            str(command), sp.returncode, err)
 
 def _check_bug_pattern(report, pattern):
-    '''Check if given report matches the given bug pattern XML DOM node; return the
-    bug URL on match, otherwise None.'''
-
+    '''Check if given report matches the given bug pattern XML DOM node.
+    
+    Return the bug URL on match, otherwise None.
+    '''
     if not pattern.attributes.has_key('url'):
         return None
 
@@ -144,12 +148,11 @@ class Report(ProblemReport):
         self.pid = None
 
     def _pkg_modified_suffix(self, package):
-        '''Return a string suitable for appending to Package:/Dependencies:
-        fields.
+        '''Return a string suitable for appending to Package/Dependencies.
 
         If package has only unmodified files, return the empty string. If not,
-        return ' [modified: ...]' with a list of modified files.'''
-
+        return ' [modified: ...]' with a list of modified files.
+        '''
         mod = packaging.get_modified_files(package)
         if mod:
             return ' [modified: %s]' % ' '.join(mod)
@@ -167,8 +170,8 @@ class Report(ProblemReport):
           for
         - Dependencies: package names and versions of all dependencies and
           pre-dependencies; this also checks if the files are unmodified and
-          appends a list of all modified files'''
-
+          appends a list of all modified files
+        '''
         if not package:
             # the kernel does not have a executable path but a package
             if (not 'ExecutablePath' in self and
@@ -218,8 +221,8 @@ class Report(ProblemReport):
         - Architecture: system architecture in distro specific notation
         - Uname: uname -srm output
         - NonfreeKernelModules: loaded kernel modules which are not free (if
-            there are none, this field will not be present)'''
-
+            there are none, this field will not be present)
+        '''
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
         self['DistroRelease'] = p.communicate()[0].strip().replace('\n', ' ')
@@ -234,7 +237,6 @@ class Report(ProblemReport):
         This adds:
         - UserGroups: system groups the user is in
         '''
-
         user = pwd.getpwuid(os.getuid()).pw_name
         groups = [name for name, p, gid, memb in grp.getgrall()
             if user in memb and gid < 1000]
@@ -242,9 +244,12 @@ class Report(ProblemReport):
         self['UserGroups'] = ' '.join(groups)
 
     def _check_interpreted(self):
-        '''Check ExecutablePath, ProcStatus and ProcCmdline if the process is
-        interpreted.'''
+        '''Check if process is a script.
 
+        Use ExecutablePath, ProcStatus and ProcCmdline to determine if
+        process is an interpreted script. If so, set InterpreterPath
+        accordingly.
+        '''
         if not self.has_key('ExecutablePath'):
             return
 
@@ -454,7 +459,6 @@ class Report(ProblemReport):
         The optional debugdir can specify an alternative debug symbol root
         directory.
         '''
-
         if not self.has_key('CoreDump') or not self.has_key('ExecutablePath'):
             return
 
@@ -521,8 +525,8 @@ class Report(ProblemReport):
         '''Build field StacktraceTop as the top five functions of Stacktrace. 
 
         Signal handler invocations and related functions are skipped since they
-        are generally not useful for triaging and duplicate detection.'''
-        
+        are generally not useful for triaging and duplicate detection.
+        '''
         unwind_functions = set(['g_logv', 'g_log', 'IA__g_log', 'IA__g_logv',
             'g_assert_warning', 'IA__g_assert_warning'])
         toptrace = [''] * 5
@@ -629,8 +633,9 @@ class Report(ProblemReport):
         return False
 
     def search_bug_patterns(self, baseurl):
-        '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
-        None otherwise.
+        '''Check bug patterns at baseurl/packagename.xml. 
+        
+        Return bug URL on match, or None otherwise.
 
         The pattern file must be valid XML and has the following syntax:
         root element := <patterns>
@@ -649,7 +654,6 @@ class Report(ProblemReport):
             </pattern>
         </patterns>
         '''
-
         # some distros might not want to support these
         if not baseurl:
             return
@@ -682,11 +686,12 @@ class Report(ProblemReport):
         return None
 
     def _get_ignore_dom(self):
-        '''Read ignore list XML file and return a DOM tree, or an empty DOM
-        tree if file does not exist.
+        '''Read ignore list XML file and return a DOM tree. 
+        
+        Return an empty DOM tree if file does not exist.
 
-        Raises ValueError if the file exists but is invalid XML.'''
-
+        Raises ValueError if the file exists but is invalid XML.
+        '''
         ifpath = os.path.expanduser(_ignore_file)
         if not os.access(ifpath, os.R_OK) or os.path.getsize(ifpath) == 0:
             # create a document from scratch
@@ -705,13 +710,15 @@ class Report(ProblemReport):
         return dom
 
     def check_ignored(self):
-        '''Check ~/.apport-ignore.xml (in the real UID's home) and
-        /etc/apport/blacklist.d/ if the current report should not be presented
-        to the user.
+        '''Check if current report should not be presented.
 
-        This requires the ExecutablePath attribute. Function can throw a
-        ValueError if the file has an invalid format.'''
+        Reports can be suppressed by per-user blacklisting in
+        ~/.apport-ignore.xml (in the real UID's home) and
+        /etc/apport/blacklist.d/.
 
+        This requires the ExecutablePath attribute. Throws a ValueError if the
+        file has an invalid format.
+        '''
         assert self.has_key('ExecutablePath')
 
         # check blacklist
@@ -744,13 +751,15 @@ class Report(ProblemReport):
         return False
 
     def mark_ignore(self):
-        '''Add a ignore list entry for this report to ~/.apport-ignore.xml, so
+        '''Ignore future crashes of this executable.
+
+        Add a ignore list entry for this report to ~/.apport-ignore.xml, so
         that future reports for this ExecutablePath are not presented to the
         user any more.
 
-        Function can throw a ValueError if the file already exists and has an
-        invalid format.'''
-
+        Throws a ValueError if the file already exists and has an invalid
+        format.
+        '''
         assert self.has_key('ExecutablePath')
 
         dom = self._get_ignore_dom()
@@ -775,13 +784,12 @@ class Report(ProblemReport):
         dom.unlink()
 
     def has_useful_stacktrace(self):
-        '''Check whether this report has a stacktrace that can be considered
-        'useful'.
+        '''Check whether StackTrace can be considered 'useful'.
 
         The current heuristic is to consider it useless if it either is shorter
         than three lines and has any unknown function, or for longer traces, a
-        minority of known functions.'''
-        
+        minority of known functions.
+        '''
         if not self.get('StacktraceTop'):
             return False
         
@@ -800,8 +808,8 @@ class Report(ProblemReport):
         Python exceptions).
 
         Return None if the report is not a crash or a default title could not
-        be generated.'''
-
+        be generated.
+        '''
         # signal crash
         if self.has_key('Signal') and \
             self.has_key('ExecutablePath') and \
@@ -906,8 +914,7 @@ class Report(ProblemReport):
         return None
 
     def obsolete_packages(self):
-        '''Check Package: and Dependencies: for obsolete packages and return a
-        list of them.'''
+        '''Return list of obsolete packages in Package and Dependencies.'''
 
         obsolete = []
         for l in (self['Package'] + '\n' + self.get('Dependencies', '')).splitlines():
@@ -921,8 +928,9 @@ class Report(ProblemReport):
         return obsolete
 
     def crash_signature(self):
-        '''Calculate a signature string for a crash suitable for identifying
-        duplicates.
+        '''Get a signature string for a crash.
+        
+        This is suitable for identifying duplicates.
 
         For signal crashes this the concatenation of ExecutablePath, Signal
         number, and StacktraceTop function names, separated by a colon. If
@@ -930,8 +938,8 @@ class Report(ProblemReport):
         fields, return None.
         
         For Python crashes, this concatenates the ExecutablePath, exception
-        name, and Traceback function names, again separated by a colon.'''
-
+        name, and Traceback function names, again separated by a colon.
+        '''
         if (not self.has_key('ExecutablePath') and 
             not self['ProblemType'] == 'KernelCrash'):
             return None

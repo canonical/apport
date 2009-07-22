@@ -197,7 +197,6 @@ def root_command_output(command, input = None, stderr = subprocess.STDOUT):
     
     In case of failure, a textual error gets returned.
     '''
-
     if os.getuid() == 0:
         prefix = []
     elif os.getenv('DISPLAY') and \
@@ -362,7 +361,8 @@ def attach_printing(report):
 def attach_related_packages(report, packages):
     '''Attach version information for related packages
 
-       In the future, this might also run their hooks.'''
+    In the future, this might also run their hooks.
+    '''
     report['RelatedPackageVersions'] = package_versions(*packages)
 
 def package_versions(*packages):
@@ -405,6 +405,7 @@ def _get_module_license(module):
 
 def nonfree_kernel_modules(module_list = '/proc/modules'):
     '''Check loaded modules and return a list of those which are not free.'''
+
     try:
         mods = [l.split()[0] for l in open(module_list)]
     except IOError:

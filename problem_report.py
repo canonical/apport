@@ -88,8 +88,8 @@ class ProblemReport(UserDict.IterableUserDict):
 
         type can be 'Crash', 'Packaging', 'KernelCrash' or 'KernelOops'.
         date is the desired date/time string; if None (default), the
-        current local time is used. '''
-
+        current local time is used.
+        '''
         if date == None:
             date = time.asctime()
         self.data = {'ProblemType': type, 'Date': date}
@@ -172,9 +172,10 @@ class ProblemReport(UserDict.IterableUserDict):
         self.old_keys = set(self.data.keys())
 
     def has_removed_fields(self):
-        '''Check whether the report has any keys which were not loaded in load()
-        due to being compressed binary.'''
-
+        '''Check if the report has any keys which were not loaded.
+        
+        This could happen when using binary=False in load().
+        '''
         return ('' in self.itervalues())
 
     def _is_binary(self, string):
@@ -340,13 +341,12 @@ class ProblemReport(UserDict.IterableUserDict):
                 file.write('\n')
 
     def add_to_existing(self, reportfile, keep_times=False):
-        '''Add the fields of this report to an already existing report
-        file.
+        '''Add this report's data to an already existing report file.
 
         The file will be temporarily chmod'ed to 000 to prevent frontends
         from picking up a hal-updated report file. If keep_times
-        is True, then the file's atime and mtime restored after updating.'''
-
+        is True, then the file's atime and mtime restored after updating.
+        '''
         st = os.stat(reportfile)
         try:
             f = open(reportfile, 'a')
@@ -360,8 +360,9 @@ class ProblemReport(UserDict.IterableUserDict):
 
     def write_mime(self, file, attach_treshold = 5, extra_headers={},
         skip_keys=None):
-        '''Write information into the given file-like object, using
-        MIME/Multipart RFC 2822 format (i. e. an email with attachments).
+        '''Write MIME/Multipart RFC 2822 formatted data into file.
+
+        file must be a file-like object, not a path.
 
         If a value is a string or a CompressedValue, it is written directly.
         Otherwise it must be a tuple containing the source file and an optional
@@ -379,7 +380,6 @@ class ProblemReport(UserDict.IterableUserDict):
         skip_keys is a set/list specifying keys which are filtered out and not
         written to the destination file.
         '''
-
         keys = self.data.keys()
         keys.sort()
 
@@ -487,9 +487,11 @@ class ProblemReport(UserDict.IterableUserDict):
         return self.data.__setitem__(k, v)
 
     def new_keys(self):
-        '''Return the set of keys which have been added to the report since it
-        was constructed or loaded.'''
+        '''Return newly added keys.
 
+        Return the set of keys which have been added to the report since it
+        was constructed or loaded.
+        '''
         return set(self.data.keys()) - self.old_keys
 
     @classmethod
@@ -677,6 +679,7 @@ Extra: appended
 
     def test_load(self):
         '''load() with various formatting.'''
+
         pr = ProblemReport()
         pr.load(StringIO(
 '''ProblemType: Crash

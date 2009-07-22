@@ -14,8 +14,7 @@ the full text of the license.
 import threading, sys
 
 class REThread(threading.Thread):
-    '''Enhanced threading.Thread which can deliver a return value and propagate
-    exceptions from the called thread to the calling thread.'''
+    '''Thread with return values and exception propagation.'''
 
     def __init__(self, group=None, target=None, name=None, args=(), kwargs={},
             verbose=None):
@@ -43,23 +42,22 @@ class REThread(threading.Thread):
         '''Return value from target function.
 
         This can only be called after the thread has finished, i. e. when
-        isAlive() is False and did not terminate with an exception.'''
-
+        isAlive() is False and did not terminate with an exception.
+        '''
         assert not self.isAlive()
         assert not self._exception
         return self._retval
 
     def exc_info(self):
-        '''Return a tuple (type, value, traceback) of the exception caught in
-        run().'''
+        '''Return (type, value, traceback) of the exception caught in run().'''
 
         return self._exception
 
     def exc_raise(self):
-        '''Raises the exception caught in the thread.
+        '''Raise the exception caught in the thread.
 
-        Does nothing if no exception was caught.'''
-
+        Do nothing if no exception was caught.
+        '''
         if self._exception:
             raise self._exception[0], self._exception[1], self._exception[2]
 
