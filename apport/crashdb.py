@@ -12,6 +12,7 @@ the full text of the license.
 
 import os, os.path, datetime, sys
 
+from exceptions import Exception
 from packaging_impl import impl as packaging
 
 class CrashDatabase:
@@ -23,8 +24,8 @@ class CrashDatabase:
         update(). For upload() and get_comment_url() you can use None.
         
         options is a dictionary with additional settings from crashdb.conf; see
-        get_crashdb() for details'''
-
+        get_crashdb() for details.
+        '''
         self.auth_file = auth_file
         self.options = options
         self.bugpattern_baseurl = bugpattern_baseurl
@@ -34,8 +35,8 @@ class CrashDatabase:
         '''Return the base URL for bug patterns.
 
         See apport.report.Report.search_bug_patterns() for details. If this
-        function returns None, bug patterns are disabled.'''
-
+        function returns None, bug patterns are disabled.
+        '''
         return self.bugpattern_baseurl
 
     #
@@ -47,8 +48,8 @@ class CrashDatabase:
         '''Initialize duplicate database.
 
         path specifies an SQLite database. It will be created if it does not
-        exist yet.'''
-
+        exist yet.
+        '''
         import sqlite3 as dbapi2
 
         assert dbapi2.paramstyle == 'qmark', \
@@ -73,7 +74,7 @@ class CrashDatabase:
 
         # verify integrity
         cur = self.duplicate_db.cursor()
-        cur.execute('PRAGMA integrity_check');
+        cur.execute('PRAGMA integrity_check')
         result = cur.fetchall() 
         if result != [('ok',)]:
             raise SystemError, 'Corrupt duplicate db:' + str(result)
@@ -92,8 +93,8 @@ class CrashDatabase:
         nothing and just returns None.
         
         By default, the report gets download()ed, but for performance reasons
-        it can be explicitly passed to this function if it is already available.'''
-
+        it can be explicitly passed to this function if it is already available.
+        '''
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
         if not report:
@@ -166,8 +167,8 @@ class CrashDatabase:
         '''Mark given crash ID as fixed in the duplicate database.
         
         version specifies the package version the crash was fixed in (None for
-        'still unfixed').'''
-
+        'still unfixed').
+        '''
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
         cur = self.duplicate_db.cursor()
@@ -177,9 +178,10 @@ class CrashDatabase:
         self.duplicate_db.commit()
 
     def duplicate_db_remove(self, id):
-        '''Remove crash from the duplicate database (because it got rejected or
-        manually duplicated).'''
-
+        '''Remove crash from the duplicate database.
+        
+        This happens when a report got rejected or manually duplicated.
+        '''
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
         cur = self.duplicate_db.cursor()
@@ -187,16 +189,15 @@ class CrashDatabase:
         self.duplicate_db.commit()
 
     def duplicate_db_consolidate(self):
-        '''Update the duplicate database status to the reality of the crash
-        database.
+        '''Update the duplicate db status to the reality of the crash db.
         
         This uses get_unfixed() and get_fixed_version() to get the status of
         particular crashes. Invalid IDs get removed from the duplicate db, and
         crashes which got fixed since the last run are marked as such in the
         database.
 
-        This is a very expensive operation and should not be used too often.'''
-
+        This is a very expensive operation and should not be used too often.
+        '''
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
         unfixed = self.get_unfixed()
@@ -235,8 +236,8 @@ class CrashDatabase:
         
         By default, this returns the number of seconds since the last
         consolidation. If absolute is True, the date and time of last
-        consolidation will be returned as a string instead.'''
-
+        consolidation will be returned as a string instead.
+        '''
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
         cur = self.duplicate_db.cursor()
@@ -249,9 +250,11 @@ class CrashDatabase:
             return delta.days * 86400 + delta.seconds
 
     def duplicate_db_needs_consolidation(self, interval=86400):
-        '''Check whether the last duplicate_db_consolidate() happened more than
-        'interval' seconds ago (default: one day).'''
+        '''Check whether DB needs consolidation.
 
+        This is True if last duplicate_db_consolidate() happened more than
+        'interval' seconds ago (default: one day).
+        '''
         return self.duplicate_db_last_consolidation() >= interval
 
     def duplicate_db_change_master_id(self, old_id, new_id):
@@ -265,25 +268,28 @@ class CrashDatabase:
         self.duplicate_db.commit()
 
     def _duplicate_search_signature(self, sig):
-        '''Look up signature in the duplicate db and return an [(id,
-        fixed_version)] tuple list.
+        '''Look up signature in the duplicate db.
+        
+        Return [(id, fixed_version)] tuple list.
         
         There might be several matches if a crash has been reintroduced in a
-        later version.'''
-
+        later version.
+        '''
         cur = self.duplicate_db.cursor()
         cur.execute('SELECT crash_id, fixed_version FROM crashes WHERE signature = ?', [sig])
         return cur.fetchall()
 
     def _duplicate_db_dump(self, with_timestamps=False):
-        '''Return the entire duplicate database as a dictionary signature ->
-           (crash_id, fixed_version).
+        '''Return the entire duplicate database as a dictionary.
+        
+        The returned dictionary maps "signature" to (crash_id, fixed_version)
+        pairs.
 
-           If with_timestamps is True, then the map will contain triples
-           (crash_id, fixed_version, last_change) instead.
+        If with_timestamps is True, then the map will contain triples
+        (crash_id, fixed_version, last_change) instead.
 
-           This is mainly useful for debugging and test suites.'''
-
+        This is mainly useful for debugging and test suites.
+        '''
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
 
         dump = {}
@@ -308,8 +314,10 @@ class CrashDatabase:
         If the implementation supports it, and a function progress_callback is
         passed, that is called repeatedly with two arguments: the number of
         bytes already sent, and the total number of bytes to send. This can be
-        used to provide a proper upload progress indication on frontends.'''
+        used to provide a proper upload progress indication on frontends.
 
+        This method can raise a NeedsCredentials exception in case of failure.
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_comment_url(self, report, handle):
@@ -318,8 +326,8 @@ class CrashDatabase:
 
         Should return None if no URL should be opened (anonymous filing without
         user comments); in that case this function should do whichever
-        interactive steps it wants to perform.'''
-
+        interactive steps it wants to perform.
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def download(self, id):
@@ -328,32 +336,38 @@ class CrashDatabase:
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def update(self, id, report, comment):
-        '''Update the given report ID with the retraced results from the report
-        (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
-        desired) and an optional comment.'''
+        '''Update the given report ID for retracing results.
+        
+        This updates Stacktrace, ThreadStacktrace, StacktraceTop, and
+        Disassembly. You can also supply an additional comment.
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
+    def set_credentials(self, username, password):
+        '''Set username and password.'''
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_distro_release(self, id):
-        '''Get 'DistroRelease: <release>' from the given report ID and return
-        it.'''
+        '''Get 'DistroRelease: <release>' from the report ID.'''
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_unretraced(self):
-        '''Return an ID set of all crashes which have not been retraced yet and
-        which happened on the current host architecture.'''
-
+        '''Return set of crash IDs which have not been retraced yet.
+        
+        This should only include crashes which match the current host
+        architecture.
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_dup_unchecked(self):
-        '''Return an ID set of all crashes which have not been checked for
-        being a duplicate.
+        '''Return set of crash IDs which need duplicate checking.
 
         This is mainly useful for crashes of scripting languages such as
         Python, since they do not need to be retraced. It should not return
-        bugs that are covered by get_unretraced().'''
-
+        bugs that are covered by get_unretraced().
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_unfixed(self):
@@ -363,8 +377,8 @@ class CrashDatabase:
         
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError).'''
-
+        raise an exception (preferably IOError).
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def get_fixed_version(self, id):
@@ -377,8 +391,8 @@ class CrashDatabase:
 
         This function should make sure that the returned result is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError).'''
-
+        raise an exception (preferably IOError).
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def duplicate_of(self, id):
@@ -412,23 +426,25 @@ class CrashDatabase:
         If invalid_msg is given, the bug should be closed as invalid with given
         message, otherwise just marked as a failed retrace.
         
-        This can be a no-op if you are not interested in this.'''
-
+        This can be a no-op if you are not interested in this.
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def _mark_dup_checked(self, id, report):
         '''Mark crash id as checked for being a duplicate
         
-        This is an internal method that should not be called from outside.'''
-
+        This is an internal method that should not be called from outside.
+        '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
 #
 # factory 
 #
 
 def get_crashdb(auth_file, name = None, conf = None):
-    '''Return a CrashDatabase object for the given crash db name, as specified
-    in the configuration file 'conf'.
+    '''Return a CrashDatabase object for the given crash db name.
+    
+    This reads the configuration file 'conf'.
     
     If name is None, it defaults to the 'default' value in conf.
 
@@ -444,8 +460,8 @@ def get_crashdb(auth_file, name = None, conf = None):
       in apport.crashdb_impl which contains a concrete 'CrashDatabase' class
       implementation for that crash db type) and 'bug_pattern_base', which
       specifies an URL for bug patterns (or None if those are not used for that
-      crash db).'''
-
+      crash db).
+    '''
     if not conf:
         conf = os.environ.get('APPORT_CRASHDB_CONF', '/etc/apport/crashdb.conf')
     settings = {}
@@ -472,3 +488,6 @@ def get_crashdb(auth_file, name = None, conf = None):
     m = __import__('apport.crashdb_impl.' + db['impl'], globals(), locals(), ['CrashDatabase'])
     return m.CrashDatabase(auth_file, db['bug_pattern_base'], db)
 
+class NeedsCredentials(Exception):
+    '''This may be raised when unable to log in to the crashdb.'''
+    pass

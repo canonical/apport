@@ -52,7 +52,8 @@ for l in (options.logs or []):
     elif os.path.isdir(l):
 	for f in os.listdir(l):
 	    path = os.path.join(l, f)
-	    pr[mkattrname(path)] = (path,)
+            if os.path.isfile(path):
+                pr[mkattrname(path)] = (path,)
 
 # write report
 pr.write(open(apport.fileutils.make_report_path(pr), 'w'))

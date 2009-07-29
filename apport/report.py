@@ -50,21 +50,22 @@ def _transitive_dependencies(package, depends_set):
             depends_set.add(d)
             _transitive_dependencies(d, depends_set)
 
-def _read_file(f):
-    '''Try to read given file and return its contents, or return a textual
-    error if it failed.'''
-
+def _read_file(path):
+    '''Read file content.
+    
+    Return its content, or return a textual error if it failed.
+    '''
     try:
-        return open(f).read().strip()
+        return open(path).read().strip()
     except (OSError, IOError), e:
         return 'Error: ' + str(e)
 
 def _read_maps(pid):
-    '''
-    Since /proc/$pid/maps may become unreadable unless we are
-    ptracing the process, detect this, and attempt to attach/detach
-    '''
+    '''Read /proc/pid/maps.
 
+    Since /proc/$pid/maps may become unreadable unless we are ptracing the
+    process, detect this, and attempt to attach/detach.
+    '''
     maps = 'Error: unable to read /proc maps file'
     try:
         maps = file('/proc/%d/maps' % pid).read().strip()
@@ -73,9 +74,11 @@ def _read_maps(pid):
     return maps
 
 def _command_output(command, input = None, stderr = subprocess.STDOUT):
-    '''Try to execute given command (array) and return its stdout, or return
-    a textual error if it failed.'''
+    '''Run command and capture its output.
 
+    Try to execute given command (argv list) and return its stdout, or return
+    a textual error if it failed.
+    '''
     sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
 
     (out, err) = sp.communicate(input)
@@ -86,9 +89,10 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
            str(command), sp.returncode, err)
 
 def _check_bug_pattern(report, pattern):
-    '''Check if given report matches the given bug pattern XML DOM node; return the
-    bug URL on match, otherwise None.'''
-
+    '''Check if given report matches the given bug pattern XML DOM node.
+    
+    Return the bug URL on match, otherwise None.
+    '''
     if not pattern.attributes.has_key('url'):
         return None
 
@@ -144,12 +148,11 @@ class Report(ProblemReport):
         self.pid = None
 
     def _pkg_modified_suffix(self, package):
-        '''Return a string suitable for appending to Package:/Dependencies:
-        fields.
+        '''Return a string suitable for appending to Package/Dependencies.
 
         If package has only unmodified files, return the empty string. If not,
-        return ' [modified: ...]' with a list of modified files.'''
-
+        return ' [modified: ...]' with a list of modified files.
+        '''
         mod = packaging.get_modified_files(package)
         if mod:
             return ' [modified: %s]' % ' '.join(mod)
@@ -167,10 +170,15 @@ class Report(ProblemReport):
           for
         - Dependencies: package names and versions of all dependencies and
           pre-dependencies; this also checks if the files are unmodified and
-          appends a list of all modified files'''
-
+          appends a list of all modified files
+        '''
         if not package:
-            package = fileutils.find_file_package(self['ExecutablePath'])
+            # the kernel does not have a executable path but a package
+            if (not 'ExecutablePath' in self and
+                self['ProblemType'] == 'KernelCrash'):
+                package = self['Package']
+            else:
+                package = fileutils.find_file_package(self['ExecutablePath'])
             if not package:
                 return
 
@@ -193,7 +201,7 @@ class Report(ProblemReport):
 
         # get dependency versions
         self['Dependencies'] = ''
-        for dep in dependencies:
+        for dep in sorted(dependencies):
             try:
                 v = packaging.get_version(dep)
             except ValueError:
@@ -213,8 +221,8 @@ class Report(ProblemReport):
         - Architecture: system architecture in distro specific notation
         - Uname: uname -srm output
         - NonfreeKernelModules: loaded kernel modules which are not free (if
-            there are none, this field will not be present)'''
-
+            there are none, this field will not be present)
+        '''
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
         self['DistroRelease'] = p.communicate()[0].strip().replace('\n', ' ')
@@ -229,7 +237,6 @@ class Report(ProblemReport):
         This adds:
         - UserGroups: system groups the user is in
         '''
-
         user = pwd.getpwuid(os.getuid()).pw_name
         groups = [name for name, p, gid, memb in grp.getgrall()
             if user in memb and gid < 1000]
@@ -237,9 +244,12 @@ class Report(ProblemReport):
         self['UserGroups'] = ' '.join(groups)
 
     def _check_interpreted(self):
-        '''Check ExecutablePath, ProcStatus and ProcCmdline if the process is
-        interpreted.'''
+        '''Check if process is a script.
 
+        Use ExecutablePath, ProcStatus and ProcCmdline to determine if
+        process is an interpreted script. If so, set InterpreterPath
+        accordingly.
+        '''
         if not self.has_key('ExecutablePath'):
             return
 
@@ -393,6 +403,47 @@ class Report(ProblemReport):
                             self['ProcEnviron'] += '\n'
                         self['ProcEnviron'] += 'PATH=(custom, no user)'
 
+    def add_kernel_crash_info(self, debugdir=None):
+        '''Add information from kernel crash.
+
+        This needs a VmCore in the Report.
+        '''
+        if not self.has_key('VmCore'):
+            return
+        unlink_core = False
+        ret = False
+        try:
+            if hasattr(self['VmCore'], 'find'):
+                (fd, core) = tempfile.mkstemp()
+                os.write(fd, self['VmCore'])
+                os.close(fd)
+                unlink_core = True
+            kver = self['Uname'].split()[1]
+            command = ['crash',
+                       '/usr/lib/debug/boot/vmlinux-%s' % kver,
+                       core,
+                       ]
+            try:
+                p = subprocess.Popen(command, 
+                                     stdin=subprocess.PIPE,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT)
+            except OSError:
+                return False
+            p.stdin.write('bt -a -f\n')
+            p.stdin.write('ps\n')
+            p.stdin.write('runq\n')
+            p.stdin.write('quit\n')
+            # FIXME: split it up nicely etc
+            out = p.stdout.read()
+            ret = (p.wait() == 0)
+            if ret:
+                self['Stacktrace'] = out
+        finally:
+            if unlink_core:
+                os.unlink(core)
+        return ret
+
     def add_gdb_info(self, debugdir=None):
         '''Add information from gdb.
 
@@ -408,7 +459,6 @@ class Report(ProblemReport):
         The optional debugdir can specify an alternative debug symbol root
         directory.
         '''
-
         if not self.has_key('CoreDump') or not self.has_key('ExecutablePath'):
             return
 
@@ -475,8 +525,8 @@ class Report(ProblemReport):
         '''Build field StacktraceTop as the top five functions of Stacktrace. 
 
         Signal handler invocations and related functions are skipped since they
-        are generally not useful for triaging and duplicate detection.'''
-        
+        are generally not useful for triaging and duplicate detection.
+        '''
         unwind_functions = set(['g_logv', 'g_log', 'IA__g_log', 'IA__g_logv',
             'g_assert_warning', 'IA__g_assert_warning'])
         toptrace = [''] * 5
@@ -583,8 +633,9 @@ class Report(ProblemReport):
         return False
 
     def search_bug_patterns(self, baseurl):
-        '''Check bug patterns at baseurl/packagename.xml, return bug URL on match or
-        None otherwise.
+        '''Check bug patterns at baseurl/packagename.xml. 
+        
+        Return bug URL on match, or None otherwise.
 
         The pattern file must be valid XML and has the following syntax:
         root element := <patterns>
@@ -603,7 +654,6 @@ class Report(ProblemReport):
             </pattern>
         </patterns>
         '''
-
         # some distros might not want to support these
         if not baseurl:
             return
@@ -636,11 +686,12 @@ class Report(ProblemReport):
         return None
 
     def _get_ignore_dom(self):
-        '''Read ignore list XML file and return a DOM tree, or an empty DOM
-        tree if file does not exist.
+        '''Read ignore list XML file and return a DOM tree. 
+        
+        Return an empty DOM tree if file does not exist.
 
-        Raises ValueError if the file exists but is invalid XML.'''
-
+        Raises ValueError if the file exists but is invalid XML.
+        '''
         ifpath = os.path.expanduser(_ignore_file)
         if not os.access(ifpath, os.R_OK) or os.path.getsize(ifpath) == 0:
             # create a document from scratch
@@ -659,13 +710,15 @@ class Report(ProblemReport):
         return dom
 
     def check_ignored(self):
-        '''Check ~/.apport-ignore.xml (in the real UID's home) and
-        /etc/apport/blacklist.d/ if the current report should not be presented
-        to the user.
+        '''Check if current report should not be presented.
 
-        This requires the ExecutablePath attribute. Function can throw a
-        ValueError if the file has an invalid format.'''
+        Reports can be suppressed by per-user blacklisting in
+        ~/.apport-ignore.xml (in the real UID's home) and
+        /etc/apport/blacklist.d/.
 
+        This requires the ExecutablePath attribute. Throws a ValueError if the
+        file has an invalid format.
+        '''
         assert self.has_key('ExecutablePath')
 
         # check blacklist
@@ -698,13 +751,15 @@ class Report(ProblemReport):
         return False
 
     def mark_ignore(self):
-        '''Add a ignore list entry for this report to ~/.apport-ignore.xml, so
+        '''Ignore future crashes of this executable.
+
+        Add a ignore list entry for this report to ~/.apport-ignore.xml, so
         that future reports for this ExecutablePath are not presented to the
         user any more.
 
-        Function can throw a ValueError if the file already exists and has an
-        invalid format.'''
-
+        Throws a ValueError if the file already exists and has an invalid
+        format.
+        '''
         assert self.has_key('ExecutablePath')
 
         dom = self._get_ignore_dom()
@@ -729,13 +784,12 @@ class Report(ProblemReport):
         dom.unlink()
 
     def has_useful_stacktrace(self):
-        '''Check whether this report has a stacktrace that can be considered
-        'useful'.
+        '''Check whether StackTrace can be considered 'useful'.
 
         The current heuristic is to consider it useless if it either is shorter
         than three lines and has any unknown function, or for longer traces, a
-        minority of known functions.'''
-        
+        minority of known functions.
+        '''
         if not self.get('StacktraceTop'):
             return False
         
@@ -754,8 +808,8 @@ class Report(ProblemReport):
         Python exceptions).
 
         Return None if the report is not a crash or a default title could not
-        be generated.'''
-
+        be generated.
+        '''
         # signal crash
         if self.has_key('Signal') and \
             self.has_key('ExecutablePath') and \
@@ -860,8 +914,7 @@ class Report(ProblemReport):
         return None
 
     def obsolete_packages(self):
-        '''Check Package: and Dependencies: for obsolete packages and return a
-        list of them.'''
+        '''Return list of obsolete packages in Package and Dependencies.'''
 
         obsolete = []
         for l in (self['Package'] + '\n' + self.get('Dependencies', '')).splitlines():
@@ -875,8 +928,9 @@ class Report(ProblemReport):
         return obsolete
 
     def crash_signature(self):
-        '''Calculate a signature string for a crash suitable for identifying
-        duplicates.
+        '''Get a signature string for a crash.
+        
+        This is suitable for identifying duplicates.
 
         For signal crashes this the concatenation of ExecutablePath, Signal
         number, and StacktraceTop function names, separated by a colon. If
@@ -884,10 +938,21 @@ class Report(ProblemReport):
         fields, return None.
         
         For Python crashes, this concatenates the ExecutablePath, exception
-        name, and Traceback function names, again separated by a colon.'''
-
-        if not self.has_key('ExecutablePath'):
+        name, and Traceback function names, again separated by a colon.
+        '''
+        if (not self.has_key('ExecutablePath') and 
+            not self['ProblemType'] == 'KernelCrash'):
             return None
+
+        # kernel crash
+        if self['ProblemType'] == 'KernelCrash':
+            sig = 'kernel'
+            regex = re.compile ('^\s*\#\d+\s\[\w+\]\s(\w+)')
+            for line in self['Stacktrace'].splitlines():
+                m = regex.match(line)
+                if m:
+                    sig += ':' + (m.group(1))
+            return sig
 
         # signal crashes
         if self.has_key('StacktraceTop') and self.has_key('Signal'):
@@ -1342,13 +1407,13 @@ int main() { return f(42); }
         self.assert_(pr.has_key('Disassembly'))
         self.assert_('(no debugging symbols found)' not in pr['Stacktrace'])
         self.assert_('Core was generated by' not in pr['Stacktrace'], pr['Stacktrace'])
-        self.assert_(not re.match(r"(?s)(^|.*\n)#0  [^\n]+\n#0  ",
+        self.assert_(not re.match(r'(?s)(^|.*\n)#0  [^\n]+\n#0  ',
                                   pr['Stacktrace']))
         self.assert_('#0  0x' in pr['Stacktrace'])
         self.assert_('#1  0x' in pr['Stacktrace'])
         self.assert_('#0  0x' in pr['ThreadStacktrace'])
         self.assert_('#1  0x' in pr['ThreadStacktrace'])
-        self.assert_('Thread 1 (process' in pr['ThreadStacktrace'])
+        self.assert_('Thread 1 (' in pr['ThreadStacktrace'])
         self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
 
     def test_add_gdb_info(self):
@@ -2063,6 +2128,121 @@ ZeroDivisionError: integer division or modulo by zero'''
 
         r['Traceback'] = 'FooBar'
         self.assertEqual(r.crash_signature(), None)
+
+
+        # kernel 
+        r['ProblemType'] = 'KernelCrash'
+        r['Stacktrace'] = '''
+crash 4.0-8.9
+Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009  Red Hat, Inc.
+Copyright (C) 2004, 2005, 2006  IBM Corporation
+Copyright (C) 1999-2006  Hewlett-Packard Co
+Copyright (C) 2005, 2006  Fujitsu Limited
+Copyright (C) 2006, 2007  VA Linux Systems Japan K.K.
+Copyright (C) 2005  NEC Corporation
+Copyright (C) 1999, 2002, 2007  Silicon Graphics, Inc.
+Copyright (C) 1999, 2000, 2001, 2002  Mission Critical Linux, Inc.
+This program is free software, covered by the GNU General Public License,
+and you are welcome to change it and/or distribute copies of it under
+certain conditions.  Enter "help copying" to see the conditions.
+This program has absolutely no warranty.  Enter "help warranty" for details.
+ 
+NOTE: stdin: not a tty
+
+GNU gdb 6.1
+Copyright 2004 Free Software Foundation, Inc.
+GDB is free software, covered by the GNU General Public License, and you are
+welcome to change it and/or distribute copies of it under certain conditions.
+Type "show copying" to see the conditions.
+There is absolutely no warranty for GDB.  Type "show warranty" for details.
+This GDB was configured as "i686-pc-linux-gnu"...
+
+      KERNEL: /usr/lib/debug/boot/vmlinux-2.6.31-2-generic
+    DUMPFILE: /tmp/tmpRJZy_O
+        CPUS: 1
+        DATE: Thu Jul  9 12:58:08 2009
+      UPTIME: 00:00:57
+LOAD AVERAGE: 0.15, 0.05, 0.02
+       TASKS: 173
+    NODENAME: egon-desktop
+     RELEASE: 2.6.31-2-generic
+     VERSION: #16-Ubuntu SMP Mon Jul 6 20:38:51 UTC 2009
+     MACHINE: i686  (2137 Mhz)
+      MEMORY: 2 GB
+       PANIC: "[   57.879776] Oops: 0002 [#1] SMP " (check log for details)
+         PID: 0
+     COMMAND: "swapper"
+        TASK: c073c180  [THREAD_INFO: c0784000]
+         CPU: 0
+       STATE: TASK_RUNNING (PANIC)
+
+PID: 0      TASK: c073c180  CPU: 0   COMMAND: "swapper"
+ #0 [c0785ba0] sysrq_handle_crash at c03917a3
+    [RA: c03919c6  SP: c0785ba0  FP: c0785ba0  SIZE: 4]
+    c0785ba0: c03919c6  
+ #1 [c0785ba0] __handle_sysrq at c03919c4
+    [RA: c0391a91  SP: c0785ba4  FP: c0785bc8  SIZE: 40]
+    c0785ba4: c06d4bab  c06d42d2  f6534000  00000004  
+    c0785bb4: 00000086  0000002e  00000001  f6534000  
+    c0785bc4: c0785bcc  c0391a91  
+ #2 [c0785bc8] handle_sysrq at c0391a8c
+    [RA: c0389961  SP: c0785bcc  FP: c0785bd0  SIZE: 8]
+    c0785bcc: c0785c0c  c0389961  
+ #3 [c0785bd0] kbd_keycode at c038995c
+    [RA: c0389b8b  SP: c0785bd4  FP: c0785c10  SIZE: 64]
+    c0785bd4: c056f96a  c0785be4  00000096  c07578c0  
+    c0785be4: 00000001  f6ac6e00  f6ac6e00  00000001  
+    c0785bf4: 00000000  00000000  0000002e  0000002e  
+    c0785c04: 00000001  f70d6850  c0785c1c  c0389b8b  
+ #4 [c0785c10] kbd_event at c0389b86
+    [RA: c043140c  SP: c0785c14  FP: c0785c20  SIZE: 16]
+    c0785c14: c0758040  f6910900  c0785c3c  c043140c  
+ #5 [c0785c20] input_pass_event at c0431409
+    [RA: c04332ce  SP: c0785c24  FP: c0785c40  SIZE: 32]
+    c0785c24: 00000001  0000002e  00000001  f70d6000  
+    c0785c34: 00000001  0000002e  c0785c64  c04332ce  
+ #6 [c0785c40] input_handle_event at c04332c9
+    [RA: c0433ac6  SP: c0785c44  FP: c0785c68  SIZE: 40]
+    c0785c44: 00000001  ffff138d  0000003d  00000001  
+    c0785c54: f70d6000  00000001  f70d6000  0000002e  
+    c0785c64: c0785c84  c0433ac6  
+ #7 [c0785c68] input_event at c0433ac1
+    [RA: c0479806  SP: c0785c6c  FP: c0785c88  SIZE: 32]
+    c0785c6c: 00000001  00000092  f70d677c  f70d70b4  
+    c0785c7c: 0000002e  f70d7000  c0785ca8  c0479806  
+ #8 [c0785c88] hidinput_hid_event at c0479801
+    [RA: c0475b31  SP: c0785c8c  FP: c0785cac  SIZE: 36]
+    c0785c8c: 00000001  00000007  c0785c00  f70d6000  
+    c0785c9c: f70d70b4  f70d5000  f70d7000  c0785cc4  
+    c0785cac: c0475b31  
+    [RA: 0  SP: c0785ffc  FP: c0785ffc  SIZE: 0]
+   PID    PPID  CPU   TASK    ST  %MEM     VSZ    RSS  COMM
+>     0      0   0  c073c180  RU   0.0       0      0  [swapper]
+      1      0   1  f7038000  IN   0.1    3096   1960  init
+      2      0   0  f7038c90  IN   0.0       0      0  [kthreadd]
+    271      2   1  f72bf110  IN   0.0       0      0  [bluetooth]
+    325      2   1  f71c25b0  IN   0.0       0      0  [khungtaskd]
+   1404      2   0  f6b5bed0  IN   0.0       0      0  [kpsmoused]
+   1504      2   1  f649cb60  IN   0.0       0      0  [hd-audio0]
+   2055      1   0  f6a18000  IN   0.0    1824    536  getty
+   2056      1   0  f6a1d7f0  IN   0.0    1824    536  getty
+   2061      1   0  f6a1f110  IN   0.1    3132   1604  login
+   2062      1   1  f6a18c90  IN   0.0    1824    540  getty
+   2063      1   1  f6b58c90  IN   0.0    1824    540  getty
+   2130      1   0  f6b5f110  IN   0.0    2200   1032  acpid
+   2169      1   0  f69ebed0  IN   0.0    2040    664  syslogd
+   2192      1   1  f65b3ed0  IN   0.0    1976    532  dd
+   2194      1   1  f6b5a5b0  IN   0.1    3996   2712  klogd
+   2217      1   0  f6b74b60  IN   0.1    3008   1120  dbus-daemon
+   2248      1   0  f65b7110  IN   0.2    6896   4304  hald
+   2251      1   1  f65b3240  IN   0.1   19688   2604  console-kit-dae
+RUNQUEUES[0]: c6002320
+ RT PRIO_ARRAY: c60023c0
+ CFS RB_ROOT: c600237c
+  PID: 9      TASK: f703f110  CPU: 0   COMMAND: "events/0"
+'''
+        self.assertEqual(r.crash_signature(), 'kernel:sysrq_handle_crash:__handle_sysrq:handle_sysrq:kbd_keycode:kbd_event:input_pass_event:input_handle_event:input_event:hidinput_hid_event')
+
 
     def test_binary_data(self):
         '''methods get along with binary data.'''

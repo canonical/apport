@@ -20,9 +20,11 @@ report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 _config_file = '~/.config/apport/settings'
 
 def find_package_desktopfile(package):
-    '''If given package is installed and has a single .desktop file, return the
-    path to it, otherwise return None.'''
+    '''Return a package's .desktop file.
 
+    If given package is installed and has a single .desktop file, return the
+    path to it, otherwise return None.
+    '''
     if package is None:
         return None
 
@@ -43,8 +45,8 @@ def likely_packaged(file):
     This is semi-decidable: A return value of False is definitive, a True value
     is only a guess which needs to be checked with find_file_package().
     However, this function is very fast and does not access the package
-    database.'''
-
+    database.
+    '''
     pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
     '/usr/', '/var'] # packages only ship files in these directories
 
@@ -57,9 +59,10 @@ def likely_packaged(file):
         file.startswith('/var/lib/schroot')
 
 def find_file_package(file):
-    '''Return the package that ships the given file (or None if no package
-    ships it).'''
-
+    '''Return the package that ships the given file.
+    
+    Return None if no package ships it.
+    '''
     # resolve symlinks in directories
     (dir, name) = os.path.split(file)
     resolved_dir = os.path.realpath(dir)
@@ -72,8 +75,7 @@ def find_file_package(file):
     return packaging.get_file_package(file)
 
 def seen_report(report):
-    '''Check whether the given report file has already been processed
-    earlier.'''
+    '''Check whether the report file has already been processed earlier.'''
 
     st = os.stat(report)
     return (st.st_atime > st.st_mtime) or (st.st_size == 0)
@@ -109,8 +111,7 @@ def mark_report_seen(report):
             delete_report(report)
 
 def get_all_reports():
-    '''Return a list with all report files which are accessible to the calling
-    user.'''
+    '''Return a list with all report files accessible to the calling user.'''
 
     reports = []
     for r in glob.glob(os.path.join(report_dir, '*.crash')):
@@ -124,15 +125,19 @@ def get_all_reports():
     return reports
 
 def get_new_reports():
-    '''Return a list with all report files which have not yet been processed
-    and are accessible to the calling user.'''
+    '''Get new reports for calling user.
 
+    Return a list with all report files which have not yet been processed
+    and are accessible to the calling user.
+    '''
     return [r for r in get_all_reports() if not seen_report(r)]
 
 def get_all_system_reports():
-    '''Return a list with all report files which belong to a system user (i. e.
-    uid < 500 according to LSB).'''
+    '''Get all system reports.
 
+    Return a list with all report files which belong to a system user (i. e.
+    uid < 500 according to LSB).
+    '''
     reports = []
     for r in glob.glob(os.path.join(report_dir, '*.crash')):
         try:
@@ -145,17 +150,19 @@ def get_all_system_reports():
     return reports
 
 def get_new_system_reports():
-    '''Return a list with all report files which have not yet been processed
-    and belong to a system user (i. e. uid < 500 according to LSB).'''
+    '''Get new system reports.
 
+    Return a list with all report files which have not yet been processed
+    and belong to a system user (i. e. uid < 500 according to LSB).
+    '''
     return [r for r in get_all_system_reports() if not seen_report(r)]
 
 def delete_report(report):
     '''Delete the given report file.
 
     If unlinking the file fails due to a permission error (if report_dir is not
-    writable to normal users), the file will be truncated to 0 bytes instead.'''
-
+    writable to normal users), the file will be truncated to 0 bytes instead.
+    '''
     try:
         os.unlink(report)
     except OSError:
@@ -165,8 +172,8 @@ def get_recent_crashes(report):
     '''Return the number of recent crashes for the given report file.
 
     Return the number of recent crashes (currently, crashes which happened more
-    than 24 hours ago are discarded).'''
-
+    than 24 hours ago are discarded).
+    '''
     pr = ProblemReport()
     pr.load(report, False)
     try:
@@ -183,8 +190,8 @@ def get_recent_crashes(report):
 def make_report_path(report, uid=None):
     '''Construct a canonical pathname for the given report.
 
-    If uid is not given, it defaults to the uid of the current process.'''
-
+    If uid is not given, it defaults to the uid of the current process.
+    '''
     if report.has_key('ExecutablePath'):
         subject = report['ExecutablePath'].replace('/', '_')
     elif report.has_key('Package'):
@@ -198,9 +205,12 @@ def make_report_path(report, uid=None):
     return os.path.join(report_dir, '%s.%i.crash' % (subject, uid))
 
 def check_files_md5(sumfile):
-    '''Given a list of MD5 sums in md5sum(1) format (relative to /), check
-    integrity of all files and return a list of files that don't match.'''
+    '''Check file integrity against md5 sum file.
 
+    sumfile must be md5sum(1) format (relative to /).
+
+    Return a list of files that don't match.
+    '''
     assert os.path.exists(sumfile)
     m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,

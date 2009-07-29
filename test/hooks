@@ -75,6 +75,8 @@ class _HooksTest(unittest.TestCase):
 
         open(os.path.join(self.workdir, 'log_1.log'), 'w').write('Log 1\nbla')
         open(os.path.join(self.workdir, 'log2'), 'w').write('Yet\nanother\nlog')
+        os.mkdir(os.path.join(self.workdir, 'logsub'))
+        open(os.path.join(self.workdir, 'logsub', 'notme.log'), 'w').write('not me!')
 
         ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'bash', '-l',
             os.path.realpath(sys.argv[0]), '-l', self.workdir],
@@ -98,6 +100,8 @@ class _HooksTest(unittest.TestCase):
                 log1key = k
             elif k.endswith('Log2'):
                 log2key = k
+            elif 'sub' in k:
+                fail('logsub should not go into log files')
 
         self.assert_(filekey)
         self.assert_(log1key)
@@ -127,7 +131,7 @@ class _HooksTest(unittest.TestCase):
         r.load(open(reps[0]))
 
         self.assertEqual(set(r.keys()), set(['Date', 'Package', 'ProblemType',
-            'VmCore', 'VmCoreLog']))
+            'VmCore', 'VmCoreLog', 'Uname', 'Architecture', 'DistroRelease']))
         self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
         self.assertEqual(r['VmCore'], '\x01' * 100)
