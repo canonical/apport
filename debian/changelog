@@ -1,5 +1,10 @@
 apport (1.6-0ubuntu3) UNRELEASED; urgency=low
 
+  * Merge trunk:
+    - apport-gtk: Fix ordering of choices
+    - bin/package_hook: Fix crash for subdirectories in log dir. (LP: #332350)
+    - doc/package-hooks.txt: Document allowed chars in report keys.
+    - Show precise error message for damaged reports.
   * ubuntu-bug: Call apport-kde instead of apport-qt.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 04 Aug 2009 18:44:31 +0100

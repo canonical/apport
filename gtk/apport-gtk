@@ -288,7 +288,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 # use previous radio button as group
                 b = gtk.RadioButton(b, option)
-            self.w('vbox_choices').pack_end(b)
+            self.w('vbox_choices').pack_start(b)
         self.w('vbox_choices').show_all()
 
         result = d.run()
