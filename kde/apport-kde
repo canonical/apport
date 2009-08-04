@@ -19,15 +19,15 @@ import sys
 try:
     from PyQt4.QtCore import *
     from PyQt4.QtGui import (QDialog, QLabel, QCheckBox, QRadioButton,
-			     QTreeWidget, QTreeWidgetItem, QMessageBox,
-			     QVBoxLayout, QFileDialog, QDialogButtonBox,
-			     QProgressBar, QGroupBox)
+                             QTreeWidget, QTreeWidgetItem, QMessageBox,
+                             QVBoxLayout, QFileDialog, QDialogButtonBox,
+                             QProgressBar, QGroupBox)
     from PyQt4 import uic
     from gettext import gettext
     from PyKDE4.kdecore import (ki18n, KAboutData, KCmdLineArgs,
-				KLocalizedString)
+                                KLocalizedString)
     from PyKDE4.kdeui import (KApplication, KNotification, KMessageBox, KIcon,
-			      KStandardGuiItem)
+                              KStandardGuiItem)
     import apport.ui
 except ImportError, e:
     # this can happen while upgrading python packages
@@ -41,12 +41,12 @@ def _(str):
 def translate(self, prop):
     ''' Reimplement method from uic to change it to use gettext '''
     if prop.get("notr", None) == "true":
-	return self._cstring(prop)
+        return self._cstring(prop)
     else:
-	if prop.text is None:
-	    return ""
-	text = prop.text.encode("UTF-8")
-	return _(text)
+        if prop.text is None:
+            return ""
+        text = prop.text.encode("UTF-8")
+        return _(text)
 
 uic.properties.Properties._string = translate
 
@@ -54,345 +54,345 @@ class Dialog(QDialog):
     ''' Main dialog wrapper '''
 
     def __init__(self, ui, title, heading, text):
-	QDialog.__init__(self, None, Qt.Window)
+        QDialog.__init__(self, None, Qt.Window)
 
-	uic.loadUi(os.path.join(os.path.dirname(sys.argv[0]), ui), self)
+        uic.loadUi(os.path.join(os.path.dirname(sys.argv[0]), ui), self)
 
-	self.setWindowTitle(title)
-	if self.findChild(QLabel, 'heading'):
-	    self.findChild(QLabel, 'heading').setText('<h2>%s</h2>' % heading)
-	self.findChild(QLabel, 'text').setText(text)
+        self.setWindowTitle(title)
+        if self.findChild(QLabel, 'heading'):
+            self.findChild(QLabel, 'heading').setText('<h2>%s</h2>' % heading)
+        self.findChild(QLabel, 'text').setText(text)
 
     def on_buttons_clicked(self, button):
-	self.actionbutton = button
-	if self.sender().buttonRole(button) == QDialogButtonBox.ActionRole:
-	    button.window().done(2)
-    
+        self.actionbutton = button
+        if self.sender().buttonRole(button) == QDialogButtonBox.ActionRole:
+            button.window().done(2)
+
     def addbutton(self, button):
-	return self.findChild(QDialogButtonBox, 'buttons').addButton(button,
-		QDialogButtonBox.ActionRole)
+        return self.findChild(QDialogButtonBox, 'buttons').addButton(button,
+                QDialogButtonBox.ActionRole)
 
 class ErrorDialog(Dialog):
     ''' Error dialog wrapper '''
 
     def __init__(self, title, heading, text, checker=None):
-	Dialog.__init__(self, 'error.ui', title, heading, text)
+        Dialog.__init__(self, 'error.ui', title, heading, text)
 
-	self.setMaximumSize(1, 1)
-	self.findChild(QLabel, 'icon').setPixmap(
-		QMessageBox.standardIcon(QMessageBox.Critical))
+        self.setMaximumSize(1, 1)
+        self.findChild(QLabel, 'icon').setPixmap(
+                QMessageBox.standardIcon(QMessageBox.Critical))
 
-	self.checker = self.findChild(QCheckBox, 'checker')
-	if checker:
-	    self.checker.setText(checker)
-	else:
-	    self.checker.hide()
-    
+        self.checker = self.findChild(QCheckBox, 'checker')
+        if checker:
+            self.checker.setText(checker)
+        else:
+            self.checker.hide()
+
     def checked(self):
-	return self.checker.isChecked()
+        return self.checker.isChecked()
 
 class ChoicesDialog(Dialog):
     ''' Choices dialog wrapper '''
 
     def __init__(self, title, text):
-	Dialog.__init__(self, 'choices.ui', title, None, text)
+        Dialog.__init__(self, 'choices.ui', title, None, text)
 
-	self.setMaximumSize(1, 1)
+        self.setMaximumSize(1, 1)
 
     def on_buttons_clicked(self, button):
-	Dialog.on_buttons_clicked(self, button)
-	if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
-	    sys.exit(0)
+        Dialog.on_buttons_clicked(self, button)
+        if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
+            sys.exit(0)
 
 class ProgressDialog(Dialog):
     ''' Progress dialog wrapper '''
 
     def __init__(self, title, heading, text):
-	Dialog.__init__(self, 'progress.ui', title, heading, text)
+        Dialog.__init__(self, 'progress.ui', title, heading, text)
 
-	self.setMaximumSize(1, 1)
+        self.setMaximumSize(1, 1)
 
     def on_buttons_clicked(self, button):
-	Dialog.on_buttons_clicked(self, button)
-	if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
-	    sys.exit(0)
-    
+        Dialog.on_buttons_clicked(self, button)
+        if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
+            sys.exit(0)
+
     def set(self, value=None):
-	progress = self.findChild(QProgressBar, 'progress')
-	if not value:
-	    progress.setRange(0, 0)
-	    progress.setValue(0)
-	else:
-	    progress.setRange(0, 1000)
-	    progress.setValue(value * 1000)
+        progress = self.findChild(QProgressBar, 'progress')
+        if not value:
+            progress.setRange(0, 0)
+            progress.setValue(0)
+        else:
+            progress.setRange(0, 1000)
+            progress.setValue(value * 1000)
 
 class ReportDialog(Dialog):
     ''' Report dialog wrapper '''
 
     def __init__(self, title, heading, text):
-	Dialog.__init__(self, 'bugreport.ui', title, heading, text)
+        Dialog.__init__(self, 'bugreport.ui', title, heading, text)
 
-	self.details = self.addbutton(_("&Details..."))
-	self.details.setCheckable(True)
+        self.details = self.addbutton(_("&Details..."))
+        self.details.setCheckable(True)
 
-	self.treeview = self.findChild(QTreeWidget, 'details')
-	self.showtree(False)
+        self.treeview = self.findChild(QTreeWidget, 'details')
+        self.showtree(False)
 
     def on_buttons_clicked(self, button):
-	if self.details == button:
-	    self.showtree(button.isChecked())
-	else:
-	    Dialog.on_buttons_clicked(self, button)
-	    if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
-		sys.exit(0)
-    
+        if self.details == button:
+            self.showtree(button.isChecked())
+        else:
+            Dialog.on_buttons_clicked(self, button)
+            if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
+                sys.exit(0)
+
     def showtree(self, visible):
-	self.treeview.setVisible(visible)
-	if visible:
-	    self.setMaximumSize(16777215, 16777215)
-	else:
-	    self.setMaximumSize(1, 1)
+        self.treeview.setVisible(visible)
+        if visible:
+            self.setMaximumSize(16777215, 16777215)
+        else:
+            self.setMaximumSize(1, 1)
 
 class MainUserInterface(apport.ui.UserInterface):
     ''' The main user interface presented to the user '''
 
     def __init__(self):
-	apport.ui.UserInterface.__init__(self)
+        apport.ui.UserInterface.__init__(self)
 
-	self.run_argv()
+        self.run_argv()
 
     #
     # ui_* implementation of abstract UserInterface classes
     #
 
     def ui_present_crash(self, desktop_entry):
-	# adapt dialog heading and label appropriately
-	if desktop_entry:
-	    name = desktop_entry.getName()
-	    heading = _('Sorry, %s closed unexpectedly') % name
-	elif self.report.has_key('ExecutablePath'):
-	    name = os.path.basename(self.report['ExecutablePath'])
-	    heading = _('Sorry, the program "%s" closed unexpectedly.') % name
-	else:
-	    name = self.cur_package
-	    heading = _('Sorry, %s closed unexpectedly.') % name
+        # adapt dialog heading and label appropriately
+        if desktop_entry:
+            name = desktop_entry.getName()
+            heading = _('Sorry, %s closed unexpectedly') % name
+        elif self.report.has_key('ExecutablePath'):
+            name = os.path.basename(self.report['ExecutablePath'])
+            heading = _('Sorry, the program "%s" closed unexpectedly.') % name
+        else:
+            name = self.cur_package
+            heading = _('Sorry, %s closed unexpectedly.') % name
 
-	dialog = ErrorDialog(name, heading,
-		_('If you were not doing anything confidential (entering '
-		     'passwords or other private information), you can help '
-		     'to improve the application by reporting the problem.'),
-		_('&Ignore future crashes of this program version'))
+        dialog = ErrorDialog(name, heading,
+                _('If you were not doing anything confidential (entering '
+                  'passwords or other private information), you can help '
+                  'to improve the application by reporting the problem.'),
+                _('&Ignore future crashes of this program version'))
 
-	reportbutton = dialog.addbutton(_('&Report Problem...'))
+        reportbutton = dialog.addbutton(_('&Report Problem...'))
 
-	if desktop_entry and self.report.has_key('ExecutablePath') and \
-		os.path.dirname(self.report['ExecutablePath']) in \
-		os.environ['PATH'].split(':') and subprocess.call(['pgrep',
-		    '-x', os.path.basename(self.report['ExecutablePath']),
-		    '-u', str(os.getuid())], stdout=subprocess.PIPE) != 0:
-	    restartbutton = dialog.addbutton(_('Restart &Program'))
+        if desktop_entry and self.report.has_key('ExecutablePath') and \
+                os.path.dirname(self.report['ExecutablePath']) in \
+                os.environ['PATH'].split(':') and subprocess.call(['pgrep',
+                    '-x', os.path.basename(self.report['ExecutablePath']),
+                    '-u', str(os.getuid())], stdout=subprocess.PIPE) != 0:
+            restartbutton = dialog.addbutton(_('Restart &Program'))
 
-	# show crash notification dialog
-	response = dialog.exec_()
-	blacklist = dialog.checked()
+        # show crash notification dialog
+        response = dialog.exec_()
+        blacklist = dialog.checked()
 
-	if response == QDialog.Rejected:
-	    return {'action': 'cancel', 'blacklist': blacklist}
-	if dialog.actionbutton == reportbutton:
-	    return {'action': 'report', 'blacklist': blacklist}
-	if dialog.actionbutton == restartbutton:
-	    return {'action': 'restart', 'blacklist': blacklist}
-	# Fallback
-	return {'action': 'cancel', 'blacklist': blacklist}
+        if response == QDialog.Rejected:
+            return {'action': 'cancel', 'blacklist': blacklist}
+        if dialog.actionbutton == reportbutton:
+            return {'action': 'report', 'blacklist': blacklist}
+        if dialog.actionbutton == restartbutton:
+            return {'action': 'restart', 'blacklist': blacklist}
+        # Fallback
+        return {'action': 'cancel', 'blacklist': blacklist}
 
     def ui_present_package_error(self):
-	name = self.report['Package']
-	dialog = ErrorDialog(name,
-		_('Sorry, the package "%s" failed to install or upgrade.') %
-		name,
-		_('You can help the developers to fix the package by '
-		     'reporting the problem.'))
-	
-	reportbutton = dialog.addbutton(_('&Report Problem...'))
+        name = self.report['Package']
+        dialog = ErrorDialog(name,
+                _('Sorry, the package "%s" failed to install or upgrade.') %
+                  name,
+                _('You can help the developers to fix the package by '
+                  'reporting the problem.'))
 
-	response = dialog.exec_()
+        reportbutton = dialog.addbutton(_('&Report Problem...'))
 
-	if response == QDialog.Rejected:
-	    return 'cancel'
-	if dialog.actionbutton == reportbutton:
-	    return 'report'
-	# Fallback
-	return 'cancel'
+        response = dialog.exec_()
+
+        if response == QDialog.Rejected:
+            return 'cancel'
+        if dialog.actionbutton == reportbutton:
+            return 'report'
+        # Fallback
+        return 'cancel'
 
     def ui_present_kernel_error(self):
-	message = _('Your system encountered a serious kernel problem.')
-	annotate = ''
-	if self.report.has_key('Annotation'):
-	    annotate = self.report['Annotation'] + '\n\n'
-	annotate += _('You can help the developers to fix the problem by '
-		         'reporting it.')
+        message = _('Your system encountered a serious kernel problem.')
+        annotate = ''
+        if self.report.has_key('Annotation'):
+            annotate = self.report['Annotation'] + '\n\n'
+        annotate += _('You can help the developers to fix the problem by '
+                      'reporting it.')
 
-	dialog = ErrorDialog(_('Kernel problem'), message, annotate)
+        dialog = ErrorDialog(_('Kernel problem'), message, annotate)
 
-	reportbutton = dialog.addbutton(_('&Report Problem...'))
+        reportbutton = dialog.addbutton(_('&Report Problem...'))
 
-	response = dialog.exec_()
+        response = dialog.exec_()
 
-	if response == QDialog.Rejected:
-	    return 'cancel'
-	if dialog.actionbutton == reportbutton:
-	    return 'report'
-	# Fallback
-	return 'cancel'
+        if response == QDialog.Rejected:
+            return 'cancel'
+        if dialog.actionbutton == reportbutton:
+            return 'report'
+        # Fallback
+        return 'cancel'
 
     def ui_present_report_details(self):
-	dialog = ReportDialog(self.report.get('Package',
-	    _('Generic error')).split()[0],
-	    _('Send problem report to the developers?'),
-	    _('After the problem report has been sent, please fill out '
-		 'the form in the automatically opened web browser.'))
+        dialog = ReportDialog(self.report.get('Package',
+            _('Generic error')).split()[0],
+            _('Send problem report to the developers?'),
+            _('After the problem report has been sent, please fill out '
+              'the form in the automatically opened web browser.'))
 
-	sendbutton = dialog.addbutton(_('&Send'))
-	sendbutton.setDefault(True)
+        sendbutton = dialog.addbutton(_('&Send'))
+        sendbutton.setDefault(True)
 
-	# report contents
-	details = dialog.findChild(QTreeWidget, 'details')
-	for key in self.report:
-	    keyitem = QTreeWidgetItem([key])
-	    details.addTopLevelItem(keyitem)
+        # report contents
+        details = dialog.findChild(QTreeWidget, 'details')
+        for key in self.report:
+            keyitem = QTreeWidgetItem([key])
+            details.addTopLevelItem(keyitem)
 
-	    # string value
-	    if not hasattr(self.report[key], 'gzipvalue') and \
-		    hasattr(self.report[key], 'isspace') and \
-		    not self.report._is_binary(self.report[key]):
-		lines = self.report[key].splitlines()
-		for line in lines:
-		    QTreeWidgetItem(keyitem, [line])
-		if len(lines) < 4:
-		    keyitem.setExpanded(True)
-	    else:
-		QTreeWidgetItem(keyitem, [_('(binary data)')])
+            # string value
+            if not hasattr(self.report[key], 'gzipvalue') and \
+               hasattr(self.report[key], 'isspace') and \
+               not self.report._is_binary(self.report[key]):
+                lines = self.report[key].splitlines()
+                for line in lines:
+                    QTreeWidgetItem(keyitem, [line])
+                if len(lines) < 4:
+                    keyitem.setExpanded(True)
+            else:
+                QTreeWidgetItem(keyitem, [_('(binary data)')])
 
-	details.header().hide()
+        details.header().hide()
 
-	# complete/reduce radio buttons
-	if self.report.has_key('CoreDump') and \
-		self.report.has_useful_stacktrace():
-	    dialog.findChild(QRadioButton, 'complete').setText(
-		    _('Complete report (recommended; %s)') %
-		    self.format_filesize(self.get_complete_size()))
-	    dialog.findChild(QRadioButton, 'reduced').setText(
-		    _('Reduced report (slow Internet connection; %s)') %
-		    self.format_filesize(self.get_reduced_size()))
-	else:
-	    dialog.findChild(QGroupBox, 'options').hide()
+        # complete/reduce radio buttons
+        if self.report.has_key('CoreDump') and \
+                self.report.has_useful_stacktrace():
+            dialog.findChild(QRadioButton, 'complete').setText(
+                _('Complete report (recommended; %s)') %
+                  self.format_filesize(self.get_complete_size()))
+            dialog.findChild(QRadioButton, 'reduced').setText(
+                _('Reduced report (slow Internet connection; %s)') %
+                  self.format_filesize(self.get_reduced_size()))
+        else:
+            dialog.findChild(QGroupBox, 'options').hide()
 
-	response = dialog.exec_()
+        response = dialog.exec_()
 
-	if response == QDialog.Rejected:
-	    return 'cancel'
-	# Fallback
-	if dialog.actionbutton != sendbutton:
-	    return 'cancel'
-	if dialog.findChild(QRadioButton, 'reduced').isChecked():
-	    return 'reduced'
-	if dialog.findChild(QRadioButton, 'complete').isChecked():
-	    return 'full'
-	# Fallback
-	return 'cancel'
+        if response == QDialog.Rejected:
+            return 'cancel'
+        # Fallback
+        if dialog.actionbutton != sendbutton:
+            return 'cancel'
+        if dialog.findChild(QRadioButton, 'reduced').isChecked():
+            return 'reduced'
+        if dialog.findChild(QRadioButton, 'complete').isChecked():
+            return 'full'
+        # Fallback
+        return 'cancel'
 
     def ui_info_message(self, title, text):
-	KMessageBox.information(None, _(text), _(title))
+        KMessageBox.information(None, _(text), _(title))
 
     def ui_error_message(self, title, text):
-	KMessageBox.information(None, _(text), _(title))
+        KMessageBox.information(None, _(text), _(title))
 
     def ui_start_info_collection_progress(self):
-	self.progress = ProgressDialog(
-		_('Collecting Problem Information'),
-		_('Collecting problem information'),
-		_('The collected information can be sent to the developers '
-		     'to improve the application. This might take a few '
-		     'minutes.'))
-	self.progress.set()
-	self.progress.show()
+        self.progress = ProgressDialog(
+                _('Collecting Problem Information'),
+                _('Collecting problem information'),
+                _('The collected information can be sent to the developers '
+                  'to improve the application. This might take a few '
+                  'minutes.'))
+        self.progress.set()
+        self.progress.show()
 
     def ui_pulse_info_collection_progress(self):
-	self.progress.set()
-	KApplication.processEvents()
+        self.progress.set()
+        KApplication.processEvents()
 
     def ui_stop_info_collection_progress(self):
-	self.progress.hide()
+        self.progress.hide()
 
     def ui_start_upload_progress(self):
-	self.progress = ProgressDialog(
-		_('Uploading Problem Information'),
-		_('Uploading problem information'),
-		_('The collected information is being sent to the bug '
-		     'tracking system. This might take a few minutes.'))
-	self.progress.show()
+        self.progress = ProgressDialog(
+                _('Uploading Problem Information'),
+                _('Uploading problem information'),
+                _('The collected information is being sent to the bug '
+                  'tracking system. This might take a few minutes.'))
+        self.progress.show()
 
     def ui_set_upload_progress(self, progress):
-	if progress:
-	    self.progress.set(progress)
-	else:
-	    self.progress.set()
-	KApplication.processEvents()
+        if progress:
+            self.progress.set(progress)
+        else:
+            self.progress.set()
+        KApplication.processEvents()
 
     def ui_stop_upload_progress(self):
-	self.progress.hide()
+        self.progress.hide()
 
     def ui_question_yesno(self, text):
-	response = KMessageBox.questionYesNoCancel(None, _(text), QString(),
-		KStandardGuiItem.yes(), KStandardGuiItem.no(),
-		KStandardGuiItem.cancel())
-	if response == KMessageBox.Yes:
-	    return True
-	if response == KMessageBox.No:
-	    return False
-	return None
+        response = KMessageBox.questionYesNoCancel(None, _(text), QString(),
+                KStandardGuiItem.yes(), KStandardGuiItem.no(),
+                KStandardGuiItem.cancel())
+        if response == KMessageBox.Yes:
+            return True
+        if response == KMessageBox.No:
+            return False
+        return None
 
     def ui_question_choice(self, text, options, multiple):
-	''' Show a question with predefined choices.
+        ''' Show a question with predefined choices.
 
-	@options is a list of strings to present.
-	@multiple - if True, choices should be QCheckBoxes, if False then
-	should be QRadioButtons.
+        @options is a list of strings to present.
+        @multiple - if True, choices should be QCheckBoxes, if False then
+        should be QRadioButtons.
 
-	Return list of selected option indexes, or None if the user cancelled.
-	If multiple is False, the list will always have one element.
-	'''
+        Return list of selected option indexes, or None if the user cancelled.
+        If multiple is False, the list will always have one element.
+        '''
 
-	dialog = ChoicesDialog(_("Apport"), text)
+        dialog = ChoicesDialog(_("Apport"), text)
 
-	b = None
-	for option in options:
-	    if multiple:
-		b = QCheckBox(option)
-	    else:
-		b = QRadioButton(option)
-	    dialog.vbox_choices.insertWidget(0, b)
-	
-	response = dialog.exec_()
+        b = None
+        for option in options:
+            if multiple:
+                b = QCheckBox(option)
+            else:
+                b = QRadioButton(option)
+            dialog.vbox_choices.insertWidget(0, b)
 
-	if response == QDialog.Rejected:
-	    return 'cancel'
+        response = dialog.exec_()
 
-	response = [c for c in range(0, dialog.vbox_choices.count()) if \
-		dialog.vbox_choices.itemAt(c).widget().isChecked()]
+        if response == QDialog.Rejected:
+            return 'cancel'
 
-	return response
+        response = [c for c in range(0, dialog.vbox_choices.count()) if \
+                dialog.vbox_choices.itemAt(c).widget().isChecked()]
+
+        return response
 
     def ui_question_file(self, text):
-	''' Show a file selector dialog.
+        ''' Show a file selector dialog.
 
-	Return path if the user selected a file, or None if cancelled.
-	'''
+        Return path if the user selected a file, or None if cancelled.
+        '''
 
-	response = QFileDialog.getOpenFileName(None, unicode(text, 'UTF-8'))
-	if response.length() == 0:
-	    return None
-	return str(response)
+        response = QFileDialog.getOpenFileName(None, unicode(text, 'UTF-8'))
+        if response.length() == 0:
+            return None
+        return str(response)
 
 if __name__ == '__main__':
     appName = "apport-kde"
@@ -407,7 +407,7 @@ if __name__ == '__main__':
     bugEmail = "kubuntu-devel@lists.ubuntu.com"
 
     aboutData = KAboutData(appName, catalog, programName, version, description,
-	    license, copyright, text, homePage, bugEmail)
+                           license, copyright, text, homePage, bugEmail)
 
     aboutData.addAuthor(ki18n("Richard A. Johnson"), ki18n("Author"))
     aboutData.addAuthor(ki18n("Michael Hofmann"), ki18n("Original Qt4 Author"))
