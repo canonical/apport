@@ -52,8 +52,8 @@ elif pgrep -u `id -u` -x ksmserver >/dev/null && \
 # fall back to calling whichever is available
 elif [ -x /usr/share/apport/apport-gtk ]; then
     /usr/share/apport/apport-gtk $args
-elif [ -x /usr/share/apport/apport-qt ]; then
-    /usr/share/apport/apport-qt $args
+elif [ -x /usr/share/apport/apport-kde ]; then
+    /usr/share/apport/apport-kde $args
 elif [ -x /usr/bin/apport-cli ]; then
     if [ -z "$TERM" ]; then
         x-terminal-emulator -e /usr/bin/apport-cli $args
