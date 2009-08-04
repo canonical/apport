@@ -21,7 +21,7 @@ try:
     from PyQt4.QtGui import (QDialog, QLabel, QCheckBox, QRadioButton,
                              QTreeWidget, QTreeWidgetItem, QMessageBox,
                              QVBoxLayout, QFileDialog, QDialogButtonBox,
-                             QProgressBar, QGroupBox)
+                             QProgressBar, QGroupBox, QLineEdit)
     from PyQt4 import uic
     from gettext import gettext
     from PyKDE4.kdecore import (ki18n, KAboutData, KCmdLineArgs,
@@ -152,6 +152,21 @@ class ReportDialog(Dialog):
             self.setMaximumSize(16777215, 16777215)
         else:
             self.setMaximumSize(1, 1)
+
+
+class UserPassDialog(Dialog):
+    ''' Username/Password dialog wrapper '''
+
+    def __init__(self, title, text):
+        Dialog.__init__(self, 'userpass.ui', title, None, text)
+        self.findChild(QLabel, 'l_username').setText(_('Username:'))
+        self.findChild(QLabel, 'l_password').setText(_('Password:'))
+
+    def on_buttons_clicked(self, button):
+        Dialog.on_buttons_clicked(self, button)
+        if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
+            sys.exit(0)
+
 
 class MainUserInterface(apport.ui.UserInterface):
     ''' The main user interface presented to the user '''
@@ -393,6 +408,26 @@ class MainUserInterface(apport.ui.UserInterface):
         if response.length() == 0:
             return None
         return str(response)
+
+
+    def ui_question_userpass(self, text):
+        '''Show a Username/Password dialog.
+
+        Return a tuple (user, pass) or None if cancelled.'''
+
+        dialog = UserPassDialog(_('Apport'), text)
+        response = dialog.exec_()
+
+        if response == QDialog.Rejected:
+            return None
+
+        username = str(dialog.findChild(QLineEdit, 'e_username').text())
+        password = str(dialog.findChild(QLineEdit, 'e_password').text())
+
+        if len(username) == 0 or len(password) == 0:
+            return None
+        return (username, password)
+
 
 if __name__ == '__main__':
     appName = "apport-kde"
