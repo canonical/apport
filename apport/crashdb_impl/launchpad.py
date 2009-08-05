@@ -1012,8 +1012,6 @@ NameError: global name 'weird' is not defined'''
             re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
 
             # parse default field values from reporting page
-            url = url.replace('+filebug/', '+filebug-advanced/')
-            
             res = opener.open(url)
             self.assertEqual(res.getcode(), 200)
             content = res.read()
