@@ -957,13 +957,11 @@ NameError: global name 'weird' is not defined'''
             cj.load(os.path.expanduser('~/.lpcookie.txt'))
             opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
-            re_pkg = re.compile('<input type="text" value="([^"]+)" id="field.packagename"')
+            re_pkg = re.compile('\+source/([\w]+)/')
             re_title = re.compile('<input.*id="field.title".*value="([^"]+)"')
             re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
 
             # parse default field values from reporting page
-            url = url.replace('+filebug/', '+filebug-advanced/')
-            
             res = opener.open(url)
             try:
                 self.assertEqual(res.getcode(), 200)
@@ -971,7 +969,7 @@ NameError: global name 'weird' is not defined'''
                 pass # getcode() is new in Python 2.6
             content = res.read()
 
-            m_pkg = re_pkg.search(content)
+            m_pkg = re_pkg.search(url)
             m_title = re_title.search(content)
             m_tags = re_tags.search(content)
 
@@ -1014,8 +1012,6 @@ NameError: global name 'weird' is not defined'''
             re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
 
             # parse default field values from reporting page
-            url = url.replace('+filebug/', '+filebug-advanced/')
-            
             res = opener.open(url)
             self.assertEqual(res.getcode(), 200)
             content = res.read()
