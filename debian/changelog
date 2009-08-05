@@ -3,6 +3,8 @@ apport (1.7-0ubuntu1) UNRELEASED; urgency=low
   * New upstream release:
     - Add support for symptoms.
   * debian/control: Recommend apport-symptoms.
+  * debian/local/ubuntu-bug: When called without arguments, run in "show
+    available symptoms" mode.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 05 Aug 2009 10:45:46 +0100
 
