@@ -292,15 +292,21 @@ free memory to automatically analyze the problem and send a report to the develo
         '''Report a bug.
 
         If a pid is given on the command line, the report will contain runtime
-        debug information. Either a package or a pid must be specified.
+        debug information. Either a package or a pid must be specified; if none
+        is given, show a list of symptoms.
 
         If a symptom script is given, this will be run first (used by
         run_symptom()).
         '''
-        if not self.options.package and not self.options.pid and not symptom_script:
-            self.ui_error_message(_('No package specified'), 
-                _('You need to specify a package or a PID. See --help for more information.'))
+        if not self.options.package and not self.options.pid and \
+                not symptom_script:
+            if self.run_symptoms():
+                return True
+            else:
+                self.ui_error_message(_('No package specified'), 
+                    _('You need to specify a package or a PID. See --help for more information.'))
             return False
+
         self.report = apport.Report('Bug')
 
         # if PID is given, add info
@@ -365,6 +371,44 @@ free memory to automatically analyze the problem and send a report to the develo
 
         return True
 
+    def run_symptoms(self):
+        '''Report a bug from a list of available symptoms.
+        
+        Return False if no symptoms are available.
+        '''
+        scripts = glob.glob(os.path.join(symptom_script_dir, '*.py'))
+
+        symptom_names = []
+        symptom_descriptions = []
+        for script in scripts:
+            symb = {}
+            try:
+                execfile(script, symb)
+            except:
+                print >> sys.stderr, 'symptom script %s is invalid' % script
+                traceback.print_exc()
+                continue
+            symptom_names.append(os.path.splitext(os.path.basename(script))[0])
+            symptom_descriptions.append(symb.get('description', symptom_names[-1]))
+
+        if not symptom_names:
+            return False
+
+        symptom_names.append(None)
+        symptom_descriptions.append('Other problem')
+
+        ch = self.ui_question_choice(_('What kind of problem do you want to report?'), 
+                symptom_descriptions, False)
+
+        if ch != None:
+            symptom = symptom_names[ch[0]]
+            if symptom:
+                self.run_report_bug(os.path.join(symptom_script_dir, symptom + '.py'))
+            else:
+                return False
+
+        return True
+
     def run_symptom(self):
         '''Report a bug with a symptom script.'''
 
@@ -407,7 +451,7 @@ free memory to automatically analyze the problem and send a report to the develo
         '''
         optparser = optparse.OptionParser('%prog [options]')
         optparser.add_option('-f', '--file-bug',
-            help='Start in bug filing mode. Requires --package and an optional --pid, or just a --pid',
+            help='Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms.',
             action='store_true', dest='filebug', default=False)
         optparser.add_option('-s', '--symptom', metavar='SYMPTOM',
             help='File a bug report about a symptom.', dest='symptom')
@@ -1069,6 +1113,7 @@ databases = {
             self.msg_title = None
             self.msg_text = None
             self.msg_severity = None # 'warning' or 'error'
+            self.msg_choices = None
 
         def ui_present_crash(self, desktopentry):
             return self.present_crash_response
@@ -1123,6 +1168,7 @@ databases = {
 
         def ui_question_choice(self, text, options, multiple):
             self.msg_text = text
+            self.msg_choices = options
             return self.question_choice_response
 
         def ui_question_file(self, text):
@@ -2051,5 +2097,39 @@ report['end'] = '1'
             self.assert_(self.ui.report['Package'].startswith('bash '))
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
             self.assertEqual(self.ui.report['q'], 'True')
+
+        def test_run_report_bug_list_symptoms(self):
+            '''run_report_bug() without specifying arguments and available symptoms.'''
+
+            f = open(os.path.join(symptom_script_dir, 'foo.py'), 'w')
+            print >> f, '''description = 'foo does not work'
+def run(report, ui):
+    return 'bash'
+'''
+            f.close()
+            f = open(os.path.join(symptom_script_dir, 'bar.py'), 'w')
+            print >> f, 'def run(report, ui):\n  return "coreutils"'
+            f.close()
+
+            sys.argv = ['ui-test', '-f']
+            self.ui = _TestSuiteUserInterface()
+
+            self.ui.question_choice_response = None
+            self.assertEqual(self.ui.run_argv(), True)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assert_('kind of problem' in self.ui.msg_text)
+            self.assertEqual(self.ui.msg_choices, 
+                    ['bar', 'foo does not work', 'Other problem'])
+
+            # cancelled
+            self.assertEqual(self.ui.ic_progress_pulses, 0)
+            self.assertEqual(self.ui.report, None)
+
+            # now, choose foo -> bash report
+            self.ui.question_choice_response = [1]
+            self.assertEqual(self.ui.run_argv(), True)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assert_(self.ui.report['Package'].startswith('bash'))
 
     unittest.main()
