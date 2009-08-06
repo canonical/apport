@@ -33,6 +33,12 @@ def add_info(report):
                 # File these reports on the grub package instead
                 report['Package'] = 'grub'
                 report['SourcePackage'] = 'grub'
+        if report['Package'] != 'initramfs-tools':
+            # update-initramfs emits this when it fails, usually invoked from the linux-image postinst
+            if 'DpkgTerminalLog' in report and re.search(r'^update-initramfs: failed for ', report['DpkgTerminalLog'], re.MULTILINE):
+                # File these reports on the initramfs-tools package instead
+                report['Package'] = 'initramfs-tools'
+                report['SourcePackage'] = 'initramfs-tools'
 
     if 'Package' in report:
         package = report['Package'].split()[0]
