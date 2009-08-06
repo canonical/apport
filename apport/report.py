@@ -562,7 +562,7 @@ class Report(ProblemReport):
                 depth += 1
         self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
-    def add_hooks_info(self, ui):
+    def add_hooks_info(self, ui, package=None, srcpackage=None):
         '''Run hook script for collecting package specific data.
 
         A hook script needs to be in _hook_dir/<Package>.py or in
@@ -593,8 +593,10 @@ class Report(ProblemReport):
                 pass
 
         # binary package hook
-        if self.has_key('Package'):
-            hook = '%s/%s.py' % (_hook_dir, self['Package'].split()[0])
+        if not package:
+            package = self.get('Package')
+        if package:
+            hook = '%s/%s.py' % (_hook_dir, package.split()[0])
             if os.path.exists(hook):
                 try:
                     execfile(hook, symb)
@@ -612,8 +614,10 @@ class Report(ProblemReport):
                     pass
 
         # source package hook
-        if self.has_key('SourcePackage'):
-            hook = '%s/source_%s.py' % (_hook_dir, self['SourcePackage'].split()[0])
+        if not srcpackage:
+            srcpackage = self.get('SourcePackage')
+        if srcpackage:
+            hook = '%s/source_%s.py' % (_hook_dir, srcpackage.split()[0])
             if os.path.exists(hook):
                 try:
                     execfile(hook, symb)
