@@ -11,6 +11,7 @@ the full text of the license.
 '''
 
 import apport.packaging
+import re
 from apport.hookutils import *
 
 def add_info(report):
@@ -24,6 +25,14 @@ def add_info(report):
 
     # This includes the Ubuntu packaged kernel version
     attach_file_if_exists(report, '/proc/version_signature', 'ProcVersionSignature')
+
+    if report['ProblemType'] == 'Package':
+        if report['Package'] != 'grub':
+            # linux-image postinst emits this when update-grub fails
+            if 'DpkgTerminalLog' in report and re.search(r'^User postinst hook script \[.*update-grub\] exited with value', report['DpkgTerminalLog'], re.MULTILINE):
+                # File these reports on the grub package instead
+                report['Package'] = 'grub'
+                report['SourcePackage'] = 'grub'
 
     if 'Package' in report:
         package = report['Package'].split()[0]
