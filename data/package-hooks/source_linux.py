@@ -19,6 +19,7 @@ from apport.hookutils import *
 def add_info(report):
 	attach_hardware(report)
 	attach_alsa(report)
+	attach_wifi(report)
 
 	attach_file_if_exists(report, "/etc/initramfs-tools/conf.d/resume",
                           key="HibernationDevice")
