@@ -32,7 +32,7 @@ def add_info(report):
 	lrm_package_name = 'linux-restricted-modules-%s' % uname_release
 	lbm_package_name = 'linux-backports-modules-%s' % uname_release
 
-	attach_related_packages(report, [lrm_package_name, lbm_package_name])
+	attach_related_packages(report, [lrm_package_name, lbm_package_name, 'linux-firmware'])
 
 if __name__ == '__main__':
 	report = {}

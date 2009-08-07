@@ -8,6 +8,8 @@ apport (1.7-0ubuntu2) UNRELEASED; urgency=low
   * data/package-hooks/source_linux.py: Per discussion with ogasawara, attach
     ALSA details on kernel bug reports by default.  About 9% of sampled kernel
     bugs are audio-related.
+  * data/package-hooks/source_linux.py: Add linux-firmware version to kernel
+    bug reports
 
  -- Matt Zimmerman <mdz@ubuntu.com>  Thu, 06 Aug 2009 16:29:14 +0100
 
