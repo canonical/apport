@@ -39,7 +39,7 @@ def _(str):
     return unicode(gettext(str), 'UTF-8')
 
 def translate(self, prop):
-    ''' Reimplement method from uic to change it to use gettext.'''
+    '''Reimplement method from uic to change it to use gettext.'''
 
     if prop.get('notr', None) == 'true':
         return self._cstring(prop)
@@ -52,7 +52,7 @@ def translate(self, prop):
 uic.properties.Properties._string = translate
 
 class Dialog(QDialog):
-    ''' Main dialog wrapper '''
+    '''Main dialog wrapper'''
 
     def __init__(self, ui, title, heading, text):
         QDialog.__init__(self, None, Qt.Window)
@@ -74,7 +74,7 @@ class Dialog(QDialog):
                 QDialogButtonBox.ActionRole)
 
 class ErrorDialog(Dialog):
-    ''' Error dialog wrapper '''
+    '''Error dialog wrapper'''
 
     def __init__(self, title, heading, text, checker=None):
         Dialog.__init__(self, 'error.ui', title, heading, text)
@@ -93,7 +93,7 @@ class ErrorDialog(Dialog):
         return self.checker.isChecked()
 
 class ChoicesDialog(Dialog):
-    ''' Choices dialog wrapper '''
+    '''Choices dialog wrapper'''
 
     def __init__(self, title, text):
         Dialog.__init__(self, 'choices.ui', title, None, text)
@@ -106,7 +106,7 @@ class ChoicesDialog(Dialog):
             sys.exit(0)
 
 class ProgressDialog(Dialog):
-    ''' Progress dialog wrapper '''
+    '''Progress dialog wrapper'''
 
     def __init__(self, title, heading, text):
         Dialog.__init__(self, 'progress.ui', title, heading, text)
@@ -128,7 +128,7 @@ class ProgressDialog(Dialog):
             progress.setValue(value * 1000)
 
 class ReportDialog(Dialog):
-    ''' Report dialog wrapper '''
+    '''Report dialog wrapper'''
 
     def __init__(self, title, heading, text):
         Dialog.__init__(self, 'bugreport.ui', title, heading, text)
@@ -156,7 +156,7 @@ class ReportDialog(Dialog):
 
 
 class UserPassDialog(Dialog):
-    ''' Username/Password dialog wrapper '''
+    '''Username/Password dialog wrapper'''
 
     def __init__(self, title, text):
         Dialog.__init__(self, 'userpass.ui', title, None, text)
@@ -170,7 +170,7 @@ class UserPassDialog(Dialog):
 
 
 class MainUserInterface(apport.ui.UserInterface):
-    ''' The main user interface presented to the user '''
+    '''The main user interface presented to the user'''
 
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
@@ -378,7 +378,6 @@ class MainUserInterface(apport.ui.UserInterface):
         Return list of selected option indexes, or None if the user cancelled.
         If multiple is False, the list will always have one element.
         '''
-
         dialog = ChoicesDialog(_('Apport'), text)
 
         b = None
@@ -404,7 +403,6 @@ class MainUserInterface(apport.ui.UserInterface):
 
         Return path if the user selected a file, or None if cancelled.
         '''
-
         response = QFileDialog.getOpenFileName(None, unicode(text, 'UTF-8'))
         if response.length() == 0:
             return None
@@ -414,8 +412,8 @@ class MainUserInterface(apport.ui.UserInterface):
     def ui_question_userpass(self, text):
         '''Show a Username/Password dialog.
 
-        Return a tuple (user, pass) or None if cancelled.'''
-
+        Return a tuple (user, pass) or None if cancelled.
+        '''
         dialog = UserPassDialog(_('Apport'), text)
         response = dialog.exec_()
 
