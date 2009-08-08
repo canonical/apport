@@ -39,13 +39,14 @@ def _(str):
     return unicode(gettext(str), 'UTF-8')
 
 def translate(self, prop):
-    ''' Reimplement method from uic to change it to use gettext '''
-    if prop.get("notr", None) == "true":
+    ''' Reimplement method from uic to change it to use gettext.'''
+
+    if prop.get('notr', None) == 'true':
         return self._cstring(prop)
     else:
         if prop.text is None:
-            return ""
-        text = prop.text.encode("UTF-8")
+            return ''
+        text = prop.text.encode('UTF-8')
         return _(text)
 
 uic.properties.Properties._string = translate
@@ -132,7 +133,7 @@ class ReportDialog(Dialog):
     def __init__(self, title, heading, text):
         Dialog.__init__(self, 'bugreport.ui', title, heading, text)
 
-        self.details = self.addbutton(_("&Details..."))
+        self.details = self.addbutton(_('&Details...'))
         self.details.setCheckable(True)
 
         self.treeview = self.findChild(QTreeWidget, 'details')
@@ -378,7 +379,7 @@ class MainUserInterface(apport.ui.UserInterface):
         If multiple is False, the list will always have one element.
         '''
 
-        dialog = ChoicesDialog(_("Apport"), text)
+        dialog = ChoicesDialog(_('Apport'), text)
 
         b = None
         for option in options:
@@ -430,27 +431,27 @@ class MainUserInterface(apport.ui.UserInterface):
 
 
 if __name__ == '__main__':
-    appName = "apport-kde"
-    catalog = "apport-kde"
-    programName = ki18n("Apport KDE")
-    version = "1.0"
-    description = ki18n("KDE 4 frontend for the apport crash report system")
+    appName = 'apport-kde'
+    catalog = 'apport-kde'
+    programName = ki18n('Apport KDE')
+    version = '1.0'
+    description = ki18n('KDE 4 frontend for the apport crash report system')
     license = KAboutData.License_GPL
-    copyright = ki18n("2009 Canonical Ltd.")
+    copyright = ki18n('2009 Canonical Ltd.')
     text = KLocalizedString()
-    homePage = "https://wiki.ubuntu.com/AutomatedProblemReports"
-    bugEmail = "kubuntu-devel@lists.ubuntu.com"
+    homePage = 'https://wiki.ubuntu.com/AutomatedProblemReports'
+    bugEmail = 'kubuntu-devel@lists.ubuntu.com'
 
     aboutData = KAboutData(appName, catalog, programName, version, description,
                            license, copyright, text, homePage, bugEmail)
 
-    aboutData.addAuthor(ki18n("Richard A. Johnson"), ki18n("Author"))
-    aboutData.addAuthor(ki18n("Michael Hofmann"), ki18n("Original Qt4 Author"))
+    aboutData.addAuthor(ki18n('Richard A. Johnson'), ki18n('Author'))
+    aboutData.addAuthor(ki18n('Michael Hofmann'), ki18n('Original Qt4 Author'))
 
-    KCmdLineArgs.init([""], aboutData)
+    KCmdLineArgs.init([''], aboutData)
 
     app = KApplication()
-    app.setWindowIcon(KIcon("apport"))
+    app.setWindowIcon(KIcon('apport'))
 
     UserInterface = MainUserInterface()
     app.exec_()
