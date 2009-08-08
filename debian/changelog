@@ -1,4 +1,4 @@
-apport (1.7-0ubuntu2) UNRELEASED; urgency=low
+apport (1.7-0ubuntu2) karmic; urgency=low
 
   [ Matt Zimmerman ]
   * data/general-hooks/ubuntu.py: Detect when a kernel upgrade failure is
@@ -20,7 +20,7 @@ apport (1.7-0ubuntu2) UNRELEASED; urgency=low
     - report.py, add_hooks_info(): Add optional package/srcpackage argument.
     - Implemented ui_question_userpass [Caio Romão].
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Thu, 06 Aug 2009 16:29:14 +0100
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Sat, 08 Aug 2009 12:20:39 +0200
 
 apport (1.7-0ubuntu1) karmic; urgency=low
 
