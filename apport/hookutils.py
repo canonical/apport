@@ -322,15 +322,26 @@ def attach_gconf(report, package):
         report['GConfNonDefault'] = s
 
 def attach_network(report):
-    '''Attach network-related information to report.'''
+    '''Attach generic network-related information to report.'''
 
     report['IpRoute'] = command_output(['ip','route'])
     report['IpAddr'] = command_output(['ip','addr'])
     report['PciNetwork'] = pci_devices(PCI_NETWORK)
+    attach_file_if_exists(report, '/etc/network/interfaces', key='IfupdownConfig')
 
     for var in ('http_proxy', 'ftp_proxy', 'no_proxy'):
         if var in os.environ:
             report[var] = os.environ[var]
+
+def attach_wifi(report):
+    '''Attach wireless (WiFi) network information to report.'''
+
+    report['WifiSyslog'] = recent_syslog(re.compile(r'(NetworkManager|dhclient|kernel):'))
+    report['IwConfig'] = command_output(['iwconfig'])
+    report['RfKill'] = command_output(['rfkill', 'list'])
+    report['CRDA'] = command_output(['iw', 'reg', 'get'])
+
+    attach_file_if_exists(report, '/var/log/wpa_supplicant.log', key='WpaSupplicantLog')
 
 def attach_printing(report):
     '''Attach printing information to the report.
