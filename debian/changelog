@@ -2,6 +2,8 @@ apport (1.7-0ubuntu3) UNRELEASED; urgency=low
 
   * data/general-hooks/ubuntu.py: File update-grub bugs on grub2 instead of
     grub if appropriate.
+  * apport/hookutils.py: Add command_available method, and use it to add
+    prtconf and pccardctl output if those commands are available.
 
  -- Colin Watson <cjwatson@ubuntu.com>  Sun, 09 Aug 2009 11:55:59 +0100
 
