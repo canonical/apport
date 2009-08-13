@@ -1,5 +1,6 @@
 apport (1.7-0ubuntu3) UNRELEASED; urgency=low
 
+  [ Colin Watson ]
   * data/general-hooks/ubuntu.py: File update-grub bugs on grub2 instead of
     grub if appropriate.
   * apport/hookutils.py: Add command_available method, and use it to add
@@ -8,7 +9,10 @@ apport (1.7-0ubuntu3) UNRELEASED; urgency=low
     roughly the same information as is provided by the 'report-hw' tool in
     installation-report.
 
- -- Colin Watson <cjwatson@ubuntu.com>  Sun, 09 Aug 2009 11:55:59 +0100
+  [ Matt Zimmerman ]
+  * apport/hookutils.py: Include modem-manager syslog messages in WifiSyslog
+
+ -- Matt Zimmerman <mdz@ubuntu.com>  Thu, 13 Aug 2009 13:43:22 +0100
 
 apport (1.7-0ubuntu2) karmic; urgency=low
 
