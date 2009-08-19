@@ -11,8 +11,10 @@ apport (1.7-0ubuntu3) UNRELEASED; urgency=low
 
   [ Matt Zimmerman ]
   * apport/hookutils.py: Include modem-manager syslog messages in WifiSyslog
+  * data/general-hooks/ubuntu.py: Exclude bugs already aimed at grub2 from the
+    update-grub test (in support of Colin's change above)
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Thu, 13 Aug 2009 13:43:22 +0100
+ -- Matt Zimmerman <mdz@ubuntu.com>  Wed, 19 Aug 2009 13:49:45 +0100
 
 apport (1.7-0ubuntu2) karmic; urgency=low
 
