@@ -45,6 +45,18 @@ def add_info(report):
                 # File these reports on the initramfs-tools package instead
                 report['SourcePackage'] = 'initramfs-tools'
 
+        if report['Package'].startswith('linux-image-') and 'DpkgTerminalLog' in report:
+            # /etc/kernel/*.d failures from kernel package postinst
+            m = re.search(r'^run-parts: (/etc/kernel/\S+\.d/\S+) exited with return code \d+', report['DpkgTerminalLog'], re.MULTILINE)
+            if m:
+                path = m.group(1)
+                package = apport.packaging.get_file_package(path)
+                if package:
+                    report['SourcePackage'] = package
+                    report['ErrorMessage'] = m.group(0)
+                else:
+                    report['UnreportableReason'] = 'This failure was caused by a program which did not originate from Ubuntu'
+
     if 'Package' in report:
         package = report['Package'].split()[0]
         if package and 'attach_conffiles' in dir():
