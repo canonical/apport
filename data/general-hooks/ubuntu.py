@@ -26,6 +26,8 @@ def add_info(report):
     # This includes the Ubuntu packaged kernel version
     attach_file_if_exists(report, '/proc/version_signature', 'ProcVersionSignature')
 
+    # There are enough of these now that it is probably worth refactoring...
+    # -mdz
     if report['ProblemType'] == 'Package':
         if report['Package'] not in ['grub', 'grub2']:
             # linux-image postinst emits this when update-grub fails
