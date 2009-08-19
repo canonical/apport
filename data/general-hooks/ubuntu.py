@@ -29,6 +29,7 @@ def add_info(report):
     if report['ProblemType'] == 'Package':
         if report['Package'] not in ['grub', 'grub2']:
             # linux-image postinst emits this when update-grub fails
+            # https://wiki.ubuntu.com/KernelTeam/DebuggingUpdateErrors
             if 'DpkgTerminalLog' in report and re.search(r'^User postinst hook script \[.*update-grub\] exited with value', report['DpkgTerminalLog'], re.MULTILINE):
                 # File these reports on the grub package instead
                 grub_package = apport.packaging.get_file_package('/usr/sbin/update-grub')
@@ -36,8 +37,10 @@ def add_info(report):
                     report['SourcePackage'] = 'grub'
                 else:
                     report['SourcePackage'] = 'grub2'
+
         if report['Package'] != 'initramfs-tools':
             # update-initramfs emits this when it fails, usually invoked from the linux-image postinst
+            # https://wiki.ubuntu.com/KernelTeam/DebuggingUpdateErrors
             if 'DpkgTerminalLog' in report and re.search(r'^update-initramfs: failed for ', report['DpkgTerminalLog'], re.MULTILINE):
                 # File these reports on the initramfs-tools package instead
                 report['SourcePackage'] = 'initramfs-tools'
