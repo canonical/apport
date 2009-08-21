@@ -154,6 +154,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if report['DistroRelease'].split()[0] == 'Ubuntu':
                 hdr['Private'] = 'yes'
                 hdr['Subscribers'] = 'apport'
+        # make kernel crashes private
+        elif report.has_key('VmCore'):
+            # FIXME: ugly Ubuntu specific hack until LP has a real crash db
+            if report['DistroRelease'].split()[0] == 'Ubuntu':
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
         if report.has_key('Tags'):
             hdr['Tags'] += ' ' + report['Tags']
 
