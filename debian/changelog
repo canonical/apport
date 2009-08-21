@@ -1,4 +1,4 @@
-apport (1.7-0ubuntu3) karmic; urgency=high
+apport (1.7-0ubuntu3) karmic; urgency=low
 
   [ Colin Watson ]
   * data/general-hooks/ubuntu.py: File update-grub bugs on grub2 instead of
@@ -18,7 +18,7 @@ apport (1.7-0ubuntu3) karmic; urgency=high
   * Make sure that kernel crash dumps are marked as private in Launchpad
     (LP: #417059)
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Wed, 19 Aug 2009 15:56:23 +0100
+ -- Kees Cook <kees@ubuntu.com>  Fri, 21 Aug 2009 11:32:06 -0700
 
 apport (1.7-0ubuntu2) karmic; urgency=low
 
