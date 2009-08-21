@@ -156,6 +156,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 hdr['Subscribers'] = 'apport'
         if report.has_key('Tags'):
             hdr['Tags'] += ' ' + report['Tags']
+        if 'VmCore' in report:
+            if report['DistroRelease'].split()[0] == 'Ubuntu':
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()

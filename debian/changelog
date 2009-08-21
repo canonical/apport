@@ -15,6 +15,8 @@ apport (1.7-0ubuntu3) UNRELEASED; urgency=low
     update-grub test (in support of Colin's change above)
   * data/general-hooks/ubuntu.py: Redirect failures in /etc/kernel/*.d to the
     package owning the file which failed
+  * Make sure that kernel crash dumps are marked as private in Launchpad
+    (LP: #417059)
 
  -- Matt Zimmerman <mdz@ubuntu.com>  Wed, 19 Aug 2009 15:56:23 +0100
 
