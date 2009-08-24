@@ -81,6 +81,8 @@ def attach_hardware(report):
     - lsusb
     - devices from udev
     - DMI information from /sys
+    - prtconf (sparc)
+    - pccardctl status/ident
     '''
     attach_dmesg(report)
 
@@ -116,6 +118,13 @@ def attach_hardware(report):
     if 'dmi.sys.vendor' in report and 'dmi.product.name' in report:
         report['MachineType'] = '%s %s' % (report['dmi.sys.vendor'],
                 report['dmi.product.name'])
+
+    if command_available('prtconf'):
+        report['Prtconf'] = command_output(['prtconf'])
+
+    if command_available('pccardctl'):
+        report['PccardctlStatus'] = command_output(['pccardctl', 'status'])
+        report['PccardctlIdent'] = command_output(['pccardctl', 'ident'])
 
 def attach_alsa(report):
     '''Attach ALSA subsystem information to the report.
@@ -167,6 +176,19 @@ def attach_alsa(report):
 
     # This seems redundant with the amixer info, do we need it?
     #report['AlsactlStore'] = command-output(['alsactl', '-f', '-', 'store'])
+
+def command_available(command):
+    '''Is given command on the executable search path?'''
+    if 'PATH' not in os.environ:
+        return False
+    path = os.environ['PATH']
+    for element in path.split(os.pathsep):
+        if not element:
+            continue
+        filename = os.path.join(element, command)
+        if os.path.isfile(filename) and os.access(filename, os.X_OK):
+            return True
+    return False
 
 def command_output(command, input = None, stderr = subprocess.STDOUT):
     '''Try to execute given command (array) and return its stdout. 
