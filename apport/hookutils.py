@@ -358,7 +358,7 @@ def attach_network(report):
 def attach_wifi(report):
     '''Attach wireless (WiFi) network information to report.'''
 
-    report['WifiSyslog'] = recent_syslog(re.compile(r'(NetworkManager|dhclient|kernel):'))
+    report['WifiSyslog'] = recent_syslog(re.compile(r'(NetworkManager|modem-manager|dhclient|kernel):'))
     report['IwConfig'] = command_output(['iwconfig'])
     report['RfKill'] = command_output(['rfkill', 'list'])
     report['CRDA'] = command_output(['iw', 'reg', 'get'])
