@@ -1,9 +1,18 @@
-apport (1.7-0ubuntu4) UNRELEASED; urgency=low
+apport (1.7-0ubuntu4) karmic; urgency=low
 
+  [ Colin Watson ]
   * data/package-hooks/source_debian-installer.py: Report Ubiquity bugs
     against the ubiquity source package, rather than rejecting them.
 
- -- Colin Watson <cjwatson@ubuntu.com>  Tue, 25 Aug 2009 12:10:29 +0100
+  [ James Westby ]
+  * data/package-hooks/source_linux.py: submit oopses back if the user
+    accepts. Use the new kerneloops-submit to do it.
+  * bin/kernel_oops: kerneloops will now pass the checksum, so if it does
+    then base the report path on that to uniquify the reports.
+  * apport/fileutils.py: allow uid to be a string so that we can use
+    the checksum in place of the uid.
+
+ -- James Westby <james.westby@ubuntu.com>  Tue, 25 Aug 2009 21:15:24 +0100
 
 apport (1.7-0ubuntu3) karmic; urgency=low
 
