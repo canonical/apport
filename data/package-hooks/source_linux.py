@@ -16,7 +16,7 @@ import os
 import subprocess
 from apport.hookutils import *
 
-def add_info(report):
+def add_info(report, ui):
 	attach_hardware(report)
 	attach_alsa(report)
 	attach_wifi(report)
@@ -35,8 +35,22 @@ def add_info(report):
 
 	attach_related_packages(report, [lrm_package_name, lbm_package_name, 'linux-firmware'])
 
+	if ('Failure' in report and report['Failure'] == 'oops'
+			and 'OopsText' in report):
+		#it's from kerneloops, ask the user whether to submit there as well
+		if ui is not None:
+			if ui.yesno("This report may also be submitted to "
+				"http://kerneloops.org/ in order to help collect aggregate "
+				"information about kernel problems. This aids in identifying "
+				"widespread issues and problematic areas. Would you like to "
+				"submit information about this crash there?"):
+				text = report['OopsText']
+				proc = subprocess.Popen("/usr/bin/kerneloops-submit",
+					stdin=subprocess.PIPE)
+				proc.communicate(text)
+
 if __name__ == '__main__':
 	report = {}
-	add_info(report)
+	add_info(report, None)
 	for key in report:
 		print '%s: %s' % (key, report[key].split('\n', 1)[0])
