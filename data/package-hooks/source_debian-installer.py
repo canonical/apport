@@ -21,7 +21,8 @@ def add_info(report):
         installer_version = open('/var/log/installer/version')
         for line in installer_version:
             if line.startswith('ubiquity '):
-                report['UnreportableReason'] = 'System installed using ubiquity, not debian-installer'
+                # File these reports on the ubiquity package instead
+                report['SourcePackage'] = 'ubiquity'
                 break
         installer_version.close()
     except IOError:
