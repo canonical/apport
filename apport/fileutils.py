@@ -202,7 +202,7 @@ def make_report_path(report, uid=None):
     if not uid:
         uid = os.getuid()
 
-    return os.path.join(report_dir, '%s.%i.crash' % (subject, uid))
+    return os.path.join(report_dir, '%s.%s.crash' % (subject, str(uid)))
 
 def check_files_md5(sumfile):
     '''Check file integrity against md5 sum file.
