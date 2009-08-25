@@ -481,6 +481,17 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     except HTTPError:
                         pass # LP#315387 workaround
 
+            bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
+            bug.newMessage(content='Thank you for taking the time to report this crash and helping \
+to make Ubuntu better.  This particular crash has already been reported and \
+is a duplicate of bug #%i, so is being marked as such.  Please look at the \
+other bug report to see if there is any missing information that you can \
+provide, or to see if there is a workaround for the bug.  Additionally, any \
+further discussion regarding the bug should occur in the other report.  \
+Please continue to report any other bugs you may find.' % master,  
+                subject='This bug is a duplicate')
+            bug.lp_save()
+
             bug = self.launchpad.bugs[id] # refresh, LP#336866 workaround
             if bug.private:
                 bug.private = False
