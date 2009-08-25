@@ -12,9 +12,13 @@
 # the full text of the license.
 
 import os, sys
-import apport, apport.fileutils
+import apport.fileutils
 
 from gettext import gettext as _
+
+checksum = None
+if len(sys.argv) > 1:
+    checksum = sys.argv[1]
 
 oops = sys.stdin.read()
 
@@ -29,4 +33,6 @@ pr['SourcePackage'] = 'linux'
 pr['OopsText'] = oops
 
 # write report
-pr.write(open(apport.fileutils.make_report_path(pr), 'w'))
+report_path = apport.fileutils.make_report_path(pr, uid=checksum)
+if not os.path.exists(report_path):
+    pr.write(open(report_path, 'w'))
