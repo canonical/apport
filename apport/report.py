@@ -828,6 +828,14 @@ class Report(ProblemReport):
         Return None if the report is not a crash or a default title could not
         be generated.
         '''
+        # assertion failure
+        if self.get('Signal') == '6' and \
+                self.has_key('ExecutablePath') and \
+                self.has_key('AssertionMessage'):
+            return '%s assert failure: %s' % (
+                os.path.basename(self['ExecutablePath']),
+                self['AssertionMessage'])
+
         # signal crash
         if self.has_key('Signal') and \
             self.has_key('ExecutablePath') and \
@@ -1941,6 +1949,13 @@ baz()
         report['StacktraceTop'] = '??()\n??()'
         self.assertEqual(report.standard_title(),
             'bash crashed with signal 42')
+
+        # assertion message
+        report['Signal'] = '6'
+        report['ExecutablePath'] = '/bin/bash'
+        report['AssertionMessage'] = 'foo.c:42 main: i > 0'
+        self.assertEqual(report.standard_title(),
+            'bash assert failure: foo.c:42 main: i > 0')
 
         # Python crash
         report = Report()
