@@ -962,6 +962,9 @@ class Report(ProblemReport):
         number, and StacktraceTop function names, separated by a colon. If
         StacktraceTop has unknown functions or the report lacks any of those
         fields, return None.
+
+        For assertion failures, it is the concatenation of ExecutablePath
+        and assertion message, separated by colons.
         
         For Python crashes, this concatenates the ExecutablePath, exception
         name, and Traceback function names, again separated by a colon.
@@ -979,6 +982,10 @@ class Report(ProblemReport):
                 if m:
                     sig += ':' + (m.group(1))
             return sig
+
+        # assertion failures
+        if self.get('Signal') == '6' and self.has_key('AssertionMessage'):
+            return self['ExecutablePath'] + ':' + self['AssertionMessage'] 
 
         # signal crashes
         if self.has_key('StacktraceTop') and self.has_key('Signal'):
@@ -2354,6 +2361,12 @@ RUNQUEUES[0]: c6002320
 '''
         self.assertEqual(r.crash_signature(), 'kernel:sysrq_handle_crash:__handle_sysrq:handle_sysrq:kbd_keycode:kbd_event:input_pass_event:input_handle_event:input_event:hidinput_hid_event')
 
+        # assertion failures
+        r = Report()
+        r['Signal'] = '6'
+        r['ExecutablePath'] = '/bin/bash'
+        r['AssertionMessage'] = 'foo.c:42 main: i > 0'
+        self.assertEqual(r.crash_signature(), '/bin/bash:foo.c:42 main: i > 0')
 
     def test_binary_data(self):
         '''methods get along with binary data.'''
