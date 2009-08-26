@@ -1,4 +1,4 @@
-apport (1.8-0ubuntu1) UNRELEASED; urgency=low
+apport (1.8-0ubuntu1) karmic; urgency=low
 
   * New upstream release:
     - Do not generally ignore SIGABRT any more. Try to extract the assertion
@@ -15,7 +15,7 @@ apport (1.8-0ubuntu1) UNRELEASED; urgency=low
     - Fix the test suite on current kernels; test/crash previously often failed
       with python segfaults, since it killed the test processes too early.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Aug 2009 13:03:57 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Aug 2009 13:19:51 +0200
 
 apport (1.7-0ubuntu4) karmic; urgency=low
 
