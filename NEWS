@@ -9,6 +9,17 @@ New features:
    reports as unreportable if they do not have an assertion message and crashed
    with SIGABRT. This requires your glibc to have this patch:
    http://sourceware.org/git/?p=glibc.git;a=commitdiff;h=48dcd0ba
+ - report.py, add_hooks_info(): Add optional package/srcpackage argument. Hooks
+   can use that to change the affected package or call hooks from different
+   packages.
+ - KDE frontend implementation of ui_question_userpass(), for crash databases
+   which need to ask for credentials.
+ - hookutils.py: New funtion attach_wifi() to add wireless network related
+   information to reports.
+
+Important bug fixes:
+ - Fix the test suite on current kernels; test/crash previously often failed
+   with python segfaults, since it killed the test processes too early.
 
 1.7 (2009-08-05):
 -----------------
