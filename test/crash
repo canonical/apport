@@ -500,8 +500,3 @@ finally:
     except:
         pass
     shutil.rmtree(temp_report_dir)
-    if os.environ.has_key('APPORT_LOG_FILE'):
-        if not all_passed:
-            print '----- apport log file -----'
-            print open(os.environ['APPORT_LOG_FILE']).read()
-        os.unlink(os.environ['APPORT_LOG_FILE'])
