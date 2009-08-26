@@ -30,7 +30,7 @@ DistUtilsExtra.auto.setup(name='apport',
       url='https://wiki.ubuntu.com/Apport',
       license='gpl',
       description='intercept, process, and report crashes and bug reports',
-      version='1.7',
+      version='1.8',
 
       data_files=[('share/mime/packages', glob('xdg-mime/*')),
                   ('share/apport', glob('kde/*.ui')), #TODO: use pykdeuic modules

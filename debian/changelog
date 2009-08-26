@@ -1,3 +1,22 @@
+apport (1.8-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release:
+    - Do not generally ignore SIGABRT any more. Try to extract the assertion
+      message from the core dump, and add it as "AssertionMessage" field. Mark
+      reports as unreportable if they do not have an assertion message and crashed
+      with SIGABRT. This implements UbuntuSpec:security-karmic-apport-abort.
+    - report.py, add_hooks_info(): Add optional package/srcpackage argument. Hooks
+      can use that to change the affected package or call hooks from different
+      packages.
+    - KDE frontend implementation of ui_question_userpass(), for crash databases
+      which need to ask for credentials.
+    - hookutils.py: New funtion attach_wifi() to add wireless network related
+      information to reports.
+    - Fix the test suite on current kernels; test/crash previously often failed
+      with python segfaults, since it killed the test processes too early.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Aug 2009 13:03:57 +0200
+
 apport (1.7-0ubuntu4) karmic; urgency=low
 
   [ Colin Watson ]

@@ -42,6 +42,7 @@ def create_test_process(check_running=True):
     # wait until child process has execv()ed properly
     while 'test-apport' in open('/proc/%i/cmdline' % pid).read():
         time.sleep(0.1)
+    time.sleep(0.3) # needs some more setup time
     return pid
 
 def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV, check_running=True, sleep=0):
@@ -499,8 +500,3 @@ finally:
     except:
         pass
     shutil.rmtree(temp_report_dir)
-    if os.environ.has_key('APPORT_LOG_FILE'):
-        if not all_passed:
-            print '----- apport log file -----'
-            print open(os.environ['APPORT_LOG_FILE']).read()
-        os.unlink(os.environ['APPORT_LOG_FILE'])

@@ -91,6 +91,10 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None):
 versions installed. Please upgrade the following packages and check if the \
 problem still occurs:\n\n%s') % ', '.join(old_pkgs)
 
+    # if we have a SIGABRT without an assertion message, declare as unreportable
+    if report.get('Signal') == '6' and 'AssertionMessage' not in report:
+        report['UnreportableReason'] = _('The program crashed on an assertion failure, but the message could not be retrieved. Apport does not support reporting these crashes.')
+
     report.anonymize()
 
     if reportfile:
@@ -1650,6 +1654,21 @@ CoreDump: base64
             self.assertEqual(self.ui.ic_progress_pulses, 0)
 
             self.assert_(self.ui.report.check_ignored())
+
+        def test_run_crash_abort(self):
+            '''run_crash() for an unreportable abort()'''
+
+            self.report['Signal'] = '6'
+            self.report['ExecutablePath'] = '/bin/bash'
+            self.report['Package'] = 'bash 1'
+            self.update_report_file()
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.present_details_response = 'full'
+            self.ui.run_crash(self.report_file.name)
+
+            self.assert_('assert' in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
+            self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_argv_file(self):
             '''run_crash() through a file specified on the command line.'''
