@@ -1,6 +1,15 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.8 (UNRELEASED)
+----------------
+New features:
+ - Do not generally ignore SIGABRT any more. Try to extract the assertion
+   message from the core dump, and add it as "AssertionMessage" field. Mark
+   reports as unreportable if they do not have an assertion message and crashed
+   with SIGABRT. This requires your glibc to have this patch:
+   http://sourceware.org/git/?p=glibc.git;a=commitdiff;h=48dcd0ba
+
 1.7 (2009-08-05):
 -----------------
 New features:

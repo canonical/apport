@@ -264,15 +264,6 @@ try:
             write_user_coredump(pid, cwd, core_ulimit)
             sys.exit(1)
 
-    # ignore SIGABRT (we currently have no way of extracting abort() messages
-    # or mono's stderr for stack traces).
-    if signum == str(signal.SIGABRT):
-        # check if the user wants a core dump
-        error_log('Ignoring SIGABRT')
-        drop_privileges(pid)
-        write_user_coredump(pid, cwd, core_ulimit)
-        sys.exit(0)
-
     # ignore blacklisted binaries
     if info.check_ignored():
         error_log('executable version is blacklisted, ignoring')

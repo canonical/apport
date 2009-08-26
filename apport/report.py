@@ -455,6 +455,7 @@ class Report(ProblemReport):
         - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
         - StacktraceTop: simplified stacktrace (topmost 5 functions) for inline
           inclusion into bug reports and easier processing
+        - AssertionMessage: Value of __assert_msg, if present
 
         The optional debugdir can specify an alternative debug symbol root
         directory.
@@ -482,6 +483,7 @@ class Report(ProblemReport):
                            'Disassembly': 'x/16i $pc',
                            'Stacktrace': 'bt full',
                            'ThreadStacktrace': 'thread apply all bt full',
+                           'AssertionMessage': 'print (char*) __assert_msg',
                           }
 
             command = ['gdb', '--batch']
@@ -517,6 +519,18 @@ class Report(ProblemReport):
         finally:
             if unlink_core:
                 os.unlink(core)
+
+        # clean up AssertionMessage
+        if 'AssertionMessage' in self:
+            # chop off "$n = 0x...." prefix, drop empty ones
+            m = re.match('^\$\d+\s+=\s+0x[0-9a-fA-F]+\s+"(.*)"\s*$',
+                self['AssertionMessage'])
+            if m:
+                self['AssertionMessage'] = m.group(1)
+                if self['AssertionMessage'].endswith('\\n'):
+                    self['AssertionMessage'] = self['AssertionMessage'][0:-2]
+            else:
+                del self['AssertionMessage']
 
         if self.has_key('Stacktrace'):
             self._gen_stacktrace_top()
@@ -1357,7 +1371,7 @@ sys.stdin.readline()
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
     @classmethod
-    def _generate_sigsegv_report(klass, file=None):
+    def _generate_sigsegv_report(klass, file=None, signal='11'):
         '''Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
         (ExecutablePath and CoreDump) and call add_gdb_info().
@@ -1392,7 +1406,7 @@ int main() { return f(42); }
 
             pr['ExecutablePath'] = os.path.join(workdir, 'crash')
             pr['CoreDump'] = (os.path.join(workdir, 'core'),)
-            pr['Signal'] = '11'
+            pr['Signal'] = signal
 
             pr.add_gdb_info()
             if file:
@@ -1430,6 +1444,7 @@ int main() { return f(42); }
         pr = self._generate_sigsegv_report()
         self._validate_gdb_fields(pr)
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
+        self.failIf ('AssertionMessage' in pr)
 
     def test_add_gdb_info_load(self):
         '''add_gdb_info() with inline core dump.'''
@@ -1477,6 +1492,83 @@ kill -SEGV $$
 
         self._validate_gdb_fields(pr)
         self.assert_('libc.so' in pr['Stacktrace'] or 'in execute_command' in pr['Stacktrace'])
+
+    def test_add_gdb_info_abort(self):
+        '''add_gdb_info() with SIGABRT/assert()
+        
+        If these come from an assert(), the report should have the assertion
+        message. Otherwise it should be marked as not reportable.
+        '''
+        (fd, script) = tempfile.mkstemp()
+        assert not os.path.exists('core')
+        try:
+            os.close(fd)
+
+            # create a test script which produces a core dump for us
+            open(script, 'w').write('''#!/bin/sh
+gcc -o $0.bin -x c - <<EOF
+#include <assert.h>
+int main() { assert(1 < 0); }
+EOF
+ulimit -c unlimited
+$0.bin 2>/dev/null
+''')
+            os.chmod(script, 0755)
+
+            # call script and verify that it gives us a proper ELF core dump
+            assert subprocess.call([script]) != 0
+            assert subprocess.call(['readelf', '-n', 'core'],
+                stdout=subprocess.PIPE) == 0
+
+            pr = Report()
+            pr['ExecutablePath'] = script + '.bin'
+            pr['CoreDump'] = ('core',)
+            pr.add_gdb_info()
+        finally:
+            os.unlink(script)
+            os.unlink(script + '.bin')
+            os.unlink('core')
+
+        self._validate_gdb_fields(pr)
+        self.assert_("<stdin>:2: main: Assertion `1 < 0' failed." in
+                pr['AssertionMessage'])
+        self.failIf(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
+        self.failIf('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
+        self.failIf(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
+
+        # abort without assertion
+        (fd, script) = tempfile.mkstemp()
+        assert not os.path.exists('core')
+        try:
+            os.close(fd)
+
+            # create a test script which produces a core dump for us
+            open(script, 'w').write('''#!/bin/sh
+gcc -o $0.bin -x c - <<EOF
+#include <stdlib.h>
+int main() { abort(); }
+EOF
+ulimit -c unlimited
+$0.bin 2>/dev/null
+''')
+            os.chmod(script, 0755)
+
+            # call script and verify that it gives us a proper ELF core dump
+            assert subprocess.call([script]) != 0
+            assert subprocess.call(['readelf', '-n', 'core'],
+                stdout=subprocess.PIPE) == 0
+
+            pr = Report()
+            pr['ExecutablePath'] = script + '.bin'
+            pr['CoreDump'] = ('core',)
+            pr.add_gdb_info()
+        finally:
+            os.unlink(script)
+            os.unlink(script + '.bin')
+            os.unlink('core')
+
+        self._validate_gdb_fields(pr)
+        self.failIf ('AssertionMessage' in pr, pr.get('AssertionMessage'))
 
     def test_search_bug_patterns(self):
         '''search_bug_patterns().'''
