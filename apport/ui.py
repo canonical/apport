@@ -1670,21 +1670,6 @@ CoreDump: base64
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
 
-        def test_run_crash_assert(self):
-            '''run_crash() for a real assert().'''
-
-            self.report['Signal'] = '6'
-            self.report['ExecutablePath'] = '/bin/bash'
-            self.report['Package'] = 'bash 1'
-            self.report['AssertionMessage'] = 'foo.c, line 2: i > 0'
-            self.update_report_file()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'full'
-            self.ui.run_crash(self.report_file.name)
-
-            self.assertEqual(self.ui.msg_text, None)
-            self.assertEqual(self.ui.msg_severity, None)
-
         def test_run_crash_argv_file(self):
             '''run_crash() through a file specified on the command line.'''
 
