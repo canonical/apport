@@ -455,7 +455,7 @@ class Report(ProblemReport):
         - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
         - StacktraceTop: simplified stacktrace (topmost 5 functions) for inline
           inclusion into bug reports and easier processing
-        - AssertionMessage: Value of __assert_msg, if present
+        - AssertionMessage: Value of __abort_msg, if present
 
         The optional debugdir can specify an alternative debug symbol root
         directory.
@@ -483,7 +483,7 @@ class Report(ProblemReport):
                            'Disassembly': 'x/16i $pc',
                            'Stacktrace': 'bt full',
                            'ThreadStacktrace': 'thread apply all bt full',
-                           'AssertionMessage': 'print (char*) __assert_msg',
+                           'AssertionMessage': 'print (char*) __abort_msg',
                           }
 
             command = ['gdb', '--batch']
@@ -985,7 +985,9 @@ class Report(ProblemReport):
 
         # assertion failures
         if self.get('Signal') == '6' and self.has_key('AssertionMessage'):
-            return self['ExecutablePath'] + ':' + self['AssertionMessage'] 
+            sig = self['ExecutablePath'] + ':' + self['AssertionMessage']
+            # filter out addresses, to help match duplicates more sanely
+            return re.sub(r'0x[0-9a-f]{6,}','ADDR', sig)
 
         # signal crashes
         if self.has_key('StacktraceTop') and self.has_key('Signal'):
