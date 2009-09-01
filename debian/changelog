@@ -1,3 +1,10 @@
+apport (1.8-0ubuntu3) UNRELEASED; urgency=low
+
+  * Move gdb dependency from apport to GUI packages to avoid pulling in gdb on
+    Ubuntu server. Thanks to Steve Beattie! (LP: #354172)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 01 Sep 2009 21:02:35 +0200
+
 apport (1.8-0ubuntu2) karmic; urgency=low
 
   * apport/report.py: add upstream bzr 1538 commit:
