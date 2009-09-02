@@ -759,15 +759,16 @@ free memory to automatically analyze the problem and send a report to the develo
         else:
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
 
-        exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
-        if not self.cur_package and self.report['ProblemType'] != 'KernelCrash' and self.report['ProblemType'] != 'KernelOops' or (
-            exe_path and not os.path.exists(exe_path)):
-            msg = _('This problem report does not apply to a packaged program.')
-            if self.report.has_key('ExecutablePath'):
-                msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
-            self.report = None
-            self.ui_info_message(_('Invalid problem report'), msg)
-            return False
+        # ensure that the crashed program is still installed:
+        if self.report['ProblemType'] == 'Crash':
+            exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
+            if not exe_path or not os.path.exists(exe_path):
+                msg = _('This problem report applies to a program which is not installed any more.')
+                if self.report.has_key('ExecutablePath'):
+                    msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
+                self.report = None
+                self.ui_info_message(_('Invalid problem report'), msg)
+                return False
 
         self.complete_size = os.path.getsize(path)
 
@@ -1204,6 +1205,7 @@ databases = {
 
             # demo report
             self.report = apport.Report()
+            self.report['ExecutablePath'] = '/bin/bash'
             self.report['Package'] = 'libfoo1 1-1'
             self.report['SourcePackage'] = 'foo'
             self.report['Foo'] = 'A' * 1000
@@ -1292,9 +1294,11 @@ databases = {
             # report without Package
             del self.report['Package']
             del self.report['SourcePackage']
+            del self.report['ExecutablePath']
             self.update_report_file()
             self.ui.load_report(self.report_file.name)
 
+            print self.ui.report
             self.assert_(self.ui.report == None)
             self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
             self.assertEqual(self.ui.msg_severity, 'info')
