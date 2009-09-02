@@ -15,6 +15,7 @@ the full text of the license.
 import os.path
 import subprocess
 import sys
+import os
 
 try:
     from PyQt4.QtCore import *
@@ -429,6 +430,10 @@ class MainUserInterface(apport.ui.UserInterface):
 
 
 if __name__ == '__main__':
+    if not os.environ.get('DISPLAY'):
+        print >> sys.stderr, 'This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.'
+        sys.exit(1)
+
     appName = 'apport-kde'
     catalog = 'apport-kde'
     programName = ki18n('Apport KDE')
