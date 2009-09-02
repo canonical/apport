@@ -18,7 +18,8 @@ elif test "$1" -gt 0 2>/dev/null; then
     args="-f -P $1"
 elif [ "${1%.crash}" != "$1" ]; then
     # crash file
-    args="-c '$1'"
+    args="-c"
+    farg="$1"
 elif expr "$1" : ".*/.*" >/dev/null; then
     # program path
     output=$(dpkg-query --search "$1" || echo '')
@@ -39,7 +40,7 @@ fi
 # check for X
 if [ -z "$DISPLAY" ]; then
     if [ -x /usr/bin/apport-cli ]; then
-        /usr/bin/apport-cli $args
+        /usr/bin/apport-cli $args "$farg"
     else
         echo "\$DISPLAY is not set. You need apport-cli to make this program work." >&2
         exit 1
@@ -47,20 +48,20 @@ if [ -z "$DISPLAY" ]; then
 # do we have a running Gnome/KDE session
 elif pgrep -u `id -u` -x gnome-session >/dev/null && \
     [ -x /usr/share/apport/apport-gtk ]; then
-    /usr/share/apport/apport-gtk $args
+    /usr/share/apport/apport-gtk $args "$farg"
 elif pgrep -u `id -u` -x ksmserver >/dev/null && \
     [ -x /usr/share/apport/apport-qt ]; then
-        /usr/share/apport/apport-qt $args
+        /usr/share/apport/apport-qt $args "$farg"
 # fall back to calling whichever is available
 elif [ -x /usr/share/apport/apport-gtk ]; then
-    /usr/share/apport/apport-gtk $args
+    /usr/share/apport/apport-gtk $args "$farg"
 elif [ -x /usr/share/apport/apport-kde ]; then
-    /usr/share/apport/apport-kde $args
+    /usr/share/apport/apport-kde $args "$farg"
 elif [ -x /usr/bin/apport-cli ]; then
     if [ -z "$TERM" ]; then
-        x-terminal-emulator -e /usr/bin/apport-cli $args
+        x-terminal-emulator -e /usr/bin/apport-cli $args "$farg"
     else
-        /usr/bin/apport-cli $args
+        /usr/bin/apport-cli $args "$farg"
     fi
 else
     echo "Neither apport-gtk, apport-qt or apport-cli is installed. Install either to make this program work." >&2

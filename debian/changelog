@@ -2,6 +2,8 @@ apport (1.8-0ubuntu3) UNRELEASED; urgency=low
 
   * Move gdb dependency from apport to GUI packages to avoid pulling in gdb on
     Ubuntu server. Thanks to Steve Beattie! (LP: #354172)
+  * ubuntu-bug: Fix handling of .crash file arguments, thanks to Marco
+    Rodrigues for pointing this out! (LP: #422881)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 01 Sep 2009 21:02:35 +0200
 
