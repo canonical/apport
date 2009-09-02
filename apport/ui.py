@@ -734,6 +734,8 @@ free memory to automatically analyze the problem and send a report to the develo
         try:
             self.report = apport.Report()
             self.report.load(open(path), binary='compressed')
+            if 'ProblemType' not in self.report:
+                raise ValueError, 'Report does not contain "ProblemType" field'
         except MemoryError:
             self.report = None
             self.ui_error_message(_('Memory exhaustion'),
