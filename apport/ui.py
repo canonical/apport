@@ -483,15 +483,12 @@ free memory to automatically analyze the problem and send a report to the develo
     def get_complete_size(self):
         '''Return the size of the complete report.'''
 
-        try:
-            return self.complete_size
-        except AttributeError:
-            # report wasn't loaded, so count manually
-            size = 0
-            for k in self.report:
-                if self.report[k]:
-                    size += len(self.report[k])
-            return size
+        # report wasn't loaded, so count manually
+        size = 0
+        for k in self.report:
+            if self.report[k]:
+                size += len(self.report[k])
+        return size
 
     def get_reduced_size(self):
         '''Return the size of the reduced report.'''
@@ -769,8 +766,6 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.report = None
                 self.ui_info_message(_('Invalid problem report'), msg)
                 return False
-
-        self.complete_size = os.path.getsize(path)
 
         return True
 
@@ -1265,11 +1260,23 @@ databases = {
 
             self.ui.load_report(self.report_file.name)
 
-            self.assertEqual(self.ui.get_complete_size(),
-                os.path.getsize(self.report_file.name))
+            fsize = os.path.getsize(self.report_file.name)
+            complete_ratio = float(self.ui.get_complete_size()) / fsize
+            self.assert_(complete_ratio >= 0.99 and complete_ratio <= 1.01)
+                
             rs = self.ui.get_reduced_size()
             self.assert_(rs > 1000)
             self.assert_(rs < 10000)
+
+            # now add some information (e. g. from package hooks)
+            self.ui.report['ExtraInfo'] = 'A' * 50000
+            s = self.ui.get_complete_size()
+            self.assert_(s >= fsize + 49900)
+            self.assert_(s < fsize + 60000)
+
+            rs = self.ui.get_reduced_size()
+            self.assert_(rs > 51000)
+            self.assert_(rs < 60000)
 
         def test_get_size_constructed(self):
             '''get_complete_size() and get_reduced_size() for on-the-fly Reports.'''
