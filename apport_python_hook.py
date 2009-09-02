@@ -74,7 +74,10 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         pr.add_user_info()
         # override the ExecutablePath with the script that was actually running.
         pr['ExecutablePath'] = binary
-        pr['PythonArgs'] = '%r' % sys.argv
+        try:
+            pr['PythonArgs'] = '%r' % sys.argv
+        except AttributeError:
+            pass
         if pr.check_ignored():
             return
         mangled_program = re.sub('/', '_', binary)
