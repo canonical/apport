@@ -184,7 +184,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     print >> sys.stderr, 'WARNING:', sumfile, 'contains NUL character, ignoring line'
                     continue
                 words  = line.split()
-                if len(line) < 1:
+                if not words:
                     print >> sys.stderr, 'WARNING:', sumfile, 'contains empty line, ignoring line'
                     continue
                 s = os.stat('/' + words[-1])
