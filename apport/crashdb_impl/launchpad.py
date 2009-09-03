@@ -73,7 +73,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         cache_dir = tempfile.mkdtemp()
         atexit.register(shutil.rmtree, cache_dir)
-        if self.options.get('staging'):
+        if self.options.get('staging') or os.getenv('APPORT_STAGING'):
             launchpad_instance = STAGING_SERVICE_ROOT
         else:
             launchpad_instance = EDGE_SERVICE_ROOT
