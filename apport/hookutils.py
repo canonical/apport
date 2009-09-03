@@ -79,7 +79,9 @@ def attach_conffiles(report, package, conffiles=None):
     for line in out.splitlines():
         if not line:
             continue
-        path, default_md5sum = line.strip().split()
+        # just take the first two fields, to not stumble over obsolete
+        # conffiles
+        path, default_md5sum = line.strip().split()[:2]
 
         if conffiles and path not in conffiles: continue
 

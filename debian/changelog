@@ -7,6 +7,8 @@ apport (1.8-0ubuntu3) UNRELEASED; urgency=low
   * debian/local/apport-collect: Set content_type and description, wadllib
     requires them now. (LP: #423512) Also drop the ASCII reencoding
     workaround, this doesn't seem to be necessary any more.
+  * apport/hookutils.py, attach_conffiles(): Fix crash with obsolete
+    conffiles. (LP: #412132)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 01 Sep 2009 21:02:35 +0200
 
