@@ -1307,7 +1307,6 @@ databases = {
             self.update_report_file()
             self.ui.load_report(self.report_file.name)
 
-            print self.ui.report
             self.assert_(self.ui.report == None)
             self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
             self.assertEqual(self.ui.msg_severity, 'info')
