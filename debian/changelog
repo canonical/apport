@@ -1,7 +1,8 @@
 apport (1.8.1-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream bug fix release:
-    - data/general-hooks/generic.py: Check $HOME, not /home for enough space. (LP: #422658)
+    - data/general-hooks/generic.py: Check $HOME, not /home for enough space.
+      (LP: #422658)
     - launchpad.py: Intercept httplib2.ServerNotFoundError as well, to avoid
       crashes when being offline. (LP: #396276)
     - apport-cli: Save reports with .apport extension instead of .txt. Thanks
