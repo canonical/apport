@@ -14,6 +14,7 @@ import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys, socket
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
+from httplib2 import ServerNotFoundError
 from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
 from launchpadlib.credentials import Credentials
 
@@ -73,7 +74,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         cache_dir = tempfile.mkdtemp()
         atexit.register(shutil.rmtree, cache_dir)
-        if self.options.get('staging'):
+        if self.options.get('staging') or os.getenv('APPORT_STAGING'):
             launchpad_instance = STAGING_SERVICE_ROOT
         else:
             launchpad_instance = EDGE_SERVICE_ROOT
@@ -100,7 +101,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 os.chmod(self.auth, 0600)
                 self.__launchpad.credentials.save(f)
                 f.close()
-        except socket.error, e:
+        except (socket.error, ServerNotFoundError), e:
             print >> sys.stderr, 'Error connecting to Launchpad: %s' % str(e)
             sys.exit(99) # transient error
 
@@ -288,24 +289,24 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # as '<fdopen>'
         if report['Stacktrace']: # don't attach empty files
             bug.addAttachment(comment=comment,
-                    #content_type=?
-                    data=report['Stacktrace'].decode('ascii', 'replace').encode('ascii', 'replace'), # LP#353805 workaround
+                    content_type='text/plain',
+                    data=report['Stacktrace'],
                     description='Stacktrace.txt (retraced)',
                     filename='Stacktrace.txt',
                     is_patch=False)
                 
         if report['ThreadStacktrace']:
             bug.addAttachment(comment='', #some other comment here?
-                    #content_type=?
-                    data=report['ThreadStacktrace'].decode('ascii', 'replace').encode('ascii', 'replace'),
+                    content_type='text/plain',
+                    data=report['ThreadStacktrace'],
                     description='ThreadStacktrace.txt (retraced)',
                     filename='ThreadStacktrace.txt',
                     is_patch=False)
 
         if report.has_key('StacktraceSource') and report['StacktraceSource']:
             bug.addAttachment(comment='', #some other comment here?
-                    #content_type=?
-                    data=report['StacktraceSource'].decode('ascii', 'replace').encode('ascii', 'replace'),
+                    content_type='text/plain',
+                    data=report['StacktraceSource'],
                     description='StacktraceSource.txt',
                     filename='StacktraceSource.txt',
                     is_patch=False)
@@ -463,16 +464,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             return None
 
-    def close_duplicate(self, id, master):
+    def close_duplicate(self, id, master_id):
         '''Mark a crash id as duplicate of given master ID.
         
         If master is None, id gets un-duplicated.
         '''
         bug = self.launchpad.bugs[id]
 
-        if master:
+        if master_id:
             # check whether the master itself is a dup
-            master = self.launchpad.bugs[master]
+            master = self.launchpad.bugs[master_id]
             if master.duplicate_of:
                 master = master.duplicate_of
             
@@ -484,6 +485,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                         a.removeFromBug()
                     except HTTPError:
                         pass # LP#315387 workaround
+
+            bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
+            bug.newMessage(content='Thank you for taking the time to report this crash and helping \
+to make Ubuntu better.  This particular crash has already been reported and \
+is a duplicate of bug #%i, so is being marked as such.  Please look at the \
+other bug report to see if there is any missing information that you can \
+provide, or to see if there is a workaround for the bug.  Additionally, any \
+further discussion regarding the bug should occur in the other report.  \
+Please continue to report any other bugs you may find.' % master_id,
+                subject='This bug is a duplicate')
 
             bug = self.launchpad.bugs[id] # refresh, LP#336866 workaround
             if bug.private:

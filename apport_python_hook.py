@@ -35,7 +35,11 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
             return
 
         # do not do anything if apport was disabled
-        from apport.packaging_impl import impl as packaging
+        try:
+            from apport.packaging_impl import impl as packaging
+        except ImportError:
+            # LP #348250; inexplicable, but better than wreaking havoc
+            return
         if not packaging.enabled():
             return
 
@@ -74,7 +78,10 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         pr.add_user_info()
         # override the ExecutablePath with the script that was actually running.
         pr['ExecutablePath'] = binary
-        pr['PythonArgs'] = '%r' % sys.argv
+        try:
+            pr['PythonArgs'] = '%r' % sys.argv
+        except AttributeError:
+            pass
         if pr.check_ignored():
             return
         mangled_program = re.sub('/', '_', binary)

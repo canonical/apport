@@ -1,5 +1,45 @@
-apport (1.8-0ubuntu3) UNRELEASED; urgency=low
+apport (1.8.1-0ubuntu1) UNRELEASED; urgency=low
 
+  * New upstream bug fix release:
+    - data/general-hooks/generic.py: Check $HOME, not /home for enough space. (LP: #422658)
+    - launchpad.py: Intercept httplib2.ServerNotFoundError as well, to avoid
+      crashes when being offline. (LP: #396276)
+    - apport-cli: Save reports with .apport extension instead of .txt. Thanks
+      to Steve Beattie! (LP: #401983)
+    - fileutils.py, likely_packaged(): Ignored crashes in /var, packages don't
+      ship executables there, and it creates false positives. (LP: #414368)
+    - packaging-apt-dpkg.py, get_modified_files(): Fix crash with empty lines.
+      (LP: #408280)
+    - packaging-apt-dpkg.py: Use installed version instead of candidate
+      version where appropriate. This also fixes a crash where an obsolete
+      package is not available any more. (LP: #423511)
+    - hookutils.py, attach_gconf(): Fix crash with keys which do not have a
+      schema default. (LP: #422277)
+    - launchpad.py: Remove LP #353805 workaround, seems fixed now.
+    - launchpad.py: Talk to staging if $APPORT_STAGING is set.
+    - launchpad.py: Explicitly supply content_type for addAttachment, current
+      wadllib requires it now.
+    - apport_python_hook.py: Paper over inexplicable import error.
+      (LP: #348250)
+    - apport_python_hook.py: Protect against nonexisting sys.argv.
+      (LP: #418051)
+    - apport/ui.py, load_report(): Check that report has ProblemType field.
+      (LP: #198543)
+    - ui.py: Fix handling of complete vs. reduced report size. (LP: #92653).
+      This also fixes a race condition crash with os.path.getsize(). 
+      (LP: #348137)
+    - fi.po: Fix mistranslation of "&Cancel". (LP: #355303)
+    - apport-{gtk,kde}: Check for having $DISPLAY at startup to avoid crashes.
+      (LP: #411276)
+    - report.py, add_gdb_info(): Fix race condition in unlink_core, thanks to
+      Tommi Komulainen! (LP: #397945)
+    - ui.py, load_report(): Robustify check whether program is still
+      installed. (LP: #329184)
+    - packaging-apt-dpkg.py, install_retracing_packages(): Install package for
+      ExecutablePath/InterpreterPath if missing; this can happen with package
+      hooks which reassing package
+    - launchpad.py: Add a comment when marking a bug as a duplicate.
+      (LP: #418871)
   * Move gdb dependency from apport to GUI packages to avoid pulling in gdb on
     Ubuntu server. Thanks to Steve Beattie! (LP: #354172)
   * ubuntu-bug: Fix handling of .crash file arguments, thanks to Marco

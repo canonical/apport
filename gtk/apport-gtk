@@ -12,7 +12,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import os.path, sys, subprocess
+import os.path, sys, subprocess, os
 from gettext import gettext as _
 try:
     import gobject, gtk
@@ -340,5 +340,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         return True
 
 if __name__ == '__main__':
+    if not os.environ.get('DISPLAY'):
+        print >> sys.stderr, 'This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.'
+        sys.exit(1)
     app = GTKUserInterface()
     app.run_argv()

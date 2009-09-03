@@ -19,7 +19,10 @@ def add_info(report):
         report['NonfreeKernelModules'] = ' '.join(nm)
 
     # check for low space
-    mounts = { '/': 'system', '/home': '/home' }
+    mounts = { '/': 'system' }
+    home = os.getenv('HOME')
+    if home:
+        mounts[home] = 'home'
     treshold = 10
 
     for mount in mounts:
