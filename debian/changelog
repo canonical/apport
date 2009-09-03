@@ -1,4 +1,4 @@
-apport (1.8.1-0ubuntu1) UNRELEASED; urgency=low
+apport (1.8.1-0ubuntu1) karmic; urgency=low
 
   * New upstream bug fix release:
     - data/general-hooks/generic.py: Check $HOME, not /home for enough space.
@@ -58,7 +58,7 @@ apport (1.8.1-0ubuntu1) UNRELEASED; urgency=low
   * debian/local/apport-collect: Drop $APPORT_STAGING check, it's done by
     launchpad.py itself now.
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 01 Sep 2009 21:02:35 +0200
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 03 Sep 2009 21:08:31 +0200
 
 apport (1.8-0ubuntu2) karmic; urgency=low
 
