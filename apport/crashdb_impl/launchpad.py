@@ -14,6 +14,7 @@ import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys, socket
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
+from httplib2 import ServerNotFoundError
 from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
 from launchpadlib.credentials import Credentials
 
@@ -100,7 +101,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 os.chmod(self.auth, 0600)
                 self.__launchpad.credentials.save(f)
                 f.close()
-        except socket.error, e:
+        except (socket.error, ServerNotFoundError), e:
             print >> sys.stderr, 'Error connecting to Launchpad: %s' % str(e)
             sys.exit(99) # transient error
 
