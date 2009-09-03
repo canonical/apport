@@ -12,6 +12,8 @@ apport (1.8-0ubuntu3) UNRELEASED; urgency=low
   * debian/local/apport-collect: Do not upload data if the affected package
     isn't installed and there is no source package hook available either.
     (LP: #417277)
+  * debian/local/ubuntu-bug: Accept .apport extension, too; thanks to Steve
+    Beattie! (LP: #401983)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 01 Sep 2009 21:02:35 +0200
 
