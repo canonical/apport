@@ -48,14 +48,15 @@ def likely_packaged(file):
     database.
     '''
     pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
-    '/usr/'] # packages only ship executables in these directories
+    '/usr/', '/var'] # packages only ship executables in these directories
 
     whitelist_match = False
     for i in pkg_whitelist:
         if file.startswith(i):
             whitelist_match = True
             break
-    return whitelist_match and not file.startswith('/usr/local/')
+    return whitelist_match and not file.startswith('/usr/local/') and not \
+        file.startswith('/var/lib/')
 
 def find_file_package(file):
     '''Return the package that ships the given file.
@@ -332,9 +333,8 @@ class _ApportUtilsTest(unittest.TestCase):
         self.assertEqual(likely_packaged('/usr/local/bin/foo'), False)
         self.assertEqual(likely_packaged('/home/test/bin/foo'), False)
         self.assertEqual(likely_packaged('/tmp/foo'), False)
-        # ignore crashes in /var/ (LP#122859, LP#414368)
+        # ignore crashes in /var/lib (LP#122859, LP#414368)
         self.assertEqual(likely_packaged('/var/lib/foo'), False)
-        self.assertEqual(likely_packaged('/var/cache/bar'), False)
 
     def test_find_file_package(self):
         '''find_file_package().'''
