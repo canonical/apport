@@ -55,8 +55,9 @@ def upload(report, bug):
     for part in msg_iter:
         print '   attachment: %s...' % part.get_filename()
         bug.addAttachment(comment='', 
-            data=part.get_payload(decode=True).decode('ascii',
-                'replace').encode('ascii', 'replace'), # LP#353805 workaround
+            description=part.get_filename(),
+            content_type=None,
+            data=part.get_payload(decode=True),
             filename=part.get_filename(), is_patch=False)
 
     # change bug status from "Incomplete"

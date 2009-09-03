@@ -4,6 +4,9 @@ apport (1.8-0ubuntu3) UNRELEASED; urgency=low
     Ubuntu server. Thanks to Steve Beattie! (LP: #354172)
   * ubuntu-bug: Fix handling of .crash file arguments, thanks to Marco
     Rodrigues for pointing this out! (LP: #422881)
+  * debian/local/apport-collect: Set content_type and description, wadllib
+    requires them now. (LP: #423512) Also drop the ASCII reencoding
+    workaround, this doesn't seem to be necessary any more.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 01 Sep 2009 21:02:35 +0200
 
