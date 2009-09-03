@@ -323,8 +323,11 @@ def attach_gconf(report, package):
 
         for key, default_value in _parse_gconf_schema(schema_file).items():
             try:
-                value = client.get(key).to_string()
-                if value != default_value:
+                value = client.get(key)
+                if not value:
+                    continue
+                value = value.to_string()
+                if not default_value or value != default_value:
                     non_defaults[key] = value
             except glib.GError:
                 # Fall back to gconftool-2 and string comparison
@@ -461,14 +464,17 @@ def _parse_gconf_schema(schema_file):
             for schema in schemalist.getElementsByTagName('schema'):
                 key = schema.getElementsByTagName('applyto')[0].childNodes[0].data
                 type = schema.getElementsByTagName('type')[0].childNodes[0].data
-                default = schema.getElementsByTagName('default')[0].childNodes[0].data
-                if type == 'bool':
-                    if default:
-                        ret[key] = 'true'
+                try:
+                    default = schema.getElementsByTagName('default')[0].childNodes[0].data
+                    if type == 'bool':
+                        if default:
+                            ret[key] = 'true'
+                        else:
+                            ret[key] = 'false'
                     else:
-                        ret[key] = 'false'
-                else:
-                    ret[key] = default
+                        ret[key] = default
+                except IndexError:
+                    ret[key] = '' # no gconf default
 
     return ret
 
