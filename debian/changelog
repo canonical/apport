@@ -54,6 +54,8 @@ apport (1.8.1-0ubuntu1) UNRELEASED; urgency=low
     (LP: #417277)
   * debian/local/ubuntu-bug: Accept .apport extension, too; thanks to Steve
     Beattie! (LP: #401983)
+  * debian/local/apport-collect: Drop $APPORT_STAGING check, it's done by
+    launchpad.py itself now.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 01 Sep 2009 21:02:35 +0200
 

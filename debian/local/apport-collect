@@ -98,10 +98,7 @@ except ValueError:
     sys.exit(1)
 
 print 'Logging into Launchpad...'
-options = {}
-if os.getenv('APPORT_STAGING'):
-    options['staging'] = 'True'
-crashdb = CrashDatabase(None, None, options)
+crashdb = CrashDatabase(None, None, {})
 
 print 'Downloading bug...'
 bug = crashdb.launchpad.bugs[int(bug_number)]
