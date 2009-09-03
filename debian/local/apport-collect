@@ -109,6 +109,7 @@ bug = crashdb.launchpad.bugs[int(bug_number)]
 report = apport.Report('Bug')
 
 print 'Bug title:', bug.title
+info_collected = False
 if opts.package:
     collect(report, opts.package)
 else:
@@ -124,11 +125,27 @@ else:
         src = match.group('source')
         report['SourcePackage'] = src
         report['Package'] = src # no way to find this out
+        # we either must have the package installed or a source package hook
+        # available to collect sensible information
+        try:
+            apport.packaging.get_version(report['Package'])
+            info_collected = True
+        except ValueError:
+            if os.path.exists('/usr/share/apport/package-hooks/source_%s.py' %
+                    report['SourcePackage']):
+                info_collected = True
+            else:
+                print 'Package %s not installed and no hook available, ignoring' % src
+                continue
         collect(report, src)
 
 report.add_os_info()
 report.add_user_info()
 report.add_proc_environ()
+
+if not info_collected:
+    print 'No additional information collected.'
+    sys.exit(0)
 
 # delete the uninteresting keys
 del report['ProblemType']
@@ -137,10 +154,6 @@ try:
     del report['SourcePackage']
 except KeyError:
     pass
-
-if len(report.keys()) == 0:
-    print 'No additional information collected.'
-    sys.exit(0)
 
 try:
     upload(report, bug)
