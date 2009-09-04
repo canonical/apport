@@ -147,7 +147,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         if self.apt_pre_079:
             return self._apt_pkg(package).architecture or 'unknown'
         else:
-            return self._apt_pkg(package).installed.architecture or 'unknown'
+            if self._apt_pkg(package).installed:
+                return self._apt_pkg(package).installed.architecture or 'unknown'
+            else:
+                return self._apt_pkg(package).candidate.architecture or 'unknown'
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
