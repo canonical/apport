@@ -47,6 +47,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         You need to specify a launchpadlib-style credentials file to
         access launchpad. If you supply None, it will use
         default_credentials_path (~/.cache/apport/launchpad.credentials).
+
+        Recognized options are:
+        - distro: Name of the distribution in Launchpad (mandatory)
+        - staging: If set, this uses staging instead of production (optional).
+          This can be overriden or set by $APPORT_STAGING environment.
+        - cache_dir: Path a permanent cache directory; by default it uses a
+          temporary one. (optional). This can be overridden or set by
+          $APPORT_LAUNCHPAD_CACHE environment.
         '''
         if not auth:
             if options.get('staging'):
@@ -64,6 +72,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         self.__launchpad = None
         self.__lp_distro = None
+        self.__lpcache = os.getenv('APPORT_LAUNCHPAD_CACHE', options.get('cache_dir'))
         
     @property
     def launchpad(self):
@@ -86,12 +95,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 # use existing credentials
                 credentials = Credentials()
                 credentials.load(open(self.auth))
-                self.__launchpad = Launchpad(credentials, launchpad_instance)
+                self.__launchpad = Launchpad(credentials, launchpad_instance,
+                        self.__lpcache)
             else:
                 # get credentials and save them
                 try:
                     self.__launchpad = Launchpad.get_token_and_login('apport-collect',
-                            launchpad_instance)
+                            launchpad_instance, self.__lpcache)
                 except HTTPError, e:
                     print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
                     sys.exit(1)
