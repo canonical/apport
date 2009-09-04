@@ -476,7 +476,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         bug = self.launchpad.bugs[id]
 
         if master_id:
-            assert id != master_id
+            assert id != master_id, 'cannot mark bug %s as a duplicate of itself' % str(id)
 
             # check whether the master itself is a dup
             master = self.launchpad.bugs[master_id]
