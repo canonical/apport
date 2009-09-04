@@ -106,7 +106,7 @@ class CrashDatabase:
         if not sig:
             return None
 
-        existing = self._duplicate_search_signature(sig)
+        existing = self._duplicate_search_signature(sig, id)
 
         # sort existing in ascending order, with unfixed last, so that
         # version comparisons find the closest fix first
@@ -267,16 +267,20 @@ class CrashDatabase:
             [new_id, old_id])
         self.duplicate_db.commit()
 
-    def _duplicate_search_signature(self, sig):
+    def _duplicate_search_signature(self, sig, id):
         '''Look up signature in the duplicate db.
         
         Return [(id, fixed_version)] tuple list.
         
         There might be several matches if a crash has been reintroduced in a
         later version.
+
+        id is the bug we are looking to find a duplicate for. The result will
+        never contain id, to avoid marking a bug as a duplicate of itself if a
+        bug is reprocessed more than once.
         '''
         cur = self.duplicate_db.cursor()
-        cur.execute('SELECT crash_id, fixed_version FROM crashes WHERE signature = ?', [sig])
+        cur.execute('SELECT crash_id, fixed_version FROM crashes WHERE signature = ? AND crash_id <> ?', [sig, id])
         return cur.fetchall()
 
     def _duplicate_db_dump(self, with_timestamps=False):

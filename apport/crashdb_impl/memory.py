@@ -390,6 +390,9 @@ class _MemoryCrashDBTest(unittest.TestCase):
         # ID#0 -> no dup
         self.assertEqual(self.crashes.check_duplicate(0), None)
 
+        # bug is not a duplicate of itself, when reprocessed
+        self.assertEqual(self.crashes.check_duplicate(0), None)
+
         # ID#1 -> dup of #0
         self.assertEqual(self.crashes.check_duplicate(1), (0, None))
 
