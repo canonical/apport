@@ -2,7 +2,7 @@
 
 rm -rf *
 
-RELEASE=jaunty
+RELEASE=karmic
 ARCH=`dpkg --print-architecture`
 if [ "$ARCH" = i386 ] || [ "$ARCH" = amd64 ] ; then
     MIRROR=http://archive.ubuntu.com/ubuntu
@@ -144,6 +144,6 @@ chmod -R g+w chroots/
 # chroot map
 cat <<EOF > chrootmap
 {
-    'Ubuntu 9.04': 'chroots/jaunty.tar.gz',
+    'Ubuntu 9.10': 'chroots/karmic.tar.gz',
 }
 EOF
