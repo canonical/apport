@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys, socket
+import urllib, tempfile, shutil, os.path, re, gzip, sys, socket
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
@@ -72,8 +72,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if self.__launchpad:
             return self.__launchpad
 
-        cache_dir = tempfile.mkdtemp()
-        atexit.register(shutil.rmtree, cache_dir)
         if self.options.get('staging') or os.getenv('APPORT_STAGING'):
             launchpad_instance = STAGING_SERVICE_ROOT
         else:
@@ -88,12 +86,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 # use existing credentials
                 credentials = Credentials()
                 credentials.load(open(self.auth))
-                self.__launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
+                self.__launchpad = Launchpad(credentials, launchpad_instance)
             else:
                 # get credentials and save them
                 try:
                     self.__launchpad = Launchpad.get_token_and_login('apport-collect',
-                            launchpad_instance, cache_dir)
+                            launchpad_instance)
                 except HTTPError, e:
                     print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
                     sys.exit(1)
