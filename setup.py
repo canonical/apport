@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from apport.ui import __version__
 from glob import glob
 import os.path, shutil, sys
 
@@ -30,7 +31,7 @@ DistUtilsExtra.auto.setup(name='apport',
       url='https://wiki.ubuntu.com/Apport',
       license='gpl',
       description='intercept, process, and report crashes and bug reports',
-      version='1.8.2',
+      version=__version__,
 
       data_files=[('share/mime/packages', glob('xdg-mime/*')),
                   ('share/apport', glob('kde/*.ui')), #TODO: use pykdeuic modules

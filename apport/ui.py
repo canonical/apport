@@ -13,6 +13,8 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
+__version__ = '1.8.2'
+
 import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser
@@ -435,6 +437,9 @@ free memory to automatically analyze the problem and send a report to the develo
         elif self.options.symptom:
             self.run_symptom()
             return True
+        elif self.options.version:
+            print __version__
+            return True
         elif self.options.crash_file:
             try:
                 self.run_crash(self.options.crash_file, False)
@@ -468,6 +473,9 @@ free memory to automatically analyze the problem and send a report to the develo
         optparser.add_option('-c', '--crash-file',
             help='Report the crash from given .crash file instead of the pending ones in ' + apport.fileutils.report_dir,
             action='store', type='string', dest='crash_file', default=None, metavar='PATH')
+        optparser.add_option('-v', '--version',
+            help='Print the Apport version number.',
+            action='store_true', dest='version', default=None)
 
         (self.options, self.args) = optparser.parse_args()
 
