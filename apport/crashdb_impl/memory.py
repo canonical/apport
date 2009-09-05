@@ -1,3 +1,5 @@
+# coding=utf-8
+
 '''Simple in-memory CrashDatabase implementation, mainly useful for testing.
 
 Copyright (C) 2007 Canonical Ltd.
@@ -449,6 +451,26 @@ class _MemoryCrashDBTest(unittest.TestCase):
 
         # final consistency check
         self.assertEqual(self.crashes.get_unfixed(), set([0, 2, 4]))
+
+    def test_check_duplicate_utf8(self):
+        '''check_duplicate() with UTF-8 strings'''
+
+        # assertion failure, with UTF-8 strings
+        r = apport.Report()
+        r['Package'] = 'bash 5'
+        r['SourcePackage'] = 'bash'
+        r['DistroRelease'] = 'Testux 2.2'
+        r['ExecutablePath'] = '/bin/bash'
+        r['Signal'] = '6'
+        r['AssertionMessage'] = 'Afirmação x != 0'
+        self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
+            'http://bash.bugs.example.com/5')
+        self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
+            'http://bash.bugs.example.com/6')
+
+        self.crashes.init_duplicate_db(':memory:')
+        self.assertEqual(self.crashes.check_duplicate(5), None)
+        self.assertEqual(self.crashes.check_duplicate(6), (5, None))
 
     def test_check_duplicate_report_arg(self):
         '''check_duplicate() with explicitly passing report'''
