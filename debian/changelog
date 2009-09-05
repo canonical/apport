@@ -1,4 +1,20 @@
-apport (1.8.1-0ubuntu2) UNRELEASED; urgency=low
+apport (1.8.2-0ubuntu1) UNRELEASED; urgency=low
+
+  [ Martin Pitt ]
+  * New upstream bug fix release:
+    - crashdb.py: Fix handling of non-ASCII crash signatures
+    - packaging-apt-dpkg.py: Run ExecutablePath/InterpreterPath check later,
+      so that it does not always have to be done
+    - crashdb.py: Never mark a bug as a duplicate of itself.
+    - launchpad.py, close_duplicate(): Add duplicate assertion
+    - Update Ubuntu bug pattern URL
+    - launchpad.py: Add "cache_dir" option and $APPORT_LAUNCHPAD_CACHE
+      environment variable to specify a non-temporary cache directory.
+      (LP: #416804)
+    - packaging-apt-dpkg.py, get_architecture(): Only use installed
+      architecture if package is actually installed
+    - launchpad.py: Drop explicit temporary cache dir, launchpadlib does that
+      automatically now. Thanks to Marco Rodriguez!
 
   [ Marco Rodrigues ]
   * debian/local/setup-apport-retracer: Switch to karmic.

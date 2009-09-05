@@ -15,6 +15,13 @@ import os, os.path, datetime, sys
 from exceptions import Exception
 from packaging_impl import impl as packaging
 
+def _u(str):
+    '''Convert str to an unicode if it isn't already.'''
+
+    if type(str) == type(''):
+        return str.decode('utf-8', 'ignore')
+    return str
+
 class CrashDatabase:
     def __init__(self, auth_file, bugpattern_baseurl, options):
         '''Initialize crash database connection. 
@@ -106,7 +113,7 @@ class CrashDatabase:
         if not sig:
             return None
 
-        existing = self._duplicate_search_signature(sig)
+        existing = self._duplicate_search_signature(sig, id)
 
         # sort existing in ascending order, with unfixed last, so that
         # version comparisons find the closest fix first
@@ -134,7 +141,7 @@ class CrashDatabase:
         if not existing:
             # add a new entry
             cur = self.duplicate_db.cursor()
-            cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (sig, id, None))
+            cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (_u(sig), id, None))
             self.duplicate_db.commit()
             return None
 
@@ -158,7 +165,7 @@ class CrashDatabase:
 
             # create a new record
             cur = self.duplicate_db.cursor()
-            cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (sig, id, None))
+            cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (_u(sig), id, None))
             self.duplicate_db.commit()
 
         return (ex_id, ex_ver)
@@ -267,16 +274,20 @@ class CrashDatabase:
             [new_id, old_id])
         self.duplicate_db.commit()
 
-    def _duplicate_search_signature(self, sig):
+    def _duplicate_search_signature(self, sig, id):
         '''Look up signature in the duplicate db.
         
         Return [(id, fixed_version)] tuple list.
         
         There might be several matches if a crash has been reintroduced in a
         later version.
+
+        id is the bug we are looking to find a duplicate for. The result will
+        never contain id, to avoid marking a bug as a duplicate of itself if a
+        bug is reprocessed more than once.
         '''
         cur = self.duplicate_db.cursor()
-        cur.execute('SELECT crash_id, fixed_version FROM crashes WHERE signature = ?', [sig])
+        cur.execute('SELECT crash_id, fixed_version FROM crashes WHERE signature = ? AND crash_id <> ?', [_u(sig), id])
         return cur.fetchall()
 
     def _duplicate_db_dump(self, with_timestamps=False):

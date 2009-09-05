@@ -10,7 +10,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import urllib, tempfile, atexit, shutil, os.path, re, gzip, sys, socket
+import urllib, tempfile, shutil, os.path, re, gzip, sys, socket
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
@@ -47,6 +47,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         You need to specify a launchpadlib-style credentials file to
         access launchpad. If you supply None, it will use
         default_credentials_path (~/.cache/apport/launchpad.credentials).
+
+        Recognized options are:
+        - distro: Name of the distribution in Launchpad (mandatory)
+        - staging: If set, this uses staging instead of production (optional).
+          This can be overriden or set by $APPORT_STAGING environment.
+        - cache_dir: Path a permanent cache directory; by default it uses a
+          temporary one. (optional). This can be overridden or set by
+          $APPORT_LAUNCHPAD_CACHE environment.
         '''
         if not auth:
             if options.get('staging'):
@@ -64,6 +72,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         self.__launchpad = None
         self.__lp_distro = None
+        self.__lpcache = os.getenv('APPORT_LAUNCHPAD_CACHE', options.get('cache_dir'))
         
     @property
     def launchpad(self):
@@ -72,8 +81,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if self.__launchpad:
             return self.__launchpad
 
-        cache_dir = tempfile.mkdtemp()
-        atexit.register(shutil.rmtree, cache_dir)
         if self.options.get('staging') or os.getenv('APPORT_STAGING'):
             launchpad_instance = STAGING_SERVICE_ROOT
         else:
@@ -88,12 +95,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 # use existing credentials
                 credentials = Credentials()
                 credentials.load(open(self.auth))
-                self.__launchpad = Launchpad(credentials, launchpad_instance, cache_dir)
+                self.__launchpad = Launchpad(credentials, launchpad_instance,
+                        self.__lpcache)
             else:
                 # get credentials and save them
                 try:
                     self.__launchpad = Launchpad.get_token_and_login('apport-collect',
-                            launchpad_instance, cache_dir)
+                            launchpad_instance, self.__lpcache)
                 except HTTPError, e:
                     print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
                     sys.exit(1)
@@ -472,6 +480,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         bug = self.launchpad.bugs[id]
 
         if master_id:
+            assert id != master_id, 'cannot mark bug %s as a duplicate of itself' % str(id)
+
             # check whether the master itself is a dup
             master = self.launchpad.bugs[master_id]
             if master.duplicate_of:

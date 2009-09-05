@@ -147,7 +147,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         if self.apt_pre_079:
             return self._apt_pkg(package).architecture or 'unknown'
         else:
-            return self._apt_pkg(package).installed.architecture or 'unknown'
+            if self._apt_pkg(package).installed:
+                return self._apt_pkg(package).installed.architecture or 'unknown'
+            else:
+                return self._apt_pkg(package).candidate.architecture or 'unknown'
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -460,14 +463,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
             c[pkg].markInstall(False)
 
-        # package hooks might reassign Package:, check that we have the originally crashing binary
-        for path in ('InterpreterPath', 'ExecutablePath'):
-            if path in report and not os.path.exists(report[path]):
-                pkg = self.get_file_package(report[path], True)
-                assert pkg, 'Could not find package for ' + path
-                print 'Installing extra package', pkg, 'to get', path
-                extra_packages.append(pkg)
-
         # extra packages
         for p in extra_packages:
             c[p].markInstall(False)
@@ -498,6 +493,14 @@ class __AptDpkgPackageInfo(PackageInfo):
                 c = apt.Cache()
         except IOError, e:
             pass # we will complain to the user later
+
+        # package hooks might reassign Package:, check that we have the originally crashing binary
+        for path in ('InterpreterPath', 'ExecutablePath'):
+            if path in report and not os.path.exists(report[path]):
+                pkg = self.get_file_package(report[path], True)
+                assert pkg, 'Could not find package for ' + path
+                print 'Installing extra package', pkg, 'to get', path
+                c[pkg].markInstall(False)
 
         # check list of libraries that the crashed process referenced at
         # runtime and warn about those which are not available
