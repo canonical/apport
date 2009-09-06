@@ -100,8 +100,13 @@ except ValueError:
 print 'Logging into Launchpad...'
 crashdb = CrashDatabase(None, None, {})
 
-print 'Downloading bug...'
-bug = crashdb.launchpad.bugs[int(bug_number)]
+print 'Downloading bug information...'
+
+try:
+    bug = crashdb.launchpad.bugs[int(bug_number)]
+except KeyError:
+    print 'The bug number %s does not exist in Launchpad.' % bug_number
+    sys.exit(1)
 
 report = apport.Report('Bug')
 
