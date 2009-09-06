@@ -24,13 +24,15 @@ if len(sys.argv) >= 2 and sys.argv[1] != 'sdist' and not os.path.exists('apport/
         print >> sys.stderr, 'Could not determine system package manager. Copy appropriate backends/packaging* to apport/packaging_impl.py'
         sys.exit(1)
 
+from apport.ui import __version__
+
 DistUtilsExtra.auto.setup(name='apport',
       author='Martin Pitt',
       author_email='martin.pitt@ubuntu.com',
       url='https://wiki.ubuntu.com/Apport',
       license='gpl',
       description='intercept, process, and report crashes and bug reports',
-      version='1.8.2',
+      version=__version__,
 
       data_files=[('share/mime/packages', glob('xdg-mime/*')),
                   ('share/apport', glob('kde/*.ui')), #TODO: use pykdeuic modules

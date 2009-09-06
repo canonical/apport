@@ -17,7 +17,7 @@ version=$(grep '(UNRELEASED)' NEWS | cut -f1 -d' ')
     exit 1
 }
 
-sed -i -r "s/(^[[:space:]]*version[[:space:]]*=[[:space:]]*').*\$/\\1${version}',/" setup.py
+sed -i -r "s/__version__ = '[0-9.]*'/__version__ = '${version}'/" apport/ui.py
 sed -i "s/(UNRELEASED)/$(date '+(%Y-%m-%d)')/" NEWS
 bzr commit -m "release $version"
 bzr tag "$version"
