@@ -704,12 +704,13 @@ free memory to automatically analyze the problem and send a report to the develo
             self.ui_set_upload_progress(__upload_progress)
             try:
                 upthread.join(0.1)
+                upthread.exc_raise()
             except KeyboardInterrupt:
                 sys.exit(1)
             except NeedsCredentials, e:
                 message = _('Please enter your account information for the '
                             '%s bug tracking system')
-                data = self.ui_question_userpass(message % e.message)
+                data = self.ui_question_userpass(message % str(e))
                 if data is not None:
                     user, password = data
                     self.crashdb.set_credentials(user, password)
@@ -717,13 +718,13 @@ free memory to automatically analyze the problem and send a report to the develo
                                                  args=(self.report,
                                                        progress_callback))
                     upthread.start()
-        if upthread.exc_info():
-            self.ui_error_message(_('Network problem'),
-                '%s:\n\n%s' % (
-                    _('Could not upload report data to crash database'),
-                    str(upthread.exc_info()[1])
-                ))
-            return
+            except Exception, e:
+                self.ui_error_message(_('Network problem'),
+                    '%s:\n\n%s' % (
+                        _('Could not upload report data to crash database'),
+                        str(e)
+                    ))
+                return
 
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
