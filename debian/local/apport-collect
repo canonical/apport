@@ -97,7 +97,7 @@ except ValueError:
     optparser.error('invalid bug report number')
     sys.exit(1)
 
-print 'Logging into Launchpad...'
+print 'Logging into Launchpad... You have to allow "Change anything" privileges.'
 crashdb = CrashDatabase(None, None, {})
 
 print 'Downloading bug information...'
