@@ -20,13 +20,8 @@ import os.path, os, sys, subprocess, re, errno
 import tty, termios, tempfile
 from datetime import datetime
 
-try:
-    from gettext import gettext as _
-    import apport.ui
-except ImportError, e:
-    # this can happen while upgrading python packages
-    print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
-    sys.exit(1)
+from gettext import gettext as _
+import apport.ui
 
 class CLIDialog:
     '''Command line dialog wrapper.'''
