@@ -13,7 +13,7 @@ optparser.add_option('-l', '--local',
 options, args = optparser.parse_args()
 
 if options.local:
-    basedir = 'bin'
+    basedir = 'data'
 else:
     basedir = '/usr/share/apport'
 
