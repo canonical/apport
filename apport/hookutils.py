@@ -94,8 +94,8 @@ def attach_hardware(report):
 
     report['Lspci'] = command_output(['lspci','-vvnn'])
     report['Lsusb'] = command_output(['lsusb'])
-    report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
-
+    report['UdevDb'] = command_output(['sh', '-c', 'udevadm info --export-db | grep -vi label'])
+    
     dmi_dir = '/sys/class/dmi/id'
     if os.path.isdir(dmi_dir):
         for f in os.listdir(dmi_dir):
