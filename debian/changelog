@@ -1,24 +1,25 @@
 apport (1.9-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release:
-    - Add "do what I mean" mode to command line argument parsing (applies to all
-      interfaces: -cli, -gtk, -kde). When giving a single argument and no options,
-      determine the most likely mode, like reporting a bug against a symptom,
-      package, executable name, or PID.
+    - Add "do what I mean" mode to command line argument parsing (applies to
+      all interfaces: -cli, -gtk, -kde). When giving a single argument and no
+      options, determine the most likely mode, like reporting a bug against a
+      symptom, package, executable name, or PID.
     - Add program "apport-bug" which determines the most appropriate user
       interface (GTK, KDE, CLI) and files a bug through it, using the single
       argument "do what I mean" mode. This is an improved version of Ubuntu's
       "ubuntu-bug" script.
     - Update apport-cli manpage to current set of options and behaviour. Also
       point out that apport-gtk and apport-kde share the same CLI.
-    - setup.py now installs apport-{gtk,kde} into $prefix/share/apport/, they are
-      not supposed to be called directly. This also reflects the path which the
-      .desktop files expect.
-    - setup.py now installs the internal helper scripts like "kernel_crashdump",
-      "apport", or "apportcheckresume" into $prefix/share/apport instead of
-      $prefix/bin.
-    - Update usage of gettext to work around Python bug of gettext() not returning
-      unicodes, but str. Fixes UnicodeDecodeErrors on translated --help output.
+    - setup.py now installs apport-{gtk,kde} into $prefix/share/apport/, they
+      are not supposed to be called directly. This also reflects the path
+      which the .desktop files expect.
+    - setup.py now installs the internal helper scripts like
+      "kernel_crashdump", "apport", or "apportcheckresume" into
+       $prefix/share/apport instead of $prefix/bin.
+    - Update usage of gettext to work around Python bug of gettext() not
+      returning unicodes, but str. Fixes UnicodeDecodeErrors on translated
+      --help output.
     - Add missing gettext wrapping for user-visible strings in
       apport-{retrace,unpack} and ui.py; thanks to Marco Rodrigues!
     - backends/packaging-apt-dpkg.py: Robustify get_{source,architecture} for
