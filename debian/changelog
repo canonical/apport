@@ -32,6 +32,8 @@ apport (1.9-0ubuntu1) UNRELEASED; urgency=low
   * debian/control: Drop obsolete texlive-latex-recommended build dependency.
   * debian/rules: Drop --install-scripts, upstream now installs the files and
     binaries into the right place. Adapt debian/*.install accordingly.
+  * Drop debian/local/ubuntu-bug{,.1} and replace them with symlinks to
+    apport-bug{,.1}, which is a more robust version of ubuntu-bug.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 06 Sep 2009 22:11:12 +0200
 
