@@ -1,0 +1,87 @@
+#!/bin/sh -e
+# Determine the most appropriate Apport user interface (GTK/KDE/CLI) and file a
+# bug with it.
+#
+# Copyright (C) 2007 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+# locate path of a particular program
+find_program() {
+    for p in /usr/local/bin /usr/bin /usr/local/share/apport /usr/share/apport; do
+	if [ -x $p/$1 ]; then
+	    RET=$p/$1
+	    return
+	fi
+    done
+    unset RET
+}
+
+# determine which UIs are available, and where
+find_programs() {
+    find_program "apport-cli"
+    CLI="$RET"
+    find_program "apport-gtk"
+    GTK="$RET"
+    find_program "apport-kde"
+    KDE="$RET"
+
+    # find a terminal emulator
+}
+
+#
+# main
+#
+
+find_programs
+
+if [ "$#" -gt 1 ] || [ "$1" = "--help" ]; then
+    echo "Usage: $0 <pid>|<symptom name>|<package name>|<program path>|<.crash file>" >&2
+    exit 1
+fi
+
+if [ "$#" = "0" ]; then
+    args="-f"
+else
+    args="$1"
+fi
+
+# check for X
+if [ -z "$DISPLAY" ]; then
+    if [ -x "$CLI" ] ; then
+        "$CLI" "$args"
+    else
+        echo "\$DISPLAY is not set. You need apport-cli to make this program work." >&2
+        exit 1
+    fi
+
+# do we have a running Gnome/KDE session?
+elif pgrep -u `id -u` -x gnome-session >/dev/null && \
+    [ -x "$GTK" ]; then
+    "$GTK" "$args"
+elif pgrep -u `id -u` -x ksmserver >/dev/null && \
+    [ -x "$KDE" ]; then
+    "$KDE" "$args"
+
+# fall back to calling whichever is available
+elif [ -x "$GTK" ]; then
+    "$GTK" "$args"
+elif [ -x "$KDE" ]; then
+    "$KDE" "$args"
+elif [ -x "$CLI" ]; then
+    if [ -z "$TERM" ] && [ -x "$XTERM" ]; then
+         "$XTERM" -e "$CLI" "$args"
+    else
+        "$CLI" "$args"
+    fi
+
+else
+    echo "Neither apport-gtk, apport-kde or apport-cli are installed. Install either to make this program work." >&2
+    exit 1
+fi
+

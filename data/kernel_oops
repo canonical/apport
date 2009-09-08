@@ -14,7 +14,7 @@
 import os, sys
 import apport.fileutils
 
-from gettext import gettext as _
+from apport import unicode_gettext as _
 
 checksum = None
 if len(sys.argv) > 1:

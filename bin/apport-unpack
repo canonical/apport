@@ -12,12 +12,15 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path
+import sys, os, os.path, gettext
+from apport import unicode_gettext as _
 
 import problem_report
 
+gettext.textdomain('apport')
+
 if len(sys.argv) != 3:
-    print 'Usage: %s <report> <target directory>' % sys.argv[0]
+    print _('Usage: %s <report> <target directory>') % sys.argv[0]
     sys.exit(1)
 
 report = sys.argv[1]
@@ -27,7 +30,7 @@ dir = sys.argv[2]
 try:
     if os.path.isdir(dir):
         if os.listdir(dir):
-            print >> sys.stderr, 'Destination directory exists and is not empty.'
+            print >> sys.stderr, _('Destination directory exists and is not empty.')
             sys.exit(1)
     else:
         os.mkdir(dir)

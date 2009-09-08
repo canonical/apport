@@ -13,14 +13,16 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
+__version__ = '1.9'
+
 import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser
-from gettext import gettext as _
 
 import apport, apport.fileutils, REThread
 
 from apport.crashdb import get_crashdb, NeedsCredentials
+from apport import unicode_gettext as _
 
 symptom_script_dir = '/usr/share/apport/symptoms'
 
@@ -435,6 +437,9 @@ free memory to automatically analyze the problem and send a report to the develo
         elif self.options.symptom:
             self.run_symptom()
             return True
+        elif self.options.version:
+            print __version__
+            return True
         elif self.options.crash_file:
             try:
                 self.run_crash(self.options.crash_file, False)
@@ -450,26 +455,70 @@ free memory to automatically analyze the problem and send a report to the develo
 
     def parse_argv(self):
         '''Parse command line options.
+
+        If a single argument is given without any options, this tries to "do
+        what I mean".
         
         Return (options, args).
         '''
-        optparser = optparse.OptionParser('%prog [options]')
+        optparser = optparse.OptionParser(_('%prog [options] [symptom|pid|package|program path|.apport/.crash file]'))
         optparser.add_option('-f', '--file-bug',
-            help='Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms.',
+            help=_('Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms. (Implied if a single argument is given.)'),
             action='store_true', dest='filebug', default=False)
         optparser.add_option('-s', '--symptom', metavar='SYMPTOM',
-            help='File a bug report about a symptom.', dest='symptom')
+            help=_('File a bug report about a symptom. (Implied if symptom name is given as only argument.)'), 
+            dest='symptom')
         optparser.add_option('-p', '--package',
-            help='Specify package name in --file-bug mode. This is optional if a --pid is specified.',
+            help=_('Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.)'),
             action='store', type='string', dest='package', default=None)
         optparser.add_option('-P', '--pid',
-            help='Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information.',
+            help=_('Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information. (Implied if pid is given as only argument.)'),
             action='store', type='int', dest='pid', default=None)
         optparser.add_option('-c', '--crash-file',
-            help='Report the crash from given .crash file instead of the pending ones in ' + apport.fileutils.report_dir,
+            help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir,
             action='store', type='string', dest='crash_file', default=None, metavar='PATH')
+        optparser.add_option('-v', '--version',
+            help=_('Print the Apport version number.'),
+            action='store_true', dest='version', default=None)
 
         (self.options, self.args) = optparser.parse_args()
+
+        # "do what I mean" for one single argument
+        if len(sys.argv) != 2 or sys.argv[1].startswith('-'):
+            return
+
+        # symptom?
+        if os.path.exists(os.path.join(symptom_script_dir, sys.argv[1] + '.py')):
+            self.args = []
+            self.options.filebug = True
+            self.options.symptom = sys.argv[1]
+
+        # .crash/.apport file?
+        elif sys.argv[1].endswith('.crash') or sys.argv[1].endswith('.apport'):
+            self.args = []
+            self.options.crash_file = sys.argv[1]
+
+        # PID?
+        elif sys.argv[1].isdigit():
+            self.args = []
+            self.options.filebug = True
+            self.options.pid = sys.argv[1]
+
+        # executable?
+        elif '/' in sys.argv[1]:
+            pkg = apport.packaging.get_file_package(sys.argv[1])
+            if not pkg:
+                optparser.error('%s does not belong to a package.' % sys.argv[1])
+                sys.exit(1)
+            self.args = []
+            self.options.filebug = True
+            self.options.package = pkg
+
+        # otherwise: package name
+        else:
+            self.args = []
+            self.options.filebug = True
+            self.options.package = sys.argv[1]
 
     def format_filesize(self, size):
         '''Format the given integer as humanly readable and i18n'ed file size.'''
@@ -696,12 +745,13 @@ free memory to automatically analyze the problem and send a report to the develo
             self.ui_set_upload_progress(__upload_progress)
             try:
                 upthread.join(0.1)
+                upthread.exc_raise()
             except KeyboardInterrupt:
                 sys.exit(1)
             except NeedsCredentials, e:
                 message = _('Please enter your account information for the '
                             '%s bug tracking system')
-                data = self.ui_question_userpass(message % e.message)
+                data = self.ui_question_userpass(message % str(e))
                 if data is not None:
                     user, password = data
                     self.crashdb.set_credentials(user, password)
@@ -709,13 +759,13 @@ free memory to automatically analyze the problem and send a report to the develo
                                                  args=(self.report,
                                                        progress_callback))
                     upthread.start()
-        if upthread.exc_info():
-            self.ui_error_message(_('Network problem'),
-                '%s:\n\n%s' % (
-                    _('Could not upload report data to crash database'),
-                    str(upthread.exc_info()[1])
-                ))
-            return
+            except Exception, e:
+                self.ui_error_message(_('Network problem'),
+                    '%s:\n\n%s' % (
+                        _('Could not upload report data to crash database'),
+                        str(e)
+                    ))
+                return
 
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
@@ -1497,10 +1547,10 @@ CoreDump: base64
             self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
             self.assert_(self.ui.ic_progress_pulses > 0)
 
-        def test_run_report_bug_wrong_pid(self):
-            '''run_report_bug() for a nonexisting pid.'''
+        @classmethod
+        def _find_unused_pid(klass):
+            '''Find and return an unused PID.'''
 
-            # search an unused pid
             pid = 1
             while True:
                 pid += 1
@@ -1509,9 +1559,14 @@ CoreDump: base64
                 except OSError, e:
                     if e.errno == errno.ESRCH:
                         break
+            return pid
+
+        def test_run_report_bug_wrong_pid(self):
+            '''run_report_bug() for a nonexisting pid.'''
 
             # silently ignore missing PID; this happens when the user closes
             # the application prematurely
+            pid = self._find_unused_pid()
             sys.argv = ['ui-test', '-f', '-P', str(pid)]
             self.ui = _TestSuiteUserInterface()
             self.ui.run_argv()
@@ -2163,4 +2218,49 @@ def run(report, ui):
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assert_(self.ui.report['Package'].startswith('bash'))
 
+        def test_parse_argv(self):
+            '''parse_args() option inference for a single argument'''
+
+            def _chk(arg, expected_opts):
+                sys.argv = ['ui-test']
+                if arg:
+                    sys.argv.append(arg)
+                ui = UserInterface()
+                ui.parse_argv()
+                expected_opts['version'] = None
+                self.assertEqual(ui.args, [])
+                self.assertEqual(ui.options, expected_opts)
+
+            # no arguments -> show pending crashes
+            _chk(None, {'filebug': False, 'package': None,
+                 'pid': None, 'crash_file': None, 'symptom': None})
+
+            # package 
+            _chk('coreutils', {'filebug': True, 'package': 'coreutils',
+                 'pid': None, 'crash_file': None, 'symptom': None})
+
+            # symptom is preferred over package
+            f = open(os.path.join(symptom_script_dir, 'coreutils.py'), 'w')
+            print >> f, '''description = 'foo does not work'
+def run(report, ui):
+    return 'bash'
+'''
+            f.close()
+            _chk('coreutils', {'filebug': True, 'package': None,
+                 'pid': None, 'crash_file': None, 'symptom': 'coreutils'})
+
+            # PID
+            _chk('1234', {'filebug': True, 'package': None,
+                 'pid': '1234', 'crash_file': None, 'symptom': None})
+
+            # .crash/.apport files; check correct handling of spaces
+            for suffix in ('.crash', '.apport'):
+                _chk('/tmp/f oo' + suffix, {'filebug': False, 'package': None,
+                     'pid': None, 'crash_file': '/tmp/f oo' + suffix, 'symptom': None})
+
+            # executable
+            _chk('/usr/bin/tail', {'filebug': True, 'package': 'coreutils',
+                 'pid': None, 'crash_file': None, 'symptom': None})
+
     unittest.main()
+
