@@ -15,6 +15,9 @@ Bug fixes:
  - setup.py now installs apport-{gtk,kde} into $prefix/share/apport/, they are
    not supposed to be called directly. This also reflects the path which the
    .desktop files expect.
+ - setup.py now installs the internal helper scripts like "kernel_crashdump",
+   "apport", or "apportcheckresume" into $prefix/share/apport instead of
+   $prefix/bin.
 
 1.8.2 (2009-09-05)
 ------------------
