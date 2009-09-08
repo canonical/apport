@@ -1,6 +1,18 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.9 (UNRELEASED)
+----------------
+New features:
+ - Add "do what I mean" mode to command line argument parsing (applies to all
+   interfaces: -cli, -gtk, -kde). When giving a single argument and no options,
+   determine the most likely mode, like reporting a bug against a symptom,
+   package, executable name, or PID.
+
+Bug fixes:
+ - Update apport-cli manpage to current set of options and behaviour. Also
+   point out that apport-gtk and apport-kde share the same CLI.
+
 1.8.2 (2009-09-05)
 ------------------
 Bug fixes.
