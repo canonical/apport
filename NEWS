@@ -8,6 +8,10 @@ New features:
    interfaces: -cli, -gtk, -kde). When giving a single argument and no options,
    determine the most likely mode, like reporting a bug against a symptom,
    package, executable name, or PID.
+ - Add program "apport-bug" which determines the most appropriate user
+   interface (GTK, KDE, CLI) and files a bug through it, using the single
+   argument "do what I mean" mode. This is an improved version of Ubuntu's
+   "ubuntu-bug" script.
 
 Bug fixes:
  - Update apport-cli manpage to current set of options and behaviour. Also
