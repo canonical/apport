@@ -97,7 +97,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         if self.apt_pre_079:
             return self._apt_pkg(package).sourcePackageName
         else:
-            return self._apt_pkg(package).installed.source_name
+            if self._apt_pkg(package).installed:
+                return self._apt_pkg(package).installed.source_name
+            elif self._apt_pkg(package).candidate:
+                return self._apt_pkg(package).candidate.source_name
+            else:
+                raise ValueError, 'package %s does not exist' % package
 
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
@@ -149,8 +154,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             if self._apt_pkg(package).installed:
                 return self._apt_pkg(package).installed.architecture or 'unknown'
-            else:
+            elif self._apt_pkg(package).candidate:
                 return self._apt_pkg(package).candidate.architecture or 'unknown'
+            else:
+                raise ValueError, 'package %s does not exist' % package
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
