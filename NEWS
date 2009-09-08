@@ -12,6 +12,9 @@ New features:
 Bug fixes:
  - Update apport-cli manpage to current set of options and behaviour. Also
    point out that apport-gtk and apport-kde share the same CLI.
+ - setup.py now installs apport-{gtk,kde} into $prefix/share/apport/, they are
+   not supposed to be called directly. This also reflects the path which the
+   .desktop files expect.
 
 1.8.2 (2009-09-05)
 ------------------
