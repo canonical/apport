@@ -29,7 +29,7 @@ from apport.ui import __version__
 DistUtilsExtra.auto.setup(name='apport',
       author='Martin Pitt',
       author_email='martin.pitt@ubuntu.com',
-      url='https://wiki.ubuntu.com/Apport',
+      url='https://launchpad.net/apport',
       license='gpl',
       description='intercept, process, and report crashes and bug reports',
       version=__version__,
