@@ -39,5 +39,5 @@ DistUtilsExtra.auto.setup(name='apport',
                   ('share/apport/testsuite/', glob('test/*')),
                   ('share/doc/apport/', glob('doc/*.txt')),
                   ],
-      scripts=['gtk/apport-gtk', 'kde/apport-kde', 'cli/apport-cli'],
+      scripts=['gtk/apport-gtk', 'kde/apport-kde'],
 )
