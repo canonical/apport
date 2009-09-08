@@ -461,24 +461,24 @@ free memory to automatically analyze the problem and send a report to the develo
         
         Return (options, args).
         '''
-        optparser = optparse.OptionParser('%prog [options] [symptom|pid|package|program path|.apport/.crash file]')
+        optparser = optparse.OptionParser(_('%prog [options] [symptom|pid|package|program path|.apport/.crash file]'))
         optparser.add_option('-f', '--file-bug',
-            help='Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms. (Implied if a single argument is given.)',
+            help=_('Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms. (Implied if a single argument is given.)'),
             action='store_true', dest='filebug', default=False)
         optparser.add_option('-s', '--symptom', metavar='SYMPTOM',
-            help='File a bug report about a symptom. (Implied if symptom name is given as only argument.)', 
+            help=_('File a bug report about a symptom. (Implied if symptom name is given as only argument.)'), 
             dest='symptom')
         optparser.add_option('-p', '--package',
-            help='Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.)',
+            help=_('Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.)'),
             action='store', type='string', dest='package', default=None)
         optparser.add_option('-P', '--pid',
-            help='Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information. (Implied if pid is given as only argument.)',
+            help=_('Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information. (Implied if pid is given as only argument.)'),
             action='store', type='int', dest='pid', default=None)
         optparser.add_option('-c', '--crash-file',
-            help='Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)' % apport.fileutils.report_dir,
+            help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir,
             action='store', type='string', dest='crash_file', default=None, metavar='PATH')
         optparser.add_option('-v', '--version',
-            help='Print the Apport version number.',
+            help=_('Print the Apport version number.'),
             action='store_true', dest='version', default=None)
 
         (self.options, self.args) = optparser.parse_args()

@@ -13,10 +13,10 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, optparse, shutil, tempfile, re, zlib
-import tty, termios
+import tty, termios, gettext
 import apport, apport.fileutils
-
 from apport.crashdb import get_crashdb
+from gettext import gettext as _
 
 #
 # functions
@@ -25,61 +25,61 @@ from apport.crashdb import get_crashdb
 def parse_options():
     '''Parse command line options and return (reportfile, options) tuple.'''
 
-    optparser = optparse.OptionParser('%prog [options] <apport problem report | crash ID>')
+    optparser = optparse.OptionParser(_('%prog [options] <apport problem report | crash ID>'))
     optparser.add_option('-s', '--stdout', 
-        help='Do not put the new traces into the report, but write them to stdout.',
+        help=_('Do not put the new traces into the report, but write them to stdout.'),
         action='store_true', dest='stdout', default=False)
     optparser.add_option('-g', '--gdb', 
-        help="Start an interactive gdb session with the report's core dump (-o ignored; does not rewrite report)",
+        help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'),
         action='store_true', dest='gdb', default=False)
     optparser.add_option('-o', '--output', 
-        help='Write modified report to given file instead of changing the original report',
+        help=_('Write modified report to given file instead of changing the original report'),
         action='store', type='string', dest='output', metavar='FILE', default=None)
     optparser.add_option('-c', '--remove-core', 
-        help='Remove the core dump from the report after stack trace regeneration',
+        help=_('Remove the core dump from the report after stack trace regeneration'),
         action='store_true', dest='removecore', default=False)
     optparser.add_option('-r', '--core-file', 
-        help="Override report's CoreFile",
+        help=_('Override report\'s CoreFile'),
         action='store', type='string', dest='core_file', metavar='CORE', default=None)
     optparser.add_option('-x', '--executable', 
-        help="Override report's ExecutablePath",
+        help=_('Override report\'s ExecutablePath'),
         action='store', type='string', dest='executable', metavar='EXE', default=None)
     optparser.add_option('-m', '--procmaps', 
-        help="Override report's ProcMaps",
+        help=_('Override report\'s ProcMaps'),
         action='store', type='string', dest='procmaps', metavar='MAPS', default=None)
     optparser.add_option('-R', '--rebuild-package-info', 
-        help="Rebuild report's Package information",
+        help=_('Rebuild report\'s Package information'),
         action='count', dest='rebuild', default=0)
     optparser.add_option('-v', '--verbose', 
-        help='Report download/install progress when installing additional packages',
+        help=_('Report download/install progress when installing additional packages'),
         action='count', dest='verbose', default=0)
     optparser.add_option('-u', '--unpack-only', 
-        help='Only unpack the additionally required packages, do not configure them; purge packages again after retracing',
+        help=_('Only unpack the additionally required packages, do not configure them; purge packages again after retracing'),
         action='store_true', dest='unpack_only', default=False)
     optparser.add_option('--no-pkg', 
-        help='Do not use packaging system when using -u and do not purge packages afterwards. This should only be used for temporarily unpacked chroot tarballs where it would just be a waste of time.',
+        help=_('Do not use packaging system when using -u and do not purge packages afterwards. This should only be used for temporarily unpacked chroot tarballs where it would just be a waste of time.'),
         action='store_true', dest='no_pkg', default=False)
     optparser.add_option('-p', '--extra-package', 
-        help='Install an extra package (can be specified multiple times)',
+        help=_('Install an extra package (can be specified multiple times)'),
         action='append', type='string', dest='extra_packages', default=[])
     optparser.add_option('--auth',
-        help='Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)',
+        help=_('Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)'),
         action='store', type='string', dest='auth_file', default=None)
     optparser.add_option('--confirm',
-        help='Display retraced stack traces and ask for confirmation before sending them to the crash database.',
+        help=_('Display retraced stack traces and ask for confirmation before sending them to the crash database.'),
         action='store_true', dest='confirm', default=False)
     optparser.add_option('--duplicate-db',
-        help='Path to the duplicate sqlite database (default: no duplicate checking)',
+        help=_('Path to the duplicate sqlite database (default: no duplicate checking)'),
         action='store', type='string', dest='dup_db', metavar='PATH', default=None)
 
     (opts, args) = optparser.parse_args()
 
     if len(args) != 1:
-        optparser.error('incorrect number of arguments; use --help for a short online help')
+        optparser.error(_('incorrect number of arguments; use --help for a short online help'))
         sys.exit(1)
 
     if not (opts.auth_file or opts.output or opts.stdout or opts.gdb):
-        optparser.error('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short online help')
+        optparser.error(_('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short online help'))
         sys.exit(1)
 
     return (args[0], opts)
@@ -111,7 +111,8 @@ def confirm_traces(report):
 
     ch = None
     while ch not in ['y', 'n']:
-        print 'OK to send these as attachments? [y/n]'
+        # translators: don't translate y/n, apport currently only checks for "y"
+        print _('OK to send these as attachments? [y/n]')
         ch = getch().lower()
 
     return ch == 'y'
@@ -189,6 +190,8 @@ def gen_source_stacktrace(report):
 # main
 #
 
+gettext.textdomain('apport')
+
 (reportfile, options) = parse_options()
 
 crashdb = get_crashdb(options.auth_file)
@@ -252,7 +255,6 @@ elif not required_fields.issubset(set(report.keys())):
     print >> sys.stderr, 'report file does not contain required fields: ' + \
 	' '.join(required_fields)
     sys.exit(0)
-
 
 (installed, outdated_msg) = apport.packaging.install_retracing_packages(report,
     options.verbose, options.unpack_only, options.no_pkg,
