@@ -2,20 +2,26 @@
 
 .SH NAME
 
-apport\-cli \- Command line client for reporting problems
+apport\-cli, apport\-gtk, apport\-kde \- Apport user interfaces for reporting problems
 
 .SH SYNOPSIS
 
 .B apport\-cli
 
-.B apport\-cli \-c
-.I report
+.B apport\-cli
+.I symptom \fR|\fI pid \fR|\fI package \fR|\fI program path \fR|\fI .apport/.crash file
+
+.B apport\-cli \-f
 
 .B apport\-cli \-f \-p
 .I package
-
-.B apport\-cli \-f \-P
+.B \-P
 .I pid
+
+Same options/arguments for
+.B apport\-gtk
+and
+.B  apport\-kde\fR.
 
 .SH DESCRIPTION
 
@@ -24,37 +30,53 @@ automatically collects data from crashed processes and compiles a problem
 report in 
 .I /var/crash/\fR. This is a command line frontend for reporting
 those crashes to the developers. It can also be used to report bugs
-about packages or running processes.
+about packages or running processes. 
+
+If symptom scripts are available, it can also be given the name of a symptom,
+or be called with just
+.B -f
+to display a list of known symptoms.
+
+When being called without any options, it processes the pending crash reports
+and offers to report them one by one. You can also display the entire report to
+see what is sent to the software developers.
+
+When being called with exactly one argument and no option,
+.B apport\-cli
+uses some heuristics to find out "what you mean" and reports a bug against the
+given symptom name, package name, program path, or PID. If the argument is a
+.B .crash 
+or 
+.B .apport
+file, it uploads the stored problem report to the bug tracking system.
 
 For desktop systems with a graphical user interface, you should
 consider installing the GTK or KDE user interface (apport-gtk or
-apport-kde).
+apport-kde). They accept the very same options and arguments.
 .B apport\-cli
 is mainly intended to be used on servers.
-
-When called without any options, it processes the pending crash
-reports and offers to report them one by one. You can also display the
-entire report to see what is sent to the software developers.
 
 .SH OPTIONS
 
 .TP
-.B \-c \fIreport\fR, \fB\-\-crash\-file\fR=\fIreport
-Instead of walking over the new crash reports in
-.I /var/crash/\fR,
-report a particular report in an arbitrary file location.
-This is useful for copying a crash report to a machine with internet
-connection and reporting it from there.
-
-.TP
 .B \-f, \-\-file\-bug
-Report a (non-crash) problem. Requires specifying
-.B \-\-package
+Report a (non-crash) problem. If neither
+.B \-\-package\fR,
+.B \-\-symptom\fR,
 or
-.B \-\-pid\fR.
+.B \-\-pid
+are specified, then it displays a list of available symptoms. If none are
+available, it aborts with an error.
+
 This will automatically attach information about your operating system
 and the package version etc. to the bug report, so that the developers
 have some important context.
+
+.TP
+.B \-s \fIsymptom\fR, \fB\-\-symptom\fR=\fIsymptom
+When being used in
+.B \-\-file\-bug
+mode, specify the symptom to report the problem about.
 
 .TP
 .B \-p \fIpackage\fR, \fB\-\-package\fR=\fIpackage
@@ -70,6 +92,15 @@ mode, specify the PID (process ID) of a running program to report the
 problem against. This can be determined with e. g.
 .B ps -ux\fR.
 
+.TP
+.B \-c \fIreport\fR, \fB\-\-crash\-file\fR=\fIreport
+Upload a previously processed stored report in an arbitrary file location.
+This is useful for copying a crash report to a machine with internet
+connection and reporting it from there. Files must end in
+.B .crash
+or
+.B .apport\fR.
+
 .SH ENVIRONMENT
 
 .TP
@@ -80,6 +111,14 @@ will thoroughly check the situation before filing a bug report can define this
 in their
 .B ~/.bashrc
 or temporarily when calling the apport frontend (\-cli, \-gtk, or \-kde).
+
+.SH FILES
+.TP
+.B /usr/share/apport/symptoms/*.py
+Symptom scripts. These ask a set of interactive questions to determine the
+package which is responsible for a particular problem. (For some problems like
+sound or storage device related bugs there are many places where things can go
+wrong, and it's not immediately obvious for a bug reporter where the problem is.)
 
 .SH AUTHOR
 .B apport
