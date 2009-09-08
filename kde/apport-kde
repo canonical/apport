@@ -30,14 +30,11 @@ try:
     from PyKDE4.kdeui import (KApplication, KNotification, KMessageBox, KIcon,
                               KStandardGuiItem)
     import apport.ui
+    from apport import unicode_gettext as _
 except ImportError, e:
     # this can happen while upgrading python packages
     print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
     sys.exit(1)
-
-# PyQt needs this weirdness
-def _(str):
-    return unicode(gettext(str), 'UTF-8')
 
 def translate(self, prop):
     '''Reimplement method from uic to change it to use gettext.'''

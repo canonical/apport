@@ -7,7 +7,7 @@ import commands
 
 import apport.hookutils
 
-from gettext import gettext as _
+from apport import unicode_gettext as _
 
 def main(argv=None):
 
@@ -62,14 +62,14 @@ def main(argv=None):
         # If we had a late hang make sure the dialog is clear that they may
         # not have noticed.  Also update the bug title so we notice.
         if os.path.exists(hanglog):
-            pr['Annotation'] += '  ' + _("The resume processing hung very near the end and will have appeared to have completed normally.")
+            pr['Annotation'] += '  ' + _('The resume processing hung very near the end and will have appeared to have completed normally.')
             pr['Failure'] = 'late resume'
 
         if pr.check_ignored():
             return 0
 
         nowtime = datetime.datetime.now()
-        pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(" ","_"))
+        pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(' ', '_'))
         report_file = os.fdopen(os.open(pr_filename, os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
         os.chmod(pr_filename, 0600)
         try:
@@ -78,10 +78,10 @@ def main(argv=None):
             report_file.close()
         return 0
     except:
-        print "apportcheckresume failed"
+        print 'apportcheckresume failed'
         raise
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())
 
 

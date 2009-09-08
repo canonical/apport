@@ -13,7 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, gettext
-from gettext import gettext as _
+from apport import unicode_gettext as _
 
 import problem_report
 

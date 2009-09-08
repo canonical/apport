@@ -20,7 +20,7 @@ import os.path, os, sys, subprocess, re, errno
 import tty, termios, tempfile
 from datetime import datetime
 
-from gettext import gettext as _
+from apport import unicode_gettext as _
 import apport.ui
 
 class CLIDialog:
@@ -34,7 +34,7 @@ class CLIDialog:
         self.visible = False
 
     def raw_input_char(self, text):
-        """ raw_input, but read only one character """
+        '''raw_input, but read only one character'''
 
         sys.stdout.write(text + ' ')
 

@@ -22,6 +22,8 @@ Bug fixes:
  - setup.py now installs the internal helper scripts like "kernel_crashdump",
    "apport", or "apportcheckresume" into $prefix/share/apport instead of
    $prefix/bin.
+ - Update usage of gettext to work around Python bug of gettext() not returning
+   unicodes, but str. Fixes UnicodeDecodeErrors on translated --help output.
 
 1.8.2 (2009-09-05)
 ------------------

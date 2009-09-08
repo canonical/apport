@@ -18,11 +18,11 @@ __version__ = '1.8.2'
 import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser
-from gettext import gettext as _
 
 import apport, apport.fileutils, REThread
 
 from apport.crashdb import get_crashdb, NeedsCredentials
+from apport import unicode_gettext as _
 
 symptom_script_dir = '/usr/share/apport/symptoms'
 

@@ -16,7 +16,7 @@ import sys, os, os.path, subprocess, optparse, shutil, tempfile, re, zlib
 import tty, termios, gettext
 import apport, apport.fileutils
 from apport.crashdb import get_crashdb
-from gettext import gettext as _
+from apport import unicode_gettext as _
 
 #
 # functions
