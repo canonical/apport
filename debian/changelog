@@ -30,6 +30,8 @@ apport (1.9-0ubuntu1) UNRELEASED; urgency=low
   * debian/local/apport-collect: Point out that you need to select "Change
     anything" privileges. (LP: #373700)
   * debian/control: Drop obsolete texlive-latex-recommended build dependency.
+  * debian/rules: Drop --install-scripts, upstream now installs the files and
+    binaries into the right place. Adapt debian/*.install accordingly.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Sun, 06 Sep 2009 22:11:12 +0200
 

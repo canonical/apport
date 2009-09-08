@@ -9,9 +9,9 @@ include /usr/share/cdbs/1/rules/langpack.mk
 
 DEB_DH_INSTALL_SOURCEDIR := debian/tmp
 ifneq (,$(findstring 2.6,$(shell python --version 2>&1)))
-DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-scripts usr/share/apport --install-layout=deb
+DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-layout=deb
 else
-DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile --install-scripts usr/share/apport
+DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile
 endif
 
 binary-install/apport::

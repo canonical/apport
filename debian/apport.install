@@ -8,7 +8,6 @@ usr/share/apport/kernel_crashdump
 usr/share/apport/kernel_oops
 usr/share/apport/gcc_ice_hook
 usr/share/apport/apportcheckresume
-usr/share/apport/apport-unpack usr/bin
 usr/share/apport/testsuite/
 usr/share/doc/apport
 usr/share/locale
@@ -16,6 +15,7 @@ usr/share/icons
 usr/share/mime
 usr/share/apport/package-hooks
 usr/share/apport/general-hooks
-usr/share/apport/*cli* usr/bin/
+usr/bin/apport-cli
+usr/bin/apport-unpack
 ../local/ubuntu-bug usr/bin
 ../local/apport-collect usr/bin
