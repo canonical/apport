@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.9.1 (UNRELEASED)
+------------------
+Bug fixes:
+ - hookutils.py, attach_hardware(): Do not attach empty Pccardctl*.
+
 1.9 (2009-09-08)
 ----------------
 New features:

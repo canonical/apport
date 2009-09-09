@@ -123,8 +123,12 @@ def attach_hardware(report):
         report['Prtconf'] = command_output(['prtconf'])
 
     if command_available('pccardctl'):
-        report['PccardctlStatus'] = command_output(['pccardctl', 'status'])
-        report['PccardctlIdent'] = command_output(['pccardctl', 'ident'])
+        out = command_output(['pccardctl', 'status']).strip()
+        if out:
+            report['PccardctlStatus'] = out
+        out = command_output(['pccardctl', 'ident']).strip()
+        if out:
+            report['PccardctlIdent'] = out
 
 def attach_alsa(report):
     '''Attach ALSA subsystem information to the report.
