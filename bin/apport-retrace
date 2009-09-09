@@ -75,11 +75,11 @@ def parse_options():
     (opts, args) = optparser.parse_args()
 
     if len(args) != 1:
-        optparser.error(_('incorrect number of arguments; use --help for a short online help'))
+        optparser.error(_('incorrect number of arguments; use --help for a short help'))
         sys.exit(1)
 
     if not (opts.auth_file or opts.output or opts.stdout or opts.gdb):
-        optparser.error(_('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short online help'))
+        optparser.error(_('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short help'))
         sys.exit(1)
 
     return (args[0], opts)
