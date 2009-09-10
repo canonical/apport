@@ -1386,7 +1386,13 @@ sys.stdin.readline()
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
     @classmethod
-    def _generate_sigsegv_report(klass, file=None, signal='11'):
+    def _generate_sigsegv_report(klass, file=None, signal='11', code='''
+int f(x) {
+    int* p = 0; *p = x;
+    return x+1;
+}
+int main() { return f(42); }
+'''):
         '''Create a test executable which will die with a SIGSEGV, generate a
         core dump for it, create a problem report with those two arguments
         (ExecutablePath and CoreDump) and call add_gdb_info().
@@ -1402,13 +1408,7 @@ sys.stdin.readline()
             os.chdir(workdir)
 
             # create a test executable
-            open('crash.c', 'w').write('''
-int f(x) {
-    int* p = 0; *p = x;
-    return x+1;
-}
-int main() { return f(42); }
-''')
+            open('crash.c', 'w').write(code)
             assert subprocess.call(['gcc', '-g', 'crash.c', '-o', 'crash']) == 0
             assert os.path.exists('crash')
 
@@ -1456,9 +1456,22 @@ int main() { return f(42); }
         # should not throw an exception for missing fields
         pr.add_gdb_info()
 
+        # normal crash
         pr = self._generate_sigsegv_report()
         self._validate_gdb_fields(pr)
-        self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6')
+        self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6', pr['StacktraceTop'])
+        self.failIf ('AssertionMessage' in pr)
+
+        # crash where gdb generates output on stderr
+        pr = self._generate_sigsegv_report(code='''
+int main() {
+    void     (*function)(void);
+    function = 0;
+    function();
+}
+''')
+        self._validate_gdb_fields(pr)
+        self.assertEqual(pr['Disassembly'], '0x0:\tCannot access memory at address 0x0', pr['Disassembly'])
         self.failIf ('AssertionMessage' in pr)
 
     def test_add_gdb_info_load(self):
@@ -1510,7 +1523,7 @@ kill -SEGV $$
 
     def test_add_gdb_info_abort(self):
         '''add_gdb_info() with SIGABRT/assert()
-        
+
         If these come from an assert(), the report should have the assertion
         message. Otherwise it should be marked as not reportable.
         '''
