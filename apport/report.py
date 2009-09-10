@@ -1514,6 +1514,7 @@ kill -SEGV $$
         If these come from an assert(), the report should have the assertion
         message. Otherwise it should be marked as not reportable.
         '''
+        # abort with assert
         (fd, script) = tempfile.mkstemp()
         assert not os.path.exists('core')
         try:
@@ -1546,7 +1547,49 @@ $0.bin 2>/dev/null
 
         self._validate_gdb_fields(pr)
         self.assert_("<stdin>:2: main: Assertion `1 < 0' failed." in
-                pr['AssertionMessage'])
+                pr['AssertionMessage'], pr['AssertionMessage'])
+        self.failIf(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
+        self.failIf('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
+        self.failIf(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
+
+        # abort with internal error
+        (fd, script) = tempfile.mkstemp()
+        assert not os.path.exists('core')
+        try:
+            os.close(fd)
+
+            # create a test script which produces a core dump for us
+            open(script, 'w').write('''#!/bin/sh
+gcc -O2 -D_FORTIFY_SOURCE=2 -o $0.bin -x c - <<EOF
+#include <string.h>
+int main(int argc, char *argv[]) {
+    char buf[8];
+    strcpy(buf, argv[1]);
+    return 0;
+}
+EOF
+ulimit -c unlimited
+LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
+''')
+            os.chmod(script, 0755)
+
+            # call script and verify that it gives us a proper ELF core dump
+            assert subprocess.call([script]) != 0
+            assert subprocess.call(['readelf', '-n', 'core'],
+                stdout=subprocess.PIPE) == 0
+
+            pr = Report()
+            pr['ExecutablePath'] = script + '.bin'
+            pr['CoreDump'] = ('core',)
+            pr.add_gdb_info()
+        finally:
+            os.unlink(script)
+            os.unlink(script + '.bin')
+            os.unlink('core')
+
+        self._validate_gdb_fields(pr)
+        self.assert_("** buffer overflow detected ***: %s.bin terminated" % (script) in
+                pr['AssertionMessage'], pr['AssertionMessage'])
         self.failIf(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
         self.failIf('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
         self.failIf(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
