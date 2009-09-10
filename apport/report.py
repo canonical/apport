@@ -503,9 +503,7 @@ class Report(ProblemReport):
 
             # call gdb
             try:
-                out = _command_output(command, stderr=open('/dev/null')).replace(
-                    '(no debugging symbols found)\n','').replace(
-                    'No symbol table info available.\n','')
+                out = _command_output(command)
             except OSError:
                 return
 

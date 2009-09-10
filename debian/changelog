@@ -1,3 +1,10 @@
+apport (1.9-0ubuntu3) UNRELEASED; urgency=low
+
+  * apport/report.py: add upstream bzr commit 1591:
+    - include stderr in gdb command output
+
+ -- Kees Cook <kees@ubuntu.com>  Wed, 09 Sep 2009 19:32:05 -0700
+
 apport (1.9-0ubuntu2) karmic; urgency=low
 
   * Add missing python-apt build dependency.
