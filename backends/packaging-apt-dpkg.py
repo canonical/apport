@@ -505,9 +505,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         for path in ('InterpreterPath', 'ExecutablePath'):
             if path in report and not os.path.exists(report[path]):
                 pkg = self.get_file_package(report[path], True)
-                assert pkg, 'Could not find package for ' + path
-                print 'Installing extra package', pkg, 'to get', path
-                c[pkg].markInstall(False)
+                if pkg:
+                    print 'Installing extra package', pkg, 'to get', path
+                    c[pkg].markInstall(False)
+                else:
+                    err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
+                    outdated += err + '\n'
+                    print >> sys.stderr, 'WARNING:', err
 
         # check list of libraries that the crashed process referenced at
         # runtime and warn about those which are not available
