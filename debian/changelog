@@ -2,6 +2,9 @@ apport (1.9-0ubuntu4) UNRELEASED; urgency=low
 
   * data/general-hooks/ubuntu.py: Add distribution channel descriptor, as per
     https://wiki.ubuntu.com/FoundationsTeam/Specs/OemTrackingId .
+  * data/general-hooks/ubuntu.py: Do not allow users to file bugs against
+    upgrade-system if the package isn't actually installed. Way too many
+    upgrade failures get wrongly reported against this. (LP: #404727)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Sep 2009 08:56:11 +0200
 

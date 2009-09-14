@@ -67,3 +67,7 @@ def add_info(report):
         package = report['Package'].split()[0]
         if package and 'attach_conffiles' in dir():
             attach_conffiles(report, package)
+
+        # do not file bugs against "upgrade-system" if it is not installed (LP#404727)
+        if package == 'upgrade-system' and 'not installed' in report['Package']:
+            report['UnreportableReason'] = 'You do not have the upgrade-system package installed. Please report package upgrade failures against the package that failed to install, or against upgrade-manager.'
