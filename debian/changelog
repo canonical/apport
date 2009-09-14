@@ -1,3 +1,10 @@
+apport (1.9-0ubuntu4) UNRELEASED; urgency=low
+
+  * data/general-hooks/ubuntu.py: Add distribution channel descriptor, as per
+    https://wiki.ubuntu.com/FoundationsTeam/Specs/OemTrackingId .
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Sep 2009 08:56:11 +0200
+
 apport (1.9-0ubuntu3) karmic; urgency=low
 
   * apport/report.py: add upstream bzr commit 1591:

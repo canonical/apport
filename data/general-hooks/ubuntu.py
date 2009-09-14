@@ -26,6 +26,10 @@ def add_info(report):
     # This includes the Ubuntu packaged kernel version
     attach_file_if_exists(report, '/proc/version_signature', 'ProcVersionSignature')
 
+    # https://wiki.ubuntu.com/FoundationsTeam/Specs/OemTrackingId
+    attach_file_if_exists(report, '/var/lib/ubuntu_dist_channel', 
+        'DistributionChannelDescriptor')
+
     # There are enough of these now that it is probably worth refactoring...
     # -mdz
     if report['ProblemType'] == 'Package':
