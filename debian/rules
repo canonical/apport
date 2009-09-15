@@ -16,7 +16,7 @@ endif
 
 binary-install/apport::
 	# upstream already installs init script
-	dh_installinit -p $(cdbs_curpkg) --onlyscripts
+	#dh_installinit -p $(cdbs_curpkg) --onlyscripts
 
 	# ignore wine crashes by default, until we found a way to
 	# handle them appropriately

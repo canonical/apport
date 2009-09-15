@@ -1,0 +1,50 @@
+# apport - automatic crash report generation
+#
+# While this job is active, core dumps will captured by apport and
+# used to generate automatic crash reports.
+
+description	"automatic crash report generation"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+env enabled=1
+
+pre-start script
+    . /etc/default/apport
+    [ "$enabled" = "1" ]
+
+    mkdir -p -m 1777 /var/crash
+
+    # check for kernel crash dump, convert it to apport report
+    if [ -e /var/crash/vmcore ]
+    then
+	/usr/share/apport/kernel_crashdump || true
+    fi
+
+    # check for incomplete suspend/resume or hibernate
+    if [ -e /var/lib/pm-utils/status ]
+    then
+        /usr/share/apport/apportcheckresume || true
+        rm -f /var/lib/pm-utils/status
+        rm -f /var/lib/pm-utils/resume-hang.log
+    fi
+
+    echo "|/usr/share/apport/apport %p %s %c" > /proc/sys/kernel/core_pattern
+end script
+
+post-stop script
+    # Check for a hung resume.  If we find one try and grab everything
+    # we can to aid in its discovery
+    if [ -e /var/lib/pm-utils/status ]
+    then
+	ps -wwef > /var/lib/pm-utils/resume-hang.log
+    fi
+
+    if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" != "|" ]
+    then
+	return 1
+    else
+	echo "core" > /proc/sys/kernel/core/pattern
+    fi
+end script

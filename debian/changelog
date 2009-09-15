@@ -1,4 +1,4 @@
-apport (1.9-0ubuntu4) UNRELEASED; urgency=low
+apport (1.9-0ubuntu5) UNRELEASED; urgency=low
 
   * data/general-hooks/ubuntu.py: Add distribution channel descriptor, as per
     https://wiki.ubuntu.com/FoundationsTeam/Specs/OemTrackingId .
@@ -7,6 +7,16 @@ apport (1.9-0ubuntu4) UNRELEASED; urgency=low
     upgrade failures get wrongly reported against this. (LP: #404727)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Sep 2009 08:56:11 +0200
+
+apport (1.9-0ubuntu4) karmic; urgency=low
+
+  FFE LP: #427356.
+
+  * Replace init script with Upstart job.
+  * debian/control:
+    - Bump build-dependency on debhelper for Upstart-aware dh_installinit
+
+ -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Sep 2009 03:33:57 +0100
 
 apport (1.9-0ubuntu3) karmic; urgency=low
 
