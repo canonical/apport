@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.9.1 (UNRELEASED)
+------------------
+Bug fixes:
+ - hookutils.py, attach_hardware(): Do not attach empty Pccardctl*.
+ - apport/report.py, add_gdb_info(): Do not throw away stderr from gdb.
+ - data/general-hooks/parse_segv.py: Handle arithmetic wrapping correctly.
+
 1.9 (2009-09-08)
 ----------------
 New features:

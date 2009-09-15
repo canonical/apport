@@ -759,12 +759,9 @@ free memory to automatically analyze the problem and send a report to the develo
                                                  args=(self.report,
                                                        progress_callback))
                     upthread.start()
-            except Exception, e:
+            except:
                 self.ui_error_message(_('Network problem'),
-                    '%s:\n\n%s' % (
-                        _('Could not upload report data to crash database'),
-                        str(e)
-                    ))
+             		_('Cannot connect to crash database, please check your Internet connection.'))
                 return
 
         ticket = upthread.return_value()

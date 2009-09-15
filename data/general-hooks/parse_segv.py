@@ -177,6 +177,7 @@ class ParseSegv(object):
                 val = int(text)
             return val
 
+        # (%ebx, %ecx, 4) style
         value = 0
         if len(parts)>1:
             parens = parts[1][0:-1]
@@ -193,7 +194,13 @@ class ParseSegv(object):
                 scale = _reg_val(self, reg_list[2], scale)
             value = base + index * scale
 
-        return segment + value + add
+        value = segment + value + add
+        if 'esp' in self.regs:
+            # 32bit
+            return value % 0x100000000
+        else:
+            # 64bit
+            return value % 0x10000000000000000
 
     def report(self):
         understood = False
@@ -243,7 +250,7 @@ class ParseSegv(object):
 
 def add_info(report):
     # Only interested in segmentation faults...
-    if report.get('Signal') != '11':
+    if report.get('Signal','0') != '11':
         return
 
     needed = ['Signal', 'Architecture', 'Disassembly', 'ProcMaps', 'Registers']
@@ -267,9 +274,12 @@ def add_info(report):
 
 
 if __name__ == '__main__':
-    if len(sys.argv)==4:
-        # 'Usage: %s Registers.txt Disassembly.txt Maps.txt' % (sys.argv[0])
-
+    if len(sys.argv)==2 and sys.argv[1] in ['-h','--help']:
+        print 'To run self-test, run without any arguments (or with -v)'
+        print 'To do stand-alone crash parsing:'
+        print '  Usage: %s Registers.txt Disassembly.txt ProcMaps.txt' % (sys.argv[0])
+        sys.exit(0)
+    elif len(sys.argv)==4:
         segv = ParseSegv(file(sys.argv[1]).read(), \
                          file(sys.argv[2]).read(), \
                          file(sys.argv[3]).read())
@@ -286,7 +296,7 @@ if __name__ == '__main__':
         import unittest, tempfile, sys
 
         # Default global registers, maps, and disassembly for testing
-        regs = '''eax            0xbfc6afc4 -1077497916
+        regs = '''eax            0xffffffff -1
 ecx            0xbfc6af40   -1077498048
 edx            0x1  1
 ebx            0x26eff4 2551796
@@ -302,6 +312,40 @@ ds             0x7b 123
 es             0x7b 123
 fs             0x4  4
 gs             0x33 51
+'''
+        regs64 = '''rax            0xffffffffffffffff   -1
+rbx            0x26eff4 2551796
+rcx            0xffffffffffffffff   -1
+rdx            0xffffffffff600180   -10485376
+rsi            0x0  0
+rdi            0x7fffffffe3b0   140737488348080
+rbp            0x0  0x0
+rsp            0x7fffffffe388   0x7fffffffe388
+r8             0x0  0
+r9             0x0  0
+r10            0x7fffffffe140   140737488347456
+r11            0x246    582
+r12            0x7fffffffe400   140737488348160
+r13            0x7fffffffe468   140737488348264
+r14            0x1  1
+r15            0x7fffffffe460   140737488348256
+rip            0x7ffff790be10   0x7ffff790be10 <nanosleep+16>
+eflags         0x246    [ PF ZF IF ]
+cs             0x33 51
+ss             0x2b 43
+ds             0x0  0
+es             0x0  0
+fs             0x0  0
+gs             0x0  0
+fctrl          0x37f    895
+fstat          0x0  0
+ftag           0xffff   65535
+fiseg          0x0  0
+fioff          0x40303a 4206650
+foseg          0x0  0
+fooff          0x0  0
+fop            0x5d8    1496
+mxcsr          0x1f80   [ IM DM ZM OM UM PM ]
 '''
         maps = '''00110000-0026c000 r-xp 00000000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
 0026c000-0026d000 ---p 0015c000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
@@ -549,6 +593,15 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertEqual(segv.calculate_arg('0x3404403'), 0x3404403, '0x3404403')
                 self.assertEqual(segv.calculate_arg('*0x40(%edi)'), 0x80834c0, segv.regs['edi'])
                 self.assertEqual(segv.calculate_arg('(%edx,%ebx,1)'), 0x26eff5, segv.regs['ebx'])
+                self.assertEqual(segv.calculate_arg('(%eax,%ebx,1)'), 0x26eff3, segv.regs['ebx'])
+
+                # Again, but 64bit
+                disasm = '''0x08083540 <main+0>:    mov    $1,%rcx'''
+                segv = ParseSegv(regs64, disasm, maps)
+                understood, reason, details = segv.report()
+                self.assertFalse(understood, details)
+
+                self.assertEqual(segv.calculate_arg('(%rax,%rbx,1)'), 0x26eff3, segv.regs['rbx'])
 
             def test_segv_pc_missing(self):
                 '''Handles PC in missing VMA'''

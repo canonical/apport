@@ -1,5 +1,14 @@
 apport (1.9-0ubuntu5) UNRELEASED; urgency=low
 
+  * Merge bug fixes from trunk:
+    - hookutils.py, attach_hardware(): Do not attach empty Pccardctl*.
+    - apport/ui.py: Show a better message when failed connection to crash
+      database. Thanks to Marco Rodrigues! (LP: #178507)
+    - Do not throw away stderr from gdb.
+    - data/general-hooks/parse_segv.py: Handle arithmetic wrapping correctly.
+    - backends/packaging-apt-dpkg.py: More robust of missing ExecutablePath
+      due to outdated packages.
+    - setup.py: Fix DistUtilsExtra version check. (LP: #428337)
   * data/general-hooks/ubuntu.py: Add distribution channel descriptor, as per
     https://wiki.ubuntu.com/FoundationsTeam/Specs/OemTrackingId .
   * data/general-hooks/ubuntu.py: Do not allow users to file bugs against

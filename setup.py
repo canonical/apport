@@ -2,6 +2,7 @@
 
 from glob import glob
 import os.path, shutil, sys
+from distutils.version import StrictVersion
 
 try:
     import DistUtilsExtra.auto
@@ -10,7 +11,7 @@ except ImportError:
     print >> sys.stderr, 'To build Apport you need https://launchpad.net/python-distutils-extra'
     sys.exit(1)
 
-assert DistUtilsExtra.auto.__version__ >= '2.2', 'needs DistUtilsExtra.auto >= 2.2'
+assert StrictVersion(DistUtilsExtra.auto.__version__) >= '2.2', 'needs DistUtilsExtra.auto >= 2.2'
 
 # try to auto-setup packaging_impl
 if len(sys.argv) >= 2 and sys.argv[1] != 'sdist' and not os.path.exists('apport/packaging_impl.py'):
