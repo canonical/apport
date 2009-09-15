@@ -5,6 +5,7 @@ apport (1.9-0ubuntu5) UNRELEASED; urgency=low
   * data/general-hooks/ubuntu.py: Do not allow users to file bugs against
     upgrade-system if the package isn't actually installed. Way too many
     upgrade failures get wrongly reported against this. (LP: #404727)
+  * debian/rules: Entirely drop obsolete dh_installinit call.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Sep 2009 08:56:11 +0200
 

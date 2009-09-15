@@ -15,9 +15,6 @@ DEB_PYTHON_INSTALL_ARGS_ALL := --no-compile
 endif
 
 binary-install/apport::
-	# upstream already installs init script
-	#dh_installinit -p $(cdbs_curpkg) --onlyscripts
-
 	# ignore wine crashes by default, until we found a way to
 	# handle them appropriately
 	install -d debian/$(cdbs_curpkg)/etc/apport/blacklist.d
