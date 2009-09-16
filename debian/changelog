@@ -1,10 +1,10 @@
-apport (1.9-0ubuntu6) UNRELEASED; urgency=low
+apport (1.9-0ubuntu6) karmic; urgency=low
 
   * debian/apport.upstart:
     - Use "exit" in Upstart script rather than "return".
     - Fix post-stop script to write to the correct file.  LP: #430895.
 
- -- Scott James Remnant <scott@ubuntu.com>  Wed, 16 Sep 2009 13:57:25 +0100
+ -- Scott James Remnant <scott@ubuntu.com>  Wed, 16 Sep 2009 20:33:49 +0100
 
 apport (1.9-0ubuntu5) karmic; urgency=low
 
