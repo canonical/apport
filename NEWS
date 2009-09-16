@@ -6,7 +6,9 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - hookutils.py, attach_hardware(): Do not attach empty Pccardctl*.
  - apport/report.py, add_gdb_info(): Do not throw away stderr from gdb.
- - data/general-hooks/parse_segv.py: Handle arithmetic wrapping correctly.
+ - data/general-hooks/parse_segv.py:
+   - Handle arithmetic wrapping correctly.
+   - Handle empty base, scale, or index registers in disassembly.
 
 1.9 (2009-09-08)
 ----------------

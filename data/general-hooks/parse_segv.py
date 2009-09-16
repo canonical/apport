@@ -173,6 +173,8 @@ class ParseSegv(object):
         def _reg_val(self, text, val = 0):
             if text.startswith('%'):
                 val = self.regs[text[1:]]
+            elif text == "":
+                val = 0
             else:
                 val = int(text)
             return val
@@ -594,6 +596,7 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertEqual(segv.calculate_arg('*0x40(%edi)'), 0x80834c0, segv.regs['edi'])
                 self.assertEqual(segv.calculate_arg('(%edx,%ebx,1)'), 0x26eff5, segv.regs['ebx'])
                 self.assertEqual(segv.calculate_arg('(%eax,%ebx,1)'), 0x26eff3, segv.regs['ebx'])
+                self.assertEqual(segv.calculate_arg('0x10(,%ebx,1)'), 0x26f004, segv.regs['ebx'])
 
                 # Again, but 64bit
                 disasm = '''0x08083540 <main+0>:    mov    $1,%rcx'''
