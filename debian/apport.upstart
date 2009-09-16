@@ -43,7 +43,7 @@ post-stop script
 
     if [ "`dd if=/proc/sys/kernel/core_pattern count=1 bs=1 2>/dev/null`" != "|" ]
     then
-	return 1
+	exit 1
     else
 	echo "core" > /proc/sys/kernel/core/pattern
     fi
