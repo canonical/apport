@@ -45,6 +45,6 @@ post-stop script
     then
 	exit 1
     else
-	echo "core" > /proc/sys/kernel/core/pattern
+	echo "core" > /proc/sys/kernel/core_pattern
     fi
 end script
