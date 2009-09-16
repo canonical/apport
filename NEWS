@@ -9,6 +9,7 @@ Bug fixes:
  - data/general-hooks/parse_segv.py:
    - Handle arithmetic wrapping correctly.
    - Handle empty base, scale, or index registers in disassembly.
+   - Handle in/out ioport faults.
 
 1.9 (2009-09-08)
 ----------------

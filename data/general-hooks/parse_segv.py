@@ -144,6 +144,43 @@ class ParseSegv(object):
         else:
             return True, '%s (0x%08x) ok' % (name, addr), '%s ok' % (perm_name[perm][1])
 
+    def register_value(self, reg):
+        reg_orig = reg
+
+        #print reg
+        mask = 0
+        if reg.startswith('%'):
+            #print '%s -> %s' % (reg, reg[1:])
+            reg = reg[1:]
+        if reg in self.regs:
+            #print 'got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask)
+            return self.regs[reg]
+
+        if len(reg) == 2 and reg.endswith('l'):
+            mask |= 0xff00
+            #print '%s -> %sx' % (reg, reg[0])
+            reg = '%sx' % reg[0]
+        if reg in self.regs:
+            #print 'got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask)
+            return self.regs[reg] & ~mask
+
+        if len(reg) == 2 and reg.endswith('x'):
+            mask |= 0xffff0000
+            #print '%s -> e%s' % (reg, reg)
+            reg = 'e%s' % reg
+        if reg in self.regs:
+            #print 'got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask)
+            return self.regs[reg] & ~mask
+
+        if len(reg) == 3 and reg.startswith('e'):
+            mask |= 0xffffffff00000000
+            #print '%s -> r%s' % (reg, reg[1:])
+            reg = 'r%s' % reg[1:]
+        if reg in self.regs:
+            #print 'got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask)
+            return self.regs[reg] & ~mask
+        raise ValueError, "Could not resolve register '%s'" % (reg_orig)
+
     def calculate_arg(self, arg):
         # Check for and pre-remove segment offset
         segment = 0
@@ -234,7 +271,7 @@ class ParseSegv(object):
 
             # Verify destination is writable
             if self.dest:
-                if self.dest.startswith('%') and not ':' in self.dest:
+                if not ':' in self.dest and (self.dest.startswith('%') or self.dest.startswith('$')):
                     details.append('destination "%s" ok' % (self.dest))
                 else:
                     addr = self.calculate_arg(self.dest)
@@ -243,6 +280,12 @@ class ParseSegv(object):
                     if not valid:
                         reason.append(short)
                         understood = True
+
+        # Handle I/O port operations
+        if self.insn in ['out','in'] and not understood:
+            reason.append('disallowed I/O port operation on port %d' % (self.register_value(self.src)))
+            details.append('disallowed I/O port operation on port %d' % (self.register_value(self.src)))
+            understood = True
 
         if not understood:
             reason.append('Reason could not be automatically determined.')
@@ -539,6 +582,27 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertEquals(segv.src, '%ecx', segv.src)
                 self.assertEquals(segv.dest, '(%esp)', segv.dest)
 
+            def test_ioport_operation(self):
+                '''I/O port violations'''
+
+                regs = 'rax            0x3  3'
+                disasm = '''0x4087f1 <snd_pcm_hw_params_set_channels_near@plt+19345>:   
+    out    %al,$0xb3
+'''
+                maps = '''00400000-00412000 r-xp 00000000 08:04 10371157                           /usr/sbin/pommed
+00611000-00614000 rw-p 00011000 08:04 10371157                           /usr/sbin/pommed
+00614000-00635000 rw-p 00614000 00:00 0                                  [heap]
+'''
+                segv = ParseSegv(regs, disasm, maps)
+                self.assertEquals(segv.pc, 0x4087f1, segv.pc)
+                self.assertEquals(segv.insn, 'out', segv.insn)
+                self.assertEquals(segv.src, '%al', segv.src)
+                self.assertEquals(segv.dest, '$0xb3', segv.dest)
+
+                understood, reason, details = segv.report()
+                self.assertTrue(understood, details)
+                self.assertTrue('disallowed I/O port operation on port 3' in reason, reason)
+
             def test_invalid_02_maps(self):
                 '''Require valid maps'''
                 regs = 'a 0x10'
@@ -578,6 +642,21 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 sys.stderr = tempfile.NamedTemporaryFile(prefix='parse_segv-stderr-')
                 segv = ParseSegv(regs, disasm, maps, debug=True)
                 self.assertTrue(segv is not None, segv)
+
+            def test_register_values(self):
+                '''Sub-register parsing'''
+
+                disasm = '''0x08083540 <main+0>:    mov    $1,%ecx'''
+                segv = ParseSegv(regs64, disasm, '')
+
+                val = segv.register_value('%rdx')
+                self.assertEqual(val, 0xffffffffff600180, hex(val))
+                val = segv.register_value('%edx')
+                self.assertEqual(val, 0xff600180, hex(val))
+                val = segv.register_value('%dx')
+                self.assertEqual(val, 0x0180, hex(val))
+                val = segv.register_value('%dl')
+                self.assertEqual(val, 0x80, hex(val))
 
             def test_segv_unknown(self):
                 '''Handles unknown segfaults'''
