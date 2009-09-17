@@ -259,7 +259,7 @@ class ParseSegv(object):
         else:
             # Verify source is readable
             if self.src:
-                if not ':' in self.src and (self.src.startswith('%') or self.src.startswith('$')):
+                if not ':' in self.src and (self.src[0] in ['%','$','*']):
                     details.append('source "%s" ok' % (self.src))
                 else:
                     addr = self.calculate_arg(self.src)
@@ -271,7 +271,7 @@ class ParseSegv(object):
 
             # Verify destination is writable
             if self.dest:
-                if not ':' in self.dest and (self.dest.startswith('%') or self.dest.startswith('$')):
+                if not ':' in self.dest and (self.dest[0] in ['%','$','*']):
                     details.append('destination "%s" ok' % (self.dest))
                 else:
                     addr = self.calculate_arg(self.dest)
@@ -738,11 +738,18 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 reg = regs + 'ecx            0x0006af24   0xbfc6af24'
                 disasm = '0x08083547 <main+7>:    pushl  -0x4(%ecx)'
 
+                # Valid crash
                 segv = ParseSegv(reg, disasm, maps)
                 understood, reason, details = segv.report()
                 self.assertTrue(understood, details)
                 self.assertTrue('source "-0x4(%ecx)" (0x0006af20) not located in a known VMA region' in details, details)
                 self.assertTrue('reading unknown VMA' in reason, reason)
+
+                # Invalid crash (ecx hasn't been dereferenced yet.)
+                disasm = '0x08083547 <main+7>:    callq  *%ecx'
+                segv = ParseSegv(reg, disasm, maps)
+                understood, reason, details = segv.report()
+                self.assertFalse(understood, details)
 
             def test_segv_src_null(self):
                 '''Handles source in NULL VMA'''
