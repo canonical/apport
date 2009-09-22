@@ -16,6 +16,7 @@ Bug fixes:
  - setup.py: Fix DistUtilsExtra version check. (LP: #428337)
  - hookutils.py, attach_gconf(): Do not overwrite previous values from other
    packages, thanks Loïc Minier!
+ - hookutils.py, attach_gconf(): Fix crash with nonexisting <applyto> tags.
 
 1.9 (2009-09-08)
 ----------------
