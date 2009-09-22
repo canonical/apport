@@ -1,5 +1,22 @@
-apport (1.9-0ubuntu7) UNRELEASED; urgency=low
+apport (1.9.1-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Martin Pitt ]
+  * New upstream bug fix release:
+    - hookutils.py, attach_hardware(): Do not attach empty Pccardctl*.
+    - apport/report.py, add_gdb_info(): Do not throw away stderr from gdb.
+    - data/general-hooks/parse_segv.py:
+      + Handle arithmetic wrapping correctly.
+      + Handle empty base, scale, or index registers in disassembly.
+      + Handle in/out ioport faults.
+    - Various improvements to user-visible strings, thanks to Marco Rodrigues!
+      (LP: #178507)
+    - Various apport-retrace robustifications.
+    - setup.py: Fix DistUtilsExtra version check. (LP: #428337)
+    - hookutils.py, attach_gconf(): Do not overwrite previous values from
+      other packages, thanks Loïc Minier!
+    - hookutils.py, attach_gconf(): Fix crash with nonexisting <applyto> tags.
+
+  [ Loïc Minier ]
   * Upstream source is at https://launchpad.net/apport/+download not
     archive.ubuntu.com.
 

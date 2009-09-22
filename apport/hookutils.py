@@ -387,6 +387,10 @@ def attach_gconf(report, package):
             value = non_defaults[key]
             s += '%s=%s\n' % (key, value)
 
+        if 'GConfNonDefault' in report:
+            # This splits the lists with a newline for readability
+            s = '%s\n%s' % (report['GConfNonDefault'], s)
+
         report['GConfNonDefault'] = s
 
 def attach_network(report):
@@ -505,7 +509,14 @@ def _parse_gconf_schema(schema_file):
     for gconfschemafile in dom.getElementsByTagName('gconfschemafile'):
         for schemalist in gconfschemafile.getElementsByTagName('schemalist'):
             for schema in schemalist.getElementsByTagName('schema'):
-                key = schema.getElementsByTagName('applyto')[0].childNodes[0].data
+                try:
+                    key = schema.getElementsByTagName('applyto')[0].childNodes[0].data
+                except IndexError:
+                    # huh, no <applyto>? let's use <key>; it has /schemas/
+                    # prefix, but it should be clear enough
+                    key = schema.getElementsByTagName('key')[0].childNodes[0].data
+                    if key.startswith('/schemas/'):
+                        key = key[8:]
                 type = schema.getElementsByTagName('type')[0].childNodes[0].data
                 try:
                     default = schema.getElementsByTagName('default')[0].childNodes[0].data
