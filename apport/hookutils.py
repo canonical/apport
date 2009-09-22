@@ -348,6 +348,10 @@ def attach_gconf(report, package):
             value = non_defaults[key]
             s += '%s=%s\n' % (key, value)
 
+        if 'GConfNonDefault' in report:
+            # This splits the lists with a newline for readability
+            s = '%s\n%s' % (report['GConfNonDefault'], s)
+
         report['GConfNonDefault'] = s
 
 def attach_network(report):
