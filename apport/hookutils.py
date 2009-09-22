@@ -63,6 +63,45 @@ def attach_file(report, path, key=None):
 
     report[key] = read_file(path)
 
+def attach_conffiles(report, package, conffiles=None):
+    '''Attach information about any modified or deleted conffiles'''
+
+    try:
+       dpkg = subprocess.Popen(['dpkg-query','-W','--showformat=${Conffiles}',
+           package], stdout=subprocess.PIPE, close_fds=True)
+    except OSError, e:
+       return 'Error: ' + str(e)
+
+    out = dpkg.communicate()[0]
+    if dpkg.returncode != 0:
+       return
+
+    for line in out.splitlines():
+        if not line:
+            continue
+        # just take the first two fields, to not stumble over obsolete
+        # conffiles
+        path, default_md5sum = line.strip().split()[:2]
+
+        if conffiles and path not in conffiles: continue
+
+        key = 'modified.conffile.' + path_to_key(path)
+
+        if os.path.exists(path):
+            contents = open(path).read()
+            m = hashlib.md5()
+            m.update(contents)
+            calculated_md5sum = m.hexdigest()
+
+            if calculated_md5sum != default_md5sum:
+                report[key] = contents
+                statinfo = os.stat(path)
+                mtime = datetime.datetime.fromtimestamp(statinfo.st_mtime)
+                mtime_key = 'mtime.conffile.' + path_to_key(path)
+                report[mtime_key] = mtime.isoformat()
+        else:
+            report[key] = '[deleted]'
+
 def attach_dmesg(report):
     '''Attach information from the kernel ring buffer (dmesg).'''
 
@@ -347,6 +386,10 @@ def attach_gconf(report, package):
         for key in keys:
             value = non_defaults[key]
             s += '%s=%s\n' % (key, value)
+
+        if 'GConfNonDefault' in report:
+            # This splits the lists with a newline for readability
+            s = '%s\n%s' % (report['GConfNonDefault'], s)
 
         report['GConfNonDefault'] = s
 
