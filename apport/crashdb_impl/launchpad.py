@@ -56,6 +56,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
           temporary one. (optional). This can be overridden or set by
           $APPORT_LAUNCHPAD_CACHE environment.
         '''
+        if os.getenv('APPORT_STAGING'):
+            options['staging'] = True
         if not auth:
             if options.get('staging'):
                 auth = default_credentials_path + '.staging'
@@ -81,7 +83,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if self.__launchpad:
             return self.__launchpad
 
-        if self.options.get('staging') or os.getenv('APPORT_STAGING'):
+        if self.options.get('staging'):
             launchpad_instance = STAGING_SERVICE_ROOT
         else:
             launchpad_instance = EDGE_SERVICE_ROOT
