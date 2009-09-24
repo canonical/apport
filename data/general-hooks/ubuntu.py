@@ -12,9 +12,13 @@ the full text of the license.
 
 import apport.packaging
 import re
+from urlparse import urljoin
+from urllib2 import urlopen
 from apport.hookutils import *
 
 def add_info(report):
+    add_tags = []
+
     # crash reports from live system installer often expose target mount
     for f in ('ExecutablePath', 'InterpreterPath'):
         if f in report and report[f].startswith('/target/'):
@@ -71,3 +75,36 @@ def add_info(report):
         # do not file bugs against "upgrade-system" if it is not installed (LP#404727)
         if package == 'upgrade-system' and 'not installed' in report['Package']:
             report['UnreportableReason'] = 'You do not have the upgrade-system package installed. Please report package upgrade failures against the package that failed to install, or against upgrade-manager.'
+
+    # EC2 and Ubuntu Enterprise Cloud instances
+    if apport.packaging.get_version('ec2-init') is not None:
+        metadata_url = 'http://169.254.169.254/latest/meta-data/'
+        ami_id_url = urljoin(metadata_url, 'ami-id')
+
+        try:
+            ami = urlopen(ami_id_url).read()
+        except:
+            ami = None
+
+        if ami is None:
+            cloud = None
+        elif ami.startswith('ami'):
+            cloud = 'ec2'
+            add_tags.append('ec2-images')
+
+            # It would be great to translate these into meaningful Ubuntu versions -mdz
+            report['Ec2AMI'] = ami
+            report['Ec2AMIManifest'] = urlopen(urljoin(metadata_url, 'ami-manifest-path')).read()
+            report['Ec2Kernel'] = urlopen(urljoin(metadata_url, 'kernel-id')).read()
+            report['Ec2Ramdisk'] = urlopen(urljoin(metadata_url, 'ramdisk-id')).read()
+            report['Ec2InstanceType'] = urlopen(urljoin(metadata_url, 'instance-type')).read()
+            report['Ec2AvailabilityZone.'] = urlopen(urljoin(metadata_url, 'placement/availability-zone')).read()
+        else:
+            cloud = 'uec'
+            add_tags.append('uec-images')
+
+    if add_tags:
+        if 'Tags' in report:
+            report['Tags'] += ' ' + ' '.join(add_tags)
+        else:
+            report['Tags'] = ' '.join(add_tags)
