@@ -98,7 +98,7 @@ def add_info(report):
             report['Ec2Kernel'] = urlopen(urljoin(metadata_url, 'kernel-id')).read()
             report['Ec2Ramdisk'] = urlopen(urljoin(metadata_url, 'ramdisk-id')).read()
             report['Ec2InstanceType'] = urlopen(urljoin(metadata_url, 'instance-type')).read()
-            report['Ec2AvailabilityZone.'] = urlopen(urljoin(metadata_url, 'placement/availability-zone')).read()
+            report['Ec2AvailabilityZone'] = urlopen(urljoin(metadata_url, 'placement/availability-zone')).read()
         else:
             cloud = 'uec'
             add_tags.append('uec-images')
