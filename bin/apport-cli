@@ -388,6 +388,16 @@ class CLIUserInterface(apport.ui.UserInterface):
             else:
                 return f
 
+    def open_url(self, url):
+        text = '%s\n\n  %s\n\n%s' % (
+            _('To continue, you must visit the following URL:'),
+            url,
+            _('You can launch a browser now, or copy this URL into a browser on another computer.'))
+
+        answer = self.ui_question_choice(text, [_('Launch a browser now')], False)
+	if answer == [0]:
+            apport.ui.UserInterface.open_url(self, url)
+
 if __name__ == '__main__':
     app = CLIUserInterface()
     if not app.run_argv():

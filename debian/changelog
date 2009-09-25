@@ -1,3 +1,14 @@
+apport (1.9.1-0ubuntu3) UNRELEASED; urgency=low
+
+  * Merge bug fixes from trunk:
+    - apport-cli: Print the URL and ask whether to open a browser. This makes
+      ubuntu-bug work much better for servers, now that ubuntu-bug is by and
+      large mandatory. (LP: #286415)
+    - launchpad.py: Consistently respect $APPORT_STAGING, so that it works
+      for bug filing as well. (LP: #435112)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Sep 2009 18:32:45 +0200
+
 apport (1.9.1-0ubuntu2) karmic; urgency=low
 
   * kde/bugreport.ui: Select "complete report" option by default, to actually
