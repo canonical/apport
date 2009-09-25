@@ -7,6 +7,10 @@ apport (1.9.1-0ubuntu3) UNRELEASED; urgency=low
     - launchpad.py: Consistently respect $APPORT_STAGING, so that it works
       for bug filing as well. (LP: #435112)
 
+  [ Matt Zimmerman ]
+  * data/general-hooks/ubuntu.py: Add metadata and tags for bugs reported from
+    EC2 and UEC instances.
+
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 25 Sep 2009 18:32:45 +0200
 
 apport (1.9.1-0ubuntu2) karmic; urgency=low
