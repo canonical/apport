@@ -1,3 +1,11 @@
+apport (1.9.1-0ubuntu4) UNRELEASED; urgency=low
+
+  * man/apport-bug.1: Document APPORT_IGNORE_OBSOLETE_PACKAGES (cherrypicked
+    from trunk), and APPORT_STAGING (Ubuntu specific change, since it's a
+    launchpad backend specific variable).
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 28 Sep 2009 19:03:03 +0200
+
 apport (1.9.1-0ubuntu3) karmic; urgency=low
 
   * Merge bug fixes from trunk:

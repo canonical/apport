@@ -81,6 +81,25 @@ under X11, it calls
 .B apport\-cli
 for a command-line client.
 
+.SH ENVIRONMENT
+
+.TP
+.B APPORT_IGNORE_OBSOLETE_PACKAGES
+Apport refuses to create bug reports if the package or any dependency is not
+current. If this environment variable is set, this check is waived. Experts who
+will thoroughly check the situation before filing a bug report can define this
+in their
+.B ~/.bashrc
+or temporarily when calling the apport frontend (\-cli, \-gtk, or \-kde).
+
+.TP
+.B APPORT_STAGING
+When reporting bugs to Launchpad (default in Ubuntu), use
+.B staging.launchpad.net
+instead of the real production instance. You should use this when testing new
+hooks or new functionality, to avoid sending uninteresting bug mail to
+developers.
+
 .SH "SEE ALSO"
 .BR apport\-cli (1)
 
