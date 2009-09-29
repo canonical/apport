@@ -10,8 +10,8 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
+import os, re
 import apport.hookutils
-import os
 
 def add_info(report):
     nm = apport.hookutils.nonfree_kernel_modules()
@@ -33,3 +33,20 @@ def add_info(report):
             report['UnreportableReason'] = 'Your %s partition has less than \
 %s MB of free space available, which leads to a lot of problems. Please \
 free some space.' % (mounts[mount], free_mb)
+
+    # important glib errors/assertions (which should not have private data)
+    xsession_errors = ''
+    xsession_errors_path = os.path.join(home, '.xsession-errors')
+    if os.path.exists(xsession_errors_path):
+        filter = re.compile('^\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR)')
+        for line in open(xsession_errors_path):
+            if filter.match(line):
+                xsession_errors += line
+    if xsession_errors:
+        report['XsessionErrors'] = xsession_errors
+
+if __name__ == '__main__':
+    r = {}
+    add_info(r)
+    for k in r:
+        print k, ':', r[k]

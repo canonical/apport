@@ -8,6 +8,8 @@ Improvements:
    situations (such as usage on a server through ssh), it's preferable to not
    open the browser on the reporting computer. Thanks to Matt Zimmerman for the
    initial patch! (LP: #286415)
+ - general-hooks/generic.py: Collect important glib errors/assertions (which
+   should not have private data) from ~/.xsession-errors (LP: #431807)
 
 1.9.1 (2009-09-22)
 ------------------
