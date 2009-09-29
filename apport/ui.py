@@ -432,11 +432,11 @@ free memory to automatically analyze the problem and send a report to the develo
         Return True if at least one report has been processed, and False
         otherwise.
         '''
-        if self.options.filebug:
-            return self.run_report_bug()
-        elif self.options.symptom:
+        if self.options.symptom:
             self.run_symptom()
             return True
+        elif self.options.filebug:
+            return self.run_report_bug()
         elif self.options.version:
             print __version__
             return True
