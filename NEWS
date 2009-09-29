@@ -12,6 +12,9 @@ Improvements:
    should not have private data) from ~/.xsession-errors (LP: #431807)
  - launchpad.py: Link hardware data submission key if it exists. (LP: #424382)
 
+Bug fixes:
+ - apport-cli: Fix crash with non-ASCII characters in prompts.
+
 1.9.1 (2009-09-22)
 ------------------
 Bug fixes:

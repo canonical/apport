@@ -33,10 +33,10 @@ class CLIDialog:
         self.buttons = []
         self.visible = False
 
-    def raw_input_char(self, text):
+    def raw_input_char(self, prompt):
         '''raw_input, but read only one character'''
 
-        sys.stdout.write(text + ' ')
+        print >> sys.stdout, prompt,
 
         file = sys.stdin.fileno()
         saved_attributes = termios.tcgetattr(file)
