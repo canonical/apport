@@ -10,10 +10,10 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-import urllib, tempfile, shutil, os.path, re, gzip, sys, socket
+import urllib, tempfile, shutil, os.path, re, gzip, sys, socket, ConfigParser
 from cStringIO import StringIO
 
-from launchpadlib.errors import HTTPError
+from launchpadlib.errors import HTTPError, CredentialsFileError
 from httplib2 import ServerNotFoundError
 from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
 from launchpadlib.credentials import Credentials
@@ -93,13 +93,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             os.makedirs(auth_dir)
 
         try:
-            if os.path.exists(self.auth):
+            try:
                 # use existing credentials
                 credentials = Credentials()
                 credentials.load(open(self.auth))
                 self.__launchpad = Launchpad(credentials, launchpad_instance,
                         self.__lpcache)
-            else:
+            except (IOError, CredentialsFileError,
+                    ConfigParser.MissingSectionHeaderError, ConfigParser.NoOptionError):
+                # FIXME: launchpadlib doesn't catch ConfigParser exceptions into CredentialsFileError
                 # get credentials and save them
                 try:
                     self.__launchpad = Launchpad.get_token_and_login('apport-collect',
