@@ -174,6 +174,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if report.has_key('Tags'):
             hdr['Tags'] += ' ' + report['Tags']
 
+        # if we have checkbox submission key, link it to the bug; keep text
+        # reference until the link is shown in Launchpad's UI
+        if report.has_key('CheckboxSubmission'):
+            hdr['HWDB-Submission'] = report['CheckboxSubmission']
+
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
         report.write_mime(mime, extra_headers=hdr)
