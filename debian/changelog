@@ -3,6 +3,8 @@ apport (1.9.1-0ubuntu4) UNRELEASED; urgency=low
   * man/apport-bug.1: Document APPORT_IGNORE_OBSOLETE_PACKAGES (cherrypicked
     from trunk), and APPORT_STAGING (Ubuntu specific change, since it's a
     launchpad backend specific variable).
+  * bin/apport-bug: Ignore -p option when giving two arguments, to keep
+    compatibility with current bug filing instructions. (LP: #356755)
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 28 Sep 2009 19:03:03 +0200
 

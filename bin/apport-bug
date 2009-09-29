@@ -38,6 +38,12 @@ find_programs() {
 # main
 #
 
+# keep backwards compatibility with old documentation which says to use
+# ubuntu-bug -p packagename
+if [ $# = 2 ] && [ "$1" = '-p' ]; then
+    shift
+fi
+
 find_programs
 
 if [ "$#" -gt 1 ] || [ "$1" = "--help" ]; then
