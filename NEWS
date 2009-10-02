@@ -1,13 +1,22 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.9.2 (UNRELEASED)
+1.9.2 (2009-10-02)
 ------------------
 Improvements:
  - apport-cli: Print the URL and ask whether to open a browser. In many
    situations (such as usage on a server through ssh), it's preferable to not
    open the browser on the reporting computer. Thanks to Matt Zimmerman for the
    initial patch! (LP: #286415)
+ - general-hooks/generic.py: Collect important glib errors/assertions (which
+   should not have private data) from ~/.xsession-errors (LP: #431807)
+ - launchpad.py: Link hardware data submission key if it exists. (LP: #424382)
+
+Bug fixes:
+ - apport-cli: Fix crash with non-ASCII characters in prompts.
+ - Fix "apport-bug symptomname" to actually work.
+ - launchpad.py: Fix crash on invalid credentials file. Thanks to Marco
+   Rodrigues for the initial patch! (LP: #414055)
 
 1.9.1 (2009-09-22)
 ------------------

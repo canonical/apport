@@ -13,7 +13,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-__version__ = '1.9.1'
+__version__ = '1.9.2'
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
@@ -432,11 +432,11 @@ free memory to automatically analyze the problem and send a report to the develo
         Return True if at least one report has been processed, and False
         otherwise.
         '''
-        if self.options.filebug:
-            return self.run_report_bug()
-        elif self.options.symptom:
+        if self.options.symptom:
             self.run_symptom()
             return True
+        elif self.options.filebug:
+            return self.run_report_bug()
         elif self.options.version:
             print __version__
             return True
