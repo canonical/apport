@@ -40,7 +40,7 @@ find_programs() {
 
 find_programs
 
-if [ "$#" -gt 1 ] || [ "$1" = "--help" ]; then
+if [ "$#" -gt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: $0 <pid>|<symptom name>|<package name>|<program path>|<.crash file>" >&2
     exit 1
 fi
