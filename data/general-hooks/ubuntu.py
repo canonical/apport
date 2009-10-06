@@ -34,6 +34,10 @@ def add_info(report):
     attach_file_if_exists(report, '/var/lib/ubuntu_dist_channel', 
         'DistributionChannelDescriptor')
 
+    # https://bugs.launchpad.net/bugs/364649
+    attach_file_if_exists(report, '/var/log/installer/media-info',
+                          'InstallationMedia')
+
     # There are enough of these now that it is probably worth refactoring...
     # -mdz
     if report['ProblemType'] == 'Package':
