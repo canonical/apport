@@ -9,7 +9,11 @@ apport (1.9.2-0ubuntu2) UNRELEASED; urgency=low
   * debian/local/apport-collect.1: Clarify that the launchpad.credentials
     files needs to be removed in order to ask for privileges again.
 
- -- Matt Zimmerman <mdz@ubuntu.com>  Tue, 06 Oct 2009 15:55:30 +0100
+  [ Brian Murray ]
+  * debian/local/apport-collect: Resolve bug with specifying package for adding
+    information also let collector know if bug was not reported by them
+
+ -- Brian Murray <brian@ubuntu.com>  Wed, 07 Oct 2009 16:27:02 -0700
 
 apport (1.9.2-0ubuntu1) karmic; urgency=low
 
