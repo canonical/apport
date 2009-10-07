@@ -108,12 +108,24 @@ except KeyError:
     print 'The bug number %s does not exist in Launchpad.' % bug_number
     sys.exit(1)
 
+if bug.owner.name != crashdb.launchpad.me.name:
+    print 'You are not the reporter of bug %s.' % bug_number
+    while True:
+        val = raw_input('Is that really the bug you want to update? [y/N]')
+        if val.lower() in ('y', 'yes'):
+    	    break
+        elif val.lower() in ('n', 'no', ''):
+    	    sys.exit(1)
+        else:
+    	    print 'Invalid answer.'
+
 report = apport.Report('Bug')
 
 print 'Bug title:', bug.title
 info_collected = False
 if opts.package:
     collect(report, opts.package)
+    info_collected = True
 else:
     # determine bug tasks and collect for those
     for task in bug.bug_tasks:
@@ -166,5 +178,5 @@ try:
     bug.tags = x
     bug.lp_save()
 except HTTPError, e:
-    print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
+    print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.\nYou can reset the credentials by removing the file "~/.cache/apport/launchpad.credentials."' % str(e)
     sys.exit(1)
