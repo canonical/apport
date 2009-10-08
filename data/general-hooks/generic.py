@@ -38,7 +38,7 @@ free some space.' % (mounts[mount], free_mb)
     xsession_errors = ''
     xsession_errors_path = os.path.join(home, '.xsession-errors')
     if os.path.exists(xsession_errors_path):
-        filter = re.compile('^\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR)')
+        filter = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)')
         for line in open(xsession_errors_path):
             if filter.match(line):
                 xsession_errors += line
