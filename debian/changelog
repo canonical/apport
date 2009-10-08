@@ -8,6 +8,9 @@ apport (1.9.2-0ubuntu2) UNRELEASED; urgency=low
   [ Martin Pitt ]
   * debian/local/apport-collect.1: Clarify that the launchpad.credentials
     files needs to be removed in order to ask for privileges again.
+  * Merge bug fixes from trunk:
+    - general-hooks/generic.py: Catch xkbcomp error messages, too. (LP: #431807)
+    - apport-bug: Consider -h as "output help", too. (Marco Rodrigues)
 
   [ Brian Murray ]
   * debian/local/apport-collect:
