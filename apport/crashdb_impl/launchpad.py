@@ -67,6 +67,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bugpattern_baseurl, options)
 
         self.distro = options.get('distro')
+        if self.distro:
+            assert 'project' not in options, 'Must not set both "project" and "distro" option'
+        else:
+            assert 'project' in options, 'Need to have either "project" or "distro" option'
+
         self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
         self.options = options
         self.auth = auth
