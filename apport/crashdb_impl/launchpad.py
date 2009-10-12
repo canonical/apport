@@ -218,8 +218,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             hostname = 'launchpad.net'
 
         project = self.options.get('project')
-        if 'ThirdParty' in report:
-            project = report['SourcePackage']
         
         if not project:
             if report.has_key('SourcePackage'):
