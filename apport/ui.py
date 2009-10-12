@@ -433,6 +433,12 @@ free memory to automatically analyze the problem and send a report to the develo
             return True
         elif self.options.filebug:
             return self.run_report_bug()
+        elif self.options.package:
+            print _('Usage: ubuntu-bug <package>\nThe option -p, --package <package> is deprecated, please do not use it.')
+            return True
+        elif self.options.pid:
+            print _('Usage: ubuntu-bug <pid>\nThe option -P, --pid <pid> is deprecated, please do not use it.')
+            return True
         elif self.options.version:
             print __version__
             return True
@@ -465,10 +471,10 @@ free memory to automatically analyze the problem and send a report to the develo
             help=_('File a bug report about a symptom. (Implied if symptom name is given as only argument.)'), 
             dest='symptom')
         optparser.add_option('-p', '--package',
-            help=_('Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.)'),
+            help=_('Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.) [deprecated]'),
             action='store', type='string', dest='package', default=None)
         optparser.add_option('-P', '--pid',
-            help=_('Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information. (Implied if pid is given as only argument.)'),
+            help=_('Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information. (Implied if pid is given as only argument.) [deprecated]'),
             action='store', type='int', dest='pid', default=None)
         optparser.add_option('-c', '--crash-file',
             help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir,

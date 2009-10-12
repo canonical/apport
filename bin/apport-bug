@@ -40,7 +40,13 @@ find_programs() {
 
 find_programs
 
-if [ "$#" -gt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+if [ "$1" = "-p" ] || [ "$1" = "--package" ]; then
+    echo "Usage: ubuntu-bug <package>\nThe option -p, --package <package> is deprecated, please do not use it."
+    exit 1
+elif [ "$1" = "-P" ] || [ "$1" = "--pid" ]; then
+    echo "Usage: ubuntu-bug <pid>\nThe option -P, --pid <pid> is deprecated, please do not use it."
+    exit 1
+elif [ "$#" -gt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: $0 <pid>|<symptom name>|<package name>|<program path>|<.crash file>" >&2
     exit 1
 fi
