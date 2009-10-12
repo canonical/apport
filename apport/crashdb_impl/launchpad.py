@@ -49,10 +49,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         default_credentials_path (~/.cache/apport/launchpad.credentials).
 
         Recognized options are:
-        - distro: Name of the distribution in Launchpad (mandatory)
+        - distro: Name of the distribution in Launchpad
+        - project: Name of the project in Launchpad
+        (Note that exactly one of "distro" or "project" must be given.)
         - staging: If set, this uses staging instead of production (optional).
           This can be overriden or set by $APPORT_STAGING environment.
-        - cache_dir: Path a permanent cache directory; by default it uses a
+        - cache_dir: Path to a permanent cache directory; by default it uses a
           temporary one. (optional). This can be overridden or set by
           $APPORT_LAUNCHPAD_CACHE environment.
         '''

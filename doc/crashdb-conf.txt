@@ -71,3 +71,27 @@ databases = {
     }
 }
 +-----------------------
+
+Crash database implementations
+==============================
+
+ * "launchpad" uses bug reports against https://launchpad.net, either projects
+   or distribution packages.
+
+   Options:
+   - distro: Name of the distribution in Launchpad
+   - project: Name of the project in Launchpad
+   (Note that exactly one of "distro" or "project" must be given.)
+   - staging: If set, this uses staging instead of production (optional).
+     This can be overriden or set by $APPORT_STAGING environment.
+   - cache_dir: Path to a permanent cache directory; by default it uses a
+     temporary one. (optional). This can be overridden or set by
+     $APPORT_LAUNCHPAD_CACHE environment.
+
+
+ * "memory" is a simple implementation of crash database interface which keeps
+   everything in RAM. This is mainly useful for testing and debugging.
+
+   The only supported option is "dummy_data"; if set to a non-False value, it
+   will populate the database with some example reports.
+
