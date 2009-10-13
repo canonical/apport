@@ -106,7 +106,7 @@ def attach_dmesg(report):
     '''Attach information from the kernel ring buffer (dmesg).'''
 
     report['BootDmesg'] = open('/var/log/dmesg').read()
-    report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 /var/log/dmesg -'])
+    report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
 
 def attach_hardware(report):
     '''Attach a standard set of hardware-related data to the report, including:
