@@ -8,6 +8,7 @@ Changes:
    "thirdparty" configuration file option. This has never been documented, and
    conceptually does not work. There is a proper mechanism for this in place
    now, e. g. launchpad.py's "project" option.
+ - hookutils.py: fix error codes from "comm", thanks to Brian Murray.
 
 1.9.2 (2009-10-02)
 ------------------
