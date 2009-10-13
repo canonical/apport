@@ -509,7 +509,7 @@ After the problem report has been sent, please fill out the form in the automati
               <object class="GtkButton" id="button4">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
                 <property name="use_stock">True</property>
               </object>
@@ -523,7 +523,7 @@ After the problem report has been sent, please fill out the form in the automati
               <object class="GtkButton" id="button6">
                 <property name="label" translatable="yes">_Send Report</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">False</property>
