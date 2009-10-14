@@ -40,8 +40,10 @@ find_programs() {
 
 # keep backwards compatibility with old documentation which says to use
 # ubuntu-bug -p packagename
-if [ $# = 2 ] && [ "$1" = '-p' ]; then
+if [ $# = 2 ] && [ "$1" = '-p' -o "$1" = '-P' ]; then
     shift
+    # Show warning about deprecated options.
+    echo "Warning: The options -p/-P are deprecated, please do not use them.  See $0 --help"
 fi
 
 find_programs
