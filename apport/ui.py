@@ -13,7 +13,7 @@ option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 the full text of the license.
 '''
 
-__version__ = '1.9.2'
+__version__ = '1.9.3'
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
@@ -76,13 +76,9 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None):
     if ('Package' not in report or \
           not apport.packaging.is_distro_package(report['Package'].split()[0])) \
           and 'CrashDB' not in report:
-        if 'APPORT_REPORT_THIRDPARTY' in os.environ or \
-            apport.fileutils.get_config('main', 'thirdparty', False, bool=True):
-            report['ThirdParty'] = 'True'
-        else:
-            #TRANS: %s is the name of the operating system
-            report['UnreportableReason'] = _('This is not a genuine %s package') % \
-                report['DistroRelease'].split()[0]
+        #TRANS: %s is the name of the operating system
+        report['UnreportableReason'] = _('This is not a genuine %s package') % \
+            report['DistroRelease'].split()[0]
 
     # check obsolete packages
     if report['ProblemType'] == 'Crash' and \

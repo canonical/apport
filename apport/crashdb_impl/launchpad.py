@@ -49,10 +49,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         default_credentials_path (~/.cache/apport/launchpad.credentials).
 
         Recognized options are:
-        - distro: Name of the distribution in Launchpad (mandatory)
+        - distro: Name of the distribution in Launchpad
+        - project: Name of the project in Launchpad
+        (Note that exactly one of "distro" or "project" must be given.)
         - staging: If set, this uses staging instead of production (optional).
           This can be overriden or set by $APPORT_STAGING environment.
-        - cache_dir: Path a permanent cache directory; by default it uses a
+        - cache_dir: Path to a permanent cache directory; by default it uses a
           temporary one. (optional). This can be overridden or set by
           $APPORT_LAUNCHPAD_CACHE environment.
         '''
@@ -67,6 +69,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bugpattern_baseurl, options)
 
         self.distro = options.get('distro')
+        if self.distro:
+            assert 'project' not in options, 'Must not set both "project" and "distro" option'
+        else:
+            assert 'project' in options, 'Need to have either "project" or "distro" option'
+
         self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
         self.options = options
         self.auth = auth
@@ -215,8 +222,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             hostname = 'launchpad.net'
 
         project = self.options.get('project')
-        if 'ThirdParty' in report:
-            project = report['SourcePackage']
         
         if not project:
             if report.has_key('SourcePackage'):

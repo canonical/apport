@@ -1,9 +1,18 @@
-apport (1.9.2-0ubuntu3) UNRELEASED; urgency=low
+apport (1.9.3-0ubuntu1) UNRELEASED; urgency=low
 
-  [ Brian Murray ]
-  * apport/hookutils.py: include upstream commit 1624 for "comm" error codes. (LP: #414194)
-
-  [ Martin Pitt ]
+  * New upstream bug fix release:
+    - hookutils.py: Fix error codes from "comm", thanks to Brian Murray.
+      (LP: #414194)
+    - general-hooks/generic.py: Catch xkbcomp error messages. (LP: #431807)
+    - launchpad.py: Assert that we have exactly one of "distro" or "project"
+      option.
+    - doc/crashdb-conf.txt: Improve documentation of crash database options.
+    - apport-gtk: Make Cancel/Send buttons focusable. Thanks to Marco
+      Rodrigues. (LP: #447780)
+    - Drop handling of the APPORT_REPORT_THIRDPARTY environment variable and
+      "thirdparty" configuration file option. This has never been documented,
+      and conceptually does not work. There is a proper mechanism for this in
+      place now, e. g. launchpad.py's "project" option.
   * bin/apport-bug: Show deprecation warning for -p/-P. (LP: #431942)
 
  -- Kees Cook <kees@ubuntu.com>  Tue, 13 Oct 2009 16:41:59 -0700

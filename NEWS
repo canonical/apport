@@ -1,6 +1,23 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.9.3 (2009-10-14)
+------------------
+Changes:
+ - Drop handling of the APPORT_REPORT_THIRDPARTY environment variable and
+   "thirdparty" configuration file option. This has never been documented, and
+   conceptually does not work. There is a proper mechanism for this in place
+   now, e. g. launchpad.py's "project" option.
+
+Bug fixes:
+ - hookutils.py: Fix error codes from "comm", thanks to Brian Murray.
+ - general-hooks/generic.py: Catch xkbcomp error messages. (LP: #431807)
+ - launchpad.py: Assert that we have exactly one of "distro" or "project"
+   option.
+ - doc/crashdb-conf.txt: Improve documentation of crash database options.
+ - apport-gtk: Make Cancel/Send buttons focusable. Thanks to Marco Rodrigues.
+   (LP: #447780)
+
 1.9.2 (2009-10-02)
 ------------------
 Improvements:
