@@ -38,9 +38,16 @@ find_programs() {
 # main
 #
 
+# Show warning about deprecated options.
+if [ "$1" = "-p" ] || [ "$1" = "--package" ]; then
+    echo "Usage: $0 <package>\nThe option -p, --package <package> is deprecated, please do not use it."
+elif [ "$1" = "-P" ] || [ "$1" = "--pid" ]; then
+    echo "Usage: $0 <pid>\nThe option -P, --pid <pid> is deprecated, please do not use it."
+fi
+
 # keep backwards compatibility with old documentation which says to use
 # ubuntu-bug -p packagename
-if [ $# = 2 ] && [ "$1" = '-p' ]; then
+if [ $# = 2 ] && ( [ "$1" = '-p' ] || [ "$1" = '-P' ]; ) then
     shift
 fi
 
