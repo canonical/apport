@@ -1,4 +1,4 @@
-apport (1.9.3-0ubuntu1) UNRELEASED; urgency=low
+apport (1.9.3-0ubuntu1) karmic; urgency=low
 
   * New upstream bug fix release:
     - hookutils.py: Fix error codes from "comm", thanks to Brian Murray.
@@ -15,7 +15,7 @@ apport (1.9.3-0ubuntu1) UNRELEASED; urgency=low
       place now, e. g. launchpad.py's "project" option.
   * bin/apport-bug: Show deprecation warning for -p/-P. (LP: #431942)
 
- -- Kees Cook <kees@ubuntu.com>  Tue, 13 Oct 2009 16:41:59 -0700
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 14 Oct 2009 23:28:24 +0200
 
 apport (1.9.2-0ubuntu2) karmic; urgency=low
 
