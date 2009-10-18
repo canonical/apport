@@ -1,3 +1,10 @@
+apport (1.9.3-0ubuntu3) UNRELEASED; urgency=low
+
+  * apport/crash_db/launchpad.py: Increase the number of files available 
+    for searching with bug patterns.
+
+ -- Brian Murray <brian@ubuntu.com>  Thu, 15 Oct 2009 16:21:33 -0700
+
 apport (1.9.3-0ubuntu2) karmic; urgency=low
 
   * debian/local/apport-collect: Instantiate Launchpad crash database with
