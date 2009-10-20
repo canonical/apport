@@ -941,7 +941,7 @@ class Report(ProblemReport):
         '''Return list of obsolete packages in Package and Dependencies.'''
 
         obsolete = []
-        for l in (self['Package'] + '\n' + self.get('Dependencies', '')).splitlines():
+        for l in (self.get('Package', '') + '\n' + self.get('Dependencies', '')).splitlines():
             if not l:
                 continue
             pkg, ver = l.split()[:2]
