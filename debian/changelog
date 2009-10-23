@@ -1,3 +1,12 @@
+apport (1.9.3-0ubuntu5) UNRELEASED; urgency=low
+
+  [ Marco Rodrigues ]
+  * etc/default/apport: Replace the old init.d force_start command by
+    the Upstart one.
+  * debian/apport.upstart: If $force_start=1 is given then run the job.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 23 Oct 2009 21:28:48 +0100
+
 apport (1.9.3-0ubuntu4) karmic; urgency=low
 
   * etc/default/apport: Disable Apport for final Karmic.

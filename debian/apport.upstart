@@ -12,7 +12,7 @@ env enabled=1
 
 pre-start script
     . /etc/default/apport
-    [ "$enabled" = "1" ]
+	[ "$enabled" = "1" ] || [ "$force_start" = "1" ]
 
     mkdir -p -m 1777 /var/crash
 

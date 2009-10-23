@@ -1,6 +1,6 @@
 # set this to 0 to disable apport, or to 1 to enable it
 # you can temporarily override this with
-# sudo force_start=1 /etc/init.d/apport start
+# sudo service apport start force_start=1
 enabled=0
 
 # set maximum core dump file size (default: 209715200 bytes == 200 MB)
