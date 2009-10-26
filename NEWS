@@ -5,6 +5,8 @@ detailled list of changes, please see ChangeLog.
 ------------------
 Bug fixes:
  - Fix crash when ExecutablePath isn't part of a package. (LP: #424965)
+ - hookutils.py, attach_hardware(): Anonymize disk labels. Thanks to Marco
+   Rodrigues. (LP: #394411)
 
 1.9.3 (2009-10-14)
 ------------------

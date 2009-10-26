@@ -96,6 +96,14 @@ def attach_hardware(report):
     report['Lsusb'] = command_output(['lsusb'])
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
+    # anonymize partition labels
+    report['UdevLog'] = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', report['UdevLog'])
+    report['UdevLog'] = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', report['UdevLog'])
+    report['UdevLog'] = re.sub('by-label/(.*)', 'by-label/<hidden>', report['UdevLog'])
+    report['UdevDb'] = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', report['UdevDb'])
+    report['UdevDb'] = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', report['UdevDb'])
+    report['UdevDb'] = re.sub('by-label/(.*)', 'by-label/<hidden>', report['UdevDb'])
+
     dmi_dir = '/sys/class/dmi/id'
     if os.path.isdir(dmi_dir):
         for f in os.listdir(dmi_dir):
