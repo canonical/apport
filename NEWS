@@ -11,6 +11,8 @@ Bug fixes:
    when being called as root). Thanks to Marco Rodrigues. (LP: #446299)
  - launchpad.py: If unset, set bug task source package also for interpreter
    crashes.
+ - apport-gtk: Give details window a minimize/maximize button, which were
+   missing in some window managers. Thanks to Marien Zwart. (LP: #447749)
 
 1.9.3 (2009-10-14)
 ------------------
