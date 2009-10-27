@@ -334,6 +334,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 '+source' not in str(bug.bug_tasks[0].target):
             bug.bug_tasks[0].transitionToTarget(target=
                     self.lp_distro.getSourcePackage(name=report['SourcePackage']))
+            bug = self.launchpad.bugs[id]
 
         # remove core dump if stack trace is usable
         if report.has_useful_stacktrace():
@@ -583,6 +584,15 @@ in a dependent package.' % master,
         '''Mark crash id as checked for being a duplicate.'''
 
         bug = self.launchpad.bugs[id]
+
+        # ensure it's assigned to the right package
+        if report.has_key('SourcePackage') and \
+                '+source' not in str(bug.bug_tasks[0].target):
+            print 'moving to source package task'
+            bug.bug_tasks[0].transitionToTarget(target=
+                    self.lp_distro.getSourcePackage(name=report['SourcePackage']))
+            bug = self.launchpad.bugs[id]
+
         if 'need-duplicate-check' in bug.tags:
             x = bug.tags[:] # LP#254901 workaround
             x.remove('need-duplicate-check')
@@ -712,6 +722,7 @@ if __name__ == '__main__':
             self.ref_report = apport.Report()
             self.ref_report.add_os_info()
             self.ref_report.add_user_info()
+            self.ref_report['SourcePackage'] = 'coreutils'
 
         def _file_segv_report(self):
             '''File a SEGV crash report.

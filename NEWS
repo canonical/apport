@@ -9,6 +9,8 @@ Bug fixes:
    Rodrigues. (LP: #394411)
  - hookutils.py, attach_wifi(): Anonymize encryption key (which appeared in hex
    when being called as root). Thanks to Marco Rodrigues. (LP: #446299)
+ - launchpad.py: If unset, set bug task source package also for interpreter
+   crashes.
 
 1.9.3 (2009-10-14)
 ------------------
