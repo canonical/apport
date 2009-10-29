@@ -13,6 +13,8 @@ Bug fixes:
    crashes.
  - apport-gtk: Give details window a minimize/maximize button, which were
    missing in some window managers. Thanks to Marien Zwart. (LP: #447749)
+ - apport-kde: Properly terminate program after closing the last dialog.
+   (LP: #458662)
 
 1.9.3 (2009-10-14)
 ------------------
