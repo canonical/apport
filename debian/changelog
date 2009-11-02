@@ -4,6 +4,8 @@ apport (1.9.3-0ubuntu5) UNRELEASED; urgency=low
   * etc/default/apport: Replace the old init.d force_start command by
     the Upstart one.
   * debian/apport.upstart: If $force_start=1 is given then run the job.
+  * debian/local/apport-collect: Don't collect information if bug is a
+    duplicate. (LP: #471429)
 
   [ Martin Pitt ]
   * debian/control: Update Vcs-Bzr: for lucid branch.
