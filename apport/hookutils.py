@@ -148,6 +148,7 @@ def attach_alsa(report):
     attach_file_if_exists(report, os.path.expanduser('~/.asoundrc.asoundconf'),
                           'UserAsoundrcAsoundconf')
     attach_file_if_exists(report, '/etc/asound.conf')
+    attach_file_if_exists(report, '/proc/asound/version', 'AlsaVersion')
 
     report['AlsaDevices'] = command_output(['ls','-l','/dev/snd/'])
     report['AplayDevices'] = command_output(['aplay','-l'])
