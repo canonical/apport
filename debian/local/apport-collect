@@ -108,6 +108,10 @@ except KeyError:
     print 'The bug number %s does not exist in Launchpad.' % bug_number
     sys.exit(1)
 
+if bug.duplicate_of:
+    print 'Duplicate of bug http://launchpad.net/bugs/%d. No information collected.' % crashdb.duplicate_of(bug_number)
+    sys.exit(1)
+
 if bug.owner.name != crashdb.launchpad.me.name:
     print 'You are not the reporter of bug %s.' % bug_number
     while True:
