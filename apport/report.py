@@ -2118,7 +2118,7 @@ baz()
         '''obsolete_packages().'''
 
         report = Report()
-        self.assertRaises(KeyError, report.obsolete_packages)
+        self.assertEqual(report.obsolete_packages(), [])
 
         # should work without Dependencies
         report['Package'] = 'bash 0'
