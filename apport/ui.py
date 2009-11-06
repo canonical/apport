@@ -2197,15 +2197,15 @@ def run(report, ui):
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None)
             self.assert_('kind of problem' in self.ui.msg_text)
-            self.assertEqual(self.ui.msg_choices, 
-                    ['bar', 'foo does not work', 'Other problem'])
+            self.assertEqual(set(self.ui.msg_choices), 
+                    set(['bar', 'foo does not work', 'Other problem']))
 
             # cancelled
             self.assertEqual(self.ui.ic_progress_pulses, 0)
             self.assertEqual(self.ui.report, None)
 
             # now, choose foo -> bash report
-            self.ui.question_choice_response = [1]
+            self.ui.question_choice_response = [self.ui.msg_choices.index('foo does not work')]
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None)
             self.assert_(self.ui.ic_progress_pulses > 0)
