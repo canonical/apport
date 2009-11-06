@@ -16,6 +16,8 @@ Bug fixes:
  - apport-kde: Properly terminate program after closing the last dialog.
    (LP: #458662)
  - hookutils.py, attach_alsa(): Attach /proc/asound/version. (LP: #467233)
+ - general-hooks/generic.py: Only collect ~/.xsession-errors bits when we have
+   an ExecutablePath linked to libgtk.
 
 1.9.3 (2009-10-14)
 ------------------

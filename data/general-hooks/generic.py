@@ -35,15 +35,17 @@ def add_info(report):
 free some space.' % (mounts[mount], free_mb)
 
     # important glib errors/assertions (which should not have private data)
-    xsession_errors = ''
     xsession_errors_path = os.path.join(home, '.xsession-errors')
-    if os.path.exists(xsession_errors_path):
-        filter = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)')
-        for line in open(xsession_errors_path):
-            if filter.match(line):
-                xsession_errors += line
-    if xsession_errors:
-        report['XsessionErrors'] = xsession_errors
+    if os.path.exists(xsession_errors_path) and 'ExecutablePath' in report:
+        libs = apport.hookutils.command_output(['ldd', report['ExecutablePath']])
+        if 'libgtk' in libs and 'libX11' in libs:
+            xsession_errors = ''
+            filter = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)')
+            for line in open(xsession_errors_path):
+                if filter.match(line):
+                    xsession_errors += line
+            if xsession_errors:
+                report['XsessionErrors'] = xsession_errors
 
 if __name__ == '__main__':
     r = {}
