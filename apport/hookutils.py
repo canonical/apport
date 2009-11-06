@@ -135,6 +135,14 @@ def attach_hardware(report):
     report['Lsusb'] = command_output(['lsusb'])
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
+    # anonymize partition labels
+    report['UdevLog'] = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', report['UdevLog'])
+    report['UdevLog'] = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', report['UdevLog'])
+    report['UdevLog'] = re.sub('by-label/(.*)', 'by-label/<hidden>', report['UdevLog'])
+    report['UdevDb'] = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', report['UdevDb'])
+    report['UdevDb'] = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', report['UdevDb'])
+    report['UdevDb'] = re.sub('by-label/(.*)', 'by-label/<hidden>', report['UdevDb'])
+
     dmi_dir = '/sys/class/dmi/id'
     if os.path.isdir(dmi_dir):
         for f in os.listdir(dmi_dir):
@@ -179,6 +187,7 @@ def attach_alsa(report):
     attach_file_if_exists(report, os.path.expanduser('~/.asoundrc.asoundconf'),
                           'UserAsoundrcAsoundconf')
     attach_file_if_exists(report, '/etc/asound.conf')
+    attach_file_if_exists(report, '/proc/asound/version', 'AlsaVersion')
 
     report['AlsaDevices'] = command_output(['ls','-l','/dev/snd/'])
     report['AplayDevices'] = command_output(['aplay','-l'])
@@ -409,7 +418,7 @@ def attach_wifi(report):
     '''Attach wireless (WiFi) network information to report.'''
 
     report['WifiSyslog'] = recent_syslog(re.compile(r'(NetworkManager|modem-manager|dhclient|kernel):'))
-    report['IwConfig'] = command_output(['iwconfig'])
+    report['IwConfig'] = re.sub('Encryption key:(.*)', 'Encryption key: <hidden>', command_output(['iwconfig']))
     report['RfKill'] = command_output(['rfkill', 'list'])
     report['CRDA'] = command_output(['iw', 'reg', 'get'])
 
