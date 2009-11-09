@@ -1,3 +1,11 @@
+apport (1.9.4-0ubuntu2) UNRELEASED; urgency=low
+
+  [ Marco Rodrigues ]
+  * debian/control: Fix lintian warnings. Move python-distutils-extra
+    to b-d-i and add misc:Depends to apport-qt.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 06 Nov 2009 20:24:31 +0100
+
 apport (1.9.4-0ubuntu1) lucid; urgency=low
 
   [ Marco Rodrigues ]

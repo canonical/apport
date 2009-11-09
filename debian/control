@@ -3,9 +3,9 @@ Section: utils
 Priority: optional
 Build-Depends: cdbs (>= 0.4.43), 
  debhelper (>= 7.3.15ubuntu2),
- python-distutils-extra (>= 2.2~),
  python-central (>= 0.5.6), 
- python-dev (>= 2.4), 
+ python-dev (>= 2.4)
+Build-Depends-Indep: python-distutils-extra (>= 2.2~),
  python-apt,
  intltool
 Maintainer: Martin Pitt <martin.pitt@ubuntu.com>
@@ -119,6 +119,6 @@ Description: KDE frontend for the apport crash report system
 Package: apport-qt
 Section: oldlibs
 Architecture: all
-Depends: apport-kde
+Depends: ${misc:Depends}, apport-kde
 Description: transitional package to apport-kde
  You can savely remove this package after the upgrade.
