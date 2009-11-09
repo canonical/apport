@@ -270,10 +270,11 @@ if options.gdb:
         '--ex', 'core-file ' + core.name])
     core.close()
 else:
-    # regenerate gdb info
-    report.add_gdb_info()
+    if os.path.exists(report.get('InterpreterPath', report['ExecutablePath'])):
+        # regenerate gdb info
+        report.add_gdb_info()
+        gen_source_stacktrace(report)
     report.add_kernel_crash_info()
-    gen_source_stacktrace(report)
 
 modified = False
 
