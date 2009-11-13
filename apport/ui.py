@@ -803,14 +803,21 @@ free memory to automatically analyze the problem and send a report to the develo
 
         # ensure that the crashed program is still installed:
         if self.report['ProblemType'] == 'Crash':
-            exe_path = self.report.get('InterpreterPath', self.report.get('ExecutablePath'))
-            if not exe_path or not os.path.exists(exe_path):
+            exe_path = self.report.get('ExecutablePath', '')
+            if not os.path.exists(exe_path):
                 msg = _('This problem report applies to a program which is not installed any more.')
-                if self.report.has_key('ExecutablePath'):
+                if exe_path:
                     msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
                 self.report = None
                 self.ui_info_message(_('Invalid problem report'), msg)
                 return False
+
+            if 'InterpreterPath' in self.report:
+                if not os.path.exists(self.report['InterpreterPath']):
+                    msg = _('This problem report applies to a program which is not installed any more.')
+                    self.ui_info_message(_('Invalid problem report'), '%s (%s)'
+                            % (msg, self.report['InterpreterPath']))
+                    return False
 
         return True
 
