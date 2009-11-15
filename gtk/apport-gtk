@@ -40,6 +40,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.widgets.set_translation_domain(self.gettext_domain)
         self.widgets.add_from_file(os.path.join(os.path.dirname(sys.argv[0]),
             'apport-gtk.ui'))
+        assert self.widgets.connect_signals(self, None) is None
 
         # initialize tree model and view
         self.tree_model = gtk.TreeStore(gobject.TYPE_STRING)

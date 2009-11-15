@@ -8,6 +8,8 @@ Bug fixes:
  - hookutils.py, attach_alsa(): Attach /proc/cpuinfo too, for CPU flags.
  - Fix crash if InterpreterPath does not exist any more at the time of
    reporting. (LP: #428289)
+ - apport-gtk: Connect signals properly, to repair cancel/window close buttons.
+   (LP: #427814)
 
 1.9.4 (2009-11-06)
 ------------------
