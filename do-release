@@ -31,5 +31,3 @@ bzr export ../apport-${version}.tar.gz
 bzr uncommit --force
 bzr revert --no-backup
 rm ChangeLog
-
-gpg --armor --sign --detach-sig ../apport-$version.tar.gz
