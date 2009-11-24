@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.9.6 (UNRELEASED)
+------------------
+Improvements:
+ - Add pm-utils hook to record current operation, so that apportcheckresume can
+   check it. Before this was kept in Ubuntu's pm-utils package.
+
 1.9.5 (2009-11-20)
 ------------------
 Bug fixes:

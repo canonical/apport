@@ -41,5 +41,6 @@ DistUtilsExtra.auto.setup(name='apport',
                   ('share/apport', glob('kde/*.ui')), #TODO: use pykdeuic modules
                   ('share/apport/testsuite/', glob('test/*')),
                   ('share/doc/apport/', glob('doc/*.txt')),
+                  ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*'))
                   ],
 )
