@@ -66,6 +66,13 @@ Write modified report to given file instead of changing the original
 report.
 
 .TP
+.B \-R, \-\-rebuild\-package\-info
+(Re\-)generate Packages: and Dependenencies: fields before retracing. This is
+particularly useful if you want to retrace a .crash report before it was
+completed by running it through the UI data collection phase. However, this
+only works when you run this on the very same system where the crash happened.
+
+.TP
 .B \-v, \-\-verbose
 Report download/install progress when installing additional packages.
 
