@@ -47,6 +47,10 @@ free some space.' % (mounts[mount], free_mb)
             if xsession_errors:
                 report['XsessionErrors'] = xsession_errors
 
+    # using ecryptfs?
+    if os.path.exists(os.path.expanduser('~/.ecryptfs/wrapped-passphrase')):
+        report['EcryptfsInUse'] = 'Yes'
+
 if __name__ == '__main__':
     r = {}
     add_info(r)
