@@ -7,6 +7,10 @@ Improvements:
  - Add pm-utils hook to record current operation, so that apportcheckresume can
    check it. Before this was kept in Ubuntu's pm-utils package.
 
+Bug fixes:
+ - launchpad.py: Ensure that text attachments on initial bug filing are valid
+   UTF-8. (LP: #453203)
+
 1.9.5 (2009-11-20)
 ------------------
 Bug fixes:

@@ -736,6 +736,10 @@ if __name__ == '__main__':
             r.add_user_info()
             self.assertEqual(r.standard_title(), 'crash crashed with SIGSEGV in f()')
 
+            # add some binary gibberish which isn't UTF-8
+            r['ShortGibberish'] = ' "]\xb6"\n'
+            r['LongGibberish'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
+
             handle = self.crashdb.upload(r)
             self.assert_(handle)
             url = self.crashdb.get_comment_url(r, handle)
@@ -847,6 +851,7 @@ NameError: global name 'weird' is not defined'''
             # test various situations which caused crashes
             r['Stacktrace'] = '' # empty file
             r['ThreadStacktrace'] = '"]\xb6"\n' # not interpretable as UTF-8, LP #353805
+            r['StacktraceSource'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
             self.crashdb.update(segv_report, r, 'tests')
 
         def test_get_distro_release(self):

@@ -442,9 +442,13 @@ class ProblemReport(UserDict.IterableUserDict):
                 attachments.append(att)
             else:
                 # plain text value
-                if type(v) == type(u''):
-                    # convert unicode to UTF-8 str
-                    v = v.encode('UTF-8')
+
+                # ensure that byte arrays are valid UTF-8
+                if type(v) == type(''):
+                    v = v.decode('UTF-8', 'replace')
+                # convert unicode to UTF-8 str
+                assert type(v) == type(u'')
+                v = v.encode('UTF-8')
 
                 lines = len(v.splitlines())
                 if lines == 1:
