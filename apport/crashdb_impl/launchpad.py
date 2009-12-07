@@ -13,10 +13,9 @@ the full text of the license.
 import urllib, tempfile, shutil, os.path, re, gzip, sys, socket, ConfigParser
 from cStringIO import StringIO
 
-from launchpadlib.errors import HTTPError, CredentialsFileError
+from launchpadlib.errors import HTTPError
 from httplib2 import ServerNotFoundError
 from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
-from launchpadlib.credentials import Credentials
 
 import apport.crashdb
 import apport
@@ -100,26 +99,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             os.makedirs(auth_dir)
 
         try:
-            try:
-                # use existing credentials
-                credentials = Credentials()
-                credentials.load(open(self.auth))
-                self.__launchpad = Launchpad(credentials, launchpad_instance,
-                        self.__lpcache)
-            except (IOError, CredentialsFileError,
-                    ConfigParser.MissingSectionHeaderError, ConfigParser.NoOptionError):
-                # FIXME: launchpadlib doesn't catch ConfigParser exceptions into CredentialsFileError
-                # get credentials and save them
-                try:
-                    self.__launchpad = Launchpad.get_token_and_login('apport-collect',
-                            launchpad_instance, self.__lpcache)
-                except HTTPError, e:
-                    print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou have to allow "Change anything" privileges.' % str(e)
-                    sys.exit(1)
-                f = open(self.auth, 'w')
-                os.chmod(self.auth, 0600)
-                self.__launchpad.credentials.save(f)
-                f.close()
+            self.__launchpad = Launchpad.login_with('apport-collect',
+                    launchpad_instance, launchpadlib_dir=self.__lpcache,
+                    allow_access_levels=['WRITE_PRIVATE'],
+                    credentials_file = self.auth)
         except (socket.error, ServerNotFoundError), e:
             print >> sys.stderr, 'Error connecting to Launchpad: %s' % str(e)
             sys.exit(99) # transient error
