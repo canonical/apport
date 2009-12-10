@@ -6,6 +6,10 @@ detailled list of changes, please see ChangeLog.
 Improvements:
  - launchpad.py: Use new login_with() to clean up code, and specify allowed
    access levels (WRITE_PRIVATE is the only sensible one anyway). (LP: #410205)
+ - New hookutils functions:
+   xsession_errors (match lines from ~/.xsession-errors)
+   shared_libraries (determine which libraries a binary links with)
+   links_with_shared_library (test if a binary links with a particular library)
 
 1.9.6 (2009-12-01)
 ------------------
