@@ -411,6 +411,11 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def is_reporter(self, id):
+        '''Check whether the user is the reporter of given ID.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
     def can_update(self, id):
         '''Check whether the user is eligible to update a report.
 

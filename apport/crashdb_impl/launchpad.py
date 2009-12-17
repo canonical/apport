@@ -362,6 +362,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             result.append(match.group('source'))
         return result
 
+    def is_reporter(self, id):
+        '''Check whether the user is the reporter of given ID.'''
+
+        bug = self.launchpad.bugs[id]
+        return bug.owner.name == self.launchpad.me.name
+
     def can_update(self, id):
         '''Check whether the user is eligible to update a report.
 
@@ -370,7 +376,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         exact policy and checks should be done according to  the particular
         implementation.
         '''
-
         bug = self.launchpad.bugs[id]
         return (bug.owner.name == self.launchpad.me.name) \
                 and not bug.duplicate_of
@@ -881,6 +886,12 @@ NameError: global name 'weird' is not defined'''
 
             self.assertEqual(self.crashdb.get_affected_packages(segv_report),
                     [self.ref_report['SourcePackage']])
+
+        def test_is_reporter(self):
+            '''is_reporter()'''
+
+            self.assert_(self.crashdb.is_reporter(segv_report))
+            self.failIf(self.crashdb.is_reporter(1))
 
         def test_can_update(self):
             '''can_update()'''

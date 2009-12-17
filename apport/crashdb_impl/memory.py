@@ -71,6 +71,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return [self.reports[id]['report']['SourcePackage']]
 
+    def is_reporter(self, id):
+        '''Check whether the user is the reporter of given ID.'''
+
+        return True
+
     def can_update(self, id):
         '''Check whether the user is eligible to update a report.
 
@@ -79,7 +84,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         exact policy and checks should be done according to  the particular
         implementation.
         '''
-        return True
+        return self.is_reporter(id)
 
     def update(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
