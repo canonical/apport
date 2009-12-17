@@ -86,13 +86,38 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''
         return self.is_reporter(id)
 
+    def update(self, id, report, comment, change_description=False,
+            attachment_comment=None):
+        '''Update the given report ID with all data from report.
+
+        This creates a text comment with the "short" data (see
+        ProblemReport.write_mime()), and creates attachments for all the
+        bulk/binary data. 
+        
+        If change_description is True, and the crash db implementation supports
+        it, the short data will be put into the description instead (like in a
+        new bug).
+
+        comment will be added to the "short" data. If attachment_comment is
+        given, it will be added to the attachment uploads.
+        '''
+        r = self.reports[id]
+        r['report'].update(report)
+        r['comment'] = comment
+
     def update_traces(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
         (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
         desired) and an optional comment.'''
 
-        self.reports[id]['report'] = report
-        self.reports[id]['comment'] = comment
+        r = self.reports[id]
+        fields = ['Stacktrace', 'ThreadStacktrace', 'StacktraceSource',
+             'StacktraceTop']
+
+        for f in fields:
+            if f in report:
+                r['report'][f] = report[f]
+        r['comment'] = comment
 
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
@@ -332,15 +357,35 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.get_affected_packages(2), ['bar'])
         self.assertEqual(self.crashes.get_affected_packages(3), ['pygoo'])
 
+    def test_update(self):
+        '''update()'''
+
+        r = apport.Report()
+        r['Package'] = 'new'
+        r['FooBar'] = 'Bogus'
+        r['StacktraceTop'] = 'Fresh!'
+
+        self.crashes.update(1, r, 'muhaha')
+        self.assertEqual(self.crashes.reports[1]['comment'], 'muhaha')
+        self.assertEqual(self.crashes.download(1)['Package'], 'new')
+        self.assertEqual(self.crashes.download(1)['StacktraceTop'], 'Fresh!')
+        self.assertEqual(self.crashes.download(1)['FooBar'], 'Bogus')
+
+        self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
+
     def test_update_traces(self):
         '''update_traces()'''
 
         r = apport.Report()
         r['Package'] = 'new'
+        r['FooBar'] = 'Bogus'
+        r['StacktraceTop'] = 'Fresh!'
 
         self.crashes.update_traces(1, r, 'muhaha')
-        self.assertEqual(self.crashes.download(1)['Package'], 'new')
         self.assertEqual(self.crashes.reports[1]['comment'], 'muhaha')
+        self.assertEqual(self.crashes.download(1)['Package'], 'libfoo1 1.2-4')
+        self.assertEqual(self.crashes.download(1)['StacktraceTop'], 'Fresh!')
+        self.failIf(self.crashes.download(1).has_key('FooBar'))
 
         self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
 

@@ -1,3 +1,4 @@
+# vim: set fileencoding=UTF-8 :
 '''Crash database implementation for Launchpad.
 
 Copyright (C) 2007, 2009 Canonical Ltd.
@@ -11,6 +12,7 @@ the full text of the license.
 '''
 
 import urllib, tempfile, shutil, os.path, re, gzip, sys, socket, ConfigParser
+import email
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
@@ -25,6 +27,7 @@ default_credentials_path = os.path.expanduser('~/.cache/apport/launchpad.credent
 APPORT_FILES = ('Dependencies.txt', 'CoreDump.gz', 'ProcMaps.txt',
         'Traceback.txt', 'Disassembly.txt', 'Registers.txt', 'Stacktrace.txt',
         'ThreadStacktrace.txt', 'DpkgTerminalLog.txt', 'DpkgTerminalLog.gz')
+
 def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
@@ -275,6 +278,60 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             else:
                 raise Exception, 'Unknown attachment type: ' + attachment.filename
         return report
+
+    def update(self, id, report, comment, change_description=False,
+            attachment_comment=None):
+        '''Update the given report ID with all data from report.
+
+        This creates a text comment with the "short" data (see
+        ProblemReport.write_mime()), and creates attachments for all the
+        bulk/binary data. 
+        
+        If change_description is True, and the crash db implementation supports
+        it, the short data will be put into the description instead (like in a
+        new bug).
+
+        comment will be added to the "short" data. If attachment_comment is
+        given, it will be added to the attachment uploads.
+        '''
+        bug = self.launchpad.bugs[id]
+
+        # we want to reuse the knowledge of write_mime() with all its different input
+        # types and output formatting; however, we have to dissect the mime ourselves,
+        # since we can't just upload it as a blob
+        mime = tempfile.TemporaryFile()
+        report.write_mime(mime)
+        mime.flush()
+        mime.seek(0)
+        msg = email.message_from_file(mime)
+        msg_iter = msg.walk()
+
+        # first part is the multipart container
+        part = msg_iter.next()
+        assert part.is_multipart()
+
+        # second part should be an inline text/plain attachments with all short
+        # fields
+        part = msg_iter.next()
+        assert not part.is_multipart()
+        assert part.get_content_type() == 'text/plain'
+        
+        # short text data
+        if change_description:
+            bug.description = bug.description + '\n--- \n' + part.get_payload(decode=True).decode('UTF-8', 'replace')
+            bug.lp_save()
+        else:
+            bug.newMessage(content=part.get_payload(decode=True), 
+                subject=comment)
+
+        # other parts are the attachments:
+        for part in msg_iter:
+            # print '   attachment: %s...' % part.get_filename()
+            bug.addAttachment(comment=attachment_comment or '',
+                description=part.get_filename(),
+                content_type=None,
+                data=part.get_payload(decode=True),
+                filename=part.get_filename(), is_patch=False)
 
     def update_traces(self, id, report, comment = ''):
         '''Update the given report ID for retracing results.
@@ -848,6 +905,7 @@ NameError: global name 'weird' is not defined'''
             r['StacktraceTop'] = '?? ()'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
+            r['FooBar'] = 'bogus'
             self.crashdb.update_traces(segv_report, r, 'I can has a better retrace?')
             r = self.crashdb.download(segv_report)
             self.assert_('CoreDump' in r)
@@ -856,6 +914,7 @@ NameError: global name 'weird' is not defined'''
             self.assert_('Registers' in r)
             self.assert_('Stacktrace' in r) # TODO: ascertain that it's the updated one
             self.assert_('ThreadStacktrace' in r)
+            self.failIf('FooBar' in r)
 
             # updating with an useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
@@ -869,12 +928,69 @@ NameError: global name 'weird' is not defined'''
             self.assert_('Registers' in r)
             self.assert_('Stacktrace' in r)
             self.assert_('ThreadStacktrace' in r)
+            self.failIf('FooBar' in r)
 
             # test various situations which caused crashes
             r['Stacktrace'] = '' # empty file
             r['ThreadStacktrace'] = '"]\xb6"\n' # not interpretable as UTF-8, LP #353805
             r['StacktraceSource'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
             self.crashdb.update_traces(segv_report, r, 'tests')
+
+        def test_update_description(self):
+            '''update() with changing description'''
+
+            id = self._fill_bug_form(
+                'https://bugs.staging.launchpad.net/%s/+source/bash/+filebug?'
+                    'field.title=testbug&field.actions.search=' % self.crashdb.distro)
+            self.assert_(id > 0)
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+
+            r = apport.Report('Bug')
+
+            r['OneLiner'] = 'bogus→'
+            r['StacktraceTop'] = 'f()\ng()\nh(1)'
+            r['ShortGoo'] = 'lineone\nlinetwo'
+            r['DpkgTerminalLog'] = 'one\ntwo\nthree\nfour\nfive\nsix'
+            r['VarLogDistupgradeBinGoo'] = '\x01' * 1024
+
+            self.crashdb.update(id, r, 'NotMe', change_description=True)
+
+            r = self.crashdb.download(id)
+
+            self.assertEqual(r['OneLiner'], 'bogus→')
+            self.assertEqual(r['ShortGoo'], 'lineone\nlinetwo')
+            self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
+            self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
+
+        def test_update_comment(self):
+            '''update() with appending comment'''
+
+            # we need to fake an apport description separator here, since we
+            # want to be lazy and use download() for checking the result
+            id = self._fill_bug_form(
+                'https://bugs.staging.launchpad.net/%s/+source/bash/+filebug?'
+                    'field.title=testbug&field.actions.search=' %
+                    self.crashdb.distro, comment='Pr0blem\n\n--- \nProblemType: Bug')
+            self.assert_(id > 0)
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+
+            r = apport.Report('Bug')
+
+            r['OneLiner'] = 'bogus→'
+            r['StacktraceTop'] = 'f()\ng()\nh(1)'
+            r['ShortGoo'] = 'lineone\nlinetwo'
+            r['DpkgTerminalLog'] = 'one\ntwo\nthree\nfour\nfive\nsix'
+            r['VarLogDistupgradeBinGoo'] = '\x01' * 1024
+
+            self.crashdb.update(id, r, 'meow', change_description=False)
+
+            r = self.crashdb.download(id)
+
+            self.failIf('OneLiner' in r)
+            self.failIf('ShortGoo' in r)
+            self.assertEqual(r['ProblemType'], 'Bug')
+            self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
+            self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
 
         def test_get_distro_release(self):
             '''get_distro_release()'''
@@ -997,7 +1113,7 @@ NameError: global name 'weird' is not defined'''
                     None)
 
         def test_update_traces_invalid(self):
-            '''updating a invalid crash
+            '''updating an invalid crash
             
             This simulates a race condition where a crash being processed gets
             invalidated by marking it as a duplicate.
@@ -1042,7 +1158,7 @@ NameError: global name 'weird' is not defined'''
             return CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
                     {'distro': 'ubuntu', 'staging': True})
 
-        def _fill_bug_form(self, url):
+        def _fill_bug_form(self, url, comment=None):
             '''Fill form for a distro bug and commit the bug.
 
             Return the report ID.
@@ -1053,7 +1169,7 @@ NameError: global name 'weird' is not defined'''
 
             re_pkg = re.compile('\+source/([\w]+)/')
             re_title = re.compile('<input.*id="field.title".*value="([^"]+)"')
-            re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
+            re_tags = re.compile('<input.*id="field.tags".*value="([^"]*)"')
 
             # parse default field values from reporting page
             res = opener.open(url)
@@ -1076,7 +1192,7 @@ NameError: global name 'weird' is not defined'''
                 'field.packagename': m_pkg.group(1),
                 'field.title': m_title.group(1),
                 'field.tags': m_tags.group(1),
-                'field.comment': 'ZOMG!',
+                'field.comment': comment or 'ZOMG!',
                 'field.actions.submit_bug': '1',
             }
 

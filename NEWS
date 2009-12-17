@@ -12,6 +12,9 @@ Improvements:
    links_with_shared_library (test if a binary links with a particular library)
  - New CrashDatabase API: get_affected_packages(), can_update(), is_reporter()
  - Rename CrashDatabase.update() to update_traces().
+ - Add CrashDatabase.update() for adding all new fields of a report. This is
+   primarily useful for collecting local standard and package hook data for an
+   already existing bug report which was not filed through Apport.
 
 1.9.6 (2009-12-01)
 ------------------

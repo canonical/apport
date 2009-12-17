@@ -346,6 +346,23 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def update(self, id, report, comment, change_description=False,
+            attachment_comment=None):
+        '''Update the given report ID with all data from report.
+
+        This creates a text comment with the "short" data (see
+        ProblemReport.write_mime()), and creates attachments for all the
+        bulk/binary data. 
+        
+        If change_description is True, and the crash db implementation supports
+        it, the short data will be put into the description instead (like in a
+        new bug).
+
+        comment will be added to the "short" data. If attachment_comment is
+        given, it will be added to the attachment uploads.
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
     def update_traces(self, id, report, comment):
         '''Update the given report ID for retracing results.
         
