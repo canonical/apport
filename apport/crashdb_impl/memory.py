@@ -86,7 +86,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''
         return self.is_reporter(id)
 
-    def update(self, id, report, comment = ''):
+    def update_traces(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
         (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
         desired) and an optional comment.'''
@@ -332,17 +332,17 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.get_affected_packages(2), ['bar'])
         self.assertEqual(self.crashes.get_affected_packages(3), ['pygoo'])
 
-    def test_update(self):
-        '''update()'''
+    def test_update_traces(self):
+        '''update_traces()'''
 
         r = apport.Report()
         r['Package'] = 'new'
 
-        self.crashes.update(1, r, 'muhaha')
+        self.crashes.update_traces(1, r, 'muhaha')
         self.assertEqual(self.crashes.download(1)['Package'], 'new')
         self.assertEqual(self.crashes.reports[1]['comment'], 'muhaha')
 
-        self.assertRaises(IndexError, self.crashes.update, 5, None)
+        self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
 
     def test_get_distro_release(self):
         '''get_distro_release()'''

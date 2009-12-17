@@ -319,7 +319,7 @@ if modified:
 
             if update_bug:
                 if 'Stacktrace' in report:
-                    crashdb.update(crashid, report)
+                    crashdb.update_traces(crashid, report)
                     print 'New attachments uploaded to crash database #' + crashid
                 else:
                     assert outdated_msg

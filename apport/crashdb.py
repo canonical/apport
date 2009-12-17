@@ -346,7 +346,7 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def update(self, id, report, comment):
+    def update_traces(self, id, report, comment):
         '''Update the given report ID for retracing results.
         
         This updates Stacktrace, ThreadStacktrace, StacktraceTop, and

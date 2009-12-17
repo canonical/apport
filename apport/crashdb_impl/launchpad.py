@@ -276,11 +276,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 raise Exception, 'Unknown attachment type: ' + attachment.filename
         return report
 
-    def update(self, id, report, comment = ''):
-        '''Update the given report ID with the retraced results from the report
-        (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
-        desired) and an optional comment.'''
-
+    def update_traces(self, id, report, comment = ''):
+        '''Update the given report ID for retracing results.
+        
+        This updates Stacktrace, ThreadStacktrace, StacktraceTop, and
+        Disassembly. You can also supply an additional comment.
+        '''
         bug = self.launchpad.bugs[id]
 
         comment += '\n\nStacktraceTop:' + report['StacktraceTop'].decode('utf-8',
@@ -832,8 +833,8 @@ NameError: global name 'weird' is not defined'''
             self.assert_('Disassembly' in r)
             self.assert_('Registers' in r)
 
-        def test_3_update(self):
-            '''update()'''
+        def test_3_update_traces(self):
+            '''update_traces()'''
 
             r = self.crashdb.download(segv_report)
             self.assert_('CoreDump' in r)
@@ -847,7 +848,7 @@ NameError: global name 'weird' is not defined'''
             r['StacktraceTop'] = '?? ()'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
-            self.crashdb.update(segv_report, r, 'I can has a better retrace?')
+            self.crashdb.update_traces(segv_report, r, 'I can has a better retrace?')
             r = self.crashdb.download(segv_report)
             self.assert_('CoreDump' in r)
             self.assert_('Dependencies' in r)
@@ -860,7 +861,7 @@ NameError: global name 'weird' is not defined'''
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
-            self.crashdb.update(segv_report, r, 'good retrace!')
+            self.crashdb.update_traces(segv_report, r, 'good retrace!')
             r = self.crashdb.download(segv_report)
             self.failIf('CoreDump' in r)
             self.assert_('Dependencies' in r)
@@ -873,7 +874,7 @@ NameError: global name 'weird' is not defined'''
             r['Stacktrace'] = '' # empty file
             r['ThreadStacktrace'] = '"]\xb6"\n' # not interpretable as UTF-8, LP #353805
             r['StacktraceSource'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
-            self.crashdb.update(segv_report, r, 'tests')
+            self.crashdb.update_traces(segv_report, r, 'tests')
 
         def test_get_distro_release(self):
             '''get_distro_release()'''
@@ -995,7 +996,7 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(self.crashdb.get_fixed_version(python_report),
                     None)
 
-        def test_update_invalid(self):
+        def test_update_traces_invalid(self):
             '''updating a invalid crash
             
             This simulates a race condition where a crash being processed gets
@@ -1012,7 +1013,7 @@ NameError: global name 'weird' is not defined'''
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
-            self.crashdb.update(id, r, 'good retrace!')
+            self.crashdb.update_traces(id, r, 'good retrace!')
 
             r = self.crashdb.download(id)
             self.failIf('CoreDump' in r)
@@ -1202,7 +1203,7 @@ NameError: global name 'weird' is not defined'''
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
-            crashdb.update(id, r, 'good retrace!')
+            crashdb.update_traces(id, r, 'good retrace!')
             r = crashdb.download(id)
 
             # test fixed version
