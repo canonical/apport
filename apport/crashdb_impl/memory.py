@@ -71,6 +71,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return [self.reports[id]['report']['SourcePackage']]
 
+    def can_update(self, id):
+        '''Check whether the user is eligible to update a report.
+
+        A user should add additional information to an existing ID if (s)he is
+        the reporter or subscribed, the bug is open, not a duplicate, etc. The
+        exact policy and checks should be done according to  the particular
+        implementation.
+        '''
+        return True
+
     def update(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
         (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if

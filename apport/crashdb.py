@@ -411,6 +411,16 @@ class CrashDatabase:
 
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def can_update(self, id):
+        '''Check whether the user is eligible to update a report.
+
+        A user should add additional information to an existing ID if (s)he is
+        the reporter or subscribed, the bug is open, not a duplicate, etc. The
+        exact policy and checks should be done according to  the particular
+        implementation.
+        '''
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
     def duplicate_of(self, id):
         '''Return master ID for a duplicate bug.
 
