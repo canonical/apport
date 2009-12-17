@@ -343,6 +343,25 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return m.group(1)
         raise ValueError, 'URL does not contain DistroRelease: field'
 
+    def get_affected_packages(self, id):
+        '''Return list of affected source packages for given ID.'''
+
+        bug_target_re = re.compile(
+                    r'/%s/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$' %
+                    self.distro)
+
+        bug = self.launchpad.bugs[id]
+        result = []
+
+        for task in bug.bug_tasks:
+            match = bug_target_re.search(task.target.self_link)
+            if not match:
+                continue
+            if task.status in ('Invalid', "Won't Fix", 'Fix Released'):
+                continue
+            result.append(match.group('source'))
+        return result
+
     def get_unretraced(self):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
@@ -842,6 +861,12 @@ NameError: global name 'weird' is not defined'''
 
             self.assertEqual(self.crashdb.get_distro_release(segv_report),
                     self.ref_report['DistroRelease'])
+
+        def test_get_affected_packages(self):
+            '''get_affected_packages()'''
+
+            self.assertEqual(self.crashdb.get_affected_packages(segv_report),
+                    [self.ref_report['SourcePackage']])
 
         def test_duplicates(self):
             '''duplicate handling'''

@@ -66,6 +66,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         return self.reports[id]['report']
 
+    def get_affected_packages(self, id):
+        '''Return list of affected source packages for given ID.'''
+
+        return [self.reports[id]['report']['SourcePackage']]
+
     def update(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
         (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
@@ -305,6 +310,12 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.reports[0]['dup_of'], None)
 
         self.assertRaises(IndexError, self.crashes.download, 5)
+
+    def test_get_affected_packages(self):
+        self.assertEqual(self.crashes.get_affected_packages(0), ['foo'])
+        self.assertEqual(self.crashes.get_affected_packages(1), ['foo'])
+        self.assertEqual(self.crashes.get_affected_packages(2), ['bar'])
+        self.assertEqual(self.crashes.get_affected_packages(3), ['pygoo'])
 
     def test_update(self):
         '''update()'''

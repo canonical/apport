@@ -406,6 +406,11 @@ class CrashDatabase:
         '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
+    def get_affected_packages(self, id):
+        '''Return list of affected source packages for given ID.'''
+
+        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+
     def duplicate_of(self, id):
         '''Return master ID for a duplicate bug.
 
