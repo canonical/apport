@@ -16,6 +16,9 @@ Improvements:
    primarily useful for collecting local standard and package hook data for an
    already existing bug report which was not filed through Apport.
 
+Bug fixes:
+ - Ignore SIGXCPU and SIGXFSZ; thanks to Kees Cook. (LP: #498074)
+
 1.9.6 (2009-12-01)
 ------------------
 Improvements:
