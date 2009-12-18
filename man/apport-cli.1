@@ -18,6 +18,9 @@ apport\-cli, apport\-gtk, apport\-kde \- Apport user interfaces for reporting pr
 .B \-P
 .I pid
 
+.B apport\-cli \-u
+.I report-number
+
 Same options/arguments for
 .B apport\-gtk
 and
@@ -100,6 +103,13 @@ connection and reporting it from there. Files must end in
 .B .crash
 or
 .B .apport\fR.
+
+.TP
+.B \-u \fIreport-number\fR, \fB\-\-update\-report \fIreport-number
+Run apport information collection on an already existing problem report. The
+affected package is taken from the report by default, but you can explicitly
+specify one with \-\-package to collect information for a different package
+(this is useful if the report is assigned to the wrong package).
 
 .SH ENVIRONMENT
 

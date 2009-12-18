@@ -1,8 +1,15 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.9.7 (UNRELEASED)
-------------------
+1.10 (UNRELEASED)
+-----------------
+New features:
+ - Add a mode for updating an existing problem report to ui.py (-u/--update).
+   This is similar to the Ubuntu specific "apport-collect" tool, but
+   implemented the right way now: In particular, this has access to the UI and
+   thus can use interactive hooks (LP: #385811) and show you what is being sent
+   for confirmation/cancelling (LP: #371827)
+
 Improvements:
  - launchpad.py: Use new login_with() to clean up code, and specify allowed
    access levels (WRITE_PRIVATE is the only sensible one anyway). (LP: #410205)

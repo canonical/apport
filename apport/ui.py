@@ -26,7 +26,8 @@ from apport import unicode_gettext as _
 
 symptom_script_dir = '/usr/share/apport/symptoms'
 
-def thread_collect_info(report, reportfile, package, ui, symptom_script=None):
+def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
+        ignore_uninstalled=False):
     '''Collect information about report.
 
     Encapsulate calls to add_*_info() and update given report, so that this
@@ -62,7 +63,22 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None):
             package = apport.fileutils.find_file_package(report['ExecutablePath'])
         else:
             raise KeyError, 'called without a package, and report does not have ExecutablePath'
-    report.add_package_info(package)
+    try:
+        report.add_package_info(package)
+
+        # check package origin
+        if ('Package' not in report or \
+              not apport.packaging.is_distro_package(report['Package'].split()[0])) \
+              and 'CrashDB' not in report:
+            #TRANS: %s is the name of the operating system
+            report['UnreportableReason'] = _('This is not a genuine %s package') % \
+                report['DistroRelease'].split()[0]
+    except ValueError:
+        # this happens if we are collecting information on an uninstalled
+        # package
+        if not ignore_uninstalled:
+            raise
+
     if report.add_hooks_info(ui):
         sys.exit(0)
 
@@ -71,14 +87,6 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None):
         title = report.standard_title()
         if title:
             report['Title'] = title
-
-    # check package origin
-    if ('Package' not in report or \
-          not apport.packaging.is_distro_package(report['Package'].split()[0])) \
-          and 'CrashDB' not in report:
-        #TRANS: %s is the name of the operating system
-        report['UnreportableReason'] = _('This is not a genuine %s package') % \
-            report['DistroRelease'].split()[0]
 
     # check obsolete packages
     if report['ProblemType'] == 'Crash' and \
@@ -373,6 +381,87 @@ free memory to automatically analyze the problem and send a report to the develo
 
         return True
 
+    def run_update_report(self):
+        '''Update an existing bug with locally collected information.'''
+
+        # avoid irrelevant noise
+        if not self.crashdb.can_update(self.options.update_report):
+            self.ui_error_message(_('Updating problem report'),
+                _('You are not the reporter or subscriber of this '
+                  'problem report, or the report is a duplicate or already '
+                  'closed.\n\nPlease create a new report using "apport-bug".'))
+            return False
+
+        is_reporter = self.crashdb.is_reporter(self.options.update_report)
+
+        if not is_reporter:
+            r = self.ui_question_yesno(
+                _('You are not the reporter of this problem report. It '
+                  'is much easier to mark a bug as a duplicate of another '
+                  'than to move your comments and attachments to a new bug.\n\n'
+                  'Subsequently, we recommend that you file a new bug report '
+                  'using "apport-bug" and make a comment in this bug about '
+                  'the one you file.\n\n'
+                  'Do you really want to proceed?'))
+            if not r:
+                return False
+
+        # list of affected source packages
+        self.report = apport.Report('Bug')
+        if self.options.package:
+            pkgs = [self.options.package.strip()]
+        else:
+            pkgs = self.crashdb.get_affected_packages(self.options.update_report)
+
+        info_collected = False
+        for p in pkgs:
+            #print 'Collecting apport information for source package %s...' % p
+            self.cur_package = p
+            self.report['SourcePackage'] = p
+            self.report['Package'] = p # no way to find this out
+
+            # we either must have the package installed or a source package hook
+            # available to collect sensible information
+            try:
+                apport.packaging.get_version(p)
+            except ValueError:
+                if not os.path.exists(os.path.join(apport.report._hook_dir, 'source_%s.py' % p)):
+                    print 'Package %s not installed and no hook available, ignoring' % p
+                    continue
+            self.collect_info(ignore_uninstalled=True)
+            info_collected = True
+
+        if not info_collected:
+            self.ui_info_message(_('Updating problem report'), 
+                    _('No additional information collected.'))
+            return False
+
+        self.report.add_user_info()
+        self.report.add_proc_environ()
+
+        # delete the uninteresting keys
+        del self.report['ProblemType']
+        del self.report['Date']
+        try:
+            del self.report['SourcePackage']
+        except KeyError:
+            pass
+
+        if len(self.report) == 0:
+            self.ui_info_message(_('Updating problem report'), 
+                    _('No additional information collected.'))
+            return False
+
+        # show what's being sent
+        response = self.ui_present_report_details()
+        if response != 'cancel':
+            self.crashdb.update(self.options.update_report, self.report,
+                    'apport information', change_description=is_reporter,
+                    attachment_comment='apport information')
+            return True
+
+        return False
+
     def run_symptoms(self):
         '''Report a bug from a list of available symptoms.
         
@@ -433,6 +522,8 @@ free memory to automatically analyze the problem and send a report to the develo
             return True
         elif self.options.filebug:
             return self.run_report_bug()
+        elif self.options.update_report:
+            return self.run_update_report()
         elif self.options.version:
             print __version__
             return True
@@ -461,6 +552,9 @@ free memory to automatically analyze the problem and send a report to the develo
         optparser.add_option('-f', '--file-bug',
             help=_('Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms. (Implied if a single argument is given.)'),
             action='store_true', dest='filebug', default=False)
+        optparser.add_option('-u', '--update-bug', type='int',
+            help=_('Start in bug updating mode. Can take an optional --package.'),
+            dest='update_report')
         optparser.add_option('-s', '--symptom', metavar='SYMPTOM',
             help=_('File a bug report about a symptom. (Implied if symptom name is given as only argument.)'), 
             dest='symptom')
@@ -556,7 +650,7 @@ free memory to automatically analyze the problem and send a report to the develo
             os.execlp('sh', 'sh', '-c', self.report.get('RespawnCommand', self.report['ProcCmdline']))
             sys.exit(1)
 
-    def collect_info(self, symptom_script=None):
+    def collect_info(self, symptom_script=None, ignore_uninstalled=False):
         '''Collect additional information.
 
         Call all the add_*_info() methods and display a progress dialog during
@@ -588,7 +682,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 icthread = REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package,
-                        hookui, symptom_script))
+                        hookui, symptom_script, ignore_uninstalled))
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
@@ -1120,6 +1214,7 @@ if  __name__ == '__main__':
     from cStringIO import StringIO
     import apport.report
     import problem_report
+    import apport.crashdb_impl.memory
 
     class _TestSuiteUserInterface(UserInterface):
         '''Concrete UserInterface suitable for automatic testing.'''
@@ -1227,7 +1322,7 @@ databases = {
             self.msg_text = text
             return self.question_file_response
 
-    class _UserInterfaceTest(unittest.TestCase):
+    class _T(unittest.TestCase):
         def setUp(self):
             # we test a few strings, don't get confused by translations
             for v in ['LANG', 'LANGUAGE', 'LC_MESSAGES', 'LC_ALL']:
@@ -2012,6 +2107,90 @@ CoreDump: base64
             for s in bad_strings:
                 self.failIf(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
 
+        def test_run_update_report_nonexisting_package_from_bug(self):
+            '''run_update_report() on a nonexisting package (from bug).'''
+
+            sys.argv = ['ui-test', '-u', '1']
+            self.ui = _TestSuiteUserInterface()
+            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
+                    '', {'dummy_data': 1})
+
+            self.assertEqual(self.ui.run_argv(), False)
+            self.assert_('No additional information collected.' in
+                    self.ui.msg_text)
+
+        def test_run_update_report_nonexisting_package_cli(self):
+            '''run_update_report() on a nonexisting package (CLI argument).'''
+
+            sys.argv = ['ui-test', '-u', '1', '-p', 'bar']
+            self.ui = _TestSuiteUserInterface()
+            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
+                    '', {'dummy_data': 1})
+
+            self.assertEqual(self.ui.run_argv(), False)
+            self.assert_('No additional information collected.' in
+                    self.ui.msg_text)
+
+        def test_run_update_report_existing_package_from_bug(self):
+            '''run_update_report() on an existing package (from bug).'''
+
+            sys.argv = ['ui-test', '-u', '1']
+            self.ui = _TestSuiteUserInterface()
+            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
+                    '', {'dummy_data': 1})
+
+            self.ui.crashdb.download(1)['SourcePackage'] = 'bash'
+            self.ui.crashdb.download(1)['Package'] = 'bash'
+            self.assertEqual(self.ui.run_argv(), True)
+            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+
+            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assert_(self.ui.report['Package'].startswith('bash '))
+            self.assert_('Dependencies' in self.ui.report.keys())
+            self.assert_('ProcEnviron' in self.ui.report.keys())
+
+        def test_run_update_report_existing_package_cli(self):
+            '''run_update_report() on an existing package (CLI argument).'''
+
+            sys.argv = ['ui-test', '-u', '1', '-p', 'bash']
+            self.ui = _TestSuiteUserInterface()
+            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
+                    '', {'dummy_data': 1})
+
+            self.assertEqual(self.ui.run_argv(), True)
+            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+
+            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assert_(self.ui.report['Package'].startswith('bash '))
+            self.assert_('Dependencies' in self.ui.report.keys())
+            self.assert_('ProcEnviron' in self.ui.report.keys())
+
+        def test_run_update_report_noninstalled_but_hook(self):
+            '''run_update_report() on an uninstalled package with a source hook.'''
+
+            sys.argv = ['ui-test', '-u', '1']
+            self.ui = _TestSuiteUserInterface()
+            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
+                    '', {'dummy_data': 1})
+
+            f = open(os.path.join(self.hookdir, 'source_foo.py'), 'w')
+            f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
+            f.close()
+
+            self.assertEqual(self.ui.run_argv(), True, self.ui.report)
+            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+
+            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assertEqual(self.ui.report['Package'], 'foo (not installed)')
+            self.assertEqual(self.ui.report['MachineType'], 'Laptop')
+            self.assert_('ProcEnviron' in self.ui.report.keys())
+
         def _run_hook(self, code):
             f = open(os.path.join(self.hookdir, 'coreutils.py'), 'w')
             f.write('def add_info(report, ui):\n%s\n' % 
@@ -2233,11 +2412,13 @@ def run(report, ui):
 
             # no arguments -> show pending crashes
             _chk(None, {'filebug': False, 'package': None,
-                 'pid': None, 'crash_file': None, 'symptom': None})
+                'pid': None, 'crash_file': None, 'symptom': None, 
+                'update_report': None})
 
             # package 
             _chk('coreutils', {'filebug': True, 'package': 'coreutils',
-                 'pid': None, 'crash_file': None, 'symptom': None})
+                'pid': None, 'crash_file': None, 'symptom': None, 
+                'update_report': None})
 
             # symptom is preferred over package
             f = open(os.path.join(symptom_script_dir, 'coreutils.py'), 'w')
@@ -2247,20 +2428,24 @@ def run(report, ui):
 '''
             f.close()
             _chk('coreutils', {'filebug': True, 'package': None,
-                 'pid': None, 'crash_file': None, 'symptom': 'coreutils'})
+                 'pid': None, 'crash_file': None, 'symptom': 'coreutils',
+                 'update_report': None})
 
             # PID
             _chk('1234', {'filebug': True, 'package': None,
-                 'pid': '1234', 'crash_file': None, 'symptom': None})
+                 'pid': '1234', 'crash_file': None, 'symptom': None,
+                 'update_report': None})
 
             # .crash/.apport files; check correct handling of spaces
             for suffix in ('.crash', '.apport'):
                 _chk('/tmp/f oo' + suffix, {'filebug': False, 'package': None,
-                     'pid': None, 'crash_file': '/tmp/f oo' + suffix, 'symptom': None})
+                     'pid': None, 'crash_file': '/tmp/f oo' + suffix,
+                     'symptom': None, 'update_report': None})
 
             # executable
             _chk('/usr/bin/tail', {'filebug': True, 'package': 'coreutils',
-                 'pid': None, 'crash_file': None, 'symptom': None})
+                'pid': None, 'crash_file': None, 'symptom': None, 
+                'update_report': None})
 
     unittest.main()
 
