@@ -264,6 +264,14 @@ try:
             write_user_coredump(pid, cwd, core_ulimit)
             sys.exit(1)
 
+    # ignore SIGXCPU and SIGXFSZ since this indicates some external
+    # influence changing soft RLIMIT values when running programs.
+    if signum in [str(signal.SIGXCPU),str(signal.SIGXFSZ)]:
+        error_log('Ignoring signal %s (caused by exceeding soft RLIMIT)' % signum)
+        drop_privileges(pid)
+        write_user_coredump(pid, cwd, core_ulimit)
+        sys.exit(0)
+
     # ignore blacklisted binaries
     if info.check_ignored():
         error_log('executable version is blacklisted, ignoring')
