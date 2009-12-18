@@ -87,7 +87,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return self.is_reporter(id)
 
     def update(self, id, report, comment, change_description=False,
-            attachment_comment=None):
+            attachment_comment=None, key_filter=None):
         '''Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see
@@ -100,10 +100,18 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         comment will be added to the "short" data. If attachment_comment is
         given, it will be added to the attachment uploads.
+
+        If key_filter is a list or set, then only those keys will be added.
         '''
         r = self.reports[id]
-        r['report'].update(report)
         r['comment'] = comment
+
+        if key_filter:
+            for f in key_filter:
+                if f in report:
+                    r['report'][f] = report[f]
+        else:
+            r['report'].update(report)
 
     def update_traces(self, id, report, comment = ''):
         '''Update the given report ID with the retraced results from the report
@@ -368,6 +376,22 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.crashes.update(1, r, 'muhaha')
         self.assertEqual(self.crashes.reports[1]['comment'], 'muhaha')
         self.assertEqual(self.crashes.download(1)['Package'], 'new')
+        self.assertEqual(self.crashes.download(1)['StacktraceTop'], 'Fresh!')
+        self.assertEqual(self.crashes.download(1)['FooBar'], 'Bogus')
+
+        self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
+
+    def test_update_filter(self):
+        '''update() with key_filter'''
+
+        r = apport.Report()
+        r['Package'] = 'new'
+        r['FooBar'] = 'Bogus'
+        r['StacktraceTop'] = 'Fresh!'
+
+        self.crashes.update(1, r, 'muhaha', key_filter=['FooBar', 'StacktraceTop'])
+        self.assertEqual(self.crashes.reports[1]['comment'], 'muhaha')
+        self.assertEqual(self.crashes.download(1)['Package'], 'libfoo1 1.2-4')
         self.assertEqual(self.crashes.download(1)['StacktraceTop'], 'Fresh!')
         self.assertEqual(self.crashes.download(1)['FooBar'], 'Bogus')
 

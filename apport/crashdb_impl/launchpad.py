@@ -280,7 +280,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return report
 
     def update(self, id, report, comment, change_description=False,
-            attachment_comment=None):
+            attachment_comment=None, key_filter=None):
         '''Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see
@@ -293,14 +293,21 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         comment will be added to the "short" data. If attachment_comment is
         given, it will be added to the attachment uploads.
+
+        If key_filter is a list or set, then only those keys will be added.
         '''
         bug = self.launchpad.bugs[id]
+
+        if key_filter:
+            skip_keys = set(report.keys()) - set(key_filter)
+        else:
+            skip_keys = None
 
         # we want to reuse the knowledge of write_mime() with all its different input
         # types and output formatting; however, we have to dissect the mime ourselves,
         # since we can't just upload it as a blob
         mime = tempfile.TemporaryFile()
-        report.write_mime(mime)
+        report.write_mime(mime, skip_keys=skip_keys)
         mime.flush()
         mime.seek(0)
         msg = email.message_from_file(mime)
@@ -991,6 +998,34 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['ProblemType'], 'Bug')
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
             self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
+
+        def test_update_filter(self):
+            '''update() with a key filter'''
+
+            id = self._fill_bug_form(
+                'https://bugs.staging.launchpad.net/%s/+source/bash/+filebug?'
+                    'field.title=testbug&field.actions.search=' % self.crashdb.distro)
+            self.assert_(id > 0)
+            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+
+            r = apport.Report('Bug')
+
+            r['OneLiner'] = 'bogus→'
+            r['StacktraceTop'] = 'f()\ng()\nh(1)'
+            r['ShortGoo'] = 'lineone\nlinetwo'
+            r['DpkgTerminalLog'] = 'one\ntwo\nthree\nfour\nfive\nsix'
+            r['VarLogDistupgradeBinGoo'] = '\x01' * 1024
+
+            self.crashdb.update(id, r, 'NotMe', change_description=True,
+                    key_filter=['ProblemType', 'ShortGoo', 'DpkgTerminalLog'])
+
+            r = self.crashdb.download(id)
+
+            self.failIf('OneLiner' in r)
+            self.assertEqual(r['ShortGoo'], 'lineone\nlinetwo')
+            self.assertEqual(r['ProblemType'], 'Bug')
+            self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
+            self.failIf('VarLogDistupgradeBinGoo' in r)
 
         def test_get_distro_release(self):
             '''get_distro_release()'''

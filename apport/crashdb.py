@@ -347,7 +347,7 @@ class CrashDatabase:
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
     def update(self, id, report, comment, change_description=False,
-            attachment_comment=None):
+            attachment_comment=None, key_filter=None):
         '''Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see
@@ -360,6 +360,8 @@ class CrashDatabase:
 
         comment will be added to the "short" data. If attachment_comment is
         given, it will be added to the attachment uploads.
+
+        If key_filter is a list or set, then only those keys will be added.
         '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
