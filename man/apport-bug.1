@@ -2,7 +2,7 @@
 
 .SH NAME
 
-apport\-bug \- file a bug report using Apport
+apport\-bug, apport\-collect \- file a bug report using Apport, or update an existing report
 
 .SH SYNOPSIS
 
@@ -10,6 +10,9 @@ apport\-bug \- file a bug report using Apport
 
 .B apport\-bug
 .I symptom \fR|\fI pid \fR|\fI package \fR|\fI program path \fR|\fI .apport/.crash file
+
+.B apport\-collect
+.I report-number
 
 .SH DESCRIPTION
 
@@ -80,6 +83,14 @@ accordingly. If neither is available, or the session does not run
 under X11, it calls
 .B apport\-cli
 for a command-line client.
+
+.SH UPDATING EXISTING REPORTS
+
+.B apport\-collect
+collects the same information as apport\-bug, but adds it to an already
+existing problem report. This is useful if the report was not originally filed
+through Apport, or by someone else, and the developers ask you for attaching
+information from your system as well.
 
 .SH ENVIRONMENT
 

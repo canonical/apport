@@ -9,6 +9,11 @@ New features:
    implemented the right way now: In particular, this has access to the UI and
    thus can use interactive hooks (LP: #385811) and show you what is being sent
    for confirmation/cancelling (LP: #371827)
+ - apport-bug: If invoked as "apport-collect" or "apport-update-bug" (i. e.
+   through a symlink), run apport in update mode (-u <number>). This provides a
+   convenient no-options command line program. Please note that setup.py does
+   not currently install such a symlink. Update the apport-bug manpage
+   accordingly.
 
 Improvements:
  - launchpad.py: Use new login_with() to clean up code, and specify allowed
