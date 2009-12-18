@@ -113,20 +113,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             r['report'].update(report)
 
-    def update_traces(self, id, report, comment = ''):
-        '''Update the given report ID with the retraced results from the report
-        (Stacktrace, ThreadStacktrace, StacktraceTop; also Disassembly if
-        desired) and an optional comment.'''
-
-        r = self.reports[id]
-        fields = ['Stacktrace', 'ThreadStacktrace', 'StacktraceSource',
-             'StacktraceTop']
-
-        for f in fields:
-            if f in report:
-                r['report'][f] = report[f]
-        r['comment'] = comment
-
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the given report ID and return
         it.'''
@@ -379,7 +365,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.download(1)['StacktraceTop'], 'Fresh!')
         self.assertEqual(self.crashes.download(1)['FooBar'], 'Bogus')
 
-        self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
+        self.assertRaises(IndexError, self.crashes.update, 5, None, '')
 
     def test_update_filter(self):
         '''update() with key_filter'''
@@ -395,7 +381,7 @@ class _MemoryCrashDBTest(unittest.TestCase):
         self.assertEqual(self.crashes.download(1)['StacktraceTop'], 'Fresh!')
         self.assertEqual(self.crashes.download(1)['FooBar'], 'Bogus')
 
-        self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
+        self.assertRaises(IndexError, self.crashes.update, 5, None, '')
 
     def test_update_traces(self):
         '''update_traces()'''

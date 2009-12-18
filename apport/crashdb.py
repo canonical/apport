@@ -365,13 +365,14 @@ class CrashDatabase:
         '''
         raise NotImplementedError, 'this method must be implemented by a concrete subclass'
 
-    def update_traces(self, id, report, comment):
+    def update_traces(self, id, report, comment=''):
         '''Update the given report ID for retracing results.
         
-        This updates Stacktrace, ThreadStacktrace, StacktraceTop, and
-        Disassembly. You can also supply an additional comment.
+        This updates Stacktrace, ThreadStacktrace, StacktraceTop,
+        and StacktraceSource. You can also supply an additional comment.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        self.update(id, report, comment, key_filter=['Stacktrace',
+            'ThreadStacktrace', 'StacktraceSource', 'StacktraceTop'])
 
     def set_credentials(self, username, password):
         '''Set username and password.'''

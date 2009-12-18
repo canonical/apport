@@ -340,43 +340,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 data=part.get_payload(decode=True),
                 filename=part.get_filename(), is_patch=False)
 
-    def update_traces(self, id, report, comment = ''):
+    def update_traces(self, id, report, comment=''):
         '''Update the given report ID for retracing results.
         
-        This updates Stacktrace, ThreadStacktrace, StacktraceTop, and
-        Disassembly. You can also supply an additional comment.
+        This updates Stacktrace, ThreadStacktrace, StacktraceTop,
+        and StacktraceSource. You can also supply an additional comment.
         '''
+        apport.crashdb.CrashDatabase.update_traces(self, id, report, comment)
+
         bug = self.launchpad.bugs[id]
-
-        comment += '\n\nStacktraceTop:' + report['StacktraceTop'].decode('utf-8',
-            'replace').encode('utf-8')
-
-        # we need properly named files here, otherwise they will be displayed
-        # as '<fdopen>'
-        if report['Stacktrace']: # don't attach empty files
-            bug.addAttachment(comment=comment,
-                    content_type='text/plain',
-                    data=report['Stacktrace'],
-                    description='Stacktrace.txt (retraced)',
-                    filename='Stacktrace.txt',
-                    is_patch=False)
-                
-        if report['ThreadStacktrace']:
-            bug.addAttachment(comment='', #some other comment here?
-                    content_type='text/plain',
-                    data=report['ThreadStacktrace'],
-                    description='ThreadStacktrace.txt (retraced)',
-                    filename='ThreadStacktrace.txt',
-                    is_patch=False)
-
-        if report.has_key('StacktraceSource') and report['StacktraceSource']:
-            bug.addAttachment(comment='', #some other comment here?
-                    content_type='text/plain',
-                    data=report['StacktraceSource'],
-                    description='StacktraceSource.txt',
-                    filename='StacktraceSource.txt',
-                    is_patch=False)
-
         # ensure it's assigned to the right package
         if report.has_key('SourcePackage') and \
                 '+source' not in str(bug.bug_tasks[0].target):
