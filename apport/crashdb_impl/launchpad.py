@@ -16,7 +16,6 @@ import email
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
-from httplib2 import ServerNotFoundError
 from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
 
 import apport.crashdb
@@ -106,8 +105,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     launchpad_instance, launchpadlib_dir=self.__lpcache,
                     allow_access_levels=['WRITE_PRIVATE'],
                     credentials_file = self.auth)
-        except (socket.error, ServerNotFoundError), e:
-            print >> sys.stderr, 'Error connecting to Launchpad: %s' % str(e)
+        except Exception, e:
+            if hasattr(e, 'content'):
+                msg = e.content
+            else:
+                msg = str(e)
+            print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou can reset the credentials by removing the file "%s"' % (msg, crashdb.auth)
             sys.exit(99) # transient error
 
         return self.__launchpad
