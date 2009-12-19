@@ -132,7 +132,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         else:
             return 'cancel'
 
-    def ui_present_report_details(self):
+    def ui_present_report_details(self, is_update):
         # report contents in expander
         self.tree_model.clear()
         row = 0
@@ -169,6 +169,12 @@ class GTKUserInterface(apport.ui.UserInterface):
         else:
             self.w('radiobutton_complete').hide()
             self.w('radiobutton_reduced').hide()
+
+        if is_update:
+            self.w('label_bug_instructions').set_label(
+                    _('Send this data to the developers?'))
+            self.w('expander_details').set_expanded(True)
+            self.w('dialog_bugreport').set_default_size(400, -1)
 
         response = self.w('dialog_bugreport').run()
         self.w('dialog_bugreport').hide()

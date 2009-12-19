@@ -265,7 +265,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
             if self.report.get('ProblemType') in ['Crash', 'KernelCrash',
                                                   'KernelOops']:
-                response = self.ui_present_report_details()
+                response = self.ui_present_report_details(False)
                 if response == 'cancel':
                     return
                 if response == 'reduced':
@@ -375,7 +375,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 pass
 
             # show what's being sent
-            response = self.ui_present_report_details()
+            response = self.ui_present_report_details(False)
             if response != 'cancel':
                 self.file_report()
 
@@ -453,7 +453,7 @@ free memory to automatically analyze the problem and send a report to the develo
             return False
 
         # show what's being sent
-        response = self.ui_present_report_details()
+        response = self.ui_present_report_details(True)
         if response != 'cancel':
             self.crashdb.update(self.options.update_report, self.report,
                     'apport information', change_description=is_reporter,
@@ -993,7 +993,7 @@ might be helpful for the developers.'))
         '''
         raise NotImplementedError, 'this function must be overridden by subclasses'
 
-    def ui_present_report_details(self):
+    def ui_present_report_details(self, is_update):
         '''Show details of the bug report.
         
         This lets the user choose between sending a complete or reduced report.
@@ -1001,6 +1001,9 @@ might be helpful for the developers.'))
         This method can use the get_complete_size() and get_reduced_size()
         methods to determine the respective size of the data to send, and
         format_filesize() to convert it to a humanly readable form.
+
+        If is_update is True, the text should describe that an existing report is
+        updated, otherwise a new report will be created.
 
         Return the action: send full report ('full'), send reduced report
         ('reduced'), or do not send anything ('cancel').
@@ -1271,7 +1274,7 @@ databases = {
         def ui_present_kernel_error(self):
             return self.present_kernel_error_response
 
-        def ui_present_report_details(self):
+        def ui_present_report_details(self, is_update):
             return self.present_details_response
 
         def ui_info_message(self, title, text):

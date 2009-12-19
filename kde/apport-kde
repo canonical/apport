@@ -259,12 +259,18 @@ class MainUserInterface(apport.ui.UserInterface):
         # Fallback
         return 'cancel'
 
-    def ui_present_report_details(self):
-        dialog = ReportDialog(self.report.get('Package',
-            _('Generic error')).split()[0],
-            _('Send problem report to the developers?'),
-            _('After the problem report has been sent, please fill out '
-              'the form in the automatically opened web browser.'))
+    def ui_present_report_details(self, is_update):
+        if is_update:
+            dialog = ReportDialog(self.report.get('Package',
+                _('Generic error')).split()[0],
+                _('Send this data to the developers?'), '')
+            dialog.showtree(True)
+        else:
+            dialog = ReportDialog(self.report.get('Package',
+                _('Generic error')).split()[0],
+                _('Send problem report to the developers?'),
+                _('After the problem report has been sent, please fill out '
+                  'the form in the automatically opened web browser.'))
 
         sendbutton = dialog.addbutton(_('&Send'))
         sendbutton.setDefault(True)
