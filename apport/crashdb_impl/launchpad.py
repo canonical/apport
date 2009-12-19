@@ -432,8 +432,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return True
 
         # check subscription
-        for subscription in bug.subscriptions:
-            if subscription.person == self.launchpad.me:
+        me = self.launchpad.me.self_link
+        for sub in bug.subscriptions.entries:
+            if sub['person_link'] == me:
                 return True
 
         return False
