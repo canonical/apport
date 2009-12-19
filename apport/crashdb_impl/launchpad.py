@@ -151,9 +151,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if a:
             hdr['Tags'] += ' ' + a
         if 'CoreDump' in report and a:
-            hdr['Tags'] += ' need-%s-retrace' % a
             # FIXME: ugly Ubuntu specific hack until LP has a real crash db
             if report['DistroRelease'].split()[0] == 'Ubuntu':
+                hdr['Tags'] += ' need-%s-retrace' % a
                 hdr['Private'] = 'yes'
                 hdr['Subscribers'] = 'apport'
         # set dup checking tag for Python crashes

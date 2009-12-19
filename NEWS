@@ -32,6 +32,8 @@ Improvements:
 
 Bug fixes:
  - Ignore SIGXCPU and SIGXFSZ; thanks to Kees Cook. (LP: #498074)
+ - launchpad.py: Do not mark non-Ubuntu bugs as needs-retrace, since there is
+   no retracer right now. (LP: #489794)
 
 1.9.6 (2009-12-01)
 ------------------
