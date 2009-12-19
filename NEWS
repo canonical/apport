@@ -26,7 +26,9 @@ Improvements:
  - Rename CrashDatabase.update() to update_traces().
  - Add CrashDatabase.update() for adding all new fields of a report. This is
    primarily useful for collecting local standard and package hook data for an
-   already existing bug report which was not filed through Apport.
+   already existing bug report which was not filed through Apport. This checks
+   can_update()/is_reporter() if the user is eligible for updating that
+   particular bug. (LP: #485880)
 
 Bug fixes:
  - Ignore SIGXCPU and SIGXFSZ; thanks to Kees Cook. (LP: #498074)

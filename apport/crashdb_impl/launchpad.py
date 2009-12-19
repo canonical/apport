@@ -425,9 +425,18 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         implementation.
         '''
         bug = self.launchpad.bugs[id]
-        return (bug.owner.name == self.launchpad.me.name) \
-                and not bug.duplicate_of
-        # TODO: check subscription
+        if bug.duplicate_of:
+            return False
+
+        if bug.owner.name == self.launchpad.me.name:
+            return True
+
+        # check subscription
+        for subscription in bug.subscriptions:
+            if subscription.person == self.launchpad.me:
+                return True
+
+        return False
 
     def get_unretraced(self):
         '''Return an ID set of all crashes which have not been retraced yet and
