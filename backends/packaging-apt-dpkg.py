@@ -430,7 +430,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
             if not l.strip():
                 continue
-            (pkg, version) = l.split()[:2]
+            try:
+                (pkg, version) = l.split()[:2]
+            except ValueError:
+                print >> sys.stderr, 'WARNING: invalid Package/Dependencies line: ', l
+                # invalid line, ignore
+                continue
             dependency_versions[pkg] = version
             try:
                 if self.get_architecture(pkg) != 'all':
