@@ -325,6 +325,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         part = msg_iter.next()
         assert not part.is_multipart()
         assert part.get_content_type() == 'text/plain'
+
+        if not key_filter:
+            # when we update a complete report, we are updating an existing bug
+            # with apport-collect
+            x = bug.tags[:] # LP#254901 workaround
+            x.append('apport-collected')
+            bug.tags = x
+            bug.lp_save()
         
         # short text data
         if change_description:
@@ -898,6 +906,10 @@ NameError: global name 'weird' is not defined'''
             self.assert_('ThreadStacktrace' in r)
             self.failIf('FooBar' in r)
 
+            tags = self.crashdb.launchpad.bugs[segv_report].tags
+            self.assert_('apport-crash' in tags)
+            self.failIf('apport-collected' in tags)
+
             # updating with an useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
@@ -944,6 +956,9 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
             self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
 
+            self.assertEqual(self.crashdb.launchpad.bugs[id].tags,
+                ['apport-collected'])
+
         def test_update_comment(self):
             '''update() with appending comment'''
 
@@ -974,6 +989,9 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
             self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
 
+            self.assertEqual(self.crashdb.launchpad.bugs[id].tags,
+                ['apport-collected'])
+
         def test_update_filter(self):
             '''update() with a key filter'''
 
@@ -1001,6 +1019,8 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['ProblemType'], 'Bug')
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
             self.failIf('VarLogDistupgradeBinGoo' in r)
+
+            self.assertEqual(self.crashdb.launchpad.bugs[id].tags, [])
 
         def test_get_distro_release(self):
             '''get_distro_release()'''
