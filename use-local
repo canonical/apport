@@ -4,4 +4,4 @@
 # making changes to bin/apport and want to test them without copying them to
 # /usr/share/apport/ every time.
 
-echo "|$(readlink -f $(dirname $0)/bin/apport) %p %s %c" > /proc/sys/kernel/core_pattern
+echo "|$(readlink -f $(dirname $0)/data/apport) %p %s %c" > /proc/sys/kernel/core_pattern

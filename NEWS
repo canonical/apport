@@ -36,6 +36,7 @@ Bug fixes:
    no retracer right now. (LP: #489794)
  - packaging-apt-dpkg.py, install_retracing_packages(): Do not crash on
    malformed Dependencies.txt lines. (LP: #441709)
+ - use-local: Fix for new source tree location of "apport" binary.
 
 1.9.6 (2009-12-01)
 ------------------
