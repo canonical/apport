@@ -574,8 +574,10 @@ free memory to automatically analyze the problem and send a report to the develo
         (self.options, self.args) = optparser.parse_args()
 
         # "do what I mean" for zero or one arguments
+        if len(sys.argv) == 0:
+            return
 
-        cmd = sys.argv[0]
+        cmd = os.environ.get('APPORT_INVOKED_AS', sys.argv[0])
         if cmd.endswith('-update-bug') or cmd.endswith('-collect'):
             if len(self.args) == 1:
                 self.options.update_report = self.args[0]

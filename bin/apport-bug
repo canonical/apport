@@ -40,6 +40,8 @@ find_programs() {
 
 find_programs
 
+export APPORT_INVOKED_AS="$0"
+
 # check for X
 if [ -z "$DISPLAY" ]; then
     if [ -x "$CLI" ] ; then
