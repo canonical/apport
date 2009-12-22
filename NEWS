@@ -3,6 +3,9 @@ detailled list of changes, please see ChangeLog.
 
 1.10.1 (UNRELEASED)
 -------------------
+Improvements:
+ - Install apport-collect symlink.
+
 Bug fixes:
  - Move all remaining option/argument parsing from apport-bug into ui.py. This
    allows the user to add options to apport-bug/apport-collect, and also avoids
