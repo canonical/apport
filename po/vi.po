@@ -1,16 +1,16 @@
-# Belarusian translation for apport
-# Copyright (c) 2007 Rosetta Contributors and Canonical Ltd 2007
+# Vietnamese translation for apport
+# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
 # This file is distributed under the same license as the apport package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2007.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-12-22 23:59+0100\n"
-"PO-Revision-Date: 2009-10-11 14:50+0000\n"
-"Last-Translator: Iryna Nikanchuk <defragbrain@gmail.com>\n"
-"Language-Team: Belarusian <be@li.org>\n"
+"PO-Revision-Date: 2009-10-12 06:10+0000\n"
+"Last-Translator: Phan Trọng Khanh <phantrongkhanh87@gmail.com>\n"
+"Language-Team: Vietnamese <vi@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: ../apport/ui.py:74
 #, python-format
 msgid "This is not a genuine %s package"
-msgstr ""
+msgstr "Đây không phải là gói %s chuẩn"
 
 #: ../apport/ui.py:96
 #, python-format
@@ -31,32 +31,40 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Bạn có vài gói phiên bản cũ. Vui lòng nâng cấp những gói sau và kiểu tra nếu "
+"lỗi vẫn xuất hiện:\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:102
 msgid ""
 "The program crashed on an assertion failure, but the message could not be "
 "retrieved. Apport does not support reporting these crashes."
 msgstr ""
+"Chương trình bị treo bởi một lỗi xác nhận, nhưng không nhận được thông điệp "
+"trả về. Trình báo lỗi không thể hỗ trợ báo cáo về lỗi này."
 
 #: ../apport/ui.py:189
 msgid "unknown program"
-msgstr "невядомая праграма"
+msgstr "chương trình không xác định"
 
 #: ../apport/ui.py:190
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr ""
+msgstr "Xin lỗi, chương trình \"%s\" đã kết thúc bất ngờ"
 
 #: ../apport/ui.py:191 ../apport/ui.py:258 ../apport/ui.py:364
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "Vấn đề trong %s"
 
 #: ../apport/ui.py:192
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
+"Máy tính của bạn không đủ bộ nhớ trống để tự động phân tích vấn đề và gửi "
+"báo cáo tới các nhà phát triển."
 
 #. package does not exist
 #: ../apport/ui.py:219 ../apport/ui.py:245 ../apport/ui.py:251
@@ -66,15 +74,15 @@ msgstr ""
 #: ../apport/ui.py:1477 ../apport/ui.py:1494 ../apport/ui.py:1981
 #: ../apport/ui.py:1997 ../apport/ui.py:2008 ../apport/ui.py:2019
 msgid "Invalid problem report"
-msgstr ""
+msgstr "Báo cáo vấn đề không hợp lệ"
 
 #: ../apport/ui.py:220 ../apport/ui.py:252
 msgid "The report belongs to a package that is not installed."
-msgstr ""
+msgstr "Báo cáo thuộc về một gói chưa được cài đặt."
 
 #: ../apport/ui.py:247 ../apport/ui.py:907
 msgid "This problem report is damaged and cannot be processed."
-msgstr ""
+msgstr "Báo cáo vấn đề này bị hỏng và không thể được thực hiện"
 
 #: ../apport/ui.py:259 ../apport/ui.py:365
 #, python-format
@@ -83,50 +91,56 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Không thể báo cáo vấn đề:\n"
+"\n"
+"%s"
 
 #: ../apport/ui.py:284
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "Bạn không được phép truy cập báo cáo vấn đề này."
 
 #: ../apport/ui.py:287
 msgid "Error"
-msgstr "Памылка"
+msgstr "Lỗi"
 
 #: ../apport/ui.py:288
 msgid "There is not enough disk space available to process this report."
-msgstr ""
+msgstr "Không đủ dung lượng đĩa để thực hiện báo cáo này."
 
 #: ../apport/ui.py:316
 msgid "No package specified"
-msgstr ""
+msgstr "Chưa gói nào được xác định"
 
 #: ../apport/ui.py:317
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
+"Bạn cần xác định một gói hoặc một PID. Xem --help để biết thêm thông tin."
 
 #: ../apport/ui.py:327
 msgid "Invalid PID"
-msgstr ""
+msgstr "PID không hợp lệ"
 
 #: ../apport/ui.py:328
 msgid "The specified process ID does not belong to a program."
-msgstr ""
+msgstr "ID của tiến trình không phải của một chương trình."
 
 #: ../apport/ui.py:336
 msgid "Permission denied"
-msgstr "Доступ забаронены"
+msgstr "Không đủ quyền truy cập"
 
 #: ../apport/ui.py:337
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"Tiến trình không phải của bạn. Vui lòng chạy chương trình với tài khoản của "
+"chủ tiến trình hoặc với tài khoản quản trị root"
 
 #: ../apport/ui.py:357
 #, python-format
 msgid "Package %s does not exist"
-msgstr "Пакет %s не існуе"
+msgstr "Gói %s không tồn tại"
 
 #: ../apport/ui.py:389 ../apport/ui.py:435 ../apport/ui.py:451
 msgid "Updating problem report"
@@ -158,20 +172,22 @@ msgstr ""
 
 #: ../apport/ui.py:491
 msgid "What kind of problem do you want to report?"
-msgstr "Пра які тып праблемы Вы жадаеце паведаміць?"
+msgstr "Bạn muốn báo cáo vấn đề loại nào?"
 
 #: ../apport/ui.py:508
 msgid "Unknown symptom"
-msgstr ""
+msgstr "Dấu hiệu không xác định"
 
 #: ../apport/ui.py:509
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "Không biết dấu hiệu \"%s\""
 
 #: ../apport/ui.py:551
 msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%prog [tùy chọn] [dấu hiệu|pid|gói|đường đẫn chương trình|.apport/.crash "
+"file]"
 
 #: ../apport/ui.py:553
 msgid ""
@@ -179,6 +195,9 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"Chạy với chế độ lọc lỗi. Yêu cầu hoặc --package và một tùy chọn --pid, hoặc "
+"chỉ là --pid. Nếu không cách nào trong hai cách trên được sử dụng, hiển thị "
+"danh sách những dấu hiệu đã biết. (Mặc định nếu một tham số được đưa ra.)"
 
 #: ../apport/ui.py:556
 msgid "Start in bug updating mode. Can take an optional --package."
@@ -189,12 +208,16 @@ msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
+"Đệ trình báo cáo lỗi về một triệu chứng. (Mặc định nếu tên triệu chứng là "
+"tham số duy nhất.)"
 
 #: ../apport/ui.py:562
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"Xác định tên gói trong chế độ --file-bug. Tùy chọn này nếu một --pid được "
+"xác định. (Mặc định nếu tên gói được đưa ra như là tham số duy nhất.)"
 
 #: ../apport/ui.py:565
 msgid ""
@@ -202,6 +225,9 @@ msgid ""
 "report will contain more information. (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Xác định một chương trình đang chạy trong chế độ --file-bug. Nếu nó được xác "
+"định, trình báo cáo lỗi sẽ chứa nhiều thông tin hơn. (Mặc định nếu pid là "
+"tham số duy nhất.)"
 
 #: ../apport/ui.py:568
 #, python-format
@@ -209,54 +235,57 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"Báo cáo lỗi sử dụng các tệp .apport hoặc .crash thay vì sử dụng các tệp tạm "
+"trong %s. (Mặc định nếu tệp tin là tham số duy nhất.)"
 
 #: ../apport/ui.py:571
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "In ra số phiên bản Trình báo lỗi"
 
 #: ../apport/ui.py:738
 msgid "Could not determine the package or source package name."
-msgstr "Немагчыма вызначыць імя пакету альбо крыніцы."
+msgstr "Không thể xác định tên của gói hoặc gói nguồn."
 
 #: ../apport/ui.py:753
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "Không thể bật trình duyệt web"
 
 #: ../apport/ui.py:754
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "Không thể bật trình duyệt web để mở %s."
 
 #: ../apport/ui.py:860
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr ""
+msgstr "Vui lòng điền vào thông tin tài khoản cho hệ thống theo dõi lỗi %s"
 
 #: ../apport/ui.py:871
 msgid "Network problem"
-msgstr "Праблема з сеткай"
+msgstr "Lỗi mạng"
 
 #: ../apport/ui.py:872
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
+"Không thể kết nối tới cơ sở lỗi, vui lòng kiểm tra kết nối Internet của bạn."
 
 #: ../apport/ui.py:896
 msgid "Memory exhaustion"
-msgstr ""
+msgstr "Hết bộ nhớ"
 
 #: ../apport/ui.py:897
 msgid "Your system does not have enough memory to process this crash report."
-msgstr ""
+msgstr "Hệ thống của bạn không đủ bộ nhớ để thực hiện báo cáo lỗi này."
 
 #: ../apport/ui.py:920 ../apport/ui.py:929
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
+msgstr "Báo cáo vấn đề này gắn với chương trình đã bị gỡ."
 
 #: ../apport/ui.py:961
 msgid "Problem already known"
-msgstr "Праблема ўжо вядомая"
+msgstr "Vấn đề đã biết"
 
 #: ../apport/ui.py:962
 msgid ""
@@ -264,25 +293,28 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
+"Vấn đề đã được báo cáo trong báo cáo lỗi hiển thị trong trình duyệt web. Vui "
+"lòng kiểm tra nếu bạn có thể thêm bất cứ thông tin gì có ích cho những người "
+"phát triển."
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
-msgstr "Націсьніце любую клявішу каб працягваць..."
+msgstr "Nhấn phím bất kì để tiếp tục..."
 
 #: ../bin/apport-cli.py:78
 msgid "What would you like to do? Your options are:"
-msgstr ""
+msgstr "Bạn muốn làm gì? Các lựa chọn là:"
 
 #: ../bin/apport-cli.py:82
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "Vui lòng chọn (%s):"
 
 #. translators: first %s: application name, second %s: date, third %s: time
 #: ../bin/apport-cli.py:139
 #, python-format
 msgid "%s closed unexpectedly on %s at %s."
-msgstr ""
+msgstr "%s đóng bất ngờ trên %s lúc %s."
 
 #: ../bin/apport-cli.py:143
 msgid ""
@@ -290,38 +322,43 @@ msgid ""
 "private information), you can help to improve the application by reporting\n"
 "the problem."
 msgstr ""
+"Nếu bạn đang không làm một việc riêng tư (nhập mật khẩu hoặc thông tin\n"
+"riêng tư nào đó), bạn có thể giúp cải thiện ứng dụng bằng cách báo cáo \n"
+"vấn đề."
 
 #: ../bin/apport-cli.py:146 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
 msgid "&Report Problem..."
-msgstr "&Паведаміць аб праблеме..."
+msgstr "&Báo cáo vấn đề..."
 
 #: ../bin/apport-cli.py:147
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
+msgstr "Hủy và bỏ &qua hỏng hóc của chương trình này những lần sau"
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
 #: ../bin/apport-cli.py:233 ../bin/apport-cli.py:314 ../bin/apport-cli.py:346
 #: ../bin/apport-cli.py:367
 msgid "&Cancel"
-msgstr "&Скасаваць"
+msgstr "&Thôi"
 
 #: ../bin/apport-cli.py:163
 #, python-format
 msgid "The package \"%s\" failed to install or upgrade."
-msgstr ""
+msgstr "Gói \"%s\" gặp lỗi khi cài hoặc nâng cấp."
 
 #: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
+"Bạn có thể giúp những người phát triển sửa gói bằng cách báo cáo vấn đề."
 
 #: ../bin/apport-cli.py:176
 msgid "Your system encountered a serious kernel problem."
-msgstr ""
+msgstr "Hệ thống của bạn gặp một vấn đề nghiêm trọng liên quan đến nhân."
 
 #: ../bin/apport-cli.py:180
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr ""
+"Bạn có thể giúp đỡ những người phát triển sửa lỗi bằng cách báo cáo nó."
 
 #: ../bin/apport-cli.py:195
 msgid "Send this data to the developers?"
@@ -329,142 +366,156 @@ msgstr ""
 
 #: ../bin/apport-cli.py:197
 msgid "Send problem report to the developers?"
-msgstr "Даслаць распрацоўшчыкам паведамленьне аб праблеме?"
+msgstr "Gửi báo cáo vấn đề tới những người phát triển?"
 
 #: ../bin/apport-cli.py:198
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"Sau khi báo cáo về vấn đề được gửi, vui lòng điền vào mẫu trong trang\n"
+"web vừa tự động mở ra."
 
 #: ../bin/apport-cli.py:217
 msgid "(binary data)"
-msgstr ""
+msgstr "(dữ liệu nhị phân)"
 
 #: ../bin/apport-cli.py:221
 #, python-format
 msgid "&Send complete report (recommended; %s)"
-msgstr ""
+msgstr "&Gửi báo cáo đầy đủ (khuyên dùng; %s)"
 
 #: ../bin/apport-cli.py:223
 #, python-format
 msgid "Send &reduced report (slow Internet connection; %s)"
-msgstr ""
+msgstr "Gửi báo &cáo giản lược (kết nối mạng chậm; %s)"
 
 #: ../bin/apport-cli.py:226
 #, python-format
 msgid "&Send report (%s)"
-msgstr "&Даслаць паведамленьне (%s)"
+msgstr "&Gửi báo cáo (%s)"
 
 #: ../bin/apport-cli.py:230
 msgid "&View report"
-msgstr ""
+msgstr "&Xem báo cáo"
 
 #: ../bin/apport-cli.py:231
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr ""
+msgstr "G&iữ tệp báo cáo để gửi sau hoặc sao chép"
 
 #: ../bin/apport-cli.py:263
 msgid "Problem report file:"
-msgstr ""
+msgstr "Tệp báo cáo vấn đề:"
 
 #: ../bin/apport-cli.py:271 ../bin/apport-cli.py:276
 msgid "&Confirm"
-msgstr ""
+msgstr "&Xác nhận"
 
 #: ../bin/apport-cli.py:275
 #, python-format
 msgid "Error: %s"
-msgstr "Памылка: %s"
+msgstr "Lỗi: %s"
 
 #: ../bin/apport-cli.py:281
 msgid "Collecting problem information"
-msgstr ""
+msgstr "Thu thập thông tin về vấn đề"
 
 #: ../bin/apport-cli.py:282
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
+"Thông tin được thu thập có thể gửi tới những người phát triển để cải tiến\n"
+"ứng dụng. Công việc này có thể mất vài phút."
 
 #: ../bin/apport-cli.py:294 ../gtk/apport-gtk.ui.h:21
 msgid "Uploading problem information"
-msgstr ""
+msgstr "Tải lên thông tin về vấn đề"
 
 #: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
+"Thông tin thu thập đang được gửi tới hệ thống kiểm duyệt lỗi.\n"
+"Côn việc này có thể mất vài phút."
 
 #: ../bin/apport-cli.py:345
 msgid "&Done"
-msgstr "&Зроблена"
+msgstr "Đã &xong"
 
 #: ../bin/apport-cli.py:351
 msgid "none"
-msgstr ""
+msgstr "không"
 
 #: ../bin/apport-cli.py:352
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "Đã chọn: %s. Nhiều lựa chọn:"
 
 #: ../bin/apport-cli.py:368
 msgid "Choices:"
-msgstr ""
+msgstr "Các lựa chọn:"
 
 #: ../bin/apport-cli.py:382
 msgid "Path to file (Enter to cancel):"
-msgstr ""
+msgstr "Đường đẫn tới tệp (Enter để hủy):"
 
 #: ../bin/apport-cli.py:387
 msgid "File does not exist."
-msgstr "Файл не існуе."
+msgstr "Tệp không tồn tại."
 
 #: ../bin/apport-cli.py:389
 msgid "This is a directory."
-msgstr "Гэта дырэкторыя."
+msgstr "Nó là một thư mục"
 
 #: ../bin/apport-cli.py:395
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "Để tiếp tục, bạn phải vào địa chỉ URL sau:"
 
 #: ../bin/apport-cli.py:397
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
+"Giờ bạn có thể chạy một trình duyệt, hoặc chép địa chỉ URL này vào một trình "
+"duyệt hoặc máy tính khác."
 
 #: ../bin/apport-cli.py:399
 msgid "Launch a browser now"
-msgstr ""
+msgstr "Chạy một trình duyệt"
 
 #: ../bin/apport-cli.py:406
 msgid "No pending crash reports. Try --help for more information."
-msgstr ""
+msgstr "Không có báo cáo lỗi nào đang chờ. Thử --help để biết thêm thông tin."
 
 #: ../data/apportcheckresume.py:58
 msgid ""
 "This occured during a previous suspend and prevented it from resuming "
 "properly."
 msgstr ""
+"Lỗi xảy ra trong một lần tạm dừng trước và khiến cho hệ thống không khôi "
+"phục lại một cách bình thường."
 
 #: ../data/apportcheckresume.py:60
 msgid ""
 "This occured during a previous hibernate and prevented it from resuming "
 "properly."
 msgstr ""
+"Lỗi xảy ra trong một lần ngủ dông trước và khiến cho hệ thống không khôi "
+"phục lại một cách bình thường."
 
 #: ../data/apportcheckresume.py:65
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
+"Quá trình khôi phục bị dừng khi sắp kết thúc và sẽ xuất hiện để hoàn thành "
+"bình thường."
 
 #: ../gtk/apport-gtk.ui.h:1
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Thu thập thông tin về vấn đề</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid ""
@@ -473,10 +524,14 @@ msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
+"<big><b>Gửi báo cáo vấn đề tới người phát triển?</b></big>\n"
+"\n"
+"Sau khi gửi báo cáo vấn đề, vui lòng điền vào mẫu ở trang web đã tự động mở "
+"ra."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Tải lên thông tin về vấn đề</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:7
 #, no-c-format
@@ -484,19 +539,21 @@ msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">Xin lỗi, gói \"%s\" gặp lỗi cài đặt "
+"hoặc nâng cấp.</span>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
-msgstr "Праблемы дастасаваньня"
+msgstr "Vấn đề về Ứng dụng"
 
 #: ../gtk/apport-gtk.ui.h:10
 #, no-c-format
 msgid "Complete report (recommended; %s)"
-msgstr ""
+msgstr "Báo cáo đầy đủ (khuyên dùng; %s)"
 
 #: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
-msgstr ""
+msgstr "Nội dung của báo cáo"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid ""
@@ -504,35 +561,41 @@ msgid ""
 "private information), you can help to improve the application by reporting "
 "the problem."
 msgstr ""
+"Nếu bạn đang không làm gì đó riêng tư (nhập mật khẩu hoặc thông tin riêng tư "
+"khác), bạn có thể giúp cải thiện ứng dụng bằng cách báo cáo vấn đề."
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
+"Thông tin đang được thu thập, nó có thể giúp các nhà phát triển sửa vấn đề "
+"bạn báo cáo."
 
 #: ../gtk/apport-gtk.ui.h:14
 msgid "Kernel problem"
-msgstr "Праблемы з ядром"
+msgstr "Lỗi nhân"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "Package problem"
-msgstr "Праблемы з пакетам"
+msgstr "Lỗi gói"
 
 #: ../gtk/apport-gtk.ui.h:17
 #, no-c-format
 msgid "Reduced report (slow Internet connection; %s)"
-msgstr ""
+msgstr "Báo cáo ngắn gọn (kết nối Internet chậm; %s)"
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
-msgstr ""
+msgstr "Khởi động lại _Chương trình"
 
 #: ../gtk/apport-gtk.ui.h:19
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
+"Thông tin thu thập được đang được gửi tới hệ thống kiểm soát lỗi. Công việc "
+"này có thể mất vài phút."
 
 #: ../gtk/apport-gtk.ui.h:20
 msgid ""
@@ -540,70 +603,76 @@ msgid ""
 "developers to debug the problem, but might be too big for you to upload if "
 "you have a slow internet connection."
 msgstr ""
-"Гэтае дзеяньне выдаліць некаторыя вялікія элементы з паведамленьня. Гэтыя "
-"элементы вельмі карысныя для распрацоўшчыкаў, але могуць быць занадта "
-"вялікімі для запампоўкі, калі вы падключаныя да Інтэрнэту праз марудны канал."
+"Lựa chọn này sẽ bỏ một vài mục lớn từ báo cáo. Những mục đó rất hữu ích cho "
+"nhà phát triển để tìm lỗi, nhưng có thể quá lớn khi bạn tải nó lên nếu bạn "
+"có đường truyền Internet chậm."
 
 #: ../gtk/apport-gtk.ui.h:23
 msgid "_Ignore future crashes of this program version"
-msgstr ""
+msgstr "_Bỏ qua vấn đề của ứng dụng sau này"
 
 #: ../gtk/apport-gtk.ui.h:24
 msgid "_Report Problem..."
-msgstr "_Паведаміць аб праблеме..."
+msgstr "_Báo cáo vấn đề..."
 
 #: ../gtk/apport-gtk.ui.h:25
 msgid "_Send Report"
-msgstr "Да_слаць паведамленьне"
+msgstr "_Gửi báo cáo"
 
 #: ../bin/apport-retrace.py:28
 msgid "%prog [options] <apport problem report | crash ID>"
-msgstr ""
+msgstr "%prog [tùy chọn] <apport problem report | crash ID>"
 
 #: ../bin/apport-retrace.py:30
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
+msgstr "Không đưa dấu vết mới vào báo cáo, nhưng in chúng ra stdout."
 
 #: ../bin/apport-retrace.py:33
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"Bắt đầu một phiên gỡ lỗi tương tác với gdb sử dụng các thông tin lưu lại "
+"được khi chương trình gặp lỗi. (-o ignored: không viết lại báo cáo)"
 
 #: ../bin/apport-retrace.py:36
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr ""
+msgstr "Ghi báo cáo đã sửa đổi tới tệp đưa ra thay vì thay đổi báo cáo gốc"
 
 #: ../bin/apport-retrace.py:39
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr ""
+"Xóa các thông tin lưu lại được khi chương trình gặp lỗi khỏi báo cáo sau khi "
+"đã ghi lại vết của ngăn xếp."
 
 #: ../bin/apport-retrace.py:42
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "Ghi đè CoreFile của báo cáo"
 
 #: ../bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "Ghi đè ExecutablePath của báo cáo"
 
 #: ../bin/apport-retrace.py:48
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "Ghi đè ProcMaps của báo cáo"
 
 #: ../bin/apport-retrace.py:51
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "Tạo lại thông tin gói của báo cáo"
 
 #: ../bin/apport-retrace.py:54
 msgid "Report download/install progress when installing additional packages"
-msgstr ""
+msgstr "Báo cái tiến trình tải về/cài đặt khi cài đặt thêm các gói"
 
 #: ../bin/apport-retrace.py:57
 msgid ""
 "Only unpack the additionally required packages, do not configure them; purge "
 "packages again after retracing"
 msgstr ""
+"Chỉ mở gói yêu cầu cài đặt thêm, không cấu hình chúng; gỡ bỏ gói sau khi dò "
+"lỗi"
 
 #: ../bin/apport-retrace.py:60
 msgid ""
@@ -611,10 +680,13 @@ msgid ""
 "afterwards. This should only be used for temporarily unpacked chroot "
 "tarballs where it would just be a waste of time."
 msgstr ""
+"Không sử dụng hệ thống đóng gói khi dùng -u và không gỡ bỏ gói sau đó. Chỉ "
+"nên dùng cách này cho các kho lưu trữ chroot được giải nén tạm thời để đỡ "
+"tốn thời gian."
 
 #: ../bin/apport-retrace.py:63
 msgid "Install an extra package (can be specified multiple times)"
-msgstr ""
+msgstr "Cài đặt một gói mở rộng (có thể xác định nhiều lần)"
 
 #: ../bin/apport-retrace.py:66
 msgid ""
@@ -628,49 +700,58 @@ msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"Hiển thị ngăn xếp dấu vết dò lại được và yêu cầu xác nhận trước khi gửi "
+"chúng tới cơ sở dữ liệu lỗi."
 
 #: ../bin/apport-retrace.py:72
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
+"Đường dẫn tới bản sao cơ sở dữ liệu sqlite (mặc định: không kiểm tra bản sao)"
 
 #: ../bin/apport-retrace.py:78
 msgid "incorrect number of arguments; use --help for a short help"
-msgstr ""
+msgstr "sai số của tham số; sử dụng --help để xem trợ giúp"
 
 #: ../bin/apport-retrace.py:82
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
 msgstr ""
+"bạn hoặc là phải thực hiện một thao tác trên máy cục bộ (-s, -g, -o) hoặc là "
+"cung cấp tệp xác thực (--auth); sử dụng --help để xem trợ giúp"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../bin/apport-retrace.py:115
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "Đồng ý gửi chúng như những đính kèm? [y/n]"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "Báo cáo một trục trặc tới nhà phát triển"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 msgid "Report a problem..."
-msgstr "Паведаміць аб праблеме..."
+msgstr "Báo cáo một vấn đề..."
 
 #: ../bin/apport-unpack.py:23
 #, python-format
 msgid "Usage: %s <report> <target directory>"
-msgstr ""
+msgstr "Sử dụng: %s <báo cáo> <thư mục đích>"
 
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "Thư mục đích tồn tại và không rỗng."
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
+"Hệ thống của bạn có thể trở nên không ổn định bây giờ và cần khởi động lại."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "Báo cáo tệp lỗi"
+
+#~ msgid "The running kernel is not an Ubuntu kernel"
+#~ msgstr "Nhân đang chạy không phải là một nhân Ubuntu"

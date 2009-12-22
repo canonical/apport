@@ -7,23 +7,23 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-08 14:07+0200\n"
-"PO-Revision-Date: 2008-10-13 14:55+0000\n"
-"Last-Translator: ChenMing <Unknown>\n"
+"POT-Creation-Date: 2009-12-22 23:59+0100\n"
+"PO-Revision-Date: 2009-12-19 17:51+0000\n"
+"Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-04-20 13:20+0000\n"
+"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #. TRANS: %s is the name of the operating system
-#: ../apport/ui.py:84
+#: ../apport/ui.py:74
 #, python-format
 msgid "This is not a genuine %s package"
-msgstr "这不是真实的%s包"
+msgstr "这不是真实的 %s 包"
 
-#: ../apport/ui.py:92
+#: ../apport/ui.py:96
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -31,55 +31,56 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"你安装了一些陈旧的软件包。请升级以下软件包后再看看问题是否依然发生:\n"
+"您安装了一些陈旧的软件包。请升级以下软件包后再查看问题是否依然发生:\n"
 "\n"
 "%s"
 
-#: ../apport/ui.py:98
+#: ../apport/ui.py:102
 msgid ""
 "The program crashed on an assertion failure, but the message could not be "
 "retrieved. Apport does not support reporting these crashes."
 msgstr ""
+"该程序因为声明失败而崩溃，但无法获取详细信息。Apport 无法对此类问题提交报告。"
 
-#: ../apport/ui.py:185
+#: ../apport/ui.py:189
 msgid "unknown program"
-msgstr "未知问题"
+msgstr "未知程序"
 
-#: ../apport/ui.py:186
+#: ../apport/ui.py:190
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "抱歉，“%s”程序异常关闭"
+msgstr "抱歉，“%s”程序异常退出"
 
-#: ../apport/ui.py:187 ../apport/ui.py:254 ../apport/ui.py:360
+#: ../apport/ui.py:191 ../apport/ui.py:258 ../apport/ui.py:364
 #, python-format
 msgid "Problem in %s"
 msgstr "%s 中的问题"
 
-#: ../apport/ui.py:188
+#: ../apport/ui.py:192
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
-msgstr "剩余空间不足，无法自动分析问题，无法向开发者发送问题报告。"
+msgstr "您的计算机剩余空间不足，程序无法自动诊断问题并向开发者发送问题报告。"
 
 #. package does not exist
-#: ../apport/ui.py:215 ../apport/ui.py:241 ../apport/ui.py:247
-#: ../apport/ui.py:279 ../apport/ui.py:287 ../apport/ui.py:352
-#: ../apport/ui.py:447 ../apport/ui.py:629 ../apport/ui.py:796
-#: ../apport/ui.py:800 ../apport/ui.py:819 ../apport/ui.py:1361
-#: ../apport/ui.py:1378 ../apport/ui.py:1865 ../apport/ui.py:1881
-#: ../apport/ui.py:1892 ../apport/ui.py:1903
+#: ../apport/ui.py:219 ../apport/ui.py:245 ../apport/ui.py:251
+#: ../apport/ui.py:283 ../apport/ui.py:291 ../apport/ui.py:356
+#: ../apport/ui.py:534 ../apport/ui.py:737 ../apport/ui.py:901
+#: ../apport/ui.py:905 ../apport/ui.py:924 ../apport/ui.py:930
+#: ../apport/ui.py:1477 ../apport/ui.py:1494 ../apport/ui.py:1981
+#: ../apport/ui.py:1997 ../apport/ui.py:2008 ../apport/ui.py:2019
 msgid "Invalid problem report"
 msgstr "无效的问题报告"
 
-#: ../apport/ui.py:216 ../apport/ui.py:248
+#: ../apport/ui.py:220 ../apport/ui.py:252
 msgid "The report belongs to a package that is not installed."
-msgstr "该报告属于一个未安装的软件包"
+msgstr "该报告属于一个未安装的软件包。"
 
-#: ../apport/ui.py:243 ../apport/ui.py:802
+#: ../apport/ui.py:247 ../apport/ui.py:907
 msgid "This problem report is damaged and cannot be processed."
-msgstr "该问题报告已毁坏，无法处理。"
+msgstr "该问题报告已损坏，无法处理。"
 
-#: ../apport/ui.py:255 ../apport/ui.py:361
+#: ../apport/ui.py:259 ../apport/ui.py:365
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -90,151 +91,189 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:280
+#: ../apport/ui.py:284
 msgid "You are not allowed to access this problem report."
-msgstr "你不被允许访问这个问题报告。"
+msgstr "您不被允许访问这个问题报告。"
 
-#: ../apport/ui.py:283
+#: ../apport/ui.py:287
 msgid "Error"
 msgstr "错误"
 
-#: ../apport/ui.py:284
+#: ../apport/ui.py:288
 msgid "There is not enough disk space available to process this report."
 msgstr "没有足够的空间来执行报告。"
 
-#: ../apport/ui.py:312
+#: ../apport/ui.py:316
 msgid "No package specified"
-msgstr "没有所指定的软件包"
+msgstr "没有指定软件包"
 
-#: ../apport/ui.py:313
+#: ../apport/ui.py:317
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "您需要指定一个软件包或者一个PID。使用 --help选项来获取更多信息。"
+msgstr "您需要指定一个软件包或者 PID。使用 --help 选项来获取更多信息。"
 
-#: ../apport/ui.py:323
+#: ../apport/ui.py:327
 msgid "Invalid PID"
-msgstr ""
+msgstr "无效的 PID"
 
-#: ../apport/ui.py:324
-#, fuzzy
+#: ../apport/ui.py:328
 msgid "The specified process ID does not belong to a program."
-msgstr "指定的进程不属于你。请作为进程的所有者或root运行这个进程。"
+msgstr "指定的进程 ID 不属于一个程序。"
 
-#: ../apport/ui.py:332
+#: ../apport/ui.py:336
 msgid "Permission denied"
 msgstr "没有权限"
 
-#: ../apport/ui.py:333
+#: ../apport/ui.py:337
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
-msgstr "指定的进程不属于你。请作为进程的所有者或root运行这个进程。"
+msgstr "指定的进程不属于您。请作为进程的所有者或 root 运行这个进程。"
 
-#: ../apport/ui.py:353
+#: ../apport/ui.py:357
 #, python-format
 msgid "Package %s does not exist"
 msgstr "软件包 %s 不存在"
 
-#: ../apport/ui.py:406
-msgid "What kind of problem do you want to report?"
+#: ../apport/ui.py:389 ../apport/ui.py:435 ../apport/ui.py:451
+msgid "Updating problem report"
 msgstr ""
 
-#: ../apport/ui.py:423
-#, fuzzy
-msgid "Unknown symptom"
-msgstr "未知问题"
+#: ../apport/ui.py:390
+msgid ""
+"You are not the reporter or subscriber of this problem report, or the report "
+"is a duplicate or already closed.\n"
+"\n"
+"Please create a new report using \"apport-bug\"."
+msgstr ""
 
-#: ../apport/ui.py:424
+#: ../apport/ui.py:399
+msgid ""
+"You are not the reporter of this problem report. It is much easier to mark a "
+"bug as a duplicate of another than to move your comments and attachments to "
+"a new bug.\n"
+"\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
+"\n"
+"Do you really want to proceed?"
+msgstr ""
+
+#: ../apport/ui.py:436 ../apport/ui.py:452
+msgid "No additional information collected."
+msgstr ""
+
+#: ../apport/ui.py:491
+msgid "What kind of problem do you want to report?"
+msgstr "您想报告什么类型的问题？"
+
+#: ../apport/ui.py:508
+msgid "Unknown symptom"
+msgstr "未知症状"
+
+#: ../apport/ui.py:509
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "症状\"%s\"不可知。"
 
-#: ../apport/ui.py:464
+#: ../apport/ui.py:551
 msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
+msgstr "%prog [选项] [症状|PID|软件包|程序目录|.apport/.crash file]"
 
-#: ../apport/ui.py:466
+#: ../apport/ui.py:553
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"以填写 bug 模式启动。需要 --package 和可选的 --pid 参数，或单独使用 --pid 参"
+"数。如果二者均未给出，将显示一系列症状供选择。"
 
-#: ../apport/ui.py:469
+#: ../apport/ui.py:556
+msgid "Start in bug updating mode. Can take an optional --package."
+msgstr ""
+
+#: ../apport/ui.py:559
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
-msgstr ""
+msgstr "针对某个症状报告 bug。"
 
-#: ../apport/ui.py:472
+#: ../apport/ui.py:562
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"--file-bug 模式中指定软件包名。如果指定了 --pid，则是可选的。(如果只给定软件"
+"包名这一个参数则它是必需的。)"
 
-#: ../apport/ui.py:475
+#: ../apport/ui.py:565
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information. (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"--file-bug 模式中指定运行的程序名。如果指定，错误报告会包含更多信息。(如果只"
+"给定 pid 这一个参数则它是必需的。)"
 
-#: ../apport/ui.py:478
+#: ../apport/ui.py:568
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"从给定的 .apport 或者  .crash 文件，而不是从正在处理的 %s 中汇报崩溃。(如果文"
+"件只给定了参数时实现。)"
 
-#: ../apport/ui.py:481
+#: ../apport/ui.py:571
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "打印 Apport 版本号"
 
-#: ../apport/ui.py:630
+#: ../apport/ui.py:738
 msgid "Could not determine the package or source package name."
-msgstr "无法检测包或者源码包的名字"
+msgstr "无法检测包或者源码包的名称。"
 
-#: ../apport/ui.py:645
+#: ../apport/ui.py:753
 msgid "Unable to start web browser"
 msgstr "无法打开浏览器"
 
-#: ../apport/ui.py:646
+#: ../apport/ui.py:754
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "无法用浏览器打开网页%s"
+msgstr "无法用浏览器打开网页 %s"
 
-#: ../apport/ui.py:752
+#: ../apport/ui.py:860
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr ""
+msgstr "请为 %s 错误追踪系统输入您的帐户信息"
 
-#: ../apport/ui.py:763
+#: ../apport/ui.py:871
 msgid "Network problem"
 msgstr "网络问题"
 
-#: ../apport/ui.py:765
-msgid "Could not upload report data to crash database"
-msgstr "无法把报告数据上传到崩溃数据库"
+#: ../apport/ui.py:872
+msgid ""
+"Cannot connect to crash database, please check your Internet connection."
+msgstr "无法连接到崩溃数据库，请检查您的 Internet 连接。"
 
-#: ../apport/ui.py:791
+#: ../apport/ui.py:896
 msgid "Memory exhaustion"
 msgstr "内存耗尽"
 
-#: ../apport/ui.py:792
+#: ../apport/ui.py:897
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "你的系统没有足够的内存来处理这一次崩溃报告。"
 
-#: ../apport/ui.py:815
-#, fuzzy
+#: ../apport/ui.py:920 ../apport/ui.py:929
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "该报告属于一个未安装的软件包"
+msgstr "这一问题报告适用于不再安装的程序。"
 
-#: ../apport/ui.py:849
+#: ../apport/ui.py:961
 msgid "Problem already known"
-msgstr "我们已经知道这个问题"
+msgstr "这是已知问题"
 
-#: ../apport/ui.py:850
+#: ../apport/ui.py:962
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -243,16 +282,16 @@ msgstr "关于这个问题，之前已经有缺陷报告如网页所示。您是
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
-msgstr "按下任何一个键继续…"
+msgstr "按任意键继续…"
 
 #: ../bin/apport-cli.py:78
 msgid "What would you like to do? Your options are:"
-msgstr "你想做什么？你的选项是："
+msgstr "您想做什么？您的选择是："
 
 #: ../bin/apport-cli.py:82
 #, python-format
 msgid "Please choose (%s):"
-msgstr "请选择 (%s)："
+msgstr "请选择(%s)："
 
 #. translators: first %s: application name, second %s: date, third %s: time
 #: ../bin/apport-cli.py:139
@@ -266,8 +305,8 @@ msgid ""
 "private information), you can help to improve the application by reporting\n"
 "the problem."
 msgstr ""
-"如果你没有做任何机密的事情 (输入密码或者其它私人信息)，\n"
-"你可以通过汇报这个问题来改进程序。"
+"如果您没有做任何机密的事情 (输入密码或者其它私人信息)，\n"
+"可以通过汇报这个问题来改进程序。"
 
 #: ../bin/apport-cli.py:146 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
 msgid "&Report Problem..."
@@ -278,15 +317,15 @@ msgid "Cancel and &ignore future crashes of this program version"
 msgstr "终止并忽略这个版本软件以后出现的崩溃。"
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-#: ../bin/apport-cli.py:231 ../bin/apport-cli.py:312 ../bin/apport-cli.py:344
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:233 ../bin/apport-cli.py:314 ../bin/apport-cli.py:346
+#: ../bin/apport-cli.py:367
 msgid "&Cancel"
 msgstr "取消(&C)"
 
 #: ../bin/apport-cli.py:163
 #, python-format
 msgid "The package \"%s\" failed to install or upgrade."
-msgstr "软件包 \"%s\" 安装或者升级失败。"
+msgstr "软件包\"%s\"安装或者升级失败。"
 
 #: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22
 msgid ""
@@ -295,69 +334,73 @@ msgstr "请报告问题，这能帮助开发者修正它。"
 
 #: ../bin/apport-cli.py:176
 msgid "Your system encountered a serious kernel problem."
-msgstr ""
+msgstr "您的系统遇到了一个严重的内核问题。"
 
 #: ../bin/apport-cli.py:180
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr "您可以通过报告这个信息来帮助开发者解决这个问题。"
 
 #: ../bin/apport-cli.py:195
+msgid "Send this data to the developers?"
+msgstr ""
+
+#: ../bin/apport-cli.py:197
 msgid "Send problem report to the developers?"
 msgstr "向开发者发送问题报告？"
 
-#: ../bin/apport-cli.py:196
+#: ../bin/apport-cli.py:198
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
-"当问题报告被发出之后，请你填写\n"
+"当问题报告被发出之后，请填写\n"
 "自动弹出窗口的表格。"
 
-#: ../bin/apport-cli.py:215
+#: ../bin/apport-cli.py:217
 msgid "(binary data)"
-msgstr "（二进制数据）"
-
-#: ../bin/apport-cli.py:219
-#, python-format
-msgid "&Send complete report (recommended; %s)"
-msgstr "发送完整的报告 (&S) (推荐的; %s)"
+msgstr "(二进制数据)"
 
 #: ../bin/apport-cli.py:221
 #, python-format
-msgid "Send &reduced report (slow Internet connection; %s)"
-msgstr "发送精简的报告 (慢速网络连接： %s)"
+msgid "&Send complete report (recommended; %s)"
+msgstr "发送完整的报告(&S)(推荐：%s)"
 
-#: ../bin/apport-cli.py:224
+#: ../bin/apport-cli.py:223
+#, python-format
+msgid "Send &reduced report (slow Internet connection; %s)"
+msgstr "发送精简的报告(慢速网络连接： %s)"
+
+#: ../bin/apport-cli.py:226
 #, python-format
 msgid "&Send report (%s)"
-msgstr "发送报告(&S) (%s)"
+msgstr "发送报告(&S)(%s)"
 
-#: ../bin/apport-cli.py:228
+#: ../bin/apport-cli.py:230
 msgid "&View report"
-msgstr "浏览报告(&V)"
+msgstr "查看报告(&V)"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:231
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr "&保存报告文件以便稍后发送或者复制到其他地方"
+msgstr "保存报告文件以便稍后发送或者复制到其他地方(&K)"
 
-#: ../bin/apport-cli.py:261
+#: ../bin/apport-cli.py:263
 msgid "Problem report file:"
 msgstr "问题报告文件："
 
-#: ../bin/apport-cli.py:269 ../bin/apport-cli.py:274
+#: ../bin/apport-cli.py:271 ../bin/apport-cli.py:276
 msgid "&Confirm"
 msgstr "确认(&C)"
 
-#: ../bin/apport-cli.py:273
+#: ../bin/apport-cli.py:275
 #, python-format
 msgid "Error: %s"
 msgstr "错误：%s"
 
-#: ../bin/apport-cli.py:279
+#: ../bin/apport-cli.py:281
 msgid "Collecting problem information"
 msgstr "正在收集问题信息"
 
-#: ../bin/apport-cli.py:280
+#: ../bin/apport-cli.py:282
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -365,11 +408,11 @@ msgstr ""
 "收集到的信息将会传送到开发人员处以改进软件。\n"
 "这可能会花费几分钟时间，"
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:21
+#: ../bin/apport-cli.py:294 ../gtk/apport-gtk.ui.h:21
 msgid "Uploading problem information"
 msgstr "上传问题信息"
 
-#: ../bin/apport-cli.py:293
+#: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -377,57 +420,70 @@ msgstr ""
 "收集到的信息正在被发送到错误跟踪系统。\n"
 "这可能要花费几分钟时间。"
 
-#: ../bin/apport-cli.py:343
+#: ../bin/apport-cli.py:345
 msgid "&Done"
-msgstr ""
+msgstr "完成(&D)"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:351
 msgid "none"
-msgstr ""
+msgstr "无"
 
-#: ../bin/apport-cli.py:350
+#: ../bin/apport-cli.py:352
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "已选择：%s。 多重选择："
 
-#: ../bin/apport-cli.py:366
+#: ../bin/apport-cli.py:368
 msgid "Choices:"
-msgstr ""
+msgstr "选择："
 
-#: ../bin/apport-cli.py:380
+#: ../bin/apport-cli.py:382
 msgid "Path to file (Enter to cancel):"
-msgstr ""
-
-#: ../bin/apport-cli.py:385
-#, fuzzy
-msgid "File does not exist."
-msgstr "软件包 %s 不存在"
+msgstr "文件的路径(回车取消)："
 
 #: ../bin/apport-cli.py:387
-msgid "This is a directory."
-msgstr ""
+msgid "File does not exist."
+msgstr "文件不存在。"
 
-#: ../bin/apport-cli.py:394
+#: ../bin/apport-cli.py:389
+msgid "This is a directory."
+msgstr "这是一个目录。"
+
+#: ../bin/apport-cli.py:395
+msgid "To continue, you must visit the following URL:"
+msgstr "要继续，您必须访问下面这个网址："
+
+#: ../bin/apport-cli.py:397
+msgid ""
+"You can launch a browser now, or copy this URL into a browser on another "
+"computer."
+msgstr "您现在可以加载一个浏览器，或者复制这个网址到另外一个电脑的浏览器。"
+
+#: ../bin/apport-cli.py:399
+msgid "Launch a browser now"
+msgstr "现在启动一个浏览器"
+
+#: ../bin/apport-cli.py:406
 msgid "No pending crash reports. Try --help for more information."
-msgstr "没有已知的崩溃报告，尝试 --help以获得更多信息。"
+msgstr "没有已知的崩溃报告，尝试 --help 以获得更多信息。"
 
 #: ../data/apportcheckresume.py:58
 msgid ""
 "This occured during a previous suspend and prevented it from resuming "
 "properly."
-msgstr ""
+msgstr "这是在上一个挂起中发生的，并阻止了它正确地恢复。"
 
 #: ../data/apportcheckresume.py:60
 msgid ""
 "This occured during a previous hibernate and prevented it from resuming "
 "properly."
-msgstr ""
+msgstr "这是在上一个休眠中发生的，并阻止了它正确地恢复。"
 
 #: ../data/apportcheckresume.py:65
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
-msgstr ""
+msgstr "这个恢复过程已经非常接近尾声， 将正常地结束。"
 
 #: ../gtk/apport-gtk.ui.h:1
 msgid "<big><b>Collecting problem information</b></big>"
@@ -464,7 +520,7 @@ msgstr "应用程序问题"
 #: ../gtk/apport-gtk.ui.h:10
 #, no-c-format
 msgid "Complete report (recommended; %s)"
-msgstr "完整报告（推荐；%s）"
+msgstr "完整报告(推荐；%s)"
 
 #: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
@@ -476,8 +532,8 @@ msgid ""
 "private information), you can help to improve the application by reporting "
 "the problem."
 msgstr ""
-"如果你现在的动作不涉及机密信息（即不是输入口令等涉及私密信息的动作），则可以"
-"报告本问题，以便程序的改进。"
+"如果您现在的动作不涉及机密信息(即不是输入口令等涉及私密信息的动作)，则可以报"
+"告本问题以便改进程序。"
 
 #: ../gtk/apport-gtk.ui.h:13
 msgid ""
@@ -491,16 +547,16 @@ msgstr "内核问题"
 
 #: ../gtk/apport-gtk.ui.h:15
 msgid "Package problem"
-msgstr "包问题"
+msgstr "软件包问题"
 
 #: ../gtk/apport-gtk.ui.h:17
 #, no-c-format
 msgid "Reduced report (slow Internet connection; %s)"
-msgstr "精简的报告（以适应慢速因特网连接；%s）"
+msgstr "精简报告(适用于慢速连接；%s)"
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
-msgstr "重新启动程序(_P)"
+msgstr "重启程序(_P)"
 
 #: ../gtk/apport-gtk.ui.h:19
 msgid ""
@@ -531,52 +587,52 @@ msgstr "发送报告(_S)"
 
 #: ../bin/apport-retrace.py:28
 msgid "%prog [options] <apport problem report | crash ID>"
-msgstr ""
+msgstr "%prog [选项] <apport 问题报告/崩溃的 ID 号>"
 
 #: ../bin/apport-retrace.py:30
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
+msgstr "不把新的痕迹写入到报告，但是把它们写入到标准输出。"
 
 #: ../bin/apport-retrace.py:33
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
-msgstr ""
+msgstr "启动一个交互式的 gdb 进程并载入提交的崩溃信息 (-o 不重新生成报告)"
 
 #: ../bin/apport-retrace.py:36
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr ""
+msgstr "将更改过的报告写入指定文件而非改变原始报告"
 
 #: ../bin/apport-retrace.py:39
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "生成栈回溯后将内核转储从报告中删除"
 
 #: ../bin/apport-retrace.py:42
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "覆盖报告核心文件"
 
 #: ../bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "覆盖报告执行路径"
 
 #: ../bin/apport-retrace.py:48
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "覆盖报告的进程表"
 
 #: ../bin/apport-retrace.py:51
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "重建报告的包信息"
 
 #: ../bin/apport-retrace.py:54
 msgid "Report download/install progress when installing additional packages"
-msgstr ""
+msgstr "在安装附加包后报告下载/安装进程"
 
 #: ../bin/apport-retrace.py:57
 msgid ""
 "Only unpack the additionally required packages, do not configure them; purge "
 "packages again after retracing"
-msgstr ""
+msgstr "仅解包附加软件包但不进行配置并在重建跟踪后彻底删除"
 
 #: ../bin/apport-retrace.py:60
 msgid ""
@@ -584,10 +640,12 @@ msgid ""
 "afterwards. This should only be used for temporarily unpacked chroot "
 "tarballs where it would just be a waste of time."
 msgstr ""
+"使用 -u 参数时不要使用打包系统，随后也不要清除软件包，除非要暂时解开 chroot "
+"档案包，否则这样做纯粹是浪费时间。"
 
 #: ../bin/apport-retrace.py:63
 msgid "Install an extra package (can be specified multiple times)"
-msgstr ""
+msgstr "安装一个额外的包(可以多次指定)"
 
 #: ../bin/apport-retrace.py:66
 msgid ""
@@ -595,31 +653,35 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"包含崩溃数据库访问信息文件之路径。此项将用于为特定崩溃代码上传堆栈的回溯调试"
+"信息(除非用户指定 -g, -o 或 -s)"
 
 #: ../bin/apport-retrace.py:69
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
-msgstr ""
+msgstr "显示返回的堆栈信息，并询求确认是否将其发送至崩溃数据库。"
 
 #: ../bin/apport-retrace.py:72
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr ""
+msgstr "SQLite 数据库路径重复(默认：不重复检查)"
 
 #: ../bin/apport-retrace.py:78
-msgid "incorrect number of arguments; use --help for a short online help"
-msgstr ""
+msgid "incorrect number of arguments; use --help for a short help"
+msgstr "参数数量错误；使用 --help 获取简略帮助"
 
 #: ../bin/apport-retrace.py:82
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short online help"
+"authentication file (--auth); see --help for a short help"
 msgstr ""
+"您或需要进行一项本地操作(-s, -g, -o) 或提供一个认证文件(--auth)；参见 --help "
+"以获取简单帮助。"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../bin/apport-retrace.py:115
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "确定以附件形式发送这些？[y/n]"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
@@ -634,71 +696,19 @@ msgstr "提交一份问题报告…"
 #: ../bin/apport-unpack.py:23
 #, python-format
 msgid "Usage: %s <report> <target directory>"
-msgstr ""
+msgstr "用法: %s <报告> <目标目录>"
 
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "目标目录存在且不为空。"
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
+msgstr "您的系统可能现在不稳定，它也许需要重启。"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "Apport 崩溃文件"
 
-#~ msgid "Sorry, %s closed unexpectedly"
-#~ msgstr "抱歉，%s 异常关闭"
-
-#~ msgid "This problem report does not apply to a packaged program."
-#~ msgstr "该问题报告与打包的软件无关。"
-
-#~ msgid "&Details..."
-#~ msgstr "细节(&D)..."
-
-#~ msgid "Sorry, %s closed unexpectedly."
-#~ msgstr "对不起，%s 异常关闭。"
-
-#~ msgid "Sorry, the program \"%s\" closed unexpectedly."
-#~ msgstr "对不起，程序 \"%s\" 异常关闭。"
-
-#~ msgid "&Ignore future crashes of this program version"
-#~ msgstr "忽略本程序版本以后发生的崩溃(＆I)"
-
-#~ msgid "Restart &Program"
-#~ msgstr "重新启动程序(&R)"
-
-#~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
-#~ msgstr "抱歉，程序包 “%s” 安装或升级失败。"
-
-#~ msgid "Generic error"
-#~ msgstr "常规错误"
-
-#~ msgid ""
-#~ "After the problem report has been sent, please fill out the form in the "
-#~ "automatically opened web browser."
-#~ msgstr "所有问题报告都已发送，请填写网络浏览器中自动打开的表格."
-
-#~ msgid "&Send"
-#~ msgstr "发送(&S)"
-
-#~ msgid "Collecting Problem Information"
-#~ msgstr "正在收集问题信息"
-
-#~ msgid ""
-#~ "The collected information can be sent to the developers to improve the "
-#~ "application. This might take a few minutes."
-#~ msgstr "收集到的信息可以发送给开发者来改进程序。这可能要花费几分钟的时间。"
-
-#~ msgid "Uploading Problem Information"
-#~ msgstr "上传问题信息"
-
-#~ msgid ""
-#~ "The current configuration cannot be supported:\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "不支持目前的配置：\n"
-#~ "\n"
-#~ "%s"
+#~ msgid "The running kernel is not an Ubuntu kernel"
+#~ msgstr "正在运行的内核不是 Ubuntu 内核"

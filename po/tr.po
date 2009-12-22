@@ -7,23 +7,23 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-08 14:07+0200\n"
-"PO-Revision-Date: 2009-02-22 12:58+0000\n"
+"POT-Creation-Date: 2009-12-22 23:59+0100\n"
+"PO-Revision-Date: 2009-12-19 17:51+0000\n"
 "Last-Translator: Hasan Yılmaz <iletisim@hasanyilmaz.net>\n"
 "Language-Team: Turkish <tr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-04-20 13:20+0000\n"
+"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #. TRANS: %s is the name of the operating system
-#: ../apport/ui.py:84
+#: ../apport/ui.py:74
 #, python-format
 msgid "This is not a genuine %s package"
-msgstr ""
+msgstr "Bu özgün bir %s paketi değil"
 
-#: ../apport/ui.py:92
+#: ../apport/ui.py:96
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -31,203 +31,262 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Kurulmuş eski paket sürümlerine sahipsiniz. Lütfen aşağıdaki paketleri "
+"yükseltin ve ardından sorunun yine ortaya çıkıp çıkmadığını kontrol edin.\n"
+"\n"
+"%s"
 
-#: ../apport/ui.py:98
+#: ../apport/ui.py:102
 msgid ""
 "The program crashed on an assertion failure, but the message could not be "
 "retrieved. Apport does not support reporting these crashes."
 msgstr ""
+"Program onaylama işlemi hatasından çöktü,ama mesaj alınamadı.Apport bu çökme "
+"raporlamasını desteklemiyor."
 
-#: ../apport/ui.py:185
+#: ../apport/ui.py:189
 msgid "unknown program"
-msgstr ""
+msgstr "bilinmeyen program"
 
-#: ../apport/ui.py:186
+#: ../apport/ui.py:190
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Üzgünüm, \"%s\" programı beklenmedik şekilde kapandı"
 
-#: ../apport/ui.py:187 ../apport/ui.py:254 ../apport/ui.py:360
+#: ../apport/ui.py:191 ../apport/ui.py:258 ../apport/ui.py:364
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "%s'de problem"
 
-#: ../apport/ui.py:188
+#: ../apport/ui.py:192
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
+"Bilgisayarınız otomatik olarak sorunu analiz etmek ve geliştiricilere rapor "
+"göndermek için yeterli boş belleğe sahip değil."
 
 #. package does not exist
-#: ../apport/ui.py:215 ../apport/ui.py:241 ../apport/ui.py:247
-#: ../apport/ui.py:279 ../apport/ui.py:287 ../apport/ui.py:352
-#: ../apport/ui.py:447 ../apport/ui.py:629 ../apport/ui.py:796
-#: ../apport/ui.py:800 ../apport/ui.py:819 ../apport/ui.py:1361
-#: ../apport/ui.py:1378 ../apport/ui.py:1865 ../apport/ui.py:1881
-#: ../apport/ui.py:1892 ../apport/ui.py:1903
+#: ../apport/ui.py:219 ../apport/ui.py:245 ../apport/ui.py:251
+#: ../apport/ui.py:283 ../apport/ui.py:291 ../apport/ui.py:356
+#: ../apport/ui.py:534 ../apport/ui.py:737 ../apport/ui.py:901
+#: ../apport/ui.py:905 ../apport/ui.py:924 ../apport/ui.py:930
+#: ../apport/ui.py:1477 ../apport/ui.py:1494 ../apport/ui.py:1981
+#: ../apport/ui.py:1997 ../apport/ui.py:2008 ../apport/ui.py:2019
 msgid "Invalid problem report"
 msgstr "Geçersiz sorun raporu"
 
-#: ../apport/ui.py:216 ../apport/ui.py:248
+#: ../apport/ui.py:220 ../apport/ui.py:252
 msgid "The report belongs to a package that is not installed."
 msgstr "Rapor kurulmamış bir pakete ait."
 
-#: ../apport/ui.py:243 ../apport/ui.py:802
+#: ../apport/ui.py:247 ../apport/ui.py:907
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Bu sorun raporu hasarlı, bu nedenle işlenemiyor."
 
-#: ../apport/ui.py:255 ../apport/ui.py:361
+#: ../apport/ui.py:259 ../apport/ui.py:365
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
 "\n"
 "%s"
 msgstr ""
+"Sorun raporlanamadı:\n"
+"\n"
+"%s"
 
-#: ../apport/ui.py:280
+#: ../apport/ui.py:284
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "Bu hata raporuna erişmeye izniniz yok."
 
-#: ../apport/ui.py:283
+#: ../apport/ui.py:287
 msgid "Error"
 msgstr "Hata"
 
-#: ../apport/ui.py:284
+#: ../apport/ui.py:288
 msgid "There is not enough disk space available to process this report."
-msgstr ""
+msgstr "Bu raporu işlemek için yeterli disk alanı yok."
 
-#: ../apport/ui.py:312
+#: ../apport/ui.py:316
 msgid "No package specified"
 msgstr "Hiçbir paket belirtilmemiş"
 
-#: ../apport/ui.py:313
+#: ../apport/ui.py:317
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
+"Bir paket veya PID belirtmelisiniz. Daha fazla bilgi için --help çıktısına "
+"bakın."
 
-#: ../apport/ui.py:323
+#: ../apport/ui.py:327
 msgid "Invalid PID"
-msgstr ""
+msgstr "Geçersiz PID"
 
-#: ../apport/ui.py:324
-#, fuzzy
+#: ../apport/ui.py:328
 msgid "The specified process ID does not belong to a program."
-msgstr "Bu sorun raporu herhangi bir paketlenmiş programla ilgili değil."
+msgstr "Belirlenen işlem ID'si bir programa ait değil."
 
-#: ../apport/ui.py:332
+#: ../apport/ui.py:336
 msgid "Permission denied"
 msgstr "İzin verilmedi"
 
-#: ../apport/ui.py:333
+#: ../apport/ui.py:337
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"Belirtilen süreç size ait değil. Lütfen bu programı süreç sahibi veya root "
+"olarak çalıştırın."
 
-#: ../apport/ui.py:353
+#: ../apport/ui.py:357
 #, python-format
 msgid "Package %s does not exist"
+msgstr "%s pakedi bulunamadı"
+
+#: ../apport/ui.py:389 ../apport/ui.py:435 ../apport/ui.py:451
+msgid "Updating problem report"
 msgstr ""
 
-#: ../apport/ui.py:406
+#: ../apport/ui.py:390
+msgid ""
+"You are not the reporter or subscriber of this problem report, or the report "
+"is a duplicate or already closed.\n"
+"\n"
+"Please create a new report using \"apport-bug\"."
+msgstr ""
+
+#: ../apport/ui.py:399
+msgid ""
+"You are not the reporter of this problem report. It is much easier to mark a "
+"bug as a duplicate of another than to move your comments and attachments to "
+"a new bug.\n"
+"\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
+"\n"
+"Do you really want to proceed?"
+msgstr ""
+
+#: ../apport/ui.py:436 ../apport/ui.py:452
+msgid "No additional information collected."
+msgstr ""
+
+#: ../apport/ui.py:491
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "Ne tür bir sorun bildirmek istiyorsunuz?"
 
-#: ../apport/ui.py:423
+#: ../apport/ui.py:508
 msgid "Unknown symptom"
-msgstr ""
+msgstr "Bilinmeyen belirti"
 
-#: ../apport/ui.py:424
+#: ../apport/ui.py:509
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "\"%s\" belirtisi bilinmiyor."
 
-#: ../apport/ui.py:464
+#: ../apport/ui.py:551
 msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
-#: ../apport/ui.py:466
+#: ../apport/ui.py:553
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"Hata dosyalama modunda başlat. --package ve isteğe bağlı --pid,veya sadece --"
+"pid gerektirir.Eğer hiçbiri verilmezse,bilinen belirtilerin listesini göster."
+"(Kastedilen;eğer tek bir argüman verilirse.)"
 
-#: ../apport/ui.py:469
+#: ../apport/ui.py:556
+msgid "Start in bug updating mode. Can take an optional --package."
+msgstr ""
+
+#: ../apport/ui.py:559
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
+"Bir belirti için hata raporu dosyala.(Kastedilen;eğer belirti adı sadece "
+"argüman olarak verilirse.)"
 
-#: ../apport/ui.py:472
+#: ../apport/ui.py:562
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"--dosya-hata modunda paket adını belirtin. Bir -pid belirtilmişse, bu "
+"seçenek opsiyoneldir. (Paket adı tek argüman olarak verilmişse uygulanır.)"
 
-#: ../apport/ui.py:475
+#: ../apport/ui.py:565
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information. (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"--dosya-hata modunda çalışan bir program belirtin. Eğer bu belirtilirse, "
+"hata raporu daha açıklayıcı olur. (Eğer pid tek argüman olarak verilmişse "
+"uygulanır.)"
 
-#: ../apport/ui.py:478
+#: ../apport/ui.py:568
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"Hata raporunu %s'te beklemekte olanlar yerine .apport veya .crash "
+"dosyalarından bildirin. (Eğer dosya adı verilen tek argüman ise)"
 
-#: ../apport/ui.py:481
+#: ../apport/ui.py:571
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "Apport sürüm numarasını yazdır."
 
-#: ../apport/ui.py:630
+#: ../apport/ui.py:738
 msgid "Could not determine the package or source package name."
 msgstr "Paket ya da kaynak kod paketi adı belirlenemedi."
 
-#: ../apport/ui.py:645
+#: ../apport/ui.py:753
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "Ağ tarayıcı başlatılamıyor"
 
-#: ../apport/ui.py:646
+#: ../apport/ui.py:754
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "%s açmak için ağ tarayıcı başlatılamıyor."
 
-#: ../apport/ui.py:752
+#: ../apport/ui.py:860
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr ""
+msgstr "Lütfen %s hata takip sistemi için hesap bilgilerinizi girin."
 
-#: ../apport/ui.py:763
+#: ../apport/ui.py:871
 msgid "Network problem"
 msgstr "Ağ sorunu"
 
-#: ../apport/ui.py:765
-msgid "Could not upload report data to crash database"
+#: ../apport/ui.py:872
+msgid ""
+"Cannot connect to crash database, please check your Internet connection."
 msgstr ""
+"Çöküş veritabanına bağlanılamıyor, lütfen internet bağlantınızı kontrol edin."
 
-#: ../apport/ui.py:791
+#: ../apport/ui.py:896
 msgid "Memory exhaustion"
 msgstr "Yetersiz bellek"
 
-#: ../apport/ui.py:792
+#: ../apport/ui.py:897
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "Sisteminiz bu çökme raporunu işlemek için yeterli belleği yok."
+msgstr "Sisteminiz bu çökme raporunu işlemek için yeterli belleğe sahip değil."
 
-#: ../apport/ui.py:815
-#, fuzzy
+#: ../apport/ui.py:920 ../apport/ui.py:929
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "Rapor kurulmamış bir pakete ait."
+msgstr "Bu problem raporu, artık yüklü olmayan bir programa ait."
 
-#: ../apport/ui.py:849
+#: ../apport/ui.py:961
 msgid "Problem already known"
 msgstr "Sorun önceden bildirilmiş"
 
-#: ../apport/ui.py:850
+#: ../apport/ui.py:962
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -262,6 +321,10 @@ msgid ""
 "private information), you can help to improve the application by reporting\n"
 "the problem."
 msgstr ""
+"Eğer güvenlik gerektiren bir işlem yapmıyorsanız (şifre veya başka\n"
+"özel bilgiler girmek gibi), hata raporu göndererek uygulamanın "
+"geliştirilmesine\n"
+"yardımcı olabilirsiniz."
 
 #: ../bin/apport-cli.py:146 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
 msgid "&Report Problem..."
@@ -269,18 +332,18 @@ msgstr "&Sorunu Bildir..."
 
 #: ../bin/apport-cli.py:147
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
+msgstr "Bu program sürümün daha sonraki çökmelerini iptal et ve yoksay."
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-#: ../bin/apport-cli.py:231 ../bin/apport-cli.py:312 ../bin/apport-cli.py:344
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:233 ../bin/apport-cli.py:314 ../bin/apport-cli.py:346
+#: ../bin/apport-cli.py:367
 msgid "&Cancel"
 msgstr "&Vazgeç"
 
 #: ../bin/apport-cli.py:163
 #, python-format
 msgid "The package \"%s\" failed to install or upgrade."
-msgstr ""
+msgstr "\"%s\" paketinin kurulumu veya güncellenmesi başarısız."
 
 #: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22
 msgid ""
@@ -299,125 +362,160 @@ msgstr ""
 "Bu sorunu rapor ederek geliştiricilerin düzeltmesinee yardım edebilirsiniz."
 
 #: ../bin/apport-cli.py:195
+msgid "Send this data to the developers?"
+msgstr ""
+
+#: ../bin/apport-cli.py:197
 msgid "Send problem report to the developers?"
 msgstr "Sorun raporu, geliştiricilere gönderilsin mi?"
 
-#: ../bin/apport-cli.py:196
+#: ../bin/apport-cli.py:198
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"Problem raporu gönderildikten sonra, lütfen web tarayıcınızda otomatik\n"
+"olarak açılan  sayfada yer alan formu doldurun."
 
-#: ../bin/apport-cli.py:215
+#: ../bin/apport-cli.py:217
 msgid "(binary data)"
 msgstr "(ikili veri)"
 
-#: ../bin/apport-cli.py:219
-#, python-format
-msgid "&Send complete report (recommended; %s)"
-msgstr ""
-
 #: ../bin/apport-cli.py:221
 #, python-format
-msgid "Send &reduced report (slow Internet connection; %s)"
-msgstr ""
+msgid "&Send complete report (recommended; %s)"
+msgstr "&Tam rapor gönderin(önerilen; %s)"
 
-#: ../bin/apport-cli.py:224
+#: ../bin/apport-cli.py:223
+#, python-format
+msgid "Send &reduced report (slow Internet connection; %s)"
+msgstr "&Özet rapor gönderin (düşük ağ bağlantısı; %s)"
+
+#: ../bin/apport-cli.py:226
 #, python-format
 msgid "&Send report (%s)"
-msgstr ""
+msgstr "Rapor &Gönder (%s)"
 
-#: ../bin/apport-cli.py:228
+#: ../bin/apport-cli.py:230
 msgid "&View report"
-msgstr ""
+msgstr "Rapor Görüntü&le"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:231
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
+"&Rapor dosyasını, daha sonra gönderme veya başka bir yere kopyalanması için "
+"saklayın."
 
-#: ../bin/apport-cli.py:261
+#: ../bin/apport-cli.py:263
 msgid "Problem report file:"
-msgstr ""
+msgstr "Sorun rapor dosyası:"
 
-#: ../bin/apport-cli.py:269 ../bin/apport-cli.py:274
+#: ../bin/apport-cli.py:271 ../bin/apport-cli.py:276
 msgid "&Confirm"
 msgstr "&Onayla"
 
-#: ../bin/apport-cli.py:273
+#: ../bin/apport-cli.py:275
 #, python-format
 msgid "Error: %s"
 msgstr "Hata: %s"
 
-#: ../bin/apport-cli.py:279
+#: ../bin/apport-cli.py:281
 msgid "Collecting problem information"
 msgstr "Sorun bilgileri toplanıyor"
 
-#: ../bin/apport-cli.py:280
+#: ../bin/apport-cli.py:282
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
+"Toplanan bilgiler geliştiriciler için uygulama geliştirmek için "
+"gönderilebilir. \n"
+"Bu birkaç dakika sürebilir."
 
-#: ../bin/apport-cli.py:292 ../gtk/apport-gtk.ui.h:21
+#: ../bin/apport-cli.py:294 ../gtk/apport-gtk.ui.h:21
 msgid "Uploading problem information"
 msgstr "Sorun bilgileri yükleniyor"
 
-#: ../bin/apport-cli.py:293
+#: ../bin/apport-cli.py:295
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
+"Toplanan bilgiler hata takip sistemi için gönderiliyor.\n"
+"Bu birkaç dakika sürebilir."
 
-#: ../bin/apport-cli.py:343
+#: ../bin/apport-cli.py:345
 msgid "&Done"
-msgstr ""
+msgstr "&Bitti"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:351
 msgid "none"
-msgstr ""
+msgstr "hiçbiri"
 
-#: ../bin/apport-cli.py:350
+#: ../bin/apport-cli.py:352
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "Seçili: %s. Birden fazla seçenek:"
 
-#: ../bin/apport-cli.py:366
+#: ../bin/apport-cli.py:368
 msgid "Choices:"
-msgstr ""
+msgstr "Seçenekler:"
 
-#: ../bin/apport-cli.py:380
+#: ../bin/apport-cli.py:382
 msgid "Path to file (Enter to cancel):"
-msgstr ""
-
-#: ../bin/apport-cli.py:385
-msgid "File does not exist."
-msgstr ""
+msgstr "Dosya yolu (Iptal etmek için girin):"
 
 #: ../bin/apport-cli.py:387
-msgid "This is a directory."
-msgstr ""
+msgid "File does not exist."
+msgstr "Dosya mevcut değil."
 
-#: ../bin/apport-cli.py:394
-msgid "No pending crash reports. Try --help for more information."
+#: ../bin/apport-cli.py:389
+msgid "This is a directory."
+msgstr "Bu bir dizin."
+
+#: ../bin/apport-cli.py:395
+msgid "To continue, you must visit the following URL:"
+msgstr "Devam etmek için, aşağıdaki URL'yi ziyaret etmelisiniz:"
+
+#: ../bin/apport-cli.py:397
+msgid ""
+"You can launch a browser now, or copy this URL into a browser on another "
+"computer."
 msgstr ""
+"Şimdi tarayıcıda açabilirsiniz, ya da bu URL'yi başka bilgisayardaki bir "
+"tarayıcıya kopyalayabilirsiniz."
+
+#: ../bin/apport-cli.py:399
+msgid "Launch a browser now"
+msgstr "Tarayıcıyı aç"
+
+#: ../bin/apport-cli.py:406
+msgid "No pending crash reports. Try --help for more information."
+msgstr "Bekleyen çökme raporu yok. Daha fazla bilgi için --yardım 'ı deneyin."
 
 #: ../data/apportcheckresume.py:58
 msgid ""
 "This occured during a previous suspend and prevented it from resuming "
 "properly."
 msgstr ""
+"Bu, geçmişteki bir askıya alma sırasında meydana geldi ve uygun bir şekilde "
+"sürdürülmesini engelledi."
 
 #: ../data/apportcheckresume.py:60
 msgid ""
 "This occured during a previous hibernate and prevented it from resuming "
 "properly."
 msgstr ""
+"Bu, geçmişteki bir hazırda bekletme işlemi sırasında meydana geldi ve uygun "
+"bir şekilde sürdürülmesini engelledi."
 
 #: ../data/apportcheckresume.py:65
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
+"Kalan işlem bitmesine çok yakın bir yerde takıldı ve normal bir biçimde "
+"tamamlanmış gibi görünecek."
 
 #: ../gtk/apport-gtk.ui.h:1
 msgid "<big><b>Collecting problem information</b></big>"
@@ -430,6 +528,10 @@ msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
+"<big><b>Geliştiricilerine sorunu rapor gönderilsin mi?</b></big>\n"
+"\n"
+"Sorunu raporladıktan sonra, otomatik olarak açılan web tarayıcısında formu "
+"doldurun gönderildi."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Uploading problem information</b></big>"
@@ -441,6 +543,8 @@ msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">Özür dilerim, \"%s\" paketi kurulum "
+"veya güncelleme hatası alındı.</span>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
@@ -484,7 +588,7 @@ msgstr "Paket sorunu"
 #: ../gtk/apport-gtk.ui.h:17
 #, no-c-format
 msgid "Reduced report (slow Internet connection; %s)"
-msgstr "Kısa rapor (yavaş internat bağlantısı; %s)"
+msgstr "Kısa rapor (yavaş internet bağlantısı; %s)"
 
 #: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
@@ -522,52 +626,56 @@ msgstr "Rapor _Gönder"
 
 #: ../bin/apport-retrace.py:28
 msgid "%prog [options] <apport problem report | crash ID>"
-msgstr ""
+msgstr "%prog [options] <apport problem report | crash ID>"
 
 #: ../bin/apport-retrace.py:30
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
+msgstr "Raporda yeni işaretlemeler yapmak yerine bunları stdout'a yazın."
 
 #: ../bin/apport-retrace.py:33
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"Raporun son dökümü ile bir interaktif gdb oturumu başlat (-o yoksayılır; "
+"raporun üzerine yazmaz)"
 
 #: ../bin/apport-retrace.py:36
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr ""
+msgstr "Asıl raporu değiştirmek yerine düzeltilmiş raporu verilen dosyaya yaz"
 
 #: ../bin/apport-retrace.py:39
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "Kutup yığınını küme izleme düzeltmesinden sonra rapordan geri al"
 
 #: ../bin/apport-retrace.py:42
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "Raporun ÇekirdekDosyası'nı Geçersiz Kıl"
 
 #: ../bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "Raporun çalıştırılabilir yolunu geçersiz kıl (ExecutablePath)"
 
 #: ../bin/apport-retrace.py:48
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "Raporun ProcMap'lerini Geçersiz Kıl"
 
 #: ../bin/apport-retrace.py:51
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "Raporların Yedek bilgisini onar"
 
 #: ../bin/apport-retrace.py:54
 msgid "Report download/install progress when installing additional packages"
-msgstr ""
+msgstr "Ek paketler yüklenirken yükleme/kurma ilerleyişini raporla"
 
 #: ../bin/apport-retrace.py:57
 msgid ""
 "Only unpack the additionally required packages, do not configure them; purge "
 "packages again after retracing"
 msgstr ""
+"Sadece gerekli ek paketleri çıkart, onları yapılandırma; kökenine indikten "
+"sonra paketleri tekrar düzenle"
 
 #: ../bin/apport-retrace.py:60
 msgid ""
@@ -575,10 +683,13 @@ msgid ""
 "afterwards. This should only be used for temporarily unpacked chroot "
 "tarballs where it would just be a waste of time."
 msgstr ""
+"-u'yu kullandığınızda yedekleme sistemini kullanmayın ve sonraki yedekleri "
+"silmeyin. Bu sadece yanlış zamanda olmuş geçici yedeklenmemiş chroot "
+"tarballarda kullanılabilinir."
 
 #: ../bin/apport-retrace.py:63
 msgid "Install an extra package (can be specified multiple times)"
-msgstr ""
+msgstr "Fazladan paket kur (çok kez belirlenmiş olabilir)"
 
 #: ../bin/apport-retrace.py:66
 msgid ""
@@ -586,36 +697,43 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"Çökme Veritabanı Doğrulama bilgisini içeren bir dosya yolu belirtin. Bu "
+"çökme ID'si belirlenirken kaynağına ulaşılmış yığın izlerinini yüklemede "
+"kullanılır. (Eğer -g, -o veya -s belirtiymediyse)"
 
 #: ../bin/apport-retrace.py:69
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"Yeniden oluşturulmuş yığın izlerini göster ve bunları çökme veritabanına "
+"göndermeden önce onay al."
 
 #: ../bin/apport-retrace.py:72
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr ""
+msgstr "Kopya sqlite veritabanının yolu (varsayılan: kopya kontrolü yok)"
 
 #: ../bin/apport-retrace.py:78
-msgid "incorrect number of arguments; use --help for a short online help"
-msgstr ""
+msgid "incorrect number of arguments; use --help for a short help"
+msgstr "Yanlış sayıda argüman; kısa bir yardım için --help 'i kullanın"
 
 #: ../bin/apport-retrace.py:82
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short online help"
+"authentication file (--auth); see --help for a short help"
 msgstr ""
+"Ya bir yerel işlem yapmalı (-s, -g ve -o gibi) veya Kimlik denetleme dosyası "
+"(--auth); bak --yardım için kısa bir yardım"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../bin/apport-retrace.py:115
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "Eklenti olarak gönderilsinler mi? [y/n]"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
 #: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "Geliştiricilere bir arıza bildir"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
 #: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
@@ -625,66 +743,20 @@ msgstr "Bir sorunu bildir..."
 #: ../bin/apport-unpack.py:23
 #, python-format
 msgid "Usage: %s <report> <target directory>"
-msgstr ""
+msgstr "Kullanım: %s <rapor> <hedef dizin>"
 
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "Hedef dizin zaten mevcut ve boş değil."
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
+"Sisteminiz şimdi kararsız hale gelebilir ve yeniden başlatılması gerekebilir."
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "Apport çökme dosyası"
 
-#~ msgid "Sorry, %s closed unexpectedly"
-#~ msgstr "Üzgünüm, %s beklenmedik şekilde kapandı"
-
-#~ msgid "This problem report does not apply to a packaged program."
-#~ msgstr "Bu sorun raporu herhangi bir paketlenmiş programla ilgili değil."
-
-#~ msgid "&Details..."
-#~ msgstr "&Ayrıntılar..."
-
-#~ msgid "Sorry, %s closed unexpectedly."
-#~ msgstr "Üzgünüm, %s beklenmedik bir şekilde kapandı."
-
-#~ msgid "Sorry, the program \"%s\" closed unexpectedly."
-#~ msgstr "Üzgünüm, \"%s\" programı beklenmedik şekilde kapandı."
-
-#~ msgid "&Ignore future crashes of this program version"
-#~ msgstr "&Programın bu sürümünün gelecekteki çökmelerini göz ardı et"
-
-#~ msgid "Restart &Program"
-#~ msgstr "&Programı Yeniden Başlat"
-
-#~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
-#~ msgstr "Üzgünüm, \"%s\" paketini kurma ya da yükseltme başarısız oldu"
-
-#~ msgid "Generic error"
-#~ msgstr "Genel hata"
-
-#~ msgid ""
-#~ "After the problem report has been sent, please fill out the form in the "
-#~ "automatically opened web browser."
-#~ msgstr ""
-#~ "Sorun raporunun gönderilmesinden sonra lütfen tarayıcınızda kendiliğinden "
-#~ "açılacak olan formu doldurun."
-
-#~ msgid "&Send"
-#~ msgstr "&Gönder"
-
-#~ msgid "Collecting Problem Information"
-#~ msgstr "Sorun Bilgileri Toplanıyor"
-
-#~ msgid ""
-#~ "The collected information can be sent to the developers to improve the "
-#~ "application. This might take a few minutes."
-#~ msgstr ""
-#~ "Toplanan bilgi, uygulamanın geliştirilmesi için geliştiricilere "
-#~ "gönderilebilir. Bu, birkaç dakika sürebilir."
-
-#~ msgid "Uploading Problem Information"
-#~ msgstr "Sorun Bilgileri Yükleniyor"
+#~ msgid "The running kernel is not an Ubuntu kernel"
+#~ msgstr "Çalışan çekirdek, bir Ubuntu çekirdeği değil"
