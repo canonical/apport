@@ -43,7 +43,7 @@ find_programs
 # check for X
 if [ -z "$DISPLAY" ]; then
     if [ -x "$CLI" ] ; then
-        "$CLI" $update_report "$@"
+        "$CLI" "$@"
     else
         echo "\$DISPLAY is not set. You need apport-cli to make this program work." >&2
         exit 1
@@ -52,21 +52,21 @@ if [ -z "$DISPLAY" ]; then
 # do we have a running Gnome/KDE session?
 elif pgrep -u `id -u` -x gnome-session >/dev/null && \
     [ -x "$GTK" ]; then
-    "$GTK" $update_report "$@"
+    "$GTK" "$@"
 elif pgrep -u `id -u` -x ksmserver >/dev/null && \
     [ -x "$KDE" ]; then
-    "$KDE" $update_report "$@"
+    "$KDE" "$@"
 
 # fall back to calling whichever is available
 elif [ -x "$GTK" ]; then
-    "$GTK" $update_report "$@"
+    "$GTK" "$@"
 elif [ -x "$KDE" ]; then
-    "$KDE" $update_report "$@"
+    "$KDE" "$@"
 elif [ -x "$CLI" ]; then
     if [ -z "$TERM" ] && [ -x "$XTERM" ]; then
-         "$XTERM" -e "$CLI" $update_report "$@"
+         "$XTERM" -e "$CLI" "$@"
     else
-        "$CLI" $update_report "$@"
+        "$CLI" "$@"
     fi
 
 else
