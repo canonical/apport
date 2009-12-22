@@ -40,30 +40,10 @@ find_programs() {
 
 find_programs
 
-progname=`basename $0`
-if [ "$progname" = "apport-collect" ] || [ "$progname" = "apport-update-bug" ]; then
-    update_report="-u"
-fi
-
-if [ "$#" -gt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    if [ -n "$update_report" ]; then
-	echo "Usage: $0 <report number>" >&2
-    else
-	echo "Usage: $0 <pid>|<symptom name>|<package name>|<program path>|<.crash file>" >&2
-    fi
-    exit 1
-fi
-
-if [ "$#" = "0" ] && [ -z "$update_report" ]; then
-    args="-f"
-else
-    args="$1"
-fi
-
 # check for X
 if [ -z "$DISPLAY" ]; then
     if [ -x "$CLI" ] ; then
-        "$CLI" $update_report "$args"
+        "$CLI" $update_report "$@"
     else
         echo "\$DISPLAY is not set. You need apport-cli to make this program work." >&2
         exit 1
@@ -72,21 +52,21 @@ if [ -z "$DISPLAY" ]; then
 # do we have a running Gnome/KDE session?
 elif pgrep -u `id -u` -x gnome-session >/dev/null && \
     [ -x "$GTK" ]; then
-    "$GTK" $update_report "$args"
+    "$GTK" $update_report "$@"
 elif pgrep -u `id -u` -x ksmserver >/dev/null && \
     [ -x "$KDE" ]; then
-    "$KDE" $update_report "$args"
+    "$KDE" $update_report "$@"
 
 # fall back to calling whichever is available
 elif [ -x "$GTK" ]; then
-    "$GTK" $update_report "$args"
+    "$GTK" $update_report "$@"
 elif [ -x "$KDE" ]; then
-    "$KDE" $update_report "$args"
+    "$KDE" $update_report "$@"
 elif [ -x "$CLI" ]; then
     if [ -z "$TERM" ] && [ -x "$XTERM" ]; then
-         "$XTERM" -e "$CLI" $update_report "$args"
+         "$XTERM" -e "$CLI" $update_report "$@"
     else
-        "$CLI" $update_report "$args"
+        "$CLI" $update_report "$@"
     fi
 
 else

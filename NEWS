@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.10.1 (UNRELEASED)
+-------------------
+Bug fixes:
+ - Move all remaining option/argument parsing from apport-bug into ui.py. This
+   allows the user to add options to apport-bug/apport-collect, and also avoids
+   unwieldy dissection of options/arguments in shell.
+
 1.10 (2009-12-19)
 -----------------
 New features:
