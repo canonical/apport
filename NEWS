@@ -3,9 +3,15 @@ detailled list of changes, please see ChangeLog.
 
 1.10.2 (UNRELEASED)
 -------------------
+Improvements:
  - Update all copyright and description headers and consistently format them.
  - Rename all TestCase classes to "_T", which makes it much easier to run
    individual tests from the command line.
+
+Bug fixes:
+ - test/hooks: Do not try to add hook information to kernel_crashdump test
+   case, since we do not have an UI here. This test case broke when the system
+   had an interactive package hook for the kernel.
 
 1.10.1 (2009-12-23)
 -------------------

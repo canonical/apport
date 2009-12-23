@@ -150,9 +150,6 @@ class _T(unittest.TestCase):
 
         r.add_package_info(r['Package'])
         self.assert_(' ' in r['Package']) # appended version number
-        r.add_hooks_info(None)
-        self.assert_('ProcModules' in r)
-        self.assert_('Lspci' in r)
 
     @classmethod
     def _gcc_version_path(klass):
