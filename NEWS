@@ -1,18 +1,18 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.10.2 (UNRELEASED)
--------------------
+1.11 (UNRELEASED)
+-----------------
 Improvements:
+ - Add "--save" UI option to store the collected information into an .apport
+   file instead of sending it right away. The file can then later be sent
+   through apport-bug. Update manpages accordingly.
  - Update all copyright and description headers and consistently format them.
  - Rename all TestCase classes to "_T", which makes it much easier to run
    individual tests from the command line.
  - Testsuite: Verify that report details are/are not shown. This uncovered that
    details about package installation failures were not shown before sending
    them, which is fixed now.
- - Add "--save" UI option to store the collected information into an .apport
-   file instead of sending it right away. The file can then later be sent
-   through apport-bug. Update manpages accordingly.
 
 Bug fixes:
  - test/hooks: Do not try to add hook information to kernel_crashdump test
