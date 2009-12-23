@@ -264,7 +264,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 return
 
             if self.report.get('ProblemType') in ['Crash', 'KernelCrash',
-                                                  'KernelOops']:
+                                                  'KernelOops', 'Package']:
                 response = self.ui_present_report_details(False)
                 if response == 'cancel':
                     return
@@ -1275,6 +1275,7 @@ databases = {
             self.question_file_response = None
 
             self.opened_url = None
+            self.present_details_shown = False
 
             self.clear_msg()
 
@@ -1295,6 +1296,7 @@ databases = {
             return self.present_kernel_error_response
 
         def ui_present_report_details(self, is_update):
+            self.present_details_shown = True
             return self.present_details_response
 
         def ui_info_message(self, title, text):
@@ -1616,6 +1618,7 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
+            self.assert_(self.ui.present_details_shown)
             self.assertEqual(self.ui.opened_url, 'http://bash.bugs.example.com/%i' % self.ui.crashdb.latest_id())
 
             self.assert_(self.ui.ic_progress_pulses > 0)
@@ -1663,6 +1666,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
+            self.assert_(self.ui.present_details_shown)
             self.assert_(self.ui.ic_progress_pulses > 0)
 
         @classmethod
@@ -1776,6 +1780,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
+            self.failIf(self.ui.present_details_shown)
 
             # report in crash notification dialog, cancel details report
             r.write(open(report_file, 'w'))
@@ -1788,6 +1793,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
+            self.assert_(self.ui.present_details_shown)
 
             # report in crash notification dialog, send full report
             r.write(open(report_file, 'w'))
@@ -1799,6 +1805,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
+            self.assert_(self.ui.present_details_shown)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Dependencies' in self.ui.report.keys())
@@ -1818,6 +1825,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
+            self.assert_(self.ui.present_details_shown)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Dependencies' in self.ui.report.keys())
@@ -1854,6 +1862,7 @@ CoreDump: base64
             self.assert_('assert' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
+            self.failIf(self.ui.present_details_shown)
 
         def test_run_crash_argv_file(self):
             '''run_crash() through a file specified on the command line.'''
@@ -1869,6 +1878,7 @@ CoreDump: base64
             self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
+            self.failIf(self.ui.present_details_shown)
 
             # should not die with an exception on an invalid name
             sys.argv = ['ui-test', '-c', '/nonexisting.crash' ]
@@ -1966,6 +1976,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
+            self.assert_(self.ui.present_details_shown)
            
         def test_run_crash_errors(self):
             '''run_crash() on various error conditions.'''
@@ -2044,15 +2055,18 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
+            self.failIf(self.ui.present_details_shown)
 
             # report in crash notification dialog, send report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
             self.ui.present_package_error_response = 'report'
+            self.ui.present_details_response = 'full'
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://bash.bugs.example.com/%i' % self.ui.crashdb.latest_id())
+            self.assert_(self.ui.present_details_shown)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             self.assert_('Package' in self.ui.report.keys())
@@ -2091,6 +2105,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
+            self.failIf(self.ui.present_details_shown)
 
             # report in crash notification dialog, send report
             r.write(open(report_file, 'w'))
@@ -2102,6 +2117,7 @@ CoreDump: base64
                 ' ' + str(self.ui.msg_text))
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://linux.bugs.example.com/%i' % self.ui.crashdb.latest_id())
+            self.assert_(self.ui.present_details_shown)
 
             self.assert_('SourcePackage' in self.ui.report.keys())
             # did we run the hooks properly?
@@ -2141,6 +2157,7 @@ CoreDump: base64
             self.assertEqual(self.ui.run_argv(), False)
             self.assert_('No additional information collected.' in
                     self.ui.msg_text)
+            self.failIf(self.ui.present_details_shown)
 
         def test_run_update_report_nonexisting_package_cli(self):
             '''run_update_report() on a nonexisting package (CLI argument).'''
@@ -2153,6 +2170,7 @@ CoreDump: base64
             self.assertEqual(self.ui.run_argv(), False)
             self.assert_('No additional information collected.' in
                     self.ui.msg_text)
+            self.failIf(self.ui.present_details_shown)
 
         def test_run_update_report_existing_package_from_bug(self):
             '''run_update_report() on an existing package (from bug).'''
@@ -2168,6 +2186,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
+            self.assert_(self.ui.present_details_shown)
 
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assert_(self.ui.report['Package'].startswith('bash '))
@@ -2186,6 +2205,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
+            self.assert_(self.ui.present_details_shown)
 
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assert_(self.ui.report['Package'].startswith('bash '))
@@ -2208,6 +2228,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
+            self.assert_(self.ui.present_details_shown)
 
             self.assert_(self.ui.ic_progress_pulses > 0)
             self.assertEqual(self.ui.report['Package'], 'foo (not installed)')
@@ -2358,6 +2379,7 @@ report['end'] = '1'
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_text, None)
             self.assertEqual(self.ui.msg_severity, None)
+            self.assert_(self.ui.present_details_shown)
 
             self.assertEqual(self.ui.report['itch'], 'scratch')
             self.assert_('DistroRelease' in self.ui.report)
@@ -2377,6 +2399,7 @@ report['end'] = '1'
             self.ui = _TestSuiteUserInterface()
             self.ui.question_yesno_response = True
             self.assertEqual(self.ui.run_argv(), True)
+            self.assert_(self.ui.present_details_shown)
             self.assertEqual(self.ui.msg_text, 'do you?')
 
             self.assertEqual(self.ui.report['itch'], 'slap')
@@ -2412,12 +2435,14 @@ def run(report, ui):
             # cancelled
             self.assertEqual(self.ui.ic_progress_pulses, 0)
             self.assertEqual(self.ui.report, None)
+            self.failIf(self.ui.present_details_shown)
 
             # now, choose foo -> bash report
             self.ui.question_choice_response = [self.ui.msg_choices.index('foo does not work')]
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None)
             self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assert_(self.ui.present_details_shown)
             self.assert_(self.ui.report['Package'].startswith('bash'))
 
         def test_parse_argv(self):
