@@ -166,7 +166,7 @@ class Chroot:
 if __name__ == '__main__':
     import unittest, os, tarfile, re, shutil
 
-    class ChrootTest(unittest.TestCase):
+    class _T(unittest.TestCase):
         def test_null(self):
             '''null chroot (working in the main system)'''
 

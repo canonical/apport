@@ -121,7 +121,7 @@ if __name__ == '__main__':
     import unittest, tempfile, subprocess, os.path, stat
     import apport.fileutils, problem_report
 
-    class _PythonHookTest(unittest.TestCase):
+    class _T(unittest.TestCase):
         def test_env(self):
             '''Check the test environment.'''
 

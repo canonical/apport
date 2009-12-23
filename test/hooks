@@ -26,7 +26,7 @@ if options.local:
 else:
     basedir = '/usr/share/apport'
 
-class _HooksTest(unittest.TestCase):
+class _T(unittest.TestCase):
     def setUp(self):
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()

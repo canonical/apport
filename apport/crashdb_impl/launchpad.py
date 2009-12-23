@@ -777,7 +777,7 @@ if __name__ == '__main__':
     segv_report = None
     python_report = None
 
-    class _Tests(unittest.TestCase):
+    class _T(unittest.TestCase):
         # this assumes that a source package 'coreutils' exists and builds a
         # binary package 'coreutils'
         test_package = 'coreutils'

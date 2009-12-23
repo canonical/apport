@@ -1065,7 +1065,7 @@ class Report(ProblemReport):
 import unittest, shutil, signal, time
 from cStringIO import StringIO
 
-class _ApportReportTest(unittest.TestCase):
+class _T(unittest.TestCase):
     def test_add_package_info(self):
         '''add_package_info().'''
 

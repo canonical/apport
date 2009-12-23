@@ -827,7 +827,7 @@ impl = __AptDpkgPackageInfo()
 if __name__ == '__main__':
     import unittest, gzip
 
-    class _AptDpkgPackageInfoTest(unittest.TestCase):
+    class _T(unittest.TestCase):
 
         def setUp(self):
             # save and restore configuration file

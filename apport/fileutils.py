@@ -254,7 +254,7 @@ get_config.config = None
 import unittest, tempfile, os, shutil, sys, time
 from cStringIO import StringIO
 
-class _ApportUtilsTest(unittest.TestCase):
+class _T(unittest.TestCase):
     def setUp(self):
         global report_dir
         global _config_file

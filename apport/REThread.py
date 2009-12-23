@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
         return x / y
 
-    class _REThreadTest(unittest.TestCase):
+    class _T(unittest.TestCase):
         def test_return_value(self):
             '''return value works properly.'''
 

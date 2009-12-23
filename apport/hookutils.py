@@ -559,7 +559,7 @@ if __name__ == '__main__':
 
     import unittest, tempfile
 
-    class _ApportHookutilsTest(unittest.TestCase):
+    class _T(unittest.TestCase):
         def test_module_license_evaluation(self):
             '''module licenses can be validated correctly.'''
 

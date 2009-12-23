@@ -524,7 +524,7 @@ class ProblemReport(UserDict.IterableUserDict):
 
 import unittest, tempfile, os, email
 
-class _ProblemReportTest(unittest.TestCase):
+class _T(unittest.TestCase):
     def test_basic_operations(self):
         '''basic creation and operation.'''
 

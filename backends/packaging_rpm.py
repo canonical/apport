@@ -264,7 +264,7 @@ impl = RPMPackageInfo()
 if __name__ == '__main__':
     import unittest
 
-    class RPMPackageInfoTest(unittest.TestCase):
+    class _T(unittest.TestCase):
     
         def test_get_dependencies(self):
             '''get_dependencies().'''

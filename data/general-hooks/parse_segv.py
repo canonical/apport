@@ -459,7 +459,7 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
 0x0808357d <main+61>:   ret    
 '''
 
-        class _TestParseSegv(unittest.TestCase):
+        class _T(unittest.TestCase):
             '''Test Segfault Parser'''
 
             def setUp(self):

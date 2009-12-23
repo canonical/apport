@@ -12,7 +12,7 @@
 
 import unittest, subprocess, tempfile, os, shutil, os.path, time, signal
 
-class _CrashDiggerTest(unittest.TestCase):
+class _T(unittest.TestCase):
     def setUp(self):
         '''Set up dummy chroot_map, crashdb.conf, and apport-chroot (which just
         logs its arguments).'''

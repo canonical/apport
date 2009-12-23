@@ -299,7 +299,7 @@ ZeroDivisionError: integer division or modulo by zero'''
 # Unit test (this also tests the dup detection API from apport/crashdb.py)
 #
 
-class _MemoryCrashDBTest(unittest.TestCase):
+class _T(unittest.TestCase):
     def setUp(self):
         self.crashes = CrashDatabase(None, None, {'dummy_data': '1'})
 
