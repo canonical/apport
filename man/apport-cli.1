@@ -8,7 +8,8 @@ apport\-cli, apport\-gtk, apport\-kde \- Apport user interfaces for reporting pr
 
 .B apport\-cli
 
-.B apport\-cli
+.B apport\-cli 
+[ \fB\-\-save \fIfile\fR ]
 .I symptom \fR|\fI pid \fR|\fI package \fR|\fI program path \fR|\fI .apport/.crash file
 
 .B apport\-cli \-f
@@ -110,6 +111,11 @@ Run apport information collection on an already existing problem report. The
 affected package is taken from the report by default, but you can explicitly
 specify one with \-\-package to collect information for a different package
 (this is useful if the report is assigned to the wrong package).
+
+.TP
+.B \-\-save \fIfilename
+In \-\-file\-bug mode, save the collected information into a file instead of
+reporting it. This file can then be reported with \-\-crash-file later on.
 
 .SH ENVIRONMENT
 

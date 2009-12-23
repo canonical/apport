@@ -366,14 +366,23 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.report['UnreportableReason'])
             return
 
-        if not self.handle_duplicate():
-            # we do not confirm contents of bug reports, this might have
-            # sensitive data
-            try:
-                del self.report['ProcCmdline']
-            except KeyError:
-                pass
+        if self.handle_duplicate():
+            return True
 
+        # not useful for bug reports, and has potentially sensitive information
+        try:
+            del self.report['ProcCmdline']
+        except KeyError:
+            pass
+
+        if self.options.save:
+            try:
+                f = open(self.options.save, 'w')
+                self.report.write(f)
+                f.close()
+            except (IOError, OSError), e:
+                self.ui_error_message(_('Cannot create report'), str(e))
+        else:
             # show what's being sent
             response = self.ui_present_report_details(False)
             if response != 'cancel':
@@ -567,6 +576,9 @@ free memory to automatically analyze the problem and send a report to the develo
         optparser.add_option('-c', '--crash-file',
             help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir,
             action='store', type='string', dest='crash_file', default=None, metavar='PATH')
+        optparser.add_option('--save',
+            help=_('In --file-bug mode, save the collected information into a file instead of reporting it. This file can then be reported with --crash-file later on.'),
+            type='string', dest='save', default=None, metavar='PATH')
         optparser.add_option('-v', '--version',
             help=_('Print the Apport version number.'),
             action='store_true', dest='version', default=None)
@@ -1729,6 +1741,32 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, 'error')
 
+        def test_run_report_bug_file(self):
+            '''run_report_bug() with saving report into a file.'''
+
+            d = os.path.join(apport.fileutils.report_dir, 'home')
+            os.mkdir(d)
+            reportfile = os.path.join(d, 'bashisbad.apport')
+
+            sys.argv = ['ui-test', '-f', '-p', 'bash', '--save', reportfile]
+            self.ui = _TestSuiteUserInterface()
+            self.assertEqual(self.ui.run_argv(), True)
+
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+            self.failIf(self.ui.present_details_shown)
+
+            self.assert_(self.ui.ic_progress_pulses > 0)
+
+            r = apport.Report()
+            r.load(open(reportfile))
+
+            self.assertEqual(r['SourcePackage'], 'bash')
+            self.assert_('Dependencies' in r.keys())
+            self.assert_('ProcEnviron' in r.keys())
+            self.assertEqual(r['ProblemType'], 'Bug')
+
         def _gen_test_crash(self):
             '''Generate a Report with real crash data.'''
 
@@ -2448,8 +2486,10 @@ def run(report, ui):
         def test_parse_argv(self):
             '''parse_args() option inference for a single argument'''
 
-            def _chk(program_name, arg, expected_opts):
+            def _chk(program_name, arg, expected_opts, argv_options=None):
                 sys.argv = [program_name]
+                if argv_options:
+                    sys.argv += argv_options
                 if arg:
                     sys.argv.append(arg)
                 orig_stderr = sys.stderr
@@ -2466,21 +2506,25 @@ def run(report, ui):
             # no arguments -> show pending crashes
             _chk('apport-gtk', None, {'filebug': False, 'package': None,
                 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None})
+                'update_report': None, 'save': None})
             # ... except when being called as '*-bug', then default to bug mode
             _chk('apport-bug', None, {'filebug': True, 'package': None,
                 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None})
+                'update_report': None, 'save': None})
             # updating report not allowed without args
             self.assertRaises(SystemExit, _chk, 'apport-collect', None, {})
 
             # package 
             _chk('apport-kde', 'coreutils', {'filebug': True, 'package':
                 'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None})
+                'update_report': None, 'save': None})
             _chk('apport-bug', 'coreutils', {'filebug': True, 'package':
                 'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None})
+                'update_report': None, 'save': None})
+            _chk('apport-bug', 'coreutils', {'filebug': True, 'package':
+                'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
+                'update_report': None, 'save': 'foo.apport'}, 
+                ['--save', 'foo.apport'])
 
             # symptom is preferred over package
             f = open(os.path.join(symptom_script_dir, 'coreutils.py'), 'w')
@@ -2491,18 +2535,18 @@ def run(report, ui):
             f.close()
             _chk('apport-cli', 'coreutils', {'filebug': True, 'package': None,
                  'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-                 'update_report': None})
+                 'update_report': None, 'save': None})
             _chk('apport-bug', 'coreutils', {'filebug': True, 'package': None,
                  'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-                 'update_report': None})
+                 'update_report': None, 'save': None})
 
             # PID
             _chk('apport-cli', '1234', {'filebug': True, 'package': None,
                  'pid': '1234', 'crash_file': None, 'symptom': None,
-                 'update_report': None})
+                 'update_report': None, 'save': None})
             _chk('apport-bug', '1234', {'filebug': True, 'package': None,
                  'pid': '1234', 'crash_file': None, 'symptom': None,
-                 'update_report': None})
+                 'update_report': None, 'save': None})
 
             # .crash/.apport files; check correct handling of spaces
             for suffix in ('.crash', '.apport'):
@@ -2510,25 +2554,25 @@ def run(report, ui):
                     _chk(prog, '/tmp/f oo' + suffix, {'filebug': False,
                          'package': None, 'pid': None, 
                          'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
-                         'update_report': None})
+                         'update_report': None, 'save': None})
 
             # executable
             _chk('apport-cli', '/usr/bin/tail', {'filebug': True, 
                  'package': 'coreutils',
                  'pid': None, 'crash_file': None, 'symptom': None, 
-                 'update_report': None})
+                 'update_report': None, 'save': None})
             _chk('apport-bug', '/usr/bin/tail', {'filebug': True, 
                  'package': 'coreutils',
                  'pid': None, 'crash_file': None, 'symptom': None, 
-                 'update_report': None})
+                 'update_report': None, 'save': None})
 
             # update existing report
             _chk('apport-collect', '1234', {'filebug': False, 'package': None,
                  'pid': None, 'crash_file': None, 'symptom': None,
-                 'update_report': '1234'})
+                 'update_report': '1234', 'save': None})
             _chk('apport-update-bug', '1234', {'filebug': False, 
                  'package': None, 'pid': None, 'crash_file': None, 
-                 'symptom': None, 'update_report': '1234'})
+                 'symptom': None, 'update_report': '1234', 'save': None})
 
     unittest.main()
 

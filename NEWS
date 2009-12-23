@@ -10,6 +10,9 @@ Improvements:
  - Testsuite: Verify that report details are/are not shown. This uncovered that
    details about package installation failures were not shown before sending
    them, which is fixed now.
+ - Add "--save" UI option to store the collected information into an .apport
+   file instead of sending it right away. The file can then later be sent
+   through apport-bug. Update manpages accordingly.
 
 Bug fixes:
  - test/hooks: Do not try to add hook information to kernel_crashdump test

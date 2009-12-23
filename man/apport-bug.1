@@ -71,8 +71,10 @@ apport\-bug /tmp/apport.firefox.332G9t.apport
 .fi
 .RE
 
-(Bug reports can be written to a file with
-.B apport\-cli\fR.)
+Bug reports can be written to a file by using the
+.B \-\-save
+option  or by using
+.B apport\-cli\fR.
 
 .B apport\-bug
 detects whether KDE or Gnome is running and calls
@@ -91,6 +93,11 @@ collects the same information as apport\-bug, but adds it to an already
 existing problem report. This is useful if the report was not originally filed
 through Apport, or by someone else, and the developers ask you for attaching
 information from your system as well.
+
+.SH OPTIONS
+Please see the 
+.BR apport\-cli(1)
+manpage for possible options.
 
 .SH ENVIRONMENT
 
