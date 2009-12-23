@@ -18,6 +18,8 @@ Bug fixes:
  - test/hooks: Do not try to add hook information to kernel_crashdump test
    case, since we do not have an UI here. This test case broke when the system
    had an interactive package hook for the kernel.
+ - When reporting a bug from a saved .apport file, let the user review/confirm
+   the content before sending.
 
 1.10.1 (2009-12-23)
 -------------------

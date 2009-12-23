@@ -263,18 +263,17 @@ free memory to automatically analyze the problem and send a report to the develo
             if self.handle_duplicate():
                 return
 
-            if self.report.get('ProblemType') in ['Crash', 'KernelCrash',
-                                                  'KernelOops', 'Package']:
-                response = self.ui_present_report_details(False)
-                if response == 'cancel':
-                    return
-                if response == 'reduced':
-                    try:
-                        del self.report['CoreDump']
-                    except KeyError:
-                        pass # Huh? Should not happen, but did in https://launchpad.net/bugs/86007
-                else:
-                    assert response == 'full'
+            # confirm what will be sent
+            response = self.ui_present_report_details(False)
+            if response == 'cancel':
+                return
+            if response == 'reduced':
+                try:
+                    del self.report['CoreDump']
+                except KeyError:
+                    pass # Huh? Should not happen, but did in https://launchpad.net/bugs/86007
+            else:
+                assert response == 'full'
 
             self.file_report()
         except IOError, e:
@@ -1767,6 +1766,17 @@ CoreDump: base64
             self.assert_('ProcEnviron' in r.keys())
             self.assertEqual(r['ProblemType'], 'Bug')
 
+            # report it
+            sys.argv = ['ui-test', '-c', reportfile]
+            self.ui = _TestSuiteUserInterface()
+            
+            self.ui.present_details_response = 'full'
+            self.assertEqual(self.ui.run_argv(), True)
+
+            self.assertEqual(self.ui.msg_text, None)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assert_(self.ui.present_details_shown)
+
         def _gen_test_crash(self):
             '''Generate a Report with real crash data.'''
 
@@ -1905,6 +1915,21 @@ CoreDump: base64
         def test_run_crash_argv_file(self):
             '''run_crash() through a file specified on the command line.'''
 
+            # valid
+            self.report['Package'] = 'bash'
+            self.update_report_file()
+
+            sys.argv = ['ui-test', '-c', self.report_file.name]
+            self.ui = _TestSuiteUserInterface()
+            
+            self.ui.present_details_response = 'full'
+            self.assertEqual(self.ui.run_argv(), True)
+
+            self.assertEqual(self.ui.msg_text, None)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assert_(self.ui.present_details_shown)
+
+            # unreportable
             self.report['Package'] = 'bash'
             self.report['UnreportableReason'] = 'It stinks.'
             self.update_report_file()
