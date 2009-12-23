@@ -1,9 +1,10 @@
 '''Apport package hook for apport itself.
 
 This adds /var/log/apport.log and the file listing in /var/crash to the report.
+'''
 
-(c) 2007 Canonical Ltd.
-Author: Martin Pitt <martin.pitt@ubuntu.com>'''
+# Copyright 2007 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
 
 APPORT_LOG = '/var/log/apport.log'
 

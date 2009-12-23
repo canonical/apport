@@ -1,15 +1,16 @@
-'''An apport.PackageInfo class implementation for python-apt and dpkg, as found
-on Debian and derivatives such as Ubuntu.
+'''apport.PackageInfo class implementation for python-apt and dpkg.
 
-Copyright (C) 2007, 2009 Canonical Ltd.
-Author: Martin Pitt <martin.pitt@ubuntu.com>
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
-the full text of the license.
+This is used on Debian and derivatives such as Ubuntu.
 '''
+
+# Copyright (C) 2007 - 2009 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
 
 import subprocess, os, glob, stat, sys, tempfile, glob, re, shutil
 

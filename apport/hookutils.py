@@ -1,15 +1,14 @@
-'''Convenience functions for use in package hooks.
+'''Convenience functions for use in package hooks.'''
 
-Copyright (C) 2008-2009 Canonical Ltd.
-Author: Matt Zimmerman <mdz@canonical.com>
-Contributor: Brian Murray <brian@ubuntu.com>
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
-the full text of the license.
-'''
+# Copyright (C) 2008 - 2009 Canonical Ltd.
+# Author: Matt Zimmerman <mdz@canonical.com>
+# Contributor: Brian Murray <brian@ubuntu.com>
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
 
 import subprocess
 import hashlib

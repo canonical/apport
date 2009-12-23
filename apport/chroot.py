@@ -1,6 +1,6 @@
 '''Class for representing and working with chroots.'''
 
-# (c) 2007, 2008 Canonical Ltd.
+# (c) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it

@@ -1,16 +1,15 @@
 # vim: set encoding=UTF-8 fileencoding=UTF-8 :
 
-'''Store, load, and handle problem reports.
+'''Store, load, and handle problem reports.'''
 
-Copyright (C) 2006 Canonical Ltd.
-Author: Martin Pitt <martin.pitt@ubuntu.com>
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
-the full text of the license.
-'''
+# Copyright (C) 2006 - 2009 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
 
 import zlib, base64, time, UserDict, sys, gzip, struct
 from cStringIO import StringIO

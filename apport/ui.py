@@ -2,16 +2,16 @@
 
 This encapsulates the workflow and common code for any user interface
 implementation (like GTK, Qt, or CLI).
-
-Copyright (C) 2007 Canonical Ltd.
-Author: Martin Pitt <martin.pitt@ubuntu.com>
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
-the full text of the license.
 '''
+
+# Copyright (C) 2007 - 2009 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
 
 __version__ = '1.10.1'
 

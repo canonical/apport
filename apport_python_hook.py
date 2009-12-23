@@ -1,17 +1,14 @@
-'''Python sys.excepthook hook to generate apport crash dumps.
+'''Python sys.excepthook hook to generate apport crash dumps.'''
 
-See https://wiki.ubuntu.com/AutomatedProblemReports for details.
-
-Copyright (c) 2006 Canonical Ltd.
-Authors: Robert Collins <robert@ubuntu.com>
-         Martin Pitt <martin.pitt@ubuntu.com>
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
-the full text of the license.
-'''
+# Copyright (c) 2006 - 2009 Canonical Ltd.
+# Authors: Robert Collins <robert@ubuntu.com>
+#          Martin Pitt <martin.pitt@ubuntu.com>
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
 
 import os
 import sys

@@ -1,16 +1,18 @@
-'''A partial apport.PackageInfo class implementation for RPM, as found in 
-Fedora, RHEL, openSUSE, SUSE Linux, and many other distributions.
+'''A partial apport.PackageInfo class implementation for RPM.
 
-Copyright (C) 2007 Red Hat Inc.
-Copyright (C) 2008 Nikolay Derkach
-Author: Will Woods <wwoods@redhat.com>, Nikolay Derkach <nderkach@gmail.com>
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
-the full text of the license.
+Used as a base class for Fedora, RHEL, openSUSE, SUSE Linux, and many other
+distributions.
 '''
+
+# Copyright (C) 2007 Red Hat Inc.
+# Copyright (C) 2008 Nikolay Derkach
+# Author: Will Woods <wwoods@redhat.com>, Nikolay Derkach <nderkach@gmail.com>
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
 
 # N.B. There's some distro-specific bits in here (e.g. is_distro_package()).
 # So this is actually an abstract base class (or a template, if you like) for

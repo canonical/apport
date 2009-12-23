@@ -1,15 +1,13 @@
-'''Class for an apport report with some useful methods to collect standard
-debug information.
+'''Representation of and data collection for a problem report.'''
 
-Copyright (C) 2006 Canonical Ltd.
-Author: Martin Pitt <martin.pitt@ubuntu.com>
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
-the full text of the license.
-'''
+# Copyright (C) 2006 - 2009 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
 import fnmatch, glob, atexit, traceback, errno
@@ -2308,23 +2306,7 @@ ZeroDivisionError: integer division or modulo by zero'''
         r['ProblemType'] = 'KernelCrash'
         r['Stacktrace'] = '''
 crash 4.0-8.9
-Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009  Red Hat, Inc.
-Copyright (C) 2004, 2005, 2006  IBM Corporation
-Copyright (C) 1999-2006  Hewlett-Packard Co
-Copyright (C) 2005, 2006  Fujitsu Limited
-Copyright (C) 2006, 2007  VA Linux Systems Japan K.K.
-Copyright (C) 2005  NEC Corporation
-Copyright (C) 1999, 2002, 2007  Silicon Graphics, Inc.
-Copyright (C) 1999, 2000, 2001, 2002  Mission Critical Linux, Inc.
-This program is free software, covered by the GNU General Public License,
-and you are welcome to change it and/or distribute copies of it under
-certain conditions.  Enter "help copying" to see the conditions.
-This program has absolutely no warranty.  Enter "help warranty" for details.
- 
-NOTE: stdin: not a tty
-
 GNU gdb 6.1
-Copyright 2004 Free Software Foundation, Inc.
 GDB is free software, covered by the GNU General Public License, and you are
 welcome to change it and/or distribute copies of it under certain conditions.
 Type "show copying" to see the conditions.
