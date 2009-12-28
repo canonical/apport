@@ -22,15 +22,11 @@ import apport
 
 default_credentials_path = os.path.expanduser('~/.cache/apport/launchpad.credentials')
 
-APPORT_FILES = ('Dependencies.txt', 'CoreDump.gz', 'ProcMaps.txt',
-        'Traceback.txt', 'Disassembly.txt', 'Registers.txt', 'Stacktrace.txt',
-        'ThreadStacktrace.txt', 'DpkgTerminalLog.txt', 'DpkgTerminalLog.gz')
-
 def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
         name = f.filename
-        if name in APPORT_FILES or name.startswith('VarLogDistupgrade'):
+        if not name.endswith('.png') and not name.endswith('.jpg'):
             yield f
             
 def id_set(tasks):
