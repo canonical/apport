@@ -145,27 +145,20 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             a = report.get('Architecture')
         if a:
             hdr['Tags'] += ' ' + a
-        if 'CoreDump' in report and a:
-            # FIXME: ugly Ubuntu specific hack until LP has a real crash db
-            if report['DistroRelease'].split()[0] == 'Ubuntu':
-                hdr['Tags'] += ' need-%s-retrace' % a
-                hdr['Private'] = 'yes'
-                hdr['Subscribers'] = 'apport'
-        # set dup checking tag for Python crashes
-        elif report.has_key('Traceback'):
-            hdr['Tags'] += ' need-duplicate-check'
-            # FIXME: ugly Ubuntu specific hack until LP has a real crash db
-            if report['DistroRelease'].split()[0] == 'Ubuntu':
-                hdr['Private'] = 'yes'
-                hdr['Subscribers'] = 'apport'
-        # make kernel crashes private
-        elif report.has_key('VmCore'):
-            # FIXME: ugly Ubuntu specific hack until LP has a real crash db
-            if report['DistroRelease'].split()[0] == 'Ubuntu':
-                hdr['Private'] = 'yes'
-                hdr['Subscribers'] = 'apport'
         if report.has_key('Tags'):
             hdr['Tags'] += ' ' + report['Tags']
+
+        # privacy/retracing for distro reports
+        # FIXME: ugly hack until LP has a real crash db
+        if 'DistroRelease' in report:
+            if a and ('VmCore' in report or 'CoreDump' in report):
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
+                hdr['Tags'] += ' need-%s-retrace' % a
+            elif 'Traceback' in report:
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
+                hdr['Tags'] += ' need-duplicate-check'
 
         # if we have checkbox submission key, link it to the bug; keep text
         # reference until the link is shown in Launchpad's UI
