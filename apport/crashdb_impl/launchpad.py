@@ -807,7 +807,7 @@ if __name__ == '__main__':
 
             Return crash ID.
             '''
-            r = apport.report._ApportReportTest._generate_sigsegv_report()
+            r = apport.report._T._generate_sigsegv_report()
             r.add_package_info(self.test_package)
             r.add_os_info()
             r.add_gdb_info()
