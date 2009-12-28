@@ -26,7 +26,7 @@ def filter_filename(attachments):
     for attachment in attachments:
         f = attachment.data.open()
         name = f.filename
-        if not name.endswith('.png') and not name.endswith('.jpg'):
+        if name.endswith('.txt') or name.endswith('.gz'):
             yield f
             
 def id_set(tasks):

@@ -5,8 +5,8 @@ detailled list of changes, please see ChangeLog.
 -------------------
 Bug fixes:
  - launchpad.py: Drop APPORT_FILES whitelist for download() and instead just
-   filter out some files which are not likely to be used in bug patterns (*.png
-   and *.jpg so far). (LP: #444975)
+   filter out file extensions that we know about (*.txt and *.gz).
+   (LP: #444975)
 
 1.11 (2009-12-23)
 -----------------
