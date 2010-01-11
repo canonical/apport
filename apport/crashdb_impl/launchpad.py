@@ -1399,7 +1399,7 @@ NameError: global name 'weird' is not defined'''
             try:
                 for b in range(first_dup, first_dup+13):
                     count += 1
-                    print count,
+                    print b,
                     sys.stdout.flush()
                     db.close_duplicate(b, segv_report)
                     b = db.launchpad.bugs[segv_report]
@@ -1413,7 +1413,7 @@ NameError: global name 'weird' is not defined'''
                         self.assert_(has_escalation_subsciption)
             finally:
                 for b in range(first_dup, first_dup+count):
-                    print 'R%i' % count,
+                    print 'R%i' % b,
                     sys.stdout.flush()
                     db.close_duplicate(b, None)
             print
