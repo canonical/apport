@@ -53,6 +53,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         - cache_dir: Path to a permanent cache directory; by default it uses a
           temporary one. (optional). This can be overridden or set by
           $APPORT_LAUNCHPAD_CACHE environment.
+        - escalation_subscription: This subscribes the given person or team to
+          a bug once it gets more than 10 duplicates.
+        - escalation_tag: This adds the given tag to a bug once it gets more
+          than 10 duplicates.
         '''
         if os.getenv('APPORT_STAGING'):
             options['staging'] = True
@@ -588,6 +592,16 @@ Please continue to report any other bugs you may find.' % master_id,
             # set duplicate last, since we cannot modify already dup'ed bugs
             if not bug.duplicate_of:
                 bug.duplicate_of = master
+
+            if len(master.duplicates) >= 10:
+                if 'escalation_tag' in self.options and \
+                    self.options['escalation_tag'] not in master.tags:
+                        master.tags = master.tags + [self.options['escalation_tag']] # LP#254901 workaround
+                        master.lp_save()
+
+                if 'escalation_subscription' in self.options:
+                    p = self.launchpad.people[self.options['escalation_subscription']]
+                    master.subscribe(person=p)
         else:
             if bug.duplicate_of:
                 bug.duplicate_of = None
@@ -1368,5 +1382,40 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['Architecture'], 'amd64')
             self.assert_(r['DistroRelease'].startswith('Ubuntu '))
             self.assert_('DpkgTerminalLog' in r)
+
+        def test_escalation(self):
+            '''Escalating bugs with more than 10 duplicates'''
+
+            assert segv_report, 'you need to run test_1_report_segv() first'
+
+            db = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
+                    {'distro': 'ubuntu', 'staging': True,
+                        'escalation_tag': 'omgkittens',
+                        'escalation_subscription': 'apport-hackers'})
+
+            count = 0
+            p = db.launchpad.people[db.options['escalation_subscription']].self_link
+            first_dup = 59
+            try:
+                for b in range(first_dup, first_dup+13):
+                    count += 1
+                    print count,
+                    sys.stdout.flush()
+                    db.close_duplicate(b, segv_report)
+                    b = db.launchpad.bugs[segv_report]
+                    has_escalation_tag = db.options['escalation_tag'] in b.tags
+                    has_escalation_subsciption = any([s.person_link == p for s in b.subscriptions])
+                    if count <= 10:
+                        self.failIf(has_escalation_tag)
+                        self.failIf(has_escalation_subsciption)
+                    else:
+                        self.assert_(has_escalation_tag)
+                        self.assert_(has_escalation_subsciption)
+            finally:
+                for b in range(first_dup, first_dup+count):
+                    print 'R%i' % count,
+                    sys.stdout.flush()
+                    db.close_duplicate(b, None)
+            print
 
     unittest.main()
