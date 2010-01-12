@@ -109,7 +109,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 msg = e.content
             else:
                 msg = str(e)
-            print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou can reset the credentials by removing the file "%s"' % (msg, crashdb.auth)
+            print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou can reset the credentials by removing the file "%s"' % (msg, self.auth)
             sys.exit(99) # transient error
 
         return self.__launchpad
