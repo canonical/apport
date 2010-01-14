@@ -171,7 +171,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
-        report.write_mime(mime, extra_headers=hdr)
+        report.write_mime(mime, extra_headers=hdr, skip_keys=['Tags'])
         mime.flush()
         mime.seek(0)
 
@@ -261,6 +261,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 report['ProblemType'] = 'Package'
             else:
                 raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
+
+        report['Tags'] = ' '.join(b.tags)
 
         report['Title'] = b.title
 
@@ -851,6 +853,7 @@ if __name__ == '__main__':
   File "/bin/foo", line 67, in fuzz
     print weird
 NameError: global name 'weird' is not defined'''
+            r['Tags'] = 'boogus pybogus'
             r.add_package_info(self.test_package)
             r.add_os_info()
             r.add_user_info()
@@ -879,6 +882,9 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r.get('NonfreeKernelModules'),
                 self.ref_report.get('NonfreeKernelModules'))
             self.assertEqual(r.get('UserGroups'), self.ref_report.get('UserGroups'))
+            tags = set(r['Tags'].split())
+            self.assertEqual(tags, set([self.crashdb.arch_tag, 'apport-crash', 
+                apport.packaging.get_system_architecture()]))
 
             self.assertEqual(r['Signal'], '11')
             self.assert_(r['ExecutablePath'].endswith('/crash'))
@@ -891,6 +897,12 @@ NameError: global name 'weird' is not defined'''
             self.assert_('Dependencies' in r)
             self.assert_('Disassembly' in r)
             self.assert_('Registers' in r)
+
+            # check tags
+            r = self.crashdb.download(python_report)
+            tags = set(r['Tags'].split())
+            self.assertEqual(tags, set(['apport-crash', 'boogus', 'pybogus',
+                'need-duplicate-check', apport.packaging.get_system_architecture()]))
 
         def test_3_update_traces(self):
             '''update_traces()'''
