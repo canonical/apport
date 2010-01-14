@@ -378,7 +378,7 @@ try:
 
     os.chmod(test_executable, 0755)
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
-    check_crash(expect_corefile=False)
+    check_crash(expect_coredump=False, expect_corefile=False)
     apport.fileutils.delete_report(report)
     resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
     check_crash(expect_corefile=False)
@@ -393,7 +393,7 @@ try:
     print '* non-packaged executables create core dumps on proper ulimits for SIGABRT'
     os.chmod(test_executable, 0755)
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
-    check_crash(expect_corefile=False, sig=signal.SIGABRT)
+    check_crash(expect_coredump=False, expect_corefile=False, sig=signal.SIGABRT)
     apport.fileutils.delete_report(report)
     resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
     check_crash(expect_corefile=False, sig=signal.SIGABRT)
@@ -410,7 +410,7 @@ try:
 
     print '* packaged executables create core dumps on proper ulimits'
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
-    check_crash(expect_corefile=False)
+    check_crash(expect_coredump=False, expect_corefile=False)
     apport.fileutils.delete_report(report)
     resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
     check_crash(expect_corefile=False)
@@ -427,7 +427,7 @@ try:
 
     print '* packaged executables create core dumps on proper ulimits for SIGABRT'
     resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
-    check_crash(expect_corefile=False, sig=signal.SIGABRT)
+    check_crash(expect_coredump=False, expect_corefile=False, sig=signal.SIGABRT)
     resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
     check_crash(expect_corefile=False, sig=signal.SIGABRT)
     resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))

@@ -18,6 +18,8 @@ Bug fixes:
  - launchpad.py: Do not put the Tags: field into the bug description, since
    they are already proper tags. In download(), convert the real tags back to
    the Tags: field. (LP: #505671)
+ - test/crash: Update expected core dump flags for changed rlimit behaviour in
+   Linux 2.6.32.
 
 1.11 (2009-12-23)
 -----------------
