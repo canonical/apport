@@ -8,6 +8,7 @@ Improvements:
    handling bugs with more than 10 duplicates.
  - crashdb.conf: For Ubuntu, escalate bugs with >= 10 duplicates to
    "ubuntu-bugcontrol" and tag them with "bugpattern-needed". (LP: #487900)
+ - general-hooks/generic.py: Filter out crashes on missing GLX (LP: #327673)
 
 Bug fixes:
  - launchpad.py: Drop APPORT_FILES whitelist for download() and instead just

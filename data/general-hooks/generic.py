@@ -49,6 +49,12 @@ free some space.' % (mounts[mount], free_mb)
     if os.path.exists(os.path.expanduser('~/.ecryptfs/wrapped-passphrase')):
         report['EcryptfsInUse'] = 'Yes'
 
+    # filter out crashes on missing GLX (LP#327673)
+    if '/usr/lib/libGL.so' in report.get('StacktraceTop', '\n').splitlines()[0] \
+        and 'Loading extension GLX' not in apport.hookutils.read_file('/var/log/Xorg.0.log'):
+            report['UnreportableReason'] = 'The X.org server does not support the GLX extension, which the crashed program expected to use.'
+
+
 if __name__ == '__main__':
     r = {}
     add_info(r)
