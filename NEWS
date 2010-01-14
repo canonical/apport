@@ -1,14 +1,15 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.11.1 (UNRELEASED)
--------------------
+1.12 (UNRELEASED)
+-----------------
 Improvements:
  - launchpad.py: Add options 'escalation_subscription' and 'escalation_tag' for
    handling bugs with more than 10 duplicates.
  - crashdb.conf: For Ubuntu, escalate bugs with >= 10 duplicates to
    "ubuntu-bugcontrol" and tag them with "bugpattern-needed". (LP: #487900)
  - general-hooks/generic.py: Filter out crashes on missing GLX (LP: #327673)
+ - Add bash completion script. Thanks to Philip Muškovac. (LP: #218933)
 
 Bug fixes:
  - launchpad.py: Drop APPORT_FILES whitelist for download() and instead just

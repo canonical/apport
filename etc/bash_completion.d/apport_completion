@@ -1,0 +1,140 @@
+# 
+# Apport bash-completion support
+#
+###############################################################################
+
+# Get available symptoms
+_apport_symptoms ()
+{
+    local syms
+    for FILE in $(ls /usr/share/apport/symptoms); do
+       syms="$syms ${FILE%.py}"
+    done
+    echo $syms
+
+}
+
+# completion when used without parameters
+_apport_parameterless ()
+{
+    local param
+    # parameter-less completion
+    # param= COMMAND parameters
+    #        package names
+    #        PIDs
+    #        Symptoms
+    #        .crash/.apport files
+    param="$dashoptions \
+           $( apt-cache pkgnames $cur 2> /dev/null ) \
+           $( command ps axo pid | sed 1d ) \
+           $( _apport_symptoms ) \
+           $( compgen -G "${cur}*.apport"
+              compgen -G "${cur}*.crash" )"
+    COMPREPLY=( $( compgen -W "$param" -- $cur) )
+
+}
+
+# apport-bug ubuntu-bug completion
+_apport-bug ()
+{
+    local cur dashoptions prev param
+
+    COMPREPLY=()
+    cur=`_get_cword`
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+
+    dashoptions='-h --help -f --file-bug -u --update-bug -s --symptom -p \
+                 --package -P --pid -c --crash-file --save -v --version'
+
+    case "$prev" in
+    ubuntu-bug | apport-bug)
+        case "$cur" in
+        -*)
+            # parameter completion
+            COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
+
+        ;;
+        *)
+            # no parameter given
+            _apport_parameterless 
+
+        ;;
+        esac
+
+    ;;
+    -f | --file-bug)
+        param="-P --pid -p --package"
+        COMPREPLY=( $( compgen -W "$param $(_apport_symptoms)" -- $cur) )
+
+    ;;
+    -p | --package)
+        COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) )
+
+    ;;
+    -u | --update-bug)
+        param="-p --package"
+        COMPREPLY=( $( compgen -W "$param" -- $cur) )
+
+    ;;
+    -s | --symptom)
+        COMPREPLY=( $( compgen -W "$(_apport_symptoms)" -- $cur) )
+
+    ;;
+    -P | --pid)
+	COMPREPLY=( $( compgen -W '$( command ps axo pid | sed 1d )' -- $cur ) )
+
+    ;;
+    --save)
+        COMPREPLY=( $( compgen -o default -G "$cur*" ) )
+    
+    ;;
+    --crash-file)
+        # only show *.apport *.crash files
+        COMPREPLY=( $( compgen -G "${cur}*.apport"
+                       compgen -G "${cur}*.crash" ) )
+
+    ;;
+    -h | --help | -v | --version)
+        # standalone parameters
+        return 0
+
+    ;;
+    *)
+        if [ "${COMP_WORDS[COMP_CWORD-2]}" == "--save" ]; then
+            # use same completion as if no parameter is given
+            _apport_parameterless
+
+        else
+            # save is allowed for most parameters
+            param="--save"
+            COMPREPLY=( $( compgen -W "$param" -- $cur) )
+
+        fi
+
+    ;;
+    esac
+}
+
+_apport-unpack ()
+{
+    local cur prev param
+
+    COMPREPLY=()
+    cur=`_get_cword`
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case "$prev" in
+    apport-unpack)
+        # only show *.apport *.crash files
+        COMPREPLY=( $( compgen -G "${cur}*.apport"
+                       compgen -G "${cur}*.crash" ) )
+
+    ;;
+    esac
+}
+
+# bind completion to apport commands
+complete -F _apport-bug -o filenames -o dirnames ubuntu-bug
+complete -F _apport-bug -o filenames -o dirnames apport-bug
+complete -F _apport-unpack -o filenames -o dirnames apport-unpack
