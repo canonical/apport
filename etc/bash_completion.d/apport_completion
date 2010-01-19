@@ -1,9 +1,9 @@
 # 
-# Apport bash-completion support
+# Apport bash-completion
 #
 ###############################################################################
 
-# Get available symptoms
+# get available symptoms
 _apport_symptoms ()
 {
     local syms
@@ -44,6 +44,7 @@ _apport-bug ()
     prev=${COMP_WORDS[COMP_CWORD-1]}
 
 
+    # available options
     dashoptions='-h --help -f --file-bug -u --update-bug -s --symptom -p \
                  --package -P --pid -c --crash-file --save -v --version'
 
@@ -64,7 +65,7 @@ _apport-bug ()
 
     ;;
     -f | --file-bug)
-        param="-P --pid -p --package"
+        param="-P --pid -p --package -s --symptom"
         COMPREPLY=( $( compgen -W "$param $(_apport_symptoms)" -- $cur) )
 
     ;;
@@ -89,7 +90,7 @@ _apport-bug ()
         COMPREPLY=( $( compgen -o default -G "$cur*" ) )
     
     ;;
-    --crash-file)
+    -c | --crash-file)
         # only show *.apport *.crash files
         COMPREPLY=( $( compgen -G "${cur}*.apport"
                        compgen -G "${cur}*.crash" ) )
@@ -103,7 +104,17 @@ _apport-bug ()
     *)
         if [ "${COMP_WORDS[COMP_CWORD-2]}" == "--save" ]; then
             # use same completion as if no parameter is given
-            _apport_parameterless
+            case "$cur" in
+            -*)
+                # parameter completion
+                COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
+
+            ;;
+            *)
+                _apport_parameterless 
+
+            ;;
+            esac
 
         else
             # save is allowed for most parameters
@@ -116,9 +127,90 @@ _apport-bug ()
     esac
 }
 
+# apport-cli completion
+_apport-cli ()
+{
+    local cur dashoptions prev param
+
+    COMPREPLY=()
+    cur=`_get_cword`
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+
+    # available options
+    dashoptions='-h --help -f --file-bug -u --update-bug -s --symptom \
+                 -c --crash-file --save -v --version'
+
+    case "$prev" in
+    apport-cli)
+        case "$cur" in
+        -*)
+            # parameter completion
+            COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
+
+        ;;
+        *)
+            # no parameter given
+            _apport_parameterless 
+
+        ;;
+        esac
+
+    ;;
+    -f | --file-bug)
+        param="-P --pid -p --package -s --symptom"
+        COMPREPLY=( $( compgen -W "$param $(_apport_symptoms)" -- $cur) )
+
+    ;;
+    -s | --symptom)
+        COMPREPLY=( $( compgen -W "$(_apport_symptoms)" -- $cur) )
+
+    ;;
+    --save)
+        COMPREPLY=( $( compgen -o default -G "$cur*" ) )
+    
+    ;;
+    -c | --crash-file)
+        # only show *.apport *.crash files
+        COMPREPLY=( $( compgen -G "${cur}*.apport"
+                       compgen -G "${cur}*.crash" ) )
+
+    ;;
+    -h | --help | -v | --version)
+        # standalone parameters
+        return 0
+
+    ;;
+    *)
+        if [ "${COMP_WORDS[COMP_CWORD-2]}" == "--save" ]; then
+            # use same completion as if no parameter is given
+            case "$cur" in
+            -*)
+                # parameter completion
+                COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
+
+            ;;
+            *)
+                _apport_parameterless 
+
+            ;;
+            esac
+
+        else
+            # save is allowed for most parameters
+            param="--save"
+            COMPREPLY=( $( compgen -W "$param" -- $cur) )
+
+        fi
+
+    ;;
+    esac
+}
+
+# apport-unpack completion
 _apport-unpack ()
 {
-    local cur prev param
+    local cur prev
 
     COMPREPLY=()
     cur=`_get_cword`
@@ -134,7 +226,31 @@ _apport-unpack ()
     esac
 }
 
+# apport-collect completion
+_apport-collect ()
+{
+    local cur prev
+
+    COMPREPLY=()
+    cur=`_get_cword`
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case "$prev" in 
+    apport-collect)
+            COMPREPLY=( $( compgen -W "-p --package" -- $cur) )
+
+    ;;
+    -p | --package)
+        # list package names
+        COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) )
+
+    ;;
+    esac
+}
+
 # bind completion to apport commands
 complete -F _apport-bug -o filenames -o dirnames ubuntu-bug
 complete -F _apport-bug -o filenames -o dirnames apport-bug
+complete -F _apport-cli -o filenames -o dirnames apport-cli
 complete -F _apport-unpack -o filenames -o dirnames apport-unpack
+complete -F _apport-collect apport-collect
