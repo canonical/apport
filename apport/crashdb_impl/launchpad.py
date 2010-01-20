@@ -668,13 +668,14 @@ in a dependent package.' % master,
 
         bug = self.launchpad.bugs[id]
 
-        # ensure it's assigned to the right package
-        if report.has_key('SourcePackage') and \
-                '+source' not in str(bug.bug_tasks[0].target):
-            print 'moving to source package task'
-            bug.bug_tasks[0].transitionToTarget(target=
-                    self.lp_distro.getSourcePackage(name=report['SourcePackage']))
-            bug = self.launchpad.bugs[id]
+        # if we have a distro task without a package, fix it
+        if report.has_key('SourcePackage'):
+            for task in bug.bug_tasks:
+                if task.target.resource_type_link.endswith('#distribution'):
+                    task.transitionToTarget(target=self.lp_distro.getSourcePackage(
+                        name=report['SourcePackage']))
+                    bug = self.launchpad.bugs[id]
+                    break
 
         if 'need-duplicate-check' in bug.tags:
             x = bug.tags[:] # LP#254901 workaround
@@ -1429,5 +1430,42 @@ NameError: global name 'weird' is not defined'''
                     sys.stdout.flush()
                     db.close_duplicate(b, None)
             print
+
+        def test_marking_python_task_mangle(self):
+            '''source package task fixup for marking interpreter crashes'''
+
+            self._mark_needs_dupcheck(python_report)
+            unchecked_before = self.crashdb.get_dup_unchecked()
+            self.assert_(python_report in unchecked_before)
+
+            # add an upstream task, and remove the package name from the
+            # package task; _mark_dup_checked is supposed to restore the
+            # package name
+            b = self.crashdb.launchpad.bugs[python_report]
+            b.bug_tasks[0].transitionToTarget(target=self.crashdb.launchpad.distributions['ubuntu'].
+                    getSourcePackage(name='pmount'))
+            b.bug_tasks[0].transitionToStatus(status='Invalid')
+            b.addTask(target=self.crashdb.launchpad.projects['coreutils'])
+            b.addTask(target=self.crashdb.launchpad.distributions['ubuntu'])
+
+            self.crashdb._mark_dup_checked(python_report, self.ref_report)
+
+            unchecked_after = self.crashdb.get_dup_unchecked()
+            self.failIf(python_report in unchecked_after)
+            self.assertEqual(unchecked_before,
+                    unchecked_after.union(set([python_report])))
+
+            # upstream task should be unmodified
+            b = self.crashdb.launchpad.bugs[python_report]
+            self.assertEqual(b.bug_tasks[0].bug_target_name, 'coreutils')
+            self.assertEqual(b.bug_tasks[0].status, 'New')
+
+            # package-less distro task should have package name fixed
+            self.assertEqual(b.bug_tasks[1].bug_target_name, 'coreutils (Ubuntu)')
+            self.assertEqual(b.bug_tasks[1].status, 'New')
+
+            # invalid pmount task should be unmodified
+            self.assertEqual(b.bug_tasks[2].bug_target_name, 'pmount (Ubuntu)')
+            self.assertEqual(b.bug_tasks[2].status, 'Invalid')
 
     unittest.main()
