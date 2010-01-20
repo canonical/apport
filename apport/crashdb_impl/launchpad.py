@@ -486,8 +486,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This function should make sure that the returned result is correct. If
         there are any errors with connecting to the crash database, it should
-        raise an exception (preferably IOError).'''
-
+        raise an exception (preferably IOError).
+        '''
         # do not do version tracking yet; for that, we need to get the current
         # distrorelease and the current package version in that distrorelease
         # (or, of course, proper version tracking in Launchpad itself)
@@ -525,11 +525,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 except IndexError:
                     # source does not exist any more
                     return 'invalid'
-
-            # check if there any invalid ones
-            if filter(lambda task: task.status in ('Invalid', "Won't Fix") and \
-                    distro_identifier in task.bug_target_display_name.lower(), tasks):
-                return 'invalid'
+            else:
+                # check if there only invalid ones
+                invalid_tasks = filter(lambda task: task.status in ('Invalid', "Won't Fix") and \
+                        distro_identifier in task.bug_target_display_name.lower(), tasks)
+                if invalid_tasks:
+                    non_invalid_tasks = filter(lambda task: task.status not in ('Invalid', "Won't Fix") and \
+                        distro_identifier in task.bug_target_display_name.lower(), tasks)
+                    if not non_invalid_tasks:
+                        return 'invalid'
         else:
             fixed_tasks = filter(lambda task: task.status == 'Fix Released',
                     tasks)
@@ -1467,5 +1471,9 @@ NameError: global name 'weird' is not defined'''
             # invalid pmount task should be unmodified
             self.assertEqual(b.bug_tasks[2].bug_target_name, 'pmount (Ubuntu)')
             self.assertEqual(b.bug_tasks[2].status, 'Invalid')
+
+            # the invalid task should not confuse get_fixed_version()
+            self.assertEqual(self.crashdb.get_fixed_version(python_report),
+                    None)
 
     unittest.main()

@@ -22,6 +22,8 @@ Bug fixes:
    Linux 2.6.32.
  - launchpad.py: Fix marking of 'checked for duplicate' for bugs with upstream
    tasks.
+ - launchpad.py, get_fixed_version(): Do not consider a bug as invalid just
+   because it has any invalid distro package task.
 
 1.11 (2009-12-23)
 -----------------
