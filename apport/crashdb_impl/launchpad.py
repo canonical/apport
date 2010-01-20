@@ -368,7 +368,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     try:
                         a.removeFromBug()
                     except HTTPError:
-                        pass # LP#315387 workaround
+                        pass # LP#249950 workaround
             try:
                 task = self._get_distro_tasks(bug.bug_tasks).next()
                 task.transitionToImportance(importance='Medium')
@@ -579,7 +579,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     try:
                         a.removeFromBug()
                     except HTTPError:
-                        pass # LP#315387 workaround
+                        pass # LP#249950 workaround
 
             bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
             bug.newMessage(content='Thank you for taking the time to report this crash and helping \
@@ -661,7 +661,7 @@ in a dependent package.' % master,
                     try:
                         a.removeFromBug()
                     except HTTPError:
-                        pass # LP#315387 workaround
+                        pass # LP#249950 workaround
         else:
             if 'apport-failed-retrace' not in bug.tags:
                 bug.tags = bug.tags + ['apport-failed-retrace'] # LP#254901 workaround
