@@ -54,7 +54,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
           temporary one. (optional). This can be overridden or set by
           $APPORT_LAUNCHPAD_CACHE environment.
         - escalation_subscription: This subscribes the given person or team to
-          a bug once it gets more than 10 duplicates.
+          a bug once it gets the 10th duplicate.
         - escalation_tag: This adds the given tag to a bug once it gets more
           than 10 duplicates.
         '''
@@ -599,7 +599,7 @@ Please continue to report any other bugs you may find.' % master_id,
             if not bug.duplicate_of:
                 bug.duplicate_of = master
 
-            if len(master.duplicates) >= 10:
+            if len(master.duplicates) == 10:
                 if 'escalation_tag' in self.options and \
                     self.options['escalation_tag'] not in master.tags:
                         master.tags = master.tags + [self.options['escalation_tag']] # LP#254901 workaround

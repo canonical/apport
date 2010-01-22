@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.12.1 (UNRELEASED)
+-------------------
+Bug fixes:
+ - launchpad.py: Do not keep escalating bugs, just escalate at the 10th
+   duplicate.
+
 1.12 (2010-01-20)
 -----------------
 Improvements:
