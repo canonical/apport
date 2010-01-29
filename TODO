@@ -1,6 +1,3 @@
-apport-retrace:
- - add heuristics for more crash types (SEGV on read/write/exec & mem region)
-
 apport:
  - check crashes of root processes with dropped privs in test suite
  - if CORE_REAL_RLIM is not set, do not write core dump; add test case
