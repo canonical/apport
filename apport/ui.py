@@ -352,8 +352,12 @@ free memory to automatically analyze the problem and send a report to the develo
             self.collect_info(symptom_script)
         except ValueError, e:
             if str(e) == 'package does not exist':
-                self.ui_error_message(_('Invalid problem report'), 
-                    _('Package %s does not exist') % self.cur_package)
+                if not self.cur_package:
+                    self.ui_error_message(_('Invalid problem report'), 
+                        _('Symptom script %s did not determine an affected package') % symptom_script)
+                else:
+                    self.ui_error_message(_('Invalid problem report'), 
+                        _('Package %s does not exist') % self.cur_package)
                 return False
             else:
                 raise
