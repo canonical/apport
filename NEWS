@@ -8,6 +8,7 @@ Bug fixes:
    duplicate.
  - Improve error message if a symptom script did not determine a package name.
    (LP: #503834)
+ - general-hooks/generic.py: Fix crash on libGL check with empty StacktraceTop.
 
 1.12 (2010-01-20)
 -----------------
