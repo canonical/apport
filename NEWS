@@ -9,6 +9,9 @@ Bug fixes:
  - Improve error message if a symptom script did not determine a package name.
    (LP: #503834)
  - general-hooks/generic.py: Fix crash on libGL check with empty StacktraceTop.
+ - Review and clean up usage of chmod(). This fixes a small race condition in the
+   Python exception hook where a local attacker could read the information from
+   another user's crash report. (LP: #516029)
 
 1.12 (2010-01-20)
 -----------------

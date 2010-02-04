@@ -94,8 +94,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
                 # don't clobber existing report
                 return
         report_file = os.fdopen(os.open(pr_filename,
-            os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
-        os.chmod(pr_filename, 0600)
+            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0600), 'w')
         try:
             pr.write(report_file)
         finally:

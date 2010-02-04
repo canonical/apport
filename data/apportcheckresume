@@ -80,8 +80,8 @@ def main(argv=None):
 
         nowtime = datetime.datetime.now()
         pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(' ', '_'))
-        report_file = os.fdopen(os.open(pr_filename, os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
-        os.chmod(pr_filename, 0600)
+        report_file = os.fdopen(os.open(pr_filename,
+            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0600), 'w')
         try:
             pr.write(report_file)
         finally:

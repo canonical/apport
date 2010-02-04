@@ -72,22 +72,19 @@ def init_error_log():
 
     if not os.isatty(sys.stderr.fileno()):
         log = os.environ.get('APPORT_LOG_FILE', '/var/log/apport.log')
-        mask = os.umask(0077)
         try:
-            f = open(log, 'a')
-            os.chmod(log, 0640)
+            f = os.open(log, os.O_WRONLY|os.O_CREAT|os.O_APPEND, 0600)
             try:
                 admgid = grp.getgrnam('adm')[2]
                 os.chown(log, -1, admgid)
+                os.chmod(log, 0640)
             except KeyError:
                 pass # if group adm doesn't exist, just leave it as root
-        except IOError: # on a permission error, don't touch stderr
-            os.umask(mask)
+        except OSError: # on a permission error, don't touch stderr
             return
-        os.umask(mask)
-        os.dup2(f.fileno(), sys.stderr.fileno())
-        os.dup2(f.fileno(), sys.stdout.fileno())
-        f.close()
+        os.dup2(f, sys.stderr.fileno())
+        os.dup2(f, sys.stdout.fileno())
+        os.close(f)
 
 def error_log(msg):
     '''Output something to the error log.'''
@@ -302,9 +299,8 @@ try:
                 write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
         reportfile = os.fdopen(os.open(report,
-            os.O_WRONLY|os.O_CREAT|os.O_EXCL), 'w')
+            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0), 'w')
         assert reportfile.fileno() > sys.stderr.fileno()
-        os.chmod(report, 0000)
         os.chown(report, pidstat.st_uid, pidstat.st_gid)
     except (OSError, IOError), e:
         error_log('Could not create report file: %s' % str(e))
