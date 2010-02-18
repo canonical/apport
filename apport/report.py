@@ -1052,7 +1052,10 @@ class Report(ProblemReport):
             pass
 
         for k in self:
-            if k.startswith('Proc') or 'Stacktrace' in k or \
+            if (k.startswith('Proc') and \
+                not k in ['ProcCpuinfo','ProcMaps','ProcStatus', \
+                          'ProcInterrupts','ProcModules']) or \
+                'Stacktrace' in k or \
                 k in ['Traceback', 'PythonArgs']:
                 for old, new in replacements.iteritems():
                     if hasattr(self[k], 'isspace'):
