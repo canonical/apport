@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.12.2 (UNRELEASED)
+-------------------
+Improvements:
+ - apport_python_hook.py: Directly check /etc/default/apport instead of
+   querying packaging.enabled(), to avoid importing lots of modules for
+   non-packaged scripts. Thanks Stuart Colville! (LP: #528355)
+
 1.12.1 (2010-02-22)
 -------------------
 Bug fixes:
