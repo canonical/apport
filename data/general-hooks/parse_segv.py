@@ -17,9 +17,16 @@ import sys, re
 class ParseSegv(object):
     def __init__(self, registers, disassembly, maps, debug=False):
         self.debug = debug
+
         self.regs = self.parse_regs(registers)
+        self.sp = None
+        for reg in ['rsp','esp']:
+            if reg in self.regs:
+                self.sp = self.regs[reg]
+
         self.line, self.pc, self.insn, self.src, self.dest = \
             self.parse_disassembly(disassembly)
+
         self.maps = self.parse_maps(maps)
 
     def find_vma(self, addr):
@@ -120,8 +127,8 @@ class ParseSegv(object):
                 if self.debug:
                     print >>sys.stderr, 'dest: %s' % (dest)
 
-        # Set up possible implicit memory destination
-        if insn in ['push','pop','pushl','popl']:
+        # Set up possible implicit memory destinations (stack actions)
+        if insn in ['push','pop','pushl','popl','call','callq','ret','retq']:
             for reg in ['rsp','esp']:
                 if reg in self.regs:
                     dest = '(%%%s)' % (reg)
@@ -293,6 +300,14 @@ class ParseSegv(object):
             details.append('disallowed I/O port operation on port %d' % (self.register_value(self.src)))
             understood = True
 
+        # Guess at falling off the stack?
+        if not understood and self.sp:
+            valid, out, short = self.validate_vma('r', self.sp, 'SP')
+            details.append(out)
+            if not valid:
+                reason.append(short)
+                understood = True
+
         if not understood:
             reason.append('Reason could not be automatically determined.')
             details.append('Reason could not be automatically determined.')
@@ -371,7 +386,7 @@ rdx            0xffffffffff600180   -10485376
 rsi            0x0  0
 rdi            0x7fffffffe3b0   140737488348080
 rbp            0x0  0x0
-rsp            0x7fffffffe388   0x7fffffffe388
+rsp            0x0000bfc6af24   0x0000bfc6af24
 r8             0x0  0
 r9             0x0  0
 r10            0x7fffffffe140   140737488347456
@@ -825,5 +840,32 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 disasm = '0x08083547 <main+7>:    pushl  -04(%ecx)'
                 segv = ParseSegv(regs, disasm, maps)
                 self.assertRaises(ValueError, segv.report)
+
+            def test_segv_stack_failure(self):
+                '''Handles walking off the stack'''
+
+                # Triggered via "push"
+                reg = regs + 'esp            0xbfc56ff0   0xbfc56ff0'
+                disasm = '0x08083547 <main+7>:    push  %eax'
+                segv = ParseSegv(reg, disasm, maps)
+                understood, reason, details = segv.report()
+                self.assertTrue(understood, details)
+                self.assertTrue('destination "(%esp)" (0xbfc56ff0) not located in a known VMA region (needed writable region)!' in details, details)
+
+                # Triggered via "call"
+                reg = regs + 'esp            0xbfc56fff   0xbfc56fff'
+                disasm = '0x08083547 <main+7>:    callq  0x08083540'
+                segv = ParseSegv(reg, disasm, maps)
+                understood, reason, details = segv.report()
+                self.assertTrue(understood, details)
+                self.assertTrue('destination "(%esp)" (0xbfc56fff) not located in a known VMA region (needed writable region)!' in details, details)
+
+                # Triggered via unknown reason
+                reg = regs + 'esp            0xbfc56000   0xbfc56000'
+                disasm = '''0x08083540 <main+0>:    mov    $1,%rcx'''
+                segv = ParseSegv(reg, disasm, maps)
+                understood, reason, details = segv.report()
+                self.assertTrue(understood, details)
+                self.assertTrue('SP (0xbfc56000) not located in a known VMA region (needed readable region)!' in details, details)
 
     unittest.main()
