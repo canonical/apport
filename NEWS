@@ -8,6 +8,10 @@ Improvements:
    querying packaging.enabled(), to avoid importing lots of modules for
    non-packaged scripts. Thanks Stuart Colville! (LP: #528355)
 
+Bug fixes:
+ - Fix --help output for bug updating mode (invocation as apport-collect or
+   apport-update-bug). (LP: #504116)
+
 1.12.1 (2010-02-22)
 -------------------
 Bug fixes:

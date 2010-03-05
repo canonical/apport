@@ -552,14 +552,39 @@ free memory to automatically analyze the problem and send a report to the develo
     # methods that implement workflow bits
     #
 
+    def parse_argv_update(self):
+        '''Parse command line options when being invoked in update mode.
+
+        Return (options, args).
+        '''
+        optparser = optparse.OptionParser(_('%prog <report number>'))
+        (self.options, self.args) = optparser.parse_args()
+
+        if len(self.args) != 1:
+            optparser.error('You need to specify a report number to update')
+            sys.exit(1)
+
+        self.options.update_report = self.args[0]
+        self.options.symptom = None
+        self.options.filebug = False
+        self.options.package = None
+        self.options.crash_file = None
+        self.options.version = None
+        self.args = []
+
     def parse_argv(self):
         '''Parse command line options.
 
         If a single argument is given without any options, this tries to "do
         what I mean".
-        
-        Return (options, args).
         '''
+        # invoked in update mode?
+        if len(sys.argv) > 0:
+            cmd = os.environ.get('APPORT_INVOKED_AS', sys.argv[0])
+            if cmd.endswith('-update-bug') or cmd.endswith('-collect'):
+                self.parse_argv_update()
+                return
+
         optparser = optparse.OptionParser(_('%prog [options] [symptom|pid|package|program path|.apport/.crash file]'))
         optparser.add_option('-f', '--file-bug',
             help=_('Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms. (Implied if a single argument is given.)'),
@@ -591,16 +616,6 @@ free memory to automatically analyze the problem and send a report to the develo
         # "do what I mean" for zero or one arguments
         if len(sys.argv) == 0:
             return
-
-        cmd = os.environ.get('APPORT_INVOKED_AS', sys.argv[0])
-        if cmd.endswith('-update-bug') or cmd.endswith('-collect'):
-            if len(self.args) == 1:
-                self.options.update_report = self.args[0]
-                self.args = []
-                return
-            else:
-                optparser.error('You need to specify a report number to update')
-                sys.exit(1)
 
         # no argument: default to "show pending crashes" except when called in
         # bug mode
@@ -2597,11 +2612,9 @@ def run(report, ui):
 
             # update existing report
             _chk('apport-collect', '1234', {'filebug': False, 'package': None,
-                 'pid': None, 'crash_file': None, 'symptom': None,
-                 'update_report': '1234', 'save': None})
-            _chk('apport-update-bug', '1234', {'filebug': False, 
-                 'package': None, 'pid': None, 'crash_file': None, 
-                 'symptom': None, 'update_report': '1234', 'save': None})
+                 'crash_file': None, 'symptom': None, 'update_report': '1234'})
+            _chk('apport-update-bug', '1234', {'filebug': False, 'package': None,
+                 'crash_file': None, 'symptom': None, 'update_report': '1234'})
 
     unittest.main()
 
