@@ -9,8 +9,11 @@ Improvements:
    non-packaged scripts. Thanks Stuart Colville! (LP: #528355)
 
 Bug fixes:
+ - Fix SegV parser to notice walking off the stack during "call" or "ret"
+   (LP: #531672).
  - Fix --help output for bug updating mode (invocation as apport-collect or
    apport-update-bug). (LP: #504116)
+ - Fix bug escalation tagging, thanks to Brian Murray.
 
 1.12.1 (2010-02-22)
 -------------------
