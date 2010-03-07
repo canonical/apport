@@ -619,7 +619,9 @@ free memory to automatically analyze the problem and send a report to the develo
 
         # no argument: default to "show pending crashes" except when called in
         # bug mode
-        if len(self.args) == 0 and cmd.endswith('-bug'):
+        # NOTE: uses sys.argv, since self.args if empty for all the options,
+        # e.g. "-v" or "-u $BUG"
+        if len(sys.argv) == 1 and cmd.endswith('-bug'):
             self.options.filebug = True
             return
 
@@ -1638,6 +1640,18 @@ CoreDump: base64
             self.ui = _TestSuiteUserInterface()
             self.assertEqual(self.ui.run_argv(), False)
             self.assertEqual(self.ui.msg_severity, 'error')
+
+        def test_run_version(self):
+            '''run_report_bug() as "ubuntu-bug" with version argument.'''
+
+            sys.argv = ['ubuntu-bug', '-v']
+            self.ui = _TestSuiteUserInterface()
+            orig_stdout = sys.stdout
+            sys.stdout = StringIO()
+            self.assertEqual(self.ui.run_argv(), True)
+            output = sys.stdout.getvalue()
+            sys.stdout = orig_stdout
+            self.assertEqual(output, __version__+"\n")
 
         def test_run_report_bug_package(self):
             '''run_report_bug() for a package.'''

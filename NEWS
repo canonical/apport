@@ -14,6 +14,8 @@ Bug fixes:
  - Fix --help output for bug updating mode (invocation as apport-collect or
    apport-update-bug). (LP: #504116)
  - Fix bug escalation tagging, thanks to Brian Murray.
+ - Fix option processing when being invoked as apport-bug. Thanks to Daniel
+   Hahler for the patch! (LP: #532944)
 
 1.12.1 (2010-02-22)
 -------------------
