@@ -1,0 +1,89 @@
+#!/usr/bin/python
+#
+# Collect information about processes which are still running after sending
+# SIGTERM to them (which happens during computer shutdown in
+# /etc/init.d/sendsigs in Debian/Ubuntu)
+#
+# Copyright (c) 2010 Canonical Ltd.
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+import os, os.path, sys, errno, optparse
+
+import apport, apport.fileutils
+
+def parse_argv():
+    '''Parse command line and return (options, args).'''
+
+    optparser = optparse.OptionParser('%prog [options]')
+    optparser.add_option('-o', '--omit', metavar='PID', 
+            action='append', default=[], dest='blacklist',
+            help='Ignore a particular process ID (can be specified multiple times)')
+
+    (opts, args) = optparser.parse_args()
+
+    if len(args) != 0:
+        optparser.error('This program does not take any non-option arguments.  Please see --help.')
+        sys.exit(1)
+
+    return (opts, args)
+
+def orphaned_processes(blacklist):
+    '''Yield an iterator of running process IDs.
+
+    This excludes PIDs which do not have a valid /proc/pid/exe symlink (e. g.
+    kernel processes), the PID of our own process, and everything that is
+    contained in the blacklist argument.
+    '''
+    my_pid = os.getpid()
+    my_sid = os.getsid(0)
+    for d in os.listdir('/proc'):
+        try:
+	    pid = int(d)
+        except ValueError:
+            continue
+        if pid == 1 or pid == my_pid or d in blacklist:
+	    print 'ignoring:', d
+            continue
+
+        if os.getsid(pid) == my_sid:
+            print 'ignoring same sid:', d
+            continue
+
+        try:
+            exe = os.readlink(os.path.join('/proc', d, 'exe'))
+        except OSError, e:
+            if e.errno == errno.ENOENT:
+                # kernel thread or similar, silently ignore
+                continue
+            print >> sys.stderr, 'WARNING: Could not read information about pid %s: %s' % (d, str(e))
+            continue
+
+        yield d
+
+def do_report(pid):
+    '''Create a report for a particular PID.'''
+
+    r = apport.Report('Bug')
+    r.add_proc_info(p)
+    r['Tags'] = 'shutdown-hang'
+    r['Title'] = 'does not terminate at computer shutdown'
+
+    f = open(apport.fileutils.make_report_path(r), 'w')
+    r.write(f)
+    f.close()
+
+#
+# main
+#
+
+(opts, args) = parse_argv()
+
+for p in orphaned_processes(opts.blacklist):
+    do_report(p)
+

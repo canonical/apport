@@ -3,6 +3,11 @@ detailled list of changes, please see ChangeLog.
 
 1.12.2 (UNRELEASED)
 -------------------
+New features:
+ - Add "unkillable_shutdown" script to collect information about processes
+   which are still running after sending SIGTERM to them. This can be hooked
+   into e. g. /etc/init.d/sendsigs on Debian/Ubuntu systems.
+
 Improvements:
  - apport_python_hook.py: Directly check /etc/default/apport instead of
    querying packaging.enabled(), to avoid importing lots of modules for
