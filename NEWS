@@ -4,7 +4,8 @@ detailled list of changes, please see ChangeLog.
 1.13.1 (UNRELEASED)
 -------------------
 Bug fixes:
- - Fix test suite to work with gdb 7.1 as well.
+ - Update parse-segv to handle gdb 7.1 output.
+ - Enhance test suite to work with gdb 7.1 as well, and catch future outputs.
 
 1.13 (2010-03-10)
 -----------------

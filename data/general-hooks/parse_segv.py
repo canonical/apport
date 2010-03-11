@@ -72,6 +72,9 @@ class ParseSegv(object):
         if len(lines)<1:
             raise ValueError, 'Failed to load empty disassembly'
         line = lines[0].strip()
+        # Drop GDB 7.1's leading $pc mark
+        if line.startswith('=>'):
+            line = line[2:].strip()
         if self.debug:
             print >>sys.stderr, line
         pc_str = line.split()[0]
@@ -79,7 +82,7 @@ class ParseSegv(object):
             pc = int(pc_str.split(':')[0],16)
         else:
             # Could not identify this instruction line
-            raise ValueError, 'Could not parse disassembly line: %s' % (pc_str)
+            raise ValueError, 'Could not parse PC "%s" from disassembly line: %s' % (pc_str, line)
         if self.debug:
             print >>sys.stderr, 'pc: 0x%08x' % (pc)
 
@@ -597,6 +600,15 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
 
                 regs = 'esp 0x444'
                 disasm = '0x08083560 <main+0>:    push %ecx\n'
+                segv = ParseSegv(regs, disasm, '')
+                self.assertEquals(segv.pc, 0x08083560, segv.pc)
+                self.assertEquals(segv.insn, 'push', segv.insn)
+                self.assertEquals(segv.src, '%ecx', segv.src)
+                self.assertEquals(segv.dest, '(%esp)', segv.dest)
+
+                # GDB 7.1
+                regs = 'esp 0x444'
+                disasm = '=> 0x08083560 <main+0>:    push %ecx\n'
                 segv = ParseSegv(regs, disasm, '')
                 self.assertEquals(segv.pc, 0x08083560, segv.pc)
                 self.assertEquals(segv.insn, 'push', segv.insn)

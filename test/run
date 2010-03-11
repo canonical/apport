@@ -15,6 +15,7 @@
 if [ "$1" = local ]; then
     export PYTHONPATH=.
     export APPORT_CRASHDB_CONF=./etc/apport/crashdb.conf
+    export APPORT_DATA_DIR=./data
     basedir=.
     local=1
 

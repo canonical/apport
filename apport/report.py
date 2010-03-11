@@ -19,8 +19,9 @@ from problem_report import ProblemReport
 import fileutils
 from packaging_impl import impl as packaging
 
-_hook_dir = '/usr/share/apport/package-hooks/'
-_common_hook_dir = '/usr/share/apport/general-hooks/'
+_data_dir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
+_hook_dir = '%s/package-hooks/' % (_data_dir)
+_common_hook_dir = '%s/general-hooks/' % (_data_dir)
 
 # path of the ignore file
 _ignore_file = '~/.apport-ignore.xml'
@@ -1487,6 +1488,34 @@ int main() {
         pr.add_gdb_info()
 
         self._validate_gdb_fields(pr)
+
+    def test_add_zz_parse_segv_details(self):
+        '''parse-segv produces sensible results'''
+        rep = tempfile.NamedTemporaryFile()
+        self._generate_sigsegv_report(rep)
+        rep.seek(0)
+
+        pr = Report()
+        pr.load(open(rep.name))
+        pr['Signal'] = '1'
+        pr.add_hooks_info('fake_ui')
+        self.assert_('SegvAnalysis' not in pr.keys())
+
+        pr = Report()
+        pr.load(open(rep.name))
+        pr.add_hooks_info('fake_ui')
+        self.assert_('Skipped: missing required field "Architecture"' in pr['SegvAnalysis'],
+                     pr['SegvAnalysis'])
+
+        pr.add_os_info()
+        pr.add_hooks_info('fake_ui')
+        self.assert_('Skipped: missing required field "ProcMaps"' in pr['SegvAnalysis'],
+                     pr['SegvAnalysis'])
+
+        pr.add_proc_info()
+        pr.add_hooks_info('fake_ui')
+        self.assert_('not located in a known VMA region' in pr['SegvAnalysis'],
+                     pr['SegvAnalysis'])
 
     def test_add_gdb_info_script(self):
         '''add_gdb_info() with a script.'''
