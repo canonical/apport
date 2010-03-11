@@ -1472,7 +1472,7 @@ int main() {
 }
 ''')
         self._validate_gdb_fields(pr)
-        self.assertEqual(pr['Disassembly'], '0x0:\tCannot access memory at address 0x0', pr['Disassembly'])
+        self.assert_('Cannot access memory at address 0x0' in pr['Disassembly'], pr['Disassembly'])
         self.failIf ('AssertionMessage' in pr)
 
     def test_add_gdb_info_load(self):
