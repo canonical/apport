@@ -15,7 +15,7 @@
 
 import os, os.path, sys, errno, optparse
 
-import apport, apport.fileutils
+import apport, apport.fileutils, apport.hookutils
 
 def parse_argv():
     '''Parse command line and return (options, args).'''
@@ -66,13 +66,16 @@ def orphaned_processes(blacklist):
 
         yield d
 
-def do_report(pid):
+def do_report(pid, blacklist):
     '''Create a report for a particular PID.'''
 
     r = apport.Report('Bug')
     r.add_proc_info(p)
     r['Tags'] = 'shutdown-hang'
     r['Title'] = 'does not terminate at computer shutdown'
+    r['Processes'] = apport.hookutils.command_output(['ps', 'aux'])
+    if blacklist:
+        r['OmitPids'] = ' '.join(blacklist)
 
     f = open(apport.fileutils.make_report_path(r), 'w')
     r.write(f)
@@ -85,5 +88,5 @@ def do_report(pid):
 (opts, args) = parse_argv()
 
 for p in orphaned_processes(opts.blacklist):
-    do_report(p)
+    do_report(p, opts.blacklist)
 

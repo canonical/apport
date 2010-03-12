@@ -7,6 +7,10 @@ Bug fixes:
  - Update parse-segv to handle gdb 7.1 output.
  - Enhance test suite to work with gdb 7.1 as well, and catch future outputs.
 
+Improvements:
+ - unkillable_shutdown: Add list of running processes and blacklisted pids to
+   report. (LP: #537262)
+
 1.13 (2010-03-10)
 -----------------
 New features:
