@@ -264,7 +264,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         report['Tags'] = ' '.join(b.tags)
 
-        report['OriginalTitle'] = report['Title']
+        if 'Title' in report:
+            report['OriginalTitle'] = report['Title']
 
         report['Title'] = b.title
 
