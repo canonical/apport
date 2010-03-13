@@ -74,6 +74,7 @@ def do_report(pid, blacklist):
     r['Tags'] = 'shutdown-hang'
     r['Title'] = 'does not terminate at computer shutdown'
     r['Processes'] = apport.hookutils.command_output(['ps', 'aux'])
+    r['InitctlList'] = apport.hookutils.command_output(['initctl', 'list'])
     if blacklist:
         r['OmitPids'] = ' '.join(blacklist)
 
