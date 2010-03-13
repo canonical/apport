@@ -264,6 +264,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         report['Tags'] = ' '.join(b.tags)
 
+        report['OriginalTitle'] = report['Title']
+
         report['Title'] = b.title
 
         for attachment in filter_filename(b.attachments):
