@@ -8,6 +8,8 @@ Bug fixes:
  - Enhance test suite to work with gdb 7.1 as well, and catch future outputs.
  - UI: Add exception string to the "network error" dialog, to better tell what
    the problem is.
+ - UI: Add back -p option to apport-collect/apport-update-bug (regression from
+   1.13). (LP: #538944)
 
 Improvements:
  - unkillable_shutdown: Add list of running processes and blacklisted pids to

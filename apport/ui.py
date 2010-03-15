@@ -558,16 +558,18 @@ free memory to automatically analyze the problem and send a report to the develo
         Return (options, args).
         '''
         optparser = optparse.OptionParser(_('%prog <report number>'))
+        optparser.add_option('-p', '--package',
+            help=_('Specify package name.)'),
+            dest='package', default=None)
         (self.options, self.args) = optparser.parse_args()
 
-        if len(self.args) != 1:
+        if len(self.args) != 1 or not self.args[0].isdigit():
             optparser.error('You need to specify a report number to update')
             sys.exit(1)
 
-        self.options.update_report = self.args[0]
+        self.options.update_report = int(self.args[0])
         self.options.symptom = None
         self.options.filebug = False
-        self.options.package = None
         self.options.crash_file = None
         self.options.version = None
         self.args = []
@@ -2310,6 +2312,25 @@ CoreDump: base64
             self.assert_('Dependencies' in self.ui.report.keys())
             self.assert_('ProcEnviron' in self.ui.report.keys())
 
+        def test_run_update_report_existing_package_cli_cmdname(self):
+            '''run_update_report() on an existing package (-collect program).'''
+
+            sys.argv = ['apport-collect', '-p', 'bash', '1']
+            self.ui = _TestSuiteUserInterface()
+            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
+                    '', {'dummy_data': 1})
+
+            self.assertEqual(self.ui.run_argv(), True)
+            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+            self.assertEqual(self.ui.msg_title, None)
+            self.assertEqual(self.ui.opened_url, None)
+            self.assert_(self.ui.present_details_shown)
+
+            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assert_(self.ui.report['Package'].startswith('bash '))
+            self.assert_('Dependencies' in self.ui.report.keys())
+            self.assert_('ProcEnviron' in self.ui.report.keys())
+
         def test_run_update_report_noninstalled_but_hook(self):
             '''run_update_report() on an uninstalled package with a source hook.'''
 
@@ -2628,9 +2649,9 @@ def run(report, ui):
 
             # update existing report
             _chk('apport-collect', '1234', {'filebug': False, 'package': None,
-                 'crash_file': None, 'symptom': None, 'update_report': '1234'})
+                 'crash_file': None, 'symptom': None, 'update_report': 1234})
             _chk('apport-update-bug', '1234', {'filebug': False, 'package': None,
-                 'crash_file': None, 'symptom': None, 'update_report': '1234'})
+                 'crash_file': None, 'symptom': None, 'update_report': 1234})
 
     unittest.main()
 
