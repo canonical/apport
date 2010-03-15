@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - Update parse-segv to handle gdb 7.1 output.
  - Enhance test suite to work with gdb 7.1 as well, and catch future outputs.
+ - UI: Add exception string to the "network error" dialog, to better tell what
+   the problem is.
 
 Improvements:
  - unkillable_shutdown: Add list of running processes and blacklisted pids to
