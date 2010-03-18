@@ -330,6 +330,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             x.append('apport-collected')
             bug.tags = x
             bug.lp_save()
+            bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
         
         # short text data
         if change_description:
