@@ -189,22 +189,19 @@ class CLIUserInterface(apport.ui.UserInterface):
         # Fallback
         return 'cancel'
 
-    def ui_present_report_details(self, is_update):
-        if is_update:
-            dialog = CLIDialog (_('Send this data to the developers?'), None)
-        else:
-            dialog = CLIDialog (_('Send problem report to the developers?'), 
-                    _('After the problem report has been sent, please fill out the form in the\n'
-                      'automatically opened web browser.'))
+    def _get_details(self):
+        '''Build report string for display.'''
 
-        # report contents
         details = ''
+        max_show = 1000000
         for key in self.report:
             details += key + ':'
             # string value
+            keylen = len(self.report[key])
             if not hasattr(self.report[key], 'gzipvalue') and \
                 hasattr(self.report[key], 'isspace') and \
-                not self.report._is_binary(self.report[key]):
+                not self.report._is_binary(self.report[key]) and \
+                keylen < max_show:
                 lines = self.report[key].splitlines()
                 if len(lines) <= 1:
                     details += ' ' + self.report[key] + '\n'
@@ -212,8 +209,21 @@ class CLIUserInterface(apport.ui.UserInterface):
                     details += '\n'
                     for line in lines:
                         details += '  ' + line + '\n'
+            elif keylen >= max_show:
+                details += ' ' + (_('(%i bytes)') % keylen ) + '\n'
             else:
                 details += ' ' + _('(binary data)') + '\n'
+
+        return details
+
+
+    def ui_present_report_details(self, is_update):
+        if is_update:
+            dialog = CLIDialog (_('Send this data to the developers?'), None)
+        else:
+            dialog = CLIDialog (_('Send problem report to the developers?'), 
+                    _('After the problem report has been sent, please fill out the form in the\n'
+                      'automatically opened web browser.'))
 
         # complete/reduced reports
         if self.report.has_key('CoreDump') and self.report.has_useful_stacktrace():
@@ -242,7 +252,7 @@ class CLIUserInterface(apport.ui.UserInterface):
                 try:
                     subprocess.Popen(["/usr/bin/sensible-pager"],
                             stdin=subprocess.PIPE,
-                            close_fds=True).communicate(details)
+                            close_fds=True).communicate(self._get_details())
                 except IOError, e:
                     # ignore broken pipe (premature quit)
                     if e.errno == errno.EPIPE:
@@ -396,7 +406,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             _('You can launch a browser now, or copy this URL into a browser on another computer.'))
 
         answer = self.ui_question_choice(text, [_('Launch a browser now')], False)
-	if answer == [0]:
+        if answer == [0]:
             apport.ui.UserInterface.open_url(self, url)
 
 if __name__ == '__main__':
