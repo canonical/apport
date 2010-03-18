@@ -135,7 +135,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         # report contents in expander
         self.tree_model.clear()
         row = 0
-        for key in self.report:
+        for key in sorted(self.report):
             keyiter = self.tree_model.insert_before(None, None)
             self.tree_model.set_value(keyiter, 0, key)
 

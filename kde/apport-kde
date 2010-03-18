@@ -276,7 +276,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
         # report contents
         details = dialog.findChild(QTreeWidget, 'details')
-        for key in self.report:
+        for key in sorted(self.report):
             keyitem = QTreeWidgetItem([key])
             details.addTopLevelItem(keyitem)
 

@@ -194,7 +194,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         details = ''
         max_show = 1000000
-        for key in self.report:
+        for key in sorted(self.report):
             details += key + ':'
             # string value
             keylen = len(self.report[key])
