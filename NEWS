@@ -12,6 +12,8 @@ Bug fixes:
    1.13). (LP: #538944)
  - launchpad.py: Add yet another workaround for LP#336866. (LP: #516381)
  - launchpad.py, download(): Ignore attachments with invalid key names.
+ - Fix regression from 1.10 which made it impossible for a package hook to set
+   a third-party crash database for non-native packages. (LP: #517272)
 
 Improvements:
  - unkillable_shutdown: Add list of running processes and blacklisted pids to

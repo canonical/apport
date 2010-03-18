@@ -65,8 +65,18 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             raise KeyError, 'called without a package, and report does not have ExecutablePath'
     try:
         report.add_package_info(package)
+    except ValueError:
+        # this happens if we are collecting information on an uninstalled
+        # package
+        if not ignore_uninstalled:
+            raise
 
-        # check package origin
+    if report.add_hooks_info(ui):
+        sys.exit(0)
+
+    # check package origin; we do that after adding hooks, so that hooks have
+    # the chance to set a third-party CrashDB.
+    try:
         if ('Package' not in report or \
               not apport.packaging.is_distro_package(report['Package'].split()[0])) \
               and 'CrashDB' not in report:
@@ -78,9 +88,6 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         # package
         if not ignore_uninstalled:
             raise
-
-    if report.add_hooks_info(ui):
-        sys.exit(0)
 
     # add title
     if 'Title' not in report:
