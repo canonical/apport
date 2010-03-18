@@ -11,6 +11,7 @@ Bug fixes:
  - UI: Add back -p option to apport-collect/apport-update-bug (regression from
    1.13). (LP: #538944)
  - launchpad.py: Add yet another workaround for LP#336866. (LP: #516381)
+ - launchpad.py, download(): Ignore attachments with invalid key names.
 
 Improvements:
  - unkillable_shutdown: Add list of running processes and blacklisted pids to

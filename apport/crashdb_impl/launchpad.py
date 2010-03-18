@@ -271,6 +271,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         for attachment in filter_filename(b.attachments):
             key, ext = os.path.splitext(attachment.filename)
+            # ignore attachments with invalid keys
+            try:
+                report[key] = ''
+            except:
+                continue
             if ext == '.txt':
                 report[key] = attachment.read()
             elif ext == '.gz':
