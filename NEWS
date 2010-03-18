@@ -16,6 +16,8 @@ Bug fixes:
    a third-party crash database for non-native packages. (LP: #517272)
  - apport-cli: Create the 'details' string only if user wants to view details,
    and do not show files larger than 1MB. Thanks Scott Moser! (LP: #486122)
+ - packaging-apt-dpkg.py: Silence apt.Cache() spewage to stdout with newer
+   python-apt versions. (LP: #531518)
 
 Improvements:
  - unkillable_shutdown: Add list of running processes and blacklisted pids to

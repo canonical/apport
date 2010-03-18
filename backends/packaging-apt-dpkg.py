@@ -47,7 +47,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         Throw a ValueError if the package does not exist.
         '''
         if not self._apt_cache:
-            self._apt_cache = apt.Cache()
+            try:
+                # avoid spewage on stdout
+                self._apt_cache = apt.Cache(apt.progress.base.OpProgress())
+            except AttributeError:
+                # older python-apt versions do not yet have above argument
+                self._apt_cache = apt.Cache()
         return self._apt_cache
 
     def _apt_pkg(self, package):
