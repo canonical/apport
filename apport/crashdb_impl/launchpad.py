@@ -170,8 +170,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             hdr['HWDB-Submission'] = report['CheckboxSubmission']
 
         # order in which keys should appear in the temporary file
-        order = [ 'ProblemType', 'DistroRelease', 'Regression', 'Reproducible', 'TestedUpstream', 
-        'SourcePackage', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules' ]
+        order = [ 'ProblemType', 'DistroRelease', 'Package', 'Regression', 'Reproducible', 
+        'TestedUpstream', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules' ]
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
