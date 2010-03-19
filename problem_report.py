@@ -358,7 +358,7 @@ class ProblemReport(UserDict.IterableUserDict):
             os.chmod(reportfile, st.st_mode)
 
     def write_mime(self, file, attach_treshold = 5, extra_headers={},
-        skip_keys=None):
+        skip_keys=None, priority_fields=None):
         '''Write MIME/Multipart RFC 2822 formatted data into file.
 
         file must be a file-like object, not a path.
@@ -378,6 +378,9 @@ class ProblemReport(UserDict.IterableUserDict):
 
         skip_keys is a set/list specifying keys which are filtered out and not
         written to the destination file.
+
+        priority_fields is a set/list specifying the order in which keys should
+        appear in the destination file.
         '''
         keys = self.data.keys()
         keys.sort()
@@ -388,6 +391,14 @@ class ProblemReport(UserDict.IterableUserDict):
         if 'ProblemType' in keys:
             keys.remove('ProblemType')
             keys.insert(0, 'ProblemType')
+
+        if priority_fields:
+            counter = 0
+            for priority_field in priority_fields:
+                if priority_field in keys:
+                    keys.remove(priority_field)
+                    keys.insert(counter, priority_field)
+                    counter += 1
 
         for k in keys:
             if skip_keys and k in skip_keys:
@@ -1378,6 +1389,45 @@ GoodText: Hi
         f.write(part.get_payload(decode=True))
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
+
+        # no more parts
+        self.assertRaises(StopIteration, msg_iter.next)
+
+    def test_write_mime_order(self):
+        '''write_mime() with keys ordered.'''
+
+        bin_value = 'AB' * 10 + '\0' * 10 + 'Z'
+
+        pr = ProblemReport(date = 'now!')
+        pr['SecondText'] = 'What'
+        pr['FirstText'] = 'Who'
+        pr['FourthText'] = 'Today'
+        pr['ThirdText'] = "I Don't Know"
+        io = StringIO()
+        pr.write_mime(io, priority_fields=['FirstText', 'SecondText', 'ThirdText', 'FourthText'])
+        io.seek(0)
+
+        msg = email.message_from_file(io)
+        msg_iter = msg.walk()
+
+        # first part is the multipart container
+        part = msg_iter.next()
+        self.assert_(part.is_multipart())
+
+        # second part should be an inline text/plain attachments with all short
+        # fields
+        part = msg_iter.next()
+        self.assert_(not part.is_multipart())
+        self.assertEqual(part.get_content_type(), 'text/plain')
+        self.assertEqual(part.get_content_charset(), 'utf-8')
+        self.assertEqual(part.get_filename(), None)
+        self.assertEqual(part.get_payload(decode=True), '''FirstText: Who
+SecondText: What
+ThirdText: I Don't Know
+FourthText: Today
+ProblemType: Crash
+Date: now!
+''')
 
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)
