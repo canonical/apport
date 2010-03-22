@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.13.2 (UNRELEASED)
+-------------------
+ - problem_report.py, write_mime(): Add new optional argument "priority_fields"
+   for ordering report keys. Patch by Brian Murray, thanks!
+ - launchpad.py: Put some interesting fields first in the report, with the new
+   priority_fields argument. Patch by Brian Murray, thanks!
+
 1.13.1 (2010-03-20)
 -------------------
 Bug fixes:
