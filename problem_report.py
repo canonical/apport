@@ -197,7 +197,8 @@ class ProblemReport(UserDict.IterableUserDict):
         which will be read and its content will become the value of this key.
         'encode' specifies whether the contents will be
         gzip compressed and base64-encoded (this defaults to True). If limit is
-        set to a positive integer, the entire key will be removed. If
+        set to a positive integer, the file is not attached if it's larger
+        than the given limit, and the entire key will be removed. If
         fail_on_empty is True, reading zero bytes will cause an IOError.
 
         Files are written in RFC822 format.
