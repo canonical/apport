@@ -70,9 +70,11 @@ def do_report(pid, blacklist):
     '''Create a report for a particular PID.'''
 
     r = apport.Report('Bug')
-    r.add_proc_info(p)
+    r.add_proc_info(pid)
     r['Tags'] = 'shutdown-hang'
     r['Title'] = 'does not terminate at computer shutdown'
+    if 'ExecutablePath' in r:
+        r['Title'] = os.path.basename(r['ExecutablePath']) + ' ' + r['Title']
     r['Processes'] = apport.hookutils.command_output(['ps', 'aux'])
     r['InitctlList'] = apport.hookutils.command_output(['initctl', 'list'])
     if blacklist:
