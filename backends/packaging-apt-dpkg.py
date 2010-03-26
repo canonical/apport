@@ -374,7 +374,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # urlretrieve does not return 404 in the headers so we use urlopen
         u = urllib.urlopen(url)
         if u.getcode() > 400:
-            raise IOError, 'urllib returned %s for %s' % (u.getcode(), url)
+            return ('', 'linux')
         while True:
             block = u.read(8*1024)
             if not block:

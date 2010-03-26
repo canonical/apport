@@ -7,6 +7,8 @@ detailled list of changes, please see ChangeLog.
    for ordering report keys. Patch by Brian Murray, thanks!
  - launchpad.py: Put some interesting fields first in the report, with the new
    priority_fields argument. Patch by Brian Murray, thanks!
+ - packaging-apt-dpkg.py, _install_debug_kernel(): Do not crash on an outdated
+   kernel, just return that it is outdated.
 
 1.13.1 (2010-03-20)
 -------------------
