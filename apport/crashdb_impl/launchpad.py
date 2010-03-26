@@ -367,12 +367,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         apport.crashdb.CrashDatabase.update_traces(self, id, report, comment)
 
         bug = self.launchpad.bugs[id]
-        # ensure it's assigned to the right package
-        if report.has_key('SourcePackage') and \
-                '+source' not in str(bug.bug_tasks[0].target):
-            bug.bug_tasks[0].transitionToTarget(target=
-                    self.lp_distro.getSourcePackage(name=report['SourcePackage']))
-            bug = self.launchpad.bugs[id]
+        # ensure it's assigned to a package
+        if report.has_key('SourcePackage'):
+            for task in bug.bug_tasks:
+                if task.target.resource_type_link.endswith('#distribution'):
+                    task.transitionToTarget(target=self.lp_distro.getSourcePackage(name=report['SourcePackage']))
+                    bug = self.launchpad.bugs[id]
+                    break
 
         # remove core dump if stack trace is usable
         if report.has_useful_stacktrace():
@@ -1246,12 +1247,21 @@ NameError: global name 'weird' is not defined'''
             re_tags = re.compile('<input.*id="field.tags".*value="([^"]*)"')
 
             # parse default field values from reporting page
-            res = opener.open(url)
-            try:
-                self.assertEqual(res.getcode(), 200)
-            except AttributeError:
-                pass # getcode() is new in Python 2.6
-            content = res.read()
+            while True:
+                res = opener.open(url)
+                try:
+                    self.assertEqual(res.getcode(), 200)
+                except AttributeError:
+                    pass # getcode() is new in Python 2.6
+                content = res.read()
+
+                if 'Please wait while bug data is processed' in content:
+                    print '.',
+                    sys.stdout.flush()
+                    time.sleep(5)
+                    continue
+
+                break
 
             m_pkg = re_pkg.search(url)
             m_title = re_title.search(content)
