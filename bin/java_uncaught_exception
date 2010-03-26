@@ -44,6 +44,7 @@ def main():
 	for key, value in d.items():
 		report[key] = value
 
+	# Add an ExecutablePath pointing to the file where the main class resides
 	if 'MainClassUrl' in report:
 		import urlparse
 		url = report['MainClassUrl']

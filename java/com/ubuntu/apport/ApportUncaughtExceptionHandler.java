@@ -1,11 +1,19 @@
 package com.ubuntu.apport;
 
+/*
+ * Apport handler for uncaught Java exceptions
+ * 
+ * Copyright 2010 Matt Zimmerman <mdz@ubuntu.com>
+ */
+
 import java.io.*;
 import java.util.HashMap;
 
 public class ApportUncaughtExceptionHandler
 	implements java.lang.Thread.UncaughtExceptionHandler {
 
+	/* Write out an apport problem report with details of the
+     * exception, then print it in the usual canonical format */
 	public void uncaughtException(Thread t, Throwable e) {
 		//System.out.println("uncaughtException");
 		if (e instanceof ThreadDeath)
@@ -83,6 +91,7 @@ public class ApportUncaughtExceptionHandler
 		return classUrl.toString();
     }
 
+	/* Install this handler as the default uncaught exception handler */
 	public static void install() {
 		Thread.setDefaultUncaughtExceptionHandler(new ApportUncaughtExceptionHandler());
 	}
