@@ -7,20 +7,20 @@ public class ApportUncaughtExceptionHandler
 	implements java.lang.Thread.UncaughtExceptionHandler {
 
 	public void uncaughtException(Thread t, Throwable e) {
-		System.out.println("uncaughtException");
+		//System.out.println("uncaughtException");
 		if (e instanceof ThreadDeath)
 			return;
 
 		HashMap problemReport = getProblemReport(t, e);
-		System.out.println("got problem report");
+		//System.out.println("got problem report");
 
 		try {
 		 	Process p = new ProcessBuilder("/usr/share/apport/java_uncaught_exception").start();
-			System.out.println("started process");
+			//System.out.println("started process");
 
 			OutputStream os = p.getOutputStream();
 			writeProblemReport(os, problemReport);
-			System.out.println("wrote problem report");
+			//System.out.println("wrote problem report");
 
 			os.close();
 
