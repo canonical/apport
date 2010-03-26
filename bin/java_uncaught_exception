@@ -24,9 +24,6 @@ def main():
 		if not items: break
 		value = items.pop(0)
 		d[key] = value
-		
-	log = open('/tmp/log', 'w')
-	log.write(`d`)
 
 	# create report
 	import apport.report
