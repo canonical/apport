@@ -1298,6 +1298,7 @@ NameError: global name 'weird' is not defined'''
             cj = cookielib.MozillaCookieJar()
             cj.load(os.path.expanduser('~/.lpcookie.txt'))
             opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+            opener.addheaders = [('Referer', url)]
 
             m = re.search('launchpad.net/([^/]+)/\+filebug', url)
             assert m
@@ -1307,9 +1308,21 @@ NameError: global name 'weird' is not defined'''
             re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
 
             # parse default field values from reporting page
-            res = opener.open(url)
-            self.assertEqual(res.getcode(), 200)
-            content = res.read()
+            while True:
+                res = opener.open(url)
+                try:
+                    self.assertEqual(res.getcode(), 200)
+                except AttributeError:
+                    pass # getcode() is new in Python 2.6
+                content = res.read()
+
+                if 'Please wait while bug data is processed' in content:
+                    print '.',
+                    sys.stdout.flush()
+                    time.sleep(5)
+                    continue
+
+                break
 
             m_title = re_title.search(content)
             m_tags = re_tags.search(content)
