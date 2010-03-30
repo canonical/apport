@@ -103,7 +103,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             self.__launchpad = Launchpad.login_with('apport-collect',
                     launchpad_instance, launchpadlib_dir=self.__lpcache,
                     allow_access_levels=['WRITE_PRIVATE'],
-                    credentials_file = self.auth)
+                    credentials_file = self.auth,
+                    version='1.0')
         except Exception, e:
             if hasattr(e, 'content'):
                 msg = e.content
@@ -371,7 +372,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if report.has_key('SourcePackage'):
             for task in bug.bug_tasks:
                 if task.target.resource_type_link.endswith('#distribution'):
-                    task.transitionToTarget(target=self.lp_distro.getSourcePackage(name=report['SourcePackage']))
+                    task.target = self.lp_distro.getSourcePackage(name=report['SourcePackage'])
+                    task.lp_save()
                     bug = self.launchpad.bugs[id]
                     break
 
@@ -385,7 +387,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                         pass # LP#249950 workaround
             try:
                 task = self._get_distro_tasks(bug.bug_tasks).next()
-                task.transitionToImportance(importance='Medium')
+                task.importance = 'Medium'
+                task.lp_save()
             except StopIteration:
                 pass # no distro tasks
         self._subscribe_triaging_team(bug, report)
@@ -668,7 +671,8 @@ in a dependent package.' % master,
             except StopIteration:
                 # no distro task, just use the first one
                 task = bug.bug_tasks[0]
-            task.transitionToStatus(status='Invalid')
+            task.status = 'Invalid'
+            task.lp_save()
             bug.newMessage(content=invalid_msg,
                     subject='Crash report cannot be processed')
             
@@ -692,8 +696,9 @@ in a dependent package.' % master,
         if report.has_key('SourcePackage'):
             for task in bug.bug_tasks:
                 if task.target.resource_type_link.endswith('#distribution'):
-                    task.transitionToTarget(target=self.lp_distro.getSourcePackage(
-                        name=report['SourcePackage']))
+                    task.target = self.lp_distro.getSourcePackage(
+                        name=report['SourcePackage'])
+                    task.lp_save()
                     bug = self.launchpad.bugs[id]
                     break
 
@@ -1366,7 +1371,9 @@ NameError: global name 'weird' is not defined'''
             bug = self.crashdb.launchpad.bugs[id]
             tasks = list(bug.bug_tasks)
             assert len(tasks) == 1
-            tasks[0].transitionToStatus(status='Fix Released')
+            t = tasks[0]
+            t.status = 'Fix Released'
+            t.lp_save()
 
         def _mark_report_new(self, id):
             '''Reopen a report ID as "new".'''
@@ -1374,7 +1381,9 @@ NameError: global name 'weird' is not defined'''
             bug = self.crashdb.launchpad.bugs[id]
             tasks = list(bug.bug_tasks)
             assert len(tasks) == 1
-            tasks[0].transitionToStatus(status='New')
+            t = tasks[0]
+            t.status = 'New'
+            t.lp_save()
 
         def _verify_marked_regression(self, id):
             '''Verify that report ID is marked as regression.'''
@@ -1485,9 +1494,10 @@ NameError: global name 'weird' is not defined'''
             # package task; _mark_dup_checked is supposed to restore the
             # package name
             b = self.crashdb.launchpad.bugs[python_report]
-            b.bug_tasks[0].transitionToTarget(target=self.crashdb.launchpad.distributions['ubuntu'].
-                    getSourcePackage(name='pmount'))
-            b.bug_tasks[0].transitionToStatus(status='Invalid')
+            t = b.bug_tasks[0]
+            t.target = self.crashdb.launchpad.distributions['ubuntu'].getSourcePackage(name='pmount')
+            t.status = 'Invalid'
+            t.lp_save()
             b.addTask(target=self.crashdb.launchpad.projects['coreutils'])
             b.addTask(target=self.crashdb.launchpad.distributions['ubuntu'])
 

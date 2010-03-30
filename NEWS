@@ -13,6 +13,8 @@ detailled list of changes, please see ChangeLog.
    launchpad.
  - launchpad.py: Fix crash if configuration does not have an "escalated_tag"
    option.
+ - launchpad.py: Port to launchpadlib 1.0 API, thanks Michael Bienia for the
+   initial patch! (LP: #545009)
 
 1.13.1 (2010-03-20)
 -------------------
