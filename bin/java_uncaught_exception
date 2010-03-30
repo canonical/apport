@@ -48,14 +48,20 @@ def main():
 	if 'MainClassUrl' in report:
 		import urlparse
 		url = report['MainClassUrl']
+
 		scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
 
-		if scheme == 'file':
+		if scheme == 'jar':
+			# path is then a URL to the jar file
+			scheme, netloc, path, params, query, fragment = urlparse.urlparse(path)
 			if '!/' in path:
-				# jar
-				report['ExecutablePath'] = path.split('!/', 1)
-			else:
-				report['ExecutablePath'] = path
+				path = path.split('!/', 1)[0]
+
+		if scheme == 'file':
+			report['ExecutablePath'] = path
+		else:
+			# Program at some non-file URL crashed. Give up.
+			return
 
 	report['Title'] = make_title(report)
 
