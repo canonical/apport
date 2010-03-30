@@ -1241,6 +1241,7 @@ NameError: global name 'weird' is not defined'''
             cj = cookielib.MozillaCookieJar()
             cj.load(os.path.expanduser('~/.lpcookie.txt'))
             opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+            opener.addheaders = [('Referer', url)]
 
             re_pkg = re.compile('\+source/([\w]+)/')
             re_title = re.compile('<input.*id="field.title".*value="([^"]+)"')
