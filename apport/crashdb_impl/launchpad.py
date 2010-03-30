@@ -616,12 +616,12 @@ Please continue to report any other bugs you may find.' % master_id,
             if len(master.duplicates) == 10:
                 if 'escalation_tag' in self.options and \
                     self.options['escalation_tag'] not in master.tags and \
-                    self.options['escalated_tag'] not in master.tags:
+                    self.options.get('escalated_tag', ' invalid ') not in master.tags:
                         master.tags = master.tags + [self.options['escalation_tag']] # LP#254901 workaround
                         master.lp_save()
 
                 if 'escalation_subscription' in self.options and \
-                    self.options['escalated_tag'] not in master.tags:
+                    self.options.get('escalated_tag', ' invalid ') not in master.tags:
                     p = self.launchpad.people[self.options['escalation_subscription']]
                     master.subscribe(person=p)
         else:

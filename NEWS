@@ -11,6 +11,8 @@ detailled list of changes, please see ChangeLog.
    kernel, just return that it is outdated.
  - launchpad.py test suite: Add "Referer" HTTP header, now required by
    launchpad.
+ - launchpad.py: Fix crash if configuration does not have an "escalated_tag"
+   option.
 
 1.13.1 (2010-03-20)
 -------------------
