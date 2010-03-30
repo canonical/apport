@@ -4,6 +4,27 @@ from glob import glob
 import os.path, shutil, sys
 from distutils.version import StrictVersion
 
+# Add Java build step
+from distutils.command.build import build
+from distutils.core import Command
+import subprocess
+
+class build_java_subdir(Command):
+    description = 'Compile java components of Apport'
+
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.call(['make','-C','java'])
+
+build.sub_commands.append(('build_java_subdir', None))
+
 try:
     import DistUtilsExtra.auto
 except ImportError:
@@ -43,4 +64,5 @@ DistUtilsExtra.auto.setup(name='apport',
                   ('share/doc/apport/', glob('doc/*.txt')),
                   ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*'))
                   ],
+    cmdclass={'build_java_subdir' : build_java_subdir}
 )
