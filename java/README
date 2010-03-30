@@ -1,0 +1,5 @@
+apport.jar contains the necessary class(es) for trapping uncaught Java
+exceptions.  crash.class and crash.jar are used only by the test suite.
+
+The crash handler, when invoked, opens a pipe to the java_uncaught_exception
+script, and feeds it key/value pairs containing the relevant JVM state.
