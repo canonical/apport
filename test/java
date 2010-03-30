@@ -5,8 +5,9 @@ set -e
 mydir=$(dirname $0)
 srcdir=$mydir/..
 
-# XXX - this is a mess -mdz
+# XXX - this is a mess in so many ways -mdz
 # This only works if /usr/share/apport/java_uncaught_exception is installed
+# ...and it's run from the source tree
 # It also dumps crash reports in /var/crash
 # ...and doesn't even check if it worked!
 
