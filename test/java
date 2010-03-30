@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+mydir=$(dirname $0)
+srcdir=$mydir/..
+
+# Should produce a crash report for $srcdir/java/crash.class
+java -classpath $srcdir/java/apport.jar:$srcdir/java crash || true
+
+# Should produce a crash report for $srcdir/java/crash.jar
+java -classpath $srcdir/java/apport.jar:$srcdir/java/crash.jar crash || true
