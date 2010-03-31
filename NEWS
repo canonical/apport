@@ -31,6 +31,9 @@ detailled list of changes, please see ChangeLog.
    (LP: #510327)
  - data/apport: Fix IOError when apport is called with invalid number of
    arguments, and stderr is not a valid fd. (LP: #467363)
+ - hookutils.py: Factor out the DMI collection code from attach_hardware()
+   into attach_dmi(), and call that in attach_alsa() as well. Thanks to Brad
+   Figg for the patch! (LP: #552091)
 
 1.13.1 (2010-03-20)
 -------------------
