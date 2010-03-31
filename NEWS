@@ -21,6 +21,8 @@ detailled list of changes, please see ChangeLog.
    Launchpad itself). Ignore those instead of crashing.
  - apport-gtk: Turn http:// and https:// links into clickable hyperlinks in
    information and error dialogs. (LP: #516323)
+ - apport-retrace: Fix crash when trying to rebuild package info for reports
+   without an ExecutablePath. (LP: #436157)
 
 1.13.1 (2010-03-20)
 -------------------
