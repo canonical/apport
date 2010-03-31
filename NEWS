@@ -34,6 +34,8 @@ detailled list of changes, please see ChangeLog.
  - hookutils.py: Factor out the DMI collection code from attach_hardware()
    into attach_dmi(), and call that in attach_alsa() as well. Thanks to Brad
    Figg for the patch! (LP: #552091)
+ - apport/ui.py: Fix the help output if Apport is invoked under an alternative
+   name (like apport-collect). (LP: #539427)
 
 1.13.1 (2010-03-20)
 -------------------

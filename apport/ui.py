@@ -595,7 +595,10 @@ free memory to automatically analyze the problem and send a report to the develo
         '''
         # invoked in update mode?
         if len(sys.argv) > 0:
-            cmd = os.environ.get('APPORT_INVOKED_AS', sys.argv[0])
+            if 'APPORT_INVOKED_AS' in os.environ:
+                sys.argv[0] = os.path.join(os.path.dirname(sys.argv[0]),
+                    os.path.basename(os.environ['APPORT_INVOKED_AS']))
+            cmd = sys.argv[0]
             if cmd.endswith('-update-bug') or cmd.endswith('-collect'):
                 self.parse_argv_update()
                 return
