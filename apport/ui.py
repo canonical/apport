@@ -70,6 +70,9 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         # package
         if not ignore_uninstalled:
             raise
+    except SystemError, e:
+        report['UnreportableReason'] = str(e)
+        return
 
     if report.add_hooks_info(ui):
         sys.exit(0)

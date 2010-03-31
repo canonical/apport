@@ -23,6 +23,8 @@ detailled list of changes, please see ChangeLog.
    information and error dialogs. (LP: #516323)
  - apport-retrace: Fix crash when trying to rebuild package info for reports
    without an ExecutablePath. (LP: #436157)
+ - ui.py: Fix crash when package information cannot be determined due to broken
+   apt status. (LP: #362743)
 
 1.13.1 (2010-03-20)
 -------------------
