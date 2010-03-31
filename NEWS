@@ -17,6 +17,8 @@ detailled list of changes, please see ChangeLog.
    initial patch! (LP: #545009)
  - gtk/apport-gtk-mime.desktop.in, kde/apport-kde-mime.desktop.in: Change
    categories so that these do not ever appear in menu editors. (LP: #449215)
+ - launchpad.py: Some LP bugs have broken attachments (this is a bug in
+   Launchpad itself). Ignore those instead of crashing.
 
 1.13.1 (2010-03-20)
 -------------------

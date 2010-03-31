@@ -24,7 +24,11 @@ default_credentials_path = os.path.expanduser('~/.cache/apport/launchpad.credent
 
 def filter_filename(attachments):
     for attachment in attachments:
-        f = attachment.data.open()
+        try:
+            f = attachment.data.open()
+        except HTTPError, e:
+            print >> sys.stderr, 'ERROR: Broken attachment on bug, ignoring'
+            continue
         name = f.filename
         if name.endswith('.txt') or name.endswith('.gz'):
             yield f
