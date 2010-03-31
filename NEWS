@@ -8,7 +8,7 @@ detailled list of changes, please see ChangeLog.
  - launchpad.py: Put some interesting fields first in the report, with the new
    priority_fields argument. Patch by Brian Murray, thanks!
  - packaging-apt-dpkg.py, _install_debug_kernel(): Do not crash on an outdated
-   kernel, just return that it is outdated.
+   kernel, just return that it is outdated. (LP: #532923)
  - launchpad.py test suite: Add "Referer" HTTP header, now required by
    launchpad.
  - launchpad.py: Fix crash if configuration does not have an "escalated_tag"
