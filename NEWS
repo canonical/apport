@@ -27,6 +27,8 @@ detailled list of changes, please see ChangeLog.
    apt status. (LP: #362743)
  - ui.py: Fix crash when /etc/apport/crashdb.conf is damaged; print an
    appropriate error message instead. (LP: #528327)
+ - data/kernel_crashdump: Fix crash if log file disappeared underneath us.
+   (LP: #510327)
 
 1.13.1 (2010-03-20)
 -------------------
