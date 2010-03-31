@@ -143,6 +143,9 @@ class UserInterface:
             # this can happen while upgrading python packages
             print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
             sys.exit(1)
+        except KeyError:
+            print >> sys.stderr, '/etc/apport/crashdb.conf is damaged: No default database'
+            sys.exit(1)
 
         gettext.textdomain(self.gettext_domain)
         self.parse_argv()

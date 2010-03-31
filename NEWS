@@ -25,6 +25,8 @@ detailled list of changes, please see ChangeLog.
    without an ExecutablePath. (LP: #436157)
  - ui.py: Fix crash when package information cannot be determined due to broken
    apt status. (LP: #362743)
+ - ui.py: Fix crash when /etc/apport/crashdb.conf is damaged; print an
+   appropriate error message instead. (LP: #528327)
 
 1.13.1 (2010-03-20)
 -------------------
