@@ -11,7 +11,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os.path, sys, subprocess, os
+import os.path, sys, subprocess, os, re
 from apport import unicode_gettext as _
 
 try:
@@ -189,8 +189,15 @@ class GTKUserInterface(apport.ui.UserInterface):
             return 'cancel'
 
     def ui_info_message(self, title, text):
-        md = gtk.MessageDialog(type=gtk.MESSAGE_INFO,
-            buttons=gtk.BUTTONS_CLOSE, message_format=text)
+        if 'http://' in text or 'https://' in text:
+            md = gtk.MessageDialog(type=gtk.MESSAGE_INFO,
+                buttons=gtk.BUTTONS_CLOSE)
+            # turn URLs into links
+            md.set_markup(re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)',
+                r'<a href="\1">\1</a>', text))
+        else:
+            md = gtk.MessageDialog(type=gtk.MESSAGE_INFO,
+                buttons=gtk.BUTTONS_CLOSE, message_format=text)
         md.set_title(title)
         md.run()
         md.hide()
@@ -198,8 +205,15 @@ class GTKUserInterface(apport.ui.UserInterface):
             gtk.main_iteration(False)
 
     def ui_error_message(self, title, text):
-        md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-            buttons=gtk.BUTTONS_CLOSE, message_format=text)
+        if 'http://' in text or 'https://' in text:
+            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                buttons=gtk.BUTTONS_CLOSE)
+            # turn URLs into links
+            md.set_markup(re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)',
+                r'<a href="\1">\1</a>', text))
+        else:
+            md = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                buttons=gtk.BUTTONS_CLOSE, message_format=text)
         md.set_title(title)
         md.run()
         md.hide()
