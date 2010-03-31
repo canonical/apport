@@ -29,6 +29,8 @@ detailled list of changes, please see ChangeLog.
    appropriate error message instead. (LP: #528327)
  - data/kernel_crashdump: Fix crash if log file disappeared underneath us.
    (LP: #510327)
+ - data/apport: Fix IOError when apport is called with invalid number of
+   arguments, and stderr is not a valid fd. (LP: #467363)
 
 1.13.1 (2010-03-20)
 -------------------
