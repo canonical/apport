@@ -3,7 +3,7 @@
 # of a segfault.  Currently very very simplistic, and only finds commonly
 # understood situations for x86/x86_64.
 #
-# Copyright 2009  Canonical, Ltd.
+# Copyright 2009-2010  Canonical, Ltd.
 # Author: Kees Cook <kees@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -312,8 +312,13 @@ class ParseSegv(object):
                 understood = True
 
         if not understood:
-            reason.append('Reason could not be automatically determined.')
-            details.append('Reason could not be automatically determined.')
+            vma = self.find_vma(self.pc)
+            if vma and (vma['name'] == '[vdso]' or vma['name'] == '[vsyscall]'):
+                reason.append('Reason could not be automatically determined. (Unhandled exception in kernel code?)')
+                details.append('Reason could not be automatically determined. (Unhandled exception in kernel code?)')
+            else:
+                reason.append('Reason could not be automatically determined.')
+                details.append('Reason could not be automatically determined.')
         return understood, '\n'.join(reason), '\n'.join(details)
 
 
@@ -879,5 +884,24 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 understood, reason, details = segv.report()
                 self.assertTrue(understood, details)
                 self.assertTrue('SP (0xbfc56000) not located in a known VMA region (needed readable region)!' in details, details)
+
+            def test_segv_stack_failure(self):
+                '''Handles unknown segfaults in kernel'''
+
+                # Crash in valid code path
+                disasm = '''0x0056e010: ret'''
+                segv = ParseSegv(regs, disasm, maps)
+                understood, reason, details = segv.report()
+                self.assertFalse(understood, details)
+                self.assertTrue('Reason could not be automatically determined.' in details, details)
+                self.assertFalse('(Unhandled exception in kernel code?)' in details, details)
+
+                # Crash from kernel code path
+                disasm = '''0x00b67422 <__kernel_vsyscall+2>: ret'''
+                segv = ParseSegv(regs, disasm, maps)
+                understood, reason, details = segv.report()
+                self.assertFalse(understood, details)
+                self.assertTrue('Reason could not be automatically determined. (Unhandled exception in kernel code?)' in details, details)
+
 
     unittest.main()
