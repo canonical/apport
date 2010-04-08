@@ -21,7 +21,22 @@ class build_java_subdir(Command):
         pass
 
     def run(self):
-        subprocess.call(['make','-C','java'])
+        oldwd = os.getcwd()
+        os.chdir('java')
+
+        try:
+            subprocess.check_call(['javac'] + glob('com/ubuntu/apport/*.java'))
+            subprocess.check_call(['jar','cvf', 'apport.jar'] + 
+                                glob('com/ubuntu/apport/*.class'))
+            subprocess.check_call(['javac','crash.java'])
+            subprocess.check_call(['jar','cvf', 'crash.jar', 'crash.class'])
+        except OSError, e:
+            if e.errno == os.errno.ENOENT:
+                print "Java prerequisites are not installed; skipping"
+            else:
+                raise e
+        finally:
+            os.chdir(oldwd)
 
 build.sub_commands.append(('build_java_subdir', None))
 
