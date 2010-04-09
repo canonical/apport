@@ -80,12 +80,15 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
     # check package origin; we do that after adding hooks, so that hooks have
     # the chance to set a third-party CrashDB.
     try:
-        if ('Package' not in report or \
-              not apport.packaging.is_distro_package(report['Package'].split()[0])) \
-              and 'CrashDB' not in report:
-            #TRANS: %s is the name of the operating system
-            report['UnreportableReason'] = _('This is not a genuine %s package') % \
-                report['DistroRelease'].split()[0]
+        if 'CrashDB' not in report:
+            if 'Package' not in report
+                report['UnreportableReason'] = _('This package does not seem to be installed correctly') % \
+                    report['DistroRelease'].split()[0]
+            elif not apport.packaging.is_distro_package(report['Package'].split()[0]) 
+                #TRANS: %s is the name of the operating system
+                report['UnreportableReason'] = _('This package does not come from %s \
+official repositories. Please remove any PPA and try again.') % \
+                    report['DistroRelease'].split()[0]
     except ValueError:
         # this happens if we are collecting information on an uninstalled
         # package
