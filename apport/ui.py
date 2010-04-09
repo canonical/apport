@@ -13,7 +13,7 @@ implementation (like GTK, Qt, or CLI).
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-__version__ = '1.13.1'
+__version__ = '1.13.2'
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
@@ -70,6 +70,9 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         # package
         if not ignore_uninstalled:
             raise
+    except SystemError, e:
+        report['UnreportableReason'] = str(e)
+        return
 
     if report.add_hooks_info(ui):
         sys.exit(0)
@@ -139,6 +142,9 @@ class UserInterface:
         except ImportError, e:
             # this can happen while upgrading python packages
             print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
+            sys.exit(1)
+        except KeyError:
+            print >> sys.stderr, '/etc/apport/crashdb.conf is damaged: No default database'
             sys.exit(1)
 
         gettext.textdomain(self.gettext_domain)
@@ -589,7 +595,10 @@ free memory to automatically analyze the problem and send a report to the develo
         '''
         # invoked in update mode?
         if len(sys.argv) > 0:
-            cmd = os.environ.get('APPORT_INVOKED_AS', sys.argv[0])
+            if 'APPORT_INVOKED_AS' in os.environ:
+                sys.argv[0] = os.path.join(os.path.dirname(sys.argv[0]),
+                    os.path.basename(os.environ['APPORT_INVOKED_AS']))
+            cmd = sys.argv[0]
             if cmd.endswith('-update-bug') or cmd.endswith('-collect'):
                 self.parse_argv_update()
                 return

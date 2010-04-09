@@ -1,14 +1,45 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.13.2 (UNRELEASED)
+1.13.3 (UNRELEASED)
+-------------------
+ - data/general-hooks/parse_segv.py: suggest segv-in-kernel possibility.
+
+1.13.2 (2010-03-31)
 -------------------
  - problem_report.py, write_mime(): Add new optional argument "priority_fields"
    for ordering report keys. Patch by Brian Murray, thanks!
  - launchpad.py: Put some interesting fields first in the report, with the new
    priority_fields argument. Patch by Brian Murray, thanks!
  - packaging-apt-dpkg.py, _install_debug_kernel(): Do not crash on an outdated
-   kernel, just return that it is outdated.
+   kernel, just return that it is outdated. (LP: #532923)
+ - launchpad.py test suite: Add "Referer" HTTP header, now required by
+   launchpad.
+ - launchpad.py: Fix crash if configuration does not have an "escalated_tag"
+   option.
+ - launchpad.py: Port to launchpadlib 1.0 API, thanks Michael Bienia for the
+   initial patch! (LP: #545009)
+ - gtk/apport-gtk-mime.desktop.in, kde/apport-kde-mime.desktop.in: Change
+   categories so that these do not ever appear in menu editors. (LP: #449215)
+ - launchpad.py: Some LP bugs have broken attachments (this is a bug in
+   Launchpad itself). Ignore those instead of crashing.
+ - apport-gtk: Turn http:// and https:// links into clickable hyperlinks in
+   information and error dialogs. (LP: #516323)
+ - apport-retrace: Fix crash when trying to rebuild package info for reports
+   without an ExecutablePath. (LP: #436157)
+ - ui.py: Fix crash when package information cannot be determined due to broken
+   apt status. (LP: #362743)
+ - ui.py: Fix crash when /etc/apport/crashdb.conf is damaged; print an
+   appropriate error message instead. (LP: #528327)
+ - data/kernel_crashdump: Fix crash if log file disappeared underneath us.
+   (LP: #510327)
+ - data/apport: Fix IOError when apport is called with invalid number of
+   arguments, and stderr is not a valid fd. (LP: #467363)
+ - hookutils.py: Factor out the DMI collection code from attach_hardware()
+   into attach_dmi(), and call that in attach_alsa() as well. Thanks to Brad
+   Figg for the patch! (LP: #552091)
+ - apport/ui.py: Fix the help output if Apport is invoked under an alternative
+   name (like apport-collect). (LP: #539427)
 
 1.13.1 (2010-03-20)
 -------------------

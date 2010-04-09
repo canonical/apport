@@ -68,6 +68,25 @@ def attach_dmesg(report):
     report['BootDmesg'] = open('/var/log/dmesg').read()
     report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
 
+def attach_dmi(report):
+    dmi_dir = '/sys/class/dmi/id'
+    if os.path.isdir(dmi_dir):
+        for f in os.listdir(dmi_dir):
+            p = '%s/%s' % (dmi_dir, f)
+            st = os.stat(p)
+            # ignore the root-only ones, since they have serial numbers
+            if not stat.S_ISREG(st.st_mode) or (st.st_mode & 4 == 0):
+                continue
+            if f in ('subsystem', 'uevent'):
+                continue
+
+            try:
+                value = open(p).read().strip()
+            except (OSError, IOError):
+                continue
+            if value:
+                report['dmi.' + f.replace('_', '.')] = value
+
 def attach_hardware(report):
     '''Attach a standard set of hardware-related data to the report, including:
 
@@ -103,23 +122,7 @@ def attach_hardware(report):
     report['UdevDb'] = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', report['UdevDb'])
     report['UdevDb'] = re.sub('by-label/(.*)', 'by-label/<hidden>', report['UdevDb'])
 
-    dmi_dir = '/sys/class/dmi/id'
-    if os.path.isdir(dmi_dir):
-        for f in os.listdir(dmi_dir):
-            p = '%s/%s' % (dmi_dir, f)
-            st = os.stat(p)
-            # ignore the root-only ones, since they have serial numbers
-            if not stat.S_ISREG(st.st_mode) or (st.st_mode & 4 == 0):
-                continue
-            if f in ('subsystem', 'uevent'):
-                continue
-
-            try:
-                value = open(p).read().strip()
-            except (OSError, IOError):
-                continue
-            if value:
-                report['dmi.' + f.replace('_', '.')] = value
+    attach_dmi(report)
 
     # Use the hardware information to create a machine type.
     if 'dmi.sys.vendor' in report and 'dmi.product.name' in report:
@@ -185,6 +188,7 @@ def attach_alsa(report):
             + glob.glob('/dev/snd/*')
             + glob.glob('/dev/seq*') )
 
+    attach_dmi(report)
     attach_dmesg(report)
 
     # This seems redundant with the amixer info, do we need it?

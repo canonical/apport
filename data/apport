@@ -195,8 +195,13 @@ def usable_ram():
 #################################################################
 
 if len(sys.argv) != 4:
-    print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> <core file ulimit>'
-    print >> sys.stderr, 'The core dump is read from stdin.'
+    try:
+        print >> sys.stderr, 'Usage:', sys.argv[0], '<pid> <signal number> <core file ulimit>'
+        print >> sys.stderr, 'The core dump is read from stdin.'
+    except IOError:
+        # sys.stderr might not actually exist, expecially not when being called
+        # from the kernel
+        pass
     sys.exit(1)
 
 init_error_log()
