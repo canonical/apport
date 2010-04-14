@@ -4,6 +4,8 @@ detailled list of changes, please see ChangeLog.
 1.13.3 (UNRELEASED)
 -------------------
  - data/general-hooks/parse_segv.py: suggest segv-in-kernel possibility.
+ - ui.py: When running as root, only show system crash reports, to avoid
+   restarting user programs as root. (LP: #445017)
 
 1.13.2 (2010-03-31)
 -------------------

@@ -164,7 +164,11 @@ class UserInterface:
         '''
         result = False
 
-        for f in apport.fileutils.get_new_reports():
+        if os.geteuid() == 0:
+            reports = apport.fileutils.get_new_system_reports()
+        else:
+            reports = apport.fileutils.get_new_reports()
+        for f in reports:
             self.run_crash(f)
             result = True
 
