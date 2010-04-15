@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.13.4 (UNRELEASED)
+-------------------
+ - bash completion: Fix error message if /usr/share/apport/symptoms does not
+   exist. Thanks Philip Muškovac! (LP: #562118)
+
 1.13.3 (2010-04-14)
 -------------------
  - data/general-hooks/parse_segv.py: suggest segv-in-kernel possibility.

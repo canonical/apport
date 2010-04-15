@@ -7,9 +7,11 @@
 _apport_symptoms ()
 {
     local syms
-    for FILE in $(ls /usr/share/apport/symptoms); do
-       syms="$syms ${FILE%.py}"
-    done
+    if [ -r /usr/share/apport/symptoms ]; then 
+        for FILE in $(ls /usr/share/apport/symptoms); do
+           syms="$syms ${FILE%.py}"
+        done
+    fi
     echo $syms
 
 }
