@@ -13,7 +13,7 @@ implementation (like GTK, Qt, or CLI).
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-__version__ = '1.13.2'
+__version__ = '1.13.3'
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
@@ -164,7 +164,11 @@ class UserInterface:
         '''
         result = False
 
-        for f in apport.fileutils.get_new_reports():
+        if os.geteuid() == 0:
+            reports = apport.fileutils.get_new_system_reports()
+        else:
+            reports = apport.fileutils.get_new_reports()
+        for f in reports:
             self.run_crash(f)
             result = True
 
