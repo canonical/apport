@@ -27,6 +27,7 @@ class ParseSegv(object):
         self.line, self.pc, self.insn, self.src, self.dest = \
             self.parse_disassembly(disassembly)
 
+        self.stack_vma = None
         self.maps = self.parse_maps(maps)
 
     def find_vma(self, addr):
@@ -48,6 +49,8 @@ class ParseSegv(object):
             else:
                 name = items[5]
             start, end = [int(x,16) for x in span.split('-')]
+            if name == '[stack]':
+                self.stack_vma = len(maps)
             maps.append({'start': start, 'end': end, 'perms': perms, 'name': name})
             if self.debug:
                 print >>sys.stderr, start, end, perms, name
@@ -217,9 +220,13 @@ class ParseSegv(object):
         if offset.startswith('*'):
             offset = offset[1:]
         if len(offset)>0:
-            if not offset.startswith('0x'):
-                raise ValueError, 'Unknown offset literal: %s' % (parts[0])
-            add = int(offset[2:],16) * sign
+            if offset.startswith('%'):
+                # Handle the *%REG case
+                add = self.regs[offset[1:]]
+            else:
+                if not offset.startswith('0x'):
+                    raise ValueError, 'Unknown offset literal: %s' % (parts[0])
+                add = int(offset[2:],16) * sign
         else:
             add = 0
 
@@ -275,7 +282,7 @@ class ParseSegv(object):
         else:
             # Verify source is readable
             if self.src:
-                if not ':' in self.src and (self.src[0] in ['%','$','*']):
+                if not ':' in self.src and (self.src[0] in ['%','$','*']) and not self.src.startswith('*%'):
                     details.append('source "%s" ok' % (self.src))
                 else:
                     addr = self.calculate_arg(self.src)
@@ -303,13 +310,19 @@ class ParseSegv(object):
             details.append('disallowed I/O port operation on port %d' % (self.register_value(self.src)))
             understood = True
 
-        # Guess at falling off the stack?
-        if not understood and self.sp:
-            valid, out, short = self.validate_vma('r', self.sp, 'SP')
-            details.append(out)
-            if not valid:
-                reason.append(short)
-                understood = True
+        # Note position of SP with regard to "[stack]" VMA
+        if self.sp != None:
+            if self.stack_vma != None:
+                if self.sp < self.maps[self.stack_vma]['start']:
+                    details.append("Stack memory exhausted (SP below stack segment)")
+                if self.sp >= self.maps[self.stack_vma]['end']:
+                    details.append("Stack pointer not within stack segment")
+            if not understood:
+                valid, out, short = self.validate_vma('r', self.sp, 'SP')
+                details.append(out)
+                if not valid:
+                    reason.append(short)
+                    understood = True
 
         if not understood:
             vma = self.find_vma(self.pc)
@@ -783,11 +796,13 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertTrue('source "-0x4(%ecx)" (0x0006af20) not located in a known VMA region' in details, details)
                 self.assertTrue('reading unknown VMA' in reason, reason)
 
-                # Invalid crash (ecx hasn't been dereferenced yet.)
+                # Valid crash
                 disasm = '0x08083547 <main+7>:    callq  *%ecx'
                 segv = ParseSegv(reg, disasm, maps)
                 understood, reason, details = segv.report()
-                self.assertFalse(understood, details)
+                self.assertTrue(understood, details)
+                self.assertTrue('source "*%ecx" (0x0006af24) not located in a known VMA region' in details, details)
+                self.assertTrue('reading unknown VMA' in reason, reason)
 
             def test_segv_src_null(self):
                 '''Handles source in NULL VMA'''
@@ -811,6 +826,8 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertTrue(understood, details)
                 self.assertTrue('source "-0x4(%ecx)" (0x0026c07c) in non-readable VMA region:' in details, details)
                 self.assertTrue('reading VMA /lib/tls/i686/cmov/libc-2.9.so' in reason, reason)
+                self.assertFalse('Stack memory exhausted' in details, details)
+                self.assertFalse('Stack pointer not within stack segment' in details, details)
 
             def test_segv_dest_missing(self):
                 '''Handles destintation in missing VMA'''
@@ -876,14 +893,16 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 understood, reason, details = segv.report()
                 self.assertTrue(understood, details)
                 self.assertTrue('destination "(%esp)" (0xbfc56fff) not located in a known VMA region (needed writable region)!' in details, details)
+                self.assertTrue('Stack memory exhausted' in details, details)
 
                 # Triggered via unknown reason
-                reg = regs + 'esp            0xbfc56000   0xbfc56000'
+                reg = regs + 'esp            0xdfc56000   0xdfc56000'
                 disasm = '''0x08083540 <main+0>:    mov    $1,%rcx'''
                 segv = ParseSegv(reg, disasm, maps)
                 understood, reason, details = segv.report()
                 self.assertTrue(understood, details)
-                self.assertTrue('SP (0xbfc56000) not located in a known VMA region (needed readable region)!' in details, details)
+                self.assertTrue('SP (0xdfc56000) not located in a known VMA region (needed readable region)!' in details, details)
+                self.assertTrue('Stack pointer not within stack segment' in details, details)
 
             def test_segv_stack_failure(self):
                 '''Handles unknown segfaults in kernel'''
