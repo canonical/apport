@@ -5,9 +5,8 @@ detailled list of changes, please see ChangeLog.
 -------------------
  - bash completion: Fix error message if /usr/share/apport/symptoms does not
    exist. Thanks Philip Muškovac! (LP: #562118)
- - data/general-hooks/parse_segv.py:
-   - report stack exhaustion more clearly.
-   - correctly handle register dereferencing calls.
+ - general-hooks/parse_segv.py: Report stack exhaustion more clearly and
+   correctly handle register dereferencing calls.
  - Save/restore environment when calling hooks, in case they change the locale,
    etc. (LP: #564422)
 
