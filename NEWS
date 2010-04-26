@@ -11,6 +11,8 @@ detailled list of changes, please see ChangeLog.
    etc. (LP: #564422)
  - hookutils.py, command_output(): Do not set $LC_MESSAGES for the calling
    process/hook, just for the command to be called.
+ - ui.py: When displaying strings from system exceptions, decode them into an
+   unicode string, to avoid crashing the KDE UI. (LP: #567253)
 
 1.13.3 (2010-04-14)
 -------------------

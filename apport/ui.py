@@ -26,6 +26,11 @@ from apport import unicode_gettext as _
 
 symptom_script_dir = '/usr/share/apport/symptoms'
 
+def excstr(exception):
+    '''Return exception message as unicode.'''
+    
+    return str(exception).decode(locale.getpreferredencoding(), 'replace')
+
 def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         ignore_uninstalled=False):
     '''Collect information about report.
@@ -71,7 +76,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         if not ignore_uninstalled:
             raise
     except SystemError, e:
-        report['UnreportableReason'] = str(e)
+        report['UnreportableReason'] = excstr(e)
         return
 
     if report.add_hooks_info(ui):
@@ -401,7 +406,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.report.write(f)
                 f.close()
             except (IOError, OSError), e:
-                self.ui_error_message(_('Cannot create report'), str(e))
+                self.ui_error_message(_('Cannot create report'), excstr(e))
         else:
             # show what's being sent
             response = self.ui_present_report_details(False)
@@ -560,7 +565,7 @@ free memory to automatically analyze the problem and send a report to the develo
             try:
                 self.run_crash(self.options.crash_file, False)
             except OSError, e:
-                self.ui_error_message(_('Invalid problem report'), str(e))
+                self.ui_error_message(_('Invalid problem report'), excstr(e))
             return True
         else:
             return self.run_crashes()
@@ -923,7 +928,7 @@ free memory to automatically analyze the problem and send a report to the develo
             except NeedsCredentials, e:
                 message = _('Please enter your account information for the '
                             '%s bug tracking system')
-                data = self.ui_question_userpass(message % str(e))
+                data = self.ui_question_userpass(message % excstr(e))
                 if data is not None:
                     user, password = data
                     self.crashdb.set_credentials(user, password)
@@ -935,7 +940,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_error_message(_('Network problem'),
                         '%s\n\n%s' % (
                             _('Cannot connect to crash database, please check your Internet connection.'),
-                             str(e)))
+                             excstr(e)))
                 return
 
         ticket = upthread.return_value()
