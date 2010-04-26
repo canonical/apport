@@ -9,6 +9,8 @@ detailled list of changes, please see ChangeLog.
    correctly handle register dereferencing calls.
  - Save/restore environment when calling hooks, in case they change the locale,
    etc. (LP: #564422)
+ - hookutils.py, command_output(): Do not set $LC_MESSAGES for the calling
+   process/hook, just for the command to be called.
 
 1.13.3 (2010-04-14)
 -------------------

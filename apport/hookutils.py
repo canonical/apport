@@ -213,7 +213,7 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
     In case of failure, a textual error gets returned. This function forces
     LC_MESSAGES to C, to avoid translated output in bug reports.
     '''
-    env = os.environ
+    env = os.environ.copy()
     env['LC_MESSAGES'] = 'C'
     try:
        sp = subprocess.Popen(command, stdout=subprocess.PIPE,
