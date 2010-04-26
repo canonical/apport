@@ -8,6 +8,8 @@ detailled list of changes, please see ChangeLog.
  - data/general-hooks/parse_segv.py:
    - report stack exhaustion more clearly.
    - correctly handle register dereferencing calls.
+ - Save/restore environment when calling hooks, in case they change the locale,
+   etc. (LP: #564422)
 
 1.13.3 (2010-04-14)
 -------------------

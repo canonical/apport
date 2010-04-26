@@ -753,6 +753,9 @@ free memory to automatically analyze the problem and send a report to the develo
             hookui = HookUI(self)
 
             if not self.report.has_key('Stacktrace'):
+                # save original environment, in case hooks change it
+                orig_env = os.environ.copy()
+
                 icthread = REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package,
@@ -766,6 +769,11 @@ free memory to automatically analyze the problem and send a report to the develo
                         sys.exit(1)
 
                 icthread.join()
+
+                # restore original environment
+                os.environ.clear()
+                os.environ.update(orig_env)
+
                 icthread.exc_raise()
 
             if self.report.has_key('CrashDB'):
