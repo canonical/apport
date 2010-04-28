@@ -13,6 +13,8 @@ detailled list of changes, please see ChangeLog.
    process/hook, just for the command to be called.
  - ui.py: When displaying strings from system exceptions, decode them into an
    unicode string, to avoid crashing the KDE UI. (LP: #567253)
+ - apport-retrace: Fix crash for retracing kernel vmcores, which do not have an
+   ExecutablePath.
 
 1.13.3 (2010-04-14)
 -------------------
