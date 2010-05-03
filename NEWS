@@ -15,6 +15,8 @@ detailled list of changes, please see ChangeLog.
    unicode string, to avoid crashing the KDE UI. (LP: #567253)
  - apport-retrace: Fix crash for retracing kernel vmcores, which do not have an
    ExecutablePath.
+ - apport-bug manpage: Clarify when apport-collect may be used. Thanks Brian
+   Murray! (LP: #537273)
 
 1.13.3 (2010-04-14)
 -------------------
