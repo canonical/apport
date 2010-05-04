@@ -17,6 +17,10 @@ detailled list of changes, please see ChangeLog.
    ExecutablePath.
  - apport-bug manpage: Clarify when apport-collect may be used. Thanks Brian
    Murray! (LP: #537273)
+ - generic hook: Check ProcMaps for unpackaged libraries, and ask the user if
+   he really wants to continue. If he does, tag the report as "local-libs" and
+   add a "LocalLibraries" field to the report with a list of them.
+   (LP: #545227)
 
 1.13.3 (2010-04-14)
 -------------------
