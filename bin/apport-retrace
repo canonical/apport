@@ -270,7 +270,7 @@ if options.gdb:
         '--ex', 'core-file ' + core.name])
     core.close()
 else:
-    if os.path.exists(report.get('InterpreterPath', report.get('ExecutablePath'))):
+    if os.path.exists(report.get('InterpreterPath', report.get('ExecutablePath', ''))):
         # regenerate gdb info
         report.add_gdb_info()
         gen_source_stacktrace(report)
