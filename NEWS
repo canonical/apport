@@ -9,6 +9,8 @@ detailled list of changes, please see ChangeLog.
    uncompressed. (LP: #574360)
  - hookutils.py, attach_gconf(): Fix defaults parsing for boolean keys.
    (LP: #583109)
+ - hookutils.py: Add new method attach_drm_info() to read and format
+   /sys/class/drm/*.
 
 1.13.4 (2010-05-04)
 -------------------

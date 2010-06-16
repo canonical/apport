@@ -1,8 +1,10 @@
 '''Convenience functions for use in package hooks.'''
 
-# Copyright (C) 2008 - 2009 Canonical Ltd.
-# Author: Matt Zimmerman <mdz@canonical.com>
-# Contributor: Brian Murray <brian@ubuntu.com>
+# Copyright (C) 2008 - 2010 Canonical Ltd.
+# Authors: 
+#   Matt Zimmerman <mdz@canonical.com>
+#   Brian Murray <brian@ubuntu.com>
+#   Martin Pitt <martin.pitt@ubuntu.com>
 # 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -18,6 +20,7 @@ import glob
 import re
 import string
 import stat
+import base64
 
 import xml.dom, xml.dom.minidom
 
@@ -556,6 +559,35 @@ def _parse_gconf_schema(schema_file):
                     ret[key] = '' # no gconf default
 
     return ret
+
+def __drm_con_info(con):
+    info = ''
+    for f in os.listdir(con):
+        path = os.path.join(con, f)
+        if f == 'uevent' or not os.path.isfile(path):
+            continue
+        val = open(path).read().strip()
+        # format some well-known attributes specially
+        if f == 'modes':
+            val = val.replace('\n', ' ')
+        if f == 'edid':
+            val = base64.b64encode(val)
+            f += '-base64'
+        info += '%s: %s\n' % (f, val)
+    return info
+
+def attach_drm_info(report):
+    '''Add information about DRM hardware.
+
+    Collect information from /sys/class/drm/.
+    '''
+    drm_dir = '/sys/class/drm'
+    if not os.path.isdir(drm_dir):
+        return
+    for f in os.listdir(drm_dir):
+        con = os.path.join(drm_dir, f)
+        if os.path.exists(os.path.join(con, 'enabled')):
+            report['DRM.' + f] = __drm_con_info(con)
 
 #
 # Unit test
