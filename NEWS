@@ -5,6 +5,8 @@ detailled list of changes, please see ChangeLog.
 -------------------
  - packaging-apt-dpkg.py: Fix deprecated python-apt variables, thanks David
    Stansby. (LP: #591695)
+ - launchpad.py: Fix crash on attachments which are named *.gz, but
+   uncompressed. (LP: #574360)
 
 1.13.4 (2010-05-04)
 -------------------

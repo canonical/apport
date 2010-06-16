@@ -288,7 +288,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if ext == '.txt':
                 report[key] = attachment.read()
             elif ext == '.gz':
-                report[key] = gzip.GzipFile(fileobj=attachment).read()#TODO: is this the best solution?
+                try:
+                    report[key] = gzip.GzipFile(fileobj=attachment).read()
+                except IOError, e:
+                    # some attachments are only called .gz, but are
+                    # uncompressed (LP #574360)
+                    if 'Not a gzip' not in str(e):
+                        raise
+                    attachment.seek(0)
+                    report[key] = attachment.read()
             else:
                 raise Exception, 'Unknown attachment type: ' + attachment.filename
         return report
