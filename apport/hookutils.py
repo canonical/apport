@@ -546,7 +546,7 @@ def _parse_gconf_schema(schema_file):
                 try:
                     default = schema.getElementsByTagName('default')[0].childNodes[0].data
                     if type == 'bool':
-                        if default:
+                        if default.lower() == 'true':
                             ret[key] = 'true'
                         else:
                             ret[key] = 'false'

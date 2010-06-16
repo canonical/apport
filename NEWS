@@ -7,6 +7,8 @@ detailled list of changes, please see ChangeLog.
    Stansby. (LP: #591695)
  - launchpad.py: Fix crash on attachments which are named *.gz, but
    uncompressed. (LP: #574360)
+ - hookutils.py, attach_gconf(): Fix defaults parsing for boolean keys.
+   (LP: #583109)
 
 1.13.4 (2010-05-04)
 -------------------
