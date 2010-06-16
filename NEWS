@@ -1,16 +1,19 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.13.5 (UNRELEASED)
--------------------
+1.14 (UNRELEASED)
+-----------------
+New features:
+ - hookutils.py: Add new method attach_drm_info() to read and format
+   /sys/class/drm/*.
+
+Bug fixes:
  - packaging-apt-dpkg.py: Fix deprecated python-apt variables, thanks David
    Stansby. (LP: #591695)
  - launchpad.py: Fix crash on attachments which are named *.gz, but
    uncompressed. (LP: #574360)
  - hookutils.py, attach_gconf(): Fix defaults parsing for boolean keys.
    (LP: #583109)
- - hookutils.py: Add new method attach_drm_info() to read and format
-   /sys/class/drm/*.
 
 1.13.4 (2010-05-04)
 -------------------
