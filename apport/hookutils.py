@@ -587,7 +587,12 @@ def attach_drm_info(report):
     for f in os.listdir(drm_dir):
         con = os.path.join(drm_dir, f)
         if os.path.exists(os.path.join(con, 'enabled')):
-            report['DRM.' + f] = __drm_con_info(con)
+            # DRM can set an arbitrary string for its connector paths.
+            # Sanitise the path before trying to attach it.
+            connector_key = path_to_key(f)
+            connector_key = connector_key.replace(' ', '_')
+            
+            report['DRM.' + connector_key] = __drm_con_info(con)
 
 #
 # Unit test
