@@ -25,13 +25,12 @@ _apport_parameterless ()
     #        package names
     #        PIDs
     #        Symptoms
-    #        .crash/.apport files
+    #        any file
     param="$dashoptions \
            $( apt-cache pkgnames $cur 2> /dev/null ) \
            $( command ps axo pid | sed 1d ) \
            $( _apport_symptoms ) \
-           $( compgen -G "${cur}*.apport"
-              compgen -G "${cur}*.crash" )"
+           $( compgen -G "${cur}*" )"
     COMPREPLY=( $( compgen -W "$param" -- $cur) )
 
 }
