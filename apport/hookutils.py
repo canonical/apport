@@ -26,7 +26,7 @@ import xml.dom, xml.dom.minidom
 
 from packaging_impl import impl as packaging
 
-_path_key_trans = string.maketrans('#/-_+','.....')
+_path_key_trans = string.maketrans('#/-_+ ','....._')
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
         
@@ -587,7 +587,8 @@ def attach_drm_info(report):
     for f in os.listdir(drm_dir):
         con = os.path.join(drm_dir, f)
         if os.path.exists(os.path.join(con, 'enabled')):
-            report['DRM.' + f] = __drm_con_info(con)
+            # DRM can set an arbitrary string for its connector paths.
+            report['DRM.' + path_to_key(f)] = __drm_con_info(con)
 
 #
 # Unit test
