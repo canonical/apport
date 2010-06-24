@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - hookutils.py, attach_drm_info(): Sanitize connector names. Thanks Chris
    Halse Rogers! (LP: #597558)
+ - bash completion: Complete all path names, apport-bug can be invoked with a
+   path to a program. Thanks Philip Muskovac.
 
 1.14 (2010-06-16)
 -----------------
