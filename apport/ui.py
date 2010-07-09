@@ -1302,7 +1302,7 @@ class HookUI:
 #
 
 if  __name__ == '__main__':
-    import unittest, shutil, signal, tempfile
+    import unittest, shutil, signal, tempfile, resource
     from cStringIO import StringIO
     import apport.report
     import problem_report
@@ -1855,29 +1855,26 @@ CoreDump: base64
             assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
             pid = os.fork()
             if pid == 0:
-                os.setsid()
+                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+                os.chdir(apport.fileutils.report_dir)
                 os.execv(test_executable, [test_executable])
                 assert False, 'Could not execute ' + test_executable
 
-            try:
-                # generate a core dump
-                time.sleep(0.5)
-                coredump = os.path.join(apport.fileutils.report_dir, 'core')
-                assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                    + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE) == 0
+            time.sleep(0.5)
 
-                # generate crash report
-                r = apport.Report()
-                r['ExecutablePath'] = test_executable
-                r['CoreDump'] = (coredump,)
-                r['Signal'] = '11'
-                r.add_proc_info(pid)
-                r.add_user_info()
-            finally:
-                # kill test executable
-                os.kill(pid, signal.SIGKILL)
-                os.waitpid(pid, 0)
+            # generate crash report
+            r = apport.Report()
+            r['ExecutablePath'] = test_executable
+            r['Signal'] = '11'
+            r.add_proc_info(pid)
+            r.add_user_info()
+
+            # generate a core dump
+            coredump = os.path.join(apport.fileutils.report_dir, 'core')
+            os.kill(pid, signal.SIGSEGV)
+            os.waitpid(pid, 0)
+            assert os.path.exists(coredump)
+            r['CoreDump'] = (coredump,)
 
             return r
 

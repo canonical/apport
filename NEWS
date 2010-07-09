@@ -4,6 +4,9 @@ detailled list of changes, please see ChangeLog.
 1.14.2 (UNRELEASED)
  - testsuite: Check that crashdb.conf can have dynamic code to determine DB
    names and options.
+ - ui.py test suite: Rewrite _gen_test_crash() to have the test process core
+   dump itself, instead of using gdb to do it. The latter fails in ptrace
+   restricted environments, such as Ubuntu 10.10.
 
 1.14.1 (2010-06-24)
 -------------------
