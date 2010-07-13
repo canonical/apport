@@ -1,7 +1,14 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.14.2 (UNRELEASED)
+1.15 (UNRELEASED)
+-----------------
+New features:
+ - Add dump_acpi_tables.py script. This can be called by package hooks which
+   need ACPI table information (in particular, kernel bug reports). Thanks to
+   Brad Figg for the script!
+
+Bug fixes:
  - testsuite: Check that crashdb.conf can have dynamic code to determine DB
    names and options.
  - ui.py test suite: Rewrite _gen_test_crash() to have the test process core
