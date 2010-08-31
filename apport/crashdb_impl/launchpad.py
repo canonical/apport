@@ -15,7 +15,7 @@ import email
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
-from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
+from launchpadlib.launchpad import Launchpad
 
 import apport.crashdb
 import apport
@@ -52,8 +52,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         - distro: Name of the distribution in Launchpad
         - project: Name of the project in Launchpad
         (Note that exactly one of "distro" or "project" must be given.)
-        - staging: If set, this uses staging instead of production (optional).
-          This can be overriden or set by $APPORT_STAGING environment.
+        - launchpad_instance: If set, this uses the given launchpad instance
+          instead of production (optional). This can be overriden or set by
+          $APPORT_LAUNCHPAD_INSTANCE environment.
         - cache_dir: Path to a permanent cache directory; by default it uses a
           temporary one. (optional). This can be overridden or set by
           $APPORT_LAUNCHPAD_CACHE environment.
@@ -62,11 +63,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         - escalation_tag: This adds the given tag to a bug once it gets more
           than 10 duplicates.
         '''
-        if os.getenv('APPORT_STAGING'):
-            options['staging'] = True
+        if os.getenv('APPORT_LAUNCHPAD_INSTANCE'):
+            options['launchpad_instance'] = os.getenv(
+                'APPORT_LAUNCHPAD_INSTANCE')
         if not auth:
-            if options.get('staging'):
-                auth = default_credentials_path + '.staging'
+            lp_instance = options.get('launchpad_instance')
+            if lp_instance:
+                auth = default_credentials_path + '.' + lp_instance
             else:
                 auth = default_credentials_path
         apport.crashdb.CrashDatabase.__init__(self, auth,
@@ -94,10 +97,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if self.__launchpad:
             return self.__launchpad
 
-        if self.options.get('staging'):
-            launchpad_instance = STAGING_SERVICE_ROOT
+        if self.options.get('launchpad_instance'):
+            launchpad_instance = self.options.get('launchpad_instance')
         else:
-            launchpad_instance = EDGE_SERVICE_ROOT
+            launchpad_instance = 'edge'
 
         auth_dir = os.path.dirname(self.auth)
         if auth_dir and not os.path.isdir(auth_dir):
@@ -184,8 +187,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         mime.flush()
         mime.seek(0)
 
-        ticket = upload_blob(mime, progress_callback,
-                staging=self.options.get('staging', False))
+        launchpad_instance = self.options.get('launchpad_instance')
+        ticket = upload_blob(
+            mime, progress_callback, launchpad_instance=launchpad_instance)
         assert ticket
         return ticket
 
@@ -214,13 +218,17 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if title:
             args['field.title'] = title
 
-        if self.options.get('staging'):
-            hostname = 'staging.launchpad.net'
+        launchpad_instance = self.options.get('launchpad_instance')
+        if launchpad_instance:
+            if launchpad_instance == 'staging':
+                hostname = 'staging.launchpad.net'
+            else:
+                hostname = 'launchpad.dev'
         else:
             hostname = 'launchpad.net'
 
         project = self.options.get('project')
-        
+
         if not project:
             if report.has_key('SourcePackage'):
                 return 'https://bugs.%s/%s/+source/%s/+filebug/%s?%s' % (
@@ -792,7 +800,7 @@ class HTTPSProgressHandler(urllib2.HTTPSHandler):
     def https_open(self, req):
         return self.do_open(HTTPSProgressConnection, req)
 
-def upload_blob(blob, progress_callback = None, staging=False):
+def upload_blob(blob, progress_callback = None, launchpad_instance=None):
     '''Upload blob (file-like object) to Launchpad.
 
     progress_callback can be set to a function(sent, total) which is regularly
@@ -802,8 +810,9 @@ def upload_blob(blob, progress_callback = None, staging=False):
 
     Return None on error, or the ticket number on success.
 
-    By default this uses the production Launchpad instance. Set staging=True to
-    use staging.launchpad.net (for testing).
+    By default this uses the production Launchpad instance. Set
+    launchpad_instance to 'dev' or 'staging' to use another instance
+    for testing.
     '''
     #XXX 2010-08-05 matsubara bug=315358
     # Once bug 315358 is fixed, this function can be converted to use the API
@@ -814,8 +823,11 @@ def upload_blob(blob, progress_callback = None, staging=False):
     _https_upload_callback = progress_callback
 
     opener = urllib2.build_opener(HTTPSProgressHandler, multipartpost_handler.MultipartPostHandler)
-    if staging:
-        url = 'https://staging.launchpad.net/+storeblob'
+    if launchpad_instance:
+        if launchpad_instance == 'staging':
+            url = 'https://staging.launchpad.net/+storeblob'
+        else:
+            url = 'https://launchpad.dev/+storeblob'
     else:
         url = 'https://launchpad.net/+storeblob'
     result = opener.open(url,
@@ -836,12 +848,10 @@ if __name__ == '__main__':
     python_report = None
 
     class _T(unittest.TestCase):
-        # this assumes that a source package 'coreutils' exists and builds a
-        # binary package 'coreutils'
-        test_package = 'coreutils'
-        test_srcpackage = 'coreutils'
-        known_test_id = 302779
-        known_test_id2 = 89040
+        # this assumes that a source package 'alsa-utils' exists and builds a
+        # binary package 'alsa-utils'
+        test_package = 'alsa-utils'
+        test_srcpackage = 'alsa-utils'
 
         #
         # Generic tests, should work for all CrashDB implementations
@@ -858,7 +868,67 @@ if __name__ == '__main__':
             self.ref_report = apport.Report()
             self.ref_report.add_os_info()
             self.ref_report.add_user_info()
-            self.ref_report['SourcePackage'] = 'coreutils'
+            self.ref_report['SourcePackage'] = 'alsa-utils'
+
+            # Objects tests rely on.
+            self.uncommon_description_bug = self._file_uncommon_description_bug()
+            self._create_project('langpack-o-matic')
+
+            # XXX Should create new bug reports, not reuse those.
+            self.known_test_id = self.uncommon_description_bug.id
+            self.known_test_id2 = self._file_uncommon_description_bug().id
+
+        def _create_project(self, name):
+            """Create a project using launchpadlib to be used by tests."""
+            project = self.crashdb.launchpad.projects[name]
+            if not project:
+                self.crashdb.launchpad.projects.new_project(
+                    description=name + 'description',
+                    display_name=name,
+                    name=name,
+                    summary=name + 'summary',
+                    title=name + 'title')
+
+        def _file_uncommon_description_bug(self):
+            """File a bug report with an uncommon description.
+
+            Example taken from real LP bug 269539. It contains only
+            ProblemType/Architecture/DistroRelease in the description.
+            """
+            title = (
+                u'Three-way merge issues with menu.lst file during kernel'
+                'updates: "Conflicts found! Please edit'
+                '`/var/run/grub/menu.lst\' and sort them out manually."')
+            uncommon_description = (
+                u'Ubuntu 8.10 failed to install 2.6.27.3 kernal during'
+                'update\n\nProblemType: Package\nArchitecture:'
+                'amd64\nDistroRelease: Ubuntu 8.10\n\nDuring a kernel upgrade,'
+                'under certain conditions, if the user select "Do a 3-way'
+                'merge" for menu.lst then the following error'
+                'occurs:\n\nupdate-initramfs: Generating'
+                '/boot/initrd.img-2.6.27-3-generic\nRunning postinst hook'
+                'script /sbin/update-grub.\nSearching for GRUB installation'
+                'directory ... found: /boot/grub\nSearching for default file'
+                '... found: /boot/grub/default\nTesting for an existing GRUB'
+                'menu.lst file ... found: /boot/grub/menu.lst\nSearching for'
+                'splash image ... none found, skipping ...\nFound kernel:'
+                '/boot/vmlinuz-2.6.27-3-generic\nFound kernel:'
+                '/boot/last-good-boot/vmlinuz\nFound kernel:'
+                '/boot/vmlinuz-2.6.27-2-generic\nFound kernel:'
+                '/boot/vmlinuz-2.6.26-5-generic\nFound kernel:'
+                '/boot/memtest86+.bin\nMerging changes into the new version\n\n'
+                'Conflicts found! Please edit `/var/run/grub/menu.lst\' and'
+                'sort them out manually.\n The file'
+                '`/var/run/grub/menu.lst.ucf-new\' has a record of the failed'
+                'merge of the configuration file.\n\nUser postinst hook script'
+                '[/sbin/update-grub] exited with value 3\ndpkg: error'
+                'processing linux-image-2.6.27-3-generic (--configure):\n'
+                'subprocess post-installation script returned error exit status'
+                '3\n\n\n')
+            bug_target = self.crashdb.lp_distro
+            return self.crashdb.launchpad.bugs.createBug(
+                title=title, description=uncommon_description,
+                target=bug_target)
 
         def _file_segv_report(self):
             '''File a SEGV crash report.
@@ -1009,7 +1079,7 @@ NameError: global name 'weird' is not defined'''
 
         def test_update_description(self):
             '''update() with changing description'''
-            bug_target = self.crashdb.lp_distro.getSourcePackage(name='bash')
+            bug_target = self.crashdb.lp_distro.getSourcePackage(name='pmount')
             bug = self.crashdb.launchpad.bugs.createBug(
                 description='test description for test bug.',
                 target=bug_target,
@@ -1041,7 +1111,7 @@ NameError: global name 'weird' is not defined'''
         def test_update_comment(self):
             '''update() with appending comment'''
 
-            bug_target = self.crashdb.lp_distro.getSourcePackage(name='bash')
+            bug_target = self.crashdb.lp_distro.getSourcePackage(name='pmount')
             # we need to fake an apport description separator here, since we
             # want to be lazy and use download() for checking the result
             bug = self.crashdb.launchpad.bugs.createBug(
@@ -1076,7 +1146,7 @@ NameError: global name 'weird' is not defined'''
         def test_update_filter(self):
             '''update() with a key filter'''
 
-            bug_target = self.crashdb.lp_distro.getSourcePackage(name='bash')
+            bug_target = self.crashdb.lp_distro.getSourcePackage(name='pmount')
             bug = self.crashdb.launchpad.bugs.createBug(
                 description='test description for test bug',
                 target=bug_target,
@@ -1268,9 +1338,11 @@ NameError: global name 'weird' is not defined'''
         @classmethod
         def _get_instance(klass):
             '''Create a CrashDB instance'''
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE')
 
-            return CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
-                    {'distro': 'ubuntu', 'staging': True})
+            return CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+                    {'distro': 'ubuntu',
+                     'launchpad_instance': launchpad_instance})
 
         def _file_bug(self, bug_target, report, handle, comment=None):
             """File a bug using launchpadlib.
@@ -1285,7 +1357,6 @@ NameError: global name 'weird' is not defined'''
             # - link hwdb submission key to bug report
             # See IFileBugData for more info.
             """
-            bug_target = bug_target
             bug_title = report.get('Title', report.standard_title())
 
             blob_info = self.crashdb.launchpad.temporary_blobs.fetch(
@@ -1314,7 +1385,6 @@ NameError: global name 'weird' is not defined'''
             for comment in processed_blob['comments']:
                 bug.newMessage(content=comment)
 
-            import pdb; pdb.set_trace()
             #XXX Internal API (linkAttachment()) is slightly different than
             # the external API (addAttachment()), need to cope with that.
             #for attachment in processed_blob['attachments']:
@@ -1333,7 +1403,8 @@ NameError: global name 'weird' is not defined'''
                 # XXX 2010-01-04 matsubara bug=XXX:
                 #     Can't fetch the submission directly, so let's load it
                 #     from the representation.
-                submission = lp.load(
+                submission = self.crashdb.launchpad.load(
+                    #XXX change the hardcoded url here.
                     'https://api.edge.launchpad.net/beta/+hwdb/+submission/%s'
                     % submission_key)
                 bug.linkHWSubmission(submission=submission)
@@ -1384,10 +1455,12 @@ NameError: global name 'weird' is not defined'''
         def test_project(self):
             '''reporting crashes against a project instead of a distro'''
 
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE')
             # crash database for langpack-o-matic project (this does not have
             # packages in any distro)
-            crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
-                {'project': 'langpack-o-matic', 'staging': True})
+            crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+                {'project': 'langpack-o-matic',
+                 'launchpad_instance': launchpad_instance})
             self.assertEqual(crashdb.distro, None)
 
             # create Python crash report
@@ -1432,7 +1505,7 @@ NameError: global name 'weird' is not defined'''
             '''download() of uncommon description formats'''
 
             # only ProblemType/Architecture/DistroRelease in description
-            r = self.crashdb.download(269539)
+            r = self.crashdb.download(self.uncommon_description_bug.id)
             self.assertEqual(r['ProblemType'], 'Package')
             self.assertEqual(r['Architecture'], 'amd64')
             self.assert_(r['DistroRelease'].startswith('Ubuntu '))
@@ -1443,10 +1516,12 @@ NameError: global name 'weird' is not defined'''
 
             assert segv_report, 'you need to run test_1_report_segv() first'
 
-            db = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
-                    {'distro': 'ubuntu', 'staging': True,
-                        'escalation_tag': 'omgkittens',
-                        'escalation_subscription': 'apport-hackers'})
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE')
+            db = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+                    {'distro': 'ubuntu',
+                     'launchpad_instance': launchpad_instance,
+                     'escalation_tag': 'omgkittens',
+                     'escalation_subscription': 'apport-hackers'})
 
             count = 0
             p = db.launchpad.people[db.options['escalation_subscription']].self_link
@@ -1459,13 +1534,13 @@ NameError: global name 'weird' is not defined'''
                     db.close_duplicate(b, segv_report)
                     b = db.launchpad.bugs[segv_report]
                     has_escalation_tag = db.options['escalation_tag'] in b.tags
-                    has_escalation_subsciption = any([s.person_link == p for s in b.subscriptions])
+                    has_escalation_subscription = any([s.person_link == p for s in b.subscriptions])
                     if count <= 10:
                         self.failIf(has_escalation_tag)
-                        self.failIf(has_escalation_subsciption)
+                        self.failIf(has_escalation_subscription)
                     else:
                         self.assert_(has_escalation_tag)
-                        self.assert_(has_escalation_subsciption)
+                        self.assert_(has_escalation_subscription)
             finally:
                 for b in range(first_dup, first_dup+count):
                     print 'R%i' % b,
@@ -1488,7 +1563,7 @@ NameError: global name 'weird' is not defined'''
             t.target = self.crashdb.launchpad.distributions['ubuntu'].getSourcePackage(name='pmount')
             t.status = 'Invalid'
             t.lp_save()
-            b.addTask(target=self.crashdb.launchpad.projects['coreutils'])
+            b.addTask(target=self.crashdb.launchpad.projects['alsa-utils'])
             b.addTask(target=self.crashdb.launchpad.distributions['ubuntu'])
 
             self.crashdb._mark_dup_checked(python_report, self.ref_report)
@@ -1500,11 +1575,11 @@ NameError: global name 'weird' is not defined'''
 
             # upstream task should be unmodified
             b = self.crashdb.launchpad.bugs[python_report]
-            self.assertEqual(b.bug_tasks[0].bug_target_name, 'coreutils')
+            self.assertEqual(b.bug_tasks[0].bug_target_name, 'alsa-utils')
             self.assertEqual(b.bug_tasks[0].status, 'New')
 
             # package-less distro task should have package name fixed
-            self.assertEqual(b.bug_tasks[1].bug_target_name, 'coreutils (Ubuntu)')
+            self.assertEqual(b.bug_tasks[1].bug_target_name, 'alsa-utils (Ubuntu)')
             self.assertEqual(b.bug_tasks[1].status, 'New')
 
             # invalid pmount task should be unmodified
