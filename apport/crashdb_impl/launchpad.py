@@ -187,9 +187,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         mime.flush()
         mime.seek(0)
 
-        launchpad_instance = self.options.get('launchpad_instance')
         ticket = upload_blob(
-            mime, progress_callback, launchpad_instance=launchpad_instance)
+            mime, progress_callback, hostname=self.get_hostname())
         assert ticket
         return ticket
 
@@ -205,6 +204,18 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bug_target = self.lp_distro
         return bug_target
 
+    def get_hostname(self):
+        """Return the hostname for the Launchpad instance."""
+        launchpad_instance = self.options.get('launchpad_instance')
+        if launchpad_instance:
+            if launchpad_instance == 'staging':
+                hostname = 'staging.launchpad.net'
+            else:
+                hostname = 'launchpad.dev'
+        else:
+            hostname = 'launchpad.net'
+        return hostname
+
     def get_comment_url(self, report, handle):
         '''Return an URL that should be opened after report has been uploaded
         and upload() returned handle.
@@ -218,14 +229,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if title:
             args['field.title'] = title
 
-        launchpad_instance = self.options.get('launchpad_instance')
-        if launchpad_instance:
-            if launchpad_instance == 'staging':
-                hostname = 'staging.launchpad.net'
-            else:
-                hostname = 'launchpad.dev'
-        else:
-            hostname = 'launchpad.net'
+        hostname = self.get_hostname()
 
         project = self.options.get('project')
 
@@ -800,7 +804,7 @@ class HTTPSProgressHandler(urllib2.HTTPSHandler):
     def https_open(self, req):
         return self.do_open(HTTPSProgressConnection, req)
 
-def upload_blob(blob, progress_callback = None, launchpad_instance=None):
+def upload_blob(blob, progress_callback = None, hostname='launchpad.net'):
     '''Upload blob (file-like object) to Launchpad.
 
     progress_callback can be set to a function(sent, total) which is regularly
@@ -810,9 +814,9 @@ def upload_blob(blob, progress_callback = None, launchpad_instance=None):
 
     Return None on error, or the ticket number on success.
 
-    By default this uses the production Launchpad instance. Set
-    launchpad_instance to 'dev' or 'staging' to use another instance
-    for testing.
+    By default this uses the production Launchpad hostname. Set
+    hostname to 'launchpad.dev' or 'staging.launchpad.net' to use another
+    instance for testing.
     '''
     #XXX 2010-08-05 matsubara bug=315358
     # Once bug 315358 is fixed, this function can be converted to use the API
@@ -823,13 +827,7 @@ def upload_blob(blob, progress_callback = None, launchpad_instance=None):
     _https_upload_callback = progress_callback
 
     opener = urllib2.build_opener(HTTPSProgressHandler, multipartpost_handler.MultipartPostHandler)
-    if launchpad_instance:
-        if launchpad_instance == 'staging':
-            url = 'https://staging.launchpad.net/+storeblob'
-        else:
-            url = 'https://launchpad.dev/+storeblob'
-    else:
-        url = 'https://launchpad.net/+storeblob'
+    url = 'https://%s/+storeblob' % hostname
     result = opener.open(url,
         { 'FORM_SUBMIT': '1', 'field.blob': blob })
     ticket = result.info().get('X-Launchpad-Blob-Token')
@@ -930,6 +928,11 @@ if __name__ == '__main__':
                 title=title, description=uncommon_description,
                 target=bug_target)
 
+        @property
+        def hostname(self):
+            """Get the hostname for the given crashdb."""
+            return self.crashdb.get_hostname()
+
         def _file_segv_report(self):
             '''File a SEGV crash report.
 
@@ -963,7 +966,7 @@ if __name__ == '__main__':
             global segv_report
             id = self._file_segv_report()
             segv_report = id
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
         def test_1_report_python(self):
             '''upload() and get_comment_url() for Python crash
@@ -991,7 +994,7 @@ NameError: global name 'weird' is not defined'''
             self.assert_(id > 0)
             global python_report
             python_report = id
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
         def test_2_download(self):
             '''download()'''
@@ -1086,7 +1089,7 @@ NameError: global name 'weird' is not defined'''
                 title='testbug')
             id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             r = apport.Report('Bug')
 
@@ -1120,7 +1123,7 @@ NameError: global name 'weird' is not defined'''
                 title='testbug')
             id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             r = apport.Report('Bug')
 
@@ -1153,7 +1156,7 @@ NameError: global name 'weird' is not defined'''
                 title='testbug')
             id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             r = apport.Report('Bug')
 
@@ -1303,7 +1306,7 @@ NameError: global name 'weird' is not defined'''
             invalidated by marking it as a duplicate.
             '''
             id = self._file_segv_report()
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             r = self.crashdb.download(id)
 
@@ -1344,24 +1347,21 @@ NameError: global name 'weird' is not defined'''
                     {'distro': 'ubuntu',
                      'launchpad_instance': launchpad_instance})
 
-        def _file_bug(self, bug_target, report, handle, comment=None):
-            """File a bug using launchpadlib.
+        def _get_librarian_hostname(self):
+            """Return the librarian hostname according to the LP hostname used."""
+            hostname = self.crashdb.get_hostname()
+            if 'staging' in hostname:
+                return 'staging.launchpadlibrarian.net'
+            else:
+                return 'launchpad.dev:58080'
 
-            # TODO: to behave like bugtarget.py we need to do:
-            # OK set initial_summary for the bug, from report or from blob
-            # OK add all tags from processed_blob
-            # OK description change from processed_blob
-            # OK additional comments from processed_blob
-            # - attachments from processed_blob
-            # OK subscribers from processed_blob
-            # - link hwdb submission key to bug report
-            # See IFileBugData for more info.
-            """
+        def _file_bug(self, bug_target, report, handle, comment=None):
+            """File a bug using launchpadlib."""
             bug_title = report.get('Title', report.standard_title())
 
             blob_info = self.crashdb.launchpad.temporary_blobs.fetch(
                 token=handle)
-            # XXX 2010-01-03 matsubara bug=612990:
+            # XXX 2010-08-03 matsubara bug=612990:
             #     Can't fetch the blob directly, so let's load it from the
             #     representation.
             blob = self.crashdb.launchpad.load(blob_info['self_link'])
@@ -1385,14 +1385,26 @@ NameError: global name 'weird' is not defined'''
             for comment in processed_blob['comments']:
                 bug.newMessage(content=comment)
 
-            #XXX Internal API (linkAttachment()) is slightly different than
-            # the external API (addAttachment()), need to cope with that.
-            #for attachment in processed_blob['attachments']:
-            #    bug.addAttachment(
-            #        comment=None,
-            #        data=attachment['file_alias_id'],
-            #        filename=attachment['file_alias_id'],
-            #        description=attachment['description'])
+            # Ideally, one would be able to retrieve the attachment content
+            # from the ProblemReport object or from the processed_blob.
+            # Unfortunately the processed_blob only give us the Launchpad
+            # librarian file_alias_id, so that's why we need to
+            # download it again and upload to the bug report. It'd be even
+            # better if addAttachment could work like linkAttachment, the LP
+            # api used in the +filebug web UI, but there are security concerns
+            # about the way linkAttachment works.
+            librarian_url = 'http://%s' % self._get_librarian_hostname()
+            for attachment in processed_blob['attachments']:
+                filename = description = attachment['description']
+                # Download the attachment data.
+                data = urllib.urlopen(urllib.basejoin(librarian_url,
+                    str(attachment['file_alias_id']) + '/' + filename)).read()
+                # Add the attachment to the newly created bug report.
+                bug.addAttachment(
+                    comment=filename,
+                    data=data,
+                    filename=filename,
+                    description=description)
 
             for subscriber in processed_blob['subscribers']:
                 sub = self.crashdb.launchpad.people[subscriber]
@@ -1400,13 +1412,12 @@ NameError: global name 'weird' is not defined'''
                     bug.subscribe(person=sub)
 
             for submission_key in processed_blob['hwdb_submission_keys']:
-                # XXX 2010-01-04 matsubara bug=XXX:
+                # XXX 2010-08-04 matsubara bug=628889:
                 #     Can't fetch the submission directly, so let's load it
                 #     from the representation.
                 submission = self.crashdb.launchpad.load(
-                    #XXX change the hardcoded url here.
-                    'https://api.edge.launchpad.net/beta/+hwdb/+submission/%s'
-                    % submission_key)
+                    'https://api.%s/beta/+hwdb/+submission/%s'
+                    % (self.crashdb.get_hostname(), submission_key))
                 bug.linkHWSubmission(submission=submission)
             return int(bug.id)
 
@@ -1482,7 +1493,7 @@ NameError: global name 'weird' is not defined'''
 
             id = self._file_bug(bug_target, r, handle)
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             # update
             r = crashdb.download(id)
