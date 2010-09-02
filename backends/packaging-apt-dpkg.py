@@ -131,7 +131,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         native_origins = [this_os]
         try:
             for f in os.listdir('/etc/apport/native-origins.d'):
-                for line in open(f):
+                for line in open(os.path.join('/etc/apport/native-origins.d', f))
                     line = line.strip()
                     if line:
                         native_origins.append(line)
