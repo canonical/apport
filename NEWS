@@ -14,6 +14,7 @@ Bug fixes:
  - ui.py test suite: Rewrite _gen_test_crash() to have the test process core
    dump itself, instead of using gdb to do it. The latter fails in ptrace
    restricted environments, such as Ubuntu 10.10.
+ - Load correct translation catalogue in KDE UI (LP: #633483)
 
 1.14.1 (2010-06-24)
 -------------------
