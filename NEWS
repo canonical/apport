@@ -14,6 +14,8 @@ Bug fixes:
  - ui.py test suite: Rewrite _gen_test_crash() to have the test process core
    dump itself, instead of using gdb to do it. The latter fails in ptrace
    restricted environments, such as Ubuntu 10.10.
+ - packaging-apt-dpkg.py: Fix handling of /etc/apport/native-origins.d to
+   actually work. Thanks Steve Langasek. (LP: #627777)
 
 1.14.1 (2010-06-24)
 -------------------
