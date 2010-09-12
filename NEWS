@@ -16,6 +16,8 @@ Bug fixes:
    restricted environments, such as Ubuntu 10.10.
  - packaging-apt-dpkg.py: Fix handling of /etc/apport/native-origins.d to
    actually work. Thanks Steve Langasek. (LP: #627777)
+ - apport-kde: Load correct translation catalogue. Thanks Jonathan Riddell.
+   (LP: #633483)
 
 1.14.1 (2010-06-24)
 -------------------
