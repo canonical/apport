@@ -24,6 +24,8 @@ Bug fixes:
  - launchpad.py: Change $APPORT_STAGING to $APPORT_LAUNCHPAD_INSTANCE, so that
    you can now specify "staging", "edge", or "dev" (for a local
    http://launchpad.dev installation). Thanks to Diogo Matsubara!
+ - backends/packaging-apt-dpkg.py: Fix crash on empty lines in ProcMaps
+   attachment.
 
 1.14.1 (2010-06-24)
 -------------------

@@ -532,7 +532,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if not l.strip():
                     continue
                 cols = l.split()
-                if 'x' in cols[1] and len(cols) == 6 and '.so' in cols[5]:
+                if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
                     lib = os.path.realpath(cols[5])
                     libs.add(lib)
 
