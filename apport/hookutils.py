@@ -109,7 +109,7 @@ def attach_hardware(report):
 
     attach_file(report, '/proc/interrupts', 'ProcInterrupts')
     attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
-    attach_file(report, '/proc/cmdline', 'ProcCmdLine')
+    attach_file(report, '/proc/cmdline', 'ProcKernelCmdLine')
     attach_file(report, '/proc/modules', 'ProcModules')
     attach_file(report, '/var/log/udev', 'UdevLog')
 
