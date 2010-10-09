@@ -29,6 +29,8 @@ Bug fixes:
  - doc/symptoms.txt: Fix typo, thanks Philip Muskovac. (LP: #590521)
  - apport/hookutils.py: rename ProcCmdLine to ProcKernelCmdLine to not wipe
    wipe out /proc/$pid/cmdline information. (LP: #657091)
+ - apport/hookutils.py: attach_file() will not overwrite existing report
+   keys, instead appending "_" until the key is unique.
 
 1.14.1 (2010-06-24)
 -------------------
