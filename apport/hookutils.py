@@ -63,6 +63,9 @@ def attach_file(report, path, key=None):
     if not key:
         key = path_to_key(path)
 
+    # Do not clobber existing keys
+    while report.has_key(key):
+        key += "_"
     report[key] = read_file(path)
 
 def attach_dmesg(report):
