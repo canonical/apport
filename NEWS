@@ -31,6 +31,7 @@ Bug fixes:
    wipe out /proc/$pid/cmdline information. (LP: #657091)
  - apport/hookutils.py: attach_file() will not overwrite existing report
    keys, instead appending "_" until the key is unique.
+ - Fix --save option to recognise ~, thanks Philip Muškovac. (LP: #657278)
 
 1.14.1 (2010-06-24)
 -------------------

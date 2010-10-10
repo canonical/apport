@@ -402,7 +402,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
         if self.options.save:
             try:
-                f = open(self.options.save, 'w')
+                f = open(os.path.expanduser(self.options.save), 'w')
                 self.report.write(f)
                 f.close()
             except (IOError, OSError), e:
