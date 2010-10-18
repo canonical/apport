@@ -519,6 +519,10 @@ free memory to automatically analyze the problem and send a report to the develo
         if not symptom_names:
             return False
 
+        symptom_descriptions, symptom_names = \
+            zip(*sorted(zip(symptom_descriptions, symptom_names)))
+        symptom_descriptions = list(symptom_descriptions)
+        symptom_names = list(symptom_names)
         symptom_names.append(None)
         symptom_descriptions.append('Other problem')
 

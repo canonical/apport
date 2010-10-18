@@ -7,6 +7,7 @@ New features:
  - Add dump_acpi_tables.py script. This can be called by package hooks which
    need ACPI table information (in particular, kernel bug reports). Thanks to
    Brad Figg for the script!
+ - Order symptom descriptions alphabetically. Thanks to Javier Collado.
 
 Bug fixes:
  - testsuite: Check that crashdb.conf can have dynamic code to determine DB
