@@ -8,6 +8,8 @@ New features:
    need ACPI table information (in particular, kernel bug reports). Thanks to
    Brad Figg for the script!
  - Order symptom descriptions alphabetically. Thanks to Javier Collado.
+ - Check $APPORT_SYMPTOMS_DIR environment variable for overriding the system
+   default path. Thanks to Javier Collado.
 
 Bug fixes:
  - testsuite: Check that crashdb.conf can have dynamic code to determine DB
