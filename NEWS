@@ -35,6 +35,8 @@ Bug fixes:
  - apport/hookutils.py: attach_file() will not overwrite existing report
    keys, instead appending "_" until the key is unique.
  - Fix --save option to recognise ~, thanks Philip Muškovac. (LP: #657278)
+ - Remove escalation_subscription from Ubuntu bug DB definition, turned out to
+   not be useful; thanks Brian Murray.
 
 1.14.1 (2010-06-24)
 -------------------
