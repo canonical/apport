@@ -69,7 +69,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if not auth:
             lp_instance = options.get('launchpad_instance')
             if lp_instance:
-                auth = default_credentials_path + '.' + lp_instance
+                auth = default_credentials_path + '.' + lp_instance.split('://', 1)[-1]
             else:
                 auth = default_credentials_path
         apport.crashdb.CrashDatabase.__init__(self, auth,
@@ -1331,8 +1331,8 @@ NameError: global name 'weird' is not defined'''
                 return self.lp_distro
 
         def _get_librarian_hostname(self):
-
             '''Return the librarian hostname according to the LP hostname used.'''
+
             hostname = self.crashdb.get_hostname()
             if 'staging' in hostname:
                 return 'staging.launchpadlibrarian.net'

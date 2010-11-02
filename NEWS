@@ -37,6 +37,7 @@ Bug fixes:
  - Fix --save option to recognise ~, thanks Philip Muškovac. (LP: #657278)
  - Remove escalation_subscription from Ubuntu bug DB definition, turned out to
    not be useful; thanks Brian Murray.
+ - launchpad.py: Fix APPORT_LAUNCHPAD_INSTANCE values with a https:// prefix.
 
 1.14.1 (2010-06-24)
 -------------------
