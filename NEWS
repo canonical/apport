@@ -38,6 +38,9 @@ Bug fixes:
  - Remove escalation_subscription from Ubuntu bug DB definition, turned out to
    not be useful; thanks Brian Murray.
  - launchpad.py: Fix APPORT_LAUNCHPAD_INSTANCE values with a https:// prefix.
+ - apt backend: Opportunistically try to install a -dbg package in addition to
+   -dbgsym, to increase the chance that at least one of it exists. Thanks
+   Daniel J Blueman!
 
 1.14.1 (2010-06-24)
 -------------------
