@@ -347,9 +347,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         return True
 
     def on_expander_details_activate(self, widget):
-        # signal is sent before actually expanding/collapsing, thus this
-        # requires negation
-        self.w('dialog_bugreport').set_resizable(not self.w('expander_details').get_expanded())
+        self.w('dialog_bugreport').set_resizable(self.w('expander_details').get_expanded())
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
         return True
