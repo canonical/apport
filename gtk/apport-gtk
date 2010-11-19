@@ -347,7 +347,10 @@ class GTKUserInterface(apport.ui.UserInterface):
         return True
 
     def on_expander_details_activate(self, widget):
-        self.w('dialog_bugreport').set_resizable(self.w('expander_details').get_expanded())
+        expanded = self.w('expander_details').get_expanded()
+        self.w('dialog_bugreport').set_resizable(expanded)
+        if expanded:
+            self.w('dialog_bugreport').resize(self.w('dialog_bugreport').get_size()[0], 400)
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
         return True
