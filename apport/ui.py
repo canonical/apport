@@ -25,7 +25,7 @@ from apport.crashdb import get_crashdb, NeedsCredentials
 from apport import unicode_gettext as _
 
 symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
-                                    '/usr/share/apport_symptoms')
+                                    '/usr/share/apport/symptoms')
 
 def excstr(exception):
     '''Return exception message as unicode.'''
