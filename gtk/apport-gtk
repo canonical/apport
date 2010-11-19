@@ -286,10 +286,13 @@ class GTKUserInterface(apport.ui.UserInterface):
         b = None
         for option in options:
             if multiple:
-                b = Gtk.CheckButton(option)
+                b = Gtk.CheckButton.new_with_label(option)
             else:
-                # use previous radio button as group
-                b = Gtk.RadioButton(b, option)
+                # use previous radio button as group; work around GNOME#635253
+                if b:
+                    b = Gtk.RadioButton.new_with_label_from_widget(b, option)
+                else:
+                    b = Gtk.RadioButton.new_with_label([], option)
             self.w('vbox_choices').pack_start(b, True, True, 0)
         self.w('vbox_choices').show_all()
 
