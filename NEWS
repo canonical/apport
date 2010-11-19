@@ -8,6 +8,8 @@ New features:
 
 Bug fixes:
  - Fix symptoms again. Version 1.15 broke the default symptom directory.
+ - Fix memory test case to work with current Python versions, where the SQLite
+   integrity check throws a different exception.
 
 1.15 (2010-11-11)
 -----------------

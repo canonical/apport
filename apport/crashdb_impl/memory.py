@@ -771,7 +771,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
             f.close()
 
             self.crashes = CrashDatabase(None, None, {})
-            self.assertRaises(SystemError, self.crashes.init_duplicate_db, db)
+            self.assertRaises(StandardError, self.crashes.init_duplicate_db, db)
 
         finally:
             os.unlink(db)
