@@ -184,14 +184,14 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_info_message(self, title, text):
         if 'http://' in text or 'https://' in text:
-            md = Gtk.MessageDialog(type=Gtk.MESSAGE_INFO,
-                buttons=Gtk.BUTTONS_CLOSE)
+            md = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.CLOSE)
             # turn URLs into links
             md.set_markup(re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)',
                 r'<a href="\1">\1</a>', text))
         else:
-            md = Gtk.MessageDialog(type=Gtk.MESSAGE_INFO,
-                buttons=Gtk.BUTTONS_CLOSE, message_format=text)
+            md = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.CLOSE, message_format=text)
         md.set_title(title)
         md.run()
         md.hide()
@@ -200,14 +200,14 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_error_message(self, title, text):
         if 'http://' in text or 'https://' in text:
-            md = Gtk.MessageDialog(type=Gtk.MESSAGE_ERROR,
-                buttons=Gtk.BUTTONS_CLOSE)
+            md = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.CLOSE)
             # turn URLs into links
             md.set_markup(re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)',
                 r'<a href="\1">\1</a>', text))
         else:
-            md = Gtk.MessageDialog(type=Gtk.MESSAGE_ERROR,
-                buttons=Gtk.BUTTONS_CLOSE, message_format=text)
+            md = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.CLOSE, message_format=text)
         md.set_title(title)
         md.run()
         md.hide()
@@ -267,8 +267,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         Return True if the user selected "Yes", False if selected "No" or
         "None" on cancel/dialog closing.
         '''
-        md = Gtk.MessageDialog(type=Gtk.MESSAGE_QUESTION,
-            buttons=Gtk.BUTTONS_YES_NO, message_format=text)
+        md = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.YES_NO, message_format=text)
         result = md.run()
         md.hide()
         while Gtk.events_pending():
