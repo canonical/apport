@@ -880,21 +880,45 @@ class Report(ProblemReport):
                     os.path.basename(self['ExecutablePath']),
                     trace[0])
 
-            trace_re = re.compile('^\s*File.* in (.+)$')
+            trace_re = re.compile('^\s*File\s*"(\S+)".* in (.+)$')
             i = len(trace)-1
             function = 'unknown'
             while i >= 0:
                 m = trace_re.match(trace[i])
                 if m:
-                    function = m.group(1)
+                    module_path = m.group(1)
+                    function = m.group(2)
                     break
                 i -= 1
 
-            return '%s crashed with %s in %s()' % (
-                os.path.basename(self['ExecutablePath']),
-                trace[-1].split(':')[0],
-                function
+            path = os.path.basename(self['ExecutablePath'])
+            last_line = trace[-1]
+            exception = last_line.split(':')[0]
+            m = re.match('^%s: (.+)$' % exception, last_line)
+            if m:
+                message = m.group(1)
+            else:
+                message = None
+
+            if function == '<module>':
+                if module_path == self['ExecutablePath']:
+                    context = '__main__'
+                else:
+                    # Maybe use os.path.basename?
+                    context = module_path
+            else:
+                context = '%s()' % function
+
+            title = '%s crashed with %s in %s' % (
+                path,
+                exception,
+                context
             )
+
+            if message:
+                title += ': %s' % message
+
+            return title
 
         # package problem
         if self.get('ProblemType') == 'Package' and \
@@ -2066,7 +2090,7 @@ File "/usr/share/apport/apport-gtk", line 67, in ui_present_crash
 subprocess.call(['pgrep', '-x',
 NameError: global name 'subprocess' is not defined'''
         self.assertEqual(report.standard_title(),
-            'apport-gtk crashed with NameError in ui_present_crash()')
+            "apport-gtk crashed with NameError in ui_present_crash(): global name 'subprocess' is not defined")
 
         # slightly weird Python crash
         report = Report()
@@ -2099,6 +2123,30 @@ Restarting AWN usually solves this issue'''
         t = report.standard_title()
         self.assert_(t.startswith('apport-gtk crashed with'))
         self.assert_(t.endswith('setup_chooser()'))
+
+        # Python crash at top level in module
+        report = Report()
+        report['ExecutablePath'] = '/usr/bin/gnome-about'
+        report['Traceback'] = '''Traceback (most recent call last):
+  File "/usr/bin/gnome-about", line 30, in <module>
+    import pygtk
+  File "/usr/lib/pymodules/python2.6/pygtk.py", line 28, in <module>
+    import nonexistent
+ImportError: No module named nonexistent
+'''
+        self.assertEqual(report.standard_title(),
+            "gnome-about crashed with ImportError in /usr/lib/pymodules/python2.6/pygtk.py: No module named nonexistent")
+
+        # Python crash at top level in main program
+        report = Report()
+        report['ExecutablePath'] = '/usr/bin/dcut'
+        report['Traceback'] = '''Traceback (most recent call last):
+  File "/usr/bin/dcut", line 28, in <module>
+    import nonexistent
+ImportError: No module named nonexistent
+'''
+        self.assertEqual(report.standard_title(),
+            "dcut crashed with ImportError in __main__: No module named nonexistent")
 
         # package install problem
         report = Report('Package')
