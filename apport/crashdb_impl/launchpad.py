@@ -100,7 +100,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if self.options.get('launchpad_instance'):
             launchpad_instance = self.options.get('launchpad_instance')
         else:
-            launchpad_instance = 'edge'
+            launchpad_instance = 'production'
 
         auth_dir = os.path.dirname(self.auth)
         if auth_dir and not os.path.isdir(auth_dir):
