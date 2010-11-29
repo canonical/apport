@@ -166,10 +166,11 @@ def attach_alsa(report):
     report['PciMultimedia'] = pci_devices(PCI_MULTIMEDIA)
 
     cards = []
-    for line in open('/proc/asound/cards'):
-        if ']:' in line:
-            fields = line.lstrip().split()
-            cards.append(int(fields[0]))
+    if os.path.exists('/proc/asound/cards'):
+        for line in open('/proc/asound/cards'):
+            if ']:' in line:
+                fields = line.lstrip().split()
+                cards.append(int(fields[0]))
 
     for card in cards:
         key = 'Card%d.Amixer.info' % card

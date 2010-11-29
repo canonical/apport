@@ -11,6 +11,8 @@ Bug fixes:
  - GTK frontend: Require GTK 3.0.
  - launchpad.py: Default to "production" instance, not "edge", since edge is
    obsolete now.
+ - hookutils.py, attach_alsa(): Fix crash if /proc/asound/cards does not exist.
+   (LP: #626215)
 
 1.16 (2010-11-19)
 -----------------
