@@ -38,7 +38,22 @@ class build_java_subdir(Command):
         finally:
             os.chdir(oldwd)
 
-build.sub_commands.append(('build_java_subdir', None))
+have_java = False
+try:
+    with open('/dev/null', 'w') as null:
+        subprocess.check_call(['javac', '-version'], stderr=null, stdout=null)
+    have_java = True
+
+except OSError, e:
+    have_java = False
+
+optional_data_files = []
+cmdclass = {}
+
+if have_java:
+    build.sub_commands.append(('build_java_subdir', None))
+    optional_data_files.append(('share/java', ['java/apport.jar']))
+    cmdclass.update({'build_java_subdir' : build_java_subdir})
 
 try:
     import DistUtilsExtra.auto
@@ -78,7 +93,6 @@ DistUtilsExtra.auto.setup(name='apport',
                   ('share/apport/testsuite/', glob('test/*')),
                   ('share/doc/apport/', glob('doc/*.txt')),
                   ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
-                  ('share/java', ['java/apport.jar'])
-                  ],
-    cmdclass={'build_java_subdir' : build_java_subdir}
+                  ] + optional_data_files,
+    cmdclass=cmdclass
 )
