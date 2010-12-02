@@ -13,7 +13,7 @@ implementation (like GTK, Qt, or CLI).
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-__version__ = '1.13.3'
+__version__ = '1.16'
 
 import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
@@ -24,7 +24,13 @@ import apport, apport.fileutils, REThread
 from apport.crashdb import get_crashdb, NeedsCredentials
 from apport import unicode_gettext as _
 
-symptom_script_dir = '/usr/share/apport/symptoms'
+symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
+                                    '/usr/share/apport/symptoms')
+
+def excstr(exception):
+    '''Return exception message as unicode.'''
+    
+    return str(exception).decode(locale.getpreferredencoding(), 'replace')
 
 def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         ignore_uninstalled=False):
@@ -71,7 +77,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         if not ignore_uninstalled:
             raise
     except SystemError, e:
-        report['UnreportableReason'] = str(e)
+        report['UnreportableReason'] = excstr(e)
         return
 
     if report.add_hooks_info(ui):
@@ -397,11 +403,11 @@ free memory to automatically analyze the problem and send a report to the develo
 
         if self.options.save:
             try:
-                f = open(self.options.save, 'w')
+                f = open(os.path.expanduser(self.options.save), 'w')
                 self.report.write(f)
                 f.close()
             except (IOError, OSError), e:
-                self.ui_error_message(_('Cannot create report'), str(e))
+                self.ui_error_message(_('Cannot create report'), excstr(e))
         else:
             # show what's being sent
             response = self.ui_present_report_details(False)
@@ -514,6 +520,10 @@ free memory to automatically analyze the problem and send a report to the develo
         if not symptom_names:
             return False
 
+        symptom_descriptions, symptom_names = \
+            zip(*sorted(zip(symptom_descriptions, symptom_names)))
+        symptom_descriptions = list(symptom_descriptions)
+        symptom_names = list(symptom_names)
         symptom_names.append(None)
         symptom_descriptions.append('Other problem')
 
@@ -560,7 +570,7 @@ free memory to automatically analyze the problem and send a report to the develo
             try:
                 self.run_crash(self.options.crash_file, False)
             except OSError, e:
-                self.ui_error_message(_('Invalid problem report'), str(e))
+                self.ui_error_message(_('Invalid problem report'), excstr(e))
             return True
         else:
             return self.run_crashes()
@@ -753,6 +763,9 @@ free memory to automatically analyze the problem and send a report to the develo
             hookui = HookUI(self)
 
             if not self.report.has_key('Stacktrace'):
+                # save original environment, in case hooks change it
+                orig_env = os.environ.copy()
+
                 icthread = REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package,
@@ -766,6 +779,11 @@ free memory to automatically analyze the problem and send a report to the develo
                         sys.exit(1)
 
                 icthread.join()
+
+                # restore original environment
+                os.environ.clear()
+                os.environ.update(orig_env)
+
                 icthread.exc_raise()
 
             if self.report.has_key('CrashDB'):
@@ -915,7 +933,7 @@ free memory to automatically analyze the problem and send a report to the develo
             except NeedsCredentials, e:
                 message = _('Please enter your account information for the '
                             '%s bug tracking system')
-                data = self.ui_question_userpass(message % str(e))
+                data = self.ui_question_userpass(message % excstr(e))
                 if data is not None:
                     user, password = data
                     self.crashdb.set_credentials(user, password)
@@ -927,7 +945,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_error_message(_('Network problem'),
                         '%s\n\n%s' % (
                             _('Cannot connect to crash database, please check your Internet connection.'),
-                             str(e)))
+                             excstr(e)))
                 return
 
         ticket = upthread.return_value()
@@ -1289,7 +1307,7 @@ class HookUI:
 #
 
 if  __name__ == '__main__':
-    import unittest, shutil, signal, tempfile
+    import unittest, shutil, signal, tempfile, resource
     from cStringIO import StringIO
     import apport.report
     import problem_report
@@ -1842,29 +1860,26 @@ CoreDump: base64
             assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
             pid = os.fork()
             if pid == 0:
-                os.setsid()
+                resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+                os.chdir(apport.fileutils.report_dir)
                 os.execv(test_executable, [test_executable])
                 assert False, 'Could not execute ' + test_executable
 
-            try:
-                # generate a core dump
-                time.sleep(0.5)
-                coredump = os.path.join(apport.fileutils.report_dir, 'core')
-                assert subprocess.call(['gdb', '--batch', '--ex', 'generate-core-file '
-                    + coredump, test_executable, str(pid)], stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE) == 0
+            time.sleep(0.5)
 
-                # generate crash report
-                r = apport.Report()
-                r['ExecutablePath'] = test_executable
-                r['CoreDump'] = (coredump,)
-                r['Signal'] = '11'
-                r.add_proc_info(pid)
-                r.add_user_info()
-            finally:
-                # kill test executable
-                os.kill(pid, signal.SIGKILL)
-                os.waitpid(pid, 0)
+            # generate crash report
+            r = apport.Report()
+            r['ExecutablePath'] = test_executable
+            r['Signal'] = '11'
+            r.add_proc_info(pid)
+            r.add_user_info()
+
+            # generate a core dump
+            coredump = os.path.join(apport.fileutils.report_dir, 'core')
+            os.kill(pid, signal.SIGSEGV)
+            os.waitpid(pid, 0)
+            assert os.path.exists(coredump)
+            r['CoreDump'] = (coredump,)
 
             return r
 

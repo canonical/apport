@@ -1,8 +1,10 @@
 '''Convenience functions for use in package hooks.'''
 
-# Copyright (C) 2008 - 2009 Canonical Ltd.
-# Author: Matt Zimmerman <mdz@canonical.com>
-# Contributor: Brian Murray <brian@ubuntu.com>
+# Copyright (C) 2008 - 2010 Canonical Ltd.
+# Authors: 
+#   Matt Zimmerman <mdz@canonical.com>
+#   Brian Murray <brian@ubuntu.com>
+#   Martin Pitt <martin.pitt@ubuntu.com>
 # 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -18,12 +20,13 @@ import glob
 import re
 import string
 import stat
+import base64
 
 import xml.dom, xml.dom.minidom
 
 from packaging_impl import impl as packaging
 
-_path_key_trans = string.maketrans('#/-_+','.....')
+_path_key_trans = string.maketrans('#/-_+ ','....._')
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
         
@@ -60,6 +63,9 @@ def attach_file(report, path, key=None):
     if not key:
         key = path_to_key(path)
 
+    # Do not clobber existing keys
+    while report.has_key(key):
+        key += "_"
     report[key] = read_file(path)
 
 def attach_dmesg(report):
@@ -106,7 +112,7 @@ def attach_hardware(report):
 
     attach_file(report, '/proc/interrupts', 'ProcInterrupts')
     attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
-    attach_file(report, '/proc/cmdline', 'ProcCmdLine')
+    attach_file(report, '/proc/cmdline', 'ProcKernelCmdLine')
     attach_file(report, '/proc/modules', 'ProcModules')
     attach_file(report, '/var/log/udev', 'UdevLog')
 
@@ -213,7 +219,7 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
     In case of failure, a textual error gets returned. This function forces
     LC_MESSAGES to C, to avoid translated output in bug reports.
     '''
-    env = os.environ
+    env = os.environ.copy()
     env['LC_MESSAGES'] = 'C'
     try:
        sp = subprocess.Popen(command, stdout=subprocess.PIPE,
@@ -546,7 +552,7 @@ def _parse_gconf_schema(schema_file):
                 try:
                     default = schema.getElementsByTagName('default')[0].childNodes[0].data
                     if type == 'bool':
-                        if default:
+                        if default.lower() == 'true':
                             ret[key] = 'true'
                         else:
                             ret[key] = 'false'
@@ -556,6 +562,36 @@ def _parse_gconf_schema(schema_file):
                     ret[key] = '' # no gconf default
 
     return ret
+
+def __drm_con_info(con):
+    info = ''
+    for f in os.listdir(con):
+        path = os.path.join(con, f)
+        if f == 'uevent' or not os.path.isfile(path):
+            continue
+        val = open(path).read().strip()
+        # format some well-known attributes specially
+        if f == 'modes':
+            val = val.replace('\n', ' ')
+        if f == 'edid':
+            val = base64.b64encode(val)
+            f += '-base64'
+        info += '%s: %s\n' % (f, val)
+    return info
+
+def attach_drm_info(report):
+    '''Add information about DRM hardware.
+
+    Collect information from /sys/class/drm/.
+    '''
+    drm_dir = '/sys/class/drm'
+    if not os.path.isdir(drm_dir):
+        return
+    for f in os.listdir(drm_dir):
+        con = os.path.join(drm_dir, f)
+        if os.path.exists(os.path.join(con, 'enabled')):
+            # DRM can set an arbitrary string for its connector paths.
+            report['DRM.' + path_to_key(f)] = __drm_con_info(con)
 
 #
 # Unit test

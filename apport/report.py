@@ -971,7 +971,7 @@ class Report(ProblemReport):
             return None
 
         # kernel crash
-        if self['ProblemType'] == 'KernelCrash':
+        if self.has_key('Stacktrace') and self['ProblemType'] == 'KernelCrash':
             sig = 'kernel'
             regex = re.compile ('^\s*\#\d+\s\[\w+\]\s(\w+)')
             for line in self['Stacktrace'].splitlines():

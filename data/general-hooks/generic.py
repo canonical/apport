@@ -11,9 +11,9 @@
 # the full text of the license.
 
 import os, re
-import apport.hookutils
+import apport.hookutils, apport.fileutils
 
-def add_info(report):
+def add_info(report, ui):
     nm = apport.hookutils.nonfree_kernel_modules()
     if nm:
         report['NonfreeKernelModules'] = ' '.join(nm)
@@ -45,6 +45,25 @@ free some space.' % (mounts[mount], free_mb)
             if xsession_errors:
                 report['XsessionErrors'] = xsession_errors
 
+    # using local libraries?
+    if 'ProcMaps' in report:
+        local_libs = set()
+        for lib in re.finditer(r'\s(/[^ ]+\.so[.0-9]*)$', report['ProcMaps'], re.M):
+            if not apport.fileutils.likely_packaged(lib.group(1)):
+                local_libs.add(lib.group(1))
+        if local_libs:
+            if not ui.yesno('''The crashed program seems to use third-party or local libraries:
+
+%s
+
+It is highly recommended to check if the problem persists without those first.
+
+Do you want to continue the report process anyway?
+''' % '\n'.join(local_libs)):
+                raise StopIteration
+            report['LocalLibraries'] = ' '.join(local_libs)
+            report['Tags'] = (report.get('Tags', '') + ' local-libs').strip()
+
     # using ecryptfs?
     if os.path.exists(os.path.expanduser('~/.ecryptfs/wrapped-passphrase')):
         report['EcryptfsInUse'] = 'Yes'
@@ -57,6 +76,6 @@ free some space.' % (mounts[mount], free_mb)
 
 if __name__ == '__main__':
     r = {}
-    add_info(r)
+    add_info(r, None)
     for k in r:
         print k, ':', r[k]

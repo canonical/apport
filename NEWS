@@ -1,10 +1,104 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.13.4 (UNRELEASED)
+1.16.1 (UNRELEASED)
+-------------------
+Bug fixes:
+ - GTK frontend: Require GTK 3.0.
+
+1.16 (2010-11-19)
+-----------------
+New features:
+ - Port GTK frontend from pygtk2 to GTK+3.0 and gobject-introspection.
+
+Bug fixes:
+ - Fix symptoms again. Version 1.15 broke the default symptom directory.
+ - Fix memory test case to work with current Python versions, where the SQLite
+   integrity check throws a different exception.
+
+1.15 (2010-11-11)
+-----------------
+New features:
+ - Add dump_acpi_tables.py script. This can be called by package hooks which
+   need ACPI table information (in particular, kernel bug reports). Thanks to
+   Brad Figg for the script!
+ - Order symptom descriptions alphabetically. Thanks to Javier Collado.
+ - Check $APPORT_SYMPTOMS_DIR environment variable for overriding the system
+   default path. Thanks to Javier Collado.
+
+Bug fixes:
+ - testsuite: Check that crashdb.conf can have dynamic code to determine DB
+   names and options.
+ - ui.py test suite: Rewrite _gen_test_crash() to have the test process core
+   dump itself, instead of using gdb to do it. The latter fails in ptrace
+   restricted environments, such as Ubuntu 10.10.
+ - packaging-apt-dpkg.py: Fix handling of /etc/apport/native-origins.d to
+   actually work. Thanks Steve Langasek. (LP: #627777)
+ - apport-kde: Load correct translation catalogue. Thanks Jonathan Riddell.
+   (LP: #633483)
+ - launchpad.py: Use launchpadlib to file a bug instead of screen scraping.
+   The latter was completely broken with current Launchpad, so this makes the
+   test suite actually work again. Thanks to Diogo Matsubara!
+ - launchpad.py: Change $APPORT_STAGING to $APPORT_LAUNCHPAD_INSTANCE, so that
+   you can now specify "staging", "edge", or "dev" (for a local
+   http://launchpad.dev installation). Thanks to Diogo Matsubara!
+ - backends/packaging-apt-dpkg.py: Fix crash on empty lines in ProcMaps
+   attachment.
+ - doc/symptoms.txt: Fix typo, thanks Philip Muskovac. (LP: #590521)
+ - apport/hookutils.py: rename ProcCmdLine to ProcKernelCmdLine to not wipe
+   wipe out /proc/$pid/cmdline information. (LP: #657091)
+ - apport/hookutils.py: attach_file() will not overwrite existing report
+   keys, instead appending "_" until the key is unique.
+ - Fix --save option to recognise ~, thanks Philip Muškovac. (LP: #657278)
+ - Remove escalation_subscription from Ubuntu bug DB definition, turned out to
+   not be useful; thanks Brian Murray.
+ - launchpad.py: Fix APPORT_LAUNCHPAD_INSTANCE values with a https:// prefix.
+ - apt backend: Opportunistically try to install a -dbg package in addition to
+   -dbgsym, to increase the chance that at least one of it exists. Thanks
+   Daniel J Blueman!
+
+1.14.1 (2010-06-24)
+-------------------
+Bug fixes:
+ - hookutils.py, attach_drm_info(): Sanitize connector names. Thanks Chris
+   Halse Rogers! (LP: #597558)
+ - bash completion: Complete all path names, apport-bug can be invoked with a
+   path to a program. Thanks Philip Muskovac.
+
+1.14 (2010-06-16)
+-----------------
+New features:
+ - hookutils.py: Add new method attach_drm_info() to read and format
+   /sys/class/drm/*.
+
+Bug fixes:
+ - packaging-apt-dpkg.py: Fix deprecated python-apt variables, thanks David
+   Stansby. (LP: #591695)
+ - launchpad.py: Fix crash on attachments which are named *.gz, but
+   uncompressed. (LP: #574360)
+ - hookutils.py, attach_gconf(): Fix defaults parsing for boolean keys.
+   (LP: #583109)
+
+1.13.4 (2010-05-04)
 -------------------
  - bash completion: Fix error message if /usr/share/apport/symptoms does not
    exist. Thanks Philip Muškovac! (LP: #562118)
+ - general-hooks/parse_segv.py: Report stack exhaustion more clearly and
+   correctly handle register dereferencing calls.
+ - Save/restore environment when calling hooks, in case they change the locale,
+   etc. (LP: #564422)
+ - hookutils.py, command_output(): Do not set $LC_MESSAGES for the calling
+   process/hook, just for the command to be called.
+ - ui.py: When displaying strings from system exceptions, decode them into an
+   unicode string, to avoid crashing the KDE UI. (LP: #567253)
+ - apport-retrace: Fix crash for retracing kernel vmcores, which do not have an
+   ExecutablePath.
+ - apport-bug manpage: Clarify when apport-collect may be used. Thanks Brian
+   Murray! (LP: #537273)
+ - generic hook: Check ProcMaps for unpackaged libraries, and ask the user if
+   he really wants to continue. If he does, tag the report as "local-libs" and
+   add a "LocalLibraries" field to the report with a list of them.
+   (LP: #545227)
 
 1.13.3 (2010-04-14)
 -------------------

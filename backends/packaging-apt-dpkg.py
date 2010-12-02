@@ -90,12 +90,12 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
-        cur_ver = self._apt_pkg(package)._pkg.CurrentVer
+        cur_ver = self._apt_pkg(package)._pkg.current_ver
         if not cur_ver:
             # happens with virtual packages
             return []
-        return [d[0].TargetPkg.Name for d in cur_ver.DependsList.get('Depends', []) +
-            cur_ver.DependsList.get('PreDepends', [])]
+        return [d[0].target_pkg.name for d in cur_ver.depends_list.get('Depends', []) +
+            cur_ver.depends_list.get('PreDepends', [])]
 
     def get_source(self, package):
         '''Return the source package name for a package.'''
@@ -131,7 +131,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         native_origins = [this_os]
         try:
             for f in os.listdir('/etc/apport/native-origins.d'):
-                for line in open(f):
+                for line in open(os.path.join('/etc/apport/native-origins.d', f)):
                     line = line.strip()
                     if line:
                         native_origins.append(line)
@@ -445,6 +445,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             dependency_versions[pkg] = version
             try:
                 if self.get_architecture(pkg) != 'all':
+                    dependency_versions[pkg+'-dbg'] = dependency_versions[pkg]
                     dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
             except ValueError:
                 print >> sys.stderr, 'WARNING: package %s not known to package cache' % pkg
@@ -532,7 +533,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if not l.strip():
                     continue
                 cols = l.split()
-                if 'x' in cols[1] and len(cols) == 6 and '.so' in cols[5]:
+                if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
                     lib = os.path.realpath(cols[5])
                     libs.add(lib)
 

@@ -329,6 +329,40 @@ class _T(unittest.TestCase):
         self.assertEqual(self.crashes.get_unretraced(), set([0, 1, 2]))
         self.assertEqual(self.crashes.get_dup_unchecked(), set([3, 4]))
 
+    def test_dynamic_crashdb_conf(self):
+        '''Dynamic code in crashdb.conf'''
+
+        # use our dummy crashdb
+        crashdb_conf = tempfile.NamedTemporaryFile()
+        print >> crashdb_conf, '''default = 'testsuite'
+
+def get_dyn():
+    return str(2 + 2)
+
+def get_dyn_name():
+    return 'on_the' + 'fly'
+
+databases = {
+    'testsuite': { 
+        'impl': 'memory',
+        'bug_pattern_base': None,
+        'dyn_option': get_dyn(),
+    },
+    get_dyn_name(): {
+        'impl': 'memory',
+        'bug_pattern_base': None,
+        'whoami': 'dynname',
+    }
+}
+'''
+        crashdb_conf.flush()
+
+        db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
+        self.assertEqual(db.options['dyn_option'], '4')
+        db = apport.crashdb.get_crashdb(None, 'on_thefly', crashdb_conf.name)
+        self.failIf('dyn_opion' in db.options)
+        self.assertEqual(db.options['whoami'], 'dynname')
+
     #
     # Test memory.py implementation
     #
@@ -737,7 +771,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
             f.close()
 
             self.crashes = CrashDatabase(None, None, {})
-            self.assertRaises(SystemError, self.crashes.init_duplicate_db, db)
+            self.assertRaises(StandardError, self.crashes.init_duplicate_db, db)
 
         finally:
             os.unlink(db)

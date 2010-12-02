@@ -10,12 +10,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import urllib, tempfile, shutil, os.path, re, gzip, sys, socket, ConfigParser
+import urllib, tempfile, os.path, re, gzip, sys
 import email
 from cStringIO import StringIO
 
 from launchpadlib.errors import HTTPError
-from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
+from launchpadlib.launchpad import Launchpad
 
 import apport.crashdb
 import apport
@@ -26,7 +26,7 @@ def filter_filename(attachments):
     for attachment in attachments:
         try:
             f = attachment.data.open()
-        except HTTPError, e:
+        except HTTPError:
             print >> sys.stderr, 'ERROR: Broken attachment on bug, ignoring'
             continue
         name = f.filename
@@ -52,8 +52,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         - distro: Name of the distribution in Launchpad
         - project: Name of the project in Launchpad
         (Note that exactly one of "distro" or "project" must be given.)
-        - staging: If set, this uses staging instead of production (optional).
-          This can be overriden or set by $APPORT_STAGING environment.
+        - launchpad_instance: If set, this uses the given launchpad instance
+          instead of production (optional). This can be overriden or set by
+          $APPORT_LAUNCHPAD_INSTANCE environment.
         - cache_dir: Path to a permanent cache directory; by default it uses a
           temporary one. (optional). This can be overridden or set by
           $APPORT_LAUNCHPAD_CACHE environment.
@@ -62,11 +63,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         - escalation_tag: This adds the given tag to a bug once it gets more
           than 10 duplicates.
         '''
-        if os.getenv('APPORT_STAGING'):
-            options['staging'] = True
+        if os.getenv('APPORT_LAUNCHPAD_INSTANCE'):
+            options['launchpad_instance'] = os.getenv(
+                'APPORT_LAUNCHPAD_INSTANCE')
         if not auth:
-            if options.get('staging'):
-                auth = default_credentials_path + '.staging'
+            lp_instance = options.get('launchpad_instance')
+            if lp_instance:
+                auth = default_credentials_path + '.' + lp_instance.split('://', 1)[-1]
             else:
                 auth = default_credentials_path
         apport.crashdb.CrashDatabase.__init__(self, auth,
@@ -94,10 +97,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if self.__launchpad:
             return self.__launchpad
 
-        if self.options.get('staging'):
-            launchpad_instance = STAGING_SERVICE_ROOT
+        if self.options.get('launchpad_instance'):
+            launchpad_instance = self.options.get('launchpad_instance')
         else:
-            launchpad_instance = EDGE_SERVICE_ROOT
+            launchpad_instance = 'edge'
 
         auth_dir = os.path.dirname(self.auth)
         if auth_dir and not os.path.isdir(auth_dir):
@@ -185,9 +188,22 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         mime.seek(0)
 
         ticket = upload_blob(mime, progress_callback,
-                staging=self.options.get('staging', False))
+                hostname=self.get_hostname())
         assert ticket
         return ticket
+
+    def get_hostname(self):
+        '''Return the hostname for the Launchpad instance.'''
+
+        launchpad_instance = self.options.get('launchpad_instance')
+        if launchpad_instance:
+            if launchpad_instance == 'staging':
+                hostname = 'staging.launchpad.net'
+            else:
+                hostname = 'launchpad.dev'
+        else:
+            hostname = 'launchpad.net'
+        return hostname
 
     def get_comment_url(self, report, handle):
         '''Return an URL that should be opened after report has been uploaded
@@ -202,13 +218,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if title:
             args['field.title'] = title
 
-        if self.options.get('staging'):
-            hostname = 'staging.launchpad.net'
-        else:
-            hostname = 'launchpad.net'
+        hostname = self.get_hostname()
 
         project = self.options.get('project')
-        
+
         if not project:
             if report.has_key('SourcePackage'):
                 return 'https://bugs.%s/%s/+source/%s/+filebug/%s?%s' % (
@@ -288,7 +301,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if ext == '.txt':
                 report[key] = attachment.read()
             elif ext == '.gz':
-                report[key] = gzip.GzipFile(fileobj=attachment).read()#TODO: is this the best solution?
+                try:
+                    report[key] = gzip.GzipFile(fileobj=attachment).read()
+                except IOError, e:
+                    # some attachments are only called .gz, but are
+                    # uncompressed (LP #574360)
+                    if 'Not a gzip' not in str(e):
+                        raise
+                    attachment.seek(0)
+                    report[key] = attachment.read()
             else:
                 raise Exception, 'Unknown attachment type: ' + attachment.filename
         return report
@@ -772,7 +793,7 @@ class HTTPSProgressHandler(urllib2.HTTPSHandler):
     def https_open(self, req):
         return self.do_open(HTTPSProgressConnection, req)
 
-def upload_blob(blob, progress_callback = None, staging=False):
+def upload_blob(blob, progress_callback = None, hostname='launchpad.net'):
     '''Upload blob (file-like object) to Launchpad.
 
     progress_callback can be set to a function(sent, total) which is regularly
@@ -782,8 +803,9 @@ def upload_blob(blob, progress_callback = None, staging=False):
 
     Return None on error, or the ticket number on success.
 
-    By default this uses the production Launchpad instance. Set staging=True to
-    use staging.launchpad.net (for testing).
+    By default this uses the production Launchpad hostname. Set
+    hostname to 'launchpad.dev' or 'staging.launchpad.net' to use another
+    instance for testing.
     '''
     ticket = None
 
@@ -791,10 +813,7 @@ def upload_blob(blob, progress_callback = None, staging=False):
     _https_upload_callback = progress_callback
 
     opener = urllib2.build_opener(HTTPSProgressHandler, multipartpost_handler.MultipartPostHandler)
-    if staging:
-        url = 'https://staging.launchpad.net/+storeblob'
-    else:
-        url = 'https://launchpad.net/+storeblob'
+    url = 'https://%s/+storeblob' % hostname
     result = opener.open(url,
         { 'FORM_SUBMIT': '1', 'field.blob': blob })
     ticket = result.info().get('X-Launchpad-Blob-Token')
@@ -806,7 +825,7 @@ def upload_blob(blob, progress_callback = None, staging=False):
 #
 
 if __name__ == '__main__':
-    import unittest, urllib2, cookielib
+    import unittest, urllib2
 
     crashdb = None
     segv_report = None
@@ -817,8 +836,6 @@ if __name__ == '__main__':
         # binary package 'coreutils'
         test_package = 'coreutils'
         test_srcpackage = 'coreutils'
-        known_test_id = 302779
-        known_test_id2 = 89040
 
         #
         # Generic tests, should work for all CrashDB implementations
@@ -836,6 +853,54 @@ if __name__ == '__main__':
             self.ref_report.add_os_info()
             self.ref_report.add_user_info()
             self.ref_report['SourcePackage'] = 'coreutils'
+
+            # Objects tests rely on.
+            self.uncommon_description_bug = self._file_uncommon_description_bug()
+            self._create_project('langpack-o-matic')
+
+            # XXX Should create new bug reports, not reuse those.
+            self.known_test_id = self.uncommon_description_bug.id
+            self.known_test_id2 = self._file_uncommon_description_bug().id
+
+        def _create_project(self, name):
+            '''Create a project using launchpadlib to be used by tests.'''
+
+            project = self.crashdb.launchpad.projects[name]
+            if not project:
+                self.crashdb.launchpad.projects.new_project(
+                    description=name + 'description',
+                    display_name=name,
+                    name=name,
+                    summary=name + 'summary',
+                    title=name + 'title')
+
+        def _file_uncommon_description_bug(self):
+            '''File a bug report with an uncommon description.
+
+            Example taken from real LP bug 269539. It contains only
+            ProblemType/Architecture/DistroRelease in the description, and has
+            free-form description text after the Apport data.
+            '''
+            desc = '''problem
+
+ProblemType: Package
+Architecture: amd64
+DistroRelease: Ubuntu 8.10
+
+more text
+
+and more
+'''
+            return self.crashdb.launchpad.bugs.createBug(
+                title=u'mixed description bug',
+                description=desc,
+                target=self.crashdb.lp_distro)
+
+        @property
+        def hostname(self):
+            '''Get the Launchpad hostname for the given crashdb.'''
+
+            return self.crashdb.get_hostname()
 
         def _file_segv_report(self):
             '''File a SEGV crash report.
@@ -855,10 +920,10 @@ if __name__ == '__main__':
 
             handle = self.crashdb.upload(r)
             self.assert_(handle)
-            url = self.crashdb.get_comment_url(r, handle)
-            self.assert_(url)
+            bug_target = self._get_bug_target(self.crashdb, r)
+            self.assert_(bug_target)
 
-            id = self._fill_bug_form(url)
+            id = self._file_bug(bug_target, r, handle)
             self.assert_(id > 0)
             return id
 
@@ -870,7 +935,7 @@ if __name__ == '__main__':
             global segv_report
             id = self._file_segv_report()
             segv_report = id
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
         def test_1_report_python(self):
             '''upload() and get_comment_url() for Python crash
@@ -891,14 +956,14 @@ NameError: global name 'weird' is not defined'''
 
             handle = self.crashdb.upload(r)
             self.assert_(handle)
-            url = self.crashdb.get_comment_url(r, handle)
-            self.assert_(url)
+            bug_target = self._get_bug_target(self.crashdb, r)
+            self.assert_(bug_target)
 
-            id = self._fill_bug_form(url)
+            id = self._file_bug(bug_target, r, handle)
             self.assert_(id > 0)
             global python_report
             python_report = id
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
         def test_2_download(self):
             '''download()'''
@@ -987,11 +1052,14 @@ NameError: global name 'weird' is not defined'''
         def test_update_description(self):
             '''update() with changing description'''
 
-            id = self._fill_bug_form(
-                'https://bugs.staging.launchpad.net/%s/+source/bash/+filebug?'
-                    'field.title=testbug&field.actions.search=' % self.crashdb.distro)
+            bug_target = self.crashdb.lp_distro.getSourcePackage(name='bash')
+            bug = self.crashdb.launchpad.bugs.createBug(
+                description='test description for test bug.',
+                target=bug_target,
+                title='testbug')
+            id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             r = apport.Report('Bug')
 
@@ -1016,14 +1084,16 @@ NameError: global name 'weird' is not defined'''
         def test_update_comment(self):
             '''update() with appending comment'''
 
+            bug_target = self.crashdb.lp_distro.getSourcePackage(name='bash')
             # we need to fake an apport description separator here, since we
             # want to be lazy and use download() for checking the result
-            id = self._fill_bug_form(
-                'https://bugs.staging.launchpad.net/%s/+source/bash/+filebug?'
-                    'field.title=testbug&field.actions.search=' %
-                    self.crashdb.distro, comment='Pr0blem\n\n--- \nProblemType: Bug')
+            bug = self.crashdb.launchpad.bugs.createBug(
+                description='Pr0blem\n\n--- \nProblemType: Bug',
+                target=bug_target,
+                title='testbug')
+            id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             r = apport.Report('Bug')
 
@@ -1049,11 +1119,14 @@ NameError: global name 'weird' is not defined'''
         def test_update_filter(self):
             '''update() with a key filter'''
 
-            id = self._fill_bug_form(
-                'https://bugs.staging.launchpad.net/%s/+source/bash/+filebug?'
-                    'field.title=testbug&field.actions.search=' % self.crashdb.distro)
+            bug_target = self.crashdb.lp_distro.getSourcePackage(name='bash')
+            bug = self.crashdb.launchpad.bugs.createBug(
+                description='test description for test bug',
+                target=bug_target,
+                title='testbug')
+            id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             r = apport.Report('Bug')
 
@@ -1203,7 +1276,7 @@ NameError: global name 'weird' is not defined'''
             invalidated by marking it as a duplicate.
             '''
             id = self._file_segv_report()
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             r = self.crashdb.download(id)
 
@@ -1239,119 +1312,99 @@ NameError: global name 'weird' is not defined'''
         def _get_instance(klass):
             '''Create a CrashDB instance'''
 
-            return CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
-                    {'distro': 'ubuntu', 'staging': True})
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
 
-        def _fill_bug_form(self, url, comment=None):
-            '''Fill form for a distro bug and commit the bug.
+            return CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+                    {'distro': 'ubuntu',
+                     'launchpad_instance': launchpad_instance})
 
-            Return the report ID.
-            '''
-            cj = cookielib.MozillaCookieJar()
-            cj.load(os.path.expanduser('~/.lpcookie.txt'))
-            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-            opener.addheaders = [('Referer', url)]
+        @classmethod
+        def _get_bug_target(klass, db, report):
+            '''Return the bug_target for this report.'''
 
-            re_pkg = re.compile('\+source/([\w]+)/')
-            re_title = re.compile('<input.*id="field.title".*value="([^"]+)"')
-            re_tags = re.compile('<input.*id="field.tags".*value="([^"]*)"')
+            project = db.options.get('project')
+            if report.has_key('SourcePackage'):
+                return db.lp_distro.getSourcePackage(name=report['SourcePackage'])
+            elif project:
+                return db.launchpad.projects[project]
+            else:
+                return self.lp_distro
 
-            # parse default field values from reporting page
-            while True:
-                res = opener.open(url)
-                try:
-                    self.assertEqual(res.getcode(), 200)
-                except AttributeError:
-                    pass # getcode() is new in Python 2.6
-                content = res.read()
+        def _get_librarian_hostname(self):
+            '''Return the librarian hostname according to the LP hostname used.'''
 
-                if 'Please wait while bug data is processed' in content:
-                    print '.',
-                    sys.stdout.flush()
-                    time.sleep(5)
-                    continue
+            hostname = self.crashdb.get_hostname()
+            if 'staging' in hostname:
+                return 'staging.launchpadlibrarian.net'
+            else:
+                return 'launchpad.dev:58080'
 
-                break
+        def _file_bug(self, bug_target, report, handle, comment=None):
+            '''File a bug report.'''
 
-            m_pkg = re_pkg.search(url)
-            m_title = re_title.search(content)
-            m_tags = re_tags.search(content)
+            bug_title = report.get('Title', report.standard_title())
 
-            # strip off GET arguments from URL
-            url = url.split('?')[0]
+            blob_info = self.crashdb.launchpad.temporary_blobs.fetch(
+                token=handle)
+            # XXX 2010-08-03 matsubara bug=612990:
+            #     Can't fetch the blob directly, so let's load it from the
+            #     representation.
+            blob = self.crashdb.launchpad.load(blob_info['self_link'])
+            #XXX Need to find a way to trigger the job that process the blob
+            # rather polling like this. This makes the test suite take forever
+            # to run.
+            while not blob.hasBeenProcessed():
+                time.sleep(1)
 
-            # create request to file bug
-            args = {
-                'packagename_option': 'choose',
-                'field.packagename': m_pkg.group(1),
-                'field.title': m_title.group(1),
-                'field.tags': m_tags.group(1),
-                'field.comment': comment or 'ZOMG!',
-                'field.actions.submit_bug': '1',
-            }
+            # processed_blob contains info about privacy, additional comments
+            # and attachments.
+            processed_blob = blob.getProcessedData()
 
-            res = opener.open(url, data=urllib.urlencode(args))
-            try:
-                self.assertEqual(res.getcode(), 200)
-            except AttributeError:
-                pass # getcode() is new in Python 2.6
-            self.assert_('+source/%s/+bug/' % m_pkg.group(1) in res.geturl())
-            id = res.geturl().split('/')[-1]
-            return int(id)
+            bug = self.crashdb.launchpad.bugs.createBug(
+                description=processed_blob['extra_description'],
+                private=processed_blob['private'],
+                tags=processed_blob['initial_tags'],
+                target=bug_target,
+                title=bug_title)
 
-        def _fill_bug_form_project(self, url):
-            '''Fill form for a project bug and commit the bug.
+            for comment in processed_blob['comments']:
+                bug.newMessage(content=comment)
 
-            Return the report ID.
-            '''
-            cj = cookielib.MozillaCookieJar()
-            cj.load(os.path.expanduser('~/.lpcookie.txt'))
-            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-            opener.addheaders = [('Referer', url)]
+            # Ideally, one would be able to retrieve the attachment content
+            # from the ProblemReport object or from the processed_blob.
+            # Unfortunately the processed_blob only give us the Launchpad
+            # librarian file_alias_id, so that's why we need to
+            # download it again and upload to the bug report. It'd be even
+            # better if addAttachment could work like linkAttachment, the LP
+            # api used in the +filebug web UI, but there are security concerns
+            # about the way linkAttachment works.
+            librarian_url = 'http://%s' % self._get_librarian_hostname()
+            for attachment in processed_blob['attachments']:
+                filename = description = attachment['description']
+                # Download the attachment data.
+                data = urllib.urlopen(urllib.basejoin(librarian_url,
+                    str(attachment['file_alias_id']) + '/' + filename)).read()
+                # Add the attachment to the newly created bug report.
+                bug.addAttachment(
+                    comment=filename,
+                    data=data,
+                    filename=filename,
+                    description=description)
 
-            m = re.search('launchpad.net/([^/]+)/\+filebug', url)
-            assert m
-            project = m.group(1)
+            for subscriber in processed_blob['subscribers']:
+                sub = self.crashdb.launchpad.people[subscriber]
+                if sub:
+                    bug.subscribe(person=sub)
 
-            re_title = re.compile('<input.*id="field.title".*value="([^"]+)"')
-            re_tags = re.compile('<input.*id="field.tags".*value="([^"]+)"')
-
-            # parse default field values from reporting page
-            while True:
-                res = opener.open(url)
-                try:
-                    self.assertEqual(res.getcode(), 200)
-                except AttributeError:
-                    pass # getcode() is new in Python 2.6
-                content = res.read()
-
-                if 'Please wait while bug data is processed' in content:
-                    print '.',
-                    sys.stdout.flush()
-                    time.sleep(5)
-                    continue
-
-                break
-
-            m_title = re_title.search(content)
-            m_tags = re_tags.search(content)
-
-            # strip off GET arguments from URL
-            url = url.split('?')[0]
-
-            # create request to file bug
-            args = {
-                'field.title': m_title.group(1),
-                'field.tags': m_tags.group(1),
-                'field.comment': 'ZOMG!',
-                'field.actions.submit_bug': '1',
-            }
-
-            res = opener.open(url, data=urllib.urlencode(args))
-            self.assertEqual(res.getcode(), 200)
-            self.assert_(('launchpad.net/%s/+bug' % project) in res.geturl())
-            id = res.geturl().split('/')[-1]
-            return int(id)
+            for submission_key in processed_blob['hwdb_submission_keys']:
+                # XXX 2010-08-04 matsubara bug=628889:
+                #     Can't fetch the submission directly, so let's load it
+                #     from the representation.
+                submission = self.crashdb.launchpad.load(
+                    'https://api.%s/beta/+hwdb/+submission/%s'
+                    % (self.crashdb.get_hostname(), submission_key))
+                bug.linkHWSubmission(submission=submission)
+            return int(bug.id)
 
         def _mark_needs_retrace(self, id):
             '''Mark a report ID as needing retrace.'''
@@ -1398,10 +1451,12 @@ NameError: global name 'weird' is not defined'''
         def test_project(self):
             '''reporting crashes against a project instead of a distro'''
 
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
             # crash database for langpack-o-matic project (this does not have
             # packages in any distro)
-            crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
-                {'project': 'langpack-o-matic', 'staging': True})
+            crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+                {'project': 'langpack-o-matic',
+                 'launchpad_instance': launchpad_instance})
             self.assertEqual(crashdb.distro, None)
 
             # create Python crash report
@@ -1418,12 +1473,12 @@ NameError: global name 'weird' is not defined'''
             # file it
             handle = crashdb.upload(r)
             self.assert_(handle)
-            url = crashdb.get_comment_url(r, handle)
-            self.assert_('launchpad.net/langpack-o-matic/+filebug' in url)
+            bug_target = self._get_bug_target(crashdb, r)
+            self.assertEqual(bug_target.name, 'langpack-o-matic')
 
-            id = self._fill_bug_form_project(url)
+            id = self._file_bug(bug_target, r, handle)
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://staging.launchpad.net/bugs/%i) ' % id,
+            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
 
             # update
             r = crashdb.download(id)
@@ -1446,21 +1501,22 @@ NameError: global name 'weird' is not defined'''
             '''download() of uncommon description formats'''
 
             # only ProblemType/Architecture/DistroRelease in description
-            r = self.crashdb.download(269539)
+            r = self.crashdb.download(self.uncommon_description_bug.id)
             self.assertEqual(r['ProblemType'], 'Package')
             self.assertEqual(r['Architecture'], 'amd64')
             self.assert_(r['DistroRelease'].startswith('Ubuntu '))
-            self.assert_('DpkgTerminalLog' in r)
 
         def test_escalation(self):
             '''Escalating bugs with more than 10 duplicates'''
 
             assert segv_report, 'you need to run test_1_report_segv() first'
 
-            db = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '', 
-                    {'distro': 'ubuntu', 'staging': True,
-                        'escalation_tag': 'omgkittens',
-                        'escalation_subscription': 'apport-hackers'})
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
+            db = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+                    {'distro': 'ubuntu',
+                     'launchpad_instance': launchpad_instance,
+                     'escalation_tag': 'omgkittens',
+                     'escalation_subscription': 'apport-hackers'})
 
             count = 0
             p = db.launchpad.people[db.options['escalation_subscription']].self_link
@@ -1473,13 +1529,13 @@ NameError: global name 'weird' is not defined'''
                     db.close_duplicate(b, segv_report)
                     b = db.launchpad.bugs[segv_report]
                     has_escalation_tag = db.options['escalation_tag'] in b.tags
-                    has_escalation_subsciption = any([s.person_link == p for s in b.subscriptions])
+                    has_escalation_subscription = any([s.person_link == p for s in b.subscriptions])
                     if count <= 10:
                         self.failIf(has_escalation_tag)
-                        self.failIf(has_escalation_subsciption)
+                        self.failIf(has_escalation_subscription)
                     else:
                         self.assert_(has_escalation_tag)
-                        self.assert_(has_escalation_subsciption)
+                        self.assert_(has_escalation_subscription)
             finally:
                 for b in range(first_dup, first_dup+count):
                     print 'R%i' % b,
@@ -1499,7 +1555,7 @@ NameError: global name 'weird' is not defined'''
             # package name
             b = self.crashdb.launchpad.bugs[python_report]
             t = b.bug_tasks[0]
-            t.target = self.crashdb.launchpad.distributions['ubuntu'].getSourcePackage(name='pmount')
+            t.target = self.crashdb.launchpad.distributions['ubuntu'].getSourcePackage(name='bash')
             t.status = 'Invalid'
             t.lp_save()
             b.addTask(target=self.crashdb.launchpad.projects['coreutils'])
@@ -1518,12 +1574,12 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(b.bug_tasks[0].status, 'New')
 
             # package-less distro task should have package name fixed
-            self.assertEqual(b.bug_tasks[1].bug_target_name, 'coreutils (Ubuntu)')
-            self.assertEqual(b.bug_tasks[1].status, 'New')
+            self.assertEqual(b.bug_tasks[2].bug_target_name, 'coreutils (Ubuntu)')
+            self.assertEqual(b.bug_tasks[2].status, 'New')
 
-            # invalid pmount task should be unmodified
-            self.assertEqual(b.bug_tasks[2].bug_target_name, 'pmount (Ubuntu)')
-            self.assertEqual(b.bug_tasks[2].status, 'Invalid')
+            # invalid bash task should be unmodified
+            self.assertEqual(b.bug_tasks[1].bug_target_name, 'bash (Ubuntu)')
+            self.assertEqual(b.bug_tasks[1].status, 'Invalid')
 
             # the invalid task should not confuse get_fixed_version()
             self.assertEqual(self.crashdb.get_fixed_version(python_report),

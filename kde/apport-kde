@@ -437,7 +437,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     appName = 'apport-kde'
-    catalog = 'apport-kde'
+    catalog = 'apport'
     programName = ki18n('Apport KDE')
     version = '1.0'
     description = ki18n('KDE 4 frontend for the apport crash report system')
