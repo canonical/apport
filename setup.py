@@ -3,10 +3,20 @@
 from glob import glob
 import os.path, shutil, sys, subprocess
 from distutils.version import StrictVersion
-from distutils.command.build import build
-from distutils.core import Command
+import distutils.core
+import distutils.command.build 
+import distutils.command.clean
 
-class build_java_subdir(Command):
+try:
+    import DistUtilsExtra.auto
+except ImportError:
+    import sys
+    print >> sys.stderr, 'To build Apport you need https://launchpad.net/python-distutils-extra'
+    sys.exit(1)
+
+assert StrictVersion(DistUtilsExtra.auto.__version__) >= '2.2', 'needs DistUtilsExtra.auto >= 2.2'
+
+class build_java_subdir(distutils.core.Command):
     '''Java crash handler build command'''
 
     description = 'Compile java components of Apport'
@@ -30,14 +40,19 @@ class build_java_subdir(Command):
 
         os.chdir(oldwd)
 
-try:
-    import DistUtilsExtra.auto
-except ImportError:
-    import sys
-    print >> sys.stderr, 'To build Apport you need https://launchpad.net/python-distutils-extra'
-    sys.exit(1)
+class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
+    '''Java crash handler clean command'''
 
-assert StrictVersion(DistUtilsExtra.auto.__version__) >= '2.2', 'needs DistUtilsExtra.auto >= 2.2'
+    def run(self):
+        DistUtilsExtra.auto.clean_build_tree.run(self)
+        for (root, dirs, files) in os.walk('java'):
+            for f in files:
+                if f.endswith('.jar') or f.endswith('.class'):
+                    os.unlink(os.path.join(root, f))
+
+#
+# main
+#
 
 # try to auto-setup packaging_impl
 if len(sys.argv) >= 2 and sys.argv[1] != 'sdist' and not os.path.exists('apport/packaging_impl.py'):
@@ -58,9 +73,10 @@ cmdclass = {}
 try:
     subprocess.check_call(['javac', '-version'], stderr=subprocess.PIPE)
 
-    build.sub_commands.append(('build_java_subdir', None))
+    distutils.command.build.build.sub_commands.append(('build_java_subdir', None))
     optional_data_files.append(('share/java', ['java/apport.jar']))
-    cmdclass.update({'build_java_subdir' : build_java_subdir})
+    cmdclass['build_java_subdir'] = build_java_subdir
+    cmdclass['clean'] = clean_java_subdir
     print 'Java support: Enabled'
 except OSError:
     print 'Java support: Java not available, not building Java crash handler'
