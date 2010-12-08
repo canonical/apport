@@ -55,4 +55,8 @@ else
     python $mydir/../general-hooks/parse_segv.py -v
 fi
 
+if [ "$local" ]; then
+    $mydir/java
+fi
+
 $mydir/crash

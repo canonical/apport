@@ -1,11 +1,14 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.16.1 (UNRELEASED)
--------------------
+1.17 (UNRELEASED)
+-----------------
 Improvements:
  - Better standard bug titles for Python crashes. Thanks Matt Zimmerman!
    (LP: #681574)
+ - Add handler for uncaught Java exceptions. There is no integration for
+   automatically intercepting all Java crashes yet, see java/README.
+   Thanks Matt Zimmerman! (LP: #548877)
 
 Bug fixes:
  - GTK frontend: Require GTK 3.0.
