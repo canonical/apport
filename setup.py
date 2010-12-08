@@ -94,7 +94,7 @@ DistUtilsExtra.auto.setup(name='apport',
       data_files=[('share/mime/packages', glob('xdg-mime/*')),
                   # these are not supposed to be called directly, use apport-bug instead
                   ('share/apport', ['gtk/apport-gtk', 'kde/apport-kde']),
-                  ('share/apport', glob('kde/*.ui')), #TODO: use pykdeuic modules
+                  ('share/apport', glob('kde/*.ui')), #TODO: fix in p-d-e
                   ('share/apport/testsuite/', glob('test/*')),
                   ('share/doc/apport/', glob('doc/*.txt')),
                   ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
