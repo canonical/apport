@@ -16,6 +16,9 @@ Bug fixes:
    obsolete now.
  - hookutils.py, attach_alsa(): Fix crash if /proc/asound/cards does not exist.
    (LP: #626215)
+ - ui.py, format_filesize(): Fix to work with stricter locale.format() in
+   Python 2.7. (LP: #688535). While we are at it, also change it to use base-10
+   units.
 
 1.16 (2010-11-19)
 -----------------

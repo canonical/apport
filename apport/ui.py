@@ -697,11 +697,11 @@ free memory to automatically analyze the problem and send a report to the develo
     def format_filesize(self, size):
         '''Format the given integer as humanly readable and i18n'ed file size.'''
 
-        if size < 1048576:
-            return locale.format('%.1f KiB', size/1024.)
-        if size < 1024 * 1048576:
-            return locale.format('%.1f MiB', size / 1048576.)
-        return locale.format('%.1f GiB', size / float(1024 * 1048576))
+        if size < 1000000:
+            return locale.format('%.1f', size/1000.) + ' KB'
+        if size < 1000000000:
+            return locale.format('%.1f', size / 1000000.) + ' MB'
+        return locale.format('%.1f', size / float(1000000000)) + ' GB'
 
     def get_complete_size(self):
         '''Return the size of the complete report.'''
@@ -1492,14 +1492,14 @@ databases = {
         def test_format_filesize(self):
             '''format_filesize().'''
 
-            self.assertEqual(self.ui.format_filesize(0), '0.0 KiB')
-            self.assertEqual(self.ui.format_filesize(2048), '2.0 KiB')
-            self.assertEqual(self.ui.format_filesize(2560), '2.5 KiB')
-            self.assertEqual(self.ui.format_filesize(1000000), '976.6 KiB')
-            self.assertEqual(self.ui.format_filesize(1048576), '1.0 MiB')
-            self.assertEqual(self.ui.format_filesize(2.7*1048576), '2.7 MiB')
-            self.assertEqual(self.ui.format_filesize(1024*1048576), '1.0 GiB')
-            self.assertEqual(self.ui.format_filesize(2560*1048576), '2.5 GiB')
+            self.assertEqual(self.ui.format_filesize(0), '0.0 KB')
+            self.assertEqual(self.ui.format_filesize(2048), '2.0 KB')
+            self.assertEqual(self.ui.format_filesize(2560), '2.6 KB')
+            self.assertEqual(self.ui.format_filesize(999999), '1000.0 KB')
+            self.assertEqual(self.ui.format_filesize(1000000), '1.0 MB')
+            self.assertEqual(self.ui.format_filesize(2.7*1000000), '2.7 MB')
+            self.assertEqual(self.ui.format_filesize(1024*1000000), '1.0 GB')
+            self.assertEqual(self.ui.format_filesize(2560*1000000), '2.6 GB')
 
         def test_get_size_loaded(self):
             '''get_complete_size() and get_reduced_size() for loaded Reports.'''
