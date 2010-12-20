@@ -365,7 +365,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             x.append('apport-collected')
             # add any tags (like the release) to the bug
             if report.has_key('Tags'):
-                x.append(report['Tags'])
+                x += report['Tags'].split()
             bug.tags = x
             bug.lp_save()
             bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
