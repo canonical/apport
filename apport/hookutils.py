@@ -450,14 +450,15 @@ def package_versions(*packages):
     
     Arguments may be package names or globs, e. g. "foo*"
     '''
-    versions = ''
+    versions = []
     for package_pattern in packages:
         if not package_pattern:
             continue
 
-        # Expand to a list of package names iff there are matches
-        packages = packaging.package_name_glob(package_pattern) \
-                    or [package_pattern]
+        packages = packaging.package_name_glob(package_pattern)
+
+        if not packages:
+            versions.append((package_pattern, 'N/A'))
 
         for package in packages:
             try:
@@ -466,9 +467,9 @@ def package_versions(*packages):
                 version = 'N/A'
             if version is None:
                 version = 'N/A'
-            versions += '%s %s\n' % (package, version)
+            versions.append((package,version))
 
-    return versions
+    return '\n'.join(['%s %s' % v for v in versions])
 
 def shared_libraries(path):
     '''Returns a list of strings containing the sonames of shared libraries
