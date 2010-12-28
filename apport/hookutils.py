@@ -454,7 +454,12 @@ def package_versions(*packages):
     for package_pattern in packages:
         if not package_pattern:
             continue
-        for package in packaging.package_name_glob(package_pattern):
+
+        # Expand to a list of package names iff there are matches
+        packages = packaging.package_name_glob(package_pattern) \
+                    or [package_pattern]
+
+        for package in packages:
             try:
                 version = packaging.get_version(package)
             except ValueError:
