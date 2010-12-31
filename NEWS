@@ -19,6 +19,8 @@ Bug fixes:
  - ui.py, format_filesize(): Fix to work with stricter locale.format() in
    Python 2.7. (LP: #688535). While we are at it, also change it to use base-10
    units.
+ - hookutils.py, package_versions(): Always include all requested package names
+   even if they're unknown to us. Thanks Matt Zimmerman! (LP: #695188)
 
 1.16 (2010-11-19)
 -----------------
