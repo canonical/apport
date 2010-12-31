@@ -21,6 +21,7 @@ Bug fixes:
    units.
  - hookutils.py, package_versions(): Always include all requested package names
    even if they're unknown to us. Thanks Matt Zimmerman! (LP: #695188)
+ - launchpad.py: When updating a bug, also add new tags. Thanks Brian Murray!
 
 1.16 (2010-11-19)
 -----------------
