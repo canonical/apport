@@ -15,7 +15,6 @@ import os.path, sys, subprocess, os, re
 
 import gobject
 from gi.repository import Gtk
-Gtk.require_version('3.0')
 
 from apport import unicode_gettext as _
 import apport.ui
