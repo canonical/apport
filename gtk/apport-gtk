@@ -38,13 +38,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             'apport-gtk.ui'))
 
         # connect signal handlers
-        if Gtk.version.startswith('2'):
-            # this is currently broken for GTK 2.0 with gi, so do it manually
-            self.w('expander_details').connect('activate', self.on_expander_details_activate)
-            self.w('window_report_upload').connect('delete_event', self.on_progress_window_close_event)
-            self.w('button_cancel_collecting').connect('clicked', self.on_progress_window_close_event)
-        else:
-            assert self.widgets.connect_signals(self) is None
+        assert self.widgets.connect_signals(self) is None
 
         # initialize tree model and view
         self.tree_model = Gtk.TreeStore(gobject.TYPE_STRING)
@@ -347,9 +341,6 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def on_expander_details_activate(self, widget):
         expanded = self.w('expander_details').get_expanded()
-        if Gtk.version.startswith('2'):
-            # in GTK 2 this handler gets called before toggling the state
-            expanded = not expanded
         self.w('dialog_bugreport').set_resizable(expanded)
         if expanded:
             self.w('dialog_bugreport').resize(self.w('dialog_bugreport').get_size()[0], 400)
