@@ -69,10 +69,14 @@ def attach_file(report, path, key=None):
     report[key] = read_file(path)
 
 def attach_dmesg(report):
-    '''Attach information from the kernel ring buffer (dmesg).'''
+    '''Attach information from the kernel ring buffer (dmesg).
 
-    report['BootDmesg'] = open('/var/log/dmesg').read()
-    report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
+    This won't overwite already existing information.
+    '''
+    if not report.get('BootDmesg', '').strip():
+        report['BootDmesg'] = open('/var/log/dmesg').read()
+    if not report.get('CurrentDmesg', '').strip():
+        report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
 
 def attach_dmi(report):
     dmi_dir = '/sys/class/dmi/id'
@@ -647,5 +651,31 @@ if __name__ == '__main__':
             self.assert_('does-not-exist' in nonfree)
             self.failIf(good_ko.name in nonfree)
             self.assert_(bad_ko.name in nonfree)
+
+        def test_attach_dmesg(self):
+            '''attach_dmesg() does not overwrite already existing data'''
+
+            report = {}
+
+            attach_dmesg(report)
+            self.assert_(report['BootDmesg'].startswith('['))
+            self.assert_(len(report['BootDmesg']) > 500)
+            self.assert_(report['CurrentDmesg'].startswith('['))
+
+        def test_dmesg_overwrite(self):
+            '''attach_dmesg() does not overwrite already existing data'''
+
+            report = {'BootDmesg': 'existingboot'}
+
+            attach_dmesg(report)
+            self.assertEqual(report['BootDmesg'][:50], 'existingboot')
+            self.assert_(report['CurrentDmesg'].startswith('['))
+            
+            report = {'BootDmesg': 'existingboot', 'CurrentDmesg': 'existingcurrent' }
+
+            attach_dmesg(report)
+            self.assertEqual(report['BootDmesg'], 'existingboot')
+            self.assertEqual(report['CurrentDmesg'], 'existingcurrent')
+            
 
     unittest.main()
