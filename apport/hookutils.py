@@ -73,8 +73,11 @@ def attach_dmesg(report):
 
     This won't overwite already existing information.
     '''
-    if not report.get('BootDmesg', '').strip():
-        report['BootDmesg'] = open('/var/log/dmesg').read()
+    try:
+        if not report.get('BootDmesg', '').strip():
+            report['BootDmesg'] = open('/var/log/dmesg').read()
+    except IOError:
+        pass
     if not report.get('CurrentDmesg', '').strip():
         report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
 
@@ -272,9 +275,12 @@ def recent_syslog(pattern):
     pattern should be a "re" object.
     '''
     lines = ''
-    for line in open('/var/log/syslog'):
-        if pattern.search(line):
-            lines += line
+    try:
+        for line in open('/var/log/syslog'):
+            if pattern.search(line):
+                lines += line
+    except IOError:
+        return []
     return lines
 
 def xsession_errors(pattern):

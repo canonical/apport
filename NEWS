@@ -4,6 +4,7 @@ detailled list of changes, please see ChangeLog.
 1.17.2 (UNRELEASED)
 Bug fixes:
  - hookutils.py, attach_dmesg(): Do not overwrite already existing dmesg.
+ - hookutils.py: Be more robust against file permission errors. (LP: #444678)
 
 1.17.1 (2011-01-10)
 -------------------
