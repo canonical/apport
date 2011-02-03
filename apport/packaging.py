@@ -172,4 +172,4 @@ class PackageInfo:
 
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
-import packaging_impl
+import apport.packaging_impl

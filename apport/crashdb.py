@@ -225,10 +225,10 @@ class CrashDatabase:
             # crash got fixed/rejected
             fixed_ver = self.get_fixed_version(id)
             if fixed_ver == 'invalid':
-                print 'DEBUG: bug %i was invalidated, removing from database' % id
+                print('DEBUG: bug %i was invalidated, removing from database' % id)
                 cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
             elif not fixed_ver:
-                print 'WARNING: inconsistency detected: bug #%i does not appear in get_unfixed(), but is not fixed yet' % id
+                print('WARNING: inconsistency detected: bug #%i does not appear in get_unfixed(), but is not fixed yet' % id)
             else:
                 cur2.execute('UPDATE crashes SET fixed_version = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
                     (fixed_ver, id))
@@ -527,7 +527,7 @@ def get_crashdb(auth_file, name = None, conf = None):
                     execfile(cfpath, settings['databases'])
                 except Exception as e:
                     # ignore broken files
-                    print >> sys.stderr, 'Invalid file %s: %s' % (cfpath, str(e))
+                    sys.stderr.write('Invalid file %s: %s\n' % (cfpath, str(e)))
                     pass
 
     if not name:

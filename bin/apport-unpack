@@ -30,13 +30,11 @@ dir = sys.argv[2]
 try:
     if os.path.isdir(dir):
         if os.listdir(dir):
-            print >> sys.stderr, _('Destination directory exists and is not empty.')
-            sys.exit(1)
+            apport.fatal(_('Destination directory exists and is not empty.'))
     else:
         os.mkdir(dir)
 except OSError, e:
-    print >> sys.stderr, e
-    sys.exit(1)
+    apport.fatal(str(e))
 
 pr = problem_report.ProblemReport()
 if report == '-':
@@ -45,7 +43,6 @@ else:
     try:
         pr.load(open(report))
     except IOError, e:
-        print >> sys.stderr, e
-        sys.exit(1)
+        apport.fatal(str(e))
 for k in pr:
     open(os.path.join(dir, k), 'w').write(pr[k])

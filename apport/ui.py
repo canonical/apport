@@ -54,13 +54,13 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             execfile(symptom_script, symb)
             package = symb['run'](report, ui)
             if not package:
-                print >> sys.stderr, 'symptom script %s did not determine the affected package' % symptom_script
+                apport.error('symptom script %s did not determine the affected package', symptom_script)
                 return
             report['Symptom'] = os.path.splitext(os.path.basename(symptom_script))[0]
         except StopIteration:
             sys.exit(0)
         except:
-            print >> sys.stderr, 'symptom script %s crashed:' % symptom_script
+            apport.error('symptom script %s crashed:', symptom_script)
             traceback.print_exc()
             sys.exit(0)
 
@@ -147,11 +147,9 @@ class UserInterface:
             self.crashdb = get_crashdb(None)
         except ImportError as e:
             # this can happen while upgrading python packages
-            print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
-            sys.exit(1)
+            apport.fatal('Could not import module, is a package upgrade in progress? Error: %s', str(e))
         except KeyError:
-            print >> sys.stderr, '/etc/apport/crashdb.conf is damaged: No default database'
-            sys.exit(1)
+            apport.fatal('/etc/apport/crashdb.conf is damaged: No default database')
 
         gettext.textdomain(self.gettext_domain)
         self.parse_argv()
@@ -315,8 +313,7 @@ free memory to automatically analyze the problem and send a report to the develo
         except OSError as e:
             # fail gracefully on ENOMEM
             if e.errno == errno.ENOMEM:
-                print >> sys.stderr, 'Out of memory, aborting'
-                sys.exit(1)
+                apport.fatal('Out of memory, aborting')
             else:
                 raise
 
@@ -450,7 +447,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
         info_collected = False
         for p in pkgs:
-            #print 'Collecting apport information for source package %s...' % p
+            #print('Collecting apport information for source package %s...' % p)
             self.cur_package = p
             self.report['SourcePackage'] = p
             self.report['Package'] = p # no way to find this out
@@ -461,7 +458,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 apport.packaging.get_version(p)
             except ValueError:
                 if not os.path.exists(os.path.join(apport.report._hook_dir, 'source_%s.py' % p)):
-                    print 'Package %s not installed and no hook available, ignoring' % p
+                    print('Package %s not installed and no hook available, ignoring' % p)
                     continue
             self.collect_info(ignore_uninstalled=True)
             info_collected = True
@@ -511,7 +508,7 @@ free memory to automatically analyze the problem and send a report to the develo
             try:
                 execfile(script, symb)
             except:
-                print >> sys.stderr, 'symptom script %s is invalid' % script
+                apport.error('symptom script %s is invalid', script)
                 traceback.print_exc()
                 continue
             symptom_names.append(os.path.splitext(os.path.basename(script))[0])
@@ -564,7 +561,7 @@ free memory to automatically analyze the problem and send a report to the develo
         elif self.options.update_report:
             return self.run_update_report()
         elif self.options.version:
-            print __version__
+            print(__version__)
             return True
         elif self.options.crash_file:
             try:
@@ -1308,7 +1305,10 @@ class HookUI:
 
 if  __name__ == '__main__':
     import unittest, shutil, signal, tempfile, resource
-    from cStringIO import StringIO
+    try:
+        from cStringIO import StringIO
+    except ImportError:
+        from io import StringIO
     import apport.report
     import problem_report
     import apport.crashdb_impl.memory
@@ -1319,14 +1319,14 @@ if  __name__ == '__main__':
         def __init__(self):
             # use our dummy crashdb
             self.crashdb_conf = tempfile.NamedTemporaryFile()
-            print >> self.crashdb_conf, '''default = 'testsuite'
+            self.crashdb_conf.write('''default = 'testsuite'
 databases = {
     'testsuite': { 
         'impl': 'memory',
         'bug_pattern_base': None
     }
 }
-'''
+''')
             self.crashdb_conf.flush()
 
             os.environ['APPORT_CRASHDB_CONF'] = self.crashdb_conf.name
@@ -2488,7 +2488,7 @@ report['end'] = '1'
 
             # does not determine package
             f = open(os.path.join(symptom_script_dir, 'nopkg.py'), 'w')
-            print >> f, 'def run(report, ui):\n    pass'
+            f.write('def run(report, ui):\n    pass\n')
             f.close()
             orig_stderr = sys.stderr
             sys.argv = ['ui-test', '-s', 'nopkg' ]
@@ -2501,7 +2501,7 @@ report['end'] = '1'
 
             # does not define run()
             f = open(os.path.join(symptom_script_dir, 'norun.py'), 'w')
-            print >> f, 'def something(x, y):\n    return 1'
+            f.write('def something(x, y):\n    return 1\n')
             f.close()
             sys.argv = ['ui-test', '-s', 'norun' ]
             self.ui = _TestSuiteUserInterface()
@@ -2513,7 +2513,7 @@ report['end'] = '1'
 
             # crashing script
             f = open(os.path.join(symptom_script_dir, 'crash.py'), 'w')
-            print >> f, 'def run(report, ui):\n    return 1/0'
+            f.write('def run(report, ui):\n    return 1/0\n')
             f.close()
             sys.argv = ['ui-test', '-s', 'crash' ]
             self.ui = _TestSuiteUserInterface()
@@ -2526,7 +2526,7 @@ report['end'] = '1'
 
             # working noninteractive script
             f = open(os.path.join(symptom_script_dir, 'itching.py'), 'w')
-            print >> f, 'def run(report, ui):\n  report["itch"] = "scratch"\n  return "bash"'
+            f.write('def run(report, ui):\n  report["itch"] = "scratch"\n  return "bash"\n')
             f.close()
             sys.argv = ['ui-test', '-s', 'itching' ]
             self.ui = _TestSuiteUserInterface()
@@ -2543,11 +2543,11 @@ report['end'] = '1'
 
             # working interactive script
             f = open(os.path.join(symptom_script_dir, 'itching.py'), 'w')
-            print >> f, '''def run(report, ui):
+            f.write('''def run(report, ui):
     report['itch'] = 'slap'
     report['q'] = str(ui.yesno('do you?'))
     return 'bash'
-'''
+''')
             f.close()
             sys.argv = ['ui-test', '-s', 'itching' ]
             self.ui = _TestSuiteUserInterface()
@@ -2567,13 +2567,13 @@ report['end'] = '1'
             '''run_report_bug() without specifying arguments and available symptoms.'''
 
             f = open(os.path.join(symptom_script_dir, 'foo.py'), 'w')
-            print >> f, '''description = 'foo does not work'
+            f.write('''description = 'foo does not work'
 def run(report, ui):
     return 'bash'
-'''
+''')
             f.close()
             f = open(os.path.join(symptom_script_dir, 'bar.py'), 'w')
-            print >> f, 'def run(report, ui):\n  return "coreutils"'
+            f.write('def run(report, ui):\n  return "coreutils"\n')
             f.close()
 
             sys.argv = ['ui-test', '-f']
@@ -2644,10 +2644,10 @@ def run(report, ui):
 
             # symptom is preferred over package
             f = open(os.path.join(symptom_script_dir, 'coreutils.py'), 'w')
-            print >> f, '''description = 'foo does not work'
+            f.write('''description = 'foo does not work'
 def run(report, ui):
     return 'bash'
-'''
+''')
             f.close()
             _chk('apport-cli', 'coreutils', {'filebug': True, 'package': None,
                  'pid': None, 'crash_file': None, 'symptom': 'coreutils',

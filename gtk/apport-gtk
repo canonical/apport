@@ -16,6 +16,7 @@ import os.path, sys, subprocess, os, re
 import gobject
 from gi.repository import Gtk
 
+import apport
 from apport import unicode_gettext as _
 import apport.ui
 
@@ -350,7 +351,6 @@ class GTKUserInterface(apport.ui.UserInterface):
 
 if __name__ == '__main__':
     if not os.environ.get('DISPLAY'):
-        print >> sys.stderr, 'This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.'
-        sys.exit(1)
+        apport.fatal('This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.')
     app = GTKUserInterface()
     app.run_argv()

@@ -201,18 +201,17 @@ if os.path.exists(reportfile):
     try:
         report = apport.Report()
         report.load(open(reportfile))
-    except (MemoryError, TypeError, ValueError, IOError, zlib.error), e:
-        print >> sys.stderr, 'Cannot open report file:', e
-        sys.exit(1)
+    except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
+        apport.fatal('Cannot open report file: %s', str(e))
 elif reportfile.isdigit():
     # crash ID
     try:
         report = crashdb.download(int(reportfile))
-    except (MemoryError, TypeError, ValueError, IOError, zlib.error), e:
+    except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
         # if we process the report automatically, and it is invalid, close it with
         # an informative message and exit cleanly to not break crash-digger
         if options.auth_file and not options.output and not options.stdout:
-            print >> sys.stderr, 'Broken report:', str(e), 'closing as invalid'
+            apport.error('Broken report: %s, closing as invalid', str(e))
             crashdb.mark_retrace_failed(reportfile, '''Thank you for your report! 
             
 However, processing it in order to get sufficient information for the
@@ -232,9 +231,8 @@ Thank you for your understanding, and sorry for the inconvenience!
     crashid = reportfile
     reportfile = None
 else:
-    print >> sys.stderr, 'ERROR: "%s" is neither an existing report file nor a \
-crash ID' % reportfile
-    sys.exit(1)
+    apport.fatal('"%s" is neither an existing report file nor a crash ID', 
+            reportfile)
 
 if options.core_file:
     report['CoreDump'] = file(options.core_file).read()
@@ -249,11 +247,11 @@ if options.rebuild and 'ExecutablePath' in report:
 required_fields = set(['CoreDump', 'ExecutablePath', 'Package'])
 if report['ProblemType'] == 'KernelCrash':
     if not set(['Package','VmCore']).issubset(set(report.keys())):
-        print >> sys.stderr, 'report file does not contain the required fields'
+        apport.error('report file does not contain the required fields')
         sys.exit(0)
 elif not required_fields.issubset(set(report.keys())):
-    print >> sys.stderr, 'report file does not contain one of the required fields: ' + \
-	' '.join(required_fields)
+    apport.error('report file does not contain one of the required fields: ' + \
+	' '.join(required_fields))
     sys.exit(0)
 
 (installed, outdated_msg) = apport.packaging.install_retracing_packages(report,
@@ -298,8 +296,7 @@ else:
 if modified:
     if not reportfile and not options.output:
         if not options.auth_file:
-            print >> sys.stderr, 'You need to specify --auth for uploading retraced results back to the crash database.'
-            sys.exit(1)
+            apport.fatal('You need to specify --auth for uploading retraced results back to the crash database.')
         if not options.confirm or confirm_traces(report):
             # check for duplicates
             update_bug = True

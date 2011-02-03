@@ -11,12 +11,21 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import zlib, base64, time, UserDict, sys, gzip, struct
-from cStringIO import StringIO
-from email.Encoders import encode_base64
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEBase import MIMEBase
-from email.MIMEText import MIMEText
+import zlib, base64, time, sys, gzip, struct
+from email.encoders import encode_base64
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
+
+try:
+    from collections import UserDict
+except ImportError:
+    # Python 2
+    from UserDict import IterableUserDict as UserDict
 
 class CompressedValue:
     '''Represent a ProblemReport value which is gzip compressed.'''
@@ -81,7 +90,7 @@ class CompressedValue:
 
         return self.get_value().splitlines()
 
-class ProblemReport(UserDict.IterableUserDict):
+class ProblemReport(UserDict):
     def __init__(self, type = 'Crash', date = None):
         '''Initialize a fresh problem report.
 
@@ -253,17 +262,17 @@ class ProblemReport(UserDict.IterableUserDict):
                     del self.data[k]
                     continue
 
-            if type(v) == type(u''):
+            if isinstance(v, unicode):
                 # unicode → str
                 v = v.encode('UTF-8')
 
             if '\n' in v:
                 # multiline value
-                print >> file, k + ':'
-                print >> file, '', v.replace('\n', '\n ')
+                file.write('%s:\n' % k)
+                file.write(' %s\n' % v.replace('\n', '\n '))
             else:
                 # single line value
-                print >> file, k + ':', v
+                file.write('%s: %s\n' % (k, v))
 
         # now write the binary keys with gzip compression and base64 encoding
         for k in binkeys:
@@ -458,7 +467,7 @@ class ProblemReport(UserDict.IterableUserDict):
                 if type(v) == type(''):
                     v = v.decode('UTF-8', 'replace')
                 # convert unicode to UTF-8 str
-                assert type(v) == type(u'')
+                assert isinstance(v, unicode)
                 v = v.encode('UTF-8')
 
                 lines = len(v.splitlines())
@@ -487,7 +496,8 @@ class ProblemReport(UserDict.IterableUserDict):
         for a in attachments:
             msg.attach(a)
 
-        print >> file, msg.as_string()
+        file.write(msg.as_string())
+        file.write('\n')
 
     def __setitem__(self, k, v):
         assert hasattr(k, 'isalnum')
@@ -620,9 +630,9 @@ class _T(unittest.TestCase):
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
         pr['SimpleUTF8'] = '1äö2Φ3'
-        pr['SimpleUnicode'] = u'1äö2Φ3'
+        pr['SimpleUnicode'] = '1äö2Φ3'.decode('UTF-8')
         pr['TwoLineUTF8'] = 'pi-π\nnu-η'
-        pr['TwoLineUnicode'] = u'pi-π\nnu-η'
+        pr['TwoLineUnicode'] = 'pi-π\nnu-η'.decode('UTF-8')
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  \n\nafteremptyline'
         io = StringIO()
         pr.write(io)
@@ -1156,11 +1166,11 @@ File: base64
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
         pr['SimpleUTF8'] = '1äö2Φ3'
-        pr['SimpleUnicode'] = u'1äö2Φ3'
+        pr['SimpleUnicode'] = '1äö2Φ3'.decode('UTF-8')
         pr['SimpleLineEnd'] = 'bar\n'
         pr['TwoLine'] = 'first\nsecond\n'
         pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'
-        pr['TwoLineUnicode'] = u'pi-π\nnu-η\n'
+        pr['TwoLineUnicode'] = 'pi-π\nnu-η\n'.decode('UTF-8')
         pr['InlineMargin'] = 'first\nsecond\nthird\nfourth\nfifth\n'
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
         io = StringIO()

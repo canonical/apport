@@ -11,6 +11,7 @@
 
 import os, time, optparse, subprocess, sys, signal, zlib, errno, stat, shutil
 
+import apport
 from apport.crashdb import get_crashdb
 
 # TODO: permanently save a set for crashes which aren't for our chroot map
@@ -34,16 +35,14 @@ class CrashDigger:
 
         self.log('Initializing crash digger, using chroot map %s' % self.chroot_map)
 
-	# read chroot map, verify it, and get available releases
+        # read chroot map, verify it, and get available releases
         if self.chroot_map:
             now = time.time()
             outdated_chroots = False
             m = eval(open(self.chroot_map).read(), {}, {})
             for r, chroot in m.iteritems():
                 if not os.path.exists(chroot):
-                    print >> sys.stderr, 'Error: chroot %s for %s does not exist' % \
-                        (chroot, r)
-                    sys.exit(1)
+                    apport.fatal('Error: chroot %s for %s does not exist', chroot, r)
                 st = os.stat(chroot)
                 if now - st.st_mtime > 86400 and not stat.S_ISDIR(st.st_mode):
                     outdated_chroots = True
@@ -56,7 +55,7 @@ class CrashDigger:
                     'upgrade', 'all'], stdout=sys.stdout, 
                     stderr=subprocess.STDOUT) == 0
 
-	self.crashdb = get_crashdb(auth_file)
+        self.crashdb = get_crashdb(auth_file)
 
         if self.dup_db:
             self.crashdb.init_duplicate_db(self.dup_db)
@@ -68,7 +67,7 @@ class CrashDigger:
         the current date and time.'''
 
         if self.verbose:
-            print >> sys.stdout, '%s: %s' % (time.strftime('%x %X'), str)
+            sys.stdout.write('%s: %s\n' % (time.strftime('%x %X'), str))
             sys.stdout.flush()
 
     def fill_pool(self):
@@ -98,13 +97,13 @@ class CrashDigger:
         try:
             rel = self.crashdb.get_distro_release(id)
         except ValueError:
-	    self.log('could not determine release -- no DistroRelease field?')
+            self.log('could not determine release -- no DistroRelease field?')
             self.crashdb.mark_retraced(id)
-	    return
-	if rel not in self.releases:
-	    self.log('crash is release %s which does not have a chroot available, skipping' % rel)
+            return
+        if rel not in self.releases:
+            self.log('crash is release %s which does not have a chroot available, skipping' % rel)
             # TODO: self.no_chroot_pool.add(id)
-	    return
+            return
 
         argv = ['apport-chroot', '-m', self.chroot_map, '--auth',
             self.auth_file]
@@ -120,7 +119,7 @@ class CrashDigger:
                 self.retrace_pool = set()
                 self.log('transient error reported; halting')
                 return
-            raise SystemError, 'retracing #%i failed' % id
+            raise SystemError('retracing #%i failed' % id)
 
         self.crashdb.mark_retraced(id)
 
@@ -132,9 +131,9 @@ class CrashDigger:
 
         try:
             report = self.crashdb.download(id)
-        except (MemoryError, TypeError, ValueError, IOError, zlib.error), e:
+        except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
             self.log('Cannot download report: ' + str(e))
-            print >> sys.stderr, 'Cannot download report %i:' % id, str(e)
+            apport.error('Cannot download report %i: %s', id, str(e))
             return
 
         res = self.crashdb.check_duplicate(id, report)
@@ -189,11 +188,9 @@ def parse_options():
     (opts, args) = optparser.parse_args()
 
     if not opts.chroot_map and not opts.dupcheck_mode:
-        print >> sys.stderr, 'Error: --chroot-map or --dupcheck needs to be given'
-        sys.exit(1)
+        apport.fatal('Error: --chroot-map or --dupcheck needs to be given')
     if not opts.auth_file:
-        print >> sys.stderr, 'Error: -a/--auth needs to be given'
-        sys.exit(1)
+        apport.fatal('Error: -a/--auth needs to be given')
     
     return (opts, args)
 
@@ -205,9 +202,9 @@ opts, args = parse_options()
 
 if opts.lockfile:
     try:
-        f = os.open(opts.lockfile, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0666)
+        f = os.open(opts.lockfile, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o666)
         os.close(f)
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.EEXIST:
             sys.exit(0)
         else:

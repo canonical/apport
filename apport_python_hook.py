@@ -48,7 +48,11 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if not enabled():
             return
 
-        from cStringIO import StringIO
+        try:
+            from cStringIO import StringIO
+        except ImportError:
+            from io import StringIO
+
         import re, tempfile, traceback
         from apport.fileutils import likely_packaged
 

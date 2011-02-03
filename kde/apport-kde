@@ -28,12 +28,12 @@ try:
                                 KLocalizedString)
     from PyKDE4.kdeui import (KApplication, KNotification, KMessageBox, KIcon,
                               KStandardGuiItem)
+    import apport
     import apport.ui
     from apport import unicode_gettext as _
 except ImportError, e:
     # this can happen while upgrading python packages
-    print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
-    sys.exit(1)
+    apport.fatal('Could not import module, is a package upgrade in progress?  Error: %s', str(e))
 
 def translate(self, prop):
     '''Reimplement method from uic to change it to use gettext.'''
@@ -433,8 +433,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
 if __name__ == '__main__':
     if not os.environ.get('DISPLAY'):
-        print >> sys.stderr, 'This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.'
-        sys.exit(1)
+        apport.fatal('This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.')
 
     appName = 'apport-kde'
     catalog = 'apport'

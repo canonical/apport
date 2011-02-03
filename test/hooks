@@ -11,7 +11,11 @@
 # the full text of the license.
 
 import unittest, subprocess, tempfile, os, shutil, os.path, sys, optparse
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import apport, apport.fileutils
 
 # parse command line options

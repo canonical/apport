@@ -18,6 +18,7 @@ import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 
+import apport
 from apport.packaging import PackageInfo
 
 class __AptDpkgPackageInfo(PackageInfo):
@@ -197,11 +198,11 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 # ignore lines with NUL bytes (happens, LP#96050)
                 if '\0' in line:
-                    print >> sys.stderr, 'WARNING:', sumfile, 'contains NUL character, ignoring line'
+                    apport.warning('%s contains NUL character, ignoring line', sumfile)
                     continue
                 words  = line.split()
                 if not words:
-                    print >> sys.stderr, 'WARNING:', sumfile, 'contains empty line, ignoring line'
+                    apport.warning('%s contains empty line, ignoring line', sumfile)
                     continue
                 s = os.stat('/' + words[-1])
                 if max(s.st_mtime, s.st_ctime) <= max_time:
@@ -364,7 +365,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         debug_pkgname = 'linux-image-debug-%s' % kver
         c = self._cache()
         if c.has_key(debug_pkgname) and c[debug_pkgname].isInstalled:
-            #print 'kernel ddeb already installed'
+            #print('kernel ddeb already installed')
             return (installed, outdated)
         target_dir = apt_pkg.Config.FindDir('Dir::Cache::archives')+'/partial'
         deb = '%s_%s_%s.ddeb' % (debug_pkgname, ver, arch)
@@ -417,13 +418,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         except SystemError as e:
             if 'Hash Sum mismatch' in str(e):
                 # temporary archive inconsistency
-                print >> sys.stderr, str(e), 'aborting'
+                apport.error('%s, aborting' % str(e))
                 sys.exit(99) # signal crash digger about transient error
             else:
                 raise
         except apt.cache.LockFailedException:
             if os.geteuid() != 0:
-                print >> sys.stderr, 'WARNING: Could not update apt, you need to be root'
+                apport.error('Could not update apt, you need to be root')
             else:
                 raise
 
@@ -439,7 +440,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             try:
                 (pkg, version) = l.split()[:2]
             except ValueError:
-                print >> sys.stderr, 'WARNING: invalid Package/Dependencies line: ', l
+                apport.warning('invalid Package/Dependencies line: %s', l)
                 # invalid line, ignore
                 continue
             dependency_versions[pkg] = version
@@ -448,11 +449,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                     dependency_versions[pkg+'-dbg'] = dependency_versions[pkg]
                     dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
             except ValueError:
-                print >> sys.stderr, 'WARNING: package %s not known to package cache' % pkg
+                apport.warning('package %s not known to package cache', pkg)
 
         for pkg, ver in dependency_versions.iteritems():
             if not c.has_key(pkg):
-                print >> sys.stderr, 'WARNING: package %s not available' % pkg
+                apport.warning('package %s not available', pkg)
                 continue
 
             # ignore packages which are already installed in the right version
@@ -474,8 +475,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if not pkg.endswith('-dbgsym'):
                     outdated += '%s: installed version %s, latest version: %s\n' % (
                         pkg, ver, candidate_version)
-                print >> sys.stderr, 'WARNING: %s version %s required, but %s is available' % (
-                    pkg, ver, candidate_version)
+                apport.warning('%s version %s required, but %s is available',
+                        pkg, ver, candidate_version)
                 if not unpack_only:
                     uninstallable.append (c[pkg].name)
                     continue
@@ -502,8 +503,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     try:
                         c.commit(fetchProgress, installProgress)
                     except SystemError:
-                        print >> sys.stderr, 'Error: Could not install all archives. If you use this tool on a production system, it is recommended to use the -u option. See --help for details.'
-                        sys.exit(1)
+                        apport.fatal('Could not install all archives. If you use this tool on a production system, it is recommended to use the -u option. See --help for details.')
 
                 # after commit(), the Cache object does not empty the pending
                 # changes, so we need to reinitialize it to avoid applying the same
@@ -518,12 +518,12 @@ class __AptDpkgPackageInfo(PackageInfo):
             if path in report and not os.path.exists(report[path]):
                 pkg = self.get_file_package(report[path], True)
                 if pkg:
-                    print 'Installing extra package', pkg, 'to get', path
+                    print('Installing extra package %s to get %s' % (pkg, path))
                     c[pkg].markInstall(False)
                 else:
                     err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
                     outdated += err + '\n'
-                    print >> sys.stderr, 'WARNING:', err
+                    apport.warning(err)
 
         # check list of libraries that the crashed process referenced at
         # runtime and warn about those which are not available
@@ -546,19 +546,19 @@ class __AptDpkgPackageInfo(PackageInfo):
             if pkg:
                 if not os.path.exists(l):
                     if pkg in uninstallable:
-                        print >> sys.stderr, 'WARNING: %s cannot be installed (incompatible version)' % pkg
+                        apport.warning('%s cannot be installed (incompatible version)', pkg)
                         continue
                     if c.has_key(pkg):
                         c[pkg].markInstall(False)
                     else:
-                        print >> sys.stderr, 'WARNING: %s was loaded at runtime, but its package %s is not available' % (l, pkg)
+                        apport.warning('%s was loaded at runtime, but its package %s is not available', l, pkg)
 
                 if c.has_key(pkg+'-dbgsym') and pkg+'-dbgsym' not in uninstallable :
                     c[pkg+'-dbgsym'].markInstall(False)
                 else:
-                    print >> sys.stderr, 'WARNING: %s-dbgsym is not available or is incompatible' % pkg
+                    apport.warning('%s-dbgsym is not available or is incompatible', pkg)
             else:
-                    print >> sys.stderr, 'WARNING: %s is needed, but cannot be mapped to a package' % l
+                    apport.warning('%s is needed, but cannot be mapped to a package', l)
 
         try:
             if c.getChanges():
@@ -569,16 +569,14 @@ class __AptDpkgPackageInfo(PackageInfo):
                     c.commit(fetchProgress, installProgress)
             installed += [p.name for p in c.getChanges()]
         except (SystemError, IOError) as e:
-            print >> sys.stderr, 'WARNING: could not install missing packages:', e
+            apport.warning('could not install missing packages: %s', str(e))
             if os.geteuid() != 0:
-                print >> sys.stderr, 'You either need to call this program as root or install these packages manually:'
+                apport.error('You either need to call this program as root or install these packages manually:')
             for p in c.getChanges():
                 if self.apt_pre_079:
-                    print >> sys.stderr, '  %s %s' % (p.name,
-                                                      p.candidateVersion)
+                    apport.error('  %s %s', p.name, p.candidateVersion)
                 else:
-                    print >> sys.stderr, '  %s %s' % (p.name,
-                                                      p.candidate.version)
+                    apport.error('  %s %s', p.name, p.candidate.version)
 
         return (installed, outdated)
 
@@ -796,7 +794,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         try:
             res = cache._fetchArchives(fetcher, pm)
         except IOError as e:
-            print >> sys.stderr, 'ERROR: could not fetch all archives:', e
+            apport.error('could not fetch all archives: %s', str(e))
 
         # extract
         if verbosity:
@@ -806,10 +804,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         if no_dpkg:
             for i in fetcher.Items:
                 if verbosity:
-                    print 'Extracting', i.DestFile
+                    print('Extracting ' + i.DestFile)
                 if subprocess.call(['dpkg', '-x', i.DestFile, '/'], stdout=so,
                     stderr=subprocess.STDOUT) != 0:
-                    print >> sys.stderr, 'WARNING: %s failed to extract' % i.DestFile
+                    apport.warning('%s failed to extract', i.DestFile)
         else:
             res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
                 [klass.deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
@@ -960,14 +958,16 @@ if __name__ == '__main__':
             try:
                 mapdir = os.path.join(basedir, 'dists', release_name)
                 os.makedirs(mapdir)
-                print >> gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
-                    impl.get_system_architecture()), 'w'), '''
+                f = gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
+                    impl.get_system_architecture()), 'w')
+                f.write('''
  foo header
 FILE                                                    LOCATION
 usr/bin/frobnicate                                      foo/frob
 usr/bin/frob                                            foo/frob-utils
 bo/gu/s                                                 na/mypackage
-'''
+''')
+                f.close()
 
                 self.assertEqual(impl.get_file_package('usr/bin/frob', False, mapdir), None)
                 # must not match frob (same file name prefix)

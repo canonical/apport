@@ -35,7 +35,8 @@ class CLIDialog:
     def raw_input_char(self, prompt):
         '''raw_input, but read only one character'''
 
-        print >> sys.stdout, prompt,
+        sys.stdout.write(prompt)
+        sys.stdout.write(' ')
 
         file = sys.stdin.fileno()
         saved_attributes = termios.tcgetattr(file)
@@ -50,20 +51,20 @@ class CLIDialog:
         finally:
             termios.tcsetattr(file, termios.TCSANOW, saved_attributes)
 
-        print
+        sys.stdout.write('\n')
         return ch
 
     def show(self):
         self.visible = True
-        print self.heading
+        print(self.heading)
         if self.text:
-            print self.text
+            print(self.text)
 
     def run(self, prompt=None):
         if not self.visible:
             self.show()
 
-        print
+        sys.stdout.write('\n')
         try:
             # Only one button
             if len (self.keys) <= 1:
@@ -72,11 +73,11 @@ class CLIDialog:
             # Multiple choices
             while True:
                 if prompt is not None:
-                    print prompt
+                    print(prompt)
                 else:
-                    print _('What would you like to do? Your options are:')
+                    print(_('What would you like to do? Your options are:'))
                 for index, button in enumerate(self.buttons):
-                    print '  %s: %s' % (self.keys[index], button)
+                    print('  %s: %s' % (self.keys[index], button))
 
                 response = self.raw_input_char(_('Please choose (%s):') % ('/'.join(self.keys)))
                 try:
@@ -84,7 +85,7 @@ class CLIDialog:
                 except ValueError:
                     pass
         except KeyboardInterrupt:
-            print
+            sys.stdout.write('\n')
             sys.exit(1)
 
     def addbutton(self, button, hotkey=None):
@@ -130,7 +131,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         # adapt dialog heading and label appropriately
         if desktop_entry:
             name = desktop_entry.getName()
-        elif self.report.has_key('ExecutablePath'):
+        elif 'ExecutablePath' in self.report:
             name = os.path.basename(self.report['ExecutablePath'])
         else:
             name = self.cur_package
@@ -174,7 +175,7 @@ class CLIUserInterface(apport.ui.UserInterface):
     def ui_present_kernel_error(self):
         message = _('Your system encountered a serious kernel problem.')
         annotation = ''
-        if self.report.has_key('Annotation'):
+        if 'Annotation' in self.report:
             annotation += self.report['Annotation'] + '\n\n'
         annotation += _('You can help the developers to fix the problem by reporting it.')
 
@@ -226,7 +227,7 @@ class CLIUserInterface(apport.ui.UserInterface):
                       'automatically opened web browser.'))
 
         # complete/reduced reports
-        if self.report.has_key('CoreDump') and self.report.has_useful_stacktrace():
+        if 'CoreDump' in self.report and self.report.has_useful_stacktrace():
             complete = dialog.addbutton(_('&Send complete report (recommended; %s)') %
                     self.format_filesize(self.get_complete_size()))
             reduced = dialog.addbutton(_('Send &reduced report (slow Internet connection; %s)') %
@@ -253,7 +254,7 @@ class CLIUserInterface(apport.ui.UserInterface):
                     subprocess.Popen(["/usr/bin/sensible-pager"],
                             stdin=subprocess.PIPE,
                             close_fds=True).communicate(self._get_details())
-                except IOError, e:
+                except IOError as e:
                     # ignore broken pipe (premature quit)
                     if e.errno == errno.EPIPE:
                         pass
@@ -264,12 +265,12 @@ class CLIUserInterface(apport.ui.UserInterface):
                 # we do not already have a report file if we report a bug
                 if not self.report_file:
                     prefix = 'apport.'
-                    if self.report.has_key('Package'):
+                    if 'Package' in self.report:
                         prefix += self.report['Package'].split()[0] + '.'
                     (fd, self.report_file) = tempfile.mkstemp(prefix=prefix, suffix='.apport')
                     self.report.write(os.fdopen(fd, 'w'))
 
-                print _('Problem report file:'), self.report_file
+                print(_('Problem report file:') + ' ' + self.report_file)
                 return 'cancel'
 
             # Fallback
@@ -296,7 +297,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.progress.set()
 
     def ui_stop_info_collection_progress(self):
-        print
+        sys.stdout.write('\n')
 
     def ui_start_upload_progress(self):
         self.progress = CLIProgressDialog (
@@ -309,7 +310,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.progress.set(progress)
 
     def ui_stop_upload_progress(self):
-        print
+        sys.stdout.write('\n')
 
     def ui_question_yesno(self, text):
         '''Show a yes/no question.
@@ -386,16 +387,17 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        print '\n*** ', text
+        print('\n***  ' + text)
         while True:
-            print _('Path to file (Enter to cancel):'), ' ',
+            sys.stdout.write(_('Path to file (Enter to cancel):'))
+            sys.stdout.write(' ')
             f = sys.stdin.readline().strip()
             if not f:
                 return None
             if not os.path.exists(f):
-                print _('File does not exist.')
+                print(_('File does not exist.'))
             elif os.path.isdir(f):
-                print _('This is a directory.')
+                print(_('This is a directory.'))
             else:
                 return f
 
@@ -412,4 +414,4 @@ class CLIUserInterface(apport.ui.UserInterface):
 if __name__ == '__main__':
     app = CLIUserInterface()
     if not app.run_argv():
-        print >> sys.stderr, _('No pending crash reports. Try --help for more information.')
+        print(_('No pending crash reports. Try --help for more information.'))

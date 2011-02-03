@@ -44,24 +44,24 @@ def orphaned_processes(blacklist):
     my_sid = os.getsid(0)
     for d in os.listdir('/proc'):
         try:
-	    pid = int(d)
+            pid = int(d)
         except ValueError:
             continue
         if pid == 1 or pid == my_pid or d in blacklist:
-	    print 'ignoring:', d
+            apport.warning('ignoring: %s', d)
             continue
 
         if os.getsid(pid) == my_sid:
-            print 'ignoring same sid:', d
+            apport.warning('ignoring same sid: %s', d)
             continue
 
         try:
             exe = os.readlink(os.path.join('/proc', d, 'exe'))
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 # kernel thread or similar, silently ignore
                 continue
-            print >> sys.stderr, 'WARNING: Could not read information about pid %s: %s' % (d, str(e))
+            apport.warning('Could not read information about pid %s: %s', d, str(e))
             continue
 
         yield d

@@ -38,7 +38,7 @@ optparser.add_option('-l', '--log',
 options = optparser.parse_args()[0]
 
 if not options.package:
-    print >> sys.stderr, 'Error: You need to specify a package name with --package'
+    apport.fatal('You need to specify a package name with --package')
     sys.exit(1)
 
 # create report

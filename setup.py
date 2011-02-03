@@ -11,7 +11,7 @@ try:
     import DistUtilsExtra.auto
 except ImportError:
     import sys
-    print >> sys.stderr, 'To build Apport you need https://launchpad.net/python-distutils-extra'
+    sys.stderr.write('To build Apport you need https://launchpad.net/python-distutils-extra\n')
     sys.exit(1)
 
 assert StrictVersion(DistUtilsExtra.auto.__version__) >= '2.2', 'needs DistUtilsExtra.auto >= 2.2'
@@ -57,13 +57,13 @@ class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
 # try to auto-setup packaging_impl
 if len(sys.argv) >= 2 and sys.argv[1] != 'sdist' and not os.path.exists('apport/packaging_impl.py'):
     if os.path.exists('/etc/apt/sources.list'):
-        print 'Installing apt/dpkg packaging backend.'
+        print('Installing apt/dpkg packaging backend.')
         shutil.copy('backends/packaging-apt-dpkg.py', 'apport/packaging_impl.py')
     elif os.path.exists('/usr/bin/rpm'):
-        print 'Installing RPM packaging backend.'
+        print('Installing RPM packaging backend.')
         shutil.copy('backends/packaging_rpm.py', 'apport/packaging_impl.py')
     else:
-        print >> sys.stderr, 'Could not determine system package manager. Copy appropriate backends/packaging* to apport/packaging_impl.py'
+        print('Could not determine system package manager. Copy appropriate backends/packaging* to apport/packaging_impl.py')
         sys.exit(1)
 
 optional_data_files = []
@@ -77,9 +77,9 @@ try:
     optional_data_files.append(('share/java', ['java/apport.jar']))
     cmdclass['build_java_subdir'] = build_java_subdir
     cmdclass['clean'] = clean_java_subdir
-    print 'Java support: Enabled'
+    print('Java support: Enabled')
 except OSError:
-    print 'Java support: Java not available, not building Java crash handler'
+    print('Java support: Java not available, not building Java crash handler')
 
 from apport.ui import __version__
 

@@ -12,7 +12,10 @@
 
 import urllib, tempfile, os.path, re, gzip, sys
 import email
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from launchpadlib.errors import HTTPError
 from launchpadlib.launchpad import Launchpad
@@ -27,7 +30,7 @@ def filter_filename(attachments):
         try:
             f = attachment.data.open()
         except HTTPError:
-            print >> sys.stderr, 'ERROR: Broken attachment on bug, ignoring'
+            apport.error('Broken attachment on bug, ignoring')
             continue
         name = f.filename
         if name.endswith('.txt') or name.endswith('.gz'):
@@ -117,7 +120,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 msg = e.content
             else:
                 msg = str(e)
-            print >> sys.stderr, 'Error connecting to Launchpad: %s\nYou can reset the credentials by removing the file "%s"' % (msg, self.auth)
+            apport.error('connecting to Launchpad failed: %s\nYou can reset the credentials by removing the file "%s"', msg, self.auth)
             sys.exit(99) # transient error
 
         return self.__launchpad
@@ -560,7 +563,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     return ''
                 
             if len(fixed_tasks) > 1: 
-                print >> sys.stderr, 'WARNING: There is more than one task fixed in %s %s, using first one to determine fixed version' % (self.distro, id)
+                apport.warning('There is more than one task fixed in %s %s, using first one to determine fixed version', self.distro, id)
                 return ''
 
             if fixed_tasks:
@@ -938,7 +941,7 @@ and more
             global segv_report
             id = self._file_segv_report()
             segv_report = id
-            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
+            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
         def test_1_report_python(self):
             '''upload() and get_comment_url() for Python crash
@@ -949,7 +952,7 @@ and more
             r['ExecutablePath'] = '/bin/foo'
             r['Traceback'] = '''Traceback (most recent call last):
   File "/bin/foo", line 67, in fuzz
-    print weird
+    print(weird)
 NameError: global name 'weird' is not defined'''
             r['Tags'] = 'boogus pybogus'
             r.add_package_info(self.test_package)
@@ -966,7 +969,7 @@ NameError: global name 'weird' is not defined'''
             self.assert_(id > 0)
             global python_report
             python_report = id
-            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
+            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
         def test_2_download(self):
             '''download()'''
@@ -1062,7 +1065,7 @@ NameError: global name 'weird' is not defined'''
                 title='testbug')
             id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
+            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             r = apport.Report('Bug')
 
@@ -1096,7 +1099,7 @@ NameError: global name 'weird' is not defined'''
                 title='testbug')
             id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
+            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             r = apport.Report('Bug')
 
@@ -1129,7 +1132,7 @@ NameError: global name 'weird' is not defined'''
                 title='testbug')
             id = bug.id
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
+            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             r = apport.Report('Bug')
 
@@ -1279,7 +1282,7 @@ NameError: global name 'weird' is not defined'''
             invalidated by marking it as a duplicate.
             '''
             id = self._file_segv_report()
-            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
+            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             r = self.crashdb.download(id)
 
@@ -1467,7 +1470,7 @@ NameError: global name 'weird' is not defined'''
             r['ExecutablePath'] = '/bin/foo'
             r['Traceback'] = '''Traceback (most recent call last):
   File "/bin/foo", line 67, in fuzz
-    print weird
+    print(weird)
 NameError: global name 'weird' is not defined'''
             r.add_os_info()
             r.add_user_info()
@@ -1481,7 +1484,7 @@ NameError: global name 'weird' is not defined'''
 
             id = self._file_bug(bug_target, r, handle)
             self.assert_(id > 0)
-            print >> sys.stderr, '(https://%s/bugs/%i) ' % (self.hostname, id),
+            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             # update
             r = crashdb.download(id)
@@ -1527,8 +1530,7 @@ NameError: global name 'weird' is not defined'''
             try:
                 for b in range(first_dup, first_dup+13):
                     count += 1
-                    print b,
-                    sys.stdout.flush()
+                    sys.stderr.write('%i ' % b)
                     db.close_duplicate(b, segv_report)
                     b = db.launchpad.bugs[segv_report]
                     has_escalation_tag = db.options['escalation_tag'] in b.tags
@@ -1541,10 +1543,9 @@ NameError: global name 'weird' is not defined'''
                         self.assert_(has_escalation_subscription)
             finally:
                 for b in range(first_dup, first_dup+count):
-                    print 'R%i' % b,
-                    sys.stdout.flush()
+                    sys.stderr.write('R%i ' % b)
                     db.close_duplicate(b, None)
-            print
+            sys.stderr.write('\n')
 
         def test_marking_python_task_mangle(self):
             '''source package task fixup for marking interpreter crashes'''

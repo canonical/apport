@@ -12,11 +12,12 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, re
+import sys, re, logging
 
 class ParseSegv(object):
     def __init__(self, registers, disassembly, maps, debug=False):
-        self.debug = debug
+        if debug:
+            logging.basicConfig(level=logging.DEBUG)
 
         self.regs = self.parse_regs(registers)
         self.sp = None
@@ -52,8 +53,7 @@ class ParseSegv(object):
             if name == '[stack]':
                 self.stack_vma = len(maps)
             maps.append({'start': start, 'end': end, 'perms': perms, 'name': name})
-            if self.debug:
-                print >>sys.stderr, start, end, perms, name
+            logging.debug(start, end, perms, name)
         return maps
 
     def parse_regs(self, reg_str):
@@ -61,8 +61,7 @@ class ParseSegv(object):
         for line in reg_str.splitlines():
             reg, hexvalue = line.split()[0:2]
             regs[reg] = int(hexvalue,16)
-            if self.debug:
-                print >>sys.stderr, '%s:0x%08x' % (reg, regs[reg])
+            logging.debug('%s:0x%08x', reg, regs[reg])
         return regs
 
     def parse_disassembly(self, disassembly):
@@ -78,16 +77,14 @@ class ParseSegv(object):
         # Drop GDB 7.1's leading $pc mark
         if line.startswith('=>'):
             line = line[2:].strip()
-        if self.debug:
-            print >>sys.stderr, line
+        logging.debug(line)
         pc_str = line.split()[0]
         if pc_str.startswith('0x'):
             pc = int(pc_str.split(':')[0],16)
         else:
             # Could not identify this instruction line
             raise ValueError('Could not parse PC "%s" from disassembly line: %s' % (pc_str, line))
-        if self.debug:
-            print >>sys.stderr, 'pc: 0x%08x' % (pc)
+        logging.debug('pc: 0x%08x', pc)
 
         full_insn_str = line.split(':',1)[1].strip()
         # Handle invalid memory
@@ -108,8 +105,7 @@ class ParseSegv(object):
             args_str = insn_parts.pop(-1)
         # Assume remainder is the insn itself
         insn = ' '.join(insn_parts)
-        if self.debug:
-            print >>sys.stderr, 'insn: %s' % (insn)
+        logging.debug('insn: %s', insn)
 
         args = []
         src = None
@@ -118,20 +114,17 @@ class ParseSegv(object):
             # Could not find insn args
             args = None
         else:
-            if self.debug:
-                print >>sys.stderr, 'args: "%s"' % (args_str)
+            logging.debug('args: "%s"', args_str)
 
             for m in re.finditer('([^,\(]*(\(:?[^\)]+\))*)',args_str):
                 if len(m.group(0)):
                     args.append(m.group(0))
             if len(args)>0:
                 src = args[0]
-                if self.debug:
-                    print >>sys.stderr, 'src: %s' % (src)
+                logging.debug('src: %s', src)
             if len(args)>1:
                 dest = args[1]
-                if self.debug:
-                    print >>sys.stderr, 'dest: %s' % (dest)
+                logging.debug('dest: %s', dest)
 
         # Set up possible implicit memory destinations (stack actions)
         if insn in ['push','pop','pushl','popl','call','callq','ret','retq']:
@@ -362,18 +355,16 @@ def add_info(report):
 
 if __name__ == '__main__':
     if len(sys.argv)==2 and sys.argv[1] in ['-h','--help']:
-        print 'To run self-test, run without any arguments (or with -v)'
-        print 'To do stand-alone crash parsing:'
-        print '  Usage: %s Registers.txt Disassembly.txt ProcMaps.txt' % (sys.argv[0])
+        print('To run self-test, run without any arguments (or with -v)')
+        print('To do stand-alone crash parsing:')
+        print('  Usage: %s Registers.txt Disassembly.txt ProcMaps.txt' % (sys.argv[0]))
         sys.exit(0)
     elif len(sys.argv)==4:
         segv = ParseSegv(file(sys.argv[1]).read(), \
                          file(sys.argv[2]).read(), \
                          file(sys.argv[3]).read())
         understood, reason, details = segv.report()
-        print reason
-        print ''
-        print details
+        print ('%s\n\n%s' % (reason, details))
         rc = 0
         if not understood:
             rc = 1

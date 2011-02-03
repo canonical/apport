@@ -16,8 +16,9 @@ import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
 from problem_report import ProblemReport
-import fileutils
-from packaging_impl import impl as packaging
+import apport
+import apport.fileutils
+from apport.packaging_impl import impl as packaging
 
 _data_dir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
 _hook_dir = '%s/package-hooks/' % (_data_dir)
@@ -67,7 +68,7 @@ def _read_maps(pid):
     '''
     maps = 'Error: unable to read /proc maps file'
     try:
-        maps = file('/proc/%d/maps' % pid).read().strip()
+        maps = open('/proc/%d/maps' % pid).read().strip()
     except (OSError,IOError) as e:
         return 'Error: ' + str(e)
     return maps
@@ -177,7 +178,7 @@ class Report(ProblemReport):
                 self['ProblemType'] == 'KernelCrash'):
                 package = self['Package']
             else:
-                package = fileutils.find_file_package(self['ExecutablePath'])
+                package = apport.fileutils.find_file_package(self['ExecutablePath'])
             if not package:
                 return
 
@@ -599,7 +600,7 @@ class Report(ProblemReport):
             except StopIteration:
                 return True
             except:
-                print >> sys.stderr, 'hook %s crashed:' % hook
+                apport.error('hook %s crashed:', hook)
                 traceback.print_exc()
                 pass
 
@@ -620,7 +621,7 @@ class Report(ProblemReport):
                 except StopIteration:
                     return True
                 except:
-                    print >> sys.stderr, 'hook %s crashed:' % hook
+                    apport.error('hook %s crashed:', hook)
                     traceback.print_exc()
                     pass
 
@@ -641,7 +642,7 @@ class Report(ProblemReport):
                 except StopIteration:
                     return True
                 except:
-                    print >> sys.stderr, 'hook %s crashed:' % hook
+                    apport.error('hook %s crashed:', hook)
                     traceback.print_exc()
                     pass
 
@@ -1091,7 +1092,10 @@ class Report(ProblemReport):
 #
 
 import unittest, shutil, signal, time
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 class _T(unittest.TestCase):
     def test_add_package_info(self):
@@ -2366,7 +2370,7 @@ __frob (x=1) at crash.c:30'''
         del r['Signal']
         r['Traceback'] = '''Traceback (most recent call last):
   File "test.py", line 7, in <module>
-    print _f(5)
+    print(_f(5))
   File "test.py", line 5, in _f
     return g_foo00(x+1)
   File "test.py", line 2, in g_foo00

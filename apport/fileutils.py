@@ -9,10 +9,17 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, glob, subprocess, os.path, ConfigParser
+import os, glob, subprocess, os.path
+
+try:
+    from configparser import ConfigParser, NoOptionError, NoSectionError
+except ImportError:
+    # Python 2
+    from ConfigParser import ConfigParser, NoOptionError, NoSectionError
+
 from problem_report import ProblemReport
 
-from packaging_impl import impl as packaging
+from apport.packaging_impl import impl as packaging
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
@@ -234,7 +241,7 @@ def get_config(section, setting, default=None, bool=False):
     interpreted as a boolean.
     '''
     if not get_config.config:
-        get_config.config = ConfigParser.ConfigParser()
+        get_config.config = ConfigParser()
         get_config.config.read(os.path.expanduser(_config_file))
 
     try:
@@ -242,7 +249,7 @@ def get_config(section, setting, default=None, bool=False):
             return get_config.config.getboolean(section, setting)
         else:
             return get_config.config.get(section, setting)
-    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
+    except (NoOptionError, NoSectionError):
         return default
 
 get_config.config = None
@@ -252,7 +259,10 @@ get_config.config = None
 #
 
 import unittest, tempfile, os, shutil, sys, time
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 class _T(unittest.TestCase):
     def setUp(self):
