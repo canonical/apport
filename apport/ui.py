@@ -640,6 +640,10 @@ free memory to automatically analyze the problem and send a report to the develo
             help=_('Print the Apport version number.'),
             action='store_true', dest='version', default=None)
 
+        if cmd.endswith('-bug'):
+            for o in ('-f', '-u', '-s', '-p', '-P', '-c', '--save'):
+                optparser.get_option(o).help = optparse.SUPPRESS_HELP
+
         (self.options, self.args) = optparser.parse_args()
 
         # "do what I mean" for zero or one arguments

@@ -10,6 +10,8 @@ Improvements:
 Bug fixes:
  - hookutils.py, attach_dmesg(): Do not overwrite already existing dmesg.
  - hookutils.py: Be more robust against file permission errors. (LP: #444678)
+ - ui.py: Do not show all the options in --help when invoked as *-bug.
+   (LP: #665953)
 
 1.17.1 (2011-01-10)
 -------------------
