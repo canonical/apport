@@ -393,8 +393,7 @@ class ProblemReport(UserDict):
         priority_fields is a set/list specifying the order in which keys should
         appear in the destination file.
         '''
-        keys = self.data.keys()
-        keys.sort()
+        keys = sorted(self.data.keys())
 
         text = ''
         attachments = []
@@ -492,7 +491,7 @@ class ProblemReport(UserDict):
         attachments.insert(0, att)
 
         msg = MIMEMultipart()
-        for k, v in extra_headers.iteritems():
+        for k, v in extra_headers.items():
             msg.add_header(k, v)
         for a in attachments:
             msg.attach(a)
@@ -630,14 +629,20 @@ class _T(unittest.TestCase):
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
-        pr['SimpleUTF8'] = '1äö2Φ3'
-        pr['SimpleUnicode'] = '1äö2Φ3'.decode('UTF-8')
-        pr['TwoLineUTF8'] = 'pi-π\nnu-η'
-        pr['TwoLineUnicode'] = 'pi-π\nnu-η'.decode('UTF-8')
+        if sys.version.startswith('2'):
+            pr['SimpleUTF8'] = '1äö2Φ3'
+            pr['SimpleUnicode'] = '1äö2Φ3'.decode('UTF-8')
+            pr['TwoLineUnicode'] = 'pi-π\nnu-η'.decode('UTF-8')
+            pr['TwoLineUTF8'] = 'pi-π\nnu-η'.decode('UTF-8')
+        else:
+            pr['SimpleUTF8'] = '1äö2Φ3'.encode('UTF-8')
+            pr['SimpleUnicode'] = '1äö2Φ3'
+            pr['TwoLineUnicode'] = 'pi-π\nnu-η'
+            pr['TwoLineUTF8'] = 'pi-π\nnu-η'
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  \n\nafteremptyline'
         io = StringIO()
         pr.write(io)
-        self.assertEqual(io.getvalue(), 
+        self.assertEqual(io.getvalue(),
 '''ProblemType: Crash
 Date: now!
 Simple: bar
@@ -773,7 +778,7 @@ Last: foo
 
         # test that load() cleans up properly
         pr.load(StringIO('ProblemType: Crash'))
-        self.assertEqual(pr.keys(), ['ProblemType'])
+        self.assertEqual(list(pr.keys()), ['ProblemType'])
 
     def test_write_file(self):
         '''writing a report with binary file data.'''
@@ -1166,12 +1171,18 @@ File: base64
 
         pr = ProblemReport(date = 'now!')
         pr['Simple'] = 'bar'
-        pr['SimpleUTF8'] = '1äö2Φ3'
-        pr['SimpleUnicode'] = '1äö2Φ3'.decode('UTF-8')
+        if sys.version.startswith('2'):
+            pr['SimpleUTF8'] = '1äö2Φ3'
+            pr['SimpleUnicode'] = '1äö2Φ3'.decode('UTF-8')
+            pr['TwoLineUnicode'] = 'pi-π\nnu-η\n'.decode('UTF-8')
+            pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'.decode('UTF-8')
+        else:
+            pr['SimpleUTF8'] = '1äö2Φ3'.encode('UTF-8')
+            pr['SimpleUnicode'] = '1äö2Φ3'
+            pr['TwoLineUnicode'] = 'pi-π\nnu-η\n'
+            pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'
         pr['SimpleLineEnd'] = 'bar\n'
         pr['TwoLine'] = 'first\nsecond\n'
-        pr['TwoLineUTF8'] = 'pi-π\nnu-η\n'
-        pr['TwoLineUnicode'] = 'pi-π\nnu-η\n'.decode('UTF-8')
         pr['InlineMargin'] = 'first\nsecond\nthird\nfourth\nfifth\n'
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
         io = StringIO()
@@ -1179,20 +1190,19 @@ File: base64
         io.seek(0)
 
         msg = email.message_from_file(io)
-        msg_iter = msg.walk()
+        parts = [p for p in msg.walk()]
+        self.assertEqual(len(parts), 3)
 
         # first part is the multipart container
-        part = msg_iter.next()
-        self.assertTrue(part.is_multipart())
+        self.assertTrue(parts[0].is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'text/plain')
-        self.assertEqual(part.get_content_charset(), 'utf-8')
-        self.assertEqual(part.get_filename(), None)
-        self.assertEqual(part.get_payload(decode=True), '''ProblemType: Crash
+        self.assertTrue(not parts[1].is_multipart())
+        self.assertEqual(parts[1].get_content_type(), 'text/plain')
+        self.assertEqual(parts[1].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[1].get_filename(), None)
+        self.assertEqual(parts[1].get_payload(decode=True), '''ProblemType: Crash
 Date: now!
 InlineMargin:
  first
@@ -1216,21 +1226,17 @@ TwoLineUnicode:
 ''')
 
         # third part should be the Multiline: field as attachment
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'text/plain')
-        self.assertEqual(part.get_content_charset(), 'utf-8')
-        self.assertEqual(part.get_filename(), 'Multiline.txt')
-        self.assertEqual(part.get_payload(decode=True), ''' foo   bar
+        self.assertTrue(not parts[2].is_multipart())
+        self.assertEqual(parts[2].get_content_type(), 'text/plain')
+        self.assertEqual(parts[2].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[2].get_filename(), 'Multiline.txt')
+        self.assertEqual(parts[2].get_payload(decode=True), ''' foo   bar
 baz
   blip  
 line4
 line♥5!!
 łıµ€ ⅝
 ''')
-
-        # no more parts
-        self.assertRaises(StopIteration, msg_iter.next)
 
     def test_write_mime_binary(self):
         '''write_mime() for binary values and file references.'''
@@ -1259,77 +1265,68 @@ line♥5!!
         io.seek(0)
 
         msg = email.message_from_file(io)
-        msg_iter = msg.walk()
+        parts = [p for p in msg.walk()]
+        self.assertEqual(len(parts), 7)
 
         # first part is the multipart container
-        part = msg_iter.next()
-        self.assertTrue(part.is_multipart())
+        self.assertTrue(parts[0].is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'text/plain')
-        self.assertEqual(part.get_content_charset(), 'utf-8')
-        self.assertEqual(part.get_filename(), None)
-        self.assertEqual(part.get_payload(decode=True),
+        self.assertTrue(not parts[1].is_multipart())
+        self.assertEqual(parts[1].get_content_type(), 'text/plain')
+        self.assertEqual(parts[1].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[1].get_filename(), None)
+        self.assertEqual(parts[1].get_payload(decode=True),
             'ProblemType: Crash\nContext: Test suite\nDate: now!\n')
 
         # third part should be the File1: file contents as gzip'ed attachment
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'application/x-gzip')
-        self.assertEqual(part.get_filename(), 'File1.gz')
+        self.assertTrue(not parts[2].is_multipart())
+        self.assertEqual(parts[2].get_content_type(), 'application/x-gzip')
+        self.assertEqual(parts[2].get_filename(), 'File1.gz')
         f = tempfile.TemporaryFile()
-        f.write(part.get_payload(decode=True))
+        f.write(parts[2].get_payload(decode=True))
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
 
         # fourth part should be the File1.gz: file contents as gzip'ed
         # attachment; write_mime() should not compress it again
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'application/x-gzip')
-        self.assertEqual(part.get_filename(), 'File1.gz')
+        self.assertTrue(not parts[3].is_multipart())
+        self.assertEqual(parts[3].get_content_type(), 'application/x-gzip')
+        self.assertEqual(parts[3].get_filename(), 'File1.gz')
         f = tempfile.TemporaryFile()
-        f.write(part.get_payload(decode=True))
+        f.write(parts[3].get_payload(decode=True))
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
 
         # fifth part should be the Value1: value as gzip'ed attachment
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'application/x-gzip')
-        self.assertEqual(part.get_filename(), 'Value1.gz')
+        self.assertTrue(not parts[4].is_multipart())
+        self.assertEqual(parts[4].get_content_type(), 'application/x-gzip')
+        self.assertEqual(parts[4].get_filename(), 'Value1.gz')
         f = tempfile.TemporaryFile()
-        f.write(part.get_payload(decode=True))
+        f.write(parts[4].get_payload(decode=True))
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
 
         # sixth part should be the Value1: value as gzip'ed attachment;
         # write_mime should not compress it again
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'application/x-gzip')
-        self.assertEqual(part.get_filename(), 'Value1.gz')
+        self.assertTrue(not parts[5].is_multipart())
+        self.assertEqual(parts[5].get_content_type(), 'application/x-gzip')
+        self.assertEqual(parts[5].get_filename(), 'Value1.gz')
         f = tempfile.TemporaryFile()
-        f.write(part.get_payload(decode=True))
+        f.write(parts[5].get_payload(decode=True))
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
 
         # seventh part should be the ZValue: value as gzip'ed attachment;
         # write_mime should not compress it again
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'application/x-gzip')
-        self.assertEqual(part.get_filename(), 'ZValue.gz')
+        self.assertTrue(not parts[6].is_multipart())
+        self.assertEqual(parts[6].get_content_type(), 'application/x-gzip')
+        self.assertEqual(parts[6].get_filename(), 'ZValue.gz')
         f = tempfile.TemporaryFile()
-        f.write(part.get_payload(decode=True))
+        f.write(parts[6].get_payload(decode=True))
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
-
-        # no more parts
-        self.assertRaises(StopIteration, msg_iter.next)
 
     def test_write_mime_extra_headers(self):
         '''write_mime() with extra headers.'''
@@ -1345,21 +1342,17 @@ line♥5!!
         msg = email.message_from_file(io)
         self.assertEqual(msg['Greeting'], 'hello world')
         self.assertEqual(msg['Foo'], 'Bar')
-        msg_iter = msg.walk()
+        parts = [p for p in msg.walk()]
+        self.assertEqual(len(parts), 2)
 
         # first part is the multipart container
-        part = msg_iter.next()
-        self.assertTrue(part.is_multipart())
+        self.assertTrue(parts[0].is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'text/plain')
-        self.assertTrue('Simple: bar' in part.get_payload(decode=True))
-
-        # no more parts
-        self.assertRaises(StopIteration, msg_iter.next)
+        self.assertTrue(not parts[1].is_multipart())
+        self.assertEqual(parts[1].get_content_type(), 'text/plain')
+        self.assertTrue('Simple: bar' in parts[1].get_payload(decode=True))
 
     def test_write_mime_filter(self):
         '''write_mime() with key filters.'''
@@ -1376,34 +1369,29 @@ line♥5!!
         io.seek(0)
 
         msg = email.message_from_file(io)
-        msg_iter = msg.walk()
+        parts = [p for p in msg.walk()]
+        self.assertEqual(len(parts), 3)
 
         # first part is the multipart container
-        part = msg_iter.next()
-        self.assertTrue(part.is_multipart())
+        self.assertTrue(parts[0].is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'text/plain')
-        self.assertEqual(part.get_content_charset(), 'utf-8')
-        self.assertEqual(part.get_filename(), None)
-        self.assertEqual(part.get_payload(decode=True), '''ProblemType: Crash
+        self.assertTrue(not parts[1].is_multipart())
+        self.assertEqual(parts[1].get_content_type(), 'text/plain')
+        self.assertEqual(parts[1].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[1].get_filename(), None)
+        self.assertEqual(parts[1].get_payload(decode=True), '''ProblemType: Crash
 Date: now!
 GoodText: Hi
 ''')
 
         # third part should be the GoodBin: field as attachment
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
+        self.assertTrue(not parts[2].is_multipart())
         f = tempfile.TemporaryFile()
-        f.write(part.get_payload(decode=True))
+        f.write(parts[2].get_payload(decode=True))
         f.seek(0)
         self.assertEqual(gzip.GzipFile(mode='rb', fileobj=f).read(), bin_value)
-
-        # no more parts
-        self.assertRaises(StopIteration, msg_iter.next)
 
     def test_write_mime_order(self):
         '''write_mime() with keys ordered.'''
@@ -1421,29 +1409,25 @@ GoodText: Hi
         io.seek(0)
 
         msg = email.message_from_file(io)
-        msg_iter = msg.walk()
+        parts = [p for p in msg.walk()]
+        self.assertEqual(len(parts), 2)
 
         # first part is the multipart container
-        part = msg_iter.next()
-        self.assertTrue(part.is_multipart())
+        self.assertTrue(parts[0].is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
-        part = msg_iter.next()
-        self.assertTrue(not part.is_multipart())
-        self.assertEqual(part.get_content_type(), 'text/plain')
-        self.assertEqual(part.get_content_charset(), 'utf-8')
-        self.assertEqual(part.get_filename(), None)
-        self.assertEqual(part.get_payload(decode=True), '''FirstText: Who
+        self.assertTrue(not parts[1].is_multipart())
+        self.assertEqual(parts[1].get_content_type(), 'text/plain')
+        self.assertEqual(parts[1].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[1].get_filename(), None)
+        self.assertEqual(parts[1].get_payload(decode=True), '''FirstText: Who
 SecondText: What
 ThirdText: I Don't Know
 FourthText: Today
 ProblemType: Crash
 Date: now!
 ''')
-
-        # no more parts
-        self.assertRaises(StopIteration, msg_iter.next)
 
     def test_updating(self):
         '''new_keys() and write() with only_new=True.'''
