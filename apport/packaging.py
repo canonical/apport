@@ -15,26 +15,26 @@ class PackageInfo:
         
         Throw ValueError if package does not exist.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.
         
         Throw ValueError if package does not exist.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_source(self, package):
         '''Return the source package name for a package.
         
         Throw ValueError if package does not exist.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def is_distro_package(self, package):
         '''Check package origin.
@@ -44,7 +44,7 @@ class PackageInfo:
 
         Throw ValueError if package does not exist.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
@@ -52,19 +52,19 @@ class PackageInfo:
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_files(self, package):
         '''Return list of files shipped by a package.
 
         Throw ValueError if package does not exist.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_modified_files(self, package):
         '''Return list of all modified files of a package.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_file_package(self, file, uninstalled=False, map_cachedir=None):
         '''Return the package a file belongs to.
@@ -77,14 +77,14 @@ class PackageInfo:
         an existing directory which will be used to permanently store the
         downloaded maps. If it is not set, a temporary directory will be used.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_system_architecture(self):
         '''Return the architecture of the system.
         
         This should use the notation of the particular distribution.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def set_mirror(self, url):
         '''Explicitly set a distribution mirror URL.
@@ -95,7 +95,7 @@ class PackageInfo:
         By default, the mirror will be read from the system configuration
         files.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_source_tree(self, srcpackage, dir, version=None):
         '''Download a source package and unpack it into dir..
@@ -112,14 +112,14 @@ class PackageInfo:
         (which might be a subdirectory of dir). Return None if the source is
         not available.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def compare_versions(self, ver1, ver2):
         '''Compare two package versions.
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def enabled(self):
         '''Return whether Apport should generate crash reports.
@@ -132,14 +132,14 @@ class PackageInfo:
         Implementations should parse the configuration file which controls
         Apport (such as /etc/default/apport in Debian/Ubuntu).
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_kernel_package(self):
         '''Return the actual Linux kernel package name.
 
         This is used when the user reports a bug against the "linux" package.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def install_retracing_packages(self, report, verbosity=0,
             unpack_only=False, no_pkg=False, extra_packages=[]):
@@ -157,7 +157,7 @@ class PackageInfo:
         
         Return a tuple (list of installed packages, string with outdated packages).
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def remove_packages(self, packages, verbosity=0):
         '''Remove packages.
@@ -165,11 +165,11 @@ class PackageInfo:
         This is called after install_retracing_packages() to clean up again
         afterwards. packages is a list of package names.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def package_name_glob(self, glob):
         '''Return known package names which match given glob.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
 import packaging_impl

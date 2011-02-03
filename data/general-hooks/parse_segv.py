@@ -43,7 +43,7 @@ class ParseSegv(object):
             try:
                 span, perms, bits, dev = items[0:4]
             except:
-                raise ValueError, 'Cannot parse maps line: %s' % (line.strip())
+                raise ValueError('Cannot parse maps line: %s' % (line.strip()))
             if len(items)==5:
                 name = None
             else:
@@ -67,13 +67,13 @@ class ParseSegv(object):
 
     def parse_disassembly(self, disassembly):
         if not self.regs:
-            raise ValueError, 'Registers not loaded yet!?'
+            raise ValueError('Registers not loaded yet!?')
         lines = disassembly.splitlines()
         # Throw away possible 'Dump' gdb report line
         if len(lines)>0 and lines[0].startswith('Dump'):
             lines.pop(0)
         if len(lines)<1:
-            raise ValueError, 'Failed to load empty disassembly'
+            raise ValueError('Failed to load empty disassembly')
         line = lines[0].strip()
         # Drop GDB 7.1's leading $pc mark
         if line.startswith('=>'):
@@ -85,7 +85,7 @@ class ParseSegv(object):
             pc = int(pc_str.split(':')[0],16)
         else:
             # Could not identify this instruction line
-            raise ValueError, 'Could not parse PC "%s" from disassembly line: %s' % (pc_str, line)
+            raise ValueError('Could not parse PC "%s" from disassembly line: %s' % (pc_str, line))
         if self.debug:
             print >>sys.stderr, 'pc: 0x%08x' % (pc)
 
@@ -198,7 +198,7 @@ class ParseSegv(object):
         if reg in self.regs:
             #print 'got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask)
             return self.regs[reg] & ~mask
-        raise ValueError, "Could not resolve register '%s'" % (reg_orig)
+        raise ValueError("Could not resolve register '%s'" % (reg_orig))
 
     def calculate_arg(self, arg):
         # Check for and pre-remove segment offset
@@ -225,7 +225,7 @@ class ParseSegv(object):
                 add = self.regs[offset[1:]]
             else:
                 if not offset.startswith('0x'):
-                    raise ValueError, 'Unknown offset literal: %s' % (parts[0])
+                    raise ValueError('Unknown offset literal: %s' % (parts[0]))
                 add = int(offset[2:],16) * sign
         else:
             add = 0
@@ -356,7 +356,7 @@ def add_info(report):
         if understood:
             report['SegvReason'] = reason
         report['SegvAnalysis'] = details
-    except BaseException, e:
+    except BaseException as e:
         report['SegvAnalysis'] = 'Failure: %s' % (str(e))
 
 
@@ -511,7 +511,7 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertRaises(ValueError, ParseSegv, regs, '', '')
                 try:
                     segv = ParseSegv(regs, '', '')
-                except ValueError, e:
+                except ValueError as e:
                     self.assertTrue('invalid literal for int()' in str(e), str(e))
 
                 regs = 'a 0x10'

@@ -83,7 +83,7 @@ class CrashDatabase:
         cur.execute('PRAGMA integrity_check')
         result = cur.fetchall() 
         if result != [('ok',)]:
-            raise SystemError, 'Corrupt duplicate db:' + str(result)
+            raise SystemError('Corrupt duplicate db:' + str(result))
 
     def check_duplicate(self, id, report=None):
         '''Check whether a crash is already known.
@@ -328,7 +328,7 @@ class CrashDatabase:
 
         This method can raise a NeedsCredentials exception in case of failure.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_comment_url(self, report, handle):
         '''Return an URL that should be opened after report has been uploaded
@@ -338,12 +338,12 @@ class CrashDatabase:
         user comments); in that case this function should do whichever
         interactive steps it wants to perform.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def update(self, id, report, comment, change_description=False,
             attachment_comment=None, key_filter=None):
@@ -362,7 +362,7 @@ class CrashDatabase:
 
         If key_filter is a list or set, then only those keys will be added.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def update_traces(self, id, report, comment=''):
         '''Update the given report ID for retracing results.
@@ -376,12 +376,12 @@ class CrashDatabase:
     def set_credentials(self, username, password):
         '''Set username and password.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_distro_release(self, id):
         '''Get 'DistroRelease: <release>' from the report ID.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_unretraced(self):
         '''Return set of crash IDs which have not been retraced yet.
@@ -389,7 +389,7 @@ class CrashDatabase:
         This should only include crashes which match the current host
         architecture.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_dup_unchecked(self):
         '''Return set of crash IDs which need duplicate checking.
@@ -398,7 +398,7 @@ class CrashDatabase:
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
@@ -409,7 +409,7 @@ class CrashDatabase:
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_fixed_version(self, id):
         '''Return the package version that fixes a given crash.
@@ -423,17 +423,17 @@ class CrashDatabase:
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_affected_packages(self, id):
         '''Return list of affected source packages for given ID.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def is_reporter(self, id):
         '''Check whether the user is the reporter of given ID.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def can_update(self, id):
         '''Check whether the user is eligible to update a report.
@@ -443,32 +443,32 @@ class CrashDatabase:
         exact policy and checks should be done according to  the particular
         implementation.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def duplicate_of(self, id):
         '''Return master ID for a duplicate bug.
 
         If the bug is not a duplicate, return None.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def close_duplicate(self, id, master):
         '''Mark a crash id as duplicate of given master ID.
         
         If master is None, id gets un-duplicated.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
         
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def mark_retraced(self, id):
         '''Mark crash id as retraced.'''
 
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def mark_retrace_failed(self, id, invalid_msg=None):
         '''Mark crash id as 'failed to retrace'.
@@ -478,14 +478,14 @@ class CrashDatabase:
         
         This can be a no-op if you are not interested in this.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def _mark_dup_checked(self, id, report):
         '''Mark crash id as checked for being a duplicate
         
         This is an internal method that should not be called from outside.
         '''
-        raise NotImplementedError, 'this method must be implemented by a concrete subclass'
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
 
 #
 # factory 
@@ -525,7 +525,7 @@ def get_crashdb(auth_file, name = None, conf = None):
             if os.path.isfile(cfpath) and cf.endswith('.conf'):
                 try:
                     execfile(cfpath, settings['databases'])
-                except Exception, e:
+                except Exception as e:
                     # ignore broken files
                     print >> sys.stderr, 'Invalid file %s: %s' % (cfpath, str(e))
                     pass

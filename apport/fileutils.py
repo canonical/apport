@@ -196,7 +196,7 @@ def make_report_path(report, uid=None):
     elif report.has_key('Package'):
         subject = report['Package'].split(None, 1)[0]
     else:
-        raise ValueError, 'report has neither ExecutablePath nor Package attribute'
+        raise ValueError('report has neither ExecutablePath nor Package attribute')
 
     if not uid:
         uid = os.getuid()

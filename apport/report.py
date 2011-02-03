@@ -56,7 +56,7 @@ def _read_file(path):
     '''
     try:
         return open(path).read().strip()
-    except (OSError, IOError), e:
+    except (OSError, IOError) as e:
         return 'Error: ' + str(e)
 
 def _read_maps(pid):
@@ -68,7 +68,7 @@ def _read_maps(pid):
     maps = 'Error: unable to read /proc maps file'
     try:
         maps = file('/proc/%d/maps' % pid).read().strip()
-    except (OSError,IOError), e:
+    except (OSError,IOError) as e:
         return 'Error: ' + str(e)
     return maps
 
@@ -84,8 +84,8 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
     if sp.returncode == 0:
         return out
     else:
-       raise OSError, 'Error: command %s failed with exit code %i: %s' % (
-           str(command), sp.returncode, err)
+       raise OSError('Error: command %s failed with exit code %i: %s' % (
+           str(command), sp.returncode, err))
 
 def _check_bug_pattern(report, pattern):
     '''Check if given report matches the given bug pattern XML DOM node.
@@ -333,9 +333,9 @@ class Report(ProblemReport):
         self['ProcMaps'] = _read_maps(int(pid))
         try:
             self['ExecutablePath'] = os.readlink('/proc/' + pid + '/exe')
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
-                raise ValueError, 'invalid process'
+                raise ValueError('invalid process')
             else:
                 raise
         for p in ('rofs', 'rwfs', 'squashmnt', 'persistmnt'):
@@ -714,8 +714,8 @@ class Report(ProblemReport):
         else:
             try:
                 dom = xml.dom.minidom.parse(ifpath)
-            except ExpatError, e:
-                raise ValueError, '%s has invalid format: %s' % (_ignore_file, str(e))
+            except ExpatError as e:
+                raise ValueError('%s has invalid format: %s' % (_ignore_file, str(e)))
 
         # remove whitespace so that writing back the XML does not accumulate
         # whitespace

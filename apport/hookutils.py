@@ -51,7 +51,7 @@ def read_file(path):
     '''
     try:
         return open(path).read().strip()
-    except Exception, e:
+    except Exception as e:
         return 'Error: ' + str(e)
 
 def attach_file(report, path, key=None):
@@ -232,7 +232,7 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
     try:
        sp = subprocess.Popen(command, stdout=subprocess.PIPE,
                              stderr=stderr, close_fds=True, env=env)
-    except OSError, e:
+    except OSError as e:
        return 'Error: ' + str(e)
 
     out = sp.communicate(input)[0]

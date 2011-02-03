@@ -64,7 +64,7 @@ class REThread(threading.Thread):
 #
 
 if __name__ == '__main__':
-    import unittest, time, traceback, exceptions
+    import unittest, time, traceback
 
     def idle(seconds):
         '''Test thread to just wait a bit.'''
@@ -107,10 +107,10 @@ if __name__ == '__main__':
             t.join()
             # thread did not terminate normally, no return value
             self.assertRaises(AssertionError, t.return_value)
-            self.assert_(t.exc_info()[0] == exceptions.ZeroDivisionError)
+            self.assert_(t.exc_info()[0] == ZeroDivisionError)
             exc = traceback.format_exception(t.exc_info()[0], t.exc_info()[1],
                 t.exc_info()[2])
-            self.assert_(exc[-1].startswith('ZeroDivisionError'))
+            self.assert_(exc[-1].startswith('ZeroDivisionError'), 'not a ZeroDivisionError:' + str(exc))
             self.assert_(exc[-2].endswith('return x / y\n'))
 
         def test_exc_raise(self):
@@ -128,7 +128,7 @@ if __name__ == '__main__':
                 raised = True
                 e = sys.exc_info()
                 exc = traceback.format_exception(e[0], e[1], e[2])
-                self.assert_(exc[-1].startswith('ZeroDivisionError'))
+                self.assert_(exc[-1].startswith('ZeroDivisionError'), 'not a ZeroDivisionError:' + str(e))
                 self.assert_(exc[-2].endswith('return x / y\n'))
             self.assert_(raised)
 

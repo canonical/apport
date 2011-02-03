@@ -112,7 +112,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     allow_access_levels=['WRITE_PRIVATE'],
                     credentials_file = self.auth,
                     version='1.0')
-        except Exception, e:
+        except Exception as e:
             if hasattr(e, 'content'):
                 msg = e.content
             else:
@@ -282,7 +282,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             elif 'apport-package' in b.tags:
                 report['ProblemType'] = 'Package'
             else:
-                raise ValueError, 'cannot determine ProblemType from tags: ' + str(b.tags)
+                raise ValueError('cannot determine ProblemType from tags: ' + str(b.tags))
 
         report['Tags'] = ' '.join(b.tags)
 
@@ -303,7 +303,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             elif ext == '.gz':
                 try:
                     report[key] = gzip.GzipFile(fileobj=attachment).read()
-                except IOError, e:
+                except IOError as e:
                     # some attachments are only called .gz, but are
                     # uncompressed (LP #574360)
                     if 'Not a gzip' not in str(e):
@@ -311,7 +311,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     attachment.seek(0)
                     report[key] = attachment.read()
             else:
-                raise Exception, 'Unknown attachment type: ' + attachment.filename
+                raise Exception('Unknown attachment type: ' + attachment.filename)
         return report
 
     def update(self, id, report, comment, change_description=False,
@@ -428,7 +428,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         m = re.search('DistroRelease: ([-a-zA-Z0-9.+/ ]+)', bug.description)
         if m:
             return m.group(1)
-        raise ValueError, 'URL does not contain DistroRelease: field'
+        raise ValueError('URL does not contain DistroRelease: field')
 
     def get_affected_packages(self, id):
         '''Return list of affected source packages for given ID.'''

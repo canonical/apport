@@ -63,7 +63,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         try:
             return self._cache()[package]
         except KeyError:
-            raise ValueError, 'package does not exist'
+            raise ValueError('package does not exist')
 
     def get_version(self, package):
         '''Return the installed version of a package.'''
@@ -71,12 +71,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         pkg = self._apt_pkg(package)
         if self.apt_pre_079:
             if not pkg.isInstalled:
-                raise ValueError, 'package does not exist'
+                raise ValueError('package does not exist')
             return pkg.installedVersion
         else:
             inst = pkg.installed
             if not inst:
-                raise ValueError, 'package does not exist'
+                raise ValueError('package does not exist')
             return inst.version
 
     def get_available_version(self, package):
@@ -108,7 +108,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             elif self._apt_pkg(package).candidate:
                 return self._apt_pkg(package).candidate.source_name
             else:
-                raise ValueError, 'package %s does not exist' % package
+                raise ValueError('package %s does not exist' % package)
 
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
@@ -163,7 +163,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             elif self._apt_pkg(package).candidate:
                 return self._apt_pkg(package).candidate.architecture or 'unknown'
             else:
-                raise ValueError, 'package %s does not exist' % package
+                raise ValueError('package %s does not exist' % package)
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -414,7 +414,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             else:
                 c.update()
             c.open(apt.progress.OpProgress())
-        except SystemError, e:
+        except SystemError as e:
             if 'Hash Sum mismatch' in str(e):
                 # temporary archive inconsistency
                 print >> sys.stderr, str(e), 'aborting'
@@ -510,7 +510,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 # changes again below
                 installed = [p.name for p in c.getChanges()]
                 c = apt.Cache()
-        except IOError, e:
+        except IOError as e:
             pass # we will complain to the user later
 
         # package hooks might reassign Package:, check that we have the originally crashing binary
@@ -568,7 +568,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 else:
                     c.commit(fetchProgress, installProgress)
             installed += [p.name for p in c.getChanges()]
-        except (SystemError, IOError), e:
+        except (SystemError, IOError) as e:
             print >> sys.stderr, 'WARNING: could not install missing packages:', e
             if os.geteuid() != 0:
                 print >> sys.stderr, 'You either need to call this program as root or install these packages manually:'
@@ -613,7 +613,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if dpkg.returncode == 0:
             return out
         else:
-            raise ValueError, 'package does not exist'
+            raise ValueError('package does not exist')
 
     def _check_files_md5(self, sumfile):
         '''Internal function for calling md5sum.
@@ -656,7 +656,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     self._mirror = fields[1]
                     break
             else:
-                raise SystemError, 'cannot determine default mirror: /etc/apt/sources.list does not contain a valid deb line'
+                raise SystemError('cannot determine default mirror: /etc/apt/sources.list does not contain a valid deb line')
 
         return self._mirror
 
@@ -795,7 +795,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         pm = apt.apt_pkg.GetPackageManager(cache._depcache)
         try:
             res = cache._fetchArchives(fetcher, pm)
-        except IOError, e:
+        except IOError as e:
             print >> sys.stderr, 'ERROR: could not fetch all archives:', e
 
         # extract
@@ -814,7 +814,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
                 [klass.deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
             if res != 0:
-                raise IOError, 'dpkg failed to unpack archives'
+                raise IOError('dpkg failed to unpack archives')
 
         # remove other maintainer scripts
         for c in cache.getChanges():

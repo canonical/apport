@@ -247,7 +247,7 @@ class ProblemReport(UserDict.IterableUserDict):
                     v = open(v[0]).read() # file name
 
                 if fail_on_empty and len(v) == 0:
-                    raise IOError, 'did not get any data for field ' + k
+                    raise IOError('did not get any data for field ' + k)
 
                 if limit != None and len(v) > limit:
                     del self.data[k]
@@ -327,7 +327,7 @@ class ProblemReport(UserDict.IterableUserDict):
 
                 if len(v) >= 4 and v[3]:
                     if size == 0:
-                        raise IOError, 'did not get any data for field %s from %s' % (k, str(v[0]))
+                        raise IOError('did not get any data for field %s from %s' % (k, str(v[0])))
 
             # flush compressor and write the rest
             if not limit or size <= limit:

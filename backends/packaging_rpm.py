@@ -54,7 +54,7 @@ class RPMPackageInfo:
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
         # used in report.py, which is used by the frontends
-        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
+        raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
@@ -131,7 +131,7 @@ class RPMPackageInfo:
         that crashed.
         '''  
         # The policy for handling files which belong to multiple packages depends on the distro
-        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
+        raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
 
     def get_system_architecture(self):
         '''Return the architecture of the system, in the notation used by the
@@ -146,7 +146,7 @@ class RPMPackageInfo:
         a third-party source.'''
         # This is a list of official keys, set by the concrete subclass
         if not self.official_keylist:
-            raise Exception, 'Subclass the RPM implementation for your distro!'
+            raise Exception('Subclass the RPM implementation for your distro!')
         hdr = self._get_header(package)
         if not hdr:
             return False
@@ -182,7 +182,7 @@ class RPMPackageInfo:
         (which might be a subdirectory of dir). Return None if the source is
         not available.'''
         # Used only by apport-retrace.
-        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
+        raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
 
     def compare_versions(self, ver1, ver2):
         '''Compare two package versions.
@@ -193,12 +193,12 @@ class RPMPackageInfo:
         # but I hate duplicating code. So if you don't want to require rpmUtils
         # you can implement this function yourself. Probably you've got
         # equivalent code in whatever your distro uses instead of yum anyway.
-        raise NotImplementedError, 'method must be implemented by distro-specific RPMPackageInfo subclass'
+        raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
 
     def package_name_glob(self, glob):
         '''Return known package names which match given glob.'''
 
-        raise NotImplementedError, 'TODO'
+        raise NotImplementedError('TODO')
 
     #
     # Internal helper methods. These are only single-underscore, so you can use
@@ -210,7 +210,7 @@ class RPMPackageInfo:
         argument.'''
         matches = self.ts.dbMatch(tag,arg)
         if matches.count() == 0:
-            raise ValueError, 'Could not find package with %s: %s' % (tag,arg)
+            raise ValueError('Could not find package with %s: %s' % (tag,arg))
         return [m for m in matches]
 
     def _get_header(self,envra):
@@ -234,7 +234,7 @@ class RPMPackageInfo:
             qlen = qlen - 1
 
         if qlen == 0:
-            raise ValueError, 'No headers found for this envra: %s' % envra
+            raise ValueError('No headers found for this envra: %s' % envra)
         return h
 
     def _make_envra_from_header(self,h):

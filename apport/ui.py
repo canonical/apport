@@ -68,7 +68,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         if report.has_key('ExecutablePath'):
             package = apport.fileutils.find_file_package(report['ExecutablePath'])
         else:
-            raise KeyError, 'called without a package, and report does not have ExecutablePath'
+            raise KeyError('called without a package, and report does not have ExecutablePath')
     try:
         report.add_package_info(package)
     except ValueError:
@@ -76,7 +76,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         # package
         if not ignore_uninstalled:
             raise
-    except SystemError, e:
+    except SystemError as e:
         report['UnreportableReason'] = excstr(e)
         return
 
@@ -145,7 +145,7 @@ class UserInterface:
 
         try:
             self.crashdb = get_crashdb(None)
-        except ImportError, e:
+        except ImportError as e:
             # this can happen while upgrading python packages
             print >> sys.stderr, 'Could not import module, is a package upgrade in progress? Error:', e
             sys.exit(1)
@@ -262,7 +262,7 @@ free memory to automatically analyze the problem and send a report to the develo
             try:
                 if 'Dependencies' not in self.report:
                     self.collect_info()
-            except (IOError, zlib.error), e:
+            except (IOError, zlib.error) as e:
                 # can happen with broken core dumps
                 self.report = None
                 self.ui_error_message(_('Invalid problem report'),
@@ -299,7 +299,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 assert response == 'full'
 
             self.file_report()
-        except IOError, e:
+        except IOError as e:
             # fail gracefully if file is not readable for us
             if e.errno in (errno.EPERM, errno.EACCES):
                 self.ui_error_message(_('Invalid problem report'),
@@ -312,7 +312,7 @@ free memory to automatically analyze the problem and send a report to the develo
             else:
                 self.ui_error_message(_('Invalid problem report'), e.strerror)
                 sys.exit(1)
-        except OSError, e:
+        except OSError as e:
             # fail gracefully on ENOMEM
             if e.errno == errno.ENOMEM:
                 print >> sys.stderr, 'Out of memory, aborting'
@@ -349,7 +349,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_error_message(_('Invalid PID'),
                         _('The specified process ID does not belong to a program.'))
                 return False
-            except OSError, e:
+            except OSError as e:
                 # silently ignore nonexisting PIDs; the user must not close the
                 # application prematurely
                 if e.errno == errno.ENOENT:
@@ -373,7 +373,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
         try:
             self.collect_info(symptom_script)
-        except ValueError, e:
+        except ValueError as e:
             if str(e) == 'package does not exist':
                 if not self.cur_package:
                     self.ui_error_message(_('Invalid problem report'), 
@@ -406,7 +406,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 f = open(os.path.expanduser(self.options.save), 'w')
                 self.report.write(f)
                 f.close()
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 self.ui_error_message(_('Cannot create report'), excstr(e))
         else:
             # show what's being sent
@@ -569,7 +569,7 @@ free memory to automatically analyze the problem and send a report to the develo
         elif self.options.crash_file:
             try:
                 self.run_crash(self.options.crash_file, False)
-            except OSError, e:
+            except OSError as e:
                 self.ui_error_message(_('Invalid problem report'), excstr(e))
             return True
         else:
@@ -898,7 +898,7 @@ free memory to automatically analyze the problem and send a report to the develo
             webbrowser.open(url, new=True, autoraise=True)
             sys.exit(0)
 
-        except Exception, e:
+        except Exception as e:
             os.write(w, str(e))
             sys.exit(1)
 
@@ -930,7 +930,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 upthread.exc_raise()
             except KeyboardInterrupt:
                 sys.exit(1)
-            except NeedsCredentials, e:
+            except NeedsCredentials as e:
                 message = _('Please enter your account information for the '
                             '%s bug tracking system')
                 data = self.ui_question_userpass(message % excstr(e))
@@ -941,7 +941,7 @@ free memory to automatically analyze the problem and send a report to the develo
                                                  args=(self.report,
                                                        progress_callback))
                     upthread.start()
-            except Exception, e:
+            except Exception as e:
                 self.ui_error_message(_('Network problem'),
                         '%s\n\n%s' % (
                             _('Cannot connect to crash database, please check your Internet connection.'),
@@ -966,17 +966,17 @@ free memory to automatically analyze the problem and send a report to the develo
             self.report = apport.Report()
             self.report.load(open(path), binary='compressed')
             if 'ProblemType' not in self.report:
-                raise ValueError, 'Report does not contain "ProblemType" field'
+                raise ValueError('Report does not contain "ProblemType" field')
         except MemoryError:
             self.report = None
             self.ui_error_message(_('Memory exhaustion'),
                 _('Your system does not have enough memory to process this crash report.'))
             return False
-        except IOError, e:
+        except IOError as e:
             self.report = None
             self.ui_error_message(_('Invalid problem report'), e.strerror)
             return False
-        except (TypeError, ValueError, zlib.error), e:
+        except (TypeError, ValueError, zlib.error) as e:
             self.report = None
             self.ui_error_message(_('Invalid problem report'),
                 '%s\n\n%s' % (
@@ -1063,7 +1063,7 @@ might be helpful for the developers.'))
         - Valid values for the 'blacklist' key: True or False (True will cause
           the invocation of report.mark_ignore()).
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_present_package_error(self, desktopentry):
         '''Ask what to do with a package failure.
@@ -1074,7 +1074,7 @@ might be helpful for the developers.'))
         Return the action: ignore ('cancel'), or report a bug about the problem
         ('report').
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_present_kernel_error(self, desktopentry):
         '''Ask what to do with a kernel error.
@@ -1085,7 +1085,7 @@ might be helpful for the developers.'))
         Return the action: ignore ('cancel'), or report a bug about the problem
         ('report').
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_present_report_details(self, is_update):
         '''Show details of the bug report.
@@ -1102,17 +1102,17 @@ might be helpful for the developers.'))
         Return the action: send full report ('full'), send reduced report
         ('reduced'), or do not send anything ('cancel').
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_info_message(self, title, text):
         '''Show an information message box with given title and text.'''
 
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_error_message(self, title, text):
         '''Show an error message box with given title and text.'''
 
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_start_info_collection_progress(self):
         '''Open a indefinite progress bar for data collection.
@@ -1120,26 +1120,26 @@ might be helpful for the developers.'))
         This tells the user to wait while debug information is being
         collected.
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_pulse_info_collection_progress(self):
         '''Advance the data collection progress bar.
 
         This function is called every 100 ms.
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_stop_info_collection_progress(self):
         '''Close debug data collection progress window.'''
 
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_start_upload_progress(self):
         '''Open progress bar for data upload.
 
         This tells the user to wait while debug information is being uploaded.
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_set_upload_progress(self, progress):
         '''Update data upload progress bar.
@@ -1149,12 +1149,12 @@ might be helpful for the developers.'))
 
         This function is called every 100 ms.
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_stop_upload_progress(self):
         '''Close debug data upload progress window.'''
 
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_shutdown(self):
         '''Called right before terminating the program.
@@ -1174,7 +1174,7 @@ might be helpful for the developers.'))
         Return True if the user selected "Yes", False if selected "No" or
         "None" on cancel/dialog closing.
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_question_choice(self, text, options, multiple):
         '''Show an question with predefined choices.
@@ -1186,14 +1186,14 @@ might be helpful for the developers.'))
         Return list of selected option indexes, or None if the user cancelled.
         If multiple == False, the list will always have one element.
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_question_file(self, text):
         '''Show a file selector dialog.
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     def ui_question_userpass(self, message):
         '''Request username and password from user.
@@ -1203,7 +1203,7 @@ might be helpful for the developers.'))
 
         Return a tuple (username, password), or None if cancelled.
         '''
-        raise NotImplementedError, 'this function must be overridden by subclasses'
+        raise NotImplementedError('this function must be overridden by subclasses')
 
 class HookUI:
     '''Interactive functions which can be used in package hooks.
@@ -1764,7 +1764,7 @@ CoreDump: base64
                 pid += 1
                 try:
                     os.kill(pid, 0)
-                except OSError, e:
+                except OSError as e:
                     if e.errno == errno.ESRCH:
                         break
             return pid
