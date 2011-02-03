@@ -102,7 +102,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
                 # don't clobber existing report
                 return
         report_file = os.fdopen(os.open(pr_filename,
-            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0600), 'w')
+            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o600), 'w')
         try:
             pr.write(report_file)
         finally:
@@ -154,7 +154,7 @@ def func(x):
 func(42)
 ''' % extracode)
                 os.close(fd)
-                os.chmod(script, 0755)
+                os.chmod(script, 0o755)
 
                 p = subprocess.Popen([script, 'testarg1', 'testarg2'],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -179,7 +179,7 @@ func(42)
             try:
                 self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
                 self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-                    0600, 'report has correct permissions')
+                    0o600, 'report has correct permissions')
 
                 pr = problem_report.ProblemReport()
                 pr.load(open(reports[0]))
@@ -212,7 +212,7 @@ func(42)
                 to_del.update(reports)
                 self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
                 self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-                    0600, 'report has correct permissions')
+                    0o600, 'report has correct permissions')
 
                 # touch report -> "seen" case
                 apport.fileutils.mark_report_seen(reports[0])
@@ -246,7 +246,7 @@ func(42)
             try:
                 self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
                 self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-                    0600, 'report has correct permissions')
+                    0o600, 'report has correct permissions')
 
                 pr = problem_report.ProblemReport()
                 pr.load(open(reports[0]))
@@ -310,7 +310,7 @@ def func(x):
 func(42)
 ''')
                 os.close(fd)
-                os.chmod(script, 0755)
+                os.chmod(script, 0o755)
 
                 # move aside current ignore file
                 if os.path.exists(ifpath):

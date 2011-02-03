@@ -278,8 +278,8 @@ class _T(unittest.TestCase):
 
         open(r1, 'w').write('report 1')
         open(r2, 'w').write('report 2')
-        os.chmod(r1, 0600)
-        os.chmod(r2, 0600)
+        os.chmod(r1, 0o600)
+        os.chmod(r2, 0o600)
         if create_inaccessible:
             ri = os.path.join(report_dir, 'inaccessible.crash')
             open(ri, 'w').write('inaccessible')

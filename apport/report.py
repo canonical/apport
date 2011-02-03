@@ -1235,7 +1235,7 @@ import sys
 sys.stdin.readline()
 ''')
         os.close(fd)
-        os.chmod(testscript, 0755)
+        os.chmod(testscript, 0o755)
         p = subprocess.Popen([testscript], stdin=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
         assert p.pid
@@ -1556,7 +1556,7 @@ cd `dirname $0`
 ulimit -c unlimited
 kill -SEGV $$
 ''')
-            os.chmod(script, 0755)
+            os.chmod(script, 0o755)
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
@@ -1596,7 +1596,7 @@ EOF
 ulimit -c unlimited
 $0.bin 2>/dev/null
 ''')
-            os.chmod(script, 0755)
+            os.chmod(script, 0o755)
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
@@ -1638,7 +1638,7 @@ EOF
 ulimit -c unlimited
 LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
 ''')
-            os.chmod(script, 0755)
+            os.chmod(script, 0o755)
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
@@ -1676,7 +1676,7 @@ EOF
 ulimit -c unlimited
 $0.bin 2>/dev/null
 ''')
-            os.chmod(script, 0755)
+            os.chmod(script, 0o755)
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0

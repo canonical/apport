@@ -125,7 +125,7 @@ problem still occurs:\n\n%s') % ', '.join(old_pkgs)
         report.write(f, only_new=True)
         f.close()
         apport.fileutils.mark_report_seen(reportfile)
-        os.chmod (reportfile, 0600)
+        os.chmod (reportfile, 0o600)
 
 class UserInterface:
     '''Apport user interface API.
@@ -1797,7 +1797,7 @@ CoreDump: base64
             (fd, exename) = tempfile.mkstemp()
             os.write(fd, open('/bin/cat').read())
             os.close(fd)
-            os.chmod(exename, 0755)
+            os.chmod(exename, 0o755)
 
             # unpackaged test process
             pid = os.fork()

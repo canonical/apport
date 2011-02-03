@@ -334,8 +334,8 @@ class ProblemReport(UserDict.IterableUserDict):
                 block = bc.flush()
                 # append gzip trailer: crc (32 bit) and size (32 bit)
                 if crc:
-                    block += struct.pack("<L", crc & 0xFFFFFFFFL)
-                    block += struct.pack("<L", size & 0xFFFFFFFFL)
+                    block += struct.pack("<L", crc & 0xFFFFFFFF)
+                    block += struct.pack("<L", size & 0xFFFFFFFF)
 
                 file.write(base64.b64encode(block))
                 file.write('\n')
