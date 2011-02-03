@@ -29,8 +29,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._apt_cache = None
         self._contents_dir = None
         self._mirror = None
-        # Checking whether we should use the API from python-apt 0.7.9
-        self.apt_pre_079 = not hasattr(apt.Package, 'installed')
 
         self.configuration = '/etc/default/apport'
 
@@ -70,23 +68,15 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''Return the installed version of a package.'''
 
         pkg = self._apt_pkg(package)
-        if self.apt_pre_079:
-            if not pkg.isInstalled:
-                raise ValueError('package does not exist')
-            return pkg.installedVersion
-        else:
-            inst = pkg.installed
-            if not inst:
-                raise ValueError('package does not exist')
-            return inst.version
+        inst = pkg.installed
+        if not inst:
+            raise ValueError('package does not exist')
+        return inst.version
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
 
-        if self.apt_pre_079:
-            return self._apt_pkg(package).candidateVersion
-        else:
-            return self._apt_pkg(package).candidate.version
+        return self._apt_pkg(package).candidate.version
 
     def get_dependencies(self, package):
         '''Return a list of packages a package depends on.'''
@@ -101,15 +91,12 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_source(self, package):
         '''Return the source package name for a package.'''
 
-        if self.apt_pre_079:
-            return self._apt_pkg(package).sourcePackageName
+        if self._apt_pkg(package).installed:
+            return self._apt_pkg(package).installed.source_name
+        elif self._apt_pkg(package).candidate:
+            return self._apt_pkg(package).candidate.source_name
         else:
-            if self._apt_pkg(package).installed:
-                return self._apt_pkg(package).installed.source_name
-            elif self._apt_pkg(package).candidate:
-                return self._apt_pkg(package).candidate.source_name
-            else:
-                raise ValueError('package %s does not exist' % package)
+            raise ValueError('package %s does not exist' % package)
 
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
@@ -122,12 +109,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         pkg = self._apt_pkg(package)
         # some PPA packages have installed version None, see LP#252734
-        if self.apt_pre_079:
-            if pkg.isInstalled and pkg.installedVersion is None:
-                return False
-        else:
-            if pkg.installed and pkg.installed.version is None:
-                return False
+        if pkg.installed and pkg.installed.version is None:
+            return False
 
         native_origins = [this_os]
         try:
@@ -140,10 +123,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             pass
 
         origins = None
-        if self.apt_pre_079:
-            origins = pkg.candidateOrigin
-        else:
-            origins = pkg.candidate.origins
+        origins = pkg.candidate.origins
         if origins: # might be None
             for o in origins:
                 if o.origin in native_origins:
@@ -156,15 +136,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         This might differ on multiarch architectures (e. g.  an i386 Firefox
         package on a x86_64 system)'''
 
-        if self.apt_pre_079:
-            return self._apt_pkg(package).architecture or 'unknown'
+        if self._apt_pkg(package).installed:
+            return self._apt_pkg(package).installed.architecture or 'unknown'
+        elif self._apt_pkg(package).candidate:
+            return self._apt_pkg(package).candidate.architecture or 'unknown'
         else:
-            if self._apt_pkg(package).installed:
-                return self._apt_pkg(package).installed.architecture or 'unknown'
-            elif self._apt_pkg(package).candidate:
-                return self._apt_pkg(package).candidate.architecture or 'unknown'
-            else:
-                raise ValueError('package %s does not exist' % package)
+            raise ValueError('package %s does not exist' % package)
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -457,20 +434,12 @@ class __AptDpkgPackageInfo(PackageInfo):
                 continue
 
             # ignore packages which are already installed in the right version
-            if self.apt_pre_079:
-                if (ver and c[pkg].isInstalled and c[pkg].installedVersion ==\
-                    ver) or (not ver and c[pkg].isInstalled):
-                    continue
-            else:
-                if (ver and c[pkg].installed and c[pkg].installed.version ==\
-                    ver) or (not ver and c[pkg].installed):
-                    continue
+            if (ver and c[pkg].installed and c[pkg].installed.version ==\
+                ver) or (not ver and c[pkg].installed):
+                continue
 
             candidate_version = None
-            if self.apt_pre_079:
-                candidate_version = c[pkg].candidateVersion
-            else:
-                candidate_version = c[pkg].candidate.version
+            candidate_version = c[pkg].candidate.version
             if ver and candidate_version != ver:
                 if not pkg.endswith('-dbgsym'):
                     outdated += '%s: installed version %s, latest version: %s\n' % (
@@ -573,10 +542,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             if os.geteuid() != 0:
                 apport.error('You either need to call this program as root or install these packages manually:')
             for p in c.getChanges():
-                if self.apt_pre_079:
-                    apport.error('  %s %s', p.name, p.candidateVersion)
-                else:
-                    apport.error('  %s %s', p.name, p.candidate.version)
+                apport.error('  %s %s', p.name, p.candidate.version)
 
         return (installed, outdated)
 

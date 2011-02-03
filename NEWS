@@ -5,6 +5,7 @@ detailled list of changes, please see ChangeLog.
 -------------------
 Improvements:
  - Be more Python 3 compatible (not fully working with Python 3 yet, though).
+ - apt/dpkg backend: Drop support for pre-0.7.9 python-apt API.
 
 Bug fixes:
  - hookutils.py, attach_dmesg(): Do not overwrite already existing dmesg.
