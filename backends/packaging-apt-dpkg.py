@@ -873,14 +873,14 @@ if __name__ == '__main__':
         def test_get_version(self):
             '''get_version().'''
 
-            self.assert_(impl.get_version('libc6').startswith('2'))
+            self.assertTrue(impl.get_version('libc6').startswith('2'))
             self.assertRaises(ValueError, impl.get_version, 'nonexisting')
             self.assertRaises(ValueError, impl.get_version, 'wukrainian')
 
         def test_get_available_version(self):
             '''get_available_version().'''
 
-            self.assert_(impl.get_available_version('libc6').startswith('2'))
+            self.assertTrue(impl.get_available_version('libc6').startswith('2'))
             self.assertRaises(ValueError, impl.get_available_version, 'nonexisting')
 
         def test_get_dependencies(self):
@@ -888,36 +888,36 @@ if __name__ == '__main__':
 
             # package with both Depends: and Pre-Depends:
             d  = impl.get_dependencies('bash')
-            self.assert_(len(d) > 2)
-            self.assert_('libc6' in d)
+            self.assertTrue(len(d) > 2)
+            self.assertTrue('libc6' in d)
             for dep in d:
-                self.assert_(impl.get_version(dep))
+                self.assertTrue(impl.get_version(dep))
 
             # Pre-Depends: only
             d  = impl.get_dependencies('coreutils')
-            self.assert_(len(d) >= 1)
-            self.assert_('libc6' in d)
+            self.assertTrue(len(d) >= 1)
+            self.assertTrue('libc6' in d)
             for dep in d:
-                self.assert_(impl.get_version(dep))
+                self.assertTrue(impl.get_version(dep))
 
             # Depends: only
             d  = impl.get_dependencies('libc6')
-            self.assert_(len(d) >= 1)
+            self.assertTrue(len(d) >= 1)
             for dep in d:
-                self.assert_(impl.get_version(dep))
+                self.assertTrue(impl.get_version(dep))
 
         def test_get_source(self):
             '''get_source().'''
 
             self.assertRaises(ValueError, impl.get_source, 'nonexisting')
             self.assertEqual(impl.get_source('bash'), 'bash')
-            self.assert_('glibc' in impl.get_source('libc6'))
+            self.assertTrue('glibc' in impl.get_source('libc6'))
 
         def test_is_distro_package(self):
             '''is_distro_package().'''
 
             self.assertRaises(ValueError, impl.is_distro_package, 'nonexisting')
-            self.assert_(impl.is_distro_package('bash'))
+            self.assertTrue(impl.is_distro_package('bash'))
             # no False test here, hard to come up with a generic one
 
         def test_get_architecture(self):
@@ -935,7 +935,7 @@ if __name__ == '__main__':
             '''get_files().'''
 
             self.assertRaises(ValueError, impl.get_files, 'nonexisting')
-            self.assert_('/bin/bash' in impl.get_files('bash'))
+            self.assertTrue('/bin/bash' in impl.get_files('bash'))
 
         def test_get_file_package(self):
             '''get_file_package() on installed files.'''
@@ -988,7 +988,7 @@ bo/gu/s                                                 na/mypackage
                 os.mkdir(cache_dir)
                 self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir), 'frob-utils')
                 self.assertEqual(len(os.listdir(cache_dir)), 1)
-                self.assert_(os.listdir(cache_dir)[0].startswith('Contents-'))
+                self.assertTrue(os.listdir(cache_dir)[0].startswith('Contents-'))
                 self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
             finally:
                 shutil.rmtree(basedir)
@@ -1014,7 +1014,7 @@ bo/gu/s                                                 na/mypackage
             arch = impl.get_system_architecture()
             # must be nonempty without line breaks
             self.assertNotEqual(arch, '')
-            self.assert_('\n' not in arch)
+            self.assertTrue('\n' not in arch)
 
         def test_compare_versions(self):
             '''compare_versions.'''
@@ -1056,13 +1056,13 @@ bo/gu/s                                                 na/mypackage
         def test_get_kernel_pacakge(self):
             '''get_kernel_package().'''
 
-            self.assert_('linux' in impl.get_kernel_package())
+            self.assertTrue('linux' in impl.get_kernel_package())
 
         def test_package_name_glob(self):
             '''package_name_glob().'''
 
-            self.assert_(len(impl.package_name_glob('a*')) > 5)
-            self.assert_('bash' in impl.package_name_glob('ba*h'))
+            self.assertTrue(len(impl.package_name_glob('a*')) > 5)
+            self.assertTrue('bash' in impl.package_name_glob('ba*h'))
             self.assertEqual(impl.package_name_glob('bash'), ['bash'])
             self.assertEqual(impl.package_name_glob('xzywef*'), [])
 

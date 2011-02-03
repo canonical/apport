@@ -925,12 +925,12 @@ and more
             r['LongGibberish'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
 
             handle = self.crashdb.upload(r)
-            self.assert_(handle)
+            self.assertTrue(handle)
             bug_target = self._get_bug_target(self.crashdb, r)
-            self.assert_(bug_target)
+            self.assertTrue(bug_target)
 
             id = self._file_bug(bug_target, r, handle)
-            self.assert_(id > 0)
+            self.assertTrue(id > 0)
             return id
 
         def test_1_report_segv(self):
@@ -961,12 +961,12 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r.standard_title(), 'foo crashed with NameError in fuzz()')
 
             handle = self.crashdb.upload(r)
-            self.assert_(handle)
+            self.assertTrue(handle)
             bug_target = self._get_bug_target(self.crashdb, r)
-            self.assert_(bug_target)
+            self.assertTrue(bug_target)
 
             id = self._file_bug(bug_target, r, handle)
-            self.assert_(id > 0)
+            self.assertTrue(id > 0)
             global python_report
             python_report = id
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
@@ -988,16 +988,16 @@ NameError: global name 'weird' is not defined'''
                 apport.packaging.get_system_architecture()]))
 
             self.assertEqual(r['Signal'], '11')
-            self.assert_(r['ExecutablePath'].endswith('/crash'))
+            self.assertTrue(r['ExecutablePath'].endswith('/crash'))
             self.assertEqual(r['SourcePackage'], self.test_srcpackage)
-            self.assert_(r['Package'].startswith(self.test_package + ' '))
-            self.assert_('f (x=42)' in r['Stacktrace'])
-            self.assert_('f (x=42)' in r['StacktraceTop'])
-            self.assert_('f (x=42)' in r['ThreadStacktrace'])
-            self.assert_(len(r['CoreDump']) > 1000)
-            self.assert_('Dependencies' in r)
-            self.assert_('Disassembly' in r)
-            self.assert_('Registers' in r)
+            self.assertTrue(r['Package'].startswith(self.test_package + ' '))
+            self.assertTrue('f (x=42)' in r['Stacktrace'])
+            self.assertTrue('f (x=42)' in r['StacktraceTop'])
+            self.assertTrue('f (x=42)' in r['ThreadStacktrace'])
+            self.assertTrue(len(r['CoreDump']) > 1000)
+            self.assertTrue('Dependencies' in r)
+            self.assertTrue('Disassembly' in r)
+            self.assertTrue('Registers' in r)
 
             # check tags
             r = self.crashdb.download(python_report)
@@ -1009,12 +1009,12 @@ NameError: global name 'weird' is not defined'''
             '''update_traces()'''
 
             r = self.crashdb.download(segv_report)
-            self.assert_('CoreDump' in r)
-            self.assert_('Dependencies' in r)
-            self.assert_('Disassembly' in r)
-            self.assert_('Registers' in r)
-            self.assert_('Stacktrace' in r)
-            self.assert_('ThreadStacktrace' in r)
+            self.assertTrue('CoreDump' in r)
+            self.assertTrue('Dependencies' in r)
+            self.assertTrue('Disassembly' in r)
+            self.assertTrue('Registers' in r)
+            self.assertTrue('Stacktrace' in r)
+            self.assertTrue('ThreadStacktrace' in r)
 
             # updating with an useless stack trace retains core dump
             r['StacktraceTop'] = '?? ()'
@@ -1023,16 +1023,16 @@ NameError: global name 'weird' is not defined'''
             r['FooBar'] = 'bogus'
             self.crashdb.update_traces(segv_report, r, 'I can has a better retrace?')
             r = self.crashdb.download(segv_report)
-            self.assert_('CoreDump' in r)
-            self.assert_('Dependencies' in r)
-            self.assert_('Disassembly' in r)
-            self.assert_('Registers' in r)
-            self.assert_('Stacktrace' in r) # TODO: ascertain that it's the updated one
-            self.assert_('ThreadStacktrace' in r)
+            self.assertTrue('CoreDump' in r)
+            self.assertTrue('Dependencies' in r)
+            self.assertTrue('Disassembly' in r)
+            self.assertTrue('Registers' in r)
+            self.assertTrue('Stacktrace' in r) # TODO: ascertain that it's the updated one
+            self.assertTrue('ThreadStacktrace' in r)
             self.failIf('FooBar' in r)
 
             tags = self.crashdb.launchpad.bugs[segv_report].tags
-            self.assert_('apport-crash' in tags)
+            self.assertTrue('apport-crash' in tags)
             self.failIf('apport-collected' in tags)
 
             # updating with an useful stack trace removes core dump
@@ -1042,11 +1042,11 @@ NameError: global name 'weird' is not defined'''
             self.crashdb.update_traces(segv_report, r, 'good retrace!')
             r = self.crashdb.download(segv_report)
             self.failIf('CoreDump' in r)
-            self.assert_('Dependencies' in r)
-            self.assert_('Disassembly' in r)
-            self.assert_('Registers' in r)
-            self.assert_('Stacktrace' in r)
-            self.assert_('ThreadStacktrace' in r)
+            self.assertTrue('Dependencies' in r)
+            self.assertTrue('Disassembly' in r)
+            self.assertTrue('Registers' in r)
+            self.assertTrue('Stacktrace' in r)
+            self.assertTrue('ThreadStacktrace' in r)
             self.failIf('FooBar' in r)
 
             # test various situations which caused crashes
@@ -1064,7 +1064,7 @@ NameError: global name 'weird' is not defined'''
                 target=bug_target,
                 title='testbug')
             id = bug.id
-            self.assert_(id > 0)
+            self.assertTrue(id > 0)
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             r = apport.Report('Bug')
@@ -1098,7 +1098,7 @@ NameError: global name 'weird' is not defined'''
                 target=bug_target,
                 title='testbug')
             id = bug.id
-            self.assert_(id > 0)
+            self.assertTrue(id > 0)
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             r = apport.Report('Bug')
@@ -1131,7 +1131,7 @@ NameError: global name 'weird' is not defined'''
                 target=bug_target,
                 title='testbug')
             id = bug.id
-            self.assert_(id > 0)
+            self.assertTrue(id > 0)
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             r = apport.Report('Bug')
@@ -1170,13 +1170,13 @@ NameError: global name 'weird' is not defined'''
         def test_is_reporter(self):
             '''is_reporter()'''
 
-            self.assert_(self.crashdb.is_reporter(segv_report))
+            self.assertTrue(self.crashdb.is_reporter(segv_report))
             self.failIf(self.crashdb.is_reporter(1))
 
         def test_can_update(self):
             '''can_update()'''
 
-            self.assert_(self.crashdb.can_update(segv_report))
+            self.assertTrue(self.crashdb.can_update(segv_report))
             self.failIf(self.crashdb.can_update(1))
 
         def test_duplicates(self):
@@ -1231,7 +1231,7 @@ NameError: global name 'weird' is not defined'''
 
             # mark_retraced()
             unretraced_before = self.crashdb.get_unretraced()
-            self.assert_(segv_report in unretraced_before)
+            self.assertTrue(segv_report in unretraced_before)
             self.failIf(python_report in unretraced_before)
             self.crashdb.mark_retraced(segv_report)
             unretraced_after = self.crashdb.get_unretraced()
@@ -1265,7 +1265,7 @@ NameError: global name 'weird' is not defined'''
             '''processing status markings for interpreter crashes'''
 
             unchecked_before = self.crashdb.get_dup_unchecked()
-            self.assert_(python_report in unchecked_before)
+            self.assertTrue(python_report in unchecked_before)
             self.failIf(segv_report in unchecked_before)
             self.crashdb._mark_dup_checked(python_report, self.ref_report)
             unchecked_after = self.crashdb.get_dup_unchecked()
@@ -1306,7 +1306,7 @@ NameError: global name 'weird' is not defined'''
             self._mark_report_fixed(segv_report)
             fixed_ver = self.crashdb.get_fixed_version(segv_report)
             self.assertNotEqual(fixed_ver, None)
-            self.assert_(fixed_ver[0].isdigit())
+            self.assertTrue(fixed_ver[0].isdigit())
             self._mark_report_new(segv_report)
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
 
@@ -1452,7 +1452,7 @@ NameError: global name 'weird' is not defined'''
             '''Verify that report ID is marked as regression.'''
 
             bug = self.crashdb.launchpad.bugs[id]
-            self.assert_('regression-retracer' in bug.tags)
+            self.assertTrue('regression-retracer' in bug.tags)
 
         def test_project(self):
             '''reporting crashes against a project instead of a distro'''
@@ -1478,12 +1478,12 @@ NameError: global name 'weird' is not defined'''
 
             # file it
             handle = crashdb.upload(r)
-            self.assert_(handle)
+            self.assertTrue(handle)
             bug_target = self._get_bug_target(crashdb, r)
             self.assertEqual(bug_target.name, 'langpack-o-matic')
 
             id = self._file_bug(bug_target, r, handle)
-            self.assert_(id > 0)
+            self.assertTrue(id > 0)
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             # update
@@ -1510,7 +1510,7 @@ NameError: global name 'weird' is not defined'''
             r = self.crashdb.download(self.uncommon_description_bug.id)
             self.assertEqual(r['ProblemType'], 'Package')
             self.assertEqual(r['Architecture'], 'amd64')
-            self.assert_(r['DistroRelease'].startswith('Ubuntu '))
+            self.assertTrue(r['DistroRelease'].startswith('Ubuntu '))
 
         def test_escalation(self):
             '''Escalating bugs with more than 10 duplicates'''
@@ -1539,8 +1539,8 @@ NameError: global name 'weird' is not defined'''
                         self.failIf(has_escalation_tag)
                         self.failIf(has_escalation_subscription)
                     else:
-                        self.assert_(has_escalation_tag)
-                        self.assert_(has_escalation_subscription)
+                        self.assertTrue(has_escalation_tag)
+                        self.assertTrue(has_escalation_subscription)
             finally:
                 for b in range(first_dup, first_dup+count):
                     sys.stderr.write('R%i ' % b)
@@ -1552,7 +1552,7 @@ NameError: global name 'weird' is not defined'''
 
             self._mark_needs_dupcheck(python_report)
             unchecked_before = self.crashdb.get_dup_unchecked()
-            self.assert_(python_report in unchecked_before)
+            self.assertTrue(python_report in unchecked_before)
 
             # add an upstream task, and remove the package name from the
             # package task; _mark_dup_checked is supposed to restore the

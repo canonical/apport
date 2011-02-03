@@ -331,8 +331,8 @@ class _T(unittest.TestCase):
         if onedesktop:
             d = find_package_desktopfile(onedesktop)
             self.assertNotEqual(d, None, 'one-desktop package %s' % onedesktop)
-            self.assert_(os.path.exists(d))
-            self.assert_(d.endswith('.desktop'))
+            self.assertTrue(os.path.exists(d))
+            self.assertTrue(d.endswith('.desktop'))
 
     def test_likely_packaged(self):
         '''likely_packaged().'''
@@ -453,9 +453,9 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         self.assertRaises(ValueError, make_report_path, pr)
 
         pr['Package'] = 'bash 1'
-        self.assert_(make_report_path(pr).startswith('%s/bash' % report_dir))
+        self.assertTrue(make_report_path(pr).startswith('%s/bash' % report_dir))
         pr['ExecutablePath'] = '/bin/bash';
-        self.assert_(make_report_path(pr).startswith('%s/_bin_bash' % report_dir))
+        self.assertTrue(make_report_path(pr).startswith('%s/_bin_bash' % report_dir))
 
     def test_check_files_md5(self):
         '''check_files_md5().'''

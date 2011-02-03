@@ -227,7 +227,7 @@ int main() { return 42; }
                 os.close(fd)
                 c.tar(tarpath)
                 t = tarfile.open(tarpath)
-                self.assert_(
+                self.assertTrue(
                     # python 2.5's tarfile
                     set(['./bin/42', './bin/hello', './newfile']).issubset(set(t.getnames())) or
                     # python 2.4's tarfile
@@ -236,7 +236,7 @@ int main() { return 42; }
 
                 # test cleanup
                 del c
-                self.assert_(os.path.exists(os.path.join(d, 'bin', '42')),
+                self.assertTrue(os.path.exists(os.path.join(d, 'bin', '42')),
                     'directory chroot should not delete the chroot')
 
             finally:
@@ -274,7 +274,7 @@ int main() { return 42; }
                 open(os.path.join(c.root, 'newfile'), 'w')
                 c.tar()
                 t = tarfile.open(tar)
-                self.assert_(
+                self.assertTrue(
                     # python 2.5's tarfile
                     set(['./bin/42', './bin/hello', './newfile']).issubset(set(t.getnames())) or
                     # python 2.4's tarfile
@@ -284,7 +284,7 @@ int main() { return 42; }
                 # test cleanup
                 d = c.root
                 del c
-                self.assert_(not os.path.exists(d),
+                self.assertTrue(not os.path.exists(d),
                     'tarball chroot should delete the temporary chroot')
             finally:
                 os.unlink(tar)
@@ -364,8 +364,8 @@ int main() { return 42; }
                 self.assertEqual(err, '')
                 self.assertEqual(result, 0)
                 files = out.splitlines()
-                self.assert_('bin' in files)
-                self.assert_('lib' in files)
+                self.assertTrue('bin' in files)
+                self.assertTrue('lib' in files)
 
                 # complex shell commands: relative symlinks and paths
                 self.assertEqual(c.run_capture(['bash'], '''set -e

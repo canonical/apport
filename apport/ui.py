@@ -1508,21 +1508,21 @@ databases = {
 
             fsize = os.path.getsize(self.report_file.name)
             complete_ratio = float(self.ui.get_complete_size()) / fsize
-            self.assert_(complete_ratio >= 0.99 and complete_ratio <= 1.01)
+            self.assertTrue(complete_ratio >= 0.99 and complete_ratio <= 1.01)
                 
             rs = self.ui.get_reduced_size()
-            self.assert_(rs > 1000)
-            self.assert_(rs < 10000)
+            self.assertTrue(rs > 1000)
+            self.assertTrue(rs < 10000)
 
             # now add some information (e. g. from package hooks)
             self.ui.report['ExtraInfo'] = 'A' * 50000
             s = self.ui.get_complete_size()
-            self.assert_(s >= fsize + 49900)
-            self.assert_(s < fsize + 60000)
+            self.assertTrue(s >= fsize + 49900)
+            self.assertTrue(s < fsize + 60000)
 
             rs = self.ui.get_reduced_size()
-            self.assert_(rs > 51000)
-            self.assert_(rs < 60000)
+            self.assertTrue(rs > 51000)
+            self.assertTrue(rs < 60000)
 
         def test_get_size_constructed(self):
             '''get_complete_size() and get_reduced_size() for on-the-fly Reports.'''
@@ -1531,8 +1531,8 @@ databases = {
             self.ui.report['Hello'] = 'World'
 
             s = self.ui.get_complete_size()
-            self.assert_(s > 5)
-            self.assert_(s < 100)
+            self.assertTrue(s > 5)
+            self.assertTrue(s < 100)
 
             self.assertEqual(s, self.ui.get_reduced_size())
 
@@ -1551,7 +1551,7 @@ databases = {
             self.update_report_file()
             self.ui.load_report(self.report_file.name)
 
-            self.assert_(self.ui.report == None)
+            self.assertTrue(self.ui.report == None)
             self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
             self.assertEqual(self.ui.msg_severity, 'info')
 
@@ -1568,7 +1568,7 @@ CoreDump: base64
             self.report_file.flush()
 
             self.ui.load_report(self.report_file.name)
-            self.assert_(self.ui.report == None)
+            self.assertTrue(self.ui.report == None)
             self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
             self.assertEqual(self.ui.msg_severity, 'error')
 
@@ -1584,8 +1584,8 @@ CoreDump: base64
 
             self.ui.restart()
             time.sleep(1) # FIXME: race condition
-            self.assert_(os.path.exists(p))
-            self.assert_(not os.path.exists(r))
+            self.assertTrue(os.path.exists(p))
+            self.assertTrue(not os.path.exists(r))
             os.unlink(p)
 
             # test with RespawnCommand
@@ -1595,8 +1595,8 @@ CoreDump: base64
 
             self.ui.restart()
             time.sleep(1) # FIXME: race condition
-            self.assert_(not os.path.exists(p))
-            self.assert_(os.path.exists(r))
+            self.assertTrue(not os.path.exists(p))
+            self.assertTrue(os.path.exists(r))
             os.unlink(r)
 
             # test that invalid command does not make us fall apart
@@ -1611,7 +1611,7 @@ CoreDump: base64
             # report without any information (distro bug)
             self.ui.report = apport.Report()
             self.ui.collect_info()
-            self.assert_(set(['Date', 'Uname', 'DistroRelease', 'ProblemType']).issubset(
+            self.assertTrue(set(['Date', 'Uname', 'DistroRelease', 'ProblemType']).issubset(
                 set(self.ui.report.keys())))
             self.assertEqual(self.ui.ic_progress_pulses, 0,
                 'no progress dialog for distro bug info collection')
@@ -1629,10 +1629,10 @@ CoreDump: base64
             self.ui.report['Fstab'] = ('/etc/fstab', True)
             self.ui.report['CompressedValue'] = problem_report.CompressedValue('Test')
             self.ui.collect_info()
-            self.assert_(set(['SourcePackage', 'Package', 'ProblemType',
+            self.assertTrue(set(['SourcePackage', 'Package', 'ProblemType',
                 'Uname', 'Dependencies', 'DistroRelease', 'Date',
                 'ExecutablePath']).issubset(set(self.ui.report.keys())))
-            self.assert_(self.ui.ic_progress_pulses > 0,
+            self.assertTrue(self.ui.ic_progress_pulses > 0,
                 'progress dialog for package bug info collection')
             self.assertEqual(self.ui.ic_progress_active, False,
                 'progress dialog for package bug info collection finished')
@@ -1644,10 +1644,10 @@ CoreDump: base64
             self.ui.report = apport.Report()
             self.ui.cur_package = 'bash'
             self.ui.collect_info()
-            self.assert_(set(['SourcePackage', 'Package', 'ProblemType',
+            self.assertTrue(set(['SourcePackage', 'Package', 'ProblemType',
                 'Uname', 'Dependencies', 'DistroRelease',
                 'Date']).issubset(set(self.ui.report.keys())))
-            self.assert_(self.ui.ic_progress_pulses > 0,
+            self.assertTrue(self.ui.ic_progress_pulses > 0,
                 'progress dialog for package bug info collection')
             self.assertEqual(self.ui.ic_progress_active, False,
                 'progress dialog for package bug info collection finished')
@@ -1704,13 +1704,13 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
             self.assertEqual(self.ui.opened_url, 'http://bash.bugs.example.com/%i' % self.ui.crashdb.latest_id())
 
-            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assertTrue(self.ui.ic_progress_pulses > 0)
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
-            self.assert_('Dependencies' in self.ui.report.keys())
-            self.assert_('ProcEnviron' in self.ui.report.keys())
+            self.assertTrue('Dependencies' in self.ui.report.keys())
+            self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
 
             # should not crash on nonexisting package
@@ -1741,19 +1741,19 @@ CoreDump: base64
                 os.kill(pid, signal.SIGKILL)
                 os.waitpid(pid, 0)
 
-            self.assert_('SourcePackage' in self.ui.report.keys())
-            self.assert_('Dependencies' in self.ui.report.keys())
-            self.assert_('ProcMaps' in self.ui.report.keys())
+            self.assertTrue('SourcePackage' in self.ui.report.keys())
+            self.assertTrue('Dependencies' in self.ui.report.keys())
+            self.assertTrue('ProcMaps' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ExecutablePath'], '/bin/sleep')
             self.failIf(self.ui.report.has_key('ProcCmdline')) # privacy!
-            self.assert_('ProcEnviron' in self.ui.report.keys())
+            self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
-            self.assert_(self.ui.present_details_shown)
-            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assertTrue(self.ui.present_details_shown)
+            self.assertTrue(self.ui.ic_progress_pulses > 0)
 
         @classmethod
         def _find_unused_pid(klass):
@@ -1831,14 +1831,14 @@ CoreDump: base64
             self.assertEqual(self.ui.opened_url, None)
             self.failIf(self.ui.present_details_shown)
 
-            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assertTrue(self.ui.ic_progress_pulses > 0)
 
             r = apport.Report()
             r.load(open(reportfile))
 
             self.assertEqual(r['SourcePackage'], 'bash')
-            self.assert_('Dependencies' in r.keys())
-            self.assert_('ProcEnviron' in r.keys())
+            self.assertTrue('Dependencies' in r.keys())
+            self.assertTrue('ProcEnviron' in r.keys())
             self.assertEqual(r['ProblemType'], 'Bug')
 
             # report it
@@ -1850,7 +1850,7 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_text, None)
             self.assertEqual(self.ui.msg_severity, None)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
         def _gen_test_crash(self):
             '''Generate a Report with real crash data.'''
@@ -1913,7 +1913,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
             # report in crash notification dialog, send full report
             r.write(open(report_file, 'w'))
@@ -1925,15 +1925,15 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
-            self.assert_('SourcePackage' in self.ui.report.keys())
-            self.assert_('Dependencies' in self.ui.report.keys())
-            self.assert_('Stacktrace' in self.ui.report.keys())
-            self.assert_('ProcEnviron' in self.ui.report.keys())
+            self.assertTrue('SourcePackage' in self.ui.report.keys())
+            self.assertTrue('Dependencies' in self.ui.report.keys())
+            self.assertTrue('Stacktrace' in self.ui.report.keys())
+            self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
-            self.assert_(len(self.ui.report['CoreDump']) > 10000)
-            self.assert_(self.ui.report['Title'].startswith('cat crashed with SIGSEGV'))
+            self.assertTrue(len(self.ui.report['CoreDump']) > 10000)
+            self.assertTrue(self.ui.report['Title'].startswith('cat crashed with SIGSEGV'))
 
             # report in crash notification dialog, send reduced report
             r.write(open(report_file, 'w'))
@@ -1945,16 +1945,16 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
             self.assertNotEqual(self.ui.ic_progress_pulses, 0)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
-            self.assert_('SourcePackage' in self.ui.report.keys())
-            self.assert_('Dependencies' in self.ui.report.keys())
-            self.assert_('Stacktrace' in self.ui.report.keys())
+            self.assertTrue('SourcePackage' in self.ui.report.keys())
+            self.assertTrue('Dependencies' in self.ui.report.keys())
+            self.assertTrue('Stacktrace' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
-            self.assert_(not self.ui.report.has_key('CoreDump'))
+            self.assertTrue(not self.ui.report.has_key('CoreDump'))
 
             # so far we did not blacklist, verify that
-            self.assert_(not self.ui.report.check_ignored())
+            self.assertTrue(not self.ui.report.check_ignored())
 
             # cancel crash notification dialog and blacklist
             r.write(open(report_file, 'w'))
@@ -1966,7 +1966,7 @@ CoreDump: base64
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
 
-            self.assert_(self.ui.report.check_ignored())
+            self.assertTrue(self.ui.report.check_ignored())
 
         def test_run_crash_abort(self):
             '''run_crash() for an unreportable abort()'''
@@ -1979,7 +1979,7 @@ CoreDump: base64
             self.ui.present_details_response = 'full'
             self.ui.run_crash(self.report_file.name)
 
-            self.assert_('assert' in self.ui.msg_text, '%s: %s' %
+            self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
             self.failIf(self.ui.present_details_shown)
@@ -1999,7 +1999,7 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_text, None)
             self.assertEqual(self.ui.msg_severity, None)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
             # unreportable
             self.report['Package'] = 'bash'
@@ -2010,7 +2010,7 @@ CoreDump: base64
             self.ui = _TestSuiteUserInterface()
             self.assertEqual(self.ui.run_argv(), True)
 
-            self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
+            self.assertTrue('It stinks.' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
             self.failIf(self.ui.present_details_shown)
@@ -2034,7 +2034,7 @@ CoreDump: base64
 
             self.ui.run_crash(self.report_file.name)
 
-            self.assert_('It stinks.' in self.ui.msg_text, '%s: %s' %
+            self.assertTrue('It stinks.' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
 
@@ -2082,7 +2082,7 @@ CoreDump: base64
             self.ui = _TestSuiteUserInterface()
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, 'error')
-            self.assert_('memory' in self.ui.msg_text, '%s: %s' %
+            self.assertTrue('memory' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
 
         def test_run_crash_preretraced(self):
@@ -2111,7 +2111,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
            
         def test_run_crash_errors(self):
             '''run_crash() on various error conditions.'''
@@ -2201,16 +2201,16 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://bash.bugs.example.com/%i' % self.ui.crashdb.latest_id())
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
-            self.assert_('SourcePackage' in self.ui.report.keys())
-            self.assert_('Package' in self.ui.report.keys())
+            self.assertTrue('SourcePackage' in self.ui.report.keys())
+            self.assertTrue('Package' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Package')
 
             # verify that additional information has been collected
-            self.assert_('Architecture' in self.ui.report.keys())
-            self.assert_('DistroRelease' in self.ui.report.keys())
-            self.assert_('Uname' in self.ui.report.keys())
+            self.assertTrue('Architecture' in self.ui.report.keys())
+            self.assertTrue('DistroRelease' in self.ui.report.keys())
+            self.assertTrue('Uname' in self.ui.report.keys())
 
         def test_run_crash_kernel(self):
             '''run_crash() for a kernel error.'''
@@ -2252,11 +2252,11 @@ CoreDump: base64
                 ' ' + str(self.ui.msg_text))
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://linux.bugs.example.com/%i' % self.ui.crashdb.latest_id())
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
-            self.assert_('SourcePackage' in self.ui.report.keys())
+            self.assertTrue('SourcePackage' in self.ui.report.keys())
             # did we run the hooks properly?
-            self.assert_('KernelDebug' in self.ui.report.keys())
+            self.assertTrue('KernelDebug' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'KernelCrash')
 
         def test_run_crash_anonymity(self):
@@ -2290,7 +2290,7 @@ CoreDump: base64
                     '', {'dummy_data': 1})
 
             self.assertEqual(self.ui.run_argv(), False)
-            self.assert_('No additional information collected.' in
+            self.assertTrue('No additional information collected.' in
                     self.ui.msg_text)
             self.failIf(self.ui.present_details_shown)
 
@@ -2303,7 +2303,7 @@ CoreDump: base64
                     '', {'dummy_data': 1})
 
             self.assertEqual(self.ui.run_argv(), False)
-            self.assert_('No additional information collected.' in
+            self.assertTrue('No additional information collected.' in
                     self.ui.msg_text)
             self.failIf(self.ui.present_details_shown)
 
@@ -2321,12 +2321,12 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
-            self.assert_(self.ui.ic_progress_pulses > 0)
-            self.assert_(self.ui.report['Package'].startswith('bash '))
-            self.assert_('Dependencies' in self.ui.report.keys())
-            self.assert_('ProcEnviron' in self.ui.report.keys())
+            self.assertTrue(self.ui.ic_progress_pulses > 0)
+            self.assertTrue(self.ui.report['Package'].startswith('bash '))
+            self.assertTrue('Dependencies' in self.ui.report.keys())
+            self.assertTrue('ProcEnviron' in self.ui.report.keys())
 
         def test_run_update_report_existing_package_cli(self):
             '''run_update_report() on an existing package (CLI argument).'''
@@ -2340,12 +2340,12 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
-            self.assert_(self.ui.ic_progress_pulses > 0)
-            self.assert_(self.ui.report['Package'].startswith('bash '))
-            self.assert_('Dependencies' in self.ui.report.keys())
-            self.assert_('ProcEnviron' in self.ui.report.keys())
+            self.assertTrue(self.ui.ic_progress_pulses > 0)
+            self.assertTrue(self.ui.report['Package'].startswith('bash '))
+            self.assertTrue('Dependencies' in self.ui.report.keys())
+            self.assertTrue('ProcEnviron' in self.ui.report.keys())
 
         def test_run_update_report_existing_package_cli_cmdname(self):
             '''run_update_report() on an existing package (-collect program).'''
@@ -2359,12 +2359,12 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
-            self.assert_(self.ui.ic_progress_pulses > 0)
-            self.assert_(self.ui.report['Package'].startswith('bash '))
-            self.assert_('Dependencies' in self.ui.report.keys())
-            self.assert_('ProcEnviron' in self.ui.report.keys())
+            self.assertTrue(self.ui.ic_progress_pulses > 0)
+            self.assertTrue(self.ui.report['Package'].startswith('bash '))
+            self.assertTrue('Dependencies' in self.ui.report.keys())
+            self.assertTrue('ProcEnviron' in self.ui.report.keys())
 
         def test_run_update_report_noninstalled_but_hook(self):
             '''run_update_report() on an uninstalled package with a source hook.'''
@@ -2382,12 +2382,12 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
-            self.assert_(self.ui.ic_progress_pulses > 0)
+            self.assertTrue(self.ui.ic_progress_pulses > 0)
             self.assertEqual(self.ui.report['Package'], 'foo (not installed)')
             self.assertEqual(self.ui.report['MachineType'], 'Laptop')
-            self.assert_('ProcEnviron' in self.ui.report.keys())
+            self.assertTrue('ProcEnviron' in self.ui.report.keys())
 
         def _run_hook(self, code):
             f = open(os.path.join(self.hookdir, 'coreutils.py'), 'w')
@@ -2483,7 +2483,7 @@ report['end'] = '1'
             sys.argv = ['ui-test', '-s', 'foobar' ]
             self.ui = _TestSuiteUserInterface()
             self.assertEqual(self.ui.run_argv(), True)
-            self.assert_('foobar" is not known' in self.ui.msg_text)
+            self.assertTrue('foobar" is not known' in self.ui.msg_text)
             self.assertEqual(self.ui.msg_severity, 'error')
 
             # does not determine package
@@ -2497,7 +2497,7 @@ report['end'] = '1'
             self.assertRaises(SystemExit, self.ui.run_argv)
             err = sys.stderr.getvalue()
             sys.stderr = orig_stderr
-            self.assert_('did not determine the affected package' in err)
+            self.assertTrue('did not determine the affected package' in err)
 
             # does not define run()
             f = open(os.path.join(symptom_script_dir, 'norun.py'), 'w')
@@ -2509,7 +2509,7 @@ report['end'] = '1'
             self.assertRaises(SystemExit, self.ui.run_argv)
             err = sys.stderr.getvalue()
             sys.stderr = orig_stderr
-            self.assert_('norun.py crashed:' in err)
+            self.assertTrue('norun.py crashed:' in err)
 
             # crashing script
             f = open(os.path.join(symptom_script_dir, 'crash.py'), 'w')
@@ -2521,8 +2521,8 @@ report['end'] = '1'
             self.assertRaises(SystemExit, self.ui.run_argv)
             err = sys.stderr.getvalue()
             sys.stderr = orig_stderr
-            self.assert_('crash.py crashed:' in err)
-            self.assert_('ZeroDivisionError:' in err)
+            self.assertTrue('crash.py crashed:' in err)
+            self.assertTrue('ZeroDivisionError:' in err)
 
             # working noninteractive script
             f = open(os.path.join(symptom_script_dir, 'itching.py'), 'w')
@@ -2533,12 +2533,12 @@ report['end'] = '1'
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_text, None)
             self.assertEqual(self.ui.msg_severity, None)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
             self.assertEqual(self.ui.report['itch'], 'scratch')
-            self.assert_('DistroRelease' in self.ui.report)
+            self.assertTrue('DistroRelease' in self.ui.report)
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
-            self.assert_(self.ui.report['Package'].startswith('bash '))
+            self.assertTrue(self.ui.report['Package'].startswith('bash '))
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
 
             # working interactive script
@@ -2553,13 +2553,13 @@ report['end'] = '1'
             self.ui = _TestSuiteUserInterface()
             self.ui.question_yesno_response = True
             self.assertEqual(self.ui.run_argv(), True)
-            self.assert_(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
             self.assertEqual(self.ui.msg_text, 'do you?')
 
             self.assertEqual(self.ui.report['itch'], 'slap')
-            self.assert_('DistroRelease' in self.ui.report)
+            self.assertTrue('DistroRelease' in self.ui.report)
             self.assertEqual(self.ui.report['SourcePackage'], 'bash')
-            self.assert_(self.ui.report['Package'].startswith('bash '))
+            self.assertTrue(self.ui.report['Package'].startswith('bash '))
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
             self.assertEqual(self.ui.report['q'], 'True')
 
@@ -2582,7 +2582,7 @@ def run(report, ui):
             self.ui.question_choice_response = None
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None)
-            self.assert_('kind of problem' in self.ui.msg_text)
+            self.assertTrue('kind of problem' in self.ui.msg_text)
             self.assertEqual(set(self.ui.msg_choices), 
                     set(['bar', 'foo does not work', 'Other problem']))
 
@@ -2595,9 +2595,9 @@ def run(report, ui):
             self.ui.question_choice_response = [self.ui.msg_choices.index('foo does not work')]
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None)
-            self.assert_(self.ui.ic_progress_pulses > 0)
-            self.assert_(self.ui.present_details_shown)
-            self.assert_(self.ui.report['Package'].startswith('bash'))
+            self.assertTrue(self.ui.ic_progress_pulses > 0)
+            self.assertTrue(self.ui.present_details_shown)
+            self.assertTrue(self.ui.report['Package'].startswith('bash'))
 
         def test_parse_argv(self):
             '''parse_args() option inference for a single argument'''

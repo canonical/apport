@@ -262,9 +262,10 @@ class ProblemReport(UserDict):
                     del self.data[k]
                     continue
 
-            if isinstance(v, unicode):
-                # unicode → str
-                v = v.encode('UTF-8')
+            if sys.version.startswith('2'):
+                if isinstance(v, unicode):
+                    # unicode → str
+                    v = v.encode('UTF-8')
 
             if '\n' in v:
                 # multiline value
@@ -559,7 +560,7 @@ class _T(unittest.TestCase):
         self.assertEqual(pr['foo'], 'bar')
         self.assertEqual(pr['bar'], ' foo   bar\nbaz\n   blip  ')
         self.assertEqual(pr['ProblemType'], 'Crash')
-        self.assert_(time.strptime(pr['Date']))
+        self.assertTrue(time.strptime(pr['Date']))
         self.assertEqual(pr['dash-key'], '1')
         self.assertEqual(pr['dot.key'], '1')
         self.assertEqual(pr['underscore_key'], '1')
@@ -594,8 +595,8 @@ class _T(unittest.TestCase):
         pr['Bin'].set_value('AB' * 10 + '\0' * 10 + 'Z')
         pr['Large'] = CompressedValue(large_val)
 
-        self.assert_(isinstance(pr['Foo'], CompressedValue))
-        self.assert_(isinstance(pr['Bin'], CompressedValue))
+        self.assertTrue(isinstance(pr['Foo'], CompressedValue))
+        self.assertTrue(isinstance(pr['Bin'], CompressedValue))
         self.assertEqual(pr['Foo'].get_value(), 'FooFoo!')
         self.assertEqual(pr['Bin'].get_value(), 'AB' * 10 + '\0' * 10 + 'Z')
         self.assertEqual(pr['Large'].get_value(), large_val)
@@ -889,7 +890,7 @@ File: base64
 
         pr2 = ProblemReport()
         pr2.load(io)
-        self.assert_(pr2['BinFile'].endswith('abhello world'))
+        self.assertTrue(pr2['BinFile'].endswith('abhello world'))
         self.assertEqual(len(pr2['BinFile']), 1048576 + len('hello world'))
 
     def test_read_file(self):
@@ -918,7 +919,7 @@ Foo: Bar
         pr.load(StringIO(bin_report), binary='compressed')
         self.assertEqual(pr['Foo'], 'Bar')
         self.assertEqual(pr.has_removed_fields(), False)
-        self.assert_(isinstance(pr['File'], CompressedValue))
+        self.assertTrue(isinstance(pr['File'], CompressedValue))
 
         self.assertEqual(pr['File'].get_value(), 'AB' * 10 + '\0' * 10 + 'Z')
 
@@ -980,14 +981,14 @@ Foo: Bar
         pr = ProblemReport()
         pr.load(io)
 
-        self.assert_(pr['File'] == data)
+        self.assertTrue(pr['File'] == data)
         self.assertEqual(pr['Before'], 'xtestx')
         self.assertEqual(pr['ZAfter'], 'ytesty')
 
         # write it again
         io2 = StringIO()
         pr.write(io2)
-        self.assert_(io.getvalue() == io2.getvalue())
+        self.assertTrue(io.getvalue() == io2.getvalue())
 
         # check gzip compatibility
         io.seek(0)
@@ -1024,9 +1025,9 @@ Foo: Bar
 
         self.failIf(pr.has_key('FileSmallLimit'))
         self.failIf(pr.has_key('FileLimitMinus1'))
-        self.assert_(pr['FileExactLimit'] == data)
-        self.assert_(pr['FileLimitPlus1'] == data)
-        self.assert_(pr['FileLimitNone'] == data)
+        self.assertTrue(pr['FileExactLimit'] == data)
+        self.assertTrue(pr['FileLimitPlus1'] == data)
+        self.assertTrue(pr['FileLimitNone'] == data)
         self.assertEqual(pr['Before'], 'xtestx')
         self.assertEqual(pr['ZAfter'], 'ytesty')
 
@@ -1182,12 +1183,12 @@ File: base64
 
         # first part is the multipart container
         part = msg_iter.next()
-        self.assert_(part.is_multipart())
+        self.assertTrue(part.is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'text/plain')
         self.assertEqual(part.get_content_charset(), 'utf-8')
         self.assertEqual(part.get_filename(), None)
@@ -1216,7 +1217,7 @@ TwoLineUnicode:
 
         # third part should be the Multiline: field as attachment
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'text/plain')
         self.assertEqual(part.get_content_charset(), 'utf-8')
         self.assertEqual(part.get_filename(), 'Multiline.txt')
@@ -1262,12 +1263,12 @@ line♥5!!
 
         # first part is the multipart container
         part = msg_iter.next()
-        self.assert_(part.is_multipart())
+        self.assertTrue(part.is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'text/plain')
         self.assertEqual(part.get_content_charset(), 'utf-8')
         self.assertEqual(part.get_filename(), None)
@@ -1276,7 +1277,7 @@ line♥5!!
 
         # third part should be the File1: file contents as gzip'ed attachment
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'application/x-gzip')
         self.assertEqual(part.get_filename(), 'File1.gz')
         f = tempfile.TemporaryFile()
@@ -1287,7 +1288,7 @@ line♥5!!
         # fourth part should be the File1.gz: file contents as gzip'ed
         # attachment; write_mime() should not compress it again
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'application/x-gzip')
         self.assertEqual(part.get_filename(), 'File1.gz')
         f = tempfile.TemporaryFile()
@@ -1297,7 +1298,7 @@ line♥5!!
 
         # fifth part should be the Value1: value as gzip'ed attachment
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'application/x-gzip')
         self.assertEqual(part.get_filename(), 'Value1.gz')
         f = tempfile.TemporaryFile()
@@ -1308,7 +1309,7 @@ line♥5!!
         # sixth part should be the Value1: value as gzip'ed attachment;
         # write_mime should not compress it again
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'application/x-gzip')
         self.assertEqual(part.get_filename(), 'Value1.gz')
         f = tempfile.TemporaryFile()
@@ -1319,7 +1320,7 @@ line♥5!!
         # seventh part should be the ZValue: value as gzip'ed attachment;
         # write_mime should not compress it again
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'application/x-gzip')
         self.assertEqual(part.get_filename(), 'ZValue.gz')
         f = tempfile.TemporaryFile()
@@ -1348,14 +1349,14 @@ line♥5!!
 
         # first part is the multipart container
         part = msg_iter.next()
-        self.assert_(part.is_multipart())
+        self.assertTrue(part.is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'text/plain')
-        self.assert_('Simple: bar' in part.get_payload(decode=True))
+        self.assertTrue('Simple: bar' in part.get_payload(decode=True))
 
         # no more parts
         self.assertRaises(StopIteration, msg_iter.next)
@@ -1379,12 +1380,12 @@ line♥5!!
 
         # first part is the multipart container
         part = msg_iter.next()
-        self.assert_(part.is_multipart())
+        self.assertTrue(part.is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'text/plain')
         self.assertEqual(part.get_content_charset(), 'utf-8')
         self.assertEqual(part.get_filename(), None)
@@ -1395,7 +1396,7 @@ GoodText: Hi
 
         # third part should be the GoodBin: field as attachment
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         f = tempfile.TemporaryFile()
         f.write(part.get_payload(decode=True))
         f.seek(0)
@@ -1424,12 +1425,12 @@ GoodText: Hi
 
         # first part is the multipart container
         part = msg_iter.next()
-        self.assert_(part.is_multipart())
+        self.assertTrue(part.is_multipart())
 
         # second part should be an inline text/plain attachments with all short
         # fields
         part = msg_iter.next()
-        self.assert_(not part.is_multipart())
+        self.assertTrue(not part.is_multipart())
         self.assertEqual(part.get_content_type(), 'text/plain')
         self.assertEqual(part.get_content_charset(), 'utf-8')
         self.assertEqual(part.get_filename(), None)

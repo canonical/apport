@@ -165,7 +165,7 @@ func(42)
                 err = p.communicate()[1]
                 self.assertEqual(p.returncode, 1,
                     'crashing test python program exits with failure code')
-                self.assert_('Exception: This should happen.' in err)
+                self.assertTrue('Exception: This should happen.' in err)
                 self.failIf('OSError' in err, err)
             finally:
                 os.unlink(script)
@@ -196,13 +196,13 @@ func(42)
                 'Traceback', 'ProblemType', 'ProcEnviron', 'ProcStatus',
                 'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps',
                 'UserGroups']
-            self.assert_(set(expected_keys).issubset(set(pr.keys())),
+            self.assertTrue(set(expected_keys).issubset(set(pr.keys())),
                 'report has necessary fields')
-            self.assert_('bin/python' in pr['InterpreterPath'])
+            self.assertTrue('bin/python' in pr['InterpreterPath'])
             self.assertEqual(pr['ExecutablePath'], script)
             self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
-            self.assert_(pr['Traceback'].startswith('Traceback'))
-            self.assert_("func\n    raise Exception, 'This should happen." in pr['Traceback'])
+            self.assertTrue(pr['Traceback'].startswith('Traceback'))
+            self.assertTrue("func\n    raise Exception, 'This should happen." in pr['Traceback'])
 
         def test_existing(self):
             '''Python crash hook overwrites seen existing files.'''
@@ -263,10 +263,10 @@ func(42)
                 'Traceback', 'ProblemType', 'ProcEnviron', 'ProcStatus',
                 'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps',
                 'UserGroups']
-            self.assert_(set(expected_keys).issubset(set(pr.keys())),
+            self.assertTrue(set(expected_keys).issubset(set(pr.keys())),
                 'report has necessary fields')
-            self.assert_('bin/python' in pr['InterpreterPath'])
-            self.assert_(pr['Traceback'].startswith('Traceback'))
+            self.assertTrue('bin/python' in pr['InterpreterPath'])
+            self.assertTrue(pr['Traceback'].startswith('Traceback'))
 
         def _assert_no_reports(self):
             '''Assert that there are no crash reports.'''
@@ -332,7 +332,7 @@ func(42)
                 err = p.communicate()[1]
                 self.assertEqual(p.returncode, 1,
                     'crashing test python program exits with failure code')
-                self.assert_('Exception: This should happen.' in err)
+                self.assertTrue('Exception: This should happen.' in err)
 
             finally:
                 os.unlink(script)

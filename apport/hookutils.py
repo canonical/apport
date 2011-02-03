@@ -642,10 +642,10 @@ if __name__ == '__main__':
             #  - fake BAD module
 
             # direct license check
-            self.assert_('GPL' in _get_module_license('isofs'))
+            self.assertTrue('GPL' in _get_module_license('isofs'))
             self.assertEqual(_get_module_license('does-not-exist'), 'invalid')
-            self.assert_('GPL' in _get_module_license(good_ko.name))
-            self.assert_('BAD' in _get_module_license(bad_ko.name))
+            self.assertTrue('GPL' in _get_module_license(good_ko.name))
+            self.assertTrue('BAD' in _get_module_license(bad_ko.name))
 
             # check via nonfree_kernel_modules logic
             f = tempfile.NamedTemporaryFile()
@@ -654,9 +654,9 @@ if __name__ == '__main__':
             f.flush()
             nonfree = nonfree_kernel_modules(f.name)
             self.failIf('isofs' in nonfree)
-            self.assert_('does-not-exist' in nonfree)
+            self.assertTrue('does-not-exist' in nonfree)
             self.failIf(good_ko.name in nonfree)
-            self.assert_(bad_ko.name in nonfree)
+            self.assertTrue(bad_ko.name in nonfree)
 
         def test_attach_dmesg(self):
             '''attach_dmesg() does not overwrite already existing data'''
@@ -664,9 +664,9 @@ if __name__ == '__main__':
             report = {}
 
             attach_dmesg(report)
-            self.assert_(report['BootDmesg'].startswith('['))
-            self.assert_(len(report['BootDmesg']) > 500)
-            self.assert_(report['CurrentDmesg'].startswith('['))
+            self.assertTrue(report['BootDmesg'].startswith('['))
+            self.assertTrue(len(report['BootDmesg']) > 500)
+            self.assertTrue(report['CurrentDmesg'].startswith('['))
 
         def test_dmesg_overwrite(self):
             '''attach_dmesg() does not overwrite already existing data'''
@@ -675,7 +675,7 @@ if __name__ == '__main__':
 
             attach_dmesg(report)
             self.assertEqual(report['BootDmesg'][:50], 'existingboot')
-            self.assert_(report['CurrentDmesg'].startswith('['))
+            self.assertTrue(report['CurrentDmesg'].startswith('['))
             
             report = {'BootDmesg': 'existingboot', 'CurrentDmesg': 'existingcurrent' }
 

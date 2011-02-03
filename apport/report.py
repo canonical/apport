@@ -1110,7 +1110,7 @@ class _T(unittest.TestCase):
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assert_('libc' in pr['Dependencies'])
+        self.assertTrue('libc' in pr['Dependencies'])
 
         # test without specifying a package, but with ExecutablePath
         pr = Report()
@@ -1119,36 +1119,36 @@ class _T(unittest.TestCase):
         pr.add_package_info()
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assert_('libc' in pr['Dependencies'])
+        self.assertTrue('libc' in pr['Dependencies'])
         # check for stray empty lines
-        self.assert_('\n\n' not in pr['Dependencies'])
-        self.assert_(pr.has_key('PackageArchitecture'))
+        self.assertTrue('\n\n' not in pr['Dependencies'])
+        self.assertTrue(pr.has_key('PackageArchitecture'))
 
         pr = Report()
         pr['ExecutablePath'] = '/nonexisting'
         pr.add_package_info()
-        self.assert_(not pr.has_key('Package'))
+        self.assertTrue(not pr.has_key('Package'))
 
     def test_add_os_info(self):
         '''add_os_info().'''
 
         pr = Report()
         pr.add_os_info()
-        self.assert_(pr['Uname'].startswith('Linux'))
-        self.assert_(type(pr['DistroRelease']) == type(''))
-        self.assert_(pr['Architecture'])
+        self.assertTrue(pr['Uname'].startswith('Linux'))
+        self.assertTrue(type(pr['DistroRelease']) == type(''))
+        self.assertTrue(pr['Architecture'])
 
     def test_add_user_info(self):
         '''add_user_info().'''
 
         pr = Report()
         pr.add_user_info()
-        self.assert_(pr.has_key('UserGroups'))
+        self.assertTrue(pr.has_key('UserGroups'))
 
         # double-check that user group names are removed
         for g in pr['UserGroups'].split():
-            self.assert_(grp.getgrnam(g).gr_gid < 1000)
-        self.assert_(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
+            self.assertTrue(grp.getgrnam(g).gr_gid < 1000)
+        self.assertTrue(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
 
     def test_add_proc_info(self):
         '''add_proc_info().'''
@@ -1163,26 +1163,26 @@ class _T(unittest.TestCase):
         self.assertEqual(pr.pid, None)
         pr.add_proc_info()
         self.assertEqual(pr.pid, os.getpid())
-        self.assert_(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
+        self.assertTrue(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
             'ProcMaps']).issubset(set(pr.keys())), 'report has required fields')
-        self.assert_('LANG='+os.environ['LANG'] in pr['ProcEnviron'])
-        self.assert_('USER' not in pr['ProcEnviron'])
-        self.assert_('PWD' not in pr['ProcEnviron'])
+        self.assertTrue('LANG='+os.environ['LANG'] in pr['ProcEnviron'])
+        self.assertTrue('USER' not in pr['ProcEnviron'])
+        self.assertTrue('PWD' not in pr['ProcEnviron'])
 
         # check with one additional safe environment variable
         pr = Report()
         pr.add_proc_info(extraenv=['PWD'])
-        self.assert_('USER' not in pr['ProcEnviron'])
-        self.assert_('PWD='+os.environ['PWD'] in pr['ProcEnviron'])
+        self.assertTrue('USER' not in pr['ProcEnviron'])
+        self.assertTrue('PWD='+os.environ['PWD'] in pr['ProcEnviron'])
 
         # check process from other user
         assert os.getuid() != 0, 'please do not run this test as root for this check.'
         pr = Report()
         self.assertRaises(OSError, pr.add_proc_info, 1) # EPERM for init process
         self.assertEqual(pr.pid, 1)
-        self.assert_('init' in pr['ProcStatus'], pr['ProcStatus'])
-        self.assert_(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
-        self.assert_(not pr.has_key('InterpreterPath'))
+        self.assertTrue('init' in pr['ProcStatus'], pr['ProcStatus'])
+        self.assertTrue(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
+        self.assertTrue(not pr.has_key('InterpreterPath'))
 
         # check escaping of ProcCmdline
         p = subprocess.Popen(['cat', '/foo bar', '\\h', '\\ \\', '-'],
@@ -1198,7 +1198,7 @@ class _T(unittest.TestCase):
         p.communicate('\n')
         self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
         self.assertEqual(pr['ExecutablePath'], '/bin/cat')
-        self.assert_(not pr.has_key('InterpreterPath'))
+        self.assertTrue(not pr.has_key('InterpreterPath'))
         self.assertTrue('/bin/cat' in pr['ProcMaps'])
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
@@ -1227,7 +1227,7 @@ class _T(unittest.TestCase):
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate('\n')
-        self.assert_(pr['ExecutablePath'].endswith('bin/zgrep'))
+        self.assertTrue(pr['ExecutablePath'].endswith('bin/zgrep'))
         self.assertEqual(pr['InterpreterPath'],
             os.path.realpath(open(pr['ExecutablePath']).readline().strip()[2:]))
         self.assertTrue('[stack]' in pr['ProcMaps'])
@@ -1251,7 +1251,7 @@ sys.stdin.readline()
         p.communicate('\n')
         os.unlink(testscript)
         self.assertEqual(pr['ExecutablePath'], testscript)
-        self.assert_('python' in pr['InterpreterPath'])
+        self.assertTrue('python' in pr['InterpreterPath'])
         self.assertTrue('python' in pr['ProcMaps'])
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
@@ -1278,7 +1278,7 @@ sys.stdin.readline()
         r = Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate('')
-        self.assert_('PATH=(custom, no user)' in r['ProcEnviron'], 
+        self.assertTrue('PATH=(custom, no user)' in r['ProcEnviron'], 
             'PATH is customized without user paths')
 
         # user paths
@@ -1288,7 +1288,7 @@ sys.stdin.readline()
         r = Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate('')
-        self.assert_('PATH=(custom, user)' in r['ProcEnviron'], 
+        self.assertTrue('PATH=(custom, user)' in r['ProcEnviron'], 
             'PATH is customized with user paths')
 
     def test_check_interpreted(self):
@@ -1463,21 +1463,21 @@ int main() { return f(42); }
         return pr
 
     def _validate_gdb_fields(self,pr):
-        self.assert_(pr.has_key('Stacktrace'))
-        self.assert_(pr.has_key('ThreadStacktrace'))
-        self.assert_(pr.has_key('StacktraceTop'))
-        self.assert_(pr.has_key('Registers'))
-        self.assert_(pr.has_key('Disassembly'))
-        self.assert_('(no debugging symbols found)' not in pr['Stacktrace'])
-        self.assert_('Core was generated by' not in pr['Stacktrace'], pr['Stacktrace'])
-        self.assert_(not re.match(r'(?s)(^|.*\n)#0  [^\n]+\n#0  ',
+        self.assertTrue(pr.has_key('Stacktrace'))
+        self.assertTrue(pr.has_key('ThreadStacktrace'))
+        self.assertTrue(pr.has_key('StacktraceTop'))
+        self.assertTrue(pr.has_key('Registers'))
+        self.assertTrue(pr.has_key('Disassembly'))
+        self.assertTrue('(no debugging symbols found)' not in pr['Stacktrace'])
+        self.assertTrue('Core was generated by' not in pr['Stacktrace'], pr['Stacktrace'])
+        self.assertTrue(not re.match(r'(?s)(^|.*\n)#0  [^\n]+\n#0  ',
                                   pr['Stacktrace']))
-        self.assert_('#0  0x' in pr['Stacktrace'])
-        self.assert_('#1  0x' in pr['Stacktrace'])
-        self.assert_('#0  0x' in pr['ThreadStacktrace'])
-        self.assert_('#1  0x' in pr['ThreadStacktrace'])
-        self.assert_('Thread 1 (' in pr['ThreadStacktrace'])
-        self.assert_(len(pr['StacktraceTop'].splitlines()) <= 5)
+        self.assertTrue('#0  0x' in pr['Stacktrace'])
+        self.assertTrue('#1  0x' in pr['Stacktrace'])
+        self.assertTrue('#0  0x' in pr['ThreadStacktrace'])
+        self.assertTrue('#1  0x' in pr['ThreadStacktrace'])
+        self.assertTrue('Thread 1 (' in pr['ThreadStacktrace'])
+        self.assertTrue(len(pr['StacktraceTop'].splitlines()) <= 5)
 
     def test_add_gdb_info(self):
         '''add_gdb_info() with core dump file reference.'''
@@ -1501,7 +1501,7 @@ int main() {
 }
 ''')
         self._validate_gdb_fields(pr)
-        self.assert_('Cannot access memory at address 0x0' in pr['Disassembly'], pr['Disassembly'])
+        self.assertTrue('Cannot access memory at address 0x0' in pr['Disassembly'], pr['Disassembly'])
         self.failIf ('AssertionMessage' in pr)
 
     def test_add_gdb_info_load(self):
@@ -1527,22 +1527,22 @@ int main() {
         pr.load(open(rep.name))
         pr['Signal'] = '1'
         pr.add_hooks_info('fake_ui')
-        self.assert_('SegvAnalysis' not in pr.keys())
+        self.assertTrue('SegvAnalysis' not in pr.keys())
 
         pr = Report()
         pr.load(open(rep.name))
         pr.add_hooks_info('fake_ui')
-        self.assert_('Skipped: missing required field "Architecture"' in pr['SegvAnalysis'],
+        self.assertTrue('Skipped: missing required field "Architecture"' in pr['SegvAnalysis'],
                      pr['SegvAnalysis'])
 
         pr.add_os_info()
         pr.add_hooks_info('fake_ui')
-        self.assert_('Skipped: missing required field "ProcMaps"' in pr['SegvAnalysis'],
+        self.assertTrue('Skipped: missing required field "ProcMaps"' in pr['SegvAnalysis'],
                      pr['SegvAnalysis'])
 
         pr.add_proc_info()
         pr.add_hooks_info('fake_ui')
-        self.assert_('not located in a known VMA region' in pr['SegvAnalysis'],
+        self.assertTrue('not located in a known VMA region' in pr['SegvAnalysis'],
                      pr['SegvAnalysis'])
 
     def test_add_gdb_info_script(self):
@@ -1577,7 +1577,7 @@ kill -SEGV $$
             os.unlink(script)
 
         self._validate_gdb_fields(pr)
-        self.assert_('libc.so' in pr['Stacktrace'] or 'in execute_command' in pr['Stacktrace'])
+        self.assertTrue('libc.so' in pr['Stacktrace'] or 'in execute_command' in pr['Stacktrace'])
 
     def test_add_gdb_info_abort(self):
         '''add_gdb_info() with SIGABRT/assert()
@@ -1617,7 +1617,7 @@ $0.bin 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.assert_("<stdin>:2: main: Assertion `1 < 0' failed." in
+        self.assertTrue("<stdin>:2: main: Assertion `1 < 0' failed." in
                 pr['AssertionMessage'], pr['AssertionMessage'])
         self.failIf(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
         self.failIf('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
@@ -1659,7 +1659,7 @@ LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.assert_("** buffer overflow detected ***: %s.bin terminated" % (script) in
+        self.assertTrue("** buffer overflow detected ***: %s.bin terminated" % (script) in
                 pr['AssertionMessage'], pr['AssertionMessage'])
         self.failIf(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
         self.failIf('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
@@ -2024,13 +2024,13 @@ def add_info(report, ui):
         self.failIf(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
-        self.assert_(r.has_useful_stacktrace())
+        self.assertTrue(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()'
-        self.assert_(r.has_useful_stacktrace())
+        self.assertTrue(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()\n?? ()'
-        self.assert_(r.has_useful_stacktrace())
+        self.assertTrue(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\n?? ()\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()\n?? ()'
         self.failIf(r.has_useful_stacktrace())
@@ -2125,8 +2125,8 @@ Key: /apps/avant-window-navigator/app/active_png isn't set.
 Restarting AWN usually solves this issue'''
 
         t = report.standard_title()
-        self.assert_(t.startswith('apport-gtk crashed with'))
-        self.assert_(t.endswith('setup_chooser()'))
+        self.assertTrue(t.startswith('apport-gtk crashed with'))
+        self.assertTrue(t.endswith('setup_chooser()'))
 
         # Python crash at top level in module
         report = Report()

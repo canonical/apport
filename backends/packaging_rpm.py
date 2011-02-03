@@ -283,7 +283,7 @@ if __name__ == '__main__':
             
             headersByTag = impl._get_headers_by_tag('basenames','/bin/bash')
             self.assertEqual(len(headersByTag), 1)
-            self.assert_(headersByTag[0]['n'].startswith('bash'))      
+            self.assertTrue(headersByTag[0]['n'].startswith('bash'))      
             
         def test_get_system_architecture(self):
             '''get_system_architecture().'''
@@ -291,7 +291,7 @@ if __name__ == '__main__':
             arch = impl.get_system_architecture()
             # must be nonempty without line breaks
             self.assertNotEqual(arch, '')
-            self.assert_('\n' not in arch)
+            self.assertTrue('\n' not in arch)
             
         def test_get_version(self):
             '''get_version().'''

@@ -656,7 +656,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
 
         # wait on child, examine status
         status = os.wait()[1]
-        self.assert_(os.WIFEXITED(status))
+        self.assertTrue(os.WIFEXITED(status))
         status = os.WEXITSTATUS(status)
         if status == 42:
             locked_exceptions += 1
@@ -710,7 +710,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
         # neither for a ten second one (check timezone offset errors)
         self.failIf(self.crashes.duplicate_db_needs_consolidation(10))
         # but for an one second interval
-        self.assert_(self.crashes.duplicate_db_needs_consolidation(1))
+        self.assertTrue(self.crashes.duplicate_db_needs_consolidation(1))
 
         self.crashes.duplicate_db_consolidate()
 
