@@ -583,8 +583,7 @@ free memory to automatically analyze the problem and send a report to the develo
         '''
         optparser = optparse.OptionParser(_('%prog <report number>'))
         optparser.add_option('-p', '--package',
-            help=_('Specify package name.)'),
-            dest='package', default=None)
+            help=_('Specify package name.)'))
         (self.options, self.args) = optparser.parse_args()
 
         if len(self.args) != 1 or not self.args[0].isdigit():
@@ -615,30 +614,23 @@ free memory to automatically analyze the problem and send a report to the develo
                 return
 
         optparser = optparse.OptionParser(_('%prog [options] [symptom|pid|package|program path|.apport/.crash file]'))
-        optparser.add_option('-f', '--file-bug',
-            help=_('Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms. (Implied if a single argument is given.)'),
-            action='store_true', dest='filebug', default=False)
-        optparser.add_option('-u', '--update-bug', type='int',
-            help=_('Start in bug updating mode. Can take an optional --package.'),
-            dest='update_report')
+        optparser.add_option('-f', '--file-bug', action='store_true',
+            dest='filebug', default=False,
+            help=_('Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms. (Implied if a single argument is given.)'))
+        optparser.add_option('-u', '--update-bug', type='int', dest='update_report',
+            help=_('Start in bug updating mode. Can take an optional --package.'))
         optparser.add_option('-s', '--symptom', metavar='SYMPTOM',
-            help=_('File a bug report about a symptom. (Implied if symptom name is given as only argument.)'), 
-            dest='symptom')
+            help=_('File a bug report about a symptom. (Implied if symptom name is given as only argument.)'))
         optparser.add_option('-p', '--package',
-            help=_('Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.)'),
-            action='store', type='string', dest='package', default=None)
-        optparser.add_option('-P', '--pid',
-            help=_('Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information. (Implied if pid is given as only argument.)'),
-            action='store', type='int', dest='pid', default=None)
-        optparser.add_option('-c', '--crash-file',
-            help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir,
-            action='store', type='string', dest='crash_file', default=None, metavar='PATH')
-        optparser.add_option('--save',
-            help=_('In bug filing mode, save the collected information into a file instead of reporting it. This file can then be reported later on from a different machine.'),
-            type='string', dest='save', default=None, metavar='PATH')
-        optparser.add_option('-v', '--version',
-            help=_('Print the Apport version number.'),
-            action='store_true', dest='version', default=None)
+            help=_('Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.)'))
+        optparser.add_option('-P', '--pid', type='int',
+            help=_('Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information.  (Implied if pid is given as only argument.)'))
+        optparser.add_option('-c', '--crash-file', metavar='PATH',
+            help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir)
+        optparser.add_option('--save', metavar='PATH',
+            help=_('In bug filing mode, save the collected information into a file instead of reporting it. This file can then be reported later on from a different machine.'))
+        optparser.add_option('-v', '--version', action='store_true',
+            help=_('Print the Apport version number.'))
 
         if cmd.endswith('-bug'):
             for o in ('-f', '-u', '-s', '-p', '-P', '-c'):
