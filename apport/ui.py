@@ -634,14 +634,14 @@ free memory to automatically analyze the problem and send a report to the develo
             help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir,
             action='store', type='string', dest='crash_file', default=None, metavar='PATH')
         optparser.add_option('--save',
-            help=_('In --file-bug mode, save the collected information into a file instead of reporting it. This file can then be reported with --crash-file later on.'),
+            help=_('In bug filing mode, save the collected information into a file instead of reporting it. This file can then be reported later on from a different machine.'),
             type='string', dest='save', default=None, metavar='PATH')
         optparser.add_option('-v', '--version',
             help=_('Print the Apport version number.'),
             action='store_true', dest='version', default=None)
 
         if cmd.endswith('-bug'):
-            for o in ('-f', '-u', '-s', '-p', '-P', '-c', '--save'):
+            for o in ('-f', '-u', '-s', '-p', '-P', '-c'):
                 optparser.get_option(o).help = optparse.SUPPRESS_HELP
 
         (self.options, self.args) = optparser.parse_args()
