@@ -389,6 +389,8 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.report['UnreportableReason'])
             return
 
+        self.add_extra_tags()
+
         if self.handle_duplicate():
             return True
 
@@ -470,6 +472,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
         self.report.add_user_info()
         self.report.add_proc_environ()
+        self.add_extra_tags()
 
         # delete the uninteresting keys
         del self.report['ProblemType']
@@ -584,6 +587,8 @@ free memory to automatically analyze the problem and send a report to the develo
         optparser = optparse.OptionParser(_('%prog <report number>'))
         optparser.add_option('-p', '--package',
             help=_('Specify package name.)'))
+        optparser.add_option('--tag', action='append', default=[],
+            help=_('Add an extra tag to the report. Can be specified multiple times.'))
         (self.options, self.args) = optparser.parse_args()
 
         if len(self.args) != 1 or not self.args[0].isdigit():
@@ -629,10 +634,12 @@ free memory to automatically analyze the problem and send a report to the develo
             help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir)
         optparser.add_option('--save', metavar='PATH',
             help=_('In bug filing mode, save the collected information into a file instead of reporting it. This file can then be reported later on from a different machine.'))
+        optparser.add_option('--tag', action='append', default=[],
+            help=_('Add an extra tag to the report. Can be specified multiple times.'))
         optparser.add_option('-v', '--version', action='store_true',
             help=_('Print the Apport version number.'))
 
-        if cmd.endswith('-bug'):
+        if len(sys.argv) > 0 and cmd.endswith('-bug'):
             for o in ('-f', '-u', '-s', '-p', '-P', '-c'):
                 optparser.get_option(o).help = optparse.SUPPRESS_HELP
 
@@ -1034,6 +1041,16 @@ might be helpful for the developers.'))
 
         self.open_url(self.report['BugPatternURL'])
         return True
+
+    def add_extra_tags(self):
+        '''Add extra tags to report specified with --tags on CLI.'''
+
+        assert self.report
+        if self.options.tag:
+            tags = self.report.get('Tags', '')
+            if tags:
+                tags += ' '
+            self.report['Tags'] = tags + ' '.join(self.options.tag)
 
     #
     # abstract UI methods that must be implemented in derived classes
@@ -1716,8 +1733,8 @@ CoreDump: base64
 
             self.assertEqual(self.ui.msg_severity, 'error')
 
-        def test_run_report_bug_pid(self):
-            '''run_report_bug() for a pid.'''
+        def test_run_report_bug_pid_tags(self):
+            '''run_report_bug() for a pid with extra tags.'''
 
             # fork a test process
             pid = os.fork()
@@ -1729,7 +1746,7 @@ CoreDump: base64
 
             try:
                 # report a bug on cat process
-                sys.argv = ['ui-test', '-f', '-P', str(pid)]
+                sys.argv = ['ui-test', '-f', '--tag', 'foo', '-P', str(pid)]
                 self.ui = _TestSuiteUserInterface()
                 self.assertEqual(self.ui.run_argv(), True)
             finally:
@@ -1744,6 +1761,8 @@ CoreDump: base64
             self.failIf(self.ui.report.has_key('ProcCmdline')) # privacy!
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
+            self.assertTrue('Tags' in self.ui.report.keys())
+            self.assertTrue('foo' in self.ui.report['Tags'])
 
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
@@ -2324,10 +2343,10 @@ CoreDump: base64
             self.assertTrue('Dependencies' in self.ui.report.keys())
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
 
-        def test_run_update_report_existing_package_cli(self):
-            '''run_update_report() on an existing package (CLI argument).'''
+        def test_run_update_report_existing_package_cli_tags(self):
+            '''run_update_report() on an existing package (CLI argument) with extra tag'''
 
-            sys.argv = ['ui-test', '-u', '1', '-p', 'bash']
+            sys.argv = ['ui-test', '-u', '1', '-p', 'bash', '--tag', 'foo']
             self.ui = _TestSuiteUserInterface()
             self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
                     '', {'dummy_data': 1})
@@ -2342,6 +2361,7 @@ CoreDump: base64
             self.assertTrue(self.ui.report['Package'].startswith('bash '))
             self.assertTrue('Dependencies' in self.ui.report.keys())
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
+            self.assertTrue('foo' in self.ui.report['Tags'])
 
         def test_run_update_report_existing_package_cli_cmdname(self):
             '''run_update_report() on an existing package (-collect program).'''
@@ -2537,6 +2557,17 @@ report['end'] = '1'
             self.assertTrue(self.ui.report['Package'].startswith('bash '))
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
 
+            # working noninteractive script with extra tag
+            sys.argv = ['ui-test', '--tag', 'foo', '-s', 'itching' ]
+            self.ui = _TestSuiteUserInterface()
+            self.assertEqual(self.ui.run_argv(), True)
+            self.assertEqual(self.ui.msg_text, None)
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assertTrue(self.ui.present_details_shown)
+
+            self.assertEqual(self.ui.report['itch'], 'scratch')
+            self.assertTrue('foo' in self.ui.report['Tags'])
+
             # working interactive script
             f = open(os.path.join(symptom_script_dir, 'itching.py'), 'w')
             f.write('''def run(report, ui):
@@ -2616,14 +2647,14 @@ def run(report, ui):
             # no arguments -> show pending crashes
             _chk('apport-gtk', None, {'filebug': False, 'package': None,
                 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None, 'save': None})
+                'update_report': None, 'save': None, 'tag': []})
             # updating report not allowed without args
             self.assertRaises(SystemExit, _chk, 'apport-collect', None, {})
 
             # package 
             _chk('apport-kde', 'coreutils', {'filebug': True, 'package':
                 'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None, 'save': None})
+                'update_report': None, 'save': None, 'tag': []})
 
             # symptom is preferred over package
             f = open(os.path.join(symptom_script_dir, 'coreutils.py'), 'w')
@@ -2634,31 +2665,33 @@ def run(report, ui):
             f.close()
             _chk('apport-cli', 'coreutils', {'filebug': True, 'package': None,
                  'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-                 'update_report': None, 'save': None})
+                 'update_report': None, 'save': None, 'tag': []})
 
             # PID
             _chk('apport-cli', '1234', {'filebug': True, 'package': None,
                  'pid': '1234', 'crash_file': None, 'symptom': None,
-                 'update_report': None, 'save': None})
+                 'update_report': None, 'save': None, 'tag': []})
 
             # .crash/.apport files; check correct handling of spaces
             for suffix in ('.crash', '.apport'):
                 _chk('apport-cli', '/tmp/f oo' + suffix, {'filebug': False,
                      'package': None, 'pid': None, 
                      'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
-                     'update_report': None, 'save': None})
+                     'update_report': None, 'save': None, 'tag': []})
 
             # executable
             _chk('apport-cli', '/usr/bin/tail', {'filebug': True, 
                  'package': 'coreutils',
                  'pid': None, 'crash_file': None, 'symptom': None, 
-                 'update_report': None, 'save': None})
+                 'update_report': None, 'save': None, 'tag': []})
 
             # update existing report
             _chk('apport-collect', '1234', {'filebug': False, 'package': None,
-                 'crash_file': None, 'symptom': None, 'update_report': 1234})
+                 'crash_file': None, 'symptom': None, 'update_report': 1234,
+                 'tag': []})
             _chk('apport-update-bug', '1234', {'filebug': False, 'package': None,
-                 'crash_file': None, 'symptom': None, 'update_report': 1234})
+                 'crash_file': None, 'symptom': None, 'update_report': 1234,
+                 'tag': []})
 
         def test_parse_argv_apport_bug(self):
             '''parse_args() option inference when invoked as *-bug'''
@@ -2681,7 +2714,7 @@ def run(report, ui):
             #
             _chk([], {'filebug': True, 'package': None,
                 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None, 'save': None})
+                'update_report': None, 'save': None, 'tag': []})
 
             #
             # single arguments
@@ -2690,7 +2723,7 @@ def run(report, ui):
             # package
             _chk(['coreutils'], {'filebug': True, 'package':
                 'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None, 'save': None})
+                'update_report': None, 'save': None, 'tag': []})
 
             # symptom (preferred over package)
             f = open(os.path.join(symptom_script_dir, 'coreutils.py'), 'w')
@@ -2701,25 +2734,25 @@ def run(report, ui):
             f.close()
             _chk(['coreutils'], {'filebug': True, 'package': None,
                  'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-                 'update_report': None, 'save': None})
+                 'update_report': None, 'save': None, 'tag': []})
             os.unlink(os.path.join(symptom_script_dir, 'coreutils.py'))
 
             # PID
             _chk(['1234'], {'filebug': True, 'package': None,
                  'pid': '1234', 'crash_file': None, 'symptom': None,
-                 'update_report': None, 'save': None})
+                 'update_report': None, 'save': None, 'tag': []})
 
             # .crash/.apport files; check correct handling of spaces
             for suffix in ('.crash', '.apport'):
                 _chk(['/tmp/f oo' + suffix], {'filebug': False,
                      'package': None, 'pid': None, 
                      'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
-                     'update_report': None, 'save': None})
+                     'update_report': None, 'save': None, 'tag': []})
 
             # executable name
             _chk(['/usr/bin/tail'], {'filebug': True, 'package': 'coreutils',
                  'pid': None, 'crash_file': None, 'symptom': None, 
-                 'update_report': None, 'save': None})
+                 'update_report': None, 'save': None, 'tag': []})
 
             #
             # supported options
@@ -2728,7 +2761,18 @@ def run(report, ui):
             # --save
             _chk(['--save', 'foo.apport', 'coreutils'], {'filebug': True,
                 'package': 'coreutils', 'pid': None, 'crash_file': None,
-                'symptom': None, 'update_report': None, 'save': 'foo.apport'})
+                'symptom': None, 'update_report': None, 'save': 'foo.apport',
+                'tag': []})
+
+            # --tag
+            _chk(['--tag', 'foo', 'coreutils'], {'filebug': True,
+                'package': 'coreutils', 'pid': None, 'crash_file': None,
+                'symptom': None, 'update_report': None, 'save': None,
+                'tag': ['foo']})
+            _chk(['--tag', 'foo', '--tag', 'bar', 'coreutils'], {
+                'filebug': True, 'package': 'coreutils', 'pid': None,
+                'crash_file': None, 'symptom': None, 'update_report': None,
+                'save': None, 'tag': ['foo', 'bar']})
 
     unittest.main()
 
