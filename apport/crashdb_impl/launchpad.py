@@ -958,7 +958,8 @@ NameError: global name 'weird' is not defined'''
             r.add_package_info(self.test_package)
             r.add_os_info()
             r.add_user_info()
-            self.assertEqual(r.standard_title(), 'foo crashed with NameError in fuzz()')
+            self.assertEqual(r.standard_title(), 
+                "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
             handle = self.crashdb.upload(r)
             self.assertTrue(handle)
@@ -1474,7 +1475,8 @@ NameError: global name 'weird' is not defined'''
 NameError: global name 'weird' is not defined'''
             r.add_os_info()
             r.add_user_info()
-            self.assertEqual(r.standard_title(), 'foo crashed with NameError in fuzz()')
+            self.assertEqual(r.standard_title(), 
+                    "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
             # file it
             handle = crashdb.upload(r)
