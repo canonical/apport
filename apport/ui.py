@@ -2603,13 +2603,11 @@ def run(report, ui):
             self.assertTrue(self.ui.present_details_shown)
             self.assertTrue(self.ui.report['Package'].startswith('bash'))
 
-        def test_parse_argv(self):
+        def test_parse_argv_single_arg(self):
             '''parse_args() option inference for a single argument'''
 
-            def _chk(program_name, arg, expected_opts, argv_options=None):
+            def _chk(program_name, arg, expected_opts):
                 sys.argv = [program_name]
-                if argv_options:
-                    sys.argv += argv_options
                 if arg:
                     sys.argv.append(arg)
                 orig_stderr = sys.stderr
@@ -2627,10 +2625,6 @@ def run(report, ui):
             _chk('apport-gtk', None, {'filebug': False, 'package': None,
                 'pid': None, 'crash_file': None, 'symptom': None, 
                 'update_report': None, 'save': None})
-            # ... except when being called as '*-bug', then default to bug mode
-            _chk('apport-bug', None, {'filebug': True, 'package': None,
-                'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None, 'save': None})
             # updating report not allowed without args
             self.assertRaises(SystemExit, _chk, 'apport-collect', None, {})
 
@@ -2638,13 +2632,6 @@ def run(report, ui):
             _chk('apport-kde', 'coreutils', {'filebug': True, 'package':
                 'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
                 'update_report': None, 'save': None})
-            _chk('apport-bug', 'coreutils', {'filebug': True, 'package':
-                'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None, 'save': None})
-            _chk('apport-bug', 'coreutils', {'filebug': True, 'package':
-                'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
-                'update_report': None, 'save': 'foo.apport'}, 
-                ['--save', 'foo.apport'])
 
             # symptom is preferred over package
             f = open(os.path.join(symptom_script_dir, 'coreutils.py'), 'w')
@@ -2656,32 +2643,21 @@ def run(report, ui):
             _chk('apport-cli', 'coreutils', {'filebug': True, 'package': None,
                  'pid': None, 'crash_file': None, 'symptom': 'coreutils',
                  'update_report': None, 'save': None})
-            _chk('apport-bug', 'coreutils', {'filebug': True, 'package': None,
-                 'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-                 'update_report': None, 'save': None})
 
             # PID
             _chk('apport-cli', '1234', {'filebug': True, 'package': None,
                  'pid': '1234', 'crash_file': None, 'symptom': None,
                  'update_report': None, 'save': None})
-            _chk('apport-bug', '1234', {'filebug': True, 'package': None,
-                 'pid': '1234', 'crash_file': None, 'symptom': None,
-                 'update_report': None, 'save': None})
 
             # .crash/.apport files; check correct handling of spaces
             for suffix in ('.crash', '.apport'):
-                for prog in ('apport-cli', 'apport-bug'):
-                    _chk(prog, '/tmp/f oo' + suffix, {'filebug': False,
-                         'package': None, 'pid': None, 
-                         'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
-                         'update_report': None, 'save': None})
+                _chk('apport-cli', '/tmp/f oo' + suffix, {'filebug': False,
+                     'package': None, 'pid': None, 
+                     'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
+                     'update_report': None, 'save': None})
 
             # executable
             _chk('apport-cli', '/usr/bin/tail', {'filebug': True, 
-                 'package': 'coreutils',
-                 'pid': None, 'crash_file': None, 'symptom': None, 
-                 'update_report': None, 'save': None})
-            _chk('apport-bug', '/usr/bin/tail', {'filebug': True, 
                  'package': 'coreutils',
                  'pid': None, 'crash_file': None, 'symptom': None, 
                  'update_report': None, 'save': None})
@@ -2691,6 +2667,76 @@ def run(report, ui):
                  'crash_file': None, 'symptom': None, 'update_report': 1234})
             _chk('apport-update-bug', '1234', {'filebug': False, 'package': None,
                  'crash_file': None, 'symptom': None, 'update_report': 1234})
+
+        def test_parse_argv_apport_bug(self):
+            '''parse_args() option inference when invoked as *-bug'''
+
+            def _chk(args, expected_opts):
+                sys.argv = ['apport-bug'] + args
+                orig_stderr = sys.stderr
+                sys.stderr = open('/dev/null', 'w')
+                try:
+                    ui = UserInterface()
+                finally:
+                    sys.stderr.close()
+                    sys.stderr = orig_stderr
+                expected_opts['version'] = None
+                self.assertEqual(ui.args, [])
+                self.assertEqual(ui.options, expected_opts)
+
+            #
+            # no arguments: default to 'ask for symptom' bug mode
+            #
+            _chk([], {'filebug': True, 'package': None,
+                'pid': None, 'crash_file': None, 'symptom': None, 
+                'update_report': None, 'save': None})
+
+            #
+            # single arguments
+            #
+
+            # package
+            _chk(['coreutils'], {'filebug': True, 'package':
+                'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
+                'update_report': None, 'save': None})
+
+            # symptom (preferred over package)
+            f = open(os.path.join(symptom_script_dir, 'coreutils.py'), 'w')
+            f.write('''description = 'foo does not work'
+def run(report, ui):
+    return 'bash'
+''')
+            f.close()
+            _chk(['coreutils'], {'filebug': True, 'package': None,
+                 'pid': None, 'crash_file': None, 'symptom': 'coreutils',
+                 'update_report': None, 'save': None})
+            os.unlink(os.path.join(symptom_script_dir, 'coreutils.py'))
+
+            # PID
+            _chk(['1234'], {'filebug': True, 'package': None,
+                 'pid': '1234', 'crash_file': None, 'symptom': None,
+                 'update_report': None, 'save': None})
+
+            # .crash/.apport files; check correct handling of spaces
+            for suffix in ('.crash', '.apport'):
+                _chk(['/tmp/f oo' + suffix], {'filebug': False,
+                     'package': None, 'pid': None, 
+                     'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
+                     'update_report': None, 'save': None})
+
+            # executable name
+            _chk(['/usr/bin/tail'], {'filebug': True, 'package': 'coreutils',
+                 'pid': None, 'crash_file': None, 'symptom': None, 
+                 'update_report': None, 'save': None})
+
+            #
+            # supported options
+            #
+
+            # --save
+            _chk(['--save', 'foo.apport', 'coreutils'], {'filebug': True,
+                'package': 'coreutils', 'pid': None, 'crash_file': None,
+                'symptom': None, 'update_report': None, 'save': 'foo.apport'})
 
     unittest.main()
 
