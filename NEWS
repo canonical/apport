@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.17.3 (UNRELEASED)
+-------------------
+Bug fixes:
+ - Ensure that symptom scripts define a run() function, and don't show them if
+   not.
+
+Improvements:
 1.17.2 (2011-02-04)
 -------------------
 Improvements:

@@ -514,6 +514,9 @@ free memory to automatically analyze the problem and send a report to the develo
                 apport.error('symptom script %s is invalid', script)
                 traceback.print_exc()
                 continue
+            if 'run' not in symb:
+                apport.error('symptom script %s does not define run() function', script)
+                continue
             symptom_names.append(os.path.splitext(os.path.basename(script))[0])
             symptom_descriptions.append(symb.get('description', symptom_names[-1]))
 
