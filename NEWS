@@ -6,8 +6,9 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - Ensure that symptom scripts define a run() function, and don't show them if
    not.
+ - Do not show symptom scripts which start with an underscore. These can be
+   used for private libraries for the actual symptom scripts.
 
-Improvements:
 1.17.2 (2011-02-04)
 -------------------
 Improvements:

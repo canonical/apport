@@ -507,6 +507,9 @@ free memory to automatically analyze the problem and send a report to the develo
         symptom_names = []
         symptom_descriptions = []
         for script in scripts:
+            # scripts with an underscore can be used for private libraries
+            if os.path.basename(script).startswith('_'):
+                continue
             symb = {}
             try:
                 execfile(script, symb)
