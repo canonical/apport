@@ -9,7 +9,10 @@ _apport_symptoms ()
     local syms
     if [ -r /usr/share/apport/symptoms ]; then 
         for FILE in $(ls /usr/share/apport/symptoms); do
-           syms="$syms ${FILE%.py}"
+            # hide utility files and symptoms that don't have a run() function
+            if [[ ! "$FILE" =~ ^_.* && -n $(egrep "^def run\s*\(.*\):" /usr/share/apport/symptoms/$FILE) ]]; then
+                syms="$syms ${FILE%.py}"
+            fi
         done
     fi
     echo $syms
