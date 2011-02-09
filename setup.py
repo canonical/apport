@@ -14,7 +14,7 @@ except ImportError:
     sys.stderr.write('To build Apport you need https://launchpad.net/python-distutils-extra\n')
     sys.exit(1)
 
-assert StrictVersion(DistUtilsExtra.auto.__version__) >= '2.2', 'needs DistUtilsExtra.auto >= 2.2'
+assert StrictVersion(DistUtilsExtra.auto.__version__) >= '2.24', 'needs DistUtilsExtra.auto >= 2.24'
 
 class build_java_subdir(distutils.core.Command):
     '''Java crash handler build command'''
@@ -94,7 +94,6 @@ DistUtilsExtra.auto.setup(name='apport',
       data_files=[('share/mime/packages', glob('xdg-mime/*')),
                   # these are not supposed to be called directly, use apport-bug instead
                   ('share/apport', ['gtk/apport-gtk', 'kde/apport-kde']),
-                  ('share/apport', glob('kde/*.ui')), #TODO: fix in p-d-e
                   ('share/apport/testsuite/', glob('test/*')),
                   ('share/doc/apport/', glob('doc/*.txt')),
                   ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),

@@ -9,6 +9,10 @@ Bug fixes:
  - Do not show symptom scripts which start with an underscore. These can be
    used for private libraries for the actual symptom scripts.
 
+Improvements:
+ - Remove explicit handling of KDE *.ui files in setup.py, as
+   python-distutils-extra 2.24 fixes this. Bump version check.
+
 1.17.2 (2011-02-04)
 -------------------
 Improvements:
