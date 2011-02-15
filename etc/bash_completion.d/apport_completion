@@ -9,7 +9,10 @@ _apport_symptoms ()
     local syms
     if [ -r /usr/share/apport/symptoms ]; then 
         for FILE in $(ls /usr/share/apport/symptoms); do
-           syms="$syms ${FILE%.py}"
+            # hide utility files and symptoms that don't have a run() function
+            if [[ ! "$FILE" =~ ^_.* && -n $(egrep "^def run\s*\(.*\):" /usr/share/apport/symptoms/$FILE) ]]; then
+                syms="$syms ${FILE%.py}"
+            fi
         done
     fi
     echo $syms
@@ -46,8 +49,7 @@ _apport-bug ()
 
 
     # available options
-    dashoptions='-h --help -f --file-bug -u --update-bug -s --symptom -p \
-                 --package -P --pid -c --crash-file --save -v --version'
+    dashoptions='-h --help --save -v --version --tag'
 
     case "$prev" in
     ubuntu-bug | apport-bug)
@@ -65,64 +67,34 @@ _apport-bug ()
         esac
 
     ;;
-    -f | --file-bug)
-        param="-P --pid -p --package -s --symptom"
-        COMPREPLY=( $( compgen -W "$param $(_apport_symptoms)" -- $cur) )
-
-    ;;
-    -p | --package)
-        COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) )
-
-    ;;
-    -u | --update-bug)
-        param="-p --package"
-        COMPREPLY=( $( compgen -W "$param" -- $cur) )
-
-    ;;
-    -s | --symptom)
-        COMPREPLY=( $( compgen -W "$(_apport_symptoms)" -- $cur) )
-
-    ;;
-    -P | --pid)
-	COMPREPLY=( $( compgen -W '$( command ps axo pid | sed 1d )' -- $cur ) )
-
-    ;;
     --save)
         COMPREPLY=( $( compgen -o default -G "$cur*" ) )
     
     ;;
-    -c | --crash-file)
-        # only show *.apport *.crash files
-        COMPREPLY=( $( compgen -G "${cur}*.apport"
-                       compgen -G "${cur}*.crash" ) )
-
-    ;;
-    -h | --help | -v | --version)
+    -h | --help | -v | --version | --tag)
         # standalone parameters
         return 0
 
     ;;
     *)
-        if [ "${COMP_WORDS[COMP_CWORD-2]}" == "--save" ]; then
-            # use same completion as if no parameter is given
-            case "$cur" in
-            -*)
-                # parameter completion
-                COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
-
-            ;;
-            *)
-                _apport_parameterless 
-
-            ;;
-            esac
-
+        # --save is allowed only once, --tag multiple times
+        if [[ "${COMP_WORDS[*]}" =~ .*--save.* ]]; then
+            dashoptions='--tag'
         else
-            # save is allowed for most parameters
-            param="--save"
-            COMPREPLY=( $( compgen -W "$param" -- $cur) )
-
+            dashoptions='--save --tag'
         fi
+
+        case "$cur" in
+        -*)
+            # parameter completion
+            COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
+
+        ;;
+        *)
+            _apport_parameterless 
+
+        ;;
+        esac
 
     ;;
     esac
@@ -140,7 +112,7 @@ _apport-cli ()
 
     # available options
     dashoptions='-h --help -f --file-bug -u --update-bug -s --symptom \
-                 -c --crash-file --save -v --version'
+                 -c --crash-file --save -v --version --tag'
 
     case "$prev" in
     apport-cli)
@@ -177,13 +149,19 @@ _apport-cli ()
                        compgen -G "${cur}*.crash" ) )
 
     ;;
-    -h | --help | -v | --version)
+    -h | --help | -v | --version | --tag)
         # standalone parameters
         return 0
 
     ;;
     *)
-        if [ "${COMP_WORDS[COMP_CWORD-2]}" == "--save" ]; then
+        if [[ "${COMP_WORDS[COMP_CWORD-2]}" == "--save" || "${COMP_WORDS[COMP_CWORD-2]}" == "--tag" ]]; then
+            # save may only be used once
+            if [[ "${COMP_WORDS[*]}" =~ .*--save.* ]]; then
+                dashoptions='-h --help -f --file-bug -u --update-bug -s --symptom \
+                             -c --crash-file -v --version --tag'
+            fi
+
             # use same completion as if no parameter is given
             case "$cur" in
             -*)
@@ -198,8 +176,9 @@ _apport-cli ()
             esac
 
         else
-            # save is allowed for most parameters
-            param="--save"
+            # --save is allowed for most parameters
+            # --tag is allowed multiple times
+            param="--save --tag"
             COMPREPLY=( $( compgen -W "$param" -- $cur) )
 
         fi
@@ -238,13 +217,26 @@ _apport-collect ()
 
     case "$prev" in 
     apport-collect)
-            COMPREPLY=( $( compgen -W "-p --package" -- $cur) )
+        COMPREPLY=( $( compgen -W "-p --package --tag" -- $cur) )
 
     ;;
     -p | --package)
         # list package names
         COMPREPLY=( $( apt-cache pkgnames $cur 2> /dev/null ) )
 
+    ;;
+    --tag)
+        # standalone parameter
+        return 0
+    ;;
+    *)
+        # only complete -p/--package once
+        if [[ "${COMP_WORDS[*]}" =~ .*\ -p.* || "${COMP_WORDS[*]}" =~ .*--package.* ]]; then
+            COMPREPLY=( $( compgen -W "--tag" -- $cur) )
+        else
+            COMPREPLY=( $( compgen -W "-p --package --tag" -- $cur) )
+        fi
+        
     ;;
     esac
 }
@@ -255,3 +247,5 @@ complete -F _apport-bug -o filenames -o dirnames apport-bug
 complete -F _apport-cli -o filenames -o dirnames apport-cli
 complete -F _apport-unpack -o filenames -o dirnames apport-unpack
 complete -F _apport-collect apport-collect
+
+# vi: syntax=bash
