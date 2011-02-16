@@ -1,6 +1,6 @@
 '''Convenience functions for use in package hooks.'''
 
-# Copyright (C) 2008 - 2010 Canonical Ltd.
+# Copyright (C) 2008 - 2011 Canonical Ltd.
 # Authors: 
 #   Matt Zimmerman <mdz@canonical.com>
 #   Brian Murray <brian@ubuntu.com>
@@ -21,6 +21,8 @@ import re
 import string
 import stat
 import base64
+import tempfile
+import shutil
 
 import xml.dom, xml.dom.minidom
 
@@ -242,14 +244,7 @@ def command_output(command, input = None, stderr = subprocess.STDOUT):
        return 'Error: command %s failed with exit code %i: %s' % (
            str(command), sp.returncode, out)
 
-def root_command_output(command, input = None, stderr = subprocess.STDOUT):
-    '''Try to execute given command (array) as root and return its stdout. 
-
-    This passes the command through gksu, kdesudo, or sudo, depending on the
-    running desktop environment.
-    
-    In case of failure, a textual error gets returned.
-    '''
+def _root_command_prefix():
     if os.getuid() == 0:
         prefix = []
     elif os.getenv('DISPLAY') and \
@@ -267,7 +262,60 @@ def root_command_output(command, input = None, stderr = subprocess.STDOUT):
     else:
         prefix = ['sudo']
 
-    return command_output(prefix + command, input, stderr)
+    return prefix
+
+def root_command_output(command, input = None, stderr = subprocess.STDOUT):
+    '''Try to execute given command (array) as root and return its stdout. 
+
+    This passes the command through gksu, kdesudo, or sudo, depending on the
+    running desktop environment.
+    
+    In case of failure, a textual error gets returned.
+    '''
+    assert type(command) == type([]), 'command must be a list'
+    return command_output(_root_command_prefix() + command, input, stderr)
+
+def attach_root_command_outputs(report, command_map):
+    '''Execute multiple commands as root and put their outputs into report.
+
+    command_map is a keyname -> 'shell command' dictionary with the commands to
+    run. They are all run through /bin/sh, so you need to take care of shell
+    escaping yourself. To include stderr output of a command, end it with
+    "2>&1".
+
+    Just like root_command_output() this will use gksu, kdesudo, or sudo for
+    gaining root privileges, depending on the running desktop environment.
+
+    This is preferrable to using root_command_output() multiple times, as that
+    will ask for the password every time.
+    '''
+    workdir = tempfile.mkdtemp()
+    try:
+        # create a shell script with all the commands
+        script_path = os.path.join(workdir, ':script:')
+        script = open(script_path, 'w')
+        for keyname, command in command_map.items():
+            assert hasattr(command, 'strip'), 'command must be a string (shell command)'
+            # use "| cat" here, so that we can end commands with 2>&1
+            # (otherwise it would have the wrong redirection order)
+            script.write('%s | cat > %s\n' % (command, os.path.join(workdir, keyname)))
+        script.close()
+
+        # run script
+        env = os.environ.copy()
+        env['LC_MESSAGES'] = 'C'
+        env['LANGUAGE'] = ''
+        sp = subprocess.Popen(_root_command_prefix() + ['/bin/sh', script_path],
+            close_fds=True, env=env)
+        sp.wait()
+
+        # now read back the individual outputs
+        for keyname in command_map:
+            f = open(os.path.join(workdir, keyname))
+            report[keyname] = f.read()
+            f.close()
+    finally:
+        shutil.rmtree(workdir)
 
 def recent_syslog(pattern):
     '''Extract recent messages from syslog which match a regex.
@@ -616,7 +664,7 @@ def attach_drm_info(report):
 
 if __name__ == '__main__':
 
-    import unittest, tempfile
+    import unittest
 
     class _T(unittest.TestCase):
         def test_module_license_evaluation(self):

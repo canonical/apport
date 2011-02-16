@@ -13,6 +13,8 @@ Bug fixes:
 Improvements:
  - Remove explicit handling of KDE *.ui files in setup.py, as
    python-distutils-extra 2.24 fixes this. Bump version check.
+ - hookutils.py: Add attach_root_command_outputs() to run several commands
+   at once. This avoids asking for the password several times. (LP: #716595)
 
 1.17.2 (2011-02-04)
 -------------------
