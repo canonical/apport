@@ -540,12 +540,12 @@ class Report(ProblemReport):
         are generally not useful for triaging and duplicate detection.
         '''
         unwind_functions = set(['g_logv', 'g_log', 'IA__g_log', 'IA__g_logv',
-            'g_assert_warning', 'IA__g_assert_warning'])
+            'g_assert_warning', 'IA__g_assert_warning', '__GI_abort'])
         toptrace = [''] * 5
         depth = 0
         unwound = False
         unwinding = False
-        bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+(.*)|(<signal handler called>)\s*)$')
+        bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+\*?(.*)|(<signal handler called>)\s*)$')
         bt_fn_noaddr_re = re.compile('^#(\d+)\s+(?:(.*)|(<signal handler called>)\s*)$')
 
         for line in self['Stacktrace'].splitlines():
@@ -2340,6 +2340,18 @@ _gnome_vfs_volume_monitor_disconnected (volume_monitor=0x8070400, drive=0x8078f0
 _hal_device_removed (hal_ctx=0x8074da8, udi=0x8093be4 "/org/freedesktop/Hal/devices/volume_uuid_92FC9DFBFC9DDA35")
 filter_func (connection=0x8075288, message=0x80768d8, user_data=0x8074da8) at libhal.c:820
 dbus_connection_dispatch (connection=0x8075288) at dbus-connection.c:4267''')
+
+        # problem with too old gdb, only assertion, nothing else
+        r = Report()
+        r['Stacktrace'] = '''#0  0x00987416 in __kernel_vsyscall ()
+No symbol table info available.
+#1  0x00ebecb1 in *__GI_raise (sig=6)
+        selftid = 945
+#2  0x00ec218e in *__GI_abort () at abort.c:59
+        save_stage = Unhandled dwarf expression opcode 0x9f
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '')
 
     def test_crash_signature(self):
         '''crash_signature().'''

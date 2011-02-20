@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.18.1 (UNRELEASED)
+-------------------
+Bug fixes:
+ - Update stack unwind patterns for current glib (slightly changed function
+   names), and also ignore a preceding '*'. (LP: #716251)
+
 1.18 (2011-02-16)
 -----------------
 Bug fixes:
