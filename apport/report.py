@@ -1016,7 +1016,11 @@ class Report(ProblemReport):
             sig = '%s:%s' % (self['ExecutablePath'], self['Signal'])
             bt_fn_re = re.compile('^(?:([\w:~]+).*|(<signal handler called>)\s*)$')
 
-            for line in self['StacktraceTop'].splitlines():
+            lines = self['StacktraceTop'].splitlines()
+            if len(lines) < 2:
+                return None
+
+            for line in lines:
                 m = bt_fn_re.match(line)
                 if m:
                     sig += ':' + (m.group(1) or m.group(2))
@@ -2376,6 +2380,9 @@ __frob::~frob (x=1) at crash.c:30'''
 raise () from /lib/libpthread.so.0
 <signal handler called>
 __frob (x=1) at crash.c:30'''
+        self.assertEqual(r.crash_signature(), None)
+
+        r['StacktraceTop'] = ''
         self.assertEqual(r.crash_signature(), None)
 
         # Python crashes

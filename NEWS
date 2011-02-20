@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - Update stack unwind patterns for current glib (slightly changed function
    names), and also ignore a preceding '*'. (LP: #716251)
+ - Fix crash_signature() to fail if there is an empty or too short
+   StacktraceTop.
 
 1.18 (2011-02-16)
 -----------------
