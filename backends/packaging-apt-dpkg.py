@@ -425,7 +425,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 if self.get_architecture(pkg) != 'all':
                     if c.has_key(pkg+'-dbg'):
                         dependency_versions[pkg+'-dbg'] = dependency_versions[pkg]
-                    dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
+                    else:
+                        dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
             except ValueError:
                 apport.warning('package %s not known to package cache', pkg)
 
