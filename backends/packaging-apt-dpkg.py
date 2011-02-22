@@ -724,7 +724,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         d = tempfile.mkdtemp()
         d2 = tempfile.mkdtemp()
         try:
-            tar = subprocess.Popen(['tar', '-C', d, '-xz'], stdin=subprocess.PIPE)
+            tar = subprocess.Popen(['tar', '-xz'], cwd=d, stdin=subprocess.PIPE)
             tar.communicate(control_tar)
             assert tar.returncode == 0
             for s in ('preinst', 'postinst', 'prerm', 'postrm'):
