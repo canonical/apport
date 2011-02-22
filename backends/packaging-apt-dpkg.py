@@ -734,7 +734,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     os.unlink(path)
 
             control_tar_new = os.path.join(d2, 'control.tar.gz')
-            tar = subprocess.Popen(['tar', '-C', d, '-cz', '.'],
+            tar = subprocess.Popen(['tar', '-cz', '.'], cwd=d,
                 stdin=subprocess.PIPE, stdout=open(control_tar_new, 'w'))
             assert tar.wait() == 0
 
