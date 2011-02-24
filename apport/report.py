@@ -115,6 +115,19 @@ def _check_bug_pattern(report, pattern):
 
     return pattern.attributes['url'].nodeValue.encode('UTF-8')
 
+def _check_bug_patterns(report, patterns):
+    try:
+        dom = xml.dom.minidom.parseString(patterns)
+    except ExpatError:
+        return None
+
+    for pattern in dom.getElementsByTagName('pattern'):
+        url = _check_bug_pattern(report, pattern)
+        if url:
+            return url
+
+    return None
+
 def _dom_remove_space(node):
     '''Recursively remove whitespace from given XML DOM node.'''
 
@@ -648,12 +661,12 @@ class Report(ProblemReport):
 
         return False
 
-    def search_bug_patterns(self, baseurl):
-        '''Check bug patterns at baseurl/packagename.xml. 
+    def search_bug_patterns(self, url):
+        '''Check bug patterns loaded from the specified url. 
         
         Return bug URL on match, or None otherwise.
 
-        The pattern file must be valid XML and has the following syntax:
+        The url must refer to a valid XML document with the following syntax:
         root element := <patterns>
         patterns := <pattern url="http://bug.url"> *
         pattern := <re key="report_key">regular expression*</re> +
@@ -665,39 +678,27 @@ class Report(ProblemReport):
                 <re key="Foo">ba.*r</re>
             </pattern>
             <pattern url="http://bugtracker.net/bugs/2">
-                <re key="Foo">write_(hello|goodbye)</re>
                 <re key="Package">^\S* 1-2$</re> <!-- test for a particular version -->
+                <re key="Foo">write_(hello|goodbye)</re>
             </pattern>
         </patterns>
         '''
         # some distros might not want to support these
-        if not baseurl:
+        if not url:
             return
 
-        assert self.has_key('Package')
-        package = self['Package'].split()[0]
         try:
-            patterns = urllib.urlopen('%s/%s.xml' % (baseurl, package)).read()
-            assert '<title>404 Not Found' not in patterns
+            patterns = urllib.urlopen(url).read()
         except:
-            # try if there is one for the source package
-            if self.has_key('SourcePackage'):
-                try:
-                    patterns = urllib.urlopen('%s/%s.xml' % (baseurl, self['SourcePackage'])).read()
-                except:
-                    return None
-            else:
-                return None
+            # doesn't exist or failed to load
+            return
 
-        try:
-            dom = xml.dom.minidom.parseString(patterns)
-        except ExpatError:
-            return None
+        if '<title>404 Not Found' in patterns:
+            return
 
-        for pattern in dom.getElementsByTagName('pattern'):
-            m = _check_bug_pattern(self, pattern)
-            if m:
-                return m
+        url = _check_bug_patterns(self, patterns)
+        if url:
+            return url
 
         return None
 
@@ -1706,92 +1707,99 @@ $0.bin 2>/dev/null
     def test_search_bug_patterns(self):
         '''search_bug_patterns().'''
 
-        pdir = None
-        try:
-            pdir = tempfile.mkdtemp()
+        temp_patterns = tempfile.NamedTemporaryFile(prefix='apport-')
+        patterns = temp_patterns.name
 
-            # create some test patterns
-            open(os.path.join(pdir, 'bash.xml'), 'w').write('''<?xml version="1.0"?>
+        # create some test patterns
+        open(patterns, 'w').write('''<?xml version="1.0"?>
 <patterns>
     <pattern url="http://bugtracker.net/bugs/1">
+        <re key="Package">^bash </re>
         <re key="Foo">ba.*r</re>
     </pattern>
     <pattern url="http://bugtracker.net/bugs/2">
+        <re key="Package">^bash 1-2$</re>
         <re key="Foo">write_(hello|goodbye)</re>
-        <re key="Package">^\S* 1-2$</re>
     </pattern>
-</patterns>''')
-
-            open(os.path.join(pdir, 'coreutils.xml'), 'w').write('''<?xml version="1.0"?>
-<patterns>
     <pattern url="http://bugtracker.net/bugs/3">
+        <re key="Package">^coreutils </re>
         <re key="Bar">^1$</re>
     </pattern>
     <pattern url="http://bugtracker.net/bugs/4">
+        <re key="Package">^coreutils </re>
         <re key="Bar">*</re> <!-- invalid RE -->
+    </pattern>
+    <pattern url="http://bugtracker.net/bugs/5">
+        <re key="SourcePackage">^bazaar$</re>
+        <re key="LogFile">AssertionError</re>
     </pattern>
 </patterns>''')
 
-            # invalid XML
-            open(os.path.join(pdir, 'invalid.xml'), 'w').write('''<?xml version="1.0"?>
+        # invalid XML
+        temp_invalid = tempfile.NamedTemporaryFile(prefix='apport-')
+        invalid = temp_invalid.name
+        open(invalid, 'w').write('''<?xml version="1.0"?>
 </patterns>''')
 
-            # create some reports
-            r_bash = Report()
-            r_bash['Package'] = 'bash 1-2'
-            r_bash['Foo'] = 'bazaar'
+        # create some reports
+        r_bash = Report()
+        r_bash['Package'] = 'bash 1-2'
+        r_bash['Foo'] = 'bazaar'
 
-            r_coreutils = Report()
-            r_coreutils['Package'] = 'coreutils 1'
-            r_coreutils['Bar'] = '1'
+        r_bazaar = Report()
+        r_bazaar['Package'] = 'bazaar 2-1'
+        r_bazaar['SourcePackage'] = 'bazaar'
+        r_bazaar['LogFile'] = 'AssertionError'
 
-            r_invalid = Report()
-            r_invalid['Package'] = 'invalid 1'
+        r_coreutils = Report()
+        r_coreutils['Package'] = 'coreutils 1'
+        r_coreutils['Bar'] = '1'
 
-            # positive match cases
-            self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/1')
-            r_bash['Foo'] = 'write_goodbye'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/2')
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/3')
+        r_invalid = Report()
+        r_invalid['Package'] = 'invalid 1'
 
-            # match on source package
-            r_bash['Package'] = 'bash-static 1-2'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), None)
-            r_bash['SourcePackage'] = 'bash'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), 'http://bugtracker.net/bugs/2')
+        # positive match cases
+        self.assertEqual(r_bash.search_bug_patterns(patterns), 'http://bugtracker.net/bugs/1')
+        r_bash['Foo'] = 'write_goodbye'
+        self.assertEqual(r_bash.search_bug_patterns(patterns), 'http://bugtracker.net/bugs/2')
+        self.assertEqual(r_coreutils.search_bug_patterns(patterns), 'http://bugtracker.net/bugs/3')
+        self.assertEqual(r_bazaar.search_bug_patterns(patterns), 'http://bugtracker.net/bugs/5')
 
-            # negative match cases
-            r_bash['Package'] = 'bash 1-21'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), None,
-                'does not match on wrong bash version')
-            r_bash['Foo'] = 'zz'
-            self.assertEqual(r_bash.search_bug_patterns(pdir), None,
-                'does not match on wrong Foo value')
-            r_coreutils['Bar'] = '11'
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
-                'does not match on wrong Bar value')
+        # negative match cases
+        r_bash['Package'] = 'bash-static 1-2'
+        self.assertEqual(r_bash.search_bug_patterns(patterns), None)
+        r_bash['Package'] = 'bash 1-21'
+        self.assertEqual(r_bash.search_bug_patterns(patterns), None,
+            'does not match on wrong bash version')
+        r_bash['Foo'] = 'zz'
+        self.assertEqual(r_bash.search_bug_patterns(patterns), None,
+            'does not match on wrong Foo value')
+        r_coreutils['Bar'] = '11'
+        self.assertEqual(r_coreutils.search_bug_patterns(patterns), None,
+            'does not match on wrong Bar value')
+        r_bazaar['SourcePackage'] = 'launchpad'
+        self.assertEqual(r_bazaar.search_bug_patterns(patterns), None,
+            'does not match on wrong source package')
+        r_bazaar['LogFile'] = ''
+        self.assertEqual(r_bazaar.search_bug_patterns(patterns), None,
+            'does not match on empty attribute')
 
-            # various errors to check for robustness (no exceptions, just None
-            # return value)
-            del r_coreutils['Bar']
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
-                'does not match on nonexisting key')
-            self.assertEqual(r_invalid.search_bug_patterns(pdir), None,
-                'gracefully handles invalid XML')
-            r_coreutils['Package'] = 'other 2'
-            self.assertEqual(r_coreutils.search_bug_patterns(pdir), None,
-                'gracefully handles nonexisting package XML file')
-            self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None,
-                'gracefully handles nonexisting base path')
-            # existing host, but no bug patterns
-            self.assertEqual(r_bash.search_bug_patterns('http://security.ubuntu.com/'), None,
-                'gracefully handles base path without bug patterns')
-            # nonexisting host
-            self.assertEqual(r_bash.search_bug_patterns('http://nonexisting.domain/'), None,
-                'gracefully handles nonexisting URL domain')
-        finally:
-            if pdir:
-                shutil.rmtree(pdir)
+        # various errors to check for robustness (no exceptions, just None
+        # return value)
+        del r_coreutils['Bar']
+        self.assertEqual(r_coreutils.search_bug_patterns(patterns), None,
+            'does not match on nonexisting key')
+        self.assertEqual(r_invalid.search_bug_patterns(invalid), None,
+            'gracefully handles invalid XML')
+        r_coreutils['Package'] = 'other 2'
+        self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None,
+            'gracefully handles nonexisting base path')
+        # existing host, but no bug patterns
+        self.assertEqual(r_bash.search_bug_patterns('http://security.ubuntu.com/'), None,
+            'gracefully handles base path without bug patterns')
+        # nonexisting host
+        self.assertEqual(r_bash.search_bug_patterns('http://nonexisting.domain/'), None,
+            'gracefully handles nonexisting URL domain')
 
     def test_add_hooks_info(self):
         '''add_hooks_info().'''
