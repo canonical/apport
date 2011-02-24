@@ -15,6 +15,12 @@ Bug fixes:
  - apt backend: Call tar with target cwd instead of using -C; the latter causes
    an extra openat() call which breaks with current fakechroot.
 
+Improvements:
+ - In apport-bug, if the user specifies a PID referring to a kernel thread,
+   do the right thing and file the bug against the kernel
+ - In hookutils.attach_dmesg, skip over an initial truncated message if one
+   is present (this happens when the ring buffer overflows)
+
 1.18 (2011-02-16)
 -----------------
 Bug fixes:
