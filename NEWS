@@ -10,6 +10,8 @@ Bug fixes:
    StacktraceTop.
  - apt backend: Do not generate a warning if the opportunistically added -dbg
    package does not exist.
+ - apt backend: Only add -dbg in --no-pkg mode, as there will be conflicts in
+   normal package mode.
  - apt backend: Call tar with target cwd instead of using -C; the latter causes
    an extra openat() call which breaks with current fakechroot.
 

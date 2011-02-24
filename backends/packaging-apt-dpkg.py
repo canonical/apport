@@ -423,7 +423,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             dependency_versions[pkg] = version
             try:
                 if self.get_architecture(pkg) != 'all':
-                    if c.has_key(pkg+'-dbg'):
+                    if no_pkg and c.has_key(pkg+'-dbg'):
                         dependency_versions[pkg+'-dbg'] = dependency_versions[pkg]
                     else:
                         dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
