@@ -197,7 +197,7 @@ class _T(unittest.TestCase):
 
         r.add_package_info()
 
-        self.assert_(r['Package'].startswith('gcc-' + gcc_version))
+        self.assertEqual(r['Package'].split()[0], 'gcc-' + gcc_version)
         self.assert_(r['SourcePackage'].startswith('gcc'))
 
     def test_gcc_ide_hook_pipe(self):
@@ -224,7 +224,7 @@ class _T(unittest.TestCase):
 
         r.add_package_info()
 
-        self.assert_(r['Package'].startswith('gcc-' + gcc_version))
+        self.assertEqual(r['Package'].split()[0], 'gcc-' + gcc_version)
         self.assert_(r['SourcePackage'].startswith('gcc'))
 
     def test_kernel_oops_hook(self):
