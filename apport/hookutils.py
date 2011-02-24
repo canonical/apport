@@ -81,7 +81,12 @@ def attach_dmesg(report):
     except IOError:
         pass
     if not report.get('CurrentDmesg', '').strip():
-        report['CurrentDmesg'] = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
+        dmesg = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
+        # if an initial message was truncated by the ring buffer, skip over it
+        first_newline = dmesg.find('\n[')
+        if first_newline != -1:
+            dmesg = dmesg[first_newline+1:]
+        report['CurrentDmesg'] = dmesg
 
 def attach_dmi(report):
     dmi_dir = '/sys/class/dmi/id'
