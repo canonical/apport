@@ -340,23 +340,30 @@ free memory to automatically analyze the problem and send a report to the develo
 
         # if PID is given, add info
         if self.options.pid:
-            try:
-                self.report.add_proc_info(self.options.pid)
-            except ValueError:
-                self.ui_error_message(_('Invalid PID'),
-                        _('The specified process ID does not belong to a program.'))
-                return False
-            except OSError as e:
-                # silently ignore nonexisting PIDs; the user must not close the
-                # application prematurely
-                if e.errno == errno.ENOENT:
+            stat = open('/proc/%s/stat' % self.options.pid).read().split()
+            flags = int(stat[8])
+            PF_KTHREAD = 0x200000
+            if flags & PF_KTHREAD:
+                # this PID is a kernel thread
+                self.options.package = 'linux'
+            else:
+                try:
+                    self.report.add_proc_info(self.options.pid)
+                except ValueError:
+                    self.ui_error_message(_('Invalid PID'),
+                            _('The specified process ID does not belong to a program.'))
                     return False
-                elif e.errno == errno.EACCES:
-                    self.ui_error_message(_('Permission denied'), 
-                        _('The specified process does not belong to you. Please run this program as the process owner or as root.'))
-                    return False
-                else:
-                    raise
+                except OSError as e:
+                    # silently ignore nonexisting PIDs; the user must not close the
+                    # application prematurely
+                    if e.errno == errno.ENOENT:
+                        return False
+                    elif e.errno == errno.EACCES:
+                        self.ui_error_message(_('Permission denied'), 
+                            _('The specified process does not belong to you. Please run this program as the process owner or as root.'))
+                        return False
+                    else:
+                        raise
         else:
             self.report.add_proc_environ()
 
