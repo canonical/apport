@@ -513,12 +513,12 @@ def package_versions(*packages):
         if not package_pattern:
             continue
 
-        packages = packaging.package_name_glob(package_pattern)
+        matching_packages = packaging.package_name_glob(package_pattern)
 
-        if not packages:
+        if not matching_packages:
             versions.append((package_pattern, 'N/A'))
 
-        for package in packages:
+        for package in sorted(matching_packages):
             try:
                 version = packaging.get_version(package)
             except ValueError:
