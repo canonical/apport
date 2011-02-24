@@ -1707,11 +1707,9 @@ $0.bin 2>/dev/null
     def test_search_bug_patterns(self):
         '''search_bug_patterns().'''
 
-        temp_patterns = tempfile.NamedTemporaryFile(prefix='apport-')
-        patterns = temp_patterns.name
-
+        patterns = tempfile.NamedTemporaryFile(prefix='apport-')
         # create some test patterns
-        open(patterns, 'w').write('''<?xml version="1.0"?>
+        patterns.write('''<?xml version="1.0"?>
 <patterns>
     <pattern url="http://bugtracker.net/bugs/1">
         <re key="Package">^bash </re>
@@ -1734,12 +1732,13 @@ $0.bin 2>/dev/null
         <re key="LogFile">AssertionError</re>
     </pattern>
 </patterns>''')
+        patterns.flush()
 
         # invalid XML
-        temp_invalid = tempfile.NamedTemporaryFile(prefix='apport-')
-        invalid = temp_invalid.name
-        open(invalid, 'w').write('''<?xml version="1.0"?>
+        invalid = tempfile.NamedTemporaryFile(prefix='apport-')
+        invalid.write('''<?xml version="1.0"?>
 </patterns>''')
+        invalid.flush()
 
         # create some reports
         r_bash = Report()
@@ -1759,37 +1758,37 @@ $0.bin 2>/dev/null
         r_invalid['Package'] = 'invalid 1'
 
         # positive match cases
-        self.assertEqual(r_bash.search_bug_patterns(patterns), 'http://bugtracker.net/bugs/1')
+        self.assertEqual(r_bash.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/1')
         r_bash['Foo'] = 'write_goodbye'
-        self.assertEqual(r_bash.search_bug_patterns(patterns), 'http://bugtracker.net/bugs/2')
-        self.assertEqual(r_coreutils.search_bug_patterns(patterns), 'http://bugtracker.net/bugs/3')
-        self.assertEqual(r_bazaar.search_bug_patterns(patterns), 'http://bugtracker.net/bugs/5')
+        self.assertEqual(r_bash.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/2')
+        self.assertEqual(r_coreutils.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/3')
+        self.assertEqual(r_bazaar.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/5')
 
         # negative match cases
         r_bash['Package'] = 'bash-static 1-2'
-        self.assertEqual(r_bash.search_bug_patterns(patterns), None)
+        self.assertEqual(r_bash.search_bug_patterns(patterns.name), None)
         r_bash['Package'] = 'bash 1-21'
-        self.assertEqual(r_bash.search_bug_patterns(patterns), None,
+        self.assertEqual(r_bash.search_bug_patterns(patterns.name), None,
             'does not match on wrong bash version')
         r_bash['Foo'] = 'zz'
-        self.assertEqual(r_bash.search_bug_patterns(patterns), None,
+        self.assertEqual(r_bash.search_bug_patterns(patterns.name), None,
             'does not match on wrong Foo value')
         r_coreutils['Bar'] = '11'
-        self.assertEqual(r_coreutils.search_bug_patterns(patterns), None,
+        self.assertEqual(r_coreutils.search_bug_patterns(patterns.name), None,
             'does not match on wrong Bar value')
         r_bazaar['SourcePackage'] = 'launchpad'
-        self.assertEqual(r_bazaar.search_bug_patterns(patterns), None,
+        self.assertEqual(r_bazaar.search_bug_patterns(patterns.name), None,
             'does not match on wrong source package')
         r_bazaar['LogFile'] = ''
-        self.assertEqual(r_bazaar.search_bug_patterns(patterns), None,
+        self.assertEqual(r_bazaar.search_bug_patterns(patterns.name), None,
             'does not match on empty attribute')
 
         # various errors to check for robustness (no exceptions, just None
         # return value)
         del r_coreutils['Bar']
-        self.assertEqual(r_coreutils.search_bug_patterns(patterns), None,
+        self.assertEqual(r_coreutils.search_bug_patterns(patterns.name), None,
             'does not match on nonexisting key')
-        self.assertEqual(r_invalid.search_bug_patterns(invalid), None,
+        self.assertEqual(r_invalid.search_bug_patterns(invalid.name), None,
             'gracefully handles invalid XML')
         r_coreutils['Package'] = 'other 2'
         self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None,
