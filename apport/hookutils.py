@@ -527,7 +527,11 @@ def package_versions(*packages):
                 version = 'N/A'
             versions.append((package,version))
 
-    return '\n'.join(['%s %s' % v for v in versions])
+    package_width, version_width = \
+        map(max, [map(len, t) for t in zip(*versions)])
+
+    fmt = '%%-%ds %%s' % package_width
+    return '\n'.join([fmt % v for v in versions])
 
 def shared_libraries(path):
     '''Returns a list of strings containing the sonames of shared libraries
