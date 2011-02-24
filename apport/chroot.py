@@ -368,6 +368,7 @@ int main() { return 42; }
                 self.assertTrue('lib' in files)
 
                 # complex shell commands: relative symlinks and paths
+                os.umask(022) # assumed below
                 self.assertEqual(c.run_capture(['bash'], '''set -e
 cd /
 mkdir test
