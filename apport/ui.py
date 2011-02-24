@@ -26,6 +26,7 @@ from apport import unicode_gettext as _
 
 symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
                                     '/usr/share/apport/symptoms')
+PF_KTHREAD = 0x200000
 
 def excstr(exception):
     '''Return exception message as unicode.'''
@@ -343,7 +344,6 @@ free memory to automatically analyze the problem and send a report to the develo
             try:
                 stat = open('/proc/%s/stat' % self.options.pid).read().split()
                 flags = int(stat[8])
-                PF_KTHREAD = 0x200000
                 if flags & PF_KTHREAD:
                     # this PID is a kernel thread
                     self.options.package = 'linux'
@@ -1846,6 +1846,25 @@ CoreDump: base64
                 os.unlink(exename)
 
             self.assertEqual(self.ui.msg_severity, 'error')
+
+        def test_run_report_bug_kernel_thread(self):
+            '''run_report_bug() for a pid of a kernel thread.'''
+
+            import glob
+            pid = None
+            for path in glob.glob('/proc/[0-9]*/stat'):
+                stat = open(path).read().split()
+                flags = int(stat[8])
+                if flags & PF_KTHREAD:
+                    pid = int(stat[0])
+                    break
+
+            self.failIf(pid is None)
+            sys.argv = ['ui-test', '-f', '-P', str(pid)]
+            self.ui = _TestSuiteUserInterface()
+            self.ui.run_argv()
+
+            self.assertTrue(self.ui.report['Package'].startswith(apport.packaging.get_kernel_package()))
 
         def test_run_report_bug_file(self):
             '''run_report_bug() with saving report into a file.'''
