@@ -349,11 +349,7 @@ free memory to automatically analyze the problem and send a report to the develo
                     self.options.package = 'linux'
                 else:
                     self.report.add_proc_info(self.options.pid)
-            except ValueError:
-                self.ui_error_message(_('Invalid PID'),
-                        _('The specified process ID does not belong to a program.'))
-                return False
-            except IOError:
+            except (ValueError, IOError):
                 self.ui_error_message(_('Invalid PID'),
                         _('The specified process ID does not belong to a program.'))
                 return False
