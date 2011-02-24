@@ -1349,7 +1349,7 @@ if  __name__ == '__main__':
 databases = {
     'testsuite': { 
         'impl': 'memory',
-        'bug_pattern_base': None
+        'bug_pattern_url': None
     }
 }
 ''')
