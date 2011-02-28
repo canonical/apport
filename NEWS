@@ -14,6 +14,7 @@ Bug fixes:
    normal package mode.
  - apt backend: Call tar with target cwd instead of using -C; the latter causes
    an extra openat() call which breaks with current fakechroot.
+ - launchpad.py: Fix retracer crash if DistroRelease field does not exist.
 
 Improvements:
  - In apport-bug, if the user specifies a PID referring to a kernel thread,
