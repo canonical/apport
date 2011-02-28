@@ -1028,8 +1028,8 @@ Foo: Bar
         pr = ProblemReport()
         pr.load(io)
 
-        self.failIf(pr.has_key('FileSmallLimit'))
-        self.failIf(pr.has_key('FileLimitMinus1'))
+        self.assertFalse(pr.has_key('FileSmallLimit'))
+        self.assertFalse(pr.has_key('FileLimitMinus1'))
         self.assertTrue(pr['FileExactLimit'] == data)
         self.assertTrue(pr['FileLimitPlus1'] == data)
         self.assertTrue(pr['FileLimitNone'] == data)

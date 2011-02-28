@@ -1219,7 +1219,7 @@ class _T(unittest.TestCase):
         pr.pid = p.pid
         pr.add_proc_info()
         p.communicate('exit\n')
-        self.failIf(pr.has_key('InterpreterPath'), pr.get('InterpreterPath'))
+        self.assertFalse(pr.has_key('InterpreterPath'), pr.get('InterpreterPath'))
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('/bin/sh'))
 
         # check correct handling of interpreted executables: shell
@@ -1273,7 +1273,7 @@ sys.stdin.readline()
         r = Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate('')
-        self.failIf('PATH' in r['ProcEnviron'], 
+        self.assertFalse('PATH' in r['ProcEnviron'], 
             'system default $PATH should be filtered out')
 
         # no user paths
@@ -1307,7 +1307,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = 'gedit\0/' + f.name
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/gedit')
-        self.failIf(pr.has_key('InterpreterPath'))
+        self.assertFalse(pr.has_key('InterpreterPath'))
         f.close()
 
         # bogus argv[0]
@@ -1317,7 +1317,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = 'nonexisting\0/foo'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/bin/dash')
-        self.failIf(pr.has_key('InterpreterPath'))
+        self.assertFalse(pr.has_key('InterpreterPath'))
 
         # standard sh script
         pr = Report()
@@ -1364,7 +1364,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = 'python\0/etc/shadow'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.failIf(pr.has_key('InterpreterPath'))
+        self.assertFalse(pr.has_key('InterpreterPath'))
 
         # succeed on files we should have access to when name!=argv[0]
         pr = Report()
@@ -1382,7 +1382,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = '../etc/shadow'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.failIf(pr.has_key('InterpreterPath'))
+        self.assertFalse(pr.has_key('InterpreterPath'))
 
         # succeed on files we should have access to when name==argv[0]
         pr = Report()
@@ -1400,7 +1400,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = 'python'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.failIf(pr.has_key('InterpreterPath'))
+        self.assertFalse(pr.has_key('InterpreterPath'))
 
         # python script (abuse /bin/bash since it must exist)
         pr = Report()
@@ -1495,7 +1495,7 @@ int main() { return f(42); }
         pr = self._generate_sigsegv_report()
         self._validate_gdb_fields(pr)
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6', pr['StacktraceTop'])
-        self.failIf ('AssertionMessage' in pr)
+        self.assertFalse ('AssertionMessage' in pr)
 
         # crash where gdb generates output on stderr
         pr = self._generate_sigsegv_report(code='''
@@ -1507,7 +1507,7 @@ int main() {
 ''')
         self._validate_gdb_fields(pr)
         self.assertTrue('Cannot access memory at address 0x0' in pr['Disassembly'], pr['Disassembly'])
-        self.failIf ('AssertionMessage' in pr)
+        self.assertFalse ('AssertionMessage' in pr)
 
     def test_add_gdb_info_load(self):
         '''add_gdb_info() with inline core dump.'''
@@ -1624,9 +1624,9 @@ $0.bin 2>/dev/null
         self._validate_gdb_fields(pr)
         self.assertTrue("<stdin>:2: main: Assertion `1 < 0' failed." in
                 pr['AssertionMessage'], pr['AssertionMessage'])
-        self.failIf(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
-        self.failIf('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
-        self.failIf(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
+        self.assertFalse(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
+        self.assertFalse('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
+        self.assertFalse(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
 
         # abort with internal error
         (fd, script) = tempfile.mkstemp()
@@ -1666,9 +1666,9 @@ LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
         self._validate_gdb_fields(pr)
         self.assertTrue("** buffer overflow detected ***: %s.bin terminated" % (script) in
                 pr['AssertionMessage'], pr['AssertionMessage'])
-        self.failIf(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
-        self.failIf('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
-        self.failIf(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
+        self.assertFalse(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
+        self.assertFalse('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
+        self.assertFalse(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
 
         # abort without assertion
         (fd, script) = tempfile.mkstemp()
@@ -1702,7 +1702,7 @@ $0.bin 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.failIf ('AssertionMessage' in pr, pr.get('AssertionMessage'))
+        self.assertFalse ('AssertionMessage' in pr, pr.get('AssertionMessage'))
 
     def test_search_bug_patterns(self):
         '''search_bug_patterns().'''
@@ -2017,22 +2017,22 @@ def add_info(report, ui):
         '''has_useful_stacktrace().'''
 
         r = Report()
-        self.failIf(r.has_useful_stacktrace())
+        self.assertFalse(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = ''
-        self.failIf(r.has_useful_stacktrace())
+        self.assertFalse(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = '?? ()'
-        self.failIf(r.has_useful_stacktrace())
+        self.assertFalse(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = '?? ()\n?? ()'
-        self.failIf(r.has_useful_stacktrace())
+        self.assertFalse(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\n?? ()'
-        self.failIf(r.has_useful_stacktrace())
+        self.assertFalse(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\n?? ()\n?? ()\n?? ()'
-        self.failIf(r.has_useful_stacktrace())
+        self.assertFalse(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
         self.assertTrue(r.has_useful_stacktrace())
@@ -2044,7 +2044,7 @@ def add_info(report, ui):
         self.assertTrue(r.has_useful_stacktrace())
 
         r['StacktraceTop'] = 'read () from /lib/libc.6.so\n?? ()\nfoo (i=1) from /usr/lib/libfoo.so\n?? ()\n?? ()'
-        self.failIf(r.has_useful_stacktrace())
+        self.assertFalse(r.has_useful_stacktrace())
 
     def test_standard_title(self):
         '''standard_title().'''

@@ -35,7 +35,7 @@ class _T(unittest.TestCase):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
-        self.assert_("Can't catch this" in err, 'crash handler must print original exception:\n' + err)
+        self.assertTrue("Can't catch this" in err, 'crash handler must print original exception:\n' + err)
 
         self._check_crash_report('java/crash.class')
 
@@ -47,7 +47,7 @@ class _T(unittest.TestCase):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
-        self.assert_("Can't catch this" in err, 'crash handler must print original exception:\n' + err)
+        self.assertTrue("Can't catch this" in err, 'crash handler must print original exception:\n' + err)
 
         self._check_crash_report('java/crash.jar!/crash.class')
 
@@ -59,15 +59,15 @@ class _T(unittest.TestCase):
         r = apport.Report()
         r.load(open(reports[0]))
         self.assertEqual(r['ProblemType'], 'Crash')
-        self.assert_(r['ProcCmdline'].startswith('java -classpath'))
-        self.assert_(r['StackTrace'].startswith(
+        self.assertTrue(r['ProcCmdline'].startswith('java -classpath'))
+        self.assertTrue(r['StackTrace'].startswith(
             "java.lang.RuntimeException: Can't catch this"))
         if '.jar!' in main_file:
             self.assertEqual(r['MainClassUrl'], 'jar:file:%s/%s' % (self.srcdir, main_file))
         else:
             self.assertEqual(r['MainClassUrl'], 'file:%s/%s' % (self.srcdir, main_file))
-        self.assert_('DistroRelease' in r)
-        self.assert_('ProcCwd' in r)
+        self.assertTrue('DistroRelease' in r)
+        self.assertTrue('ProcCwd' in r)
             
 #
 # main

@@ -360,7 +360,7 @@ databases = {
         db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
         self.assertEqual(db.options['dyn_option'], '4')
         db = apport.crashdb.get_crashdb(None, 'on_thefly', crashdb_conf.name)
-        self.failIf('dyn_opion' in db.options)
+        self.assertFalse('dyn_opion' in db.options)
         self.assertEqual(db.options['whoami'], 'dynname')
 
     #
@@ -428,7 +428,7 @@ databases = {
         self.assertEqual(self.crashes.reports[1]['comment'], 'muhaha')
         self.assertEqual(self.crashes.download(1)['Package'], 'libfoo1 1.2-4')
         self.assertEqual(self.crashes.download(1)['StacktraceTop'], 'Fresh!')
-        self.failIf(self.crashes.download(1).has_key('FooBar'))
+        self.assertFalse(self.crashes.download(1).has_key('FooBar'))
 
         self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
 
@@ -702,19 +702,19 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
         self.crashes.init_duplicate_db(':memory:')
 
         # a fresh and empty db does not need consolidation
-        self.failIf(self.crashes.duplicate_db_needs_consolidation())
+        self.assertFalse(self.crashes.duplicate_db_needs_consolidation())
 
         time.sleep(1.1)
         # for an one-day interval we do not need consolidation
-        self.failIf(self.crashes.duplicate_db_needs_consolidation())
+        self.assertFalse(self.crashes.duplicate_db_needs_consolidation())
         # neither for a ten second one (check timezone offset errors)
-        self.failIf(self.crashes.duplicate_db_needs_consolidation(10))
+        self.assertFalse(self.crashes.duplicate_db_needs_consolidation(10))
         # but for an one second interval
         self.assertTrue(self.crashes.duplicate_db_needs_consolidation(1))
 
         self.crashes.duplicate_db_consolidate()
 
-        self.failIf(self.crashes.duplicate_db_needs_consolidation(1))
+        self.assertFalse(self.crashes.duplicate_db_needs_consolidation(1))
 
     def test_change_master_id(self):
         '''duplicate_db_change_master_id()'''
@@ -762,7 +762,7 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
             self.assertEqual(self.crashes._duplicate_db_dump(), 
                 {self.crashes.download(0).crash_signature(): (0, '42')})
 
-            self.failIf(self.crashes.duplicate_db_needs_consolidation())
+            self.assertFalse(self.crashes.duplicate_db_needs_consolidation())
             del self.crashes
 
             # damage file

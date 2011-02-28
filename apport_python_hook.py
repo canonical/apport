@@ -166,7 +166,7 @@ func(42)
                 self.assertEqual(p.returncode, 1,
                     'crashing test python program exits with failure code')
                 self.assertTrue('Exception: This should happen.' in err)
-                self.failIf('OSError' in err, err)
+                self.assertFalse('OSError' in err, err)
             finally:
                 os.unlink(script)
 

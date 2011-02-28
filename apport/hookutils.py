@@ -710,9 +710,9 @@ if __name__ == '__main__':
                     (good_ko.name,bad_ko.name))
             f.flush()
             nonfree = nonfree_kernel_modules(f.name)
-            self.failIf('isofs' in nonfree)
+            self.assertFalse('isofs' in nonfree)
             self.assertTrue('does-not-exist' in nonfree)
-            self.failIf(good_ko.name in nonfree)
+            self.assertFalse(good_ko.name in nonfree)
             self.assertTrue(bad_ko.name in nonfree)
 
         def test_attach_dmesg(self):

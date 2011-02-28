@@ -1771,7 +1771,7 @@ CoreDump: base64
             self.assertTrue('Dependencies' in self.ui.report.keys())
             self.assertTrue('ProcMaps' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ExecutablePath'], '/bin/sleep')
-            self.failIf(self.ui.report.has_key('ProcCmdline')) # privacy!
+            self.assertFalse(self.ui.report.has_key('ProcCmdline')) # privacy!
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
             self.assertTrue('Tags' in self.ui.report.keys())
@@ -1855,7 +1855,7 @@ CoreDump: base64
                     pid = int(stat[0])
                     break
 
-            self.failIf(pid is None)
+            self.assertFalse(pid is None)
             sys.argv = ['ui-test', '-f', '-P', str(pid)]
             self.ui = _TestSuiteUserInterface()
             self.ui.run_argv()
@@ -1876,7 +1876,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
             self.assertTrue(self.ui.ic_progress_pulses > 0)
 
@@ -1947,7 +1947,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
             # report in crash notification dialog, cancel details report
             r.write(open(report_file, 'w'))
@@ -2029,7 +2029,7 @@ CoreDump: base64
             self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
         def test_run_crash_argv_file(self):
             '''run_crash() through a file specified on the command line.'''
@@ -2060,7 +2060,7 @@ CoreDump: base64
             self.assertTrue('It stinks.' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
             # should not die with an exception on an invalid name
             sys.argv = ['ui-test', '-c', '/nonexisting.crash' ]
@@ -2237,7 +2237,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
             # report in crash notification dialog, send report
             r.write(open(report_file, 'w'))
@@ -2287,7 +2287,7 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
             # report in crash notification dialog, send report
             r.write(open(report_file, 'w'))
@@ -2317,7 +2317,7 @@ CoreDump: base64
             self.ui.present_details_response = 'cancel'
             self.ui.run_crash(report_file)
 
-            self.failIf('ProcCwd' in self.ui.report)
+            self.assertFalse('ProcCwd' in self.ui.report)
 
             dump = StringIO()
             self.ui.report.write(dump)
@@ -2326,7 +2326,7 @@ CoreDump: base64
             bad_strings = [os.uname()[1], p[0], p[4], p[5], os.getcwd()]
 
             for s in bad_strings:
-                self.failIf(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
+                self.assertFalse(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
 
         def test_run_update_report_nonexisting_package_from_bug(self):
             '''run_update_report() on a nonexisting package (from bug).'''
@@ -2339,7 +2339,7 @@ CoreDump: base64
             self.assertEqual(self.ui.run_argv(), False)
             self.assertTrue('No additional information collected.' in
                     self.ui.msg_text)
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
         def test_run_update_report_nonexisting_package_cli(self):
             '''run_update_report() on a nonexisting package (CLI argument).'''
@@ -2352,7 +2352,7 @@ CoreDump: base64
             self.assertEqual(self.ui.run_argv(), False)
             self.assertTrue('No additional information collected.' in
                     self.ui.msg_text)
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
         def test_run_update_report_existing_package_from_bug(self):
             '''run_update_report() on an existing package (from bug).'''
@@ -2648,7 +2648,7 @@ def run(report, ui):
             # cancelled
             self.assertEqual(self.ui.ic_progress_pulses, 0)
             self.assertEqual(self.ui.report, None)
-            self.failIf(self.ui.present_details_shown)
+            self.assertFalse(self.ui.present_details_shown)
 
             # now, choose foo -> bash report
             self.ui.question_choice_response = [self.ui.msg_choices.index('foo does not work')]

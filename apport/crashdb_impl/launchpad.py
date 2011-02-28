@@ -1030,11 +1030,11 @@ NameError: global name 'weird' is not defined'''
             self.assertTrue('Registers' in r)
             self.assertTrue('Stacktrace' in r) # TODO: ascertain that it's the updated one
             self.assertTrue('ThreadStacktrace' in r)
-            self.failIf('FooBar' in r)
+            self.assertFalse('FooBar' in r)
 
             tags = self.crashdb.launchpad.bugs[segv_report].tags
             self.assertTrue('apport-crash' in tags)
-            self.failIf('apport-collected' in tags)
+            self.assertFalse('apport-collected' in tags)
 
             # updating with an useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
@@ -1042,13 +1042,13 @@ NameError: global name 'weird' is not defined'''
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
             self.crashdb.update_traces(segv_report, r, 'good retrace!')
             r = self.crashdb.download(segv_report)
-            self.failIf('CoreDump' in r)
+            self.assertFalse('CoreDump' in r)
             self.assertTrue('Dependencies' in r)
             self.assertTrue('Disassembly' in r)
             self.assertTrue('Registers' in r)
             self.assertTrue('Stacktrace' in r)
             self.assertTrue('ThreadStacktrace' in r)
-            self.failIf('FooBar' in r)
+            self.assertFalse('FooBar' in r)
 
             # test various situations which caused crashes
             r['Stacktrace'] = '' # empty file
@@ -1114,8 +1114,8 @@ NameError: global name 'weird' is not defined'''
 
             r = self.crashdb.download(id)
 
-            self.failIf('OneLiner' in r)
-            self.failIf('ShortGoo' in r)
+            self.assertFalse('OneLiner' in r)
+            self.assertFalse('ShortGoo' in r)
             self.assertEqual(r['ProblemType'], 'Bug')
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
             self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
@@ -1148,11 +1148,11 @@ NameError: global name 'weird' is not defined'''
 
             r = self.crashdb.download(id)
 
-            self.failIf('OneLiner' in r)
+            self.assertFalse('OneLiner' in r)
             self.assertEqual(r['ShortGoo'], 'lineone\nlinetwo')
             self.assertEqual(r['ProblemType'], 'Bug')
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
-            self.failIf('VarLogDistupgradeBinGoo' in r)
+            self.assertFalse('VarLogDistupgradeBinGoo' in r)
 
             self.assertEqual(self.crashdb.launchpad.bugs[id].tags, [])
 
@@ -1172,13 +1172,13 @@ NameError: global name 'weird' is not defined'''
             '''is_reporter()'''
 
             self.assertTrue(self.crashdb.is_reporter(segv_report))
-            self.failIf(self.crashdb.is_reporter(1))
+            self.assertFalse(self.crashdb.is_reporter(1))
 
         def test_can_update(self):
             '''can_update()'''
 
             self.assertTrue(self.crashdb.can_update(segv_report))
-            self.failIf(self.crashdb.can_update(1))
+            self.assertFalse(self.crashdb.can_update(1))
 
         def test_duplicates(self):
             '''duplicate handling'''
@@ -1203,10 +1203,10 @@ NameError: global name 'weird' is not defined'''
             # this should have removed attachments; note that Stacktrace is
             # short, and thus inline
             r = self.crashdb.download(segv_report)
-            self.failIf('CoreDump' in r)
-            self.failIf('Dependencies' in r)
-            self.failIf('Disassembly' in r)
-            self.failIf('Registers' in r)
+            self.assertFalse('CoreDump' in r)
+            self.assertFalse('Dependencies' in r)
+            self.assertFalse('Disassembly' in r)
+            self.assertFalse('Registers' in r)
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
@@ -1233,10 +1233,10 @@ NameError: global name 'weird' is not defined'''
             # mark_retraced()
             unretraced_before = self.crashdb.get_unretraced()
             self.assertTrue(segv_report in unretraced_before)
-            self.failIf(python_report in unretraced_before)
+            self.assertFalse(python_report in unretraced_before)
             self.crashdb.mark_retraced(segv_report)
             unretraced_after = self.crashdb.get_unretraced()
-            self.failIf(segv_report in unretraced_after)
+            self.assertFalse(segv_report in unretraced_after)
             self.assertEqual(unretraced_before,
                     unretraced_after.union(set([segv_report])))
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
@@ -1246,7 +1246,7 @@ NameError: global name 'weird' is not defined'''
             self.crashdb.mark_retraced(segv_report)
             self.crashdb.mark_retrace_failed(segv_report)
             unretraced_after = self.crashdb.get_unretraced()
-            self.failIf(segv_report in unretraced_after)
+            self.assertFalse(segv_report in unretraced_after)
             self.assertEqual(unretraced_before,
                     unretraced_after.union(set([segv_report])))
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
@@ -1256,7 +1256,7 @@ NameError: global name 'weird' is not defined'''
             self.crashdb.mark_retraced(segv_report)
             self.crashdb.mark_retrace_failed(segv_report, "I don't like you")
             unretraced_after = self.crashdb.get_unretraced()
-            self.failIf(segv_report in unretraced_after)
+            self.assertFalse(segv_report in unretraced_after)
             self.assertEqual(unretraced_before,
                     unretraced_after.union(set([segv_report])))
             self.assertEqual(self.crashdb.get_fixed_version(segv_report),
@@ -1267,10 +1267,10 @@ NameError: global name 'weird' is not defined'''
 
             unchecked_before = self.crashdb.get_dup_unchecked()
             self.assertTrue(python_report in unchecked_before)
-            self.failIf(segv_report in unchecked_before)
+            self.assertFalse(segv_report in unchecked_before)
             self.crashdb._mark_dup_checked(python_report, self.ref_report)
             unchecked_after = self.crashdb.get_dup_unchecked()
-            self.failIf(python_report in unchecked_after)
+            self.assertFalse(python_report in unchecked_after)
             self.assertEqual(unchecked_before,
                     unchecked_after.union(set([python_report])))
             self.assertEqual(self.crashdb.get_fixed_version(python_report),
@@ -1296,7 +1296,7 @@ NameError: global name 'weird' is not defined'''
             self.crashdb.update_traces(id, r, 'good retrace!')
 
             r = self.crashdb.download(id)
-            self.failIf('CoreDump' in r)
+            self.assertFalse('CoreDump' in r)
 
         def test_get_fixed_version(self):
             '''get_fixed_version() for fixed bugs
@@ -1538,8 +1538,8 @@ NameError: global name 'weird' is not defined'''
                     has_escalation_tag = db.options['escalation_tag'] in b.tags
                     has_escalation_subscription = any([s.person_link == p for s in b.subscriptions])
                     if count <= 10:
-                        self.failIf(has_escalation_tag)
-                        self.failIf(has_escalation_subscription)
+                        self.assertFalse(has_escalation_tag)
+                        self.assertFalse(has_escalation_subscription)
                     else:
                         self.assertTrue(has_escalation_tag)
                         self.assertTrue(has_escalation_subscription)
@@ -1570,7 +1570,7 @@ NameError: global name 'weird' is not defined'''
             self.crashdb._mark_dup_checked(python_report, self.ref_report)
 
             unchecked_after = self.crashdb.get_dup_unchecked()
-            self.failIf(python_report in unchecked_after)
+            self.assertFalse(python_report in unchecked_after)
             self.assertEqual(unchecked_before,
                     unchecked_after.union(set([python_report])))
 

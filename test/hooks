@@ -116,10 +116,10 @@ class _T(unittest.TestCase):
             elif 'sub' in k:
                 fail('logsub should not go into log files')
 
-        self.assert_(filekey)
-        self.assert_(log1key)
-        self.assert_(log2key)
-        self.assert_('0234lkjas' in r[filekey])
+        self.assertTrue(filekey)
+        self.assertTrue(log1key)
+        self.assertTrue(log2key)
+        self.assertTrue('0234lkjas' in r[filekey])
         self.assertEqual(len(r[filekey]), os.path.getsize(sys.argv[0]))
         self.assertEqual(r[log1key], 'Log 1\nbla')
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
@@ -148,12 +148,12 @@ class _T(unittest.TestCase):
         self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
         self.assertEqual(r['VmCore'], '\x01' * 100)
-        self.assert_('linux' in r['Package'])
+        self.assertTrue('linux' in r['Package'])
 
-        self.assert_(os.uname()[2].split('-')[0] in r['Package'])
+        self.assertTrue(os.uname()[2].split('-')[0] in r['Package'])
 
         r.add_package_info(r['Package'])
-        self.assert_(' ' in r['Package']) # appended version number
+        self.assertTrue(' ' in r['Package']) # appended version number
 
     @classmethod
     def _gcc_version_path(klass):
@@ -198,7 +198,7 @@ class _T(unittest.TestCase):
         r.add_package_info()
 
         self.assertEqual(r['Package'].split()[0], 'gcc-' + gcc_version)
-        self.assert_(r['SourcePackage'].startswith('gcc'))
+        self.assertTrue(r['SourcePackage'].startswith('gcc'))
 
     def test_gcc_ide_hook_pipe(self):
         '''gcc_ice_hook with piping.'''
@@ -225,7 +225,7 @@ class _T(unittest.TestCase):
         r.add_package_info()
 
         self.assertEqual(r['Package'].split()[0], 'gcc-' + gcc_version)
-        self.assert_(r['SourcePackage'].startswith('gcc'))
+        self.assertTrue(r['SourcePackage'].startswith('gcc'))
 
     def test_kernel_oops_hook(self):
 	test_source = '''------------[ cut here ]------------
@@ -249,7 +249,7 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT
 
         r.add_package_info(r['Package'])
 
-        self.assert_(r['Package'].startswith('linux-image-'))
+        self.assertTrue(r['Package'].startswith('linux-image-'))
 
 # call tests
 
