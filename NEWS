@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.18.1 (UNRELEASED)
--------------------
+1.19 (UNRELEASED)
+-----------------
 Bug fixes:
  - Update stack unwind patterns for current glib (slightly changed function
    names), and also ignore a preceding '*'. (LP: #716251)
@@ -21,6 +21,12 @@ Improvements:
    do the right thing and file the bug against the kernel
  - In hookutils.attach_dmesg, skip over an initial truncated message if one
    is present (this happens when the ring buffer overflows)
+ - Change bug patterns to just use one central file instead of per-package
+   files. This allows bug patterns to be written which are not package
+   specific, and is easier to maintain as well. IMPORTANT: This changed the
+   format of crashdb.conf: bug_pattern_base is now obsolete, and the new
+   attribute bug_pattern_url now points to the full URL/path of the patterns
+   file. Thanks to Matt Zimmerman!
 
 1.18 (2011-02-16)
 -----------------

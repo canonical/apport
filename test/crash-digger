@@ -22,7 +22,7 @@ class _T(unittest.TestCase):
         crashdb_conf = os.path.join(self.workdir, 'crashdb.conf')
         open(crashdb_conf, 'w').write('''default = 'memory'
 databases = { 'memory': { 
-    'impl': 'memory', 'bug_pattern_base': '/tmp', 'distro': 'Testux', 'dummy_data': '1' }
+    'impl': 'memory', 'bug_pattern_url': '/tmp/bugpatterns.xml', 'distro': 'Testux', 'dummy_data': '1' }
 }''')
 
         self.chroot_map = os.path.join(self.workdir, 'chroot_map')

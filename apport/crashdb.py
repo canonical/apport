@@ -508,7 +508,7 @@ def get_crashdb(auth_file, name = None, conf = None):
     - A dictionary 'databases' which maps names to crash db configuration
       dictionaries. These need to have at least the keys 'impl' (Python module
       in apport.crashdb_impl which contains a concrete 'CrashDatabase' class
-      implementation for that crash db type) and 'bug_pattern_base', which
+      implementation for that crash db type) and 'bug_pattern_url', which
       specifies an URL for bug patterns (or None if those are not used for that
       crash db).
     '''
@@ -536,7 +536,7 @@ def get_crashdb(auth_file, name = None, conf = None):
     db = settings['databases'][name]
 
     m = __import__('apport.crashdb_impl.' + db['impl'], globals(), locals(), ['CrashDatabase'])
-    return m.CrashDatabase(auth_file, db['bug_pattern_base'], db)
+    return m.CrashDatabase(auth_file, db['bug_pattern_url'], db)
 
 class NeedsCredentials(Exception):
     '''This may be raised when unable to log in to the crashdb.'''

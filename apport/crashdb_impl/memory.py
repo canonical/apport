@@ -21,13 +21,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     
     This is mainly useful for testing and debugging.'''
 
-    def __init__(self, auth_file, bugpattern_baseurl, options):
+    def __init__(self, auth_file, bugpattern_url, options):
         '''Initialize crash database connection.
         
         This class does not support bug patterns and authentication.'''
 
         apport.crashdb.CrashDatabase.__init__(self, auth_file,
-            bugpattern_baseurl, options)
+            bugpattern_url, options)
 
         self.reports = [] # list of dictionaries with keys: report, fixed_version, dup_of, comment
         self.unretraced = set()
@@ -345,12 +345,12 @@ def get_dyn_name():
 databases = {
     'testsuite': { 
         'impl': 'memory',
-        'bug_pattern_base': None,
+        'bug_pattern_url': None,
         'dyn_option': get_dyn(),
     },
     get_dyn_name(): {
         'impl': 'memory',
-        'bug_pattern_base': None,
+        'bug_pattern_url': None,
         'whoami': 'dynname',
     }
 }
