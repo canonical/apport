@@ -606,10 +606,13 @@ class Report(ProblemReport):
                 execfile(hook, symb)
                 try:
                     symb['add_info'](self, ui)
-                except TypeError:
-                    # older versions of apport did not pass UI, and hooks that
-                    # do not require it don't need to take it
-                    symb['add_info'](self)
+                except TypeError as e:
+                    if e.message.startswith('add_info()'):
+                        # older versions of apport did not pass UI, and hooks that
+                        # do not require it don't need to take it
+                        symb['add_info'](self)
+                    else:
+                        raise
             except StopIteration:
                 return True
             except:
@@ -627,10 +630,13 @@ class Report(ProblemReport):
                     execfile(hook, symb)
                     try:
                         symb['add_info'](self, ui)
-                    except TypeError:
-                        # older versions of apport did not pass UI, and hooks that
-                        # do not require it don't need to take it
-                        symb['add_info'](self)
+                    except TypeError as e:
+                        if e.message.startswith('add_info()'):
+                            # older versions of apport did not pass UI, and hooks that
+                            # do not require it don't need to take it
+                            symb['add_info'](self)
+                        else:
+                            raise
                 except StopIteration:
                     return True
                 except:
@@ -648,10 +654,13 @@ class Report(ProblemReport):
                     execfile(hook, symb)
                     try:
                         symb['add_info'](self, ui)
-                    except TypeError:
-                        # older versions of apport did not pass UI, and hooks that
-                        # do not require it don't need to take it
-                        symb['add_info'](self)
+                    except TypeError as e:
+                        if e.message.startswith('add_info()'):
+                            # older versions of apport did not pass UI, and hooks that
+                            # do not require it don't need to take it
+                            symb['add_info'](self)
+                        else:
+                            raise
                 except StopIteration:
                     return True
                 except:
