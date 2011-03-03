@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.19.1 (UNRELEASED)
+-------------------
+ - report.py, add_hooks_info(): Properly report TypeErrors from hooks.
+
 1.19 (2011-02-28)
 -----------------
 Bug fixes:
@@ -17,7 +21,6 @@ Bug fixes:
  - launchpad.py: Fix retracer crash if DistroRelease field does not exist.
  - Convert deprecated failIf()/assert_() TestCase method calls to
    assertFalse()/assertTrue().
- - report.py, add_hooks_info(): Properly report TypeErrors from hooks.
 
 Improvements:
  - In apport-bug, if the user specifies a PID referring to a kernel thread,
