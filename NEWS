@@ -3,7 +3,10 @@ detailled list of changes, please see ChangeLog.
 
 1.19.1 (UNRELEASED)
 -------------------
+Bug fixes:
  - report.py, add_hooks_info(): Properly report TypeErrors from hooks.
+ - apport-retrace: Intercept SystemErrors from ill-formed gzip attachments as
+   well.
 
 1.19 (2011-02-28)
 -----------------
