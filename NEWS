@@ -7,6 +7,8 @@ Bug fixes:
  - report.py, add_hooks_info(): Properly report TypeErrors from hooks.
  - apport-retrace: Intercept SystemErrors from ill-formed gzip attachments as
    well.
+ - Fix crash if crash database configuration does not specify a
+   bug_pattern_url. Just assume None. (LP: #731526)
 
 1.19 (2011-02-28)
 -----------------

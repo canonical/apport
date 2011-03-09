@@ -345,12 +345,10 @@ def get_dyn_name():
 databases = {
     'testsuite': { 
         'impl': 'memory',
-        'bug_pattern_url': None,
         'dyn_option': get_dyn(),
     },
     get_dyn_name(): {
         'impl': 'memory',
-        'bug_pattern_url': None,
         'whoami': 'dynname',
     }
 }

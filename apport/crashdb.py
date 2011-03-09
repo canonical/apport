@@ -536,7 +536,7 @@ def get_crashdb(auth_file, name = None, conf = None):
     db = settings['databases'][name]
 
     m = __import__('apport.crashdb_impl.' + db['impl'], globals(), locals(), ['CrashDatabase'])
-    return m.CrashDatabase(auth_file, db['bug_pattern_url'], db)
+    return m.CrashDatabase(auth_file, db.get('bug_pattern_url'), db)
 
 class NeedsCredentials(Exception):
     '''This may be raised when unable to log in to the crashdb.'''
