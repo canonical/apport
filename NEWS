@@ -11,6 +11,8 @@ Bug fixes:
    bug_pattern_url. Just assume None. (LP: #731526)
  - If a custom crash database does not specify a bug_pattern_url, fall back to
    using the default database's. (LP: #731526)
+ - hookutils.py Update WifiSyslog regex to correctly catch application log
+   messages in syslog. Thanks Mathieu Trudel-Lapierre. (LP: #732917)
 
 1.19 (2011-02-28)
 -----------------
