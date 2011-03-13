@@ -130,7 +130,8 @@ def attach_hardware(report):
     attach_file(report, '/proc/modules', 'ProcModules')
     attach_file(report, '/var/log/udev', 'UdevLog')
 
-    report['Lspci'] = command_output(['lspci','-vvnn'])
+    if os.path.exists('/sys/bus/pci'):
+        report['Lspci'] = command_output(['lspci','-vvnn'])
     report['Lsusb'] = command_output(['lsusb'])
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
@@ -739,6 +740,15 @@ if __name__ == '__main__':
             attach_dmesg(report)
             self.assertEqual(report['BootDmesg'], 'existingboot')
             self.assertEqual(report['CurrentDmesg'], 'existingcurrent')
-            
+
+        def test_no_crashes(self):
+            '''functions do not crash (very shallow'''
+
+            report = {}
+            attach_hardware(report)
+            attach_alsa(report)
+            attach_network(report)
+            attach_wifi(report)
+            attach_printing(report)
 
     unittest.main()
