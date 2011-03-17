@@ -2036,15 +2036,22 @@ CoreDump: base64
             self.assertTrue(self.ui.report.check_ignored())
 
         def test_run_crash_abort(self):
-            '''run_crash() for an unreportable abort()'''
+            '''run_crash() for an abort() without assertion message'''
 
-            self.report['Signal'] = '6'
-            self.report['ExecutablePath'] = '/bin/bash'
-            self.report['Package'] = 'bash 1'
-            self.update_report_file()
+            r = self._gen_test_crash()
+            r['Signal'] = '6'
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+
             self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
             self.ui.present_details_response = 'full'
-            self.ui.run_crash(self.report_file.name)
+            self.ui.run_crash(report_file)
+
+            self.assertTrue('SourcePackage' in self.ui.report.keys())
+            self.assertTrue('Dependencies' in self.ui.report.keys())
+            self.assertTrue('Stacktrace' in self.ui.report.keys())
+            self.assertTrue('ProcEnviron' in self.ui.report.keys())
+            self.assertEqual(self.ui.report['Signal'], '6')
 
             self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
