@@ -466,7 +466,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             installProgress = apt.progress.DumbInstallProgress()
 
         try:
-            if c.getChanges():
+            if c.get_changes():
                 os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
                 if unpack_only:
                     self.fetch_unpack(c, fetchProgress, no_pkg, verbosity)

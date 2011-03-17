@@ -15,6 +15,8 @@ Bug fixes:
    messages in syslog. Thanks Mathieu Trudel-Lapierre. (LP: #732917)
  - hookutils.py, attach_hardware(): Avoid error message if machine does not
    have a PCI bus. Thanks Marcin Juszkiewicz! (LP: #608449)
+ - backends/packaging-apt-dpkg.py: Replace deprecated getChanges() call with
+   get_changes().
 
 1.19 (2011-02-28)
 -----------------
