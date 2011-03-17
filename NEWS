@@ -7,6 +7,8 @@ Improvements:
  - Add support for -w/--window option which will enable user to select a
    window as a target for filing a problem report. Thanks Abhinav Upadhyay for
    the patch! (LP: #357847)
+ - Disable the filtering on SIGABRT without assertion messages. Turns out that
+   developers want these crash reports after all.
 
 Bug fixes:
  - report.py, add_hooks_info(): Properly report TypeErrors from hooks.

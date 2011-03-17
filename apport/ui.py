@@ -114,9 +114,9 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
 versions installed. Please upgrade the following packages and check if the \
 problem still occurs:\n\n%s') % ', '.join(old_pkgs)
 
-    # if we have a SIGABRT without an assertion message, declare as unreportable
-    if report.get('Signal') == '6' and 'AssertionMessage' not in report:
-        report['UnreportableReason'] = _('The program crashed on an assertion failure, but the message could not be retrieved. Apport does not support reporting these crashes.')
+    # disabled: if we have a SIGABRT without an assertion message, declare as unreportable
+    #if report.get('Signal') == '6' and 'AssertionMessage' not in report:
+    #    report['UnreportableReason'] = _('The program crashed on an assertion failure, but the message could not be retrieved. Apport does not support reporting these crashes.')
 
     report.anonymize()
 
@@ -2053,10 +2053,12 @@ CoreDump: base64
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['Signal'], '6')
 
-            self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
-                (self.ui.msg_title, self.ui.msg_text))
-            self.assertEqual(self.ui.msg_severity, 'info')
-            self.assertFalse(self.ui.present_details_shown)
+            # we disable the ABRT filtering, we want these crashes after all 
+            #self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
+            #    (self.ui.msg_title, self.ui.msg_text))
+            #self.assertEqual(self.ui.msg_severity, 'info')
+            self.assertEqual(self.ui.msg_severity, None)
+            self.assertTrue(self.ui.present_details_shown)
 
         def test_run_crash_argv_file(self):
             '''run_crash() through a file specified on the command line.'''
