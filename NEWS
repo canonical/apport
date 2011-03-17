@@ -30,6 +30,10 @@ Bug fixes:
    get_changes().
  - apport-gtk: Fix broken dialog heading if the name of the crashed program
    contains an & or other markup specific characters.
+ - apport-gtk: Don't crash if GTK cannot be initialized. This usually happens
+   without a $DISPLAY or when the session is being shut down. Just print an
+   error message. If there are pending crashes, they will be shown again the
+   next time a session starts. (LP: #730569)
 
 1.19 (2011-02-28)
 -----------------

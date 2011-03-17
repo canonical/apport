@@ -15,7 +15,12 @@ import os.path, sys, subprocess, os, re
 
 import gobject
 import glib
-from gi.repository import Gtk
+try:
+    from gi.repository import Gtk
+except RuntimeError as e:
+    # probably session just closing down?
+    sys.stderr.write('Cannot start: %s\n' % str(e))
+    sys.exit(1)
 
 import apport
 from apport import unicode_gettext as _
