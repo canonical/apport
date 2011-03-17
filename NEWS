@@ -9,6 +9,10 @@ Improvements:
    the patch! (LP: #357847)
  - Disable the filtering on SIGABRT without assertion messages. Turns out that
    developers want these crash reports after all.
+ - Add support for a "DuplicateSignature" report fields. This allows package
+   hooks to implement custom duplicate problem handling which doesn't need to
+   be hardcoded in Apport itself. Update the launchpad backend to tag such bugs
+   as "need-duplicate-check".
 
 Bug fixes:
  - report.py, add_hooks_info(): Properly report TypeErrors from hooks.

@@ -584,6 +584,33 @@ databases = {
         self.assertEqual(self.crashes.check_duplicate(5), None)
         self.assertEqual(self.crashes.check_duplicate(6), (5, None))
 
+    def test_check_duplicate_custom_signature(self):
+        '''check_duplicate() with custom DuplicateSignature: field'''
+
+        r = apport.Report()
+        r['SourcePackage'] = 'bash'
+        r['Package'] = 'bash 5'
+        r['DuplicateSignature'] = 'Code42Blue'
+        self.assertEqual(self.crashes.get_comment_url(r, self.crashes.upload(r)),
+            'http://bash.bugs.example.com/5')
+
+        self.crashes.init_duplicate_db(':memory:')
+        self.assertEqual(self.crashes.check_duplicate(5), None)
+
+        self.assertEqual(self.crashes._duplicate_db_dump(), {'Code42Blue': (5, None)})
+
+        # this one has a standard crash_signature
+        self.assertEqual(self.crashes.check_duplicate(0), None)
+        # ... but DuplicateSignature wins
+        self.crashes.download(0)['DuplicateSignature'] = 'Code42Blue'
+        self.assertEqual(self.crashes.check_duplicate(0), (5, None))
+
+        self.crashes.download(1)['DuplicateSignature'] = 'CodeRed'
+        self.assertEqual(self.crashes.check_duplicate(1), None)
+        self.assertEqual(self.crashes._duplicate_db_dump(), 
+                {'Code42Blue': (5, None), 'CodeRed': (1, None), 
+                 self.crashes.download(0).crash_signature(): (0, None)})
+
     def test_check_duplicate_report_arg(self):
         '''check_duplicate() with explicitly passing report'''
 

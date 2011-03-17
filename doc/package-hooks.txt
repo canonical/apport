@@ -62,6 +62,12 @@ a report. You can influence this in various ways:
 
    to cancel the problem report submission.
 
+For special classes of problems where Apport does not have a builtin crash
+duplicate detection (such as for signal and Python crashes), hooks can also set
+report['DuplicateSignature']. This should both uniquely identify the problem
+class (e. g. "XorgGPUFreeze") as well as the particular problem (i. e.
+variables which tell this instance apart from different problems).
+
 Package independent hooks
 =========================
 

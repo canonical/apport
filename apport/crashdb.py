@@ -108,7 +108,10 @@ class CrashDatabase:
 
         self._mark_dup_checked(id, report)
 
-        sig = report.crash_signature()
+        if 'DuplicateSignature' in report:
+            sig = report['DuplicateSignature']
+        else:
+            sig = report.crash_signature()
         if not sig:
             return None
 
