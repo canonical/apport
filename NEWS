@@ -1,8 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.19.1 (UNRELEASED)
--------------------
+1.20 (UNRELEASED)
+-----------------
+Improvements:
+ - Add support for -w/--window option which will enable user to select a
+   window as a target for filing a problem report. Thanks Abhinav Upadhyay for
+   the patch! (LP: #357847)
+
 Bug fixes:
  - report.py, add_hooks_info(): Properly report TypeErrors from hooks.
  - apport-retrace: Intercept SystemErrors from ill-formed gzip attachments as
