@@ -8,7 +8,7 @@ Improvements:
    window as a target for filing a problem report. Thanks Abhinav Upadhyay for
    the patch! (LP: #357847)
  - Disable the filtering on SIGABRT without assertion messages. Turns out that
-   developers want these crash reports after all.
+   developers want these crash reports after all. (LP: #729223)
  - Add support for a "DuplicateSignature" report fields. This allows package
    hooks to implement custom duplicate problem handling which doesn't need to
    be hardcoded in Apport itself. Update the launchpad backend to tag such bugs
