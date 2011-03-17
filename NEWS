@@ -28,6 +28,8 @@ Bug fixes:
    have a PCI bus. Thanks Marcin Juszkiewicz! (LP: #608449)
  - backends/packaging-apt-dpkg.py: Replace deprecated getChanges() call with
    get_changes().
+ - apport-gtk: Fix broken dialog heading if the name of the crashed program
+   contains an & or other markup specific characters.
 
 1.19 (2011-02-28)
 -----------------
