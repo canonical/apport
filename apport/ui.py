@@ -586,10 +586,10 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_error_message(_('Invalid problem report'), excstr(e))
             return True
         elif self.options.window:
-        	self.ui_info_message('', _('After closing this message '
-        	    'please click on an application window to report a problem about it.'))
-                xprop = subprocess.Popen(['xprop', '_NET_WM_PID'], stdout =
-                        subprocess.PIPE, stderr=subprocess.PIPE)
+                self.ui_info_message('', _('After closing this message '
+                    'please click on an application window to report a problem about it.'))
+                xprop = subprocess.Popen(['xprop', '_NET_WM_PID'],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 (out, err) = xprop.communicate()
                 if xprop.returncode == 0:
                     try:
