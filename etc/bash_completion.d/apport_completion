@@ -49,7 +49,7 @@ _apport-bug ()
 
 
     # available options
-    dashoptions='-h --help --save -v --version --tag'
+    dashoptions='-h --help --save -v --version --tag -w --window'
 
     case "$prev" in
     ubuntu-bug | apport-bug)
@@ -71,17 +71,23 @@ _apport-bug ()
         COMPREPLY=( $( compgen -o default -G "$cur*" ) )
     
     ;;
+    -w | --window)
+        dashoptions="--save --tag"
+        COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
+    ;;
     -h | --help | -v | --version | --tag)
         # standalone parameters
         return 0
 
     ;;
     *)
-        # --save is allowed only once, --tag multiple times
-        if [[ "${COMP_WORDS[*]}" =~ .*--save.* ]]; then
-            dashoptions='--tag'
-        else
-            dashoptions='--save --tag'
+        # --save and --window make only sense once
+        dashoptions="--tag"
+        if ! [[ "${COMP_WORDS[*]}" =~ .*--save.* ]]; then
+            dashoptions="--save $dashoptions"
+        fi
+        if ! [[ "${COMP_WORDS[*]}" =~ .*--window.* || "${COMP_WORDS[*]}" =~ .*\ -w\ .* ]]; then
+            dashoptions="-w --window $dashoptions"
         fi
 
         case "$cur" in
@@ -112,7 +118,7 @@ _apport-cli ()
 
     # available options
     dashoptions='-h --help -f --file-bug -u --update-bug -s --symptom \
-                 -c --crash-file --save -v --version --tag'
+                 -c --crash-file --save -v --version --tag -w --window'
 
     case "$prev" in
     apport-cli)
@@ -149,39 +155,50 @@ _apport-cli ()
                        compgen -G "${cur}*.crash" ) )
 
     ;;
+    -w | --window)
+        dashoptions="--save --tag"
+        COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
+    ;;
     -h | --help | -v | --version | --tag)
         # standalone parameters
         return 0
 
     ;;
     *)
-        if [[ "${COMP_WORDS[COMP_CWORD-2]}" == "--save" || "${COMP_WORDS[COMP_CWORD-2]}" == "--tag" ]]; then
-            # save may only be used once
-            if [[ "${COMP_WORDS[*]}" =~ .*--save.* ]]; then
-                dashoptions='-h --help -f --file-bug -u --update-bug -s --symptom \
-                             -c --crash-file -v --version --tag'
-            fi
+        dashoptions='--tag'
 
-            # use same completion as if no parameter is given
-            case "$cur" in
-            -*)
-                # parameter completion
-                COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
-
-            ;;
-            *)
-                _apport_parameterless 
-
-            ;;
-            esac
-
-        else
-            # --save is allowed for most parameters
-            # --tag is allowed multiple times
-            param="--save --tag"
-            COMPREPLY=( $( compgen -W "$param" -- $cur) )
-
+        # most parameters only make sense once
+        if ! [[ "${COMP_WORDS[*]}" =~ .*--save.* ]]; then
+            dashoptions="--save $dashoptions"
         fi
+        if ! [[ "${COMP_WORDS[*]}" =~ .*--window.* || "${COMP_WORDS[*]}" =~ .*\ -w\ .* ]]; then
+            dashoptions="-w --window $dashoptions"
+        fi
+        if ! [[ "${COMP_WORDS[*]}" =~ .*--symptom.* || "${COMP_WORDS[*]}" =~ .*\ -s\ .* ]]; then
+            dashoptions="-s --symptom $dashoptions"
+        fi
+        if ! [[ "${COMP_WORDS[*]}" =~ .*--update.* || "${COMP_WORDS[*]}" =~ .*\ -u\ .* ]]; then
+            dashoptions="-u --update $dashoptions"
+        fi
+        if ! [[ "${COMP_WORDS[*]}" =~ .*--file-bug.* || "${COMP_WORDS[*]}" =~ .*\ -f\ .* ]]; then
+            dashoptions="-f --file-bug $dashoptions"
+        fi
+        if ! [[ "${COMP_WORDS[*]}" =~ .*--crash-file.* || "${COMP_WORDS[*]}" =~ .*\ -c\ .* ]]; then
+            dashoptions="-c --crash-file $dashoptions"
+        fi
+
+        # use same completion as if no parameter is given
+        case "$cur" in
+        -*)
+            # parameter completion
+            COMPREPLY=( $( compgen -W "$dashoptions" -- $cur ) )
+
+        ;;
+        *)
+            _apport_parameterless 
+
+        ;;
+        esac
 
     ;;
     esac
