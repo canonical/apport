@@ -13,7 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, gettext
-from apport import unicode_gettext as _
+from apport import unicode_gettext as _, fatal
 
 import problem_report
 
@@ -30,7 +30,7 @@ dir = sys.argv[2]
 try:
     if os.path.isdir(dir):
         if os.listdir(dir):
-            apport.fatal(_('Destination directory exists and is not empty.'))
+            fatal(_('Destination directory exists and is not empty.'))
     else:
         os.mkdir(dir)
 except OSError, e:
