@@ -275,11 +275,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_shutdown()
                 return
 
-            # check unreportable flag
-            if self.report.has_key('UnreportableReason'):
-                self.ui_info_message(_('Problem in %s') % self.report['Package'].split()[0],
-                    _('The problem cannot be reported:\n\n%s') %
-                    self.report['UnreportableReason'])
+            if self.check_unreportable():
                 return
 
             if self.handle_duplicate():
@@ -389,11 +385,7 @@ free memory to automatically analyze the problem and send a report to the develo
             else:
                 raise
 
-        # check unreportable flag
-        if self.report.has_key('UnreportableReason'):
-            self.ui_info_message(_('Problem in %s') % self.report['Package'].split()[0],
-                _('The problem cannot be reported:\n\n%s') %
-                self.report['UnreportableReason'])
+        if self.check_unreportable():
             return
 
         self.add_extra_tags()
@@ -1041,6 +1033,20 @@ free memory to automatically analyze the problem and send a report to the develo
                     return False
 
         return True
+
+    def check_unreportable(self):
+        '''Check if the current report is unreportable.
+
+        If so, display an info message and return True.
+        '''
+        if 'UnreportableReason' in self.report:
+            if isinstance(self.report['UnreportableReason'], str):
+                self.report['UnreportableReason'] = self.report['UnreportableReason'].decode('UTF-8')
+            self.ui_info_message(_('Problem in %s') % self.report['Package'].split()[0],
+                _('The problem cannot be reported:\n\n%s') %
+                self.report['UnreportableReason'])
+            return True
+        return False
 
     def get_desktop_entry(self):
         '''Return a matching xdg.DesktopEntry for the current report.
@@ -2079,7 +2085,7 @@ CoreDump: base64
 
             # unreportable
             self.report['Package'] = 'bash'
-            self.report['UnreportableReason'] = 'It stinks.'
+            self.report['UnreportableReason'] = u'It stinks. \u2665'
             self.update_report_file()
 
             sys.argv = ['ui-test', '-c', self.report_file.name]
