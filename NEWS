@@ -12,6 +12,8 @@ Bug fixes:
    (LP: #737799)
  - unkillable_shutdown: Fix rare crash if ExecutablePath does not exist (any
    more). (LP: #537904)
+ - kernel_crashdump: Fix crash if the vmcore file disappeared underneath us.
+   (LP: #450295)
 
 1.20 (2011-03-17)
 -----------------
