@@ -16,6 +16,8 @@ Bug fixes:
    (LP: #450295)
  - unkillable_shutdown: Fix crash if the checked process terminated underneath
    us. (LP: #540436)
+ - ui.py: Properly raise exceptions from the upload thread that happen at its
+   very end. (LP: #469943)
 
 1.20 (2011-03-17)
 -----------------

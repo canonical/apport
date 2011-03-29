@@ -973,6 +973,7 @@ free memory to automatically analyze the problem and send a report to the develo
                              excstr(e)))
                 return
 
+        upthread.exc_raise()
         ticket = upthread.return_value()
         self.ui_stop_upload_progress()
 
