@@ -70,7 +70,10 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_present_crash(self, desktop_entry): 
         # adapt dialog heading and label appropriately
         if desktop_entry:
-            heading = _('Sorry, %s closed unexpectedly') % glib.markup_escape_text(desktop_entry.getName())
+            # python2+glib needs a confusing mix of UTF-8 str and unicode here :-(
+            n = desktop_entry.getName().encode('UTF-8')
+            n = glib.markup_escape_text(n).decode('UTF-8')
+            heading = _('Sorry, %s closed unexpectedly') % n
         elif self.report.has_key('ExecutablePath'):
             heading = _('Sorry, the program "%s" closed unexpectedly') % os.path.basename(self.report['ExecutablePath'])
         else:
