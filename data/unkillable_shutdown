@@ -70,7 +70,12 @@ def do_report(pid, blacklist):
     '''Create a report for a particular PID.'''
 
     r = apport.Report('Bug')
-    r.add_proc_info(pid)
+    try:
+        r.add_proc_info(pid)
+    except AssertionError:
+        # happens if ExecutablePath doesn't exist (any more?), ignore
+        return
+
     r['Tags'] = 'shutdown-hang'
     r['Title'] = 'does not terminate at computer shutdown'
     if 'ExecutablePath' in r:

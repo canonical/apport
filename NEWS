@@ -10,6 +10,8 @@ Bug fixes:
  - Fix crash if UnreportableReason is a non-ASCII string. (LP: #738632)
  - Fix crash if application from desktop name is a non-ASCII string.
    (LP: #737799)
+ - unkillable_shutdown: Fix rare crash if ExecutablePath does not exist (any
+   more). (LP: #537904)
 
 1.20 (2011-03-17)
 -----------------
