@@ -51,7 +51,14 @@ def orphaned_processes(blacklist):
             apport.warning('ignoring: %s', d)
             continue
 
-        if os.getsid(pid) == my_sid:
+        try:
+            sid = os.getsid(pid)
+        except OSError:
+            # os.getsid() can fail with "No such process" if the process died
+            # in the meantime
+            continue
+
+        if sid == my_sid:
             apport.warning('ignoring same sid: %s', d)
             continue
 

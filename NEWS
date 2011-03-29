@@ -14,6 +14,8 @@ Bug fixes:
    more). (LP: #537904)
  - kernel_crashdump: Fix crash if the vmcore file disappeared underneath us.
    (LP: #450295)
+ - unkillable_shutdown: Fix crash if the checked process terminated underneath
+   us. (LP: #540436)
 
 1.20 (2011-03-17)
 -----------------
