@@ -199,9 +199,11 @@ class GTKUserInterface(apport.ui.UserInterface):
             buttons=Gtk.ButtonsType.CLOSE):
         md = Gtk.MessageDialog(type=_type, buttons=buttons)
         if 'http://' in text or 'https://' in text:
+            text = glib.markup_escape_text (text)
+            text = re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)', 
+                    r'<a href="\1">\1</a>', text)
             # turn URLs into links
-            md.set_markup(re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)',
-                r'<a href="\1">\1</a>', text))
+            md.set_markup(text)
         else:
             # work around gnome #620579
             md.set_property('text', text.encode('UTF-8'))
