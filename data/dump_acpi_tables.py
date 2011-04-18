@@ -49,4 +49,5 @@ def dump_acpi_tables(path, out):
         else:
             dump_acpi_table(pathname, tablename, out)
 
-dump_acpi_tables('/sys/firmware/acpi/tables', sys.stdout)
+if os.path.isdir('/sys/firmware/acpi/tables'):
+    dump_acpi_tables('/sys/firmware/acpi/tables', sys.stdout)
