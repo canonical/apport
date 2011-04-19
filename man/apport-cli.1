@@ -117,6 +117,14 @@ specify one with \-\-package to collect information for a different package
 In \-\-file\-bug mode, save the collected information into a file instead of
 reporting it. This file can then be reported with \-\-crash-file later on.
 
+.TP
+.B \-w, \fB\-\-window
+Point and click at the application window against which you wish to report
+the bug. Apport will automatically find the package name and generate a report 
+for you. This option can be specially useful in situations when you do not know
+the name of the package, or if the application window has stopped responding
+and you cannot report the problem from the "Help" menu of the application.
+
 .SH ENVIRONMENT
 
 .TP
