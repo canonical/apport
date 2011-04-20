@@ -877,12 +877,12 @@ free memory to automatically analyze the problem and send a report to the develo
 
         # figure out appropriate web browser
         try:
-            # if ksmserver is running, try kfmclient
+            # if ksmserver is running, try kde-open
             try:
                 if os.getenv('DISPLAY') and \
                         subprocess.call(['pgrep', '-x', '-u', str(uid), 'ksmserver'],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    subprocess.call(sudo_prefix + ['kfmclient', 'openURL', url])
+                    subprocess.call(sudo_prefix + ['kde-open', url])
                     sys.exit(0)
             except OSError:
                 pass
