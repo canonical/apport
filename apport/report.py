@@ -1429,6 +1429,15 @@ sys.stdin.readline()
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
+        # python script with a versioned interpreter
+        pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python2.7'
+        pr['ProcStatus'] = 'Name:\tbash'
+        pr['ProcCmdline'] = '/usr/bin/python\0/bin/bash'
+        pr._check_interpreted()
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
+        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+
     @classmethod
     def _generate_sigsegv_report(klass, file=None, signal='11', code='''
 int f(x) {
