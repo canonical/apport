@@ -258,7 +258,7 @@ def _root_command_prefix():
                     stderr=subprocess.PIPE) == 0 and \
             subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'ksmserver'],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-        prefix = ['kdesudo', '--']
+        prefix = ['kdesudo', '--desktop', '/usr/share/applications/apport-kde-mime.desktop', '--']
     elif os.getenv('DISPLAY') and \
             subprocess.call(['which', 'gksu'], stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE) == 0 and \

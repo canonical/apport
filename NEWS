@@ -3,6 +3,10 @@ detailled list of changes, please see ChangeLog.
 
 1.20.2 (UNRELEASED)
 -------------------
+Improvements:
+ - Supply --desktop option to kdesudo to improve the description which program
+   is requesting administrative privileges.
+
 Bug fixes:
  - apport-gtk: HTML-escape text for dialogs with URLs. (LP: #750870)
  - dump_acpi_tables.py: Check to see if acpi/tables dir is mounted first.
