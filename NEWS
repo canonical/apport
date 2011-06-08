@@ -6,6 +6,9 @@ detailled list of changes, please see ChangeLog.
 Improvements:
  - Supply --desktop option to kdesudo to improve the description which program
    is requesting administrative privileges.
+ - apport-checkreports: Exit with status 2 if there are new reports, but apport
+   is disabled. This helps crash notification GUIs to not display new crash
+   reports in that case. Thanks to Michael Vogt for the original patch.
 
 Bug fixes:
  - apport-gtk: HTML-escape text for dialogs with URLs. (LP: #750870)
