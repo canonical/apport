@@ -9,6 +9,10 @@ Improvements:
  - apport-checkreports: Exit with status 2 if there are new reports, but apport
    is disabled. This helps crash notification GUIs to not display new crash
    reports in that case. Thanks to Michael Vogt for the original patch.
+ - Add data/is-enabled: Shell script to check if apport is enabled. Non-Python
+   programs (which can't use apport.packaging.enabled() ) can call this instead
+   of having to parse /etc/default/apport themselves, and just check the exit
+   code. Inspired by original patch from Michael Vogt, thanks!
 
 Bug fixes:
  - apport-gtk: HTML-escape text for dialogs with URLs. (LP: #750870)
