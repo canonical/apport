@@ -15,6 +15,8 @@ import sys
 
 CONFIG = '/etc/default/apport'
 
+# This doesn't use apport.packaging.enabled() because it is too heavyweight
+# See LP: #528355
 def enabled():
     '''Return whether Apport should generate crash reports.'''
 
