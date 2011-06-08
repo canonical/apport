@@ -15,16 +15,7 @@ import sys
 
 CONFIG = '/etc/default/apport'
 
-def enabled():
-    '''Return whether Apport should generate crash reports.'''
-
-    import re
-    try:
-        conf = open(CONFIG).read()
-        return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
-    except IOError:
-        # if the file does not exist, assume it's enabled
-        return True
+from apport.fileutils import apport_enabled
 
 def apport_excepthook(exc_type, exc_obj, exc_tb):
     '''Catch an uncaught exception and make a traceback.'''
@@ -45,7 +36,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
             return
 
         # do not do anything if apport was disabled
-        if not enabled():
+        if not apport_enabled():
             return
 
         try:

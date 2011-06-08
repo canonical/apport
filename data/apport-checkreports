@@ -14,7 +14,7 @@
 
 import sys, os.path, optparse
 
-from apport.fileutils import get_new_reports, get_new_system_reports
+from apport.fileutils import get_new_reports, get_new_system_reports, apport_enabled
 
 # parse command line options
 optparser = optparse.OptionParser('%prog [options]')
@@ -29,8 +29,12 @@ else:
     reports = get_new_reports()
 
 if len(reports) > 0:
-    for r in reports:
-        print r.split('.')[0].split('_')[-1]
-    sys.exit(0)
+    if apport_enabled():
+        for r in reports:
+            print r.split('.')[0].split('_')[-1]
+        sys.exit(0)
+    else:
+        print "new reports but apport disabled"
+        sys.exit(2)
 else:
     sys.exit(1)

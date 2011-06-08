@@ -25,6 +25,17 @@ report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
 _config_file = '~/.config/apport/settings'
 
+def apport_enabled():
+    '''Return whether Apport should generate crash reports.'''
+    CONFIG = '/etc/default/apport'
+    import re
+    try:
+        conf = open(CONFIG).read()
+        return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
+    except IOError:
+        # if the file does not exist, assume it's enabled
+        return True
+
 def find_package_desktopfile(package):
     '''Return a package's .desktop file.
 
