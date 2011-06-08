@@ -13,8 +13,6 @@
 import os
 import sys
 
-CONFIG = '/etc/default/apport'
-
 from apport.fileutils import apport_enabled
 
 def apport_excepthook(exc_type, exc_obj, exc_tb):
