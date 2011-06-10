@@ -3,7 +3,8 @@
 # Copyright (C) 2009 Canonical Ltd.
 # Authors: Matt Zimmerman <mdz@canonical.com>
 #          Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#          Brian Murray <brian@ubuntu.com>
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -19,7 +20,10 @@ def add_info(report, ui):
         report['NonfreeKernelModules'] = ' '.join(nm)
 
     # check for low space
-    mounts = { '/': 'system' }
+    mounts = {'/': 'system',
+              '/var': '/var',
+              '/rofs': 'system'}
+
     home = os.getenv('HOME')
     if home:
         mounts[home] = 'home'
@@ -31,8 +35,8 @@ def add_info(report, ui):
 
         if free_mb < treshold:
             report['UnreportableReason'] = 'Your %s partition has less than \
-%s MB of free space available, which leads to a lot of problems. Please \
-free some space.' % (mounts[mount], free_mb)
+%s MB of free space available, which leads to problems using applications \
+and installing updates. Please free some space.' % (mounts[mount], free_mb)
 
     # important glib errors/assertions (which should not have private data)
     if 'ExecutablePath' in report:
