@@ -36,14 +36,20 @@ def path_to_key(path):
     '''
     return path.translate(_path_key_trans)
 
-def attach_file_if_exists(report, path, key=None):
-    '''Attach file contents if file exists.'''
+def attach_file_if_exists(report, path, key=None, overwrite=True):
+    '''Attach file contents if file exists.
 
+    If key is not specified, the key name will be derived from the file
+    name with path_to_key().
+
+    If overwrite is True, an existing key will be updated. If it is False, a
+    new key with '_' appended will be added instead.
+    '''
     if not key:
         key = path_to_key(path)
 
     if os.path.exists(path):
-        attach_file(report, path, key)
+        attach_file(report, path, key, overwrite)
 
 def read_file(path):
     '''Return the contents of the specified path. 
@@ -56,18 +62,22 @@ def read_file(path):
     except Exception as e:
         return 'Error: ' + str(e)
 
-def attach_file(report, path, key=None):
+def attach_file(report, path, key=None, overwrite=True):
     '''Attach a file to the report.
 
     If key is not specified, the key name will be derived from the file
     name with path_to_key().
+
+    If overwrite is True, an existing key will be updated. If it is False, a
+    new key with '_' appended will be added instead.
     '''
     if not key:
         key = path_to_key(path)
 
     # Do not clobber existing keys
-    while report.has_key(key):
-        key += "_"
+    if not overwrite:
+        while report.has_key(key):
+            key += '_'
     report[key] = read_file(path)
 
 def attach_dmesg(report):
@@ -741,8 +751,69 @@ if __name__ == '__main__':
             self.assertEqual(report['BootDmesg'], 'existingboot')
             self.assertEqual(report['CurrentDmesg'], 'existingcurrent')
 
+        def test_attach_file(self):
+            '''attach_file()'''
+
+            with open('/etc/motd') as f:
+                motd_contents = f.read().strip()
+            with open('/etc/issue') as f:
+                issue_contents = f.read().strip()
+
+            # default key name
+            report = {}
+            attach_file(report, '/etc/motd')
+            self.assertEqual(report.keys(), ['.etc.motd'])
+            self.assertEqual(report['.etc.motd'], motd_contents)
+
+            # custom key name
+            report = {}
+            attach_file(report, '/etc/motd', 'Motd')
+            self.assertEqual(report.keys(), ['Motd'])
+            self.assertEqual(report['Motd'], motd_contents)
+
+            # nonexisting file
+            report = {}
+            attach_file(report, '/nonexisting')
+            self.assertEqual(report.keys(), ['.nonexisting'])
+            self.assertTrue(report['.nonexisting'].startswith('Error: '))
+
+            # existing key
+            report = {}
+            attach_file(report, '/etc/motd')
+            attach_file(report, '/etc/motd')
+            self.assertEqual(report.keys(), ['.etc.motd'])
+            self.assertEqual(report['.etc.motd'], motd_contents)
+
+            attach_file(report, '/etc/issue', '.etc.motd', overwrite=False)
+            self.assertEqual(sorted(report.keys()), ['.etc.motd', '.etc.motd_'])
+            self.assertEqual(report['.etc.motd'], motd_contents)
+            self.assertEqual(report['.etc.motd_'], issue_contents)
+
+        def test_attach_file_if_exists(self):
+            '''attach_file_if_exists()'''
+
+            with open('/etc/motd') as f:
+                motd_contents = f.read().strip()
+
+            # default key name
+            report = {}
+            attach_file_if_exists(report, '/etc/motd')
+            self.assertEqual(report.keys(), ['.etc.motd'])
+            self.assertEqual(report['.etc.motd'], motd_contents)
+
+            # custom key name
+            report = {}
+            attach_file_if_exists(report, '/etc/motd', 'Motd')
+            self.assertEqual(report.keys(), ['Motd'])
+            self.assertEqual(report['Motd'], motd_contents)
+
+            # nonexisting file
+            report = {}
+            attach_file_if_exists(report, '/nonexisting')
+            self.assertEqual(report.keys(), [])
+
         def test_no_crashes(self):
-            '''functions do not crash (very shallow'''
+            '''functions do not crash (very shallow)'''
 
             report = {}
             attach_hardware(report)

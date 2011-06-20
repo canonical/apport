@@ -6,6 +6,11 @@ detailled list of changes, please see ChangeLog.
 Improvements:
  - data/general-hooks/generic.py: Also check for low space on /var. Thanks
    Brian Murray.
+ - hookutils.py, attach_file() and attach_file_if_exists(): Add a new
+   "overwrite" flag option. If not given, now default to overwriting an
+   existing key, as this is usually what you need when attaching files
+   (instead of attaching it several times with '_' appended to the keys). You
+   can get the old behaviour by setting overwrite=False.
 
 1.21 (2011-06-08)
 -----------------
