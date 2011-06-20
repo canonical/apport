@@ -43,9 +43,9 @@ apport/packaging_impl
 for m in $modules; do
     echo "--- Testing $m ---"
     if [ -n "$local" ]; then
-	python -tt ./${m}.py -v
+	${PYTHON:=python} -tt ./${m}.py -v
     else
-	python -tt -m $m -v
+	${PYTHON:=python} -tt -m $m -v
     fi
 done
 
@@ -57,9 +57,9 @@ fi
 
 if [ "$local" ]; then
     $mydir/crash-digger
-    python $mydir/../data/general-hooks/parse_segv.py -v
+    $PYTHON $mydir/../data/general-hooks/parse_segv.py -v
 else
-    python $mydir/../general-hooks/parse_segv.py -v
+    $PYTHON $mydir/../general-hooks/parse_segv.py -v
 fi
 
 if [ "$local" ]; then

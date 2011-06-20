@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.22 (UNRELEASED)
+-----------------
+Improvements:
+ - test/run: Check $PYTHON for using a different Python interpreter (such as
+   "python3") for the tests.
+
 1.21.1 (2011-06-20)
 -------------------
 Improvements:
