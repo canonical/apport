@@ -735,7 +735,12 @@ free memory to automatically analyze the problem and send a report to the develo
         size = 0
         for k in self.report:
             if self.report[k]:
-                size += len(self.report[k])
+                try:
+                    # if we have a compressed value, take its size, but take
+                    # base64 overhead into account
+                    size += len(self.report[k].gzipvalue) * 8 / 6
+                except AttributeError:
+                    size += len(self.report[k])
         return size
 
     def get_reduced_size(self):
@@ -745,7 +750,12 @@ free memory to automatically analyze the problem and send a report to the develo
         for k in self.report:
             if k != 'CoreDump':
                 if self.report[k]:
-                    size += len(self.report[k])
+                    try:
+                        # if we have a compressed value, take its size, but take
+                        # base64 overhead into account
+                        size += len(self.report[k].gzipvalue) * 8 / 6
+                    except AttributeError:
+                        size += len(self.report[k])
 
         return size
 
