@@ -16,7 +16,6 @@ if [ "$1" = local ]; then
     export PYTHONPATH=.
     export APPORT_CRASHDB_CONF=./etc/apport/crashdb.conf
     export APPORT_DATA_DIR=./data
-    basedir=.
     local=1
 
     if [ ! -e apport/packaging_impl.py ]; then
@@ -24,23 +23,31 @@ if [ "$1" = local ]; then
 	exit 1
     fi
 else
-    basedir=`python -c 'import os.path; import problem_report; print os.path.dirname(problem_report.__file__)'`
     unset local
 fi
 
 mydir=`dirname "$0"`
 
-set -x
-python -tt $basedir/problem_report.py -v
-python -tt $basedir/apport/fileutils.py -v
-python -tt $basedir/apport/report.py -v
-python -tt $basedir/apport/hookutils.py -v
-python -tt $basedir/apport_python_hook.py -v
-python -tt $basedir/apport/ui.py -v
-python -tt $basedir/apport/REThread.py -v
-python -tt $basedir/apport/chroot.py -v
-python -tt $basedir/apport/crashdb_impl/memory.py -v
-python -tt $basedir/apport/packaging_impl.py -v
+modules="problem_report
+apport/fileutils
+apport/report
+apport/hookutils 
+apport_python_hook
+apport/ui
+apport/REThread
+apport/chroot
+apport/crashdb_impl/memory
+apport/packaging_impl
+"
+
+for m in $modules; do
+    echo "--- Testing $m ---"
+    if [ -n "$local" ]; then
+	python -tt ./${m}.py -v
+    else
+	python -tt -m $m -v
+    fi
+done
 
 if [ "$local" ]; then
     $mydir/hooks -l

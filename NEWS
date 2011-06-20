@@ -17,6 +17,9 @@ Bug fixes:
    values instead of their uncompressed size, as the crash db upload will use
    the compressed values.
  - backends/packaging-apt-dpkg.py: Fix for current dpkg with multiarch support.
+ - test/run: Fix the test suite to run against the system installed libraries
+   with current Python versions (2.6, 2.7) where __file__ does not work any
+   more with imports.
 
 1.21 (2011-06-08)
 -----------------
