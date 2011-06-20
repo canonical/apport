@@ -16,6 +16,7 @@ Bug fixes:
  - When showing the size of the full report, take the compressed size of binary
    values instead of their uncompressed size, as the crash db upload will use
    the compressed values.
+ - backends/packaging-apt-dpkg.py: Fix for current dpkg with multiarch support.
 
 1.21 (2011-06-08)
 -----------------

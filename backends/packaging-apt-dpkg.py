@@ -155,7 +155,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''Return list of all modified files of a package.'''
 
         # get the maximum mtime of package files that we consider unmodified
-        listfile = '/var/lib/dpkg/info/%s.list' % package
+        listfile = '/var/lib/dpkg/info/%s:%s.list' % (package, self.get_system_architecture())
+        if not os.path.exists(listfile):
+            listfile = '/var/lib/dpkg/info/%s.list' % package
         try:
             s = os.stat(listfile)
             if not stat.S_ISREG(s.st_mode):
@@ -166,10 +168,12 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # create a list of files with a newer timestamp for md5sum'ing
         sums = ''
-        sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
-        # some packages do not ship md5sums, shrug on them
+        sumfile = '/var/lib/dpkg/info/%s:%s.md5sums' % (package, self.get_system_architecture())
         if not os.path.exists(sumfile):
-            return []
+            sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
+            if not os.path.exists(sumfile):
+                # some packages do not ship md5sums
+                return []
 
         for line in open(sumfile):
             try:
@@ -221,8 +225,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         packages; this is very expensive, though, and needs network access and
         lots of CPU and I/O resources. In this case, map_cachedir can be set to
         an existing directory which will be used to permanently store the
-        downloaded maps. If it is not set, a temporary directory will be used.'''
-
+        downloaded maps. If it is not set, a temporary directory will be used.
+        '''
         # check if the file is a diversion
         dpkg = subprocess.Popen(['/usr/sbin/dpkg-divert', '--list', file],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -235,7 +239,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         all_lists = []
         likely_lists = []
         for f in glob.glob('/var/lib/dpkg/info/*.list'):
-            p = os.path.splitext(os.path.basename(f))[0].lower()
+            p = os.path.splitext(os.path.basename(f))[0].lower().split(':')[0]
             if p in fname or fname in p:
                 likely_lists.append(f)
             else:
@@ -247,7 +251,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             match = self.__fgrep_files(file, all_lists)
 
         if match:
-            return os.path.splitext(os.path.basename(match))[0]
+            return os.path.splitext(os.path.basename(match))[0].split(':')[0]
 
         if uninstalled:
             return self._search_contents(file, map_cachedir)
@@ -786,6 +790,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         for c in cache.getChanges():
             for script in ('postinst', 'prerm', 'postrm'):
                 try:
+                    os.unlink('/var/lib/dpkg/info/%s:%s.%s' % (c.name, self.get_system_architecture(), script))
+                except OSError:
+                    pass
+                try:
                     os.unlink('/var/lib/dpkg/info/%s.%s' % (c.name, script))
                 except OSError:
                     pass
@@ -910,6 +918,7 @@ if __name__ == '__main__':
 
             self.assertEqual(impl.get_file_package('/bin/bash'), 'bash')
             self.assertEqual(impl.get_file_package('/bin/cat'), 'coreutils')
+            self.assertEqual(impl.get_file_package('/etc/blkid.tab'), 'libblkid1')
             self.assertEqual(impl.get_file_package('/nonexisting'), None)
 
         def test_get_file_package_uninstalled(self):
