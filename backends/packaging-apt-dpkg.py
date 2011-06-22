@@ -258,7 +258,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             return None
 
-    def get_system_architecture(self):
+    @classmethod
+    def get_system_architecture(klass):
         '''Return the architecture of the system, in the notation used by the
         particular distribution.'''
 
@@ -790,7 +791,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         for c in cache.getChanges():
             for script in ('postinst', 'prerm', 'postrm'):
                 try:
-                    os.unlink('/var/lib/dpkg/info/%s:%s.%s' % (c.name, self.get_system_architecture(), script))
+                    os.unlink('/var/lib/dpkg/info/%s:%s.%s' % (c.name, klass.get_system_architecture(), script))
                 except OSError:
                     pass
                 try:
