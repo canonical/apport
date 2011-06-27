@@ -6,6 +6,9 @@ detailled list of changes, please see ChangeLog.
 Improvements:
  - test/run: Check $PYTHON for using a different Python interpreter (such as
    "python3") for the tests.
+ - generic hook: Don't report package installation failures due to segfaulting
+   maintainer scripts. We want the actual crash report only. Thanks Brian
+   Murray.
 
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix crash introduced in 1.21.1's multiarch

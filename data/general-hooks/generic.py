@@ -76,6 +76,10 @@ Do you want to continue the report process anyway?
     if '/usr/lib/libGL.so' in (report.get('StacktraceTop') or '\n').splitlines()[0] \
         and 'Loading extension GLX' not in apport.hookutils.read_file('/var/log/Xorg.0.log'):
             report['UnreportableReason'] = 'The X.org server does not support the GLX extension, which the crashed program expected to use.'
+    # filter out package install failures due to a segfault
+    if 'Segmentation fault' in report.get('ErrorMessage', '') \
+        and report['ProblemType'] == 'Package':
+            report['UnreportableReason'] = 'The package installation resulted in a segmentation fault which is better reported as a crash report rather than a package install failure.'
 
 
 if __name__ == '__main__':
