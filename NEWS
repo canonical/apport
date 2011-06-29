@@ -13,6 +13,8 @@ Improvements:
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix crash introduced in 1.21.1's multiarch
    fixes.
+ - report.py: Fix bug patterns to correctly match against compressed report
+   fields.
 
 1.21.1 (2011-06-20)
 -------------------

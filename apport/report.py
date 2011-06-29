@@ -15,7 +15,7 @@ import fnmatch, glob, atexit, traceback, errno
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
-from problem_report import ProblemReport
+import problem_report
 import apport
 import apport.fileutils
 from apport.packaging_impl import impl as packaging
@@ -108,7 +108,10 @@ def _check_bug_pattern(report, pattern):
                 c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
                 regexp = c.childNodes[0].nodeValue.encode('UTF-8')
                 try:
-                    if not re.search(regexp, report[key]):
+                    v = report[key]
+                    if isinstance(v, problem_report.CompressedValue):
+                        v = v.get_value()
+                    if not re.search(regexp, v):
                         return None
                 except:
                     return None
@@ -142,7 +145,7 @@ def _dom_remove_space(node):
 # Report class
 #
 
-class Report(ProblemReport):
+class Report(problem_report.ProblemReport):
     '''A problem report specific to apport (crash or bug).
 
     This class wraps a standard ProblemReport and adds methods for collecting
@@ -157,7 +160,7 @@ class Report(ProblemReport):
         If the report is attached to a process ID, this should be set in
         self.pid, so that e. g. hooks can use it to collect additional data.
         '''
-        ProblemReport.__init__(self, type, date)
+        problem_report.ProblemReport.__init__(self, type, date)
         self.pid = None
 
     def _pkg_modified_suffix(self, package):
@@ -1781,6 +1784,11 @@ $0.bin 2>/dev/null
         self.assertEqual(r_bash.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/2')
         self.assertEqual(r_coreutils.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/3')
         self.assertEqual(r_bazaar.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/5')
+
+        # also works for CompressedValues
+        r_bash_compressed = r_bash.copy()
+        r_bash_compressed['Foo'] = problem_report.CompressedValue('bazaar')
+        self.assertEqual(r_bash_compressed.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/1')
 
         # negative match cases
         r_bash['Package'] = 'bash-static 1-2'
