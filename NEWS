@@ -9,6 +9,8 @@ Improvements:
  - generic hook: Don't report package installation failures due to segfaulting
    maintainer scripts. We want the actual crash report only. Thanks Brian
    Murray.
+ - hookutils.py, attach_wifi(): Also include wpasupplicant logs. Thanks Mathieu
+   Trudel-Lapierre!
 
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix crash introduced in 1.21.1's multiarch
