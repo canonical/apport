@@ -335,12 +335,19 @@ def attach_root_command_outputs(report, command_map):
 
 def recent_syslog(pattern):
     '''Extract recent messages from syslog which match a regex.
-        
+
+    pattern should be a "re" object.
+    '''
+    return recent_logfile('/var/log/syslog', pattern)
+
+def recent_logfile(logfile, pattern):
+    '''Extract recent messages from a logfile which match a regex.
+
     pattern should be a "re" object.
     '''
     lines = ''
     try:
-        for line in open('/var/log/syslog'):
+        for line in open(logfile):
             if pattern.search(line):
                 lines += line
     except IOError:
@@ -511,6 +518,31 @@ def attach_printing(report):
         'cups-driver-gutenprint', 'foomatic-db-gutenprint', 'ijsgutenprint',
         'cupsys-driver-gutenprint', 'gimp-gutenprint', 'gutenprint-doc',
         'gutenprint-locales', 'system-config-printer-common', 'kdeprint')
+
+def attach_mac_events(report):
+    '''Attach MAC information and events to the report.'''
+
+    mac_regex = 'audit\(|apparmor|selinux|security'
+    mac_re = re.compile(mac_regex, re.IGNORECASE)
+    aa_denied_regex = 'apparmor="DENIED"'
+    aa_denied_re = re.compile(aa_denied_regex, re.IGNORECASE)
+
+    if os.path.exists('/var/log/kern.log'):
+        report['KernLog'] = recent_logfile('/var/log/kern.log', mac_re)
+    elif os.path.exists('/var/log/messages'):
+        report['KernLog'] = recent_logfile('/var/log/messages', mac_re)
+
+    if os.path.exists('/var/log/audit/audit.log'):
+        attach_root_command_outputs(report, {'AuditLog': 'grep "' + mac_regex + '" /var/log/audit/audit.log'})
+
+    attach_file(report, '/proc/version_signature', 'ProcVersionSignature')
+    attach_file(report, '/proc/cmdline', 'ProcCmdline')
+
+    if re.search(aa_denied_re, report.get('KernLog', '')) or re.search(aa_denied_re, report.get('AuditLog', '')):
+        tags = report.get('Tags', '')
+        if tags:
+            tags += ' '
+        report['Tags'] = tags + 'apparmor'
 
 def attach_related_packages(report, packages):
     '''Attach version information for related packages

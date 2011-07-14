@@ -7,6 +7,10 @@ Bug fixes:
  - gtk/apport-gtk.desktop.in: Also show in Unity. (LP: #803519)
  - apport-unpack: Fix crash on file errors.
 
+Improvements:
+ - hookutils.py: Add attach_mac_events() for reporting logs of MAC systems.
+   Looks for AppArmor messages for now. Thanks Marc Deslauriers!
+
 1.21.2 (2011-07-01)
 -------------------
 Improvements:
