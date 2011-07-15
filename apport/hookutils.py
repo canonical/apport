@@ -532,8 +532,8 @@ def attach_mac_events(report):
     elif os.path.exists('/var/log/messages'):
         report['KernLog'] = recent_logfile('/var/log/messages', mac_re)
 
-    if os.path.exists('/var/log/audit/audit.log'):
-        attach_root_command_outputs(report, {'AuditLog': 'grep "' + mac_regex + '" /var/log/audit/audit.log'})
+    if os.path.exists('/var/run/auditd.pid'):
+        attach_root_command_outputs(report, {'AuditLog': 'egrep "' + mac_regex + '" /var/log/audit/audit.log'})
 
     attach_file(report, '/proc/version_signature', 'ProcVersionSignature')
     attach_file(report, '/proc/cmdline', 'ProcCmdline')
