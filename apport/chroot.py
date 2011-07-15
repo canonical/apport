@@ -11,6 +11,8 @@
 
 import subprocess, tempfile, os, os.path, shutil
 
+import apport 
+
 def setup_fakeroot_env():
     '''Set up a fakeroot/fakechroot environment.
 
@@ -31,7 +33,7 @@ def setup_fakeroot_env():
 
     os.environ['LD_PRELOAD'] = '%s %s %s' % (libfakechroot, libfakeroot,
         os.environ.get('LD_PRELOAD', ''))
-    os.environ['LD_LIBRARY_PATH'] = '/lib:' + os.environ.get('LD_LIBRARY_PATH', '')
+    os.environ['LD_LIBRARY_PATH'] = '%s:%s' % (apport.packaging.get_library_paths(), os.environ.get('LD_LIBRARY_PATH', '')) 
     os.environ['FAKECHROOT'] = 'true'
 
 def pathsplit(p, rest=[]):

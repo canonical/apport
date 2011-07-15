@@ -6,6 +6,9 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - gtk/apport-gtk.desktop.in: Also show in Unity. (LP: #803519)
  - apport-unpack: Fix crash on file errors.
+ - Add apport.packaging.get_library_paths() interface and implement it for
+   backends/packaging-apt-dpkg.py using dpkg multiarch directories. Use it in
+   chroot.py.
 
 Improvements:
  - hookutils.py: Add attach_mac_events() for reporting logs of MAC systems.

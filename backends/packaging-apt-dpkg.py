@@ -270,6 +270,20 @@ class __AptDpkgPackageInfo(PackageInfo):
         assert arch
         return arch
 
+    def get_library_paths(self):
+        '''Return a list of default library search paths.
+        
+        The entries should be separated with a colon ':', like for
+        $LD_LIBRARY_PATH. This needs to take any multiarch directories into
+        account.
+        '''
+        dpkg = subprocess.Popen(['dpkg-architecture', '-qDEB_HOST_MULTIARCH'],
+                stdout=subprocess.PIPE)
+        multiarch_triple = dpkg.communicate()[0].strip()
+        assert dpkg.returncode == 0
+
+        return '/lib/%s:/lib' % multiarch_triple
+
     def set_mirror(self, url):
         '''Explicitly set a distribution mirror URL for operations that need to
         fetch distribution files/packages from the network.
@@ -993,6 +1007,16 @@ bo/gu/s                                                 na/mypackage
             # must be nonempty without line breaks
             self.assertNotEqual(arch, '')
             self.assertTrue('\n' not in arch)
+
+        def test_get_library_paths(self):
+            '''get_library_paths().'''
+
+            paths = impl.get_library_paths()
+            # must be nonempty without line breaks
+            self.assertNotEqual(paths, '')
+            self.assertTrue(':' in paths)
+            self.assertTrue('/lib' in paths)
+            self.assertTrue('\n' not in paths)
 
         def test_compare_versions(self):
             '''compare_versions.'''

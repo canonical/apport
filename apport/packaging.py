@@ -86,6 +86,16 @@ class PackageInfo:
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
+    def get_library_paths(self):
+        '''Return a list of default library search paths.
+        
+        The entries should be separated with a colon ':', like for
+        $LD_LIBRARY_PATH. This needs to take any multiarch directories into
+        account.
+        '''
+        # dummy default implementation
+        return '/lib:/usr/lib'
+
     def set_mirror(self, url):
         '''Explicitly set a distribution mirror URL.
         
