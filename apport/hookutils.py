@@ -291,7 +291,7 @@ def root_command_output(command, input = None, stderr = subprocess.STDOUT):
     assert type(command) == type([]), 'command must be a list'
     return command_output(_root_command_prefix() + command, input, stderr)
 
-def attach_root_command_outputs(report, command_map):
+def attach_root_command_outputs(report, command_map, omit_empty=False):
     '''Execute multiple commands as root and put their outputs into report.
 
     command_map is a keyname -> 'shell command' dictionary with the commands to
@@ -328,7 +328,10 @@ def attach_root_command_outputs(report, command_map):
         # now read back the individual outputs
         for keyname in command_map:
             f = open(os.path.join(workdir, keyname))
-            report[keyname] = f.read()
+            buf = f.read()
+            if omit_empty and len(buf.strip())==0:
+                continue
+            report[keyname] = buf
             f.close()
     finally:
         shutil.rmtree(workdir)
