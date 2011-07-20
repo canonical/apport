@@ -32,7 +32,7 @@ _path_key_trans = string.maketrans('#/-_+ ','....._')
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
         
-    This will meet apport's restrictions on the characters used in keys.
+    This will replace invalid punctuation symbols with valid ones.
     '''
     return path.translate(_path_key_trans)
 
