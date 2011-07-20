@@ -54,7 +54,7 @@ def attach_file_if_exists(report, path, key=None, overwrite=True):
 def read_file(path):
     '''Return the contents of the specified path. 
         
-    Upon error, this will deliver a a text representation of the error,
+    Upon error, this will deliver a text representation of the error,
     instead of failing.
     '''
     try:
@@ -83,7 +83,7 @@ def attach_file(report, path, key=None, overwrite=True):
 def attach_dmesg(report):
     '''Attach information from the kernel ring buffer (dmesg).
 
-    This won't overwite already existing information.
+    This will not overwrite already existing information.
     '''
     try:
         if not report.get('BootDmesg', '').strip():
