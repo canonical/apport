@@ -220,6 +220,10 @@ def attach_alsa(report):
             + glob.glob('/dev/snd/*')
             + glob.glob('/dev/seq*') )
 
+    if os.path.exists('/usr/bin/pacmd'):
+        report['PulseSinks'] = command_output(['pacmd', 'list-sinks'])
+        report['PulseSources'] = command_output(['pacmd', 'list-sources'])
+
     attach_dmi(report)
     attach_dmesg(report)
 

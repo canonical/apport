@@ -16,6 +16,10 @@ Bug fixes:
 Improvements:
  - hookutils.py: Add attach_mac_events() for reporting logs of MAC systems.
    Looks for AppArmor messages for now. Thanks Marc Deslauriers!
+ - hookutils.py, attach_alsa(): Get a list of outputs/inputs that PulseAudio
+   knows about, which also shows the currently selected output/input, as well
+   as volumes. This should help with "no sound" bug troubleshooting. Thanks
+   Luke Yelavich.
 
 1.21.2 (2011-07-01)
 -------------------
