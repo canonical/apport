@@ -9,6 +9,8 @@ Bug fixes:
  - Add apport.packaging.get_library_paths() interface and implement it for
    backends/packaging-apt-dpkg.py using dpkg multiarch directories. Use it in
    chroot.py.
+ - hookutils.py: Don't attach empty values. Thanks Bryce Harrington.
+   (LP: #813798)
 
 Improvements:
  - hookutils.py: Add attach_mac_events() for reporting logs of MAC systems.

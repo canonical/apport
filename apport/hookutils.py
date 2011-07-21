@@ -32,7 +32,7 @@ _path_key_trans = string.maketrans('#/-_+ ','....._')
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
         
-    This will meet apport's restrictions on the characters used in keys.
+    This will replace invalid punctuation symbols with valid ones.
     '''
     return path.translate(_path_key_trans)
 
@@ -54,7 +54,7 @@ def attach_file_if_exists(report, path, key=None, overwrite=True):
 def read_file(path):
     '''Return the contents of the specified path. 
         
-    Upon error, this will deliver a a text representation of the error,
+    Upon error, this will deliver a text representation of the error,
     instead of failing.
     '''
     try:
@@ -83,7 +83,7 @@ def attach_file(report, path, key=None, overwrite=True):
 def attach_dmesg(report):
     '''Attach information from the kernel ring buffer (dmesg).
 
-    This won't overwite already existing information.
+    This will not overwrite already existing information.
     '''
     try:
         if not report.get('BootDmesg', '').strip():
@@ -328,7 +328,9 @@ def attach_root_command_outputs(report, command_map):
         # now read back the individual outputs
         for keyname in command_map:
             f = open(os.path.join(workdir, keyname))
-            report[keyname] = f.read()
+            buf = f.read().strip()
+            if buf:
+                report[keyname] = buf
             f.close()
     finally:
         shutil.rmtree(workdir)
