@@ -197,7 +197,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def _ui_message_dialog(self, title, text, _type,
             buttons=Gtk.ButtonsType.CLOSE):
-        md = Gtk.MessageDialog(type=_type, buttons=buttons)
+        md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
         if 'http://' in text or 'https://' in text:
             text = glib.markup_escape_text (text)
             text = re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)', 
