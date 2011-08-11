@@ -12,6 +12,8 @@ Bug fixes:
  - hookutils.py: Don't attach empty values. Thanks Bryce Harrington.
    (LP: #813798)
  - apport-gtk: Correctly pass message dialog type.
+ - apport-gtk: Fix GLib and GObject imports to be compatible with the future
+   pygobject 3.0.
 
 Improvements:
  - hookutils.py: Add attach_mac_events() for reporting logs of MAC systems.

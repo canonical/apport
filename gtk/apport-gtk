@@ -13,8 +13,8 @@
 
 import os.path, sys, subprocess, os, re
 
-import gobject
-import glib
+from gi.repository import GObject
+from gi.repository import GLib
 try:
     from gi.repository import Gtk
 except RuntimeError as e:
@@ -48,7 +48,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         assert self.widgets.connect_signals(self) is None
 
         # initialize tree model and view
-        self.tree_model = Gtk.TreeStore(gobject.TYPE_STRING)
+        self.tree_model = Gtk.TreeStore(GObject.TYPE_STRING)
         self.w('treeview_reportdetails').set_model(self.tree_model)
 
         column = Gtk.TreeViewColumn("Report", Gtk.CellRendererText(), text=0)
@@ -72,7 +72,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         if desktop_entry:
             # python2+glib needs a confusing mix of UTF-8 str and unicode here :-(
             n = desktop_entry.getName().encode('UTF-8')
-            n = glib.markup_escape_text(n).decode('UTF-8')
+            n = GLib.markup_escape_text(n).decode('UTF-8')
             heading = _('Sorry, %s closed unexpectedly') % n
         elif self.report.has_key('ExecutablePath'):
             heading = _('Sorry, the program "%s" closed unexpectedly') % os.path.basename(self.report['ExecutablePath'])
@@ -199,7 +199,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             buttons=Gtk.ButtonsType.CLOSE):
         md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
         if 'http://' in text or 'https://' in text:
-            text = glib.markup_escape_text (text)
+            text = GLib.markup_escape_text (text)
             text = re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)', 
                     r'<a href="\1">\1</a>', text)
             # turn URLs into links
