@@ -473,7 +473,6 @@ class __AptDpkgPackageInfo(PackageInfo):
             shutil.rmtree(aptroot)
 
         # reset config
-        apt.apt_pkg.init_system()
         apt.apt_pkg.init_config()
 
         return obsolete
@@ -587,7 +586,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @classmethod
     def _build_apt_sandbox(klass, apt_root, apt_sources):
-        apt.apt_pkg.init_system()
         apt.apt_pkg.init_config()
         apt.apt_pkg.config.set('RootDir', apt_root)
         apt.apt_pkg.config.set('Debug::NoLocking', 'true')
@@ -699,6 +697,7 @@ if __name__ == '__main__':
             # save and restore configuration file
             self.orig_conf = impl.configuration
             self.workdir = tempfile.mkdtemp()
+            apt.apt_pkg.init_system()
 
         def tearDown(self):
             impl.configuration = self.orig_conf
