@@ -488,6 +488,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         which happened on the current host architecture.'''
         try:
             bugs = self.lp_distro.searchTasks(tags=self.arch_tag)
+            return id_set(bugs)
         except Exception, e:
             if hasattr(e, 'content'):
                 msg = e.content
@@ -495,7 +496,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 msg = str(e)
             apport.error('connecting to Launchpad failed: %s', msg)
             sys.exit(99) # transient error
-        return id_set(bugs)
 
     def get_dup_unchecked(self):
         '''Return an ID set of all crashes which have not been checked for
@@ -507,6 +507,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         
         try:
             bugs = self.lp_distro.searchTasks(tags='need-duplicate-check')
+            return id_set(bugs)
         except Exception, e:
             if hasattr(e, 'content'):
                 msg = e.content
@@ -514,7 +515,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 msg = str(e)
             apport.error('connecting to Launchpad failed: %s', msg)
             sys.exit(99) # transient error
-        return id_set(bugs)
 
     def get_unfixed(self):
         '''Return an ID set of all crashes which are not yet fixed.
