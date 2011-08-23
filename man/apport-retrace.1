@@ -23,14 +23,21 @@ symbolic and thus become much more useful for developers to fix the
 problem.
 
 .B apport\-retrace 
-attempts to install the missing packages. This requires root
-privileges, but will work fine in a chroot with the fakeroot and
-fakechroot libraries, so that the entire process can be performed with
-just normal user privileges.
+has two modes: By default it will just regenerate traces based on the packages
+which are currently installed in the system, i. e. it assumes that all
+necessary debug symbols for the report are installed. When specifying the
+.B \-S
+option, it creates a temporary "sandbox" and downloads and installs all
+necessary packages and debug symbols there. It will not do any changes to your
+system.  This does not require root privileges, as it does not actually use the
+.B chroot()
+system call, but just supplies some "virtual root" options to
+.B gdb\fR.
 
-If this tool is run as normal user, then it will merely print out the
-missing packages as a warning and continue the retracing process. It
-will yield worse up to unusable results, though.
+If you regularly use
+.B apport\-retrace
+in sandbox mode, it is highly recommended to use a permanent cache directory
+(the \fB\-\-cache\fR option).
 
 .I report
 is either the path to a .crash file, or a bug number. In the latter
@@ -73,21 +80,42 @@ completed by running it through the UI data collection phase. However, this
 only works when you run this on the very same system where the crash happened.
 
 .TP
-.B \-v, \-\-verbose
-Report download/install progress when installing additional packages.
+.B \-S \fICONFIG_DIR\fR, \fB\-\-sandbox=\fICONFIG_DIR
+Build a temporary sandbox and download/install the necessary packages and debug
+symbols in there; without this option it assumes that the necessary packages
+and debug symbols are already installed in the system. 
+
+The argument points to the packaging system configuration directory, which
+needs to have a subdirectory for the
+.B DistroRelease
+field in the report (e. g. "config/Ubuntu 11.04/"), which contains the package
+system configuration. 
+
+When using the apt/dpkg backend (Debian/Ubuntu based
+distributions), the per-release directory must contain an apt
+.B sources.list
+file with package sources for this release, plus the corresponding debug symbol
+package repository. 
+
+Sandboxing is not implemented for other (RPM based) backends right now.
 
 .TP
-.B \-u, \-\-unpack\-only
-Only unpack the additionally required packages, do not configure them.
-The additional packages are purged again after retracing. This is
-particularly useful when running this program in a fakeroot
-environment, when not every package can be cleanly installed
-completely.
+.B \-v, \-\-verbose
+Report download/install progress when installing packages in sandbox mode.
 
 .TP
 .B \-p, \-\-extra\-package
-Install an additional package for retracing. May be specified multiple
-times.
+Install an additional package for retracing into the sandbox. May be specified
+multiple times.
+
+.TP
+.B \-C \fIDIR\fR, \fB\-\-cache=\fIDIR
+Permanent cache directory for downloaded package indexes and packages for
+sandbox mode. If not specified all indexes and packages will have to be
+re-downloaded at each run of
+.B apport\-retrace\fR.
+If you use sandbox mode regularly, using a permanent cache directory is highly
+recommended.
 
 .TP
 .B \-h, \-\-help
@@ -119,6 +147,29 @@ database will be created and initialized if it does not exist. If not
 specified,
 .B apport\-retrace
 will not check for duplicates.
+
+.SH EXAMPLES
+
+Reprocess recent local gedit crash report after the debug symbol packages have
+been installed into the system, and show reprocessed stack traces on stdout:
+
+.RS 4
+apport\-retrace \-\-stdout /var/crash/_usr_bin_gedit.1000.crash
+.RE
+
+Build a sandbox with all necessary packages and debug symbols, and start a gdb
+session on the report's core file:
+
+.RS 4
+apport\-retrace \-\-gdb \-\-sandbox ~/conf/ \-\-cache ~/.cache/apport\-retrace /var/crash/_usr_bin_gedit.1000.crash
+.RE
+
+Download crash report bug #12345, run in sandbox mode, and reupload updated
+traces to the bug (as neither \-g or \-s is specified):
+
+.RS 4
+apport\-retrace \-\-auth ~/.cache/apport/launchpad.credentials \-S ~/conf/ \-C ~/.cache/apport\-retrace 12345
+.RE
 
 .SH AUTHOR
 .B apport
