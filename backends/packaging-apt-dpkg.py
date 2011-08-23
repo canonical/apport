@@ -464,9 +464,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         res = c._fetchArchives(fetcher, pm)
 
         # unpack packages
+        if verbose:
+            print('Extracting downloaded debs...')
         for i in fetcher.Items:
-            if verbose:
-                print('Extracting ' + i.DestFile)
             subprocess.check_call(['dpkg', '-x', i.DestFile, rootdir])
 
         if tmp_aptroot:

@@ -235,10 +235,10 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
         if os.path.exists(sandbox + l):
             continue
 
-        if verbose:
-            print >> sys.stderr, 'searching for package of dynamically loaded lib %s..' % l
         pkg = apport.packaging.get_file_package(l, True, cache_dir)
         if pkg:
+            if verbose:
+                print >> sys.stderr, 'dynamically loaded %s needs package %s, queueing' % (l, pkg)
             pkgs.add(pkg)
         else:
                 apport.warning('%s is needed, but cannot be mapped to a package', l)
