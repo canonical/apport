@@ -490,11 +490,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bugs = self.lp_distro.searchTasks(tags=self.arch_tag)
             return id_set(bugs)
         except Exception, e:
-            if hasattr(e, 'content'):
-                msg = e.content
-            else:
-                msg = str(e)
-            apport.error('connecting to Launchpad failed: %s', msg)
+            apport.error('connecting to Launchpad failed: %s', str(e))
             sys.exit(99) # transient error
 
     def get_dup_unchecked(self):
@@ -509,11 +505,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bugs = self.lp_distro.searchTasks(tags='need-duplicate-check')
             return id_set(bugs)
         except Exception, e:
-            if hasattr(e, 'content'):
-                msg = e.content
-            else:
-                msg = str(e)
-            apport.error('connecting to Launchpad failed: %s', msg)
+            apport.error('connecting to Launchpad failed: %s', str(e))
             sys.exit(99) # transient error
 
     def get_unfixed(self):
