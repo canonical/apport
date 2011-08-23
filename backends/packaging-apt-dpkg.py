@@ -587,26 +587,28 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @classmethod
     def _build_apt_sandbox(klass, apt_root, apt_sources):
-        os.makedirs(apt_root + os.path.dirname(apt_root))
-        os.symlink(apt_root, apt_root + apt_root)
-
         apt.apt_pkg.init_system()
         apt.apt_pkg.init_config()
         apt.apt_pkg.config.set('RootDir', apt_root)
         apt.apt_pkg.config.set('Debug::NoLocking', 'true')
         apt.apt_pkg.config.clear('APT::Update::Post-Invoke-Success')
 
-        os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'sources.list.d'))
-        os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'apt.conf.d'))
-        os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'trusted.gpg.d'))
-        os.makedirs(os.path.join(apt_root, 'usr', 'lib', 'apt'))
-        os.makedirs(os.path.join(apt_root, 'var', 'lib', 'apt', 'lists', 'partial'))
-        os.makedirs(os.path.join(apt_root, 'var', 'cache', 'apt', 'archives', 'partial'))
-        os.makedirs(os.path.join(apt_root, 'var', 'log', 'apt'))
-        dpkglib = os.path.join(apt_root, 'var', 'lib', 'dpkg')
-        os.makedirs(dpkglib)
-        open(os.path.join(dpkglib, 'status'), 'w').close()
-        os.symlink('/usr/lib/apt/methods', os.path.join(apt_root, 'usr', 'lib', 'apt', 'methods'))
+        if not os.path.exists(apt_root + apt_root):
+            os.makedirs(apt_root + os.path.dirname(apt_root))
+            os.symlink(apt_root, apt_root + apt_root)
+
+            os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'sources.list.d'))
+            os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'apt.conf.d'))
+            os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'trusted.gpg.d'))
+            os.makedirs(os.path.join(apt_root, 'usr', 'lib', 'apt'))
+            os.makedirs(os.path.join(apt_root, 'var', 'lib', 'apt', 'lists', 'partial'))
+            os.makedirs(os.path.join(apt_root, 'var', 'cache', 'apt', 'archives', 'partial'))
+            os.makedirs(os.path.join(apt_root, 'var', 'log', 'apt'))
+            dpkglib = os.path.join(apt_root, 'var', 'lib', 'dpkg')
+            os.makedirs(dpkglib)
+            open(os.path.join(dpkglib, 'status'), 'w').close()
+            os.symlink('/usr/lib/apt/methods', os.path.join(apt_root, 'usr', 'lib', 'apt', 'methods'))
+
         with open(apt_sources) as src:
             with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'w') as dest:
                 dest.write(src.read())
