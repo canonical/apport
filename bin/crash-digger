@@ -32,8 +32,11 @@ class CrashDigger:
         self.dup_db = dup_db
         self.dupcheck_mode = dupcheck_mode
         self.crashdb = get_crashdb(auth_file)
-        self.releases = os.listdir(config_dir)
-        self.log('Available releases: %s' % str(self.releases))
+        if config_dir:
+            self.releases = os.listdir(config_dir)
+            self.log('Available releases: %s' % str(self.releases))
+        else:
+            self.releases = None
 
         # support running from tree, then fall back to $PATH
         self.apport_retrace = os.path.join(os.path.dirname(sys.argv[0]),
