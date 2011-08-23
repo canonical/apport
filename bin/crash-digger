@@ -199,8 +199,14 @@ if opts.lockfile:
         else:
             raise
 
-CrashDigger(opts.config_dir, opts.auth_file, opts.cache, opts.verbose, opts.dup_db,
-    opts.dupcheck_mode).run()
+try:
+    CrashDigger(opts.config_dir, opts.auth_file, opts.cache, opts.verbose, opts.dup_db,
+        opts.dupcheck_mode).run()
+except SystemExit as exit:
+    if exit.code == 99:
+        pass # fall through lock cleanup
+    else:
+       raise
 
 if opts.lockfile:
     os.unlink(opts.lockfile)
