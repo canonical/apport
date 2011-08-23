@@ -133,7 +133,7 @@ fi
         self.assertFalse (os.path.exists(self.lock_file))
 
     def test_crashes_transient_error(self):
-        '''Crash retracing if apport-chroot reports a transient error'''
+        '''Crash retracing if apport-retrace reports a transient error'''
 
         # make apport-retrace fail on bug 1
         os.rename(self.apport_retrace, self.apport_retrace + '.bak')
