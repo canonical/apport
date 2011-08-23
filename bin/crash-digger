@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright (C) 2007 - 2009 Canonical Ltd.
+# Copyright (C) 2007 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -14,48 +14,33 @@ import os, time, optparse, subprocess, sys, signal, zlib, errno, stat, shutil
 import apport
 from apport.crashdb import get_crashdb
 
-# TODO: permanently save a set for crashes which aren't for our chroot map
-
 #
 # classes
 #
 
 class CrashDigger:
-    def __init__(self, chroot_map, auth_file, verbose=False,
+    def __init__(self, config_dir, auth_file, cache_dir, verbose=False,
         dup_db=None, dupcheck_mode=False):
         '''Initialize pools.'''
 
         self.retrace_pool = set()
         self.dupcheck_pool = set()
+        self.config_dir = config_dir
+        self.cache_dir = cache_dir
         self.verbose = verbose
-        self.chroot_map = chroot_map
         self.auth_file = auth_file
         self.dup_db = dup_db
         self.dupcheck_mode = dupcheck_mode
-
-        self.log('Initializing crash digger, using chroot map %s' % self.chroot_map)
-
-        # read chroot map, verify it, and get available releases
-        if self.chroot_map:
-            now = time.time()
-            outdated_chroots = False
-            m = eval(open(self.chroot_map).read(), {}, {})
-            for r, chroot in m.iteritems():
-                if not os.path.exists(chroot):
-                    apport.fatal('Error: chroot %s for %s does not exist', chroot, r)
-                st = os.stat(chroot)
-                if now - st.st_mtime > 86400 and not stat.S_ISDIR(st.st_mode):
-                    outdated_chroots = True
-            self.releases = m.keys()
-            self.log('Available releases: %s' % str(self.releases))
-
-            # upgrade tarball chroots if necessary
-            if outdated_chroots:
-                assert subprocess.call(['apport-chroot', '-vm', self.chroot_map,
-                    'upgrade', 'all'], stdout=sys.stdout, 
-                    stderr=subprocess.STDOUT) == 0
-
         self.crashdb = get_crashdb(auth_file)
+        self.releases = os.listdir(config_dir)
+        self.log('Available releases: %s' % str(self.releases))
+
+        # support running from tree, then fall back to $PATH
+        self.apport_retrace = os.path.join(os.path.dirname(sys.argv[0]),
+                'apport-retrace')
+        if not os.access(self.apport_retrace, os.X_OK):
+            self.log('%s not found, expecting apport-retrace in $PATH', self.apport_retrace)
+            self.apport_retrace = 'apport-retrace'
 
         if self.dup_db:
             self.crashdb.init_duplicate_db(self.dup_db)
@@ -101,15 +86,17 @@ class CrashDigger:
             self.crashdb.mark_retraced(id)
             return
         if rel not in self.releases:
-            self.log('crash is release %s which does not have a chroot available, skipping' % rel)
-            # TODO: self.no_chroot_pool.add(id)
+            self.log('crash is release %s which does not have a config available, skipping' % rel)
             return
 
-        argv = ['apport-chroot', '-m', self.chroot_map, '--auth',
-            self.auth_file]
+        argv = [self.apport_retrace, '-S', self.config_dir, '--auth', self.auth_file]
+        if self.cache_dir:
+            argv += ['--cache', self.cache_dir]
         if self.dup_db:
             argv += ['--duplicate-db', self.dup_db]
-        argv += ['retrace', str(id)]
+        if self.verbose:
+            argv.append('-v')
+        argv.append(str(id))
 
         result = subprocess.call(argv, stdout=sys.stdout,
             stderr=subprocess.STDOUT)
@@ -164,9 +151,10 @@ def parse_options():
     '''Parse command line options and return (options, args) tuple.'''
 
     optparser = optparse.OptionParser('%prog [options]')
-    optparser.add_option('-m', '--chroot-map',
-        help='Path to chroot map. This is a file that defines a Python dictionary, mapping DistroRelease: values to chroot paths',
-        action='store', type='string', dest='chroot_map', metavar='FILE', default=None)
+    optparser.add_option('-c', '--config-dir', metavar='DIR',
+        help='Packaging system configuration base directory.')
+    optparser.add_option('-C', '--cache', metavar='DIR',
+        help='Cache directory for packages downloaded in the sandbox')
     optparser.add_option('-a', '--auth',
         help='Path to a file with the crash database authentication information.',
         action='store', type='string', dest='auth_file', default=None)
@@ -187,8 +175,8 @@ def parse_options():
 
     (opts, args) = optparser.parse_args()
 
-    if not opts.chroot_map and not opts.dupcheck_mode:
-        apport.fatal('Error: --chroot-map or --dupcheck needs to be given')
+    if not opts.config_dir and not opts.dupcheck_mode:
+        apport.fatal('Error: --config-dir or --dupcheck needs to be given')
     if not opts.auth_file:
         apport.fatal('Error: -a/--auth needs to be given')
     
@@ -210,7 +198,7 @@ if opts.lockfile:
         else:
             raise
 
-CrashDigger(opts.chroot_map, opts.auth_file, opts.verbose, opts.dup_db,
+CrashDigger(opts.config_dir, opts.auth_file, opts.cache, opts.verbose, opts.dup_db,
     opts.dupcheck_mode).run()
 
 if opts.lockfile:
