@@ -593,10 +593,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         apt.apt_pkg.config.set('Debug::NoLocking', 'true')
         apt.apt_pkg.config.clear('APT::Update::Post-Invoke-Success')
 
-        if not os.path.exists(apt_root + apt_root):
-            os.makedirs(apt_root + os.path.dirname(apt_root))
-            os.symlink(apt_root, apt_root + apt_root)
-
+        if not os.path.exists(os.path.join(apt_root, 'etc', 'apt', 'sources.list.d')):
             os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'sources.list.d'))
             os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'apt.conf.d'))
             os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'trusted.gpg.d'))
