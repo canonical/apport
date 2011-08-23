@@ -383,201 +383,100 @@ class __AptDpkgPackageInfo(PackageInfo):
             installed.append(deb.split('_')[0])
         return (installed, outdated)
 
-    def install_retracing_packages(self, report, verbosity=0,
-            unpack_only=False, no_pkg=False, extra_packages=[]):
-        '''Install packages which are required to retrace a report.
-        
-        If package installation fails (e. g. because the user does not have root
-        privileges), the list of required packages is printed out instead.
+    def install_packages(self, rootdir, configdir, release, packages,
+            verbose=False, cache_dir=None):
+        '''Install packages into a sandbox (for apport-retrace).
 
-        If unpack_only is True, packages are only temporarily unpacked and
-        purged again after retrace, instead of permanently and fully installed.
-        If no_pkg is True, the package manager is not used at all, but the
-        binary packages are just unpacked with low-level tools; this speeds up
-        operations in fakechroots, but makes it impossible to cleanly remove
-        the package, so only use that in apport-chroot.
+        In order to work without any special permissions and without touching
+        the running system, this should only download and unpack packages into
+        the given root directory, not install them into the system.
+
+        configdir points to a directory with by-release configuration files for
+        the packaging system; this is completely dependent on the backend
+        implementation, the only assumption is that this looks into
+        configdir/release/, so that you can use retracing for multiple
+        DistroReleases.
+
+        release is the value of the report's 'DistroRelease' field.
+
+        packages is a list of ('packagename', 'version') tuples. If the version
+        is None, it should install the most current available version.
         
-        Return a tuple (list of installed packages, string with outdated packages).
+        If cache_dir is given, then the downloaded packages will be stored
+        there, to speed up subsequent retraces.
+
+        Return a string with outdated packages, or None if all packages were
+        installed.
         '''
-        if (report['ProblemType'] == 'KernelCrash' and 
-            report['Package'].startswith('linux-image')):
-            return self._install_debug_kernel(report)
+        apt_sources = os.path.join(configdir, release, 'sources.list')
+        if not os.path.exists(apt_sources):
+            raise SystemError('%s does not exist' % apt_sources)
 
-        c = self._cache()
-
-        try:
-            if verbosity:
-                c.update(apt.progress.TextFetchProgress())
-            else:
-                c.update()
-            c.open(apt.progress.OpProgress())
-        except SystemError as e:
-            if 'Hash Sum mismatch' in str(e):
-                # temporary archive inconsistency
-                apport.error('%s, aborting' % str(e))
-                sys.exit(99) # signal crash digger about transient error
-            else:
-                raise
-        except apt.cache.LockFailedException:
-            if os.geteuid() != 0:
-                apport.error('Could not update apt, you need to be root')
-            else:
-                raise
-
-        installed = []
-        uninstallable = []
-        outdated = ''
-
-        # create map of dependency package versions as specified in report
-        dependency_versions = {}
-        for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
-            if not l.strip():
-                continue
+        # create apt sandbox
+        if cache_dir:
+            tmp_aptroot = False
+            aptroot = os.path.join(cache_dir, release, 'apt')
             try:
-                (pkg, version) = l.split()[:2]
-            except ValueError:
-                apport.warning('invalid Package/Dependencies line: %s', l)
-                # invalid line, ignore
-                continue
-            dependency_versions[pkg] = version
-            try:
-                if self.get_architecture(pkg) != 'all':
-                    if no_pkg and c.has_key(pkg+'-dbg'):
-                        dependency_versions[pkg+'-dbg'] = dependency_versions[pkg]
-                    else:
-                        dependency_versions[pkg+'-dbgsym'] = dependency_versions[pkg]
-            except ValueError:
-                apport.warning('package %s not known to package cache', pkg)
+                os.makedirs(aptroot)
+            except OSError:
+                pass
+        else:
+            tmp_aptroot = True
+            aptroot = tempfile.mkdtemp()
 
-        for pkg, ver in dependency_versions.iteritems():
-            if not c.has_key(pkg):
-                apport.warning('package %s not available', pkg)
-                continue
+        self._build_apt_sandbox(aptroot, apt_sources)
 
-            # ignore packages which are already installed in the right version
-            if (ver and c[pkg].installed and c[pkg].installed.version ==\
-                ver) or (not ver and c[pkg].installed):
-                continue
-
-            candidate_version = None
-            candidate_version = c[pkg].candidate.version
-            if ver and candidate_version != ver:
-                if not pkg.endswith('-dbgsym'):
-                    outdated += '%s: installed version %s, latest version: %s\n' % (
-                        pkg, ver, candidate_version)
-                apport.warning('%s version %s required, but %s is available',
-                        pkg, ver, candidate_version)
-                if not unpack_only:
-                    uninstallable.append (c[pkg].name)
-                    continue
-
-            c[pkg].markInstall(False)
-
-        # extra packages
-        for p in extra_packages:
-            c[p].markInstall(False)
-
-        if verbosity:
+        if verbose:
             fetchProgress = apt.progress.TextFetchProgress()
-            installProgress = apt.progress.InstallProgress()
         else:
             fetchProgress = apt.progress.FetchProgress()
-            installProgress = apt.progress.DumbInstallProgress()
+        c = apt.Cache()
+        c.update(fetchProgress)
+        c = apt.Cache()
 
-        try:
-            if c.get_changes():
-                os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
-                if unpack_only:
-                    self.fetch_unpack(c, fetchProgress, no_pkg, verbosity)
-                else:
-                    try:
-                        c.commit(fetchProgress, installProgress)
-                    except SystemError:
-                        apport.fatal('Could not install all archives. If you use this tool on a production system, it is recommended to use the -u option. See --help for details.')
+        obsolete = ''
 
-                # after commit(), the Cache object does not empty the pending
-                # changes, so we need to reinitialize it to avoid applying the same
-                # changes again below
-                installed = [p.name for p in c.getChanges()]
-                c = apt.Cache()
-        except IOError as e:
-            pass # we will complain to the user later
-
-        # package hooks might reassign Package:, check that we have the originally crashing binary
-        for path in ('InterpreterPath', 'ExecutablePath'):
-            if path in report and not os.path.exists(report[path]):
-                pkg = self.get_file_package(report[path], True)
-                if pkg:
-                    print('Installing extra package %s to get %s' % (pkg, path))
-                    c[pkg].markInstall(False)
-                else:
-                    err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
-                    outdated += err + '\n'
-                    apport.warning(err)
-
-        # check list of libraries that the crashed process referenced at
-        # runtime and warn about those which are not available
-        libs = set()
-        if report.has_key('ProcMaps'):
-            for l in report['ProcMaps'].splitlines():
-                if not l.strip():
-                    continue
-                cols = l.split()
-                if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
-                    lib = os.path.realpath(cols[5])
-                    libs.add(lib)
-
-        # grab as much as we can
-        for l in libs:
-            if os.path.exists('/usr/lib/debug' + l):
+        # mark packages for installation
+        for (pkg, ver) in packages:
+            candidate = c[pkg].candidate
+            if not candidate:
+                apport.warning('package %s does not exist, ignoring', pkg)
                 continue
 
-            pkg = self.get_file_package(l, True)
-            if pkg:
-                if not os.path.exists(l):
-                    if pkg in uninstallable:
-                        apport.warning('%s cannot be installed (incompatible version)', pkg)
-                        continue
-                    if c.has_key(pkg):
-                        c[pkg].markInstall(False)
-                    else:
-                        apport.warning('%s was loaded at runtime, but its package %s is not available', l, pkg)
+            if ver and candidate.version != ver:
+                w = '%s version %s required, but %s is available' % (pkg, ver, candidate.version)
+                obsolete += w + '\n'
+            c[pkg].mark_install(False, False)
 
-                if c.has_key(pkg+'-dbgsym') and pkg+'-dbgsym' not in uninstallable :
-                    c[pkg+'-dbgsym'].markInstall(False)
-                else:
-                    apport.warning('%s-dbgsym is not available or is incompatible', pkg)
-            else:
-                    apport.warning('%s is needed, but cannot be mapped to a package', l)
+            if candidate.architecture != 'all':
+                if c.has_key(pkg + '-dbg'):
+                    c[pkg + '-dbg'].mark_install(False, False)
+                elif c.has_key(pkg + '-dbgsym'):
+                    c[pkg + '-dbgsym'].mark_install(False, False)
+                    if c[pkg + '-dbgsym'].candidate.version != candidate.version:
+                        obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
+                                pkg, candidate.version, c[pkg + '-dbgsym'].candidate.version)
 
-        try:
-            if c.getChanges():
-                os.environ['DEBIAN_FRONTEND'] = 'noninteractive'
-                if unpack_only:
-                    self.fetch_unpack(c, fetchProgress, no_pkg, verbosity)
-                else:
-                    c.commit(fetchProgress, installProgress)
-            installed += [p.name for p in c.getChanges()]
-        except (SystemError, IOError) as e:
-            apport.warning('could not install missing packages: %s', str(e))
-            if os.geteuid() != 0:
-                apport.error('You either need to call this program as root or install these packages manually:')
-            for p in c.getChanges():
-                apport.error('  %s %s', p.name, p.candidate.version)
 
-        return (installed, outdated)
+        # fetch packages
+        fetcher = apt.apt_pkg.GetAcquire(fetchProgress)
+        pm = apt.apt_pkg.GetPackageManager(c._depcache)
+        res = c._fetchArchives(fetcher, pm)
 
-    def remove_packages(self, packages, verbosity=0):
-        '''Remove packages.
+        # unpack packages
+        for i in fetcher.Items:
+            if verbose:
+                print('Extracting ' + i.DestFile)
+            subprocess.check_call(['dpkg', '-x', i.DestFile, rootdir])
 
-        This is called after install_retracing_packages() to clean up again
-        afterwards. packages is a list of package names.
-        '''
-        if verbosity > 0:
-            so = sys.stderr
-        else:
-            so = subprocess.PIPE
-        subprocess.call(['dpkg', '-P'] + packages, stdout=so)
+        if tmp_aptroot:
+            shutil.rmtree(aptroot)
+
+        # reset config
+        apt.apt_pkg.init_system()
+        apt.apt_pkg.init_config()
+
+        return obsolete
 
     def package_name_glob(self, nameglob):
         '''Return known package names which match given glob.'''
@@ -686,6 +585,32 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return package
 
+    @classmethod
+    def _build_apt_sandbox(klass, apt_root, apt_sources):
+        os.makedirs(apt_root + os.path.dirname(apt_root))
+        os.symlink(apt_root, apt_root + apt_root)
+
+        apt.apt_pkg.init_system()
+        apt.apt_pkg.init_config()
+        apt.apt_pkg.config.set('RootDir', apt_root)
+        apt.apt_pkg.config.set('Debug::NoLocking', 'true')
+        apt.apt_pkg.config.clear('APT::Update::Post-Invoke-Success')
+
+        os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'sources.list.d'))
+        os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'apt.conf.d'))
+        os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'trusted.gpg.d'))
+        os.makedirs(os.path.join(apt_root, 'usr', 'lib', 'apt'))
+        os.makedirs(os.path.join(apt_root, 'var', 'lib', 'apt', 'lists', 'partial'))
+        os.makedirs(os.path.join(apt_root, 'var', 'cache', 'apt', 'archives', 'partial'))
+        os.makedirs(os.path.join(apt_root, 'var', 'log', 'apt'))
+        dpkglib = os.path.join(apt_root, 'var', 'lib', 'dpkg')
+        os.makedirs(dpkglib)
+        open(os.path.join(dpkglib, 'status'), 'w').close()
+        os.symlink('/usr/lib/apt/methods', os.path.join(apt_root, 'usr', 'lib', 'apt', 'methods'))
+        with open(apt_sources) as src:
+            with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'w') as dest:
+                dest.write(src.read())
+
     def compare_versions(self, ver1, ver2):
         '''Compare two package versions.
 
@@ -712,59 +637,6 @@ class __AptDpkgPackageInfo(PackageInfo):
             return True
 
         return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
-
-    @classmethod
-    def deb_without_preinst(klass, deb):
-        '''Return .deb without a preinst script.
-
-        If given .deb file has a preinst script, generate a <name>_noscript.deb
-        file without it and return that name; otherwise, return deb.
-        
-        If the modified deb already exists, its name is returned without recreating
-        it.
-        '''
-        ndeb = '/var/cache/apt/archives/%s_noscript%s' % os.path.splitext(os.path.basename(deb))
-
-        if os.path.exists(ndeb):
-            return ndeb
-
-        # get control.tar.gz    
-        ar = subprocess.Popen(['ar', 'p', deb, 'control.tar.gz'], stdout=subprocess.PIPE)
-        control_tar = ar.communicate()[0]
-        assert ar.returncode == 0
-
-        # check if package has a preinst
-        tar = subprocess.Popen(['tar', 'tz', './preinst'], stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        tar.communicate(control_tar)
-        if tar.returncode != 0:
-            return deb
-
-        # unpack control.tar.gz and remove scripts
-        d = tempfile.mkdtemp()
-        d2 = tempfile.mkdtemp()
-        try:
-            tar = subprocess.Popen(['tar', '-xz'], cwd=d, stdin=subprocess.PIPE)
-            tar.communicate(control_tar)
-            assert tar.returncode == 0
-            for s in ('preinst', 'postinst', 'prerm', 'postrm'):
-                path = os.path.join(d, s)
-                if os.path.exists(path):
-                    os.unlink(path)
-
-            control_tar_new = os.path.join(d2, 'control.tar.gz')
-            tar = subprocess.Popen(['tar', '-cz', '.'], cwd=d,
-                stdin=subprocess.PIPE, stdout=open(control_tar_new, 'w'))
-            assert tar.wait() == 0
-
-            shutil.copy(deb, ndeb)
-            r = subprocess.Popen(['ar', 'r', ndeb, control_tar_new])
-            assert r.wait() == 0
-        finally:
-            shutil.rmtree(d)
-            shutil.rmtree(d2)
-
-        return ndeb
 
     @classmethod
     def fetch_unpack(klass, cache, fetchProgress, no_dpkg=False, verbosity=0):
@@ -827,9 +699,11 @@ if __name__ == '__main__':
         def setUp(self):
             # save and restore configuration file
             self.orig_conf = impl.configuration
+            self.workdir = tempfile.mkdtemp()
 
         def tearDown(self):
             impl.configuration = self.orig_conf
+            shutil.rmtree(self.workdir)
 
         def test_check_files_md5(self):
             '''_check_files_md5().'''
@@ -1067,6 +941,78 @@ bo/gu/s                                                 na/mypackage
             self.assertTrue('bash' in impl.package_name_glob('ba*h'))
             self.assertEqual(impl.package_name_glob('bash'), ['bash'])
             self.assertEqual(impl.package_name_glob('xzywef*'), [])
+
+        def test_install_packages_versioned(self):
+            '''install_packages() with versions and with cache'''
+
+            self._setup_foonux_config()
+            impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                    [('coreutils', '7.4-2ubuntu2'),
+                     ('libc6', '2.11.1-0ubuntu7'),
+                     ('tzdata', '2010i-1'),
+                    ], False, self.cachedir)
+
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/bin/stat')))
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/lib/debug/usr/bin/stat')))
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/share/zoneinfo/zone.tab')))
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/share/doc/libc6/copyright')))
+
+            # does not clobber config dir
+            self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
+            self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')), 
+                    ['sources.list'])
+
+            # caches packages
+            cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
+                'var', 'cache', 'apt', 'archives'))
+            cache_names = [p.split('_')[0] for p in cache]
+            self.assertTrue('coreutils' in cache_names)
+            self.assertTrue('coreutils-dbgsym' in cache_names)
+            self.assertTrue('tzdata' in cache_names)
+            self.assertTrue('libc6' in cache_names)
+            self.assertTrue('libc6-dbg' in cache_names)
+
+        def test_install_packages_unversioned(self):
+            '''install_packages() without versions and no cache'''
+
+            self._setup_foonux_config()
+            impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                    [('coreutils', None),
+                     ('tzdata', None),
+                    ], False, None)
+
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/bin/stat')))
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/lib/debug/usr/bin/stat')))
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/share/zoneinfo/zone.tab')))
+
+            # does not clobber config dir
+            self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
+            self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')), 
+                    ['sources.list'])
+
+            # no cache
+            self.assertEqual(os.listdir(self.cachedir), [])
+
+        def _setup_foonux_config(self):
+            '''Set up directories and configuration for install_packages()'''
+
+            self.cachedir = os.path.join(self.workdir, 'cache')
+            self.rootdir = os.path.join(self.workdir, 'root')
+            self.configdir = os.path.join(self.workdir, 'config')
+            os.mkdir(self.cachedir)
+            os.mkdir(self.rootdir)
+            os.mkdir(self.configdir)
+            os.mkdir(os.path.join(self.configdir, 'Foonux 1.2'))
+            with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
+                f.write('deb http://archive.ubuntu.com/ubuntu/ lucid main\n')
+                f.write('deb http://ddebs.ubuntu.com/ lucid main\n')
 
     # only execute if dpkg is available
     try:
