@@ -486,7 +486,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def get_unretraced(self):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
-        bugs = self.lp_distro.searchTasks(tags=self.arch_tag)
+        try:
+            bugs = self.lp_distro.searchTasks(tags=self.arch_tag)
+        except Exception, e:
+            if hasattr(e, 'content'):
+                msg = e.content
+            else:
+                msg = str(e)
+            apport.error('connecting to Launchpad failed: %s', msg)
+            sys.exit(99) # transient error
         return id_set(bugs)
 
     def get_dup_unchecked(self):
@@ -497,7 +505,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
         
-        bugs = self.lp_distro.searchTasks(tags='need-duplicate-check')
+        try:
+            bugs = self.lp_distro.searchTasks(tags='need-duplicate-check')
+        except Exception, e:
+            if hasattr(e, 'content'):
+                msg = e.content
+            else:
+                msg = str(e)
+            apport.error('connecting to Launchpad failed: %s', msg)
+            sys.exit(99) # transient error
         return id_set(bugs)
 
     def get_unfixed(self):

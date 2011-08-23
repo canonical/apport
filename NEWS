@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - apport-gtk: Fix crash in GLib.markup_escape_text() call, regression from
    1.21.3. (LP: #828010)
+ - launchpad.py: When searchTasks() times out, exit with 99 as this is a
+   transient error.
 
 1.21.3 (2011-08-17)
 -------------------
