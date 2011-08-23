@@ -329,9 +329,6 @@ if options.sandbox:
     pkgs = needed_runtime_packages(report, sandbox, options.cache,
             options.verbose)
     if pkgs:
-        if options.verbose:
-            print 'Additionally installing dynamic runtime dependencies:'
-            print pkgs
         outdated_msg += apport.packaging.install_packages(sandbox, options.sandbox,
             report['DistroRelease'], pkgs, options.verbose, options.cache)
 
