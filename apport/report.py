@@ -460,7 +460,7 @@ class Report(problem_report.ProblemReport):
                 os.unlink(core)
         return ret
 
-    def add_gdb_info(self, debugdir=None):
+    def add_gdb_info(self, rootdir=None):
         '''Add information from gdb.
 
         This requires that the report has a CoreDump and an
@@ -473,8 +473,10 @@ class Report(problem_report.ProblemReport):
           inclusion into bug reports and easier processing
         - AssertionMessage: Value of __abort_msg, if present
 
-        The optional debugdir can specify an alternative debug symbol root
-        directory.
+        The optional rootdir can specify a root directory which has the
+        executable, libraries, and debug symbols. This does not require
+        chroot() or root privileges, it just instructs gdb to search for the
+        files there.
         '''
         if not self.has_key('CoreDump') or not self.has_key('ExecutablePath'):
             return
@@ -503,10 +505,12 @@ class Report(problem_report.ProblemReport):
                           }
 
             command = ['gdb', '--batch']
-            if debugdir:
-                command += ['--ex', 'set debug-file-directory ' + debugdir]
-            command += ['--ex', 'file ' + self.get('InterpreterPath',
-                self['ExecutablePath']), '--ex', 'core-file ' + core]
+            executable = self.get('InterpreterPath', self['ExecutablePath'])
+            if rootdir:
+                command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % rootdir,
+                            '--ex', 'set solib-absolute-prefix ' + rootdir]
+                executable = rootdir + '/' + executable
+            command += ['--ex', 'file ' + executable, '--ex', 'core-file ' + core]
             # limit maximum backtrace depth (to avoid looped stacks)
             command += ['--ex', 'set backtrace limit 2000']
             value_keys = []
@@ -515,7 +519,7 @@ class Report(problem_report.ProblemReport):
                 value_keys.append(name)
                 command += ['--ex', 'p -99', '--ex', cmd]
 
-            assert os.path.exists(self.get('InterpreterPath', self['ExecutablePath']))
+            assert os.path.exists(executable)
 
             # call gdb
             try:
