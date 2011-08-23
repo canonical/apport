@@ -19,8 +19,8 @@ from apport.crashdb import get_crashdb
 #
 
 class CrashDigger:
-    def __init__(self, config_dir, auth_file, cache_dir, verbose=False,
-        dup_db=None, dupcheck_mode=False):
+    def __init__(self, config_dir, auth_file, cache_dir, apport_retrace,
+            verbose=False, dup_db=None, dupcheck_mode=False):
         '''Initialize pools.'''
 
         self.retrace_pool = set()
@@ -32,17 +32,13 @@ class CrashDigger:
         self.dup_db = dup_db
         self.dupcheck_mode = dupcheck_mode
         self.crashdb = get_crashdb(auth_file)
+        self.apport_retrace = apport_retrace
         if config_dir:
             self.releases = os.listdir(config_dir)
+            self.releases.sort()
             self.log('Available releases: %s' % str(self.releases))
         else:
             self.releases = None
-
-        # support running from tree, then fall back to $PATH
-        self.apport_retrace = os.path.join(os.path.dirname(sys.argv[0]),
-                'apport-retrace')
-        if not os.access(self.apport_retrace, os.X_OK):
-            self.apport_retrace = 'apport-retrace'
 
         if self.dup_db:
             self.crashdb.init_duplicate_db(self.dup_db)
@@ -173,6 +169,8 @@ def parse_options():
     optparser.add_option('-v', '--verbose',
         help='Verbose operation (also passed to apport-retrace)',
         action='store_true', dest='verbose', default=False)
+    optparser.add_option('--apport-retrace', metavar='PATH',
+        help='Path to apport-retrace script (default: directory of crash-digger or $PATH)')
 
     (opts, args) = optparser.parse_args()
 
@@ -189,6 +187,14 @@ def parse_options():
 
 opts, args = parse_options()
 
+
+# support running from tree, then fall back to $PATH
+if not opts.apport_retrace:
+    opts.apport_retrace = os.path.join(os.path.dirname(sys.argv[0]),
+            'apport-retrace')
+    if not os.access(opts.apport_retrace, os.X_OK):
+        opts.apport_retrace = 'apport-retrace'
+
 if opts.lockfile:
     try:
         f = os.open(opts.lockfile, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o666)
@@ -200,7 +206,8 @@ if opts.lockfile:
             raise
 
 try:
-    CrashDigger(opts.config_dir, opts.auth_file, opts.cache, opts.verbose, opts.dup_db,
+    CrashDigger(opts.config_dir, opts.auth_file, opts.cache,
+            opts.apport_retrace, opts.verbose, opts.dup_db,
         opts.dupcheck_mode).run()
 except SystemExit as exit:
     if exit.code == 99:
