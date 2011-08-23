@@ -328,21 +328,23 @@ if options.sandbox:
 
     pkgs = needed_runtime_packages(report, sandbox, options.cache,
             options.verbose)
+
+    # package hooks might reassign Package:, check that we have the originally crashing binary
+    for path in ('InterpreterPath', 'ExecutablePath'):
+        if path in report and not os.path.exists(sandbox + report[path]):
+            pkg = apport.packaging.get_file_package(report[path], True, options.cache)
+            if pkg:
+                print('Installing extra package %s to get %s' % (pkg, path))
+                pkgs.append((pkg, None))
+            else:
+                err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
+                obsolete += err + '\n'
+                apport.warning(err)
+
     if pkgs:
         outdated_msg += apport.packaging.install_packages(sandbox, options.sandbox,
             report['DistroRelease'], pkgs, options.verbose, options.cache)
 
-    # package hooks might reassign Package:, check that we have the originally crashing binary
-    #for path in ('InterpreterPath', 'ExecutablePath'):
-    #    if path in report and not os.path.exists(report[path]):
-    #        pkg = self.get_file_package(report[path], True)
-    #        if pkg:
-    #            print('Installing extra package %s to get %s' % (pkg, path))
-    #            c[pkg].mark_install(False)
-    #        else:
-    #            err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
-    #            obsolete += err + '\n'
-    #            apport.warning(err)
 
 # interactive gdb session
 try:
