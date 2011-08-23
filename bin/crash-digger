@@ -39,7 +39,6 @@ class CrashDigger:
         self.apport_retrace = os.path.join(os.path.dirname(sys.argv[0]),
                 'apport-retrace')
         if not os.access(self.apport_retrace, os.X_OK):
-            self.log('%s not found, expecting apport-retrace in $PATH', self.apport_retrace)
             self.apport_retrace = 'apport-retrace'
 
         if self.dup_db:
@@ -51,9 +50,8 @@ class CrashDigger:
         '''If verbosity is enabled, log the given string to stdout, and prepend
         the current date and time.'''
 
-        if self.verbose:
-            sys.stdout.write('%s: %s\n' % (time.strftime('%x %X'), str))
-            sys.stdout.flush()
+        sys.stdout.write('%s: %s\n' % (time.strftime('%x %X'), str))
+        sys.stdout.flush()
 
     def fill_pool(self):
         '''Query crash db for new IDs to process.
