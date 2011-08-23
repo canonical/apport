@@ -635,53 +635,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
 
-    @classmethod
-    def fetch_unpack(klass, cache, fetchProgress, no_dpkg=False, verbosity=0):
-        '''Fetch and unpack packages.
-        
-        The packages need to be marked for installation in the given
-        apt.Cache() object.
-        
-        fetchProgress must be a valid apt.progress.FetchProgress object.
-        '''
-        # fetch
-        fetcher = apt.apt_pkg.GetAcquire(fetchProgress)
-        pm = apt.apt_pkg.GetPackageManager(cache._depcache)
-        try:
-            res = cache._fetchArchives(fetcher, pm)
-        except IOError as e:
-            apport.error('could not fetch all archives: %s', str(e))
-
-        # extract
-        if verbosity:
-            so = sys.stderr
-        else:
-            so = subprocess.PIPE
-        if no_dpkg:
-            for i in fetcher.Items:
-                if verbosity:
-                    print('Extracting ' + i.DestFile)
-                if subprocess.call(['dpkg', '-x', i.DestFile, '/'], stdout=so,
-                    stderr=subprocess.STDOUT) != 0:
-                    apport.warning('%s failed to extract', i.DestFile)
-        else:
-            res = subprocess.call(['dpkg', '--force-depends', '--force-overwrite', '--unpack'] + 
-                [klass.deb_without_preinst(i.DestFile) for i in fetcher.Items], stdout=so)
-            if res != 0:
-                raise IOError('dpkg failed to unpack archives')
-
-        # remove other maintainer scripts
-        for c in cache.getChanges():
-            for script in ('postinst', 'prerm', 'postrm'):
-                try:
-                    os.unlink('/var/lib/dpkg/info/%s:%s.%s' % (c.name, klass.get_system_architecture(), script))
-                except OSError:
-                    pass
-                try:
-                    os.unlink('/var/lib/dpkg/info/%s.%s' % (c.name, script))
-                except OSError:
-                    pass
-
 impl = __AptDpkgPackageInfo()
 
 #
