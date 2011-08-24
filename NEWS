@@ -1,8 +1,22 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.21.4 (UNRELEASED)
--------------------
+1.22 (UNRELEASED)
+-----------------
+Improvements:
+ - Completely rework apport-retrace to use gdb's "debug-file-directory" and
+   "solib-absolute-prefix" settings and only unpack the necessary packages in a
+   temporary directory. This makes it possible to use it in a running system
+   without actually touching installed packages, does not need any root
+   privileges, and stops the requirement of using chroots with fakechroot and
+   fakeroot. This is a lot easier to maintain and use, and a lot faster, too.
+   As a consequence, drop the chroot module, and update crash-digger
+   accordingly. See "man apport-retrace" for the new usage.
+   It is now also easier to port to other packaging backends, as a lot of the
+   common logic moved out of the packaging API;
+   packaging.install_retracing_packages() got dropped in favor of the simpler
+   packaging.install_packages().
+
 Bug fixes:
  - apport-gtk: Fix crash in GLib.markup_escape_text() call, regression from
    1.21.3. (LP: #828010)

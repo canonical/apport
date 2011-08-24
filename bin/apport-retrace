@@ -3,7 +3,7 @@
 # Use the coredump in a crash report to regenerate the stack traces. This is
 # helpful to get a trace with debug symbols.
 #
-# Copyright (c) 2006 - 2009 Canonical Ltd.
+# Copyright (c) 2006 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -50,17 +50,16 @@ def parse_options():
     optparser.add_option('-R', '--rebuild-package-info', 
         help=_('Rebuild report\'s Package information'),
         action='count', dest='rebuild', default=0)
+    optparser.add_option('-S', '--sandbox', metavar='CONFIG_DIR',
+        help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory.'),
+        default=None)
     optparser.add_option('-v', '--verbose', 
-        help=_('Report download/install progress when installing additional packages'),
-        action='count', dest='verbose', default=0)
-    optparser.add_option('-u', '--unpack-only', 
-        help=_('Only unpack the additionally required packages, do not configure them; purge packages again after retracing'),
-        action='store_true', dest='unpack_only', default=False)
-    optparser.add_option('--no-pkg', 
-        help=_('Do not use packaging system when using -u and do not purge packages afterwards. This should only be used for temporarily unpacked chroot tarballs where it would just be a waste of time.'),
-        action='store_true', dest='no_pkg', default=False)
+        help=_('Report download/install progress when installing packages into sandbox'),
+        action='store_true', dest='verbose', default=False)
+    optparser.add_option('-C', '--cache', metavar='DIR',
+        help=_('Cache directory for packages downloaded in the sandbox'))
     optparser.add_option('-p', '--extra-package', 
-        help=_('Install an extra package (can be specified multiple times)'),
+        help=_('Install an extra package into the sandbox (can be specified multiple times)'),
         action='append', type='string', dest='extra_packages', default=[])
     optparser.add_option('--auth',
         help=_('Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)'),
@@ -186,6 +185,66 @@ def gen_source_stacktrace(report):
         shutil.rmtree(workdir)
         pass
 
+def needed_packages(report):
+    '''Determine necessary packages for given report.
+
+    Return list of (pkgname, version) pairs. version might be None for unknown
+    package versions.
+    '''
+    pkgs = {}
+
+    # first, grab the versions that we captured at crash time
+    for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
+        if not l.strip():
+            continue
+        try:
+            (pkg, version) = l.split()[:2]
+        except ValueError:
+            apport.warning('invalid Package/Dependencies line: %s', l)
+            # invalid line, ignore
+            continue
+        pkgs[pkg] = version
+
+    return [(p, v) for (p, v) in pkgs.items()]
+    
+def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
+    '''Determine necessary runtime packages for given report.
+
+    This determines libraries which were dynamically loaded at runtime, i. e.
+    appear in /proc/pid/maps, but not in Dependencies: (such as plugins).
+
+    Return list of (pkgname, None) pairs.
+
+    When cache_dir is specified, it is used as a cache for get_file_package().
+    '''
+    # check list of libraries that the crashed process referenced at
+    # runtime and warn about those which are not available
+    pkgs = set()
+    libs = set()
+    if report.has_key('ProcMaps'):
+        for l in report['ProcMaps'].splitlines():
+            if not l.strip():
+                continue
+            cols = l.split()
+            if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
+                lib = os.path.realpath(cols[5])
+                libs.add(lib)
+
+    # grab as much as we can
+    for l in libs:
+        if os.path.exists(sandbox + l):
+            continue
+
+        pkg = apport.packaging.get_file_package(l, True, cache_dir)
+        if pkg:
+            if verbose:
+                print >> sys.stderr, 'dynamically loaded %s needs package %s, queueing' % (l, pkg)
+            pkgs.add(pkg)
+        else:
+                apport.warning('%s is needed, but cannot be mapped to a package', l)
+
+    return [(p, None) for p in pkgs]
+
 #
 # main
 #
@@ -244,35 +303,74 @@ if options.rebuild and 'ExecutablePath' in report:
     report.add_package_info()
 
 # sanity checks
-required_fields = set(['CoreDump', 'ExecutablePath', 'Package'])
+required_fields = set(['CoreDump', 'ExecutablePath', 'Package', 'DistroRelease'])
 if report['ProblemType'] == 'KernelCrash':
     if not set(['Package','VmCore']).issubset(set(report.keys())):
         apport.error('report file does not contain the required fields')
         sys.exit(0)
+    apport.error('KernelCrash processing not implemented yet')
+    sys.exit(99) # signal crash digger about transient error
 elif not required_fields.issubset(set(report.keys())):
     apport.error('report file does not contain one of the required fields: ' + \
 	' '.join(required_fields))
     sys.exit(0)
 
-(installed, outdated_msg) = apport.packaging.install_retracing_packages(report,
-    options.verbose, options.unpack_only, options.no_pkg,
-    options.extra_packages)
+sandbox = None
+outdated_msg = None
+if options.sandbox:
+    sandbox = tempfile.mkdtemp()
+
+    pkgs = needed_packages(report)
+    for p in options.extra_packages:
+        pkgs.append((p, None))
+    outdated_msg = apport.packaging.install_packages(sandbox, options.sandbox,
+        report['DistroRelease'], pkgs, options.verbose, options.cache)
+
+    pkgs = needed_runtime_packages(report, sandbox, options.cache,
+            options.verbose)
+
+    # package hooks might reassign Package:, check that we have the originally crashing binary
+    for path in ('InterpreterPath', 'ExecutablePath'):
+        if path in report and not os.path.exists(sandbox + report[path]):
+            pkg = apport.packaging.get_file_package(report[path], True, options.cache)
+            if pkg:
+                print('Installing extra package %s to get %s' % (pkg, path))
+                pkgs.append((pkg, None))
+            else:
+                err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
+                obsolete += err + '\n'
+                apport.warning(err)
+
+    if pkgs:
+        outdated_msg += apport.packaging.install_packages(sandbox, options.sandbox,
+            report['DistroRelease'], pkgs, options.verbose, options.cache)
+
 
 # interactive gdb session
-if options.gdb:
-    core = tempfile.NamedTemporaryFile()
-    core.write(report['CoreDump'])
-    core.flush()
-    subprocess.call(['gdb',
-        '--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath']),
-        '--ex', 'core-file ' + core.name])
-    core.close()
-else:
-    if os.path.exists(report.get('InterpreterPath', report.get('ExecutablePath', ''))):
+try:
+    if options.gdb:
+        core = tempfile.NamedTemporaryFile()
+        core.write(report['CoreDump'])
+        core.flush()
+
+        argv = ['gdb']
+        if options.sandbox:
+            argv += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
+                     '--ex', 'set solib-absolute-prefix ' + sandbox]
+
+        argv += ['--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath']),
+            '--ex', 'core-file ' + core.name]
+
+        subprocess.call(argv)
+        core.close()
+    else:
         # regenerate gdb info
-        report.add_gdb_info()
-        gen_source_stacktrace(report)
-    report.add_kernel_crash_info()
+        report.add_gdb_info(sandbox)
+        #gen_source_stacktrace(report) # TODO: disabled until this gets adapted to the chroot-less sandbox
+        report.add_kernel_crash_info()
+finally:
+    if sandbox:
+        shutil.rmtree(sandbox)
 
 modified = False
 
@@ -353,6 +451,3 @@ Thank you for your understanding, and sorry for the inconvenience!
             out = open(options.output, 'w')
 
         report.write(out)
-
-if options.unpack_only and installed and not options.no_pkg:
-    apport.packaging.remove_packages(installed, options.verbose)

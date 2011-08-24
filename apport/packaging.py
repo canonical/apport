@@ -151,29 +151,30 @@ class PackageInfo:
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
-    def install_retracing_packages(self, report, verbosity=0,
-            unpack_only=False, no_pkg=False, extra_packages=[]):
-        '''Install packages which are required to retrace a report.
+    def install_packages(self, rootdir, configdir, release, packages,
+            verbose=False, cache_dir=None):
+        '''Install packages into a sandbox (for apport-retrace).
+
+        In order to work without any special permissions and without touching
+        the running system, this should only download and unpack packages into
+        the given root directory, not install them into the system.
+
+        configdir points to a directory with by-release configuration files for
+        the packaging system; this is completely dependent on the backend
+        implementation, the only assumption is that this looks into
+        configdir/release/, so that you can use retracing for multiple
+        DistroReleases.
+
+        release is the value of the report's 'DistroRelease' field.
+
+        packages is a list of ('packagename', 'version') tuples. If the version
+        is None, it should install the most current available version.
         
-        If package installation fails (e. g. because the user does not have root
-        privileges), the list of required packages is printed out instead.
+        If cache_dir is given, then the downloaded packages will be stored
+        there, to speed up subsequent retraces.
 
-        If unpack_only is True, packages are only temporarily unpacked and
-        purged again after retrace, instead of permanently and fully installed.
-        If no_pkg is True, the package manager is not used at all, but the
-        binary packages are just unpacked with low-level tools; this speeds up
-        operations in fakechroots, but makes it impossible to cleanly remove
-        the package, so only use that in apport-chroot.
-        
-        Return a tuple (list of installed packages, string with outdated packages).
-        '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
-
-    def remove_packages(self, packages, verbosity=0):
-        '''Remove packages.
-
-        This is called after install_retracing_packages() to clean up again
-        afterwards. packages is a list of package names.
+        Return a string with outdated packages, or None if all packages were
+        installed.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
