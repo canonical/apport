@@ -438,9 +438,14 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # mark packages for installation
         for (pkg, ver) in packages:
-            candidate = c[pkg].candidate
+            try:
+                candidate = c[pkg].candidate
+            except KeyError:
+                candidate = None
             if not candidate:
-                apport.warning('package %s does not exist, ignoring', pkg)
+                m = 'package %s does not exist, ignoring' % pkg
+                obsolete += m + '\n'
+                apport.warning(m)
                 continue
 
             if ver and candidate.version != ver:
@@ -926,6 +931,28 @@ bo/gu/s                                                 na/mypackage
             self.assertTrue('tzdata' in cache_names)
             self.assertTrue('libc6' in cache_names)
             self.assertTrue('libc6-dbg' in cache_names)
+
+            # does not crash with existing cache
+            impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                    [('coreutils', '7.4-2ubuntu2'),
+                    ], False, self.cachedir)
+
+            # complains about obsolete packages
+            result = impl.install_packages(self.rootdir, self.configdir,
+                    'Foonux 1.2', [('gnome-common', '1.1')])
+            self.assertEqual(len(result.splitlines()), 1)
+            self.assertTrue('gnome-common' in result)
+            self.assertTrue('1.1' in result)
+            # ... but installs the current version anyway
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/bin/gnome-autogen.sh')))
+
+            # does not crash on nonexisting packages
+            result = impl.install_packages(self.rootdir, self.configdir,
+                    'Foonux 1.2', [('buggerbogger', None)])
+            self.assertEqual(len(result.splitlines()), 1)
+            self.assertTrue('buggerbogger' in result)
+            self.assertTrue('not exist' in result)
 
         def test_install_packages_unversioned(self):
             '''install_packages() without versions and no cache'''
