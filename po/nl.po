@@ -9,10 +9,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-22 23:59+0100\n"
+"POT-Creation-Date: 2011-08-24 14:53+0200\n"
 "PO-Revision-Date: 2009-12-19 17:49+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Nederlands <nl_NL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,12 +21,12 @@ msgstr ""
 "X-Generator: Launchpad (build Unknown)\n"
 
 #. TRANS: %s is the name of the operating system
-#: ../apport/ui.py:74
+#: ../apport/ui.py:94
 #, python-format
 msgid "This is not a genuine %s package"
 msgstr "Dit is geen authentiek %s-pakket."
 
-#: ../apport/ui.py:96
+#: ../apport/ui.py:113
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -39,29 +40,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:102
-msgid ""
-"The program crashed on an assertion failure, but the message could not be "
-"retrieved. Apport does not support reporting these crashes."
-msgstr ""
-"Het programma is vastgelopen door een assertion-fout, maar het bericht kon "
-"niet achterhaald worden. Apport ken dergelijke vastlopers niet verwerken."
-
-#: ../apport/ui.py:189
+#: ../apport/ui.py:211
 msgid "unknown program"
 msgstr "onbekend programma"
 
-#: ../apport/ui.py:190
+#: ../apport/ui.py:212 ../gtk/apport-gtk.py:78
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Excuses, het programma \"%s\" werd onverwachts afgesloten"
 
-#: ../apport/ui.py:191 ../apport/ui.py:258 ../apport/ui.py:364
+#: ../apport/ui.py:213 ../apport/ui.py:1056
 #, python-format
 msgid "Problem in %s"
 msgstr "Probleem in %s"
 
-#: ../apport/ui.py:192
+#: ../apport/ui.py:214
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -70,68 +63,58 @@ msgstr ""
 "te analyseren en een rapport naar de ontwikkelaars te sturen."
 
 #. package does not exist
-#: ../apport/ui.py:219 ../apport/ui.py:245 ../apport/ui.py:251
-#: ../apport/ui.py:283 ../apport/ui.py:291 ../apport/ui.py:356
-#: ../apport/ui.py:534 ../apport/ui.py:737 ../apport/ui.py:901
-#: ../apport/ui.py:905 ../apport/ui.py:924 ../apport/ui.py:930
-#: ../apport/ui.py:1477 ../apport/ui.py:1494 ../apport/ui.py:1981
-#: ../apport/ui.py:1997 ../apport/ui.py:2008 ../apport/ui.py:2019
+#: ../apport/ui.py:241 ../apport/ui.py:267 ../apport/ui.py:273
+#: ../apport/ui.py:300 ../apport/ui.py:308 ../apport/ui.py:379
+#: ../apport/ui.py:382 ../apport/ui.py:578 ../apport/ui.py:846
+#: ../apport/ui.py:1013 ../apport/ui.py:1017 ../apport/ui.py:1036
+#: ../apport/ui.py:1042 ../apport/ui.py:1618 ../apport/ui.py:1635
+#: ../apport/ui.py:2222 ../apport/ui.py:2238 ../apport/ui.py:2249
+#: ../apport/ui.py:2260
 msgid "Invalid problem report"
 msgstr "Ongeldig probleemrapport"
 
-#: ../apport/ui.py:220 ../apport/ui.py:252
+#: ../apport/ui.py:242 ../apport/ui.py:274
 msgid "The report belongs to a package that is not installed."
 msgstr "Het rapport behoort bij een pakket dat niet is geïnstalleerd."
 
-#: ../apport/ui.py:247 ../apport/ui.py:907
+#: ../apport/ui.py:269 ../apport/ui.py:1019
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Dit probleemrapport is beschadigd en kan niet worden verwerkt."
 
-#: ../apport/ui.py:259 ../apport/ui.py:365
-#, python-format
-msgid ""
-"The problem cannot be reported:\n"
-"\n"
-"%s"
-msgstr ""
-"Het probleem kan niet worden gerapporteerd:\n"
-"\n"
-"%s"
-
-#: ../apport/ui.py:284
+#: ../apport/ui.py:301
 msgid "You are not allowed to access this problem report."
 msgstr "U bent niet bevoegd om dit probleemrapport te bekijken."
 
-#: ../apport/ui.py:287
+#: ../apport/ui.py:304
 msgid "Error"
 msgstr "Fout"
 
-#: ../apport/ui.py:288
+#: ../apport/ui.py:305
 msgid "There is not enough disk space available to process this report."
 msgstr "Er is onvoldoende schijfruimte om dit rapport te verwerken"
 
-#: ../apport/ui.py:316
+#: ../apport/ui.py:332
 msgid "No package specified"
 msgstr "Geen pakket opgegeven"
 
-#: ../apport/ui.py:317
+#: ../apport/ui.py:333
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr "U moet een pakket of PID opgeven. Zie --help voor meer informatie."
 
-#: ../apport/ui.py:327
+#: ../apport/ui.py:349
 msgid "Invalid PID"
 msgstr "Ongeldig PID"
 
-#: ../apport/ui.py:328
+#: ../apport/ui.py:350
 msgid "The specified process ID does not belong to a program."
 msgstr "Het opgegeven proces-PID behoort niet tot een programma."
 
-#: ../apport/ui.py:336
+#: ../apport/ui.py:358
 msgid "Permission denied"
 msgstr "Toegang geweigerd"
 
-#: ../apport/ui.py:337
+#: ../apport/ui.py:359
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -139,16 +122,26 @@ msgstr ""
 "U bent niet de eigenaar van het opgegeven proces. Voer dit programma uit als "
 "proceseigenaar of als root."
 
-#: ../apport/ui.py:357
+#: ../apport/ui.py:380
+#, python-format
+msgid "Symptom script %s did not determine an affected package"
+msgstr ""
+
+#: ../apport/ui.py:383
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Pakket %s bestaat niet"
 
-#: ../apport/ui.py:389 ../apport/ui.py:435 ../apport/ui.py:451
+#: ../apport/ui.py:408 ../apport/ui.py:590 ../apport/ui.py:595
+#, fuzzy
+msgid "Cannot create report"
+msgstr "Inhoud van het verslag"
+
+#: ../apport/ui.py:422 ../apport/ui.py:468 ../apport/ui.py:485
 msgid "Updating problem report"
 msgstr ""
 
-#: ../apport/ui.py:390
+#: ../apport/ui.py:423
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -156,7 +149,7 @@ msgid ""
 "Please create a new report using \"apport-bug\"."
 msgstr ""
 
-#: ../apport/ui.py:399
+#: ../apport/ui.py:432
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -168,29 +161,52 @@ msgid ""
 "Do you really want to proceed?"
 msgstr ""
 
-#: ../apport/ui.py:436 ../apport/ui.py:452
+#: ../apport/ui.py:469 ../apport/ui.py:486
 msgid "No additional information collected."
 msgstr ""
 
-#: ../apport/ui.py:491
+#: ../apport/ui.py:535
 msgid "What kind of problem do you want to report?"
 msgstr "Wat voor soort probleem wilt u rapporteren?"
 
-#: ../apport/ui.py:508
+#: ../apport/ui.py:552
 msgid "Unknown symptom"
 msgstr "Onbekend symptoom"
 
-#: ../apport/ui.py:509
+#: ../apport/ui.py:553
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Het symptoom \"%s\" is onbekend."
 
-#: ../apport/ui.py:551
+#: ../apport/ui.py:581
+msgid ""
+"After closing this message please click on an application window to report a "
+"problem about it."
+msgstr ""
+
+#: ../apport/ui.py:591 ../apport/ui.py:596
+msgid "xprop failed to determine process ID of the window"
+msgstr ""
+
+#: ../apport/ui.py:610
+msgid "%prog <report number>"
+msgstr ""
+
+#: ../apport/ui.py:612
+msgid "Specify package name."
+msgstr ""
+
+#: ../apport/ui.py:614 ../apport/ui.py:663
+#, fuzzy
+msgid "Add an extra tag to the report. Can be specified multiple times."
+msgstr "Een extra pakket installeren (kan meerdere keren opgegeven worden)"
+
+#: ../apport/ui.py:644
 msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [opties] [symptomen|pid|pakket|programmapad|.apport/.crash-bestand]"
 
-#: ../apport/ui.py:553
+#: ../apport/ui.py:647
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -201,11 +217,15 @@ msgstr ""
 "met bekende symptomen getoond worden. (Impliciet als een enkel argument is "
 "opgegeven.)"
 
-#: ../apport/ui.py:556
+#: ../apport/ui.py:649
+msgid "Click a window as a target for filing a problem report."
+msgstr ""
+
+#: ../apport/ui.py:651
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 
-#: ../apport/ui.py:559
+#: ../apport/ui.py:653
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -213,7 +233,7 @@ msgstr ""
 "Een foutrapport over een symptoom indienen. (Impliciet als symptoomnaam het "
 "enige argument zijn.)"
 
-#: ../apport/ui.py:562
+#: ../apport/ui.py:655
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -221,17 +241,18 @@ msgstr ""
 "Pakketnaam in --file-bug-modus opgeven. Dit is optioneel als een --pid is "
 "opgegeven. (Impliciet als pakketnaam het enige argument is.)"
 
-#: ../apport/ui.py:565
+#: ../apport/ui.py:657
+#, fuzzy
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
-"report will contain more information. (Implied if pid is given as only "
+"report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
 "Een draaiend programma in --file-bug-modus opgeven. Als dit is opgegeven, "
 "zal het foutrapport meer informatie bevatten. (Impliciet als pid het enige "
 "argument is.)"
 
-#: ../apport/ui.py:568
+#: ../apport/ui.py:659
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -240,59 +261,77 @@ msgstr ""
 "De vastloper van een gegeven .apport- of .crash-bestand rapporten in plaats "
 "van de wachtende rapporten in %s. (Impliciet als file het enige argument is.)"
 
-#: ../apport/ui.py:571
+#: ../apport/ui.py:661
+msgid ""
+"In bug filing mode, save the collected information into a file instead of "
+"reporting it. This file can then be reported later on from a different "
+"machine."
+msgstr ""
+
+#: ../apport/ui.py:665
 msgid "Print the Apport version number."
 msgstr "Het versienummer van Apport weergeven."
 
-#: ../apport/ui.py:738
+#: ../apport/ui.py:847
 msgid "Could not determine the package or source package name."
 msgstr "Kon de naam van het pakket of het bronpakket niet bepalen."
 
-#: ../apport/ui.py:753
+#: ../apport/ui.py:862
 msgid "Unable to start web browser"
 msgstr "Kon de webbrowser niet starten"
 
-#: ../apport/ui.py:754
+#: ../apport/ui.py:863
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Kon de webbrowser niet starten om %s te openen."
 
-#: ../apport/ui.py:860
+#: ../apport/ui.py:969
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr "Voer uw accountinformatie in voor het foutbeheersysteem %s"
 
-#: ../apport/ui.py:871
+#: ../apport/ui.py:980
 msgid "Network problem"
 msgstr "Netwerkprobleem"
 
-#: ../apport/ui.py:872
+#: ../apport/ui.py:982
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Verbinding met crash-database mislukt, controleer uw internetverbinding."
 
-#: ../apport/ui.py:896
+#: ../apport/ui.py:1008
 msgid "Memory exhaustion"
 msgstr "Geheugen vol"
 
-#: ../apport/ui.py:897
+#: ../apport/ui.py:1009
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Uw systeem heeft onvoldoende geheugen om dit foutenrapport te verwerken."
 
-#: ../apport/ui.py:920 ../apport/ui.py:929
+#: ../apport/ui.py:1032 ../apport/ui.py:1041
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "Dit probleemrapport verwijst naar een programma dat niet meer geinstalleerd "
 "is."
 
-#: ../apport/ui.py:961
+#: ../apport/ui.py:1057
+#, python-format
+msgid ""
+"The problem cannot be reported:\n"
+"\n"
+"%s"
+msgstr ""
+"Het probleem kan niet worden gerapporteerd:\n"
+"\n"
+"%s"
+
+#: ../apport/ui.py:1087
 msgid "Problem already known"
 msgstr "Probleem reeds bekend"
 
-#: ../apport/ui.py:962
+#: ../apport/ui.py:1088
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -332,6 +371,7 @@ msgstr ""
 "het probleem te melden."
 
 #: ../bin/apport-cli.py:146 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
+#: ../kde/apport-kde.py:199 ../kde/apport-kde.py:229 ../kde/apport-kde.py:250
 msgid "&Report Problem..."
 msgstr "P&robleem melden..."
 
@@ -340,8 +380,8 @@ msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Annuleren en toekomstige vastlopers van deze programmavers&ie negeren"
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-#: ../bin/apport-cli.py:233 ../bin/apport-cli.py:314 ../bin/apport-cli.py:346
-#: ../bin/apport-cli.py:367
+#: ../bin/apport-cli.py:243 ../bin/apport-cli.py:324 ../bin/apport-cli.py:356
+#: ../bin/apport-cli.py:377
 msgid "&Cancel"
 msgstr "&Annuleren"
 
@@ -350,32 +390,41 @@ msgstr "&Annuleren"
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr "Het pakket \"%s\" kon niet worden geïnstalleerd of opgewaardeerd"
 
-#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22
+#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:226
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
 "U kunt de ontwikkelaars helpen om het pakket te repareren door het probleem "
 "te rapporteren."
 
-#: ../bin/apport-cli.py:176
+#: ../bin/apport-cli.py:176 ../gtk/apport-gtk.py:126 ../kde/apport-kde.py:241
 msgid "Your system encountered a serious kernel problem."
 msgstr "Er is een ernstig kernelprobleem op uw computer opgetreden."
 
-#: ../bin/apport-cli.py:180
+#: ../bin/apport-cli.py:180 ../gtk/apport-gtk.py:130 ../kde/apport-kde.py:245
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr ""
 "U kunt de ontwikkelaars helpen met het probleem te verhelpen, door het te "
 "rapporteren."
 
-#: ../bin/apport-cli.py:195
+#: ../bin/apport-cli.py:214
+#, python-format
+msgid "(%i bytes)"
+msgstr ""
+
+#: ../bin/apport-cli.py:216 ../gtk/apport-gtk.py:160 ../kde/apport-kde.py:293
+msgid "(binary data)"
+msgstr "(binaire gegevens)"
+
+#: ../bin/apport-cli.py:223 ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:265
 msgid "Send this data to the developers?"
 msgstr ""
 
-#: ../bin/apport-cli.py:197
+#: ../bin/apport-cli.py:225 ../kde/apport-kde.py:270
 msgid "Send problem report to the developers?"
 msgstr "Probleemrapport naar de ontwikkelaars sturen?"
 
-#: ../bin/apport-cli.py:198
+#: ../bin/apport-cli.py:226
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -383,52 +432,48 @@ msgstr ""
 "Zodra het probleemrapport is verzonden, wordt u verzocht het formulier\n"
 "in de automatisch geopende webbrowser in te vullen."
 
-#: ../bin/apport-cli.py:217
-msgid "(binary data)"
-msgstr "(binaire gegevens)"
-
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:231
 #, python-format
 msgid "&Send complete report (recommended; %s)"
 msgstr "Compleet rapport ver&sturen (aanbevolen; %s)"
 
-#: ../bin/apport-cli.py:223
+#: ../bin/apport-cli.py:233
 #, python-format
 msgid "Send &reduced report (slow Internet connection; %s)"
 msgstr "Bepe&rkt rapport versturen (langzame internetverbinding; %s)"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:236
 #, python-format
 msgid "&Send report (%s)"
 msgstr "Rapport ver&sturen (%s)"
 
-#: ../bin/apport-cli.py:230
+#: ../bin/apport-cli.py:240
 msgid "&View report"
 msgstr "Rapport weerge&ven"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:241
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "Rapportbestand bewaren voor latere verzending, of om elders heen te &kopiëren"
 
-#: ../bin/apport-cli.py:263
+#: ../bin/apport-cli.py:273
 msgid "Problem report file:"
 msgstr "Probleemrapport-bestand:"
 
-#: ../bin/apport-cli.py:271 ../bin/apport-cli.py:276
+#: ../bin/apport-cli.py:281 ../bin/apport-cli.py:286
 msgid "&Confirm"
 msgstr "Be&vestigen"
 
-#: ../bin/apport-cli.py:275
+#: ../bin/apport-cli.py:285
 #, python-format
 msgid "Error: %s"
 msgstr "Fout: %s"
 
-#: ../bin/apport-cli.py:281
+#: ../bin/apport-cli.py:291 ../kde/apport-kde.py:332
 msgid "Collecting problem information"
 msgstr "Bezig met verzamelen van probleeminformatie"
 
-#: ../bin/apport-cli.py:282
+#: ../bin/apport-cli.py:292
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -436,11 +481,11 @@ msgstr ""
 "De verzamelde informatie kan naar de ontwikkelaars worden verzonden om\n"
 "de toepassing te verbeteren. Dit kan enkele minuten duren."
 
-#: ../bin/apport-cli.py:294 ../gtk/apport-gtk.ui.h:21
+#: ../bin/apport-cli.py:304 ../gtk/apport-gtk.ui.h:21 ../kde/apport-kde.py:349
 msgid "Uploading problem information"
 msgstr "Bezig met versturen van foutgegevens"
 
-#: ../bin/apport-cli.py:295
+#: ../bin/apport-cli.py:305
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -448,40 +493,40 @@ msgstr ""
 "De verzamelde informatie wordt naar het foutbeheersysteem verzonden.\n"
 "Dit kan enkele minuten duren."
 
-#: ../bin/apport-cli.py:345
+#: ../bin/apport-cli.py:355
 msgid "&Done"
 msgstr "Geree&d"
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:361
 msgid "none"
 msgstr "geen"
 
-#: ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:362
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Geselecteerd: %s. Meerdere keuzes:"
 
-#: ../bin/apport-cli.py:368
+#: ../bin/apport-cli.py:378
 msgid "Choices:"
 msgstr "Keuzes:"
 
-#: ../bin/apport-cli.py:382
+#: ../bin/apport-cli.py:392
 msgid "Path to file (Enter to cancel):"
 msgstr "Pad naar het bestand (Enter om te stoppen):"
 
-#: ../bin/apport-cli.py:387
+#: ../bin/apport-cli.py:398
 msgid "File does not exist."
 msgstr "Bestand bestaat niet."
 
-#: ../bin/apport-cli.py:389
+#: ../bin/apport-cli.py:400
 msgid "This is a directory."
 msgstr "Dit is een map."
 
-#: ../bin/apport-cli.py:395
+#: ../bin/apport-cli.py:406
 msgid "To continue, you must visit the following URL:"
 msgstr "Om verder te gaan moet u het volgende adres bezoeken:"
 
-#: ../bin/apport-cli.py:397
+#: ../bin/apport-cli.py:408
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -489,16 +534,16 @@ msgstr ""
 "U kunt nu een browser starten, of dit adres in een browser op een andere "
 "computer openen."
 
-#: ../bin/apport-cli.py:399
+#: ../bin/apport-cli.py:410
 msgid "Launch a browser now"
 msgstr "De browser nu starten"
 
-#: ../bin/apport-cli.py:406
+#: ../bin/apport-cli.py:417
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Geen crashrapporten in de wachtrij. Probeer --help voor meer informatie."
 
-#: ../data/apportcheckresume.py:58
+#: ../data/apportcheckresume.py:68
 msgid ""
 "This occured during a previous suspend and prevented it from resuming "
 "properly."
@@ -506,7 +551,7 @@ msgstr ""
 "Dit gebeurde tijdens een vorige pauzestand en zorgde ervoor dat de computer "
 "niet goed ontwaakte."
 
-#: ../data/apportcheckresume.py:60
+#: ../data/apportcheckresume.py:70
 msgid ""
 "This occured during a previous hibernate and prevented it from resuming "
 "properly."
@@ -514,7 +559,7 @@ msgstr ""
 "Dit vond plaats tijdens een vorige slaapstand en zorgde ervoor dat de "
 "computer niet goed ontwaakte."
 
-#: ../data/apportcheckresume.py:65
+#: ../data/apportcheckresume.py:75
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
@@ -555,8 +600,8 @@ msgstr ""
 msgid "Application problem"
 msgstr "Toepassingprobleem"
 
-#: ../gtk/apport-gtk.ui.h:10
-#, no-c-format
+#: ../gtk/apport-gtk.ui.h:10 ../kde/apport-kde.py:301
+#, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "Volledig verslag (aanbevolen; %s)"
 
@@ -564,7 +609,7 @@ msgstr "Volledig verslag (aanbevolen; %s)"
 msgid "Content of the report"
 msgstr "Inhoud van het verslag"
 
-#: ../gtk/apport-gtk.ui.h:12
+#: ../gtk/apport-gtk.ui.h:12 ../kde/apport-kde.py:194
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -582,7 +627,7 @@ msgstr ""
 "Er wordt informatie verzameld die ontwikkelaars kan helpen om het "
 "gerapporteerde probleem te verhelpen."
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:248
 msgid "Kernel problem"
 msgstr "Kernelprobleem"
 
@@ -590,8 +635,8 @@ msgstr "Kernelprobleem"
 msgid "Package problem"
 msgstr "Pakketprobleem"
 
-#: ../gtk/apport-gtk.ui.h:17
-#, no-c-format
+#: ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:304
+#, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Beperkt rapport (langzame internetverbinding; %s)"
 
@@ -599,7 +644,7 @@ msgstr "Beperkt rapport (langzame internetverbinding; %s)"
 msgid "Restart _Program"
 msgstr "_Programma herstarten"
 
-#: ../gtk/apport-gtk.ui.h:19
+#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:350
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -628,6 +673,16 @@ msgstr "Probleem _rapporteren..."
 #: ../gtk/apport-gtk.ui.h:25
 msgid "_Send Report"
 msgstr "Rapport ver_sturen"
+
+#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
+msgid "Report a malfunction to the developers"
+msgstr "Rapporteer een mankement aan de ontwikkelaars"
+
+#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
+msgid "Report a problem..."
+msgstr "Een probleem rapporteren..."
 
 #: ../bin/apport-retrace.py:28
 msgid "%prog [options] <apport problem report | crash ID>"
@@ -676,35 +731,31 @@ msgid "Rebuild report's Package information"
 msgstr "Pakketinformatie van rapport opnieuw aanmaken"
 
 #: ../bin/apport-retrace.py:54
-msgid "Report download/install progress when installing additional packages"
+msgid ""
+"Build a temporary sandbox and download/install the necessary packages and "
+"debug symbols in there; without this option it assumes that the necessary "
+"packages and debug symbols are already installed in the system. The argument "
+"points to the packaging system configuration base directory."
+msgstr ""
+
+#: ../bin/apport-retrace.py:57
+#, fuzzy
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Download/installatie-voorgang weergeven tijdens het installeren van extra "
 "pakketten"
 
-#: ../bin/apport-retrace.py:57
-msgid ""
-"Only unpack the additionally required packages, do not configure them; purge "
-"packages again after retracing"
-msgstr ""
-"Alleen vereiste pakketten uitpakken, ze niet configureren; pakketten "
-"volledig verwijderen na retracen"
-
 #: ../bin/apport-retrace.py:60
-msgid ""
-"Do not use packaging system when using -u and do not purge packages "
-"afterwards. This should only be used for temporarily unpacked chroot "
-"tarballs where it would just be a waste of time."
+msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
-"Pakketsysteem niet gebruiken wanneer -u wordt gebruikt en pakketten nadien "
-"niet volledig verwijderen. Dit dient alleen gebruikt te worden voor "
-"tijdelijk uitgepakte chroot-tarballs, waarbij dit simpelweg tijdverspilling "
-"zou zijn."
 
-#: ../bin/apport-retrace.py:63
-msgid "Install an extra package (can be specified multiple times)"
+#: ../bin/apport-retrace.py:62
+#, fuzzy
+msgid ""
+"Install an extra package into the sandbox (can be specified multiple times)"
 msgstr "Een extra pakket installeren (kan meerdere keren opgegeven worden)"
 
-#: ../bin/apport-retrace.py:66
+#: ../bin/apport-retrace.py:65
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -714,7 +765,7 @@ msgstr ""
 "wordt gebruikt bij het opgegeven van een crash-ID om hergetraceerde "
 "stacktraces te uploaden (alleen als -g, -o en -s niet zijn opgegeven)"
 
-#: ../bin/apport-retrace.py:69
+#: ../bin/apport-retrace.py:68
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -722,17 +773,17 @@ msgstr ""
 "Hergetraceerde stacktraces tonen en voor bevestiging vragen alvorens te "
 "verzenden naar de crash-database."
 
-#: ../bin/apport-retrace.py:72
+#: ../bin/apport-retrace.py:71
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Pad naar de dubbele sqlite-database (standaard: geen controle voor "
 "duplicaten)"
 
-#: ../bin/apport-retrace.py:78
+#: ../bin/apport-retrace.py:77
 msgid "incorrect number of arguments; use --help for a short help"
 msgstr "ongeldig aantal argumenten; gebruik --help voor een korte handleiding"
 
-#: ../bin/apport-retrace.py:82
+#: ../bin/apport-retrace.py:81
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
@@ -741,19 +792,100 @@ msgstr ""
 "authenticatiebestand (--auth) meegeven; zie --help voor een korte handleiding"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:115
+#: ../bin/apport-retrace.py:114
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Deze bijlagen verzenden? [y/n]"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
-msgid "Report a malfunction to the developers"
-msgstr "Rapporteer een mankement aan de ontwikkelaars"
+#: ../data/kernel_oops.py:28
+msgid "Your system might become unstable now and might need to be restarted."
+msgstr ""
+"Uw systeem kan nu instabiel worden en moet mogelijk opnieuw worden opgestart."
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
-msgid "Report a problem..."
-msgstr "Een probleem rapporteren..."
+#: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
+#, fuzzy, python-format
+msgid "Sorry, %s closed unexpectedly"
+msgstr "Excuses, het programma \"%s\" werd onverwachts afgesloten"
+
+#: ../kde/apport-kde.py:133
+msgid "&Details..."
+msgstr ""
+
+#: ../kde/apport-kde.py:160
+msgid "Username:"
+msgstr ""
+
+#: ../kde/apport-kde.py:161
+msgid "Password:"
+msgstr ""
+
+#: ../kde/apport-kde.py:188
+#, fuzzy, python-format
+msgid "Sorry, the program \"%s\" closed unexpectedly."
+msgstr "Excuses, het programma \"%s\" werd onverwachts afgesloten"
+
+#: ../kde/apport-kde.py:191
+#, fuzzy, python-format
+msgid "Sorry, %s closed unexpectedly."
+msgstr "Excuses, het programma \"%s\" werd onverwachts afgesloten"
+
+#: ../kde/apport-kde.py:197
+#, fuzzy
+msgid "&Ignore future crashes of this program version"
+msgstr "Toekomstige vastlopers van deze programmavers_ie negeren"
+
+#: ../kde/apport-kde.py:206
+#, fuzzy
+msgid "Restart &Program"
+msgstr "_Programma herstarten"
+
+#: ../kde/apport-kde.py:224
+#, fuzzy, python-format
+msgid "Sorry, the package \"%s\" failed to install or upgrade."
+msgstr "Het pakket \"%s\" kon niet worden geïnstalleerd of opgewaardeerd"
+
+#: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
+msgid "Generic error"
+msgstr ""
+
+#: ../kde/apport-kde.py:271
+#, fuzzy
+msgid ""
+"After the problem report has been sent, please fill out the form in the "
+"automatically opened web browser."
+msgstr ""
+"Zodra het probleemrapport is verzonden, wordt u verzocht het formulier\n"
+"in de automatisch geopende webbrowser in te vullen."
+
+#: ../kde/apport-kde.py:274
+msgid "&Send"
+msgstr ""
+
+#: ../kde/apport-kde.py:331
+#, fuzzy
+msgid "Collecting Problem Information"
+msgstr "Bezig met verzamelen van probleeminformatie"
+
+#: ../kde/apport-kde.py:333
+#, fuzzy
+msgid ""
+"The collected information can be sent to the developers to improve the "
+"application. This might take a few minutes."
+msgstr ""
+"De verzamelde informatie kan naar de ontwikkelaars worden verzonden om\n"
+"de toepassing te verbeteren. Dit kan enkele minuten duren."
+
+#: ../kde/apport-kde.py:348
+#, fuzzy
+msgid "Uploading Problem Information"
+msgstr "Bezig met versturen van foutgegevens"
+
+#: ../kde/apport-kde.py:384 ../kde/apport-kde.py:420
+msgid "Apport"
+msgstr ""
+
+#: ../kde/apport-kde-mimelnk.desktop.in.h:1
+msgid "Apport crash file"
+msgstr "Apport-crashbestand"
 
 #: ../bin/apport-unpack.py:23
 #, python-format
@@ -764,14 +896,30 @@ msgstr "Gebruik: %s <rapport> <doelmap>"
 msgid "Destination directory exists and is not empty."
 msgstr "Doelmap bestaat en is niet leeg."
 
-#: ../data/kernel_oops.py:28
-msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
-"Uw systeem kan nu instabiel worden en moet mogelijk opnieuw worden opgestart."
+#~ msgid ""
+#~ "The program crashed on an assertion failure, but the message could not be "
+#~ "retrieved. Apport does not support reporting these crashes."
+#~ msgstr ""
+#~ "Het programma is vastgelopen door een assertion-fout, maar het bericht "
+#~ "kon niet achterhaald worden. Apport ken dergelijke vastlopers niet "
+#~ "verwerken."
 
-#: ../kde/apport-kde-mimelnk.desktop.in.h:1
-msgid "Apport crash file"
-msgstr "Apport-crashbestand"
+#~ msgid ""
+#~ "Only unpack the additionally required packages, do not configure them; "
+#~ "purge packages again after retracing"
+#~ msgstr ""
+#~ "Alleen vereiste pakketten uitpakken, ze niet configureren; pakketten "
+#~ "volledig verwijderen na retracen"
+
+#~ msgid ""
+#~ "Do not use packaging system when using -u and do not purge packages "
+#~ "afterwards. This should only be used for temporarily unpacked chroot "
+#~ "tarballs where it would just be a waste of time."
+#~ msgstr ""
+#~ "Pakketsysteem niet gebruiken wanneer -u wordt gebruikt en pakketten "
+#~ "nadien niet volledig verwijderen. Dit dient alleen gebruikt te worden "
+#~ "voor tijdelijk uitgepakte chroot-tarballs, waarbij dit simpelweg "
+#~ "tijdverspilling zou zijn."
 
 #~ msgid "The running kernel is not an Ubuntu kernel"
 #~ msgstr "De huidige kernel is geen Ubuntu-kernel"
