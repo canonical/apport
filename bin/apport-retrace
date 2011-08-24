@@ -349,15 +349,19 @@ if options.sandbox:
 # interactive gdb session
 try:
     if options.gdb:
-        if options.sandbox:
-            raise NotImplementedError('--sandbox --gdb is not implemented yet')
-
         core = tempfile.NamedTemporaryFile()
         core.write(report['CoreDump'])
         core.flush()
-        subprocess.call(['gdb',
-            '--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath']),
-            '--ex', 'core-file ' + core.name])
+
+        argv = ['gdb']
+        if options.sandbox:
+            argv += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
+                     '--ex', 'set solib-absolute-prefix ' + sandbox]
+
+        argv += ['--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath']),
+            '--ex', 'core-file ' + core.name]
+
+        subprocess.call(argv)
         core.close()
     else:
         # regenerate gdb info
