@@ -609,7 +609,7 @@ free memory to automatically analyze the problem and send a report to the develo
         '''
         optparser = optparse.OptionParser(_('%prog <report number>'))
         optparser.add_option('-p', '--package',
-            help=_('Specify package name.)'))
+            help=_('Specify package name.'))
         optparser.add_option('--tag', action='append', default=[],
             help=_('Add an extra tag to the report. Can be specified multiple times.'))
         (self.options, self.args) = optparser.parse_args()
