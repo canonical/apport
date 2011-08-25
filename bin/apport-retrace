@@ -328,9 +328,7 @@ if options.sandbox:
                 print('Installing extra package %s to get %s' % (pkg, path))
                 pkgs.append((pkg, None))
             else:
-                err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
-                obsolete += err + '\n'
-                apport.warning(err)
+                apport.warning('Cannot find package which ships %s', path)
 
     if pkgs:
         outdated_msg += apport.packaging.install_packages(sandbox, sandbox_arg,
@@ -338,9 +336,8 @@ if options.sandbox:
 
     for path in ('InterpreterPath', 'ExecutablePath'):
         if path in report and not os.path.exists(sandbox + report[path]):
-            err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
-            obsolete += err + '\n'
-            apport.warning(err)
+            apport.error('%s %s does exist (report specified package %s)',
+                    path, report[path], report['Package'])
             sys.exit(0)
 
 # interactive gdb session
