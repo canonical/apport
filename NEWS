@@ -16,6 +16,7 @@ Improvements:
    common logic moved out of the packaging API;
    packaging.install_retracing_packages() got dropped in favor of the simpler
    packaging.install_packages().
+ - crash-digger: Show how many bugs are left in the pool with each new retrace.
 
 Bug fixes:
  - apport-gtk: Fix crash in GLib.markup_escape_text() call, regression from

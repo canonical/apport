@@ -74,7 +74,7 @@ class CrashDigger:
         '''Grab an ID from the retrace pool and retrace it.'''
 
         id = self.retrace_pool.pop()
-        self.log('retracing #%i' % id)
+        self.log('retracing #%i (left in pool: %i)' % (id, len(self.retrace_pool)))
 
         try:
             rel = self.crashdb.get_distro_release(id)
@@ -111,7 +111,7 @@ class CrashDigger:
         '''Grab an ID from the dupcheck pool and process it.'''
 
         id = self.dupcheck_pool.pop()
-        self.log('checking #%i for duplicate' % id)
+        self.log('checking #%i for duplicate (left in pool: %i)' % (id, len(self.dupcheck_pool)))
 
         try:
             report = self.crashdb.download(id)
