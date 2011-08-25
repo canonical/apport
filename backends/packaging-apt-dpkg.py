@@ -466,7 +466,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         # fetch packages
         fetcher = apt.apt_pkg.GetAcquire(fetchProgress)
         pm = apt.apt_pkg.GetPackageManager(c._depcache)
-        res = c._fetchArchives(fetcher, pm)
+        try:
+            res = c._fetchArchives(fetcher, pm)
+        except apt.cache.FetchFailedException as e:
+            apport.error('Package download error, try again later: %s', str(e))
+            sys.exit(99) # transient error
 
         # unpack packages
         if verbose:
