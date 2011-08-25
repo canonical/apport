@@ -350,6 +350,12 @@ if options.sandbox:
         outdated_msg += apport.packaging.install_packages(sandbox, sandbox_arg,
             report['DistroRelease'], pkgs, options.verbose, options.cache)
 
+    for path in ('InterpreterPath', 'ExecutablePath'):
+        if path in report and not os.path.exists(sandbox + report[path]):
+            err = 'current version of package %s does not contain the program %s any more' % (report['Package'], path)
+            obsolete += err + '\n'
+            apport.warning(err)
+            sys.exit(0)
 
 # interactive gdb session
 try:
