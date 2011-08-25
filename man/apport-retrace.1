@@ -99,6 +99,11 @@ package repository.
 
 Sandboxing is not implemented for other (RPM based) backends right now.
 
+If
+.I CONFIG_DIR
+is "system", it will use the system configuration files, but will then only be
+able to retrace crashes that happened on the currently running release.
+
 .TP
 .B \-v, \-\-verbose
 Report download/install progress when installing packages in sandbox mode.
@@ -161,14 +166,14 @@ Build a sandbox with all necessary packages and debug symbols, and start a gdb
 session on the report's core file:
 
 .RS 4
-apport\-retrace \-\-gdb \-\-sandbox ~/conf/ \-\-cache ~/.cache/apport\-retrace /var/crash/_usr_bin_gedit.1000.crash
+apport\-retrace \-\-gdb \-\-sandbox system \-\-cache ~/.cache/apport\-retrace /var/crash/_usr_bin_gedit.1000.crash
 .RE
 
-Download crash report bug #12345, run in sandbox mode, and reupload updated
-traces to the bug (as neither \-g or \-s is specified):
+Download crash report bug #12345, run in sandbox mode with local configuration
+files, and reupload updated traces to the bug (as neither \-g or \-s is specified):
 
 .RS 4
-apport\-retrace \-\-auth ~/.cache/apport/launchpad.credentials \-S ~/conf/ \-C ~/.cache/apport\-retrace 12345
+apport\-retrace \-\-auth ~/.cache/apport/launchpad.credentials \-S ~/retrace-conf/ \-C ~/.cache/apport\-retrace 12345
 .RE
 
 .SH AUTHOR

@@ -51,7 +51,7 @@ def parse_options():
         help=_('Rebuild report\'s Package information'),
         action='count', dest='rebuild', default=0)
     optparser.add_option('-S', '--sandbox', metavar='CONFIG_DIR',
-        help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory.'),
+        help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'),
         default=None)
     optparser.add_option('-v', '--verbose', 
         help=_('Report download/install progress when installing packages into sandbox'),
@@ -324,7 +324,11 @@ if options.sandbox:
     pkgs = needed_packages(report)
     for p in options.extra_packages:
         pkgs.append((p, None))
-    outdated_msg = apport.packaging.install_packages(sandbox, options.sandbox,
+    if options.sandbox == 'system':
+        sandbox_arg = None
+    else:
+        sandbox_arg = options.sandbox
+    outdated_msg = apport.packaging.install_packages(sandbox, sandbox_arg,
         report['DistroRelease'], pkgs, options.verbose, options.cache)
 
     pkgs = needed_runtime_packages(report, sandbox, options.cache,
@@ -343,7 +347,7 @@ if options.sandbox:
                 apport.warning(err)
 
     if pkgs:
-        outdated_msg += apport.packaging.install_packages(sandbox, options.sandbox,
+        outdated_msg += apport.packaging.install_packages(sandbox, sandbox_arg,
             report['DistroRelease'], pkgs, options.verbose, options.cache)
 
 

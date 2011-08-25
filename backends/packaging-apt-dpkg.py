@@ -395,7 +395,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         the packaging system; this is completely dependent on the backend
         implementation, the only assumption is that this looks into
         configdir/release/, so that you can use retracing for multiple
-        DistroReleases.
+        DistroReleases. As a special case, if rootdir is None, it uses the
+        current system configuration, and "release" is ignored.
 
         release is the value of the report's 'DistroRelease' field.
 
@@ -408,14 +409,20 @@ class __AptDpkgPackageInfo(PackageInfo):
         Return a string with outdated packages, or None if all packages were
         installed.
         '''
-        apt_sources = os.path.join(configdir, release, 'sources.list')
+        if not configdir:
+            apt_sources = '/etc/apt/sources.list'
+        else:
+            apt_sources = os.path.join(configdir, release, 'sources.list')
         if not os.path.exists(apt_sources):
             raise SystemError('%s does not exist' % apt_sources)
 
         # create apt sandbox
         if cache_dir:
             tmp_aptroot = False
-            aptroot = os.path.join(cache_dir, release, 'apt')
+            if configdir:
+                aptroot = os.path.join(cache_dir, release, 'apt')
+            else:
+                aptroot = os.path.join(cache_dir, 'system', 'apt')
             try:
                 os.makedirs(aptroot)
             except OSError:
@@ -981,6 +988,37 @@ bo/gu/s                                                 na/mypackage
 
             # no cache
             self.assertEqual(os.listdir(self.cachedir), [])
+
+        def test_install_packages_system(self):
+            '''install_packages() with system configuration'''
+
+            self._setup_foonux_config()
+            result = impl.install_packages(self.rootdir, None, None,
+                    [('coreutils', impl.get_version('coreutils')),
+                     ('tzdata', '1.1'),
+                    ], False, self.cachedir)
+
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/bin/stat')))
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/share/zoneinfo/zone.tab')))
+
+            # complains about obsolete packages
+            self.assertEqual(len(result.splitlines()), 1)
+            self.assertTrue('tzdata' in result)
+            self.assertTrue('1.1' in result)
+
+            # caches packages
+            cache = os.listdir(os.path.join(self.cachedir, 'system', 'apt',
+                'var', 'cache', 'apt', 'archives'))
+            cache_names = [p.split('_')[0] for p in cache]
+            self.assertTrue('coreutils' in cache_names)
+            self.assertTrue('coreutils-dbgsym' in cache_names)
+            self.assertTrue('tzdata' in cache_names)
+
+            # does not crash with existing cache
+            impl.install_packages(self.rootdir, None, None,
+                    [('coreutils', None)], False, self.cachedir)
 
         def _setup_foonux_config(self):
             '''Set up directories and configuration for install_packages()'''
