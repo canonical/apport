@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-24 14:53+0200\n"
+"POT-Creation-Date: 2011-08-25 07:46+0200\n"
 "PO-Revision-Date: 2009-12-19 17:51+0000\n"
 "Last-Translator: Hasan Yılmaz <iletisim@hasanyilmaz.net>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -687,7 +687,7 @@ msgstr "%prog [options] <apport problem report | crash ID>"
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr "Raporda yeni işaretlemeler yapmak yerine bunları stdout'a yazın."
 
-#: ../bin/apport-retrace.py:33
+#: ../bin/apport-retrace.py:32
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -695,55 +695,57 @@ msgstr ""
 "Raporun son dökümü ile bir interaktif gdb oturumu başlat (-o yoksayılır; "
 "raporun üzerine yazmaz)"
 
-#: ../bin/apport-retrace.py:36
+#: ../bin/apport-retrace.py:34
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr "Asıl raporu değiştirmek yerine düzeltilmiş raporu verilen dosyaya yaz"
 
-#: ../bin/apport-retrace.py:39
+#: ../bin/apport-retrace.py:36
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr "Kutup yığınını küme izleme düzeltmesinden sonra rapordan geri al"
 
-#: ../bin/apport-retrace.py:42
+#: ../bin/apport-retrace.py:38
 msgid "Override report's CoreFile"
 msgstr "Raporun ÇekirdekDosyası'nı Geçersiz Kıl"
 
-#: ../bin/apport-retrace.py:45
+#: ../bin/apport-retrace.py:40
 msgid "Override report's ExecutablePath"
 msgstr "Raporun çalıştırılabilir yolunu geçersiz kıl (ExecutablePath)"
 
-#: ../bin/apport-retrace.py:48
+#: ../bin/apport-retrace.py:42
 msgid "Override report's ProcMaps"
 msgstr "Raporun ProcMap'lerini Geçersiz Kıl"
 
-#: ../bin/apport-retrace.py:51
+#: ../bin/apport-retrace.py:44
 msgid "Rebuild report's Package information"
 msgstr "Raporların Yedek bilgisini onar"
 
-#: ../bin/apport-retrace.py:54
+#: ../bin/apport-retrace.py:46
 msgid ""
 "Build a temporary sandbox and download/install the necessary packages and "
 "debug symbols in there; without this option it assumes that the necessary "
 "packages and debug symbols are already installed in the system. The argument "
-"points to the packaging system configuration base directory."
+"points to the packaging system configuration base directory; if you specify "
+"\"system\", it will use the system configuration files, but will then only "
+"be able to retrace crashes that happened on the currently running release."
 msgstr ""
 
-#: ../bin/apport-retrace.py:57
+#: ../bin/apport-retrace.py:48
 #, fuzzy
 msgid "Report download/install progress when installing packages into sandbox"
 msgstr "Ek paketler yüklenirken yükleme/kurma ilerleyişini raporla"
 
-#: ../bin/apport-retrace.py:60
+#: ../bin/apport-retrace.py:50
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
 
-#: ../bin/apport-retrace.py:62
+#: ../bin/apport-retrace.py:52
 #, fuzzy
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr "Fazladan paket kur (çok kez belirlenmiş olabilir)"
 
-#: ../bin/apport-retrace.py:65
+#: ../bin/apport-retrace.py:54
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -753,7 +755,7 @@ msgstr ""
 "çökme ID'si belirlenirken kaynağına ulaşılmış yığın izlerinini yüklemede "
 "kullanılır. (Eğer -g, -o veya -s belirtiymediyse)"
 
-#: ../bin/apport-retrace.py:68
+#: ../bin/apport-retrace.py:56
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -761,15 +763,15 @@ msgstr ""
 "Yeniden oluşturulmuş yığın izlerini göster ve bunları çökme veritabanına "
 "göndermeden önce onay al."
 
-#: ../bin/apport-retrace.py:71
+#: ../bin/apport-retrace.py:58
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "Kopya sqlite veritabanının yolu (varsayılan: kopya kontrolü yok)"
 
-#: ../bin/apport-retrace.py:77
+#: ../bin/apport-retrace.py:63
 msgid "incorrect number of arguments; use --help for a short help"
 msgstr "Yanlış sayıda argüman; kısa bir yardım için --help 'i kullanın"
 
-#: ../bin/apport-retrace.py:81
+#: ../bin/apport-retrace.py:67
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
@@ -778,7 +780,7 @@ msgstr ""
 "(--auth); bak --yardım için kısa bir yardım"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:114
+#: ../bin/apport-retrace.py:100
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Eklenti olarak gönderilsinler mi? [y/n]"
 

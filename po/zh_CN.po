@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-24 14:53+0200\n"
+"POT-Creation-Date: 2011-08-25 07:46+0200\n"
 "PO-Revision-Date: 2009-12-19 17:51+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
@@ -649,61 +649,63 @@ msgstr "%prog [选项] <apport 问题报告/崩溃的 ID 号>"
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr "不把新的痕迹写入到报告，但是把它们写入到标准输出。"
 
-#: ../bin/apport-retrace.py:33
+#: ../bin/apport-retrace.py:32
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr "启动一个交互式的 gdb 进程并载入提交的崩溃信息 (-o 不重新生成报告)"
 
-#: ../bin/apport-retrace.py:36
+#: ../bin/apport-retrace.py:34
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr "将更改过的报告写入指定文件而非改变原始报告"
 
-#: ../bin/apport-retrace.py:39
+#: ../bin/apport-retrace.py:36
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr "生成栈回溯后将内核转储从报告中删除"
 
-#: ../bin/apport-retrace.py:42
+#: ../bin/apport-retrace.py:38
 msgid "Override report's CoreFile"
 msgstr "覆盖报告核心文件"
 
-#: ../bin/apport-retrace.py:45
+#: ../bin/apport-retrace.py:40
 msgid "Override report's ExecutablePath"
 msgstr "覆盖报告执行路径"
 
-#: ../bin/apport-retrace.py:48
+#: ../bin/apport-retrace.py:42
 msgid "Override report's ProcMaps"
 msgstr "覆盖报告的进程表"
 
-#: ../bin/apport-retrace.py:51
+#: ../bin/apport-retrace.py:44
 msgid "Rebuild report's Package information"
 msgstr "重建报告的包信息"
 
-#: ../bin/apport-retrace.py:54
+#: ../bin/apport-retrace.py:46
 msgid ""
 "Build a temporary sandbox and download/install the necessary packages and "
 "debug symbols in there; without this option it assumes that the necessary "
 "packages and debug symbols are already installed in the system. The argument "
-"points to the packaging system configuration base directory."
+"points to the packaging system configuration base directory; if you specify "
+"\"system\", it will use the system configuration files, but will then only "
+"be able to retrace crashes that happened on the currently running release."
 msgstr ""
 
-#: ../bin/apport-retrace.py:57
+#: ../bin/apport-retrace.py:48
 #, fuzzy
 msgid "Report download/install progress when installing packages into sandbox"
 msgstr "在安装附加包后报告下载/安装进程"
 
-#: ../bin/apport-retrace.py:60
+#: ../bin/apport-retrace.py:50
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
 
-#: ../bin/apport-retrace.py:62
+#: ../bin/apport-retrace.py:52
 #, fuzzy
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr "安装一个额外的包(可以多次指定)"
 
-#: ../bin/apport-retrace.py:65
+#: ../bin/apport-retrace.py:54
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -712,21 +714,21 @@ msgstr ""
 "包含崩溃数据库访问信息文件之路径。此项将用于为特定崩溃代码上传堆栈的回溯调试"
 "信息(除非用户指定 -g, -o 或 -s)"
 
-#: ../bin/apport-retrace.py:68
+#: ../bin/apport-retrace.py:56
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr "显示返回的堆栈信息，并询求确认是否将其发送至崩溃数据库。"
 
-#: ../bin/apport-retrace.py:71
+#: ../bin/apport-retrace.py:58
 msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "SQLite 数据库路径重复(默认：不重复检查)"
 
-#: ../bin/apport-retrace.py:77
+#: ../bin/apport-retrace.py:63
 msgid "incorrect number of arguments; use --help for a short help"
 msgstr "参数数量错误；使用 --help 获取简略帮助"
 
-#: ../bin/apport-retrace.py:81
+#: ../bin/apport-retrace.py:67
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
@@ -735,7 +737,7 @@ msgstr ""
 "以获取简单帮助。"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:114
+#: ../bin/apport-retrace.py:100
 msgid "OK to send these as attachments? [y/n]"
 msgstr "确定以附件形式发送这些？[y/n]"
 
