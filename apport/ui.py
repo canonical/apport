@@ -646,7 +646,7 @@ free memory to automatically analyze the problem and send a report to the develo
             dest='filebug', default=False,
             help=_('Start in bug filing mode. Requires --package and an optional --pid, or just a --pid. If neither is given, display a list of known symptoms. (Implied if a single argument is given.)'))
         optparser.add_option('-w', '--window', action='store_true', default=False,
-        	help=_('Click a window as a target for filing a problem report.'))
+            help=_('Click a window as a target for filing a problem report.'))
         optparser.add_option('-u', '--update-bug', type='int', dest='update_report',
             help=_('Start in bug updating mode. Can take an optional --package.'))
         optparser.add_option('-s', '--symptom', metavar='SYMPTOM',
