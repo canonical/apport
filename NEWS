@@ -22,6 +22,8 @@ Bug fixes:
    1.21.3. (LP: #828010)
  - launchpad.py: When searchTasks() times out, exit with 99 as this is a
    transient error.
+ - crash-digger: Intercept OverflowError from downloaded compressed
+   attachments.
 
 1.21.3 (2011-08-17)
 -------------------
