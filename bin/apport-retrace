@@ -26,50 +26,36 @@ def parse_options():
     '''Parse command line options and return (reportfile, options) tuple.'''
 
     optparser = optparse.OptionParser(_('%prog [options] <apport problem report | crash ID>'))
-    optparser.add_option('-s', '--stdout', 
-        help=_('Do not put the new traces into the report, but write them to stdout.'),
-        action='store_true', dest='stdout', default=False)
-    optparser.add_option('-g', '--gdb', 
-        help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'),
-        action='store_true', dest='gdb', default=False)
-    optparser.add_option('-o', '--output', 
-        help=_('Write modified report to given file instead of changing the original report'),
-        action='store', type='string', dest='output', metavar='FILE', default=None)
-    optparser.add_option('-c', '--remove-core', 
-        help=_('Remove the core dump from the report after stack trace regeneration'),
-        action='store_true', dest='removecore', default=False)
-    optparser.add_option('-r', '--core-file', 
-        help=_('Override report\'s CoreFile'),
-        action='store', type='string', dest='core_file', metavar='CORE', default=None)
-    optparser.add_option('-x', '--executable', 
-        help=_('Override report\'s ExecutablePath'),
-        action='store', type='string', dest='executable', metavar='EXE', default=None)
-    optparser.add_option('-m', '--procmaps', 
-        help=_('Override report\'s ProcMaps'),
-        action='store', type='string', dest='procmaps', metavar='MAPS', default=None)
-    optparser.add_option('-R', '--rebuild-package-info', 
-        help=_('Rebuild report\'s Package information'),
-        action='count', dest='rebuild', default=0)
+    optparser.add_option('-s', '--stdout', action='store_true',
+        help=_('Do not put the new traces into the report, but write them to stdout.'))
+    optparser.add_option('-g', '--gdb', action='store_true',
+        help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'))
+    optparser.add_option('-o', '--output', metavar='FILE',
+        help=_('Write modified report to given file instead of changing the original report'))
+    optparser.add_option('-c', '--remove-core', action='store_true',
+        help=_('Remove the core dump from the report after stack trace regeneration'))
+    optparser.add_option('-r', '--core-file', metavar='CORE',
+        help=_('Override report\'s CoreFile'))
+    optparser.add_option('-x', '--executable', metavar='EXE',
+        help=_('Override report\'s ExecutablePath'))
+    optparser.add_option('-m', '--procmaps', metavar='MAPS',
+        help=_('Override report\'s ProcMaps'))
+    optparser.add_option('-R', '--rebuild-package-info', action='store_true',
+        help=_('Rebuild report\'s Package information'))
     optparser.add_option('-S', '--sandbox', metavar='CONFIG_DIR',
-        help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'),
-        default=None)
-    optparser.add_option('-v', '--verbose', 
-        help=_('Report download/install progress when installing packages into sandbox'),
-        action='store_true', dest='verbose', default=False)
+        help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'))
+    optparser.add_option('-v', '--verbose', action='store_true',
+        help=_('Report download/install progress when installing packages into sandbox'))
     optparser.add_option('-C', '--cache', metavar='DIR',
         help=_('Cache directory for packages downloaded in the sandbox'))
-    optparser.add_option('-p', '--extra-package', 
-        help=_('Install an extra package into the sandbox (can be specified multiple times)'),
-        action='append', type='string', dest='extra_packages', default=[])
+    optparser.add_option('-p', '--extra-package', action='append', default=[],
+        help=_('Install an extra package into the sandbox (can be specified multiple times)'))
     optparser.add_option('--auth',
-        help=_('Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)'),
-        action='store', type='string', dest='auth_file', default=None)
-    optparser.add_option('--confirm',
-        help=_('Display retraced stack traces and ask for confirmation before sending them to the crash database.'),
-        action='store_true', dest='confirm', default=False)
-    optparser.add_option('--duplicate-db',
-        help=_('Path to the duplicate sqlite database (default: no duplicate checking)'),
-        action='store', type='string', dest='dup_db', metavar='PATH', default=None)
+        help=_('Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)'))
+    optparser.add_option('--confirm', action='store_true',
+        help=_('Display retraced stack traces and ask for confirmation before sending them to the crash database.'))
+    optparser.add_option('--duplicate-db', metavar='PATH',
+        help=_('Path to the duplicate sqlite database (default: no duplicate checking)'))
 
     (opts, args) = optparser.parse_args()
 
@@ -253,7 +239,7 @@ gettext.textdomain('apport')
 
 (reportfile, options) = parse_options()
 
-crashdb = get_crashdb(options.auth_file)
+crashdb = get_crashdb(options.auth)
 
 # load the report
 if os.path.exists(reportfile):
@@ -270,7 +256,7 @@ elif reportfile.isdigit():
             OverflowError, zlib.error) as e:
         # if we process the report automatically, and it is invalid, close it with
         # an informative message and exit cleanly to not break crash-digger
-        if options.auth_file and not options.output and not options.stdout:
+        if options.auth and not options.output and not options.stdout:
             apport.error('Broken report: %s, closing as invalid', str(e))
             crashdb.mark_retrace_failed(reportfile, '''Thank you for your report! 
             
@@ -300,7 +286,7 @@ if options.executable:
     report['ExecutablePath'] = options.executable
 if options.procmaps:
     report['ProcMaps'] = file(options.procmaps).read()
-if options.rebuild and 'ExecutablePath' in report:
+if options.rebuild_package_info and 'ExecutablePath' in report:
     report.add_package_info()
 
 # sanity checks
@@ -322,7 +308,7 @@ if options.sandbox:
     sandbox = tempfile.mkdtemp()
 
     pkgs = needed_packages(report)
-    for p in options.extra_packages:
+    for p in options.extra_package:
         pkgs.append((p, None))
     if options.sandbox == 'system':
         sandbox_arg = None
@@ -385,7 +371,7 @@ finally:
 
 modified = False
 
-if options.removecore:
+if options.remove_core:
     del report['CoreDump']
     modified = True
 
@@ -404,13 +390,13 @@ else:
 
 if modified:
     if not reportfile and not options.output:
-        if not options.auth_file:
+        if not options.auth:
             apport.fatal('You need to specify --auth for uploading retraced results back to the crash database.')
         if not options.confirm or confirm_traces(report):
             # check for duplicates
             update_bug = True
-            if options.dup_db:
-                crashdb.init_duplicate_db(options.dup_db)
+            if options.duplicate_db:
+                crashdb.init_duplicate_db(options.duplicate_db)
                 res = crashdb.check_duplicate(int(crashid), report)
                 if res:
                     if res[1] == None:
