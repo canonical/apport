@@ -28,7 +28,7 @@ def command_dump(crashdb, opts, args):
     '''Print out all entries.'''
 
     for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(True).iteritems():
-        print '%7i: %s ' % (id, sig),
+        print '%7i: %s ' % (id, sig.encode('UTF-8', 'replace')),
         if version == '':
             print '[fixed]'
         elif version:

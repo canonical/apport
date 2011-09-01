@@ -7,6 +7,7 @@ Bug fixes:
  - dupdb-admin: Use the in-memory CrashDB implementation for simple operations
    like dump or changeid, which do not require an actual backend. This makes
    the command work in checkouts without a /etc/apport/crashdb.conf.
+ - dupdb-admin: Fix UnicodeEncodeError crash.
 
 1.22 (2011-08-25)
 -----------------
