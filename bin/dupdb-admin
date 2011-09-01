@@ -46,6 +46,13 @@ def command_changeid(crashdb, opts, args):
 
     crashdb.duplicate_db_change_master_id(oldid, newid)
 
+def command_removeid(crashdb, opts, args):
+    '''Remove a crash.'''
+
+    if len(args) != 1:
+        apport.fatal('removeid needs exactly one argument (use --help for a short help)')
+    crashdb.duplicate_db_remove_id(args[0])
+
 def command_consolidate(crashdb, opts, args):
     crashdb.duplicate_db_consolidate()
 
@@ -57,6 +64,7 @@ def command_consolidate(crashdb, opts, args):
 optparser = optparse.OptionParser('''%prog [options] status
 %prog [options] dump
 %prog [options] changeid <old ID> <new ID>
+%prog [options] removeid <ID>
 %prog [options] consolidate''')
 
 optparser.add_option('-f', '--database-file',

@@ -3,6 +3,9 @@ detailled list of changes, please see ChangeLog.
 
 1.22.1 (UNRELEASED)
 -------------------
+Improvements:
+ - dupdb-admin: Add "removeid" command.
+
 Bug fixes:
  - dupdb-admin: Use the in-memory CrashDB implementation for simple operations
    like dump or changeid, which do not require an actual backend. This makes

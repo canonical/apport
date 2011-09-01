@@ -773,6 +773,32 @@ ZeroDivisionError%i: integer division or modulo by zero''' % bug
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (99, None)})
 
+    def test_remove_id(self):
+        '''duplicate_db_remove_id()'''
+
+        # db not yet initialized
+        self.assertRaises(AssertionError, self.crashes.check_duplicate, 0)
+
+        self.crashes.init_duplicate_db(':memory:')
+
+        self.assertEqual(self.crashes.check_duplicate(0), None)
+        self.assertEqual(self.crashes.check_duplicate(2), None)
+
+        # invalid ID (raising KeyError is *hard*, so it's not done)
+        self.crashes.duplicate_db_remove_id(99)
+
+        # nevertheless, this should not change the DB
+        self.assertEqual(self.crashes._duplicate_db_dump(), 
+            {self.crashes.download(0).crash_signature(): (0, None),
+             self.crashes.download(2).crash_signature(): (2, None)})
+
+        # valid ID
+        self.crashes.duplicate_db_remove_id(2)
+
+        # check DB consistency
+        self.assertEqual(self.crashes._duplicate_db_dump(), 
+            {self.crashes.download(0).crash_signature(): (0, None)})
+
     def test_db_corruption(self):
         '''Detection of DB file corruption'''
 

@@ -276,6 +276,15 @@ class CrashDatabase:
             [new_id, old_id])
         self.duplicate_db.commit()
 
+    def duplicate_db_remove_id(self, id):
+        '''Remove a crash ID.'''
+
+        assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
+
+        cur = self.duplicate_db.cursor()
+        cur.execute('DELETE from crashes WHERE crash_id = ?', [id])
+        self.duplicate_db.commit()
+
     def _duplicate_search_signature(self, sig, id):
         '''Look up signature in the duplicate db.
         
