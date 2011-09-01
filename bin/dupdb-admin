@@ -14,6 +14,7 @@
 import optparse, sys, os.path
 
 from apport.crashdb import get_crashdb
+import apport.crashdb_impl.memory
 import apport
 
 def command_status(crashdb, opts, args):
@@ -66,7 +67,12 @@ options, args = optparser.parse_args()
 if not os.path.exists(options.db_file):
     apport.fatal('file does not exist: %s', options.db_file)
 
-crashdb = get_crashdb(None, None, {})
+if args[0] in ('consolidate',):
+    # these commands require a real DB
+    crashdb = get_crashdb(None, None, {})
+else:
+    # pure DB operations don't need a real backend, and thus no crashdb.conf
+    crashdb = apport.crashdb_impl.memory.CrashDatabase(None, None, {})
 crashdb.init_duplicate_db(options.db_file)
 
 try:

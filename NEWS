@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.22.1 (UNRELEASED)
+-------------------
+Bug fixes:
+ - dupdb-admin: Use the in-memory CrashDB implementation for simple operations
+   like dump or changeid, which do not require an actual backend. This makes
+   the command work in checkouts without a /etc/apport/crashdb.conf.
+
 1.22 (2011-08-25)
 -----------------
 Improvements:
