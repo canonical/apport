@@ -872,6 +872,7 @@ After the problem report has been sent, please fill out the form in the automati
   <object class="GtkDialog" id="dialog_choice">
     <property name="border_width">5</property>
     <property name="modal">True</property>
+    <property name="title" translatable="yes">Apport</property>
     <property name="type_hint">normal</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox6">
