@@ -12,6 +12,8 @@ Bug fixes:
    the command work in checkouts without a /etc/apport/crashdb.conf.
  - dupdb-admin: Fix UnicodeEncodeError crash.
  - launchpad.py: Fix crash if a crash report does not have a DistroRelease.
+ - Set the default "Apport" title for choice dialogs instead of the default
+   apport-gtk title. Thanks Robert Roth. (LP: #608222)
 
 1.22 (2011-08-25)
 -----------------
