@@ -756,7 +756,7 @@ in a dependent package.' % master,
         #FIXME: this entire function is an ugly Ubuntu specific hack until LP
         #gets a real crash db; see https://wiki.ubuntu.com/CrashReporting
 
-        if report.get('DistroRelease', '').split()[0] != 'Ubuntu':
+        if 'DistroRelease' in report and report['DistroRelease'].split()[0] != 'Ubuntu':
             return # only Ubuntu bugs are filed private
         
         #use a url hack here, it is faster

@@ -11,6 +11,7 @@ Bug fixes:
    like dump or changeid, which do not require an actual backend. This makes
    the command work in checkouts without a /etc/apport/crashdb.conf.
  - dupdb-admin: Fix UnicodeEncodeError crash.
+ - launchpad.py: Fix crash if a crash report does not have a DistroRelease.
 
 1.22 (2011-08-25)
 -----------------
