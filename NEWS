@@ -14,6 +14,7 @@ Bug fixes:
  - launchpad.py: Fix crash if a crash report does not have a DistroRelease.
  - Set the default "Apport" title for choice dialogs instead of the default
    apport-gtk title. Thanks Robert Roth. (LP: #608222)
+ - apport-gtk: Update markup_escape_text() call to current glib. (LP: #829635)
 
 1.22 (2011-08-25)
 -----------------
