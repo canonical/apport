@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - launchpad.py: Fix crash in close_duplicate() if master bug was already
    marked as a duplicate of the examined bug.
+ - problem_report.py, load(): Fix missing last character if the last line in a
+   multi-line field is not terminated with a newline.
 
 1.22.1 (2011-09-06)
 -------------------

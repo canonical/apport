@@ -154,7 +154,10 @@ class ProblemReport(UserDict):
                 else:
                     if len(value) > 0:
                         value += '\n'
-                    value += line[1:-1]
+                    if line.endswith('\n'):
+                        value += line[1:-1]
+                    else:
+                        value += line[1:]
             else:
                 if b64_block:
                     if bd:
@@ -741,6 +744,19 @@ WhiteSpace:
         self.assertEqual(pr['Date'], 'now!')
         self.assertEqual(pr['Simple'], 'bar')
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  \n')
+
+        # last field might not be \n terminated
+        pr.load(StringIO(
+'''ProblemType: Crash
+Date: now!
+Simple: bar
+WhiteSpace:
+ foo
+ bar'''))
+        self.assertEqual(pr['ProblemType'], 'Crash')
+        self.assertEqual(pr['Date'], 'now!')
+        self.assertEqual(pr['Simple'], 'bar')
+        self.assertEqual(pr['WhiteSpace'], 'foo\nbar')
 
         pr = ProblemReport()
         pr.load(StringIO(
