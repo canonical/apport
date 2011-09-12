@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.22.2 (UNRELEASED)
+-------------------
+Bug fixes:
+ - launchpad.py: Fix crash in close_duplicate() if master bug was already
+   marked as a duplicate of the examined bug.
+
 1.22.1 (2011-09-06)
 -------------------
 Improvements:

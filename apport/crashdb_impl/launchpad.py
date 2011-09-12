@@ -629,6 +629,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             master = self.launchpad.bugs[master_id]
             if master.duplicate_of:
                 master = master.duplicate_of
+                if master.id == id:
+                    # this happens if the bug was manually duped to a newer one
+                    apport.warning('Bug %i was manually marked as a dupe of newer bug %i, not closing as duplicate', 
+                            id, master_id)
+                    return
             
             for a in bug.attachments:
                 if a.title in ('CoreDump.gz', 'Stacktrace.txt',
