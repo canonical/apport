@@ -8,6 +8,8 @@ Bug fixes:
    marked as a duplicate of the examined bug.
  - problem_report.py, load(): Fix missing last character if the last line in a
    multi-line field is not terminated with a newline.
+ - launchpad.py: Fix test_marking_python_task_mangle() check to work with
+   current Launchpad.
 
 1.22.1 (2011-09-06)
 -------------------

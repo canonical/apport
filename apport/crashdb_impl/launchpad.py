@@ -1576,11 +1576,9 @@ NameError: global name 'weird' is not defined'''
             # package name
             b = self.crashdb.launchpad.bugs[python_report]
             t = b.bug_tasks[0]
-            t.target = self.crashdb.launchpad.distributions['ubuntu'].getSourcePackage(name='bash')
-            t.status = 'Invalid'
+            t.target = self.crashdb.launchpad.distributions['ubuntu']
             t.lp_save()
             b.addTask(target=self.crashdb.launchpad.projects['coreutils'])
-            b.addTask(target=self.crashdb.launchpad.distributions['ubuntu'])
 
             self.crashdb._mark_dup_checked(python_report, self.ref_report)
 
@@ -1595,14 +1593,10 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(b.bug_tasks[0].status, 'New')
 
             # package-less distro task should have package name fixed
-            self.assertEqual(b.bug_tasks[2].bug_target_name, 'coreutils (Ubuntu)')
-            self.assertEqual(b.bug_tasks[2].status, 'New')
+            self.assertEqual(b.bug_tasks[1].bug_target_name, 'coreutils (Ubuntu)')
+            self.assertEqual(b.bug_tasks[1].status, 'New')
 
-            # invalid bash task should be unmodified
-            self.assertEqual(b.bug_tasks[1].bug_target_name, 'bash (Ubuntu)')
-            self.assertEqual(b.bug_tasks[1].status, 'Invalid')
-
-            # the invalid task should not confuse get_fixed_version()
+            # should not confuse get_fixed_version()
             self.assertEqual(self.crashdb.get_fixed_version(python_report),
                     None)
 
