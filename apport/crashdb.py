@@ -73,9 +73,6 @@ class CrashDatabase:
                 fixed_version VARCHAR(50),
                 last_change TIMESTAMP)''')
 
-            cur.execute('''CREATE TABLE consolidation (
-                last_update TIMESTAMP)''')
-            cur.execute('''INSERT INTO consolidation VALUES (CURRENT_TIMESTAMP)''')
             self.duplicate_db.commit()
 
         # verify integrity
@@ -140,6 +137,13 @@ class CrashDatabase:
 
         existing.sort(cmp, lambda k: k[1])
 
+        if existing:
+            # update status of existing master bugs
+            for (ex_id, _) in existing:
+                self._duplicate_db_sync_status(ex_id)
+            existing = self._duplicate_search_signature(sig, id)
+            existing.sort(cmp, lambda k: k[1])
+
         if not existing:
             # add a new entry
             cur = self.duplicate_db.cursor()
@@ -170,6 +174,9 @@ class CrashDatabase:
             cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (_u(sig), id, None))
             self.duplicate_db.commit()
 
+            # we now track this as a new crash
+            return None
+
         return (ex_id, ex_ver)
 
     def duplicate_db_fixed(self, id, version):
@@ -196,75 +203,6 @@ class CrashDatabase:
         cur = self.duplicate_db.cursor()
         cur.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
         self.duplicate_db.commit()
-
-    def duplicate_db_consolidate(self):
-        '''Update the duplicate db status to the reality of the crash db.
-        
-        This uses get_unfixed() and get_fixed_version() to get the status of
-        particular crashes. Invalid IDs get removed from the duplicate db, and
-        crashes which got fixed since the last run are marked as such in the
-        database.
-
-        This is a very expensive operation and should not be used too often.
-        '''
-        assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
-
-        unfixed = self.get_unfixed()
-
-        cur = self.duplicate_db.cursor()
-        cur.execute('SELECT crash_id, fixed_version FROM crashes')
-
-        cur2 = self.duplicate_db.cursor()
-        for (id, ver) in cur:
-            # crash got reopened
-            if id in unfixed:
-                if ver != None:
-                    cur2.execute('UPDATE crashes SET fixed_version = NULL, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?', [id])
-                continue
-
-            if ver != None:
-                continue # skip get_fixed_version(), we already know its fixed
-
-            # crash got fixed/rejected
-            fixed_ver = self.get_fixed_version(id)
-            if fixed_ver == 'invalid':
-                print('DEBUG: bug %i was invalidated, removing from database' % id)
-                cur2.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
-            elif not fixed_ver:
-                print('WARNING: inconsistency detected: bug #%i does not appear in get_unfixed(), but is not fixed yet' % id)
-            else:
-                cur2.execute('UPDATE crashes SET fixed_version = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
-                    (fixed_ver, id))
-
-        # poke consolidation.last_update
-        cur.execute('UPDATE consolidation SET last_update = CURRENT_TIMESTAMP')
-        self.duplicate_db.commit()
-
-    def duplicate_db_last_consolidation(self, absolute=False):
-        '''Return the date and time of last consolidation.
-        
-        By default, this returns the number of seconds since the last
-        consolidation. If absolute is True, the date and time of last
-        consolidation will be returned as a string instead.
-        '''
-        assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
-
-        cur = self.duplicate_db.cursor()
-        cur.execute('SELECT last_update FROM consolidation')
-        if absolute:
-            return cur.fetchone()[0]
-        else:
-            last_run = datetime.datetime.strptime(cur.fetchone()[0], '%Y-%m-%d %H:%M:%S')
-            delta = (datetime.datetime.utcnow() - last_run)
-            return delta.days * 86400 + delta.seconds
-
-    def duplicate_db_needs_consolidation(self, interval=86400):
-        '''Check whether DB needs consolidation.
-
-        This is True if last duplicate_db_consolidate() happened more than
-        'interval' seconds ago (default: one day).
-        '''
-        return self.duplicate_db_last_consolidation() >= interval
 
     def duplicate_db_change_master_id(self, old_id, new_id):
         '''Change a crash ID.'''
@@ -323,6 +261,42 @@ class CrashDatabase:
             else:
                 dump[sig] = (id, ver)
         return dump
+
+    def _duplicate_db_sync_status(self, id):
+        '''Update the duplicate db to the reality of the report in the crash db.
+        
+        This uses get_fixed_version() to get the status of the given crash.
+        An invalid ID gets removed from the duplicate db, and a crash which got
+        fixed is marked as such in the database.
+        '''
+        assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
+
+        cur = self.duplicate_db.cursor()
+        cur.execute('SELECT fixed_version FROM crashes WHERE crash_id = ?', [id])
+        db_fixed_version = cur.fetchone()
+        if not db_fixed_version:
+            return
+        db_fixed_version = db_fixed_version[0]
+
+        real_fixed_version = self.get_fixed_version(id)
+
+        # crash got rejected
+        if real_fixed_version == 'invalid':
+            print('DEBUG: bug %i was invalidated, removing from database' % id)
+            self.duplicate_db_remove(id)
+            return
+
+        # crash got fixed
+        if not db_fixed_version and real_fixed_version:
+            print('DEBUG: bug %i got fixed in version %s, updating database' % (id, real_fixed_version))
+            self.duplicate_db_fixed(id, real_fixed_version)
+            return
+
+        # crash got reopened
+        if db_fixed_version and not real_fixed_version:
+            print('DEBUG: bug %i got reopened, dropping fixed version %s from database' % (id, db_fixed_version))
+            self.duplicate_db_fixed(id, real_fixed_version)
+            return
 
     #
     # Abstract functions that need to be implemented by subclasses

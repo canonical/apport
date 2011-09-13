@@ -17,13 +17,6 @@ from apport.crashdb import get_crashdb
 import apport.crashdb_impl.memory
 import apport
 
-def command_status(crashdb, opts, args):
-    '''Give general status.'''
-
-    print 'Last consolidation: %s (%s seconds ago)' % (
-        crashdb.duplicate_db_last_consolidation(True),
-        crashdb.duplicate_db_last_consolidation())
-
 def command_dump(crashdb, opts, args):
     '''Print out all entries.'''
 
@@ -53,19 +46,14 @@ def command_removeid(crashdb, opts, args):
         apport.fatal('removeid needs exactly one argument (use --help for a short help)')
     crashdb.duplicate_db_remove_id(args[0])
 
-def command_consolidate(crashdb, opts, args):
-    crashdb.duplicate_db_consolidate()
-
 #
 # main
 #
 
 # parse command line options
-optparser = optparse.OptionParser('''%prog [options] status
-%prog [options] dump
+optparser = optparse.OptionParser('''%prog [options] dump
 %prog [options] changeid <old ID> <new ID>
-%prog [options] removeid <ID>
-%prog [options] consolidate''')
+%prog [options] removeid <ID>''')
 
 optparser.add_option('-f', '--database-file',
     help='Location of the database file', action='store', metavar='PATH',
@@ -75,7 +63,7 @@ options, args = optparser.parse_args()
 if not os.path.exists(options.db_file):
     apport.fatal('file does not exist: %s', options.db_file)
 
-if args[0] in ('consolidate',):
+if args[0] in ():
     # these commands require a real DB
     crashdb = get_crashdb(None, None, {})
 else:

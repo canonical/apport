@@ -8,10 +8,6 @@ dupdb\-admin \- Manage the duplicate database for apport\-retrace.
 
 .B dupdb\-admin \-f
 .I dbpath
-.B status
-
-.B dupdb\-admin \-f
-.I dbpath
 .B dump
 
 .B dupdb\-admin \-f
@@ -38,13 +34,6 @@ It also tracks the status of crashes (open/fixed in a particular
 version) to be able to identify regressions.
 
 .SH MODES
-
-.TP
-.B status
-Print general status of the duplicate db. For now, it only shows the
-time when the database was "consolidated" last, i. e. when the bug
-states (open/fixed) in the SQLite database where updated to the actual
-states in the bug tracking system.
 
 .TP
 .B dump

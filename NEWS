@@ -1,8 +1,14 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.22.2 (UNRELEASED)
--------------------
+1.23 (UNRELEASED)
+-----------------
+Improvements:
+ - crashdb.py, crash-digger, dupdb-admin: Drop the concept of "duplicate DB
+   consolidation". Such massive queries cause timeouts with e. g. Launchpad.
+   Instead, update the status of potential master bugs in the crash DB whenever
+   check_duplicate() is called.
+
 Bug fixes:
  - launchpad.py: Fix crash in close_duplicate() if master bug was already
    marked as a duplicate of the examined bug.

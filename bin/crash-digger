@@ -53,15 +53,7 @@ class CrashDigger:
         sys.stdout.flush()
 
     def fill_pool(self):
-        '''Query crash db for new IDs to process.
-        
-        This function also takes care of regularly consolidating the duplicate
-        database.'''
-
-        if self.dup_db and self.dupcheck_mode:
-            if self.crashdb.duplicate_db_needs_consolidation():
-                self.log('Consolidating duplicate database...')
-                self.crashdb.duplicate_db_consolidate()
+        '''Query crash db for new IDs to process.'''
 
         if self.dupcheck_mode:
             self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
