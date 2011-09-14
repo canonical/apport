@@ -395,7 +395,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         the packaging system; this is completely dependent on the backend
         implementation, the only assumption is that this looks into
         configdir/release/, so that you can use retracing for multiple
-        DistroReleases. As a special case, if rootdir is None, it uses the
+        DistroReleases. As a special case, if configdir is None, it uses the
         current system configuration, and "release" is ignored.
 
         release is the value of the report's 'DistroRelease' field.
