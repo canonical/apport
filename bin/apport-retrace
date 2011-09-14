@@ -252,6 +252,12 @@ elif reportfile.isdigit():
     # crash ID
     try:
         report = crashdb.download(int(reportfile))
+    except AssertionError as e:
+        if 'apport format data' in str(e):
+            apport.error('Broken report: %s', str(e))
+            sys.exit(0)
+        else:
+            raise
     except (MemoryError, TypeError, ValueError, IOError, SystemError,
             OverflowError, zlib.error) as e:
         # if we process the report automatically, and it is invalid, close it with

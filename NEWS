@@ -20,6 +20,8 @@ Bug fixes:
    shared one instead of letting the two install_packages() calls create their
    own. This ensures that the apt and dpkg status is up to date, and avoids
    downloading the package indexes multiple times. (LP: #847951)
+ - apport-retrace: Give proper error mesage instead of AssertionError crash if
+   a report does not contain standard Apport format data. (LP: #843221)
 
 1.22.1 (2011-09-06)
 -------------------
