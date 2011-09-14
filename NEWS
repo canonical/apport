@@ -26,6 +26,8 @@ Bug fixes:
    middle of the operation. (LP: #640216)
  - apport/ui.py, load_report(): Intercept another case of broken report files.
    (LP: #445142)
+ - apport/report.py, standard_title(): Escape regular expression control
+   characters in custom exception names. (LP: #762998)
 
 1.22.1 (2011-09-06)
 -------------------

@@ -912,7 +912,7 @@ class Report(problem_report.ProblemReport):
             path = os.path.basename(self['ExecutablePath'])
             last_line = trace[-1]
             exception = last_line.split(':')[0]
-            m = re.match('^%s: (.+)$' % exception, last_line)
+            m = re.match('^%s: (.+)$' % re.escape(exception), last_line)
             if m:
                 message = m.group(1)
             else:
@@ -2151,9 +2151,9 @@ order (MRO) for bases GObject, CanvasGroupableIface, CanvasGroupable'''
         report['Traceback'] = '''Traceback (most recent call last):
   File "/x/foo.py", line 242, in setup_chooser
     raise "Moo"
-Moo'''
+Mo?o[a-1]'''
 
-        self.assertEqual(report.standard_title(), 'apport-gtk crashed with Moo in setup_chooser()')
+        self.assertEqual(report.standard_title(), 'apport-gtk crashed with Mo?o[a-1] in setup_chooser()')
 
         # Python crash with custom message with newlines (LP #190947)
         report = Report()
