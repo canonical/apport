@@ -22,6 +22,8 @@ Bug fixes:
    downloading the package indexes multiple times. (LP: #847951)
  - apport-retrace: Give proper error mesage instead of AssertionError crash if
    a report does not contain standard Apport format data. (LP: #843221)
+ - fileutils.py, get_new_reports(): Fix crash if report file disappears in the
+   middle of the operation. (LP: #640216)
 
 1.22.1 (2011-09-06)
 -------------------

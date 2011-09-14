@@ -136,7 +136,16 @@ def get_new_reports():
     Return a list with all report files which have not yet been processed
     and are accessible to the calling user.
     '''
-    return [r for r in get_all_reports() if not seen_report(r)]
+    reports = []
+    for r in get_all_reports():
+        try:
+            if not seen_report(r):
+                reports.append(r)
+        except OSError:
+            # race condition, can happen if report disappears between glob and
+            # stat
+            pass
+    return reports
 
 def get_all_system_reports():
     '''Get all system reports.
