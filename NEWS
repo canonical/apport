@@ -24,6 +24,8 @@ Bug fixes:
    a report does not contain standard Apport format data. (LP: #843221)
  - fileutils.py, get_new_reports(): Fix crash if report file disappears in the
    middle of the operation. (LP: #640216)
+ - apport/ui.py, load_report(): Intercept another case of broken report files.
+   (LP: #445142)
 
 1.22.1 (2011-09-06)
 -------------------

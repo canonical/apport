@@ -1012,7 +1012,7 @@ free memory to automatically analyze the problem and send a report to the develo
             self.report = None
             self.ui_error_message(_('Invalid problem report'), e.strerror)
             return False
-        except (TypeError, ValueError, zlib.error) as e:
+        except (TypeError, ValueError, AssertionError, zlib.error) as e:
             self.report = None
             self.ui_error_message(_('Invalid problem report'),
                 '%s\n\n%s' % (
