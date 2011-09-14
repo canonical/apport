@@ -13,7 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, optparse, shutil, tempfile, re, zlib
-import tty, termios, gettext
+import tty, termios, gettext, atexit
 import apport, apport.fileutils
 from apport.crashdb import get_crashdb
 from apport import unicode_gettext as _
@@ -314,6 +314,13 @@ if options.sandbox:
         sandbox_arg = None
     else:
         sandbox_arg = options.sandbox
+
+    # we call install_packages() multiple times, plus get_file_package(); use a
+    # shared cache dir for these
+    if not options.cache:
+        options.cache = tempfile.mkdtemp()
+        atexit.register(shutil.rmtree, options.cache)
+
     outdated_msg = apport.packaging.install_packages(sandbox, sandbox_arg,
         report['DistroRelease'], pkgs, options.verbose, options.cache)
 
