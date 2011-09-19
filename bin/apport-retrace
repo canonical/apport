@@ -349,8 +349,8 @@ if options.sandbox:
 
     for path in ('InterpreterPath', 'ExecutablePath'):
         if path in report and not os.path.exists(sandbox + report[path]):
-            apport.error('%s %s does exist (report specified package %s)',
-                    path, report[path], report['Package'])
+            apport.error('%s %s does not exist (report specified package %s)',
+                    path, sandbox + report[path], report['Package'])
             sys.exit(0)
 
 # interactive gdb session
@@ -364,9 +364,10 @@ try:
         if options.sandbox:
             argv += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
                      '--ex', 'set solib-absolute-prefix ' + sandbox]
-
-        argv += ['--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath']),
-            '--ex', 'core-file ' + core.name]
+            argv += ['--ex', 'file ' + sandbox + report.get('InterpreterPath', report['ExecutablePath'])]
+        else:
+            argv += ['--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath'])]
+        argv += ['--ex', 'core-file ' + core.name]
 
         subprocess.call(argv)
         core.close()
