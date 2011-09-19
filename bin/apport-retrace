@@ -312,6 +312,7 @@ sandbox = None
 outdated_msg = None
 if options.sandbox:
     sandbox = tempfile.mkdtemp()
+    atexit.register(shutil.rmtree, sandbox)
 
     pkgs = needed_packages(report)
     for p in options.extra_package:
@@ -354,31 +355,27 @@ if options.sandbox:
             sys.exit(0)
 
 # interactive gdb session
-try:
-    if options.gdb:
-        core = tempfile.NamedTemporaryFile()
-        core.write(report['CoreDump'])
-        core.flush()
+if options.gdb:
+    core = tempfile.NamedTemporaryFile()
+    core.write(report['CoreDump'])
+    core.flush()
 
-        argv = ['gdb']
-        if options.sandbox:
-            argv += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
-                     '--ex', 'set solib-absolute-prefix ' + sandbox]
-            argv += ['--ex', 'file ' + sandbox + report.get('InterpreterPath', report['ExecutablePath'])]
-        else:
-            argv += ['--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath'])]
-        argv += ['--ex', 'core-file ' + core.name]
-
-        subprocess.call(argv)
-        core.close()
+    argv = ['gdb']
+    if options.sandbox:
+        argv += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
+                 '--ex', 'set solib-absolute-prefix ' + sandbox]
+        argv += ['--ex', 'file ' + sandbox + report.get('InterpreterPath', report['ExecutablePath'])]
     else:
-        # regenerate gdb info
-        report.add_gdb_info(sandbox)
-        #gen_source_stacktrace(report) # TODO: disabled until this gets adapted to the chroot-less sandbox
-        report.add_kernel_crash_info()
-finally:
-    if sandbox:
-        shutil.rmtree(sandbox)
+        argv += ['--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath'])]
+    argv += ['--ex', 'core-file ' + core.name]
+
+    subprocess.call(argv)
+    core.close()
+else:
+    # regenerate gdb info
+    report.add_gdb_info(sandbox)
+    #gen_source_stacktrace(report) # TODO: disabled until this gets adapted to the chroot-less sandbox
+    report.add_kernel_crash_info()
 
 modified = False
 
