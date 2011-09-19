@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.23.1 (UNRELEASED)
+-------------------
+Bug fixes:
+ - apport/crashdb.py: Ensure that duplicate table only has one entry per report
+   ID.
+
 1.23 (2011-09-14)
 -----------------
 Improvements:

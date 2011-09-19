@@ -71,7 +71,8 @@ class CrashDatabase:
                 signature VARCHAR(255) NOT NULL,
                 crash_id INTEGER NOT NULL,
                 fixed_version VARCHAR(50),
-                last_change TIMESTAMP)''')
+                last_change TIMESTAMP,
+                CONSTRAINT crashes_pk PRIMARY KEY (crash_id))''')
 
             self.duplicate_db.commit()
 
@@ -144,13 +145,6 @@ class CrashDatabase:
             existing = self._duplicate_search_signature(sig, id)
             existing.sort(cmp, lambda k: k[1])
 
-        if not existing:
-            # add a new entry
-            cur = self.duplicate_db.cursor()
-            cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (_u(sig), id, None))
-            self.duplicate_db.commit()
-            return None
-
         try:
             report_package_version = report['Package'].split()[1]
         except (KeyError, IndexError):
@@ -164,20 +158,23 @@ class CrashDatabase:
                not report_package_version or \
                 packaging.compare_versions(report_package_version, ex_ver) < 0: 
                 self.close_duplicate(id, ex_id)
-                break
-        else:
-            # regression, mark it as such in the crash db
-            self.mark_regression(id, ex_id)
+                return (ex_id, ex_ver)
 
-            # create a new record
-            cur = self.duplicate_db.cursor()
+        # if the version comparison did not find a match, but we have a
+        # existing reports with the same signature, mark it as a regression of
+        # the latest fix, but still create a new unfixed ID for it
+        if existing:
+            self.mark_regression(id, existing[-1][0])
+
+        # create a new record for the ID if we don't have one already
+        cur = self.duplicate_db.cursor()
+        cur.execute('SELECT count(*) FROM crashes WHERE crash_id == ?', [id])
+        count_id = cur.fetchone()[0]
+        if count_id == 0:
             cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (_u(sig), id, None))
             self.duplicate_db.commit()
 
-            # we now track this as a new crash
-            return None
-
-        return (ex_id, ex_ver)
+        return None
 
     def duplicate_db_fixed(self, id, version):
         '''Mark given crash ID as fixed in the duplicate database.
