@@ -422,7 +422,7 @@ if modified:
                     crashdb.update_traces(crashid, report)
                     print 'New attachments uploaded to crash database #' + crashid
                 else:
-                    assert outdated_msg
+                    # this happens when gdb crashes
                     print 'No stack trace, invalid report'
 
                 if not report.has_useful_stacktrace():
