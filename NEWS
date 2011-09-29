@@ -8,7 +8,7 @@ Bug fixes:
    ID.
  - apport-retrace: Pass correct executable path to gdb in --gdb with --sandbox
    mode.
- - apport-retraceDo not leave behind temporary directories on errors.
+ - apport-retrace: Do not leave behind temporary directories on errors.
  - apport-retrace: Drop assertion failure for existance of "Stacktrace". This
    isn't present in the case of gdb crashing, and there is not much we can do
    about it. This should not break the retracer.
