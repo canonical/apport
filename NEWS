@@ -12,6 +12,9 @@ Bug fixes:
  - apport-retrace: Drop assertion failure for existance of "Stacktrace". This
    isn't present in the case of gdb crashing, and there is not much we can do
    about it. This should not break the retracer.
+ - apport/report.py: Unwind XError() from stack traces for the "StacktraceTop"
+   field, as they take a significant part of the trace. This causes bugs to be
+   duplicated which really have different causes.
 
 1.23 (2011-09-14)
 -----------------

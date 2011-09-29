@@ -560,11 +560,12 @@ class Report(problem_report.ProblemReport):
         are generally not useful for triaging and duplicate detection.
         '''
         unwind_functions = set(['g_logv', 'g_log', 'IA__g_log', 'IA__g_logv',
-            'g_assert_warning', 'IA__g_assert_warning', '__GI_abort'])
+            'g_assert_warning', 'IA__g_assert_warning', '__GI_abort', '_XError'])
         toptrace = [''] * 5
         depth = 0
         unwound = False
         unwinding = False
+        unwinding_xerror = False
         bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+\*?(.*)|(<signal handler called>)\s*)$')
         bt_fn_noaddr_re = re.compile('^#(\d+)\s+(?:(.*)|(<signal handler called>)\s*)$')
 
@@ -580,11 +581,26 @@ class Report(problem_report.ProblemReport):
                     fn = m.group(2).split()[0].split('(')[0]
                 else:
                     fn = None
+
+                # handle XErrors
+                if unwinding_xerror:
+                    if fn.startswith('_X') or fn in ['handle_response', 'handle_error', 'XWindowEvent']:
+                        continue
+                    else:
+                        unwinding_xerror = False
+
                 if m.group(3) or fn in unwind_functions:
                     unwinding = True
                     depth = 0
                     toptrace = [''] * 5
-                    unwound = True
+                    if m.group(3):
+                        # we stop unwinding when we found a <signal handler>,
+                        # but we continue unwinding otherwise, as e. g. a glib
+                        # abort is usually sitting on top of an XError
+                        unwound = True
+
+                    if fn == '_XError':
+                        unwinding_xerror = True
                     continue
                 else:
                     unwinding = False
@@ -2381,6 +2397,50 @@ _gnome_vfs_volume_monitor_disconnected (volume_monitor=0x8070400, drive=0x8078f0
 _hal_device_removed (hal_ctx=0x8074da8, udi=0x8093be4 "/org/freedesktop/Hal/devices/volume_uuid_92FC9DFBFC9DDA35")
 filter_func (connection=0x8075288, message=0x80768d8, user_data=0x8074da8) at libhal.c:820
 dbus_connection_dispatch (connection=0x8075288) at dbus-connection.c:4267''')
+
+        # XError (taken from LP#848808)
+        r = Report()
+        r['Stacktrace'] = '''#0  0x007cf416 in __kernel_vsyscall ()
+No symbol table info available.
+#1  0x01017c8f in __GI_raise (sig=6) at ../nptl/sysdeps/unix/sysv/linux/raise.c:64
+#2  0x0101b2b5 in __GI_abort () at abort.c:92
+#3  0x0807daab in meta_bug (format=0x80b0c60 "Unexpected X error: %s serial %ld error_code %d request_code %d minor_code %d)\n") at core/util.c:398
+#4  0x0806989c in x_error_handler (error=0xbf924acc, xdisplay=0x9104b88) at core/errors.c:247
+#5  x_error_handler (xdisplay=0x9104b88, error=0xbf924acc) at core/errors.c:203
+#6  0x00e97d3b in _XError (dpy=0x9104b88, rep=0x9131840) at ../../src/XlibInt.c:1583
+#7  0x00e9490d in handle_error (dpy=0x9104b88, err=0x9131840, in_XReply=0) at ../../src/xcb_io.c:212
+#8  0x00e94967 in handle_response (dpy=0x9104b88, response=0x9131840, in_XReply=0) at ../../src/xcb_io.c:324
+#9  0x00e952fe in _XReadEvents (dpy=0x9104b88) at ../../src/xcb_io.c:425
+#10 0x00e93663 in XWindowEvent (dpy=0x9104b88, w=16777220, mask=4194304, event=0xbf924c6c) at ../../src/WinEvent.c:79
+#11 0x0806071c in meta_display_get_current_time_roundtrip (display=0x916d7d0) at core/display.c:1217
+#12 0x08089f64 in meta_window_show (window=0x91ccfc8) at core/window.c:2165
+#13 implement_showing (window=0x91ccfc8, showing=1) at core/window.c:1583
+#14 0x080879cc in meta_window_flush_calc_showing (window=0x91ccfc8) at core/window.c:1806'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''meta_display_get_current_time_roundtrip (display=0x916d7d0) at core/display.c:1217
+meta_window_show (window=0x91ccfc8) at core/window.c:2165
+implement_showing (window=0x91ccfc8, showing=1) at core/window.c:1583
+meta_window_flush_calc_showing (window=0x91ccfc8) at core/window.c:1806''')
+
+        # another XError (taken from LP#834403)
+        r = Report()
+        r['Stacktrace'] = '''#0  g_logv (log_domain=0x7fd41db08a46 "Gdk", log_level=<optimized out>, format=0x7fd41db12e87 "%s", args1=0x7fff50bf0c18) at /build/buildd/glib2.0-2.29.16/./glib/gmessages.c:577
+#1  0x00007fd42006bb92 in g_log (log_domain=<optimized out>, log_level=<optimized out>, format=<optimized out>) at /build/buildd/glib2.0-2.29.16/./glib/gmessages.c:591
+#2  0x00007fd41dae86f3 in _gdk_x11_display_error_event (display=<optimized out>, error=<optimized out>) at /build/buildd/gtk+3.0-3.1.12/./gdk/x11/gdkdisplay-x11.c:2374
+#3  0x00007fd41daf5647 in gdk_x_error (error=0x7fff50bf0dc0, xdisplay=<optimized out>) at /build/buildd/gtk+3.0-3.1.12/./gdk/x11/gdkmain-x11.c:312
+#4  gdk_x_error (xdisplay=<optimized out>, error=0x7fff50bf0dc0) at /build/buildd/gtk+3.0-3.1.12/./gdk/x11/gdkmain-x11.c:275
+#5  0x00007fd41d5a301f in _XError (dpy=0x2425370, rep=<optimized out>) at ../../src/XlibInt.c:1583
+#6  0x00007fd41d59fdd1 in handle_error (dpy=0x2425370, err=0x7fd408707980, in_XReply=<optimized out>) at ../../src/xcb_io.c:212
+#7  0x00007fd41d5a0d27 in _XReply (dpy=0x2425370, rep=0x7fff50bf0f60, extra=0, discard=0) at ../../src/xcb_io.c:698
+#8  0x00007fd41d5852fb in XGetWindowProperty (dpy=0x2425370, w=0, property=348, offset=0, length=2, delete=<optimized out>, req_type=348, actual_type=0x7fff50bf1038, actual_format=0x7fff50bf105c, nitems=0x7fff50bf1040, bytesafter=0x7fff50bf1048, prop=0x7fff50bf1050) at ../../src/GetProp.c:61
+#9  0x00007fd41938269e in window_is_xembed (w=<optimized out>, d=<optimized out>) at canberra-gtk-module.c:373
+#10 dispatch_sound_event (d=0x32f6a30) at canberra-gtk-module.c:454
+#11 dispatch_queue () at canberra-gtk-module.c:815'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''XGetWindowProperty (dpy=0x2425370, w=0, property=348, offset=0, length=2, delete=<optimized out>, req_type=348, actual_type=0x7fff50bf1038, actual_format=0x7fff50bf105c, nitems=0x7fff50bf1040, bytesafter=0x7fff50bf1048, prop=0x7fff50bf1050) at ../../src/GetProp.c:61
+window_is_xembed (w=<optimized out>, d=<optimized out>) at canberra-gtk-module.c:373
+dispatch_sound_event (d=0x32f6a30) at canberra-gtk-module.c:454
+dispatch_queue () at canberra-gtk-module.c:815''')
 
         # problem with too old gdb, only assertion, nothing else
         r = Report()
