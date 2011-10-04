@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.23.2 (UNRELEASED):
+--------------------
+ - backends/packaging-apt-dpkg.py: Also copy apt/sources.list.d/ into sandbox.
+
 1.23.1 (2011-09-29)
 -------------------
 Bug fixes:

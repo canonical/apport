@@ -607,8 +607,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         apt.apt_pkg.config.set('Debug::NoLocking', 'true')
         apt.apt_pkg.config.clear('APT::Update::Post-Invoke-Success')
 
-        if not os.path.exists(os.path.join(apt_root, 'etc', 'apt', 'sources.list.d')):
-            os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'sources.list.d'))
+        if not os.path.exists(os.path.join(apt_root, 'etc', 'apt', 'sources.list')):
             os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'apt.conf.d'))
             os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'trusted.gpg.d'))
             os.makedirs(os.path.join(apt_root, 'usr', 'lib', 'apt'))
@@ -623,6 +622,15 @@ class __AptDpkgPackageInfo(PackageInfo):
         with open(apt_sources) as src:
             with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'w') as dest:
                 dest.write(src.read())
+        list_d = os.path.join(apt_root, 'etc', 'apt', 'sources.list.d')
+        if os.path.isdir(apt_sources + '.d'):
+            try:
+                shutil.rmtree(list_d)
+            except OSError:
+                pass
+            shutil.copytree(apt_sources + '.d', list_d)
+        else:
+            os.makedirs(list_d)
 
     def compare_versions(self, ver1, ver2):
         '''Compare two package versions.
