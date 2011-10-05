@@ -10,6 +10,8 @@ detailled list of changes, please see ChangeLog.
  - packaging.py, backends/packaging-apt-dpkg.py: Define that install_packages()
    should return a SystemError for broken configs/unreachable servers etc., and
    fix the apt/dpkg implementation accordingly.
+ - apport-retrace: Don't crash, just give a proper error message if servers are
+   unreachable, or configuration files are broken. (LP: #859248)
 
 1.23.1 (2011-09-29)
 -------------------
