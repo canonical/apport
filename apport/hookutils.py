@@ -357,7 +357,7 @@ def recent_logfile(logfile, pattern):
             if pattern.search(line):
                 lines += line
     except IOError:
-        return []
+        return ''
     return lines
 
 def xsession_errors(pattern):
@@ -849,6 +849,11 @@ if __name__ == '__main__':
             report = {}
             attach_file_if_exists(report, '/nonexisting')
             self.assertEqual(report.keys(), [])
+
+        def test_recent_logfile(self):
+            self.assertEqual(recent_logfile('/nonexisting', re.compile('.')), '')
+            self.assertEqual(recent_syslog(re.compile('ThisCantPossiblyHitAnything')), '')
+            self.assertNotEqual(len(recent_syslog(re.compile('.'))), 0)
 
         def test_no_crashes(self):
             '''functions do not crash (very shallow)'''

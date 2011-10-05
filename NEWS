@@ -14,6 +14,8 @@ detailled list of changes, please see ChangeLog.
    unreachable, or configuration files are broken. (LP: #859248)
  - backends/packaging-apt-dpkg.py: Fix crash when /etc/apport/native-origins.d
    contains any files. (LP: #865199)
+ - hookutils, recent_logfile(): Fix invalid return value if log file is not
+   readable. (LP: #819357)
 
 1.23.1 (2011-09-29)
 -------------------
