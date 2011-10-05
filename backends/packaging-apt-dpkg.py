@@ -408,6 +408,10 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         Return a string with outdated packages, or None if all packages were
         installed.
+
+        If something is wrong with the environment (invalid configuration,
+        package servers down, etc.), this should raise a SystemError with a
+        meaningful error message.
         '''
         if not configdir:
             apt_sources = '/etc/apt/sources.list'
@@ -438,7 +442,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             fetchProgress = apt.progress.FetchProgress()
         c = apt.Cache()
-        c.update(fetchProgress)
+        try:
+            c.update(fetchProgress)
+        except apt.cache.FetchFailedException as e:
+            raise SystemError(str(e))
         c = apt.Cache()
 
         obsolete = ''
@@ -1044,6 +1051,34 @@ bo/gu/s                                                 na/mypackage
             # does not crash with existing cache
             impl.install_packages(self.rootdir, None, None,
                     [('coreutils', None)], False, self.cachedir)
+
+        def test_install_packages_error(self):
+            '''install_packages() with errors'''
+
+            # sources.list with invalid format
+            self._setup_foonux_config()
+            with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
+                f.write('bogus format')
+
+            try:
+                impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                        [('tzdata', None)], False, self.cachedir)
+                self.fail('install_packages() unexpectedly succeeded with broken sources.list')
+            except SystemError as e:
+                self.assertTrue('bogus' in str(e))
+                self.assertFalse('Exception' in str(e))
+
+            # sources.list with wrong server
+            with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
+                f.write('deb http://archive.ubuntu.com/nosuchdistro/ lucid main\n')
+
+            try:
+                impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                        [('tzdata', None)], False, self.cachedir)
+                self.fail('install_packages() unexpectedly succeeded with broken server URL')
+            except SystemError as e:
+                self.assertTrue('nosuchdistro' in str(e))
+                self.assertTrue('index files failed to download' in str(e))
 
         def _setup_foonux_config(self):
             '''Set up directories and configuration for install_packages()'''

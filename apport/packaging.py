@@ -176,6 +176,10 @@ class PackageInfo:
 
         Return a string with outdated packages, or None if all packages were
         installed.
+
+        If something is wrong with the environment (invalid configuration,
+        package servers down, etc.), this should raise a SystemError with a
+        meaningful error message.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 

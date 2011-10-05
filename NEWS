@@ -7,6 +7,9 @@ detailled list of changes, please see ChangeLog.
    apt/sources.list.d/ into sandbox.
  - backends/packaging-apt-dpkg.py, install_packages(): Install apt keyrings
    from config dir or from system into sandbox. (LP: #856216)
+ - packaging.py, backends/packaging-apt-dpkg.py: Define that install_packages()
+   should return a SystemError for broken configs/unreachable servers etc., and
+   fix the apt/dpkg implementation accordingly.
 
 1.23.1 (2011-09-29)
 -------------------
