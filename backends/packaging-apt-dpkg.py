@@ -609,7 +609,6 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         if not os.path.exists(os.path.join(apt_root, 'etc', 'apt', 'sources.list')):
             os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'apt.conf.d'))
-            os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'trusted.gpg.d'))
             os.makedirs(os.path.join(apt_root, 'usr', 'lib', 'apt'))
             os.makedirs(os.path.join(apt_root, 'var', 'lib', 'apt', 'lists', 'partial'))
             os.makedirs(os.path.join(apt_root, 'var', 'cache', 'apt', 'archives', 'partial'))
@@ -619,18 +618,36 @@ class __AptDpkgPackageInfo(PackageInfo):
             open(os.path.join(dpkglib, 'status'), 'w').close()
             os.symlink('/usr/lib/apt/methods', os.path.join(apt_root, 'usr', 'lib', 'apt', 'methods'))
 
+        # install apt sources
         with open(apt_sources) as src:
             with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'w') as dest:
                 dest.write(src.read())
         list_d = os.path.join(apt_root, 'etc', 'apt', 'sources.list.d')
+        if os.path.exists(list_d):
+            shutil.rmtree(list_d)
         if os.path.isdir(apt_sources + '.d'):
-            try:
-                shutil.rmtree(list_d)
-            except OSError:
-                pass
             shutil.copytree(apt_sources + '.d', list_d)
         else:
             os.makedirs(list_d)
+
+        # install apt keyrings; prefer the ones from the config dir, fall back
+        # to system
+        trusted_gpg = os.path.join(os.path.dirname(apt_sources), 'trusted.gpg')
+        if os.path.exists(trusted_gpg):
+            shutil.copy(trusted_gpg, os.path.join(apt_root, 'etc', 'apt'))
+        elif os.path.exists('/etc/apt/trusted.gpg'):
+            shutil.copy('/etc/apt/trusted.gpg', os.path.join(apt_root, 'etc', 'apt'))
+
+        trusted_d = os.path.join(apt_root, 'etc', 'apt', 'trusted.gpg.d')
+        if os.path.exists(trusted_d):
+            shutil.rmtree(trusted_d)
+
+        if os.path.exists(trusted_gpg + '.d'):
+            shutil.copytree(trusted_gpg + '.d', trusted_d)
+        elif os.path.exists('/etc/apt/trusted.gpg.d'):
+            shutil.copytree('/etc/apt/trusted.gpg.d', trusted_d)
+        else:
+            os.makedirs(trusted_d)
 
     def compare_versions(self, ver1, ver2):
         '''Compare two package versions.

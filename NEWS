@@ -5,6 +5,8 @@ detailled list of changes, please see ChangeLog.
 --------------------
  - backends/packaging-apt-dpkg.py, install_packages(): Also copy
    apt/sources.list.d/ into sandbox.
+ - backends/packaging-apt-dpkg.py, install_packages(): Install apt keyrings
+   from config dir or from system into sandbox. (LP: #856216)
 
 1.23.1 (2011-09-29)
 -------------------
