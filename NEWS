@@ -12,6 +12,8 @@ detailled list of changes, please see ChangeLog.
    fix the apt/dpkg implementation accordingly.
  - apport-retrace: Don't crash, just give a proper error message if servers are
    unreachable, or configuration files are broken. (LP: #859248)
+ - backends/packaging-apt-dpkg.py: Fix crash when /etc/apport/native-origins.d
+   contains any files. (LP: #865199)
 
 1.23.1 (2011-09-29)
 -------------------

@@ -113,14 +113,14 @@ class __AptDpkgPackageInfo(PackageInfo):
             return False
 
         native_origins = [this_os]
-        try:
-            for f in os.listdir('/etc/apport/native-origins.d'):
-                for line in open(os.path.join('/etc/apport/native-origins.d', f)):
+        for f in glob.glob('/etc/apport/native-origins.d/*'):
+            try:
+                for line in open(f):
                     line = line.strip()
                     if line:
                         native_origins.append(line)
-        except OSError:
-            pass
+            except IOError:
+                pass
 
         origins = None
         origins = pkg.candidate.origins
