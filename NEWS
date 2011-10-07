@@ -17,6 +17,8 @@ Bug fixes:
    contains any files. (LP: #865199)
  - hookutils, recent_logfile(): Fix invalid return value if log file is not
    readable. (LP: #819357)
+ - test/crash: Fix race condition in the "second instance terminates
+   immediately" check.
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log

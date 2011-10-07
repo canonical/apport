@@ -205,6 +205,8 @@ try:
             env={'APPORT_REPORT_DIR': temp_report_dir}, close_fds=True,
             stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
+        time.sleep(0.5) # give it some time to grab the lock
+
         app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0'], 
             env={'APPORT_REPORT_DIR': temp_report_dir}, close_fds=True,
             stdin=subprocess.PIPE, stderr=subprocess.PIPE)
