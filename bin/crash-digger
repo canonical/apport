@@ -78,7 +78,8 @@ class CrashDigger:
             self.log('crash is release %s which does not have a config available, skipping' % rel)
             return
 
-        argv = [self.apport_retrace, '-S', self.config_dir, '--auth', self.auth_file]
+        argv = [self.apport_retrace, '-S', self.config_dir, '--auth',
+                self.auth_file, '--timestamps']
         if self.cache_dir:
             argv += ['--cache', self.cache_dir]
         if self.dup_db:

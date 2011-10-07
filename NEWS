@@ -21,6 +21,8 @@ Bug fixes:
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log
    messages. This is useful for batch operations.
+ - crash-digger: Call apport-retrace with --timestamps, to get consistent
+   timestamps in log output.
 
 1.23.1 (2011-09-29)
 -------------------
