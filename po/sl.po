@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-25 07:46+0200\n"
+"POT-Creation-Date: 2011-10-07 08:03+0200\n"
 "PO-Revision-Date: 2009-12-19 17:50+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -384,7 +384,7 @@ msgstr "&Prekliči"
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr "Namestitev ali nadgradnja paketa \"%s\" ni uspela."
 
-#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:226
+#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:23 ../kde/apport-kde.py:226
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
@@ -473,7 +473,7 @@ msgstr ""
 "Zbrani podatki so lahko poslani k razvijalcem za izboljšanje\n"
 "aplikacije. To utegne trajati nekaj minut."
 
-#: ../bin/apport-cli.py:304 ../gtk/apport-gtk.ui.h:21 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:304 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:349
 msgid "Uploading problem information"
 msgstr "Pošiljajo se informacije o težavi"
 
@@ -592,16 +592,20 @@ msgstr ""
 msgid "Application problem"
 msgstr "Težava programa"
 
-#: ../gtk/apport-gtk.ui.h:10 ../kde/apport-kde.py:301
+#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:384 ../kde/apport-kde.py:420
+msgid "Apport"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:301
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "Dokončaj poročilo (priporočeno; %s)"
 
-#: ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.ui.h:12
 msgid "Content of the report"
 msgstr "Vsebina poročila"
 
-#: ../gtk/apport-gtk.ui.h:12 ../kde/apport-kde.py:194
+#: ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:194
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -611,7 +615,7 @@ msgstr ""
 "podatkov), lahko pomagate pri izpopolnjevanju programa tako, da pošljete "
 "poročilo o nastali težavi."
 
-#: ../gtk/apport-gtk.ui.h:13
+#: ../gtk/apport-gtk.ui.h:14
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -619,24 +623,24 @@ msgstr ""
 "Zbirajo se podatki, ki bi lahko pomagali razvijalcem popraviti težavo, ki "
 "ste jo prijavili."
 
-#: ../gtk/apport-gtk.ui.h:14 ../kde/apport-kde.py:248
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:248
 msgid "Kernel problem"
 msgstr "Težava z jedrom"
 
-#: ../gtk/apport-gtk.ui.h:15
+#: ../gtk/apport-gtk.ui.h:16
 msgid "Package problem"
 msgstr "Težava s paketom"
 
-#: ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:304
+#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:304
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Skrčeno poročilo (počasna internetna povezava; %s)"
 
-#: ../gtk/apport-gtk.ui.h:18
+#: ../gtk/apport-gtk.ui.h:19
 msgid "Restart _Program"
 msgstr "Ponovno zaženi _program"
 
-#: ../gtk/apport-gtk.ui.h:19 ../kde/apport-kde.py:350
+#: ../gtk/apport-gtk.ui.h:20 ../kde/apport-kde.py:350
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -644,7 +648,7 @@ msgstr ""
 "Zbrani podatki se pošiljajo na sistem sledenja hroščev. To utegne trajati "
 "nekaj minut."
 
-#: ../gtk/apport-gtk.ui.h:20
+#: ../gtk/apport-gtk.ui.h:21
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -654,15 +658,15 @@ msgstr ""
 "uporabni za odpravljanje napak, a bi utegnili biti preveliki za pošiljanje "
 "po internetu pri počasni povezavi."
 
-#: ../gtk/apport-gtk.ui.h:23
+#: ../gtk/apport-gtk.ui.h:24
 msgid "_Ignore future crashes of this program version"
 msgstr "_Spreglej bodoča sesutja te različice programa"
 
-#: ../gtk/apport-gtk.ui.h:24
+#: ../gtk/apport-gtk.ui.h:25
 msgid "_Report Problem..."
 msgstr "_Pošlji poročilo..."
 
-#: ../gtk/apport-gtk.ui.h:25
+#: ../gtk/apport-gtk.ui.h:26
 msgid "_Send Report"
 msgstr "_Pošlji poročilo"
 
@@ -855,10 +859,6 @@ msgstr ""
 #, fuzzy
 msgid "Uploading Problem Information"
 msgstr "Pošiljajo se informacije o težavi"
-
-#: ../kde/apport-kde.py:384 ../kde/apport-kde.py:420
-msgid "Apport"
-msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
