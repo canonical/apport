@@ -13,7 +13,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, optparse, shutil, tempfile, re, zlib
-import tty, termios, gettext, atexit
+import tty, termios, gettext, atexit, time
 import apport, apport.fileutils
 from apport.crashdb import get_crashdb
 from apport import unicode_gettext as _
@@ -21,6 +21,15 @@ from apport import unicode_gettext as _
 #
 # functions
 #
+
+log_timestamps = False
+
+def log(message):
+    '''Log the given string to stdout. Prepend timestamp if requested'''
+
+    if log_timestamps:
+        sys.stdout.write('%s: ' % time.strftime('%x %X'))
+    print(message)
 
 def parse_options():
     '''Parse command line options and return (reportfile, options) tuple.'''
@@ -46,6 +55,8 @@ def parse_options():
         help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'))
     optparser.add_option('-v', '--verbose', action='store_true',
         help=_('Report download/install progress when installing packages into sandbox'))
+    optparser.add_option('--timestamps', action='store_true',
+        help=_('Prepend timestamps to log messages, for batch operation'))
     optparser.add_option('-C', '--cache', metavar='DIR',
         help=_('Cache directory for packages downloaded in the sandbox'))
     optparser.add_option('-p', '--extra-package', action='append', default=[],
@@ -67,6 +78,10 @@ def parse_options():
         optparser.error(_('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short help'))
         sys.exit(1)
 
+    if opts.timestamps:
+        global log_timestamps
+        log_timestamps = True
+
     return (args[0], opts)
 
 def getch():
@@ -87,17 +102,12 @@ def confirm_traces(report):
     
     Return True if the user agrees.'''
 
-    print '--- stack trace ---'
-    print report['Stacktrace']
-    if report.has_key('ThreadedStacktrace'):
-        print '--- thread stack trace ---'
-        print report['ThreadStacktrace']
-    print '---'
+    print_traces(report)
 
     ch = None
     while ch not in ['y', 'n']:
         # translators: don't translate y/n, apport currently only checks for "y"
-        print _('OK to send these as attachments? [y/n]')
+        print(_('OK to send these as attachments? [y/n]'))
         ch = getch().lower()
 
     return ch == 'y'
@@ -224,12 +234,24 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
         pkg = apport.packaging.get_file_package(l, True, cache_dir)
         if pkg:
             if verbose:
-                print >> sys.stderr, 'dynamically loaded %s needs package %s, queueing' % (l, pkg)
+                log('dynamically loaded %s needs package %s, queueing' % (l, pkg))
             pkgs.add(pkg)
         else:
                 apport.warning('%s is needed, but cannot be mapped to a package', l)
 
     return [(p, None) for p in pkgs]
+
+def print_traces(report):
+    '''Print stack traces from given report'''
+
+    print('--- stack trace ---')
+    print(report['Stacktrace'])
+    if report.has_key('ThreadedStacktrace'):
+        print('--- thread stack trace ---')
+        print(report['ThreadStacktrace'])
+    if report.has_key('StacktraceSource'):
+        print('--- source code stack trace ---')
+        print(report['StacktraceSource'])
 
 #
 # main
@@ -343,7 +365,7 @@ if options.sandbox:
         if path in report and not os.path.exists(sandbox + report[path]):
             pkg = apport.packaging.get_file_package(report[path], True, options.cache)
             if pkg:
-                print('Installing extra package %s to get %s' % (pkg, path))
+                log('Installing extra package %s to get %s' % (pkg, path))
                 pkgs.append((pkg, None))
             else:
                 apport.warning('Cannot find package which ships %s', path)
@@ -392,14 +414,7 @@ if options.remove_core:
     modified = True
 
 if options.stdout:
-    print '--- stack trace ---'
-    print report['Stacktrace']
-    if report.has_key('ThreadedStacktrace'):
-        print '--- thread stack trace ---'
-        print report['ThreadStacktrace']
-    if report.has_key('StacktraceSource'):
-        print '--- source code stack trace ---'
-        print report['StacktraceSource']
+    print_traces(report)
 else:
     if not options.gdb:
         modified = True
@@ -416,22 +431,22 @@ if modified:
                 res = crashdb.check_duplicate(int(crashid), report)
                 if res:
                     if res[1] == None:
-                        print 'Report is a duplicate of #%i (not fixed yet)' % res[0]
+                        log('Report is a duplicate of #%i (not fixed yet)' % res[0])
                     elif res[1] == '':
-                        print 'Report is a duplicate of #%i (fixed in latest version)' % res[0]
+                        log('Report is a duplicate of #%i (fixed in latest version)' % res[0])
                     else:
-                        print 'Report is a duplicate of #%i (fixed in version %s)' % res
+                        log('Report is a duplicate of #%i (fixed in version %s)' % res)
                     update_bug = False
                 else:
-                    print 'Duplicate check negative'
+                    log('Duplicate check negative')
 
             if update_bug:
                 if 'Stacktrace' in report:
                     crashdb.update_traces(crashid, report)
-                    print 'New attachments uploaded to crash database #' + crashid
+                    log('New attachments uploaded to crash database #' + crashid)
                 else:
                     # this happens when gdb crashes
-                    print 'No stack trace, invalid report'
+                    log('No stack trace, invalid report')
 
                 if not report.has_useful_stacktrace():
                     if outdated_msg:
@@ -449,10 +464,10 @@ encounter the crash, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 ''' % outdated_msg
-                        print 'No crash signature and outdated packages, invalidating report'
+                        log('No crash signature and outdated packages, invalidating report')
                         crashdb.mark_retrace_failed(crashid, invalid_msg)
                     else:
-                        print 'Report has no crash signature, so retrace is flawed'
+                        log('Report has no crash signature, so retrace is flawed')
                         crashdb.mark_retrace_failed(crashid)
 
     else:

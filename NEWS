@@ -3,6 +3,7 @@ detailled list of changes, please see ChangeLog.
 
 1.23.2 (UNRELEASED):
 --------------------
+Bug fixes:
  - backends/packaging-apt-dpkg.py, install_packages(): Also copy
    apt/sources.list.d/ into sandbox.
  - backends/packaging-apt-dpkg.py, install_packages(): Install apt keyrings
@@ -16,6 +17,10 @@ detailled list of changes, please see ChangeLog.
    contains any files. (LP: #865199)
  - hookutils, recent_logfile(): Fix invalid return value if log file is not
    readable. (LP: #819357)
+
+Improvements:
+ - apport-retrace: Add --timestamp option to prepend a timestamp to log
+   messages. This is useful for batch operations.
 
 1.23.1 (2011-09-29)
 -------------------
