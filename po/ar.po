@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-07 08:03+0200\n"
-"PO-Revision-Date: 2009-06-29 01:58+0000\n"
+"PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Arabic <ar@li.org>\n"
-"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:10+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
+"Language: ar\n"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:94
@@ -32,8 +32,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"مثبت لديك بعض الإصدارات اللاغية من الحزم، رقِّ من فضلك الحزم التالية وتحقق مما "
-"إذا ما زالت المشكلة تقع:\n"
+"مثبت لديك بعض الإصدارات اللاغية من الحزم، رقِّ من فضلك الحزم التالية وتحقق "
+"مما إذا ما زالت المشكلة تقع:\n"
 "\n"
 "%s"
 
@@ -130,9 +130,8 @@ msgid "Package %s does not exist"
 msgstr "الحزمة %s غير موجودة"
 
 #: ../apport/ui.py:408 ../apport/ui.py:590 ../apport/ui.py:595
-#, fuzzy
 msgid "Cannot create report"
-msgstr "محتوى البلاغ"
+msgstr ""
 
 #: ../apport/ui.py:422 ../apport/ui.py:468 ../apport/ui.py:485
 msgid "Updating problem report"
@@ -152,8 +151,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -198,7 +197,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:644
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:647
@@ -314,8 +314,8 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"بُلغ عن هذه المشكلة مسبقاً في بلاغ العِلة المعروض في المتصفح، تحقق من فضلك مما "
-"إذا كان باستطاعتك إضافة معلومات أخرى قد تساعد المطورين."
+"بُلغ عن هذه المشكلة مسبقاً في بلاغ العِلة المعروض في المتصفح، تحقق من فضلك "
+"مما إذا كان باستطاعتك إضافة معلومات أخرى قد تساعد المطورين."
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -554,8 +554,8 @@ msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">عفواً، فشِل تثبيت أو ترقية حزمة \"%s\".</"
-"span>"
+"<span weight=\"bold\" size=\"larger\">عفواً، فشِل تثبيت أو ترقية حزمة "
+"\"%s\".</span>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
@@ -612,7 +612,8 @@ msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"يجرى إرسال المعلومات التي جُمِعت إلى نظام تتبع العِلَل، وقد يستغرق هذا بضع دقائق."
+"يجرى إرسال المعلومات التي جُمِعت إلى نظام تتبع العِلَل، وقد يستغرق هذا بضع "
+"دقائق."
 
 #: ../gtk/apport-gtk.ui.h:21
 msgid ""
@@ -620,8 +621,8 @@ msgid ""
 "developers to debug the problem, but might be too big for you to upload if "
 "you have a slow internet connection."
 msgstr ""
-"سيُزِيل هذا أجزاء كبيرة من البلاغ، وهي مفيدة للغاية للمطورين في تنقيح المشكلة "
-"لكنها قد تكون كبيرة جداً عند الرفع إذا كان اتصالك بالإنترنت بطيء."
+"سيُزِيل هذا أجزاء كبيرة من البلاغ، وهي مفيدة للغاية للمطورين في تنقيح "
+"المشكلة لكنها قد تكون كبيرة جداً عند الرفع إذا كان اتصالك بالإنترنت بطيء."
 
 #: ../gtk/apport-gtk.ui.h:24
 msgid "_Ignore future crashes of this program version"
@@ -695,7 +696,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:48
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:50
@@ -721,7 +723,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:58
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:63
@@ -744,9 +747,9 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr "عفواً، أُغلق البرنامج \"%s\" فجأة"
+msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -761,65 +764,55 @@ msgid "Password:"
 msgstr ""
 
 #: ../kde/apport-kde.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "عفواً، أُغلق البرنامج \"%s\" فجأة"
+msgstr ""
 
 #: ../kde/apport-kde.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr "عفواً، أُغلق البرنامج \"%s\" فجأة"
+msgstr ""
 
 #: ../kde/apport-kde.py:197
-#, fuzzy
 msgid "&Ignore future crashes of this program version"
-msgstr "_تجاهل الانهيارات المستقبلية من إصدارة البرنامج هذه"
+msgstr ""
 
 #: ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Restart &Program"
-msgstr "أعد تشغيل ال_برنامج"
+msgstr ""
 
 #: ../kde/apport-kde.py:224
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "فشِل تثبيت أو ترقية حزمة \"%s\"."
+msgstr ""
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
 msgstr ""
 
 #: ../kde/apport-kde.py:271
-#, fuzzy
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
-"من فضلك بعد الإبلاغ عن المشكلة املأ النموذج في\n"
-"متصفح الشبكة الوب المفتوح تلقائيا."
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
 msgstr ""
 
 #: ../kde/apport-kde.py:331
-#, fuzzy
 msgid "Collecting Problem Information"
-msgstr "يجمع معلومات عن المشكلة"
+msgstr ""
 
 #: ../kde/apport-kde.py:333
-#, fuzzy
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"يمكن إرسال المعلومات التي جُمِعت إلى المطورين لتحسين\n"
-"التطبيق، لكن قد يستغرق هذا بعض الدقائق."
 
 #: ../kde/apport-kde.py:348
-#, fuzzy
 msgid "Uploading Problem Information"
-msgstr "يرفع معلومات المشكلة"
+msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"

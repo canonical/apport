@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-07 08:03+0200\n"
-"PO-Revision-Date: 2009-12-19 17:51+0000\n"
+"PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:11+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
+"Language: \n"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:94
@@ -125,9 +125,8 @@ msgid "Package %s does not exist"
 msgstr "软件包 %s 不存在"
 
 #: ../apport/ui.py:408 ../apport/ui.py:590 ../apport/ui.py:595
-#, fuzzy
 msgid "Cannot create report"
-msgstr "报告的内容"
+msgstr ""
 
 #: ../apport/ui.py:422 ../apport/ui.py:468 ../apport/ui.py:485
 msgid "Updating problem report"
@@ -147,8 +146,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -189,12 +188,12 @@ msgid "Specify package name."
 msgstr ""
 
 #: ../apport/ui.py:614 ../apport/ui.py:663
-#, fuzzy
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr "安装一个额外的包(可以多次指定)"
+msgstr ""
 
 #: ../apport/ui.py:644
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [选项] [症状|PID|软件包|程序目录|.apport/.crash file]"
 
 #: ../apport/ui.py:647
@@ -203,8 +202,7 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"以填写 bug 模式启动。需要 --package 和可选的 --pid 参数，或单独使用 --pid 参"
-"数。如果二者均未给出，将显示一系列症状供选择。"
+"以填写 bug 模式启动。需要 --package 和可选的 --pid 参数，或单独使用 --pid 参数。如果二者均未给出，将显示一系列症状供选择。"
 
 #: ../apport/ui.py:649
 msgid "Click a window as a target for filing a problem report."
@@ -224,28 +222,21 @@ msgstr "针对某个症状报告 bug。"
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
-msgstr ""
-"--file-bug 模式中指定软件包名。如果指定了 --pid，则是可选的。(如果只给定软件"
-"包名这一个参数则它是必需的。)"
+msgstr "--file-bug 模式中指定软件包名。如果指定了 --pid，则是可选的。(如果只给定软件包名这一个参数则它是必需的。)"
 
 #: ../apport/ui.py:657
-#, fuzzy
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"--file-bug 模式中指定运行的程序名。如果指定，错误报告会包含更多信息。(如果只"
-"给定 pid 这一个参数则它是必需的。)"
 
 #: ../apport/ui.py:659
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
-msgstr ""
-"从给定的 .apport 或者  .crash 文件，而不是从正在处理的 %s 中汇报崩溃。(如果文"
-"件只给定了参数时实现。)"
+msgstr "从给定的 .apport 或者  .crash 文件，而不是从正在处理的 %s 中汇报崩溃。(如果文件只给定了参数时实现。)"
 
 #: ../apport/ui.py:661
 msgid ""
@@ -555,9 +546,7 @@ msgstr "<big><b>正在上传问题信息</b></big>"
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
-msgstr ""
-"<span weight=\"bold\" size=\"larger\">对不起，软件包 \"%s\" 安装或升级失败</"
-"span>"
+msgstr "<span weight=\"bold\" size=\"larger\">对不起，软件包 \"%s\" 安装或升级失败</span>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
@@ -581,9 +570,7 @@ msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
 "the problem."
-msgstr ""
-"如果您现在的动作不涉及机密信息(即不是输入口令等涉及私密信息的动作)，则可以报"
-"告本问题以便改进程序。"
+msgstr "如果您现在的动作不涉及机密信息(即不是输入口令等涉及私密信息的动作)，则可以报告本问题以便改进程序。"
 
 #: ../gtk/apport-gtk.ui.h:14
 msgid ""
@@ -619,9 +606,7 @@ msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
 "you have a slow internet connection."
-msgstr ""
-"这会移除报告的一些大条目。虽然这对开发者报告问题很有用，但如果带宽窄则会上传"
-"太慢。"
+msgstr "这会移除报告的一些大条目。虽然这对开发者报告问题很有用，但如果带宽窄则会上传太慢。"
 
 #: ../gtk/apport-gtk.ui.h:24
 msgid "_Ignore future crashes of this program version"
@@ -695,28 +680,25 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:48
-#, fuzzy
-msgid "Report download/install progress when installing packages into sandbox"
-msgstr "在安装附加包后报告下载/安装进程"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
+msgstr ""
 
 #: ../bin/apport-retrace.py:50
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:52
-#, fuzzy
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr "安装一个额外的包(可以多次指定)"
+msgstr ""
 
 #: ../bin/apport-retrace.py:54
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
-msgstr ""
-"包含崩溃数据库访问信息文件之路径。此项将用于为特定崩溃代码上传堆栈的回溯调试"
-"信息(除非用户指定 -g, -o 或 -s)"
+msgstr "包含崩溃数据库访问信息文件之路径。此项将用于为特定崩溃代码上传堆栈的回溯调试信息(除非用户指定 -g, -o 或 -s)"
 
 #: ../bin/apport-retrace.py:56
 msgid ""
@@ -725,7 +707,8 @@ msgid ""
 msgstr "显示返回的堆栈信息，并询求确认是否将其发送至崩溃数据库。"
 
 #: ../bin/apport-retrace.py:58
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "SQLite 数据库路径重复(默认：不重复检查)"
 
 #: ../bin/apport-retrace.py:63
@@ -736,9 +719,7 @@ msgstr "参数数量错误；使用 --help 获取简略帮助"
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
-msgstr ""
-"您或需要进行一项本地操作(-s, -g, -o) 或提供一个认证文件(--auth)；参见 --help "
-"以获取简单帮助。"
+msgstr "您或需要进行一项本地操作(-s, -g, -o) 或提供一个认证文件(--auth)；参见 --help 以获取简单帮助。"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../bin/apport-retrace.py:100
@@ -750,9 +731,9 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr "您的系统可能现在不稳定，它也许需要重启。"
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr "抱歉，“%s”程序异常退出"
+msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -767,65 +748,55 @@ msgid "Password:"
 msgstr ""
 
 #: ../kde/apport-kde.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "抱歉，“%s”程序异常退出"
+msgstr ""
 
 #: ../kde/apport-kde.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr "抱歉，“%s”程序异常退出"
+msgstr ""
 
 #: ../kde/apport-kde.py:197
-#, fuzzy
 msgid "&Ignore future crashes of this program version"
-msgstr "忽略这个程序以后的崩溃(_I)"
+msgstr ""
 
 #: ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Restart &Program"
-msgstr "重启程序(_P)"
+msgstr ""
 
 #: ../kde/apport-kde.py:224
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "软件包\"%s\"安装或者升级失败。"
+msgstr ""
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
 msgstr ""
 
 #: ../kde/apport-kde.py:271
-#, fuzzy
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
-"当问题报告被发出之后，请填写\n"
-"自动弹出窗口的表格。"
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
 msgstr ""
 
 #: ../kde/apport-kde.py:331
-#, fuzzy
 msgid "Collecting Problem Information"
-msgstr "正在收集问题信息"
+msgstr ""
 
 #: ../kde/apport-kde.py:333
-#, fuzzy
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"收集到的信息将会传送到开发人员处以改进软件。\n"
-"这可能会花费几分钟时间，"
 
 #: ../kde/apport-kde.py:348
-#, fuzzy
 msgid "Uploading Problem Information"
-msgstr "上传问题信息"
+msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
@@ -839,26 +810,3 @@ msgstr "用法: %s <报告> <目标目录>"
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
 msgstr "目标目录存在且不为空。"
-
-#~ msgid ""
-#~ "The program crashed on an assertion failure, but the message could not be "
-#~ "retrieved. Apport does not support reporting these crashes."
-#~ msgstr ""
-#~ "该程序因为声明失败而崩溃，但无法获取详细信息。Apport 无法对此类问题提交报"
-#~ "告。"
-
-#~ msgid ""
-#~ "Only unpack the additionally required packages, do not configure them; "
-#~ "purge packages again after retracing"
-#~ msgstr "仅解包附加软件包但不进行配置并在重建跟踪后彻底删除"
-
-#~ msgid ""
-#~ "Do not use packaging system when using -u and do not purge packages "
-#~ "afterwards. This should only be used for temporarily unpacked chroot "
-#~ "tarballs where it would just be a waste of time."
-#~ msgstr ""
-#~ "使用 -u 参数时不要使用打包系统，随后也不要清除软件包，除非要暂时解开 "
-#~ "chroot 档案包，否则这样做纯粹是浪费时间。"
-
-#~ msgid "The running kernel is not an Ubuntu kernel"
-#~ msgstr "正在运行的内核不是 Ubuntu 内核"

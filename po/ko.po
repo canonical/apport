@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-07 08:03+0200\n"
-"PO-Revision-Date: 2009-12-19 17:49+0000\n"
+"PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Namhyung Kim <namhyung@gmail.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
-"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:10+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
+"Language: ko\n"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:94
@@ -32,8 +32,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"오래된 버전의 패키지가 몇 개 설치되어 있습니다. 다음 패키지들을 업그레이드한 "
-"후 계속 문제가 발생하는지 점검해 주십시오:\n"
+"오래된 버전의 패키지가 몇 개 설치되어 있습니다. 다음 패키지들을 업그레이드한 후 계속 문제가 발생하는지 점검해 주십시오:\n"
 "\n"
 "%s"
 
@@ -55,9 +54,7 @@ msgstr "%s 내의 문제"
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
-msgstr ""
-"여러분의 컴퓨터에는 자동으로 문제점을 분석하여 개발자에게 보고서를 보낼 수 있"
-"을 정도의 충분한 메모리가 없습니다."
+msgstr "여러분의 컴퓨터에는 자동으로 문제점을 분석하여 개발자에게 보고서를 보낼 수 있을 정도의 충분한 메모리가 없습니다."
 
 #. package does not exist
 #: ../apport/ui.py:241 ../apport/ui.py:267 ../apport/ui.py:273
@@ -97,9 +94,7 @@ msgstr "패키지가 지정되지 않음"
 #: ../apport/ui.py:333
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr ""
-"패키지 혹은 PID를 지정해야 합니다. --help 옵션을 이용하여 정보를 볼 수 있습니"
-"다."
+msgstr "패키지 혹은 PID를 지정해야 합니다. --help 옵션을 이용하여 정보를 볼 수 있습니다."
 
 #: ../apport/ui.py:349
 msgid "Invalid PID"
@@ -117,9 +112,7 @@ msgstr "권한이 없음"
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
-msgstr ""
-"지정된 프로세스는 여러분이 실행한 것이 아닙니다. 이 프로그램을 직접 실행하거"
-"나 root 사용자로 실행하십시오."
+msgstr "지정된 프로세스는 여러분이 실행한 것이 아닙니다. 이 프로그램을 직접 실행하거나 root 사용자로 실행하십시오."
 
 #: ../apport/ui.py:380
 #, python-format
@@ -132,9 +125,8 @@ msgid "Package %s does not exist"
 msgstr "%s 패키지가 존재하지 않습니다"
 
 #: ../apport/ui.py:408 ../apport/ui.py:590 ../apport/ui.py:595
-#, fuzzy
 msgid "Cannot create report"
-msgstr "보고서의 내용"
+msgstr ""
 
 #: ../apport/ui.py:422 ../apport/ui.py:468 ../apport/ui.py:485
 msgid "Updating problem report"
@@ -154,8 +146,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -200,7 +192,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:644
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:647
@@ -316,8 +309,8 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"이 문제는 웹 브라우저에 표시된 버그 보고서에 이미 보고된 것입니다. 개발자에"
-"게 도움이 될 만한 추가적인 정보를 제공할 수 있는지 점검해 주십시오."
+"이 문제는 웹 브라우저에 표시된 버그 보고서에 이미 보고된 것입니다. 개발자에게 도움이 될 만한 추가적인 정보를 제공할 수 있는지 점검해 "
+"주십시오."
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -379,8 +372,7 @@ msgstr "시스템에 심각한 커널 문제가 발생하였습니다."
 
 #: ../bin/apport-cli.py:180 ../gtk/apport-gtk.py:130 ../kde/apport-kde.py:245
 msgid "You can help the developers to fix the problem by reporting it."
-msgstr ""
-"이 문제를 보고하여 개발자들이 문제를 해결할 수 있도록 도와줄 수 있습니다."
+msgstr "이 문제를 보고하여 개발자들이 문제를 해결할 수 있도록 도와줄 수 있습니다."
 
 #: ../bin/apport-cli.py:214
 #, python-format
@@ -512,9 +504,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:417
 msgid "No pending crash reports. Try --help for more information."
-msgstr ""
-"대기 중인 문제점 보고서가 없습니다. --help 옵션을 이용하여 다른 정보를 볼 수 "
-"있습니다."
+msgstr "대기 중인 문제점 보고서가 없습니다. --help 옵션을 이용하여 다른 정보를 볼 수 있습니다."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
@@ -547,8 +537,7 @@ msgid ""
 msgstr ""
 "<big><b>이 문제를 개발자에게 보고하시겠습니까?</b></big>\n"
 "\n"
-"버그 보고서를 보내고 난 후에, 웹 브라우저에 자동으로 열리는 페이지의 정보를 "
-"입력해 주십시오."
+"버그 보고서를 보내고 난 후에, 웹 브라우저에 자동으로 열리는 페이지의 정보를 입력해 주십시오."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Uploading problem information</b></big>"
@@ -560,8 +549,8 @@ msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">죄송합니다. \"%s\" 패키지의 설치 혹은 "
-"업그레이드가 실패했습니다.</span>"
+"<span weight=\"bold\" size=\"larger\">죄송합니다. \"%s\" 패키지의 설치 혹은 업그레이드가 "
+"실패했습니다.</span>"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Application problem"
@@ -586,16 +575,14 @@ msgid ""
 "private information), you can help to improve the application by reporting "
 "the problem."
 msgstr ""
-"(암호 또는 다른 개인 정보를 입력하는 것과 같은) 보안 작업을 수행하지 않았다"
-"면, 문제점을 보고하여 프로그램을 개선하도록 도울 수 있습니다."
+"(암호 또는 다른 개인 정보를 입력하는 것과 같은) 보안 작업을 수행하지 않았다면, 문제점을 보고하여 프로그램을 개선하도록 도울 수 "
+"있습니다."
 
 #: ../gtk/apport-gtk.ui.h:14
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
-msgstr ""
-"개발자가 여러분이 보낸 보고서를 통해 문제점을 해결할 수 있도록 정보를 수집하"
-"고 있습니다."
+msgstr "개발자가 여러분이 보낸 보고서를 통해 문제점을 해결할 수 있도록 정보를 수집하고 있습니다."
 
 #: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:248
 msgid "Kernel problem"
@@ -618,9 +605,7 @@ msgstr "프로그램 재시작(_P)"
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
-msgstr ""
-"수집된 정보를 버그 추적 시스템으로 전송하고 있습니다. 이 작업은 몇 분 정도 걸"
-"릴 수 있습니다."
+msgstr "수집된 정보를 버그 추적 시스템으로 전송하고 있습니다. 이 작업은 몇 분 정도 걸릴 수 있습니다."
 
 #: ../gtk/apport-gtk.ui.h:21
 msgid ""
@@ -628,9 +613,8 @@ msgid ""
 "developers to debug the problem, but might be too big for you to upload if "
 "you have a slow internet connection."
 msgstr ""
-"이것은 보고서에서 많은 항목을 제거합니다. 이 정보들은 개발자가 문제점을 고치"
-"는 데에는 매우 유용하지만, 인터넷 접속이 느리다면 업로드하기에는 너무 클 수 "
-"있습니다."
+"이것은 보고서에서 많은 항목을 제거합니다. 이 정보들은 개발자가 문제점을 고치는 데에는 매우 유용하지만, 인터넷 접속이 느리다면 "
+"업로드하기에는 너무 클 수 있습니다."
 
 #: ../gtk/apport-gtk.ui.h:24
 msgid "_Ignore future crashes of this program version"
@@ -704,7 +688,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:48
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:50
@@ -730,7 +715,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:58
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:63
@@ -753,9 +739,9 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr "죄송합니다. \"%s\" 프로그램이 예상치 않게 종료되었습니다"
+msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -770,65 +756,55 @@ msgid "Password:"
 msgstr ""
 
 #: ../kde/apport-kde.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "죄송합니다. \"%s\" 프로그램이 예상치 않게 종료되었습니다"
+msgstr ""
 
 #: ../kde/apport-kde.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr "죄송합니다. \"%s\" 프로그램이 예상치 않게 종료되었습니다"
+msgstr ""
 
 #: ../kde/apport-kde.py:197
-#, fuzzy
 msgid "&Ignore future crashes of this program version"
-msgstr "이 버전의 프로그램에 대해 이후의 문제 발생시 무시(_I)"
+msgstr ""
 
 #: ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Restart &Program"
-msgstr "프로그램 재시작(_P)"
+msgstr ""
 
 #: ../kde/apport-kde.py:224
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "\"%s\" 패키지가 설치 혹은 업그레이드 과정에서 실패하였습니다."
+msgstr ""
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
 msgstr ""
 
 #: ../kde/apport-kde.py:271
-#, fuzzy
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
-"문제점 보고서가 전송된 후에, 자동으로 열리는 웹 브라우저 내의 문항을\n"
-"작성해 주시기 바랍니다."
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
 msgstr ""
 
 #: ../kde/apport-kde.py:331
-#, fuzzy
 msgid "Collecting Problem Information"
-msgstr "문제점 정보를 모으는 중"
+msgstr ""
 
 #: ../kde/apport-kde.py:333
-#, fuzzy
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"수집된 정보는 프로그램을 개선하기 위해 개발자에게 보낼 수 있습니다.\n"
-"이 과정은 몇 분 정도 걸립니다."
 
 #: ../kde/apport-kde.py:348
-#, fuzzy
 msgid "Uploading Problem Information"
-msgstr "문제점 정보를 업로드하는 중"
+msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"

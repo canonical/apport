@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-07 08:03+0200\n"
-"PO-Revision-Date: 2009-06-29 02:09+0000\n"
+"PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: rizoye-xerzi <rizoxerzi@gmail.com>\n"
 "Language-Team: Kurdish <ku@li.org>\n"
-"Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:10+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
+"Language: ku\n"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:94
@@ -153,8 +153,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -199,8 +199,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:644
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:647
 msgid ""
@@ -235,15 +237,11 @@ msgid ""
 msgstr ""
 
 #: ../apport/ui.py:657
-#, fuzzy
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"Di --moda pel-çewtî'yê de bernameyekê dîyarbike. Ger ev bê dîyarkirin,  "
-"rapora çewtiyan dê zedetir xwedî agahî be.(Tê watey ku pid weka arguman "
-"hatibe dayîn.)"
 
 #: ../apport/ui.py:659
 #, python-format
@@ -364,7 +362,8 @@ msgstr "Pirsgirêkê &Raporbike..."
 
 #: ../bin/apport-cli.py:147
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
+msgstr ""
+"Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
 #: ../bin/apport-cli.py:243 ../bin/apport-cli.py:324 ../bin/apport-cli.py:356
@@ -706,7 +705,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:48
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:50
@@ -732,7 +732,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:58
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:63
@@ -755,9 +756,9 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr "Xemgînim, bernameya \"%s\" bi awayekî ne dihat hêvîkirin hat girtin."
+msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -772,64 +773,55 @@ msgid "Password:"
 msgstr ""
 
 #: ../kde/apport-kde.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "Xemgînim, bernameya \"%s\" bi awayekî ne dihat hêvîkirin hat girtin."
+msgstr ""
 
 #: ../kde/apport-kde.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr "Xemgînim, bernameya \"%s\" bi awayekî ne dihat hêvîkirin hat girtin."
+msgstr ""
 
 #: ../kde/apport-kde.py:197
-#, fuzzy
 msgid "&Ignore future crashes of this program version"
-msgstr "Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
+msgstr ""
 
 #: ../kde/apport-kde.py:206
 msgid "Restart &Program"
 msgstr ""
 
 #: ../kde/apport-kde.py:224
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "Sazkirin yan jî bilindkirna pakêta \"%s\" biserbeket."
+msgstr ""
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
 msgstr ""
 
 #: ../kde/apport-kde.py:271
-#, fuzzy
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
-"Pîştî rapor hat şandin ji kerema xwe ra forma di geroka webê de ku \n"
-"bixweber vebû dagirin."
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
 msgstr ""
 
 #: ../kde/apport-kde.py:331
-#, fuzzy
 msgid "Collecting Problem Information"
-msgstr "Agahiyên pirsgirêkê tên civandin."
+msgstr ""
 
 #: ../kde/apport-kde.py:333
-#, fuzzy
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"Agahiyên civandî kare bê şandin ji pisporan re ji pêşxistina sepanê.\n"
-"Ev dibe ku çend xulekan bigire."
 
 #: ../kde/apport-kde.py:348
-#, fuzzy
 msgid "Uploading Problem Information"
-msgstr "Agahiyên pirsgirêkê tên vebarkirin."
+msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
@@ -843,10 +835,3 @@ msgstr ""
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
 msgstr ""
-
-#~ msgid ""
-#~ "The program crashed on an assertion failure, but the message could not be "
-#~ "retrieved. Apport does not support reporting these crashes."
-#~ msgstr ""
-#~ "Bername li ser çewtiyeke  erêkirinê   hilweşiya. lê peyam nehate "
-#~ "gihîştin. Apport raporkirina vê hilweşînê destek nake."

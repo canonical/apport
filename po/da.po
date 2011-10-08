@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-07 08:03+0200\n"
-"PO-Revision-Date: 2009-10-15 19:49+0000\n"
+"PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Mads Lundby <Unknown>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
-"Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:10+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
+"Language: da\n"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:94
@@ -87,7 +87,8 @@ msgstr "Fejl"
 
 #: ../apport/ui.py:305
 msgid "There is not enough disk space available to process this report."
-msgstr "Der er ikke nok diskplads til rådighed til at behandle denne rapport."
+msgstr ""
+"Der er ikke nok diskplads til rådighed til at behandle denne rapport."
 
 #: ../apport/ui.py:332
 msgid "No package specified"
@@ -96,7 +97,8 @@ msgstr "Ingen pakke angivet"
 #: ../apport/ui.py:333
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Du skal angive en pakke eller en PID. Se --help for mere information."
+msgstr ""
+"Du skal angive en pakke eller en PID. Se --help for mere information."
 
 #: ../apport/ui.py:349
 msgid "Invalid PID"
@@ -129,9 +131,8 @@ msgid "Package %s does not exist"
 msgstr "Pakke %s eksisterer ikke"
 
 #: ../apport/ui.py:408 ../apport/ui.py:590 ../apport/ui.py:595
-#, fuzzy
 msgid "Cannot create report"
-msgstr "Indhold af rapporten"
+msgstr ""
 
 #: ../apport/ui.py:422 ../apport/ui.py:468 ../apport/ui.py:485
 msgid "Updating problem report"
@@ -151,8 +152,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -193,12 +194,12 @@ msgid "Specify package name."
 msgstr ""
 
 #: ../apport/ui.py:614 ../apport/ui.py:663
-#, fuzzy
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr "Installér en ekstra pakke (kan blive angivet flere gange)"
+msgstr ""
 
 #: ../apport/ui.py:644
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [tilvalg] [symptom|pid|pakke|programsti|.apport/.crash-fil]"
 
 #: ../apport/ui.py:647
@@ -236,15 +237,11 @@ msgstr ""
 "angivet. (Underforstået hvis pakkenavn er angivet som eneste argument.)"
 
 #: ../apport/ui.py:657
-#, fuzzy
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"Angiv et kørende program i --file-bug-tilstand. Hvis dette er angivet, vil "
-"fejlrapporten indeholde mere information. (Underforstået hvis pid er angivet "
-"som eneste argument.)"
 
 #: ../apport/ui.py:659
 #, python-format
@@ -309,7 +306,8 @@ msgstr ""
 #: ../apport/ui.py:1032 ../apport/ui.py:1041
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "Problemrapporten vedrører et program, som ikke længere er installeret."
+msgstr ""
+"Problemrapporten vedrører et program, som ikke længere er installeret."
 
 #: ../apport/ui.py:1057
 #, python-format
@@ -736,21 +734,18 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:48
-#, fuzzy
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
-"Rapportér hentnings-/installations-fremskridt under installation af "
-"yderligere pakker"
 
 #: ../bin/apport-retrace.py:50
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:52
-#, fuzzy
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr "Installér en ekstra pakke (kan blive angivet flere gange)"
+msgstr ""
 
 #: ../bin/apport-retrace.py:54
 msgid ""
@@ -771,8 +766,10 @@ msgstr ""
 "nedbrudsdatabasen."
 
 #: ../bin/apport-retrace.py:58
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr "Sti til sqlite-duplikatdatabasen (standard: ingen duplikeret kontrol)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgstr ""
+"Sti til sqlite-duplikatdatabasen (standard: ingen duplikeret kontrol)"
 
 #: ../bin/apport-retrace.py:63
 msgid "incorrect number of arguments; use --help for a short help"
@@ -797,9 +794,9 @@ msgstr ""
 "Dit system kan blive ustabilt nu og kan få brug for at blive genstartet."
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr "Undskyld, programmet \"%s\" lukkede uventet"
+msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -814,65 +811,55 @@ msgid "Password:"
 msgstr ""
 
 #: ../kde/apport-kde.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "Undskyld, programmet \"%s\" lukkede uventet"
+msgstr ""
 
 #: ../kde/apport-kde.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr "Undskyld, programmet \"%s\" lukkede uventet"
+msgstr ""
 
 #: ../kde/apport-kde.py:197
-#, fuzzy
 msgid "&Ignore future crashes of this program version"
-msgstr "_Ignorér fremtidige nedbrud af denne programversion"
+msgstr ""
 
 #: ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Restart &Program"
-msgstr "Genstart _program"
+msgstr ""
 
 #: ../kde/apport-kde.py:224
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "Pakken \"%s\" fejlede under installation eller opgradering."
+msgstr ""
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
 msgstr ""
 
 #: ../kde/apport-kde.py:271
-#, fuzzy
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
-"Efter problemrapporten er afsendt, bedes du udfylde formularen i den\n"
-"internetbrowser, som åbner automatisk."
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
 msgstr ""
 
 #: ../kde/apport-kde.py:331
-#, fuzzy
 msgid "Collecting Problem Information"
-msgstr "Indsamler information om problem"
+msgstr ""
 
 #: ../kde/apport-kde.py:333
-#, fuzzy
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"De indsamlede informationer kan sendes til udviklerne med henblik på\n"
-" at forbedre programmet. Dette kan tage nogle få minutter."
 
 #: ../kde/apport-kde.py:348
-#, fuzzy
 msgid "Uploading Problem Information"
-msgstr "Sender probleminformation"
+msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
@@ -886,29 +873,3 @@ msgstr "Brug: %s <rapport> <målkatalog>"
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
 msgstr "Destinationskatalog eksisterer og er ikke tomt."
-
-#~ msgid ""
-#~ "The program crashed on an assertion failure, but the message could not be "
-#~ "retrieved. Apport does not support reporting these crashes."
-#~ msgstr ""
-#~ "Programmet brød ned med en programfejl (assert), men fejlmeddelelsen "
-#~ "kunne ikke hentes. Apport understøtter ikke rapportering af disse nedbrud."
-
-#~ msgid ""
-#~ "Only unpack the additionally required packages, do not configure them; "
-#~ "purge packages again after retracing"
-#~ msgstr ""
-#~ "Udpak kun de yderligere krævede pakker, men konfigurér dem ikke; kassér "
-#~ "pakker igen efter gensporing"
-
-#~ msgid ""
-#~ "Do not use packaging system when using -u and do not purge packages "
-#~ "afterwards. This should only be used for temporarily unpacked chroot "
-#~ "tarballs where it would just be a waste of time."
-#~ msgstr ""
-#~ "Brug ikke pakkesystem, når du bruger -u og kassér ikke pakker "
-#~ "efterfølgende. Dette bør kun bruges til midlertidige udpakkede chroot-"
-#~ "tarballs, hvor det bare ville være spild af tid."
-
-#~ msgid "The running kernel is not an Ubuntu kernel"
-#~ msgstr "Den kerne, som kører, er ikke en Ubuntu-kerne"

@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-07 08:03+0200\n"
-"PO-Revision-Date: 2009-12-19 17:48+0000\n"
+"PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Dražen Odobašić <dodobas@geoinfo.geof.hr>\n"
 "Language-Team: Croatian <hr@li.org>\n"
-"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:11+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
+"Language: hr\n"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:94
@@ -97,7 +97,8 @@ msgstr "Nema određenih paketa"
 #: ../apport/ui.py:333
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Morate odrediti paket ili PID. Pogledajte --help za više informacija."
+msgstr ""
+"Morate odrediti paket ili PID. Pogledajte --help za više informacija."
 
 #: ../apport/ui.py:349
 msgid "Invalid PID"
@@ -130,9 +131,8 @@ msgid "Package %s does not exist"
 msgstr "Paket %s ne postoji"
 
 #: ../apport/ui.py:408 ../apport/ui.py:590 ../apport/ui.py:595
-#, fuzzy
 msgid "Cannot create report"
-msgstr "Sadržaj izvještaja"
+msgstr ""
 
 #: ../apport/ui.py:422 ../apport/ui.py:468 ../apport/ui.py:485
 msgid "Updating problem report"
@@ -152,8 +152,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -198,7 +198,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:644
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:647
@@ -372,7 +373,8 @@ msgstr "Paket \"%s\" se nije uspio instalirati ili nadograditi"
 #: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:23 ../kde/apport-kde.py:226
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
-msgstr "I vi možete pomoći razvojnom timu da popravi paket prijavom problema."
+msgstr ""
+"I vi možete pomoći razvojnom timu da popravi paket prijavom problema."
 
 #: ../bin/apport-cli.py:176 ../gtk/apport-gtk.py:126 ../kde/apport-kde.py:241
 msgid "Your system encountered a serious kernel problem."
@@ -707,7 +709,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:48
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:50
@@ -733,7 +736,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:58
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:63
@@ -756,9 +760,9 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr "Žao nam je, \"%s\" je neplanirano prestao s radom"
+msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -773,66 +777,55 @@ msgid "Password:"
 msgstr ""
 
 #: ../kde/apport-kde.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "Žao nam je, \"%s\" je neplanirano prestao s radom"
+msgstr ""
 
 #: ../kde/apport-kde.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr "Žao nam je, \"%s\" je neplanirano prestao s radom"
+msgstr ""
 
 #: ../kde/apport-kde.py:197
-#, fuzzy
 msgid "&Ignore future crashes of this program version"
-msgstr "_Zanemari buduća rušenja ove verzije programa"
+msgstr ""
 
 #: ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Restart &Program"
-msgstr "Ponovo pokreni _Program"
+msgstr ""
 
 #: ../kde/apport-kde.py:224
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "Paket \"%s\" se nije uspio instalirati ili nadograditi"
+msgstr ""
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
 msgstr ""
 
 #: ../kde/apport-kde.py:271
-#, fuzzy
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
-"Nakon slanja izvještaja o problemu, molimo ispunite formular u\n"
-"automatski otvorenom internet pregledniku."
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
 msgstr ""
 
 #: ../kde/apport-kde.py:331
-#, fuzzy
 msgid "Collecting Problem Information"
-msgstr "Skupljanje informacija o problemu"
+msgstr ""
 
 #: ../kde/apport-kde.py:333
-#, fuzzy
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"Prikupljene informacije mogu biti poslane razvojnom timu kako bi se "
-"aplikacija\n"
-"poboljšala. To može potrajati nekoliko minuta."
 
 #: ../kde/apport-kde.py:348
-#, fuzzy
 msgid "Uploading Problem Information"
-msgstr "Slanje informacija o problemu"
+msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"

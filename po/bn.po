@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-07 08:03+0200\n"
-"PO-Revision-Date: 2009-10-01 03:06+0000\n"
+"PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Khandakar Mujahidul Islam <suzan229@gmail.com>\n"
 "Language-Team: Bengali <bn@li.org>\n"
-"Language: bn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:10+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
+"Language: bn\n"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:94
@@ -52,8 +52,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"স্বয়ংক্রিয়ভাবে সমস্যাটি পর্যালোচনা করা এবং ডেভেলপারদেরকে রিপোর্ট করার জন্য আপনার "
-"কম্পিউটারে পর্যাপ্ত পরিমাণ খালি মেমোরি নেই।"
+"স্বয়ংক্রিয়ভাবে সমস্যাটি পর্যালোচনা করা এবং ডেভেলপারদেরকে রিপোর্ট করার জন্য "
+"আপনার কম্পিউটারে পর্যাপ্ত পরিমাণ খালি মেমোরি নেই।"
 
 #. package does not exist
 #: ../apport/ui.py:241 ../apport/ui.py:267 ../apport/ui.py:273
@@ -145,8 +145,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -191,7 +191,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:644
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:647
@@ -272,8 +273,8 @@ msgstr "নেটওয়ার্ক সমস্যা"
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
-"বিধস্ত ডাটাবেসে সংযোগ করতে পারছি না, অনুগ্রহ করে আপনার ইন্টারনেট সংযুক্তি পরীক্ষা "
-"করুন।"
+"বিধস্ত ডাটাবেসে সংযোগ করতে পারছি না, অনুগ্রহ করে আপনার ইন্টারনেট সংযুক্তি "
+"পরীক্ষা করুন।"
 
 #: ../apport/ui.py:1008
 msgid "Memory exhaustion"
@@ -281,7 +282,8 @@ msgstr ""
 
 #: ../apport/ui.py:1009
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "এই বিধস্ত রিপোর্ট প্রক্রিয়াজাত করার জন্য আপনার সিস্টেমে পর্যাপ্ত মেমোরি নেই।"
+msgstr ""
+"এই বিধস্ত রিপোর্ট প্রক্রিয়াজাত করার জন্য আপনার সিস্টেমে পর্যাপ্ত মেমোরি নেই।"
 
 #: ../apport/ui.py:1032 ../apport/ui.py:1041
 msgid ""
@@ -668,7 +670,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:48
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:50
@@ -694,7 +697,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:58
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:63
@@ -717,9 +721,9 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr "দুঃখিত, \"%s\" প্রোগ্রামটি অপ্রত্যাশিতভাবে বন্ধ হয়ে গেল"
+msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -734,14 +738,14 @@ msgid "Password:"
 msgstr ""
 
 #: ../kde/apport-kde.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "দুঃখিত, \"%s\" প্রোগ্রামটি অপ্রত্যাশিতভাবে বন্ধ হয়ে গেল"
+msgstr ""
 
 #: ../kde/apport-kde.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr "দুঃখিত, \"%s\" প্রোগ্রামটি অপ্রত্যাশিতভাবে বন্ধ হয়ে গেল"
+msgstr ""
 
 #: ../kde/apport-kde.py:197
 msgid "&Ignore future crashes of this program version"

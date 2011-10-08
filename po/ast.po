@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-07 08:03+0200\n"
-"PO-Revision-Date: 2009-09-29 20:00+0000\n"
+"PO-Revision-Date: 2011-10-07 06:48+0000\n"
 "Last-Translator: Iñigo Varela <malditoastur@gmail.com>\n"
 "Language-Team: Asturian <alministradores@softastur.org>\n"
-"Language: ast\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-22 20:36+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:10+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
+"Language: ast\n"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:94
@@ -128,9 +128,8 @@ msgid "Package %s does not exist"
 msgstr "El paquete %s nun esiste"
 
 #: ../apport/ui.py:408 ../apport/ui.py:590 ../apport/ui.py:595
-#, fuzzy
 msgid "Cannot create report"
-msgstr "Conteníu del informe"
+msgstr ""
 
 #: ../apport/ui.py:422 ../apport/ui.py:468 ../apport/ui.py:485
 msgid "Updating problem report"
@@ -150,8 +149,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -192,12 +191,12 @@ msgid "Specify package name."
 msgstr ""
 
 #: ../apport/ui.py:614 ../apport/ui.py:663
-#, fuzzy
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr "Instalar un paquete estra (puede especificase delles vegaes)"
+msgstr ""
 
 #: ../apport/ui.py:644
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [opciones] [síntomes|pid|paquete|camín pal programa|.apport/.crash]"
 
@@ -237,15 +236,11 @@ msgstr ""
 "argumentu)"
 
 #: ../apport/ui.py:657
-#, fuzzy
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"Especifique un programa que tea corriendo nel mou --ficheru-error. Si "
-"s'especifica, l'informe del error contendrá mas información (Implícitu si "
-"pid lu tien como únicu argumentu)"
 
 #: ../apport/ui.py:659
 #, python-format
@@ -742,21 +737,18 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:48
-#, fuzzy
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
-"Informar del progresu de la descarga/instalación cuando s'instalen paquetes "
-"adicionales"
 
 #: ../bin/apport-retrace.py:50
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:52
-#, fuzzy
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr "Instalar un paquete estra (puede especificase delles vegaes)"
+msgstr ""
 
 #: ../bin/apport-retrace.py:54
 msgid ""
@@ -777,7 +769,8 @@ msgstr ""
 "d'unviales a la base de datos d'errores"
 
 #: ../bin/apport-retrace.py:58
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Camín a la base de datos sqlite duplicada (por omisión: ensin comprobación "
 "de duplicáu)"
@@ -805,9 +798,9 @@ msgstr ""
 "El so sistema puede volvese inestable y ye dable que necesite reanicialu."
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr "Sentimoslo; el programa «%s» zarróse inesperadamente"
+msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -822,65 +815,55 @@ msgid "Password:"
 msgstr ""
 
 #: ../kde/apport-kde.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr "Sentimoslo; el programa «%s» zarróse inesperadamente"
+msgstr ""
 
 #: ../kde/apport-kde.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr "Sentimoslo; el programa «%s» zarróse inesperadamente"
+msgstr ""
 
 #: ../kde/apport-kde.py:197
-#, fuzzy
 msgid "&Ignore future crashes of this program version"
-msgstr "_Inorar fallos futuros d'esta versión del programa"
+msgstr ""
 
 #: ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Restart &Program"
-msgstr "Reaniciar el _programa"
+msgstr ""
 
 #: ../kde/apport-kde.py:224
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr "Falló la instalación o l'anovamientu del paquete «%s»."
+msgstr ""
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
 msgstr ""
 
 #: ../kde/apport-kde.py:271
-#, fuzzy
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
-"Lluéu de que la información del problema se tenga unviao, por favor,\n"
-"completa'l formulariu que s'abrirá automáticamente nel to restolador."
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
 msgstr ""
 
 #: ../kde/apport-kde.py:331
-#, fuzzy
 msgid "Collecting Problem Information"
-msgstr "Recopilando información del problema"
+msgstr ""
 
 #: ../kde/apport-kde.py:333
-#, fuzzy
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"La información recopilada puede unviase a los desendolcaodres pa meyorar\n"
-"l'aplicación. Esto puede tardar unos minutos."
 
 #: ../kde/apport-kde.py:348
-#, fuzzy
 msgid "Uploading Problem Information"
-msgstr "Unviando la información del problema"
+msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
@@ -894,29 +877,3 @@ msgstr "Usu: %s <informe> <direutoriu oxetivu>"
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
 msgstr "El direutoriu de destín esiste y nun ta ermu."
-
-#~ msgid ""
-#~ "The program crashed on an assertion failure, but the message could not be "
-#~ "retrieved. Apport does not support reporting these crashes."
-#~ msgstr ""
-#~ "El programa colgóse nel fallu d'un asertu, pero nun se pudo recuperar el "
-#~ "mensax. Apport nun almite la notificación d'estos cuelgues."
-
-#~ msgid ""
-#~ "Only unpack the additionally required packages, do not configure them; "
-#~ "purge packages again after retracing"
-#~ msgstr ""
-#~ "Namái desempaquetar los paquetes adicionales requeríos, no los configura; "
-#~ "purgar los paquetes de nuevu dempués de retrautase"
-
-#~ msgid ""
-#~ "Do not use packaging system when using -u and do not purge packages "
-#~ "afterwards. This should only be used for temporarily unpacked chroot "
-#~ "tarballs where it would just be a waste of time."
-#~ msgstr ""
-#~ "Nun use'l sistema de paquetes cuando use -u, nin purgue los paquetes "
-#~ "darréu. Esto namái tendría d'usase con archivadores temporales de chroot "
-#~ "desempaquetaos au sería namái una perda de tiempu."
-
-#~ msgid "The running kernel is not an Ubuntu kernel"
-#~ msgstr "El núcleu n'execución nun ye un núcleu Ubuntu"
