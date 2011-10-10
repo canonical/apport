@@ -442,6 +442,46 @@ def attach_gconf(report, package):
     # keeping a no-op function for some time to not break hooks
     pass
 
+def attach_gsettings_schema(report, schema):
+    '''Attach user-modified gsttings keys of a schema.'''
+
+    cur_value = report.get('GsettingsChanges', '')
+
+    defaults = {} # schema -> key ->  value
+    env = os.environ.copy()
+    env['XDG_CONFIG_HOME'] = '/nonexisting'
+    gsettings = subprocess.Popen(['gsettings', 'list-recursively', schema],
+            env=env, stdout=subprocess.PIPE)
+    for l in gsettings.stdout:
+        try:
+            (schema, key, value) = l.split(None, 2)
+            value = value.rstrip()
+        except ValueError:
+            continue # invalid line
+        defaults.setdefault(schema, {})[key] = value
+    
+    gsettings = subprocess.Popen(['gsettings', 'list-recursively', schema],
+            stdout=subprocess.PIPE)
+    for l in gsettings.stdout:
+        try:
+            (schema, key, value) = l.split(None, 2)
+            value = value.rstrip()
+        except ValueError:
+            continue # invalid line
+
+        if value != defaults.get(schema, {}).get(key, ''):
+            cur_value += '%s %s %s\n' % (schema, key, value)
+
+    report['GsettingsChanges'] = cur_value
+
+def attach_gsettings_package(report, package):
+    '''Attach user-modified gsettings keys of all schemas in a package.'''
+
+    for schema_file in files_in_package(package,
+            '/usr/share/glib-2.0/schemas/*.gschema.xml'):
+        schema = os.path.basename(schema_file)[:-12]
+        attach_gsettings_schema(report, schema)
+
 def attach_network(report):
     '''Attach generic network-related information to report.'''
 

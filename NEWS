@@ -28,6 +28,9 @@ Improvements:
    messages. This is useful for batch operations.
  - crash-digger: Call apport-retrace with --timestamps, to get consistent
    timestamps in log output.
+ - hookutils.py: Add two new functions attach_gsettings_package() and
+   attach_gsettings_schema() for adding user-modified gsettings keys to a
+   report. (LP: #836489)
 
 1.23.1 (2011-09-29)
 -------------------
