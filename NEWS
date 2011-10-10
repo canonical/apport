@@ -25,6 +25,8 @@ Bug fixes:
  - ui.py, open_url(): Greatly simply and robustify by just using xdg-open. This
    already does the right thing wrt. reading the default browser from GNOME,
    KDE, XCE, and other desktops. (LP: #198449)
+ - data/general-hooks/generic.py: Only attach ~/.xsession_errors if the bug is
+   reported in the same XDG session as the crash happened. (LP: #869974)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log
