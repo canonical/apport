@@ -34,6 +34,10 @@ Improvements:
  - hookutils.py: Add two new functions attach_gsettings_package() and
    attach_gsettings_schema() for adding user-modified gsettings keys to a
    report. (LP: #836489)
+ - hookutils.py: Add new function in_session_of_problem() which returns whether
+   the given report happened in the currently running XDG session. This can be
+   used to determine if e. g. ~/.xsession-errors is relevant and should be
+   attached.
 
 1.23.1 (2011-09-29)
 -------------------
