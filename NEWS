@@ -22,6 +22,9 @@ Bug fixes:
  - hookutils.py: Replace attach_gconf() with a no-op stub. It used static
    python modules like "gconf" which broke the PyGI GTK user interface, and
    gconf is rather obsolete these days.
+ - ui.py, open_url(): Greatly simply and robustify by just using xdg-open. This
+   already does the right thing wrt. reading the default browser from GNOME,
+   KDE, XCE, and other desktops. (LP: #198449)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log

@@ -880,60 +880,21 @@ free memory to automatically analyze the problem and send a report to the develo
         try:
             uid = int(os.getenv('SUDO_UID'))
             gid = int(os.getenv('SUDO_GID'))
-            sudo_prefix = ['sudo', '-H', '-u', '#'+str(uid)]
-        except (TypeError):
-            uid = os.getuid()
-            gid = None
-            sudo_prefix = []
+            os.setgroups([gid])
+            os.setgid(gid)
+            os.setuid(uid)
+            os.unsetenv('SUDO_USER') # to make firefox not croak
+            os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
+        except TypeError:
+            pass
 
-        # figure out appropriate web browser
         try:
-            # if ksmserver is running, try kde-open
             try:
-                if os.getenv('DISPLAY') and \
-                        subprocess.call(['pgrep', '-x', '-u', str(uid), 'ksmserver'],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    subprocess.call(sudo_prefix + ['kde-open', url])
-                    sys.exit(0)
+                subprocess.call(['xdg-open', url])
             except OSError:
-                pass
-
-            # if gnome-session is running, try gnome-open; special-case firefox
-            # (and more generally, mozilla browsers) and epiphany to open a new window
-            # with respectively -new-window and --new-window
-            try:
-                if os.getenv('DISPLAY') and \
-                        subprocess.call(['pgrep', '-x', '-u', str(uid), 'gnome-panel|gconfd-2'],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                    gct = subprocess.Popen(sudo_prefix + ['gconftool', '--get',
-                        '/desktop/gnome/url-handlers/http/command'],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    if gct.returncode == 0:
-                        preferred_browser = gct.communicate()[0]
-                        browser = re.match('((firefox|seamonkey|flock)[^\s]*)', preferred_browser)
-                        if browser:
-                            subprocess.call(sudo_prefix + [browser.group(0), '-new-window', url])
-                            sys.exit(0)
-                        browser = re.match('(epiphany[^\s]*)', preferred_browser)
-                        if browser:
-                            subprocess.call(sudo_prefix + [browser.group(0), '--new-window', url])
-                            sys.exit(0)
-                    if subprocess.call(sudo_prefix + ['gnome-open', url]) == 0:
-                        sys.exit(0)
-            except OSError:
-                pass
-
-            # fall back to webbrowser
-            if uid and gid:
-                os.setgroups([gid])
-                os.setgid(gid)
-                os.setuid(uid)
-                os.unsetenv('SUDO_USER') # to make firefox not croak
-                os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
-
-            webbrowser.open(url, new=True, autoraise=True)
-            sys.exit(0)
-
+                # fall back to webbrowser
+                webbrowser.open(url, new=True, autoraise=True)
+                sys.exit(0)
         except Exception as e:
             os.write(w, str(e))
             sys.exit(1)
