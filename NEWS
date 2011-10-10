@@ -19,6 +19,9 @@ Bug fixes:
    readable. (LP: #819357)
  - test/crash: Fix race condition in the "second instance terminates
    immediately" check.
+ - hookutils.py: Replace attach_gconf() with a no-op stub. It used static
+   python modules like "gconf" which broke the PyGI GTK user interface, and
+   gconf is rather obsolete these days.
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log

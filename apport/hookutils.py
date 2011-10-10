@@ -437,45 +437,10 @@ def files_in_package(package, globpat=None):
     return result
 
 def attach_gconf(report, package):
-    '''Attach information about gconf keys set to non-default values.'''
+    '''Obsolete'''
 
-    import gconf
-    import glib
-
-    client = gconf.client_get_default()
-
-    non_defaults = {}
-    for schema_file in files_in_package(package,
-                                    '/usr/share/gconf/schemas/*.schemas'):
-
-        for key, default_value in _parse_gconf_schema(schema_file).items():
-            try:
-                value = client.get(key)
-                if not value:
-                    continue
-                value = value.to_string()
-                if not default_value or value != default_value:
-                    non_defaults[key] = value
-            except glib.GError:
-                # Fall back to gconftool-2 and string comparison
-                value = command_output(['gconftool-2','-g',key])
-
-                if value != default_value:
-                    non_defaults[key] = value
-
-    if non_defaults:
-        s = ''
-        keys = non_defaults.keys()
-        keys.sort()
-        for key in keys:
-            value = non_defaults[key]
-            s += '%s=%s\n' % (key, value)
-
-        if 'GConfNonDefault' in report:
-            # This splits the lists with a newline for readability
-            s = '%s\n%s' % (report['GConfNonDefault'], s)
-
-        report['GConfNonDefault'] = s
+    # keeping a no-op function for some time to not break hooks
+    pass
 
 def attach_network(report):
     '''Attach generic network-related information to report.'''
@@ -655,36 +620,6 @@ def nonfree_kernel_modules(module_list = '/proc/modules'):
             nonfree.append(m)
 
     return nonfree
-
-def _parse_gconf_schema(schema_file):
-    ret = {}
-
-    dom = xml.dom.minidom.parse(schema_file)
-    for gconfschemafile in dom.getElementsByTagName('gconfschemafile'):
-        for schemalist in gconfschemafile.getElementsByTagName('schemalist'):
-            for schema in schemalist.getElementsByTagName('schema'):
-                try:
-                    key = schema.getElementsByTagName('applyto')[0].childNodes[0].data
-                except IndexError:
-                    # huh, no <applyto>? let's use <key>; it has /schemas/
-                    # prefix, but it should be clear enough
-                    key = schema.getElementsByTagName('key')[0].childNodes[0].data
-                    if key.startswith('/schemas/'):
-                        key = key[8:]
-                type = schema.getElementsByTagName('type')[0].childNodes[0].data
-                try:
-                    default = schema.getElementsByTagName('default')[0].childNodes[0].data
-                    if type == 'bool':
-                        if default.lower() == 'true':
-                            ret[key] = 'true'
-                        else:
-                            ret[key] = 'false'
-                    else:
-                        ret[key] = default
-                except IndexError:
-                    ret[key] = '' # no gconf default
-
-    return ret
 
 def __drm_con_info(con):
     info = ''
