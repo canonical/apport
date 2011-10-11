@@ -4,7 +4,7 @@ This encapsulates the workflow and common code for any user interface
 implementation (like GTK, Qt, or CLI).
 '''
 
-# Copyright (C) 2007 - 2009 Canonical Ltd.
+# Copyright (C) 2007 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -782,6 +782,16 @@ free memory to automatically analyze the problem and send a report to the develo
         If a symptom script is given, this will be run first (used by
         run_symptom()).
         '''
+        # check if binary changed since the crash happened
+        if 'ExecutablePath' in self.report and 'ExecutableTimestamp' in self.report:
+            orig_time = int(self.report['ExecutableTimestamp'])
+            del self.report['ExecutableTimestamp']
+            cur_time = int(os.stat(self.report['ExecutablePath']).st_mtime)
+
+            if orig_time != cur_time:
+                self.report['UnreportableReason'] = _('The problem happened with the program %s which changed since then.') % self.report['ExecutablePath']
+                return
+
         if not self.cur_package and not self.report.has_key('ExecutablePath') \
                 and not symptom_script:
             # this happens if we file a bug without specifying a PID or a
@@ -1015,8 +1025,11 @@ free memory to automatically analyze the problem and send a report to the develo
         if 'UnreportableReason' in self.report:
             if isinstance(self.report['UnreportableReason'], str):
                 self.report['UnreportableReason'] = self.report['UnreportableReason'].decode('UTF-8')
-            self.ui_info_message(_('Problem in %s') % self.report['Package'].split()[0],
-                _('The problem cannot be reported:\n\n%s') %
+            if 'Package' in self.report:
+                title = _('Problem in %s') % self.report['Package'].split()[0]
+            else:
+                title = ''
+            self.ui_info_message(title, _('The problem cannot be reported:\n\n%s') %
                 self.report['UnreportableReason'])
             return True
         return False
@@ -1977,6 +1990,7 @@ CoreDump: base64
             self.assertTrue('Dependencies' in self.ui.report.keys())
             self.assertTrue('Stacktrace' in self.ui.report.keys())
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
+            self.assertFalse('ExecutableTimestamp' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
             self.assertTrue(len(self.ui.report['CoreDump']) > 10000)
             self.assertTrue(self.ui.report['Title'].startswith('cat crashed with SIGSEGV'))
@@ -1996,6 +2010,7 @@ CoreDump: base64
             self.assertTrue('SourcePackage' in self.ui.report.keys())
             self.assertTrue('Dependencies' in self.ui.report.keys())
             self.assertTrue('Stacktrace' in self.ui.report.keys())
+            self.assertFalse('ExecutableTimestamp' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
             self.assertTrue(not self.ui.report.has_key('CoreDump'))
 
@@ -2030,6 +2045,7 @@ CoreDump: base64
             self.assertTrue('Dependencies' in self.ui.report.keys())
             self.assertTrue('Stacktrace' in self.ui.report.keys())
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
+            self.assertFalse('ExecutableTimestamp' in self.ui.report.keys())
             self.assertEqual(self.ui.report['Signal'], '6')
 
             # we disable the ABRT filtering, we want these crashes after all 
@@ -2220,6 +2236,25 @@ CoreDump: base64
             self.ui.run_crash(report_file)
 
             self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
+            self.assertEqual(self.ui.msg_severity, 'info')
+
+        def test_run_crash_updated_binary(self):
+            '''run_crash() on binary that got updated in the meantime'''
+
+            r = self._gen_test_crash()
+            r['ExecutableTimestamp'] = str(int(r['ExecutableTimestamp'])-10)
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.present_details_response = 'full'
+            self.ui.run_crash(report_file)
+
+            self.assertFalse('ExecutableTimestamp' in self.ui.report)
+            self.assertTrue(self.ui.report['ExecutablePath'] in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
+            self.assertTrue('changed' in self.ui.msg_text, '%s: %s' %
+                (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
 
         def test_run_crash_package(self):

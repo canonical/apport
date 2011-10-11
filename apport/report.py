@@ -326,6 +326,8 @@ class Report(problem_report.ProblemReport):
           interpreted, this contains the script path instead
         - InterpreterPath: /proc/pid/exe contents if the crashed process is
           interpreted; otherwise this key does not exist
+        - ExecutableTimestamp: time stamp of ExecutablePath, for comparing at
+          report time
         - ProcEnviron: A subset of the process' environment (only some standard
           variables that do not disclose potentially sensitive information, plus
           the ones mentioned in extraenv)
@@ -363,6 +365,8 @@ class Report(problem_report.ProblemReport):
 
         # check if we have an interpreted program
         self._check_interpreted()
+
+        self['ExecutableTimestamp'] = str(int(os.stat(self['ExecutablePath']).st_mtime))
 
         # make ProcCmdline ASCII friendly, do shell escaping
         self['ProcCmdline'] = self['ProcCmdline'].replace('\\', '\\\\').replace(' ', '\\ ').replace('\0', ' ')
@@ -1205,7 +1209,10 @@ class _T(unittest.TestCase):
         self.assertTrue('LANG='+os.environ['LANG'] in pr['ProcEnviron'])
         self.assertTrue('USER' not in pr['ProcEnviron'])
         self.assertTrue('PWD' not in pr['ProcEnviron'])
-
+        self.assertTrue('report.py' in pr['ExecutablePath'])
+        self.assertEqual(int(pr['ExecutableTimestamp']), 
+                int(os.stat(__file__).st_mtime))
+ 
         # check with one additional safe environment variable
         pr = Report()
         pr.add_proc_info(extraenv=['PWD'])
@@ -1253,6 +1260,8 @@ class _T(unittest.TestCase):
         p.communicate('exit\n')
         self.assertFalse(pr.has_key('InterpreterPath'), pr.get('InterpreterPath'))
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('/bin/sh'))
+        self.assertEqual(int(pr['ExecutableTimestamp']), 
+                int(os.stat(os.path.realpath('/bin/sh')).st_mtime))
 
         # check correct handling of interpreted executables: shell
         p = subprocess.Popen(['zgrep', 'foo'], stdin=subprocess.PIPE,
@@ -1267,6 +1276,8 @@ class _T(unittest.TestCase):
         self.assertTrue(pr['ExecutablePath'].endswith('bin/zgrep'))
         self.assertEqual(pr['InterpreterPath'],
             os.path.realpath(open(pr['ExecutablePath']).readline().strip()[2:]))
+        self.assertEqual(int(pr['ExecutableTimestamp']), 
+                int(os.stat(pr['ExecutablePath']).st_mtime))
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
         # check correct handling of interpreted executables: python
@@ -1286,8 +1297,10 @@ sys.stdin.readline()
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         p.communicate('\n')
-        os.unlink(testscript)
         self.assertEqual(pr['ExecutablePath'], testscript)
+        self.assertEqual(int(pr['ExecutableTimestamp']), 
+                int(os.stat(testscript).st_mtime))
+        os.unlink(testscript)
         self.assertTrue('python' in pr['InterpreterPath'])
         self.assertTrue('python' in pr['ProcMaps'])
         self.assertTrue('[stack]' in pr['ProcMaps'])

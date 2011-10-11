@@ -27,6 +27,8 @@ Bug fixes:
    KDE, XCE, and other desktops. (LP: #198449)
  - data/general-hooks/generic.py: Only attach ~/.xsession_errors if the bug is
    reported in the same XDG session as the crash happened. (LP: #869974)
+ - Ignore crashes for programs which got updated in between the crash and
+   reporting. (LP: #132904)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log
