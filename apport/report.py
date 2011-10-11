@@ -305,15 +305,46 @@ class Report(problem_report.ProblemReport):
             if os.access(cmdargs[1], os.R_OK):
                 self['InterpreterPath'] = self['ExecutablePath']
                 self['ExecutablePath'] = os.path.realpath(cmdargs[1])
-                return
 
         # catch directly executed scripts
-        if name != exebasename:
+        if not self.has_key('InterpreterPath') and name != exebasename:
             argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
             if argvexes and os.path.basename(os.path.realpath(argvexes[0])) == name:
                 self['InterpreterPath'] = self['ExecutablePath']
                 self['ExecutablePath'] = argvexes[0]
-                return
+
+        # special case: crashes from twistd are usually the fault of the
+        # launched program
+        if self.has_key('InterpreterPath') and os.path.basename(self['ExecutablePath']) == 'twistd':
+            self['InterpreterPath'] = self['ExecutablePath']
+            exe = self._twistd_executable()
+            if exe:
+                self['ExecutablePath'] = exe
+            else:
+                self['UnreportableReason'] = 'Cannot determine twistd client program'
+
+    def _twistd_executable(self):
+        '''Determine the twistd client program from ProcCmdline.'''
+
+        args = self['ProcCmdline'].split('\0')[2:]
+
+        # search for a -f/--file, -y/--python or -s/--source argument
+        while args:
+            arg = args[0].split('=', 1)
+            if arg[0].startswith('--file') or arg[0].startswith('--python') or \
+               arg[0].startswith('--source'):
+                   if len(arg) == 2:
+                       return arg[1]
+                   else:
+                       return args[1]
+            elif len(arg[0]) > 1 and arg[0][0] == '-' and arg[0][1] != '-':
+                opts = arg[0][1:]
+                if 'f' in opts or 'y' in opts or 's' in opts:
+                   return args[1]
+
+            args.pop(0)
+
+        return None
 
     def add_proc_info(self, pid=None, extraenv=[]):
         '''Add /proc/pid information.
@@ -1473,6 +1504,46 @@ sys.stdin.readline()
         pr._check_interpreted()
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+
+    def test_check_interpreted_twistd(self):
+        '''_check_interpreted() for programs ran through twistd'''
+
+        # LP#761374
+        pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python2.7'
+        pr['ProcStatus'] = 'Name:\ttwistd'
+        pr['ProcCmdline'] = '/usr/bin/python\0/usr/bin/twistd\0--uid\0root\0--gid\0root\0--pidfile\0/var/run/nanny.pid\0-r\0glib2\0--logfile\0/var/log/nanny.log\0-y\0/usr/share/nanny/daemon/nanny.tap'
+        pr._check_interpreted()
+        self.assertEqual(pr['ExecutablePath'], '/usr/share/nanny/daemon/nanny.tap')
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/twistd')
+
+        # LP#625039 
+        pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python2.7'
+        pr['ProcStatus'] = 'Name:\ttwistd'
+        pr['ProcCmdline'] = '/usr/bin/python\0/usr/bin/twistd\0--pidfile=/var/run/apt-p2p//apt-p2p.pid\0--rundir=/var/run/apt-p2p/\0--python=/usr/sbin/apt-p2p\0--logfile=/var/log/apt-p2p.log\0--no_save'
+        pr._check_interpreted()
+        self.assertEqual(pr['ExecutablePath'], '/usr/sbin/apt-p2p')
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/twistd')
+
+        # somewhere from LP#755025
+        pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python2.7'
+        pr['ProcStatus'] = 'Name:\ttwistd'
+        pr['ProcCmdline'] = '/usr/bin/python\0/usr/bin/twistd\0-r\0gtk2\0--pidfile\0/tmp/vmc.pid\0-noy\0/usr/share/vodafone-mobile-connect/gtk-tap.py\0-l\0/dev/null'
+        pr._check_interpreted()
+        self.assertEqual(pr['ExecutablePath'], '/usr/share/vodafone-mobile-connect/gtk-tap.py')
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/twistd')
+
+        # LP#725383 -> not practical to determine file here
+        pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python2.7'
+        pr['ProcStatus'] = 'Name:\ttwistd'
+        pr['ProcCmdline'] = '/usr/bin/python\0/usr/bin/twistd\0--pidfile=/var/run/poker-network-server.pid\0--logfile=/var/log/poker-network-server.log\0--no_save\0--reactor=poll\0pokerserver'
+        pr._check_interpreted()
+        self.assertTrue('ExecutablePath' in pr)
+        self.assertTrue('UnreportableReason' in pr)
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/twistd')
 
     @classmethod
     def _generate_sigsegv_report(klass, file=None, signal='11', code='''

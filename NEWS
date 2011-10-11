@@ -29,6 +29,8 @@ Bug fixes:
    reported in the same XDG session as the crash happened. (LP: #869974)
  - Ignore crashes for programs which got updated in between the crash and
    reporting. (LP: #132904)
+ - Special-case crashes of 'twistd': Try to determine the client program and
+   assign the report to that, or fail with an UnreportableReason. (LP: #755025)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log
