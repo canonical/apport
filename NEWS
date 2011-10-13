@@ -33,6 +33,7 @@ Bug fixes:
    assign the report to that, or fail with an UnreportableReason. (LP: #755025)
  - apport-gtk: In bug update mode, make details dialog resizable and fix
    default size. (LP: #865754)
+ - apport-gtk: Fix crash if report does not have ProcCmdline. (LP: #854452)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log

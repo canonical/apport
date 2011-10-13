@@ -79,7 +79,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         else:
             heading = _('Sorry, %s closed unexpectedly') % self.cur_package
 
-        if desktop_entry and self.report.has_key('ExecutablePath') and \
+        if desktop_entry and 'ExecutablePath' in self.report and 'ProcCmdline' in self.report and \
 	    os.path.dirname(self.report['ExecutablePath']) in os.environ['PATH'].split(':') and \
 	    subprocess.call(['pgrep', '-x',
 		os.path.basename(self.report['ExecutablePath']), 
