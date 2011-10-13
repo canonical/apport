@@ -31,6 +31,8 @@ Bug fixes:
    reporting. (LP: #132904)
  - Special-case crashes of 'twistd': Try to determine the client program and
    assign the report to that, or fail with an UnreportableReason. (LP: #755025)
+ - apport-gtk: In bug update mode, make details dialog resizable and fix
+   default size. (LP: #865754)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log

@@ -180,7 +180,8 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('label_bug_instructions').set_label(
                     _('Send this data to the developers?'))
             self.w('expander_details').set_expanded(True)
-            self.w('dialog_bugreport').set_default_size(400, -1)
+            self.w('dialog_bugreport').set_default_size(500, 400)
+            self.w('dialog_bugreport').set_resizable(True)
 
         response = self.w('dialog_bugreport').run()
         self.w('dialog_bugreport').hide()
