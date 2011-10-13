@@ -34,6 +34,8 @@ Bug fixes:
  - apport-gtk: In bug update mode, make details dialog resizable and fix
    default size. (LP: #865754)
  - apport-gtk: Fix crash if report does not have ProcCmdline. (LP: #854452)
+ - hookutils.py, attach_wifi(): Anonymize ESSID and AP MAC from "iwconfig"
+   output. (LP: #746900)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log

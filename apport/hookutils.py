@@ -505,7 +505,10 @@ def attach_wifi(report):
     '''Attach wireless (WiFi) network information to report.'''
 
     report['WifiSyslog'] = recent_syslog(re.compile(r'(NetworkManager|modem-manager|dhclient|kernel|wpa_supplicant)(\[\d+\])?:'))
-    report['IwConfig'] = re.sub('Encryption key:(.*)', 'Encryption key: <hidden>', command_output(['iwconfig']))
+    report['IwConfig'] = re.sub('ESSID:(.*)', 'ESSID:<hidden>', 
+        re.sub('Encryption key:(.*)', 'Encryption key: <hidden>', 
+        re.sub('Access Point: (.*)', 'Access Point: <hidden>', 
+            command_output(['iwconfig']))))
     report['RfKill'] = command_output(['rfkill', 'list'])
     report['CRDA'] = command_output(['iw', 'reg', 'get'])
 
