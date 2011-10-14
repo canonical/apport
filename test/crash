@@ -10,7 +10,7 @@
 # the full text of the license.
 
 import tempfile, shutil, os.path, os, subprocess, signal, time, stat, sys
-import resource, errno
+import resource, errno, grp
 import apport.fileutils
 
 test_executable = '/bin/cat'
@@ -186,8 +186,10 @@ try:
     print '* dumped environment only has insensitive variables'
     check_safe_environment(pr['ProcEnviron'])
 
-    print '* collected system groups has nonempty user groups information'
-    assert pr['UserGroups']
+    print '* UserGroups only has system groups'
+    for g in pr['UserGroups'].split():
+        assert grp.getgrnam(g).gr_gid < 500
+
     print '* collected system groups are not those from root'
     assert 'root' not in pr['UserGroups']
 

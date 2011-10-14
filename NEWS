@@ -36,6 +36,7 @@ Bug fixes:
  - apport-gtk: Fix crash if report does not have ProcCmdline. (LP: #854452)
  - hookutils.py, attach_wifi(): Anonymize ESSID and AP MAC from "iwconfig"
    output. (LP: #746900)
+ - test/crash: Fix test failure if user is not in any system groups.
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log
