@@ -55,8 +55,11 @@ def create_test_process(check_running=True):
     return pid
 
 def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV, check_running=True, sleep=0):
-    assert not os.path.exists('core'), 'no core dump in current directory'
+    orig_dir = os.getcwd()
+    os.chdir('/tmp')
+    assert not os.path.exists('core'), '/tmp/core already exists, please clean up first'
     pid = create_test_process(check_running)
+    os.chdir(orig_dir)
     if sleep > 0:
         time.sleep(sleep)
     os.kill(pid, sig)
@@ -80,20 +83,20 @@ def check_crash(expect_coredump=True, expect_corefile=False, sig=signal.SIGSEGV,
     if check_running:
         assert subprocess.call(['pidof', test_executable]) == 1, 'no running test executable processes'
     if expect_corefile:
-        assert os.path.exists('core'), 'leaves wanted core file'
+        assert os.path.exists('/tmp/core'), 'leaves wanted core file'
         try:
             # check that core file is valid
             gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'bt',
-                test_executable, 'core'], stdout=subprocess.PIPE,
+                test_executable, '/tmp/core'], stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
             (out, err) = gdb.communicate()
             assert gdb.returncode == 0
             err = err.strip()
             assert err == '' or err.startswith('warning'), err
         finally:
-            os.unlink('core')
+            os.unlink('/tmp/core')
     else:
-        assert not os.path.exists('core'), 'leaves unexpected core file behind'
+        assert not os.path.exists('/tmp/core'), 'leaves unexpected core file behind'
 
 def check_safe_environment(env):
     allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',

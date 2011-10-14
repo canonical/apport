@@ -37,6 +37,9 @@ Bug fixes:
  - hookutils.py, attach_wifi(): Anonymize ESSID and AP MAC from "iwconfig"
    output. (LP: #746900)
  - test/crash: Fix test failure if user is not in any system groups.
+ - test/crash: Change to /tmp/ for test crash process, to fix failure if the
+   user that runs the test suite cannot write into the current directory.
+   (LP: #868695)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log
