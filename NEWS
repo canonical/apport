@@ -40,6 +40,8 @@ Bug fixes:
  - test/crash: Change to /tmp/ for test crash process, to fix failure if the
    user that runs the test suite cannot write into the current directory.
    (LP: #868695)
+ - ui.py: Improve error message if package is not a genuine distro package.
+   Thanks to Ronan Jouchet. (LP: #559345)
 
 Improvements:
  - apport-retrace: Add --timestamp option to prepend a timestamp to log
