@@ -41,10 +41,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             pass
 
     def _cache(self):
-        '''Return apt.Cache() (initialized lazily).
-        
-        Throw a ValueError if the package does not exist.
-        '''
+        '''Return apt.Cache() (initialized lazily).'''
+
         if not self._apt_cache:
             try:
                 # avoid spewage on stdout
