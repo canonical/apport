@@ -18,6 +18,7 @@ import os
 import sys
 import time
 import calendar
+import datetime
 import glob
 import re
 import string
@@ -86,6 +87,36 @@ def attach_file(report, path, key=None, overwrite=True):
         while report.has_key(key):
             key += '_'
     report[key] = read_file(path)
+
+def attach_conffiles(report, package, conffiles=None, ui=None):
+    '''Attach information about any modified or deleted conffiles.
+    
+    If conffiles is given, only this subset will be attached. If ui is given,
+    ask whether the contents of the file may be added to the report; if this is
+    denied, or there is no UI, just mark it as "modified" in the report.
+    '''
+    modified = packaging.get_modified_conffiles(package)
+
+    for path, contents in modified.items():
+        if conffiles and path not in conffiles:
+            continue
+
+        key = 'modified.conffile.' + path_to_key(path)
+        if contents == '[deleted]':
+            report[key] = contents
+            continue
+
+        if ui:
+            response = ui.yesno('It seems you have modified the contents of "%s".  Would you like to add the contents of it to your bug report?' % path)
+            if response:
+                report[key] = contents
+            else:
+                report[key] = '[modified]'
+        else:
+            report[key] = '[modified]'
+
+        mtime = datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
+        report['mtime.conffile.' + path_to_key(path)] = mtime.isoformat()
 
 def attach_dmesg(report):
     '''Attach information from the kernel ring buffer (dmesg).
@@ -926,5 +957,8 @@ if __name__ == '__main__':
             attach_network(report)
             attach_wifi(report)
             attach_printing(report)
+            attach_conffiles(report, 'bash')
+            attach_conffiles(report, 'apport')
+            attach_conffiles(report, 'nonexisting')
 
     unittest.main()

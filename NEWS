@@ -21,6 +21,7 @@ Improvements:
    system's sitecustomize.py.
  - packaging.py: Add get_modified_conffiles() API, and implement it in
    packaging-apt-dpkg.py.
+ - hookutils.py: Add attach_conffiles().
 
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".
