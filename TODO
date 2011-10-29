@@ -9,3 +9,9 @@ GUI:
 
 hooks:
  - add hooks which run during program crash, to collect more runtime data
+
+hookutils:
+- run hooks for related packages in attach_related_packages
+
+apt-dpkg backend:
+- use python-apt's Version.get_source() instead of apt-get source
