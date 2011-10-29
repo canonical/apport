@@ -233,4 +233,7 @@ func(42)
         self.assertGreater(count, 1)
         self.assertLess(count, limit)
 
-unittest.main()
+tl = unittest.TestLoader()
+tests_all = unittest.TestSuite(tl.loadTestsFromName('__main__'))
+unittest.TextTestRunner(verbosity=2).run(tests_all)
+
