@@ -164,8 +164,7 @@ func(42)
         finally:
             # clean up in case we fail
             for r in reports:
-                pass
-                #os.unlink(r)
+                os.unlink(r)
 
     def test_interactive(self):
         '''interactive Python sessions never generate a report.'''
