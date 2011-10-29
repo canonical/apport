@@ -118,6 +118,20 @@ def attach_conffiles(report, package, conffiles=None, ui=None):
         mtime = datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
         report['mtime.conffile.' + path_to_key(path)] = mtime.isoformat()
 
+def attach_upstart_overrides(report, package):
+    '''Attach information about any Upstart override files'''
+
+    try:
+        files = apport.packaging.get_files(package)
+    except ValueError:
+        return
+
+    for file in files:
+        if os.path.exists(file) and file.startswith('/etc/init/'):
+            override = file.replace('.conf', '.override')
+            key = 'upstart.' + override.replace('/etc/init/', '')
+            attach_file_if_exists(report, override, key)
+
 def attach_dmesg(report):
     '''Attach information from the kernel ring buffer (dmesg).
 
@@ -960,5 +974,7 @@ if __name__ == '__main__':
             attach_conffiles(report, 'bash')
             attach_conffiles(report, 'apport')
             attach_conffiles(report, 'nonexisting')
+            attach_upstart_overrides(report, 'apport')
+            attach_upstart_overrides(report, 'nonexisting')
 
     unittest.main()
