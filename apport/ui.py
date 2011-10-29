@@ -1564,6 +1564,10 @@ databases = {
             self.orig_hook_dir = apport.report._hook_dir
             apport.report._hook_dir = self.hookdir
 
+            # test suite should not stumble over local packages
+            os.environ['APPORT_IGNORE_OBSOLETE_PACKAGES'] = '1'
+            os.environ['APPORT_DISABLE_DISTRO_CHECK'] = '1'
+
         def update_report_file(self):
             self.report_file.seek(0)
             self.report_file.truncate()
