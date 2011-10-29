@@ -176,6 +176,8 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('radiobutton_complete').hide()
             self.w('radiobutton_reduced').hide()
 
+        self.w('button_examine_locally').set_visible(self.can_examine_locally())
+
         if is_update:
             self.w('label_bug_instructions').set_label(
                     _('Send this data to the developers?'))
@@ -193,8 +195,12 @@ class GTKUserInterface(apport.ui.UserInterface):
                 return 'full'
             else:
                 return 'reduced'
-        else:
+        elif response == Gtk.ResponseType.ACCEPT:
+            return 'examine'
+        elif response == Gtk.ResponseType.CANCEL:
             return 'cancel'
+        else:
+            raise NotImplementedError('got unexpected respose %i from dialog_bugreport' % response)
 
     def _ui_message_dialog(self, title, text, _type,
             buttons=Gtk.ButtonsType.CLOSE):
@@ -342,6 +348,22 @@ class GTKUserInterface(apport.ui.UserInterface):
             return md.get_filenames()[0]
         else:
             return None
+
+    def ui_run_terminal(self, command):
+        terminals = ['x-terminal-emulator', 'gnome-terminal', 'terminator',
+                'xfce4-terminal', 'xterm']
+
+        program = None
+        for t in terminals:
+            program = GLib.find_program_in_path(t)
+            if program:
+                break
+
+        if not command:
+            # test mode
+            return 'DISPLAY' in os.environ and program is not None
+
+        subprocess.call([program, '-e', command], stdout=subprocess.PIPE)
 
     #
     # Event handlers

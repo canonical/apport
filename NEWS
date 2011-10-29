@@ -8,6 +8,8 @@ Improvements:
    runs apport-retrace in the chosen mode in a terminal. This should be made
    available for crash reports if apport-retrace and a Terminal application are
    installed; add an abstrace UI method for this. (LP: #75901)
+ - apport-gtk: Add "Examine locally..." button, and implement
+   ui_run_terminal().
 
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".
