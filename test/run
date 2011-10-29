@@ -32,7 +32,6 @@ modules="problem_report
 apport/fileutils
 apport/report
 apport/hookutils 
-apport_python_hook
 apport/ui
 apport/REThread
 apport/crashdb_impl/memory
@@ -65,4 +64,5 @@ if [ "$local" ]; then
     $mydir/java
 fi
 
+$mydir/python
 $mydir/crash
