@@ -237,6 +237,11 @@ class CLIUserInterface(apport.ui.UserInterface):
                     self.format_filesize(self.get_complete_size()))
             reduced = None
 
+        if self.can_examine_locally():
+            examine = dialog.addbutton(_('&Examine locally'))
+        else:
+            examine = None
+
         view = dialog.addbutton(_('&View report'))
         save = dialog.addbutton(_('&Keep report file for sending later or copying to somewhere else'))
         
@@ -249,6 +254,8 @@ class CLIUserInterface(apport.ui.UserInterface):
                 return 'full'
             if response == reduced:
                 return 'reduced'
+            if response == examine:
+                return 'examine'
             if response == view:
                 try:
                     subprocess.Popen(["/usr/bin/sensible-pager"],
@@ -410,6 +417,13 @@ class CLIUserInterface(apport.ui.UserInterface):
         answer = self.ui_question_choice(text, [_('Launch a browser now')], False)
         if answer == [0]:
             apport.ui.UserInterface.open_url(self, url)
+
+    def ui_run_terminal(self, command):
+        # we are already running in a terminal, so this works by definition
+        if not command:
+            return True
+
+        subprocess.call(command, shell=True)
 
 if __name__ == '__main__':
     app = CLIUserInterface()
