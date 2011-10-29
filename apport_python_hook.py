@@ -98,7 +98,8 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         mangled_program = re.sub('/', '_', binary)
         # get the uid for now, user name later
         user = os.getuid()
-        pr_filename = '/var/crash/%s.%i.crash' % (mangled_program, user)
+        pr_filename = '%s/%s.%i.crash' % (os.environ.get('APPORT_REPORT_DIR',
+            '/var/crash'), mangled_program, user)
         if os.path.exists(pr_filename):
             if apport.fileutils.seen_report(pr_filename):
                 # remove the old file, so that we can create the new one with

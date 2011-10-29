@@ -19,6 +19,7 @@ Improvements:
    avoid having to parse the unit tests at each Python startup.
  - test/python: Also make tests work if Python hook is not installed in
    system's sitecustomize.py.
+ - apport_python_hook: Respect $APPORT_REPORT_DIR.
 
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".

@@ -12,15 +12,18 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, tempfile, subprocess, os, stat, sys
+import unittest, tempfile, subprocess, os, stat, sys, shutil, atexit
+
+temp_report_dir = tempfile.mkdtemp()
+os.environ['APPORT_REPORT_DIR'] = temp_report_dir
+atexit.register(shutil.rmtree, temp_report_dir)
+
 import apport.fileutils, problem_report
 
 class _T(unittest.TestCase):
-    def setUp(self):
-        '''Check the test environment.'''
-
-        self.assertEqual(apport.fileutils.get_all_reports(), [],
-            'No crash reports already present')
+    def tearDown(self):
+        for f in apport.fileutils.get_all_reports():
+            os.unlink(f)
 
     def _test_crash(self, extracode='', scriptname=None):
         '''Create a test crash.'''
@@ -31,7 +34,7 @@ class _T(unittest.TestCase):
             script = scriptname
             fd = os.open(scriptname, os.O_CREAT|os.O_WRONLY)
         else:
-            (fd, script) = tempfile.mkstemp(dir=apport.fileutils.report_dir)
+            (fd, script) = tempfile.mkstemp(dir='/var/crash')
         try:
             os.write(fd, '''#!/usr/bin/python
 import apport_python_hook
@@ -47,7 +50,7 @@ func(42)
             os.chmod(script, 0o755)
 
             p = subprocess.Popen([script, 'testarg1', 'testarg2'],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
             err = p.communicate()[1]
             self.assertEqual(p.returncode, 1,
                 'crashing test python program exits with failure code')
@@ -66,16 +69,12 @@ func(42)
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
         pr = None
-        try:
-            self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
-            self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-                0o600, 'report has correct permissions')
+        self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+        self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
+            0o600, 'report has correct permissions')
 
-            pr = problem_report.ProblemReport()
-            pr.load(open(reports[0]))
-        finally:
-            for r in reports:
-                os.unlink(r)
+        pr = problem_report.ProblemReport()
+        pr.load(open(reports[0]))
 
         # check report contents
         expected_keys = ['InterpreterPath', 'PythonArgs',
@@ -96,34 +95,25 @@ func(42)
         script = self._test_crash()
 
         # did we get a report?
-        to_del = set()
-        try:
-            reports = apport.fileutils.get_new_reports()
-            to_del.update(reports)
-            self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
-            self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-                0o600, 'report has correct permissions')
+        reports = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+        self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
+            0o600, 'report has correct permissions')
 
-            # touch report -> "seen" case
-            apport.fileutils.mark_report_seen(reports[0])
+        # touch report -> "seen" case
+        apport.fileutils.mark_report_seen(reports[0])
 
-            reports = apport.fileutils.get_new_reports()
-            to_del.update(reports)
-            self.assertEqual(len(reports), 0)
+        reports = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reports), 0)
 
-            script = self._test_crash(scriptname=script)
-            reports = apport.fileutils.get_new_reports()
-            to_del.update(reports)
-            self.assertEqual(len(reports), 1)
+        script = self._test_crash(scriptname=script)
+        reports = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reports), 1)
 
-            # "unseen" case
-            script = self._test_crash(scriptname=script)
-            reports = apport.fileutils.get_new_reports()
-            self.assertEqual(len(reports), 1)
-            to_del.update(reports)
-        finally:
-            for r in to_del:
-                os.unlink(r)
+        # "unseen" case
+        script = self._test_crash(scriptname=script)
+        reports = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reports), 1)
 
     def test_no_argv(self):
         '''with zapped sys.argv.'''
@@ -133,16 +123,12 @@ func(42)
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
         pr = None
-        try:
-            self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
-            self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-                0o600, 'report has correct permissions')
+        self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+        self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
+            0o600, 'report has correct permissions')
 
-            pr = problem_report.ProblemReport()
-            pr.load(open(reports[0]))
-        finally:
-            for r in reports:
-                os.unlink(r)
+        pr = problem_report.ProblemReport()
+        pr.load(open(reports[0]))
 
         # check report contents
         expected_keys = ['InterpreterPath',
@@ -158,13 +144,8 @@ func(42)
         '''Assert that there are no crash reports.'''
 
         reports = apport.fileutils.get_new_reports()
-        try:
-            self.assertEqual(len(reports), 0,
-                'no crash reports present (cwd: %s)' % os.getcwd())
-        finally:
-            # clean up in case we fail
-            for r in reports:
-                os.unlink(r)
+        self.assertEqual(len(reports), 0,
+            'no crash reports present (cwd: %s)' % os.getcwd())
 
     def test_interactive(self):
         '''interactive Python sessions never generate a report.'''
@@ -233,10 +214,6 @@ func(42)
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
         pr = None
-        try:
-            self.assertEqual(len(reports), 0)
-        finally:
-            for r in reports:
-                os.unlink(r)
+        self.assertEqual(len(reports), 0)
 
 unittest.main()
