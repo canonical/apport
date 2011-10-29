@@ -196,24 +196,19 @@ class CLIUserInterface(apport.ui.UserInterface):
         details = ''
         max_show = 1000000
         for key in sorted(self.report):
-            details += key + ':'
+            details += '== %s =================================\n' % key
             # string value
             keylen = len(self.report[key])
             if not hasattr(self.report[key], 'gzipvalue') and \
                 hasattr(self.report[key], 'isspace') and \
                 not self.report._is_binary(self.report[key]) and \
                 keylen < max_show:
-                lines = self.report[key].splitlines()
-                if len(lines) <= 1:
-                    details += ' ' + self.report[key] + '\n'
-                else:
-                    details += '\n'
-                    for line in lines:
-                        details += '  ' + line + '\n'
+                details += self.report[key]
             elif keylen >= max_show:
-                details += ' ' + (_('(%i bytes)') % keylen ) + '\n'
+                details += _('(%i bytes)') % keylen
             else:
-                details += ' ' + _('(binary data)') + '\n'
+                details += _('(binary data)')
+            details += '\n\n'
 
         return details
 

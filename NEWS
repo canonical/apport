@@ -12,6 +12,9 @@ Improvements:
    ui_run_terminal().
  - apport-cli: Add "Examine locally..." respones, and implement
    ui_run_terminal().
+ - apport-cli: Greatly speed up displaying large reports. This also changes the
+   format to avoid indenting each line with a space, and visually set apart the
+   keys in a better way.
 
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".
