@@ -17,6 +17,8 @@ Improvements:
    keys in a better way.
  - apport_python_hook.py: Move tests out of this file into test/python, to
    avoid having to parse the unit tests at each Python startup.
+ - test/python: Also make tests work if Python hook is not installed in
+   system's sitecustomize.py.
 
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".

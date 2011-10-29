@@ -34,6 +34,9 @@ class _T(unittest.TestCase):
             (fd, script) = tempfile.mkstemp(dir=apport.fileutils.report_dir)
         try:
             os.write(fd, '''#!/usr/bin/python
+import apport_python_hook
+apport_python_hook.install()
+
 def func(x):
     raise Exception, 'This should happen.'
 
@@ -191,6 +194,9 @@ func(42)
         orig_ignore_file = None
         try:
             os.write(fd, '''#!/usr/bin/python
+import apport_python_hook
+apport_python_hook.install()
+
 def func(x):
     raise Exception, 'This should happen.'
 
