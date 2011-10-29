@@ -30,6 +30,7 @@ Bug fixes:
  - apport_python_hook: Respect $APPORT_REPORT_DIR.
  - apport_python_hook: Limit successive crashes per program and user to 3 per
    day, just like signal crashes. (LP: #603503)
+ - packaging-apt-dpkg.py: Skip online tests when there is no default route.
 
 1.24 (2011-10-19):
 ------------------

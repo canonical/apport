@@ -692,6 +692,25 @@ impl = __AptDpkgPackageInfo()
 if __name__ == '__main__':
     import unittest, gzip
 
+    def _has_default_route():
+        '''Return if there is a default route.
+
+        This is a reasonable indicator that online tests can be run.
+        '''
+        global _has_defaultroute_cache
+        if _has_defaultroute_cache is None:
+            _has_defaultroute_cache = False
+            route = subprocess.Popen(['/sbin/route', '-n'],
+                stdout=subprocess.PIPE)
+            for l in route.stdout:
+                if l.startswith('0.0.0.0 '):
+                    _has_defaultroute_cache = True
+            route.wait()
+
+        return _has_defaultroute_cache
+
+    _has_defaultroute_cache = None
+
     class _T(unittest.TestCase):
 
         def setUp(self):
@@ -941,6 +960,7 @@ bo/gu/s                                                 na/mypackage
             self.assertEqual(impl.package_name_glob('bash'), ['bash'])
             self.assertEqual(impl.package_name_glob('xzywef*'), [])
 
+        @unittest.skipUnless(_has_default_route(), 'online test')
         def test_install_packages_versioned(self):
             '''install_packages() with versions and with cache'''
 
@@ -997,6 +1017,7 @@ bo/gu/s                                                 na/mypackage
             self.assertTrue('buggerbogger' in result)
             self.assertTrue('not exist' in result)
 
+        @unittest.skipUnless(_has_default_route(), 'online test')
         def test_install_packages_unversioned(self):
             '''install_packages() without versions and no cache'''
 
@@ -1021,6 +1042,7 @@ bo/gu/s                                                 na/mypackage
             # no cache
             self.assertEqual(os.listdir(self.cachedir), [])
 
+        @unittest.skipUnless(_has_default_route(), 'online test')
         def test_install_packages_system(self):
             '''install_packages() with system configuration'''
 
@@ -1052,6 +1074,7 @@ bo/gu/s                                                 na/mypackage
             impl.install_packages(self.rootdir, None, None,
                     [('coreutils', None)], False, self.cachedir)
 
+        @unittest.skipUnless(_has_default_route(), 'online test')
         def test_install_packages_error(self):
             '''install_packages() with errors'''
 
