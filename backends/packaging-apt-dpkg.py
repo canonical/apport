@@ -230,7 +230,9 @@ class __AptDpkgPackageInfo(PackageInfo):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = dpkg.communicate()[0]
         if dpkg.returncode == 0 and out:
-            return out.split()[-1]
+            pkg = out.split()[-1]
+            if pkg != 'hardening-wrapper':
+                return pkg
 
         fname = os.path.splitext(os.path.basename(file))[0].lower()
 

@@ -28,6 +28,8 @@ Bug fixes:
    (LP: #883234)
  - apport-kde: Rearrange order of imports to get intended error message if
    PyKDE is not installed.
+ - packaging-apt-dpkg.py: Ignore hardening-wrapper diversions, to make
+   gcc_ice_hook work if hardening-wrapper is installed.
 
 1.24 (2011-10-19):
 ------------------
