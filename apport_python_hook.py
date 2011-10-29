@@ -56,7 +56,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
             from io import StringIO
 
         import re, tempfile, traceback
-        from apport.fileutils import likely_packaged
+        from apport.fileutils import likely_packaged, get_recent_crashes
 
         # apport will look up the package from the executable path.
         try:
@@ -100,14 +100,23 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         user = os.getuid()
         pr_filename = '%s/%s.%i.crash' % (os.environ.get('APPORT_REPORT_DIR',
             '/var/crash'), mangled_program, user)
+        crash_counter = 0
         if os.path.exists(pr_filename):
             if apport.fileutils.seen_report(pr_filename):
+                # flood protection
+                crash_counter = get_recent_crashes(open(pr_filename)) + 1
+                if crash_counter > 1:
+                    return
+
                 # remove the old file, so that we can create the new one with
                 # os.O_CREAT|os.O_EXCL
                 os.unlink(pr_filename)
             else:
                 # don't clobber existing report
                 return
+
+        if crash_counter:
+            pr['CrashCounter'] = str(crash_counter)
         report_file = os.fdopen(os.open(pr_filename,
             os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o600), 'w')
         try:

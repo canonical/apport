@@ -216,4 +216,21 @@ func(42)
         pr = None
         self.assertEqual(len(reports), 0)
 
+    def test_no_flooding(self):
+        '''limit successive reports'''
+
+        count = 0
+        limit = 5
+        while count < limit:
+            self._test_crash(scriptname='/var/crash/pytestcrash')
+            reports = apport.fileutils.get_new_reports()
+            if not reports:
+                break
+            self.assertEqual(len(reports), 1, 'crashed Python program produced one report')
+            apport.fileutils.mark_report_seen(reports[0])
+            count += 1
+
+        self.assertGreater(count, 1)
+        self.assertLess(count, limit)
+
 unittest.main()
