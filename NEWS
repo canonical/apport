@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".
    (LP: #883234)
+ - apport-kde: Rearrange order of imports to get intended error message if
+   PyKDE is not installed.
 
 1.24 (2011-10-19):
 ------------------

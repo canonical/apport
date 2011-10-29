@@ -17,6 +17,7 @@ import sys
 import os
 
 try:
+    import apport
     from PyQt4.QtCore import *
     from PyQt4.QtGui import (QDialog, QLabel, QCheckBox, QRadioButton,
                              QTreeWidget, QTreeWidgetItem, QMessageBox,
@@ -28,7 +29,6 @@ try:
                                 KLocalizedString)
     from PyKDE4.kdeui import (KApplication, KNotification, KMessageBox, KIcon,
                               KStandardGuiItem)
-    import apport
     import apport.ui
     from apport import unicode_gettext as _
 except ImportError, e:
