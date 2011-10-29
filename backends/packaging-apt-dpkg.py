@@ -3,7 +3,7 @@
 This is used on Debian and derivatives such as Ubuntu.
 '''
 
-# Copyright (C) 2007 - 2009 Canonical Ltd.
+# Copyright (C) 2007 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -13,6 +13,7 @@ This is used on Debian and derivatives such as Ubuntu.
 # the full text of the license.
 
 import subprocess, os, glob, stat, sys, tempfile, glob, re, shutil
+import hashlib
 
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
@@ -195,6 +196,42 @@ class __AptDpkgPackageInfo(PackageInfo):
             return self._check_files_md5(sums)
         else:
             return []
+
+    def get_modified_conffiles(self, package):
+        '''Return modified configuration files of a package.
+
+        Return a file name -> file contents map of all configuration files of
+        package. Please note that apport.hookutils.attach_conffiles() is the
+        official user-facing API for this, which will ask for confirmation and
+        allows filtering.
+        '''
+        dpkg = subprocess.Popen(['dpkg-query','-W','--showformat=${Conffiles}',
+            package], stdout=subprocess.PIPE, close_fds=True)
+
+        out = dpkg.communicate()[0]
+        if dpkg.returncode != 0:
+           return {}
+
+        modified = {}
+        for line in out.splitlines():
+            if not line:
+                continue
+            # just take the first two fields, to not stumble over obsolete
+            # conffiles
+            path, default_md5sum = line.strip().split()[:2]
+
+            if os.path.exists(path):
+                contents = open(path).read()
+                m = hashlib.md5()
+                m.update(contents)
+                calculated_md5sum = m.hexdigest()
+
+                if calculated_md5sum != default_md5sum:
+                    modified[path] = contents
+            else:
+                modified[path] = '[deleted]'
+
+        return modified
 
     def __fgrep_files(self, pattern, file_list):
         '''Call fgrep for a pattern on given file list and return the first
@@ -891,6 +928,14 @@ bo/gu/s                                                 na/mypackage
             pkg = fields[-1]
 
             self.assertEqual(impl.get_file_package(file), pkg)
+
+        def test_get_modified_conffiles(self):
+            '''get_modified_conffiles()'''
+
+            # very shallow
+            self.assertEqual(type(impl.get_modified_conffiles('bash')), type({}))
+            self.assertEqual(type(impl.get_modified_conffiles('apport')), type({}))
+            self.assertEqual(type(impl.get_modified_conffiles('nonexisting')), type({}))
 
         def test_get_system_architecture(self):
             '''get_system_architecture().'''

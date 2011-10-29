@@ -19,6 +19,8 @@ Improvements:
    avoid having to parse the unit tests at each Python startup.
  - test/python: Also make tests work if Python hook is not installed in
    system's sitecustomize.py.
+ - packaging.py: Add get_modified_conffiles() API, and implement it in
+   packaging-apt-dpkg.py.
 
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".

@@ -1,6 +1,6 @@
 '''Abstraction of packaging operations.'''
 
-# Copyright (C) 2007 - 2009 Canonical Ltd.
+# Copyright (C) 2007 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -65,6 +65,16 @@ class PackageInfo:
         '''Return list of all modified files of a package.'''
 
         raise NotImplementedError('this method must be implemented by a concrete subclass')
+
+    def get_modified_conffiles(self, package):
+        '''Return modified configuration files of a package.
+
+        Return a file name -> file contents map of all configuration files of
+        package. Please note that apport.hookutils.attach_conffiles() is the
+        official user-facing API for this, which will ask for confirmation and
+        allows filtering.
+        '''
+        return {}
 
     def get_file_package(self, file, uninstalled=False, map_cachedir=None):
         '''Return the package a file belongs to.
