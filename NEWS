@@ -19,9 +19,6 @@ Improvements:
    avoid having to parse the unit tests at each Python startup.
  - test/python: Also make tests work if Python hook is not installed in
    system's sitecustomize.py.
- - apport_python_hook: Respect $APPORT_REPORT_DIR.
- - apport_python_hook: Limit successive crashes per program and user to 3 per
-   day, just like signal crashes. (LP: #603503)
 
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".
@@ -30,6 +27,9 @@ Bug fixes:
    PyKDE is not installed.
  - packaging-apt-dpkg.py: Ignore hardening-wrapper diversions, to make
    gcc_ice_hook work if hardening-wrapper is installed.
+ - apport_python_hook: Respect $APPORT_REPORT_DIR.
+ - apport_python_hook: Limit successive crashes per program and user to 3 per
+   day, just like signal crashes. (LP: #603503)
 
 1.24 (2011-10-19):
 ------------------
