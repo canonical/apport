@@ -15,3 +15,7 @@ hookutils:
 
 apt-dpkg backend:
 - use python-apt's Version.get_source() instead of apt-get source
+
+apport-retrace:
+- add "gdb" mode: apport-gdb /usr/bin/myprog -> imply -S system, throw you into
+  gdb session with debug symbols
