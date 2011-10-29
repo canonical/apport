@@ -646,7 +646,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
             bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
             bug.newMessage(content='Thank you for taking the time to report this crash and helping \
-to make Ubuntu better.  This particular crash has already been reported and \
+to make this software better.  This particular crash has already been reported and \
 is a duplicate of bug #%i, so is being marked as such.  Please look at the \
 other bug report to see if there is any missing information that you can \
 provide, or to see if there is a workaround for the bug.  Additionally, any \
