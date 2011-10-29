@@ -287,6 +287,9 @@ free memory to automatically analyze the problem and send a report to the develo
             response = self.ui_present_report_details(False)
             if response == 'cancel':
                 return
+            if response == 'examine':
+                self.examine()
+                return
             if response == 'reduced':
                 try:
                     del self.report['CoreDump']
@@ -761,6 +764,27 @@ free memory to automatically analyze the problem and send a report to the develo
 
         return size
 
+    def can_examine_locally(self):
+        '''Check whether to offer the "Examine locally" button.
+
+        This will be true if the report has a core dump, apport-retrace is
+        installed and a terminal is available (see ui_run_terminal()).
+        '''
+        if not self.report or 'CoreDump' not in self.report:
+            return False
+
+        try:
+            if subprocess.call(['apport-retrace', '--help'],
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
+                return False
+        except OSError:
+            return False
+
+        try:
+            return self.ui_run_terminal(None)
+        except NotImplementedError:
+            return False
+
     def restart(self):
         '''Reopen the crashed application.'''
 
@@ -770,6 +794,33 @@ free memory to automatically analyze the problem and send a report to the develo
             os.setsid()
             os.execlp('sh', 'sh', '-c', self.report.get('RespawnCommand', self.report['ProcCmdline']))
             sys.exit(1)
+
+    def examine(self):
+        '''Locally examine crash report.'''
+
+        response = self.ui_question_choice(
+            _('This will launch apport-retrace in a terminal window to examine the crash.'),
+            [_('Run gdb session'),
+             _('Run gdb session without downloading debug symbols'),
+            #TRANSLATORS: %s contains the crash report file name
+             _('Update %s with fully symbolic stack trace') % self.report_file,
+            ],
+            False)
+
+        if response is None:
+            return
+
+        retrace_with_download = 'apport-retrace -S system -C ~/.cache/apport/retrace -v '
+        retrace_no_download = 'apport-retrace '
+        filearg = "'" + self.report_file.replace("'", "'\\''") + "'"
+
+        cmds = {
+            0: retrace_with_download + '--gdb ' + filearg,
+            1: retrace_no_download + '--gdb ' + filearg,
+            2: retrace_with_download + '--output ' + filearg + ' ' + filearg,
+        }
+
+        self.ui_run_terminal(cmds[response[0]])
 
     def collect_info(self, symptom_script=None, ignore_uninstalled=False):
         '''Collect additional information.
@@ -1126,7 +1177,9 @@ might be helpful for the developers.'))
     def ui_present_report_details(self, is_update):
         '''Show details of the bug report.
         
-        This lets the user choose between sending a complete or reduced report.
+        This lets the user choose between sending a complete or reduced report,
+        or examining the problem locally. This should only be offered if
+        can_examine_locally() returns True.
 
         This method can use the get_complete_size() and get_reduced_size()
         methods to determine the respective size of the data to send, and
@@ -1136,7 +1189,7 @@ might be helpful for the developers.'))
         updated, otherwise a new report will be created.
 
         Return the action: send full report ('full'), send reduced report
-        ('reduced'), or do not send anything ('cancel').
+        ('reduced'), examine locally ('examine'), or do not do anything ('cancel').
         '''
         raise NotImplementedError('this function must be overridden by subclasses')
 
@@ -1198,6 +1251,17 @@ might be helpful for the developers.'))
         This can be used for for cleaning up.
         '''
         pass
+
+    def ui_run_terminal(self, command):
+        '''Run command in, or check for a terminal window.
+
+        If command is given, run command in a terminal window; raise an exception
+        if terminal cannot be opened. 
+            
+        If command is None, merely check if a terminal application is available
+        and can be launched.
+        '''
+        raise NotImplementedError('this function must be overridden by subclasses')
 
     #
     # Additional UI dialogs; these are not required by Apport itself, but can
@@ -2861,6 +2925,59 @@ def run(report, ui):
                 'filebug': True, 'package': 'coreutils', 'pid': None,
                 'crash_file': None, 'symptom': None, 'update_report': None,
                 'save': None, 'window': False, 'tag': ['foo', 'bar']})
+
+        def test_can_examine_locally_crash(self):
+            '''can_examine_locally() for a crash report'''
+
+            self.ui.load_report(self.report_file.name)
+
+            orig_path = os.environ['PATH']
+            orig_fn = self.ui.ui_run_terminal
+            try:
+                self.ui.ui_run_terminal = lambda command: True
+                os.environ['PATH'] = ''
+                self.assertEqual(self.ui.can_examine_locally(), False)
+
+                src_bindir = os.path.join(
+                        os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 
+                        'bin')
+                # this will only work for running the tests in the source tree
+                if os.access(os.path.join(src_bindir, 'apport-retrace'), os.X_OK):
+                    os.environ['PATH'] = src_bindir
+                    self.assertEqual(self.ui.can_examine_locally(), True)
+                else:
+                    # if we run tests in installed system, we just check that
+                    # it doesn't crash
+                    self.assertTrue(self.ui.can_examine_locally() in [False, True])
+
+                self.ui.ui_run_terminal = lambda command: False
+                self.assertEqual(self.ui.can_examine_locally(), False)
+
+                # does not crash on NotImplementedError
+                self.ui.ui_run_terminal = orig_fn
+                self.assertEqual(self.ui.can_examine_locally(), False)
+
+            finally:
+                os.environ['PATH'] = orig_path
+                self.ui.ui_run_terminal = orig_fn
+
+        def test_can_examine_locally_nocrash(self):
+            '''can_examine_locally() for a non-crash report'''
+
+            self.ui.load_report(self.report_file.name)
+            del self.ui.report['CoreDump']
+
+            orig_path = os.environ['PATH']
+            orig_fn = self.ui.ui_run_terminal
+            try:
+                self.ui.ui_run_terminal = lambda command: True
+                src_bindir = os.path.join(
+                        os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 
+                        'bin')
+                self.assertEqual(self.ui.can_examine_locally(), False)
+            finally:
+                os.environ['PATH'] = orig_path
+                self.ui.ui_run_terminal = orig_fn
 
     unittest.main()
 

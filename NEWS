@@ -1,8 +1,14 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.24.1 (UNRELEASED):
---------------------
+1.25 (UNRELEASED):
+------------------
+Improvements:
+ - Add new response "Examine locally" to presenting the report details, which
+   runs apport-retrace in the chosen mode in a terminal. This should be made
+   available for crash reports if apport-retrace and a Terminal application are
+   installed; add an abstrace UI method for this. (LP: #75901)
+
 Bug fixes: 
  - launchpad.py: Remove "Ubuntu" in bug response, replace with "this software".
    (LP: #883234)
