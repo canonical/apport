@@ -84,7 +84,7 @@ def attach_file(report, path, key=None, overwrite=True):
 
     # Do not clobber existing keys
     if not overwrite:
-        while report.has_key(key):
+        while key in report:
             key += '_'
     report[key] = read_file(path)
 

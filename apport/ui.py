@@ -66,7 +66,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             sys.exit(0)
 
     if not package:
-        if report.has_key('ExecutablePath'):
+        if 'ExecutablePath' in report:
             package = apport.fileutils.find_file_package(report['ExecutablePath'])
         else:
             raise KeyError('called without a package, and report does not have ExecutablePath')
@@ -246,8 +246,8 @@ free memory to automatically analyze the problem and send a report to the develo
                     return
 
                 response = self.ui_present_crash(desktop_entry)
-                assert response.has_key('action')
-                assert response.has_key('blacklist')
+                assert 'action' in response
+                assert 'blacklist' in response
 
                 if response['blacklist']:
                     self.report.mark_ignore()
@@ -788,7 +788,7 @@ free memory to automatically analyze the problem and send a report to the develo
     def restart(self):
         '''Reopen the crashed application.'''
 
-        assert self.report.has_key('ProcCmdline')
+        assert 'ProcCmdline' in self.report
 
         if os.fork() == 0:
             os.setsid()
@@ -844,7 +844,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.report['UnreportableReason'] = _('The problem happened with the program %s which changed since then.') % self.report['ExecutablePath']
                 return
 
-        if not self.cur_package and not self.report.has_key('ExecutablePath') \
+        if not self.cur_package and 'ExecutablePath' not in self.report \
                 and not symptom_script:
             # this happens if we file a bug without specifying a PID or a
             # package
@@ -860,7 +860,7 @@ free memory to automatically analyze the problem and send a report to the develo
 
             hookui = HookUI(self)
 
-            if not self.report.has_key('Stacktrace'):
+            if 'Stacktrace' not in self.report:
                 # save original environment, in case hooks change it
                 orig_env = os.environ.copy()
 
@@ -884,10 +884,10 @@ free memory to automatically analyze the problem and send a report to the develo
 
                 icthread.exc_raise()
 
-            if self.report.has_key('CrashDB'):
+            if 'CrashDB' in self.report:
                 self.crashdb = get_crashdb(None, self.report['CrashDB']) 
 
-            if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or self.report.has_key('Package'):
+            if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or 'Package' in self.report:
                 bpthread = REThread.REThread(target=self.report.search_bug_patterns,
                     args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
@@ -1044,7 +1044,7 @@ free memory to automatically analyze the problem and send a report to the develo
                     repr(e)))
             return False
 
-        if self.report.has_key('Package'):
+        if 'Package' in self.report:
             self.cur_package = self.report['Package'].split()[0]
         else:
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
@@ -1091,7 +1091,7 @@ free memory to automatically analyze the problem and send a report to the develo
         
         Return None if report cannot be associated to a .desktop file.
         '''
-        if self.report.has_key('DesktopFile') and os.path.exists(self.report['DesktopFile']):
+        if 'DesktopFile' in self.report and os.path.exists(self.report['DesktopFile']):
             desktop_file = self.report['DesktopFile']
         else:
             desktop_file = apport.fileutils.find_package_desktopfile(self.cur_package)
@@ -1108,7 +1108,7 @@ free memory to automatically analyze the problem and send a report to the develo
         If so, tell the user about it, open the existing bug in a browser, and
         return True.
         '''
-        if not self.report.has_key('BugPatternURL'):
+        if 'BugPatternURL' not in self.report:
             return False
 
         self.ui_info_message(_('Problem already known'),
@@ -1852,7 +1852,7 @@ CoreDump: base64
             self.assertTrue('Dependencies' in self.ui.report.keys())
             self.assertTrue('ProcMaps' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ExecutablePath'], '/bin/sleep')
-            self.assertFalse(self.ui.report.has_key('ProcCmdline')) # privacy!
+            self.assertFalse('ProcCmdline' in self.ui.report) # privacy!
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
             self.assertTrue('Tags' in self.ui.report.keys())
@@ -2081,7 +2081,7 @@ CoreDump: base64
             self.assertTrue('Stacktrace' in self.ui.report.keys())
             self.assertFalse('ExecutableTimestamp' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
-            self.assertTrue(not self.ui.report.has_key('CoreDump'))
+            self.assertTrue('CoreDump' not in self.ui.report)
 
             # so far we did not blacklist, verify that
             self.assertTrue(not self.ui.report.check_ignored())

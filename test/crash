@@ -314,7 +314,7 @@ try:
     # On a leak, no report is created since the executable path will be replaced
     # by the symlink path, and it doesn't belong to any package.
     assert pr['ExecutablePath'] == '/usr/bin/perl'
-    assert not pr.has_key('InterpreterPath')
+    assert 'InterpreterPath' not in pr
     apport.fileutils.delete_report(leak)
     test_executable = orig_test_executable
 
@@ -491,7 +491,7 @@ try:
 
     assert pr['Signal'] == '42'
     assert pr['ExecutablePath'] == test_executable
-    assert not pr.has_key('CoreDump'), 'report does not have core dump'
+    assert 'CoreDump' not in pr, 'report does not have core dump'
 
 
     print '* binary blacklisting works'

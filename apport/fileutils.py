@@ -207,9 +207,9 @@ def make_report_path(report, uid=None):
 
     If uid is not given, it defaults to the uid of the current process.
     '''
-    if report.has_key('ExecutablePath'):
+    if 'ExecutablePath' in report:
         subject = report['ExecutablePath'].replace('/', '_')
-    elif report.has_key('Package'):
+    elif 'Package' in report:
         subject = report['Package'].split(None, 1)[0]
     else:
         raise ValueError('report has neither ExecutablePath nor Package attribute')

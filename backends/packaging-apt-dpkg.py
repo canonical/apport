@@ -397,7 +397,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         ver = report['Package'].split()[1]
         debug_pkgname = 'linux-image-debug-%s' % kver
         c = self._cache()
-        if c.has_key(debug_pkgname) and c[debug_pkgname].isInstalled:
+        if debug_pkgname in c and c[debug_pkgname].isInstalled:
             #print('kernel ddeb already installed')
             return (installed, outdated)
         target_dir = apt_pkg.Config.FindDir('Dir::Cache::archives')+'/partial'
@@ -505,9 +505,9 @@ class __AptDpkgPackageInfo(PackageInfo):
             c[pkg].mark_install(False, False)
 
             if candidate.architecture != 'all':
-                if c.has_key(pkg + '-dbg'):
+                if pkg + '-dbg' in c:
                     c[pkg + '-dbg'].mark_install(False, False)
-                elif c.has_key(pkg + '-dbgsym'):
+                elif pkg + '-dbgsym' in c:
                     c[pkg + '-dbgsym'].mark_install(False, False)
                     if c[pkg + '-dbgsym'].candidate.version != candidate.version:
                         obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (

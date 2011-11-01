@@ -244,11 +244,11 @@ try:
     # etc).
     info.add_proc_info(pid)
 
-    if not info.has_key('ExecutablePath'):
+    if 'ExecutablePath' not in info:
         error_log('could not determine ExecutablePath, aborting')
         sys.exit(1)
 
-    if info.has_key('InterpreterPath'):
+    if 'InterpreterPath' in info:
         error_log('script: %s, interpreted by %s (command line "%s")' %
             (info['ExecutablePath'], info['InterpreterPath'],
             info['ProcCmdline']))

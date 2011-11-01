@@ -54,7 +54,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return http://<sourcepackage>.bugs.example.com/<handle> for package bugs
         or http://bugs.example.com/<handle> for reports without a SourcePackage.'''
 
-        if report.has_key('SourcePackage'):
+        if 'SourcePackage' in report:
             return 'http://%s.bugs.example.com/%i' % (report['SourcePackage'],
                 handle)
         else:
@@ -423,7 +423,7 @@ databases = {
         self.assertEqual(self.crashes.reports[1]['comment'], 'muhaha')
         self.assertEqual(self.crashes.download(1)['Package'], 'libfoo1 1.2-4')
         self.assertEqual(self.crashes.download(1)['StacktraceTop'], 'Fresh!')
-        self.assertFalse(self.crashes.download(1).has_key('FooBar'))
+        self.assertFalse('FooBar' in self.crashes.download(1))
 
         self.assertRaises(IndexError, self.crashes.update_traces, 5, None)
 

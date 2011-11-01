@@ -151,7 +151,7 @@ def gen_source_stacktrace(report):
     '''Generate StacktraceSource, a version of Stacktrace with the surrounding
     code lines (where available) and with local variables removed.'''
 
-    if not report.has_key('Stacktrace') or not report.has_key('SourcePackage'):
+    if 'Stacktrace' not in report or 'SourcePackage' not in report:
         return
 
     workdir = tempfile.mkdtemp()
@@ -217,7 +217,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     # runtime and warn about those which are not available
     pkgs = set()
     libs = set()
-    if report.has_key('ProcMaps'):
+    if 'ProcMaps' in report:
         for l in report['ProcMaps'].splitlines():
             if not l.strip():
                 continue
@@ -246,10 +246,10 @@ def print_traces(report):
 
     print('--- stack trace ---')
     print(report['Stacktrace'])
-    if report.has_key('ThreadedStacktrace'):
+    if 'ThreadedStacktrace' in report:
         print('--- thread stack trace ---')
         print(report['ThreadStacktrace'])
-    if report.has_key('StacktraceSource'):
+    if 'StacktraceSource' in report:
         print('--- source code stack trace ---')
         print(report['StacktraceSource'])
 

@@ -183,7 +183,7 @@ class MainUserInterface(apport.ui.UserInterface):
         if desktop_entry:
             name = desktop_entry.getName()
             heading = _('Sorry, %s closed unexpectedly') % name
-        elif self.report.has_key('ExecutablePath'):
+        elif 'ExecutablePath' in self.report:
             name = os.path.basename(self.report['ExecutablePath'])
             heading = _('Sorry, the program "%s" closed unexpectedly.') % name
         else:
@@ -198,7 +198,7 @@ class MainUserInterface(apport.ui.UserInterface):
 
         reportbutton = dialog.addbutton(_('&Report Problem...'))
 
-        if desktop_entry and self.report.has_key('ExecutablePath') and \
+        if desktop_entry and 'ExecutablePath' in self.report and \
                 os.path.dirname(self.report['ExecutablePath']) in \
                 os.environ['PATH'].split(':') and subprocess.call(['pgrep',
                     '-x', os.path.basename(self.report['ExecutablePath']),
@@ -240,7 +240,7 @@ class MainUserInterface(apport.ui.UserInterface):
     def ui_present_kernel_error(self):
         message = _('Your system encountered a serious kernel problem.')
         annotate = ''
-        if self.report.has_key('Annotation'):
+        if 'Annotation' in self.report:
             annotate = self.report['Annotation'] + '\n\n'
         annotate += _('You can help the developers to fix the problem by '
                       'reporting it.')
@@ -295,7 +295,7 @@ class MainUserInterface(apport.ui.UserInterface):
         details.header().hide()
 
         # complete/reduce radio buttons
-        if self.report.has_key('CoreDump') and \
+        if 'CoreDump' in self.report and \
                 self.report.has_useful_stacktrace():
             dialog.findChild(QRadioButton, 'complete').setText(
                 _('Complete report (recommended; %s)') %

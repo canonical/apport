@@ -101,7 +101,7 @@ def _check_bug_pattern(report, pattern):
         if c.nodeType == xml.dom.Node.ELEMENT_NODE and c.nodeName == 're' and \
             c.attributes.has_key('key'):
             key = c.attributes['key'].nodeValue
-            if not report.has_key(key):
+            if key not in report:
                 return None
             c.normalize()
             if c.hasChildNodes() and \
@@ -266,7 +266,7 @@ class Report(problem_report.ProblemReport):
         process is an interpreted script. If so, set InterpreterPath
         accordingly.
         '''
-        if not self.has_key('ExecutablePath'):
+        if 'ExecutablePath' not in self:
             return
 
         exebasename = os.path.basename(self['ExecutablePath'])
@@ -300,14 +300,14 @@ class Report(problem_report.ProblemReport):
         # catch scripts explicitly called with interpreter
         if len(cmdargs) >= 2:
             # ensure that cmdargs[1] is an absolute path
-            if cmdargs[1].startswith('.') and self.has_key('ProcCwd'):
+            if cmdargs[1].startswith('.') and 'ProcCwd' in self:
                 cmdargs[1] = os.path.join(self['ProcCwd'], cmdargs[1])
             if os.access(cmdargs[1], os.R_OK):
                 self['InterpreterPath'] = self['ExecutablePath']
                 self['ExecutablePath'] = os.path.realpath(cmdargs[1])
 
         # catch directly executed scripts
-        if not self.has_key('InterpreterPath') and name != exebasename:
+        if 'InterpreterPath' not in self and name != exebasename:
             argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
             if argvexes and os.path.basename(os.path.realpath(argvexes[0])) == name:
                 self['InterpreterPath'] = self['ExecutablePath']
@@ -315,7 +315,7 @@ class Report(problem_report.ProblemReport):
 
         # special case: crashes from twistd are usually the fault of the
         # launched program
-        if self.has_key('InterpreterPath') and os.path.basename(self['ExecutablePath']) == 'twistd':
+        if 'InterpreterPath' in self and os.path.basename(self['ExecutablePath']) == 'twistd':
             self['InterpreterPath'] = self['ExecutablePath']
             exe = self._twistd_executable()
             if exe:
@@ -459,7 +459,7 @@ class Report(problem_report.ProblemReport):
 
         This needs a VmCore in the Report.
         '''
-        if not self.has_key('VmCore'):
+        if 'VmCore' not in self:
             return
         unlink_core = False
         ret = False
@@ -513,7 +513,7 @@ class Report(problem_report.ProblemReport):
         chroot() or root privileges, it just instructs gdb to search for the
         files there.
         '''
-        if not self.has_key('CoreDump') or not self.has_key('ExecutablePath'):
+        if 'CoreDump' not in self or 'ExecutablePath' not in self:
             return
 
         unlink_core = False
@@ -585,7 +585,7 @@ class Report(problem_report.ProblemReport):
             else:
                 del self['AssertionMessage']
 
-        if self.has_key('Stacktrace'):
+        if 'Stacktrace' in self:
             self._gen_stacktrace_top()
 
     def _gen_stacktrace_top(self):
@@ -803,7 +803,7 @@ class Report(problem_report.ProblemReport):
         This requires the ExecutablePath attribute. Throws a ValueError if the
         file has an invalid format.
         '''
-        assert self.has_key('ExecutablePath')
+        assert 'ExecutablePath' in self
 
         # check blacklist
         try:
@@ -844,7 +844,7 @@ class Report(problem_report.ProblemReport):
         Throws a ValueError if the file already exists and has an invalid
         format.
         '''
-        assert self.has_key('ExecutablePath')
+        assert 'ExecutablePath' in self
 
         dom = self._get_ignore_dom()
         mtime = str(int(os.stat(self['ExecutablePath']).st_mtime))
@@ -896,16 +896,16 @@ class Report(problem_report.ProblemReport):
         '''
         # assertion failure
         if self.get('Signal') == '6' and \
-                self.has_key('ExecutablePath') and \
-                self.has_key('AssertionMessage'):
+                'ExecutablePath' in self and \
+                'AssertionMessage' in self:
             return '%s assert failure: %s' % (
                 os.path.basename(self['ExecutablePath']),
                 self['AssertionMessage'])
 
         # signal crash
-        if self.has_key('Signal') and \
-            self.has_key('ExecutablePath') and \
-            self.has_key('StacktraceTop'):
+        if 'Signal' in self and \
+            'ExecutablePath' in self and \
+            'StacktraceTop' in self:
 
             signal_names = {
                 '4': 'SIGILL',
@@ -923,8 +923,8 @@ class Report(problem_report.ProblemReport):
                     break
 
             arch_mismatch = ''
-            if self.has_key('Architecture') and \
-                self.has_key('PackageArchitecture') and \
+            if 'Architecture' in self and \
+                'PackageArchitecture' in self and \
                 self['Architecture'] != self['PackageArchitecture'] and \
                 self['PackageArchitecture'] != 'all':
                 arch_mismatch = ' [non-native %s package]' % self['PackageArchitecture']
@@ -937,8 +937,8 @@ class Report(problem_report.ProblemReport):
             )
 
         # Python exception
-        if self.has_key('Traceback') and \
-            self.has_key('ExecutablePath'):
+        if 'Traceback' in self and \
+            'ExecutablePath' in self:
 
             trace = self['Traceback'].splitlines()
 
@@ -991,7 +991,7 @@ class Report(problem_report.ProblemReport):
 
         # package problem
         if self.get('ProblemType') == 'Package' and \
-            self.has_key('Package'):
+            'Package' in self:
 
             title = 'package %s failed to install/upgrade' % \
                 self['Package']
@@ -1001,7 +1001,7 @@ class Report(problem_report.ProblemReport):
             return title
 
         if self.get('ProblemType') == 'KernelOops' and \
-            self.has_key('OopsText'):
+            'OopsText' in self:
 
             oops = self['OopsText']
             if oops.startswith('------------[ cut here ]------------'):
@@ -1012,7 +1012,7 @@ class Report(problem_report.ProblemReport):
             return title
 
         if self.get('ProblemType') == 'KernelOops' and \
-            self.has_key('Failure'):
+            'Failure' in self:
             
             # Title the report with suspend or hibernate as appropriate,
             # and mention any non-free modules loaded up front.
@@ -1059,12 +1059,12 @@ class Report(problem_report.ProblemReport):
         For Python crashes, this concatenates the ExecutablePath, exception
         name, and Traceback function names, again separated by a colon.
         '''
-        if (not self.has_key('ExecutablePath') and 
+        if ('ExecutablePath' not in self and 
             not self['ProblemType'] == 'KernelCrash'):
             return None
 
         # kernel crash
-        if self.has_key('Stacktrace') and self['ProblemType'] == 'KernelCrash':
+        if 'Stacktrace' in self and self['ProblemType'] == 'KernelCrash':
             sig = 'kernel'
             regex = re.compile ('^\s*\#\d+\s\[\w+\]\s(\w+)')
             for line in self['Stacktrace'].splitlines():
@@ -1074,13 +1074,13 @@ class Report(problem_report.ProblemReport):
             return sig
 
         # assertion failures
-        if self.get('Signal') == '6' and self.has_key('AssertionMessage'):
+        if self.get('Signal') == '6' and 'AssertionMessage' in self:
             sig = self['ExecutablePath'] + ':' + self['AssertionMessage']
             # filter out addresses, to help match duplicates more sanely
             return re.sub(r'0x[0-9a-f]{6,}','ADDR', sig)
 
         # signal crashes
-        if self.has_key('StacktraceTop') and self.has_key('Signal'):
+        if 'StacktraceTop' in self and 'Signal' in self:
             sig = '%s:%s' % (self['ExecutablePath'], self['Signal'])
             bt_fn_re = re.compile('^(?:([\w:~]+).*|(<signal handler called>)\s*)$')
 
@@ -1098,7 +1098,7 @@ class Report(problem_report.ProblemReport):
             return sig
 
         # Python crashes
-        if self.has_key('Traceback'):
+        if 'Traceback' in self:
             trace = self['Traceback'].splitlines()
 
             sig = ''
@@ -1194,12 +1194,12 @@ class _T(unittest.TestCase):
         self.assertTrue('libc' in pr['Dependencies'])
         # check for stray empty lines
         self.assertTrue('\n\n' not in pr['Dependencies'])
-        self.assertTrue(pr.has_key('PackageArchitecture'))
+        self.assertTrue('PackageArchitecture' in pr)
 
         pr = Report()
         pr['ExecutablePath'] = '/nonexisting'
         pr.add_package_info()
-        self.assertTrue(not pr.has_key('Package'))
+        self.assertTrue('Package' not in pr)
 
     def test_add_os_info(self):
         '''add_os_info().'''
@@ -1215,7 +1215,7 @@ class _T(unittest.TestCase):
 
         pr = Report()
         pr.add_user_info()
-        self.assertTrue(pr.has_key('UserGroups'))
+        self.assertTrue('UserGroups' in pr)
 
         # double-check that user group names are removed
         for g in pr['UserGroups'].split():
@@ -1226,9 +1226,9 @@ class _T(unittest.TestCase):
         '''add_proc_info().'''
 
         # set test environment
-        assert os.environ.has_key('LANG'), 'please set $LANG for this test'
-        assert os.environ.has_key('USER'), 'please set $USER for this test'
-        assert os.environ.has_key('PWD'), '$PWD is not set'
+        assert 'LANG' in os.environ, 'please set $LANG for this test'
+        assert 'USER' in os.environ, 'please set $USER for this test'
+        assert 'PWD' in os.environ, '$PWD is not set'
 
         # check without additional safe environment variables
         pr = Report()
@@ -1257,7 +1257,7 @@ class _T(unittest.TestCase):
         self.assertEqual(pr.pid, 1)
         self.assertTrue('init' in pr['ProcStatus'], pr['ProcStatus'])
         self.assertTrue(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
-        self.assertTrue(not pr.has_key('InterpreterPath'))
+        self.assertTrue('InterpreterPath' not in pr)
 
         # check escaping of ProcCmdline
         p = subprocess.Popen(['cat', '/foo bar', '\\h', '\\ \\', '-'],
@@ -1273,7 +1273,7 @@ class _T(unittest.TestCase):
         p.communicate('\n')
         self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
         self.assertEqual(pr['ExecutablePath'], '/bin/cat')
-        self.assertTrue(not pr.has_key('InterpreterPath'))
+        self.assertTrue('InterpreterPath' not in pr)
         self.assertTrue('/bin/cat' in pr['ProcMaps'])
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
@@ -1289,7 +1289,7 @@ class _T(unittest.TestCase):
         pr.pid = p.pid
         pr.add_proc_info()
         p.communicate('exit\n')
-        self.assertFalse(pr.has_key('InterpreterPath'), pr.get('InterpreterPath'))
+        self.assertFalse('InterpreterPath' in pr, pr.get('InterpreterPath'))
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('/bin/sh'))
         self.assertEqual(int(pr['ExecutableTimestamp']), 
                 int(os.stat(os.path.realpath('/bin/sh')).st_mtime))
@@ -1383,7 +1383,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = 'gedit\0/' + f.name
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/gedit')
-        self.assertFalse(pr.has_key('InterpreterPath'))
+        self.assertFalse('InterpreterPath' in pr)
         f.close()
 
         # bogus argv[0]
@@ -1393,7 +1393,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = 'nonexisting\0/foo'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/bin/dash')
-        self.assertFalse(pr.has_key('InterpreterPath'))
+        self.assertFalse('InterpreterPath' in pr)
 
         # standard sh script
         pr = Report()
@@ -1440,7 +1440,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = 'python\0/etc/shadow'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.assertFalse(pr.has_key('InterpreterPath'))
+        self.assertFalse('InterpreterPath' in pr)
 
         # succeed on files we should have access to when name!=argv[0]
         pr = Report()
@@ -1458,7 +1458,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = '../etc/shadow'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.assertFalse(pr.has_key('InterpreterPath'))
+        self.assertFalse('InterpreterPath' in pr)
 
         # succeed on files we should have access to when name==argv[0]
         pr = Report()
@@ -1476,7 +1476,7 @@ sys.stdin.readline()
         pr['ProcCmdline'] = 'python'
         pr._check_interpreted()
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.assertFalse(pr.has_key('InterpreterPath'))
+        self.assertFalse('InterpreterPath' in pr)
 
         # python script (abuse /bin/bash since it must exist)
         pr = Report()
@@ -1593,11 +1593,11 @@ int main() { return f(42); }
         return pr
 
     def _validate_gdb_fields(self,pr):
-        self.assertTrue(pr.has_key('Stacktrace'))
-        self.assertTrue(pr.has_key('ThreadStacktrace'))
-        self.assertTrue(pr.has_key('StacktraceTop'))
-        self.assertTrue(pr.has_key('Registers'))
-        self.assertTrue(pr.has_key('Disassembly'))
+        self.assertTrue('Stacktrace' in pr)
+        self.assertTrue('ThreadStacktrace' in pr)
+        self.assertTrue('StacktraceTop' in pr)
+        self.assertTrue('Registers' in pr)
+        self.assertTrue('Disassembly' in pr)
         self.assertTrue('(no debugging symbols found)' not in pr['Stacktrace'])
         self.assertTrue('Core was generated by' not in pr['Stacktrace'], pr['Stacktrace'])
         self.assertTrue(not re.match(r'(?s)(^|.*\n)#0  [^\n]+\n#0  ',

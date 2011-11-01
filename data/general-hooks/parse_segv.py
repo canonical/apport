@@ -335,7 +335,7 @@ def add_info(report):
 
     needed = ['Signal', 'Architecture', 'Disassembly', 'ProcMaps', 'Registers']
     for field in needed:
-        if not report.has_key(field):
+        if field not in report:
             report['SegvAnalysis'] = 'Skipped: missing required field "%s"' % (field)
             return
 

@@ -160,7 +160,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             a = report.get('Architecture')
         if a:
             hdr['Tags'] += ' ' + a
-        if report.has_key('Tags'):
+        if 'Tags' in report:
             hdr['Tags'] += ' ' + report['Tags']
 
         # privacy/retracing for distro reports
@@ -179,7 +179,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # if we have checkbox submission key, link it to the bug; keep text
         # reference until the link is shown in Launchpad's UI
-        if report.has_key('CheckboxSubmission'):
+        if 'CheckboxSubmission' in report:
             hdr['HWDB-Submission'] = report['CheckboxSubmission']
 
         # order in which keys should appear in the temporary file
@@ -228,7 +228,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         project = self.options.get('project')
 
         if not project:
-            if report.has_key('SourcePackage'):
+            if 'SourcePackage' in report:
                 return 'https://bugs.%s/%s/+source/%s/+filebug/%s?%s' % (
                     hostname, self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
             else:
@@ -369,7 +369,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             x = bug.tags[:] # LP#254901 workaround
             x.append('apport-collected')
             # add any tags (like the release) to the bug
-            if report.has_key('Tags'):
+            if 'Tags' in report:
                 x += report['Tags'].split()
             bug.tags = x
             bug.lp_save()
@@ -402,7 +402,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         bug = self.launchpad.bugs[id]
         # ensure it's assigned to a package
-        if report.has_key('SourcePackage'):
+        if 'SourcePackage' in report:
             for task in bug.bug_tasks:
                 if task.target.resource_type_link.endswith('#distribution'):
                     task.target = self.lp_distro.getSourcePackage(name=report['SourcePackage'])
@@ -739,7 +739,7 @@ in a dependent package.' % master,
         bug = self.launchpad.bugs[id]
 
         # if we have a distro task without a package, fix it
-        if report.has_key('SourcePackage'):
+        if 'SourcePackage' in report:
             for task in bug.bug_tasks:
                 if task.target.resource_type_link.endswith('#distribution'):
                     task.target = self.lp_distro.getSourcePackage(
@@ -1345,7 +1345,7 @@ NameError: global name 'weird' is not defined'''
             '''Return the bug_target for this report.'''
 
             project = db.options.get('project')
-            if report.has_key('SourcePackage'):
+            if 'SourcePackage' in report:
                 return db.lp_distro.getSourcePackage(name=report['SourcePackage'])
             elif project:
                 return db.launchpad.projects[project]

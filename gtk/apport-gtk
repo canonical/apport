@@ -74,7 +74,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             n = desktop_entry.getName().encode('UTF-8')
             n = GLib.markup_escape_text(n).decode('UTF-8')
             heading = _('Sorry, %s closed unexpectedly') % n
-        elif self.report.has_key('ExecutablePath'):
+        elif 'ExecutablePath' in self.report:
             heading = _('Sorry, the program "%s" closed unexpectedly') % os.path.basename(self.report['ExecutablePath'])
         else:
             heading = _('Sorry, %s closed unexpectedly') % self.cur_package
@@ -125,7 +125,7 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_present_kernel_error(self):
         message = _('Your system encountered a serious kernel problem.')
         annotation = ''
-        if self.report.has_key('Annotation'):
+        if 'Annotation' in self.report:
             annotation += self.report['Annotation'] + '\n\n'
         annotation += _('You can help the developers to fix the problem by reporting it.')
 
@@ -160,7 +160,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
         # complete/reduced radio buttons
-        if self.report.has_key('CoreDump'):
+        if 'CoreDump' in self.report:
             self.w('radiobutton_complete').set_label(self.str_radio_complete % 
                 self.format_filesize(self.get_complete_size()))
             self.w('radiobutton_reduced').set_label(self.str_radio_reduced % 
