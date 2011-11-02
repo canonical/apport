@@ -103,7 +103,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         lsb_release = subprocess.Popen(['lsb_release', '-i', '-s'],
             stdout=subprocess.PIPE)
-        this_os = lsb_release.communicate()[0].strip()
+        this_os = lsb_release.communicate()[0].decode().strip()
         assert lsb_release.returncode == 0
 
         pkg = self._apt_pkg(package)
@@ -114,10 +114,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         native_origins = [this_os]
         for f in glob.glob('/etc/apport/native-origins.d/*'):
             try:
-                for line in open(f):
-                    line = line.strip()
-                    if line:
-                        native_origins.append(line)
+                with open(f) as fd:
+                    for line in fd:
+                        line = line.strip()
+                        if line:
+                            native_origins.append(line)
             except IOError:
                 pass
 
@@ -208,7 +209,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         dpkg = subprocess.Popen(['dpkg-query','-W','--showformat=${Conffiles}',
             package], stdout=subprocess.PIPE, close_fds=True)
 
-        out = dpkg.communicate()[0]
+        out = dpkg.communicate()[0].decode()
         if dpkg.returncode != 0:
            return {}
 
@@ -221,7 +222,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             path, default_md5sum = line.strip().split()[:2]
 
             if os.path.exists(path):
-                contents = open(path).read()
+                with open(path, 'rb') as fd:
+                    contents = fd.read()
                 m = hashlib.md5()
                 m.update(contents)
                 calculated_md5sum = m.hexdigest()
@@ -245,7 +247,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             p = subprocess.Popen(['fgrep', '-lxm', '1', '--', pattern] +
                 file_list[i:i+slice_size], stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-            out = p.communicate()[0]
+            out = p.communicate()[0].decode('UTF-8')
             if p.returncode == 0:
                 match = out
             i += slice_size
@@ -265,7 +267,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # check if the file is a diversion
         dpkg = subprocess.Popen(['/usr/sbin/dpkg-divert', '--list', file],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out = dpkg.communicate()[0]
+        out = dpkg.communicate()[0].decode('UTF-8')
         if dpkg.returncode == 0 and out:
             pkg = out.split()[-1]
             if pkg != 'hardening-wrapper':
@@ -302,7 +304,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         dpkg = subprocess.Popen(['dpkg', '--print-architecture'],
             stdout=subprocess.PIPE)
-        arch = dpkg.communicate()[0].strip()
+        arch = dpkg.communicate()[0].decode().strip()
         assert dpkg.returncode == 0
         assert arch
         return arch
@@ -316,7 +318,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''
         dpkg = subprocess.Popen(['dpkg-architecture', '-qDEB_HOST_MULTIARCH'],
                 stdout=subprocess.PIPE)
-        multiarch_triple = dpkg.communicate()[0].strip()
+        multiarch_triple = dpkg.communicate()[0].decode().strip()
         assert dpkg.returncode == 0
 
         return '/lib/%s:/lib' % multiarch_triple
@@ -475,9 +477,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._build_apt_sandbox(aptroot, apt_sources)
 
         if verbose:
-            fetchProgress = apt.progress.TextFetchProgress()
+            fetchProgress = apt.progress.text.AcquireProgress()
         else:
-            fetchProgress = apt.progress.FetchProgress()
+            fetchProgress = apt.progress.base.AcquireProgress()
         c = apt.Cache()
         try:
             c.update(fetchProgress)
@@ -515,8 +517,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
 
         # fetch packages
-        fetcher = apt.apt_pkg.GetAcquire(fetchProgress)
-        pm = apt.apt_pkg.GetPackageManager(c._depcache)
+        fetcher = apt.apt_pkg.Acquire(fetchProgress)
+        pm = apt.apt_pkg.PackageManager(c._depcache)
         try:
             res = c._fetchArchives(fetcher, pm)
         except apt.cache.FetchFailedException as e:
@@ -552,7 +554,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         dpkg = subprocess.Popen(['dpkg'] + args, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
-        out = dpkg.communicate(input)[0]
+        out = dpkg.communicate(input)[0].decode('UTF-8')
         if dpkg.returncode == 0:
             return out
         else:
@@ -568,12 +570,12 @@ class __AptDpkgPackageInfo(PackageInfo):
             m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
                 cwd='/', env={})
-            out = m.communicate()[0]
+            out = m.communicate()[0].decode()
         else:
             m = subprocess.Popen(['/usr/bin/md5sum', '-c'],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
-            out = m.communicate(sumfile)[0]
+            out = m.communicate(sumfile.encode())[0].decode()
 
         # if md5sum succeeded, don't bother parsing the output
         if m.returncode == 0:
@@ -636,7 +638,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         package = None
         zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out = zgrep.communicate()[0]
+        out = zgrep.communicate()[0].decode('UTF-8')
         # we do not check the return code, since zgrep -m1 often errors out
         # with 'stdout: broken pipe'
         if out:
@@ -698,7 +700,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
 
-        return apt.VersionCompare(ver1, ver2)
+        return apt.apt_pkg.version_compare(ver1, ver2)
 
     def enabled(self):
         '''Return whether Apport should generate crash reports.
@@ -713,7 +715,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''
 
         try:
-            conf = open(self.configuration).read()
+            with open(self.configuration) as f:
+                conf = f.read()
         except IOError:
             # if the file does not exist, assume it's enabled
             return True
@@ -740,7 +743,7 @@ if __name__ == '__main__':
             route = subprocess.Popen(['/sbin/route', '-n'],
                 stdout=subprocess.PIPE)
             for l in route.stdout:
-                if l.startswith('0.0.0.0 '):
+                if l.decode('UTF-8').startswith('0.0.0.0 '):
                     _has_defaultroute_cache = True
             route.wait()
 
@@ -768,24 +771,31 @@ if __name__ == '__main__':
                 f1 = os.path.join(td, 'test 1.txt')
                 f2 = os.path.join(td, 'test:2.txt')
                 sumfile = os.path.join(td, 'sums.txt')
-                open(f1, 'w').write('Some stuff')
-                open(f2, 'w').write('More stuff')
+                with open(f1, 'w') as fd:
+                    fd.write('Some stuff')
+                with open(f2, 'w') as fd:
+                    fd.write('More stuff')
                 # use one relative and one absolute path in checksums file
-                open(sumfile, 'w').write('''2e41290da2fa3f68bd3313174467e3b5  %s
-        f6423dfbc4faf022e58b4d3f5ff71a70  %s
+                with open(sumfile, 'w') as fd:
+                    fd.write('''2e41290da2fa3f68bd3313174467e3b5  %s
+f6423dfbc4faf022e58b4d3f5ff71a70  %s
         ''' % (f1[1:], f2))
                 self.assertEqual(impl._check_files_md5(sumfile), [], 'correct md5sums')
 
-                open(f1, 'w').write('Some stuff!')
+                with open(f1, 'w') as fd:
+                    fd.write('Some stuff!')
                 self.assertEqual(impl._check_files_md5(sumfile), [f1[1:]], 'file 1 wrong')
-                open(f2, 'w').write('More stuff!')
+                with open(f2, 'w') as fd:
+                    fd.write('More stuff!')
                 self.assertEqual(impl._check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
-                open(f1, 'w').write('Some stuff')
+                with open(f1, 'w') as fd:
+                    fd.write('Some stuff')
                 self.assertEqual(impl._check_files_md5(sumfile), [f2], 'file 2 wrong')
 
                 # check using a direct md5 list as argument
-                self.assertEqual(impl._check_files_md5(open(sumfile).read()),
-                    [f2], 'file 2 wrong')
+                with open(sumfile) as fd:
+                    self.assertEqual(impl._check_files_md5(fd.read()),
+                        [f2], 'file 2 wrong')
 
             finally:
                 shutil.rmtree(td)
@@ -847,7 +857,7 @@ if __name__ == '__main__':
             # just assume that bash uses the native architecture
             d = subprocess.Popen(['dpkg', '--print-architecture'],
                 stdout=subprocess.PIPE)
-            system_arch = d.communicate()[0].strip()
+            system_arch = d.communicate()[0].decode().strip()
             assert d.returncode == 0
             self.assertEqual(impl.get_architecture('bash'), system_arch)
 
@@ -871,7 +881,7 @@ if __name__ == '__main__':
             # determine distro release code name
             lsb_release = subprocess.Popen(['lsb_release', '-sc'],
                 stdout=subprocess.PIPE)
-            release_name = lsb_release.communicate()[0].strip()
+            release_name = lsb_release.communicate()[0].decode('UTF-8').strip()
             assert lsb_release.returncode == 0
 
             # generate a test Contents.gz
@@ -879,16 +889,15 @@ if __name__ == '__main__':
             try:
                 mapdir = os.path.join(basedir, 'dists', release_name)
                 os.makedirs(mapdir)
-                f = gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
-                    impl.get_system_architecture()), 'w')
-                f.write('''
+                with gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
+                    impl.get_system_architecture()), 'w') as f:
+                    f.write(b'''
  foo header
 FILE                                                    LOCATION
 usr/bin/frobnicate                                      foo/frob
 usr/bin/frob                                            foo/frob-utils
 bo/gu/s                                                 na/mypackage
 ''')
-                f.close()
 
                 self.assertEqual(impl.get_file_package('usr/bin/frob', False, mapdir), None)
                 # must not match frob (same file name prefix)
@@ -920,7 +929,7 @@ bo/gu/s                                                 na/mypackage
             # pick first diversion we have
             p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',
                 shell=True, stdout=subprocess.PIPE)
-            out = p.communicate()[0]
+            out = p.communicate()[0].decode('UTF-8')
             assert p.returncode == 0
             assert out
             fields = out.split()
@@ -973,21 +982,21 @@ bo/gu/s                                                 na/mypackage
 
             f = tempfile.NamedTemporaryFile()
             impl.configuration = f.name
-            f.write('# configuration file\nenabled = 1')
+            f.write('# configuration file\nenabled = 1'.encode())
             f.flush()
             self.assertEqual(impl.enabled(), True)
             f.close()
 
             f = tempfile.NamedTemporaryFile()
             impl.configuration = f.name
-            f.write('# configuration file\n  enabled =0  ')
+            f.write('# configuration file\n  enabled =0  '.encode())
             f.flush()
             self.assertEqual(impl.enabled(), False)
             f.close()
 
             f = tempfile.NamedTemporaryFile()
             impl.configuration = f.name
-            f.write('# configuration file\nnothing here')
+            f.write('# configuration file\nnothing here'.encode())
             f.flush()
             self.assertEqual(impl.enabled(), True)
             f.close()
