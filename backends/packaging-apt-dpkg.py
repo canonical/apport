@@ -175,23 +175,24 @@ class __AptDpkgPackageInfo(PackageInfo):
                 # some packages do not ship md5sums
                 return []
 
-        for line in open(sumfile):
-            try:
-                # ignore lines with NUL bytes (happens, LP#96050)
-                if '\0' in line:
-                    apport.warning('%s contains NUL character, ignoring line', sumfile)
-                    continue
-                words  = line.split()
-                if not words:
-                    apport.warning('%s contains empty line, ignoring line', sumfile)
-                    continue
-                s = os.stat('/' + words[-1])
-                if max(s.st_mtime, s.st_ctime) <= max_time:
-                    continue
-            except OSError:
-                pass
+        with open(sumfile) as fd:
+            for line in fd:
+                try:
+                    # ignore lines with NUL bytes (happens, LP#96050)
+                    if '\0' in line:
+                        apport.warning('%s contains NUL character, ignoring line', sumfile)
+                        continue
+                    words  = line.split()
+                    if not words:
+                        apport.warning('%s contains empty line, ignoring line', sumfile)
+                        continue
+                    s = os.stat('/' + words[-1])
+                    if max(s.st_mtime, s.st_ctime) <= max_time:
+                        continue
+                except OSError:
+                    pass
 
-            sums += line
+                sums += line
 
         if sums:
             return self._check_files_md5(sums)

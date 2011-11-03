@@ -56,7 +56,8 @@ def _read_file(path):
     Return its content, or return a textual error if it failed.
     '''
     try:
-        return open(path).read().strip()
+        with open(path) as fd:
+            return fd.read().strip()
     except (OSError, IOError) as e:
         return 'Error: ' + str(e)
 
@@ -68,7 +69,8 @@ def _read_maps(pid):
     '''
     maps = 'Error: unable to read /proc maps file'
     try:
-        maps = open('/proc/%d/maps' % pid).read().strip()
+        with open('/proc/%d/maps' % pid) as fd:
+            maps = fd.read().strip()
     except (OSError,IOError) as e:
         return 'Error: ' + str(e)
     return maps
@@ -809,12 +811,12 @@ class Report(problem_report.ProblemReport):
         try:
             for f in os.listdir(_blacklist_dir):
                 try:
-                    fd = open(os.path.join(_blacklist_dir, f))
+                    with open(os.path.join(_blacklist_dir, f)) as fd:
+                        for line in fd:
+                            if line.strip() == self['ExecutablePath']:
+                                return True
                 except IOError:
                     continue
-                for line in fd:
-                    if line.strip() == self['ExecutablePath']:
-                        return True
         except OSError:
             pass
 
@@ -862,8 +864,8 @@ class Report(problem_report.ProblemReport):
             dom.documentElement.appendChild(e)
 
         # write back file
-        dom.writexml(open(os.path.expanduser(_ignore_file), 'w'),
-            addindent='  ', newl='\n')
+        with open(os.path.expanduser(_ignore_file), 'w') as fd:
+            dom.writexml(fd, addindent='  ', newl='\n')
 
         dom.unlink()
 
@@ -1265,8 +1267,11 @@ class _T(unittest.TestCase):
             stderr=subprocess.PIPE, close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
-        while not open('/proc/%i/cmdline' % p.pid).read():
-            time.sleep(0.1)
+        while True:
+            with open('/proc/%i/cmdline' % p.pid) as fd:
+                if fd.read():
+                    break
+                time.sleep(0.1)
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         self.assertEqual(pr.pid, p.pid)
@@ -1568,7 +1573,8 @@ int main() { return f(42); }
             os.chdir(workdir)
 
             # create a test executable
-            open('crash.c', 'w').write(code)
+            with open('crash.c', 'w') as fd:
+                fd.write(code)
             assert subprocess.call(['gcc', '-g', 'crash.c', '-o', 'crash']) == 0
             assert os.path.exists('crash')
 
@@ -1685,7 +1691,8 @@ int main() {
             os.close(fd)
 
             # create a test script which produces a core dump for us
-            open(script, 'w').write('''#!/bin/bash
+            with open(script, 'w') as fd:
+                fd.write('''#!/bin/bash
 cd `dirname $0`
 ulimit -c unlimited
 kill -SEGV $$
@@ -1722,7 +1729,8 @@ kill -SEGV $$
             os.close(fd)
 
             # create a test script which produces a core dump for us
-            open(script, 'w').write('''#!/bin/sh
+            with open(script, 'w') as fd:
+                fd.write('''#!/bin/sh
 gcc -o $0.bin -x c - <<EOF
 #include <assert.h>
 int main() { assert(1 < 0); }
@@ -1940,7 +1948,8 @@ $0.bin 2>/dev/null
         orig_common_hook_dir = _common_hook_dir
         _common_hook_dir = tempfile.mkdtemp()
         try:
-            open(os.path.join(_hook_dir, 'foo.py'), 'w').write('''
+            with open(os.path.join(_hook_dir, 'foo.py'), 'w') as fd:
+                fd.write('''
 import sys
 def add_info(report):
     report['Field1'] = 'Field 1'
@@ -1949,23 +1958,27 @@ def add_info(report):
         raise StopIteration
 ''')
 
-            open(os.path.join(_common_hook_dir, 'foo1.py'), 'w').write('''
+            with open(os.path.join(_common_hook_dir, 'foo1.py'), 'w') as fd:
+                fd.write('''
 def add_info(report):
     report['CommonField1'] = 'CommonField 1'
     if report['Package'] == 'commonspethial':
         raise StopIteration
 ''')
-            open(os.path.join(_common_hook_dir, 'foo2.py'), 'w').write('''
+            with open(os.path.join(_common_hook_dir, 'foo2.py'), 'w') as fd:
+                fd.write('''
 def add_info(report):
     report['CommonField2'] = 'CommonField 2'
 ''')
-            open(os.path.join(_common_hook_dir, 'foo3.py'), 'w').write('''
+            with open(os.path.join(_common_hook_dir, 'foo3.py'), 'w') as fd:
+                fd.write('''
 def add_info(report, ui):
     report['CommonField3'] = str(ui)
 ''')
 
             # should only catch .py files
-            open(os.path.join(_common_hook_dir, 'notme'), 'w').write('''
+            with open(os.path.join(_common_hook_dir, 'notme'), 'w') as fd:
+                fd.write('''
 def add_info(report):
     report['BadField'] = 'XXX'
 ''')
@@ -2054,8 +2067,10 @@ def add_info(report, ui):
         workdir = tempfile.mkdtemp()
         _ignore_file = os.path.join(workdir, 'ignore.xml')
         try:
-            open(os.path.join(workdir, 'bash'), 'w').write('bash')
-            open(os.path.join(workdir, 'crap'), 'w').write('crap')
+            with open(os.path.join(workdir, 'bash'), 'w') as fd:
+                fd.write('bash')
+            with open(os.path.join(workdir, 'crap'), 'w') as fd:
+                fd.write('crap')
 
             bash_rep = Report()
             bash_rep['ExecutablePath'] = os.path.join(workdir, 'bash')
@@ -2084,13 +2099,15 @@ def add_info(report, ui):
 
             # poke crap so that it has a newer timestamp
             time.sleep(1)
-            open(os.path.join(workdir, 'crap'), 'w').write('crapnew')
+            with open(os.path.join(workdir, 'crap'), 'w') as fd:
+                fd.write('crapnew')
             self.assertEqual(bash_rep.check_ignored(), True)
             self.assertEqual(crap_rep.check_ignored(), False)
             self.assertEqual(cp_rep.check_ignored(), False)
 
             # do not complain about an empty ignore file
-            open(_ignore_file, 'w').write('')
+            with open(_ignore_file, 'w') as fd:
+                fd.write('')
             self.assertEqual(bash_rep.check_ignored(), False)
             self.assertEqual(crap_rep.check_ignored(), False)
             self.assertEqual(cp_rep.check_ignored(), False)
@@ -2118,24 +2135,24 @@ def add_info(report, ui):
             self.assertEqual(crap_rep.check_ignored(), False)
 
             # should not stumble over comments
-            open(os.path.join(_blacklist_dir, 'README'), 'w').write(
-                '# Ignore file\n#/bin/bash\n')
+            with open(os.path.join(_blacklist_dir, 'README'), 'w') as fd:
+                fd.write('# Ignore file\n#/bin/bash\n')
 
             # no ignores on nonmatching paths
-            open(os.path.join(_blacklist_dir, 'bl1'), 'w').write(
-                '/bin/bas\n/bin/bashh\nbash\nbin/bash\n')
+            with open(os.path.join(_blacklist_dir, 'bl1'), 'w') as fd:
+                fd.write('/bin/bas\n/bin/bashh\nbash\nbin/bash\n')
             self.assertEqual(bash_rep.check_ignored(), False)
             self.assertEqual(crap_rep.check_ignored(), False)
 
             # ignore crap now
-            open(os.path.join(_blacklist_dir, 'bl_2'), 'w').write(
-                '/bin/crap\n')
+            with open(os.path.join(_blacklist_dir, 'bl_2'), 'w') as fd:
+                fd.write('/bin/crap\n')
             self.assertEqual(bash_rep.check_ignored(), False)
             self.assertEqual(crap_rep.check_ignored(), True)
 
             # ignore bash now
-            open(os.path.join(_blacklist_dir, 'bl1'), 'a').write(
-                '/bin/bash\n')
+            with open(os.path.join(_blacklist_dir, 'bl1'), 'a') as fd:
+                fd.write('/bin/bash\n')
             self.assertEqual(bash_rep.check_ignored(), True)
             self.assertEqual(crap_rep.check_ignored(), True)
         finally:
