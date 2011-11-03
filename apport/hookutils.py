@@ -21,7 +21,6 @@ import calendar
 import datetime
 import glob
 import re
-import string
 import stat
 import base64
 import tempfile
@@ -36,14 +35,24 @@ from packaging_impl import impl as packaging
 
 import apport
 
-_path_key_trans = string.maketrans('#/-_+ ','....._')
+try:
+    _path_key_trans = ''.maketrans('#/-_+ ', '....._')
+except AttributeError:
+    # Python 2 variant
+    import string
+    _path_key_trans = string.maketrans('#/-_+ ', '....._')
+
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
         
     This will replace invalid punctuation symbols with valid ones.
     '''
-    if type(path) != type(b''):
-        path = path.encode('UTF-8')
+    if sys.version[0] >= '3':
+        if type(path) == type(b''):
+            path = path.decode('UTF-8')
+    else:
+        if type(path) != type(b''):
+            path = path.encode('UTF-8')
     return path.translate(_path_key_trans)
 
 def attach_file_if_exists(report, path, key=None, overwrite=True):
@@ -68,7 +77,8 @@ def read_file(path):
     instead of failing.
     '''
     try:
-        return open(path).read().strip()
+        with open(path, 'rb') as f:
+            return f.read().strip()
     except Exception as e:
         return 'Error: ' + str(e)
 
@@ -141,13 +151,14 @@ def attach_dmesg(report):
     '''
     try:
         if not report.get('BootDmesg', '').strip():
-            report['BootDmesg'] = open('/var/log/dmesg').read()
+            with open('/var/log/dmesg') as f:
+                report['BootDmesg'] = f.read()
     except IOError:
         pass
     if not report.get('CurrentDmesg', '').strip():
         dmesg = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
         # if an initial message was truncated by the ring buffer, skip over it
-        first_newline = dmesg.find('\n[')
+        first_newline = dmesg.find(b'\n[')
         if first_newline != -1:
             dmesg = dmesg[first_newline+1:]
         report['CurrentDmesg'] = dmesg
@@ -165,7 +176,8 @@ def attach_dmi(report):
                 continue
 
             try:
-                value = open(p).read().strip()
+                with open(p) as fd:
+                    value = fd.read().strip()
             except (OSError, IOError):
                 continue
             if value:
@@ -200,12 +212,14 @@ def attach_hardware(report):
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
     # anonymize partition labels
-    report['UdevLog'] = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', report['UdevLog'])
-    report['UdevLog'] = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', report['UdevLog'])
-    report['UdevLog'] = re.sub('by-label/(.*)', 'by-label/<hidden>', report['UdevLog'])
-    report['UdevDb'] = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', report['UdevDb'])
-    report['UdevDb'] = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', report['UdevDb'])
-    report['UdevDb'] = re.sub('by-label/(.*)', 'by-label/<hidden>', report['UdevDb'])
+    l = report['UdevLog'].decode('UTF-8', errors='replace')
+    l = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', l)
+    l = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', l)
+    l = re.sub('by-label/(.*)', 'by-label/<hidden>', l)
+    l = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', l)
+    l = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', l)
+    l = re.sub('by-label/(.*)', 'by-label/<hidden>', l)
+    report['UdevLog'] = l.encode('UTF-8')
 
     attach_dmi(report)
 
@@ -246,10 +260,11 @@ def attach_alsa(report):
 
     cards = []
     if os.path.exists('/proc/asound/cards'):
-        for line in open('/proc/asound/cards'):
-            if ']:' in line:
-                fields = line.lstrip().split()
-                cards.append(int(fields[0]))
+        with open('/proc/asound/cards') as fd:
+            for line in fd:
+                if ']:' in line:
+                    fields = line.lstrip().split()
+                    cards.append(int(fields[0]))
 
     for card in cards:
         key = 'Card%d.Amixer.info' % card
@@ -407,9 +422,10 @@ def recent_logfile(logfile, pattern):
     '''
     lines = ''
     try:
-        for line in open(logfile):
-            if pattern.search(line):
-                lines += line
+        with open(logfile) as f:
+            for line in f:
+                if pattern.search(line):
+                    lines += line
     except IOError:
         return ''
     return lines
@@ -451,13 +467,13 @@ def pci_devices(*pci_classes):
 
     result = ''
     output = command_output(['lspci','-vvmmnn'])
-    for paragraph in output.split('\n\n'):
+    for paragraph in output.split(b'\n\n'):
         pci_class = None
         pci_subclass = None
         slot = None
 
-        for line in paragraph.split('\n'):
-            key, value = line.split(':',1)
+        for line in paragraph.split(b'\n'):
+            key, value = line.split(b':',1)
             value = value.strip()
             key = key.strip()
             if key == 'Class':
@@ -555,7 +571,7 @@ def attach_wifi(report):
     report['IwConfig'] = re.sub('ESSID:(.*)', 'ESSID:<hidden>', 
         re.sub('Encryption key:(.*)', 'Encryption key: <hidden>', 
         re.sub('Access Point: (.*)', 'Access Point: <hidden>', 
-            command_output(['iwconfig']))))
+            command_output(['iwconfig']).decode('UTF-8', errors='ignore'))))
     report['RfKill'] = command_output(['rfkill', 'list'])
     report['CRDA'] = command_output(['iw', 'reg', 'get'])
 
@@ -688,7 +704,7 @@ def _get_module_license(module):
     try:
         modinfo = subprocess.Popen(['/sbin/modinfo', module],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out = modinfo.communicate()[0]
+        out = modinfo.communicate()[0].decode('UTF-8')
         if modinfo.returncode != 0:
             return 'invalid'
     except OSError:
@@ -706,7 +722,8 @@ def nonfree_kernel_modules(module_list = '/proc/modules'):
     '''Check loaded modules and return a list of those which are not free.'''
 
     try:
-        mods = [l.split()[0] for l in open(module_list)]
+        with open(module_list) as f:
+            mods = [l.split()[0] for l in f]
     except IOError:
         return []
 
@@ -810,7 +827,7 @@ if __name__ == '__main__':
             def _build_ko(license):
                 asm = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
                                                   suffix='.S')
-                asm.write('.section .modinfo\n.string "license=%s"\n' % (license))
+                asm.write(('.section .modinfo\n.string "license=%s"\n' % (license)).encode())
                 asm.flush()
                 ko = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
                                                  suffix='.ko')
@@ -834,8 +851,8 @@ if __name__ == '__main__':
 
             # check via nonfree_kernel_modules logic
             f = tempfile.NamedTemporaryFile()
-            f.write('isofs\ndoes-not-exist\n%s\n%s\n' %
-                    (good_ko.name,bad_ko.name))
+            f.write(('isofs\ndoes-not-exist\n%s\n%s\n' %
+                    (good_ko.name,bad_ko.name)).encode())
             f.flush()
             nonfree = nonfree_kernel_modules(f.name)
             self.assertFalse('isofs' in nonfree)
@@ -851,7 +868,7 @@ if __name__ == '__main__':
             attach_dmesg(report)
             self.assertTrue(report['BootDmesg'].startswith('['))
             self.assertTrue(len(report['BootDmesg']) > 500)
-            self.assertTrue(report['CurrentDmesg'].startswith('['))
+            self.assertTrue(report['CurrentDmesg'].startswith(b'['))
 
         def test_dmesg_overwrite(self):
             '''attach_dmesg() does not overwrite already existing data'''
@@ -860,7 +877,7 @@ if __name__ == '__main__':
 
             attach_dmesg(report)
             self.assertEqual(report['BootDmesg'][:50], 'existingboot')
-            self.assertTrue(report['CurrentDmesg'].startswith('['))
+            self.assertTrue(report['CurrentDmesg'].startswith(b'['))
             
             report = {'BootDmesg': 'existingboot', 'CurrentDmesg': 'existingcurrent' }
 
@@ -871,34 +888,34 @@ if __name__ == '__main__':
         def test_attach_file(self):
             '''attach_file()'''
 
-            with open('/etc/motd') as f:
+            with open('/etc/motd', 'rb') as f:
                 motd_contents = f.read().strip()
-            with open('/etc/issue') as f:
+            with open('/etc/issue', 'rb') as f:
                 issue_contents = f.read().strip()
 
             # default key name
             report = {}
             attach_file(report, '/etc/motd')
-            self.assertEqual(report.keys(), ['.etc.motd'])
+            self.assertEqual(list(report), ['.etc.motd'])
             self.assertEqual(report['.etc.motd'], motd_contents)
 
             # custom key name
             report = {}
             attach_file(report, '/etc/motd', 'Motd')
-            self.assertEqual(report.keys(), ['Motd'])
+            self.assertEqual(list(report), ['Motd'])
             self.assertEqual(report['Motd'], motd_contents)
 
             # nonexisting file
             report = {}
             attach_file(report, '/nonexisting')
-            self.assertEqual(report.keys(), ['.nonexisting'])
+            self.assertEqual(list(report), ['.nonexisting'])
             self.assertTrue(report['.nonexisting'].startswith('Error: '))
 
             # existing key
             report = {}
             attach_file(report, '/etc/motd')
             attach_file(report, '/etc/motd')
-            self.assertEqual(report.keys(), ['.etc.motd'])
+            self.assertEqual(list(report), ['.etc.motd'])
             self.assertEqual(report['.etc.motd'], motd_contents)
 
             attach_file(report, '/etc/issue', '.etc.motd', overwrite=False)
@@ -909,25 +926,25 @@ if __name__ == '__main__':
         def test_attach_file_if_exists(self):
             '''attach_file_if_exists()'''
 
-            with open('/etc/motd') as f:
+            with open('/etc/motd', 'rb') as f:
                 motd_contents = f.read().strip()
 
             # default key name
             report = {}
             attach_file_if_exists(report, '/etc/motd')
-            self.assertEqual(report.keys(), ['.etc.motd'])
+            self.assertEqual(list(report), ['.etc.motd'])
             self.assertEqual(report['.etc.motd'], motd_contents)
 
             # custom key name
             report = {}
             attach_file_if_exists(report, '/etc/motd', 'Motd')
-            self.assertEqual(report.keys(), ['Motd'])
+            self.assertEqual(list(report), ['Motd'])
             self.assertEqual(report['Motd'], motd_contents)
 
             # nonexisting file
             report = {}
             attach_file_if_exists(report, '/nonexisting')
-            self.assertEqual(report.keys(), [])
+            self.assertEqual(list(report), [])
 
         def test_recent_logfile(self):
             self.assertEqual(recent_logfile('/nonexisting', re.compile('.')), '')
