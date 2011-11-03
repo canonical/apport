@@ -129,8 +129,9 @@ temp_report_dir = tempfile.mkdtemp()
 
 try:
     core_pattern = open('/proc/sys/kernel/core_pattern').read().strip()
-    assert core_pattern[0] == '|', \
-            'kernel crash dump helper is not active; please enable before running this test.'
+    if core_pattern[0] != '|':
+        sys.stderr.write('kernel crash dump helper is not active; please enable before running this test.\n')
+        sys.exit(0)
     apport_path = core_pattern[1:].split()[0]
 
     assert apport.fileutils.get_all_reports() == [], 'please remove all crash reports from /var/crash/ for this test suite'
