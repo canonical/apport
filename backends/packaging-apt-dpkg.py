@@ -619,16 +619,27 @@ class __AptDpkgPackageInfo(PackageInfo):
         map = os.path.join(dir, 'Contents-%s.gz' % arch)
 
         if not os.path.exists(map):
-            import urllib
 
             # determine distro release code name
             lsb_release = subprocess.Popen(['lsb_release', '-sc'],
                 stdout=subprocess.PIPE)
-            release_name = lsb_release.communicate()[0].strip()
+            release_name = lsb_release.communicate()[0].decode('UTF-8').strip()
             assert lsb_release.returncode == 0
 
             url = '%s/dists/%s/Contents-%s.gz' % (self._get_mirror(), release_name, arch)
-            urllib.urlretrieve(url, map)
+            try:
+                from urllib.request import urlopen
+            except ImportError:
+                from urllib import urlopen
+
+            src = urlopen(url)
+            with open(map, 'wb') as f:
+                while True:
+                    data = src.read(1000000)
+                    if not data:
+                        break
+                    f.write(data)
+            src.close()
             assert os.path.exists(map)
 
         if file.startswith('/'):
