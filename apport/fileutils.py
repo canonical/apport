@@ -230,7 +230,7 @@ def check_files_md5(sumfile):
     m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
         cwd='/', env={})
-    out = m.communicate()[0]
+    out = m.communicate()[0].decode()
 
     # if md5sum succeeded, don't bother parsing the output
     if m.returncode == 0:
@@ -295,13 +295,16 @@ class _T(unittest.TestCase):
         r1 = os.path.join(report_dir, 'rep1.crash')
         r2 = os.path.join(report_dir, 'rep2.crash')
 
-        open(r1, 'w').write('report 1')
-        open(r2, 'w').write('report 2')
+        with open(r1, 'w') as fd:
+            fd.write('report 1')
+        with open(r2, 'w') as fd:
+            fd.write('report 2')
         os.chmod(r1, 0o600)
         os.chmod(r2, 0o600)
         if create_inaccessible:
             ri = os.path.join(report_dir, 'inaccessible.crash')
-            open(ri, 'w').write('inaccessible')
+            with open(ri, 'w') as fd:
+                fd.write('inaccessible')
             os.chmod(ri, 0)
             return [r1, r2, ri]
         else:
@@ -472,19 +475,25 @@ CrashCounter: 3''' % time.ctime(time.mktime(time.localtime())-3600))
         f1 = os.path.join(report_dir, 'test 1.txt')
         f2 = os.path.join(report_dir, 'test:2.txt')
         sumfile = os.path.join(report_dir, 'sums.txt')
-        open(f1, 'w').write('Some stuff')
-        open(f2, 'w').write('More stuff')
+        with open(f1, 'w') as fd:
+            fd.write('Some stuff')
+        with open(f2, 'w') as fd:
+            fd.write('More stuff')
         # use one relative and one absolute path in checksums file
-        open(sumfile, 'w').write('''2e41290da2fa3f68bd3313174467e3b5  %s
+        with open(sumfile, 'w') as fd:
+            fd.write('''2e41290da2fa3f68bd3313174467e3b5  %s
 f6423dfbc4faf022e58b4d3f5ff71a70  %s
 ''' % (f1[1:], f2))
         self.assertEqual(check_files_md5(sumfile), [], 'correct md5sums')
 
-        open(f1, 'w').write('Some stuff!')
+        with open(f1, 'w') as fd:
+            fd.write('Some stuff!')
         self.assertEqual(check_files_md5(sumfile), [f1[1:]], 'file 1 wrong')
-        open(f2, 'w').write('More stuff!')
+        with open(f2, 'w') as fd:
+            fd.write('More stuff!')
         self.assertEqual(check_files_md5(sumfile), [f1[1:], f2], 'files 1 and 2 wrong')
-        open(f1, 'w').write('Some stuff')
+        with open(f1, 'w') as fd:
+            fd.write('Some stuff')
         self.assertEqual(check_files_md5(sumfile), [f2], 'file 2 wrong')
 
     def test_get_config(self):
@@ -506,7 +515,7 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         get_config.config = None # trash cache
 
         # nonempty
-        f.write('[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n[spethial]\none= 99\n')
+        f.write(b'[main]\none=1\ntwo = TWO\nb1 = 1\nb2=False\n[spethial]\none= 99\n')
         f.flush()
         self.assertEqual(get_config('main', 'foo'), None)
         self.assertEqual(get_config('main', 'foo', 'moo'), 'moo')
