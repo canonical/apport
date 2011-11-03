@@ -14,7 +14,8 @@ import os, os.path, datetime, sys
 try:
     from exceptions import Exception
 except ImportError:
-    pass # python 3
+    # python 3
+    from functools import cmp_to_key
 
 import apport
 
@@ -122,6 +123,8 @@ class CrashDatabase:
         # sort existing in ascending order, with unfixed last, so that
         # version comparisons find the closest fix first
         def cmp(x, y):
+            x = x[1]
+            y = y[1]
             if x == y:
                 return 0
             if x == '':
@@ -140,15 +143,20 @@ class CrashDatabase:
                 return -1
             return apport.packaging.compare_versions(x, y)
 
-        existing.sort(cmp=cmp, key=lambda k: k[1])
+        if sys.version[0] >= '3':
+            existing.sort(key=cmp_to_key(cmp))
+        else:
+            existing.sort(cmp=cmp)
 
         if existing:
             # update status of existing master bugs
             for (ex_id, _) in existing:
                 self._duplicate_db_sync_status(ex_id)
             existing = self._duplicate_search_signature(sig, id)
-            existing.sort(cmp=cmp, key=lambda k: k[1])
-
+            if sys.version[0] >= '3':
+                existing.sort(key=cmp_to_key(cmp))
+            else:
+                existing.sort(cmp=cmp)
         try:
             report_package_version = report['Package'].split()[1]
         except (KeyError, IndexError):
