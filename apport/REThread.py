@@ -58,6 +58,8 @@ class REThread(threading.Thread):
         '''
         if self._exception:
             raise self._exception[0], self._exception[1], self._exception[2]
+            # Python 3:
+            #raise self._exception[0](self._exception[1]).with_traceback(self._exception[2])
 
 #
 # Unit test
