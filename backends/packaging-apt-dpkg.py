@@ -1059,10 +1059,13 @@ bo/gu/s                                                 na/mypackage
             self.assertTrue('libc6' in cache_names)
             self.assertTrue('libc6-dbg' in cache_names)
 
-            # does not crash with existing cache
+            # installs cached packages
+            os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
             impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                     [('coreutils', '7.4-2ubuntu2'),
                     ], False, self.cachedir)
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/bin/stat')))
 
             # complains about obsolete packages
             result = impl.install_packages(self.rootdir, self.configdir,
