@@ -128,7 +128,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         raise an exception (preferably IOError).'''
 
         result = set()
-        for i in xrange(len(self.reports)):
+        for i in range(len(self.reports)):
             if self.reports[i]['dup_of'] is None and \
                 self.reports[i]['fixed_version'] == None:
                 result.add(i)
@@ -331,7 +331,7 @@ class _T(unittest.TestCase):
 
         # use our dummy crashdb
         crashdb_conf = tempfile.NamedTemporaryFile()
-        print >> crashdb_conf, '''default = 'testsuite'
+        crashdb_conf.write(b'''default = 'testsuite'
 
 def get_dyn():
     return str(2 + 2)
@@ -349,7 +349,7 @@ databases = {
         'whoami': 'dynname',
     }
 }
-'''
+''')
         crashdb_conf.flush()
 
         db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
@@ -723,7 +723,7 @@ databases = {
             f.close()
 
             self.crashes = CrashDatabase(None, None, {})
-            self.assertRaises(StandardError, self.crashes.init_duplicate_db, db)
+            self.assertRaises(Exception, self.crashes.init_duplicate_db, db)
 
         finally:
             os.unlink(db)

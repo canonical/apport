@@ -11,14 +11,18 @@
 
 import os, os.path, datetime, sys
 
-from exceptions import Exception
-from packaging_impl import impl as packaging
+try:
+    from exceptions import Exception
+except ImportError:
+    pass # python 3
+
+import apport
 
 def _u(str):
     '''Convert str to an unicode if it isn't already.'''
 
-    if type(str) == type(''):
-        return str.decode('utf-8', 'ignore')
+    if type(str) == type(b''):
+        return str.decode('UTF-8', 'ignore')
     return str
 
 class CrashDatabase:
@@ -134,16 +138,16 @@ class CrashDatabase:
                 return 1
             if y == None:
                 return -1
-            return packaging.compare_versions(x, y)
+            return apport.packaging.compare_versions(x, y)
 
-        existing.sort(cmp, lambda k: k[1])
+        existing.sort(cmp=cmp, key=lambda k: k[1])
 
         if existing:
             # update status of existing master bugs
             for (ex_id, _) in existing:
                 self._duplicate_db_sync_status(ex_id)
             existing = self._duplicate_search_signature(sig, id)
-            existing.sort(cmp, lambda k: k[1])
+            existing.sort(cmp=cmp, key=lambda k: k[1])
 
         try:
             report_package_version = report['Package'].split()[1]
@@ -156,7 +160,7 @@ class CrashDatabase:
         for (ex_id, ex_ver) in existing:
             if not ex_ver or \
                not report_package_version or \
-                packaging.compare_versions(report_package_version, ex_ver) < 0: 
+                apport.packaging.compare_versions(report_package_version, ex_ver) < 0: 
                 self.close_duplicate(id, ex_id)
                 return (ex_id, ex_ver)
 
@@ -489,7 +493,8 @@ def get_crashdb(auth_file, name = None, conf = None):
     if not conf:
         conf = os.environ.get('APPORT_CRASHDB_CONF', '/etc/apport/crashdb.conf')
     settings = {}
-    execfile(conf, settings)
+    with open(conf) as f:
+        exec(compile(f.read(), conf, 'exec'), settings)
 
     # Load third parties crashdb.conf
     confdDir = conf + '.d'
@@ -498,7 +503,8 @@ def get_crashdb(auth_file, name = None, conf = None):
             cfpath = os.path.join(confdDir, cf)
             if os.path.isfile(cfpath) and cf.endswith('.conf'):
                 try:
-                    execfile(cfpath, settings['databases'])
+                    with open(cfpath) as f:
+                        exec(compile(f.read(), cfpath, 'exec'), settings['databases'])
                 except Exception as e:
                     # ignore broken files
                     sys.stderr.write('Invalid file %s: %s\n' % (cfpath, str(e)))
