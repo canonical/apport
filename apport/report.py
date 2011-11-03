@@ -663,7 +663,7 @@ class Report(problem_report.ProblemReport):
         # common hooks
         for hook in glob.glob(_common_hook_dir + '/*.py'):
             try:
-                execfile(hook, symb)
+                exec(compile(open(hook).read(), hook, 'exec'), symb)
                 try:
                     symb['add_info'](self, ui)
                 except TypeError as e:
@@ -687,7 +687,7 @@ class Report(problem_report.ProblemReport):
             hook = '%s/%s.py' % (_hook_dir, package.split()[0])
             if os.path.exists(hook):
                 try:
-                    execfile(hook, symb)
+                    exec(compile(open(hook).read(), hook, 'exec'), symb)
                     try:
                         symb['add_info'](self, ui)
                     except TypeError as e:
@@ -711,7 +711,7 @@ class Report(problem_report.ProblemReport):
             hook = '%s/source_%s.py' % (_hook_dir, srcpackage.split()[0])
             if os.path.exists(hook):
                 try:
-                    execfile(hook, symb)
+                    exec(compile(open(hook).read(), hook, 'exec'), symb)
                     try:
                         symb['add_info'](self, ui)
                     except TypeError as e:

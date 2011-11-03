@@ -52,7 +52,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
     if symptom_script:
         symb = {}
         try:
-            execfile(symptom_script, symb)
+            exec(compile(open(symptom_script).read(), symptom_script, 'exec'), symb)
             package = symb['run'](report, ui)
             if not package:
                 apport.error('symptom script %s did not determine the affected package', symptom_script)
@@ -516,7 +516,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 continue
             symb = {}
             try:
-                execfile(script, symb)
+                exec(compile(open(script).read(), script, 'exec'), symb)
             except:
                 apport.error('symptom script %s is invalid', script)
                 traceback.print_exc()
