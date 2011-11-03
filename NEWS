@@ -5,6 +5,7 @@ detailled list of changes, please see ChangeLog.
 ------------------
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Port to current python-apt API.
+ - hookutils.py: Fix path_to_key() to also work with unicode arguments.
 
 1.25 (2011-11-02):
 ------------------

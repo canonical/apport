@@ -42,6 +42,8 @@ def path_to_key(path):
         
     This will replace invalid punctuation symbols with valid ones.
     '''
+    if type(path) != type(b''):
+        path = path.encode('UTF-8')
     return path.translate(_path_key_trans)
 
 def attach_file_if_exists(report, path, key=None, overwrite=True):
