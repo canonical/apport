@@ -518,9 +518,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # fetch packages
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
-        pm = apt.apt_pkg.PackageManager(c._depcache)
         try:
-            res = c._fetchArchives(fetcher, pm)
+            res = c.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as e:
             apport.error('Package download error, try again later: %s', str(e))
             sys.exit(99) # transient error
@@ -528,8 +527,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         # unpack packages
         if verbose:
             print('Extracting downloaded debs...')
-        for i in fetcher.Items:
-            subprocess.check_call(['dpkg', '-x', i.DestFile, rootdir])
+        for i in fetcher.items:
+            subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
 
         if tmp_aptroot:
             shutil.rmtree(aptroot)
