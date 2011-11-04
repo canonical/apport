@@ -88,7 +88,7 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
         return out
     else:
        raise OSError('Error: command %s failed with exit code %i: %s' % (
-           str(command), sp.returncode, err))
+           str(command), sp.returncode, err.decode('UTF-8', errors='replace')))
 
 def _check_bug_pattern(report, pattern):
     '''Check if given report matches the given bug pattern XML DOM node.
@@ -243,7 +243,7 @@ class Report(problem_report.ProblemReport):
         '''
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
-        self['DistroRelease'] = p.communicate()[0].strip().replace('\n', ' ')
+        self['DistroRelease'] = p.communicate()[0].decode().strip().replace('\n', ' ')
 
         u = os.uname()
         self['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
@@ -410,7 +410,8 @@ class Report(problem_report.ProblemReport):
             # On Linux 2.6.28+, 'current' is world readable, but read() gives
             # EPERM; Python 2.5.3+ crashes on that (LP: #314065)
             if os.getuid() == 0:
-                val = open('/proc/' + pid + '/attr/current').read().strip()
+                with open('/proc/' + pid + '/attr/current') as fd:
+                    val = fd.read().strip()
                 if val != 'unconfined':
                     self['ProcAttrCurrent'] = val
         except (IOError, OSError):
@@ -552,7 +553,7 @@ class Report(problem_report.ProblemReport):
             command += ['--ex', 'set backtrace limit 2000']
             value_keys = []
             # append the actual commands and something that acts as a separator
-            for name, cmd in gdb_reports.iteritems():
+            for name, cmd in gdb_reports.items():
                 value_keys.append(name)
                 command += ['--ex', 'p -99', '--ex', cmd]
 
@@ -560,7 +561,7 @@ class Report(problem_report.ProblemReport):
 
             # call gdb
             try:
-                out = _command_output(command)
+                out = _command_output(command).decode('UTF-8', errors='replace')
             except OSError:
                 return
 
@@ -663,11 +664,12 @@ class Report(problem_report.ProblemReport):
         # common hooks
         for hook in glob.glob(_common_hook_dir + '/*.py'):
             try:
-                exec(compile(open(hook).read(), hook, 'exec'), symb)
+                with open(hook) as fd:
+                    exec(compile(fd.read(), hook, 'exec'), symb)
                 try:
                     symb['add_info'](self, ui)
                 except TypeError as e:
-                    if e.message.startswith('add_info()'):
+                    if str(e).startswith('add_info()'):
                         # older versions of apport did not pass UI, and hooks that
                         # do not require it don't need to take it
                         symb['add_info'](self)
@@ -687,11 +689,12 @@ class Report(problem_report.ProblemReport):
             hook = '%s/%s.py' % (_hook_dir, package.split()[0])
             if os.path.exists(hook):
                 try:
-                    exec(compile(open(hook).read(), hook, 'exec'), symb)
+                    with open(hook) as fd:
+                        exec(compile(fd.read(), hook, 'exec'), symb)
                     try:
                         symb['add_info'](self, ui)
                     except TypeError as e:
-                        if e.message.startswith('add_info()'):
+                        if str(e).startswith('add_info()'):
                             # older versions of apport did not pass UI, and hooks that
                             # do not require it don't need to take it
                             symb['add_info'](self)
@@ -711,11 +714,12 @@ class Report(problem_report.ProblemReport):
             hook = '%s/source_%s.py' % (_hook_dir, srcpackage.split()[0])
             if os.path.exists(hook):
                 try:
-                    exec(compile(open(hook).read(), hook, 'exec'), symb)
+                    with open(hook) as fd:
+                        exec(compile(fd.read(), hook, 'exec'), symb)
                     try:
                         symb['add_info'](self, ui)
                     except TypeError as e:
-                        if e.message.startswith('add_info()'):
+                        if str(e).startswith('add_info()'):
                             # older versions of apport did not pass UI, and hooks that
                             # do not require it don't need to take it
                             symb['add_info'](self)
@@ -1157,7 +1161,7 @@ class Report(problem_report.ProblemReport):
                           'ProcInterrupts','ProcModules']) or \
                 'Stacktrace' in k or \
                 k in ['Traceback', 'PythonArgs']:
-                for old, new in replacements.iteritems():
+                for old, new in replacements.items():
                     if hasattr(self[k], 'isspace'):
                         self[k] = self[k].replace(old, new)
 
@@ -1209,7 +1213,8 @@ class _T(unittest.TestCase):
         pr = Report()
         pr.add_os_info()
         self.assertTrue(pr['Uname'].startswith('Linux'))
-        self.assertTrue(type(pr['DistroRelease']) == type(''))
+        self.assertTrue(hasattr(pr['DistroRelease'], 'startswith'))
+        self.assertGreater(len(pr['DistroRelease']), 5)
         self.assertTrue(pr['Architecture'])
 
     def test_add_user_info(self):
@@ -1275,7 +1280,7 @@ class _T(unittest.TestCase):
         pr = Report()
         pr.add_proc_info(pid=p.pid)
         self.assertEqual(pr.pid, p.pid)
-        p.communicate('\n')
+        p.communicate(b'\n')
         self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
         self.assertEqual(pr['ExecutablePath'], '/bin/cat')
         self.assertTrue('InterpreterPath' not in pr)
@@ -1288,12 +1293,15 @@ class _T(unittest.TestCase):
             close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
-        while not open('/proc/%i/cmdline' % p.pid).read():
-            time.sleep(0.1)
+        while True:
+            with open('/proc/%i/cmdline' % p.pid) as fd:
+                if fd.read():
+                    break
+                time.sleep(0.1)
         pr = Report()
         pr.pid = p.pid
         pr.add_proc_info()
-        p.communicate('exit\n')
+        p.communicate(b'exit\n')
         self.assertFalse('InterpreterPath' in pr, pr.get('InterpreterPath'))
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('/bin/sh'))
         self.assertEqual(int(pr['ExecutableTimestamp']), 
@@ -1304,14 +1312,18 @@ class _T(unittest.TestCase):
             close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
-        while not open('/proc/%i/cmdline' % p.pid).read():
-            time.sleep(0.1)
+        while True:
+            with open('/proc/%i/cmdline' % p.pid) as fd:
+                if fd.read():
+                    break
+                time.sleep(0.1)
         pr = Report()
         pr.add_proc_info(pid=p.pid)
-        p.communicate('\n')
+        p.communicate(b'\n')
         self.assertTrue(pr['ExecutablePath'].endswith('bin/zgrep'))
-        self.assertEqual(pr['InterpreterPath'],
-            os.path.realpath(open(pr['ExecutablePath']).readline().strip()[2:]))
+        with open(pr['ExecutablePath']) as fd:
+            self.assertEqual(pr['InterpreterPath'],
+                os.path.realpath(fd.readline().strip()[2:]))
         self.assertEqual(int(pr['ExecutableTimestamp']), 
                 int(os.stat(pr['ExecutablePath']).st_mtime))
         self.assertTrue('[stack]' in pr['ProcMaps'])
@@ -1328,11 +1340,14 @@ sys.stdin.readline()
             stderr=subprocess.PIPE, close_fds=True)
         assert p.pid
         # wait until /proc/pid/cmdline exists
-        while not open('/proc/%i/cmdline' % p.pid).read():
-            time.sleep(0.1)
+        while True:
+            with open('/proc/%i/cmdline' % p.pid) as fd:
+                if fd.read():
+                    break
+                time.sleep(0.1)
         pr = Report()
         pr.add_proc_info(pid=p.pid)
-        p.communicate('\n')
+        p.communicate(b'\n')
         self.assertEqual(pr['ExecutablePath'], testscript)
         self.assertEqual(int(pr['ExecutableTimestamp']), 
                 int(os.stat(testscript).st_mtime))
@@ -1353,7 +1368,7 @@ sys.stdin.readline()
         time.sleep(0.1)
         r = Report()
         r.add_proc_environ(pid=p.pid)
-        p.communicate('')
+        p.communicate(b'')
         self.assertFalse('PATH' in r['ProcEnviron'], 
             'system default $PATH should be filtered out')
 
@@ -1363,7 +1378,7 @@ sys.stdin.readline()
         time.sleep(0.1)
         r = Report()
         r.add_proc_environ(pid=p.pid)
-        p.communicate('')
+        p.communicate(b'')
         self.assertTrue('PATH=(custom, no user)' in r['ProcEnviron'], 
             'PATH is customized without user paths')
 
@@ -1373,7 +1388,7 @@ sys.stdin.readline()
         time.sleep(0.1)
         r = Report()
         r.add_proc_environ(pid=p.pid)
-        p.communicate('')
+        p.communicate(b'')
         self.assertTrue('PATH=(custom, user)' in r['ProcEnviron'], 
             'PATH is customized with user paths')
 
@@ -1768,7 +1783,8 @@ $0.bin 2>/dev/null
             os.close(fd)
 
             # create a test script which produces a core dump for us
-            open(script, 'w').write('''#!/bin/sh
+            with open(script, 'w') as fd:
+                fd.write('''#!/bin/sh
 gcc -O2 -D_FORTIFY_SOURCE=2 -o $0.bin -x c - <<EOF
 #include <string.h>
 int main(int argc, char *argv[]) {
@@ -1810,7 +1826,8 @@ LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
             os.close(fd)
 
             # create a test script which produces a core dump for us
-            open(script, 'w').write('''#!/bin/sh
+            with open(script, 'w') as fd:
+                fd.write('''#!/bin/sh
 gcc -o $0.bin -x c - <<EOF
 #include <stdlib.h>
 int main() { abort(); }
@@ -1842,7 +1859,7 @@ $0.bin 2>/dev/null
 
         patterns = tempfile.NamedTemporaryFile(prefix='apport-')
         # create some test patterns
-        patterns.write('''<?xml version="1.0"?>
+        patterns.write(b'''<?xml version="1.0"?>
 <patterns>
     <pattern url="http://bugtracker.net/bugs/1">
         <re key="Package">^bash </re>
@@ -1869,7 +1886,7 @@ $0.bin 2>/dev/null
 
         # invalid XML
         invalid = tempfile.NamedTemporaryFile(prefix='apport-')
-        invalid.write('''<?xml version="1.0"?>
+        invalid.write(b'''<?xml version="1.0"?>
 </patterns>''')
         invalid.flush()
 
@@ -2029,7 +2046,8 @@ def add_info(report):
             self.assertEqual(r.add_hooks_info('fake_ui'), True)
 
             # source package hook
-            open(os.path.join(_hook_dir, 'source_foo.py'), 'w').write('''
+            with open(os.path.join(_hook_dir, 'source_foo.py'), 'w') as fd:
+                fd.write('''
 def add_info(report, ui):
     report['Field1'] = 'Field 1'
     report['Field2'] = 'Field 2\\nBla'
