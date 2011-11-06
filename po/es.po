@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-29 16:03-0400\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: Ricardo Pérez López <ricpelo@gmail.com>\n"
+"PO-Revision-Date: 2011-11-06 00:36+0000\n"
+"Last-Translator: Fitoschido <fitoschido@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-10-31 05:17+0000\n"
-"X-Generator: Launchpad (build 14197)\n"
+"X-Launchpad-Export-Date: 2011-11-06 05:18+0000\n"
+"X-Generator: Launchpad (build 14231)\n"
 "Language: es\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Este paquete no parece haberse instalado correctamente"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Este no es un paquete oficial de %s. Desinstale cualquier paquete de "
+"terceros e inténtelo de nuevo."
 
 #: ../apport/ui.py:115
 #, python-format
@@ -38,8 +40,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Tiene algunos paquetes instalados con versiones obsoletas. Por favor, "
-"actualice los siguientes paquetes y verifique si el problema persiste:\n"
+"Tiene algunos paquetes instalados con versiones obsoletas. Actualice los "
+"siguientes paquetes y compruebe si el problema persiste:\n"
 "\n"
 "%s"
 
@@ -74,7 +76,7 @@ msgstr ""
 #: ../apport/ui.py:2265 ../apport/ui.py:2281 ../apport/ui.py:2292
 #: ../apport/ui.py:2303
 msgid "Invalid problem report"
-msgstr "Informe de problema incorrecto"
+msgstr "Informe de problema no válido"
 
 #: ../apport/ui.py:244 ../apport/ui.py:276
 msgid "The report belongs to a package that is not installed."
@@ -131,7 +133,7 @@ msgstr ""
 #: ../apport/ui.py:385
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "El script de síntomas %s no determinó ningún paquete afectado"
 
 #: ../apport/ui.py:388
 #, python-format
@@ -140,11 +142,11 @@ msgstr "El paquete %s no existe"
 
 #: ../apport/ui.py:413 ../apport/ui.py:595 ../apport/ui.py:600
 msgid "Cannot create report"
-msgstr ""
+msgstr "No se puede crear el informe"
 
 #: ../apport/ui.py:427 ../apport/ui.py:473 ../apport/ui.py:490
 msgid "Updating problem report"
-msgstr ""
+msgstr "Actualizando el informe de problema"
 
 #: ../apport/ui.py:428
 msgid ""
@@ -153,6 +155,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Usted no es el informador o suscriptor de este informe de problema, o el "
+"informe es un duplicado o ya está cerrado.\n"
+"\n"
+"Cree un informe nuevo usando «apport-bug»."
 
 #: ../apport/ui.py:437
 msgid ""
@@ -165,14 +171,23 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Usted no informó de este problema. Es mucho más fácil marcar un error como "
+"duplicado de otro que trasladar sus comentarios y archivos adjuntos a un "
+"nuevo error.\n"
+"\n"
+"Por lo tanto, le recomendamos que genere un nuevo informe de error "
+"utilizando «apport-bug» y haga un comentario en este error informando del "
+"que ha generado.\n"
+"\n"
+"¿Está seguro de que quiere continuar?"
 
 #: ../apport/ui.py:474 ../apport/ui.py:491
 msgid "No additional information collected."
-msgstr ""
+msgstr "No se ha recopilado información adicional."
 
 #: ../apport/ui.py:540
 msgid "What kind of problem do you want to report?"
-msgstr "¿De qué tipo de problema desea informar?"
+msgstr "¿De qué tipo de problema quiere informar?"
 
 #: ../apport/ui.py:557
 msgid "Unknown symptom"
@@ -181,29 +196,32 @@ msgstr "Síntoma desconocido"
 #: ../apport/ui.py:558
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr "El síntoma «%s» es desconocido"
+msgstr "El síntoma «%s» es desconocido."
 
 #: ../apport/ui.py:586
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Después de cerrar este mensaje pulse en una ventana de aplicación para "
+"informar acerca de un problema con ella."
 
 #: ../apport/ui.py:596 ../apport/ui.py:601
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop falló al determinar la ID de proceso de la ventana"
 
 #: ../apport/ui.py:615
 msgid "%prog <report number>"
-msgstr ""
+msgstr "%prog <número del informe>"
 
 #: ../apport/ui.py:617
 msgid "Specify package name."
-msgstr ""
+msgstr "Especifique el nombre del paquete."
 
 #: ../apport/ui.py:619 ../apport/ui.py:668
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
+"Añade una etiqueta adicional al informe. Se puede especificar varias veces."
 
 #: ../apport/ui.py:649
 msgid ""
@@ -226,10 +244,13 @@ msgstr ""
 #: ../apport/ui.py:654
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
+"Pulse una ventana como objetivo para rellenar un informe de problema."
 
 #: ../apport/ui.py:656
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"Iniciar en modo de actualización de errores. Admite un parámetro --package "
+"opcional."
 
 #: ../apport/ui.py:658
 msgid ""
@@ -237,7 +258,7 @@ msgid ""
 "argument.)"
 msgstr ""
 "Rellenar un informe de error acerca de un síntoma. (Implícito si se "
-"proporciona un nombre de síntoma como único argumento.)"
+"proporciona un nombre de síntoma como único argumento)."
 
 #: ../apport/ui.py:660
 msgid ""
@@ -246,7 +267,7 @@ msgid ""
 msgstr ""
 "Especifique el nombre del paquete en el modo --file-bug. Esto es opcional si "
 "un --pid es especificado. (Implícito si se ha dado un nombre de paquete como "
-"un único argumento)"
+"un único argumento)."
 
 #: ../apport/ui.py:662
 msgid ""
@@ -254,6 +275,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Especificar un programa ejecutándose en modo --file-bug. Si se especifica, "
+"el informe de error contendrá más información. (Implica si pid se da como un "
+"argumento solo.)"
 
 #: ../apport/ui.py:664
 #, python-format
@@ -271,6 +295,9 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"En el modo de relleno del error, guarda la información recopilada en un "
+"archivo en vez de enviarla. Este archivo se puede enviar más tarde desde un "
+"equipo diferente."
 
 #: ../apport/ui.py:670
 msgid "Print the Apport version number."
@@ -280,25 +307,27 @@ msgstr "Mostrar el número de versión de Apport"
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Esto ejecutará apport-retrace en una terminal para examinar la falla."
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "Ejecutar una sesión gdb"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Ejecutar una sesión gdb sin descargar símbolos de depuración"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Actualizar %s con una pila de seguimiento completamente simbólica"
 
 #: ../apport/ui.py:844
 #, python-format
 msgid "The problem happened with the program %s which changed since then."
 msgstr ""
+"El problema ocurrió con el programa %s que ha cambiado desde entonces."
 
 #: ../apport/ui.py:910
 msgid "Could not determine the package or source package name."
@@ -403,7 +432,7 @@ msgstr ""
 #: ../bin/apport-cli.py:146 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
 #: ../kde/apport-kde.py:199 ../kde/apport-kde.py:229 ../kde/apport-kde.py:250
 msgid "&Report Problem..."
-msgstr "&Informar de un problema..."
+msgstr "&Informar problema..."
 
 #: ../bin/apport-cli.py:147
 msgid "Cancel and &ignore future crashes of this program version"
@@ -429,7 +458,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:176 ../gtk/apport-gtk.py:126 ../kde/apport-kde.py:241
 msgid "Your system encountered a serious kernel problem."
-msgstr "Su sistema ha encontrado un problema serio del núcleo"
+msgstr "Su sistema ha encontrado un problema serio del núcleo."
 
 #: ../bin/apport-cli.py:180 ../gtk/apport-gtk.py:130 ../kde/apport-kde.py:245
 msgid "You can help the developers to fix the problem by reporting it."
@@ -439,7 +468,7 @@ msgstr ""
 #: ../bin/apport-cli.py:208
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bytes)"
 
 #: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:160 ../kde/apport-kde.py:293
 msgid "(binary data)"
@@ -447,7 +476,7 @@ msgstr "(datos binarios)"
 
 #: ../bin/apport-cli.py:218 ../gtk/apport-gtk.py:183 ../kde/apport-kde.py:265
 msgid "Send this data to the developers?"
-msgstr ""
+msgstr "¿Enviar estos datos a los desarrolladores?"
 
 #: ../bin/apport-cli.py:220 ../kde/apport-kde.py:270
 msgid "Send problem report to the developers?"
@@ -478,7 +507,7 @@ msgstr "&Enviar informe (%s)"
 
 #: ../bin/apport-cli.py:236
 msgid "&Examine locally"
-msgstr ""
+msgstr "&Examinar localmente"
 
 #: ../bin/apport-cli.py:240
 msgid "&View report"
@@ -524,7 +553,7 @@ msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
-"La información recopilada esta siendo enviada al sistema de seguimiento de "
+"La información recopilada está enviándose al sistema de seguimiento de "
 "errores.\n"
 "Esto puede tardar unos minutos."
 
@@ -547,7 +576,7 @@ msgstr "Opciones:"
 
 #: ../bin/apport-cli.py:394
 msgid "Path to file (Enter to cancel):"
-msgstr "Ruta al archivo (Entrar para cancelar):"
+msgstr "Ruta al archivo (Intro para cancelar):"
 
 #: ../bin/apport-cli.py:400
 msgid "File does not exist."
@@ -628,7 +657,7 @@ msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Lo sentimos; falló la instalación o "
+"<span weight=\"bold\" size=\"larger\">Lo sentimos, falló la instalación o "
 "actualización del paquete «%s».</span>"
 
 #: ../gtk/apport-gtk.ui.h:8
@@ -637,7 +666,7 @@ msgstr "Problema en la aplicación"
 
 #: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:384 ../kde/apport-kde.py:420
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:301
 #, no-c-format, python-format
@@ -703,7 +732,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:24
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Examinar localmente"
 
 #: ../gtk/apport-gtk.ui.h:25
 msgid "_Ignore future crashes of this program version"
@@ -788,19 +817,24 @@ msgstr ""
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Informar del progreso de la descarga/instalación de paquetes en la caja de "
+"arena"
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr ""
+"Anteponer marcas de tiempo para registrar mensajes, para su operación en lote"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Almacenar directorios para paquetes descargados en la caja de arena"
 
 #: ../bin/apport-retrace.py:63
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
+"Instalar un paquete adicional en la caja de arena (puede especificarse "
+"varias veces)"
 
 #: ../bin/apport-retrace.py:65
 msgid ""
@@ -817,8 +851,8 @@ msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
-"Mostrar la piula de rastros reconstituidos y pedir confirmación antes de "
-"enviarles a la base de datos de errores"
+"Mostrar la pila de rastros reconstituidos y pedir confirmación antes de "
+"enviarlos a la base de datos de errores"
 
 #: ../bin/apport-retrace.py:69
 msgid ""
@@ -842,79 +876,84 @@ msgstr ""
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../bin/apport-retrace.py:110
 msgid "OK to send these as attachments? [y/n]"
-msgstr "¿De acuerdo en enviar esto como adjuntos? [y/n]"
+msgstr "¿Está de acuerdo en enviar esto como adjuntos? [y/n]"
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr "Su sistema puede volverse inestable y que necesite reiniciarlo."
+msgstr ""
+"Su sistema puede volverse inestable y puede que necesite reiniciarlo."
 
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
 #, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr ""
+msgstr "Lo sentimos: %s se ha cerrado inesperadamente"
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
-msgstr ""
+msgstr "&Detalles..."
 
 #: ../kde/apport-kde.py:160
 msgid "Username:"
-msgstr ""
+msgstr "Nombre de usuario:"
 
 #: ../kde/apport-kde.py:161
 msgid "Password:"
-msgstr ""
+msgstr "Contraseña:"
 
 #: ../kde/apport-kde.py:188
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr ""
+msgstr "Lo sentimos: el programa «%s» se ha cerrado inesperadamente."
 
 #: ../kde/apport-kde.py:191
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr ""
+msgstr "Lo sentimos: %s se ha cerrado inesperadamente."
 
 #: ../kde/apport-kde.py:197
 msgid "&Ignore future crashes of this program version"
-msgstr ""
+msgstr "&Ignorar errores futuros en esta versión del programa"
 
 #: ../kde/apport-kde.py:206
 msgid "Restart &Program"
-msgstr ""
+msgstr "R&einiciar el programa"
 
 #: ../kde/apport-kde.py:224
 #, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr ""
+msgstr "Lo sentimos: el paquete «%s» no se pudo instalar o actualizar."
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
-msgstr ""
+msgstr "Error genérico"
 
 #: ../kde/apport-kde.py:271
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
+"Una vez se haya enviado el informe del problema, complete el formulario que "
+"aparecerá automáticmente en el navegador."
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
-msgstr ""
+msgstr "&Enviar"
 
 #: ../kde/apport-kde.py:331
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Recopilando información del problema"
 
 #: ../kde/apport-kde.py:333
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"La información recopilada se puede enviar a los desarrolladores para mejorar "
+"la aplicación. Esto puede tardar algunos minutos."
 
 #: ../kde/apport-kde.py:348
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Enviando información del problema"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
