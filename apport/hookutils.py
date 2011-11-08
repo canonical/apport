@@ -31,7 +31,7 @@ import xml.dom, xml.dom.minidom
 
 from gi.repository import Gio, GLib
 
-from packaging_impl import impl as packaging
+from apport.packaging_impl import impl as packaging
 
 import apport
 

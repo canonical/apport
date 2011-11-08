@@ -19,7 +19,7 @@ import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
 import pwd, errno, urllib, zlib
 import subprocess, threading, webbrowser
 
-import apport, apport.fileutils, REThread
+import apport, apport.fileutils, apport.REThread
 
 from apport.crashdb import get_crashdb, NeedsCredentials
 from apport import unicode_gettext as _
@@ -864,7 +864,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 # save original environment, in case hooks change it
                 orig_env = os.environ.copy()
 
-                icthread = REThread.REThread(target=thread_collect_info,
+                icthread = apport.REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package,
                         hookui, symptom_script, ignore_uninstalled))
@@ -888,7 +888,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.crashdb = get_crashdb(None, self.report['CrashDB']) 
 
             if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or 'Package' in self.report:
-                bpthread = REThread.REThread(target=self.report.search_bug_patterns,
+                bpthread = apport.REThread.REThread(target=self.report.search_bug_patterns,
                     args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
                 while bpthread.isAlive():
@@ -979,7 +979,7 @@ free memory to automatically analyze the problem and send a report to the develo
             __upload_progress = float(sent)/total
 
         self.ui_start_upload_progress()
-        upthread = REThread.REThread(target=self.crashdb.upload,
+        upthread = apport.REThread.REThread(target=self.crashdb.upload,
             args=(self.report, progress_callback))
         upthread.start()
         while upthread.isAlive():
@@ -996,7 +996,7 @@ free memory to automatically analyze the problem and send a report to the develo
                 if data is not None:
                     user, password = data
                     self.crashdb.set_credentials(user, password)
-                    upthread = REThread.REThread(target=self.crashdb.upload,
+                    upthread = apport.REThread.REThread(target=self.crashdb.upload,
                                                  args=(self.report,
                                                        progress_callback))
                     upthread.start()

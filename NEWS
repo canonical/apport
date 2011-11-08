@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.26 (UNRELEASED):
-------------------
+1.25.1 (UNRELEASED):
+--------------------
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Port to current python-apt API.
  - hookutils.py: Fix path_to_key() to also work with unicode arguments.
@@ -10,6 +10,7 @@ Bug fixes:
    allows packages to run the test suite during build.
  - report.py, add_proc_info(): Correctly handle "python -m <modulename>"
    programs as being interpreted and determine the appropriate module path.
+ - Fix some import statements to also work for the system-installed test suite.
 
 1.25 (2011-11-02):
 ------------------
