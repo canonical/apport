@@ -1593,6 +1593,13 @@ databases = {
             self.assertEqual(subprocess.call(['pidof', '/bin/cat']), 1, 'no stray cats')
             self.assertEqual(subprocess.call(['pidof', '/bin/sleep']), 1, 'no stray sleeps')
 
+            # clean up apport report from _gen_test_crash()
+            for f in glob.glob('/var/crash/_bin_cat.*.crash'):
+                try:
+                    os.unlink(f)
+                except OSError:
+                    pass
+
             shutil.rmtree(self.hookdir)
             apport.report._hook_dir = self.orig_hook_dir
 
