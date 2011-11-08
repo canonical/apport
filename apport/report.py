@@ -297,6 +297,16 @@ class Report(problem_report.ProblemReport):
 
         # filter out interpreter options
         while len(cmdargs) >= 2 and cmdargs[1].startswith('-'):
+            # check for -m
+            if name.startswith('python') and cmdargs[1] == '-m' and len(cmdargs) >= 3:
+                path = self._python_module_path(cmdargs[2])
+                if path:
+                    self['InterpreterPath'] = self['ExecutablePath']
+                    self['ExecutablePath'] = path
+                else:
+                    self['UnreportableReason'] = 'Cannot determine path of python module %s' % cmdargs[2]
+                return
+
             del cmdargs[1]
 
         # catch scripts explicitly called with interpreter
@@ -347,6 +357,21 @@ class Report(problem_report.ProblemReport):
             args.pop(0)
 
         return None
+
+    @classmethod
+    def _python_module_path(klass, module):
+        '''Determine path of given Python module'''
+
+        try:
+            m = __import__(module.replace('/', '.'))
+        except:
+            return None
+
+        # chop off the first component, as it's already covered by m
+        path = eval('m.%s.__file__' % '.'.join(module.split('/')[1:]))
+        if path.endswith('.pyc'):
+            path = path[:-1]
+        return path
 
     def add_proc_info(self, pid=None, extraenv=[]):
         '''Add /proc/pid information.
@@ -1524,6 +1549,16 @@ sys.stdin.readline()
         pr._check_interpreted()
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
         self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+
+        # python script through -m
+        pr = Report()
+        pr['ExecutablePath'] = '/usr/bin/python2.7'
+        pr['ProcStatus'] = 'Name:\tpython'
+        pr['ProcCmdline'] = 'python\0-tt\0-m\0apport/report\0-v'
+        pr._check_interpreted()
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
+        self.assertTrue('report' in pr['ExecutablePath'], 
+            'expecting "report" in ExecutablePath "%s"' % pr['ExecutablePath'])
 
     def test_check_interpreted_twistd(self):
         '''_check_interpreted() for programs ran through twistd'''

@@ -8,6 +8,8 @@ Bug fixes:
  - hookutils.py: Fix path_to_key() to also work with unicode arguments.
  - test/crash: Exit successfully if apport is not enabled in the system. This
    allows packages to run the test suite during build.
+ - report.py, add_proc_info(): Correctly handle "python -m <modulename>"
+   programs as being interpreted and determine the appropriate module path.
 
 1.25 (2011-11-02):
 ------------------
