@@ -47,21 +47,14 @@ for m in $modules; do
     fi
 done
 
+$PYTHON $mydir/../data/general-hooks/parse_segv.py -v
+
 if [ "$local" ]; then
     $mydir/hooks -l
+    $mydir/crash-digger
+    $mydir/java
 else
     $mydir/hooks
-fi
-
-if [ "$local" ]; then
-    $mydir/crash-digger
-    $PYTHON $mydir/../data/general-hooks/parse_segv.py -v
-else
-    $PYTHON $mydir/../general-hooks/parse_segv.py -v
-fi
-
-if [ "$local" ]; then
-    $mydir/java
 fi
 
 $mydir/python
