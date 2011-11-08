@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-29 16:03-0400\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
+"PO-Revision-Date: 2011-11-07 16:12+0000\n"
 "Last-Translator: Hasan Yılmaz <iletisim@hasanyilmaz.net>\n"
 "Language-Team: Turkish <tr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-10-31 05:17+0000\n"
-"X-Generator: Launchpad (build 14197)\n"
+"X-Launchpad-Export-Date: 2011-11-08 05:19+0000\n"
+"X-Generator: Launchpad (build 14231)\n"
 "Language: tr\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Bu paket doğru yüklenmiş gibi görünmüyor."
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Bu resmi bir %s paketi değil. Lütfen herhangi bir üçüncü parti paketini "
+"kaldırıp tekrar deneyin."
 
 #: ../apport/ui.py:115
 #, python-format
@@ -139,7 +141,7 @@ msgstr "%s pakedi bulunamadı"
 
 #: ../apport/ui.py:413 ../apport/ui.py:595 ../apport/ui.py:600
 msgid "Cannot create report"
-msgstr ""
+msgstr "Rapor oluşturulamıyor"
 
 #: ../apport/ui.py:427 ../apport/ui.py:473 ../apport/ui.py:490
 msgid "Updating problem report"
@@ -187,6 +189,8 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Bu iletiyi kapattıktan sonra lütfen bununla ilgili sorunu bildirmek için bir "
+"uygulama penceresine tıklayın."
 
 #: ../apport/ui.py:596 ../apport/ui.py:601
 msgid "xprop failed to determine process ID of the window"
@@ -198,7 +202,7 @@ msgstr ""
 
 #: ../apport/ui.py:617
 msgid "Specify package name."
-msgstr ""
+msgstr "Paket adı belirtin."
 
 #: ../apport/ui.py:619 ../apport/ui.py:668
 msgid "Add an extra tag to the report. Can be specified multiple times."
@@ -842,15 +846,15 @@ msgstr ""
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
-msgstr ""
+msgstr "&Detaylar..."
 
 #: ../kde/apport-kde.py:160
 msgid "Username:"
-msgstr ""
+msgstr "Kullanıcı Adı:"
 
 #: ../kde/apport-kde.py:161
 msgid "Password:"
-msgstr ""
+msgstr "Parola:"
 
 #: ../kde/apport-kde.py:188
 #, python-format
@@ -860,7 +864,7 @@ msgstr ""
 #: ../kde/apport-kde.py:191
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr ""
+msgstr "Üzgünüm, %s beklenmedik bir şekilde kapandı."
 
 #: ../kde/apport-kde.py:197
 msgid "&Ignore future crashes of this program version"
@@ -877,7 +881,7 @@ msgstr ""
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
-msgstr ""
+msgstr "Genel hata"
 
 #: ../kde/apport-kde.py:271
 msgid ""
@@ -887,7 +891,7 @@ msgstr ""
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
-msgstr ""
+msgstr "&Gönder"
 
 #: ../kde/apport-kde.py:331
 msgid "Collecting Problem Information"
