@@ -1260,7 +1260,6 @@ class _T(unittest.TestCase):
         # set test environment
         assert 'LANG' in os.environ, 'please set $LANG for this test'
         assert 'USER' in os.environ, 'please set $USER for this test'
-        assert 'PWD' in os.environ, '$PWD is not set'
 
         # check without additional safe environment variables
         pr = Report()
@@ -1280,12 +1279,20 @@ class _T(unittest.TestCase):
         pr = Report()
         pr.add_proc_info(extraenv=['PWD'])
         self.assertTrue('USER' not in pr['ProcEnviron'])
-        self.assertTrue('PWD='+os.environ['PWD'] in pr['ProcEnviron'])
+        if 'PWD' in os.environ:
+            self.assertTrue('PWD='+os.environ['PWD'] in pr['ProcEnviron'])
 
         # check process from other user
-        assert os.getuid() != 0, 'please do not run this test as root for this check.'
+        restore_root = False
+        if os.getuid() == 0:
+            # temporarily drop to normal user "mail"
+            os.setresuid(8, 8, -1)
+            restore_root = True
         pr = Report()
         self.assertRaises(OSError, pr.add_proc_info, 1) # EPERM for init process
+        if restore_root:
+            os.setresuid(0, 0, -1)
+
         self.assertEqual(pr.pid, 1)
         self.assertTrue('init' in pr['ProcStatus'], pr['ProcStatus'])
         self.assertTrue(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
@@ -1420,145 +1427,155 @@ sys.stdin.readline()
     def test_check_interpreted(self):
         '''_check_interpreted().'''
 
-        # standard ELF binary
-        f = tempfile.NamedTemporaryFile()
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/gedit'
-        pr['ProcStatus'] = 'Name:\tgedit'
-        pr['ProcCmdline'] = 'gedit\0/' + f.name
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/usr/bin/gedit')
-        self.assertFalse('InterpreterPath' in pr)
-        f.close()
+        restore_root = False
+        if os.getuid() == 0:
+            # temporarily drop to normal user "mail"
+            os.setresuid(8, 8, -1)
+            restore_root = True
 
-        # bogus argv[0]
-        pr = Report()
-        pr['ExecutablePath'] = '/bin/dash'
-        pr['ProcStatus'] = 'Name:\tznonexisting'
-        pr['ProcCmdline'] = 'nonexisting\0/foo'
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/bin/dash')
-        self.assertFalse('InterpreterPath' in pr)
+        try:
+            # standard ELF binary
+            f = tempfile.NamedTemporaryFile()
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/gedit'
+            pr['ProcStatus'] = 'Name:\tgedit'
+            pr['ProcCmdline'] = 'gedit\0/' + f.name
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/gedit')
+            self.assertFalse('InterpreterPath' in pr)
+            f.close()
 
-        # standard sh script
-        pr = Report()
-        pr['ExecutablePath'] = '/bin/dash'
-        pr['ProcStatus'] = 'Name:\tzgrep'
-        pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
-        self.assertEqual(pr['InterpreterPath'], '/bin/dash')
+            # bogus argv[0]
+            pr = Report()
+            pr['ExecutablePath'] = '/bin/dash'
+            pr['ProcStatus'] = 'Name:\tznonexisting'
+            pr['ProcCmdline'] = 'nonexisting\0/foo'
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/bin/dash')
+            self.assertFalse('InterpreterPath' in pr)
 
-        # standard sh script when being called explicitly with interpreter
-        pr = Report()
-        pr['ExecutablePath'] = '/bin/dash'
-        pr['ProcStatus'] = 'Name:\tdash'
-        pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
-        self.assertEqual(pr['InterpreterPath'], '/bin/dash')
+            # standard sh script
+            pr = Report()
+            pr['ExecutablePath'] = '/bin/dash'
+            pr['ProcStatus'] = 'Name:\tzgrep'
+            pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+            self.assertEqual(pr['InterpreterPath'], '/bin/dash')
 
-        # special case mono scheme: beagled-helper (use zgrep to make the test
-        # suite work if mono or beagle are not installed)
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/mono'
-        pr['ProcStatus'] = 'Name:\tzgrep'
-        pr['ProcCmdline'] = 'zgrep\0--debug\0/bin/zgrep'
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
-        self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
+            # standard sh script when being called explicitly with interpreter
+            pr = Report()
+            pr['ExecutablePath'] = '/bin/dash'
+            pr['ProcStatus'] = 'Name:\tdash'
+            pr['ProcCmdline'] = '/bin/sh\0/bin/zgrep\0foo'
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+            self.assertEqual(pr['InterpreterPath'], '/bin/dash')
 
-        # special case mono scheme: banshee (use zgrep to make the test
-        # suite work if mono or beagle are not installed)
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/mono'
-        pr['ProcStatus'] = 'Name:\tzgrep'
-        pr['ProcCmdline'] = 'zgrep\0/bin/zgrep'
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
-        self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
+            # special case mono scheme: beagled-helper (use zgrep to make the test
+            # suite work if mono or beagle are not installed)
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/mono'
+            pr['ProcStatus'] = 'Name:\tzgrep'
+            pr['ProcCmdline'] = 'zgrep\0--debug\0/bin/zgrep'
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
 
-        # fail on files we shouldn't have access to when name!=argv[0]
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python'
-        pr['ProcStatus'] = 'Name:\tznonexisting'
-        pr['ProcCmdline'] = 'python\0/etc/shadow'
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.assertFalse('InterpreterPath' in pr)
+            # special case mono scheme: banshee (use zgrep to make the test
+            # suite work if mono or beagle are not installed)
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/mono'
+            pr['ProcStatus'] = 'Name:\tzgrep'
+            pr['ProcCmdline'] = 'zgrep\0/bin/zgrep'
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/bin/zgrep')
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/mono')
 
-        # succeed on files we should have access to when name!=argv[0]
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python'
-        pr['ProcStatus'] = 'Name:\tznonexisting'
-        pr['ProcCmdline'] = 'python\0/etc/passwd'
-        pr._check_interpreted()
-        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
-        self.assertEqual(pr['ExecutablePath'], '/etc/passwd')
+            # fail on files we shouldn't have access to when name!=argv[0]
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python'
+            pr['ProcStatus'] = 'Name:\tznonexisting'
+            pr['ProcCmdline'] = 'python\0/etc/shadow'
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+            self.assertFalse('InterpreterPath' in pr)
 
-        # fail on files we shouldn't have access to when name==argv[0]
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python'
-        pr['ProcStatus'] = 'Name:\tshadow'
-        pr['ProcCmdline'] = '../etc/shadow'
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.assertFalse('InterpreterPath' in pr)
+            # succeed on files we should have access to when name!=argv[0]
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python'
+            pr['ProcStatus'] = 'Name:\tznonexisting'
+            pr['ProcCmdline'] = 'python\0/etc/passwd'
+            pr._check_interpreted()
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+            self.assertEqual(pr['ExecutablePath'], '/etc/passwd')
 
-        # succeed on files we should have access to when name==argv[0]
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python'
-        pr['ProcStatus'] = 'Name:\tpasswd'
-        pr['ProcCmdline'] = '../etc/passwd'
-        pr._check_interpreted()
-        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
-        self.assertEqual(pr['ExecutablePath'], '/bin/../etc/passwd')
+            # fail on files we shouldn't have access to when name==argv[0]
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python'
+            pr['ProcStatus'] = 'Name:\tshadow'
+            pr['ProcCmdline'] = '../etc/shadow'
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+            self.assertFalse('InterpreterPath' in pr)
 
-        # interactive python process
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python'
-        pr['ProcStatus'] = 'Name:\tpython'
-        pr['ProcCmdline'] = 'python'
-        pr._check_interpreted()
-        self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
-        self.assertFalse('InterpreterPath' in pr)
+            # succeed on files we should have access to when name==argv[0]
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python'
+            pr['ProcStatus'] = 'Name:\tpasswd'
+            pr['ProcCmdline'] = '../etc/passwd'
+            pr._check_interpreted()
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+            self.assertEqual(pr['ExecutablePath'], '/bin/../etc/passwd')
 
-        # python script (abuse /bin/bash since it must exist)
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python'
-        pr['ProcStatus'] = 'Name:\tbash'
-        pr['ProcCmdline'] = 'python\0/bin/bash'
-        pr._check_interpreted()
-        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
-        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+            # interactive python process
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python'
+            pr['ProcStatus'] = 'Name:\tpython'
+            pr['ProcCmdline'] = 'python'
+            pr._check_interpreted()
+            self.assertEqual(pr['ExecutablePath'], '/usr/bin/python')
+            self.assertFalse('InterpreterPath' in pr)
 
-        # python script with options (abuse /bin/bash since it must exist)
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python'
-        pr['ProcStatus'] = 'Name:\tbash'
-        pr['ProcCmdline'] = 'python\0-OO\0/bin/bash'
-        pr._check_interpreted()
-        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
-        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+            # python script (abuse /bin/bash since it must exist)
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python'
+            pr['ProcStatus'] = 'Name:\tbash'
+            pr['ProcCmdline'] = 'python\0/bin/bash'
+            pr._check_interpreted()
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+            self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
-        # python script with a versioned interpreter
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python2.7'
-        pr['ProcStatus'] = 'Name:\tbash'
-        pr['ProcCmdline'] = '/usr/bin/python\0/bin/bash'
-        pr._check_interpreted()
-        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
-        self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+            # python script with options (abuse /bin/bash since it must exist)
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python'
+            pr['ProcStatus'] = 'Name:\tbash'
+            pr['ProcCmdline'] = 'python\0-OO\0/bin/bash'
+            pr._check_interpreted()
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+            self.assertEqual(pr['ExecutablePath'], '/bin/bash')
 
-        # python script through -m
-        pr = Report()
-        pr['ExecutablePath'] = '/usr/bin/python2.7'
-        pr['ProcStatus'] = 'Name:\tpython'
-        pr['ProcCmdline'] = 'python\0-tt\0-m\0apport/report\0-v'
-        pr._check_interpreted()
-        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
-        self.assertTrue('report' in pr['ExecutablePath'], 
-            'expecting "report" in ExecutablePath "%s"' % pr['ExecutablePath'])
+            # python script with a versioned interpreter
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python2.7'
+            pr['ProcStatus'] = 'Name:\tbash'
+            pr['ProcCmdline'] = '/usr/bin/python\0/bin/bash'
+            pr._check_interpreted()
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
+            self.assertEqual(pr['ExecutablePath'], '/bin/bash')
+
+            # python script through -m
+            pr = Report()
+            pr['ExecutablePath'] = '/usr/bin/python2.7'
+            pr['ProcStatus'] = 'Name:\tpython'
+            pr['ProcCmdline'] = 'python\0-tt\0-m\0apport/report\0-v'
+            pr._check_interpreted()
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
+            self.assertTrue('report' in pr['ExecutablePath'], 
+                'expecting "report" in ExecutablePath "%s"' % pr['ExecutablePath'])
+        finally:
+            if restore_root:
+                os.setresuid(0, 0, -1)
 
     def test_check_interpreted_twistd(self):
         '''_check_interpreted() for programs ran through twistd'''

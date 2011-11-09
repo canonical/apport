@@ -951,6 +951,7 @@ if __name__ == '__main__':
             self.assertEqual(recent_syslog(re.compile('ThisCantPossiblyHitAnything')), '')
             self.assertNotEqual(len(recent_syslog(re.compile('.'))), 0)
 
+        @unittest.skipIf(in_session_of_problem(apport.Report()) is None, 'no ConsoleKit session')
         def test_in_session_of_problem(self):
             '''in_session_of_problem()'''
 

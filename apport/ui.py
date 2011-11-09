@@ -1898,13 +1898,21 @@ CoreDump: base64
         def test_run_report_bug_noperm_pid(self):
             '''run_report_bug() for a pid which runs as a different user.'''
 
-            assert os.getuid() > 0, 'this test must not be run as root'
+            restore_root = False
+            if os.getuid() == 0:
+                # temporarily drop to normal user "mail"
+                os.setresuid(8, 8, -1)
+                restore_root = True
 
-            sys.argv = ['ui-test', '-f', '-P', '1']
-            self.ui = _TestSuiteUserInterface()
-            self.ui.run_argv()
+            try:
+                sys.argv = ['ui-test', '-f', '-P', '1']
+                self.ui = _TestSuiteUserInterface()
+                self.ui.run_argv()
 
-            self.assertEqual(self.ui.msg_severity, 'error')
+                self.assertEqual(self.ui.msg_severity, 'error')
+            finally:
+                if restore_root:
+                    os.setresuid(0, 0, -1)
 
         def test_run_report_bug_unpackaged_pid(self):
             '''run_report_bug() for a pid of an unpackaged program.'''

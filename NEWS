@@ -14,6 +14,7 @@ Bug fixes:
  - test/run: Fix testing data/general-hooks/parse_segv.py when called in
    system-installed mode.
  - apport/ui.py: Clean up test .crash file after test cases.
+ - Fix tests when running as root.
 
 1.25 (2011-11-02):
 ------------------
