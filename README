@@ -31,7 +31,7 @@ The automatic crash interception component of apport is disabled by default in
 stable releases for a number of reasons [1].  To enable it just for the current
 session, do
 
-  sudo force_start=1 /etc/init.d/apport restart
+  sudo service apport start force_start=1
 
 Then you can simply trigger the crash again, and Apport's dialog will show up
 with instructions to report a bug with traces. Apport will be automatically
