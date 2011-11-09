@@ -78,7 +78,7 @@ try:
     cmdclass['build_java_subdir'] = build_java_subdir
     cmdclass['clean'] = clean_java_subdir
     print('Java support: Enabled')
-except OSError:
+except (OSError, subprocess.CalledProcessError):
     print('Java support: Java not available, not building Java crash handler')
 
 from apport.ui import __version__
