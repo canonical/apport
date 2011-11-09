@@ -491,6 +491,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         obsolete = ''
 
         # mark packages for installation
+        real_pkgs = set()
         for (pkg, ver) in packages:
             try:
                 candidate = c[pkg].candidate
@@ -505,17 +506,19 @@ class __AptDpkgPackageInfo(PackageInfo):
             if ver and candidate.version != ver:
                 w = '%s version %s required, but %s is available' % (pkg, ver, candidate.version)
                 obsolete += w + '\n'
-            c[pkg].mark_install(False, False)
+            real_pkgs.add(pkg)
 
             if candidate.architecture != 'all':
                 if pkg + '-dbg' in c:
-                    c[pkg + '-dbg'].mark_install(False, False)
+                    real_pkgs.add(pkg + '-dbg')
                 elif pkg + '-dbgsym' in c:
-                    c[pkg + '-dbgsym'].mark_install(False, False)
+                    real_pkgs.add(pkg + '-dbgsym')
                     if c[pkg + '-dbgsym'].candidate.version != candidate.version:
                         obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
                                 pkg, candidate.version, c[pkg + '-dbgsym'].candidate.version)
 
+        for p in real_pkgs:
+            c[p].mark_install(False, False)
 
         # fetch packages
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
@@ -530,12 +533,17 @@ class __AptDpkgPackageInfo(PackageInfo):
             print('Extracting downloaded debs...')
         for i in fetcher.items:
             subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
+            real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
 
         if tmp_aptroot:
             shutil.rmtree(aptroot)
 
         # reset config
         apt.apt_pkg.init_config()
+
+        # check bookkeeping that apt fetcher really got everything
+        assert not real_pkgs, 'apt fetcher did not fetch these packages: ' \
+            + ' '.join(real_pkgs)
 
         return obsolete
 
