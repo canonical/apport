@@ -481,12 +481,12 @@ class __AptDpkgPackageInfo(PackageInfo):
             fetchProgress = apt.progress.text.AcquireProgress()
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
-        c = apt.Cache()
+        c = apt.Cache(rootdir=aptroot)
         try:
             c.update(fetchProgress)
         except apt.cache.FetchFailedException as e:
             raise SystemError(str(e))
-        c = apt.Cache()
+        c.open()
 
         obsolete = ''
 
@@ -538,12 +538,15 @@ class __AptDpkgPackageInfo(PackageInfo):
         if tmp_aptroot:
             shutil.rmtree(aptroot)
 
-        # reset config
-        apt.apt_pkg.init_config()
-
         # check bookkeeping that apt fetcher really got everything
         assert not real_pkgs, 'apt fetcher did not fetch these packages: ' \
             + ' '.join(real_pkgs)
+
+        # work around python-apt bug that causes parts of the Cache(rootdir=)
+        # argument configuration to be persistent; this resets the apt
+        # configuration to system defaults again
+        apt.Cache(rootdir='/')
+        self._apt_cache = None
 
         return obsolete
 
@@ -667,26 +670,14 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     @classmethod
     def _build_apt_sandbox(klass, apt_root, apt_sources):
-        apt.apt_pkg.init_config()
-        apt.apt_pkg.config.set('RootDir', apt_root)
-        apt.apt_pkg.config.set('Debug::NoLocking', 'true')
-        apt.apt_pkg.config.clear('APT::Update::Post-Invoke-Success')
-
-        if not os.path.exists(os.path.join(apt_root, 'etc', 'apt', 'sources.list')):
-            os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'apt.conf.d'))
-            os.makedirs(os.path.join(apt_root, 'usr', 'lib', 'apt'))
+        # pre-create directories, to avoid apt.Cache() printing "creating..."
+        # messages on stdout
+        if not os.path.exists(os.path.join(apt_root, 'var', 'lib', 'apt')):
             os.makedirs(os.path.join(apt_root, 'var', 'lib', 'apt', 'lists', 'partial'))
             os.makedirs(os.path.join(apt_root, 'var', 'cache', 'apt', 'archives', 'partial'))
-            os.makedirs(os.path.join(apt_root, 'var', 'log', 'apt'))
-            dpkglib = os.path.join(apt_root, 'var', 'lib', 'dpkg')
-            os.makedirs(dpkglib)
-            open(os.path.join(dpkglib, 'status'), 'w').close()
-            os.symlink('/usr/lib/apt/methods', os.path.join(apt_root, 'usr', 'lib', 'apt', 'methods'))
+            os.makedirs(os.path.join(apt_root, 'var', 'lib', 'dpkg'))
 
         # install apt sources
-        with open(apt_sources) as src:
-            with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'w') as dest:
-                dest.write(src.read())
         list_d = os.path.join(apt_root, 'etc', 'apt', 'sources.list.d')
         if os.path.exists(list_d):
             shutil.rmtree(list_d)
@@ -694,6 +685,9 @@ class __AptDpkgPackageInfo(PackageInfo):
             shutil.copytree(apt_sources + '.d', list_d)
         else:
             os.makedirs(list_d)
+        with open(apt_sources) as src:
+            with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'w') as dest:
+                dest.write(src.read())
 
         # install apt keyrings; prefer the ones from the config dir, fall back
         # to system
@@ -776,7 +770,6 @@ if __name__ == '__main__':
             # save and restore configuration file
             self.orig_conf = impl.configuration
             self.workdir = tempfile.mkdtemp()
-            apt.apt_pkg.init_system()
 
         def tearDown(self):
             impl.configuration = self.orig_conf
@@ -1093,6 +1086,26 @@ bo/gu/s                                                 na/mypackage
             self.assertTrue('buggerbogger' in result)
             self.assertTrue('not exist' in result)
 
+            # can interleave with other operations
+            dpkg = subprocess.Popen(['dpkg-query', '-Wf${Version}', 'dash'],
+                    stdout=subprocess.PIPE)
+            coreutils_version = dpkg.communicate()[0].decode()
+            self.assertEqual(dpkg.returncode, 0)
+
+            self.assertEqual(impl.get_version('dash'), coreutils_version)
+            self.assertRaises(ValueError, impl.get_available_version, 'buggerbogger')
+
+            # still installs packages after above operations
+            os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
+            impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                    [('coreutils', '7.4-2ubuntu2'),
+                     ('dpkg', None),
+                    ], False, self.cachedir)
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/bin/stat')))
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/bin/dpkg')))
+
         @unittest.skipUnless(_has_default_route(), 'online test')
         def test_install_packages_unversioned(self):
             '''install_packages() without versions and no cache'''
@@ -1121,6 +1134,11 @@ bo/gu/s                                                 na/mypackage
         @unittest.skipUnless(_has_default_route(), 'online test')
         def test_install_packages_system(self):
             '''install_packages() with system configuration'''
+
+            # trigger an unrelated package query here to get the cache set up,
+            # reproducing an install failure when the internal caches are not
+            # reset properly
+            impl.get_version('dash')
 
             self._setup_foonux_config()
             result = impl.install_packages(self.rootdir, None, None,
@@ -1176,7 +1194,7 @@ bo/gu/s                                                 na/mypackage
                         [('tzdata', None)], False, self.cachedir)
                 self.fail('install_packages() unexpectedly succeeded with broken server URL')
             except SystemError as e:
-                self.assertTrue('nosuchdistro' in str(e))
+                self.assertTrue('nosuchdistro' in str(e), str(e))
                 self.assertTrue('index files failed to download' in str(e))
 
         def _setup_foonux_config(self):

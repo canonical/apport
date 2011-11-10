@@ -17,6 +17,9 @@ Bug fixes:
  - Fix tests when running as root.
  - setup.py: Fix crash when "javac -version" fails.
  - README: Update command for one-time enablement.
+ - backends/packaging-apt-dpkg.py: Fix interleaving usage of install_packages()
+   with other operations such as get_version(), by resetting the apt status
+   after building and using the sandbox.
 
 1.25 (2011-11-02):
 ------------------
