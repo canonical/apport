@@ -20,6 +20,8 @@ Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix interleaving usage of install_packages()
    with other operations such as get_version(), by resetting the apt status
    after building and using the sandbox.
+ - report.py test suite: Remove requirement that $USER is set, which makes it
+   easier to run this from package build environments.
 
 Improvements:
  - Ignore a crash if gnome-session is running and says that the session is

@@ -1259,7 +1259,6 @@ class _T(unittest.TestCase):
 
         # set test environment
         assert 'LANG' in os.environ, 'please set $LANG for this test'
-        assert 'USER' in os.environ, 'please set $USER for this test'
 
         # check without additional safe environment variables
         pr = Report()
