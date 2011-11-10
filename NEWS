@@ -28,6 +28,8 @@ Improvements:
    being shut down. These often die because X.org or other services are going
    away, are usually harmless, and just cause a lot of clutter in bug trackers.
    (LP: #460932)
+ - test/crash: Rewrite using Python's unittest, to be in line with other tests,
+   and be easier to maintain and extend.
 
 1.25 (2011-11-02):
 ------------------
