@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.25.1 (UNRELEASED):
---------------------
+1.26 (UNRELEASED):
+------------------
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Port to current python-apt API.
  - hookutils.py: Fix path_to_key() to also work with unicode arguments.
@@ -20,6 +20,12 @@ Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix interleaving usage of install_packages()
    with other operations such as get_version(), by resetting the apt status
    after building and using the sandbox.
+
+Improvements:
+ - Ignore a crash if gnome-session is running and says that the session is
+   being shut down. These often die because X.org or other services are going
+   away, are usually harmless, and just cause a lot of clutter in bug trackers.
+   (LP: #460932)
 
 1.25 (2011-11-02):
 ------------------

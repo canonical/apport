@@ -4,7 +4,7 @@
 # specified by apport.fileutils.report_dir.
 # See https://wiki.ubuntu.com/Apport for details.
 #
-# Copyright (c) 2006 - 2009 Canonical Ltd.
+# Copyright (c) 2006 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -186,6 +186,43 @@ def usable_ram():
     
     return (memfree+cached-writeback) * 1024
 
+def is_closing_session(pid, uid):
+    '''Check if pid is in a closing user session.
+
+    During that, crashes are common as the session D-BUS and X.org are going
+    away, etc. These crash reports are mostly noise, so should be ignored.
+    '''
+    with open('/proc/%s/environ' % pid) as e:
+        env = e.read().split('\0')
+    for e in env:
+        if e.startswith('DBUS_SESSION_BUS_ADDRESS='):
+            dbus_addr = e.split('=', 1)[1]
+            break
+    else:
+        error_log('is_closing_session(): no DBUS_SESSION_BUS_ADDRESS in environment')
+        return False
+
+    orig_uid = os.geteuid()
+    os.setresuid(uid, uid, -1)
+    try:
+        gdbus = subprocess.Popen(['/usr/bin/gdbus', 'call', '-e', '-d',
+            'org.gnome.SessionManager', '-o', '/org/gnome/SessionManager', '-m',
+            'org.gnome.SessionManager.IsSessionRunning'], stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE, env={'DBUS_SESSION_BUS_ADDRESS': dbus_addr})
+        (out, err) = gdbus.communicate()
+        if err:
+            error_log('gdbus call error: ' + err.decode('UTF-8'))
+    except OSError as e:
+        error_log('gdbus call failed, cannot determine running session: ' + str(e))
+        return False
+    finally:
+        os.setresuid(orig_uid, orig_uid, -1)
+    error_log('debug: session gdbus call: ' + out.decode('UTF-8'))
+    if out.startswith(b'(false,'):
+        return True
+
+    return False
+
 
 #################################################################
 #
@@ -276,6 +313,10 @@ try:
     # ignore blacklisted binaries
     if info.check_ignored():
         error_log('executable version is blacklisted, ignoring')
+        sys.exit(1)
+
+    if is_closing_session(pid, pidstat.st_uid):
+        error_log('happens for shutting down session, ignoring')
         sys.exit(1)
 
     crash_counter = 0
