@@ -1062,7 +1062,7 @@ bo/gu/s                                                 na/mypackage
                 'var', 'cache', 'apt', 'archives'))
             cache_names = [p.split('_')[0] for p in cache]
             self.assertTrue('coreutils' in cache_names)
-            self.assertTrue('coreutils-dbgsym' in cache_names)
+            self.assertEqual('coreutils-dbgsym' in cache_names, self.has_dbgsym)
             self.assertTrue('tzdata' in cache_names)
             self.assertTrue('libc6' in cache_names)
             self.assertTrue('libc6-dbg' in cache_names)
