@@ -750,19 +750,18 @@ if __name__ == '__main__':
 
         This is a reasonable indicator that online tests can be run.
         '''
-        global _has_defaultroute_cache
-        if _has_defaultroute_cache is None:
-            _has_defaultroute_cache = False
+        if _has_default_route.cache is None:
+            _has_default_route.cache = False
             route = subprocess.Popen(['/sbin/route', '-n'],
                 stdout=subprocess.PIPE)
             for l in route.stdout:
                 if l.decode('UTF-8').startswith('0.0.0.0 '):
-                    _has_defaultroute_cache = True
+                    _has_default_route.cache = True
             route.wait()
 
-        return _has_defaultroute_cache
+        return _has_default_route.cache
 
-    _has_defaultroute_cache = None
+    _has_default_route.cache = None
 
     class _T(unittest.TestCase):
 
