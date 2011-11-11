@@ -25,6 +25,8 @@ Bug fixes:
  - apport/ui.py, test/crash: Use "yes" as test process instead of "cat". The
    former is less likely to run already, and does not depend on having a stdin,
    so it runs better in test environments like autopkgtest.
+ - backends/packaging-apt-dpkg.py: Fix tests if system does not have a dbgsym
+   apt source.
 
 Improvements:
  - Ignore a crash if gnome-session is running and says that the session is

@@ -770,6 +770,12 @@ if __name__ == '__main__':
             self.orig_conf = impl.configuration
             self.workdir = tempfile.mkdtemp()
 
+            try:
+                impl.get_available_version('coreutils-dbgsym')
+                self.has_dbgsym = True
+            except ValueError:
+                self.has_dbgsym = False
+
         def tearDown(self):
             impl.configuration = self.orig_conf
             shutil.rmtree(self.workdir)
@@ -1038,8 +1044,9 @@ bo/gu/s                                                 na/mypackage
 
             self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                 'usr/bin/stat')))
-            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-                'usr/lib/debug/usr/bin/stat')))
+            if self.has_dbgsym:
+                self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                    'usr/lib/debug/usr/bin/stat')))
             self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                 'usr/share/zoneinfo/zone.tab')))
             self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -1117,8 +1124,9 @@ bo/gu/s                                                 na/mypackage
 
             self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                 'usr/bin/stat')))
-            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-                'usr/lib/debug/usr/bin/stat')))
+            if self.has_dbgsym:
+                self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                    'usr/lib/debug/usr/bin/stat')))
             self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                 'usr/share/zoneinfo/zone.tab')))
 
@@ -1160,7 +1168,7 @@ bo/gu/s                                                 na/mypackage
                 'var', 'cache', 'apt', 'archives'))
             cache_names = [p.split('_')[0] for p in cache]
             self.assertTrue('coreutils' in cache_names)
-            self.assertTrue('coreutils-dbgsym' in cache_names)
+            self.assertEqual('coreutils-dbgsym' in cache_names, self.has_dbgsym)
             self.assertTrue('tzdata' in cache_names)
 
             # does not crash with existing cache
