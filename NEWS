@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix another test case failure when ddeb
    repository is not enabled.
+ - backends/packaging-apt-dpkg.py: Fix handling of explicit cache directory
+   name when it is a relative path.
 
 1.26 (2011-11-11):
 ------------------

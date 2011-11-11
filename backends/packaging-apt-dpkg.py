@@ -481,7 +481,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             fetchProgress = apt.progress.text.AcquireProgress()
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
-        c = apt.Cache(rootdir=aptroot)
+        c = apt.Cache(rootdir=os.path.abspath(aptroot))
         try:
             c.update(fetchProgress)
         except apt.cache.FetchFailedException as e:
@@ -1171,9 +1171,17 @@ bo/gu/s                                                 na/mypackage
             self.assertEqual('coreutils-dbgsym' in cache_names, self.has_dbgsym)
             self.assertTrue('tzdata' in cache_names)
 
-            # does not crash with existing cache
-            impl.install_packages(self.rootdir, None, None,
-                    [('coreutils', None)], False, self.cachedir)
+            # works with relative paths and existing cache
+            os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
+            orig_cwd = os.getcwd()
+            try:
+                os.chdir(self.workdir)
+                impl.install_packages('root', None, None,
+                        [('coreutils', None)], False, 'cache')
+            finally:
+                os.chdir(orig_cwd)
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                'usr/bin/stat')))
 
         @unittest.skipUnless(_has_default_route(), 'online test')
         def test_install_packages_error(self):
