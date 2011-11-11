@@ -13,7 +13,7 @@ import tempfile, shutil, os, subprocess, signal, time, stat, sys
 import resource, errno, grp, unittest
 import apport.fileutils
 
-test_executable = '/bin/cat'
+test_executable = '/usr/bin/yes'
 test_package = 'coreutils'
 test_source = 'coreutils'
 
@@ -427,6 +427,7 @@ class T(unittest.TestCase):
             assert subprocess.call(['pidof', command]) == 1, 'no running test executable processes'
         pid = os.fork()
         if pid == 0:
+            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
             sys.stdin.close()
             os.setsid()
             os.execv(command, [command])

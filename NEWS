@@ -22,6 +22,9 @@ Bug fixes:
    after building and using the sandbox.
  - report.py test suite: Remove requirement that $USER is set, which makes it
    easier to run this from package build environments.
+ - apport/ui.py, test/crash: Use "yes" as test process instead of "cat". The
+   former is less likely to run already, and does not depend on having a stdin,
+   so it runs better in test environments like autopkgtest.
 
 Improvements:
  - Ignore a crash if gnome-session is running and says that the session is

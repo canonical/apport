@@ -1590,11 +1590,10 @@ databases = {
             self.ui = None
             self.report_file.close()
 
-            self.assertEqual(subprocess.call(['pidof', '/bin/cat']), 1, 'no stray cats')
-            self.assertEqual(subprocess.call(['pidof', '/bin/sleep']), 1, 'no stray sleeps')
+            self.assertEqual(subprocess.call(['pidof', '/bin/yes']), 1, 'no stray test processes')
 
             # clean up apport report from _gen_test_crash()
-            for f in glob.glob('/var/crash/_bin_cat.*.crash'):
+            for f in glob.glob('/var/crash/_usr_bin_yes.*.crash'):
                 try:
                     os.unlink(f)
                 except OSError:
@@ -1840,13 +1839,14 @@ CoreDump: base64
             # fork a test process
             pid = os.fork()
             if pid == 0:
-                os.execv('/bin/sleep', ['sleep', '10000'])
-                assert False, 'Could not execute /bin/sleep'
+                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+                os.execv('/usr/bin/yes', ['yes'])
+                assert False, 'Could not execute /usr/bin/yes'
 
             time.sleep(0.5)
 
             try:
-                # report a bug on cat process
+                # report a bug on yes process
                 sys.argv = ['ui-test', '-f', '--tag', 'foo', '-P', str(pid)]
                 self.ui = _TestSuiteUserInterface()
                 self.assertEqual(self.ui.run_argv(), True)
@@ -1858,7 +1858,7 @@ CoreDump: base64
             self.assertTrue('SourcePackage' in self.ui.report.keys())
             self.assertTrue('Dependencies' in self.ui.report.keys())
             self.assertTrue('ProcMaps' in self.ui.report.keys())
-            self.assertEqual(self.ui.report['ExecutablePath'], '/bin/sleep')
+            self.assertEqual(self.ui.report['ExecutablePath'], '/usr/bin/yes')
             self.assertFalse('ProcCmdline' in self.ui.report) # privacy!
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Bug')
@@ -1919,13 +1919,14 @@ CoreDump: base64
 
             # create unpackaged test program
             (fd, exename) = tempfile.mkstemp()
-            os.write(fd, open('/bin/cat').read())
+            os.write(fd, open('/usr/bin/yes').read())
             os.close(fd)
             os.chmod(exename, 0o755)
 
             # unpackaged test process
             pid = os.fork()
             if pid == 0:
+                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
                 os.execv(exename, [exename])
 
             try:
@@ -1999,10 +2000,13 @@ CoreDump: base64
             '''Generate a Report with real crash data.'''
 
             # create a test executable
-            test_executable = '/bin/cat'
+            test_executable = '/usr/bin/yes'
             assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
             pid = os.fork()
             if pid == 0:
+                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+                sys.stdin.close()
+                os.setsid()
                 resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
                 os.chdir(apport.fileutils.report_dir)
                 os.execv(test_executable, [test_executable])
@@ -2077,7 +2081,7 @@ CoreDump: base64
             self.assertFalse('ExecutableTimestamp' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
             self.assertTrue(len(self.ui.report['CoreDump']) > 10000)
-            self.assertTrue(self.ui.report['Title'].startswith('cat crashed with SIGSEGV'))
+            self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'))
 
             # report in crash notification dialog, send reduced report
             r.write(open(report_file, 'w'))
@@ -2208,11 +2212,12 @@ CoreDump: base64
             '''run_crash() for a crash dump without CoreDump.'''
 
             # create a test executable
-            test_executable = '/bin/cat'
+            test_executable = '/usr/bin/yes'
             assert os.access(test_executable, os.X_OK), test_executable + ' is not executable'
             pid = os.fork()
             if pid == 0:
                 os.setsid()
+                os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
                 os.execv(test_executable, [test_executable])
                 assert False, 'Could not execute ' + test_executable
 
