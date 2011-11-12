@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-29 16:03-0400\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: Aurimas Fišeras <Unknown>\n"
+"PO-Revision-Date: 2011-11-11 06:39+0000\n"
+"Last-Translator: Algimantas Margevičius <Unknown>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-10-31 05:17+0000\n"
-"X-Generator: Launchpad (build 14197)\n"
+"X-Launchpad-Export-Date: 2011-11-12 04:38+0000\n"
+"X-Generator: Launchpad (build 14277)\n"
 "Language: lt\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Atrodo šis paketas įdiegtas neteisingai"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Paketas „%s“ nėra oficialus paketus. Pašalinkite betkokius trečiosios šalies "
+"paketus ir bandykite dar kartą."
 
 #: ../apport/ui.py:115
 #, python-format
@@ -129,7 +131,7 @@ msgstr ""
 #: ../apport/ui.py:385
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Simptomų scenarijus %s nenustatė paveikto paketo"
 
 #: ../apport/ui.py:388
 #, python-format
@@ -138,11 +140,11 @@ msgstr "Paketas %s neegzistuoja"
 
 #: ../apport/ui.py:413 ../apport/ui.py:595 ../apport/ui.py:600
 msgid "Cannot create report"
-msgstr ""
+msgstr "Ataskaitos sukurti nepavyko"
 
 #: ../apport/ui.py:427 ../apport/ui.py:473 ../apport/ui.py:490
 msgid "Updating problem report"
-msgstr ""
+msgstr "Atnaujinama problemos ataskaita"
 
 #: ../apport/ui.py:428
 msgid ""
@@ -151,6 +153,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Jūs nesate šio pranešimo apie klaidą pranešėjas ar pasekėjas, arba "
+"pranešimas yra dublikatas ar jau užvertas.\n"
+"\n"
+"Prašome sukurti naują pranešimą naudojant „apport-bug“."
 
 #: ../apport/ui.py:437
 msgid ""
@@ -166,7 +172,7 @@ msgstr ""
 
 #: ../apport/ui.py:474 ../apport/ui.py:491
 msgid "No additional information collected."
-msgstr ""
+msgstr "Jokios papildomos informacijos nesurinkta."
 
 #: ../apport/ui.py:540
 msgid "What kind of problem do you want to report?"
@@ -186,22 +192,25 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Kai uždarysite šį pranešimą, paspauskite ant programos lango, kad "
+"praneštumėte apie tai."
 
 #: ../apport/ui.py:596 ../apport/ui.py:601
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop nepavyko nustatyti lango proceso ID"
 
 #: ../apport/ui.py:615
 msgid "%prog <report number>"
-msgstr ""
+msgstr "%prog <pranešimo numeris>"
 
 #: ../apport/ui.py:617
 msgid "Specify package name."
-msgstr ""
+msgstr "Nurodykite paketo pavadinimą."
 
 #: ../apport/ui.py:619 ../apport/ui.py:668
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
+"Prie ataskaitos pridėti papildomą žymę. Gali būti nurodyta kelis kartus."
 
 #: ../apport/ui.py:649
 msgid ""
@@ -222,11 +231,12 @@ msgstr ""
 
 #: ../apport/ui.py:654
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "Pranešti apie problemą, paspauskite ant lango."
 
 #: ../apport/ui.py:656
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"Pradėti klaidos atnaujinimo režime. Gali prireikti nebūtino --package."
 
 #: ../apport/ui.py:658
 msgid ""
@@ -275,14 +285,15 @@ msgstr "Atspausdinti Apport versijos numerį."
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Tai terminalo lange paleis „apport-retrace“ ir bus galima išanalizuoti lūžį."
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "Vykdyti gdb sesiją"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Vykdyti gdb sesiją, neparsiunčiant derinimo simbolių"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
@@ -293,7 +304,7 @@ msgstr ""
 #: ../apport/ui.py:844
 #, python-format
 msgid "The problem happened with the program %s which changed since then."
-msgstr ""
+msgstr "Problema kilo su programa %s kuri nuo tada pasikeitė."
 
 #: ../apport/ui.py:910
 msgid "Could not determine the package or source package name."
@@ -345,7 +356,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Apie problema negali būti pranešta:\n"
+"Apie problemą negali būti pranešta:\n"
 "\n"
 "%s"
 
@@ -429,7 +440,7 @@ msgstr "Jūs galite padėti kūrėjams pataisyti problemą apie ją pranešdami.
 #: ../bin/apport-cli.py:208
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i baitų)"
 
 #: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:160 ../kde/apport-kde.py:293
 msgid "(binary data)"
@@ -437,7 +448,7 @@ msgstr "(dvejetainiai duomenys)"
 
 #: ../bin/apport-cli.py:218 ../gtk/apport-gtk.py:183 ../kde/apport-kde.py:265
 msgid "Send this data to the developers?"
-msgstr ""
+msgstr "Siųsti šiuos duomenis kūrėjams?"
 
 #: ../bin/apport-cli.py:220 ../kde/apport-kde.py:270
 msgid "Send problem report to the developers?"
@@ -468,7 +479,7 @@ msgstr "&Siųsti ataskaitą (%s)"
 
 #: ../bin/apport-cli.py:236
 msgid "&Examine locally"
-msgstr ""
+msgstr "&Ištirti vietoj"
 
 #: ../bin/apport-cli.py:240
 msgid "&View report"
@@ -622,7 +633,7 @@ msgstr "Programos problema"
 
 #: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:384 ../kde/apport-kde.py:420
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:301
 #, no-c-format, python-format
@@ -687,7 +698,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:24
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Ištirti vietoj"
 
 #: ../gtk/apport-gtk.ui.h:25
 msgid "_Ignore future crashes of this program version"
@@ -772,7 +783,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
+msgstr "Prie žurnalo pranešimų pridėti laiko žymes"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
@@ -832,7 +843,7 @@ msgstr ""
 #: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
 #, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr ""
+msgstr "Atsiprašome, %s netikėtai užvertas"
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
@@ -840,38 +851,38 @@ msgstr ""
 
 #: ../kde/apport-kde.py:160
 msgid "Username:"
-msgstr ""
+msgstr "Naudotojo vardas:"
 
 #: ../kde/apport-kde.py:161
 msgid "Password:"
-msgstr ""
+msgstr "Slaptažodis:"
 
 #: ../kde/apport-kde.py:188
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr ""
+msgstr "Atsiprašome, programa „%s“ netikėtai užsivėrė."
 
 #: ../kde/apport-kde.py:191
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr ""
+msgstr "Atsiprašome, %s netikėtai užvertas."
 
 #: ../kde/apport-kde.py:197
 msgid "&Ignore future crashes of this program version"
-msgstr ""
+msgstr "Šios programos versijos, lūžius ateityje &ignoruoti"
 
 #: ../kde/apport-kde.py:206
 msgid "Restart &Program"
-msgstr ""
+msgstr "Paleisti &programą iš naujo"
 
 #: ../kde/apport-kde.py:224
 #, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr ""
+msgstr "Atsiprašome, nepavyko įdiegti ar atnaujinti paketo „%s“"
 
 #: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
 msgid "Generic error"
-msgstr ""
+msgstr "Bendroji klaida"
 
 #: ../kde/apport-kde.py:271
 msgid ""
@@ -881,21 +892,23 @@ msgstr ""
 
 #: ../kde/apport-kde.py:274
 msgid "&Send"
-msgstr ""
+msgstr "&Siųsti"
 
 #: ../kde/apport-kde.py:331
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Renkama informacija apie problemą"
 
 #: ../kde/apport-kde.py:333
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Surinkta informacija gali būti nusiųsta kūrėjams programai patobulinti. Tai "
+"gali užtrukti kelias minutes."
 
 #: ../kde/apport-kde.py:348
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Išsiunčiama informacija apie klaidą"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
