@@ -87,8 +87,12 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
     if sp.returncode == 0:
         return out
     else:
-       raise OSError('Error: command %s failed with exit code %i: %s' % (
-           str(command), sp.returncode, err.decode('UTF-8', errors='replace')))
+        if err:
+            err = err.decode('UTF-8', errors='replace')
+        else:
+            err = ''
+        raise OSError('Error: command %s failed with exit code %i: %s' % (
+            str(command), sp.returncode, err))
 
 def _check_bug_pattern(report, pattern):
     '''Check if given report matches the given bug pattern XML DOM node.
