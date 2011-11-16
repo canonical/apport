@@ -919,6 +919,16 @@ class Report(problem_report.ProblemReport):
 
         return unknown_fn.count(True) <= len(unknown_fn)/2.
 
+    def stacktrace_top_function(self):
+        '''Return topmost function in StacktraceTop'''
+
+        for l in self.get('StacktraceTop', '').splitlines():
+            fname = l.split('(')[0].strip()
+            if fname != '??':
+                return fname
+
+        return None
+
     def standard_title(self):
         '''Create an appropriate title for a crash database entry.
 
@@ -950,12 +960,11 @@ class Report(problem_report.ProblemReport):
                 '13': 'SIGPIPE'
             }
 
-            fn = ''
-            for l in self['StacktraceTop'].splitlines():
-                fname = l.split('(')[0].strip()
-                if fname != '??':
-                    fn = ' in %s()' % fname
-                    break
+            fn = self.stacktrace_top_function()
+            if fn:
+                fn = ' in %s()' % fn
+            else:
+                fn = ''
 
             arch_mismatch = ''
             if 'Architecture' in self and \

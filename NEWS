@@ -10,6 +10,10 @@ Bug fixes:
    name when it is a relative path.
  - launchpad.py: Only query for bugs after 2011-08-01, to avoid timeouts.
 
+Improvements:
+ - report.py: Break out new method stacktrace_top_function() from
+   standard_title(), so that other parts of the code can use this as well.
+
 1.26 (2011-11-11):
 ------------------
 Bug fixes:
