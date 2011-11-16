@@ -13,6 +13,8 @@ Bug fixes:
 Improvements:
  - report.py: Break out new method stacktrace_top_function() from
    standard_title(), so that other parts of the code can use this as well.
+ - launchpad.net: When sending retraced results back to the bug report, update
+   the topmost function in the bug title. (LP: #869970)
 
 1.26 (2011-11-11):
 ------------------

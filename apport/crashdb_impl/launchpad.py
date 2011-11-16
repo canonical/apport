@@ -424,6 +424,19 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 task.lp_save()
             except StopIteration:
                 pass # no distro tasks
+
+            # update bug title with retraced function name
+            fn = report.stacktrace_top_function()
+            if fn:
+                m = re.match('^(.*crashed with SIG.* in )([^( ]+)(\(\).*$)', bug.title)
+                if m and m.group(2) != fn:
+                    bug.title = m.group(1) + fn + m.group(3)
+                    try:
+                        bug.lp_save()
+                    except HTTPError:
+                        pass # LP#336866 workaround
+                    bug = self.launchpad.bugs[id]
+
         self._subscribe_triaging_team(bug, report)
 
     def get_distro_release(self, id):
@@ -1031,6 +1044,7 @@ NameError: global name 'weird' is not defined'''
             self.assertTrue('Registers' in r)
             self.assertTrue('Stacktrace' in r)
             self.assertTrue('ThreadStacktrace' in r)
+            self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
 
             # updating with an useless stack trace retains core dump
             r['StacktraceTop'] = '?? ()'
@@ -1046,6 +1060,7 @@ NameError: global name 'weird' is not defined'''
             self.assertTrue('Stacktrace' in r) # TODO: ascertain that it's the updated one
             self.assertTrue('ThreadStacktrace' in r)
             self.assertFalse('FooBar' in r)
+            self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
 
             tags = self.crashdb.launchpad.bugs[segv_report].tags
             self.assertTrue('apport-crash' in tags)
@@ -1064,6 +1079,35 @@ NameError: global name 'weird' is not defined'''
             self.assertTrue('Stacktrace' in r)
             self.assertTrue('ThreadStacktrace' in r)
             self.assertFalse('FooBar' in r)
+
+            # as previous title had standard form, the top function gets
+            # updated
+            self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in read()')
+            
+            # respects title amendments
+            bug = self.crashdb.launchpad.bugs[segv_report]
+            bug.title = 'crash crashed with SIGSEGV in f() on exit'
+            try:
+                bug.lp_save()
+            except HTTPError:
+                pass # LP#336866 workaround
+            r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
+            self.crashdb.update_traces(segv_report, r, 'good retrace with title amendment')
+            r = self.crashdb.download(segv_report)
+            self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in read() on exit')
+
+            # does not destroy custom titles
+            bug = self.crashdb.launchpad.bugs[segv_report]
+            bug.title = 'crash is crashy'
+            try:
+                bug.lp_save()
+            except HTTPError:
+                pass # LP#336866 workaround
+
+            r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
+            self.crashdb.update_traces(segv_report, r, 'good retrace with custom title')
+            r = self.crashdb.download(segv_report)
+            self.assertEqual(r['Title'], 'crash is crashy')
 
             # test various situations which caused crashes
             r['Stacktrace'] = '' # empty file
