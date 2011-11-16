@@ -487,7 +487,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return an ID set of all crashes which have not been retraced yet and
         which happened on the current host architecture.'''
         try:
-            bugs = self.lp_distro.searchTasks(tags=self.arch_tag)
+            bugs = self.lp_distro.searchTasks(tags=self.arch_tag, created_since='2011-08-01')
             return id_set(bugs)
         except Exception, e:
             apport.error('connecting to Launchpad failed: %s', str(e))
@@ -502,7 +502,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         bugs that are covered by get_unretraced().'''
         
         try:
-            bugs = self.lp_distro.searchTasks(tags='need-duplicate-check')
+            bugs = self.lp_distro.searchTasks(tags='need-duplicate-check', created_since='2011-08-01')
             return id_set(bugs)
         except Exception, e:
             apport.error('connecting to Launchpad failed: %s', str(e))

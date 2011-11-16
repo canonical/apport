@@ -8,6 +8,7 @@ Bug fixes:
    repository is not enabled.
  - backends/packaging-apt-dpkg.py: Fix handling of explicit cache directory
    name when it is a relative path.
+ - launchpad.py: Only query for bugs after 2011-08-01, to avoid timeouts.
 
 1.26 (2011-11-11):
 ------------------
