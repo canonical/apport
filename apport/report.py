@@ -168,6 +168,7 @@ class Report(problem_report.ProblemReport):
         '''
         problem_report.ProblemReport.__init__(self, type, date)
         self.pid = None
+        self._proc_maps_cache = None
 
     def _pkg_modified_suffix(self, package):
         '''Return a string suitable for appending to Package/Dependencies.
@@ -1202,6 +1203,60 @@ class Report(problem_report.ProblemReport):
                 for old, new in replacements.items():
                     if hasattr(self[k], 'isspace'):
                         self[k] = self[k].replace(old, new)
+
+    def _address_to_offset(self, addr):
+        '''Resolve a memory address to an ELF name and offset.
+
+        This can be used for building duplicate signatures from non-symbolic
+        stack traces. These often do not have enough symbols available to
+        resolve function names, but taking the raw addresses also is not
+        suitable due to ASLR. But the offsets within a library should be
+        constant between crashes (assuming the same version of all libraries).
+
+        This needs and uses the "ProcMaps" field to resolve addresses.
+
+        Return 'path+offset' when found, or None if address is not in any
+        mapped range.
+        '''
+        self._build_proc_maps_cache()
+
+        for (start, end, elf) in self._proc_maps_cache:
+            if start <= addr and end >= addr:
+                return '%s+%x' % (elf, addr-start)
+
+        return None
+
+    def _build_proc_maps_cache(self):
+        '''Generate self._proc_maps_cache from ProcMaps field.
+        
+        This only gets done once.
+        '''
+        if self._proc_maps_cache:
+            return
+
+        assert 'ProcMaps' in self
+        self._proc_maps_cache = []
+        # library paths might have spaces, so we need to make some assumptions
+        # about the intermediate fields. But we know that in between the pre-last
+        # data field and the path there are many spaces, while between the
+        # other data fields there is only one. So we take 4 or more spaces as
+        # the separator of the last data field and the path.
+        fmt = re.compile('^([0-9a-fA-F]+)-([0-9a-fA-F]+).*\s{4,}(\S.*$)')
+        fmt_unknown = re.compile('^([0-9a-fA-F]+)-([0-9a-fA-F]+)\s')
+
+        for line in self['ProcMaps'].splitlines():
+            if not line.strip():
+                continue
+            m = fmt.match(line)
+            if not m:
+                # ignore lines with unknown ELF
+                if fmt_unknown.match(line):
+                    continue
+                # but complain otherwise, as this means we encounter an
+                # architecture or new kernel version where the format changed
+                assert m, 'cannot parse ProcMaps line: ' + line
+            self._proc_maps_cache.append((int(m.group(1), 16), 
+                int(m.group(2), 16), m.group(3)))
 
 #
 # Unit test
@@ -2813,6 +2868,50 @@ RUNQUEUES[0]: c6002320
         self.assertEqual(pr.has_useful_stacktrace(), True)
         self.assertEqual(pr.crash_signature(), '/bin/foo:11:h:main')
         self.assertEqual(pr.standard_title(), 'foo crashed with SIGSEGV in h()')
+
+    def test_address_to_offset(self):
+        '''_address_to_offset()'''
+
+        pr = Report()
+
+        self.assertRaises(AssertionError, pr._address_to_offset, 0)
+
+        pr['ProcMaps'] = '''
+00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
+006de000-006df000 r--p 000de000 08:02 1044485                            /bin/bash
+01596000-01597000 rw-p 00000000 00:00 0 
+01597000-015a4000 rw-p 00000000 00:00 0                                  [heap]
+7f491f868000-7f491f88a000 r-xp 00000000 08:02 526219                     /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f491fa8f000-7f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
+7f491fc24000-7f491fe23000 ---p 00195000 08:02 522605                     /lib/with spaces !/libfoo.so
+7fff6e57b000-7fff6e59c000 rw-p 00000000 00:00 0                          [stack]
+7fff6e5ff000-7fff6e600000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+'''
+
+        self.assertEqual(pr._address_to_offset(0x41d703), '/bin/bash+1d703')
+        self.assertEqual(pr._address_to_offset(0x00007f491fac5687),
+            '/lib/x86_64-linux-gnu/libc-2.13.so+36687')
+
+        self.assertEqual(pr._address_to_offset(0x006ddfff), None)
+        self.assertEqual(pr._address_to_offset(0x006de000), '/bin/bash+0')
+        self.assertEqual(pr._address_to_offset(0x006df000), '/bin/bash+1000')
+        self.assertEqual(pr._address_to_offset(0x006df001), None)
+
+        self.assertEqual(pr._address_to_offset(0x7f491fc24010),
+            '/lib/with spaces !/libfoo.so+10')
+
+    def test_address_to_offset_live(self):
+        '''_address_to_offset() for current /proc/pid/maps'''
+
+        # this primarily checks that the parser actually gets along with the
+        # real /proc/pid/maps and not just with our static test case above
+        pr = Report()
+        pr.add_proc_info()
+        self.assertEqual(pr._address_to_offset(0), None)
+        res = pr._address_to_offset(int(pr['ProcMaps'].split('-', 1)[0], 16) + 5)
+        self.assertEqual(res.split('+', 1)[1], '5')
+        self.assertTrue('python' in res.split('+', 1)[0])
 
 if __name__ == '__main__':
     unittest.main()
