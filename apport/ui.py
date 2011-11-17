@@ -899,7 +899,7 @@ free memory to automatically analyze the problem and send a report to the develo
                         sys.exit(1)
                 bpthread.exc_raise()
                 if bpthread.return_value():
-                    self.report['BugPatternURL'] = bpthread.return_value()
+                    self.report['KnownReport'] = bpthread.return_value()
 
             self.ui_stop_info_collection_progress()
 
@@ -1115,15 +1115,22 @@ free memory to automatically analyze the problem and send a report to the develo
         If so, tell the user about it, open the existing bug in a browser, and
         return True.
         '''
-        if 'BugPatternURL' not in self.report:
+        if 'KnownReport' not in self.report:
             return False
 
-        self.ui_info_message(_('Problem already known'),
-            _('This problem was already reported in the bug report displayed \
+        # if we have an URL, open it; otherwise this is just a marker that we
+        # know about it
+        if self.report['KnownReport'].startswith('http'):
+            self.ui_info_message(_('Problem already known'),
+                _('This problem was already reported in the bug report displayed \
 in the web browser. Please check if you can add any further information that \
 might be helpful for the developers.'))
 
-        self.open_url(self.report['BugPatternURL'])
+            self.open_url(self.report['KnownReport'])
+        else:
+            self.ui_info_message(_('Problem already known'),
+                _('This problem was already reported to developers. Thank you!'))
+
         return True
 
     def add_extra_tags(self):
@@ -1781,12 +1788,21 @@ CoreDump: base64
             self.assertEqual(self.ui.opened_url, None)
 
             demo_url = 'http://example.com/1'
-            self.report['BugPatternURL'] = demo_url
+            self.report['KnownReport'] = demo_url
             self.update_report_file()
             self.ui.load_report(self.report_file.name)
             self.assertEqual(self.ui.handle_duplicate(), True)
             self.assertEqual(self.ui.msg_severity, 'info')
             self.assertEqual(self.ui.opened_url, demo_url)
+
+            self.ui.opened_url = None
+            demo_url = 'http://example.com/1'
+            self.report['KnownReport'] = '1'
+            self.update_report_file()
+            self.ui.load_report(self.report_file.name)
+            self.assertEqual(self.ui.handle_duplicate(), True)
+            self.assertEqual(self.ui.msg_severity, 'info')
+            self.assertEqual(self.ui.opened_url, None)
 
         def test_run_nopending(self):
             '''running the frontend without any pending reports.'''
