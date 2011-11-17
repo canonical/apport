@@ -1096,7 +1096,9 @@ class Report(problem_report.ProblemReport):
         For signal crashes this the concatenation of ExecutablePath, Signal
         number, and StacktraceTop function names, separated by a colon. If
         StacktraceTop has unknown functions or the report lacks any of those
-        fields, return None.
+        fields, return None. In this case, you can use
+        crash_signature_addresses() to get a less precise duplicate signature
+        based on addresses instead of symbol names.
 
         For assertion failures, it is the concatenation of ExecutablePath
         and assertion message, separated by colons.
@@ -1164,6 +1166,63 @@ class Report(problem_report.ProblemReport):
             return self['ExecutablePath'] + ':' + trace[-1].split(':')[0] + sig
 
         return None
+
+    def crash_signature_addresses(self):
+        '''Compute heuristic duplicate signature for a signal crash.
+
+        This should be used if crash_signature() fails, i. e. Stacktrace does
+        not have enough symbols.
+
+        This approach only uses addresses in the stack trace and does not rely
+        on symbol resolution. As we can't unwind these stack traces, we cannot
+        limit them to the top five frames and thus will end up with several or
+        many different signatures for a particular crash. But these can be
+        computed and synchronously checked with a crash database at the client
+        side, which avoids having to upload and process the full report. So on
+        the server-side crash database we will only have to deal with all the
+        equivalence classes (i. e. same crash producing a number of possible
+        signatures) instead of every single report.
+
+        Return None when signature cannot be determined.
+        '''
+        if not 'ProcMaps' in self or not 'Stacktrace' in self:
+            return None
+
+        stack = []
+        failed = 0
+        for line in self['Stacktrace'].splitlines():
+            if line.startswith('#'):
+                addr = line.split()[1]
+                if not addr.startswith('0x'):
+                    continue
+                addr = int(addr, 16) # we do want to know about ValueErrors here, so don't catch
+                offset = self._address_to_offset(addr)
+                if offset:
+                    # avoid ':' in ELF paths, we use that as separator
+                    stack.append(offset.replace(':', '..'))
+                else:
+                    failed += 1
+
+            # stack unwinding chops off ~ 5 functions, and we need some more
+            # accuracy because we do not have symbols; but beyond a depth of 15
+            # we get too much noise, so we can abort there
+            if len(stack) >= 15:
+                break
+
+        # we only accept a small minority (< 20%) of failed resolutions, otherwise we
+        # discard
+        if failed > 0 and len(stack)/failed < 4:
+            return None
+
+        # we also discard if the trace is too short
+        if (failed == 0 and len(stack) < 3) or (failed > 0 and len(stack) < 6):
+            return None
+
+        return '%s:%s:%s:%s' % (
+                self['ExecutablePath'], 
+                self['Signal'],
+                os.uname()[4], 
+                ':'.join(stack))
 
     def anonymize(self):
         '''Remove user identifying strings from the report.
@@ -2912,6 +2971,79 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsysca
         res = pr._address_to_offset(int(pr['ProcMaps'].split('-', 1)[0], 16) + 5)
         self.assertEqual(res.split('+', 1)[1], '5')
         self.assertTrue('python' in res.split('+', 1)[0])
+
+    def test_crash_signature_addresses(self):
+        '''crash_signature_addresses()'''
+
+        pr = Report()
+        self.assertEqual(pr.crash_signature_addresses(), None)
+
+        pr['ExecutablePath'] = '/bin/bash'
+        pr['Signal'] = '42'
+        pr['ProcMaps'] = '''
+00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
+006de000-006df000 r--p 000de000 08:02 1044485                            /bin/bash
+01596000-01597000 rw-p 00000000 00:00 0 
+01597000-015a4000 rw-p 00000000 00:00 0                                  [heap]
+7f491f868000-7f491f88a000 r-xp 00000000 08:02 526219                     /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f491fa8f000-7f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
+7f491fc24000-7f491fe23000 ---p 00195000 08:02 522605                     /lib/with spaces !/libfoo.so
+7fff6e57b000-7fff6e59c000 rw-p 00000000 00:00 0                          [stack]
+7fff6e5ff000-7fff6e600000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+'''
+
+        # no Stacktrace field
+        self.assertEqual(pr.crash_signature_addresses(), None)
+
+        # good stack trace
+        pr['Stacktrace'] = '''
+#0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
+No locals.
+#1  0x000000000043fd51 in kill_pid ()
+#2  g_main_context_iterate (context=0x1731680) at gmain.c:3068
+#3  0x000000000042eb76 in ?? ()
+#4  0x00000000004324d8 in ??
+No symbol table info available.
+#5  0x00000000004707e3 in parse_and_execute ()
+#6  0x000000000041d703 in _start ()
+'''
+        self.assertEqual(pr.crash_signature_addresses(), 
+                '/bin/bash:42:%s:/lib/x86_64-linux-gnu/libc-2.13.so+36687:/bin/bash+3fd51:/bin/bash+2eb76:/bin/bash+324d8:/bin/bash+707e3:/bin/bash+1d703' % os.uname()[4])
+
+        # all resolvable, but too short
+        pr['Stacktrace'] = '#0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82'
+        self.assertEqual(pr.crash_signature_addresses(), None)
+
+        # one unresolvable, but long enough
+        pr['Stacktrace'] = '''
+#0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
+No locals.
+#1  0x000001000043fd51 in kill_pid ()
+#2  g_main_context_iterate (context=0x1731680) at gmain.c:3068
+#3  0x000000000042eb76 in ?? ()
+#4  0x00000000004324d8 in ??
+No symbol table info available.
+#5  0x00000000004707e3 in parse_and_execute ()
+#6  0x000000000041d715 in main ()
+#7  0x000000000041d703 in _start ()
+'''
+        self.assertNotEqual(pr.crash_signature_addresses(), None)
+
+        # two unresolvables, 2/7 is too much
+        pr['Stacktrace'] = '''
+#0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
+No locals.
+#1  0x000001000043fd51 in kill_pid ()
+#2  g_main_context_iterate (context=0x1731680) at gmain.c:3068
+#3  0x000001000042eb76 in ?? ()
+#4  0x00000000004324d8 in ??
+No symbol table info available.
+#5  0x00000000004707e3 in parse_and_execute ()
+#6  0x000000000041d715 in main ()
+#7  0x000000000041d703 in _start ()
+'''
+        self.assertEqual(pr.crash_signature_addresses(), None)
 
 if __name__ == '__main__':
     unittest.main()
