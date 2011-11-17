@@ -620,6 +620,9 @@ class Report(problem_report.ProblemReport):
 
         if 'Stacktrace' in self:
             self._gen_stacktrace_top()
+            addr_signature = self.crash_signature_addresses()
+            if addr_signature:
+                self['StacktraceAddressSignature'] = addr_signature
 
     def _gen_stacktrace_top(self):
         '''Build field StacktraceTop as the top five functions of Stacktrace. 

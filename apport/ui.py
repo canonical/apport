@@ -971,6 +971,13 @@ free memory to automatically analyze the problem and send a report to the develo
             except KeyError:
                 pass
 
+        # StacktraceAddressSignature is redundant and does not need to clutter
+        # the database
+        try:
+            del self.report['StacktraceAddressSignature']
+        except KeyError:
+            pass
+
         global __upload_progress
         __upload_progress = None
 
@@ -2079,6 +2086,7 @@ CoreDump: base64
             self.assertTrue('Stacktrace' in self.ui.report.keys())
             self.assertTrue('ProcEnviron' in self.ui.report.keys())
             self.assertFalse('ExecutableTimestamp' in self.ui.report.keys())
+            self.assertFalse('StacktraceAddressSignature' in self.ui.report.keys())
             self.assertEqual(self.ui.report['ProblemType'], 'Crash')
             self.assertTrue(len(self.ui.report['CoreDump']) > 10000)
             self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'))

@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.26.1 (UNRELEASED):
---------------------
+1.27 (UNRELEASED):
+------------------
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix another test case failure when ddeb
    repository is not enabled.
@@ -15,6 +15,14 @@ Improvements:
    standard_title(), so that other parts of the code can use this as well.
  - launchpad.net: When sending retraced results back to the bug report, update
    the topmost function in the bug title. (LP: #869970)
+ - report.py, add_gdb_info(): Add a new field "StacktraceAddressSignature"
+   which is a heuristic signature for signal crashes. This should be used if
+   crash_signature() fails, i. e. the Stacktrace field does not have enough
+   symbols. This can be used to check for duplicates on the client side,
+   provided that the crash database server supports querying for these.
+   Do not expose this field when uploading to crash databases though, as it can
+   be recomputed from the already existing information (ProcMaps and
+   Stacktrace) and thus would just clutter the reports.
 
 1.26 (2011-11-11):
 ------------------
