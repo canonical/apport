@@ -28,6 +28,8 @@ Improvements:
    will not be uploaded, and instead the user will be directed to the existing
    report URL (if available), similar to bug patterns. The default
    implementation always returns None, i. e. keeps current behaviour.
+ - crashdb.py: Add a table "version" with the database format version. Add
+   automatic upgrading to the most current format.
 
 1.26 (2011-11-11):
 ------------------

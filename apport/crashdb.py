@@ -66,6 +66,8 @@ class CrashDatabase:
         assert dbapi2.paramstyle == 'qmark', \
             'this module assumes qmark dbapi parameter style'
 
+        self.format_version = 1
+
         init = not os.path.exists(path) or path == ':memory:' or \
             os.path.getsize(path) == 0
         self.duplicate_db = dbapi2.connect(path, timeout=7200)
@@ -79,6 +81,9 @@ class CrashDatabase:
                 last_change TIMESTAMP,
                 CONSTRAINT crashes_pk PRIMARY KEY (crash_id))''')
 
+            cur.execute('CREATE TABLE version (format INTEGER NOT NULL)')
+            cur.execute('INSERT INTO version VALUES (?)', [self.format_version])
+
             self.duplicate_db.commit()
 
         # verify integrity
@@ -87,6 +92,18 @@ class CrashDatabase:
         result = cur.fetchall() 
         if result != [('ok',)]:
             raise SystemError('Corrupt duplicate db:' + str(result))
+
+        try:
+            cur.execute('SELECT format FROM version')
+            result = cur.fetchone() 
+        except self.duplicate_db.OperationalError as e:
+            if 'no such table' in str(e):
+                # first db format did not have version table yet
+                result = [0]
+        if result[0] != self.format_version:
+            print('duplicate db has format %i, upgrading to %i' %
+                    (result[0], self.format_version))
+            self._duplicate_db_upgrade(result[0])
 
     def check_duplicate(self, id, report=None):
         '''Check whether a crash is already known.
@@ -222,6 +239,19 @@ class CrashDatabase:
         cur.execute('UPDATE crashes SET crash_id = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
             [new_id, old_id])
         self.duplicate_db.commit()
+
+    def _duplicate_db_upgrade(self, cur_format):
+        '''Upgrade database to current format'''
+
+        cur = self.duplicate_db.cursor()
+
+        if cur_format == 0:
+            cur.execute('CREATE TABLE version (format INTEGER NOT NULL)')
+            cur.execute('INSERT INTO version VALUES (1)')
+            self.duplicate_db.commit()
+            cur_format = 1
+
+        assert cur_format == self.format_version
 
     def _duplicate_search_signature(self, sig, id):
         '''Look up signature in the duplicate db.
