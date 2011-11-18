@@ -36,6 +36,35 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if 'dummy_data' in options:
             self.add_dummy_data()
 
+    def known(self, report):
+        '''Check if the crash db already knows about the crash signature.
+
+        Check if the report has a DuplicateSignature, crash_signature(), or
+        StacktraceAddressSignature, and ask the database whether the problem is
+        already known. If so, return an URL where the user can check the status
+        or subscribe (if available), or just return True if the report is known
+        but there is no public URL. In that case the report will not be
+        uploaded (i. e. upload() will not be called).
+
+        Return None if the report does not have any signature or the crash
+        database does not support checking for duplicates on the client side.
+        '''
+        if 'DuplicateSignature' in report:
+            sig = report['DuplicateSignature']
+        else:
+            sig = report.crash_signature()
+        if not sig:
+            return None
+
+        # as we have the same CrashDB object on the client and server side, we
+        # can actually check the SQL database here
+        existing = self._duplicate_search_signature(sig, -1)
+        if existing:
+            return 'http://%s.bugs.example.com/%i' % (report['SourcePackage'],
+                    existing[0][0])
+
+        return None
+
     def upload(self, report, progress_callback = None):
         '''Store the report and return a handle number (starting from 0).
         
@@ -507,7 +536,7 @@ databases = {
             {self.crashes.download(0).crash_signature(): (0, None)})
 
     def test_check_duplicate(self):
-        '''check_duplicate()'''
+        '''check_duplicate() and known()'''
 
         # db not yet initialized
         self.assertRaises(AssertionError, self.crashes.check_duplicate, 0,
@@ -519,16 +548,24 @@ databases = {
         self.assertEqual(self.crashes._duplicate_db_dump(), {})
 
         # ID#0 -> no dup
+        self.assertEqual(self.crashes.known(self.crashes.download(0)), None)
         self.assertEqual(self.crashes.check_duplicate(0), None)
+        self.assertEqual(self.crashes.known(self.crashes.download(0)), 
+                'http://foo.bugs.example.com/0')
 
         # bug is not a duplicate of itself, when reprocessed
         self.assertEqual(self.crashes.check_duplicate(0), None)
 
         # ID#1 -> dup of #0
+        self.assertEqual(self.crashes.known(self.crashes.download(1)), 
+                'http://foo.bugs.example.com/0')
         self.assertEqual(self.crashes.check_duplicate(1), (0, None))
 
         # ID#2 is unrelated, no dup
+        self.assertEqual(self.crashes.known(self.crashes.download(2)), None)
         self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.assertEqual(self.crashes.known(self.crashes.download(2)), 
+                'http://bar.bugs.example.com/2')
 
         # ID#3: no dup, master of ID#4
         self.assertEqual(self.crashes.check_duplicate(3), None)
