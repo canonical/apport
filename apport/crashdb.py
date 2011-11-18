@@ -74,15 +74,15 @@ class CrashDatabase:
 
         if init:
             cur = self.duplicate_db.cursor()
+            cur.execute('CREATE TABLE version (format INTEGER NOT NULL)')
+            cur.execute('INSERT INTO version VALUES (?)', [self.format_version])
+
             cur.execute('''CREATE TABLE crashes (
                 signature VARCHAR(255) NOT NULL,
                 crash_id INTEGER NOT NULL,
                 fixed_version VARCHAR(50),
                 last_change TIMESTAMP,
                 CONSTRAINT crashes_pk PRIMARY KEY (crash_id))''')
-
-            cur.execute('CREATE TABLE version (format INTEGER NOT NULL)')
-            cur.execute('INSERT INTO version VALUES (?)', [self.format_version])
 
             self.duplicate_db.commit()
 
