@@ -137,43 +137,11 @@ class CrashDatabase:
 
         existing = self._duplicate_search_signature(sig, id)
 
-        # sort existing in ascending order, with unfixed last, so that
-        # version comparisons find the closest fix first
-        def cmp(x, y):
-            x = x[1]
-            y = y[1]
-            if x == y:
-                return 0
-            if x == '':
-                if y == None:
-                    return -1
-                else:
-                    return 1
-            if y == '':
-                if x == None:
-                    return 1
-                else:
-                    return -1
-            if x == None:
-                return 1
-            if y == None:
-                return -1
-            return apport.packaging.compare_versions(x, y)
-
-        if sys.version[0] >= '3':
-            existing.sort(key=cmp_to_key(cmp))
-        else:
-            existing.sort(cmp=cmp)
-
         if existing:
             # update status of existing master bugs
             for (ex_id, _) in existing:
                 self._duplicate_db_sync_status(ex_id)
             existing = self._duplicate_search_signature(sig, id)
-            if sys.version[0] >= '3':
-                existing.sort(key=cmp_to_key(cmp))
-            else:
-                existing.sort(cmp=cmp)
         try:
             report_package_version = report['Package'].split()[1]
         except (KeyError, IndexError):
@@ -259,7 +227,8 @@ class CrashDatabase:
         Return [(id, fixed_version)] tuple list.
         
         There might be several matches if a crash has been reintroduced in a
-        later version.
+        later version. The results are sorted so that the highest fixed version
+        comes first, and "unfixed" being the last result.
 
         id is the bug we are looking to find a duplicate for. The result will
         never contain id, to avoid marking a bug as a duplicate of itself if a
@@ -267,7 +236,35 @@ class CrashDatabase:
         '''
         cur = self.duplicate_db.cursor()
         cur.execute('SELECT crash_id, fixed_version FROM crashes WHERE signature = ? AND crash_id <> ?', [_u(sig), id])
-        return cur.fetchall()
+        existing = cur.fetchall()
+
+        def cmp(x, y):
+            x = x[1]
+            y = y[1]
+            if x == y:
+                return 0
+            if x == '':
+                if y == None:
+                    return -1
+                else:
+                    return 1
+            if y == '':
+                if x == None:
+                    return 1
+                else:
+                    return -1
+            if x == None:
+                return 1
+            if y == None:
+                return -1
+            return apport.packaging.compare_versions(x, y)
+
+        if sys.version[0] >= '3':
+            existing.sort(key=cmp_to_key(cmp))
+        else:
+            existing.sort(cmp=cmp)
+
+        return existing
 
     def _duplicate_db_dump(self, with_timestamps=False):
         '''Return the entire duplicate database as a dictionary.
