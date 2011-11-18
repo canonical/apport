@@ -887,6 +887,7 @@ free memory to automatically analyze the problem and send a report to the develo
             if 'CrashDB' in self.report:
                 self.crashdb = get_crashdb(None, self.report['CrashDB']) 
 
+            # check bug patterns
             if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or 'Package' in self.report:
                 bpthread = apport.REThread.REThread(target=self.report.search_bug_patterns,
                     args=(self.crashdb.get_bugpattern_baseurl(),))
@@ -900,6 +901,22 @@ free memory to automatically analyze the problem and send a report to the develo
                 bpthread.exc_raise()
                 if bpthread.return_value():
                     self.report['KnownReport'] = bpthread.return_value()
+
+            # check crash database if problem is known
+            if self.report['ProblemType'] != 'Bug':
+                known_thread = apport.REThread.REThread(target=self.crashdb.known,
+                    args=(self.report,))
+                known_thread.start()
+                while known_thread.isAlive():
+                    self.ui_pulse_info_collection_progress()
+                    try:
+                        known_thread.join(0.1)
+                    except KeyboardInterrupt:
+                        sys.exit(1)
+                known_thread.exc_raise()
+                val = known_thread.return_value()
+                if val is not None:
+                    self.report['KnownReport'] = val
 
             self.ui_stop_info_collection_progress()
 
@@ -2483,6 +2500,33 @@ CoreDump: base64
 
             for s in bad_strings:
                 self.assertFalse(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
+
+        def test_run_crash_known(self):
+            '''run_crash() for already known problem'''
+
+            r = self._gen_test_crash()
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.present_details_response = 'full'
+
+            # known without URL
+            with open(report_file, 'w') as f:
+                r.write(f)
+            self.ui.crashdb.known = lambda r: '1'
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.report['KnownReport'], '1')
+            self.assertEqual(self.ui.msg_severity, 'info')
+            self.assertEqual(self.ui.opened_url, None)
+
+            # known with URL
+            with open(report_file, 'w') as f:
+                r.write(f)
+            self.ui.crashdb.known = lambda r: 'http://myreport/1'
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.report['KnownReport'], 'http://myreport/1')
+            self.assertEqual(self.ui.msg_severity, 'info')
+            self.assertEqual(self.ui.opened_url, 'http://myreport/1')
 
         def test_run_update_report_nonexisting_package_from_bug(self):
             '''run_update_report() on a nonexisting package (from bug).'''

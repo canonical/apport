@@ -23,6 +23,11 @@ Improvements:
    Do not expose this field when uploading to crash databases though, as it can
    be recomputed from the already existing information (ProcMaps and
    Stacktrace) and thus would just clutter the reports.
+ - crashdb.py: Add new method "known(report)" which can be implemented to check
+   if the crash db already knows about the crash signature. If so, the report
+   will not be uploaded, and instead the user will be directed to the existing
+   report URL (if available), similar to bug patterns. The default
+   implementation always returns None, i. e. keeps current behaviour.
 
 1.26 (2011-11-11):
 ------------------

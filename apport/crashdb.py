@@ -302,6 +302,21 @@ class CrashDatabase:
     # Abstract functions that need to be implemented by subclasses
     #
 
+    def known(self, report):
+        '''Check if the crash db already knows about the crash signature.
+
+        Check if the report has a DuplicateSignature, crash_signature(), or
+        StacktraceAddressSignature, and ask the database whether the problem is
+        already known. If so, return an URL where the user can check the status
+        or subscribe (if available), or just return True if the report is known
+        but there is no public URL. In that case the report will not be
+        uploaded (i. e. upload() will not be called).
+
+        Return None if the report does not have any signature or the crash
+        database does not support checking for duplicates on the client side.
+        '''
+        return None
+
     def upload(self, report, progress_callback = None):
         '''Upload given problem report return a handle for it. 
         
