@@ -2169,6 +2169,7 @@ CoreDump: base64
             self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
             self.ui.present_details_response = 'full'
             self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
 
             self.assertTrue('SourcePackage' in self.ui.report.keys())
             self.assertTrue('Dependencies' in self.ui.report.keys())
@@ -2489,6 +2490,7 @@ CoreDump: base64
             self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
             self.ui.present_details_response = 'cancel'
             self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
 
             self.assertFalse('ProcCwd' in self.ui.report)
 
