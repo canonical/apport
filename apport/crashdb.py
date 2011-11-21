@@ -66,7 +66,7 @@ class CrashDatabase:
         assert dbapi2.paramstyle == 'qmark', \
             'this module assumes qmark dbapi parameter style'
 
-        self.format_version = 1
+        self.format_version = 2
 
         init = not os.path.exists(path) or path == ':memory:' or \
             os.path.getsize(path) == 0
@@ -83,6 +83,10 @@ class CrashDatabase:
                 fixed_version VARCHAR(50),
                 last_change TIMESTAMP,
                 CONSTRAINT crashes_pk PRIMARY KEY (crash_id))''')
+
+            cur.execute('''CREATE TABLE address_signatures (
+                signature VARCHAR(1000) NOT NULL,
+                crash_id INTEGER NOT NULL)''')
 
             self.duplicate_db.commit()
 
@@ -128,6 +132,8 @@ class CrashDatabase:
 
         self._mark_dup_checked(id, report)
 
+        self._duplicate_db_add_address_signature(report, id)
+
         if 'DuplicateSignature' in report:
             sig = report['DuplicateSignature']
         else:
@@ -154,6 +160,7 @@ class CrashDatabase:
             if not ex_ver or \
                not report_package_version or \
                 apport.packaging.compare_versions(report_package_version, ex_ver) < 0: 
+                self._duplicate_db_move_address_signature(ex_id, id)
                 self.close_duplicate(id, ex_id)
                 return (ex_id, ex_ver)
 
@@ -196,6 +203,7 @@ class CrashDatabase:
 
         cur = self.duplicate_db.cursor()
         cur.execute('DELETE FROM crashes WHERE crash_id = ?', [id])
+        cur.execute('DELETE FROM address_signatures WHERE crash_id = ?', [id])
         self.duplicate_db.commit()
 
     def duplicate_db_change_master_id(self, old_id, new_id):
@@ -205,6 +213,8 @@ class CrashDatabase:
 
         cur = self.duplicate_db.cursor()
         cur.execute('UPDATE crashes SET crash_id = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
+            [new_id, old_id])
+        cur.execute('UPDATE address_signatures SET crash_id = ? WHERE crash_id = ?',
             [new_id, old_id])
         self.duplicate_db.commit()
 
@@ -218,6 +228,13 @@ class CrashDatabase:
             cur.execute('INSERT INTO version VALUES (1)')
             self.duplicate_db.commit()
             cur_format = 1
+
+        if cur_format == 1:
+            cur.execute('''CREATE TABLE address_signatures (
+                signature VARCHAR(1000) NOT NULL,
+                crash_id INTEGER NOT NULL)''')
+            self.duplicate_db.commit()
+            cur_format = 2
 
         assert cur_format == self.format_version
 
@@ -265,6 +282,24 @@ class CrashDatabase:
             existing.sort(cmp=cmp)
 
         return existing
+
+    def _duplicate_search_address_signature(self, sig):
+        '''Return ID for crash address signature.
+
+        Return None if signature is unknown.
+        '''
+        if not sig:
+            return None
+
+        cur = self.duplicate_db.cursor()
+
+        cur.execute('SELECT crash_id FROM address_signatures WHERE signature == ?', [sig])
+        existing_ids = cur.fetchall()
+        assert len(existing_ids) <= 1
+        if existing_ids:
+            return existing_ids[0][0]
+        else:
+            return None
 
     def _duplicate_db_dump(self, with_timestamps=False):
         '''Return the entire duplicate database as a dictionary.
@@ -324,6 +359,31 @@ class CrashDatabase:
             print('DEBUG: bug %i got reopened, dropping fixed version %s from database' % (id, db_fixed_version))
             self.duplicate_db_fixed(id, real_fixed_version)
             return
+
+    def _duplicate_db_add_address_signature(self, report, id):
+        addr_sig = report.crash_signature_addresses()
+        if not addr_sig:
+            return
+
+        cur = self.duplicate_db.cursor()
+        cur.execute('SELECT crash_id FROM address_signatures WHERE signature == ?', [addr_sig])
+        existing_ids = cur.fetchall()
+        if existing_ids:
+            # sanity check
+            if set(existing_ids) != set([id]):
+                raise SystemError('ID %i has signature %s, but database already has that signature for IDs %s' % (
+                    id, addr_sig, str(existing_ids)))
+        else:
+            cur.execute('INSERT INTO address_signatures VALUES (?, ?)', (_u(addr_sig), id))
+            self.duplicate_db.commit()
+
+    def _duplicate_db_move_address_signature(self, master, duplicate):
+        '''Move address signatures of duplicate to master ID.'''
+
+        cur = self.duplicate_db.cursor()
+        cur.execute('UPDATE address_signatures SET crash_id = ? WHERE crash_id == ?', 
+                (master, duplicate))
+        self.duplicate_db.commit()
 
     #
     # Abstract functions that need to be implemented by subclasses

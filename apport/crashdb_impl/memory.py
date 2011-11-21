@@ -49,21 +49,31 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         Return None if the report does not have any signature or the crash
         database does not support checking for duplicates on the client side.
         '''
+        if not self.duplicate_db:
+            # not initialized, can't check
+            return None
+
         if 'DuplicateSignature' in report:
             sig = report['DuplicateSignature']
         else:
             sig = report.crash_signature()
-        if not sig:
-            return None
 
         # as we have the same CrashDB object on the client and server side, we
         # can actually check the SQL database here
-        existing = self._duplicate_search_signature(sig, -1)
-        if existing:
-            return 'http://%s.bugs.example.com/%i' % (report['SourcePackage'],
-                    existing[0][0])
+        known_id = None
+        if sig:
+            existing = self._duplicate_search_signature(sig, -1)
+            if existing:
+                known_id = existing[0][0]
 
-        return None
+        # fall back to address signature
+        if known_id is None:
+            known_id = self._duplicate_search_address_signature(report.crash_signature_addresses())
+
+        if known_id is not None:
+            return self.get_comment_url(report, known_id)
+        else:
+            return None
 
     def upload(self, report, progress_callback = None):
         '''Store the report and return a handle number (starting from 0).
@@ -705,6 +715,116 @@ databases = {
         # report from ID#1 is a dup of #0
         self.assertEqual(self.crashes.check_duplicate(2,
             self.crashes.download(1)), (0, None))
+
+    def test_known_address_sig(self):
+        '''known() for address signatures'''
+
+        self.crashes.init_duplicate_db(':memory:')
+
+        r = apport.Report()
+        r['SourcePackage'] = 'bash'
+        r['Package'] = 'bash 5'
+        r['ExecutablePath'] = '/bin/bash'
+        r['Signal'] = '11'
+        r['ProcMaps'] = '''
+00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
+7f491fa8f000-7f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
+'''
+
+        r['Stacktrace'] = '''
+#0  0x00007f491fac5687 in kill ()
+#1  0x000000000042eb76 in ?? ()
+#2  0x00000000004324d8 in ??
+#3  0x00000000004707e3 in parse_and_execute ()
+#4  0x000000000041d703 in _start ()
+'''
+
+        self.assertNotEqual(r.crash_signature_addresses(), None)
+        self.assertEqual(self.crashes.known(r), None)
+        r_id = self.crashes.upload(r)
+        self.assertEqual(self.crashes.check_duplicate(r_id), None)
+        self.assertEqual(self.crashes.known(r), 
+                self.crashes.get_comment_url(r, r_id))
+
+        # another report with same address signature
+        r2 = apport.Report()
+        r2['SourcePackage'] = 'bash'
+        r2['Package'] = 'bash 5'
+        r2['ExecutablePath'] = '/bin/bash'
+        r2['Signal'] = '11'
+
+        r2['ProcMaps'] = '''
+00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
+5f491fa8f000-5f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
+'''
+
+        r2['Stacktrace'] = '''
+#0  0x00005f491fac5687 in kill ()
+#1  0x000000000042eb76 in ?? ()
+#2  0x00000000004324d8 in ??
+#3  0x00000000004707e3 in parse_and_execute ()
+#4  0x000000000041d703 in _start ()
+'''
+
+        self.assertEqual(r.crash_signature_addresses(),
+                r2.crash_signature_addresses())
+        self.assertEqual(self.crashes.known(r2), 
+                self.crashes.get_comment_url(r, r_id))
+
+        # different address signature
+        r3 = apport.Report()
+        r3['SourcePackage'] = 'bash'
+        r3['Package'] = 'bash 5'
+        r3['ExecutablePath'] = '/bin/bash'
+        r3['Signal'] = '11'
+
+        r3['ProcMaps'] = '''
+00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
+5f491fa8f000-5f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
+'''
+
+        r3['Stacktrace'] = '''
+#0  0x00005f491fac5687 in kill ()
+#1  0x000000000042eb76 in ?? ()
+#2  0x0000000000432401 in ??
+#3  0x00000000004707e3 in parse_and_execute ()
+#4  0x000000000041d703 in _start ()
+'''
+        self.assertNotEqual(r.crash_signature_addresses(),
+                r3.crash_signature_addresses())
+        self.assertEqual(self.crashes.known(r3), None)
+
+        # pretend that we went through retracing and r and r3 are actually
+        # dupes; temporarily add a signature here to convince check_duplicate()
+        self.crashes.init_duplicate_db(':memory:')
+        r['DuplicateSignature'] = 'moo'
+        r3['DuplicateSignature'] = 'moo'
+        r_id = self.crashes.upload(r)
+        self.assertEqual(self.crashes.check_duplicate(r_id), None)
+        r3_id = self.crashes.upload(r3)
+        self.assertEqual(self.crashes.check_duplicate(r3_id), (r_id, None))
+        del r['DuplicateSignature']
+        del r3['DuplicateSignature']
+
+        # now both r and r3 address sigs should be known as r_id
+        self.assertEqual(self.crashes.known(r), 
+                self.crashes.get_comment_url(r, r_id))
+        self.assertEqual(self.crashes.known(r3), 
+                self.crashes.get_comment_url(r3, r_id))
+
+        # changing ID also works on address signatures
+        self.crashes.duplicate_db_change_master_id(r_id, r3_id)
+        self.assertEqual(self.crashes.known(r), 
+                self.crashes.get_comment_url(r, r3_id))
+        self.assertEqual(self.crashes.known(r3), 
+                self.crashes.get_comment_url(r3, r3_id))
+
+        # removing an ID also works for address signatures
+        self.crashes.duplicate_db_remove(r3_id)
+        self.assertEqual(self.crashes.known(r), None)
+        self.assertEqual(self.crashes.known(r3), None)
+
+        self.assertEqual(self.crashes._duplicate_db_dump(), {})
 
     def test_change_master_id(self):
         '''duplicate_db_change_master_id()'''
