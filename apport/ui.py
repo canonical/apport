@@ -1467,6 +1467,9 @@ databases = {
 
             UserInterface.__init__(self)
 
+            self.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
+                    '', {'dummy_data': 1})
+
             # state of progress dialogs
             self.ic_progress_active = False
             self.ic_progress_pulses = 0 # count the pulses
@@ -2535,8 +2538,6 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-u', '1']
             self.ui = _TestSuiteUserInterface()
-            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                    '', {'dummy_data': 1})
 
             self.assertEqual(self.ui.run_argv(), False)
             self.assertTrue('No additional information collected.' in
@@ -2548,8 +2549,6 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-u', '1', '-p', 'bar']
             self.ui = _TestSuiteUserInterface()
-            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                    '', {'dummy_data': 1})
 
             self.assertEqual(self.ui.run_argv(), False)
             self.assertTrue('No additional information collected.' in
@@ -2561,8 +2560,6 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-u', '1']
             self.ui = _TestSuiteUserInterface()
-            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                    '', {'dummy_data': 1})
 
             self.ui.crashdb.download(1)['SourcePackage'] = 'bash'
             self.ui.crashdb.download(1)['Package'] = 'bash'
@@ -2582,8 +2579,6 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-u', '1', '-p', 'bash', '--tag', 'foo']
             self.ui = _TestSuiteUserInterface()
-            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                    '', {'dummy_data': 1})
 
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
@@ -2602,8 +2597,6 @@ CoreDump: base64
 
             sys.argv = ['apport-collect', '-p', 'bash', '1']
             self.ui = _TestSuiteUserInterface()
-            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                    '', {'dummy_data': 1})
 
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
@@ -2621,8 +2614,6 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-u', '1']
             self.ui = _TestSuiteUserInterface()
-            self.ui.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                    '', {'dummy_data': 1})
 
             f = open(os.path.join(self.hookdir, 'source_foo.py'), 'w')
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
