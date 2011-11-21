@@ -236,6 +236,9 @@ class CrashDatabase:
             self.duplicate_db.commit()
             cur_format = 2
 
+        cur.execute('UPDATE version SET format = ?', (cur_format,))
+        self.duplicate_db.commit()
+
         assert cur_format == self.format_version
 
     def _duplicate_search_signature(self, sig, id):
