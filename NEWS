@@ -23,16 +23,19 @@ Improvements:
    Do not expose this field when uploading to crash databases though, as it can
    be recomputed from the already existing information (ProcMaps and
    Stacktrace) and thus would just clutter the reports.
- - crashdb.py: Add new method "known(report)" which can be implemented to check
-   if the crash db already knows about the crash signature. If so, the report
-   will not be uploaded, and instead the user will be directed to the existing
-   report URL (if available), similar to bug patterns. The default
-   implementation always returns None, i. e. keeps current behaviour.
  - crashdb.py: Add a table "version" with the database format version. Add
    automatic upgrading to the most current format.
  - crashdb.py: Put address signatures from reports checked with
    check_duplicate() into the duplicate database, so that implementations of
    known() can check for these.
+ - dupdb-admin: Add "publish" dupdb-admin command which exports the
+   duplicate database into a set of text files suitable for WWW publishing.
+ - crashdb.py: Add new method "known(report)" which can be implemented to check
+   if the crash db already knows about the crash signature. If so, the report
+   will not be uploaded, and instead the user will be directed to the existing
+   report URL (if available), similar to bug patterns. The default
+   implementation checks this format, if the crash database is initialized with
+   a "dupdb_url" option pointing to the exported database.
 
 1.26 (2011-11-11):
 ------------------

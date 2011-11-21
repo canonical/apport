@@ -46,6 +46,13 @@ def command_removeid(crashdb, opts, args):
         apport.fatal('removeid needs exactly one argument (use --help for a short help)')
     crashdb.duplicate_db_remove(args[0])
 
+def command_publish(crashdb, opts, args):
+    '''Publish crash database to a directory.'''
+
+    if len(args) != 1:
+        apport.fatal('publish needs exactly one argument (use --help for a short help)')
+    crashdb.duplicate_db_publish(args[0])
+
 #
 # main
 #
@@ -53,7 +60,8 @@ def command_removeid(crashdb, opts, args):
 # parse command line options
 optparser = optparse.OptionParser('''%prog [options] dump
 %prog [options] changeid <old ID> <new ID>
-%prog [options] removeid <ID>''')
+%prog [options] removeid <ID>
+%prog [options] publish <path>''')
 
 optparser.add_option('-f', '--database-file',
     help='Location of the database file', action='store', metavar='PATH',

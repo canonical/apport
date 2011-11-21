@@ -238,6 +238,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             return 'https://bugs.%s/%s/+filebug/%s?%s' % (
                 hostname, project, handle, urllib.urlencode(args))
 
+    def get_id_url(self, report, id):
+        '''Return URL for a given report ID.
+
+        The report is passed in case building the URL needs additional
+        information from it, such as the SourcePackage name.
+
+        Return None if URL is not available or cannot be determined.
+        '''
+        return 'https://bugs.launchpad.net/bugs/' + str(id)
+
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
 

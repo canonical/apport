@@ -36,45 +36,6 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if 'dummy_data' in options:
             self.add_dummy_data()
 
-    def known(self, report):
-        '''Check if the crash db already knows about the crash signature.
-
-        Check if the report has a DuplicateSignature, crash_signature(), or
-        StacktraceAddressSignature, and ask the database whether the problem is
-        already known. If so, return an URL where the user can check the status
-        or subscribe (if available), or just return True if the report is known
-        but there is no public URL. In that case the report will not be
-        uploaded (i. e. upload() will not be called).
-
-        Return None if the report does not have any signature or the crash
-        database does not support checking for duplicates on the client side.
-        '''
-        if not self.duplicate_db:
-            # not initialized, can't check
-            return None
-
-        if 'DuplicateSignature' in report:
-            sig = report['DuplicateSignature']
-        else:
-            sig = report.crash_signature()
-
-        # as we have the same CrashDB object on the client and server side, we
-        # can actually check the SQL database here
-        known_id = None
-        if sig:
-            existing = self._duplicate_search_signature(sig, -1)
-            if existing:
-                known_id = existing[0][0]
-
-        # fall back to address signature
-        if known_id is None:
-            known_id = self._duplicate_search_address_signature(report.crash_signature_addresses())
-
-        if known_id is not None:
-            return self.get_comment_url(report, known_id)
-        else:
-            return None
-
     def upload(self, report, progress_callback = None):
         '''Store the report and return a handle number (starting from 0).
         
@@ -98,6 +59,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 handle)
         else:
             return 'http://bugs.example.com/%i' % handle
+
+    def get_id_url(self, report, id):
+        '''Return URL for a given report ID.
+
+        The report is passed in case building the URL needs additional
+        information from it, such as the SourcePackage name.
+
+        Return None if URL is not available or cannot be determined.
+        '''
+        return self.get_comment_url(report, id)
 
     def download(self, id):
         '''Download the problem report from given ID and return a Report.'''
@@ -337,7 +308,10 @@ ZeroDivisionError: integer division or modulo by zero'''
 
 class _T(unittest.TestCase):
     def setUp(self):
-        self.crashes = CrashDatabase(None, None, {'dummy_data': '1'})
+        self.workdir = tempfile.mkdtemp()
+        self.dupdb_dir = os.path.join(self.workdir, 'dupdb')
+        self.crashes = CrashDatabase(None, None, {'dummy_data': '1',
+            'dupdb_url': self.dupdb_dir})
 
         self.assertEqual(self.crashes.get_comment_url(self.crashes.download(0),
             0), 'http://foo.bugs.example.com/0')
@@ -351,6 +325,9 @@ class _T(unittest.TestCase):
 
         # we should have 5 crashes
         self.assertEqual(self.crashes.latest_id(), 4)
+
+    def tearDown(self):
+        shutil.rmtree(self.workdir)
 
     def test_no_dummy_data(self):
         '''No dummy data is added by default'''
@@ -560,6 +537,9 @@ databases = {
         # ID#0 -> no dup
         self.assertEqual(self.crashes.known(self.crashes.download(0)), None)
         self.assertEqual(self.crashes.check_duplicate(0), None)
+        # can't be known before publishing DB
+        self.assertEqual(self.crashes.known(self.crashes.download(0)), None)
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(self.crashes.download(0)), 
                 'http://foo.bugs.example.com/0')
 
@@ -567,13 +547,16 @@ databases = {
         self.assertEqual(self.crashes.check_duplicate(0), None)
 
         # ID#1 -> dup of #0
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(self.crashes.download(1)), 
                 'http://foo.bugs.example.com/0')
         self.assertEqual(self.crashes.check_duplicate(1), (0, None))
 
         # ID#2 is unrelated, no dup
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(self.crashes.download(2)), None)
         self.assertEqual(self.crashes.check_duplicate(2), None)
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(self.crashes.download(2)), 
                 'http://bar.bugs.example.com/2')
 
@@ -740,9 +723,11 @@ databases = {
 '''
 
         self.assertNotEqual(r.crash_signature_addresses(), None)
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r), None)
         r_id = self.crashes.upload(r)
         self.assertEqual(self.crashes.check_duplicate(r_id), None)
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r), 
                 self.crashes.get_comment_url(r, r_id))
 
@@ -768,6 +753,7 @@ databases = {
 
         self.assertEqual(r.crash_signature_addresses(),
                 r2.crash_signature_addresses())
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r2), 
                 self.crashes.get_comment_url(r, r_id))
 
@@ -792,6 +778,7 @@ databases = {
 '''
         self.assertNotEqual(r.crash_signature_addresses(),
                 r3.crash_signature_addresses())
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r3), None)
 
         # pretend that we went through retracing and r and r3 are actually
@@ -807,6 +794,7 @@ databases = {
         del r3['DuplicateSignature']
 
         # now both r and r3 address sigs should be known as r_id
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r), 
                 self.crashes.get_comment_url(r, r_id))
         self.assertEqual(self.crashes.known(r3), 
@@ -814,6 +802,7 @@ databases = {
 
         # changing ID also works on address signatures
         self.crashes.duplicate_db_change_master_id(r_id, r3_id)
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r), 
                 self.crashes.get_comment_url(r, r3_id))
         self.assertEqual(self.crashes.known(r3), 
@@ -821,6 +810,7 @@ databases = {
 
         # removing an ID also works for address signatures
         self.crashes.duplicate_db_remove(r3_id)
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r), None)
         self.assertEqual(self.crashes.known(r3), None)
 
@@ -886,5 +876,5 @@ databases = {
             os.unlink(db)
 
 if __name__ == '__main__':
-    import tempfile
+    import tempfile, shutil
     unittest.main()

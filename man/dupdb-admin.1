@@ -15,6 +15,11 @@ dupdb\-admin \- Manage the duplicate database for apport\-retrace.
 .B changeid
 .I oldid newid
 
+.B dupdb\-admin \-f
+.I dbpath
+.B publish
+.I path
+
 .SH DESCRIPTION
 
 .BR apport\-retrace (1)
@@ -43,16 +48,19 @@ Print a list of all database entries.
 .B changeid
 Change the associated crash ID for a particular crash.
 
+.TP
+.B publish
+Export the duplicate database into a set of text files in the given directory
+which is suitable for WWW publishing.
+If the directory already exists, it will be updated. The new content is built
+in a new directory which is the given one with ".new" appended, then moved to
+the given name in an almost atomic way.
+
 .SH OPTIONS
 
 .TP
 .B \-f \fIpath\fR, \fB\-\-database-file\fR=\fIpath
-Instead of processing the new crash reports in
-.I /var/crash/\fR,
-report a particular report in an arbitrary file location.
-This is useful for copying a crash report to a machine with internet
-connection and reporting it from there. This defaults to
-.I ~./apport_duplicates.db\fR.
+Path to the duplicate database SQLite file.
 
 .SH AUTHOR
 .B apport
