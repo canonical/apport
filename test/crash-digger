@@ -21,8 +21,9 @@ class _T(unittest.TestCase):
         crashdb_conf = os.path.join(self.workdir, 'crashdb.conf')
         open(crashdb_conf, 'w').write('''default = 'memory'
 databases = { 'memory': { 
-    'impl': 'memory', 'distro': 'Testux', 'dummy_data': '1' }
-}''')
+    'impl': 'memory', 'distro': 'Testux', 'dummy_data': '1',
+    'dupdb_url': '%s'}
+}''' % os.path.join(self.workdir, 'dupdb'))
 
         self.config_dir = os.path.join(self.workdir, 'config')
         os.mkdir(self.config_dir)
@@ -77,6 +78,8 @@ echo "$@" >> %s''' % self.apport_retrace_log)
         self.assertTrue('dup.db -v 1\n' in retrace_log)
         self.assertTrue('dup.db -v 2\n' in retrace_log)
         self.assertFalse (os.path.exists(self.lock_file))
+
+        self.assertFalse(os.path.isdir(os.path.join(self.workdir, 'dupdb', 'sig')))
 
     def test_crashes_error(self):
         '''Crash retracing if apport-retrace fails on bug #1'''
@@ -185,6 +188,17 @@ echo ApportRetraceError >&2''')
             os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assertTrue('ApportRetraceError' in out)
+
+    def test_publish_db(self):
+        '''Duplicate database publishing'''
+
+        (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
+            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file,
+            '--publish-db', os.path.join(self.workdir, 'dupdb')])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.assertTrue('retracing #0' in out)
+
+        self.assertTrue(os.path.isdir(os.path.join(self.workdir, 'dupdb', 'sig')))
 
 tl = unittest.TestLoader()
 tests_all = unittest.TestSuite((

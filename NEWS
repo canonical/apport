@@ -36,6 +36,8 @@ Improvements:
    report URL (if available), similar to bug patterns. The default
    implementation checks this format, if the crash database is initialized with
    a "dupdb_url" option pointing to the exported database.
+ - crash-digger: Add --publish-db option to conveniently integrate duplicate DB
+   publication (similar to dupdb-admin publish) into retracer setups.
 
 1.26 (2011-11-11):
 ------------------

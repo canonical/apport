@@ -20,7 +20,7 @@ from apport.crashdb import get_crashdb
 
 class CrashDigger:
     def __init__(self, config_dir, auth_file, cache_dir, apport_retrace,
-            verbose=False, dup_db=None, dupcheck_mode=False):
+            verbose=False, dup_db=None, dupcheck_mode=False, publish_dir=None):
         '''Initialize pools.'''
 
         self.retrace_pool = set()
@@ -33,6 +33,7 @@ class CrashDigger:
         self.dupcheck_mode = dupcheck_mode
         self.crashdb = get_crashdb(auth_file)
         self.apport_retrace = apport_retrace
+        self.publish_dir = publish_dir
         if config_dir:
             self.releases = os.listdir(config_dir)
             self.releases.sort()
@@ -133,6 +134,9 @@ class CrashDigger:
         while self.retrace_pool:
             self.retrace_next()
 
+        if self.publish_dir:
+            self.crashdb.duplicate_db_publish(self.publish_dir)
+
 #
 # functions
 #
@@ -164,6 +168,9 @@ def parse_options():
         action='store_true', dest='verbose', default=False)
     optparser.add_option('--apport-retrace', metavar='PATH',
         help='Path to apport-retrace script (default: directory of crash-digger or $PATH)')
+    optparser.add_option('--publish-db',
+        help='After processing all reports, publish duplicate database to given directory',
+        metavar='DIR', default=None)
 
     (opts, args) = optparser.parse_args()
 
@@ -201,7 +208,7 @@ if opts.lockfile:
 try:
     CrashDigger(opts.config_dir, opts.auth_file, opts.cache,
             opts.apport_retrace, opts.verbose, opts.dup_db,
-        opts.dupcheck_mode).run()
+            opts.dupcheck_mode, opts.publish_db).run()
 except SystemExit as exit:
     if exit.code == 99:
         pass # fall through lock cleanup
