@@ -21,13 +21,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     
     This is mainly useful for testing and debugging.'''
 
-    def __init__(self, auth_file, bugpattern_url, options):
+    def __init__(self, auth_file, options):
         '''Initialize crash database connection.
         
         This class does not support bug patterns and authentication.'''
 
-        apport.crashdb.CrashDatabase.__init__(self, auth_file,
-            bugpattern_url, options)
+        apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
 
         self.reports = [] # list of dictionaries with keys: report, fixed_version, dup_of, comment
         self.unretraced = set()
@@ -310,7 +309,7 @@ class _T(unittest.TestCase):
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
         self.dupdb_dir = os.path.join(self.workdir, 'dupdb')
-        self.crashes = CrashDatabase(None, None, {'dummy_data': '1',
+        self.crashes = CrashDatabase(None, {'dummy_data': '1',
             'dupdb_url': self.dupdb_dir})
 
         self.assertEqual(self.crashes.get_comment_url(self.crashes.download(0),
@@ -332,7 +331,7 @@ class _T(unittest.TestCase):
     def test_no_dummy_data(self):
         '''No dummy data is added by default'''
 
-        self.crashes = CrashDatabase(None, None, {})
+        self.crashes = CrashDatabase(None, {})
         self.assertEqual(self.crashes.latest_id(), -1)
         self.assertRaises(IndexError, self.crashes.download, 0)
 
@@ -869,7 +868,7 @@ databases = {
             f.truncate(os.path.getsize(db)*2/3)
             f.close()
 
-            self.crashes = CrashDatabase(None, None, {})
+            self.crashes = CrashDatabase(None, {})
             self.assertRaises(Exception, self.crashes.init_duplicate_db, db)
 
         finally:

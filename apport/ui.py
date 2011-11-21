@@ -1468,7 +1468,7 @@ databases = {
             UserInterface.__init__(self)
 
             self.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                    '', {'dummy_data': 1})
+                    {'dummy_data': 1})
 
             # state of progress dialogs
             self.ic_progress_active = False

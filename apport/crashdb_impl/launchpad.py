@@ -44,7 +44,7 @@ def id_set(tasks):
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
 
-    def __init__(self, auth, bugpattern_baseurl, options):
+    def __init__(self, auth, options):
         '''Initialize Launchpad crash database. 
         
         You need to specify a launchpadlib-style credentials file to
@@ -75,8 +75,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 auth = default_credentials_path + '.' + lp_instance.split('://', 1)[-1]
             else:
                 auth = default_credentials_path
-        apport.crashdb.CrashDatabase.__init__(self, auth,
-            bugpattern_baseurl, options)
+        apport.crashdb.CrashDatabase.__init__(self, auth, options)
 
         self.distro = options.get('distro')
         if self.distro:
@@ -1390,7 +1389,7 @@ NameError: global name 'weird' is not defined'''
 
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
 
-            return CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+            return CrashDatabase(os.environ.get('LP_CREDENTIALS'),
                     {'distro': 'ubuntu',
                      'launchpad_instance': launchpad_instance})
 
@@ -1530,7 +1529,7 @@ NameError: global name 'weird' is not defined'''
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
             # crash database for langpack-o-matic project (this does not have
             # packages in any distro)
-            crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+            crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'),
                 {'project': 'langpack-o-matic',
                  'launchpad_instance': launchpad_instance})
             self.assertEqual(crashdb.distro, None)
@@ -1589,7 +1588,7 @@ NameError: global name 'weird' is not defined'''
             assert segv_report, 'you need to run test_1_report_segv() first'
 
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
-            db = CrashDatabase(os.environ.get('LP_CREDENTIALS'), '',
+            db = CrashDatabase(os.environ.get('LP_CREDENTIALS'),
                     {'distro': 'ubuntu',
                      'launchpad_instance': launchpad_instance,
                      'escalation_tag': 'omgkittens',

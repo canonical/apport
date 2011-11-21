@@ -76,7 +76,7 @@ if args[0] in ():
     crashdb = get_crashdb(None, None, {})
 else:
     # pure DB operations don't need a real backend, and thus no crashdb.conf
-    crashdb = apport.crashdb_impl.memory.CrashDatabase(None, None, {})
+    crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
 crashdb.init_duplicate_db(options.db_file)
 
 try:
