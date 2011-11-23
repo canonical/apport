@@ -13,9 +13,11 @@ import os, os.path, datetime, sys, shutil, urllib
 
 try:
     from exceptions import Exception
+    from urllib import quote_plus
 except ImportError:
     # python 3
     from functools import cmp_to_key
+    from urllib.parse import quote_plus
 
 import apport
 
@@ -556,7 +558,7 @@ class CrashDatabase:
         i = i.replace('/', '_')
         # just in case, avoid too long file names
         i = i[:200]
-        i = urllib.quote_plus(i)
+        i = quote_plus(i)
         return i
 
     #
