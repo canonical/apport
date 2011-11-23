@@ -752,9 +752,15 @@ databases = {
 
         self.assertEqual(r.crash_signature_addresses(),
                 r2.crash_signature_addresses())
+
+        # DB knows about this already
         self.crashes.duplicate_db_publish(self.dupdb_dir)
         self.assertEqual(self.crashes.known(r2), 
                 self.crashes.get_comment_url(r, r_id))
+
+        # if it gets uploaded anyway, duplicate it properly
+        r2_id = self.crashes.upload(r2)
+        self.assertEqual(self.crashes.check_duplicate(r2_id), (r_id, None))
 
         # different address signature
         r3 = apport.Report()

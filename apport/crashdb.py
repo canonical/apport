@@ -132,22 +132,33 @@ class CrashDatabase:
 
         self._mark_dup_checked(id, report)
 
-        self._duplicate_db_add_address_signature(report, id)
-
+        addr_sig = report.crash_signature_addresses()
         if 'DuplicateSignature' in report:
             sig = report['DuplicateSignature']
         else:
             sig = report.crash_signature()
-        if not sig:
-            return None
-
-        existing = self._duplicate_search_signature(sig, id)
-
-        if existing:
-            # update status of existing master bugs
-            for (ex_id, _) in existing:
-                self._duplicate_db_sync_status(ex_id)
+        if sig:
+            # use real duplicate signature
             existing = self._duplicate_search_signature(sig, id)
+
+            if existing:
+                # update status of existing master bugs
+                for (ex_id, _) in existing:
+                    self._duplicate_db_sync_status(ex_id)
+                existing = self._duplicate_search_signature(sig, id)
+        else:
+            # fall back to address signature
+            if addr_sig:
+                existing = self._duplicate_search_address_signature(addr_sig)
+                # make compatible to _duplicate_search_signature() result format
+                if existing:
+                    existing = [(existing, None)]
+                else:
+                    existing = []
+            else:
+                # no signature to compare against
+                return None
+
         try:
             report_package_version = report['Package'].split()[1]
         except (KeyError, IndexError):
@@ -160,7 +171,8 @@ class CrashDatabase:
             if not ex_ver or \
                not report_package_version or \
                 apport.packaging.compare_versions(report_package_version, ex_ver) < 0: 
-                self._duplicate_db_move_address_signature(ex_id, id)
+                if addr_sig:
+                    self._duplicate_db_add_address_signature(addr_sig, ex_id)
                 self.close_duplicate(id, ex_id)
                 return (ex_id, ex_ver)
 
@@ -171,12 +183,15 @@ class CrashDatabase:
             self.mark_regression(id, existing[-1][0])
 
         # create a new record for the ID if we don't have one already
-        cur = self.duplicate_db.cursor()
-        cur.execute('SELECT count(*) FROM crashes WHERE crash_id == ?', [id])
-        count_id = cur.fetchone()[0]
-        if count_id == 0:
-            cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (_u(sig), id, None))
-            self.duplicate_db.commit()
+        if sig:
+            cur = self.duplicate_db.cursor()
+            cur.execute('SELECT count(*) FROM crashes WHERE crash_id == ?', [id])
+            count_id = cur.fetchone()[0]
+            if count_id == 0:
+                cur.execute('INSERT INTO crashes VALUES (?, ?, ?, CURRENT_TIMESTAMP)', (_u(sig), id, None))
+                self.duplicate_db.commit()
+        if addr_sig:
+            self._duplicate_db_add_address_signature(addr_sig, id)
 
         return None
 
@@ -513,29 +528,15 @@ class CrashDatabase:
             self.duplicate_db_fixed(id, real_fixed_version)
             return
 
-    def _duplicate_db_add_address_signature(self, report, id):
-        addr_sig = report.crash_signature_addresses()
-        if not addr_sig:
-            return
+    def _duplicate_db_add_address_signature(self, sig, id):
+        # sanity check
+        existing = self._duplicate_search_address_signature(sig)
+        if existing and existing != id:
+            raise SystemError('ID %i has signature %s, but database already has that signature for ID %i' % (
+                    id, sig, existing))
 
         cur = self.duplicate_db.cursor()
-        cur.execute('SELECT crash_id FROM address_signatures WHERE signature == ?', [addr_sig])
-        existing_ids = cur.fetchall()
-        if existing_ids:
-            # sanity check
-            if set(existing_ids) != set([id]):
-                raise SystemError('ID %i has signature %s, but database already has that signature for IDs %s' % (
-                    id, addr_sig, str(existing_ids)))
-        else:
-            cur.execute('INSERT INTO address_signatures VALUES (?, ?)', (_u(addr_sig), id))
-            self.duplicate_db.commit()
-
-    def _duplicate_db_move_address_signature(self, master, duplicate):
-        '''Move address signatures of duplicate to master ID.'''
-
-        cur = self.duplicate_db.cursor()
-        cur.execute('UPDATE address_signatures SET crash_id = ? WHERE crash_id == ?', 
-                (master, duplicate))
+        cur.execute('INSERT INTO address_signatures VALUES (?, ?)', (_u(sig), id))
         self.duplicate_db.commit()
 
     @classmethod
