@@ -39,6 +39,9 @@ Improvements:
    a "dupdb_url" option pointing to the exported database.
  - crash-digger: Add --publish-db option to conveniently integrate duplicate DB
    publication (similar to dupdb-admin publish) into retracer setups.
+ - launchpad.py: Attach updated stack traces from a duplicate to the master bug
+   if it failed retracing previously or has an "apport-request-retrace" tag.
+   (LP: #869982)
 
 1.26 (2011-11-11):
 ------------------

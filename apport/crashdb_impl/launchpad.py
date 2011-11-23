@@ -651,6 +651,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             master = self.launchpad.bugs[master_id]
             if master.duplicate_of:
                 master = master.duplicate_of
+                master_id = master.id
                 if master.id == id:
                     # this happens if the bug was manually duped to a newer one
                     apport.warning('Bug %i was manually marked as a dupe of newer bug %i, not closing as duplicate', 
@@ -695,6 +696,30 @@ Please continue to report any other bugs you may find.' % master_id,
                     self.options.get('escalated_tag', ' invalid ') not in master.tags:
                     p = self.launchpad.people[self.options['escalation_subscription']]
                     master.subscribe(person=p)
+
+            # requesting updated stack trace?
+            if report.has_useful_stacktrace() and ('apport-request-retrace' in master.tags
+                    or 'apport-failed-retrace' in master.tags):
+                self.update(master_id, report, 'Updated stack trace from duplicate bug %i' % id,
+                        key_filter=['Stacktrace', 'ThreadStacktrace',
+                            'Package', 'Dependencies', 'ProcMaps', 'ProcCmdline'])
+
+                master = self.launchpad.bugs[master_id]
+                x = master.tags[:] # LP#254901 workaround
+                try:
+                    x.remove('apport-failed-retrace')
+                except KeyError:
+                    pass
+                try:
+                    x.remove('apport-request-retrace')
+                except KeyError:
+                    pass
+                master.tags = x
+                try:
+                    master.lp_save()
+                except HTTPError:
+                    pass # LP#336866 workaround
+
         else:
             if bug.duplicate_of:
                 bug.duplicate_of = None
