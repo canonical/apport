@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-10-31 05:17+0000\n"
-"X-Generator: Launchpad (build 14197)\n"
+"X-Launchpad-Export-Date: 2011-11-23 05:13+0000\n"
+"X-Generator: Launchpad (build 14336)\n"
 "Language: \n"
 
 #: ../apport/ui.py:92
@@ -30,7 +30,7 @@ msgid ""
 "and try again."
 msgstr ""
 
-#: ../apport/ui.py:115
+#: ../apport/ui.py:106
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -43,21 +43,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:213
+#: ../apport/ui.py:206
 msgid "unknown program"
 msgstr "programa desconhecido"
 
-#: ../apport/ui.py:214 ../gtk/apport-gtk.py:78
+#: ../apport/ui.py:207
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Desculpe, o programa \"%s\" fechou inesperadamente"
 
-#: ../apport/ui.py:215 ../apport/ui.py:1081
+#: ../apport/ui.py:208 ../apport/ui.py:275 ../apport/ui.py:384
 #, python-format
 msgid "Problem in %s"
 msgstr "Problema em %s"
 
-#: ../apport/ui.py:216
+#: ../apport/ui.py:209
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -66,60 +66,60 @@ msgstr ""
 "problema e enviar um relatório aos desenvolvedores."
 
 #. package does not exist
-#: ../apport/ui.py:243 ../apport/ui.py:269 ../apport/ui.py:275
-#: ../apport/ui.py:305 ../apport/ui.py:313 ../apport/ui.py:384
-#: ../apport/ui.py:387 ../apport/ui.py:583 ../apport/ui.py:909
-#: ../apport/ui.py:1037 ../apport/ui.py:1041 ../apport/ui.py:1060
-#: ../apport/ui.py:1066 ../apport/ui.py:1658 ../apport/ui.py:1675
-#: ../apport/ui.py:2265 ../apport/ui.py:2281 ../apport/ui.py:2292
-#: ../apport/ui.py:2303
+#: ../apport/ui.py:236 ../apport/ui.py:262 ../apport/ui.py:268
+#: ../apport/ui.py:299 ../apport/ui.py:307 ../apport/ui.py:373
+#: ../apport/ui.py:376 ../apport/ui.py:563 ../apport/ui.py:793
+#: ../apport/ui.py:959 ../apport/ui.py:963 ../apport/ui.py:982
+#: ../apport/ui.py:988 ../apport/ui.py:1537 ../apport/ui.py:1554
+#: ../apport/ui.py:2114 ../apport/ui.py:2130 ../apport/ui.py:2141
+#: ../apport/ui.py:2152
 msgid "Invalid problem report"
 msgstr "Relatório do problema inválido"
 
-#: ../apport/ui.py:244 ../apport/ui.py:276
+#: ../apport/ui.py:237 ../apport/ui.py:269
 msgid "The report belongs to a package that is not installed."
 msgstr "O relatório pertence a um pacote que não está instalado."
 
-#: ../apport/ui.py:271 ../apport/ui.py:1043
+#: ../apport/ui.py:264 ../apport/ui.py:965
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Este relatório de erros está danificado e não pode ser processado."
 
-#: ../apport/ui.py:306
+#: ../apport/ui.py:300
 msgid "You are not allowed to access this problem report."
 msgstr "Você não tem permissão para acessar esse relatório de problema."
 
-#: ../apport/ui.py:309
+#: ../apport/ui.py:303
 msgid "Error"
 msgstr "Erro"
 
-#: ../apport/ui.py:310
+#: ../apport/ui.py:304
 msgid "There is not enough disk space available to process this report."
 msgstr "Não há espaço suficiente em disco para processar este relatório."
 
-#: ../apport/ui.py:337
+#: ../apport/ui.py:332
 msgid "No package specified"
 msgstr "Nenhum pacote especificado"
 
-#: ../apport/ui.py:338
+#: ../apport/ui.py:333
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Você precisa especificar o pacote ou o PID. Veja --help para mais "
 "informações."
 
-#: ../apport/ui.py:354
+#: ../apport/ui.py:343
 msgid "Invalid PID"
 msgstr "PID inválido"
 
-#: ../apport/ui.py:355
+#: ../apport/ui.py:344
 msgid "The specified process ID does not belong to a program."
 msgstr "O ID do processo especificado não pertence a um programa."
 
-#: ../apport/ui.py:363
+#: ../apport/ui.py:352
 msgid "Permission denied"
 msgstr "Permissão negada"
 
-#: ../apport/ui.py:364
+#: ../apport/ui.py:353
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -127,25 +127,25 @@ msgstr ""
 "O processo especificado não pertence a você. Por favor, execute este "
 "programa como dono do processo ou como usuário root."
 
-#: ../apport/ui.py:385
+#: ../apport/ui.py:374
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "O script de sintoma %s não determinou um pacote afetado."
 
-#: ../apport/ui.py:388
+#: ../apport/ui.py:377
 #, python-format
 msgid "Package %s does not exist"
 msgstr "O pacote %s não existe."
 
-#: ../apport/ui.py:413 ../apport/ui.py:595 ../apport/ui.py:600
+#: ../apport/ui.py:404
 msgid "Cannot create report"
 msgstr "Não foi possível criar o relatório"
 
-#: ../apport/ui.py:427 ../apport/ui.py:473 ../apport/ui.py:490
+#: ../apport/ui.py:418 ../apport/ui.py:464 ../apport/ui.py:480
 msgid "Updating problem report"
 msgstr "Atualizando o relatório de problema"
 
-#: ../apport/ui.py:428
+#: ../apport/ui.py:419
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -156,7 +156,7 @@ msgstr ""
 "está duplicado ou já foi fechado.\n"
 "Por favor, crie um novo relatório utilizando o \"apport-bug\""
 
-#: ../apport/ui.py:437
+#: ../apport/ui.py:428
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -176,19 +176,19 @@ msgstr ""
 "\n"
 "Você realmente deseja continuar?"
 
-#: ../apport/ui.py:474 ../apport/ui.py:491
+#: ../apport/ui.py:465 ../apport/ui.py:481
 msgid "No additional information collected."
 msgstr "Nenhuma informação adicional foi coletada."
 
-#: ../apport/ui.py:540
+#: ../apport/ui.py:520
 msgid "What kind of problem do you want to report?"
 msgstr "Que tipo de problema você deseja informar?"
 
-#: ../apport/ui.py:557
+#: ../apport/ui.py:537
 msgid "Unknown symptom"
 msgstr "Sintoma desconhecido"
 
-#: ../apport/ui.py:558
+#: ../apport/ui.py:538
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "O sintoma \"%s\" não é conhecido."
@@ -205,7 +205,7 @@ msgstr ""
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop falhou ao determinar a ID do processo da janela"
 
-#: ../apport/ui.py:615
+#: ../apport/ui.py:577
 msgid "%prog <report number>"
 msgstr "%prog <relato número>"
 
@@ -218,14 +218,14 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "Adicione um rótulo a mais ao relatório. Pode ser especificado várias vezes."
 
-#: ../apport/ui.py:649
+#: ../apport/ui.py:610
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [opções] [sintoma|pid|pacote|localização do programa|arquivo "
 ".apport/.crash]"
 
-#: ../apport/ui.py:652
+#: ../apport/ui.py:612
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -239,12 +239,12 @@ msgstr ""
 msgid "Click a window as a target for filing a problem report."
 msgstr "Clique na janela como alvo para preencher um relatório de problema."
 
-#: ../apport/ui.py:656
+#: ../apport/ui.py:615
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "Iniciar em modo de atualização de erro. Aceita o parâmetro --package."
 
-#: ../apport/ui.py:658
+#: ../apport/ui.py:618
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -252,7 +252,7 @@ msgstr ""
 "Submete um relatório de bug sobre um sintoma. (Automático se um nome de "
 "sintoma é fornecido como único argumento)"
 
-#: ../apport/ui.py:660
+#: ../apport/ui.py:621
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -271,7 +271,7 @@ msgstr ""
 "relatório de erro conterá mais informações. (Implícito se pid for dado como "
 "único argumento.)"
 
-#: ../apport/ui.py:664
+#: ../apport/ui.py:627
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -291,7 +291,7 @@ msgstr ""
 "arquivo em vez de relatá-las. Esse arquivo pode ser reportado mais tarde ou "
 "de outra máquina."
 
-#: ../apport/ui.py:670
+#: ../apport/ui.py:633
 msgid "Print the Apport version number."
 msgstr "Imprimir o número da versão do Apport."
 
@@ -319,54 +319,54 @@ msgstr ""
 msgid "The problem happened with the program %s which changed since then."
 msgstr ""
 
-#: ../apport/ui.py:910
+#: ../apport/ui.py:794
 msgid "Could not determine the package or source package name."
 msgstr "Não foi possível determinar o pacote ou nome do pacote fonte."
 
-#: ../apport/ui.py:925
+#: ../apport/ui.py:809
 msgid "Unable to start web browser"
 msgstr "Não é possível iniciar navegador web"
 
-#: ../apport/ui.py:926
+#: ../apport/ui.py:810
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Não é possível iniciar navegador web para abrir %s."
 
-#: ../apport/ui.py:993
+#: ../apport/ui.py:916
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 "Por favor digite as informações da sua conta para o sistema de monitoramento "
 "de falhas %s"
 
-#: ../apport/ui.py:1004
+#: ../apport/ui.py:927
 msgid "Network problem"
 msgstr "Problema na rede"
 
-#: ../apport/ui.py:1006
+#: ../apport/ui.py:929
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Não é possível conectar em uma base de dados quebrada, por favor verifique "
 "sua conexão com a internet."
 
-#: ../apport/ui.py:1032
+#: ../apport/ui.py:954
 msgid "Memory exhaustion"
 msgstr "Memória exaurida"
 
-#: ../apport/ui.py:1033
+#: ../apport/ui.py:955
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Seu sistema não tem memória o suficiente para processar este relatório de "
 "erro."
 
-#: ../apport/ui.py:1056 ../apport/ui.py:1065
+#: ../apport/ui.py:978 ../apport/ui.py:987
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "Este problema relatado se aplica a um programa que não está mais instalado."
 
-#: ../apport/ui.py:1084
+#: ../apport/ui.py:276 ../apport/ui.py:385
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -377,11 +377,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1114
+#: ../apport/ui.py:1019
 msgid "Problem already known"
 msgstr "Problema já informado"
 
-#: ../apport/ui.py:1115
+#: ../apport/ui.py:1020
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -391,26 +391,26 @@ msgstr ""
 "Por favor, verifique se você pode adicionar alguma informação adicional que "
 "possa ser útil aos desenvolvedores."
 
-#: ../bin/apport-cli.py:71
+#: ../bin/apport-cli.py:70
 msgid "Press any key to continue..."
 msgstr "Pressione qualquer tecla para continuar..."
 
-#: ../bin/apport-cli.py:78
+#: ../bin/apport-cli.py:77
 msgid "What would you like to do? Your options are:"
 msgstr "O que você gostaria de fazer? Suas opções são:"
 
-#: ../bin/apport-cli.py:82
+#: ../bin/apport-cli.py:81
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Por favor escolha (%s):"
 
 #. translators: first %s: application name, second %s: date, third %s: time
-#: ../bin/apport-cli.py:139
+#: ../bin/apport-cli.py:138
 #, python-format
 msgid "%s closed unexpectedly on %s at %s."
 msgstr "%s fechou inesperadamente em %s em %s."
 
-#: ../bin/apport-cli.py:143
+#: ../bin/apport-cli.py:142
 msgid ""
 "If you were not doing anything confidential (entering passwords or other\n"
 "private information), you can help to improve the application by reporting\n"
@@ -420,59 +420,58 @@ msgstr ""
 "informações privadas), você pode ajudar a melhorar o aplicativo relatando\n"
 "o problema."
 
-#: ../bin/apport-cli.py:146 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
-#: ../kde/apport-kde.py:199 ../kde/apport-kde.py:229 ../kde/apport-kde.py:250
+#: ../bin/apport-cli.py:145 ../bin/apport-cli.py:164 ../bin/apport-cli.py:182
 msgid "&Report Problem..."
 msgstr "&Reportar Problema..."
 
-#: ../bin/apport-cli.py:147
+#: ../bin/apport-cli.py:146
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Cancelar e &ignorar futuros travamentos dessa versão do programa."
 
-#: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-#: ../bin/apport-cli.py:243 ../bin/apport-cli.py:326 ../bin/apport-cli.py:358
-#: ../bin/apport-cli.py:379
+#: ../bin/apport-cli.py:147 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
+#: ../bin/apport-cli.py:242 ../bin/apport-cli.py:323 ../bin/apport-cli.py:355
+#: ../bin/apport-cli.py:376
 msgid "&Cancel"
 msgstr "&Cancelar"
 
-#: ../bin/apport-cli.py:163
+#: ../bin/apport-cli.py:162
 #, python-format
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr "O pacote \"%s\" falhou na instalação ou atualização."
 
-#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:23 ../kde/apport-kde.py:226
+#: ../bin/apport-cli.py:163 ../gtk/apport-gtk.ui.h:22
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
 "Você pode ajudar os desenvolvedores a reparar o pacote informando o problema."
 
-#: ../bin/apport-cli.py:176 ../gtk/apport-gtk.py:126 ../kde/apport-kde.py:241
+#: ../bin/apport-cli.py:175
 msgid "Your system encountered a serious kernel problem."
 msgstr "Seu sistema encontrou um grave problema no kernel"
 
-#: ../bin/apport-cli.py:180 ../gtk/apport-gtk.py:130 ../kde/apport-kde.py:245
+#: ../bin/apport-cli.py:179
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr ""
 "Você pode ajudar os desenvolvedores a corrigir o problema, reportando-o."
 
-#: ../bin/apport-cli.py:208
+#: ../bin/apport-cli.py:213
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i bytes)"
 
-#: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:160 ../kde/apport-kde.py:293
+#: ../bin/apport-cli.py:215
 msgid "(binary data)"
 msgstr "(dados binários)"
 
-#: ../bin/apport-cli.py:218 ../gtk/apport-gtk.py:183 ../kde/apport-kde.py:265
+#: ../bin/apport-cli.py:222
 msgid "Send this data to the developers?"
 msgstr "Deseja enviar estes dados para os desenvolvedores?"
 
-#: ../bin/apport-cli.py:220 ../kde/apport-kde.py:270
+#: ../bin/apport-cli.py:224
 msgid "Send problem report to the developers?"
 msgstr "Enviar o relatório do problema aos desenvolvedores?"
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:225
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -480,17 +479,17 @@ msgstr ""
 "Depois que o relatório do problema for enviado, por favor preencha o \n"
 "formulário que será aberto automaticamente no navegador web."
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:230
 #, python-format
 msgid "&Send complete report (recommended; %s)"
 msgstr "&Enviar relatório completo (recomendado; %s)"
 
-#: ../bin/apport-cli.py:228
+#: ../bin/apport-cli.py:232
 #, python-format
 msgid "Send &reduced report (slow Internet connection; %s)"
 msgstr "Enviar relatório &resumido (conexão lenta com a internet; %s)"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:235
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Enviar relatório (%s)"
@@ -499,34 +498,34 @@ msgstr "&Enviar relatório (%s)"
 msgid "&Examine locally"
 msgstr ""
 
-#: ../bin/apport-cli.py:240
+#: ../bin/apport-cli.py:239
 msgid "&View report"
 msgstr "&Ver relatório"
 
-#: ../bin/apport-cli.py:241
+#: ../bin/apport-cli.py:240
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Manter arquivo do relatório para enviar mais tarde ou copiar para outro "
 "lugar."
 
-#: ../bin/apport-cli.py:275
+#: ../bin/apport-cli.py:272
 msgid "Problem report file:"
 msgstr "Arquivo do relatório de problema:"
 
-#: ../bin/apport-cli.py:283 ../bin/apport-cli.py:288
+#: ../bin/apport-cli.py:280 ../bin/apport-cli.py:285
 msgid "&Confirm"
 msgstr "&Confirmar"
 
-#: ../bin/apport-cli.py:287
+#: ../bin/apport-cli.py:284
 #, python-format
 msgid "Error: %s"
 msgstr "Erro: %s"
 
-#: ../bin/apport-cli.py:293 ../kde/apport-kde.py:332
+#: ../bin/apport-cli.py:290
 msgid "Collecting problem information"
 msgstr "Coletando informações sobre o problema"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:291
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -534,11 +533,11 @@ msgstr ""
 "A informação coletada pode ser enviada aos desenvolvedores para melhorar\n"
 "o aplicativo. Isso pode demorar alguns minutos."
 
-#: ../bin/apport-cli.py:306 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:303 ../gtk/apport-gtk.ui.h:21
 msgid "Uploading problem information"
 msgstr "Enviando informações sobre o problema"
 
-#: ../bin/apport-cli.py:307
+#: ../bin/apport-cli.py:304
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -547,40 +546,40 @@ msgstr ""
 "erros.\n"
 "Isso pode demorar alguns minutos."
 
-#: ../bin/apport-cli.py:357
+#: ../bin/apport-cli.py:354
 msgid "&Done"
 msgstr "&Pronto"
 
-#: ../bin/apport-cli.py:363
+#: ../bin/apport-cli.py:360
 msgid "none"
 msgstr "nenhum"
 
-#: ../bin/apport-cli.py:364
+#: ../bin/apport-cli.py:361
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Selecionado: %s. Multiplas opções:"
 
-#: ../bin/apport-cli.py:380
+#: ../bin/apport-cli.py:377
 msgid "Choices:"
 msgstr "Escolhas:"
 
-#: ../bin/apport-cli.py:394
+#: ../bin/apport-cli.py:391
 msgid "Path to file (Enter to cancel):"
 msgstr "Caminho para o arquivo (Enter para cancelar):"
 
-#: ../bin/apport-cli.py:400
+#: ../bin/apport-cli.py:396
 msgid "File does not exist."
 msgstr "O arquivo não existe."
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:398
 msgid "This is a directory."
 msgstr "Isto é um diretório."
 
-#: ../bin/apport-cli.py:408
+#: ../bin/apport-cli.py:404
 msgid "To continue, you must visit the following URL:"
 msgstr "Para continuar, você deve visitar a seguinte URL:"
 
-#: ../bin/apport-cli.py:410
+#: ../bin/apport-cli.py:406
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -588,11 +587,11 @@ msgstr ""
 "Você pode executar um navegador agora, ou copiar esta URL dentro de um "
 "navegador em outro computador."
 
-#: ../bin/apport-cli.py:412
+#: ../bin/apport-cli.py:408
 msgid "Launch a browser now"
 msgstr "Executar o navegador agora"
 
-#: ../bin/apport-cli.py:426
+#: ../bin/apport-cli.py:415
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nenhum relatório de travamentos pendente. Tente --help para maiores "
@@ -657,16 +656,16 @@ msgstr "Problema no aplicativo"
 msgid "Apport"
 msgstr "Apport"
 
-#: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:301
-#, no-c-format, python-format
+#: ../gtk/apport-gtk.ui.h:10
+#, no-c-format
 msgid "Complete report (recommended; %s)"
 msgstr "Relatório completo (recomendado; %s)"
 
-#: ../gtk/apport-gtk.ui.h:12
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "Índice do relatório"
 
-#: ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:194
+#: ../gtk/apport-gtk.ui.h:12
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -676,7 +675,7 @@ msgstr ""
 "informação privada), você pode ajudar a melhorar este aplicativo relatando o "
 "problema ocorrido."
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../gtk/apport-gtk.ui.h:13
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -684,24 +683,24 @@ msgstr ""
 "A informação que está sendo coletada pode ajudar os desenvolvedores a "
 "corrigir o problema que você relatou."
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:248
+#: ../gtk/apport-gtk.ui.h:14
 msgid "Kernel problem"
 msgstr "Problema no kernel"
 
-#: ../gtk/apport-gtk.ui.h:16
+#: ../gtk/apport-gtk.ui.h:15
 msgid "Package problem"
 msgstr "Problema no pacote"
 
-#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:304
-#, no-c-format, python-format
+#: ../gtk/apport-gtk.ui.h:17
+#, no-c-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Relatório reduzido (baixa conexão de internet; %s)"
 
-#: ../gtk/apport-gtk.ui.h:19
+#: ../gtk/apport-gtk.ui.h:18
 msgid "Restart _Program"
 msgstr "Reiniciar o _Programa"
 
-#: ../gtk/apport-gtk.ui.h:20 ../kde/apport-kde.py:350
+#: ../gtk/apport-gtk.ui.h:19
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -709,7 +708,7 @@ msgstr ""
 "A informação coletada está sendo enviada ao sistema de rastreamento de "
 "erros. Isto pode levar alguns minutos."
 
-#: ../gtk/apport-gtk.ui.h:21
+#: ../gtk/apport-gtk.ui.h:20
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -723,15 +722,15 @@ msgstr ""
 msgid "_Examine locally"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:25
+#: ../gtk/apport-gtk.ui.h:23
 msgid "_Ignore future crashes of this program version"
 msgstr "_Ignorar travamentos futuros nesta versão do programa"
 
-#: ../gtk/apport-gtk.ui.h:26
+#: ../gtk/apport-gtk.ui.h:24
 msgid "_Report Problem..."
 msgstr "Info_rmar Problema..."
 
-#: ../gtk/apport-gtk.ui.h:27
+#: ../gtk/apport-gtk.ui.h:25
 msgid "_Send Report"
 msgstr "_Enviar Relatório"
 
@@ -745,16 +744,16 @@ msgstr "Relatar um mal-funcionamento aos desenvolvedores"
 msgid "Report a problem..."
 msgstr "Informar um problema..."
 
-#: ../bin/apport-retrace.py:37
+#: ../bin/apport-retrace.py:28
 msgid "%prog [options] <apport problem report | crash ID>"
 msgstr "%prog [opções] <relatório de problema apport | id da falha>"
 
-#: ../bin/apport-retrace.py:39
+#: ../bin/apport-retrace.py:30
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr ""
 "Não colocar as novas análises no relatório, mas mostrá-las na saída padrão."
 
-#: ../bin/apport-retrace.py:41
+#: ../bin/apport-retrace.py:33
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -762,31 +761,31 @@ msgstr ""
 "Iniciar uma sessão interativa do gdb com o core dump do relatório (-o "
 "ignorado; não reescreve o relatório)"
 
-#: ../bin/apport-retrace.py:43
+#: ../bin/apport-retrace.py:36
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
 "Escrever relatório modificado para determinado arquivo ao invés de alterar o "
 "relatório original"
 
-#: ../bin/apport-retrace.py:45
+#: ../bin/apport-retrace.py:39
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr ""
 "Remove o core dump do relatório após a regeneração da análise da pilha"
 
-#: ../bin/apport-retrace.py:47
+#: ../bin/apport-retrace.py:42
 msgid "Override report's CoreFile"
 msgstr "Sobrescrever os relatórios \"CoreFile\""
 
-#: ../bin/apport-retrace.py:49
+#: ../bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
 msgstr "Sobrescrever os relatórios \"ExecutablePath\""
 
-#: ../bin/apport-retrace.py:51
+#: ../bin/apport-retrace.py:48
 msgid "Override report's ProcMaps"
 msgstr "Sobrescrever os relatórios \"ProcMaps\""
 
-#: ../bin/apport-retrace.py:53
+#: ../bin/apport-retrace.py:51
 msgid "Rebuild report's Package information"
 msgstr "Reconstruir o relatório de informação do pacote"
 
@@ -829,7 +828,7 @@ msgstr ""
 "Instalar um pacote extra na área local (pode ser especificado múltiplas "
 "vezes)"
 
-#: ../bin/apport-retrace.py:65
+#: ../bin/apport-retrace.py:66
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -840,7 +839,7 @@ msgstr ""
 "para carregar o rastreamento de pilha refeito (somente se não -g, -o, nem -s "
 "forem especificadas)"
 
-#: ../bin/apport-retrace.py:67
+#: ../bin/apport-retrace.py:69
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -848,18 +847,18 @@ msgstr ""
 "Exibir rastreamentos de pilhas refeitos e pedir confirmação antes de enviá-"
 "los para o banco de dados de falhas."
 
-#: ../bin/apport-retrace.py:69
+#: ../bin/apport-retrace.py:72
 msgid ""
 "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Caminho para o banco de dados de duplicados do SQLite (padrão: nenhuma "
 "verificação duplicação)"
 
-#: ../bin/apport-retrace.py:74
+#: ../bin/apport-retrace.py:78
 msgid "incorrect number of arguments; use --help for a short help"
 msgstr "número de argumentos incorretos; use --help para uma ajuda rápida"
 
-#: ../bin/apport-retrace.py:78
+#: ../bin/apport-retrace.py:82
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
@@ -868,7 +867,7 @@ msgstr ""
 "autenticação (--auth); veja --help para uma ajuda rápida"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:110
+#: ../bin/apport-retrace.py:115
 msgid "OK to send these as attachments? [y/n]"
 msgstr "OK para enviar estes como anexos? [y / n]"
 
