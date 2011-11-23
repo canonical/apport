@@ -69,22 +69,25 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_present_crash(self, desktop_entry): 
         # adapt dialog heading and label appropriately
-        if desktop_entry:
-            # python2+glib needs a confusing mix of UTF-8 str and unicode here :-(
-            n = desktop_entry.getName().encode('UTF-8')
-            n = GLib.markup_escape_text(n).decode('UTF-8')
-            heading = _('Sorry, %s closed unexpectedly') % n
-        elif 'ExecutablePath' in self.report:
-            heading = _('Sorry, the program "%s" closed unexpectedly') % os.path.basename(self.report['ExecutablePath'])
+        if 'Annotation' in self.report:
+            heading = self.report['Annotation']
         else:
-            heading = _('Sorry, %s closed unexpectedly') % self.cur_package
+            if desktop_entry:
+                # python2+glib needs a confusing mix of UTF-8 str and unicode here :-(
+                n = desktop_entry.getName().encode('UTF-8')
+                n = GLib.markup_escape_text(n).decode('UTF-8')
+                heading = _('Sorry, %s closed unexpectedly') % n
+            elif 'ExecutablePath' in self.report:
+                heading = _('Sorry, the program "%s" closed unexpectedly') % os.path.basename(self.report['ExecutablePath'])
+            else:
+                heading = _('Sorry, %s closed unexpectedly') % self.cur_package
 
         if desktop_entry and 'ExecutablePath' in self.report and 'ProcCmdline' in self.report and \
 	    os.path.dirname(self.report['ExecutablePath']) in os.environ['PATH'].split(':') and \
 	    subprocess.call(['pgrep', '-x',
 		os.path.basename(self.report['ExecutablePath']), 
 		'-u', str(os.geteuid())], stdout=subprocess.PIPE) != 0:
-            self.w('label_heading_reopen').set_markup(self.str_heading % heading)
+            self.w('label_heading_reopen').set_markup(self.str_heading_reopen % heading)
             d = self.w('dialog_crash_reopen')
 	    bl_checkbox = self.w('checkbutton_blacklist_reopen')
         else:
@@ -111,8 +114,12 @@ class GTKUserInterface(apport.ui.UserInterface):
             return {'action': 'cancel', 'blacklist': blacklist}
 
     def ui_present_package_error(self):
-	self.w('label_heading_package_error').set_markup(
-	    self.str_heading_package_error % self.report['Package'])
+        if 'Annotation' in self.report:
+            self.w('label_heading_package_error').set_markup(
+                    self.report['Annotation'])
+        else:
+            self.w('label_heading_package_error').set_markup(
+                self.str_heading_package_error % self.report['Package'])
         response = self.w('dialog_package_error').run()
         self.w('dialog_package_error').hide()
         while Gtk.events_pending():

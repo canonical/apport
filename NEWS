@@ -42,6 +42,9 @@ Improvements:
  - launchpad.py: Attach updated stack traces from a duplicate to the master bug
    if it failed retracing previously or has an "apport-request-retrace" tag.
    (LP: #869982)
+ - apport-kde, apport-gtk: Support the "Annotation" field for custom dialog
+   titles for "Crash" and "Package" problem types as well, not just for
+   "Kernel". (LP: #664378)
 
 1.26 (2011-11-11):
 ------------------

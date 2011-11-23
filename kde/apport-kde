@@ -180,15 +180,18 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_present_crash(self, desktop_entry):
         # adapt dialog heading and label appropriately
-        if desktop_entry:
-            name = desktop_entry.getName()
-            heading = _('Sorry, %s closed unexpectedly') % name
-        elif 'ExecutablePath' in self.report:
-            name = os.path.basename(self.report['ExecutablePath'])
-            heading = _('Sorry, the program "%s" closed unexpectedly.') % name
+        if 'Annotation' in self.report:
+            heading = self.report['Annotation']
         else:
-            name = self.cur_package
-            heading = _('Sorry, %s closed unexpectedly.') % name
+            if desktop_entry:
+                name = desktop_entry.getName()
+                heading = _('Sorry, %s closed unexpectedly') % name
+            elif 'ExecutablePath' in self.report:
+                name = os.path.basename(self.report['ExecutablePath'])
+                heading = _('Sorry, the program "%s" closed unexpectedly.') % name
+            else:
+                name = self.cur_package
+                heading = _('Sorry, %s closed unexpectedly.') % name
 
         dialog = ErrorDialog(name, heading,
                 _('If you were not doing anything confidential (entering '
@@ -219,10 +222,11 @@ class MainUserInterface(apport.ui.UserInterface):
         return {'action': 'cancel', 'blacklist': blacklist}
 
     def ui_present_package_error(self):
-        name = self.report['Package']
-        dialog = ErrorDialog(name,
-                _('Sorry, the package "%s" failed to install or upgrade.') %
-                  name,
+        if 'Annotation' in self.report:
+            title = self.report['Annotation']
+        else:
+            title = _('Sorry, the package "%s" failed to install or upgrade.') % self.report['Package']
+        dialog = ErrorDialog(name, title,
                 _('You can help the developers to fix the package by '
                   'reporting the problem.'))
 
