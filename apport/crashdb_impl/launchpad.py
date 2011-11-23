@@ -637,7 +637,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             return None
 
-    def close_duplicate(self, id, master_id):
+    def close_duplicate(self, report, id, master_id):
         '''Mark a crash id as duplicate of given master ID.
         
         If master is None, id gets un-duplicated.
@@ -1256,15 +1256,16 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
 
             # dupe our segv_report and check that it worked; then undupe it
-            self.crashdb.close_duplicate(segv_report, self.known_test_id)
+            r = self.crashdb.download(segv_report)
+            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
             self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
 
             # this should be a no-op
-            self.crashdb.close_duplicate(segv_report, self.known_test_id)
+            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
             self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
 
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), 'invalid')
-            self.crashdb.close_duplicate(segv_report, None)
+            self.crashdb.close_duplicate(r, segv_report, None)
             self.assertEqual(self.crashdb.duplicate_of(segv_report), None)
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
 
@@ -1278,18 +1279,18 @@ NameError: global name 'weird' is not defined'''
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
-            self.crashdb.close_duplicate(self.known_test_id,
+            self.crashdb.close_duplicate({}, self.known_test_id,
                     self.known_test_id2)
-            self.crashdb.close_duplicate(segv_report, self.known_test_id)
+            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
             self.assertEqual(self.crashdb.duplicate_of(segv_report),
                     self.known_test_id2)
 
-            self.crashdb.close_duplicate(self.known_test_id, None)
-            self.crashdb.close_duplicate(self.known_test_id2, None)
-            self.crashdb.close_duplicate(segv_report, None)
+            self.crashdb.close_duplicate({}, self.known_test_id, None)
+            self.crashdb.close_duplicate({}, self.known_test_id2, None)
+            self.crashdb.close_duplicate(r, segv_report, None)
 
             # this should be a no-op
-            self.crashdb.close_duplicate(self.known_test_id, None)
+            self.crashdb.close_duplicate({}, self.known_test_id, None)
             self.assertEqual(self.crashdb.duplicate_of(self.known_test_id), None)
 
             self.crashdb.mark_regression(segv_report, self.known_test_id)
@@ -1355,7 +1356,7 @@ NameError: global name 'weird' is not defined'''
 
             r = self.crashdb.download(id)
 
-            self.crashdb.close_duplicate(id, segv_report)
+            self.crashdb.close_duplicate(r, id, segv_report)
 
             # updating with an useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
@@ -1566,10 +1567,10 @@ NameError: global name 'weird' is not defined'''
 
             # test fixed version
             self.assertEqual(crashdb.get_fixed_version(id), None)
-            crashdb.close_duplicate(id, self.known_test_id)
+            crashdb.close_duplicate(r, id, self.known_test_id)
             self.assertEqual(crashdb.duplicate_of(id), self.known_test_id)
             self.assertEqual(crashdb.get_fixed_version(id), 'invalid')
-            crashdb.close_duplicate(id, None)
+            crashdb.close_duplicate(r, id, None)
             self.assertEqual(crashdb.duplicate_of(id), None)
             self.assertEqual(crashdb.get_fixed_version(id), None)
 
@@ -1601,7 +1602,7 @@ NameError: global name 'weird' is not defined'''
                 for b in range(first_dup, first_dup+13):
                     count += 1
                     sys.stderr.write('%i ' % b)
-                    db.close_duplicate(b, segv_report)
+                    db.close_duplicate({}, b, segv_report)
                     b = db.launchpad.bugs[segv_report]
                     has_escalation_tag = db.options['escalation_tag'] in b.tags
                     has_escalation_subscription = any([s.person_link == p for s in b.subscriptions])
@@ -1614,7 +1615,7 @@ NameError: global name 'weird' is not defined'''
             finally:
                 for b in range(first_dup, first_dup+count):
                     sys.stderr.write('R%i ' % b)
-                    db.close_duplicate(b, None)
+                    db.close_duplicate({}, b, None)
             sys.stderr.write('\n')
 
         def test_marking_python_task_mangle(self):

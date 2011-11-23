@@ -170,7 +170,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''
         return self.reports[id]['dup_of']
 
-    def close_duplicate(self, id, master):
+    def close_duplicate(self, report, id, master):
         '''Mark a crash id as duplicate of given master ID.
         
         If master is None, id gets un-duplicated.
@@ -457,7 +457,7 @@ databases = {
 
         self.assertEqual(self.crashes.duplicate_of(0), None)
         self.assertEqual(self.crashes.duplicate_of(1), None)
-        self.crashes.close_duplicate(1, 0)
+        self.crashes.close_duplicate({}, 1, 0)
         self.assertEqual(self.crashes.duplicate_of(0), None)
         self.assertEqual(self.crashes.duplicate_of(1), 0)
 
@@ -577,7 +577,7 @@ databases = {
         self.crashes.reports[3]['fixed_version'] = '4.1'
 
         # ID#4 is dup of ID#3, but happend in version 5 -> regression
-        self.crashes.close_duplicate(4, None) # reset
+        self.crashes.close_duplicate(self.crashes.download(4), 4, None) # reset
         self.assertEqual(self.crashes.check_duplicate(4), None)
         self.assertEqual(self.crashes.duplicate_of(4), None)
         self.assertEqual(self.crashes.reports[4]['comment'], 'regression, already fixed in #3')

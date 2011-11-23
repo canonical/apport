@@ -175,7 +175,7 @@ class CrashDatabase:
                 apport.packaging.compare_versions(report_package_version, ex_ver) < 0: 
                 if addr_sig:
                     self._duplicate_db_add_address_signature(addr_sig, ex_id)
-                self.close_duplicate(id, ex_id)
+                self.close_duplicate(report, id, ex_id)
                 return (ex_id, ex_ver)
 
         # if the version comparison did not find a match, but we have a
@@ -711,7 +711,7 @@ class CrashDatabase:
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
-    def close_duplicate(self, id, master):
+    def close_duplicate(self, report, id, master):
         '''Mark a crash id as duplicate of given master ID.
         
         If master is None, id gets un-duplicated.
