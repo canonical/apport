@@ -708,11 +708,11 @@ Please continue to report any other bugs you may find.' % master_id,
                 x = master.tags[:] # LP#254901 workaround
                 try:
                     x.remove('apport-failed-retrace')
-                except KeyError:
+                except ValueError:
                     pass
                 try:
                     x.remove('apport-request-retrace')
-                except KeyError:
+                except ValueError:
                     pass
                 master.tags = x
                 try:
@@ -1360,18 +1360,18 @@ NameError: global name 'weird' is not defined'''
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
-            self.crashdb.close_duplicate({}, self.known_test_id,
+            self.crashdb.close_duplicate(apport.Report(), self.known_test_id,
                     self.known_test_id2)
             self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
             self.assertEqual(self.crashdb.duplicate_of(segv_report),
                     self.known_test_id2)
 
-            self.crashdb.close_duplicate({}, self.known_test_id, None)
-            self.crashdb.close_duplicate({}, self.known_test_id2, None)
+            self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
+            self.crashdb.close_duplicate(apport.Report(), self.known_test_id2, None)
             self.crashdb.close_duplicate(r, segv_report, None)
 
             # this should be a no-op
-            self.crashdb.close_duplicate({}, self.known_test_id, None)
+            self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
             self.assertEqual(self.crashdb.duplicate_of(self.known_test_id), None)
 
             self.crashdb.mark_regression(segv_report, self.known_test_id)
@@ -1683,7 +1683,7 @@ NameError: global name 'weird' is not defined'''
                 for b in range(first_dup, first_dup+13):
                     count += 1
                     sys.stderr.write('%i ' % b)
-                    db.close_duplicate({}, b, segv_report)
+                    db.close_duplicate(apport.Report(), b, segv_report)
                     b = db.launchpad.bugs[segv_report]
                     has_escalation_tag = db.options['escalation_tag'] in b.tags
                     has_escalation_subscription = any([s.person_link == p for s in b.subscriptions])
@@ -1696,7 +1696,7 @@ NameError: global name 'weird' is not defined'''
             finally:
                 for b in range(first_dup, first_dup+count):
                     sys.stderr.write('R%i ' % b)
-                    db.close_duplicate({}, b, None)
+                    db.close_duplicate(apport.Report(), b, None)
             sys.stderr.write('\n')
 
         def test_marking_python_task_mangle(self):
