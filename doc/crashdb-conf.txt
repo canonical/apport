@@ -13,8 +13,9 @@ default = 'ubuntu'
 databases = {
     'ubuntu': { 
         'impl': 'launchpad',
+        'distro': 'ubuntu'
         'bug_pattern_url': 'http://people.canonical.com/~ubuntu-archive/bugpatterns/bugpatterns.xml',
-	'distro': 'ubuntu'
+        'dupdb_url': 'http://people.canonical.com/~ubuntu-archive/apport-duplicates',
     },
 }
 +-----------------
@@ -22,6 +23,22 @@ databases = {
 The 'default' parameter is used to specify the default database to use when
 getting a crash report.  It's one of the names used as a label in the databases
 dictionary.
+
+Standard options
+================
+
+All crash database implementations support the following options:
+
+ - bug_pattern_url: URL to an XML file describing the bug patterns for this
+   distribution. This can match existing bugs to arbitrary keys of a report
+   with regular expressions, to prevent common problems from being reported
+   over and over again. Please see apport.Report.search_bug_patterns() for the
+   format.
+
+ - dupdb_url: URL for the duplicate DB export, to prevent already known crashes
+   from being reported again. This can be generated from an existing duplicate
+   database SQLite file with "dupdb admin publish" (see manpage) or with the
+   --publish-db option of crash-digger.
 
 Third Parties crashdb databases
 ===============================
