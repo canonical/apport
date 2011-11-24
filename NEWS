@@ -37,6 +37,9 @@ Improvements:
    report URL (if available), similar to bug patterns. The default
    implementation checks this format, if the crash database is initialized with
    a "dupdb_url" option pointing to the exported database.
+ - launchpad.py: Override known() to check if the master bug is actually
+   accessible by the reporter, and is not tagged with "apport-failed-retrace"
+   or "apport-request-retrace"; otherwise file it anyway.
  - crash-digger: Add --publish-db option to conveniently integrate duplicate DB
    publication (similar to dupdb-admin publish) into retracer setups.
  - launchpad.py: Attach updated stack traces from a duplicate to the master bug
