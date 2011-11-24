@@ -1710,6 +1710,9 @@ NameError: global name 'weird' is not defined'''
             # package task; _mark_dup_checked is supposed to restore the
             # package name
             b = self.crashdb.launchpad.bugs[python_report]
+            if b.private:
+                b.private = False
+                b.lp_save()
             t = b.bug_tasks[0]
             t.target = self.crashdb.launchpad.distributions['ubuntu']
             t.lp_save()

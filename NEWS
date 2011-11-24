@@ -10,6 +10,8 @@ Bug fixes:
    name when it is a relative path.
  - launchpad.py: Only query for bugs after 2011-08-01, to avoid timeouts.
  - ui.py: Also anonymize standard bug title. (LP: #893863)
+ - launchpad.py: Current Launchpad cannot have private bugs which affect
+   multiple projects. Fix test suite accordingly.
 
 Improvements:
  - report.py: Break out new method stacktrace_top_function() from
