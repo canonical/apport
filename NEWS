@@ -1,8 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.27 (UNRELEASED):
+1.90 (UNRELEASED):
 ------------------
+First beta release of 2.0 which introduces client-side duplicate checking.
+
 Bug fixes:
  - backends/packaging-apt-dpkg.py: Fix another test case failure when ddeb
    repository is not enabled.
