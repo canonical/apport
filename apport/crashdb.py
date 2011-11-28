@@ -139,6 +139,7 @@ class CrashDatabase:
             sig = report['DuplicateSignature']
         else:
             sig = report.crash_signature()
+        existing = []
         if sig:
             # use real duplicate signature
             existing = self._duplicate_search_signature(sig, id)
@@ -148,7 +149,8 @@ class CrashDatabase:
                 for (ex_id, _) in existing:
                     self._duplicate_db_sync_status(ex_id)
                 existing = self._duplicate_search_signature(sig, id)
-        else:
+            
+        if not existing:
             # fall back to address signature
             if addr_sig:
                 existing = self._duplicate_search_address_signature(addr_sig)
@@ -157,9 +159,6 @@ class CrashDatabase:
                     existing = [(existing, None)]
                 else:
                     existing = []
-            else:
-                # no signature to compare against
-                return None
 
         try:
             report_package_version = report['Package'].split()[1]

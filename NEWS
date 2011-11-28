@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.91 (UNRELEASED):
+------------------
+Bug fixes:
+ - crashdb.py, check_duplicate(): If a crash has a signature but no existing
+   duplicate in the DB, also check for an existing address signature duplicate
+   in the DB.
+
 1.90 (2011-11-24):
 ------------------
 First beta release of 2.0 which introduces client-side duplicate checking.
