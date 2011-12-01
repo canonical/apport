@@ -324,7 +324,7 @@ if report['ProblemType'] == 'KernelCrash':
         apport.error('report file does not contain the required fields')
         sys.exit(0)
     apport.error('KernelCrash processing not implemented yet')
-    sys.exit(99) # signal crash digger about transient error
+    sys.exit(0)
 elif not required_fields.issubset(set(report.keys())):
     apport.error('report file does not contain one of the required fields: ' + \
 	' '.join(required_fields))
