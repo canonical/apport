@@ -9,6 +9,8 @@ Bug fixes:
    in the DB.
  - apport-retrace: Use DistroRelease specific subdirectory of the cache dir for
    mapping a file to a package, as these maps are release specific.
+ - packaging-apt-dpkg.py: Refresh Contents.gz cache if it is older than one
+   day.
 
 1.90 (2011-11-24):
 ------------------

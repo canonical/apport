@@ -629,8 +629,15 @@ class __AptDpkgPackageInfo(PackageInfo):
         arch = self.get_system_architecture()
         map = os.path.join(dir, 'Contents-%s.gz' % arch)
 
-        if not os.path.exists(map):
+        # check if map exists and is younger than a day; if not, we need to
+        # refresh it
+        try:
+            st = os.stat(map)
+            age = int(time.time() - st.st_mtime)
+        except OSError:
+            age = None
 
+        if age is None or age >= 86400:
             # determine distro release code name
             lsb_release = subprocess.Popen(['lsb_release', '-sc'],
                 stdout=subprocess.PIPE)
@@ -743,7 +750,7 @@ impl = __AptDpkgPackageInfo()
 #
 
 if __name__ == '__main__':
-    import unittest, gzip
+    import unittest, gzip, time
 
     def _has_default_route():
         '''Return if there is a default route.
@@ -935,8 +942,20 @@ bo/gu/s                                                 na/mypackage
                 os.mkdir(cache_dir)
                 self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir), 'frob-utils')
                 self.assertEqual(len(os.listdir(cache_dir)), 1)
-                self.assertTrue(os.listdir(cache_dir)[0].startswith('Contents-'))
+                cache_file = os.listdir(cache_dir)[0]
+                self.assertTrue(cache_file.startswith('Contents-'))
                 self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
+
+                # valid cache, should not need to access the mirror
+                impl.set_mirror('file:///foo/nonexisting')
+                self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
+
+                # outdated cache, must refresh the cache and hit the invalid
+                # mirror
+                now = int(time.time())
+                os.utime(os.path.join(cache_dir, cache_file), (now, now-90000))
+
+                self.assertRaises(IOError, impl.get_file_package, '/bo/gu/s', True, cache_dir)
             finally:
                 shutil.rmtree(basedir)
 
