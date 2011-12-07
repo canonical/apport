@@ -527,13 +527,14 @@ class CrashDatabase:
     def _duplicate_db_add_address_signature(self, sig, id):
         # sanity check
         existing = self._duplicate_search_address_signature(sig)
-        if existing and existing != id:
-            raise SystemError('ID %i has signature %s, but database already has that signature for ID %i' % (
-                    id, sig, existing))
-
-        cur = self.duplicate_db.cursor()
-        cur.execute('INSERT INTO address_signatures VALUES (?, ?)', (_u(sig), id))
-        self.duplicate_db.commit()
+        if existing: 
+            if existing != id:
+                raise SystemError('ID %i has signature %s, but database already has that signature for ID %i' % (
+                        id, sig, existing))
+        else:
+            cur = self.duplicate_db.cursor()
+            cur.execute('INSERT INTO address_signatures VALUES (?, ?)', (_u(sig), id))
+            self.duplicate_db.commit()
 
     @classmethod
     def duplicate_sig_hash(klass, sig):

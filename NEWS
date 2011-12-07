@@ -15,6 +15,7 @@ Bug fixes:
    multiple identical signatures by making it a primary key. Bump the db format
    to "3". Existing databases need to be migrated manually as SQLite does not
    allow adding a "PRIMARY KEY" constraint to existing tables.
+ - crashdb.py: Do not add a new address signature entry if one already exists.
 
 1.90 (2011-11-24):
 ------------------
