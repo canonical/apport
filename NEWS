@@ -11,6 +11,10 @@ Bug fixes:
    mapping a file to a package, as these maps are release specific.
  - packaging-apt-dpkg.py: Refresh Contents.gz cache if it is older than one
    day.
+ - crashdb.py: Ensure that address_signature duplicate db table does not have
+   multiple identical signatures by making it a primary key. Bump the db format
+   to "3". Existing databases need to be migrated manually as SQLite does not
+   allow adding a "PRIMARY KEY" constraint to existing tables.
 
 1.90 (2011-11-24):
 ------------------

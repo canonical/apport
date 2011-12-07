@@ -68,7 +68,7 @@ class CrashDatabase:
         assert dbapi2.paramstyle == 'qmark', \
             'this module assumes qmark dbapi parameter style'
 
-        self.format_version = 2
+        self.format_version = 3
 
         init = not os.path.exists(path) or path == ':memory:' or \
             os.path.getsize(path) == 0
@@ -88,7 +88,8 @@ class CrashDatabase:
 
             cur.execute('''CREATE TABLE address_signatures (
                 signature VARCHAR(1000) NOT NULL,
-                crash_id INTEGER NOT NULL)''')
+                crash_id INTEGER NOT NULL,
+                CONSTRAINT address_signatures_pk PRIMARY KEY (signature))''')
 
             self.duplicate_db.commit()
 
@@ -106,7 +107,9 @@ class CrashDatabase:
             if 'no such table' in str(e):
                 # first db format did not have version table yet
                 result = [0]
-        if result[0] != self.format_version:
+        if result[0] > self.format_version:
+            raise SystemError('duplicate DB has unknown format %i' % result[0])
+        if result[0] < self.format_version:
             print('duplicate db has format %i, upgrading to %i' %
                     (result[0], self.format_version))
             self._duplicate_db_upgrade(result[0])
@@ -387,20 +390,12 @@ class CrashDatabase:
     def _duplicate_db_upgrade(self, cur_format):
         '''Upgrade database to current format'''
 
+        # Format 3 added a primary key which can't be done as an upgrade in
+        # SQLite
+        if cur_format < 3:
+            raise SystemError('Cannot upgrade database from format earlier than 3')
+
         cur = self.duplicate_db.cursor()
-
-        if cur_format == 0:
-            cur.execute('CREATE TABLE version (format INTEGER NOT NULL)')
-            cur.execute('INSERT INTO version VALUES (1)')
-            self.duplicate_db.commit()
-            cur_format = 1
-
-        if cur_format == 1:
-            cur.execute('''CREATE TABLE address_signatures (
-                signature VARCHAR(1000) NOT NULL,
-                crash_id INTEGER NOT NULL)''')
-            self.duplicate_db.commit()
-            cur_format = 2
 
         cur.execute('UPDATE version SET format = ?', (cur_format,))
         self.duplicate_db.commit()
