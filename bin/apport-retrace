@@ -226,6 +226,9 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
                 lib = os.path.realpath(cols[5])
                 libs.add(lib)
 
+    if sandbox:
+        cache_dir = os.path.join(cache_dir, report['DistroRelease'])
+
     # grab as much as we can
     for l in libs:
         if os.path.exists(sandbox + l):

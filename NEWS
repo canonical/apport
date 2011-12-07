@@ -7,6 +7,8 @@ Bug fixes:
  - crashdb.py, check_duplicate(): If a crash has a signature but no existing
    duplicate in the DB, also check for an existing address signature duplicate
    in the DB.
+ - apport-retrace: Use DistroRelease specific subdirectory of the cache dir for
+   mapping a file to a package, as these maps are release specific.
 
 1.90 (2011-11-24):
 ------------------
