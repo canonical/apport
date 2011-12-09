@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-01 05:15+0000\n"
-"X-Generator: Launchpad (build 14414)\n"
+"X-Launchpad-Export-Date: 2011-12-09 04:38+0000\n"
+"X-Generator: Launchpad (build 14450)\n"
 "Language: lt\n"
 
 #: ../apport/ui.py:92
@@ -32,7 +32,7 @@ msgstr ""
 "Paketas „%s“ nėra oficialus paketus. Pašalinkite betkokius trečiosios šalies "
 "paketus ir bandykite dar kartą."
 
-#: ../apport/ui.py:106
+#: ../apport/ui.py:117
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -45,21 +45,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:206
+#: ../apport/ui.py:213
 msgid "unknown program"
 msgstr "nežinoma programa"
 
-#: ../apport/ui.py:207
+#: ../apport/ui.py:214 ../gtk/apport-gtk.py:81
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Atsiprašome, programa „%s“ netikėtai užsidarė"
 
-#: ../apport/ui.py:208 ../apport/ui.py:275 ../apport/ui.py:384
+#: ../apport/ui.py:215 ../apport/ui.py:1105
 #, python-format
 msgid "Problem in %s"
 msgstr "%s problema"
 
-#: ../apport/ui.py:209
+#: ../apport/ui.py:216
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -68,59 +68,59 @@ msgstr ""
 "išanalizuotų problemą ir išsiųstų ataskaitą kūrėjams."
 
 #. package does not exist
-#: ../apport/ui.py:236 ../apport/ui.py:262 ../apport/ui.py:268
-#: ../apport/ui.py:299 ../apport/ui.py:307 ../apport/ui.py:373
-#: ../apport/ui.py:376 ../apport/ui.py:563 ../apport/ui.py:793
-#: ../apport/ui.py:959 ../apport/ui.py:963 ../apport/ui.py:982
-#: ../apport/ui.py:988 ../apport/ui.py:1537 ../apport/ui.py:1554
-#: ../apport/ui.py:2114 ../apport/ui.py:2130 ../apport/ui.py:2141
-#: ../apport/ui.py:2152
+#: ../apport/ui.py:243 ../apport/ui.py:269 ../apport/ui.py:275
+#: ../apport/ui.py:305 ../apport/ui.py:313 ../apport/ui.py:384
+#: ../apport/ui.py:387 ../apport/ui.py:583 ../apport/ui.py:926
+#: ../apport/ui.py:1061 ../apport/ui.py:1065 ../apport/ui.py:1084
+#: ../apport/ui.py:1090 ../apport/ui.py:1702 ../apport/ui.py:1719
+#: ../apport/ui.py:2334 ../apport/ui.py:2350 ../apport/ui.py:2361
+#: ../apport/ui.py:2372
 msgid "Invalid problem report"
 msgstr "Neteisingas ataskaita apie klaidą"
 
-#: ../apport/ui.py:237 ../apport/ui.py:269
+#: ../apport/ui.py:244 ../apport/ui.py:276
 msgid "The report belongs to a package that is not installed."
 msgstr "Ataskaita priklauso neįdiegtam paketui"
 
-#: ../apport/ui.py:264 ../apport/ui.py:965
+#: ../apport/ui.py:271 ../apport/ui.py:1067
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Ši ataskaita apie klaidą yra pažeista ir negali būti apdorota."
 
-#: ../apport/ui.py:300
+#: ../apport/ui.py:306
 msgid "You are not allowed to access this problem report."
 msgstr "Jums neleidžiama prieiti prie ataskaitos apie problemą."
 
-#: ../apport/ui.py:303
+#: ../apport/ui.py:309
 msgid "Error"
 msgstr "Klaida"
 
-#: ../apport/ui.py:304
+#: ../apport/ui.py:310
 msgid "There is not enough disk space available to process this report."
 msgstr "Nepakanka vietos diske šios ataskaitos apdorojimui."
 
-#: ../apport/ui.py:332
+#: ../apport/ui.py:337
 msgid "No package specified"
 msgstr "Nenurodytas paketas"
 
-#: ../apport/ui.py:333
+#: ../apport/ui.py:338
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Jums reikia nurodyti paketą arba PID. Daugiau informacijos gausite su --help."
 
-#: ../apport/ui.py:343
+#: ../apport/ui.py:354
 msgid "Invalid PID"
 msgstr "Neteisingas PID"
 
-#: ../apport/ui.py:344
+#: ../apport/ui.py:355
 msgid "The specified process ID does not belong to a program."
 msgstr "Nurodytas proceso ID nepriklauso programai."
 
-#: ../apport/ui.py:352
+#: ../apport/ui.py:363
 msgid "Permission denied"
 msgstr "Neturite teisės"
 
-#: ../apport/ui.py:353
+#: ../apport/ui.py:364
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -128,25 +128,25 @@ msgstr ""
 "Nurodytas procesas jums nepriklauso. Paleiskite programą kaip proceso "
 "valdytojas ar pagrindinis naudotojas."
 
-#: ../apport/ui.py:374
+#: ../apport/ui.py:385
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Simptomų scenarijus %s nenustatė paveikto paketo"
 
-#: ../apport/ui.py:377
+#: ../apport/ui.py:388
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Paketas %s neegzistuoja"
 
-#: ../apport/ui.py:404
+#: ../apport/ui.py:413 ../apport/ui.py:595 ../apport/ui.py:600
 msgid "Cannot create report"
 msgstr "Ataskaitos sukurti nepavyko"
 
-#: ../apport/ui.py:418 ../apport/ui.py:464 ../apport/ui.py:480
+#: ../apport/ui.py:427 ../apport/ui.py:473 ../apport/ui.py:490
 msgid "Updating problem report"
 msgstr "Atnaujinama problemos ataskaita"
 
-#: ../apport/ui.py:419
+#: ../apport/ui.py:428
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -158,7 +158,7 @@ msgstr ""
 "\n"
 "Prašome sukurti naują pranešimą naudojant „apport-bug“."
 
-#: ../apport/ui.py:428
+#: ../apport/ui.py:437
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -170,19 +170,19 @@ msgid ""
 "Do you really want to proceed?"
 msgstr ""
 
-#: ../apport/ui.py:465 ../apport/ui.py:481
+#: ../apport/ui.py:474 ../apport/ui.py:491
 msgid "No additional information collected."
 msgstr "Jokios papildomos informacijos nesurinkta."
 
-#: ../apport/ui.py:520
+#: ../apport/ui.py:540
 msgid "What kind of problem do you want to report?"
 msgstr "Apie kokią problemų rūšį norite pranešti?"
 
-#: ../apport/ui.py:537
+#: ../apport/ui.py:557
 msgid "Unknown symptom"
 msgstr "Nežinomas simptomas"
 
-#: ../apport/ui.py:538
+#: ../apport/ui.py:558
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Simptomas „%s“ yra nežinomas."
@@ -199,7 +199,7 @@ msgstr ""
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop nepavyko nustatyti lango proceso ID"
 
-#: ../apport/ui.py:577
+#: ../apport/ui.py:615
 msgid "%prog <report number>"
 msgstr "%prog <pranešimo numeris>"
 
@@ -212,14 +212,14 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "Prie ataskaitos pridėti papildomą žymę. Gali būti nurodyta kelis kartus."
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:649
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [parametrai] [simptomas|pid|paketas|programos kelias|.apport/.crash "
 "failas]"
 
-#: ../apport/ui.py:612
+#: ../apport/ui.py:652
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -233,12 +233,12 @@ msgstr ""
 msgid "Click a window as a target for filing a problem report."
 msgstr "Pranešti apie problemą, paspauskite ant lango."
 
-#: ../apport/ui.py:615
+#: ../apport/ui.py:656
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "Pradėti klaidos atnaujinimo režime. Gali prireikti nebūtino --package."
 
-#: ../apport/ui.py:618
+#: ../apport/ui.py:658
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -246,7 +246,7 @@ msgstr ""
 "Registruoti pranešimą apie simptomą. (Turima omeny, jei simptomo vardas "
 "duotas kaip vienintelis argumentas.)"
 
-#: ../apport/ui.py:621
+#: ../apport/ui.py:660
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -261,7 +261,7 @@ msgid ""
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:627
+#: ../apport/ui.py:664
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -277,7 +277,7 @@ msgid ""
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:633
+#: ../apport/ui.py:670
 msgid "Print the Apport version number."
 msgstr "Atspausdinti Apport versijos numerį."
 
@@ -306,50 +306,50 @@ msgstr ""
 msgid "The problem happened with the program %s which changed since then."
 msgstr "Problema kilo su programa %s kuri nuo tada pasikeitė."
 
-#: ../apport/ui.py:794
+#: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
 msgstr "Nepavyko nustatyti paketo ar pirminio paketo vardo."
 
-#: ../apport/ui.py:809
+#: ../apport/ui.py:942
 msgid "Unable to start web browser"
 msgstr "Nepavyko paleisti žiniatinklio naršyklės"
 
-#: ../apport/ui.py:810
+#: ../apport/ui.py:943
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Nepavyko paleisti žiniatinklio naršyklės %s atverti."
 
-#: ../apport/ui.py:916
+#: ../apport/ui.py:1017
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr "Prašome įvesti savo paskyros informaciją %s klaidų sekimo sistemoje"
 
-#: ../apport/ui.py:927
+#: ../apport/ui.py:1028
 msgid "Network problem"
 msgstr "Tinklo problema"
 
-#: ../apport/ui.py:929
+#: ../apport/ui.py:1030
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Nepavyko prisijungti prie strigčių duomenų bazės, patikrinkite interneto "
 "ryšį."
 
-#: ../apport/ui.py:954
+#: ../apport/ui.py:1056
 msgid "Memory exhaustion"
 msgstr "Atminties išnaudojimas"
 
-#: ../apport/ui.py:955
+#: ../apport/ui.py:1057
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Jūsų sistema neturi pakankamai atminties ataskaitai apie strigtį apdoroti."
 
-#: ../apport/ui.py:978 ../apport/ui.py:987
+#: ../apport/ui.py:1080 ../apport/ui.py:1089
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Ši ataskaita apie problemą yra programos, kuri jau nėra įdiegta."
 
-#: ../apport/ui.py:276 ../apport/ui.py:385
+#: ../apport/ui.py:1108
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -360,11 +360,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1019
+#: ../apport/ui.py:1141 ../apport/ui.py:1148
 msgid "Problem already known"
 msgstr "Problema jau žinoma"
 
-#: ../apport/ui.py:1020
+#: ../apport/ui.py:1142
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -374,26 +374,26 @@ msgstr ""
 "rodomoje žiniatinklio naršyklėje. Patikrinkite ar galite pridėti daugiau "
 "informacijos, kuri galėtų būti naudinga kūrėjams."
 
-#: ../bin/apport-cli.py:70
+#: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
 msgstr "Spauskite bet kurį klavišą tęsimui..."
 
-#: ../bin/apport-cli.py:77
+#: ../bin/apport-cli.py:78
 msgid "What would you like to do? Your options are:"
 msgstr "Ką norite atlikti? Jūsų parinktys yra:"
 
-#: ../bin/apport-cli.py:81
+#: ../bin/apport-cli.py:82
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Prašome pasirinkti (%s):"
 
 #. translators: first %s: application name, second %s: date, third %s: time
-#: ../bin/apport-cli.py:138
+#: ../bin/apport-cli.py:139
 #, python-format
 msgid "%s closed unexpectedly on %s at %s."
 msgstr "%s netikėtai užsidarė %s %s."
 
-#: ../bin/apport-cli.py:142
+#: ../bin/apport-cli.py:143
 msgid ""
 "If you were not doing anything confidential (entering passwords or other\n"
 "private information), you can help to improve the application by reporting\n"
@@ -403,57 +403,58 @@ msgstr ""
 "asmeninė informacija), galite padėti pagerinti programą pranešdami\n"
 "apie problemą."
 
-#: ../bin/apport-cli.py:145 ../bin/apport-cli.py:164 ../bin/apport-cli.py:182
+#: ../bin/apport-cli.py:146 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
+#: ../kde/apport-kde.py:202 ../kde/apport-kde.py:233 ../kde/apport-kde.py:254
 msgid "&Report Problem..."
 msgstr "&Pranešti apie problemą..."
 
-#: ../bin/apport-cli.py:146
+#: ../bin/apport-cli.py:147
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Atsisakyti ir &ignoruoti šios programos strigtis ateityje"
 
-#: ../bin/apport-cli.py:147 ../bin/apport-cli.py:165 ../bin/apport-cli.py:183
-#: ../bin/apport-cli.py:242 ../bin/apport-cli.py:323 ../bin/apport-cli.py:355
-#: ../bin/apport-cli.py:376
+#: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
+#: ../bin/apport-cli.py:243 ../bin/apport-cli.py:326 ../bin/apport-cli.py:358
+#: ../bin/apport-cli.py:379
 msgid "&Cancel"
 msgstr "&Atsisakyti"
 
-#: ../bin/apport-cli.py:162
+#: ../bin/apport-cli.py:163
 #, python-format
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr "Nepavyko įdiegti ar atnaujinti paketo „%s“."
 
-#: ../bin/apport-cli.py:163 ../gtk/apport-gtk.ui.h:22
+#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:23 ../kde/apport-kde.py:230
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
 "Jūs galite padėti kūrėjams pataisyti paketą pranešdami apie problemą."
 
-#: ../bin/apport-cli.py:175
+#: ../bin/apport-cli.py:176 ../gtk/apport-gtk.py:133 ../kde/apport-kde.py:245
 msgid "Your system encountered a serious kernel problem."
 msgstr "Sistema susidūrė su rimta branduolio problema."
 
-#: ../bin/apport-cli.py:179
+#: ../bin/apport-cli.py:180 ../gtk/apport-gtk.py:137 ../kde/apport-kde.py:249
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr "Jūs galite padėti kūrėjams pataisyti problemą apie ją pranešdami."
 
-#: ../bin/apport-cli.py:213
+#: ../bin/apport-cli.py:208
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i baitų)"
 
-#: ../bin/apport-cli.py:215
+#: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
 msgid "(binary data)"
 msgstr "(dvejetainiai duomenys)"
 
-#: ../bin/apport-cli.py:222
+#: ../bin/apport-cli.py:218 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
 msgid "Send this data to the developers?"
 msgstr "Siųsti šiuos duomenis kūrėjams?"
 
-#: ../bin/apport-cli.py:224
+#: ../bin/apport-cli.py:220 ../kde/apport-kde.py:274
 msgid "Send problem report to the developers?"
 msgstr "Siųsti ataskaitą apie problemą kūrėjams?"
 
-#: ../bin/apport-cli.py:225
+#: ../bin/apport-cli.py:221
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -461,17 +462,17 @@ msgstr ""
 "Kai ataskaita apie problemą bus nusiųsta, prašome užpildyti formą\n"
 "automatiškai atvertoje žiniatinklio naršyklėje."
 
-#: ../bin/apport-cli.py:230
+#: ../bin/apport-cli.py:226
 #, python-format
 msgid "&Send complete report (recommended; %s)"
 msgstr "&Siųsti visą ataskaitą (rekomenduojama; %s)"
 
-#: ../bin/apport-cli.py:232
+#: ../bin/apport-cli.py:228
 #, python-format
 msgid "Send &reduced report (slow Internet connection; %s)"
 msgstr "Siųsti su&mažintą ataskaitą (lėtas interneto ryšys; %s)"
 
-#: ../bin/apport-cli.py:235
+#: ../bin/apport-cli.py:231
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Siųsti ataskaitą (%s)"
@@ -480,33 +481,33 @@ msgstr "&Siųsti ataskaitą (%s)"
 msgid "&Examine locally"
 msgstr "&Ištirti vietoj"
 
-#: ../bin/apport-cli.py:239
+#: ../bin/apport-cli.py:240
 msgid "&View report"
 msgstr "&Peržiūrėti ataskaitą"
 
-#: ../bin/apport-cli.py:240
+#: ../bin/apport-cli.py:241
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "Lai&kyti ataskaitos failą vėlesniam siuntimui ar kopijavimui kur nors kitur"
 
-#: ../bin/apport-cli.py:272
+#: ../bin/apport-cli.py:275
 msgid "Problem report file:"
 msgstr "Ataskaitos apie problemą failas:"
 
-#: ../bin/apport-cli.py:280 ../bin/apport-cli.py:285
+#: ../bin/apport-cli.py:283 ../bin/apport-cli.py:288
 msgid "&Confirm"
 msgstr "Pa&tvirtinti"
 
-#: ../bin/apport-cli.py:284
+#: ../bin/apport-cli.py:287
 #, python-format
 msgid "Error: %s"
 msgstr "Klaida: %s"
 
-#: ../bin/apport-cli.py:290
+#: ../bin/apport-cli.py:293 ../kde/apport-kde.py:336
 msgid "Collecting problem information"
 msgstr "Renkama informacija apie problemą"
 
-#: ../bin/apport-cli.py:291
+#: ../bin/apport-cli.py:294
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -514,11 +515,11 @@ msgstr ""
 "Surinkta informacija gali būti nusiųsta kūrėjams, kad jie patobulintų\n"
 "programą. Tai gali užtrukti kelias minutes."
 
-#: ../bin/apport-cli.py:303 ../gtk/apport-gtk.ui.h:21
+#: ../bin/apport-cli.py:306 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:353
 msgid "Uploading problem information"
 msgstr "Išsiunčiama informacija apie problemą"
 
-#: ../bin/apport-cli.py:304
+#: ../bin/apport-cli.py:307
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -526,40 +527,40 @@ msgstr ""
 "Surinkta informacija yra siunčiama į klaidų sekimo sistemą.\n"
 "Tai gali užtrukti kelias minutes."
 
-#: ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:357
 msgid "&Done"
 msgstr "&Baigta"
 
-#: ../bin/apport-cli.py:360
+#: ../bin/apport-cli.py:363
 msgid "none"
 msgstr "nėra"
 
-#: ../bin/apport-cli.py:361
+#: ../bin/apport-cli.py:364
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Pasirinkta: %s. Daugybinis pasirinkimas:"
 
-#: ../bin/apport-cli.py:377
+#: ../bin/apport-cli.py:380
 msgid "Choices:"
 msgstr "Pasirinkimai:"
 
-#: ../bin/apport-cli.py:391
+#: ../bin/apport-cli.py:394
 msgid "Path to file (Enter to cancel):"
 msgstr "Kelias iki failo (Enter - atsisakyti):"
 
-#: ../bin/apport-cli.py:396
+#: ../bin/apport-cli.py:400
 msgid "File does not exist."
 msgstr "Failas neegzistuoja."
 
-#: ../bin/apport-cli.py:398
+#: ../bin/apport-cli.py:402
 msgid "This is a directory."
 msgstr "Tai katalogas."
 
-#: ../bin/apport-cli.py:404
+#: ../bin/apport-cli.py:408
 msgid "To continue, you must visit the following URL:"
 msgstr "Norėdami tęsti privalote aplankyti šį URL:"
 
-#: ../bin/apport-cli.py:406
+#: ../bin/apport-cli.py:410
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -567,11 +568,11 @@ msgstr ""
 "Galite paleisti naršyklę dabar arba nukopijuoti šį URL į naršyklę kitame "
 "kompiuteryje."
 
-#: ../bin/apport-cli.py:408
+#: ../bin/apport-cli.py:412
 msgid "Launch a browser now"
 msgstr "Paleisti naršyklę dabar"
 
-#: ../bin/apport-cli.py:415
+#: ../bin/apport-cli.py:426
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nėra laukiančiųjų strigčių ataskaitų. Mėginkite --help daugiau informacijos "
@@ -630,20 +631,20 @@ msgstr ""
 msgid "Application problem"
 msgstr "Programos problema"
 
-#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:384 ../kde/apport-kde.py:420
+#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
 msgid "Apport"
 msgstr "Apport"
 
-#: ../gtk/apport-gtk.ui.h:10
-#, no-c-format
+#: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:305
+#, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "Visa ataskaita (rekomenduojama; %s)"
 
-#: ../gtk/apport-gtk.ui.h:11
+#: ../gtk/apport-gtk.ui.h:12
 msgid "Content of the report"
 msgstr "Ataskaitos turinys"
 
-#: ../gtk/apport-gtk.ui.h:12
+#: ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:197
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -652,7 +653,7 @@ msgstr ""
 "Jei nedarėte nieko konfidencialaus (slaptažodžių įvedimas ar asmeninė "
 "informacija), galite padėti patobulinti programą pranešdami apie problemą."
 
-#: ../gtk/apport-gtk.ui.h:13
+#: ../gtk/apport-gtk.ui.h:14
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -660,24 +661,24 @@ msgstr ""
 "Renkama informacija, kuri gali padėti kūrėjams pataisyti problemą apie kurią "
 "pranešėte."
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:252
 msgid "Kernel problem"
 msgstr "Branduolio problema"
 
-#: ../gtk/apport-gtk.ui.h:15
+#: ../gtk/apport-gtk.ui.h:16
 msgid "Package problem"
 msgstr "Paketo problema"
 
-#: ../gtk/apport-gtk.ui.h:17
-#, no-c-format
+#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:308
+#, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Sumažinta ataskaita (lėtas interneto ryšys; %s)"
 
-#: ../gtk/apport-gtk.ui.h:18
+#: ../gtk/apport-gtk.ui.h:19
 msgid "Restart _Program"
 msgstr "Paleisti _programą iš naujo"
 
-#: ../gtk/apport-gtk.ui.h:19
+#: ../gtk/apport-gtk.ui.h:20 ../kde/apport-kde.py:354
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -685,7 +686,7 @@ msgstr ""
 "Surinkta informacija siunčiama į klaidų sekimo sistemą. Tai gali užtrukti "
 "keletą minučių."
 
-#: ../gtk/apport-gtk.ui.h:20
+#: ../gtk/apport-gtk.ui.h:21
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -699,15 +700,15 @@ msgstr ""
 msgid "_Examine locally"
 msgstr "_Ištirti vietoj"
 
-#: ../gtk/apport-gtk.ui.h:23
+#: ../gtk/apport-gtk.ui.h:25
 msgid "_Ignore future crashes of this program version"
 msgstr "_Ignoruoti šios programos versijos strigtis ateityje"
 
-#: ../gtk/apport-gtk.ui.h:24
+#: ../gtk/apport-gtk.ui.h:26
 msgid "_Report Problem..."
 msgstr "P_ranešti apie problemą..."
 
-#: ../gtk/apport-gtk.ui.h:25
+#: ../gtk/apport-gtk.ui.h:27
 msgid "_Send Report"
 msgstr "_Siųsti ataskaitą"
 
@@ -721,16 +722,16 @@ msgstr "Pranešti apie triktį kūrėjams"
 msgid "Report a problem..."
 msgstr "Pranešti apie problemą..."
 
-#: ../bin/apport-retrace.py:28
+#: ../bin/apport-retrace.py:37
 msgid "%prog [options] <apport problem report | crash ID>"
 msgstr "%prog [parametrai] <apport problemos ataskaita | strigties ID>"
 
-#: ../bin/apport-retrace.py:30
+#: ../bin/apport-retrace.py:39
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr ""
 "Nedėti naujų pėdsakų į ataskaitą, bet išvesti juos į standartinę išvestį."
 
-#: ../bin/apport-retrace.py:33
+#: ../bin/apport-retrace.py:41
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -738,30 +739,30 @@ msgstr ""
 "Pradėti interaktyvų gdb seansą su ataskaitos „core dump“ (-o ignoruojamas; "
 "neperrašo ataskaitos)"
 
-#: ../bin/apport-retrace.py:36
+#: ../bin/apport-retrace.py:43
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
 "Įrašyti modifikuotą ataskaitą į nurodytą failą, vietoj originalios "
 "ataskaitos keitimo"
 
-#: ../bin/apport-retrace.py:39
+#: ../bin/apport-retrace.py:45
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr "Pašalinti „core dump“ iš ataskaitos po dėklo pėdsakų atkūrimo."
 
-#: ../bin/apport-retrace.py:42
+#: ../bin/apport-retrace.py:47
 msgid "Override report's CoreFile"
 msgstr "Nustelbti ataskaitos CoreFile"
 
-#: ../bin/apport-retrace.py:45
+#: ../bin/apport-retrace.py:49
 msgid "Override report's ExecutablePath"
 msgstr "Nustelbti ataskaitos ExecutablePath"
 
-#: ../bin/apport-retrace.py:48
+#: ../bin/apport-retrace.py:51
 msgid "Override report's ProcMaps"
 msgstr "Nustelbti ataskaitos ProcMaps"
 
-#: ../bin/apport-retrace.py:51
+#: ../bin/apport-retrace.py:53
 msgid "Rebuild report's Package information"
 msgstr "Perdaryti ataskaitos paketų informaciją"
 
@@ -793,7 +794,7 @@ msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
 
-#: ../bin/apport-retrace.py:66
+#: ../bin/apport-retrace.py:65
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -803,7 +804,7 @@ msgstr ""
 "naudojama, kai nurodomas strigties ID atsektiems dėklo pėdsakams išsiųsti "
 "(tik, jei nenurodyti -g, -o, ar -s)"
 
-#: ../bin/apport-retrace.py:69
+#: ../bin/apport-retrace.py:67
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -811,17 +812,17 @@ msgstr ""
 "Rodyti atsektus dėklo pėdsakus ir klausti patvirtinimo prieš siunčiant juos "
 "į strigčių duomenų bazę."
 
-#: ../bin/apport-retrace.py:72
+#: ../bin/apport-retrace.py:69
 msgid ""
 "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Kelias į dublikatų sqlite duomenų bazę (numatyta r.: netikrinti dublikatų)"
 
-#: ../bin/apport-retrace.py:78
+#: ../bin/apport-retrace.py:74
 msgid "incorrect number of arguments; use --help for a short help"
 msgstr "neteisingas argumentų skaičius; naudokite --help trumpai pagalbai"
 
-#: ../bin/apport-retrace.py:82
+#: ../bin/apport-retrace.py:78
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
@@ -830,7 +831,7 @@ msgstr ""
 "atpažinimo failą (--auth); žiūrėkite --help trumpai pagalbai"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:115
+#: ../bin/apport-retrace.py:110
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Ar siųsti šiuos priedus? [y/n]"
 
@@ -839,7 +840,7 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Jūsų sistema dabar gali tapti nestabili ir gali reikėti įkrauti OS iš naujo."
 
-#: ../gtk/apport-gtk.py:76 ../gtk/apport-gtk.py:80 ../kde/apport-kde.py:185
+#: ../gtk/apport-gtk.py:79 ../gtk/apport-gtk.py:83 ../kde/apport-kde.py:188
 #, python-format
 msgid "Sorry, %s closed unexpectedly"
 msgstr "Atsiprašome, %s netikėtai užvertas"
@@ -856,48 +857,48 @@ msgstr "Naudotojo vardas:"
 msgid "Password:"
 msgstr "Slaptažodis:"
 
-#: ../kde/apport-kde.py:188
+#: ../kde/apport-kde.py:191
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
 msgstr "Atsiprašome, programa „%s“ netikėtai užsivėrė."
 
-#: ../kde/apport-kde.py:191
+#: ../kde/apport-kde.py:194
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
 msgstr "Atsiprašome, %s netikėtai užvertas."
 
-#: ../kde/apport-kde.py:197
+#: ../kde/apport-kde.py:200
 msgid "&Ignore future crashes of this program version"
 msgstr "Šios programos versijos, lūžius ateityje &ignoruoti"
 
-#: ../kde/apport-kde.py:206
+#: ../kde/apport-kde.py:209
 msgid "Restart &Program"
 msgstr "Paleisti &programą iš naujo"
 
-#: ../kde/apport-kde.py:224
+#: ../kde/apport-kde.py:228
 #, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
 msgstr "Atsiprašome, nepavyko įdiegti ar atnaujinti paketo „%s“"
 
-#: ../kde/apport-kde.py:264 ../kde/apport-kde.py:269
+#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:273
 msgid "Generic error"
 msgstr "Bendroji klaida"
 
-#: ../kde/apport-kde.py:271
+#: ../kde/apport-kde.py:275
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
 
-#: ../kde/apport-kde.py:274
+#: ../kde/apport-kde.py:278
 msgid "&Send"
 msgstr "&Siųsti"
 
-#: ../kde/apport-kde.py:331
+#: ../kde/apport-kde.py:335
 msgid "Collecting Problem Information"
 msgstr "Renkama informacija apie problemą"
 
-#: ../kde/apport-kde.py:333
+#: ../kde/apport-kde.py:337
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -905,7 +906,7 @@ msgstr ""
 "Surinkta informacija gali būti nusiųsta kūrėjams programai patobulinti. Tai "
 "gali užtrukti kelias minutes."
 
-#: ../kde/apport-kde.py:348
+#: ../kde/apport-kde.py:352
 msgid "Uploading Problem Information"
 msgstr "Išsiunčiama informacija apie klaidą"
 
