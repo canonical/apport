@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-29 16:03-0400\n"
-"PO-Revision-Date: 2011-10-16 12:16+0000\n"
-"Last-Translator: Janne Solanpää <Unknown>\n"
+"PO-Revision-Date: 2011-12-12 18:16+0000\n"
+"Last-Translator: Tuomas Lähteenmäki <Unknown>\n"
 "Language-Team: Finnish <fi@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-09 04:37+0000\n"
-"X-Generator: Launchpad (build 14450)\n"
+"X-Launchpad-Export-Date: 2011-12-13 04:34+0000\n"
+"X-Generator: Launchpad (build 14458)\n"
 "Language: fi\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Tätä pakettia ei ole asennettu oikein"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Tämä %s paketti ei ole virallinen. Ole hyvä ja poista kolmannenosapuolen "
+"paketit ja yritä uudelleen."
 
 #: ../apport/ui.py:117
 #, python-format
@@ -244,6 +246,8 @@ msgstr "Napsauta ikkunaa, johon liittyvän virheraportin haluat tehdä"
 #: ../apport/ui.py:656
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"Aloita ohjelmavirheiden päivitystilassa. Voi ottaa valinnaisen valitsimen --"
+"package."
 
 #: ../apport/ui.py:658
 msgid ""
@@ -295,7 +299,7 @@ msgstr ""
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "Käynnistä gdb sessiossa"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
@@ -328,7 +332,7 @@ msgstr "Nettiselainta ei saatu käynnistettyä avattaessa %s."
 #: ../apport/ui.py:1017
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr ""
+msgstr "Ole hyvä ja syötä %s bugi raportointi järjestelmän kirjautumistiedot"
 
 #: ../apport/ui.py:1028
 msgid "Network problem"
@@ -485,7 +489,7 @@ msgstr "&Lähetä raportti (%s)"
 
 #: ../bin/apport-cli.py:236
 msgid "&Examine locally"
-msgstr ""
+msgstr "&Tutki paikallisesti"
 
 #: ../bin/apport-cli.py:240
 msgid "&View report"
@@ -706,7 +710,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:24
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Tutki paikallisesti"
 
 #: ../gtk/apport-gtk.ui.h:25
 msgid "_Ignore future crashes of this program version"
@@ -756,7 +760,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:45
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "Poista muistivedos raportista pinojäljityksen elvyttämisen jälkeen"
 
 #: ../bin/apport-retrace.py:47
 msgid "Override report's CoreFile"
@@ -768,7 +772,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:51
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "Korvaa raportin ProcMaps"
 
 #: ../bin/apport-retrace.py:53
 msgid "Rebuild report's Package information"
@@ -808,6 +812,9 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"Polku tiedostoon kaatumistietokannan todentamistietojen kanssa. Tätä "
+"käytetään määritettäessä kaatumistunnistetta ladattaessa jäljitettyä "
+"pinojälkiä. (vain jos yhtäkään seuraavista ei ole määritetty: -g, -o ja -s)"
 
 #: ../bin/apport-retrace.py:67
 msgid ""
@@ -858,62 +865,66 @@ msgstr "&Yksityiskohdat..."
 
 #: ../kde/apport-kde.py:160
 msgid "Username:"
-msgstr ""
+msgstr "Käyttäjätunnus"
 
 #: ../kde/apport-kde.py:161
 msgid "Password:"
-msgstr ""
+msgstr "Salasana:"
 
 #: ../kde/apport-kde.py:191
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr ""
+msgstr "Ikävä kyllä ohjelma \"%s\" sulkeutui yllättäen."
 
 #: ../kde/apport-kde.py:194
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr ""
+msgstr "Ikävä kyllä %s sulkeutui yllättäen."
 
 #: ../kde/apport-kde.py:200
 msgid "&Ignore future crashes of this program version"
-msgstr ""
+msgstr "Älä huomioi tämän ohjelmaversion kaatumisia jatkossa"
 
 #: ../kde/apport-kde.py:209
 msgid "Restart &Program"
-msgstr ""
+msgstr "Käynnistä &ohjelma uudelleen"
 
 #: ../kde/apport-kde.py:228
 #, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr ""
+msgstr "Ikävä kyllä paketin \"%s\" asennus tai päivitys epäonnistui."
 
 #: ../kde/apport-kde.py:268 ../kde/apport-kde.py:273
 msgid "Generic error"
-msgstr ""
+msgstr "Yleinen virhe"
 
 #: ../kde/apport-kde.py:275
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
+"Kun raportti on lähetetty, ole hyvä ja täytä selaimeesi automaattisesti "
+"aukeava lomake."
 
 #: ../kde/apport-kde.py:278
 msgid "&Send"
-msgstr ""
+msgstr "&Lähetä"
 
 #: ../kde/apport-kde.py:335
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Kerätään tietoja ongelmasta"
 
 #: ../kde/apport-kde.py:337
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Kerätty tieto voidaan lähettää kehittäjille ohjelmiston parantamiseksi. Tämä "
+"voi kestää muutamia minuutteja."
 
 #: ../kde/apport-kde.py:352
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Lähetetään tiedot ongelmasta"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
@@ -922,7 +933,7 @@ msgstr "Apport-kaatumistiedosto"
 #: ../bin/apport-unpack.py:23
 #, python-format
 msgid "Usage: %s <report> <target directory>"
-msgstr ""
+msgstr "Käyttö: %s <raportti> <kohdehakemisto>"
 
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
