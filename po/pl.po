@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-29 16:03-0400\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: Tomasz Dominikowski <dominikowski@gmail.com>\n"
+"PO-Revision-Date: 2011-12-31 13:09+0000\n"
+"Last-Translator: vilqn87 <michalgorski87@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-09 04:38+0000\n"
-"X-Generator: Launchpad (build 14450)\n"
+"X-Launchpad-Export-Date: 2012-01-01 05:21+0000\n"
+"X-Generator: Launchpad (build 14560)\n"
 "Language: pl\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Prawdopobnie pakiet został zainstalowany nieprawidłowo"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"To nie jest oficjalny pakiet %s. Proszę usunąć wszystkie pakiety pochodzące "
+"z innych źródeł niż oficjalne i spróbować ponownie."
 
 #: ../apport/ui.py:117
 #, python-format
@@ -141,11 +143,11 @@ msgstr "Pakiet %s nie istnieje"
 
 #: ../apport/ui.py:413 ../apport/ui.py:595 ../apport/ui.py:600
 msgid "Cannot create report"
-msgstr ""
+msgstr "Nie można utworzyć raportu"
 
 #: ../apport/ui.py:427 ../apport/ui.py:473 ../apport/ui.py:490
 msgid "Updating problem report"
-msgstr ""
+msgstr "Uaktualnianie raportu o problemie"
 
 #: ../apport/ui.py:428
 msgid ""
@@ -154,6 +156,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Użytkownik nie jest autorem lub subskrybentem tego raportu problemu lub "
+"raport jest duplikatem już zamkniętego.\n"
+"\n"
+"Proszę utworzyć nowy raport błędu używając narzędzia \"apport-bug\"."
 
 #: ../apport/ui.py:437
 msgid ""
@@ -175,7 +181,7 @@ msgstr ""
 
 #: ../apport/ui.py:474 ../apport/ui.py:491
 msgid "No additional information collected."
-msgstr ""
+msgstr "Nie zebrano dodatkowych informacji."
 
 #: ../apport/ui.py:540
 msgid "What kind of problem do you want to report?"
@@ -237,6 +243,7 @@ msgstr "Proszę kliknąć okno docelowe, aby zgłosić błąd."
 #: ../apport/ui.py:656
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"Uruchomienie w trybie aktualizacji. Może przyjąć opcjonalnie --package."
 
 #: ../apport/ui.py:658
 msgid ""
@@ -260,6 +267,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Sprecyzowanie programu pracującego w trybie --file-bug. Ta opcja spowoduje, "
+"że raport o błędach będzie zawierał więcej informacji (pid jest podany jako "
+"jedyny argument)."
 
 #: ../apport/ui.py:664
 #, python-format
@@ -276,6 +286,8 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Zapis informacji o błędzie do pliku, zamiast bezpośredniego zgłaszania go. "
+"Raport zawarty w pliku, może być zgłoszony później z innego komputera."
 
 #: ../apport/ui.py:670
 msgid "Print the Apport version number."
@@ -288,7 +300,7 @@ msgstr ""
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "Rozpoczyna sesję gdb"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
@@ -441,7 +453,7 @@ msgstr "Można pomóc twórcom naprawić problem, zgłaszając go."
 #: ../bin/apport-cli.py:208
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bajtów)"
 
 #: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
 msgid "(binary data)"
@@ -638,7 +650,7 @@ msgstr "Problem z programem"
 
 #: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:305
 #, no-c-format, python-format
@@ -860,21 +872,21 @@ msgstr ""
 
 #: ../kde/apport-kde.py:160
 msgid "Username:"
-msgstr ""
+msgstr "Nazwa użytkownika:"
 
 #: ../kde/apport-kde.py:161
 msgid "Password:"
-msgstr ""
+msgstr "Hasło:"
 
 #: ../kde/apport-kde.py:191
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr ""
+msgstr "Przepraszamy, program \"%s\" został niespodziewanie zakończony."
 
 #: ../kde/apport-kde.py:194
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr ""
+msgstr "Przepraszamy, niespodziewanie zakończono %s."
 
 #: ../kde/apport-kde.py:200
 msgid "&Ignore future crashes of this program version"
@@ -882,7 +894,7 @@ msgstr ""
 
 #: ../kde/apport-kde.py:209
 msgid "Restart &Program"
-msgstr ""
+msgstr "Uruchom &program ponownie"
 
 #: ../kde/apport-kde.py:228
 #, python-format
@@ -892,21 +904,23 @@ msgstr ""
 
 #: ../kde/apport-kde.py:268 ../kde/apport-kde.py:273
 msgid "Generic error"
-msgstr ""
+msgstr "Błąd ogólny"
 
 #: ../kde/apport-kde.py:275
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
+"Po wysłaniu raportu o błędzie proszę wypełnić formularz w automatycznie "
+"otwartym oknie przeglądarki."
 
 #: ../kde/apport-kde.py:278
 msgid "&Send"
-msgstr ""
+msgstr "&Wyślij"
 
 #: ../kde/apport-kde.py:335
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Zbieranie informacji o problemie"
 
 #: ../kde/apport-kde.py:337
 msgid ""
@@ -918,7 +932,7 @@ msgstr ""
 
 #: ../kde/apport-kde.py:352
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Wysyłanie informacji o problemie"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
