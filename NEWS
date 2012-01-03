@@ -16,6 +16,7 @@ Bug fixes:
    to "3". Existing databases need to be migrated manually as SQLite does not
    allow adding a "PRIMARY KEY" constraint to existing tables.
  - crashdb.py: Do not add a new address signature entry if one already exists.
+ - apport-cli: Fix UnicodeDecodeError on unicode report values. (LP: #275972)
 
 1.90 (2011-11-24):
 ------------------

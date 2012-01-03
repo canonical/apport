@@ -203,7 +203,10 @@ class CLIUserInterface(apport.ui.UserInterface):
                 hasattr(self.report[key], 'isspace') and \
                 not self.report._is_binary(self.report[key]) and \
                 keylen < max_show:
-                details += self.report[key]
+                if type(self.report[key]) == type(b''):
+                    details += self.report[key]
+                else:
+                    details += self.report[key].encode('UTF-8')
             elif keylen >= max_show:
                 details += _('(%i bytes)') % keylen
             else:
