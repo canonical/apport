@@ -429,8 +429,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                         pass # LP#249950 workaround
             try:
                 task = self._get_distro_tasks(bug.bug_tasks).next()
-                task.importance = 'Medium'
-                task.lp_save()
+                if task.importance == 'Undecided':
+                    task.importance = 'Medium'
+                    task.lp_save()
             except StopIteration:
                 pass # no distro tasks
 

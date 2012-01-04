@@ -17,6 +17,7 @@ Bug fixes:
    allow adding a "PRIMARY KEY" constraint to existing tables.
  - crashdb.py: Do not add a new address signature entry if one already exists.
  - apport-cli: Fix UnicodeDecodeError on unicode report values. (LP: #275972)
+ - launchpad.py: Only set bug task importance if it is undecided.
 
 1.90 (2011-11-24):
 ------------------
