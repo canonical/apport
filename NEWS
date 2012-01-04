@@ -19,6 +19,9 @@ Bug fixes:
  - apport-cli: Fix UnicodeDecodeError on unicode report values. (LP: #275972)
  - launchpad.py: Only set bug task importance if it is undecided.
  - apport-retrace: Fix "an useful" typo. (LP: #911437)
+ - report.py: Filter out frames which are internal kernel/glibc implementation
+   details and not stable across duplicates. In particular, filter out
+   __kernel-syscall() and the SSE stubs.
 
 1.90 (2011-11-24):
 ------------------

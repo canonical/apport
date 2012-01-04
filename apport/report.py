@@ -639,6 +639,8 @@ class Report(problem_report.ProblemReport):
         unwinding_xerror = False
         bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+\*?(.*)|(<signal handler called>)\s*)$')
         bt_fn_noaddr_re = re.compile('^#(\d+)\s+(?:(.*)|(<signal handler called>)\s*)$')
+        # some internal functions like the SSE stubs cause unnecessary jitter
+        ignore_functions_re = re.compile('^(__.*_s?sse\d+(?:_\w+)?|__kernel_vsyscall)$')
 
         for line in self['Stacktrace'].splitlines():
             m = bt_fn_re.match(line)
@@ -676,8 +678,10 @@ class Report(problem_report.ProblemReport):
                 else:
                     unwinding = False
 
-            if depth < len(toptrace):
-                toptrace[depth] = m.group(2) or m.group(3)
+            frame = m.group(2) or m.group(3)
+            function = frame.split()[0]
+            if depth < len(toptrace) and not ignore_functions_re.match(function):
+                toptrace[depth] = frame
                 depth += 1
         self['StacktraceTop'] = '\n'.join(toptrace).strip()
 
@@ -2753,6 +2757,27 @@ No symbol table info available.
 '''
         r._gen_stacktrace_top()
         self.assertEqual(r['StacktraceTop'], '')
+
+        # ignore uninteresting frames
+        r = Report()
+        r['Stacktrace'] = '''#0  0x00987416 in __kernel_vsyscall ()
+#1  __strchr_sse42 () at strchr.S:97
+#2 h (p=0x0) at crash.c:25
+#3  0x100004c8 in g (x=1, y=42) at crash.c:26
+#4  0x10000999 in __memmove_ssse3 ()
+#5 f (x=1) at crash.c:27
+#6  0x10000530 in e (x=1) at crash.c:28
+#7  0x10000999 in __strlen_sse2_back () at strchr.S:42
+#8  0x10000530 in d (x=1) at crash.c:29
+#9  0x10000530 in c (x=1) at crash.c:30
+#10 0x10000550 in main () at crash.c:31
+'''
+        r._gen_stacktrace_top()
+        self.assertEqual(r['StacktraceTop'], '''h (p=0x0) at crash.c:25
+g (x=1, y=42) at crash.c:26
+f (x=1) at crash.c:27
+e (x=1) at crash.c:28
+d (x=1) at crash.c:29''')
 
     def test_crash_signature(self):
         '''crash_signature().'''
