@@ -1137,7 +1137,7 @@ NameError: global name 'weird' is not defined'''
             self.assertTrue('ThreadStacktrace' in r)
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
 
-            # updating with an useless stack trace retains core dump
+            # updating with a useless stack trace retains core dump
             r['StacktraceTop'] = '?? ()'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
@@ -1157,7 +1157,7 @@ NameError: global name 'weird' is not defined'''
             self.assertTrue('apport-crash' in tags)
             self.assertFalse('apport-collected' in tags)
 
-            # updating with an useful stack trace removes core dump
+            # updating with a useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
@@ -1440,7 +1440,7 @@ NameError: global name 'weird' is not defined'''
 
             self.crashdb.close_duplicate(r, id, segv_report)
 
-            # updating with an useful stack trace removes core dump
+            # updating with a useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
