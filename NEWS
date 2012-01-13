@@ -22,6 +22,8 @@ Bug fixes:
  - report.py: Filter out frames which are internal kernel/glibc implementation
    details and not stable across duplicates. In particular, filter out
    __kernel-syscall() and the SSE stubs.
+ - crashdb.py: Remove debugging leftover which completely disabled bug pattern
+   checking.
 
 1.90 (2011-11-24):
 ------------------

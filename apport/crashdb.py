@@ -49,7 +49,6 @@ class CrashDatabase:
         See apport.report.Report.search_bug_patterns() for details. If this
         function returns None, bug patterns are disabled.
         '''
-        return None
         return self.options.get('bug_pattern_url')
 
     #
