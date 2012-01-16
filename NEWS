@@ -25,6 +25,10 @@ Bug fixes:
  - crashdb.py: Remove debugging leftover which completely disabled bug pattern
    checking.
 
+Improvements:
+ - Change permissions of .crash files from 0600 to 0640, so that /var/crash can
+   be made g+s and crash handling daemons can access those.
+
 1.90 (2011-11-24):
 ------------------
 First beta release of 2.0 which introduces client-side duplicate checking.

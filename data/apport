@@ -141,7 +141,7 @@ def write_user_coredump(pid, cwd, limit):
     try:
         if open('/proc/sys/kernel/core_uses_pid').read().strip() != '0':
             core_path += '.' + str(pid)
-        core_file = os.open(core_path, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o600)
+        core_file = os.open(core_path, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o640)
     except (OSError, IOError):
         return
 
@@ -374,7 +374,7 @@ try:
             os.unlink(report)
         raise
     if report:
-        os.chmod(report, 0o600)
+        os.chmod(report, 0o640)
     if reportfile != sys.stderr:
         error_log('wrote report %s' % report)
 except (SystemExit, KeyboardInterrupt):

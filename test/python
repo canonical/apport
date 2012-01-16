@@ -71,7 +71,7 @@ func(42)
         pr = None
         self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
         self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-            0o600, 'report has correct permissions')
+            0o640, 'report has correct permissions')
 
         pr = problem_report.ProblemReport()
         pr.load(open(reports[0]))
@@ -98,7 +98,7 @@ func(42)
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
         self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-            0o600, 'report has correct permissions')
+            0o640, 'report has correct permissions')
 
         # touch report -> "seen" case
         apport.fileutils.mark_report_seen(reports[0])
@@ -125,7 +125,7 @@ func(42)
         pr = None
         self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
         self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-            0o600, 'report has correct permissions')
+            0o640, 'report has correct permissions')
 
         pr = problem_report.ProblemReport()
         pr.load(open(reports[0]))

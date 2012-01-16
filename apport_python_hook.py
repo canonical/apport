@@ -118,7 +118,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if crash_counter:
             pr['CrashCounter'] = str(crash_counter)
         report_file = os.fdopen(os.open(pr_filename,
-            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o600), 'w')
+            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o640), 'w')
         try:
             pr.write(report_file)
         finally:
