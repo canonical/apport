@@ -29,6 +29,7 @@ _ignore_file = '~/.apport-ignore.xml'
 
 # system-wide blacklist
 _blacklist_dir = '/etc/apport/blacklist.d'
+_whitelist_dir = '/etc/apport/whitelist.d'
 
 # programs that we consider interpreters
 interpreters = ['sh', 'bash', 'dash', 'csh', 'tcsh', 'python*',
@@ -841,7 +842,10 @@ class Report(problem_report.ProblemReport):
 
         Reports can be suppressed by per-user blacklisting in
         ~/.apport-ignore.xml (in the real UID's home) and
-        /etc/apport/blacklist.d/.
+        /etc/apport/blacklist.d/. For environments where you are only
+        interested in crashes of some programs, you can also create a whitelist
+        in /etc/apport/whitelist.d/, everything which does not match gets
+        ignored then.
 
         This requires the ExecutablePath attribute. Throws a ValueError if the
         file has an invalid format.
@@ -858,6 +862,22 @@ class Report(problem_report.ProblemReport):
                                 return True
                 except IOError:
                     continue
+        except OSError:
+            pass
+
+        # check whitelist
+        try:
+            whitelist = set()
+            for f in os.listdir(_whitelist_dir):
+                try:
+                    with open(os.path.join(_whitelist_dir, f)) as fd:
+                        for line in fd:
+                            whitelist.add(line.strip())
+                except IOError:
+                    continue
+
+            if whitelist and self['ExecutablePath'] not in whitelist:
+                return True
         except OSError:
             pass
 
@@ -2361,6 +2381,51 @@ def add_info(report, ui):
         finally:
             shutil.rmtree(_blacklist_dir)
             _blacklist_dir = orig_blacklist_dir
+            _ignore_file = orig_ignore_file
+
+    def test_whitelisting(self):
+        '''check_ignored() for system-wise whitelist.'''
+
+        global _whitelist_dir
+        global _ignore_file
+        orig_whitelist_dir = _whitelist_dir
+        _whitelist_dir = tempfile.mkdtemp()
+        orig_ignore_file = _ignore_file
+        _ignore_file = '/nonexistant'
+        try:
+            bash_rep = Report()
+            bash_rep['ExecutablePath'] = '/bin/bash'
+            crap_rep = Report()
+            crap_rep['ExecutablePath'] = '/bin/crap'
+
+            # no ignores without any whitelist
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), False)
+
+            # should not stumble over comments
+            with open(os.path.join(_whitelist_dir, 'README'), 'w') as fd:
+                fd.write('# Ignore file\n#/bin/bash\n')
+
+            # accepts matching paths
+            with open(os.path.join(_whitelist_dir, 'wl1'), 'w') as fd:
+                fd.write('/bin/bash\n')
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), True)
+
+            # also accept crap now
+            with open(os.path.join(_whitelist_dir, 'wl_2'), 'w') as fd:
+                fd.write('/bin/crap\n')
+            self.assertEqual(bash_rep.check_ignored(), False)
+            self.assertEqual(crap_rep.check_ignored(), False)
+
+            # only complete matches accepted
+            with open(os.path.join(_whitelist_dir, 'wl1'), 'w') as fd:
+                fd.write('/bin/bas\n/bin/bashh\nbash\n')
+            self.assertEqual(bash_rep.check_ignored(), True)
+            self.assertEqual(crap_rep.check_ignored(), False)
+        finally:
+            shutil.rmtree(_whitelist_dir)
+            _whitelist_dir = orig_whitelist_dir
             _ignore_file = orig_ignore_file
 
     def test_has_useful_stacktrace(self):

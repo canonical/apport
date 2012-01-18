@@ -31,6 +31,9 @@ Improvements:
  - Python exceptions: Blacklist DBus.Error.NoReply. It does not help to get
    these traces from the client-side application, you need the actual exception
    in the D-Bus server backend instead. (LP: #914220)
+ - Support /etc/apport/whitelist.d/ similarly to /etc/apport/blacklist.d/, for
+   cases like installer environments where only crashes of a few selected
+   programs should be reported.
 
 1.90 (2011-11-24):
 ------------------
