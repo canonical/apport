@@ -50,6 +50,11 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if not enabled():
             return
 
+        # org.freedesktop.DBus.Error.NoReply is an useless crash, needs actual
+        # crash from D-BUS backend (LP# 914220)
+        if str(exc_obj).startswith('org.freedesktop.DBus.Error.NoReply'):
+            return
+
         try:
             from cStringIO import StringIO
         except ImportError:
