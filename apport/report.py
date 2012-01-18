@@ -570,7 +570,7 @@ class Report(problem_report.ProblemReport):
                            'Disassembly': 'x/16i $pc',
                            'Stacktrace': 'bt full',
                            'ThreadStacktrace': 'thread apply all bt full',
-                           'AssertionMessage': 'print (char*) __abort_msg',
+                           'AssertionMessage': 'print __abort_msg->msg',
                           }
 
             command = ['gdb', '--batch']

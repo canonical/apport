@@ -24,6 +24,8 @@ Bug fixes:
    __kernel-syscall() and the SSE stubs.
  - crashdb.py: Remove debugging leftover which completely disabled bug pattern
    checking.
+ - report.py: Update reading AssertionMessage. Current (e)glibc turned
+   __abort_msg from a simple static string into a struct.
 
 Improvements:
  - Change permissions of .crash files from 0600 to 0640, so that /var/crash can
