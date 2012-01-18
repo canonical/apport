@@ -810,7 +810,8 @@ free memory to automatically analyze the problem and send a report to the develo
         if response is None:
             return
 
-        retrace_with_download = 'apport-retrace -S system -C ~/.cache/apport/retrace -v '
+        retrace_with_download = 'apport-retrace -S system -C %s -v ' % os.path.expanduser(
+                '~/.cache/apport/retrace')
         retrace_no_download = 'apport-retrace '
         filearg = "'" + self.report_file.replace("'", "'\\''") + "'"
 
