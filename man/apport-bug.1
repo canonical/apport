@@ -94,6 +94,12 @@ reported problem you have submitted. This is useful if the report was
 not originally filed through Apport, and the developers ask you to attach
 information from your system.
 
+.SH FILES
+apport crash files are written in to 
+.B /var/crash
+by default, named uniquely per binary name and user id.  They are not deleted after being sent to the bug tracker.  You can extract the core file (if any) and other information using 
+.B apport-unpack.
+
 .SH OPTIONS
 Please see the 
 .BR apport\-cli(1)
