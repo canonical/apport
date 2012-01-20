@@ -7,6 +7,10 @@ Bug fixes:
  - ui.py: Fix wrong creation of "~" folder instead of expanding it to home
    directory when using "Examine locally". Thanks Jason Conti! (LP: #909149)
 
+Improvements:
+ - man/apport-bug.1: Mention where crash files are stored. Thanks David
+   Kastrup.
+
 1.91 (2012-01-18):
 ------------------
 Bug fixes:

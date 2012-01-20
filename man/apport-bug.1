@@ -111,8 +111,17 @@ in their
 or temporarily on the command line when calling
 .B apport\-bug\fR.
 
+.SH FILES
+apport crash files are written in to 
+.B /var/crash
+by default, named uniquely per binary name and user id.  They are not deleted
+after being sent to the bug tracker (but from cron when they get older than 7
+days). You can extract the core file (if any) and other information using 
+.B apport-unpack.
+
 .SH "SEE ALSO"
-.BR apport\-cli (1)
+.BR apport\-cli (1),
+.BR apport\-unpack (1)
 
 .SH AUTHOR
 .B apport
