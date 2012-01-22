@@ -360,9 +360,9 @@ if __name__ == '__main__':
         print('  Usage: %s Registers.txt Disassembly.txt ProcMaps.txt' % (sys.argv[0]))
         sys.exit(0)
     elif len(sys.argv)==4:
-        segv = ParseSegv(file(sys.argv[1]).read(), \
-                         file(sys.argv[2]).read(), \
-                         file(sys.argv[3]).read())
+        segv = ParseSegv(open(sys.argv[1]).read(), \
+                         open(sys.argv[2]).read(), \
+                         open(sys.argv[3]).read())
         understood, reason, details = segv.report()
         print ('%s\n\n%s' % (reason, details))
         rc = 0
