@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - ui.py: Fix wrong creation of "~" folder instead of expanding it to home
    directory when using "Examine locally". Thanks Jason Conti! (LP: #909149)
+ - Replace file() calls with open() for Python 3 compatibility. Thanks Colin
+   Watson!
 
 Improvements:
  - man/apport-bug.1: Mention where crash files are stored. Thanks David
