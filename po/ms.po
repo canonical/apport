@@ -14,13 +14,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-09 04:38+0000\n"
-"X-Generator: Launchpad (build 14450)\n"
+"X-Launchpad-Export-Date: 2012-01-28 04:35+0000\n"
+"X-Generator: Launchpad (build 14727)\n"
 "Language: ms\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Pakej ini tidak kelihatan dipasang dengan betul"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Ini bukanlah pakej %s rasmi. Sila buang sebarang pakej pihak ketiga dan cuba "
+"lagi."
 
 #: ../apport/ui.py:117
 #, python-format
@@ -263,25 +265,27 @@ msgstr ""
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Ini akan lancarkan apport-retrace didalam tetingkap terminal untuk periksa "
+"kerosakan."
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "Jalankan sesi gdb"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Jalankan sesi gdb tanpa memuat turun simbol nyahpepijat"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Kemaskini %s dengan jejak tindanan simbolik penuh"
 
 #: ../apport/ui.py:844
 #, python-format
 msgid "The problem happened with the program %s which changed since then."
-msgstr ""
+msgstr "Masalah berlaku dengan program %s yang mana berubah."
 
 #: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
@@ -381,8 +385,8 @@ msgid "Cancel and &ignore future crashes of this program version"
 msgstr ""
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-#: ../bin/apport-cli.py:243 ../bin/apport-cli.py:326 ../bin/apport-cli.py:358
-#: ../bin/apport-cli.py:379
+#: ../bin/apport-cli.py:246 ../bin/apport-cli.py:329 ../bin/apport-cli.py:361
+#: ../bin/apport-cli.py:382
 msgid "&Cancel"
 msgstr "&Batal"
 
@@ -391,7 +395,7 @@ msgstr "&Batal"
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr ""
 
-#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:23 ../kde/apport-kde.py:230
+#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:230
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
@@ -404,133 +408,133 @@ msgstr ""
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr ""
 
-#: ../bin/apport-cli.py:208
+#: ../bin/apport-cli.py:211
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
 msgid "(binary data)"
 msgstr "(data binari)"
 
-#: ../bin/apport-cli.py:218 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
+#: ../bin/apport-cli.py:221 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
 msgid "Send this data to the developers?"
 msgstr ""
 
-#: ../bin/apport-cli.py:220 ../kde/apport-kde.py:274
+#: ../bin/apport-cli.py:223 ../kde/apport-kde.py:274
 msgid "Send problem report to the developers?"
 msgstr ""
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:224
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:229
 #, python-format
 msgid "&Send complete report (recommended; %s)"
 msgstr ""
 
-#: ../bin/apport-cli.py:228
+#: ../bin/apport-cli.py:231
 #, python-format
 msgid "Send &reduced report (slow Internet connection; %s)"
 msgstr ""
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:234
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Hantar laporan(%s)"
 
-#: ../bin/apport-cli.py:236
+#: ../bin/apport-cli.py:239
 msgid "&Examine locally"
-msgstr ""
+msgstr "&Periksa secara setempat"
 
-#: ../bin/apport-cli.py:240
+#: ../bin/apport-cli.py:243
 msgid "&View report"
 msgstr "&Lihat laporan"
 
-#: ../bin/apport-cli.py:241
+#: ../bin/apport-cli.py:244
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 
-#: ../bin/apport-cli.py:275
+#: ../bin/apport-cli.py:278
 msgid "Problem report file:"
 msgstr "Fail laporan masalah:"
 
-#: ../bin/apport-cli.py:283 ../bin/apport-cli.py:288
+#: ../bin/apport-cli.py:286 ../bin/apport-cli.py:291
 msgid "&Confirm"
 msgstr ""
 
-#: ../bin/apport-cli.py:287
+#: ../bin/apport-cli.py:290
 #, python-format
 msgid "Error: %s"
 msgstr "Ralat: %s"
 
-#: ../bin/apport-cli.py:293 ../kde/apport-kde.py:336
+#: ../bin/apport-cli.py:296 ../kde/apport-kde.py:336
 msgid "Collecting problem information"
 msgstr ""
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:297
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
 
-#: ../bin/apport-cli.py:306 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:353
+#: ../bin/apport-cli.py:309 ../gtk/apport-gtk.ui.h:25 ../kde/apport-kde.py:353
 msgid "Uploading problem information"
 msgstr ""
 
-#: ../bin/apport-cli.py:307
+#: ../bin/apport-cli.py:310
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
 
-#: ../bin/apport-cli.py:357
+#: ../bin/apport-cli.py:360
 msgid "&Done"
 msgstr ""
 
-#: ../bin/apport-cli.py:363
+#: ../bin/apport-cli.py:366
 msgid "none"
 msgstr ""
 
-#: ../bin/apport-cli.py:364
+#: ../bin/apport-cli.py:367
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:380
+#: ../bin/apport-cli.py:383
 msgid "Choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:394
+#: ../bin/apport-cli.py:397
 msgid "Path to file (Enter to cancel):"
 msgstr ""
 
-#: ../bin/apport-cli.py:400
+#: ../bin/apport-cli.py:403
 msgid "File does not exist."
 msgstr ""
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:405
 msgid "This is a directory."
 msgstr ""
 
-#: ../bin/apport-cli.py:408
+#: ../bin/apport-cli.py:411
 msgid "To continue, you must visit the following URL:"
 msgstr ""
 
-#: ../bin/apport-cli.py:410
+#: ../bin/apport-cli.py:413
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
 
-#: ../bin/apport-cli.py:412
+#: ../bin/apport-cli.py:415
 msgid "Launch a browser now"
 msgstr ""
 
-#: ../bin/apport-cli.py:426
+#: ../bin/apport-cli.py:429
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 
@@ -552,11 +556,11 @@ msgid ""
 "completed normally."
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:1
+#: ../gtk/apport-gtk.ui.h:23
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:2
+#: ../gtk/apport-gtk.ui.h:3
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -564,100 +568,100 @@ msgid ""
 "automatically opened web browser."
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:5
+#: ../gtk/apport-gtk.ui.h:26
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:7
+#: ../gtk/apport-gtk.ui.h:21
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:8
+#: ../gtk/apport-gtk.ui.h:13
 msgid "Application problem"
 msgstr "Masalah aplikasi"
 
-#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
+#: ../gtk/apport-gtk.ui.h:12 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
 msgid "Apport"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:305
+#: ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:305
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:12
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "Kandungan laporan"
 
-#: ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:197
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:197
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
 "the problem."
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../gtk/apport-gtk.ui.h:24
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:252
+#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:252
 msgid "Kernel problem"
 msgstr "Masalah kernel"
 
-#: ../gtk/apport-gtk.ui.h:16
+#: ../gtk/apport-gtk.ui.h:19
 msgid "Package problem"
 msgstr "Masalah pakej"
 
-#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:308
+#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:308
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:19
+#: ../gtk/apport-gtk.ui.h:17
 msgid "Restart _Program"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:20 ../kde/apport-kde.py:354
+#: ../gtk/apport-gtk.ui.h:27 ../kde/apport-kde.py:354
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:21
+#: ../gtk/apport-gtk.ui.h:10
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
 "you have a slow internet connection."
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:24
+#: ../gtk/apport-gtk.ui.h:1
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Periksa secara setempat"
 
-#: ../gtk/apport-gtk.ui.h:25
+#: ../gtk/apport-gtk.ui.h:16
 msgid "_Ignore future crashes of this program version"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:26
+#: ../gtk/apport-gtk.ui.h:14
 msgid "_Report Problem..."
 msgstr "_Lapor Masalah..."
 
-#: ../gtk/apport-gtk.ui.h:27
+#: ../gtk/apport-gtk.ui.h:2
 msgid "_Send Report"
 msgstr "_Kirim Laporan"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
+#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr ""
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
+#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "Lapor masalah..."
 
@@ -717,7 +721,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
+msgstr "Tokok setem masa untuk log mesej, bagi operasi kelompok"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"

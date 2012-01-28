@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-09 04:38+0000\n"
-"X-Generator: Launchpad (build 14450)\n"
+"X-Launchpad-Export-Date: 2012-01-28 04:36+0000\n"
+"X-Generator: Launchpad (build 14727)\n"
 "Language: \n"
 
 #: ../apport/ui.py:92
@@ -44,7 +44,7 @@ msgstr ""
 
 #: ../apport/ui.py:213
 msgid "unknown program"
-msgstr "未知的程式"
+msgstr "未知程式"
 
 #: ../apport/ui.py:214 ../gtk/apport-gtk.py:81
 #, python-format
@@ -224,7 +224,7 @@ msgstr ""
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
-msgstr "建立一份關於症狀的錯誤報告。（暗示若症狀名稱是唯一給予的參數。）"
+msgstr "建立關於症狀的錯誤報告。(暗示是否只要提供症狀名稱作為引數。)"
 
 #: ../apport/ui.py:660
 msgid ""
@@ -345,7 +345,7 @@ msgstr "此問題在網路瀏覽器顯示之錯誤報告中已回報。請檢查
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
-msgstr "按下任何鍵繼續…"
+msgstr "按任意鍵繼續..."
 
 #: ../bin/apport-cli.py:78
 msgid "What would you like to do? Your options are:"
@@ -382,8 +382,8 @@ msgid "Cancel and &ignore future crashes of this program version"
 msgstr "取消及忽略未來此程式版本的當機 (&I)"
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-#: ../bin/apport-cli.py:243 ../bin/apport-cli.py:326 ../bin/apport-cli.py:358
-#: ../bin/apport-cli.py:379
+#: ../bin/apport-cli.py:246 ../bin/apport-cli.py:329 ../bin/apport-cli.py:361
+#: ../bin/apport-cli.py:382
 msgid "&Cancel"
 msgstr "取消(&C)"
 
@@ -392,37 +392,37 @@ msgstr "取消(&C)"
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr "\"%s\" 套件無法安裝或升級"
 
-#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:23 ../kde/apport-kde.py:230
+#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:230
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr "您可報告此問題以協助解決。"
 
 #: ../bin/apport-cli.py:176 ../gtk/apport-gtk.py:133 ../kde/apport-kde.py:245
 msgid "Your system encountered a serious kernel problem."
-msgstr "閣下系統遇上嚴重核心問題"
+msgstr "您的系統遭遇到嚴重的內核問題。"
 
 #: ../bin/apport-cli.py:180 ../gtk/apport-gtk.py:137 ../kde/apport-kde.py:249
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr "您可報告這個問題，以協助開發者解決"
 
-#: ../bin/apport-cli.py:208
+#: ../bin/apport-cli.py:211
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
 msgid "(binary data)"
 msgstr "（二進制資料）"
 
-#: ../bin/apport-cli.py:218 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
+#: ../bin/apport-cli.py:221 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
 msgid "Send this data to the developers?"
 msgstr "是否傳送本資料予開發者？"
 
-#: ../bin/apport-cli.py:220 ../kde/apport-kde.py:274
+#: ../bin/apport-cli.py:223 ../kde/apport-kde.py:274
 msgid "Send problem report to the developers?"
 msgstr "要將傳送問題報告給開發者嗎？"
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:224
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -430,114 +430,114 @@ msgstr ""
 "在問題報告傳送後，請填寫自動開啟之\n"
 "網路瀏覽器中的表格。"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:229
 #, python-format
 msgid "&Send complete report (recommended; %s)"
 msgstr "傳送完整報告（建議；%s）(&S)"
 
-#: ../bin/apport-cli.py:228
-#, python-format
-msgid "Send &reduced report (slow Internet connection; %s)"
-msgstr "傳送簡易報告（慢速網際網路連線；%s） (&R)"
-
 #: ../bin/apport-cli.py:231
 #, python-format
-msgid "&Send report (%s)"
-msgstr "傳送報告（%s） (&S)"
+msgid "Send &reduced report (slow Internet connection; %s)"
+msgstr "傳送簡短報告 (慢速網際網路連線；%s)(&R)"
 
-#: ../bin/apport-cli.py:236
+#: ../bin/apport-cli.py:234
+#, python-format
+msgid "&Send report (%s)"
+msgstr "傳送報告 (%s)(&S)"
+
+#: ../bin/apport-cli.py:239
 msgid "&Examine locally"
 msgstr ""
 
-#: ../bin/apport-cli.py:240
+#: ../bin/apport-cli.py:243
 msgid "&View report"
-msgstr "檢視報告 (&V)"
+msgstr "檢視報告(&V)"
 
-#: ../bin/apport-cli.py:241
+#: ../bin/apport-cli.py:244
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr "保留回報檔稍候傳送或複製至其他地點 (&K)"
+msgstr "保留回報檔，稍後傳送或複製至其他位置(&K)"
 
-#: ../bin/apport-cli.py:275
+#: ../bin/apport-cli.py:278
 msgid "Problem report file:"
 msgstr "問題回報檔："
 
-#: ../bin/apport-cli.py:283 ../bin/apport-cli.py:288
+#: ../bin/apport-cli.py:286 ../bin/apport-cli.py:291
 msgid "&Confirm"
-msgstr "確認 (&C)"
+msgstr "確認(&C)"
 
-#: ../bin/apport-cli.py:287
+#: ../bin/apport-cli.py:290
 #, python-format
 msgid "Error: %s"
 msgstr "錯誤：%s"
 
-#: ../bin/apport-cli.py:293 ../kde/apport-kde.py:336
+#: ../bin/apport-cli.py:296 ../kde/apport-kde.py:336
 msgid "Collecting problem information"
 msgstr "正在收集問題資訊"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:297
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
-"已收集的資訊可被傳送給開發者以改進此\n"
+"收集的資訊可傳送予開發者以改進此\n"
 "應用程式。這可能需要數分鐘。"
 
-#: ../bin/apport-cli.py:306 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:353
+#: ../bin/apport-cli.py:309 ../gtk/apport-gtk.ui.h:25 ../kde/apport-kde.py:353
 msgid "Uploading problem information"
 msgstr "正在上傳問題資訊"
 
-#: ../bin/apport-cli.py:307
+#: ../bin/apport-cli.py:310
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
-"已收集的資訊將被傳送至錯誤追蹤系統。\n"
+"已收集的資訊將傳送至臭蟲追蹤系統。\n"
 "這可能需要數分鐘。"
 
-#: ../bin/apport-cli.py:357
+#: ../bin/apport-cli.py:360
 msgid "&Done"
-msgstr "完成 (&D)"
+msgstr "完成(&D)"
 
-#: ../bin/apport-cli.py:363
+#: ../bin/apport-cli.py:366
 msgid "none"
 msgstr "無"
 
-#: ../bin/apport-cli.py:364
+#: ../bin/apport-cli.py:367
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "已選擇：%s。多種選擇："
 
-#: ../bin/apport-cli.py:380
+#: ../bin/apport-cli.py:383
 msgid "Choices:"
 msgstr "選項："
 
-#: ../bin/apport-cli.py:394
+#: ../bin/apport-cli.py:397
 msgid "Path to file (Enter to cancel):"
-msgstr "檔案路徑（按下 Enter 取消）："
+msgstr "檔案路徑 (按 Enter 取消)："
 
-#: ../bin/apport-cli.py:400
+#: ../bin/apport-cli.py:403
 msgid "File does not exist."
 msgstr "檔案不存在。"
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:405
 msgid "This is a directory."
-msgstr "這是一個目錄。"
+msgstr "這是個目錄。"
 
-#: ../bin/apport-cli.py:408
+#: ../bin/apport-cli.py:411
 msgid "To continue, you must visit the following URL:"
 msgstr "欲繼續，您必須造訪以下網址："
 
-#: ../bin/apport-cli.py:410
+#: ../bin/apport-cli.py:413
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
-msgstr "您現在可以啟動瀏覽器，或複製此網址到另一台電腦的瀏覽器中。"
+msgstr "您現在可以啟動瀏覽器，或複製此網址到另一臺電腦的瀏覽器中。"
 
-#: ../bin/apport-cli.py:412
+#: ../bin/apport-cli.py:415
 msgid "Launch a browser now"
 msgstr "現在啟動瀏覽器"
 
-#: ../bin/apport-cli.py:426
+#: ../bin/apport-cli.py:429
 msgid "No pending crash reports. Try --help for more information."
 msgstr "無等待中的當機報告。更多資訊請試試 --help。"
 
@@ -559,11 +559,11 @@ msgid ""
 "completed normally."
 msgstr "回復行程在非常接近結束的時候停止回應，且將會表現出正常完成的情形。"
 
-#: ../gtk/apport-gtk.ui.h:1
+#: ../gtk/apport-gtk.ui.h:23
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>正在收集問題資訊</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:2
+#: ../gtk/apport-gtk.ui.h:3
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -574,100 +574,100 @@ msgstr ""
 "\n"
 "傳送問題報告之後，請填寫自動開啟的網頁瀏覽器中的表格。"
 
-#: ../gtk/apport-gtk.ui.h:5
+#: ../gtk/apport-gtk.ui.h:26
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>正在上傳問題資訊</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:7
+#: ../gtk/apport-gtk.ui.h:21
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 "install or upgrade.</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">對不起，無法安裝或升級 \"%s\" 套件。</span>"
 
-#: ../gtk/apport-gtk.ui.h:8
+#: ../gtk/apport-gtk.ui.h:13
 msgid "Application problem"
 msgstr "應用程式問題"
 
-#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
+#: ../gtk/apport-gtk.ui.h:12 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
 msgid "Apport"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:305
+#: ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:305
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "完整報告（推廌做法；%s）"
 
-#: ../gtk/apport-gtk.ui.h:12
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "報告內容"
 
-#: ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:197
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:197
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
 "the problem."
-msgstr "如您正在做的並無涉及機密資料（例如密碼或其他私人資訊），您可報告此問題以協助解決"
+msgstr "如您正在做的並無涉及機密資料 (例如密碼或其他私人資訊)，您可以回報此問題幫忙改善應用程式。"
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../gtk/apport-gtk.ui.h:24
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr "正在收集資訊以幫助開發者修正您報告的問題。"
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:252
+#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:252
 msgid "Kernel problem"
 msgstr "核心 (Kernel) 問題"
 
-#: ../gtk/apport-gtk.ui.h:16
+#: ../gtk/apport-gtk.ui.h:19
 msgid "Package problem"
 msgstr "套件問題"
 
-#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:308
+#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:308
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
-msgstr "簡約報告（慢速網際網路連線；%s）"
+msgstr "簡短報告 (慢速網際網路連線；%s)"
 
-#: ../gtk/apport-gtk.ui.h:19
+#: ../gtk/apport-gtk.ui.h:17
 msgid "Restart _Program"
 msgstr "重新啟動程式(_P)"
 
-#: ../gtk/apport-gtk.ui.h:20 ../kde/apport-kde.py:354
+#: ../gtk/apport-gtk.ui.h:27 ../kde/apport-kde.py:354
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
-msgstr "正將收集到之資訊傳送至錯誤追蹤系統。可能會花上數分鐘。"
+msgstr "正將收集到的資訊傳送至臭蟲追蹤系統。這可能需要數分鐘。"
 
-#: ../gtk/apport-gtk.ui.h:21
+#: ../gtk/apport-gtk.ui.h:10
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
 "you have a slow internet connection."
 msgstr "這會從報告中移除某些大型事項。這對開發展偵錯來說非常有幫助，但當你的連線速度較慢時或許對您來說所需上傳的部份會太大。"
 
-#: ../gtk/apport-gtk.ui.h:24
+#: ../gtk/apport-gtk.ui.h:1
 msgid "_Examine locally"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:25
+#: ../gtk/apport-gtk.ui.h:16
 msgid "_Ignore future crashes of this program version"
 msgstr "忽略此程式版本未來的問題(_I)"
 
-#: ../gtk/apport-gtk.ui.h:26
+#: ../gtk/apport-gtk.ui.h:14
 msgid "_Report Problem..."
 msgstr "報告問題(_R)..."
 
-#: ../gtk/apport-gtk.ui.h:27
+#: ../gtk/apport-gtk.ui.h:2
 msgid "_Send Report"
 msgstr "傳送報告(_S)"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
+#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "報告問題予開發者"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
+#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "報告問題..."
 

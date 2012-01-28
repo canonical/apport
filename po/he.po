@@ -14,13 +14,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-09 04:37+0000\n"
-"X-Generator: Launchpad (build 14450)\n"
+"X-Launchpad-Export-Date: 2012-01-28 04:35+0000\n"
+"X-Generator: Launchpad (build 14727)\n"
 "Language: he\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "מסתבר כי חבילה זו אינה מותקנת כראוי"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -194,7 +194,7 @@ msgstr ""
 
 #: ../apport/ui.py:617
 msgid "Specify package name."
-msgstr ""
+msgstr "נא לציין את שם החבילה."
 
 #: ../apport/ui.py:619 ../apport/ui.py:668
 msgid "Add an extra tag to the report. Can be specified multiple times."
@@ -261,15 +261,15 @@ msgstr "הצגת מספר הגרסה של Apport."
 #: ../apport/ui.py:802
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
-msgstr ""
+msgstr "פעולה זו תפעיל את apport-retrace בחלון מסוף כדי לנתח את הקריסה."
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "הפעלת gdb"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "הפעלת gdb מבלי להוריד סימני ניפוי שגיאות"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
@@ -384,8 +384,8 @@ msgid "Cancel and &ignore future crashes of this program version"
 msgstr "בטל והת&עלם מקריסות עתידיות של גירסה זו של התוכנה"
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-#: ../bin/apport-cli.py:243 ../bin/apport-cli.py:326 ../bin/apport-cli.py:358
-#: ../bin/apport-cli.py:379
+#: ../bin/apport-cli.py:246 ../bin/apport-cli.py:329 ../bin/apport-cli.py:361
+#: ../bin/apport-cli.py:382
 msgid "&Cancel"
 msgstr "&ביטול"
 
@@ -394,7 +394,7 @@ msgstr "&ביטול"
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr "התקנת או שדרוג החבילה \"%s\" נכשלו."
 
-#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:23 ../kde/apport-kde.py:230
+#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:230
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr "תוכל לעזור למפתחים לתקן את החבילה על ידי דיווח על התקלה."
@@ -407,24 +407,24 @@ msgstr "המערכת נתקלה בבעיה רצינית בליבה."
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr "תוכל לסייע למפתחים לתקן את התקלה על ידי דיווח עליה."
 
-#: ../bin/apport-cli.py:208
+#: ../bin/apport-cli.py:211
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
 msgid "(binary data)"
 msgstr "(נתונים בינאריים)"
 
-#: ../bin/apport-cli.py:218 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
+#: ../bin/apport-cli.py:221 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
 msgid "Send this data to the developers?"
 msgstr ""
 
-#: ../bin/apport-cli.py:220 ../kde/apport-kde.py:274
+#: ../bin/apport-cli.py:223 ../kde/apport-kde.py:274
 msgid "Send problem report to the developers?"
 msgstr "האם לשלוח דוח תקלה למפתחים?"
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:224
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -432,51 +432,51 @@ msgstr ""
 "לאחר שדיווח אודות התקלה נשלח, נא מלאו את הטופס\n"
 "בדפדפן האינטרנט שנפתח אוטומטית."
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:229
 #, python-format
 msgid "&Send complete report (recommended; %s)"
 msgstr "&שלח דוח מלא (מומלץ; %s)"
 
-#: ../bin/apport-cli.py:228
+#: ../bin/apport-cli.py:231
 #, python-format
 msgid "Send &reduced report (slow Internet connection; %s)"
 msgstr "שלח דוח &מצומצם (לחיבור אינטרנט איטי; %s)"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:234
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&שלח דוח (%s)"
 
-#: ../bin/apport-cli.py:236
+#: ../bin/apport-cli.py:239
 msgid "&Examine locally"
-msgstr ""
+msgstr "&ניתוח מקומי"
 
-#: ../bin/apport-cli.py:240
+#: ../bin/apport-cli.py:243
 msgid "&View report"
 msgstr "ה&צג דוח"
 
-#: ../bin/apport-cli.py:241
+#: ../bin/apport-cli.py:244
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr "&שמור על קובץ הדוח לשליחה מאוחרת או העתקה למיקום אחר"
 
-#: ../bin/apport-cli.py:275
+#: ../bin/apport-cli.py:278
 msgid "Problem report file:"
 msgstr "קובץ דיווח התקלה:"
 
-#: ../bin/apport-cli.py:283 ../bin/apport-cli.py:288
+#: ../bin/apport-cli.py:286 ../bin/apport-cli.py:291
 msgid "&Confirm"
 msgstr "&אשר"
 
-#: ../bin/apport-cli.py:287
+#: ../bin/apport-cli.py:290
 #, python-format
 msgid "Error: %s"
 msgstr "שגיאה: %s"
 
-#: ../bin/apport-cli.py:293 ../kde/apport-kde.py:336
+#: ../bin/apport-cli.py:296 ../kde/apport-kde.py:336
 msgid "Collecting problem information"
 msgstr "אוסף מידע אודות התקלה"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:297
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -484,11 +484,11 @@ msgstr ""
 "ניתן לשלוח את המידע שנאסף למפתחים כדי לשפר את היישום.\n"
 "פעולה זו עלולה להמשך מספר דקות."
 
-#: ../bin/apport-cli.py:306 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:353
+#: ../bin/apport-cli.py:309 ../gtk/apport-gtk.ui.h:25 ../kde/apport-kde.py:353
 msgid "Uploading problem information"
 msgstr "מעלה את פרטי התקלה"
 
-#: ../bin/apport-cli.py:307
+#: ../bin/apport-cli.py:310
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -496,50 +496,50 @@ msgstr ""
 "המידע שנאסף נשלח כעת אל מערכת המעקב אחר התקלות.\n"
 "פעולה זו עלולה להמשך מספר דקות."
 
-#: ../bin/apport-cli.py:357
+#: ../bin/apport-cli.py:360
 msgid "&Done"
 msgstr "&סיום"
 
-#: ../bin/apport-cli.py:363
+#: ../bin/apport-cli.py:366
 msgid "none"
 msgstr "ללא"
 
-#: ../bin/apport-cli.py:364
+#: ../bin/apport-cli.py:367
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "נבחרו %s. בחירות מרובות:"
 
-#: ../bin/apport-cli.py:380
+#: ../bin/apport-cli.py:383
 msgid "Choices:"
 msgstr "בחירות"
 
-#: ../bin/apport-cli.py:394
+#: ../bin/apport-cli.py:397
 msgid "Path to file (Enter to cancel):"
 msgstr "נתיב אל הקובץ (Enter לביטול):"
 
-#: ../bin/apport-cli.py:400
+#: ../bin/apport-cli.py:403
 msgid "File does not exist."
 msgstr "הקובץ אינו קיים."
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:405
 msgid "This is a directory."
 msgstr "זוהי תיקייה."
 
-#: ../bin/apport-cli.py:408
+#: ../bin/apport-cli.py:411
 msgid "To continue, you must visit the following URL:"
 msgstr "כדי להמשיך, עליך לבקר בכתובת הבאה:"
 
-#: ../bin/apport-cli.py:410
+#: ../bin/apport-cli.py:413
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr "ניתן לטעון את הדפדפן כעת, או להעתיק את הכתובת הזאת לדפדפן במחשב אחר."
 
-#: ../bin/apport-cli.py:412
+#: ../bin/apport-cli.py:415
 msgid "Launch a browser now"
 msgstr "טעינת הדפדפן כעת"
 
-#: ../bin/apport-cli.py:426
+#: ../bin/apport-cli.py:429
 msgid "No pending crash reports. Try --help for more information."
 msgstr "אין דיווחי קריסות בהמתנה. נסו --help לקבלת מידע נוסף."
 
@@ -562,11 +562,11 @@ msgid ""
 msgstr ""
 "עיבוד חזרת המחשב לפעולה נתקע ממש לקראת הסוף ונראה כאילו הוא הסתיים כרגיל."
 
-#: ../gtk/apport-gtk.ui.h:1
+#: ../gtk/apport-gtk.ui.h:23
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>אוסף מידע אודות התקלה</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:2
+#: ../gtk/apport-gtk.ui.h:3
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -577,11 +577,11 @@ msgstr ""
 "\n"
 "לאחר שדוח התקלה נשלח, אנא מלא את הטופס הנפתח אוטומטית בדפדפן האינטרנט."
 
-#: ../gtk/apport-gtk.ui.h:5
+#: ../gtk/apport-gtk.ui.h:26
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>מעלה את נתוני התקלה</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:7
+#: ../gtk/apport-gtk.ui.h:21
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
@@ -590,24 +590,24 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">אנו מתנצלים, עדכון או שדרוג החבילה "
 "\"%s\" נכשל.</span>"
 
-#: ../gtk/apport-gtk.ui.h:8
+#: ../gtk/apport-gtk.ui.h:13
 msgid "Application problem"
 msgstr "תקלת יישום"
 
-#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
+#: ../gtk/apport-gtk.ui.h:12 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
 msgid "Apport"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:305
+#: ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:305
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "דוח שלם (מומלץ; %s)"
 
-#: ../gtk/apport-gtk.ui.h:12
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "תוכן הדוח"
 
-#: ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:197
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:197
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -616,37 +616,37 @@ msgstr ""
 "במידה ולא עשית שום דבר חסוי (כמו הזנת סיסמאות או מידע פרטי), תוכל לעזור "
 "בשיפור היישום באמצעות דיווח על הבעיה."
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../gtk/apport-gtk.ui.h:24
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr "המידע נאסף כדי לעזור למפתחים לתקן את התקלה עליה אתה מדווח."
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:252
+#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:252
 msgid "Kernel problem"
 msgstr "תקלת ליבה"
 
-#: ../gtk/apport-gtk.ui.h:16
+#: ../gtk/apport-gtk.ui.h:19
 msgid "Package problem"
 msgstr "תקלת חבילה"
 
-#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:308
+#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:308
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "דוח מצומצם (חיבור איטי לאינטרנט; %s)"
 
-#: ../gtk/apport-gtk.ui.h:19
+#: ../gtk/apport-gtk.ui.h:17
 msgid "Restart _Program"
 msgstr "הפעל את התוכנה מחדש"
 
-#: ../gtk/apport-gtk.ui.h:20 ../kde/apport-kde.py:354
+#: ../gtk/apport-gtk.ui.h:27 ../kde/apport-kde.py:354
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
 "המידע שנאסף נשלח כעת למערכת המעקב אחר התקלות. פעולה זו עלולה להמשך מספר דקות."
 
-#: ../gtk/apport-gtk.ui.h:21
+#: ../gtk/apport-gtk.ui.h:10
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -656,29 +656,29 @@ msgstr ""
 "השגיאה, אך עלולים להיות גדולים מדי עבורך להעלאה במידה ויש לך חיבור אינטרנט "
 "איטי."
 
-#: ../gtk/apport-gtk.ui.h:24
+#: ../gtk/apport-gtk.ui.h:1
 msgid "_Examine locally"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:25
+#: ../gtk/apport-gtk.ui.h:16
 msgid "_Ignore future crashes of this program version"
 msgstr "ה_תעלם מקריסות עתידיות של גירסה זו של התוכנה"
 
-#: ../gtk/apport-gtk.ui.h:26
+#: ../gtk/apport-gtk.ui.h:14
 msgid "_Report Problem..."
 msgstr "_דווח על תקלה..."
 
-#: ../gtk/apport-gtk.ui.h:27
+#: ../gtk/apport-gtk.ui.h:2
 msgid "_Send Report"
 msgstr "_שלח דוח"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
+#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "דווח על תפקוד לקוי למפתחים"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
+#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "דווח על תקלה..."
 

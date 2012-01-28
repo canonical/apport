@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-09 04:38+0000\n"
-"X-Generator: Launchpad (build 14450)\n"
+"X-Launchpad-Export-Date: 2012-01-28 04:35+0000\n"
+"X-Generator: Launchpad (build 14727)\n"
 "Language: lt\n"
 
 #: ../apport/ui.py:92
@@ -169,6 +169,14 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Jūs nesate šio pranešimo apie klaidą autorius. Yra daug lengviau pažymėti "
+"pranešimą apie klaidą kaip kito dublikatą, nei perkelti jūsų komentarus ir "
+"priedus į naują pranešimą apie klaidą.\n"
+"\n"
+"Todėl mes rekomenduojame, kad jūs praneštumėte apie klaidą naudodami „apport-"
+"bug“ ir pakomentuotumėte šiame pranešime apie klaidą apie jūsų pranešimą.\n"
+"\n"
+"Ar tikrai norite tęsti?"
 
 #: ../apport/ui.py:474 ../apport/ui.py:491
 msgid "No additional information collected."
@@ -260,6 +268,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"nurodyti vykdomą programą --file-bug veiksenoje. Jei tai nurodyta, "
+"pranešimas apie klaidą turės daugiau informacijos. (Numanoma, jei pateiktas "
+"„pid“ kaip vienintelis argumentas.)"
 
 #: ../apport/ui.py:664
 #, python-format
@@ -276,6 +287,8 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Pranešimo apie klaidą veiksenoje išsaugoti surinktą informaciją į failą "
+"vietoj perdavimo. Šis failas gali būti perduotas vėliau iš kito kompiuterio."
 
 #: ../apport/ui.py:670
 msgid "Print the Apport version number."
@@ -299,7 +312,7 @@ msgstr "Vykdyti gdb sesiją, neparsiunčiant derinimo simbolių"
 #: ../apport/ui.py:806
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Atnaujinti %s su visiškai simboliniu dėklo pėdsaku"
 
 #: ../apport/ui.py:844
 #, python-format
@@ -413,8 +426,8 @@ msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Atsisakyti ir &ignoruoti šios programos strigtis ateityje"
 
 #: ../bin/apport-cli.py:148 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-#: ../bin/apport-cli.py:243 ../bin/apport-cli.py:326 ../bin/apport-cli.py:358
-#: ../bin/apport-cli.py:379
+#: ../bin/apport-cli.py:246 ../bin/apport-cli.py:329 ../bin/apport-cli.py:361
+#: ../bin/apport-cli.py:382
 msgid "&Cancel"
 msgstr "&Atsisakyti"
 
@@ -423,7 +436,7 @@ msgstr "&Atsisakyti"
 msgid "The package \"%s\" failed to install or upgrade."
 msgstr "Nepavyko įdiegti ar atnaujinti paketo „%s“."
 
-#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:23 ../kde/apport-kde.py:230
+#: ../bin/apport-cli.py:164 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:230
 msgid ""
 "You can help the developers to fix the package by reporting the problem."
 msgstr ""
@@ -437,24 +450,24 @@ msgstr "Sistema susidūrė su rimta branduolio problema."
 msgid "You can help the developers to fix the problem by reporting it."
 msgstr "Jūs galite padėti kūrėjams pataisyti problemą apie ją pranešdami."
 
-#: ../bin/apport-cli.py:208
+#: ../bin/apport-cli.py:211
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i baitų)"
 
-#: ../bin/apport-cli.py:210 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
+#: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
 msgid "(binary data)"
 msgstr "(dvejetainiai duomenys)"
 
-#: ../bin/apport-cli.py:218 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
+#: ../bin/apport-cli.py:221 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
 msgid "Send this data to the developers?"
 msgstr "Siųsti šiuos duomenis kūrėjams?"
 
-#: ../bin/apport-cli.py:220 ../kde/apport-kde.py:274
+#: ../bin/apport-cli.py:223 ../kde/apport-kde.py:274
 msgid "Send problem report to the developers?"
 msgstr "Siųsti ataskaitą apie problemą kūrėjams?"
 
-#: ../bin/apport-cli.py:221
+#: ../bin/apport-cli.py:224
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -462,52 +475,52 @@ msgstr ""
 "Kai ataskaita apie problemą bus nusiųsta, prašome užpildyti formą\n"
 "automatiškai atvertoje žiniatinklio naršyklėje."
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:229
 #, python-format
 msgid "&Send complete report (recommended; %s)"
 msgstr "&Siųsti visą ataskaitą (rekomenduojama; %s)"
 
-#: ../bin/apport-cli.py:228
+#: ../bin/apport-cli.py:231
 #, python-format
 msgid "Send &reduced report (slow Internet connection; %s)"
 msgstr "Siųsti su&mažintą ataskaitą (lėtas interneto ryšys; %s)"
 
-#: ../bin/apport-cli.py:231
+#: ../bin/apport-cli.py:234
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Siųsti ataskaitą (%s)"
 
-#: ../bin/apport-cli.py:236
+#: ../bin/apport-cli.py:239
 msgid "&Examine locally"
 msgstr "&Ištirti vietoj"
 
-#: ../bin/apport-cli.py:240
+#: ../bin/apport-cli.py:243
 msgid "&View report"
 msgstr "&Peržiūrėti ataskaitą"
 
-#: ../bin/apport-cli.py:241
+#: ../bin/apport-cli.py:244
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "Lai&kyti ataskaitos failą vėlesniam siuntimui ar kopijavimui kur nors kitur"
 
-#: ../bin/apport-cli.py:275
+#: ../bin/apport-cli.py:278
 msgid "Problem report file:"
 msgstr "Ataskaitos apie problemą failas:"
 
-#: ../bin/apport-cli.py:283 ../bin/apport-cli.py:288
+#: ../bin/apport-cli.py:286 ../bin/apport-cli.py:291
 msgid "&Confirm"
 msgstr "Pa&tvirtinti"
 
-#: ../bin/apport-cli.py:287
+#: ../bin/apport-cli.py:290
 #, python-format
 msgid "Error: %s"
 msgstr "Klaida: %s"
 
-#: ../bin/apport-cli.py:293 ../kde/apport-kde.py:336
+#: ../bin/apport-cli.py:296 ../kde/apport-kde.py:336
 msgid "Collecting problem information"
 msgstr "Renkama informacija apie problemą"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:297
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -515,11 +528,11 @@ msgstr ""
 "Surinkta informacija gali būti nusiųsta kūrėjams, kad jie patobulintų\n"
 "programą. Tai gali užtrukti kelias minutes."
 
-#: ../bin/apport-cli.py:306 ../gtk/apport-gtk.ui.h:22 ../kde/apport-kde.py:353
+#: ../bin/apport-cli.py:309 ../gtk/apport-gtk.ui.h:25 ../kde/apport-kde.py:353
 msgid "Uploading problem information"
 msgstr "Išsiunčiama informacija apie problemą"
 
-#: ../bin/apport-cli.py:307
+#: ../bin/apport-cli.py:310
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -527,40 +540,40 @@ msgstr ""
 "Surinkta informacija yra siunčiama į klaidų sekimo sistemą.\n"
 "Tai gali užtrukti kelias minutes."
 
-#: ../bin/apport-cli.py:357
+#: ../bin/apport-cli.py:360
 msgid "&Done"
 msgstr "&Baigta"
 
-#: ../bin/apport-cli.py:363
+#: ../bin/apport-cli.py:366
 msgid "none"
 msgstr "nėra"
 
-#: ../bin/apport-cli.py:364
+#: ../bin/apport-cli.py:367
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Pasirinkta: %s. Daugybinis pasirinkimas:"
 
-#: ../bin/apport-cli.py:380
+#: ../bin/apport-cli.py:383
 msgid "Choices:"
 msgstr "Pasirinkimai:"
 
-#: ../bin/apport-cli.py:394
+#: ../bin/apport-cli.py:397
 msgid "Path to file (Enter to cancel):"
 msgstr "Kelias iki failo (Enter - atsisakyti):"
 
-#: ../bin/apport-cli.py:400
+#: ../bin/apport-cli.py:403
 msgid "File does not exist."
 msgstr "Failas neegzistuoja."
 
-#: ../bin/apport-cli.py:402
+#: ../bin/apport-cli.py:405
 msgid "This is a directory."
 msgstr "Tai katalogas."
 
-#: ../bin/apport-cli.py:408
+#: ../bin/apport-cli.py:411
 msgid "To continue, you must visit the following URL:"
 msgstr "Norėdami tęsti privalote aplankyti šį URL:"
 
-#: ../bin/apport-cli.py:410
+#: ../bin/apport-cli.py:413
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -568,11 +581,11 @@ msgstr ""
 "Galite paleisti naršyklę dabar arba nukopijuoti šį URL į naršyklę kitame "
 "kompiuteryje."
 
-#: ../bin/apport-cli.py:412
+#: ../bin/apport-cli.py:415
 msgid "Launch a browser now"
 msgstr "Paleisti naršyklę dabar"
 
-#: ../bin/apport-cli.py:426
+#: ../bin/apport-cli.py:429
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nėra laukiančiųjų strigčių ataskaitų. Mėginkite --help daugiau informacijos "
@@ -598,11 +611,11 @@ msgstr ""
 "Tęsimo apdorojimas užstrigo prie pat pabaigos ir atrodė, kad buvo atliktas "
 "normaliai."
 
-#: ../gtk/apport-gtk.ui.h:1
+#: ../gtk/apport-gtk.ui.h:23
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>Renkama informacija apie problemą</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:2
+#: ../gtk/apport-gtk.ui.h:3
 msgid ""
 "<big><b>Send problem report to the developers?</b></big>\n"
 "\n"
@@ -614,11 +627,11 @@ msgstr ""
 "Kai pranešimas apie problemą bus išsiųstas, užpildykite formą automatiškai "
 "atvertoje žiniatinklio naršyklėje."
 
-#: ../gtk/apport-gtk.ui.h:5
+#: ../gtk/apport-gtk.ui.h:26
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Siunčiama informacija apie problemą</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:7
+#: ../gtk/apport-gtk.ui.h:21
 #, no-c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
@@ -627,24 +640,24 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">Deja, paketas „%s“ nebuvo įrašytas ar "
 "atnaujintas.</span>"
 
-#: ../gtk/apport-gtk.ui.h:8
+#: ../gtk/apport-gtk.ui.h:13
 msgid "Application problem"
 msgstr "Programos problema"
 
-#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
+#: ../gtk/apport-gtk.ui.h:12 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
 msgid "Apport"
 msgstr "Apport"
 
-#: ../gtk/apport-gtk.ui.h:11 ../kde/apport-kde.py:305
+#: ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:305
 #, no-c-format, python-format
 msgid "Complete report (recommended; %s)"
 msgstr "Visa ataskaita (rekomenduojama; %s)"
 
-#: ../gtk/apport-gtk.ui.h:12
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Content of the report"
 msgstr "Ataskaitos turinys"
 
-#: ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:197
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:197
 msgid ""
 "If you were not doing anything confidential (entering passwords or other "
 "private information), you can help to improve the application by reporting "
@@ -653,7 +666,7 @@ msgstr ""
 "Jei nedarėte nieko konfidencialaus (slaptažodžių įvedimas ar asmeninė "
 "informacija), galite padėti patobulinti programą pranešdami apie problemą."
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../gtk/apport-gtk.ui.h:24
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -661,24 +674,24 @@ msgstr ""
 "Renkama informacija, kuri gali padėti kūrėjams pataisyti problemą apie kurią "
 "pranešėte."
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:252
+#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:252
 msgid "Kernel problem"
 msgstr "Branduolio problema"
 
-#: ../gtk/apport-gtk.ui.h:16
+#: ../gtk/apport-gtk.ui.h:19
 msgid "Package problem"
 msgstr "Paketo problema"
 
-#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:308
+#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:308
 #, no-c-format, python-format
 msgid "Reduced report (slow Internet connection; %s)"
 msgstr "Sumažinta ataskaita (lėtas interneto ryšys; %s)"
 
-#: ../gtk/apport-gtk.ui.h:19
+#: ../gtk/apport-gtk.ui.h:17
 msgid "Restart _Program"
 msgstr "Paleisti _programą iš naujo"
 
-#: ../gtk/apport-gtk.ui.h:20 ../kde/apport-kde.py:354
+#: ../gtk/apport-gtk.ui.h:27 ../kde/apport-kde.py:354
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -686,7 +699,7 @@ msgstr ""
 "Surinkta informacija siunčiama į klaidų sekimo sistemą. Tai gali užtrukti "
 "keletą minučių."
 
-#: ../gtk/apport-gtk.ui.h:21
+#: ../gtk/apport-gtk.ui.h:10
 msgid ""
 "This will remove some large items from the report. These are very useful for "
 "developers to debug the problem, but might be too big for you to upload if "
@@ -696,29 +709,29 @@ msgstr ""
 "kūrėjams problemos derinimui, bet gali būti per didelės išsiuntimui, jei "
 "turite lėtą interneto ryšį."
 
-#: ../gtk/apport-gtk.ui.h:24
+#: ../gtk/apport-gtk.ui.h:1
 msgid "_Examine locally"
 msgstr "_Ištirti vietoj"
 
-#: ../gtk/apport-gtk.ui.h:25
+#: ../gtk/apport-gtk.ui.h:16
 msgid "_Ignore future crashes of this program version"
 msgstr "_Ignoruoti šios programos versijos strigtis ateityje"
 
-#: ../gtk/apport-gtk.ui.h:26
+#: ../gtk/apport-gtk.ui.h:14
 msgid "_Report Problem..."
 msgstr "P_ranešti apie problemą..."
 
-#: ../gtk/apport-gtk.ui.h:27
+#: ../gtk/apport-gtk.ui.h:2
 msgid "_Send Report"
 msgstr "_Siųsti ataskaitą"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
+#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "Pranešti apie triktį kūrėjams"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
+#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "Pranešti apie problemą..."
 
@@ -775,11 +788,18 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Sukurti laikiną smėlio dėžę ir atsiųsti/įdiegti ten reikalingus paketus ir "
+"derinimo simbolius; be šios parinkties yra manoma, kad reikalingi paketai ir "
+"derinimo simboliai jau yra įdiegti sistemoje. Argumentas rodo į paketų "
+"sistemos konfigūracijos bazinį katalogą; jei nurodysite „system“, bus "
+"naudojami sistemos konfigūravimo failai, bet tada galėsite tik atsekti "
+"strigtis, kurios įvyko dabar vykdomoje laidoje."
 
 #: ../bin/apport-retrace.py:57
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Raportuoti atsiuntimo/įdiegimo eigą kai įdiegiami paketai į smėlio dėžę"
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
@@ -787,12 +807,13 @@ msgstr "Prie žurnalo pranešimų pridėti laiko žymes"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Podėlio katalogas paketams atsiųstiems smėlio dėžėje"
 
 #: ../bin/apport-retrace.py:63
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
+"Įdiegti papildomą paketą smėlio dėžėje (gali būti nurodyta daugelį kartų)"
 
 #: ../bin/apport-retrace.py:65
 msgid ""
@@ -847,7 +868,7 @@ msgstr "Atsiprašome, %s netikėtai užvertas"
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
-msgstr ""
+msgstr "&Detalės..."
 
 #: ../kde/apport-kde.py:160
 msgid "Username:"
@@ -889,6 +910,8 @@ msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
+"Kai pranešimas apie klaidą bus išsiųstas, prašome užpildyti formą "
+"automatiškai atvertoje žiniatinklio naršyklėje."
 
 #: ../kde/apport-kde.py:278
 msgid "&Send"
