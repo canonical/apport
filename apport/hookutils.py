@@ -203,12 +203,12 @@ def attach_hardware(report):
     attach_file(report, '/proc/interrupts', 'ProcInterrupts')
     attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
     attach_file(report, '/proc/cmdline', 'ProcKernelCmdLine')
-    attach_file(report, '/proc/modules', 'ProcModules')
     attach_file(report, '/var/log/udev', 'UdevLog')
 
     if os.path.exists('/sys/bus/pci'):
         report['Lspci'] = command_output(['lspci','-vvnn'])
     report['Lsusb'] = command_output(['lsusb'])
+    report['ProcModules'] = command_output(['sort', '/proc/modules'])
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
     # anonymize partition labels
