@@ -160,7 +160,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if a:
             hdr['Tags'] += ' ' + a
         if 'Tags' in report:
-            hdr['Tags'] += ' ' + report['Tags']
+            hdr['Tags'] += ' ' + report['Tags'].lower()
 
         # privacy/retracing for distro reports
         # FIXME: ugly hack until LP has a real crash db
@@ -379,7 +379,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             x.append('apport-collected')
             # add any tags (like the release) to the bug
             if 'Tags' in report:
-                x += report['Tags'].split()
+                x += report['Tags'].lower().split()
             bug.tags = x
             bug.lp_save()
             bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
