@@ -661,8 +661,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             
             for a in bug.attachments:
                 if a.title in ('CoreDump.gz', 'Stacktrace.txt',
-                    'ThreadStacktrace.txt', 'Dependencies.txt', 'ProcMaps.txt',
-                    'ProcStatus.txt', 'Registers.txt', 'Disassembly.txt'):
+                    'ThreadStacktrace.txt', 'ProcMaps.txt', 'ProcStatus.txt',
+                    'Registers.txt', 'Disassembly.txt'):
                     try:
                         a.removeFromBug()
                     except HTTPError:
