@@ -147,7 +147,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         else:
             return 'cancel'
 
-    def ui_present_report_details(self, is_update):
+    def ui_present_report_details(self, desktop_file):
         # report contents in expander
         self.tree_model.clear()
         for key in sorted(self.report):
@@ -165,19 +165,34 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
+        if desktop_file:
+            from gi.repository import GdkPixbuf
+            icon = desktop_file.getIcon()
+            builtin = Gtk.IconLookupFlags.USE_BUILTIN
+            app_icon = self.w('application_icon')
+            theme = Gtk.IconTheme.get_default()
+            pb = theme.load_icon(icon, 42, builtin)
+            overlay = theme.load_icon('error', 16, builtin)
+            overlay.composite(pb, 26, 26, 16, 16, 26, 26, 1, 1,
+                              GdkPixbuf.InterpType.BILINEAR, 255)
+            app_icon.set_from_pixbuf(pb)
         self.w('dialog_crash_new').show()
         return_value = {}
         def dialog_crash_dismissed(widget):
-            if self.w('send_error_report').get_sensitive():
-                return_value['action'] = 'report'
-            if self.w('ignore_future_problems').get_sensitive():
+            if self.w('send_error_report').get_active():
+                return_value['report'] = True
+            else:
+                return_value['report'] = False
+
+            if self.w('ignore_future_problems').get_active():
                 return_value['blacklist'] = True
             else:
                 return_value['blacklist'] = False
+
             if widget is self.w('continue_button'):
-                return_value['relaunch'] = True
+                return_value['restart'] = True
             else:
-                return_value['relaunch'] = False
+                return_value['restart'] = False
             Gtk.main_quit()
 
         self.w('dialog_crash_new').connect('destroy', dialog_crash_dismissed)
