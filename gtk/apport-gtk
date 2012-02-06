@@ -48,11 +48,10 @@ class GTKUserInterface(apport.ui.UserInterface):
         assert self.widgets.connect_signals(self) is None
 
         # initialize tree model and view
-        self.tree_model = Gtk.TreeStore(GObject.TYPE_STRING)
-        self.w('treeview_reportdetails').set_model(self.tree_model)
+        self.tree_model = self.w('details_treestore')
 
         column = Gtk.TreeViewColumn("Report", Gtk.CellRendererText(), text=0)
-        self.w('treeview_reportdetails').append_column(column)
+        self.w('details_treeview').append_column(column)
 
         # save the original strings of the dialogs (those which contain %s,
         # which we replace later)
@@ -162,52 +161,30 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.tree_model.set_value(valiter, 0, self.report[key])
                 # expand the row if the value has less than 5 lines
                 if len(filter(lambda c: c == '\n', self.report[key])) < 4:
-                    self.w('treeview_reportdetails').expand_row(self.tree_model.get_path(keyiter), False)
+                    self.w('details_treeview').expand_row(self.tree_model.get_path(keyiter), False)
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
-        # complete/reduced radio buttons
-        if 'CoreDump' in self.report:
-            self.w('radiobutton_complete').set_label(self.str_radio_complete % 
-                self.format_filesize(self.get_complete_size()))
-            self.w('radiobutton_reduced').set_label(self.str_radio_reduced % 
-                self.format_filesize(self.get_reduced_size()))
-            if self.report.has_useful_stacktrace():
-                self.w('radiobutton_complete').set_sensitive(True)
-                self.w('radiobutton_complete').show()
-                self.w('radiobutton_reduced').show()
+        self.w('dialog_crash_new').show()
+        return_value = {}
+        def dialog_crash_dismissed(widget):
+            if self.w('send_error_report').get_sensitive():
+                return_value['action'] = 'report'
+            if self.w('ignore_future_problems').get_sensitive():
+                return_value['blacklist'] = True
             else:
-                self.w('radiobutton_complete').set_sensitive(False)
-                self.w('radiobutton_reduced').hide()
-        else:
-            self.w('radiobutton_complete').hide()
-            self.w('radiobutton_reduced').hide()
-
-        self.w('button_examine_locally').set_visible(self.can_examine_locally())
-
-        if is_update:
-            self.w('label_bug_instructions').set_label(
-                    _('Send this data to the developers?'))
-            self.w('expander_details').set_expanded(True)
-            self.w('dialog_bugreport').set_default_size(500, 400)
-            self.w('dialog_bugreport').set_resizable(True)
-
-        response = self.w('dialog_bugreport').run()
-        self.w('dialog_bugreport').hide()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
-
-        if response == Gtk.ResponseType.OK:
-            if self.w('radiobutton_complete').get_active():
-                return 'full'
+                return_value['blacklist'] = False
+            if widget is self.w('continue_button'):
+                return_value['relaunch'] = True
             else:
-                return 'reduced'
-        elif response == Gtk.ResponseType.ACCEPT:
-            return 'examine'
-        elif response == Gtk.ResponseType.CANCEL:
-            return 'cancel'
-        else:
-            raise NotImplementedError('got unexpected respose %i from dialog_bugreport' % response)
+                return_value['relaunch'] = False
+            Gtk.main_quit()
+
+        self.w('dialog_crash_new').connect('destroy', dialog_crash_dismissed)
+        self.w('continue_button').connect('clicked', dialog_crash_dismissed)
+        self.w('closed_button').connect('clicked', dialog_crash_dismissed)
+        Gtk.main()
+        return return_value
 
     def _ui_message_dialog(self, title, text, _type,
             buttons=Gtk.ButtonsType.CLOSE):
@@ -375,6 +352,16 @@ class GTKUserInterface(apport.ui.UserInterface):
     #
     # Event handlers
     #
+
+    def on_show_details_clicked(self, widget):
+        sw = self.w('details_scrolledwindow')
+        if sw.get_property('visible'):
+            sw.hide()
+            widget.set_label(_('Show Details'))
+        else:
+            sw.show()
+            widget.set_label(_('Hide Details'))
+        return True
 
     def on_progress_window_close_event(self, widget, event=None):
         self.w('window_information_collection').hide()
