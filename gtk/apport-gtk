@@ -248,23 +248,19 @@ class GTKUserInterface(apport.ui.UserInterface):
                                                       Gtk.IconSize.DIALOG)
 
         self.w('dialog_crash_new').show()
-        return_value = {}
+        return_value = { 'report' : False, 'blacklist' : False,
+                         'restart' : False }
         def dialog_crash_dismissed(widget):
+            self.w('dialog_crash_new').hide()
+            if widget is self.w('dialog_crash_new'):
+                Gtk.main_quit()
+                return
             if self.w('send_error_report').get_active():
                 return_value['report'] = True
-            else:
-                return_value['report'] = False
-
             if self.w('ignore_future_problems').get_active():
                 return_value['blacklist'] = True
-            else:
-                return_value['blacklist'] = False
-
             if widget is self.w('continue_button'):
                 return_value['restart'] = True
-            else:
-                return_value['restart'] = False
-            self.w('dialog_crash_new').hide()
             Gtk.main_quit()
 
         self.w('dialog_crash_new').connect('destroy', dialog_crash_dismissed)
