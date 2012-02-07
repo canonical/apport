@@ -228,6 +228,10 @@ class GTKUserInterface(apport.ui.UserInterface):
                     _('If you notice further problems, '
                       'try restarting the computer.'))
                 icon = 'distributor-logo'
+            if self.report.get('CrashCounter'):
+                self.w('ignore_future_problems').show()
+            else:
+                self.w('ignore_future_problems').hide()
 
         if icon:
             from gi.repository import GdkPixbuf
