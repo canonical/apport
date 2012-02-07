@@ -202,6 +202,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('ignore_future_problems').hide()
             self.w('title_label').set_label('<big><b>%s</b></big>' %
                 _('Ubuntu has restarted after experiencing an internal error.'))
+            self.w('closed_button').hide()
             self.w('subtitle_label').hide()
             icon = 'distributor-logo'
         elif report_type == 'Package':
@@ -210,6 +211,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('subtitle_label').set_label(_('Package: %s') % package)
             else:
                 self.w('subtitle_label').hide()
+            self.w('closed_button').hide()
             self.w('ignore_future_problems').hide()
             self.w('title_label').set_label(
                 _('Sorry a problem occurred while installing software.'))
@@ -221,13 +223,18 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
                     _('The application %s has closed unexpectedly.') % 
                     desktop_file.getName())
+                self.w('closed_button').show()
+                self.w('closed_button').set_label(_('Leave Closed'))
+                self.w('continue_button').set_label(_('Relaunch'))
             else:
+                icon = 'distributor-logo'
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
                     _('Sorry, Ubuntu has experienced an internal error.'))
                 self.w('subtitle_label').set_label(
                     _('If you notice further problems, '
                       'try restarting the computer.'))
-                icon = 'distributor-logo'
+                self.w('closed_button').hide()
+                self.w('continue_button').set_label(_('Continue'))
             if self.report.get('CrashCounter'):
                 self.w('ignore_future_problems').show()
             else:
