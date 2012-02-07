@@ -186,8 +186,6 @@ class UserInterface:
     def collect(self, callback=None):
         def _go(callback=None):
             self.collect_info()
-            import time
-            time.sleep(5)
             if callable(callback):
                 callback()
         self.collection_thread = apport.REThread.REThread(target=_go,
