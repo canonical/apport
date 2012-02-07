@@ -266,7 +266,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 return_value['report'] = True
             if self.w('ignore_future_problems').get_active():
                 return_value['blacklist'] = True
-            if widget is self.w('continue_button'):
+            if widget.get_label() == _('Relaunch'):
                 return_value['restart'] = True
             Gtk.main_quit()
 
