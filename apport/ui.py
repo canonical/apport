@@ -145,6 +145,7 @@ class UserInterface:
         self.report = None
         self.report_file = None
         self.cur_package = None
+        self.collection_thread = None
 
         try:
             self.crashdb = get_crashdb(None)
@@ -181,6 +182,21 @@ class UserInterface:
 
         return result
 
+
+    def collect(self, callback=None):
+        def _go(callback=None):
+            self.collect_info()
+            import time
+            time.sleep(5)
+            if callable(callback):
+                callback()
+        self.collection_thread = apport.REThread.REThread(target=_go,
+                                                          args=(callback,))
+        self.collection_thread.start()
+
+    def touch_upload(self):
+        pass
+
     def run_crash(self, report_file, confirm=True):
         '''Present and report a particular crash.
 
@@ -213,53 +229,11 @@ class UserInterface:
                     _('unknown program')))
                 heading = _('Sorry, the program "%s" closed unexpectedly') % subject
                 self.ui_error_message(_('Problem in %s') % subject,
-                    '%s\n\n%s' % (heading, _('Your computer does not have enough \
-free memory to automatically analyze the problem and send a report to the developers.')))
+                    '%s\n\n%s' % (heading, _('Your computer does not have '
+                    'enough free memory to automatically analyze the problem '
+                    'and send a report to the developers.')))
                 return
 
-            # ask the user about what to do with the current crash
-            if not confirm:
-                pass
-            elif self.report.get('ProblemType') == 'Package':
-                response = self.ui_present_package_error()
-                if response == 'cancel':
-                    return
-                assert response == 'report'
-            elif self.report.get('ProblemType') == 'KernelCrash':
-                response = self.ui_present_kernel_error()
-                if response == 'cancel':
-                    return
-                assert response == 'report'
-            elif self.report.get('ProblemType') == 'KernelOops':
-                # XXX the string doesn't quite match this case
-                response = self.ui_present_kernel_error()
-                if response == 'cancel':
-                    return
-                assert response == 'report'
-            else:
-                try:
-                    desktop_entry = self.get_desktop_entry()
-                except ValueError: # package does not exist
-                    self.ui_error_message(_('Invalid problem report'),
-                        _('The report belongs to a package that is not installed.'))
-                    self.ui_shutdown()
-                    return
-
-                response = self.ui_present_crash(desktop_entry)
-                assert 'action' in response
-                assert 'blacklist' in response
-
-                if response['blacklist']:
-                    self.report.mark_ignore()
-
-                if response['action'] == 'cancel':
-                    return
-                if response['action'] == 'restart':
-                    self.restart()
-                    return
-                assert response['action'] == 'report'
-
-            # we want to file a bug now
             try:
                 if 'Dependencies' not in self.report:
                     self.collect_info()
@@ -277,27 +251,26 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_shutdown()
                 return
 
-            if self.check_unreportable():
+            desktop_file = self.get_desktop_entry()
+            response = self.ui_present_report_details(desktop_file)
+            if not self.collection_thread:
+                self.collect()
+            self.collection_thread.join()
+            self.collection_thread.exc_raise()
+            print 'response', response
+            if response['restart']:
+                self.restart()
+            if not response['report']:
                 return
 
+            self.touch_upload()
+            # We check for duplicates and unreportable crashes here, rather
+            # than before we show the dialog, as we want to submit these to the
+            # crash database, but not Launchpad.
             if self.handle_duplicate():
                 return
-
-            # confirm what will be sent
-            response = self.ui_present_report_details(False)
-            if response == 'cancel':
+            if self.check_unreportable():
                 return
-            if response == 'examine':
-                self.examine()
-                return
-            if response == 'reduced':
-                try:
-                    del self.report['CoreDump']
-                except KeyError:
-                    pass # Huh? Should not happen, but did in https://launchpad.net/bugs/86007
-            else:
-                assert response == 'full'
-
             self.file_report()
         except IOError as e:
             # fail gracefully if file is not readable for us
@@ -842,7 +815,9 @@ free memory to automatically analyze the problem and send a report to the develo
             cur_time = int(os.stat(self.report['ExecutablePath']).st_mtime)
 
             if orig_time != cur_time:
-                self.report['UnreportableReason'] = _('The problem happened with the program %s which changed since then.') % self.report['ExecutablePath']
+                self.report['UnreportableReason'] = (
+                    _('The problem happened with the program %s which changed '
+                      'since then.') % self.report['ExecutablePath'])
                 return
 
         if not self.cur_package and 'ExecutablePath' not in self.report \
@@ -851,79 +826,36 @@ free memory to automatically analyze the problem and send a report to the develo
             # package
             self.report.add_os_info()
         else:
-            # report might already be pre-processed by apport-retrace
             if self.report['ProblemType'] == 'Crash' and 'Stacktrace' in self.report:
                 return
-
-            # since this might take a while, create separate threads and
-            # display a progress dialog
-            self.ui_start_info_collection_progress()
 
             hookui = HookUI(self)
 
             if 'Stacktrace' not in self.report:
-                # save original environment, in case hooks change it
-                orig_env = os.environ.copy()
-
-                icthread = apport.REThread.REThread(target=thread_collect_info,
-                    name='thread_collect_info',
-                    args=(self.report, self.report_file, self.cur_package,
-                        hookui, symptom_script, ignore_uninstalled))
-                icthread.start()
-                while icthread.isAlive():
-                    self.ui_pulse_info_collection_progress()
-                    try:
-                        hookui.process_event()
-                    except KeyboardInterrupt:
-                        sys.exit(1)
-
-                icthread.join()
-
-                # restore original environment
-                os.environ.clear()
-                os.environ.update(orig_env)
-
-                icthread.exc_raise()
+                thread_collect_info(self.report, self.report_file, self.cur_package,
+                                    hookui, symptom_script, ignore_uninstalled)
 
             if 'CrashDB' in self.report:
                 self.crashdb = get_crashdb(None, self.report['CrashDB']) 
 
             # check bug patterns
-            if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or 'Package' in self.report:
-                bpthread = apport.REThread.REThread(target=self.report.search_bug_patterns,
-                    args=(self.crashdb.get_bugpattern_baseurl(),))
-                bpthread.start()
-                while bpthread.isAlive():
-                    self.ui_pulse_info_collection_progress()
-                    try:
-                        bpthread.join(0.1)
-                    except KeyboardInterrupt:
-                        sys.exit(1)
-                bpthread.exc_raise()
-                if bpthread.return_value():
+            if (self.report['ProblemType'] == 'KernelCrash'
+                or self.report['ProblemType'] == 'KernelOops'
+                or 'Package' in self.report):
+                url = self.crashdb.get_bugpattern_baseurl() 
+                if self.report.search_bug_patterns(url):
                     self.report['KnownReport'] = bpthread.return_value()
 
             # check crash database if problem is known
             if self.report['ProblemType'] != 'Bug':
-                known_thread = apport.REThread.REThread(target=self.crashdb.known,
-                    args=(self.report,))
-                known_thread.start()
-                while known_thread.isAlive():
-                    self.ui_pulse_info_collection_progress()
-                    try:
-                        known_thread.join(0.1)
-                    except KeyboardInterrupt:
-                        sys.exit(1)
-                known_thread.exc_raise()
-                val = known_thread.return_value()
+                val = self.crashdb.known(self.report)
                 if val is not None:
                     self.report['KnownReport'] = val
 
-            self.ui_stop_info_collection_progress()
-
             # check that we were able to determine package names
-            if 'SourcePackage' not in self.report or \
-                (not self.report['ProblemType'].startswith('Kernel') and 'Package' not in self.report):
+            if ('SourcePackage' not in self.report or
+                (not self.report['ProblemType'].startswith('Kernel')
+                 and 'Package' not in self.report)):
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
                 # TODO This is not called consistently, is it really needed?

@@ -25,6 +25,9 @@ except RuntimeError as e:
 import apport
 from apport import unicode_gettext as _
 import apport.ui
+from gi.repository import Gdk
+GObject.threads_init()
+Gdk.threads_init()
 
 class GTKUserInterface(apport.ui.UserInterface):
     '''GTK UserInterface.'''
@@ -61,6 +64,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.str_heading_kernel_error = self.w('label_heading_kernel_error').get_label()
         self.str_radio_complete = self.w('radiobutton_complete').get_label()
         self.str_radio_reduced = self.w('radiobutton_reduced').get_label()
+        self.spinner = self.add_spinner_over_treeview(self.w('details_treeview'))
+        self.collect_called = False
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -147,8 +152,31 @@ class GTKUserInterface(apport.ui.UserInterface):
         else:
             return 'cancel'
 
-    def ui_present_report_details(self, desktop_file):
-        # report contents in expander
+    def add_spinner_over_treeview(self, treeview):
+        '''Reparents a treeview in a GtkOverlay, then layers a GtkSpinner
+        centered on top.'''
+        # TODO handle the expose event of the spinner so that we can draw on
+        # the treeview's viewport's window instead.
+        parent = treeview.get_parent()
+        parent.remove(treeview)
+        overlay = Gtk.Overlay()
+        parent.add_with_viewport(overlay)
+        overlay.add(treeview)
+        spinner = Gtk.Spinner()
+        spinner.set_size_request(42, 42)
+        align = Gtk.Alignment()
+        align.set_valign(Gtk.Align.CENTER)
+        align.set_halign(Gtk.Align.CENTER)
+        align.add(spinner)
+        overlay.add_overlay(align)
+        overlay.show()
+        align.show()
+        spinner.hide()
+        return spinner
+
+    def ui_update_view(self):
+        self.spinner.hide()
+        self.spinner.stop()
         self.tree_model.clear()
         for key in sorted(self.report):
             keyiter = self.tree_model.insert_before(None, None)
@@ -161,13 +189,26 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.tree_model.set_value(valiter, 0, self.report[key])
                 # expand the row if the value has less than 5 lines
                 if len(filter(lambda c: c == '\n', self.report[key])) < 4:
-                    self.w('details_treeview').expand_row(self.tree_model.get_path(keyiter), False)
+                    self.w('details_treeview').expand_row(
+                        self.tree_model.get_path(keyiter), False)
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
+    def ui_present_report_details(self, desktop_file):
+        icon = None
         if desktop_file:
-            from gi.repository import GdkPixbuf
             icon = desktop_file.getIcon()
+        report_type = self.report.get('ProblemType')
+        if report_type == 'KernelCrash' or report_type == 'KernelOops':
+            self.w('ignore_future_problems').set_active(False)
+            self.w('ignore_future_problems').hide()
+            self.w('title_label').set_label(
+                _('Ubuntu has restarted after experiencing an internal error.'))
+            self.w('subtitle_label').hide()
+            icon = 'distributor-logo'
+
+        if icon:
+            from gi.repository import GdkPixbuf
             builtin = Gtk.IconLookupFlags.USE_BUILTIN
             app_icon = self.w('application_icon')
             theme = Gtk.IconTheme.get_default()
@@ -193,6 +234,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 return_value['restart'] = True
             else:
                 return_value['restart'] = False
+            self.w('dialog_crash_new').hide()
             Gtk.main_quit()
 
         self.w('dialog_crash_new').connect('destroy', dialog_crash_dismissed)
@@ -225,22 +267,6 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_error_message(self, title, text):
         self._ui_message_dialog(title, text, Gtk.MessageType.ERROR)
-
-    def ui_start_info_collection_progress(self):
-        self.w('progressbar_information_collection').set_fraction(0)
-        self.w('window_information_collection').show()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
-
-    def ui_pulse_info_collection_progress(self):
-        self.w('progressbar_information_collection').pulse()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
-
-    def ui_stop_info_collection_progress(self):
-        self.w('window_information_collection').hide()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
 
     def ui_start_upload_progress(self):
         '''Open a window with an definite progress bar, telling the user to
@@ -376,6 +402,11 @@ class GTKUserInterface(apport.ui.UserInterface):
         else:
             sw.show()
             widget.set_label(_('Hide Details'))
+            if not self.collect_called:
+                self.spinner.show()
+                self.spinner.start()
+                self.collect(self.ui_update_view)
+                self.collect_called = True
         return True
 
     def on_progress_window_close_event(self, widget, event=None):
