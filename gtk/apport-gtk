@@ -194,18 +194,40 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
-    def ui_present_report_details(self, desktop_file):
+    def ui_present_report_details(self):
         icon = None
-        if desktop_file:
-            icon = desktop_file.getIcon()
         report_type = self.report.get('ProblemType')
         if report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)
             self.w('ignore_future_problems').hide()
-            self.w('title_label').set_label(
+            self.w('title_label').set_label('<big><b>%s</b></big>' %
                 _('Ubuntu has restarted after experiencing an internal error.'))
             self.w('subtitle_label').hide()
             icon = 'distributor-logo'
+        elif report_type == 'Package':
+            package = self.report.get('Package')
+            if package:
+                self.w('subtitle_label').set_label(_('Package: %s') % package)
+            else:
+                self.w('subtitle_label').hide()
+            self.w('ignore_future_problems').hide()
+            self.w('title_label').set_label(
+                _('Sorry a problem occurred while installing software.'))
+        else:
+            # Regular crash.
+            desktop_file = self.get_desktop_entry()
+            if desktop_file:
+                icon = desktop_file.getIcon()
+                self.w('title_label').set_label('<big><b>%s</b></big>' %
+                    _('The application %s has closed unexpectedly.') % 
+                    desktop_file.getName())
+            else:
+                self.w('title_label').set_label('<big><b>%s</b></big>' %
+                    _('Sorry, Ubuntu has experienced an internal error.'))
+                self.w('subtitle_label').set_label(
+                    _('If you notice further problems, '
+                      'try restarting the computer.'))
+                icon = 'distributor-logo'
 
         if icon:
             from gi.repository import GdkPixbuf
@@ -217,6 +239,10 @@ class GTKUserInterface(apport.ui.UserInterface):
             overlay.composite(pb, 26, 26, 16, 16, 26, 26, 1, 1,
                               GdkPixbuf.InterpType.BILINEAR, 255)
             app_icon.set_from_pixbuf(pb)
+        else:
+            self.w('application_icon').set_from_stock(Gtk.STOCK_DIALOG_ERROR,
+                                                      Gtk.IconSize.DIALOG)
+
         self.w('dialog_crash_new').show()
         return_value = {}
         def dialog_crash_dismissed(widget):

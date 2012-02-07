@@ -251,12 +251,12 @@ class UserInterface:
                 self.ui_shutdown()
                 return
 
-            desktop_file = self.get_desktop_entry()
-            response = self.ui_present_report_details(desktop_file)
-            if not self.collection_thread:
+            response = self.ui_present_report_details()
+            if not self.collection_thread and response['report']:
                 self.collect()
-            self.collection_thread.join()
-            self.collection_thread.exc_raise()
+            if self.collection_thread:
+                self.collection_thread.join()
+                self.collection_thread.exc_raise()
             print 'response', response
             if response['restart']:
                 self.restart()
