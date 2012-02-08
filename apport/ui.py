@@ -258,6 +258,8 @@ class UserInterface:
             print 'response', response
             if response['restart']:
                 self.restart()
+            if response['blacklist']:
+                self.report.mark_ignore()
             if not response['report']:
                 return
 
