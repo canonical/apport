@@ -24,6 +24,13 @@ from apport.packaging_impl import impl as packaging
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
 _config_file = '~/.config/apport/settings'
+_whoopsie_config_file =  '/etc/default/whoopsie'
+
+def allowed_to_report():
+    '''Check whether crash reporting is enabled.'''
+
+    return get_config('General', 'report_crashes', path=_whoopsie_config_file,
+                      default=True, bool=True)
 
 def find_package_desktopfile(package):
     '''Return a package's .desktop file.
@@ -243,15 +250,18 @@ def check_files_md5(sumfile):
 
     return mismatches
 
-def get_config(section, setting, default=None, bool=False):
+def get_config(section, setting, path=None, default=None, bool=False):
     '''Return a setting from user configuration.
 
-    This is read from ~/.config/apport/settings. If bool is True, the value is
-    interpreted as a boolean.
+    This is read from ~/.config/apport/settings or path. If bool is True, the
+    value is interpreted as a boolean.
     '''
     if not get_config.config:
         get_config.config = ConfigParser()
-        get_config.config.read(os.path.expanduser(_config_file))
+        if path:
+            get_config.config.read(path)
+        else:
+            get_config.config.read(os.path.expanduser(_config_file))
 
     try:
         if bool:

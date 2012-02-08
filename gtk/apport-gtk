@@ -203,8 +203,15 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
-    def ui_present_report_details(self):
+    def ui_present_report_details(self, allowed_to_report=True):
         icon = None
+        if allowed_to_report:
+            self.w('send_error_report').set_active(True)
+            self.w('send_error_report').show()
+        else:
+            self.w('send_error_report').set_active(False)
+            self.w('send_error_report').hide()
+
         report_type = self.report.get('ProblemType')
         if report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)

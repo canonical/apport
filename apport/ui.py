@@ -182,7 +182,6 @@ class UserInterface:
 
         return result
 
-
     def collect(self, callback=None):
         def _go(callback=None):
             try:
@@ -248,7 +247,8 @@ class UserInterface:
                     'and send a report to the developers.')))
                 return
 
-            response = self.ui_present_report_details()
+            allowed_to_report = apport.fileutils.allowed_to_report()
+            response = self.ui_present_report_details(allowed_to_report)
             if not self.collection_thread and response['report']:
                 self.collect()
             if self.collection_thread:
