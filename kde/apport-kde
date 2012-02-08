@@ -127,13 +127,16 @@ class ProgressDialog(Dialog):
 class ReportDialog(Dialog):
     '''Report dialog wrapper'''
 
-    def __init__(self, title, heading, text):
+    def __init__(self, title, heading, text, ui=None):
         Dialog.__init__(self, 'bugreport.ui', title, heading, text)
 
         self.details = self.addbutton(_('&Details...'))
         self.details.setCheckable(True)
 
         self.treeview = self.findChild(QTreeWidget, 'details')
+        self.treeview.header().hide()
+        self.ui = ui
+        self.collect_called = False
         self.showtree(False)
 
     def on_buttons_clicked(self, button):
@@ -144,8 +147,14 @@ class ReportDialog(Dialog):
             if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
                 sys.exit(0)
 
+    def collect_done(self):
+        self.ui.ui_update_view(self)
+
     def showtree(self, visible):
         self.treeview.setVisible(visible)
+        if visible and not self.collect_called:
+            self.ui.collect(self.collect_done)
+            self.collect_called = True
         if visible:
             self.setMaximumSize(16777215, 16777215)
         else:
@@ -262,22 +271,7 @@ class MainUserInterface(apport.ui.UserInterface):
         # Fallback
         return 'cancel'
 
-    def ui_present_report_details(self, is_update):
-        if is_update:
-            dialog = ReportDialog(self.report.get('Package',
-                _('Generic error')).split()[0],
-                _('Send this data to the developers?'), '')
-            dialog.showtree(True)
-        else:
-            dialog = ReportDialog(self.report.get('Package',
-                _('Generic error')).split()[0],
-                _('Send problem report to the developers?'),
-                _('After the problem report has been sent, please fill out '
-                  'the form in the automatically opened web browser.'))
-
-        sendbutton = dialog.addbutton(_('&Send'))
-        sendbutton.setDefault(True)
-
+    def ui_update_view(self, dialog):
         # report contents
         details = dialog.findChild(QTreeWidget, 'details')
         for key in sorted(self.report):
@@ -296,7 +290,22 @@ class MainUserInterface(apport.ui.UserInterface):
             else:
                 QTreeWidgetItem(keyitem, [_('(binary data)')])
 
-        details.header().hide()
+
+    def ui_present_report_details(self, is_update):
+
+        if is_update:
+            dialog = ReportDialog(self.report.get('Package',
+                _('Generic error')).split()[0],
+                _('Send this data to the developers?'), '', ui=self)
+        else:
+            dialog = ReportDialog(self.report.get('Package',
+                _('Generic error')).split()[0],
+                _('Send problem report to the developers?'),
+                _('After the problem report has been sent, please fill out '
+                  'the form in the automatically opened web browser.'), ui=self)
+
+        sendbutton = dialog.addbutton(_('&Send'))
+        sendbutton.setDefault(True)
 
         # complete/reduce radio buttons
         if 'CoreDump' in self.report and \
@@ -312,17 +321,21 @@ class MainUserInterface(apport.ui.UserInterface):
 
         response = dialog.exec_()
 
+        return_value = { 'report' : False, 'blacklist' : False,
+                         'restart' : False }
         if response == QDialog.Rejected:
-            return 'cancel'
+            return return_value
         # Fallback
         if dialog.actionbutton != sendbutton:
-            return 'cancel'
+            return return_value
         if dialog.findChild(QRadioButton, 'reduced').isChecked():
-            return 'reduced'
+            return_value['report'] = True
+            return return_value
         if dialog.findChild(QRadioButton, 'complete').isChecked():
-            return 'full'
+            return_value['report'] = True
+            return return_value
         # Fallback
-        return 'cancel'
+        return return_value
 
     def ui_info_message(self, title, text):
         KMessageBox.information(None, _(text), _(title))
