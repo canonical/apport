@@ -94,7 +94,7 @@ def seen_report(report):
     return (st.st_atime > st.st_mtime) or (st.st_size == 0)
 
 def mark_report_upload(report):
-    report = '%s.upload' % report.rsplit('.')[0]
+    report = '%s.upload' % report.rsplit('.', 1)[0]
     with open(report, 'a'):
         pass
 
