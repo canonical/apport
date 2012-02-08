@@ -93,6 +93,11 @@ def seen_report(report):
     st = os.stat(report)
     return (st.st_atime > st.st_mtime) or (st.st_size == 0)
 
+def mark_report_upload(report):
+    report = '%s.upload' % report.rsplit('.')[0]
+    with open(report, 'a'):
+        pass
+
 def mark_report_seen(report):
     '''Mark given report file as seen.'''
 

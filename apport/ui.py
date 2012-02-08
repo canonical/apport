@@ -207,9 +207,6 @@ class UserInterface:
                                                           args=(callback,))
         self.collection_thread.start()
 
-    def touch_upload(self):
-        pass
-
     def run_crash(self, report_file, confirm=True):
         '''Present and report a particular crash.
 
@@ -254,7 +251,7 @@ class UserInterface:
             if self.collection_thread:
                 self.collection_thread.join()
                 self.collection_thread.exc_raise()
-            print 'response', response
+
             if response['restart']:
                 self.restart()
             if response['blacklist']:
@@ -262,7 +259,7 @@ class UserInterface:
             if not response['report']:
                 return
 
-            self.touch_upload()
+            apport.fileutils.mark_report_upload(report_file)
             # We check for duplicates and unreportable crashes here, rather
             # than before we show the dialog, as we want to submit these to the
             # crash database, but not Launchpad.
