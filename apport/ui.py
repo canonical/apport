@@ -185,7 +185,23 @@ class UserInterface:
 
     def collect(self, callback=None):
         def _go(callback=None):
-            self.collect_info()
+            try:
+                if 'Dependencies' not in self.report:
+                    self.collect_info()
+            except (IOError, zlib.error) as e:
+                # can happen with broken core dumps
+                self.report = None
+                self.ui_error_message(_('Invalid problem report'),
+                    '%s\n\n%s' % (
+                        _('This problem report is damaged and cannot be processed.'),
+                        repr(e)))
+                self.ui_shutdown()
+                return
+            except ValueError: # package does not exist
+                self.ui_error_message(_('Invalid problem report'),
+                    _('The report belongs to a package that is not installed.'))
+                self.ui_shutdown()
+                return
             if callable(callback):
                 callback()
         self.collection_thread = apport.REThread.REThread(target=_go,
@@ -230,23 +246,6 @@ class UserInterface:
                     '%s\n\n%s' % (heading, _('Your computer does not have '
                     'enough free memory to automatically analyze the problem '
                     'and send a report to the developers.')))
-                return
-
-            try:
-                if 'Dependencies' not in self.report:
-                    self.collect_info()
-            except (IOError, zlib.error) as e:
-                # can happen with broken core dumps
-                self.report = None
-                self.ui_error_message(_('Invalid problem report'),
-                    '%s\n\n%s' % (
-                        _('This problem report is damaged and cannot be processed.'),
-                        repr(e)))
-                return False
-            except ValueError: # package does not exist
-                self.ui_error_message(_('Invalid problem report'),
-                    _('The report belongs to a package that is not installed.'))
-                self.ui_shutdown()
                 return
 
             response = self.ui_present_report_details()

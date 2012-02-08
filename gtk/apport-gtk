@@ -29,6 +29,14 @@ from gi.repository import Gdk
 GObject.threads_init()
 Gdk.threads_init()
 
+def threaded_operation(func):
+    def f(*args, **kwargs):
+        Gdk.threads_enter()
+        ret = func(*args, **kwargs)
+        Gdk.threads_leave()
+        return ret
+    return f
+
 class GTKUserInterface(apport.ui.UserInterface):
     '''GTK UserInterface.'''
 
@@ -174,6 +182,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         spinner.hide()
         return spinner
 
+    @threaded_operation
     def ui_update_view(self):
         self.spinner.hide()
         self.spinner.stop()
@@ -298,8 +307,12 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_info_message(self, title, text):
         self._ui_message_dialog(title, text, Gtk.MessageType.INFO)
 
+    @threaded_operation
     def ui_error_message(self, title, text):
         self._ui_message_dialog(title, text, Gtk.MessageType.ERROR)
+
+    def ui_shutdown(self):
+        Gtk.main_quit()
 
     def ui_start_upload_progress(self):
         '''Open a window with an definite progress bar, telling the user to
