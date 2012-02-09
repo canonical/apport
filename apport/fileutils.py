@@ -29,8 +29,8 @@ _whoopsie_config_file =  '/etc/default/whoopsie'
 def allowed_to_report():
     '''Check whether crash reporting is enabled.'''
 
-    return get_config('General', 'report_crashes', path=_whoopsie_config_file,
-                      default=True, bool=True)
+    return get_config('General', 'report_crashes', default=True,
+                      path=_whoopsie_config_file, bool=True)
 
 def find_package_desktopfile(package):
     '''Return a package's .desktop file.
@@ -255,7 +255,7 @@ def check_files_md5(sumfile):
 
     return mismatches
 
-def get_config(section, setting, path=None, default=None, bool=False):
+def get_config(section, setting, default=None, path=None, bool=False):
     '''Return a setting from user configuration.
 
     This is read from ~/.config/apport/settings or path. If bool is True, the
