@@ -22,7 +22,7 @@ try:
     from PyQt4.QtGui import (QDialog, QLabel, QCheckBox, QRadioButton,
                              QTreeWidget, QTreeWidgetItem, QMessageBox,
                              QVBoxLayout, QFileDialog, QDialogButtonBox,
-                             QProgressBar, QGroupBox, QLineEdit)
+                             QProgressBar, QGroupBox, QLineEdit, QPushButton)
     from PyQt4 import uic
     from gettext import gettext
     from PyKDE4.kdecore import (ki18n, KAboutData, KCmdLineArgs,
@@ -130,22 +130,31 @@ class ReportDialog(Dialog):
     def __init__(self, title, heading, text, ui=None):
         Dialog.__init__(self, 'bugreport.ui', title, heading, text)
 
-        self.details = self.addbutton(_('&Details...'))
-        self.details.setCheckable(True)
-
+        self.details = self.findChild(QPushButton, 'show_details')
+        self.details.clicked.connect(self.on_show_details_clicked)
+        self.continue_button = self.findChild(QPushButton, 'continue_button')
+        self.continue_button.clicked.connect(self.on_continue_clicked)
+        self.closed_button = self.findChild(QPushButton, 'closed_button')
+        self.closed_button.clicked.connect(self.on_closed_clicked)
         self.treeview = self.findChild(QTreeWidget, 'details')
-        self.treeview.header().hide()
+        self.send_error_report = self.findChild(QCheckBox, 'send_error_report')
+        self.ignore_future_problems = self.findChild(QCheckBox, 'ignore_future_problems')
         self.ui = ui
         self.collect_called = False
         self.showtree(False)
 
-    def on_buttons_clicked(self, button):
-        if self.details == button:
-            self.showtree(button.isChecked())
+    def on_continue_clicked(self):
+        self.done(1)
+    
+    def on_closed_clicked(self):
+        self.done(2)
+
+    def on_show_details_clicked(self):
+        if self.treeview.isVisible():
+            self.details.setText(_('Show Details'))
         else:
-            Dialog.on_buttons_clicked(self, button)
-            if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
-                sys.exit(0)
+            self.details.setText(_('Hide Details'))
+        self.showtree(not self.treeview.isVisible())
 
     def collect_done(self):
         self.ui.ui_update_view(self)
@@ -304,37 +313,18 @@ class MainUserInterface(apport.ui.UserInterface):
                 _('After the problem report has been sent, please fill out '
                   'the form in the automatically opened web browser.'), ui=self)
 
-        sendbutton = dialog.addbutton(_('&Send'))
-        sendbutton.setDefault(True)
-
-        # complete/reduce radio buttons
-        if 'CoreDump' in self.report and \
-                self.report.has_useful_stacktrace():
-            dialog.findChild(QRadioButton, 'complete').setText(
-                _('Complete report (recommended; %s)') %
-                  self.format_filesize(self.get_complete_size()))
-            dialog.findChild(QRadioButton, 'reduced').setText(
-                _('Reduced report (slow Internet connection; %s)') %
-                  self.format_filesize(self.get_reduced_size()))
-        else:
-            dialog.findChild(QGroupBox, 'options').hide()
-
         response = dialog.exec_()
 
         return_value = { 'report' : False, 'blacklist' : False,
                          'restart' : False }
         if response == QDialog.Rejected:
             return return_value
-        # Fallback
-        if dialog.actionbutton != sendbutton:
-            return return_value
-        if dialog.findChild(QRadioButton, 'reduced').isChecked():
+        if response == 1:
+            return_value['restart'] = True
+        if dialog.send_error_report.isChecked():
             return_value['report'] = True
-            return return_value
-        if dialog.findChild(QRadioButton, 'complete').isChecked():
-            return_value['report'] = True
-            return return_value
-        # Fallback
+        if dialog.ignore_future_problems.isChecked():
+            return_value['blacklist'] = True
         return return_value
 
     def ui_info_message(self, title, text):
