@@ -839,8 +839,9 @@ class UserInterface:
                 or self.report['ProblemType'] == 'KernelOops'
                 or 'Package' in self.report):
                 url = self.crashdb.get_bugpattern_baseurl() 
-                if self.report.search_bug_patterns(url):
-                    self.report['KnownReport'] = bpthread.return_value()
+                patterns = self.report.search_bug_patterns(url)
+                if patterns:
+                    self.report['KnownReport'] = patterns
 
             # check crash database if problem is known
             if self.report['ProblemType'] != 'Bug':
