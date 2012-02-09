@@ -15,8 +15,8 @@ implementation (like GTK, Qt, or CLI).
 
 __version__ = '1.91'
 
-import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
-import pwd, errno, urllib, zlib
+import glob, sys, os.path, optparse, time, traceback, locale, gettext
+import pwd, errno, zlib
 import subprocess, threading, webbrowser
 
 import apport, apport.fileutils, apport.REThread
