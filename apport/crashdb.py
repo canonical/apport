@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, os.path, datetime, sys, shutil, urllib
+import os, os.path, sys, shutil, urllib
 
 try:
     from exceptions import Exception

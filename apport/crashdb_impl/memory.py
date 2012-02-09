@@ -11,7 +11,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import copy, time, os, unittest
+import copy, os, unittest
 import apport.crashdb
 import apport
 

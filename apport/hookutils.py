@@ -13,7 +13,6 @@
 # the full text of the license.
 
 import subprocess
-import hashlib
 import os
 import sys
 import time
@@ -26,8 +25,6 @@ import base64
 import tempfile
 import shutil
 import locale
-
-import xml.dom, xml.dom.minidom
 
 from gi.repository import Gio, GLib
 

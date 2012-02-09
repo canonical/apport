@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
+import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
 import fnmatch, glob, atexit, traceback, errno
 
 import xml.dom, xml.dom.minidom
@@ -1348,7 +1348,7 @@ class Report(problem_report.ProblemReport):
 # Unit test
 #
 
-import unittest, shutil, signal, time
+import unittest, shutil, time
 try:
     from cStringIO import StringIO
 except ImportError:

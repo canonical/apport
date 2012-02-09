@@ -282,7 +282,7 @@ get_config.config = None
 # Unit test
 #
 
-import unittest, tempfile, os, shutil, sys, time
+import unittest, tempfile, os, shutil, time
 try:
     from cStringIO import StringIO
 except ImportError:
