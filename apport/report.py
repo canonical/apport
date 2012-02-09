@@ -1212,7 +1212,7 @@ class Report(problem_report.ProblemReport):
 
         Return None when signature cannot be determined.
         '''
-        if not 'ProcMaps' in self or not 'Stacktrace' in self:
+        if not 'ProcMaps' in self or not 'Stacktrace' in self or not 'Signal' in self:
             return None
 
         stack = []

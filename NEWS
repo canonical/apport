@@ -9,6 +9,8 @@ Bug fixes:
  - Replace file() calls with open() for Python 3 compatibility. Thanks Colin
    Watson!
  - launchpad.py: Avoid sending tag names with upper case. (LP: #924181)
+ - report.py, crash_signature_addresses(): Fix crash if report does not have
+   "Signal".
 
 Improvements:
  - man/apport-bug.1: Mention where crash files are stored. Thanks David
