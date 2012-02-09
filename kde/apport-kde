@@ -22,7 +22,8 @@ try:
     from PyQt4.QtGui import (QDialog, QLabel, QCheckBox, QRadioButton,
                              QTreeWidget, QTreeWidgetItem, QMessageBox,
                              QVBoxLayout, QFileDialog, QDialogButtonBox,
-                             QProgressBar, QGroupBox, QLineEdit, QPushButton)
+                             QProgressBar, QGroupBox, QLineEdit, QPushButton,
+                             QIcon, QPainter, QPixmap, QMovie)
     from PyQt4 import uic
     from gettext import gettext
     from PyKDE4.kdecore import (ki18n, KAboutData, KCmdLineArgs,
@@ -127,9 +128,8 @@ class ProgressDialog(Dialog):
 class ReportDialog(Dialog):
     '''Report dialog wrapper'''
 
-    def __init__(self, title, heading, text, ui=None):
-        Dialog.__init__(self, 'bugreport.ui', title, heading, text)
-
+    def __init__(self, report, allowed_to_report, ui, desktop_file):
+        Dialog.__init__(self, 'bugreport.ui', '', '', '')
         self.details = self.findChild(QPushButton, 'show_details')
         self.details.clicked.connect(self.on_show_details_clicked)
         self.continue_button = self.findChild(QPushButton, 'continue_button')
@@ -139,8 +139,80 @@ class ReportDialog(Dialog):
         self.treeview = self.findChild(QTreeWidget, 'details')
         self.send_error_report = self.findChild(QCheckBox, 'send_error_report')
         self.ignore_future_problems = self.findChild(QCheckBox, 'ignore_future_problems')
+        self.heading = self.findChild(QLabel, 'heading')
+        self.text = self.findChild(QLabel, 'text')
         self.ui = ui
         self.collect_called = False
+        icon = None
+
+        self.spinner = QLabel('', parent=self.treeview)
+        self.spinner.setGeometry(0, 0, 32, 32)
+        # FIXME: resource path
+        self.movie = QMovie('kde/spinner.gif', QByteArray(), self.spinner)
+        self.spinner.setMovie(self.movie)
+
+        if allowed_to_report:
+            self.send_error_report.setChecked(True)
+            self.send_error_report.show()
+        else:
+            self.send_error_report.setChecked(False)
+            self.send_error_report.hide()
+
+        report_type = report.get('ProblemType')
+        if report_type == 'KernelCrash' or report_type == 'KernelOops':
+            self.ignore_future_problems.setChecked(False)
+            self.ignore_future_problems.hide()
+            self.heading.setText(_('Ubuntu has restarted after experiencing an'
+                                   ' internal error.'))
+            self.closed_button.hide()
+            self.text.hide()
+            icon = 'distributor-logo'
+        elif report_type == 'Package':
+            package = report.get('Package')
+            if package:
+                self.text.setText(_('Package: %s') % package)
+                self.text.show()
+            else:
+                self.text.hide()
+            self.closed_button.hide()
+            self.ignore_future_problems.hide()
+            self.heading.setText(_('Sorry a problem occurred while installing '
+                                   'software.'))
+        else:
+            # Regular crash.
+            if desktop_file:
+                icon = desktop_file.getIcon()
+                self.heading.setText(_('The application %s has closed '
+                                       'unexpectedly.') % 
+                                       desktop_file.getName())
+                self.closed_button.show()
+                self.closed_button.setText(_('Leave Closed'))
+                self.continue_button.setText(_('Relaunch'))
+            else:
+                icon = 'distributor-logo'
+                self.heading.setText(_('Sorry, Ubuntu has experienced an '
+                                       'internal error.'))
+                self.text.setText(_('If you notice further problems, '
+                                    'try restarting the computer.'))
+                self.closed_button.hide()
+                self.continue_button.setText(_('Continue'))
+            if report.get('CrashCounter'):
+                self.ignore_future_problems.show()
+            else:
+                self.ignore_future_problems.hide()
+
+        if icon:
+            base = QIcon.fromTheme(icon).pixmap(42, 42)
+            overlay = QIcon.fromTheme('dialog-error').pixmap(16, 16)
+            p = QPainter(base)
+            p.drawPixmap(base.width() - overlay.width(),
+                         base.height() - overlay.height(), overlay)
+            p.end()
+            self.application_icon.setPixmap(base)
+        else:
+            self.application_icon.setPixmap(
+                QIcon.fromTheme('dialog-error').pixmap(42, 42))
+
         self.showtree(False)
 
     def on_continue_clicked(self):
@@ -150,18 +222,26 @@ class ReportDialog(Dialog):
         self.done(2)
 
     def on_show_details_clicked(self):
-        if self.treeview.isVisible():
-            self.details.setText(_('Show Details'))
-        else:
+        if not self.treeview.isVisible():
             self.details.setText(_('Hide Details'))
-        self.showtree(not self.treeview.isVisible())
+            self.showtree(True)
+        else:
+            self.details.setText(_('Show Details'))
+            self.showtree(False)
 
     def collect_done(self):
+        self.movie.start()
+        self.spinner.hide()
         self.ui.ui_update_view(self)
 
     def showtree(self, visible):
         self.treeview.setVisible(visible)
         if visible and not self.collect_called:
+            rect = self.spinner.parent().rect()
+            self.spinner.setGeometry(rect.width() / 2 - self.spinner.width() / 2,
+                                     rect.height() / 2 - self.spinner.height() / 2,
+                                     self.spinner.width(), self.spinner.height())
+            self.movie.start()
             self.ui.collect(self.collect_done)
             self.collect_called = True
         if visible:
@@ -300,18 +380,15 @@ class MainUserInterface(apport.ui.UserInterface):
                 QTreeWidgetItem(keyitem, [_('(binary data)')])
 
 
-    def ui_present_report_details(self, is_update):
-
-        if is_update:
-            dialog = ReportDialog(self.report.get('Package',
-                _('Generic error')).split()[0],
-                _('Send this data to the developers?'), '', ui=self)
-        else:
-            dialog = ReportDialog(self.report.get('Package',
-                _('Generic error')).split()[0],
-                _('Send problem report to the developers?'),
-                _('After the problem report has been sent, please fill out '
-                  'the form in the automatically opened web browser.'), ui=self)
+    def ui_present_report_details(self, allowed_to_report=True):
+        #if is_update:
+        #    dialog = ReportDialog(self.report.get('Package',
+        #        _('Generic error')).split()[0],
+        #        _('Send this data to the developers?'), '', ui=self)
+        #else:
+        desktop_file = self.get_desktop_entry()
+        dialog = ReportDialog(self.report, allowed_to_report, self,
+                              desktop_file)
 
         response = dialog.exec_()
 

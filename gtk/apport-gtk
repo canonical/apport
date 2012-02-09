@@ -225,6 +225,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             package = self.report.get('Package')
             if package:
                 self.w('subtitle_label').set_label(_('Package: %s') % package)
+                self.w('subtitle_label').show()
             else:
                 self.w('subtitle_label').hide()
             self.w('closed_button').hide()
