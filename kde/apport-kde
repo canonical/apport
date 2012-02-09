@@ -396,7 +396,8 @@ class MainUserInterface(apport.ui.UserInterface):
                          'restart' : False }
         if response == QDialog.Rejected:
             return return_value
-        if response == 1:
+        text = dialog.continue_button.text().remove('&')
+        if response == 1 and text == _('Relaunch'):
             return_value['restart'] = True
         if dialog.send_error_report.isChecked():
             return_value['report'] = True
