@@ -71,25 +71,6 @@ class Dialog(QDialog):
         return self.findChild(QDialogButtonBox, 'buttons').addButton(button,
                 QDialogButtonBox.ActionRole)
 
-class ErrorDialog(Dialog):
-    '''Error dialog wrapper'''
-
-    def __init__(self, title, heading, text, checker=None):
-        Dialog.__init__(self, 'error.ui', title, heading, text)
-
-        self.setMaximumSize(1, 1)
-        self.findChild(QLabel, 'icon').setPixmap(
-                QMessageBox.standardIcon(QMessageBox.Critical))
-
-        self.checker = self.findChild(QCheckBox, 'checker')
-        if checker:
-            self.checker.setText(checker)
-        else:
-            self.checker.hide()
-
-    def checked(self):
-        return self.checker.isChecked()
-
 class ChoicesDialog(Dialog):
     '''Choices dialog wrapper'''
 
@@ -276,90 +257,6 @@ class MainUserInterface(apport.ui.UserInterface):
     # ui_* implementation of abstract UserInterface classes
     #
 
-    def ui_present_crash(self, desktop_entry):
-        # adapt dialog heading and label appropriately
-        if 'Annotation' in self.report:
-            heading = self.report['Annotation']
-        else:
-            if desktop_entry:
-                name = desktop_entry.getName()
-                heading = _('Sorry, %s closed unexpectedly') % name
-            elif 'ExecutablePath' in self.report:
-                name = os.path.basename(self.report['ExecutablePath'])
-                heading = _('Sorry, the program "%s" closed unexpectedly.') % name
-            else:
-                name = self.cur_package
-                heading = _('Sorry, %s closed unexpectedly.') % name
-
-        dialog = ErrorDialog(name, heading,
-                _('If you were not doing anything confidential (entering '
-                  'passwords or other private information), you can help '
-                  'to improve the application by reporting the problem.'),
-                _('&Ignore future crashes of this program version'))
-
-        reportbutton = dialog.addbutton(_('&Report Problem...'))
-
-        if desktop_entry and 'ExecutablePath' in self.report and \
-                os.path.dirname(self.report['ExecutablePath']) in \
-                os.environ['PATH'].split(':') and subprocess.call(['pgrep',
-                    '-x', os.path.basename(self.report['ExecutablePath']),
-                    '-u', str(os.getuid())], stdout=subprocess.PIPE) != 0:
-            restartbutton = dialog.addbutton(_('Restart &Program'))
-
-        # show crash notification dialog
-        response = dialog.exec_()
-        blacklist = dialog.checked()
-
-        if response == QDialog.Rejected:
-            return {'action': 'cancel', 'blacklist': blacklist}
-        if dialog.actionbutton == reportbutton:
-            return {'action': 'report', 'blacklist': blacklist}
-        if dialog.actionbutton == restartbutton:
-            return {'action': 'restart', 'blacklist': blacklist}
-        # Fallback
-        return {'action': 'cancel', 'blacklist': blacklist}
-
-    def ui_present_package_error(self):
-        if 'Annotation' in self.report:
-            title = self.report['Annotation']
-        else:
-            title = _('Sorry, the package "%s" failed to install or upgrade.') % self.report['Package']
-        dialog = ErrorDialog(name, title,
-                _('You can help the developers to fix the package by '
-                  'reporting the problem.'))
-
-        reportbutton = dialog.addbutton(_('&Report Problem...'))
-
-        response = dialog.exec_()
-
-        if response == QDialog.Rejected:
-            return 'cancel'
-        if dialog.actionbutton == reportbutton:
-            return 'report'
-        # Fallback
-        return 'cancel'
-
-    def ui_present_kernel_error(self):
-        message = _('Your system encountered a serious kernel problem.')
-        annotate = ''
-        if 'Annotation' in self.report:
-            annotate = self.report['Annotation'] + '\n\n'
-        annotate += _('You can help the developers to fix the problem by '
-                      'reporting it.')
-
-        dialog = ErrorDialog(_('Kernel problem'), message, annotate)
-
-        reportbutton = dialog.addbutton(_('&Report Problem...'))
-
-        response = dialog.exec_()
-
-        if response == QDialog.Rejected:
-            return 'cancel'
-        if dialog.actionbutton == reportbutton:
-            return 'report'
-        # Fallback
-        return 'cancel'
-
     def ui_update_view(self, dialog):
         # report contents
         details = dialog.findChild(QTreeWidget, 'details')
@@ -381,11 +278,6 @@ class MainUserInterface(apport.ui.UserInterface):
 
 
     def ui_present_report_details(self, allowed_to_report=True):
-        #if is_update:
-        #    dialog = ReportDialog(self.report.get('Package',
-        #        _('Generic error')).split()[0],
-        #        _('Send this data to the developers?'), '', ui=self)
-        #else:
         desktop_file = self.get_desktop_entry()
         dialog = ReportDialog(self.report, allowed_to_report, self,
                               desktop_file)

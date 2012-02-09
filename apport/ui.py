@@ -1093,63 +1093,14 @@ might be helpful for the developers.'))
     # abstract UI methods that must be implemented in derived classes
     #
 
-    def ui_present_crash(self, desktopentry):
-        '''Ask what to do with a crash.
-
-        Inform that a crash has happened for self.report and self.cur_package
-        and ask about an action.
-
-        If the package can be mapped to a desktop file, an xdg.DesktopEntry is
-        passed as an argument; this can be used for enhancing strings, etc.
-
-        Return the action and options as a dictionary:
-
-        - Valid values for the 'action' key: ignore the crash ('cancel'), restart
-          the crashed application ('restart'), or report a bug about the crash
-          ('report').
-        - Valid values for the 'blacklist' key: True or False (True will cause
-          the invocation of report.mark_ignore()).
-        '''
-        raise NotImplementedError('this function must be overridden by subclasses')
-
-    def ui_present_package_error(self, desktopentry):
-        '''Ask what to do with a package failure.
-
-        Inform that a package installation/upgrade failure has happened for
-        self.report and self.cur_package and ask about an action.
-
-        Return the action: ignore ('cancel'), or report a bug about the problem
-        ('report').
-        '''
-        raise NotImplementedError('this function must be overridden by subclasses')
-
-    def ui_present_kernel_error(self, desktopentry):
-        '''Ask what to do with a kernel error.
-
-        Inform that a kernel crash has happened for self.report and ask about
-        an action.
-
-        Return the action: ignore ('cancel'), or report a bug about the problem
-        ('report').
-        '''
-        raise NotImplementedError('this function must be overridden by subclasses')
-
-    def ui_present_report_details(self, is_update):
+    def ui_present_report_details(self, allowed_to_report=True):
         '''Show details of the bug report.
         
-        This lets the user choose between sending a complete or reduced report,
-        or examining the problem locally. This should only be offered if
-        can_examine_locally() returns True.
+        Return the action and options as a dictionary:
 
-        This method can use the get_complete_size() and get_reduced_size()
-        methods to determine the respective size of the data to send, and
-        format_filesize() to convert it to a humanly readable form.
-
-        If is_update is True, the text should describe that an existing report is
-        updated, otherwise a new report will be created.
-
-        Return the action: send full report ('full'), send reduced report
-        ('reduced'), examine locally ('examine'), or do not do anything ('cancel').
+        - Valid keys are: report the crash ('report'), restart
+          the crashed application ('restart'), or blacklist further crashes
+          ('blacklist').
         '''
         raise NotImplementedError('this function must be overridden by subclasses')
 
@@ -1425,15 +1376,6 @@ databases = {
             self.msg_text = None
             self.msg_severity = None # 'warning' or 'error'
             self.msg_choices = None
-
-        def ui_present_crash(self, desktopentry):
-            return self.present_crash_response
-
-        def ui_present_package_error(self):
-            return self.present_package_error_response
-
-        def ui_present_kernel_error(self):
-            return self.present_kernel_error_response
 
         def ui_present_report_details(self, is_update):
             self.present_details_shown = True
