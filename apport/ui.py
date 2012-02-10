@@ -201,6 +201,13 @@ class UserInterface:
                     _('The report belongs to a package that is not installed.'))
                 self.ui_shutdown()
                 return
+            except Exception as e:
+                apport.error(repr(e))
+                self.ui_error_message(_('Invalid problem report'),
+                    _('An error occurred while attempting to process this'
+                      ' problem report.'))
+                self.ui_shutdown()
+                return
             if callable(callback):
                 callback()
         self.collection_thread = apport.REThread.REThread(target=_go,
