@@ -64,7 +64,6 @@ class GTKUserInterface(apport.ui.UserInterface):
         column = Gtk.TreeViewColumn("Report", Gtk.CellRendererText(), text=0)
         self.w('details_treeview').append_column(column)
         self.spinner = self.add_spinner_over_treeview(self.w('details_treeview'))
-        self.collect_called = False
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -96,7 +95,6 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_update_view(self):
         self.spinner.hide()
         self.spinner.stop()
-        self.tree_model.clear()
         for key in sorted(self.report):
             keyiter = self.tree_model.insert_before(None, None)
             self.tree_model.set_value(keyiter, 0, key)
@@ -115,6 +113,11 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_present_report_details(self, allowed_to_report=True):
         icon = None
+        self.collect_called = False
+        self.w('details_scrolledwindow').hide()
+        self.w('show_details').set_label(_('Show Details'))
+        self.tree_model.clear()
+
         if allowed_to_report:
             self.w('send_error_report').set_active(True)
             self.w('send_error_report').show()
@@ -122,6 +125,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('send_error_report').set_active(False)
             self.w('send_error_report').hide()
 
+        self.w('continue_button').set_label(_('Continue'))
         report_type = self.report.get('ProblemType')
         if report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)
@@ -182,7 +186,8 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('application_icon').set_from_stock(Gtk.STOCK_DIALOG_ERROR,
                                                       Gtk.IconSize.DIALOG)
 
-        self.w('dialog_crash_new').show()
+        d = self.w('dialog_crash_new')
+        d.show()
         # don't steal focus when being called without arguments (i. e.
         # automatically launched)
         if len(sys.argv) == 1:
@@ -375,8 +380,8 @@ class GTKUserInterface(apport.ui.UserInterface):
             if not self.collect_called:
                 self.spinner.show()
                 self.spinner.start()
-                self.collect(self.ui_update_view)
                 self.collect_called = True
+                self.collect(self.ui_update_view)
         return True
 
     def on_progress_window_close_event(self, widget, event=None):
