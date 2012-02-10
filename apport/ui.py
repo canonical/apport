@@ -389,8 +389,9 @@ class UserInterface:
                 self.ui_error_message(_('Cannot create report'), excstr(e))
         else:
             # show what's being sent
-            response = self.ui_present_report_details(False)
-            if response != 'cancel':
+            allowed_to_report = apport.fileutils.allowed_to_report()
+            response = self.ui_present_report_details(allowed_to_report)
+            if response['report']:
                 self.file_report()
 
         return True
@@ -468,8 +469,9 @@ class UserInterface:
             return False
 
         # show what's being sent
-        response = self.ui_present_report_details(True)
-        if response != 'cancel':
+        allowed_to_report = apport.fileutils.allowed_to_report()
+        response = self.ui_present_report_details(allowed_to_report)
+        if response['report']:
             self.crashdb.update(self.options.update_report, self.report,
                     'apport information', change_description=is_reporter,
                     attachment_comment='apport information')
