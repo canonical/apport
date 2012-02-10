@@ -128,8 +128,9 @@ class ReportDialog(Dialog):
 
         self.spinner = QLabel('', parent=self.treeview)
         self.spinner.setGeometry(0, 0, 32, 32)
-        # FIXME: resource path
-        self.movie = QMovie('kde/spinner.gif', QByteArray(), self.spinner)
+        self.movie = QMovie(
+            os.path.join(os.path.dirname(sys.argv[0]), 'spinner.gif'),
+            QByteArray(), self.spinner)
         self.spinner.setMovie(self.movie)
 
         if allowed_to_report:
