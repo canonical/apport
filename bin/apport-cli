@@ -121,6 +121,7 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
+        self.in_update_view = False
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -216,57 +217,54 @@ class CLIUserInterface(apport.ui.UserInterface):
         return details
 
 
-    def ui_present_report_details(self, is_update):
-        if is_update:
-            dialog = CLIDialog (_('Send this data to the developers?'), None)
-        else:
-            dialog = CLIDialog (_('Send problem report to the developers?'), 
-                    _('After the problem report has been sent, please fill out the form in the\n'
-                      'automatically opened web browser.'))
+    def ui_update_view(self):
+        self.in_update_view = True
+        self.ui_stop_info_collection_progress()
+        try:
+            subprocess.Popen(["/usr/bin/sensible-pager"],
+                    stdin=subprocess.PIPE,
+                    close_fds=True).communicate(self._get_details())
+        except IOError as e:
+            # ignore broken pipe (premature quit)
+            if e.errno == errno.EPIPE:
+                pass
+            else:
+                raise
+        self.in_update_view = False
+    def ui_present_report_details(self, allowed_to_report=True):
+        dialog = CLIDialog (_('Send problem report to the developers?'), 
+                _('After the problem report has been sent, please fill out the form in the\n'
+                  'automatically opened web browser.'))
 
-        # complete/reduced reports
-        if 'CoreDump' in self.report and self.report.has_useful_stacktrace():
-            complete = dialog.addbutton(_('&Send complete report (recommended; %s)') %
-                    self.format_filesize(self.get_complete_size()))
-            reduced = dialog.addbutton(_('Send &reduced report (slow Internet connection; %s)') %
-                    self.format_filesize(self.get_reduced_size()))
-        else:
-            complete = dialog.addbutton(_('&Send report (%s)') %
-                    self.format_filesize(self.get_complete_size()))
-            reduced = None
-
-        if self.can_examine_locally():
-            examine = dialog.addbutton(_('&Examine locally'))
-        else:
-            examine = None
+        complete = dialog.addbutton(_('&Send report (%s)') %
+                self.format_filesize(self.get_complete_size()))
 
         view = dialog.addbutton(_('&View report'))
         save = dialog.addbutton(_('&Keep report file for sending later or copying to somewhere else'))
+        ignore = dialog.addbutton(_('Cancel and &ignore future crashes of this program version'))
         
         dialog.addbutton(_('&Cancel'))
 
+        import time
         while True:
             response = dialog.run()
 
+            return_value = { 'restart' : False, 'blacklist' : False,
+                             'report' : False }
             if response == complete:
-                return 'full'
-            if response == reduced:
-                return 'reduced'
-            if response == examine:
-                return 'examine'
-            if response == view:
-                try:
-                    subprocess.Popen(["/usr/bin/sensible-pager"],
-                            stdin=subprocess.PIPE,
-                            close_fds=True).communicate(self._get_details())
-                except IOError as e:
-                    # ignore broken pipe (premature quit)
-                    if e.errno == errno.EPIPE:
-                        pass
-                    else:
-                        raise
+                return_value['report'] = True
+            elif response == ignore:
+                return_value['blacklist'] = True
+            elif response == view:
+                self.collect(self.ui_update_view)
+                self.ui_start_info_collection_progress()
+                while not self.in_update_view:
+                    self.ui_pulse_info_collection_progress()
+                    time.sleep(0.5)
+                while self.in_update_view:
+                    time.sleep(0.5)
                 continue
-            if response == save:
+            elif response == save:
                 # we do not already have a report file if we report a bug
                 if not self.report_file:
                     prefix = 'apport.'
@@ -276,10 +274,8 @@ class CLIUserInterface(apport.ui.UserInterface):
                     self.report.write(os.fdopen(fd, 'w'))
 
                 print(_('Problem report file:') + ' ' + self.report_file)
-                return 'cancel'
 
-            # Fallback
-            return 'cancel'
+            return return_value
 
     def ui_info_message(self, title, text):
         dialog = CLIDialog(title, text)
