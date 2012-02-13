@@ -11,6 +11,8 @@ Bug fixes:
  - launchpad.py: Avoid sending tag names with upper case. (LP: #924181)
  - report.py, crash_signature_addresses(): Fix crash if report does not have
    "Signal".
+ - apport-gtk: Fix resize handling of expander in details window. Thanks Thomas
+   Bechtold! (LP: #930562)
 
 Improvements:
  - man/apport-bug.1: Mention where crash files are stored. Thanks David

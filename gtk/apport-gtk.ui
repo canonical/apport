@@ -151,7 +151,7 @@ After the problem report has been sent, please fill out the form in the automati
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="has_focus">True</property>
-                <signal name="activate" handler="on_expander_details_activate" swapped="no"/>
+                <signal name="activate" handler="on_expander_details_activate" after="yes" swapped="no"/>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow1">
                     <property name="visible">True</property>
