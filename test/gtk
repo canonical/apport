@@ -1,0 +1,171 @@
+#!/usr/bin/python
+
+'''GTK Apport user interface tests.'''
+
+# Copyright (C) 2012 Canonical Ltd.
+# Author: Evan Dandrea <evan.dandrea@canonical.com>
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+import unittest
+import tempfile
+import sys
+import imp
+GTKUserInterface = imp.load_source('', 'gtk/apport-gtk').GTKUserInterface
+import apport
+from gi.repository import GLib, Gtk
+from apport import unicode_gettext as _
+
+class _T(unittest.TestCase):
+    def setUp(self):
+        self.report = apport.Report()
+        saved = sys.argv[0]
+        # Work around GTKUserInterface using basename to find the GtkBuilder UI
+        # file.
+        sys.argv[0] = 'gtk/foo'
+        self.app = GTKUserInterface()
+        sys.argv[0] = saved
+        self.app.report = self.report
+
+    def test_close_button(self):
+        '''Ensure that clicking the close button on the window does not cause
+        the crash to be reported.'''
+        self.app.w('send_error_report').set_active(True)
+        def c(*args):
+            self.app.w('dialog_crash_new').destroy()
+        GLib.idle_add(c)
+        result = self.app.ui_present_report_details(True)
+        self.assertFalse(result['report'])
+
+    def test_kernel_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ ubuntu ] Ubuntu has restarted after experiencing an internal  |
+        |            error.                                               |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'KernelCrash'
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('title_label').get_text(),
+            _('Ubuntu has restarted after experiencing an internal error.'))
+        send_error_report = self.app.w('send_error_report')
+        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(), 
+                         _('Continue'))
+        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+        self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
+
+    def test_package_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ error  ] Sorry, a problem occurred while installing software. |
+        |            Package: apport 1.2.3~0ubuntu1                       |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'Package'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('title_label').get_text(),
+            _('Sorry, a problem occurred while installing software.'))
+        send_error_report = self.app.w('send_error_report')
+        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(), 
+                         _('Continue'))
+        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+        self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
+        self.assertEqual(self.app.w('subtitle_label').get_text(),
+                         _('Package: apport 1.2.3~0ubuntu1'))
+
+    def test_regular_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ apport ] The application Apport has closed unexpectedly.      |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                 [ Leave Closed ]  [ Relaunch ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'Crash'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write('''[Desktop Entry]
+Version=1.0
+Name=Apport
+Type=Application''')
+            fp.flush()
+            self.report['DesktopFile'] = fp.name
+            GLib.idle_add(Gtk.main_quit)
+            self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('title_label').get_text(),
+            _('The application Apport has closed unexpectedly.'))
+        send_error_report = self.app.w('send_error_report')
+        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(), 
+                         _('Relaunch'))
+        self.assertTrue(self.app.w('closed_button').get_property('visible'))
+        self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
+
+    def test_system_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ ubuntu ] Sorry, Ubuntu has experienced an internal error.     |
+        |            If you notice further problems, try restarting the   |
+        |            computer                                             |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'Crash'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('title_label').get_text(),
+            _('Sorry, Ubuntu has experienced an internal error.'))
+        self.assertEqual(self.app.w('subtitle_label').get_text(),
+            _('If you notice further problems, try restarting the computer.'))
+        self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
+        send_error_report = self.app.w('send_error_report')
+        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(), 
+                         _('Continue'))
+        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+
+    def test_administrator_disabled_reporting(self):
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(False)
+        send_error_report = self.app.w('send_error_report')
+        self.assertFalse(send_error_report.get_property('visible'))
+        self.assertFalse(send_error_report.get_active())
+
+if __name__ == '__main__':
+    unittest.main()
+    sys.exit(0)

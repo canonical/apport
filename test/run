@@ -57,8 +57,8 @@ if [ "$local" ]; then
     $mydir/hooks -l
     $mydir/crash-digger
     $mydir/java
-    $xvfb ./gtk/apport-gtk --unit-test
-    $xvfb ./kde/apport-kde --unit-test
+    $xvfb $mydir/gtk
+    $xvfb $mydir/kde
 else
     $mydir/hooks
 fi
