@@ -661,8 +661,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             
             for a in bug.attachments:
                 if a.title in ('CoreDump.gz', 'Stacktrace.txt',
-                    'ThreadStacktrace.txt', 'Dependencies.txt', 'ProcMaps.txt',
-                    'ProcStatus.txt', 'Registers.txt', 'Disassembly.txt'):
+                    'ThreadStacktrace.txt', 'ProcMaps.txt', 'ProcStatus.txt',
+                    'Registers.txt', 'Disassembly.txt'):
                     try:
                         a.removeFromBug()
                     except HTTPError:
@@ -1355,9 +1355,12 @@ NameError: global name 'weird' is not defined'''
             # short, and thus inline
             r = self.crashdb.download(segv_report)
             self.assertFalse('CoreDump' in r)
-            self.assertFalse('Dependencies' in r)
             self.assertFalse('Disassembly' in r)
+            self.assertFalse('ProcMaps' in r)
+            self.assertFalse('ProcStatus' in r)
             self.assertFalse('Registers' in r)
+            self.assertFalse('Stacktrace' in r)
+            self.assertFalse('ThreadStacktrace' in r)
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
