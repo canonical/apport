@@ -158,7 +158,7 @@ class ReportDialog(Dialog):
                 self.text.hide()
             self.closed_button.hide()
             self.ignore_future_problems.hide()
-            self.heading.setText(_('Sorry a problem occurred while installing '
+            self.heading.setText(_('Sorry, a problem occurred while installing '
                                    'software.'))
         else:
             # Regular crash.
@@ -167,6 +167,7 @@ class ReportDialog(Dialog):
                 self.heading.setText(_('The application %s has closed '
                                        'unexpectedly.') % 
                                        desktop_file.getName())
+                self.text.hide()
                 self.closed_button.show()
                 self.closed_button.setText(_('Leave Closed'))
                 self.continue_button.setText(_('Relaunch'))
@@ -174,6 +175,7 @@ class ReportDialog(Dialog):
                 icon = 'distributor-logo'
                 self.heading.setText(_('Sorry, Ubuntu has experienced an '
                                        'internal error.'))
+                self.text.show()
                 self.text.setText(_('If you notice further problems, '
                                     'try restarting the computer.'))
                 self.closed_button.hide()
@@ -251,8 +253,8 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
-
-        sys.exit(self.run_argv())
+        # Help unit tests get at the dialog.
+        self.dialog = None
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -280,21 +282,21 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def ui_present_report_details(self, allowed_to_report=True):
         desktop_file = self.get_desktop_entry()
-        dialog = ReportDialog(self.report, allowed_to_report, self,
+        self.dialog = ReportDialog(self.report, allowed_to_report, self,
                               desktop_file)
 
-        response = dialog.exec_()
+        response = self.dialog.exec_()
 
         return_value = { 'report' : False, 'blacklist' : False,
                          'restart' : False }
         if response == QDialog.Rejected:
             return return_value
-        text = dialog.continue_button.text().remove('&')
+        text = self.dialog.continue_button.text().remove('&')
         if response == 1 and text == _('Relaunch'):
             return_value['restart'] = True
-        if dialog.send_error_report.isChecked():
+        if self.dialog.send_error_report.isChecked():
             return_value['report'] = True
-        if dialog.ignore_future_problems.isChecked():
+        if self.dialog.ignore_future_problems.isChecked():
             return_value['blacklist'] = True
         return return_value
 
@@ -409,6 +411,138 @@ class MainUserInterface(apport.ui.UserInterface):
         return (username, password)
 
 
+import unittest
+import tempfile
+class _T(unittest.TestCase):
+    def setUp(self):
+        self.report = apport.Report()
+        self.app = MainUserInterface()
+        self.app.report = self.report
+
+    def test_close_button(self):
+        '''Ensure that clicking the close button on the window does not cause
+        the crash to be reported.'''
+        def c(*args):
+            self.app.dialog.reject()
+        QTimer.singleShot(0, c)
+        result = self.app.ui_present_report_details(True)
+        self.assertFalse(result['report'])
+
+    def test_kernel_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ ubuntu ] Ubuntu has restarted after experiencing an internal  |
+        |            error.                                               |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'KernelCrash'
+        QTimer.singleShot(0, QCoreApplication.quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.heading.text(),
+             _('Ubuntu has restarted after experiencing an internal error.'))
+        self.assertTrue(self.app.dialog.send_error_report.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isChecked())
+        self.assertTrue(self.app.dialog.details.isVisible())
+        self.assertTrue(self.app.dialog.continue_button.isVisible())
+        self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
+        self.assertFalse(self.app.dialog.closed_button.isVisible())
+        self.assertFalse(self.app.dialog.text.isVisible())
+
+    def test_package_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ error  ] Sorry, a problem occurred while installing software. |
+        |            Package: apport 1.2.3~0ubuntu1                       |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'Package'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        QTimer.singleShot(0, QCoreApplication.quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.heading.text(),
+             _('Sorry, a problem occurred while installing software.'))
+        self.assertTrue(self.app.dialog.send_error_report.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isChecked())
+        self.assertTrue(self.app.dialog.details.isVisible())
+        self.assertTrue(self.app.dialog.continue_button.isVisible())
+        self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
+        self.assertFalse(self.app.dialog.closed_button.isVisible())
+        self.assertEqual(self.app.dialog.text.text(),
+            _('Package: apport 1.2.3~0ubuntu1'))
+
+    def test_regular_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ apport ] The application Apport has closed unexpectedly.      |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                 [ Leave Closed ]  [ Relaunch ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'Crash'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write('''[Desktop Entry]
+Version=1.0
+Name=Apport
+Type=Application''')
+            fp.flush()
+            self.report['DesktopFile'] = fp.name
+            QTimer.singleShot(0, QCoreApplication.quit)
+            self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.heading.text(),
+             _('The application Apport has closed unexpectedly.'))
+        self.assertTrue(self.app.dialog.send_error_report.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isChecked())
+        self.assertTrue(self.app.dialog.details.isVisible())
+        self.assertTrue(self.app.dialog.continue_button.isVisible())
+        self.assertEqual(self.app.dialog.continue_button.text(), _('Relaunch'))
+        self.assertTrue(self.app.dialog.closed_button.isVisible())
+        self.assertFalse(self.app.dialog.text.isVisible())
+
+    def test_system_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ ubuntu ] Sorry, Ubuntu has experienced an internal error.     |
+        |            If you notice further problems, try restarting the   |
+        |            computer                                             |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'Crash'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        QTimer.singleShot(0, QCoreApplication.quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.heading.text(),
+             _('Sorry, Ubuntu has experienced an internal error.'))
+        self.assertEqual(self.app.dialog.text.text(),
+             _('If you notice further problems, try restarting the computer.'))
+        self.assertTrue(self.app.dialog.text.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isChecked())
+        self.assertTrue(self.app.dialog.details.isVisible())
+        self.assertTrue(self.app.dialog.continue_button.isVisible())
+        self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
+        self.assertFalse(self.app.dialog.closed_button.isVisible())
+
+    def test_administrator_disabled_reporting(self):
+        QTimer.singleShot(0, QCoreApplication.quit)
+        self.app.ui_present_report_details(False)
+        self.assertFalse(self.app.dialog.send_error_report.isVisible())
+        self.assertFalse(self.app.dialog.send_error_report.isChecked())
+
 if __name__ == '__main__':
     if not os.environ.get('DISPLAY'):
         apport.fatal('This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.')
@@ -435,5 +569,10 @@ if __name__ == '__main__':
     app = KApplication()
     app.setWindowIcon(KIcon('apport'))
 
+    if '--unit-test' in sys.argv:
+        sys.argv.remove('--unit-test')
+        unittest.main()
+        sys.exit(0)
     UserInterface = MainUserInterface()
+    sys.exit(UserInterface.run_argv())
     app.exec_()

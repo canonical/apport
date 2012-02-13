@@ -163,6 +163,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 icon = 'distributor-logo'
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
                     _('Sorry, Ubuntu has experienced an internal error.'))
+                self.w('subtitle_label').show()
                 self.w('subtitle_label').set_label(
                     _('If you notice further problems, '
                       'try restarting the computer.'))
