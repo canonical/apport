@@ -114,6 +114,8 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_present_report_details(self, allowed_to_report=True):
         icon = None
         self.collect_called = False
+        distro = self.report.get('DistroRelease', 'Ubuntu')
+        report_type = self.report.get('ProblemType')
         self.w('details_scrolledwindow').hide()
         self.w('show_details').set_label(_('Show Details'))
         self.tree_model.clear()
@@ -126,12 +128,12 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('send_error_report').hide()
 
         self.w('continue_button').set_label(_('Continue'))
-        report_type = self.report.get('ProblemType')
         if report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)
             self.w('ignore_future_problems').hide()
             self.w('title_label').set_label('<big><b>%s</b></big>' %
-                _('Ubuntu has restarted after experiencing an internal error.'))
+                _('%s has restarted after experiencing an internal error.')
+                % distro)
             self.w('closed_button').hide()
             self.w('subtitle_label').hide()
             icon = 'distributor-logo'
@@ -162,7 +164,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 icon = 'distributor-logo'
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
-                    _('Sorry, Ubuntu has experienced an internal error.'))
+                    _('Sorry, %s has experienced an internal error.') % distro)
                 self.w('subtitle_label').show()
                 self.w('subtitle_label').set_label(
                     _('If you notice further problems, '

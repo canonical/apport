@@ -125,6 +125,7 @@ class ReportDialog(Dialog):
         self.ui = ui
         self.collect_called = False
         icon = None
+        distro = report.get('DistroRelease', 'Ubuntu')
 
         self.spinner = QLabel('', parent=self.treeview)
         self.spinner.setGeometry(0, 0, 32, 32)
@@ -144,8 +145,8 @@ class ReportDialog(Dialog):
         if report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.ignore_future_problems.setChecked(False)
             self.ignore_future_problems.hide()
-            self.heading.setText(_('Ubuntu has restarted after experiencing an'
-                                   ' internal error.'))
+            self.heading.setText(_('%s has restarted after experiencing an'
+                                   ' internal error.') % distro)
             self.closed_button.hide()
             self.text.hide()
             icon = 'distributor-logo'
@@ -173,8 +174,8 @@ class ReportDialog(Dialog):
                 self.continue_button.setText(_('Relaunch'))
             else:
                 icon = 'distributor-logo'
-                self.heading.setText(_('Sorry, Ubuntu has experienced an '
-                                       'internal error.'))
+                self.heading.setText(_('Sorry, %s has experienced an '
+                                       'internal error.') % distro)
                 self.text.show()
                 self.text.setText(_('If you notice further problems, '
                                     'try restarting the computer.'))
