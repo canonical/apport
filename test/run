@@ -49,12 +49,16 @@ done
 
 $PYTHON $mydir/../data/general-hooks/parse_segv.py -v
 
+xvfb=
+if type xvfb-run >/dev/null; then
+    xvfb=xvfb-run
+fi
 if [ "$local" ]; then
     $mydir/hooks -l
     $mydir/crash-digger
     $mydir/java
-    xvfb-run ./gtk/apport-gtk --unit-test
-    xvfb-run ./kde/apport-kde --unit-test
+    $xvfb ./gtk/apport-gtk --unit-test
+    $xvfb ./kde/apport-kde --unit-test
 else
     $mydir/hooks
 fi
