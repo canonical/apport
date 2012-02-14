@@ -14,14 +14,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-01-28 04:35+0000\n"
-"X-Generator: Launchpad (build 14727)\n"
+"X-Launchpad-Export-Date: 2012-02-14 05:17+0000\n"
+"X-Generator: Launchpad (build 14781)\n"
 "Language: ro\n"
 "100 > 19) || ((n % 100 == 0) && (n != 0))) ? 2: 1))\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Se pare că acest pachet nu este instalat corect"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -30,6 +30,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Acesta nu este un pachet oficial %s. Ștergeți toate pachetele de la terți și "
+"încercați din nou."
 
 #: ../apport/ui.py:117
 #, python-format
@@ -199,7 +201,7 @@ msgstr ""
 
 #: ../apport/ui.py:617
 msgid "Specify package name."
-msgstr ""
+msgstr "Specificați numele pachetului."
 
 #: ../apport/ui.py:619 ../apport/ui.py:668
 msgid "Add an extra tag to the report. Can be specified multiple times."
@@ -279,25 +281,27 @@ msgstr "Tipărește numărul de versiune al Apport."
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Această comandă va lansa apport-retrace într-o fereastră terminal pentru a "
+"examina eroarea."
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "Rulare sesiune gdb"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Rulați o sesiune gdb fără descărcarea simbolurilor pentru depanare"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Actualizați %s cu urmărirea întregii stive"
 
 #: ../apport/ui.py:844
 #, python-format
 msgid "The problem happened with the program %s which changed since then."
-msgstr ""
+msgstr "Problema a apărut la programul %s, care de atunci s-a modificat."
 
 #: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
@@ -476,7 +480,7 @@ msgstr "&Trimite raport (%s)"
 
 #: ../bin/apport-cli.py:239
 msgid "&Examine locally"
-msgstr ""
+msgstr "&Examinează local"
 
 #: ../bin/apport-cli.py:243
 msgid "&View report"
@@ -702,7 +706,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:1
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Examinează local"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid "_Ignore future crashes of this program version"
@@ -780,24 +784,36 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Construiește o zonă protejată temporară și descarcă/instalează aici "
+"pachetele necesare și simbolurile pentru depanare; fără această opțiune se "
+"presupune că pachetele necesare și simbolurile pentru depanare sunt "
+"instalate deja în sistem. Argumentul indică dosarul de bază al configurației "
+"sistemului de pachete; dacă specificați „sistem”, vor fi folosite fișierele "
+"de configurare ale sistemului, însă în acest mod vor putea fi urmărite numai "
+"erorile apărute în versiunea curentă."
 
 #: ../bin/apport-retrace.py:57
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Arată progresul descărcării/instalării pentru instalarea pachetelor în zona "
+"protejată"
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr ""
+"Adaugă marcaje de timp mesajelor din jurnale, pentru operații în bloc"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Dosarul cache pentru pachetele descărcate în zona protejată"
 
 #: ../bin/apport-retrace.py:63
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
+"Instalează un pachet suplimentar în zona protejată (poate fi specificat de "
+"mai multe ori)"
 
 #: ../bin/apport-retrace.py:65
 msgid ""

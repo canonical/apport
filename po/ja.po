@@ -14,13 +14,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-01-28 04:35+0000\n"
-"X-Generator: Launchpad (build 14727)\n"
+"X-Launchpad-Export-Date: 2012-02-14 05:17+0000\n"
+"X-Generator: Launchpad (build 14781)\n"
 "Language: ja\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "このパッケージは恐らく正常にインストールされていません"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -28,7 +28,7 @@ msgstr ""
 msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
-msgstr ""
+msgstr "これは %s の公式パッケージではありません。すべてのサードパーティーのパッケージを削除して再度試してください。"
 
 #: ../apport/ui.py:117
 #, python-format
@@ -249,6 +249,7 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"バグファイリングモードでは、収集した情報は報告する代わりにファイルに保存されます。このファイルは、後で別のコンピューターから報告することができます。"
 
 #: ../apport/ui.py:670
 msgid "Print the Apport version number."

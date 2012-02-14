@@ -14,13 +14,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-01-28 04:35+0000\n"
-"X-Generator: Launchpad (build 14727)\n"
+"X-Launchpad-Export-Date: 2012-02-14 05:17+0000\n"
+"X-Generator: Launchpad (build 14781)\n"
 "Language: it\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Questo pacchetto non sembra installato correttamente"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Questo non è un pacchetto ufficiale di %s. Rimuovere tutti i pacchetti di "
+"terze parti, quindi riprovare."
 
 #: ../apport/ui.py:117
 #, python-format
@@ -281,25 +283,29 @@ msgstr "Mostra il numero di versione del programma."
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Questo eseguirà apport-retrace in una finestra di terminale per esaminare il "
+"crash."
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "Esegui una sessione gdb"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Esegui una sessione gdb senza scaricare i simboli di debug"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Aggiornare %s con uno stack trace completamente simbolico"
 
 #: ../apport/ui.py:844
 #, python-format
 msgid "The problem happened with the program %s which changed since then."
 msgstr ""
+"Il problema si è verificato con il programma %s che è stato modificato da "
+"allora."
 
 #: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
@@ -484,7 +490,7 @@ msgstr "&Invia segnalazione (%s)"
 
 #: ../bin/apport-cli.py:239
 msgid "&Examine locally"
-msgstr ""
+msgstr "&Esamina localmente"
 
 #: ../bin/apport-cli.py:243
 msgid "&View report"
@@ -712,7 +718,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:1
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Esamina localmente"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid "_Ignore future crashes of this program version"
@@ -799,7 +805,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
+msgstr "Anteporre gli orari ai messaggi di log nelle operazioni batch"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"

@@ -14,13 +14,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-01-28 04:36+0000\n"
-"X-Generator: Launchpad (build 14727)\n"
+"X-Launchpad-Export-Date: 2012-02-14 05:18+0000\n"
+"X-Generator: Launchpad (build 14781)\n"
 "Language: \n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "這個套件似乎尚未正確安裝"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -28,7 +28,7 @@ msgstr ""
 msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
-msgstr ""
+msgstr "這不是官方的 %s 套件。請移除任何第三方套件並重試。"
 
 #: ../apport/ui.py:117
 #, python-format
@@ -260,26 +260,26 @@ msgstr "列印 Apport 版本號碼。"
 #: ../apport/ui.py:802
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
-msgstr ""
+msgstr "這會在終端機視窗中啟動 apport-retrace 以檢查程式崩潰原因。"
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "執行 gdb 作業階段"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "執行 gdb 作業階段而不下載除錯符號"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "以完整的符號堆疊追蹤來更新 %s"
 
 #: ../apport/ui.py:844
 #, python-format
 msgid "The problem happened with the program %s which changed since then."
-msgstr ""
+msgstr "該問題是 %s 所引起，但自那時起已有過變動。"
 
 #: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
@@ -447,7 +447,7 @@ msgstr "傳送報告 (%s)(&S)"
 
 #: ../bin/apport-cli.py:239
 msgid "&Examine locally"
-msgstr ""
+msgstr "於本地端檢查(&E)"
 
 #: ../bin/apport-cli.py:243
 msgid "&View report"
@@ -647,7 +647,7 @@ msgstr "這會從報告中移除某些大型事項。這對開發展偵錯來說
 
 #: ../gtk/apport-gtk.ui.h:1
 msgid "_Examine locally"
-msgstr ""
+msgstr "於本地端檢查(_E)"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid "_Ignore future crashes of this program version"
@@ -727,7 +727,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
+msgstr "在記錄訊息前加上時間戳記，供批次操作"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"

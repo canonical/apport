@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-01-28 04:35+0000\n"
-"X-Generator: Launchpad (build 14727)\n"
+"X-Launchpad-Export-Date: 2012-02-14 05:17+0000\n"
+"X-Generator: Launchpad (build 14781)\n"
 "Language: \n"
 
 #: ../apport/ui.py:92
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Aqueste paquet es pas oficialament pres en carga per %s. Desinstallatz tot "
+"paquet tèrç e tornatz ensajar."
 
 #: ../apport/ui.py:117
 #, python-format
@@ -293,6 +295,8 @@ msgstr "Aficha lo numèro de version d'Apport."
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Aquò va aviar apport-retrace dins una fenèstra de terminal per examinar lo "
+"crash."
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
@@ -300,18 +304,18 @@ msgstr "Aviar una sesilha gdb"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Executar la sesilha gdb sens telecargar los simbòls de desbugatge"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Mesa a jorn de %s amb una traça de la pila totalament simbolica"
 
 #: ../apport/ui.py:844
 #, python-format
 msgid "The problem happened with the program %s which changed since then."
-msgstr ""
+msgstr "Lo problèma s'es produch amb lo programa %s qu'a cambiat dempuèi."
 
 #: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
@@ -815,6 +819,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr ""
+"Prefixar un orodatatge als messatges de jornal, per un tractament per lòts"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
