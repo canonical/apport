@@ -159,6 +159,48 @@ Type=Application''')
                          _('Continue'))
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
 
+    def test_system_crash_from_console_layout(self):
+        '''
+        +-------------------------------------------------------------------+
+        | [ ubuntu ] Sorry, the application apport has closed unexpectedly. |
+        |            If you notice further problems, try restarting the     |
+        |            computer                                               |
+        |                                                                   |
+        |            [x] Send an error report to help fix this problem.     |
+        |                                                                   |
+        | [ Show Details ]                                     [ Continue ] |
+        +-------------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'Crash'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.report['ProcEnviron'] = ('LANGUAGE=en_GB:en\n'
+                                      'SHELL=/bin/sh\n'
+                                      'TERM=xterm')
+        self.report['ExecutablePath'] = '/usr/bin/apport'
+        # This will be set by apport/ui.py in load_report()
+        self.app.cur_package = 'apport'
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('title_label').get_text(),
+            _('Sorry, the application apport has closed unexpectedly.'))
+        self.assertEqual(self.app.w('subtitle_label').get_text(),
+            _('If you notice further problems, try restarting the computer.'))
+        self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
+        send_error_report = self.app.w('send_error_report')
+        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(), 
+                         _('Continue'))
+        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+
+        del self.report['ExecutablePath']
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('title_label').get_text(),
+            _('Sorry, apport has closed unexpectedly.'))
+
     def test_administrator_disabled_reporting(self):
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(False)

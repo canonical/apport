@@ -111,6 +111,27 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
+    def get_system_application_title_text(self):
+        """If the system application was started from the console, assume a
+        developer who would appreciate the application name having a more
+        prominent placement. Otherwise, provide a simple explaination for
+        more novice users."""
+
+        distro = self.report.get('DistroRelease', 'Ubuntu')
+        from_console = 'TERM=' in self.report.get('ProcEnviron', '')
+
+        if from_console:
+            if 'ExecutablePath' in self.report:
+                t = (_('Sorry, the application %s has closed unexpectedly.')
+                     % os.path.basename(self.report['ExecutablePath']))
+            else:
+                t = (_('Sorry, %s has closed unexpectedly.') %
+                     self.cur_package)
+
+        else:
+            t = _('Sorry, %s has experienced an internal error.') % distro
+        return t
+
     def ui_present_report_details(self, allowed_to_report=True):
         icon = None
         self.collect_called = False
@@ -163,8 +184,9 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('continue_button').set_label(_('Relaunch'))
             else:
                 icon = 'distributor-logo'
+                title_text = self.get_system_application_title_text()
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
-                    _('Sorry, %s has experienced an internal error.') % distro)
+                                                title_text)
                 self.w('subtitle_label').show()
                 self.w('subtitle_label').set_label(
                     _('If you notice further problems, '
