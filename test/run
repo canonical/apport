@@ -38,30 +38,36 @@ apport/crashdb_impl/memory
 apport/packaging_impl
 "
 
+count=0
+failed () {
+    count=$((count+1))
+}
 for m in $modules; do
     echo "--- Testing $m ---"
     if [ -n "$local" ]; then
-	${PYTHON:=python} -tt ./${m}.py -v
+	${PYTHON:=python} -tt ./${m}.py -v || failed
     else
-	${PYTHON:=python} -tt -m $m -v
+	${PYTHON:=python} -tt -m $m -v || failed
     fi
 done
 
-$PYTHON $mydir/../data/general-hooks/parse_segv.py -v
+$PYTHON $mydir/../data/general-hooks/parse_segv.py -v || failed
 
 xvfb=
 if type xvfb-run >/dev/null; then
     xvfb=xvfb-run
 fi
 if [ "$local" ]; then
-    $mydir/hooks -l
-    $mydir/crash-digger
-    $mydir/java
-    $xvfb $mydir/gtk
-    $xvfb $mydir/kde
+    $mydir/hooks -l || failed
+    $mydir/crash-digger || failed
+    $mydir/java || failed
+    $xvfb $mydir/gtk || failed
+    $xvfb $mydir/kde || failed
 else
-    $mydir/hooks
+    $mydir/hooks || failed
 fi
 
-$mydir/python
-$mydir/crash -v
+$mydir/python || failed
+$mydir/crash -v || failed
+
+exit $count
