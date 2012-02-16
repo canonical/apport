@@ -151,7 +151,15 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w('examine').set_visible(self.can_examine_locally())
 
         self.w('continue_button').set_label(_('Continue'))
-        if report_type == 'KernelCrash' or report_type == 'KernelOops':
+        if not self.report_file:
+            # This is a bug generated through `apport-bug $package`.
+            self.w('title_label').set_label('<big><b>%s</b></big>' %
+                _('Send problem report to the developers?'))
+            self.w('title_label').show()
+            self.w('subtitle_label').hide()
+            self.w('closed_button').hide()
+            self.w('ignore_future_problems').hide()
+        elif report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)
             self.w('ignore_future_problems').hide()
             self.w('title_label').set_label('<big><b>%s</b></big>' %

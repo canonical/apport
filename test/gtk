@@ -31,6 +31,7 @@ class _T(unittest.TestCase):
         self.app = GTKUserInterface()
         sys.argv[0] = saved
         self.app.report = self.report
+        self.app.report_file = '/var/crash/fake.crash'
 
     def test_close_button(self):
         '''Ensure that clicking the close button on the window does not cause
@@ -226,6 +227,31 @@ Type=Application''')
         result = self.app.ui_present_report_details(True)
         self.assertTrue(self.app.w('examine').get_property('visible'))
         self.assertTrue(result['examine'])
+
+    def test_apport_bug_package(self):
+        '''
+        +-------------------------------------------------------------------+
+        | [ ubuntu ] Send problem report to the developers?                 |
+        |                                                                   |
+        |            [x] Send an error report to help fix this problem.     |
+        |                                                                   |
+        | [ Show Details ]                                     [ Continue ] |
+        +-------------------------------------------------------------------+
+        '''
+        self.app.report_file = None
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('title_label').get_text(),
+            _('Send problem report to the developers?'))
+        self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
+        send_error_report = self.app.w('send_error_report')
+        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(), 
+                         _('Continue'))
+        self.assertFalse(self.app.w('closed_button').get_property('visible'))
 
     def test_administrator_disabled_reporting(self):
         GLib.idle_add(Gtk.main_quit)
