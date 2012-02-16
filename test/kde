@@ -29,6 +29,7 @@ class _T(unittest.TestCase):
         self.report = apport.Report()
         self.app = MainUserInterface()
         self.app.report = self.report
+        self.app.report_file = '/var/crash/fake.crash'
 
     def test_close_button(self):
         '''Ensure that clicking the close button on the window does not cause
@@ -141,6 +142,31 @@ Type=Application''')
         self.assertEqual(self.app.dialog.text.text(),
              _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.dialog.text.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isChecked())
+        self.assertTrue(self.app.dialog.details.isVisible())
+        self.assertTrue(self.app.dialog.continue_button.isVisible())
+        self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
+        self.assertFalse(self.app.dialog.closed_button.isVisible())
+
+    def test_apport_bug_package(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ ubuntu ] Sorry, Ubuntu has experienced an internal error.     |
+        |            If you notice further problems, try restarting the   |
+        |            computer                                             |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.app.report_file = None
+        QTimer.singleShot(0, QCoreApplication.quit)
+        self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.heading.text(),
+             _('Send problem report to the developers?'))
+        self.assertFalse(self.app.dialog.text.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
         self.assertTrue(self.app.dialog.details.isVisible())

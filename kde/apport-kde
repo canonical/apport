@@ -128,6 +128,7 @@ class ReportDialog(Dialog):
         self.collect_called = False
         icon = None
         distro = report.get('DistroRelease', 'Ubuntu')
+        report_type = report.get('ProblemType')
 
         self.spinner = QLabel('', parent=self.treeview)
         self.spinner.setGeometry(0, 0, 32, 32)
@@ -145,8 +146,12 @@ class ReportDialog(Dialog):
 
         self.examine_button.setVisible(self.ui.can_examine_locally())
 
-        report_type = report.get('ProblemType')
-        if report_type == 'KernelCrash' or report_type == 'KernelOops':
+        if not self.ui.report_file:
+            self.heading.setText(_('Send problem report to the developers?'))
+            self.text.hide()
+            self.closed_button.hide()
+            self.ignore_future_problems.hide()
+        elif report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.ignore_future_problems.setChecked(False)
             self.ignore_future_problems.hide()
             self.heading.setText(_('%s has restarted after experiencing an'
