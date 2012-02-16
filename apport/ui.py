@@ -840,8 +840,27 @@ class UserInterface:
             hookui = HookUI(self)
 
             if 'Stacktrace' not in self.report:
-                thread_collect_info(self.report, self.report_file, self.cur_package,
-                                    hookui, symptom_script, ignore_uninstalled)
+                # save original environment, in case hooks change it
+                orig_env = os.environ.copy()
+                icthread = apport.REThread.REThread(target=thread_collect_info,
+                    name='thread_collect_info',
+                    args=(self.report, self.report_file, self.cur_package,
+                        hookui, symptom_script, ignore_uninstalled))
+                icthread.start()
+                while icthread.isAlive():
+                    self.ui_pulse_info_collection_progress()
+                    try:
+                        hookui.process_event()
+                    except KeyboardInterrupt:
+                        sys.exit(1)
+
+                icthread.join()
+
+                # restore original environment
+                os.environ.clear()
+                os.environ.update(orig_env)
+
+                icthread.exc_raise()
 
             if 'CrashDB' in self.report:
                 self.crashdb = get_crashdb(None, self.report['CrashDB']) 

@@ -308,6 +308,10 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
+    def ui_pulse_info_collection_progress(self):
+        pass
+
+    @threaded_operation
     def ui_question_yesno(self, text):
         '''Show a yes/no question.
 
@@ -322,6 +326,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             return False
         return None
 
+    @threaded_operation
     def ui_question_choice(self, text, options, multiple):
         '''Show an question with predefined choices.
 
@@ -366,6 +371,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             index += 1
         return result
 
+    @threaded_operation
     def ui_question_file(self, text):
         '''Show a file selector dialog.
 
