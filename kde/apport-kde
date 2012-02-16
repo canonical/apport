@@ -117,6 +117,8 @@ class ReportDialog(Dialog):
         self.continue_button.clicked.connect(self.on_continue_clicked)
         self.closed_button = self.findChild(QPushButton, 'closed_button')
         self.closed_button.clicked.connect(self.on_closed_clicked)
+        self.examine_button = self.findChild(QPushButton, 'examine_button')
+        self.examine_button.clicked.connect(self.on_examine_clicked)
         self.treeview = self.findChild(QTreeWidget, 'details')
         self.send_error_report = self.findChild(QCheckBox, 'send_error_report')
         self.ignore_future_problems = self.findChild(QCheckBox, 'ignore_future_problems')
@@ -140,6 +142,8 @@ class ReportDialog(Dialog):
         else:
             self.send_error_report.setChecked(False)
             self.send_error_report.hide()
+
+        self.examine_button.setVisible(self.ui.can_examine_locally())
 
         report_type = report.get('ProblemType')
         if report_type == 'KernelCrash' or report_type == 'KernelOops':
@@ -205,6 +209,9 @@ class ReportDialog(Dialog):
     
     def on_closed_clicked(self):
         self.done(2)
+
+    def on_examine_clicked(self):
+        self.done(3)
 
     def on_show_details_clicked(self):
         if not self.treeview.isVisible():
@@ -289,9 +296,13 @@ class MainUserInterface(apport.ui.UserInterface):
         response = self.dialog.exec_()
 
         return_value = { 'report' : False, 'blacklist' : False,
-                         'restart' : False }
+                         'restart' : False, 'examine' : False }
         if response == QDialog.Rejected:
             return return_value
+        if response == 3:
+            return_value['examine'] = True
+            return return_value
+
         text = self.dialog.continue_button.text().remove('&')
         if response == 1 and text == _('Relaunch'):
             return_value['restart'] = True
