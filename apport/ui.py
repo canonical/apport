@@ -840,7 +840,7 @@ class UserInterface:
             # since this might take a while, create separate threads and
             # display a progress dialog. Don't show in the regular UI, as that
             # has its own embedded progress indicator.
-            if symptom_script:
+            if not self.options.crash_file:
                 self.ui_start_info_collection_progress()
 
             hookui = HookUI(self)
@@ -854,7 +854,8 @@ class UserInterface:
                         hookui, symptom_script, ignore_uninstalled))
                 icthread.start()
                 while icthread.isAlive():
-                    self.ui_pulse_info_collection_progress()
+                    if not self.options.crash_file:
+                        self.ui_pulse_info_collection_progress()
                     try:
                         hookui.process_event()
                     except KeyboardInterrupt:
@@ -886,7 +887,8 @@ class UserInterface:
                 if val is not None:
                     self.report['KnownReport'] = val
 
-            self.ui_stop_info_collection_progress()
+            if not self.options.crash_file:
+                self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
             if ('SourcePackage' not in self.report or
