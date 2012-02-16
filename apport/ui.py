@@ -2528,6 +2528,10 @@ CoreDump: base64
         def test_interactive_hooks_information(self):
             '''interactive hooks: HookUI.information()'''
 
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self._run_hook('''report['begin'] = '1'
 ui.information('InfoText')
 report['end'] = '1'
@@ -2539,6 +2543,10 @@ report['end'] = '1'
         def test_interactive_hooks_yesno(self):
             '''interactive hooks: HookUI.yesno()'''
 
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.question_yesno_response = True
             self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.yesno('YesNo?'))
@@ -2562,6 +2570,10 @@ report['end'] = '1'
         def test_interactive_hooks_file(self):
             '''interactive hooks: HookUI.file()'''
 
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.question_file_response = '/etc/fstab'
             self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.file('YourFile?'))
@@ -2580,6 +2592,10 @@ report['end'] = '1'
         def test_interactive_hooks_choices(self):
             '''interactive hooks: HookUI.choice()'''
 
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.question_choice_response = [1]
             self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.choice('YourChoice?', ['foo', 'bar']))
