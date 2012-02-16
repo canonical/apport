@@ -2328,19 +2328,24 @@ CoreDump: base64
             # cancel crash notification dialog
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_package_error_response = 'cancel'
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.assertFalse(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
             # report in crash notification dialog, send report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_package_error_response = 'report'
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
@@ -2377,20 +2382,25 @@ CoreDump: base64
             # cancel crash notification dialog
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_kernel_error_response = 'cancel'
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, 'error: %s - %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.assertFalse(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
             # report in crash notification dialog, send report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_kernel_error_response = 'report'
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) + 
                 ' ' + str(self.ui.msg_text))
