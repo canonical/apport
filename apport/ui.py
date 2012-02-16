@@ -837,6 +837,12 @@ class UserInterface:
             if self.report['ProblemType'] == 'Crash' and 'Stacktrace' in self.report:
                 return
 
+            # since this might take a while, create separate threads and
+            # display a progress dialog. Don't show in the regular UI, as that
+            # has its own embedded progress indicator.
+            if symptom_script:
+                self.ui_start_info_collection_progress()
+
             hookui = HookUI(self)
 
             if 'Stacktrace' not in self.report:
@@ -879,6 +885,8 @@ class UserInterface:
                 val = self.crashdb.known(self.report)
                 if val is not None:
                     self.report['KnownReport'] = val
+
+            self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
             if ('SourcePackage' not in self.report or

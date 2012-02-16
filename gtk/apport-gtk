@@ -267,6 +267,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             Gtk.main_iteration_do(False)
         return result
 
+    @threaded_operation
     def ui_info_message(self, title, text):
         self._ui_message_dialog(title, text, Gtk.MessageType.INFO)
 
@@ -301,6 +302,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
+    @threaded_operation
     def ui_stop_upload_progress(self):
         '''Close debug data upload progress window.'''
 
@@ -308,8 +310,24 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
+    @threaded_operation
+    def ui_start_info_collection_progress(self):
+        self.w('progressbar_information_collection').set_fraction(0)
+        self.w('window_information_collection').show()
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
+        
+    @threaded_operation
     def ui_pulse_info_collection_progress(self):
-        pass
+        self.w('progressbar_information_collection').pulse()
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
+
+    @threaded_operation
+    def ui_stop_info_collection_progress(self):
+        self.w('window_information_collection').hide()
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
 
     @threaded_operation
     def ui_question_yesno(self, text):
