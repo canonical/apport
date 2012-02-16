@@ -19,6 +19,7 @@ GTKUserInterface = imp.load_source('', 'gtk/apport-gtk').GTKUserInterface
 import apport
 from gi.repository import GLib, Gtk
 from apport import unicode_gettext as _
+from mock import patch
 
 class _T(unittest.TestCase):
     def setUp(self):
@@ -200,6 +201,31 @@ Type=Application''')
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
             _('Sorry, apport has closed unexpectedly.'))
+
+    @patch.object(GTKUserInterface, 'can_examine_locally')
+    def test_examine_button(self, *args):
+        '''
+        +---------------------------------------------------------------------+
+        | [ apport ] The application Apport has closed unexpectedly.          |
+        |                                                                     |
+        |            [x] Send an error report to help fix this problem.       |
+        |                                                                     |
+        | [ Show Details ] [ Examine locally ]  [ Leave Closed ] [ Relaunch ] |
+        +---------------------------------------------------------------------+
+        '''
+        self.report['ProblemType'] = 'Crash'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+
+        GLib.idle_add(Gtk.main_quit)
+        self.app.can_examine_locally.return_value = False
+        self.app.ui_present_report_details(True)
+        self.assertFalse(self.app.w('examine').get_property('visible'))
+
+        GLib.idle_add(self.app.w('examine').clicked)
+        self.app.can_examine_locally.return_value = True
+        result = self.app.ui_present_report_details(True)
+        self.assertTrue(self.app.w('examine').get_property('visible'))
+        self.assertTrue(result['examine'])
 
     def test_administrator_disabled_reporting(self):
         GLib.idle_add(Gtk.main_quit)

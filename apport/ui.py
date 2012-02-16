@@ -259,6 +259,9 @@ class UserInterface:
                 self.collection_thread.join()
                 self.collection_thread.exc_raise()
 
+            if response['examine']:
+                self.examine()
+                return
             if response['restart']:
                 self.restart()
             if response['blacklist']:

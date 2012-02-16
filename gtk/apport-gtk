@@ -148,6 +148,8 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('send_error_report').set_active(False)
             self.w('send_error_report').hide()
 
+        self.w('examine').set_visible(self.can_examine_locally())
+
         self.w('continue_button').set_label(_('Continue'))
         if report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)
@@ -220,12 +222,17 @@ class GTKUserInterface(apport.ui.UserInterface):
             d.set_focus_on_map(False)
 
         return_value = { 'report' : False, 'blacklist' : False,
-                         'restart' : False }
+                         'restart' : False, 'examine' : False }
         def dialog_crash_dismissed(widget):
             self.w('dialog_crash_new').hide()
             if widget is self.w('dialog_crash_new'):
                 Gtk.main_quit()
                 return
+            elif widget is self.w('examine'):
+                return_value['examine'] = True
+                Gtk.main_quit()
+                return
+
             if self.w('send_error_report').get_active():
                 return_value['report'] = True
             if self.w('ignore_future_problems').get_active():
@@ -237,6 +244,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w('dialog_crash_new').connect('destroy', dialog_crash_dismissed)
         self.w('continue_button').connect('clicked', dialog_crash_dismissed)
         self.w('closed_button').connect('clicked', dialog_crash_dismissed)
+        self.w('examine').connect('clicked', dialog_crash_dismissed)
         Gtk.main()
         return return_value
 
