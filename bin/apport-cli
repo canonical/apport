@@ -239,6 +239,11 @@ class CLIUserInterface(apport.ui.UserInterface):
         complete = dialog.addbutton(_('&Send report (%s)') %
                 self.format_filesize(self.get_complete_size()))
 
+        if self.can_examine_locally():
+            examine = dialog.addbutton(_('&Examine locally'))
+        else:
+            examine = None
+
         view = dialog.addbutton(_('&View report'))
         save = dialog.addbutton(_('&Keep report file for sending later or copying to somewhere else'))
         ignore = dialog.addbutton(_('Cancel and &ignore future crashes of this program version'))
@@ -250,8 +255,11 @@ class CLIUserInterface(apport.ui.UserInterface):
             response = dialog.run()
 
             return_value = { 'restart' : False, 'blacklist' : False,
-                             'report' : False }
-            if response == complete:
+                             'report' : False, 'examine' : False }
+            if response == examine:
+                return_value['examine'] = True
+                return return_value
+            elif response == complete:
                 return_value['report'] = True
             elif response == ignore:
                 return_value['blacklist'] = True

@@ -253,8 +253,9 @@ class UserInterface:
 
             allowed_to_report = apport.fileutils.allowed_to_report()
             response = self.ui_present_report_details(allowed_to_report)
-            if not self.collection_thread and response['report']:
-                self.collect()
+            if not self.collection_thread:
+                if response['report'] or response['examine']:
+                    self.collect()
             if self.collection_thread:
                 self.collection_thread.join()
                 self.collection_thread.exc_raise()
