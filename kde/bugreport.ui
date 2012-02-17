@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
+    <width>567</width>
     <height>371</height>
    </rect>
   </property>
@@ -49,6 +49,16 @@
       <widget class="QPushButton" name="examine_button">
        <property name="text">
         <string>&amp;Examine locally</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancel_button">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Cancel</string>
        </property>
       </widget>
      </item>

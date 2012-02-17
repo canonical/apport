@@ -119,6 +119,8 @@ class ReportDialog(Dialog):
         self.closed_button.clicked.connect(self.on_closed_clicked)
         self.examine_button = self.findChild(QPushButton, 'examine_button')
         self.examine_button.clicked.connect(self.on_examine_clicked)
+        self.cancel_button = self.findChild(QPushButton, 'cancel_button')
+        self.cancel_button.clicked.connect(self.on_cancel_button_clicked)
         self.treeview = self.findChild(QTreeWidget, 'details')
         self.send_error_report = self.findChild(QCheckBox, 'send_error_report')
         self.ignore_future_problems = self.findChild(QCheckBox, 'ignore_future_problems')
@@ -146,11 +148,19 @@ class ReportDialog(Dialog):
 
         self.examine_button.setVisible(self.ui.can_examine_locally())
 
+        self.cancel_button.hide()
         if not self.ui.report_file:
             self.heading.setText(_('Send problem report to the developers?'))
             self.text.hide()
             self.closed_button.hide()
             self.ignore_future_problems.hide()
+            self.show_details.hide()
+            self.cancel_button.show()
+            self.send_error_report.setChecked(True)
+            self.send_error_report.hide()
+            self.continue_button.setText(_('Send'))
+            self.showtree(True)
+
         elif report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.ignore_future_problems.setChecked(False)
             self.ignore_future_problems.hide()
@@ -207,7 +217,8 @@ class ReportDialog(Dialog):
             self.application_icon.setPixmap(
                 QIcon.fromTheme('dialog-error').pixmap(42, 42))
 
-        self.showtree(False)
+        if self.ui.report_file:
+            self.showtree(False)
 
     def on_continue_clicked(self):
         self.done(1)
@@ -217,6 +228,9 @@ class ReportDialog(Dialog):
 
     def on_examine_clicked(self):
         self.done(3)
+
+    def on_cancel_button_clicked(self):
+        self.done(QDialog.Rejected)
 
     def on_show_details_clicked(self):
         if not self.treeview.isVisible():
@@ -304,7 +318,7 @@ class MainUserInterface(apport.ui.UserInterface):
                          'restart' : False, 'examine' : False }
         if response == QDialog.Rejected:
             return return_value
-        if response == 3:
+        elif response == 3:
             return_value['examine'] = True
             return return_value
 
