@@ -31,9 +31,14 @@ Gdk.threads_init()
 
 def threaded_operation(func):
     def f(*args, **kwargs):
-        Gdk.threads_enter()
+        threads = False
+        if Gtk.main_level() > 0:
+            threads = True
+        if threads:
+            Gdk.threads_enter()
         ret = func(*args, **kwargs)
-        Gdk.threads_leave()
+        if threads:
+            Gdk.threads_leave()
         return ret
     return f
 
