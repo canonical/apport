@@ -855,7 +855,7 @@ class UserInterface:
                         hookui, symptom_script, ignore_uninstalled))
                 icthread.start()
                 while icthread.isAlive():
-                    if not self.options.crash_file:
+                    if self.report['ProblemType'] != 'Crash':
                         self.ui_pulse_info_collection_progress()
                     try:
                         hookui.process_event()
@@ -888,7 +888,7 @@ class UserInterface:
                 if val is not None:
                     self.report['KnownReport'] = val
 
-            if not self.options.crash_file:
+            if self.report['ProblemType'] != 'Crash':
                 self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
