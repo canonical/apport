@@ -2070,8 +2070,10 @@ CoreDump: base64
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             r.write(open(report_file, 'w'))
 
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
 
@@ -2444,8 +2446,10 @@ CoreDump: base64
             r = self._gen_test_crash()
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
 
             # known without URL
             with open(report_file, 'w') as f:
