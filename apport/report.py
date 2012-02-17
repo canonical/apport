@@ -458,7 +458,7 @@ class Report(problem_report.ProblemReport):
           variables that do not disclose potentially sensitive information, plus
           the ones mentioned in extraenv)
         '''
-        safe_vars = ['SHELL', 'LANGUAGE', 'LANG', 'LC_CTYPE',
+        safe_vars = ['SHELL', 'TERM', 'LANGUAGE', 'LANG', 'LC_CTYPE',
             'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
             'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
             'LC_IDENTIFICATION', 'LOCPATH'] + extraenv
