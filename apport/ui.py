@@ -1995,6 +1995,8 @@ CoreDump: base64
             coredump = os.path.join(apport.fileutils.report_dir, 'core')
             os.kill(pid, signal.SIGSEGV)
             os.waitpid(pid, 0)
+            # Otherwise the core dump is empty.
+            time.sleep(0.5)
             assert os.path.exists(coredump)
             r['CoreDump'] = (coredump,)
 
@@ -2461,6 +2463,11 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'info')
             self.assertEqual(self.ui.opened_url, None)
 
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             # known with URL
             with open(report_file, 'w') as f:
                 r.write(f)
