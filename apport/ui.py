@@ -841,7 +841,7 @@ class UserInterface:
             # since this might take a while, create separate threads and
             # display a progress dialog. Don't show in the regular UI, as that
             # has its own embedded progress indicator.
-            if not self.options.crash_file:
+            if self.report['ProblemType'] != 'Crash':
                 self.ui_start_info_collection_progress()
 
             hookui = HookUI(self)
