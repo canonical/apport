@@ -231,11 +231,14 @@ Type=Application''')
     def test_apport_bug_package(self):
         '''
         +-------------------------------------------------------------------+
-        | [ ubuntu ] Send problem report to the developers?                 |
+        | [ error  ] Send problem report to the developers?                 |
         |                                                                   |
-        |            [x] Send an error report to help fix this problem.     |
+        |            +----------------------------------------------------+ |
+        |            | |> ApportVersion                                   | |
+        |            | ...                                                | |
+        |            +----------------------------------------------------+ |
         |                                                                   |
-        | [ Show Details ]                                     [ Continue ] |
+        | [ Cancel ]                                               [ Send ] |
         +-------------------------------------------------------------------+
         '''
         self.app.report_file = None
@@ -245,13 +248,15 @@ Type=Application''')
             _('Send problem report to the developers?'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
         send_error_report = self.app.w('send_error_report')
-        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertFalse(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
-        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertFalse(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
         self.assertEqual(self.app.w('continue_button').get_label(), 
-                         _('Continue'))
+                         _('Send'))
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
+        self.assertTrue(self.app.w('cancel_button').get_property('visible'))
+        self.assertTrue(self.app.w('details_scrolledwindow').get_property('visible'))
 
     def test_administrator_disabled_reporting(self):
         GLib.idle_add(Gtk.main_quit)
