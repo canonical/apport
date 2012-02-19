@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-29 16:03-0400\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: Kainourgiakis Giorgos <kaingeo@yahoo.gr>\n"
+"PO-Revision-Date: 2012-02-18 11:19+0000\n"
+"Last-Translator: komnik <komatselis@yahoo.com>\n"
 "Language-Team: Greek, Modern (1453-) <el@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-14 05:17+0000\n"
-"X-Generator: Launchpad (build 14781)\n"
+"X-Launchpad-Export-Date: 2012-02-19 05:28+0000\n"
+"X-Generator: Launchpad (build 14814)\n"
 "Language: \n"
 
 #: ../apport/ui.py:92
@@ -65,8 +65,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"Ο υπολογιστής σας δεν έχει αρκετή ελεύθερη μνήμη για να αναλύσει αυτόνομα το "
-"πρόβλημα και να στείλει την αναφορά στους προγραμματιστές."
+"Ο υπολογιστής σας δεν έχει αρκετή ελεύθερη μνήμη για να αναλύσει αυτόματα το "
+"πρόβλημα και να στείλει μια αναφορά στους προγραμματιστές."
 
 #. package does not exist
 #: ../apport/ui.py:243 ../apport/ui.py:269 ../apport/ui.py:275
@@ -77,7 +77,7 @@ msgstr ""
 #: ../apport/ui.py:2334 ../apport/ui.py:2350 ../apport/ui.py:2361
 #: ../apport/ui.py:2372
 msgid "Invalid problem report"
-msgstr "Μη έγκυρη αναφορά του προβλήματος"
+msgstr "Μη έγκυρη αναφορά προβλήματος"
 
 #: ../apport/ui.py:244 ../apport/ui.py:276
 msgid "The report belongs to a package that is not installed."
@@ -86,7 +86,8 @@ msgstr "Η αναφορά ανήκει σε ένα πακέτο το οποίο 
 #: ../apport/ui.py:271 ../apport/ui.py:1067
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
-"Αυτή η αναφορά προβλήματος έχει καταστραφεί και δε μπορεί να επεξεργαστεί."
+"Αυτή η αναφορά προβλήματος έχει καταστραφεί και είναι αδύνατη η επεξεργασία "
+"της."
 
 #: ../apport/ui.py:306
 msgid "You are not allowed to access this problem report."
@@ -115,7 +116,7 @@ msgstr ""
 
 #: ../apport/ui.py:354
 msgid "Invalid PID"
-msgstr ""
+msgstr "Άκυρος αριθμός αναγνώρισης της διεργασίας (PID)"
 
 #: ../apport/ui.py:355
 msgid "The specified process ID does not belong to a program."
@@ -136,7 +137,7 @@ msgstr ""
 #: ../apport/ui.py:385
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Το σενάριο συμπτώματος %s δεν προσδιόρισε κανένα επηρεασμένο πακέτο"
 
 #: ../apport/ui.py:388
 #, python-format
@@ -145,11 +146,11 @@ msgstr "Το πακέτο %s δεν υπάρχει"
 
 #: ../apport/ui.py:413 ../apport/ui.py:595 ../apport/ui.py:600
 msgid "Cannot create report"
-msgstr ""
+msgstr "Αδυναμία δημιουργίας αναφοράς"
 
 #: ../apport/ui.py:427 ../apport/ui.py:473 ../apport/ui.py:490
 msgid "Updating problem report"
-msgstr ""
+msgstr "Ενημέρωση αναφοράς προβλήματος"
 
 #: ../apport/ui.py:428
 msgid ""
