@@ -25,6 +25,22 @@ except RuntimeError as e:
 import apport
 from apport import unicode_gettext as _
 import apport.ui
+from gi.repository import Gdk
+GObject.threads_init()
+Gdk.threads_init()
+
+def threaded_operation(func):
+    def f(*args, **kwargs):
+        threads = False
+        if Gtk.main_level() > 0:
+            threads = True
+        if threads:
+            Gdk.threads_enter()
+        ret = func(*args, **kwargs)
+        if threads:
+            Gdk.threads_leave()
+        return ret
+    return f
 
 class GTKUserInterface(apport.ui.UserInterface):
     '''GTK UserInterface.'''
@@ -48,109 +64,42 @@ class GTKUserInterface(apport.ui.UserInterface):
         assert self.widgets.connect_signals(self) is None
 
         # initialize tree model and view
-        self.tree_model = Gtk.TreeStore(GObject.TYPE_STRING)
-        self.w('treeview_reportdetails').set_model(self.tree_model)
+        self.tree_model = self.w('details_treestore')
 
-        column = Gtk.TreeViewColumn("Report", Gtk.CellRendererText(), text=0)
-        self.w('treeview_reportdetails').append_column(column)
-
-        # save the original strings of the dialogs (those which contain %s,
-        # which we replace later)
-        self.str_heading = self.w('label_heading').get_label()
-        self.str_heading_reopen = self.w('label_heading_reopen').get_label()
-        self.str_heading_package_error = self.w('label_heading_package_error').get_label()
-        self.str_heading_kernel_error = self.w('label_heading_kernel_error').get_label()
-        self.str_radio_complete = self.w('radiobutton_complete').get_label()
-        self.str_radio_reduced = self.w('radiobutton_reduced').get_label()
+        column = Gtk.TreeViewColumn('Report', Gtk.CellRendererText(), text=0)
+        self.w('details_treeview').append_column(column)
+        self.spinner = self.add_spinner_over_treeview(self.w('details_treeview'))
 
     #
     # ui_* implementation of abstract UserInterface classes
     #
 
-    def ui_present_crash(self, desktop_entry): 
-        # adapt dialog heading and label appropriately
-        if 'Annotation' in self.report:
-            heading = self.report['Annotation']
-        else:
-            if desktop_entry:
-                # python2+glib needs a confusing mix of UTF-8 str and unicode here :-(
-                n = desktop_entry.getName().encode('UTF-8')
-                n = GLib.markup_escape_text(n).decode('UTF-8')
-                heading = _('Sorry, %s closed unexpectedly') % n
-            elif 'ExecutablePath' in self.report:
-                heading = _('Sorry, the program "%s" closed unexpectedly') % os.path.basename(self.report['ExecutablePath'])
-            else:
-                heading = _('Sorry, %s closed unexpectedly') % self.cur_package
+    def add_spinner_over_treeview(self, treeview):
+        '''Reparents a treeview in a GtkOverlay, then layers a GtkSpinner
+        centered on top.'''
+        # TODO handle the expose event of the spinner so that we can draw on
+        # the treeview's viewport's window instead.
+        parent = treeview.get_parent()
+        parent.remove(treeview)
+        overlay = Gtk.Overlay()
+        parent.add_with_viewport(overlay)
+        overlay.add(treeview)
+        spinner = Gtk.Spinner()
+        spinner.set_size_request(42, 42)
+        align = Gtk.Alignment()
+        align.set_valign(Gtk.Align.CENTER)
+        align.set_halign(Gtk.Align.CENTER)
+        align.add(spinner)
+        overlay.add_overlay(align)
+        overlay.show()
+        align.show()
+        spinner.hide()
+        return spinner
 
-        if desktop_entry and 'ExecutablePath' in self.report and 'ProcCmdline' in self.report and \
-	    os.path.dirname(self.report['ExecutablePath']) in os.environ['PATH'].split(':') and \
-	    subprocess.call(['pgrep', '-x',
-		os.path.basename(self.report['ExecutablePath']), 
-		'-u', str(os.geteuid())], stdout=subprocess.PIPE) != 0:
-            self.w('label_heading_reopen').set_markup(self.str_heading_reopen % heading)
-            d = self.w('dialog_crash_reopen')
-	    bl_checkbox = self.w('checkbutton_blacklist_reopen')
-        else:
-            self.w('label_heading').set_markup(self.str_heading % heading)
-            d = self.w('dialog_crash')
-	    bl_checkbox = self.w('checkbutton_blacklist')
-
-        # don't steal focus when being called without arguments (i. e.
-        # automatically launched)
-        if len(sys.argv) == 1:
-            d.set_focus_on_map(False)
-
-        # show crash notification dialog
-        response = d.run()
-        d.hide()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
-	blacklist = bl_checkbox.get_active()
-        if response == Gtk.ResponseType.YES:
-            return {'action': 'report', 'blacklist': blacklist}
-        elif response == Gtk.ResponseType.OK:
-            return {'action': 'restart', 'blacklist': blacklist}
-        else:
-            return {'action': 'cancel', 'blacklist': blacklist}
-
-    def ui_present_package_error(self):
-        if 'Annotation' in self.report:
-            self.w('label_heading_package_error').set_markup(
-                    self.report['Annotation'])
-        else:
-            self.w('label_heading_package_error').set_markup(
-                self.str_heading_package_error % self.report['Package'])
-        response = self.w('dialog_package_error').run()
-        self.w('dialog_package_error').hide()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
-        if response == Gtk.ResponseType.YES:
-            return 'report'
-        else:
-            return 'cancel'
-
-    def ui_present_kernel_error(self):
-        message = _('Your system encountered a serious kernel problem.')
-        annotation = ''
-        if 'Annotation' in self.report:
-            annotation += self.report['Annotation'] + '\n\n'
-        annotation += _('You can help the developers to fix the problem by reporting it.')
-
-        label = self.str_heading_kernel_error % (message, annotation)
-        self.w('label_heading_kernel_error').set_markup(label)
-
-        response = self.w('dialog_kernel_error').run()
-        self.w('dialog_kernel_error').hide()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
-        if response == Gtk.ResponseType.YES:
-            return 'report'
-        else:
-            return 'cancel'
-
-    def ui_present_report_details(self, is_update):
-        # report contents in expander
-        self.tree_model.clear()
+    @threaded_operation
+    def ui_update_view(self):
+        self.spinner.hide()
+        self.spinner.stop()
         for key in sorted(self.report):
             keyiter = self.tree_model.insert_before(None, None)
             self.tree_model.set_value(keyiter, 0, key)
@@ -162,52 +111,169 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.tree_model.set_value(valiter, 0, self.report[key])
                 # expand the row if the value has less than 5 lines
                 if len(filter(lambda c: c == '\n', self.report[key])) < 4:
-                    self.w('treeview_reportdetails').expand_row(self.tree_model.get_path(keyiter), False)
+                    self.w('details_treeview').expand_row(
+                        self.tree_model.get_path(keyiter), False)
             else:
                 self.tree_model.set_value(valiter, 0, _('(binary data)'))
 
-        # complete/reduced radio buttons
-        if 'CoreDump' in self.report:
-            self.w('radiobutton_complete').set_label(self.str_radio_complete % 
-                self.format_filesize(self.get_complete_size()))
-            self.w('radiobutton_reduced').set_label(self.str_radio_reduced % 
-                self.format_filesize(self.get_reduced_size()))
-            if self.report.has_useful_stacktrace():
-                self.w('radiobutton_complete').set_sensitive(True)
-                self.w('radiobutton_complete').show()
-                self.w('radiobutton_reduced').show()
+    def get_system_application_title(self):
+        '''Get dialog title for a non-.desktop application.
+
+        If the system application was started from the console, assume a
+        developer who would appreciate the application name having a more
+        prominent placement. Otherwise, provide a simple explaination for
+        more novice users.
+        '''
+        distro = self.report.get('DistroRelease', 'Ubuntu')
+        from_console = 'TERM=' in self.report.get('ProcEnviron', '')
+
+        if from_console:
+            if 'ExecutablePath' in self.report:
+                t = (_('Sorry, the application %s has closed unexpectedly.')
+                     % os.path.basename(self.report['ExecutablePath']))
             else:
-                self.w('radiobutton_complete').set_sensitive(False)
-                self.w('radiobutton_reduced').hide()
+                t = (_('Sorry, %s has closed unexpectedly.') %
+                     self.cur_package)
+
         else:
-            self.w('radiobutton_complete').hide()
-            self.w('radiobutton_reduced').hide()
+            t = _('Sorry, %s has experienced an internal error.') % distro
+        return t
 
-        self.w('button_examine_locally').set_visible(self.can_examine_locally())
+    def setup_bug_report(self):
+        # This is a bug generated through `apport-bug $package`.
+        self.w('title_label').set_label('<big><b>%s</b></big>' %
+            _('Send problem report to the developers?'))
+        self.w('title_label').show()
+        self.w('subtitle_label').hide()
+        self.w('closed_button').hide()
+        self.w('ignore_future_problems').hide()
+        self.w('show_details').clicked()
+        self.w('show_details').hide()
+        self.w('cancel_button').show()
+        self.w('cancel_button').connect('clicked', Gtk.main_quit)
+        self.w('continue_button').set_label(_('Send'))
+        self.w('send_error_report').set_active(True)
+        self.w('send_error_report').hide()
 
-        if is_update:
-            self.w('label_bug_instructions').set_label(
-                    _('Send this data to the developers?'))
-            self.w('expander_details').set_expanded(True)
-            self.w('dialog_bugreport').set_default_size(500, 400)
-            self.w('dialog_bugreport').set_resizable(True)
+    def ui_present_report_details(self, allowed_to_report=True):
+        icon = None
+        self.collect_called = False
+        distro = self.report.get('DistroRelease', 'Ubuntu')
+        report_type = self.report.get('ProblemType')
+        self.w('details_scrolledwindow').hide()
+        self.w('show_details').set_label(_('Show Details'))
+        self.tree_model.clear()
 
-        response = self.w('dialog_bugreport').run()
-        self.w('dialog_bugreport').hide()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
+        if allowed_to_report:
+            self.w('send_error_report').set_active(True)
+            self.w('send_error_report').show()
+        else:
+            self.w('send_error_report').set_active(False)
+            self.w('send_error_report').hide()
 
-        if response == Gtk.ResponseType.OK:
-            if self.w('radiobutton_complete').get_active():
-                return 'full'
+        self.w('examine').set_visible(self.can_examine_locally())
+
+        self.w('continue_button').set_label(_('Continue'))
+
+        self.w('cancel_button').hide()
+        if not self.report_file:
+            self.setup_bug_report()
+        elif report_type == 'KernelCrash' or report_type == 'KernelOops':
+            self.w('ignore_future_problems').set_active(False)
+            self.w('ignore_future_problems').hide()
+            self.w('title_label').set_label('<big><b>%s</b></big>' %
+                _('%s has restarted after experiencing an internal error.')
+                % distro)
+            self.w('closed_button').hide()
+            self.w('subtitle_label').hide()
+            icon = 'distributor-logo'
+        elif report_type == 'Package':
+            package = self.report.get('Package')
+            if package:
+                self.w('subtitle_label').set_label(_('Package: %s') % package)
+                self.w('subtitle_label').show()
             else:
-                return 'reduced'
-        elif response == Gtk.ResponseType.ACCEPT:
-            return 'examine'
-        elif response == Gtk.ResponseType.CANCEL:
-            return 'cancel'
+                self.w('subtitle_label').hide()
+            self.w('closed_button').hide()
+            self.w('ignore_future_problems').hide()
+            self.w('title_label').set_label(
+                _('Sorry, a problem occurred while installing software.'))
         else:
-            raise NotImplementedError('got unexpected respose %i from dialog_bugreport' % response)
+            # Regular crash.
+            desktop_file = self.get_desktop_entry()
+            if desktop_file:
+                icon = desktop_file.getIcon()
+                n = desktop_file.getName().encode('UTF-8')
+                n = GLib.markup_escape_text(n).decode('UTF-8')
+                self.w('title_label').set_label('<big><b>%s</b></big>' %
+                    _('The application %s has closed unexpectedly.') % n)
+                self.w('subtitle_label').hide()
+                self.w('closed_button').show()
+                self.w('closed_button').set_label(_('Leave Closed'))
+                self.w('continue_button').set_label(_('Relaunch'))
+            else:
+                icon = 'distributor-logo'
+                title_text = self.get_system_application_title()
+                self.w('title_label').set_label('<big><b>%s</b></big>' %
+                                                title_text)
+                self.w('subtitle_label').show()
+                self.w('subtitle_label').set_label(
+                    _('If you notice further problems, '
+                      'try restarting the computer.'))
+                self.w('closed_button').hide()
+                self.w('continue_button').set_label(_('Continue'))
+            if self.report.get('CrashCounter'):
+                self.w('ignore_future_problems').show()
+            else:
+                self.w('ignore_future_problems').hide()
+
+        if icon:
+            from gi.repository import GdkPixbuf
+            builtin = Gtk.IconLookupFlags.USE_BUILTIN
+            app_icon = self.w('application_icon')
+            theme = Gtk.IconTheme.get_default()
+            pb = theme.load_icon(icon, 42, builtin)
+            overlay = theme.load_icon('dialog-error', 16, builtin)
+            overlay.composite(pb, 26, 26, 16, 16, 26, 26, 1, 1,
+                              GdkPixbuf.InterpType.BILINEAR, 255)
+            app_icon.set_from_pixbuf(pb)
+        else:
+            self.w('application_icon').set_from_stock(Gtk.STOCK_DIALOG_ERROR,
+                                                      Gtk.IconSize.DIALOG)
+
+        d = self.w('dialog_crash_new')
+        d.show()
+        # don't steal focus when being called without arguments (i. e.
+        # automatically launched)
+        if len(sys.argv) == 1:
+            d.set_focus_on_map(False)
+
+        return_value = { 'report' : False, 'blacklist' : False,
+                         'restart' : False, 'examine' : False }
+        def dialog_crash_dismissed(widget):
+            self.w('dialog_crash_new').hide()
+            if widget is self.w('dialog_crash_new'):
+                Gtk.main_quit()
+                return
+            elif widget is self.w('examine'):
+                return_value['examine'] = True
+                Gtk.main_quit()
+                return
+
+            if self.w('send_error_report').get_active():
+                return_value['report'] = True
+            if self.w('ignore_future_problems').get_active():
+                return_value['blacklist'] = True
+            if widget.get_label() == _('Relaunch'):
+                return_value['restart'] = True
+            Gtk.main_quit()
+
+        self.w('dialog_crash_new').connect('destroy', dialog_crash_dismissed)
+        self.w('continue_button').connect('clicked', dialog_crash_dismissed)
+        self.w('closed_button').connect('clicked', dialog_crash_dismissed)
+        self.w('examine').connect('clicked', dialog_crash_dismissed)
+        Gtk.main()
+        return return_value
 
     def _ui_message_dialog(self, title, text, _type,
             buttons=Gtk.ButtonsType.CLOSE):
@@ -228,27 +294,16 @@ class GTKUserInterface(apport.ui.UserInterface):
             Gtk.main_iteration_do(False)
         return result
 
+    @threaded_operation
     def ui_info_message(self, title, text):
         self._ui_message_dialog(title, text, Gtk.MessageType.INFO)
 
+    @threaded_operation
     def ui_error_message(self, title, text):
         self._ui_message_dialog(title, text, Gtk.MessageType.ERROR)
 
-    def ui_start_info_collection_progress(self):
-        self.w('progressbar_information_collection').set_fraction(0)
-        self.w('window_information_collection').show()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
-
-    def ui_pulse_info_collection_progress(self):
-        self.w('progressbar_information_collection').pulse()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
-
-    def ui_stop_info_collection_progress(self):
-        self.w('window_information_collection').hide()
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
+    def ui_shutdown(self):
+        Gtk.main_quit()
 
     def ui_start_upload_progress(self):
         '''Open a window with an definite progress bar, telling the user to
@@ -274,6 +329,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
+    @threaded_operation
     def ui_stop_upload_progress(self):
         '''Close debug data upload progress window.'''
 
@@ -281,6 +337,26 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
+    @threaded_operation
+    def ui_start_info_collection_progress(self):
+        self.w('progressbar_information_collection').set_fraction(0)
+        self.w('window_information_collection').show()
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
+        
+    @threaded_operation
+    def ui_pulse_info_collection_progress(self):
+        self.w('progressbar_information_collection').pulse()
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
+
+    @threaded_operation
+    def ui_stop_info_collection_progress(self):
+        self.w('window_information_collection').hide()
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
+
+    @threaded_operation
     def ui_question_yesno(self, text):
         '''Show a yes/no question.
 
@@ -295,6 +371,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             return False
         return None
 
+    @threaded_operation
     def ui_question_choice(self, text, options, multiple):
         '''Show an question with predefined choices.
 
@@ -339,6 +416,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             index += 1
         return result
 
+    @threaded_operation
     def ui_question_file(self, text):
         '''Show a file selector dialog.
 
@@ -376,19 +454,25 @@ class GTKUserInterface(apport.ui.UserInterface):
     # Event handlers
     #
 
+    def on_show_details_clicked(self, widget):
+        sw = self.w('details_scrolledwindow')
+        if sw.get_property('visible'):
+            sw.hide()
+            widget.set_label(_('Show Details'))
+        else:
+            sw.show()
+            widget.set_label(_('Hide Details'))
+            if not self.collect_called:
+                self.spinner.show()
+                self.spinner.start()
+                self.collect_called = True
+                self.collect(self.ui_update_view)
+        return True
+
     def on_progress_window_close_event(self, widget, event=None):
         self.w('window_information_collection').hide()
         self.w('window_report_upload').hide()
         sys.exit(0)
-        return True
-
-    def on_expander_details_activate(self, widget):
-        expanded = self.w('expander_details').get_expanded()
-        self.w('dialog_bugreport').set_resizable(expanded)
-        if expanded:
-            self.w('dialog_bugreport').resize(self.w('dialog_bugreport').get_size()[0], 400)
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
         return True
 
 if __name__ == '__main__':

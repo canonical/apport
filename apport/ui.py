@@ -15,8 +15,8 @@ implementation (like GTK, Qt, or CLI).
 
 __version__ = '1.91'
 
-import glob, sys, os.path, optparse, time, traceback, locale, gettext, re
-import pwd, errno, urllib, zlib
+import glob, sys, os.path, optparse, time, traceback, locale, gettext
+import pwd, errno, zlib
 import subprocess, threading, webbrowser
 
 import apport, apport.fileutils, apport.REThread
@@ -145,6 +145,7 @@ class UserInterface:
         self.report = None
         self.report_file = None
         self.cur_package = None
+        self.collection_thread = None
 
         try:
             self.crashdb = get_crashdb(None)
@@ -181,6 +182,38 @@ class UserInterface:
 
         return result
 
+    def collect(self, callback=None):
+        def _go(callback=None):
+            try:
+                if 'Dependencies' not in self.report:
+                    self.collect_info()
+            except (IOError, zlib.error) as e:
+                # can happen with broken core dumps
+                self.report = None
+                self.ui_error_message(_('Invalid problem report'),
+                    '%s\n\n%s' % (
+                        _('This problem report is damaged and cannot be processed.'),
+                        repr(e)))
+                self.ui_shutdown()
+                return
+            except ValueError: # package does not exist
+                self.ui_error_message(_('Invalid problem report'),
+                    _('The report belongs to a package that is not installed.'))
+                self.ui_shutdown()
+                return
+            except Exception as e:
+                apport.error(repr(e))
+                self.ui_error_message(_('Invalid problem report'),
+                    _('An error occurred while attempting to process this'
+                      ' problem report.'))
+                self.ui_shutdown()
+                return
+            if callable(callback):
+                callback()
+        self.collection_thread = apport.REThread.REThread(target=_go,
+                                                          args=(callback,))
+        self.collection_thread.start()
+
     def run_crash(self, report_file, confirm=True):
         '''Present and report a particular crash.
 
@@ -213,91 +246,38 @@ class UserInterface:
                     _('unknown program')))
                 heading = _('Sorry, the program "%s" closed unexpectedly') % subject
                 self.ui_error_message(_('Problem in %s') % subject,
-                    '%s\n\n%s' % (heading, _('Your computer does not have enough \
-free memory to automatically analyze the problem and send a report to the developers.')))
+                    '%s\n\n%s' % (heading, _('Your computer does not have '
+                    'enough free memory to automatically analyze the problem '
+                    'and send a report to the developers.')))
                 return
 
-            # ask the user about what to do with the current crash
-            if not confirm:
-                pass
-            elif self.report.get('ProblemType') == 'Package':
-                response = self.ui_present_package_error()
-                if response == 'cancel':
-                    return
-                assert response == 'report'
-            elif self.report.get('ProblemType') == 'KernelCrash':
-                response = self.ui_present_kernel_error()
-                if response == 'cancel':
-                    return
-                assert response == 'report'
-            elif self.report.get('ProblemType') == 'KernelOops':
-                # XXX the string doesn't quite match this case
-                response = self.ui_present_kernel_error()
-                if response == 'cancel':
-                    return
-                assert response == 'report'
-            else:
-                try:
-                    desktop_entry = self.get_desktop_entry()
-                except ValueError: # package does not exist
-                    self.ui_error_message(_('Invalid problem report'),
-                        _('The report belongs to a package that is not installed.'))
-                    self.ui_shutdown()
-                    return
+            allowed_to_report = apport.fileutils.allowed_to_report()
+            response = self.ui_present_report_details(allowed_to_report)
+            if not self.collection_thread:
+                if response['report'] or response['examine']:
+                    self.collect()
+            if self.collection_thread:
+                self.collection_thread.join()
+                self.collection_thread.exc_raise()
 
-                response = self.ui_present_crash(desktop_entry)
-                assert 'action' in response
-                assert 'blacklist' in response
-
-                if response['blacklist']:
-                    self.report.mark_ignore()
-
-                if response['action'] == 'cancel':
-                    return
-                if response['action'] == 'restart':
-                    self.restart()
-                    return
-                assert response['action'] == 'report'
-
-            # we want to file a bug now
-            try:
-                if 'Dependencies' not in self.report:
-                    self.collect_info()
-            except (IOError, zlib.error) as e:
-                # can happen with broken core dumps
-                self.report = None
-                self.ui_error_message(_('Invalid problem report'),
-                    '%s\n\n%s' % (
-                        _('This problem report is damaged and cannot be processed.'),
-                        repr(e)))
-                return False
-            except ValueError: # package does not exist
-                self.ui_error_message(_('Invalid problem report'),
-                    _('The report belongs to a package that is not installed.'))
-                self.ui_shutdown()
-                return
-
-            if self.check_unreportable():
-                return
-
-            if self.handle_duplicate():
-                return
-
-            # confirm what will be sent
-            response = self.ui_present_report_details(False)
-            if response == 'cancel':
-                return
-            if response == 'examine':
+            if response['examine']:
                 self.examine()
                 return
-            if response == 'reduced':
-                try:
-                    del self.report['CoreDump']
-                except KeyError:
-                    pass # Huh? Should not happen, but did in https://launchpad.net/bugs/86007
-            else:
-                assert response == 'full'
+            if response['restart']:
+                self.restart()
+            if response['blacklist']:
+                self.report.mark_ignore()
+            if not response['report']:
+                return
 
+            apport.fileutils.mark_report_upload(report_file)
+            # We check for duplicates and unreportable crashes here, rather
+            # than before we show the dialog, as we want to submit these to the
+            # crash database, but not Launchpad.
+            if self.handle_duplicate():
+                return
+            if self.check_unreportable():
+                return
             self.file_report()
         except IOError as e:
             # fail gracefully if file is not readable for us
@@ -413,8 +393,9 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.ui_error_message(_('Cannot create report'), excstr(e))
         else:
             # show what's being sent
-            response = self.ui_present_report_details(False)
-            if response != 'cancel':
+            allowed_to_report = apport.fileutils.allowed_to_report()
+            response = self.ui_present_report_details(allowed_to_report)
+            if response['report']:
                 self.file_report()
 
         return True
@@ -492,8 +473,9 @@ free memory to automatically analyze the problem and send a report to the develo
             return False
 
         # show what's being sent
-        response = self.ui_present_report_details(True)
-        if response != 'cancel':
+        allowed_to_report = apport.fileutils.allowed_to_report()
+        response = self.ui_present_report_details(allowed_to_report)
+        if response['report']:
             self.crashdb.update(self.options.update_report, self.report,
                     'apport information', change_description=is_reporter,
                     attachment_comment='apport information')
@@ -842,7 +824,9 @@ free memory to automatically analyze the problem and send a report to the develo
             cur_time = int(os.stat(self.report['ExecutablePath']).st_mtime)
 
             if orig_time != cur_time:
-                self.report['UnreportableReason'] = _('The problem happened with the program %s which changed since then.') % self.report['ExecutablePath']
+                self.report['UnreportableReason'] = (
+                    _('The problem happened with the program %s which changed '
+                      'since then.') % self.report['ExecutablePath'])
                 return
 
         if not self.cur_package and 'ExecutablePath' not in self.report \
@@ -851,27 +835,28 @@ free memory to automatically analyze the problem and send a report to the develo
             # package
             self.report.add_os_info()
         else:
-            # report might already be pre-processed by apport-retrace
             if self.report['ProblemType'] == 'Crash' and 'Stacktrace' in self.report:
                 return
 
             # since this might take a while, create separate threads and
-            # display a progress dialog
-            self.ui_start_info_collection_progress()
+            # display a progress dialog. Don't show in the regular UI, as that
+            # has its own embedded progress indicator.
+            if self.report['ProblemType'] != 'Crash':
+                self.ui_start_info_collection_progress()
 
             hookui = HookUI(self)
 
             if 'Stacktrace' not in self.report:
                 # save original environment, in case hooks change it
                 orig_env = os.environ.copy()
-
                 icthread = apport.REThread.REThread(target=thread_collect_info,
                     name='thread_collect_info',
                     args=(self.report, self.report_file, self.cur_package,
                         hookui, symptom_script, ignore_uninstalled))
                 icthread.start()
                 while icthread.isAlive():
-                    self.ui_pulse_info_collection_progress()
+                    if self.report['ProblemType'] != 'Crash':
+                        self.ui_pulse_info_collection_progress()
                     try:
                         hookui.process_event()
                     except KeyboardInterrupt:
@@ -889,41 +874,27 @@ free memory to automatically analyze the problem and send a report to the develo
                 self.crashdb = get_crashdb(None, self.report['CrashDB']) 
 
             # check bug patterns
-            if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or 'Package' in self.report:
-                bpthread = apport.REThread.REThread(target=self.report.search_bug_patterns,
-                    args=(self.crashdb.get_bugpattern_baseurl(),))
-                bpthread.start()
-                while bpthread.isAlive():
-                    self.ui_pulse_info_collection_progress()
-                    try:
-                        bpthread.join(0.1)
-                    except KeyboardInterrupt:
-                        sys.exit(1)
-                bpthread.exc_raise()
-                if bpthread.return_value():
-                    self.report['KnownReport'] = bpthread.return_value()
+            if (self.report['ProblemType'] == 'KernelCrash'
+                or self.report['ProblemType'] == 'KernelOops'
+                or 'Package' in self.report):
+                url = self.crashdb.get_bugpattern_baseurl() 
+                patterns = self.report.search_bug_patterns(url)
+                if patterns:
+                    self.report['KnownReport'] = patterns
 
             # check crash database if problem is known
             if self.report['ProblemType'] != 'Bug':
-                known_thread = apport.REThread.REThread(target=self.crashdb.known,
-                    args=(self.report,))
-                known_thread.start()
-                while known_thread.isAlive():
-                    self.ui_pulse_info_collection_progress()
-                    try:
-                        known_thread.join(0.1)
-                    except KeyboardInterrupt:
-                        sys.exit(1)
-                known_thread.exc_raise()
-                val = known_thread.return_value()
+                val = self.crashdb.known(self.report)
                 if val is not None:
                     self.report['KnownReport'] = val
 
-            self.ui_stop_info_collection_progress()
+            if self.report['ProblemType'] != 'Crash':
+                self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
-            if 'SourcePackage' not in self.report or \
-                (not self.report['ProblemType'].startswith('Kernel') and 'Package' not in self.report):
+            if ('SourcePackage' not in self.report or
+                (not self.report['ProblemType'].startswith('Kernel')
+                 and 'Package' not in self.report)):
                 self.ui_error_message(_('Invalid problem report'),
                     _('Could not determine the package or source package name.'))
                 # TODO This is not called consistently, is it really needed?
@@ -1165,63 +1136,14 @@ might be helpful for the developers.'))
     # abstract UI methods that must be implemented in derived classes
     #
 
-    def ui_present_crash(self, desktopentry):
-        '''Ask what to do with a crash.
-
-        Inform that a crash has happened for self.report and self.cur_package
-        and ask about an action.
-
-        If the package can be mapped to a desktop file, an xdg.DesktopEntry is
-        passed as an argument; this can be used for enhancing strings, etc.
-
-        Return the action and options as a dictionary:
-
-        - Valid values for the 'action' key: ignore the crash ('cancel'), restart
-          the crashed application ('restart'), or report a bug about the crash
-          ('report').
-        - Valid values for the 'blacklist' key: True or False (True will cause
-          the invocation of report.mark_ignore()).
-        '''
-        raise NotImplementedError('this function must be overridden by subclasses')
-
-    def ui_present_package_error(self, desktopentry):
-        '''Ask what to do with a package failure.
-
-        Inform that a package installation/upgrade failure has happened for
-        self.report and self.cur_package and ask about an action.
-
-        Return the action: ignore ('cancel'), or report a bug about the problem
-        ('report').
-        '''
-        raise NotImplementedError('this function must be overridden by subclasses')
-
-    def ui_present_kernel_error(self, desktopentry):
-        '''Ask what to do with a kernel error.
-
-        Inform that a kernel crash has happened for self.report and ask about
-        an action.
-
-        Return the action: ignore ('cancel'), or report a bug about the problem
-        ('report').
-        '''
-        raise NotImplementedError('this function must be overridden by subclasses')
-
-    def ui_present_report_details(self, is_update):
+    def ui_present_report_details(self, allowed_to_report=True):
         '''Show details of the bug report.
         
-        This lets the user choose between sending a complete or reduced report,
-        or examining the problem locally. This should only be offered if
-        can_examine_locally() returns True.
+        Return the action and options as a dictionary:
 
-        This method can use the get_complete_size() and get_reduced_size()
-        methods to determine the respective size of the data to send, and
-        format_filesize() to convert it to a humanly readable form.
-
-        If is_update is True, the text should describe that an existing report is
-        updated, otherwise a new report will be created.
-
-        Return the action: send full report ('full'), send reduced report
-        ('reduced'), examine locally ('examine'), or do not do anything ('cancel').
+        - Valid keys are: report the crash ('report'), restart
+          the crashed application ('restart'), or blacklist further crashes
+          ('blacklist').
         '''
         raise NotImplementedError('this function must be overridden by subclasses')
 
@@ -1478,7 +1400,6 @@ databases = {
             self.upload_progress_pulses = 0
 
             # these store the choices the ui_present_* calls do
-            self.present_crash_response = None
             self.present_package_error_response = None
             self.present_kernel_error_response = None
             self.present_details_response = None
@@ -1497,15 +1418,6 @@ databases = {
             self.msg_text = None
             self.msg_severity = None # 'warning' or 'error'
             self.msg_choices = None
-
-        def ui_present_crash(self, desktopentry):
-            return self.present_crash_response
-
-        def ui_present_package_error(self):
-            return self.present_package_error_response
-
-        def ui_present_kernel_error(self):
-            return self.present_kernel_error_response
 
         def ui_present_report_details(self, is_update):
             self.present_details_shown = True
@@ -1857,6 +1769,10 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-f', '-p', 'bash']
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.assertEqual(self.ui.run_argv(), True)
 
             self.assertEqual(self.ui.msg_severity, None)
@@ -1893,6 +1809,10 @@ CoreDump: base64
                 # report a bug on yes process
                 sys.argv = ['ui-test', '-f', '--tag', 'foo', '-P', str(pid)]
                 self.ui = _TestSuiteUserInterface()
+                self.ui.present_details_response = {'report': True,
+                                                    'blacklist': False,
+                                                    'examine' : False,
+                                                    'restart' : False }
                 self.assertEqual(self.ui.run_argv(), True)
             finally:
                 # kill test process
@@ -1999,6 +1919,10 @@ CoreDump: base64
             self.assertFalse(pid is None)
             sys.argv = ['ui-test', '-f', '-P', str(pid)]
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_argv()
 
             self.assertTrue(self.ui.report['Package'].startswith(apport.packaging.get_kernel_package()))
@@ -2032,8 +1956,10 @@ CoreDump: base64
             # report it
             sys.argv = ['ui-test', '-c', reportfile]
             self.ui = _TestSuiteUserInterface()
-            
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.assertEqual(self.ui.run_argv(), True)
 
             self.assertEqual(self.ui.msg_text, None)
@@ -2069,6 +1995,8 @@ CoreDump: base64
             coredump = os.path.join(apport.fileutils.report_dir, 'core')
             os.kill(pid, signal.SIGSEGV)
             os.waitpid(pid, 0)
+            # Otherwise the core dump is empty.
+            time.sleep(0.5)
             assert os.path.exists(coredump)
             r['CoreDump'] = (coredump,)
 
@@ -2085,32 +2013,23 @@ CoreDump: base64
             # cancel crash notification dialog
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'cancel', 'blacklist': False }
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.assertFalse(self.ui.present_details_shown)
-
-            # report in crash notification dialog, cancel details report
-            r.write(open(report_file, 'w'))
-            self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'cancel'
-            self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None, 'has %s message: %s: %s' % (
-                self.ui.msg_severity, str(self.ui.msg_title), str(self.ui.msg_text)))
-            self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, None)
-            self.assertNotEqual(self.ui.ic_progress_pulses, 0)
-            self.assertTrue(self.ui.present_details_shown)
 
             # report in crash notification dialog, send full report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
@@ -2128,32 +2047,16 @@ CoreDump: base64
             self.assertTrue(len(self.ui.report['CoreDump']) > 10000)
             self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'))
 
-            # report in crash notification dialog, send reduced report
-            r.write(open(report_file, 'w'))
-            self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'reduced'
-            self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None)
-            self.assertEqual(self.ui.msg_title, None)
-            self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
-            self.assertNotEqual(self.ui.ic_progress_pulses, 0)
-            self.assertTrue(self.ui.present_details_shown)
-
-            self.assertTrue('SourcePackage' in self.ui.report.keys())
-            self.assertTrue('Dependencies' in self.ui.report.keys())
-            self.assertTrue('Stacktrace' in self.ui.report.keys())
-            self.assertFalse('ExecutableTimestamp' in self.ui.report.keys())
-            self.assertEqual(self.ui.report['ProblemType'], 'Crash')
-            self.assertTrue('CoreDump' not in self.ui.report)
-
             # so far we did not blacklist, verify that
             self.assertTrue(not self.ui.report.check_ignored())
 
             # cancel crash notification dialog and blacklist
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'cancel', 'blacklist': True }
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': True,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
@@ -2170,8 +2073,10 @@ CoreDump: base64
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             r.write(open(report_file, 'w'))
 
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
 
@@ -2198,8 +2103,11 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-c', self.report_file.name]
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             
-            self.ui.present_details_response = 'full'
             self.assertEqual(self.ui.run_argv(), True)
 
             self.assertEqual(self.ui.msg_text, None)
@@ -2213,12 +2121,15 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-c', self.report_file.name]
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.assertEqual(self.ui.run_argv(), True)
 
             self.assertTrue('It stinks.' in self.ui.msg_text, '%s: %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_severity, 'info')
-            self.assertFalse(self.ui.present_details_shown)
 
             # should not die with an exception on an invalid name
             sys.argv = ['ui-test', '-c', '/nonexisting.crash' ]
@@ -2234,8 +2145,10 @@ CoreDump: base64
             self.report['ExecutablePath'] = '/bin/bash'
             self.report['Package'] = 'bash 1'
             self.update_report_file()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
 
             self.ui.run_crash(self.report_file.name)
 
@@ -2309,8 +2222,10 @@ CoreDump: base64
             # report in crash notification dialog, cancel details report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'cancel'
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, 'has %s message: %s: %s' % (
                 self.ui.msg_severity, str(self.ui.msg_title), str(self.ui.msg_text)))
@@ -2330,6 +2245,10 @@ CoreDump: base64
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             r.write(open(report_file, 'w'))
 
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
 
             self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
@@ -2345,7 +2264,10 @@ CoreDump: base64
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             r.write(open(report_file, 'w'))
 
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
 
             self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
@@ -2381,8 +2303,10 @@ CoreDump: base64
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             r.write(open(report_file, 'w'))
 
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
 
             self.assertFalse('ExecutableTimestamp' in self.ui.report)
@@ -2409,19 +2333,24 @@ CoreDump: base64
             # cancel crash notification dialog
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_package_error_response = 'cancel'
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.assertFalse(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
             # report in crash notification dialog, send report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_package_error_response = 'report'
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
@@ -2458,20 +2387,25 @@ CoreDump: base64
             # cancel crash notification dialog
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_kernel_error_response = 'cancel'
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, 'error: %s - %s' %
                 (self.ui.msg_title, self.ui.msg_text))
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, None)
             self.assertEqual(self.ui.ic_progress_pulses, 0)
-            self.assertFalse(self.ui.present_details_shown)
+            self.assertTrue(self.ui.present_details_shown)
 
             # report in crash notification dialog, send report
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_kernel_error_response = 'report'
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) + 
                 ' ' + str(self.ui.msg_text))
@@ -2491,8 +2425,10 @@ CoreDump: base64
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             r.write(open(report_file, 'w'))
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'cancel'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
 
@@ -2513,8 +2449,10 @@ CoreDump: base64
             r = self._gen_test_crash()
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             self.ui = _TestSuiteUserInterface()
-            self.ui.present_crash_response = {'action': 'report', 'blacklist': False }
-            self.ui.present_details_response = 'full'
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
 
             # known without URL
             with open(report_file, 'w') as f:
@@ -2525,6 +2463,11 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, 'info')
             self.assertEqual(self.ui.opened_url, None)
 
+            self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             # known with URL
             with open(report_file, 'w') as f:
                 r.write(f)
@@ -2561,6 +2504,10 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-u', '1']
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
 
             self.ui.crashdb.download(1)['SourcePackage'] = 'bash'
             self.ui.crashdb.download(1)['Package'] = 'bash'
@@ -2580,6 +2527,10 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-u', '1', '-p', 'bash', '--tag', 'foo']
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
 
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
@@ -2598,6 +2549,10 @@ CoreDump: base64
 
             sys.argv = ['apport-collect', '-p', 'bash', '1']
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
 
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
@@ -2615,6 +2570,10 @@ CoreDump: base64
 
             sys.argv = ['ui-test', '-u', '1']
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
 
             f = open(os.path.join(self.hookdir, 'source_foo.py'), 'w')
             f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
@@ -2642,6 +2601,10 @@ CoreDump: base64
         def test_interactive_hooks_information(self):
             '''interactive hooks: HookUI.information()'''
 
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self._run_hook('''report['begin'] = '1'
 ui.information('InfoText')
 report['end'] = '1'
@@ -2653,6 +2616,10 @@ report['end'] = '1'
         def test_interactive_hooks_yesno(self):
             '''interactive hooks: HookUI.yesno()'''
 
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.question_yesno_response = True
             self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.yesno('YesNo?'))
@@ -2676,6 +2643,10 @@ report['end'] = '1'
         def test_interactive_hooks_file(self):
             '''interactive hooks: HookUI.file()'''
 
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.question_file_response = '/etc/fstab'
             self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.file('YourFile?'))
@@ -2694,6 +2665,10 @@ report['end'] = '1'
         def test_interactive_hooks_choices(self):
             '''interactive hooks: HookUI.choice()'''
 
+            self.ui.present_details_response = {'report': False,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.question_choice_response = [1]
             self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.choice('YourChoice?', ['foo', 'bar']))
@@ -2724,6 +2699,10 @@ report['end'] = '1'
             # unknown symptom
             sys.argv = ['ui-test', '-s', 'foobar' ]
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.assertEqual(self.ui.run_argv(), True)
             self.assertTrue('foobar" is not known' in self.ui.msg_text)
             self.assertEqual(self.ui.msg_severity, 'error')
@@ -2772,6 +2751,10 @@ report['end'] = '1'
             f.close()
             sys.argv = ['ui-test', '-s', 'itching' ]
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_text, None)
             self.assertEqual(self.ui.msg_severity, None)
@@ -2786,6 +2769,10 @@ report['end'] = '1'
             # working noninteractive script with extra tag
             sys.argv = ['ui-test', '--tag', 'foo', '-s', 'itching' ]
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.assertEqual(self.ui.run_argv(), True)
             self.assertEqual(self.ui.msg_text, None)
             self.assertEqual(self.ui.msg_severity, None)
@@ -2804,6 +2791,10 @@ report['end'] = '1'
             f.close()
             sys.argv = ['ui-test', '-s', 'itching' ]
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
             self.ui.question_yesno_response = True
             self.assertEqual(self.ui.run_argv(), True)
             self.assertTrue(self.ui.present_details_shown)
@@ -2831,6 +2822,10 @@ def run(report, ui):
 
             sys.argv = ['ui-test', '-f']
             self.ui = _TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
 
             self.ui.question_choice_response = None
             self.assertEqual(self.ui.run_argv(), True)

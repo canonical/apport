@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, tempfile, os.path, urllib, re, pwd, grp, os, sys
+import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
 import fnmatch, glob, atexit, traceback, errno
 
 import xml.dom, xml.dom.minidom
@@ -458,7 +458,7 @@ class Report(problem_report.ProblemReport):
           variables that do not disclose potentially sensitive information, plus
           the ones mentioned in extraenv)
         '''
-        safe_vars = ['SHELL', 'LANGUAGE', 'LANG', 'LC_CTYPE',
+        safe_vars = ['SHELL', 'TERM', 'LANGUAGE', 'LANG', 'LC_CTYPE',
             'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
             'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
             'LC_IDENTIFICATION', 'LOCPATH'] + extraenv
@@ -1348,7 +1348,7 @@ class Report(problem_report.ProblemReport):
 # Unit test
 #
 
-import unittest, shutil, signal, time
+import unittest, shutil, time
 try:
     from cStringIO import StringIO
 except ImportError:

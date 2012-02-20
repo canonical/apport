@@ -22,7 +22,8 @@ try:
     from PyQt4.QtGui import (QDialog, QLabel, QCheckBox, QRadioButton,
                              QTreeWidget, QTreeWidgetItem, QMessageBox,
                              QVBoxLayout, QFileDialog, QDialogButtonBox,
-                             QProgressBar, QGroupBox, QLineEdit)
+                             QProgressBar, QGroupBox, QLineEdit, QPushButton,
+                             QIcon, QPainter, QPixmap, QMovie)
     from PyQt4 import uic
     from gettext import gettext
     from PyKDE4.kdecore import (ki18n, KAboutData, KCmdLineArgs,
@@ -70,25 +71,6 @@ class Dialog(QDialog):
         return self.findChild(QDialogButtonBox, 'buttons').addButton(button,
                 QDialogButtonBox.ActionRole)
 
-class ErrorDialog(Dialog):
-    '''Error dialog wrapper'''
-
-    def __init__(self, title, heading, text, checker=None):
-        Dialog.__init__(self, 'error.ui', title, heading, text)
-
-        self.setMaximumSize(1, 1)
-        self.findChild(QLabel, 'icon').setPixmap(
-                QMessageBox.standardIcon(QMessageBox.Critical))
-
-        self.checker = self.findChild(QCheckBox, 'checker')
-        if checker:
-            self.checker.setText(checker)
-        else:
-            self.checker.hide()
-
-    def checked(self):
-        return self.checker.isChecked()
-
 class ChoicesDialog(Dialog):
     '''Choices dialog wrapper'''
 
@@ -127,25 +109,152 @@ class ProgressDialog(Dialog):
 class ReportDialog(Dialog):
     '''Report dialog wrapper'''
 
-    def __init__(self, title, heading, text):
-        Dialog.__init__(self, 'bugreport.ui', title, heading, text)
-
-        self.details = self.addbutton(_('&Details...'))
-        self.details.setCheckable(True)
-
+    def __init__(self, report, allowed_to_report, ui, desktop_file):
+        Dialog.__init__(self, 'bugreport.ui', '', '', '')
+        self.details = self.findChild(QPushButton, 'show_details')
+        self.details.clicked.connect(self.on_show_details_clicked)
+        self.continue_button = self.findChild(QPushButton, 'continue_button')
+        self.continue_button.clicked.connect(self.on_continue_clicked)
+        self.closed_button = self.findChild(QPushButton, 'closed_button')
+        self.closed_button.clicked.connect(self.on_closed_clicked)
+        self.examine_button = self.findChild(QPushButton, 'examine_button')
+        self.examine_button.clicked.connect(self.on_examine_clicked)
+        self.cancel_button = self.findChild(QPushButton, 'cancel_button')
+        self.cancel_button.clicked.connect(self.on_cancel_button_clicked)
         self.treeview = self.findChild(QTreeWidget, 'details')
-        self.showtree(False)
+        self.send_error_report = self.findChild(QCheckBox, 'send_error_report')
+        self.ignore_future_problems = self.findChild(QCheckBox, 'ignore_future_problems')
+        self.heading = self.findChild(QLabel, 'heading')
+        self.text = self.findChild(QLabel, 'text')
+        self.ui = ui
+        self.collect_called = False
+        icon = None
+        distro = report.get('DistroRelease', 'Ubuntu')
+        report_type = report.get('ProblemType')
 
-    def on_buttons_clicked(self, button):
-        if self.details == button:
-            self.showtree(button.isChecked())
+        self.spinner = QLabel('', parent=self.treeview)
+        self.spinner.setGeometry(0, 0, 32, 32)
+        self.movie = QMovie(
+            os.path.join(os.path.dirname(sys.argv[0]), 'spinner.gif'),
+            QByteArray(), self.spinner)
+        self.spinner.setMovie(self.movie)
+
+        if allowed_to_report:
+            self.send_error_report.setChecked(True)
+            self.send_error_report.show()
         else:
-            Dialog.on_buttons_clicked(self, button)
-            if self.sender().buttonRole(button) == QDialogButtonBox.RejectRole:
-                sys.exit(0)
+            self.send_error_report.setChecked(False)
+            self.send_error_report.hide()
+
+        self.examine_button.setVisible(self.ui.can_examine_locally())
+
+        self.cancel_button.hide()
+        if not self.ui.report_file:
+            self.heading.setText(_('Send problem report to the developers?'))
+            self.text.hide()
+            self.closed_button.hide()
+            self.ignore_future_problems.hide()
+            self.show_details.hide()
+            self.cancel_button.show()
+            self.send_error_report.setChecked(True)
+            self.send_error_report.hide()
+            self.continue_button.setText(_('Send'))
+            self.showtree(True)
+
+        elif report_type == 'KernelCrash' or report_type == 'KernelOops':
+            self.ignore_future_problems.setChecked(False)
+            self.ignore_future_problems.hide()
+            self.heading.setText(_('%s has restarted after experiencing an'
+                                   ' internal error.') % distro)
+            self.closed_button.hide()
+            self.text.hide()
+            icon = 'distributor-logo'
+        elif report_type == 'Package':
+            package = report.get('Package')
+            if package:
+                self.text.setText(_('Package: %s') % package)
+                self.text.show()
+            else:
+                self.text.hide()
+            self.closed_button.hide()
+            self.ignore_future_problems.hide()
+            self.heading.setText(_('Sorry, a problem occurred while installing '
+                                   'software.'))
+        else:
+            # Regular crash.
+            if desktop_file:
+                icon = desktop_file.getIcon()
+                self.heading.setText(_('The application %s has closed '
+                                       'unexpectedly.') % 
+                                       desktop_file.getName())
+                self.text.hide()
+                self.closed_button.show()
+                self.closed_button.setText(_('Leave Closed'))
+                self.continue_button.setText(_('Relaunch'))
+            else:
+                icon = 'distributor-logo'
+                self.heading.setText(_('Sorry, %s has experienced an '
+                                       'internal error.') % distro)
+                self.text.show()
+                self.text.setText(_('If you notice further problems, '
+                                    'try restarting the computer.'))
+                self.closed_button.hide()
+                self.continue_button.setText(_('Continue'))
+            if report.get('CrashCounter'):
+                self.ignore_future_problems.show()
+            else:
+                self.ignore_future_problems.hide()
+
+        if icon:
+            base = QIcon.fromTheme(icon).pixmap(42, 42)
+            overlay = QIcon.fromTheme('dialog-error').pixmap(16, 16)
+            p = QPainter(base)
+            p.drawPixmap(base.width() - overlay.width(),
+                         base.height() - overlay.height(), overlay)
+            p.end()
+            self.application_icon.setPixmap(base)
+        else:
+            self.application_icon.setPixmap(
+                QIcon.fromTheme('dialog-error').pixmap(42, 42))
+
+        if self.ui.report_file:
+            self.showtree(False)
+
+    def on_continue_clicked(self):
+        self.done(1)
+    
+    def on_closed_clicked(self):
+        self.done(2)
+
+    def on_examine_clicked(self):
+        self.done(3)
+
+    def on_cancel_button_clicked(self):
+        self.done(QDialog.Rejected)
+
+    def on_show_details_clicked(self):
+        if not self.treeview.isVisible():
+            self.details.setText(_('Hide Details'))
+            self.showtree(True)
+        else:
+            self.details.setText(_('Show Details'))
+            self.showtree(False)
+
+    def collect_done(self):
+        self.movie.start()
+        self.spinner.hide()
+        self.ui.ui_update_view(self)
 
     def showtree(self, visible):
         self.treeview.setVisible(visible)
+        if visible and not self.collect_called:
+            rect = self.spinner.parent().rect()
+            self.spinner.setGeometry(rect.width() / 2 - self.spinner.width() / 2,
+                                     rect.height() / 2 - self.spinner.height() / 2,
+                                     self.spinner.width(), self.spinner.height())
+            self.movie.start()
+            self.ui.collect(self.collect_done)
+            self.collect_called = True
         if visible:
             self.setMaximumSize(16777215, 16777215)
         else:
@@ -171,113 +280,14 @@ class MainUserInterface(apport.ui.UserInterface):
 
     def __init__(self):
         apport.ui.UserInterface.__init__(self)
-
-        sys.exit(self.run_argv())
+        # Help unit tests get at the dialog.
+        self.dialog = None
 
     #
     # ui_* implementation of abstract UserInterface classes
     #
 
-    def ui_present_crash(self, desktop_entry):
-        # adapt dialog heading and label appropriately
-        if 'Annotation' in self.report:
-            heading = self.report['Annotation']
-        else:
-            if desktop_entry:
-                name = desktop_entry.getName()
-                heading = _('Sorry, %s closed unexpectedly') % name
-            elif 'ExecutablePath' in self.report:
-                name = os.path.basename(self.report['ExecutablePath'])
-                heading = _('Sorry, the program "%s" closed unexpectedly.') % name
-            else:
-                name = self.cur_package
-                heading = _('Sorry, %s closed unexpectedly.') % name
-
-        dialog = ErrorDialog(name, heading,
-                _('If you were not doing anything confidential (entering '
-                  'passwords or other private information), you can help '
-                  'to improve the application by reporting the problem.'),
-                _('&Ignore future crashes of this program version'))
-
-        reportbutton = dialog.addbutton(_('&Report Problem...'))
-
-        if desktop_entry and 'ExecutablePath' in self.report and \
-                os.path.dirname(self.report['ExecutablePath']) in \
-                os.environ['PATH'].split(':') and subprocess.call(['pgrep',
-                    '-x', os.path.basename(self.report['ExecutablePath']),
-                    '-u', str(os.getuid())], stdout=subprocess.PIPE) != 0:
-            restartbutton = dialog.addbutton(_('Restart &Program'))
-
-        # show crash notification dialog
-        response = dialog.exec_()
-        blacklist = dialog.checked()
-
-        if response == QDialog.Rejected:
-            return {'action': 'cancel', 'blacklist': blacklist}
-        if dialog.actionbutton == reportbutton:
-            return {'action': 'report', 'blacklist': blacklist}
-        if dialog.actionbutton == restartbutton:
-            return {'action': 'restart', 'blacklist': blacklist}
-        # Fallback
-        return {'action': 'cancel', 'blacklist': blacklist}
-
-    def ui_present_package_error(self):
-        if 'Annotation' in self.report:
-            title = self.report['Annotation']
-        else:
-            title = _('Sorry, the package "%s" failed to install or upgrade.') % self.report['Package']
-        dialog = ErrorDialog(name, title,
-                _('You can help the developers to fix the package by '
-                  'reporting the problem.'))
-
-        reportbutton = dialog.addbutton(_('&Report Problem...'))
-
-        response = dialog.exec_()
-
-        if response == QDialog.Rejected:
-            return 'cancel'
-        if dialog.actionbutton == reportbutton:
-            return 'report'
-        # Fallback
-        return 'cancel'
-
-    def ui_present_kernel_error(self):
-        message = _('Your system encountered a serious kernel problem.')
-        annotate = ''
-        if 'Annotation' in self.report:
-            annotate = self.report['Annotation'] + '\n\n'
-        annotate += _('You can help the developers to fix the problem by '
-                      'reporting it.')
-
-        dialog = ErrorDialog(_('Kernel problem'), message, annotate)
-
-        reportbutton = dialog.addbutton(_('&Report Problem...'))
-
-        response = dialog.exec_()
-
-        if response == QDialog.Rejected:
-            return 'cancel'
-        if dialog.actionbutton == reportbutton:
-            return 'report'
-        # Fallback
-        return 'cancel'
-
-    def ui_present_report_details(self, is_update):
-        if is_update:
-            dialog = ReportDialog(self.report.get('Package',
-                _('Generic error')).split()[0],
-                _('Send this data to the developers?'), '')
-            dialog.showtree(True)
-        else:
-            dialog = ReportDialog(self.report.get('Package',
-                _('Generic error')).split()[0],
-                _('Send problem report to the developers?'),
-                _('After the problem report has been sent, please fill out '
-                  'the form in the automatically opened web browser.'))
-
-        sendbutton = dialog.addbutton(_('&Send'))
-        sendbutton.setDefault(True)
-
+    def ui_update_view(self, dialog):
         # report contents
         details = dialog.findChild(QTreeWidget, 'details')
         for key in sorted(self.report):
@@ -296,33 +306,30 @@ class MainUserInterface(apport.ui.UserInterface):
             else:
                 QTreeWidgetItem(keyitem, [_('(binary data)')])
 
-        details.header().hide()
 
-        # complete/reduce radio buttons
-        if 'CoreDump' in self.report and \
-                self.report.has_useful_stacktrace():
-            dialog.findChild(QRadioButton, 'complete').setText(
-                _('Complete report (recommended; %s)') %
-                  self.format_filesize(self.get_complete_size()))
-            dialog.findChild(QRadioButton, 'reduced').setText(
-                _('Reduced report (slow Internet connection; %s)') %
-                  self.format_filesize(self.get_reduced_size()))
-        else:
-            dialog.findChild(QGroupBox, 'options').hide()
+    def ui_present_report_details(self, allowed_to_report=True):
+        desktop_file = self.get_desktop_entry()
+        self.dialog = ReportDialog(self.report, allowed_to_report, self,
+                              desktop_file)
 
-        response = dialog.exec_()
+        response = self.dialog.exec_()
 
+        return_value = { 'report' : False, 'blacklist' : False,
+                         'restart' : False, 'examine' : False }
         if response == QDialog.Rejected:
-            return 'cancel'
-        # Fallback
-        if dialog.actionbutton != sendbutton:
-            return 'cancel'
-        if dialog.findChild(QRadioButton, 'reduced').isChecked():
-            return 'reduced'
-        if dialog.findChild(QRadioButton, 'complete').isChecked():
-            return 'full'
-        # Fallback
-        return 'cancel'
+            return return_value
+        elif response == 3:
+            return_value['examine'] = True
+            return return_value
+
+        text = self.dialog.continue_button.text().remove('&')
+        if response == 1 and text == _('Relaunch'):
+            return_value['restart'] = True
+        if self.dialog.send_error_report.isChecked():
+            return_value['report'] = True
+        if self.dialog.ignore_future_problems.isChecked():
+            return_value['blacklist'] = True
+        return return_value
 
     def ui_info_message(self, title, text):
         KMessageBox.information(None, _(text), _(title))
@@ -434,7 +441,6 @@ class MainUserInterface(apport.ui.UserInterface):
             return None
         return (username, password)
 
-
 if __name__ == '__main__':
     if not os.environ.get('DISPLAY'):
         apport.fatal('This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.')
@@ -462,4 +468,5 @@ if __name__ == '__main__':
     app.setWindowIcon(KIcon('apport'))
 
     UserInterface = MainUserInterface()
+    sys.exit(UserInterface.run_argv())
     app.exec_()

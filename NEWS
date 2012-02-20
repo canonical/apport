@@ -13,6 +13,7 @@ Bug fixes:
    "Signal".
  - apport-gtk: Fix resize handling of expander in details window. Thanks Thomas
    Bechtold! (LP: #930562)
+ - Clean up unnecessary imports. Thanks Evan Dandrea!
 
 Improvements:
  - man/apport-bug.1: Mention where crash files are stored. Thanks David
@@ -20,6 +21,11 @@ Improvements:
  - hookutils.py, attach_hardware(): Sort ProcModules, thanks Brian Murray.
  - launchpad.py: Keep "Dependencies" attachment in duplicates. Thanks Brian
    Murray.
+ - Reorganize the GNOME and KDE user interface to do the crash notifications
+   and detail browser in a single dialog. Add test/gtk and test/kde tests to
+   check expected dialog layout for different cases. Thanks Evan Dandrea!
+ - Add support for the whoopsie-daisy crash reporting daemon by creating
+   zero-byte .upload file stamps for crash reports. Thanks Evan Dandrea!
 
 1.91 (2012-01-18):
 ------------------

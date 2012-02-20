@@ -60,7 +60,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         except ImportError:
             from io import StringIO
 
-        import re, tempfile, traceback
+        import re, traceback
         from apport.fileutils import likely_packaged, get_recent_crashes
 
         # apport will look up the package from the executable path.
