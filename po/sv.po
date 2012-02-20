@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-29 16:03-0400\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
+"PO-Revision-Date: 2012-02-19 17:31+0000\n"
 "Last-Translator: Daniel Nylander <yeager@ubuntu.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-14 05:17+0000\n"
-"X-Generator: Launchpad (build 14781)\n"
+"X-Launchpad-Export-Date: 2012-02-20 05:26+0000\n"
+"X-Generator: Launchpad (build 14833)\n"
 "Language: sv\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Detta paket verkar inte ha installerats korrekt"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Det här är inte ett officiellt %s-paket. Ta bort eventuella tredjepartspaket "
+"och försök igen."
 
 #: ../apport/ui.py:117
 #, python-format
@@ -130,7 +132,7 @@ msgstr ""
 #: ../apport/ui.py:385
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Symtomskriptet %s fastställde inte ett påverkat paket"
 
 #: ../apport/ui.py:388
 #, python-format
@@ -139,11 +141,11 @@ msgstr "Paketet %s finns inte"
 
 #: ../apport/ui.py:413 ../apport/ui.py:595 ../apport/ui.py:600
 msgid "Cannot create report"
-msgstr ""
+msgstr "Kan inte skapa rapporten"
 
 #: ../apport/ui.py:427 ../apport/ui.py:473 ../apport/ui.py:490
 msgid "Updating problem report"
-msgstr ""
+msgstr "Uppdaterar problemrapporten"
 
 #: ../apport/ui.py:428
 msgid ""
@@ -152,6 +154,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Du är inte rapportör eller prenumerant av denna problemrapport, eller så är "
+"rapporten en dubblett eller redan stängd.\n"
+"\n"
+"Skapa en ny rapport med \"apport-bug\"."
 
 #: ../apport/ui.py:437
 msgid ""
@@ -164,10 +170,18 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Du är inte den som rapporterat denna problemrapport. Det är mycket enklare "
+"att märka en felrapport som en dubblett av en annan än att flytta dina "
+"kommentarer och bilagor till en ny felrapport.\n"
+"\n"
+"Vi rekommenderar därför att du skapar en ny felrapport med \"apport-bug\" "
+"och skriver en kommentar i denna felrapport om den nya rapporten du skapar.\n"
+"\n"
+"Vill du verkligen fortsätta?"
 
 #: ../apport/ui.py:474 ../apport/ui.py:491
 msgid "No additional information collected."
-msgstr ""
+msgstr "Ingen ytterligare information har samlats in."
 
 #: ../apport/ui.py:540
 msgid "What kind of problem do you want to report?"
@@ -187,22 +201,24 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Efter att du stängt detta meddelande kan du klicka på ett programfönster för "
+"att rapportera ett problem med det."
 
 #: ../apport/ui.py:596 ../apport/ui.py:601
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop misslyckades med att fastställa process-ID för fönstret"
 
 #: ../apport/ui.py:615
 msgid "%prog <report number>"
-msgstr ""
+msgstr "%prog <rapportnummer>"
 
 #: ../apport/ui.py:617
 msgid "Specify package name."
-msgstr ""
+msgstr "Ange paketnamn."
 
 #: ../apport/ui.py:619 ../apport/ui.py:668
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
+msgstr "Lägg till en extra tagg till rapporten. Kan anges flera gånger."
 
 #: ../apport/ui.py:649
 msgid ""
@@ -222,11 +238,11 @@ msgstr ""
 
 #: ../apport/ui.py:654
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "Klicka på ett fönster för att rapportera ett problem med det."
 
 #: ../apport/ui.py:656
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
+msgstr "Starta i feluppdateringsläge. Kan ta emot en valfri --package."
 
 #: ../apport/ui.py:658
 msgid ""
@@ -250,6 +266,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Ange ett körande program i --file-bug-läget. Om detta anges kommer "
+"felrapporten att innehålla mer information (underförstått om pid anges som "
+"enda argument.)"
 
 #: ../apport/ui.py:664
 #, python-format
@@ -266,6 +285,9 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"I felrapporteringsläge kommer insamlad information att sparas i en fil "
+"istället för att rapportera. Denna fil kan sedan rapporteras in från en "
+"annan dator."
 
 #: ../apport/ui.py:670
 msgid "Print the Apport version number."
@@ -275,25 +297,27 @@ msgstr "Skriv ut versionsnummer för Apport."
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Detta kommer starta apport-retrace i ett terminalfönster för att undersöka "
+"kraschen."
 
 #: ../apport/ui.py:803
 msgid "Run gdb session"
-msgstr ""
+msgstr "Kör GDB-session"
 
 #: ../apport/ui.py:804
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Kör GDB-session utan att ladda ner felsökningssymboler"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:806
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Uppdatera %s med fullständigt symbolisk stackspårning"
 
 #: ../apport/ui.py:844
 #, python-format
 msgid "The problem happened with the program %s which changed since then."
-msgstr ""
+msgstr "Problemet uppstod i programmet %s som ändrades sedan dess."
 
 #: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
@@ -433,7 +457,7 @@ msgstr ""
 #: ../bin/apport-cli.py:211
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i byte)"
 
 #: ../bin/apport-cli.py:213 ../gtk/apport-gtk.py:167 ../kde/apport-kde.py:297
 msgid "(binary data)"
@@ -441,7 +465,7 @@ msgstr "(binär data)"
 
 #: ../bin/apport-cli.py:221 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
 msgid "Send this data to the developers?"
-msgstr ""
+msgstr "Skicka denna data till utvecklarna?"
 
 #: ../bin/apport-cli.py:223 ../kde/apport-kde.py:274
 msgid "Send problem report to the developers?"
@@ -472,7 +496,7 @@ msgstr "&Skicka rapport (%s)"
 
 #: ../bin/apport-cli.py:239
 msgid "&Examine locally"
-msgstr ""
+msgstr "Und&ersök lokalt"
 
 #: ../bin/apport-cli.py:243
 msgid "&View report"
@@ -628,7 +652,7 @@ msgstr "Programproblem"
 
 #: ../gtk/apport-gtk.ui.h:12 ../kde/apport-kde.py:388 ../kde/apport-kde.py:424
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:305
 #, no-c-format, python-format
@@ -694,7 +718,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:1
 msgid "_Examine locally"
-msgstr ""
+msgstr "Und_ersök lokalt"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid "_Ignore future crashes of this program version"
@@ -772,24 +796,35 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Bygg en tillfällig sandlåda och hämta/installera nödvändiga paket samt "
+"felsökningssymbolerna där; utan det här alternativet antas att nödvändiga "
+"paket och felsökningssymboler redan har installerats på systemet. Argumentet "
+"pekar på baskatalogen för pakethanteringssystemets konfiguration; om du "
+"anger \"system\" kommer det använda systemets konfigurationsfiler, men "
+"kommer då endast kunna bakåtspåra krascher som skedde i den utgåva som nu "
+"körs."
 
 #: ../bin/apport-retrace.py:57
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Rapportera förlopp för hämtning/installation när paket installeras i "
+"sandlådan"
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr ""
+"Lägg till tidsstämplar längst fram i loggmeddelanden, för automatiserade "
+"åtgärder"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Mellanlagringskatalog för paket som hämtas i sandlådan"
 
 #: ../bin/apport-retrace.py:63
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr ""
+msgstr "Installera ett extrapaket i sandlådan (kan anges flera gånger)"
 
 #: ../bin/apport-retrace.py:65
 msgid ""
@@ -840,70 +875,75 @@ msgstr "Ditt system kan nu bli instabilt och kan behöva att startas om."
 #: ../gtk/apport-gtk.py:79 ../gtk/apport-gtk.py:83 ../kde/apport-kde.py:188
 #, python-format
 msgid "Sorry, %s closed unexpectedly"
-msgstr ""
+msgstr "Tyvärr, %s avslutades oväntat"
 
 #: ../kde/apport-kde.py:133
 msgid "&Details..."
-msgstr ""
+msgstr "&Detaljer..."
 
 #: ../kde/apport-kde.py:160
 msgid "Username:"
-msgstr ""
+msgstr "Användarnamn:"
 
 #: ../kde/apport-kde.py:161
 msgid "Password:"
-msgstr ""
+msgstr "Lösenord:"
 
 #: ../kde/apport-kde.py:191
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr ""
+msgstr "Tyvärr, programmet \"%s\" stängdes oväntat."
 
 #: ../kde/apport-kde.py:194
 #, python-format
 msgid "Sorry, %s closed unexpectedly."
-msgstr ""
+msgstr "Tyvärr, %s stängdes oväntat."
 
 #: ../kde/apport-kde.py:200
 msgid "&Ignore future crashes of this program version"
-msgstr ""
+msgstr "&Ignorera framtida krascher för den här programversionen"
 
 #: ../kde/apport-kde.py:209
 msgid "Restart &Program"
-msgstr ""
+msgstr "Starta om &programmet"
 
 #: ../kde/apport-kde.py:228
 #, python-format
 msgid "Sorry, the package \"%s\" failed to install or upgrade."
 msgstr ""
+"Tyvärr, paketet \"%s\" misslyckades att installeras eller uppgraderas."
 
 #: ../kde/apport-kde.py:268 ../kde/apport-kde.py:273
 msgid "Generic error"
-msgstr ""
+msgstr "Allmänt fel"
 
 #: ../kde/apport-kde.py:275
 msgid ""
 "After the problem report has been sent, please fill out the form in the "
 "automatically opened web browser."
 msgstr ""
+"Fyll i formuläret i det webbläsarfönster som öppnats automatiskt efter att "
+"problemrapporten har skickats."
 
 #: ../kde/apport-kde.py:278
 msgid "&Send"
-msgstr ""
+msgstr "&Skicka"
 
 #: ../kde/apport-kde.py:335
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Samlar in probleminformation"
 
 #: ../kde/apport-kde.py:337
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Den insamlade informationen kan skickas till utvecklarna för att förbättra "
+"programmet. Det här kan ta några minuter."
 
 #: ../kde/apport-kde.py:352
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Skickar probleminformation"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
