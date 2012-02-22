@@ -9,6 +9,8 @@ Bug fixes:
  - ui.py, open_url(): Revert back to calling sudo instead of dropping
    privileges ourselves; with the latter, calling firefox as the sudo'ing user
    fails. (LP: #916810)
+ - ui.py: Fix aborting with "AssertionError" if the report is already known,
+   but without an URL. (LP: #938778)
 
 1.92 (2012-02-20):
 ------------------

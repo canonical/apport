@@ -886,7 +886,10 @@ class UserInterface:
             if self.report['ProblemType'] != 'Bug':
                 val = self.crashdb.known(self.report)
                 if val is not None:
-                    self.report['KnownReport'] = val
+                    if val is True:
+                        self.report['KnownReport'] = '1'
+                    else:
+                        self.report['KnownReport'] = val
 
             if self.report['ProblemType'] != 'Crash':
                 self.ui_stop_info_collection_progress()
@@ -2452,7 +2455,7 @@ CoreDump: base64
             # known without URL
             with open(report_file, 'w') as f:
                 r.write(f)
-            self.ui.crashdb.known = lambda r: '1'
+            self.ui.crashdb.known = lambda r: True
             self.ui.run_crash(report_file)
             self.assertEqual(self.ui.report['KnownReport'], '1')
             self.assertEqual(self.ui.msg_severity, 'info')
