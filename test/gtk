@@ -265,6 +265,16 @@ Type=Application''')
         self.assertFalse(send_error_report.get_property('visible'))
         self.assertFalse(send_error_report.get_active())
 
+    @patch.object(GTKUserInterface, 'get_desktop_entry')
+    def test_missing_icon(self, *args):
+        # LP: 937354
+        self.report['ProblemType'] = 'Crash'
+        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.get_desktop_entry.return_value.getIcon.return_value = 'nonexistent'
+        self.app.get_desktop_entry.return_value.getName.return_value = 'apport'
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(True)
+
 if __name__ == '__main__':
     unittest.main()
     sys.exit(0)
