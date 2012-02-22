@@ -100,7 +100,15 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_update_view(self):
         self.spinner.hide()
         self.spinner.stop()
-        for key in sorted(self.report):
+
+        # show the most interesting items on top
+        keys = sorted(self.report)
+        for k in ('Traceback', 'StackTrace', 'Title', 'ProblemType', 'Package', 'ExecutablePath'):
+            if k in keys:
+                keys.remove(k)
+                keys.insert(0, k)
+
+        for key in keys:
             keyiter = self.tree_model.insert_before(None, None)
             self.tree_model.set_value(keyiter, 0, key)
 

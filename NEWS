@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-1.92.1 (UNRELEASED):
---------------------
+1.93 (UNRELEASED):
+------------------
 Bug fixes:
  - apport-gtk: Fix crash on nonexisting icon. Thanks Evan Dandrea.
    (LP: #937354)
@@ -14,6 +14,9 @@ Bug fixes:
  - launchpad.py: If a bug is already known, but the report is private, do not
    send the report. There is little sense piling up lots of duplicates.
    (LP: #938700)
+
+Improvements:
+ - apport-gtk: Show the most interesting fields first in the details view.
 
 1.92 (2012-02-20):
 ------------------
