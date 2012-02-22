@@ -11,6 +11,9 @@ Bug fixes:
    fails. (LP: #916810)
  - ui.py: Fix aborting with "AssertionError" if the report is already known,
    but without an URL. (LP: #938778)
+ - launchpad.py: If a bug is already known, but the report is private, do not
+   send the report. There is little sense piling up lots of duplicates.
+   (LP: #938700)
 
 1.92 (2012-02-20):
 ------------------

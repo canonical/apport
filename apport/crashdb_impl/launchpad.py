@@ -841,9 +841,8 @@ in a dependent package.' % master,
 
         line = f.readline()
         if not line.startswith('bug:'):
-            # presumably a 404 etc. page, which happens for private bugs; do
-            # file the report then
-            return None
+            # presumably a 404 etc. page, which happens for private bugs
+            return True
 
         # check tags
         for line in f:
