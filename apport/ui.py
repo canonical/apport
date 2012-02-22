@@ -930,19 +930,14 @@ class UserInterface:
         # browser with it to get the user's web browser settings.
         try:
             uid = int(os.getenv('SUDO_UID'))
-            gid = int(os.getenv('SUDO_GID'))
-            os.setgroups([gid])
-            os.setgid(gid)
-            os.setuid(uid)
-            os.unsetenv('SUDO_USER') # to make firefox not croak
-            os.environ['HOME'] = pwd.getpwuid(uid).pw_dir
+            sudo_prefix = ['sudo', '-H', '-u', '#'+str(uid)]
         except TypeError:
-            pass
+            sudo_prefix = []
 
         try:
             try:
-                subprocess.call(['xdg-open', url])
-            except OSError:
+                subprocess.call(sudo_prefix + ['xdg-open', url])
+            except OSError as e:
                 # fall back to webbrowser
                 webbrowser.open(url, new=True, autoraise=True)
                 sys.exit(0)

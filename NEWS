@@ -6,6 +6,9 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - apport-gtk: Fix crash on nonexisting icon. Thanks Evan Dandrea.
    (LP: #937354)
+ - ui.py, open_url(): Revert back to calling sudo instead of dropping
+   privileges ourselves; with the latter, calling firefox as the sudo'ing user
+   fails. (LP: #916810)
 
 1.92 (2012-02-20):
 ------------------
