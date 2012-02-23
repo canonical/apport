@@ -9,6 +9,12 @@
     exit 1
 }
 
+# filter out unused identifiers, too many false positives
+if pyflakes .|grep -v unused; then
+    echo "pyflakes errors, aborting" >&2
+    exit 1
+fi
+
 bzr clean-tree --ignored
 
 version=$(grep '(UNRELEASED)' NEWS | cut -f1 -d' ')
