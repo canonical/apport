@@ -182,7 +182,12 @@ class UserInterface:
 
         return result
 
-    def collect(self, callback=None):
+    def collect(self, on_finished=None):
+        '''Start data collection for current report in the background.
+
+        This calls collect_info() in a background thread. When on_finished is
+        given, this gets called back when data collection is complete.
+        '''
         def _go(callback=None):
             try:
                 if 'Dependencies' not in self.report:
@@ -210,8 +215,10 @@ class UserInterface:
                 return
             if callable(callback):
                 callback()
+
+        assert self.collection_thread is None, 'collection already done'
         self.collection_thread = apport.REThread.REThread(target=_go,
-                                                          args=(callback,))
+                                                          args=(on_finished,))
         self.collection_thread.start()
 
     def run_crash(self, report_file, confirm=True):
