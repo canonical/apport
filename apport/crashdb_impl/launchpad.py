@@ -1063,7 +1063,7 @@ and more
             global segv_report
             (id, report) = self._file_segv_report()
             segv_report = id
-            url = get_comment_url(report, id)
+            url = self.crashdb.get_comment_url(report, id)
 
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
