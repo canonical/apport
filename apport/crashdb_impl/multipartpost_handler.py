@@ -41,7 +41,7 @@ Further Example:
 import urllib
 import urllib2
 import mimetools, mimetypes
-import os, stat
+import os, stat, sys
 
 class Callable:
     def __init__(self, anycallable):
@@ -108,7 +108,7 @@ class MultipartPostHandler(urllib2.BaseHandler):
     https_request = http_request
 
 def main():
-    import tempfile, sys
+    import tempfile
 
     validatorURL = "http://validator.w3.org/check"
     opener = urllib2.build_opener(MultipartPostHandler)

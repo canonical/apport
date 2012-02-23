@@ -1412,8 +1412,6 @@ GoodText: Hi
     def test_write_mime_order(self):
         '''write_mime() with keys ordered.'''
 
-        bin_value = 'AB' * 10 + '\0' * 10 + 'Z'
-
         pr = ProblemReport(date = 'now!')
         pr['SecondText'] = 'What'
         pr['FirstText'] = 'Who'

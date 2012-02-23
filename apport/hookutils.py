@@ -466,7 +466,6 @@ def pci_devices(*pci_classes):
     output = command_output(['lspci','-vvmmnn'])
     for paragraph in output.split(b'\n\n'):
         pci_class = None
-        pci_subclass = None
         slot = None
 
         for line in paragraph.split(b'\n'):
@@ -476,7 +475,6 @@ def pci_devices(*pci_classes):
             if key == 'Class':
                 n = int(value[-5:-1],16)
                 pci_class = (n & 0xff00) >> 8
-                pci_subclass = (n & 0x00ff)
             elif key == 'Slot':
                 slot = value
 
@@ -953,7 +951,7 @@ if __name__ == '__main__':
             '''in_session_of_problem()'''
 
             old_ctime = locale.getlocale(locale.LC_TIME)
-            loc = locale.setlocale(locale.LC_TIME, 'C')
+            locale.setlocale(locale.LC_TIME, 'C')
 
             report = {'Date': 'Sat Jan  1 12:00:00 2011'}
             self.assertFalse(in_session_of_problem(report))
@@ -964,7 +962,7 @@ if __name__ == '__main__':
             report = {'Date': 'Tue Jan  1 12:00:00 2211'}
             self.assertTrue(in_session_of_problem(report))
 
-            loc = locale.setlocale(locale.LC_TIME, '')
+            locale.setlocale(locale.LC_TIME, '')
 
             report = {'Date': 'Sat Jan  1 12:00:00 2011'}
             self.assertFalse(in_session_of_problem(report))

@@ -43,7 +43,7 @@ def _transitive_dependencies(package, depends_set):
     '''Recursively add dependencies of package to depends_set.'''
 
     try:
-        cur_ver = packaging.get_version(package)
+        packaging.get_version(package)
     except ValueError:
         return
     for d in packaging.get_dependencies(package):

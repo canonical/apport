@@ -523,7 +523,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # fetch packages
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
         try:
-            res = c.fetch_archives(fetcher=fetcher)
+            c.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as e:
             apport.error('Package download error, try again later: %s', str(e))
             sys.exit(99) # transient error
