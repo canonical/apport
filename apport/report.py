@@ -370,6 +370,7 @@ class Report(problem_report.ProblemReport):
 
         try:
             m = __import__(module.replace('/', '.'))
+            m
         except:
             return None
 
