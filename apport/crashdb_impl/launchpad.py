@@ -841,9 +841,8 @@ in a dependent package.' % master,
 
         line = f.readline()
         if not line.startswith('bug:'):
-            # presumably a 404 etc. page, which happens for private bugs; do
-            # file the report then
-            return None
+            # presumably a 404 etc. page, which happens for private bugs
+            return True
 
         # check tags
         for line in f:
@@ -1479,8 +1478,7 @@ NameError: global name 'weird' is not defined'''
                     {'distro': 'ubuntu',
                      'launchpad_instance': launchpad_instance})
 
-        @classmethod
-        def _get_bug_target(klass, db, report):
+        def _get_bug_target(self, db, report):
             '''Return the bug_target for this report.'''
 
             project = db.options.get('project')

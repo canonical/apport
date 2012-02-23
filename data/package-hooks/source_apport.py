@@ -8,7 +8,6 @@ This adds /var/log/apport.log and the file listing in /var/crash to the report.
 
 APPORT_LOG = '/var/log/apport.log'
 
-import os.path, subprocess
 from glob import glob
 import apport.hookutils
 

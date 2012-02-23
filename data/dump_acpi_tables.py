@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-import os, sys
-from stat import *
-from tempfile import mkstemp
+import os, sys, stat
 
 def dump_acpi_table(filename, tablename, out):
     '''Dump a single ACPI table'''
@@ -43,8 +41,8 @@ def dump_acpi_tables(path, out):
     tables = os.listdir(path)
     for tablename in tables:
         pathname = os.path.join(path, tablename)
-        mode = os.stat(pathname)[ST_MODE]   
-        if S_ISDIR(mode):
+        mode = os.stat(pathname).st_mode
+        if stat.S_ISDIR(mode):
             dump_acpi_tables(pathname, out)
         else:
             dump_acpi_table(pathname, tablename, out)

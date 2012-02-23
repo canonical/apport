@@ -1,5 +1,3 @@
-#!/usr/bin/python
-#
 # Test apport_python_hook.py
 #
 # Copyright (c) 2006 - 2011 Canonical Ltd.
@@ -20,7 +18,7 @@ atexit.register(shutil.rmtree, temp_report_dir)
 
 import apport.fileutils, problem_report
 
-class _T(unittest.TestCase):
+class T(unittest.TestCase):
     def tearDown(self):
         for f in apport.fileutils.get_all_reports():
             os.unlink(f)
@@ -28,13 +26,13 @@ class _T(unittest.TestCase):
     def _test_crash(self, extracode='', scriptname=None):
         '''Create a test crash.'''
 
-        # put the script into /var/crash, since that isn't ignored in the
+        # put the script into /var/tmp, since that isn't ignored in the
         # hook
         if scriptname:
             script = scriptname
             fd = os.open(scriptname, os.O_CREAT|os.O_WRONLY)
         else:
-            (fd, script) = tempfile.mkstemp(dir='/var/crash')
+            (fd, script) = tempfile.mkstemp(dir='/var/tmp')
         try:
             os.write(fd, '''#!/usr/bin/python
 import apport_python_hook
@@ -213,7 +211,6 @@ func(42)
 
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
-        pr = None
         self.assertEqual(len(reports), 0)
 
     def test_no_flooding(self):
@@ -222,7 +219,7 @@ func(42)
         count = 0
         limit = 5
         while count < limit:
-            self._test_crash(scriptname='/var/crash/pytestcrash')
+            self._test_crash(scriptname='/var/tmp/pytestcrash')
             reports = apport.fileutils.get_new_reports()
             if not reports:
                 break
@@ -233,7 +230,4 @@ func(42)
         self.assertGreater(count, 1)
         self.assertLess(count, limit)
 
-tl = unittest.TestLoader()
-tests_all = unittest.TestSuite(tl.loadTestsFromName('__main__'))
-unittest.TextTestRunner(verbosity=2).run(tests_all)
-
+unittest.main()

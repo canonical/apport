@@ -248,7 +248,7 @@ class CrashDatabase:
             f.close()
             if '<title>404 Not Found' in contents:
                 return None
-        except Exception as e:
+        except Exception:
             # does not exist, failed to load, etc.
             return None
 

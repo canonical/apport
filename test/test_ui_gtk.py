@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 '''GTK Apport user interface tests.'''
 
 # Copyright (C) 2012 Canonical Ltd.
@@ -14,12 +12,18 @@
 import unittest
 import tempfile
 import sys
+import os
 import imp
-GTKUserInterface = imp.load_source('', 'gtk/apport-gtk').GTKUserInterface
 import apport
 from gi.repository import GLib, Gtk
 from apport import unicode_gettext as _
 from mock import patch
+
+if os.environ.get('APPORT_TEST_LOCAL'):
+    path = 'gtk/apport-gtk'
+else:
+    path = os.path.join(os.environ.get('APPORT_DATA_DIR','/usr/share/apport'), 'apport-gtk')
+GTKUserInterface = imp.load_source('', path).GTKUserInterface
 
 class _T(unittest.TestCase):
     def setUp(self):
@@ -275,6 +279,4 @@ Type=Application''')
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
 
-if __name__ == '__main__':
-    unittest.main()
-    sys.exit(0)
+unittest.main()

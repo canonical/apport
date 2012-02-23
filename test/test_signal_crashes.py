@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 # 
@@ -109,7 +107,7 @@ class T(unittest.TestCase):
         allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
             'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
             'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
-            'LC_IDENTIFICATION', 'LOCPATH']
+            'LC_IDENTIFICATION', 'LOCPATH', 'TERM']
 
         for l in pr['ProcEnviron'].splitlines():
             (k, v) = l.split('=', 1)
