@@ -14,6 +14,8 @@ Bug fixes:
  - launchpad.py: If a bug is already known, but the report is private, do not
    send the report. There is little sense piling up lots of duplicates.
    (LP: #938700)
+ - test/crash: Fix regression of test_crash_apport(), consider $TERM a
+   non-sensitive variable.
 
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.
