@@ -25,7 +25,7 @@ else:
     path = os.path.join(os.environ.get('APPORT_DATA_DIR','/usr/share/apport'), 'apport-gtk')
 GTKUserInterface = imp.load_source('', path).GTKUserInterface
 
-class _T(unittest.TestCase):
+class T(unittest.TestCase):
     def setUp(self):
         self.report = apport.Report()
         saved = sys.argv[0]

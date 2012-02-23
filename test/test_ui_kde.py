@@ -14,7 +14,7 @@ import tempfile
 import sys
 import os
 
-from PyQt4.QtCore import *
+from PyQt4.QtCore import QTimer, QCoreApplication
 from PyKDE4.kdecore import ki18n, KCmdLineArgs, KAboutData, KLocalizedString
 from PyKDE4.kdeui import KApplication
 
@@ -30,7 +30,7 @@ MainUserInterface = imp.load_source('', path).MainUserInterface
 # Work around MainUserInterface using basename to find the KDE UI file.
 sys.argv[0] = 'kde/foo'
 
-class _T(unittest.TestCase):
+class T(unittest.TestCase):
     def setUp(self):
         self.report = apport.Report()
         self.app = MainUserInterface()
