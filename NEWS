@@ -24,6 +24,7 @@ Bug fixes:
  - test/python: Do not assume that /var/crash/ exists. Use /var/tmp/ for the
    fake binaries instead.
  - data/general-hooks/parse_segv.py: Fix test case name.
+ - ui.py: Fix crash on invalid core dumps. (LP: #937215)
 
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.

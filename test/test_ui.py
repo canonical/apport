@@ -735,6 +735,29 @@ bOgUs=
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.present_details_shown)
 
+    def test_run_crash_broken(self):
+        '''run_crash() for an invalid core dump'''
+
+        # generate broken crash report
+        r = apport.Report()
+        r['ExecutablePath'] = '/usr/bin/yes'
+        r['Signal'] = '11'
+        r['CoreDump'] = problem_report.CompressedValue()
+        r['CoreDump'].gzipvalue = 'AAAAAAAA'
+        r.add_user_info()
+
+        report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+        r.write(open(report_file, 'w'))
+
+        self.ui.present_details_response = {'report': True,
+                                            'blacklist': False,
+                                            'examine' : False,
+                                            'restart' : False }
+        self.ui.run_crash(report_file)
+        self.assertEqual(self.ui.msg_severity, 'error',  self.ui.msg_text)
+        self.assertTrue('decompress' in self.ui.msg_text)
+        self.assertTrue(self.ui.present_details_shown)
+
     def test_run_crash_argv_file(self):
         '''run_crash() through a file specified on the command line'''
 

@@ -267,6 +267,10 @@ class UserInterface:
                 self.collection_thread.join()
                 self.collection_thread.exc_raise()
 
+            if self.report is None:
+                # collect() does that on invalid reports
+                return
+
             if response['examine']:
                 self.examine()
                 return
