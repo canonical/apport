@@ -220,6 +220,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         args = {}
         title = report.get('Title', report.standard_title())
         if title:
+            # always use UTF-8 encoding, urlencode() blows up otherwise in
+            # python 2.7
+            if type(title) != type(b''):
+                title = title.encode('UTF-8')
             args['field.title'] = title
 
         hostname = self.get_hostname()
@@ -512,7 +516,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         try:
             bugs = self.lp_distro.searchTasks(tags=self.arch_tag, created_since='2011-08-01')
             return id_set(bugs)
-        except Exception, e:
+        except Exception as e:
             apport.error('connecting to Launchpad failed: %s', str(e))
             sys.exit(99) # transient error
 
@@ -527,7 +531,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         try:
             bugs = self.lp_distro.searchTasks(tags='need-duplicate-check', created_since='2011-08-01')
             return id_set(bugs)
-        except Exception, e:
+        except Exception as e:
             apport.error('connecting to Launchpad failed: %s', str(e))
             sys.exit(99) # transient error
 
@@ -1016,7 +1020,7 @@ more text
 and more
 '''
             return self.crashdb.launchpad.bugs.createBug(
-                title=u'mixed description bug',
+                title=b'mixed description bug'.encode(),
                 description=desc,
                 target=self.crashdb.lp_distro)
 
@@ -1209,6 +1213,28 @@ NameError: global name 'weird' is not defined'''
             r['ThreadStacktrace'] = '"]\xb6"\n' # not interpretable as UTF-8, LP #353805
             r['StacktraceSource'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
             self.crashdb.update_traces(segv_report, r, 'tests')
+
+        def test_get_comment_url(self):
+            '''get_comment_url() for non-ASCII titles'''
+
+            # UTF-8 bytestring, works in both python 2.7 and 3
+            title = b'1\xc3\xa4\xe2\x99\xa52'
+
+            # distro, UTF-8 bytestring
+            r = apport.Report('Bug')
+            r['Title'] = title
+            url = self.crashdb.get_comment_url(r, 42)
+            self.assertTrue(url.endswith('/ubuntu/+filebug/42?field.title=1%C3%A4%E2%99%A52'))
+
+            # distro, unicode
+            r['Title'] = title.decode('UTF-8')
+            url = self.crashdb.get_comment_url(r, 42)
+            self.assertTrue(url.endswith('/ubuntu/+filebug/42?field.title=1%C3%A4%E2%99%A52'))
+
+            # package, unicode
+            r['SourcePackage'] = 'coreutils'
+            url = self.crashdb.get_comment_url(r, 42)
+            self.assertTrue(url.endswith('/ubuntu/+source/coreutils/+filebug/42?field.title=1%C3%A4%E2%99%A52'))
 
         def test_update_description(self):
             '''update() with changing description'''

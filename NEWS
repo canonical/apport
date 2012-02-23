@@ -25,6 +25,7 @@ Bug fixes:
    fake binaries instead.
  - data/general-hooks/parse_segv.py: Fix test case name.
  - ui.py: Fix crash on invalid core dumps. (LP: #937215)
+ - launchpad.py: Fix crash on unicode report titles. (LP: #896626)
 
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.
