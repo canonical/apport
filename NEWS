@@ -23,6 +23,7 @@ Bug fixes:
    during package builds on build servers.
  - test/python: Do not assume that /var/crash/ exists. Use /var/tmp/ for the
    fake binaries instead.
+ - data/general-hooks/parse_segv.py: Fix test case name.
 
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.

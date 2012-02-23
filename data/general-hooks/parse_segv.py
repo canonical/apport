@@ -895,7 +895,7 @@ bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
                 self.assertTrue('SP (0xdfc56000) not located in a known VMA region (needed readable region)!' in details, details)
                 self.assertTrue('Stack pointer not within stack segment' in details, details)
 
-            def test_segv_stack_failure(self):
+            def test_segv_stack_kernel_segfault(self):
                 '''Handles unknown segfaults in kernel'''
 
                 # Crash in valid code path
