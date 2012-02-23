@@ -10,7 +10,6 @@ import distutils.command.clean
 try:
     import DistUtilsExtra.auto
 except ImportError:
-    import sys
     sys.stderr.write('To build Apport you need https://launchpad.net/python-distutils-extra\n')
     sys.exit(1)
 

@@ -12,7 +12,7 @@ This is used on Debian and derivatives such as Ubuntu.
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, os, glob, stat, sys, tempfile, glob, re, shutil, time
+import subprocess, os, glob, stat, sys, tempfile, re, shutil, time
 import hashlib
 
 import warnings

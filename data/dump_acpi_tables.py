@@ -2,7 +2,6 @@
 
 import os, sys
 from stat import *
-from tempfile import mkstemp
 
 def dump_acpi_table(filename, tablename, out):
     '''Dump a single ACPI table'''
