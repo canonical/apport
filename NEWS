@@ -28,6 +28,9 @@ Bug fixes:
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.
  - do-release: Call pyflakes and abort on errors other than unused imports.
+ - Move all test suites out of the code modules into test/test_<module>.py.
+   This avoids having to load it every time the program runs, and also allows
+   running the tests against the installed version of Apport.
 
 1.92 (2012-02-20):
 ------------------

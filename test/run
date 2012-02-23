@@ -28,30 +28,14 @@ fi
 
 mydir=`dirname "$0"`
 
-modules="problem_report
-apport/fileutils
-apport/report
-apport/hookutils 
-apport/ui
-apport/REThread
-apport/crashdb_impl/memory
-apport/packaging_impl
-"
-
 count=0
 failed () {
     count=$((count+1))
 }
-for m in $modules; do
+for m in $mydir/test_*.py; do
     echo "--- Testing $m ---"
-    if [ -n "$local" ]; then
-	${PYTHON:=python} -tt ./${m}.py -v || failed
-    else
-	${PYTHON:=python} -tt -m $m -v || failed
-    fi
+    ${PYTHON:=python} -tt $m -v || failed
 done
-
-$PYTHON $mydir/../data/general-hooks/parse_segv.py -v || failed
 
 xvfb=
 if type xvfb-run >/dev/null; then
