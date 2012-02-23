@@ -1478,8 +1478,7 @@ NameError: global name 'weird' is not defined'''
                     {'distro': 'ubuntu',
                      'launchpad_instance': launchpad_instance})
 
-        @classmethod
-        def _get_bug_target(klass, db, report):
+        def _get_bug_target(self, db, report):
             '''Return the bug_target for this report.'''
 
             project = db.options.get('project')
