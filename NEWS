@@ -19,6 +19,8 @@ Bug fixes:
  - ui.py: Fix test failures for data collection progress, they are not expected
    to happen for "ProblemType: Crash" any more (happens in the background
    during sending, or if user clicks on "Show Details").
+ - test/hooks: Use a package from Debian/Ubuntu main, so that this works better
+   during package builds on build servers.
 
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.
