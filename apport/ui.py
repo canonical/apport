@@ -3055,16 +3055,11 @@ def run(report, ui):
             self.ui.load_report(self.report_file.name)
             del self.ui.report['CoreDump']
 
-            orig_path = os.environ['PATH']
             orig_fn = self.ui.ui_run_terminal
             try:
                 self.ui.ui_run_terminal = lambda command: True
-                src_bindir = os.path.join(
-                        os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 
-                        'bin')
                 self.assertEqual(self.ui.can_examine_locally(), False)
             finally:
-                os.environ['PATH'] = orig_path
                 self.ui.ui_run_terminal = orig_fn
 
     unittest.main()
