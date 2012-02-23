@@ -949,7 +949,7 @@ def upload_blob(blob, progress_callback = None, hostname='launchpad.net'):
 #
 
 if __name__ == '__main__':
-    import unittest, urllib2
+    import unittest, urllib2, atexit, shutil, subprocess
 
     crashdb = None
     segv_report = None
@@ -1029,9 +1029,9 @@ and more
         def _file_segv_report(self):
             '''File a SEGV crash report.
 
-            Return crash ID.
+            Return (crash ID, report).
             '''
-            r = apport.report._T._generate_sigsegv_report()
+            r = self._generate_sigsegv_report()
             r.add_package_info(self.test_package)
             r.add_os_info()
             r.add_gdb_info()
@@ -1049,7 +1049,7 @@ and more
 
             id = self._file_bug(bug_target, r, handle)
             self.assertTrue(id > 0)
-            return id
+            return (id, r)
 
         def test_1_report_segv(self):
             '''upload() and get_comment_url() for SEGV crash
@@ -1057,9 +1057,14 @@ and more
             This needs to run first, since it sets segv_report.
             '''
             global segv_report
-            id = self._file_segv_report()
+            (id, report) = self._file_segv_report()
             segv_report = id
+            url = get_comment_url(report, id)
+
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
+
+            #TODO: check this programatically
+            sys.stderr.write('[%s] ' % url)
 
         def test_1_report_python(self):
             '''upload() and get_comment_url() for Python crash
@@ -1435,7 +1440,7 @@ NameError: global name 'weird' is not defined'''
             This simulates a race condition where a crash being processed gets
             invalidated by marking it as a duplicate.
             '''
-            id = self._file_segv_report()
+            id = self._file_segv_report()[0]
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
             r = self.crashdb.download(id)
@@ -1739,5 +1744,50 @@ NameError: global name 'weird' is not defined'''
             # should not confuse get_fixed_version()
             self.assertEqual(self.crashdb.get_fixed_version(python_report),
                     None)
+
+        @classmethod
+        def _generate_sigsegv_report(klass, signal='11'):
+            '''Create a test executable which will die with a SIGSEGV, generate a
+            core dump for it, create a problem report with those two arguments
+            (ExecutablePath and CoreDump) and call add_gdb_info().
+
+            Return the apport.report.Report.
+            '''
+            workdir = None
+            orig_cwd = os.getcwd()
+            pr = apport.report.Report()
+            try:
+                workdir = tempfile.mkdtemp()
+                atexit.register(shutil.rmtree, workdir)
+                os.chdir(workdir)
+
+                # create a test executable
+                with open('crash.c', 'w') as fd:
+                    fd.write('''
+int f(x) {
+    int* p = 0; *p = x;
+    return x+1;
+}
+int main() { return f(42); }
+''')
+                assert subprocess.call(['gcc', '-g', 'crash.c', '-o', 'crash']) == 0
+                assert os.path.exists('crash')
+
+                # call it through gdb and dump core
+                subprocess.call(['gdb', '--batch', '--ex', 'run', '--ex',
+                    'generate-core-file core', './crash'], stdout=subprocess.PIPE)
+                assert os.path.exists('core')
+                assert subprocess.call(['readelf', '-n', 'core'],
+                    stdout=subprocess.PIPE) == 0
+
+                pr['ExecutablePath'] = os.path.join(workdir, 'crash')
+                pr['CoreDump'] = (os.path.join(workdir, 'core'),)
+                pr['Signal'] = signal
+
+                pr.add_gdb_info()
+            finally:
+                os.chdir(orig_cwd)
+
+            return pr
 
     unittest.main()
