@@ -1685,7 +1685,7 @@ CoreDump: base64
             '''collect_info() on report with only ExecutablePath.'''
 
             # report with only package information
-            self.report = apport.Report()
+            self.report = apport.Report('Bug')
             self.report['ExecutablePath'] = '/bin/bash'
             self.update_report_file()
             self.ui.load_report(self.report_file.name)
@@ -1706,7 +1706,7 @@ CoreDump: base64
             '''collect_info() on report with a package.'''
 
             # report with only package information
-            self.ui.report = apport.Report()
+            self.ui.report = apport.Report('Bug')
             self.ui.cur_package = 'bash'
             self.ui.collect_info()
             self.assertTrue(set(['SourcePackage', 'Package', 'ProblemType',
@@ -2039,7 +2039,9 @@ CoreDump: base64
             self.assertEqual(self.ui.msg_severity, None)
             self.assertEqual(self.ui.msg_title, None)
             self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
-            self.assertNotEqual(self.ui.ic_progress_pulses, 0)
+            # no separate data collection dialog
+            self.assertFalse(self.ui.ic_progress_active)
+            self.assertEqual(self.ui.ic_progress_pulses, 0)
             self.assertTrue(self.ui.present_details_shown)
 
             self.assertTrue('SourcePackage' in self.ui.report.keys())

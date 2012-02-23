@@ -16,6 +16,9 @@ Bug fixes:
    (LP: #938700)
  - test/crash: Fix regression of test_crash_apport(), consider $TERM a
    non-sensitive variable.
+ - ui.py: Fix test failures for data collection progress, they are not expected
+   to happen for "ProblemType: Crash" any more (happens in the background
+   during sending, or if user clicks on "Show Details").
 
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.
