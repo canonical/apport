@@ -28,13 +28,13 @@ class _T(unittest.TestCase):
     def _test_crash(self, extracode='', scriptname=None):
         '''Create a test crash.'''
 
-        # put the script into /var/crash, since that isn't ignored in the
+        # put the script into /var/tmp, since that isn't ignored in the
         # hook
         if scriptname:
             script = scriptname
             fd = os.open(scriptname, os.O_CREAT|os.O_WRONLY)
         else:
-            (fd, script) = tempfile.mkstemp(dir='/var/crash')
+            (fd, script) = tempfile.mkstemp(dir='/var/tmp')
         try:
             os.write(fd, '''#!/usr/bin/python
 import apport_python_hook
@@ -222,7 +222,7 @@ func(42)
         count = 0
         limit = 5
         while count < limit:
-            self._test_crash(scriptname='/var/crash/pytestcrash')
+            self._test_crash(scriptname='/var/tmp/pytestcrash')
             reports = apport.fileutils.get_new_reports()
             if not reports:
                 break

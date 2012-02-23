@@ -21,6 +21,8 @@ Bug fixes:
    during sending, or if user clicks on "Show Details").
  - test/hooks: Use a package from Debian/Ubuntu main, so that this works better
    during package builds on build servers.
+ - test/python: Do not assume that /var/crash/ exists. Use /var/tmp/ for the
+   fake binaries instead.
 
 Improvements:
  - apport-gtk: Show the most interesting fields first in the details view.
