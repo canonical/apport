@@ -1,8 +1,7 @@
 import unittest, tempfile, sys, os.path
 
-# find module in local tree
-rootdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(rootdir, 'data', 'general-hooks'))
+datadir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
+sys.path.insert(0, os.path.join(datadir, 'general-hooks'))
 
 import parse_segv
 

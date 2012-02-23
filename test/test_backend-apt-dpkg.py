@@ -1,6 +1,9 @@
 import unittest, gzip, imp, subprocess, tempfile, shutil, os, os.path, time
 
-impl = imp.load_source('', 'backends/packaging-apt-dpkg.py').impl
+if os.environ.get('APPORT_TEST_LOCAL'):
+    impl = imp.load_source('', 'backends/packaging-apt-dpkg.py').impl
+else:
+    from apport.packaging_impl import impl
 
 def _has_default_route():
     '''Return if there is a default route.

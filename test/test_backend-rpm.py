@@ -1,7 +1,10 @@
-import unittest, imp, subprocess, sys
+import unittest, imp, subprocess, sys, os
 
 try:
-    impl = imp.load_source('', 'backends/packaging_rpm.py').impl
+    if os.environ.get('APPORT_TEST_LOCAL'):
+        impl = imp.load_source('', 'backends/packaging_rpm.py').impl
+    else:
+        from apport.packaging_impl import impl
 except ImportError:
     print('%s: Skipping, rpm module not available' % sys.argv[0])
     sys.exit(0)

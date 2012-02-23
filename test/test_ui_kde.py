@@ -22,13 +22,13 @@ import apport
 from apport import unicode_gettext as _
 
 if os.environ.get('APPORT_TEST_LOCAL'):
-    path = 'kde/apport-kde'
+    apport_kde_path = 'kde/apport-kde'
 else:
-    path = os.path.join(os.environ.get('APPORT_DATA_DIR','/usr/share/apport'), 'apport-kde')
-MainUserInterface = imp.load_source('', path).MainUserInterface
+    apport_kde_path = os.path.join(os.environ.get('APPORT_DATA_DIR','/usr/share/apport'), 'apport-kde')
+MainUserInterface = imp.load_source('', apport_kde_path).MainUserInterface
 
 # Work around MainUserInterface using basename to find the KDE UI file.
-sys.argv[0] = 'kde/foo'
+sys.argv[0] = apport_kde_path
 
 class T(unittest.TestCase):
     def setUp(self):

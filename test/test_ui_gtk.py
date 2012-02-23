@@ -20,10 +20,10 @@ from apport import unicode_gettext as _
 from mock import patch
 
 if os.environ.get('APPORT_TEST_LOCAL'):
-    path = 'gtk/apport-gtk'
+    apport_gtk_path = 'gtk/apport-gtk'
 else:
-    path = os.path.join(os.environ.get('APPORT_DATA_DIR','/usr/share/apport'), 'apport-gtk')
-GTKUserInterface = imp.load_source('', path).GTKUserInterface
+    apport_gtk_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'apport-gtk')
+GTKUserInterface = imp.load_source('', apport_gtk_path).GTKUserInterface
 
 class T(unittest.TestCase):
     def setUp(self):
@@ -31,7 +31,7 @@ class T(unittest.TestCase):
         saved = sys.argv[0]
         # Work around GTKUserInterface using basename to find the GtkBuilder UI
         # file.
-        sys.argv[0] = 'gtk/foo'
+        sys.argv[0] = apport_gtk_path
         self.app = GTKUserInterface()
         sys.argv[0] = saved
         self.app.report = self.report

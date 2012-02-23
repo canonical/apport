@@ -13,14 +13,20 @@ import apport, apport.fileutils
 
 class T(unittest.TestCase):
     def setUp(self):
-        self.srcdir = os.path.dirname(os.path.dirname(os.path.realpath(sys.argv[0])))
+        mydir = os.path.dirname(os.path.realpath(sys.argv[0]))
+        datadir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
+        self.srcdir = os.path.dirname(mydir)
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
         os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
-        os.environ['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(
-                os.environ.get('APPORT_DATA_DIR','/usr/share/apport'),
+        os.environ['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(datadir,
                 'java_uncaught_exception')
-        self.apport_jar_path = os.path.join(self.srcdir, 'java', 'apport.jar')
+        if os.environ.get('APPORT_TEST_LOCAL'):
+            self.crash_jar_path = os.path.join(self.srcdir, 'java', 'crash.jar')
+            self.apport_jar_path = os.path.join(self.srcdir, 'java', 'apport.jar')
+        else:
+            self.crash_jar_path = os.path.join(mydir, 'crash.jar')
+            self.apport_jar_path = os.path.join(datadir, 'apport.jar')
 
     def tearDown(self):
         shutil.rmtree(apport.fileutils.report_dir)
@@ -30,25 +36,25 @@ class T(unittest.TestCase):
         '''Crash in a .class file'''
 
         p = subprocess.Popen(['java', '-classpath',
-            self.apport_jar_path + ':' + os.path.join(self.srcdir, 'java'), 'crash'],
+            self.apport_jar_path + ':' + os.path.dirname(self.crash_jar_path), 'crash'],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
         self.assertTrue("Can't catch this" in err, 'crash handler must print original exception:\n' + err)
 
-        self._check_crash_report('java/crash.class')
+        self._check_crash_report(os.path.dirname(self.crash_jar_path) + '/crash.class')
 
     def test_crash_jar(self):
         '''Crash in a .jar file'''
 
         p = subprocess.Popen(['java', '-classpath',
-            self.apport_jar_path + ':' + os.path.join(self.srcdir, 'java', 'crash.jar'), 'crash'],
+            self.apport_jar_path + ':' + self.crash_jar_path, 'crash'],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
         self.assertTrue("Can't catch this" in err, 'crash handler must print original exception:\n' + err)
 
-        self._check_crash_report('java/crash.jar!/crash.class')
+        self._check_crash_report(self.crash_jar_path + '!/crash.class')
 
     def _check_crash_report(self, main_file):
         '''Check that we have one crash report, and verify its contents'''
@@ -62,9 +68,9 @@ class T(unittest.TestCase):
         self.assertTrue(r['StackTrace'].startswith(
             "java.lang.RuntimeException: Can't catch this"))
         if '.jar!' in main_file:
-            self.assertEqual(r['MainClassUrl'], 'jar:file:%s/%s' % (self.srcdir, main_file))
+            self.assertEqual(r['MainClassUrl'], 'jar:file:' + main_file)
         else:
-            self.assertEqual(r['MainClassUrl'], 'file:%s/%s' % (self.srcdir, main_file))
+            self.assertEqual(r['MainClassUrl'], 'file:' + main_file)
         self.assertTrue('DistroRelease' in r)
         self.assertTrue('ProcCwd' in r)
             
