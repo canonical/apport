@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 '''KDE 4 Apport User Interface tests'''
 
 # Copyright (C) 2012 Canonical Ltd.
@@ -10,16 +8,24 @@
 # Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
-import apport
-from PyQt4.QtCore import *
-from PyKDE4.kdecore import ki18n, KCmdLineArgs, KAboutData, KLocalizedString
-from PyKDE4.kdeui import KApplication
 import imp
-MainUserInterface = imp.load_source('', 'kde/apport-kde').MainUserInterface
 import unittest
 import tempfile
 import sys
+import os
+
+from PyQt4.QtCore import *
+from PyKDE4.kdecore import ki18n, KCmdLineArgs, KAboutData, KLocalizedString
+from PyKDE4.kdeui import KApplication
+
+import apport
 from apport import unicode_gettext as _
+
+if os.environ.get('APPORT_TEST_LOCAL'):
+    path = 'kde/apport-kde'
+else:
+    path = os.path.join(os.environ.get('APPORT_DATA_DIR','/usr/share/apport'), 'apport-kde')
+MainUserInterface = imp.load_source('', path).MainUserInterface
 
 # Work around MainUserInterface using basename to find the KDE UI file.
 sys.argv[0] = 'kde/foo'
@@ -183,23 +189,20 @@ Type=Application''')
         self.assertFalse(self.app.dialog.send_error_report.isVisible())
         self.assertFalse(self.app.dialog.send_error_report.isChecked())
 
-if __name__ == '__main__':
-    appName = 'apport-kde'
-    catalog = 'apport'
-    programName = ki18n('Apport KDE')
-    version = '1.0'
-    description = ki18n('KDE 4 frontend tests for the apport')
-    license = KAboutData.License_GPL
-    copyright = ki18n('2012 Canonical Ltd.')
-    text = KLocalizedString()
-    homePage = 'https://wiki.ubuntu.com/AutomatedProblemReports'
-    bugEmail = 'kubuntu-devel@lists.ubuntu.com'
+appName = 'apport-kde'
+catalog = 'apport'
+programName = ki18n('Apport KDE')
+version = '1.0'
+description = ki18n('KDE 4 frontend tests for the apport')
+license = KAboutData.License_GPL
+copyright = ki18n('2012 Canonical Ltd.')
+text = KLocalizedString()
+homePage = 'https://wiki.ubuntu.com/AutomatedProblemReports'
+bugEmail = 'kubuntu-devel@lists.ubuntu.com'
 
-    aboutData = KAboutData(appName, catalog, programName, version, description,
-                           license, copyright, text, homePage, bugEmail)
+aboutData = KAboutData(appName, catalog, programName, version, description,
+                       license, copyright, text, homePage, bugEmail)
 
-    KCmdLineArgs.init([''], aboutData)
-    app = KApplication()
-    unittest.main()
-    sys.exit(0)
-
+KCmdLineArgs.init([''], aboutData)
+app = KApplication()
+unittest.main()

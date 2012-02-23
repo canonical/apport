@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 # 

@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Copyright (C) 2010 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
@@ -13,14 +11,15 @@ import tempfile, unittest, subprocess, sys, os, os.path, shutil
 
 import apport, apport.fileutils
 
-class _T(unittest.TestCase):
+class T(unittest.TestCase):
     def setUp(self):
         self.srcdir = os.path.dirname(os.path.dirname(os.path.realpath(sys.argv[0])))
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
         os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
-        os.environ['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(self.srcdir,
-                'data', 'java_uncaught_exception')
+        os.environ['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(
+                os.environ.get('APPORT_DATA_DIR','/usr/share/apport'),
+                'java_uncaught_exception')
         self.apport_jar_path = os.path.join(self.srcdir, 'java', 'apport.jar')
 
     def tearDown(self):
@@ -80,7 +79,4 @@ except OSError:
     apport.warning('Java not available, skipping')
     sys.exit(0)
 
-tl = unittest.TestLoader()
-tests_all = unittest.TestSuite(tl.loadTestsFromName('__main__'))
-unittest.TextTestRunner(verbosity=2).run(tests_all)
-
+unittest.main()

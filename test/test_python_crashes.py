@@ -1,5 +1,3 @@
-#!/usr/bin/python
-#
 # Test apport_python_hook.py
 #
 # Copyright (c) 2006 - 2011 Canonical Ltd.
@@ -20,7 +18,7 @@ atexit.register(shutil.rmtree, temp_report_dir)
 
 import apport.fileutils, problem_report
 
-class _T(unittest.TestCase):
+class T(unittest.TestCase):
     def tearDown(self):
         for f in apport.fileutils.get_all_reports():
             os.unlink(f)
@@ -213,7 +211,6 @@ func(42)
 
         # did we get a report?
         reports = apport.fileutils.get_new_reports()
-        pr = None
         self.assertEqual(len(reports), 0)
 
     def test_no_flooding(self):
@@ -233,7 +230,4 @@ func(42)
         self.assertGreater(count, 1)
         self.assertLess(count, limit)
 
-tl = unittest.TestLoader()
-tests_all = unittest.TestSuite(tl.loadTestsFromName('__main__'))
-unittest.TextTestRunner(verbosity=2).run(tests_all)
-
+unittest.main()

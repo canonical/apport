@@ -7,6 +7,7 @@ def _has_default_route():
 
     This is a reasonable indicator that online tests can be run.
     '''
+    return False
     if _has_default_route.cache is None:
         _has_default_route.cache = False
         route = subprocess.Popen(['/sbin/route', '-n'],

@@ -20,17 +20,10 @@ import apport, apport.fileutils
 
 # parse command line options
 optparser = optparse.OptionParser('%prog [options]')
-optparser.add_option('-l', '--local',
-    help='Test scripts in ./bin/ instead of /usr/share/apport/',
-    action='store_true', dest='local', default=False)
-options, args = optparser.parse_args()
 
-if options.local:
-    basedir = 'data'
-else:
-    basedir = '/usr/share/apport'
+datadir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
 
-class _T(unittest.TestCase):
+class T(unittest.TestCase):
     def setUp(self):
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
@@ -47,7 +40,7 @@ class _T(unittest.TestCase):
     def test_package_hook_nologs(self):
         '''package_hook without any log files.'''
 
-        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'bash'],
+        ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'bash'],
             stdin=subprocess.PIPE)
         ph.communicate('something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
@@ -67,7 +60,7 @@ class _T(unittest.TestCase):
         '''package_hook on an uninstalled package (might fail to install).'''
 
         #FIXME: This is a really Debian/Ubuntu specific dodgy test case
-        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'augeas-dbg'],
+        ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'augeas-dbg'],
             stdin=subprocess.PIPE)
         ph.communicate('something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
@@ -91,7 +84,7 @@ class _T(unittest.TestCase):
         os.mkdir(os.path.join(self.workdir, 'logsub'))
         open(os.path.join(self.workdir, 'logsub', 'notme.log'), 'w').write('not me!')
 
-        ph = subprocess.Popen(['%s/package_hook' % basedir, '-p', 'bash', '-l',
+        ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'bash', '-l',
             os.path.realpath(sys.argv[0]), '-l', self.workdir],
             stdin=subprocess.PIPE)
         ph.communicate('something is wrong')
@@ -107,14 +100,14 @@ class _T(unittest.TestCase):
         log1key = None
         log2key = None
         for k in r.keys():
-            if k.endswith('TestHooks'):
+            if k.endswith('Testhookspy'):
                 filekey = k
             elif k.endswith('Log1log'):
                 log1key = k
             elif k.endswith('Log2'):
                 log2key = k
             elif 'sub' in k:
-                fail('logsub should not go into log files')
+                self.fail('logsub should not go into log files')
 
         self.assertTrue(filekey)
         self.assertTrue(log1key)
@@ -134,7 +127,7 @@ class _T(unittest.TestCase):
         f.write('vmcore successfully dumped')
         f.close()
 
-        self.assertEqual(subprocess.call('%s/kernel_crashdump' % basedir), 0,
+        self.assertEqual(subprocess.call('%s/kernel_crashdump' % datadir), 0,
             'kernel_crashdump finished successfully')
 
         reps = apport.fileutils.get_new_reports()
@@ -182,7 +175,7 @@ class _T(unittest.TestCase):
         test_source.flush()
         test_source.seek(0)
 
-        self.assertEqual(subprocess.call(['%s/gcc_ice_hook' % basedir,
+        self.assertEqual(subprocess.call(['%s/gcc_ice_hook' % datadir,
             gcc_path, test_source.name]), 0, 'gcc_ice_hook finished successfully')
 
         reps = apport.fileutils.get_new_reports()
@@ -207,7 +200,7 @@ class _T(unittest.TestCase):
 
         test_source = 'int f(int x);'
 
-        hook = subprocess.Popen(['%s/gcc_ice_hook' % basedir, gcc_path, '-'], 
+        hook = subprocess.Popen(['%s/gcc_ice_hook' % datadir, gcc_path, '-'], 
             stdin=subprocess.PIPE)
         hook.communicate(test_source)
         self.assertEqual(hook.returncode, 0, 'gcc_ice_hook finished successfully')
@@ -228,12 +221,12 @@ class _T(unittest.TestCase):
         self.assertTrue(r['SourcePackage'].startswith('gcc'))
 
     def test_kernel_oops_hook(self):
-	test_source = '''------------[ cut here ]------------
+        test_source = '''------------[ cut here ]------------
 kernel BUG at /tmp/oops.c:5!
 invalid opcode: 0000 [#1] SMP 
 Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT iptable_filter ip_tables nf_conntrack_ipv6 xt_state nf_conntrack xt_tcpudp ip6t_ipv6header ip6t_REJECT ip6table_filter ip6_tables x_tables ipv6 loop dm_multipath rtc_cmos iTCO_wdt iTCO_vendor_support pcspkr i2c_i801 i2c_core battery video ac output power_supply button sg joydev usb_storage dm_snapshot dm_zero dm_mirror dm_mod ahci pata_acpi ata_generic ata_piix libata sd_mod scsi_mod ext3 jbd mbcache uhci_hcd ohci_hcd ehci_hcd
 '''
-        hook = subprocess.Popen(['%s/kernel_oops' % basedir],
+        hook = subprocess.Popen(['%s/kernel_oops' % datadir],
             stdin=subprocess.PIPE)
         hook.communicate(test_source)
         self.assertEqual(hook.returncode, 0, 'kernel_oops finished successfully')
@@ -251,10 +244,4 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT
 
         self.assertTrue(r['Package'].startswith('linux-image-'))
 
-# call tests
-
-tl = unittest.TestLoader()
-tests_all = unittest.TestSuite((
-    tl.loadTestsFromName('__main__')
-))
-unittest.TextTestRunner(verbosity=2).run(tests_all)
+unittest.main()

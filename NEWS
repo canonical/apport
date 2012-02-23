@@ -31,6 +31,8 @@ Improvements:
  - Move all test suites out of the code modules into test/test_<module>.py.
    This avoids having to load it every time the program runs, and also allows
    running the tests against the installed version of Apport.
+ - Clean up the other executable test script in test/* and change them to the
+   same structure as the module tests.
 
 1.92 (2012-02-20):
 ------------------

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-'''Test crash-digger.'''
+'''Test crash-digger'''
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -10,11 +10,11 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, subprocess, tempfile, os, shutil, os.path, time, signal
+import unittest, subprocess, tempfile, os, shutil, os.path
 
-class _T(unittest.TestCase):
+class T(unittest.TestCase):
     def setUp(self):
-        '''Set up dummy config dir, crashdb.conf, and apport-retrace.'''
+        '''Set up dummy config dir, crashdb.conf, and apport-retrace'''
 
         self.workdir = tempfile.mkdtemp()
 
@@ -41,7 +41,6 @@ echo "$@" >> %s''' % self.apport_retrace_log)
 
         os.environ['APPORT_CRASHDB_CONF'] = crashdb_conf
         os.environ['PYTHONPATH'] = '.'
-        os.environ['PATH'] = '%s:%s' % ('./bin', os.environ.get('PATH', ''))
 
     def tearDown(self):
         shutil.rmtree(self.workdir)
@@ -200,8 +199,4 @@ echo ApportRetraceError >&2''')
 
         self.assertTrue(os.path.isdir(os.path.join(self.workdir, 'dupdb', 'sig')))
 
-tl = unittest.TestLoader()
-tests_all = unittest.TestSuite((
-    tl.loadTestsFromName('__main__')
-))
-unittest.TextTestRunner(verbosity=2).run(tests_all)
+unittest.main()
