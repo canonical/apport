@@ -13,7 +13,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, time, traceback, tempfile, glob
+import sys, os, os.path, subprocess, time, traceback, tempfile, glob, pwd
 import signal, inspect, grp, fcntl
 
 import apport, apport.fileutils
@@ -346,7 +346,13 @@ try:
         reportfile = os.fdopen(os.open(report,
             os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0), 'w')
         assert reportfile.fileno() > sys.stderr.fileno()
-        os.chown(report, pidstat.st_uid, pidstat.st_gid)
+        whoopsie_gid = pwd.getpwnam('whoopsie')
+        if whoopsie_gid:
+            # Make sure the crash reporting daemon can read this report
+            whoopsie_gid = whoopsie_gid.pw_gid
+            os.chown(report, pidstat.st_uid, whoopsie_gid)
+        else:
+            os.chown(report, pidstat.st_uid, pidstat.st_gid)
     except (OSError, IOError) as e:
         error_log('Could not create report file: %s' % str(e))
         sys.exit(1)
