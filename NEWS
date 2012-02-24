@@ -8,6 +8,8 @@ Bug fixes:
  - Fix tests to run properly against the system-installed modules and binaries.
  - test/run: Run under LC_MESSAGES=C to avoid test failures due to translated
    strings.
+ - general-hooks/generic.py: Also attach xsession-errors for programs that link
+   to libgtk-3.
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

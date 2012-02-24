@@ -42,6 +42,7 @@ and installing updates. Please free some space.' % (mounts[mount], free_mb)
     if 'ExecutablePath' in report:
         path = report['ExecutablePath']
         if (apport.hookutils.links_with_shared_library(path, 'libgtk') or
+            apport.hookutils.links_with_shared_library(path, 'libgtk-3') or
             apport.hookutils.links_with_shared_library(path, 'libX11')) and \
            apport.hookutils.in_session_of_problem(report):
             pattern = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)')
