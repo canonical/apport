@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - apport: Set the group of written reports to "whoopsie" if that group exists.
  - Fix tests to run properly against the system-installed modules and binaries.
+ - test/run: Run under LC_MESSAGES=C to avoid test failures due to translated
+   strings.
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when
