@@ -45,8 +45,7 @@ and installing updates. Please free some space.' % (mounts[mount], free_mb)
             apport.hookutils.links_with_shared_library(path, 'libgtk-3') or
             apport.hookutils.links_with_shared_library(path, 'libX11')) and \
            apport.hookutils.in_session_of_problem(report):
-            pattern = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)')
-            xsession_errors = apport.hookutils.xsession_errors(pattern)
+            xsession_errors = apport.hookutils.xsession_errors()
             if xsession_errors:
                 report['XsessionErrors'] = xsession_errors
 

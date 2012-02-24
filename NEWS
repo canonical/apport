@@ -19,6 +19,10 @@ Improvements:
    when given.
  - testsuite: Force the skipping of online tests when $SKIP_ONLINE_TESTS is
    set.
+ - hookutils.py, xsession_errors(): Add a reasonable default pattern which
+   matches glib-style warnings, errors, criticals etc. and X window errors.
+   In data/general-hooks/generic.py, call it with that default instead of the
+   rather incomplete custom pattern. (LP: #932660)
 
 1.93 (2012-02-23):
 ------------------

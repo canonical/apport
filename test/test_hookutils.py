@@ -1,8 +1,15 @@
-import unittest, tempfile, locale, subprocess, re
+# coding: UTF-8
+import unittest, tempfile, locale, subprocess, re, shutil, os.path
 
 import apport.hookutils
 
 class T(unittest.TestCase):
+    def setUp(self):
+        self.workdir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.workdir)
+
     def test_module_license_evaluation(self):
         '''module licenses can be validated correctly'''
 
@@ -163,6 +170,64 @@ class T(unittest.TestCase):
         self.assertEqual(apport.hookutils.in_session_of_problem({}), None)
 
         locale.setlocale(locale.LC_TIME, old_ctime)
+
+    def test_xsession_errors(self):
+        '''xsession_errors()'''
+
+        with open(os.path.join(self.workdir, '.xsession-errors'), 'w') as f:
+            f.write('''Loading profile from /etc/profile
+gnome-session[1948]: WARNING: standard glib warning
+EggSMClient-CRITICAL **: egg_sm_client_set_mode: standard glib assertion
+24/02/2012 11:14:46 Sending credentials s3kr1t
+
+** WARNING **: nonstandard warning
+
+WARN  2012-02-24 11:23:47 unity <unknown>:0 some unicode ♥ ♪
+
+GNOME_KEYRING_CONTROL=/tmp/keyring-u7hrD6
+
+(gnome-settings-daemon:5115): Gdk-WARNING **: The program 'gnome-settings-daemon' received an X Window System error.
+This probably reflects a bug in the program.
+The error was 'BadMatch (invalid parameter attributes)'.
+  (Details: serial 723 error_code 8 request_code 143 minor_code 22)
+  (Note to programmers: normally, X errors are reported asynchronously;
+   that is, you will receive the error a while after causing it.
+   To debug your program, run it with the --sync command line
+   option to change this behavior. You can then get a meaningful
+   backtrace from your debugger if you break on the gdk_x_error() function.)"
+
+GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
+''')
+        orig_home = os.environ.get('HOME')
+        try:
+            os.environ['HOME'] = self.workdir
+
+            # explicit pattern
+            pattern = re.compile('notfound')
+            self.assertEqual(apport.hookutils.xsession_errors(pattern), '')
+
+            pattern = re.compile('^\w+-CRITICAL')
+            res = apport.hookutils.xsession_errors(pattern).splitlines()
+            self.assertEqual(len(res), 2)
+            self.assertTrue(res[0].startswith('EggSMClient-CRITICAL'))
+            self.assertTrue(res[1].startswith('GdkPixbuf-CRITICAL'))
+
+            # default pattern includes glib assertions and X Errors
+            res = apport.hookutils.xsession_errors()
+            self.assertFalse('nonstandard warning' in res)
+            self.assertFalse('keyring' in res)
+            self.assertFalse('credentials' in res)
+            self.assertTrue('WARNING: standard glib warning' in res, res)
+            self.assertTrue('GdkPixbuf-CRITICAL' in res, res)
+            self.assertTrue("'gnome-settings-daemon' received an X Window" in res, res)
+            self.assertTrue('BadMatch' in res, res)
+            self.assertTrue('serial 723' in res, res)
+
+        finally:
+            if orig_home is not None:
+                os.environ['HOME'] = orig_home
+            else:
+                os.unsetenv('HOME')
 
     def test_no_crashes(self):
         '''functions do not crash (very shallow)'''

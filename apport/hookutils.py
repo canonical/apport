@@ -427,15 +427,22 @@ def recent_logfile(logfile, pattern):
         return ''
     return lines
 
-def xsession_errors(pattern):
-    '''Extract messages from ~/.xsession-errors which match a regex.
+def xsession_errors(pattern=None):
+    '''Extract messages from ~/.xsession-errors.
         
-    pattern should be a "re" object.
-    '''
+    By default this parses out glib-style warnings, errors, criticals etc. and
+    X window errors.  You can specify a "re" object as pattern to customize the
+    filtering.
 
+    Please note that you should avoid attaching the whole file to reports, as
+    it can, and often does, contain sensitive and private data.
+    '''
     path = os.path.expanduser('~/.xsession-errors')
     if not os.path.exists(path):
-        return None
+        return ''
+
+    if not pattern:
+        pattern = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)|([^ ]+\[\d+\]: ([A-Z]+):)|([^ ]-[A-Z]+ \*\*:)|(received an X Window System error)|(^The error was \')|(^  \(Details: serial \d+ error_code)')
 
     lines = ''
     for line in open(path):
