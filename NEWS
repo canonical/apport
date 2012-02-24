@@ -11,6 +11,8 @@ Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when
    run in the source tree root, and against the system libraries/programs when
    run from anywhere else.
+ - test/run: Consider command line arguments as test names and only run those
+   when given.
 
 1.93 (2012-02-23):
 ------------------

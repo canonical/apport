@@ -2,6 +2,7 @@
 # Run all Apport self tests.
 # Test against the source tree when run in the source tree root. Test against
 # the system libraries/programs when run from anywhere else.
+# You can specify test names as arguments to only run a subset of tests.
 
 # Copyright (C) 2007 - 2012 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -40,7 +41,23 @@ fi
 
 failed=0
 
-for t in $mydir/test_*.py; do
+# check command line whether to only run a subset of tests
+if [ -z "$1" ]; then
+    TESTS="$mydir/test_*.py"
+else
+    while [ -n "$1" ]; do
+        T="$mydir/test_$1.py"
+        if [ -e "$T" ]; then
+            TESTS="$TESTS $T"
+        else
+            echo "Test $1 does not exist" >&2
+            exit 1
+        fi
+        shift
+    done 
+fi
+
+for t in $TESTS; do
     echo "--- Testing $t ---"
     if [ "${t#*_ui_}" != $t ]; then
         prefix=$xvfb
