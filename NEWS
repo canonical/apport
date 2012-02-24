@@ -7,6 +7,11 @@ Bug fixes:
  - apport: Set the group of written reports to "whoopsie" if that group exists.
  - Fix tests to run properly against the system-installed modules and binaries.
 
+Improvements:
+ - test/run: Drop "local" argument. This now tests against the source tree when
+   run in the source tree root, and against the system libraries/programs when
+   run from anywhere else.
+
 1.93 (2012-02-23):
 ------------------
 Bug fixes:
