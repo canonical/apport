@@ -1530,7 +1530,7 @@ __frob (x=1) at crash.c:30'''
   File "test.py", line 2, in g_foo00
     return x/0
 ZeroDivisionError: integer division or modulo by zero'''
-        self.assertEqual(r.crash_signature(), '/bin/crash:ZeroDivisionError:<module>:_f:g_foo00')
+        self.assertEqual(r.crash_signature(), '/bin/crash:ZeroDivisionError:test.py@7:_f:g_foo00')
 
         # sometimes Python traces do not have file references
         r['Traceback'] = 'TypeError: function takes exactly 0 arguments (1 given)'

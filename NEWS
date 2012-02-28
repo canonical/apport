@@ -13,6 +13,10 @@ Bug fixes:
  - launchpad.py: Properly handle "Expired" status, to avoid marking new bugs as
    duplicates of expired ones. (LP: #941854)
  - apport: Fix crash if the "whoopsie" group does not exist. (LP: #942326)
+ - report.py, crash_signature(): Do not put "<module>" frames into Python crash
+   signatures that happen outside of function/method calls. Fall back to the
+   file/line number as a frame description instead. This will do a much better
+   job at disambiguating e. g. different ImportError crashes. (LP: #920403)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

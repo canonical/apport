@@ -1192,9 +1192,18 @@ class Report(problem_report.ProblemReport):
             elif len(trace) < 3:
                 return None
 
+            loc_re = re.compile ('^\s+File "([^"]+).*line (\d+).*\sin (.*)$')
             for l in trace:
-                if l.startswith('  File'):
-                    sig += ':' + l.split()[-1]
+                m = loc_re.match(l)
+                if m:
+                    # if we have a function name, use this; for a a crash
+                    # outside of a function/method, fall back to the source
+                    # file location
+                    fn = l.split()[-1]
+                    if m.group(3) != '<module>':
+                        sig += ':' + m.group(3)
+                    else:
+                        sig += ':%s@%s' % (m.group(1), m.group(2))
 
             return self['ExecutablePath'] + ':' + trace[-1].split(':')[0] + sig
 
