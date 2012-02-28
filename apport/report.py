@@ -171,17 +171,22 @@ class Report(problem_report.ProblemReport):
         self.pid = None
         self._proc_maps_cache = None
 
-    def _pkg_modified_suffix(self, package):
+    def _customized_package_suffix(self, package):
         '''Return a string suitable for appending to Package/Dependencies.
 
         If package has only unmodified files, return the empty string. If not,
         return ' [modified: ...]' with a list of modified files.
         '''
+        suffix = ''
         mod = packaging.get_modified_files(package)
         if mod:
-            return ' [modified: %s]' % ' '.join(mod)
-        else:
-            return ''
+            suffix += ' [modified: %s]' % ' '.join(mod)
+        if not packaging.is_distro_package(package):
+            origin = packaging.get_package_origin(package)
+            if origin:
+                suffix += ' [origin: %s]' % origin
+
+        return suffix
 
     def add_package_info(self, package = None):
         '''Add packaging information.
@@ -212,7 +217,7 @@ class Report(problem_report.ProblemReport):
             # package not installed
             version = None
         self['Package'] = '%s %s%s' % (package, version or '(not installed)',
-            self._pkg_modified_suffix(package))
+            self._customized_package_suffix(package))
         self['SourcePackage'] = packaging.get_source(package)
         if not version:
             return
@@ -235,7 +240,7 @@ class Report(problem_report.ProblemReport):
             if self['Dependencies']:
                 self['Dependencies'] += '\n'
             self['Dependencies'] += '%s %s%s' % (dep, v,
-                self._pkg_modified_suffix(dep))
+                self._customized_package_suffix(dep))
 
     def add_os_info(self):
         '''Add operating system information.

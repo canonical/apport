@@ -27,6 +27,10 @@ Improvements:
    rather incomplete custom pattern. (LP: #932660)
  - packaging.py: Add get_package_origin() method, and implement it for
    apt-dpkg.
+ - report.py, add_package_info(): Add "[origin: ...]" tag to "Package" and
+   "Dependencies" fields for any package which is not native to the
+   distribution. If any such package is present, tag the report with
+   "third-party-packages" in data/general-hooks/generic.py. (LP: #927912)
 
 1.93 (2012-02-23):
 ------------------

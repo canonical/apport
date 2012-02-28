@@ -68,6 +68,10 @@ Do you want to continue the report process anyway?
             report['LocalLibraries'] = ' '.join(local_libs)
             report['Tags'] = (report.get('Tags', '') + ' local-libs').strip()
 
+    # using third-party packages?
+    if '[origin:' in report.get('Package', '') or '[origin:' in report.get('Dependencies', ''):
+        report['Tags'] = (report.get('Tags', '') + ' third-party-packages').strip()
+
     # using ecryptfs?
     if os.path.exists(os.path.expanduser('~/.ecryptfs/wrapped-passphrase')):
         report['EcryptfsInUse'] = 'Yes'
