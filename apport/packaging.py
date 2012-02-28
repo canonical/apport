@@ -36,6 +36,16 @@ class PackageInfo:
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
+    def get_package_origin(self, package):
+        '''Return package origin.
+
+        Return the repository name from which a package was installed, or None
+        if it cannot be determined.
+
+        Throw ValueError if package is not installed.
+        '''
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
+
     def is_distro_package(self, package):
         '''Check package origin.
 

@@ -97,6 +97,22 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             raise ValueError('package %s does not exist' % package)
 
+    def get_package_origin(self, package):
+        '''Return package origin.
+
+        Return the repository name from which a package was installed, or None
+        if it cannot be determined.
+
+        Throw ValueError if package is not installed.
+        '''
+        pkg = self._apt_pkg(package).installed
+        if not pkg:
+            raise ValueError('package is not installed')
+        for origin in pkg.origins:
+            if origin.origin:
+                return origin.origin
+        return None
+
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
         a third-party source.'''

@@ -121,6 +121,19 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         self.assertEqual(impl.get_source('bash'), 'bash')
         self.assertTrue('glibc' in impl.get_source('libc6'))
 
+    def test_get_package_origin(self):
+        '''get_package_origin().'''
+
+        # determine distro name
+        distro = subprocess.check_output(['lsb_release', '-si']).decode('UTF-8').strip()
+
+        self.assertRaises(ValueError, impl.get_package_origin, 'nonexisting')
+        # this assumes that this package is not installed
+        self.assertRaises(ValueError, impl.get_package_origin, 'robocode-doc')
+        # this assumes that bash is native
+        self.assertEqual(impl.get_package_origin('bash'), distro)
+        # no non-native test here, hard to come up with a generic one
+
     def test_is_distro_package(self):
         '''is_distro_package().'''
 

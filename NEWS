@@ -25,6 +25,8 @@ Improvements:
    matches glib-style warnings, errors, criticals etc. and X window errors.
    In data/general-hooks/generic.py, call it with that default instead of the
    rather incomplete custom pattern. (LP: #932660)
+ - packaging.py: Add get_package_origin() method, and implement it for
+   apt-dpkg.
 
 1.93 (2012-02-23):
 ------------------
