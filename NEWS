@@ -12,6 +12,7 @@ Bug fixes:
    to libgtk-3.
  - launchpad.py: Properly handle "Expired" status, to avoid marking new bugs as
    duplicates of expired ones. (LP: #941854)
+ - apport: Fix crash if the "whoopsie" group does not exist. (LP: #942326)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

@@ -346,12 +346,12 @@ try:
         reportfile = os.fdopen(os.open(report,
             os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0), 'w')
         assert reportfile.fileno() > sys.stderr.fileno()
-        whoopsie_gid = pwd.getpwnam('whoopsie')
-        if whoopsie_gid:
-            # Make sure the crash reporting daemon can read this report
-            whoopsie_gid = whoopsie_gid.pw_gid
-            os.chown(report, pidstat.st_uid, whoopsie_gid)
-        else:
+
+        # Make sure the crash reporting daemon can read this report
+        try:
+            gid = pwd.getpwnam('whoopsie').pw_gid
+            os.chown(report, pidstat.st_uid, gid)
+        except (OSError, KeyError):
             os.chown(report, pidstat.st_uid, pidstat.st_gid)
     except (OSError, IOError) as e:
         error_log('Could not create report file: %s' % str(e))
