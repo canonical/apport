@@ -10,6 +10,8 @@ Bug fixes:
    strings.
  - general-hooks/generic.py: Also attach xsession-errors for programs that link
    to libgtk-3.
+ - launchpad.py: Properly handle "Expired" status, to avoid marking new bugs as
+   duplicates of expired ones. (LP: #941854)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

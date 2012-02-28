@@ -612,10 +612,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     return 'invalid'
             else:
                 # check if there only invalid ones
-                invalid_tasks = filter(lambda task: task.status in ('Invalid', "Won't Fix") and \
+                invalid_tasks = filter(lambda task: task.status in ('Invalid', "Won't Fix", 'Expired') and \
                         distro_identifier in task.bug_target_display_name.lower(), tasks)
                 if invalid_tasks:
-                    non_invalid_tasks = filter(lambda task: task.status not in ('Invalid', "Won't Fix") and \
+                    non_invalid_tasks = filter(lambda task: task.status not in ('Invalid', "Won't Fix", 'Expired') and \
                         distro_identifier in task.bug_target_display_name.lower(), tasks)
                     if not non_invalid_tasks:
                         return 'invalid'
