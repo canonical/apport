@@ -273,12 +273,12 @@ d (x=1) at crash.c:29'''
         r['DistroRelease'] = 'Testux 2.2'
         r['ExecutablePath'] = '/usr/bin/pygoo'
         r['Traceback'] = '''Traceback (most recent call last):
-File "test.py", line 7, in <module>
-print _f(5)
-File "test.py", line 5, in _f
-return g_foo00(x+1)
-File "test.py", line 2, in g_foo00
-return x/0
+  File "test.py", line 7, in <module>
+    print _f(5)
+  File "test.py", line 5, in _f
+    return g_foo00(x+1)
+  File "test.py", line 2, in g_foo00
+    return x/0
 ZeroDivisionError: integer division or modulo by zero'''
         self.upload(r)
 
@@ -289,11 +289,11 @@ ZeroDivisionError: integer division or modulo by zero'''
         r['DistroRelease'] = 'Testux 2.2'
         r['ExecutablePath'] = '/usr/bin/pygoo'
         r['Traceback'] = '''Traceback (most recent call last):
-File "test.py", line 7, in <module>
-print _f(5)
-File "test.py", line 5, in _f
-return g_foo00(x+1)
-File "test.py", line 2, in g_foo00
-return x/0
+  File "test.py", line 7, in <module>
+    print _f(5)
+  File "test.py", line 5, in _f
+    return g_foo00(x+1)
+  File "test.py", line 2, in g_foo00
+    return x/0
 ZeroDivisionError: integer division or modulo by zero'''
         self.upload(r)
