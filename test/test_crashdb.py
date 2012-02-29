@@ -397,6 +397,62 @@ databases = {
         self.assertEqual(self.crashes.check_duplicate(2,
             self.crashes.download(1)), (0, None))
 
+    def test_check_duplicate_multiple_masters(self):
+        '''check_duplicate() with multiple master bugs
+
+        Due to the unavoidable jitter in gdb stack traces, it can happen that a
+        bug B has the same symbolic signature as a bug S, but the same address
+        signature as a bug A, where A and S have slightly different symbolic
+        and address signatures and thus were not identified as duplicates. In
+        that case we want the lowest ID to become the new master bug, and the
+        other two duplicates.
+        '''
+        a = apport.Report()
+        a['SourcePackage'] = 'bash'
+        a['Package'] = 'bash 5'
+        a.crash_signature = lambda: '/bin/bash:11:read:main'
+        a.crash_signature_addresses = lambda: '/bin/bash:11:/lib/libc.so+123:/bin/bash+DEAD'
+        self.assertEqual(self.crashes.get_comment_url(a, self.crashes.upload(a)),
+            'http://bash.bugs.example.com/5')
+
+        s = apport.Report()
+        s['SourcePackage'] = 'bash'
+        s['Package'] = 'bash 5'
+        s.crash_signature = lambda: '/bin/bash:11:__getch:read:main'
+        s.crash_signature_addresses = lambda: '/bin/bash:11:/lib/libc.so+BEEF:/lib/libc.so+123:/bin/bash+DEAD'
+        self.assertEqual(self.crashes.get_comment_url(s, self.crashes.upload(s)),
+            'http://bash.bugs.example.com/6')
+
+        # same addr sig as a, same symbolic sig as s
+        b = apport.Report()
+        b['SourcePackage'] = 'bash'
+        b['Package'] = 'bash 5'
+        b.crash_signature = lambda: '/bin/bash:11:__getch:read:main'
+        b.crash_signature_addresses = lambda: '/bin/bash:11:/lib/libc.so+123:/bin/bash+DEAD'
+        self.assertEqual(self.crashes.get_comment_url(b, self.crashes.upload(b)),
+            'http://bash.bugs.example.com/7')
+
+        self.crashes.init_duplicate_db(':memory:')
+        self.assertEqual(self.crashes.check_duplicate(5, a), None)
+
+        # a and s have slightly different sigs -> no dupe
+        self.assertEqual(self.crashes.check_duplicate(6, s), None)
+
+        # now throw the interesting b at it
+        self.assertEqual(self.crashes.check_duplicate(7, b), (5, None))
+        
+        # s and b should now be duplicates of a
+        self.assertEqual(self.crashes.duplicate_of(5), None)
+        self.assertEqual(self.crashes.duplicate_of(6), 5)
+        self.assertEqual(self.crashes.duplicate_of(7), 5)
+
+        # sig DB should only have a now
+        self.assertEqual(self.crashes._duplicate_db_dump(), {'/bin/bash:11:read:main': (5, None)})
+
+        # addr DB should have both possible patterns on a
+        self.assertEqual(self.crashes._duplicate_search_address_signature(b.crash_signature_addresses()), 5)
+        self.assertEqual(self.crashes._duplicate_search_address_signature(s.crash_signature_addresses()), 5)
+
     def test_known_address_sig(self):
         '''known() for address signatures'''
 

@@ -19,6 +19,13 @@ Bug fixes:
    job at disambiguating e. g. different ImportError crashes. (LP: #920403)
  - Make "binary changed since the time of the crash" error message more
    comprehensible, thanks Paolo Rotolo. (LP: #942830)
+ - crashdb.py, check_duplicate(): It can happen that a bug gets identified as
+   being a duplicate of bug S by symbolic signatures and a duplicate of bug A
+   by address signatures. Empirical evidence shows that this is due to the
+   unavoidable jitter in stack traces (A and S not being identified as
+   duplicates as their signatures differ slightly) and not a logic error. So
+   instead of erroring out, duplicate all three bugs and keep the lowest number
+   as the master ID. (LP: #943117)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

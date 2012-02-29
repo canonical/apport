@@ -136,7 +136,6 @@ class CrashDatabase:
 
         self._mark_dup_checked(id, report)
 
-        addr_sig = report.crash_signature_addresses()
         if 'DuplicateSignature' in report:
             sig = report['DuplicateSignature']
         else:
@@ -152,40 +151,60 @@ class CrashDatabase:
                     self._duplicate_db_sync_status(ex_id)
                 existing = self._duplicate_search_signature(sig, id)
 
-        if not existing:
-            # fall back to address signature
-            if addr_sig:
-                existing = self._duplicate_search_address_signature(addr_sig)
-                # make compatible to _duplicate_search_signature() result format
-                if existing:
-                    existing = [(existing, None)]
-                else:
-                    existing = []
-
         try:
             report_package_version = report['Package'].split()[1]
         except (KeyError, IndexError):
             report_package_version = None
 
-        # search the newest fixed id or an unfixed id to check whether there is
-        # a regression (crash happening on a later version than the latest
-        # fixed one)
+        # check the existing IDs whether there is one that is unfixed or not
+        # older than the report's package version; if so, we have a duplicate.
+        master_id = None
+        master_ver = None
         for (ex_id, ex_ver) in existing:
             if not ex_ver or \
                not report_package_version or \
                 apport.packaging.compare_versions(report_package_version, ex_ver) < 0:
-                if addr_sig:
-                    self._duplicate_db_add_address_signature(addr_sig, ex_id)
-                self.close_duplicate(report, id, ex_id)
-                return (ex_id, ex_ver)
+                master_id = ex_id
+                master_ver = ex_ver
+                break
+        else:
+            # if we did not find a new enough open master report,
+            # we have a regression of the latest fix. Mark it so, and create a
+            # new unfixed ID for it later on
+            if existing:
+                self.mark_regression(id, existing[-1][0])
 
-        # if the version comparison did not find a match, but we have a
-        # existing reports with the same signature, mark it as a regression of
-        # the latest fix, but still create a new unfixed ID for it
-        if existing:
-            self.mark_regression(id, existing[-1][0])
+        # now query address signatures, they might turn up another duplicate
+        # (not necessarily the same, due to Stacktraces sometimes being
+        # slightly different)
+        addr_sig = report.crash_signature_addresses()
+        if addr_sig:
+            addr_match = self._duplicate_search_address_signature(addr_sig)
+            if addr_match and addr_match != master_id:
+                if master_id is None:
+                    # we have a duplicate only identified by address sig, close it
+                    master_id = addr_match
+                else:
+                    # our bug is a dupe of two different masters, one from
+                    # symbolic, the other from addr matching (see LP#943117);
+                    # make them all duplicates of each other, using the lower
+                    # number as master
+                    if master_id < addr_match:
+                        self.close_duplicate(report, addr_match, master_id)
+                        self._duplicate_db_merge_id(addr_match, master_id)
+                    else:
+                        self.close_duplicate(report, master_id, addr_match)
+                        self._duplicate_db_merge_id(master_id, addr_match)
+                        master_id = addr_match
+                        master_ver = None # no version tracking for address signatures yet
 
-        # create a new record for the ID if we don't have one already
+        if master_id is not None:
+            if addr_sig:
+                self._duplicate_db_add_address_signature(addr_sig, master_id)
+            self.close_duplicate(report, id, master_id)
+            return (master_id, master_ver)
+
+        # no duplicate detected; create a new record for the ID if we don't have one already
         if sig:
             cur = self.duplicate_db.cursor()
             cur.execute('SELECT count(*) FROM crashes WHERE crash_id == ?', [id])
@@ -534,6 +553,20 @@ class CrashDatabase:
             cur = self.duplicate_db.cursor()
             cur.execute('INSERT INTO address_signatures VALUES (?, ?)', (_u(sig), id))
             self.duplicate_db.commit()
+
+    def _duplicate_db_merge_id(self, dup, master):
+        '''Merge two crash IDs.
+
+        This is necessary when having to mark a bug as a duplicate if it
+        already is in the duplicate DB.
+        '''
+        assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
+
+        cur = self.duplicate_db.cursor()
+        cur.execute('DELETE FROM crashes WHERE crash_id = ?', [dup])
+        cur.execute('UPDATE address_signatures SET crash_id = ? WHERE crash_id = ?',
+            [master, dup])
+        self.duplicate_db.commit()
 
     @classmethod
     def duplicate_sig_hash(klass, sig):
