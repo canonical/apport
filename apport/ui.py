@@ -837,7 +837,7 @@ class UserInterface:
             if orig_time != cur_time:
                 self.report['UnreportableReason'] = (
                     _('The problem happened with the program %s which changed '
-                      'since then.') % self.report['ExecutablePath'])
+                      'since the crash occurred.') % self.report['ExecutablePath'])
                 return
 
         if not self.cur_package and 'ExecutablePath' not in self.report \

@@ -17,6 +17,8 @@ Bug fixes:
    signatures that happen outside of function/method calls. Fall back to the
    file/line number as a frame description instead. This will do a much better
    job at disambiguating e. g. different ImportError crashes. (LP: #920403)
+ - Make "binary changed since the time of the crash" error message more
+   comprehensible, thanks Paolo Rotolo. (LP: #942830)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when
