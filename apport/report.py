@@ -181,10 +181,14 @@ class Report(problem_report.ProblemReport):
         mod = packaging.get_modified_files(package)
         if mod:
             suffix += ' [modified: %s]' % ' '.join(mod)
-        if not packaging.is_distro_package(package):
-            origin = packaging.get_package_origin(package)
-            if origin:
-                suffix += ' [origin: %s]' % origin
+        try:
+            if not packaging.is_distro_package(package):
+                origin = packaging.get_package_origin(package)
+                if origin:
+                    suffix += ' [origin: %s]' % origin
+        except ValueError:
+            # no-op for nonexisting packages
+            pass
 
         return suffix
 
