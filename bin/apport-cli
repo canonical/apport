@@ -4,7 +4,7 @@
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Michael Hofmann <mh21@piware.de>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -232,7 +232,7 @@ class CLIUserInterface(apport.ui.UserInterface):
                 raise
         self.in_update_view = False
     def ui_present_report_details(self, allowed_to_report=True):
-        dialog = CLIDialog (_('Send problem report to the developers?'), 
+        dialog = CLIDialog (_('Send problem report to the developers?'),
                 _('After the problem report has been sent, please fill out the form in the\n'
                   'automatically opened web browser.'))
 
@@ -247,7 +247,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         view = dialog.addbutton(_('&View report'))
         save = dialog.addbutton(_('&Keep report file for sending later or copying to somewhere else'))
         ignore = dialog.addbutton(_('Cancel and &ignore future crashes of this program version'))
-        
+
         dialog.addbutton(_('&Cancel'))
 
         import time

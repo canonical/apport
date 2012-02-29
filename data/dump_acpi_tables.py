@@ -15,7 +15,7 @@ def dump_acpi_table(filename, tablename, out):
             if (n & 15) == 0:
                 hex_str = '  %4.4x: ' % n
                 ascii_str=''
-                
+
             hex_str = hex_str + '%2.2x ' % val
 
             if (val < 32) or (val > 126):
@@ -34,7 +34,7 @@ def dump_acpi_table(filename, tablename, out):
             out.write('%s %s\n' % (hex_str, ascii_str))
         f.close()
     out.write('\n')
-    
+
 def dump_acpi_tables(path, out):
     '''Dump ACPI tables'''
 

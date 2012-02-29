@@ -340,7 +340,7 @@ bo/gu/s                                                 na/mypackage
 
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
-        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')), 
+        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')),
                 ['sources.list'])
 
         # caches packages
@@ -418,7 +418,7 @@ bo/gu/s                                                 na/mypackage
 
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
-        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')), 
+        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')),
                 ['sources.list'])
 
         # no cache

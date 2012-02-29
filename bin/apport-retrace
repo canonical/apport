@@ -99,7 +99,7 @@ def getch():
 def confirm_traces(report):
     '''Display the retraced stack traces and ask the user whether or not to
     upload them to the crash database.
-    
+
     Return True if the user agrees.'''
 
     print_traces(report)
@@ -115,7 +115,7 @@ def confirm_traces(report):
 def find_file_dir(name, dir, limit=None):
     '''Return a path list of all files with given name which are in or below
     dir.
-    
+
     If limit is not None, the search will be stopped after finding the given
     number of hits.'''
 
@@ -202,7 +202,7 @@ def needed_packages(report):
         pkgs[pkg] = version
 
     return [(p, v) for (p, v) in pkgs.items()]
-    
+
 def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     '''Determine necessary runtime packages for given report.
 
@@ -289,8 +289,8 @@ elif reportfile.isdigit():
         # an informative message and exit cleanly to not break crash-digger
         if options.auth and not options.output and not options.stdout:
             apport.error('Broken report: %s, closing as invalid', str(e))
-            crashdb.mark_retrace_failed(reportfile, '''Thank you for your report! 
-            
+            crashdb.mark_retrace_failed(reportfile, '''Thank you for your report!
+
 However, processing it in order to get sufficient information for the
 developers failed, since the report is ill-formed. Perhaps the report data got
 modified?
@@ -308,7 +308,7 @@ Thank you for your understanding, and sorry for the inconvenience!
     crashid = reportfile
     reportfile = None
 else:
-    apport.fatal('"%s" is neither an existing report file nor a crash ID', 
+    apport.fatal('"%s" is neither an existing report file nor a crash ID',
             reportfile)
 
 if options.core_file:
@@ -453,7 +453,7 @@ if modified:
 
                 if not report.has_useful_stacktrace():
                     if outdated_msg:
-                        invalid_msg = '''Thank you for your report! 
+                        invalid_msg = '''Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed (it does not generate a useful symbolic stack trace). This

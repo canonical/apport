@@ -4,7 +4,7 @@
 
 # Copyright (C) 2006 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -32,7 +32,7 @@ class CompressedValue:
 
     def __init__(self, value=None, name=None):
         '''Initialize an empty CompressedValue object with an optional name.'''
-        
+
         self.gzipvalue = None
         self.name = name
         # By default, compressed values are in gzip format. Earlier versions of
@@ -107,7 +107,7 @@ class ProblemReport(UserDict):
 
     def load(self, file, binary=True):
         '''Initialize problem report from a file-like object.
-        
+
         If binary is False, binary data is not loaded; the dictionary key is
         created, but its value will be an empty string. If it is true, it is
         transparently uncompressed and available as dictionary string values.
@@ -137,13 +137,13 @@ class ProblemReport(UserDict):
                         if binary == 'compressed':
                             # check gzip header; if absent, we have legacy zlib
                             # data
-                            if value.gzipvalue == '' and not l.startswith('\037\213\010'): 
+                            if value.gzipvalue == '' and not l.startswith('\037\213\010'):
                                 value.legacy_zlib = True
                             value.gzipvalue += l
                         else:
                             # lazy initialization of bd
                             # skip gzip header, if present
-                            if l.startswith('\037\213\010'): 
+                            if l.startswith('\037\213\010'):
                                 bd = zlib.decompressobj(-zlib.MAX_WBITS)
                                 value = bd.decompress(self._strip_gzip_header(l))
                             else:
@@ -184,7 +184,7 @@ class ProblemReport(UserDict):
 
     def has_removed_fields(self):
         '''Check if the report has any keys which were not loaded.
-        
+
         This could happen when using binary=False in load().
         '''
         return ('' in self.itervalues())

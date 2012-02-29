@@ -6,7 +6,7 @@ implementation (like GTK, Qt, or CLI).
 
 # Copyright (C) 2007 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -30,7 +30,7 @@ PF_KTHREAD = 0x200000
 
 def excstr(exception):
     '''Return exception message as unicode.'''
-    
+
     return str(exception).decode(locale.getpreferredencoding(), 'replace')
 
 def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
@@ -164,9 +164,9 @@ class UserInterface:
 
     def run_crashes(self):
         '''Present all currently pending crash reports.
-        
+
         Ask the user what to do about them, and offer to file bugs for them.
-        
+
         Return True if at least one crash report was processed, False
         otherwise.
         '''
@@ -226,7 +226,7 @@ class UserInterface:
 
         If confirm is True, ask the user what to do about it, and offer to file
         a bug for it.
-        
+
         If confirm is False, the user will not be asked, and the crash is
         reported right away.
         '''
@@ -325,7 +325,7 @@ class UserInterface:
             if self.run_symptoms():
                 return True
             else:
-                self.ui_error_message(_('No package specified'), 
+                self.ui_error_message(_('No package specified'),
                     _('You need to specify a package or a PID. See --help for more information.'))
             return False
 
@@ -351,7 +351,7 @@ class UserInterface:
                 if e.errno == errno.ENOENT:
                     return False
                 elif e.errno == errno.EACCES:
-                    self.ui_error_message(_('Permission denied'), 
+                    self.ui_error_message(_('Permission denied'),
                         _('The specified process does not belong to you. Please run this program as the process owner or as root.'))
                     return False
                 else:
@@ -372,10 +372,10 @@ class UserInterface:
         except ValueError as e:
             if str(e) == 'package does not exist':
                 if not self.cur_package:
-                    self.ui_error_message(_('Invalid problem report'), 
+                    self.ui_error_message(_('Invalid problem report'),
                         _('Symptom script %s did not determine an affected package') % symptom_script)
                 else:
-                    self.ui_error_message(_('Invalid problem report'), 
+                    self.ui_error_message(_('Invalid problem report'),
                         _('Package %s does not exist') % self.cur_package)
                 return False
             else:
@@ -462,7 +462,7 @@ class UserInterface:
             info_collected = True
 
         if not info_collected:
-            self.ui_info_message(_('Updating problem report'), 
+            self.ui_info_message(_('Updating problem report'),
                     _('No additional information collected.'))
             return False
 
@@ -479,7 +479,7 @@ class UserInterface:
             pass
 
         if len(self.report) == 0:
-            self.ui_info_message(_('Updating problem report'), 
+            self.ui_info_message(_('Updating problem report'),
                     _('No additional information collected.'))
             return False
 
@@ -496,7 +496,7 @@ class UserInterface:
 
     def run_symptoms(self):
         '''Report a bug from a list of available symptoms.
-        
+
         Return False if no symptoms are available.
         '''
         scripts = glob.glob(os.path.join(symptom_script_dir, '*.py'))
@@ -530,7 +530,7 @@ class UserInterface:
         symptom_names.append(None)
         symptom_descriptions.append('Other problem')
 
-        ch = self.ui_question_choice(_('What kind of problem do you want to report?'), 
+        ch = self.ui_question_choice(_('What kind of problem do you want to report?'),
                 symptom_descriptions, False)
 
         if ch != None:
@@ -555,7 +555,7 @@ class UserInterface:
 
     def run_argv(self):
         '''Call appopriate run_* method according to command line arguments.
-        
+
         Return True if at least one report has been processed, and False
         otherwise.
         '''
@@ -585,12 +585,12 @@ class UserInterface:
                     try:
                         self.options.pid = int(out.split()[-1])
                     except ValueError:
-                        self.ui_error_message(_('Cannot create report'), 
+                        self.ui_error_message(_('Cannot create report'),
                                 _('xprop failed to determine process ID of the window'))
                         return True
                     return self.run_report_bug()
                 else:
-                    self.ui_error_message(_('Cannot create report'), 
+                    self.ui_error_message(_('Cannot create report'),
                             _('xprop failed to determine process ID of the window') + '\n\n' + err)
                     return True
         else:
@@ -882,13 +882,13 @@ class UserInterface:
                 icthread.exc_raise()
 
             if 'CrashDB' in self.report:
-                self.crashdb = get_crashdb(None, self.report['CrashDB']) 
+                self.crashdb = get_crashdb(None, self.report['CrashDB'])
 
             # check bug patterns
             if (self.report['ProblemType'] == 'KernelCrash'
                 or self.report['ProblemType'] == 'KernelOops'
                 or 'Package' in self.report):
-                url = self.crashdb.get_bugpattern_baseurl() 
+                url = self.crashdb.get_bugpattern_baseurl()
                 patterns = self.report.search_bug_patterns(url)
                 if patterns:
                     self.report['KnownReport'] = patterns
@@ -1093,7 +1093,7 @@ class UserInterface:
 
     def get_desktop_entry(self):
         '''Return a matching xdg.DesktopEntry for the current report.
-        
+
         Return None if report cannot be associated to a .desktop file.
         '''
         if 'DesktopFile' in self.report and os.path.exists(self.report['DesktopFile']):
@@ -1147,7 +1147,7 @@ might be helpful for the developers.'))
 
     def ui_present_report_details(self, allowed_to_report=True):
         '''Show details of the bug report.
-        
+
         Return the action and options as a dictionary:
 
         - Valid keys are: report the crash ('report'), restart
@@ -1168,7 +1168,7 @@ might be helpful for the developers.'))
 
     def ui_start_info_collection_progress(self):
         '''Open a indefinite progress bar for data collection.
-        
+
         This tells the user to wait while debug information is being
         collected.
         '''
@@ -1210,7 +1210,7 @@ might be helpful for the developers.'))
 
     def ui_shutdown(self):
         '''Called right before terminating the program.
-        
+
         This can be used for for cleaning up.
         '''
         pass
@@ -1219,8 +1219,8 @@ might be helpful for the developers.'))
         '''Run command in, or check for a terminal window.
 
         If command is given, run command in a terminal window; raise an exception
-        if terminal cannot be opened. 
-            
+        if terminal cannot be opened.
+
         If command is None, merely check if a terminal application is available
         and can be launched.
         '''

@@ -54,7 +54,7 @@ def get_dyn_name():
     return 'on_the' + 'fly'
 
 databases = {
-    'testsuite': { 
+    'testsuite': {
         'impl': 'memory',
         'dyn_option': get_dyn(),
     },
@@ -171,7 +171,7 @@ databases = {
         self.crashes.reports[3]['fixed_version'] = '4.1'
 
         self.crashes.mark_regression(4, 3)
-        self.assertEqual(self.crashes.reports[4]['comment'], 
+        self.assertEqual(self.crashes.reports[4]['comment'],
             'regression, already fixed in #3')
         self.assertEqual(self.crashes.duplicate_of(3), None)
         self.assertEqual(self.crashes.duplicate_of(4), None)
@@ -186,12 +186,12 @@ databases = {
         self.crashes.init_duplicate_db(':memory:')
         self.assertEqual(self.crashes.check_duplicate(0), None)
 
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None)})
 
         self.crashes.duplicate_db_fixed(0, '42')
 
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, '42')})
 
     def test_duplicate_db_remove(self):
@@ -209,7 +209,7 @@ databases = {
         self.crashes.duplicate_db_remove(99)
 
         # nevertheless, this should not change the DB
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (2, None)})
 
@@ -217,7 +217,7 @@ databases = {
         self.crashes.duplicate_db_remove(2)
 
         # check DB consistency
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None)})
 
     def test_check_duplicate(self):
@@ -238,7 +238,7 @@ databases = {
         # can't be known before publishing DB
         self.assertEqual(self.crashes.known(self.crashes.download(0)), None)
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(self.crashes.download(0)), 
+        self.assertEqual(self.crashes.known(self.crashes.download(0)),
                 'http://foo.bugs.example.com/0')
 
         # bug is not a duplicate of itself, when reprocessed
@@ -246,7 +246,7 @@ databases = {
 
         # ID#1 -> dup of #0
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(self.crashes.download(1)), 
+        self.assertEqual(self.crashes.known(self.crashes.download(1)),
                 'http://foo.bugs.example.com/0')
         self.assertEqual(self.crashes.check_duplicate(1), (0, None))
 
@@ -255,7 +255,7 @@ databases = {
         self.assertEqual(self.crashes.known(self.crashes.download(2)), None)
         self.assertEqual(self.crashes.check_duplicate(2), None)
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(self.crashes.download(2)), 
+        self.assertEqual(self.crashes.known(self.crashes.download(2)),
                 'http://bar.bugs.example.com/2')
 
         # ID#3: no dup, master of ID#4
@@ -267,7 +267,7 @@ databases = {
         self.assertFalse('comment' in self.crashes.reports[3])
 
         # check DB consistency; #1 and #4 are dupes and do not appear
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (2, None),
              self.crashes.download(3).crash_signature(): (3, None)})
@@ -283,7 +283,7 @@ databases = {
 
         # check DB consistency; ID#3 should now be updated to be fixed in 4.1,
         # and as 4 is a regression, appear as a new crash
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (2, None),
              self.crashes.download(3).crash_signature(): (3, '4.1'),
@@ -310,7 +310,7 @@ databases = {
 
         # check DB consistency; #5 and #6 are dupes of #3 and #4, so no new
         # entries
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (2, None),
              self.crashes.download(3).crash_signature(): (3, '4.1'),
@@ -329,7 +329,7 @@ databases = {
         self.assertFalse('comment' in self.crashes.reports[6])
 
         # final consistency check
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (2, None),
              self.crashes.download(3).crash_signature(): (3, ''),
@@ -378,8 +378,8 @@ databases = {
 
         self.crashes.download(1)['DuplicateSignature'] = 'CodeRed'
         self.assertEqual(self.crashes.check_duplicate(1), None)
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
-                {'Code42Blue': (5, None), 'CodeRed': (1, None), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
+                {'Code42Blue': (5, None), 'CodeRed': (1, None),
                  self.crashes.download(0).crash_signature(): (0, None)})
 
     def test_check_duplicate_report_arg(self):
@@ -426,7 +426,7 @@ databases = {
         r_id = self.crashes.upload(r)
         self.assertEqual(self.crashes.check_duplicate(r_id), None)
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(r), 
+        self.assertEqual(self.crashes.known(r),
                 self.crashes.get_comment_url(r, r_id))
 
         # another report with same address signature
@@ -454,7 +454,7 @@ databases = {
 
         # DB knows about this already
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(r2), 
+        self.assertEqual(self.crashes.known(r2),
                 self.crashes.get_comment_url(r, r_id))
 
         # if it gets uploaded anyway, duplicate it properly
@@ -499,17 +499,17 @@ databases = {
 
         # now both r and r3 address sigs should be known as r_id
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(r), 
+        self.assertEqual(self.crashes.known(r),
                 self.crashes.get_comment_url(r, r_id))
-        self.assertEqual(self.crashes.known(r3), 
+        self.assertEqual(self.crashes.known(r3),
                 self.crashes.get_comment_url(r3, r_id))
 
         # changing ID also works on address signatures
         self.crashes.duplicate_db_change_master_id(r_id, r3_id)
         self.crashes.duplicate_db_publish(self.dupdb_dir)
-        self.assertEqual(self.crashes.known(r), 
+        self.assertEqual(self.crashes.known(r),
                 self.crashes.get_comment_url(r, r3_id))
-        self.assertEqual(self.crashes.known(r3), 
+        self.assertEqual(self.crashes.known(r3),
                 self.crashes.get_comment_url(r3, r3_id))
 
         # removing an ID also works for address signatures
@@ -532,7 +532,7 @@ databases = {
         self.assertEqual(self.crashes.check_duplicate(2), None)
 
         # check DB consistency
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (2, None)})
 
@@ -540,7 +540,7 @@ databases = {
         self.crashes.duplicate_db_change_master_id(5, 99)
 
         # nevertheless, this should not change the DB
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (2, None)})
 
@@ -548,7 +548,7 @@ databases = {
         self.crashes.duplicate_db_change_master_id(2, 99)
 
         # check DB consistency
-        self.assertEqual(self.crashes._duplicate_db_dump(), 
+        self.assertEqual(self.crashes._duplicate_db_dump(),
             {self.crashes.download(0).crash_signature(): (0, None),
              self.crashes.download(2).crash_signature(): (99, None)})
 
@@ -560,10 +560,10 @@ databases = {
             os.close(fd)
             self.crashes.init_duplicate_db(db)
             self.assertEqual(self.crashes.check_duplicate(0), None)
-            self.assertEqual(self.crashes._duplicate_db_dump(), 
+            self.assertEqual(self.crashes._duplicate_db_dump(),
                 {self.crashes.download(0).crash_signature(): (0, None)})
             self.crashes.duplicate_db_fixed(0, '42')
-            self.assertEqual(self.crashes._duplicate_db_dump(), 
+            self.assertEqual(self.crashes._duplicate_db_dump(),
                 {self.crashes.download(0).crash_signature(): (0, '42')})
 
             del self.crashes

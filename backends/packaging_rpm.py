@@ -7,7 +7,7 @@ distributions.
 # Copyright (C) 2007 Red Hat Inc.
 # Copyright (C) 2008 Nikolay Derkach
 # Author: Will Woods <wwoods@redhat.com>, Nikolay Derkach <nderkach@gmail.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -17,9 +17,9 @@ distributions.
 # N.B. There's some distro-specific bits in here (e.g. is_distro_package()).
 # So this is actually an abstract base class (or a template, if you like) for
 # RPM-based distributions.
-# A proper implementation needs to (at least) set official_keylist to a list 
+# A proper implementation needs to (at least) set official_keylist to a list
 # of GPG keyids used by official packages. You might have to extend
-# is_distro_package() as well, if you don't sign all your official packages 
+# is_distro_package() as well, if you don't sign all your official packages
 # (cough cough Fedora rawhide cough)
 
 # It'd be convenient to use rpmUtils from yum, but I'm trying to keep this
@@ -32,7 +32,7 @@ class RPMPackageInfo:
 
     # Empty keylist. Should contain a list of key ids (8 lowercase hex digits).
     # e.g. official_keylist = ('30c9ecf8','4f2a6fd2','897da07a','1ac70ce6')
-    official_keylist = () 
+    official_keylist = ()
 
     def __init__(self):
         self.ts = rpm.TransactionSet() # connect to the rpmdb
@@ -47,9 +47,9 @@ class RPMPackageInfo:
         if not hdr['e']:
             return hdr['v'] + '-' + hdr['r']
         if not hdr['v'] or not hdr['r']:
-            return None       
+            return None
         else:
-            return hdr['e'] + ':' + hdr['v'] + '-' + hdr['r']     
+            return hdr['e'] + ':' + hdr['v'] + '-' + hdr['r']
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.'''
@@ -78,7 +78,7 @@ class RPMPackageInfo:
         '''Return the source package name for a package.'''
         hdr = self._get_header(package)
         return hdr['sourcerpm']
-        
+
     def get_architecture(self, package):
         '''Return the architecture of a package.
 
@@ -87,7 +87,7 @@ class RPMPackageInfo:
         # Yeah, this is kind of redundant, as package is ENVRA, but I want
         # to do this the right way (in case we change what 'package' is)
         hdr = self._get_header(package)
-        return hdr['arch'] 
+        return hdr['arch']
 
     def get_files(self, package):
         '''Return list of files shipped by a package.'''
@@ -100,7 +100,7 @@ class RPMPackageInfo:
 
     def get_modified_files(self, package):
         '''Return list of all modified files of a package.'''
-        hdr = self._get_header(package)   
+        hdr = self._get_header(package)
 
         files  = hdr['filenames']
         mtimes = hdr['filemtimes']
@@ -126,10 +126,10 @@ class RPMPackageInfo:
     def get_file_package(self, file):
         '''Return the package a file belongs to, or None if the file is not
         shipped by any package.
-        
+
         Under normal use, the 'file' argument will always be the executable
         that crashed.
-        '''  
+        '''
         # The policy for handling files which belong to multiple packages depends on the distro
         raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')
 
@@ -139,7 +139,7 @@ class RPMPackageInfo:
         rpmarch = subprocess.Popen(['rpm', '--eval', '%_target_cpu'],
                 stdout=subprocess.PIPE)
         arch = rpmarch.communicate()[0].strip()
-        return arch 
+        return arch
 
     def is_distro_package(self, package):
         '''Check if a package is a genuine distro package (True) or comes from
@@ -150,13 +150,13 @@ class RPMPackageInfo:
         hdr = self._get_header(package)
         if not hdr:
             return False
-        # Check the GPG sig and key ID to see if this package was signed 
+        # Check the GPG sig and key ID to see if this package was signed
         # with an official key.
         if hdr['siggpg']:
             # Package is signed
             keyid = hdr['siggpg'][13:17].encode('hex')
             if keyid in self.official_keylist:
-                return True      
+                return True
         return False
 
     def set_mirror(self, url):
@@ -217,7 +217,7 @@ class RPMPackageInfo:
         '''Get the RPM header that matches the given ENVRA.'''
 
         querystr = envra
-        qlen = len(envra) 
+        qlen = len(envra)
         while qlen > 0:
             mi = impl.ts.dbMatch('name', querystr)
             hdrs = [m for m in mi]
@@ -228,7 +228,7 @@ class RPMPackageInfo:
                 # who cares which one you get?
                 h = hdrs[0]
                 break
-                
+
             # remove the last char of querystr and retry the search
             querystr = querystr[0:len(querystr)-1]
             qlen = qlen - 1
@@ -245,12 +245,12 @@ class RPMPackageInfo:
         else:
             envra = nvra
         return envra
-    
+
     def _checkmd5(self,filename,filemd5):
         '''Internal function to check a file's md5sum'''
         m = hashlib.md5()
         f = open(filename)
-        data = f.read() 
+        data = f.read()
         f.close()
         m.update(data)
         return (filemd5 == m.hexdigest())

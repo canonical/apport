@@ -3,7 +3,7 @@
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Authors: Martin Pitt <martin.pitt@ubuntu.com> and Markus Korn <thekorn@gmx.de>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -35,18 +35,18 @@ def filter_filename(attachments):
         name = f.filename
         if name.endswith('.txt') or name.endswith('.gz'):
             yield f
-            
+
 def id_set(tasks):
     # same as set(int(i.bug.id) for i in tasks) but faster
     return set(int(i.self_link.split('/').pop()) for i in tasks)
-    
+
 
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Launchpad implementation of crash database interface.'''
 
     def __init__(self, auth, options):
-        '''Initialize Launchpad crash database. 
-        
+        '''Initialize Launchpad crash database.
+
         You need to specify a launchpadlib-style credentials file to
         access launchpad. If you supply None, it will use
         default_credentials_path (~/.cache/apport/launchpad.credentials).
@@ -91,7 +91,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.__launchpad = None
         self.__lp_distro = None
         self.__lpcache = os.getenv('APPORT_LAUNCHPAD_CACHE', options.get('cache_dir'))
-        
+
     @property
     def launchpad(self):
         '''Return Launchpad instance.'''
@@ -132,7 +132,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             if t.bug_target_name.lower() == self.distro or \
                     re.match('^.+\(%s.*\)$' % self.distro, t.bug_target_name.lower()):
                 yield t
-    
+
     @property
     def lp_distro(self):
         if not self.distro:
@@ -142,10 +142,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return self.__lp_distro
 
     def upload(self, report, progress_callback = None):
-        '''Upload given problem report return a handle for it. 
-        
-        This should happen noninteractively. 
-        
+        '''Upload given problem report return a handle for it.
+
+        This should happen noninteractively.
+
         If the implementation supports it, and a function progress_callback is
         passed, that is called repeatedly with two arguments: the number of
         bytes already sent, and the total number of bytes to send. This can be
@@ -182,7 +182,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             hdr['HWDB-Submission'] = report['CheckboxSubmission']
 
         # order in which keys should appear in the temporary file
-        order = [ 'ProblemType', 'DistroRelease', 'Package', 'Regression', 'Reproducible', 
+        order = [ 'ProblemType', 'DistroRelease', 'Package', 'Regression', 'Reproducible',
         'TestedUpstream', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules' ]
 
         # write MIME/Multipart version into temporary file
@@ -264,7 +264,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         assert m, 'bug description must contain standard apport format data'
 
         description = m.group(1).encode('UTF-8').replace('\xc2\xa0', ' ').replace('\r\n', '\n')
-        
+
         if '\n\n' in description:
             # this often happens, remove all empty lines between top and
             # 'Uname'
@@ -338,8 +338,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This creates a text comment with the "short" data (see
         ProblemReport.write_mime()), and creates attachments for all the
-        bulk/binary data. 
-        
+        bulk/binary data.
+
         If change_description is True, and the crash db implementation supports
         it, the short data will be put into the description instead (like in a
         new bug).
@@ -387,13 +387,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bug.tags = x
             bug.lp_save()
             bug = self.launchpad.bugs[id] # fresh bug object, LP#336866 workaround
-        
+
         # short text data
         if change_description:
             bug.description = bug.description + '\n--- \n' + part.get_payload(decode=True).decode('UTF-8', 'replace')
             bug.lp_save()
         else:
-            bug.newMessage(content=part.get_payload(decode=True), 
+            bug.newMessage(content=part.get_payload(decode=True),
                 subject=comment)
 
         # other parts are the attachments:
@@ -407,7 +407,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def update_traces(self, id, report, comment=''):
         '''Update the given report ID for retracing results.
-        
+
         This updates Stacktrace, ThreadStacktrace, StacktraceTop,
         and StacktraceSource. You can also supply an additional comment.
         '''
@@ -527,7 +527,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         This is mainly useful for crashes of scripting languages such as
         Python, since they do not need to be retraced. It should not return
         bugs that are covered by get_unretraced().'''
-        
+
         try:
             bugs = self.lp_distro.searchTasks(tags='need-duplicate-check', created_since='2011-08-01')
             return id_set(bugs)
@@ -539,11 +539,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return an ID set of all crashes which are not yet fixed.
 
         The list must not contain bugs which were rejected or duplicate.
-        
+
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
-        
+
         bugs = self.lp_distro.searchTasks(tags='apport-crash')
         return id_set(bugs)
 
@@ -551,7 +551,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return the version of given source package in the latest release of
         given distribution.
 
-        If 'distro' is None, we will look for a launchpad project . 
+        If 'distro' is None, we will look for a launchpad project .
         '''
         sources = self.lp_distro.main_archive.getPublishedSources(
             exact_match=True,
@@ -576,12 +576,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # do not do version tracking yet; for that, we need to get the current
         # distrorelease and the current package version in that distrorelease
         # (or, of course, proper version tracking in Launchpad itself)
-        
+
         try:
             b = self.launchpad.bugs[id]
         except KeyError:
             return 'invalid'
-            
+
         if b.duplicate_of:
             return 'invalid'
 
@@ -591,15 +591,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             distro_identifier = '(%s)' %self.distro.lower()
             fixed_tasks = filter(lambda task: task.status == 'Fix Released' and \
                     distro_identifier in task.bug_target_display_name.lower(), tasks)
-            
+
             if not fixed_tasks:
                 fixed_distro = filter(lambda task: task.status == 'Fix Released' and \
                         task.bug_target_name.lower() == self.distro.lower(), tasks)
                 if fixed_distro:
                     # fixed in distro inself (without source package)
                     return ''
-                
-            if len(fixed_tasks) > 1: 
+
+            if len(fixed_tasks) > 1:
                 apport.warning('There is more than one task fixed in %s %s, using first one to determine fixed version', self.distro, id)
                 return ''
 
@@ -644,7 +644,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def close_duplicate(self, report, id, master_id):
         '''Mark a crash id as duplicate of given master ID.
-        
+
         If master is None, id gets un-duplicated.
         '''
         bug = self.launchpad.bugs[id]
@@ -659,10 +659,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 master_id = master.id
                 if master.id == id:
                     # this happens if the bug was manually duped to a newer one
-                    apport.warning('Bug %i was manually marked as a dupe of newer bug %i, not closing as duplicate', 
+                    apport.warning('Bug %i was manually marked as a dupe of newer bug %i, not closing as duplicate',
                             id, master_id)
                     return
-            
+
             for a in bug.attachments:
                 if a.title in ('CoreDump.gz', 'Stacktrace.txt',
                     'ThreadStacktrace.txt', 'ProcMaps.txt', 'ProcStatus.txt',
@@ -735,7 +735,7 @@ Please continue to report any other bugs you may find.' % master_id,
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
-        
+
         bug = self.launchpad.bugs[id]
         bug.newMessage(content='This crash has the same stack trace characteristics as bug #%i. \
 However, the latter was already fixed in an earlier package version than the \
@@ -773,7 +773,7 @@ in a dependent package.' % master,
             task.lp_save()
             bug.newMessage(content=invalid_msg,
                     subject='Crash report cannot be processed')
-            
+
             for a in bug.attachments:
                 if a.title == 'CoreDump.gz':
                     try:
@@ -804,7 +804,7 @@ in a dependent package.' % master,
             x = bug.tags[:] # LP#254901 workaround
             x.remove('need-duplicate-check')
             bug.tags = x
-            bug.lp_save()        
+            bug.lp_save()
         self._subscribe_triaging_team(bug, report)
 
     def known(self, report):
@@ -870,7 +870,7 @@ in a dependent package.' % master,
 
         if 'DistroRelease' in report and report['DistroRelease'].split()[0] != 'Ubuntu':
             return # only Ubuntu bugs are filed private
-        
+
         #use a url hack here, it is faster
         person = '%s~ubuntu-crashes-universe' %self.launchpad._root_uri
         bug.subscribe(person=person)
@@ -909,7 +909,7 @@ class HTTPSProgressConnection(httplib.HTTPSConnection):
             sent += chunksize
             t2 = time.time()
 
-            # adjust chunksize so that it takes between .5 and 2 
+            # adjust chunksize so that it takes between .5 and 2
             # seconds to send a chunk
             if t2 - t1 < .5:
                 chunksize *= 2
@@ -1057,7 +1057,7 @@ and more
 
         def test_1_report_segv(self):
             '''upload() and get_comment_url() for SEGV crash
-            
+
             This needs to run first, since it sets segv_report.
             '''
             global segv_report
@@ -1072,7 +1072,7 @@ and more
 
         def test_1_report_python(self):
             '''upload() and get_comment_url() for Python crash
-            
+
             This needs to run early, since it sets python_report.
             '''
             r = apport.Report('Crash')
@@ -1085,7 +1085,7 @@ NameError: global name 'weird' is not defined'''
             r.add_package_info(self.test_package)
             r.add_os_info()
             r.add_user_info()
-            self.assertEqual(r.standard_title(), 
+            self.assertEqual(r.standard_title(),
                 "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
             handle = self.crashdb.upload(r)
@@ -1112,7 +1112,7 @@ NameError: global name 'weird' is not defined'''
                 self.ref_report.get('NonfreeKernelModules'))
             self.assertEqual(r.get('UserGroups'), self.ref_report.get('UserGroups'))
             tags = set(r['Tags'].split())
-            self.assertEqual(tags, set([self.crashdb.arch_tag, 'apport-crash', 
+            self.assertEqual(tags, set([self.crashdb.arch_tag, 'apport-crash',
                 apport.packaging.get_system_architecture()]))
 
             self.assertEqual(r['Signal'], '11')
@@ -1182,7 +1182,7 @@ NameError: global name 'weird' is not defined'''
             # as previous title had standard form, the top function gets
             # updated
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in read()')
-            
+
             # respects title amendments
             bug = self.crashdb.launchpad.bugs[segv_report]
             bug.title = 'crash crashed with SIGSEGV in f() on exit'
@@ -1462,7 +1462,7 @@ NameError: global name 'weird' is not defined'''
 
         def test_update_traces_invalid(self):
             '''updating an invalid crash
-            
+
             This simulates a race condition where a crash being processed gets
             invalidated by marking it as a duplicate.
             '''
@@ -1658,7 +1658,7 @@ NameError: global name 'weird' is not defined'''
 NameError: global name 'weird' is not defined'''
             r.add_os_info()
             r.add_user_info()
-            self.assertEqual(r.standard_title(), 
+            self.assertEqual(r.standard_title(),
                     "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
             # file it

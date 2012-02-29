@@ -2,7 +2,7 @@
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -15,12 +15,12 @@ import apport
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Simple implementation of crash database interface which keeps everything
     in memory.
-    
+
     This is mainly useful for testing and debugging.'''
 
     def __init__(self, auth_file, options):
         '''Initialize crash database connection.
-        
+
         This class does not support bug patterns and authentication.'''
 
         apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
@@ -34,7 +34,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def upload(self, report, progress_callback = None):
         '''Store the report and return a handle number (starting from 0).
-        
+
         This does not support (nor need) progress callbacks.'''
 
         self.reports.append({'report': report, 'fixed_version': None, 'dup_of':
@@ -97,8 +97,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         This creates a text comment with the "short" data (see
         ProblemReport.write_mime()), and creates attachments for all the
-        bulk/binary data. 
-        
+        bulk/binary data.
+
         If change_description is True, and the crash db implementation supports
         it, the short data will be put into the description instead (like in a
         new bug).
@@ -128,7 +128,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return an ID set of all crashes which are not yet fixed.
 
         The list must not contain bugs which were rejected or duplicate.
-        
+
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).'''
@@ -169,7 +169,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     def close_duplicate(self, report, id, master):
         '''Mark a crash id as duplicate of given master ID.
-        
+
         If master is None, id gets un-duplicated.
         '''
         self.reports[id]['dup_of'] = master

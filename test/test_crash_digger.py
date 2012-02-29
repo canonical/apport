@@ -3,7 +3,7 @@
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -20,7 +20,7 @@ class T(unittest.TestCase):
 
         crashdb_conf = os.path.join(self.workdir, 'crashdb.conf')
         open(crashdb_conf, 'w').write('''default = 'memory'
-databases = { 'memory': { 
+databases = { 'memory': {
     'impl': 'memory', 'distro': 'Testux', 'dummy_data': '1',
     'dupdb_url': '%s'}
 }''' % os.path.join(self.workdir, 'dupdb'))
@@ -47,7 +47,7 @@ echo "$@" >> %s''' % self.apport_retrace_log)
 
     def call(self, args):
         '''Call crash-digger with given arguments.
-        
+
         Return a pair (stdout, stderr).
         '''
         s = subprocess.Popen(['crash-digger', '--apport-retrace',

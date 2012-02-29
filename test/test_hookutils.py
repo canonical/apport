@@ -22,7 +22,7 @@ class T(unittest.TestCase):
                                              suffix='.ko')
             subprocess.call(['/usr/bin/as',asm.name,'-o',ko.name])
             return ko
-        
+
         good_ko = _build_ko('GPL')
         bad_ko  = _build_ko('BAD')
 
@@ -67,7 +67,7 @@ class T(unittest.TestCase):
         apport.hookutils.attach_dmesg(report)
         self.assertEqual(report['BootDmesg'][:50], 'existingboot')
         self.assertTrue(report['CurrentDmesg'].startswith(b'['))
-        
+
         report = {'BootDmesg': 'existingboot', 'CurrentDmesg': 'existingcurrent' }
 
         apport.hookutils.attach_dmesg(report)

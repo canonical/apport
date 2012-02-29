@@ -1,11 +1,11 @@
 '''Convenience functions for use in package hooks.'''
 
 # Copyright (C) 2008 - 2011 Canonical Ltd.
-# Authors: 
+# Authors:
 #   Matt Zimmerman <mdz@canonical.com>
 #   Brian Murray <brian@ubuntu.com>
 #   Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -41,7 +41,7 @@ except AttributeError:
 
 def path_to_key(path):
     '''Generate a valid report key name from a file path.
-        
+
     This will replace invalid punctuation symbols with valid ones.
     '''
     if sys.version[0] >= '3':
@@ -68,8 +68,8 @@ def attach_file_if_exists(report, path, key=None, overwrite=True):
         attach_file(report, path, key, overwrite)
 
 def read_file(path):
-    '''Return the contents of the specified path. 
-        
+    '''Return the contents of the specified path.
+
     Upon error, this will deliver a text representation of the error,
     instead of failing.
     '''
@@ -99,7 +99,7 @@ def attach_file(report, path, key=None, overwrite=True):
 
 def attach_conffiles(report, package, conffiles=None, ui=None):
     '''Attach information about any modified or deleted conffiles.
-    
+
     If conffiles is given, only this subset will be attached. If ui is given,
     ask whether the contents of the file may be added to the report; if this is
     denied, or there is no UI, just mark it as "modified" in the report.
@@ -282,7 +282,7 @@ def attach_alsa(report):
                     attach_file(report, path, key)
 
     report['AudioDevicesInUse'] = command_output(
-        ['fuser','-v'] + glob.glob('/dev/dsp*') 
+        ['fuser','-v'] + glob.glob('/dev/dsp*')
             + glob.glob('/dev/snd/*')
             + glob.glob('/dev/seq*') )
 
@@ -310,8 +310,8 @@ def command_available(command):
     return False
 
 def command_output(command, input = None, stderr = subprocess.STDOUT):
-    '''Try to execute given command (array) and return its stdout. 
-    
+    '''Try to execute given command (array) and return its stdout.
+
     In case of failure, a textual error gets returned. This function forces
     LC_MESSAGES to C, to avoid translated output in bug reports.
     '''
@@ -351,11 +351,11 @@ def _root_command_prefix():
     return prefix
 
 def root_command_output(command, input = None, stderr = subprocess.STDOUT):
-    '''Try to execute given command (array) as root and return its stdout. 
+    '''Try to execute given command (array) as root and return its stdout.
 
     This passes the command through gksu, kdesudo, or sudo, depending on the
     running desktop environment.
-    
+
     In case of failure, a textual error gets returned.
     '''
     assert type(command) == type([]), 'command must be a list'
@@ -429,7 +429,7 @@ def recent_logfile(logfile, pattern):
 
 def xsession_errors(pattern=None):
     '''Extract messages from ~/.xsession-errors.
-        
+
     By default this parses out glib-style warnings, errors, criticals etc. and
     X window errors.  You can specify a "re" object as pattern to customize the
     filtering.
@@ -531,7 +531,7 @@ def attach_gsettings_schema(report, schema):
         except ValueError:
             continue # invalid line
         defaults.setdefault(schema, {})[key] = value
-    
+
     gsettings = subprocess.Popen(['gsettings', 'list-recursively', schema],
             stdout=subprocess.PIPE)
     for l in gsettings.stdout:
@@ -570,9 +570,9 @@ def attach_wifi(report):
     '''Attach wireless (WiFi) network information to report.'''
 
     report['WifiSyslog'] = recent_syslog(re.compile(r'(NetworkManager|modem-manager|dhclient|kernel|wpa_supplicant)(\[\d+\])?:'))
-    report['IwConfig'] = re.sub('ESSID:(.*)', 'ESSID:<hidden>', 
-        re.sub('Encryption key:(.*)', 'Encryption key: <hidden>', 
-        re.sub('Access Point: (.*)', 'Access Point: <hidden>', 
+    report['IwConfig'] = re.sub('ESSID:(.*)', 'ESSID:<hidden>',
+        re.sub('Encryption key:(.*)', 'Encryption key: <hidden>',
+        re.sub('Access Point: (.*)', 'Access Point: <hidden>',
             command_output(['iwconfig']).decode('UTF-8', errors='ignore'))))
     report['RfKill'] = command_output(['rfkill', 'list'])
     report['CRDA'] = command_output(['iw', 'reg', 'get'])
@@ -639,7 +639,7 @@ def attach_related_packages(report, packages):
 
 def package_versions(*packages):
     '''Return a text listing of package names and versions.
-    
+
     Arguments may be package names or globs, e. g. "foo*"
     '''
     versions = []

@@ -4,7 +4,7 @@
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -292,7 +292,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
         if 'http://' in text or 'https://' in text:
             text = GLib.markup_escape_text(text)
-            text = re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)', 
+            text = re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)',
                     r'<a href="\1">\1</a>', text)
             # turn URLs into links
             md.set_markup(text)
@@ -330,7 +330,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         '''Set the progress bar in the debug data upload progress
         window to the given ratio (between 0 and 1, or None for indefinite
         progress).
-        
+
         This function is called every 100 ms.'''
 
         if progress:
@@ -355,7 +355,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w('window_information_collection').show()
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
-        
+
     @threaded_operation
     def ui_pulse_info_collection_progress(self):
         self.w('progressbar_information_collection').pulse()

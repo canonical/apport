@@ -61,7 +61,7 @@ maps = '''00110000-0026c000 r-xp 00000000 08:06 375131     /lib/tls/i686/cmov/li
 0026c000-0026d000 ---p 0015c000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
 0026d000-0026f000 r--p 0015c000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
 0026f000-00270000 rw-p 0015e000 08:06 375131     /lib/tls/i686/cmov/libc-2.9.so
-00270000-00273000 rw-p 00000000 00:00 0 
+00270000-00273000 rw-p 00000000 00:00 0
 002c1000-002e5000 r-xp 00000000 08:06 375135     /lib/tls/i686/cmov/libm-2.9.so
 002e5000-002e6000 r--p 00023000 08:06 375135     /lib/tls/i686/cmov/libm-2.9.so
 002e6000-002e7000 rw-p 00024000 08:06 375135     /lib/tls/i686/cmov/libm-2.9.so
@@ -75,7 +75,7 @@ maps = '''00110000-0026c000 r-xp 00000000 08:06 375131     /lib/tls/i686/cmov/li
 00bb6000-00bcb000 r-xp 00000000 08:06 375202     /lib/tls/i686/cmov/libpthread-2.9.so
 00bcb000-00bcc000 r--p 00014000 08:06 375202     /lib/tls/i686/cmov/libpthread-2.9.so
 00bcc000-00bcd000 rw-p 00015000 08:06 375202     /lib/tls/i686/cmov/libpthread-2.9.so
-00bcd000-00bcf000 rw-p 00000000 00:00 0 
+00bcd000-00bcf000 rw-p 00000000 00:00 0
 00beb000-00bed000 r-xp 00000000 08:06 375134     /lib/tls/i686/cmov/libdl-2.9.so
 00bed000-00bee000 r--p 00001000 08:06 375134     /lib/tls/i686/cmov/libdl-2.9.so
 00bee000-00bef000 rw-p 00002000 08:06 375134     /lib/tls/i686/cmov/libdl-2.9.so
@@ -86,13 +86,13 @@ maps = '''00110000-0026c000 r-xp 00000000 08:06 375131     /lib/tls/i686/cmov/li
 00dfa000-00dfb000 ---p 0002c000 08:06 65612      /lib/libreadline.so.5.2
 00dfb000-00dfc000 r--p 0002c000 08:06 65612      /lib/libreadline.so.5.2
 00dfc000-00dff000 rw-p 0002d000 08:06 65612      /lib/libreadline.so.5.2
-00dff000-00e00000 rw-p 00000000 00:00 0 
+00dff000-00e00000 rw-p 00000000 00:00 0
 08048000-0831c000 r-xp 00000000 08:06 1140349    /usr/bin/gdb
 0831c000-0831d000 r--p 002d3000 08:06 1140349    /usr/bin/gdb
 0831d000-08325000 rw-p 002d4000 08:06 1140349    /usr/bin/gdb
-08325000-0833f000 rw-p 00000000 00:00 0 
-b8077000-b807a000 rw-p 00000000 00:00 0 
-b8096000-b8098000 rw-p 00000000 00:00 0 
+08325000-0833f000 rw-p 00000000 00:00 0
+b8077000-b807a000 rw-p 00000000 00:00 0
+b8096000-b8098000 rw-p 00000000 00:00 0
 bfc57000-bfc6c000 rw-p 00000000 00:00 0          [stack]
 '''
 disasm = '''0x08083540 <main+0>:    lea    0x4(%esp),%ecx
@@ -115,7 +115,7 @@ disasm = '''0x08083540 <main+0>:    lea    0x4(%esp),%ecx
 0x08083578 <main+56>:   pop    %ecx
 0x08083579 <main+57>:   pop    %ebp
 0x0808357a <main+58>:   lea    -0x4(%ecx),%esp
-0x0808357d <main+61>:   ret    
+0x0808357d <main+61>:   ret
 '''
 
 class T(unittest.TestCase):
@@ -204,7 +204,7 @@ class T(unittest.TestCase):
         self.assertEquals(segv.src, '0x4(%esp)', segv.src)
         self.assertEquals(segv.dest, '%ecx', segv.dest)
 
-        disasm = '''0x404127 <exo_mount_hal_device_mount+167>:    
+        disasm = '''0x404127 <exo_mount_hal_device_mount+167>:
     repz cmpsb %es:(%rdi),%ds:(%rsi)\n'''
         segv = parse_segv.ParseSegv(regs, disasm, '')
         self.assertEquals(segv.pc, 0x0404127, segv.pc)
@@ -254,7 +254,7 @@ class T(unittest.TestCase):
         '''I/O port violations'''
 
         regs = 'rax            0x3  3'
-        disasm = '''0x4087f1 <snd_pcm_hw_params_set_channels_near@plt+19345>:   
+        disasm = '''0x4087f1 <snd_pcm_hw_params_set_channels_near@plt+19345>:
     out    %al,$0xb3
 '''
         maps = '''00400000-00412000 r-xp 00000000 08:04 10371157                           /usr/sbin/pommed

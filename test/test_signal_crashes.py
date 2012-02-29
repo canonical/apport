@@ -1,6 +1,6 @@
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -24,7 +24,7 @@ ifpath = os.path.expanduser(apport.report._ignore_file)
 class T(unittest.TestCase):
     def setUp(self):
         # use local report dir
-        self.report_dir = tempfile.mkdtemp() 
+        self.report_dir = tempfile.mkdtemp()
         os.environ['APPORT_REPORT_DIR'] = self.report_dir
 
         self.workdir = tempfile.mkdtemp()
@@ -40,7 +40,7 @@ class T(unittest.TestCase):
         os.chdir('/tmp')
 
         # expected report name for test executable report
-        self.test_report = os.path.join(apport.fileutils.report_dir, 
+        self.test_report = os.path.join(apport.fileutils.report_dir,
                 '%s.%i.crash' % (test_executable.replace('/', '_'), os.getuid()))
 
     def tearDown(self):
@@ -64,7 +64,7 @@ class T(unittest.TestCase):
 
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
                 close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             app.stdin.close()
             assert app.wait() == 0, app.stderr.read()
@@ -77,32 +77,32 @@ class T(unittest.TestCase):
     def test_crash_apport(self):
         '''report generation with apport'''
         self.do_crash()
-    
+
         # check crash report
         self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
         st = os.stat(self.test_report)
-        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 
+        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640,
                 'report has correct permissions')
-    
+
         # a subsequent crash does not alter unseen report
         self.do_crash()
         st2 = os.stat(self.test_report)
         self.assertEqual(st, st2, 'original unseen report did not get overwritten')
-    
+
         # a subsequent crash alters seen report
         apport.fileutils.mark_report_seen(self.test_report)
         self.do_crash()
         st2 = os.stat(self.test_report)
         self.assertNotEqual(st, st2, 'original seen report gets overwritten')
-    
+
         pr = apport.Report()
         pr.load(open(self.test_report))
-        self.assertTrue(set(required_fields).issubset(set(pr.keys())), 
+        self.assertTrue(set(required_fields).issubset(set(pr.keys())),
                 'report has required fields')
         self.assertEqual(pr['ExecutablePath'], test_executable)
         self.assertEqual(pr['ProcCmdline'], test_executable)
         self.assertEqual(pr['Signal'], '%i' % signal.SIGSEGV)
-    
+
         # check safe environment subset
         allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
             'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
@@ -111,48 +111,48 @@ class T(unittest.TestCase):
 
         for l in pr['ProcEnviron'].splitlines():
             (k, v) = l.split('=', 1)
-            self.assertTrue(k in allowed_vars, 
+            self.assertTrue(k in allowed_vars,
                     'report contains sensitive environment variable %s' % k)
-    
+
         # UserGroups only has system groups
         for g in pr['UserGroups'].split():
             self.assertLess(grp.getgrnam(g).gr_gid, 500)
-    
+
         self.assertFalse('root' in pr['UserGroups'],
                 'collected system groups are not those from root')
-    
+
     def test_parallel_crash(self):
         '''only one apport instance is ran at a time'''
 
         test_proc = self.create_test_process()
         test_proc2 = self.create_test_process(False, '/bin/dd')
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
                 close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    
+
             time.sleep(0.5) # give it some time to grab the lock
-    
-            app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0'], 
+
+            app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0'],
                 close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    
+
             # app should wait indefinitely for stdin, while app2 should terminate
             # immediately (give it 5 seconds)
             timeout = 50
             while timeout >= 0:
                 if app2.poll():
                     break
-    
+
                 time.sleep(0.1)
                 timeout -= 1
-    
+
             self.assertGreater(timeout, 0, 'second apport instance terminates immediately')
             self.assertFalse(app.poll(), 'first apport instance is still running')
-    
+
             # properly terminate app and app2
             app2.stdin.close()
             app.stdin.write('boo')
             app.stdin.close()
-    
+
             self.assertEqual(app.wait(), 0, app.stderr.read())
         finally:
             os.kill(test_proc, 9)
@@ -162,7 +162,7 @@ class T(unittest.TestCase):
 
     def test_lock_symlink(self):
         '''existing .lock file as dangling symlink does not create the file
-        
+
         This would be a vulnerability, as users could overwrite system files.
         '''
         # prepare a symlink trap
@@ -174,7 +174,7 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
 
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
                 close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             app.stdin.write('boo')
             app.stdin.close()
@@ -197,7 +197,7 @@ class T(unittest.TestCase):
         os.chmod(local_exe, 0755)
         self.do_crash(command=local_exe)
         self.assertEqual(apport.fileutils.get_all_reports(), [])
-    
+
     def test_unpackaged_script(self):
         '''unpackaged scripts do not create a report'''
 
@@ -209,7 +209,7 @@ class T(unittest.TestCase):
 
         # absolute path
         self.assertEqual(apport.fileutils.get_all_reports(), [])
-    
+
         # relative path
         os.chdir(self.workdir)
         self.do_crash(command='./myscript')
@@ -220,7 +220,7 @@ class T(unittest.TestCase):
 
         self.do_crash(sig=signal.SIGQUIT)
         self.assertEqual(apport.fileutils.get_all_reports(), [])
-    
+
     def test_leak_inaccessible_files(self):
         '''existence of user-inaccessible files does not leak'''
 
@@ -265,7 +265,7 @@ class T(unittest.TestCase):
         self.assertTrue(os.path.exists(self.test_report))
         pr.load(open(self.test_report))
         assert set(required_fields).issubset(set(pr.keys()))
-    
+
     def test_core_dump_packaged(self):
         '''packaged executables create core dumps on proper ulimits'''
 
@@ -324,7 +324,7 @@ class T(unittest.TestCase):
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(expect_corefile=True, command=local_exe)
         self.assertEqual(apport.fileutils.get_all_reports(), [])
-    
+
         # for SIGABRT
         resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
         self.do_crash(expect_coredump=False, expect_corefile=False, command=local_exe, sig=signal.SIGABRT)
@@ -350,10 +350,10 @@ class T(unittest.TestCase):
         totalmb = long(r['MemFree'].split()[0]) + long(r['Cached'].split()[0])
         totalmb /= 1024
         r = None
-    
+
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'], 
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
                 close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             # pipe an entire total memory size worth of spaces into it, which must be
             # bigger than the 'usable' memory size. apport should digest that and the
@@ -378,19 +378,19 @@ class T(unittest.TestCase):
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
-    
+
         reports = self.get_temp_all_reports()
         self.assertEqual(len(reports), 1)
-    
+
         pr = apport.Report()
         with open(reports[0]) as f:
             pr.load(f)
         os.unlink(reports[0])
-    
+
         self.assertEqual(pr['Signal'], '42')
         self.assertEqual(pr['ExecutablePath'], test_executable)
         self.assertFalse('CoreDump' in pr)
-    
+
     def test_ignore(self):
         '''ignoring executables'''
 
@@ -398,7 +398,7 @@ class T(unittest.TestCase):
 
         reports = apport.fileutils.get_all_reports()
         self.assertEqual(len(reports), 1)
-    
+
         pr = apport.Report()
         with open(reports[0]) as f:
             pr.load(f)
@@ -408,7 +408,7 @@ class T(unittest.TestCase):
 
         self.do_crash()
         self.assertEqual(apport.fileutils.get_all_reports(), [])
-    
+
 
     #
     # Helper methods
@@ -471,7 +471,7 @@ class T(unittest.TestCase):
             timeout -= 1
         self.assertGreater(timeout, 0)
         if check_running:
-            self.assertEqual(subprocess.call(['pidof', command]), 1, 
+            self.assertEqual(subprocess.call(['pidof', command]), 1,
                     'no running test executable processes')
 
         if expect_corefile:

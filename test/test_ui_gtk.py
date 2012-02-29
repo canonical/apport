@@ -2,7 +2,7 @@
 
 # Copyright (C) 2012 Canonical Ltd.
 # Author: Evan Dandrea <evan.dandrea@canonical.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -68,7 +68,7 @@ class T(unittest.TestCase):
         self.assertTrue(send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
-        self.assertEqual(self.app.w('continue_button').get_label(), 
+        self.assertEqual(self.app.w('continue_button').get_label(),
                          _('Continue'))
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
@@ -95,7 +95,7 @@ class T(unittest.TestCase):
         self.assertTrue(send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
-        self.assertEqual(self.app.w('continue_button').get_label(), 
+        self.assertEqual(self.app.w('continue_button').get_label(),
                          _('Continue'))
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
@@ -130,7 +130,7 @@ Type=Application''')
         self.assertTrue(send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
-        self.assertEqual(self.app.w('continue_button').get_label(), 
+        self.assertEqual(self.app.w('continue_button').get_label(),
                          _('Relaunch'))
         self.assertTrue(self.app.w('closed_button').get_property('visible'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
@@ -161,7 +161,7 @@ Type=Application''')
         self.assertTrue(send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
-        self.assertEqual(self.app.w('continue_button').get_label(), 
+        self.assertEqual(self.app.w('continue_button').get_label(),
                          _('Continue'))
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
 
@@ -197,7 +197,7 @@ Type=Application''')
         self.assertTrue(send_error_report.get_active())
         self.assertTrue(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
-        self.assertEqual(self.app.w('continue_button').get_label(), 
+        self.assertEqual(self.app.w('continue_button').get_label(),
                          _('Continue'))
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
 
@@ -256,7 +256,7 @@ Type=Application''')
         self.assertTrue(send_error_report.get_active())
         self.assertFalse(self.app.w('show_details').get_property('visible'))
         self.assertTrue(self.app.w('continue_button').get_property('visible'))
-        self.assertEqual(self.app.w('continue_button').get_label(), 
+        self.assertEqual(self.app.w('continue_button').get_label(),
                          _('Send'))
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
         self.assertTrue(self.app.w('cancel_button').get_property('visible'))

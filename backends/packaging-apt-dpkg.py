@@ -5,7 +5,7 @@ This is used on Debian and derivatives such as Ubuntu.
 
 # Copyright (C) 2007 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -55,7 +55,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def _apt_pkg(self, package):
         '''Return apt.Cache()[package] (initialized lazily).
-        
+
         Throw a ValueError if the package does not exist.
         '''
         try:
@@ -274,7 +274,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def get_file_package(self, file, uninstalled=False, map_cachedir=None):
         '''Return the package a file belongs to, or None if the file is not
         shipped by any package.
-        
+
         If uninstalled is True, this will also find files of uninstalled
         packages; this is very expensive, though, and needs network access and
         lots of CPU and I/O resources. In this case, map_cachedir can be set to
@@ -328,7 +328,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def get_library_paths(self):
         '''Return a list of default library search paths.
-        
+
         The entries should be separated with a colon ':', like for
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
@@ -381,7 +381,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 root = d
         assert root, 'could not determine source tree root directory'
 
-        # apply patches on a best-effort basis 
+        # apply patches on a best-effort basis
         try:
             subprocess.call('debian/rules patch || debian/rules apply-patches ' \
                 '|| debian/rules apply-dpatches || '\
@@ -402,7 +402,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return 'linux-image-' + os.uname()[2]
 
     def _install_debug_kernel(self, report):
-        '''Install kernel debug package 
+        '''Install kernel debug package
 
         Ideally this would be just another package but the kernel is
         special in various ways currently so we can not use the apt
@@ -458,7 +458,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         packages is a list of ('packagename', 'version') tuples. If the version
         is None, it should install the most current available version.
-        
+
         If cache_dir is given, then the downloaded packages will be stored
         there, to speed up subsequent retraces.
 
@@ -745,7 +745,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         some init script needs to set that value based on a configuration file.
         This also determines whether Apport generates reports for Python,
         package, or kernel crashes.
-        
+
         Implementations should parse the configuration file which controls
         Apport (such as /etc/default/apport in Debian/Ubuntu).
         '''

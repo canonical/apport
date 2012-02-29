@@ -3,7 +3,7 @@
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -33,7 +33,7 @@ class T(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(apport.fileutils.report_dir)
-        apport.fileutils.report_dir = self.orig_report_dir 
+        apport.fileutils.report_dir = self.orig_report_dir
 
         shutil.rmtree(self.workdir)
 
@@ -164,7 +164,7 @@ class T(unittest.TestCase):
             gcc_path + ' must exist and work for this test suite'
 
         return (gcc_ver, gcc_path)
- 
+
     def test_gcc_ide_hook_file(self):
         '''gcc_ice_hook with a temporary file.'''
 
@@ -200,7 +200,7 @@ class T(unittest.TestCase):
 
         test_source = 'int f(int x);'
 
-        hook = subprocess.Popen(['%s/gcc_ice_hook' % datadir, gcc_path, '-'], 
+        hook = subprocess.Popen(['%s/gcc_ice_hook' % datadir, gcc_path, '-'],
             stdin=subprocess.PIPE)
         hook.communicate(test_source)
         self.assertEqual(hook.returncode, 0, 'gcc_ice_hook finished successfully')
@@ -223,7 +223,7 @@ class T(unittest.TestCase):
     def test_kernel_oops_hook(self):
         test_source = '''------------[ cut here ]------------
 kernel BUG at /tmp/oops.c:5!
-invalid opcode: 0000 [#1] SMP 
+invalid opcode: 0000 [#1] SMP
 Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT iptable_filter ip_tables nf_conntrack_ipv6 xt_state nf_conntrack xt_tcpudp ip6t_ipv6header ip6t_REJECT ip6table_filter ip6_tables x_tables ipv6 loop dm_multipath rtc_cmos iTCO_wdt iTCO_vendor_support pcspkr i2c_i801 i2c_core battery video ac output power_supply button sg joydev usb_storage dm_snapshot dm_zero dm_mirror dm_mod ahci pata_acpi ata_generic ata_piix libata sd_mod scsi_mod ext3 jbd mbcache uhci_hcd ohci_hcd ehci_hcd
 '''
         hook = subprocess.Popen(['%s/kernel_oops' % datadir],

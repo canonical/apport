@@ -20,7 +20,7 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
         self.crashdb_conf = tempfile.NamedTemporaryFile()
         self.crashdb_conf.write('''default = 'testsuite'
 databases = {
-    'testsuite': { 
+    'testsuite': {
         'impl': 'memory',
         'bug_pattern_url': None
     }
@@ -209,7 +209,7 @@ class T(unittest.TestCase):
         fsize = os.path.getsize(self.report_file.name)
         complete_ratio = float(self.ui.get_complete_size()) / fsize
         self.assertTrue(complete_ratio >= 0.99 and complete_ratio <= 1.01)
-            
+
         rs = self.ui.get_reduced_size()
         self.assertTrue(rs > 1000)
         self.assertTrue(rs < 10000)
@@ -728,7 +728,7 @@ bOgUs=
         self.assertFalse('ExecutableTimestamp' in self.ui.report.keys())
         self.assertEqual(self.ui.report['Signal'], '6')
 
-        # we disable the ABRT filtering, we want these crashes after all 
+        # we disable the ABRT filtering, we want these crashes after all
         #self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
         #    (self.ui.msg_title, self.ui.msg_text))
         #self.assertEqual(self.ui.msg_severity, 'info')
@@ -771,7 +771,7 @@ bOgUs=
                                             'blacklist': False,
                                             'examine' : False,
                                             'restart' : False }
-        
+
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertEqual(self.ui.msg_text, None)
@@ -820,7 +820,7 @@ bOgUs=
         self.assertEqual(self.ui.msg_severity, 'info')
 
     def test_run_crash_ignore(self):
-        '''run_crash() on a crash with the Ignore field''' 
+        '''run_crash() on a crash with the Ignore field'''
         self.report['Ignore'] = 'True'
         self.report['ExecutablePath'] = '/bin/bash'
         self.report['Package'] = 'bash 1'
@@ -868,7 +868,7 @@ bOgUs=
 
     def test_run_crash_preretraced(self):
         '''run_crash() pre-retraced reports.
-        
+
         This happens with crashes which are pre-processed by
         apport-retrace.
         '''
@@ -895,7 +895,7 @@ bOgUs=
         self.assertEqual(self.ui.opened_url, None)
         self.assertEqual(self.ui.ic_progress_pulses, 0)
         self.assertTrue(self.ui.present_details_shown)
-       
+
     def test_run_crash_errors(self):
         '''run_crash() on various error conditions'''
 
@@ -1033,7 +1033,7 @@ bOgUs=
 
         # set up hook
         f = open(os.path.join(self.hookdir, 'source_linux.py'), 'w')
-        f.write('''def add_info(report, ui): 
+        f.write('''def add_info(report, ui):
     report['KernelDebug'] = 'LotsMoreInfo'
 ''')
         f.close()
@@ -1069,7 +1069,7 @@ bOgUs=
                                             'examine' : False,
                                             'restart' : False }
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) + 
+        self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) +
             ' ' + str(self.ui.msg_text))
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(self.ui.opened_url, 'http://linux.bugs.example.com/%i' % self.ui.crashdb.latest_id())
@@ -1254,7 +1254,7 @@ bOgUs=
 
     def _run_hook(self, code):
         f = open(os.path.join(self.hookdir, 'coreutils.py'), 'w')
-        f.write('def add_info(report, ui):\n%s\n' % 
+        f.write('def add_info(report, ui):\n%s\n' %
                 '\n'.join(['    ' + l for l in code.splitlines()]))
         f.close()
         self.ui.options.package = 'coreutils'
@@ -1349,7 +1349,7 @@ report['end'] = '1'
     def test_interactive_hooks_cancel(self):
         '''interactive hooks: user cancels'''
 
-        self.assertRaises(SystemExit, self._run_hook, 
+        self.assertRaises(SystemExit, self._run_hook,
             '''report['begin'] = '1'
 raise StopIteration
 report['end'] = '1'
@@ -1493,7 +1493,7 @@ def run(report, ui):
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue('kind of problem' in self.ui.msg_text)
-        self.assertEqual(set(self.ui.msg_choices), 
+        self.assertEqual(set(self.ui.msg_choices),
                 set(['bar', 'foo does not work', 'Other problem']))
 
         # cancelled
@@ -1529,16 +1529,16 @@ def run(report, ui):
 
         # no arguments -> show pending crashes
         _chk('apport-gtk', None, {'filebug': False, 'package': None,
-            'pid': None, 'crash_file': None, 'symptom': None, 
-            'update_report': None, 'save': None, 'window': False, 
+            'pid': None, 'crash_file': None, 'symptom': None,
+            'update_report': None, 'save': None, 'window': False,
             'tag': []})
         # updating report not allowed without args
         self.assertRaises(SystemExit, _chk, 'apport-collect', None, {})
 
-        # package 
+        # package
         _chk('apport-kde', 'coreutils', {'filebug': True, 'package':
-            'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
-            'update_report': None, 'save': None, 'window': False, 
+            'coreutils', 'pid': None, 'crash_file': None, 'symptom': None,
+            'update_report': None, 'save': None, 'window': False,
             'tag': []})
 
         # symptom is preferred over package
@@ -1550,28 +1550,28 @@ return 'bash'
         f.close()
         _chk('apport-cli', 'coreutils', {'filebug': True, 'package': None,
              'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-             'update_report': None, 'save': None, 'window': False, 
+             'update_report': None, 'save': None, 'window': False,
              'tag': []})
 
         # PID
         _chk('apport-cli', '1234', {'filebug': True, 'package': None,
              'pid': '1234', 'crash_file': None, 'symptom': None,
-             'update_report': None, 'save': None, 'window': False, 
+             'update_report': None, 'save': None, 'window': False,
              'tag': []})
 
         # .crash/.apport files; check correct handling of spaces
         for suffix in ('.crash', '.apport'):
             _chk('apport-cli', '/tmp/f oo' + suffix, {'filebug': False,
-                 'package': None, 'pid': None, 
+                 'package': None, 'pid': None,
                  'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
-                 'update_report': None, 'save': None, 'window': False, 
+                 'update_report': None, 'save': None, 'window': False,
                  'tag': []})
 
         # executable
-        _chk('apport-cli', '/usr/bin/tail', {'filebug': True, 
+        _chk('apport-cli', '/usr/bin/tail', {'filebug': True,
              'package': 'coreutils',
-             'pid': None, 'crash_file': None, 'symptom': None, 
-             'update_report': None, 'save': None, 'window': False, 
+             'pid': None, 'crash_file': None, 'symptom': None,
+             'update_report': None, 'save': None, 'window': False,
              'tag': []})
 
         # update existing report
@@ -1602,7 +1602,7 @@ return 'bash'
         # no arguments: default to 'ask for symptom' bug mode
         #
         _chk([], {'filebug': True, 'package': None,
-            'pid': None, 'crash_file': None, 'symptom': None, 
+            'pid': None, 'crash_file': None, 'symptom': None,
             'update_report': None, 'save': None, 'window': False,
             'tag': []})
 
@@ -1612,8 +1612,8 @@ return 'bash'
 
         # package
         _chk(['coreutils'], {'filebug': True, 'package':
-            'coreutils', 'pid': None, 'crash_file': None, 'symptom': None, 
-            'update_report': None, 'save': None, 'window': False, 
+            'coreutils', 'pid': None, 'crash_file': None, 'symptom': None,
+            'update_report': None, 'save': None, 'window': False,
             'tag': []})
 
         # symptom (preferred over package)
@@ -1625,28 +1625,28 @@ return 'bash'
         f.close()
         _chk(['coreutils'], {'filebug': True, 'package': None,
              'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-             'update_report': None, 'save': None, 'window': False, 
+             'update_report': None, 'save': None, 'window': False,
              'tag': []})
         os.unlink(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'))
 
         # PID
         _chk(['1234'], {'filebug': True, 'package': None,
              'pid': '1234', 'crash_file': None, 'symptom': None,
-             'update_report': None, 'save': None, 'window': False, 
+             'update_report': None, 'save': None, 'window': False,
              'tag': []})
 
         # .crash/.apport files; check correct handling of spaces
         for suffix in ('.crash', '.apport'):
             _chk(['/tmp/f oo' + suffix], {'filebug': False,
-                 'package': None, 'pid': None, 
+                 'package': None, 'pid': None,
                  'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
-                 'update_report': None, 'save': None, 'window': False, 
+                 'update_report': None, 'save': None, 'window': False,
                  'tag': []})
 
         # executable name
         _chk(['/usr/bin/tail'], {'filebug': True, 'package': 'coreutils',
-             'pid': None, 'crash_file': None, 'symptom': None, 
-             'update_report': None, 'save': None, 'window': False, 
+             'pid': None, 'crash_file': None, 'symptom': None,
+             'update_report': None, 'save': None, 'window': False,
              'tag': []})
 
         #
@@ -1682,7 +1682,7 @@ return 'bash'
             self.assertEqual(self.ui.can_examine_locally(), False)
 
             src_bindir = os.path.join(
-                    os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 
+                    os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
                     'bin')
             # this will only work for running the tests in the source tree
             if os.access(os.path.join(src_bindir, 'apport-retrace'), os.X_OK):

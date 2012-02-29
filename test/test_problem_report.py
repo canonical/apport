@@ -73,7 +73,7 @@ class T(unittest.TestCase):
         self.assertEqual(io.getvalue(), large_val)
 
         pr['Multiline'] = problem_report.CompressedValue('\1\1\1\n\2\2\n\3\3\3')
-        self.assertEqual(pr['Multiline'].splitlines(), 
+        self.assertEqual(pr['Multiline'].splitlines(),
             ['\1\1\1', '\2\2', '\3\3\3'])
 
         # test writing of reports with CompressedValues
@@ -137,7 +137,7 @@ WhiteSpace:
         pr['Extra'] = 'appended'
         pr.write(io)
 
-        self.assertEqual(io.getvalue(), 
+        self.assertEqual(io.getvalue(),
 '''ProblemType: Crash
 Date: now!
 Simple: bar
@@ -810,7 +810,7 @@ line♥5!!
         pr['Simple'] = 'bar'
         pr['TwoLine'] = 'first\nsecond\n'
         io = StringIO()
-        pr.write_mime(io, extra_headers={'Greeting': 'hello world', 
+        pr.write_mime(io, extra_headers={'Greeting': 'hello world',
             'Foo': 'Bar'})
         io.seek(0)
 
@@ -935,7 +935,7 @@ Baz: blob
         d = {}
         d['newtext'] = 'Goodbye world'
         d['newbin'] = '11\000\001\002\xFFZZ'
-        d['overwrite'] = 'I am good' 
+        d['overwrite'] = 'I am good'
 
         pr.update(d)
         self.assertEqual(pr['oldtext'], 'Hello world')

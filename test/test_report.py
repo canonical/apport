@@ -80,9 +80,9 @@ class T(unittest.TestCase):
         self.assertTrue('USER' not in pr['ProcEnviron'])
         self.assertTrue('PWD' not in pr['ProcEnviron'])
         self.assertTrue('report.py' in pr['ExecutablePath'])
-        self.assertEqual(int(pr['ExecutableTimestamp']), 
+        self.assertEqual(int(pr['ExecutableTimestamp']),
                 int(os.stat(__file__).st_mtime))
- 
+
         # check with one additional safe environment variable
         pr = apport.report.Report()
         pr.add_proc_info(extraenv=['PWD'])
@@ -144,7 +144,7 @@ class T(unittest.TestCase):
         p.communicate(b'exit\n')
         self.assertFalse('InterpreterPath' in pr, pr.get('InterpreterPath'))
         self.assertEqual(pr['ExecutablePath'], os.path.realpath('/bin/sh'))
-        self.assertEqual(int(pr['ExecutableTimestamp']), 
+        self.assertEqual(int(pr['ExecutableTimestamp']),
                 int(os.stat(os.path.realpath('/bin/sh')).st_mtime))
 
         # check correct handling of interpreted executables: shell
@@ -164,7 +164,7 @@ class T(unittest.TestCase):
         with open(pr['ExecutablePath']) as fd:
             self.assertEqual(pr['InterpreterPath'],
                 os.path.realpath(fd.readline().strip()[2:]))
-        self.assertEqual(int(pr['ExecutableTimestamp']), 
+        self.assertEqual(int(pr['ExecutableTimestamp']),
                 int(os.stat(pr['ExecutablePath']).st_mtime))
         self.assertTrue('[stack]' in pr['ProcMaps'])
 
@@ -189,7 +189,7 @@ sys.stdin.readline()
         pr.add_proc_info(pid=p.pid)
         p.communicate(b'\n')
         self.assertEqual(pr['ExecutablePath'], testscript)
-        self.assertEqual(int(pr['ExecutableTimestamp']), 
+        self.assertEqual(int(pr['ExecutableTimestamp']),
                 int(os.stat(testscript).st_mtime))
         os.unlink(testscript)
         self.assertTrue('python' in pr['InterpreterPath'])
@@ -203,33 +203,33 @@ sys.stdin.readline()
         '''classification of $PATH.'''
 
         # system default
-        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, 
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE,
             env={'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games'})
         time.sleep(0.1)
         r = apport.report.Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate(b'')
-        self.assertFalse('PATH' in r['ProcEnviron'], 
+        self.assertFalse('PATH' in r['ProcEnviron'],
             'system default $PATH should be filtered out')
 
         # no user paths
-        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, 
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE,
             env={'PATH': '/usr/sbin:/usr/bin:/sbin:/bin'})
         time.sleep(0.1)
         r = apport.report.Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate(b'')
-        self.assertTrue('PATH=(custom, no user)' in r['ProcEnviron'], 
+        self.assertTrue('PATH=(custom, no user)' in r['ProcEnviron'],
             'PATH is customized without user paths')
 
         # user paths
-        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, 
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE,
             env={'PATH': '/home/pitti:/usr/sbin:/usr/bin:/sbin:/bin'})
         time.sleep(0.1)
         r = apport.report.Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate(b'')
-        self.assertTrue('PATH=(custom, user)' in r['ProcEnviron'], 
+        self.assertTrue('PATH=(custom, user)' in r['ProcEnviron'],
             'PATH is customized with user paths')
 
     def test_check_interpreted(self):
@@ -379,7 +379,7 @@ sys.stdin.readline()
             pr['ProcCmdline'] = 'python\0-tt\0-m\0apport/report\0-v'
             pr._check_interpreted()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
-            self.assertTrue('report' in pr['ExecutablePath'], 
+            self.assertTrue('report' in pr['ExecutablePath'],
                 'expecting "report" in ExecutablePath "%s"' % pr['ExecutablePath'])
         finally:
             if restore_root:
@@ -397,7 +397,7 @@ sys.stdin.readline()
         self.assertEqual(pr['ExecutablePath'], '/usr/share/nanny/daemon/nanny.tap')
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/twistd')
 
-        # LP#625039 
+        # LP#625039
         pr = apport.report.Report()
         pr['ExecutablePath'] = '/usr/bin/python2.7'
         pr['ProcStatus'] = 'Name:\ttwistd'
@@ -862,7 +862,7 @@ def add_info(report):
             # should not throw any exceptions
             self.assertEqual(r.add_hooks_info('fake_ui'), False)
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package', 'CommonField1', 'CommonField2', 'CommonField3']), 
+                'Package', 'CommonField1', 'CommonField2', 'CommonField3']),
                 'report has required fields')
 
             r = apport.report.Report()
@@ -870,7 +870,7 @@ def add_info(report):
             # should not throw any exceptions
             self.assertEqual(r.add_hooks_info('fake_ui'), False)
             self.assertEqual(set(r.keys()), set(['ProblemType', 'Date',
-                'Package', 'CommonField1', 'CommonField2', 'CommonField3']), 
+                'Package', 'CommonField1', 'CommonField2', 'CommonField3']),
                 'report has required fields')
 
             r = apport.report.Report()
@@ -1194,7 +1194,7 @@ Mo?o[a-1]'''
         report['Traceback'] = '''Traceback (most recent call last):
   File "/x/foo.py", line 242, in setup_chooser
     raise "\nKey: "+key+" isn't set.\nRestarting AWN usually solves this issue\n"
- 
+
 Key: /apps/avant-window-navigator/app/active_png isn't set.
 Restarting AWN usually solves this issue'''
 
@@ -1298,7 +1298,7 @@ baz()
 
     def test_gen_stacktrace_top(self):
         '''_gen_stacktrace_top().'''
-        
+
         # nothing to chop off
         r = apport.report.Report()
         r['Stacktrace'] = '''#0  0x10000488 in h (p=0x0) at crash.c:25
@@ -1386,11 +1386,11 @@ c (x=1) at crash.c:30''')
 
         # Gnome assertion; should unwind the logs and assert call
         r = apport.report.Report()
-        r['Stacktrace'] = '''#0  0xb7d39cab in IA__g_logv (log_domain=<value optimized out>, log_level=G_LOG_LEVEL_ERROR, 
+        r['Stacktrace'] = '''#0  0xb7d39cab in IA__g_logv (log_domain=<value optimized out>, log_level=G_LOG_LEVEL_ERROR,
     format=0xb7d825f0 "file %s: line %d (%s): assertion failed: (%s)", args1=0xbfee8e3c "xxx") at /build/buildd/glib2.0-2.13.5/glib/gmessages.c:493
-#1  0xb7d39f29 in IA__g_log (log_domain=0xb7edbfd0 "libgnomevfs", log_level=G_LOG_LEVEL_ERROR, 
+#1  0xb7d39f29 in IA__g_log (log_domain=0xb7edbfd0 "libgnomevfs", log_level=G_LOG_LEVEL_ERROR,
     format=0xb7d825f0 "file %s: line %d (%s): assertion failed: (%s)") at /build/buildd/glib2.0-2.13.5/glib/gmessages.c:517
-#2  0xb7d39fa6 in IA__g_assert_warning (log_domain=0xb7edbfd0 "libgnomevfs", file=0xb7ee1a26 "gnome-vfs-volume.c", line=254, 
+#2  0xb7d39fa6 in IA__g_assert_warning (log_domain=0xb7edbfd0 "libgnomevfs", file=0xb7ee1a26 "gnome-vfs-volume.c", line=254,
     pretty_function=0xb7ee1920 "gnome_vfs_volume_unset_drive_private", expression=0xb7ee1a39 "volume->priv->drive == drive")
     at /build/buildd/glib2.0-2.13.5/glib/gmessages.c:552
 No locals.
@@ -1540,7 +1540,7 @@ ZeroDivisionError: integer division or modulo by zero'''
         self.assertEqual(r.crash_signature(), None)
 
 
-        # kernel 
+        # kernel
         r['ProblemType'] = 'KernelCrash'
         r['Stacktrace'] = '''
 crash 4.0-8.9
@@ -1573,42 +1573,42 @@ LOAD AVERAGE: 0.15, 0.05, 0.02
 PID: 0      TASK: c073c180  CPU: 0   COMMAND: "swapper"
  #0 [c0785ba0] sysrq_handle_crash at c03917a3
     [RA: c03919c6  SP: c0785ba0  FP: c0785ba0  SIZE: 4]
-    c0785ba0: c03919c6  
+    c0785ba0: c03919c6
  #1 [c0785ba0] __handle_sysrq at c03919c4
     [RA: c0391a91  SP: c0785ba4  FP: c0785bc8  SIZE: 40]
-    c0785ba4: c06d4bab  c06d42d2  f6534000  00000004  
-    c0785bb4: 00000086  0000002e  00000001  f6534000  
-    c0785bc4: c0785bcc  c0391a91  
+    c0785ba4: c06d4bab  c06d42d2  f6534000  00000004
+    c0785bb4: 00000086  0000002e  00000001  f6534000
+    c0785bc4: c0785bcc  c0391a91
  #2 [c0785bc8] handle_sysrq at c0391a8c
     [RA: c0389961  SP: c0785bcc  FP: c0785bd0  SIZE: 8]
-    c0785bcc: c0785c0c  c0389961  
+    c0785bcc: c0785c0c  c0389961
  #3 [c0785bd0] kbd_keycode at c038995c
     [RA: c0389b8b  SP: c0785bd4  FP: c0785c10  SIZE: 64]
-    c0785bd4: c056f96a  c0785be4  00000096  c07578c0  
-    c0785be4: 00000001  f6ac6e00  f6ac6e00  00000001  
-    c0785bf4: 00000000  00000000  0000002e  0000002e  
-    c0785c04: 00000001  f70d6850  c0785c1c  c0389b8b  
+    c0785bd4: c056f96a  c0785be4  00000096  c07578c0
+    c0785be4: 00000001  f6ac6e00  f6ac6e00  00000001
+    c0785bf4: 00000000  00000000  0000002e  0000002e
+    c0785c04: 00000001  f70d6850  c0785c1c  c0389b8b
  #4 [c0785c10] kbd_event at c0389b86
     [RA: c043140c  SP: c0785c14  FP: c0785c20  SIZE: 16]
-    c0785c14: c0758040  f6910900  c0785c3c  c043140c  
+    c0785c14: c0758040  f6910900  c0785c3c  c043140c
  #5 [c0785c20] input_pass_event at c0431409
     [RA: c04332ce  SP: c0785c24  FP: c0785c40  SIZE: 32]
-    c0785c24: 00000001  0000002e  00000001  f70d6000  
-    c0785c34: 00000001  0000002e  c0785c64  c04332ce  
+    c0785c24: 00000001  0000002e  00000001  f70d6000
+    c0785c34: 00000001  0000002e  c0785c64  c04332ce
  #6 [c0785c40] input_handle_event at c04332c9
     [RA: c0433ac6  SP: c0785c44  FP: c0785c68  SIZE: 40]
-    c0785c44: 00000001  ffff138d  0000003d  00000001  
-    c0785c54: f70d6000  00000001  f70d6000  0000002e  
-    c0785c64: c0785c84  c0433ac6  
+    c0785c44: 00000001  ffff138d  0000003d  00000001
+    c0785c54: f70d6000  00000001  f70d6000  0000002e
+    c0785c64: c0785c84  c0433ac6
  #7 [c0785c68] input_event at c0433ac1
     [RA: c0479806  SP: c0785c6c  FP: c0785c88  SIZE: 32]
-    c0785c6c: 00000001  00000092  f70d677c  f70d70b4  
-    c0785c7c: 0000002e  f70d7000  c0785ca8  c0479806  
+    c0785c6c: 00000001  00000092  f70d677c  f70d70b4
+    c0785c7c: 0000002e  f70d7000  c0785ca8  c0479806
  #8 [c0785c88] hidinput_hid_event at c0479801
     [RA: c0475b31  SP: c0785c8c  FP: c0785cac  SIZE: 36]
-    c0785c8c: 00000001  00000007  c0785c00  f70d6000  
-    c0785c9c: f70d70b4  f70d5000  f70d7000  c0785cc4  
-    c0785cac: c0475b31  
+    c0785c8c: 00000001  00000007  c0785c00  f70d6000
+    c0785c9c: f70d70b4  f70d5000  f70d7000  c0785cc4
+    c0785cac: c0475b31
     [RA: 0  SP: c0785ffc  FP: c0785ffc  SIZE: 0]
    PID    PPID  CPU   TASK    ST  %MEM     VSZ    RSS  COMM
 >     0      0   0  c073c180  RU   0.0       0      0  [swapper]
@@ -1679,7 +1679,7 @@ RUNQUEUES[0]: c6002320
         pr['ProcMaps'] = '''
 00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
 006de000-006df000 r--p 000de000 08:02 1044485                            /bin/bash
-01596000-01597000 rw-p 00000000 00:00 0 
+01596000-01597000 rw-p 00000000 00:00 0
 01597000-015a4000 rw-p 00000000 00:00 0                                  [heap]
 7f491f868000-7f491f88a000 r-xp 00000000 08:02 526219                     /lib/x86_64-linux-gnu/libtinfo.so.5.9
 7f491fa8f000-7f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
@@ -1724,7 +1724,7 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsysca
         pr['ProcMaps'] = '''
 00400000-004df000 r-xp 00000000 08:02 1044485                            /bin/bash
 006de000-006df000 r--p 000de000 08:02 1044485                            /bin/bash
-01596000-01597000 rw-p 00000000 00:00 0 
+01596000-01597000 rw-p 00000000 00:00 0
 01597000-015a4000 rw-p 00000000 00:00 0                                  [heap]
 7f491f868000-7f491f88a000 r-xp 00000000 08:02 526219                     /lib/x86_64-linux-gnu/libtinfo.so.5.9
 7f491fa8f000-7f491fc24000 r-xp 00000000 08:02 522605                     /lib/x86_64-linux-gnu/libc-2.13.so
@@ -1749,7 +1749,7 @@ No symbol table info available.
 #5  0x00000000004707e3 in parse_and_execute ()
 #6  0x000000000041d703 in _start ()
 '''
-        self.assertEqual(pr.crash_signature_addresses(), 
+        self.assertEqual(pr.crash_signature_addresses(),
                 '/bin/bash:42:%s:/lib/x86_64-linux-gnu/libc-2.13.so+36687:/bin/bash+3fd51:/bin/bash+2eb76:/bin/bash+324d8:/bin/bash+707e3:/bin/bash+1d703' % os.uname()[4])
 
         # all resolvable, but too short

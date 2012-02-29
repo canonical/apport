@@ -2,7 +2,7 @@
 
 # Copyright (C) 2007 - 2011 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -12,14 +12,14 @@
 class PackageInfo:
     def get_version(self, package):
         '''Return the installed version of a package.
-        
+
         Throw ValueError if package does not exist.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_available_version(self, package):
         '''Return the latest available version of a package.
-        
+
         Throw ValueError if package does not exist.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
@@ -31,7 +31,7 @@ class PackageInfo:
 
     def get_source(self, package):
         '''Return the source package name for a package.
-        
+
         Throw ValueError if package does not exist.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
@@ -88,9 +88,9 @@ class PackageInfo:
 
     def get_file_package(self, file, uninstalled=False, map_cachedir=None):
         '''Return the package a file belongs to.
-        
+
         Return None if the file is not shipped by any package.
-        
+
         If uninstalled is True, this will also find files of uninstalled
         packages; this is very expensive, though, and needs network access and
         lots of CPU and I/O resources. In this case, map_cachedir can be set to
@@ -101,14 +101,14 @@ class PackageInfo:
 
     def get_system_architecture(self):
         '''Return the architecture of the system.
-        
+
         This should use the notation of the particular distribution.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def get_library_paths(self):
         '''Return a list of default library search paths.
-        
+
         The entries should be separated with a colon ':', like for
         $LD_LIBRARY_PATH. This needs to take any multiarch directories into
         account.
@@ -118,7 +118,7 @@ class PackageInfo:
 
     def set_mirror(self, url):
         '''Explicitly set a distribution mirror URL.
-        
+
         This might be called for operations that need to fetch distribution
         files/packages from the network.
 
@@ -129,7 +129,7 @@ class PackageInfo:
 
     def get_source_tree(self, srcpackage, dir, version=None):
         '''Download a source package and unpack it into dir..
-        
+
         dir should exist and be empty.
 
         This also has to care about applying patches etc., so that dir will
@@ -158,7 +158,7 @@ class PackageInfo:
         some init script needs to set that value based on a configuration file.
         This also determines whether Apport generates reports for Python,
         package, or kernel crashes.
-        
+
         Implementations should parse the configuration file which controls
         Apport (such as /etc/default/apport in Debian/Ubuntu).
         '''
@@ -190,7 +190,7 @@ class PackageInfo:
 
         packages is a list of ('packagename', 'version') tuples. If the version
         is None, it should install the most current available version.
-        
+
         If cache_dir is given, then the downloaded packages will be stored
         there, to speed up subsequent retraces.
 

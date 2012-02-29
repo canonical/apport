@@ -2,7 +2,7 @@
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -30,12 +30,12 @@ def _u(str):
 
 class CrashDatabase:
     def __init__(self, auth_file, options):
-        '''Initialize crash database connection. 
-        
+        '''Initialize crash database connection.
+
         You need to specify an implementation specific file with the
         authentication credentials for retracing access for download() and
         update(). For upload() and get_comment_url() you can use None.
-        
+
         options is a dictionary with additional settings from crashdb.conf; see
         get_crashdb() for details.
         '''
@@ -95,13 +95,13 @@ class CrashDatabase:
         # verify integrity
         cur = self.duplicate_db.cursor()
         cur.execute('PRAGMA integrity_check')
-        result = cur.fetchall() 
+        result = cur.fetchall()
         if result != [('ok',)]:
             raise SystemError('Corrupt duplicate db:' + str(result))
 
         try:
             cur.execute('SELECT format FROM version')
-            result = cur.fetchone() 
+            result = cur.fetchone()
         except self.duplicate_db.OperationalError as e:
             if 'no such table' in str(e):
                 # first db format did not have version table yet
@@ -122,10 +122,10 @@ class CrashDatabase:
         None if the crash is not fixed in the latest version yet. Depending on
         whether the version in report is smaller than/equal to the fixed
         version or larger, this calls close_duplicate() or mark_regression().
-        
+
         If the report does not have a valid crash signature, this function does
         nothing and just returns None.
-        
+
         By default, the report gets download()ed, but for performance reasons
         it can be explicitly passed to this function if it is already available.
         '''
@@ -151,7 +151,7 @@ class CrashDatabase:
                 for (ex_id, _) in existing:
                     self._duplicate_db_sync_status(ex_id)
                 existing = self._duplicate_search_signature(sig, id)
-            
+
         if not existing:
             # fall back to address signature
             if addr_sig:
@@ -173,7 +173,7 @@ class CrashDatabase:
         for (ex_id, ex_ver) in existing:
             if not ex_ver or \
                not report_package_version or \
-                apport.packaging.compare_versions(report_package_version, ex_ver) < 0: 
+                apport.packaging.compare_versions(report_package_version, ex_ver) < 0:
                 if addr_sig:
                     self._duplicate_db_add_address_signature(addr_sig, ex_id)
                 self.close_duplicate(report, id, ex_id)
@@ -265,12 +265,12 @@ class CrashDatabase:
                     # if we can't have an URL, just report as "known"
                     result = '1'
                 return result
-                
+
         return None
 
     def duplicate_db_fixed(self, id, version):
         '''Mark given crash ID as fixed in the duplicate database.
-        
+
         version specifies the package version the crash was fixed in (None for
         'still unfixed').
         '''
@@ -284,7 +284,7 @@ class CrashDatabase:
 
     def duplicate_db_remove(self, id):
         '''Remove crash from the duplicate database.
-        
+
         This happens when a report got rejected or manually duplicated.
         '''
         assert self.duplicate_db, 'init_duplicate_db() needs to be called before'
@@ -403,9 +403,9 @@ class CrashDatabase:
 
     def _duplicate_search_signature(self, sig, id):
         '''Look up signature in the duplicate db.
-        
+
         Return [(id, fixed_version)] tuple list.
-        
+
         There might be several matches if a crash has been reintroduced in a
         later version. The results are sorted so that the highest fixed version
         comes first, and "unfixed" being the last result.
@@ -466,7 +466,7 @@ class CrashDatabase:
 
     def _duplicate_db_dump(self, with_timestamps=False):
         '''Return the entire duplicate database as a dictionary.
-        
+
         The returned dictionary maps "signature" to (crash_id, fixed_version)
         pairs.
 
@@ -489,7 +489,7 @@ class CrashDatabase:
 
     def _duplicate_db_sync_status(self, id):
         '''Update the duplicate db to the reality of the report in the crash db.
-        
+
         This uses get_fixed_version() to get the status of the given crash.
         An invalid ID gets removed from the duplicate db, and a crash which got
         fixed is marked as such in the database.
@@ -526,7 +526,7 @@ class CrashDatabase:
     def _duplicate_db_add_address_signature(self, sig, id):
         # sanity check
         existing = self._duplicate_search_address_signature(sig)
-        if existing: 
+        if existing:
             if existing != id:
                 raise SystemError('ID %i has signature %s, but database already has that signature for ID %i' % (
                         id, sig, existing))
@@ -560,10 +560,10 @@ class CrashDatabase:
     #
 
     def upload(self, report, progress_callback = None):
-        '''Upload given problem report return a handle for it. 
-        
-        This should happen noninteractively. 
-        
+        '''Upload given problem report return a handle for it.
+
+        This should happen noninteractively.
+
         If the implementation supports it, and a function progress_callback is
         passed, that is called repeatedly with two arguments: the number of
         bytes already sent, and the total number of bytes to send. This can be
@@ -604,8 +604,8 @@ class CrashDatabase:
 
         This creates a text comment with the "short" data (see
         ProblemReport.write_mime()), and creates attachments for all the
-        bulk/binary data. 
-        
+        bulk/binary data.
+
         If change_description is True, and the crash db implementation supports
         it, the short data will be put into the description instead (like in a
         new bug).
@@ -619,7 +619,7 @@ class CrashDatabase:
 
     def update_traces(self, id, report, comment=''):
         '''Update the given report ID for retracing results.
-        
+
         This updates Stacktrace, ThreadStacktrace, StacktraceTop,
         and StacktraceSource. You can also supply an additional comment.
         '''
@@ -638,7 +638,7 @@ class CrashDatabase:
 
     def get_unretraced(self):
         '''Return set of crash IDs which have not been retraced yet.
-        
+
         This should only include crashes which match the current host
         architecture.
         '''
@@ -657,7 +657,7 @@ class CrashDatabase:
         '''Return an ID set of all crashes which are not yet fixed.
 
         The list must not contain bugs which were rejected or duplicate.
-        
+
         This function should make sure that the returned list is correct. If
         there are any errors with connecting to the crash database, it should
         raise an exception (preferably IOError).
@@ -707,7 +707,7 @@ class CrashDatabase:
 
     def close_duplicate(self, report, id, master):
         '''Mark a crash id as duplicate of given master ID.
-        
+
         If master is None, id gets un-duplicated.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
@@ -715,7 +715,7 @@ class CrashDatabase:
     def mark_regression(self, id, master):
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
-        
+
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def mark_retraced(self, id):
@@ -728,27 +728,27 @@ class CrashDatabase:
 
         If invalid_msg is given, the bug should be closed as invalid with given
         message, otherwise just marked as a failed retrace.
-        
+
         This can be a no-op if you are not interested in this.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def _mark_dup_checked(self, id, report):
         '''Mark crash id as checked for being a duplicate
-        
+
         This is an internal method that should not be called from outside.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
 #
-# factory 
+# factory
 #
 
 def get_crashdb(auth_file, name = None, conf = None):
     '''Return a CrashDatabase object for the given crash db name.
-    
+
     This reads the configuration file 'conf'.
-    
+
     If name is None, it defaults to the 'default' value in conf.
 
     If conf is None, it defaults to the environment variable

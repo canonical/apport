@@ -2,7 +2,7 @@
 
 # Copyright (C) 2006 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 2 of the License, or (at your
@@ -53,7 +53,7 @@ def _transitive_dependencies(package, depends_set):
 
 def _read_file(path):
     '''Read file content.
-    
+
     Return its content, or return a textual error if it failed.
     '''
     try:
@@ -97,7 +97,7 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
 
 def _check_bug_pattern(report, pattern):
     '''Check if given report matches the given bug pattern XML DOM node.
-    
+
     Return the bug URL on match, otherwise None.
     '''
     if not pattern.attributes.has_key('url'):
@@ -519,7 +519,7 @@ class Report(problem_report.ProblemReport):
                        core,
                        ]
             try:
-                p = subprocess.Popen(command, 
+                p = subprocess.Popen(command,
                                      stdin=subprocess.PIPE,
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT)
@@ -636,7 +636,7 @@ class Report(problem_report.ProblemReport):
                 self['StacktraceAddressSignature'] = addr_signature
 
     def _gen_stacktrace_top(self):
-        '''Build field StacktraceTop as the top five functions of Stacktrace. 
+        '''Build field StacktraceTop as the top five functions of Stacktrace.
 
         Signal handler invocations and related functions are skipped since they
         are generally not useful for triaging and duplicate detection.
@@ -783,8 +783,8 @@ class Report(problem_report.ProblemReport):
         return False
 
     def search_bug_patterns(self, url):
-        '''Check bug patterns loaded from the specified url. 
-        
+        '''Check bug patterns loaded from the specified url.
+
         Return bug URL on match, or None otherwise.
 
         The url must refer to a valid XML document with the following syntax:
@@ -824,8 +824,8 @@ class Report(problem_report.ProblemReport):
         return None
 
     def _get_ignore_dom(self):
-        '''Read ignore list XML file and return a DOM tree. 
-        
+        '''Read ignore list XML file and return a DOM tree.
+
         Return an empty DOM tree if file does not exist.
 
         Raises ValueError if the file exists but is invalid XML.
@@ -949,7 +949,7 @@ class Report(problem_report.ProblemReport):
         '''
         if not self.get('StacktraceTop'):
             return False
-        
+
         unknown_fn = [f.startswith('??') for f in self['StacktraceTop'].splitlines()]
 
         if len(unknown_fn) < 3:
@@ -1095,7 +1095,7 @@ class Report(problem_report.ProblemReport):
 
         if self.get('ProblemType') == 'KernelOops' and \
             'Failure' in self:
-            
+
             # Title the report with suspend or hibernate as appropriate,
             # and mention any non-free modules loaded up front.
             title = ''
@@ -1127,7 +1127,7 @@ class Report(problem_report.ProblemReport):
 
     def crash_signature(self):
         '''Get a signature string for a crash.
-        
+
         This is suitable for identifying duplicates.
 
         For signal crashes this the concatenation of ExecutablePath, Signal
@@ -1139,11 +1139,11 @@ class Report(problem_report.ProblemReport):
 
         For assertion failures, it is the concatenation of ExecutablePath
         and assertion message, separated by colons.
-        
+
         For Python crashes, this concatenates the ExecutablePath, exception
         name, and Traceback function names, again separated by a colon.
         '''
-        if ('ExecutablePath' not in self and 
+        if ('ExecutablePath' not in self and
             not self['ProblemType'] == 'KernelCrash'):
             return None
 
@@ -1265,9 +1265,9 @@ class Report(problem_report.ProblemReport):
             return None
 
         return '%s:%s:%s:%s' % (
-                self['ExecutablePath'], 
+                self['ExecutablePath'],
                 self['Signal'],
-                os.uname()[4], 
+                os.uname()[4],
                 ':'.join(stack))
 
     def anonymize(self):
@@ -1333,7 +1333,7 @@ class Report(problem_report.ProblemReport):
 
     def _build_proc_maps_cache(self):
         '''Generate self._proc_maps_cache from ProcMaps field.
-        
+
         This only gets done once.
         '''
         if self._proc_maps_cache:
@@ -1360,5 +1360,5 @@ class Report(problem_report.ProblemReport):
                 # but complain otherwise, as this means we encounter an
                 # architecture or new kernel version where the format changed
                 assert m, 'cannot parse ProcMaps line: ' + line
-            self._proc_maps_cache.append((int(m.group(1), 16), 
+            self._proc_maps_cache.append((int(m.group(1), 16),
                 int(m.group(2), 16), m.group(3)))

@@ -4,7 +4,7 @@ from glob import glob
 import os.path, shutil, sys, subprocess
 from distutils.version import StrictVersion
 import distutils.core
-import distutils.command.build 
+import distutils.command.build
 import distutils.command.clean
 
 try:
@@ -32,7 +32,7 @@ class build_java_subdir(distutils.core.Command):
         os.chdir('java')
 
         subprocess.check_call(['javac'] + glob('com/ubuntu/apport/*.java'))
-        subprocess.check_call(['jar','cvf', 'apport.jar'] + 
+        subprocess.check_call(['jar','cvf', 'apport.jar'] +
                             glob('com/ubuntu/apport/*.class'))
         subprocess.check_call(['javac','crash.java'])
         subprocess.check_call(['jar','cvf', 'crash.jar', 'crash.class'])
