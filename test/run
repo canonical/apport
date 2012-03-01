@@ -1,8 +1,13 @@
 #!/bin/sh
-# Run all Apport self tests.
+# Run Apport self tests.
+#
 # Test against the source tree when run in the source tree root. Test against
 # the system libraries/programs when run from anywhere else.
 # You can specify test names as arguments to only run a subset of tests.
+#
+# Run all tests: test/run
+# Run tests of one module: test/run crashdb
+# Run one test in one module:  test/run report.test_add_os_info
 
 # Copyright (C) 2007 - 2012 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
@@ -48,9 +53,8 @@ if [ -z "$1" ]; then
     TESTS="$mydir/test_*.py"
 else
     while [ -n "$1" ]; do
-        T="$mydir/test_$1.py"
-        if [ -e "$T" ]; then
-            TESTS="$TESTS $T"
+        if [ -e "$mydir/test_${1%%.*}.py" ]; then
+            TESTS="$TESTS $1"
         else
             echo "Test $1 does not exist" >&2
             exit 1
@@ -61,13 +65,19 @@ fi
 
 for t in $TESTS; do
     echo "--- Testing $t ---"
-    if [ "${t#*_ui_}" != $t ]; then
+    if [ "${t#ui_}" != $t ]; then
         prefix=$xvfb
     else
         # ensure that non-UI modules do not require X
         prefix="env -u DISPLAY"
     fi
-    $prefix ${PYTHON:=python} -tt $t -v || failed=$((failed+1))
+    test_file="$mydir/test_${t%%.*}.py"
+    if [ "$t" = "${t#*.}" ]; then
+        test_name=""
+    else
+        test_name="T.${t#*.}"
+    fi
+    $prefix ${PYTHON:=python} -tt $test_file -v $test_name || failed=$((failed+1))
 done
 
 exit $failed

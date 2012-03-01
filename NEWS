@@ -32,7 +32,7 @@ Improvements:
    run in the source tree root, and against the system libraries/programs when
    run from anywhere else.
  - test/run: Consider command line arguments as test names and only run those
-   when given.
+   when given. Also support just running a single test.
  - testsuite: Force the skipping of online tests when $SKIP_ONLINE_TESTS is
    set.
  - hookutils.py, xsession_errors(): Add a reasonable default pattern which
