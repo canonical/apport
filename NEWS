@@ -48,6 +48,10 @@ Improvements:
  - apport/packaging.py: Add get_uninstalled_package() method as a helper method
    for the test suite. Use it instead of a hardcoded Debian/Ubuntu specific
    name in test/test_hooks.py.
+ - test/test_ui_gtk.py: Add test cases for complete UI workflow runs for
+   reporting a bug against an installed/uninstalled package, and reporting a
+   crash with and without showing details. This reproduces the recent crashes
+   like LP #901675 or LP #943661.
 
 1.93 (2012-02-23):
 ------------------

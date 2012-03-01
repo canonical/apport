@@ -15,9 +15,12 @@ import sys
 import os
 import imp
 import apport
+import shutil
 from gi.repository import GLib, Gtk
 from apport import unicode_gettext as _
 from mock import patch
+
+import apport.crashdb_impl.memory
 
 if os.environ.get('APPORT_TEST_LOCAL'):
     apport_gtk_path = 'gtk/apport-gtk'
@@ -27,15 +30,31 @@ GTKUserInterface = imp.load_source('', apport_gtk_path).GTKUserInterface
 
 class T(unittest.TestCase):
     def setUp(self):
-        self.report = apport.Report()
+        self.report_dir = tempfile.mkdtemp()
+        apport.fileutils.report_dir = self.report_dir
+
         saved = sys.argv[0]
         # Work around GTKUserInterface using basename to find the GtkBuilder UI
         # file.
         sys.argv[0] = apport_gtk_path
         self.app = GTKUserInterface()
         sys.argv[0] = saved
-        self.app.report = self.report
-        self.app.report_file = '/var/crash/fake.crash'
+
+        # use in-memory crashdb
+        self.app.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
+
+        # test report
+        self.app.report_file = os.path.join(self.report_dir, 'bash.crash')
+
+        self.app.report = apport.Report()
+        self.app.report['ExecutablePath'] = '/bin/bash'
+        self.app.report['Signal'] = '11'
+        self.app.report['CoreDump'] = ''
+        with open(self.app.report_file, 'w') as f:
+            self.app.report.write(f)
+
+    def tearDown(self):
+        shutil.rmtree(self.report_dir)
 
     def test_close_button(self):
         '''Clicking the close button on the window does not report the crash.'''
@@ -58,7 +77,7 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'KernelCrash'
+        self.app.report['ProblemType'] = 'KernelCrash'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
@@ -84,8 +103,8 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'Package'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['ProblemType'] = 'Package'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
@@ -112,15 +131,15 @@ class T(unittest.TestCase):
         | [ Show Details ]                 [ Leave Closed ]  [ Relaunch ] |
         +-----------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'Crash'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         with tempfile.NamedTemporaryFile() as fp:
             fp.write('''[Desktop Entry]
 Version=1.0
 Name=Apport
 Type=Application''')
             fp.flush()
-            self.report['DesktopFile'] = fp.name
+            self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
@@ -147,8 +166,8 @@ Type=Application''')
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'Crash'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['Package'] = 'bash 5'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
@@ -177,12 +196,12 @@ Type=Application''')
         | [ Show Details ]                                     [ Continue ] |
         +-------------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'Crash'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
-        self.report['ProcEnviron'] = ('LANGUAGE=en_GB:en\n'
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['Package'] = 'bash 5'
+        self.app.report['ProcEnviron'] = ('LANGUAGE=en_GB:en\n'
                                       'SHELL=/bin/sh\n'
                                       'TERM=xterm')
-        self.report['ExecutablePath'] = '/usr/bin/apport'
+        self.app.report['ExecutablePath'] = '/usr/bin/apport'
         # This will be set by apport/ui.py in load_report()
         self.app.cur_package = 'apport'
         GLib.idle_add(Gtk.main_quit)
@@ -201,7 +220,7 @@ Type=Application''')
                          _('Continue'))
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
 
-        del self.report['ExecutablePath']
+        del self.app.report['ExecutablePath']
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
@@ -218,8 +237,8 @@ Type=Application''')
         | [ Show Details ] [ Examine locally ]  [ Leave Closed ] [ Relaunch ] |
         +---------------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'Crash'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['Package'] = 'bash 5'
 
         GLib.idle_add(Gtk.main_quit)
         self.app.can_examine_locally.return_value = False
@@ -269,11 +288,113 @@ Type=Application''')
         self.assertFalse(send_error_report.get_property('visible'))
         self.assertFalse(send_error_report.get_active())
 
+    @patch.object(GTKUserInterface, 'open_url')
+    def test_crash_nodetails(self, *args):
+        '''Crash report without showing details'''
+
+        def cont(*args):
+            if not self.app.w('continue_button').get_visible():
+                return True
+            self.app.w('continue_button').clicked()
+            return False
+
+        GLib.timeout_add_seconds(1, cont)
+        self.app.run_crash(self.app.report_file)
+
+        # we should have reported one crash
+        self.assertEqual(self.app.crashdb.latest_id(), 0)
+        r = self.app.crashdb.download(0)
+        self.assertEqual(r['ProblemType'], 'Crash')
+        self.assertEqual(r['ExecutablePath'], '/bin/bash')
+
+        # data was collected
+        self.assertTrue(r['Package'].startswith('bash '))
+        self.assertTrue('libc' in r['Dependencies'])
+        self.assertTrue('Stacktrace' in r)
+
+        # URL was opened
+        self.assertEqual(self.app.open_url.call_count, 1)
+
+    @patch.object(GTKUserInterface, 'open_url')
+    def test_crash_details(self, *args):
+        '''Crash report with showing details'''
+
+        def show_details(*args):
+            if not self.app.w('show_details').get_visible():
+                return True
+            self.app.w('show_details').clicked()
+            GLib.timeout_add(200, cont)
+            return False
+
+        def cont(*args):
+            # wait until data collection is done and tree filled
+            if  self.app.tree_model.get_iter_first() is None:
+                return True
+
+            self.assertTrue(self.app.w('continue_button').get_visible())
+            self.app.w('continue_button').clicked()
+            return False
+
+        GLib.timeout_add(200, show_details)
+        self.app.run_crash(self.app.report_file)
+
+        # we should have reported one crash
+        self.assertEqual(self.app.crashdb.latest_id(), 0)
+        r = self.app.crashdb.download(0)
+        self.assertEqual(r['ProblemType'], 'Crash')
+        self.assertEqual(r['ExecutablePath'], '/bin/bash')
+
+        # data was collected
+        self.assertTrue(r['Package'].startswith('bash '))
+        self.assertTrue('libc' in r['Dependencies'])
+        self.assertTrue('Stacktrace' in r)
+
+        # URL was opened
+        self.assertEqual(self.app.open_url.call_count, 1)
+
+    def test_bug_report_installed_package(self):
+        '''Bug report for installed package'''
+
+        self.app.report_file = None
+        self.app.options.package = 'bash'
+        def c(*args):
+            if not self.app.w('cancel_button').get_visible():
+                return True
+            self.app.w('cancel_button').clicked()
+            return False
+        GLib.timeout_add_seconds(1, c)
+        self.app.run_report_bug()
+
+        self.assertEqual(self.app.report['ProblemType'], 'Bug')
+        self.assertEqual(self.app.report['SourcePackage'], 'bash')
+        self.assertTrue(self.app.report['Package'].startswith('bash '))
+        self.assertNotEqual(self.app.report['Dependencies'], '')
+
+    def test_bug_report_uninstalled_package(self):
+        '''Bug report for uninstalled package'''
+
+        pkg = apport.packaging.get_uninstalled_package()
+
+        self.app.report_file = None
+        self.app.options.package = pkg
+        def c(*args):
+            if not self.app.w('cancel_button').get_visible():
+                return True
+            self.app.w('cancel_button').clicked()
+            return False
+        GLib.timeout_add_seconds(1, c)
+        self.app.run_report_bug()
+
+        self.assertEqual(self.app.report['ProblemType'], 'Bug')
+        self.assertEqual(self.app.report['SourcePackage'],
+                apport.packaging.get_source(pkg))
+        self.assertEqual(self.app.report['Package'], '%s (not installed)' % pkg)
+
     @patch.object(GTKUserInterface, 'get_desktop_entry')
     def test_missing_icon(self, *args):
         # LP: 937354
-        self.report['ProblemType'] = 'Crash'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         self.app.get_desktop_entry.return_value.getIcon.return_value = 'nonexistent'
         self.app.get_desktop_entry.return_value.getName.return_value = 'apport'
         GLib.idle_add(Gtk.main_quit)
