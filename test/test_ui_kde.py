@@ -13,13 +13,17 @@ import unittest
 import tempfile
 import sys
 import os
+import shutil
 
+from mock import patch
 from PyQt4.QtCore import QTimer, QCoreApplication
+from PyQt4.QtGui import QTreeWidget
 from PyKDE4.kdecore import ki18n, KCmdLineArgs, KAboutData, KLocalizedString
 from PyKDE4.kdeui import KApplication
 
 import apport
 from apport import unicode_gettext as _
+import apport.crashdb_impl.memory
 
 if os.environ.get('APPORT_TEST_LOCAL'):
     apport_kde_path = 'kde/apport-kde'
@@ -32,10 +36,31 @@ sys.argv[0] = apport_kde_path
 
 class T(unittest.TestCase):
     def setUp(self):
-        self.report = apport.Report()
+        self.report_dir = tempfile.mkdtemp()
+        apport.fileutils.report_dir = self.report_dir
+
         self.app = MainUserInterface()
-        self.app.report = self.report
-        self.app.report_file = '/var/crash/fake.crash'
+
+        # use in-memory crashdb
+        self.app.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
+
+        # test report
+        self.app.report_file = os.path.join(self.report_dir, 'bash.crash')
+
+        self.app.report = apport.Report()
+        self.app.report['ExecutablePath'] = '/bin/bash'
+        self.app.report['Signal'] = '11'
+        self.app.report['CoreDump'] = ''
+        with open(self.app.report_file, 'w') as f:
+            self.app.report.write(f)
+
+    def tearDown(self):
+        if self.app.dialog:
+            QCoreApplication.processEvents()
+            self.app.dialog.done(0)
+            QCoreApplication.processEvents()
+
+        shutil.rmtree(self.report_dir)
 
     def test_close_button(self):
         '''Clicking the close button on the window does not report the crash.'''
@@ -57,7 +82,7 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'KernelCrash'
+        self.app.report['ProblemType'] = 'KernelCrash'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.heading.text(),
@@ -81,8 +106,8 @@ class T(unittest.TestCase):
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'Package'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['ProblemType'] = 'Package'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.heading.text(),
@@ -106,15 +131,15 @@ class T(unittest.TestCase):
         | [ Show Details ]                 [ Leave Closed ]  [ Relaunch ] |
         +-----------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'Crash'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         with tempfile.NamedTemporaryFile() as fp:
             fp.write('''[Desktop Entry]
 Version=1.0
 Name=Apport
 Type=Application''')
             fp.flush()
-            self.report['DesktopFile'] = fp.name
+            self.app.report['DesktopFile'] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
             self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.heading.text(),
@@ -139,8 +164,8 @@ Type=Application''')
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         '''
-        self.report['ProblemType'] = 'Crash'
-        self.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.heading.text(),
@@ -155,7 +180,7 @@ Type=Application''')
         self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
         self.assertFalse(self.app.dialog.closed_button.isVisible())
 
-    def test_apport_bug_package(self):
+    def test_apport_bug_package_layout(self):
         '''
         +-------------------------------------------------------------------+
         | [ error  ] Send problem report to the developers?                 |
@@ -182,6 +207,121 @@ Type=Application''')
         self.assertFalse(self.app.dialog.closed_button.isVisible())
         self.assertTrue(self.app.dialog.cancel_button.isVisible())
         self.assertTrue(self.app.dialog.treeview.isVisible())
+
+    @patch.object(MainUserInterface, 'open_url')
+    def test_1_crash_nodetails(self, *args):
+        '''Crash report without showing details'''
+
+        def cont(*args):
+            if self.app.dialog and self.app.dialog.continue_button.isVisible():
+                self.app.dialog.continue_button.click()
+                return
+            # try again
+            QTimer.singleShot(1000, cont)
+
+        QTimer.singleShot(1000, cont)
+        self.app.run_crash(self.app.report_file)
+
+        # we should have reported one crash
+        self.assertEqual(self.app.crashdb.latest_id(), 0)
+        r = self.app.crashdb.download(0)
+        self.assertEqual(r['ProblemType'], 'Crash')
+        self.assertEqual(r['ExecutablePath'], '/bin/bash')
+
+        # data was collected
+        self.assertTrue(r['Package'].startswith('bash '))
+        self.assertTrue('libc' in r['Dependencies'])
+        self.assertTrue('Stacktrace' in r)
+
+        # URL was opened
+        self.assertEqual(self.app.open_url.call_count, 1)
+
+    @patch.object(MainUserInterface, 'open_url')
+    def test_1_crash_details(self, *args):
+        '''Crash report with showing details'''
+
+        def show_details(*args):
+            if self.app.dialog and self.app.dialog.show_details.isVisible():
+                self.app.dialog.show_details.click()
+                QTimer.singleShot(1000, cont)
+                return
+
+            # try again
+            QTimer.singleShot(200, show_details)
+
+        def cont(*args):
+            # wait until data collection is done and tree filled
+            details = self.app.dialog.findChild(QTreeWidget, 'details')
+            if details.topLevelItemCount() == 0:
+                QTimer.singleShot(200, cont)
+                return
+
+            if self.app.dialog and self.app.dialog.continue_button.isVisible():
+                self.app.dialog.continue_button.click()
+                return
+            # try again
+            QTimer.singleShot(200, cont)
+
+        QTimer.singleShot(200, show_details)
+        self.app.run_crash(self.app.report_file)
+
+        # we should have reported one crash
+        self.assertEqual(self.app.crashdb.latest_id(), 0)
+        r = self.app.crashdb.download(0)
+        self.assertEqual(r['ProblemType'], 'Crash')
+        self.assertEqual(r['ExecutablePath'], '/bin/bash')
+
+        # data was collected
+        self.assertTrue(r['Package'].startswith('bash '))
+        self.assertTrue('libc' in r['Dependencies'])
+        self.assertTrue('Stacktrace' in r)
+
+        # URL was opened
+        self.assertEqual(self.app.open_url.call_count, 1)
+
+    def test_bug_report_installed_package(self):
+        '''Bug report for installed package'''
+
+        self.app.report_file = None
+        self.app.options.package = 'bash'
+
+        def c(*args):
+            if self.app.dialog and self.app.dialog.cancel_button.isVisible():
+                self.app.dialog.cancel_button.click()
+                return
+            # try again
+            QTimer.singleShot(1000, c)
+
+        QTimer.singleShot(1000, c)
+        self.app.run_report_bug()
+
+        self.assertEqual(self.app.report['ProblemType'], 'Bug')
+        self.assertEqual(self.app.report['SourcePackage'], 'bash')
+        self.assertTrue(self.app.report['Package'].startswith('bash '))
+        self.assertNotEqual(self.app.report['Dependencies'], '')
+
+    def xtest_bug_report_uninstalled_package(self):
+        '''Bug report for uninstalled package'''
+
+        pkg = apport.packaging.get_uninstalled_package()
+
+        self.app.report_file = None
+        self.app.options.package = pkg
+
+        def c(*args):
+            if self.app.dialog and self.app.dialog.cancel_button.isVisible():
+                self.app.dialog.cancel_button.click()
+                return
+            # try again
+            QTimer.singleShot(1000, c)
+
+        QTimer.singleShot(1000, c)
+        self.app.run_report_bug()
+
+        self.assertEqual(self.app.report['ProblemType'], 'Bug')
+        self.assertEqual(self.app.report['SourcePackage'],
+                apport.packaging.get_source(pkg))
+        self.assertEqual(self.app.report['Package'], '%s (not installed)' % pkg)
 
     def test_administrator_disabled_reporting(self):
         QTimer.singleShot(0, QCoreApplication.quit)
