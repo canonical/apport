@@ -45,6 +45,9 @@ Improvements:
    "Dependencies" fields for any package which is not native to the
    distribution. If any such package is present, tag the report with
    "third-party-packages" in data/general-hooks/generic.py. (LP: #927912)
+ - apport/packaging.py: Add get_uninstalled_package() method as a helper method
+   for the test suite. Use it instead of a hardcoded Debian/Ubuntu specific
+   name in test/test_hooks.py.
 
 1.93 (2012-02-23):
 ------------------

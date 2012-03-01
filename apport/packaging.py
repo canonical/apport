@@ -208,4 +208,20 @@ class PackageInfo:
 
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
+    def get_uninstalled_package(self):
+        '''Return a valid package name which is not installed.
+
+        This is only used in the test suite. The default implementation should
+        work, but might be slow for your backend, so you might want to
+        reimplement this.
+        '''
+        for p in self.package_name_glob('*'):
+            if not self.is_distro_package(p):
+                continue
+            try:
+                self.get_version(p)
+                continue
+            except ValueError:
+                return p
+
 import apport.packaging_impl

@@ -59,8 +59,8 @@ class T(unittest.TestCase):
     def test_package_hook_uninstalled(self):
         '''package_hook on an uninstalled package (might fail to install).'''
 
-        #FIXME: This is a really Debian/Ubuntu specific dodgy test case
-        ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'augeas-dbg'],
+        pkg = apport.packaging.get_uninstalled_package()
+        ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', pkg],
             stdin=subprocess.PIPE)
         ph.communicate('something is wrong')
         self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
@@ -72,8 +72,8 @@ class T(unittest.TestCase):
         r.load(open(reps[0]))
 
         self.assertEqual(r['ProblemType'], 'Package')
-        self.assertEqual(r['Package'], 'augeas-dbg')
-        self.assertEqual(r['SourcePackage'], 'augeas')
+        self.assertEqual(r['Package'], pkg)
+        self.assertEqual(r['SourcePackage'], apport.packaging.get_source(pkg))
         self.assertEqual(r['ErrorMessage'], 'something is wrong')
 
     def test_package_hook_logs(self):
