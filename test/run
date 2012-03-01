@@ -37,7 +37,7 @@ else
 fi
 
 xvfb=
-if type xvfb-run >/dev/null; then
+if type xvfb-run >/dev/null && [ -z "$APPORT_TEST_NOXVFB" ]; then
     xvfb=xvfb-run
 fi
 
