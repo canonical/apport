@@ -232,7 +232,7 @@ Type=Application''')
         self.assertTrue(self.app.w('examine').get_property('visible'))
         self.assertTrue(result['examine'])
 
-    def test_apport_bug_package(self):
+    def test_apport_bug_package_layout(self):
         '''
         +-------------------------------------------------------------------+
         | [ error  ] Send problem report to the developers?                 |
