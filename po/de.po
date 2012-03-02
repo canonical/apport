@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport 0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-02 13:27+0100\n"
+"POT-Creation-Date: 2012-03-02 13:30+0100\n"
 "PO-Revision-Date: 2012-01-07 22:22+0000\n"
 "Last-Translator: Daniel Schury <das.surst@googlemail.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -329,11 +329,13 @@ msgid "Update %s with fully symbolic stack trace"
 msgstr "%s mit vollständig symbolischen Stacktrace aktualisieren"
 
 #: ../apport/ui.py:819
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "Das Problem trat in der Anwendung %s auf, die seitdem verändert wurde."
+msgstr ""
+"Das Problem trat in der Anwendung %s auf, die seit dem Absturz verändert "
+"wurde."
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -589,9 +591,8 @@ msgid "Apport"
 msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
-#, fuzzy
 msgid "Crash report"
-msgstr "Kann Bericht nicht erstellen"
+msgstr "Absturzbericht"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
@@ -606,15 +607,13 @@ msgid "Send an error report to help fix this problem"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:6
-#, fuzzy
 msgid "Ignore future problems of this program version"
-msgstr "Zukünftige Abstürze dieser Programmversion _ignorieren"
+msgstr "Zukünftige Abstürze dieser Programmversion ignorieren"
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
-#, fuzzy
 msgid "Show Details"
-msgstr "&Details …"
+msgstr "Details anzeigen"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -803,12 +802,12 @@ msgstr ""
 "werden."
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Entschuldigung, das Programm \"%s\" wurde unerwartet beendet."
+msgstr "Entschuldigung, die Anwendung %s wurde unerwartet beendet."
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Entschuldigung, \"%s\" wurde unerwartet beendet."
 
@@ -818,23 +817,22 @@ msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
-#, fuzzy
 msgid "Send"
-msgstr "&Senden"
+msgstr "Senden"
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "Paketproblem"
+msgstr "Paket: %s"
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Entschuldigung, \"%s\" wurde unerwartet beendet."
+msgstr "Entschuldigung, %s wurde unerwartet beendet."
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
@@ -842,9 +840,8 @@ msgid "Relaunch"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
-#, fuzzy
 msgid "Hide Details"
-msgstr "&Details …"
+msgstr "Details ausblenden"
 
 #: ../kde/apport-kde.py:265
 msgid "Username:"
