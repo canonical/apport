@@ -32,8 +32,7 @@ Bug fixes:
    ui_*_info_collection_progress() methods. This fixes libX11 crashes when
    multiple UI threads do changes concurrently (LP: #901675), and also avoids
    multi-thread induced crashes in Pango (LP: #943661). The removal of the
-   collect() method, this also fixes the new crashes in it. (LP: #942098, 
-   LP: #939803)
+   collect() method also fixes the new crashes in it. (LP: #942098, #939803)
  - ui.py, get_desktop_entry(): Fix crash on uninstalled package. (LP: #940984)
  - data/unkillable_shutdown: Fix crash on race condition when PID goes away
    while the report is created. (LP: #546369)
