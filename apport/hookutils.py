@@ -476,7 +476,10 @@ def pci_devices(*pci_classes):
         slot = None
 
         for line in paragraph.split(b'\n'):
-            key, value = line.split(b':',1)
+            try:
+                key, value = line.split(b':',1)
+            except ValueError:
+                continue
             value = value.strip()
             key = key.strip()
             if key == 'Class':

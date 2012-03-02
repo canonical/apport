@@ -37,6 +37,8 @@ Bug fixes:
  - ui.py, get_desktop_entry(): Fix crash on uninstalled package. (LP: #940984)
  - data/unkillable_shutdown: Fix crash on race condition when PID goes away
    while the report is created. (LP: #546369)
+ - apport/hookutils.py, pci_devices(): Fix crash on unexpected lines from
+   lspci. (LP: #904489)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when
