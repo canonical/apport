@@ -26,6 +26,13 @@ Bug fixes:
    duplicates as their signatures differ slightly) and not a logic error. So
    instead of erroring out, duplicate all three bugs and keep the lowest number
    as the master ID. (LP: #943117)
+ - Revert the usage of multiple nested threads during data collection, and
+   switch back to only using one UI thread. The UI implementations can, and now
+   do, decide between showing a spinner and showing a progress dialog in the
+   ui_*_info_collection_progress() methods. This fixes libX11 crashes when
+   multiple UI threads do changes concurrently (LP: #901675), and also avoids
+   multi-thread induced crashes in Pango (LP: #943661). The removal of the
+   collect() method, this also fixes the new crashes in it. (LP: #942098)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

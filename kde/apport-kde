@@ -138,6 +138,7 @@ class ReportDialog(Dialog):
             os.path.join(os.path.dirname(sys.argv[0]), 'spinner.gif'),
             QByteArray(), self.spinner)
         self.spinner.setMovie(self.movie)
+        self.spinner.setVisible(False)
 
         if allowed_to_report:
             self.send_error_report.setChecked(True)
@@ -241,19 +242,12 @@ class ReportDialog(Dialog):
             self.showtree(False)
 
     def collect_done(self):
-        self.movie.start()
-        self.spinner.hide()
         self.ui.ui_update_view(self)
 
     def showtree(self, visible):
         self.treeview.setVisible(visible)
         if visible and not self.collect_called:
-            rect = self.spinner.parent().rect()
-            self.spinner.setGeometry(rect.width() / 2 - self.spinner.width() / 2,
-                                     rect.height() / 2 - self.spinner.height() / 2,
-                                     self.spinner.width(), self.spinner.height())
-            self.movie.start()
-            self.ui.collect(self.collect_done)
+            QTimer.singleShot(0, lambda: self.ui.collect_info(on_finished=self.collect_done))
             self.collect_called = True
         if visible:
             self.setMaximumSize(16777215, 16777215)
@@ -282,6 +276,7 @@ class MainUserInterface(apport.ui.UserInterface):
         apport.ui.UserInterface.__init__(self)
         # Help unit tests get at the dialog.
         self.dialog = None
+        self.progress = None
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -338,21 +333,41 @@ class MainUserInterface(apport.ui.UserInterface):
         KMessageBox.information(None, _(text), _(title))
 
     def ui_start_info_collection_progress(self):
-        self.progress = ProgressDialog(
-                _('Collecting Problem Information'),
-                _('Collecting problem information'),
-                _('The collected information can be sent to the developers '
-                  'to improve the application. This might take a few '
-                  'minutes.'))
-        self.progress.set()
-        self.progress.show()
+        # show a spinner if we already have the main window
+        if self.dialog and self.dialog.isVisible():
+            rect = self.dialog.spinner.parent().rect()
+            self.dialog.spinner.setGeometry(rect.width() / 2 - self.dialog.spinner.width() / 2,
+                                     rect.height() / 2 - self.dialog.spinner.height() / 2,
+                                     self.dialog.spinner.width(), self.dialog.spinner.height())
+            self.dialog.movie.start()
+        else:
+            # show a progress dialog
+            self.progress = ProgressDialog(
+                    _('Collecting Problem Information'),
+                    _('Collecting problem information'),
+                    _('The collected information can be sent to the developers '
+                      'to improve the application. This might take a few '
+                      'minutes.'))
+            self.progress.set()
+            self.progress.show()
+
+        KApplication.processEvents()
 
     def ui_pulse_info_collection_progress(self):
-        self.progress.set()
+        if self.progress:
+            self.progress.set()
+        # for a spinner we just need to handle events
         KApplication.processEvents()
 
     def ui_stop_info_collection_progress(self):
-        self.progress.hide()
+        if self.progress:
+            self.progress.hide()
+            self.progress = None
+        else:
+            self.dialog.movie.stop()
+            self.dialog.spinner.hide()
+
+        KApplication.processEvents()
 
     def ui_start_upload_progress(self):
         self.progress = ProgressDialog(

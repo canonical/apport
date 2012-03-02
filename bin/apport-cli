@@ -219,11 +219,11 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def ui_update_view(self):
         self.in_update_view = True
-        self.ui_stop_info_collection_progress()
+        report = self._get_details()
         try:
             subprocess.Popen(['/usr/bin/sensible-pager'],
                     stdin=subprocess.PIPE,
-                    close_fds=True).communicate(self._get_details())
+                    close_fds=True).communicate(report.encode('UTF-8'))
         except IOError as e:
             # ignore broken pipe (premature quit)
             if e.errno == errno.EPIPE:
@@ -231,6 +231,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             else:
                 raise
         self.in_update_view = False
+
     def ui_present_report_details(self, allowed_to_report=True):
         dialog = CLIDialog (_('Send problem report to the developers?'),
                 _('After the problem report has been sent, please fill out the form in the\n'
@@ -264,13 +265,8 @@ class CLIUserInterface(apport.ui.UserInterface):
             elif response == ignore:
                 return_value['blacklist'] = True
             elif response == view:
-                self.collect(self.ui_update_view)
-                self.ui_start_info_collection_progress()
-                while not self.in_update_view:
-                    self.ui_pulse_info_collection_progress()
-                    time.sleep(0.5)
-                while self.in_update_view:
-                    time.sleep(0.5)
+                self.collect_info()
+                self.ui_update_view()
                 continue
             elif response == save:
                 # we do not already have a report file if we report a bug

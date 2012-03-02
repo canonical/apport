@@ -670,12 +670,11 @@ bOgUs=
                                             'examine' : False,
                                             'restart' : False }
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None)
+        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
-        # no separate data collection dialog
         self.assertFalse(self.ui.ic_progress_active)
-        self.assertEqual(self.ui.ic_progress_pulses, 0)
+        self.assertNotEqual(self.ui.ic_progress_pulses, 0)
         self.assertTrue(self.ui.present_details_shown)
 
         self.assertTrue('SourcePackage' in self.ui.report.keys())

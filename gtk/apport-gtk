@@ -26,21 +26,6 @@ import apport
 from apport import unicode_gettext as _
 import apport.ui
 from gi.repository import Gdk
-GObject.threads_init()
-Gdk.threads_init()
-
-def threaded_operation(func):
-    def f(*args, **kwargs):
-        threads = False
-        if Gtk.main_level() > 0:
-            threads = True
-        if threads:
-            Gdk.threads_enter()
-        ret = func(*args, **kwargs)
-        if threads:
-            Gdk.threads_leave()
-        return ret
-    return f
 
 class GTKUserInterface(apport.ui.UserInterface):
     '''GTK UserInterface.'''
@@ -96,11 +81,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         spinner.hide()
         return spinner
 
-    @threaded_operation
     def ui_update_view(self):
-        self.spinner.hide()
-        self.spinner.stop()
-
         # show the most interesting items on top
         keys = sorted(self.report)
         for k in ('Traceback', 'StackTrace', 'Title', 'ProblemType', 'Package', 'ExecutablePath'):
@@ -306,11 +287,9 @@ class GTKUserInterface(apport.ui.UserInterface):
             Gtk.main_iteration_do(False)
         return result
 
-    @threaded_operation
     def ui_info_message(self, title, text):
         self._ui_message_dialog(title, text, Gtk.MessageType.INFO)
 
-    @threaded_operation
     def ui_error_message(self, title, text):
         self._ui_message_dialog(title, text, Gtk.MessageType.ERROR)
 
@@ -341,7 +320,6 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    @threaded_operation
     def ui_stop_upload_progress(self):
         '''Close debug data upload progress window.'''
 
@@ -349,26 +327,37 @@ class GTKUserInterface(apport.ui.UserInterface):
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    @threaded_operation
     def ui_start_info_collection_progress(self):
-        self.w('progressbar_information_collection').set_fraction(0)
-        self.w('window_information_collection').show()
+        # show a spinner if we already have the main window
+        if self.w('dialog_crash_new').get_property('visible'):
+            self.spinner.show()
+            self.spinner.start()
+        else:
+            # show a progress dialog
+            self.w('progressbar_information_collection').set_fraction(0)
+            self.w('window_information_collection').show()
+
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    @threaded_operation
     def ui_pulse_info_collection_progress(self):
-        self.w('progressbar_information_collection').pulse()
+        if self.w('window_information_collection').get_property('visible'):
+            self.w('progressbar_information_collection').pulse()
+
+        # for a spinner we just need to handle events
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    @threaded_operation
     def ui_stop_info_collection_progress(self):
-        self.w('window_information_collection').hide()
+        if self.w('window_information_collection').get_property('visible'):
+            self.w('window_information_collection').hide()
+        else:
+            self.spinner.hide()
+            self.spinner.stop()
+
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-    @threaded_operation
     def ui_question_yesno(self, text):
         '''Show a yes/no question.
 
@@ -383,7 +372,6 @@ class GTKUserInterface(apport.ui.UserInterface):
             return False
         return None
 
-    @threaded_operation
     def ui_question_choice(self, text, options, multiple):
         '''Show an question with predefined choices.
 
@@ -428,7 +416,6 @@ class GTKUserInterface(apport.ui.UserInterface):
             index += 1
         return result
 
-    @threaded_operation
     def ui_question_file(self, text):
         '''Show a file selector dialog.
 
@@ -475,10 +462,8 @@ class GTKUserInterface(apport.ui.UserInterface):
             sw.show()
             widget.set_label(_('Hide Details'))
             if not self.collect_called:
-                self.spinner.show()
-                self.spinner.start()
                 self.collect_called = True
-                self.collect(self.ui_update_view)
+                GLib.idle_add(lambda: self.collect_info(on_finished=self.ui_update_view))
         return True
 
     def on_progress_window_close_event(self, widget, event=None):

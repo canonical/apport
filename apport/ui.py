@@ -145,7 +145,6 @@ class UserInterface:
         self.report = None
         self.report_file = None
         self.cur_package = None
-        self.collection_thread = None
 
         try:
             self.crashdb = get_crashdb(None)
@@ -181,45 +180,6 @@ class UserInterface:
             result = True
 
         return result
-
-    def collect(self, on_finished=None):
-        '''Start data collection for current report in the background.
-
-        This calls collect_info() in a background thread. When on_finished is
-        given, this gets called back when data collection is complete.
-        '''
-        def _go(callback=None):
-            try:
-                if 'Dependencies' not in self.report:
-                    self.collect_info()
-            except (IOError, zlib.error) as e:
-                # can happen with broken core dumps
-                self.report = None
-                self.ui_error_message(_('Invalid problem report'),
-                    '%s\n\n%s' % (
-                        _('This problem report is damaged and cannot be processed.'),
-                        repr(e)))
-                self.ui_shutdown()
-                return
-            except ValueError: # package does not exist
-                self.ui_error_message(_('Invalid problem report'),
-                    _('The report belongs to a package that is not installed.'))
-                self.ui_shutdown()
-                return
-            except Exception as e:
-                apport.error(repr(e))
-                self.ui_error_message(_('Invalid problem report'),
-                    _('An error occurred while attempting to process this'
-                      ' problem report.'))
-                self.ui_shutdown()
-                return
-            if callable(callback):
-                callback()
-
-        assert self.collection_thread is None, 'collection already done'
-        self.collection_thread = apport.REThread.REThread(target=_go,
-                                                          args=(on_finished,))
-        self.collection_thread.start()
 
     def run_crash(self, report_file, confirm=True):
         '''Present and report a particular crash.
@@ -260,12 +220,31 @@ class UserInterface:
 
             allowed_to_report = apport.fileutils.allowed_to_report()
             response = self.ui_present_report_details(allowed_to_report)
-            if not self.collection_thread:
-                if response['report'] or response['examine']:
-                    self.collect()
-            if self.collection_thread:
-                self.collection_thread.join()
-                self.collection_thread.exc_raise()
+            if response['report'] or response['examine']:
+                try:
+                    if 'Dependencies' not in self.report:
+                        self.collect_info()
+                except (IOError, zlib.error) as e:
+                    # can happen with broken core dumps
+                    self.report = None
+                    self.ui_error_message(_('Invalid problem report'),
+                        '%s\n\n%s' % (
+                            _('This problem report is damaged and cannot be processed.'),
+                            repr(e)))
+                    self.ui_shutdown()
+                    return
+                except ValueError: # package does not exist
+                    self.ui_error_message(_('Invalid problem report'),
+                        _('The report belongs to a package that is not installed.'))
+                    self.ui_shutdown()
+                    return
+                except Exception as e:
+                    apport.error(repr(e))
+                    self.ui_error_message(_('Invalid problem report'),
+                        _('An error occurred while attempting to process this'
+                          ' problem report:') + '\n\n' + str(e))
+                    self.ui_shutdown()
+                    return
 
             if self.report is None:
                 # collect() does that on invalid reports
@@ -816,7 +795,8 @@ class UserInterface:
 
         self.ui_run_terminal(cmds[response[0]])
 
-    def collect_info(self, symptom_script=None, ignore_uninstalled=False):
+    def collect_info(self, symptom_script=None, ignore_uninstalled=False,
+            on_finished=None):
         '''Collect additional information.
 
         Call all the add_*_info() methods and display a progress dialog during
@@ -846,14 +826,16 @@ class UserInterface:
             # package
             self.report.add_os_info()
         else:
-            if self.report['ProblemType'] == 'Crash' and 'Stacktrace' in self.report:
+            # check if we already ran, skip if so
+            if (self.report['ProblemType'] == 'Crash' and 'Stacktrace' in self.report) or \
+               (self.report['ProblemType'] == 'Bug' and 'DistroRelease' in self.report):
+                if on_finished:
+                    on_finished()
                 return
 
             # since this might take a while, create separate threads and
-            # display a progress dialog. Don't show in the regular UI, as that
-            # has its own embedded progress indicator.
-            if self.report['ProblemType'] != 'Crash':
-                self.ui_start_info_collection_progress()
+            # display a progress dialog.
+            self.ui_start_info_collection_progress()
 
             hookui = HookUI(self)
 
@@ -866,8 +848,7 @@ class UserInterface:
                         hookui, symptom_script, ignore_uninstalled))
                 icthread.start()
                 while icthread.isAlive():
-                    if self.report['ProblemType'] != 'Crash':
-                        self.ui_pulse_info_collection_progress()
+                    self.ui_pulse_info_collection_progress()
                     try:
                         hookui.process_event()
                     except KeyboardInterrupt:
@@ -888,22 +869,39 @@ class UserInterface:
             if (self.report['ProblemType'] == 'KernelCrash'
                 or self.report['ProblemType'] == 'KernelOops'
                 or 'Package' in self.report):
-                url = self.crashdb.get_bugpattern_baseurl()
-                patterns = self.report.search_bug_patterns(url)
-                if patterns:
-                    self.report['KnownReport'] = patterns
+                bpthread = apport.REThread.REThread(target=self.report.search_bug_patterns,
+                    args=(self.crashdb.get_bugpattern_baseurl(),))
+                bpthread.start()
+                while bpthread.isAlive():
+                    self.ui_pulse_info_collection_progress()
+                    try:
+                        bpthread.join(0.1)
+                    except KeyboardInterrupt:
+                        sys.exit(1)
+                bpthread.exc_raise()
+                if bpthread.return_value():
+                    self.report['KnownReport'] = bpthread.return_value()
 
             # check crash database if problem is known
             if self.report['ProblemType'] != 'Bug':
-                val = self.crashdb.known(self.report)
+                known_thread = apport.REThread.REThread(target=self.crashdb.known,
+                    args=(self.report,))
+                known_thread.start()
+                while known_thread.isAlive():
+                    self.ui_pulse_info_collection_progress()
+                    try:
+                        known_thread.join(0.1)
+                    except KeyboardInterrupt:
+                        sys.exit(1)
+                known_thread.exc_raise()
+                val = known_thread.return_value()
                 if val is not None:
                     if val is True:
                         self.report['KnownReport'] = '1'
                     else:
                         self.report['KnownReport'] = val
 
-            if self.report['ProblemType'] != 'Crash':
-                self.ui_stop_info_collection_progress()
+            self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
             if ('SourcePackage' not in self.report or
@@ -914,6 +912,9 @@ class UserInterface:
                 # TODO This is not called consistently, is it really needed?
                 self.ui_shutdown()
                 sys.exit(1)
+
+        if on_finished:
+            on_finished()
 
     def open_url(self, url):
         '''Open the given URL in a new browser window.
