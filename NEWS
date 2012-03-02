@@ -32,7 +32,8 @@ Bug fixes:
    ui_*_info_collection_progress() methods. This fixes libX11 crashes when
    multiple UI threads do changes concurrently (LP: #901675), and also avoids
    multi-thread induced crashes in Pango (LP: #943661). The removal of the
-   collect() method, this also fixes the new crashes in it. (LP: #942098)
+   collect() method, this also fixes the new crashes in it. (LP: #942098, 
+   LP: #939803)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when
