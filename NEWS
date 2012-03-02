@@ -35,6 +35,8 @@ Bug fixes:
    collect() method, this also fixes the new crashes in it. (LP: #942098, 
    LP: #939803)
  - ui.py, get_desktop_entry(): Fix crash on uninstalled package. (LP: #940984)
+ - data/unkillable_shutdown: Fix crash on race condition when PID goes away
+   while the report is created. (LP: #546369)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

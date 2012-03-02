@@ -79,7 +79,7 @@ def do_report(pid, blacklist):
     r = apport.Report('Bug')
     try:
         r.add_proc_info(pid)
-    except AssertionError:
+    except (ValueError, AssertionError):
         # happens if ExecutablePath doesn't exist (any more?), ignore
         return
 
