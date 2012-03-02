@@ -34,7 +34,7 @@ if [ -d test -a -e setup.py ]; then
     export APPORT_TEST_LOCAL=1
 
     # assert that there are no hardcoded "Ubuntu" names
-    out=$(grep -rw Ubuntu test/*.py apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v '[#|].*Ubuntu')
+    out=$(grep -rw Ubuntu test/*.py apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v '#.*Ubuntu') || :
     if [ -n "$out" ]; then
         echo "Found hardcoded 'Ubuntu' names, use DistroRelease: field or lsb_release instead:\n\n$out" >&2
         exit 1

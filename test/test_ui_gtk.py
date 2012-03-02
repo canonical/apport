@@ -29,6 +29,12 @@ else:
 GTKUserInterface = imp.load_source('', apport_gtk_path).GTKUserInterface
 
 class T(unittest.TestCase):
+    @classmethod
+    def setUpClass(klass):
+        r = apport.Report()
+        r.add_os_info()
+        klass.distro = r['DistroRelease']
+
     def setUp(self):
         self.report_dir = tempfile.mkdtemp()
         apport.fileutils.report_dir = self.report_dir
@@ -69,8 +75,7 @@ class T(unittest.TestCase):
     def test_kernel_crash_layout(self):
         '''
         +-----------------------------------------------------------------+
-        | [ ubuntu ] Ubuntu has restarted after experiencing an internal  |
-        |            error.                                               |
+        | [ logo] YourDistro has experienced an internal error.           |
         |                                                                 |
         |            [x] Send an error report to help fix this problem.   |
         |                                                                 |
@@ -81,7 +86,7 @@ class T(unittest.TestCase):
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('Ubuntu has restarted after experiencing an internal error.'))
+            _('Sorry, %s has experienced an internal error.') % self.distro)
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
@@ -156,22 +161,22 @@ Type=Application''')
 
     def test_system_crash_layout(self):
         '''
-        +-----------------------------------------------------------------+
-        | [ ubuntu ] Sorry, Ubuntu has experienced an internal error.     |
-        |            If you notice further problems, try restarting the   |
-        |            computer                                             |
-        |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
-        |                                                                 |
-        | [ Show Details ]                                   [ Continue ] |
-        +-----------------------------------------------------------------+
+        +---------------------------------------------------------------+
+        | [ logo ] Sorry, YourDistro has experienced an internal error. |
+        |          If you notice further problems, try restarting the   |
+        |          computer                                             |
+        |                                                               |
+        |            [x] Send an error report to help fix this problem. |
+        |                                                               |
+        | [ Show Details ]                                 [ Continue ] |
+        +---------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Crash'
         self.app.report['Package'] = 'bash 5'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('Sorry, Ubuntu has experienced an internal error.'))
+            _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertEqual(self.app.w('subtitle_label').get_text(),
             _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))

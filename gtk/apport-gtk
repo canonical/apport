@@ -110,10 +110,9 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         If the system application was started from the console, assume a
         developer who would appreciate the application name having a more
-        prominent placement. Otherwise, provide a simple explaination for
+        prominent placement. Otherwise, provide a simple explanation for
         more novice users.
         '''
-        distro = self.report.get('DistroRelease', 'Ubuntu')
         from_console = 'TERM=' in self.report.get('ProcEnviron', '')
 
         if from_console:
@@ -125,7 +124,9 @@ class GTKUserInterface(apport.ui.UserInterface):
                      self.cur_package)
 
         else:
-            t = _('Sorry, %s has experienced an internal error.') % distro
+            if 'DistroRelease' not in self.report:
+                self.report.add_os_info()
+            t = _('Sorry, %s has experienced an internal error.') % self.report['DistroRelease']
         return t
 
     def setup_bug_report(self):
@@ -147,7 +148,6 @@ class GTKUserInterface(apport.ui.UserInterface):
     def ui_present_report_details(self, allowed_to_report=True):
         icon = None
         self.collect_called = False
-        distro = self.report.get('DistroRelease', 'Ubuntu')
         report_type = self.report.get('ProblemType')
         self.w('details_scrolledwindow').hide()
         self.w('show_details').set_label(_('Show Details'))
@@ -171,8 +171,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('ignore_future_problems').set_active(False)
             self.w('ignore_future_problems').hide()
             self.w('title_label').set_label('<big><b>%s</b></big>' %
-                _('%s has restarted after experiencing an internal error.')
-                % distro)
+                                            self.get_system_application_title())
             self.w('closed_button').hide()
             self.w('subtitle_label').hide()
             icon = 'distributor-logo'

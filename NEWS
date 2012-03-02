@@ -38,6 +38,8 @@ Bug fixes:
    while the report is created. (LP: #546369)
  - apport/hookutils.py, pci_devices(): Fix crash on unexpected lines from
    lspci. (LP: #904489)
+ - Drop hardcoded "Ubuntu" words again which crept in with the whoopsie support
+   merge. Use the DistroRelease: field.
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

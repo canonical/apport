@@ -35,6 +35,12 @@ MainUserInterface = imp.load_source('', apport_kde_path).MainUserInterface
 sys.argv[0] = apport_kde_path
 
 class T(unittest.TestCase):
+    @classmethod
+    def setUpClass(klass):
+        r = apport.Report()
+        r.add_os_info()
+        klass.distro = r['DistroRelease']
+
     def setUp(self):
         self.report_dir = tempfile.mkdtemp()
         apport.fileutils.report_dir = self.report_dir
@@ -74,8 +80,7 @@ class T(unittest.TestCase):
     def test_kernel_crash_layout(self):
         '''
         +-----------------------------------------------------------------+
-        | [ ubuntu ] Ubuntu has restarted after experiencing an internal  |
-        |            error.                                               |
+        | [ logo ] YourDistro has experienced an internal error.          |
         |                                                                 |
         |            [x] Send an error report to help fix this problem.   |
         |                                                                 |
@@ -86,7 +91,7 @@ class T(unittest.TestCase):
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.heading.text(),
-             _('Ubuntu has restarted after experiencing an internal error.'))
+              _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
         self.assertTrue(self.app.dialog.details.isVisible())
@@ -155,7 +160,7 @@ Type=Application''')
     def test_system_crash_layout(self):
         '''
         +-----------------------------------------------------------------+
-        | [ ubuntu ] Sorry, Ubuntu has experienced an internal error.     |
+        | [ logo ] Sorry, YourDistro has experienced an internal error.   |
         |            If you notice further problems, try restarting the   |
         |            computer                                             |
         |                                                                 |
@@ -169,7 +174,7 @@ Type=Application''')
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.heading.text(),
-             _('Sorry, Ubuntu has experienced an internal error.'))
+             _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertEqual(self.app.dialog.text.text(),
              _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.dialog.text.isVisible())
