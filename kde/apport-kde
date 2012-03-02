@@ -470,7 +470,7 @@ if __name__ == '__main__':
     license = KAboutData.License_GPL
     copyright = ki18n('2009 Canonical Ltd.')
     text = KLocalizedString()
-    homePage = 'https://wiki.ubuntu.com/AutomatedProblemReports'
+    homePage = 'https://wiki.ubuntu.com/Apport'
     bugEmail = 'kubuntu-devel@lists.ubuntu.com'
 
     aboutData = KAboutData(appName, catalog, programName, version, description,
