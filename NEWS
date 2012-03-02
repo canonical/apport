@@ -41,6 +41,7 @@ Bug fixes:
  - Drop hardcoded "Ubuntu" words again which crept in with the whoopsie support
    merge. Use the DistroRelease: field.
  - apport-kde: Fix Home page URL in KApplication metadata.
+ - apport-gtk: Fix resizability and size after hiding details. (LP: #405418)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when

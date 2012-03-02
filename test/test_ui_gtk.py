@@ -405,4 +405,52 @@ Type=Application''')
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
 
+    def test_resizing(self):
+        '''Problem report window resizability and sizing.'''
+        
+        def show_details(data):
+            if not self.app.w('show_details').get_visible():
+                return True
+
+            data['orig_size'] = self.app.w('dialog_crash_new').get_size()
+            data['orig_resizable'] = self.app.w('dialog_crash_new').get_resizable()
+            self.app.w('show_details').clicked()
+            GLib.timeout_add(200, hide_details, data)
+            return False
+
+        def hide_details(data):
+            # wait until data collection is done and tree filled
+            if  self.app.tree_model.get_iter_first() is None:
+                return True
+
+            data['detail_size'] = self.app.w('dialog_crash_new').get_size()
+            data['detail_resizable'] = self.app.w('dialog_crash_new').get_resizable()
+            self.app.w('show_details').clicked()
+            GLib.timeout_add(200, details_hidden, data)
+            return False
+
+        def details_hidden(data):
+            # wait until data collection is done and tree filled
+            if  self.app.w('details_scrolledwindow').get_visible():
+                return True
+
+            data['hidden_size'] = self.app.w('dialog_crash_new').get_size()
+            data['hidden_resizable'] = self.app.w('dialog_crash_new').get_resizable()
+            Gtk.main_quit()
+
+        data = {}
+        GLib.timeout_add(200, show_details, data)
+        self.app.run_crash(self.app.report_file)
+
+        # when showing details, dialog should get considerably bigger
+        self.assertGreater(data['detail_size'][1], data['orig_size'][1] + 100)
+       
+        # when hiding details, original size should be restored
+        self.assertEqual(data['orig_size'], data['hidden_size'])
+
+        # should only be resizable in details mode
+        self.assertFalse(data['orig_resizable'])
+        self.assertTrue(data['detail_resizable'])
+        self.assertFalse(data['hidden_resizable'])
+
 unittest.main()

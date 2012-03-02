@@ -234,6 +234,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                                                       Gtk.IconSize.DIALOG)
 
         d = self.w('dialog_crash_new')
+        d.set_resizable(False)
         d.show()
         # don't steal focus when being called without arguments (i. e.
         # automatically launched)
@@ -455,9 +456,11 @@ class GTKUserInterface(apport.ui.UserInterface):
     def on_show_details_clicked(self, widget):
         sw = self.w('details_scrolledwindow')
         if sw.get_property('visible'):
+            self.w('dialog_crash_new').set_resizable(False)
             sw.hide()
             widget.set_label(_('Show Details'))
         else:
+            self.w('dialog_crash_new').set_resizable(True)
             sw.show()
             widget.set_label(_('Hide Details'))
             if not self.collect_called:
