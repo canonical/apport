@@ -1100,7 +1100,11 @@ class UserInterface:
         if 'DesktopFile' in self.report and os.path.exists(self.report['DesktopFile']):
             desktop_file = self.report['DesktopFile']
         else:
-            desktop_file = apport.fileutils.find_package_desktopfile(self.cur_package)
+            try:
+                desktop_file = apport.fileutils.find_package_desktopfile(self.cur_package)
+            except ValueError:
+                desktop_file = None
+
         if desktop_file:
             try:
                 import xdg.DesktopEntry

@@ -34,6 +34,7 @@ Bug fixes:
    multi-thread induced crashes in Pango (LP: #943661). The removal of the
    collect() method, this also fixes the new crashes in it. (LP: #942098, 
    LP: #939803)
+ - ui.py, get_desktop_entry(): Fix crash on uninstalled package. (LP: #940984)
 
 Improvements:
  - test/run: Drop "local" argument. This now tests against the source tree when
