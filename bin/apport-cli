@@ -123,74 +123,6 @@ class CLIUserInterface(apport.ui.UserInterface):
         apport.ui.UserInterface.__init__(self)
         self.in_update_view = False
 
-    #
-    # ui_* implementation of abstract UserInterface classes
-    #
-
-    def ui_present_crash(self, desktop_entry):
-        date = datetime.strptime(self.report['Date'], '%a %b %d %H:%M:%S %Y')
-        # adapt dialog heading and label appropriately
-        if desktop_entry:
-            name = desktop_entry.getName()
-        elif 'ExecutablePath' in self.report:
-            name = os.path.basename(self.report['ExecutablePath'])
-        else:
-            name = self.cur_package
-        # translators: first %s: application name, second %s: date, third %s: time
-        heading = _('%s closed unexpectedly on %s at %s.') % (name, date.date(), date.time())
-
-        dialog = CLIDialog(
-                heading,
-                _('If you were not doing anything confidential (entering passwords or other\n'
-                  'private information), you can help to improve the application by reporting\n'
-                  'the problem.'))
-        report = dialog.addbutton(_('&Report Problem...'))
-        ignore = dialog.addbutton(_('Cancel and &ignore future crashes of this program version'))
-        dialog.addbutton(_('&Cancel'))
-
-        # show crash notification dialog
-        response = dialog.run()
-
-        if response == report:
-            return {'action': 'report', 'blacklist': False}
-        if response == ignore:
-            return {'action': 'cancel', 'blacklist': True}
-        # Fallback
-        return {'action': 'cancel', 'blacklist': False}
-
-    def ui_present_package_error(self):
-        name = self.report['Package']
-        dialog = CLIDialog(
-                _('The package "%s" failed to install or upgrade.') % name,
-                _('You can help the developers to fix the package by reporting the problem.'))
-        report = dialog.addbutton(_('&Report Problem...'))
-        dialog.addbutton(_('&Cancel'))
-
-        response = dialog.run()
-
-        if response == report:
-            return 'report'
-        # Fallback
-        return 'cancel'
-
-    def ui_present_kernel_error(self):
-        message = _('Your system encountered a serious kernel problem.')
-        annotation = ''
-        if 'Annotation' in self.report:
-            annotation += self.report['Annotation'] + '\n\n'
-        annotation += _('You can help the developers to fix the problem by reporting it.')
-
-        dialog = CLIDialog (message, annotation)
-        report = dialog.addbutton(_('&Report Problem...'))
-        dialog.addbutton(_('&Cancel'))
-
-        response = dialog.run()
-
-        if response == report:
-            return 'report'
-        # Fallback
-        return 'cancel'
-
     def _get_details(self):
         '''Build report string for display.'''
 
@@ -231,6 +163,10 @@ class CLIUserInterface(apport.ui.UserInterface):
             else:
                 raise
         self.in_update_view = False
+
+    #
+    # ui_* implementation of abstract UserInterface classes
+    #
 
     def ui_present_report_details(self, allowed_to_report=True):
         dialog = CLIDialog (_('Send problem report to the developers?'),
