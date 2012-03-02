@@ -1203,7 +1203,6 @@ class Report(problem_report.ProblemReport):
                     # if we have a function name, use this; for a a crash
                     # outside of a function/method, fall back to the source
                     # file location
-                    fn = l.split()[-1]
                     if m.group(3) != '<module>':
                         sig += ':' + m.group(3)
                     else:
