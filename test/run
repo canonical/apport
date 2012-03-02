@@ -33,6 +33,13 @@ if [ -d test -a -e setup.py ]; then
     export APPORT_DATA_DIR=./data
     export APPORT_TEST_LOCAL=1
 
+    # assert that there are no hardcoded "Ubuntu" names
+    out=$(grep -rw Ubuntu test/*.py apport/*.py gtk/apport-gtk* kde/* bin/* | grep -v Debian | grep -v '[#|].*Ubuntu')
+    if [ -n "$out" ]; then
+        echo "Found hardcoded 'Ubuntu' names, use DistroRelease: field or lsb_release instead:\n\n$out" >&2
+        exit 1
+    fi
+
     if [ ! -e apport/packaging_impl.py ]; then
 	echo "You need to copy an appropriate packaging implementation from backends/ to apport/packaging_impl.py; run './setup.py build' for auto-detection." >&2
 	exit 1

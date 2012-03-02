@@ -67,6 +67,8 @@ Improvements:
  - test_ui.py: Add a test case for reporting a complete report on uninstalled
    package. This happens when reporting a problem from a different machine
    through copying a .crash file.
+ - test/run: Add a test that there are no hardcoded "Ubuntu" words in the
+   source. The code should use the DistroRelease: field or lsb_release.
 
 1.93 (2012-02-23):
 ------------------
