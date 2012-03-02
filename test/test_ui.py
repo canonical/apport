@@ -891,8 +891,36 @@ bOgUs=
         self.assertEqual(self.ui.msg_severity, None, 'has %s message: %s: %s' % (
             self.ui.msg_severity, str(self.ui.msg_title), str(self.ui.msg_text)))
         self.assertEqual(self.ui.msg_title, None)
-        self.assertEqual(self.ui.opened_url, None)
-        self.assertEqual(self.ui.ic_progress_pulses, 0)
+        self.assertTrue(self.ui.present_details_shown)
+
+    def test_run_crash_precollected(self):
+        '''run_crash() on complete report on uninstalled package
+
+        This happens when reporting a problem from a different machine through
+        copying a .crash file.
+        '''
+        self.ui.report = self._gen_test_crash()
+        self.ui.collect_info()
+
+        # now pretend to move it to a machine where the package is not
+        # installed
+        self.ui.report['Package'] = 'uninstalled_pkg 1'
+
+        # write crash report
+        report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+        self.ui.report.write(open(report_file, 'w'))
+
+        # report it
+        self.ui = TestSuiteUserInterface()
+        self.ui.present_details_response = {'report': True,
+                                            'blacklist': False,
+                                            'examine' : False,
+                                            'restart' : False }
+        self.ui.run_crash(report_file)
+        self.assertEqual(self.ui.cur_package, 'uninstalled_pkg')
+        self.assertEqual(self.ui.msg_severity, None, 'has %s message: %s: %s' % (
+            self.ui.msg_severity, str(self.ui.msg_title), str(self.ui.msg_text)))
+        self.assertTrue(self.ui.opened_url.startswith('http://coreutils.bugs.example.com'))
         self.assertTrue(self.ui.present_details_shown)
 
     def test_run_crash_errors(self):

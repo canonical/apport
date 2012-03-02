@@ -60,6 +60,9 @@ Improvements:
    reporting a bug against an installed/uninstalled package, and reporting a
    crash with and without showing details. This reproduces the recent crashes
    like LP #901675 or LP #943661.
+ - test_ui.py: Add a test case for reporting a complete report on uninstalled
+   package. This happens when reporting a problem from a different machine
+   through copying a .crash file.
 
 1.93 (2012-02-23):
 ------------------
