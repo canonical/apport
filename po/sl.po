@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-29 16:03-0400\n"
+"POT-Creation-Date: 2012-03-02 13:27+0100\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
+"Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
 "X-Generator: Launchpad (build 14874)\n"
-"Language: sl\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -45,21 +45,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:253
+#: ../apport/ui.py:213
 msgid "unknown program"
 msgstr "neznam program"
 
-#: ../apport/ui.py:254
+#: ../apport/ui.py:214
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Oprostite, program \"%s\" se je nepričakovano zaprl."
 
-#: ../apport/ui.py:255 ../apport/ui.py:1086
+#: ../apport/ui.py:215 ../apport/ui.py:1087
 #, python-format
 msgid "Problem in %s"
 msgstr "Težava v %s"
 
-#: ../apport/ui.py:256
+#: ../apport/ui.py:216
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -68,56 +68,61 @@ msgstr ""
 "in pošiljanje poročila razvijalcem."
 
 #. package does not exist
-#: ../apport/ui.py:198 ../apport/ui.py:205 ../apport/ui.py:211
-#: ../apport/ui.py:296 ../apport/ui.py:304 ../apport/ui.py:375
-#: ../apport/ui.py:378 ../apport/ui.py:576 ../apport/ui.py:912
-#: ../apport/ui.py:1042 ../apport/ui.py:1046 ../apport/ui.py:1065
-#: ../apport/ui.py:1071
+#: ../apport/ui.py:230 ../apport/ui.py:237 ../apport/ui.py:243
+#: ../apport/ui.py:275 ../apport/ui.py:283 ../apport/ui.py:354
+#: ../apport/ui.py:357 ../apport/ui.py:555 ../apport/ui.py:910
+#: ../apport/ui.py:1043 ../apport/ui.py:1047 ../apport/ui.py:1066
+#: ../apport/ui.py:1072
 msgid "Invalid problem report"
 msgstr "Neveljavno poročilo o napaki"
 
-#: ../apport/ui.py:206
-msgid "The report belongs to a package that is not installed."
-msgstr "Poročilo pripada nenameščenemu paketu."
-
-#: ../apport/ui.py:200 ../apport/ui.py:1048
+#: ../apport/ui.py:232 ../apport/ui.py:1049
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Poročilo o težavi je poškodovano in njegova obdelava ni mogoča."
 
-#: ../apport/ui.py:297
+#: ../apport/ui.py:238
+msgid "The report belongs to a package that is not installed."
+msgstr "Poročilo pripada nenameščenemu paketu."
+
+#: ../apport/ui.py:244
+#, fuzzy
+msgid "An error occurred while attempting to process this problem report:"
+msgstr "Dostop do poročila napake vam ni dovoljen."
+
+#: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
 msgstr "Dostop do poročila napake vam ni dovoljen."
 
-#: ../apport/ui.py:300
+#: ../apport/ui.py:279
 msgid "Error"
 msgstr "Napaka"
 
-#: ../apport/ui.py:301
+#: ../apport/ui.py:280
 msgid "There is not enough disk space available to process this report."
 msgstr "Na disku ni dovolj prostora za obdelavo tega poročila."
 
-#: ../apport/ui.py:328
+#: ../apport/ui.py:307
 msgid "No package specified"
 msgstr "Določen ni noben paket"
 
-#: ../apport/ui.py:329
+#: ../apport/ui.py:308
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr "Navesti morate paket ali PID. Več informacij pridobite s --help."
 
-#: ../apport/ui.py:345
+#: ../apport/ui.py:324
 msgid "Invalid PID"
 msgstr "Neveljaven PID"
 
-#: ../apport/ui.py:346
+#: ../apport/ui.py:325
 msgid "The specified process ID does not belong to a program."
 msgstr "Dotični ID proces ne pripada programu."
 
-#: ../apport/ui.py:354
+#: ../apport/ui.py:333
 msgid "Permission denied"
 msgstr "Dovoljenje zavrnjeno"
 
-#: ../apport/ui.py:355
+#: ../apport/ui.py:334
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -125,25 +130,25 @@ msgstr ""
 "Dotični proces ne pripada vam. Prosimo, da zaženete ta program kot lastnih "
 "procesa ali kot root."
 
-#: ../apport/ui.py:376
+#: ../apport/ui.py:355
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr ""
 
-#: ../apport/ui.py:379
+#: ../apport/ui.py:358
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Paket %s ne obstaja"
 
-#: ../apport/ui.py:404 ../apport/ui.py:588 ../apport/ui.py:593
+#: ../apport/ui.py:383 ../apport/ui.py:567 ../apport/ui.py:572
 msgid "Cannot create report"
 msgstr ""
 
-#: ../apport/ui.py:419 ../apport/ui.py:465 ../apport/ui.py:482
+#: ../apport/ui.py:398 ../apport/ui.py:444 ../apport/ui.py:461
 msgid "Updating problem report"
 msgstr ""
 
-#: ../apport/ui.py:420
+#: ../apport/ui.py:399
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -151,64 +156,63 @@ msgid ""
 "Please create a new report using \"apport-bug\"."
 msgstr ""
 
-#: ../apport/ui.py:429
+#: ../apport/ui.py:408
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
 
-#: ../apport/ui.py:466 ../apport/ui.py:483
+#: ../apport/ui.py:445 ../apport/ui.py:462
 msgid "No additional information collected."
 msgstr ""
 
-#: ../apport/ui.py:533
+#: ../apport/ui.py:512
 msgid "What kind of problem do you want to report?"
 msgstr "O kakšni vrsti težave bi radi poročali?"
 
-#: ../apport/ui.py:550
+#: ../apport/ui.py:529
 msgid "Unknown symptom"
 msgstr "Neznan simptom"
 
-#: ../apport/ui.py:551
+#: ../apport/ui.py:530
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Simptom \"%s\" ni znan."
 
-#: ../apport/ui.py:579
+#: ../apport/ui.py:558
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
 
-#: ../apport/ui.py:589 ../apport/ui.py:594
+#: ../apport/ui.py:568 ../apport/ui.py:573
 msgid "xprop failed to determine process ID of the window"
 msgstr ""
 
-#: ../apport/ui.py:608
+#: ../apport/ui.py:587
 msgid "%prog <report number>"
 msgstr ""
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:589
 msgid "Specify package name."
 msgstr ""
 
-#: ../apport/ui.py:612 ../apport/ui.py:661
+#: ../apport/ui.py:591 ../apport/ui.py:640
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
-#: ../apport/ui.py:642
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+#: ../apport/ui.py:621
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [možnosti] [simptom|pid|paket|pot programa|datoteka .apport/.crash]"
 
-#: ../apport/ui.py:645
+#: ../apport/ui.py:624
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -218,15 +222,15 @@ msgstr ""
 "pdi, ali pa samo --pid. Če ne podate nobenega izmed naštetih, bo prikazan "
 "seznam poznanih simptomov. (Privzeto, ko je podan samo en argument)."
 
-#: ../apport/ui.py:647
+#: ../apport/ui.py:626
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
 
-#: ../apport/ui.py:649
+#: ../apport/ui.py:628
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 
-#: ../apport/ui.py:651
+#: ../apport/ui.py:630
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -234,7 +238,7 @@ msgstr ""
 "Vloži prijavo hrošča o simptomu. (implicirano, če je ime simptoma dano kot "
 "edini argument.)"
 
-#: ../apport/ui.py:653
+#: ../apport/ui.py:632
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -242,101 +246,103 @@ msgstr ""
 "V načinu --file-bug navedite ime paketa. Če je podan --pid, to ni obvezno. "
 "(Privzeto, ko je kot edini argument podano ime paketa)"
 
-#: ../apport/ui.py:655
+#: ../apport/ui.py:634
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:657
+#: ../apport/ui.py:636
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
 
-#: ../apport/ui.py:659
+#: ../apport/ui.py:638
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:663
+#: ../apport/ui.py:642
 msgid "Print the Apport version number."
 msgstr "Natisni številko različice Apporta"
 
-#: ../apport/ui.py:795
+#: ../apport/ui.py:774
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr "To bo v terminalu zagnalo apport-retrace za preučevanje sesutja."
 
-#: ../apport/ui.py:796
+#: ../apport/ui.py:775
 msgid "Run gdb session"
 msgstr "Poženi sejo gdb"
 
-#: ../apport/ui.py:797
+#: ../apport/ui.py:776
 msgid "Run gdb session without downloading debug symbols"
 msgstr "Poženi sejo gdb brez prejemanja razhroščevalnih simbolov"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:799
+#: ../apport/ui.py:778
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "Posodobi %s s polno simbolično sledjo sklicev"
 
-#: ../apport/ui.py:839
-#, python-format
-msgid "The problem happened with the program %s which changed since then."
+#: ../apport/ui.py:819
+#, fuzzy, python-format
+msgid ""
+"The problem happened with the program %s which changed since the crash "
+"occurred."
 msgstr "Težava se je zgodila s programom %s, ki se je od takrat spremenil."
 
-#: ../apport/ui.py:913
+#: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
 msgstr "Ni bilo mogoče ugotoviti imena paketa oz. izvornega paketa."
 
-#: ../apport/ui.py:928
+#: ../apport/ui.py:929
 msgid "Unable to start web browser"
 msgstr "Spletnega brskalnika ni mogoče zagnati"
 
-#: ../apport/ui.py:929
+#: ../apport/ui.py:930
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Spletni brskalnik ne more odpreti %s."
 
-#: ../apport/ui.py:998
+#: ../apport/ui.py:999
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 "Prosimo, da vpišete podatke vašega računa za sledilni sistem hroščev %s"
 
-#: ../apport/ui.py:1009
+#: ../apport/ui.py:1010
 msgid "Network problem"
 msgstr "Težava z omrežjem"
 
-#: ../apport/ui.py:1011
+#: ../apport/ui.py:1012
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Ne morem se povezati z zbirko podatkov o napakah. Preverite vašo povezavo z "
 "internetom."
 
-#: ../apport/ui.py:1037
+#: ../apport/ui.py:1038
 msgid "Memory exhaustion"
 msgstr "Pomnilnik zapolnjen"
 
-#: ../apport/ui.py:1038
+#: ../apport/ui.py:1039
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Vašemu sistemu je zmanjkalo prostora v pomnilniku za obdelavo poročila o "
 "sesutju."
 
-#: ../apport/ui.py:1061 ../apport/ui.py:1070
+#: ../apport/ui.py:1062 ../apport/ui.py:1071
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "To poročilo o težavi se nanaša na program, ki ni več nameščen."
 
-#: ../apport/ui.py:1089
+#: ../apport/ui.py:1090
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -347,11 +353,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1122 ../apport/ui.py:1129
+#: ../apport/ui.py:1127 ../apport/ui.py:1134
 msgid "Problem already known"
 msgstr "Težava je že znana"
 
-#: ../apport/ui.py:1123
+#: ../apport/ui.py:1128
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -360,6 +366,10 @@ msgstr ""
 "Poročilo o tej težavi je bilo že poslano v poročilu o hroššču, ki je bilo "
 "prikazano v spletnem brskalniku. Preverite, če lahko dodate še kakšen "
 "podatek, ki bi lahko pomagal razvijalcem."
+
+#: ../apport/ui.py:1135
+msgid "This problem was already reported to developers. Thank you!"
+msgstr ""
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -374,74 +384,20 @@ msgstr "Kaj bi radi storili? Vaše možnosti so:"
 msgid "Please choose (%s):"
 msgstr "Prosimo izberite (%s):"
 
-#. translators: first %s: application name, second %s: date, third %s: time
-#: ../bin/apport-cli.py:140
-#, python-format
-msgid "%s closed unexpectedly on %s at %s."
-msgstr "%s se je nepričakovano zaprl dne %s ob %s."
-
 #: ../bin/apport-cli.py:144
-msgid ""
-"If you were not doing anything confidential (entering passwords or other\n"
-"private information), you can help to improve the application by reporting\n"
-"the problem."
-msgstr ""
-"Če niste počeli ničesar zaupnega (vpisovali gesel ali drugih\n"
-"zasebnih podatkov), nam lahko pomagate izboljšati program\n"
-"tako, da nam pošljete poročilo o težavi."
-
-#: ../bin/apport-cli.py:147 ../bin/apport-cli.py:166 ../bin/apport-cli.py:184
-msgid "&Report Problem..."
-msgstr "&Poročaj o težavi..."
-
-#: ../bin/apport-cli.py:148 ../bin/apport-cli.py:249
-msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Prekliči in &ignoriraj nadaljnja sesutja te različice programa"
-
-#: ../bin/apport-cli.py:149 ../bin/apport-cli.py:167 ../bin/apport-cli.py:185
-#: ../bin/apport-cli.py:251 ../bin/apport-cli.py:333 ../bin/apport-cli.py:365
-#: ../bin/apport-cli.py:386
-msgid "&Cancel"
-msgstr "&Prekliči"
-
-#: ../bin/apport-cli.py:164
-#, python-format
-msgid "The package \"%s\" failed to install or upgrade."
-msgstr "Namestitev ali nadgradnja paketa \"%s\" ni uspela."
-
-#: ../bin/apport-cli.py:165
-msgid ""
-"You can help the developers to fix the package by reporting the problem."
-msgstr ""
-"Razvijalcem lahko pomagate pri popravilu paketa ter jim pošljete poročilo o "
-"nastali težavi."
-
-#: ../bin/apport-cli.py:177
-msgid "Your system encountered a serious kernel problem."
-msgstr "Sistem je naletel na resno težavo v jedru."
-
-#: ../bin/apport-cli.py:181
-msgid "You can help the developers to fix the problem by reporting it."
-msgstr "Razvijalcem lahko pomagate odpraviti težavo tako, da ga prijavite."
-
-#: ../bin/apport-cli.py:212
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:214 ../gtk/apport-gtk.py:125 ../kde/apport-kde.py:307
+#: ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:106 ../kde/apport-kde.py:304
 msgid "(binary data)"
 msgstr "(binarni podatki)"
 
-#: ../bin/apport-cli.py:221 ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:269
-msgid "Send this data to the developers?"
-msgstr ""
-
-#: ../bin/apport-cli.py:235 ../gtk/apport-gtk.py:153 ../kde/apport-kde.py:153
+#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:135 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
 msgstr "Pošljem razvijalcem poročilo napake?"
 
-#: ../bin/apport-cli.py:236
+#: ../bin/apport-cli.py:173
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -449,52 +405,51 @@ msgstr ""
 "Potem, ko je bilo poročilo o težavi poslano, vas prosimo, da izpolnite\n"
 "obrazec v samodejno odprtem spletnem brskalniku."
 
-#: ../bin/apport-cli.py:229
-#, python-format
-msgid "&Send complete report (recommended; %s)"
-msgstr "Pošlji &popolno poročilo (priporočeno; %s)"
-
-#: ../bin/apport-cli.py:231
-#, python-format
-msgid "Send &reduced report (slow Internet connection; %s)"
-msgstr "Pošlji &skrajšano poročilo (počasna internetna povezava; %s)"
-
-#: ../bin/apport-cli.py:239
+#: ../bin/apport-cli.py:176
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Pošlji poročilo (%s)"
 
-#: ../bin/apport-cli.py:243
+#: ../bin/apport-cli.py:180
 msgid "&Examine locally"
 msgstr "&Preuči krajevno"
 
-#: ../bin/apport-cli.py:247
+#: ../bin/apport-cli.py:184
 msgid "&View report"
 msgstr "&Ogled poročila"
 
-#: ../bin/apport-cli.py:248
+#: ../bin/apport-cli.py:185
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Obdrži datoteko o poročilu za kasnejše pošiljanje ali kopiranje kam drugam"
 
-#: ../bin/apport-cli.py:284
+#: ../bin/apport-cli.py:186
+msgid "Cancel and &ignore future crashes of this program version"
+msgstr "Prekliči in &ignoriraj nadaljnja sesutja te različice programa"
+
+#: ../bin/apport-cli.py:188 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
+#: ../bin/apport-cli.py:318
+msgid "&Cancel"
+msgstr "&Prekliči"
+
+#: ../bin/apport-cli.py:216
 msgid "Problem report file:"
 msgstr "Datoteka s poročilom o napaki:"
 
-#: ../bin/apport-cli.py:290 ../bin/apport-cli.py:295
+#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
 msgid "&Confirm"
 msgstr "Po&trdi"
 
-#: ../bin/apport-cli.py:294
+#: ../bin/apport-cli.py:226
 #, python-format
 msgid "Error: %s"
 msgstr "Napaka: %s"
 
-#: ../bin/apport-cli.py:300 ../kde/apport-kde.py:343
+#: ../bin/apport-cli.py:232 ../kde/apport-kde.py:349
 msgid "Collecting problem information"
 msgstr "Zbiranje informacij o napaki"
 
-#: ../bin/apport-cli.py:301
+#: ../bin/apport-cli.py:233
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -502,11 +457,11 @@ msgstr ""
 "Zbrani podatki so lahko poslani k razvijalcem za izboljšanje\n"
 "aplikacije. To utegne trajati nekaj minut."
 
-#: ../bin/apport-cli.py:313 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:360
+#: ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
 msgid "Uploading problem information"
 msgstr "Pošiljajo se informacije o težavi"
 
-#: ../bin/apport-cli.py:314
+#: ../bin/apport-cli.py:246
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -514,40 +469,40 @@ msgstr ""
 "Zbrani podatki se pošiljajo v sledilni sistem hroščev.\n"
 "To utegne trajati nekaj minut."
 
-#: ../bin/apport-cli.py:364
+#: ../bin/apport-cli.py:296
 msgid "&Done"
 msgstr "&Končano"
 
-#: ../bin/apport-cli.py:370
+#: ../bin/apport-cli.py:302
 msgid "none"
 msgstr "brez"
 
-#: ../bin/apport-cli.py:371
+#: ../bin/apport-cli.py:303
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Izbrano: %s. Več izbir:"
 
-#: ../bin/apport-cli.py:387
+#: ../bin/apport-cli.py:319
 msgid "Choices:"
 msgstr "Izbire"
 
-#: ../bin/apport-cli.py:401
+#: ../bin/apport-cli.py:333
 msgid "Path to file (Enter to cancel):"
 msgstr "Pot do datoteke (Enter za preklic):"
 
-#: ../bin/apport-cli.py:407
+#: ../bin/apport-cli.py:339
 msgid "File does not exist."
 msgstr "Datoteka ne obstaja."
 
-#: ../bin/apport-cli.py:409
+#: ../bin/apport-cli.py:341
 msgid "This is a directory."
 msgstr "To je mapa."
 
-#: ../bin/apport-cli.py:415
+#: ../bin/apport-cli.py:347
 msgid "To continue, you must visit the following URL:"
 msgstr "Za nadaljevanje morate obiskati naslednji URL:"
 
-#: ../bin/apport-cli.py:417
+#: ../bin/apport-cli.py:349
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -555,11 +510,11 @@ msgstr ""
 "Sedaj lahko zaženete vaš spletni brskalnik ali prekopirate URL v brskalnik "
 "na drugem računalniku."
 
-#: ../bin/apport-cli.py:419
+#: ../bin/apport-cli.py:351
 msgid "Launch a browser now"
 msgstr "Sedaj zaženi spletni brskalnik"
 
-#: ../bin/apport-cli.py:433
+#: ../bin/apport-cli.py:365
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Brez čakajočih poročil o sesutju. Za več informacij poizkusite s --help."
@@ -588,61 +543,52 @@ msgstr ""
 "Obdelava nadaljevanja se je obesila blizu konca in bo izgledala, kot da se "
 "je normalno zaključila."
 
-#: ../gtk/apport-gtk.ui.h:11
-msgid "<big><b>Collecting problem information</b></big>"
-msgstr "<big><b>Zbiranje podatkov o nastali težavi</b></big>"
-
-#: ../gtk/apport-gtk.ui.h:3
-msgid ""
-"<big><b>Send problem report to the developers?</b></big>\n"
-"\n"
-"After the problem report has been sent, please fill out the form in the "
-"automatically opened web browser."
-msgstr ""
-"<big><b>Pošljem poročilo o težavi razvijalcem?></big>\n"
-"\n"
-"Potem, ko je bilo poročilo to težavi poslano, vas prosimo, da izpolnite "
-"obrazev v samodejno odprtem spletnem brskalniku."
-
-#: ../gtk/apport-gtk.ui.h:14
-msgid "<big><b>Uploading problem information</b></big>"
-msgstr "<big><b>Pošiljanje podatkov o nastali težavi</b></big>"
-
-#: ../gtk/apport-gtk.ui.h:21
-#, no-c-format
-msgid ""
-"<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
-"install or upgrade.</span>"
-msgstr ""
-"<span weight=\"bold\" size=\"larger\">Žal se paketu \"%s\" ni uspelo "
-"namestiti ali nadgraditi.</span>"
-
-#: ../gtk/apport-gtk.ui.h:13
-msgid "Application problem"
-msgstr "Težava programa"
-
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:395 ../kde/apport-kde.py:431
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:412 ../kde/apport-kde.py:448
 msgid "Apport"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:7 ../kde/apport-kde.py:305
-#, no-c-format, python-format
-msgid "Complete report (recommended; %s)"
-msgstr "Dokončaj poročilo (priporočeno; %s)"
+#: ../gtk/apport-gtk.ui.h:2
+msgid "Crash report"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:3
+msgid "<big><b>Sorry, an internal error happened.</b></big>"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
+msgid "If you notice further problems, try restarting the computer."
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:5
+msgid "Send an error report to help fix this problem"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:6
+#, fuzzy
+msgid "Ignore future problems of this program version"
+msgstr "_Spreglej bodoča sesutja te različice programa"
+
+#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
+#: ../kde/apport-kde.py:243
+msgid "Show Details"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:8
+msgid "_Examine locally"
+msgstr "_Preuči krajevno"
+
+#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
+msgid "Leave Closed"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
+#: ../kde/apport-kde.py:205
+msgid "Continue"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:11
-msgid "Content of the report"
-msgstr "Vsebina poročila"
-
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:197
-msgid ""
-"If you were not doing anything confidential (entering passwords or other "
-"private information), you can help to improve the application by reporting "
-"the problem."
-msgstr ""
-"Če niste delali česa zaupnega (npr. vnašali gesla ali drugih zasebnih "
-"podatkov), lahko pomagate pri izpopolnjevanju programa tako, da pošljete "
-"poročilo o nastali težavi."
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr "<big><b>Zbiranje podatkov o nastali težavi</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:12
 msgid ""
@@ -652,66 +598,17 @@ msgstr ""
 "Zbirajo se podatki, ki bi lahko pomagali razvijalcem popraviti težavo, ki "
 "ste jo prijavili."
 
-#: ../gtk/apport-gtk.ui.h:18 ../kde/apport-kde.py:252
-msgid "Kernel problem"
-msgstr "Težava z jedrom"
+#: ../gtk/apport-gtk.ui.h:14
+msgid "<big><b>Uploading problem information</b></big>"
+msgstr "<big><b>Pošiljanje podatkov o nastali težavi</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:19
-msgid "Package problem"
-msgstr "Težava s paketom"
-
-#: ../gtk/apport-gtk.ui.h:9 ../kde/apport-kde.py:308
-#, no-c-format, python-format
-msgid "Reduced report (slow Internet connection; %s)"
-msgstr "Skrčeno poročilo (počasna internetna povezava; %s)"
-
-#: ../gtk/apport-gtk.ui.h:17
-msgid "Restart _Program"
-msgstr "Ponovno zaženi _program"
-
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:361
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:378
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
 "Zbrani podatki se pošiljajo na sistem sledenja hroščev. To utegne trajati "
 "nekaj minut."
-
-#: ../gtk/apport-gtk.ui.h:10
-msgid ""
-"This will remove some large items from the report. These are very useful for "
-"developers to debug the problem, but might be too big for you to upload if "
-"you have a slow internet connection."
-msgstr ""
-"S tem se iz poročila odstrani določene zajetne elemente, ki so sicer zelo "
-"uporabni za odpravljanje napak, a bi utegnili biti preveliki za pošiljanje "
-"po internetu pri počasni povezavi."
-
-#: ../gtk/apport-gtk.ui.h:8
-msgid "_Examine locally"
-msgstr "_Preuči krajevno"
-
-#: ../gtk/apport-gtk.ui.h:16
-msgid "_Ignore future crashes of this program version"
-msgstr "_Spreglej bodoča sesutja te različice programa"
-
-#: ../gtk/apport-gtk.ui.h:14
-msgid "_Report Problem..."
-msgstr "_Pošlji poročilo..."
-
-#: ../gtk/apport-gtk.ui.h:2
-msgid "_Send Report"
-msgstr "_Pošlji poročilo"
-
-#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
-msgid "Report a malfunction to the developers"
-msgstr ""
-
-#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
-msgid "Report a problem..."
-msgstr "Pošlji poročilo o težavi..."
 
 #: ../bin/apport-retrace.py:37
 msgid "%prog [options] <apport problem report | crash ID>"
@@ -765,8 +662,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -796,8 +692,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -815,75 +710,81 @@ msgstr ""
 msgid "OK to send these as attachments? [y/n]"
 msgstr ""
 
+#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
+msgid "Report a problem..."
+msgstr "Pošlji poročilo o težavi..."
+
+#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
+msgid "Report a malfunction to the developers"
+msgstr ""
+
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:79 ../gtk/apport-gtk.py:83 ../kde/apport-kde.py:188
+#: ../gtk/apport-gtk.py:120
+#, fuzzy, python-format
+msgid "Sorry, the application %s has closed unexpectedly."
+msgstr "Oprostite, program \"%s\" se je nepričakovano zaprl."
+
+#: ../gtk/apport-gtk.py:123
+#, fuzzy, python-format
+msgid "Sorry, %s has closed unexpectedly."
+msgstr "Oprostite, program \"%s\" se je nepričakovano zaprl."
+
+#: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
-msgid "Sorry, %s closed unexpectedly"
+msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
-#: ../kde/apport-kde.py:133
-msgid "&Details..."
+#: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
+msgid "Send"
 msgstr ""
 
-#: ../kde/apport-kde.py:269
+#: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
+#, fuzzy, python-format
+msgid "Package: %s"
+msgstr "Težava s paketom"
+
+#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
+msgid "Sorry, a problem occurred while installing software."
+msgstr ""
+
+#: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
+#, fuzzy, python-format
+msgid "The application %s has closed unexpectedly."
+msgstr "Oprostite, program \"%s\" se je nepričakovano zaprl."
+
+#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
+#: ../kde/apport-kde.py:323
+msgid "Relaunch"
+msgstr ""
+
+#: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
+msgid "Hide Details"
+msgstr ""
+
+#: ../kde/apport-kde.py:265
 msgid "Username:"
 msgstr ""
 
-#: ../kde/apport-kde.py:270
+#: ../kde/apport-kde.py:266
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:191
-#, python-format
-msgid "Sorry, the program \"%s\" closed unexpectedly."
-msgstr ""
-
-#: ../kde/apport-kde.py:194
-#, python-format
-msgid "Sorry, %s closed unexpectedly."
-msgstr ""
-
-#: ../kde/apport-kde.py:200
-msgid "&Ignore future crashes of this program version"
-msgstr ""
-
-#: ../kde/apport-kde.py:209
-msgid "Restart &Program"
-msgstr ""
-
-#: ../kde/apport-kde.py:228
-#, python-format
-msgid "Sorry, the package \"%s\" failed to install or upgrade."
-msgstr ""
-
-#: ../kde/apport-kde.py:268 ../kde/apport-kde.py:273
-msgid "Generic error"
-msgstr ""
-
-#: ../kde/apport-kde.py:275
-msgid ""
-"After the problem report has been sent, please fill out the form in the "
-"automatically opened web browser."
-msgstr ""
-
-#: ../kde/apport-kde.py:278
-msgid "&Send"
-msgstr ""
-
-#: ../kde/apport-kde.py:342
+#: ../kde/apport-kde.py:348
 msgid "Collecting Problem Information"
 msgstr ""
 
-#: ../kde/apport-kde.py:344
+#: ../kde/apport-kde.py:350
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
 
-#: ../kde/apport-kde.py:359
+#: ../kde/apport-kde.py:376
 msgid "Uploading Problem Information"
 msgstr ""
 
@@ -900,6 +801,102 @@ msgstr "Uporaba: %s <poročilo> <ciljna mapa>"
 msgid "Destination directory exists and is not empty."
 msgstr "Ciljna mapa ne obstaja ali pa ni prazna."
 
-#, python-format
+#~ msgid "%s closed unexpectedly on %s at %s."
+#~ msgstr "%s se je nepričakovano zaprl dne %s ob %s."
+
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
+#~ "the problem."
+#~ msgstr ""
+#~ "Če niste počeli ničesar zaupnega (vpisovali gesel ali drugih\n"
+#~ "zasebnih podatkov), nam lahko pomagate izboljšati program\n"
+#~ "tako, da nam pošljete poročilo o težavi."
+
+#~ msgid "&Report Problem..."
+#~ msgstr "&Poročaj o težavi..."
+
+#~ msgid "The package \"%s\" failed to install or upgrade."
+#~ msgstr "Namestitev ali nadgradnja paketa \"%s\" ni uspela."
+
+#~ msgid ""
+#~ "You can help the developers to fix the package by reporting the problem."
+#~ msgstr ""
+#~ "Razvijalcem lahko pomagate pri popravilu paketa ter jim pošljete poročilo "
+#~ "o nastali težavi."
+
+#~ msgid "Your system encountered a serious kernel problem."
+#~ msgstr "Sistem je naletel na resno težavo v jedru."
+
+#~ msgid "You can help the developers to fix the problem by reporting it."
+#~ msgstr "Razvijalcem lahko pomagate odpraviti težavo tako, da ga prijavite."
+
+#~ msgid "&Send complete report (recommended; %s)"
+#~ msgstr "Pošlji &popolno poročilo (priporočeno; %s)"
+
+#~ msgid "Send &reduced report (slow Internet connection; %s)"
+#~ msgstr "Pošlji &skrajšano poročilo (počasna internetna povezava; %s)"
+
+#~ msgid ""
+#~ "<big><b>Send problem report to the developers?</b></big>\n"
+#~ "\n"
+#~ "After the problem report has been sent, please fill out the form in the "
+#~ "automatically opened web browser."
+#~ msgstr ""
+#~ "<big><b>Pošljem poročilo o težavi razvijalcem?></big>\n"
+#~ "\n"
+#~ "Potem, ko je bilo poročilo to težavi poslano, vas prosimo, da izpolnite "
+#~ "obrazev v samodejno odprtem spletnem brskalniku."
+
+#~ msgid ""
+#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+#~ "install or upgrade.</span>"
+#~ msgstr ""
+#~ "<span weight=\"bold\" size=\"larger\">Žal se paketu \"%s\" ni uspelo "
+#~ "namestiti ali nadgraditi.</span>"
+
+#~ msgid "Application problem"
+#~ msgstr "Težava programa"
+
+#~ msgid "Complete report (recommended; %s)"
+#~ msgstr "Dokončaj poročilo (priporočeno; %s)"
+
+#~ msgid "Content of the report"
+#~ msgstr "Vsebina poročila"
+
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other "
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
+#~ msgstr ""
+#~ "Če niste delali česa zaupnega (npr. vnašali gesla ali drugih zasebnih "
+#~ "podatkov), lahko pomagate pri izpopolnjevanju programa tako, da pošljete "
+#~ "poročilo o nastali težavi."
+
+#~ msgid "Kernel problem"
+#~ msgstr "Težava z jedrom"
+
+#~ msgid "Reduced report (slow Internet connection; %s)"
+#~ msgstr "Skrčeno poročilo (počasna internetna povezava; %s)"
+
+#~ msgid "Restart _Program"
+#~ msgstr "Ponovno zaženi _program"
+
+#~ msgid ""
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
+#~ msgstr ""
+#~ "S tem se iz poročila odstrani določene zajetne elemente, ki so sicer zelo "
+#~ "uporabni za odpravljanje napak, a bi utegnili biti preveliki za "
+#~ "pošiljanje po internetu pri počasni povezavi."
+
+#~ msgid "_Report Problem..."
+#~ msgstr "_Pošlji poročilo..."
+
+#~ msgid "_Send Report"
+#~ msgstr "_Pošlji poročilo"
+
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "To ni pristen %s paket"
