@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-02-19 17:31+0000\n"
 "Last-Translator: Daniel Nylander <yeager@ubuntu.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
-"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: sv\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -85,9 +85,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr "Rapporten tillhör ett paket som inte är installerat."
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Du tillåts inte komma åt denna problemrapport."
+msgstr ""
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -168,8 +167,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -224,7 +223,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Lägg till en extra tagg till rapporten. Kan anges flera gånger."
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [flaggor] [symptom|pid|package|program sökväg|.apport/.crash-fil]"
 
@@ -317,11 +317,11 @@ msgid "Update %s with fully symbolic stack trace"
 msgstr "Uppdatera %s med fullständigt symbolisk stackspårning"
 
 #: ../apport/ui.py:819
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "Problemet uppstod i programmet %s som ändrades sedan dess."
+msgstr ""
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -395,7 +395,7 @@ msgstr ""
 
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "Problemet har redan rapporterats till utvecklarna. Tack!"
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -573,32 +573,29 @@ msgid "Apport"
 msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
-#, fuzzy
 msgid "Crash report"
-msgstr "Kan inte skapa rapporten"
+msgstr "Kraschrapport"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>Tyvärr, ett internt fel inträffade.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
-msgstr ""
+msgstr "Starta om datorn om du fortsätter att uppleva problem."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
-msgstr ""
+msgstr "Skicka en felrapport för att hjälpa till att rätta till problemet"
 
 #: ../gtk/apport-gtk.ui.h:6
-#, fuzzy
 msgid "Ignore future problems of this program version"
-msgstr "_Ignorera framtida krascher för den här programversionen"
+msgstr "Ignorera framtida problem med denna programversion"
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
-#, fuzzy
 msgid "Show Details"
-msgstr "&Detaljer..."
+msgstr "Visa information"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -606,12 +603,12 @@ msgstr "Und_ersök lokalt"
 
 #: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
 msgid "Leave Closed"
-msgstr ""
+msgstr "Lämna stängd"
 
 #: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
 #: ../kde/apport-kde.py:205
 msgid "Continue"
-msgstr ""
+msgstr "Fortsätt"
 
 #: ../gtk/apport-gtk.ui.h:11
 msgid "<big><b>Collecting problem information</b></big>"
@@ -700,7 +697,8 @@ msgstr ""
 "körs."
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Rapportera förlopp för hämtning/installation när paket installeras i "
 "sandlådan"
@@ -739,7 +737,8 @@ msgstr ""
 "till kraschdatabasen."
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Sökväg till den duplicerade sqlite-databasen (standard: ingen kontroll av "
 "duplikat)"
@@ -776,48 +775,46 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr "Ditt system kan nu bli instabilt och kan behöva att startas om."
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Tyvärr, programmet \"%s\" stängdes oväntat."
+msgstr "Tyvärr, programmet %s har oväntat stängts av."
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Tyvärr, %s stängdes oväntat."
+msgstr "Tyvärr, %s har oväntat stängts av."
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr ""
+msgstr "Tyvärr, %s har påträffat ett internt fel."
 
 #: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
-#, fuzzy
 msgid "Send"
-msgstr "&Skicka"
+msgstr "Skicka"
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "Paketproblem"
+msgstr "Paket: %s"
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
+msgstr "Tyvärr, ett problem inträffade vid installation av program."
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Tyvärr, %s stängdes oväntat."
+msgstr "Programmet %s har oväntat stängts av."
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
 msgid "Relaunch"
-msgstr ""
+msgstr "Starta igen"
 
 #: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
-#, fuzzy
 msgid "Hide Details"
-msgstr "&Detaljer..."
+msgstr "Dölj information"
 
 #: ../kde/apport-kde.py:265
 msgid "Username:"
@@ -856,47 +853,17 @@ msgstr "Användning: %s <rapport> <målkatalog>"
 msgid "Destination directory exists and is not empty."
 msgstr "Målkatalogen finns och är inte tom."
 
-#~ msgid "%s closed unexpectedly on %s at %s."
-#~ msgstr "%s stängdes oväntat %s klockan %s."
-
-#~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
-#~ "the problem."
+#~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Om du inte gjorde något av hemlig karaktär (angav lösenord eller annan\n"
-#~ "privat information) så kan du hjälpa oss att förbättra programmet genom\n"
-#~ "att rapportera problemet."
+#~ "Du kan hjälpa utvecklarna att rätta till problemet genom att rapportera det."
 
-#~ msgid "&Report Problem..."
-#~ msgstr "&Rapportera problem..."
-
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Paketet \"%s\" misslyckades att installeras eller uppgraderas"
 
-#~ msgid ""
-#~ "You can help the developers to fix the package by reporting the problem."
-#~ msgstr ""
-#~ "Du kan hjälpa utvecklarna att rätta till paketet genom att rapportera "
-#~ "problemet."
-
-#~ msgid "Your system encountered a serious kernel problem."
-#~ msgstr "Ditt system har påträffat ett allvarligt problem i kärnan."
-
-#~ msgid "You can help the developers to fix the problem by reporting it."
-#~ msgstr ""
-#~ "Du kan hjälpa utvecklarna att rätta till problemet genom att rapportera "
-#~ "det."
-
-#~ msgid "Send this data to the developers?"
-#~ msgstr "Skicka denna data till utvecklarna?"
-
-#~ msgid "&Send complete report (recommended; %s)"
-#~ msgstr "&Skicka komplett rapport (rekommenderas; %s)"
-
-#~ msgid "Send &reduced report (slow Internet connection; %s)"
-#~ msgstr "Skicka &reducerad rapport (långsam internetanslutning; %s)"
+#, no-c-format, python-format
+#~ msgid "Complete report (recommended; %s)"
+#~ msgstr "Komplett rapport (rekommenderas; %s)"
 
 #~ msgid ""
 #~ "<big><b>Send problem report to the developers?</b></big>\n"
@@ -906,70 +873,30 @@ msgstr "Målkatalogen finns och är inte tom."
 #~ msgstr ""
 #~ "<big><b>Skicka problemrapport till utvecklarna?</b></big>\n"
 #~ "\n"
-#~ "Fyll i formuläret i det webbläsarfönster som öppnats automatiskt efter "
-#~ "att problemrapporten har skickats."
-
-#~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
-#~ "install or upgrade.</span>"
-#~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Tyvärr, misslyckades att installera "
-#~ "eller uppgradera paketet \"%s\".</span>"
-
-#~ msgid "Application problem"
-#~ msgstr "Programproblem"
-
-#~ msgid "Complete report (recommended; %s)"
-#~ msgstr "Komplett rapport (rekommenderas; %s)"
-
-#~ msgid "Content of the report"
-#~ msgstr "Rapportens innehåll"
+#~ "Fyll i formuläret i det webbläsarfönster som öppnats automatiskt efter att "
+#~ "problemrapporten har skickats."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Om du inte gjorde något av hemlig karaktär (angav lösenord eller annan "
 #~ "privat information) kan du hjälpa till att förbättra programmet genom att "
 #~ "rapportera problemet."
 
-#~ msgid "Kernel problem"
-#~ msgstr "Problem i kärnan"
-
-#~ msgid "Reduced report (slow Internet connection; %s)"
-#~ msgstr "Reducerad rapport (långsam Internetanslutning; %s)"
-
-#~ msgid "Restart _Program"
-#~ msgstr "Starta om _programmet"
-
-#~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
-#~ msgstr ""
-#~ "Det här kommer att ta bort vissa större delar från rapporten. Dessa är "
-#~ "mycket användbara för utvecklarna för att felsöka problemet, men kan vara "
-#~ "för stora för dig att skicka upp om du har en långsam Internetanslutning."
-
-#~ msgid "_Report Problem..."
-#~ msgstr "_Rapportera problem..."
-
-#~ msgid "_Send Report"
-#~ msgstr "_Skicka rapport"
-
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Tyvärr, %s avslutades oväntat"
 
-#~ msgid "&Ignore future crashes of this program version"
-#~ msgstr "&Ignorera framtida krascher för den här programversionen"
+#~ msgid "Application problem"
+#~ msgstr "Programproblem"
 
-#~ msgid "Restart &Program"
-#~ msgstr "Starta om &programmet"
+#~ msgid "&Details..."
+#~ msgstr "&Detaljer..."
 
-#~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
-#~ msgstr ""
-#~ "Tyvärr, paketet \"%s\" misslyckades att installeras eller uppgraderas."
+#~ msgid "_Send Report"
+#~ msgstr "_Skicka rapport"
 
 #~ msgid "Generic error"
 #~ msgstr "Allmänt fel"
@@ -978,8 +905,106 @@ msgstr "Målkatalogen finns och är inte tom."
 #~ "After the problem report has been sent, please fill out the form in the "
 #~ "automatically opened web browser."
 #~ msgstr ""
-#~ "Fyll i formuläret i det webbläsarfönster som öppnats automatiskt efter "
-#~ "att problemrapporten har skickats."
+#~ "Fyll i formuläret i det webbläsarfönster som öppnats automatiskt efter att "
+#~ "problemrapporten har skickats."
 
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other\n"
+#~ "private information), you can help to improve the application by reporting\n"
+#~ "the problem."
+#~ msgstr ""
+#~ "Om du inte gjorde något av hemlig karaktär (angav lösenord eller annan\n"
+#~ "privat information) så kan du hjälpa oss att förbättra programmet genom\n"
+#~ "att rapportera problemet."
+
+#, python-format
+#~ msgid "%s closed unexpectedly on %s at %s."
+#~ msgstr "%s stängdes oväntat %s klockan %s."
+
+#~ msgid "Restart _Program"
+#~ msgstr "Starta om _programmet"
+
+#, python-format
+#~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
+#~ msgstr ""
+#~ "Tyvärr, paketet \"%s\" misslyckades att installeras eller uppgraderas."
+
+#, no-c-format
+#~ msgid ""
+#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+#~ "install or upgrade.</span>"
+#~ msgstr ""
+#~ "<span weight=\"bold\" size=\"larger\">Tyvärr, misslyckades att installera "
+#~ "eller uppgradera paketet \"%s\".</span>"
+
+#, python-format
+#~ msgid "&Send complete report (recommended; %s)"
+#~ msgstr "&Skicka komplett rapport (rekommenderas; %s)"
+
+#, no-c-format, python-format
+#~ msgid "Reduced report (slow Internet connection; %s)"
+#~ msgstr "Reducerad rapport (långsam Internetanslutning; %s)"
+
+#, python-format
+#~ msgid "Sorry, %s closed unexpectedly."
+#~ msgstr "Tyvärr, %s stängdes oväntat."
+
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr "_Ignorera framtida krascher för den här programversionen"
+
+#~ msgid "Restart &Program"
+#~ msgstr "Starta om &programmet"
+
+#, python-format
+#~ msgid "Send &reduced report (slow Internet connection; %s)"
+#~ msgstr "Skicka &reducerad rapport (långsam internetanslutning; %s)"
+
+#~ msgid ""
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
+#~ msgstr ""
+#~ "Det här kommer att ta bort vissa större delar från rapporten. Dessa är "
+#~ "mycket användbara för utvecklarna för att felsöka problemet, men kan vara "
+#~ "för stora för dig att skicka upp om du har en långsam Internetanslutning."
+
+#~ msgid "&Report Problem..."
+#~ msgstr "&Rapportera problem..."
+
+#~ msgid "_Report Problem..."
+#~ msgstr "_Rapportera problem..."
+
+#~ msgid "&Send"
+#~ msgstr "&Skicka"
+
+#~ msgid "Kernel problem"
+#~ msgstr "Problem i kärnan"
+
+#~ msgid "&Ignore future crashes of this program version"
+#~ msgstr "&Ignorera framtida krascher för den här programversionen"
+
+#~ msgid ""
+#~ "You can help the developers to fix the package by reporting the problem."
+#~ msgstr ""
+#~ "Du kan hjälpa utvecklarna att rätta till paketet genom att rapportera "
+#~ "problemet."
+
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Det här är inte ett genuint %s-paket"
+
+#, python-format
+#~ msgid "Sorry, the program \"%s\" closed unexpectedly."
+#~ msgstr "Tyvärr, programmet \"%s\" stängdes oväntat."
+
+#~ msgid "Content of the report"
+#~ msgstr "Rapportens innehåll"
+
+#~ msgid "Package problem"
+#~ msgstr "Paketproblem"
+
+#~ msgid "Your system encountered a serious kernel problem."
+#~ msgstr "Ditt system har påträffat ett allvarligt problem i kärnan."
+
+#~ msgid "Send this data to the developers?"
+#~ msgstr "Skicka denna data till utvecklarna?"

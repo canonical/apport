@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Andrej Tobola <andrej.tobola+linux@gmail.com>\n"
 "Language-Team: Slovak <sk@li.org>\n"
-"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: sk\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -85,9 +85,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr "Správa patrí k balíku, ktorý nie je nainštalovaný."
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Nemáte povolený prístup k tejto správe o probléme."
+msgstr ""
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -108,7 +107,8 @@ msgstr "Nebol určený žiadny balík"
 #: ../apport/ui.py:308
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Je potrebné určiť balík alebo PID. Pozrite --help pre viac informácií."
+msgstr ""
+"Je potrebné určiť balík alebo PID. Pozrite --help pre viac informácií."
 
 #: ../apport/ui.py:324
 msgid "Invalid PID"
@@ -162,8 +162,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -210,8 +210,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Pridať k hláseniu značku navyše. Môže byť zadaná viackrát."
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -294,12 +296,11 @@ msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
 #: ../apport/ui.py:819
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
-"Táto chybová správa sa vzťahuje na program, ktorý už nie je nainštalovaný."
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -373,7 +374,7 @@ msgstr ""
 
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "Tento problém bol už nahlásený vývojárom. Ďakujeme!"
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -567,9 +568,8 @@ msgid "Send an error report to help fix this problem"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:6
-#, fuzzy
 msgid "Ignore future problems of this program version"
-msgstr "_Ignorovať budúce pády tejto verzie programu"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
@@ -663,7 +663,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -693,7 +694,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -726,14 +728,14 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Prepáčte, program \"%s\" neočakávane skončil"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Prepáčte, program \"%s\" neočakávane skončil"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
@@ -745,18 +747,18 @@ msgid "Send"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "Problém balíka"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Prepáčte, program \"%s\" neočakávane skončil"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
@@ -802,40 +804,9 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
-#~ msgid "%s closed unexpectedly on %s at %s."
-#~ msgstr "%s sa nečakane ukončil %s o %s"
-
-#~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
-#~ "the problem."
-#~ msgstr ""
-#~ "Ak ste nevykonávali niečo dôverné (zadávanie hesiel alebo iných\n"
-#~ "súkromných informácií), môžete pomôcť zlepšiť aplikáciu nahlásením\n"
-#~ "problému."
-
-#~ msgid "&Report Problem..."
-#~ msgstr "&Nahlásiť problém..."
-
-#~ msgid "The package \"%s\" failed to install or upgrade."
-#~ msgstr "Balík \"%s\" sa nepodarilo nainštalovať alebo aktualizovať."
-
-#~ msgid ""
-#~ "You can help the developers to fix the package by reporting the problem."
-#~ msgstr "Môžete pomôcť vývojárom opraviť balík ohlásením problému."
-
-#~ msgid "Your system encountered a serious kernel problem."
-#~ msgstr "Váš systém zaznamenal vážny problém s jadrom."
-
-#~ msgid "You can help the developers to fix the problem by reporting it."
-#~ msgstr "Môžete pomôcť vývojárom odstrániť problém jeho ohlásením."
-
-#~ msgid "&Send complete report (recommended; %s)"
-#~ msgstr "&Poslať celé hlásenie (odporúčané; %s)"
-
-#~ msgid "Send &reduced report (slow Internet connection; %s)"
-#~ msgstr "Odoslať &skrátené hlásenie (pomalé internetové pripojenie; %s)"
+#, no-c-format, python-format
+#~ msgid "Complete report (recommended; %s)"
+#~ msgstr "Zostaviť hlásenie (odporúča sa; %s)"
 
 #~ msgid ""
 #~ "<big><b>Send problem report to the developers?</b></big>\n"
@@ -848,6 +819,16 @@ msgstr ""
 #~ "Po odoslaní správy o probléme, vyplňte prosím formulár v automaticky "
 #~ "otvorenom webovom prehliadači."
 
+#~ msgid "Application problem"
+#~ msgstr "Problém aplikácie"
+
+#~ msgid "_Send Report"
+#~ msgstr "_Poslať hlásenie"
+
+#~ msgid "Restart _Program"
+#~ msgstr "Reštartovať _program"
+
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -855,46 +836,80 @@ msgstr ""
 #~ "<span weight=\"bold\" size=\"larger\">Prepáčte, zlyhala inštalácia alebo "
 #~ "aktualizácia balíka \"%s\".</span>"
 
-#~ msgid "Application problem"
-#~ msgstr "Problém aplikácie"
-
-#~ msgid "Complete report (recommended; %s)"
-#~ msgstr "Zostaviť hlásenie (odporúča sa; %s)"
-
-#~ msgid "Content of the report"
-#~ msgstr "Obsah hlásenia"
-
-#~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
-#~ msgstr ""
-#~ "V prípade, že nerobíte nič dôverné (zadávanie hesla alebo iných osobných "
-#~ "údajov), môžete pomôcť vylepšiť aplikáciu nahlásením problému."
-
-#~ msgid "Kernel problem"
-#~ msgstr "Problém jadra"
-
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Zmenšené hlásenie (pomalé internetové pripojenie; %s)"
 
-#~ msgid "Restart _Program"
-#~ msgstr "Reštartovať _program"
-
-#~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
-#~ msgstr ""
-#~ "Toto vymaže veľké veci zo správy. Tieto sú veľmi užitočné pre vývojárov "
-#~ "na debugovanie problému, ale pokiaľ máte pomalé pripojenie na internet, "
-#~ "môže to byť pre vás priveľa na odoslanie."
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr "_Ignorovať budúce pády tejto verzie programu"
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Ohlásiť problém..."
 
-#~ msgid "_Send Report"
-#~ msgstr "_Poslať hlásenie"
+#~ msgid "Kernel problem"
+#~ msgstr "Problém jadra"
 
+#~ msgid ""
+#~ "You can help the developers to fix the package by reporting the problem."
+#~ msgstr "Môžete pomôcť vývojárom opraviť balík ohlásením problému."
+
+#~ msgid "Content of the report"
+#~ msgstr "Obsah hlásenia"
+
+#~ msgid "Package problem"
+#~ msgstr "Problém balíka"
+
+#~ msgid "&Report Problem..."
+#~ msgstr "&Nahlásiť problém..."
+
+#, python-format
+#~ msgid "Send &reduced report (slow Internet connection; %s)"
+#~ msgstr "Odoslať &skrátené hlásenie (pomalé internetové pripojenie; %s)"
+
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Toto nie je autentický %s balík"
+
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other\n"
+#~ "private information), you can help to improve the application by reporting\n"
+#~ "the problem."
+#~ msgstr ""
+#~ "Ak ste nevykonávali niečo dôverné (zadávanie hesiel alebo iných\n"
+#~ "súkromných informácií), môžete pomôcť zlepšiť aplikáciu nahlásením\n"
+#~ "problému."
+
+#, python-format
+#~ msgid "%s closed unexpectedly on %s at %s."
+#~ msgstr "%s sa nečakane ukončil %s o %s"
+
+#~ msgid "Your system encountered a serious kernel problem."
+#~ msgstr "Váš systém zaznamenal vážny problém s jadrom."
+
+#, python-format
+#~ msgid "The package \"%s\" failed to install or upgrade."
+#~ msgstr "Balík \"%s\" sa nepodarilo nainštalovať alebo aktualizovať."
+
+#~ msgid "You can help the developers to fix the problem by reporting it."
+#~ msgstr "Môžete pomôcť vývojárom odstrániť problém jeho ohlásením."
+
+#, python-format
+#~ msgid "&Send complete report (recommended; %s)"
+#~ msgstr "&Poslať celé hlásenie (odporúčané; %s)"
+
+#~ msgid ""
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
+#~ msgstr ""
+#~ "Toto vymaže veľké veci zo správy. Tieto sú veľmi užitočné pre vývojárov na "
+#~ "debugovanie problému, ale pokiaľ máte pomalé pripojenie na internet, môže to "
+#~ "byť pre vás priveľa na odoslanie."
+
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other "
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
+#~ msgstr ""
+#~ "V prípade, že nerobíte nič dôverné (zadávanie hesla alebo iných osobných "
+#~ "údajov), môžete pomôcť vylepšiť aplikáciu nahlásením problému."

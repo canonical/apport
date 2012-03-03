@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Kannada <kn@li.org>\n"
-"Language: kn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:18+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: kn\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -38,8 +38,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"ನೀವು ಕೆಲವು ಹಳೆ ಆವ್ರತ್ತಿಯ ಪ್ಯಾಕೆಜ್ ಗಳನ್ನ ಅನುಸ್ಥಾಪಿಸಿ ಕೊಂಡಿದ್ದೀರಿ. ದಯವಿಟ್ಟು ಕೆಳಕಂಡ "
-"ಪ್ಯಾಕೆಜ್ ಗಳನ್ನ ಅಪ್ಗ್ರೇಡ್ ಮಾಡಿಕೊಂಡು ದೋಷ ಮರುಕಳಿಸುತ್ತದೆಯೆ ಎಂದು ಗಮನಿಸಿ\n"
+"ನೀವು ಕೆಲವು ಹಳೆ ಆವ್ರತ್ತಿಯ ಪ್ಯಾಕೆಜ್ ಗಳನ್ನ ಅನುಸ್ಥಾಪಿಸಿ ಕೊಂಡಿದ್ದೀರಿ. ದಯವಿಟ್ಟು "
+"ಕೆಳಕಂಡ ಪ್ಯಾಕೆಜ್ ಗಳನ್ನ ಅಪ್ಗ್ರೇಡ್ ಮಾಡಿಕೊಂಡು ದೋಷ ಮರುಕಳಿಸುತ್ತದೆಯೆ ಎಂದು ಗಮನಿಸಿ\n"
 "\n"
 "%s"
 
@@ -81,9 +81,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr ""
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "ನಿಮಗೆ ಈ ತೊಂದರೆ ವರದಿಯನ್ನು ಪರಿಶೀಲಿಸುವ ಅಧಿಕಾರವಿಲ್ಲ"
+msgstr ""
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -96,8 +95,8 @@ msgstr "ದೋಷ"
 #: ../apport/ui.py:280
 msgid "There is not enough disk space available to process this report."
 msgstr ""
-"ಈ ತೊಂದರೆ ವರದಿಯನ್ನು ಪರಿಶೀಲಿಸಲು ಬೇಕಾಗುವಷ್ಟು ಸ್ಥಳಾವಕಾಶ ನಿಮ್ಮ ಗಣಕಯಂತ್ರದ ಡಿಸ್ಕ್"
-"(ಮುದ್ರಿಕೆಯಲ್ಲಿ) ನಲ್ಲಿ ಇಲ್ಲ"
+"ಈ ತೊಂದರೆ ವರದಿಯನ್ನು ಪರಿಶೀಲಿಸಲು ಬೇಕಾಗುವಷ್ಟು ಸ್ಥಳಾವಕಾಶ ನಿಮ್ಮ ಗಣಕಯಂತ್ರದ "
+"ಡಿಸ್ಕ್(ಮುದ್ರಿಕೆಯಲ್ಲಿ) ನಲ್ಲಿ ಇಲ್ಲ"
 
 #: ../apport/ui.py:307
 msgid "No package specified"
@@ -107,7 +106,8 @@ msgstr "ಯಾವುದೇ ಪ್ಯಾಕೆಜ್ ಹೇಳಲಾಗಿಲ್�
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
-"ನೀವು ಪ್ಯಾಕೆಜ್ ಅಥವಾ PID ಯನ್ನು ಉಲ್ಲೇಖಿಸಬೇಕು. ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗಾಗಿ --help ಅನ್ನು ನೋಡಿ"
+"ನೀವು ಪ್ಯಾಕೆಜ್ ಅಥವಾ PID ಯನ್ನು ಉಲ್ಲೇಖಿಸಬೇಕು. ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗಾಗಿ --help ಅನ್ನು "
+"ನೋಡಿ"
 
 #: ../apport/ui.py:324
 msgid "Invalid PID"
@@ -126,8 +126,8 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"ಉಲ್ಲೇಖಿಸಿದ ಪ್ರಕ್ರಿಯೆಯು ನಿಮಗೆ ಸಂಬಂಧಿಸಿದಲ್ಲ. ದಯವಿಟ್ಟು ಈ ಅನ್ವಯವನ್ನು ಪ್ರಕ್ರಿಯೆಯ ಯಜಮಾನನಾಗಿ "
-"ಅಥವಾ root ಆಗಿ ಚಾಲನೆ ಮಾಡಿ."
+"ಉಲ್ಲೇಖಿಸಿದ ಪ್ರಕ್ರಿಯೆಯು ನಿಮಗೆ ಸಂಬಂಧಿಸಿದಲ್ಲ. ದಯವಿಟ್ಟು ಈ ಅನ್ವಯವನ್ನು ಪ್ರಕ್ರಿಯೆಯ "
+"ಯಜಮಾನನಾಗಿ ಅಥವಾ root ಆಗಿ ಚಾಲನೆ ಮಾಡಿ."
 
 #: ../apport/ui.py:355
 #, python-format
@@ -161,8 +161,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -207,8 +207,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -577,8 +579,8 @@ msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"ಸಂಗ್ರಹಿಸಿದ ಮಾಹಿತಿಯನ್ನು ದೋಷ ಟ್ರಾಕಿಂಗ್ ವ್ಯವಸ್ಥೆಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ. ಇದು ಕೆಲವು ನಿಮಿಷ "
-"ತೆಗೆದುಕೊಳ್ಳ್ಬಹುದು."
+"ಸಂಗ್ರಹಿಸಿದ ಮಾಹಿತಿಯನ್ನು ದೋಷ ಟ್ರಾಕಿಂಗ್ ವ್ಯವಸ್ಥೆಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ. ಇದು ಕೆಲವು "
+"ನಿಮಿಷ ತೆಗೆದುಕೊಳ್ಳ್ಬಹುದು."
 
 #: ../bin/apport-retrace.py:37
 msgid "%prog [options] <apport problem report | crash ID>"
@@ -597,7 +599,8 @@ msgstr ""
 #: ../bin/apport-retrace.py:43
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr "ಮೂಲ ವರದಿಯನ್ನು ಬದಲಾಯಿಸುವ ಬದಲು ಬದಲಾವಣೆ ಮಾಡಿದ ವರದಿಯನ್ನು ಹೇಳಿದ ಕಡತಕ್ಕೆ ಬರೆ"
+msgstr ""
+"ಮೂಲ ವರದಿಯನ್ನು ಬದಲಾಯಿಸುವ ಬದಲು ಬದಲಾವಣೆ ಮಾಡಿದ ವರದಿಯನ್ನು ಹೇಳಿದ ಕಡತಕ್ಕೆ ಬರೆ"
 
 #: ../bin/apport-retrace.py:45
 msgid "Remove the core dump from the report after stack trace regeneration"
@@ -630,7 +633,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -660,7 +664,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -693,14 +698,14 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "ಕ್ಷಮಿಸಿ %s ಪ್ರೋಗ್ರಾಮ್ ಅನಿರೀಕ್ಷಿತವಾಗಿ ಅಂತ್ಯಗೊಂಡಿದೆ"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "ಕ್ಷಮಿಸಿ %s ಪ್ರೋಗ್ರಾಮ್ ಅನಿರೀಕ್ಷಿತವಾಗಿ ಅಂತ್ಯಗೊಂಡಿದೆ"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
@@ -712,18 +717,18 @@ msgid "Send"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "ಪ್ಯಾಕೇಜ್ ತೊಂದರೆ"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "ಕ್ಷಮಿಸಿ %s ಪ್ರೋಗ್ರಾಮ್ ಅನಿರೀಕ್ಷಿತವಾಗಿ ಅಂತ್ಯಗೊಂಡಿದೆ"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
@@ -769,12 +774,18 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
+#, python-format
+#~ msgid "This is not a genuine %s package"
+#~ msgstr "%s ಅಸಲಿ ತಂತ್ರಾಂಶ(ಪ್ಯಾಕೆಜ್) ಅಲ್ಲ"
+
 #~ msgid "&Report Problem..."
 #~ msgstr "ತೊಂದರೆಯನ್ನು ವರದಿಮಾಡು (&R)"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "ಸಂಪೂರ್ಣ ವರದಿಯನ್ನು ರವಾನಿಸಿ (&S)(ಸೂಚಿಸಲಾಗಿದೆ; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr ""
 #~ "ಮೊಟಕುಗೊಳಿಸಿದ ವರದಿಯನ್ನು ರವಾನಿಸು (&S) (ನಿಧಾನವಿರುವ ಅಂತರ್ಜಾಲ ಸಂಪರ್ಕಗಳಿಗೆ; %s)"
@@ -782,6 +793,7 @@ msgstr ""
 #~ msgid "Application problem"
 #~ msgstr "ಅನ್ವಯದ ತೊಂದರೆ"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "ಪೂರ್ಣ ವರದಿ (ಸೂಚಿಸಲಾದ; %s)"
 
@@ -791,6 +803,10 @@ msgstr ""
 #~ msgid "Kernel problem"
 #~ msgstr "ಕರ್ನೆಲ್ ತೊಂದರೆ"
 
+#~ msgid "Package problem"
+#~ msgstr "ಪ್ಯಾಕೇಜ್ ತೊಂದರೆ"
+
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "ಮೊಟಕುಗೊಳಿಸಿದ ವರದಿ (ನಿಧಾನವಿರುವ ಅಂತರ್ಜಾಲ ಸಂಪರ್ಕಕ್ಕೆ; %s)"
 
@@ -802,6 +818,3 @@ msgstr ""
 
 #~ msgid "_Send Report"
 #~ msgstr "ವರದಿಯನ್ನು ಕಳುಹಿಸು (_S)"
-
-#~ msgid "This is not a genuine %s package"
-#~ msgstr "%s ಅಸಲಿ ತಂತ್ರಾಂಶ(ಪ್ಯಾಕೆಜ್) ಅಲ್ಲ"

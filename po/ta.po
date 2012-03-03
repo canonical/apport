@@ -13,12 +13,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: tamil <Ubuntu-l10n-tam@lists.ubuntu.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: \n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -153,8 +153,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -199,7 +199,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:624
@@ -525,9 +526,8 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
-#, fuzzy
 msgid "Show Details"
-msgstr "&விவரங்கள்..."
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -612,7 +612,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -642,7 +643,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -675,14 +677,14 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "மன்னிக்கவும், %s பயன்பாடு எதிர்பாராத விதமாக செயலிழந்துவிட்டது."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "மன்னிக்கவும், %s எதிர்பாராத விதமாக செயலிழந்துவிட்டது."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
@@ -690,9 +692,8 @@ msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
-#, fuzzy
 msgid "Send"
-msgstr "&அனுப்புக"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
 #, python-format
@@ -704,9 +705,9 @@ msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "மன்னிக்கவும், %s எதிர்பாராத விதமாக செயலிழந்துவிட்டது."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
@@ -714,9 +715,8 @@ msgid "Relaunch"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
-#, fuzzy
 msgid "Hide Details"
-msgstr "&விவரங்கள்..."
+msgstr ""
 
 #: ../kde/apport-kde.py:265
 msgid "Username:"
@@ -754,16 +754,31 @@ msgid "Destination directory exists and is not empty."
 msgstr ""
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "இது சில பெரிய உருப்படிகளை அறிக்கையிலிருந்து நீக்கும். இவை நிரல் உருவாக்குவோருக்கு "
-#~ "மிகவும் உதவக் கூடிய தகவல்கள் ஆயினும் உங்கள் வலை இணைப்பு மெதுவானதாக இருப்பின் இது "
-#~ "மேலேற்றுவதற்கு பெரியதாக இருக்கலாம்."
+#~ "இது சில பெரிய உருப்படிகளை அறிக்கையிலிருந்து நீக்கும். இவை நிரல் "
+#~ "உருவாக்குவோருக்கு மிகவும் உதவக் கூடிய தகவல்கள் ஆயினும் உங்கள் வலை இணைப்பு "
+#~ "மெதுவானதாக இருப்பின் இது மேலேற்றுவதற்கு பெரியதாக இருக்கலாம்."
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "மன்னிக்கவும், %s எதிர்பாராத விதமாக செயலிழந்துவிட்டது"
+
+#, python-format
+#~ msgid "Sorry, the program \"%s\" closed unexpectedly."
+#~ msgstr "மன்னிக்கவும், %s பயன்பாடு எதிர்பாராத விதமாக செயலிழந்துவிட்டது."
+
+#, python-format
+#~ msgid "Sorry, %s closed unexpectedly."
+#~ msgstr "மன்னிக்கவும், %s எதிர்பாராத விதமாக செயலிழந்துவிட்டது."
+
+#~ msgid "&Details..."
+#~ msgstr "&விவரங்கள்..."
+
+#~ msgid "&Send"
+#~ msgstr "&அனுப்புக"
 
 #~ msgid "Generic error"
 #~ msgstr "பொதுவான பிழை"

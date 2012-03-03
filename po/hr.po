@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Dražen Odobašić <dodobas@geoinfo.geof.hr>\n"
 "Language-Team: Croatian <hr@li.org>\n"
-"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: hr\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -83,9 +83,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr "Izvještaj pripada paketu koji nije instaliran."
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Niste ovlašteni za pristup ovom izvještaju o problemu."
+msgstr ""
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -106,7 +105,8 @@ msgstr "Nema određenih paketa"
 #: ../apport/ui.py:308
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Morate odrediti paket ili PID. Pogledajte --help za više informacija."
+msgstr ""
+"Morate odrediti paket ili PID. Pogledajte --help za više informacija."
 
 #: ../apport/ui.py:324
 msgid "Invalid PID"
@@ -160,8 +160,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -206,7 +206,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:624
@@ -545,9 +546,8 @@ msgid "Send an error report to help fix this problem"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:6
-#, fuzzy
 msgid "Ignore future problems of this program version"
-msgstr "_Zanemari buduća rušenja ove verzije programa"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
@@ -641,7 +641,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -671,7 +672,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -704,14 +706,14 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Žao nam je, \"%s\" je neplanirano prestao s radom"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Žao nam je, \"%s\" je neplanirano prestao s radom"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
@@ -723,18 +725,18 @@ msgid "Send"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "Problem s paketom"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Žao nam je, \"%s\" je neplanirano prestao s radom"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
@@ -780,38 +782,16 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
-#~ msgid "%s closed unexpectedly on %s at %s."
-#~ msgstr "%s neočekivano prekinut na %s u %s."
-
-#~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
-#~ "the problem."
-#~ msgstr ""
-#~ "Ako niste radili ništa povjerljivo (unosili lozinke ili druge\n"
-#~ "privatne informacije), možete pomoći unaprijediti aplikaciju prijavom\n"
-#~ "problema."
-
-#~ msgid "&Report Problem..."
-#~ msgstr "&Prijavi Problem..."
-
-#~ msgid "The package \"%s\" failed to install or upgrade."
-#~ msgstr "Paket \"%s\" se nije uspio instalirati ili nadograditi"
-
-#~ msgid ""
-#~ "You can help the developers to fix the package by reporting the problem."
-#~ msgstr ""
-#~ "I vi možete pomoći razvojnom timu da popravi paket prijavom problema."
-
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Možete pomoći razvojnom timu da riješi problem prijavom istog."
 
-#~ msgid "&Send complete report (recommended; %s)"
-#~ msgstr "&Pošaljite potpun izvještaj (preporučeno; %s)"
+#, python-format
+#~ msgid "The package \"%s\" failed to install or upgrade."
+#~ msgstr "Paket \"%s\" se nije uspio instalirati ili nadograditi"
 
-#~ msgid "Send &reduced report (slow Internet connection; %s)"
-#~ msgstr "Pošaljite &sažeti izvještaj (spora Internet veza; %s)"
+#, no-c-format, python-format
+#~ msgid "Complete report (recommended; %s)"
+#~ msgstr "Potpun izvještaj (preporučeno; %s)"
 
 #~ msgid ""
 #~ "<big><b>Send problem report to the developers?</b></big>\n"
@@ -825,53 +805,88 @@ msgstr ""
 #~ "automatski otvorenom internet pregledniku."
 
 #~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
-#~ "install or upgrade.</span>"
-#~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Nažalost, paket \"%s\" se nije "
-#~ "uspio instalirati ili nadograditi</span>"
-
-#~ msgid "Application problem"
-#~ msgstr "Problem s aplikacijom"
-
-#~ msgid "Complete report (recommended; %s)"
-#~ msgstr "Potpun izvještaj (preporučeno; %s)"
-
-#~ msgid "Content of the report"
-#~ msgstr "Sadržaj izvještaja"
-
-#~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Ako niste radili nešto povjerljivo (unosili lozinke ili nešto slično), "
 #~ "možete pomoći u poboljšanju aplikacije prijavljivanjem problema razvojnom "
 #~ "timu."
 
-#~ msgid "Kernel problem"
-#~ msgstr "Problem s kernelom"
+#~ msgid "Application problem"
+#~ msgstr "Problem s aplikacijom"
 
-#~ msgid "Reduced report (slow Internet connection; %s)"
-#~ msgstr "Sažeti izvještaj (spora Internet veza; %s)"
+#~ msgid "_Send Report"
+#~ msgstr "_Pošalji izvješće"
+
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other\n"
+#~ "private information), you can help to improve the application by reporting\n"
+#~ "the problem."
+#~ msgstr ""
+#~ "Ako niste radili ništa povjerljivo (unosili lozinke ili druge\n"
+#~ "privatne informacije), možete pomoći unaprijediti aplikaciju prijavom\n"
+#~ "problema."
+
+#, python-format
+#~ msgid "%s closed unexpectedly on %s at %s."
+#~ msgstr "%s neočekivano prekinut na %s u %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Ponovo pokreni _Program"
 
+#, no-c-format
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+#~ "install or upgrade.</span>"
+#~ msgstr ""
+#~ "<span weight=\"bold\" size=\"larger\">Nažalost, paket \"%s\" se nije uspio "
+#~ "instalirati ili nadograditi</span>"
+
+#, python-format
+#~ msgid "&Send complete report (recommended; %s)"
+#~ msgstr "&Pošaljite potpun izvještaj (preporučeno; %s)"
+
+#, no-c-format, python-format
+#~ msgid "Reduced report (slow Internet connection; %s)"
+#~ msgstr "Sažeti izvještaj (spora Internet veza; %s)"
+
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr "_Zanemari buduća rušenja ove verzije programa"
+
+#, python-format
+#~ msgid "Send &reduced report (slow Internet connection; %s)"
+#~ msgstr "Pošaljite &sažeti izvještaj (spora Internet veza; %s)"
+
+#~ msgid ""
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Ovo će odstraniti neke veće dijelove izvještaja. Oni su vrlo korisni "
 #~ "razvojnom timu za otklanjanje problema, ali mogu biti preveliki za slanje "
 #~ "ako imate sporu vezu s internetom."
 
+#~ msgid "&Report Problem..."
+#~ msgstr "&Prijavi Problem..."
+
 #~ msgid "_Report Problem..."
 #~ msgstr "_Prijavi problem..."
 
-#~ msgid "_Send Report"
-#~ msgstr "_Pošalji izvješće"
+#~ msgid "Kernel problem"
+#~ msgstr "Problem s kernelom"
 
+#~ msgid ""
+#~ "You can help the developers to fix the package by reporting the problem."
+#~ msgstr ""
+#~ "I vi možete pomoći razvojnom timu da popravi paket prijavom problema."
+
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ovo nije izvorni %s paket"
+
+#~ msgid "Content of the report"
+#~ msgstr "Sadržaj izvještaja"
+
+#~ msgid "Package problem"
+#~ msgstr "Problem s paketom"

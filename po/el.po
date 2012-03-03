@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-02-18 11:19+0000\n"
 "Last-Translator: komnik <komatselis@yahoo.com>\n"
 "Language-Team: Greek, Modern (1453-) <el@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:18+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:08+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: \n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -88,10 +88,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr "Η αναφορά ανήκει σε ένα πακέτο το οποίο δεν είναι εγκατεστημένο."
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
-"Δεν σας επιτρέπεται να αποκτήσετε πρόσβαση στην αναφορά του προβλήματος."
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -170,8 +168,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -216,7 +214,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:624
@@ -293,13 +292,11 @@ msgid "Update %s with fully symbolic stack trace"
 msgstr "Ενημέρωση %s με πλήρως συμβολική παρακολούθηση στίβας"
 
 #: ../apport/ui.py:819
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
-"Το πρόβλημα συνέβηκε με το πρόγραμμα %s το οποίο έχει τροποποιηθεί από "
-"εκείνη τη στιγμή."
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -372,6 +369,8 @@ msgstr ""
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
+"Αυτό το πρόβλημα έχει ήδη αναφερθεί στους συντελεστές της εφαρμογής. Σας "
+"ευχαριστούμε!"
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -545,9 +544,8 @@ msgid "Apport"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
-#, fuzzy
 msgid "Crash report"
-msgstr "Αδυναμία δημιουργίας αναφοράς"
+msgstr "Αναφορά αποτυχίας συστήματος"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
@@ -556,21 +554,22 @@ msgstr ""
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
+"Εάν συναντήσετε περαιτέρω προβλήματα, παρακαλούμε επανεκκινήστε  τον "
+"υπολογιστή σας."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
 msgstr ""
+"Αποστείλετε αναφορά λάθους για να βοηθήσει στην επίλυση του προβλήματος"
 
 #: ../gtk/apport-gtk.ui.h:6
-#, fuzzy
 msgid "Ignore future problems of this program version"
-msgstr ""
-"Να αγνοηθούν μελλοντικές καταρρεύσεις αυτής της έκδοσης του προγράμματος"
+msgstr "Αγνοήστε μελλοντικά προβλήματα αυτής της έκδοσης προγράμματος"
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
 msgid "Show Details"
-msgstr ""
+msgstr "Προβολή λεπτομερειών"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -578,12 +577,12 @@ msgstr "Τοπική _εξέταση"
 
 #: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
 msgid "Leave Closed"
-msgstr ""
+msgstr "Να παραμείνει κλεισμένο"
 
 #: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
 #: ../kde/apport-kde.py:205
 msgid "Continue"
-msgstr ""
+msgstr "Συνέχεια"
 
 #: ../gtk/apport-gtk.ui.h:11
 msgid "<big><b>Collecting problem information</b></big>"
@@ -667,7 +666,8 @@ msgstr ""
 "αποδέσμευση."
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Αναφορά προόδου λήψης/εγκατάστασης όταν εγκαθίστανται πακέτα στο δοκιμαστικό "
 "χώρο"
@@ -705,7 +705,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -738,46 +739,47 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Συγνώμη, το πρόγραμμα \"%s\" τερματίστηκε απροσδόκητα"
+msgstr "Συγνώμη, η εφαρμογή %s τερματίστηκε απροσδόκητα."
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Συγνώμη, το πρόγραμμα \"%s\" τερματίστηκε απροσδόκητα"
+msgstr "Συγνώμη,το %s τερματίστηκε απροδόκητα."
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr ""
+msgstr "Συγνώμη, το %s παρουσίασε εσωτερικό σφάλμα."
 
 #: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
 msgid "Send"
-msgstr ""
+msgstr "Αποστολή"
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "Πρόβλημα πακέτου"
+msgstr "Πακέτο: %s"
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
+"Συγνώμη , κάποιο πρόβλημα παρουσιάστηκε κατά την εγκατάσταση του λογισμικού."
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Συγνώμη, το πρόγραμμα \"%s\" τερματίστηκε απροσδόκητα"
+msgstr "Η εφαρμογή %s τερματίστηκε απροσδόκητα."
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
 msgid "Relaunch"
-msgstr ""
+msgstr "Επανεκκίνηση"
 
 #: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
 msgid "Hide Details"
-msgstr ""
+msgstr "Απόκρυψη λεπτομεριών"
 
 #: ../kde/apport-kde.py:265
 msgid "Username:"
@@ -814,44 +816,18 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
-#~ msgid "%s closed unexpectedly on %s at %s."
-#~ msgstr "Το %s τερματίστηκε απροσδόκητα στο %s και στο %s."
-
-#~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
-#~ "the problem."
+#~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή \n"
-#~ "κάποιων άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην \n"
-#~ "βελτίωση της εφαρμογής, αναφέροντας το πρόβλημα."
+#~ "Μπορείτε να βοηθήσετε τους υπεύθυνους ανάπτυξης να το φτιάξουν αναφέροντας "
+#~ "το."
 
-#~ msgid "&Report Problem..."
-#~ msgstr "&Αναφορά Προβλήματος..."
-
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Το πακέτο \"%s\" απέτυχε να εγκατασταθεί ή να ενημερωθεί."
 
-#~ msgid ""
-#~ "You can help the developers to fix the package by reporting the problem."
-#~ msgstr ""
-#~ "Μπορείτε να βοηθήσετε τους προγραμματιστές να διορθώσουν το πακέτο "
-#~ "αναφέροντας το πρόβλημα."
-
-#~ msgid "Your system encountered a serious kernel problem."
-#~ msgstr "Το σύστημα σας αντιμετώπισε ένα σοβαρό πρόβλημα στον πυρήνα."
-
-#~ msgid "You can help the developers to fix the problem by reporting it."
-#~ msgstr ""
-#~ "Μπορείτε να βοηθήσετε τους υπεύθυνους ανάπτυξης να το φτιάξουν "
-#~ "αναφέροντας το."
-
-#~ msgid "&Send complete report (recommended; %s)"
-#~ msgstr "&Αποστολή ολοκληρωμένης αναφοράς (προτείνεται %s)"
-
-#~ msgid "Send &reduced report (slow Internet connection; %s)"
-#~ msgstr "Απόστολή &περιορισμένης αναφοράς (αργή σύνδεση με το διαδίκτυο %s)"
+#, no-c-format, python-format
+#~ msgid "Complete report (recommended; %s)"
+#~ msgstr "Ολοκληρωμένη αναφορά (προτείνεται το %s)"
 
 #~ msgid ""
 #~ "<big><b>Send problem report to the developers?</b></big>\n"
@@ -859,12 +835,44 @@ msgstr ""
 #~ "After the problem report has been sent, please fill out the form in the "
 #~ "automatically opened web browser."
 #~ msgstr ""
-#~ "<big><b>Να αποσταλεί η αναφορά του προβλήματος στους προγραμματιστές;</"
-#~ "b></big>\n"
+#~ "<big><b>Να αποσταλεί η αναφορά του προβλήματος στους "
+#~ "προγραμματιστές;</b></big>\n"
 #~ "\n"
 #~ "Μετά την αναφορά του προβλήματος, παρακαλώ συμπληρώστε τη φόρμα που θα "
 #~ "ανοίξει αυτόματα στον περιηγητή ιστού."
 
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other "
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
+#~ msgstr ""
+#~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή κάποιων "
+#~ "άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην βελτίωση της "
+#~ "εφαρμογής, αναφέροντας το πρόβλημα."
+
+#~ msgid "Application problem"
+#~ msgstr "Πρόβλημα εφαρμογής"
+
+#~ msgid "_Send Report"
+#~ msgstr "Α_ποστολή Αναφοράς"
+
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other\n"
+#~ "private information), you can help to improve the application by reporting\n"
+#~ "the problem."
+#~ msgstr ""
+#~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή \n"
+#~ "κάποιων άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην \n"
+#~ "βελτίωση της εφαρμογής, αναφέροντας το πρόβλημα."
+
+#, python-format
+#~ msgid "%s closed unexpectedly on %s at %s."
+#~ msgstr "Το %s τερματίστηκε απροσδόκητα στο %s και στο %s."
+
+#~ msgid "Restart _Program"
+#~ msgstr "Επανεκκίνηση_Προγράμματος"
+
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -872,48 +880,55 @@ msgstr ""
 #~ "<span weight=\"bold\" size=\"larger\"> Λυπούμαστε, αλλά το πακέτο \"%s\" "
 #~ "απέτυχε να εγκατασταθεί ή να αναβαθμιστεί.</span>"
 
-#~ msgid "Application problem"
-#~ msgstr "Πρόβλημα εφαρμογής"
+#, python-format
+#~ msgid "&Send complete report (recommended; %s)"
+#~ msgstr "&Αποστολή ολοκληρωμένης αναφοράς (προτείνεται %s)"
 
-#~ msgid "Complete report (recommended; %s)"
-#~ msgstr "Ολοκληρωμένη αναφορά (προτείνεται το %s)"
-
-#~ msgid "Content of the report"
-#~ msgstr "Περιεχόμενο της αναφοράς"
-
-#~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
-#~ msgstr ""
-#~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή "
-#~ "κάποιων άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην "
-#~ "βελτίωση της εφαρμογής, αναφέροντας το πρόβλημα."
-
-#~ msgid "Kernel problem"
-#~ msgstr "Πρόβλημα πυρήνα"
-
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Περιορισμένη αναφορά (αργή σύνδεση με το διαδίκτυο: %s)"
 
-#~ msgid "Restart _Program"
-#~ msgstr "Επανεκκίνηση_Προγράμματος"
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr ""
+#~ "Να αγνοηθούν μελλοντικές καταρρεύσεις αυτής της έκδοσης του προγράμματος"
+
+#, python-format
+#~ msgid "Send &reduced report (slow Internet connection; %s)"
+#~ msgstr "Απόστολή &περιορισμένης αναφοράς (αργή σύνδεση με το διαδίκτυο %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Αυτό θα αφαιρέσει κάποια ογκώδη στοιχεία από την αναφορά. Τα στοιχεία "
-#~ "αυτά είναι πολύ χρήσιμα στους προγραμματιστές για τον εντοπισμό και την "
-#~ "διόρθωση λαθών, αλλά είναι πολύ μεγάλα για να τα αποστείλετε αν έχετε "
-#~ "αργή σύνδεση."
+#~ "Αυτό θα αφαιρέσει κάποια ογκώδη στοιχεία από την αναφορά. Τα στοιχεία αυτά "
+#~ "είναι πολύ χρήσιμα στους προγραμματιστές για τον εντοπισμό και την διόρθωση "
+#~ "λαθών, αλλά είναι πολύ μεγάλα για να τα αποστείλετε αν έχετε αργή σύνδεση."
+
+#~ msgid "&Report Problem..."
+#~ msgstr "&Αναφορά Προβλήματος..."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Αναφορά Προβλήματος..."
 
-#~ msgid "_Send Report"
-#~ msgstr "Α_ποστολή Αναφοράς"
+#~ msgid "Kernel problem"
+#~ msgstr "Πρόβλημα πυρήνα"
 
+#~ msgid ""
+#~ "You can help the developers to fix the package by reporting the problem."
+#~ msgstr ""
+#~ "Μπορείτε να βοηθήσετε τους προγραμματιστές να διορθώσουν το πακέτο "
+#~ "αναφέροντας το πρόβλημα."
+
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Αυτό δεν είναι γνήσιο το πακέτο %s"
+
+#~ msgid "Content of the report"
+#~ msgstr "Περιεχόμενο της αναφοράς"
+
+#~ msgid "Package problem"
+#~ msgstr "Πρόβλημα πακέτου"
+
+#~ msgid "Your system encountered a serious kernel problem."
+#~ msgstr "Το σύστημα σας αντιμετώπισε ένα σοβαρό πρόβλημα στον πυρήνα."

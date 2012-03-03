@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-11-07 16:12+0000\n"
 "Last-Translator: Hasan Yılmaz <iletisim@hasanyilmaz.net>\n"
 "Language-Team: Turkish <tr@li.org>\n"
-"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: tr\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -85,9 +85,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr "Rapor kurulmamış bir pakete ait."
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Bu hata raporuna erişmeye izniniz yok."
+msgstr ""
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -164,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -212,8 +211,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -222,8 +223,8 @@ msgid ""
 "a single argument is given.)"
 msgstr ""
 "Hata dosyalama modunda başlat. --package ve isteğe bağlı --pid,veya sadece --"
-"pid gerektirir.Eğer hiçbiri verilmezse,bilinen belirtilerin listesini göster."
-"(Kastedilen;eğer tek bir argüman verilirse.)"
+"pid gerektirir.Eğer hiçbiri verilmezse,bilinen belirtilerin listesini "
+"göster.(Kastedilen;eğer tek bir argüman verilirse.)"
 
 #: ../apport/ui.py:626
 msgid "Click a window as a target for filing a problem report."
@@ -298,11 +299,11 @@ msgid "Update %s with fully symbolic stack trace"
 msgstr "%s dosyasını tümüyle sembolik küme iziyle güncelle"
 
 #: ../apport/ui.py:819
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "Problem, o andan itibaren değişen %s uygulaması ile oluştu."
+msgstr ""
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -338,7 +339,8 @@ msgstr "Yetersiz bellek"
 
 #: ../apport/ui.py:1039
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "Sisteminiz bu çökme raporunu işlemek için yeterli belleğe sahip değil."
+msgstr ""
+"Sisteminiz bu çökme raporunu işlemek için yeterli belleğe sahip değil."
 
 #: ../apport/ui.py:1062 ../apport/ui.py:1071
 msgid ""
@@ -372,7 +374,7 @@ msgstr ""
 
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "Bu sorun daha önce geliştiricilere bildirildi. Teşekkür ederiz!"
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -521,7 +523,8 @@ msgstr "Tarayıcıyı aç"
 
 #: ../bin/apport-cli.py:365
 msgid "No pending crash reports. Try --help for more information."
-msgstr "Bekleyen çökme raporu yok. Daha fazla bilgi için --yardım 'ı deneyin."
+msgstr ""
+"Bekleyen çökme raporu yok. Daha fazla bilgi için --yardım 'ı deneyin."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
@@ -552,9 +555,8 @@ msgid "Apport"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
-#, fuzzy
 msgid "Crash report"
-msgstr "Rapor oluşturulamıyor"
+msgstr "Çökme raporu"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
@@ -563,21 +565,20 @@ msgstr ""
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
+"Daha fazla sorunla karşılaşırsanız bilgisayarınız yeniden başlatmayı deneyin."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
-msgstr ""
+msgstr "Bu sorunu çözmek için hatâ raporu gönder"
 
 #: ../gtk/apport-gtk.ui.h:6
-#, fuzzy
 msgid "Ignore future problems of this program version"
-msgstr "_Programın bu sürümünün gelecekteki çökmeleri göz ardı et."
+msgstr "Bu yazılım sürümünün gelecekteki sorunlarını görmezden gel"
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
-#, fuzzy
 msgid "Show Details"
-msgstr "&Detaylar..."
+msgstr "Ayrıntıları Göster"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -585,12 +586,12 @@ msgstr "Yerel olarak _İncele"
 
 #: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
 msgid "Leave Closed"
-msgstr ""
+msgstr "Kapalı Bırak"
 
 #: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
 #: ../kde/apport-kde.py:205
 msgid "Continue"
-msgstr ""
+msgstr "Devam Et"
 
 #: ../gtk/apport-gtk.ui.h:11
 msgid "<big><b>Collecting problem information</b></big>"
@@ -635,7 +636,8 @@ msgstr ""
 #: ../bin/apport-retrace.py:43
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr "Asıl raporu değiştirmek yerine düzeltilmiş raporu verilen dosyaya yaz"
+msgstr ""
+"Asıl raporu değiştirmek yerine düzeltilmiş raporu verilen dosyaya yaz"
 
 #: ../bin/apport-retrace.py:45
 msgid "Remove the core dump from the report after stack trace regeneration"
@@ -675,7 +677,8 @@ msgstr ""
 "kaynağına gidebilir."
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -710,7 +713,8 @@ msgstr ""
 "göndermeden önce onay al."
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "Kopya sqlite veritabanının yolu (varsayılan: kopya kontrolü yok)"
 
 #: ../bin/apport-retrace.py:74
@@ -746,48 +750,46 @@ msgstr ""
 "Sisteminiz şimdi kararsız hale gelebilir ve yeniden başlatılması gerekebilir."
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Üzgünüm, \"%s\" programı beklenmedik şekilde kapandı"
+msgstr "Üzgünüz, %s uygulaması beklenmedik bir şekilde kapandı."
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Üzgünüm, %s beklenmedik bir şekilde kapandı."
+msgstr "Üzgünüz, %s beklenmedik bir şekilde kapandı."
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr ""
+msgstr "Üzgünüz, %s içsel bir hatâyla karşılaştı."
 
 #: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
-#, fuzzy
 msgid "Send"
-msgstr "&Gönder"
+msgstr "Gönder"
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "Paket sorunu"
+msgstr "Paket: %s"
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
+msgstr "Üzgünüz, yazılım yüklenirken bir hatâyla karşılaşıldı."
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Üzgünüm, %s beklenmedik bir şekilde kapandı."
+msgstr "%s yazılımı beklenmedik bir şekilde kapandı."
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
 msgid "Relaunch"
-msgstr ""
+msgstr "Yeniden başlat"
 
 #: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
-#, fuzzy
 msgid "Hide Details"
-msgstr "&Detaylar..."
+msgstr "Ayrıntıları Gizle"
 
 #: ../kde/apport-kde.py:265
 msgid "Username:"
@@ -824,26 +826,39 @@ msgstr "Kullanım: %s <rapor> <hedef dizin>"
 msgid "Destination directory exists and is not empty."
 msgstr "Hedef dizin zaten mevcut ve boş değil."
 
-#~ msgid "%s closed unexpectedly on %s at %s."
-#~ msgstr ""
-#~ "%s uygulaması %s tarihinde %s saatinde beklenmedik şekilde kapatıldı."
+#, no-c-format, python-format
+#~ msgid "Complete report (recommended; %s)"
+#~ msgstr "Tam rapor (önerilen; %s)"
 
 #~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "If you were not doing anything confidential (entering passwords or other "
+#~ "private information), you can help to improve the application by reporting "
 #~ "the problem."
 #~ msgstr ""
-#~ "Eğer güvenlik gerektiren bir işlem yapmıyorsanız (şifre veya başka\n"
-#~ "özel bilgiler girmek gibi), hata raporu göndererek uygulamanın "
-#~ "geliştirilmesine\n"
-#~ "yardımcı olabilirsiniz."
+#~ "Sorun oluştuğunda yapmakta olduğunuz işlemin gizliliği yoksa (parola ya da "
+#~ "başka kişisel bilgilerin girilmesi gibi), sorunu rapor ederek uygulamanın "
+#~ "geliştirilmesine yardım edebilirsiniz."
 
-#~ msgid "&Report Problem..."
-#~ msgstr "&Sorunu Bildir..."
+#~ msgid "_Send Report"
+#~ msgstr "Rapor _Gönder"
 
-#~ msgid "The package \"%s\" failed to install or upgrade."
-#~ msgstr "\"%s\" paketinin kurulumu veya güncellenmesi başarısız."
+#~ msgid "Restart _Program"
+#~ msgstr "Programı _Yeniden Başlat"
+
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr "_Programın bu sürümünün gelecekteki çökmeleri göz ardı et."
+
+#~ msgid ""
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
+#~ msgstr ""
+#~ "Bu, rapordan kimi büyük öğeleri çıkaracak. Bunlar geliştiriciler için çok "
+#~ "kullanışlı bilgiler olsa da, eğer yavaş bir internet bağlantınız varsa "
+#~ "yüklemeniz için fazla büyük olabilir."
+
+#~ msgid "_Report Problem..."
+#~ msgstr "Sorunu _Bildir..."
 
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
@@ -851,19 +866,54 @@ msgstr "Hedef dizin zaten mevcut ve boş değil."
 #~ "Sorunu bildirerek geliştiricilerin paketi düzeltmelerine yardım "
 #~ "edebilirsiniz."
 
+#~ msgid "Content of the report"
+#~ msgstr "Raporun içeriği"
+
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "Sisteminiz ciddi bir çekirdek sorunu ile karşılaştı."
 
+#~ msgid "Package problem"
+#~ msgstr "Paket sorunu"
+
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Bu sorunu rapor ederek geliştiricilerin düzeltmesinee yardım "
-#~ "edebilirsiniz."
+#~ "Bu sorunu rapor ederek geliştiricilerin düzeltmesinee yardım edebilirsiniz."
 
-#~ msgid "&Send complete report (recommended; %s)"
-#~ msgstr "&Tam rapor gönderin(önerilen; %s)"
+#~ msgid "Kernel problem"
+#~ msgstr "Çekirdek sorunu"
 
-#~ msgid "Send &reduced report (slow Internet connection; %s)"
-#~ msgstr "&Özet rapor gönderin (düşük ağ bağlantısı; %s)"
+#~ msgid "Application problem"
+#~ msgstr "Uygulama sorunu"
+
+#~ msgid "Generic error"
+#~ msgstr "Genel hata"
+
+#~ msgid "&Report Problem..."
+#~ msgstr "&Sorunu Bildir..."
+
+#, python-format
+#~ msgid "Sorry, %s closed unexpectedly."
+#~ msgstr "Üzgünüm, %s beklenmedik bir şekilde kapandı."
+
+#~ msgid "&Send"
+#~ msgstr "&Gönder"
+
+#, python-format
+#~ msgid "%s closed unexpectedly on %s at %s."
+#~ msgstr ""
+#~ "%s uygulaması %s tarihinde %s saatinde beklenmedik şekilde kapatıldı."
+
+#, python-format
+#~ msgid "This is not a genuine %s package"
+#~ msgstr "Bu özgün bir %s paketi değil"
+
+#, no-c-format
+#~ msgid ""
+#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+#~ "install or upgrade.</span>"
+#~ msgstr ""
+#~ "<span weight=\"bold\" size=\"larger\">Özür dilerim, \"%s\" paketi kurulum "
+#~ "veya güncelleme hatası alındı.</span>"
 
 #~ msgid ""
 #~ "<big><b>Send problem report to the developers?</b></big>\n"
@@ -873,60 +923,34 @@ msgstr "Hedef dizin zaten mevcut ve boş değil."
 #~ msgstr ""
 #~ "<big><b>Geliştiricilerine sorunu rapor gönderilsin mi?</b></big>\n"
 #~ "\n"
-#~ "Sorunu raporladıktan sonra, otomatik olarak açılan web tarayıcısında "
-#~ "formu doldurun gönderildi."
+#~ "Sorunu raporladıktan sonra, otomatik olarak açılan web tarayıcısında formu "
+#~ "doldurun gönderildi."
+
+#, python-format
+#~ msgid "&Send complete report (recommended; %s)"
+#~ msgstr "&Tam rapor gönderin(önerilen; %s)"
+
+#, python-format
+#~ msgid "Send &reduced report (slow Internet connection; %s)"
+#~ msgstr "&Özet rapor gönderin (düşük ağ bağlantısı; %s)"
+
+#, python-format
+#~ msgid "The package \"%s\" failed to install or upgrade."
+#~ msgstr "\"%s\" paketinin kurulumu veya güncellenmesi başarısız."
 
 #~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
-#~ "install or upgrade.</span>"
+#~ "If you were not doing anything confidential (entering passwords or other\n"
+#~ "private information), you can help to improve the application by reporting\n"
+#~ "the problem."
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Özür dilerim, \"%s\" paketi kurulum "
-#~ "veya güncelleme hatası alındı.</span>"
+#~ "Eğer güvenlik gerektiren bir işlem yapmıyorsanız (şifre veya başka\n"
+#~ "özel bilgiler girmek gibi), hata raporu göndererek uygulamanın "
+#~ "geliştirilmesine\n"
+#~ "yardımcı olabilirsiniz."
 
-#~ msgid "Application problem"
-#~ msgstr "Uygulama sorunu"
-
-#~ msgid "Complete report (recommended; %s)"
-#~ msgstr "Tam rapor (önerilen; %s)"
-
-#~ msgid "Content of the report"
-#~ msgstr "Raporun içeriği"
-
-#~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
-#~ msgstr ""
-#~ "Sorun oluştuğunda yapmakta olduğunuz işlemin gizliliği yoksa (parola ya "
-#~ "da başka kişisel bilgilerin girilmesi gibi), sorunu rapor ederek "
-#~ "uygulamanın geliştirilmesine yardım edebilirsiniz."
-
-#~ msgid "Kernel problem"
-#~ msgstr "Çekirdek sorunu"
-
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Kısa rapor (yavaş internet bağlantısı; %s)"
 
-#~ msgid "Restart _Program"
-#~ msgstr "Programı _Yeniden Başlat"
-
-#~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
-#~ msgstr ""
-#~ "Bu, rapordan kimi büyük öğeleri çıkaracak. Bunlar geliştiriciler için çok "
-#~ "kullanışlı bilgiler olsa da, eğer yavaş bir internet bağlantınız varsa "
-#~ "yüklemeniz için fazla büyük olabilir."
-
-#~ msgid "_Report Problem..."
-#~ msgstr "Sorunu _Bildir..."
-
-#~ msgid "_Send Report"
-#~ msgstr "Rapor _Gönder"
-
-#~ msgid "Generic error"
-#~ msgstr "Genel hata"
-
-#~ msgid "This is not a genuine %s package"
-#~ msgstr "Bu özgün bir %s paketi değil"
+#~ msgid "&Details..."
+#~ msgstr "&Detaylar..."

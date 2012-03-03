@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: rizoye-xerzi <rizoxerzi@gmail.com>\n"
 "Language-Team: Kurdish <ku@li.org>\n"
-"Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: ku\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -83,9 +83,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr "Rapor aîdê pakêteke ne barkirî ye."
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Destûra te tune tu bigihîjî vê rapora pirsgirêkê."
+msgstr ""
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -162,8 +161,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -208,8 +207,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -288,12 +289,11 @@ msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
 #: ../apport/ui.py:819
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
-"Ev rapora çewtiyan li ser bernameyên ku kîjan hêja ne sazkirî be tê sepandin."
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -417,7 +417,8 @@ msgstr "Ji bo şandina peyde yan jî tomarkirina ciye&kî raporê veşêre"
 
 #: ../bin/apport-cli.py:186
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
+msgstr ""
+"Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
 
 #: ../bin/apport-cli.py:188 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
 #: ../bin/apport-cli.py:318
@@ -551,9 +552,8 @@ msgid "Send an error report to help fix this problem"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:6
-#, fuzzy
 msgid "Ignore future problems of this program version"
-msgstr "Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
@@ -643,7 +643,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -673,7 +674,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -706,14 +708,14 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Xemgînim, bernameya \"%s\" bi awayekî ne dihat hêvîkirin hat girtin."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Xemgînim, bernameya \"%s\" bi awayekî ne dihat hêvîkirin hat girtin."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
@@ -734,9 +736,9 @@ msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Xemgînim, bernameya \"%s\" bi awayekî ne dihat hêvîkirin hat girtin."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
@@ -782,24 +784,45 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
-#~ msgid "%s closed unexpectedly on %s at %s."
-#~ msgstr "%s bê hêvîkirin hat girtin li ser %s di %s de."
+#~ msgid ""
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
+#~ msgstr ""
+#~ "Ev yek dê hin hêmanên mezin ji raporê bibe. Ev tiştekî asayî ye ji bo "
+#~ "pêşdebiran, lê dibe ku ji bo te tiştekî gelekî mezin be ku tu barbikî heke "
+#~ "girêdana interneta te giran be."
+
+#, python-format
+#~ msgid "This is not a genuine %s package"
+#~ msgstr "Ev ne pakêteke xweser ya %s e."
+
+#, python-format
+#~ msgid "The package \"%s\" failed to install or upgrade."
+#~ msgstr "Sazkirin yan jî bilindkirna pakêta \"%s\" biserbeket."
+
+#~ msgid "&Report Problem..."
+#~ msgstr "Pirsgirêkê &Raporbike..."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Ger te tiştekî veşartî nekiribe (têketine nasnavê yan jî agahiyên \n"
 #~ "taybet yên din), tu dikarî sepanê bi pêşbixî bi raporkirina \n"
 #~ "pirsgirêkê."
 
-#~ msgid "&Report Problem..."
-#~ msgstr "Pirsgirêkê &Raporbike..."
+#, python-format
+#~ msgid "%s closed unexpectedly on %s at %s."
+#~ msgstr "%s bê hêvîkirin hat girtin li ser %s di %s de."
 
-#~ msgid "The package \"%s\" failed to install or upgrade."
-#~ msgstr "Sazkirin yan jî bilindkirna pakêta \"%s\" biserbeket."
+#~ msgid "Your system encountered a serious kernel problem."
+#~ msgstr "Pergala te leqayî pirsgirêkeka girîng ya kernel'ê hat."
+
+#, python-format
+#~ msgid "Send &reduced report (slow Internet connection; %s)"
+#~ msgstr "Rapora &kêmkirî bişîne (girêdana înternetê ya hêdî; %s)"
 
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
@@ -807,28 +830,11 @@ msgstr ""
 #~ "Bi raporkirina pirsgirêkê tu alîkariya pisporan bikî ji bo tamîrkirina "
 #~ "pakêtê."
 
-#~ msgid "Your system encountered a serious kernel problem."
-#~ msgstr "Pergala te leqayî pirsgirêkeka girîng ya kernel'ê hat."
-
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
 #~ "Bi raporkirina vê tu dikarî ji bo çareserkirina pirsgirêkê alîkariya "
 #~ "pisporan bikî."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Hemû raporê bişîne(Tê pêşniyarkirin; %s)"
-
-#~ msgid "Send &reduced report (slow Internet connection; %s)"
-#~ msgstr "Rapora &kêmkirî bişîne (girêdana înternetê ya hêdî; %s)"
-
-#~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
-#~ msgstr ""
-#~ "Ev yek dê hin hêmanên mezin ji raporê bibe. Ev tiştekî asayî ye ji bo "
-#~ "pêşdebiran, lê dibe ku ji bo te tiştekî gelekî mezin be ku tu barbikî "
-#~ "heke girêdana interneta te giran be."
-
-#~ msgid "This is not a genuine %s package"
-#~ msgstr "Ev ne pakêteke xweser ya %s e."

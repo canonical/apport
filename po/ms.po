@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:52+0000\n"
 "Last-Translator: Ahmed Noor Kader Mustajir Md Eusoff <Unknown>\n"
 "Language-Team: Malay <ms@li.org>\n"
-"Language: ms\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: ms\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -85,9 +85,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr "Laporan dari pakej yang belum dipasang."
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Anda tidak dibenarkan mencapai laporan masalah ini."
+msgstr "Ralat berlaku semasa cuba memproses laporan masalah ini:"
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -161,8 +160,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -207,8 +206,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -284,11 +285,13 @@ msgid "Update %s with fully symbolic stack trace"
 msgstr "Kemaskini %s dengan jejak tindanan simbolik penuh"
 
 #: ../apport/ui.py:819
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "Masalah berlaku dengan program %s yang mana berubah."
+msgstr ""
+"Masalah berpunca dari program %s yang mana telah berubah semejak kerosakan "
+"berlaku."
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -354,7 +357,7 @@ msgstr ""
 
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "Masalah ini sudah dilaporkan kepada pembangun. Terima kasih!"
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -517,30 +520,29 @@ msgid "Apport"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
-#, fuzzy
 msgid "Crash report"
-msgstr "Tidak dapat mencipta laporan"
+msgstr "Laporan kerosakan"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>Maaf, ralat dalaman berlaku.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
-msgstr ""
+msgstr "Jika anda mengalami masalah, cuba mulakan semula komputer."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
-msgstr ""
+msgstr "Hantar laporan ralat untuk bantu membaiki masalah ini"
 
 #: ../gtk/apport-gtk.ui.h:6
 msgid "Ignore future problems of this program version"
-msgstr ""
+msgstr "Abai masalah versi program ini dimasa hadapan"
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
 msgid "Show Details"
-msgstr ""
+msgstr "Papar Perincian"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -548,12 +550,12 @@ msgstr "_Periksa secara setempat"
 
 #: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
 msgid "Leave Closed"
-msgstr ""
+msgstr "Tinggalkan Tertutup"
 
 #: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
 #: ../kde/apport-kde.py:205
 msgid "Continue"
-msgstr ""
+msgstr "Teruskan"
 
 #: ../gtk/apport-gtk.ui.h:11
 msgid "<big><b>Collecting problem information</b></big>"
@@ -625,7 +627,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -655,7 +658,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -688,46 +692,46 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Maaf, program \"%s\" terpaksa ditutup"
+msgstr "Maaf, aplikasi %s telah ditutup tanpa dijangka."
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Maaf, program \"%s\" terpaksa ditutup"
+msgstr "Maaf, %s telah ditutup tanpa dijangka."
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr ""
+msgstr "Maaf, %s telah mengalami ralat dalaman."
 
 #: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
 msgid "Send"
-msgstr ""
+msgstr "Hantar"
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "Masalah pakej"
+msgstr "Pakej: %s"
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
+msgstr "Maaf, masalah berlaku semasa memasang perisian."
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Maaf, program \"%s\" terpaksa ditutup"
+msgstr "Aplikasi %s telah ditutup tanpa dijangka."
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
 msgid "Relaunch"
-msgstr ""
+msgstr "Lancarkan Semula"
 
 #: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
 msgid "Hide Details"
-msgstr ""
+msgstr "Sembunyi Perincian"
 
 #: ../kde/apport-kde.py:265
 msgid "Username:"
@@ -764,23 +768,27 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
-#~ msgid "&Report Problem..."
-#~ msgstr "&Lapor Masalh..."
-
 #~ msgid "Application problem"
 #~ msgstr "Masalah aplikasi"
-
-#~ msgid "Content of the report"
-#~ msgstr "Kandungan laporan"
-
-#~ msgid "Kernel problem"
-#~ msgstr "Masalah kernel"
-
-#~ msgid "_Report Problem..."
-#~ msgstr "_Lapor Masalah..."
 
 #~ msgid "_Send Report"
 #~ msgstr "_Kirim Laporan"
 
+#~ msgid "&Report Problem..."
+#~ msgstr "&Lapor Masalh..."
+
+#~ msgid "_Report Problem..."
+#~ msgstr "_Lapor Masalah..."
+
+#~ msgid "Kernel problem"
+#~ msgstr "Masalah kernel"
+
+#~ msgid "Content of the report"
+#~ msgstr "Kandungan laporan"
+
+#~ msgid "Package problem"
+#~ msgstr "Masalah pakej"
+
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ini bukanlah pakej %s yang tulen"

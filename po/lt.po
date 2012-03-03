@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-11-11 06:39+0000\n"
 "Last-Translator: Algimantas Margevičius <Unknown>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
-"Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-28 05:19+0000\n"
-"X-Generator: Launchpad (build 14874)\n"
+"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
+"X-Generator: Launchpad (build 14886)\n"
+"Language: lt\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -85,9 +85,8 @@ msgid "The report belongs to a package that is not installed."
 msgstr "Ataskaita priklauso neįdiegtam paketui"
 
 #: ../apport/ui.py:244
-#, fuzzy
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Jums neleidžiama prieiti prie ataskaitos apie problemą."
+msgstr ""
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -167,8 +166,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -224,7 +223,8 @@ msgstr ""
 "Prie ataskaitos pridėti papildomą žymę. Gali būti nurodyta kelis kartus."
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [parametrai] [simptomas|pid|paketas|programos kelias|.apport/.crash "
 "failas]"
@@ -245,7 +245,8 @@ msgstr "Pranešti apie problemą, paspauskite ant lango."
 
 #: ../apport/ui.py:628
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr "Pradėti klaidos atnaujinimo režime. Gali prireikti nebūtino --package."
+msgstr ""
+"Pradėti klaidos atnaujinimo režime. Gali prireikti nebūtino --package."
 
 #: ../apport/ui.py:630
 msgid ""
@@ -316,11 +317,11 @@ msgid "Update %s with fully symbolic stack trace"
 msgstr "Atnaujinti %s su visiškai simboliniu dėklo pėdsaku"
 
 #: ../apport/ui.py:819
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "Problema kilo su programa %s kuri nuo tada pasikeitė."
+msgstr ""
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -392,7 +393,7 @@ msgstr ""
 
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "Apie šią problemą jau buvo pranešta kūrėjams. Ačiū!"
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -568,9 +569,8 @@ msgid "Apport"
 msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2
-#, fuzzy
 msgid "Crash report"
-msgstr "Ataskaitos sukurti nepavyko"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
@@ -585,15 +585,13 @@ msgid "Send an error report to help fix this problem"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:6
-#, fuzzy
 msgid "Ignore future problems of this program version"
-msgstr "_Ignoruoti šios programos versijos strigtis ateityje"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
-#, fuzzy
 msgid "Show Details"
-msgstr "&Detalės..."
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -693,7 +691,8 @@ msgstr ""
 "strigtis, kurios įvyko dabar vykdomoje laidoje."
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Raportuoti atsiuntimo/įdiegimo eigą kai įdiegiami paketai į smėlio dėžę"
 
@@ -730,7 +729,8 @@ msgstr ""
 "į strigčių duomenų bazę."
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Kelias į dublikatų sqlite duomenų bazę (numatyta r.: netikrinti dublikatų)"
 
@@ -767,14 +767,14 @@ msgstr ""
 "Jūsų sistema dabar gali tapti nestabili ir gali reikėti įkrauti OS iš naujo."
 
 #: ../gtk/apport-gtk.py:120
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr "Atsiprašome, programa „%s“ netikėtai užsivėrė."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:123
-#, fuzzy, python-format
+#, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr "Atsiprašome, %s netikėtai užvertas."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
@@ -782,23 +782,22 @@ msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
-#, fuzzy
 msgid "Send"
-msgstr "&Siųsti"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "Paketo problema"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
-#, fuzzy, python-format
+#, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr "Atsiprašome, %s netikėtai užvertas."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
@@ -806,9 +805,8 @@ msgid "Relaunch"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
-#, fuzzy
 msgid "Hide Details"
-msgstr "&Detalės..."
+msgstr ""
 
 #: ../kde/apport-kde.py:265
 msgid "Username:"
@@ -847,22 +845,78 @@ msgstr "Naudojimas: %s <ataskaita> <paskirties katalogas>"
 msgid "Destination directory exists and is not empty."
 msgstr "Paskirties katalogas egzistuoja ir yra netuščias."
 
-#~ msgid "%s closed unexpectedly on %s at %s."
-#~ msgstr "%s netikėtai užsidarė %s %s."
+#, python-format
+#~ msgid "This is not a genuine %s package"
+#~ msgstr "Tai ne autentiškas %s paketas"
+
+#~ msgid "&Report Problem..."
+#~ msgstr "&Pranešti apie problemą..."
+
+#~ msgid "Your system encountered a serious kernel problem."
+#~ msgstr "Sistema susidūrė su rimta branduolio problema."
+
+#, python-format
+#~ msgid "&Send complete report (recommended; %s)"
+#~ msgstr "&Siųsti visą ataskaitą (rekomenduojama; %s)"
+
+#, python-format
+#~ msgid "Send &reduced report (slow Internet connection; %s)"
+#~ msgstr "Siųsti su&mažintą ataskaitą (lėtas interneto ryšys; %s)"
+
+#, no-c-format
+#~ msgid ""
+#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
+#~ "install or upgrade.</span>"
+#~ msgstr ""
+#~ "<span weight=\"bold\" size=\"larger\">Deja, paketas „%s“ nebuvo įrašytas ar "
+#~ "atnaujintas.</span>"
+
+#~ msgid "Content of the report"
+#~ msgstr "Ataskaitos turinys"
+
+#, no-c-format, python-format
+#~ msgid "Complete report (recommended; %s)"
+#~ msgstr "Visa ataskaita (rekomenduojama; %s)"
+
+#~ msgid "Application problem"
+#~ msgstr "Programos problema"
+
+#, no-c-format, python-format
+#~ msgid "Reduced report (slow Internet connection; %s)"
+#~ msgstr "Sumažinta ataskaita (lėtas interneto ryšys; %s)"
+
+#~ msgid "Restart _Program"
+#~ msgstr "Paleisti _programą iš naujo"
+
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr "_Ignoruoti šios programos versijos strigtis ateityje"
+
+#~ msgid "_Report Problem..."
+#~ msgstr "P_ranešti apie problemą..."
+
+#~ msgid "Package problem"
+#~ msgstr "Paketo problema"
+
+#~ msgid "Kernel problem"
+#~ msgstr "Branduolio problema"
+
+#~ msgid "_Send Report"
+#~ msgstr "_Siųsti ataskaitą"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Jei nedarėte nieko konfidencialaus (slaptažodžių įvedimas ar kita\n"
 #~ "asmeninė informacija), galite padėti pagerinti programą pranešdami\n"
 #~ "apie problemą."
 
-#~ msgid "&Report Problem..."
-#~ msgstr "&Pranešti apie problemą..."
+#, python-format
+#~ msgid "%s closed unexpectedly on %s at %s."
+#~ msgstr "%s netikėtai užsidarė %s %s."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Nepavyko įdiegti ar atnaujinti paketo „%s“."
 
@@ -871,20 +925,16 @@ msgstr "Paskirties katalogas egzistuoja ir yra netuščias."
 #~ msgstr ""
 #~ "Jūs galite padėti kūrėjams pataisyti paketą pranešdami apie problemą."
 
-#~ msgid "Your system encountered a serious kernel problem."
-#~ msgstr "Sistema susidūrė su rimta branduolio problema."
-
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Jūs galite padėti kūrėjams pataisyti problemą apie ją pranešdami."
 
-#~ msgid "Send this data to the developers?"
-#~ msgstr "Siųsti šiuos duomenis kūrėjams?"
-
-#~ msgid "&Send complete report (recommended; %s)"
-#~ msgstr "&Siųsti visą ataskaitą (rekomenduojama; %s)"
-
-#~ msgid "Send &reduced report (slow Internet connection; %s)"
-#~ msgstr "Siųsti su&mažintą ataskaitą (lėtas interneto ryšys; %s)"
+#~ msgid ""
+#~ "If you were not doing anything confidential (entering passwords or other "
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
+#~ msgstr ""
+#~ "Jei nedarėte nieko konfidencialaus (slaptažodžių įvedimas ar asmeninė "
+#~ "informacija), galite padėti patobulinti programą pranešdami apie problemą."
 
 #~ msgid ""
 #~ "<big><b>Send problem report to the developers?</b></big>\n"
@@ -894,71 +944,51 @@ msgstr "Paskirties katalogas egzistuoja ir yra netuščias."
 #~ msgstr ""
 #~ "<big><b>Ar išsiųsti pranešimą apie problemą kūrėjams?</b></big>\n"
 #~ "\n"
-#~ "Kai pranešimas apie problemą bus išsiųstas, užpildykite formą "
-#~ "automatiškai atvertoje žiniatinklio naršyklėje."
+#~ "Kai pranešimas apie problemą bus išsiųstas, užpildykite formą automatiškai "
+#~ "atvertoje žiniatinklio naršyklėje."
 
 #~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
-#~ "install or upgrade.</span>"
-#~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Deja, paketas „%s“ nebuvo įrašytas "
-#~ "ar atnaujintas.</span>"
-
-#~ msgid "Application problem"
-#~ msgstr "Programos problema"
-
-#~ msgid "Complete report (recommended; %s)"
-#~ msgstr "Visa ataskaita (rekomenduojama; %s)"
-
-#~ msgid "Content of the report"
-#~ msgstr "Ataskaitos turinys"
-
-#~ msgid ""
-#~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
-#~ msgstr ""
-#~ "Jei nedarėte nieko konfidencialaus (slaptažodžių įvedimas ar asmeninė "
-#~ "informacija), galite padėti patobulinti programą pranešdami apie problemą."
-
-#~ msgid "Kernel problem"
-#~ msgstr "Branduolio problema"
-
-#~ msgid "Reduced report (slow Internet connection; %s)"
-#~ msgstr "Sumažinta ataskaita (lėtas interneto ryšys; %s)"
-
-#~ msgid "Restart _Program"
-#~ msgstr "Paleisti _programą iš naujo"
-
-#~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Tai pašalins kelias dideles dalis iš ataskaitos. Jos yra labai naudingos "
 #~ "kūrėjams problemos derinimui, bet gali būti per didelės išsiuntimui, jei "
 #~ "turite lėtą interneto ryšį."
 
-#~ msgid "_Report Problem..."
-#~ msgstr "P_ranešti apie problemą..."
+#~ msgid "Send this data to the developers?"
+#~ msgstr "Siųsti šiuos duomenis kūrėjams?"
 
-#~ msgid "_Send Report"
-#~ msgstr "_Siųsti ataskaitą"
+#, python-format
+#~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
+#~ msgstr "Atsiprašome, nepavyko įdiegti ar atnaujinti paketo „%s“"
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Atsiprašome, %s netikėtai užvertas"
 
-#~ msgid "&Ignore future crashes of this program version"
-#~ msgstr "Šios programos versijos, lūžius ateityje &ignoruoti"
+#~ msgid "Generic error"
+#~ msgstr "Bendroji klaida"
 
 #~ msgid "Restart &Program"
 #~ msgstr "Paleisti &programą iš naujo"
 
-#~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
-#~ msgstr "Atsiprašome, nepavyko įdiegti ar atnaujinti paketo „%s“"
+#, python-format
+#~ msgid "Sorry, %s closed unexpectedly."
+#~ msgstr "Atsiprašome, %s netikėtai užvertas."
 
-#~ msgid "Generic error"
-#~ msgstr "Bendroji klaida"
+#~ msgid "&Send"
+#~ msgstr "&Siųsti"
+
+#, python-format
+#~ msgid "Sorry, the program \"%s\" closed unexpectedly."
+#~ msgstr "Atsiprašome, programa „%s“ netikėtai užsivėrė."
+
+#~ msgid "&Ignore future crashes of this program version"
+#~ msgstr "Šios programos versijos, lūžius ateityje &ignoruoti"
+
+#~ msgid "&Details..."
+#~ msgstr "&Detalės..."
 
 #~ msgid ""
 #~ "After the problem report has been sent, please fill out the form in the "
@@ -966,6 +996,3 @@ msgstr "Paskirties katalogas egzistuoja ir yra netuščias."
 #~ msgstr ""
 #~ "Kai pranešimas apie klaidą bus išsiųstas, prašome užpildyti formą "
 #~ "automatiškai atvertoje žiniatinklio naršyklėje."
-
-#~ msgid "This is not a genuine %s package"
-#~ msgstr "Tai ne autentiškas %s paketas"
