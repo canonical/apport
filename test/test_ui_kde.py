@@ -305,7 +305,7 @@ Type=Application''')
         self.assertTrue(self.app.report['Package'].startswith('bash '))
         self.assertNotEqual(self.app.report['Dependencies'], '')
 
-    def xtest_bug_report_uninstalled_package(self):
+    def test_bug_report_uninstalled_package(self):
         '''Bug report for uninstalled package'''
 
         pkg = apport.packaging.get_uninstalled_package()
