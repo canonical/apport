@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-02 13:30+0100\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: Martin Böhm <Unknown>\n"
+"PO-Revision-Date: 2012-03-05 20:18+0000\n"
+"Last-Translator: Vojtěch Trefný <vojtech.trefny@gmail.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:08+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-06 04:34+0000\n"
+"X-Generator: Launchpad (build 14900)\n"
 "Language: cs\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Tento balík zřejmě není nainstalován správně"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Toto není oficiální %s balík. Prosíme odstraňte všechny balíky třetích stran "
+"a zkuste to znovu."
 
 #: ../apport/ui.py:117
 #, python-format
@@ -84,11 +86,11 @@ msgstr "Toto hlášení náleží k balíku, který není nainstalován."
 
 #: ../apport/ui.py:244
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
+msgstr "Při zpracování chybového hlášení došlo k chybě:"
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "Nemáte oprávnění k přístupu k tomuto hlášení problému."
 
 #: ../apport/ui.py:279
 msgid "Error"
@@ -141,7 +143,7 @@ msgstr "Balík %s neexistuje"
 
 #: ../apport/ui.py:383 ../apport/ui.py:567 ../apport/ui.py:572
 msgid "Cannot create report"
-msgstr ""
+msgstr "Nelze vytvořit hlášení"
 
 #: ../apport/ui.py:398 ../apport/ui.py:444 ../apport/ui.py:461
 msgid "Updating problem report"
@@ -169,7 +171,7 @@ msgstr ""
 
 #: ../apport/ui.py:445 ../apport/ui.py:462
 msgid "No additional information collected."
-msgstr ""
+msgstr "Nebyly shromážděny žádné další informace."
 
 #: ../apport/ui.py:512
 msgid "What kind of problem do you want to report?"
@@ -192,7 +194,7 @@ msgstr ""
 
 #: ../apport/ui.py:568 ../apport/ui.py:573
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop selhal při rozeznávávání ID procesu okna"
 
 #: ../apport/ui.py:587
 msgid "%prog <report number>"
@@ -271,11 +273,11 @@ msgstr ""
 
 #: ../apport/ui.py:775
 msgid "Run gdb session"
-msgstr ""
+msgstr "Spustit gdb"
 
 #: ../apport/ui.py:776
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Spustit gdb bez stahování debugovacích symbolů"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:778
@@ -361,7 +363,7 @@ msgstr ""
 
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "Tato chyba byla vývojářům již ohlášena. Děkujeme!"
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -536,28 +538,28 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Crash report"
-msgstr ""
+msgstr "Hlášení o chybě"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>Omlouváme se, nastala vnitřní chyba.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
-msgstr ""
+msgstr "Pokud problémy neustanou, zkuste restartovat počítač."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
-msgstr ""
+msgstr "Zaslat hlášení o chybě. Pomůžete tím vyřešení tohoto problému"
 
 #: ../gtk/apport-gtk.ui.h:6
 msgid "Ignore future problems of this program version"
-msgstr ""
+msgstr "Ignorovat budoucí problémy této verze programu"
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
 #: ../kde/apport-kde.py:243
 msgid "Show Details"
-msgstr ""
+msgstr "Zobrazit podrobnosti"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -565,12 +567,12 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
 msgid "Leave Closed"
-msgstr ""
+msgstr "Ponechat uazvřené"
 
 #: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
 #: ../kde/apport-kde.py:205
 msgid "Continue"
-msgstr ""
+msgstr "Pokračovat"
 
 #: ../gtk/apport-gtk.ui.h:11
 msgid "<big><b>Collecting problem information</b></big>"
@@ -716,44 +718,44 @@ msgstr ""
 #: ../gtk/apport-gtk.py:120
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr ""
+msgstr "Omlouváme se, aplikace %s byla neočekávaně ukončena."
 
 #: ../gtk/apport-gtk.py:123
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr ""
+msgstr "Omlouváme se, %s byl neočekávaně ukončen."
 
 #: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr ""
+msgstr "Omlouváme se, %s zaznamenal vnitřní chybu."
 
 #: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
 msgid "Send"
-msgstr ""
+msgstr "Odeslat"
 
 #: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
-msgstr ""
+msgstr "Balík: %s"
 
 #: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
+msgstr "Omlouváme se, při instalaci softwaru nastala chyba."
 
 #: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr ""
+msgstr "Aplikace %s byla neočekávaně ukončena."
 
 #: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
 msgid "Relaunch"
-msgstr ""
+msgstr "Restartovat"
 
 #: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
 msgid "Hide Details"
-msgstr ""
+msgstr "Skrýt podrobnosti"
 
 #: ../kde/apport-kde.py:265
 msgid "Username:"
