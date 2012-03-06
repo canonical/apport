@@ -395,6 +395,39 @@ Type=Application''')
                 apport.packaging.get_source(pkg))
         self.assertEqual(self.app.report['Package'], '%s (not installed)' % pkg)
 
+    @patch.object(GTKUserInterface, 'open_url')
+    def test_update_report(self, *args):
+        '''Updating an existing report'''
+
+        self.app.report_file = None
+
+        def cont(*args):
+            if  self.app.tree_model.get_iter_first() is None:
+                return True
+            self.app.w('continue_button').clicked()
+            return False
+
+        # upload empty report
+        id = self.app.crashdb.upload({})
+        self.assertEqual(id, 0)
+        self.app.options.update_report = 0
+        self.app.options.package = 'bash'
+
+        GLib.timeout_add(200, cont)
+        self.app.run_update_report()
+
+        # no new bug reported
+        self.assertEqual(self.app.crashdb.latest_id(), 0)
+
+        # bug was updated
+        r = self.app.crashdb.download(0)
+        self.assertTrue(r['Package'].startswith('bash '))
+        self.assertTrue('libc' in r['Dependencies'])
+        self.assertTrue('DistroRelease' in r)
+
+        # No URL in this mode
+        self.assertEqual(self.app.open_url.call_count, 0)
+
     @patch.object(GTKUserInterface, 'get_desktop_entry')
     def test_missing_icon(self, *args):
         # LP: 937354

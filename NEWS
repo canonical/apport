@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - test_ui_kde.py: Re-enable inadvertently disabled "bug report for uninstalled
    package" test.
+ - ui.py, collect_info(): Do not assume that reports have a "ProblemType"
+   field. This is not the case when updating a bug. (LP: #947519)
 
 1.94 (2012-03-02)
 -----------------

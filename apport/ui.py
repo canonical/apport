@@ -543,7 +543,7 @@ class UserInterface:
             return True
         elif self.options.filebug:
             return self.run_report_bug()
-        elif self.options.update_report:
+        elif self.options.update_report is not None:
             return self.run_update_report()
         elif self.options.version:
             print(__version__)
@@ -827,8 +827,8 @@ class UserInterface:
             self.report.add_os_info()
         else:
             # check if we already ran, skip if so
-            if (self.report['ProblemType'] == 'Crash' and 'Stacktrace' in self.report) or \
-               (self.report['ProblemType'] == 'Bug' and 'DistroRelease' in self.report):
+            if (self.report.get('ProblemType') == 'Crash' and 'Stacktrace' in self.report) or \
+               (self.report.get('ProblemType') != 'Crash' and 'DistroRelease' in self.report):
                 if on_finished:
                     on_finished()
                 return

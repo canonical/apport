@@ -328,6 +328,40 @@ Type=Application''')
                 apport.packaging.get_source(pkg))
         self.assertEqual(self.app.report['Package'], '%s (not installed)' % pkg)
 
+    @patch.object(MainUserInterface, 'open_url')
+    def test_1_update_report(self, *args):
+        '''Updating an existing report'''
+
+        self.app.report_file = None
+
+        def cont(*args):
+            if self.app.dialog and self.app.dialog.continue_button.isVisible():
+                self.app.dialog.continue_button.click()
+                return
+            # try again
+            QTimer.singleShot(200, cont)
+
+        # upload empty report
+        id = self.app.crashdb.upload({})
+        self.assertEqual(id, 0)
+        self.app.options.update_report = 0
+        self.app.options.package = 'bash'
+
+        QTimer.singleShot(200, cont)
+        self.app.run_update_report()
+
+        # no new bug reported
+        self.assertEqual(self.app.crashdb.latest_id(), 0)
+
+        # bug was updated
+        r = self.app.crashdb.download(0)
+        self.assertTrue(r['Package'].startswith('bash '))
+        self.assertTrue('libc' in r['Dependencies'])
+        self.assertTrue('DistroRelease' in r)
+
+        # No URL in this mode
+        self.assertEqual(self.app.open_url.call_count, 0)
+
     def test_administrator_disabled_reporting(self):
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(False)
