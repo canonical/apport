@@ -8,6 +8,7 @@ Bug fixes:
    package" test.
  - ui.py, collect_info(): Do not assume that reports have a "ProblemType"
    field. This is not the case when updating a bug. (LP: #947519)
+ - apport-cli: Consistently handle unicode vs. byte arrays. (LP: #946207)
 
 1.94 (2012-03-02)
 -----------------

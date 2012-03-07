@@ -126,25 +126,26 @@ class CLIUserInterface(apport.ui.UserInterface):
     def _get_details(self):
         '''Build report string for display.'''
 
-        details = ''
+        details = u''
         max_show = 1000000
         for key in sorted(self.report):
-            details += '== %s =================================\n' % key
+            details += u'== %s =================================\n' % key
             # string value
             keylen = len(self.report[key])
             if not hasattr(self.report[key], 'gzipvalue') and \
                 hasattr(self.report[key], 'isspace') and \
                 not self.report._is_binary(self.report[key]) and \
                 keylen < max_show:
-                if type(self.report[key]) == type(b''):
-                    details += self.report[key]
-                else:
-                    details += self.report[key].encode('UTF-8')
+                l = self.report[key]
             elif keylen >= max_show:
-                details += _('(%i bytes)') % keylen
+                l = _('(%i bytes)') % keylen
             else:
-                details += _('(binary data)')
-            details += '\n\n'
+                l = _('(binary data)')
+
+            if type(l) == type(b''):
+                l = l.decode('UTF-8', errors='ignore')
+            details += l
+            details += u'\n\n'
 
         return details
 
