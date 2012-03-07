@@ -55,6 +55,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w('details_treeview').append_column(column)
         self.spinner = self.add_spinner_over_treeview(self.w('details_treeview'))
 
+        self.md = None
+
     #
     # ui_* implementation of abstract UserInterface classes
     #
@@ -270,21 +272,24 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def _ui_message_dialog(self, title, text, _type,
             buttons=Gtk.ButtonsType.CLOSE):
-        md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
+        self.md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
         if 'http://' in text or 'https://' in text:
+            if type(text) != type(b''):
+                text = text.encode('UTF-8')
             text = GLib.markup_escape_text(text)
             text = re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)',
                     r'<a href="\1">\1</a>', text)
             # turn URLs into links
-            md.set_markup(text)
+            self.md.set_markup(text)
         else:
             # work around gnome #620579
-            md.set_property('text', text.encode('UTF-8'))
-        md.set_title(title)
-        result = md.run()
-        md.hide()
+            self.md.set_property('text', text)
+        self.md.set_title(title)
+        result = self.md.run()
+        self.md.hide()
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
+        self.md = None
         return result
 
     def ui_info_message(self, title, text):

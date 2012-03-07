@@ -13,6 +13,8 @@ Bug fixes:
    non-ASCII characters. (LP: #945230)
  - packaging-apt-dpkg.py: Fix UnicodeDecodeError on unexpected md5sum output.
    (LP: #921037)
+ - apport-gtk: Fix handling of non-ASCII strings in message dialogs.
+   (LP: #620579)
 
 1.94 (2012-03-02)
 -----------------

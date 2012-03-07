@@ -1,3 +1,4 @@
+# coding: UTF-8
 '''GTK Apport user interface tests.'''
 
 # Copyright (C) 2012 Canonical Ltd.
@@ -485,5 +486,27 @@ Type=Application''')
         self.assertFalse(data['orig_resizable'])
         self.assertTrue(data['detail_resizable'])
         self.assertFalse(data['hidden_resizable'])
+
+    def test_dialog_nonascii(self):
+        '''Non-ASCII title/text in dialogs'''
+
+        def close(response):
+            if not self.app.md:
+                return True
+            self.app.md.response(response)
+            return False
+
+        # unicode arguments
+        GLib.timeout_add(200, close, 0)
+        self.app.ui_info_message(b'title ♩'.decode('UTF-8'), b'text ♪'.decode('UTF-8'))
+        # byte array arguments (in Python 2)
+        GLib.timeout_add(200, close, 0)
+        self.app.ui_info_message('title ♩', 'text ♪')
+
+        # with URLs
+        GLib.timeout_add(200, close, 0)
+        self.app.ui_info_message('title', b'http://example.com ♪'.decode('UTF-8'))
+        GLib.timeout_add(200, close, 0)
+        self.app.ui_info_message('title', 'http://example.com ♪')
 
 unittest.main()
