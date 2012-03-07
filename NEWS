@@ -11,6 +11,8 @@ Bug fixes:
  - apport-cli: Consistently handle unicode vs. byte arrays. (LP: #946207)
  - report.py, anonymize(): Fix crash when the hostname or user name contain
    non-ASCII characters. (LP: #945230)
+ - packaging-apt-dpkg.py: Fix UnicodeDecodeError on unexpected md5sum output.
+   (LP: #921037)
 
 1.94 (2012-03-02)
 -----------------
