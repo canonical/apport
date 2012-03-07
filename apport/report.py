@@ -1306,7 +1306,10 @@ class Report(problem_report.ProblemReport):
                 k in ['Traceback', 'PythonArgs']:
                 for old, new in replacements.items():
                     if hasattr(self[k], 'isspace'):
-                        self[k] = self[k].replace(old, new)
+                        if type(self[k]) == type(b''):
+                            self[k] = self[k].replace(old, new)
+                        else:
+                            self[k] = self[k].encode('UTF-8').replace(old, new).decode('UTF-8')
 
     def _address_to_offset(self, addr):
         '''Resolve a memory address to an ELF name and offset.

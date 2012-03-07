@@ -1,3 +1,4 @@
+# coding: UTF-8
 import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, re
 
 import apport.report
@@ -1668,6 +1669,27 @@ RUNQUEUES[0]: c6002320
         self.assertEqual(pr.has_useful_stacktrace(), True)
         self.assertEqual(pr.crash_signature(), '/bin/foo:11:h:main')
         self.assertEqual(pr.standard_title(), 'foo crashed with SIGSEGV in h()')
+
+    def test_nonascii_data(self):
+        '''methods get along with non-ASCII data'''
+
+        # fake os.uname() into reporting a non-ASCII name
+        uname = os.uname()
+        uname = (uname[0], 't♪x', uname[2], uname[3], uname[4])
+        orig_uname = os.uname
+        os.uname = lambda: uname
+
+        try:
+            pr = apport.report.Report()
+            pr['ProcUnicodeValue'] = u'ä %s ♥ ' % uname[1].decode('UTF-8')
+            pr['ProcByteArrayValue'] = b'ä %s ♥ ' % uname[1]
+
+            pr.anonymize()
+
+            self.assertEqual(pr['ProcUnicodeValue'], u'ä hostname ♥ ')
+            self.assertEqual(pr['ProcByteArrayValue'], b'ä hostname ♥ ')
+        finally:
+            os.uname = orig_uname
 
     def test_address_to_offset(self):
         '''_address_to_offset()'''

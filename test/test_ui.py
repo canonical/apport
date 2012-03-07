@@ -1,3 +1,4 @@
+# coding: UTF-8
 import unittest, shutil, signal, tempfile, resource, pwd, time, os, sys
 import subprocess, errno, glob
 
@@ -1111,6 +1112,8 @@ bOgUs=
         '''run_crash() anonymization'''
 
         r = self._gen_test_crash()
+        r['ProcUnicodeValue'] = u'ä %s ♥ ' % os.uname()[1]
+        r['ProcByteArrayValue'] = b'ä %s ♥ ' % os.uname()[1]
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
         r.write(open(report_file, 'w'))
         self.ui = TestSuiteUserInterface()
