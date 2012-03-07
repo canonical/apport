@@ -236,6 +236,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                                                       Gtk.IconSize.DIALOG)
 
         d = self.w('dialog_crash_new')
+        d.set_title(self.report['DistroRelease'].split()[0])
         d.set_resizable(False)
         d.show()
         # don't steal focus when being called without arguments (i. e.

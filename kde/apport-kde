@@ -110,7 +110,10 @@ class ReportDialog(Dialog):
     '''Report dialog wrapper'''
 
     def __init__(self, report, allowed_to_report, ui, desktop_file):
-        Dialog.__init__(self, 'bugreport.ui', '', '', '')
+        if 'DistroRelease' not in report:
+            report.add_os_info()
+        distro = report['DistroRelease']
+        Dialog.__init__(self, 'bugreport.ui', distro.split()[0], '', '')
         self.details = self.findChild(QPushButton, 'show_details')
         self.details.clicked.connect(self.on_show_details_clicked)
         self.continue_button = self.findChild(QPushButton, 'continue_button')
@@ -129,9 +132,6 @@ class ReportDialog(Dialog):
         self.ui = ui
         self.collect_called = False
         icon = None
-        if 'DistroRelease' not in report:
-            report.add_os_info()
-        distro = report['DistroRelease']
         report_type = report.get('ProblemType')
 
         self.spinner = QLabel('', parent=self.treeview)
