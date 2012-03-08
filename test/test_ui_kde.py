@@ -90,6 +90,8 @@ class T(unittest.TestCase):
         self.app.report['ProblemType'] = 'KernelCrash'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.windowTitle(),
+            self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
               _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
@@ -115,6 +117,8 @@ class T(unittest.TestCase):
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.windowTitle(),
+            self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
              _('Sorry, a problem occurred while installing software.'))
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
@@ -147,6 +151,8 @@ Type=Application''')
             self.app.report['DesktopFile'] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
             self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.windowTitle(),
+            self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
              _('The application Apport has closed unexpectedly.'))
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
@@ -173,6 +179,8 @@ Type=Application''')
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.windowTitle(),
+            self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
              _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertEqual(self.app.dialog.text.text(),
@@ -201,6 +209,8 @@ Type=Application''')
         self.app.report_file = None
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.windowTitle(),
+            self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
              _('Send problem report to the developers?'))
         self.assertFalse(self.app.dialog.text.isVisible())

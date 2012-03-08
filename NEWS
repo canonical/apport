@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+1.95 (UNRELEASED)
+-----------------
+ - ui.py: Ensure that the report file is readable by the crash reporting daemon
+   after running through collect_info(). Thanks Evan Dandrea.
+ - apport-gtk, apport-kde: Set the window title to the distribution name, as
+   per http://wiki.ubuntu.com/ErrorTracker#error . Thanks Evan Dandrea.
+
 1.94.1 (2012-03-07)
 -------------------
 Bug fixes:
@@ -15,8 +22,6 @@ Bug fixes:
    (LP: #921037)
  - apport-gtk: Fix handling of non-ASCII strings in message dialogs.
    (LP: #620579)
- - ui.py: Ensure that the report file is readable by the crash reporting daemon
-   after running through collect_info(). Thanks Evan Dandrea.
 
 1.94 (2012-03-02)
 -----------------

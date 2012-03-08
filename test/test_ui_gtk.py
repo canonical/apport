@@ -57,6 +57,7 @@ class T(unittest.TestCase):
         self.app.report['ExecutablePath'] = '/bin/bash'
         self.app.report['Signal'] = '11'
         self.app.report['CoreDump'] = ''
+        self.app.report['DistroRelease'] = self.distro
         with open(self.app.report_file, 'w') as f:
             self.app.report.write(f)
 
@@ -86,6 +87,8 @@ class T(unittest.TestCase):
         self.app.report['ProblemType'] = 'KernelCrash'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
+            self.distro.split()[0])
         self.assertEqual(self.app.w('title_label').get_text(),
             _('Sorry, %s has experienced an internal error.') % self.distro)
         send_error_report = self.app.w('send_error_report')
@@ -113,6 +116,8 @@ class T(unittest.TestCase):
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
+            self.distro.split()[0])
         self.assertEqual(self.app.w('title_label').get_text(),
             _('Sorry, a problem occurred while installing software.'))
         send_error_report = self.app.w('send_error_report')
@@ -148,6 +153,8 @@ Type=Application''')
             self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
+            self.distro.split()[0])
         self.assertEqual(self.app.w('title_label').get_text(),
             _('The application Apport has closed unexpectedly.'))
         send_error_report = self.app.w('send_error_report')
@@ -176,6 +183,8 @@ Type=Application''')
         self.app.report['Package'] = 'bash 5'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
+            self.distro.split()[0])
         self.assertEqual(self.app.w('title_label').get_text(),
             _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertEqual(self.app.w('subtitle_label').get_text(),
@@ -212,6 +221,8 @@ Type=Application''')
         self.app.cur_package = 'apport'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
+            self.distro.split()[0])
         self.assertEqual(self.app.w('title_label').get_text(),
             _('Sorry, the application apport has closed unexpectedly.'))
         self.assertEqual(self.app.w('subtitle_label').get_text(),
