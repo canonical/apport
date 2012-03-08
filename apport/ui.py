@@ -128,7 +128,7 @@ problem still occurs:\n\n%s') % ', '.join(old_pkgs)
         report.write(f, only_new=True)
         f.close()
         apport.fileutils.mark_report_seen(reportfile)
-        os.chmod (reportfile, 0o600)
+        os.chmod (reportfile, 0o640)
 
 class UserInterface:
     '''Apport user interface API.

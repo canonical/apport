@@ -12,6 +12,7 @@ from apport.ui import _
 import apport.report
 import problem_report
 import apport.crashdb_impl.memory
+import stat
 
 class TestSuiteUserInterface(apport.ui.UserInterface):
     '''Concrete apport.ui.UserInterface suitable for automatic testing'''
@@ -352,6 +353,14 @@ bOgUs=
             'progress dialog for package bug info collection')
         self.assertEqual(self.ui.ic_progress_active, False,
             'progress dialog for package bug info collection finished')
+
+    def test_collect_info_permissions(self):
+        '''collect_info() leaves the report accessible to the group'''
+        self.ui.report = apport.Report('Bug')
+        self.ui.cur_package = 'bash'
+        self.ui.report_file = self.report_file.name
+        self.ui.collect_info()
+        self.assertTrue(os.stat(self.report_file.name).st_mode & stat.S_IRGRP)
 
     def test_handle_duplicate(self):
         '''handle_duplicate()'''
