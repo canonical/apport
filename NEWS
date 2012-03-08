@@ -15,6 +15,8 @@ Bug fixes:
    (LP: #921037)
  - apport-gtk: Fix handling of non-ASCII strings in message dialogs.
    (LP: #620579)
+ - ui.py: Ensure that the report file is readable by the crash reporting daemon
+   after running through collect_info(). Thanks Evan Dandrea.
 
 1.94 (2012-03-02)
 -----------------
