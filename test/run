@@ -48,6 +48,9 @@ else
     echo "Testing installed libraries/program."
 fi
 
+# avoid breaking the UI tests due to obsolete packages
+export APPORT_IGNORE_OBSOLETE_PACKAGES=1
+
 xvfb=
 if type xvfb-run >/dev/null && [ -z "$APPORT_TEST_NOXVFB" ]; then
     xvfb=xvfb-run
