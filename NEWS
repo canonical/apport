@@ -3,6 +3,7 @@ detailled list of changes, please see ChangeLog.
 
 1.95 (UNRELEASED)
 -----------------
+Bug fixes:
  - ui.py: Ensure that the report file is readable by the crash reporting daemon
    after running through collect_info(). Thanks Evan Dandrea.
  - apport-gtk, apport-kde: Set the window title to the distribution name, as
@@ -10,6 +11,10 @@ detailled list of changes, please see ChangeLog.
    (LP: #948015)
  - test/run: Ignore obsolete packages on the system, to avoid breaking the GUI
    tests due to them.
+
+Improvements:
+ - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of
+   just sinks and sources. Thanks David Henningsson.
 
 1.94.1 (2012-03-07)
 -------------------
