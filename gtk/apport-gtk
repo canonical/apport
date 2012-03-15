@@ -83,14 +83,19 @@ class GTKUserInterface(apport.ui.UserInterface):
         spinner.hide()
         return spinner
 
-    def ui_update_view(self):
+    def ui_update_view(self, shown_keys=None):
+        if shown_keys:
+            keys = set(self.report.keys()) & set(shown_keys)
+        else:
+            keys = self.report.keys()
         # show the most interesting items on top
-        keys = sorted(self.report)
+        keys = sorted(keys)
         for k in ('Traceback', 'StackTrace', 'Title', 'ProblemType', 'Package', 'ExecutablePath'):
             if k in keys:
                 keys.remove(k)
                 keys.insert(0, k)
 
+        self.tree_model.clear()
         for key in keys:
             keyiter = self.tree_model.insert_before(None, None)
             self.tree_model.set_value(keyiter, 0, key)
@@ -472,6 +477,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             widget.set_label(_('Hide Details'))
             if not self.collect_called:
                 self.collect_called = True
+                self.ui_update_view(['ExecutablePath'])
                 GLib.idle_add(lambda: self.collect_info(on_finished=self.ui_update_view))
         return True
 
