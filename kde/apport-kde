@@ -249,6 +249,7 @@ class ReportDialog(Dialog):
     def showtree(self, visible):
         self.treeview.setVisible(visible)
         if visible and not self.collect_called:
+            self.ui.ui_update_view(self, ['ExecutablePath'])
             QTimer.singleShot(0, lambda: self.ui.collect_info(on_finished=self.collect_done))
             self.collect_called = True
         if visible:
@@ -284,10 +285,15 @@ class MainUserInterface(apport.ui.UserInterface):
     # ui_* implementation of abstract UserInterface classes
     #
 
-    def ui_update_view(self, dialog):
+    def ui_update_view(self, dialog, shown_keys=None):
         # report contents
         details = dialog.findChild(QTreeWidget, 'details')
-        for key in sorted(self.report):
+        if shown_keys:
+            keys = set(self.report.keys()) & set(shown_keys)
+        else:
+            keys = self.report.keys()
+        details.clear()
+        for key in sorted(keys):
             keyitem = QTreeWidgetItem([key])
             details.addTopLevelItem(keyitem)
 
