@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-02 13:30+0100\n"
-"PO-Revision-Date: 2011-11-06 00:36+0000\n"
-"Last-Translator: Fitoschido <fitoschido@gmail.com>\n"
+"PO-Revision-Date: 2012-03-19 12:44+0000\n"
+"Last-Translator: Paco Molinero <paco@byasl.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-20 04:31+0000\n"
+"X-Generator: Launchpad (build 14969)\n"
 "Language: es\n"
 
 #: ../apport/ui.py:92
@@ -52,7 +52,7 @@ msgstr "programa desconocido"
 #: ../apport/ui.py:214
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "Lo sentimos; el programa «%s» se ha cerrado inesperadamente"
+msgstr "Lo sentimos, el programa «%s» se ha cerrado inesperadamente"
 
 #: ../apport/ui.py:215 ../apport/ui.py:1087
 #, python-format
@@ -377,7 +377,8 @@ msgstr ""
 #: ../apport/ui.py:1062 ../apport/ui.py:1071
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "Este informe de problema aplica a un programa que no está instalado."
+msgstr ""
+"Este informe de problema aplica a un programa que ya no está instalado."
 
 #: ../apport/ui.py:1090
 #, python-format
@@ -421,20 +422,20 @@ msgstr "¿Qué desea hacer? Sus opciones son:"
 msgid "Please choose (%s):"
 msgstr "Por favor elija (%s):"
 
-#: ../bin/apport-cli.py:144
+#: ../bin/apport-cli.py:141
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i bytes)"
 
-#: ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:106 ../kde/apport-kde.py:304
+#: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:108 ../kde/apport-kde.py:304
 msgid "(binary data)"
 msgstr "(datos binarios)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:135 ../kde/apport-kde.py:156
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:137 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
 msgstr "¿Enviar un informe del problema a los desarrolladores?"
 
-#: ../bin/apport-cli.py:173
+#: ../bin/apport-cli.py:174
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -442,51 +443,51 @@ msgstr ""
 "Después de que se haya enviado el informe del problema, por favor,\n"
 "complete el formulario que se abrirá automáticamente en su navegador."
 
-#: ../bin/apport-cli.py:176
+#: ../bin/apport-cli.py:177
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Enviar informe (%s)"
 
-#: ../bin/apport-cli.py:180
+#: ../bin/apport-cli.py:181
 msgid "&Examine locally"
 msgstr "&Examinar localmente"
 
-#: ../bin/apport-cli.py:184
+#: ../bin/apport-cli.py:185
 msgid "&View report"
 msgstr "&Ver informe"
 
-#: ../bin/apport-cli.py:185
+#: ../bin/apport-cli.py:186
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Guardar el informe para enviarlo luego, o para copiarlo a algún otro lugar."
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:187
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Cancelar e &ignorar errores futuros de esta versión del programa."
+msgstr "Cancelar e &ignorar errores futuros de esta versión del programa"
 
-#: ../bin/apport-cli.py:188 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:266 ../bin/apport-cli.py:298
+#: ../bin/apport-cli.py:319
 msgid "&Cancel"
 msgstr "&Cancelar"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:217
 msgid "Problem report file:"
 msgstr "Archivo del informe del problema:"
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:223 ../bin/apport-cli.py:228
 msgid "&Confirm"
 msgstr "&Confirmar"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:227
 #, python-format
 msgid "Error: %s"
 msgstr "Error: %s"
 
-#: ../bin/apport-cli.py:232 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:233 ../kde/apport-kde.py:349
 msgid "Collecting problem information"
 msgstr "Recopilando información del problema"
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:234
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -495,11 +496,11 @@ msgstr ""
 "la\n"
 "aplicación. Esto puede tardar unos minutos."
 
-#: ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
+#: ../bin/apport-cli.py:246 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
 msgid "Uploading problem information"
 msgstr "Enviando la información del problema"
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:247
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -508,40 +509,40 @@ msgstr ""
 "errores.\n"
 "Esto puede tardar unos minutos."
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:297
 msgid "&Done"
 msgstr "&Hecho"
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:303
 msgid "none"
 msgstr "ninguno"
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:304
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Seleccionado: %s. Varias opciones:"
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:320
 msgid "Choices:"
 msgstr "Opciones:"
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:334
 msgid "Path to file (Enter to cancel):"
 msgstr "Ruta al archivo (Intro para cancelar):"
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:340
 msgid "File does not exist."
 msgstr "El archivo no existe."
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:342
 msgid "This is a directory."
 msgstr "Esto es un directorio."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:348
 msgid "To continue, you must visit the following URL:"
 msgstr "Para continuar, visite la siguiente URL:"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:350
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -549,11 +550,11 @@ msgstr ""
 "Puede lanzar un navegador ahora, o copiar esta URL a un navegador en otro "
 "equipo."
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:352
 msgid "Launch a browser now"
 msgstr "Lanzar un navegador ahora"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:366
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "No hay informes de errores pendientes. Intente --help para más información."
@@ -594,7 +595,7 @@ msgstr "Informe de error"
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>Lo sentimos, ocurrió un error interno.</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:211 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr "Si sigue teniendo problemas, intente reiniciar el equipo."
 
@@ -604,9 +605,9 @@ msgstr "Enviar un informe de error para ayudar a corregir este problema"
 
 #: ../gtk/apport-gtk.ui.h:6
 msgid "Ignore future problems of this program version"
-msgstr "Ignorar problemas futuros de esta versión de programa"
+msgstr "Ignorar problemas futuros de esta versión del programa"
 
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
+#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:155 ../gtk/apport-gtk.py:468
 #: ../kde/apport-kde.py:243
 msgid "Show Details"
 msgstr "Mostrar detalles"
@@ -615,11 +616,11 @@ msgstr "Mostrar detalles"
 msgid "_Examine locally"
 msgstr "_Examinar localmente"
 
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
+#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:202 ../kde/apport-kde.py:195
 msgid "Leave Closed"
 msgstr "Dejar cerrada"
 
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:167 ../gtk/apport-gtk.py:214
 #: ../kde/apport-kde.py:205
 msgid "Continue"
 msgstr "Continuar"
@@ -704,6 +705,13 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Construye una caja de arena temporal y descarga/instala los paquetes "
+"necesarios y los símbolos de depuración; sin esta opción se asume que los "
+"paquetes necesarios y los símbolos de depuración ya están instalados en el "
+"sistema. El argumento apunta al directorio de sistema de paquetes de "
+"configuración de base, si se especifica «system», utilizará los archivos de "
+"configuración del sistema, pero solo será capaz de volver sobre los errores "
+"que ocurrieron en la ejecución actual."
 
 #: ../bin/apport-retrace.py:57
 msgid ""
@@ -785,45 +793,45 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Su sistema puede volverse inestable y puede que necesite reiniciarlo."
 
-#: ../gtk/apport-gtk.py:120
+#: ../gtk/apport-gtk.py:122
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr "Lo sentimos, la aplicación %s se ha cerrado de manera inesperada."
 
-#: ../gtk/apport-gtk.py:123
+#: ../gtk/apport-gtk.py:125
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Lo sentimos,  %s se ha cerrado de manera inesperada."
 
-#: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
+#: ../gtk/apport-gtk.py:131 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Lo sentimos, %s ha experimentado un error interno."
 
-#: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
+#: ../gtk/apport-gtk.py:146 ../kde/apport-kde.py:164
 msgid "Send"
 msgstr "Enviar"
 
-#: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
+#: ../gtk/apport-gtk.py:183 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
 msgstr "Paquete: %s"
 
-#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Lo sentimos, ha ocurrido un problema al instalar el software."
 
-#: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
+#: ../gtk/apport-gtk.py:199 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "La aplicación %s se ha cerrado inesperadamente."
 
-#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
+#: ../gtk/apport-gtk.py:203 ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:323
 msgid "Relaunch"
 msgstr "Reabrir"
 
-#: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
+#: ../gtk/apport-gtk.py:472 ../kde/apport-kde.py:240
 msgid "Hide Details"
 msgstr "Ocultar detalles"
 
