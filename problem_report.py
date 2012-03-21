@@ -386,7 +386,8 @@ class ProblemReport(UserDict):
 
         attach_treshold specifies the maximum number of lines for a value to be
         included into the first inline text part. All bigger values (as well as
-        all non-ASCII ones) will become an attachment.
+        all non-ASCII ones) will become an attachment, as well as text
+        values bigger than 1 kB.
 
         Extra MIME preamble headers can be specified, too, as a dictionary.
 
@@ -465,6 +466,7 @@ class ProblemReport(UserDict):
                 attachments.append(att)
             else:
                 # plain text value
+                size = len(v)
 
                 # ensure that byte arrays are valid UTF-8
                 if type(v) == type(''):
@@ -474,10 +476,10 @@ class ProblemReport(UserDict):
                 v = v.encode('UTF-8')
 
                 lines = len(v.splitlines())
-                if lines == 1:
+                if size <= 1000 and lines == 1:
                     v = v.rstrip()
                     text += '%s: %s\n' % (k, v)
-                elif lines <= attach_treshold:
+                elif size <= 100 and lines <= attach_treshold:
                     text += '%s:\n ' % k
                     if not v.endswith('\n'):
                         v += '\n'

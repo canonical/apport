@@ -15,6 +15,8 @@ Bug fixes:
    this program version", but "...of this type", as we don't show a program
    version in the initial dialog (https://wiki.ubuntu.com/ErrorTracker#error)
    (LP: #961065)
+ - problem_report.py, write_mime(): Do not put a key inline if it is bigger
+   than 1 kB, to guard against very long lines. (LP: #957326)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

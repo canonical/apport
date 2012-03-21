@@ -660,13 +660,14 @@ File: base64
         pr['TwoLine'] = 'first\nsecond\n'
         pr['InlineMargin'] = 'first\nsecond\nthird\nfourth\nfifth\n'
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
+        pr['Hugeline'] = 'A' * 10000
         io = StringIO()
         pr.write_mime(io)
         io.seek(0)
 
         msg = email.message_from_file(io)
         parts = [p for p in msg.walk()]
-        self.assertEqual(len(parts), 3)
+        self.assertEqual(len(parts), 4)
 
         # first part is the multipart container
         self.assertTrue(parts[0].is_multipart())
@@ -700,12 +701,19 @@ TwoLineUnicode:
  nu-η
 ''')
 
-        # third part should be the Multiline: field as attachment
+        # third part should be the Hugeline: field as attachment
         self.assertTrue(not parts[2].is_multipart())
         self.assertEqual(parts[2].get_content_type(), 'text/plain')
         self.assertEqual(parts[2].get_content_charset(), 'utf-8')
-        self.assertEqual(parts[2].get_filename(), 'Multiline.txt')
-        self.assertEqual(parts[2].get_payload(decode=True), ''' foo   bar
+        self.assertEqual(parts[2].get_filename(), 'Hugeline.txt')
+        self.assertEqual(parts[2].get_payload(decode=True), 'A' * 10000)
+
+        # fourth part should be the Multiline: field as attachment
+        self.assertTrue(not parts[3].is_multipart())
+        self.assertEqual(parts[3].get_content_type(), 'text/plain')
+        self.assertEqual(parts[3].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[3].get_filename(), 'Multiline.txt')
+        self.assertEqual(parts[3].get_payload(decode=True), ''' foo   bar
 baz
   blip  
 line4
