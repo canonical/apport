@@ -203,6 +203,7 @@ class ReportDialog(Dialog):
                                     'try restarting the computer.'))
                 self.closed_button.hide()
                 self.continue_button.setText(_('Continue'))
+                self.ignore_future_problems.setText(_('Ignore future problems of this type'))
             if report.get('CrashCounter'):
                 self.ignore_future_problems.show()
             else:

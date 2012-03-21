@@ -11,6 +11,10 @@ Bug fixes:
    (LP: #948015)
  - test/run: Ignore obsolete packages on the system, to avoid breaking the GUI
    tests due to them.
+ - apport-gtk, apport-kde: When reporting a "system crash", don't say "... of
+   this program version", but "...of this type", as we don't show a program
+   version in the initial dialog (https://wiki.ubuntu.com/ErrorTracker#error)
+   (LP: #961065)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

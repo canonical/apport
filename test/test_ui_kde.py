@@ -136,11 +136,13 @@ class T(unittest.TestCase):
         | [ apport ] The application Apport has closed unexpectedly.      |
         |                                                                 |
         |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Ignore future problems of this program version.  |
         |                                                                 |
         | [ Show Details ]                 [ Leave Closed ]  [ Relaunch ] |
         +-----------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Crash'
+        self.app.report['CrashCounter'] = '1'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         with tempfile.NamedTemporaryFile() as fp:
             fp.write('''[Desktop Entry]
@@ -162,6 +164,10 @@ Type=Application''')
         self.assertEqual(self.app.dialog.continue_button.text(), _('Relaunch'))
         self.assertTrue(self.app.dialog.closed_button.isVisible())
         self.assertFalse(self.app.dialog.text.isVisible())
+        self.assertFalse(self.app.dialog.text.isVisible())
+        self.assertTrue(self.app.dialog.ignore_future_problems.isVisible())
+        self.assertTrue(str(self.app.dialog.ignore_future_problems.text()).endswith(
+            'of this program version'))
 
     def test_system_crash_layout(self):
         '''
@@ -171,11 +177,13 @@ Type=Application''')
         |            computer                                             |
         |                                                                 |
         |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Ignore future problems of this type.             |
         |                                                                 |
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Crash'
+        self.app.report['CrashCounter'] = '1'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
@@ -192,6 +200,9 @@ Type=Application''')
         self.assertTrue(self.app.dialog.continue_button.isVisible())
         self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
         self.assertFalse(self.app.dialog.closed_button.isVisible())
+        self.assertTrue(self.app.dialog.ignore_future_problems.isVisible())
+        self.assertTrue(str(self.app.dialog.ignore_future_problems.text()).endswith(
+            'of this type'))
 
     def test_apport_bug_package_layout(self):
         '''

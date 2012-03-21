@@ -217,6 +217,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                       'try restarting the computer.'))
                 self.w('closed_button').hide()
                 self.w('continue_button').set_label(_('Continue'))
+                self.w('ignore_future_problems').set_label(_('Ignore future problems of this type'))
             if self.report.get('CrashCounter'):
                 self.w('ignore_future_problems').show()
             else:
