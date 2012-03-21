@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-02 13:30+0100\n"
+"POT-Creation-Date: 2012-03-21 18:25+0100\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Mads Lundby <Unknown>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
+"Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-03-03 05:08+0000\n"
 "X-Generator: Launchpad (build 14886)\n"
-"Language: da\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -95,8 +95,7 @@ msgstr "Fejl"
 
 #: ../apport/ui.py:280
 msgid "There is not enough disk space available to process this report."
-msgstr ""
-"Der er ikke nok diskplads til rådighed til at behandle denne rapport."
+msgstr "Der er ikke nok diskplads til rådighed til at behandle denne rapport."
 
 #: ../apport/ui.py:307
 msgid "No package specified"
@@ -105,8 +104,7 @@ msgstr "Ingen pakke angivet"
 #: ../apport/ui.py:308
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr ""
-"Du skal angive en pakke eller en PID. Se --help for mere information."
+msgstr "Du skal angive en pakke eller en PID. Se --help for mere information."
 
 #: ../apport/ui.py:324
 msgid "Invalid PID"
@@ -160,8 +158,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -206,8 +204,7 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [tilvalg] [symptom|pid|pakke|programsti|.apport/.crash-fil]"
 
 #: ../apport/ui.py:624
@@ -340,8 +337,7 @@ msgstr ""
 #: ../apport/ui.py:1062 ../apport/ui.py:1071
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
-"Problemrapporten vedrører et program, som ikke længere er installeret."
+msgstr "Problemrapporten vedrører et program, som ikke længere er installeret."
 
 #: ../apport/ui.py:1090
 #, python-format
@@ -385,20 +381,20 @@ msgstr "Hvad ønsker du at foretage dig? Dine valg er:"
 msgid "Please choose (%s):"
 msgstr "Vælg venligst (%s):"
 
-#: ../bin/apport-cli.py:144
+#: ../bin/apport-cli.py:141
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:106 ../kde/apport-kde.py:304
+#: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:113 ../kde/apport-kde.py:311
 msgid "(binary data)"
 msgstr "(binære data)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:135 ../kde/apport-kde.py:156
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:142 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
 msgstr "Send problemrapport til udviklerne?"
 
-#: ../bin/apport-cli.py:173
+#: ../bin/apport-cli.py:174
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -406,51 +402,51 @@ msgstr ""
 "Efter problemrapporten er afsendt, bedes du udfylde formularen i den\n"
 "internetbrowser, som åbner automatisk."
 
-#: ../bin/apport-cli.py:176
+#: ../bin/apport-cli.py:177
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Send rapport (%s)"
 
-#: ../bin/apport-cli.py:180
+#: ../bin/apport-cli.py:181
 msgid "&Examine locally"
 msgstr ""
 
-#: ../bin/apport-cli.py:184
+#: ../bin/apport-cli.py:185
 msgid "&View report"
 msgstr "&Læs rapport"
 
-#: ../bin/apport-cli.py:185
+#: ../bin/apport-cli.py:186
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Behold rapportfil til senere afsendelse eller kopiér den til et andet sted"
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:187
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Annullér og &ignorér fremtidige nedbrud af denne programversion"
 
-#: ../bin/apport-cli.py:188 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:266 ../bin/apport-cli.py:298
+#: ../bin/apport-cli.py:319
 msgid "&Cancel"
 msgstr "&Annullér"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:217
 msgid "Problem report file:"
 msgstr "Problemrapportfil:"
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:223 ../bin/apport-cli.py:228
 msgid "&Confirm"
 msgstr "&Bekræft"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:227
 #, python-format
 msgid "Error: %s"
 msgstr "Fejl: %s"
 
-#: ../bin/apport-cli.py:232 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:233 ../kde/apport-kde.py:356
 msgid "Collecting problem information"
 msgstr "Indsamler information om problem"
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:234
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -458,11 +454,11 @@ msgstr ""
 "De indsamlede informationer kan sendes til udviklerne med henblik på\n"
 " at forbedre programmet. Dette kan tage nogle få minutter."
 
-#: ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
+#: ../bin/apport-cli.py:246 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:384
 msgid "Uploading problem information"
 msgstr "Sender probleminformation"
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:247
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -470,40 +466,40 @@ msgstr ""
 "De indsamlede informationer sendes til fejlregistreringssystemet.\n"
 "Dette kan tage et par minutter."
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:297
 msgid "&Done"
 msgstr "&Færdig"
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:303
 msgid "none"
 msgstr "intet"
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:304
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Valgt: %s. Flere valg:"
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:320
 msgid "Choices:"
 msgstr "Valg:"
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:334
 msgid "Path to file (Enter to cancel):"
 msgstr "Sti til fil (Enter for at annullere):"
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:340
 msgid "File does not exist."
 msgstr "Fil eksisterer ikke."
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:342
 msgid "This is a directory."
 msgstr "Dette er et katalog."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:348
 msgid "To continue, you must visit the following URL:"
 msgstr "Du skal beøge følgende internetadresse for at fortsætte:"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:350
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -511,11 +507,11 @@ msgstr ""
 "Du kan åbne en browser nu eller kopiere adressen til en browser på en anden "
 "computer."
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:352
 msgid "Launch a browser now"
 msgstr "Åbn en browser nu"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:366
 msgid "No pending crash reports. Try --help for more information."
 msgstr "Ingen ventende nedbrudsrapporter. Prøv --help for mere information."
 
@@ -543,7 +539,7 @@ msgstr ""
 "Opvågningsprocessen gik i stå meget tæt på slutningen, og den har set ud, "
 "som om den er blevet fuldført på normal vis."
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:412 ../kde/apport-kde.py:448
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:419 ../kde/apport-kde.py:455
 msgid "Apport"
 msgstr ""
 
@@ -555,7 +551,7 @@ msgstr ""
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 
@@ -567,8 +563,8 @@ msgstr ""
 msgid "Ignore future problems of this program version"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
-#: ../kde/apport-kde.py:243
+#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:160 ../gtk/apport-gtk.py:474
+#: ../kde/apport-kde.py:244
 msgid "Show Details"
 msgstr ""
 
@@ -576,11 +572,11 @@ msgstr ""
 msgid "_Examine locally"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
+#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:207 ../kde/apport-kde.py:195
 msgid "Leave Closed"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:172 ../gtk/apport-gtk.py:219
 #: ../kde/apport-kde.py:205
 msgid "Continue"
 msgstr ""
@@ -601,7 +597,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Sender probleminformation</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:378
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:385
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -663,8 +659,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -699,10 +694,8 @@ msgstr ""
 "nedbrudsdatabasen."
 
 #: ../bin/apport-retrace.py:69
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr ""
-"Sti til sqlite-duplikatdatabasen (standard: ingen duplikeret kontrol)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgstr "Sti til sqlite-duplikatdatabasen (standard: ingen duplikeret kontrol)"
 
 #: ../bin/apport-retrace.py:74
 msgid "incorrect number of arguments; use --help for a short help"
@@ -736,67 +729,72 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Dit system kan blive ustabilt nu og kan få brug for at blive genstartet."
 
-#: ../gtk/apport-gtk.py:120
+#: ../gtk/apport-gtk.py:127
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:123
+#: ../gtk/apport-gtk.py:130
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
+#: ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
+#: ../gtk/apport-gtk.py:151 ../kde/apport-kde.py:164
 msgid "Send"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
+#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:195 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
+#: ../gtk/apport-gtk.py:204 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
-#: ../kde/apport-kde.py:323
+#: ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:196
+#: ../kde/apport-kde.py:330
 msgid "Relaunch"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
+#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
+#, fuzzy
+msgid "Ignore future problems of this type"
+msgstr "_Ignorér fremtidige nedbrud af denne programversion"
+
+#: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
 msgstr ""
 
-#: ../kde/apport-kde.py:265
+#: ../kde/apport-kde.py:267
 msgid "Username:"
 msgstr ""
 
-#: ../kde/apport-kde.py:266
+#: ../kde/apport-kde.py:268
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:348
+#: ../kde/apport-kde.py:355
 msgid "Collecting Problem Information"
 msgstr ""
 
-#: ../kde/apport-kde.py:350
+#: ../kde/apport-kde.py:357
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
 
-#: ../kde/apport-kde.py:376
+#: ../kde/apport-kde.py:383
 msgid "Uploading Problem Information"
 msgstr ""
 
@@ -817,18 +815,16 @@ msgstr "Destinationskatalog eksisterer og er ikke tomt."
 #~ msgstr ""
 #~ "Du kan hjælpe udviklerne med at rette dette problem ved at rapportere det."
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Undskyld, pakken \"%s\" fejlede under "
-#~ "installation eller opgradering.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Undskyld, pakken \"%s\" fejlede "
+#~ "under installation eller opgradering.</span>"
 
 #~ msgid "Content of the report"
 #~ msgstr "Indhold af rapporten"
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Hele rapporten (anbefalet; %s)"
 
@@ -848,20 +844,19 @@ msgstr "Destinationskatalog eksisterer og er ikke tomt."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Hvis ikke du foretog dig noget fortroligt (indtastning af adgangskode eller "
-#~ "anden\n"
-#~ "privat information), kan du hjælpe udviklerne med at forbedre programmet ved "
-#~ "at\n"
+#~ "Hvis ikke du foretog dig noget fortroligt (indtastning af adgangskode "
+#~ "eller anden\n"
+#~ "privat information), kan du hjælpe udviklerne med at forbedre programmet "
+#~ "ved at\n"
 #~ "rapportere problemet."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s lukkede uventet på %s ved %s."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Send komplet rapport (anbefalet; %s)"
 
@@ -877,18 +872,12 @@ msgstr "Destinationskatalog eksisterer og er ikke tomt."
 #~ msgid "Kernel problem"
 #~ msgstr "Kerneproblem"
 
-#~ msgid "_Ignore future crashes of this program version"
-#~ msgstr "_Ignorér fremtidige nedbrud af denne programversion"
-
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Pakken \"%s\" fejlede under installation eller opgradering."
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Send &reduceret rapport (langsom Internetforbindelse; %s)"
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Dette er ikke en original %s-pakke"
 
@@ -908,22 +897,21 @@ msgstr "Destinationskatalog eksisterer og er ikke tomt."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Hvis du ikke var i gang med noget fortroligt (indtastning af adgangskode "
 #~ "eller anden privat information), kan du hjælpe med at forbedre programmet "
 #~ "ved at rapportere problemet."
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Begrænset rapport (langsom internetforbindelse; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Dette vil fjerne nogle store elementer fra rapporten. Disse er meget nyttige "
-#~ "for udviklerne til at fejlsøge problemet, men kan være for store for dig at "
-#~ "afsende, hvis du har en langsom internetforbindelse."
+#~ "Dette vil fjerne nogle store elementer fra rapporten. Disse er meget "
+#~ "nyttige for udviklerne til at fejlsøge problemet, men kan være for store "
+#~ "for dig at afsende, hvis du har en langsom internetforbindelse."

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-02 13:30+0100\n"
+"POT-Creation-Date: 2012-03-21 18:25+0100\n"
 "PO-Revision-Date: 2012-03-05 20:18+0000\n"
 "Last-Translator: Vojtěch Trefný <vojtech.trefny@gmail.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-03-06 04:34+0000\n"
 "X-Generator: Launchpad (build 14900)\n"
-"Language: cs\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -163,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -209,8 +209,7 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [přepínače] [příznak|pid|balík|cesta k programu|soubor .apport/.crash]"
 
@@ -333,8 +332,7 @@ msgstr ""
 #: ../apport/ui.py:1062 ../apport/ui.py:1071
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
-"Toto hlášení o problému se týká programu, který již není nainstalován."
+msgstr "Toto hlášení o problému se týká programu, který již není nainstalován."
 
 #: ../apport/ui.py:1090
 #, python-format
@@ -378,20 +376,20 @@ msgstr "Co chcete udělat? Máte tyto možnosti:"
 msgid "Please choose (%s):"
 msgstr "Prosím vyberte (%s):"
 
-#: ../bin/apport-cli.py:144
+#: ../bin/apport-cli.py:141
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:106 ../kde/apport-kde.py:304
+#: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:113 ../kde/apport-kde.py:311
 msgid "(binary data)"
 msgstr "(binární data)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:135 ../kde/apport-kde.py:156
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:142 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
 msgstr "Odeslat hlášení o problému vývojářům?"
 
-#: ../bin/apport-cli.py:173
+#: ../bin/apport-cli.py:174
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -399,51 +397,51 @@ msgstr ""
 "Po odeslání hlášení o problému vyplňte prosím formulář v nově\n"
 "otevřeném okně prohlížeče."
 
-#: ../bin/apport-cli.py:176
+#: ../bin/apport-cli.py:177
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Odeslat hlášení (%s)"
 
-#: ../bin/apport-cli.py:180
+#: ../bin/apport-cli.py:181
 msgid "&Examine locally"
 msgstr ""
 
-#: ../bin/apport-cli.py:184
+#: ../bin/apport-cli.py:185
 msgid "&View report"
 msgstr "Zobrazi&t hlášení"
 
-#: ../bin/apport-cli.py:185
+#: ../bin/apport-cli.py:186
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Ponechat soubor s hlášením pro pozdější odeslání nebo kopírování někam jinam"
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:187
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Zrušit a &ignorovat budoucí havárie této verze programu"
 
-#: ../bin/apport-cli.py:188 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:266 ../bin/apport-cli.py:298
+#: ../bin/apport-cli.py:319
 msgid "&Cancel"
 msgstr "&Zrušit"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:217
 msgid "Problem report file:"
 msgstr "Soubor s hlášením o problému:"
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:223 ../bin/apport-cli.py:228
 msgid "&Confirm"
 msgstr "&Potvrdit"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:227
 #, python-format
 msgid "Error: %s"
 msgstr "Chyba: %s"
 
-#: ../bin/apport-cli.py:232 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:233 ../kde/apport-kde.py:356
 msgid "Collecting problem information"
 msgstr "Shromažďování informací o problému"
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:234
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -451,11 +449,11 @@ msgstr ""
 "Sesbírané informace mohou být odeslány vývojářům za účelem zlepšení\n"
 "aplikace. To může trvat i několik minut."
 
-#: ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
+#: ../bin/apport-cli.py:246 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:384
 msgid "Uploading problem information"
 msgstr "Odesílání informací o problému"
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:247
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -463,40 +461,40 @@ msgstr ""
 "Sesbírané informace se odesílají do systému pro sledování chyb.\n"
 "To může trvat i několik minut."
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:297
 msgid "&Done"
 msgstr "&Hotovo"
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:303
 msgid "none"
 msgstr "nic"
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:304
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:320
 msgid "Choices:"
 msgstr "Volby"
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:334
 msgid "Path to file (Enter to cancel):"
 msgstr "Cesta k souboru (Enter pro zrušení):"
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:340
 msgid "File does not exist."
 msgstr "Soubor neexistuje."
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:342
 msgid "This is a directory."
 msgstr "Toto je adresář."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:348
 msgid "To continue, you must visit the following URL:"
 msgstr "Pro pokračování musíte navštívit následující adresu:"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:350
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -504,11 +502,11 @@ msgstr ""
 "Nyní můžete spustit prohlížeč nebo zkopírovat tuto adresu do prohlížeče nebo "
 "jiného počítače."
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:352
 msgid "Launch a browser now"
 msgstr "Spustit prohlížeč nyní"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:366
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Žádná nevyřízená hlášení o haváriích. Pro více informací použijte přepínač --"
@@ -532,7 +530,7 @@ msgid ""
 "completed normally."
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:412 ../kde/apport-kde.py:448
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:419 ../kde/apport-kde.py:455
 msgid "Apport"
 msgstr ""
 
@@ -544,7 +542,7 @@ msgstr "Hlášení o chybě"
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>Omlouváme se, nastala vnitřní chyba.</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr "Pokud problémy neustanou, zkuste restartovat počítač."
 
@@ -556,8 +554,8 @@ msgstr "Zaslat hlášení o chybě. Pomůžete tím vyřešení tohoto problému
 msgid "Ignore future problems of this program version"
 msgstr "Ignorovat budoucí problémy této verze programu"
 
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
-#: ../kde/apport-kde.py:243
+#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:160 ../gtk/apport-gtk.py:474
+#: ../kde/apport-kde.py:244
 msgid "Show Details"
 msgstr "Zobrazit podrobnosti"
 
@@ -565,11 +563,11 @@ msgstr "Zobrazit podrobnosti"
 msgid "_Examine locally"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
+#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:207 ../kde/apport-kde.py:195
 msgid "Leave Closed"
 msgstr "Ponechat uazvřené"
 
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:172 ../gtk/apport-gtk.py:219
 #: ../kde/apport-kde.py:205
 msgid "Continue"
 msgstr "Pokračovat"
@@ -590,7 +588,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Odesílání informací o problému</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:378
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:385
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -649,8 +647,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -680,8 +677,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "Cesta k duplikátu databáze sqlite (výchozí: žádná kontrola duplicit)"
 
 #: ../bin/apport-retrace.py:74
@@ -715,67 +711,72 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Váš systém může být nyní nestabilní a bude jej možná nutné restartovat."
 
-#: ../gtk/apport-gtk.py:120
+#: ../gtk/apport-gtk.py:127
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr "Omlouváme se, aplikace %s byla neočekávaně ukončena."
 
-#: ../gtk/apport-gtk.py:123
+#: ../gtk/apport-gtk.py:130
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Omlouváme se, %s byl neočekávaně ukončen."
 
-#: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
+#: ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Omlouváme se, %s zaznamenal vnitřní chybu."
 
-#: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
+#: ../gtk/apport-gtk.py:151 ../kde/apport-kde.py:164
 msgid "Send"
 msgstr "Odeslat"
 
-#: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
+#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
 msgstr "Balík: %s"
 
-#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:195 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Omlouváme se, při instalaci softwaru nastala chyba."
 
-#: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
+#: ../gtk/apport-gtk.py:204 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Aplikace %s byla neočekávaně ukončena."
 
-#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
-#: ../kde/apport-kde.py:323
+#: ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:196
+#: ../kde/apport-kde.py:330
 msgid "Relaunch"
 msgstr "Restartovat"
 
-#: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
+#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
+#, fuzzy
+msgid "Ignore future problems of this type"
+msgstr "Ignorovat budoucí problémy této verze programu"
+
+#: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
 msgstr "Skrýt podrobnosti"
 
-#: ../kde/apport-kde.py:265
+#: ../kde/apport-kde.py:267
 msgid "Username:"
 msgstr ""
 
-#: ../kde/apport-kde.py:266
+#: ../kde/apport-kde.py:268
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:348
+#: ../kde/apport-kde.py:355
 msgid "Collecting Problem Information"
 msgstr ""
 
-#: ../kde/apport-kde.py:350
+#: ../kde/apport-kde.py:357
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
 
-#: ../kde/apport-kde.py:376
+#: ../kde/apport-kde.py:383
 msgid "Uploading Problem Information"
 msgstr ""
 
@@ -792,14 +793,13 @@ msgstr "Použití: %s <hlášení> <cílový adresář>"
 msgid "Destination directory exists and is not empty."
 msgstr "Cílový adresář existuje a není prázdný."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Kompletní hlášení (doporučeno; %s)"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Pokud jste nedělali nic soukromého (zadávání hesla nebo jiné osobní "
 #~ "informace), můžete pomoci vylepšit aplikaci zasláním hlášení o problému."
@@ -810,7 +810,6 @@ msgstr "Cílový adresář existuje a není prázdný."
 #~ msgid "Restart _Program"
 #~ msgstr "Spustit _program znovu"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -818,7 +817,6 @@ msgstr "Cílový adresář existuje a není prázdný."
 #~ "<span weight=\"bold\" size=\"larger\">Omlouváme se, avšak balík \"%s\" se "
 #~ "nepodařilo nainstalovat nebo aktualizovat.</span>"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Stručné hlášení (pomalé internetové připojení; %s)"
 
@@ -826,13 +824,13 @@ msgstr "Cílový adresář existuje a není prázdný."
 #~ msgstr "_Ignorovat budoucí havárie této verze programu"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Tímto odstraníte některé rozsáhlé položky z hlášení. Jsou sice užitečné pro "
-#~ "vývojáře při hledání problému, ale mohou být příliš objemné, pokud máte "
-#~ "pomalé internetové připojení."
+#~ "Tímto odstraníte některé rozsáhlé položky z hlášení. Jsou sice užitečné "
+#~ "pro vývojáře při hledání problému, ale mohou být příliš objemné, pokud "
+#~ "máte pomalé internetové připojení."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Nahlásit problém..."
@@ -854,7 +852,6 @@ msgstr "Cílový adresář existuje a není prázdný."
 #~ msgid "&Report Problem..."
 #~ msgstr "&Nahlásit problém..."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "Aplikace \"%s\" se neočekávaně ukončila dne %s v %s."
 
@@ -863,7 +860,8 @@ msgstr "Cílový adresář existuje a není prázdný."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Pokud jste nedělali nic soukromého (zadávání hesla nebo\n"
@@ -873,11 +871,9 @@ msgstr "Cílový adresář existuje a není prázdný."
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Můžete pomoci vývojářům opravit problém tím, že jej nahlásíte."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Odeslat úplné hlášení (doporučeno; %s)"
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Nepodařilo se nainstalovat nebo aktualizovat balík \"%s\"."
 
@@ -889,14 +885,12 @@ msgstr "Cílový adresář existuje a není prázdný."
 #~ msgstr ""
 #~ "<big><b>Odeslat hlášení o problému vývojářům?</b></big>\n"
 #~ "\n"
-#~ "Po odeslání hlášení o problému vyplňte prosím formulář v nově otevřeném okně "
-#~ "prohlížeče."
+#~ "Po odeslání hlášení o problému vyplňte prosím formulář v nově otevřeném "
+#~ "okně prohlížeče."
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Odeslat &stručné hlášení (pomalé internetové připojení; %s)"
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Toto není původní balík pro %s"
 

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-02 13:30+0100\n"
+"POT-Creation-Date: 2012-03-21 18:25+0100\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Kannada <kn@li.org>\n"
+"Language: kn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
 "X-Generator: Launchpad (build 14886)\n"
-"Language: kn\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -38,8 +38,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"ನೀವು ಕೆಲವು ಹಳೆ ಆವ್ರತ್ತಿಯ ಪ್ಯಾಕೆಜ್ ಗಳನ್ನ ಅನುಸ್ಥಾಪಿಸಿ ಕೊಂಡಿದ್ದೀರಿ. ದಯವಿಟ್ಟು "
-"ಕೆಳಕಂಡ ಪ್ಯಾಕೆಜ್ ಗಳನ್ನ ಅಪ್ಗ್ರೇಡ್ ಮಾಡಿಕೊಂಡು ದೋಷ ಮರುಕಳಿಸುತ್ತದೆಯೆ ಎಂದು ಗಮನಿಸಿ\n"
+"ನೀವು ಕೆಲವು ಹಳೆ ಆವ್ರತ್ತಿಯ ಪ್ಯಾಕೆಜ್ ಗಳನ್ನ ಅನುಸ್ಥಾಪಿಸಿ ಕೊಂಡಿದ್ದೀರಿ. ದಯವಿಟ್ಟು ಕೆಳಕಂಡ "
+"ಪ್ಯಾಕೆಜ್ ಗಳನ್ನ ಅಪ್ಗ್ರೇಡ್ ಮಾಡಿಕೊಂಡು ದೋಷ ಮರುಕಳಿಸುತ್ತದೆಯೆ ಎಂದು ಗಮನಿಸಿ\n"
 "\n"
 "%s"
 
@@ -95,8 +95,8 @@ msgstr "ದೋಷ"
 #: ../apport/ui.py:280
 msgid "There is not enough disk space available to process this report."
 msgstr ""
-"ಈ ತೊಂದರೆ ವರದಿಯನ್ನು ಪರಿಶೀಲಿಸಲು ಬೇಕಾಗುವಷ್ಟು ಸ್ಥಳಾವಕಾಶ ನಿಮ್ಮ ಗಣಕಯಂತ್ರದ "
-"ಡಿಸ್ಕ್(ಮುದ್ರಿಕೆಯಲ್ಲಿ) ನಲ್ಲಿ ಇಲ್ಲ"
+"ಈ ತೊಂದರೆ ವರದಿಯನ್ನು ಪರಿಶೀಲಿಸಲು ಬೇಕಾಗುವಷ್ಟು ಸ್ಥಳಾವಕಾಶ ನಿಮ್ಮ ಗಣಕಯಂತ್ರದ ಡಿಸ್ಕ್"
+"(ಮುದ್ರಿಕೆಯಲ್ಲಿ) ನಲ್ಲಿ ಇಲ್ಲ"
 
 #: ../apport/ui.py:307
 msgid "No package specified"
@@ -106,8 +106,7 @@ msgstr "ಯಾವುದೇ ಪ್ಯಾಕೆಜ್ ಹೇಳಲಾಗಿಲ್�
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
-"ನೀವು ಪ್ಯಾಕೆಜ್ ಅಥವಾ PID ಯನ್ನು ಉಲ್ಲೇಖಿಸಬೇಕು. ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗಾಗಿ --help ಅನ್ನು "
-"ನೋಡಿ"
+"ನೀವು ಪ್ಯಾಕೆಜ್ ಅಥವಾ PID ಯನ್ನು ಉಲ್ಲೇಖಿಸಬೇಕು. ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗಾಗಿ --help ಅನ್ನು ನೋಡಿ"
 
 #: ../apport/ui.py:324
 msgid "Invalid PID"
@@ -126,8 +125,8 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"ಉಲ್ಲೇಖಿಸಿದ ಪ್ರಕ್ರಿಯೆಯು ನಿಮಗೆ ಸಂಬಂಧಿಸಿದಲ್ಲ. ದಯವಿಟ್ಟು ಈ ಅನ್ವಯವನ್ನು ಪ್ರಕ್ರಿಯೆಯ "
-"ಯಜಮಾನನಾಗಿ ಅಥವಾ root ಆಗಿ ಚಾಲನೆ ಮಾಡಿ."
+"ಉಲ್ಲೇಖಿಸಿದ ಪ್ರಕ್ರಿಯೆಯು ನಿಮಗೆ ಸಂಬಂಧಿಸಿದಲ್ಲ. ದಯವಿಟ್ಟು ಈ ಅನ್ವಯವನ್ನು ಪ್ರಕ್ರಿಯೆಯ ಯಜಮಾನನಾಗಿ "
+"ಅಥವಾ root ಆಗಿ ಚಾಲನೆ ಮಾಡಿ."
 
 #: ../apport/ui.py:355
 #, python-format
@@ -161,8 +160,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -207,10 +206,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -369,69 +366,69 @@ msgstr ""
 msgid "Please choose (%s):"
 msgstr "ದಯವಿಟ್ಟು ಆಯ್ಕೆ ಮಾಡಿ (%s):"
 
-#: ../bin/apport-cli.py:144
+#: ../bin/apport-cli.py:141
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:106 ../kde/apport-kde.py:304
+#: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:113 ../kde/apport-kde.py:311
 msgid "(binary data)"
 msgstr "(ಬೈನರಿ ದತ್ತಾಂಶ)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:135 ../kde/apport-kde.py:156
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:142 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
 msgstr "ದೋಷ ವರದಿಯನ್ನು ವಿಕಾಸಗಾರರಿಗೆ ರವಾನಿಸುವುದೇ?"
 
-#: ../bin/apport-cli.py:173
+#: ../bin/apport-cli.py:174
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
 
-#: ../bin/apport-cli.py:176
+#: ../bin/apport-cli.py:177
 #, python-format
 msgid "&Send report (%s)"
 msgstr "ವರದಿಯನ್ನು ಕಳುಹಿಸು (%s) (&S)"
 
-#: ../bin/apport-cli.py:180
+#: ../bin/apport-cli.py:181
 msgid "&Examine locally"
 msgstr ""
 
-#: ../bin/apport-cli.py:184
+#: ../bin/apport-cli.py:185
 msgid "&View report"
 msgstr "ವರದಿಯನ್ನು ವೀಕ್ಷಿಸು (&V)"
 
-#: ../bin/apport-cli.py:185
+#: ../bin/apport-cli.py:186
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:187
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr ""
 
-#: ../bin/apport-cli.py:188 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:266 ../bin/apport-cli.py:298
+#: ../bin/apport-cli.py:319
 msgid "&Cancel"
 msgstr "ರದ್ದುಗೊಳಿಸು(&C)"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:217
 msgid "Problem report file:"
 msgstr "ತೊಂದರೆ ವರದಿ ಕಡತ:"
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:223 ../bin/apport-cli.py:228
 msgid "&Confirm"
 msgstr "ಖಚಿತಪಡಿಸು(&C)"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:227
 #, python-format
 msgid "Error: %s"
 msgstr "ದೋಷ: %s"
 
-#: ../bin/apport-cli.py:232 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:233 ../kde/apport-kde.py:356
 msgid "Collecting problem information"
 msgstr "ಕುಸಿತದಿಂದ ಮಾಹಿತಿಯನ್ನು ಪಡೆದುಕೊಳ್ಳಲಾಗುತ್ತಿದೆ"
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:234
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -439,11 +436,11 @@ msgstr ""
 "ಅನ್ವಯವನ್ನು ಸುಧಾರಿಸಲು ಸಂಗ್ರಹಿಸಿದ ಮಾಹಿತಿಯನ್ನು ವಿಕಾಸಗಾರರಿಗೆ ಕಳುಹಿಸಬಹುದು.\n"
 "ಇದು ಕೆಲವು ನಿಮಿಷ ತೆಗೆದು ಕೊಳ್ಳಬಹುದು."
 
-#: ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
+#: ../bin/apport-cli.py:246 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:384
 msgid "Uploading problem information"
 msgstr "ತೊಂದರೆ ಮಾಹಿತಿಯನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ"
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:247
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -451,50 +448,50 @@ msgstr ""
 "ಸಂಗ್ರಹಿಸಿದ ಮಾಹಿತಿಯನ್ನು ದೋಷ ಟ್ರಾಕಿಂಗ್ ವ್ಯವಸ್ಥೆಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ.\n"
 "ಇದು ಕೆಲವು ನಿಮಿಷ ತೆಗೆದುಕೊಳ್ಳ್ಬಹುದು."
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:297
 msgid "&Done"
 msgstr "ಆಯಿತು(&D)"
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:303
 msgid "none"
 msgstr "ಯಾವುದೂ  ಅಲ್ಲ"
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:304
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:320
 msgid "Choices:"
 msgstr "ಆಯ್ಕೆಗಳು:"
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:334
 msgid "Path to file (Enter to cancel):"
 msgstr ""
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:340
 msgid "File does not exist."
 msgstr "ಕಡತ ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ"
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:342
 msgid "This is a directory."
 msgstr "ಇದು ಕಡತ ಕೋಶವಾಗಿದೆ"
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:348
 msgid "To continue, you must visit the following URL:"
 msgstr ""
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:350
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:352
 msgid "Launch a browser now"
 msgstr "ಜಾಲ ವೀಕ್ಷಕವನ್ನು ಆರಂಭಿಸು"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:366
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 
@@ -516,7 +513,7 @@ msgid ""
 "completed normally."
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:412 ../kde/apport-kde.py:448
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:419 ../kde/apport-kde.py:455
 msgid "Apport"
 msgstr ""
 
@@ -528,7 +525,7 @@ msgstr ""
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 
@@ -540,8 +537,8 @@ msgstr ""
 msgid "Ignore future problems of this program version"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
-#: ../kde/apport-kde.py:243
+#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:160 ../gtk/apport-gtk.py:474
+#: ../kde/apport-kde.py:244
 msgid "Show Details"
 msgstr ""
 
@@ -549,11 +546,11 @@ msgstr ""
 msgid "_Examine locally"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
+#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:207 ../kde/apport-kde.py:195
 msgid "Leave Closed"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:172 ../gtk/apport-gtk.py:219
 #: ../kde/apport-kde.py:205
 msgid "Continue"
 msgstr ""
@@ -574,13 +571,13 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:378
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:385
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"ಸಂಗ್ರಹಿಸಿದ ಮಾಹಿತಿಯನ್ನು ದೋಷ ಟ್ರಾಕಿಂಗ್ ವ್ಯವಸ್ಥೆಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ. ಇದು ಕೆಲವು "
-"ನಿಮಿಷ ತೆಗೆದುಕೊಳ್ಳ್ಬಹುದು."
+"ಸಂಗ್ರಹಿಸಿದ ಮಾಹಿತಿಯನ್ನು ದೋಷ ಟ್ರಾಕಿಂಗ್ ವ್ಯವಸ್ಥೆಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ. ಇದು ಕೆಲವು ನಿಮಿಷ "
+"ತೆಗೆದುಕೊಳ್ಳ್ಬಹುದು."
 
 #: ../bin/apport-retrace.py:37
 msgid "%prog [options] <apport problem report | crash ID>"
@@ -599,8 +596,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:43
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr ""
-"ಮೂಲ ವರದಿಯನ್ನು ಬದಲಾಯಿಸುವ ಬದಲು ಬದಲಾವಣೆ ಮಾಡಿದ ವರದಿಯನ್ನು ಹೇಳಿದ ಕಡತಕ್ಕೆ ಬರೆ"
+msgstr "ಮೂಲ ವರದಿಯನ್ನು ಬದಲಾಯಿಸುವ ಬದಲು ಬದಲಾವಣೆ ಮಾಡಿದ ವರದಿಯನ್ನು ಹೇಳಿದ ಕಡತಕ್ಕೆ ಬರೆ"
 
 #: ../bin/apport-retrace.py:45
 msgid "Remove the core dump from the report after stack trace regeneration"
@@ -633,8 +629,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -664,8 +659,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -697,67 +691,71 @@ msgstr "ಒಂದು ಅಸಮರ್ಪಕ ಕಾರ್ಯವನ್ನು ವಿ
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:120
+#: ../gtk/apport-gtk.py:127
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:123
+#: ../gtk/apport-gtk.py:130
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
+#: ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
+#: ../gtk/apport-gtk.py:151 ../kde/apport-kde.py:164
 msgid "Send"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
+#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:195 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
+#: ../gtk/apport-gtk.py:204 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
-#: ../kde/apport-kde.py:323
+#: ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:196
+#: ../kde/apport-kde.py:330
 msgid "Relaunch"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
+#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
+msgid "Ignore future problems of this type"
+msgstr ""
+
+#: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
 msgstr ""
 
-#: ../kde/apport-kde.py:265
+#: ../kde/apport-kde.py:267
 msgid "Username:"
 msgstr ""
 
-#: ../kde/apport-kde.py:266
+#: ../kde/apport-kde.py:268
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:348
+#: ../kde/apport-kde.py:355
 msgid "Collecting Problem Information"
 msgstr ""
 
-#: ../kde/apport-kde.py:350
+#: ../kde/apport-kde.py:357
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
 
-#: ../kde/apport-kde.py:376
+#: ../kde/apport-kde.py:383
 msgid "Uploading Problem Information"
 msgstr ""
 
@@ -774,18 +772,15 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "%s ಅಸಲಿ ತಂತ್ರಾಂಶ(ಪ್ಯಾಕೆಜ್) ಅಲ್ಲ"
 
 #~ msgid "&Report Problem..."
 #~ msgstr "ತೊಂದರೆಯನ್ನು ವರದಿಮಾಡು (&R)"
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "ಸಂಪೂರ್ಣ ವರದಿಯನ್ನು ರವಾನಿಸಿ (&S)(ಸೂಚಿಸಲಾಗಿದೆ; %s)"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr ""
 #~ "ಮೊಟಕುಗೊಳಿಸಿದ ವರದಿಯನ್ನು ರವಾನಿಸು (&S) (ನಿಧಾನವಿರುವ ಅಂತರ್ಜಾಲ ಸಂಪರ್ಕಗಳಿಗೆ; %s)"
@@ -793,7 +788,6 @@ msgstr ""
 #~ msgid "Application problem"
 #~ msgstr "ಅನ್ವಯದ ತೊಂದರೆ"
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "ಪೂರ್ಣ ವರದಿ (ಸೂಚಿಸಲಾದ; %s)"
 
@@ -806,7 +800,6 @@ msgstr ""
 #~ msgid "Package problem"
 #~ msgstr "ಪ್ಯಾಕೇಜ್ ತೊಂದರೆ"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "ಮೊಟಕುಗೊಳಿಸಿದ ವರದಿ (ನಿಧಾನವಿರುವ ಅಂತರ್ಜಾಲ ಸಂಪರ್ಕಕ್ಕೆ; %s)"
 

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-02 13:30+0100\n"
+"POT-Creation-Date: 2012-03-21 18:25+0100\n"
 "PO-Revision-Date: 2012-03-15 15:02+0000\n"
 "Last-Translator: Aleksi Kinnunen <Unknown>\n"
 "Language-Team: Finnish <fi@li.org>\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-03-16 04:34+0000\n"
 "X-Generator: Launchpad (build 14951)\n"
-"Language: fi\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -167,8 +167,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -225,11 +225,10 @@ msgstr ""
 "Lisää raporttiin liittyvä tunniste. Tämä voidaan tehdä useampia kertoja."
 
 #: ../apport/ui.py:621
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [valinnat] [ongelma|pid|paketti|ohjelman "
-"polku|.apport/.kaatumisraportti]"
+"%prog [valinnat] [ongelma|pid|paketti|ohjelman polku|.apport/."
+"kaatumisraportti]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -360,8 +359,7 @@ msgstr ""
 #: ../apport/ui.py:1062 ../apport/ui.py:1071
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
-"Tämä ongelmaraportti kytkeytyy ohjelmaan, joka ei ole enää asennettu."
+msgstr "Tämä ongelmaraportti kytkeytyy ohjelmaan, joka ei ole enää asennettu."
 
 #: ../apport/ui.py:1090
 #, python-format
@@ -411,11 +409,11 @@ msgstr "Ole hyvä ja valitse (%s):"
 msgid "(%i bytes)"
 msgstr "(%i tavua)"
 
-#: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:108 ../kde/apport-kde.py:304
+#: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:113 ../kde/apport-kde.py:311
 msgid "(binary data)"
 msgstr "(binääritiedot)"
 
-#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:137 ../kde/apport-kde.py:156
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:142 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
 msgstr "Lähetetäänkö raportti ongelmasta kehittäjille?"
 
@@ -467,7 +465,7 @@ msgstr "&Vahvista"
 msgid "Error: %s"
 msgstr "Virhe: %s"
 
-#: ../bin/apport-cli.py:233 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:233 ../kde/apport-kde.py:356
 msgid "Collecting problem information"
 msgstr "Kerätään tietoja ongelmasta"
 
@@ -479,7 +477,7 @@ msgstr ""
 "Kerätyt tiedot voidaan lähettää kehittäjille ohjelman parantamiseksi.\n"
 "Tähän voi mennä muutama minuutti."
 
-#: ../bin/apport-cli.py:246 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
+#: ../bin/apport-cli.py:246 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:384
 msgid "Uploading problem information"
 msgstr "Lähetetään tiedot ongelmasta"
 
@@ -565,7 +563,7 @@ msgstr ""
 "Aloitettu ajo jumiutui erittäin lähellä loppua ja tulee ilmestymään "
 "suorittuakseen loppuun normaalisti."
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:412 ../kde/apport-kde.py:448
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:419 ../kde/apport-kde.py:455
 msgid "Apport"
 msgstr "Apport"
 
@@ -577,7 +575,7 @@ msgstr "Ohjelmisto lopetti toimintansa"
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>Valitettavasti sisäinen virhe havaittiin.</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:211 ../kde/apport-kde.py:202
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr "Jos huomaat ongelmien jatkuvan, käynnistä tietokone uudelleen."
 
@@ -589,8 +587,8 @@ msgstr "Auta kehittäjiä korjaamaan tämä ongelma lähettämällä vikailmoitu
 msgid "Ignore future problems of this program version"
 msgstr "Älä huomioi tämän ohjelmiston kaatumisia jatkossa"
 
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:155 ../gtk/apport-gtk.py:468
-#: ../kde/apport-kde.py:243
+#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:160 ../gtk/apport-gtk.py:474
+#: ../kde/apport-kde.py:244
 msgid "Show Details"
 msgstr "Näytä tiedot"
 
@@ -598,11 +596,11 @@ msgstr "Näytä tiedot"
 msgid "_Examine locally"
 msgstr "_Tutki paikallisesti"
 
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:202 ../kde/apport-kde.py:195
+#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:207 ../kde/apport-kde.py:195
 msgid "Leave Closed"
 msgstr "Sulje sovellus"
 
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:167 ../gtk/apport-gtk.py:214
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:172 ../gtk/apport-gtk.py:219
 #: ../kde/apport-kde.py:205
 msgid "Continue"
 msgstr "Jatka"
@@ -621,7 +619,7 @@ msgstr "Kerätään tietoja ongelman korjaamisen helpottamiseksi."
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Lähetetään tietoja ongelmasta</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:378
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:385
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -635,8 +633,7 @@ msgstr "%prog [valinnat] <tasaa ongelmaraportti | kaatumistunniste>"
 
 #: ../bin/apport-retrace.py:39
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
-"Älä laita uusia jäljityksiä raporttiin, mutta kirjoita ne stdout:iin."
+msgstr "Älä laita uusia jäljityksiä raporttiin, mutta kirjoita ne stdout:iin."
 
 #: ../bin/apport-retrace.py:41
 msgid ""
@@ -684,8 +681,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -720,8 +716,7 @@ msgstr ""
 "kaatumistietokantaan."
 
 #: ../bin/apport-retrace.py:69
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Polku jäljennös-sqlite-tietokantaan (oletus: ei jälkennöksen tarkistusta)"
 
@@ -759,61 +754,66 @@ msgstr ""
 "Järjestelmästäsi saattaa tulla epävakaa ja se saattaa tarvita "
 "uudelleenkäynnistystä."
 
-#: ../gtk/apport-gtk.py:122
+#: ../gtk/apport-gtk.py:127
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr "Valitettavasti sovellus %s sulkeutui odottamatta."
 
-#: ../gtk/apport-gtk.py:125
+#: ../gtk/apport-gtk.py:130
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Valitettavasti %s sulkeutui odottamatta."
 
-#: ../gtk/apport-gtk.py:131 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
+#: ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "%s kohtasi valitettavasti sisäisen virheen."
 
-#: ../gtk/apport-gtk.py:146 ../kde/apport-kde.py:164
+#: ../gtk/apport-gtk.py:151 ../kde/apport-kde.py:164
 msgid "Send"
 msgstr "Lähetä"
 
-#: ../gtk/apport-gtk.py:183 ../kde/apport-kde.py:178
+#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
 msgstr "Paketti: %s"
 
-#: ../gtk/apport-gtk.py:190 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:195 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Valitettavasti ohjelmistoja asennettaessa ilmeni ongelma."
 
-#: ../gtk/apport-gtk.py:199 ../kde/apport-kde.py:190
+#: ../gtk/apport-gtk.py:204 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Sovellus %s sulkeutui yllättäen."
 
-#: ../gtk/apport-gtk.py:203 ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:196
-#: ../kde/apport-kde.py:323
+#: ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:196
+#: ../kde/apport-kde.py:330
 msgid "Relaunch"
 msgstr "Käynnistä uudelleen"
 
-#: ../gtk/apport-gtk.py:472 ../kde/apport-kde.py:240
+#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
+#, fuzzy
+msgid "Ignore future problems of this type"
+msgstr "Älä huomioi tämän ohjelmiston kaatumisia jatkossa"
+
+#: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
 msgstr "Piilota tiedot"
 
-#: ../kde/apport-kde.py:265
+#: ../kde/apport-kde.py:267
 msgid "Username:"
 msgstr "Käyttäjätunnus"
 
-#: ../kde/apport-kde.py:266
+#: ../kde/apport-kde.py:268
 msgid "Password:"
 msgstr "Salasana:"
 
-#: ../kde/apport-kde.py:348
+#: ../kde/apport-kde.py:355
 msgid "Collecting Problem Information"
 msgstr "Kerätään tietoja ongelmasta"
 
-#: ../kde/apport-kde.py:350
+#: ../kde/apport-kde.py:357
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -821,7 +821,7 @@ msgstr ""
 "Kerätty tieto voidaan lähettää kehittäjille ohjelmiston parantamiseksi. Tämä "
 "voi kestää muutamia minuutteja."
 
-#: ../kde/apport-kde.py:376
+#: ../kde/apport-kde.py:383
 msgid "Uploading Problem Information"
 msgstr "Lähetetään tiedot ongelmasta"
 
@@ -841,11 +841,9 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Voit auttaa kehittäjiä korjaaman ongelman ilmoittamalla siitä."
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Paketin \"%s\" asennus tai päivitys epäonnistui."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Täydellinen raportti (suositus; %s)"
 
@@ -862,14 +860,13 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Jos et tehnyt mitään luottamuksellista (syöttänyt salasanoja tai muita "
 #~ "henkilökohtaisia tietoja), voit auttaa kehittämään ohjelmaa raportoimalla "
 #~ "ongelmasta."
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Ikävä kyllä %s sulkeutui yllättäen"
 
@@ -894,22 +891,22 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Jos et ollut tekemässä mitään luottamuksellista (kuten syöttänyt salasanoja "
-#~ "tai muuta\n"
-#~ "henkilökohtaista tietoa), voit auttaa ohjelman kehittämisessä raportoimalla\n"
+#~ "Jos et ollut tekemässä mitään luottamuksellista (kuten syöttänyt "
+#~ "salasanoja tai muuta\n"
+#~ "henkilökohtaista tietoa), voit auttaa ohjelman kehittämisessä "
+#~ "raportoimalla\n"
 #~ "ongelman."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Uudelleenkäynnistä _ohjelma"
 
-#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Ikävä kyllä paketin \"%s\" asennus tai päivitys epäonnistui."
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -917,15 +914,12 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ "<span weight=\"bold\" size=\"larger\">Paketin \"%s\" asennus tai päivitys "
 #~ "epäonnistui.</span>"
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Lähetä täydellinen raportti (suositeltavaa; %s)"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Pelkistetty raportti (hidas Internet-yhteys; %s)"
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Ikävä kyllä %s sulkeutui yllättäen."
 
@@ -935,18 +929,18 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ msgid "Restart &Program"
 #~ msgstr "Käynnistä &ohjelma uudelleen"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Lähetä &suppea raportti (hitaille Internet-yhteyksille; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Tämä poistaa joitain isoimpia osuuksia raportista. Osuudet ovat hyödyllisiä "
-#~ "ohjelman kehittäjille ongelman selvittämisessä mutta et välttämättä halua "
-#~ "odottaa niiden lähettämistä, jos Internet-yhteytesi on hidas."
+#~ "Tämä poistaa joitain isoimpia osuuksia raportista. Osuudet ovat "
+#~ "hyödyllisiä ohjelman kehittäjille ongelman selvittämisessä mutta et "
+#~ "välttämättä halua odottaa niiden lähettämistä, jos Internet-yhteytesi on "
+#~ "hidas."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Raportoi ongelma..."
@@ -967,11 +961,9 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr "Voi auttaa kehittäjiä korjaamaan ongelman raportoimalla ongelmasta."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Tämä ei ole alkuperäinen %s-paketti"
 
-#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Ikävä kyllä ohjelma \"%s\" sulkeutui yllättäen."
 
@@ -987,6 +979,5 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Lähetetäänkö nämä tiedot kehittäjille?"
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s sulkeutui yllättäen %s %s."

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-02 13:30+0100\n"
+"POT-Creation-Date: 2012-03-21 18:25+0100\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Iryna Nikanchuk <defragbrain@gmail.com>\n"
 "Language-Team: Belarusian <be@li.org>\n"
+"Language: be\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-03-03 05:08+0000\n"
 "X-Generator: Launchpad (build 14886)\n"
-"Language: be\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -163,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -220,8 +220,7 @@ msgstr ""
 "Дадаць дадатковы тэг да справаздачы. Можа быць паказаны некалькі разоў."
 
 #: ../apport/ui.py:621
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [параметры] [прыкмета|pid|пакет|шлях да праграмы|.apport/.crash файл]"
 
@@ -405,20 +404,20 @@ msgstr ""
 msgid "Please choose (%s):"
 msgstr ""
 
-#: ../bin/apport-cli.py:144
+#: ../bin/apport-cli.py:141
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i байт)"
 
-#: ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:106 ../kde/apport-kde.py:304
+#: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:113 ../kde/apport-kde.py:311
 msgid "(binary data)"
 msgstr "(двайковыя дадзеныя)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:135 ../kde/apport-kde.py:156
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:142 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
 msgstr "Даслаць распрацоўшчыкам паведамленне аб праблеме?"
 
-#: ../bin/apport-cli.py:173
+#: ../bin/apport-cli.py:174
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -426,52 +425,52 @@ msgstr ""
 "Пасля таго, як справаздача будзе дасланая, запоўніце\n"
 "форму ў акне браўзэра , што адчынілася аўтаматычна."
 
-#: ../bin/apport-cli.py:176
+#: ../bin/apport-cli.py:177
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Даслаць паведамленне (%s)"
 
-#: ../bin/apport-cli.py:180
+#: ../bin/apport-cli.py:181
 msgid "&Examine locally"
 msgstr ""
 
-#: ../bin/apport-cli.py:184
+#: ../bin/apport-cli.py:185
 msgid "&View report"
 msgstr ""
 
-#: ../bin/apport-cli.py:185
+#: ../bin/apport-cli.py:186
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Захаваць файл справаздачы для наступнай адпраўкі альбо капіявання куды-"
 "небудзь"
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:187
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Адмяніць і &ігнараваць будучыя збоі ў гэтай версіі праграмы"
 
-#: ../bin/apport-cli.py:188 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:266 ../bin/apport-cli.py:298
+#: ../bin/apport-cli.py:319
 msgid "&Cancel"
 msgstr "&Скасаваць"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:217
 msgid "Problem report file:"
 msgstr ""
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:223 ../bin/apport-cli.py:228
 msgid "&Confirm"
 msgstr "&Пацвердзіць"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:227
 #, python-format
 msgid "Error: %s"
 msgstr "Памылка: %s"
 
-#: ../bin/apport-cli.py:232 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:233 ../kde/apport-kde.py:356
 msgid "Collecting problem information"
 msgstr ""
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:234
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -479,11 +478,11 @@ msgstr ""
 "Сабраная інфармацыя можа быць накіравана распрацоўшчыкам для\n"
 "паляпшэння дастасавання. Гэта можа заняць некалькі хвілін."
 
-#: ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
+#: ../bin/apport-cli.py:246 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:384
 msgid "Uploading problem information"
 msgstr "Перадача інфармацыі аб непаладцы"
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:247
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -491,51 +490,51 @@ msgstr ""
 "Сабраная інфармацыя накіроўваецца да сістэмы адсочвання памылак.\n"
 "Гэта можа заняць некалькі хвілін."
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:297
 msgid "&Done"
 msgstr "&Зроблена"
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:303
 msgid "none"
 msgstr ""
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:304
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:320
 msgid "Choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:334
 msgid "Path to file (Enter to cancel):"
 msgstr ""
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:340
 msgid "File does not exist."
 msgstr "Файл не існуе."
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:342
 msgid "This is a directory."
 msgstr "Гэта - дырэкторыя."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:348
 msgid "To continue, you must visit the following URL:"
 msgstr "Каб працягнуць, Вы павінны наведаць наступны адрас:"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:350
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
 "Зараз Вы можаце адкрыць браўзар ці скапіяваць URL у браўзар на іншы кампутар."
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:352
 msgid "Launch a browser now"
 msgstr "Запусціць браўзар"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:366
 msgid "No pending crash reports. Try --help for more information."
 msgstr "Няма чакаючых паведамленьняў аб збоях. Паспрабуйце ключ --help."
 
@@ -562,7 +561,7 @@ msgstr ""
 "Адбылася памылка ў працэсе стварэння справаздачы, бо сам працэс завіс перад "
 "сваім завяршэннем; для нармальнага завяршэння ён павінен быў з'явіцца."
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:412 ../kde/apport-kde.py:448
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:419 ../kde/apport-kde.py:455
 msgid "Apport"
 msgstr "Apport"
 
@@ -574,7 +573,7 @@ msgstr ""
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 
@@ -586,8 +585,8 @@ msgstr ""
 msgid "Ignore future problems of this program version"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
-#: ../kde/apport-kde.py:243
+#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:160 ../gtk/apport-gtk.py:474
+#: ../kde/apport-kde.py:244
 msgid "Show Details"
 msgstr ""
 
@@ -595,11 +594,11 @@ msgstr ""
 msgid "_Examine locally"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
+#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:207 ../kde/apport-kde.py:195
 msgid "Leave Closed"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:172 ../gtk/apport-gtk.py:219
 #: ../kde/apport-kde.py:205
 msgid "Continue"
 msgstr ""
@@ -618,7 +617,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Перадача звестак аб няспраўнасці</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:378
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:385
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -687,8 +686,7 @@ msgstr ""
 "працуе ў дадзены момант."
 
 #: ../bin/apport-retrace.py:57
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Паведамляць аб ходзе выканання загрузкі / ўсталёўкі пакетаў у часовае "
 "асяроддзе"
@@ -727,8 +725,7 @@ msgstr ""
 "дадзеных збояў."
 
 #: ../bin/apport-retrace.py:69
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Шлях да дублюючай базы дадзеных sqlite (па змаўчанні: без праверкі "
 "дублікатаў)"
@@ -764,61 +761,66 @@ msgstr "Паведаміць аб недапрацоўцы распрацоўш�
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr "Сістэма можа стаць нестабільнай, магчыма спатрэбіцца перазагрузка."
 
-#: ../gtk/apport-gtk.py:120
+#: ../gtk/apport-gtk.py:127
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:123
+#: ../gtk/apport-gtk.py:130
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
+#: ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
+#: ../gtk/apport-gtk.py:151 ../kde/apport-kde.py:164
 msgid "Send"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
+#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:195 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
+#: ../gtk/apport-gtk.py:204 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
-#: ../kde/apport-kde.py:323
+#: ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:196
+#: ../kde/apport-kde.py:330
 msgid "Relaunch"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
+#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
+#, fuzzy
+msgid "Ignore future problems of this type"
+msgstr "&Ігнараваць будучыя збоі ў гэтай версіі праграмы"
+
+#: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
 msgstr ""
 
-#: ../kde/apport-kde.py:265
+#: ../kde/apport-kde.py:267
 msgid "Username:"
 msgstr ""
 
-#: ../kde/apport-kde.py:266
+#: ../kde/apport-kde.py:268
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:348
+#: ../kde/apport-kde.py:355
 msgid "Collecting Problem Information"
 msgstr "Збор інфармацыі аб праблеме"
 
-#: ../kde/apport-kde.py:350
+#: ../kde/apport-kde.py:357
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -826,7 +828,7 @@ msgstr ""
 "Сабраную інфармацыю можна даслаць распрацоўшчыкам, каб палепшыць "
 "прыкладанне. Гэта можа заняць некалькі хвілін."
 
-#: ../kde/apport-kde.py:376
+#: ../kde/apport-kde.py:383
 msgid "Uploading Problem Information"
 msgstr "Перадача інфармацыі аб непаладцы"
 
@@ -855,14 +857,9 @@ msgstr "Тэчка прызначэння існуе і яна не пустая
 #~ msgid "Kernel problem"
 #~ msgstr "Праблемы з ядром"
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Прабачце, праграма %s нечакана зачыніліся"
 
-#~ msgid "&Ignore future crashes of this program version"
-#~ msgstr "&Ігнараваць будучыя збоі ў гэтай версіі праграмы"
-
-#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Прабачце, праграма \"%s\" нечакана зачыніліся."
 
@@ -883,8 +880,8 @@ msgstr "Тэчка прызначэння існуе і яна не пустая
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Вы можаце дапамагчы распрацоўшчыкам выправіць дадзеную праблему, адаслаўшы "
-#~ "справаздачу аб ёй."
+#~ "Вы можаце дапамагчы распрацоўшчыкам выправіць дадзеную праблему, "
+#~ "адаслаўшы справаздачу аб ёй."
 
 #~ msgid ""
 #~ "After the problem report has been sent, please fill out the form in the "
@@ -893,9 +890,9 @@ msgstr "Тэчка прызначэння існуе і яна не пустая
 #~ "Пасля таго, як справаздача будзе даслана, запоўніце форму ў аўтаматычна "
 #~ "выплыўшым акне аглядальніка."
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
-#~ msgstr "Кароткая версія справаздачы (пры марудным злучэнні з Інтэрнэтам; %s)"
+#~ msgstr ""
+#~ "Кароткая версія справаздачы (пры марудным злучэнні з Інтэрнэтам; %s)"
 
 #~ msgid "Restart _Program"
 #~ msgstr "Перазапусціць _праграму"
@@ -909,55 +906,53 @@ msgstr "Тэчка прызначэння існуе і яна не пустая
 #~ msgid "Application problem"
 #~ msgstr "Праблемы дастасавання"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Прабачце, не ўдалося ўсталяваць альбо "
-#~ "абнавіць пакет «%s».</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Прабачце, не ўдалося ўсталяваць "
+#~ "альбо абнавіць пакет «%s».</span>"
 
 #~ msgid "_Send Report"
 #~ msgstr "Да_слаць паведамленне"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Калі Вы не ўводзілі сакрэтную інфармацыю (паролі або асабістыя дадзеныя),\n"
+#~ "Калі Вы не ўводзілі сакрэтную інфармацыю (паролі або асабістыя "
+#~ "дадзеныя),\n"
 #~ "Вы можаце дапамагчы нам палепшыць праграму, адправіўшы справаздачу аб "
 #~ "памылцы."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s нечакана зачынілася %s у %s."
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Ня атрымалася ўсталяваць альбо абнавіць пакет «%s»."
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr ""
-#~ "Адаслаць &скарочаную версію справаздачы (павольнае злучэнне з Інтэрнэтам; %s)"
+#~ "Адаслаць &скарочаную версію справаздачы (павольнае злучэнне з Інтэрнэтам; "
+#~ "%s)"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
-#~ "Калі Вы ня ўводзілі сакрэтную інфармацыю (паролі або асабістыя дадзеныя), Вы "
-#~ "можаце дапамагчы нам палепшыць праграму, адправіўшы справаздачу аб непаладцы."
+#~ "Калі Вы ня ўводзілі сакрэтную інфармацыю (паролі або асабістыя дадзеныя), "
+#~ "Вы можаце дапамагчы нам палепшыць праграму, адправіўшы справаздачу аб "
+#~ "непаладцы."
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Прабачце, праграмы %s нечакана зачыніліся."
 
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "У Вашай сістэме выяўлена сур'ёзная няспраўнасць ядра."
 
-#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Прабачце, адбылася памылка ўсталёўкі або абнаўлення пакета \"%s\"."
 
@@ -973,11 +968,11 @@ msgstr "Тэчка прызначэння існуе і яна не пустая
 #~ "якая аўтаматычна адкрыецца ў браўзары."
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Гэтае дзеянне выдаліць некаторыя вялікія элементы з паведамлення. Дадзеныя "
-#~ "элементы вельмі карысныя для распрацоўшчыкаў, але могуць быць занадта "
-#~ "вялікімі для загрузкі ў выпадку, калі Вы падлучаны да Інтэрнэту праз "
-#~ "павольны канал."
+#~ "Гэтае дзеянне выдаліць некаторыя вялікія элементы з паведамлення. "
+#~ "Дадзеныя элементы вельмі карысныя для распрацоўшчыкаў, але могуць быць "
+#~ "занадта вялікімі для загрузкі ў выпадку, калі Вы падлучаны да Інтэрнэту "
+#~ "праз павольны канал."

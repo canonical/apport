@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-02 13:30+0100\n"
+"POT-Creation-Date: 2012-03-21 18:25+0100\n"
 "PO-Revision-Date: 2011-12-31 13:09+0000\n"
 "Last-Translator: vilqn87 <michalgorski87@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
 "X-Generator: Launchpad (build 14886)\n"
-"Language: pl\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -169,8 +169,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -224,8 +224,7 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Dodaje dodatkową etykietę do raportu. Można użyć kilkukrotnie."
 
 #: ../apport/ui.py:621
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [opcje] [symptom|pid|scieżka_do_programu|plik .apport/.crash]"
 
 #: ../apport/ui.py:624
@@ -407,20 +406,20 @@ msgstr "Co zrobić? Oto dostępne opcje:"
 msgid "Please choose (%s):"
 msgstr "Proszę wybrać (%s):"
 
-#: ../bin/apport-cli.py:144
+#: ../bin/apport-cli.py:141
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i bajtów)"
 
-#: ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:106 ../kde/apport-kde.py:304
+#: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:113 ../kde/apport-kde.py:311
 msgid "(binary data)"
 msgstr "(dane binarne)"
 
-#: ../bin/apport-cli.py:172 ../gtk/apport-gtk.py:135 ../kde/apport-kde.py:156
+#: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:142 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
 msgstr "Wysłać raport o problemie do twórców programu?"
 
-#: ../bin/apport-cli.py:173
+#: ../bin/apport-cli.py:174
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -428,51 +427,50 @@ msgstr ""
 "Gdy raport zostanie wysłany, proszę wypełnić formularz\n"
 "w automatycznie otwartej przeglądarce internetowej."
 
-#: ../bin/apport-cli.py:176
+#: ../bin/apport-cli.py:177
 #, python-format
 msgid "&Send report (%s)"
 msgstr "Wy&słanie raportu (%s)"
 
-#: ../bin/apport-cli.py:180
+#: ../bin/apport-cli.py:181
 msgid "&Examine locally"
 msgstr ""
 
-#: ../bin/apport-cli.py:184
+#: ../bin/apport-cli.py:185
 msgid "&View report"
 msgstr "&Wyświetlenie raportu"
 
-#: ../bin/apport-cli.py:185
-msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr ""
-"Pozostawienie pli&ku raportu do późniejszego wysłania lub skopiowania"
-
 #: ../bin/apport-cli.py:186
+msgid "&Keep report file for sending later or copying to somewhere else"
+msgstr "Pozostawienie pli&ku raportu do późniejszego wysłania lub skopiowania"
+
+#: ../bin/apport-cli.py:187
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Anulowanie i  &ignorowanie przyszłych problemów tej wersji programu"
 
-#: ../bin/apport-cli.py:188 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:266 ../bin/apport-cli.py:298
+#: ../bin/apport-cli.py:319
 msgid "&Cancel"
 msgstr "&Anulowanie"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:217
 msgid "Problem report file:"
 msgstr "Plik z raportem problemu:"
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:223 ../bin/apport-cli.py:228
 msgid "&Confirm"
 msgstr "&Potwierdź"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:227
 #, python-format
 msgid "Error: %s"
 msgstr "Błąd: %s"
 
-#: ../bin/apport-cli.py:232 ../kde/apport-kde.py:349
+#: ../bin/apport-cli.py:233 ../kde/apport-kde.py:356
 msgid "Collecting problem information"
 msgstr "Zbieranie informacji o problemie"
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:234
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -480,11 +478,11 @@ msgstr ""
 "Zebrane informacje mogą zostać wysłane do twórców, aby ulepszyć\n"
 "program. To może potrwa kilka minut."
 
-#: ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:377
+#: ../bin/apport-cli.py:246 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:384
 msgid "Uploading problem information"
 msgstr "Wysyłanie informacji o problemie"
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:247
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -492,40 +490,40 @@ msgstr ""
 "Zebrane informacje są wysyłane do systemu zgłaszania błędów.\n"
 "To może potrwać kilka minut."
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:297
 msgid "&Done"
 msgstr "&Gotowe"
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:303
 msgid "none"
 msgstr "brak"
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:304
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Zaznaczono: %s. Wielokrotny wybór:"
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:320
 msgid "Choices:"
 msgstr "Wybór:"
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:334
 msgid "Path to file (Enter to cancel):"
 msgstr "Ścieżka do pliku (wciśnięcie klawisza ENTER anuluje działanie):"
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:340
 msgid "File does not exist."
 msgstr "Plik nie istnieje."
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:342
 msgid "This is a directory."
 msgstr "To jest katalog."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:348
 msgid "To continue, you must visit the following URL:"
 msgstr "Aby kontynuować, przejdź pod następujący adres URL:"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:350
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -533,11 +531,11 @@ msgstr ""
 "Możesz uruchomić teraz przeglądarkę internetową albo wkleić ten adres URL do "
 "przeglądarki na innym komputerze."
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:352
 msgid "Launch a browser now"
 msgstr "Uruchom teraz przeglądarkę"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:366
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nie ma oczekujących raportów awarii. Proszę użyć --help, aby uzyskać więcej "
@@ -567,7 +565,7 @@ msgstr ""
 "Wznawianie zawiesiło się bardzo blisko końca tego procesu i wygląda na "
 "ukończony poprawnie."
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:412 ../kde/apport-kde.py:448
+#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:419 ../kde/apport-kde.py:455
 msgid "Apport"
 msgstr "Apport"
 
@@ -579,7 +577,7 @@ msgstr ""
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:209 ../kde/apport-kde.py:202
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 
@@ -591,8 +589,8 @@ msgstr ""
 msgid "Ignore future problems of this program version"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:153 ../gtk/apport-gtk.py:461
-#: ../kde/apport-kde.py:243
+#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:160 ../gtk/apport-gtk.py:474
+#: ../kde/apport-kde.py:244
 msgid "Show Details"
 msgstr "Wyświetl szczegóły"
 
@@ -600,11 +598,11 @@ msgstr "Wyświetl szczegóły"
 msgid "_Examine locally"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:200 ../kde/apport-kde.py:195
+#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:207 ../kde/apport-kde.py:195
 msgid "Leave Closed"
 msgstr ""
 
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:165 ../gtk/apport-gtk.py:212
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:172 ../gtk/apport-gtk.py:219
 #: ../kde/apport-kde.py:205
 msgid "Continue"
 msgstr "Kontynuuj"
@@ -625,7 +623,7 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Wysyłanie informacji o problemie</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:378
+#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:385
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -688,8 +686,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -724,8 +721,7 @@ msgstr ""
 "wysłaniem ich do bazy problemów."
 
 #: ../bin/apport-retrace.py:69
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Ścieżka do zduplikowanej bazy danych sqlite (domyślnie: bez wyszukiwania "
 "duplikatów)"
@@ -764,61 +760,66 @@ msgstr ""
 "System może być niestabilny, dlatego może być wymagane jego ponowne "
 "uruchomienie."
 
-#: ../gtk/apport-gtk.py:120
+#: ../gtk/apport-gtk.py:127
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr "Przepraszamy, program %s został niespodziewanie zakończony."
 
-#: ../gtk/apport-gtk.py:123
+#: ../gtk/apport-gtk.py:130
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:129 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
+#: ../gtk/apport-gtk.py:136 ../kde/apport-kde.py:170 ../kde/apport-kde.py:199
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:144 ../kde/apport-kde.py:164
+#: ../gtk/apport-gtk.py:151 ../kde/apport-kde.py:164
 msgid "Send"
 msgstr "Wyślij"
 
-#: ../gtk/apport-gtk.py:181 ../kde/apport-kde.py:178
+#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
 msgstr "Pakiet: %s"
 
-#: ../gtk/apport-gtk.py:188 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:195 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Przepraszamy, wystąpił błąd podczas instalowania oprogramowania."
 
-#: ../gtk/apport-gtk.py:197 ../kde/apport-kde.py:190
+#: ../gtk/apport-gtk.py:204 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Program %s został niespodziewanie zakończony."
 
-#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:196
-#: ../kde/apport-kde.py:323
+#: ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:196
+#: ../kde/apport-kde.py:330
 msgid "Relaunch"
 msgstr "Uruchom ponownie"
 
-#: ../gtk/apport-gtk.py:465 ../kde/apport-kde.py:240
+#: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
+#, fuzzy
+msgid "Ignore future problems of this type"
+msgstr "_Ignorowanie przyszłych problemów tej wersji programu"
+
+#: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
 msgstr "Ukryj szczegóły"
 
-#: ../kde/apport-kde.py:265
+#: ../kde/apport-kde.py:267
 msgid "Username:"
 msgstr "Nazwa użytkownika:"
 
-#: ../kde/apport-kde.py:266
+#: ../kde/apport-kde.py:268
 msgid "Password:"
 msgstr "Hasło:"
 
-#: ../kde/apport-kde.py:348
+#: ../kde/apport-kde.py:355
 msgid "Collecting Problem Information"
 msgstr "Zbieranie informacji o problemie"
 
-#: ../kde/apport-kde.py:350
+#: ../kde/apport-kde.py:357
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -826,7 +827,7 @@ msgstr ""
 "Zebrane informacje mogą zostać wysłane do twórców programu w celu jego "
 "usprawnienia. To może potrwać kilka minut."
 
-#: ../kde/apport-kde.py:376
+#: ../kde/apport-kde.py:383
 msgid "Uploading Problem Information"
 msgstr "Wysyłanie informacji o problemie"
 
@@ -843,11 +844,9 @@ msgstr "Użycie: %s <raport> <docelowy katalog>"
 msgid "Destination directory exists and is not empty."
 msgstr "Katalog docelowy istnieje i nie jest pusty."
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Instalowanie lub aktualizowanie pakietu \"%s\" nie powiodło się."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Raport pełny (zalecany; %s)"
 
@@ -869,30 +868,27 @@ msgstr "Katalog docelowy istnieje i nie jest pusty."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Jeśli wykonywana praca nie była poufna (wpisywanie haseł bądź innych "
 #~ "prywatnych informacji), można pomóc w usprawnieniu programu zgłaszając "
 #~ "problem."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "Wy&syłanie pełnego raportu (zalecane; %s)"
-
-#~ msgid "_Ignore future crashes of this program version"
-#~ msgstr "_Ignorowanie przyszłych problemów tej wersji programu"
 
 #~ msgid "Restart &Program"
 #~ msgstr "Uruchom &program ponownie"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "To usunie większe obiekty z raportu. Są bardzo przydatne dla programistów w "
-#~ "celu naprawienia błędu, jednak mogą być zbyt duże jeśli posiadasz wolne "
+#~ "To usunie większe obiekty z raportu. Są bardzo przydatne dla programistów "
+#~ "w celu naprawienia błędu, jednak mogą być zbyt duże jeśli posiadasz wolne "
 #~ "połączenie z Internetem."
 
 #~ msgid "&Report Problem..."
@@ -907,7 +903,6 @@ msgstr "Katalog docelowy istnieje i nie jest pusty."
 #~ msgid "Kernel problem"
 #~ msgstr "Problem z jądrem systemu"
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "To nie jest oryginalny pakiet %s"
 
@@ -919,8 +914,8 @@ msgstr "Katalog docelowy istnieje i nie jest pusty."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Jeśli bieżąca praca nie jest jest tajna (wprowadzanie haseł lub innych "
 #~ "prywatnych danych), to można pomóc w ulepszeniu programu poprzez wysłanie "
@@ -929,11 +924,9 @@ msgstr "Katalog docelowy istnieje i nie jest pusty."
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "W systemie wystąpił poważny problem z jądrem."
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Wysłanie z&redukowanego raportu (wolne łącze internetowe; %s)"
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s nieoczekiwanie zakończył działanie: %s o %s."
 
@@ -946,12 +939,10 @@ msgstr "Katalog docelowy istnieje i nie jest pusty."
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Można pomóc twórcom naprawić problem, zgłaszając go."
 
-#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr ""
 #~ "Przepraszamy, nie udało się zainstalować lub zaktualizować pakietu \"%s\"."
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Raport zmniejszony (wolne połączenie internetowe; %s)"
 
@@ -969,7 +960,6 @@ msgstr "Katalog docelowy istnieje i nie jest pusty."
 #~ msgid "Restart _Program"
 #~ msgstr "_Uruchom program ponownie"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -977,10 +967,8 @@ msgstr "Katalog docelowy istnieje i nie jest pusty."
 #~ "<span weight=\"bold\" size=\"larger\">Przepraszamy, nie udało się "
 #~ "zainstalować lub zaktualizować pakietu \"%s\".</span>"
 
-#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Przepraszamy, program \"%s\" został niespodziewanie zakończony."
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Przepraszamy, niespodziewanie zakończono %s."
