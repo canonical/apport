@@ -57,6 +57,8 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         self.md = None
 
+        self.desktop_file = None
+
     #
     # ui_* implementation of abstract UserInterface classes
     #
@@ -195,10 +197,10 @@ class GTKUserInterface(apport.ui.UserInterface):
                 _('Sorry, a problem occurred while installing software.'))
         else:
             # Regular crash.
-            desktop_file = self.get_desktop_entry()
-            if desktop_file:
-                icon = desktop_file.getIcon()
-                n = desktop_file.getName().encode('UTF-8')
+            self.desktop_file = self.get_desktop_entry()
+            if self.desktop_file:
+                icon = self.desktop_file.getIcon()
+                n = self.desktop_file.getName().encode('UTF-8')
                 n = GLib.markup_escape_text(n).decode('UTF-8')
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
                     _('The application %s has closed unexpectedly.') % n)
@@ -267,7 +269,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 return_value['report'] = True
             if self.w('ignore_future_problems').get_active():
                 return_value['blacklist'] = True
-            if widget.get_label() == _('Relaunch'):
+            if widget == self.w('continue_button') and self.desktop_file:
                 return_value['restart'] = True
             Gtk.main_quit()
 

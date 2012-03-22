@@ -22,6 +22,9 @@ Bug fixes:
    which deals with them. Thanks Steve Langasek. (LP: #957102)
  - report.py, mark_ignore(): Fix crash if executable went away underneath us.
    (LP: #961410)
+ - apport-gtk: Do not compare current continue button label against a
+   translated string.  Instead just remember whether or not we can restart the
+   application. (LP: #960439)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of
