@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Артём Попов <artfwo@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
-"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-22 04:35+0000\n"
+"X-Generator: Launchpad (build 14981)\n"
+"Language: ru\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -86,7 +86,7 @@ msgstr "Отчёт относится к пакету, который не бы�
 
 #: ../apport/ui.py:244
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
+msgstr "Произошла ошибка при попытке обработать это сообщение о неполадке:"
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -163,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -209,7 +209,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [параметры] [признак|pid|пакет|путь до программы|.apport/.crash файл]"
 
@@ -303,6 +304,8 @@ msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
+"Неполадка произошла с программой %s, в которую были внесены изменения с "
+"момента её аварийного завершения работы."
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -374,7 +377,8 @@ msgstr ""
 
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
-msgstr "Сообщение о неисправности отправлено разработчикам. Спасибо за помощь!"
+msgstr ""
+"Сообщение о неисправности отправлено разработчикам. Спасибо за помощь!"
 
 #: ../bin/apport-cli.py:71
 msgid "Press any key to continue..."
@@ -557,7 +561,7 @@ msgstr "Отчёт о неполадке"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>Извините, возникла внутренняя ошибка.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
@@ -669,7 +673,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -705,7 +710,8 @@ msgstr ""
 "данных сбоев."
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Путь к дублирующей базе данных sqlite (по умолчанию: без проверки дубликатов)"
 
@@ -772,7 +778,7 @@ msgstr ""
 #: ../gtk/apport-gtk.py:204 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr ""
+msgstr "Приложение %s внезапно закрылось."
 
 #: ../gtk/apport-gtk.py:208 ../gtk/apport-gtk.py:270 ../kde/apport-kde.py:196
 #: ../kde/apport-kde.py:330
@@ -780,9 +786,8 @@ msgid "Relaunch"
 msgstr "Перезапустить"
 
 #: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Ignore future problems of this type"
-msgstr "Игнорировать будущие сбои в этой версии программы"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
@@ -823,9 +828,11 @@ msgstr "Использование: %s <отчет> <папка назначен
 msgid "Destination directory exists and is not empty."
 msgstr "Папка назначения существует и не пуста."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Не удалось установить или обновить пакет «%s»."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Полный отчёт (рекомендуется; %s)"
 
@@ -842,8 +849,8 @@ msgstr "Папка назначения существует и не пуста.
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Если вы не вводили секретную информацию (пароли или личные данные), вы "
 #~ "можете помочь нам улучшить программу, отправив отчёт о неполадке."
@@ -856,19 +863,20 @@ msgstr "Папка назначения существует и не пуста.
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Если вы не вводили секретную информацию (пароли или личные данные),\n"
 #~ "вы можете помочь нам улучшить программу, отправив отчёт о неполадке."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s неожиданно закрылась %s в %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Перезапустить _программу"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -876,9 +884,11 @@ msgstr "Папка назначения существует и не пуста.
 #~ "<span weight=\"bold\" size=\"larger\">Извините, не удалось установить или "
 #~ "обновить пакет «%s».</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Послать полный отчёт (рекомендуется; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Краткая версия отчёта (при медленном соединении с Интернетом; %s)"
 
@@ -886,13 +896,13 @@ msgstr "Папка назначения существует и не пуста.
 #~ msgstr "_Игнорировать будущие сбои в этой версии программы"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Некоторые большие части вашего сообщения будут удалены. Они очень полезны "
-#~ "разработчикам при устранении неполадки, но могут долго отправляться, если "
-#~ "у вас медленное соединение с Интернетом."
+#~ "разработчикам при устранении неполадки, но могут долго отправляться, если у "
+#~ "вас медленное соединение с Интернетом."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Сообщить о проблеме..."
@@ -908,6 +918,7 @@ msgstr "Папка назначения существует и не пуста.
 #~ msgstr ""
 #~ "Вы можете помочь разработчикам, отправив отчёт о выявленной неполадке."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Это не оригинальный пакет %s"
 
@@ -922,9 +933,9 @@ msgstr "Папка назначения существует и не пуста.
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Вы можете помочь разработчикам исправить эту проблему, отправив о ней "
-#~ "отчёт."
+#~ "Вы можете помочь разработчикам исправить эту проблему, отправив о ней отчёт."
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr ""
 #~ "Послать &сокращенную версию отчета (медленное соединение с Интернетом; %s)"

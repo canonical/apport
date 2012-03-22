@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Ofir Klinger <klinger.ofir@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
-"Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:08+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-22 04:34+0000\n"
+"X-Generator: Launchpad (build 14981)\n"
+"Language: he\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -157,8 +157,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -203,8 +203,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -628,7 +630,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -658,7 +661,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -730,9 +734,8 @@ msgid "Relaunch"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Ignore future problems of this type"
-msgstr "ה_תעלם מקריסות עתידיות של גירסה זו של התוכנה"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
@@ -773,9 +776,11 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "התקנת או שדרוג החבילה \"%s\" נכשלו."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "דוח שלם (מומלץ; %s)"
 
@@ -794,19 +799,20 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "במידה ולא ביצעת כל פעולה חשאית (הזנת סיסמאות או מידע פרטי אחר כלשהו), "
-#~ "תוכל לעזור לשפר את היישום על ידי דיווח אודות התקלה."
+#~ "במידה ולא ביצעת כל פעולה חשאית (הזנת סיסמאות או מידע פרטי אחר כלשהו), תוכל "
+#~ "לעזור לשפר את היישום על ידי דיווח אודות התקלה."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s נסגר במפתיע תחת %s ב- %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "הפעל את התוכנה מחדש"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -814,23 +820,29 @@ msgstr ""
 #~ "<span weight=\"bold\" size=\"larger\">אנו מתנצלים, עדכון או שדרוג החבילה "
 #~ "\"%s\" נכשל.</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&שלח דוח מלא (מומלץ; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "דוח מצומצם (חיבור איטי לאינטרנט; %s)"
 
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr "ה_תעלם מקריסות עתידיות של גירסה זו של התוכנה"
+
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "שלח דוח &מצומצם (לחיבור אינטרנט איטי; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "פעולה זו תסיר כמה פריטים גדולים מהדוח. אלו מאוד שימושיים למפתחים לצורך "
-#~ "איתור השגיאה, אך עלולים להיות גדולים מדי עבורך להעלאה במידה ויש לך חיבור "
-#~ "אינטרנט איטי."
+#~ "פעולה זו תסיר כמה פריטים גדולים מהדוח. אלו מאוד שימושיים למפתחים לצורך איתור "
+#~ "השגיאה, אך עלולים להיות גדולים מדי עבורך להעלאה במידה ויש לך חיבור אינטרנט "
+#~ "איטי."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&דווח על תקלה..."
@@ -845,6 +857,7 @@ msgstr ""
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr "תוכל לעזור למפתחים לתקן את החבילה על ידי דיווח על התקלה."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "זוהי אינה חבילת %s מקורית"
 
@@ -865,8 +878,8 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "במידה ולא עשית שום דבר חסוי (כמו הזנת סיסמאות או מידע פרטי), תוכל לעזור "
 #~ "בשיפור היישום באמצעות דיווח על הבעיה."

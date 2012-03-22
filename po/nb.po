@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Kjetil Birkeland Moe <kjetilbi@stud.ntnu.no>\n"
 "Language-Team: Norwegian Bokmål <nb@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-22 04:34+0000\n"
+"X-Generator: Launchpad (build 14981)\n"
+"Language: \n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -105,7 +105,8 @@ msgstr "Ingen pakke er spesifisert"
 #: ../apport/ui.py:308
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Du må spesifisere en pakke eller PID: Se --hjelp for mer informasjon."
+msgstr ""
+"Du må spesifisere en pakke eller PID: Se --hjelp for mer informasjon."
 
 #: ../apport/ui.py:324
 msgid "Invalid PID"
@@ -159,8 +160,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -205,7 +206,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [valg] [symptom|pid|pakke|programsti|.apport/.crash-fil]"
 
 #: ../apport/ui.py:624
@@ -311,7 +313,8 @@ msgstr "Kunne ikke starte nettleseren for å åpne %s."
 #: ../apport/ui.py:999
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr "Vennligst skriv inn kontoinformasjonen din for %s-feilsporingssystemet"
+msgstr ""
+"Vennligst skriv inn kontoinformasjonen din for %s-feilsporingssystemet"
 
 #: ../apport/ui.py:1010
 msgid "Network problem"
@@ -329,7 +332,8 @@ msgstr "Minne fullt"
 
 #: ../apport/ui.py:1039
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "Systemet ditt har ikke nok minne til å behandle denne krasjrapporten."
+msgstr ""
+"Systemet ditt har ikke nok minne til å behandle denne krasjrapporten."
 
 #: ../apport/ui.py:1062 ../apport/ui.py:1071
 msgid ""
@@ -610,7 +614,8 @@ msgstr "%prog [alternativer] <apport feilrapport | kræsj ID>"
 
 #: ../bin/apport-retrace.py:39
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "Legg ikke til flere meldinger i rapporten, skriv de heller til stdout."
+msgstr ""
+"Legg ikke til flere meldinger i rapporten, skriv de heller til stdout."
 
 #: ../bin/apport-retrace.py:41
 msgid ""
@@ -660,7 +665,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -694,7 +700,8 @@ msgstr ""
 "Vis krasjrapporten og be om bekreftelse før den sendes til krasjdatabasen."
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "Sti til kopien av sqlite-databasen. (Forvalgt: ikke se etter kopier)"
 
 #: ../bin/apport-retrace.py:74
@@ -767,9 +774,8 @@ msgid "Relaunch"
 msgstr "Start på nytt"
 
 #: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Ignore future problems of this type"
-msgstr "Ignorer fremtidige problemer med denne programversjonen"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
@@ -814,13 +820,13 @@ msgstr "Målmappe finnes og er ikke tom."
 #~ msgstr "Program feil"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Dette vil fjerne noen store elementer fra rapporten. Disse er veldig "
-#~ "nyttige for utviklere for å feilsøke problemet, men kan være for store "
-#~ "for deg å laste opp om du har en treg internettforbindelse."
+#~ "Dette vil fjerne noen store elementer fra rapporten. Disse er veldig nyttige "
+#~ "for utviklere for å feilsøke problemet, men kan være for store for deg å "
+#~ "laste opp om du har en treg internettforbindelse."
 
 #~ msgid "Content of the report"
 #~ msgstr "Innhold i rapporten"
@@ -830,8 +836,7 @@ msgstr "Målmappe finnes og er ikke tom."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Hvis du ikke gjorde noe konfidensielt (skrev inn passord eller annen\n"
@@ -851,15 +856,19 @@ msgstr "Målmappe finnes og er ikke tom."
 #~ msgstr ""
 #~ "Du kan hjelpe utviklerne med å reparere problemet ved å rapportere det."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Send komplett rapport (anbefalt; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Send &redusert rapport (treg internettforbindelse; %s)"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Pakken \"%s\" ble ikke installert eller oppgradert."
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Redusert rapport (treg internettforbindelse; %s)"
 
@@ -877,16 +886,18 @@ msgstr "Målmappe finnes og er ikke tom."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "Hvis du ikke gjorde noe konfidensielt (skrev inn passord eller annen "
-#~ "privat informasjon), kan du hjelpe til med å forbedre programmet ved å "
-#~ "rapportere problemet."
+#~ "Hvis du ikke gjorde noe konfidensielt (skrev inn passord eller annen privat "
+#~ "informasjon), kan du hjelpe til med å forbedre programmet ved å rapportere "
+#~ "problemet."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Komplett rapport (anbefalt; %s)"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -894,6 +905,7 @@ msgstr "Målmappe finnes og er ikke tom."
 #~ "<span weight=\"bold\" size=\"larger\">Beklager, pakken\"%s\" kunne ikke "
 #~ "installeres eller oppgraderes.</span>"
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s ble lukket uventet på %s på %s."
 
@@ -905,8 +917,8 @@ msgstr "Målmappe finnes og er ikke tom."
 #~ msgstr ""
 #~ "<big><b>Sende problemrapport til utviklerne?</b></big>\n"
 #~ "\n"
-#~ "Vennligst fyll ut skjemaet i det automatisk åpnede nettleservinduet etter "
-#~ "at problemrapporten har blitt sendt."
+#~ "Vennligst fyll ut skjemaet i det automatisk åpnede nettleservinduet etter at "
+#~ "problemrapporten har blitt sendt."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Rapporter problem"
@@ -914,5 +926,6 @@ msgstr "Målmappe finnes og er ikke tom."
 #~ msgid "_Send Report"
 #~ msgstr "_Send rapport"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Dette er ikke en gyldig %s-pakke"

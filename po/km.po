@@ -11,16 +11,16 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Khmer <km@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:09+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-22 04:34+0000\n"
+"X-Generator: Launchpad (build 14981)\n"
+"Language: \n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "កញ្ចប់​នេះ​ហាក់​បី​ដូច​ជា​ដំឡើង​មិន​ត្រឹមត្រូវ​ទេ"
 
 #. TRANS: %s is the name of the operating system
 #: ../apport/ui.py:95
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"នេះ​មិនមែន​ជា​កញ្ចប់ %s ផ្លូវ​ការ​ទេ ។ សូម​យក​កញ្ចប់​ភាគី​ទី​បី​ចេញ "
+"ហើយ​ព្យាយាម​ម្ដ​ងទៀត ។"
 
 #: ../apport/ui.py:117
 #, python-format
@@ -38,20 +40,23 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"អ្នកមាន​កំណែ​កញ្ចប់​ដែល​លែង​ប្រើ​បាន​ដំឡើង ។ "
+"សូម​ធ្វើ​វា​​ឲ្យ​កញ្ចប់​ដូច​ខាង​ក្រោម​ប្រសើរ​ឡើង​ "
+"ហើយ​ពិនិត្យ​មើល​ថាតើ​នៅ​តែ​មាន​បញ្ហា​កើត​ឡើង​ទៀត​ដែរឬទេ ៖ %s"
 
 #: ../apport/ui.py:213
 msgid "unknown program"
-msgstr ""
+msgstr "មិន​ស្គាល់​កម្មវិធី"
 
 #: ../apport/ui.py:214
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr ""
+msgstr "សូម​ទោស កម្មវិធី \"%s\" មិន​ត្រឹមត្រូវ"
 
 #: ../apport/ui.py:215 ../apport/ui.py:1087
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "បញ្ហា​នៅ​ក្នុង %s"
 
 #: ../apport/ui.py:216
 msgid ""
@@ -66,7 +71,7 @@ msgstr ""
 #: ../apport/ui.py:1043 ../apport/ui.py:1047 ../apport/ui.py:1066
 #: ../apport/ui.py:1072
 msgid "Invalid problem report"
-msgstr ""
+msgstr "របាយការណ៍​បញ្ហា​មិន​ត្រឹមត្រូវ"
 
 #: ../apport/ui.py:232 ../apport/ui.py:1049
 msgid "This problem report is damaged and cannot be processed."
@@ -78,46 +83,50 @@ msgstr ""
 
 #: ../apport/ui.py:244
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
+msgstr "កំហុស​មួយ​បាន​កើត​ឡើង​ នៅ​ពេល​ព្យាយាម​ដំណើរការ​របាយការណ៍​បញ្ហា​នេះ ៖"
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "អ្នក​មិន​ត្រូវ​បាន​អនុញ្ញាត​ឲ្យ​ចូល​មើល​របាយការណ៍​បញ្ហា​នេះ ។"
 
 #: ../apport/ui.py:279
 msgid "Error"
-msgstr ""
+msgstr "កំហុស"
 
 #: ../apport/ui.py:280
 msgid "There is not enough disk space available to process this report."
-msgstr ""
+msgstr "មិនមាន​ទំហំ​គ្រប់គ្រាន់​ ដើម្បី​ដំណើរការ​របាយការណ៍​នេះ​ទេ ។"
 
 #: ../apport/ui.py:307
 msgid "No package specified"
-msgstr ""
+msgstr "គ្មាន​កញ្ចប់​បាន​បញ្ជាក់​ទេ"
 
 #: ../apport/ui.py:308
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
+"អ្នក​ត្រូវ​តែ​បញ្ជាក់​កញ្ចប់ ឬ​ PID ។ ចំពោះ​ព័ត៌មាន​បន្ថែម សូម​មើល --help ។"
 
 #: ../apport/ui.py:324
 msgid "Invalid PID"
-msgstr ""
+msgstr "PID មិន​ត្រឹមត្រូវ"
 
 #: ../apport/ui.py:325
 msgid "The specified process ID does not belong to a program."
 msgstr ""
+"លេខ​សម្គាល់​ដំណើរការ​ដែល​បាន​បញ្ជាក់ មិន​មែន​ជា​របស់​កម្មវិធី​​នេះ​ទេ ។"
 
 #: ../apport/ui.py:333
 msgid "Permission denied"
-msgstr ""
+msgstr "សិទ្ធិ​ត្រូវ​បាន​បដិសេធ"
 
 #: ../apport/ui.py:334
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"ដំណើរការ​ដែល​បាន​បញ្ជាក់​មិនមែនជា​របស់​អ្នក​ទេ ។ "
+"សូម​ដំណើរការ​កម្មវិធី​នេះ​ជា​ម្ចាស់​ដំណើរការ ឬ​ដំណើរការ​ជា root ។"
 
 #: ../apport/ui.py:355
 #, python-format
@@ -151,8 +160,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -197,7 +206,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:624
@@ -609,7 +619,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -639,7 +650,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74

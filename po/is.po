@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Stefán Sigurjónsson <stefans@mmedia.is>\n"
 "Language-Team: Icelandic <is@li.org>\n"
-"Language: is\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:08+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-22 04:34+0000\n"
+"X-Generator: Launchpad (build 14981)\n"
+"Language: is\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -159,8 +159,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -205,8 +205,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:624
 msgid ""
@@ -630,7 +632,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -660,7 +663,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -731,9 +735,8 @@ msgid "Relaunch"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Ignore future problems of this type"
-msgstr "_Hunsa frekari hrun þessarar forritsútgáfu"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
@@ -774,6 +777,7 @@ msgstr "Notkun: %s <report> <target directory>"
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Full skýrsla (mælt með; %s)"
 
@@ -785,13 +789,13 @@ msgstr ""
 #~ msgstr ""
 #~ "<big><b>Senda vandamálsskýrslu til forritaranna?</b></big>\n"
 #~ "\n"
-#~ "Eftir að skýrslan hefur verið send, vinsamlegast fylltu út formið í "
-#~ "vafranum sem opnast sjálfkrafa."
+#~ "Eftir að skýrslan hefur verið send, vinsamlegast fylltu út formið í vafranum "
+#~ "sem opnast sjálfkrafa."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Ef þú varst ekki að gera eitthvað leynilegt (slá inn lykilorð eða aðrar "
 #~ "persónulegar upplýsingar) geturðu hjálpað við að bæta forritið með því að "
@@ -805,37 +809,39 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Ef þú varst ekki að gera eitthvað persónugreinanlegt (slá inn lykilorð "
-#~ "eða \n"
-#~ "aðrar persónulegar upplýsingar) getur þú hjálpað við að laga forritið "
-#~ "með\n"
+#~ "Ef þú varst ekki að gera eitthvað persónugreinanlegt (slá inn lykilorð eða \n"
+#~ "aðrar persónulegar upplýsingar) getur þú hjálpað við að laga forritið með\n"
 #~ "því að tilkynna vandamálið."
 
 #~ msgid "Restart _Program"
 #~ msgstr "_Endurræsa Forrit"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Því miður tókst ekki að setja upp "
-#~ "eða uppfæra pakkann \"%s\"</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Því miður tókst ekki að setja upp eða "
+#~ "uppfæra pakkann \"%s\"</span>"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Minnkuð skýrsla (hæg nettenging; %s)"
 
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr "_Hunsa frekari hrun þessarar forritsútgáfu"
+
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Þetta tekur nokkra stóra hluta úr skýrslunni. Þeir eru gagnlegir "
-#~ "forriturum til að greina vandamálkið, en gætu verið of stórir til að að "
-#~ "senda yfir hæga nettengingu."
+#~ "Þetta tekur nokkra stóra hluta úr skýrslunni. Þeir eru gagnlegir forriturum "
+#~ "til að greina vandamálkið, en gætu verið of stórir til að að senda yfir hæga "
+#~ "nettengingu."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Tilkynna vandamál"
@@ -852,6 +858,7 @@ msgstr ""
 #~ "Þú getur hjálpað forriturunum að laga pakkann með því að senda inn "
 #~ "tilkynningu."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Þetta er ekki alvöru %s pakki"
 
@@ -861,9 +868,11 @@ msgstr ""
 #~ msgid "Package problem"
 #~ msgstr "Pakkavandamál"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Það tókst hvorki að setja upp “%s“ eða uppfæra."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s lokaði óviðbúið þann %s klukkan %s."
 
@@ -873,8 +882,10 @@ msgstr ""
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Þú getur hjálpað til með því að tilkynna vandann."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Senda alla skýrsluna (mælt með þessu; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Senda &stytta skýrslu (hæg nettenging; %s)"

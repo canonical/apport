@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-02-18 11:19+0000\n"
 "Last-Translator: komnik <komatselis@yahoo.com>\n"
 "Language-Team: Greek, Modern (1453-) <el@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:08+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-22 04:34+0000\n"
+"X-Generator: Launchpad (build 14981)\n"
+"Language: \n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -90,6 +90,8 @@ msgstr "Η αναφορά ανήκει σε ένα πακέτο το οποίο 
 #: ../apport/ui.py:244
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
+"Παρουσιάστηκε ένα σφάλμα καθώς επιχειρούνταν η επεξεργασία αυτής της "
+"αναφοράς προβλήματος:"
 
 #: ../apport/ui.py:276
 msgid "You are not allowed to access this problem report."
@@ -168,8 +170,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -214,7 +216,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:624
@@ -296,6 +299,8 @@ msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
+"Το πρόβλημα παρουσιάστηκε με το πρόγραμμα %s το οποίο έχει αλλάξει από τη "
+"στιγμή που συνέβη η κατάρρευση."
 
 #: ../apport/ui.py:911
 msgid "Could not determine the package or source package name."
@@ -548,7 +553,7 @@ msgstr "Αναφορά αποτυχίας συστήματος"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>Μας συγχωρείτε, συνέβη ένα εσωτερικό σφάλμα.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:202
 msgid "If you notice further problems, try restarting the computer."
@@ -665,7 +670,8 @@ msgstr ""
 "αποδέσμευση."
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Αναφορά προόδου λήψης/εγκατάστασης όταν εγκαθίστανται πακέτα στο δοκιμαστικό "
 "χώρο"
@@ -703,7 +709,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -775,9 +782,8 @@ msgid "Relaunch"
 msgstr "Επανεκκίνηση"
 
 #: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Ignore future problems of this type"
-msgstr "Αγνοήστε μελλοντικά προβλήματα αυτής της έκδοσης προγράμματος"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
@@ -820,12 +826,14 @@ msgstr ""
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Μπορείτε να βοηθήσετε τους υπεύθυνους ανάπτυξης να το φτιάξουν "
-#~ "αναφέροντας το."
+#~ "Μπορείτε να βοηθήσετε τους υπεύθυνους ανάπτυξης να το φτιάξουν αναφέροντας "
+#~ "το."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Το πακέτο \"%s\" απέτυχε να εγκατασταθεί ή να ενημερωθεί."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Ολοκληρωμένη αναφορά (προτείνεται το %s)"
 
@@ -835,20 +843,20 @@ msgstr ""
 #~ "After the problem report has been sent, please fill out the form in the "
 #~ "automatically opened web browser."
 #~ msgstr ""
-#~ "<big><b>Να αποσταλεί η αναφορά του προβλήματος στους προγραμματιστές;</"
-#~ "b></big>\n"
+#~ "<big><b>Να αποσταλεί η αναφορά του προβλήματος στους "
+#~ "προγραμματιστές;</b></big>\n"
 #~ "\n"
 #~ "Μετά την αναφορά του προβλήματος, παρακαλώ συμπληρώστε τη φόρμα που θα "
 #~ "ανοίξει αυτόματα στον περιηγητή ιστού."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή "
-#~ "κάποιων άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην "
-#~ "βελτίωση της εφαρμογής, αναφέροντας το πρόβλημα."
+#~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή κάποιων "
+#~ "άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην βελτίωση της "
+#~ "εφαρμογής, αναφέροντας το πρόβλημα."
 
 #~ msgid "Application problem"
 #~ msgstr "Πρόβλημα εφαρμογής"
@@ -858,20 +866,21 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή \n"
 #~ "κάποιων άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην \n"
 #~ "βελτίωση της εφαρμογής, αναφέροντας το πρόβλημα."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "Το %s τερματίστηκε απροσδόκητα στο %s και στο %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Επανεκκίνηση_Προγράμματος"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -879,9 +888,11 @@ msgstr ""
 #~ "<span weight=\"bold\" size=\"larger\"> Λυπούμαστε, αλλά το πακέτο \"%s\" "
 #~ "απέτυχε να εγκατασταθεί ή να αναβαθμιστεί.</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Αποστολή ολοκληρωμένης αναφοράς (προτείνεται %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Περιορισμένη αναφορά (αργή σύνδεση με το διαδίκτυο: %s)"
 
@@ -889,18 +900,18 @@ msgstr ""
 #~ msgstr ""
 #~ "Να αγνοηθούν μελλοντικές καταρρεύσεις αυτής της έκδοσης του προγράμματος"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Απόστολή &περιορισμένης αναφοράς (αργή σύνδεση με το διαδίκτυο %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Αυτό θα αφαιρέσει κάποια ογκώδη στοιχεία από την αναφορά. Τα στοιχεία "
-#~ "αυτά είναι πολύ χρήσιμα στους προγραμματιστές για τον εντοπισμό και την "
-#~ "διόρθωση λαθών, αλλά είναι πολύ μεγάλα για να τα αποστείλετε αν έχετε "
-#~ "αργή σύνδεση."
+#~ "Αυτό θα αφαιρέσει κάποια ογκώδη στοιχεία από την αναφορά. Τα στοιχεία αυτά "
+#~ "είναι πολύ χρήσιμα στους προγραμματιστές για τον εντοπισμό και την διόρθωση "
+#~ "λαθών, αλλά είναι πολύ μεγάλα για να τα αποστείλετε αν έχετε αργή σύνδεση."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Αναφορά Προβλήματος..."
@@ -917,6 +928,7 @@ msgstr ""
 #~ "Μπορείτε να βοηθήσετε τους προγραμματιστές να διορθώσουν το πακέτο "
 #~ "αναφέροντας το πρόβλημα."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Αυτό δεν είναι γνήσιο το πακέτο %s"
 

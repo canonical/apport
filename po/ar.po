@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Arabic <ar@li.org>\n"
-"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-03 05:08+0000\n"
-"X-Generator: Launchpad (build 14886)\n"
+"X-Launchpad-Export-Date: 2012-03-22 04:34+0000\n"
+"X-Generator: Launchpad (build 14981)\n"
+"Language: ar\n"
 
 #: ../apport/ui.py:92
 msgid "This package does not seem to be installed correctly"
@@ -38,8 +38,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"مثبت لديك بعض الإصدارات اللاغية من الحزم، رقِّ من فضلك الحزم التالية وتحقق مما "
-"إذا ما زالت المشكلة تقع:\n"
+"مثبت لديك بعض الإصدارات اللاغية من الحزم، رقِّ من فضلك الحزم التالية وتحقق "
+"مما إذا ما زالت المشكلة تقع:\n"
 "\n"
 "%s"
 
@@ -162,8 +162,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -208,7 +208,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:621
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:624
@@ -350,8 +351,8 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"بُلغ عن هذه المشكلة مسبقاً في بلاغ العِلة المعروض في المتصفح، تحقق من فضلك مما "
-"إذا كان باستطاعتك إضافة معلومات أخرى قد تساعد المطورين."
+"بُلغ عن هذه المشكلة مسبقاً في بلاغ العِلة المعروض في المتصفح، تحقق من فضلك "
+"مما إذا كان باستطاعتك إضافة معلومات أخرى قد تساعد المطورين."
 
 #: ../apport/ui.py:1135
 msgid "This problem was already reported to developers. Thank you!"
@@ -581,7 +582,8 @@ msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"يجرى إرسال المعلومات التي جُمِعت إلى نظام تتبع العِلَل، وقد يستغرق هذا بضع دقائق."
+"يجرى إرسال المعلومات التي جُمِعت إلى نظام تتبع العِلَل، وقد يستغرق هذا بضع "
+"دقائق."
 
 #: ../bin/apport-retrace.py:37
 msgid "%prog [options] <apport problem report | crash ID>"
@@ -633,7 +635,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:57
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
@@ -663,7 +666,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:74
@@ -734,9 +738,8 @@ msgid "Relaunch"
 msgstr ""
 
 #: ../gtk/apport-gtk.py:220 ../kde/apport-kde.py:206
-#, fuzzy
 msgid "Ignore future problems of this type"
-msgstr "_تجاهل الانهيارات المستقبلية من إصدارة البرنامج هذه"
+msgstr ""
 
 #: ../gtk/apport-gtk.py:478 ../kde/apport-kde.py:241
 msgid "Hide Details"
@@ -780,13 +783,15 @@ msgstr ""
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "يمكنك مساعدة المطورين في إصلاح المشكلة بالإبلاغ عنها."
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">عفواً، فشِل تثبيت أو ترقية حزمة \"%s"
-#~ "\".</span>"
+#~ "<span weight=\"bold\" size=\"larger\">عفواً، فشِل تثبيت أو ترقية حزمة "
+#~ "\"%s\".</span>"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "بلاغ كامل (موصى به; %s)"
 
@@ -806,12 +811,15 @@ msgstr ""
 #~ msgid "_Report Problem..."
 #~ msgstr "_أبلغ عن مشكلة"
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "أُغلق %s فجأة في %s عند %s."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "فشِل تثبيت أو ترقية حزمة \"%s\"."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "هذه ليست حزمة %s أصلية"
 
@@ -831,13 +839,14 @@ msgstr ""
 #~ "\n"
 #~ "من فضلك بعد الإبلاغ عن المشكلة املأ النموذج في متصفح الوب المفتوح تلقائيا."
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "بلاغ مختصر (اتصال إنترنت بطيء; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "سيُزِيل هذا أجزاء كبيرة من البلاغ، وهي مفيدة للغاية للمطورين في تنقيح "
 #~ "المشكلة لكنها قد تكون كبيرة جداً عند الرفع إذا كان اتصالك بالإنترنت بطيء."
@@ -850,27 +859,31 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "يمكنك إذا لم يكن ما تفعله سرّي (تدخل كلمات سرية أو معلومات خاصة) فيمكنك "
 #~ "المساعدة في تحسين التطبيق بالإبلاغ عن المشكلة."
+
+#~ msgid "_Ignore future crashes of this program version"
+#~ msgstr "_تجاهل الانهيارات المستقبلية من إصدارة البرنامج هذه"
 
 #~ msgid "_Send Report"
 #~ msgstr "_أرسل البلاغ"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "إذا لم يكن ما تفعله سرّي (تدخل كلمات سرية أو\n"
 #~ "معلومات خاصة أخرى) فيمكنك المساعدة في تحسين التطبيق بالإبلاغ عن\n"
 #~ "المشكلة."
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "أرسل بلاغا مختصرا (اتصال إنترنت بطيء؛ %s)"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&أرسل بلاغا كاملا (يوصى به؛ %s)"
