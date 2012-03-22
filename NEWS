@@ -49,6 +49,8 @@ Bug fixes:
  - backends/packaging-apt-dpkg.py, _check_files_md5(): Fix double encoding,
    which caused UnicodeDecodeErrors on non-ASCII characters in an md5sum file.
    (LP: #953682)
+ - apport-kde, apport-gtk: Only show "Relaunch" if the report has a
+   ProcCmdline, otherwise we cannot restart it. (LP: #956173)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

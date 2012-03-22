@@ -191,9 +191,13 @@ class ReportDialog(Dialog):
                                        'unexpectedly.') %
                                        desktop_file.getName())
                 self.text.hide()
-                self.closed_button.show()
-                self.closed_button.setText(_('Leave Closed'))
-                self.continue_button.setText(_('Relaunch'))
+                if 'ProcCmdline' in report:
+                    self.closed_button.show()
+                    self.closed_button.setText(_('Leave Closed'))
+                    self.continue_button.setText(_('Relaunch'))
+                else:
+                    self.closed_button.hide()
+                    self.continue_button.setText(_('Continue'))
             else:
                 icon = 'distributor-logo'
                 self.heading.setText(_('Sorry, %s has experienced an '

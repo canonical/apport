@@ -209,9 +209,14 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
                     _('The application %s has closed unexpectedly.') % n)
                 self.w('subtitle_label').hide()
-                self.w('closed_button').show()
-                self.w('closed_button').set_label(_('Leave Closed'))
-                self.w('continue_button').set_label(_('Relaunch'))
+
+                if 'ProcCmdline' in self.report:
+                    self.w('closed_button').show()
+                    self.w('closed_button').set_label(_('Leave Closed'))
+                    self.w('continue_button').set_label(_('Relaunch'))
+                else:
+                    self.w('closed_button').hide()
+                    self.w('continue_button').set_label(_('Continue'))
             else:
                 icon = 'distributor-logo'
                 title_text = self.get_system_application_title()
