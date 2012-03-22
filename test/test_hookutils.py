@@ -244,4 +244,29 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         apport.hookutils.attach_upstart_overrides(report, 'apport')
         apport.hookutils.attach_upstart_overrides(report, 'nonexisting')
 
+    def test_command_output(self):
+        orig_lcm = os.environ.get('LC_MESSAGES')
+        os.environ['LC_MESSAGES'] = 'en_US.UTF-8'
+        try:
+            # default mode: disable translations
+            out = apport.hookutils.command_output(['env'])
+            self.assertTrue('LC_MESSAGES=C' in out)
+
+            # keep locale
+            out = apport.hookutils.command_output(['env'], keep_locale=True)
+            self.assertFalse('LC_MESSAGES=C' in out, out)
+        finally:
+            if orig_lcm is not None:
+                os.environ['LC_MESSAGES'] = orig_lcm
+            else:
+                os.unsetenv('LC_MESSAGES')
+
+        # nonexisting binary
+        out = apport.hookutils.command_output(['/non existing'])
+        self.assertTrue(out.startswith('Error: [Errno 2]'))
+
+        # stdin
+        out = apport.hookutils.command_output(['cat'], input='hello')
+        self.assertEqual(out, 'hello')
+
 unittest.main()

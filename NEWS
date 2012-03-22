@@ -25,6 +25,11 @@ Bug fixes:
  - apport-gtk: Do not compare current continue button label against a
    translated string.  Instead just remember whether or not we can restart the
    application. (LP: #960439)
+ - hookutils.py, command_output(): Add option to keep the locale instead of
+   disabling it.
+ - hookutils.py, command_output(): Actually make the "input" parameter work,
+   instead of causing an eternal hang. Add tests for all possible modes of
+   operation.
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

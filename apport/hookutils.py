@@ -308,17 +308,20 @@ def command_available(command):
             return True
     return False
 
-def command_output(command, input = None, stderr = subprocess.STDOUT):
+def command_output(command, input=None, stderr=subprocess.STDOUT, keep_locale=False):
     '''Try to execute given command (array) and return its stdout.
 
     In case of failure, a textual error gets returned. This function forces
     LC_MESSAGES to C, to avoid translated output in bug reports.
     '''
     env = os.environ.copy()
-    env['LC_MESSAGES'] = 'C'
+    if not keep_locale:
+        env['LC_MESSAGES'] = 'C'
     try:
        sp = subprocess.Popen(command, stdout=subprocess.PIPE,
-                             stderr=stderr, close_fds=True, env=env)
+                             stderr=stderr, 
+                             stdin=(input and subprocess.PIPE or None),
+                             close_fds=True, env=env)
     except OSError as e:
        return 'Error: ' + str(e)
 
