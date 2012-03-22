@@ -34,6 +34,9 @@ Bug fixes:
    to disable translated messages (LC_MESSAGES=C) only as part of the command
    to be run, not already for the root prefix command. This will keep the
    latter (gksu, kdesudo, etc.) translated. (LP: #961659)
+ - apport-gtk: Cut off text values after 4000 characters, as Gtk's TreeView
+   does not get along well with huge values. KDE's copes fine, so continue to
+   display the complete value there. (LP: #957062)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of
