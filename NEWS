@@ -46,6 +46,9 @@ Bug fixes:
  - apport-gtk: Require an application to both have TERM and SHELL in its
    environment to consider it a command line application that was started by
    the user. (LP: #962130)
+ - backends/packaging-apt-dpkg.py, _check_files_md5(): Fix double encoding,
+   which caused UnicodeDecodeErrors on non-ASCII characters in an md5sum file.
+   (LP: #953682)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

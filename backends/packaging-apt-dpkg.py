@@ -602,7 +602,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             m = subprocess.Popen(['/usr/bin/md5sum', '-c'],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
-            out = m.communicate(sumfile.encode())[0].decode(errors='replace')
+            out = m.communicate(sumfile)[0].decode(errors='replace')
 
         # if md5sum succeeded, don't bother parsing the output
         if m.returncode == 0:

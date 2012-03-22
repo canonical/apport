@@ -54,9 +54,10 @@ class T(unittest.TestCase):
             with open(f2, 'w') as fd:
                 fd.write('More stuff')
             # use one relative and one absolute path in checksums file
-            with open(sumfile, 'w') as fd:
+            with open(sumfile, 'wb') as fd:
                 fd.write('''2e41290da2fa3f68bd3313174467e3b5  %s
 f6423dfbc4faf022e58b4d3f5ff71a70  %s
+deadbeef000001111110000011110000  /bin/\xc3\xa4
 ''' % (f1[1:], f2))
             self.assertEqual(impl._check_files_md5(sumfile), [], 'correct md5sums')
 
