@@ -17,6 +17,9 @@ Bug fixes:
    (LP: #961065)
  - problem_report.py, write_mime(): Do not put a key inline if it is bigger
    than 1 kB, to guard against very long lines. (LP: #957326)
+ - etc/cron.daily/apport: Do not remove whoopsie's *.upload* stamps every day,
+   only if they are older than a week. whoopsie comes with its own cron job
+   which deals with them. Thanks Steve Langasek. (LP: #957102)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of
