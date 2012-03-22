@@ -20,6 +20,8 @@ Bug fixes:
  - etc/cron.daily/apport: Do not remove whoopsie's *.upload* stamps every day,
    only if they are older than a week. whoopsie comes with its own cron job
    which deals with them. Thanks Steve Langasek. (LP: #957102)
+ - report.py, mark_ignore(): Fix crash if executable went away underneath us.
+   (LP: #961410)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

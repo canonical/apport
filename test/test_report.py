@@ -987,6 +987,11 @@ def add_info(report, ui):
             self.assertEqual(bash_rep.check_ignored(), False)
             self.assertEqual(crap_rep.check_ignored(), False)
             self.assertEqual(cp_rep.check_ignored(), False)
+
+            # does not crash if the executable went away under our feet
+            crap_rep['ExecutablePath'] = '/non existing'
+            crap_rep.mark_ignore()
+            self.assertEqual(os.path.getsize(apport.report.apport.report._ignore_file), 0)
         finally:
             shutil.rmtree(workdir)
             apport.report.apport.report._ignore_file = orig_ignore_file

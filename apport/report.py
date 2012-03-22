@@ -920,7 +920,14 @@ class Report(problem_report.ProblemReport):
         assert 'ExecutablePath' in self
 
         dom = self._get_ignore_dom()
-        mtime = str(int(os.stat(self['ExecutablePath']).st_mtime))
+        try:
+            mtime = str(int(os.stat(self['ExecutablePath']).st_mtime))
+        except OSError as e:
+            # file went away underneath us, ignore
+            if e.errno == errno.ENOENT:
+                return
+            else:
+                raise
 
         # search for existing entry and update it
         for ignore in dom.getElementsByTagName('ignore'):
