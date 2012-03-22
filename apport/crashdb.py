@@ -238,52 +238,50 @@ class CrashDatabase:
         if 'dupdb_url' not in self.options:
             return None
 
-        # get signature
-        if 'DuplicateSignature' in report:
-            sig = report['DuplicateSignature']
-        else:
-            sig = report.crash_signature()
+        for kind in ('sig', 'address'):
+            # get signature
+            if kind == 'sig':
+                if 'DuplicateSignature' in report:
+                    sig = report['DuplicateSignature']
+                else:
+                    sig = report.crash_signature()
+            else:
+                sig = report.crash_signature_addresses()
 
-        if sig:
-            category = 'sig'
-        else:
-            sig = report.crash_signature_addresses()
-            category = 'address'
-
-        if not sig:
-            return None
-
-        # build URL where the data should be
-        h = self.duplicate_sig_hash(sig)
-        if not h:
-            return None
-
-        url = os.path.join(self.options['dupdb_url'], category, h)
-
-        # read data file
-        try:
-            f = urllib.urlopen(url)
-            contents = f.read()
-            f.close()
-            if '<title>404 Not Found' in contents:
-                return None
-        except Exception:
-            # does not exist, failed to load, etc.
-            return None
-
-        # now check if we find our signature
-        for line in contents.splitlines():
-            try:
-                id, s = line.split(None, 1)
-                id = int(id)
-            except ValueError:
+            if not sig:
                 continue
-            if s == sig:
-                result = self.get_id_url(report, id)
-                if not result:
-                    # if we can't have an URL, just report as "known"
-                    result = '1'
-                return result
+
+            # build URL where the data should be
+            h = self.duplicate_sig_hash(sig)
+            if not h:
+                return None
+
+            url = os.path.join(self.options['dupdb_url'], kind, h)
+
+            # read data file
+            try:
+                f = urllib.urlopen(url)
+                contents = f.read()
+                f.close()
+                if '<title>404 Not Found' in contents:
+                    continue
+            except Exception:
+                # does not exist, failed to load, etc.
+                continue
+
+            # now check if we find our signature
+            for line in contents.splitlines():
+                try:
+                    id, s = line.split(None, 1)
+                    id = int(id)
+                except ValueError:
+                    continue
+                if s == sig:
+                    result = self.get_id_url(report, id)
+                    if not result:
+                        # if we can't have an URL, just report as "known"
+                        result = '1'
+                    return result
 
         return None
 
