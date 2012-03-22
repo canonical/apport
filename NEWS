@@ -37,6 +37,7 @@ Bug fixes:
  - apport-gtk: Cut off text values after 4000 characters, as Gtk's TreeView
    does not get along well with huge values. KDE's copes fine, so continue to
    display the complete value there. (LP: #957062)
+ - apport-gtk: Make details window resizable in bug reporting mode.
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

@@ -249,7 +249,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         d = self.w('dialog_crash_new')
         if 'DistroRelease' in self.report:
             d.set_title(self.report['DistroRelease'].split()[0])
-        d.set_resizable(False)
+        d.set_resizable(self.w('details_scrolledwindow').get_property('visible'))
         d.show()
         # don't steal focus when being called without arguments (i. e.
         # automatically launched)

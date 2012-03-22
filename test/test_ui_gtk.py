@@ -311,6 +311,7 @@ Type=Application''')
         self.assertFalse(self.app.w('closed_button').get_property('visible'))
         self.assertTrue(self.app.w('cancel_button').get_property('visible'))
         self.assertTrue(self.app.w('details_scrolledwindow').get_property('visible'))
+        self.assertTrue(self.app.w('dialog_crash_new').get_resizable())
 
     def test_administrator_disabled_reporting(self):
         GLib.idle_add(Gtk.main_quit)
