@@ -30,6 +30,10 @@ Bug fixes:
  - hookutils.py, command_output(): Actually make the "input" parameter work,
    instead of causing an eternal hang. Add tests for all possible modes of
    operation.
+ - hooktuils.py: Change root_command_output() and attach_root_command_outputs()
+   to disable translated messages (LC_MESSAGES=C) only as part of the command
+   to be run, not already for the root prefix command. This will keep the
+   latter (gksu, kdesudo, etc.) translated. (LP: #961659)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

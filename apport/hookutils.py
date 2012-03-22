@@ -340,19 +340,20 @@ def _root_command_prefix():
                     stderr=subprocess.PIPE) == 0 and \
             subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'ksmserver'],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-        prefix = ['kdesudo', '--desktop', '/usr/share/applications/apport-kde-mime.desktop', '--']
+        prefix = ['kdesudo', '--desktop', '/usr/share/applications/apport-kde-mime.desktop', 
+                  '--', 'env', '-u', 'LANGUAGE', 'LC_MESSAGES=C']
     elif os.getenv('DISPLAY') and \
             subprocess.call(['which', 'gksu'], stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE) == 0 and \
             subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'gnome-panel|gconfd-2'],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-        prefix = ['gksu', '-D', 'Apport', '--']
+        prefix = ['gksu', '-D', 'Apport', '--', 'env', '-u', 'LANGUAGE', 'LC_MESSAGES=C']
     else:
-        prefix = ['sudo']
+        prefix = ['sudo', 'LC_MESSAGES=C', 'LANGUAGE=']
 
     return prefix
 
-def root_command_output(command, input = None, stderr = subprocess.STDOUT):
+def root_command_output(command, input=None, stderr=subprocess.STDOUT):
     '''Try to execute given command (array) as root and return its stdout.
 
     This passes the command through gksu, kdesudo, or sudo, depending on the
@@ -361,7 +362,8 @@ def root_command_output(command, input = None, stderr = subprocess.STDOUT):
     In case of failure, a textual error gets returned.
     '''
     assert type(command) == type([]), 'command must be a list'
-    return command_output(_root_command_prefix() + command, input, stderr)
+    return command_output(_root_command_prefix() + command, input, stderr,
+            keep_locale=True)
 
 def attach_root_command_outputs(report, command_map):
     '''Execute multiple commands as root and put their outputs into report.
@@ -390,11 +392,8 @@ def attach_root_command_outputs(report, command_map):
         script.close()
 
         # run script
-        env = os.environ.copy()
-        env['LC_MESSAGES'] = 'C'
-        env['LANGUAGE'] = ''
         sp = subprocess.Popen(_root_command_prefix() + ['/bin/sh', script_path],
-            close_fds=True, env=env)
+            close_fds=True)
         sp.wait()
 
         # now read back the individual outputs
