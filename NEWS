@@ -43,6 +43,9 @@ Bug fixes:
  - ui.py: Run anonymization after checking for duplicates, to prevent host or
    user names which look like hex numbers to corrupt the stack trace.
    (LP: #953104)
+ - apport-gtk: Require an application to both have TERM and SHELL in its
+   environment to consider it a command line application that was started by
+   the user. (LP: #962130)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of

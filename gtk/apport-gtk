@@ -125,7 +125,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         prominent placement. Otherwise, provide a simple explanation for
         more novice users.
         '''
-        from_console = 'TERM=' in self.report.get('ProcEnviron', '')
+        env = self.report.get('ProcEnviron', '')
+        from_console = 'TERM=' in env and 'SHELL=' in env
 
         if from_console:
             if 'ExecutablePath' in self.report:
