@@ -1310,7 +1310,7 @@ class Report(problem_report.ProblemReport):
                 not k in ['ProcCpuinfo','ProcMaps','ProcStatus', \
                           'ProcInterrupts','ProcModules']) or \
                 'Stacktrace' in k or \
-                k in ['Traceback', 'PythonArgs']:
+                k in ['Traceback', 'PythonArgs', 'Title']:
                 for old, new in replacements.items():
                     if hasattr(self[k], 'isspace'):
                         if type(self[k]) == type(b''):

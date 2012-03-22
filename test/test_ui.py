@@ -24,7 +24,7 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
 databases = {
     'testsuite': {
         'impl': 'memory',
-        'bug_pattern_url': None
+        'bug_pattern_url': None,
     }
 }
 ''')
@@ -35,7 +35,7 @@ databases = {
         apport.ui.UserInterface.__init__(self)
 
         self.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                {'dummy_data': 1})
+                {'dummy_data': 1, 'dupdb_url': ''})
 
         # state of progress dialogs
         self.ic_progress_active = False
@@ -1144,6 +1144,47 @@ bOgUs=
 
         for s in bad_strings:
             self.assertFalse(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
+
+    def test_run_crash_anonymity_order(self):
+        '''run_crash() anonymization runs after info and duplicate collection'''
+
+        # pretend the hostname looks like a hex number which matches part of
+        # the stack trace address
+        uname = os.uname()
+        uname = (uname[0], 'BEEF', uname[2], uname[3], uname[4])
+        orig_uname = os.uname
+        orig_add_gdb_info = apport.report.Report.add_gdb_info
+        os.uname = lambda: uname
+
+        def fake_add_gdb_info(self):
+            self['Stacktrace'] = '''#0  0xDEADBEEF in h (p=0x0) at crash.c:25
+#1  0x10000042 in g (x=1, y=42) at crash.c:26
+'''
+
+        try:
+            r = self._gen_test_crash()
+            apport.report.Report.add_gdb_info = fake_add_gdb_info
+            r['ProcAuxInfo'] = 'my BEEF'
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+
+            # if this runs anonymization before the duplicate signature, then this
+            # will fail, as 0xDEADhostname is an invalid address
+            self.ui = TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
+
+            self.assertEqual(self.ui.report['ProcAuxInfo'], 'my hostname')
+            # after anonymization this should mess up Stacktrace; this mostly
+            # confirms that our test logic works
+            self.assertRaises(ValueError, self.ui.report.crash_signature_addresses)
+        finally:
+            os.uname = orig_uname
+            apport.report.Report.add_gdb_info = orig_add_gdb_info
 
     def test_run_crash_known(self):
         '''run_crash() for already known problem'''

@@ -101,8 +101,6 @@ package. Please remove any third party package and try again.') % \
         if not ignore_uninstalled:
             raise
 
-    report.anonymize()
-
     # add title
     if 'Title' not in report:
         title = report.standard_title()
@@ -900,6 +898,18 @@ class UserInterface:
                         self.report['KnownReport'] = '1'
                     else:
                         self.report['KnownReport'] = val
+
+            # anonymize; needs to happen after duplicate checking, otherwise we
+            # might damage the stack trace
+            anonymize_thread = apport.REThread.REThread(target=self.report.anonymize)
+            anonymize_thread.start()
+            while anonymize_thread.isAlive():
+                self.ui_pulse_info_collection_progress()
+                try:
+                    anonymize_thread.join(0.1)
+                except KeyboardInterrupt:
+                    sys.exit(1)
+            anonymize_thread.exc_raise()
 
             self.ui_stop_info_collection_progress()
 

@@ -40,6 +40,9 @@ Bug fixes:
  - apport-gtk: Make details window resizable in bug reporting mode.
  - crashdb.py, known(): Check the address signature duplicate database if the
    symbolic signature exists, but did not find any result. (LP: #103083)
+ - ui.py: Run anonymization after checking for duplicates, to prevent host or
+   user names which look like hex numbers to corrupt the stack trace.
+   (LP: #953104)
 
 Improvements:
  - hookutils.py, attach_alsa(): Add the full "pacmd list" output instead of
