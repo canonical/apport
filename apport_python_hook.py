@@ -52,7 +52,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
         # org.freedesktop.DBus.Error.NoReply is an useless crash, needs actual
         # crash from D-BUS backend (LP# 914220)
-        if str(exc_obj).startswith('org.freedesktop.DBus.Error.NoReply'):
+        if 'org.freedesktop.DBus.Error.NoReply' in str(exc_obj):
             return
 
         try:

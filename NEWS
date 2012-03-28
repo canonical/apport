@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  - report.py, anonymize(): Only replace whole words, not substrings.
    (LP: #966562)
+ - apport_python_hook.py: Fix filtering of org.freedesktop.DBus.Error.NoReply
+   exceptions. (LP: #958575)
 
 1.95 (2012-03-22)
 -----------------
