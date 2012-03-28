@@ -1283,22 +1283,22 @@ class Report(problem_report.ProblemReport):
         from attributes which contain data read from the environment, and
         removes the ProcCwd attribute completely.
         '''
-        replacements = {}
+        replacements = []
         if (os.getuid() > 0):
             # do not replace "root"
             p = pwd.getpwuid(os.getuid())
             if len(p[0]) >= 2:
-                replacements[p[0]] = 'username'
-            replacements[p[5]] = '/home/username'
+                replacements.append((re.compile('\\b%s\\b' % p[0]), 'username'))
+            replacements.append((re.compile('\\b%s\\b' % p[5]), '/home/username'))
 
             for s in p[4].split(','):
                 s = s.strip()
                 if len(s) > 2:
-                    replacements[s] = 'User Name'
+                    replacements.append((re.compile('\\b%s\\b' % s), 'User Name'))
 
         hostname = os.uname()[1]
         if len(hostname) >= 2:
-            replacements[hostname] = 'hostname'
+            replacements.append((re.compile('\\b%s\\b' % hostname), 'hostname'))
 
         try:
             del self['ProcCwd']
@@ -1311,12 +1311,13 @@ class Report(problem_report.ProblemReport):
                           'ProcInterrupts','ProcModules']) or \
                 'Stacktrace' in k or \
                 k in ['Traceback', 'PythonArgs', 'Title']:
-                for old, new in replacements.items():
-                    if hasattr(self[k], 'isspace'):
-                        if type(self[k]) == type(b''):
-                            self[k] = self[k].replace(old, new)
-                        else:
-                            self[k] = self[k].encode('UTF-8').replace(old, new).decode('UTF-8')
+                if not hasattr(self[k], 'isspace'):
+                    continue
+                for (pattern, repl) in replacements:
+                    if type(self[k]) == type(b''):
+                        self[k] = pattern.sub(repl, self[k])
+                    else:
+                        self[k] = pattern.sub(repl, self[k].encode('UTF-8')).decode('UTF-8')
 
     def _address_to_offset(self, addr):
         '''Resolve a memory address to an ELF name and offset.

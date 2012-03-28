@@ -1148,10 +1148,10 @@ bOgUs=
     def test_run_crash_anonymity_order(self):
         '''run_crash() anonymization runs after info and duplicate collection'''
 
-        # pretend the hostname looks like a hex number which matches part of
+        # pretend the hostname looks like a hex number which matches
         # the stack trace address
         uname = os.uname()
-        uname = (uname[0], 'BEEF', uname[2], uname[3], uname[4])
+        uname = (uname[0], '0xDEADBEEF', uname[2], uname[3], uname[4])
         orig_uname = os.uname
         orig_add_gdb_info = apport.report.Report.add_gdb_info
         os.uname = lambda: uname
@@ -1159,12 +1159,17 @@ bOgUs=
         def fake_add_gdb_info(self):
             self['Stacktrace'] = '''#0  0xDEADBEEF in h (p=0x0) at crash.c:25
 #1  0x10000042 in g (x=1, y=42) at crash.c:26
+#1  0x10000001 in main () at crash.c:40
 '''
+            self['ProcMaps'] = '''
+10000000-DEADBEF0 r-xp 00000000 08:02 100000           /bin/crash
+'''
+            assert self.crash_signature_addresses() != None
 
         try:
             r = self._gen_test_crash()
             apport.report.Report.add_gdb_info = fake_add_gdb_info
-            r['ProcAuxInfo'] = 'my BEEF'
+            r['ProcAuxInfo'] = 'my 0xDEADBEEF'
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
             r.write(open(report_file, 'w'))
 
@@ -1181,10 +1186,43 @@ bOgUs=
             self.assertEqual(self.ui.report['ProcAuxInfo'], 'my hostname')
             # after anonymization this should mess up Stacktrace; this mostly
             # confirms that our test logic works
-            self.assertRaises(ValueError, self.ui.report.crash_signature_addresses)
+            self.assertEqual(self.ui.report.crash_signature_addresses(), None)
         finally:
             os.uname = orig_uname
             apport.report.Report.add_gdb_info = orig_add_gdb_info
+
+    def test_run_crash_anonymity_substring(self):
+        '''run_crash() anonymization only catches whole words'''
+
+        # pretend the hostname is "ed", a substring of e. g. "crashed"
+        uname = os.uname()
+        uname = (uname[0], 'ed', uname[2], uname[3], uname[4])
+        orig_uname = os.uname
+        os.uname = lambda: uname
+
+        try:
+            r = self._gen_test_crash()
+            r['ProcInfo1'] = 'my ed'
+            r['ProcInfo2'] = '"ed.localnet"'
+            r['ProcInfo3'] = 'education'
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            r.write(open(report_file, 'w'))
+
+            self.ui = TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine' : False,
+                                                'restart' : False }
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
+
+            self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'), 
+                self.ui.report['Title'])
+            self.assertEqual(self.ui.report['ProcInfo1'], 'my hostname')
+            self.assertEqual(self.ui.report['ProcInfo2'], '"hostname.localnet"')
+            self.assertEqual(self.ui.report['ProcInfo3'], 'education')
+        finally:
+            os.uname = orig_uname
 
     def test_run_crash_known(self):
         '''run_crash() for already known problem'''
