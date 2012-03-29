@@ -40,6 +40,15 @@ All crash database implementations support the following options:
    database SQLite file with "dupdb admin publish" (see manpage) or with the
    --publish-db option of crash-digger.
 
+ - problem_types: List of "ProblemType:" values that this database accepts for
+   reporting. E. g. you might set
+
+     'problem_types': ['Bug', 'Package']
+
+   to only get bug and package failure reports reported to this database,
+   but not crash reports. If not present, all types of problems will be
+   reported.
+
 Third Parties crashdb databases
 ===============================
 

@@ -973,6 +973,14 @@ class UserInterface:
     def file_report(self):
         '''Upload the current report and guide the user to the reporting web page.'''
 
+        # FIXME: This behaviour is not really correct, but necessary as long as
+        # we only support a single crashdb and have whoopsie hardcoded. Once we
+        # have multiple crash dbs, we need to check accepts() earlier, and not
+        # even present the data if none of the DBs wants the report. See
+        # LP#957177 for details.
+        if not self.crashdb.accepts(self.report):
+            return
+
         # drop PackageArchitecture if equal to Architecture
         if self.report.get('PackageArchitecture') == self.report.get('Architecture'):
             try:

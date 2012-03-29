@@ -149,7 +149,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         If the implementation supports it, and a function progress_callback is
         passed, that is called repeatedly with two arguments: the number of
         bytes already sent, and the total number of bytes to send. This can be
-        used to provide a proper upload progress indication on frontends.'''
+        used to provide a proper upload progress indication on frontends.
+        '''
+        assert self.accepts(report)
 
         # set reprocessing tags
         hdr = {}

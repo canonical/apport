@@ -72,6 +72,37 @@ databases = {
         self.assertFalse('dyn_opion' in db.options)
         self.assertEqual(db.options['whoami'], 'dynname')
 
+    def test_accepts_default(self):
+        '''accepts(): default configuration'''
+
+        # by default crash DBs accept any type
+        self.assertTrue(self.crashes.accepts(apport.Report('Crash')))
+        self.assertTrue(self.crashes.accepts(apport.Report('Bug')))
+        self.assertTrue(self.crashes.accepts(apport.Report('weirdtype')))
+
+    def test_accepts_problem_types(self):
+        '''accepts(): problem_types option in crashdb.conf'''
+
+        # create a crash DB with type limits
+        crashdb_conf = tempfile.NamedTemporaryFile()
+        crashdb_conf.write(b'''default = 'testsuite'
+
+databases = {
+    'testsuite': {
+        'impl': 'memory',
+        'problem_types': ['Bug', 'Kernel'],
+    },
+}
+''')
+        crashdb_conf.flush()
+
+        db = apport.crashdb.get_crashdb(None, None, crashdb_conf.name)
+
+        self.assertTrue(db.accepts(apport.Report('Bug')))
+        self.assertFalse(db.accepts(apport.Report('Crash')))
+        self.assertFalse(db.accepts(apport.Report('weirdtype')))
+
+
     #
     # Test memory.py implementation
     #

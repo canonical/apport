@@ -1836,5 +1836,40 @@ return 'bash'
         finally:
             self.ui.ui_run_terminal = orig_fn
 
+    def test_db_no_accept(self):
+        '''crash database does not accept report'''
+
+        # FIXME: This behaviour is not really correct, but necessary as long as
+        # we only support a single crashdb and have whoopsie hardcoded
+        # (see LP#957177)
+
+        latest_id_before = self.ui.crashdb.latest_id()
+
+        sys.argv = ['ui-test', '-f', '-p', 'bash']
+        self.ui = TestSuiteUserInterface()
+
+        # Pretend it does not accept report
+        self.ui.crashdb.accepts = lambda r: False
+        self.ui.present_details_response = {'report': True,
+                                            'blacklist': False,
+                                            'examine' : False,
+                                            'restart' : False }
+        self.assertEqual(self.ui.run_argv(), True)
+
+        self.assertEqual(self.ui.msg_severity, None)
+        self.assertEqual(self.ui.msg_title, None)
+        self.assertTrue(self.ui.present_details_shown)
+
+        # data was collected for whoopsie
+        self.assertEqual(self.ui.report['SourcePackage'], 'bash')
+        self.assertTrue('Dependencies' in self.ui.report.keys())
+        self.assertTrue('ProcEnviron' in self.ui.report.keys())
+        self.assertEqual(self.ui.report['ProblemType'], 'Bug')
+
+        # no upload happend
+        self.assertEqual(self.ui.opened_url, None)
+        self.assertEqual(self.ui.upload_progress_pulses, 0)
+        self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)
+
 unittest.main()
 

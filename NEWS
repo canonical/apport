@@ -14,6 +14,16 @@ Bug fixes:
    signature which contained an URL-quoted character, therefore breaking
    client-side duplicate checking in a lot of cases. Double-quote the file name
    now, as urlopen() unquotes it.
+ - Add a new crash database option "problem_types" and a CrashDatabase method
+   "accepts(report)". This can be used to stop uploading particular problem
+   report types to that database. E. g. a distribution might decide to not get
+   "Crash" reports any more after release.  Document the new option in
+   doc/crashdb-conf.txt.
+ - ui.py: Do not upload a report if the crash database does not accept the
+   report's type. This behaviour is not really correct, but necessary as long
+   as we only support a single crashdb and have whoopsie hardcoded.  Once we
+   have multiple crash dbs, we need to not even present the data if none of the
+   DBs wants the report. See LP #957177 for details. (LP: #968121)
 
 1.95 (2012-03-22)
 -----------------

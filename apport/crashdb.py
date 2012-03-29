@@ -51,6 +51,17 @@ class CrashDatabase:
         '''
         return self.options.get('bug_pattern_url')
 
+    def accepts(self, report):
+        '''Check if this report can be uploaded to this database.
+
+        Crash databases might limit the types of reports they get with e. g.
+        the "problem_types" option.
+        '''
+        if 'problem_types' in self.options:
+            return report.get('ProblemType') in self.options['problem_types']
+
+        return True
+
     #
     # API for duplicate detection
     #
@@ -603,6 +614,10 @@ class CrashDatabase:
         bytes already sent, and the total number of bytes to send. This can be
         used to provide a proper upload progress indication on frontends.
 
+        Implementations ought to "assert self.accepts(report)". The UI logic
+        already prevents uploading a report to a database which does not accept
+        it, but for third-party users of the API this should still be checked.
+
         This method can raise a NeedsCredentials exception in case of failure.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
@@ -796,7 +811,7 @@ def get_crashdb(auth_file, name = None, conf = None):
       dictionaries. These need to have at least the key 'impl' (Python module
       in apport.crashdb_impl which contains a concrete 'CrashDatabase' class
       implementation for that crash db type). Other generally known options are
-      'bug_pattern_url' and 'dupdb_url'.
+      'bug_pattern_url', 'dupdb_url', and 'problem_types'.
     '''
     if not conf:
         conf = os.environ.get('APPORT_CRASHDB_CONF', '/etc/apport/crashdb.conf')

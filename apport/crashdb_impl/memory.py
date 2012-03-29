@@ -35,7 +35,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def upload(self, report, progress_callback = None):
         '''Store the report and return a handle number (starting from 0).
 
-        This does not support (nor need) progress callbacks.'''
+        This does not support (nor need) progress callbacks.
+        '''
+        assert self.accepts(report)
 
         self.reports.append({'report': report, 'fixed_version': None, 'dup_of':
             None, 'comment:': ''})
