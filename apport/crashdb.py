@@ -256,7 +256,10 @@ class CrashDatabase:
             if not h:
                 return None
 
-            url = os.path.join(self.options['dupdb_url'], kind, h)
+            # the hash is already quoted, but we really want to open the quoted
+            # file names; as urlopen() unquotes, we need to double-quote here
+            # again so that urlopen() sees the single-quoted file names
+            url = os.path.join(self.options['dupdb_url'], kind, quote_plus(h))
 
             # read data file
             try:
@@ -581,9 +584,9 @@ class CrashDatabase:
         i = '_'.join(i.split(':', 2)[:2])
         # we manually quote '/' to make them nicer to read
         i = i.replace('/', '_')
-        # just in case, avoid too long file names
-        i = i[:200]
         i = quote_plus(i)
+        # avoid too long file names
+        i = i[:200]
         return i
 
     #

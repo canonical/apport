@@ -576,6 +576,28 @@ databases = {
 
         self.assertEqual(self.crashes._duplicate_db_dump(), {})
 
+    def test_duplicate_db_publish_long_sigs(self):
+        '''duplicate_db_publish() with very long signatures'''
+
+        self.crashes.init_duplicate_db(':memory:')
+
+        # give #0 a long symbolic sig which needs lots of quoting
+        symb = self.crashes.download(0)
+        symb.crash_signature = lambda: 's+' * 1000
+
+        # and #1 a long addr sig
+        addr = self.crashes.download(1)
+        addr.crash_signature_addresses = lambda: '0x1+/' * 1000
+
+        self.assertEqual(self.crashes.known(symb), None)
+        self.assertEqual(self.crashes.check_duplicate(0), None)
+        self.assertEqual(self.crashes.known(addr), None)
+        self.assertEqual(self.crashes.check_duplicate(1), None)
+
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
+        self.assertEqual(self.crashes.known(symb), 'http://foo.bugs.example.com/0')
+        self.assertEqual(self.crashes.known(addr), 'http://foo.bugs.example.com/1')
+
     def test_change_master_id(self):
         '''duplicate_db_change_master_id()'''
 

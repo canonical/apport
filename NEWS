@@ -8,6 +8,12 @@ Bug fixes:
    (LP: #966562)
  - apport_python_hook.py: Fix filtering of org.freedesktop.DBus.Error.NoReply
    exceptions. (LP: #958575)
+ - crashdb.py: When publishing the crash database, cut hash file names after
+   quoting, to avoid that the quoting causes them to become too long.
+   (LP: #968070) This also uncovered that known() did not actually find any
+   signature which contained an URL-quoted character, therefore breaking
+   client-side duplicate checking in a lot of cases. Double-quote the file name
+   now, as urlopen() unquotes it.
 
 1.95 (2012-03-22)
 -----------------
