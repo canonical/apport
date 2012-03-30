@@ -39,6 +39,11 @@ class T(unittest.TestCase):
         r.add_os_info()
         klass.distro = r['DistroRelease'].split()[0]
 
+        # disable package hooks, as they might ask for sudo password and other
+        # interactive bits
+        apport.report._hook_dir = '/nonexisting'
+        apport.report._common_hook_dir = '/nonexisting'
+
     def setUp(self):
         self.report_dir = tempfile.mkdtemp()
         apport.fileutils.report_dir = self.report_dir
