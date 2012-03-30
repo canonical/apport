@@ -17,6 +17,7 @@ import os
 import imp
 import apport
 import shutil
+import subprocess
 from gi.repository import GLib, Gtk
 from apport import unicode_gettext as _
 from mock import patch
@@ -25,8 +26,10 @@ import apport.crashdb_impl.memory
 
 if os.environ.get('APPORT_TEST_LOCAL'):
     apport_gtk_path = 'gtk/apport-gtk'
+    kernel_oops_path = 'data/kernel_oops'
 else:
     apport_gtk_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'apport-gtk')
+    kernel_oops_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'kernel_oops')
 GTKUserInterface = imp.load_source('', apport_gtk_path).GTKUserInterface
 
 class T(unittest.TestCase):
@@ -39,6 +42,7 @@ class T(unittest.TestCase):
     def setUp(self):
         self.report_dir = tempfile.mkdtemp()
         apport.fileutils.report_dir = self.report_dir
+        os.environ['APPORT_REPORT_DIR'] = self.report_dir
 
         saved = sys.argv[0]
         # Work around GTKUserInterface using basename to find the GtkBuilder UI
@@ -422,6 +426,40 @@ Type=Application''')
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
         self.assertTrue('Stacktrace' in r)
+
+        # URL was opened
+        self.assertEqual(self.app.open_url.call_count, 1)
+
+    @patch.object(GTKUserInterface, 'open_url')
+    def test_kerneloops_nodetails(self, *args):
+        '''Kernel oops report without showing details'''
+
+        def cont(*args):
+            if not self.app.w('continue_button').get_visible():
+                return True
+            self.app.w('continue_button').clicked()
+            return False
+
+        # remove the crash from setUp() and create a kernel oops
+        os.remove(self.app.report_file)
+        kernel_oops = subprocess.Popen([kernel_oops_path],
+                stdin=subprocess.PIPE)
+        kernel_oops.communicate('Plasma conduit phase misalignment')
+        self.assertEqual(kernel_oops.returncode, 0)
+
+        GLib.timeout_add_seconds(1, cont)
+        self.app.run_crashes()
+
+        # we should have reported one crash
+        self.assertEqual(self.app.crashdb.latest_id(), 0)
+        r = self.app.crashdb.download(0)
+        self.assertEqual(r['ProblemType'], 'KernelOops')
+        self.assertEqual(r['OopsText'], 'Plasma conduit phase misalignment')
+
+        # data was collected
+        self.assertTrue('linux' in r['Package'])
+        self.assertTrue('Dependencies' in r)
+        self.assertTrue('Plasma conduit' in r['Title'])
 
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)

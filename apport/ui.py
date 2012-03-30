@@ -826,7 +826,7 @@ class UserInterface:
         else:
             # check if we already ran, skip if so
             if (self.report.get('ProblemType') == 'Crash' and 'Stacktrace' in self.report) or \
-               (self.report.get('ProblemType') != 'Crash' and 'DistroRelease' in self.report):
+               (self.report.get('ProblemType') != 'Crash' and 'Dependencies' in self.report):
                 if on_finished:
                     on_finished()
                 return

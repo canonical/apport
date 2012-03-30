@@ -24,6 +24,10 @@ Bug fixes:
    as we only support a single crashdb and have whoopsie hardcoded.  Once we
    have multiple crash dbs, we need to not even present the data if none of the
    DBs wants the report. See LP #957177 for details. (LP: #968121)
+ - ui.py: Do not short-circuit information collection if report already has a
+   "DistroRelease" field, as the GUIs add that in some cases. Check for
+   "Dependencies" instead. This fixes information collection for kernel
+   problems (which now has a full GTK GUI test case). (LP: #968488)
 
 1.95 (2012-03-22)
 -----------------
