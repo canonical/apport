@@ -6,6 +6,10 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  * test_ui_gtk.py: Disable package hooks for the tests, as they might ask for
    sudo passwords and other interactive bits, and thus make the tests hang.
+ * test_backend_apt_dpkg.py: Fix checks for the installation of -dbgsym
+   packages. This should always happen, as the sandboxes have a ddeb apt
+   source. Only make it conditional on the system apt sources in the "use
+   system config" test.
 
 2.0 (2012-03-30)
 ----------------

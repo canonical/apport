@@ -331,9 +331,8 @@ bo/gu/s                                                 na/mypackage
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
             'usr/bin/stat')))
-        if self.has_dbgsym:
-            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-                'usr/lib/debug/usr/bin/stat')))
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+            'usr/lib/debug/usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
             'usr/share/zoneinfo/zone.tab')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -349,7 +348,7 @@ bo/gu/s                                                 na/mypackage
             'var', 'cache', 'apt', 'archives'))
         cache_names = [p.split('_')[0] for p in cache]
         self.assertTrue('coreutils' in cache_names)
-        self.assertEqual('coreutils-dbgsym' in cache_names, self.has_dbgsym)
+        self.assertTrue('coreutils-dbgsym' in cache_names)
         self.assertTrue('tzdata' in cache_names)
         self.assertTrue('libc6' in cache_names)
         self.assertTrue('libc6-dbg' in cache_names)
@@ -411,9 +410,8 @@ bo/gu/s                                                 na/mypackage
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
             'usr/bin/stat')))
-        if self.has_dbgsym:
-            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-                'usr/lib/debug/usr/bin/stat')))
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+            'usr/lib/debug/usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
             'usr/share/zoneinfo/zone.tab')))
 
