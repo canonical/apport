@@ -10,6 +10,8 @@ Bug fixes:
    packages. This should always happen, as the sandboxes have a ddeb apt
    source. Only make it conditional on the system apt sources in the "use
    system config" test.
+ * test_report.py: Sleep a bit after calling our test crash script, to ensure
+   the kernel has time to finish writing the core file.
 
 2.0 (2012-03-30)
 ----------------

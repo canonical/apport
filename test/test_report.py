@@ -577,6 +577,7 @@ kill -SEGV $$
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
+            time.sleep(1)
             assert subprocess.call(['readelf', '-n', coredump],
                 stdout=subprocess.PIPE) == 0
 
@@ -618,6 +619,7 @@ $0.bin 2>/dev/null
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
+            time.sleep(1)
             assert subprocess.call(['readelf', '-n', 'core'],
                 stdout=subprocess.PIPE) == 0
 
