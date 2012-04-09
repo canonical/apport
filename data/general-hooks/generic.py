@@ -22,6 +22,7 @@ def add_info(report, ui):
     # check for low space
     mounts = {'/': 'system',
               '/var': '/var',
+              '/tmp': '/tmp'
              }
 
     home = os.getenv('HOME')
