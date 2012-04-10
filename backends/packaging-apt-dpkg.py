@@ -518,7 +518,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             aptroot = tempfile.mkdtemp()
 
         if not tmp_aptroot:
-            self._sandbox_cache(aptroot, apt_sources, verbose)
+            c = self._sandbox_cache(aptroot, apt_sources, verbose)
         else:
             self._build_apt_sandbox(aptroot, apt_sources)
             if verbose:
