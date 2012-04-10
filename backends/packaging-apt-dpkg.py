@@ -28,6 +28,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def __init__(self):
         self._apt_cache = None
+        self._sandbox_apt_cache = None
         self._contents_dir = None
         self._mirror = None
 
@@ -44,14 +45,36 @@ class __AptDpkgPackageInfo(PackageInfo):
     def _cache(self):
         '''Return apt.Cache() (initialized lazily).'''
 
+        self._sandbox_apt_cache = None
         if not self._apt_cache:
             try:
                 # avoid spewage on stdout
-                self._apt_cache = apt.Cache(apt.progress.base.OpProgress())
+                progress = apt.progress.base.OpProgress()
+                self._apt_cache = apt.Cache(progress, rootdir='/')
             except AttributeError:
                 # older python-apt versions do not yet have above argument
-                self._apt_cache = apt.Cache()
+                self._apt_cache = apt.Cache(rootdir='/')
         return self._apt_cache
+
+    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress):
+        '''Build apt sandbox and return apt.Cache(rootdir=) (initialized lazily).
+
+        Clear the package selection on subsequent calls.
+        '''
+        self._apt_cache = None
+        if not self._sandbox_apt_cache:
+            self._build_apt_sandbox(aptroot, apt_sources)
+            rootdir = os.path.abspath(aptroot)
+            self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
+            try:
+                # We don't need to update this multiple times.
+                self._sandbox_apt_cache.update(fetchProgress)
+            except apt.cache.FetchFailedException as e:
+                raise SystemError(str(e))
+            self._sandbox_apt_cache.open()
+        else:
+            self._sandbox_apt_cache.clear()
+        return self._sandbox_apt_cache
 
     def _apt_pkg(self, package):
         '''Return apt.Cache()[package] (initialized lazily).
@@ -491,18 +514,20 @@ class __AptDpkgPackageInfo(PackageInfo):
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
 
-        self._build_apt_sandbox(aptroot, apt_sources)
-
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
-        c = apt.Cache(rootdir=os.path.abspath(aptroot))
-        try:
-            c.update(fetchProgress)
-        except apt.cache.FetchFailedException as e:
-            raise SystemError(str(e))
-        c.open()
+        if not tmp_aptroot:
+            c = self._sandbox_cache(aptroot, apt_sources, fetchProgress)
+        else:
+            self._build_apt_sandbox(aptroot, apt_sources)
+            c = apt.Cache(rootdir=os.path.abspath(aptroot))
+            try:
+                c.update(fetchProgress)
+            except apt.cache.FetchFailedException as e:
+                raise SystemError(str(e))
+            c.open()
 
         obsolete = ''
 
@@ -557,12 +582,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         # check bookkeeping that apt fetcher really got everything
         assert not real_pkgs, 'apt fetcher did not fetch these packages: ' \
             + ' '.join(real_pkgs)
-
-        # work around python-apt bug that causes parts of the Cache(rootdir=)
-        # argument configuration to be persistent; this resets the apt
-        # configuration to system defaults again
-        apt.Cache(rootdir='/')
-        self._apt_cache = None
 
         return obsolete
 

@@ -15,6 +15,11 @@ Bug fixes:
  * generic package hook: Also check /tmp for enough space. Thanks Brian Murray.
    (LP: #972933)
 
+Improvements:
+ * packaging-apt-dpkg.py: Avoid constructing and updating the apt.Cache()
+   objects multiple times, to speed up retracing. Thanks Evan Dandrea.
+   (LP: #973494)
+
 2.0 (2012-03-30)
 ----------------
 This is the final 2.0 release, featuring the overhauled and simplified GUI,
