@@ -339,7 +339,7 @@ sandbox = None
 outdated_msg = None
 if options.sandbox:
     if options.keep_unpacked:
-        sandbox = options.keep_unpacked
+        sandbox = os.path.abspath(options.keep_unpacked)
         if not os.path.exists(sandbox):
             os.makedirs(sandbox)
         keep = True
