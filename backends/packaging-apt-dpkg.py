@@ -463,7 +463,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return (installed, outdated)
 
     def install_packages(self, rootdir, configdir, release, packages,
-            verbose=False, cache_dir=None, keep_unpacked=False):
+            verbose=False, cache_dir=None, sandbox_dir=None):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -484,6 +484,9 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         If cache_dir is given, then the downloaded packages will be stored
         there, to speed up subsequent retraces.
+
+        If sandbox_dir is given, then the sandbox created from the downloaded
+        packages will be reused, to speed up subsequent retraces.
 
         Return a string with outdated packages, or None if all packages were
         installed.
@@ -513,6 +516,18 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
+
+        if sandbox_dir:
+            tmp_sandbox = False
+            # gdb expects an absolute path.
+            sandbox_dir = os.path.abspath(sandbox_dir)
+            try:
+                os.makedirs(sandbox_dir)
+            except OSError:
+                pass
+        else:
+            tmp_sandbox = True
+            sandbox_dir = tempfile.mkdtemp()
 
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()
@@ -576,7 +591,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         archives = os.path.join(aptroot, 'var/cache/apt/archives')
         for i in fetcher.items:
             cached = os.path.join(archives, os.path.basename(i.destfile))
-            if not keep_unpacked or os.path.getctime(cached) > last_written:
+            if tmp_sandbox or os.path.getctime(cached) > last_written:
                 subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
             real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
 
