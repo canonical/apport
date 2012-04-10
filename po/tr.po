@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-21 18:25+0100\n"
-"PO-Revision-Date: 2012-03-26 12:23+0000\n"
+"PO-Revision-Date: 2012-04-09 13:51+0000\n"
 "Last-Translator: Hasan Yılmaz <iletisim@hasanyilmaz.net>\n"
 "Language-Team: Turkish <tr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-03-27 04:33+0000\n"
-"X-Generator: Launchpad (build 15011)\n"
+"X-Launchpad-Export-Date: 2012-04-10 04:43+0000\n"
+"X-Generator: Launchpad (build 15070)\n"
 "Language: tr\n"
 
 #: ../apport/ui.py:92
@@ -54,7 +54,7 @@ msgstr "bilinmeyen program"
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Üzgünüm, \"%s\" programı beklenmedik şekilde kapandı"
 
-#: ../apport/ui.py:213 ../apport/ui.py:1097
+#: ../apport/ui.py:213 ../apport/ui.py:1105
 #, python-format
 msgid "Problem in %s"
 msgstr "%s'de problem"
@@ -71,12 +71,12 @@ msgstr ""
 #: ../apport/ui.py:228 ../apport/ui.py:235 ../apport/ui.py:241
 #: ../apport/ui.py:273 ../apport/ui.py:281 ../apport/ui.py:352
 #: ../apport/ui.py:355 ../apport/ui.py:553 ../apport/ui.py:920
-#: ../apport/ui.py:1053 ../apport/ui.py:1057 ../apport/ui.py:1076
-#: ../apport/ui.py:1082
+#: ../apport/ui.py:1061 ../apport/ui.py:1065 ../apport/ui.py:1084
+#: ../apport/ui.py:1090
 msgid "Invalid problem report"
 msgstr "Geçersiz sorun raporu"
 
-#: ../apport/ui.py:230 ../apport/ui.py:1059
+#: ../apport/ui.py:230 ../apport/ui.py:1067
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Bu sorun raporu hasarlı, bu nedenle işlenemiyor."
 
@@ -245,7 +245,7 @@ msgstr "Bir sorunu bildirmek için hedef olarak bir pencereye tıklayın."
 
 #: ../apport/ui.py:626
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
+msgstr "Hata güncelleme kipinde başlat. Seçime bağlı --package alınabilir."
 
 #: ../apport/ui.py:628
 msgid ""
@@ -269,6 +269,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"--file-bug kipinde çalışacak bir program belirtebilirsiniz. Eğer "
+"belirtilmişse, hata raporu daha fazla ayrıntı içerecektir.(PID 'in tek "
+"parametre olarak verilmesi durumu kastedilmiştir)"
 
 #: ../apport/ui.py:634
 #, python-format
@@ -285,6 +288,8 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Hata belirtme kipinde, toplanan bilgileri raporlamak yerine onları bir "
+"dosyaya kaydedin. Bu dosya dha sonra farklı bir makineden raporlanabilir."
 
 #: ../apport/ui.py:640
 msgid "Print the Apport version number."
@@ -332,36 +337,36 @@ msgstr "Ağ tarayıcı başlatılamıyor"
 msgid "Unable to start web browser to open %s."
 msgstr "%s açmak için ağ tarayıcı başlatılamıyor."
 
-#: ../apport/ui.py:1009
+#: ../apport/ui.py:1017
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr "Lütfen %s hata takip sistemi için hesap bilgilerinizi girin."
 
-#: ../apport/ui.py:1020
+#: ../apport/ui.py:1028
 msgid "Network problem"
 msgstr "Ağ sorunu"
 
-#: ../apport/ui.py:1022
+#: ../apport/ui.py:1030
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Çöküş veritabanına bağlanılamıyor, lütfen internet bağlantınızı kontrol edin."
 
-#: ../apport/ui.py:1048
+#: ../apport/ui.py:1056
 msgid "Memory exhaustion"
 msgstr "Yetersiz bellek"
 
-#: ../apport/ui.py:1049
+#: ../apport/ui.py:1057
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Sisteminiz bu çökme raporunu işlemek için yeterli belleğe sahip değil."
 
-#: ../apport/ui.py:1072 ../apport/ui.py:1081
+#: ../apport/ui.py:1080 ../apport/ui.py:1089
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Bu problem raporu, artık yüklü olmayan bir programa ait."
 
-#: ../apport/ui.py:1100
+#: ../apport/ui.py:1108
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -372,11 +377,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1137 ../apport/ui.py:1144
+#: ../apport/ui.py:1145 ../apport/ui.py:1152
 msgid "Problem already known"
 msgstr "Sorun önceden bildirilmiş"
 
-#: ../apport/ui.py:1138
+#: ../apport/ui.py:1146
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -386,7 +391,7 @@ msgstr ""
 "bildirilmiş. Lütfen geliştiricilere yardımcı olabilecek ek bir bilgi ekleyip "
 "ekleyemeyeceğinize bakın."
 
-#: ../apport/ui.py:1145
+#: ../apport/ui.py:1153
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Bu sorun daha önce geliştiricilere bildirildi. Teşekkür ederiz!"
 
@@ -406,7 +411,7 @@ msgstr "Lütfen seçin (%s):"
 #: ../bin/apport-cli.py:141
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i sekiz ikil)"
 
 #: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:118 ../kde/apport-kde.py:315
 msgid "(binary data)"
@@ -537,8 +542,7 @@ msgstr "Tarayıcıyı aç"
 
 #: ../bin/apport-cli.py:366
 msgid "No pending crash reports. Try --help for more information."
-msgstr ""
-"Bekleyen çökme raporu yok. Daha fazla bilgi için --yardım 'ı deneyin."
+msgstr "Bekleyen çökme raporu yok. Daha fazla bilgi için --help 'i deneyin."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
@@ -830,7 +834,7 @@ msgstr ""
 
 #: ../kde/apport-kde.py:387
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Sorun Bilgileri Gönderiliyor"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
