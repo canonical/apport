@@ -56,7 +56,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._apt_cache = apt.Cache(rootdir='/')
         return self._apt_cache
 
-    def _sandbox_cache(self, aptroot, apt_sources, verbose):
+    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress):
         '''Return apt.Cache(rootdir=) (initialized lazily).
            Clear the package selection on subsequent calls.'''
 
@@ -67,10 +67,6 @@ class __AptDpkgPackageInfo(PackageInfo):
             self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
             try:
                 # We don't need to update this multiple times.
-                if verbose:
-                    fetchProgress = apt.progress.text.AcquireProgress()
-                else:
-                    fetchProgress = apt.progress.base.AcquireProgress()
                 self._sandbox_apt_cache.update(fetchProgress)
             except apt.cache.FetchFailedException as e:
                 raise SystemError(str(e))
@@ -517,14 +513,14 @@ class __AptDpkgPackageInfo(PackageInfo):
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
 
+        if verbose:
+            fetchProgress = apt.progress.text.AcquireProgress()
+        else:
+            fetchProgress = apt.progress.base.AcquireProgress()
         if not tmp_aptroot:
-            c = self._sandbox_cache(aptroot, apt_sources, verbose)
+            c = self._sandbox_cache(aptroot, apt_sources, fetchProgress)
         else:
             self._build_apt_sandbox(aptroot, apt_sources)
-            if verbose:
-                fetchProgress = apt.progress.text.AcquireProgress()
-            else:
-                fetchProgress = apt.progress.base.AcquireProgress()
             c = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
                 c.update(fetchProgress)
