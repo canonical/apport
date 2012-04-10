@@ -660,14 +660,21 @@ File: base64
         pr['TwoLine'] = 'first\nsecond\n'
         pr['InlineMargin'] = 'first\nsecond\nthird\nfourth\nfifth\n'
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
+
+        # still small enough for inline text
+        pr['Largeline'] = 'A' * 999 
+        pr['LargeMultiline'] = 'A' * 120 + '\n' + 'B' * 90
+
+        # too big for inline text, these become attachments
         pr['Hugeline'] = 'A' * 10000
+        pr['HugeMultiline'] = 'A' * 900 + '\n' + 'B' * 900 + '\n' + 'C' * 900
         io = StringIO()
         pr.write_mime(io)
         io.seek(0)
 
         msg = email.message_from_file(io)
         parts = [p for p in msg.walk()]
-        self.assertEqual(len(parts), 4)
+        self.assertEqual(len(parts), 5)
 
         # first part is the multipart container
         self.assertTrue(parts[0].is_multipart())
@@ -686,6 +693,10 @@ InlineMargin:
  third
  fourth
  fifth
+LargeMultiline:
+ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+Largeline: %s
 Simple: bar
 SimpleLineEnd: bar
 SimpleUTF8: 1äö2Φ3
@@ -699,21 +710,28 @@ TwoLineUTF8:
 TwoLineUnicode:
  pi-π
  nu-η
-''')
+''' % pr['Largeline'])
 
-        # third part should be the Hugeline: field as attachment
+        # third part should be the HugeMultiline: field as attachment
         self.assertTrue(not parts[2].is_multipart())
         self.assertEqual(parts[2].get_content_type(), 'text/plain')
         self.assertEqual(parts[2].get_content_charset(), 'utf-8')
-        self.assertEqual(parts[2].get_filename(), 'Hugeline.txt')
-        self.assertEqual(parts[2].get_payload(decode=True), 'A' * 10000)
+        self.assertEqual(parts[2].get_filename(), 'HugeMultiline.txt')
+        self.assertEqual(parts[2].get_payload(decode=True), pr['HugeMultiline'])
 
-        # fourth part should be the Multiline: field as attachment
+        # fourth part should be the Hugeline: field as attachment
         self.assertTrue(not parts[3].is_multipart())
         self.assertEqual(parts[3].get_content_type(), 'text/plain')
         self.assertEqual(parts[3].get_content_charset(), 'utf-8')
-        self.assertEqual(parts[3].get_filename(), 'Multiline.txt')
-        self.assertEqual(parts[3].get_payload(decode=True), ''' foo   bar
+        self.assertEqual(parts[3].get_filename(), 'Hugeline.txt')
+        self.assertEqual(parts[3].get_payload(decode=True), pr['Hugeline'])
+
+        # fifth part should be the Multiline: field as attachment
+        self.assertTrue(not parts[4].is_multipart())
+        self.assertEqual(parts[4].get_content_type(), 'text/plain')
+        self.assertEqual(parts[4].get_content_charset(), 'utf-8')
+        self.assertEqual(parts[4].get_filename(), 'Multiline.txt')
+        self.assertEqual(parts[4].get_payload(decode=True), ''' foo   bar
 baz
   blip  
 line4

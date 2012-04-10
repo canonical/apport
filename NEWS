@@ -14,6 +14,9 @@ Bug fixes:
    the kernel has time to finish writing the core file.
  * generic package hook: Also check /tmp for enough space. Thanks Brian Murray.
    (LP: #972933)
+ * problem_report.py, write_mime(): Fix regression from version 1.95: Add a
+   value as attachment if it is bigger than 1000 bytes, not if it is bigger
+   than 100. (LP: #977882)
 
 Improvements:
  * packaging-apt-dpkg.py: Avoid constructing and updating the apt.Cache()

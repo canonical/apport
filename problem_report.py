@@ -479,7 +479,7 @@ class ProblemReport(UserDict):
                 if size <= 1000 and lines == 1:
                     v = v.rstrip()
                     text += '%s: %s\n' % (k, v)
-                elif size <= 100 and lines <= attach_treshold:
+                elif size <= 1000 and lines <= attach_treshold:
                     text += '%s:\n ' % k
                     if not v.endswith('\n'):
                         v += '\n'
