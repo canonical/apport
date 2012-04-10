@@ -576,7 +576,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         archives = os.path.join(aptroot, 'var/cache/apt/archives')
         for i in fetcher.items:
             cached = os.path.join(archives, os.path.basename(i.destfile))
-            if not keep_unpacked or os.path.getctime(dest) > last_written:
+            if not keep_unpacked or os.path.getctime(cached) > last_written:
                 subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
             real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
 
