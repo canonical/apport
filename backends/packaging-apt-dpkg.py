@@ -463,7 +463,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return (installed, outdated)
 
     def install_packages(self, rootdir, configdir, release, packages,
-            verbose=False, cache_dir=None):
+            verbose=False, cache_dir=None, keep_unpacked=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -572,8 +572,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         # unpack packages
         if verbose:
             print('Extracting downloaded debs...')
+        archives = os.path.join(aptroot, 'var/cache/apt/archives')
         for i in fetcher.items:
-            subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
+            cached = os.path.join(archives, os.path.basename(i.destfile))
+            if not keep_unpacked or not os.path.exists(cached):
+                subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
             real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
 
         if tmp_aptroot:

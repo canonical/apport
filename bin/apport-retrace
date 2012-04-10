@@ -59,6 +59,8 @@ def parse_options():
         help=_('Prepend timestamps to log messages, for batch operation'))
     optparser.add_option('-C', '--cache', metavar='DIR',
         help=_('Cache directory for packages downloaded in the sandbox'))
+    optparser.add_option('-k', '--keep-unpacked', metavar='DIR',
+        help=_('Cache directory for unpacked packages. Future runs will assume that any already downloaded package is also extracted to this sandbox.'))
     optparser.add_option('-p', '--extra-package', action='append', default=[],
         help=_('Install an extra package into the sandbox (can be specified multiple times)'))
     optparser.add_option('--auth',
@@ -336,8 +338,13 @@ elif not required_fields.issubset(set(report.keys())):
 sandbox = None
 outdated_msg = None
 if options.sandbox:
-    sandbox = tempfile.mkdtemp()
-    atexit.register(shutil.rmtree, sandbox)
+    if options.keep_unpacked:
+        sandbox = options.keep_unpacked
+        keep = True
+    else:
+        sandbox = tempfile.mkdtemp()
+        atexit.register(shutil.rmtree, sandbox)
+        keep = False
 
     pkgs = needed_packages(report)
     for p in options.extra_package:
@@ -355,7 +362,7 @@ if options.sandbox:
 
     try:
         outdated_msg = apport.packaging.install_packages(sandbox, sandbox_arg,
-            report['DistroRelease'], pkgs, options.verbose, options.cache)
+            report['DistroRelease'], pkgs, options.verbose, options.cache, keep)
     except SystemError as e:
         sys.stderr.write(str(e) + '\n')
         sys.exit(1)
