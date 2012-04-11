@@ -14,6 +14,7 @@
 import os, re
 import apport.hookutils, apport.fileutils
 
+
 def add_info(report, ui):
     nm = apport.hookutils.nonfree_kernel_modules()
     if nm:

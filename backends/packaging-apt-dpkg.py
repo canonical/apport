@@ -22,6 +22,7 @@ import apt
 import apport
 from apport.packaging import PackageInfo
 
+
 class __AptDpkgPackageInfo(PackageInfo):
     '''Concrete apport.PackageInfo class implementation for python-apt and
     dpkg, as found on Debian and derivatives such as Ubuntu.'''
@@ -163,7 +164,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         origins = None
         origins = pkg.candidate.origins
-        if origins: # might be None
+        if origins:  # might be None
             for o in origins:
                 if o.origin in native_origins:
                     return True
@@ -221,7 +222,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     if '\0' in line:
                         apport.warning('%s contains NUL character, ignoring line', sumfile)
                         continue
-                    words  = line.split()
+                    words = line.split()
                     if not words:
                         apport.warning('%s contains empty line, ignoring line', sumfile)
                         continue
@@ -246,12 +247,12 @@ class __AptDpkgPackageInfo(PackageInfo):
         official user-facing API for this, which will ask for confirmation and
         allows filtering.
         '''
-        dpkg = subprocess.Popen(['dpkg-query','-W','--showformat=${Conffiles}',
+        dpkg = subprocess.Popen(['dpkg-query', '-W', '--showformat=${Conffiles}',
             package], stdout=subprocess.PIPE, close_fds=True)
 
         out = dpkg.communicate()[0].decode()
         if dpkg.returncode != 0:
-           return {}
+            return {}
 
         modified = {}
         for line in out.splitlines():
@@ -285,7 +286,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         while not match and i < len(file_list):
             p = subprocess.Popen(['fgrep', '-lxm', '1', '--', pattern] +
-                file_list[i:i+slice_size], stdin=subprocess.PIPE,
+                file_list[i:(i + slice_size)], stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
             out = p.communicate()[0].decode('UTF-8')
             if p.returncode == 0:
@@ -442,7 +443,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if debug_pkgname in c and c[debug_pkgname].isInstalled:
             #print('kernel ddeb already installed')
             return (installed, outdated)
-        target_dir = apt_pkg.Config.FindDir('Dir::Cache::archives')+'/partial'
+        target_dir = apt_pkg.Config.FindDir('Dir::Cache::archives') + '/partial'
         deb = '%s_%s_%s.ddeb' % (debug_pkgname, ver, arch)
         # FIXME: this package is currently not in Packages.gz
         url = 'http://ddebs.ubuntu.com/pool/main/l/linux/%s' % deb
@@ -452,7 +453,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if u.getcode() > 400:
             return ('', 'linux')
         while True:
-            block = u.read(8*1024)
+            block = u.read(8 * 1024)
             if not block:
                 break
             out.write(block)
@@ -569,7 +570,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             c.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as e:
             apport.error('Package download error, try again later: %s', str(e))
-            sys.exit(99) # transient error
+            sys.exit(99)  # transient error
 
         # unpack packages
         if verbose:

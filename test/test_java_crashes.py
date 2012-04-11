@@ -11,10 +11,11 @@ import tempfile, unittest, subprocess, sys, os, os.path, shutil
 
 import apport, apport.fileutils
 
+
 class T(unittest.TestCase):
     def setUp(self):
         mydir = os.path.dirname(os.path.realpath(sys.argv[0]))
-        datadir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
+        datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
         self.srcdir = os.path.dirname(mydir)
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()

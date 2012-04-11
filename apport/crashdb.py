@@ -21,12 +21,14 @@ except ImportError:
 
 import apport
 
+
 def _u(str):
     '''Convert str to an unicode if it isn't already.'''
 
     if type(str) == type(b''):
         return str.decode('UTF-8', 'ignore')
     return str
+
 
 class CrashDatabase:
     def __init__(self, auth_file, options):
@@ -207,7 +209,7 @@ class CrashDatabase:
                         self.close_duplicate(report, master_id, addr_match)
                         self._duplicate_db_merge_id(master_id, addr_match)
                         master_id = addr_match
-                        master_ver = None # no version tracking for address signatures yet
+                        master_ver = None  # no version tracking for address signatures yet
 
         if master_id is not None:
             if addr_sig:
@@ -604,7 +606,7 @@ class CrashDatabase:
     # Abstract functions that need to be implemented by subclasses
     #
 
-    def upload(self, report, progress_callback = None):
+    def upload(self, report, progress_callback=None):
         '''Upload given problem report return a handle for it.
 
         This should happen noninteractively.
@@ -793,7 +795,8 @@ class CrashDatabase:
 # factory
 #
 
-def get_crashdb(auth_file, name = None, conf = None):
+
+def get_crashdb(auth_file, name=None, conf=None):
     '''Return a CrashDatabase object for the given crash db name.
 
     This reads the configuration file 'conf'.
@@ -840,6 +843,7 @@ def get_crashdb(auth_file, name = None, conf = None):
 
     m = __import__('apport.crashdb_impl.' + db['impl'], globals(), locals(), ['CrashDatabase'])
     return m.CrashDatabase(auth_file, db)
+
 
 class NeedsCredentials(Exception):
     '''This may be raised when unable to log in to the crashdb.'''

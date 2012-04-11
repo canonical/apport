@@ -12,6 +12,7 @@
 
 import unittest, subprocess, tempfile, os, shutil, os.path
 
+
 class T(unittest.TestCase):
     def setUp(self):
         '''Set up dummy config dir, crashdb.conf, and apport-retrace'''
@@ -76,7 +77,7 @@ echo "$@" >> %s''' % self.apport_retrace_log)
         self.assertFalse('dup.db -v 0\n' in retrace_log)
         self.assertTrue('dup.db -v 1\n' in retrace_log)
         self.assertTrue('dup.db -v 2\n' in retrace_log)
-        self.assertFalse (os.path.exists(self.lock_file))
+        self.assertFalse(os.path.exists(self.lock_file))
 
         self.assertFalse(os.path.isdir(os.path.join(self.workdir, 'dupdb', 'sig')))
 
@@ -132,7 +133,7 @@ fi
             os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertTrue('retracing #2' in out)
         self.assertEqual(err, '', 'no error messages:\n' + err)
-        self.assertFalse (os.path.exists(self.lock_file))
+        self.assertFalse(os.path.exists(self.lock_file))
 
     def test_crashes_transient_error(self):
         '''Crash retracing if apport-retrace reports a transient error'''
@@ -176,7 +177,7 @@ fi
         self.assertTrue('checking #4 for duplicate' in out)
         self.assertTrue('Report is a duplicate of #3 (not fixed yet)' in out)
         self.assertFalse(os.path.exists(self.apport_retrace_log))
-        self.assertFalse (os.path.exists(self.lock_file))
+        self.assertFalse(os.path.exists(self.lock_file))
 
     def test_stderr_redirection(self):
         '''apport-retrace's stderr is redirected to stdout'''

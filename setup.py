@@ -15,6 +15,7 @@ except ImportError:
 
 assert StrictVersion(DistUtilsExtra.auto.__version__) >= '2.24', 'needs DistUtilsExtra.auto >= 2.24'
 
+
 class build_java_subdir(distutils.core.Command):
     '''Java crash handler build command'''
 
@@ -32,12 +33,13 @@ class build_java_subdir(distutils.core.Command):
         os.chdir('java')
 
         subprocess.check_call(['javac'] + glob('com/ubuntu/apport/*.java'))
-        subprocess.check_call(['jar','cvf', 'apport.jar'] +
+        subprocess.check_call(['jar', 'cvf', 'apport.jar'] +
                             glob('com/ubuntu/apport/*.class'))
-        subprocess.check_call(['javac','crash.java'])
-        subprocess.check_call(['jar','cvf', 'crash.jar', 'crash.class'])
+        subprocess.check_call(['javac', 'crash.java'])
+        subprocess.check_call(['jar', 'cvf', 'crash.jar', 'crash.class'])
 
         os.chdir(oldwd)
+
 
 class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
     '''Java crash handler clean command'''

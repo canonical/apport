@@ -24,6 +24,7 @@ import apport, apport.fileutils
 #
 #################################################################
 
+
 def check_lock():
     '''Abort if another instance of apport is already running.
 
@@ -33,7 +34,7 @@ def check_lock():
     # create a lock file
     lockfile = os.path.join(apport.fileutils.report_dir, '.lock')
     try:
-        fd = os.open(lockfile, os.O_WRONLY|os.O_CREAT|os.O_NOFOLLOW)
+        fd = os.open(lockfile, os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW)
     except OSError as e:
         error_log('cannot create lock file (uid %i): %s' % (os.getuid(), str(e)))
         sys.exit(1)
@@ -43,6 +44,7 @@ def check_lock():
     except IOError:
         error_log('another apport instance is already running, aborting')
         sys.exit(1)
+
 
 def drop_privileges(pid, partial=False):
     '''Change user and group to match the given target process.'''
@@ -67,29 +69,32 @@ def drop_privileges(pid, partial=False):
     assert os.geteuid() == effective_uid
     assert os.getuid() == stat.st_uid
 
+
 def init_error_log():
     '''Open a suitable error log if sys.stderr is not a tty.'''
 
     if not os.isatty(sys.stderr.fileno()):
         log = os.environ.get('APPORT_LOG_FILE', '/var/log/apport.log')
         try:
-            f = os.open(log, os.O_WRONLY|os.O_CREAT|os.O_APPEND, 0o600)
+            f = os.open(log, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
             try:
                 admgid = grp.getgrnam('adm')[2]
                 os.chown(log, -1, admgid)
                 os.chmod(log, 0o640)
             except KeyError:
-                pass # if group adm doesn't exist, just leave it as root
-        except OSError: # on a permission error, don't touch stderr
+                pass  # if group adm doesn't exist, just leave it as root
+        except OSError:  # on a permission error, don't touch stderr
             return
         os.dup2(f, sys.stderr.fileno())
         os.dup2(f, sys.stdout.fileno())
         os.close(f)
 
+
 def error_log(msg):
     '''Output something to the error log.'''
 
     apport.error('apport (pid %s) %s: %s', os.getpid(), time.asctime(), msg)
+
 
 def _log_signal_handler(sgn, frame):
     '''Internal apport signal handler. Just log the signal handler and exit.'''
@@ -104,6 +109,7 @@ def _log_signal_handler(sgn, frame):
         pass
     sys.exit(1)
 
+
 def setup_signals():
     '''Install a signal handler for all crash-like signals, so that apport is
     not called on itself when apport crashed.'''
@@ -114,6 +120,7 @@ def setup_signals():
     signal.signal(signal.SIGSEGV, _log_signal_handler)
     signal.signal(signal.SIGPIPE, _log_signal_handler)
     signal.signal(signal.SIGBUS, _log_signal_handler)
+
 
 def write_user_coredump(pid, cwd, limit):
     '''Write the core into the current directory if ulimit requests it.'''
@@ -141,7 +148,7 @@ def write_user_coredump(pid, cwd, limit):
     try:
         if open('/proc/sys/kernel/core_uses_pid').read().strip() != '0':
             core_path += '.' + str(pid)
-        core_file = os.open(core_path, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o640)
+        core_file = os.open(core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640)
     except (OSError, IOError):
         return
 
@@ -172,6 +179,7 @@ def write_user_coredump(pid, cwd, limit):
     os.close(core_file)
     return core_path
 
+
 def usable_ram():
     '''Return how many bytes of RAM is currently available that can be
     allocated without causing major thrashing.'''
@@ -183,8 +191,9 @@ def usable_ram():
     memfree = long(r['MemFree'].split()[0])
     cached = long(r['Cached'].split()[0])
     writeback = long(r['Writeback'].split()[0])
-    
-    return (memfree+cached-writeback) * 1024
+
+    return (memfree + cached - writeback) * 1024
+
 
 def is_closing_session(pid, uid):
     '''Check if pid is in a closing user session.
@@ -252,7 +261,7 @@ try:
     try:
         os.nice(10)
     except OSError:
-        pass # *shrug*, we tried
+        pass  # *shrug*, we tried
 
     # Partially drop privs to gain proper os.access() checks
     drop_privileges(pid, True)
@@ -275,7 +284,7 @@ try:
 
     info = apport.Report('Crash')
     info['Signal'] = signum
-    info['CoreDump'] = (sys.stdin, True, usable_ram()*3/4, True)
+    info['CoreDump'] = (sys.stdin, True, usable_ram() * 3 / 4, True)
 
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
@@ -304,7 +313,7 @@ try:
 
     # ignore SIGXCPU and SIGXFSZ since this indicates some external
     # influence changing soft RLIMIT values when running programs.
-    if signum in [str(signal.SIGXCPU),str(signal.SIGXFSZ)]:
+    if signum in [str(signal.SIGXCPU), str(signal.SIGXFSZ)]:
         error_log('Ignoring signal %s (caused by exceeding soft RLIMIT)' % signum)
         drop_privileges(pid)
         write_user_coredump(pid, cwd, core_ulimit)
@@ -344,7 +353,7 @@ try:
                 write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
         reportfile = os.fdopen(os.open(report,
-            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0), 'w')
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'w')
         assert reportfile.fileno() > sys.stderr.fileno()
 
         # Make sure the crash reporting daemon can read this report
@@ -365,7 +374,7 @@ try:
     # Now that we've written it, it's no longer on stdin, so we need
     # to change the CoreDump info if we want it in the crash report.
     if coredump:
-        info['CoreDump'] = (open(coredump), True, usable_ram()*3/4)
+        info['CoreDump'] = (open(coredump), True, usable_ram() * 3 / 4)
 
     info.add_user_info()
     info.add_os_info()

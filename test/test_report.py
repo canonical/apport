@@ -10,6 +10,7 @@ try:
 except ImportError:
     from io import StringIO
 
+
 class T(unittest.TestCase):
     def test_add_package_info(self):
         '''add_package_info().'''
@@ -77,7 +78,7 @@ class T(unittest.TestCase):
         self.assertEqual(pr.pid, os.getpid())
         self.assertTrue(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
             'ProcMaps']).issubset(set(pr.keys())), 'report has required fields')
-        self.assertTrue('LANG='+os.environ['LANG'] in pr['ProcEnviron'])
+        self.assertTrue('LANG=' + os.environ['LANG'] in pr['ProcEnviron'])
         self.assertTrue('USER' not in pr['ProcEnviron'])
         self.assertTrue('PWD' not in pr['ProcEnviron'])
         self.assertTrue('report.py' in pr['ExecutablePath'])
@@ -89,7 +90,7 @@ class T(unittest.TestCase):
         pr.add_proc_info(extraenv=['PWD'])
         self.assertTrue('USER' not in pr['ProcEnviron'])
         if 'PWD' in os.environ:
-            self.assertTrue('PWD='+os.environ['PWD'] in pr['ProcEnviron'])
+            self.assertTrue('PWD=' + os.environ['PWD'] in pr['ProcEnviron'])
 
         # check process from other user
         restore_root = False
@@ -98,7 +99,7 @@ class T(unittest.TestCase):
             os.setresuid(8, 8, -1)
             restore_root = True
         pr = apport.report.Report()
-        self.assertRaises(OSError, pr.add_proc_info, 1) # EPERM for init process
+        self.assertRaises(OSError, pr.add_proc_info, 1)  # EPERM for init process
         if restore_root:
             os.setresuid(0, 0, -1)
 
@@ -474,7 +475,7 @@ int main() { return f(42); }
 
         return pr
 
-    def _validate_gdb_fields(self,pr):
+    def _validate_gdb_fields(self, pr):
         self.assertTrue('Stacktrace' in pr)
         self.assertTrue('ThreadStacktrace' in pr)
         self.assertTrue('StacktraceTop' in pr)
@@ -502,7 +503,7 @@ int main() { return f(42); }
         pr = self._generate_sigsegv_report()
         self._validate_gdb_fields(pr)
         self.assertEqual(pr['StacktraceTop'], 'f (x=42) at crash.c:3\nmain () at crash.c:6', pr['StacktraceTop'])
-        self.assertFalse ('AssertionMessage' in pr)
+        self.assertFalse('AssertionMessage' in pr)
 
         # crash where gdb generates output on stderr
         pr = self._generate_sigsegv_report(code='''
@@ -514,7 +515,7 @@ int main() {
 ''')
         self._validate_gdb_fields(pr)
         self.assertTrue('Cannot access memory at address 0x0' in pr['Disassembly'], pr['Disassembly'])
-        self.assertFalse ('AssertionMessage' in pr)
+        self.assertFalse('AssertionMessage' in pr)
 
     def test_add_gdb_info_load(self):
         '''add_gdb_info() with inline core dump.'''
@@ -715,7 +716,7 @@ $0.bin 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.assertFalse ('AssertionMessage' in pr, pr.get('AssertionMessage'))
+        self.assertFalse('AssertionMessage' in pr, pr.get('AssertionMessage'))
 
     def test_search_bug_patterns(self):
         '''search_bug_patterns().'''
@@ -1276,7 +1277,7 @@ baz()
 
         report = apport.report.Report('KernelOops')
         report['OopsText'] = '------------[ cut here ]------------\nkernel BUG at /tmp/oops.c:5!\ninvalid opcode: 0000 [#1] SMP'
-        self.assertEqual(report.standard_title(),'kernel BUG at /tmp/oops.c:5!')
+        self.assertEqual(report.standard_title(), 'kernel BUG at /tmp/oops.c:5!')
 
     def test_obsolete_packages(self):
         '''obsolete_packages().'''
@@ -1546,7 +1547,6 @@ ZeroDivisionError: integer division or modulo by zero'''
 
         r['Traceback'] = 'FooBar'
         self.assertEqual(r.crash_signature(), None)
-
 
         # kernel
         r['ProblemType'] = 'KernelCrash'

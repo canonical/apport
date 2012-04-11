@@ -14,6 +14,7 @@ import problem_report
 import apport.crashdb_impl.memory
 import stat
 
+
 class TestSuiteUserInterface(apport.ui.UserInterface):
     '''Concrete apport.ui.UserInterface suitable for automatic testing'''
 
@@ -39,7 +40,7 @@ databases = {
 
         # state of progress dialogs
         self.ic_progress_active = False
-        self.ic_progress_pulses = 0 # count the pulses
+        self.ic_progress_pulses = 0  # count the pulses
         self.upload_progress_active = False
         self.upload_progress_pulses = 0
 
@@ -60,7 +61,7 @@ databases = {
         # last message box
         self.msg_title = None
         self.msg_text = None
-        self.msg_severity = None # 'warning' or 'error'
+        self.msg_severity = None  # 'warning' or 'error'
         self.msg_choices = None
 
     def ui_present_report_details(self, is_update):
@@ -114,6 +115,7 @@ databases = {
     def ui_question_file(self, text):
         self.msg_text = text
         return self.question_file_response
+
 
 class T(unittest.TestCase):
     def setUp(self):
@@ -199,9 +201,9 @@ class T(unittest.TestCase):
         self.assertEqual(self.ui.format_filesize(2560), '2.6 KB')
         self.assertEqual(self.ui.format_filesize(999999), '1000.0 KB')
         self.assertEqual(self.ui.format_filesize(1000000), '1.0 MB')
-        self.assertEqual(self.ui.format_filesize(2.7*1000000), '2.7 MB')
-        self.assertEqual(self.ui.format_filesize(1024*1000000), '1.0 GB')
-        self.assertEqual(self.ui.format_filesize(2560*1000000), '2.6 GB')
+        self.assertEqual(self.ui.format_filesize(2.7 * 1000000), '2.7 MB')
+        self.assertEqual(self.ui.format_filesize(1024 * 1000000), '1.0 GB')
+        self.assertEqual(self.ui.format_filesize(2560 * 1000000), '2.6 GB')
 
     def test_get_size_loaded(self):
         '''get_complete_size() and get_reduced_size() for loaded Reports'''
@@ -285,7 +287,7 @@ bOgUs=
         self.ui.load_report(self.report_file.name)
 
         self.ui.restart()
-        time.sleep(1) # FIXME: race condition
+        time.sleep(1)  # FIXME: race condition
         self.assertTrue(os.path.exists(p))
         self.assertTrue(not os.path.exists(r))
         os.unlink(p)
@@ -296,7 +298,7 @@ bOgUs=
         self.ui.load_report(self.report_file.name)
 
         self.ui.restart()
-        time.sleep(1) # FIXME: race condition
+        time.sleep(1)  # FIXME: race condition
         self.assertTrue(not os.path.exists(p))
         self.assertTrue(os.path.exists(r))
         os.unlink(r)
@@ -356,7 +358,7 @@ bOgUs=
 
     def test_collect_info_permissions(self):
         '''collect_info() leaves the report accessible to the group'''
-        
+
         self.ui.report = apport.Report('Bug')
         self.ui.cur_package = 'bash'
         self.ui.report_file = self.report_file.name
@@ -413,7 +415,7 @@ bOgUs=
         self.assertEqual(self.ui.run_argv(), True)
         output = sys.stdout.getvalue()
         sys.stdout = orig_stdout
-        self.assertEqual(output, apport.ui.__version__+"\n")
+        self.assertEqual(output, apport.ui.__version__ + '\n')
 
     def test_run_report_bug_package(self):
         '''run_report_bug() for a package'''
@@ -422,8 +424,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertEqual(self.ui.msg_severity, None)
@@ -462,8 +464,8 @@ bOgUs=
             self.ui = TestSuiteUserInterface()
             self.ui.present_details_response = {'report': True,
                                                 'blacklist': False,
-                                                'examine' : False,
-                                                'restart' : False }
+                                                'examine': False,
+                                                'restart': False}
             self.assertEqual(self.ui.run_argv(), True)
         finally:
             # kill test process
@@ -474,7 +476,7 @@ bOgUs=
         self.assertTrue('Dependencies' in self.ui.report.keys())
         self.assertTrue('ProcMaps' in self.ui.report.keys())
         self.assertEqual(self.ui.report['ExecutablePath'], '/usr/bin/yes')
-        self.assertFalse('ProcCmdline' in self.ui.report) # privacy!
+        self.assertFalse('ProcCmdline' in self.ui.report)  # privacy!
         self.assertTrue('ProcEnviron' in self.ui.report.keys())
         self.assertEqual(self.ui.report['ProblemType'], 'Bug')
         self.assertTrue('Tags' in self.ui.report.keys())
@@ -571,8 +573,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_argv()
 
         self.assertTrue(self.ui.report['Package'].startswith(apport.packaging.get_kernel_package()))
@@ -608,8 +610,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertEqual(self.ui.msg_text, None)
@@ -665,8 +667,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -678,8 +680,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
         self.assertEqual(self.ui.msg_title, None)
@@ -706,8 +708,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': True,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -726,10 +728,10 @@ bOgUs=
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
+        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
         self.assertTrue('SourcePackage' in self.ui.report.keys())
         self.assertTrue('Dependencies' in self.ui.report.keys())
@@ -761,10 +763,10 @@ bOgUs=
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, 'error',  self.ui.msg_text)
+        self.assertEqual(self.ui.msg_severity, 'error', self.ui.msg_text)
         self.assertTrue('decompress' in self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
@@ -779,8 +781,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
 
         self.assertEqual(self.ui.run_argv(), True)
 
@@ -797,8 +799,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertTrue('It stinks.' in self.ui.msg_text, '%s: %s' %
@@ -806,7 +808,7 @@ bOgUs=
         self.assertEqual(self.ui.msg_severity, 'info')
 
         # should not die with an exception on an invalid name
-        sys.argv = ['ui-test', '-c', '/nonexisting.crash' ]
+        sys.argv = ['ui-test', '-c', '/nonexisting.crash']
         self.ui = TestSuiteUserInterface()
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, 'error')
@@ -820,8 +822,8 @@ bOgUs=
         self.update_report_file()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
 
         self.ui.run_crash(self.report_file.name)
 
@@ -896,8 +898,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, 'has %s message: %s: %s' % (
             self.ui.msg_severity, str(self.ui.msg_title), str(self.ui.msg_text)))
@@ -925,8 +927,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.cur_package, 'uninstalled_pkg')
         self.assertEqual(self.ui.msg_severity, None, 'has %s message: %s: %s' % (
@@ -947,8 +949,8 @@ bOgUs=
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
 
         self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
@@ -966,8 +968,8 @@ bOgUs=
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
 
         self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
@@ -999,14 +1001,14 @@ bOgUs=
         '''run_crash() on binary that got updated in the meantime'''
 
         r = self._gen_test_crash()
-        r['ExecutableTimestamp'] = str(int(r['ExecutableTimestamp'])-10)
+        r['ExecutableTimestamp'] = str(int(r['ExecutableTimestamp']) - 10)
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
         r.write(open(report_file, 'w'))
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
 
         self.assertFalse('ExecutableTimestamp' in self.ui.report)
@@ -1035,8 +1037,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -1049,8 +1051,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None)
         self.assertEqual(self.ui.msg_title, None)
@@ -1089,8 +1091,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, 'error: %s - %s' %
             (self.ui.msg_title, self.ui.msg_text))
@@ -1104,8 +1106,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) +
             ' ' + str(self.ui.msg_text))
@@ -1129,10 +1131,10 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
+        self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
         self.assertFalse('ProcCwd' in self.ui.report)
 
@@ -1178,10 +1180,10 @@ bOgUs=
             self.ui = TestSuiteUserInterface()
             self.ui.present_details_response = {'report': True,
                                                 'blacklist': False,
-                                                'examine' : False,
-                                                'restart' : False }
+                                                'examine': False,
+                                                'restart': False}
             self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
+            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
             self.assertEqual(self.ui.report['ProcAuxInfo'], 'my hostname')
             # after anonymization this should mess up Stacktrace; this mostly
@@ -1211,12 +1213,12 @@ bOgUs=
             self.ui = TestSuiteUserInterface()
             self.ui.present_details_response = {'report': True,
                                                 'blacklist': False,
-                                                'examine' : False,
-                                                'restart' : False }
+                                                'examine': False,
+                                                'restart': False}
             self.ui.run_crash(report_file)
-            self.assertEqual(self.ui.msg_severity, None,  self.ui.msg_text)
+            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
-            self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'), 
+            self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'),
                 self.ui.report['Title'])
             self.assertEqual(self.ui.report['ProcInfo1'], 'my hostname')
             self.assertEqual(self.ui.report['ProcInfo2'], '"hostname.localnet"')
@@ -1232,8 +1234,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
 
         # known without URL
         with open(report_file, 'w') as f:
@@ -1247,8 +1249,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         # known with URL
         with open(report_file, 'w') as f:
             r.write(f)
@@ -1287,8 +1289,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
 
         self.ui.crashdb.download(1)['SourcePackage'] = 'bash'
         self.ui.crashdb.download(1)['Package'] = 'bash'
@@ -1310,8 +1312,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
 
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
@@ -1332,8 +1334,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
 
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
@@ -1353,8 +1355,8 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
 
         f = open(os.path.join(self.hookdir, 'source_foo.py'), 'w')
         f.write('def add_info(r, ui):\n  r["MachineType"]="Laptop"\n')
@@ -1384,8 +1386,8 @@ bOgUs=
 
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self._run_hook('''report['begin'] = '1'
 ui.information('InfoText')
 report['end'] = '1'
@@ -1399,8 +1401,8 @@ report['end'] = '1'
 
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.question_yesno_response = True
         self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.yesno('YesNo?'))
@@ -1426,8 +1428,8 @@ report['end'] = '1'
 
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.question_file_response = '/etc/fstab'
         self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.file('YourFile?'))
@@ -1448,8 +1450,8 @@ report['end'] = '1'
 
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.question_choice_response = [1]
         self._run_hook('''report['begin'] = '1'
 report['answer'] = str(ui.choice('YourChoice?', ['foo', 'bar']))
@@ -1478,12 +1480,12 @@ report['end'] = '1'
         '''run_symptom()'''
 
         # unknown symptom
-        sys.argv = ['ui-test', '-s', 'foobar' ]
+        sys.argv = ['ui-test', '-s', 'foobar']
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.assertEqual(self.ui.run_argv(), True)
         self.assertTrue('foobar" is not known' in self.ui.msg_text)
         self.assertEqual(self.ui.msg_severity, 'error')
@@ -1493,7 +1495,7 @@ report['end'] = '1'
         f.write('def run(report, ui):\n    pass\n')
         f.close()
         orig_stderr = sys.stderr
-        sys.argv = ['ui-test', '-s', 'nopkg' ]
+        sys.argv = ['ui-test', '-s', 'nopkg']
         self.ui = TestSuiteUserInterface()
         sys.stderr = StringIO()
         self.assertRaises(SystemExit, self.ui.run_argv)
@@ -1505,7 +1507,7 @@ report['end'] = '1'
         f = open(os.path.join(apport.ui.symptom_script_dir, 'norun.py'), 'w')
         f.write('def something(x, y):\n    return 1\n')
         f.close()
-        sys.argv = ['ui-test', '-s', 'norun' ]
+        sys.argv = ['ui-test', '-s', 'norun']
         self.ui = TestSuiteUserInterface()
         sys.stderr = StringIO()
         self.assertRaises(SystemExit, self.ui.run_argv)
@@ -1517,7 +1519,7 @@ report['end'] = '1'
         f = open(os.path.join(apport.ui.symptom_script_dir, 'crash.py'), 'w')
         f.write('def run(report, ui):\n    return 1/0\n')
         f.close()
-        sys.argv = ['ui-test', '-s', 'crash' ]
+        sys.argv = ['ui-test', '-s', 'crash']
         self.ui = TestSuiteUserInterface()
         sys.stderr = StringIO()
         self.assertRaises(SystemExit, self.ui.run_argv)
@@ -1530,12 +1532,12 @@ report['end'] = '1'
         f = open(os.path.join(apport.ui.symptom_script_dir, 'itching.py'), 'w')
         f.write('def run(report, ui):\n  report["itch"] = "scratch"\n  return "bash"\n')
         f.close()
-        sys.argv = ['ui-test', '-s', 'itching' ]
+        sys.argv = ['ui-test', '-s', 'itching']
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_text, None)
         self.assertEqual(self.ui.msg_severity, None)
@@ -1548,12 +1550,12 @@ report['end'] = '1'
         self.assertEqual(self.ui.report['ProblemType'], 'Bug')
 
         # working noninteractive script with extra tag
-        sys.argv = ['ui-test', '--tag', 'foo', '-s', 'itching' ]
+        sys.argv = ['ui-test', '--tag', 'foo', '-s', 'itching']
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.assertEqual(self.ui.run_argv(), True)
         self.assertEqual(self.ui.msg_text, None)
         self.assertEqual(self.ui.msg_severity, None)
@@ -1570,12 +1572,12 @@ report['end'] = '1'
     return 'bash'
 ''')
         f.close()
-        sys.argv = ['ui-test', '-s', 'itching' ]
+        sys.argv = ['ui-test', '-s', 'itching']
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.ui.question_yesno_response = True
         self.assertEqual(self.ui.run_argv(), True)
         self.assertTrue(self.ui.present_details_shown)
@@ -1605,8 +1607,8 @@ def run(report, ui):
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
 
         self.ui.question_choice_response = None
         self.assertEqual(self.ui.run_argv(), True)
@@ -1852,8 +1854,8 @@ return 'bash'
         self.ui.crashdb.accepts = lambda r: False
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
-                                            'examine' : False,
-                                            'restart' : False }
+                                            'examine': False,
+                                            'restart': False}
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertEqual(self.ui.msg_severity, None)
@@ -1872,4 +1874,3 @@ return 'bash'
         self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)
 
 unittest.main()
-

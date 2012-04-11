@@ -11,6 +11,7 @@ APPORT_LOG = '/var/log/apport.log'
 from glob import glob
 import apport.hookutils
 
+
 def add_info(report):
     apport.hookutils.attach_file_if_exists(report, APPORT_LOG, 'ApportLog')
     reports = glob('/var/crash/*')

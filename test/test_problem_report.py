@@ -8,6 +8,7 @@ except ImportError:
 
 import problem_report
 
+
 class T(unittest.TestCase):
     def test_basic_operations(self):
         '''basic creation and operation.'''
@@ -31,7 +32,7 @@ class T(unittest.TestCase):
 
         pr = problem_report.ProblemReport('KernelCrash')
         self.assertEqual(pr['ProblemType'], 'KernelCrash')
-        pr = problem_report.ProblemReport(date = '19801224 12:34')
+        pr = problem_report.ProblemReport(date='19801224 12:34')
         self.assertEqual(pr['Date'], '19801224 12:34')
 
     def test_sanity_checks(self):
@@ -89,7 +90,7 @@ class T(unittest.TestCase):
     def test_write(self):
         '''write() and proper formatting.'''
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['Simple'] = 'bar'
         if sys.version.startswith('2'):
             pr['SimpleUTF8'] = '1äö2Φ3'
@@ -127,7 +128,7 @@ WhiteSpace:
     def test_write_append(self):
         '''write() with appending to an existing file.'''
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['Simple'] = 'bar'
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  '
         io = StringIO()
@@ -152,7 +153,7 @@ Extra: appended
         temp.write('AB' * 10 + '\0' * 10 + 'Z')
         temp.flush()
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['File'] = (temp.name,)
         io = StringIO()
         pr.write(io)
@@ -262,7 +263,7 @@ Last: foo
         temp.write('AB' * 10 + '\0' * 10 + 'Z')
         temp.flush()
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['File'] = (temp.name,)
         pr['Afile'] = (temp.name,)
         io = StringIO()
@@ -284,7 +285,7 @@ File: base64
         temp = tempfile.NamedTemporaryFile()
         temp.write('foo\0bar')
         temp.flush()
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['File'] = (temp.name, False)
         io = StringIO()
         pr.write(io)
@@ -314,7 +315,7 @@ File: base64
         tempbin = StringIO('AB' * 10 + '\0' * 10 + 'Z')
         tempasc = StringIO('Hello World')
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['BinFile'] = (tempbin,)
         pr['AscFile'] = (tempasc, False)
         io = StringIO()
@@ -332,12 +333,12 @@ File: base64
         tempbin = StringIO('')
         tempasc = StringIO('')
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['BinFile'] = (tempbin, True, None, True)
         io = StringIO()
         self.assertRaises(IOError, pr.write, io)
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['AscFile'] = (tempasc, False, None, True)
         io = StringIO()
         self.assertRaises(IOError, pr.write, io)
@@ -350,7 +351,7 @@ File: base64
         if os.fork() == 0:
             os.close(fout)
             time.sleep(0.3)
-            os.write(fin, 'ab' * 512*1024)
+            os.write(fin, 'ab' * 512 * 1024)
             time.sleep(0.3)
             os.write(fin, 'hello')
             time.sleep(0.3)
@@ -360,7 +361,7 @@ File: base64
 
         os.close(fin)
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['BinFile'] = (os.fdopen(fout),)
         io = StringIO()
         pr.write(io)
@@ -603,7 +604,7 @@ File: base64
         # create a another new one and add it, but make sure mtime must be
         # different
         time.sleep(1)
-        open(rep).read() # bump atime
+        open(rep).read()  # bump atime
         time.sleep(1)
 
         pr = problem_report.ProblemReport()
@@ -619,7 +620,7 @@ File: base64
         # skip atime check if filesystem is mounted noatime
         skip_atime = False
         dir = rep
-        while len(dir)>1:
+        while len(dir) > 1:
             dir, filename = os.path.split(dir)
             if os.path.ismount(dir):
                 for line in open('/proc/mounts'):
@@ -644,7 +645,7 @@ File: base64
     def test_write_mime_text(self):
         '''write_mime() for text values.'''
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['Simple'] = 'bar'
         if sys.version.startswith('2'):
             pr['SimpleUTF8'] = '1äö2Φ3'
@@ -662,7 +663,7 @@ File: base64
         pr['Multiline'] = ' foo   bar\nbaz\n  blip  \nline4\nline♥5!!\nłıµ€ ⅝\n'
 
         # still small enough for inline text
-        pr['Largeline'] = 'A' * 999 
+        pr['Largeline'] = 'A' * 999
         pr['LargeMultiline'] = 'A' * 120 + '\n' + 'B' * 90
 
         # too big for inline text, these become attachments
@@ -754,7 +755,7 @@ line♥5!!
         gz.close()
         tempgz.flush()
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['Context'] = 'Test suite'
         pr['File1'] = (temp.name,)
         pr['File1.gz'] = (tempgz.name,)
@@ -832,7 +833,7 @@ line♥5!!
     def test_write_mime_extra_headers(self):
         '''write_mime() with extra headers.'''
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['Simple'] = 'bar'
         pr['TwoLine'] = 'first\nsecond\n'
         io = StringIO()
@@ -860,7 +861,7 @@ line♥5!!
 
         bin_value = 'AB' * 10 + '\0' * 10 + 'Z'
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['GoodText'] = 'Hi'
         pr['BadText'] = 'YouDontSeeMe'
         pr['GoodBin'] = bin_value
@@ -897,7 +898,7 @@ GoodText: Hi
     def test_write_mime_order(self):
         '''write_mime() with keys ordered.'''
 
-        pr = problem_report.ProblemReport(date = 'now!')
+        pr = problem_report.ProblemReport(date='now!')
         pr['SecondText'] = 'What'
         pr['FirstText'] = 'Who'
         pr['FourthText'] = 'Today'

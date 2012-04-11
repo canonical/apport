@@ -2,15 +2,18 @@ import unittest, time, traceback, sys
 
 import apport.REThread
 
+
 def idle(seconds):
     '''Test thread to just wait a bit.'''
 
     time.sleep(seconds)
 
+
 def div(x, y):
     '''Test thread to divide two numbers.'''
 
     return x / y
+
 
 class T(unittest.TestCase):
     def test_return_value(self):
@@ -69,4 +72,3 @@ class T(unittest.TestCase):
         self.assertTrue(raised)
 
 unittest.main()
-

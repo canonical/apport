@@ -4,6 +4,7 @@ import unittest, tempfile, shutil, os.path, copy
 import apport
 from apport.crashdb_impl.memory import CrashDatabase
 
+
 class T(unittest.TestCase):
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
@@ -101,7 +102,6 @@ databases = {
         self.assertTrue(db.accepts(apport.Report('Bug')))
         self.assertFalse(db.accepts(apport.Report('Crash')))
         self.assertFalse(db.accepts(apport.Report('weirdtype')))
-
 
     #
     # Test memory.py implementation
@@ -307,7 +307,7 @@ databases = {
         self.crashes.reports[3]['fixed_version'] = '4.1'
 
         # ID#4 is dup of ID#3, but happend in version 5 -> regression
-        self.crashes.close_duplicate(self.crashes.download(4), 4, None) # reset
+        self.crashes.close_duplicate(self.crashes.download(4), 4, None)  # reset
         self.assertEqual(self.crashes.check_duplicate(4), None)
         self.assertEqual(self.crashes.duplicate_of(4), None)
         self.assertEqual(self.crashes.reports[4]['comment'], 'regression, already fixed in #3')
@@ -471,7 +471,7 @@ databases = {
 
         # now throw the interesting b at it
         self.assertEqual(self.crashes.check_duplicate(7, b), (5, None))
-        
+
         # s and b should now be duplicates of a
         self.assertEqual(self.crashes.duplicate_of(5), None)
         self.assertEqual(self.crashes.duplicate_of(6), 5)
@@ -679,7 +679,7 @@ databases = {
 
             # damage file
             f = open(db, 'r+')
-            f.truncate(os.path.getsize(db)*2/3)
+            f.truncate(os.path.getsize(db) * 2 / 3)
             f.close()
 
             self.crashes = CrashDatabase(None, {})

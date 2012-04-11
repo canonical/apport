@@ -14,6 +14,7 @@
 
 import sys, re, logging
 
+
 class ParseSegv(object):
     def __init__(self, registers, disassembly, maps, debug=False):
         if debug:
@@ -21,7 +22,7 @@ class ParseSegv(object):
 
         self.regs = self.parse_regs(registers)
         self.sp = None
-        for reg in ['rsp','esp']:
+        for reg in ['rsp', 'esp']:
             if reg in self.regs:
                 self.sp = self.regs[reg]
 
@@ -45,11 +46,11 @@ class ParseSegv(object):
                 span, perms, bits, dev = items[0:4]
             except:
                 raise ValueError('Cannot parse maps line: %s' % (line.strip()))
-            if len(items)==5:
+            if len(items) == 5:
                 name = None
             else:
                 name = items[5]
-            start, end = [int(x,16) for x in span.split('-')]
+            start, end = [int(x, 16) for x in span.split('-')]
             if name == '[stack]':
                 self.stack_vma = len(maps)
             maps.append({'start': start, 'end': end, 'perms': perms, 'name': name})
@@ -60,7 +61,7 @@ class ParseSegv(object):
         regs = dict()
         for line in reg_str.splitlines():
             reg, hexvalue = line.split()[0:2]
-            regs[reg] = int(hexvalue,16)
+            regs[reg] = int(hexvalue, 16)
             logging.debug('%s:0x%08x', reg, regs[reg])
         return regs
 
@@ -69,9 +70,9 @@ class ParseSegv(object):
             raise ValueError('Registers not loaded yet!?')
         lines = disassembly.splitlines()
         # Throw away possible 'Dump' gdb report line
-        if len(lines)>0 and lines[0].startswith('Dump'):
+        if len(lines) > 0 and lines[0].startswith('Dump'):
             lines.pop(0)
-        if len(lines)<1:
+        if len(lines) < 1:
             raise ValueError('Failed to load empty disassembly')
         line = lines[0].strip()
         # Drop GDB 7.1's leading $pc mark
@@ -80,20 +81,20 @@ class ParseSegv(object):
         logging.debug(line)
         pc_str = line.split()[0]
         if pc_str.startswith('0x'):
-            pc = int(pc_str.split(':')[0],16)
+            pc = int(pc_str.split(':')[0], 16)
         else:
             # Could not identify this instruction line
             raise ValueError('Could not parse PC "%s" from disassembly line: %s' % (pc_str, line))
         logging.debug('pc: 0x%08x', pc)
 
-        full_insn_str = line.split(':',1)[1].strip()
+        full_insn_str = line.split(':', 1)[1].strip()
         # Handle invalid memory
-        if 'Cannot access memory at address' in full_insn_str or (full_insn_str == '' and len(lines)==1):
+        if 'Cannot access memory at address' in full_insn_str or (full_insn_str == '' and len(lines) == 1):
             return line, pc, None, None, None
         # Handle wrapped lines
         if full_insn_str == '' and lines[1].startswith(' '):
             line = line + ' ' + lines[1].strip()
-            full_insn_str = line.split(':',1)[1].strip()
+            full_insn_str = line.split(':', 1)[1].strip()
 
         insn_parts = full_insn_str.split()
         # Drop call target names "call   0xb7a805af <_Unwind_Find_FDE@plt+111>"
@@ -101,7 +102,7 @@ class ParseSegv(object):
             insn_parts.pop(-1)
         # Attempt to find arguments
         args_str = ''
-        if len(insn_parts)>1:
+        if len(insn_parts) > 1:
             args_str = insn_parts.pop(-1)
         # Assume remainder is the insn itself
         insn = ' '.join(insn_parts)
@@ -116,19 +117,19 @@ class ParseSegv(object):
         else:
             logging.debug('args: "%s"', args_str)
 
-            for m in re.finditer('([^,\(]*(\(:?[^\)]+\))*)',args_str):
+            for m in re.finditer('([^,\(]*(\(:?[^\)]+\))*)', args_str):
                 if len(m.group(0)):
                     args.append(m.group(0))
-            if len(args)>0:
+            if len(args) > 0:
                 src = args[0]
                 logging.debug('src: %s', src)
-            if len(args)>1:
+            if len(args) > 1:
                 dest = args[1]
                 logging.debug('dest: %s', dest)
 
         # Set up possible implicit memory destinations (stack actions)
-        if insn in ['push','pop','pushl','popl','call','callq','ret','retq']:
-            for reg in ['rsp','esp']:
+        if insn in ['push', 'pop', 'pushl', 'popl', 'call', 'callq', 'ret', 'retq']:
+            for reg in ['rsp', 'esp']:
                 if reg in self.regs:
                     dest = '(%%%s)' % (reg)
                     break
@@ -136,7 +137,7 @@ class ParseSegv(object):
         return line, pc, insn, src, dest
 
     def validate_vma(self, perm, addr, name):
-        perm_name = { 'x': ['executable','executing'], 'r': ['readable','reading'], 'w': ['writable','writing'] }
+        perm_name = {'x': ['executable', 'executing'], 'r': ['readable', 'reading'], 'w': ['writable', 'writing']}
         vma = self.find_vma(addr)
         if vma == None:
             alarmist = 'unknown'
@@ -197,7 +198,7 @@ class ParseSegv(object):
         # Check for and pre-remove segment offset
         segment = 0
         if arg.startswith('%') and ':' in arg:
-            parts = arg.split(':',1)
+            parts = arg.split(':', 1)
             segment = self.regs[parts[0][1:]]
             arg = parts[1]
 
@@ -212,18 +213,18 @@ class ParseSegv(object):
         # Skip call target dereferences
         if offset.startswith('*'):
             offset = offset[1:]
-        if len(offset)>0:
+        if len(offset) > 0:
             if offset.startswith('%'):
                 # Handle the *%REG case
                 add = self.regs[offset[1:]]
             else:
                 if not offset.startswith('0x'):
                     raise ValueError('Unknown offset literal: %s' % (parts[0]))
-                add = int(offset[2:],16) * sign
+                add = int(offset[2:], 16) * sign
         else:
             add = 0
 
-        def _reg_val(self, text, val = 0):
+        def _reg_val(self, text, val=0):
             if text.startswith('%'):
                 val = self.regs[text[1:]]
             elif text == "":
@@ -234,18 +235,18 @@ class ParseSegv(object):
 
         # (%ebx, %ecx, 4) style
         value = 0
-        if len(parts)>1:
+        if len(parts) > 1:
             parens = parts[1][0:-1]
             reg_list = parens.split(',')
 
             base = 0
-            if len(reg_list)>0:
+            if len(reg_list) > 0:
                 base = _reg_val(self, reg_list[0], base)
             index = 0
-            if len(reg_list)>1:
+            if len(reg_list) > 1:
                 index = _reg_val(self, reg_list[1], index)
             scale = 1
-            if len(reg_list)>2:
+            if len(reg_list) > 2:
                 scale = _reg_val(self, reg_list[2], scale)
             value = base + index * scale
 
@@ -269,13 +270,13 @@ class ParseSegv(object):
             reason.append(short)
             understood = True
 
-        if self.insn in ['lea','leal']:
+        if self.insn in ['lea', 'leal']:
             # Short-circuit for instructions that do not cause vma access
             details.append('insn (%s) does not access VMA' % (self.insn))
         else:
             # Verify source is readable
             if self.src:
-                if not ':' in self.src and (self.src[0] in ['%','$','*']) and not self.src.startswith('*%'):
+                if not ':' in self.src and (self.src[0] in ['%', '$', '*']) and not self.src.startswith('*%'):
                     details.append('source "%s" ok' % (self.src))
                 else:
                     addr = self.calculate_arg(self.src)
@@ -287,7 +288,7 @@ class ParseSegv(object):
 
             # Verify destination is writable
             if self.dest:
-                if not ':' in self.dest and (self.dest[0] in ['%','$','*']):
+                if not ':' in self.dest and (self.dest[0] in ['%', '$', '*']):
                     details.append('destination "%s" ok' % (self.dest))
                 else:
                     addr = self.calculate_arg(self.dest)
@@ -298,7 +299,7 @@ class ParseSegv(object):
                         understood = True
 
         # Handle I/O port operations
-        if self.insn in ['out','in'] and not understood:
+        if self.insn in ['out', 'in'] and not understood:
             reason.append('disallowed I/O port operation on port %d' % (self.register_value(self.src)))
             details.append('disallowed I/O port operation on port %d' % (self.register_value(self.src)))
             understood = True
@@ -330,7 +331,7 @@ class ParseSegv(object):
 
 def add_info(report):
     # Only interested in segmentation faults...
-    if report.get('Signal','0') != '11':
+    if report.get('Signal', '0') != '11':
         return
 
     needed = ['Signal', 'Architecture', 'Disassembly', 'ProcMaps', 'Registers']
@@ -340,7 +341,7 @@ def add_info(report):
             return
 
     # Only run on segv for x86 and x86_64...
-    if not report['Architecture'] in ['i386','amd64']:
+    if not report['Architecture'] in ['i386', 'amd64']:
         return
 
     try:
@@ -354,7 +355,7 @@ def add_info(report):
 
 
 if __name__ == '__main__':
-    if len(sys.argv)!=4 or sys.argv[1] in ['-h','--help']:
+    if len(sys.argv) != 4 or sys.argv[1] in ['-h', '--help']:
         print('To run self-test, run without any arguments (or with -v)')
         print('To do stand-alone crash parsing:')
         print('  Usage: %s Registers.txt Disassembly.txt ProcMaps.txt' % (sys.argv[0]))
@@ -369,4 +370,3 @@ if __name__ == '__main__':
     if not understood:
         rc = 1
     sys.exit(rc)
-

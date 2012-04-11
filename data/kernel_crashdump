@@ -37,9 +37,8 @@ except IOError, e:
 try:
     os.unlink(vmcore_path)
 except OSError:
-    pass # huh, already gone?
+    pass  # huh, already gone?
 try:
     os.unlink(vmcore_path + '.log')
 except OSError:
     pass
-

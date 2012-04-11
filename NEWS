@@ -11,6 +11,8 @@ Improvements:
    (unpacked packages). This provides a considerable speedup. Thanks Evan
    Dandrea.
  * crash-digger: Add --sandbox-dir option and pass it to apport-retrace.
+ * Fix the whole code to be PEP-8 compatible, and enforce this in test/run by
+   running the "pep8" tool.
 
 2.0.1 (2012-04-10)
 ------------------

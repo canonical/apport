@@ -15,11 +15,12 @@ import sys
 
 CONFIG = '/etc/default/apport'
 
-# This doesn't use apport.packaging.enabled() because it is too heavyweight
-# See LP: #528355
+
 def enabled():
     '''Return whether Apport should generate crash reports.'''
 
+    # This doesn't use apport.packaging.enabled() because it is too heavyweight
+    # See LP: #528355
     import re
     try:
         conf = open(CONFIG).read()
@@ -27,6 +28,7 @@ def enabled():
     except IOError:
         # if the file does not exist, assume it's enabled
         return True
+
 
 def apport_excepthook(exc_type, exc_obj, exc_tb):
     '''Catch an uncaught exception and make a traceback.'''
@@ -92,7 +94,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         pr['Traceback'] = tb_file.getvalue().strip()
         pr.add_proc_info()
         pr.add_user_info()
-        # override the ExecutablePath with the script that was actually running.
+        # override the ExecutablePath with the script that was actually running
         pr['ExecutablePath'] = binary
         try:
             pr['PythonArgs'] = '%r' % sys.argv
@@ -123,7 +125,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if crash_counter:
             pr['CrashCounter'] = str(crash_counter)
         report_file = os.fdopen(os.open(pr_filename,
-            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o640), 'w')
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'w')
         try:
             pr.write(report_file)
         finally:
@@ -140,4 +142,3 @@ def install():
     '''Install the python apport hook.'''
 
     sys.excepthook = apport_excepthook
-

@@ -20,7 +20,7 @@ import apport
 import apport.fileutils
 from apport.packaging_impl import impl as packaging
 
-_data_dir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
+_data_dir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 _hook_dir = '%s/package-hooks/' % (_data_dir)
 _common_hook_dir = '%s/general-hooks/' % (_data_dir)
 
@@ -39,6 +39,7 @@ interpreters = ['sh', 'bash', 'dash', 'csh', 'tcsh', 'python*',
 # helper functions
 #
 
+
 def _transitive_dependencies(package, depends_set):
     '''Recursively add dependencies of package to depends_set.'''
 
@@ -51,6 +52,7 @@ def _transitive_dependencies(package, depends_set):
             depends_set.add(d)
             _transitive_dependencies(d, depends_set)
 
+
 def _read_file(path):
     '''Read file content.
 
@@ -62,6 +64,7 @@ def _read_file(path):
     except (OSError, IOError) as e:
         return 'Error: ' + str(e)
 
+
 def _read_maps(pid):
     '''Read /proc/pid/maps.
 
@@ -72,11 +75,12 @@ def _read_maps(pid):
     try:
         with open('/proc/%d/maps' % pid) as fd:
             maps = fd.read().strip()
-    except (OSError,IOError) as e:
+    except (OSError, IOError) as e:
         return 'Error: ' + str(e)
     return maps
 
-def _command_output(command, input = None, stderr = subprocess.STDOUT):
+
+def _command_output(command, input=None, stderr=subprocess.STDOUT):
     '''Run command and capture its output.
 
     Try to execute given command (argv list) and return its stdout, or return
@@ -94,6 +98,7 @@ def _command_output(command, input = None, stderr = subprocess.STDOUT):
             err = ''
         raise OSError('Error: command %s failed with exit code %i: %s' % (
             str(command), sp.returncode, err))
+
 
 def _check_bug_pattern(report, pattern):
     '''Check if given report matches the given bug pattern XML DOM node.
@@ -125,6 +130,7 @@ def _check_bug_pattern(report, pattern):
 
     return pattern.attributes['url'].nodeValue.encode('UTF-8')
 
+
 def _check_bug_patterns(report, patterns):
     try:
         dom = xml.dom.minidom.parseString(patterns)
@@ -137,6 +143,7 @@ def _check_bug_patterns(report, patterns):
             return url
 
     return None
+
 
 def _dom_remove_space(node):
     '''Recursively remove whitespace from given XML DOM node.'''
@@ -151,6 +158,7 @@ def _dom_remove_space(node):
 #
 # Report class
 #
+
 
 class Report(problem_report.ProblemReport):
     '''A problem report specific to apport (crash or bug).
@@ -192,7 +200,7 @@ class Report(problem_report.ProblemReport):
 
         return suffix
 
-    def add_package_info(self, package = None):
+    def add_package_info(self, package=None):
         '''Add packaging information.
 
         If package is not given, the report must have ExecutablePath.
@@ -335,7 +343,7 @@ class Report(problem_report.ProblemReport):
 
         # catch directly executed scripts
         if 'InterpreterPath' not in self and name != exebasename:
-            argvexes = filter(lambda p: os.access(p, os.R_OK), [p+cmdargs[0] for p in bindirs])
+            argvexes = filter(lambda p: os.access(p, os.R_OK), [p + cmdargs[0] for p in bindirs])
             if argvexes and os.path.basename(os.path.realpath(argvexes[0])) == name:
                 self['InterpreterPath'] = self['ExecutablePath']
                 self['ExecutablePath'] = argvexes[0]
@@ -360,14 +368,14 @@ class Report(problem_report.ProblemReport):
             arg = args[0].split('=', 1)
             if arg[0].startswith('--file') or arg[0].startswith('--python') or \
                arg[0].startswith('--source'):
-                   if len(arg) == 2:
-                       return arg[1]
-                   else:
-                       return args[1]
+                if len(arg) == 2:
+                    return arg[1]
+                else:
+                    return args[1]
             elif len(arg[0]) > 1 and arg[0][0] == '-' and arg[0][1] != '-':
                 opts = arg[0][1:]
                 if 'f' in opts or 'y' in opts or 's' in opts:
-                   return args[1]
+                    return args[1]
 
             args.pop(0)
 
@@ -478,7 +486,7 @@ class Report(problem_report.ProblemReport):
         pid = str(pid)
 
         self['ProcEnviron'] = ''
-        env = _read_file('/proc/'+ pid + '/environ').replace('\n', '\\n')
+        env = _read_file('/proc/' + pid + '/environ').replace('\n', '\\n')
         if env.startswith('Error:'):
             self['ProcEnviron'] = env
         else:
@@ -962,7 +970,7 @@ class Report(problem_report.ProblemReport):
         if len(unknown_fn) < 3:
             return unknown_fn.count(True) == 0
 
-        return unknown_fn.count(True) <= len(unknown_fn)/2.
+        return unknown_fn.count(True) <= len(unknown_fn) / 2.
 
     def stacktrace_top_function(self):
         '''Return topmost function in StacktraceTop'''
@@ -1039,7 +1047,7 @@ class Report(problem_report.ProblemReport):
                     trace[0])
 
             trace_re = re.compile('^\s*File\s*"(\S+)".* in (.+)$')
-            i = len(trace)-1
+            i = len(trace) - 1
             function = 'unknown'
             while i >= 0:
                 m = trace_re.match(trace[i])
@@ -1115,7 +1123,6 @@ class Report(problem_report.ProblemReport):
 
             return title
 
-
         return None
 
     def obsolete_packages(self):
@@ -1157,7 +1164,7 @@ class Report(problem_report.ProblemReport):
         # kernel crash
         if 'Stacktrace' in self and self['ProblemType'] == 'KernelCrash':
             sig = 'kernel'
-            regex = re.compile ('^\s*\#\d+\s\[\w+\]\s(\w+)')
+            regex = re.compile('^\s*\#\d+\s\[\w+\]\s(\w+)')
             for line in self['Stacktrace'].splitlines():
                 m = regex.match(line)
                 if m:
@@ -1168,7 +1175,7 @@ class Report(problem_report.ProblemReport):
         if self.get('Signal') == '6' and 'AssertionMessage' in self:
             sig = self['ExecutablePath'] + ':' + self['AssertionMessage']
             # filter out addresses, to help match duplicates more sanely
-            return re.sub(r'0x[0-9a-f]{6,}','ADDR', sig)
+            return re.sub(r'0x[0-9a-f]{6,}', 'ADDR', sig)
 
         # signal crashes
         if 'StacktraceTop' in self and 'Signal' in self:
@@ -1203,7 +1210,7 @@ class Report(problem_report.ProblemReport):
             elif len(trace) < 3:
                 return None
 
-            loc_re = re.compile ('^\s+File "([^"]+).*line (\d+).*\sin (.*)$')
+            loc_re = re.compile('^\s+File "([^"]+).*line (\d+).*\sin (.*)$')
             for l in trace:
                 m = loc_re.match(l)
                 if m:
@@ -1247,7 +1254,7 @@ class Report(problem_report.ProblemReport):
                 addr = line.split()[1]
                 if not addr.startswith('0x'):
                     continue
-                addr = int(addr, 16) # we do want to know about ValueErrors here, so don't catch
+                addr = int(addr, 16)  # we do want to know about ValueErrors here, so don't catch
                 offset = self._address_to_offset(addr)
                 if offset:
                     # avoid ':' in ELF paths, we use that as separator
@@ -1263,7 +1270,7 @@ class Report(problem_report.ProblemReport):
 
         # we only accept a small minority (< 20%) of failed resolutions, otherwise we
         # discard
-        if failed > 0 and len(stack)/failed < 4:
+        if failed > 0 and len(stack) / failed < 4:
             return None
 
         # we also discard if the trace is too short
@@ -1307,8 +1314,8 @@ class Report(problem_report.ProblemReport):
 
         for k in self:
             if (k.startswith('Proc') and \
-                not k in ['ProcCpuinfo','ProcMaps','ProcStatus', \
-                          'ProcInterrupts','ProcModules']) or \
+                not k in ['ProcCpuinfo', 'ProcMaps', 'ProcStatus', \
+                          'ProcInterrupts', 'ProcModules']) or \
                 'Stacktrace' in k or \
                 k in ['Traceback', 'PythonArgs', 'Title']:
                 if not hasattr(self[k], 'isspace'):
@@ -1337,7 +1344,7 @@ class Report(problem_report.ProblemReport):
 
         for (start, end, elf) in self._proc_maps_cache:
             if start <= addr and end >= addr:
-                return '%s+%x' % (elf, addr-start)
+                return '%s+%x' % (elf, addr - start)
 
         return None
 

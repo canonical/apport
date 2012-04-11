@@ -19,6 +19,7 @@ import apport.hookutils
 
 from apport import unicode_gettext as _
 
+
 def main(argv=None):
 
     if argv is None:
@@ -81,7 +82,7 @@ def main(argv=None):
         nowtime = datetime.datetime.now()
         pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(' ', '_'))
         report_file = os.fdopen(os.open(pr_filename,
-            os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o640), 'w')
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'w')
         try:
             pr.write(report_file)
         finally:
@@ -93,5 +94,3 @@ def main(argv=None):
 
 if __name__ == '__main__':
     sys.exit(main())
-
-

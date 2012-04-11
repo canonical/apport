@@ -26,6 +26,7 @@ distributions.
 # class distro-agnostic.
 import rpm, hashlib, os, stat, subprocess
 
+
 class RPMPackageInfo:
     '''Partial apport.PackageInfo class implementation for RPM, as
     found in Fedora, RHEL, CentOS, etc.'''
@@ -35,7 +36,7 @@ class RPMPackageInfo:
     official_keylist = ()
 
     def __init__(self):
-        self.ts = rpm.TransactionSet() # connect to the rpmdb
+        self.ts = rpm.TransactionSet()  # connect to the rpmdb
         self._mirror = None
 
     def get_version(self, package):
@@ -60,14 +61,14 @@ class RPMPackageInfo:
         '''Return a list of packages a package depends on.'''
         hdr = self._get_header(package)
         # parse this package's Requires
-        reqs=[]
+        reqs = []
         for r in hdr['requires']:
             if r.startswith('rpmlib') or r.startswith('uname('):
-                continue # we've got rpmlib, thanks
-            if r[0] == '/': # file requires
-                req_heads = self._get_headers_by_tag('basenames',r)
+                continue  # we've got rpmlib, thanks
+            if r[0] == '/':  # file requires
+                req_heads = self._get_headers_by_tag('basenames', r)
             else:           # other requires
-                req_heads = self._get_headers_by_tag('provides',r)
+                req_heads = self._get_headers_by_tag('provides', r)
             for rh in req_heads:
                 rh_envra = self._make_envra_from_header(rh)
                 if rh_envra not in reqs:
@@ -93,7 +94,7 @@ class RPMPackageInfo:
         '''Return list of files shipped by a package.'''
         hdr = self._get_header(package)
         files = []
-        for (f, mode) in zip(hdr['filenames'],hdr['filemodes']):
+        for (f, mode) in zip(hdr['filenames'], hdr['filemodes']):
             if not stat.S_ISDIR(mode):
                 files.append(f)
         return files
@@ -102,23 +103,27 @@ class RPMPackageInfo:
         '''Return list of all modified files of a package.'''
         hdr = self._get_header(package)
 
-        files  = hdr['filenames']
+        files = hdr['filenames']
         mtimes = hdr['filemtimes']
-        md5s   = hdr['filemd5s']
+        md5s = hdr['filemd5s']
 
         modified = []
         for i in xrange(len(files)):
             # Skip files we're not tracking md5s for
-            if not md5s[i]: continue
+            if not md5s[i]:
+                continue
             # Skip files we can't read
-            if not os.access(files[i],os.R_OK): continue
+            if not os.access(files[i], os.R_OK):
+                continue
             # Skip things that aren't real files
             s = os.stat(files[i])
-            if not stat.S_ISREG(s.st_mode): continue
+            if not stat.S_ISREG(s.st_mode):
+                continue
             # Skip things that haven't been modified
-            if mtimes[i] == s.st_mtime: continue
+            if mtimes[i] == s.st_mtime:
+                continue
             # Oh boy, an actual possibly-modified file. Check the md5sum!
-            if not self._checkmd5(files[i],md5s[i]):
+            if not self._checkmd5(files[i], md5s[i]):
                 modified.append(files[i])
 
         return modified
@@ -205,15 +210,15 @@ class RPMPackageInfo:
     # use them in extending/overriding the methods above in your subclasses
     #
 
-    def _get_headers_by_tag(self,tag,arg):
+    def _get_headers_by_tag(self, tag, arg):
         '''Get a list of RPM headers by doing dbMatch on the given tag and
         argument.'''
-        matches = self.ts.dbMatch(tag,arg)
+        matches = self.ts.dbMatch(tag, arg)
         if matches.count() == 0:
-            raise ValueError('Could not find package with %s: %s' % (tag,arg))
+            raise ValueError('Could not find package with %s: %s' % (tag, arg))
         return [m for m in matches]
 
-    def _get_header(self,envra):
+    def _get_header(self, envra):
         '''Get the RPM header that matches the given ENVRA.'''
 
         querystr = envra
@@ -230,24 +235,26 @@ class RPMPackageInfo:
                 break
 
             # remove the last char of querystr and retry the search
-            querystr = querystr[0:len(querystr)-1]
+            querystr = querystr[0:len(querystr) - 1]
             qlen = qlen - 1
 
         if qlen == 0:
             raise ValueError('No headers found for this envra: %s' % envra)
         return h
 
-    def _make_envra_from_header(self,h):
+    def _make_envra_from_header(self, h):
         '''Generate an ENVRA string from an rpm header'''
-        nvra="%s-%s-%s.%s" % (h['n'],h['v'],h['r'],h['arch'])
+
+        nvra = "%s-%s-%s.%s" % (h['n'], h['v'], h['r'], h['arch'])
         if h['e']:
-            envra = "%s:%s" % (h['e'],nvra)
+            envra = "%s:%s" % (h['e'], nvra)
         else:
             envra = nvra
         return envra
 
-    def _checkmd5(self,filename,filemd5):
+    def _checkmd5(self, filename, filemd5):
         '''Internal function to check a file's md5sum'''
+
         m = hashlib.md5()
         f = open(filename)
         data = f.read()

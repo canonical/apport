@@ -27,6 +27,7 @@ except ImportError:
     # Python 2
     from UserDict import IterableUserDict as UserDict
 
+
 class CompressedValue:
     '''Represent a ProblemReport value which is gzip compressed.'''
 
@@ -36,8 +37,8 @@ class CompressedValue:
         self.gzipvalue = None
         self.name = name
         # By default, compressed values are in gzip format. Earlier versions of
-        # problem_report used zlib format (without gzip header). If you have such
-        # a case, set legacy_zlib to True.
+        # problem_report used zlib format (without gzip header). If you have
+        # such a case, set legacy_zlib to True.
         self.legacy_zlib = False
 
         if value:
@@ -90,8 +91,9 @@ class CompressedValue:
 
         return self.get_value().splitlines()
 
+
 class ProblemReport(UserDict):
-    def __init__(self, type = 'Crash', date = None):
+    def __init__(self, type='Crash', date=None):
         '''Initialize a fresh problem report.
 
         type can be 'Crash', 'Packaging', 'KernelCrash' or 'KernelOops'.
@@ -197,7 +199,7 @@ class ProblemReport(UserDict):
                 return True
         return False
 
-    def write(self, file, only_new = False):
+    def write(self, file, only_new=False):
         '''Write information into the given file-like object.
 
         If only_new is True, only keys which have been added since the last
@@ -229,7 +231,8 @@ class ProblemReport(UserDict):
                 else:
                     asckeys.append(k)
             else:
-                if not isinstance(v, CompressedValue) and len(v) >= 2 and not v[1]: # force uncompressed
+                if not isinstance(v, CompressedValue) and len(v) >= 2 and not v[1]:
+                    # force uncompressed
                     asckeys.append(k)
                 else:
                     binkeys.append(k)
@@ -254,9 +257,9 @@ class ProblemReport(UserDict):
                 fail_on_empty = len(v) >= 4 and v[3]
 
                 if hasattr(v[0], 'read'):
-                    v = v[0].read() # file-like object
+                    v = v[0].read()  # file-like object
                 else:
-                    v = open(v[0]).read() # file name
+                    v = open(v[0]).read()  # file name
 
                 if fail_on_empty and len(v) == 0:
                     raise IOError('did not get any data for field ' + k)
@@ -285,7 +288,7 @@ class ProblemReport(UserDict):
             size = 0
 
             curr_pos = file.tell()
-            file.write (k + ': base64\n ')
+            file.write(k + ': base64\n ')
 
             # CompressedValue
             if isinstance(v, CompressedValue):
@@ -315,9 +318,9 @@ class ProblemReport(UserDict):
                     limit = v[2]
 
                 if hasattr(v[0], 'read'):
-                    f = v[0] # file-like object
+                    f = v[0]  # file-like object
                 else:
-                    f = open(v[0]) # file name
+                    f = open(v[0])  # file name
                 while True:
                     block = f.read(1048576)
                     size += len(block)
@@ -371,7 +374,7 @@ class ProblemReport(UserDict):
                 os.utime(reportfile, (st.st_atime, st.st_mtime))
             os.chmod(reportfile, st.st_mode)
 
-    def write_mime(self, file, attach_treshold = 5, extra_headers={},
+    def write_mime(self, file, attach_treshold=5, extra_headers={},
         skip_keys=None, priority_fields=None):
         '''Write MIME/Multipart RFC 2822 formatted data into file.
 
@@ -429,9 +432,9 @@ class ProblemReport(UserDict):
             elif not hasattr(v, 'find'):
                 attach_value = ''
                 if hasattr(v[0], 'read'):
-                    f = v[0] # file-like object
+                    f = v[0]  # file-like object
                 else:
-                    f = open(v[0]) # file name
+                    f = open(v[0])  # file name
                 if k.endswith('.gz'):
                     attach_value = f.read()
                 else:
@@ -460,7 +463,7 @@ class ProblemReport(UserDict):
                 if k.endswith('.gz'):
                     att.add_header('Content-Disposition', 'attachment', filename=k)
                 else:
-                    att.add_header('Content-Disposition', 'attachment', filename=k+'.gz')
+                    att.add_header('Content-Disposition', 'attachment', filename=k + '.gz')
                 att.set_payload(attach_value)
                 encode_base64(att)
                 attachments.append(att)
@@ -487,7 +490,7 @@ class ProblemReport(UserDict):
                 else:
                     # too large, separate attachment
                     att = MIMEText(v, _charset='UTF-8')
-                    att.add_header('Content-Disposition', 'attachment', filename=k+'.txt')
+                    att.add_header('Content-Disposition', 'attachment', filename=k + '.txt')
                     attachments.append(att)
 
         # create initial text attachment
@@ -530,17 +533,17 @@ class ProblemReport(UserDict):
 
         flags = ord(line[3])
         offset = 10
-        if flags & 4: # FLG.FEXTRA
+        if flags & 4:  # FLG.FEXTRA
             offset += line[offset] + 1
-        if flags & 8: # FLG.FNAME
+        if flags & 8:  # FLG.FNAME
             while ord(line[offset]) != 0:
                 offset += 1
             offset += 1
-        if flags & 16: # FLG.FCOMMENT
+        if flags & 16:  # FLG.FCOMMENT
             while ord(line[offset]) != 0:
                 offset += 1
             offset += 1
-        if flags & 2: # FLG.FHCRC
+        if flags & 2:  # FLG.FHCRC
             offset += 2
 
         return line[offset:]

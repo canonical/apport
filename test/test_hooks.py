@@ -21,7 +21,8 @@ import apport, apport.fileutils
 # parse command line options
 optparser = optparse.OptionParser('%prog [options]')
 
-datadir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
+datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
+
 
 class T(unittest.TestCase):
     def setUp(self):
@@ -146,7 +147,7 @@ class T(unittest.TestCase):
         self.assertTrue(os.uname()[2].split('-')[0] in r['Package'])
 
         r.add_package_info(r['Package'])
-        self.assertTrue(' ' in r['Package']) # appended version number
+        self.assertTrue(' ' in r['Package'])  # appended version number
 
     @classmethod
     def _gcc_version_path(klass):

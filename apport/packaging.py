@@ -9,6 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+
 class PackageInfo:
     def get_version(self, package):
         '''Return the installed version of a package.

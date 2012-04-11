@@ -18,6 +18,7 @@ atexit.register(shutil.rmtree, temp_report_dir)
 
 import apport.fileutils, problem_report
 
+
 class T(unittest.TestCase):
     def tearDown(self):
         for f in apport.fileutils.get_all_reports():
@@ -30,7 +31,7 @@ class T(unittest.TestCase):
         # hook
         if scriptname:
             script = scriptname
-            fd = os.open(scriptname, os.O_CREAT|os.O_WRONLY)
+            fd = os.open(scriptname, os.O_CREAT | os.O_WRONLY)
         else:
             (fd, script) = tempfile.mkstemp(dir='/var/tmp')
         try:

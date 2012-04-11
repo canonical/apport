@@ -130,7 +130,7 @@ class T(unittest.TestCase):
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
                 close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            time.sleep(0.5) # give it some time to grab the lock
+            time.sleep(0.5)  # give it some time to grab the lock
 
             app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0'],
                 close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -409,7 +409,6 @@ class T(unittest.TestCase):
         self.do_crash()
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
-
     #
     # Helper methods
     #
@@ -434,7 +433,7 @@ class T(unittest.TestCase):
         # wait until child process has execv()ed properly
         while 'test-apport' in open('/proc/%i/cmdline' % pid).read():
             time.sleep(0.1)
-        time.sleep(0.3) # needs some more setup time
+        time.sleep(0.3)  # needs some more setup time
         return pid
 
     def do_crash(self, expect_coredump=True, expect_corefile=False,

@@ -28,10 +28,12 @@ symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
                                     '/usr/share/apport/symptoms')
 PF_KTHREAD = 0x200000
 
+
 def excstr(exception):
     '''Return exception message as unicode.'''
 
     return str(exception).decode(locale.getpreferredencoding(), 'replace')
+
 
 def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
         ignore_uninstalled=False):
@@ -122,11 +124,12 @@ problem still occurs:\n\n%s') % ', '.join(old_pkgs)
 
     if reportfile:
         f = open(reportfile, 'a')
-        os.chmod (reportfile, 0)
+        os.chmod(reportfile, 0)
         report.write(f, only_new=True)
         f.close()
         apport.fileutils.mark_report_seen(reportfile)
-        os.chmod (reportfile, 0o640)
+        os.chmod(reportfile, 0o640)
+
 
 class UserInterface:
     '''Apport user interface API.
@@ -231,7 +234,7 @@ class UserInterface:
                             repr(e)))
                     self.ui_shutdown()
                     return
-                except ValueError: # package does not exist
+                except ValueError:  # package does not exist
                     self.ui_error_message(_('Invalid problem report'),
                         _('The report belongs to a package that is not installed.'))
                     self.ui_shutdown()
@@ -425,7 +428,7 @@ class UserInterface:
             #print('Collecting apport information for source package %s...' % p)
             self.cur_package = p
             self.report['SourcePackage'] = p
-            self.report['Package'] = p # no way to find this out
+            self.report['Package'] = p  # no way to find this out
 
             # we either must have the package installed or a source package hook
             # available to collect sensible information
@@ -698,7 +701,7 @@ class UserInterface:
         '''Format the given integer as humanly readable and i18n'ed file size.'''
 
         if size < 1000000:
-            return locale.format('%.1f', size/1000.) + ' KB'
+            return locale.format('%.1f', size / 1000.) + ' KB'
         if size < 1000000000:
             return locale.format('%.1f', size / 1000000.) + ' MB'
         return locale.format('%.1f', size / float(1000000000)) + ' GB'
@@ -955,7 +958,7 @@ class UserInterface:
         # browser with it to get the user's web browser settings.
         try:
             uid = int(os.getenv('SUDO_UID'))
-            sudo_prefix = ['sudo', '-H', '-u', '#'+str(uid)]
+            sudo_prefix = ['sudo', '-H', '-u', '#' + str(uid)]
         except TypeError:
             sudo_prefix = []
 
@@ -1000,7 +1003,7 @@ class UserInterface:
 
         def progress_callback(sent, total):
             global __upload_progress
-            __upload_progress = float(sent)/total
+            __upload_progress = float(sent) / total
 
         self.ui_start_upload_progress()
         upthread = apport.REThread.REThread(target=self.crashdb.upload,
@@ -1290,6 +1293,7 @@ might be helpful for the developers.'))
         Return a tuple (username, password), or None if cancelled.
         '''
         raise NotImplementedError('this function must be overridden by subclasses')
+
 
 class HookUI:
     '''Interactive functions which can be used in package hooks.

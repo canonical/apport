@@ -32,6 +32,7 @@ else:
     kernel_oops_path = os.path.join(os.environ.get('APPORT_DATA_DIR', '/usr/share/apport'), 'kernel_oops')
 GTKUserInterface = imp.load_source('', apport_gtk_path).GTKUserInterface
 
+
 class T(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
@@ -76,9 +77,9 @@ class T(unittest.TestCase):
     def test_close_button(self):
         '''Clicking the close button on the window does not report the crash.'''
 
-        self.app.w('send_error_report').set_active(True)
         def c(*args):
             self.app.w('dialog_crash_new').destroy()
+        self.app.w('send_error_report').set_active(True)
         GLib.idle_add(c)
         result = self.app.ui_present_report_details(True)
         self.assertFalse(result['report'])
@@ -472,13 +473,14 @@ Type=Application''')
     def test_bug_report_installed_package(self):
         '''Bug report for installed package'''
 
-        self.app.report_file = None
-        self.app.options.package = 'bash'
         def c(*args):
             if not self.app.w('cancel_button').get_visible():
                 return True
             self.app.w('cancel_button').clicked()
             return False
+
+        self.app.report_file = None
+        self.app.options.package = 'bash'
         GLib.timeout_add_seconds(1, c)
         self.app.run_report_bug()
 
@@ -490,15 +492,15 @@ Type=Application''')
     def test_bug_report_uninstalled_package(self):
         '''Bug report for uninstalled package'''
 
-        pkg = apport.packaging.get_uninstalled_package()
-
-        self.app.report_file = None
-        self.app.options.package = pkg
         def c(*args):
             if not self.app.w('cancel_button').get_visible():
                 return True
             self.app.w('cancel_button').clicked()
             return False
+
+        pkg = apport.packaging.get_uninstalled_package()
+        self.app.report_file = None
+        self.app.options.package = pkg
         GLib.timeout_add_seconds(1, c)
         self.app.run_report_bug()
 
@@ -552,7 +554,7 @@ Type=Application''')
 
     def test_resizing(self):
         '''Problem report window resizability and sizing.'''
-        
+
         def show_details(data):
             if not self.app.w('show_details').get_visible():
                 return True
@@ -589,7 +591,7 @@ Type=Application''')
 
         # when showing details, dialog should get considerably bigger
         self.assertGreater(data['detail_size'][1], data['orig_size'][1] + 100)
-       
+
         # when hiding details, original size should be restored
         self.assertEqual(data['orig_size'], data['hidden_size'])
 

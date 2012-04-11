@@ -17,11 +17,12 @@ import os, os.path, sys, errno, optparse
 
 import apport, apport.fileutils, apport.hookutils
 
+
 def parse_argv():
     '''Parse command line and return (options, args).'''
 
     optparser = optparse.OptionParser('%prog [options]')
-    optparser.add_option('-o', '--omit', metavar='PID', 
+    optparser.add_option('-o', '--omit', metavar='PID',
             action='append', default=[], dest='blacklist',
             help='Ignore a particular process ID (can be specified multiple times)')
 
@@ -32,6 +33,7 @@ def parse_argv():
         sys.exit(1)
 
     return (opts, args)
+
 
 def orphaned_processes(blacklist):
     '''Yield an iterator of running process IDs.
@@ -73,6 +75,7 @@ def orphaned_processes(blacklist):
 
         yield d
 
+
 def do_report(pid, blacklist):
     '''Create a report for a particular PID.'''
 
@@ -104,4 +107,3 @@ def do_report(pid, blacklist):
 
 for p in orphaned_processes(opts.blacklist):
     do_report(p, opts.blacklist)
-

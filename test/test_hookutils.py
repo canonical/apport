@@ -3,6 +3,7 @@ import unittest, tempfile, locale, subprocess, re, shutil, os.path
 
 import apport.hookutils
 
+
 class T(unittest.TestCase):
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
@@ -20,11 +21,11 @@ class T(unittest.TestCase):
             asm.flush()
             ko = tempfile.NamedTemporaryFile(prefix='%s-' % (license),
                                              suffix='.ko')
-            subprocess.call(['/usr/bin/as',asm.name,'-o',ko.name])
+            subprocess.call(['/usr/bin/as', asm.name, '-o', ko.name])
             return ko
 
         good_ko = _build_ko('GPL')
-        bad_ko  = _build_ko('BAD')
+        bad_ko = _build_ko('BAD')
 
         # test:
         #  - loaded real module
@@ -41,7 +42,7 @@ class T(unittest.TestCase):
         # check via nonfree_kernel_modules logic
         f = tempfile.NamedTemporaryFile()
         f.write(('isofs\ndoes-not-exist\n%s\n%s\n' %
-                (good_ko.name,bad_ko.name)).encode())
+                (good_ko.name, bad_ko.name)).encode())
         f.flush()
         nonfree = apport.hookutils.nonfree_kernel_modules(f.name)
         self.assertFalse('isofs' in nonfree)
@@ -68,7 +69,7 @@ class T(unittest.TestCase):
         self.assertEqual(report['BootDmesg'][:50], 'existingboot')
         self.assertTrue(report['CurrentDmesg'].startswith(b'['))
 
-        report = {'BootDmesg': 'existingboot', 'CurrentDmesg': 'existingcurrent' }
+        report = {'BootDmesg': 'existingboot', 'CurrentDmesg': 'existingcurrent'}
 
         apport.hookutils.attach_dmesg(report)
         self.assertEqual(report['BootDmesg'], 'existingboot')

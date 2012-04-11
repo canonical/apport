@@ -22,6 +22,18 @@ set -e
 
 mydir=`dirname "$0"`
 
+# PEP8 tests, if pep8 is available
+if type pep8 >/dev/null 2>&1; then
+    # . catches all *.py modules; we explicitly need to specify the programs
+    pep8 -r --ignore=E401,E501 --exclude=test_problem_report.py,report.py,is-enabled,apport-bug .  `find bin data -type f -executable`
+    # those tests deliberately have trailing whitespace in test files, ignore
+    pep8 -r --ignore=E401,E501,W291,W293 test/test_problem_report.py
+    # has_key is minidom API, not the dict operator here
+    pep8 -r --ignore=E401,E501,W601 apport/report.py
+else
+    echo "Skipping PEP 8 tests, pep8 is not installed"
+fi
+
 export LC_MESSAGES=C
 
 # Run against source tree when we are in the source directory

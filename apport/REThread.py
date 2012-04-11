@@ -11,6 +11,7 @@
 
 import threading, sys
 
+
 class REThread(threading.Thread):
     '''Thread with return values and exception propagation.'''
 

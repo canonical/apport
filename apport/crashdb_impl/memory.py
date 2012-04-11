@@ -12,6 +12,7 @@
 import apport.crashdb
 import apport
 
+
 class CrashDatabase(apport.crashdb.CrashDatabase):
     '''Simple implementation of crash database interface which keeps everything
     in memory.
@@ -25,14 +26,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         apport.crashdb.CrashDatabase.__init__(self, auth_file, options)
 
-        self.reports = [] # list of dictionaries with keys: report, fixed_version, dup_of, comment
+        self.reports = []  # list of dictionaries with keys: report, fixed_version, dup_of, comment
         self.unretraced = set()
         self.dup_unchecked = set()
 
         if 'dummy_data' in options:
             self.add_dummy_data()
 
-    def upload(self, report, progress_callback = None):
+    def upload(self, report, progress_callback=None):
         '''Store the report and return a handle number (starting from 0).
 
         This does not support (nor need) progress callbacks.
@@ -41,7 +42,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         self.reports.append({'report': report, 'fixed_version': None, 'dup_of':
             None, 'comment:': ''})
-        id = len(self.reports)-1
+        id = len(self.reports) - 1
         if 'Traceback' in report:
             self.dup_unchecked.add(id)
         else:
@@ -189,7 +190,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         try:
             self.dup_unchecked.remove(id)
         except KeyError:
-            pass # happens when trying to check for dup twice
+            pass  # happens when trying to check for dup twice
 
     def mark_retraced(self, id):
         '''Mark crash id as retraced.'''
@@ -215,7 +216,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
     def latest_id(self):
         '''Return the ID of the most recently filed report.'''
 
-        return len(self.reports)-1
+        return len(self.reports) - 1
 
     def add_dummy_data(self):
         '''Add some dummy crash reports.

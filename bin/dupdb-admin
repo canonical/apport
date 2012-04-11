@@ -17,6 +17,7 @@ from apport.crashdb import get_crashdb
 import apport.crashdb_impl.memory
 import apport
 
+
 def command_dump(crashdb, opts, args):
     '''Print out all entries.'''
 
@@ -30,6 +31,7 @@ def command_dump(crashdb, opts, args):
             print '[open]',
         print 'last change:', lastchange
 
+
 def command_changeid(crashdb, opts, args):
     '''Change the master ID of a crash.'''
 
@@ -39,12 +41,14 @@ def command_changeid(crashdb, opts, args):
 
     crashdb.duplicate_db_change_master_id(oldid, newid)
 
+
 def command_removeid(crashdb, opts, args):
     '''Remove a crash.'''
 
     if len(args) != 1:
         apport.fatal('removeid needs exactly one argument (use --help for a short help)')
     crashdb.duplicate_db_remove(args[0])
+
 
 def command_publish(crashdb, opts, args):
     '''Publish crash database to a directory.'''
@@ -85,4 +89,3 @@ except KeyError:
     apport.fatal('unknown command (use --help for a short help)')
 
 command(crashdb, options, args)
-

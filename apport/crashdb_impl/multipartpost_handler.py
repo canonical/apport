@@ -43,6 +43,7 @@ import urllib2
 import mimetools, mimetypes
 import os, stat, sys
 
+
 class Callable:
     def __init__(self, anycallable):
         self.__call__ = anycallable
@@ -51,8 +52,9 @@ class Callable:
 #  assigning a sequence.
 doseq = 1
 
+
 class MultipartPostHandler(urllib2.BaseHandler):
-    handler_order = urllib2.HTTPHandler.handler_order - 10 # needs to run first
+    handler_order = urllib2.HTTPHandler.handler_order - 10  # needs to run first
 
     def http_request(self, request):
         data = request.get_data()
@@ -60,11 +62,11 @@ class MultipartPostHandler(urllib2.BaseHandler):
             v_files = []
             v_vars = []
             try:
-                 for(key, value) in data.items():
-                     if type(value) == file:
-                         v_files.append((key, value))
-                     else:
-                         v_vars.append((key, value))
+                for(key, value) in data.items():
+                    if type(value) == file:
+                        v_files.append((key, value))
+                    else:
+                        v_vars.append((key, value))
             except TypeError:
                 systype, value, traceback = sys.exc_info()
                 raise TypeError("not a valid non-string sequence or mapping object").with_traceback(traceback)
@@ -82,7 +84,7 @@ class MultipartPostHandler(urllib2.BaseHandler):
             request.add_data(data)
         return request
 
-    def multipart_encode(vars, files, boundary = None, buffer = None):
+    def multipart_encode(vars, files, boundary=None, buffer=None):
         if boundary is None:
             boundary = mimetools.choose_boundary()
         if buffer is None:
@@ -107,6 +109,7 @@ class MultipartPostHandler(urllib2.BaseHandler):
 
     https_request = http_request
 
+
 def main():
     import tempfile
 
@@ -116,9 +119,9 @@ def main():
     def validateFile(url):
         temp = tempfile.mkstemp(suffix=".html")
         os.write(temp[0], opener.open(url).read())
-        params = { "ss" : "0",            # show source
-                   "doctype" : "Inline",
-                   "uploaded_file" : open(temp[1], "rb") }
+        params = {"ss": "0",            # show source
+                  "doctype": "Inline",
+                  "uploaded_file": open(temp[1], "rb")}
         print opener.open(validatorURL, params).read()
         os.remove(temp[1])
 
@@ -128,5 +131,5 @@ def main():
     else:
         validateFile("http://www.google.com")
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()

@@ -1,6 +1,6 @@
 import unittest, tempfile, sys, os.path
 
-datadir = os.environ.get('APPORT_DATA_DIR','/usr/share/apport')
+datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 sys.path.insert(0, os.path.join(datadir, 'general-hooks'))
 
 import parse_segv
@@ -117,6 +117,7 @@ disasm = '''0x08083540 <main+0>:    lea    0x4(%esp),%ecx
 0x0808357a <main+58>:   lea    -0x4(%ecx),%esp
 0x0808357d <main+61>:   ret
 '''
+
 
 class T(unittest.TestCase):
     '''Test Segfault Parser'''

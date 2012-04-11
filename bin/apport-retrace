@@ -24,12 +24,14 @@ from apport import unicode_gettext as _
 
 log_timestamps = False
 
+
 def log(message):
     '''Log the given string to stdout. Prepend timestamp if requested'''
 
     if log_timestamps:
         sys.stdout.write('%s: ' % time.strftime('%x %X'))
     print(message)
+
 
 def parse_options():
     '''Parse command line options and return (reportfile, options) tuple.'''
@@ -86,6 +88,7 @@ def parse_options():
 
     return (args[0], opts)
 
+
 def getch():
     '''Read a single character from stdin.'''
 
@@ -97,6 +100,7 @@ def getch():
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return ch
+
 
 def confirm_traces(report):
     '''Display the retraced stack traces and ask the user whether or not to
@@ -114,6 +118,7 @@ def confirm_traces(report):
 
     return ch == 'y'
 
+
 def find_file_dir(name, dir, limit=None):
     '''Return a path list of all files with given name which are in or below
     dir.
@@ -129,6 +134,7 @@ def find_file_dir(name, dir, limit=None):
                 break
     return result
 
+
 def get_code(srcdir, filename, line, context=5):
     '''Find the given filename in the srcdir directory and return the code
     lines around the given line number.'''
@@ -140,14 +146,15 @@ def get_code(srcdir, filename, line, context=5):
     result = ''
     lineno = 0
     # make enough room for all line numbers
-    format = '  %%%ii: %%s' % len(str(line+context))
+    format = '  %%%ii: %%s' % len(str(line + context))
 
     for l in open(files[0]):
         lineno += 1
-        if lineno >= line-context and lineno <= line+context:
+        if lineno >= line - context and lineno <= line + context:
             result += format % (lineno, l)
 
     return result
+
 
 def gen_source_stacktrace(report):
     '''Generate StacktraceSource, a version of Stacktrace with the surrounding
@@ -183,6 +190,7 @@ def gen_source_stacktrace(report):
         shutil.rmtree(workdir)
         pass
 
+
 def needed_packages(report):
     '''Determine necessary packages for given report.
 
@@ -204,6 +212,7 @@ def needed_packages(report):
         pkgs[pkg] = version
 
     return [(p, v) for (p, v) in pkgs.items()]
+
 
 def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     '''Determine necessary runtime packages for given report.
@@ -245,6 +254,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
                 apport.warning('%s is needed, but cannot be mapped to a package', l)
 
     return [(p, None) for p in pkgs]
+
 
 def print_traces(report):
     '''Print stack traces from given report'''
@@ -325,14 +335,14 @@ if options.rebuild_package_info and 'ExecutablePath' in report:
 # sanity checks
 required_fields = set(['CoreDump', 'ExecutablePath', 'Package', 'DistroRelease'])
 if report['ProblemType'] == 'KernelCrash':
-    if not set(['Package','VmCore']).issubset(set(report.keys())):
+    if not set(['Package', 'VmCore']).issubset(set(report.keys())):
         apport.error('report file does not contain the required fields')
         sys.exit(0)
     apport.error('KernelCrash processing not implemented yet')
     sys.exit(0)
 elif not required_fields.issubset(set(report.keys())):
     apport.error('report file does not contain one of the required fields: ' + \
-	' '.join(required_fields))
+        ' '.join(required_fields))
     sys.exit(0)
 
 sandbox = None

@@ -24,13 +24,15 @@ from apport.packaging_impl import impl as packaging
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
 _config_file = '~/.config/apport/settings'
-_whoopsie_config_file =  '/etc/default/whoopsie'
+_whoopsie_config_file = '/etc/default/whoopsie'
+
 
 def allowed_to_report():
     '''Check whether crash reporting is enabled.'''
 
     return get_config('General', 'report_crashes', default=True,
                       path=_whoopsie_config_file, bool=True)
+
 
 def find_package_desktopfile(package):
     '''Return a package's .desktop file.
@@ -46,11 +48,12 @@ def find_package_desktopfile(package):
     for line in packaging.get_files(package):
         if line.endswith('.desktop'):
             if desktopfile:
-                return None # more than one
+                return None  # more than one
             else:
                 desktopfile = line
 
     return desktopfile
+
 
 def likely_packaged(file):
     '''Check whether the given file is likely to belong to a package.
@@ -61,7 +64,7 @@ def likely_packaged(file):
     database.
     '''
     pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
-    '/usr/', '/var'] # packages only ship executables in these directories
+    '/usr/', '/var']  # packages only ship executables in these directories
 
     whitelist_match = False
     for i in pkg_whitelist:
@@ -70,6 +73,7 @@ def likely_packaged(file):
             break
     return whitelist_match and not file.startswith('/usr/local/') and not \
         file.startswith('/var/lib/')
+
 
 def find_file_package(file):
     '''Return the package that ships the given file.
@@ -87,23 +91,26 @@ def find_file_package(file):
 
     return packaging.get_file_package(file)
 
+
 def seen_report(report):
     '''Check whether the report file has already been processed earlier.'''
 
     st = os.stat(report)
     return (st.st_atime > st.st_mtime) or (st.st_size == 0)
 
+
 def mark_report_upload(report):
     report = '%s.upload' % report.rsplit('.', 1)[0]
     with open(report, 'a'):
         pass
+
 
 def mark_report_seen(report):
     '''Mark given report file as seen.'''
 
     st = os.stat(report)
     try:
-        os.utime(report, (st.st_mtime, st.st_mtime-1))
+        os.utime(report, (st.st_mtime, st.st_mtime - 1))
     except OSError:
         # file is probably not our's, so do it the slow and boring way
         # change the file's access time until it stat's different than the mtime.
@@ -128,6 +135,7 @@ def mark_report_seen(report):
             # happens on noatime mounted partitions; just give up and delete
             delete_report(report)
 
+
 def get_all_reports():
     '''Return a list with all report files accessible to the calling user.'''
 
@@ -141,6 +149,7 @@ def get_all_reports():
             # stat
             pass
     return reports
+
 
 def get_new_reports():
     '''Get new reports for calling user.
@@ -159,6 +168,7 @@ def get_new_reports():
             pass
     return reports
 
+
 def get_all_system_reports():
     '''Get all system reports.
 
@@ -176,6 +186,7 @@ def get_all_system_reports():
             pass
     return reports
 
+
 def get_new_system_reports():
     '''Get new system reports.
 
@@ -183,6 +194,7 @@ def get_new_system_reports():
     and belong to a system user (i. e. uid < 500 according to LSB).
     '''
     return [r for r in get_all_system_reports() if not seen_report(r)]
+
 
 def delete_report(report):
     '''Delete the given report file.
@@ -194,6 +206,7 @@ def delete_report(report):
         os.unlink(report)
     except OSError:
         open(report, 'w').truncate(0)
+
 
 def get_recent_crashes(report):
     '''Return the number of recent crashes for the given report file.
@@ -208,11 +221,12 @@ def get_recent_crashes(report):
         report_time = time.mktime(time.strptime(pr['Date']))
         cur_time = time.mktime(time.localtime())
         # discard reports which are older than 24 hours
-        if cur_time - report_time > 24*3600:
+        if cur_time - report_time > 24 * 3600:
             return 0
         return count
     except (ValueError, KeyError):
         return 0
+
 
 def make_report_path(report, uid=None):
     '''Construct a canonical pathname for the given report.
@@ -230,6 +244,7 @@ def make_report_path(report, uid=None):
         uid = os.getuid()
 
     return os.path.join(report_dir, '%s.%s.crash' % (subject, str(uid)))
+
 
 def check_files_md5(sumfile):
     '''Check file integrity against md5 sum file.
@@ -254,6 +269,7 @@ def check_files_md5(sumfile):
             mismatches.append(l.rsplit(':', 1)[0])
 
     return mismatches
+
 
 def get_config(section, setting, default=None, path=None, bool=False):
     '''Return a setting from user configuration.

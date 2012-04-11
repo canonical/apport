@@ -7,6 +7,7 @@ if os.environ.get('APPORT_TEST_LOCAL'):
 else:
     from apport.packaging_impl import impl
 
+
 def _has_default_route():
     '''Return if there is a default route.
 
@@ -26,6 +27,7 @@ def _has_default_route():
     return _has_default_route.cache
 
 _has_default_route.cache = None
+
 
 class T(unittest.TestCase):
     def setUp(self):
@@ -98,21 +100,21 @@ deadbeef000001111110000011110000  /bin/\xc3\xa4
         '''get_dependencies().'''
 
         # package with both Depends: and Pre-Depends:
-        d  = impl.get_dependencies('bash')
+        d = impl.get_dependencies('bash')
         self.assertTrue(len(d) > 2)
         self.assertTrue('libc6' in d)
         for dep in d:
             self.assertTrue(impl.get_version(dep))
 
         # Pre-Depends: only
-        d  = impl.get_dependencies('coreutils')
+        d = impl.get_dependencies('coreutils')
         self.assertTrue(len(d) >= 1)
         self.assertTrue('libc6' in d)
         for dep in d:
             self.assertTrue(impl.get_version(dep))
 
         # Depends: only
-        d  = impl.get_dependencies('libc6')
+        d = impl.get_dependencies('libc6')
         self.assertTrue(len(d) >= 1)
         for dep in d:
             self.assertTrue(impl.get_version(dep))
@@ -223,7 +225,7 @@ bo/gu/s                                                 na/mypackage
             # outdated cache, must refresh the cache and hit the invalid
             # mirror
             now = int(time.time())
-            os.utime(os.path.join(cache_dir, cache_file), (now, now-90000))
+            os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
 
             self.assertRaises(IOError, impl.get_file_package, '/bo/gu/s', True, cache_dir)
         finally:

@@ -22,6 +22,7 @@ from datetime import datetime
 from apport import unicode_gettext as _
 import apport.ui
 
+
 class CLIDialog:
     '''Command line dialog wrapper.'''
 
@@ -67,7 +68,7 @@ class CLIDialog:
         sys.stdout.write('\n')
         try:
             # Only one button
-            if len (self.keys) <= 1:
+            if len(self.keys) <= 1:
                 self.raw_input_char(_('Press any key to continue...'))
                 return 0
             # Multiple choices
@@ -105,7 +106,7 @@ class CLIProgressDialog(CLIDialog):
         CLIDialog.__init__(self, heading, text)
         self.progresscount = 0
 
-    def set(self, progress = None):
+    def set(self, progress=None):
         self.progresscount = (self.progresscount + 1) % 5
         if self.progresscount:
             return
@@ -115,6 +116,7 @@ class CLIProgressDialog(CLIDialog):
         else:
             sys.stdout.write('.')
         sys.stdout.flush()
+
 
 class CLIUserInterface(apport.ui.UserInterface):
     '''Command line Apport user interface'''
@@ -149,7 +151,6 @@ class CLIUserInterface(apport.ui.UserInterface):
 
         return details
 
-
     def ui_update_view(self):
         self.in_update_view = True
         report = self._get_details()
@@ -170,7 +171,7 @@ class CLIUserInterface(apport.ui.UserInterface):
     #
 
     def ui_present_report_details(self, allowed_to_report=True):
-        dialog = CLIDialog (_('Send problem report to the developers?'),
+        dialog = CLIDialog(_('Send problem report to the developers?'),
                 _('After the problem report has been sent, please fill out the form in the\n'
                   'automatically opened web browser.'))
 
@@ -192,8 +193,8 @@ class CLIUserInterface(apport.ui.UserInterface):
         while True:
             response = dialog.run()
 
-            return_value = { 'restart' : False, 'blacklist' : False,
-                             'report' : False, 'examine' : False }
+            return_value = {'restart': False, 'blacklist': False,
+                            'report': False, 'examine': False}
             if response == examine:
                 return_value['examine'] = True
                 return return_value
@@ -229,7 +230,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         dialog.run()
 
     def ui_start_info_collection_progress(self):
-        self.progress = CLIProgressDialog (
+        self.progress = CLIProgressDialog(
                 _('Collecting problem information'),
                 _('The collected information can be sent to the developers to improve the\n'
                   'application. This might take a few minutes.'))
@@ -242,7 +243,7 @@ class CLIUserInterface(apport.ui.UserInterface):
         sys.stdout.write('\n')
 
     def ui_start_upload_progress(self):
-        self.progress = CLIProgressDialog (
+        self.progress = CLIProgressDialog(
                 _('Uploading problem information'),
                 _('The collected information is being sent to the bug tracking system.\n'
                   'This might take a few minutes.'))
@@ -292,13 +293,13 @@ class CLIUserInterface(apport.ui.UserInterface):
                 choice_index_map = {}
                 for option in options:
                     if index not in result:
-                        choice_index_map[dialog.addbutton(option, str(index+1))] = index
+                        choice_index_map[dialog.addbutton(option, str(index + 1))] = index
                     index += 1
                 done = dialog.addbutton(_('&Done'))
                 cancel = dialog.addbutton(_('&Cancel'))
 
                 if result:
-                    cur = ', '.join([str(r+1) for r in result])
+                    cur = ', '.join([str(r + 1) for r in result])
                 else:
                     cur = _('none')
                 response = dialog.run(_('Selected: %s. Multiple choices:') % cur)
@@ -320,7 +321,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             response = dialog.run(_('Choices:'))
             if response == cancel:
                 return None
-            result.append(response-1)
+            result.append(response - 1)
 
         return result
 
