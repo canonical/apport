@@ -1,6 +1,16 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.1 (UNRELEASED)
+----------------
+Improvements:
+ * packaging.py, install_packages(): Add permanent_rootdir flag and if set,
+   only unpack newly downloaded packages. Implement it for the apt/dpkg
+   backend. Thanks Evan Dandrea.
+ * apport-retrace: Add --sandbox-dir option for keeping a permanent sandbox
+   (unpacked packages). This provides a considerable speedup. Thanks Evan
+   Dandrea.
+
 2.0.1 (2012-04-10)
 ------------------
 Bug fixes:

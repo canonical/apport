@@ -463,7 +463,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return (installed, outdated)
 
     def install_packages(self, rootdir, configdir, release, packages,
-            verbose=False, cache_dir=None):
+            verbose=False, cache_dir=None, permanent_rootdir=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -484,6 +484,9 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         If cache_dir is given, then the downloaded packages will be stored
         there, to speed up subsequent retraces.
+
+        If permanent_rootdir is True, then the sandbox created from the
+        downloaded packages will be reused, to speed up subsequent retraces.
 
         Return a string with outdated packages, or None if all packages were
         installed.
@@ -506,10 +509,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                 aptroot = os.path.join(cache_dir, release, 'apt')
             else:
                 aptroot = os.path.join(cache_dir, 'system', 'apt')
-            try:
+            if not os.path.isdir(aptroot):
                 os.makedirs(aptroot)
-            except OSError:
-                pass
         else:
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
@@ -561,6 +562,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         for p in real_pkgs:
             c[p].mark_install(False, False)
 
+        last_written = time.time()
         # fetch packages
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
         try:
@@ -573,7 +575,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         if verbose:
             print('Extracting downloaded debs...')
         for i in fetcher.items:
-            subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
+            if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
+                subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
             real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
 
         if tmp_aptroot:
