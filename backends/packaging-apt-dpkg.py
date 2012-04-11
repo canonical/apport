@@ -584,10 +584,16 @@ class __AptDpkgPackageInfo(PackageInfo):
                 virtual_mapping = self._virtual_mapping(configdir)
                 for p in candidate.provides:
                     virtual_mapping[p][pkg] = None
-            if permanent_rootdir and candidate.record.has_key('Conflicts'):
+            if (permanent_rootdir and (candidate.record.has_key('Conflicts') or
+                                       candidate.record.has_key('Replaces'))):
                 conflicts = candidate.record['Conflicts'].split(', ')
+                if candidate.record.has_key('Replaces'):
+                    replacements = candidate.record['Replaces'].split(', ')
+                    conflicts = conflicts + replacements
                 archives = apt_pkg.Config.FindDir('Dir::Cache::archives')
                 for conflict in conflicts:
+                    # Get rid of ' (<< 0.1.2)' if it exists.
+                    conflict = conflict.split()[0]
                     if c.is_virtual_package(conflict):
                         real = virtual_mapping[conflict].keys()
                         for p in real:
