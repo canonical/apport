@@ -172,7 +172,7 @@ class PackageInfo:
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def install_packages(self, rootdir, configdir, release, packages,
-            verbose=False, cache_dir=None, sandbox_dir=None):
+            verbose=False, cache_dir=None, permanent_rootdir=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -194,8 +194,8 @@ class PackageInfo:
         If cache_dir is given, then the downloaded packages will be stored
         there, to speed up subsequent retraces.
 
-        If sandbox_dir is given, then the sandbox created from the downloaded
-        packages will be reused, to speed up subsequent retraces.
+        If permanent_rootdir is True, then the sandbox created from the
+        downloaded packages will be reused, to speed up subsequent retraces.
 
         Return a string with outdated packages, or None if all packages were
         installed.
