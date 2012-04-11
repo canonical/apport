@@ -10,6 +10,7 @@ Improvements:
  * apport-retrace: Add --sandbox-dir option for keeping a permanent sandbox
    (unpacked packages). This provides a considerable speedup. Thanks Evan
    Dandrea.
+ * crash-digger: Add --sandbox-dir option and pass it to apport-retrace.
 
 2.0.1 (2012-04-10)
 ------------------
