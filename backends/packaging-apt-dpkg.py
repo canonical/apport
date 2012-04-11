@@ -586,10 +586,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                     virtual_mapping[p][pkg] = None
             if (permanent_rootdir and (candidate.record.has_key('Conflicts') or
                                        candidate.record.has_key('Replaces'))):
-                conflicts = candidate.record['Conflicts'].split(', ')
+                conflicts = []
+                if candidate.record.has_key('Conflicts'):
+                    conflicts += candidate.record['Conflicts'].split(', ')
                 if candidate.record.has_key('Replaces'):
-                    replacements = candidate.record['Replaces'].split(', ')
-                    conflicts = conflicts + replacements
+                    conflicts += candidate.record['Replaces'].split(', ')
                 archives = apt_pkg.Config.FindDir('Dir::Cache::archives')
                 for conflict in conflicts:
                     # Get rid of ' (<< 0.1.2)' if it exists.
