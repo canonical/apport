@@ -575,7 +575,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if verbose:
             print('Extracting downloaded debs...')
         for i in fetcher.items:
-            if permanent_rootdir or os.path.getctime(i.destfile) > last_written:
+            if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
                 subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
             real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
 
