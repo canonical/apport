@@ -1,4 +1,6 @@
 import unittest, gzip, imp, subprocess, tempfile, shutil, os, os.path, time
+import apt_pkg
+import glob
 
 if os.environ.get('APPORT_TEST_LOCAL'):
     impl = imp.load_source('', 'backends/packaging-apt-dpkg.py').impl
@@ -496,6 +498,47 @@ bo/gu/s                                                 na/mypackage
         except SystemError as e:
             self.assertTrue('nosuchdistro' in str(e), str(e))
             self.assertTrue('index files failed to download' in str(e))
+
+    @unittest.skipUnless(_has_default_route(), 'online test')
+    def test_install_packages_permanent_sandbox(self):
+        '''install_packages() with a permanent sandbox'''
+        self._setup_foonux_config()
+        zonetab = os.path.join(self.rootdir, 'usr/share/zoneinfo/zone.tab')
+
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+            [('tzdata', None)], False, self.cachedir, permanent_rootdir=True)
+
+        # This will now be using a Cache with our rootdir.
+        archives = apt_pkg.Config.FindDir('Dir::Cache::archives')
+        tzdata = glob.glob(os.path.join(archives, 'tzdata*.deb'))
+        if not tzdata:
+            self.fail('tzdata was not downloaded')
+        tzdata_written = os.path.getctime(tzdata[0])
+        zonetab_written = os.path.getctime(zonetab)
+
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+            [('coreutils', None), ('tzdata', None)], False, self.cachedir,
+            permanent_rootdir=True)
+
+        if not glob.glob(os.path.join(archives, 'coreutils*.deb')):
+            self.fail('coreutils was not downloaded.')
+        self.assertEqual(os.path.getctime(tzdata[0]), tzdata_written,
+            'tzdata downloaded twice.')
+        self.assertEqual(zonetab_written, os.path.getctime(zonetab),
+            'zonetab written twice.')
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+            'usr/bin/stat')))
+
+        # Prevent packages from downloading.
+        apt_pkg.Config.set('Acquire::http::Proxy', 'http://nonexistent')
+        self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
+            self.configdir, 'Foonux 1.2', [('libc6', None)], False,
+            self.cachedir, permanent_rootdir=True)
+        # These packages exist, so attempting to install them should not fail.
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+            [('coreutils', None), ('tzdata', None)], False, self.cachedir,
+            permanent_rootdir=True)
+        apt_pkg.Config.set('Acquire::http::Proxy', '')
 
     def _setup_foonux_config(self):
         '''Set up directories and configuration for install_packages()'''
