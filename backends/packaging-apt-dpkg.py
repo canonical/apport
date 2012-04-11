@@ -18,6 +18,10 @@ import hashlib
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
+import apt_pkg
+from collections import defaultdict
+import cPickle as pickle
+import atexit
 
 import apport
 from apport.packaging import PackageInfo
@@ -32,6 +36,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._sandbox_apt_cache = None
         self._contents_dir = None
         self._mirror = None
+        self._virtual_mapping_obj = None
 
         self.configuration = '/etc/default/apport'
 
@@ -42,6 +47,30 @@ class __AptDpkgPackageInfo(PackageInfo):
                 shutil.rmtree(self._contents_dir)
         except AttributeError:
             pass
+
+    def _virtual_mapping(self, configdir):
+        if self._virtual_mapping_obj is not None:
+            return self._virtual_mapping_obj
+
+        mapping_file = os.path.join(configdir, 'virtual_mapping.pickle')
+        if os.path.exists(mapping_file):
+            with open(mapping_file, 'rb') as fp:
+                self._virtual_mapping_obj = pickle.load(fp)
+        else:
+            self._virtual_mapping_obj = defaultdict(dict)
+
+        atexit.register(self._save_virtual_mapping, configdir)
+        return self._virtual_mapping_obj
+
+    def _save_virtual_mapping(self, configdir):
+        # Under normal circumstances this will still exists, but unit tests
+        # clean up before atexit is called.
+        if not os.path.exists(configdir):
+            return
+        mapping_file = os.path.join(configdir, 'virtual_mapping.pickle')
+        if self._virtual_mapping_obj is not None:
+            with open(mapping_file, 'wb') as fp:
+                pickle.dump(self._virtual_mapping_obj, fp)
 
     def _cache(self):
         '''Return apt.Cache() (initialized lazily).'''
@@ -550,6 +579,26 @@ class __AptDpkgPackageInfo(PackageInfo):
                 w = '%s version %s required, but %s is available' % (pkg, ver, candidate.version)
                 obsolete += w + '\n'
             real_pkgs.add(pkg)
+
+            if permanent_rootdir:
+                virtual_mapping = self._virtual_mapping(configdir)
+                for p in candidate.provides:
+                    virtual_mapping[p][pkg] = None
+            if permanent_rootdir and candidate.record.has_key('Conflicts'):
+                conflicts = candidate.record['Conflicts'].split(', ')
+                archives = apt_pkg.Config.FindDir('Dir::Cache::archives')
+                for conflict in conflicts:
+                    if c.is_virtual_package(conflict):
+                        real = virtual_mapping[conflict].keys()
+                        for p in real:
+                            del virtual_mapping[conflict][p]
+                            debs = os.path.join(archives, '%s_*.deb' % p)
+                            for path in glob.glob(debs):
+                                os.unlink(path)
+                    else:
+                        debs = os.path.join(archives, '%s_*.deb' % conflict)
+                        for path in glob.glob(debs):
+                            os.unlink(path)
 
             if candidate.architecture != 'all':
                 if pkg + '-dbg' in c:
