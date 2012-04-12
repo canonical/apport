@@ -588,8 +588,10 @@ class __AptDpkgPackageInfo(PackageInfo):
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
                 archives = apt.apt_pkg.Config.FindDir('Dir::Cache::archives')
                 for conflict in conflicts:
-                    # FIXME: if we have an | conflict we'll have more than one
-                    # item in this list.
+                    # apt_pkg.parse_depends needs to handle the or operator,
+                    # but as policy states it is invalid to use that in
+                    # Replaces/Depends, we can safely choose the first value
+                    # here.
                     conflict = conflict[0]
                     if c.is_virtual_package(conflict[0]):
                         try:
