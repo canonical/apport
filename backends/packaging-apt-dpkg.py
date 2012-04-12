@@ -18,7 +18,6 @@ import hashlib
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
-from collections import defaultdict
 import cPickle as pickle
 import atexit
 
@@ -56,7 +55,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             with open(mapping_file, 'rb') as fp:
                 self._virtual_mapping_obj = pickle.load(fp)
         else:
-            self._virtual_mapping_obj = defaultdict(dict)
+            self._virtual_mapping_obj = {}
 
         atexit.register(self._save_virtual_mapping, configdir)
         return self._virtual_mapping_obj
@@ -582,26 +581,23 @@ class __AptDpkgPackageInfo(PackageInfo):
             if permanent_rootdir:
                 virtual_mapping = self._virtual_mapping(configdir)
                 for p in candidate.provides:
-                    virtual_mapping[p][pkg] = None
-            if (permanent_rootdir and (candidate.record.has_key('Conflicts') or
-                                       candidate.record.has_key('Replaces'))):
+                    virtual_mapping.setdefault(p, set()).add(pkg)
                 conflicts = []
-                if candidate.record.has_key('Conflicts'):
+                if 'Conflicts' in candidate.record:
                     conflicts += candidate.record['Conflicts'].split(', ')
-                if candidate.record.has_key('Replaces'):
+                if 'Replaces' in candidate.record:
                     conflicts += candidate.record['Replaces'].split(', ')
-                print 'found conflicts for', pkg, conflicts
                 archives = apt.apt_pkg.Config.FindDir('Dir::Cache::archives')
                 for conflict in conflicts:
                     # Get rid of ' (<< 0.1.2)' if it exists.
                     conflict = conflict.split()[0]
                     if c.is_virtual_package(conflict):
-                        real = virtual_mapping[conflict].keys()
-                        for p in real:
-                            del virtual_mapping[conflict][p]
+                        providers = virtual_mapping[conflict]
+                        for p in providers:
                             debs = os.path.join(archives, '%s_*.deb' % p)
                             for path in glob.glob(debs):
                                 os.unlink(path)
+                        del providers
                     else:
                         debs = os.path.join(archives, '%s_*.deb' % conflict)
                         for path in glob.glob(debs):
