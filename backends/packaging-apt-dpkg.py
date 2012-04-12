@@ -574,7 +574,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             real_pkgs.add(pkg)
 
             if permanent_rootdir:
-                virtual_mapping = self._virtual_mapping(configdir)
+                mapping_path = os.path.join(configdir, release)
+                virtual_mapping = self._virtual_mapping(mapping_path)
                 # Remember all the virtual packages that this package provides,
                 # so that if we encounter that virtual package as a
                 # Conflicts/Replaces later, we know to remove this package from
@@ -656,7 +657,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             + ' '.join(real_pkgs)
 
         if permanent_rootdir:
-            self._save_virtual_mapping(configdir)
+            self._save_virtual_mapping(mapping_path)
         return obsolete
 
     def package_name_glob(self, nameglob):
