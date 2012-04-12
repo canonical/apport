@@ -19,7 +19,6 @@ import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 import cPickle as pickle
-import atexit
 
 import apport
 from apport.packaging import PackageInfo
@@ -57,14 +56,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             self._virtual_mapping_obj = {}
 
-        atexit.register(self._save_virtual_mapping, configdir)
         return self._virtual_mapping_obj
 
     def _save_virtual_mapping(self, configdir):
-        # Under normal circumstances this will still exist, but unit tests
-        # clean up before atexit is called.
-        if not os.path.exists(configdir):
-            return
         mapping_file = os.path.join(configdir, 'virtual_mapping.pickle')
         if self._virtual_mapping_obj is not None:
             with open(mapping_file, 'wb') as fp:
@@ -639,6 +633,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         assert not real_pkgs, 'apt fetcher did not fetch these packages: ' \
             + ' '.join(real_pkgs)
 
+        if permanent_rootdir:
+            self._save_virtual_mapping(configdir)
         return obsolete
 
     def package_name_glob(self, nameglob):
