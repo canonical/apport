@@ -18,7 +18,6 @@ import hashlib
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
-import apt_pkg
 from collections import defaultdict
 import cPickle as pickle
 import atexit
@@ -472,7 +471,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if debug_pkgname in c and c[debug_pkgname].isInstalled:
             #print('kernel ddeb already installed')
             return (installed, outdated)
-        target_dir = apt_pkg.Config.FindDir('Dir::Cache::archives') + '/partial'
+        target_dir = apt.apt_pkg.Config.FindDir('Dir::Cache::archives') + '/partial'
         deb = '%s_%s_%s.ddeb' % (debug_pkgname, ver, arch)
         # FIXME: this package is currently not in Packages.gz
         url = 'http://ddebs.ubuntu.com/pool/main/l/linux/%s' % deb
@@ -591,7 +590,8 @@ class __AptDpkgPackageInfo(PackageInfo):
                     conflicts += candidate.record['Conflicts'].split(', ')
                 if candidate.record.has_key('Replaces'):
                     conflicts += candidate.record['Replaces'].split(', ')
-                archives = apt_pkg.Config.FindDir('Dir::Cache::archives')
+                print 'found conflicts for', pkg, conflicts
+                archives = apt.apt_pkg.Config.FindDir('Dir::Cache::archives')
                 for conflict in conflicts:
                     # Get rid of ' (<< 0.1.2)' if it exists.
                     conflict = conflict.split()[0]

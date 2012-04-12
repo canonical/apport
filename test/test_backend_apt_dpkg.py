@@ -1,5 +1,5 @@
 import unittest, gzip, imp, subprocess, tempfile, shutil, os, os.path, time
-import apt_pkg
+from apt import apt_pkg
 import glob
 
 if os.environ.get('APPORT_TEST_LOCAL'):
