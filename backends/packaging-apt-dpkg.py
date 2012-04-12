@@ -18,6 +18,7 @@ import hashlib
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
+from debian import debfile
 import cPickle as pickle
 
 import apport
@@ -574,28 +575,47 @@ class __AptDpkgPackageInfo(PackageInfo):
 
             if permanent_rootdir:
                 virtual_mapping = self._virtual_mapping(configdir)
+                # Remember all the virtual packages that this package provides,
+                # so that if we encounter that virtual package as a
+                # Conflicts/Replaces later, we know to remove this package from
+                # the cache.
                 for p in candidate.provides:
                     virtual_mapping.setdefault(p, set()).add(pkg)
                 conflicts = []
                 if 'Conflicts' in candidate.record:
-                    conflicts += candidate.record['Conflicts'].split(', ')
+                    conflicts += apt.apt_pkg.parse_depends(candidate.record['Conflicts'])
                 if 'Replaces' in candidate.record:
-                    conflicts += candidate.record['Replaces'].split(', ')
+                    conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
                 archives = apt.apt_pkg.Config.FindDir('Dir::Cache::archives')
                 for conflict in conflicts:
-                    # Get rid of ' (<< 0.1.2)' if it exists.
-                    conflict = conflict.split()[0]
-                    if c.is_virtual_package(conflict):
-                        providers = virtual_mapping[conflict]
+                    # FIXME: if we have an | conflict we'll have more than one
+                    # item in this list.
+                    conflict = conflict[0]
+                    if c.is_virtual_package(conflict[0]):
+                        try:
+                            providers = virtual_mapping[conflict[0]]
+                        except KeyError:
+                            # We may not have seen the virtual package that
+                            # this conflicts with, so we can assume it's not
+                            # unpacked into the sandbox.
+                            continue
                         for p in providers:
                             debs = os.path.join(archives, '%s_*.deb' % p)
                             for path in glob.glob(debs):
-                                os.unlink(path)
+                                ver = debfile.DebFile(path)
+                                ver = ver.control.debcontrol()['version']
+                                if apt.apt_pkg.check_dep(ver, conflict[2],
+                                                              conflict[1]):
+                                    os.unlink(path)
                         del providers
                     else:
-                        debs = os.path.join(archives, '%s_*.deb' % conflict)
+                        debs = os.path.join(archives, '%s_*.deb' % conflict[0])
                         for path in glob.glob(debs):
-                            os.unlink(path)
+                            ver = debfile.DebFile(path)
+                            ver = ver.control.debcontrol()['version']
+                            if apt.apt_pkg.check_dep(ver, conflict[2],
+                                                          conflict[1]):
+                                os.unlink(path)
 
             if candidate.architecture != 'all':
                 if pkg + '-dbg' in c:
