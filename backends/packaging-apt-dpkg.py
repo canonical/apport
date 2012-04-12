@@ -63,7 +63,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return self._virtual_mapping_obj
 
     def _save_virtual_mapping(self, configdir):
-        # Under normal circumstances this will still exists, but unit tests
+        # Under normal circumstances this will still exist, but unit tests
         # clean up before atexit is called.
         if not os.path.exists(configdir):
             return
