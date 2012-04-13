@@ -24,6 +24,8 @@ from mock import patch
 
 import apport.crashdb_impl.memory
 
+GLib.log_set_always_fatal(GLib.LogLevelFlags.LEVEL_WARNING | GLib.LogLevelFlags.LEVEL_CRITICAL)
+
 if os.environ.get('APPORT_TEST_LOCAL'):
     apport_gtk_path = 'gtk/apport-gtk'
     kernel_oops_path = 'data/kernel_oops'

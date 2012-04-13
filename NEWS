@@ -13,6 +13,7 @@ Improvements:
  * crash-digger: Add --sandbox-dir option and pass it to apport-retrace.
  * Fix the whole code to be PEP-8 compatible, and enforce this in test/run by
    running the "pep8" tool.
+ * GTK UI tests: Ensure that there are no GLib/GTK warnings or criticals.
 
 2.0.1 (2012-04-10)
 ------------------
