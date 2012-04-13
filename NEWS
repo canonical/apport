@@ -15,6 +15,10 @@ Improvements:
    running the "pep8" tool.
  * GTK UI tests: Ensure that there are no GLib/GTK warnings or criticals.
 
+Bug fixes:
+ * apport-gtk: Work around GTK crash when trying to set pixmap on an already
+   destroyed parent window. (LP: #938090)
+
 2.0.1 (2012-04-10)
 ------------------
 Bug fixes:

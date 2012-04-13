@@ -244,7 +244,8 @@ class GTKUserInterface(apport.ui.UserInterface):
                 overlay = theme.load_icon('dialog-error', 16, builtin)
                 overlay.composite(pb, 26, 26, 16, 16, 26, 26, 1, 1,
                                   GdkPixbuf.InterpType.BILINEAR, 255)
-                app_icon.set_from_pixbuf(pb)
+                if app_icon.get_parent():  # work around LP#938090
+                    app_icon.set_from_pixbuf(pb)
             except GLib.GError:
                 self.w('application_icon').set_from_stock(
                     Gtk.STOCK_DIALOG_ERROR, Gtk.IconSize.DIALOG)

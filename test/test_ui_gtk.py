@@ -624,4 +624,12 @@ Type=Application''')
         GLib.timeout_add(200, close, 0)
         self.app.ui_info_message('title', 'http://example.com ♪')
 
+    def test_immediate_close(self):
+        '''Close details window immediately'''
+
+        # this reproduces https://launchpad.net/bugs/938090
+        self.app.w('dialog_crash_new').destroy()
+        GLib.idle_add(Gtk.main_quit)
+        self.app.run_crash(self.app.report_file)
+
 unittest.main()
