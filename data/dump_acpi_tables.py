@@ -9,6 +9,7 @@ def dump_acpi_table(filename, tablename, out):
     out.write('%s @ 0x00000000\n' % tablename)
     n = 0
     f = open(filename, 'rb')
+    hex_str = ''
     try:
         byte = f.read(1)
         while byte != '':

@@ -18,6 +18,8 @@ Improvements:
 Bug fixes:
  * apport-gtk: Work around GTK crash when trying to set pixmap on an already
    destroyed parent window. (LP: #938090)
+ * data/dump_acpi_tables.py: Fix crash on undefined variable with non-standard
+   tables. (LP: #982267)
 
 2.0.1 (2012-04-10)
 ------------------
