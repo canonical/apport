@@ -20,6 +20,8 @@ Bug fixes:
    destroyed parent window. (LP: #938090)
  * data/dump_acpi_tables.py: Fix crash on undefined variable with non-standard
    tables. (LP: #982267)
+ * backends/packaging-apt-dpkg.py: Fix crash if a package is installed, but has
+   no candidates in apt. (LP: #980094)
 
 2.0.1 (2012-04-10)
 ------------------

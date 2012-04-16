@@ -162,10 +162,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             except IOError:
                 pass
 
-        origins = None
-        origins = pkg.candidate.origins
-        if origins:  # might be None
-            for o in origins:
+        if pkg.candidate and pkg.candidate.origins:  # might be None
+            for o in pkg.candidate.origins:
                 if o.origin in native_origins:
                     return True
         return False
