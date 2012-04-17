@@ -574,7 +574,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             real_pkgs.add(pkg)
 
             if permanent_rootdir:
-                mapping_path = os.path.join(configdir, release)
+                mapping_path = os.path.join(cache_dir, release)
                 virtual_mapping = self._virtual_mapping(mapping_path)
                 # Remember all the virtual packages that this package provides,
                 # so that if we encounter that virtual package as a
