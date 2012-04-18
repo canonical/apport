@@ -250,11 +250,11 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         os.environ['LC_MESSAGES'] = 'en_US.UTF-8'
         try:
             # default mode: disable translations
-            out = apport.hookutils.command_output(['env'])
+            out = apport.hookutils.command_output(['env']).decode()
             self.assertTrue('LC_MESSAGES=C' in out)
 
             # keep locale
-            out = apport.hookutils.command_output(['env'], keep_locale=True)
+            out = apport.hookutils.command_output(['env'], keep_locale=True).decode()
             self.assertFalse('LC_MESSAGES=C' in out, out)
         finally:
             if orig_lcm is not None:
@@ -267,7 +267,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         self.assertTrue(out.startswith('Error: [Errno 2]'))
 
         # stdin
-        out = apport.hookutils.command_output(['cat'], input='hello')
-        self.assertEqual(out, 'hello')
+        out = apport.hookutils.command_output(['cat'], input=b'hello')
+        self.assertEqual(out, b'hello')
 
 unittest.main()

@@ -464,9 +464,10 @@ def xsession_errors(pattern=None):
         pattern = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)|([^ ]+\[\d+\]: ([A-Z]+):)|([^ ]-[A-Z]+ \*\*:)|(received an X Window System error)|(^The error was \')|(^  \(Details: serial \d+ error_code)')
 
     lines = ''
-    for line in open(path):
-        if pattern.search(line):
-            lines += line
+    with open(path) as f:
+        for line in f:
+            if pattern.search(line):
+                lines += line
     return lines
 
 PCI_MASS_STORAGE = 0x01
