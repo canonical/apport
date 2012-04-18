@@ -29,7 +29,7 @@ def add_info(report, ui):
     home = os.getenv('HOME')
     if home:
         mounts[home] = 'home'
-    treshold = 10
+    treshold = 50
 
     for mount in mounts:
         st = os.statvfs(mount)

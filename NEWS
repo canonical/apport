@@ -22,6 +22,8 @@ Bug fixes:
    tables. (LP: #982267)
  * backends/packaging-apt-dpkg.py: Fix crash if a package is installed, but has
    no candidates in apt. (LP: #980094)
+ * data/general-hooks/generic.py: Bump minimum free space requirement from 10
+   to 50 MB. 10 is not nearly enough particularly for /tmp. (LP: #979928)
 
 2.0.1 (2012-04-10)
 ------------------
