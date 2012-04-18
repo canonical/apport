@@ -13,11 +13,14 @@ import os, os.path, sys, shutil, urllib
 
 try:
     from exceptions import Exception
-    from urllib import quote_plus
+    from urllib import quote_plus, urlopen
+    URLError = IOError
 except ImportError:
     # python 3
     from functools import cmp_to_key
     from urllib.parse import quote_plus
+    from urllib.request import urlopen
+    from urllib.error import URLError
 
 import apport
 
@@ -276,12 +279,12 @@ class CrashDatabase:
 
             # read data file
             try:
-                f = urllib.urlopen(url)
-                contents = f.read()
+                f = urlopen(url)
+                contents = f.read().decode('UTF-8')
                 f.close()
                 if '<title>404 Not Found' in contents:
                     continue
-            except Exception:
+            except (IOError, URLError):
                 # does not exist, failed to load, etc.
                 continue
 
@@ -372,7 +375,6 @@ class CrashDatabase:
 
         cur.execute('SELECT * from address_signatures ORDER BY signature')
         for (sig, id) in cur.fetchall():
-            sig = sig.encode('UTF-8')
             h = self.duplicate_sig_hash(sig)
             if h is None:
                 # some entries can't be represented in a single line
@@ -381,7 +383,7 @@ class CrashDatabase:
                 cur_hash = h
                 if cur_file:
                     cur_file.close()
-                cur_file = open(os.path.join(addr_base, cur_hash), 'wb')
+                cur_file = open(os.path.join(addr_base, cur_hash), 'w')
 
             cur_file.write('%i %s\n' % (id, sig))
 
@@ -396,7 +398,6 @@ class CrashDatabase:
 
         cur.execute('SELECT signature, crash_id from crashes ORDER BY signature')
         for (sig, id) in cur.fetchall():
-            sig = sig.encode('UTF-8')
             h = self.duplicate_sig_hash(sig)
             if h is None:
                 # some entries can't be represented in a single line
@@ -405,7 +406,7 @@ class CrashDatabase:
                 cur_hash = h
                 if cur_file:
                     cur_file.close()
-                cur_file = open(os.path.join(sig_base, cur_hash), 'wb')
+                cur_file = open(os.path.join(sig_base, cur_hash), 'w')
 
             cur_file.write('%i %s\n' % (id, sig))
 

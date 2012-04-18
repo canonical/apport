@@ -10,7 +10,7 @@ class T(unittest.TestCase):
         self.workdir = tempfile.mkdtemp()
         self.dupdb_dir = os.path.join(self.workdir, 'dupdb')
         self.crashes = CrashDatabase(None, {'dummy_data': '1',
-            'dupdb_url': self.dupdb_dir})
+            'dupdb_url': 'file://' + self.dupdb_dir})
 
         self.assertEqual(self.crashes.get_comment_url(self.crashes.download(0),
             0), 'http://foo.bugs.example.com/0')
