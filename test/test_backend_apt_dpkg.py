@@ -1,5 +1,5 @@
 import unittest, gzip, imp, subprocess, tempfile, shutil, os, os.path, time
-import apt_pkg
+from apt import apt_pkg
 import glob
 
 if os.environ.get('APPORT_TEST_LOCAL'):
@@ -542,6 +542,25 @@ bo/gu/s                                                 na/mypackage
             [('coreutils', None), ('tzdata', None)], False, self.cachedir,
             permanent_rootdir=True)
         apt_pkg.Config.set('Acquire::http::Proxy', '')
+
+    @unittest.skipUnless(_has_default_route(), 'online test')
+    def test_install_packages_permanent_sandbox_repack(self):
+        self._setup_foonux_config()
+        apache_bin_path = os.path.join(self.rootdir, 'usr/sbin/apache2')
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+            [('apache2-mpm-worker', None)], False, self.cachedir,
+            permanent_rootdir=True)
+        self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-worker/apache2'))
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+            [('apache2-mpm-event', None)], False, self.cachedir,
+            permanent_rootdir=True)
+        self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-event/apache2'),
+            'should have installed mpm-event, but have mpm-worker.')
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+            [('apache2-mpm-worker', None)], False, self.cachedir,
+            permanent_rootdir=True)
+        self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-worker/apache2'),
+            'should have installed mpm-worker, but have mpm-event.')
 
     def _setup_foonux_config(self):
         '''Set up directories and configuration for install_packages()'''

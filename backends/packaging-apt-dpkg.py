@@ -18,6 +18,7 @@ import hashlib
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
+import cPickle as pickle
 
 import apport
 from apport.packaging import PackageInfo
@@ -32,6 +33,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._sandbox_apt_cache = None
         self._contents_dir = None
         self._mirror = None
+        self._virtual_mapping_obj = None
 
         self.configuration = '/etc/default/apport'
 
@@ -42,6 +44,25 @@ class __AptDpkgPackageInfo(PackageInfo):
                 shutil.rmtree(self._contents_dir)
         except AttributeError:
             pass
+
+    def _virtual_mapping(self, configdir):
+        if self._virtual_mapping_obj is not None:
+            return self._virtual_mapping_obj
+
+        mapping_file = os.path.join(configdir, 'virtual_mapping.pickle')
+        if os.path.exists(mapping_file):
+            with open(mapping_file, 'rb') as fp:
+                self._virtual_mapping_obj = pickle.load(fp)
+        else:
+            self._virtual_mapping_obj = {}
+
+        return self._virtual_mapping_obj
+
+    def _save_virtual_mapping(self, configdir):
+        mapping_file = os.path.join(configdir, 'virtual_mapping.pickle')
+        if self._virtual_mapping_obj is not None:
+            with open(mapping_file, 'wb') as fp:
+                pickle.dump(self._virtual_mapping_obj, fp)
 
     def _cache(self):
         '''Return apt.Cache() (initialized lazily).'''
@@ -430,7 +451,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         special in various ways currently so we can not use the apt
         method.
         '''
-        import urllib, apt_pkg
+        import urllib
         installed = []
         outdated = []
         kver = report['Uname'].split()[1]
@@ -441,7 +462,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if debug_pkgname in c and c[debug_pkgname].isInstalled:
             #print('kernel ddeb already installed')
             return (installed, outdated)
-        target_dir = apt_pkg.Config.FindDir('Dir::Cache::archives') + '/partial'
+        target_dir = apt.apt_pkg.Config.FindDir('Dir::Cache::archives') + '/partial'
         deb = '%s_%s_%s.ddeb' % (debug_pkgname, ver, arch)
         # FIXME: this package is currently not in Packages.gz
         url = 'http://ddebs.ubuntu.com/pool/main/l/linux/%s' % deb
@@ -549,6 +570,51 @@ class __AptDpkgPackageInfo(PackageInfo):
                 obsolete += w + '\n'
             real_pkgs.add(pkg)
 
+            if permanent_rootdir:
+                mapping_path = os.path.join(cache_dir, release)
+                virtual_mapping = self._virtual_mapping(mapping_path)
+                # Remember all the virtual packages that this package provides,
+                # so that if we encounter that virtual package as a
+                # Conflicts/Replaces later, we know to remove this package from
+                # the cache.
+                for p in candidate.provides:
+                    virtual_mapping.setdefault(p, set()).add(pkg)
+                conflicts = []
+                if 'Conflicts' in candidate.record:
+                    conflicts += apt.apt_pkg.parse_depends(candidate.record['Conflicts'])
+                if 'Replaces' in candidate.record:
+                    conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
+                archives = apt.apt_pkg.Config.FindDir('Dir::Cache::archives')
+                for conflict in conflicts:
+                    # apt_pkg.parse_depends needs to handle the or operator,
+                    # but as policy states it is invalid to use that in
+                    # Replaces/Depends, we can safely choose the first value
+                    # here.
+                    conflict = conflict[0]
+                    if c.is_virtual_package(conflict[0]):
+                        try:
+                            providers = virtual_mapping[conflict[0]]
+                        except KeyError:
+                            # We may not have seen the virtual package that
+                            # this conflicts with, so we can assume it's not
+                            # unpacked into the sandbox.
+                            continue
+                        for p in providers:
+                            debs = os.path.join(archives, '%s_*.deb' % p)
+                            for path in glob.glob(debs):
+                                ver = self._deb_version(path)
+                                if apt.apt_pkg.check_dep(ver, conflict[2],
+                                                              conflict[1]):
+                                    os.unlink(path)
+                        del providers
+                    else:
+                        debs = os.path.join(archives, '%s_*.deb' % conflict[0])
+                        for path in glob.glob(debs):
+                            ver = self._deb_version(path)
+                            if apt.apt_pkg.check_dep(ver, conflict[2],
+                                                          conflict[1]):
+                                os.unlink(path)
+
             if candidate.architecture != 'all':
                 if pkg + '-dbg' in c:
                     real_pkgs.add(pkg + '-dbg')
@@ -585,6 +651,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         assert not real_pkgs, 'apt fetcher did not fetch these packages: ' \
             + ' '.join(real_pkgs)
 
+        if permanent_rootdir:
+            self._save_virtual_mapping(mapping_path)
         return obsolete
 
     def package_name_glob(self, nameglob):
@@ -596,7 +664,8 @@ class __AptDpkgPackageInfo(PackageInfo):
     # Internal helper methods
     #
 
-    def _call_dpkg(self, args):
+    @classmethod
+    def _call_dpkg(klass, args):
         '''Call dpkg with given arguments and return output, or return None on
         error.'''
 
@@ -751,6 +820,16 @@ class __AptDpkgPackageInfo(PackageInfo):
             shutil.copytree('/etc/apt/trusted.gpg.d', trusted_d)
         else:
             os.makedirs(trusted_d)
+
+    @classmethod
+    def _deb_version(klass, pkg):
+        '''Return the version of a .deb file'''
+
+        dpkg = subprocess.Popen(['dpkg-deb', '-f', pkg, 'Version'], stdout=subprocess.PIPE)
+        out = dpkg.communicate(input)[0].decode('UTF-8')
+        assert dpkg.returncode == 0
+        assert out
+        return out
 
     def compare_versions(self, ver1, ver2):
         '''Compare two package versions.
