@@ -18,7 +18,10 @@ import hashlib
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 import apport
 from apport.packaging import PackageInfo
@@ -462,7 +465,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if debug_pkgname in c and c[debug_pkgname].isInstalled:
             #print('kernel ddeb already installed')
             return (installed, outdated)
-        target_dir = apt.apt_pkg.Config.FindDir('Dir::Cache::archives') + '/partial'
+        target_dir = apt.apt_pkg.config.find_dir('Dir::Cache::archives') + '/partial'
         deb = '%s_%s_%s.ddeb' % (debug_pkgname, ver, arch)
         # FIXME: this package is currently not in Packages.gz
         url = 'http://ddebs.ubuntu.com/pool/main/l/linux/%s' % deb
@@ -584,7 +587,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Conflicts'])
                 if 'Replaces' in candidate.record:
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
-                archives = apt.apt_pkg.Config.FindDir('Dir::Cache::archives')
+                archives = apt.apt_pkg.config.find_dir('Dir::Cache::archives')
                 for conflict in conflicts:
                     # apt_pkg.parse_depends needs to handle the or operator,
                     # but as policy states it is invalid to use that in
@@ -681,18 +684,18 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''Internal function for calling md5sum.
 
         This is separate from get_modified_files so that it is automatically
-        testable.'''
-
+        testable.
+        '''
         if os.path.exists(sumfile):
             m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
                 cwd='/', env={})
-            out = m.communicate()[0].decode(errors='replace')
+            out = m.communicate()[0].decode('UTF-8', errors='replace')
         else:
             m = subprocess.Popen(['/usr/bin/md5sum', '-c'],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
-            out = m.communicate(sumfile)[0].decode(errors='replace')
+            out = m.communicate(sumfile)[0].decode('UTF-8', errors='replace')
 
         # if md5sum succeeded, don't bother parsing the output
         if m.returncode == 0:

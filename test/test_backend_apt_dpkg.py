@@ -59,10 +59,9 @@ class T(unittest.TestCase):
                 fd.write('More stuff')
             # use one relative and one absolute path in checksums file
             with open(sumfile, 'wb') as fd:
-                fd.write('''2e41290da2fa3f68bd3313174467e3b5  %s
-f6423dfbc4faf022e58b4d3f5ff71a70  %s
-deadbeef000001111110000011110000  /bin/\xc3\xa4
-''' % (f1[1:], f2))
+                fd.write(b'2e41290da2fa3f68bd3313174467e3b5  ' + f1[1:].encode() + b'\n')
+                fd.write(b'f6423dfbc4faf022e58b4d3f5ff71a70  ' + f2.encode() + b'\n')
+                fd.write(b'deadbeef000001111110000011110000  /bin/\xc3\xa4')
             self.assertEqual(impl._check_files_md5(sumfile), [], 'correct md5sums')
 
             with open(f1, 'w') as fd:
@@ -76,7 +75,7 @@ deadbeef000001111110000011110000  /bin/\xc3\xa4
             self.assertEqual(impl._check_files_md5(sumfile), [f2], 'file 2 wrong')
 
             # check using a direct md5 list as argument
-            with open(sumfile) as fd:
+            with open(sumfile, 'rb') as fd:
                 self.assertEqual(impl._check_files_md5(fd.read()),
                     [f2], 'file 2 wrong')
 
@@ -512,7 +511,7 @@ bo/gu/s                                                 na/mypackage
             [('tzdata', None)], False, self.cachedir, permanent_rootdir=True)
 
         # This will now be using a Cache with our rootdir.
-        archives = apt_pkg.Config.FindDir('Dir::Cache::archives')
+        archives = apt_pkg.config.find_dir('Dir::Cache::archives')
         tzdata = glob.glob(os.path.join(archives, 'tzdata*.deb'))
         if not tzdata:
             self.fail('tzdata was not downloaded')
@@ -533,7 +532,7 @@ bo/gu/s                                                 na/mypackage
             'usr/bin/stat')))
 
         # Prevent packages from downloading.
-        apt_pkg.Config.set('Acquire::http::Proxy', 'http://nonexistent')
+        apt_pkg.config.set('Acquire::http::Proxy', 'http://nonexistent')
         self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
             self.configdir, 'Foonux 1.2', [('libc6', None)], False,
             self.cachedir, permanent_rootdir=True)
@@ -541,7 +540,7 @@ bo/gu/s                                                 na/mypackage
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
             [('coreutils', None), ('tzdata', None)], False, self.cachedir,
             permanent_rootdir=True)
-        apt_pkg.Config.set('Acquire::http::Proxy', '')
+        apt_pkg.config.set('Acquire::http::Proxy', '')
 
     @unittest.skipUnless(_has_default_route(), 'online test')
     def test_install_packages_permanent_sandbox_repack(self):
