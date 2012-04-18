@@ -10,9 +10,10 @@ import gettext
 
 def unicode_gettext(str):
     trans = gettext.gettext(str)
-    if isinstance(trans, unicode):
+    if type(trans) == type(b''):
+        return trans.decode('UTF-8')
+    else:
         return trans
-    return trans.decode('UTF-8')
 
 
 def fatal(msg, *args):

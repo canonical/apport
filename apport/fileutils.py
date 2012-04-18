@@ -205,7 +205,8 @@ def delete_report(report):
     try:
         os.unlink(report)
     except OSError:
-        open(report, 'w').truncate(0)
+        with open(report, 'w') as f:
+            f.truncate(0)
 
 
 def get_recent_crashes(report):

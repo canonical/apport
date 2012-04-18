@@ -150,7 +150,7 @@ class T(unittest.TestCase):
 
             # properly terminate app and app2
             app2.stdin.close()
-            app.stdin.write('boo')
+            app.stdin.write(b'boo')
             app.stdin.close()
 
             self.assertEqual(app.wait(), 0, app.stderr.read())
@@ -176,7 +176,7 @@ class T(unittest.TestCase):
         try:
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
                 close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-            app.stdin.write('boo')
+            app.stdin.write(b'boo')
             app.stdin.close()
 
             self.assertNotEqual(app.wait(), 0, app.stderr.read())
@@ -194,7 +194,7 @@ class T(unittest.TestCase):
         with open(local_exe, 'wb') as dest:
             with open(test_executable, 'rb') as src:
                 dest.write(src.read())
-        os.chmod(local_exe, 0755)
+        os.chmod(local_exe, 0o755)
         self.do_crash(command=local_exe)
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
@@ -204,7 +204,7 @@ class T(unittest.TestCase):
         local_exe = os.path.join(self.workdir, 'myscript')
         with open(local_exe, 'w') as f:
             f.write('#!/bin/sh\nkill -SEGV $$')
-        os.chmod(local_exe, 0755)
+        os.chmod(local_exe, 0o755)
         self.do_crash(command=local_exe)
 
         # absolute path
@@ -227,7 +227,7 @@ class T(unittest.TestCase):
         local_exe = os.path.join(self.workdir, 'myscript')
         with open(local_exe, 'w') as f:
             f.write('#!/usr/bin/perl\nsystem("mv $0 $0.exe");\nsystem("ln -sf /etc/shadow $0");\n$0="..$0";\nsleep(10);\n')
-        os.chmod(local_exe, 0755)
+        os.chmod(local_exe, 0o755)
         self.do_crash(check_running=False, command=local_exe, sleep=2)
 
         leak = os.path.join(apport.fileutils.report_dir, '_usr_bin_perl.%i.crash' %
@@ -310,7 +310,7 @@ class T(unittest.TestCase):
         with open(local_exe, 'wb') as dest:
             with open(test_executable, 'rb') as src:
                 dest.write(src.read())
-        os.chmod(local_exe, 0755)
+        os.chmod(local_exe, 0o755)
 
         # for SIGSEGV
         resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
@@ -347,8 +347,8 @@ class T(unittest.TestCase):
         r = apport.Report()
         with open('/proc/meminfo') as f:
             r.load(f)
-        totalmb = long(r['MemFree'].split()[0]) + long(r['Cached'].split()[0])
-        totalmb /= 1024
+        totalmb = int(r['MemFree'].split()[0]) + int(r['Cached'].split()[0])
+        totalmb = int(totalmb / 1024)
         r = None
 
         test_proc = self.create_test_process()
@@ -431,8 +431,14 @@ class T(unittest.TestCase):
             assert False, 'Could not execute ' + command
 
         # wait until child process has execv()ed properly
-        while 'test-apport' in open('/proc/%i/cmdline' % pid).read():
-            time.sleep(0.1)
+        while True:
+            with open('/proc/%i/cmdline' % pid) as f:
+                cmdline = f.read()
+            if 'test-apport' in cmdline:
+                time.sleep(0.1)
+            else:
+                break
+
         time.sleep(0.3)  # needs some more setup time
         return pid
 
@@ -482,7 +488,8 @@ class T(unittest.TestCase):
                     stderr=subprocess.PIPE)
                 (out, err) = gdb.communicate()
                 self.assertEqual(gdb.returncode, 0)
-                err = err.strip()
+                out = out.decode()
+                err = err.decode().strip()
                 self.assertTrue(err == '' or err.startswith('warning'), err)
             finally:
                 os.unlink('/tmp/core')

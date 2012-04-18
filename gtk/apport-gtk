@@ -111,7 +111,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 else:
                     self.tree_model.set_value(valiter, 0, self.report[key])
                 # expand the row if the value has less than 5 lines
-                if len(filter(lambda c: c == '\n', self.report[key])) < 4:
+                if len(list(filter(lambda c: c == '\n', self.report[key]))) < 4:
                     self.w('details_treeview').expand_row(
                         self.tree_model.get_path(keyiter), False)
             else:
