@@ -135,7 +135,7 @@ class T(unittest.TestCase):
         regs = 'a 0x10'
         disasm = '0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.regs['a'], 0x10, segv)
+        self.assertEqual(segv.regs['a'], 0x10, segv)
 
         segv.regs = None
         self.assertRaises(ValueError, segv.parse_disassembly, '')
@@ -158,98 +158,98 @@ class T(unittest.TestCase):
 
         disasm = '0x1111111111: Cannot access memory at address 0x1111111111\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x1111111111, segv.pc)
-        self.assertEquals(segv.insn, None, segv.insn)
-        self.assertEquals(segv.src, None, segv.src)
-        self.assertEquals(segv.dest, None, segv.dest)
+        self.assertEqual(segv.pc, 0x1111111111, segv.pc)
+        self.assertEqual(segv.insn, None, segv.insn)
+        self.assertEqual(segv.src, None, segv.src)
+        self.assertEqual(segv.dest, None, segv.dest)
 
         disasm = '0x2111111111: \n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x2111111111, segv.pc)
-        self.assertEquals(segv.insn, None, segv.insn)
-        self.assertEquals(segv.src, None, segv.src)
-        self.assertEquals(segv.dest, None, segv.dest)
+        self.assertEqual(segv.pc, 0x2111111111, segv.pc)
+        self.assertEqual(segv.insn, None, segv.insn)
+        self.assertEqual(segv.src, None, segv.src)
+        self.assertEqual(segv.dest, None, segv.dest)
 
         disasm = '0x8069ff0 <fopen@plt+132220>: cmpb   $0x0,(%eax,%ebx,1)\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x8069ff0, segv.pc)
-        self.assertEquals(segv.insn, 'cmpb', segv.insn)
-        self.assertEquals(segv.src, '$0x0', segv.src)
-        self.assertEquals(segv.dest, '(%eax,%ebx,1)', segv.dest)
+        self.assertEqual(segv.pc, 0x8069ff0, segv.pc)
+        self.assertEqual(segv.insn, 'cmpb', segv.insn)
+        self.assertEqual(segv.src, '$0x0', segv.src)
+        self.assertEqual(segv.dest, '(%eax,%ebx,1)', segv.dest)
 
         disasm = '0xb765bb48 <_XSend+440>:  call   *0x40(%edi)\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0xb765bb48, segv.pc)
-        self.assertEquals(segv.insn, 'call', segv.insn)
-        self.assertEquals(segv.src, '*0x40(%edi)', segv.src)
-        self.assertEquals(segv.dest, None, segv.dest)
+        self.assertEqual(segv.pc, 0xb765bb48, segv.pc)
+        self.assertEqual(segv.insn, 'call', segv.insn)
+        self.assertEqual(segv.src, '*0x40(%edi)', segv.src)
+        self.assertEqual(segv.dest, None, segv.dest)
 
         disasm = '0xb7aae5a0:   call   0xb7a805af <_Unwind_Find_FDE@plt+111>\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0xb7aae5a0, segv.pc)
-        self.assertEquals(segv.insn, 'call', segv.insn)
-        self.assertEquals(segv.src, '0xb7a805af', segv.src)
-        self.assertEquals(segv.dest, None, segv.dest)
+        self.assertEqual(segv.pc, 0xb7aae5a0, segv.pc)
+        self.assertEqual(segv.insn, 'call', segv.insn)
+        self.assertEqual(segv.src, '0xb7a805af', segv.src)
+        self.assertEqual(segv.dest, None, segv.dest)
 
         disasm = '0x09083540:    mov    0x4(%esp),%es:%ecx\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x09083540, segv.pc)
-        self.assertEquals(segv.insn, 'mov', segv.insn)
-        self.assertEquals(segv.src, '0x4(%esp)', segv.src)
-        self.assertEquals(segv.dest, '%es:%ecx', segv.dest)
+        self.assertEqual(segv.pc, 0x09083540, segv.pc)
+        self.assertEqual(segv.insn, 'mov', segv.insn)
+        self.assertEqual(segv.src, '0x4(%esp)', segv.src)
+        self.assertEqual(segv.dest, '%es:%ecx', segv.dest)
 
         disasm = '0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x08083540, segv.pc)
-        self.assertEquals(segv.insn, 'lea', segv.insn)
-        self.assertEquals(segv.src, '0x4(%esp)', segv.src)
-        self.assertEquals(segv.dest, '%ecx', segv.dest)
+        self.assertEqual(segv.pc, 0x08083540, segv.pc)
+        self.assertEqual(segv.insn, 'lea', segv.insn)
+        self.assertEqual(segv.src, '0x4(%esp)', segv.src)
+        self.assertEqual(segv.dest, '%ecx', segv.dest)
 
         disasm = '''0x404127 <exo_mount_hal_device_mount+167>:
     repz cmpsb %es:(%rdi),%ds:(%rsi)\n'''
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x0404127, segv.pc)
-        self.assertEquals(segv.insn, 'repz cmpsb', segv.insn)
-        self.assertEquals(segv.src, '%es:(%rdi)', segv.src)
-        self.assertEquals(segv.dest, '%ds:(%rsi)', segv.dest)
+        self.assertEqual(segv.pc, 0x0404127, segv.pc)
+        self.assertEqual(segv.insn, 'repz cmpsb', segv.insn)
+        self.assertEqual(segv.src, '%es:(%rdi)', segv.src)
+        self.assertEqual(segv.dest, '%ds:(%rsi)', segv.dest)
 
         disasm = '0xb031765a <hufftab16+570>: add    0x3430433,%eax'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0xb031765a, segv.pc)
-        self.assertEquals(segv.insn, 'add', segv.insn)
-        self.assertEquals(segv.src, '0x3430433', segv.src)
-        self.assertEquals(segv.dest, '%eax', segv.dest)
+        self.assertEqual(segv.pc, 0xb031765a, segv.pc)
+        self.assertEqual(segv.insn, 'add', segv.insn)
+        self.assertEqual(segv.src, '0x3430433', segv.src)
+        self.assertEqual(segv.dest, '%eax', segv.dest)
 
         disasm = 'Dump ...\n0x08083540 <main+0>:    lea    0x4(%esp),%ecx\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x08083540, segv.pc)
-        self.assertEquals(segv.insn, 'lea', segv.insn)
-        self.assertEquals(segv.src, '0x4(%esp)', segv.src)
-        self.assertEquals(segv.dest, '%ecx', segv.dest)
+        self.assertEqual(segv.pc, 0x08083540, segv.pc)
+        self.assertEqual(segv.insn, 'lea', segv.insn)
+        self.assertEqual(segv.src, '0x4(%esp)', segv.src)
+        self.assertEqual(segv.dest, '%ecx', segv.dest)
 
         disasm = '0x08083550 <main+0>:    nop\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x08083550, segv.pc)
-        self.assertEquals(segv.insn, 'nop', segv.insn)
-        self.assertEquals(segv.src, None, segv.src)
-        self.assertEquals(segv.dest, None, segv.dest)
+        self.assertEqual(segv.pc, 0x08083550, segv.pc)
+        self.assertEqual(segv.insn, 'nop', segv.insn)
+        self.assertEqual(segv.src, None, segv.src)
+        self.assertEqual(segv.dest, None, segv.dest)
 
         regs = 'esp 0x444'
         disasm = '0x08083560 <main+0>:    push %ecx\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x08083560, segv.pc)
-        self.assertEquals(segv.insn, 'push', segv.insn)
-        self.assertEquals(segv.src, '%ecx', segv.src)
-        self.assertEquals(segv.dest, '(%esp)', segv.dest)
+        self.assertEqual(segv.pc, 0x08083560, segv.pc)
+        self.assertEqual(segv.insn, 'push', segv.insn)
+        self.assertEqual(segv.src, '%ecx', segv.src)
+        self.assertEqual(segv.dest, '(%esp)', segv.dest)
 
         # GDB 7.1
         regs = 'esp 0x444'
         disasm = '=> 0x08083560 <main+0>:    push %ecx\n'
         segv = parse_segv.ParseSegv(regs, disasm, '')
-        self.assertEquals(segv.pc, 0x08083560, segv.pc)
-        self.assertEquals(segv.insn, 'push', segv.insn)
-        self.assertEquals(segv.src, '%ecx', segv.src)
-        self.assertEquals(segv.dest, '(%esp)', segv.dest)
+        self.assertEqual(segv.pc, 0x08083560, segv.pc)
+        self.assertEqual(segv.insn, 'push', segv.insn)
+        self.assertEqual(segv.src, '%ecx', segv.src)
+        self.assertEqual(segv.dest, '(%esp)', segv.dest)
 
     def test_ioport_operation(self):
         '''I/O port violations'''
@@ -263,10 +263,10 @@ class T(unittest.TestCase):
 00614000-00635000 rw-p 00614000 00:00 0                                  [heap]
 '''
         segv = parse_segv.ParseSegv(regs, disasm, maps)
-        self.assertEquals(segv.pc, 0x4087f1, segv.pc)
-        self.assertEquals(segv.insn, 'out', segv.insn)
-        self.assertEquals(segv.src, '%al', segv.src)
-        self.assertEquals(segv.dest, '$0xb3', segv.dest)
+        self.assertEqual(segv.pc, 0x4087f1, segv.pc)
+        self.assertEqual(segv.insn, 'out', segv.insn)
+        self.assertEqual(segv.src, '%al', segv.src)
+        self.assertEqual(segv.dest, '$0xb3', segv.dest)
 
         understood, reason, details = segv.report()
         self.assertTrue(understood, details)
@@ -284,20 +284,20 @@ class T(unittest.TestCase):
 00b67000-00b68000 r-xp 00000000 00:00 0          [vdso]
 00c67000-00c68000 r--p 00000000 00:00 0 '''
         segv = parse_segv.ParseSegv(regs, disasm, maps)
-        self.assertEquals(segv.maps[0]['start'], 0x005a3000, segv)
-        self.assertEquals(segv.maps[0]['end'], 0x005a4000, segv)
-        self.assertEquals(segv.maps[0]['perms'], 'rw-p', segv)
-        self.assertEquals(segv.maps[0]['name'], '/lib/libncurses.so.5.7', segv)
+        self.assertEqual(segv.maps[0]['start'], 0x005a3000, segv)
+        self.assertEqual(segv.maps[0]['end'], 0x005a4000, segv)
+        self.assertEqual(segv.maps[0]['perms'], 'rw-p', segv)
+        self.assertEqual(segv.maps[0]['name'], '/lib/libncurses.so.5.7', segv)
 
-        self.assertEquals(segv.maps[1]['start'], 0x00b67000, segv)
-        self.assertEquals(segv.maps[1]['end'], 0x00b68000, segv)
-        self.assertEquals(segv.maps[1]['perms'], 'r-xp', segv)
-        self.assertEquals(segv.maps[1]['name'], '[vdso]', segv)
+        self.assertEqual(segv.maps[1]['start'], 0x00b67000, segv)
+        self.assertEqual(segv.maps[1]['end'], 0x00b68000, segv)
+        self.assertEqual(segv.maps[1]['perms'], 'r-xp', segv)
+        self.assertEqual(segv.maps[1]['name'], '[vdso]', segv)
 
-        self.assertEquals(segv.maps[2]['start'], 0x00c67000, segv)
-        self.assertEquals(segv.maps[2]['end'], 0x00c68000, segv)
-        self.assertEquals(segv.maps[2]['perms'], 'r--p', segv)
-        self.assertEquals(segv.maps[2]['name'], None, segv)
+        self.assertEqual(segv.maps[2]['start'], 0x00c67000, segv)
+        self.assertEqual(segv.maps[2]['end'], 0x00c68000, segv)
+        self.assertEqual(segv.maps[2]['perms'], 'r--p', segv)
+        self.assertEqual(segv.maps[2]['name'], None, segv)
 
     def test_debug(self):
         '''Debug mode works'''

@@ -18,7 +18,7 @@ import sys, re, logging
 class ParseSegv(object):
     def __init__(self, registers, disassembly, maps, debug=False):
         if debug:
-            logging.basicConfig(level=logging.DEBUG)
+            logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 
         self.regs = self.parse_regs(registers)
         self.sp = None
@@ -54,7 +54,7 @@ class ParseSegv(object):
             if name == '[stack]':
                 self.stack_vma = len(maps)
             maps.append({'start': start, 'end': end, 'perms': perms, 'name': name})
-            logging.debug(start, end, perms, name)
+            logging.debug('start: %s, end: %s, perms: %s, name: %s', start, end, perms, name)
         return maps
 
     def parse_regs(self, reg_str):
