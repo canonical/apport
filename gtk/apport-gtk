@@ -240,10 +240,15 @@ class GTKUserInterface(apport.ui.UserInterface):
             app_icon = self.w('application_icon')
             theme = Gtk.IconTheme.get_default()
             try:
-                pb = theme.load_icon(icon, 42, builtin)
+                pb = theme.load_icon(icon, 42, builtin).copy()
                 overlay = theme.load_icon('dialog-error', 16, builtin)
-                overlay.composite(pb, 26, 26, 16, 16, 26, 26, 1, 1,
-                                  GdkPixbuf.InterpType.BILINEAR, 255)
+                overlay_w = overlay.get_width()
+                overlay_h = overlay.get_height()
+                off_x = pb.get_width() - overlay_w
+                off_y = pb.get_height() - overlay_h
+                overlay.composite(pb, off_x, off_y, overlay_w, overlay_h,
+                        off_x, off_y, 1, 1,
+                        GdkPixbuf.InterpType.BILINEAR, 255)
                 if app_icon.get_parent():  # work around LP#938090
                     app_icon.set_from_pixbuf(pb)
             except GLib.GError:
