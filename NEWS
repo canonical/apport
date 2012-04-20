@@ -15,6 +15,9 @@ Improvements:
    running the "pep8" tool.
  * GTK UI tests: Ensure that there are no GLib/GTK warnings or criticals.
  * Fix some code to work with Python 3.
+ * data/apport: Ignore a crash if the executable was modified after the process
+   started. This often happens if the package is upgraded and a long-running
+   process is not stopped before. (LP: #984944)
 
 Bug fixes:
  * apport-gtk: Work around GTK crash when trying to set pixmap on an already

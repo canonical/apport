@@ -282,6 +282,14 @@ try:
         error_log('Invalid PID')
         sys.exit(1)
 
+    # check if the executable was modified after the process started (e. g.
+    # package got upgraded in between)
+    exe_mtime = os.stat('/proc/%s/exe' % pid).st_mtime
+    process_start = os.lstat('/proc/%s/cmdline' % pid).st_mtime
+    if exe_mtime > process_start:
+        error_log('executable was modified after program start, ignoring')
+        sys.exit(1)
+
     info = apport.Report('Crash')
     info['Signal'] = signum
     info['CoreDump'] = (sys.stdin, True, usable_ram() * 3 / 4, True)

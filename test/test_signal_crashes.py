@@ -409,6 +409,42 @@ class T(unittest.TestCase):
         self.do_crash()
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
+    def test_modify_after_start(self):
+        '''ignores executables which got modified after process started'''
+
+        # create executable in a path we can modify which apport regards as
+        # likely packaged
+        (fd, myexe) = tempfile.mkstemp(dir='/var/tmp')
+        try:
+            with open(test_executable) as f:
+                os.write(fd, f.read())
+            os.close(fd)
+            os.chmod(myexe, 0o755)
+            time.sleep(1)
+
+            try:
+                test_proc = self.create_test_process(command=myexe)
+
+                # bump mtime of myexe to make it more recent than process start
+                # time; ensure this works with file systems with only second
+                # resolution
+                time.sleep(1.1)
+                os.utime(myexe, None)
+
+                app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+                    close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                app.stdin.write(b'boo')
+                app.stdin.close()
+                err = app.stderr.read().decode()
+                self.assertNotEqual(app.wait(), 0, err)
+            finally:
+                os.kill(test_proc, 9)
+                os.waitpid(test_proc, 0)
+
+            self.assertEqual(self.get_temp_all_reports(), [])
+        finally:
+            os.unlink(myexe)
+
     #
     # Helper methods
     #
@@ -434,7 +470,7 @@ class T(unittest.TestCase):
         while True:
             with open('/proc/%i/cmdline' % pid) as f:
                 cmdline = f.read()
-            if 'test-apport' in cmdline:
+            if 'test_signal' in cmdline:
                 time.sleep(0.1)
             else:
                 break
