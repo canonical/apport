@@ -1,5 +1,5 @@
 # coding: UTF-8
-import unittest, tempfile, locale, subprocess, re, shutil, os.path
+import unittest, tempfile, locale, subprocess, re, shutil, os.path, sys
 
 import apport.hookutils
 
@@ -137,9 +137,32 @@ class T(unittest.TestCase):
         self.assertEqual(list(report), [])
 
     def test_recent_logfile(self):
+        '''recent_logfile'''
+
         self.assertEqual(apport.hookutils.recent_logfile('/nonexisting', re.compile('.')), '')
         self.assertEqual(apport.hookutils.recent_syslog(re.compile('ThisCantPossiblyHitAnything')), '')
         self.assertNotEqual(len(apport.hookutils.recent_syslog(re.compile('.'))), 0)
+
+    def test_recent_logfile_overflow(self):
+        '''recent_logfile on a huge file'''
+
+        log = os.path.join(self.workdir, 'syslog')
+        with open(log, 'w') as f:
+            lines = 1000000
+            while lines >= 0:
+                f.write('Apr 20 11:30:00 komputer kernel: bogus message\n')
+                lines -= 1
+
+        mem_before = self._get_mem_usage()
+        data = apport.hookutils.recent_logfile(log, re.compile('kernel'))
+        mem_after = self._get_mem_usage()
+        delta_kb = mem_after - mem_before
+        sys.stderr.write('[Δ %i kB] ' % delta_kb)
+        self.assertLess(delta_kb, 5000)
+
+        self.assertTrue(data.startswith('Apr 20 11:30:00 komputer kernel: bogus message\n'))
+        self.assertGreater(len(data), 100000)
+        self.assertLess(len(data), 1000000)
 
     @unittest.skipIf(apport.hookutils.apport.hookutils.in_session_of_problem(apport.Report()) is None, 'no ConsoleKit session')
     def test_in_session_of_problem(self):
@@ -269,5 +292,16 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         # stdin
         out = apport.hookutils.command_output(['cat'], input=b'hello')
         self.assertEqual(out, b'hello')
+
+    @classmethod
+    def _get_mem_usage(klass):
+        '''Get current memory usage in kB'''
+
+        with open('/proc/self/status') as f:
+            for line in f:
+                if line.startswith('VmSize:'):
+                    return int(line.split()[1])
+            else:
+                raise SystemError('did not find VmSize: in /proc/self/status')
 
 unittest.main()

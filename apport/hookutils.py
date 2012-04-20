@@ -430,17 +430,21 @@ def recent_syslog(pattern):
     return recent_logfile('/var/log/syslog', pattern)
 
 
-def recent_logfile(logfile, pattern):
+def recent_logfile(logfile, pattern, maxlines=10000):
     '''Extract recent messages from a logfile which match a regex.
 
-    pattern should be a "re" object.
+    pattern should be a "re" object. By default this catches at most the last
+    1000 lines, but this can be modified with a different maxlines argument.
     '''
     lines = ''
     try:
-        with open(logfile) as f:
-            for line in f:
+        tail = subprocess.Popen(['tail', '-n', str(maxlines), logfile],
+                stdout=subprocess.PIPE)
+        while tail.poll() is None:
+            for line in tail.stdout:
                 if pattern.search(line):
                     lines += line
+        tail.wait()
     except IOError:
         return ''
     return lines

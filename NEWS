@@ -25,6 +25,9 @@ Bug fixes:
    no candidates in apt. (LP: #980094)
  * data/general-hooks/generic.py: Bump minimum free space requirement from 10
    to 50 MB. 10 is not nearly enough particularly for /tmp. (LP: #979928)
+ * hookutils.py, recent_logfile(): Use a default limit of 10000 lines and call
+   "tail" instead of reading the whole file. This protects against using up all
+   memory when there are massive repeated log messages. (LP: #984256)
 
 2.0.1 (2012-04-10)
 ------------------
