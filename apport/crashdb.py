@@ -406,9 +406,9 @@ class CrashDatabase:
                 cur_hash = h
                 if cur_file:
                     cur_file.close()
-                cur_file = open(os.path.join(sig_base, cur_hash), 'w')
+                cur_file = open(os.path.join(sig_base, cur_hash), 'wb')
 
-            cur_file.write('%i %s\n' % (id, sig))
+            cur_file.write(('%i %s\n' % (id, sig)).encode('UTF-8'))
 
         if cur_file:
             cur_file.close()
@@ -598,7 +598,7 @@ class CrashDatabase:
         i = '_'.join(i.split(':', 2)[:2])
         # we manually quote '/' to make them nicer to read
         i = i.replace('/', '_')
-        i = quote_plus(i)
+        i = quote_plus(i.encode('UTF-8'))
         # avoid too long file names
         i = i[:200]
         return i

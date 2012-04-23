@@ -386,6 +386,8 @@ databases = {
         self.assertEqual(self.crashes.check_duplicate(5), None)
         self.assertEqual(self.crashes.check_duplicate(6), (5, None))
 
+        self.crashes.duplicate_db_publish(self.dupdb_dir)
+
     def test_check_duplicate_custom_signature(self):
         '''check_duplicate() with custom DuplicateSignature: field'''
 
