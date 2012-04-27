@@ -35,7 +35,7 @@ class T(unittest.TestCase):
         else:
             (fd, script) = tempfile.mkstemp(dir='/var/tmp')
         try:
-            os.write(fd, '''#!/usr/bin/python
+            os.write(fd, ('''#!/usr/bin/python
 import apport_python_hook
 apport_python_hook.install()
 
@@ -44,13 +44,13 @@ def func(x):
 
 %s
 func(42)
-''' % extracode)
+''' % extracode).encode())
             os.close(fd)
             os.chmod(script, 0o755)
 
             p = subprocess.Popen([script, 'testarg1', 'testarg2'],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
-            err = p.communicate()[1]
+            err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
                 'crashing test python program exits with failure code')
             self.assertTrue('Exception: This should happen.' in err)
@@ -73,7 +73,8 @@ func(42)
             0o640, 'report has correct permissions')
 
         pr = problem_report.ProblemReport()
-        pr.load(open(reports[0]))
+        with open(reports[0]) as f:
+            pr.load(f)
 
         # check report contents
         expected_keys = ['InterpreterPath', 'PythonArgs',
@@ -127,7 +128,8 @@ func(42)
             0o640, 'report has correct permissions')
 
         pr = problem_report.ProblemReport()
-        pr.load(open(reports[0]))
+        with open(reports[0]) as f:
+            pr.load(f)
 
         # check report contents
         expected_keys = ['InterpreterPath',
@@ -155,7 +157,9 @@ func(42)
                 os.chdir(d)
                 p = subprocess.Popen(['python'], stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                (out, err) = p.communicate('raise ValueError')
+                (out, err) = p.communicate(b'raise ValueError')
+                out = out.decode()
+                err = err.decode()
                 assert p.returncode != 0
                 assert out == ''
                 assert 'ValueError' in err
@@ -172,7 +176,7 @@ func(42)
         ifpath = os.path.expanduser(apport.report._ignore_file)
         orig_ignore_file = None
         try:
-            os.write(fd, '''#!/usr/bin/python
+            os.write(fd, b'''#!/usr/bin/python
 import apport_python_hook
 apport_python_hook.install()
 
@@ -197,7 +201,7 @@ func(42)
 
             p = subprocess.Popen([script, 'testarg1', 'testarg2'],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            err = p.communicate()[1]
+            err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
                 'crashing test python program exits with failure code')
             self.assertTrue('Exception: This should happen.' in err)
