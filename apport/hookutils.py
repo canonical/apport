@@ -442,6 +442,7 @@ def recent_logfile(logfile, pattern, maxlines=10000):
                 stdout=subprocess.PIPE)
         while tail.poll() is None:
             for line in tail.stdout:
+                line = line.decode('UTF-8', errors='replace')
                 if pattern.search(line):
                     lines += line
         tail.wait()
