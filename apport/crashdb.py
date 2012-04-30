@@ -251,7 +251,7 @@ class CrashDatabase:
         Subclasses are free to override this with a custom implementation, such
         as a real database lookup.
         '''
-        if 'dupdb_url' not in self.options:
+        if not self.options.get('dupdb_url'):
             return None
 
         for kind in ('sig', 'address'):

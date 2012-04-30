@@ -54,7 +54,8 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
     if symptom_script:
         symb = {}
         try:
-            exec(compile(open(symptom_script).read(), symptom_script, 'exec'), symb)
+            with open(symptom_script) as f:
+                exec(compile(f.read(), symptom_script, 'exec'), symb)
             package = symb['run'](report, ui)
             if not package:
                 apport.error('symptom script %s did not determine the affected package', symptom_script)
@@ -319,7 +320,8 @@ class UserInterface:
         # if PID is given, add info
         if self.options.pid:
             try:
-                stat = open('/proc/%s/stat' % self.options.pid).read().split()
+                with open('/proc/%s/stat' % self.options.pid) as f:
+                    stat = f.read().split()
                 flags = int(stat[8])
                 if flags & PF_KTHREAD:
                     # this PID is a kernel thread
@@ -493,7 +495,8 @@ class UserInterface:
                 continue
             symb = {}
             try:
-                exec(compile(open(script).read(), script, 'exec'), symb)
+                with open(script) as f:
+                    exec(compile(f.read(), script, 'exec'), symb)
             except:
                 apport.error('symptom script %s is invalid', script)
                 traceback.print_exc()
@@ -1107,7 +1110,7 @@ class UserInterface:
         if not self.crashdb.accepts(self.report):
             return False
         if 'UnreportableReason' in self.report:
-            if isinstance(self.report['UnreportableReason'], str):
+            if type(self.report['UnreportableReason']) == bytes:
                 self.report['UnreportableReason'] = self.report['UnreportableReason'].decode('UTF-8')
             if 'Package' in self.report:
                 title = _('Problem in %s') % self.report['Package'].split()[0]

@@ -106,10 +106,16 @@ class GTKUserInterface(apport.ui.UserInterface):
             if not hasattr(self.report[key], 'gzipvalue') and \
                 hasattr(self.report[key], 'isspace') and \
                 not self.report._is_binary(self.report[key]):
-                if len (self.report[key]) > 4000:
-                    self.tree_model.set_value(valiter, 0, self.report[key][:4000] + '\n[...]')
-                else:
-                    self.tree_model.set_value(valiter, 0, self.report[key])
+                v = self.report[key]
+                if len(v) > 4000:
+                    v = v[:4000]
+                    if type(v) == bytes:
+                        v += b'\n[...]'
+                    else:
+                        v += '\n[...]'
+                if type(v) == bytes:
+                    v = v.decode('UTF-8', errors='replace')
+                self.tree_model.set_value(valiter, 0, v)
                 # expand the row if the value has less than 5 lines
                 if len(list(filter(lambda c: c == '\n', self.report[key]))) < 4:
                     self.w('details_treeview').expand_row(
@@ -205,7 +211,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             if self.desktop_file:
                 icon = self.desktop_file.getIcon()
                 n = self.desktop_file.getName().encode('UTF-8')
-                n = GLib.markup_escape_text(n).decode('UTF-8')
+                n = GLib.markup_escape_text(n)
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
                     _('The application %s has closed unexpectedly.') % n)
                 self.w('subtitle_label').hide()

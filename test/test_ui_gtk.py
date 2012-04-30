@@ -68,7 +68,7 @@ class T(unittest.TestCase):
         self.app.report = apport.Report()
         self.app.report['ExecutablePath'] = '/bin/bash'
         self.app.report['Signal'] = '11'
-        self.app.report['CoreDump'] = ''
+        self.app.report['CoreDump'] = b'\x01\x02'
         self.app.report['DistroRelease'] = self.distro
         with open(self.app.report_file, 'wb') as f:
             self.app.report.write(f)
@@ -160,7 +160,7 @@ class T(unittest.TestCase):
         self.app.report['CrashCounter'] = '1'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         with tempfile.NamedTemporaryFile() as fp:
-            fp.write('''[Desktop Entry]
+            fp.write(b'''[Desktop Entry]
 Version=1.0
 Name=Apport
 Type=Application''')
@@ -202,7 +202,7 @@ Type=Application''')
         self.app.report['ProcCmdline'] = 'apport-bug apport'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         with tempfile.NamedTemporaryFile() as fp:
-            fp.write('''[Desktop Entry]
+            fp.write(b'''[Desktop Entry]
 Version=1.0
 Name=Apport
 Type=Application''')
@@ -452,7 +452,7 @@ Type=Application''')
         os.remove(self.app.report_file)
         kernel_oops = subprocess.Popen([kernel_oops_path],
                 stdin=subprocess.PIPE)
-        kernel_oops.communicate('Plasma conduit phase misalignment')
+        kernel_oops.communicate(b'Plasma conduit phase misalignment')
         self.assertEqual(kernel_oops.returncode, 0)
 
         GLib.timeout_add_seconds(1, cont)
@@ -615,14 +615,16 @@ Type=Application''')
         GLib.timeout_add(200, close, 0)
         self.app.ui_info_message(b'title \xe2\x99\xaa'.decode('UTF-8'), b'text \xe2\x99\xaa'.decode('UTF-8'))
         # byte array arguments (in Python 2)
-        GLib.timeout_add(200, close, 0)
-        self.app.ui_info_message(b'title \xe2\x99\xaa', b'text \xe2\x99\xaa')
+        if sys.version < '3':
+            GLib.timeout_add(200, close, 0)
+            self.app.ui_info_message(b'title \xe2\x99\xaa', b'text \xe2\x99\xaa')
 
         # with URLs
         GLib.timeout_add(200, close, 0)
         self.app.ui_info_message('title', b'http://example.com \xe2\x99\xaa'.decode('UTF-8'))
-        GLib.timeout_add(200, close, 0)
-        self.app.ui_info_message('title', b'http://example.com \xe2\x99\xaa')
+        if sys.version < '3':
+            GLib.timeout_add(200, close, 0)
+            self.app.ui_info_message('title', b'http://example.com \xe2\x99\xaa')
 
     def test_immediate_close(self):
         '''Close details window immediately'''

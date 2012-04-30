@@ -144,7 +144,7 @@ class T(unittest.TestCase):
             'VmCore', 'VmCoreLog', 'Uname', 'Architecture', 'DistroRelease']))
         self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
-        self.assertEqual(r['VmCore'], '\x01' * 100)
+        self.assertEqual(r['VmCore'], b'\x01' * 100)
         self.assertTrue('linux' in r['Package'])
 
         self.assertTrue(os.uname()[2].split('-')[0] in r['Package'])

@@ -599,7 +599,8 @@ class Report(problem_report.ProblemReport):
                 (fd, core) = tempfile.mkstemp()
                 unlink_core = True
                 os.close(fd)
-                self['CoreDump'].write(open(core, 'w'))
+                with open(core, 'wb') as f:
+                    self['CoreDump'].write(f)
             else:
                 core = self['CoreDump'][0]
 

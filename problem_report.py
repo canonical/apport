@@ -171,7 +171,8 @@ class ProblemReport(UserDict):
                     assert value != None
                     self.data[key] = self._try_unicode(value)
                 (key, value) = line.split(b':', 1)
-                key = key.decode('ASCII')
+                if not _python2:
+                    key = key.decode('ASCII')
                 value = value.strip()
                 if value == b'base64':
                     if binary == 'compressed':
