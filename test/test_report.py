@@ -169,7 +169,7 @@ class T(unittest.TestCase):
 
         # check correct handling of interpreted executables: python
         (fd, testscript) = tempfile.mkstemp()
-        os.write(fd, '''#!/usr/bin/python
+        os.write(fd, b'''#!/usr/bin/python
 import sys
 sys.stdin.readline()
 ''')
@@ -739,7 +739,9 @@ $0.bin 2>/dev/null
     </pattern>
     <pattern url="http://bugtracker.net/bugs/4">
         <re key="Package">^coreutils </re>
+        <re></re>
         <re key="Bar">*</re> <!-- invalid RE -->
+        <re key="broken">+[1^</re>
     </pattern>
     <pattern url="http://bugtracker.net/bugs/5">
         <re key="SourcePackage">^bazaar$</re>
@@ -771,43 +773,50 @@ $0.bin 2>/dev/null
         r_invalid = apport.report.Report()
         r_invalid['Package'] = 'invalid 1'
 
+        pattern_url = 'file://' + patterns.name
+
         # positive match cases
-        self.assertEqual(r_bash.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/1')
+        self.assertEqual(r_bash.search_bug_patterns(pattern_url),
+                'http://bugtracker.net/bugs/1')
         r_bash['Foo'] = 'write_goodbye'
-        self.assertEqual(r_bash.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/2')
-        self.assertEqual(r_coreutils.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/3')
-        self.assertEqual(r_bazaar.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/5')
+        self.assertEqual(r_bash.search_bug_patterns(pattern_url),
+                'http://bugtracker.net/bugs/2')
+        self.assertEqual(r_coreutils.search_bug_patterns(pattern_url),
+                'http://bugtracker.net/bugs/3')
+        self.assertEqual(r_bazaar.search_bug_patterns(pattern_url),
+                'http://bugtracker.net/bugs/5')
 
         # also works for CompressedValues
         r_bash_compressed = r_bash.copy()
-        r_bash_compressed['Foo'] = problem_report.CompressedValue('bazaar')
-        self.assertEqual(r_bash_compressed.search_bug_patterns(patterns.name), 'http://bugtracker.net/bugs/1')
+        r_bash_compressed['Foo'] = problem_report.CompressedValue(b'bazaar')
+        self.assertEqual(r_bash_compressed.search_bug_patterns(pattern_url),
+                'http://bugtracker.net/bugs/1')
 
         # negative match cases
         r_bash['Package'] = 'bash-static 1-2'
-        self.assertEqual(r_bash.search_bug_patterns(patterns.name), None)
+        self.assertEqual(r_bash.search_bug_patterns(pattern_url), None)
         r_bash['Package'] = 'bash 1-21'
-        self.assertEqual(r_bash.search_bug_patterns(patterns.name), None,
+        self.assertEqual(r_bash.search_bug_patterns(pattern_url), None,
             'does not match on wrong bash version')
         r_bash['Foo'] = 'zz'
-        self.assertEqual(r_bash.search_bug_patterns(patterns.name), None,
+        self.assertEqual(r_bash.search_bug_patterns(pattern_url), None,
             'does not match on wrong Foo value')
         r_coreutils['Bar'] = '11'
-        self.assertEqual(r_coreutils.search_bug_patterns(patterns.name), None,
+        self.assertEqual(r_coreutils.search_bug_patterns(pattern_url), None,
             'does not match on wrong Bar value')
         r_bazaar['SourcePackage'] = 'launchpad'
-        self.assertEqual(r_bazaar.search_bug_patterns(patterns.name), None,
+        self.assertEqual(r_bazaar.search_bug_patterns(pattern_url), None,
             'does not match on wrong source package')
         r_bazaar['LogFile'] = ''
-        self.assertEqual(r_bazaar.search_bug_patterns(patterns.name), None,
+        self.assertEqual(r_bazaar.search_bug_patterns(pattern_url), None,
             'does not match on empty attribute')
 
         # various errors to check for robustness (no exceptions, just None
         # return value)
         del r_coreutils['Bar']
-        self.assertEqual(r_coreutils.search_bug_patterns(patterns.name), None,
+        self.assertEqual(r_coreutils.search_bug_patterns(pattern_url), None,
             'does not match on nonexisting key')
-        self.assertEqual(r_invalid.search_bug_patterns(invalid.name), None,
+        self.assertEqual(r_invalid.search_bug_patterns('file://' + invalid.name), None,
             'gracefully handles invalid XML')
         r_coreutils['Package'] = 'other 2'
         self.assertEqual(r_bash.search_bug_patterns('file:///nonexisting/directory/'), None,
@@ -1652,49 +1661,26 @@ RUNQUEUES[0]: c6002320
         r['AssertionMessage'] = 'foo.c:42 main: i > 0'
         self.assertEqual(r.crash_signature(), '/bin/bash:foo.c:42 main: i > 0')
 
-    def test_binary_data(self):
-        '''methods get along with binary data.'''
-
-        pr = apport.report.Report()
-        pr['Signal'] = '11'
-        pr['ExecutablePath'] = '/bin/foo'
-        pr['Stacktrace'] = '''#0  0x10000488 in h (p="\0\0\0\1\2") at crash.c:25
-#1  0x10000550 in main () at crash.c:31
-'''
-        pr['ThreadStacktrace'] = pr['Stacktrace']
-        pr['ProcCmdline'] = 'python\0-OO\011\0/bin/bash'
-        pr._gen_stacktrace_top()
-
-        io = BytesIO()
-        pr.write(io)
-        io.seek(0)
-        pr = apport.report.Report()
-        pr.load(io, binary='compressed')
-
-        assert hasattr(pr['StacktraceTop'], 'get_value')
-
-        self.assertEqual(pr.has_useful_stacktrace(), True)
-        self.assertEqual(pr.crash_signature(), '/bin/foo:11:h:main')
-        self.assertEqual(pr.standard_title(), 'foo crashed with SIGSEGV in h()')
-
     def test_nonascii_data(self):
         '''methods get along with non-ASCII data'''
 
         # fake os.uname() into reporting a non-ASCII name
         uname = os.uname()
-        uname = (uname[0], 't♪x', uname[2], uname[3], uname[4])
+        uname = (uname[0], b't\xe2\x99\xaax'.decode('UTF-8'), uname[2], uname[3], uname[4])
         orig_uname = os.uname
         os.uname = lambda: uname
 
         try:
             pr = apport.report.Report()
-            pr['ProcUnicodeValue'] = u'ä %s ♥ ' % uname[1].decode('UTF-8')
-            pr['ProcByteArrayValue'] = b'ä %s ♥ ' % uname[1]
+            utf8_val = b'\xc3\xa4 ' + uname[1].encode('UTF-8') + b' \xe2\x99\xa5 '
+            pr['ProcUnicodeValue'] = utf8_val.decode('UTF-8')
+            pr['ProcByteArrayValue'] = utf8_val
 
             pr.anonymize()
 
-            self.assertEqual(pr['ProcUnicodeValue'], u'ä hostname ♥ ')
-            self.assertEqual(pr['ProcByteArrayValue'], b'ä hostname ♥ ')
+            exp_utf8 = b'\xc3\xa4 hostname \xe2\x99\xa5 '
+            self.assertEqual(pr['ProcUnicodeValue'], exp_utf8.decode('UTF-8'))
+            self.assertEqual(pr['ProcByteArrayValue'], exp_utf8)
         finally:
             os.uname = orig_uname
 

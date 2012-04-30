@@ -341,8 +341,8 @@ def command_output(command, input=None, stderr=subprocess.STDOUT, keep_locale=Fa
     if sp.returncode == 0:
         return out.strip()
     else:
-        return 'Error: command %s failed with exit code %i: %s' % (
-                str(command), sp.returncode, out)
+        return b'Error: command ' + str(command).encode() + b' failed with exit code ' \
+                + str(sp.returncode).encode() + b': ' + out
 
 
 def _root_command_prefix():
@@ -714,7 +714,7 @@ def shared_libraries(path):
 
     libs = set()
 
-    for line in command_output(['ldd', path]).split('\n'):
+    for line in command_output(['ldd', path]).decode().split('\n'):
         try:
             lib, rest = line.split('=>', 1)
         except ValueError:

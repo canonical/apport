@@ -229,7 +229,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             return []
 
         # create a list of files with a newer timestamp for md5sum'ing
-        sums = ''
+        sums = b''
         sumfile = '/var/lib/dpkg/info/%s:%s.md5sums' % (package, self.get_system_architecture())
         if not os.path.exists(sumfile):
             sumfile = '/var/lib/dpkg/info/%s.md5sums' % package
@@ -237,18 +237,18 @@ class __AptDpkgPackageInfo(PackageInfo):
                 # some packages do not ship md5sums
                 return []
 
-        with open(sumfile) as fd:
+        with open(sumfile, 'rb') as fd:
             for line in fd:
                 try:
                     # ignore lines with NUL bytes (happens, LP#96050)
-                    if '\0' in line:
+                    if b'\0' in line:
                         apport.warning('%s contains NUL character, ignoring line', sumfile)
                         continue
                     words = line.split()
                     if not words:
                         apport.warning('%s contains empty line, ignoring line', sumfile)
                         continue
-                    s = os.stat('/' + words[-1])
+                    s = os.stat('/' + words[-1].decode('UTF-8'))
                     if max(s.st_mtime, s.st_ctime) <= max_time:
                         continue
                 except OSError:
@@ -692,6 +692,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 cwd='/', env={})
             out = m.communicate()[0].decode('UTF-8', errors='replace')
         else:
+            assert type(sumfile) == bytes, 'md5sum list value must be a byte array'
             m = subprocess.Popen(['/usr/bin/md5sum', '-c'],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})

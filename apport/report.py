@@ -10,10 +10,19 @@
 # the full text of the license.
 
 import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
-import fnmatch, glob, traceback, errno
+import fnmatch, glob, traceback, errno, sys
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
+
+if sys.version > '3':
+    _python2 = False
+    from urllib.error import URLError
+    from urllib.request import urlopen
+else:
+    _python2 = True
+    from urllib import quote_plus, urlopen
+    URLError = IOError
 
 import problem_report
 import apport
@@ -105,30 +114,38 @@ def _check_bug_pattern(report, pattern):
 
     Return the bug URL on match, otherwise None.
     '''
-    if not pattern.attributes.has_key('url'):
-        return None
+    if _python2:
+        if not pattern.attributes.has_key('url'):
+            return None
+    else:
+        if 'url' not in pattern.attributes:
+            return None
 
     for c in pattern.childNodes:
         # regular expression condition
-        if c.nodeType == xml.dom.Node.ELEMENT_NODE and c.nodeName == 're' and \
-            c.attributes.has_key('key'):
-            key = c.attributes['key'].nodeValue
+        if c.nodeType == xml.dom.Node.ELEMENT_NODE and c.nodeName == 're':
+            try:
+                key = c.attributes['key'].nodeValue
+            except KeyError:
+                continue
             if key not in report:
                 return None
             c.normalize()
             if c.hasChildNodes() and \
                 c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
-                regexp = c.childNodes[0].nodeValue.encode('UTF-8')
+                regexp = c.childNodes[0].nodeValue
+                v = report[key]
+                if isinstance(v, problem_report.CompressedValue):
+                    v = v.get_value()
+                    regexp = regexp.encode('UTF-8')
                 try:
-                    v = report[key]
-                    if isinstance(v, problem_report.CompressedValue):
-                        v = v.get_value()
-                    if not re.search(regexp, v):
-                        return None
+                    re_c = re.compile(regexp)
                 except:
+                    continue
+                if not re_c.search(v):
                     return None
 
-    return pattern.attributes['url'].nodeValue.encode('UTF-8')
+    return pattern.attributes['url'].nodeValue
 
 
 def _check_bug_patterns(report, patterns):
@@ -299,7 +316,7 @@ class Report(problem_report.ProblemReport):
         # check if we consider ExecutablePath an interpreter; we have to do
         # this, otherwise 'gedit /tmp/foo.txt' would be detected as interpreted
         # script as well
-        if not filter(lambda i: fnmatch.fnmatch(exebasename, i), interpreters):
+        if not any(filter(lambda i: fnmatch.fnmatch(exebasename, i), interpreters)):
             return
 
         # first, determine process name
@@ -343,10 +360,13 @@ class Report(problem_report.ProblemReport):
 
         # catch directly executed scripts
         if 'InterpreterPath' not in self and name != exebasename:
-            argvexes = filter(lambda p: os.access(p, os.R_OK), [p + cmdargs[0] for p in bindirs])
-            if argvexes and os.path.basename(os.path.realpath(argvexes[0])) == name:
-                self['InterpreterPath'] = self['ExecutablePath']
-                self['ExecutablePath'] = argvexes[0]
+            for p in bindirs:
+                if os.access(p + cmdargs[0], os.R_OK):
+                    argvexe = p + cmdargs[0]
+                    if os.path.basename(os.path.realpath(argvexe)) == name:
+                        self['InterpreterPath'] = self['ExecutablePath']
+                        self['ExecutablePath'] = argvexe
+                    break
 
         # special case: crashes from twistd are usually the fault of the
         # launched program
@@ -817,8 +837,10 @@ class Report(problem_report.ProblemReport):
             return
 
         try:
-            patterns = urllib.urlopen(url).read()
-        except:
+            f = urlopen(url)
+            patterns = f.read().decode('UTF-8', errors='replace')
+            f.close()
+        except (IOError, URLError):
             # doesn't exist or failed to load
             return
 
@@ -1321,10 +1343,10 @@ class Report(problem_report.ProblemReport):
                 if not hasattr(self[k], 'isspace'):
                     continue
                 for (pattern, repl) in replacements:
-                    if type(self[k]) == type(b''):
-                        self[k] = pattern.sub(repl, self[k])
+                    if type(self[k]) == bytes:
+                        self[k] = pattern.sub(repl, self[k].decode('UTF-8', errors='replace')).encode('UTF-8')
                     else:
-                        self[k] = pattern.sub(repl, self[k].encode('UTF-8')).decode('UTF-8')
+                        self[k] = pattern.sub(repl, self[k])
 
     def _address_to_offset(self, addr):
         '''Resolve a memory address to an ELF name and offset.
