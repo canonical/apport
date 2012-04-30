@@ -419,7 +419,7 @@ class T(unittest.TestCase):
         # likely packaged
         (fd, myexe) = tempfile.mkstemp(dir='/var/tmp')
         try:
-            with open(test_executable) as f:
+            with open(test_executable, 'rb') as f:
                 os.write(fd, f.read())
             os.close(fd)
             os.chmod(myexe, 0o755)
@@ -548,7 +548,8 @@ class T(unittest.TestCase):
 # main
 #
 
-core_pattern = open('/proc/sys/kernel/core_pattern').read().strip()
+with open('/proc/sys/kernel/core_pattern') as f:
+    core_pattern = f.read().strip()
 if core_pattern[0] != '|':
     sys.stderr.write('kernel crash dump helper is not active; please enable before running this test.\n')
     sys.exit(0)
