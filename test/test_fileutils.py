@@ -4,10 +4,7 @@ import problem_report
 import apport.fileutils
 import apport.packaging
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
+from io import BytesIO
 
 
 class T(unittest.TestCase):
@@ -166,29 +163,31 @@ class T(unittest.TestCase):
         '''get_recent_crashes()'''
 
         # incomplete fields
-        r = StringIO('''ProblemType: Crash''')
+        r = BytesIO(b'''ProblemType: Crash''')
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
-        r = StringIO('''ProblemType: Crash
+        r = BytesIO(b'''ProblemType: Crash
 Date: Wed Aug 01 00:00:01 1990''')
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
         # ancient report
-        r = StringIO('''ProblemType: Crash
+        r = BytesIO(b'''ProblemType: Crash
 Date: Wed Aug 01 00:00:01 1990
 CrashCounter: 3''')
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
         # old report (one day + one hour ago)
-        r = StringIO('''ProblemType: Crash
-Date: %s
-CrashCounter: 3''' % time.ctime(time.mktime(time.localtime()) - 25 * 3600))
+        date = time.ctime(time.mktime(time.localtime()) - 25 * 3600)
+        r = BytesIO(b'''ProblemType: Crash
+Date: ''' + date.encode() + b'''
+CrashCounter: 3''')
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 0)
 
         # current report (one hour ago)
-        r = StringIO('''ProblemType: Crash
-Date: %s
-CrashCounter: 3''' % time.ctime(time.mktime(time.localtime()) - 3600))
+        date = time.ctime(time.mktime(time.localtime()) - 3600)
+        r = BytesIO(b'''ProblemType: Crash
+Date: ''' + date.encode() + b'''
+CrashCounter: 3''')
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 3)
 
     def test_make_report_path(self):

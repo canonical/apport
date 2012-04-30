@@ -31,5 +31,5 @@ else:
     pr['PreprocessedSource'] = (open(sourcefile), False)
 
 # write report
-with open(apport.fileutils.make_report_path(pr), 'w') as f:
+with open(apport.fileutils.make_report_path(pr), 'wb') as f:
     pr.write(f)

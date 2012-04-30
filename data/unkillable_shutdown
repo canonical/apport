@@ -95,9 +95,8 @@ def do_report(pid, blacklist):
     if blacklist:
         r['OmitPids'] = ' '.join(blacklist)
 
-    f = open(apport.fileutils.make_report_path(r), 'w')
-    r.write(f)
-    f.close()
+    with open(apport.fileutils.make_report_path(r), 'wb') as f:
+        r.write(f)
 
 #
 # main

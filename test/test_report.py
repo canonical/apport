@@ -5,10 +5,7 @@ import apport.report
 import problem_report
 import apport.packaging
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
+from io import BytesIO
 
 
 class T(unittest.TestCase):
@@ -525,7 +522,8 @@ int main() {
         rep.seek(0)
 
         pr = apport.report.Report()
-        pr.load(open(rep.name))
+        with open(rep.name, 'rb') as f:
+            pr.load(f)
         pr.add_gdb_info()
 
         self._validate_gdb_fields(pr)
@@ -537,13 +535,15 @@ int main() {
         rep.seek(0)
 
         pr = apport.report.Report()
-        pr.load(open(rep.name))
+        with open(rep.name, 'rb') as f:
+            pr.load(f)
         pr['Signal'] = '1'
         pr.add_hooks_info('fake_ui')
         self.assertTrue('SegvAnalysis' not in pr.keys())
 
         pr = apport.report.Report()
-        pr.load(open(rep.name))
+        with open(rep.name, 'rb') as f:
+            pr.load(f)
         pr.add_hooks_info('fake_ui')
         self.assertTrue('Skipped: missing required field "Architecture"' in pr['SegvAnalysis'],
                      pr['SegvAnalysis'])
@@ -1665,7 +1665,7 @@ RUNQUEUES[0]: c6002320
         pr['ProcCmdline'] = 'python\0-OO\011\0/bin/bash'
         pr._gen_stacktrace_top()
 
-        io = StringIO()
+        io = BytesIO()
         pr.write(io)
         io.seek(0)
         pr = apport.report.Report()

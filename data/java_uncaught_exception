@@ -80,7 +80,8 @@ def main():
 
     report['Title'] = make_title(report)
 
-    report.write(open(apport.fileutils.make_report_path(report), 'w'))
+    with open(apport.fileutils.make_report_path(report), 'wb') as f:
+        report.write(f)
 
 if __name__ == '__main__':
     main()

@@ -63,7 +63,8 @@ class T(unittest.TestCase):
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, 'did not create a crash report')
         r = apport.Report()
-        r.load(open(reports[0]))
+        with open(reports[0], 'rb') as f:
+            r.load(f)
         self.assertEqual(r['ProblemType'], 'Crash')
         self.assertTrue(r['ProcCmdline'].startswith('java -classpath'))
         self.assertTrue(r['StackTrace'].startswith(

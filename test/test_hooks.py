@@ -11,10 +11,6 @@
 # the full text of the license.
 
 import unittest, subprocess, tempfile, os, shutil, os.path, sys, optparse
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 import apport, apport.fileutils
 
@@ -50,7 +46,7 @@ class T(unittest.TestCase):
         self.assertEqual(len(reps), 1, 'package_hook created a report')
 
         r = apport.Report()
-        with open(reps[0]) as f:
+        with open(reps[0], 'rb') as f:
             r.load(f)
 
         self.assertEqual(r['ProblemType'], 'Package')
@@ -71,7 +67,7 @@ class T(unittest.TestCase):
         self.assertEqual(len(reps), 1, 'package_hook created a report')
 
         r = apport.Report()
-        with open(reps[0]) as f:
+        with open(reps[0], 'rb') as f:
             r.load(f)
 
         self.assertEqual(r['ProblemType'], 'Package')
@@ -100,7 +96,7 @@ class T(unittest.TestCase):
         self.assertEqual(len(reps), 1, 'package_hook created a report')
 
         r = apport.Report()
-        with open(reps[0]) as f:
+        with open(reps[0], 'rb') as f:
             r.load(f)
 
         filekey = None
@@ -127,8 +123,8 @@ class T(unittest.TestCase):
     def test_kernel_crashdump(self):
         '''kernel_crashdump.'''
 
-        f = open(os.path.join(apport.fileutils.report_dir, 'vmcore'), 'w')
-        f.write('\x01' * 100)
+        f = open(os.path.join(apport.fileutils.report_dir, 'vmcore'), 'wb')
+        f.write(b'\x01' * 100)
         f.close()
         f = open(os.path.join(apport.fileutils.report_dir, 'vmcore.log'), 'w')
         f.write('vmcore successfully dumped')
@@ -141,7 +137,7 @@ class T(unittest.TestCase):
         self.assertEqual(len(reps), 1, 'kernel_crashdump created a report')
 
         r = apport.Report()
-        with open(reps[0]) as f:
+        with open(reps[0], 'rb') as f:
             r.load(f)
 
         self.assertEqual(set(r.keys()), set(['Date', 'Package', 'ProblemType',
@@ -190,7 +186,7 @@ class T(unittest.TestCase):
         self.assertEqual(len(reps), 1, 'gcc_ice_hook created a report')
 
         r = apport.Report()
-        with open(reps[0]) as f:
+        with open(reps[0], 'rb') as f:
             r.load(f)
         self.assertEqual(r['ProblemType'], 'Crash')
         self.assertEqual(r['ExecutablePath'], gcc_path)
@@ -217,7 +213,7 @@ class T(unittest.TestCase):
         self.assertEqual(len(reps), 1, 'gcc_ice_hook created a report')
 
         r = apport.Report()
-        with open(reps[0]) as f:
+        with open(reps[0], 'rb') as f:
             r.load(f)
 
         self.assertEqual(r['ProblemType'], 'Crash')
@@ -244,7 +240,7 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT
         self.assertEqual(len(reps), 1, 'kernel_oops created a report')
 
         r = apport.Report()
-        with open(reps[0]) as f:
+        with open(reps[0], 'rb') as f:
             r.load(f)
 
         self.assertEqual(r['ProblemType'], 'KernelOops')

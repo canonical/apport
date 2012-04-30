@@ -96,7 +96,8 @@ class T(unittest.TestCase):
         self.assertNotEqual(st, st2, 'original seen report gets overwritten')
 
         pr = apport.Report()
-        pr.load(open(self.test_report))
+        with open(self.test_report, 'rb') as f:
+            pr.load(f)
         self.assertTrue(set(required_fields).issubset(set(pr.keys())),
                 'report has required fields')
         self.assertEqual(pr['ExecutablePath'], test_executable)
@@ -233,7 +234,8 @@ class T(unittest.TestCase):
         leak = os.path.join(apport.fileutils.report_dir, '_usr_bin_perl.%i.crash' %
             (os.getuid()))
         pr = apport.Report()
-        pr.load(open(leak))
+        with open(leak, 'rb') as f:
+            pr.load(f)
         # On a leak, no report is created since the executable path will be replaced
         # by the symlink path, and it doesn't belong to any package.
         self.assertEqual(pr['ExecutablePath'], '/usr/bin/perl')
@@ -263,7 +265,8 @@ class T(unittest.TestCase):
         self.do_crash()
         pr = apport.Report()
         self.assertTrue(os.path.exists(self.test_report))
-        pr.load(open(self.test_report))
+        with open(self.test_report, 'rb') as f:
+            pr.load(f)
         assert set(required_fields).issubset(set(pr.keys()))
 
     def test_core_dump_packaged(self):
@@ -345,7 +348,7 @@ class T(unittest.TestCase):
         # determine how much data we have to pump into apport in order to make sure
         # that it will refuse the core dump
         r = apport.Report()
-        with open('/proc/meminfo') as f:
+        with open('/proc/meminfo', 'rb') as f:
             r.load(f)
         totalmb = int(r['MemFree'].split()[0]) + int(r['Cached'].split()[0])
         totalmb = int(totalmb / 1024)
@@ -383,7 +386,7 @@ class T(unittest.TestCase):
         self.assertEqual(len(reports), 1)
 
         pr = apport.Report()
-        with open(reports[0]) as f:
+        with open(reports[0], 'rb') as f:
             pr.load(f)
         os.unlink(reports[0])
 
@@ -400,7 +403,7 @@ class T(unittest.TestCase):
         self.assertEqual(len(reports), 1)
 
         pr = apport.Report()
-        with open(reports[0]) as f:
+        with open(reports[0], 'rb') as f:
             pr.load(f)
         os.unlink(reports[0])
 

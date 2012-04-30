@@ -2,7 +2,7 @@
 
 '''Store, load, and handle problem reports.'''
 
-# Copyright (C) 2006 - 2009 Canonical Ltd.
+# Copyright (C) 2006 - 2012 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -16,16 +16,14 @@ from email.encoders import encode_base64
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
+from io import BytesIO
 
-try:
-    from collections import UserDict
-except ImportError:
-    # Python 2
+if sys.version[0] < '3':
     from UserDict import IterableUserDict as UserDict
+    _python2 = True
+else:
+    from collections import UserDict
+    _python2 = False
 
 
 class CompressedValue:
@@ -47,7 +45,7 @@ class CompressedValue:
     def set_value(self, value):
         '''Set uncompressed value.'''
 
-        out = StringIO()
+        out = BytesIO()
         gzip.GzipFile(self.name, mode='wb', fileobj=out).write(value)
         self.gzipvalue = out.getvalue()
         self.legacy_zlib = False
@@ -60,7 +58,7 @@ class CompressedValue:
 
         if self.legacy_zlib:
             return zlib.decompress(self.gzipvalue)
-        return gzip.GzipFile(fileobj=StringIO(self.gzipvalue)).read()
+        return gzip.GzipFile(fileobj=BytesIO(self.gzipvalue)).read()
 
     def write(self, file):
         '''Write uncompressed value into given file-like object.'''
@@ -71,7 +69,7 @@ class CompressedValue:
             file.write(zlib.decompress(self.gzipvalue))
             return
 
-        gz = gzip.GzipFile(fileobj=StringIO(self.gzipvalue))
+        gz = gzip.GzipFile(fileobj=BytesIO(self.gzipvalue))
         while True:
             block = gz.read(1048576)
             if not block:
@@ -84,7 +82,7 @@ class CompressedValue:
         assert self.gzipvalue
         if self.legacy_zlib:
             return len(self.get_value())
-        return int(struct.unpack("<L", self.gzipvalue[-4:])[0])
+        return int(struct.unpack('<L', self.gzipvalue[-4:])[0])
 
     def splitlines(self):
         '''Behaves like splitlines() for a normal string.'''
@@ -111,15 +109,18 @@ class ProblemReport(UserDict):
         '''Initialize problem report from a file-like object.
 
         If binary is False, binary data is not loaded; the dictionary key is
-        created, but its value will be an empty string. If it is true, it is
-        transparently uncompressed and available as dictionary string values.
+        created, but its value will be an empty string. If it is True, it is
+        transparently uncompressed and available as dictionary byte array values.
         If binary is 'compressed', the compressed value is retained, and the
         dictionary value will be a CompressedValue object. This is useful if
         the compressed value is still useful (to avoid recompression if the
         file needs to be written back).
 
+        file needs to be opened in binary mode.
+
         Files are in RFC822 format.
         '''
+        self._assert_bin_mode(file)
         self.data.clear()
         key = None
         value = None
@@ -127,7 +128,7 @@ class ProblemReport(UserDict):
         bd = None
         for line in file:
             # continuation line
-            if line.startswith(' '):
+            if line.startswith(b' '):
                 if b64_block and not binary:
                     continue
                 assert (key != None and value != None)
@@ -139,13 +140,13 @@ class ProblemReport(UserDict):
                         if binary == 'compressed':
                             # check gzip header; if absent, we have legacy zlib
                             # data
-                            if value.gzipvalue == '' and not l.startswith('\037\213\010'):
+                            if value.gzipvalue == b'' and not l.startswith(b'\037\213\010'):
                                 value.legacy_zlib = True
                             value.gzipvalue += l
                         else:
                             # lazy initialization of bd
                             # skip gzip header, if present
-                            if l.startswith('\037\213\010'):
+                            if l.startswith(b'\037\213\010'):
                                 bd = zlib.decompressobj(-zlib.MAX_WBITS)
                                 value = bd.decompress(self._strip_gzip_header(l))
                             else:
@@ -155,8 +156,8 @@ class ProblemReport(UserDict):
                                 value += bd.decompress(l)
                 else:
                     if len(value) > 0:
-                        value += '\n'
-                    if line.endswith('\n'):
+                        value += b'\n'
+                    if line.endswith(b'\n'):
                         value += line[1:-1]
                     else:
                         value += line[1:]
@@ -168,19 +169,20 @@ class ProblemReport(UserDict):
                     bd = None
                 if key:
                     assert value != None
-                    self.data[key] = value
-                (key, value) = line.split(':', 1)
+                    self.data[key] = self._try_unicode(value)
+                (key, value) = line.split(b':', 1)
+                key = key.decode('ASCII')
                 value = value.strip()
-                if value == 'base64':
+                if value == b'base64':
                     if binary == 'compressed':
-                        value = CompressedValue(key)
-                        value.gzipvalue = ''
+                        value = CompressedValue(key.encode())
+                        value.gzipvalue = b''
                     else:
-                        value = ''
+                        value = b''
                     b64_block = True
 
         if key != None:
-            self.data[key] = value
+            self.data[key] = self._try_unicode(value)
 
         self.old_keys = set(self.data.keys())
 
@@ -189,15 +191,40 @@ class ProblemReport(UserDict):
 
         This could happen when using binary=False in load().
         '''
-        return ('' in self.itervalues())
+        return ('' in self.values())
 
-    def _is_binary(self, string):
+    @classmethod
+    def _is_binary(klass, string):
         '''Check if the given strings contains binary data.'''
+
+        if _python2:
+            return klass._is_binary_py2(string)
+
+        if type(string) == bytes:
+            for c in string:
+                if c < 32 and not chr(c).isspace():
+                    return True
+        return False
+
+    @classmethod
+    def _is_binary_py2(klass, string):
+        '''Check if the given strings contains binary data. (Python 2)'''
 
         for c in string:
             if c < ' ' and not c.isspace():
                 return True
         return False
+
+    @classmethod
+    def _try_unicode(klass, value):
+        '''Try to convert bytearray value to unicode'''
+
+        if type(value) == bytes and not klass._is_binary(value):
+            try:
+                return value.decode('UTF-8')
+            except UnicodeDecodeError:
+                return value
+        return value
 
     def write(self, file, only_new=False):
         '''Write information into the given file-like object.
@@ -215,8 +242,12 @@ class ProblemReport(UserDict):
         than the given limit, and the entire key will be removed. If
         fail_on_empty is True, reading zero bytes will cause an IOError.
 
+        file needs to be opened in binary mode.
+
         Files are written in RFC822 format.
         '''
+        self._assert_bin_mode(file)
+
         # sort keys into ASCII non-ASCII/binary attachment ones, so that
         # the base64 ones appear last in the report
         asckeys = []
@@ -259,7 +290,8 @@ class ProblemReport(UserDict):
                 if hasattr(v[0], 'read'):
                     v = v[0].read()  # file-like object
                 else:
-                    v = open(v[0]).read()  # file name
+                    with open(v[0], 'rb') as f:  # file name
+                        v = f.read()
 
                 if fail_on_empty and len(v) == 0:
                     raise IOError('did not get any data for field ' + k)
@@ -268,18 +300,24 @@ class ProblemReport(UserDict):
                     del self.data[k]
                     continue
 
-            if sys.version.startswith('2'):
+            if _python2:
                 if isinstance(v, unicode):
                     # unicode → str
                     v = v.encode('UTF-8')
-
-            if '\n' in v:
-                # multiline value
-                file.write('%s:\n' % k)
-                file.write(' %s\n' % v.replace('\n', '\n '))
             else:
-                # single line value
-                file.write('%s: %s\n' % (k, v))
+                if isinstance(v, str):
+                    # unicode → str
+                    v = v.encode('UTF-8')
+
+            file.write(k.encode('ASCII'))
+            if b'\n' in v:
+                # multiline value
+                file.write(b':\n ')
+                file.write(v.replace(b'\n', b'\n '))
+            else:
+                file.write(b': ')
+                file.write(v)
+            file.write(b'\n')
 
         # now write the binary keys with gzip compression and base64 encoding
         for k in binkeys:
@@ -288,19 +326,20 @@ class ProblemReport(UserDict):
             size = 0
 
             curr_pos = file.tell()
-            file.write(k + ': base64\n ')
+            file.write(k.encode('ASCII'))
+            file.write(b': base64\n ')
 
             # CompressedValue
             if isinstance(v, CompressedValue):
                 file.write(base64.b64encode(v.gzipvalue))
-                file.write('\n')
+                file.write(b'\n')
                 continue
 
             # write gzip header
-            gzip_header = '\037\213\010\010\000\000\000\000\002\377' + k + '\000'
+            gzip_header = b'\037\213\010\010\000\000\000\000\002\377' + k.encode('UTF-8') + b'\000'
             file.write(base64.b64encode(gzip_header))
-            file.write('\n ')
-            crc = zlib.crc32('')
+            file.write(b'\n ')
+            crc = zlib.crc32(b'')
 
             bc = zlib.compressobj(9, zlib.DEFLATED, -zlib.MAX_WBITS,
                 zlib.DEF_MEM_LEVEL, 0)
@@ -311,7 +350,7 @@ class ProblemReport(UserDict):
                 outblock = bc.compress(v)
                 if outblock:
                     file.write(base64.b64encode(outblock))
-                    file.write('\n ')
+                    file.write(b'\n ')
             # file reference
             else:
                 if len(v) >= 3 and v[2] != None:
@@ -320,7 +359,7 @@ class ProblemReport(UserDict):
                 if hasattr(v[0], 'read'):
                     f = v[0]  # file-like object
                 else:
-                    f = open(v[0])  # file name
+                    f = open(v[0], 'rb')  # file name
                 while True:
                     block = f.read(1048576)
                     size += len(block)
@@ -337,9 +376,11 @@ class ProblemReport(UserDict):
                         outblock = bc.compress(block)
                         if outblock:
                             file.write(base64.b64encode(outblock))
-                            file.write('\n ')
+                            file.write(b'\n ')
                     else:
                         break
+                if not hasattr(v[0], 'read'):
+                    f.close()
 
                 if len(v) >= 4 and v[3]:
                     if size == 0:
@@ -350,11 +391,11 @@ class ProblemReport(UserDict):
                 block = bc.flush()
                 # append gzip trailer: crc (32 bit) and size (32 bit)
                 if crc:
-                    block += struct.pack("<L", crc & 0xFFFFFFFF)
-                    block += struct.pack("<L", size & 0xFFFFFFFF)
+                    block += struct.pack('<L', crc & 0xFFFFFFFF)
+                    block += struct.pack('<L', size & 0xFFFFFFFF)
 
                 file.write(base64.b64encode(block))
-                file.write('\n')
+                file.write(b'\n')
 
     def add_to_existing(self, reportfile, keep_times=False):
         '''Add this report's data to an already existing report file.
@@ -365,7 +406,7 @@ class ProblemReport(UserDict):
         '''
         st = os.stat(reportfile)
         try:
-            f = open(reportfile, 'a')
+            f = open(reportfile, 'ab')
             os.chmod(reportfile, 0)
             self.write(f)
             f.close()
@@ -378,7 +419,8 @@ class ProblemReport(UserDict):
         skip_keys=None, priority_fields=None):
         '''Write MIME/Multipart RFC 2822 formatted data into file.
 
-        file must be a file-like object, not a path.
+        file must be a file-like object, not a path.  It needs to be opened in
+        binary mode.
 
         If a value is a string or a CompressedValue, it is written directly.
         Otherwise it must be a tuple containing the source file and an optional
@@ -400,9 +442,11 @@ class ProblemReport(UserDict):
         priority_fields is a set/list specifying the order in which keys should
         appear in the destination file.
         '''
+        self._assert_bin_mode(file)
+
         keys = sorted(self.data.keys())
 
-        text = ''
+        text = b''
         attachments = []
 
         if 'ProblemType' in keys:
@@ -434,11 +478,11 @@ class ProblemReport(UserDict):
                 if hasattr(v[0], 'read'):
                     f = v[0]  # file-like object
                 else:
-                    f = open(v[0])  # file name
+                    f = open(v[0], 'rb')  # file name
                 if k.endswith('.gz'):
                     attach_value = f.read()
                 else:
-                    io = StringIO()
+                    io = BytesIO()
                     gf = gzip.GzipFile(k, mode='wb', fileobj=io)
                     while True:
                         block = f.read(1048576)
@@ -472,21 +516,24 @@ class ProblemReport(UserDict):
                 size = len(v)
 
                 # ensure that byte arrays are valid UTF-8
-                if type(v) == type(''):
+                if type(v) == bytes:
                     v = v.decode('UTF-8', 'replace')
                 # convert unicode to UTF-8 str
-                assert isinstance(v, unicode)
+                if _python2:
+                    assert isinstance(v, unicode)
+                else:
+                    assert isinstance(v, str)
                 v = v.encode('UTF-8')
 
                 lines = len(v.splitlines())
                 if size <= 1000 and lines == 1:
                     v = v.rstrip()
-                    text += '%s: %s\n' % (k, v)
+                    text += k.encode() + b': ' + v + b'\n'
                 elif size <= 1000 and lines <= attach_treshold:
-                    text += '%s:\n ' % k
-                    if not v.endswith('\n'):
-                        v += '\n'
-                    text += v.strip().replace('\n', '\n ') + '\n'
+                    text += k.encode() + b':\n '
+                    if not v.endswith(b'\n'):
+                        v += b'\n'
+                    text += v.strip().replace(b'\n', b'\n ') + b'\n'
                 else:
                     # too large, separate attachment
                     att = MIMEText(v, _charset='UTF-8')
@@ -504,8 +551,8 @@ class ProblemReport(UserDict):
         for a in attachments:
             msg.attach(a)
 
-        file.write(msg.as_string())
-        file.write('\n')
+        file.write(msg.as_string().encode('UTF-8'))
+        file.write(b'\n')
 
     def __setitem__(self, k, v):
         assert hasattr(k, 'isalnum')
@@ -531,6 +578,30 @@ class ProblemReport(UserDict):
     def _strip_gzip_header(klass, line):
         '''Strip gzip header from line and return the rest.'''
 
+        if _python2:
+            return klass._strip_gzip_header_py2(line)
+
+        flags = line[3]
+        offset = 10
+        if flags & 4:  # FLG.FEXTRA
+            offset += line[offset] + 1
+        if flags & 8:  # FLG.FNAME
+            while line[offset] != 0:
+                offset += 1
+            offset += 1
+        if flags & 16:  # FLG.FCOMMENT
+            while line[offset] != 0:
+                offset += 1
+            offset += 1
+        if flags & 2:  # FLG.FHCRC
+            offset += 2
+
+        return line[offset:]
+
+    @classmethod
+    def _strip_gzip_header_py2(klass, line):
+        '''Strip gzip header from line and return the rest. (Python 2)'''
+
         flags = ord(line[3])
         offset = 10
         if flags & 4:  # FLG.FEXTRA
@@ -547,3 +618,12 @@ class ProblemReport(UserDict):
             offset += 2
 
         return line[offset:]
+
+    @classmethod
+    def _assert_bin_mode(klass, file):
+        '''Assert that given file object is in binary mode'''
+
+        if _python2:
+            assert (type(file) == BytesIO or 'b' in file.mode), 'file stream must be in binary mode'
+        else:
+            assert not hasattr(file, 'encoding'), 'file stream must be in binary mode'

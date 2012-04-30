@@ -35,4 +35,5 @@ pr['OopsText'] = oops
 # write report
 report_path = apport.fileutils.make_report_path(pr, uid=checksum)
 if not os.path.exists(report_path):
-    pr.write(open(report_path, 'w'))
+    with open(report_path, 'wb') as f:
+        pr.write(f)

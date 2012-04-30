@@ -70,7 +70,7 @@ class T(unittest.TestCase):
         self.app.report['Signal'] = '11'
         self.app.report['CoreDump'] = ''
         self.app.report['DistroRelease'] = self.distro
-        with open(self.app.report_file, 'w') as f:
+        with open(self.app.report_file, 'wb') as f:
             self.app.report.write(f)
 
     def tearDown(self):

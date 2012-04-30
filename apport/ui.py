@@ -123,10 +123,9 @@ problem still occurs:\n\n%s') % ', '.join(old_pkgs)
     #    report['UnreportableReason'] = _('The program crashed on an assertion failure, but the message could not be retrieved. Apport does not support reporting these crashes.')
 
     if reportfile:
-        f = open(reportfile, 'a')
-        os.chmod(reportfile, 0)
-        report.write(f, only_new=True)
-        f.close()
+        with open(reportfile, 'ab') as f:
+            os.chmod(reportfile, 0)
+            report.write(f, only_new=True)
         apport.fileutils.mark_report_seen(reportfile)
         os.chmod(reportfile, 0o640)
 
@@ -377,9 +376,8 @@ class UserInterface:
 
         if self.options.save:
             try:
-                f = open(os.path.expanduser(self.options.save), 'w')
-                self.report.write(f)
-                f.close()
+                with open(os.path.expanduser(self.options.save), 'wb') as f:
+                    self.report.write(f)
             except (IOError, OSError) as e:
                 self.ui_error_message(_('Cannot create report'), excstr(e))
         else:
@@ -1051,7 +1049,8 @@ class UserInterface:
         '''
         try:
             self.report = apport.Report()
-            self.report.load(open(path), binary='compressed')
+            with open(path, 'rb') as f:
+                self.report.load(f, binary='compressed')
             if 'ProblemType' not in self.report:
                 raise ValueError('Report does not contain "ProblemType" field')
         except MemoryError:

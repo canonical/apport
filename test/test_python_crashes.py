@@ -73,7 +73,7 @@ func(42)
             0o640, 'report has correct permissions')
 
         pr = problem_report.ProblemReport()
-        with open(reports[0]) as f:
+        with open(reports[0], 'rb') as f:
             pr.load(f)
 
         # check report contents
@@ -128,7 +128,7 @@ func(42)
             0o640, 'report has correct permissions')
 
         pr = problem_report.ProblemReport()
-        with open(reports[0]) as f:
+        with open(reports[0], 'rb') as f:
             pr.load(f)
 
         # check report contents

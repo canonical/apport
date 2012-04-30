@@ -186,7 +186,8 @@ def usable_ram():
 
     # abuse our excellent RFC822 parser to parse /proc/meminfo
     r = apport.Report()
-    r.load(open('/proc/meminfo'))
+    with open('/proc/meminfo', 'rb') as f:
+        r.load(f)
 
     memfree = long(r['MemFree'].split()[0])
     cached = long(r['Cached'].split()[0])
@@ -345,7 +346,8 @@ try:
         if os.path.exists(report):
             if apport.fileutils.seen_report(report):
                 # do not flood the logs and the user with repeated crashes
-                crash_counter = apport.fileutils.get_recent_crashes(open(report))
+                with open(report, 'rb') as f:
+                    crash_counter = apport.fileutils.get_recent_crashes(f)
                 crash_counter += 1
                 if crash_counter > 1:
                     drop_privileges(pid)
@@ -361,7 +363,7 @@ try:
                 write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
         reportfile = os.fdopen(os.open(report,
-            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'w')
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'wb')
         assert reportfile.fileno() > sys.stderr.fileno()
 
         # Make sure the crash reporting daemon can read this report

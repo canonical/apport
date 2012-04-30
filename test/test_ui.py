@@ -6,6 +6,7 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from io import StringIO
+from io import BytesIO
 
 import apport.ui
 from apport.ui import _
@@ -598,7 +599,8 @@ bOgUs=
         self.assertTrue(self.ui.ic_progress_pulses > 0)
 
         r = apport.Report()
-        r.load(open(reportfile))
+        with open(reportfile, 'rb') as f:
+            r.load(f)
 
         self.assertEqual(r['SourcePackage'], 'bash')
         self.assertTrue('Dependencies' in r.keys())
@@ -663,7 +665,8 @@ bOgUs=
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
 
         # cancel crash notification dialog
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
@@ -676,7 +679,8 @@ bOgUs=
         self.assertEqual(self.ui.ic_progress_pulses, 0)
 
         # report in crash notification dialog, send full report
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -704,7 +708,8 @@ bOgUs=
         self.assertTrue(not self.ui.report.check_ignored())
 
         # cancel crash notification dialog and blacklist
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': True,
@@ -724,7 +729,8 @@ bOgUs=
         r = self._gen_test_crash()
         r['Signal'] = '6'
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -759,7 +765,8 @@ bOgUs=
         r.add_user_info()
 
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -869,7 +876,8 @@ bOgUs=
 
         # write crash report
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
 
         # run
         self.ui = TestSuiteUserInterface()
@@ -894,7 +902,8 @@ bOgUs=
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
 
         # report in crash notification dialog, cancel details report
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
@@ -921,7 +930,8 @@ bOgUs=
 
         # write crash report
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-        self.ui.report.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            self.ui.report.write(f)
 
         # report it
         self.ui = TestSuiteUserInterface()
@@ -945,7 +955,8 @@ bOgUs=
         r['Package'] = 'foobarbaz'
         r['SourcePackage'] = 'foobarbaz'
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -964,7 +975,8 @@ bOgUs=
         r['ExecutablePath'] = '/bin/nonexisting'
         r['Package'] = 'bash'
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -1003,7 +1015,8 @@ bOgUs=
         r = self._gen_test_crash()
         r['ExecutableTimestamp'] = str(int(r['ExecutableTimestamp']) - 10)
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
 
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -1033,7 +1046,8 @@ bOgUs=
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
 
         # cancel crash notification dialog
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
@@ -1047,7 +1061,8 @@ bOgUs=
         self.assertTrue(self.ui.present_details_shown)
 
         # report in crash notification dialog, send report
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -1087,7 +1102,8 @@ bOgUs=
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
 
         # cancel crash notification dialog
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': False,
                                             'blacklist': False,
@@ -1102,7 +1118,8 @@ bOgUs=
         self.assertTrue(self.ui.present_details_shown)
 
         # report in crash notification dialog, send report
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -1127,7 +1144,8 @@ bOgUs=
         r['ProcUnicodeValue'] = u'ä %s ♥ ' % os.uname()[1]
         r['ProcByteArrayValue'] = b'ä %s ♥ ' % os.uname()[1]
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-        r.write(open(report_file, 'w'))
+        with open(report_file, 'wb') as f:
+            r.write(f)
         self.ui = TestSuiteUserInterface()
         self.ui.present_details_response = {'report': True,
                                             'blacklist': False,
@@ -1138,14 +1156,15 @@ bOgUs=
 
         self.assertFalse('ProcCwd' in self.ui.report)
 
-        dump = StringIO()
+        dump = BytesIO()
         self.ui.report.write(dump)
+        report = dump.getvalue().decode('UTF-8')
 
         p = pwd.getpwuid(os.getuid())
         bad_strings = [os.uname()[1], p[0], p[4], p[5], os.getcwd()]
 
         for s in bad_strings:
-            self.assertFalse(s in dump.getvalue(), 'dump contains sensitive string: %s' % s)
+            self.assertFalse(s in report, 'dump contains sensitive string: %s' % s)
 
     def test_run_crash_anonymity_order(self):
         '''run_crash() anonymization runs after info and duplicate collection'''
@@ -1173,7 +1192,8 @@ bOgUs=
             apport.report.Report.add_gdb_info = fake_add_gdb_info
             r['ProcAuxInfo'] = 'my 0xDEADBEEF'
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-            r.write(open(report_file, 'w'))
+            with open(report_file, 'wb') as f:
+                r.write(f)
 
             # if this runs anonymization before the duplicate signature, then this
             # will fail, as 0xDEADhostname is an invalid address
@@ -1208,7 +1228,8 @@ bOgUs=
             r['ProcInfo2'] = '"ed.localnet"'
             r['ProcInfo3'] = 'education'
             report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
-            r.write(open(report_file, 'w'))
+            with open(report_file, 'wb') as f:
+                r.write(f)
 
             self.ui = TestSuiteUserInterface()
             self.ui.present_details_response = {'report': True,
@@ -1238,7 +1259,7 @@ bOgUs=
                                             'restart': False}
 
         # known without URL
-        with open(report_file, 'w') as f:
+        with open(report_file, 'wb') as f:
             r.write(f)
         self.ui.crashdb.known = lambda r: True
         self.ui.run_crash(report_file)
@@ -1252,7 +1273,7 @@ bOgUs=
                                             'examine': False,
                                             'restart': False}
         # known with URL
-        with open(report_file, 'w') as f:
+        with open(report_file, 'wb') as f:
             r.write(f)
         self.ui.crashdb.known = lambda r: 'http://myreport/1'
         self.ui.run_crash(report_file)
