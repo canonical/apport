@@ -38,6 +38,9 @@ Bug fixes:
    smaller one instead, causing overflows. Also, copy the image as
    gtk_icon_theme_load_icon() returns a readonly result which we must not
    modify. (LP: #937249)
+ * ui.py: Don't show the duplicate warning when the crash database does not
+   accept the problem type, and they are just being sent to whoopsie. Thanks
+   Evan Dandrea. (LP: #989779)
 
 2.0.1 (2012-04-10)
 ------------------

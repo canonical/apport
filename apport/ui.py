@@ -264,11 +264,17 @@ class UserInterface:
             # We check for duplicates and unreportable crashes here, rather
             # than before we show the dialog, as we want to submit these to the
             # crash database, but not Launchpad.
-            if self.handle_duplicate():
-                return
-            if self.check_unreportable():
-                return
-            self.file_report()
+            if self.crashdb.accepts(self.report):
+                # FIXME: This behaviour is not really correct, but necessary as
+                # long as we only support a single crashdb and have whoopsie
+                # hardcoded. Once we have multiple crash dbs, we need to check
+                # accepts() earlier, and not even present the data if none of
+                # the DBs wants the report. See LP#957177 for details.
+                if self.handle_duplicate():
+                    return
+                if self.check_unreportable():
+                    return
+                self.file_report()
         except IOError as e:
             # fail gracefully if file is not readable for us
             if e.errno in (errno.EPERM, errno.EACCES):
@@ -973,15 +979,13 @@ class UserInterface:
 
     def file_report(self):
         '''Upload the current report and guide the user to the reporting web page.'''
-
-        # FIXME: This behaviour is not really correct, but necessary as long as
-        # we only support a single crashdb and have whoopsie hardcoded. Once we
-        # have multiple crash dbs, we need to check accepts() earlier, and not
-        # even present the data if none of the DBs wants the report. See
-        # LP#957177 for details.
+        # FIXME: This behaviour is not really correct, but necessary as
+        # long as we only support a single crashdb and have whoopsie
+        # hardcoded. Once we have multiple crash dbs, we need to check
+        # accepts() earlier, and not even present the data if none of
+        # the DBs wants the report. See LP#957177 for details.
         if not self.crashdb.accepts(self.report):
             return
-
         # drop PackageArchitecture if equal to Architecture
         if self.report.get('PackageArchitecture') == self.report.get('Architecture'):
             try:
@@ -1100,6 +1104,8 @@ class UserInterface:
 
         If so, display an info message and return True.
         '''
+        if not self.crashdb.accepts(self.report):
+            return False
         if 'UnreportableReason' in self.report:
             if isinstance(self.report['UnreportableReason'], str):
                 self.report['UnreportableReason'] = self.report['UnreportableReason'].decode('UTF-8')
@@ -1138,6 +1144,8 @@ class UserInterface:
         If so, tell the user about it, open the existing bug in a browser, and
         return True.
         '''
+        if not self.crashdb.accepts(self.report):
+            return False
         if 'KnownReport' not in self.report:
             return False
 
