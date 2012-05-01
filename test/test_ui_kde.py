@@ -58,7 +58,7 @@ class T(unittest.TestCase):
         self.app.report['ExecutablePath'] = '/bin/bash'
         self.app.report['Signal'] = '11'
         self.app.report['CoreDump'] = ''
-        with open(self.app.report_file, 'w') as f:
+        with open(self.app.report_file, 'wb') as f:
             self.app.report.write(f)
 
     def tearDown(self):
