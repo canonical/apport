@@ -151,7 +151,7 @@ def _check_bug_pattern(report, pattern):
 def _check_bug_patterns(report, patterns):
     try:
         dom = xml.dom.minidom.parseString(patterns)
-    except ExpatError:
+    except (ExpatError, UnicodeEncodeError):
         return None
 
     for pattern in dom.getElementsByTagName('pattern'):
