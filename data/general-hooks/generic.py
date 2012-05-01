@@ -92,4 +92,4 @@ if __name__ == '__main__':
     r = {}
     add_info(r, None)
     for k in r:
-        print k, ':', r[k]
+        print('%s: %s' % (k, r[k]))

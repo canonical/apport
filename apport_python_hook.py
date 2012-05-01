@@ -23,7 +23,8 @@ def enabled():
     # See LP: #528355
     import re
     try:
-        conf = open(CONFIG).read()
+        with open(CONFIG) as f:
+            conf = f.read()
         return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
     except IOError:
         # if the file does not exist, assume it's enabled

@@ -41,7 +41,8 @@ class T(unittest.TestCase):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
-        self.assertTrue("Can't catch this" in err, 'crash handler must print original exception:\n' + err)
+        self.assertTrue(b"Can't catch this" in err,
+                'crash handler must print original exception:\n' + err.decode())
 
         self._check_crash_report(os.path.dirname(self.crash_jar_path) + '/crash.class')
 
@@ -53,7 +54,8 @@ class T(unittest.TestCase):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
-        self.assertTrue("Can't catch this" in err, 'crash handler must print original exception:\n' + err)
+        self.assertTrue(b"Can't catch this" in err,
+                'crash handler must print original exception:\n' + err.decode())
 
         self._check_crash_report(self.crash_jar_path + '!/crash.class')
 

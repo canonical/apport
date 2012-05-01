@@ -22,7 +22,7 @@ class TestSuiteUserInterface(apport.ui.UserInterface):
     def __init__(self):
         # use our dummy crashdb
         self.crashdb_conf = tempfile.NamedTemporaryFile()
-        self.crashdb_conf.write('''default = 'testsuite'
+        self.crashdb_conf.write(b'''default = 'testsuite'
 databases = {
     'testsuite': {
         'impl': 'memory',
@@ -146,7 +146,7 @@ class T(unittest.TestCase):
         self.report['Package'] = 'libfoo1 1-1'
         self.report['SourcePackage'] = 'foo'
         self.report['Foo'] = 'A' * 1000
-        self.report['CoreDump'] = 'A' * 100000
+        self.report['CoreDump'] = problem_report.CompressedValue(b'\x01' * 100000)
 
         # write demo report into temporary file
         self.report_file = tempfile.NamedTemporaryFile()
@@ -213,7 +213,7 @@ class T(unittest.TestCase):
 
         fsize = os.path.getsize(self.report_file.name)
         complete_ratio = float(self.ui.get_complete_size()) / fsize
-        self.assertTrue(complete_ratio >= 0.99 and complete_ratio <= 1.01)
+        self.assertTrue(complete_ratio >= 0.9 and complete_ratio <= 1.1)
 
         rs = self.ui.get_reduced_size()
         self.assertTrue(rs > 1000)
@@ -246,7 +246,10 @@ class T(unittest.TestCase):
 
         # valid report
         self.ui.load_report(self.report_file.name)
-        self.assertEqual(self.ui.report, self.report)
+        self.assertEqual(set(self.ui.report.keys()), set(self.report.keys()))
+        self.assertEqual(self.ui.report['Package'], self.report['Package'])
+        self.assertEqual(self.ui.report['CoreDump'].get_value(),
+                self.report['CoreDump'].get_value())
         self.assertEqual(self.ui.msg_title, None)
 
         # report without Package
@@ -265,7 +268,7 @@ class T(unittest.TestCase):
         # invalid base64 encoding
         self.report_file.seek(0)
         self.report_file.truncate()
-        self.report_file.write('''Type: test
+        self.report_file.write(b'''Type: test
 Package: foo 1-1
 CoreDump: base64
 bOgUs=
@@ -332,7 +335,7 @@ bOgUs=
         # add some tuple values, for robustness testing (might be added by
         # apport hooks)
         self.ui.report['Fstab'] = ('/etc/fstab', True)
-        self.ui.report['CompressedValue'] = problem_report.CompressedValue('Test')
+        self.ui.report['CompressedValue'] = problem_report.CompressedValue(b'Test')
         self.ui.collect_info()
         self.assertTrue(set(['SourcePackage', 'Package', 'ProblemType',
             'Uname', 'Dependencies', 'DistroRelease', 'Date',
@@ -537,7 +540,8 @@ bOgUs=
 
         # create unpackaged test program
         (fd, exename) = tempfile.mkstemp()
-        os.write(fd, open('/usr/bin/yes').read())
+        with open('/usr/bin/yes', 'rb') as f:
+            os.write(fd, f.read())
         os.close(fd)
         os.chmod(exename, 0o755)
 
@@ -563,7 +567,8 @@ bOgUs=
 
         pid = None
         for path in glob.glob('/proc/[0-9]*/stat'):
-            stat = open(path).read().split()
+            with open(path) as f:
+                stat = f.read().split()
             flags = int(stat[8])
             if flags & apport.ui.PF_KTHREAD:
                 pid = int(stat[0])
@@ -761,7 +766,7 @@ bOgUs=
         r['ExecutablePath'] = '/usr/bin/yes'
         r['Signal'] = '11'
         r['CoreDump'] = problem_report.CompressedValue()
-        r['CoreDump'].gzipvalue = 'AAAAAAAA'
+        r['CoreDump'].gzipvalue = b'AAAAAAAA'
         r.add_user_info()
 
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
@@ -799,7 +804,7 @@ bOgUs=
 
         # unreportable
         self.report['Package'] = 'bash'
-        self.report['UnreportableReason'] = u'It stinks. \u2665'
+        self.report['UnreportableReason'] = b'It stinks. \xe2\x99\xa5'.decode('UTF-8')
         self.update_report_file()
 
         sys.argv = ['ui-test', '-c', self.report_file.name]
@@ -1141,8 +1146,9 @@ bOgUs=
         '''run_crash() anonymization'''
 
         r = self._gen_test_crash()
-        r['ProcUnicodeValue'] = u'ä %s ♥ ' % os.uname()[1]
-        r['ProcByteArrayValue'] = b'ä %s ♥ ' % os.uname()[1]
+        utf8_val = b'\xc3\xa4 ' + os.uname()[1].encode('UTF-8') + b' \xe2\x99\xa5 '
+        r['ProcUnicodeValue'] = utf8_val.decode('UTF-8')
+        r['ProcByteArrayValue'] = utf8_val
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
         with open(report_file, 'wb') as f:
             r.write(f)

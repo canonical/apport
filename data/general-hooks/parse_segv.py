@@ -12,13 +12,17 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, re, logging
+import sys, re, logging, io
 
 
 class ParseSegv(object):
     def __init__(self, registers, disassembly, maps, debug=False):
         if debug:
-            logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
+            if sys.version > '3':
+                logging.basicConfig(level=logging.DEBUG,
+                        stream=io.TextIOWrapper(sys.stderr, encoding='UTF-8'))
+            else:
+                logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 
         self.regs = self.parse_regs(registers)
         self.sp = None
