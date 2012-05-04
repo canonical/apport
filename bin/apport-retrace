@@ -148,10 +148,11 @@ def get_code(srcdir, filename, line, context=5):
     # make enough room for all line numbers
     format = '  %%%ii: %%s' % len(str(line + context))
 
-    for l in open(files[0]):
-        lineno += 1
-        if lineno >= line - context and lineno <= line + context:
-            result += format % (lineno, l)
+    with open(files[0]) as f:
+        for l in f:
+            lineno += 1
+            if lineno >= line - context and lineno <= line + context:
+                result += format % (lineno, l)
 
     return result
 
@@ -282,7 +283,8 @@ crashdb = get_crashdb(options.auth)
 if os.path.exists(reportfile):
     try:
         report = apport.Report()
-        report.load(open(reportfile))
+        with open(reportfile, 'rb') as f:
+            report.load(f)
     except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
         apport.fatal('Cannot open report file: %s', str(e))
 elif reportfile.isdigit():
@@ -324,11 +326,13 @@ else:
             reportfile)
 
 if options.core_file:
-    report['CoreDump'] = open(options.core_file).read()
+    with open(options.core_file, 'rb') as f:
+        report['CoreDump'] = f.read()
 if options.executable:
     report['ExecutablePath'] = options.executable
 if options.procmaps:
-    report['ProcMaps'] = open(options.procmaps).read()
+    with open(options.procmaps, r) as f:
+        report['ProcMaps'] = f.read()
 if options.rebuild_package_info and 'ExecutablePath' in report:
     report.add_package_info()
 
@@ -495,10 +499,13 @@ Thank you for your understanding, and sorry for the inconvenience!
 
     else:
         if options.output == None:
-            out = open(reportfile, 'w')
+            out = open(reportfile, 'wb')
         elif options.output == '-':
-            out = sys.stdout
+            if sys.version[0] < '3':
+                out = sys.stdout
+            else:
+                out = sys.stdout.detach()
         else:
-            out = open(options.output, 'w')
+            out = open(options.output, 'wb')
 
         report.write(out)
