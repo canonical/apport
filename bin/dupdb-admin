@@ -2,7 +2,7 @@
 
 # CLI for maintaining the duplicate database
 #
-# Copyright (c) 2007 - 2009 Canonical Ltd.
+# Copyright (c) 2007 - 2012 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -21,15 +21,15 @@ import apport
 def command_dump(crashdb, opts, args):
     '''Print out all entries.'''
 
-    for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(True).iteritems():
-        print '%7i: %s ' % (id, sig.encode('UTF-8', 'replace')),
+    for (sig, (id, version, lastchange)) in crashdb._duplicate_db_dump(True).items():
+        sys.stdout.write('%7i: %s ' % (id, sig))
         if version == '':
-            print '[fixed]'
+            sys.stdout.write('[fixed] ')
         elif version:
-            print '[fixed in: %s]' % version,
+            sys.stdout.write('[fixed in: %s] ' % version)
         else:
-            print '[open]',
-        print 'last change:', lastchange
+            sys.stdout.write('[open] ')
+        print('last change: %s' % str(lastchange))
 
 
 def command_changeid(crashdb, opts, args):
@@ -72,15 +72,20 @@ optparser.add_option('-f', '--database-file',
         type='string', dest='db_file', default='apport_duplicates.db')
 options, args = optparser.parse_args()
 
+if len(args) == 0:
+    optparser.error('No command specified')
+
 if not os.path.exists(options.db_file):
     apport.fatal('file does not exist: %s', options.db_file)
 
-if args[0] in ():
-    # these commands require a real DB
-    crashdb = get_crashdb(None, None, {})
-else:
-    # pure DB operations don't need a real backend, and thus no crashdb.conf
-    crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
+# pure DB operations don't need a real backend, and thus no crashdb.conf
+crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
+
+#if args[0] in ():
+#    # these commands require a real DB
+#    crashdb = get_crashdb(None, None, {})
+#else:
+
 crashdb.init_duplicate_db(options.db_file)
 
 try:
