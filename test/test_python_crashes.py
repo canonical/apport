@@ -35,16 +35,16 @@ class T(unittest.TestCase):
         else:
             (fd, script) = tempfile.mkstemp(dir='/var/tmp')
         try:
-            os.write(fd, ('''#!/usr/bin/python
+            os.write(fd, ('''#!/usr/bin/env %s
 import apport_python_hook
 apport_python_hook.install()
 
 def func(x):
-    raise Exception, 'This should happen.'
+    raise Exception('This should happen.')
 
 %s
 func(42)
-''' % extracode).encode())
+''' % (os.getenv('PYTHON', 'python'), extracode)).encode())
             os.close(fd)
             os.chmod(script, 0o755)
 
@@ -87,7 +87,8 @@ func(42)
         self.assertEqual(pr['ExecutablePath'], script)
         self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
         self.assertTrue(pr['Traceback'].startswith('Traceback'))
-        self.assertTrue("func\n    raise Exception, 'This should happen." in pr['Traceback'])
+        self.assertTrue("func\n    raise Exception('This should happen.')" in pr['Traceback'],
+                pr['Traceback'])
 
     def test_existing(self):
         '''Python crash hook overwrites seen existing files.'''
