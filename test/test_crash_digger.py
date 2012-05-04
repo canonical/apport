@@ -1,4 +1,3 @@
-#!/usr/bin/python
 '''Test crash-digger'''
 
 # Copyright (C) 2007 - 2009 Canonical Ltd.
