@@ -146,8 +146,9 @@ def write_user_coredump(pid, cwd, limit):
 
     core_path = os.path.join(cwd, 'core')
     try:
-        if open('/proc/sys/kernel/core_uses_pid').read().strip() != '0':
-            core_path += '.' + str(pid)
+        with open('/proc/sys/kernel/core_uses_pid') as f:
+            if f.read().strip() != '0':
+                core_path += '.' + str(pid)
         core_file = os.open(core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640)
     except (OSError, IOError):
         return
@@ -157,7 +158,7 @@ def write_user_coredump(pid, cwd, limit):
     written = 0
 
     # Priming read
-    block = sys.stdin.read(1048576)
+    block = os.read(sys.stdin.fileno(), 1048576)
 
     while True:
         size = len(block)
@@ -174,7 +175,7 @@ def write_user_coredump(pid, cwd, limit):
             os.close(core_file)
             os.unlink(core_path)
             return
-        block = sys.stdin.read(1048576)
+        block = os.read(sys.stdin.fileno(), 1048576)
 
     os.close(core_file)
     return core_path
@@ -189,9 +190,9 @@ def usable_ram():
     with open('/proc/meminfo', 'rb') as f:
         r.load(f)
 
-    memfree = long(r['MemFree'].split()[0])
-    cached = long(r['Cached'].split()[0])
-    writeback = long(r['Writeback'].split()[0])
+    memfree = int(r['MemFree'].split()[0])
+    cached = int(r['Cached'].split()[0])
+    writeback = int(r['Writeback'].split()[0])
 
     return (memfree + cached - writeback) * 1024
 
@@ -293,7 +294,11 @@ try:
 
     info = apport.Report('Crash')
     info['Signal'] = signum
-    info['CoreDump'] = (sys.stdin, True, usable_ram() * 3 / 4, True)
+    if sys.version[0] < '3':
+        info['CoreDump'] = (sys.stdin, True, usable_ram() * 3 / 4, True)
+    else:
+        # read binary data from stdio
+        info['CoreDump'] = (sys.stdin.detach(), True, usable_ram() * 3 / 4, True)
 
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
