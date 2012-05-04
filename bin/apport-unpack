@@ -17,10 +17,23 @@ from apport import unicode_gettext as _, fatal
 
 import problem_report
 
+
+def help():
+    print(_('Usage: %s <report> <target directory>') % sys.argv[0])
+
+if sys.version[0] < '3':
+    t_str = unicode
+else:
+    t_str = str
+
 gettext.textdomain('apport')
 
+if len(sys.argv) >= 2 and sys.argv[1] == '--help':
+    help()
+    sys.exit(0)
+
 if len(sys.argv) != 3:
-    print _('Usage: %s <report> <target directory>') % sys.argv[0]
+    help()
     sys.exit(1)
 
 report = sys.argv[1]
@@ -33,7 +46,7 @@ try:
             fatal(_('Destination directory exists and is not empty.'))
     else:
         os.mkdir(dir)
-except OSError, e:
+except OSError as e:
     fatal(str(e))
 
 pr = problem_report.ProblemReport()
@@ -41,8 +54,13 @@ if report == '-':
     pr.load(sys.stdin)
 else:
     try:
-        pr.load(open(report))
-    except IOError, e:
+        with open(report, 'rb') as f:
+            pr.load(f)
+    except IOError as e:
         fatal(str(e))
 for k in pr:
-    open(os.path.join(dir, k), 'w').write(pr[k])
+    with open(os.path.join(dir, k), 'wb') as f:
+        if type(pr[k]) == t_str:
+            f.write(pr[k].encode('UTF-8'))
+        else:
+            f.write(pr[k])
