@@ -31,7 +31,7 @@ if os.path.exists(vmcore_path + '.log'):
 try:
     with open(apport.fileutils.make_report_path(pr), 'wb') as f:
         pr.write(f)
-except IOError, e:
+except IOError as e:
     apport.fatal('Cannot create report: ' + str(e))
 
 # clean up the core files
