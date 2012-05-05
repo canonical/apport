@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-04-24 04:35+0000\n"
-"X-Generator: Launchpad (build 15135)\n"
+"X-Launchpad-Export-Date: 2012-05-05 04:32+0000\n"
+"X-Generator: Launchpad (build 15195)\n"
 "Language: \n"
 
 #: ../apport/ui.py:92
@@ -53,7 +53,7 @@ msgstr "មិន​ស្គាល់​កម្មវិធី"
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "សូម​ទោស កម្មវិធី \"%s\" មិន​ត្រឹមត្រូវ"
 
-#: ../apport/ui.py:213 ../apport/ui.py:1105
+#: ../apport/ui.py:213 ../apport/ui.py:1111
 #, python-format
 msgid "Problem in %s"
 msgstr "បញ្ហា​នៅ​ក្នុង %s"
@@ -68,14 +68,14 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:228 ../apport/ui.py:235 ../apport/ui.py:241
-#: ../apport/ui.py:273 ../apport/ui.py:281 ../apport/ui.py:352
-#: ../apport/ui.py:355 ../apport/ui.py:553 ../apport/ui.py:920
-#: ../apport/ui.py:1061 ../apport/ui.py:1065 ../apport/ui.py:1084
-#: ../apport/ui.py:1090
+#: ../apport/ui.py:279 ../apport/ui.py:287 ../apport/ui.py:358
+#: ../apport/ui.py:361 ../apport/ui.py:559 ../apport/ui.py:926
+#: ../apport/ui.py:1065 ../apport/ui.py:1069 ../apport/ui.py:1088
+#: ../apport/ui.py:1094
 msgid "Invalid problem report"
 msgstr "របាយការណ៍​បញ្ហា​មិន​ត្រឹមត្រូវ"
 
-#: ../apport/ui.py:230 ../apport/ui.py:1067
+#: ../apport/ui.py:230 ../apport/ui.py:1071
 msgid "This problem report is damaged and cannot be processed."
 msgstr "របាយការណ៍​អំពី​បង្ហាញ​នេះ​ខូច ហើយ​មិន​អាច​ធ្វើ​បន្ត​បាន​ទេ ។"
 
@@ -87,42 +87,42 @@ msgstr "របាយការណ៍​ស្ថិត​នៅ​ក្នុង
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "កំហុស​មួយ​បាន​កើត​ឡើង​ នៅ​ពេល​ព្យាយាម​ដំណើរការ​របាយការណ៍​បញ្ហា​នេះ ៖"
 
-#: ../apport/ui.py:274
+#: ../apport/ui.py:280
 msgid "You are not allowed to access this problem report."
 msgstr "អ្នក​មិន​ត្រូវ​បាន​អនុញ្ញាត​ឲ្យ​ចូល​មើល​របាយការណ៍​បញ្ហា​នេះ ។"
 
-#: ../apport/ui.py:277
+#: ../apport/ui.py:283
 msgid "Error"
 msgstr "កំហុស"
 
-#: ../apport/ui.py:278
+#: ../apport/ui.py:284
 msgid "There is not enough disk space available to process this report."
 msgstr "មិនមាន​ទំហំ​គ្រប់គ្រាន់​ ដើម្បី​ដំណើរការ​របាយការណ៍​នេះ​ទេ ។"
 
-#: ../apport/ui.py:305
+#: ../apport/ui.py:311
 msgid "No package specified"
 msgstr "គ្មាន​កញ្ចប់​បាន​បញ្ជាក់​ទេ"
 
-#: ../apport/ui.py:306
+#: ../apport/ui.py:312
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "អ្នក​ត្រូវ​តែ​បញ្ជាក់​កញ្ចប់ ឬ​ PID ។ ចំពោះ​ព័ត៌មាន​បន្ថែម សូម​មើល --help ។"
 
-#: ../apport/ui.py:322
+#: ../apport/ui.py:328
 msgid "Invalid PID"
 msgstr "PID មិន​ត្រឹមត្រូវ"
 
-#: ../apport/ui.py:323
+#: ../apport/ui.py:329
 msgid "The specified process ID does not belong to a program."
 msgstr ""
 "លេខ​សម្គាល់​ដំណើរការ​ដែល​បាន​បញ្ជាក់ មិន​មែន​ជា​របស់​កម្មវិធី​​នេះ​ទេ ។"
 
-#: ../apport/ui.py:331
+#: ../apport/ui.py:337
 msgid "Permission denied"
 msgstr "សិទ្ធិ​ត្រូវ​បាន​បដិសេធ"
 
-#: ../apport/ui.py:332
+#: ../apport/ui.py:338
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -130,25 +130,25 @@ msgstr ""
 "ដំណើរការ​ដែល​បាន​បញ្ជាក់​មិនមែនជា​របស់​អ្នក​ទេ ។ "
 "សូម​ដំណើរការ​កម្មវិធី​នេះ​ជា​ម្ចាស់​ដំណើរការ ឬ​ដំណើរការ​ជា root ។"
 
-#: ../apport/ui.py:353
+#: ../apport/ui.py:359
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "ស្គ្រីប​សញ្ញា %s មិន​បាន​កំណត់​កញ្ចប់​ដែល​មាន​ប្រសិទ្ធភាព​ឡើយ"
 
-#: ../apport/ui.py:356
+#: ../apport/ui.py:362
 #, python-format
 msgid "Package %s does not exist"
 msgstr "គ្មាន​កញ្ចប់ %s ឡើយ"
 
-#: ../apport/ui.py:381 ../apport/ui.py:565 ../apport/ui.py:570
+#: ../apport/ui.py:387 ../apport/ui.py:571 ../apport/ui.py:576
 msgid "Cannot create report"
 msgstr "មិន​អាច​ធ្វើ​របាយការណ៍​​បាន​ឡើយ"
 
-#: ../apport/ui.py:396 ../apport/ui.py:442 ../apport/ui.py:459
+#: ../apport/ui.py:402 ../apport/ui.py:448 ../apport/ui.py:465
 msgid "Updating problem report"
 msgstr "ធ្វើ​បច្ចុប្បន្នភាព​របាយការណ៍​​អំពី​បញ្ហា"
 
-#: ../apport/ui.py:397
+#: ../apport/ui.py:403
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -160,7 +160,7 @@ msgstr ""
 "\n"
 "សូម​ធ្វើ​របាយការណ៍​ថ្មី \"apport-bug\" ។"
 
-#: ../apport/ui.py:406
+#: ../apport/ui.py:412
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -180,54 +180,54 @@ msgstr ""
 "\n"
 "តើ​អ្នក​ពិត​ជា​ចង់​ធ្វើ​បន្ត​ឬ ?"
 
-#: ../apport/ui.py:443 ../apport/ui.py:460
+#: ../apport/ui.py:449 ../apport/ui.py:466
 msgid "No additional information collected."
 msgstr "គ្មាន​ព័ត៌មាន​បន្ថែម​​ដែល​បាន​ប្រមូល​ឡើយ ។"
 
-#: ../apport/ui.py:510
+#: ../apport/ui.py:516
 msgid "What kind of problem do you want to report?"
 msgstr "តើ​ប្រភេទ​បញ្ហា​អ្វី​ដែល​អ្នក​ចង់​រាយការណ៍ ?"
 
-#: ../apport/ui.py:527
+#: ../apport/ui.py:533
 msgid "Unknown symptom"
 msgstr "មិន​ស្គាល់​សញ្ញា"
 
-#: ../apport/ui.py:528
+#: ../apport/ui.py:534
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "មិន​ស្គាល់​សញ្ញា \"%s\" ។"
 
-#: ../apport/ui.py:556
+#: ../apport/ui.py:562
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
 "ក្រោយ​ពេល​​បិទ​សារ​នេះ សូម​ចុច​លើ​​បង្អួច​កម្មវិធី ដើម្បី​រាយការណ៍​អំពី​វា ។"
 
-#: ../apport/ui.py:566 ../apport/ui.py:571
+#: ../apport/ui.py:572 ../apport/ui.py:577
 msgid "xprop failed to determine process ID of the window"
 msgstr "បាន​បរាជ័យ xprop ដើម្បី​កំណត់​លេខ​សម្គាល់​ដំណើរការ​របស់​បង្អួច"
 
-#: ../apport/ui.py:585
+#: ../apport/ui.py:591
 msgid "%prog <report number>"
 msgstr "%prog <report number>"
 
-#: ../apport/ui.py:587
+#: ../apport/ui.py:593
 msgid "Specify package name."
 msgstr "បញ្ជាក់​ឈ្មោះ​កញ្ចប់ ។"
 
-#: ../apport/ui.py:589 ../apport/ui.py:638
+#: ../apport/ui.py:595 ../apport/ui.py:644
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "បន្ថែម​ស្លាក​​ខាងក្រៅ​ដើម្បី​រាយការណ៍ ។ អាច​ត្រូវ​បាន​បញ្ជាក់​ពេលវេលា​ច្រើន ។"
 
-#: ../apport/ui.py:619
+#: ../apport/ui.py:625
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
-#: ../apport/ui.py:622
+#: ../apport/ui.py:628
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -238,17 +238,17 @@ msgstr ""
 "បង្ហាញ​បញ្ជី​សញ្ញា​ដែល​មិន​ស្គាល់ ។  (បាន​បញ្ជាក់ "
 "ប្រសិនបើ​អាគុយម៉ង់​ត្រូវ​បាន​ផ្ដល់​ឲ្យ ។)"
 
-#: ../apport/ui.py:624
+#: ../apport/ui.py:630
 msgid "Click a window as a target for filing a problem report."
 msgstr "ចុច​លើ​បង្អួច​ដែល​ជា​គោលដៅ​សម្រាប់​បំពេញ​របាយការណ៍​អំពី​បញ្ហា ។"
 
-#: ../apport/ui.py:626
+#: ../apport/ui.py:632
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "ចាប់ផ្ដើម​ជា​របៀប​​ការ​ធ្វើ​បច្ចុប្បន្នភាព​កំហុស ។ អាច​យក​កញ្ចប់ --ជា​ជម្រើស "
 "។"
 
-#: ../apport/ui.py:628
+#: ../apport/ui.py:634
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -256,7 +256,7 @@ msgstr ""
 "ឯកសារ​របាយការណ៍​កំហុស​អំពី​សញ្ញា ។ (បាន​បញ្ជាក់ "
 "ប្រសិនបើ​ឈ្មោះ​សញ្ញា​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:630
+#: ../apport/ui.py:636
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -265,7 +265,7 @@ msgstr ""
 "ត្រូវ​បាន​បញ្ជាក់ ។ (បាន​បញ្ជាក់ "
 "ប្រសិនបើ​​ឈ្មោះ​កញ្ចប់​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:632
+#: ../apport/ui.py:638
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -275,7 +275,7 @@ msgstr ""
 "វា​ត្រូវ​បាន​បញ្ជាក់ របាយការណ៍​កំហុស​នឹង​មាន​ព័ត៌មាន​បន្ថែម ។  (បាន​បញ្ជាក់ "
 "ប្រសិនបើ pid ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:634
+#: ../apport/ui.py:640
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -284,7 +284,7 @@ msgstr ""
 "របាយការណ៍​គាំង​​ដែល​បាន​ផ្ដល់​ពី​ឯកសារ .apport ឬ .crash ជំនួស​នៅ​ក្នុង%s. ( "
 "បាន​បញ្ជាក់​ ប្រសិនបើ​ឯកសារ​ត្រូវ​បាន​ផ្ដល់​​តែ​អាគុយម៉ង់ ។)"
 
-#: ../apport/ui.py:636
+#: ../apport/ui.py:642
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -294,32 +294,32 @@ msgstr ""
 "រក្សាទុក​ព័ត៌មាន​ដែល​បាន​ប្រមូល​នៅ​ក្នុង​ឯកសារ​​ជំនួស​ការ​ធ្វើ​របាយការណ៍​​អំព"
 "ី​វា ។ ឯកសារ​នេះ​​អាច​ត្រូវ​បាន​​រាយការណ៍​​ក្រោយ​ពេល​ពី​ម៉ាស៊ីន​ខុសគ្នា ។"
 
-#: ../apport/ui.py:640
+#: ../apport/ui.py:646
 msgid "Print the Apport version number."
 msgstr "បោះពុម្ព​លេខ​កំណែ Apport ។"
 
-#: ../apport/ui.py:772
+#: ../apport/ui.py:778
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "វា​នឹង​ចាប់ផ្ដើម apport-retrace នៅ​ក្នុង​បង្អួយ​ស្ថានីយ "
 "ដើម្បី​ត្រួតពិនិត្យ​​ភាគ​គាំង ។"
 
-#: ../apport/ui.py:773
+#: ../apport/ui.py:779
 msgid "Run gdb session"
 msgstr "រត់​សម័យ  gdb"
 
-#: ../apport/ui.py:774
+#: ../apport/ui.py:780
 msgid "Run gdb session without downloading debug symbols"
 msgstr "រត់​សម័យ gdb ដោយ​មិន​ទាញ​យក​និមិត្ត​សញ្ញា​បំបាត់​កំហុស"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:776
+#: ../apport/ui.py:782
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "ធ្វើ​បច្ចុប្បន្ន %s ជា​មួយ​ដាន​​ជា​​​និមិត្ត​សញ្ញា​ពេញលេញ"
 
-#: ../apport/ui.py:817
+#: ../apport/ui.py:823
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -328,53 +328,53 @@ msgstr ""
 "បញ្ហា​បានកើត​ឡើង​ជា​មួយ​កម្មវិធី %s "
 "ដែល​បាន​ផ្លាស់ប្ដូរ​តាំង​ពី​​មាន​ការ​គាំង ។"
 
-#: ../apport/ui.py:921
+#: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
 msgstr "មិន​អាច​កំណត់​​ ឈ្មោះ​កញ្ចប់​ប្រភព ឬ​កញ្ចប់​បាន​ឡើយ ។"
 
-#: ../apport/ui.py:939
+#: ../apport/ui.py:945
 msgid "Unable to start web browser"
 msgstr "មិន​អាច​ចាប់ផ្ដើម​កម្មវិធី​រុករក​បណ្ដាញ​បាន​ទេ"
 
-#: ../apport/ui.py:940
+#: ../apport/ui.py:946
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "មិន​អាច​ចាប់ផ្ដើម​កម្មវិធី​រុករក​បណ្ដាញ ដើម្បី​បើក %s បាន​ទេ ។"
 
-#: ../apport/ui.py:1017
+#: ../apport/ui.py:1021
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 "សូម​បញ្ចូល​ព័ត៌មាន​អំពី​គណនី​របស់​អ្នក​​សម្រាប់​ប្រព័ន្ធ​តាមដាន​កំហុស %s"
 
-#: ../apport/ui.py:1028
+#: ../apport/ui.py:1032
 msgid "Network problem"
 msgstr "បញ្ហា​បណ្ដាញ"
 
-#: ../apport/ui.py:1030
+#: ../apport/ui.py:1034
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "មិន​អាច​តភ្ជាប់​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ​គាំង​បាន​ទេ "
 "សូម​ពិនិត្យមើល​ការ​តភ្ជាប់​អ៊ីនធឺណិត​របស់​អ្នក ។"
 
-#: ../apport/ui.py:1056
+#: ../apport/ui.py:1060
 msgid "Memory exhaustion"
 msgstr "ការ​ប្រើ​​​អស់​អង្គ​ចងចាំ"
 
-#: ../apport/ui.py:1057
+#: ../apport/ui.py:1061
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "ប្រព័ន្ធ​របស់​អ្នក​មិន​មាន​អង្គ​ចងចាំ​គ្រប់គ្រាន់ "
 "ដើម្បី​ដំណើរការ​របាយការណ៍​គាំង​នេះ​ទេ ។"
 
-#: ../apport/ui.py:1080 ../apport/ui.py:1089
+#: ../apport/ui.py:1084 ../apport/ui.py:1093
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "របាយការណ៍​អំពី​បញ្ហា​នេះ​អនុវត្ត​កម្មវិធី​ដែល​មិន​ត្រូវ​បាន​ដំឡើង​ទៀត​ឡើយ ។"
 
-#: ../apport/ui.py:1108
+#: ../apport/ui.py:1114
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -385,11 +385,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1145 ../apport/ui.py:1152
+#: ../apport/ui.py:1153 ../apport/ui.py:1160
 msgid "Problem already known"
 msgstr "ស្គាល់​​​អំពី​បញ្ហា​ហើយ"
 
-#: ../apport/ui.py:1146
+#: ../apport/ui.py:1154
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -400,7 +400,7 @@ msgstr ""
 "ប្រសិនបើ​អ្នក​អាច​បន្ថែម​ព័ត៌មាន​បន្ថែម "
 "​​ដែល​​​អា​ផ្ដល់​ជា​ប្រយោជន៍​សម្រាប់​​អ្នក​អ្នក​អភិវឌ្ឍន៍ ។"
 
-#: ../apport/ui.py:1153
+#: ../apport/ui.py:1161
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "បញ្ហា​នេះ​​អាច​ត្រូវ​បាន​រាយការណ៍​ទៅ​កាន់​​​អ្នក​អភិវឌ្ឍន៍ ។ អរគុណ !"
 

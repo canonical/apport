@@ -9,8 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-04-24 04:35+0000\n"
-"X-Generator: Launchpad (build 15135)\n"
+"X-Launchpad-Export-Date: 2012-05-05 04:32+0000\n"
+"X-Generator: Launchpad (build 15195)\n"
 "Language: ast\n"
 
 #: ../apport/ui.py:92
@@ -49,7 +49,7 @@ msgstr "programa desconocíu"
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Sentimoslo; el programa «%s» zarróse inesperadamente"
 
-#: ../apport/ui.py:213 ../apport/ui.py:1105
+#: ../apport/ui.py:213 ../apport/ui.py:1111
 #, python-format
 msgid "Problem in %s"
 msgstr "Problema en %s"
@@ -64,14 +64,14 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:228 ../apport/ui.py:235 ../apport/ui.py:241
-#: ../apport/ui.py:273 ../apport/ui.py:281 ../apport/ui.py:352
-#: ../apport/ui.py:355 ../apport/ui.py:553 ../apport/ui.py:920
-#: ../apport/ui.py:1061 ../apport/ui.py:1065 ../apport/ui.py:1084
-#: ../apport/ui.py:1090
+#: ../apport/ui.py:279 ../apport/ui.py:287 ../apport/ui.py:358
+#: ../apport/ui.py:361 ../apport/ui.py:559 ../apport/ui.py:926
+#: ../apport/ui.py:1065 ../apport/ui.py:1069 ../apport/ui.py:1088
+#: ../apport/ui.py:1094
 msgid "Invalid problem report"
 msgstr "Informe de problema incorreutu"
 
-#: ../apport/ui.py:230 ../apport/ui.py:1067
+#: ../apport/ui.py:230 ../apport/ui.py:1071
 msgid "This problem report is damaged and cannot be processed."
 msgstr "L'informe del problema ta frayáu y nun puede procesase."
 
@@ -83,43 +83,43 @@ msgstr "L'informe remanez d'un paquete non instaláu."
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "Hebo un fallu mentanto s'intentaba procesar l'informe de fallu:"
 
-#: ../apport/ui.py:274
+#: ../apport/ui.py:280
 msgid "You are not allowed to access this problem report."
 msgstr "Nun tienes permitíu acceder a esti informe de problema."
 
-#: ../apport/ui.py:277
+#: ../apport/ui.py:283
 msgid "Error"
 msgstr "Fallu"
 
-#: ../apport/ui.py:278
+#: ../apport/ui.py:284
 msgid "There is not enough disk space available to process this report."
 msgstr ""
 "Nun hai suficiente espaciu de discu disponible pa procesar esti informe."
 
-#: ../apport/ui.py:305
+#: ../apport/ui.py:311
 msgid "No package specified"
 msgstr "Nun s'especificó dengún paquete"
 
-#: ../apport/ui.py:306
+#: ../apport/ui.py:312
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Necesites especificar un paquete o un PID. Consulta --help pa más "
 "información."
 
-#: ../apport/ui.py:322
+#: ../apport/ui.py:328
 msgid "Invalid PID"
 msgstr "PID incorreutu"
 
-#: ../apport/ui.py:323
+#: ../apport/ui.py:329
 msgid "The specified process ID does not belong to a program."
 msgstr "El ID de procesu especificáu nun pertenez a dengún programa."
 
-#: ../apport/ui.py:331
+#: ../apport/ui.py:337
 msgid "Permission denied"
 msgstr "Permisu denegáu"
 
-#: ../apport/ui.py:332
+#: ../apport/ui.py:338
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -127,25 +127,25 @@ msgstr ""
 "El procesu especificáu nun te pertenez. Executa esti programa como "
 "propietariu del procesu o como superusuariu."
 
-#: ../apport/ui.py:353
+#: ../apport/ui.py:359
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr ""
 
-#: ../apport/ui.py:356
+#: ../apport/ui.py:362
 #, python-format
 msgid "Package %s does not exist"
 msgstr "El paquete %s nun esiste"
 
-#: ../apport/ui.py:381 ../apport/ui.py:565 ../apport/ui.py:570
+#: ../apport/ui.py:387 ../apport/ui.py:571 ../apport/ui.py:576
 msgid "Cannot create report"
 msgstr ""
 
-#: ../apport/ui.py:396 ../apport/ui.py:442 ../apport/ui.py:459
+#: ../apport/ui.py:402 ../apport/ui.py:448 ../apport/ui.py:465
 msgid "Updating problem report"
 msgstr ""
 
-#: ../apport/ui.py:397
+#: ../apport/ui.py:403
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -153,7 +153,7 @@ msgid ""
 "Please create a new report using \"apport-bug\"."
 msgstr ""
 
-#: ../apport/ui.py:406
+#: ../apport/ui.py:412
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -165,52 +165,52 @@ msgid ""
 "Do you really want to proceed?"
 msgstr ""
 
-#: ../apport/ui.py:443 ../apport/ui.py:460
+#: ../apport/ui.py:449 ../apport/ui.py:466
 msgid "No additional information collected."
 msgstr ""
 
-#: ../apport/ui.py:510
+#: ../apport/ui.py:516
 msgid "What kind of problem do you want to report?"
 msgstr "¿De qué triba de problema quier informar?"
 
-#: ../apport/ui.py:527
+#: ../apport/ui.py:533
 msgid "Unknown symptom"
 msgstr "Síntoma desconocíu"
 
-#: ../apport/ui.py:528
+#: ../apport/ui.py:534
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "El síntoma «%s» ye desconocíu"
 
-#: ../apport/ui.py:556
+#: ../apport/ui.py:562
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
 
-#: ../apport/ui.py:566 ../apport/ui.py:571
+#: ../apport/ui.py:572 ../apport/ui.py:577
 msgid "xprop failed to determine process ID of the window"
 msgstr ""
 
-#: ../apport/ui.py:585
+#: ../apport/ui.py:591
 msgid "%prog <report number>"
 msgstr ""
 
-#: ../apport/ui.py:587
+#: ../apport/ui.py:593
 msgid "Specify package name."
 msgstr ""
 
-#: ../apport/ui.py:589 ../apport/ui.py:638
+#: ../apport/ui.py:595 ../apport/ui.py:644
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
-#: ../apport/ui.py:619
+#: ../apport/ui.py:625
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [opciones] [síntomes|pid|paquete|camín pal programa|.apport/.crash]"
 
-#: ../apport/ui.py:622
+#: ../apport/ui.py:628
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -220,15 +220,15 @@ msgstr ""
 "opcional, o sólo un --pid. Si nun s'apurre dengún, amuesa una llista de "
 "síntomes conocíos. (Implícitu si s'apurre un únicu argumentu.)"
 
-#: ../apport/ui.py:624
+#: ../apport/ui.py:630
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
 
-#: ../apport/ui.py:626
+#: ../apport/ui.py:632
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 
-#: ../apport/ui.py:628
+#: ../apport/ui.py:634
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -236,7 +236,7 @@ msgstr ""
 "Rellenar un informe de fallu sobre un síntoma. (Implícitu si s'apurre un "
 "nome de síntoma como únicu argumentu.)"
 
-#: ../apport/ui.py:630
+#: ../apport/ui.py:636
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -245,14 +245,14 @@ msgstr ""
 "pid s'especifica. (Implícitu si se dió un nome de paquete como un únicu "
 "argumentu)"
 
-#: ../apport/ui.py:632
+#: ../apport/ui.py:638
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:634
+#: ../apport/ui.py:640
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -262,37 +262,37 @@ msgstr ""
 "llugar de los pendientes en %s. (Implícitu si s'indica el ficheru como únicu "
 "argumentu.)"
 
-#: ../apport/ui.py:636
+#: ../apport/ui.py:642
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:640
+#: ../apport/ui.py:646
 msgid "Print the Apport version number."
 msgstr "Amosar el númberu de versión d'Apport"
 
-#: ../apport/ui.py:772
+#: ../apport/ui.py:778
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr "Esto executará apport-retrace nuna terminal pa desaminar el fallu."
 
-#: ../apport/ui.py:773
+#: ../apport/ui.py:779
 msgid "Run gdb session"
 msgstr "Executar una sesión gdb"
 
-#: ../apport/ui.py:774
+#: ../apport/ui.py:780
 msgid "Run gdb session without downloading debug symbols"
 msgstr "Executar una sesión gdb ensin descargar símbolos de depuración"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:776
+#: ../apport/ui.py:782
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "Anovar %s con una pila de siguimientu completamente simbólica"
 
-#: ../apport/ui.py:817
+#: ../apport/ui.py:823
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -300,53 +300,53 @@ msgid ""
 msgstr ""
 "El problema ocurrió col programa %s, que camudó dende qu'asocedió'l fallu."
 
-#: ../apport/ui.py:921
+#: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
 msgstr "Nun pudo determinase'l nome del paquete binariu o fonte."
 
-#: ../apport/ui.py:939
+#: ../apport/ui.py:945
 msgid "Unable to start web browser"
 msgstr "Nun puede arrancase'l restolador web"
 
-#: ../apport/ui.py:940
+#: ../apport/ui.py:946
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Nun puede arrancase'l restolador web p'abrir %s."
 
-#: ../apport/ui.py:1017
+#: ../apport/ui.py:1021
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 "Introduza la información de la so cuenta pal sistema de seguimientu de "
 "fallos de %s"
 
-#: ../apport/ui.py:1028
+#: ../apport/ui.py:1032
 msgid "Network problem"
 msgstr "Problemes cola rede"
 
-#: ../apport/ui.py:1030
+#: ../apport/ui.py:1034
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Nun puede afitase la conexón cola base de datos d'errores, por favor, "
 "verifique la so conexón a Internet."
 
-#: ../apport/ui.py:1056
+#: ../apport/ui.py:1060
 msgid "Memory exhaustion"
 msgstr "Memoria escosada"
 
-#: ../apport/ui.py:1057
+#: ../apport/ui.py:1061
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "El to sistema nun tien la memoria suficiente pa procesar esti informe de "
 "fallu."
 
-#: ../apport/ui.py:1080 ../apport/ui.py:1089
+#: ../apport/ui.py:1084 ../apport/ui.py:1093
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Esti informe de problema aplícase a un programa que nun ta instaláu."
 
-#: ../apport/ui.py:1108
+#: ../apport/ui.py:1114
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -357,11 +357,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1145 ../apport/ui.py:1152
+#: ../apport/ui.py:1153 ../apport/ui.py:1160
 msgid "Problem already known"
 msgstr "Problema yá conocíu"
 
-#: ../apport/ui.py:1146
+#: ../apport/ui.py:1154
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -371,7 +371,7 @@ msgstr ""
 "restolador web. Por favor, comprueba si puedes amestar cualesquier "
 "información adicional que pudieres resultar d'utilidá a los desendolcadores."
 
-#: ../apport/ui.py:1153
+#: ../apport/ui.py:1161
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Ya s'informó d'esti problema a los desendolcadores. ¡Gracies!"
 

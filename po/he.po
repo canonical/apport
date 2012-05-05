@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-04-24 04:35+0000\n"
-"X-Generator: Launchpad (build 15135)\n"
+"X-Launchpad-Export-Date: 2012-05-05 04:32+0000\n"
+"X-Generator: Launchpad (build 15195)\n"
 "Language: he\n"
 
 #: ../apport/ui.py:92
@@ -29,6 +29,7 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"זוהי אינה חבילה רשמית של %s. נא להסיר כל חבילת צד־שלישי שהיא ולנסות שוב."
 
 #: ../apport/ui.py:115
 #, python-format
@@ -38,21 +39,21 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"כמה מחבילות התוכנה המותקנות אצלך הינן מיושנות. נא לעדכן את החבילות הבאות "
-"ולבדוק האם התקלה נמשכת:\n"
+"חלק מהגרסאות של חבילות התכנה שלך מיושנות. נא לשדרג את החבילות הבאות ולבדוק "
+"אם הבעיה עדיין מתרחשת:\n"
 "\n"
 "%s"
 
 #: ../apport/ui.py:211
 msgid "unknown program"
-msgstr "תוכנה לא ידועה"
+msgstr "תכנית בלתי מוכרת"
 
 #: ../apport/ui.py:212
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "מצטערים, התוכנה \"%s\" נסגרה במפתיע"
+msgstr "התכנה „%s“  נסגרה במפתיע, עמך הסליחה"
 
-#: ../apport/ui.py:213 ../apport/ui.py:1105
+#: ../apport/ui.py:213 ../apport/ui.py:1111
 #, python-format
 msgid "Problem in %s"
 msgstr "תקלה ב-%s"
@@ -66,14 +67,14 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:228 ../apport/ui.py:235 ../apport/ui.py:241
-#: ../apport/ui.py:273 ../apport/ui.py:281 ../apport/ui.py:352
-#: ../apport/ui.py:355 ../apport/ui.py:553 ../apport/ui.py:920
-#: ../apport/ui.py:1061 ../apport/ui.py:1065 ../apport/ui.py:1084
-#: ../apport/ui.py:1090
+#: ../apport/ui.py:279 ../apport/ui.py:287 ../apport/ui.py:358
+#: ../apport/ui.py:361 ../apport/ui.py:559 ../apport/ui.py:926
+#: ../apport/ui.py:1065 ../apport/ui.py:1069 ../apport/ui.py:1088
+#: ../apport/ui.py:1094
 msgid "Invalid problem report"
 msgstr "דוח תקלה שגוי"
 
-#: ../apport/ui.py:230 ../apport/ui.py:1067
+#: ../apport/ui.py:230 ../apport/ui.py:1071
 msgid "This problem report is damaged and cannot be processed."
 msgstr "דוח תקלה זה פגום ולכן לא ניתן לעבד אותו."
 
@@ -83,67 +84,67 @@ msgstr "הדוח שייך לחבילה שאינה מותקנת."
 
 #: ../apport/ui.py:242
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
+msgstr "אירעה שגיאה במהלך ניסיון עיבוד דוח תקלה זה:"
 
-#: ../apport/ui.py:274
+#: ../apport/ui.py:280
 msgid "You are not allowed to access this problem report."
 msgstr "אינך מורשה לגשת לדוח תקלה זה."
 
-#: ../apport/ui.py:277
+#: ../apport/ui.py:283
 msgid "Error"
 msgstr "שגיאה"
 
-#: ../apport/ui.py:278
+#: ../apport/ui.py:284
 msgid "There is not enough disk space available to process this report."
 msgstr "אין די שטח פנוי בכונן כדי לעבד דוח זה."
 
-#: ../apport/ui.py:305
+#: ../apport/ui.py:311
 msgid "No package specified"
 msgstr "לא צויינה כל חבילה"
 
-#: ../apport/ui.py:306
+#: ../apport/ui.py:312
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr "עליך לציין חבילה או מזהה תהליך. עיין ב --help לקבלת מידע נוסף."
 
-#: ../apport/ui.py:322
+#: ../apport/ui.py:328
 msgid "Invalid PID"
 msgstr "מזהה התהליך שגוי"
 
-#: ../apport/ui.py:323
+#: ../apport/ui.py:329
 msgid "The specified process ID does not belong to a program."
 msgstr "מזהה התהליך שצויין אינו שייך לאף תוכנית."
 
-#: ../apport/ui.py:331
+#: ../apport/ui.py:337
 msgid "Permission denied"
 msgstr "הגישה נדחתה"
 
-#: ../apport/ui.py:332
+#: ../apport/ui.py:338
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
 "התהליך שצויין אינו שייך לך. נא להריץ תוכנה זו כבעל התהליך או כמנהל (root)."
 
-#: ../apport/ui.py:353
+#: ../apport/ui.py:359
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr ""
 
-#: ../apport/ui.py:356
+#: ../apport/ui.py:362
 #, python-format
 msgid "Package %s does not exist"
 msgstr "החבילה %s אינה קיימת"
 
-#: ../apport/ui.py:381 ../apport/ui.py:565 ../apport/ui.py:570
+#: ../apport/ui.py:387 ../apport/ui.py:571 ../apport/ui.py:576
 msgid "Cannot create report"
 msgstr ""
 
-#: ../apport/ui.py:396 ../apport/ui.py:442 ../apport/ui.py:459
+#: ../apport/ui.py:402 ../apport/ui.py:448 ../apport/ui.py:465
 msgid "Updating problem report"
-msgstr ""
+msgstr "דוח הבעיה מתעדכן"
 
-#: ../apport/ui.py:397
+#: ../apport/ui.py:403
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -151,7 +152,7 @@ msgid ""
 "Please create a new report using \"apport-bug\"."
 msgstr ""
 
-#: ../apport/ui.py:406
+#: ../apport/ui.py:412
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -162,171 +163,185 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"בעיה זו לא דווחה על ידיך במקור. עדיף לסמן באג ככפול מאשר להעביר את ההערות "
+"ואת הקבצים המצורפים אליו לבאג חדש.\n"
+"\n"
+"כתוצאה מכך, ההמלצה היא ליצור דוח שגיאות חדש באמצעות \"apport-bug\" ולהעיר שם "
+"על התקלה שדווחה.\n"
+"\n"
+"האם ברצונך להמשיך?"
 
-#: ../apport/ui.py:443 ../apport/ui.py:460
+#: ../apport/ui.py:449 ../apport/ui.py:466
 msgid "No additional information collected."
 msgstr ""
 
-#: ../apport/ui.py:510
+#: ../apport/ui.py:516
 msgid "What kind of problem do you want to report?"
 msgstr "מהי הבעיה עליה ברצונך לדווח?"
 
-#: ../apport/ui.py:527
+#: ../apport/ui.py:533
 msgid "Unknown symptom"
 msgstr "תסמין לא מוכר"
 
-#: ../apport/ui.py:528
+#: ../apport/ui.py:534
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr "התסמין \"%s\" אינו מוכר."
+msgstr "התסמין „%s“ אינו מוכר."
 
-#: ../apport/ui.py:556
+#: ../apport/ui.py:562
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
 
-#: ../apport/ui.py:566 ../apport/ui.py:571
+#: ../apport/ui.py:572 ../apport/ui.py:577
 msgid "xprop failed to determine process ID of the window"
 msgstr ""
 
-#: ../apport/ui.py:585
+#: ../apport/ui.py:591
 msgid "%prog <report number>"
 msgstr ""
 
-#: ../apport/ui.py:587
+#: ../apport/ui.py:593
 msgid "Specify package name."
 msgstr "נא לציין את שם החבילה."
 
-#: ../apport/ui.py:589 ../apport/ui.py:638
+#: ../apport/ui.py:595 ../apport/ui.py:644
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
-#: ../apport/ui.py:619
+#: ../apport/ui.py:625
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
-#: ../apport/ui.py:622
+#: ../apport/ui.py:628
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"התחלה במצב מילוי שגיאות. נדרש ‎--package ו־‎--pid (לא חובה), או ‎--pid בלבד. "
+"אם אף אחד מאלה לא הוזן, תוצג רשימה של סימפטומים ידועים. (מרומז במקרה שצוין "
+"ארגומנט יחיד.)"
 
-#: ../apport/ui.py:624
+#: ../apport/ui.py:630
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
 
-#: ../apport/ui.py:626
+#: ../apport/ui.py:632
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 
-#: ../apport/ui.py:628
+#: ../apport/ui.py:634
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
-msgstr ""
+msgstr "הגשת דיווח על תסמין. (מרומז אם שם התסמין ניתן רק כארגומנט.)"
 
-#: ../apport/ui.py:630
+#: ../apport/ui.py:636
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
 
-#: ../apport/ui.py:632
+#: ../apport/ui.py:638
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"יש לציין תכנית פעילה במצב ‎--file-bug. אם פרמטר זה יתווסף דיווח הבאג יכיל "
+"מידע נוסף.  (כלומר שהמזהה התהליך, ה־pid, ניתן כארגומנט בלבד.)"
 
-#: ../apport/ui.py:634
+#: ../apport/ui.py:640
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"דיווח על התקלה מקובץ ‎.apport או ‎.crash נתון במקום אלו שממתינים ב־%s. "
+"(מרומז אם ניתן קובץ כארגומנט יחיד.)"
 
-#: ../apport/ui.py:636
+#: ../apport/ui.py:642
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:640
+#: ../apport/ui.py:646
 msgid "Print the Apport version number."
 msgstr "הצגת מספר הגרסה של Apport."
 
-#: ../apport/ui.py:772
+#: ../apport/ui.py:778
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr "פעולה זו תפעיל את apport-retrace בחלון מסוף כדי לנתח את הקריסה."
 
-#: ../apport/ui.py:773
+#: ../apport/ui.py:779
 msgid "Run gdb session"
 msgstr "הפעלת gdb"
 
-#: ../apport/ui.py:774
+#: ../apport/ui.py:780
 msgid "Run gdb session without downloading debug symbols"
 msgstr "הפעלת gdb מבלי להוריד סימני ניפוי שגיאות"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:776
+#: ../apport/ui.py:782
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "עדכון %s במעקב ערימה בסמליות מלאה"
 
-#: ../apport/ui.py:817
+#: ../apport/ui.py:823
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr ""
+msgstr "התקלה אירעה בתכנית %s שהשתנתה מאז קריסתה האחרונה."
 
-#: ../apport/ui.py:921
+#: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
 msgstr "לא ניתן לאתר את החבילה או את שם חבילת המקור."
 
-#: ../apport/ui.py:939
+#: ../apport/ui.py:945
 msgid "Unable to start web browser"
-msgstr "לא יכול להפעיל את דפדפן האינטרנט"
+msgstr "לא ניתן להפעיל את דפדפן האינטרנט."
 
-#: ../apport/ui.py:940
+#: ../apport/ui.py:946
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "לא יכול להפעיל את דפדפן האינטרנט כדי לפתוח את %s."
+msgstr "לא ניתן להפעיל את דפדפן האינטרנט כדי לפתוח את %s."
 
-#: ../apport/ui.py:1017
+#: ../apport/ui.py:1021
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr "יש להזין את נתוני החשבון שלך עבור מערכת דיווח התקלות %s."
+msgstr "נא להזין את נתוני החשבון שלך עבור מערכת דיווח התקלות %s."
 
-#: ../apport/ui.py:1028
+#: ../apport/ui.py:1032
 msgid "Network problem"
 msgstr "תקלת רשת"
 
-#: ../apport/ui.py:1030
+#: ../apport/ui.py:1034
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "לא ניתן להתחבר אל מסד נתוני הקריסות, יש לבדוק את החיבור לאינטרנט."
 
-#: ../apport/ui.py:1056
+#: ../apport/ui.py:1060
 msgid "Memory exhaustion"
 msgstr "תשישות הזכרון"
 
-#: ../apport/ui.py:1057
+#: ../apport/ui.py:1061
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "למערכת שלך אין די זכרון פנוי כדי לעבד דוח תקלה זה."
 
-#: ../apport/ui.py:1080 ../apport/ui.py:1089
+#: ../apport/ui.py:1084 ../apport/ui.py:1093
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "דיווח תקלה זה חל על תוכנית שאינה מותקנת עוד."
+msgstr "דיווח תקלה זה חל על תכנית שאינה מותקנת עוד."
 
-#: ../apport/ui.py:1108
+#: ../apport/ui.py:1114
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -337,11 +352,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1145 ../apport/ui.py:1152
+#: ../apport/ui.py:1153 ../apport/ui.py:1160
 msgid "Problem already known"
 msgstr "התקלה כבר ידועה"
 
-#: ../apport/ui.py:1146
+#: ../apport/ui.py:1154
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -350,7 +365,7 @@ msgstr ""
 "תקלה זו כבר דווחה בדוח התקלה המוצג בדפדפן האינטרנט. נא לבדוק האם ניתן להוסיף "
 "מידע נוסף שעלול לעזור למפתחים בפתרון התקלה."
 
-#: ../apport/ui.py:1153
+#: ../apport/ui.py:1161
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "תקלה זו כבר דווחה למתכנתים. תודה רבה!"
 
@@ -360,7 +375,7 @@ msgstr "לחץ על מקש כלשהו להמשך..."
 
 #: ../bin/apport-cli.py:78
 msgid "What would you like to do? Your options are:"
-msgstr "מה ברצונך לעשות? אפשרויותך הן:"
+msgstr "מה ברצונך לעשות? אפשרויותיך הן:"
 
 #: ../bin/apport-cli.py:82
 #, python-format
@@ -374,7 +389,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:143 ../gtk/apport-gtk.py:118 ../kde/apport-kde.py:315
 msgid "(binary data)"
-msgstr "(נתונים בינאריים)"
+msgstr "(נתונים בינריים)"
 
 #: ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:148 ../kde/apport-kde.py:156
 msgid "Send problem report to the developers?"
@@ -502,20 +517,20 @@ msgstr "אין דיווחי קריסות בהמתנה. נסו --help לקבלת 
 msgid ""
 "This occured during a previous suspend and prevented it from resuming "
 "properly."
-msgstr "תופעה זו נגרמה במהלך השהיה קודמת ומנעה מהתהליך מלהמשיך כראוי."
+msgstr "תופעה זו נגרמה במהלך השהיה קודמת ומנעה מהתהליך להמשיך כראוי."
 
 #: ../data/apportcheckresume.py:70
 msgid ""
 "This occured during a previous hibernate and prevented it from resuming "
 "properly."
-msgstr "תופעה זו נגרמה במהלך תרדמת קודמת ומנעה מהתהליך מלהמשיך כראוי."
+msgstr "תופעה זו נגרמה במהלך תרדמת קודמת ומנעה מהתהליך להמשיך כראוי."
 
 #: ../data/apportcheckresume.py:75
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
-"עיבוד חזרת המחשב לפעולה נתקע ממש לקראת הסוף ונראה כאילו הוא הסתיים כרגיל."
+"תהליך חזרת המחשב לפעולה נתקע ממש לקראת הסוף ונראה כאילו הוא הסתיים כרגיל."
 
 #: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:423 ../kde/apport-kde.py:459
 msgid "Apport"
@@ -523,41 +538,41 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Crash report"
-msgstr ""
+msgstr "דוח קריסה"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>אירעה שגיאה פנימית, עמך הסליחה.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:227 ../kde/apport-kde.py:206
 msgid "If you notice further problems, try restarting the computer."
-msgstr ""
+msgstr "אם הבחנת בבעיות נוספות, כדאי לנסות להפעיל את המחשב מחדש."
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
-msgstr ""
+msgstr "שליחת דוח שגיאה כדי לסייע בתיקון בעיה זו."
 
 #: ../gtk/apport-gtk.ui.h:6
 msgid "Ignore future problems of this program version"
-msgstr ""
+msgstr "התעלמות בתקלות עתידיות בגרסת תכנית זו"
 
 #: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:166 ../gtk/apport-gtk.py:491
 #: ../kde/apport-kde.py:248
 msgid "Show Details"
-msgstr ""
+msgstr "הצגת פרטים"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
-msgstr ""
+msgstr "_בדיקה מקומית"
 
 #: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:215 ../kde/apport-kde.py:196
 msgid "Leave Closed"
-msgstr ""
+msgstr "להשאיר סגור"
 
 #: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:178 ../gtk/apport-gtk.py:219
 #: ../gtk/apport-gtk.py:230 ../kde/apport-kde.py:200 ../kde/apport-kde.py:209
 msgid "Continue"
-msgstr ""
+msgstr "להמשיך"
 
 #: ../gtk/apport-gtk.ui.h:11
 msgid "<big><b>Collecting problem information</b></big>"
@@ -593,6 +608,8 @@ msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"התחלת מופע אינטראקטיבי של gdb עם איסוף הליבה של הדוח (‎-o ignored; הדוח לא "
+"ישוכתב)"
 
 #: ../bin/apport-retrace.py:43
 msgid ""
@@ -628,19 +645,24 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"יצירת ארז חול זמני ולהוריד/להתקין את החבילות ההכרחיות ואת סמלי ניפוי "
+"השגיאות; ללא אפשרות זאת המערכת תניח שהחבילות ההכרחיות ושסמלי ניפוי השגיאות "
+"כבר מותקנים במחשבך. הארגומנט מפנה לתיקיית מסד תצורת מערכת החבילות; אם "
+"הארגומנט יהיה „system“, ייעשה שימוש בקובצי התצורה של המערכת אך במצב כזה ניתן "
+"יהיה רק לעקוב מחדש אחר הקריסות שהתחרשו בהפצה הפעילה הנוכחית."
 
 #: ../bin/apport-retrace.py:57
 msgid ""
 "Report download/install progress when installing packages into sandbox"
-msgstr ""
+msgstr "דיווח על תהליך של הורדה/התקנה בעת התקנת חבילות בתוך ארגז החול"
 
 #: ../bin/apport-retrace.py:59
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
+msgstr "הוספת קידומת חותמת זמן להודעות ביומן, לצורך פעולות אצווה"
 
 #: ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "תיקיית המטמון לחבילות שהורדו בארגז החול"
 
 #: ../bin/apport-retrace.py:63
 msgid ""
@@ -659,12 +681,15 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"נתיב לקובץ עם פרטי האימות מול מסד נתוני הקריסות. בקובץ ייעשה שימוש בעת ציון "
+"מזהה קריסה כדי לעלות מעקבי מחסניות מחודשים (רק אם לא צוינו ‎-g, -o, או ‎-s)"
 
 #: ../bin/apport-retrace.py:67
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"הצגת מעקבי מחסניות מחודשים ובקשת אישור בטרם שליחה למסד נתוני הקריסות."
 
 #: ../bin/apport-retrace.py:69
 msgid ""
@@ -684,17 +709,17 @@ msgstr ""
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../bin/apport-retrace.py:110
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "האם זה בסדר לשלוח קבצים מצורפים אלה? [y/n]"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
 #: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
-msgstr "דווח על תקלה..."
+msgstr "דיווח על תקלה..."
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
 #: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr "דווח על תפקוד לקוי למפתחים"
+msgstr "דיווח על תפקוד לקוי למתכנתים"
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
@@ -704,47 +729,47 @@ msgstr ""
 #: ../gtk/apport-gtk.py:133
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
-msgstr ""
+msgstr "היישום %s נסגר במפתיע, עמך הסליחה."
 
 #: ../gtk/apport-gtk.py:136
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr ""
+msgstr "היישום %s נסגר במפתיע, עמך סליחה."
 
 #: ../gtk/apport-gtk.py:142 ../kde/apport-kde.py:170 ../kde/apport-kde.py:203
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr ""
+msgstr "היישום %s סבל משגיאה פנימית, עמך הסליחה."
 
 #: ../gtk/apport-gtk.py:157 ../kde/apport-kde.py:164
 msgid "Send"
-msgstr ""
+msgstr "שליחה"
 
 #: ../gtk/apport-gtk.py:194 ../kde/apport-kde.py:178
 #, python-format
 msgid "Package: %s"
-msgstr ""
+msgstr "חבילה: %s"
 
 #: ../gtk/apport-gtk.py:201 ../kde/apport-kde.py:184
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
+msgstr "אירעה תקלה בעת התקנת תוכנות, עמך הסליחה."
 
 #: ../gtk/apport-gtk.py:210 ../kde/apport-kde.py:190
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr ""
+msgstr "היישום %s  נסגר במפתיע"
 
 #: ../gtk/apport-gtk.py:216 ../kde/apport-kde.py:197 ../kde/apport-kde.py:334
 msgid "Relaunch"
-msgstr ""
+msgstr "הפעלה מחדש"
 
 #: ../gtk/apport-gtk.py:231 ../kde/apport-kde.py:210
 msgid "Ignore future problems of this type"
-msgstr ""
+msgstr "התעלמות מתקלות חוזרות ונשנות מסוג זה"
 
 #: ../gtk/apport-gtk.py:495 ../kde/apport-kde.py:245
 msgid "Hide Details"
-msgstr ""
+msgstr "הסתרת הפרטים"
 
 #: ../kde/apport-kde.py:271
 msgid "Username:"
@@ -756,17 +781,19 @@ msgstr ""
 
 #: ../kde/apport-kde.py:359
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "נאספים נתונים על התקלה"
 
 #: ../kde/apport-kde.py:361
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"ניתן לשלוח את המידע שנאסף למפתחים כדי לשפר את התכנה. פעולה זו עלולה להמשך "
+"מספר דקות."
 
 #: ../kde/apport-kde.py:387
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "נתוני התקלה נשלחים"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
@@ -779,7 +806,7 @@ msgstr ""
 
 #: ../bin/apport-unpack.py:33
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "ספריית היעד קיימת ואינה ריקה."
 
 #, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."

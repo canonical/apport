@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-04-24 04:36+0000\n"
-"X-Generator: Launchpad (build 15135)\n"
+"X-Launchpad-Export-Date: 2012-05-05 04:33+0000\n"
+"X-Generator: Launchpad (build 15195)\n"
 "Language: sk\n"
 
 #: ../apport/ui.py:92
@@ -54,7 +54,7 @@ msgstr "neznámy program"
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Prepáčte, program \"%s\" neočakávane skončil"
 
-#: ../apport/ui.py:213 ../apport/ui.py:1105
+#: ../apport/ui.py:213 ../apport/ui.py:1111
 #, python-format
 msgid "Problem in %s"
 msgstr "Problém v %s"
@@ -69,14 +69,14 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:228 ../apport/ui.py:235 ../apport/ui.py:241
-#: ../apport/ui.py:273 ../apport/ui.py:281 ../apport/ui.py:352
-#: ../apport/ui.py:355 ../apport/ui.py:553 ../apport/ui.py:920
-#: ../apport/ui.py:1061 ../apport/ui.py:1065 ../apport/ui.py:1084
-#: ../apport/ui.py:1090
+#: ../apport/ui.py:279 ../apport/ui.py:287 ../apport/ui.py:358
+#: ../apport/ui.py:361 ../apport/ui.py:559 ../apport/ui.py:926
+#: ../apport/ui.py:1065 ../apport/ui.py:1069 ../apport/ui.py:1088
+#: ../apport/ui.py:1094
 msgid "Invalid problem report"
 msgstr "Neplatná správa problému"
 
-#: ../apport/ui.py:230 ../apport/ui.py:1067
+#: ../apport/ui.py:230 ../apport/ui.py:1071
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Táto správa je poškodená a nie je možné ju spracovať."
 
@@ -88,41 +88,41 @@ msgstr "Správa patrí k balíku, ktorý nie je nainštalovaný."
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
 
-#: ../apport/ui.py:274
+#: ../apport/ui.py:280
 msgid "You are not allowed to access this problem report."
 msgstr "Nemáte povolený prístup k tejto správe o probléme."
 
-#: ../apport/ui.py:277
+#: ../apport/ui.py:283
 msgid "Error"
 msgstr "Chyba"
 
-#: ../apport/ui.py:278
+#: ../apport/ui.py:284
 msgid "There is not enough disk space available to process this report."
 msgstr "Nie je dostatok voľného miesta na disku na spracovanie tejto správy."
 
-#: ../apport/ui.py:305
+#: ../apport/ui.py:311
 msgid "No package specified"
 msgstr "Nebol určený žiadny balík"
 
-#: ../apport/ui.py:306
+#: ../apport/ui.py:312
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Je potrebné určiť balík alebo PID. Pozrite --help pre viac informácií."
 
-#: ../apport/ui.py:322
+#: ../apport/ui.py:328
 msgid "Invalid PID"
 msgstr "Neplatné PID"
 
-#: ../apport/ui.py:323
+#: ../apport/ui.py:329
 msgid "The specified process ID does not belong to a program."
 msgstr "Špecifikované ID procesu nepatrí k programu."
 
-#: ../apport/ui.py:331
+#: ../apport/ui.py:337
 msgid "Permission denied"
 msgstr "Prístup odmietnutý"
 
-#: ../apport/ui.py:332
+#: ../apport/ui.py:338
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -130,25 +130,25 @@ msgstr ""
 "Nemáte dosah na označený proces. Prosím spustite program ako jeho vlastník, "
 "alebo ako superpoužívateľ."
 
-#: ../apport/ui.py:353
+#: ../apport/ui.py:359
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr ""
 
-#: ../apport/ui.py:356
+#: ../apport/ui.py:362
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Balík %s neexistuje"
 
-#: ../apport/ui.py:381 ../apport/ui.py:565 ../apport/ui.py:570
+#: ../apport/ui.py:387 ../apport/ui.py:571 ../apport/ui.py:576
 msgid "Cannot create report"
 msgstr ""
 
-#: ../apport/ui.py:396 ../apport/ui.py:442 ../apport/ui.py:459
+#: ../apport/ui.py:402 ../apport/ui.py:448 ../apport/ui.py:465
 msgid "Updating problem report"
 msgstr ""
 
-#: ../apport/ui.py:397
+#: ../apport/ui.py:403
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -156,7 +156,7 @@ msgid ""
 "Please create a new report using \"apport-bug\"."
 msgstr ""
 
-#: ../apport/ui.py:406
+#: ../apport/ui.py:412
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -168,24 +168,24 @@ msgid ""
 "Do you really want to proceed?"
 msgstr ""
 
-#: ../apport/ui.py:443 ../apport/ui.py:460
+#: ../apport/ui.py:449 ../apport/ui.py:466
 msgid "No additional information collected."
 msgstr ""
 
-#: ../apport/ui.py:510
+#: ../apport/ui.py:516
 msgid "What kind of problem do you want to report?"
 msgstr "Aký druh problému chcete nahlásiť?"
 
-#: ../apport/ui.py:527
+#: ../apport/ui.py:533
 msgid "Unknown symptom"
 msgstr "Neznámy príznak"
 
-#: ../apport/ui.py:528
+#: ../apport/ui.py:534
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Príznak \"%s\"  nie je známy"
 
-#: ../apport/ui.py:556
+#: ../apport/ui.py:562
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -193,29 +193,29 @@ msgstr ""
 "Pre nahlásenie problému s aplikáciou kliknite, prosím, po zavretí tejto "
 "správy na okno aplikácie."
 
-#: ../apport/ui.py:566 ../apport/ui.py:571
+#: ../apport/ui.py:572 ../apport/ui.py:577
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop nedokázal zistiť identifikátor procesu okna"
 
-#: ../apport/ui.py:585
+#: ../apport/ui.py:591
 msgid "%prog <report number>"
 msgstr ""
 
-#: ../apport/ui.py:587
+#: ../apport/ui.py:593
 msgid "Specify package name."
 msgstr "Zadajte názov balíka."
 
-#: ../apport/ui.py:589 ../apport/ui.py:638
+#: ../apport/ui.py:595 ../apport/ui.py:644
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Pridať k hláseniu značku navyše. Môže byť zadaná viackrát."
 
-#: ../apport/ui.py:619
+#: ../apport/ui.py:625
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
-#: ../apport/ui.py:622
+#: ../apport/ui.py:628
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -225,15 +225,15 @@ msgstr ""
 "alebo len --pid. Ak nie je zadaný ani jeden z nich, zobrazí sa zoznam "
 "známych príznakov. (Predpokladané ak je zadaný len jeden argument.)"
 
-#: ../apport/ui.py:624
+#: ../apport/ui.py:630
 msgid "Click a window as a target for filing a problem report."
 msgstr "Kliknite na okno ktoré bude cieľom pre vyplnenia hlásenia o chybe."
 
-#: ../apport/ui.py:626
+#: ../apport/ui.py:632
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 
-#: ../apport/ui.py:628
+#: ../apport/ui.py:634
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -241,7 +241,7 @@ msgstr ""
 "Vytvorte chybovú správu o príznaku. (Predpokladané ak je zadané ako jediný "
 "argument meno príznaku.)"
 
-#: ../apport/ui.py:630
+#: ../apport/ui.py:636
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -249,14 +249,14 @@ msgstr ""
 "Zadajte meno balíka v móde --file-bug. Je to voliteľné ak je zadaný --pid. "
 "(Predpokladané ak je zadané ako jediný argument meno.)"
 
-#: ../apport/ui.py:632
+#: ../apport/ui.py:638
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:634
+#: ../apport/ui.py:640
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -265,89 +265,89 @@ msgstr ""
 "Nahláste pád z daného .apport alebo .crash súboru namieste prebiehajúcich v "
 "%s. (Predpokladané ak je zadaný ako jediný argument súbor.)"
 
-#: ../apport/ui.py:636
+#: ../apport/ui.py:642
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:640
+#: ../apport/ui.py:646
 msgid "Print the Apport version number."
 msgstr "Vytlačiť verziu Apport."
 
-#: ../apport/ui.py:772
+#: ../apport/ui.py:778
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 
-#: ../apport/ui.py:773
+#: ../apport/ui.py:779
 msgid "Run gdb session"
 msgstr "Spustiť gdb reláciu"
 
-#: ../apport/ui.py:774
+#: ../apport/ui.py:780
 msgid "Run gdb session without downloading debug symbols"
 msgstr "Spustiť gdb reláciu bez sťahovania ladiacich symbolov"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:776
+#: ../apport/ui.py:782
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
-#: ../apport/ui.py:817
+#: ../apport/ui.py:823
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
 
-#: ../apport/ui.py:921
+#: ../apport/ui.py:927
 msgid "Could not determine the package or source package name."
 msgstr "Nedá sa zistiť balík alebo zdrojový názov balíka."
 
-#: ../apport/ui.py:939
+#: ../apport/ui.py:945
 msgid "Unable to start web browser"
 msgstr "Nepodarilo sa spustiť internetový prehliadač"
 
-#: ../apport/ui.py:940
+#: ../apport/ui.py:946
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Nepodarilo sa spustiť internetový prehliadač pre otvorenie %s."
 
-#: ../apport/ui.py:1017
+#: ../apport/ui.py:1021
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 "Prosím zadajte vaše informácie o prihlasovacom účte pre Systém sledovanie "
 "chýb %s"
 
-#: ../apport/ui.py:1028
+#: ../apport/ui.py:1032
 msgid "Network problem"
 msgstr "Problém siete"
 
-#: ../apport/ui.py:1030
+#: ../apport/ui.py:1034
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Nie je možné sa pripojiť do databázy pádov, prosím skontrolujte vaše "
 "internetové pripojenie."
 
-#: ../apport/ui.py:1056
+#: ../apport/ui.py:1060
 msgid "Memory exhaustion"
 msgstr "Vyčerpanie pamäte"
 
-#: ../apport/ui.py:1057
+#: ../apport/ui.py:1061
 msgid "Your system does not have enough memory to process this crash report."
 msgstr "Váš systém nemá dostatočnú pamäť na spracovanie chybovej správy."
 
-#: ../apport/ui.py:1080 ../apport/ui.py:1089
+#: ../apport/ui.py:1084 ../apport/ui.py:1093
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "Táto chybová správa sa vzťahuje na program, ktorý už nie je nainštalovaný."
 
-#: ../apport/ui.py:1108
+#: ../apport/ui.py:1114
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -358,11 +358,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1145 ../apport/ui.py:1152
+#: ../apport/ui.py:1153 ../apport/ui.py:1160
 msgid "Problem already known"
 msgstr "Problém je už známy"
 
-#: ../apport/ui.py:1146
+#: ../apport/ui.py:1154
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -372,7 +372,7 @@ msgstr ""
 "prehliadači. Skontrolujte prosím, či môžete doplniť ďaľšie informácie, ktoré "
 "môžu byť nápomocné pre vývojárov."
 
-#: ../apport/ui.py:1153
+#: ../apport/ui.py:1161
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Tento problém bol už nahlásený vývojárom. Ďakujeme!"
 
