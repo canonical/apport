@@ -411,6 +411,9 @@ if options.sandbox:
                     path, sandbox + report[path], report['Package'])
             sys.exit(0)
 
+    if outdated_msg:
+        report['RetraceOutdatedPackages'] = outdated_msg
+
 # interactive gdb session
 if options.gdb:
     core = tempfile.NamedTemporaryFile()

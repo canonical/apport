@@ -21,6 +21,8 @@ Improvements:
    started. This often happens if the package is upgraded and a long-running
    process is not stopped before. (LP: #984944)
  * Add test cases for apport-unpack.
+ * apport-retrace: Add information about outdated packages to the
+   "RetraceOutdatedPackages" field.
 
 Bug fixes:
  * apport-gtk: Work around GTK crash when trying to set pixmap on an already
