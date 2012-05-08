@@ -14,7 +14,8 @@ Improvements:
  * Fix the whole code to be PEP-8 compatible, and enforce this in test/run by
    running the "pep8" tool.
  * GTK UI tests: Ensure that there are no GLib/GTK warnings or criticals.
- * Fix some code to work with Python 3. An important change is that the load(),
+ * Support Python 3. Everything except the launchpad crashdb backend now works
+   with both Python 2 and 3. An important change is that the load(),
    write(), and write_mime() methods of a ProblemReport and apport.Report
    object now require the file stream to be opened in binary mode.
  * data/apport: Ignore a crash if the executable was modified after the process
