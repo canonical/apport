@@ -618,7 +618,7 @@ class Report(problem_report.ProblemReport):
                 command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % rootdir,
                             '--ex', 'set solib-absolute-prefix ' + rootdir]
                 executable = rootdir + '/' + executable
-            command += ['--ex', 'file ' + executable, '--ex', 'core-file ' + core]
+            command += ['--ex', 'file "%s"' % executable, '--ex', 'core-file ' + core]
             # limit maximum backtrace depth (to avoid looped stacks)
             command += ['--ex', 'set backtrace limit 2000']
             value_keys = []
