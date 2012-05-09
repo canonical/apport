@@ -45,6 +45,7 @@ Bug fixes:
  * ui.py: Don't show the duplicate warning when the crash database does not
    accept the problem type, and they are just being sent to whoopsie. Thanks
    Evan Dandrea. (LP: #989779)
+ * report.py: Correctly escape the file path passed to gdb.
 
 2.0.1 (2012-04-10)
 ------------------
@@ -62,7 +63,6 @@ Bug fixes:
  * problem_report.py, write_mime(): Fix regression from version 1.95: Add a
    value as attachment if it is bigger than 1000 bytes, not if it is bigger
    than 100. (LP: #977882)
- * report.py: Correctly escape the file path passed to gdb.
 
 Improvements:
  * packaging-apt-dpkg.py: Avoid constructing and updating the apt.Cache()
