@@ -24,6 +24,11 @@ import apport, apport.fileutils, apport.REThread
 from apport.crashdb import get_crashdb, NeedsCredentials
 from apport import unicode_gettext as _
 
+if sys.version[0] < '3':
+    from ConfigParser import ConfigParser
+else:
+    from configparser import ConfigParser
+
 symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
                                     '/usr/share/apport/symptoms')
 PF_KTHREAD = 0x200000
@@ -1122,7 +1127,7 @@ class UserInterface:
         return False
 
     def get_desktop_entry(self):
-        '''Return a matching xdg.DesktopEntry for the current report.
+        '''Return a .desktop info dictionary for the current report.
 
         Return None if report cannot be associated to a .desktop file.
         '''
@@ -1132,14 +1137,19 @@ class UserInterface:
             try:
                 desktop_file = apport.fileutils.find_package_desktopfile(self.cur_package)
             except ValueError:
-                desktop_file = None
-
-        if desktop_file:
-            try:
-                import xdg.DesktopEntry
-                return xdg.DesktopEntry.DesktopEntry(desktop_file)
-            except:
                 return None
+
+        if not desktop_file:
+            return None
+
+        cp = ConfigParser()
+        cp.read(desktop_file)
+        if not cp.has_section('Desktop Entry'):
+            return None
+        result = dict(cp.items('Desktop Entry'))
+        if 'name' not in result:
+            return None
+        return result
 
     def handle_duplicate(self):
         '''Check if current report matches a bug pattern.

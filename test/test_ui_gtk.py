@@ -549,8 +549,7 @@ Type=Application''')
         # LP: 937354
         self.app.report['ProblemType'] = 'Crash'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
-        self.app.get_desktop_entry.return_value.getIcon.return_value = 'nonexistent'
-        self.app.get_desktop_entry.return_value.getName.return_value = 'apport'
+        self.app.get_desktop_entry.return_value = {'name': 'apport', 'icon': 'nonexistent'}
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
 

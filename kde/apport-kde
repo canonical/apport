@@ -109,7 +109,7 @@ class ProgressDialog(Dialog):
 class ReportDialog(Dialog):
     '''Report dialog wrapper'''
 
-    def __init__(self, report, allowed_to_report, ui, desktop_file):
+    def __init__(self, report, allowed_to_report, ui, desktop_info):
         if 'DistroRelease' not in report:
             report.add_os_info()
         distro = report['DistroRelease']
@@ -185,11 +185,11 @@ class ReportDialog(Dialog):
                                    'software.'))
         else:
             # Regular crash.
-            if desktop_file:
-                icon = desktop_file.getIcon()
+            if desktop_info:
+                icon = desktop_info.get('icon')
                 self.heading.setText(_('The application %s has closed '
                                        'unexpectedly.') %
-                                       desktop_file.getName())
+                                       desktop_info['name'])
                 self.text.hide()
                 if 'ProcCmdline' in report:
                     self.closed_button.show()
@@ -316,9 +316,9 @@ class MainUserInterface(apport.ui.UserInterface):
 
 
     def ui_present_report_details(self, allowed_to_report=True):
-        desktop_file = self.get_desktop_entry()
+        desktop_info = self.get_desktop_entry()
         self.dialog = ReportDialog(self.report, allowed_to_report, self,
-                              desktop_file)
+                              desktop_info)
 
         response = self.dialog.exec_()
 

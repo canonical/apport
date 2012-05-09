@@ -24,6 +24,8 @@ Improvements:
  * Add test cases for apport-unpack.
  * apport-retrace: Add information about outdated packages to the
    "RetraceOutdatedPackages" field.
+ * ui.py: Drop python-xdg dependency, use ConfigParser to read the .desktop
+   files.
 
 Bug fixes:
  * apport-gtk: Work around GTK crash when trying to set pixmap on an already
