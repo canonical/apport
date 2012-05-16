@@ -12,10 +12,7 @@
 
 import urllib, tempfile, os.path, re, gzip, sys
 import email
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
+from io import BytesIO
 
 from launchpadlib.errors import HTTPError
 from launchpadlib.launchpad import Launchpad
@@ -282,7 +279,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 # just parse out the Apport block; e. g. LP #269539
                 description = description.split('\n\n', 1)[0]
 
-        report.load(StringIO(description))
+        report.load(BytesIO(description))
 
         if 'Date' not in report:
             # We had not submitted this field for a while, claiming it
