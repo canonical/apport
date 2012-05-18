@@ -4,7 +4,7 @@
 # should solely be used by upstream developers, distributors do not need to
 # worry about it.
 
-[ -z "`bzr status`" ] || {
+[ -z "`bzr status | grep -v shelve`" ] || {
     echo "Uncommitted changes, aborting" >&2
     exit 1
 }
