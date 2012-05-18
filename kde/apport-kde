@@ -353,8 +353,8 @@ class MainUserInterface(apport.ui.UserInterface):
                                      rect.height() / 2 - self.dialog.spinner.height() / 2,
                                      self.dialog.spinner.width(), self.dialog.spinner.height())
             self.dialog.movie.start()
-        else:
-            # show a progress dialog
+        elif self.crashdb.accepts(self.report):
+            # show a progress dialog if our DB accepts the crash
             self.progress = ProgressDialog(
                     _('Collecting Problem Information'),
                     _('Collecting problem information'),

@@ -280,12 +280,18 @@ Type=Application''')
     def test_1_crash_nodetails(self, *args):
         '''Crash report without showing details'''
 
+        self.visible_progress = None
+
         def cont(*args):
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
+                QTimer.singleShot(500, check_progress)
                 return
             # try again
             QTimer.singleShot(1000, cont)
+
+        def check_progress(*args):
+            self.visible_progress = (self.app.progress != None)
 
         QTimer.singleShot(1000, cont)
         self.app.run_crash(self.app.report_file)
@@ -295,6 +301,9 @@ Type=Application''')
         r = self.app.crashdb.download(0)
         self.assertEqual(r['ProblemType'], 'Crash')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
+
+        # should show a progress bar for info collection
+        self.assertEqual(self.visible_progress, True)
 
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
@@ -307,6 +316,8 @@ Type=Application''')
     @patch.object(MainUserInterface, 'open_url')
     def test_1_crash_details(self, *args):
         '''Crash report with showing details'''
+
+        self.visible_progress = None
 
         def show_details(*args):
             if self.app.dialog and self.app.dialog.show_details.isVisible():
@@ -326,9 +337,13 @@ Type=Application''')
 
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
+                QTimer.singleShot(500, check_progress)
                 return
             # try again
             QTimer.singleShot(200, cont)
+
+        def check_progress(*args):
+            self.visible_progress = (self.app.progress != None)
 
         QTimer.singleShot(200, show_details)
         self.app.run_crash(self.app.report_file)
@@ -339,6 +354,9 @@ Type=Application''')
         self.assertEqual(r['ProblemType'], 'Crash')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
 
+        # we already collected details, do not show the progress dialog again
+        self.assertEqual(self.visible_progress, False)
+
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
@@ -346,6 +364,42 @@ Type=Application''')
 
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
+
+    @patch.object(MainUserInterface, 'open_url')
+    def test_1_crash_noaccept(self, *args):
+        '''Crash report with non-accepting crash DB'''
+
+        self.visible_progress = None
+
+        def cont(*args):
+            if self.app.dialog and self.app.dialog.continue_button.isVisible():
+                self.app.dialog.continue_button.click()
+                QTimer.singleShot(500, check_progress)
+                return
+            # try again
+            QTimer.singleShot(1000, cont)
+
+        def check_progress(*args):
+            self.visible_progress = (self.app.progress != None)
+
+        QTimer.singleShot(1000, cont)
+        self.app.crashdb.options['problem_types'] = ['bug']
+        self.app.run_crash(self.app.report_file)
+
+        # we should not have reported the crash
+        self.assertEqual(self.app.crashdb.latest_id(), -1)
+        self.assertEqual(self.app.open_url.call_count, 0)
+
+        # no progress dialog for non-accepting DB
+        self.assertEqual(self.visible_progress, False)
+
+        # data was collected for whoopsie
+        r = self.app.report
+        self.assertEqual(r['ProblemType'], 'Crash')
+        self.assertEqual(r['ExecutablePath'], '/bin/bash')
+        self.assertTrue(r['Package'].startswith('bash '))
+        self.assertTrue('libc' in r['Dependencies'])
+        self.assertTrue('Stacktrace' in r)
 
     def test_bug_report_installed_package(self):
         '''Bug report for installed package'''

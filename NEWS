@@ -48,10 +48,10 @@ Bug fixes:
    accept the problem type, and they are just being sent to whoopsie. Thanks
    Evan Dandrea. (LP: #989779)
  * report.py: Correctly escape the file path passed to gdb.
- * apport-gtk: Do not show the information collection progress dialog if the
-   crash database does not accept this kind of report. In that case whoopsie
-   will upload it in the background and the dialog is not necessary.
-   (LP: #989698)
+ * apport-gtk, apport-kde: Do not show the information collection progress
+   dialog if the crash database does not accept this kind of report. In that
+   case whoopsie will upload it in the background and the dialog is not
+   necessary.  (LP: #989698)
 
 2.0.1 (2012-04-10)
 ------------------
