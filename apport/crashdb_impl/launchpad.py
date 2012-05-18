@@ -730,13 +730,24 @@ Please continue to report any other bugs you may find.' % master_id,
                 except HTTPError:
                     pass  # LP#336866 workaround
 
+            # white list of tags to copy from duplicates bugs to the master
+            tags_to_copy = ['bugpattern-needed', 'running-unity']
+            for series in ubuntu.series:
+                if series.status not in ['Active Development',
+                    'Current Stable Release', 'Supported']:
+                    continue
+                tags_to_copy.append(series.name)
             # copy tags over from the duplicate bug to the master bug
             dupe_tags = set(bug.tags)
-            # reload master tags as they have changed
+            # reload master tags as they may have changed
             master_tags = master.tags
             missing_tags = dupe_tags.difference(master_tags)
 
-            master.tags = master_tags + list(missing_tags)
+            for tag in missing_tags:
+                if tag in tags_to_copy:
+                    master_tags.append(tag)
+
+            master.tags = master_tags
             master.lp_save()
 
         else:
