@@ -378,10 +378,18 @@ Type=Application''')
     def test_crash_nodetails(self, *args):
         '''Crash report without showing details'''
 
+        self.visible_progress = None
+
         def cont(*args):
             if not self.app.w('continue_button').get_visible():
                 return True
             self.app.w('continue_button').clicked()
+            GLib.timeout_add(500, check_progress)
+            return False
+
+        def check_progress(*args):
+            self.visible_progress = self.app.w(
+                    'window_information_collection').get_property('visible')
             return False
 
         GLib.timeout_add_seconds(1, cont)
@@ -392,6 +400,9 @@ Type=Application''')
         r = self.app.crashdb.download(0)
         self.assertEqual(r['ProblemType'], 'Crash')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
+
+        # should show a progress bar for info collection
+        self.assertEqual(self.visible_progress, True)
 
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
@@ -404,6 +415,8 @@ Type=Application''')
     @patch.object(GTKUserInterface, 'open_url')
     def test_crash_details(self, *args):
         '''Crash report with showing details'''
+
+        self.visible_progress = None
 
         def show_details(*args):
             if not self.app.w('show_details').get_visible():
@@ -419,6 +432,12 @@ Type=Application''')
 
             self.assertTrue(self.app.w('continue_button').get_visible())
             self.app.w('continue_button').clicked()
+            GLib.timeout_add(500, check_progress)
+            return False
+
+        def check_progress(*args):
+            self.visible_progress = self.app.w(
+                    'window_information_collection').get_property('visible')
             return False
 
         GLib.timeout_add(200, show_details)
@@ -430,6 +449,9 @@ Type=Application''')
         self.assertEqual(r['ProblemType'], 'Crash')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
 
+        # we already collected details, do not show the progress dialog again
+        self.assertEqual(self.visible_progress, False)
+
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
@@ -437,6 +459,43 @@ Type=Application''')
 
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
+
+    @patch.object(GTKUserInterface, 'open_url')
+    def test_crash_noaccept(self, *args):
+        '''Crash report with non-accepting crash DB'''
+
+        self.visible_progress = None
+
+        def cont(*args):
+            if not self.app.w('continue_button').get_visible():
+                return True
+            self.app.w('continue_button').clicked()
+            GLib.timeout_add(500, check_progress)
+            return False
+
+        def check_progress(*args):
+            self.visible_progress = self.app.w(
+                    'window_information_collection').get_property('visible')
+            return False
+
+        GLib.timeout_add_seconds(1, cont)
+        self.app.crashdb.options['problem_types'] = ['bug']
+        self.app.run_crash(self.app.report_file)
+
+        # we should not have reported the crash
+        self.assertEqual(self.app.crashdb.latest_id(), -1)
+        self.assertEqual(self.app.open_url.call_count, 0)
+
+        # no progress dialog for non-accepting DB
+        self.assertEqual(self.visible_progress, False)
+
+        # data was collected for whoopsie
+        r = self.app.report
+        self.assertEqual(r['ProblemType'], 'Crash')
+        self.assertEqual(r['ExecutablePath'], '/bin/bash')
+        self.assertTrue(r['Package'].startswith('bash '))
+        self.assertTrue('libc' in r['Dependencies'])
+        self.assertTrue('Stacktrace' in r)
 
     @patch.object(GTKUserInterface, 'open_url')
     def test_kerneloops_nodetails(self, *args):

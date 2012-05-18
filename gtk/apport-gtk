@@ -368,8 +368,8 @@ class GTKUserInterface(apport.ui.UserInterface):
         if self.w('dialog_crash_new').get_property('visible'):
             self.spinner.show()
             self.spinner.start()
-        else:
-            # show a progress dialog
+        elif self.crashdb.accepts(self.report):
+            # show a progress dialog if our DB accepts the crash
             self.w('progressbar_information_collection').set_fraction(0)
             self.w('window_information_collection').show()
 
