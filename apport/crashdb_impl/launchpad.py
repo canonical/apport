@@ -830,6 +830,12 @@ in a dependent package.' % master,
             x.remove('need-duplicate-check')
             bug.tags = x
             bug.lp_save()
+            if 'Traceback' in report:
+                for task in bug.bug_tasks:
+                    if task.target.resource_type_link.endswith('#distribution'):
+                        if task.importance == 'Undecided':
+                            task.importance = 'Medium'
+                            task.lp_save()
         self._subscribe_triaging_team(bug, report)
 
     def known(self, report):
