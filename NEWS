@@ -1,6 +1,14 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.1.1 (UNRELEASED)
+------------------
+Improvements:
+ * launchpad.py: When closing a bug as a duplicate, copy some well-known tags
+   to the master bug. Thanks Brian Murray.
+ * launchpad.py: Set importance of Python crash reports to "Medium" by default,
+   similar to signal crashes. Thanks Brian Murray.
+
 2.1 (2012-05-18)
 ----------------
 Improvements:

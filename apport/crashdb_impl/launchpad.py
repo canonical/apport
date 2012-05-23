@@ -691,21 +691,25 @@ Please continue to report any other bugs you may find.' % master_id,
             if not bug.duplicate_of:
                 bug.duplicate_of = master
 
+            # cache tags of master bug report instead of performing multiple
+            # queries
+            master_tags = master.tags
+
             if len(master.duplicates) == 10:
                 if 'escalation_tag' in self.options and \
-                    self.options['escalation_tag'] not in master.tags and \
-                    self.options.get('escalated_tag', ' invalid ') not in master.tags:
-                        master.tags = master.tags + [self.options['escalation_tag']]  # LP#254901 workaround
+                    self.options['escalation_tag'] not in master_tags and \
+                    self.options.get('escalated_tag', ' invalid ') not in master_tags:
+                        master.tags = master_tags + [self.options['escalation_tag']]  # LP#254901 workaround
                         master.lp_save()
 
                 if 'escalation_subscription' in self.options and \
-                    self.options.get('escalated_tag', ' invalid ') not in master.tags:
+                    self.options.get('escalated_tag', ' invalid ') not in master_tags:
                     p = self.launchpad.people[self.options['escalation_subscription']]
                     master.subscribe(person=p)
 
             # requesting updated stack trace?
-            if report.has_useful_stacktrace() and ('apport-request-retrace' in master.tags
-                    or 'apport-failed-retrace' in master.tags):
+            if report.has_useful_stacktrace() and ('apport-request-retrace' in master_tags
+                    or 'apport-failed-retrace' in master_tags):
                 self.update(master_id, report, 'Updated stack trace from duplicate bug %i' % id,
                         key_filter=['Stacktrace', 'ThreadStacktrace',
                             'Package', 'Dependencies', 'ProcMaps', 'ProcCmdline'])
@@ -725,6 +729,26 @@ Please continue to report any other bugs you may find.' % master_id,
                     master.lp_save()
                 except HTTPError:
                     pass  # LP#336866 workaround
+
+            # white list of tags to copy from duplicates bugs to the master
+            tags_to_copy = ['bugpattern-needed', 'running-unity']
+            for series in ubuntu.series:
+                if series.status not in ['Active Development',
+                    'Current Stable Release', 'Supported']:
+                    continue
+                tags_to_copy.append(series.name)
+            # copy tags over from the duplicate bug to the master bug
+            dupe_tags = set(bug.tags)
+            # reload master tags as they may have changed
+            master_tags = master.tags
+            missing_tags = dupe_tags.difference(master_tags)
+
+            for tag in missing_tags:
+                if tag in tags_to_copy:
+                    master_tags.append(tag)
+
+            master.tags = master_tags
+            master.lp_save()
 
         else:
             if bug.duplicate_of:
@@ -806,6 +830,12 @@ in a dependent package.' % master,
             x.remove('need-duplicate-check')
             bug.tags = x
             bug.lp_save()
+            if 'Traceback' in report:
+                for task in bug.bug_tasks:
+                    if task.target.resource_type_link.endswith('#distribution'):
+                        if task.importance == 'Undecided':
+                            task.importance = 'Medium'
+                            task.lp_save()
         self._subscribe_triaging_team(bug, report)
 
     def known(self, report):
