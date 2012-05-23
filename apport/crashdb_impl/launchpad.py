@@ -64,6 +64,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
           a bug once it gets the 10th duplicate.
         - escalation_tag: This adds the given tag to a bug once it gets more
           than 10 duplicates.
+        - initial_subscriber: The Launchpad user which gets subscribed to newly
+          filed bugs (default: "apport"). It should be a bot user which the
+          crash-digger instance runs as, as this will get to see all bug
+          details immediately.
+        - triaging_team: The Launchpad user/team which gets subscribed after
+          updating a crash report bug by the retracer (default:
+          "ubuntu-crashes-universe")
         '''
         if os.getenv('APPORT_LAUNCHPAD_INSTANCE'):
             options['launchpad_instance'] = os.getenv(
@@ -168,7 +175,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if 'DistroRelease' in report:
             if a and ('VmCore' in report or 'CoreDump' in report):
                 hdr['Private'] = 'yes'
-                hdr['Subscribers'] = 'apport'
+                hdr['Subscribers'] = self.options.get('initial_subscriber', 'apport')
                 hdr['Tags'] += ' need-%s-retrace' % a
             elif 'Traceback' in report:
                 hdr['Private'] = 'yes'
@@ -903,7 +910,8 @@ in a dependent package.' % master,
             return  # only Ubuntu bugs are filed private
 
         #use a url hack here, it is faster
-        person = '%s~ubuntu-crashes-universe' % self.launchpad._root_uri
+        person = '%s~%s' % (self.launchpad._root_uri, 
+            self.options.get('triaging_team', 'ubuntu-crashes-universe'))
         bug.subscribe(person=person)
 
 #
