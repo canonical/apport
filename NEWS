@@ -8,6 +8,8 @@ Improvements:
    to the master bug. Thanks Brian Murray.
  * launchpad.py: Set importance of Python crash reports to "Medium" by default,
    similar to signal crashes. Thanks Brian Murray.
+ * hookutils.py: Add attach_default_grub() convenience function from the grub2
+   package hook so it can be used by other packages. Thanks Brian Murray.
 
 2.1 (2012-05-18)
 ----------------

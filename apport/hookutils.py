@@ -1,6 +1,6 @@
 '''Convenience functions for use in package hooks.'''
 
-# Copyright (C) 2008 - 2011 Canonical Ltd.
+# Copyright (C) 2008 - 2012 Canonical Ltd.
 # Authors:
 #   Matt Zimmerman <mdz@canonical.com>
 #   Brian Murray <brian@ubuntu.com>
@@ -862,3 +862,18 @@ def in_session_of_problem(report):
         return None
 
     return session_start_time <= report_time
+
+
+def attach_default_grub(report, key=None):
+    '''attach /etc/default/grub after filtering out password lines'''
+
+    path = '/etc/default/grub'
+    if not key:
+        key = path_to_key(path)
+
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            filtered = [l if not l.startswith('password')
+                        else '### PASSWORD LINE REMOVED ###'
+                        for l in f.readlines()]
+            report[key] = ''.join(filtered)
