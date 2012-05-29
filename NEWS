@@ -15,6 +15,12 @@ Improvements:
    "initial_subscriber" crashdb option, and the team which gets subscribed
    after retracing with "triaging_team". (LP: #980726)
 
+Bug fixes:
+ * report.py: Do not change the SourcePackage: field if the binary package is
+   not installed and does not exist. This fixes source package hooks to
+   actually work in some cases where source and binary package names overlap.
+   (part of LP: #993810)
+
 2.1 (2012-05-18)
 ----------------
 Improvements:

@@ -247,7 +247,8 @@ class Report(problem_report.ProblemReport):
             version = None
         self['Package'] = '%s %s%s' % (package, version or '(not installed)',
             self._customized_package_suffix(package))
-        self['SourcePackage'] = packaging.get_source(package)
+        if version or 'SourcePackage' not in self:
+            self['SourcePackage'] = packaging.get_source(package)
         if not version:
             return
 
