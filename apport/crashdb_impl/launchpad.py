@@ -910,7 +910,7 @@ in a dependent package.' % master,
             return  # only Ubuntu bugs are filed private
 
         #use a url hack here, it is faster
-        person = '%s~%s' % (self.launchpad._root_uri, 
+        person = '%s~%s' % (self.launchpad._root_uri,
             self.options.get('triaging_team', 'ubuntu-crashes-universe'))
         bug.subscribe(person=person)
 
