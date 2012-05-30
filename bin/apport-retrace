@@ -331,7 +331,7 @@ if options.core_file:
 if options.executable:
     report['ExecutablePath'] = options.executable
 if options.procmaps:
-    with open(options.procmaps, r) as f:
+    with open(options.procmaps, 'r') as f:
         report['ProcMaps'] = f.read()
 if options.rebuild_package_info and 'ExecutablePath' in report:
     report.add_package_info()
