@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, tempfile, os.path, urllib, re, pwd, grp, os
+import subprocess, tempfile, os.path, re, pwd, grp, os
 import fnmatch, glob, traceback, errno, sys
 
 import xml.dom, xml.dom.minidom
@@ -19,9 +19,10 @@ if sys.version > '3':
     _python2 = False
     from urllib.error import URLError
     from urllib.request import urlopen
+    (urlopen, URLError)  # pyflakes
 else:
     _python2 = True
-    from urllib import quote_plus, urlopen
+    from urllib import urlopen
     URLError = IOError
 
 import problem_report

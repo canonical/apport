@@ -1,4 +1,4 @@
-import unittest, time, traceback, sys
+import unittest
 
 import apport
 

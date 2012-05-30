@@ -20,7 +20,11 @@ warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 try:
     import cPickle as pickle
+    from urllib import urlopen
+    (pickle, urlopen)  # pyflakes
 except ImportError:
+    # python 3
+    from urllib.request import urlopen
     import pickle
 
 import apport
@@ -43,7 +47,6 @@ class __AptDpkgPackageInfo(PackageInfo):
     def __del__(self):
         try:
             if self._contents_dir:
-                import shutil
                 shutil.rmtree(self._contents_dir)
         except AttributeError:
             pass
@@ -454,7 +457,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         special in various ways currently so we can not use the apt
         method.
         '''
-        import urllib
         installed = []
         outdated = []
         kver = report['Uname'].split()[1]
@@ -471,7 +473,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         url = 'http://ddebs.ubuntu.com/pool/main/l/linux/%s' % deb
         out = open(os.path.join(target_dir, deb), 'w')
         # urlretrieve does not return 404 in the headers so we use urlopen
-        u = urllib.urlopen(url)
+        u = urlopen(url)
         if u.getcode() > 400:
             return ('', 'linux')
         while True:
@@ -755,10 +757,6 @@ class __AptDpkgPackageInfo(PackageInfo):
             assert lsb_release.returncode == 0
 
             url = '%s/dists/%s/Contents-%s.gz' % (self._get_mirror(), release_name, arch)
-            try:
-                from urllib.request import urlopen
-            except ImportError:
-                from urllib import urlopen
 
             src = urlopen(url)
             with open(map, 'wb') as f:

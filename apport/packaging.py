@@ -227,5 +227,3 @@ class PackageInfo:
                 continue
             except ValueError:
                 return p
-
-import apport.packaging_impl

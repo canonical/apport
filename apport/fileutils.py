@@ -13,6 +13,7 @@ import os, glob, subprocess, os.path, time
 
 try:
     from configparser import ConfigParser, NoOptionError, NoSectionError
+    (ConfigParser, NoOptionError, NoSectionError)  # pyflakes
 except ImportError:
     # Python 2
     from ConfigParser import ConfigParser, NoOptionError, NoSectionError

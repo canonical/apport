@@ -9,12 +9,13 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, os.path, sys, shutil, urllib
+import os, os.path, sys, shutil
 
 try:
     from exceptions import Exception
     from urllib import quote_plus, urlopen
     URLError = IOError
+    (quote_plus, urlopen)  # pyflakes
 except ImportError:
     # python 3
     from functools import cmp_to_key

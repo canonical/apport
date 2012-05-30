@@ -2,6 +2,9 @@ from apport.report import Report
 
 from apport.packaging_impl import impl as packaging
 
+Report  # pyflakes
+packaging  # pyflakes
+
 import sys
 
 # fix gettext to output proper unicode strings

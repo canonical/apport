@@ -4,6 +4,7 @@ import subprocess, errno, glob
 
 try:
     from cStringIO import StringIO
+    StringIO  # pyflakes
 except ImportError:
     from io import StringIO
 from io import BytesIO

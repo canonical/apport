@@ -13,7 +13,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, time, traceback, tempfile, glob, pwd
+import sys, os, os.path, subprocess, time, traceback, pwd
 import signal, inspect, grp, fcntl
 
 import apport, apport.fileutils

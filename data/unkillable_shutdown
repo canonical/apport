@@ -65,7 +65,7 @@ def orphaned_processes(blacklist):
             continue
 
         try:
-            exe = os.readlink(os.path.join('/proc', d, 'exe'))
+            os.readlink(os.path.join('/proc', d, 'exe'))
         except OSError as e:
             if e.errno == errno.ENOENT:
                 # kernel thread or similar, silently ignore

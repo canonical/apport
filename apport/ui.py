@@ -26,6 +26,7 @@ from apport import unicode_gettext as _
 
 if sys.version[0] < '3':
     from ConfigParser import ConfigParser
+    ConfigParser  # pyflakes
 else:
     from configparser import ConfigParser
 

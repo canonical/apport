@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, time, optparse, subprocess, sys, signal, zlib, errno, stat, shutil
+import os, time, optparse, subprocess, sys, zlib, errno, shutil
 
 import apport
 from apport.crashdb import get_crashdb

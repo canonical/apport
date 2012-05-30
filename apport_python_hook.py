@@ -60,6 +60,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
         try:
             from cStringIO import StringIO
+            StringIO  # pyflakes
         except ImportError:
             from io import StringIO
 

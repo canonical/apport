@@ -5,8 +5,6 @@ import apport.report
 import problem_report
 import apport.packaging
 
-from io import BytesIO
-
 
 class T(unittest.TestCase):
     def test_add_package_info(self):

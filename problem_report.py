@@ -20,6 +20,7 @@ from io import BytesIO
 
 if sys.version[0] < '3':
     from UserDict import IterableUserDict as UserDict
+    UserDict  # pyflakes
     _python2 = True
 else:
     from collections import UserDict

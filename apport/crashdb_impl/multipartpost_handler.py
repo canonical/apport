@@ -41,7 +41,7 @@ Further Example:
 import urllib
 import urllib2
 import mimetools, mimetypes
-import os, stat, sys
+import os, sys
 
 
 class Callable:

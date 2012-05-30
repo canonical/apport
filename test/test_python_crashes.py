@@ -10,7 +10,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, tempfile, subprocess, os, stat, sys, shutil, atexit
+import unittest, tempfile, subprocess, os, stat, shutil, atexit
 
 temp_report_dir = tempfile.mkdtemp()
 os.environ['APPORT_REPORT_DIR'] = temp_report_dir
