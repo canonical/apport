@@ -739,7 +739,7 @@ Please continue to report any other bugs you may find.' % master_id,
 
             # white list of tags to copy from duplicates bugs to the master
             tags_to_copy = ['bugpattern-needed', 'running-unity']
-            for series in ubuntu.series:
+            for series in self.lp_distro.series:
                 if series.status not in ['Active Development',
                     'Current Stable Release', 'Supported']:
                     continue
