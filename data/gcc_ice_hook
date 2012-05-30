@@ -15,7 +15,7 @@ import sys
 import apport, apport.fileutils
 
 # parse command line arguments
-if  len(sys.argv) != 3:
+if len(sys.argv) != 3:
     print('Usage: %s <executable name> <gcc -E output file>' % sys.argv[0])
     print('If "-" is specified as second argument, the preprocessed source is read from stdin.')
     sys.exit(1)

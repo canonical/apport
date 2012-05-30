@@ -427,7 +427,7 @@ Type=Application''')
 
         def cont(*args):
             # wait until data collection is done and tree filled
-            if  self.app.tree_model.get_iter_first() is None:
+            if self.app.tree_model.get_iter_first() is None:
                 return True
 
             self.assertTrue(self.app.w('continue_button').get_visible())
@@ -577,7 +577,7 @@ Type=Application''')
         self.app.report_file = None
 
         def cont(*args):
-            if  self.app.tree_model.get_iter_first() is None:
+            if self.app.tree_model.get_iter_first() is None:
                 return True
             self.app.w('continue_button').clicked()
             return False
@@ -627,7 +627,7 @@ Type=Application''')
 
         def hide_details(data):
             # wait until data collection is done and tree filled
-            if  self.app.tree_model.get_iter_first() is None:
+            if self.app.tree_model.get_iter_first() is None:
                 return True
 
             data['detail_size'] = self.app.w('dialog_crash_new').get_size()
@@ -638,7 +638,7 @@ Type=Application''')
 
         def details_hidden(data):
             # wait until data collection is done and tree filled
-            if  self.app.w('details_scrolledwindow').get_visible():
+            if self.app.w('details_scrolledwindow').get_visible():
                 return True
 
             data['hidden_size'] = self.app.w('dialog_crash_new').get_size()
