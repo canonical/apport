@@ -153,6 +153,13 @@ class ReportDialog(Dialog):
 
         self.cancel_button.hide()
         if not self.ui.report_file:
+            # This is a bug generated through `apport-bug $package`, or
+            # `apport-collect $id`.
+
+            # avoid collecting information again, in this mode we already have it 
+            if 'Uname' in report:
+                self.collect_called = True
+                self.ui.ui_update_view(self)
             self.heading.setText(_('Send problem report to the developers?'))
             self.text.hide()
             self.closed_button.hide()

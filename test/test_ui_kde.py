@@ -51,6 +51,12 @@ class T(unittest.TestCase):
         # use in-memory crashdb
         self.app.crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
 
+        # disable package hooks, as they might ask for sudo password and other
+        # interactive bits; allow tests to install their own hooks
+        self.hook_dir = tempfile.mkdtemp()
+        apport.report._hook_dir = self.hook_dir
+        apport.report._common_hook_dir = self.hook_dir
+
         # test report
         self.app.report_file = os.path.join(self.report_dir, 'bash.crash')
 
@@ -68,6 +74,7 @@ class T(unittest.TestCase):
             QCoreApplication.processEvents()
 
         shutil.rmtree(self.report_dir)
+        shutil.rmtree(self.hook_dir)
 
     def test_close_button(self):
         '''Clicking the close button on the window does not report the crash.'''
@@ -475,6 +482,57 @@ Type=Application''')
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
         self.assertTrue('DistroRelease' in r)
+
+        # No URL in this mode
+        self.assertEqual(self.app.open_url.call_count, 0)
+
+    @patch.object(MainUserInterface, 'open_url')
+    def test_1_update_report_different_binary_source(self, *args):
+        '''Updating an existing report on a source package which does not have a binary of the same name'''
+
+        self.app.report_file = None
+
+        def cont(*args):
+            if self.app.dialog and self.app.dialog.continue_button.isVisible():
+                self.app.dialog.continue_button.click()
+                return
+            # try again
+            QTimer.singleShot(200, cont)
+
+        kernel_pkg = apport.packaging.get_kernel_package()
+        kernel_src = apport.packaging.get_source(kernel_pkg)
+        self.assertNotEqual(kernel_pkg, kernel_src,
+                'this test assumes that the kernel binary package != kernel source package')
+        self.assertNotEqual(apport.packaging.get_version(kernel_pkg), '',
+                'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
+        # this test assumes that the kernel source package name is not an
+        # installed binary package
+        self.assertRaises(ValueError, apport.packaging.get_version, kernel_src)
+
+        # create source package hook, as otherwise there is nothing to collect
+        with open(os.path.join(self.hook_dir, 'source_%s.py' % kernel_src), 'w') as f:
+            f.write('def add_info(r, ui):\n r["MachineType"]="Laptop"\n')
+
+        # upload empty report
+        id = self.app.crashdb.upload({})
+        self.assertEqual(id, 0)
+
+        # run in update mode for that bug
+        self.app.options.update_report = 0
+        self.app.options.package = kernel_src
+
+        QTimer.singleShot(200, cont)
+        self.app.run_update_report()
+
+        # no new bug reported
+        self.assertEqual(self.app.crashdb.latest_id(), 0)
+
+        # bug was updated
+        r = self.app.crashdb.download(0)
+        self.assertTrue('ProcEnviron' in r)
+        self.assertTrue('DistroRelease' in r)
+        self.assertTrue('Uname' in r)
+        self.assertEqual(r['MachineType'], 'Laptop')
 
         # No URL in this mode
         self.assertEqual(self.app.open_url.call_count, 0)

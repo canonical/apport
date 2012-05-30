@@ -20,6 +20,9 @@ Bug fixes:
    not installed and does not exist. This fixes source package hooks to
    actually work in some cases where source and binary package names overlap.
    (part of LP: #993810)
+ * apport-gtk, apport-kde: Avoid collecting information twice in "bug update"
+   mode. This caused a crash in cases where the source package in a bug report
+   does not correspond to an installed binary package. (LP: #993810)
 
 2.1 (2012-05-18)
 ----------------
