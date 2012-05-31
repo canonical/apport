@@ -134,7 +134,7 @@ class T(unittest.TestCase):
         with open(reps[0], 'rb') as f:
             r.load(f)
 
-        self.assertEqual(r['Tags'], 'dist-upgrade, verybad')
+        self.assertEqual(r['Tags'], 'dist-upgrade verybad')
 
     def test_kernel_crashdump(self):
         '''kernel_crashdump.'''
