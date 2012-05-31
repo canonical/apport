@@ -36,6 +36,9 @@ optparser.add_option('-p', '--package',
 optparser.add_option('-l', '--log',
     help='Append given log file, or, if it is a directory, all files in it (can be specified multiple times)',
     action='append', type='string', dest='logs')
+optparser.add_option('-t', '--tags',
+    help='Add the following tags to the bug report (comma separated)',
+    action='append', type='string', dest='tags')
 options = optparser.parse_args()[0]
 
 if not options.package:
@@ -47,14 +50,15 @@ pr = apport.Report('Package')
 pr['Package'] = options.package
 pr['SourcePackage'] = apport.packaging.get_source(options.package)
 pr['ErrorMessage'] = (sys.stdin, False)
+
+if options.tags:
+    tags = options.tags
+    pr['Tags'] = ' '.join(tags)
+
 for l in (options.logs or []):
     if os.path.isfile(l):
         pr[mkattrname(l)] = (l,)
-        if 'dist-upgrade' in l:
-            pr['Tags'] = 'dist-upgrade'
     elif os.path.isdir(l):
-        if 'dist-upgrade' in l:
-            pr['Tags'] = 'dist-upgrade'
         for f in os.listdir(l):
             path = os.path.join(l, f)
             if os.path.isfile(path):
