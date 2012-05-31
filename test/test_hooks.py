@@ -119,8 +119,8 @@ class T(unittest.TestCase):
         self.assertEqual(r[log1key], 'Log 1\nbla')
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
 
-    def test_package_hook_log_tags(self):
-        '''package_hook with a log file including dist-upgrade gets tagged.'''
+    def test_package_hook_tags(self):
+        '''package_hook with can accept tags as an argument.'''
 
         ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'bash',
             '-t', 'dist-upgrade, verybad'], stdin=subprocess.PIPE)
