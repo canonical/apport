@@ -50,7 +50,11 @@ pr['ErrorMessage'] = (sys.stdin, False)
 for l in (options.logs or []):
     if os.path.isfile(l):
         pr[mkattrname(l)] = (l,)
+        if 'dist-upgrade' in l:
+            pr['Tags'] = 'dist-upgrade'
     elif os.path.isdir(l):
+        if 'dist-upgrade' in l:
+            pr['Tags'] = 'dist-upgrade'
         for f in os.listdir(l):
             path = os.path.join(l, f)
             if os.path.isfile(path):

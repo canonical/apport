@@ -119,6 +119,29 @@ class T(unittest.TestCase):
         self.assertEqual(r[log1key], 'Log 1\nbla')
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
 
+    def test_package_hook_log_tags(self):
+        '''package_hook with a log file including dist-upgrade gets tagged.'''
+
+        dist_upgrade_dir = os.path.join(self.workdir, 'dist-upgrade')
+        os.mkdir(dist_upgrade_dir)
+        with open(os.path.join(dist_upgrade_dir, 'metoo.log'), 'w') as f:
+            f.write('pick me!')
+
+        ph = subprocess.Popen(['%s/package_hook' % datadir, '-p', 'bash', '-l',
+            os.path.realpath(sys.argv[0]), '-l', dist_upgrade_dir],
+            stdin=subprocess.PIPE)
+        ph.communicate(b'something is wrong')
+        self.assertEqual(ph.returncode, 0, 'package_hook finished successfully')
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, 'package_hook created a report')
+
+        r = apport.Report()
+        with open(reps[0], 'rb') as f:
+            r.load(f)
+
+        self.assertTrue('dist-upgrade' in r['Tags'])
+
     def test_kernel_crashdump(self):
         '''kernel_crashdump.'''
 
