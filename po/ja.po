@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-11 17:16+0200\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: Nazo <lovesyao@gmail.com>\n"
+"PO-Revision-Date: 2012-06-04 03:49+0000\n"
+"Last-Translator: Shushi Kurose <md81bird@hitaki.net>\n"
 "Language-Team: Japanese <ja@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-05-24 10:29+0000\n"
-"X-Generator: Launchpad (build 15288)\n"
+"X-Launchpad-Export-Date: 2012-06-04 04:34+0000\n"
+"X-Generator: Launchpad (build 15353)\n"
 "Language: ja\n"
 
 #: ../apport/ui.py:92
@@ -159,10 +159,16 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"あなたはこの問題の報告者または登録者ではありません。新しいバグとしてコメントと添付ファイルを提出するより、他のバグと重複したバグとしてマークするほうがより"
+"簡単です。\n"
+"\n"
+"その後、\"apport-bug\"を利用して新たにバグ報告を行い、このバグの中で提出するものについてのコメントを行うことをお勧めします。\n"
+"\n"
+"本当に進めますか?"
 
 #: ../apport/ui.py:449 ../apport/ui.py:466
 msgid "No additional information collected."
-msgstr ""
+msgstr "収集する追加情報はありません。"
 
 #: ../apport/ui.py:516
 msgid "What kind of problem do you want to report?"
@@ -185,24 +191,25 @@ msgstr ""
 
 #: ../apport/ui.py:572 ../apport/ui.py:577
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop はウィンドウのプロセス ID を特定できませんでした"
 
 #: ../apport/ui.py:591
 msgid "%prog <report number>"
-msgstr ""
+msgstr "%prog <report number>"
 
 #: ../apport/ui.py:593
 msgid "Specify package name."
-msgstr ""
+msgstr "パッケージ名を指定"
 
 #: ../apport/ui.py:595 ../apport/ui.py:644
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
+msgstr "レポートに追加タグを追加します。複数回指定できます。"
 
 #: ../apport/ui.py:625
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:628
 msgid ""
@@ -210,14 +217,16 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"バグファイリングモードを開始します。実行には --package と追加の --pid を用いるか、あるいはただ --pid "
+"だけとするオプションが必要です。どちらも与えられていないときには、既知の現象のリストを表示します（暗黙の一つの引数が与えられた場合）。"
 
 #: ../apport/ui.py:630
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "問題レポートを埋めるには、ターゲットとなるウィンドウをクリックしてください。"
 
 #: ../apport/ui.py:632
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
+msgstr "バグ更新モードを開始します。オプション --package が使用できます。"
 
 #: ../apport/ui.py:634
 msgid ""
@@ -249,6 +258,7 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"クラッシュの報告を %s で保留中のプログラムのかわりに .apport または .crash ファイルで行う（ファイル名が引数のみで与えられた場合）。"
 
 #: ../apport/ui.py:642
 msgid ""
@@ -260,7 +270,7 @@ msgstr ""
 
 #: ../apport/ui.py:646
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "Apport のバージョン番号を表示します。"
 
 #: ../apport/ui.py:778
 msgid ""
@@ -452,7 +462,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:297
 msgid "&Done"
-msgstr ""
+msgstr "完了(&D)"
 
 #: ../bin/apport-cli.py:303
 msgid "none"
@@ -473,7 +483,7 @@ msgstr "ファイルへのパス（Enterでキャンセル）："
 
 #: ../bin/apport-cli.py:340
 msgid "File does not exist."
-msgstr ""
+msgstr "ファイルが存在しません。"
 
 #: ../bin/apport-cli.py:342
 msgid "This is a directory."
