@@ -6,6 +6,7 @@ detailled list of changes, please see ChangeLog.
 Improvements:
  * Clean up module imports.
  * test/run: Run pyflakes, if available.
+ * package_hook: Add --tags option. Thanks to Brian Murray.
 
 Bug fixes:
  * apport-retrace: Fix crash when using the --procmaps option.
