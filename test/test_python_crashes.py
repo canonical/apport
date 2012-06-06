@@ -182,7 +182,7 @@ import apport_python_hook
 apport_python_hook.install()
 
 def func(x):
-    raise Exception, 'This should happen.'
+    raise Exception('This should happen.')
 
 func(42)
 ''' % os.getenv('PYTHON', 'python')).encode('ascii'))
@@ -205,7 +205,7 @@ func(42)
             err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
                 'crashing test python program exits with failure code')
-            self.assertTrue('Exception: This should happen.' in err)
+            self.assertTrue('Exception: This should happen.' in err, err)
 
         finally:
             os.unlink(script)
