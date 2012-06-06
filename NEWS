@@ -9,6 +9,9 @@ Improvements:
  * package_hook: Add --tags option. Thanks to Brian Murray.
  * launchpad.py: Drop the external multipartpost_handler.py (which is not
    portable to Python 3) and replace it with using the standard email module.
+ * launchpad.py: Also work with Python 3. Deal gracefully with a missing
+   "launchpadlib" module; this is not yet available for Python 3, but not
+   required for client-side reporting.
 
 Bug fixes:
  * apport-retrace: Fix crash when using the --procmaps option.

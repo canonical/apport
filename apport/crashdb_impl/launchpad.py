@@ -10,12 +10,25 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import urllib, tempfile, os.path, re, gzip, sys
-import email
+import urllib, tempfile, os.path, re, gzip, sys, email, time
+
 from io import BytesIO
 
-from launchpadlib.errors import HTTPError
-from launchpadlib.launchpad import Launchpad
+if sys.version_info.major == 2:
+    from urllib2 import HTTPSHandler, Request, build_opener
+    from httplib import HTTPSConnection
+    from urllib import urlencode
+else:
+    from urllib.request import HTTPSHandler, Request, build_opener
+    from urllib.parse import urlencode
+    from http.client import HTTPSConnection
+
+try:
+    from launchpadlib.errors import HTTPError
+    from launchpadlib.launchpad import Launchpad
+except ImportError:
+    # if launchpadlib is not available, only client-side reporting will work
+    Launchpad = None
 
 import apport.crashdb
 import apport
@@ -104,6 +117,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         if self.__launchpad:
             return self.__launchpad
+
+        if Launchpad is None:
+            sys.stderr.write('ERROR: The launchpadlib Python module is not installed. This functionality is not available.\n')
+            sys.exit(1)
 
         if self.options.get('launchpad_instance'):
             launchpad_instance = self.options.get('launchpad_instance')
@@ -241,13 +258,13 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if not project:
             if 'SourcePackage' in report:
                 return 'https://bugs.%s/%s/+source/%s/+filebug/%s?%s' % (
-                    hostname, self.distro, report['SourcePackage'], handle, urllib.urlencode(args))
+                    hostname, self.distro, report['SourcePackage'], handle, urlencode(args))
             else:
                 return 'https://bugs.%s/%s/+filebug/%s?%s' % (
-                    hostname, self.distro, handle, urllib.urlencode(args))
+                    hostname, self.distro, handle, urlencode(args))
         else:
             return 'https://bugs.%s/%s/+filebug/%s?%s' % (
-                hostname, project, handle, urllib.urlencode(args))
+                hostname, project, handle, urlencode(args))
 
     def get_id_url(self, report, id):
         '''Return URL for a given report ID.
@@ -918,8 +935,6 @@ in a dependent package.' % master,
 # Launchpad storeblob API (should go into launchpadlib, see LP #315358)
 #
 
-import urllib2, time, httplib
-
 _https_upload_callback = None
 
 
@@ -927,7 +942,7 @@ _https_upload_callback = None
 # This progress code is based on KodakLoader by Jason Hildebrand
 # <jason@opensky.ca>. See http://www.opensky.ca/~jdhildeb/software/kodakloader/
 # for details.
-class HTTPSProgressConnection(httplib.HTTPSConnection):
+class HTTPSProgressConnection(HTTPSConnection):
     '''Implement a HTTPSConnection with an optional callback function for
     upload progress.'''
 
@@ -936,7 +951,7 @@ class HTTPSProgressConnection(httplib.HTTPSConnection):
 
         # if callback has not been set, call the old method
         if not _https_upload_callback:
-            httplib.HTTPSConnection.send(self, data)
+            HTTPSConnection.send(self, data)
             return
 
         sent = 0
@@ -945,7 +960,7 @@ class HTTPSProgressConnection(httplib.HTTPSConnection):
         while sent < total:
             _https_upload_callback(sent, total)
             t1 = time.time()
-            httplib.HTTPSConnection.send(self, data[sent:(sent + chunksize)])
+            HTTPSConnection.send(self, data[sent:(sent + chunksize)])
             sent += chunksize
             t2 = time.time()
 
@@ -957,7 +972,7 @@ class HTTPSProgressConnection(httplib.HTTPSConnection):
                 chunksize /= 2
 
 
-class HTTPSProgressHandler(urllib2.HTTPSHandler):
+class HTTPSProgressHandler(HTTPSHandler):
 
     def https_open(self, req):
         return self.do_open(HTTPSProgressConnection, req)
@@ -992,21 +1007,25 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
 
     form_blob = email.mime.base.MIMEBase('application', 'octet-stream')
     form_blob.add_header('Content-Disposition', 'form-data; name="field.blob"; filename="x"')
-    form_blob.set_payload(blob.read())
+    form_blob.set_payload(blob.read().decode('ascii'))
     data.attach(form_blob)
 
-    data_str = data.as_string()
+    data_flat = BytesIO()
+    if sys.version_info.major == 2:
+        gen = email.generator.Generator(data_flat, mangle_from_=False)
+    else:
+        gen = email.generator.BytesGenerator(data_flat, mangle_from_=False)
+    gen.flatten(data)
 
     # do the request; we need to explicitly set the content type here, as it
     # defaults to x-www-form-urlencoded
-    req = urllib2.Request(url, data_str)
+    req = Request(url, data_flat.getvalue())
     req.add_header('Content-Type', 'multipart/form-data; boundary=' + data.get_boundary())
-    opener = urllib2.build_opener(HTTPSProgressHandler)
+    opener = build_opener(HTTPSProgressHandler)
     result = opener.open(req)
-
     ticket = result.info().get('X-Launchpad-Blob-Token')
-    assert ticket
 
+    assert ticket
     return ticket
 
 #
@@ -1014,7 +1033,7 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
 #
 
 if __name__ == '__main__':
-    import unittest, urllib2, atexit, shutil, subprocess
+    import unittest, atexit, shutil, subprocess
 
     crashdb = None
     segv_report = None
