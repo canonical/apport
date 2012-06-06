@@ -167,10 +167,10 @@ class T(unittest.TestCase):
 
         # check correct handling of interpreted executables: python
         (fd, testscript) = tempfile.mkstemp()
-        os.write(fd, b'''#!/usr/bin/%s
+        os.write(fd, ('''#!/usr/bin/%s
 import sys
 sys.stdin.readline()
-''' % os.getenv('PYTHON', 'python'))
+''' % os.getenv('PYTHON', 'python')).encode('ascii'))
         os.close(fd)
         os.chmod(testscript, 0o755)
         p = subprocess.Popen([testscript], stdin=subprocess.PIPE,

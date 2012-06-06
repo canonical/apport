@@ -177,7 +177,7 @@ func(42)
         ifpath = os.path.expanduser(apport.report._ignore_file)
         orig_ignore_file = None
         try:
-            os.write(fd, b'''#!/usr/bin/env %s
+            os.write(fd, ('''#!/usr/bin/env %s
 import apport_python_hook
 apport_python_hook.install()
 
@@ -185,7 +185,7 @@ def func(x):
     raise Exception, 'This should happen.'
 
 func(42)
-''' % os.getenv('PYTHON', 'python'))
+''' % os.getenv('PYTHON', 'python')).encode('ascii'))
             os.close(fd)
             os.chmod(script, 0o755)
 
