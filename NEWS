@@ -7,6 +7,8 @@ Improvements:
  * Clean up module imports.
  * test/run: Run pyflakes, if available.
  * package_hook: Add --tags option. Thanks to Brian Murray.
+ * launchpad.py: Drop the external multipartpost_handler.py (which is not
+   portable to Python 3) and replace it with using the standard email module.
 
 Bug fixes:
  * apport-retrace: Fix crash when using the --procmaps option.

@@ -918,7 +918,7 @@ in a dependent package.' % master,
 # Launchpad storeblob API (should go into launchpadlib, see LP #315358)
 #
 
-import multipartpost_handler, urllib2, time, httplib
+import urllib2, time, httplib
 
 _https_upload_callback = None
 
@@ -978,15 +978,34 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
     instance for testing.
     '''
     ticket = None
+    url = 'https://%s/+storeblob' % hostname
 
     global _https_upload_callback
     _https_upload_callback = progress_callback
 
-    opener = urllib2.build_opener(HTTPSProgressHandler, multipartpost_handler.MultipartPostHandler)
-    url = 'https://%s/+storeblob' % hostname
-    result = opener.open(url,
-        {'FORM_SUBMIT': '1', 'field.blob': blob})
+    # build the form-data multipart/MIME request
+    data = email.mime.multipart.MIMEMultipart()
+
+    submit = email.mime.text.MIMEText('1')
+    submit.add_header('Content-Disposition', 'form-data; name="FORM_SUBMIT"')
+    data.attach(submit)
+
+    form_blob = email.mime.base.MIMEBase('application', 'octet-stream')
+    form_blob.add_header('Content-Disposition', 'form-data; name="field.blob"; filename="x"')
+    form_blob.set_payload(blob.read())
+    data.attach(form_blob)
+
+    data_str = data.as_string()
+
+    # do the request; we need to explicitly set the content type here, as it
+    # defaults to x-www-form-urlencoded
+    req = urllib2.Request(url, data_str)
+    req.add_header('Content-Type', 'multipart/form-data; boundary=' + data.get_boundary())
+    opener = urllib2.build_opener(HTTPSProgressHandler)
+    result = opener.open(req)
+
     ticket = result.info().get('X-Launchpad-Blob-Token')
+    assert ticket
 
     return ticket
 
