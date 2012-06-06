@@ -10,6 +10,9 @@ Improvements:
 
 Bug fixes:
  * apport-retrace: Fix crash when using the --procmaps option.
+ * setup.py: Update hashbang lines of installed scripts in data directory to
+   the python executable setup.py was run with, similar to what already happens
+   to scripts installed to ../bin/.
 
 2.1.1 (2012-05-30)
 ------------------

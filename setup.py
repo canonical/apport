@@ -51,6 +51,27 @@ class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
                 if f.endswith('.jar') or f.endswith('.class'):
                     os.unlink(os.path.join(root, f))
 
+class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
+    '''Fix hashbang lines in scripts in data dir.'''
+
+    def run(self):
+        DistUtilsExtra.auto.install_auto.run(self)
+        for (path, _, files) in os.walk(os.path.join(self.install_data, 'share', 'apport')):
+            for fname in files:
+                f = os.path.join(path, fname)
+                with open(f) as fd:
+                    try:
+                        lines = fd.readlines()
+                    except UnicodeDecodeError:
+                        # ignore data files like spinner.gif
+                        continue
+                if lines[0].startswith('#!') and 'python' in lines[0]:
+                    distutils.log.info('Updating hashbang of %s', f)
+                    lines[0] = '#!%s\n' % sys.executable
+                    with open(f, 'w') as fd:
+                        for l in lines:
+                            fd.write(l)
+
 #
 # main
 #
@@ -77,6 +98,7 @@ try:
     distutils.command.build.build.sub_commands.append(('build_java_subdir', None))
     optional_data_files.append(('share/java', ['java/apport.jar']))
     cmdclass['build_java_subdir'] = build_java_subdir
+    cmdclass['install'] = install_fix_hashbangs
     cmdclass['clean'] = clean_java_subdir
     print('Java support: Enabled')
 except (OSError, subprocess.CalledProcessError):
