@@ -31,7 +31,7 @@ else:
 
 if len(reports) > 0:
     for r in reports:
-        print r.split('.')[0].split('_')[-1]
+        print(r.split('.')[0].split('_')[-1])
     if apport.packaging.enabled():
         sys.exit(0)
     else:

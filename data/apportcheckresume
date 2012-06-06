@@ -87,7 +87,7 @@ def main(argv=None):
             report_file.close()
         return 0
     except:
-        print 'apportcheckresume failed'
+        print('apportcheckresume failed')
         raise
 
 if __name__ == '__main__':
