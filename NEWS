@@ -12,6 +12,7 @@ Improvements:
  * launchpad.py: Also work with Python 3. Deal gracefully with a missing
    "launchpadlib" module; this is not yet available for Python 3, but not
    required for client-side reporting.
+ * apport-kde: Port to work with Python 3.
 
 Bug fixes:
  * apport-retrace: Fix crash when using the --procmaps option.

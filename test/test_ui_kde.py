@@ -63,7 +63,7 @@ class T(unittest.TestCase):
         self.app.report = apport.Report()
         self.app.report['ExecutablePath'] = '/bin/bash'
         self.app.report['Signal'] = '11'
-        self.app.report['CoreDump'] = ''
+        self.app.report['CoreDump'] = b'\x01\x02'
         with open(self.app.report_file, 'wb') as f:
             self.app.report.write(f)
 
@@ -153,7 +153,7 @@ class T(unittest.TestCase):
         self.app.report['CrashCounter'] = '1'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         with tempfile.NamedTemporaryFile() as fp:
-            fp.write('''[Desktop Entry]
+            fp.write(b'''[Desktop Entry]
 Version=1.0
 Name=Apport
 Type=Application''')
@@ -194,7 +194,7 @@ Type=Application''')
         self.app.report['ProcCmdline'] = 'apport-bug apport'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         with tempfile.NamedTemporaryFile() as fp:
-            fp.write('''[Desktop Entry]
+            fp.write(b'''[Desktop Entry]
 Version=1.0
 Name=Apport
 Type=Application''')
@@ -545,11 +545,11 @@ Type=Application''')
 
 appName = 'apport-kde'
 catalog = 'apport'
-programName = ki18n('Apport KDE')
+programName = ki18n(b'Apport KDE')
 version = '1.0'
-description = ki18n('KDE 4 frontend tests for the apport')
+description = ki18n(b'KDE 4 frontend tests for the apport')
 license = KAboutData.License_GPL
-copyright = ki18n('2012 Canonical Ltd.')
+copyright = ki18n(b'2012 Canonical Ltd.')
 text = KLocalizedString()
 homePage = 'https://wiki.ubuntu.com/AutomatedProblemReports'
 bugEmail = 'kubuntu-devel@lists.ubuntu.com'

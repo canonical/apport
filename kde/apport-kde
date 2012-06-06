@@ -12,7 +12,6 @@
 # the full text of the license.
 
 import os.path
-import subprocess
 import sys
 import os
 
@@ -32,7 +31,7 @@ try:
                               KStandardGuiItem)
     import apport.ui
     from apport import unicode_gettext as _
-except ImportError, e:
+except ImportError as e:
     # this can happen while upgrading python packages
     apport.fatal('Could not import module, is a package upgrade in progress?  Error: %s', str(e))
 
@@ -337,7 +336,7 @@ class MainUserInterface(apport.ui.UserInterface):
             return_value['examine'] = True
             return return_value
 
-        text = self.dialog.continue_button.text().remove('&')
+        text = self.dialog.continue_button.text().replace('&', '')
         if response == 1 and text == _('Relaunch'):
             return_value['restart'] = True
         if self.dialog.send_error_report.isChecked():
@@ -482,11 +481,11 @@ if __name__ == '__main__':
 
     appName = 'apport-kde'
     catalog = 'apport'
-    programName = ki18n('Apport KDE')
+    programName = ki18n(b'Apport KDE')
     version = '1.0'
-    description = ki18n('KDE 4 frontend for the apport crash report system')
+    description = ki18n(b'KDE 4 frontend for the apport crash report system')
     license = KAboutData.License_GPL
-    copyright = ki18n('2009 Canonical Ltd.')
+    copyright = ki18n(b'2009 Canonical Ltd.')
     text = KLocalizedString()
     homePage = 'https://wiki.ubuntu.com/Apport'
     bugEmail = 'kubuntu-devel@lists.ubuntu.com'
@@ -494,8 +493,8 @@ if __name__ == '__main__':
     aboutData = KAboutData(appName, catalog, programName, version, description,
                            license, copyright, text, homePage, bugEmail)
 
-    aboutData.addAuthor(ki18n('Richard A. Johnson'), ki18n('Author'))
-    aboutData.addAuthor(ki18n('Michael Hofmann'), ki18n('Original Qt4 Author'))
+    aboutData.addAuthor(ki18n(b'Richard A. Johnson'), ki18n(b'Author'))
+    aboutData.addAuthor(ki18n(b'Michael Hofmann'), ki18n(b'Original Qt4 Author'))
 
     KCmdLineArgs.init([''], aboutData)
 
