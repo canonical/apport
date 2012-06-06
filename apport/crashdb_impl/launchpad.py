@@ -18,6 +18,7 @@ if sys.version_info.major == 2:
     from urllib2 import HTTPSHandler, Request, build_opener
     from httplib import HTTPSConnection
     from urllib import urlencode
+    (HTTPSHandler, Request, build_opener, HTTPSConnection, urlencode)  # pyflakes
 else:
     from urllib.request import HTTPSHandler, Request, build_opener
     from urllib.parse import urlencode
@@ -26,6 +27,7 @@ else:
 try:
     from launchpadlib.errors import HTTPError
     from launchpadlib.launchpad import Launchpad
+    Launchpad  # pyflakes
 except ImportError:
     # if launchpadlib is not available, only client-side reporting will work
     Launchpad = None

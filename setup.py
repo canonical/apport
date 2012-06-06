@@ -51,6 +51,7 @@ class clean_java_subdir(DistUtilsExtra.auto.clean_build_tree):
                 if f.endswith('.jar') or f.endswith('.class'):
                     os.unlink(os.path.join(root, f))
 
+
 class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
     '''Fix hashbang lines in scripts in data dir.'''
 

@@ -27,24 +27,20 @@ from apport import unicode_gettext as _
 if sys.version_info.major == 2:
     from ConfigParser import ConfigParser
     ConfigParser  # pyflakes
-
-    def excstr(exception):
-        '''Return exception message as unicode.'''
-
-        return str(exception).decode(locale.getpreferredencoding(), 'replace')
 else:
     from configparser import ConfigParser
 
-    def excstr(exception):
-        '''Return exception message as unicode.'''
 
-        return str(exception)
+def excstr(exception):
+    '''Return exception message as unicode.'''
+
+    if sys.version_info.major == 2:
+        return str(exception).decode(locale.getpreferredencoding(), 'replace')
+    return str(exception)
 
 symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
                                     '/usr/share/apport/symptoms')
 PF_KTHREAD = 0x200000
-
-
 
 
 def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
