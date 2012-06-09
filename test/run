@@ -35,7 +35,7 @@ else
 fi
 
 # pyflakes, if available
-if type pep8 >/dev/null 2>&1; then
+if type pyflakes >/dev/null 2>&1; then
     pyflakes `find -name '*.py'` `find bin data -type f -executable ! -name is-enabled ! -name apport-bug`
 else
     echo "Skipping pyflakes tests, pyflakes is not installed"
