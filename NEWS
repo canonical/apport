@@ -5,6 +5,8 @@ detailled list of changes, please see ChangeLog.
 ------------------
 Bug fixes:
  * apport-cli: Port to work with Python 3.
+ * setup.py: When fixing hashbang lines of installed scripts, only include the
+   major Python version.
 
 2.2 (2012-06-11)
 ----------------
