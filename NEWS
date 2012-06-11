@@ -10,6 +10,8 @@ Bug fixes:
  * hookutils.py, read_file, attach_file(), attach_file_if_exists(): Convert
    file contents to unicode if the contents is UTF-8, or the newly added
    force_unicode argument is True.
+ * hooktuils, command_output(): Convert output to unicode by default, and add
+   a "decode_utf8" parameter to disable this.
 
 2.2 (2012-06-11)
 ----------------

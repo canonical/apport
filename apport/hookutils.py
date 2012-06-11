@@ -177,7 +177,7 @@ def attach_dmesg(report):
     if not report.get('CurrentDmesg', '').strip():
         dmesg = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
         # if an initial message was truncated by the ring buffer, skip over it
-        first_newline = dmesg.find(b'\n[')
+        first_newline = dmesg.find('\n[')
         if first_newline != -1:
             dmesg = dmesg[first_newline + 1:]
         report['CurrentDmesg'] = dmesg
@@ -240,7 +240,7 @@ def attach_hardware(report):
     l = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', l)
     l = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', l)
     l = re.sub('by-label/(.*)', 'by-label/<hidden>', l)
-    report['UdevLog'] = l.encode('UTF-8')
+    report['UdevLog'] = l
 
     attach_dmi(report)
 
@@ -335,11 +335,15 @@ def command_available(command):
     return False
 
 
-def command_output(command, input=None, stderr=subprocess.STDOUT, keep_locale=False):
+def command_output(command, input=None, stderr=subprocess.STDOUT,
+        keep_locale=False, decode_utf8=True):
     '''Try to execute given command (array) and return its stdout.
 
     In case of failure, a textual error gets returned. This function forces
     LC_MESSAGES to C, to avoid translated output in bug reports.
+
+    If decode_utf8 is True (default), the output will be converted to a string,
+    otherwise left as bytes.
     '''
     env = os.environ.copy()
     if not keep_locale:
@@ -354,10 +358,14 @@ def command_output(command, input=None, stderr=subprocess.STDOUT, keep_locale=Fa
 
     out = sp.communicate(input)[0]
     if sp.returncode == 0:
-        return out.strip()
+        res = out.strip()
     else:
-        return b'Error: command ' + str(command).encode() + b' failed with exit code ' \
+        res = b'Error: command ' + str(command).encode() + b' failed with exit code ' \
                 + str(sp.returncode).encode() + b': ' + out
+
+    if decode_utf8:
+        res = res.decode('UTF-8', errors='replace')
+    return res
 
 
 def _root_command_prefix():
@@ -382,17 +390,20 @@ def _root_command_prefix():
     return prefix
 
 
-def root_command_output(command, input=None, stderr=subprocess.STDOUT):
+def root_command_output(command, input=None, stderr=subprocess.STDOUT, decode_utf8=True):
     '''Try to execute given command (array) as root and return its stdout.
 
     This passes the command through gksu, kdesudo, or sudo, depending on the
     running desktop environment.
 
     In case of failure, a textual error gets returned.
+
+    If decode_utf8 is True (default), the output will be converted to a string,
+    otherwise left as bytes.
     '''
     assert type(command) == type([]), 'command must be a list'
     return command_output(_root_command_prefix() + command, input, stderr,
-            keep_locale=True)
+            keep_locale=True, decode_utf8=decode_utf8)
 
 
 def attach_root_command_outputs(report, command_map):
@@ -512,13 +523,13 @@ def pci_devices(*pci_classes):
 
     result = ''
     output = command_output(['lspci', '-vvmmnn'])
-    for paragraph in output.split(b'\n\n'):
+    for paragraph in output.split('\n\n'):
         pci_class = None
         slot = None
 
-        for line in paragraph.split(b'\n'):
+        for line in paragraph.split('\n'):
             try:
-                key, value = line.split(b':', 1)
+                key, value = line.split(':', 1)
             except ValueError:
                 continue
             value = value.strip()
@@ -624,7 +635,7 @@ def attach_wifi(report):
     report['IwConfig'] = re.sub('ESSID:(.*)', 'ESSID:<hidden>',
         re.sub('Encryption key:(.*)', 'Encryption key: <hidden>',
         re.sub('Access Point: (.*)', 'Access Point: <hidden>',
-            command_output(['iwconfig']).decode('UTF-8', errors='ignore'))))
+            command_output(['iwconfig']))))
     report['RfKill'] = command_output(['rfkill', 'list'])
     report['CRDA'] = command_output(['iw', 'reg', 'get'])
 

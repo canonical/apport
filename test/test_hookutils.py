@@ -58,7 +58,7 @@ class T(unittest.TestCase):
         apport.hookutils.attach_dmesg(report)
         self.assertTrue(report['BootDmesg'].startswith('['))
         self.assertTrue(len(report['BootDmesg']) > 500)
-        self.assertTrue(report['CurrentDmesg'].startswith(b'['))
+        self.assertTrue(report['CurrentDmesg'].startswith('['))
 
     def test_dmesg_overwrite(self):
         '''attach_dmesg() does not overwrite already existing data'''
@@ -67,7 +67,7 @@ class T(unittest.TestCase):
 
         apport.hookutils.attach_dmesg(report)
         self.assertEqual(report['BootDmesg'][:50], 'existingboot')
-        self.assertTrue(report['CurrentDmesg'].startswith(b'['))
+        self.assertTrue(report['CurrentDmesg'].startswith('['))
 
         report = {'BootDmesg': 'existingboot', 'CurrentDmesg': 'existingcurrent'}
 
@@ -288,11 +288,11 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         os.environ['LC_MESSAGES'] = 'en_US.UTF-8'
         try:
             # default mode: disable translations
-            out = apport.hookutils.command_output(['env']).decode()
+            out = apport.hookutils.command_output(['env'])
             self.assertTrue('LC_MESSAGES=C' in out)
 
             # keep locale
-            out = apport.hookutils.command_output(['env'], keep_locale=True).decode()
+            out = apport.hookutils.command_output(['env'], keep_locale=True)
             self.assertFalse('LC_MESSAGES=C' in out, out)
         finally:
             if orig_lcm is not None:
@@ -306,7 +306,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
 
         # stdin
         out = apport.hookutils.command_output(['cat'], input=b'hello')
-        self.assertEqual(out, b'hello')
+        self.assertEqual(out, 'hello')
 
     @classmethod
     def _get_mem_usage(klass):
