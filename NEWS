@@ -7,6 +7,9 @@ Bug fixes:
  * apport-cli: Port to work with Python 3.
  * setup.py: When fixing hashbang lines of installed scripts, only include the
    major Python version.
+ * hookutils.py, read_file, attach_file(), attach_file_if_exists(): Convert
+   file contents to unicode if the contents is UTF-8, or the newly added
+   force_unicode argument is True.
 
 2.2 (2012-06-11)
 ----------------

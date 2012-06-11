@@ -78,9 +78,9 @@ class T(unittest.TestCase):
     def test_attach_file(self):
         '''attach_file()'''
 
-        with open('/etc/motd', 'rb') as f:
+        with open('/etc/motd') as f:
             motd_contents = f.read().strip()
-        with open('/etc/issue', 'rb') as f:
+        with open('/etc/issue') as f:
             issue_contents = f.read().strip()
 
         # default key name
@@ -113,10 +113,24 @@ class T(unittest.TestCase):
         self.assertEqual(report['.etc.motd'], motd_contents)
         self.assertEqual(report['.etc.motd_'], issue_contents)
 
+    def test_attach_file_binary(self):
+        '''attach_file() for binary files'''
+
+        myfile = os.path.join(self.workdir, 'data')
+        with open(myfile, 'wb') as f:
+            f.write(b'a\xc3\xb6b\xffx')
+
+        report = {}
+        apport.hookutils.attach_file(report, myfile, key='data')
+        self.assertEqual(report['data'], b'a\xc3\xb6b\xffx')
+
+        apport.hookutils.attach_file(report, myfile, key='data', force_unicode=True)
+        self.assertEqual(report['data'], b'a\xc3\xb6b\xef\xbf\xbdx'.decode('UTF-8'))
+
     def test_attach_file_if_exists(self):
         '''attach_file_if_exists()'''
 
-        with open('/etc/motd', 'rb') as f:
+        with open('/etc/motd') as f:
             motd_contents = f.read().strip()
 
         # default key name

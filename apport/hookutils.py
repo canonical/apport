@@ -54,7 +54,7 @@ def path_to_key(path):
     return path.translate(_path_key_trans)
 
 
-def attach_file_if_exists(report, path, key=None, overwrite=True):
+def attach_file_if_exists(report, path, key=None, overwrite=True, force_unicode=False):
     '''Attach file contents if file exists.
 
     If key is not specified, the key name will be derived from the file
@@ -62,28 +62,40 @@ def attach_file_if_exists(report, path, key=None, overwrite=True):
 
     If overwrite is True, an existing key will be updated. If it is False, a
     new key with '_' appended will be added instead.
+
+    If the contents is valid UTF-8, or force_unicode is True, then the value
+    will a string, otherwise it will be bytes.
     '''
     if not key:
         key = path_to_key(path)
 
     if os.path.exists(path):
-        attach_file(report, path, key, overwrite)
+        attach_file(report, path, key, overwrite, force_unicode)
 
 
-def read_file(path):
+def read_file(path, force_unicode=False):
     '''Return the contents of the specified path.
+
+    If the contents is valid UTF-8, or force_unicode is True, then the value
+    will a string, otherwise it will be bytes.
 
     Upon error, this will deliver a text representation of the error,
     instead of failing.
     '''
     try:
         with open(path, 'rb') as f:
-            return f.read().strip()
+            contents = f.read().strip()
+        if force_unicode:
+            return contents.decode('UTF-8', errors='replace')
+        try:
+            return contents.decode('UTF-8')
+        except UnicodeDecodeError:
+            return contents
     except Exception as e:
         return 'Error: ' + str(e)
 
 
-def attach_file(report, path, key=None, overwrite=True):
+def attach_file(report, path, key=None, overwrite=True, force_unicode=False):
     '''Attach a file to the report.
 
     If key is not specified, the key name will be derived from the file
@@ -91,6 +103,9 @@ def attach_file(report, path, key=None, overwrite=True):
 
     If overwrite is True, an existing key will be updated. If it is False, a
     new key with '_' appended will be added instead.
+
+    If the contents is valid UTF-8, or force_unicode is True, then the value
+    will a string, otherwise it will be bytes.
     '''
     if not key:
         key = path_to_key(path)
@@ -99,7 +114,7 @@ def attach_file(report, path, key=None, overwrite=True):
     if not overwrite:
         while key in report:
             key += '_'
-    report[key] = read_file(path)
+    report[key] = read_file(path, force_unicode=force_unicode)
 
 
 def attach_conffiles(report, package, conffiles=None, ui=None):
@@ -209,7 +224,7 @@ def attach_hardware(report):
     attach_file(report, '/proc/interrupts', 'ProcInterrupts')
     attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
     attach_file(report, '/proc/cmdline', 'ProcKernelCmdLine')
-    attach_file(report, '/var/log/udev', 'UdevLog')
+    attach_file(report, '/var/log/udev', 'UdevLog', force_unicode=True)
 
     if os.path.exists('/sys/bus/pci'):
         report['Lspci'] = command_output(['lspci', '-vvnn'])
@@ -218,7 +233,7 @@ def attach_hardware(report):
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
     # anonymize partition labels
-    l = report['UdevLog'].decode('UTF-8', errors='replace')
+    l = report['UdevLog']
     l = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', l)
     l = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', l)
     l = re.sub('by-label/(.*)', 'by-label/<hidden>', l)
