@@ -15,7 +15,7 @@
 find_program() {
     for p in /usr/local/bin /usr/bin /usr/local/share/apport /usr/share/apport; do
 	if [ -x $p/$1 ]; then
-	    RET=$p/$1
+	    RET="$p/$1"
 	    return
 	fi
     done
@@ -44,8 +44,8 @@ export APPORT_INVOKED_AS="$0"
 
 # check for X
 if [ -z "$DISPLAY" ]; then
-    if [ -x "$CLI" ] ; then
-        "$CLI" "$@"
+    if [ -n "$CLI" ] ; then
+        $CLI "$@"
     else
         echo "\$DISPLAY is not set. You need apport-cli to make this program work." >&2
         exit 1
@@ -53,22 +53,22 @@ if [ -z "$DISPLAY" ]; then
 
 # do we have a running Gnome/KDE session?
 elif pgrep -u `id -u` -x gnome-session >/dev/null && \
-    [ -x "$GTK" ]; then
-    "$GTK" "$@"
+    [ -n "$GTK" ]; then
+    $GTK "$@"
 elif pgrep -u `id -u` -x ksmserver >/dev/null && \
-    [ -x "$KDE" ]; then
-    "$KDE" "$@"
+    [ -n "$KDE" ]; then
+    $KDE "$@"
 
 # fall back to calling whichever is available
-elif [ -x "$GTK" ]; then
-    "$GTK" "$@"
-elif [ -x "$KDE" ]; then
-    "$KDE" "$@"
-elif [ -x "$CLI" ]; then
+elif [ -n "$GTK" ]; then
+    $GTK "$@"
+elif [ -n "$KDE" ]; then
+    $KDE "$@"
+elif [ -n "$CLI" ]; then
     if [ -z "$TERM" ] && [ -x "$XTERM" ]; then
          "$XTERM" -e "$CLI" "$@"
     else
-        "$CLI" "$@"
+        $CLI "$@"
     fi
 
 else
