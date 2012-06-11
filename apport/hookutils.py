@@ -741,7 +741,7 @@ def shared_libraries(path):
 
     libs = set()
 
-    for line in command_output(['ldd', path]).decode().split('\n'):
+    for line in command_output(['ldd', path]).split('\n'):
         try:
             lib, rest = line.split('=>', 1)
         except ValueError:
