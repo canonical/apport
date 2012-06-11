@@ -12,6 +12,7 @@ Bug fixes:
    force_unicode argument is True.
  * hooktuils, command_output(): Convert output to unicode by default, and add
    a "decode_utf8" parameter to disable this.
+ * hookutils.py, recent_logfile(): Fix fd leak.
 
 2.2 (2012-06-11)
 ----------------

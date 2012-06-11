@@ -471,6 +471,7 @@ def recent_logfile(logfile, pattern, maxlines=10000):
                 line = line.decode('UTF-8', errors='replace')
                 if pattern.search(line):
                     lines += line
+        tail.stdout.close()
         tail.wait()
     except IOError:
         return ''
