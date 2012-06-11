@@ -12,7 +12,7 @@ def dump_acpi_table(filename, tablename, out):
     hex_str = ''
     try:
         byte = f.read(1)
-        while byte != '':
+        while byte != b'':
             val = ord(byte)
             if (n & 15) == 0:
                 hex_str = '  %4.4x: ' % n
@@ -23,7 +23,7 @@ def dump_acpi_table(filename, tablename, out):
             if (val < 32) or (val > 126):
                 ascii_str = ascii_str + '.'
             else:
-                ascii_str = ascii_str + byte
+                ascii_str = ascii_str + chr(val)
             n = n + 1
             if (n & 15) == 0:
                 out.write('%s %s\n' % (hex_str, ascii_str))

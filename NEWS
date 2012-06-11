@@ -15,6 +15,7 @@ Bug fixes:
  * hookutils.py, recent_logfile(): Fix fd leak.
  * data/apport: Do not assume that sys.stdout and sys.stderr always have a
    name; they can be None in Python 3.
+ * data/dump_acpi_tables.py: Fix for Python 3.
 
 2.2 (2012-06-11)
 ----------------
