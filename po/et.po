@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 07:41+0000\n"
 "Last-Translator: Jalakas <Unknown>\n"
 "Language-Team: Estonian <et@li.org>\n"
-"Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-05-24 10:29+0000\n"
-"X-Generator: Launchpad (build 15288)\n"
+"X-Launchpad-Export-Date: 2012-06-12 04:32+0000\n"
+"X-Generator: Launchpad (build 15389)\n"
+"Language: et\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -163,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -211,7 +211,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:637
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:640
@@ -411,7 +412,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:61
@@ -447,7 +449,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:73
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:78
@@ -791,6 +794,7 @@ msgstr ""
 msgid "Apport crash file"
 msgstr ""
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Raporti lõpetamine (soovitatud; %s)"
 
@@ -806,13 +810,14 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "Kui sa ei tegelenud millegi konfidentsiaalsega (salasõnade või muu "
-#~ "isikliku informatsiooni sisestamine), siis võiksid sa rakenduse "
-#~ "parandamisele probleemist teatamisega kaasa aidata."
+#~ "Kui sa ei tegelenud millegi konfidentsiaalsega (salasõnade või muu isikliku "
+#~ "informatsiooni sisestamine), siis võiksid sa rakenduse parandamisele "
+#~ "probleemist teatamisega kaasa aidata."
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Vabandust, programm %s sulgus ootamatult"
 
@@ -825,28 +830,33 @@ msgstr ""
 #~ msgid "Generic error"
 #~ msgstr "Üldine viga"
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s sulgus ettearvamatult, %s %s"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Saada täisraport (soovitatud; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Lühendatud raport (aeglane võrguühendus; %s)"
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Vabandame, %s sulgus ettearvamatult."
 
 #~ msgid "Restart &Program"
 #~ msgstr "Taaskäivita &programm"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Saada &vähendatud raport (aeglane internetiühendus; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Vearaportist eemaldatakse mõningad mahukamad osad. Need osad on tarkvara "
 #~ "arendajatele vea leidmiseks väga kasulikud, kuid nende üleslaadimine võib "
@@ -867,6 +877,7 @@ msgstr ""
 #~ msgid "&Ignore future crashes of this program version"
 #~ msgstr "&Ignoreeri programmi selle versiooni krahhe edaspidi"
 
+#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Vabandust, programm \"%s\" sulgus ettearvamatult."
 
@@ -885,12 +896,14 @@ msgstr ""
 #~ msgstr ""
 #~ "Sa võid aidata arendajatel viga kõrvaldada, kui teatad neile sellest."
 
+#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Vabandust, paketi \"%s\" paigaldamine või uuendamine nurjus."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Taaskäivita _programm"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -898,24 +911,25 @@ msgstr ""
 #~ "<span weight=\"bold\" size=\"larger\">Vabandust, paketi \"%s\" uuendamine "
 #~ "või paigaldamine ebaõnnestus.</span>"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "See ei ole ehtne %s paigalduspakett"
 
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "Teie süsteemis tekkis tõsine kerneli probleem."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Paketi \"%s\" paigaldamine või uuendamine nurjus."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Kui te ei tegelenud millegi isiklikuga (paroolide või muude isiklike "
-#~ "andmete sisestamine), võid aidata rakenduse arendamisele kaasa, saates "
-#~ "vea kohta raporti."
+#~ "Kui te ei tegelenud millegi isiklikuga (paroolide või muude isiklike andmete "
+#~ "sisestamine), võid aidata rakenduse arendamisele kaasa, saates vea kohta "
+#~ "raporti."
 
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Saada need andmed arendajatele?"
@@ -930,5 +944,5 @@ msgstr ""
 #~ "After the problem report has been sent, please fill out the form in the "
 #~ "automatically opened web browser."
 #~ msgstr ""
-#~ "Pärast vearaporti saatmist olege hea ja täitke vorm, mis avaneb "
-#~ "automaatselt veebibrauseris."
+#~ "Pärast vearaporti saatmist olege hea ja täitke vorm, mis avaneb automaatselt "
+#~ "veebibrauseris."

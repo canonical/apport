@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-03-22 13:07+0000\n"
 "Last-Translator: Milo Casagrande <milo.casagrande@gmail.com>\n"
 "Language-Team: Italian <it@li.org>\n"
-"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-05-24 10:29+0000\n"
-"X-Generator: Launchpad (build 15288)\n"
+"X-Launchpad-Export-Date: 2012-06-12 04:33+0000\n"
+"X-Generator: Launchpad (build 15389)\n"
+"Language: it\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -173,8 +173,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -232,10 +232,11 @@ msgstr ""
 "Aggiunge un'etichetta alla segnalazione, può essere specificata più volte"
 
 #: ../apport/ui.py:637
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [opzioni] [anomalia|pid|pacchetto|percorso programma|file .apport/."
-"crash]"
+"%prog [opzioni] [anomalia|pid|pacchetto|percorso programma|file "
+".apport/.crash]"
 
 #: ../apport/ui.py:640
 msgid ""
@@ -243,9 +244,9 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"Avvia in modalità segnalazione bug. Richiede --package e opzionalmente --"
-"pid  oppure solo --pid. Se non è indicato alcuno dei due, sarà visualizzato "
-"un elenco di anomalie (implicito se è indicato un singolo argomento)."
+"Avvia in modalità segnalazione bug. Richiede --package e opzionalmente --pid "
+" oppure solo --pid. Se non è indicato alcuno dei due, sarà visualizzato un "
+"elenco di anomalie (implicito se è indicato un singolo argomento)."
 
 #: ../apport/ui.py:642
 msgid "Click a window as a target for filing a problem report."
@@ -470,13 +471,14 @@ msgstr ""
 "Crea una sandbox temporanea e vi scarica/installa i pacchetti necessari e i "
 "simboli di debug. Senza questa opzione si presume che i pacchetti necessari "
 "e i simboli di debug siano già installati nel sistema. L'argomento punta "
-"alla directory base del sistema di pacchetti: se viene specificato \"system"
-"\", vengono usati i file di configurazione di sistema, ma sarà possibile "
-"eseguire il retrace dei crash avvenuti all'interno della release attualmente "
-"in esecuzione."
+"alla directory base del sistema di pacchetti: se viene specificato "
+"\"system\", vengono usati i file di configurazione di sistema, ma sarà "
+"possibile eseguire il retrace dei crash avvenuti all'interno della release "
+"attualmente in esecuzione."
 
 #: ../bin/apport-retrace.py:59
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Segnala avanzamento di scaricamento/installazione durante l'installazione di "
 "pacchetti nella sandbox"
@@ -522,7 +524,8 @@ msgstr ""
 "conferma prima di inviarli al database dei crash."
 
 #: ../bin/apport-retrace.py:73
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Percorso al duplicato del database sqlite (predefinito: nessun controllo sul "
 "duplicato)"
@@ -890,9 +893,11 @@ msgstr "File crash di Apport"
 #~ "È possibile aiutare gli sviluppatori a correggere il problema segnalando "
 #~ "quanto è accaduto."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Installazione o aggiornamento del pacchetto \"%s\" non riuscita."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Segnalazione completa (raccomandato, %s)"
 
@@ -909,11 +914,11 @@ msgstr "File crash di Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "Se non era in corso alcuna operazione confidenziale (inserimento di "
-#~ "password o altre informazioni private), è possibile aiutare a migliorare "
+#~ "Se non era in corso alcuna operazione confidenziale (inserimento di password "
+#~ "o altre informazioni private), è possibile aiutare a migliorare "
 #~ "l'applicazione segnalando il problema."
 
 #~ msgid "Application problem"
@@ -924,35 +929,37 @@ msgstr "File crash di Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Se non era in corso alcuna operazione confidenziale (inserimento di "
-#~ "password o\n"
-#~ "altre informazioni private), è possibile aiutare a migliorare "
-#~ "l'applicazione segnalando\n"
+#~ "Se non era in corso alcuna operazione confidenziale (inserimento di password "
+#~ "o\n"
+#~ "altre informazioni private), è possibile aiutare a migliorare l'applicazione "
+#~ "segnalando\n"
 #~ "il problema."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Riavvia _programma"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "Invia &segnalazione completa (raccomandato; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Segnalazione ridotta (per connessioni a Internet lente; %s)"
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "_Ignora i futuri crash di questa versione del programma"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Invia segnalazione &ridotta (per connessioni a Internet lente; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Questa operazione rimuoverà  alcuni elementi di grandi dimensioni dalla "
 #~ "segnalazione. Tali elementi sono di grande aiuto agli sviluppatori per "
@@ -974,6 +981,7 @@ msgstr "File crash di Apport"
 #~ "Segnalando questo problema, è possibile aiutare gli sviluppatori a "
 #~ "correggere il pacchetto."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Questo non è un pacchetto %s genuino"
 
@@ -986,9 +994,11 @@ msgstr "File crash di Apport"
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "Il sistema ha riscontrato un grave problema al kernel."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s si è chiuso inaspettatamente il giorno %s alle %s."
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"

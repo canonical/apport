@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Артём Попов <artfwo@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
-"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-05-24 10:29+0000\n"
-"X-Generator: Launchpad (build 15288)\n"
+"X-Launchpad-Export-Date: 2012-06-12 04:33+0000\n"
+"X-Generator: Launchpad (build 15389)\n"
+"Language: ru\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -163,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -209,7 +209,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:637
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [параметры] [признак|pid|пакет|путь до программы|.apport/.crash файл]"
 
@@ -376,7 +377,8 @@ msgstr ""
 
 #: ../apport/ui.py:1179
 msgid "This problem was already reported to developers. Thank you!"
-msgstr "Сообщение о неисправности отправлено разработчикам. Спасибо за помощь!"
+msgstr ""
+"Сообщение о неисправности отправлено разработчикам. Спасибо за помощь!"
 
 #: ../bin/apport-retrace.py:39
 msgid "%prog [options] <apport problem report | crash ID>"
@@ -432,7 +434,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:61
@@ -474,7 +477,8 @@ msgstr ""
 "данных сбоев."
 
 #: ../bin/apport-retrace.py:73
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Путь к дублирующей базе данных sqlite (по умолчанию: без проверки дубликатов)"
 
@@ -829,9 +833,11 @@ msgstr "Извините, %s было непредвиденно закрыто.
 msgid "Apport crash file"
 msgstr "Файл отчета Apport"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Не удалось установить или обновить пакет «%s»."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Полный отчёт (рекомендуется; %s)"
 
@@ -848,8 +854,8 @@ msgstr "Файл отчета Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Если вы не вводили секретную информацию (пароли или личные данные), вы "
 #~ "можете помочь нам улучшить программу, отправив отчёт о неполадке."
@@ -862,19 +868,20 @@ msgstr "Файл отчета Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Если вы не вводили секретную информацию (пароли или личные данные),\n"
 #~ "вы можете помочь нам улучшить программу, отправив отчёт о неполадке."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s неожиданно закрылась %s в %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Перезапустить _программу"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -882,9 +889,11 @@ msgstr "Файл отчета Apport"
 #~ "<span weight=\"bold\" size=\"larger\">Извините, не удалось установить или "
 #~ "обновить пакет «%s».</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Послать полный отчёт (рекомендуется; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Краткая версия отчёта (при медленном соединении с Интернетом; %s)"
 
@@ -892,13 +901,13 @@ msgstr "Файл отчета Apport"
 #~ msgstr "_Игнорировать будущие сбои в этой версии программы"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Некоторые большие части вашего сообщения будут удалены. Они очень полезны "
-#~ "разработчикам при устранении неполадки, но могут долго отправляться, если "
-#~ "у вас медленное соединение с Интернетом."
+#~ "разработчикам при устранении неполадки, но могут долго отправляться, если у "
+#~ "вас медленное соединение с Интернетом."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Сообщить о проблеме..."
@@ -914,6 +923,7 @@ msgstr "Файл отчета Apport"
 #~ msgstr ""
 #~ "Вы можете помочь разработчикам, отправив отчёт о выявленной неполадке."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Это не оригинальный пакет %s"
 
@@ -928,9 +938,9 @@ msgstr "Файл отчета Apport"
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Вы можете помочь разработчикам исправить эту проблему, отправив о ней "
-#~ "отчёт."
+#~ "Вы можете помочь разработчикам исправить эту проблему, отправив о ней отчёт."
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr ""
 #~ "Послать &сокращенную версию отчета (медленное соединение с Интернетом; %s)"
