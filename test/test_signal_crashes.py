@@ -279,7 +279,7 @@ class T(unittest.TestCase):
         self.assertEqual(apport.fileutils.get_all_reports(), [])
         resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
         self.do_crash(expect_corefile=False)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
         apport.fileutils.delete_report(self.test_report)
         resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
         self.do_crash(expect_corefile=True)

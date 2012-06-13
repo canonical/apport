@@ -131,20 +131,12 @@ def write_user_coredump(pid, cwd, limit):
 
     # three cases:
     # limit == 0: do not write anything
-    # limit == None: unlimited or large enough, write out everything
+    # limit < 0: unlimited, write out everything
     # limit nonzero: crashed process' core size ulimit in bytes
 
-    if limit == '0':
+    if limit == 0:
         return
-    if limit:
-        limit = int(limit)
-    else:
-        assert limit is None
-
-    # limit -1 means 'unlimited'
-    if limit < 0:
-        limit = None
-    else:
+    if limit > 0:
         # ulimit specifies kB
         limit *= 1024
 
@@ -169,7 +161,7 @@ def write_user_coredump(pid, cwd, limit):
         if size == 0:
             break
         written += size
-        if limit and written > limit:
+        if limit > 0 and written > limit:
             error_log('aborting core dump writing, size exceeds current limit %i' % limit)
             os.close(core_file)
             os.unlink(core_path)
@@ -280,7 +272,18 @@ try:
     if signum == str(signal.SIGQUIT):
         sys.exit(0)
 
-    error_log('called for pid %s, signal %s' % (pid, signum))
+    error_log('called for pid %s, signal %s, core limit %s' % (pid, signum, core_ulimit))
+
+    try:
+        core_ulimit = int(core_ulimit)
+    except ValueError:
+        error_log('core limit is invalid, disabling core files')
+        core_ulimit = 0
+    # clamp core_ulimit to a sensible size, for -1 the kernel reports something
+    # absurdly big
+    if core_ulimit > 9223372036854775807:
+        error_log('ignoring implausibly big core limit, treating as unlimited')
+        core_ulimit = -1
 
     try:
         pidstat = os.stat('/proc/' + pid)
@@ -393,7 +396,7 @@ try:
     # Now that we've written it, it's no longer on stdin, so we need
     # to change the CoreDump info if we want it in the crash report.
     if coredump:
-        info['CoreDump'] = (open(coredump), True, usable_ram() * 3 / 4)
+        info['CoreDump'] = (open(coredump, 'rb'), True, usable_ram() * 3 / 4)
 
     info.add_user_info()
     info.add_os_info()
