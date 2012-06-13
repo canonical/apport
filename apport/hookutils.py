@@ -496,8 +496,9 @@ def xsession_errors(pattern=None):
         pattern = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)|([^ ]+\[\d+\]: ([A-Z]+):)|([^ ]-[A-Z]+ \*\*:)|(received an X Window System error)|(^The error was \')|(^  \(Details: serial \d+ error_code)')
 
     lines = ''
-    with open(path) as f:
+    with open(path, 'rb') as f:
         for line in f:
+            line = line.decode('UTF-8', errors='replace')
             if pattern.search(line):
                 lines += line
     return lines

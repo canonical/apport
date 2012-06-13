@@ -212,7 +212,7 @@ class T(unittest.TestCase):
     def test_xsession_errors(self):
         '''xsession_errors()'''
 
-        with open(os.path.join(self.workdir, '.xsession-errors'), 'w') as f:
+        with open(os.path.join(self.workdir, '.xsession-errors'), 'w', encoding='UTF-8') as f:
             f.write('''Loading profile from /etc/profile
 gnome-session[1948]: WARNING: standard glib warning
 EggSMClient-CRITICAL **: egg_sm_client_set_mode: standard glib assertion
