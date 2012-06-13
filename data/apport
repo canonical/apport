@@ -13,7 +13,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, time, traceback, pwd
+import sys, os, os.path, subprocess, time, traceback, pwd, io
 import signal, inspect, grp, fcntl
 
 import apport, apport.fileutils
@@ -88,6 +88,10 @@ def init_error_log():
         os.dup2(f, 1)
         os.dup2(f, 2)
         os.close(f)
+        sys.stderr = os.fdopen(2, 'wb')
+        if sys.version_info.major >= 3:
+            sys.stderr = io.TextIOWrapper(sys.stderr)
+        sys.stdout = sys.stderr
 
 
 def error_log(msg):
@@ -294,7 +298,7 @@ try:
 
     info = apport.Report('Crash')
     info['Signal'] = signum
-    if sys.version[0] < '3':
+    if sys.version_info.major < 3:
         info['CoreDump'] = (sys.stdin, True, usable_ram() * 3 / 4, True)
     else:
         # read binary data from stdio
