@@ -154,7 +154,7 @@ def write_user_coredump(pid, cwd, limit):
     written = 0
 
     # Priming read
-    block = os.read(sys.stdin.fileno(), 1048576)
+    block = os.read(0, 1048576)
 
     while True:
         size = len(block)
@@ -171,7 +171,7 @@ def write_user_coredump(pid, cwd, limit):
             os.close(core_file)
             os.unlink(core_path)
             return
-        block = os.read(sys.stdin.fileno(), 1048576)
+        block = os.read(0, 1048576)
 
     os.close(core_file)
     return core_path

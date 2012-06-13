@@ -15,6 +15,8 @@ Bug fixes:
  * apport-gtk: Fix crash when closing the crash dialog while the information is
    being collected.
  * hookutils.py, xsession_errors(): Fix crash when running under a non-UTF8 locale.
+ * data/apport: Do not use sys.stdin.fileno(), it is invalid when being called
+   from the kernel with Python 3.
 
 2.2.1 (2012-06-11)
 ------------------
