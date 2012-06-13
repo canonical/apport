@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  * apport: Redefine sys.std{out,err} when redirecting output, as they are None
    in Python 3 when being called from the kernel.
+ * test/test_signal_crashes.py: Clean up unexpected core dumps on failed test
+   cases.
 
 2.2.1 (2012-06-11)
 ------------------

@@ -566,7 +566,9 @@ class T(unittest.TestCase):
             finally:
                 os.unlink('/tmp/core')
         else:
-            self.assertFalse(os.path.exists('/tmp/core'), 'leaves unexpected core file behind')
+            if os.path.exists('/tmp/core'):
+                os.unlink('/tmp/core')
+                self.fail('leaves unexpected core file behind')
 
     def get_temp_all_reports(self):
         '''Call apport.fileutils.get_all_reports() for our temp dir'''
