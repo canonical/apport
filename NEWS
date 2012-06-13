@@ -8,6 +8,8 @@ Bug fixes:
    in Python 3 when being called from the kernel.
  * test/test_signal_crashes.py: Clean up unexpected core dumps on failed test
    cases.
+ * apport-gtk: Fix crash when closing the crash dialog while the information is
+   being collected.
 
 2.2.1 (2012-06-11)
 ------------------

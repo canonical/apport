@@ -86,6 +86,11 @@ class GTKUserInterface(apport.ui.UserInterface):
         return spinner
 
     def ui_update_view(self, shown_keys=None):
+        # do nothing if the dialog is already destroyed when the data
+        # collection finishes
+        if not self.w('details_treeview').get_property('visible'):
+            return
+
         if shown_keys:
             keys = set(self.report.keys()) & set(shown_keys)
         else:

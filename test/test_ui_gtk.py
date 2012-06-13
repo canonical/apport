@@ -377,6 +377,8 @@ Type=Application''')
         self.assertFalse(send_error_report.get_active())
 
     @patch.object(GTKUserInterface, 'open_url')
+    @patch.object(GTKUserInterface, 'ui_start_upload_progress')
+    @patch.object(GTKUserInterface, 'ui_stop_upload_progress')
     def test_crash_nodetails(self, *args):
         '''Crash report without showing details'''
 
@@ -411,10 +413,16 @@ Type=Application''')
         self.assertTrue('libc' in r['Dependencies'])
         self.assertTrue('Stacktrace' in r)
 
+        # upload dialog shown
+        self.assertEqual(self.app.ui_start_upload_progress.call_count, 1)
+        self.assertEqual(self.app.ui_stop_upload_progress.call_count, 1)
+
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
 
     @patch.object(GTKUserInterface, 'open_url')
+    @patch.object(GTKUserInterface, 'ui_start_upload_progress')
+    @patch.object(GTKUserInterface, 'ui_stop_upload_progress')
     def test_crash_details(self, *args):
         '''Crash report with showing details'''
 
@@ -458,6 +466,10 @@ Type=Application''')
         self.assertTrue(r['Package'].startswith('bash '))
         self.assertTrue('libc' in r['Dependencies'])
         self.assertTrue('Stacktrace' in r)
+
+        # upload dialog shown
+        self.assertEqual(self.app.ui_start_upload_progress.call_count, 1)
+        self.assertEqual(self.app.ui_stop_upload_progress.call_count, 1)
 
         # URL was opened
         self.assertEqual(self.app.open_url.call_count, 1)
@@ -743,5 +755,25 @@ Type=Application''')
         self.app.w('dialog_crash_new').destroy()
         GLib.idle_add(Gtk.main_quit)
         self.app.run_crash(self.app.report_file)
+
+    @patch.object(GTKUserInterface, 'ui_start_upload_progress')
+    def test_close_during_collect(self, *args):
+        '''Close details window during information collection'''
+
+        def show_details(*args):
+            if not self.app.w('show_details').get_visible():
+                return True
+            self.app.w('show_details').clicked()
+            GLib.timeout_add(200, close)
+            return False
+
+        def close(*args):
+            self.app.w('dialog_crash_new').destroy()
+            return False
+
+        GLib.timeout_add(200, show_details)
+        self.app.run_crash(self.app.report_file)
+
+        self.assertEqual(self.app.ui_start_upload_progress.call_count, 0)
 
 unittest.main()
