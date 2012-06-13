@@ -280,29 +280,34 @@ class T(unittest.TestCase):
         resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
         self.do_crash(expect_corefile=False)
         self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
+        self.check_report_coredump(self.test_report)
         apport.fileutils.delete_report(self.test_report)
         resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
         self.do_crash(expect_corefile=True)
         self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
+        self.check_report_coredump(self.test_report)
         apport.fileutils.delete_report(self.test_report)
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(expect_corefile=True)
         self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
+        self.check_report_coredump(self.test_report)
         apport.fileutils.delete_report(self.test_report)
 
         # for SIGABRT
         resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
         self.do_crash(expect_coredump=False, expect_corefile=False, sig=signal.SIGABRT)
-        apport.fileutils.delete_report(self.test_report)
+        self.assertEqual(apport.fileutils.get_all_reports(), [])
         resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
         self.do_crash(expect_corefile=False, sig=signal.SIGABRT)
+        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
         apport.fileutils.delete_report(self.test_report)
         resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
         self.do_crash(expect_corefile=True, sig=signal.SIGABRT)
+        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
         apport.fileutils.delete_report(self.test_report)
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
         self.do_crash(expect_corefile=True, sig=signal.SIGABRT)
-        apport.fileutils.delete_report(self.test_report)
+        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
 
         # creates core file with existing crash report, too
         self.do_crash(expect_corefile=True)
@@ -578,6 +583,17 @@ class T(unittest.TestCase):
         reports = apport.fileutils.get_all_reports()
         apport.fileutils.report_dir = old_dir
         return reports
+
+    def check_report_coredump(self, report_path):
+        '''Check that given report file has a valid core dump'''
+
+        r = apport.Report()
+        with open(report_path, 'rb') as f:
+            r.load(f)
+        self.assertTrue('CoreDump' in r)
+        self.assertGreater(len(r['CoreDump']), 5000)
+        r.add_gdb_info()
+        self.assertTrue('\n#4' in r['Stacktrace'])
 
 #
 # main

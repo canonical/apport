@@ -17,6 +17,11 @@ Bug fixes:
  * hookutils.py, xsession_errors(): Fix crash when running under a non-UTF8 locale.
  * data/apport: Do not use sys.stdin.fileno(), it is invalid when being called
    from the kernel with Python 3.
+ * data/apport: When core dumps are enabled, read them from the written report
+   instead of directly from stdin (and then reading the written core file into
+   the .crash report). If the core file size is limited, we otherwise stop
+   reading the core dump from the kernel in the middle and have no (or a
+   broken) core dump to be put into the report.
 
 2.2.1 (2012-06-11)
 ------------------

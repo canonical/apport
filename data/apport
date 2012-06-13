@@ -126,7 +126,7 @@ def setup_signals():
     signal.signal(signal.SIGBUS, _log_signal_handler)
 
 
-def write_user_coredump(pid, cwd, limit):
+def write_user_coredump(pid, cwd, limit, from_report=None):
     '''Write the core into the current directory if ulimit requests it.'''
 
     # three cases:
@@ -154,24 +154,38 @@ def write_user_coredump(pid, cwd, limit):
     written = 0
 
     # Priming read
-    block = os.read(0, 1048576)
-
-    while True:
-        size = len(block)
-        if size == 0:
-            break
-        written += size
-        if limit > 0 and written > limit:
-            error_log('aborting core dump writing, size exceeds current limit %i' % limit)
+    if from_report:
+        r = apport.Report()
+        with open(from_report, 'rb') as f:
+            r.load(f)
+        core_size = len(r['CoreDump'])
+        if limit > 0 and core_size > limit:
+            error_log('aborting core dump writing, size %i exceeds current limit' % core_size)
             os.close(core_file)
             os.unlink(core_path)
             return
-        if os.write(core_file, block) != size:
-            error_log('aborting core dump writing, could not write')
-            os.close(core_file)
-            os.unlink(core_path)
-            return
+        error_log('writing core dump %s of size %i' % (core_path, core_size))
+        os.write(core_file, r['CoreDump'])
+    else:
+        # read from stdin
         block = os.read(0, 1048576)
+
+        while True:
+            size = len(block)
+            if size == 0:
+                break
+            written += size
+            if limit > 0 and written > limit:
+                error_log('aborting core dump writing, size exceeds current limit %i' % limit)
+                os.close(core_file)
+                os.unlink(core_path)
+                return
+            if os.write(core_file, block) != size:
+                error_log('aborting core dump writing, could not write')
+                os.close(core_file)
+                os.unlink(core_path)
+                return
+            block = os.read(0, 1048576)
 
     os.close(core_file)
     return core_path
@@ -391,13 +405,6 @@ try:
     # Totally drop privs before writing out the reportfile.
     drop_privileges(pid)
 
-    # check if the user wants a core dump
-    coredump = write_user_coredump(pid, cwd, core_ulimit)
-    # Now that we've written it, it's no longer on stdin, so we need
-    # to change the CoreDump info if we want it in the crash report.
-    if coredump:
-        info['CoreDump'] = (open(coredump, 'rb'), True, usable_ram() * 3 / 4)
-
     info.add_user_info()
     info.add_os_info()
 
@@ -414,6 +421,13 @@ try:
         os.chmod(report, 0o640)
     if reportfile != sys.stderr:
         error_log('wrote report %s' % report)
+
+    # Check if the user wants a core file. We need to create that from the
+    # written report, as we can only read stdin once and write_user_coredump()
+    # might abort reading from stdin and remove the written core file when
+    # core_ulimit is > 0 and smaller than the core size.
+    write_user_coredump(pid, cwd, core_ulimit, from_report=report)
+
 except (SystemExit, KeyboardInterrupt):
     raise
 except Exception as e:
