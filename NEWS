@@ -3,6 +3,10 @@ detailled list of changes, please see ChangeLog.
 
 2.2.2 (UNRELEASED):
 -------------------
+Improvements:
+ * testsuite: Run with Python 3 by default. To test with Python 2, run
+   "PYTHON=python2 test/run".
+
 Bug fixes:
  * apport: Redefine sys.std{out,err} when redirecting output, as they are None
    in Python 3 when being called from the kernel.

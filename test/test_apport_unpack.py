@@ -62,7 +62,7 @@ class T(unittest.TestCase):
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                 'bin')
 
-        self.assertEqual(self._call([os.getenv('PYTHON', 'python'),
+        self.assertEqual(self._call([os.getenv('PYTHON', 'python3'),
                                      os.path.join(bindir, 'apport-unpack'),
                                      self.report_file,
                                      self.unpack_dir]),

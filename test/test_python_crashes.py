@@ -44,7 +44,7 @@ def func(x):
 
 %s
 func(42)
-''' % (os.getenv('PYTHON', 'python'), extracode)).encode())
+''' % (os.getenv('PYTHON', 'python3'), extracode)).encode())
             os.close(fd)
             os.chmod(script, 0o755)
 
@@ -185,7 +185,7 @@ def func(x):
     raise Exception('This should happen.')
 
 func(42)
-''' % os.getenv('PYTHON', 'python')).encode('ascii'))
+''' % os.getenv('PYTHON', 'python3')).encode('ascii'))
             os.close(fd)
             os.chmod(script, 0o755)
 

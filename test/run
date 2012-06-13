@@ -106,7 +106,7 @@ for t in $TESTS; do
     else
         test_name="T.${t#*.}"
     fi
-    $prefix ${PYTHON:=python} -tt $test_file -v $test_name || failed=$((failed+1))
+    $prefix ${PYTHON:=python3} -tt $test_file -v $test_name || failed=$((failed+1))
 done
 
 exit $failed
