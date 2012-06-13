@@ -467,7 +467,7 @@ class T(unittest.TestCase):
             self.assertEqual(out, b'')
             err = err.decode('UTF-8')
             self.assertEqual(app.returncode, 0, err)
-            self.assertTrue('called for pid' in err)
+            self.assertTrue('called for pid' in err, err)
             self.assertTrue('wrote report' in err, err)
             self.assertFalse('Traceback' in err, err)
         finally:
@@ -593,7 +593,8 @@ class T(unittest.TestCase):
         self.assertTrue('CoreDump' in r)
         self.assertGreater(len(r['CoreDump']), 5000)
         r.add_gdb_info()
-        self.assertTrue('\n#4' in r['Stacktrace'])
+        self.assertTrue('\n#2' in r.get('Stacktrace', ''),
+                r.get('Stacktrace', 'no Stacktrace field'))
 
 #
 # main
