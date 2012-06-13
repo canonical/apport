@@ -22,6 +22,9 @@ Bug fixes:
    the .crash report). If the core file size is limited, we otherwise stop
    reading the core dump from the kernel in the middle and have no (or a
    broken) core dump to be put into the report.
+ * data/apport: Properly close the written crash report before changing its
+   permissions to be readable. This prevents having crash reporting UI from
+   looking at incomplete .crash files.
 
 2.2.1 (2012-06-11)
 ------------------

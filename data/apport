@@ -413,6 +413,8 @@ try:
 
     try:
         info.write(reportfile)
+        if reportfile != sys.stderr:
+            reportfile.close()
     except IOError:
         if reportfile != sys.stderr:
             os.unlink(report)
