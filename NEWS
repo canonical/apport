@@ -6,6 +6,10 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  * test/run: Do not run pep8 and pyflakes when running against the sytem
    installed Apport.
+ * test_backend_apt_dpkg.py: For the "are we online" check, verify that we can
+   download from http://ddebs.ubuntu.com/, not just whether we have a default
+   route. The latter is not sufficient for e. g. buildd environments which are
+   online, but are restricted by proxies or firewalls.
 
 2.2.2 (2012-06-13):
 -------------------

@@ -1,6 +1,6 @@
 import unittest, gzip, imp, subprocess, tempfile, shutil, os, os.path, time
+import glob, urllib
 from apt import apt_pkg
-import glob
 
 if os.environ.get('APPORT_TEST_LOCAL'):
     impl = imp.load_source('', 'backends/packaging-apt-dpkg.py').impl
@@ -8,25 +8,25 @@ else:
     from apport.packaging_impl import impl
 
 
-def _has_default_route():
-    '''Return if there is a default route.
+def _has_internet():
+    '''Return if there is sufficient network connection for the tests.
 
-    This is a reasonable indicator that online tests can be run.
+    This checks if http://ddebs.ubuntu.com/ can be downloaded from, to check if
+    we can run the online tests.
     '''
     if os.environ.get('SKIP_ONLINE_TESTS'):
         return False
-    if _has_default_route.cache is None:
-        _has_default_route.cache = False
-        route = subprocess.Popen(['/sbin/route', '-n'],
-            stdout=subprocess.PIPE)
-        for l in route.stdout:
-            if l.decode('UTF-8').startswith('0.0.0.0 '):
-                _has_default_route.cache = True
-        route.wait()
+    if _has_internet.cache is None:
+        _has_internet.cache = False
+        try:
+            f = urllib.request.urlopen('http://ddebs.ubuntu.com/dbgsym-release-key.asc', timeout=30)
+            if f.readline().startswith(b'-----BEGIN PGP'):
+                _has_internet.cache = True
+        except (IOError, urllib.error.URLError):
+            pass
+    return _has_internet.cache
 
-    return _has_default_route.cache
-
-_has_default_route.cache = None
+_has_internet.cache = None
 
 
 class T(unittest.TestCase):
@@ -321,7 +321,7 @@ bo/gu/s                                                 na/mypackage
         self.assertEqual(impl.package_name_glob('bash'), ['bash'])
         self.assertEqual(impl.package_name_glob('xzywef*'), [])
 
-    @unittest.skipUnless(_has_default_route(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_versioned(self):
         '''install_packages() with versions and with cache'''
 
@@ -401,7 +401,7 @@ bo/gu/s                                                 na/mypackage
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
             'usr/bin/dpkg')))
 
-    @unittest.skipUnless(_has_default_route(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_unversioned(self):
         '''install_packages() without versions and no cache'''
 
@@ -426,7 +426,7 @@ bo/gu/s                                                 na/mypackage
         # no cache
         self.assertEqual(os.listdir(self.cachedir), [])
 
-    @unittest.skipUnless(_has_default_route(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_system(self):
         '''install_packages() with system configuration'''
 
@@ -471,7 +471,7 @@ bo/gu/s                                                 na/mypackage
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
             'usr/bin/stat')))
 
-    @unittest.skipUnless(_has_default_route(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_error(self):
         '''install_packages() with errors'''
 
@@ -500,7 +500,7 @@ bo/gu/s                                                 na/mypackage
             self.assertTrue('nosuchdistro' in str(e), str(e))
             self.assertTrue('index files failed to download' in str(e))
 
-    @unittest.skipUnless(_has_default_route(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_permanent_sandbox(self):
         '''install_packages() with a permanent sandbox'''
 
@@ -542,7 +542,7 @@ bo/gu/s                                                 na/mypackage
             permanent_rootdir=True)
         apt_pkg.config.set('Acquire::http::Proxy', '')
 
-    @unittest.skipUnless(_has_default_route(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_permanent_sandbox_repack(self):
         self._setup_foonux_config()
         apache_bin_path = os.path.join(self.rootdir, 'usr/sbin/apache2')
