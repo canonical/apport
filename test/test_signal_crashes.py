@@ -454,25 +454,65 @@ class T(unittest.TestCase):
         finally:
             os.unlink(myexe)
 
-    def test_local_python(self):
-        '''works with $PYTHON version'''
+    def test_logging_file(self):
+        '''outputs to log file, if available'''
 
         test_proc = self.create_test_process()
+        log = os.path.join(self.workdir, 'apport.log')
         try:
-            app = subprocess.Popen([os.getenv('PYTHON', 'python'), apport_path,
-                                    str(test_proc), '42', '0'],
-                                   close_fds=True, stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            env = os.environ.copy()
+            env['APPORT_LOG_FILE'] = log
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+                                   close_fds=True, stdin=subprocess.PIPE, env=env,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   universal_newlines=True)
             (out, err) = app.communicate(b'hel\x01lo')
-            self.assertEqual(out, b'')
-            err = err.decode('UTF-8')
-            self.assertEqual(app.returncode, 0, err)
-            self.assertTrue('called for pid' in err, err)
-            self.assertTrue('wrote report' in err, err)
-            self.assertFalse('Traceback' in err, err)
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
+
+        self.assertEqual(out, '')
+        self.assertEqual(err, '')
+        self.assertEqual(app.returncode, 0, err)
+        with open(log) as f:
+            logged = f.read()
+        self.assertTrue('called for pid' in logged, logged)
+        self.assertTrue('wrote report' in logged, logged)
+        self.assertFalse('Traceback' in logged, logged)
+
+        reports = self.get_temp_all_reports()
+        self.assertEqual(len(reports), 1)
+
+        pr = apport.Report()
+        with open(reports[0], 'rb') as f:
+            pr.load(f)
+        os.unlink(reports[0])
+
+        self.assertEqual(pr['Signal'], '42')
+        self.assertEqual(pr['ExecutablePath'], test_executable)
+        self.assertEqual(pr['CoreDump'], b'hel\x01lo')
+
+    def test_logging_stderr(self):
+        '''outputs to stderr if log is not available'''
+
+        test_proc = self.create_test_process()
+        try:
+            env = os.environ.copy()
+            env['APPORT_LOG_FILE'] = '/not/existing/apport.log'
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+                                   close_fds=True, stdin=subprocess.PIPE, env=env,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   universal_newlines=True)
+            (out, err) = app.communicate(b'hel\x01lo')
+        finally:
+            os.kill(test_proc, 9)
+            os.waitpid(test_proc, 0)
+
+        self.assertEqual(out, '')
+        self.assertEqual(app.returncode, 0, err)
+        self.assertTrue('called for pid' in err, err)
+        self.assertTrue('wrote report' in err, err)
+        self.assertFalse('Traceback' in err, err)
 
         reports = self.get_temp_all_reports()
         self.assertEqual(len(reports), 1)

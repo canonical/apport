@@ -12,6 +12,8 @@ Bug fixes:
    online, but are restricted by proxies or firewalls.
  * test_report.py: Call "sync" after test script write core dumps, to ensure
    that subsequent operations have a complete one.
+ * test_signal_crashes.py: Drop the broken and obsolete test_local_python()
+   test. Instead, add two tests which check proper logging.
 
 2.2.2 (2012-06-13):
 -------------------
