@@ -14,6 +14,7 @@ Bug fixes:
    that subsequent operations have a complete one.
  * test_signal_crashes.py: Drop the broken and obsolete test_local_python()
    test. Instead, add two tests which check proper logging.
+ * launchpad.py: Fix urlopen() for Python3. Thanks Steve Langasek.
 
 2.2.2 (2012-06-13):
 -------------------

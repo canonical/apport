@@ -17,10 +17,10 @@ from io import BytesIO
 if sys.version_info.major == 2:
     from urllib2 import HTTPSHandler, Request, build_opener
     from httplib import HTTPSConnection
-    from urllib import urlencode
-    (HTTPSHandler, Request, build_opener, HTTPSConnection, urlencode)  # pyflakes
+    from urllib import urlencode, urlopen
+    (HTTPSHandler, Request, build_opener, HTTPSConnection, urlencode, urlopen)  # pyflakes
 else:
-    from urllib.request import HTTPSHandler, Request, build_opener
+    from urllib.request import HTTPSHandler, Request, build_opener, urlopen
     from urllib.parse import urlencode
     from http.client import HTTPSConnection
 
@@ -894,7 +894,7 @@ in a dependent package.' % master,
         report['DuplicateOf'] = url
 
         try:
-            f = urllib.urlopen(url + '/+text')
+            f = urlopen(url + '/+text')
         except IOError:
             # if we are offline, or LP is down, upload will fail anyway, so we
             # can just as well avoid the upload
@@ -1654,7 +1654,7 @@ NameError: global name 'weird' is not defined'''
             for attachment in processed_blob['attachments']:
                 filename = description = attachment['description']
                 # Download the attachment data.
-                data = urllib.urlopen(urllib.basejoin(librarian_url,
+                data = urlopen(urllib.basejoin(librarian_url,
                     str(attachment['file_alias_id']) + '/' + filename)).read()
                 # Add the attachment to the newly created bug report.
                 bug.addAttachment(
