@@ -16,6 +16,12 @@ This generates and saves a problem report.
 
 import sys
 
+if sys.version_info.major < 3:
+    from urlparse import urlparse
+    urlparse  # pyflakes
+else:
+    from urllib.parse import urlparse
+
 
 def make_title(report):
     lines = report['StackTrace'].split('\n')
@@ -61,14 +67,13 @@ def main():
 
     # Add an ExecutablePath pointing to the file where the main class resides
     if 'MainClassUrl' in report:
-        import urlparse
         url = report['MainClassUrl']
 
-        scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
+        scheme, netloc, path, params, query, fragment = urlparse(url)
 
         if scheme == 'jar':
             # path is then a URL to the jar file
-            scheme, netloc, path, params, query, fragment = urlparse.urlparse(path)
+            scheme, netloc, path, params, query, fragment = urlparse(path)
             if '!/' in path:
                 path = path.split('!/', 1)[0]
 

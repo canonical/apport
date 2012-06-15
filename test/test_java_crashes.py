@@ -68,7 +68,7 @@ class T(unittest.TestCase):
         with open(reports[0], 'rb') as f:
             r.load(f)
         self.assertEqual(r['ProblemType'], 'Crash')
-        self.assertTrue(r['ProcCmdline'].startswith('java -classpath'))
+        self.assertTrue(r['ProcCmdline'].startswith('java -classpath'), r)
         self.assertTrue(r['StackTrace'].startswith(
             "java.lang.RuntimeException: Can't catch this"))
         if '.jar!' in main_file:
