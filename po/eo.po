@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-11 07:40+0200\n"
+"POT-Creation-Date: 2012-06-15 07:52+0200\n"
 "PO-Revision-Date: 2011-10-07 06:49+0000\n"
 "Last-Translator: Aisano <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
+"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-06-12 04:32+0000\n"
 "X-Generator: Launchpad (build 15389)\n"
-"Language: eo\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -165,8 +165,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -221,11 +221,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Aldoni plian markon al la raporto. Tio plurfoje specifeblas."
 
 #: ../apport/ui.py:637
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [opcioj] [simptomo|pid|pakaĵo|dosierpado de programaro|dosiero "
-".apport/.crash]"
+"%prog [opcioj] [simptomo|pid|pakaĵo|dosierpado de programaro|dosiero ."
+"apport/.crash]"
 
 #: ../apport/ui.py:640
 msgid ""
@@ -452,13 +451,12 @@ msgstr ""
 "Fari provizoran provejon kaj elŝuti/instali en ĝin la necesajn pakaĵojn kaj "
 "sencimigajn simbolojn; sen ĉi tiu opcio estas supozate, ke la necesaj "
 "pakaĵoj kaj sencimigaj simboloj jam troveblas en la sistemo. La argumento "
-"ligas al la pakaĵsistema baza dosierujo por agordoj; se vi specifas "
-"\"system\", ĝi uzos la sistemagordajn dosierojn, sed tiam ĝi havos nur la "
-"eblon por retrovi kolapsojn okazitajn sur la nune funkcianta sistemo."
+"ligas al la pakaĵsistema baza dosierujo por agordoj; se vi specifas \"system"
+"\", ĝi uzos la sistemagordajn dosierojn, sed tiam ĝi havos nur la eblon por "
+"retrovi kolapsojn okazitajn sur la nune funkcianta sistemo."
 
 #: ../bin/apport-retrace.py:59
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:61
@@ -499,16 +497,14 @@ msgstr ""
 "kolapsdatumbazo."
 
 #: ../bin/apport-retrace.py:73
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Pado al la duobligita sqlite-datumbazo (apriore: neniu kontrolo por "
 "duobligoj)"
 
 #: ../bin/apport-retrace.py:78
 msgid "incorrect number of arguments; use --help for a short help"
-msgstr ""
-"Erara nombro de la argumentoj; uzu --help por ricevi koncizan helpon."
+msgstr "Erara nombro de la argumentoj; uzu --help por ricevi koncizan helpon."
 
 #: ../bin/apport-retrace.py:82
 msgid ""
@@ -544,64 +540,62 @@ msgstr "La celdosierujo ekzistas kaj ne estas malplena."
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
-"Via sistemo povas nun nestabiliĝi kaj eble ĝi devas esti restartigata"
+msgstr "Via sistemo povas nun nestabiliĝi kaj eble ĝi devas esti restartigata"
 
-#: ../kde/apport-kde.py:162 ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:160
+#: ../kde/apport-kde.py:162 ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:165
 msgid "Send problem report to the developers?"
 msgstr "Ĉu sendi problem-raporton al la evoluigantoj?"
 
-#: ../kde/apport-kde.py:170 ../gtk/apport-gtk.py:169
+#: ../kde/apport-kde.py:170 ../gtk/apport-gtk.py:174
 msgid "Send"
 msgstr "Sendi"
 
-#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:209 ../gtk/apport-gtk.py:148
+#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:209 ../gtk/apport-gtk.py:153
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Pardonu, interna eraro okazis en %s."
 
-#: ../kde/apport-kde.py:184 ../gtk/apport-gtk.py:206
+#: ../kde/apport-kde.py:184 ../gtk/apport-gtk.py:211
 #, python-format
 msgid "Package: %s"
 msgstr "Pakaĵo: %s"
 
-#: ../kde/apport-kde.py:190 ../gtk/apport-gtk.py:213
+#: ../kde/apport-kde.py:190 ../gtk/apport-gtk.py:218
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Pardonu, problemo okazis dum instalado de la programaro."
 
-#: ../kde/apport-kde.py:196 ../gtk/apport-gtk.py:222
+#: ../kde/apport-kde.py:196 ../gtk/apport-gtk.py:227
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "La aplikaĵo %s fermiĝis neatendite."
 
-#: ../kde/apport-kde.py:202 ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:227
+#: ../kde/apport-kde.py:202 ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:232
 msgid "Leave Closed"
 msgstr "Lasi fermitan"
 
-#: ../kde/apport-kde.py:203 ../kde/apport-kde.py:340 ../gtk/apport-gtk.py:228
+#: ../kde/apport-kde.py:203 ../kde/apport-kde.py:340 ../gtk/apport-gtk.py:233
 msgid "Relaunch"
 msgstr "Relanĉi"
 
 #: ../kde/apport-kde.py:206 ../kde/apport-kde.py:215 ../gtk/apport-gtk.ui.h:10
-#: ../gtk/apport-gtk.py:190 ../gtk/apport-gtk.py:231 ../gtk/apport-gtk.py:242
+#: ../gtk/apport-gtk.py:195 ../gtk/apport-gtk.py:236 ../gtk/apport-gtk.py:247
 msgid "Continue"
 msgstr "Daŭrigi"
 
-#: ../kde/apport-kde.py:212 ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:239
+#: ../kde/apport-kde.py:212 ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:244
 msgid "If you notice further problems, try restarting the computer."
-msgstr ""
-"Se vi renkontiĝas pliajn problemojn, klopodu restartigi la komputilon."
+msgstr "Se vi renkontiĝas pliajn problemojn, klopodu restartigi la komputilon."
 
-#: ../kde/apport-kde.py:216 ../gtk/apport-gtk.py:243
+#: ../kde/apport-kde.py:216 ../gtk/apport-gtk.py:248
 msgid "Ignore future problems of this type"
 msgstr ""
 
-#: ../kde/apport-kde.py:251 ../gtk/apport-gtk.py:507
+#: ../kde/apport-kde.py:251 ../gtk/apport-gtk.py:512
 msgid "Hide Details"
 msgstr "Kaŝi detalojn"
 
-#: ../kde/apport-kde.py:254 ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:178
-#: ../gtk/apport-gtk.py:503
+#: ../kde/apport-kde.py:254 ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:183
+#: ../gtk/apport-gtk.py:508
 msgid "Show Details"
 msgstr "Montri detalojn"
 
@@ -613,7 +607,7 @@ msgstr "Uzantnomo:"
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:321 ../bin/apport-cli.py:144 ../gtk/apport-gtk.py:124
+#: ../kde/apport-kde.py:321 ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:129
 msgid "(binary data)"
 msgstr "(duumaj datumoj)"
 
@@ -621,7 +615,7 @@ msgstr "(duumaj datumoj)"
 msgid "Collecting Problem Information"
 msgstr "Kolektanta probleminformojn"
 
-#: ../kde/apport-kde.py:366 ../bin/apport-cli.py:232
+#: ../kde/apport-kde.py:366 ../bin/apport-cli.py:234
 msgid "Collecting problem information"
 msgstr "Kolektado de informoj pri la problemo"
 
@@ -635,7 +629,7 @@ msgstr ""
 msgid "Uploading Problem Information"
 msgstr "Alŝutanta probleminformojn"
 
-#: ../kde/apport-kde.py:394 ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13
+#: ../kde/apport-kde.py:394 ../bin/apport-cli.py:247 ../gtk/apport-gtk.ui.h:13
 msgid "Uploading problem information"
 msgstr "Alŝutado de informoj pri la problemo"
 
@@ -651,25 +645,25 @@ msgstr ""
 msgid "Apport"
 msgstr "Aporto"
 
-#: ../bin/apport-cli.py:71
+#: ../bin/apport-cli.py:73
 msgid "Press any key to continue..."
 msgstr "Premu klavon por daŭrigi..."
 
-#: ../bin/apport-cli.py:78
+#: ../bin/apport-cli.py:80
 msgid "What would you like to do? Your options are:"
 msgstr "Kion vi ŝatus fari? Viaj ebloj estas:"
 
-#: ../bin/apport-cli.py:82
+#: ../bin/apport-cli.py:84
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Bonvole ekektu (%s):"
 
-#: ../bin/apport-cli.py:142
+#: ../bin/apport-cli.py:144
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:174
+#: ../bin/apport-cli.py:176
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -677,46 +671,46 @@ msgstr ""
 "Post sendo de la problem-raporto, bonvole plenigu la formularon en la\n"
 "fenestro de la retfoliumilo, kiu aŭtomate malfermiĝos."
 
-#: ../bin/apport-cli.py:177
+#: ../bin/apport-cli.py:179
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Sendi raporton (%s)"
 
-#: ../bin/apport-cli.py:181
+#: ../bin/apport-cli.py:183
 msgid "&Examine locally"
 msgstr "Lok&e testi"
 
-#: ../bin/apport-cli.py:185
+#: ../bin/apport-cli.py:187
 msgid "&View report"
 msgstr "&Montri raporton"
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:188
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr "&Konservi raportdosieron por poste sendi ĝin aŭ kopii aliloken."
 
-#: ../bin/apport-cli.py:187
+#: ../bin/apport-cli.py:189
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Nuligi kaj &ignori ontajn kolapsojn de ĉi tiu programarversio."
 
-#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:191 ../bin/apport-cli.py:267 ../bin/apport-cli.py:299
+#: ../bin/apport-cli.py:320
 msgid "&Cancel"
 msgstr "&Nuligi"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:218
 msgid "Problem report file:"
 msgstr "Problemraporta dosiero:"
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:224 ../bin/apport-cli.py:229
 msgid "&Confirm"
 msgstr "&Konfirmi"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:228
 #, python-format
 msgid "Error: %s"
 msgstr "Eraro: %s"
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:235
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -724,7 +718,7 @@ msgstr ""
 "La kolektitaj informoj povas esti senditaj al la evoluigantoj por\n"
 "plibonigi la aplikaĵon. Tio povas daŭri kelkajn minutojn."
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:248
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -732,40 +726,40 @@ msgstr ""
 "La kolektitaj informoj estas sendataj al la sistemo de cimspurado.\n"
 "Tio povas daŭri kelkajn minutojn."
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:298
 msgid "&Done"
 msgstr "&Farite"
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:304
 msgid "none"
 msgstr "nenio"
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:305
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Elektita: %s. Pluraj ebloj:"
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:321
 msgid "Choices:"
 msgstr "Ebloj:"
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:335
 msgid "Path to file (Enter to cancel):"
 msgstr "Pado al la dosiero (presi \"enigu\" por nuligi):"
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:341
 msgid "File does not exist."
 msgstr "Dosiero ne ekzistas."
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:343
 msgid "This is a directory."
 msgstr "Ĉi tio estas dosierujo."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:349
 msgid "To continue, you must visit the following URL:"
 msgstr "Por daŭrigi vi devas viziti la sekvan URL:"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:351
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -773,11 +767,11 @@ msgstr ""
 "Vi povas nun lanĉi retfoliumilon aŭ kopii la URL en retfoliumilo en alia "
 "komputilo."
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:353
 msgid "Launch a browser now"
 msgstr "Nun lanĉi retfoliumilon"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:367
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Ne restas netrakitaj kolapsraportoj. Indiku --help por vidi pliajn informojn."
@@ -838,12 +832,12 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Alŝutado de informoj pri la problemo</b></big>"
 
-#: ../gtk/apport-gtk.py:139
+#: ../gtk/apport-gtk.py:144
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr "Pardonu, la aplikaĵo %s fermiĝis neatendite."
 
-#: ../gtk/apport-gtk.py:142
+#: ../gtk/apport-gtk.py:147
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Pardonu, %s fermiĝis neatendite."
@@ -872,14 +866,14 @@ msgstr "Kolapsdosiero de Aporto"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Se vi ne estis faranta ion konfidencan (enigante pasvorton aŭ aliajn\n"
 #~ "privatajn informojn), vi povas helpi plibonigi la aplikaĵon raportante\n"
 #~ "la problemon."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s fermiĝis neatendite je %s je la %s."
 
@@ -896,22 +890,18 @@ msgstr "Kolapsdosiero de Aporto"
 #~ msgstr ""
 #~ "Vi povas helpi al la evoluigantoj korekti la problemon, raportante ĝin."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Sendu kompletan raporton (rekomendite, %s)"
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Ne eblis instali aŭ aktualigi la pakaĵon \"%s\"."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Kompleta raporto (rekomendita; %s)"
 
 #~ msgid "Application problem"
 #~ msgstr "Aplikaĵa problemo"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -930,11 +920,9 @@ msgstr "Kolapsdosiero de Aporto"
 #~ "Post sendo de la raporto bonvolu plenigi la formularon en la aŭtomate "
 #~ "aperonta krozila fenestro."
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Sendu &reduktitan raporton (se via retkonekto estas malrapida; %s)"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Reduktita raporto (se via retkonekto estas malrapida; %s)"
 
@@ -945,22 +933,21 @@ msgstr "Kolapsdosiero de Aporto"
 #~ msgstr "_Ignoru estontajn kraŝojn de tiu ĉi program-versio"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Tio ĉi forigos kelkajn grandajn erojn el la raportaĵo. Tiuj estas tre utilaj "
-#~ "por programistoj por povi sencimigi la problemon. Sed eble tiel la alŝutaĵo "
-#~ "estos tro granda se vi havas malrapidan retkonekton."
+#~ "Tio ĉi forigos kelkajn grandajn erojn el la raportaĵo. Tiuj estas tre "
+#~ "utilaj por programistoj por povi sencimigi la problemon. Sed eble tiel la "
+#~ "alŝutaĵo estos tro granda se vi havas malrapidan retkonekton."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Se vi ne faris ion konfidencan (entajpi pasvortojn aŭ aliajn privatajn "
 #~ "informojn), vi povas helpi plibonigi la aplikaĵon raportante la problemon."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ĉi tio ne estas aŭtentika pakaĵo de %s."

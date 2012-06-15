@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-11 07:40+0200\n"
+"POT-Creation-Date: 2012-06-15 07:52+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Артём Попов <artfwo@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-06-12 04:33+0000\n"
 "X-Generator: Launchpad (build 15389)\n"
-"Language: ru\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -163,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -209,8 +209,7 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:637
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [параметры] [признак|pid|пакет|путь до программы|.apport/.crash файл]"
 
@@ -377,8 +376,7 @@ msgstr ""
 
 #: ../apport/ui.py:1179
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
-"Сообщение о неисправности отправлено разработчикам. Спасибо за помощь!"
+msgstr "Сообщение о неисправности отправлено разработчикам. Спасибо за помощь!"
 
 #: ../bin/apport-retrace.py:39
 msgid "%prog [options] <apport problem report | crash ID>"
@@ -434,8 +432,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:61
@@ -477,8 +474,7 @@ msgstr ""
 "данных сбоев."
 
 #: ../bin/apport-retrace.py:73
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Путь к дублирующей базе данных sqlite (по умолчанию: без проверки дубликатов)"
 
@@ -522,63 +518,63 @@ msgstr "Папка назначения существует и не пуста.
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr "Система может стать нестабильной, возможно потребуется перезагрузка."
 
-#: ../kde/apport-kde.py:162 ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:160
+#: ../kde/apport-kde.py:162 ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:165
 msgid "Send problem report to the developers?"
 msgstr "Отправить отчёт об ошибке разработчикам?"
 
-#: ../kde/apport-kde.py:170 ../gtk/apport-gtk.py:169
+#: ../kde/apport-kde.py:170 ../gtk/apport-gtk.py:174
 msgid "Send"
 msgstr "Отправить"
 
-#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:209 ../gtk/apport-gtk.py:148
+#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:209 ../gtk/apport-gtk.py:153
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Извините, возникла внутренняя ошибка %s."
 
-#: ../kde/apport-kde.py:184 ../gtk/apport-gtk.py:206
+#: ../kde/apport-kde.py:184 ../gtk/apport-gtk.py:211
 #, python-format
 msgid "Package: %s"
 msgstr "Пакет: %s"
 
-#: ../kde/apport-kde.py:190 ../gtk/apport-gtk.py:213
+#: ../kde/apport-kde.py:190 ../gtk/apport-gtk.py:218
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 "Извините, обнаружена неполадка во время установки программного обеспечения."
 
-#: ../kde/apport-kde.py:196 ../gtk/apport-gtk.py:222
+#: ../kde/apport-kde.py:196 ../gtk/apport-gtk.py:227
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Приложение %s внезапно закрылось."
 
-#: ../kde/apport-kde.py:202 ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:227
+#: ../kde/apport-kde.py:202 ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:232
 msgid "Leave Closed"
 msgstr "Оставить закрытым"
 
-#: ../kde/apport-kde.py:203 ../kde/apport-kde.py:340 ../gtk/apport-gtk.py:228
+#: ../kde/apport-kde.py:203 ../kde/apport-kde.py:340 ../gtk/apport-gtk.py:233
 msgid "Relaunch"
 msgstr "Перезапустить"
 
 #: ../kde/apport-kde.py:206 ../kde/apport-kde.py:215 ../gtk/apport-gtk.ui.h:10
-#: ../gtk/apport-gtk.py:190 ../gtk/apport-gtk.py:231 ../gtk/apport-gtk.py:242
+#: ../gtk/apport-gtk.py:195 ../gtk/apport-gtk.py:236 ../gtk/apport-gtk.py:247
 msgid "Continue"
 msgstr "Продолжить"
 
-#: ../kde/apport-kde.py:212 ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:239
+#: ../kde/apport-kde.py:212 ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:244
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "При возникновении этой неполадки в дальнейшем попробуйте перезапустить "
 "компьютер."
 
-#: ../kde/apport-kde.py:216 ../gtk/apport-gtk.py:243
+#: ../kde/apport-kde.py:216 ../gtk/apport-gtk.py:248
 msgid "Ignore future problems of this type"
 msgstr "Игнорировать этот тип неполадок в дальнейшем"
 
-#: ../kde/apport-kde.py:251 ../gtk/apport-gtk.py:507
+#: ../kde/apport-kde.py:251 ../gtk/apport-gtk.py:512
 msgid "Hide Details"
 msgstr "Скрыть подробности"
 
-#: ../kde/apport-kde.py:254 ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:178
-#: ../gtk/apport-gtk.py:503
+#: ../kde/apport-kde.py:254 ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:183
+#: ../gtk/apport-gtk.py:508
 msgid "Show Details"
 msgstr "Показать подробности"
 
@@ -590,7 +586,7 @@ msgstr ""
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:321 ../bin/apport-cli.py:144 ../gtk/apport-gtk.py:124
+#: ../kde/apport-kde.py:321 ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:129
 msgid "(binary data)"
 msgstr "(двоичные данные)"
 
@@ -598,7 +594,7 @@ msgstr "(двоичные данные)"
 msgid "Collecting Problem Information"
 msgstr ""
 
-#: ../kde/apport-kde.py:366 ../bin/apport-cli.py:232
+#: ../kde/apport-kde.py:366 ../bin/apport-cli.py:234
 msgid "Collecting problem information"
 msgstr "Сбор информации о проблеме"
 
@@ -612,7 +608,7 @@ msgstr ""
 msgid "Uploading Problem Information"
 msgstr ""
 
-#: ../kde/apport-kde.py:394 ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13
+#: ../kde/apport-kde.py:394 ../bin/apport-cli.py:247 ../gtk/apport-gtk.ui.h:13
 msgid "Uploading problem information"
 msgstr "Передача информации о неполадке"
 
@@ -628,25 +624,25 @@ msgstr ""
 msgid "Apport"
 msgstr ""
 
-#: ../bin/apport-cli.py:71
+#: ../bin/apport-cli.py:73
 msgid "Press any key to continue..."
 msgstr "Чтобы продолжить, нажмите любую клавишу..."
 
-#: ../bin/apport-cli.py:78
+#: ../bin/apport-cli.py:80
 msgid "What would you like to do? Your options are:"
 msgstr "Что вы хотите сделать? Возможные варианты:"
 
-#: ../bin/apport-cli.py:82
+#: ../bin/apport-cli.py:84
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Пожалуйста, выберите (%s):"
 
-#: ../bin/apport-cli.py:142
+#: ../bin/apport-cli.py:144
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:174
+#: ../bin/apport-cli.py:176
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -654,47 +650,47 @@ msgstr ""
 "После того, как отчёт будет отправлен, заполните форму\n"
 "в автоматически открывшемся окне браузера."
 
-#: ../bin/apport-cli.py:177
+#: ../bin/apport-cli.py:179
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Отправить отчёт (%s)"
 
-#: ../bin/apport-cli.py:181
+#: ../bin/apport-cli.py:183
 msgid "&Examine locally"
 msgstr "&Локальная проверка"
 
-#: ../bin/apport-cli.py:185
+#: ../bin/apport-cli.py:187
 msgid "&View report"
 msgstr "&Просмотреть отчёт"
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:188
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Сохранить файл отчёта для последующей отправки или копирования куда-либо"
 
-#: ../bin/apport-cli.py:187
+#: ../bin/apport-cli.py:189
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Отменить и &игнорировать будущие сбои в этой версии программы"
 
-#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:191 ../bin/apport-cli.py:267 ../bin/apport-cli.py:299
+#: ../bin/apport-cli.py:320
 msgid "&Cancel"
 msgstr "О&тменить"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:218
 msgid "Problem report file:"
 msgstr "Файл отчёта о проблеме:"
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:224 ../bin/apport-cli.py:229
 msgid "&Confirm"
 msgstr "&Подтвердить"
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:228
 #, python-format
 msgid "Error: %s"
 msgstr "Ошибка: %s"
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:235
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -702,7 +698,7 @@ msgstr ""
 "Собранная информация может быть направлена разработчикам\n"
 "для улучшения приложения. Это может занять несколько минут."
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:248
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -710,40 +706,40 @@ msgstr ""
 "Собранная информация направляется в систему отслеживания ошибок.\n"
 "Это может занять несколько минут."
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:298
 msgid "&Done"
 msgstr "&Готово"
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:304
 msgid "none"
 msgstr "пусто"
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:305
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Выбрано: %s. Несколько вариантов:"
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:321
 msgid "Choices:"
 msgstr "Выбор:"
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:335
 msgid "Path to file (Enter to cancel):"
 msgstr "Путь к файлу (Enter — отмена):"
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:341
 msgid "File does not exist."
 msgstr "Файл не существует."
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:343
 msgid "This is a directory."
 msgstr "Это — директория."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:349
 msgid "To continue, you must visit the following URL:"
 msgstr "Чтобы продолжить, вы должны пройти по следующему адресу:"
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:351
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -751,11 +747,11 @@ msgstr ""
 "Теперь вы можете открыть браузер или скопировать URL в браузер на другой "
 "компьютер."
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:353
 msgid "Launch a browser now"
 msgstr "Запустить браузер"
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:367
 msgid "No pending crash reports. Try --help for more information."
 msgstr "Нет ожидающих сообщений о сбоях. Попробуйте ключ --help."
 
@@ -819,12 +815,12 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Передача сведений о неполадке</b></big>"
 
-#: ../gtk/apport-gtk.py:139
+#: ../gtk/apport-gtk.py:144
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr "Извините, приложение %s непредвиденно закрылось."
 
-#: ../gtk/apport-gtk.py:142
+#: ../gtk/apport-gtk.py:147
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Извините, %s было непредвиденно закрыто."
@@ -833,11 +829,9 @@ msgstr "Извините, %s было непредвиденно закрыто.
 msgid "Apport crash file"
 msgstr "Файл отчета Apport"
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Не удалось установить или обновить пакет «%s»."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Полный отчёт (рекомендуется; %s)"
 
@@ -854,8 +848,8 @@ msgstr "Файл отчета Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Если вы не вводили секретную информацию (пароли или личные данные), вы "
 #~ "можете помочь нам улучшить программу, отправив отчёт о неполадке."
@@ -868,20 +862,19 @@ msgstr "Файл отчета Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Если вы не вводили секретную информацию (пароли или личные данные),\n"
 #~ "вы можете помочь нам улучшить программу, отправив отчёт о неполадке."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s неожиданно закрылась %s в %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Перезапустить _программу"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -889,11 +882,9 @@ msgstr "Файл отчета Apport"
 #~ "<span weight=\"bold\" size=\"larger\">Извините, не удалось установить или "
 #~ "обновить пакет «%s».</span>"
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Послать полный отчёт (рекомендуется; %s)"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Краткая версия отчёта (при медленном соединении с Интернетом; %s)"
 
@@ -901,13 +892,13 @@ msgstr "Файл отчета Apport"
 #~ msgstr "_Игнорировать будущие сбои в этой версии программы"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
 #~ "Некоторые большие части вашего сообщения будут удалены. Они очень полезны "
-#~ "разработчикам при устранении неполадки, но могут долго отправляться, если у "
-#~ "вас медленное соединение с Интернетом."
+#~ "разработчикам при устранении неполадки, но могут долго отправляться, если "
+#~ "у вас медленное соединение с Интернетом."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Сообщить о проблеме..."
@@ -923,7 +914,6 @@ msgstr "Файл отчета Apport"
 #~ msgstr ""
 #~ "Вы можете помочь разработчикам, отправив отчёт о выявленной неполадке."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Это не оригинальный пакет %s"
 
@@ -938,9 +928,9 @@ msgstr "Файл отчета Apport"
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Вы можете помочь разработчикам исправить эту проблему, отправив о ней отчёт."
+#~ "Вы можете помочь разработчикам исправить эту проблему, отправив о ней "
+#~ "отчёт."
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr ""
 #~ "Послать &сокращенную версию отчета (медленное соединение с Интернетом; %s)"

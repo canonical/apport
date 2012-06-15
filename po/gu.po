@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-11 07:40+0200\n"
+"POT-Creation-Date: 2012-06-15 07:52+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: raj <Unknown>\n"
 "Language-Team: Gujarati <gu@li.org>\n"
+"Language: gu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-06-12 04:33+0000\n"
 "X-Generator: Launchpad (build 15389)\n"
-"Language: gu\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -58,8 +58,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"તમારા કૉમ્પ્યૂટર માં મુશ્કેલીનુ આપોઆપ વિશ્લેષણ કરવા માટે અને ડેવલોપરોને "
-"રિપૉર્ટ (હકીકત) મોકલાવવા માટે પુરતા પ્રમાણ માં મુકત મેમરી નથી."
+"તમારા કૉમ્પ્યૂટર માં મુશ્કેલીનુ આપોઆપ વિશ્લેષણ કરવા માટે અને ડેવલોપરોને રિપૉર્ટ (હકીકત) "
+"મોકલાવવા માટે પુરતા પ્રમાણ માં મુકત મેમરી નથી."
 
 #. package does not exist
 #: ../apport/ui.py:239 ../apport/ui.py:246 ../apport/ui.py:252
@@ -101,9 +101,7 @@ msgstr "કોઈ પેકેજ જણાવેલ નથી"
 #: ../apport/ui.py:323
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr ""
-"તમારે ચોક્કસ પેકેજ અથવા પીઆઈડી નો ઉલ્લેખ કરવાની જરૂર છે. વધુ વિઞત માટે --મદદ "
-"જુઓ."
+msgstr "તમારે ચોક્કસ પેકેજ અથવા પીઆઈડી નો ઉલ્લેખ કરવાની જરૂર છે. વધુ વિઞત માટે --મદદ જુઓ."
 
 #: ../apport/ui.py:340
 msgid "Invalid PID"
@@ -155,8 +153,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -201,8 +199,7 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:637
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:640
@@ -231,8 +228,8 @@ msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
-"પેકેજ ના નામનો  --ફાઇલ-બગ મોડ માં ઉલ્લેખ કરો. આ વૈકલ્પિક છે જો --પીઆઈડી નો "
-"ઉલ્લેખ હોય. (સૂચિત જો ચિહ્ન નુ નામ ફકત આર્ગ્યૂમેન્ટ તરીકે આપેલ હોય.)"
+"પેકેજ ના નામનો  --ફાઇલ-બગ મોડ માં ઉલ્લેખ કરો. આ વૈકલ્પિક છે જો --પીઆઈડી નો ઉલ્લેખ હોય. "
+"(સૂચિત જો ચિહ્ન નુ નામ ફકત આર્ગ્યૂમેન્ટ તરીકે આપેલ હોય.)"
 
 #: ../apport/ui.py:650
 msgid ""
@@ -247,8 +244,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"પતન વિશે ની રજુઆત નિકાલ ન થયેલા %s ના બદલે આપેલી .અપોર્ટ અથવા .ક્રૅશ ફાઈલ "
-"માંથી કરો. (સૂચિત જો એક આર્ગ્યૂમેન્ટ આપેલ હોય.)"
+"પતન વિશે ની રજુઆત નિકાલ ન થયેલા %s ના બદલે આપેલી .અપોર્ટ અથવા .ક્રૅશ ફાઈલ માંથી કરો. "
+"(સૂચિત જો એક આર્ગ્યૂમેન્ટ આપેલ હોય.)"
 
 #: ../apport/ui.py:654
 msgid ""
@@ -303,8 +300,7 @@ msgstr "%s ને ખોલવા માટે વેબ બ્રાઊઝર �
 #: ../apport/ui.py:1033
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr ""
-"મહેરબાની કરીને %s બગ ટ્રૅકીંગ સિસ્ટમ માટે તમારી અકાઉન્ટની માહીતી દાખલ કરો"
+msgstr "મહેરબાની કરીને %s બગ ટ્રૅકીંગ સિસ્ટમ માટે તમારી અકાઉન્ટની માહીતી દાખલ કરો"
 
 #: ../apport/ui.py:1044
 msgid "Network problem"
@@ -314,8 +310,7 @@ msgstr "નેટવર્ક માં સમસ્યા"
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
-"ક્રૅશ ડેટાબેઞ સાથે જોડાણ થઈ શકે તેમ નથી. મહેરબાની કરીને તમારા ઈનટરનેટનુ "
-"જોડાણ તપાશો."
+"ક્રૅશ ડેટાબેઞ સાથે જોડાણ થઈ શકે તેમ નથી. મહેરબાની કરીને તમારા ઈનટરનેટનુ જોડાણ તપાશો."
 
 #: ../apport/ui.py:1073
 msgid "Memory exhaustion"
@@ -323,14 +318,12 @@ msgstr "મેમરીની થકાવટ"
 
 #: ../apport/ui.py:1074
 msgid "Your system does not have enough memory to process this crash report."
-msgstr ""
-"આ ક્રૅશ રિપૉર્ટ ને પ્રોસેસ કરવા માટે તમારી સિસ્ટમમાં પૂરતી મેમરી નથી."
+msgstr "આ ક્રૅશ રિપૉર્ટ ને પ્રોસેસ કરવા માટે તમારી સિસ્ટમમાં પૂરતી મેમરી નથી."
 
 #: ../apport/ui.py:1097 ../apport/ui.py:1106
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
-"આ મુશ્કેલી અહેવાલ પ્રોગ્રામને લાગુ પડે છે જે હવે વધુ કાંઇ સ્થાપીત નથી."
+msgstr "આ મુશ્કેલી અહેવાલ પ્રોગ્રામને લાગુ પડે છે જે હવે વધુ કાંઇ સ્થાપીત નથી."
 
 #: ../apport/ui.py:1127
 #, python-format
@@ -353,8 +346,8 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"આ સમસ્યા વેબ બ્રાઊઝરમાં દેખાતા બગ રિપૉટમાં પહેલાંથી રજુ કરેલ છે. મહેરબાની "
-"કરીને ચકાસો કે તમે વધુ માહીતી ઊમેરી શકો છો કે જે ડેવલોપરો માટે ઊપયોગી થઈ શકે."
+"આ સમસ્યા વેબ બ્રાઊઝરમાં દેખાતા બગ રિપૉટમાં પહેલાંથી રજુ કરેલ છે. મહેરબાની કરીને ચકાસો કે "
+"તમે વધુ માહીતી ઊમેરી શકો છો કે જે ડેવલોપરો માટે ઊપયોગી થઈ શકે."
 
 #: ../apport/ui.py:1179
 msgid "This problem was already reported to developers. Thank you!"
@@ -410,8 +403,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:61
@@ -447,8 +439,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:73
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:78
@@ -489,60 +480,60 @@ msgstr ""
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
-#: ../kde/apport-kde.py:162 ../bin/apport-cli.py:173 ../gtk/apport-gtk.py:160
+#: ../kde/apport-kde.py:162 ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:165
 msgid "Send problem report to the developers?"
 msgstr ""
 
-#: ../kde/apport-kde.py:170 ../gtk/apport-gtk.py:169
+#: ../kde/apport-kde.py:170 ../gtk/apport-gtk.py:174
 msgid "Send"
 msgstr ""
 
-#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:209 ../gtk/apport-gtk.py:148
+#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:209 ../gtk/apport-gtk.py:153
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
-#: ../kde/apport-kde.py:184 ../gtk/apport-gtk.py:206
+#: ../kde/apport-kde.py:184 ../gtk/apport-gtk.py:211
 #, python-format
 msgid "Package: %s"
 msgstr ""
 
-#: ../kde/apport-kde.py:190 ../gtk/apport-gtk.py:213
+#: ../kde/apport-kde.py:190 ../gtk/apport-gtk.py:218
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
-#: ../kde/apport-kde.py:196 ../gtk/apport-gtk.py:222
+#: ../kde/apport-kde.py:196 ../gtk/apport-gtk.py:227
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr ""
 
-#: ../kde/apport-kde.py:202 ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:227
+#: ../kde/apport-kde.py:202 ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:232
 msgid "Leave Closed"
 msgstr ""
 
-#: ../kde/apport-kde.py:203 ../kde/apport-kde.py:340 ../gtk/apport-gtk.py:228
+#: ../kde/apport-kde.py:203 ../kde/apport-kde.py:340 ../gtk/apport-gtk.py:233
 msgid "Relaunch"
 msgstr ""
 
 #: ../kde/apport-kde.py:206 ../kde/apport-kde.py:215 ../gtk/apport-gtk.ui.h:10
-#: ../gtk/apport-gtk.py:190 ../gtk/apport-gtk.py:231 ../gtk/apport-gtk.py:242
+#: ../gtk/apport-gtk.py:195 ../gtk/apport-gtk.py:236 ../gtk/apport-gtk.py:247
 msgid "Continue"
 msgstr ""
 
-#: ../kde/apport-kde.py:212 ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:239
+#: ../kde/apport-kde.py:212 ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:244
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 
-#: ../kde/apport-kde.py:216 ../gtk/apport-gtk.py:243
+#: ../kde/apport-kde.py:216 ../gtk/apport-gtk.py:248
 msgid "Ignore future problems of this type"
 msgstr ""
 
-#: ../kde/apport-kde.py:251 ../gtk/apport-gtk.py:507
+#: ../kde/apport-kde.py:251 ../gtk/apport-gtk.py:512
 msgid "Hide Details"
 msgstr ""
 
-#: ../kde/apport-kde.py:254 ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:178
-#: ../gtk/apport-gtk.py:503
+#: ../kde/apport-kde.py:254 ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:183
+#: ../gtk/apport-gtk.py:508
 msgid "Show Details"
 msgstr ""
 
@@ -554,7 +545,7 @@ msgstr ""
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:321 ../bin/apport-cli.py:144 ../gtk/apport-gtk.py:124
+#: ../kde/apport-kde.py:321 ../bin/apport-cli.py:146 ../gtk/apport-gtk.py:129
 msgid "(binary data)"
 msgstr ""
 
@@ -562,7 +553,7 @@ msgstr ""
 msgid "Collecting Problem Information"
 msgstr ""
 
-#: ../kde/apport-kde.py:366 ../bin/apport-cli.py:232
+#: ../kde/apport-kde.py:366 ../bin/apport-cli.py:234
 msgid "Collecting problem information"
 msgstr ""
 
@@ -576,7 +567,7 @@ msgstr ""
 msgid "Uploading Problem Information"
 msgstr ""
 
-#: ../kde/apport-kde.py:394 ../bin/apport-cli.py:245 ../gtk/apport-gtk.ui.h:13
+#: ../kde/apport-kde.py:394 ../bin/apport-cli.py:247 ../gtk/apport-gtk.ui.h:13
 msgid "Uploading problem information"
 msgstr ""
 
@@ -590,125 +581,125 @@ msgstr ""
 msgid "Apport"
 msgstr ""
 
-#: ../bin/apport-cli.py:71
+#: ../bin/apport-cli.py:73
 msgid "Press any key to continue..."
 msgstr "ચાલુ રાખવું માટે કોઈપણ કી દબાવો..."
 
-#: ../bin/apport-cli.py:78
+#: ../bin/apport-cli.py:80
 msgid "What would you like to do? Your options are:"
 msgstr "તમે શુ કરવાનુ પસંદ કરશો? તમારા વિકલ્પો છે:"
 
-#: ../bin/apport-cli.py:82
+#: ../bin/apport-cli.py:84
 #, python-format
 msgid "Please choose (%s):"
 msgstr "મહેરબાની કરીને પસંદ કરો (%s):"
 
-#: ../bin/apport-cli.py:142
+#: ../bin/apport-cli.py:144
 #, python-format
 msgid "(%i bytes)"
 msgstr ""
 
-#: ../bin/apport-cli.py:174
+#: ../bin/apport-cli.py:176
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
 
-#: ../bin/apport-cli.py:177
+#: ../bin/apport-cli.py:179
 #, python-format
 msgid "&Send report (%s)"
 msgstr ""
 
-#: ../bin/apport-cli.py:181
+#: ../bin/apport-cli.py:183
 msgid "&Examine locally"
 msgstr ""
 
-#: ../bin/apport-cli.py:185
+#: ../bin/apport-cli.py:187
 msgid "&View report"
 msgstr ""
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:188
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 
-#: ../bin/apport-cli.py:187
+#: ../bin/apport-cli.py:189
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "આ પ્રોગ્રામ વર્ઝનના ભવિષ્યના ક્રૅશો ની અવગણના કરો અને રદ કરો."
 
-#: ../bin/apport-cli.py:189 ../bin/apport-cli.py:265 ../bin/apport-cli.py:297
-#: ../bin/apport-cli.py:318
+#: ../bin/apport-cli.py:191 ../bin/apport-cli.py:267 ../bin/apport-cli.py:299
+#: ../bin/apport-cli.py:320
 msgid "&Cancel"
 msgstr "&રદ કરો"
 
-#: ../bin/apport-cli.py:216
+#: ../bin/apport-cli.py:218
 msgid "Problem report file:"
 msgstr ""
 
-#: ../bin/apport-cli.py:222 ../bin/apport-cli.py:227
+#: ../bin/apport-cli.py:224 ../bin/apport-cli.py:229
 msgid "&Confirm"
 msgstr ""
 
-#: ../bin/apport-cli.py:226
+#: ../bin/apport-cli.py:228
 #, python-format
 msgid "Error: %s"
 msgstr ""
 
-#: ../bin/apport-cli.py:233
+#: ../bin/apport-cli.py:235
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
 
-#: ../bin/apport-cli.py:246
+#: ../bin/apport-cli.py:248
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
 
-#: ../bin/apport-cli.py:296
+#: ../bin/apport-cli.py:298
 msgid "&Done"
 msgstr ""
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:304
 msgid "none"
 msgstr ""
 
-#: ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:305
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:319
+#: ../bin/apport-cli.py:321
 msgid "Choices:"
 msgstr ""
 
-#: ../bin/apport-cli.py:333
+#: ../bin/apport-cli.py:335
 msgid "Path to file (Enter to cancel):"
 msgstr ""
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:341
 msgid "File does not exist."
 msgstr ""
 
-#: ../bin/apport-cli.py:341
+#: ../bin/apport-cli.py:343
 msgid "This is a directory."
 msgstr ""
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:349
 msgid "To continue, you must visit the following URL:"
 msgstr ""
 
-#: ../bin/apport-cli.py:349
+#: ../bin/apport-cli.py:351
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
 
-#: ../bin/apport-cli.py:351
+#: ../bin/apport-cli.py:353
 msgid "Launch a browser now"
 msgstr ""
 
-#: ../bin/apport-cli.py:365
+#: ../bin/apport-cli.py:367
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 
@@ -764,12 +755,12 @@ msgstr ""
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:139
+#: ../gtk/apport-gtk.py:144
 #, python-format
 msgid "Sorry, the application %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:142
+#: ../gtk/apport-gtk.py:147
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr ""
@@ -778,7 +769,6 @@ msgstr ""
 msgid "Apport crash file"
 msgstr ""
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "આ અસલ %s પેકેજ નથી"
 
@@ -787,13 +777,13 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "જો તમે કઈ ખાનગી ન કરી રહયા ન હોય (પાસવર્ડ દાખલ કરતા અથવા અન્ય\n"
 #~ "ખાનગી માહીતી), તમે સમસ્યા ને રજુ કરીને આ ઍપ્લિકેશનને વધુ સારી બનાવવા \n"
 #~ "મદદ કરી શકો છો."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s અનપેક્ષિત રીતે %s ના રોજ %s વાગે બંધ થયો છે."
