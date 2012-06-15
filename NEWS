@@ -15,6 +15,7 @@ Bug fixes:
  * test_signal_crashes.py: Drop the broken and obsolete test_local_python()
    test. Instead, add two tests which check proper logging.
  * launchpad.py: Fix urlopen() for Python3. Thanks Steve Langasek.
+ * test_apport_unpack.py: Do not fail tests on translated help output.
 
 2.2.2 (2012-06-13):
 -------------------

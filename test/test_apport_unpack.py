@@ -33,6 +33,13 @@ class T(unittest.TestCase):
 
         klass.unpack_dir = os.path.join(klass.workdir, 'un pack')
 
+        # Avoid tests stumbling over translated help output
+        os.environ['LC_MESSAGES'] = 'C'
+        try:
+            del os.environ['LANGUAGE']
+        except KeyError:
+            pass
+
     @classmethod
     def tearDownClass(klass):
         shutil.rmtree(klass.workdir)
@@ -79,7 +86,7 @@ class T(unittest.TestCase):
         (ret, out, err) = self._call(['apport-unpack', '--help'])
         self.assertEqual(ret, 0)
         self.assertEqual(err, '')
-        self.assertTrue(out.startswith('Usage:'))
+        self.assertTrue(out.startswith('Usage:'), out)
 
     def test_error(self):
         '''calling apport-unpack with wrong arguments'''
@@ -87,12 +94,12 @@ class T(unittest.TestCase):
         (ret, out, err) = self._call(['apport-unpack'])
         self.assertEqual(ret, 1)
         self.assertEqual(err, '')
-        self.assertTrue(out.startswith('Usage:'))
+        self.assertTrue(out.startswith('Usage:'), out)
 
         (ret, out, err) = self._call(['apport-unpack', self.report_file])
         self.assertEqual(ret, 1)
         self.assertEqual(err, '')
-        self.assertTrue(out.startswith('Usage:'))
+        self.assertTrue(out.startswith('Usage:'), out)
 
         (ret, out, err) = self._call(['apport-unpack', '/nonexisting.crash', self.unpack_dir])
         self.assertEqual(ret, 1)
