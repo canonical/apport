@@ -72,6 +72,10 @@ fi
 # avoid breaking the UI tests due to obsolete packages
 export APPORT_IGNORE_OBSOLETE_PACKAGES=1
 
+# avoid breaking tests due to translated strings
+export LC_MESSAGES=C
+unset LANGUAGE
+
 xvfb=
 if type xvfb-run >/dev/null && [ -z "$APPORT_TEST_NOXVFB" ]; then
     xvfb=xvfb-run

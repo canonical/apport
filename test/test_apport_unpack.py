@@ -33,13 +33,6 @@ class T(unittest.TestCase):
 
         klass.unpack_dir = os.path.join(klass.workdir, 'un pack')
 
-        # Avoid tests stumbling over translated help output
-        os.environ['LC_MESSAGES'] = 'C'
-        try:
-            del os.environ['LANGUAGE']
-        except KeyError:
-            pass
-
     @classmethod
     def tearDownClass(klass):
         shutil.rmtree(klass.workdir)
