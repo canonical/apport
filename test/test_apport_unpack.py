@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import unittest, subprocess, tempfile, shutil, os, os.path
+import unittest, subprocess, tempfile, shutil, os, os.path, sys
 import problem_report
 
 
@@ -58,12 +58,17 @@ class T(unittest.TestCase):
         This will catch Python 2/3 specific errors when running the tests with
         a different $PYTHON than apport-unpacks' hashbang.
         '''
-        bindir = os.path.join(
+        apport_unpack = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'bin')
+                'bin', 'apport-unpack')
+        if not os.path.exists(apport_unpack):
+            apport_unpack = '/usr/bin/apport-unpack'
+        if not os.path.exists(apport_unpack):
+            sys.stderr.write('[skip: apport-unpack not found] ')
+            return
 
         self.assertEqual(self._call([os.getenv('PYTHON', 'python3'),
-                                     os.path.join(bindir, 'apport-unpack'),
+                                     apport_unpack,
                                      self.report_file,
                                      self.unpack_dir]),
                          (0, '', ''))

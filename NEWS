@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.2.4 (UNRELELASED):
+--------------------
+Bug fixes:
+ * test_apport_unpack.py: Fix test_unpack_python() test when running the
+   system-installed tests.
+
 2.2.3 (2012-06-15):
 -------------------
 Bug fixes:
