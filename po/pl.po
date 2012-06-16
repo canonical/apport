@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-03-30 19:27+0000\n"
 "Last-Translator: Antoni Kudelski <antekk@linux.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
-"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-06-12 04:33+0000\n"
-"X-Generator: Launchpad (build 15389)\n"
+"X-Launchpad-Export-Date: 2012-06-16 04:33+0000\n"
+"X-Generator: Launchpad (build 15419)\n"
+"Language: pl\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -120,7 +120,8 @@ msgstr "Nieprawidłowy identyfikator procesu"
 
 #: ../apport/ui.py:341
 msgid "The specified process ID does not belong to a program."
-msgstr "Określony identyfikator procesu nie powiązany jest z żadnym programem."
+msgstr ""
+"Określony identyfikator procesu nie powiązany jest z żadnym programem."
 
 #: ../apport/ui.py:349
 msgid "Permission denied"
@@ -170,8 +171,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -228,7 +229,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Dodaje dodatkową etykietę do zgłoszenia. Można użyć kilkukrotnie."
 
 #: ../apport/ui.py:637
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [opcje] [symptom|pid|scieżka_do_programu|plik .apport/.crash]"
 
 #: ../apport/ui.py:640
@@ -282,8 +284,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"Zgłasza błąd działania programu na podstawie określonego pliku .apport lub ."
-"crash zamiast oczekujących w %s (wymuszone, jeśli określono plik jako "
+"Zgłasza błąd działania programu na podstawie określonego pliku .apport lub "
+".crash zamiast oczekujących w %s (wymuszone, jeśli określono plik jako "
 "parametr)."
 
 #: ../apport/ui.py:654
@@ -454,7 +456,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Wyświetl pasek postępu pobierania/instalowania podczas instalowania pakietów "
 "w piaskownicy"
@@ -497,7 +500,8 @@ msgstr ""
 "wysłaniem ich do bazy błędów."
 
 #: ../bin/apport-retrace.py:73
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Ścieżka do zduplikowanej bazy danych sqlite (domyślnie: bez wyszukiwania "
 "duplikatów)"
@@ -859,9 +863,11 @@ msgstr "Przepraszamy, %s został niespodziewanie zakończony."
 msgid "Apport crash file"
 msgstr "Plik zgłoszenia Apport"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Instalowanie lub aktualizowanie pakietu \"%s\" nie powiodło się."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Raport pełny (zalecany; %s)"
 
@@ -883,14 +889,14 @@ msgstr "Plik zgłoszenia Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Jeśli wykonywana praca nie była poufna (wpisywanie haseł bądź innych "
 #~ "prywatnych informacji), można pomóc w usprawnieniu programu zgłaszając "
 #~ "problem."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "Wy&syłanie pełnego raportu (zalecane; %s)"
 
@@ -901,12 +907,12 @@ msgstr "Plik zgłoszenia Apport"
 #~ msgstr "Uruchom &program ponownie"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "To usunie większe obiekty z raportu. Są bardzo przydatne dla programistów "
-#~ "w celu naprawienia błędu, jednak mogą być zbyt duże jeśli posiadasz wolne "
+#~ "To usunie większe obiekty z raportu. Są bardzo przydatne dla programistów w "
+#~ "celu naprawienia błędu, jednak mogą być zbyt duże jeśli posiadasz wolne "
 #~ "połączenie z Internetem."
 
 #~ msgid "&Report Problem..."
@@ -921,6 +927,7 @@ msgstr "Plik zgłoszenia Apport"
 #~ msgid "Kernel problem"
 #~ msgstr "Problem z jądrem systemu"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "To nie jest oryginalny pakiet %s"
 
@@ -932,8 +939,8 @@ msgstr "Plik zgłoszenia Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Jeśli bieżąca praca nie jest jest tajna (wprowadzanie haseł lub innych "
 #~ "prywatnych danych), to można pomóc w ulepszeniu programu poprzez wysłanie "
@@ -942,9 +949,11 @@ msgstr "Plik zgłoszenia Apport"
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "W systemie wystąpił poważny problem z jądrem."
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Wysłanie z&redukowanego raportu (wolne łącze internetowe; %s)"
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s nieoczekiwanie zakończył działanie: %s o %s."
 
@@ -957,10 +966,12 @@ msgstr "Plik zgłoszenia Apport"
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Można pomóc twórcom naprawić problem, zgłaszając go."
 
+#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr ""
 #~ "Przepraszamy, nie udało się zainstalować lub zaktualizować pakietu \"%s\"."
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Raport zmniejszony (wolne połączenie internetowe; %s)"
 
@@ -978,6 +989,7 @@ msgstr "Plik zgłoszenia Apport"
 #~ msgid "Restart _Program"
 #~ msgstr "_Uruchom program ponownie"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -985,8 +997,10 @@ msgstr "Plik zgłoszenia Apport"
 #~ "<span weight=\"bold\" size=\"larger\">Przepraszamy, nie udało się "
 #~ "zainstalować lub zaktualizować pakietu \"%s\".</span>"
 
+#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Przepraszamy, program \"%s\" został niespodziewanie zakończony."
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Przepraszamy, niespodziewanie zakończono %s."

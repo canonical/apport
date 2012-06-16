@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Adi Roiban <adi@roiban.ro>\n"
 "Language-Team: Romanian <ro@li.org>\n"
-"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-06-12 04:33+0000\n"
-"X-Generator: Launchpad (build 15389)\n"
+"X-Launchpad-Export-Date: 2012-06-16 04:33+0000\n"
+"X-Generator: Launchpad (build 15419)\n"
+"Language: ro\n"
 "100 > 19) || ((n % 100 == 0) && (n != 0))) ? 2: 1))\n"
 
 #: ../apport/ui.py:103
@@ -165,8 +165,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -211,7 +211,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:637
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [opțiuni] [fișier simptom|pid|pachet|program cale|.apport/.crash]"
 
@@ -446,14 +447,16 @@ msgstr ""
 "erorile apărute în versiunea curentă."
 
 #: ../bin/apport-retrace.py:59
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Arată progresul descărcării/instalării pentru instalarea pachetelor în zona "
 "protejată"
 
 #: ../bin/apport-retrace.py:61
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr "Adaugă marcaje de timp mesajelor din jurnale, pentru operații în bloc"
+msgstr ""
+"Adaugă marcaje de timp mesajelor din jurnale, pentru operații în bloc"
 
 #: ../bin/apport-retrace.py:63
 msgid "Cache directory for packages downloaded in the sandbox"
@@ -492,7 +495,8 @@ msgstr ""
 "de a le trimite în baza de date despre terminări neașteptate."
 
 #: ../bin/apport-retrace.py:73
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Calea către baza de date sqlite duplicată (implicit: fără verificarea "
 "duplicatelor)"
@@ -815,7 +819,8 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:6
 msgid "Ignore future problems of this program version"
-msgstr "Ignoră viitoarele probleme apărute în versiunea curentă a programului"
+msgstr ""
+"Ignoră viitoarele probleme apărute în versiunea curentă a programului"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
@@ -851,9 +856,11 @@ msgstr "%s s-a închis neașteptat."
 msgid "Apport crash file"
 msgstr "Fișier despre o terminare neașteptată Apport"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Pachetul „%s” a eșuat la instalare sau actualizare."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Raport complet (recomandat; %s)"
 
@@ -863,16 +870,16 @@ msgstr "Fișier despre o terminare neașteptată Apport"
 #~ "After the problem report has been sent, please fill out the form in the "
 #~ "automatically opened web browser."
 #~ msgstr ""
-#~ "<big><b>Trimite înştiinţare cu problema către programatorii aplicaţiei?</"
-#~ "b></big>\n"
+#~ "<big><b>Trimite înştiinţare cu problema către programatorii "
+#~ "aplicaţiei?</b></big>\n"
 #~ "\n"
-#~ "După trimiterea înştiinţării. vă rugăm să completaţi formularul care se "
-#~ "va deschide automat."
+#~ "După trimiterea înştiinţării. vă rugăm să completaţi formularul care se va "
+#~ "deschide automat."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Dacă nu făceaţi nimic confidenţial (introduceaţi parole sau alte date "
 #~ "private), puteţi contribui la îmbunătăţirea aplicaţiei prin raportarea "
@@ -884,39 +891,44 @@ msgstr "Fișier despre o terminare neașteptată Apport"
 #~ msgid "_Send Report"
 #~ msgstr "_Trimite raportul"
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s s-a închis neașteptat în data de %s la %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Reporneşte _Aplicaţia"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Din păcate, pachetul \"%s\" nu a "
-#~ "fost instalat sau actualizat.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Din păcate, pachetul \"%s\" nu a fost "
+#~ "instalat sau actualizat.</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Trimite rapot complet (recomandat; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Raport redus (conexiune lentă la Internet; %s)"
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "_Ignoră erori viitoare în această versiune a programului"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Trimite raport &redus (pentru conexiuni slabe la Internet; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Aceasta va îndepărta părţi substanţiale din raport. Aceste informaţii "
-#~ "sunt utile dezvoltatorilor pentru a depana problema, dar pot fi prea mari "
-#~ "pentru a le trimite dacă conexiunea la internet e lentă."
+#~ "Aceasta va îndepărta părţi substanţiale din raport. Aceste informaţii sunt "
+#~ "utile dezvoltatorilor pentru a depana problema, dar pot fi prea mari pentru "
+#~ "a le trimite dacă conexiunea la internet e lentă."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Raportați problema..."
@@ -933,6 +945,7 @@ msgstr "Fișier despre o terminare neașteptată Apport"
 #~ "Puteţi să-i ajutaţi pe dezvoltatori să repare pachetul prin raportarea "
 #~ "problemei."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Acest pachet %s nu este autentic"
 
@@ -947,12 +960,11 @@ msgstr "Fișier despre o terminare neașteptată Apport"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "În cazul în care nu efectuați operații confidențiale (introducere de "
-#~ "parolă sau de alte\n"
+#~ "În cazul în care nu efectuați operații confidențiale (introducere de parolă "
+#~ "sau de alte\n"
 #~ "informații private), puteți ajuta la îmbunătățirea aplicației prin "
 #~ "raportarea problemei."
 

@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: rizoye-xerzi <rizoxerzi@gmail.com>\n"
 "Language-Team: Kurdish <ku@li.org>\n"
-"Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-06-12 04:33+0000\n"
-"X-Generator: Launchpad (build 15389)\n"
+"X-Launchpad-Export-Date: 2012-06-16 04:33+0000\n"
+"X-Generator: Launchpad (build 15419)\n"
+"Language: ku\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -161,8 +161,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -207,8 +207,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:637
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:640
 msgid ""
@@ -412,7 +414,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:61
@@ -448,7 +451,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:73
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:78
@@ -635,7 +639,8 @@ msgstr "Ji bo şandina peyde yan jî tomarkirina ciye&kî raporê veşêre"
 
 #: ../bin/apport-cli.py:189
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
+msgstr ""
+"Betal yan jî &Derbasbibe di hilweşînên vê bernameyê yên di pêşerojê de"
 
 #: ../bin/apport-cli.py:191 ../bin/apport-cli.py:267 ../bin/apport-cli.py:299
 #: ../bin/apport-cli.py:320
@@ -789,17 +794,19 @@ msgid "Apport crash file"
 msgstr ""
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Ev yek dê hin hêmanên mezin ji raporê bibe. Ev tiştekî asayî ye ji bo "
-#~ "pêşdebiran, lê dibe ku ji bo te tiştekî gelekî mezin be ku tu barbikî "
-#~ "heke girêdana interneta te giran be."
+#~ "pêşdebiran, lê dibe ku ji bo te tiştekî gelekî mezin be ku tu barbikî heke "
+#~ "girêdana interneta te giran be."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ev ne pakêteke xweser ya %s e."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Sazkirin yan jî bilindkirna pakêta \"%s\" biserbeket."
 
@@ -808,20 +815,21 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Ger te tiştekî veşartî nekiribe (têketine nasnavê yan jî agahiyên \n"
 #~ "taybet yên din), tu dikarî sepanê bi pêşbixî bi raporkirina \n"
 #~ "pirsgirêkê."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s bê hêvîkirin hat girtin li ser %s di %s de."
 
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "Pergala te leqayî pirsgirêkeka girîng ya kernel'ê hat."
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Rapora &kêmkirî bişîne (girêdana înternetê ya hêdî; %s)"
 
@@ -836,5 +844,6 @@ msgstr ""
 #~ "Bi raporkirina vê tu dikarî ji bo çareserkirina pirsgirêkê alîkariya "
 #~ "pisporan bikî."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Hemû raporê bişîne(Tê pêşniyarkirin; %s)"

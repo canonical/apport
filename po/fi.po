@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-04-09 17:00+0000\n"
 "Last-Translator: Jani Uusitalo <jani@mummila.net>\n"
 "Language-Team: Finnish <fi@li.org>\n"
-"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-06-12 04:32+0000\n"
-"X-Generator: Launchpad (build 15389)\n"
+"X-Launchpad-Export-Date: 2012-06-16 04:32+0000\n"
+"X-Generator: Launchpad (build 15419)\n"
+"Language: fi\n"
 
 #: ../apport/ui.py:103
 msgid "This package does not seem to be installed correctly"
@@ -167,8 +167,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -225,10 +225,11 @@ msgstr ""
 "Lisää raporttiin liittyvä tunniste. Tämä voidaan tehdä useampia kertoja."
 
 #: ../apport/ui.py:637
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [valinnat] [ongelma|pid|paketti|ohjelman polku|.apport/."
-"kaatumisraportti]"
+"%prog [valinnat] [ongelma|pid|paketti|ohjelman "
+"polku|.apport/.kaatumisraportti]"
 
 #: ../apport/ui.py:640
 msgid ""
@@ -359,7 +360,8 @@ msgstr ""
 #: ../apport/ui.py:1097 ../apport/ui.py:1106
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "Tämä ongelmaraportti kytkeytyy ohjelmaan, joka ei ole enää asennettu."
+msgstr ""
+"Tämä ongelmaraportti kytkeytyy ohjelmaan, joka ei ole enää asennettu."
 
 #: ../apport/ui.py:1127
 #, python-format
@@ -397,7 +399,8 @@ msgstr "%prog [valinnat] <tasaa ongelmaraportti | kaatumistunniste>"
 
 #: ../bin/apport-retrace.py:41
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "Älä laita uusia jäljityksiä raporttiin, mutta kirjoita ne stdout:iin."
+msgstr ""
+"Älä laita uusia jäljityksiä raporttiin, mutta kirjoita ne stdout:iin."
 
 #: ../bin/apport-retrace.py:43
 msgid ""
@@ -445,7 +448,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:59
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:61
@@ -486,7 +490,8 @@ msgstr ""
 "kaatumistietokantaan."
 
 #: ../bin/apport-retrace.py:73
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Polku jäljennös-sqlite-tietokantaan (oletus: ei jälkennöksen tarkistusta)"
 
@@ -845,9 +850,11 @@ msgstr "Apport-kaatumistiedosto"
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Voit auttaa kehittäjiä korjaaman ongelman ilmoittamalla siitä."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Paketin \"%s\" asennus tai päivitys epäonnistui."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Täydellinen raportti (suositus; %s)"
 
@@ -864,13 +871,14 @@ msgstr "Apport-kaatumistiedosto"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Jos et tehnyt mitään luottamuksellista (syöttänyt salasanoja tai muita "
 #~ "henkilökohtaisia tietoja), voit auttaa kehittämään ohjelmaa raportoimalla "
 #~ "ongelmasta."
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Ikävä kyllä %s sulkeutui yllättäen"
 
@@ -895,22 +903,22 @@ msgstr "Apport-kaatumistiedosto"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Jos et ollut tekemässä mitään luottamuksellista (kuten syöttänyt "
-#~ "salasanoja tai muuta\n"
-#~ "henkilökohtaista tietoa), voit auttaa ohjelman kehittämisessä "
-#~ "raportoimalla\n"
+#~ "Jos et ollut tekemässä mitään luottamuksellista (kuten syöttänyt salasanoja "
+#~ "tai muuta\n"
+#~ "henkilökohtaista tietoa), voit auttaa ohjelman kehittämisessä raportoimalla\n"
 #~ "ongelman."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Uudelleenkäynnistä _ohjelma"
 
+#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Ikävä kyllä paketin \"%s\" asennus tai päivitys epäonnistui."
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -918,12 +926,15 @@ msgstr "Apport-kaatumistiedosto"
 #~ "<span weight=\"bold\" size=\"larger\">Paketin \"%s\" asennus tai päivitys "
 #~ "epäonnistui.</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Lähetä täydellinen raportti (suositeltavaa; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Pelkistetty raportti (hidas Internet-yhteys; %s)"
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Ikävä kyllä %s sulkeutui yllättäen."
 
@@ -933,18 +944,18 @@ msgstr "Apport-kaatumistiedosto"
 #~ msgid "Restart &Program"
 #~ msgstr "Käynnistä &ohjelma uudelleen"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Lähetä &suppea raportti (hitaille Internet-yhteyksille; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Tämä poistaa joitain isoimpia osuuksia raportista. Osuudet ovat "
-#~ "hyödyllisiä ohjelman kehittäjille ongelman selvittämisessä mutta et "
-#~ "välttämättä halua odottaa niiden lähettämistä, jos Internet-yhteytesi on "
-#~ "hidas."
+#~ "Tämä poistaa joitain isoimpia osuuksia raportista. Osuudet ovat hyödyllisiä "
+#~ "ohjelman kehittäjille ongelman selvittämisessä mutta et välttämättä halua "
+#~ "odottaa niiden lähettämistä, jos Internet-yhteytesi on hidas."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Raportoi ongelma..."
@@ -965,9 +976,11 @@ msgstr "Apport-kaatumistiedosto"
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr "Voi auttaa kehittäjiä korjaamaan ongelman raportoimalla ongelmasta."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Tämä ei ole alkuperäinen %s-paketti"
 
+#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Ikävä kyllä ohjelma \"%s\" sulkeutui yllättäen."
 
@@ -983,5 +996,6 @@ msgstr "Apport-kaatumistiedosto"
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Lähetetäänkö nämä tiedot kehittäjille?"
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s sulkeutui yllättäen %s %s."
