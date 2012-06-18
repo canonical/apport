@@ -648,7 +648,8 @@ if core_pattern[0] != '|':
 apport_path = core_pattern[1:].split()[0]
 
 if apport.fileutils.get_all_reports():
-    sys.stderr.write('Please remove all crash reports from /var/crash/ for this test suite\n')
+    sys.stderr.write('Please remove all crash reports from /var/crash/ for this test suite:\n  %s\n' %
+            '\n  '.join(os.listdir('/var/crash')))
     sys.exit(1)
 
 unittest.main()
