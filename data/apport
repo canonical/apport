@@ -381,6 +381,19 @@ try:
                     write_user_coredump(pid, cwd, core_ulimit)
                     error_log('this executable already crashed %i times, ignoring' % crash_counter)
                     sys.exit(1)
+                with open(report, 'rb') as f:
+                    r = apport.Report()
+                    r.load(f)
+                    try:
+                        if r['ProblemType'] == 'Hang':
+                            application_hang = True
+                            # We default to Crash early, but at this point we
+                            # know we have a hanging application.
+                            info['ProblemType'] = 'Hang'
+                            if 'NeedsRestart' in r:
+                                info['NeedsRestart'] = r['NeedsRestart']
+                    except KeyError:
+                        pass
                 # remove the old file, so that we can create the new one with
                 # os.O_CREAT|os.O_EXCL
                 if not application_hang:
@@ -391,14 +404,6 @@ try:
                 write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
 
-            with open(report, 'rb') as f:
-                r = apport.Report()
-                r.load(f)
-                try:
-                    if r['ProblemType'] == 'Hang':
-                        application_hang = True
-                except KeyError:
-                    pass
         if application_hang:
             reportfile = os.fdopen(os.open(report, os.O_WRONLY, 0), 'wb')
         else:

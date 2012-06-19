@@ -186,7 +186,12 @@ class UserInterface:
         else:
             reports = apport.fileutils.get_new_reports()
         for f in reports:
-            self.run_crash(f)
+            if not self.load_report(f):
+                continue
+            if self.report['ProblemType'] == 'Hang':
+                self.finish_hang(f)
+            else:
+                self.run_crash(f)
             result = True
 
         return result
@@ -209,7 +214,7 @@ class UserInterface:
                 # not there any more? no problem, then it won't be regarded as
                 # "seen" any more anyway
                 pass
-            if not self.load_report(report_file):
+            if not self.report and not self.load_report(report_file):
                 return
 
             if 'Ignore' in self.report:
@@ -305,6 +310,23 @@ class UserInterface:
             else:
                 raise
 
+    def finish_hang(self, f):
+        '''Finish processing a hanging application after the core pipe handler
+        has handed the report back.
+
+        This may restart the now terminated application and signal to whoopsie
+        that the report needs to be uploaded.
+        '''
+        print('finish hang')
+        if self.report['NeedsRestart'] == '1':
+            print('restarting')
+            self.restart()
+            #del self.report['NeedsRestart']
+            with open(f, 'wb') as fp:
+                self.report.write(fp)
+        apport.fileutils.mark_report_upload(f)
+        apport.fileutils.mark_report_seen(f)
+
     def run_hang(self, pid):
         '''Report an application hanging.
 
@@ -334,6 +356,7 @@ class UserInterface:
                                          path, os.getuid())
         with open(reportfile, 'wb') as f:
             self.report.write(f)
+        apport.fileutils.mark_report_seen(reportfile)
         self.kill_segv(pid)
 
     def kill_segv(self, pid):
