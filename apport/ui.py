@@ -317,9 +317,7 @@ class UserInterface:
         This may restart the now terminated application and signal to whoopsie
         that the report needs to be uploaded.
         '''
-        print('finish hang')
         if self.report['NeedsRestart'] == '1':
-            print('restarting')
             self.restart()
             #del self.report['NeedsRestart']
             with open(f, 'wb') as fp:
