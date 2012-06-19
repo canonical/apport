@@ -348,6 +348,13 @@ class UserInterface:
         allowed_to_report = apport.fileutils.allowed_to_report()
         response = self.ui_present_report_details(allowed_to_report)
         if not response['report']:
+            os.kill(int(pid), signal.SIGKILL)
+            if response['restart']:
+                # This approach means that we will not be able to process the
+                # report later on, if the users selects to not report it now.
+                # An alternative would be to use a NeedsReporting field and
+                # still send SEGV here.
+                self.restart()
             return
         if response['restart']:
             self.report['NeedsRestart'] = '1'
