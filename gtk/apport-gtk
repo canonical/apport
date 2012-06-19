@@ -195,7 +195,25 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w('continue_button').set_label(_('Continue'))
 
         self.w('cancel_button').hide()
-        if not self.report_file:
+        if report_type == 'Hang':
+            self.w('ignore_future_problems').set_active(False)
+            self.w('ignore_future_problems').hide()
+            self.w('closed_button').show()
+            self.w('closed_button').set_label(_('Force Closed'))
+            self.w('continue_button').set_label(_('Relaunch'))
+            self.w('subtitle_label').hide()
+            self.desktop_info = self.get_desktop_entry()
+            if self.desktop_info:
+                icon = self.desktop_info.get('icon')
+                name = self.desktop_info['name']
+                name = GLib.markup_escape_text(name)
+                title = _('The application %s has stopped responding.') % name
+            else:
+                icon = 'distributor-logo'
+                name = os.path.basename(self.report['ExecutablePath'])
+                title = _('The program "%s" has stopped responding.') % name
+            self.w('title_label').set_label('<big><b>%s</b></big>' % title)
+        elif not self.report_file:
             self.setup_bug_report()
         elif report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)

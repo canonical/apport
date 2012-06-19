@@ -365,6 +365,7 @@ try:
 
     crash_counter = 0
 
+    application_hang = False
     # Create crash report file descriptor for writing the report into
     # report_dir
     try:
@@ -382,14 +383,27 @@ try:
                     sys.exit(1)
                 # remove the old file, so that we can create the new one with
                 # os.O_CREAT|os.O_EXCL
-                os.unlink(report)
+                if not application_hang:
+                    os.unlink(report)
             else:
                 error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
                 drop_privileges(pid)
                 write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
-        reportfile = os.fdopen(os.open(report,
-            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'wb')
+
+            with open(report, 'rb') as f:
+                r = apport.Report()
+                r.load(f)
+                try:
+                    if r['ProblemType'] == 'Hang':
+                        application_hang = True
+                except KeyError:
+                    pass
+        if application_hang:
+            reportfile = os.fdopen(os.open(report, os.O_WRONLY, 0), 'wb')
+        else:
+            reportfile = os.fdopen(os.open(report,
+                os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'wb')
         assert reportfile.fileno() > sys.stderr.fileno()
 
         # Make sure the crash reporting daemon can read this report

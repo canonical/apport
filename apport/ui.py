@@ -18,6 +18,7 @@ __version__ = '2.2.3'
 import glob, sys, os.path, optparse, traceback, locale, gettext
 import errno, zlib
 import subprocess, threading, webbrowser
+import signal
 
 import apport, apport.fileutils, apport.REThread
 
@@ -304,6 +305,40 @@ class UserInterface:
             else:
                 raise
 
+    def run_hang(self, pid):
+        '''Report an application hanging.
+
+        This will first present a dialog containing the information it can
+        collect from the running application (everything but the trace) with
+        the option of terminating or restarting the application, optionally
+        reporting that this error occurred.
+
+        A SEGV will then be sent to the process and a series of noninteractive
+        processes will collect the remaining information, append it to the
+        report generated here, potentially restart the application, and then
+        mark that report for uploading.
+        '''
+        self.report = apport.Report('Hang')
+        self.report.add_proc_info(pid)
+        self.report.add_package_info()
+        self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
+        self.report.add_os_info()
+        allowed_to_report = apport.fileutils.allowed_to_report()
+        response = self.ui_present_report_details(allowed_to_report)
+        if not response['report']:
+            return
+        if response['restart']:
+            self.report['NeedsRestart'] = '1'
+        path = self.report['ExecutablePath'].replace('/', '_')
+        reportfile = '%s/%s.%i.crash' % (apport.fileutils.report_dir,
+                                         path, os.getuid())
+        with open(reportfile, 'wb') as f:
+            self.report.write(f)
+        self.kill_segv(pid)
+
+    def kill_segv(self, pid):
+        os.kill(int(pid), signal.SIGSEGV)
+
     def run_report_bug(self, symptom_script=None):
         '''Report a bug.
 
@@ -557,6 +592,9 @@ class UserInterface:
         if self.options.symptom:
             self.run_symptom()
             return True
+        elif self.options.pid and self.options.hanging:
+            self.run_hang(self.options.pid)
+            return True
         elif self.options.filebug:
             return self.run_report_bug()
         elif self.options.update_report is not None:
@@ -648,6 +686,8 @@ class UserInterface:
             help=_('Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.)'))
         optparser.add_option('-P', '--pid', type='int',
             help=_('Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information.  (Implied if pid is given as only argument.)'))
+        optparser.add_option('--hanging', action='store_true', default=False,
+            help=_('The provided pid is a hanging application.'))
         optparser.add_option('-c', '--crash-file', metavar='PATH',
             help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir)
         optparser.add_option('--save', metavar='PATH',
