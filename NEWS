@@ -8,6 +8,8 @@ Bug fixes:
    system-installed tests.
  * data/java_uncaught_exception: Fix for Python 3.
  * test_signal_crashes.py: Show crash reports in /var/crash/.
+ * test_crash_digger.py: Do not write crash reports of crash-digger into system
+   /var/crash, use a temporary directory.
 
 2.2.3 (2012-06-15):
 -------------------

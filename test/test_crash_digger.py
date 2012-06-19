@@ -11,6 +11,8 @@
 
 import unittest, subprocess, tempfile, os, shutil, os.path
 
+import apport.fileutils
+
 
 class T(unittest.TestCase):
     def setUp(self):
@@ -44,8 +46,14 @@ echo "$@" >> %s''' % self.apport_retrace_log)
         os.environ['APPORT_CRASHDB_CONF'] = crashdb_conf
         os.environ['PYTHONPATH'] = '.'
 
+        self.orig_report_dir = apport.fileutils.report_dir
+        apport.fileutils.report_dir = os.path.join(self.workdir, 'crashes')
+        os.mkdir(apport.fileutils.report_dir)
+        os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
+
     def tearDown(self):
         shutil.rmtree(self.workdir)
+        apport.fileutils.report_dir = self.orig_report_dir
 
     def call(self, args):
         '''Call crash-digger with given arguments.
