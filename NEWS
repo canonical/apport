@@ -10,6 +10,9 @@ Bug fixes:
  * test_signal_crashes.py: Show crash reports in /var/crash/.
  * test_crash_digger.py: Do not write crash reports of crash-digger into system
    /var/crash, use a temporary directory.
+ * test/run: Wait for a previous xvfb server to finish before trying to start
+   one. This fixes a race condition in the KDE UI tests which often failed to
+   start up xvfb.
 
 2.2.3 (2012-06-15):
 -------------------
