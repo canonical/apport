@@ -319,7 +319,7 @@ class UserInterface:
         '''
         if self.report['NeedsRestart'] == '1':
             self.restart()
-            #del self.report['NeedsRestart']
+            del self.report['NeedsRestart']
             with open(f, 'wb') as fp:
                 self.report.write(fp)
         apport.fileutils.mark_report_upload(f)
