@@ -908,8 +908,8 @@ in a dependent package.' % master,
 
         # check tags
         for line in f:
-            if line.startswith('tags:'):
-                if 'apport-failed-retrace' in line or 'apport-request-retrace' in line:
+            if line.startswith(b'tags:'):
+                if b'apport-failed-retrace' in line or b'apport-request-retrace' in line:
                     return None
                 else:
                     break
