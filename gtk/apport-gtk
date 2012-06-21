@@ -494,7 +494,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             # test mode
             return 'DISPLAY' in os.environ and program is not None
 
-        subprocess.call([program, '-e', command], stdout=subprocess.PIPE)
+        subprocess.call([program, '-e', command])
 
     #
     # Event handlers

@@ -1948,11 +1948,12 @@ Categories=GNOME;GTK;Utility;TextEditor;
         self.report['DesktopFile'] = desktop_file.name
         self.ui.report = self.report
         info = self.ui.get_desktop_entry()
-        self.assertEqual(info, {'genericname': 'Translator', 
+        self.assertEqual(info, {'genericname': 'Translator',
             'categories': 'GNOME;GTK;Utility;TextEditor;',
             'name': 'gtranslate',
             'genericname[de]': 'Übersetzer',
             'exec': 'gedit %U'
             })
+
 
 unittest.main()

@@ -770,8 +770,10 @@ class UserInterface:
             return False
 
         try:
-            if subprocess.call(['apport-retrace', '--help'],
-                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
+            p = subprocess.Popen(['apport-retrace', '--help'],
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            p.communicate()
+            if p.returncode != 0:
                 return False
         except OSError:
             return False

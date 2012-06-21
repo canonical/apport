@@ -413,12 +413,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         not available.'''
 
         # fetch source tree
-        argv = ['apt-get', '--assume-yes', 'source', srcpackage]
+        argv = ['apt-get', '-qq', '--assume-yes', 'source', srcpackage]
         if version:
             argv[-1] += '=' + version
         try:
-            if subprocess.call(argv, stdout=subprocess.PIPE,
-                cwd=dir) != 0:
+            if subprocess.call(argv, cwd=dir) != 0:
                 return None
         except OSError:
             return None
@@ -432,11 +431,10 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # apply patches on a best-effort basis
         try:
-            subprocess.call('debian/rules patch || debian/rules apply-patches ' \
+            subprocess.call('(debian/rules patch || debian/rules apply-patches ' \
                 '|| debian/rules apply-dpatches || '\
                 'debian/rules unpack || debian/rules patch-stamp || ' \
-                'debian/rules setup', shell=True, cwd=root,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                'debian/rules setup) >/dev/null 2>&1', shell=True, cwd=root)
         except OSError:
             pass
 
