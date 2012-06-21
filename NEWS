@@ -13,6 +13,7 @@ Bug fixes:
  * test/run: Wait for a previous xvfb server to finish before trying to start
    one. This fixes a race condition in the KDE UI tests which often failed to
    start up xvfb.
+ * apport-cli: Unbreak "keep" option. (LP: #1007826)
 
 2.2.3 (2012-06-15):
 -------------------

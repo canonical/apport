@@ -213,7 +213,8 @@ class CLIUserInterface(apport.ui.UserInterface):
                     if 'Package' in self.report:
                         prefix += self.report['Package'].split()[0] + '.'
                     (fd, self.report_file) = tempfile.mkstemp(prefix=prefix, suffix='.apport')
-                    self.report.write(os.fdopen(fd, 'w'))
+                    with os.fdopen(fd, 'wb') as f:
+                        self.report.write(f)
 
                 print(_('Problem report file:') + ' ' + self.report_file)
 
