@@ -46,6 +46,8 @@ class T(unittest.TestCase):
         self.report_dir = tempfile.mkdtemp()
         apport.fileutils.report_dir = self.report_dir
         os.environ['APPORT_REPORT_DIR'] = self.report_dir
+        # do not cause eternal hangs because of error dialog boxes
+        os.environ['APPORT_DISABLE_DISTRO_CHECK'] = '1'
 
         saved = sys.argv[0]
         # Work around GTKUserInterface using basename to find the GtkBuilder UI

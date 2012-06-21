@@ -45,6 +45,9 @@ class T(unittest.TestCase):
     def setUp(self):
         self.report_dir = tempfile.mkdtemp()
         apport.fileutils.report_dir = self.report_dir
+        os.environ['APPORT_REPORT_DIR'] = self.report_dir
+        # do not cause eternal hangs because of error dialog boxes
+        os.environ['APPORT_DISABLE_DISTRO_CHECK'] = '1'
 
         self.app = MainUserInterface()
 

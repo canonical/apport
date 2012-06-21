@@ -8,6 +8,8 @@ detailled list of changes, please see ChangeLog.
    desktop files with % signs. (LP: #1014341)
  * apport/ui.py: Fix rare crash if a report is already being updated in the
    background when the UI tries to update a previous version. (LP: #949196)
+ * GTK and KDE UI tests: Avoid eternal hangs due to "this is not a distro
+   package" error messages.
 
 2.2.4 (2012-06-21):
 --------------------
