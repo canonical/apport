@@ -1145,8 +1145,8 @@ class UserInterface:
         if not desktop_file:
             return None
 
-        cp = ConfigParser()
-        cp.read(desktop_file)
+        cp = ConfigParser(interpolation=None)
+        cp.read(desktop_file, encoding='UTF-8')
         if not cp.has_section('Desktop Entry'):
             return None
         result = dict(cp.items('Desktop Entry'))

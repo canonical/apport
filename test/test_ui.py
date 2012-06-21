@@ -1934,4 +1934,25 @@ return 'bash'
         self.assertEqual(self.ui.upload_progress_pulses, 0)
         self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)
 
+    def test_get_desktop_entry(self):
+        desktop_file = tempfile.NamedTemporaryFile()
+        desktop_file.write('''[Desktop Entry]
+Name=gtranslate
+GenericName=Translator
+GenericName[de]=Übersetzer
+Exec=gedit %U
+Categories=GNOME;GTK;Utility;TextEditor;
+'''.encode('UTF-8'))
+        desktop_file.flush()
+
+        self.report['DesktopFile'] = desktop_file.name
+        self.ui.report = self.report
+        info = self.ui.get_desktop_entry()
+        self.assertEqual(info, {'genericname': 'Translator', 
+            'categories': 'GNOME;GTK;Utility;TextEditor;',
+            'name': 'gtranslate',
+            'genericname[de]': 'Übersetzer',
+            'exec': 'gedit %U'
+            })
+
 unittest.main()

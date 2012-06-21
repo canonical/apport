@@ -4,6 +4,8 @@ detailled list of changes, please see ChangeLog.
 2.2.5 (UNRELEASED):
 -------------------
  * launchpad.py: Fix str vs. bytes crash for already known bugs, take 2. (LP: #1015788)
+ * apport/ui.py, get_desktop_entry(): Disable interpolation, to correctly read
+   desktop files with % signs. (LP: #1014341)
 
 2.2.4 (2012-06-21):
 --------------------
