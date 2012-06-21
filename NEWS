@@ -14,6 +14,7 @@ Bug fixes:
    one. This fixes a race condition in the KDE UI tests which often failed to
    start up xvfb.
  * apport-cli: Unbreak "keep" option. (LP: #1007826)
+ * launchpad.py: Fix str vs. bytes crash for already known bugs. (LP: #1015788)
 
 2.2.3 (2012-06-15):
 -------------------

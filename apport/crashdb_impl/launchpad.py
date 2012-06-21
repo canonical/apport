@@ -900,8 +900,9 @@ in a dependent package.' % master,
             # can just as well avoid the upload
             return url
 
+
         line = f.readline()
-        if not line.startswith('bug:'):
+        if not line.startswith(b'bug:'):
             # presumably a 404 etc. page, which happens for private bugs
             return True
 
