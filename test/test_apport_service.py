@@ -17,6 +17,7 @@ import tempfile
 import time
 import sys
 import apport
+import traceback
 
 
 class T(unittest.TestCase):
@@ -33,10 +34,11 @@ class T(unittest.TestCase):
         bus = dbus.SessionBus()
         obj = bus.get_object('com.ubuntu.Apport', '/com/ubuntu/Apport')
         self.iface = dbus.Interface(obj, 'com.ubuntu.Apport')
+        self.tb = ''.join(traceback.format_stack())
 
     def test_apport_service(self):
         empty = dbus.Dictionary(signature=dbus.Signature('ss'))
-        self.iface.RecoverableCrashReport('test_body', 'test_traceback', empty)
+        self.iface.RecoverableCrashReport('test_body', self.tb, empty)
         path = os.path.abspath(sys.argv[0]).replace('/', '_')
         report_dir = os.environ['APPORT_REPORT_DIR']
         expected_path = '%s/%s.%i.crash' % (report_dir, path, os.getuid())
@@ -45,11 +47,11 @@ class T(unittest.TestCase):
         with open(expected_path, 'rb') as fp:
             report.load(fp)
             self.assertEqual(report['DialogBody'], 'test_body')
-            self.assertEqual(report['Traceback'], 'test_traceback')
+            self.assertEqual(report['Traceback'], self.tb)
 
     def test_apport_service_additional_keys(self):
         keys = {'TestKey': 'TestValue', 'TestKey2': 'TestValue2'}
-        self.iface.RecoverableCrashReport('test_body', 'test_traceback', keys)
+        self.iface.RecoverableCrashReport('test_body', self.tb, keys)
         path = os.path.abspath(sys.argv[0]).replace('/', '_')
         report_dir = os.environ['APPORT_REPORT_DIR']
         expected_path = '%s/%s.%i.crash' % (report_dir, path, os.getuid())
@@ -58,7 +60,7 @@ class T(unittest.TestCase):
         with open(expected_path, 'rb') as fp:
             report.load(fp)
             self.assertEqual(report['DialogBody'], 'test_body')
-            self.assertEqual(report['Traceback'], 'test_traceback')
+            self.assertEqual(report['Traceback'], self.tb)
             for key in keys:
                 self.assertEqual(report[key], keys[key])
 
