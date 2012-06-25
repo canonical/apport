@@ -251,6 +251,15 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 self.w('ignore_future_problems').hide()
 
+            if report_type == 'RecoverableCrash':
+                body = self.report.get('DialogBody', '')
+                if body:
+                    del self.report['DialogBody']
+                    self.w('subtitle_label').show()
+                    # Set a maximum size for the dialog body, so developers do
+                    # not try to shove entire log files into this dialog.
+                    self.w('subtitle_label').set_label(body[:1024])
+
         if icon:
             from gi.repository import GdkPixbuf
             builtin = Gtk.IconLookupFlags.USE_BUILTIN
