@@ -8,6 +8,7 @@ import apport
 import os
 import argparse
 
+
 class Apport(dbus.service.Object):
     def __init__(self, bus):
         object_path = '/com/ubuntu/Apport'
@@ -16,7 +17,7 @@ class Apport(dbus.service.Object):
         dbus.service.Object.__init__(self, bus, object_path)
 
     @dbus.service.method(
-        'com.Ubuntu.Apport', in_signature='ssa{ss}', out_signature='',
+        'com.ubuntu.Apport', in_signature='ssa{ss}', out_signature='',
         sender_keyword='sender')
     def RecoverableCrashReport(self, dialog_text, traceback, additional_keys, sender=None):
         if not sender:
@@ -48,7 +49,7 @@ class Apport(dbus.service.Object):
         reportfile = '%s/%s.%i.crash' % (reportdir, path, os.getuid())
         with open(reportfile, 'wb') as f:
             report.write(f)
-                                         
+
 
 def parse_argv():
     desc = 'Apport recoverable errors service'
