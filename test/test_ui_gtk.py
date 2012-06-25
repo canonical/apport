@@ -395,9 +395,9 @@ Type=Application''')
         self.assertEqual(self.app.w('dialog_crash_new').get_title(),
             self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('The application Apport has experienced an internal error.'))
+            'The application Apport has experienced an internal error.')
         self.assertEqual(self.app.w('subtitle_label').get_text(),
-            _('Some developer-specified error text.'))
+            'Some developer-specified error text.')
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))

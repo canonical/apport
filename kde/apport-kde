@@ -193,9 +193,14 @@ class ReportDialog(Dialog):
             # Regular crash.
             if desktop_info:
                 icon = desktop_info.get('icon')
-                self.heading.setText(_('The application %s has closed '
-                                       'unexpectedly.') %
-                                       desktop_info['name'])
+                if report_type == 'RecoverableCrash':
+                    self.heading.setText(_('The application %s has experienced '
+                                           'an internal error.') %
+                                           desktop_info['name'])
+                else:
+                    self.heading.setText(_('The application %s has closed '
+                                           'unexpectedly.') %
+                                           desktop_info['name'])
                 self.text.hide()
                 if 'ProcCmdline' in report:
                     self.closed_button.show()
