@@ -39,7 +39,6 @@ class Apport(dbus.service.Object):
             else:
                 report['Stacktrace'] = traceback
 
-        # TODO check the security implecations of this.
         for key in additional_keys:
             report[key] = additional_keys[key]
 
@@ -51,6 +50,7 @@ class Apport(dbus.service.Object):
                                          
 
 if __name__ == '__main__':
+    # TODO shutdown timer
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = dbus.SessionBus()
     Apport(bus)
