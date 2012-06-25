@@ -53,7 +53,7 @@ class Apport(dbus.service.Object):
 def parse_argv():
     desc = 'Apport recoverable errors service'
     parser = argparse.ArgumentParser(description=desc)
-    h = 'Timeout for D-BUS service (default: 600, 0: run forever)'
+    h = 'Timeout for D-BUS service (default: 600)'
     parser.add_argument('--timeout', type=int, help=h)
     return parser.parse_args()
 

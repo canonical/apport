@@ -1,3 +1,3 @@
 [D-BUS Service]
 Name=com.ubuntu.Apport
-Exec=/usr/share/apport/apport-service
+Exec=/usr/share/apport/apport-service --timeout 600
