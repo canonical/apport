@@ -223,8 +223,12 @@ class GTKUserInterface(apport.ui.UserInterface):
                 icon = self.desktop_info.get('icon')
                 n = self.desktop_info['name']
                 n = GLib.markup_escape_text(n)
-                self.w('title_label').set_label('<big><b>%s</b></big>' %
-                    _('The application %s has closed unexpectedly.') % n)
+                if report_type == 'RecoverableCrash':
+                    t = _('The application %s has experienced '
+                          'an internal error.') % n
+                else:
+                    t = _('The application %s has closed unexpectedly.') % n
+                self.w('title_label').set_label('<big><b>%s</b></big>' % t)
                 self.w('subtitle_label').hide()
 
                 if 'ProcCmdline' in self.report:
@@ -236,7 +240,11 @@ class GTKUserInterface(apport.ui.UserInterface):
                     self.w('continue_button').set_label(_('Continue'))
             else:
                 icon = 'distributor-logo'
-                title_text = self.get_system_application_title()
+                if report_type == 'RecoverableCrash':
+                    title_text = _('The application %s has experienced '
+                                   'an internal error.') % self.cur_package
+                else:
+                    title_text = self.get_system_application_title()
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
                                                 title_text)
                 self.w('subtitle_label').show()
