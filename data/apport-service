@@ -6,6 +6,7 @@ import dbus.service
 import dbus.mainloop.glib
 import apport
 import os
+import argparse
 
 class Apport(dbus.service.Object):
     def __init__(self, bus):
@@ -49,12 +50,26 @@ class Apport(dbus.service.Object):
             report.write(f)
                                          
 
+def parse_argv():
+    desc = 'Apport recoverable errors service'
+    parser = argparse.ArgumentParser(description=desc)
+    h = 'Timeout for D-BUS service (default: 600, 0: run forever)'
+    parser.add_argument('--timeout', type=int, help=h)
+    return parser.parse_args()
+
 if __name__ == '__main__':
-    # TODO shutdown timer
+    args = parse_argv()
+
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = dbus.SessionBus()
     Apport(bus)
+    loop = GLib.MainLoop()
+    if args.timeout:
+        def _t():
+            loop.quit()
+            return True
+        GLib.timeout_add(args.timeout * 1000, _t)
     try:
-        GLib.MainLoop().run()
+        loop.run()
     except KeyboardInterrupt:
         pass
