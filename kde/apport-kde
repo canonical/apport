@@ -219,6 +219,15 @@ class ReportDialog(Dialog):
             else:
                 self.ignore_future_problems.hide()
 
+            if report_type == 'RecoverableCrash':
+                body = report.get('DialogBody', '')
+                if body:
+                    del report['DialogBody']
+                    # Set a maximum size for the dialog body, so developers do
+                    # not try to shove entire log files into this dialog.
+                    self.text.setText(body[:1024])
+                    self.text.show()
+
         if icon:
             base = QIcon.fromTheme(icon).pixmap(42, 42)
             overlay = QIcon.fromTheme('dialog-error').pixmap(16, 16)
