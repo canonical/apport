@@ -1879,6 +1879,7 @@ int main() { return f(42); }
                 subprocess.call(['gdb', '--batch', '--ex', 'run', '--ex',
                                  'generate-core-file core', './crash'], stdout=subprocess.PIPE)
                 assert os.path.exists('core')
+                subprocess.check_call(['sync'])
                 assert subprocess.call(['readelf', '-n', 'core'],
                                        stdout=subprocess.PIPE) == 0
 
