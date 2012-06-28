@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.2.6 (UNRELEASED):
+-------------------
+Bug fixes:
+ * apport: Also treat a binary as modified if the /proc/pid/exe symlink does
+   not point to an existing file any more. (LP: #984944)
+
 2.2.5 (2012-06-21):
 -------------------
  * launchpad.py: Fix str vs. bytes crash for already known bugs, take 2. (LP: #1015788)
