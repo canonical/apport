@@ -183,7 +183,7 @@ class T(unittest.TestCase):
         self.ui = None
         self.report_file.close()
 
-        self.assertEqual(subprocess.call(['pidof', '/bin/yes']), 1, 'no stray test processes')
+        self.assertEqual(subprocess.call(['pidof', '/usr/bin/yes']), 1, 'no stray test processes')
 
         # clean up apport report from _gen_test_crash()
         for f in glob.glob('/var/crash/_usr_bin_yes.*.crash'):
@@ -1947,6 +1947,21 @@ Categories=GNOME;GTK;Utility;TextEditor;
                                 'name': 'gtranslate',
                                 'genericname[de]': 'Übersetzer',
                                 'exec': 'gedit %U'})
+
+    def test_wait_for_pid(self):
+        # fork a test process
+        pid = os.fork()
+        if pid == 0:
+            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+            os.execv('/usr/bin/yes', ['yes'])
+            assert False, 'Could not execute /usr/bin/yes'
+
+        time.sleep(0.5)
+        os.kill(pid, signal.SIGKILL)
+        os.waitpid(pid, 0)
+        self.ui.wait_for_pid(pid)
+
+        self.assertRaises(OSError, self.ui.wait_for_pid, '1')
 
 
 unittest.main()
