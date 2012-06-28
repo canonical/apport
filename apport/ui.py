@@ -347,7 +347,7 @@ class UserInterface:
             apport.fileutils.mark_hanging_process(pid)
             os.kill(int(pid), signal.SIGABRT)
         else:
-            os.kill(int(pid), signal.SIGTERM)
+            os.kill(int(pid), signal.SIGKILL)
 
         if response['restart']:
             self.wait_for_pid(pid)
