@@ -183,47 +183,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''
         assert self.accepts(report)
 
-        # set reprocessing tags
-        hdr = {}
-        hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
-        a = report.get('PackageArchitecture')
-        if not a or a == 'all':
-            a = report.get('Architecture')
-        if a:
-            hdr['Tags'] += ' ' + a
-        if 'Tags' in report:
-            hdr['Tags'] += ' ' + report['Tags'].lower()
-
-        # privacy/retracing for distro reports
-        # FIXME: ugly hack until LP has a real crash db
-        if 'DistroRelease' in report:
-            if a and ('VmCore' in report or 'CoreDump' in report):
-                hdr['Private'] = 'yes'
-                hdr['Subscribers'] = self.options.get('initial_subscriber', 'apport')
-                hdr['Tags'] += ' need-%s-retrace' % a
-            elif 'Traceback' in report:
-                hdr['Private'] = 'yes'
-                hdr['Subscribers'] = 'apport'
-                hdr['Tags'] += ' need-duplicate-check'
-        if 'DuplicateSignature' in report and 'need-duplicate-check' not in hdr['Tags']:
-                hdr['Tags'] += ' need-duplicate-check'
-
-        # if we have checkbox submission key, link it to the bug; keep text
-        # reference until the link is shown in Launchpad's UI
-        if 'CheckboxSubmission' in report:
-            hdr['HWDB-Submission'] = report['CheckboxSubmission']
-
-        # order in which keys should appear in the temporary file
-        order = ['ProblemType', 'DistroRelease', 'Package', 'Regression', 'Reproducible',
-                 'TestedUpstream', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules']
-
-        # write MIME/Multipart version into temporary file
-        mime = tempfile.TemporaryFile()
-        report.write_mime(mime, extra_headers=hdr, skip_keys=['Tags'], priority_fields=order)
-        mime.flush()
-        mime.seek(0)
-
-        ticket = upload_blob(mime, progress_callback, hostname=self.get_hostname())
+        blob_file = self._generate_upload_blob(report)
+        ticket = upload_blob(blob_file, progress_callback, hostname=self.get_hostname())
+        blob_file.close()
         assert ticket
         return ticket
 
@@ -933,6 +895,54 @@ in a dependent package.' % master,
                             self.options.get('triaging_team', 'ubuntu-crashes-universe'))
         bug.subscribe(person=person)
 
+
+    def _generate_upload_blob(self, report):
+        '''Generate a multipart/MIME temporary file for uploading.
+
+        You have to close the returned file object after you are done with it.
+        '''
+        # set reprocessing tags
+        hdr = {}
+        hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
+        a = report.get('PackageArchitecture')
+        if not a or a == 'all':
+            a = report.get('Architecture')
+        if a:
+            hdr['Tags'] += ' ' + a
+        if 'Tags' in report:
+            hdr['Tags'] += ' ' + report['Tags'].lower()
+
+        # privacy/retracing for distro reports
+        # FIXME: ugly hack until LP has a real crash db
+        if 'DistroRelease' in report:
+            if a and ('VmCore' in report or 'CoreDump' in report):
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = self.options.get('initial_subscriber', 'apport')
+                hdr['Tags'] += ' need-%s-retrace' % a
+            elif 'Traceback' in report:
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
+                hdr['Tags'] += ' need-duplicate-check'
+        if 'DuplicateSignature' in report and 'need-duplicate-check' not in hdr['Tags']:
+                hdr['Tags'] += ' need-duplicate-check'
+
+        # if we have checkbox submission key, link it to the bug; keep text
+        # reference until the link is shown in Launchpad's UI
+        if 'CheckboxSubmission' in report:
+            hdr['HWDB-Submission'] = report['CheckboxSubmission']
+
+        # order in which keys should appear in the temporary file
+        order = ['ProblemType', 'DistroRelease', 'Package', 'Regression', 'Reproducible',
+                 'TestedUpstream', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules']
+
+        # write MIME/Multipart version into temporary file
+        mime = tempfile.TemporaryFile()
+        report.write_mime(mime, extra_headers=hdr, skip_keys=['Tags'], priority_fields=order)
+        mime.flush()
+        mime.seek(0)
+
+        return mime
+
 #
 # Launchpad storeblob API (should go into launchpadlib, see LP #315358)
 #
@@ -1038,8 +1048,8 @@ if __name__ == '__main__':
     import unittest, atexit, shutil, subprocess
 
     crashdb = None
-    segv_report = None
-    python_report = None
+    _segv_report = None
+    _python_report = None
 
     class _T(unittest.TestCase):
         # this assumes that a source package 'coreutils' exists and builds a
@@ -1112,11 +1122,18 @@ and more
 
             return self.crashdb.get_hostname()
 
-        def _file_segv_report(self):
-            '''File a SEGV crash report.
+        def get_segv_report(self, force_fresh=False):
+            '''Generate SEGV crash report.
 
-            Return (crash ID, report).
+            This is only done once, subsequent calls will return the already
+            existing ID, unless force_fresh is True.
+
+            Return the ID.
             '''
+            global _segv_report
+            if not force_fresh and _segv_report is not None:
+                return _segv_report
+
             r = self._generate_sigsegv_report()
             r.add_package_info(self.test_package)
             r.add_os_info()
@@ -1128,35 +1145,27 @@ and more
             r['ShortGibberish'] = ' "]\xb6"\n'
             r['LongGibberish'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
 
-            handle = self.crashdb.upload(r)
-            self.assertTrue(handle)
+            # create a bug for the report
             bug_target = self._get_bug_target(self.crashdb, r)
             self.assertTrue(bug_target)
 
-            id = self._file_bug(bug_target, r, handle)
+            id = self._file_bug(bug_target, r)
             self.assertTrue(id > 0)
-            return (id, r)
 
-        def test_1_report_segv(self):
-            '''upload() and get_comment_url() for SEGV crash
+            sys.stderr.write('(Created SEGV report: https://%s/bugs/%i) ' % (self.hostname, id))
+            if not force_fresh:
+                _segv_report = id
+            return id
 
-            This needs to run first, since it sets segv_report.
+        def get_python_report(self):
+            '''Generate Python crash report.
+            
+            Return the ID.
             '''
-            global segv_report
-            (id, report) = self._file_segv_report()
-            segv_report = id
-            url = self.crashdb.get_comment_url(report, id)
+            global _python_report
+            if _python_report is not None:
+                return _python_report
 
-            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
-
-            #TODO: check this programatically
-            sys.stderr.write('[%s] ' % url)
-
-        def test_1_report_python(self):
-            '''upload() and get_comment_url() for Python crash
-
-            This needs to run early, since it sets python_report.
-            '''
             r = apport.Report('Crash')
             r['ExecutablePath'] = '/bin/foo'
             r['Traceback'] = '''Traceback (most recent call last):
@@ -1170,21 +1179,19 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r.standard_title(),
                              "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
-            handle = self.crashdb.upload(r)
-            self.assertTrue(handle)
             bug_target = self._get_bug_target(self.crashdb, r)
             self.assertTrue(bug_target)
 
-            id = self._file_bug(bug_target, r, handle)
+            id = self._file_bug(bug_target, r)
             self.assertTrue(id > 0)
-            global python_report
-            python_report = id
-            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
+            sys.stderr.write('(Created Python report: https://%s/bugs/%i) ' % (self.hostname, id))
+            _python_report = id
+            return id
 
-        def test_2_download(self):
+        def test_1_download(self):
             '''download()'''
 
-            r = self.crashdb.download(segv_report)
+            r = self.crashdb.download(self.get_segv_report())
             self.assertEqual(r['ProblemType'], 'Crash')
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
             self.assertEqual(r['DistroRelease'], self.ref_report['DistroRelease'])
@@ -1210,15 +1217,15 @@ NameError: global name 'weird' is not defined'''
             self.assertTrue('Registers' in r)
 
             # check tags
-            r = self.crashdb.download(python_report)
+            r = self.crashdb.download(self.get_python_report())
             tags = set(r['Tags'].split())
             self.assertEqual(tags, set(['apport-crash', 'boogus', 'pybogus',
                                         'need-duplicate-check', apport.packaging.get_system_architecture()]))
 
-        def test_3_update_traces(self):
+        def test_2_update_traces(self):
             '''update_traces()'''
 
-            r = self.crashdb.download(segv_report)
+            r = self.crashdb.download(self.get_segv_report())
             self.assertTrue('CoreDump' in r)
             self.assertTrue('Dependencies' in r)
             self.assertTrue('Disassembly' in r)
@@ -1232,8 +1239,8 @@ NameError: global name 'weird' is not defined'''
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
             r['FooBar'] = 'bogus'
-            self.crashdb.update_traces(segv_report, r, 'I can has a better retrace?')
-            r = self.crashdb.download(segv_report)
+            self.crashdb.update_traces(self.get_segv_report(), r, 'I can has a better retrace?')
+            r = self.crashdb.download(self.get_segv_report())
             self.assertTrue('CoreDump' in r)
             self.assertTrue('Dependencies' in r)
             self.assertTrue('Disassembly' in r)
@@ -1243,7 +1250,7 @@ NameError: global name 'weird' is not defined'''
             self.assertFalse('FooBar' in r)
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
 
-            tags = self.crashdb.launchpad.bugs[segv_report].tags
+            tags = self.crashdb.launchpad.bugs[self.get_segv_report()].tags
             self.assertTrue('apport-crash' in tags)
             self.assertFalse('apport-collected' in tags)
 
@@ -1251,8 +1258,8 @@ NameError: global name 'weird' is not defined'''
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
-            self.crashdb.update_traces(segv_report, r, 'good retrace!')
-            r = self.crashdb.download(segv_report)
+            self.crashdb.update_traces(self.get_segv_report(), r, 'good retrace!')
+            r = self.crashdb.download(self.get_segv_report())
             self.assertFalse('CoreDump' in r)
             self.assertTrue('Dependencies' in r)
             self.assertTrue('Disassembly' in r)
@@ -1266,19 +1273,19 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in read()')
 
             # respects title amendments
-            bug = self.crashdb.launchpad.bugs[segv_report]
+            bug = self.crashdb.launchpad.bugs[self.get_segv_report()]
             bug.title = 'crash crashed with SIGSEGV in f() on exit'
             try:
                 bug.lp_save()
             except HTTPError:
                 pass  # LP#336866 workaround
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
-            self.crashdb.update_traces(segv_report, r, 'good retrace with title amendment')
-            r = self.crashdb.download(segv_report)
+            self.crashdb.update_traces(self.get_segv_report(), r, 'good retrace with title amendment')
+            r = self.crashdb.download(self.get_segv_report())
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in read() on exit')
 
             # does not destroy custom titles
-            bug = self.crashdb.launchpad.bugs[segv_report]
+            bug = self.crashdb.launchpad.bugs[self.get_segv_report()]
             bug.title = 'crash is crashy'
             try:
                 bug.lp_save()
@@ -1286,15 +1293,15 @@ NameError: global name 'weird' is not defined'''
                 pass  # LP#336866 workaround
 
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
-            self.crashdb.update_traces(segv_report, r, 'good retrace with custom title')
-            r = self.crashdb.download(segv_report)
+            self.crashdb.update_traces(self.get_segv_report(), r, 'good retrace with custom title')
+            r = self.crashdb.download(self.get_segv_report())
             self.assertEqual(r['Title'], 'crash is crashy')
 
             # test various situations which caused crashes
             r['Stacktrace'] = ''  # empty file
             r['ThreadStacktrace'] = '"]\xb6"\n'  # not interpretable as UTF-8, LP #353805
             r['StacktraceSource'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
-            self.crashdb.update_traces(segv_report, r, 'tests')
+            self.crashdb.update_traces(self.get_segv_report(), r, 'tests')
 
         def test_get_comment_url(self):
             '''get_comment_url() for non-ASCII titles'''
@@ -1421,51 +1428,51 @@ NameError: global name 'weird' is not defined'''
         def test_get_distro_release(self):
             '''get_distro_release()'''
 
-            self.assertEqual(self.crashdb.get_distro_release(segv_report),
+            self.assertEqual(self.crashdb.get_distro_release(self.get_segv_report()),
                              self.ref_report['DistroRelease'])
 
         def test_get_affected_packages(self):
             '''get_affected_packages()'''
 
-            self.assertEqual(self.crashdb.get_affected_packages(segv_report),
+            self.assertEqual(self.crashdb.get_affected_packages(self.get_segv_report()),
                              [self.ref_report['SourcePackage']])
 
         def test_is_reporter(self):
             '''is_reporter()'''
 
-            self.assertTrue(self.crashdb.is_reporter(segv_report))
+            self.assertTrue(self.crashdb.is_reporter(self.get_segv_report()))
             self.assertFalse(self.crashdb.is_reporter(1))
 
         def test_can_update(self):
             '''can_update()'''
 
-            self.assertTrue(self.crashdb.can_update(segv_report))
+            self.assertTrue(self.crashdb.can_update(self.get_segv_report()))
             self.assertFalse(self.crashdb.can_update(1))
 
         def test_duplicates(self):
             '''duplicate handling'''
 
             # initially we have no dups
-            self.assertEqual(self.crashdb.duplicate_of(segv_report), None)
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), None)
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
             # dupe our segv_report and check that it worked; then undupe it
-            r = self.crashdb.download(segv_report)
-            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
+            r = self.crashdb.download(self.get_segv_report())
+            self.crashdb.close_duplicate(r, self.get_segv_report(), self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), self.known_test_id)
 
             # this should be a no-op
-            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
+            self.crashdb.close_duplicate(r, self.get_segv_report(), self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), self.known_test_id)
 
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), 'invalid')
-            self.crashdb.close_duplicate(r, segv_report, None)
-            self.assertEqual(self.crashdb.duplicate_of(segv_report), None)
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), 'invalid')
+            self.crashdb.close_duplicate(r, self.get_segv_report(), None)
+            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), None)
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
             # this should have removed attachments; note that Stacktrace is
             # short, and thus inline
-            r = self.crashdb.download(segv_report)
+            r = self.crashdb.download(self.get_segv_report())
             self.assertFalse('CoreDump' in r)
             self.assertFalse('Disassembly' in r)
             self.assertFalse('ProcMaps' in r)
@@ -1478,54 +1485,54 @@ NameError: global name 'weird' is not defined'''
             # transition to the master bug
             self.crashdb.close_duplicate(apport.Report(), self.known_test_id,
                                          self.known_test_id2)
-            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(segv_report),
+            self.crashdb.close_duplicate(r, self.get_segv_report(), self.known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()),
                              self.known_test_id2)
 
             self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
             self.crashdb.close_duplicate(apport.Report(), self.known_test_id2, None)
-            self.crashdb.close_duplicate(r, segv_report, None)
+            self.crashdb.close_duplicate(r, self.get_segv_report(), None)
 
             # this should be a no-op
             self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
             self.assertEqual(self.crashdb.duplicate_of(self.known_test_id), None)
 
-            self.crashdb.mark_regression(segv_report, self.known_test_id)
-            self._verify_marked_regression(segv_report)
+            self.crashdb.mark_regression(self.get_segv_report(), self.known_test_id)
+            self._verify_marked_regression(self.get_segv_report())
 
         def test_marking_segv(self):
             '''processing status markings for signal crashes'''
 
             # mark_retraced()
             unretraced_before = self.crashdb.get_unretraced()
-            self.assertTrue(segv_report in unretraced_before)
-            self.assertFalse(python_report in unretraced_before)
-            self.crashdb.mark_retraced(segv_report)
+            self.assertTrue(self.get_segv_report() in unretraced_before)
+            self.assertFalse(self.get_python_report() in unretraced_before)
+            self.crashdb.mark_retraced(self.get_segv_report())
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(segv_report in unretraced_after)
+            self.assertFalse(self.get_segv_report() in unretraced_after)
             self.assertEqual(unretraced_before,
-                             unretraced_after.union(set([segv_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+                             unretraced_after.union(set([self.get_segv_report()])))
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
             # mark_retrace_failed()
-            self._mark_needs_retrace(segv_report)
-            self.crashdb.mark_retraced(segv_report)
-            self.crashdb.mark_retrace_failed(segv_report)
+            self._mark_needs_retrace(self.get_segv_report())
+            self.crashdb.mark_retraced(self.get_segv_report())
+            self.crashdb.mark_retrace_failed(self.get_segv_report())
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(segv_report in unretraced_after)
+            self.assertFalse(self.get_segv_report() in unretraced_after)
             self.assertEqual(unretraced_before,
-                             unretraced_after.union(set([segv_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+                             unretraced_after.union(set([self.get_segv_report()])))
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
             # mark_retrace_failed() of invalid bug
-            self._mark_needs_retrace(segv_report)
-            self.crashdb.mark_retraced(segv_report)
-            self.crashdb.mark_retrace_failed(segv_report, "I don't like you")
+            self._mark_needs_retrace(self.get_segv_report())
+            self.crashdb.mark_retraced(self.get_segv_report())
+            self.crashdb.mark_retrace_failed(self.get_segv_report(), "I don't like you")
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(segv_report in unretraced_after)
+            self.assertFalse(self.get_segv_report() in unretraced_after)
             self.assertEqual(unretraced_before,
-                             unretraced_after.union(set([segv_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report),
+                             unretraced_after.union(set([self.get_segv_report()])))
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()),
                              'invalid')
 
         def test_marking_project(self):
@@ -1567,14 +1574,14 @@ NameError: global name 'weird' is not defined'''
             '''processing status markings for interpreter crashes'''
 
             unchecked_before = self.crashdb.get_dup_unchecked()
-            self.assertTrue(python_report in unchecked_before)
-            self.assertFalse(segv_report in unchecked_before)
-            self.crashdb._mark_dup_checked(python_report, self.ref_report)
+            self.assertTrue(self.get_python_report() in unchecked_before)
+            self.assertFalse(self.get_segv_report() in unchecked_before)
+            self.crashdb._mark_dup_checked(self.get_python_report(), self.ref_report)
             unchecked_after = self.crashdb.get_dup_unchecked()
-            self.assertFalse(python_report in unchecked_after)
+            self.assertFalse(self.get_python_report() in unchecked_after)
             self.assertEqual(unchecked_before,
-                             unchecked_after.union(set([python_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(python_report), None)
+                             unchecked_after.union(set([self.get_python_report()])))
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
 
         def test_update_traces_invalid(self):
             '''updating an invalid crash
@@ -1582,12 +1589,11 @@ NameError: global name 'weird' is not defined'''
             This simulates a race condition where a crash being processed gets
             invalidated by marking it as a duplicate.
             '''
-            id = self._file_segv_report()[0]
-            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
+            id = self.get_segv_report(force_fresh=True)
 
             r = self.crashdb.download(id)
 
-            self.crashdb.close_duplicate(r, id, segv_report)
+            self.crashdb.close_duplicate(r, id, self.get_segv_report())
 
             # updating with a useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
@@ -1604,12 +1610,12 @@ NameError: global name 'weird' is not defined'''
             Other cases are already checked in test_marking_segv() (invalid
             bugs) and test_duplicates (duplicate bugs) for efficiency.
             '''
-            self._mark_report_fixed(segv_report)
-            fixed_ver = self.crashdb.get_fixed_version(segv_report)
+            self._mark_report_fixed(self.get_segv_report())
+            fixed_ver = self.crashdb.get_fixed_version(self.get_segv_report())
             self.assertNotEqual(fixed_ver, None)
             self.assertTrue(fixed_ver[0].isdigit())
-            self._mark_report_new(segv_report)
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+            self._mark_report_new(self.get_segv_report())
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
         #
         # Launchpad specific implementation and tests
@@ -1636,81 +1642,58 @@ NameError: global name 'weird' is not defined'''
             else:
                 return self.lp_distro
 
-        def _get_librarian_hostname(self):
-            '''Return the librarian hostname according to the LP hostname used.'''
+        def _file_bug(self, bug_target, report, description=None):
+            '''File a bug report for a report.
+            
+            Return the bug ID.
+            '''
+            # unfortunately staging's +storeblob API hardly ever works, so we
+            # must avoid using it. Fake it by manually doing the comments and
+            # attachments that +filebug would ordinarily do itself when given a
+            # blob handle.
 
-            hostname = self.crashdb.get_hostname()
-            if 'staging' in hostname:
-                return 'staging.launchpadlibrarian.net'
-            else:
-                return 'launchpad.dev:58080'
+            if description is None:
+                description = 'some description'
 
-        def _file_bug(self, bug_target, report, handle, comment=None):
-            '''File a bug report.'''
+            mime = self.crashdb._generate_upload_blob(report)
+            msg = email.message_from_file(mime)
+            mime.close()
+            msg_iter = msg.walk()
 
-            bug_title = report.get('Title', report.standard_title())
+            # first one is the multipart container
+            header = msg_iter.next()
+            assert header.is_multipart()
 
-            blob_info = self.crashdb.launchpad.temporary_blobs.fetch(
-                token=handle)
-            # XXX 2010-08-03 matsubara bug=612990:
-            #     Can't fetch the blob directly, so let's load it from the
-            #     representation.
-            blob = self.crashdb.launchpad.load(blob_info['self_link'])
-            #XXX Need to find a way to trigger the job that process the blob
-            # rather polling like this. This makes the test suite take forever
-            # to run.
-            while not blob.hasBeenProcessed():
-                time.sleep(1)
+            # second part should be an inline text/plain attachments with all short
+            # fields
+            part = msg_iter.next()
+            assert not part.is_multipart()
+            assert part.get_content_type() == 'text/plain'
+            description += '\n\n' + part.get_payload(decode=True).decode('UTF-8', 'replace')
 
-            # processed_blob contains info about privacy, additional comments
-            # and attachments.
-            processed_blob = blob.getProcessedData()
-
+            # create the bug from header and description data
             bug = self.crashdb.launchpad.bugs.createBug(
-                description=processed_blob['extra_description'],
-                private=processed_blob['private'],
-                tags=processed_blob['initial_tags'],
+                description=description,
+                private=(header['Private'] == 'yes'),
+                tags=header['Tags'].split(),
                 target=bug_target,
-                title=bug_title)
+                title=report.get('Title', report.standard_title()))
 
-            for comment in processed_blob['comments']:
-                bug.newMessage(content=comment)
+            # nwo add the attachments
+            for part in msg_iter:
+                assert not part.is_multipart()
+                bug.addAttachment(comment='',
+                                  description=part.get_filename(),
+                                  content_type=None,
+                                  data=part.get_payload(decode=True),
+                                  filename=part.get_filename(), is_patch=False)
 
-            # Ideally, one would be able to retrieve the attachment content
-            # from the ProblemReport object or from the processed_blob.
-            # Unfortunately the processed_blob only give us the Launchpad
-            # librarian file_alias_id, so that's why we need to
-            # download it again and upload to the bug report. It'd be even
-            # better if addAttachment could work like linkAttachment, the LP
-            # api used in the +filebug web UI, but there are security concerns
-            # about the way linkAttachment works.
-            librarian_url = 'http://%s' % self._get_librarian_hostname()
-            for attachment in processed_blob['attachments']:
-                filename = description = attachment['description']
-                # Download the attachment data.
-                data = urlopen(urllib.basejoin(
-                    librarian_url, str(attachment['file_alias_id']) + '/' + filename)).read()
-                # Add the attachment to the newly created bug report.
-                bug.addAttachment(
-                    comment=filename,
-                    data=data,
-                    filename=filename,
-                    description=description)
-
-            for subscriber in processed_blob['subscribers']:
+            for subscriber in header['Subscribers'].split():
                 sub = self.crashdb.launchpad.people[subscriber]
                 if sub:
                     bug.subscribe(person=sub)
 
-            for submission_key in processed_blob['hwdb_submission_keys']:
-                # XXX 2010-08-04 matsubara bug=628889:
-                #     Can't fetch the submission directly, so let's load it
-                #     from the representation.
-                submission = self.crashdb.launchpad.load(
-                    'https://api.%s/beta/+hwdb/+submission/%s'
-                    % (self.crashdb.get_hostname(), submission_key))
-                bug.linkHWSubmission(submission=submission)
-            return int(bug.id)
+            return bug.id
 
         def _mark_needs_retrace(self, id):
             '''Mark a report ID as needing retrace.'''
@@ -1778,12 +1761,10 @@ NameError: global name 'weird' is not defined'''
                              "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
             # file it
-            handle = crashdb.upload(r)
-            self.assertTrue(handle)
             bug_target = self._get_bug_target(crashdb, r)
             self.assertEqual(bug_target.name, 'langpack-o-matic')
 
-            id = self._file_bug(bug_target, r, handle)
+            id = self._file_bug(bug_target, r)
             self.assertTrue(id > 0)
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
@@ -1816,8 +1797,6 @@ NameError: global name 'weird' is not defined'''
         def test_escalation(self):
             '''Escalating bugs with more than 10 duplicates'''
 
-            assert segv_report, 'you need to run test_1_report_segv() first'
-
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
             db = CrashDatabase(os.environ.get('LP_CREDENTIALS'),
                                {'distro': 'ubuntu',
@@ -1832,8 +1811,8 @@ NameError: global name 'weird' is not defined'''
                 for b in range(first_dup, first_dup + 13):
                     count += 1
                     sys.stderr.write('%i ' % b)
-                    db.close_duplicate(apport.Report(), b, segv_report)
-                    b = db.launchpad.bugs[segv_report]
+                    db.close_duplicate(apport.Report(), b, self.get_segv_report())
+                    b = db.launchpad.bugs[self.get_segv_report()]
                     has_escalation_tag = db.options['escalation_tag'] in b.tags
                     has_escalation_subscription = any([s.person_link == p for s in b.subscriptions])
                     if count <= 10:
@@ -1851,14 +1830,14 @@ NameError: global name 'weird' is not defined'''
         def test_marking_python_task_mangle(self):
             '''source package task fixup for marking interpreter crashes'''
 
-            self._mark_needs_dupcheck(python_report)
+            self._mark_needs_dupcheck(self.get_python_report())
             unchecked_before = self.crashdb.get_dup_unchecked()
-            self.assertTrue(python_report in unchecked_before)
+            self.assertTrue(self.get_python_report() in unchecked_before)
 
             # add an upstream task, and remove the package name from the
             # package task; _mark_dup_checked is supposed to restore the
             # package name
-            b = self.crashdb.launchpad.bugs[python_report]
+            b = self.crashdb.launchpad.bugs[self.get_python_report()]
             if b.private:
                 b.private = False
                 b.lp_save()
@@ -1867,15 +1846,15 @@ NameError: global name 'weird' is not defined'''
             t.lp_save()
             b.addTask(target=self.crashdb.launchpad.projects['coreutils'])
 
-            self.crashdb._mark_dup_checked(python_report, self.ref_report)
+            self.crashdb._mark_dup_checked(self.get_python_report(), self.ref_report)
 
             unchecked_after = self.crashdb.get_dup_unchecked()
-            self.assertFalse(python_report in unchecked_after)
+            self.assertFalse(self.get_python_report() in unchecked_after)
             self.assertEqual(unchecked_before,
-                             unchecked_after.union(set([python_report])))
+                             unchecked_after.union(set([self.get_python_report()])))
 
             # upstream task should be unmodified
-            b = self.crashdb.launchpad.bugs[python_report]
+            b = self.crashdb.launchpad.bugs[self.get_python_report()]
             self.assertEqual(b.bug_tasks[0].bug_target_name, 'coreutils')
             self.assertEqual(b.bug_tasks[0].status, 'New')
 
@@ -1884,7 +1863,7 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(b.bug_tasks[1].status, 'New')
 
             # should not confuse get_fixed_version()
-            self.assertEqual(self.crashdb.get_fixed_version(python_report), None)
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
 
         @classmethod
         def _generate_sigsegv_report(klass, signal='11'):
