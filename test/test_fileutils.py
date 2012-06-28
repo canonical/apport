@@ -46,7 +46,7 @@ class T(unittest.TestCase):
         # package without any .desktop file
         nodesktop = 'bash'
         assert len([f for f in apport.packaging.get_files(nodesktop)
-            if f.endswith('.desktop')]) == 0
+                    if f.endswith('.desktop')]) == 0
 
         # find a package with one and a package with multiple .desktop files
         onedesktop = None
@@ -57,7 +57,7 @@ class T(unittest.TestCase):
             pkg = apport.packaging.get_file_package(
                 os.path.join('/usr/share/applications/', d))
             num = len([f for f in apport.packaging.get_files(pkg)
-                if f.endswith('.desktop')])
+                       if f.endswith('.desktop')])
             if not onedesktop and num == 1:
                 onedesktop = pkg
             elif not multidesktop and num > 1:

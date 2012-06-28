@@ -19,9 +19,8 @@ import apport
 
 # parse command line options
 optparser = optparse.OptionParser('%prog [options]')
-optparser.add_option('-s', '--system',
-    help='Check for crash reports from system users.', action='store_true',
-        dest='system', default=False)
+optparser.add_option('-s', '--system', default=False, action='store_true',
+                     help='Check for crash reports from system users.')
 options, args = optparser.parse_args()
 
 if options.system:

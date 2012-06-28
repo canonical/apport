@@ -34,7 +34,7 @@ class build_java_subdir(distutils.core.Command):
 
         subprocess.check_call(['javac'] + glob('com/ubuntu/apport/*.java'))
         subprocess.check_call(['jar', 'cvf', 'apport.jar'] +
-                            glob('com/ubuntu/apport/*.class'))
+                              glob('com/ubuntu/apport/*.class'))
         subprocess.check_call(['javac', 'crash.java'])
         subprocess.check_call(['jar', 'cvf', 'crash.jar', 'crash.class'])
 
@@ -108,20 +108,21 @@ except (OSError, subprocess.CalledProcessError):
 
 from apport.ui import __version__
 
-DistUtilsExtra.auto.setup(name='apport',
-      author='Martin Pitt',
-      author_email='martin.pitt@ubuntu.com',
-      url='https://launchpad.net/apport',
-      license='gpl',
-      description='intercept, process, and report crashes and bug reports',
-      version=__version__,
+DistUtilsExtra.auto.setup(
+    name='apport',
+    author='Martin Pitt',
+    author_email='martin.pitt@ubuntu.com',
+    url='https://launchpad.net/apport',
+    license='gpl',
+    description='intercept, process, and report crashes and bug reports',
+    version=__version__,
 
-      data_files=[('share/mime/packages', glob('xdg-mime/*')),
-                  # these are not supposed to be called directly, use apport-bug instead
-                  ('share/apport', ['gtk/apport-gtk', 'kde/apport-kde']),
-                  ('share/apport/testsuite/', glob('test/*')),
-                  ('share/doc/apport/', glob('doc/*.txt')),
-                  ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
-                  ] + optional_data_files,
-      cmdclass=cmdclass
+    data_files=[('share/mime/packages', glob('xdg-mime/*')),
+                # these are not supposed to be called directly, use apport-bug instead
+                ('share/apport', ['gtk/apport-gtk', 'kde/apport-kde']),
+                ('share/apport/testsuite/', glob('test/*')),
+                ('share/doc/apport/', glob('doc/*.txt')),
+                ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
+                ] + optional_data_files,
+    cmdclass=cmdclass
 )

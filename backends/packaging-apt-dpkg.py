@@ -136,7 +136,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             # happens with virtual packages
             return []
         return [d[0].target_pkg.name for d in cur_ver.depends_list.get('Depends', []) +
-            cur_ver.depends_list.get('PreDepends', [])]
+                cur_ver.depends_list.get('PreDepends', [])]
 
     def get_source(self, package):
         '''Return the source package name for a package.'''
@@ -169,7 +169,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         a third-party source.'''
 
         lsb_release = subprocess.Popen(['lsb_release', '-i', '-s'],
-            stdout=subprocess.PIPE)
+                                       stdout=subprocess.PIPE)
         this_os = lsb_release.communicate()[0].decode().strip()
         assert lsb_release.returncode == 0
 
@@ -273,7 +273,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         allows filtering.
         '''
         dpkg = subprocess.Popen(['dpkg-query', '-W', '--showformat=${Conffiles}',
-            package], stdout=subprocess.PIPE, close_fds=True)
+                                 package], stdout=subprocess.PIPE)
 
         out = dpkg.communicate()[0].decode()
         if dpkg.returncode != 0:
@@ -311,8 +311,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         while not match and i < len(file_list):
             p = subprocess.Popen(['fgrep', '-lxm', '1', '--', pattern] +
-                file_list[i:(i + slice_size)], stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+                                 file_list[i:(i + slice_size)], stdin=subprocess.PIPE,
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out = p.communicate()[0].decode('UTF-8')
             if p.returncode == 0:
                 match = out
@@ -332,7 +332,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''
         # check if the file is a diversion
         dpkg = subprocess.Popen(['/usr/sbin/dpkg-divert', '--list', file],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = dpkg.communicate()[0].decode('UTF-8')
         if dpkg.returncode == 0 and out:
             pkg = out.split()[-1]
@@ -369,7 +369,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         particular distribution.'''
 
         dpkg = subprocess.Popen(['dpkg', '--print-architecture'],
-            stdout=subprocess.PIPE)
+                                stdout=subprocess.PIPE)
         arch = dpkg.communicate()[0].decode().strip()
         assert dpkg.returncode == 0
         assert arch
@@ -383,7 +383,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         account.
         '''
         dpkg = subprocess.Popen(['dpkg-architecture', '-qDEB_HOST_MULTIARCH'],
-                stdout=subprocess.PIPE)
+                                stdout=subprocess.PIPE)
         multiarch_triple = dpkg.communicate()[0].decode().strip()
         assert dpkg.returncode == 0
 
@@ -413,12 +413,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         not available.'''
 
         # fetch source tree
-        argv = ['apt-get', '--assume-yes', 'source', srcpackage]
+        argv = ['apt-get', '-qq', '--assume-yes', 'source', srcpackage]
         if version:
             argv[-1] += '=' + version
         try:
-            if subprocess.call(argv, stdout=subprocess.PIPE,
-                cwd=dir) != 0:
+            if subprocess.call(argv, cwd=dir) != 0:
                 return None
         except OSError:
             return None
@@ -432,11 +431,10 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         # apply patches on a best-effort basis
         try:
-            subprocess.call('debian/rules patch || debian/rules apply-patches ' \
-                '|| debian/rules apply-dpatches || '\
-                'debian/rules unpack || debian/rules patch-stamp || ' \
-                'debian/rules setup', shell=True, cwd=root,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.call('(debian/rules patch || debian/rules apply-patches '
+                            '|| debian/rules apply-dpatches || '
+                            'debian/rules unpack || debian/rules patch-stamp || '
+                            'debian/rules setup) >/dev/null 2>&1', shell=True, cwd=root)
         except OSError:
             pass
 
@@ -488,7 +486,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return (installed, outdated)
 
     def install_packages(self, rootdir, configdir, release, packages,
-            verbose=False, cache_dir=None, permanent_rootdir=False):
+                         verbose=False, cache_dir=None, permanent_rootdir=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -627,7 +625,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     real_pkgs.add(pkg + '-dbgsym')
                     if c[pkg + '-dbgsym'].candidate.version != candidate.version:
                         obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
-                                pkg, candidate.version, c[pkg + '-dbgsym'].candidate.version)
+                            pkg, candidate.version, c[pkg + '-dbgsym'].candidate.version)
 
         for p in real_pkgs:
             c[p].mark_install(False, False)
@@ -675,7 +673,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         error.'''
 
         dpkg = subprocess.Popen(['dpkg'] + args, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+                                stderr=subprocess.PIPE)
         out = dpkg.communicate(input)[0].decode('UTF-8')
         if dpkg.returncode == 0:
             return out
@@ -690,14 +688,14 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''
         if os.path.exists(sumfile):
             m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
-                cwd='/', env={})
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 cwd='/', env={})
             out = m.communicate()[0].decode('UTF-8', errors='replace')
         else:
             assert type(sumfile) == bytes, 'md5sum list value must be a byte array'
             m = subprocess.Popen(['/usr/bin/md5sum', '-c'],
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE, close_fds=True, cwd='/', env={})
+                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, cwd='/', env={})
             out = m.communicate(sumfile)[0].decode('UTF-8', errors='replace')
 
         # if md5sum succeeded, don't bother parsing the output
@@ -752,7 +750,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if age is None or age >= 86400:
             # determine distro release code name
             lsb_release = subprocess.Popen(['lsb_release', '-sc'],
-                stdout=subprocess.PIPE)
+                                           stdout=subprocess.PIPE)
             release_name = lsb_release.communicate()[0].decode('UTF-8').strip()
             assert lsb_release.returncode == 0
 
@@ -774,7 +772,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         # zgrep is magnitudes faster than a 'gzip.open/split() loop'
         package = None
         zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = zgrep.communicate()[0].decode('UTF-8')
         # we do not check the return code, since zgrep -m1 often errors out
         # with 'stdout: broken pipe'

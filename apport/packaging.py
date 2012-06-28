@@ -173,7 +173,7 @@ class PackageInfo:
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def install_packages(self, rootdir, configdir, release, packages,
-            verbose=False, cache_dir=None, permanent_rootdir=False):
+                         verbose=False, cache_dir=None, permanent_rootdir=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching

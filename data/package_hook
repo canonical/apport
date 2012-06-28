@@ -30,14 +30,11 @@ def mkattrname(path):
 
 # parse command line arguments
 optparser = optparse.OptionParser('%prog [options]')
-optparser.add_option('-p', '--package',
-    help='Specify the package name which failed to upgrade (mandatory)',
-    action='store', type='string', dest='package')
-optparser.add_option('-l', '--log',
-    help='Append given log file, or, if it is a directory, all files in it (can be specified multiple times)',
-    action='append', type='string', dest='logs')
-optparser.add_option('-t', '--tags',
-    help='Add the following tags to the bug report (comma separated)')
+optparser.add_option('-p', '--package', help='Specify the package name which failed to upgrade (mandatory)')
+optparser.add_option('-l', '--log', action='append', dest='logs',
+                     help='Append given log file, or, if it is a directory, all files in it (can be specified multiple times)')
+
+optparser.add_option('-t', '--tags', help='Add the following tags to the bug report (comma separated)')
 options = optparser.parse_args()[0]
 
 if not options.package:

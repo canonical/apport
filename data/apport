@@ -227,9 +227,9 @@ def is_closing_session(pid, uid):
     os.setresuid(uid, uid, -1)
     try:
         gdbus = subprocess.Popen(['/usr/bin/gdbus', 'call', '-e', '-d',
-            'org.gnome.SessionManager', '-o', '/org/gnome/SessionManager', '-m',
-            'org.gnome.SessionManager.IsSessionRunning'], stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, env={'DBUS_SESSION_BUS_ADDRESS': dbus_addr})
+                                  'org.gnome.SessionManager', '-o', '/org/gnome/SessionManager', '-m',
+                                  'org.gnome.SessionManager.IsSessionRunning'], stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, env={'DBUS_SESSION_BUS_ADDRESS': dbus_addr})
         (out, err) = gdbus.communicate()
         if err:
             error_log('gdbus call error: ' + err.decode('UTF-8'))
@@ -309,7 +309,7 @@ try:
     # package got upgraded in between)
     exe_mtime = os.stat('/proc/%s/exe' % pid).st_mtime
     process_start = os.lstat('/proc/%s/cmdline' % pid).st_mtime
-    if exe_mtime > process_start:
+    if not os.path.exists(os.readlink('/proc/%s/exe' % pid)) or exe_mtime > process_start:
         error_log('executable was modified after program start, ignoring')
         sys.exit(1)
 
@@ -336,11 +336,11 @@ try:
 
     if 'InterpreterPath' in info:
         error_log('script: %s, interpreted by %s (command line "%s")' %
-            (info['ExecutablePath'], info['InterpreterPath'],
-            info['ProcCmdline']))
+                  (info['ExecutablePath'], info['InterpreterPath'],
+                   info['ProcCmdline']))
     else:
         error_log('executable: %s (command line "%s")' %
-            (info['ExecutablePath'], info['ProcCmdline']))
+                  (info['ExecutablePath'], info['ProcCmdline']))
 
     # ignore non-package binaries (unless configured otherwise)
     if not apport.fileutils.likely_packaged(info['ExecutablePath']):
@@ -393,8 +393,7 @@ try:
                 drop_privileges(pid)
                 write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
-        reportfile = os.fdopen(os.open(report,
-            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'wb')
+        reportfile = os.fdopen(os.open(report, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'wb')
         assert reportfile.fileno() > sys.stderr.fileno()
 
         # Make sure the crash reporting daemon can read this report
@@ -441,5 +440,5 @@ except Exception as e:
     error_log('Unhandled exception:')
     traceback.print_exc()
     error_log('pid: %i, uid: %i, gid: %i, euid: %i, egid: %i' % (
-       os.getpid(), os.getuid(), os.getgid(), os.geteuid(), os.getegid()))
+              os.getpid(), os.getuid(), os.getgid(), os.geteuid(), os.getegid()))
     error_log('environment: %s' % str(os.environ))

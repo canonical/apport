@@ -135,10 +135,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         try:
             self.__launchpad = Launchpad.login_with('apport-collect',
-                    launchpad_instance, launchpadlib_dir=self.__lpcache,
-                    allow_access_levels=['WRITE_PRIVATE'],
-                    credentials_file=self.auth,
-                    version='1.0')
+                                                    launchpad_instance,
+                                                    launchpadlib_dir=self.__lpcache,
+                                                    allow_access_levels=['WRITE_PRIVATE'],
+                                                    credentials_file=self.auth,
+                                                    version='1.0')
         except Exception as e:
             if hasattr(e, 'content'):
                 msg = e.content
@@ -210,7 +211,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # order in which keys should appear in the temporary file
         order = ['ProblemType', 'DistroRelease', 'Package', 'Regression', 'Reproducible',
-        'TestedUpstream', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules']
+                 'TestedUpstream', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules']
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
@@ -218,8 +219,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         mime.flush()
         mime.seek(0)
 
-        ticket = upload_blob(mime, progress_callback,
-                hostname=self.get_hostname())
+        ticket = upload_blob(mime, progress_callback, hostname=self.get_hostname())
         assert ticket
         return ticket
 
@@ -360,7 +360,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return report
 
     def update(self, id, report, comment, change_description=False,
-            attachment_comment=None, key_filter=None):
+               attachment_comment=None, key_filter=None):
         '''Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see
@@ -420,17 +420,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bug.description = bug.description + '\n--- \n' + part.get_payload(decode=True).decode('UTF-8', 'replace')
             bug.lp_save()
         else:
-            bug.newMessage(content=part.get_payload(decode=True),
-                subject=comment)
+            bug.newMessage(content=part.get_payload(decode=True), subject=comment)
 
         # other parts are the attachments:
         for part in msg_iter:
             # print '   attachment: %s...' % part.get_filename()
             bug.addAttachment(comment=attachment_comment or '',
-                description=part.get_filename(),
-                content_type=None,
-                data=part.get_payload(decode=True),
-                filename=part.get_filename(), is_patch=False)
+                              description=part.get_filename(),
+                              content_type=None,
+                              data=part.get_payload(decode=True),
+                              filename=part.get_filename(), is_patch=False)
 
     def update_traces(self, id, report, comment=''):
         '''Update the given report ID for retracing results.
@@ -493,8 +492,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return list of affected source packages for given ID.'''
 
         bug_target_re = re.compile(
-                    r'/%s/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$' %
-                    self.distro)
+            r'/%s/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$' % self.distro)
 
         bug = self.launchpad.bugs[id]
         result = []
@@ -616,12 +614,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         if self.distro:
             distro_identifier = '(%s)' % self.distro.lower()
-            fixed_tasks = filter(lambda task: task.status == 'Fix Released' and \
-                    distro_identifier in task.bug_target_display_name.lower(), tasks)
+            fixed_tasks = filter(lambda task: task.status == 'Fix Released' and
+                                 distro_identifier in task.bug_target_display_name.lower(), tasks)
 
             if not fixed_tasks:
-                fixed_distro = filter(lambda task: task.status == 'Fix Released' and \
-                        task.bug_target_name.lower() == self.distro.lower(), tasks)
+                fixed_distro = filter(lambda task: task.status == 'Fix Released' and
+                                      task.bug_target_name.lower() == self.distro.lower(), tasks)
                 if fixed_distro:
                     # fixed in distro inself (without source package)
                     return ''
@@ -639,16 +637,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     return 'invalid'
             else:
                 # check if there only invalid ones
-                invalid_tasks = filter(lambda task: task.status in ('Invalid', "Won't Fix", 'Expired') and \
-                        distro_identifier in task.bug_target_display_name.lower(), tasks)
+                invalid_tasks = filter(lambda task: task.status in ('Invalid', "Won't Fix", 'Expired') and
+                                       distro_identifier in task.bug_target_display_name.lower(), tasks)
                 if invalid_tasks:
-                    non_invalid_tasks = filter(lambda task: task.status not in ('Invalid', "Won't Fix", 'Expired') and \
+                    non_invalid_tasks = filter(
+                        lambda task: task.status not in ('Invalid', "Won't Fix", 'Expired') and
                         distro_identifier in task.bug_target_display_name.lower(), tasks)
                     if not non_invalid_tasks:
                         return 'invalid'
         else:
-            fixed_tasks = filter(lambda task: task.status == 'Fix Released',
-                    tasks)
+            fixed_tasks = filter(lambda task: task.status == 'Fix Released', tasks)
             if fixed_tasks:
                 # TODO: look for current series
                 return ''
@@ -687,13 +685,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 if master.id == id:
                     # this happens if the bug was manually duped to a newer one
                     apport.warning('Bug %i was manually marked as a dupe of newer bug %i, not closing as duplicate',
-                            id, master_id)
+                                   id, master_id)
                     return
 
             for a in bug.attachments:
                 if a.title in ('CoreDump.gz', 'Stacktrace.txt',
-                    'ThreadStacktrace.txt', 'ProcMaps.txt', 'ProcStatus.txt',
-                    'Registers.txt', 'Disassembly.txt'):
+                               'ThreadStacktrace.txt', 'ProcMaps.txt',
+                               'ProcStatus.txt', 'Registers.txt',
+                               'Disassembly.txt'):
                     try:
                         a.removeFromBug()
                     except HTTPError:
@@ -707,7 +706,7 @@ other bug report to see if there is any missing information that you can \
 provide, or to see if there is a workaround for the bug.  Additionally, any \
 further discussion regarding the bug should occur in the other report.  \
 Please continue to report any other bugs you may find.' % master_id,
-                subject='This bug is a duplicate')
+                           subject='This bug is a duplicate')
 
             bug = self.launchpad.bugs[id]  # refresh, LP#336866 workaround
             if bug.private:
@@ -722,23 +721,20 @@ Please continue to report any other bugs you may find.' % master_id,
             master_tags = master.tags
 
             if len(master.duplicates) == 10:
-                if 'escalation_tag' in self.options and \
-                    self.options['escalation_tag'] not in master_tags and \
-                    self.options.get('escalated_tag', ' invalid ') not in master_tags:
-                        master.tags = master_tags + [self.options['escalation_tag']]  # LP#254901 workaround
-                        master.lp_save()
+                if 'escalation_tag' in self.options and self.options['escalation_tag'] not in master_tags and self.options.get('escalated_tag', ' invalid ') not in master_tags:
+                    master.tags = master_tags + [self.options['escalation_tag']]  # LP#254901 workaround
+                    master.lp_save()
 
-                if 'escalation_subscription' in self.options and \
-                    self.options.get('escalated_tag', ' invalid ') not in master_tags:
+                if 'escalation_subscription' in self.options and self.options.get('escalated_tag', ' invalid ') not in master_tags:
                     p = self.launchpad.people[self.options['escalation_subscription']]
                     master.subscribe(person=p)
 
             # requesting updated stack trace?
             if report.has_useful_stacktrace() and ('apport-request-retrace' in master_tags
-                    or 'apport-failed-retrace' in master_tags):
+                                                   or 'apport-failed-retrace' in master_tags):
                 self.update(master_id, report, 'Updated stack trace from duplicate bug %i' % id,
-                        key_filter=['Stacktrace', 'ThreadStacktrace',
-                            'Package', 'Dependencies', 'ProcMaps', 'ProcCmdline'])
+                            key_filter=['Stacktrace', 'ThreadStacktrace',
+                                        'Package', 'Dependencies', 'ProcMaps', 'ProcCmdline'])
 
                 master = self.launchpad.bugs[master_id]
                 x = master.tags[:]  # LP#254901 workaround
@@ -760,7 +756,7 @@ Please continue to report any other bugs you may find.' % master_id,
             tags_to_copy = ['bugpattern-needed', 'running-unity']
             for series in self.lp_distro.series:
                 if series.status not in ['Active Development',
-                    'Current Stable Release', 'Supported']:
+                                         'Current Stable Release', 'Supported']:
                     continue
                 tags_to_copy.append(series.name)
             # copy tags over from the duplicate bug to the master bug
@@ -792,7 +788,7 @@ Please continue to report any other bugs you may find.' % master_id,
 However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem is \
 in a dependent package.' % master,
-            subject='Possible regression detected')
+                       subject='Possible regression detected')
         bug = self.launchpad.bugs[id]  # fresh bug object, LP#336866 workaround
         bug.tags = bug.tags + ['regression-retracer']  # LP#254901 workaround
         bug.lp_save()
@@ -823,7 +819,7 @@ in a dependent package.' % master,
             task.status = 'Invalid'
             task.lp_save()
             bug.newMessage(content=invalid_msg,
-                    subject='Crash report cannot be processed')
+                           subject='Crash report cannot be processed')
 
             for a in bug.attachments:
                 if a.title == 'CoreDump.gz':
@@ -901,14 +897,14 @@ in a dependent package.' % master,
             return url
 
         line = f.readline()
-        if not line.startswith('bug:'):
+        if not line.startswith(b'bug:'):
             # presumably a 404 etc. page, which happens for private bugs
             return True
 
         # check tags
         for line in f:
-            if line.startswith('tags:'):
-                if 'apport-failed-retrace' in line or 'apport-request-retrace' in line:
+            if line.startswith(b'tags:'):
+                if b'apport-failed-retrace' in line or b'apport-request-retrace' in line:
                     return None
                 else:
                     break
@@ -930,7 +926,7 @@ in a dependent package.' % master,
 
         #use a url hack here, it is faster
         person = '%s~%s' % (self.launchpad._root_uri,
-            self.options.get('triaging_team', 'ubuntu-crashes-universe'))
+                            self.options.get('triaging_team', 'ubuntu-crashes-universe'))
         bug.subscribe(person=person)
 
 #
@@ -1168,7 +1164,7 @@ NameError: global name 'weird' is not defined'''
             r.add_os_info()
             r.add_user_info()
             self.assertEqual(r.standard_title(),
-                "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
+                             "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
             handle = self.crashdb.upload(r)
             self.assertTrue(handle)
@@ -1191,11 +1187,11 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['Architecture'], self.ref_report['Architecture'])
             self.assertEqual(r['Uname'], self.ref_report['Uname'])
             self.assertEqual(r.get('NonfreeKernelModules'),
-                self.ref_report.get('NonfreeKernelModules'))
+                             self.ref_report.get('NonfreeKernelModules'))
             self.assertEqual(r.get('UserGroups'), self.ref_report.get('UserGroups'))
             tags = set(r['Tags'].split())
             self.assertEqual(tags, set([self.crashdb.arch_tag, 'apport-crash',
-                apport.packaging.get_system_architecture()]))
+                                        apport.packaging.get_system_architecture()]))
 
             self.assertEqual(r['Signal'], '11')
             self.assertTrue(r['ExecutablePath'].endswith('/crash'))
@@ -1213,7 +1209,7 @@ NameError: global name 'weird' is not defined'''
             r = self.crashdb.download(python_report)
             tags = set(r['Tags'].split())
             self.assertEqual(tags, set(['apport-crash', 'boogus', 'pybogus',
-                'need-duplicate-check', apport.packaging.get_system_architecture()]))
+                                        'need-duplicate-check', apport.packaging.get_system_architecture()]))
 
         def test_3_update_traces(self):
             '''update_traces()'''
@@ -1348,7 +1344,7 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
 
             self.assertEqual(self.crashdb.launchpad.bugs[id].tags,
-                ['apport-collected'])
+                             ['apport-collected'])
 
         def test_update_comment(self):
             '''update() with appending comment'''
@@ -1383,7 +1379,7 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
 
             self.assertEqual(self.crashdb.launchpad.bugs[id].tags,
-                ['apport-collected'])
+                             ['apport-collected'])
 
         def test_update_filter(self):
             '''update() with a key filter'''
@@ -1406,7 +1402,7 @@ NameError: global name 'weird' is not defined'''
             r['VarLogDistupgradeBinGoo'] = '\x01' * 1024
 
             self.crashdb.update(id, r, 'NotMe', change_description=True,
-                    key_filter=['ProblemType', 'ShortGoo', 'DpkgTerminalLog'])
+                                key_filter=['ProblemType', 'ShortGoo', 'DpkgTerminalLog'])
 
             r = self.crashdb.download(id)
 
@@ -1422,13 +1418,13 @@ NameError: global name 'weird' is not defined'''
             '''get_distro_release()'''
 
             self.assertEqual(self.crashdb.get_distro_release(segv_report),
-                    self.ref_report['DistroRelease'])
+                             self.ref_report['DistroRelease'])
 
         def test_get_affected_packages(self):
             '''get_affected_packages()'''
 
             self.assertEqual(self.crashdb.get_affected_packages(segv_report),
-                    [self.ref_report['SourcePackage']])
+                             [self.ref_report['SourcePackage']])
 
         def test_is_reporter(self):
             '''is_reporter()'''
@@ -1477,10 +1473,10 @@ NameError: global name 'weird' is not defined'''
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
             self.crashdb.close_duplicate(apport.Report(), self.known_test_id,
-                    self.known_test_id2)
+                                         self.known_test_id2)
             self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
             self.assertEqual(self.crashdb.duplicate_of(segv_report),
-                    self.known_test_id2)
+                             self.known_test_id2)
 
             self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
             self.crashdb.close_duplicate(apport.Report(), self.known_test_id2, None)
@@ -1504,7 +1500,7 @@ NameError: global name 'weird' is not defined'''
             unretraced_after = self.crashdb.get_unretraced()
             self.assertFalse(segv_report in unretraced_after)
             self.assertEqual(unretraced_before,
-                    unretraced_after.union(set([segv_report])))
+                             unretraced_after.union(set([segv_report])))
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
 
             # mark_retrace_failed()
@@ -1514,7 +1510,7 @@ NameError: global name 'weird' is not defined'''
             unretraced_after = self.crashdb.get_unretraced()
             self.assertFalse(segv_report in unretraced_after)
             self.assertEqual(unretraced_before,
-                    unretraced_after.union(set([segv_report])))
+                             unretraced_after.union(set([segv_report])))
             self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
 
             # mark_retrace_failed() of invalid bug
@@ -1524,9 +1520,9 @@ NameError: global name 'weird' is not defined'''
             unretraced_after = self.crashdb.get_unretraced()
             self.assertFalse(segv_report in unretraced_after)
             self.assertEqual(unretraced_before,
-                    unretraced_after.union(set([segv_report])))
+                             unretraced_after.union(set([segv_report])))
             self.assertEqual(self.crashdb.get_fixed_version(segv_report),
-                    'invalid')
+                             'invalid')
 
         def test_marking_python(self):
             '''processing status markings for interpreter crashes'''
@@ -1538,9 +1534,8 @@ NameError: global name 'weird' is not defined'''
             unchecked_after = self.crashdb.get_dup_unchecked()
             self.assertFalse(python_report in unchecked_after)
             self.assertEqual(unchecked_before,
-                    unchecked_after.union(set([python_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(python_report),
-                    None)
+                             unchecked_after.union(set([python_report])))
+            self.assertEqual(self.crashdb.get_fixed_version(python_report), None)
 
         def test_update_traces_invalid(self):
             '''updating an invalid crash
@@ -1588,8 +1583,8 @@ NameError: global name 'weird' is not defined'''
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
 
             return CrashDatabase(os.environ.get('LP_CREDENTIALS'),
-                    {'distro': 'ubuntu',
-                     'launchpad_instance': launchpad_instance})
+                                 {'distro': 'ubuntu',
+                                  'launchpad_instance': launchpad_instance})
 
         def _get_bug_target(self, db, report):
             '''Return the bug_target for this report.'''
@@ -1654,8 +1649,8 @@ NameError: global name 'weird' is not defined'''
             for attachment in processed_blob['attachments']:
                 filename = description = attachment['description']
                 # Download the attachment data.
-                data = urlopen(urllib.basejoin(librarian_url,
-                    str(attachment['file_alias_id']) + '/' + filename)).read()
+                data = urlopen(urllib.basejoin(
+                    librarian_url, str(attachment['file_alias_id']) + '/' + filename)).read()
                 # Add the attachment to the newly created bug report.
                 bug.addAttachment(
                     comment=filename,
@@ -1727,8 +1722,8 @@ NameError: global name 'weird' is not defined'''
             # crash database for langpack-o-matic project (this does not have
             # packages in any distro)
             crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'),
-                {'project': 'langpack-o-matic',
-                 'launchpad_instance': launchpad_instance})
+                                    {'project': 'langpack-o-matic',
+                                     'launchpad_instance': launchpad_instance})
             self.assertEqual(crashdb.distro, None)
 
             # create Python crash report
@@ -1741,7 +1736,7 @@ NameError: global name 'weird' is not defined'''
             r.add_os_info()
             r.add_user_info()
             self.assertEqual(r.standard_title(),
-                    "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
+                             "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
             # file it
             handle = crashdb.upload(r)
@@ -1786,10 +1781,10 @@ NameError: global name 'weird' is not defined'''
 
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
             db = CrashDatabase(os.environ.get('LP_CREDENTIALS'),
-                    {'distro': 'ubuntu',
-                     'launchpad_instance': launchpad_instance,
-                     'escalation_tag': 'omgkittens',
-                     'escalation_subscription': 'apport-hackers'})
+                               {'distro': 'ubuntu',
+                                'launchpad_instance': launchpad_instance,
+                                'escalation_tag': 'omgkittens',
+                                'escalation_subscription': 'apport-hackers'})
 
             count = 0
             p = db.launchpad.people[db.options['escalation_subscription']].self_link
@@ -1838,7 +1833,7 @@ NameError: global name 'weird' is not defined'''
             unchecked_after = self.crashdb.get_dup_unchecked()
             self.assertFalse(python_report in unchecked_after)
             self.assertEqual(unchecked_before,
-                    unchecked_after.union(set([python_report])))
+                             unchecked_after.union(set([python_report])))
 
             # upstream task should be unmodified
             b = self.crashdb.launchpad.bugs[python_report]
@@ -1850,8 +1845,7 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(b.bug_tasks[1].status, 'New')
 
             # should not confuse get_fixed_version()
-            self.assertEqual(self.crashdb.get_fixed_version(python_report),
-                    None)
+            self.assertEqual(self.crashdb.get_fixed_version(python_report), None)
 
         @classmethod
         def _generate_sigsegv_report(klass, signal='11'):
@@ -1883,10 +1877,10 @@ int main() { return f(42); }
 
                 # call it through gdb and dump core
                 subprocess.call(['gdb', '--batch', '--ex', 'run', '--ex',
-                    'generate-core-file core', './crash'], stdout=subprocess.PIPE)
+                                 'generate-core-file core', './crash'], stdout=subprocess.PIPE)
                 assert os.path.exists('core')
                 assert subprocess.call(['readelf', '-n', 'core'],
-                    stdout=subprocess.PIPE) == 0
+                                       stdout=subprocess.PIPE) == 0
 
                 pr['ExecutablePath'] = os.path.join(workdir, 'crash')
                 pr['CoreDump'] = (os.path.join(workdir, 'core'),)

@@ -101,6 +101,10 @@ fi
 for t in $TESTS; do
     echo "--- Testing $t ---"
     if [ "${t#ui_}" != $t ]; then
+        while [ -e /tmp/.X99-lock ]; do
+           echo "Waiting for previous xvfb to finish..."
+           sleep 0.5
+        done
         prefix=$xvfb
     else
         # ensure that non-UI modules do not require X

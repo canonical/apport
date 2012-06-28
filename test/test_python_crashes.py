@@ -49,10 +49,11 @@ func(42)
             os.chmod(script, 0o755)
 
             p = subprocess.Popen([script, 'testarg1', 'testarg2'],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, env=os.environ)
             err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
-                'crashing test python program exits with failure code')
+                             'crashing test python program exits with failure code')
             self.assertTrue('Exception: This should happen.' in err)
             self.assertFalse('OSError' in err, err)
         finally:
@@ -70,25 +71,25 @@ func(42)
         pr = None
         self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
         self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-            0o640, 'report has correct permissions')
+                         0o640, 'report has correct permissions')
 
         pr = problem_report.ProblemReport()
         with open(reports[0], 'rb') as f:
             pr.load(f)
 
         # check report contents
-        expected_keys = ['InterpreterPath', 'PythonArgs',
-            'Traceback', 'ProblemType', 'ProcEnviron', 'ProcStatus',
-            'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps',
-            'UserGroups']
+        expected_keys = ['InterpreterPath', 'PythonArgs', 'Traceback',
+                         'ProblemType', 'ProcEnviron', 'ProcStatus',
+                         'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps',
+                         'UserGroups']
         self.assertTrue(set(expected_keys).issubset(set(pr.keys())),
-            'report has necessary fields')
+                        'report has necessary fields')
         self.assertTrue('bin/python' in pr['InterpreterPath'])
         self.assertEqual(pr['ExecutablePath'], script)
         self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
         self.assertTrue(pr['Traceback'].startswith('Traceback'))
         self.assertTrue("func\n    raise Exception('This should happen.')" in pr['Traceback'],
-                pr['Traceback'])
+                        pr['Traceback'])
 
     def test_existing(self):
         '''Python crash hook overwrites seen existing files.'''
@@ -99,7 +100,7 @@ func(42)
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
         self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-            0o640, 'report has correct permissions')
+                         0o640, 'report has correct permissions')
 
         # touch report -> "seen" case
         apport.fileutils.mark_report_seen(reports[0])
@@ -126,19 +127,18 @@ func(42)
         pr = None
         self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
         self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
-            0o640, 'report has correct permissions')
+                         0o640, 'report has correct permissions')
 
         pr = problem_report.ProblemReport()
         with open(reports[0], 'rb') as f:
             pr.load(f)
 
         # check report contents
-        expected_keys = ['InterpreterPath',
-            'Traceback', 'ProblemType', 'ProcEnviron', 'ProcStatus',
-            'ProcCmdline', 'Date', 'ExecutablePath', 'ProcMaps',
-            'UserGroups']
+        expected_keys = ['InterpreterPath', 'Traceback', 'ProblemType',
+                         'ProcEnviron', 'ProcStatus', 'ProcCmdline', 'Date',
+                         'ExecutablePath', 'ProcMaps', 'UserGroups']
         self.assertTrue(set(expected_keys).issubset(set(pr.keys())),
-            'report has necessary fields')
+                        'report has necessary fields')
         self.assertTrue('bin/python' in pr['InterpreterPath'])
         self.assertTrue(pr['Traceback'].startswith('Traceback'))
 
@@ -147,7 +147,7 @@ func(42)
 
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 0,
-            'no crash reports present (cwd: %s)' % os.getcwd())
+                         'no crash reports present (cwd: %s)' % os.getcwd())
 
     def test_interactive(self):
         '''interactive Python sessions never generate a report.'''
@@ -157,7 +157,7 @@ func(42)
             for d in ('/tmp', '/usr/local', '/usr'):
                 os.chdir(d)
                 p = subprocess.Popen(['python'], stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 (out, err) = p.communicate(b'raise ValueError')
                 out = out.decode()
                 err = err.decode()
@@ -201,10 +201,10 @@ func(42)
             r = None
 
             p = subprocess.Popen([script, 'testarg1', 'testarg2'],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
-                'crashing test python program exits with failure code')
+                             'crashing test python program exits with failure code')
             self.assertTrue('Exception: This should happen.' in err, err)
 
         finally:

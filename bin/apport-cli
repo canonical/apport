@@ -112,7 +112,7 @@ class CLIProgressDialog(CLIDialog):
         if self.progresscount:
             return
 
-        if progress != None:
+        if progress is not None:
             sys.stdout.write('\r%u%%' % (progress * 100))
         else:
             sys.stdout.write('.')
@@ -136,9 +136,9 @@ class CLIUserInterface(apport.ui.UserInterface):
             # string value
             keylen = len(self.report[key])
             if not hasattr(self.report[key], 'gzipvalue') and \
-                hasattr(self.report[key], 'isspace') and \
-                not self.report._is_binary(self.report[key]) and \
-                keylen < max_show:
+                    hasattr(self.report[key], 'isspace') and \
+                    not self.report._is_binary(self.report[key]) and \
+                    keylen < max_show:
                 l = self.report[key]
             elif keylen >= max_show:
                 l = _('(%i bytes)') % keylen
@@ -156,9 +156,8 @@ class CLIUserInterface(apport.ui.UserInterface):
         self.in_update_view = True
         report = self._get_details()
         try:
-            subprocess.Popen(['/usr/bin/sensible-pager'],
-                    stdin=subprocess.PIPE,
-                    close_fds=True).communicate(report.encode('UTF-8'))
+            p = subprocess.Popen(['/usr/bin/sensible-pager'], stdin=subprocess.PIPE)
+            p.communicate(report.encode('UTF-8'))
         except IOError as e:
             # ignore broken pipe (premature quit)
             if e.errno == errno.EPIPE:
@@ -173,11 +172,11 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def ui_present_report_details(self, allowed_to_report=True):
         dialog = CLIDialog(_('Send problem report to the developers?'),
-                _('After the problem report has been sent, please fill out the form in the\n'
-                  'automatically opened web browser.'))
+                           _('After the problem report has been sent, please fill out the form in the\n'
+                             'automatically opened web browser.'))
 
         complete = dialog.addbutton(_('&Send report (%s)') %
-                self.format_filesize(self.get_complete_size()))
+                                    self.format_filesize(self.get_complete_size()))
 
         if self.can_examine_locally():
             examine = dialog.addbutton(_('&Examine locally'))
@@ -213,7 +212,8 @@ class CLIUserInterface(apport.ui.UserInterface):
                     if 'Package' in self.report:
                         prefix += self.report['Package'].split()[0] + '.'
                     (fd, self.report_file) = tempfile.mkstemp(prefix=prefix, suffix='.apport')
-                    self.report.write(os.fdopen(fd, 'w'))
+                    with os.fdopen(fd, 'wb') as f:
+                        self.report.write(f)
 
                 print(_('Problem report file:') + ' ' + self.report_file)
 
@@ -231,9 +231,9 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def ui_start_info_collection_progress(self):
         self.progress = CLIProgressDialog(
-                _('Collecting problem information'),
-                _('The collected information can be sent to the developers to improve the\n'
-                  'application. This might take a few minutes.'))
+            _('Collecting problem information'),
+            _('The collected information can be sent to the developers to improve the\n'
+              'application. This might take a few minutes.'))
         self.progress.show()
 
     def ui_pulse_info_collection_progress(self):
@@ -244,9 +244,9 @@ class CLIUserInterface(apport.ui.UserInterface):
 
     def ui_start_upload_progress(self):
         self.progress = CLIProgressDialog(
-                _('Uploading problem information'),
-                _('The collected information is being sent to the bug tracking system.\n'
-                  'This might take a few minutes.'))
+            _('Uploading problem information'),
+            _('The collected information is being sent to the bug tracking system.\n'
+              'This might take a few minutes.'))
         self.progress.show()
 
     def ui_set_upload_progress(self, progress):

@@ -22,9 +22,9 @@ def parse_argv():
     '''Parse command line and return (options, args).'''
 
     optparser = optparse.OptionParser('%prog [options]')
-    optparser.add_option('-o', '--omit', metavar='PID',
-            action='append', default=[], dest='blacklist',
-            help='Ignore a particular process ID (can be specified multiple times)')
+    optparser.add_option('-o', '--omit', metavar='PID', action='append',
+                         default=[], dest='blacklist',
+                         help='Ignore a particular process ID (can be specified multiple times)')
 
     (opts, args) = optparser.parse_args()
 

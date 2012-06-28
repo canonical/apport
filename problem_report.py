@@ -99,7 +99,7 @@ class ProblemReport(UserDict):
         date is the desired date/time string; if None (default), the
         current local time is used.
         '''
-        if date == None:
+        if date is None:
             date = time.asctime()
         self.data = {'ProblemType': type, 'Date': date}
 
@@ -132,7 +132,7 @@ class ProblemReport(UserDict):
             if line.startswith(b' '):
                 if b64_block and not binary:
                     continue
-                assert (key != None and value != None)
+                assert (key is not None and value is not None)
                 if b64_block:
                     l = base64.b64decode(line)
                     if bd:
@@ -169,7 +169,7 @@ class ProblemReport(UserDict):
                     b64_block = False
                     bd = None
                 if key:
-                    assert value != None
+                    assert value is not None
                     self.data[key] = self._try_unicode(value)
                 (key, value) = line.split(b':', 1)
                 if not _python2:
@@ -183,7 +183,7 @@ class ProblemReport(UserDict):
                         value = b''
                     b64_block = True
 
-        if key != None:
+        if key is not None:
             self.data[key] = self._try_unicode(value)
 
         self.old_keys = set(self.data.keys())
@@ -282,7 +282,7 @@ class ProblemReport(UserDict):
 
             # if it's a tuple, we have a file reference; read the contents
             if not hasattr(v, 'find'):
-                if len(v) >= 3 and v[2] != None:
+                if len(v) >= 3 and v[2] is not None:
                     limit = v[2]
                 else:
                     limit = None
@@ -298,7 +298,7 @@ class ProblemReport(UserDict):
                 if fail_on_empty and len(v) == 0:
                     raise IOError('did not get any data for field ' + k)
 
-                if limit != None and len(v) > limit:
+                if limit is not None and len(v) > limit:
                     del self.data[k]
                     continue
 
@@ -344,7 +344,7 @@ class ProblemReport(UserDict):
             crc = zlib.crc32(b'')
 
             bc = zlib.compressobj(9, zlib.DEFLATED, -zlib.MAX_WBITS,
-                zlib.DEF_MEM_LEVEL, 0)
+                                  zlib.DEF_MEM_LEVEL, 0)
             # direct value
             if hasattr(v, 'find'):
                 size += len(v)
@@ -355,7 +355,7 @@ class ProblemReport(UserDict):
                     file.write(b'\n ')
             # file reference
             else:
-                if len(v) >= 3 and v[2] != None:
+                if len(v) >= 3 and v[2] is not None:
                     limit = v[2]
 
                 if hasattr(v[0], 'read'):
@@ -366,7 +366,7 @@ class ProblemReport(UserDict):
                     block = f.read(1048576)
                     size += len(block)
                     crc = zlib.crc32(block, crc)
-                    if limit != None:
+                    if limit is not None:
                         if size > limit:
                             # roll back
                             file.seek(curr_pos)
@@ -418,7 +418,7 @@ class ProblemReport(UserDict):
             os.chmod(reportfile, st.st_mode)
 
     def write_mime(self, file, attach_treshold=5, extra_headers={},
-        skip_keys=None, priority_fields=None):
+                   skip_keys=None, priority_fields=None):
         '''Write MIME/Multipart RFC 2822 formatted data into file.
 
         file must be a file-like object, not a path.  It needs to be opened in
@@ -562,9 +562,9 @@ class ProblemReport(UserDict):
         # value must be a string or a CompressedValue or a file reference
         # (tuple (string|file [, bool]))
         assert (isinstance(v, CompressedValue) or hasattr(v, 'isalnum') or
-            (hasattr(v, '__getitem__') and (
-            len(v) == 1 or (len(v) >= 2 and v[1] in (True, False)))
-            and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
+                (hasattr(v, '__getitem__') and (
+                    len(v) == 1 or (len(v) >= 2 and v[1] in (True, False)))
+                    and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
 
         return self.data.__setitem__(k, v)
 

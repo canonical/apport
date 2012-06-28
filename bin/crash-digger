@@ -21,8 +21,8 @@ from apport.crashdb import get_crashdb
 
 class CrashDigger:
     def __init__(self, config_dir, auth_file, cache_dir, sandbox_dir,
-            apport_retrace, verbose=False, dup_db=None, dupcheck_mode=False,
-            publish_dir=None):
+                 apport_retrace, verbose=False, dup_db=None, dupcheck_mode=False,
+                 publish_dir=None):
         '''Initialize pools.'''
 
         self.retrace_pool = set()
@@ -94,8 +94,7 @@ class CrashDigger:
             argv.append('-v')
         argv.append(str(id))
 
-        result = subprocess.call(argv, stdout=sys.stdout,
-            stderr=subprocess.STDOUT)
+        result = subprocess.call(argv, stdout=sys.stdout, stderr=subprocess.STDOUT)
         if result != 0:
             self.log('retracing #%i failed with status: %i' % (id, result))
             if result == 99:
@@ -121,7 +120,7 @@ class CrashDigger:
 
         res = self.crashdb.check_duplicate(id, report)
         if res:
-            if res[1] == None:
+            if res[1] is None:
                 self.log('Report is a duplicate of #%i (not fixed yet)' % res[0])
             elif res[1] == '':
                 self.log('Report is a duplicate of #%i (fixed in latest version)' % res[0])
@@ -152,33 +151,26 @@ def parse_options():
 
     optparser = optparse.OptionParser('%prog [options]')
     optparser.add_option('-c', '--config-dir', metavar='DIR',
-        help='Packaging system configuration base directory.')
+                         help='Packaging system configuration base directory.')
     optparser.add_option('--sandbox-dir', metavar='DIR',
-        help='Directory for unpacked packages. Future runs will assume that any already downloaded package is also extracted to this sandbox.')
+                         help='Directory for unpacked packages. Future runs will assume that any already downloaded package is also extracted to this sandbox.')
     optparser.add_option('-C', '--cache', metavar='DIR',
-        help='Cache directory for packages downloaded in the sandbox')
-    optparser.add_option('-a', '--auth',
-        help='Path to a file with the crash database authentication information.',
-        action='store', type='string', dest='auth_file', default=None)
-    optparser.add_option('-l', '--lock',
-        help='Lock file; will be created and removed on successful exit, and '
-            'program immediately aborts if it already exists',
-        action='store', dest='lockfile', default=None)
-    optparser.add_option('-d', '--duplicate-db',
-        help='Path to the duplicate sqlite database (default: disabled)',
-        action='store', type='string', dest='dup_db', metavar='PATH',
-        default=None)
-    optparser.add_option('-D', '--dupcheck',
-        help='Only check duplicates for architecture independent crashes (like Python exceptions)',
-        action='store_true', dest='dupcheck_mode', default=False)
-    optparser.add_option('-v', '--verbose',
-        help='Verbose operation (also passed to apport-retrace)',
-        action='store_true', dest='verbose', default=False)
+                         help='Cache directory for packages downloaded in the sandbox')
+    optparser.add_option('-a', '--auth', dest='auth_file',
+                         help='Path to a file with the crash database authentication information.')
+    optparser.add_option('-l', '--lock', dest='lockfile',
+                         help='Lock file; will be created and removed on successful exit, and '
+                              'program immediately aborts if it already exists')
+    optparser.add_option('-d', '--duplicate-db', dest='dup_db', metavar='PATH',
+                         help='Path to the duplicate sqlite database (default: disabled)')
+    optparser.add_option('-D', '--dupcheck', dest='dupcheck_mode', default=False,
+                         help='Only check duplicates for architecture independent crashes (like Python exceptions)')
+    optparser.add_option('-v', '--verbose', action='store_true', default=False,
+                         help='Verbose operation (also passed to apport-retrace)')
     optparser.add_option('--apport-retrace', metavar='PATH',
-        help='Path to apport-retrace script (default: directory of crash-digger or $PATH)')
-    optparser.add_option('--publish-db',
-        help='After processing all reports, publish duplicate database to given directory',
-        metavar='DIR', default=None)
+                         help='Path to apport-retrace script (default: directory of crash-digger or $PATH)')
+    optparser.add_option('--publish-db', metavar='DIR',
+                         help='After processing all reports, publish duplicate database to given directory')
 
     (opts, args) = optparser.parse_args()
 
@@ -198,8 +190,7 @@ opts, args = parse_options()
 
 # support running from tree, then fall back to $PATH
 if not opts.apport_retrace:
-    opts.apport_retrace = os.path.join(os.path.dirname(sys.argv[0]),
-            'apport-retrace')
+    opts.apport_retrace = os.path.join(os.path.dirname(sys.argv[0]), 'apport-retrace')
     if not os.access(opts.apport_retrace, os.X_OK):
         opts.apport_retrace = 'apport-retrace'
 

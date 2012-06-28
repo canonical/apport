@@ -77,7 +77,7 @@ class T(unittest.TestCase):
 
         pr['Multiline'] = problem_report.CompressedValue(b'\1\1\1\n\2\2\n\3\3\3')
         self.assertEqual(pr['Multiline'].splitlines(),
-            [b'\1\1\1', b'\2\2', b'\3\3\3'])
+                         [b'\1\1\1', b'\2\2', b'\3\3\3'])
 
         # test writing of reports with CompressedValues
         io = BytesIO()
@@ -143,7 +143,7 @@ WhiteSpace:
         pr.write(io)
 
         self.assertEqual(io.getvalue(),
-b'''ProblemType: Crash
+                         b'''ProblemType: Crash
 Date: now!
 Simple: bar
 WhiteSpace:
@@ -179,8 +179,7 @@ Extra: appended
         '''load() with various formatting.'''
 
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(
-b'''ProblemType: Crash
+        pr.load(BytesIO(b'''ProblemType: Crash
 Date: now!
 Simple: bar
 WhiteSpace:
@@ -194,8 +193,7 @@ WhiteSpace:
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  ')
 
         # test last field a bit more
-        pr.load(BytesIO(
-b'''ProblemType: Crash
+        pr.load(BytesIO(b'''ProblemType: Crash
 Date: now!
 Simple: bar
 WhiteSpace:
@@ -210,8 +208,7 @@ WhiteSpace:
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n  blip  \n')
 
         # last field might not be \n terminated
-        pr.load(BytesIO(
-b'''ProblemType: Crash
+        pr.load(BytesIO(b'''ProblemType: Crash
 Date: now!
 Simple: bar
 WhiteSpace:
@@ -223,8 +220,7 @@ WhiteSpace:
         self.assertEqual(pr['WhiteSpace'], 'foo\nbar')
 
         pr = problem_report.ProblemReport()
-        pr.load(BytesIO(
-b'''ProblemType: Crash
+        pr.load(BytesIO(b'''ProblemType: Crash
 WhiteSpace:
   foo   bar
  baz
@@ -235,8 +231,7 @@ Last: foo
         self.assertEqual(pr['WhiteSpace'], ' foo   bar\nbaz\n\n  blip  ')
         self.assertEqual(pr['Last'], 'foo')
 
-        pr.load(BytesIO(
-b'''ProblemType: Crash
+        pr.load(BytesIO(b'''ProblemType: Crash
 WhiteSpace:
   foo   bar
  baz
@@ -248,8 +243,7 @@ Last: foo
         self.assertEqual(pr['Last'], 'foo\n')
 
         # empty lines in values must have a leading space in coding
-        invalid_spacing = BytesIO(
-b'''WhiteSpace:
+        invalid_spacing = BytesIO(b'''WhiteSpace:
  first
 
  second
@@ -276,7 +270,7 @@ b'''WhiteSpace:
         temp.close()
 
         self.assertEqual(io.getvalue(),
-b'''ProblemType: Crash
+                         b'''ProblemType: Crash
 Date: now!
 Afile: base64
  H4sICAAAAAAC/0FmaWxlAA==
@@ -296,7 +290,7 @@ File: base64
         pr.write(io)
 
         self.assertEqual(io.getvalue(),
-b'''ProblemType: Crash
+                         b'''ProblemType: Crash
 Date: now!
 File: foo\0bar
 ''')
@@ -306,7 +300,7 @@ File: foo\0bar
         pr.write(io)
 
         self.assertEqual(io.getvalue(),
-b'''ProblemType: Crash
+                         b'''ProblemType: Crash
 Date: now!
 File: base64
  H4sICAAAAAAC/0ZpbGUA
@@ -559,7 +553,7 @@ File: base64
         io = BytesIO()
         pr.write(io)
         self.assertEqual(io.getvalue(),
-b'''ProblemType: Crash
+                         b'''ProblemType: Crash
 Date: now!
 Long: 123
 Short:
@@ -793,7 +787,7 @@ line♥5!!
         self.assertEqual(parts[1].get_content_charset(), 'utf-8')
         self.assertEqual(parts[1].get_filename(), None)
         self.assertEqual(parts[1].get_payload(decode=True),
-            b'ProblemType: Crash\nContext: Test suite\nDate: now!\n')
+                         b'ProblemType: Crash\nContext: Test suite\nDate: now!\n')
 
         # third part should be the File1: file contents as gzip'ed attachment
         self.assertTrue(not parts[2].is_multipart())
@@ -856,7 +850,7 @@ line♥5!!
         pr['TwoLine'] = 'first\nsecond\n'
         io = BytesIO()
         pr.write_mime(io, extra_headers={'Greeting': 'hello world',
-            'Foo': 'Bar'})
+                                         'Foo': 'Bar'})
         io.seek(0)
 
         msg = email.message_from_binary_file(io)
@@ -922,7 +916,7 @@ GoodText: Hi
         pr['ThirdText'] = "I Don't Know"
         io = BytesIO()
         pr.write_mime(io, priority_fields=['FirstText', 'SecondText',
-            'ThirdText', 'Unknown', 'FourthText'])
+                                           'ThirdText', 'Unknown', 'FourthText'])
         io.seek(0)
 
         msg = email.message_from_binary_file(io)
@@ -951,8 +945,7 @@ Date: now!
 
         pr = problem_report.ProblemReport()
         self.assertEqual(pr.new_keys(), set(['ProblemType', 'Date']))
-        pr.load(BytesIO(
-b'''ProblemType: Crash
+        pr.load(BytesIO(b'''ProblemType: Crash
 Date: now!
 Foo: bar
 Baz: blob
