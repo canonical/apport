@@ -313,7 +313,12 @@ try:
         error_log('executable was modified after program start, ignoring')
         sys.exit(1)
 
-    info = apport.Report('Crash')
+    hanging = os.path.join(apport.fileutils.report_dir, '%s.hanging' % pid)
+    if os.path.exists(hanging):
+        info = apport.Report('Hang')
+        os.unlink(hanging)
+    else:
+        info = apport.Report('Crash')
     info['Signal'] = signum
     if sys.version_info.major < 3:
         info['CoreDump'] = (sys.stdin, True, usable_ram() * 3 / 4, True)
@@ -365,7 +370,6 @@ try:
 
     crash_counter = 0
 
-    application_hang = False
     # Create crash report file descriptor for writing the report into
     # report_dir
     try:
@@ -381,34 +385,16 @@ try:
                     write_user_coredump(pid, cwd, core_ulimit)
                     error_log('this executable already crashed %i times, ignoring' % crash_counter)
                     sys.exit(1)
-                with open(report, 'rb') as f:
-                    r = apport.Report()
-                    r.load(f)
-                    try:
-                        if r['ProblemType'] == 'Hang':
-                            application_hang = True
-                            # We default to Crash early, but at this point we
-                            # know we have a hanging application.
-                            info['ProblemType'] = 'Hang'
-                            if 'NeedsRestart' in r:
-                                info['NeedsRestart'] = r['NeedsRestart']
-                    except KeyError:
-                        pass
                 # remove the old file, so that we can create the new one with
                 # os.O_CREAT|os.O_EXCL
-                if not application_hang:
-                    os.unlink(report)
+                os.unlink(report)
             else:
                 error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
                 drop_privileges(pid)
                 write_user_coredump(pid, cwd, core_ulimit)
                 sys.exit(1)
-
-        if application_hang:
-            reportfile = os.fdopen(os.open(report, os.O_WRONLY, 0), 'wb')
-        else:
-            reportfile = os.fdopen(os.open(report,
-                os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'wb')
+        reportfile = os.fdopen(os.open(report,
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0), 'wb')
         assert reportfile.fileno() > sys.stderr.fileno()
 
         # Make sure the crash reporting daemon can read this report

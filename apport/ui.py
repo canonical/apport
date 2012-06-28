@@ -19,6 +19,7 @@ import glob, sys, os.path, optparse, traceback, locale, gettext
 import errno, zlib
 import subprocess, threading, webbrowser
 import signal
+import time
 
 import apport, apport.fileutils, apport.REThread
 
@@ -214,7 +215,7 @@ class UserInterface:
                 # not there any more? no problem, then it won't be regarded as
                 # "seen" any more anyway
                 pass
-            if not self.report and not self.load_report(report_file):
+            if self.load_report(report_file):
                 return
 
             if 'Ignore' in self.report:
@@ -314,14 +315,8 @@ class UserInterface:
         '''Finish processing a hanging application after the core pipe handler
         has handed the report back.
 
-        This may restart the now terminated application and signal to whoopsie
-        that the report needs to be uploaded.
+        This will signal to whoopsie that the report needs to be uploaded.
         '''
-        if self.report['NeedsRestart'] == '1':
-            self.restart()
-            del self.report['NeedsRestart']
-            with open(f, 'wb') as fp:
-                self.report.write(fp)
         apport.fileutils.mark_report_upload(f)
         apport.fileutils.mark_report_seen(f)
 
@@ -333,10 +328,9 @@ class UserInterface:
         the option of terminating or restarting the application, optionally
         reporting that this error occurred.
 
-        A SEGV will then be sent to the process and a series of noninteractive
-        processes will collect the remaining information, append it to the
-        report generated here, potentially restart the application, and then
-        mark that report for uploading.
+        A SIGABRT will then be sent to the process and a series of
+        noninteractive processes will collect the remaining information and
+        mark the report for uploading.
         '''
         self.report = apport.Report('Hang')
         self.report.add_proc_info(pid)
@@ -345,24 +339,29 @@ class UserInterface:
         self.report.add_os_info()
         allowed_to_report = apport.fileutils.allowed_to_report()
         response = self.ui_present_report_details(allowed_to_report)
-        if not response['report']:
-            os.kill(int(pid), signal.SIGKILL)
-            if response['restart']:
-                # This approach means that we will not be able to process the
-                # report later on, if the users selects to not report it now.
-                # An alternative would be to use a NeedsReporting field and
-                # still send SEGV here.
-                self.restart()
-            return
+        if response['report']:
+            apport.fileutils.mark_hanging_process(pid)
+            os.kill(int(pid), signal.SIGABRT)
+        else:
+            os.kill(int(pid), signal.SIGTERM)
+
         if response['restart']:
-            self.report['NeedsRestart'] = '1'
-        path = self.report['ExecutablePath'].replace('/', '_')
-        reportfile = '%s/%s.%i.crash' % (apport.fileutils.report_dir,
-                                         path, os.getuid())
-        with open(reportfile, 'wb') as f:
-            self.report.write(f)
-        apport.fileutils.mark_report_seen(reportfile)
-        self.kill_segv(pid)
+            self.wait_for_pid(pid)
+            self.restart()
+
+    def wait_for_pid(self, pid):
+        '''waitpid() does not work for non-child processes. Query the process
+        state in a loop, waiting for "no such process."
+        '''
+        while True:
+            try:
+                os.kill(int(pid), 0)
+            except OSError as e:
+                if e.errno == errno.ESRCH:
+                    break
+                else:
+                    raise
+            time.sleep(1)
 
     def kill_segv(self, pid):
         os.kill(int(pid), signal.SIGSEGV)

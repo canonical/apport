@@ -106,6 +106,12 @@ def mark_report_upload(report):
         pass
 
 
+def mark_hanging_process(pid):
+    path = os.path.join(report_dir, '%s.hanging' % pid)
+    with open(path, 'a'):
+        pass
+
+
 def mark_report_seen(report):
     '''Mark given report file as seen.'''
 
