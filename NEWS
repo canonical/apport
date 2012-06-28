@@ -9,6 +9,8 @@ Bug fixes:
  * Fix PEP-8 violations picked up by latest pep8 checker.
  * ui.py: Do not ignore certain exceptions during upload which are not likely
    to be a network error.
+ * launchpad.py: Recongize Launchpad projects for bug query and marking
+   operations. (LP: #1003506)
 
 2.2.5 (2012-06-21):
 -------------------

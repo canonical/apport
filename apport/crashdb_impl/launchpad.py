@@ -161,10 +161,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     @property
     def lp_distro(self):
-        if not self.distro:
-            return None
         if self.__lp_distro is None:
-            self.__lp_distro = self.launchpad.distributions[self.distro]
+            if self.distro:
+                self.__lp_distro = self.launchpad.distributions[self.distro]
+            elif 'project' in self.options:
+                self.__lp_distro = self.launchpad.projects[self.options['project']]
+            else:
+                raise SystemError('distro or project needs to be specified in crashdb options')
+
         return self.__lp_distro
 
     def upload(self, report, progress_callback=None):
@@ -1523,6 +1527,41 @@ NameError: global name 'weird' is not defined'''
                              unretraced_after.union(set([segv_report])))
             self.assertEqual(self.crashdb.get_fixed_version(segv_report),
                              'invalid')
+
+        def test_marking_project(self):
+            '''processing status markings for a project CrashDB'''
+
+            # create a distro bug
+            distro_bug = self.crashdb.launchpad.bugs.createBug(
+                description='foo',
+                tags=self.crashdb.arch_tag,
+                target=self.crashdb.lp_distro,
+                title='ubuntu distro retrace bug')
+            #print('distro bug: https://staging.launchpad.net/bugs/%i' % distro_bug.id)
+
+            # create a project crash DB and a bug
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
+
+            project_db = CrashDatabase(
+                os.environ.get('LP_CREDENTIALS'),
+                {'project': 'langpack-o-matic', 'launchpad_instance': launchpad_instance})
+            project_bug = project_db.launchpad.bugs.createBug(
+                description='bar',
+                tags=project_db.arch_tag,
+                target=project_db.lp_distro,
+                title='project retrace bug')
+            #print('project bug: https://staging.launchpad.net/bugs/%i' % project_bug.id)
+
+            # on project_db, we recognize the project bug and can mark it
+            unretraced_before = project_db.get_unretraced()
+            self.assertTrue(project_bug.id in unretraced_before)
+            self.assertFalse(distro_bug.id in unretraced_before)
+            project_db.mark_retraced(project_bug.id)
+            unretraced_after = project_db.get_unretraced()
+            self.assertFalse(project_bug.id in unretraced_after)
+            self.assertEqual(unretraced_before,
+                             unretraced_after.union(set([project_bug.id])))
+            self.assertEqual(self.crashdb.get_fixed_version(project_bug.id), None)
 
         def test_marking_python(self):
             '''processing status markings for interpreter crashes'''
