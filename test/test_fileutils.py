@@ -113,6 +113,19 @@ class T(unittest.TestCase):
             self.assertEqual(apport.fileutils.seen_report(r), True)
             self.assertEqual(set(apport.fileutils.get_new_reports()), nr)
 
+    def test_mark_hanging_process(self):
+        '''mark_hanging_process()'''
+        apport.fileutils.mark_hanging_process('1')
+        expected = os.path.join(apport.fileutils.report_dir, '1.hanging')
+        self.assertTrue(os.path.exists(expected))
+
+    def test_mark_report_upload(self):
+        '''mark_report_upload()'''
+        report = os.path.join(apport.fileutils.report_dir, 'report.crash')
+        apport.fileutils.mark_report_upload(report)
+        expected = os.path.join(apport.fileutils.report_dir, 'report.upload')
+        self.assertTrue(os.path.exists(expected))
+
     def test_get_all_reports(self):
         '''get_all_reports()'''
 
