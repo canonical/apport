@@ -77,7 +77,7 @@ class T(unittest.TestCase):
             # check using a direct md5 list as argument
             with open(sumfile, 'rb') as fd:
                 self.assertEqual(impl._check_files_md5(fd.read()),
-                    [f2], 'file 2 wrong')
+                                 [f2], 'file 2 wrong')
 
         finally:
             shutil.rmtree(td)
@@ -151,7 +151,7 @@ class T(unittest.TestCase):
         self.assertRaises(ValueError, impl.get_architecture, 'nonexisting')
         # just assume that bash uses the native architecture
         d = subprocess.Popen(['dpkg', '--print-architecture'],
-            stdout=subprocess.PIPE)
+                             stdout=subprocess.PIPE)
         system_arch = d.communicate()[0].decode().strip()
         assert d.returncode == 0
         self.assertEqual(impl.get_architecture('bash'), system_arch)
@@ -175,7 +175,7 @@ class T(unittest.TestCase):
 
         # determine distro release code name
         lsb_release = subprocess.Popen(['lsb_release', '-sc'],
-            stdout=subprocess.PIPE)
+                                       stdout=subprocess.PIPE)
         release_name = lsb_release.communicate()[0].decode('UTF-8').strip()
         assert lsb_release.returncode == 0
 
@@ -185,7 +185,7 @@ class T(unittest.TestCase):
             mapdir = os.path.join(basedir, 'dists', release_name)
             os.makedirs(mapdir)
             with gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
-                impl.get_system_architecture()), 'w') as f:
+                                        impl.get_system_architecture()), 'w') as f:
                 f.write(b'''
 foo header
 FILE                                                    LOCATION
@@ -235,7 +235,7 @@ bo/gu/s                                                 na/mypackage
 
         # pick first diversion we have
         p = subprocess.Popen('LC_ALL=C dpkg-divert --list | head -n 1',
-            shell=True, stdout=subprocess.PIPE)
+                             shell=True, stdout=subprocess.PIPE)
         out = p.communicate()[0].decode('UTF-8')
         assert p.returncode == 0
         assert out
@@ -327,28 +327,28 @@ bo/gu/s                                                 na/mypackage
 
         self._setup_foonux_config()
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                [('coreutils', '7.4-2ubuntu2'),
-                 ('libc6', '2.11.1-0ubuntu7'),
-                 ('tzdata', '2010i-1'),
-                ], False, self.cachedir)
+                              [('coreutils', '7.4-2ubuntu2'),
+                               ('libc6', '2.11.1-0ubuntu7'),
+                               ('tzdata', '2010i-1'),
+                              ], False, self.cachedir)
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/stat')))
+                                                    'usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/lib/debug/usr/bin/stat')))
+                                                    'usr/lib/debug/usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/share/zoneinfo/zone.tab')))
+                                                    'usr/share/zoneinfo/zone.tab')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/share/doc/libc6/copyright')))
+                                                    'usr/share/doc/libc6/copyright')))
 
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')),
-                ['sources.list'])
+                         ['sources.list'])
 
         # caches packages
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
-            'var', 'cache', 'apt', 'archives'))
+                                        'var', 'cache', 'apt', 'archives'))
         cache_names = [p.split('_')[0] for p in cache]
         self.assertTrue('coreutils' in cache_names)
         self.assertTrue('coreutils-dbgsym' in cache_names)
@@ -359,31 +359,31 @@ bo/gu/s                                                 na/mypackage
         # installs cached packages
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                [('coreutils', '7.4-2ubuntu2'),
-                ], False, self.cachedir)
-        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/stat')))
+                              [('coreutils', '7.4-2ubuntu2'),
+                              ], False, self.cachedir)
+        self.assertTrue(os.path.exists(
+            os.path.join(self.rootdir, 'usr/bin/stat')))
 
         # complains about obsolete packages
         result = impl.install_packages(self.rootdir, self.configdir,
-                'Foonux 1.2', [('gnome-common', '1.1')])
+                                       'Foonux 1.2', [('gnome-common', '1.1')])
         self.assertEqual(len(result.splitlines()), 1)
         self.assertTrue('gnome-common' in result)
         self.assertTrue('1.1' in result)
         # ... but installs the current version anyway
-        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/gnome-autogen.sh')))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.rootdir, 'usr/bin/gnome-autogen.sh')))
 
         # does not crash on nonexisting packages
         result = impl.install_packages(self.rootdir, self.configdir,
-                'Foonux 1.2', [('buggerbogger', None)])
+                                       'Foonux 1.2', [('buggerbogger', None)])
         self.assertEqual(len(result.splitlines()), 1)
         self.assertTrue('buggerbogger' in result)
         self.assertTrue('not exist' in result)
 
         # can interleave with other operations
         dpkg = subprocess.Popen(['dpkg-query', '-Wf${Version}', 'dash'],
-                stdout=subprocess.PIPE)
+                                stdout=subprocess.PIPE)
         coreutils_version = dpkg.communicate()[0].decode()
         self.assertEqual(dpkg.returncode, 0)
 
@@ -393,13 +393,13 @@ bo/gu/s                                                 na/mypackage
         # still installs packages after above operations
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                [('coreutils', '7.4-2ubuntu2'),
-                 ('dpkg', None),
-                ], False, self.cachedir)
+                              [('coreutils', '7.4-2ubuntu2'),
+                               ('dpkg', None),
+                              ], False, self.cachedir)
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/stat')))
+                                                    'usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/dpkg')))
+                                                    'usr/bin/dpkg')))
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_unversioned(self):
@@ -407,21 +407,21 @@ bo/gu/s                                                 na/mypackage
 
         self._setup_foonux_config()
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                [('coreutils', None),
-                 ('tzdata', None),
-                ], False, None)
+                              [('coreutils', None),
+                               ('tzdata', None),
+                              ], False, None)
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/stat')))
+                                                    'usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/lib/debug/usr/bin/stat')))
+                                                    'usr/lib/debug/usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/share/zoneinfo/zone.tab')))
+                                                    'usr/share/zoneinfo/zone.tab')))
 
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')),
-                ['sources.list'])
+                         ['sources.list'])
 
         # no cache
         self.assertEqual(os.listdir(self.cachedir), [])
@@ -437,14 +437,14 @@ bo/gu/s                                                 na/mypackage
 
         self._setup_foonux_config()
         result = impl.install_packages(self.rootdir, None, None,
-                [('coreutils', impl.get_version('coreutils')),
-                 ('tzdata', '1.1'),
-                ], False, self.cachedir)
+                                       [('coreutils', impl.get_version('coreutils')),
+                                        ('tzdata', '1.1'),
+                                       ], False, self.cachedir)
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/stat')))
+                                                    'usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/share/zoneinfo/zone.tab')))
+                                                    'usr/share/zoneinfo/zone.tab')))
 
         # complains about obsolete packages
         self.assertEqual(len(result.splitlines()), 1)
@@ -453,7 +453,7 @@ bo/gu/s                                                 na/mypackage
 
         # caches packages
         cache = os.listdir(os.path.join(self.cachedir, 'system', 'apt',
-            'var', 'cache', 'apt', 'archives'))
+                                        'var', 'cache', 'apt', 'archives'))
         cache_names = [p.split('_')[0] for p in cache]
         self.assertTrue('coreutils' in cache_names)
         self.assertEqual('coreutils-dbgsym' in cache_names, self.has_dbgsym)
@@ -465,11 +465,11 @@ bo/gu/s                                                 na/mypackage
         try:
             os.chdir(self.workdir)
             impl.install_packages('root', None, None,
-                    [('coreutils', None)], False, 'cache')
+                                  [('coreutils', None)], False, 'cache')
         finally:
             os.chdir(orig_cwd)
-        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/stat')))
+            self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                                                        'usr/bin/stat')))
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_error(self):
@@ -482,7 +482,7 @@ bo/gu/s                                                 na/mypackage
 
         try:
             impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                    [('tzdata', None)], False, self.cachedir)
+                                  [('tzdata', None)], False, self.cachedir)
             self.fail('install_packages() unexpectedly succeeded with broken sources.list')
         except SystemError as e:
             self.assertTrue('bogus' in str(e))
@@ -494,7 +494,7 @@ bo/gu/s                                                 na/mypackage
 
         try:
             impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                    [('tzdata', None)], False, self.cachedir)
+                                  [('tzdata', None)], False, self.cachedir)
             self.fail('install_packages() unexpectedly succeeded with broken server URL')
         except SystemError as e:
             self.assertTrue('nosuchdistro' in str(e), str(e))
@@ -508,7 +508,7 @@ bo/gu/s                                                 na/mypackage
         zonetab = os.path.join(self.rootdir, 'usr/share/zoneinfo/zone.tab')
 
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-            [('tzdata', None)], False, self.cachedir, permanent_rootdir=True)
+                              [('tzdata', None)], False, self.cachedir, permanent_rootdir=True)
 
         # This will now be using a Cache with our rootdir.
         archives = apt_pkg.config.find_dir('Dir::Cache::archives')
@@ -519,27 +519,27 @@ bo/gu/s                                                 na/mypackage
         zonetab_written = os.path.getctime(zonetab)
 
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-            [('coreutils', None), ('tzdata', None)], False, self.cachedir,
-            permanent_rootdir=True)
+                              [('coreutils', None), ('tzdata', None)], False, self.cachedir,
+                              permanent_rootdir=True)
 
         if not glob.glob(os.path.join(archives, 'coreutils*.deb')):
             self.fail('coreutils was not downloaded.')
-        self.assertEqual(os.path.getctime(tzdata[0]), tzdata_written,
-            'tzdata downloaded twice.')
-        self.assertEqual(zonetab_written, os.path.getctime(zonetab),
-            'zonetab written twice.')
-        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-            'usr/bin/stat')))
+            self.assertEqual(os.path.getctime(tzdata[0]), tzdata_written,
+                             'tzdata downloaded twice.')
+            self.assertEqual(zonetab_written, os.path.getctime(zonetab),
+                             'zonetab written twice.')
+            self.assertTrue(os.path.exists(
+                os.path.join(self.rootdir, 'usr/bin/stat')))
 
         # Prevent packages from downloading.
         apt_pkg.config.set('Acquire::http::Proxy', 'http://nonexistent')
         self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
-            self.configdir, 'Foonux 1.2', [('libc6', None)], False,
-            self.cachedir, permanent_rootdir=True)
+                          self.configdir, 'Foonux 1.2', [('libc6', None)], False,
+                          self.cachedir, permanent_rootdir=True)
         # These packages exist, so attempting to install them should not fail.
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-            [('coreutils', None), ('tzdata', None)], False, self.cachedir,
-            permanent_rootdir=True)
+                              [('coreutils', None), ('tzdata', None)], False, self.cachedir,
+                              permanent_rootdir=True)
         apt_pkg.config.set('Acquire::http::Proxy', '')
 
     @unittest.skipUnless(_has_internet(), 'online test')
@@ -547,19 +547,19 @@ bo/gu/s                                                 na/mypackage
         self._setup_foonux_config()
         apache_bin_path = os.path.join(self.rootdir, 'usr/sbin/apache2')
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-            [('apache2-mpm-worker', None)], False, self.cachedir,
-            permanent_rootdir=True)
+                              [('apache2-mpm-worker', None)], False, self.cachedir,
+                              permanent_rootdir=True)
         self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-worker/apache2'))
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-            [('apache2-mpm-event', None)], False, self.cachedir,
-            permanent_rootdir=True)
+                              [('apache2-mpm-event', None)], False, self.cachedir,
+                              permanent_rootdir=True)
         self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-event/apache2'),
-            'should have installed mpm-event, but have mpm-worker.')
+                        'should have installed mpm-event, but have mpm-worker.')
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-            [('apache2-mpm-worker', None)], False, self.cachedir,
-            permanent_rootdir=True)
+                              [('apache2-mpm-worker', None)], False, self.cachedir,
+                              permanent_rootdir=True)
         self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-worker/apache2'),
-            'should have installed mpm-worker, but have mpm-event.')
+                        'should have installed mpm-worker, but have mpm-event.')
 
     def _setup_foonux_config(self):
         '''Set up directories and configuration for install_packages()'''
@@ -578,7 +578,7 @@ bo/gu/s                                                 na/mypackage
 # only execute if dpkg is available
 try:
     if subprocess.call(['dpkg', '--help'], stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE) == 0:
+                       stderr=subprocess.PIPE) == 0:
         unittest.main()
 except OSError:
     pass

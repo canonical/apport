@@ -65,7 +65,7 @@ def likely_packaged(file):
     database.
     '''
     pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
-    '/usr/', '/var']  # packages only ship executables in these directories
+                     '/usr/', '/var']  # packages only ship executables in these directories
 
     whitelist_match = False
     for i in pkg_whitelist:
@@ -257,8 +257,8 @@ def check_files_md5(sumfile):
     '''
     assert os.path.exists(sumfile)
     m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
-        cwd='/', env={})
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         cwd='/', env={})
     out = m.communicate()[0].decode()
 
     # if md5sum succeeded, don't bother parsing the output

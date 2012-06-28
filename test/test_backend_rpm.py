@@ -51,7 +51,7 @@ class T(unittest.TestCase):
 # only execute if rpm is available
 try:
     if subprocess.call(['rpm', '--help'], stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE) == 0:
+                       stderr=subprocess.PIPE) == 0:
         unittest.main()
 except OSError:
     print('%s: Skipping, rpm not available' % sys.argv[0])

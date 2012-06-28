@@ -107,8 +107,8 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         mangled_program = re.sub('/', '_', binary)
         # get the uid for now, user name later
         user = os.getuid()
-        pr_filename = '%s/%s.%i.crash' % (os.environ.get('APPORT_REPORT_DIR',
-            '/var/crash'), mangled_program, user)
+        pr_filename = '%s/%s.%i.crash' % (os.environ.get(
+            'APPORT_REPORT_DIR', '/var/crash'), mangled_program, user)
         crash_counter = 0
         if os.path.exists(pr_filename):
             if apport.fileutils.seen_report(pr_filename):
@@ -128,7 +128,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         if crash_counter:
             pr['CrashCounter'] = str(crash_counter)
         with os.fdopen(os.open(pr_filename,
-            os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'wb') as f:
+                               os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'wb') as f:
             pr.write(f)
 
     finally:

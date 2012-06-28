@@ -67,9 +67,9 @@ optparser = optparse.OptionParser('''%prog [options] dump
 %prog [options] removeid <ID>
 %prog [options] publish <path>''')
 
-optparser.add_option('-f', '--database-file',
-    help='Location of the database file', action='store', metavar='PATH',
-        type='string', dest='db_file', default='apport_duplicates.db')
+optparser.add_option('-f', '--database-file', dest='db_file', metavar='PATH',
+                     default='apport_duplicates.db',
+                     help='Location of the database file')
 options, args = optparser.parse_args()
 
 if len(args) == 0:

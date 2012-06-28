@@ -43,7 +43,7 @@ _whitelist_dir = '/etc/apport/whitelist.d'
 
 # programs that we consider interpreters
 interpreters = ['sh', 'bash', 'dash', 'csh', 'tcsh', 'python*',
-    'ruby*', 'php', 'perl*', 'mono*', 'awk']
+                'ruby*', 'php', 'perl*', 'mono*', 'awk']
 
 #
 # helper functions
@@ -96,7 +96,7 @@ def _command_output(command, input=None, stderr=subprocess.STDOUT):
     Try to execute given command (argv list) and return its stdout, or return
     a textual error if it failed.
     '''
-    sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, close_fds=True)
+    sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr)
 
     (out, err) = sp.communicate(input)
     if sp.returncode == 0:
@@ -132,8 +132,7 @@ def _check_bug_pattern(report, pattern):
             if key not in report:
                 return None
             c.normalize()
-            if c.hasChildNodes() and \
-                c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
+            if c.hasChildNodes() and c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
                 regexp = c.childNodes[0].nodeValue
                 v = report[key]
                 if isinstance(v, problem_report.CompressedValue):
@@ -233,8 +232,7 @@ class Report(problem_report.ProblemReport):
         '''
         if not package:
             # the kernel does not have a executable path but a package
-            if (not 'ExecutablePath' in self and
-                self['ProblemType'] == 'KernelCrash'):
+            if not 'ExecutablePath' in self and self['ProblemType'] == 'KernelCrash':
                 package = self['Package']
             else:
                 package = apport.fileutils.find_file_package(self['ExecutablePath'])
@@ -247,7 +245,7 @@ class Report(problem_report.ProblemReport):
             # package not installed
             version = None
         self['Package'] = '%s %s%s' % (package, version or '(not installed)',
-            self._customized_package_suffix(package))
+                                       self._customized_package_suffix(package))
         if version or 'SourcePackage' not in self:
             self['SourcePackage'] = packaging.get_source(package)
         if not version:
@@ -270,8 +268,8 @@ class Report(problem_report.ProblemReport):
 
             if self['Dependencies']:
                 self['Dependencies'] += '\n'
-            self['Dependencies'] += '%s %s%s' % (dep, v,
-                self._customized_package_suffix(dep))
+            self['Dependencies'] += '%s %s%s' % (
+                dep, v, self._customized_package_suffix(dep))
 
     def add_os_info(self):
         '''Add operating system information.
@@ -284,7 +282,7 @@ class Report(problem_report.ProblemReport):
             there are none, this field will not be present)
         '''
         p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, close_fds=True)
+                             stderr=subprocess.PIPE)
         self['DistroRelease'] = p.communicate()[0].decode().strip().replace('\n', ' ')
 
         u = os.uname()
@@ -299,7 +297,7 @@ class Report(problem_report.ProblemReport):
         '''
         user = pwd.getpwuid(os.getuid()).pw_name
         groups = [name for name, p, gid, memb in grp.getgrall()
-            if user in memb and gid < 1000]
+                  if user in memb and gid < 1000]
         groups.sort()
         self['UserGroups'] = ' '.join(groups)
 
@@ -388,8 +386,7 @@ class Report(problem_report.ProblemReport):
         # search for a -f/--file, -y/--python or -s/--source argument
         while args:
             arg = args[0].split('=', 1)
-            if arg[0].startswith('--file') or arg[0].startswith('--python') or \
-               arg[0].startswith('--source'):
+            if arg[0].startswith('--file') or arg[0].startswith('--python') or arg[0].startswith('--source'):
                 if len(arg) == 2:
                     return arg[1]
                 else:
@@ -499,9 +496,10 @@ class Report(problem_report.ProblemReport):
           the ones mentioned in extraenv)
         '''
         safe_vars = ['SHELL', 'TERM', 'LANGUAGE', 'LANG', 'LC_CTYPE',
-            'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
-            'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
-            'LC_IDENTIFICATION', 'LOCPATH'] + extraenv
+                     'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY',
+                     'LC_MESSAGES', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS',
+                     'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION',
+                     'LOCPATH'] + extraenv
 
         if not pid:
             pid = os.getpid()
@@ -606,13 +604,11 @@ class Report(problem_report.ProblemReport):
             else:
                 core = self['CoreDump'][0]
 
-            gdb_reports = {
-                           'Registers': 'info registers',
+            gdb_reports = {'Registers': 'info registers',
                            'Disassembly': 'x/16i $pc',
                            'Stacktrace': 'bt full',
                            'ThreadStacktrace': 'thread apply all bt full',
-                           'AssertionMessage': 'print __abort_msg->msg',
-                          }
+                           'AssertionMessage': 'print __abort_msg->msg'}
 
             command = ['gdb', '--batch']
             executable = self.get('InterpreterPath', self['ExecutablePath'])
@@ -652,7 +648,7 @@ class Report(problem_report.ProblemReport):
         if 'AssertionMessage' in self:
             # chop off "$n = 0x...." prefix, drop empty ones
             m = re.match('^\$\d+\s+=\s+0x[0-9a-fA-F]+\s+"(.*)"\s*$',
-                self['AssertionMessage'])
+                         self['AssertionMessage'])
             if m:
                 self['AssertionMessage'] = m.group(1)
                 if self['AssertionMessage'].endswith('\\n'):
@@ -673,7 +669,8 @@ class Report(problem_report.ProblemReport):
         are generally not useful for triaging and duplicate detection.
         '''
         unwind_functions = set(['g_logv', 'g_log', 'IA__g_log', 'IA__g_logv',
-            'g_assert_warning', 'IA__g_assert_warning', '__GI_abort', '_XError'])
+                                'g_assert_warning', 'IA__g_assert_warning',
+                                '__GI_abort', '_XError'])
         toptrace = [''] * 5
         depth = 0
         unwound = False
@@ -1026,17 +1023,14 @@ class Report(problem_report.ProblemReport):
                 self['AssertionMessage'])
 
         # signal crash
-        if 'Signal' in self and \
-            'ExecutablePath' in self and \
-            'StacktraceTop' in self:
+        if 'Signal' in self and 'ExecutablePath' in self and 'StacktraceTop' in self:
 
             signal_names = {
                 '4': 'SIGILL',
                 '6': 'SIGABRT',
                 '8': 'SIGFPE',
                 '11': 'SIGSEGV',
-                '13': 'SIGPIPE'
-            }
+                '13': 'SIGPIPE'}
 
             fn = self.stacktrace_top_function()
             if fn:
@@ -1045,22 +1039,17 @@ class Report(problem_report.ProblemReport):
                 fn = ''
 
             arch_mismatch = ''
-            if 'Architecture' in self and \
-                'PackageArchitecture' in self and \
-                self['Architecture'] != self['PackageArchitecture'] and \
-                self['PackageArchitecture'] != 'all':
+            if 'Architecture' in self and 'PackageArchitecture' in self and self['Architecture'] != self['PackageArchitecture'] and self['PackageArchitecture'] != 'all':
                 arch_mismatch = ' [non-native %s package]' % self['PackageArchitecture']
 
             return '%s crashed with %s%s%s' % (
                 os.path.basename(self['ExecutablePath']),
-                signal_names.get(self.get('Signal'),
-                    'signal ' + self.get('Signal')),
+                signal_names.get(self.get('Signal'), 'signal ' + self.get('Signal')),
                 fn, arch_mismatch
             )
 
         # Python exception
-        if 'Traceback' in self and \
-            'ExecutablePath' in self:
+        if 'Traceback' in self and 'ExecutablePath' in self:
 
             trace = self['Traceback'].splitlines()
 
@@ -1112,8 +1101,7 @@ class Report(problem_report.ProblemReport):
             return title
 
         # package problem
-        if self.get('ProblemType') == 'Package' and \
-            'Package' in self:
+        if self.get('ProblemType') == 'Package' and 'Package' in self:
 
             title = 'package %s failed to install/upgrade' % \
                 self['Package']
@@ -1122,8 +1110,7 @@ class Report(problem_report.ProblemReport):
 
             return title
 
-        if self.get('ProblemType') == 'KernelOops' and \
-            'OopsText' in self:
+        if self.get('ProblemType') == 'KernelOops' and 'OopsText' in self:
 
             oops = self['OopsText']
             if oops.startswith('------------[ cut here ]------------'):
@@ -1133,9 +1120,7 @@ class Report(problem_report.ProblemReport):
 
             return title
 
-        if self.get('ProblemType') == 'KernelOops' and \
-            'Failure' in self:
-
+        if self.get('ProblemType') == 'KernelOops' and 'Failure' in self:
             # Title the report with suspend or hibernate as appropriate,
             # and mention any non-free modules loaded up front.
             title = ''
@@ -1159,8 +1144,7 @@ class Report(problem_report.ProblemReport):
                 continue
             pkg, ver = l.split()[:2]
             avail = packaging.get_available_version(pkg)
-            if ver != None and ver != 'None' and avail != None and \
-                packaging.compare_versions(ver, avail) < 0:
+            if ver is not None and ver != 'None' and avail is not None and packaging.compare_versions(ver, avail) < 0:
                 obsolete.append(pkg)
         return obsolete
 
@@ -1182,8 +1166,7 @@ class Report(problem_report.ProblemReport):
         For Python crashes, this concatenates the ExecutablePath, exception
         name, and Traceback function names, again separated by a colon.
         '''
-        if ('ExecutablePath' not in self and
-            not self['ProblemType'] == 'KernelCrash'):
+        if 'ExecutablePath' not in self and not self['ProblemType'] == 'KernelCrash':
             return None
 
         # kernel crash
@@ -1303,10 +1286,10 @@ class Report(problem_report.ProblemReport):
             return None
 
         return '%s:%s:%s:%s' % (
-                self['ExecutablePath'],
-                self['Signal'],
-                os.uname()[4],
-                ':'.join(stack))
+            self['ExecutablePath'],
+            self['Signal'],
+            os.uname()[4],
+            ':'.join(stack))
 
     def anonymize(self):
         '''Remove user identifying strings from the report.
@@ -1338,11 +1321,9 @@ class Report(problem_report.ProblemReport):
             pass
 
         for k in self:
-            if (k.startswith('Proc') and \
-                not k in ['ProcCpuinfo', 'ProcMaps', 'ProcStatus', \
-                          'ProcInterrupts', 'ProcModules']) or \
-                'Stacktrace' in k or \
-                k in ['Traceback', 'PythonArgs', 'Title']:
+            is_proc_field = k.startswith('Proc') and not k in [
+                'ProcCpuinfo', 'ProcMaps', 'ProcStatus', 'ProcInterrupts', 'ProcModules']
+            if is_proc_field or 'Stacktrace' in k or k in ['Traceback', 'PythonArgs', 'Title']:
                 if not hasattr(self[k], 'isspace'):
                     continue
                 for (pattern, repl) in replacements:
@@ -1403,4 +1384,4 @@ class Report(problem_report.ProblemReport):
                 # architecture or new kernel version where the format changed
                 assert m, 'cannot parse ProcMaps line: ' + line
             self._proc_maps_cache.append((int(m.group(1), 16),
-                int(m.group(2), 16), m.group(3)))
+                                          int(m.group(2), 16), m.group(3)))

@@ -20,8 +20,8 @@ class T(unittest.TestCase):
         self.orig_report_dir = apport.fileutils.report_dir
         apport.fileutils.report_dir = tempfile.mkdtemp()
         os.environ['APPORT_REPORT_DIR'] = apport.fileutils.report_dir
-        os.environ['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(datadir,
-                'java_uncaught_exception')
+        os.environ['APPORT_JAVA_EXCEPTION_HANDLER'] = os.path.join(
+            datadir, 'java_uncaught_exception')
         if os.environ.get('APPORT_TEST_LOCAL'):
             self.crash_jar_path = os.path.join(self.srcdir, 'java', 'crash.jar')
             self.apport_jar_path = os.path.join(self.srcdir, 'java', 'apport.jar')
@@ -37,12 +37,12 @@ class T(unittest.TestCase):
         '''Crash in a .class file'''
 
         p = subprocess.Popen(['java', '-classpath',
-            self.apport_jar_path + ':' + os.path.dirname(self.crash_jar_path), 'crash'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                              self.apport_jar_path + ':' + os.path.dirname(self.crash_jar_path), 'crash'],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
         self.assertTrue(b"Can't catch this" in err,
-                'crash handler must print original exception:\n' + err.decode())
+                        'crash handler must print original exception:\n' + err.decode())
 
         self._check_crash_report(os.path.dirname(self.crash_jar_path) + '/crash.class')
 
@@ -50,12 +50,12 @@ class T(unittest.TestCase):
         '''Crash in a .jar file'''
 
         p = subprocess.Popen(['java', '-classpath',
-            self.apport_jar_path + ':' + self.crash_jar_path, 'crash'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                              self.apport_jar_path + ':' + self.crash_jar_path, 'crash'],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = p.communicate()
         self.assertNotEqual(p.returncode, 0, 'crash must exit with nonzero code')
         self.assertTrue(b"Can't catch this" in err,
-                'crash handler must print original exception:\n' + err.decode())
+                        'crash handler must print original exception:\n' + err.decode())
 
         self._check_crash_report(self.crash_jar_path + '!/crash.class')
 
@@ -84,7 +84,7 @@ class T(unittest.TestCase):
 
 try:
     subprocess.check_call(['java', '-version'], stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+                          stderr=subprocess.PIPE)
 except OSError:
     apport.warning('Java not available, skipping')
     sys.exit(0)

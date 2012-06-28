@@ -127,7 +127,7 @@ class CrashDatabase:
             raise SystemError('duplicate DB has unknown format %i' % result[0])
         if result[0] < self.format_version:
             print('duplicate db has format %i, upgrading to %i' %
-                    (result[0], self.format_version))
+                  (result[0], self.format_version))
             self._duplicate_db_upgrade(result[0])
 
     def check_duplicate(self, id, report=None):
@@ -178,9 +178,7 @@ class CrashDatabase:
         master_id = None
         master_ver = None
         for (ex_id, ex_ver) in existing:
-            if not ex_ver or \
-               not report_package_version or \
-                apport.packaging.compare_versions(report_package_version, ex_ver) < 0:
+            if not ex_ver or not report_package_version or apport.packaging.compare_versions(report_package_version, ex_ver) < 0:
                 master_id = ex_id
                 master_ver = ex_ver
                 break
@@ -315,7 +313,7 @@ class CrashDatabase:
 
         cur = self.duplicate_db.cursor()
         n = cur.execute('UPDATE crashes SET fixed_version = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
-            (version, id))
+                        (version, id))
         assert n.rowcount == 1
         self.duplicate_db.commit()
 
@@ -338,9 +336,9 @@ class CrashDatabase:
 
         cur = self.duplicate_db.cursor()
         cur.execute('UPDATE crashes SET crash_id = ?, last_change = CURRENT_TIMESTAMP WHERE crash_id = ?',
-            [new_id, old_id])
+                    [new_id, old_id])
         cur.execute('UPDATE address_signatures SET crash_id = ? WHERE crash_id = ?',
-            [new_id, old_id])
+                    [new_id, old_id])
         self.duplicate_db.commit()
 
     def duplicate_db_publish(self, dir):
@@ -459,18 +457,18 @@ class CrashDatabase:
             if x == y:
                 return 0
             if x == '':
-                if y == None:
+                if y is None:
                     return -1
                 else:
                     return 1
             if y == '':
-                if x == None:
+                if x is None:
                     return 1
                 else:
                     return -1
-            if x == None:
+            if x is None:
                 return 1
-            if y == None:
+            if y is None:
                 return -1
             return apport.packaging.compare_versions(x, y)
 
@@ -564,7 +562,7 @@ class CrashDatabase:
         if existing:
             if existing != id:
                 raise SystemError('ID %i has signature %s, but database already has that signature for ID %i' % (
-                        id, sig, existing))
+                    id, sig, existing))
         else:
             cur = self.duplicate_db.cursor()
             cur.execute('INSERT INTO address_signatures VALUES (?, ?)', (_u(sig), id))
@@ -581,7 +579,7 @@ class CrashDatabase:
         cur = self.duplicate_db.cursor()
         cur.execute('DELETE FROM crashes WHERE crash_id = ?', [dup])
         cur.execute('UPDATE address_signatures SET crash_id = ? WHERE crash_id = ?',
-            [master, dup])
+                    [master, dup])
         self.duplicate_db.commit()
 
     @classmethod
@@ -652,7 +650,7 @@ class CrashDatabase:
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def update(self, id, report, comment, change_description=False,
-            attachment_comment=None, key_filter=None):
+               attachment_comment=None, key_filter=None):
         '''Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see
@@ -676,8 +674,8 @@ class CrashDatabase:
         This updates Stacktrace, ThreadStacktrace, StacktraceTop,
         and StacktraceSource. You can also supply an additional comment.
         '''
-        self.update(id, report, comment, key_filter=['Stacktrace',
-            'ThreadStacktrace', 'StacktraceSource', 'StacktraceTop'])
+        self.update(id, report, comment, key_filter=[
+            'Stacktrace', 'ThreadStacktrace', 'StacktraceSource', 'StacktraceTop'])
 
     def set_credentials(self, username, password):
         '''Set username and password.'''

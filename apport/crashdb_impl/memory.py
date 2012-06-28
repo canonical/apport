@@ -41,7 +41,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         assert self.accepts(report)
 
         self.reports.append({'report': report, 'fixed_version': None, 'dup_of':
-            None, 'comment:': ''})
+                             None, 'comment:': ''})
         id = len(self.reports) - 1
         if 'Traceback' in report:
             self.dup_unchecked.add(id)
@@ -54,8 +54,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         or http://bugs.example.com/<handle> for reports without a SourcePackage.'''
 
         if 'SourcePackage' in report:
-            return 'http://%s.bugs.example.com/%i' % (report['SourcePackage'],
-                handle)
+            return 'http://%s.bugs.example.com/%i' % (report['SourcePackage'], handle)
         else:
             return 'http://bugs.example.com/%i' % handle
 
@@ -95,7 +94,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return self.is_reporter(id)
 
     def update(self, id, report, comment, change_description=False,
-            attachment_comment=None, key_filter=None):
+               attachment_comment=None, key_filter=None):
         '''Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see
@@ -138,8 +137,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         result = set()
         for i in range(len(self.reports)):
-            if self.reports[i]['dup_of'] is None and \
-                self.reports[i]['fixed_version'] == None:
+            if self.reports[i]['dup_of'] is None and self.reports[i]['fixed_version'] is None:
                 result.add(i)
 
         return result
@@ -157,7 +155,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         raise an exception (preferably IOError).'''
 
         try:
-            if self.reports[id]['dup_of'] != None:
+            if self.reports[id]['dup_of'] is not None:
                 return 'invalid'
             return self.reports[id]['fixed_version']
         except IndexError:
@@ -181,7 +179,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Mark a crash id as reintroducing an earlier crash which is
         already marked as fixed (having ID 'master').'''
 
-        assert self.reports[master]['fixed_version'] != None
+        assert self.reports[master]['fixed_version'] is not None
         self.reports[id]['comment'] = 'regression, already fixed in #%i' % master
 
     def _mark_dup_checked(self, id, report):

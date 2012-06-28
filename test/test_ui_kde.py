@@ -101,10 +101,9 @@ class T(unittest.TestCase):
         self.app.report['ProblemType'] = 'KernelCrash'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(),
-            self.distro.split()[0])
+        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
-              _('Sorry, %s has experienced an internal error.') % self.distro)
+                         _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
         self.assertTrue(self.app.dialog.details.isVisible())
@@ -128,10 +127,9 @@ class T(unittest.TestCase):
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(),
-            self.distro.split()[0])
+        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
-             _('Sorry, a problem occurred while installing software.'))
+                         _('Sorry, a problem occurred while installing software.'))
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
         self.assertTrue(self.app.dialog.details.isVisible())
@@ -139,7 +137,7 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
         self.assertFalse(self.app.dialog.closed_button.isVisible())
         self.assertEqual(self.app.dialog.text.text(),
-            _('Package: apport 1.2.3~0ubuntu1'))
+                         _('Package: apport 1.2.3~0ubuntu1'))
 
     def test_regular_crash_layout(self):
         '''
@@ -164,10 +162,9 @@ Type=Application''')
             self.app.report['DesktopFile'] = fp.name
             QTimer.singleShot(0, QCoreApplication.quit)
             self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(),
-            self.distro.split()[0])
+        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
-             _('The application Apport has closed unexpectedly.'))
+                         _('The application Apport has closed unexpectedly.'))
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
         self.assertTrue(self.app.dialog.details.isVisible())
@@ -206,9 +203,9 @@ Type=Application''')
             QTimer.singleShot(0, QCoreApplication.quit)
             self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.windowTitle(),
-            self.distro.split()[0])
+                         self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
-             _('The application Apport has closed unexpectedly.'))
+                         _('The application Apport has closed unexpectedly.'))
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
         self.assertTrue(self.app.dialog.details.isVisible())
@@ -239,12 +236,11 @@ Type=Application''')
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(),
-            self.distro.split()[0])
+        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
-             _('Sorry, %s has experienced an internal error.') % self.distro)
+                         _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertEqual(self.app.dialog.text.text(),
-             _('If you notice further problems, try restarting the computer.'))
+                         _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.dialog.text.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
@@ -272,10 +268,9 @@ Type=Application''')
         self.app.report_file = None
         QTimer.singleShot(0, QCoreApplication.quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.dialog.windowTitle(),
-            self.distro.split()[0])
+        self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
-             _('Send problem report to the developers?'))
+                         _('Send problem report to the developers?'))
         self.assertFalse(self.app.dialog.text.isVisible())
         self.assertFalse(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
@@ -301,7 +296,7 @@ Type=Application''')
             QTimer.singleShot(1000, cont)
 
         def check_progress(*args):
-            self.visible_progress = (self.app.progress != None)
+            self.visible_progress = (self.app.progress is not None)
 
         QTimer.singleShot(1000, cont)
         self.app.run_crash(self.app.report_file)
@@ -353,7 +348,7 @@ Type=Application''')
             QTimer.singleShot(200, cont)
 
         def check_progress(*args):
-            self.visible_progress = (self.app.progress != None)
+            self.visible_progress = (self.app.progress is not None)
 
         QTimer.singleShot(200, show_details)
         self.app.run_crash(self.app.report_file)
@@ -390,7 +385,7 @@ Type=Application''')
             QTimer.singleShot(1000, cont)
 
         def check_progress(*args):
-            self.visible_progress = (self.app.progress != None)
+            self.visible_progress = (self.app.progress is not None)
 
         QTimer.singleShot(1000, cont)
         self.app.crashdb.options['problem_types'] = ['bug']
@@ -452,7 +447,7 @@ Type=Application''')
 
         self.assertEqual(self.app.report['ProblemType'], 'Bug')
         self.assertEqual(self.app.report['SourcePackage'],
-                apport.packaging.get_source(pkg))
+                         apport.packaging.get_source(pkg))
         self.assertEqual(self.app.report['Package'], '%s (not installed)' % pkg)
 
     @patch.object(MainUserInterface, 'open_url')
@@ -505,9 +500,9 @@ Type=Application''')
         kernel_pkg = apport.packaging.get_kernel_package()
         kernel_src = apport.packaging.get_source(kernel_pkg)
         self.assertNotEqual(kernel_pkg, kernel_src,
-                'this test assumes that the kernel binary package != kernel source package')
+                            'this test assumes that the kernel binary package != kernel source package')
         self.assertNotEqual(apport.packaging.get_version(kernel_pkg), '',
-                'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
+                            'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
         # this test assumes that the kernel source package name is not an
         # installed binary package
         self.assertRaises(ValueError, apport.packaging.get_version, kernel_src)
