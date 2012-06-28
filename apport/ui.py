@@ -1042,6 +1042,8 @@ class UserInterface:
                     upthread = apport.REThread.REThread(target=self.crashdb.upload,
                                                         args=(self.report, progress_callback))
                     upthread.start()
+            except (TypeError, SyntaxError, ValueError):
+                raise
             except Exception as e:
                 self.ui_error_message(_('Network problem'),
                                       '%s\n\n%s' % (
