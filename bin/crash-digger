@@ -169,7 +169,7 @@ def parse_options():
                          help='Path to the duplicate sqlite database (default: disabled)')
     optparser.add_option('--crash-db', metavar='NAME',
                          help='Use a different crash database than the "default" in /etc/apport/crashdb.conf')
-    optparser.add_option('-D', '--dupcheck', dest='dupcheck_mode', default=False, action='store_true'<
+    optparser.add_option('-D', '--dupcheck', dest='dupcheck_mode', default=False, action='store_true',
                          help='Only check duplicates for architecture independent crashes (like Python exceptions)')
     optparser.add_option('-v', '--verbose', action='store_true', default=False,
                          help='Verbose operation (also passed to apport-retrace)')
