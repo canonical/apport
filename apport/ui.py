@@ -221,7 +221,7 @@ class UserInterface:
                 # not there any more? no problem, then it won't be regarded as
                 # "seen" any more anyway
                 pass
-            if self.load_report(report_file):
+            if not self.report and not self.load_report(report_file):
                 return
 
             if 'Ignore' in self.report:
