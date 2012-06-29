@@ -20,6 +20,7 @@ Bug fixes:
    to be a network error.
  * launchpad.py: Recongize Launchpad projects for bug query and marking
    operations. (LP: #1003506)
+ * packaging-apt-dpkg.py: Fix get_source_tree() to work with apt sandboxes.
 
 2.2.5 (2012-06-21):
 -------------------

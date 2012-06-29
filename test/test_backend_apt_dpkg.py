@@ -561,6 +561,20 @@ bo/gu/s                                                 na/mypackage
         self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-worker/apache2'),
                         'should have installed mpm-worker, but have mpm-event.')
 
+    @unittest.skipUnless(_has_internet(), 'online test')
+    def test_get_source_tree_sandbox(self):
+        self._setup_foonux_config()
+        out_dir = os.path.join(self.workdir, 'out')
+        os.mkdir(out_dir)
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'))
+        res = impl.get_source_tree('base-files', out_dir, sandbox=self.rootdir,
+                                   apt_update=True)
+        self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
+        # this needs to be updated when the release in _setup_foonux_config
+        # changes
+        self.assertTrue(res.endswith('/base-files-5.0.0ubuntu20'),
+                        'unexpected version: ' + res.split('/')[-1])
+
     def _setup_foonux_config(self):
         '''Set up directories and configuration for install_packages()'''
 
@@ -573,6 +587,7 @@ bo/gu/s                                                 na/mypackage
         os.mkdir(os.path.join(self.configdir, 'Foonux 1.2'))
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
             f.write('deb http://archive.ubuntu.com/ubuntu/ lucid main\n')
+            f.write('deb-src http://archive.ubuntu.com/ubuntu/ lucid main\n')
             f.write('deb http://ddebs.ubuntu.com/ lucid main\n')
 
 # only execute if dpkg is available

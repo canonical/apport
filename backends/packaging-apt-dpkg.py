@@ -398,26 +398,46 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         self._mirror = url
 
-    def get_source_tree(self, srcpackage, dir, version=None):
-        '''Download given source package and unpack it into dir (which should
-        be empty).
+    def get_source_tree(self, srcpackage, dir, version=None, sandbox=None,
+                        apt_update=False):
+        '''Download source package and unpack it into dir.
 
         This also has to care about applying patches etc., so that dir will
-        eventually contain the actually compiled source.
+        eventually contain the actually compiled source. dir needs to exist and
+        should be empty.
 
         If version is given, this particular version will be retrieved.
         Otherwise this will fetch the latest available version.
 
+        If sandbox is given, it calls apt-get source in that sandbox, otherwise
+        it uses the system apt configuration.
+
+        If apt_update is True, it will call apt-get update before apt-get
+        source. This is mostly necessary for freshly created sandboxes.
+
         Return the directory that contains the actual source root directory
         (which might be a subdirectory of dir). Return None if the source is
-        not available.'''
+        not available.
+        '''
+        # configure apt for sandbox
+        env = os.environ.copy()
+        if sandbox:
+            f = tempfile.NamedTemporaryFile()
+            f.write(('''Dir "%s";
+Debug::NoLocking "true";
+ ''' % sandbox).encode())
+            f.flush()
+            env['APT_CONFIG'] = f.name
+
+        if apt_update:
+            subprocess.call(['apt-get', '-qq', 'update'], env=env)
 
         # fetch source tree
         argv = ['apt-get', '-qq', '--assume-yes', 'source', srcpackage]
         if version:
             argv[-1] += '=' + version
         try:
-            if subprocess.call(argv, cwd=dir) != 0:
+            if subprocess.call(argv, cwd=dir, env=env) != 0:
                 return None
         except OSError:
             return None
@@ -789,6 +809,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             os.makedirs(os.path.join(apt_root, 'var', 'lib', 'apt', 'lists', 'partial'))
             os.makedirs(os.path.join(apt_root, 'var', 'cache', 'apt', 'archives', 'partial'))
             os.makedirs(os.path.join(apt_root, 'var', 'lib', 'dpkg'))
+            os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'apt.conf.d'))
+            os.makedirs(os.path.join(apt_root, 'etc', 'apt', 'preferences.d'))
 
         # install apt sources
         list_d = os.path.join(apt_root, 'etc', 'apt', 'sources.list.d')
