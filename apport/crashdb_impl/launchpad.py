@@ -1051,6 +1051,7 @@ if __name__ == '__main__':
     crashdb = None
     _segv_report = None
     _python_report = None
+    _uncommon_description_report = None
 
     class _T(unittest.TestCase):
         # this assumes that a source package 'coreutils' exists and builds a
@@ -1076,12 +1077,7 @@ if __name__ == '__main__':
             self.ref_report['SourcePackage'] = 'coreutils'
 
             # Objects tests rely on.
-            self.uncommon_description_bug = self._file_uncommon_description_bug()
             self._create_project('langpack-o-matic')
-
-            # XXX Should create new bug reports, not reuse those.
-            self.known_test_id = self.uncommon_description_bug.id
-            self.known_test_id2 = self._file_uncommon_description_bug().id
 
         def _create_project(self, name):
             '''Create a project using launchpadlib to be used by tests.'''
@@ -1094,28 +1090,6 @@ if __name__ == '__main__':
                     name=name,
                     summary=name + 'summary',
                     title=name + 'title')
-
-        def _file_uncommon_description_bug(self):
-            '''File a bug report with an uncommon description.
-
-            Example taken from real LP bug 269539. It contains only
-            ProblemType/Architecture/DistroRelease in the description, and has
-            free-form description text after the Apport data.
-            '''
-            desc = '''problem
-
-ProblemType: Package
-Architecture: amd64
-DistroRelease: Ubuntu 8.10
-
-more text
-
-and more
-'''
-            return self.crashdb.launchpad.bugs.createBug(
-                title=b'mixed description bug'.encode(),
-                description=desc,
-                target=self.crashdb.lp_distro)
 
         @property
         def hostname(self):
@@ -1188,6 +1162,42 @@ NameError: global name 'weird' is not defined'''
             sys.stderr.write('(Created Python report: https://%s/bugs/%i) ' % (self.hostname, id))
             _python_report = id
             return id
+
+        def get_uncommon_description_report(self, force_fresh=False):
+            '''File a bug report with an uncommon description.
+
+            This is only done once, subsequent calls will return the already
+            existing ID, unless force_fresh is True.
+
+            Example taken from real LP bug 269539. It contains only
+            ProblemType/Architecture/DistroRelease in the description, and has
+            free-form description text after the Apport data.
+
+            Return the ID.
+            '''
+            global _uncommon_description_report
+            if not force_fresh and _uncommon_description_report is not None:
+                return _uncommon_description_report
+
+            desc = '''problem
+
+ProblemType: Package
+Architecture: amd64
+DistroRelease: Ubuntu 8.10
+
+more text
+
+and more
+'''
+            bug = self.crashdb.launchpad.bugs.createBug(
+                title=b'mixed description bug'.encode(),
+                description=desc,
+                target=self.crashdb.lp_distro)
+            sys.stderr.write('(Created uncommon description: https://%s/bugs/%i) ' % (self.hostname, bug.id))
+
+            if not force_fresh:
+                _uncommon_description_report = bug.id
+            return bug.id
 
         def test_1_download(self):
             '''download()'''
@@ -1457,19 +1467,23 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), None)
             self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
+            segv_id = self.get_segv_report()
+            known_test_id = self.get_uncommon_description_report()
+            known_test_id2 = self.get_uncommon_description_report(force_fresh=True)
+
             # dupe our segv_report and check that it worked; then undupe it
-            r = self.crashdb.download(self.get_segv_report())
-            self.crashdb.close_duplicate(r, self.get_segv_report(), self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), self.known_test_id)
+            r = self.crashdb.download(segv_id)
+            self.crashdb.close_duplicate(r, segv_id, known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_id), known_test_id)
 
             # this should be a no-op
-            self.crashdb.close_duplicate(r, self.get_segv_report(), self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), self.known_test_id)
+            self.crashdb.close_duplicate(r, segv_id, known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_id), known_test_id)
 
-            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), 'invalid')
-            self.crashdb.close_duplicate(r, self.get_segv_report(), None)
-            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), None)
-            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_id), 'invalid')
+            self.crashdb.close_duplicate(r, segv_id, None)
+            self.assertEqual(self.crashdb.duplicate_of(segv_id), None)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_id), None)
 
             # this should have removed attachments; note that Stacktrace is
             # short, and thus inline
@@ -1479,27 +1493,26 @@ NameError: global name 'weird' is not defined'''
             self.assertFalse('ProcMaps' in r)
             self.assertFalse('ProcStatus' in r)
             self.assertFalse('Registers' in r)
-            self.assertFalse('Stacktrace' in r)
             self.assertFalse('ThreadStacktrace' in r)
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
-            self.crashdb.close_duplicate(apport.Report(), self.known_test_id,
-                                         self.known_test_id2)
-            self.crashdb.close_duplicate(r, self.get_segv_report(), self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()),
-                             self.known_test_id2)
+            self.crashdb.close_duplicate(apport.Report(), known_test_id,
+                                         known_test_id2)
+            self.crashdb.close_duplicate(r, segv_id, known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_id),
+                             known_test_id2)
 
-            self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
-            self.crashdb.close_duplicate(apport.Report(), self.known_test_id2, None)
-            self.crashdb.close_duplicate(r, self.get_segv_report(), None)
+            self.crashdb.close_duplicate(apport.Report(), known_test_id, None)
+            self.crashdb.close_duplicate(apport.Report(), known_test_id2, None)
+            self.crashdb.close_duplicate(r, segv_id, None)
 
             # this should be a no-op
-            self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
-            self.assertEqual(self.crashdb.duplicate_of(self.known_test_id), None)
+            self.crashdb.close_duplicate(apport.Report(), known_test_id, None)
+            self.assertEqual(self.crashdb.duplicate_of(known_test_id), None)
 
-            self.crashdb.mark_regression(self.get_segv_report(), self.known_test_id)
-            self._verify_marked_regression(self.get_segv_report())
+            self.crashdb.mark_regression(segv_id, known_test_id)
+            self._verify_marked_regression(segv_id)
 
         def test_marking_segv(self):
             '''processing status markings for signal crashes'''
@@ -1783,8 +1796,8 @@ NameError: global name 'weird' is not defined'''
 
             # test fixed version
             self.assertEqual(crashdb.get_fixed_version(id), None)
-            crashdb.close_duplicate(r, id, self.known_test_id)
-            self.assertEqual(crashdb.duplicate_of(id), self.known_test_id)
+            crashdb.close_duplicate(r, id, self.get_uncommon_description_report())
+            self.assertEqual(crashdb.duplicate_of(id), self.get_uncommon_description_report())
             self.assertEqual(crashdb.get_fixed_version(id), 'invalid')
             crashdb.close_duplicate(r, id, None)
             self.assertEqual(crashdb.duplicate_of(id), None)
@@ -1794,7 +1807,7 @@ NameError: global name 'weird' is not defined'''
             '''download() of uncommon description formats'''
 
             # only ProblemType/Architecture/DistroRelease in description
-            r = self.crashdb.download(self.uncommon_description_bug.id)
+            r = self.crashdb.download(self.get_uncommon_description_report())
             self.assertEqual(r['ProblemType'], 'Package')
             self.assertEqual(r['Architecture'], 'amd64')
             self.assertTrue(r['DistroRelease'].startswith('Ubuntu '))
