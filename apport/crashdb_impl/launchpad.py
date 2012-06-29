@@ -10,7 +10,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import urllib, tempfile, os.path, re, gzip, sys, email, time
+import tempfile, os.path, re, gzip, sys, email, time
 
 from io import BytesIO
 
@@ -895,7 +895,6 @@ in a dependent package.' % master,
                             self.options.get('triaging_team', 'ubuntu-crashes-universe'))
         bug.subscribe(person=person)
 
-
     def _generate_upload_blob(self, report):
         '''Generate a multipart/MIME temporary file for uploading.
 
@@ -1134,7 +1133,7 @@ if __name__ == '__main__':
 
         def get_python_report(self):
             '''Generate Python crash report.
-            
+
             Return the ID.
             '''
             global _python_report
@@ -1618,7 +1617,6 @@ and more
             r = self.crashdb.download(id)
             self.assertFalse('CoreDump' in r)
 
-        
         @mock.patch.object(CrashDatabase, '_get_source_version')
         def test_get_fixed_version(self, *args):
             '''get_fixed_version() for fixed bugs
@@ -1662,7 +1660,7 @@ and more
 
         def _file_bug(self, bug_target, report, description=None):
             '''File a bug report for a report.
-            
+
             Return the bug ID.
             '''
             # unfortunately staging's +storeblob API hardly ever works, so we
