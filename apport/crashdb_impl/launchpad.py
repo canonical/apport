@@ -1339,20 +1339,20 @@ NameError: global name 'weird' is not defined'''
 
             r = apport.Report('Bug')
 
-            r['OneLiner'] = 'bogus→'
+            r['OneLiner'] = b'bogus\xe2\x86\x92'.decode('UTF-8')
             r['StacktraceTop'] = 'f()\ng()\nh(1)'
             r['ShortGoo'] = 'lineone\nlinetwo'
             r['DpkgTerminalLog'] = 'one\ntwo\nthree\nfour\nfive\nsix'
-            r['VarLogDistupgradeBinGoo'] = '\x01' * 1024
+            r['VarLogDistupgradeBinGoo'] = b'\x01' * 1024
 
             self.crashdb.update(id, r, 'NotMe', change_description=True)
 
             r = self.crashdb.download(id)
 
-            self.assertEqual(r['OneLiner'], 'bogus→')
+            self.assertEqual(r['OneLiner'], b'bogus\xe2\x86\x92'.decode('UTF-8'))
             self.assertEqual(r['ShortGoo'], 'lineone\nlinetwo')
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
-            self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
+            self.assertEqual(r['VarLogDistupgradeBinGoo'], b'\x01' * 1024)
 
             self.assertEqual(self.crashdb.launchpad.bugs[id].tags,
                              ['apport-collected'])
