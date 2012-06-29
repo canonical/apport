@@ -623,7 +623,7 @@ class UserInterface:
         if self.options.symptom:
             self.run_symptom()
             return True
-        elif self.options.pid and self.options.hanging:
+        elif hasattr(self.options, 'pid') and self.options.hanging:
             self.run_hang(self.options.pid)
             return True
         elif self.options.filebug:
