@@ -21,6 +21,8 @@ Bug fixes:
  * launchpad.py: Recongize Launchpad projects for bug query and marking
    operations. (LP: #1003506)
  * packaging-apt-dpkg.py: Fix get_source_tree() to work with apt sandboxes.
+ * apport-retrace: Turn StacktraceSource generation back on, now that it works
+   with the current sandboxing.
 
 2.2.5 (2012-06-21):
 -------------------
