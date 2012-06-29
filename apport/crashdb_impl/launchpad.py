@@ -1046,6 +1046,7 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
 
 if __name__ == '__main__':
     import unittest, atexit, shutil, subprocess
+    import mock
 
     crashdb = None
     _segv_report = None
@@ -1604,16 +1605,20 @@ NameError: global name 'weird' is not defined'''
             r = self.crashdb.download(id)
             self.assertFalse('CoreDump' in r)
 
-        def test_get_fixed_version(self):
+        
+        @mock.patch.object(CrashDatabase, '_get_source_version')
+        def test_get_fixed_version(self, *args):
             '''get_fixed_version() for fixed bugs
 
             Other cases are already checked in test_marking_segv() (invalid
             bugs) and test_duplicates (duplicate bugs) for efficiency.
             '''
+            # staging.launchpad.net often does not have Quantal, so mock-patch
+            # it to a known value
+            CrashDatabase._get_source_version.return_value = '3.14'
             self._mark_report_fixed(self.get_segv_report())
             fixed_ver = self.crashdb.get_fixed_version(self.get_segv_report())
-            self.assertNotEqual(fixed_ver, None)
-            self.assertTrue(fixed_ver[0].isdigit())
+            self.assertEqual(fixed_ver, '3.14')
             self._mark_report_new(self.get_segv_report())
             self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
