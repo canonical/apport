@@ -22,7 +22,7 @@ from apport.crashdb import get_crashdb
 class CrashDigger:
     def __init__(self, config_dir, auth_file, cache_dir, sandbox_dir,
                  apport_retrace, verbose=False, dup_db=None, dupcheck_mode=False,
-                 publish_dir=None):
+                 publish_dir=None, crash_db=None):
         '''Initialize pools.'''
 
         self.retrace_pool = set()
@@ -34,7 +34,11 @@ class CrashDigger:
         self.auth_file = auth_file
         self.dup_db = dup_db
         self.dupcheck_mode = dupcheck_mode
-        self.crashdb = get_crashdb(auth_file)
+        try:
+            self.crashdb = get_crashdb(auth_file, name=crash_db)
+        except KeyError:
+            apport.error('Crash database %s does not exist', crash_db)
+            sys.exit(1)
         self.apport_retrace = apport_retrace
         self.publish_dir = publish_dir
         if config_dir:
@@ -163,6 +167,8 @@ def parse_options():
                               'program immediately aborts if it already exists')
     optparser.add_option('-d', '--duplicate-db', dest='dup_db', metavar='PATH',
                          help='Path to the duplicate sqlite database (default: disabled)')
+    optparser.add_option('--crash-db', metavar='NAME',
+                         help='Use a different crash database than the "default" in /etc/apport/crashdb.conf')
     optparser.add_option('-D', '--dupcheck', dest='dupcheck_mode', default=False,
                          help='Only check duplicates for architecture independent crashes (like Python exceptions)')
     optparser.add_option('-v', '--verbose', action='store_true', default=False,
@@ -207,7 +213,7 @@ if opts.lockfile:
 try:
     CrashDigger(opts.config_dir, opts.auth_file, opts.cache, opts.sandbox_dir,
                 opts.apport_retrace, opts.verbose, opts.dup_db,
-                opts.dupcheck_mode, opts.publish_db).run()
+                opts.dupcheck_mode, opts.publish_db, opts.crash_db).run()
 except SystemExit as exit:
     if exit.code == 99:
         pass  # fall through lock cleanup

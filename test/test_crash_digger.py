@@ -23,9 +23,10 @@ class T(unittest.TestCase):
         crashdb_conf = os.path.join(self.workdir, 'crashdb.conf')
         with open(crashdb_conf, 'w') as f:
             f.write('''default = 'memory'
-databases = { 'memory': {
-    'impl': 'memory', 'distro': 'Testux', 'dummy_data': '1',
-    'dupdb_url': '%s'}
+databases = {
+    'memory': {'impl': 'memory', 'distro': 'Testux', 'dummy_data': '1',
+               'dupdb_url': '%s'},
+    'empty': {'impl': 'memory', 'distro': 'Foonux'},
 }''' % os.path.join(self.workdir, 'dupdb'))
 
         self.config_dir = os.path.join(self.workdir, 'config')
@@ -214,5 +215,23 @@ echo ApportRetraceError >&2''')
         self.assertTrue('retracing #0' in out)
 
         self.assertTrue(os.path.isdir(os.path.join(self.workdir, 'dupdb', 'sig')))
+
+    def test_alternate_crashdb(self):
+        '''Alternate crash database name'''
+
+        # existing DB "empty" has no crashes
+        (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero',
+                                '-vl', self.lock_file, '--crash-db', 'empty'])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.assertFalse('retracing #' in out)
+        self.assertFalse('crash is' in out)
+        self.assertFalse('failed with status' in out)
+
+        # nonexisting DB
+        (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero',
+                                '-vl', self.lock_file, '--crash-db', 'nonexisting'])
+        self.assertEqual(out, '', 'no output messages:\n' + out)
+        self.assertFalse('Traceback' in err, err)
+        self.assertTrue('nonexisting' in err, err)
 
 unittest.main()

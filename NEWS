@@ -9,6 +9,8 @@ Improvements:
    the bug creation from a blob by manually creating the comment and
    attachments ourselves, and just assume that storeblob works on production.
    Also change the structure to allow running every test individually.
+ * crash-digger: Add --crash-db option to specify a non-default crash databae
+   name. (LP: #1003506)
 
 Bug fixes:
  * apport: Also treat a binary as modified if the /proc/pid/exe symlink does
