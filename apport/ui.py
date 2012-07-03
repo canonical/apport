@@ -339,11 +339,12 @@ class UserInterface:
         self.report = apport.Report('Hang')
         self.report.add_proc_info(pid)
         self.report.add_package_info()
-        self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
+        path = self.report.get('ExecutablePath', '')
+        self.cur_package = apport.fileutils.find_file_package(path)
         self.report.add_os_info()
         allowed_to_report = apport.fileutils.allowed_to_report()
-        # TODO make the window modal for the pid.
-        response = self.ui_present_report_details(allowed_to_report)
+        response = self.ui_present_report_details(allowed_to_report,
+                                                  modal_for=pid)
         if response['report']:
             apport.fileutils.mark_hanging_process(self.report, pid)
             os.kill(int(pid), signal.SIGABRT)
