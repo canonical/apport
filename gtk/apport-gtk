@@ -24,7 +24,6 @@ except RuntimeError as e:
 import apport
 from apport import unicode_gettext as _
 import apport.ui
-from gi.repository import Gdk
 
 def find_xid_for_pid (pid):
     '''Return the X11 Window (xid) for the supplied process ID.'''
