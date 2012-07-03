@@ -313,12 +313,7 @@ try:
         error_log('executable was modified after program start, ignoring')
         sys.exit(1)
 
-    hanging = os.path.join(apport.fileutils.report_dir, '%s.hanging' % pid)
-    if os.path.exists(hanging):
-        info = apport.Report('Hang')
-        os.unlink(hanging)
-    else:
-        info = apport.Report('Crash')
+    info = apport.Report('Crash')
     info['Signal'] = signum
     if sys.version_info.major < 3:
         info['CoreDump'] = (sys.stdin, True, usable_ram() * 3 / 4, True)
@@ -333,6 +328,14 @@ try:
     if 'ExecutablePath' not in info:
         error_log('could not determine ExecutablePath, aborting')
         sys.exit(1)
+
+    subject = info['ExecutablePath'].replace('/', '_')
+    base = '%s.%s.%s.hanging' % (subject, str(pidstat.st_uid), pid)
+    hanging = os.path.join(apport.fileutils.report_dir, base)
+
+    if os.path.exists(hanging):
+        info['ProblemType'] = 'Hang'
+        os.unlink(hanging)
 
     if 'InterpreterPath' in info:
         error_log('script: %s, interpreted by %s (command line "%s")' %

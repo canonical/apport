@@ -106,8 +106,15 @@ def mark_report_upload(report):
         pass
 
 
-def mark_hanging_process(pid):
-    path = os.path.join(report_dir, '%s.hanging' % pid)
+def mark_hanging_process(report, pid):
+    if 'ExecutablePath' in report:
+        subject = report['ExecutablePath'].replace('/', '_')
+    else:
+        raise ValueError('report does not have the ExecutablePath attribute')
+
+    uid = os.getuid()
+    base = '%s.%s.%s.hanging' % (subject, str(uid), pid)
+    path = os.path.join(report_dir, base)
     with open(path, 'a'):
         pass
 

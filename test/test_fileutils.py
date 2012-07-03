@@ -115,8 +115,12 @@ class T(unittest.TestCase):
 
     def test_mark_hanging_process(self):
         '''mark_hanging_process()'''
-        apport.fileutils.mark_hanging_process('1')
-        expected = os.path.join(apport.fileutils.report_dir, '1.hanging')
+        pr = problem_report.ProblemReport()
+        pr['ExecutablePath'] = '/bin/bash'
+        apport.fileutils.mark_hanging_process(pr, '1')
+        uid = str(os.getuid())
+        base = '_bin_bash.%s.1.hanging' % uid
+        expected = os.path.join(apport.fileutils.report_dir, base)
         self.assertTrue(os.path.exists(expected))
 
     def test_mark_report_upload(self):
