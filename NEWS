@@ -23,6 +23,7 @@ Bug fixes:
  * packaging-apt-dpkg.py: Fix get_source_tree() to work with apt sandboxes.
  * apport-retrace: Turn StacktraceSource generation back on, now that it works
    with the current sandboxing.
+ * launchpad.py: Ensure that upload chunk size does not underrun. (LP: #1013334)
 
 2.2.5 (2012-06-21):
 -------------------

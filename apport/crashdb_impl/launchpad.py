@@ -977,10 +977,11 @@ class HTTPSProgressConnection(HTTPSConnection):
 
             # adjust chunksize so that it takes between .5 and 2
             # seconds to send a chunk
-            if t2 - t1 < .5:
-                chunksize *= 2
-            elif t2 - t1 > 2:
-                chunksize /= 2
+            if chunksize > 1024:
+                if t2 - t1 < .5:
+                    chunksize <<= 1
+                elif t2 - t1 > 2:
+                    chunksize >>= 1
 
 
 class HTTPSProgressHandler(HTTPSHandler):
