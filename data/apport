@@ -334,7 +334,8 @@ try:
     hanging = os.path.join(apport.fileutils.report_dir, base)
 
     if os.path.exists(hanging):
-        info['ProblemType'] = 'Hang'
+        if (os.stat('/proc/uptime').st_ctime < os.stat(hanging).st_mtime):
+            info['ProblemType'] = 'Hang'
         os.unlink(hanging)
 
     if 'InterpreterPath' in info:
