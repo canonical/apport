@@ -11,6 +11,11 @@ Improvements:
    Also change the structure to allow running every test individually.
  * crash-digger: Add --crash-db option to specify a non-default crash databae
    name. (LP: #1003506)
+ * apport-gtk: Add --hanging option to specify the process ID of a hanging
+   application. If the user chooses to report this error, apport will terminate
+   the pid with SIGABRT, otherwise it will send SIGKILL. The normal core pipe
+   handler will be used to process the resulting report file, with a .hanging
+   file in /var/crash to separate these from regular crashes.
 
 Bug fixes:
  * apport: Also treat a binary as modified if the /proc/pid/exe symlink does

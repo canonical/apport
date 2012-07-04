@@ -183,7 +183,7 @@ class T(unittest.TestCase):
         self.ui = None
         self.report_file.close()
 
-        self.assertEqual(subprocess.call(['pidof', '/bin/yes']), 1, 'no stray test processes')
+        self.assertEqual(subprocess.call(['pidof', '/usr/bin/yes']), 1, 'no stray test processes')
 
         # clean up apport report from _gen_test_crash()
         for f in glob.glob('/var/crash/_usr_bin_yes.*.crash'):
@@ -1711,7 +1711,7 @@ def run(report, ui):
         _chk('apport-gtk', None,
              {'filebug': False, 'package': None, 'pid': None, 'crash_file':
               None, 'symptom': None, 'update_report': None, 'save': None,
-              'window': False, 'tag': []})
+              'window': False, 'tag': [], 'hanging': False})
         # updating report not allowed without args
         self.assertRaises(SystemExit, _chk, 'apport-collect', None, {})
 
@@ -1719,7 +1719,7 @@ def run(report, ui):
         _chk('apport-kde', 'coreutils',
              {'filebug': True, 'package': 'coreutils', 'pid': None,
               'crash_file': None, 'symptom': None, 'update_report': None,
-              'save': None, 'window': False, 'tag': []})
+              'save': None, 'window': False, 'tag': [], 'hanging': False})
 
         # symptom is preferred over package
         f = open(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'), 'w')
@@ -1731,13 +1731,13 @@ return 'bash'
         _chk('apport-cli', 'coreutils',
              {'filebug': True, 'package': None, 'pid': None, 'crash_file':
               None, 'symptom': 'coreutils', 'update_report': None, 'save':
-              None, 'window': False, 'tag': []})
+              None, 'window': False, 'tag': [], 'hanging': False})
 
         # PID
         _chk('apport-cli', '1234', {'filebug': True, 'package': None,
              'pid': '1234', 'crash_file': None, 'symptom': None,
              'update_report': None, 'save': None, 'window': False,
-             'tag': []})
+             'tag': [], 'hanging': False})
 
         # .crash/.apport files; check correct handling of spaces
         for suffix in ('.crash', '.apport'):
@@ -1745,14 +1745,14 @@ return 'bash'
                  'package': None, 'pid': None,
                  'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
                  'update_report': None, 'save': None, 'window': False,
-                 'tag': []})
+                 'tag': [], 'hanging': False})
 
         # executable
         _chk('apport-cli', '/usr/bin/tail', {'filebug': True,
              'package': 'coreutils',
              'pid': None, 'crash_file': None, 'symptom': None,
              'update_report': None, 'save': None, 'window': False,
-             'tag': []})
+             'tag': [], 'hanging': False})
 
         # update existing report
         _chk('apport-collect', '1234', {'filebug': False, 'package': None,
@@ -1783,7 +1783,7 @@ return 'bash'
         #
         _chk([], {'filebug': True, 'package': None, 'pid': None, 'crash_file':
                   None, 'symptom': None, 'update_report': None, 'save': None,
-                  'window': False, 'tag': []})
+                  'window': False, 'tag': [], 'hanging': False})
 
         #
         # single arguments
@@ -1793,7 +1793,7 @@ return 'bash'
         _chk(['coreutils'], {'filebug': True, 'package': 'coreutils', 'pid':
                              None, 'crash_file': None, 'symptom': None,
                              'update_report': None, 'save': None, 'window':
-                             False, 'tag': []})
+                             False, 'tag': [], 'hanging': False})
 
         # symptom (preferred over package)
         f = open(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'), 'w')
@@ -1805,26 +1805,27 @@ return 'bash'
         _chk(['coreutils'], {'filebug': True, 'package': None, 'pid': None,
                              'crash_file': None, 'symptom': 'coreutils',
                              'update_report': None, 'save': None, 'window':
-                             False, 'tag': []})
+                             False, 'tag': [], 'hanging': False})
         os.unlink(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'))
 
         # PID
         _chk(['1234'], {'filebug': True, 'package': None, 'pid': '1234',
                         'crash_file': None, 'symptom': None, 'update_report':
-                        None, 'save': None, 'window': False, 'tag': []})
+                        None, 'save': None, 'window': False, 'tag': [],
+                        'hanging': False})
 
         # .crash/.apport files; check correct handling of spaces
         for suffix in ('.crash', '.apport'):
             _chk(['/tmp/f oo' + suffix],
                  {'filebug': False, 'package': None, 'pid': None, 'crash_file':
                   '/tmp/f oo' + suffix, 'symptom': None, 'update_report': None,
-                  'save': None, 'window': False, 'tag': []})
+                  'save': None, 'window': False, 'tag': [], 'hanging': False})
 
         # executable name
         _chk(['/usr/bin/tail'],
              {'filebug': True, 'package': 'coreutils', 'pid': None,
               'crash_file': None, 'symptom': None, 'update_report': None,
-              'save': None, 'window': False, 'tag': []})
+              'save': None, 'window': False, 'tag': [], 'hanging': False})
 
         #
         # supported options
@@ -1834,17 +1835,19 @@ return 'bash'
         _chk(['--save', 'foo.apport', 'coreutils'],
              {'filebug': True, 'package': 'coreutils', 'pid': None,
               'crash_file': None, 'symptom': None, 'update_report': None,
-              'save': 'foo.apport', 'window': False, 'tag': []})
+              'save': 'foo.apport', 'window': False, 'tag': [],
+              'hanging': False})
 
         # --tag
         _chk(['--tag', 'foo', 'coreutils'],
              {'filebug': True, 'package': 'coreutils', 'pid': None,
               'crash_file': None, 'symptom': None, 'update_report': None,
-              'save': None, 'window': False, 'tag': ['foo']})
+              'save': None, 'window': False, 'tag': ['foo'], 'hanging': False})
         _chk(['--tag', 'foo', '--tag', 'bar', 'coreutils'],
              {'filebug': True, 'package': 'coreutils', 'pid': None,
               'crash_file': None, 'symptom': None, 'update_report': None,
-              'save': None, 'window': False, 'tag': ['foo', 'bar']})
+              'save': None, 'window': False, 'tag': ['foo', 'bar'],
+              'hanging': False})
 
     def test_can_examine_locally_crash(self):
         '''can_examine_locally() for a crash report'''
@@ -1947,6 +1950,21 @@ Categories=GNOME;GTK;Utility;TextEditor;
                                 'name': 'gtranslate',
                                 'genericname[de]': 'Übersetzer',
                                 'exec': 'gedit %U'})
+
+    def test_wait_for_pid(self):
+        # fork a test process
+        pid = os.fork()
+        if pid == 0:
+            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+            os.execv('/usr/bin/yes', ['yes'])
+            assert False, 'Could not execute /usr/bin/yes'
+
+        time.sleep(0.5)
+        os.kill(pid, signal.SIGKILL)
+        os.waitpid(pid, 0)
+        self.ui.wait_for_pid(pid)
+
+        self.assertRaises(OSError, self.ui.wait_for_pid, '1')
 
 
 unittest.main()

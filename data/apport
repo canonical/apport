@@ -329,6 +329,15 @@ try:
         error_log('could not determine ExecutablePath, aborting')
         sys.exit(1)
 
+    subject = info['ExecutablePath'].replace('/', '_')
+    base = '%s.%s.%s.hanging' % (subject, str(pidstat.st_uid), pid)
+    hanging = os.path.join(apport.fileutils.report_dir, base)
+
+    if os.path.exists(hanging):
+        if (os.stat('/proc/uptime').st_ctime < os.stat(hanging).st_mtime):
+            info['ProblemType'] = 'Hang'
+        os.unlink(hanging)
+
     if 'InterpreterPath' in info:
         error_log('script: %s, interpreted by %s (command line "%s")' %
                   (info['ExecutablePath'], info['InterpreterPath'],

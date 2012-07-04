@@ -159,7 +159,7 @@ def get_code(srcdir, filename, line, context=5):
 
 def gen_source_stacktrace(report, sandbox):
     '''Generate StacktraceSource.
-    
+
     This is a version of Stacktrace with the surrounding code lines (where
     available) and with local variables removed.
     '''

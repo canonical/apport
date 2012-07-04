@@ -18,6 +18,8 @@ __version__ = '2.2.5'
 import glob, sys, os.path, optparse, traceback, locale, gettext
 import errno, zlib
 import subprocess, threading, webbrowser
+import signal
+import time
 
 import apport, apport.fileutils, apport.REThread
 
@@ -191,7 +193,12 @@ class UserInterface:
         else:
             reports = apport.fileutils.get_new_reports()
         for f in reports:
-            self.run_crash(f)
+            if not self.load_report(f):
+                continue
+            if self.report['ProblemType'] == 'Hang':
+                self.finish_hang(f)
+            else:
+                self.run_crash(f)
             result = True
 
         return result
@@ -214,7 +221,7 @@ class UserInterface:
                 # not there any more? no problem, then it won't be regarded as
                 # "seen" any more anyway
                 pass
-            if not self.load_report(report_file):
+            if not self.report and not self.load_report(report_file):
                 return
 
             if 'Ignore' in self.report:
@@ -307,6 +314,63 @@ class UserInterface:
                 apport.fatal('Out of memory, aborting')
             else:
                 raise
+
+    def finish_hang(self, f):
+        '''Finish processing a hanging application after the core pipe handler
+        has handed the report back.
+
+        This will signal to whoopsie that the report needs to be uploaded.
+        '''
+        apport.fileutils.mark_report_upload(f)
+        apport.fileutils.mark_report_seen(f)
+
+    def run_hang(self, pid):
+        '''Report an application hanging.
+
+        This will first present a dialog containing the information it can
+        collect from the running application (everything but the trace) with
+        the option of terminating or restarting the application, optionally
+        reporting that this error occurred.
+
+        A SIGABRT will then be sent to the process and a series of
+        noninteractive processes will collect the remaining information and
+        mark the report for uploading.
+        '''
+        self.report = apport.Report('Hang')
+        self.report.add_proc_info(pid)
+        self.report.add_package_info()
+        path = self.report.get('ExecutablePath', '')
+        self.cur_package = apport.fileutils.find_file_package(path)
+        self.report.add_os_info()
+        allowed_to_report = apport.fileutils.allowed_to_report()
+        response = self.ui_present_report_details(allowed_to_report,
+                                                  modal_for=pid)
+        if response['report']:
+            apport.fileutils.mark_hanging_process(self.report, pid)
+            os.kill(int(pid), signal.SIGABRT)
+        else:
+            os.kill(int(pid), signal.SIGKILL)
+
+        if response['restart']:
+            self.wait_for_pid(pid)
+            self.restart()
+
+    def wait_for_pid(self, pid):
+        '''waitpid() does not work for non-child processes. Query the process
+        state in a loop, waiting for "no such process."
+        '''
+        while True:
+            try:
+                os.kill(int(pid), 0)
+            except OSError as e:
+                if e.errno == errno.ESRCH:
+                    break
+                else:
+                    raise
+            time.sleep(1)
+
+    def kill_segv(self, pid):
+        os.kill(int(pid), signal.SIGSEGV)
 
     def run_report_bug(self, symptom_script=None):
         '''Report a bug.
@@ -561,6 +625,9 @@ class UserInterface:
         if self.options.symptom:
             self.run_symptom()
             return True
+        elif hasattr(self.options, 'pid') and self.options.hanging:
+            self.run_hang(self.options.pid)
+            return True
         elif self.options.filebug:
             return self.run_report_bug()
         elif self.options.update_report is not None:
@@ -652,6 +719,8 @@ class UserInterface:
                              help=_('Specify package name in --file-bug mode. This is optional if a --pid is specified. (Implied if package name is given as only argument.)'))
         optparser.add_option('-P', '--pid', type='int',
                              help=_('Specify a running program in --file-bug mode. If this is specified, the bug report will contain more information.  (Implied if pid is given as only argument.)'))
+        optparser.add_option('--hanging', action='store_true', default=False,
+                             help=_('The provided pid is a hanging application.'))
         optparser.add_option('-c', '--crash-file', metavar='PATH',
                              help=_('Report the crash from given .apport or .crash file instead of the pending ones in %s. (Implied if file is given as only argument.)') % apport.fileutils.report_dir)
         optparser.add_option('--save', metavar='PATH',
