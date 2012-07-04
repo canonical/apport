@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.2.6 (UNRELEASED):
--------------------
+2.3 (UNRELEASED):
+-----------------
 Improvements:
  * launchpad.py: Rework test suite to not use Launchpad's +storeblob facility
    at all any more. It almost never works on staging and is horribly slow. Fake
