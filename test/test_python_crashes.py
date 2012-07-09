@@ -40,7 +40,7 @@ import apport_python_hook
 apport_python_hook.install()
 
 def func(x):
-    raise Exception('This should happen.')
+    raise Exception(b'This should happen. \\xe2\\x99\\xa5'.decode('UTF-8'))
 
 %s
 func(42)
@@ -54,7 +54,7 @@ func(42)
             err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
                              'crashing test python program exits with failure code')
-            self.assertTrue('Exception: This should happen.' in err)
+            self.assertTrue('This should happen.' in err, err)
             self.assertFalse('OSError' in err, err)
         finally:
             os.unlink(script)
@@ -88,8 +88,8 @@ func(42)
         self.assertEqual(pr['ExecutablePath'], script)
         self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
         self.assertTrue(pr['Traceback'].startswith('Traceback'))
-        self.assertTrue("func\n    raise Exception('This should happen.')" in pr['Traceback'],
-                        pr['Traceback'])
+        self.assertTrue("func\n    raise Exception(b'This should happen." in
+                        pr['Traceback'], pr['Traceback'])
 
     def test_existing(self):
         '''Python crash hook overwrites seen existing files.'''

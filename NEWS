@@ -29,6 +29,8 @@ Bug fixes:
  * apport-retrace: Turn StacktraceSource generation back on, now that it works
    with the current sandboxing.
  * launchpad.py: Ensure that upload chunk size does not underrun. (LP: #1013334)
+ * apport_python_hook: Fix UnicodeEncodeError crash with Python 2 for
+   exceptions with non-ASCII characters. (LP: #972436)
 
 2.2.5 (2012-06-21):
 -------------------
