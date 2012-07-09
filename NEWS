@@ -31,6 +31,8 @@ Bug fixes:
  * launchpad.py: Ensure that upload chunk size does not underrun. (LP: #1013334)
  * apport_python_hook: Fix UnicodeEncodeError crash with Python 2 for
    exceptions with non-ASCII characters. (LP: #972436)
+ * test_ui_kde.py: Fix occasional test failure in test_1_crash_details if the
+   application ends before the "is progress bar visible" check is done.
 
 2.2.5 (2012-06-21):
 -------------------

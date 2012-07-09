@@ -360,7 +360,7 @@ Type=Application''')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
 
         # we already collected details, do not show the progress dialog again
-        self.assertEqual(self.visible_progress, False)
+        self.assertFalse(self.visible_progress)
 
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
