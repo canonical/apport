@@ -12,6 +12,8 @@
 
 import os
 import sys
+import re
+from glob import glob
 
 CONFIG = '/etc/default/apport'
 
@@ -21,7 +23,6 @@ def enabled():
 
     # This doesn't use apport.packaging.enabled() because it is too heavyweight
     # See LP: #528355
-    import re
     try:
         with open(CONFIG) as f:
             conf = f.read()
@@ -51,11 +52,6 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
         # do not do anything if apport was disabled
         if not enabled():
-            return
-
-        # org.freedesktop.DBus.Error.NoReply is an useless crash, needs actual
-        # crash from D-BUS backend (LP# 914220)
-        if 'org.freedesktop.DBus.Error.NoReply' in repr(exc_obj):
             return
 
         try:
@@ -89,6 +85,16 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         import apport.report
 
         pr = apport.report.Report()
+
+        # special handling of dbus-python exceptions
+        if hasattr(exc_obj, 'get_dbus_name'):
+            if exc_obj.get_dbus_name() == 'org.freedesktop.DBus.Error.NoReply':
+                # NoReply is an useless crash, we do not even get the method it
+                # was trying to call; needs actual crash from D-BUS backend (LP #914220)
+                return
+            if exc_obj.get_dbus_name() == 'org.freedesktop.DBus.Error.ServiceUnknown':
+                dbus_service_unknown_analysis(exc_obj, pr)
+
         # append a basic traceback. In future we may want to include
         # additional data such as the local variables, loaded modules etc.
         tb_file = StringIO()
@@ -136,6 +142,51 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         # but do not trigger an AttributeError on interpreter shutdown.
         if sys:
             sys.__excepthook__(exc_type, exc_obj, exc_tb)
+
+
+def dbus_service_unknown_analysis(exc_obj, report):
+    import subprocess
+    try:
+        from configparser import ConfigParser, NoSectionError, NoOptionError
+        (ConfigParser, NoSectionError, NoOptionError)  # pyflakes
+    except ImportError:
+        # Python 2
+        from ConfigParser import ConfigParser, NoSectionError, NoOptionError
+
+    # determine D-BUS name
+    m = re.search('name\s+(\S+)\s+was not provided by any .service',
+                  exc_obj.get_dbus_message())
+    if not m:
+        if sys.stderr:
+            sys.stderr.write('Error: cannot parse D-BUS name from exception: '
+                             + exc_obj.get_dbus_message())
+            return
+
+    dbus_name = m.group(1)
+
+    # determine .service file and Exec name for the D-BUS name
+    services = []  # tuples of (service file, exe name, running)
+    for f in glob('/usr/share/dbus-1/*services/*.service'):
+        cp = ConfigParser(interpolation=None)
+        cp.read(f, encoding='UTF-8')
+        try:
+            if cp.get('D-BUS Service', 'Name') == dbus_name:
+                exe = cp.get('D-BUS Service', 'Exec')
+                running = (subprocess.call(['pidof', '-sx', exe], stdout=subprocess.PIPE) == 0)
+                services.append((f, exe, running))
+        except (NoSectionError, NoOptionError):
+            if sys.stderr:
+                sys.stderr.write('Invalid D-BUS .service file %s: %s' % (
+                    f, exc_obj.get_dbus_message()))
+            continue
+
+    if not services:
+        report['DbusErrorAnalysis'] = 'no service file providing ' + dbus_name
+    else:
+        report['DbusErrorAnalysis'] = 'provided by'
+        for (service, exe, running) in services:
+            report['DbusErrorAnalysis'] += ' %s (%s is %srunning)' % (
+                service, exe, ('' if running else 'not '))
 
 
 def install():

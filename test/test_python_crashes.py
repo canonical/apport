@@ -11,6 +11,7 @@
 # the full text of the license.
 
 import unittest, tempfile, subprocess, os, stat, shutil, atexit
+import dbus
 
 temp_report_dir = tempfile.mkdtemp()
 os.environ['APPORT_REPORT_DIR'] = temp_report_dir
@@ -49,12 +50,12 @@ func(42)
             os.chmod(script, 0o755)
 
             p = subprocess.Popen([script, 'testarg1', 'testarg2'],
-                                 stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, env=os.environ)
             err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
                              'crashing test python program exits with failure code')
-            self.assertTrue('This should happen.' in err, err)
+            if not extracode:
+                self.assertTrue('This should happen.' in err, err)
             self.assertFalse('OSError' in err, err)
         finally:
             os.unlink(script)
@@ -235,5 +236,122 @@ func(42)
 
         self.assertGreater(count, 1)
         self.assertLess(count, limit)
+
+    def test_dbus_service_unknown_invalid(self):
+        '''DBus.Error.ServiceUnknown with an invalid name'''
+
+        self._test_crash(extracode='''import dbus
+obj = dbus.SessionBus().get_object('com.example.NotExisting', '/Foo')
+''')
+
+        pr = self._load_report()
+        self.assertTrue(pr['Traceback'].startswith('Traceback'), pr['Traceback'])
+        self.assertTrue('org.freedesktop.DBus.Error.ServiceUnknown' in pr['Traceback'], pr['Traceback'])
+        self.assertEqual(pr['DbusErrorAnalysis'], 'no service file providing com.example.NotExisting')
+
+    def test_dbus_service_unknown_wrongbus_notrunning(self):
+        '''DBus.Error.ServiceUnknown with a valid name on a different bus (not running)'''
+
+        subprocess.call(['killall', 'gvfsd-metadata'])
+        self._test_crash(extracode='''import dbus
+obj = dbus.SystemBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata')
+''')
+
+        pr = self._load_report()
+        self.assertTrue('org.freedesktop.DBus.Error.ServiceUnknown' in pr['Traceback'], pr['Traceback'])
+        self.assertTrue(pr['DbusErrorAnalysis'].startswith('provided by /usr/share/dbus-1/services/gvfs-metadata.service'),
+                        pr['DbusErrorAnalysis'])
+        self.assertTrue('gvfsd-metadata is not running' in pr['DbusErrorAnalysis'], pr['DbusErrorAnalysis'])
+
+    def test_dbus_service_unknown_wrongbus_running(self):
+        '''DBus.Error.ServiceUnknown with a valid name on a different bus (running)'''
+
+        self._test_crash(extracode='''import dbus
+# let the service be activated, to ensure it is running
+obj = dbus.SessionBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata')
+assert obj
+obj = dbus.SystemBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata')
+''')
+
+        pr = self._load_report()
+        self.assertTrue('org.freedesktop.DBus.Error.ServiceUnknown' in pr['Traceback'], pr['Traceback'])
+        self.assertTrue(pr['DbusErrorAnalysis'].startswith('provided by /usr/share/dbus-1/services/gvfs-metadata.service'),
+                        pr['DbusErrorAnalysis'])
+        self.assertTrue('gvfsd-metadata is running' in pr['DbusErrorAnalysis'], pr['DbusErrorAnalysis'])
+
+    def test_dbus_service_timeout_running(self):
+        '''DBus.Error.NoReply with a running service'''
+
+        # ensure the service is running
+        metadata_obj = dbus.SessionBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata')
+        self.assertNotEqual(metadata_obj, None)
+
+        # timeout of zero will always fail with NoReply
+        self._test_crash(extracode='''import dbus
+obj = dbus.SessionBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata')
+assert obj
+i = dbus.Interface(obj, 'org.freedesktop.DBus.Peer')
+i.Ping(timeout=0)
+''')
+
+        # check report contents
+        reports = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reports), 0, 'NoReply is an useless exception and should not create a report')
+
+        # This is disabled for now as we cannot get the bus name from the NoReply exception
+        #pr = self._load_report()
+        #self.assertTrue('org.freedesktop.DBus.Error.NoReply' in pr['Traceback'], pr['Traceback'])
+        #self.assertTrue(pr['DbusErrorAnalysis'].startswith('provided by /usr/share/dbus-1/services/gvfs-metadata.service'),
+        #                pr['DbusErrorAnalysis'])
+        #self.assertTrue('gvfsd-metadata is running' in pr['DbusErrorAnalysis'], pr['DbusErrorAnalysis'])
+
+# This is disabled for now as we cannot get the bus name from the NoReply exception
+#    def test_dbus_service_timeout_notrunning(self):
+#        '''DBus.Error.NoReply with a crashing method'''
+#
+#        # run our own mock service with a crashing method
+#        subprocess.call(['killall', 'gvfsd-metadata'])
+#        service = subprocess.Popen([os.getenv('PYTHON', 'python3')],
+#                                   stdin=subprocess.PIPE,
+#                                   universal_newlines=True)
+#        service.stdin.write('''import os
+#import dbus, dbus.service, dbus.mainloop.glib
+#from gi.repository import GLib
+#
+#class MockMetadata(dbus.service.Object):
+#    @dbus.service.method('com.ubuntu.Test', in_signature='', out_signature='i')
+#    def Crash(self):
+#        os.kill(os.getpid(), 5)
+#
+#dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+#dbus_name = dbus.service.BusName('org.gtk.vfs.Metadata', dbus.SessionBus())
+#svr = MockMetadata(bus_name=dbus_name, object_path='/org/gtk/vfs/metadata')
+#GLib.MainLoop().run()
+#''')
+#        service.stdin.close()
+#        self.addCleanup(service.terminate)
+#        time.sleep(0.5)
+#
+#        self._test_crash(extracode='''import dbus
+#obj = dbus.SessionBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata')
+#assert obj
+#dbus.Interface(obj, 'com.ubuntu.Test').Crash()
+#''')
+#
+#        pr = self._load_report()
+#        self.assertTrue('org.freedesktop.DBus.Error.NoReply' in pr['Traceback'], pr['Traceback'])
+#        self.assertTrue(pr['DbusErrorAnalysis'].startswith('provided by /usr/share/dbus-1/services/gvfs-metadata.service'),
+#                        pr['DbusErrorAnalysis'])
+#        self.assertTrue('gvfsd-metadata is not running' in pr['DbusErrorAnalysis'], pr['DbusErrorAnalysis'])
+
+    def _load_report(self):
+        '''Ensure that there is exactly one crash report and load it'''
+
+        reports = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+        pr = problem_report.ProblemReport()
+        with open(reports[0], 'rb') as f:
+            pr.load(f)
+        return pr
 
 unittest.main()

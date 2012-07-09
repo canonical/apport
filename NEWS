@@ -1,6 +1,16 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.4 (UNRELEASED):
+-----------------
+Improvements:
+ * apport_python_hook.py: For org.freedesktop.DBus.Error.ServiceUnknown
+   exceptions, add a 'DbusErrorAnalysis' field to the report which points out
+   whether any .service file provides the service it tried to talk to, and
+   whether the processes for those are running. This helps to determine the
+   root cause for such errors (missing dependencies, broken .service files,
+   talking to the wrong bus, etc.) (LP: #1020572)
+
 2.3 (2012-07-09):
 -----------------
 Improvements:
