@@ -1964,7 +1964,5 @@ Categories=GNOME;GTK;Utility;TextEditor;
         os.waitpid(pid, 0)
         self.ui.wait_for_pid(pid)
 
-        self.assertRaises(OSError, self.ui.wait_for_pid, '1')
-
 
 unittest.main()

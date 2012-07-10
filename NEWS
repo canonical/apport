@@ -13,6 +13,9 @@ Improvements:
  * hookutils.py, attach_alsa(): Use alsa-info.sh when available. Thanks David
    Henningson.
 
+Bug fixes:
+ * ui tests, test_wait_for_pid(): Fix eternal hang when running as root.
+
 2.3 (2012-07-09):
 -----------------
 Improvements:
