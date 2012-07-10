@@ -287,12 +287,16 @@ obj = dbus.SystemBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata
         self.assertNotEqual(metadata_obj, None)
 
         # timeout of zero will always fail with NoReply
-        self._test_crash(extracode='''import dbus
+        try:
+            subprocess.call(['killall', '-STOP', 'gvfsd-metadata'])
+            self._test_crash(extracode='''import dbus
 obj = dbus.SessionBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata')
 assert obj
 i = dbus.Interface(obj, 'org.freedesktop.DBus.Peer')
-i.Ping(timeout=0)
+i.Ping(timeout=1)
 ''')
+        finally:
+            subprocess.call(['killall', '-CONT', 'gvfsd-metadata'])
 
         # check report contents
         reports = apport.fileutils.get_new_reports()
