@@ -181,8 +181,9 @@ class T(unittest.TestCase):
         gcc_ver = '.'.join(out.splitlines()[0].split()[2].split('.')[:2])
         gcc_path = '/usr/bin/gcc-' + gcc_ver
 
-        assert subprocess.call([gcc_path, '--version'], stdout=subprocess.PIPE) == 0, \
-            gcc_path + ' must exist and work for this test suite'
+        gcc = subprocess.Popen([gcc_path, '--version'], stdout=subprocess.PIPE)
+        gcc.communicate()
+        assert gcc.returncode == 0, gcc_path + ' must exist and work for this test suite'
 
         return (gcc_ver, gcc_path)
 

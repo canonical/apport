@@ -449,11 +449,10 @@ int main() { return f(42); }
             assert os.path.exists('crash')
 
             # call it through gdb and dump core
-            subprocess.call(['gdb', '--batch', '--ex', 'run', '--ex',
-                             'generate-core-file core', './crash'], stdout=subprocess.PIPE)
-            assert os.path.exists('core')
-            assert subprocess.call(['readelf', '-n', 'core'],
-                                   stdout=subprocess.PIPE) == 0
+            gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'run', '--ex',
+                                    'generate-core-file core', './crash'], stdout=subprocess.PIPE)
+            gdb.communicate()
+            klass._validate_core('core')
 
             pr['ExecutablePath'] = os.path.join(workdir, 'crash')
             pr['CoreDump'] = (os.path.join(workdir, 'core'),)
@@ -467,6 +466,14 @@ int main() { return f(42); }
             os.chdir(orig_cwd)
 
         return pr
+
+    @classmethod
+    def _validate_core(klass, core_path):
+        subprocess.check_call(['sync'])
+        assert os.path.exists(core_path)
+        readelf = subprocess.Popen(['readelf', '-n', core_path], stdout=subprocess.PIPE)
+        readelf.communicate()
+        assert readelf.returncode == 0
 
     def _validate_gdb_fields(self, pr):
         self.assertTrue('Stacktrace' in pr)
@@ -574,9 +581,7 @@ kill -SEGV $$
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
-            subprocess.check_call(['sync'])
-            assert subprocess.call(['readelf', '-n', coredump],
-                                   stdout=subprocess.PIPE) == 0
+            self._validate_core(coredump)
 
             pr = apport.report.Report()
             pr['InterpreterPath'] = '/bin/bash'
@@ -616,9 +621,7 @@ $0.bin 2>/dev/null
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
-            subprocess.check_call(['sync'])
-            assert subprocess.call(['readelf', '-n', 'core'],
-                                   stdout=subprocess.PIPE) == 0
+            self._validate_core('core')
 
             pr = apport.report.Report()
             pr['ExecutablePath'] = script + '.bin'
@@ -660,9 +663,7 @@ LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
-            subprocess.check_call(['sync'])
-            assert subprocess.call(['readelf', '-n', 'core'],
-                                   stdout=subprocess.PIPE) == 0
+            self._validate_core('core')
 
             pr = apport.report.Report()
             pr['ExecutablePath'] = script + '.bin'
@@ -700,9 +701,7 @@ $0.bin 2>/dev/null
 
             # call script and verify that it gives us a proper ELF core dump
             assert subprocess.call([script]) != 0
-            subprocess.check_call(['sync'])
-            assert subprocess.call(['readelf', '-n', 'core'],
-                                   stdout=subprocess.PIPE) == 0
+            self._validate_core('core')
 
             pr = apport.report.Report()
             pr['ExecutablePath'] = script + '.bin'

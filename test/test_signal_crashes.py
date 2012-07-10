@@ -70,6 +70,7 @@ class T(unittest.TestCase):
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             app.stdin.close()
             assert app.wait() == 0, app.stderr.read()
+            app.stderr.close()
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
@@ -154,10 +155,12 @@ class T(unittest.TestCase):
 
             # properly terminate app and app2
             app2.stdin.close()
+            app2.stderr.close()
             app.stdin.write(b'boo')
             app.stdin.close()
 
             self.assertEqual(app.wait(), 0, app.stderr.read())
+            app.stderr.close()
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
@@ -184,6 +187,7 @@ class T(unittest.TestCase):
             app.stdin.close()
 
             self.assertNotEqual(app.wait(), 0, app.stderr.read())
+            app.stderr.close()
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
@@ -385,6 +389,7 @@ class T(unittest.TestCase):
                 totalmb -= 1
             app.stdin.close()
             self.assertEqual(app.wait(), 0, app.stderr.read())
+            app.stderr.close()
             onemb = None
         finally:
             os.kill(test_proc, 9)
@@ -448,6 +453,7 @@ class T(unittest.TestCase):
                 app.stdin.close()
                 err = app.stderr.read().decode()
                 self.assertNotEqual(app.wait(), 0, err)
+                app.stderr.close()
             finally:
                 os.kill(test_proc, 9)
                 os.waitpid(test_proc, 0)
@@ -589,7 +595,9 @@ class T(unittest.TestCase):
         # wait max 10 seconds for apport to finish
         timeout = 50
         while timeout >= 0:
-            if subprocess.call(['pidof', '-x', 'apport'], stdout=subprocess.PIPE) != 0:
+            pidof = subprocess.Popen(['pidof', '-x', 'apport'], stdout=subprocess.PIPE)
+            pidof.communicate()
+            if pidof.returncode != 0:
                 break
             time.sleep(0.2)
             timeout -= 1
