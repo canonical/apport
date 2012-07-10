@@ -261,10 +261,9 @@ def attach_hardware(report):
             report['PccardctlIdent'] = out
 
 
-def attach_alsa(report):
-    '''Attach ALSA subsystem information to the report.
-
-    (loosely based on http://www.alsa-project.org/alsa-info.sh)
+def attach_alsa_old(report):
+    ''' (loosely based on http://www.alsa-project.org/alsa-info.sh)
+    for systems where alsa-info is not installed (i e, *buntu 12.04 and earlier)
     '''
     attach_file_if_exists(report, os.path.expanduser('~/.asoundrc'),
                           'UserAsoundrc')
@@ -306,6 +305,15 @@ def attach_alsa(report):
                     key = 'Card%d.Codecs.%s.%s' % (card, path_to_key(codec), path_to_key(name))
                     attach_file(report, path, key)
 
+
+def attach_alsa(report):
+    '''Attach ALSA subsystem information to the report.
+    '''
+    if os.path.exists('/usr/share/alsa-base/alsa-info.sh'):
+        report['AlsaInfo'] = command_output(['/usr/share/alsa-base/alsa-info.sh', '--stdout', '--no-upload'])
+    else:
+        attach_alsa_old(report)
+
     report['AudioDevicesInUse'] = command_output(
         ['fuser', '-v'] + glob.glob('/dev/dsp*') + glob.glob('/dev/snd/*') + glob.glob('/dev/seq*'))
 
@@ -314,9 +322,6 @@ def attach_alsa(report):
 
     attach_dmi(report)
     attach_dmesg(report)
-
-    # This seems redundant with the amixer info, do we need it?
-    #report['AlsactlStore'] = command-output(['alsactl', '-f', '-', 'store'])
 
 
 def command_available(command):

@@ -10,6 +10,8 @@ Improvements:
    whether the processes for those are running. This helps to determine the
    root cause for such errors (missing dependencies, broken .service files,
    talking to the wrong bus, etc.) (LP: #1020572)
+ * hookutils.py, attach_alsa(): Use alsa-info.sh when available. Thanks David
+   Henningson.
 
 2.3 (2012-07-09):
 -----------------
