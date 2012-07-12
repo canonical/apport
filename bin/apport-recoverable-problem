@@ -4,6 +4,7 @@ import apport.report
 import sys
 import os
 
+
 def main():
     report = apport.report.Report('RecoverableProblem')
     items = sys.stdin.read().split('\0')

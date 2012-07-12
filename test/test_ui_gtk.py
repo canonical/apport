@@ -427,11 +427,11 @@ Type=Application''')
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('dialog_crash_new').get_title(),
-            self.distro)
-        self.assertEqual(self.app.w('title_label').get_text(),
-            'The application Apport has experienced an internal error.')
-        self.assertEqual(self.app.w('subtitle_label').get_text(),
-            'Some developer-specified error text.')
+                         self.distro)
+        msg = 'The application Apport has experienced an internal error.'
+        self.assertEqual(self.app.w('title_label').get_text(), msg)
+        msg = 'Some developer-specified error text.'
+        self.assertEqual(self.app.w('subtitle_label').get_text(), msg)
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))

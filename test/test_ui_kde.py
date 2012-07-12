@@ -306,11 +306,11 @@ Type=Application''')
             QTimer.singleShot(0, QCoreApplication.quit)
             self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.windowTitle(),
-            self.distro.split()[0])
-        self.assertEqual(self.app.dialog.heading.text(),
-            'The application Apport has experienced an internal error.')
-        self.assertEqual(self.app.dialog.text.text(),
-            'Some developer-specified error text.')
+                         self.distro.split()[0])
+        msg = 'The application Apport has experienced an internal error.'
+        self.assertEqual(self.app.dialog.heading.text(), msg)
+        msg = 'Some developer-specified error text.'
+        self.assertEqual(self.app.dialog.text.text(), msg)
         self.assertTrue(self.app.dialog.text.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())
