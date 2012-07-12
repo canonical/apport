@@ -46,6 +46,7 @@ class T(unittest.TestCase):
             report = apport.report.Report()
             report.load(report_path)
             self.assertEqual(report['hello'], 'there')
+            self.assertTrue('Pid:\t%d' % os.getpid() in report['ProcStatus'])
 
 
 with open('/proc/sys/kernel/core_pattern') as f:
