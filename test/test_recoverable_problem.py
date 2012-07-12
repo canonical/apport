@@ -27,7 +27,10 @@ class T(unittest.TestCase):
 
     def wait_for_report(self):
         cwd = os.getcwd().replace('/', '_')
-        base = sys.argv[0].replace('/', '_')
+        base = sys.argv[0]
+        if base.startswith('./'):
+            base = base[2:]
+        base = base.replace('/', '_')
         path = '%s_%s.%d.crash' % (cwd, base, os.getuid())
         path = os.path.join(self.report_dir, path)
         seconds = 0
