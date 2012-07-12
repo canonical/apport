@@ -10,7 +10,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import urllib, tempfile, os.path, re, gzip, sys, email, time
+import tempfile, os.path, re, gzip, sys, email, time
 
 from io import BytesIO
 
@@ -135,10 +135,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         try:
             self.__launchpad = Launchpad.login_with('apport-collect',
-                    launchpad_instance, launchpadlib_dir=self.__lpcache,
-                    allow_access_levels=['WRITE_PRIVATE'],
-                    credentials_file=self.auth,
-                    version='1.0')
+                                                    launchpad_instance,
+                                                    launchpadlib_dir=self.__lpcache,
+                                                    allow_access_levels=['WRITE_PRIVATE'],
+                                                    credentials_file=self.auth,
+                                                    version='1.0')
         except Exception as e:
             if hasattr(e, 'content'):
                 msg = e.content
@@ -160,10 +161,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
     @property
     def lp_distro(self):
-        if not self.distro:
-            return None
         if self.__lp_distro is None:
-            self.__lp_distro = self.launchpad.distributions[self.distro]
+            if self.distro:
+                self.__lp_distro = self.launchpad.distributions[self.distro]
+            elif 'project' in self.options:
+                self.__lp_distro = self.launchpad.projects[self.options['project']]
+            else:
+                raise SystemError('distro or project needs to be specified in crashdb options')
+
         return self.__lp_distro
 
     def upload(self, report, progress_callback=None):
@@ -178,48 +183,9 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''
         assert self.accepts(report)
 
-        # set reprocessing tags
-        hdr = {}
-        hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
-        a = report.get('PackageArchitecture')
-        if not a or a == 'all':
-            a = report.get('Architecture')
-        if a:
-            hdr['Tags'] += ' ' + a
-        if 'Tags' in report:
-            hdr['Tags'] += ' ' + report['Tags'].lower()
-
-        # privacy/retracing for distro reports
-        # FIXME: ugly hack until LP has a real crash db
-        if 'DistroRelease' in report:
-            if a and ('VmCore' in report or 'CoreDump' in report):
-                hdr['Private'] = 'yes'
-                hdr['Subscribers'] = self.options.get('initial_subscriber', 'apport')
-                hdr['Tags'] += ' need-%s-retrace' % a
-            elif 'Traceback' in report:
-                hdr['Private'] = 'yes'
-                hdr['Subscribers'] = 'apport'
-                hdr['Tags'] += ' need-duplicate-check'
-        if 'DuplicateSignature' in report and 'need-duplicate-check' not in hdr['Tags']:
-                hdr['Tags'] += ' need-duplicate-check'
-
-        # if we have checkbox submission key, link it to the bug; keep text
-        # reference until the link is shown in Launchpad's UI
-        if 'CheckboxSubmission' in report:
-            hdr['HWDB-Submission'] = report['CheckboxSubmission']
-
-        # order in which keys should appear in the temporary file
-        order = ['ProblemType', 'DistroRelease', 'Package', 'Regression', 'Reproducible',
-        'TestedUpstream', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules']
-
-        # write MIME/Multipart version into temporary file
-        mime = tempfile.TemporaryFile()
-        report.write_mime(mime, extra_headers=hdr, skip_keys=['Tags'], priority_fields=order)
-        mime.flush()
-        mime.seek(0)
-
-        ticket = upload_blob(mime, progress_callback,
-                hostname=self.get_hostname())
+        blob_file = self._generate_upload_blob(report)
+        ticket = upload_blob(blob_file, progress_callback, hostname=self.get_hostname())
+        blob_file.close()
         assert ticket
         return ticket
 
@@ -360,7 +326,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         return report
 
     def update(self, id, report, comment, change_description=False,
-            attachment_comment=None, key_filter=None):
+               attachment_comment=None, key_filter=None):
         '''Update the given report ID with all data from report.
 
         This creates a text comment with the "short" data (see
@@ -420,17 +386,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bug.description = bug.description + '\n--- \n' + part.get_payload(decode=True).decode('UTF-8', 'replace')
             bug.lp_save()
         else:
-            bug.newMessage(content=part.get_payload(decode=True),
-                subject=comment)
+            bug.newMessage(content=part.get_payload(decode=True), subject=comment)
 
         # other parts are the attachments:
         for part in msg_iter:
             # print '   attachment: %s...' % part.get_filename()
             bug.addAttachment(comment=attachment_comment or '',
-                description=part.get_filename(),
-                content_type=None,
-                data=part.get_payload(decode=True),
-                filename=part.get_filename(), is_patch=False)
+                              description=part.get_filename(),
+                              content_type=None,
+                              data=part.get_payload(decode=True),
+                              filename=part.get_filename(), is_patch=False)
 
     def update_traces(self, id, report, comment=''):
         '''Update the given report ID for retracing results.
@@ -493,8 +458,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''Return list of affected source packages for given ID.'''
 
         bug_target_re = re.compile(
-                    r'/%s/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$' %
-                    self.distro)
+            r'/%s/(?:(?P<suite>[^/]+)/)?\+source/(?P<source>[^/]+)$' % self.distro)
 
         bug = self.launchpad.bugs[id]
         result = []
@@ -616,12 +580,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         if self.distro:
             distro_identifier = '(%s)' % self.distro.lower()
-            fixed_tasks = filter(lambda task: task.status == 'Fix Released' and \
-                    distro_identifier in task.bug_target_display_name.lower(), tasks)
+            fixed_tasks = filter(lambda task: task.status == 'Fix Released' and
+                                 distro_identifier in task.bug_target_display_name.lower(), tasks)
 
             if not fixed_tasks:
-                fixed_distro = filter(lambda task: task.status == 'Fix Released' and \
-                        task.bug_target_name.lower() == self.distro.lower(), tasks)
+                fixed_distro = filter(lambda task: task.status == 'Fix Released' and
+                                      task.bug_target_name.lower() == self.distro.lower(), tasks)
                 if fixed_distro:
                     # fixed in distro inself (without source package)
                     return ''
@@ -639,16 +603,16 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     return 'invalid'
             else:
                 # check if there only invalid ones
-                invalid_tasks = filter(lambda task: task.status in ('Invalid', "Won't Fix", 'Expired') and \
-                        distro_identifier in task.bug_target_display_name.lower(), tasks)
+                invalid_tasks = filter(lambda task: task.status in ('Invalid', "Won't Fix", 'Expired') and
+                                       distro_identifier in task.bug_target_display_name.lower(), tasks)
                 if invalid_tasks:
-                    non_invalid_tasks = filter(lambda task: task.status not in ('Invalid', "Won't Fix", 'Expired') and \
+                    non_invalid_tasks = filter(
+                        lambda task: task.status not in ('Invalid', "Won't Fix", 'Expired') and
                         distro_identifier in task.bug_target_display_name.lower(), tasks)
                     if not non_invalid_tasks:
                         return 'invalid'
         else:
-            fixed_tasks = filter(lambda task: task.status == 'Fix Released',
-                    tasks)
+            fixed_tasks = filter(lambda task: task.status == 'Fix Released', tasks)
             if fixed_tasks:
                 # TODO: look for current series
                 return ''
@@ -687,13 +651,14 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 if master.id == id:
                     # this happens if the bug was manually duped to a newer one
                     apport.warning('Bug %i was manually marked as a dupe of newer bug %i, not closing as duplicate',
-                            id, master_id)
+                                   id, master_id)
                     return
 
             for a in bug.attachments:
                 if a.title in ('CoreDump.gz', 'Stacktrace.txt',
-                    'ThreadStacktrace.txt', 'ProcMaps.txt', 'ProcStatus.txt',
-                    'Registers.txt', 'Disassembly.txt'):
+                               'ThreadStacktrace.txt', 'ProcMaps.txt',
+                               'ProcStatus.txt', 'Registers.txt',
+                               'Disassembly.txt'):
                     try:
                         a.removeFromBug()
                     except HTTPError:
@@ -707,7 +672,7 @@ other bug report to see if there is any missing information that you can \
 provide, or to see if there is a workaround for the bug.  Additionally, any \
 further discussion regarding the bug should occur in the other report.  \
 Please continue to report any other bugs you may find.' % master_id,
-                subject='This bug is a duplicate')
+                           subject='This bug is a duplicate')
 
             bug = self.launchpad.bugs[id]  # refresh, LP#336866 workaround
             if bug.private:
@@ -722,23 +687,20 @@ Please continue to report any other bugs you may find.' % master_id,
             master_tags = master.tags
 
             if len(master.duplicates) == 10:
-                if 'escalation_tag' in self.options and \
-                    self.options['escalation_tag'] not in master_tags and \
-                    self.options.get('escalated_tag', ' invalid ') not in master_tags:
-                        master.tags = master_tags + [self.options['escalation_tag']]  # LP#254901 workaround
-                        master.lp_save()
+                if 'escalation_tag' in self.options and self.options['escalation_tag'] not in master_tags and self.options.get('escalated_tag', ' invalid ') not in master_tags:
+                    master.tags = master_tags + [self.options['escalation_tag']]  # LP#254901 workaround
+                    master.lp_save()
 
-                if 'escalation_subscription' in self.options and \
-                    self.options.get('escalated_tag', ' invalid ') not in master_tags:
+                if 'escalation_subscription' in self.options and self.options.get('escalated_tag', ' invalid ') not in master_tags:
                     p = self.launchpad.people[self.options['escalation_subscription']]
                     master.subscribe(person=p)
 
             # requesting updated stack trace?
             if report.has_useful_stacktrace() and ('apport-request-retrace' in master_tags
-                    or 'apport-failed-retrace' in master_tags):
+                                                   or 'apport-failed-retrace' in master_tags):
                 self.update(master_id, report, 'Updated stack trace from duplicate bug %i' % id,
-                        key_filter=['Stacktrace', 'ThreadStacktrace',
-                            'Package', 'Dependencies', 'ProcMaps', 'ProcCmdline'])
+                            key_filter=['Stacktrace', 'ThreadStacktrace',
+                                        'Package', 'Dependencies', 'ProcMaps', 'ProcCmdline'])
 
                 master = self.launchpad.bugs[master_id]
                 x = master.tags[:]  # LP#254901 workaround
@@ -760,7 +722,7 @@ Please continue to report any other bugs you may find.' % master_id,
             tags_to_copy = ['bugpattern-needed', 'running-unity']
             for series in self.lp_distro.series:
                 if series.status not in ['Active Development',
-                    'Current Stable Release', 'Supported']:
+                                         'Current Stable Release', 'Supported']:
                     continue
                 tags_to_copy.append(series.name)
             # copy tags over from the duplicate bug to the master bug
@@ -792,7 +754,7 @@ Please continue to report any other bugs you may find.' % master_id,
 However, the latter was already fixed in an earlier package version than the \
 one in this report. This might be a regression or because the problem is \
 in a dependent package.' % master,
-            subject='Possible regression detected')
+                       subject='Possible regression detected')
         bug = self.launchpad.bugs[id]  # fresh bug object, LP#336866 workaround
         bug.tags = bug.tags + ['regression-retracer']  # LP#254901 workaround
         bug.lp_save()
@@ -823,7 +785,7 @@ in a dependent package.' % master,
             task.status = 'Invalid'
             task.lp_save()
             bug.newMessage(content=invalid_msg,
-                    subject='Crash report cannot be processed')
+                           subject='Crash report cannot be processed')
 
             for a in bug.attachments:
                 if a.title == 'CoreDump.gz':
@@ -901,14 +863,14 @@ in a dependent package.' % master,
             return url
 
         line = f.readline()
-        if not line.startswith('bug:'):
+        if not line.startswith(b'bug:'):
             # presumably a 404 etc. page, which happens for private bugs
             return True
 
         # check tags
         for line in f:
-            if line.startswith('tags:'):
-                if 'apport-failed-retrace' in line or 'apport-request-retrace' in line:
+            if line.startswith(b'tags:'):
+                if b'apport-failed-retrace' in line or b'apport-request-retrace' in line:
                     return None
                 else:
                     break
@@ -930,8 +892,55 @@ in a dependent package.' % master,
 
         #use a url hack here, it is faster
         person = '%s~%s' % (self.launchpad._root_uri,
-            self.options.get('triaging_team', 'ubuntu-crashes-universe'))
+                            self.options.get('triaging_team', 'ubuntu-crashes-universe'))
         bug.subscribe(person=person)
+
+    def _generate_upload_blob(self, report):
+        '''Generate a multipart/MIME temporary file for uploading.
+
+        You have to close the returned file object after you are done with it.
+        '''
+        # set reprocessing tags
+        hdr = {}
+        hdr['Tags'] = 'apport-%s' % report['ProblemType'].lower()
+        a = report.get('PackageArchitecture')
+        if not a or a == 'all':
+            a = report.get('Architecture')
+        if a:
+            hdr['Tags'] += ' ' + a
+        if 'Tags' in report:
+            hdr['Tags'] += ' ' + report['Tags'].lower()
+
+        # privacy/retracing for distro reports
+        # FIXME: ugly hack until LP has a real crash db
+        if 'DistroRelease' in report:
+            if a and ('VmCore' in report or 'CoreDump' in report):
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = self.options.get('initial_subscriber', 'apport')
+                hdr['Tags'] += ' need-%s-retrace' % a
+            elif 'Traceback' in report:
+                hdr['Private'] = 'yes'
+                hdr['Subscribers'] = 'apport'
+                hdr['Tags'] += ' need-duplicate-check'
+        if 'DuplicateSignature' in report and 'need-duplicate-check' not in hdr['Tags']:
+                hdr['Tags'] += ' need-duplicate-check'
+
+        # if we have checkbox submission key, link it to the bug; keep text
+        # reference until the link is shown in Launchpad's UI
+        if 'CheckboxSubmission' in report:
+            hdr['HWDB-Submission'] = report['CheckboxSubmission']
+
+        # order in which keys should appear in the temporary file
+        order = ['ProblemType', 'DistroRelease', 'Package', 'Regression', 'Reproducible',
+                 'TestedUpstream', 'ProcVersionSignature', 'Uname', 'NonfreeKernelModules']
+
+        # write MIME/Multipart version into temporary file
+        mime = tempfile.TemporaryFile()
+        report.write_mime(mime, extra_headers=hdr, skip_keys=['Tags'], priority_fields=order)
+        mime.flush()
+        mime.seek(0)
+
+        return mime
 
 #
 # Launchpad storeblob API (should go into launchpadlib, see LP #315358)
@@ -968,10 +977,11 @@ class HTTPSProgressConnection(HTTPSConnection):
 
             # adjust chunksize so that it takes between .5 and 2
             # seconds to send a chunk
-            if t2 - t1 < .5:
-                chunksize *= 2
-            elif t2 - t1 > 2:
-                chunksize /= 2
+            if chunksize > 1024:
+                if t2 - t1 < .5:
+                    chunksize <<= 1
+                elif t2 - t1 > 2:
+                    chunksize >>= 1
 
 
 class HTTPSProgressHandler(HTTPSHandler):
@@ -1036,10 +1046,12 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
 
 if __name__ == '__main__':
     import unittest, atexit, shutil, subprocess
+    import mock
 
     crashdb = None
-    segv_report = None
-    python_report = None
+    _segv_report = None
+    _python_report = None
+    _uncommon_description_report = None
 
     class _T(unittest.TestCase):
         # this assumes that a source package 'coreutils' exists and builds a
@@ -1065,12 +1077,7 @@ if __name__ == '__main__':
             self.ref_report['SourcePackage'] = 'coreutils'
 
             # Objects tests rely on.
-            self.uncommon_description_bug = self._file_uncommon_description_bug()
             self._create_project('langpack-o-matic')
-
-            # XXX Should create new bug reports, not reuse those.
-            self.known_test_id = self.uncommon_description_bug.id
-            self.known_test_id2 = self._file_uncommon_description_bug().id
 
         def _create_project(self, name):
             '''Create a project using launchpadlib to be used by tests.'''
@@ -1084,39 +1091,24 @@ if __name__ == '__main__':
                     summary=name + 'summary',
                     title=name + 'title')
 
-        def _file_uncommon_description_bug(self):
-            '''File a bug report with an uncommon description.
-
-            Example taken from real LP bug 269539. It contains only
-            ProblemType/Architecture/DistroRelease in the description, and has
-            free-form description text after the Apport data.
-            '''
-            desc = '''problem
-
-ProblemType: Package
-Architecture: amd64
-DistroRelease: Ubuntu 8.10
-
-more text
-
-and more
-'''
-            return self.crashdb.launchpad.bugs.createBug(
-                title=b'mixed description bug'.encode(),
-                description=desc,
-                target=self.crashdb.lp_distro)
-
         @property
         def hostname(self):
             '''Get the Launchpad hostname for the given crashdb.'''
 
             return self.crashdb.get_hostname()
 
-        def _file_segv_report(self):
-            '''File a SEGV crash report.
+        def get_segv_report(self, force_fresh=False):
+            '''Generate SEGV crash report.
 
-            Return (crash ID, report).
+            This is only done once, subsequent calls will return the already
+            existing ID, unless force_fresh is True.
+
+            Return the ID.
             '''
+            global _segv_report
+            if not force_fresh and _segv_report is not None:
+                return _segv_report
+
             r = self._generate_sigsegv_report()
             r.add_package_info(self.test_package)
             r.add_os_info()
@@ -1128,35 +1120,27 @@ and more
             r['ShortGibberish'] = ' "]\xb6"\n'
             r['LongGibberish'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
 
-            handle = self.crashdb.upload(r)
-            self.assertTrue(handle)
+            # create a bug for the report
             bug_target = self._get_bug_target(self.crashdb, r)
             self.assertTrue(bug_target)
 
-            id = self._file_bug(bug_target, r, handle)
+            id = self._file_bug(bug_target, r)
             self.assertTrue(id > 0)
-            return (id, r)
 
-        def test_1_report_segv(self):
-            '''upload() and get_comment_url() for SEGV crash
+            sys.stderr.write('(Created SEGV report: https://%s/bugs/%i) ' % (self.hostname, id))
+            if not force_fresh:
+                _segv_report = id
+            return id
 
-            This needs to run first, since it sets segv_report.
+        def get_python_report(self):
+            '''Generate Python crash report.
+
+            Return the ID.
             '''
-            global segv_report
-            (id, report) = self._file_segv_report()
-            segv_report = id
-            url = self.crashdb.get_comment_url(report, id)
+            global _python_report
+            if _python_report is not None:
+                return _python_report
 
-            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
-
-            #TODO: check this programatically
-            sys.stderr.write('[%s] ' % url)
-
-        def test_1_report_python(self):
-            '''upload() and get_comment_url() for Python crash
-
-            This needs to run early, since it sets python_report.
-            '''
             r = apport.Report('Crash')
             r['ExecutablePath'] = '/bin/foo'
             r['Traceback'] = '''Traceback (most recent call last):
@@ -1168,34 +1152,68 @@ NameError: global name 'weird' is not defined'''
             r.add_os_info()
             r.add_user_info()
             self.assertEqual(r.standard_title(),
-                "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
+                             "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
-            handle = self.crashdb.upload(r)
-            self.assertTrue(handle)
             bug_target = self._get_bug_target(self.crashdb, r)
             self.assertTrue(bug_target)
 
-            id = self._file_bug(bug_target, r, handle)
+            id = self._file_bug(bug_target, r)
             self.assertTrue(id > 0)
-            global python_report
-            python_report = id
-            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
+            sys.stderr.write('(Created Python report: https://%s/bugs/%i) ' % (self.hostname, id))
+            _python_report = id
+            return id
 
-        def test_2_download(self):
+        def get_uncommon_description_report(self, force_fresh=False):
+            '''File a bug report with an uncommon description.
+
+            This is only done once, subsequent calls will return the already
+            existing ID, unless force_fresh is True.
+
+            Example taken from real LP bug 269539. It contains only
+            ProblemType/Architecture/DistroRelease in the description, and has
+            free-form description text after the Apport data.
+
+            Return the ID.
+            '''
+            global _uncommon_description_report
+            if not force_fresh and _uncommon_description_report is not None:
+                return _uncommon_description_report
+
+            desc = '''problem
+
+ProblemType: Package
+Architecture: amd64
+DistroRelease: Ubuntu 8.10
+
+more text
+
+and more
+'''
+            bug = self.crashdb.launchpad.bugs.createBug(
+                title=b'mixed description bug'.encode(),
+                description=desc,
+                target=self.crashdb.lp_distro)
+            sys.stderr.write('(Created uncommon description: https://%s/bugs/%i) ' % (self.hostname, bug.id))
+
+            if not force_fresh:
+                _uncommon_description_report = bug.id
+            return bug.id
+
+        def test_1_download(self):
             '''download()'''
 
-            r = self.crashdb.download(segv_report)
+            r = self.crashdb.download(self.get_segv_report())
             self.assertEqual(r['ProblemType'], 'Crash')
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
             self.assertEqual(r['DistroRelease'], self.ref_report['DistroRelease'])
             self.assertEqual(r['Architecture'], self.ref_report['Architecture'])
             self.assertEqual(r['Uname'], self.ref_report['Uname'])
             self.assertEqual(r.get('NonfreeKernelModules'),
-                self.ref_report.get('NonfreeKernelModules'))
+                             self.ref_report.get('NonfreeKernelModules'))
             self.assertEqual(r.get('UserGroups'), self.ref_report.get('UserGroups'))
             tags = set(r['Tags'].split())
             self.assertEqual(tags, set([self.crashdb.arch_tag, 'apport-crash',
-                apport.packaging.get_system_architecture()]))
+                                        apport.packaging.get_system_architecture()]))
 
             self.assertEqual(r['Signal'], '11')
             self.assertTrue(r['ExecutablePath'].endswith('/crash'))
@@ -1210,15 +1228,15 @@ NameError: global name 'weird' is not defined'''
             self.assertTrue('Registers' in r)
 
             # check tags
-            r = self.crashdb.download(python_report)
+            r = self.crashdb.download(self.get_python_report())
             tags = set(r['Tags'].split())
             self.assertEqual(tags, set(['apport-crash', 'boogus', 'pybogus',
-                'need-duplicate-check', apport.packaging.get_system_architecture()]))
+                                        'need-duplicate-check', apport.packaging.get_system_architecture()]))
 
-        def test_3_update_traces(self):
+        def test_2_update_traces(self):
             '''update_traces()'''
 
-            r = self.crashdb.download(segv_report)
+            r = self.crashdb.download(self.get_segv_report())
             self.assertTrue('CoreDump' in r)
             self.assertTrue('Dependencies' in r)
             self.assertTrue('Disassembly' in r)
@@ -1232,8 +1250,8 @@ NameError: global name 'weird' is not defined'''
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
             r['FooBar'] = 'bogus'
-            self.crashdb.update_traces(segv_report, r, 'I can has a better retrace?')
-            r = self.crashdb.download(segv_report)
+            self.crashdb.update_traces(self.get_segv_report(), r, 'I can has a better retrace?')
+            r = self.crashdb.download(self.get_segv_report())
             self.assertTrue('CoreDump' in r)
             self.assertTrue('Dependencies' in r)
             self.assertTrue('Disassembly' in r)
@@ -1243,7 +1261,7 @@ NameError: global name 'weird' is not defined'''
             self.assertFalse('FooBar' in r)
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
 
-            tags = self.crashdb.launchpad.bugs[segv_report].tags
+            tags = self.crashdb.launchpad.bugs[self.get_segv_report()].tags
             self.assertTrue('apport-crash' in tags)
             self.assertFalse('apport-collected' in tags)
 
@@ -1251,8 +1269,8 @@ NameError: global name 'weird' is not defined'''
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
             r['Stacktrace'] = 'long\ntrace'
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
-            self.crashdb.update_traces(segv_report, r, 'good retrace!')
-            r = self.crashdb.download(segv_report)
+            self.crashdb.update_traces(self.get_segv_report(), r, 'good retrace!')
+            r = self.crashdb.download(self.get_segv_report())
             self.assertFalse('CoreDump' in r)
             self.assertTrue('Dependencies' in r)
             self.assertTrue('Disassembly' in r)
@@ -1266,19 +1284,19 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in read()')
 
             # respects title amendments
-            bug = self.crashdb.launchpad.bugs[segv_report]
+            bug = self.crashdb.launchpad.bugs[self.get_segv_report()]
             bug.title = 'crash crashed with SIGSEGV in f() on exit'
             try:
                 bug.lp_save()
             except HTTPError:
                 pass  # LP#336866 workaround
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
-            self.crashdb.update_traces(segv_report, r, 'good retrace with title amendment')
-            r = self.crashdb.download(segv_report)
+            self.crashdb.update_traces(self.get_segv_report(), r, 'good retrace with title amendment')
+            r = self.crashdb.download(self.get_segv_report())
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in read() on exit')
 
             # does not destroy custom titles
-            bug = self.crashdb.launchpad.bugs[segv_report]
+            bug = self.crashdb.launchpad.bugs[self.get_segv_report()]
             bug.title = 'crash is crashy'
             try:
                 bug.lp_save()
@@ -1286,15 +1304,15 @@ NameError: global name 'weird' is not defined'''
                 pass  # LP#336866 workaround
 
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
-            self.crashdb.update_traces(segv_report, r, 'good retrace with custom title')
-            r = self.crashdb.download(segv_report)
+            self.crashdb.update_traces(self.get_segv_report(), r, 'good retrace with custom title')
+            r = self.crashdb.download(self.get_segv_report())
             self.assertEqual(r['Title'], 'crash is crashy')
 
             # test various situations which caused crashes
             r['Stacktrace'] = ''  # empty file
             r['ThreadStacktrace'] = '"]\xb6"\n'  # not interpretable as UTF-8, LP #353805
             r['StacktraceSource'] = 'a\nb\nc\nd\ne\n\xff\xff\xff\n\f'
-            self.crashdb.update_traces(segv_report, r, 'tests')
+            self.crashdb.update_traces(self.get_segv_report(), r, 'tests')
 
         def test_get_comment_url(self):
             '''get_comment_url() for non-ASCII titles'''
@@ -1332,23 +1350,23 @@ NameError: global name 'weird' is not defined'''
 
             r = apport.Report('Bug')
 
-            r['OneLiner'] = 'bogus→'
+            r['OneLiner'] = b'bogus\xe2\x86\x92'.decode('UTF-8')
             r['StacktraceTop'] = 'f()\ng()\nh(1)'
             r['ShortGoo'] = 'lineone\nlinetwo'
             r['DpkgTerminalLog'] = 'one\ntwo\nthree\nfour\nfive\nsix'
-            r['VarLogDistupgradeBinGoo'] = '\x01' * 1024
+            r['VarLogDistupgradeBinGoo'] = b'\x01' * 1024
 
             self.crashdb.update(id, r, 'NotMe', change_description=True)
 
             r = self.crashdb.download(id)
 
-            self.assertEqual(r['OneLiner'], 'bogus→')
+            self.assertEqual(r['OneLiner'], b'bogus\xe2\x86\x92'.decode('UTF-8'))
             self.assertEqual(r['ShortGoo'], 'lineone\nlinetwo')
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
-            self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
+            self.assertEqual(r['VarLogDistupgradeBinGoo'], b'\x01' * 1024)
 
             self.assertEqual(self.crashdb.launchpad.bugs[id].tags,
-                ['apport-collected'])
+                             ['apport-collected'])
 
         def test_update_comment(self):
             '''update() with appending comment'''
@@ -1383,7 +1401,7 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
 
             self.assertEqual(self.crashdb.launchpad.bugs[id].tags,
-                ['apport-collected'])
+                             ['apport-collected'])
 
         def test_update_filter(self):
             '''update() with a key filter'''
@@ -1406,7 +1424,7 @@ NameError: global name 'weird' is not defined'''
             r['VarLogDistupgradeBinGoo'] = '\x01' * 1024
 
             self.crashdb.update(id, r, 'NotMe', change_description=True,
-                    key_filter=['ProblemType', 'ShortGoo', 'DpkgTerminalLog'])
+                                key_filter=['ProblemType', 'ShortGoo', 'DpkgTerminalLog'])
 
             r = self.crashdb.download(id)
 
@@ -1421,126 +1439,163 @@ NameError: global name 'weird' is not defined'''
         def test_get_distro_release(self):
             '''get_distro_release()'''
 
-            self.assertEqual(self.crashdb.get_distro_release(segv_report),
-                    self.ref_report['DistroRelease'])
+            self.assertEqual(self.crashdb.get_distro_release(self.get_segv_report()),
+                             self.ref_report['DistroRelease'])
 
         def test_get_affected_packages(self):
             '''get_affected_packages()'''
 
-            self.assertEqual(self.crashdb.get_affected_packages(segv_report),
-                    [self.ref_report['SourcePackage']])
+            self.assertEqual(self.crashdb.get_affected_packages(self.get_segv_report()),
+                             [self.ref_report['SourcePackage']])
 
         def test_is_reporter(self):
             '''is_reporter()'''
 
-            self.assertTrue(self.crashdb.is_reporter(segv_report))
+            self.assertTrue(self.crashdb.is_reporter(self.get_segv_report()))
             self.assertFalse(self.crashdb.is_reporter(1))
 
         def test_can_update(self):
             '''can_update()'''
 
-            self.assertTrue(self.crashdb.can_update(segv_report))
+            self.assertTrue(self.crashdb.can_update(self.get_segv_report()))
             self.assertFalse(self.crashdb.can_update(1))
 
         def test_duplicates(self):
             '''duplicate handling'''
 
             # initially we have no dups
-            self.assertEqual(self.crashdb.duplicate_of(segv_report), None)
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+            self.assertEqual(self.crashdb.duplicate_of(self.get_segv_report()), None)
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
+
+            segv_id = self.get_segv_report()
+            known_test_id = self.get_uncommon_description_report()
+            known_test_id2 = self.get_uncommon_description_report(force_fresh=True)
 
             # dupe our segv_report and check that it worked; then undupe it
-            r = self.crashdb.download(segv_report)
-            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
+            r = self.crashdb.download(segv_id)
+            self.crashdb.close_duplicate(r, segv_id, known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_id), known_test_id)
 
             # this should be a no-op
-            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(segv_report), self.known_test_id)
+            self.crashdb.close_duplicate(r, segv_id, known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_id), known_test_id)
 
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), 'invalid')
-            self.crashdb.close_duplicate(r, segv_report, None)
-            self.assertEqual(self.crashdb.duplicate_of(segv_report), None)
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_id), 'invalid')
+            self.crashdb.close_duplicate(r, segv_id, None)
+            self.assertEqual(self.crashdb.duplicate_of(segv_id), None)
+            self.assertEqual(self.crashdb.get_fixed_version(segv_id), None)
 
             # this should have removed attachments; note that Stacktrace is
             # short, and thus inline
-            r = self.crashdb.download(segv_report)
+            r = self.crashdb.download(self.get_segv_report())
             self.assertFalse('CoreDump' in r)
             self.assertFalse('Disassembly' in r)
             self.assertFalse('ProcMaps' in r)
             self.assertFalse('ProcStatus' in r)
             self.assertFalse('Registers' in r)
-            self.assertFalse('Stacktrace' in r)
             self.assertFalse('ThreadStacktrace' in r)
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
-            self.crashdb.close_duplicate(apport.Report(), self.known_test_id,
-                    self.known_test_id2)
-            self.crashdb.close_duplicate(r, segv_report, self.known_test_id)
-            self.assertEqual(self.crashdb.duplicate_of(segv_report),
-                    self.known_test_id2)
+            self.crashdb.close_duplicate(apport.Report(), known_test_id,
+                                         known_test_id2)
+            self.crashdb.close_duplicate(r, segv_id, known_test_id)
+            self.assertEqual(self.crashdb.duplicate_of(segv_id),
+                             known_test_id2)
 
-            self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
-            self.crashdb.close_duplicate(apport.Report(), self.known_test_id2, None)
-            self.crashdb.close_duplicate(r, segv_report, None)
+            self.crashdb.close_duplicate(apport.Report(), known_test_id, None)
+            self.crashdb.close_duplicate(apport.Report(), known_test_id2, None)
+            self.crashdb.close_duplicate(r, segv_id, None)
 
             # this should be a no-op
-            self.crashdb.close_duplicate(apport.Report(), self.known_test_id, None)
-            self.assertEqual(self.crashdb.duplicate_of(self.known_test_id), None)
+            self.crashdb.close_duplicate(apport.Report(), known_test_id, None)
+            self.assertEqual(self.crashdb.duplicate_of(known_test_id), None)
 
-            self.crashdb.mark_regression(segv_report, self.known_test_id)
-            self._verify_marked_regression(segv_report)
+            self.crashdb.mark_regression(segv_id, known_test_id)
+            self._verify_marked_regression(segv_id)
 
         def test_marking_segv(self):
             '''processing status markings for signal crashes'''
 
             # mark_retraced()
             unretraced_before = self.crashdb.get_unretraced()
-            self.assertTrue(segv_report in unretraced_before)
-            self.assertFalse(python_report in unretraced_before)
-            self.crashdb.mark_retraced(segv_report)
+            self.assertTrue(self.get_segv_report() in unretraced_before)
+            self.assertFalse(self.get_python_report() in unretraced_before)
+            self.crashdb.mark_retraced(self.get_segv_report())
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(segv_report in unretraced_after)
+            self.assertFalse(self.get_segv_report() in unretraced_after)
             self.assertEqual(unretraced_before,
-                    unretraced_after.union(set([segv_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+                             unretraced_after.union(set([self.get_segv_report()])))
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
             # mark_retrace_failed()
-            self._mark_needs_retrace(segv_report)
-            self.crashdb.mark_retraced(segv_report)
-            self.crashdb.mark_retrace_failed(segv_report)
+            self._mark_needs_retrace(self.get_segv_report())
+            self.crashdb.mark_retraced(self.get_segv_report())
+            self.crashdb.mark_retrace_failed(self.get_segv_report())
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(segv_report in unretraced_after)
+            self.assertFalse(self.get_segv_report() in unretraced_after)
             self.assertEqual(unretraced_before,
-                    unretraced_after.union(set([segv_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+                             unretraced_after.union(set([self.get_segv_report()])))
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
             # mark_retrace_failed() of invalid bug
-            self._mark_needs_retrace(segv_report)
-            self.crashdb.mark_retraced(segv_report)
-            self.crashdb.mark_retrace_failed(segv_report, "I don't like you")
+            self._mark_needs_retrace(self.get_segv_report())
+            self.crashdb.mark_retraced(self.get_segv_report())
+            self.crashdb.mark_retrace_failed(self.get_segv_report(), "I don't like you")
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(segv_report in unretraced_after)
+            self.assertFalse(self.get_segv_report() in unretraced_after)
             self.assertEqual(unretraced_before,
-                    unretraced_after.union(set([segv_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report),
-                    'invalid')
+                             unretraced_after.union(set([self.get_segv_report()])))
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()),
+                             'invalid')
+
+        def test_marking_project(self):
+            '''processing status markings for a project CrashDB'''
+
+            # create a distro bug
+            distro_bug = self.crashdb.launchpad.bugs.createBug(
+                description='foo',
+                tags=self.crashdb.arch_tag,
+                target=self.crashdb.lp_distro,
+                title='ubuntu distro retrace bug')
+            #print('distro bug: https://staging.launchpad.net/bugs/%i' % distro_bug.id)
+
+            # create a project crash DB and a bug
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
+
+            project_db = CrashDatabase(
+                os.environ.get('LP_CREDENTIALS'),
+                {'project': 'langpack-o-matic', 'launchpad_instance': launchpad_instance})
+            project_bug = project_db.launchpad.bugs.createBug(
+                description='bar',
+                tags=project_db.arch_tag,
+                target=project_db.lp_distro,
+                title='project retrace bug')
+            #print('project bug: https://staging.launchpad.net/bugs/%i' % project_bug.id)
+
+            # on project_db, we recognize the project bug and can mark it
+            unretraced_before = project_db.get_unretraced()
+            self.assertTrue(project_bug.id in unretraced_before)
+            self.assertFalse(distro_bug.id in unretraced_before)
+            project_db.mark_retraced(project_bug.id)
+            unretraced_after = project_db.get_unretraced()
+            self.assertFalse(project_bug.id in unretraced_after)
+            self.assertEqual(unretraced_before,
+                             unretraced_after.union(set([project_bug.id])))
+            self.assertEqual(self.crashdb.get_fixed_version(project_bug.id), None)
 
         def test_marking_python(self):
             '''processing status markings for interpreter crashes'''
 
             unchecked_before = self.crashdb.get_dup_unchecked()
-            self.assertTrue(python_report in unchecked_before)
-            self.assertFalse(segv_report in unchecked_before)
-            self.crashdb._mark_dup_checked(python_report, self.ref_report)
+            self.assertTrue(self.get_python_report() in unchecked_before)
+            self.assertFalse(self.get_segv_report() in unchecked_before)
+            self.crashdb._mark_dup_checked(self.get_python_report(), self.ref_report)
             unchecked_after = self.crashdb.get_dup_unchecked()
-            self.assertFalse(python_report in unchecked_after)
+            self.assertFalse(self.get_python_report() in unchecked_after)
             self.assertEqual(unchecked_before,
-                    unchecked_after.union(set([python_report])))
-            self.assertEqual(self.crashdb.get_fixed_version(python_report),
-                    None)
+                             unchecked_after.union(set([self.get_python_report()])))
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
 
         def test_update_traces_invalid(self):
             '''updating an invalid crash
@@ -1548,12 +1603,11 @@ NameError: global name 'weird' is not defined'''
             This simulates a race condition where a crash being processed gets
             invalidated by marking it as a duplicate.
             '''
-            id = self._file_segv_report()[0]
-            sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
+            id = self.get_segv_report(force_fresh=True)
 
             r = self.crashdb.download(id)
 
-            self.crashdb.close_duplicate(r, id, segv_report)
+            self.crashdb.close_duplicate(r, id, self.get_segv_report())
 
             # updating with a useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
@@ -1564,18 +1618,21 @@ NameError: global name 'weird' is not defined'''
             r = self.crashdb.download(id)
             self.assertFalse('CoreDump' in r)
 
-        def test_get_fixed_version(self):
+        @mock.patch.object(CrashDatabase, '_get_source_version')
+        def test_get_fixed_version(self, *args):
             '''get_fixed_version() for fixed bugs
 
             Other cases are already checked in test_marking_segv() (invalid
             bugs) and test_duplicates (duplicate bugs) for efficiency.
             '''
-            self._mark_report_fixed(segv_report)
-            fixed_ver = self.crashdb.get_fixed_version(segv_report)
-            self.assertNotEqual(fixed_ver, None)
-            self.assertTrue(fixed_ver[0].isdigit())
-            self._mark_report_new(segv_report)
-            self.assertEqual(self.crashdb.get_fixed_version(segv_report), None)
+            # staging.launchpad.net often does not have Quantal, so mock-patch
+            # it to a known value
+            CrashDatabase._get_source_version.return_value = '3.14'
+            self._mark_report_fixed(self.get_segv_report())
+            fixed_ver = self.crashdb.get_fixed_version(self.get_segv_report())
+            self.assertEqual(fixed_ver, '3.14')
+            self._mark_report_new(self.get_segv_report())
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
 
         #
         # Launchpad specific implementation and tests
@@ -1588,8 +1645,8 @@ NameError: global name 'weird' is not defined'''
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
 
             return CrashDatabase(os.environ.get('LP_CREDENTIALS'),
-                    {'distro': 'ubuntu',
-                     'launchpad_instance': launchpad_instance})
+                                 {'distro': 'ubuntu',
+                                  'launchpad_instance': launchpad_instance})
 
         def _get_bug_target(self, db, report):
             '''Return the bug_target for this report.'''
@@ -1602,81 +1659,58 @@ NameError: global name 'weird' is not defined'''
             else:
                 return self.lp_distro
 
-        def _get_librarian_hostname(self):
-            '''Return the librarian hostname according to the LP hostname used.'''
+        def _file_bug(self, bug_target, report, description=None):
+            '''File a bug report for a report.
 
-            hostname = self.crashdb.get_hostname()
-            if 'staging' in hostname:
-                return 'staging.launchpadlibrarian.net'
-            else:
-                return 'launchpad.dev:58080'
+            Return the bug ID.
+            '''
+            # unfortunately staging's +storeblob API hardly ever works, so we
+            # must avoid using it. Fake it by manually doing the comments and
+            # attachments that +filebug would ordinarily do itself when given a
+            # blob handle.
 
-        def _file_bug(self, bug_target, report, handle, comment=None):
-            '''File a bug report.'''
+            if description is None:
+                description = 'some description'
 
-            bug_title = report.get('Title', report.standard_title())
+            mime = self.crashdb._generate_upload_blob(report)
+            msg = email.message_from_file(mime)
+            mime.close()
+            msg_iter = msg.walk()
 
-            blob_info = self.crashdb.launchpad.temporary_blobs.fetch(
-                token=handle)
-            # XXX 2010-08-03 matsubara bug=612990:
-            #     Can't fetch the blob directly, so let's load it from the
-            #     representation.
-            blob = self.crashdb.launchpad.load(blob_info['self_link'])
-            #XXX Need to find a way to trigger the job that process the blob
-            # rather polling like this. This makes the test suite take forever
-            # to run.
-            while not blob.hasBeenProcessed():
-                time.sleep(1)
+            # first one is the multipart container
+            header = msg_iter.next()
+            assert header.is_multipart()
 
-            # processed_blob contains info about privacy, additional comments
-            # and attachments.
-            processed_blob = blob.getProcessedData()
+            # second part should be an inline text/plain attachments with all short
+            # fields
+            part = msg_iter.next()
+            assert not part.is_multipart()
+            assert part.get_content_type() == 'text/plain'
+            description += '\n\n' + part.get_payload(decode=True).decode('UTF-8', 'replace')
 
+            # create the bug from header and description data
             bug = self.crashdb.launchpad.bugs.createBug(
-                description=processed_blob['extra_description'],
-                private=processed_blob['private'],
-                tags=processed_blob['initial_tags'],
+                description=description,
+                private=(header['Private'] == 'yes'),
+                tags=header['Tags'].split(),
                 target=bug_target,
-                title=bug_title)
+                title=report.get('Title', report.standard_title()))
 
-            for comment in processed_blob['comments']:
-                bug.newMessage(content=comment)
+            # nwo add the attachments
+            for part in msg_iter:
+                assert not part.is_multipart()
+                bug.addAttachment(comment='',
+                                  description=part.get_filename(),
+                                  content_type=None,
+                                  data=part.get_payload(decode=True),
+                                  filename=part.get_filename(), is_patch=False)
 
-            # Ideally, one would be able to retrieve the attachment content
-            # from the ProblemReport object or from the processed_blob.
-            # Unfortunately the processed_blob only give us the Launchpad
-            # librarian file_alias_id, so that's why we need to
-            # download it again and upload to the bug report. It'd be even
-            # better if addAttachment could work like linkAttachment, the LP
-            # api used in the +filebug web UI, but there are security concerns
-            # about the way linkAttachment works.
-            librarian_url = 'http://%s' % self._get_librarian_hostname()
-            for attachment in processed_blob['attachments']:
-                filename = description = attachment['description']
-                # Download the attachment data.
-                data = urlopen(urllib.basejoin(librarian_url,
-                    str(attachment['file_alias_id']) + '/' + filename)).read()
-                # Add the attachment to the newly created bug report.
-                bug.addAttachment(
-                    comment=filename,
-                    data=data,
-                    filename=filename,
-                    description=description)
-
-            for subscriber in processed_blob['subscribers']:
+            for subscriber in header['Subscribers'].split():
                 sub = self.crashdb.launchpad.people[subscriber]
                 if sub:
                     bug.subscribe(person=sub)
 
-            for submission_key in processed_blob['hwdb_submission_keys']:
-                # XXX 2010-08-04 matsubara bug=628889:
-                #     Can't fetch the submission directly, so let's load it
-                #     from the representation.
-                submission = self.crashdb.launchpad.load(
-                    'https://api.%s/beta/+hwdb/+submission/%s'
-                    % (self.crashdb.get_hostname(), submission_key))
-                bug.linkHWSubmission(submission=submission)
-            return int(bug.id)
+            return bug.id
 
         def _mark_needs_retrace(self, id):
             '''Mark a report ID as needing retrace.'''
@@ -1727,8 +1761,8 @@ NameError: global name 'weird' is not defined'''
             # crash database for langpack-o-matic project (this does not have
             # packages in any distro)
             crashdb = CrashDatabase(os.environ.get('LP_CREDENTIALS'),
-                {'project': 'langpack-o-matic',
-                 'launchpad_instance': launchpad_instance})
+                                    {'project': 'langpack-o-matic',
+                                     'launchpad_instance': launchpad_instance})
             self.assertEqual(crashdb.distro, None)
 
             # create Python crash report
@@ -1741,15 +1775,13 @@ NameError: global name 'weird' is not defined'''
             r.add_os_info()
             r.add_user_info()
             self.assertEqual(r.standard_title(),
-                    "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
+                             "foo crashed with NameError in fuzz(): global name 'weird' is not defined")
 
             # file it
-            handle = crashdb.upload(r)
-            self.assertTrue(handle)
             bug_target = self._get_bug_target(crashdb, r)
             self.assertEqual(bug_target.name, 'langpack-o-matic')
 
-            id = self._file_bug(bug_target, r, handle)
+            id = self._file_bug(bug_target, r)
             self.assertTrue(id > 0)
             sys.stderr.write('(https://%s/bugs/%i) ' % (self.hostname, id))
 
@@ -1763,8 +1795,8 @@ NameError: global name 'weird' is not defined'''
 
             # test fixed version
             self.assertEqual(crashdb.get_fixed_version(id), None)
-            crashdb.close_duplicate(r, id, self.known_test_id)
-            self.assertEqual(crashdb.duplicate_of(id), self.known_test_id)
+            crashdb.close_duplicate(r, id, self.get_uncommon_description_report())
+            self.assertEqual(crashdb.duplicate_of(id), self.get_uncommon_description_report())
             self.assertEqual(crashdb.get_fixed_version(id), 'invalid')
             crashdb.close_duplicate(r, id, None)
             self.assertEqual(crashdb.duplicate_of(id), None)
@@ -1774,7 +1806,7 @@ NameError: global name 'weird' is not defined'''
             '''download() of uncommon description formats'''
 
             # only ProblemType/Architecture/DistroRelease in description
-            r = self.crashdb.download(self.uncommon_description_bug.id)
+            r = self.crashdb.download(self.get_uncommon_description_report())
             self.assertEqual(r['ProblemType'], 'Package')
             self.assertEqual(r['Architecture'], 'amd64')
             self.assertTrue(r['DistroRelease'].startswith('Ubuntu '))
@@ -1782,14 +1814,12 @@ NameError: global name 'weird' is not defined'''
         def test_escalation(self):
             '''Escalating bugs with more than 10 duplicates'''
 
-            assert segv_report, 'you need to run test_1_report_segv() first'
-
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
             db = CrashDatabase(os.environ.get('LP_CREDENTIALS'),
-                    {'distro': 'ubuntu',
-                     'launchpad_instance': launchpad_instance,
-                     'escalation_tag': 'omgkittens',
-                     'escalation_subscription': 'apport-hackers'})
+                               {'distro': 'ubuntu',
+                                'launchpad_instance': launchpad_instance,
+                                'escalation_tag': 'omgkittens',
+                                'escalation_subscription': 'apport-hackers'})
 
             count = 0
             p = db.launchpad.people[db.options['escalation_subscription']].self_link
@@ -1798,8 +1828,8 @@ NameError: global name 'weird' is not defined'''
                 for b in range(first_dup, first_dup + 13):
                     count += 1
                     sys.stderr.write('%i ' % b)
-                    db.close_duplicate(apport.Report(), b, segv_report)
-                    b = db.launchpad.bugs[segv_report]
+                    db.close_duplicate(apport.Report(), b, self.get_segv_report())
+                    b = db.launchpad.bugs[self.get_segv_report()]
                     has_escalation_tag = db.options['escalation_tag'] in b.tags
                     has_escalation_subscription = any([s.person_link == p for s in b.subscriptions])
                     if count <= 10:
@@ -1817,14 +1847,14 @@ NameError: global name 'weird' is not defined'''
         def test_marking_python_task_mangle(self):
             '''source package task fixup for marking interpreter crashes'''
 
-            self._mark_needs_dupcheck(python_report)
+            self._mark_needs_dupcheck(self.get_python_report())
             unchecked_before = self.crashdb.get_dup_unchecked()
-            self.assertTrue(python_report in unchecked_before)
+            self.assertTrue(self.get_python_report() in unchecked_before)
 
             # add an upstream task, and remove the package name from the
             # package task; _mark_dup_checked is supposed to restore the
             # package name
-            b = self.crashdb.launchpad.bugs[python_report]
+            b = self.crashdb.launchpad.bugs[self.get_python_report()]
             if b.private:
                 b.private = False
                 b.lp_save()
@@ -1833,15 +1863,15 @@ NameError: global name 'weird' is not defined'''
             t.lp_save()
             b.addTask(target=self.crashdb.launchpad.projects['coreutils'])
 
-            self.crashdb._mark_dup_checked(python_report, self.ref_report)
+            self.crashdb._mark_dup_checked(self.get_python_report(), self.ref_report)
 
             unchecked_after = self.crashdb.get_dup_unchecked()
-            self.assertFalse(python_report in unchecked_after)
+            self.assertFalse(self.get_python_report() in unchecked_after)
             self.assertEqual(unchecked_before,
-                    unchecked_after.union(set([python_report])))
+                             unchecked_after.union(set([self.get_python_report()])))
 
             # upstream task should be unmodified
-            b = self.crashdb.launchpad.bugs[python_report]
+            b = self.crashdb.launchpad.bugs[self.get_python_report()]
             self.assertEqual(b.bug_tasks[0].bug_target_name, 'coreutils')
             self.assertEqual(b.bug_tasks[0].status, 'New')
 
@@ -1850,8 +1880,7 @@ NameError: global name 'weird' is not defined'''
             self.assertEqual(b.bug_tasks[1].status, 'New')
 
             # should not confuse get_fixed_version()
-            self.assertEqual(self.crashdb.get_fixed_version(python_report),
-                    None)
+            self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
 
         @classmethod
         def _generate_sigsegv_report(klass, signal='11'):
@@ -1883,10 +1912,11 @@ int main() { return f(42); }
 
                 # call it through gdb and dump core
                 subprocess.call(['gdb', '--batch', '--ex', 'run', '--ex',
-                    'generate-core-file core', './crash'], stdout=subprocess.PIPE)
+                                 'generate-core-file core', './crash'], stdout=subprocess.PIPE)
                 assert os.path.exists('core')
+                subprocess.check_call(['sync'])
                 assert subprocess.call(['readelf', '-n', 'core'],
-                    stdout=subprocess.PIPE) == 0
+                                       stdout=subprocess.PIPE) == 0
 
                 pr['ExecutablePath'] = os.path.join(workdir, 'crash')
                 pr['CoreDump'] = (os.path.join(workdir, 'core'),)

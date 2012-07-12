@@ -37,8 +37,8 @@ databases = {
 
         apport.ui.UserInterface.__init__(self)
 
-        self.crashdb = apport.crashdb_impl.memory.CrashDatabase(None,
-                {'dummy_data': 1, 'dupdb_url': ''})
+        self.crashdb = apport.crashdb_impl.memory.CrashDatabase(
+            None, {'dummy_data': 1, 'dupdb_url': ''})
 
         # state of progress dialogs
         self.ic_progress_active = False
@@ -183,7 +183,7 @@ class T(unittest.TestCase):
         self.ui = None
         self.report_file.close()
 
-        self.assertEqual(subprocess.call(['pidof', '/bin/yes']), 1, 'no stray test processes')
+        self.assertEqual(subprocess.call(['pidof', '/usr/bin/yes']), 1, 'no stray test processes')
 
         # clean up apport report from _gen_test_crash()
         for f in glob.glob('/var/crash/_usr_bin_yes.*.crash'):
@@ -250,7 +250,7 @@ class T(unittest.TestCase):
         self.assertEqual(set(self.ui.report.keys()), set(self.report.keys()))
         self.assertEqual(self.ui.report['Package'], self.report['Package'])
         self.assertEqual(self.ui.report['CoreDump'].get_value(),
-                self.report['CoreDump'].get_value())
+                         self.report['CoreDump'].get_value())
         self.assertEqual(self.ui.msg_title, None)
 
         # report without Package
@@ -260,7 +260,7 @@ class T(unittest.TestCase):
         self.update_report_file()
         self.ui.load_report(self.report_file.name)
 
-        self.assertTrue(self.ui.report == None)
+        self.assertTrue(self.ui.report is None)
         self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
         self.assertEqual(self.ui.msg_severity, 'info')
 
@@ -277,7 +277,7 @@ bOgUs=
         self.report_file.flush()
 
         self.ui.load_report(self.report_file.name)
-        self.assertTrue(self.ui.report == None)
+        self.assertTrue(self.ui.report is None)
         self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
         self.assertEqual(self.ui.msg_severity, 'error')
 
@@ -323,7 +323,7 @@ bOgUs=
         self.assertTrue(set(['Date', 'Uname', 'DistroRelease', 'ProblemType']).issubset(
             set(self.ui.report.keys())))
         self.assertEqual(self.ui.ic_progress_pulses, 0,
-            'no progress dialog for distro bug info collection')
+                         'no progress dialog for distro bug info collection')
 
     def test_collect_info_exepath(self):
         '''collect_info() on report with only ExecutablePath'''
@@ -339,12 +339,12 @@ bOgUs=
         self.ui.report['CompressedValue'] = problem_report.CompressedValue(b'Test')
         self.ui.collect_info()
         self.assertTrue(set(['SourcePackage', 'Package', 'ProblemType',
-            'Uname', 'Dependencies', 'DistroRelease', 'Date',
-            'ExecutablePath']).issubset(set(self.ui.report.keys())))
+                             'Uname', 'Dependencies', 'DistroRelease', 'Date',
+                             'ExecutablePath']).issubset(set(self.ui.report.keys())))
         self.assertTrue(self.ui.ic_progress_pulses > 0,
-            'progress dialog for package bug info collection')
+                        'progress dialog for package bug info collection')
         self.assertEqual(self.ui.ic_progress_active, False,
-            'progress dialog for package bug info collection finished')
+                         'progress dialog for package bug info collection finished')
 
     def test_collect_info_package(self):
         '''collect_info() on report with a package'''
@@ -354,12 +354,12 @@ bOgUs=
         self.ui.cur_package = 'bash'
         self.ui.collect_info()
         self.assertTrue(set(['SourcePackage', 'Package', 'ProblemType',
-            'Uname', 'Dependencies', 'DistroRelease',
-            'Date']).issubset(set(self.ui.report.keys())))
+                             'Uname', 'Dependencies', 'DistroRelease',
+                             'Date']).issubset(set(self.ui.report.keys())))
         self.assertTrue(self.ui.ic_progress_pulses > 0,
-            'progress dialog for package bug info collection')
+                        'progress dialog for package bug info collection')
         self.assertEqual(self.ui.ic_progress_active, False,
-            'progress dialog for package bug info collection finished')
+                         'progress dialog for package bug info collection finished')
 
     def test_collect_info_permissions(self):
         '''collect_info() leaves the report accessible to the group'''
@@ -817,7 +817,7 @@ bOgUs=
         self.assertEqual(self.ui.run_argv(), True)
 
         self.assertTrue('It stinks.' in self.ui.msg_text, '%s: %s' %
-            (self.ui.msg_title, self.ui.msg_text))
+                        (self.ui.msg_title, self.ui.msg_text))
         self.assertEqual(self.ui.msg_severity, 'info')
 
         # should not die with an exception on an invalid name
@@ -841,7 +841,7 @@ bOgUs=
         self.ui.run_crash(self.report_file.name)
 
         self.assertTrue('It stinks.' in self.ui.msg_text, '%s: %s' %
-            (self.ui.msg_title, self.ui.msg_text))
+                        (self.ui.msg_title, self.ui.msg_text))
         self.assertEqual(self.ui.msg_severity, 'info')
 
     def test_run_crash_ignore(self):
@@ -890,7 +890,7 @@ bOgUs=
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, 'error')
         self.assertTrue('memory' in self.ui.msg_text, '%s: %s' %
-            (self.ui.msg_title, self.ui.msg_text))
+                        (self.ui.msg_title, self.ui.msg_text))
 
     def test_run_crash_preretraced(self):
         '''run_crash() pre-retraced reports.
@@ -1031,9 +1031,9 @@ bOgUs=
 
         self.assertFalse('ExecutableTimestamp' in self.ui.report)
         self.assertTrue(self.ui.report['ExecutablePath'] in self.ui.msg_text, '%s: %s' %
-            (self.ui.msg_title, self.ui.msg_text))
+                        (self.ui.msg_title, self.ui.msg_text))
         self.assertTrue('changed' in self.ui.msg_text, '%s: %s' %
-            (self.ui.msg_title, self.ui.msg_text))
+                        (self.ui.msg_title, self.ui.msg_text))
         self.assertEqual(self.ui.msg_severity, 'info')
 
     def test_run_crash_package(self):
@@ -1116,7 +1116,7 @@ bOgUs=
                                             'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, 'error: %s - %s' %
-            (self.ui.msg_title, self.ui.msg_text))
+                         (self.ui.msg_title, self.ui.msg_text))
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(self.ui.opened_url, None)
         self.assertEqual(self.ui.ic_progress_pulses, 0)
@@ -1132,7 +1132,7 @@ bOgUs=
                                             'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.msg_severity, None, str(self.ui.msg_title) +
-            ' ' + str(self.ui.msg_text))
+                         ' ' + str(self.ui.msg_text))
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(self.ui.opened_url, 'http://linux.bugs.example.com/%i' % self.ui.crashdb.latest_id())
         self.assertTrue(self.ui.present_details_shown)
@@ -1191,7 +1191,7 @@ bOgUs=
             self['ProcMaps'] = '''
 10000000-DEADBEF0 r-xp 00000000 08:02 100000           /bin/crash
 '''
-            assert self.crash_signature_addresses() != None
+            assert self.crash_signature_addresses() is not None
 
         try:
             r = self._gen_test_crash()
@@ -1246,7 +1246,7 @@ bOgUs=
             self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
 
             self.assertTrue(self.ui.report['Title'].startswith('yes crashed with SIGSEGV'),
-                self.ui.report['Title'])
+                            self.ui.report['Title'])
             self.assertEqual(self.ui.report['ProcInfo1'], 'my hostname')
             self.assertEqual(self.ui.report['ProcInfo2'], '"hostname.localnet"')
             self.assertEqual(self.ui.report['ProcInfo3'], 'education')
@@ -1294,8 +1294,7 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
 
         self.assertEqual(self.ui.run_argv(), False)
-        self.assertTrue('No additional information collected.' in
-                self.ui.msg_text)
+        self.assertTrue('No additional information collected.' in self.ui.msg_text)
         self.assertFalse(self.ui.present_details_shown)
 
     def test_run_update_report_nonexisting_package_cli(self):
@@ -1305,8 +1304,7 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
 
         self.assertEqual(self.ui.run_argv(), False)
-        self.assertTrue('No additional information collected.' in
-                self.ui.msg_text)
+        self.assertTrue('No additional information collected.' in self.ui.msg_text)
         self.assertFalse(self.ui.present_details_shown)
 
     def test_run_update_report_existing_package_from_bug(self):
@@ -1405,9 +1403,9 @@ bOgUs=
         kernel_pkg = apport.packaging.get_kernel_package()
         kernel_src = apport.packaging.get_source(kernel_pkg)
         self.assertNotEqual(kernel_pkg, kernel_src,
-                'this test assumes that the kernel binary package != kernel source package')
+                            'this test assumes that the kernel binary package != kernel source package')
         self.assertNotEqual(apport.packaging.get_version(kernel_pkg), '',
-                'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
+                            'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
 
         # this test assumes that the kernel source package name is not an
         # installed binary package
@@ -1532,7 +1530,7 @@ report['end'] = '1'
         '''interactive hooks: user cancels'''
 
         self.assertRaises(SystemExit, self._run_hook,
-            '''report['begin'] = '1'
+                          '''report['begin'] = '1'
 raise StopIteration
 report['end'] = '1'
 ''')
@@ -1676,7 +1674,7 @@ def run(report, ui):
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue('kind of problem' in self.ui.msg_text)
         self.assertEqual(set(self.ui.msg_choices),
-                set(['bar', 'foo does not work', 'Other problem']))
+                         set(['bar', 'foo does not work', 'Other problem']))
 
         # cancelled
         self.assertEqual(self.ui.ic_progress_pulses, 0)
@@ -1710,18 +1708,18 @@ def run(report, ui):
             self.assertEqual(ui.options, expected_opts)
 
         # no arguments -> show pending crashes
-        _chk('apport-gtk', None, {'filebug': False, 'package': None,
-            'pid': None, 'crash_file': None, 'symptom': None,
-            'update_report': None, 'save': None, 'window': False,
-            'tag': []})
+        _chk('apport-gtk', None,
+             {'filebug': False, 'package': None, 'pid': None, 'crash_file':
+              None, 'symptom': None, 'update_report': None, 'save': None,
+              'window': False, 'tag': [], 'hanging': False})
         # updating report not allowed without args
         self.assertRaises(SystemExit, _chk, 'apport-collect', None, {})
 
         # package
-        _chk('apport-kde', 'coreutils', {'filebug': True, 'package':
-            'coreutils', 'pid': None, 'crash_file': None, 'symptom': None,
-            'update_report': None, 'save': None, 'window': False,
-            'tag': []})
+        _chk('apport-kde', 'coreutils',
+             {'filebug': True, 'package': 'coreutils', 'pid': None,
+              'crash_file': None, 'symptom': None, 'update_report': None,
+              'save': None, 'window': False, 'tag': [], 'hanging': False})
 
         # symptom is preferred over package
         f = open(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'), 'w')
@@ -1730,16 +1728,16 @@ def run(report, ui):
 return 'bash'
 ''')
         f.close()
-        _chk('apport-cli', 'coreutils', {'filebug': True, 'package': None,
-             'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-             'update_report': None, 'save': None, 'window': False,
-             'tag': []})
+        _chk('apport-cli', 'coreutils',
+             {'filebug': True, 'package': None, 'pid': None, 'crash_file':
+              None, 'symptom': 'coreutils', 'update_report': None, 'save':
+              None, 'window': False, 'tag': [], 'hanging': False})
 
         # PID
         _chk('apport-cli', '1234', {'filebug': True, 'package': None,
              'pid': '1234', 'crash_file': None, 'symptom': None,
              'update_report': None, 'save': None, 'window': False,
-             'tag': []})
+             'tag': [], 'hanging': False})
 
         # .crash/.apport files; check correct handling of spaces
         for suffix in ('.crash', '.apport'):
@@ -1747,14 +1745,14 @@ return 'bash'
                  'package': None, 'pid': None,
                  'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
                  'update_report': None, 'save': None, 'window': False,
-                 'tag': []})
+                 'tag': [], 'hanging': False})
 
         # executable
         _chk('apport-cli', '/usr/bin/tail', {'filebug': True,
              'package': 'coreutils',
              'pid': None, 'crash_file': None, 'symptom': None,
              'update_report': None, 'save': None, 'window': False,
-             'tag': []})
+             'tag': [], 'hanging': False})
 
         # update existing report
         _chk('apport-collect', '1234', {'filebug': False, 'package': None,
@@ -1783,20 +1781,19 @@ return 'bash'
         #
         # no arguments: default to 'ask for symptom' bug mode
         #
-        _chk([], {'filebug': True, 'package': None,
-            'pid': None, 'crash_file': None, 'symptom': None,
-            'update_report': None, 'save': None, 'window': False,
-            'tag': []})
+        _chk([], {'filebug': True, 'package': None, 'pid': None, 'crash_file':
+                  None, 'symptom': None, 'update_report': None, 'save': None,
+                  'window': False, 'tag': [], 'hanging': False})
 
         #
         # single arguments
         #
 
         # package
-        _chk(['coreutils'], {'filebug': True, 'package':
-            'coreutils', 'pid': None, 'crash_file': None, 'symptom': None,
-            'update_report': None, 'save': None, 'window': False,
-            'tag': []})
+        _chk(['coreutils'], {'filebug': True, 'package': 'coreutils', 'pid':
+                             None, 'crash_file': None, 'symptom': None,
+                             'update_report': None, 'save': None, 'window':
+                             False, 'tag': [], 'hanging': False})
 
         # symptom (preferred over package)
         f = open(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'), 'w')
@@ -1805,51 +1802,52 @@ def run(report, ui):
 return 'bash'
 ''')
         f.close()
-        _chk(['coreutils'], {'filebug': True, 'package': None,
-             'pid': None, 'crash_file': None, 'symptom': 'coreutils',
-             'update_report': None, 'save': None, 'window': False,
-             'tag': []})
+        _chk(['coreutils'], {'filebug': True, 'package': None, 'pid': None,
+                             'crash_file': None, 'symptom': 'coreutils',
+                             'update_report': None, 'save': None, 'window':
+                             False, 'tag': [], 'hanging': False})
         os.unlink(os.path.join(apport.ui.symptom_script_dir, 'coreutils.py'))
 
         # PID
-        _chk(['1234'], {'filebug': True, 'package': None,
-             'pid': '1234', 'crash_file': None, 'symptom': None,
-             'update_report': None, 'save': None, 'window': False,
-             'tag': []})
+        _chk(['1234'], {'filebug': True, 'package': None, 'pid': '1234',
+                        'crash_file': None, 'symptom': None, 'update_report':
+                        None, 'save': None, 'window': False, 'tag': [],
+                        'hanging': False})
 
         # .crash/.apport files; check correct handling of spaces
         for suffix in ('.crash', '.apport'):
-            _chk(['/tmp/f oo' + suffix], {'filebug': False,
-                 'package': None, 'pid': None,
-                 'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
-                 'update_report': None, 'save': None, 'window': False,
-                 'tag': []})
+            _chk(['/tmp/f oo' + suffix],
+                 {'filebug': False, 'package': None, 'pid': None, 'crash_file':
+                  '/tmp/f oo' + suffix, 'symptom': None, 'update_report': None,
+                  'save': None, 'window': False, 'tag': [], 'hanging': False})
 
         # executable name
-        _chk(['/usr/bin/tail'], {'filebug': True, 'package': 'coreutils',
-             'pid': None, 'crash_file': None, 'symptom': None,
-             'update_report': None, 'save': None, 'window': False,
-             'tag': []})
+        _chk(['/usr/bin/tail'],
+             {'filebug': True, 'package': 'coreutils', 'pid': None,
+              'crash_file': None, 'symptom': None, 'update_report': None,
+              'save': None, 'window': False, 'tag': [], 'hanging': False})
 
         #
         # supported options
         #
 
         # --save
-        _chk(['--save', 'foo.apport', 'coreutils'], {'filebug': True,
-            'package': 'coreutils', 'pid': None, 'crash_file': None,
-            'symptom': None, 'update_report': None, 'save': 'foo.apport',
-            'window': False, 'tag': []})
+        _chk(['--save', 'foo.apport', 'coreutils'],
+             {'filebug': True, 'package': 'coreutils', 'pid': None,
+              'crash_file': None, 'symptom': None, 'update_report': None,
+              'save': 'foo.apport', 'window': False, 'tag': [],
+              'hanging': False})
 
         # --tag
-        _chk(['--tag', 'foo', 'coreutils'], {'filebug': True,
-            'package': 'coreutils', 'pid': None, 'crash_file': None,
-            'symptom': None, 'update_report': None, 'save': None,
-            'window': False, 'tag': ['foo']})
-        _chk(['--tag', 'foo', '--tag', 'bar', 'coreutils'], {
-            'filebug': True, 'package': 'coreutils', 'pid': None,
-            'crash_file': None, 'symptom': None, 'update_report': None,
-            'save': None, 'window': False, 'tag': ['foo', 'bar']})
+        _chk(['--tag', 'foo', 'coreutils'],
+             {'filebug': True, 'package': 'coreutils', 'pid': None,
+              'crash_file': None, 'symptom': None, 'update_report': None,
+              'save': None, 'window': False, 'tag': ['foo'], 'hanging': False})
+        _chk(['--tag', 'foo', '--tag', 'bar', 'coreutils'],
+             {'filebug': True, 'package': 'coreutils', 'pid': None,
+              'crash_file': None, 'symptom': None, 'update_report': None,
+              'save': None, 'window': False, 'tag': ['foo', 'bar'],
+              'hanging': False})
 
     def test_can_examine_locally_crash(self):
         '''can_examine_locally() for a crash report'''
@@ -1864,8 +1862,7 @@ return 'bash'
             self.assertEqual(self.ui.can_examine_locally(), False)
 
             src_bindir = os.path.join(
-                    os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-                    'bin')
+                os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'bin')
             # this will only work for running the tests in the source tree
             if os.access(os.path.join(src_bindir, 'apport-retrace'), os.X_OK):
                 os.environ['PATH'] = src_bindir
@@ -1933,5 +1930,39 @@ return 'bash'
         self.assertEqual(self.ui.opened_url, None)
         self.assertEqual(self.ui.upload_progress_pulses, 0)
         self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)
+
+    def test_get_desktop_entry(self):
+        desktop_file = tempfile.NamedTemporaryFile()
+        desktop_file.write('''[Desktop Entry]
+Name=gtranslate
+GenericName=Translator
+GenericName[de]=Übersetzer
+Exec=gedit %U
+Categories=GNOME;GTK;Utility;TextEditor;
+'''.encode('UTF-8'))
+        desktop_file.flush()
+
+        self.report['DesktopFile'] = desktop_file.name
+        self.ui.report = self.report
+        info = self.ui.get_desktop_entry()
+        self.assertEqual(info, {'genericname': 'Translator',
+                                'categories': 'GNOME;GTK;Utility;TextEditor;',
+                                'name': 'gtranslate',
+                                'genericname[de]': 'Übersetzer',
+                                'exec': 'gedit %U'})
+
+    def test_wait_for_pid(self):
+        # fork a test process
+        pid = os.fork()
+        if pid == 0:
+            os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
+            os.execv('/usr/bin/yes', ['yes'])
+            assert False, 'Could not execute /usr/bin/yes'
+
+        time.sleep(0.5)
+        os.kill(pid, signal.SIGKILL)
+        os.waitpid(pid, 0)
+        self.ui.wait_for_pid(pid)
+
 
 unittest.main()

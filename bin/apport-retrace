@@ -38,39 +38,39 @@ def parse_options():
 
     optparser = optparse.OptionParser(_('%prog [options] <apport problem report | crash ID>'))
     optparser.add_option('-s', '--stdout', action='store_true',
-        help=_('Do not put the new traces into the report, but write them to stdout.'))
+                         help=_('Do not put the new traces into the report, but write them to stdout.'))
     optparser.add_option('-g', '--gdb', action='store_true',
-        help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'))
+                         help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'))
     optparser.add_option('-o', '--output', metavar='FILE',
-        help=_('Write modified report to given file instead of changing the original report'))
+                         help=_('Write modified report to given file instead of changing the original report'))
     optparser.add_option('-c', '--remove-core', action='store_true',
-        help=_('Remove the core dump from the report after stack trace regeneration'))
+                         help=_('Remove the core dump from the report after stack trace regeneration'))
     optparser.add_option('-r', '--core-file', metavar='CORE',
-        help=_('Override report\'s CoreFile'))
+                         help=_('Override report\'s CoreFile'))
     optparser.add_option('-x', '--executable', metavar='EXE',
-        help=_('Override report\'s ExecutablePath'))
+                         help=_('Override report\'s ExecutablePath'))
     optparser.add_option('-m', '--procmaps', metavar='MAPS',
-        help=_('Override report\'s ProcMaps'))
+                         help=_('Override report\'s ProcMaps'))
     optparser.add_option('-R', '--rebuild-package-info', action='store_true',
-        help=_('Rebuild report\'s Package information'))
+                         help=_('Rebuild report\'s Package information'))
     optparser.add_option('-S', '--sandbox', metavar='CONFIG_DIR',
-        help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'))
+                         help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'))
     optparser.add_option('-v', '--verbose', action='store_true',
-        help=_('Report download/install progress when installing packages into sandbox'))
+                         help=_('Report download/install progress when installing packages into sandbox'))
     optparser.add_option('--timestamps', action='store_true',
-        help=_('Prepend timestamps to log messages, for batch operation'))
+                         help=_('Prepend timestamps to log messages, for batch operation'))
     optparser.add_option('-C', '--cache', metavar='DIR',
-        help=_('Cache directory for packages downloaded in the sandbox'))
+                         help=_('Cache directory for packages downloaded in the sandbox'))
     optparser.add_option('--sandbox-dir', metavar='DIR',
-        help=_('Directory for unpacked packages. Future runs will assume that any already downloaded package is also extracted to this sandbox.'))
+                         help=_('Directory for unpacked packages. Future runs will assume that any already downloaded package is also extracted to this sandbox.'))
     optparser.add_option('-p', '--extra-package', action='append', default=[],
-        help=_('Install an extra package into the sandbox (can be specified multiple times)'))
+                         help=_('Install an extra package into the sandbox (can be specified multiple times)'))
     optparser.add_option('--auth',
-        help=_('Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)'))
+                         help=_('Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)'))
     optparser.add_option('--confirm', action='store_true',
-        help=_('Display retraced stack traces and ask for confirmation before sending them to the crash database.'))
+                         help=_('Display retraced stack traces and ask for confirmation before sending them to the crash database.'))
     optparser.add_option('--duplicate-db', metavar='PATH',
-        help=_('Path to the duplicate sqlite database (default: no duplicate checking)'))
+                         help=_('Path to the duplicate sqlite database (default: no duplicate checking)'))
 
     (opts, args) = optparser.parse_args()
 
@@ -157,10 +157,12 @@ def get_code(srcdir, filename, line, context=5):
     return result
 
 
-def gen_source_stacktrace(report):
-    '''Generate StacktraceSource, a version of Stacktrace with the surrounding
-    code lines (where available) and with local variables removed.'''
+def gen_source_stacktrace(report, sandbox):
+    '''Generate StacktraceSource.
 
+    This is a version of Stacktrace with the surrounding code lines (where
+    available) and with local variables removed.
+    '''
     if 'Stacktrace' not in report or 'SourcePackage' not in report:
         return
 
@@ -170,7 +172,9 @@ def gen_source_stacktrace(report):
             version = report['Package'].split()[1]
         except (IndexError, KeyError):
             version = None
-        srcdir = apport.packaging.get_source_tree(report['SourcePackage'], workdir, version)
+        srcdir = apport.packaging.get_source_tree(report['SourcePackage'],
+                                                  workdir, version,
+                                                  sandbox=sandbox)
         if not srcdir:
             return
 
@@ -322,8 +326,7 @@ Thank you for your understanding, and sorry for the inconvenience!
     crashid = reportfile
     reportfile = None
 else:
-    apport.fatal('"%s" is neither an existing report file nor a crash ID',
-            reportfile)
+    apport.fatal('"%s" is neither an existing report file nor a crash ID', reportfile)
 
 if options.core_file:
     with open(options.core_file, 'rb') as f:
@@ -345,8 +348,8 @@ if report['ProblemType'] == 'KernelCrash':
     apport.error('KernelCrash processing not implemented yet')
     sys.exit(0)
 elif not required_fields.issubset(set(report.keys())):
-    apport.error('report file does not contain one of the required fields: ' + \
-        ' '.join(required_fields))
+    apport.error('report file does not contain one of the required fields: ' +
+                 ' '.join(required_fields))
     sys.exit(0)
 
 sandbox = None
@@ -377,15 +380,14 @@ if options.sandbox:
         atexit.register(shutil.rmtree, options.cache)
 
     try:
-        outdated_msg = apport.packaging.install_packages(sandbox, sandbox_arg,
-            report['DistroRelease'], pkgs, options.verbose, options.cache,
-            permanent_rootdir)
+        outdated_msg = apport.packaging.install_packages(
+            sandbox, sandbox_arg, report['DistroRelease'], pkgs,
+            options.verbose, options.cache, permanent_rootdir)
     except SystemError as e:
         sys.stderr.write(str(e) + '\n')
         sys.exit(1)
 
-    pkgs = needed_runtime_packages(report, sandbox, options.cache,
-            options.verbose)
+    pkgs = needed_runtime_packages(report, sandbox, options.cache, options.verbose)
 
     # package hooks might reassign Package:, check that we have the originally crashing binary
     for path in ('InterpreterPath', 'ExecutablePath'):
@@ -399,8 +401,9 @@ if options.sandbox:
 
     if pkgs:
         try:
-            outdated_msg += apport.packaging.install_packages(sandbox, sandbox_arg,
-                report['DistroRelease'], pkgs, options.verbose, options.cache)
+            outdated_msg += apport.packaging.install_packages(
+                sandbox, sandbox_arg, report['DistroRelease'], pkgs,
+                options.verbose, options.cache)
         except SystemError as e:
             sys.stderr.write(str(e) + '\n')
             sys.exit(1)
@@ -408,7 +411,7 @@ if options.sandbox:
     for path in ('InterpreterPath', 'ExecutablePath'):
         if path in report and not os.path.exists(sandbox + report[path]):
             apport.error('%s %s does not exist (report specified package %s)',
-                    path, sandbox + report[path], report['Package'])
+                         path, sandbox + report[path], report['Package'])
             sys.exit(0)
 
     if outdated_msg:
@@ -434,7 +437,11 @@ if options.gdb:
 else:
     # regenerate gdb info
     report.add_gdb_info(sandbox)
-    #gen_source_stacktrace(report) # TODO: disabled until this gets adapted to the chroot-less sandbox
+    if options.sandbox == 'system':
+        apt_root = os.path.join(options.cache, 'system', 'apt')
+    else:
+        apt_root = os.path.join(options.cache, report['DistroRelease'], 'apt')
+    gen_source_stacktrace(report, apt_root)
     report.add_kernel_crash_info()
 
 modified = False
@@ -460,7 +467,7 @@ if modified:
                 crashdb.init_duplicate_db(options.duplicate_db)
                 res = crashdb.check_duplicate(int(crashid), report)
                 if res:
-                    if res[1] == None:
+                    if res[1] is None:
                         log('Report is a duplicate of #%i (not fixed yet)' % res[0])
                     elif res[1] == '':
                         log('Report is a duplicate of #%i (fixed in latest version)' % res[0])
@@ -501,7 +508,7 @@ Thank you for your understanding, and sorry for the inconvenience!
                         crashdb.mark_retrace_failed(crashid)
 
     else:
-        if options.output == None:
+        if options.output is None:
             out = open(reportfile, 'wb')
         elif options.output == '-':
             if sys.version[0] < '3':

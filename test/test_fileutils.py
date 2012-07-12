@@ -46,7 +46,7 @@ class T(unittest.TestCase):
         # package without any .desktop file
         nodesktop = 'bash'
         assert len([f for f in apport.packaging.get_files(nodesktop)
-            if f.endswith('.desktop')]) == 0
+                    if f.endswith('.desktop')]) == 0
 
         # find a package with one and a package with multiple .desktop files
         onedesktop = None
@@ -57,7 +57,7 @@ class T(unittest.TestCase):
             pkg = apport.packaging.get_file_package(
                 os.path.join('/usr/share/applications/', d))
             num = len([f for f in apport.packaging.get_files(pkg)
-                if f.endswith('.desktop')])
+                       if f.endswith('.desktop')])
             if not onedesktop and num == 1:
                 onedesktop = pkg
             elif not multidesktop and num > 1:
@@ -112,6 +112,23 @@ class T(unittest.TestCase):
             apport.fileutils.mark_report_seen(r)
             self.assertEqual(apport.fileutils.seen_report(r), True)
             self.assertEqual(set(apport.fileutils.get_new_reports()), nr)
+
+    def test_mark_hanging_process(self):
+        '''mark_hanging_process()'''
+        pr = problem_report.ProblemReport()
+        pr['ExecutablePath'] = '/bin/bash'
+        apport.fileutils.mark_hanging_process(pr, '1')
+        uid = str(os.getuid())
+        base = '_bin_bash.%s.1.hanging' % uid
+        expected = os.path.join(apport.fileutils.report_dir, base)
+        self.assertTrue(os.path.exists(expected))
+
+    def test_mark_report_upload(self):
+        '''mark_report_upload()'''
+        report = os.path.join(apport.fileutils.report_dir, 'report.crash')
+        apport.fileutils.mark_report_upload(report)
+        expected = os.path.join(apport.fileutils.report_dir, 'report.upload')
+        self.assertTrue(os.path.exists(expected))
 
     def test_get_all_reports(self):
         '''get_all_reports()'''

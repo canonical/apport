@@ -1,7 +1,67 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.2.4 (UNRELELASED):
+2.4 (UNRELEASED):
+-----------------
+Improvements:
+ * apport_python_hook.py: For org.freedesktop.DBus.Error.ServiceUnknown
+   exceptions, add a 'DbusErrorAnalysis' field to the report which points out
+   whether any .service file provides the service it tried to talk to, and
+   whether the processes for those are running. This helps to determine the
+   root cause for such errors (missing dependencies, broken .service files,
+   talking to the wrong bus, etc.) (LP: #1020572)
+ * hookutils.py, attach_alsa(): Use alsa-info.sh when available. Thanks David
+   Henningson.
+
+Bug fixes:
+ * ui tests, test_wait_for_pid(): Fix eternal hang when running as root.
+ * testsuite: Fix ResourceWarnings when running with Python 3.
+ * test_python_crashes.py: Fix race condition in timeout test.
+
+2.3 (2012-07-09):
+-----------------
+Improvements:
+ * launchpad.py: Rework test suite to not use Launchpad's +storeblob facility
+   at all any more. It almost never works on staging and is horribly slow. Fake
+   the bug creation from a blob by manually creating the comment and
+   attachments ourselves, and just assume that storeblob works on production.
+   Also change the structure to allow running every test individually.
+ * crash-digger: Add --crash-db option to specify a non-default crash databae
+   name. (LP: #1003506)
+ * apport-gtk: Add --hanging option to specify the process ID of a hanging
+   application. If the user chooses to report this error, apport will terminate
+   the pid with SIGABRT, otherwise it will send SIGKILL. The normal core pipe
+   handler will be used to process the resulting report file, with a .hanging
+   file in /var/crash to separate these from regular crashes.
+
+Bug fixes:
+ * apport: Also treat a binary as modified if the /proc/pid/exe symlink does
+   not point to an existing file any more. (LP: #984944)
+ * Fix PEP-8 violations picked up by latest pep8 checker.
+ * ui.py: Do not ignore certain exceptions during upload which are not likely
+   to be a network error.
+ * launchpad.py: Recongize Launchpad projects for bug query and marking
+   operations. (LP: #1003506)
+ * packaging-apt-dpkg.py: Fix get_source_tree() to work with apt sandboxes.
+ * apport-retrace: Turn StacktraceSource generation back on, now that it works
+   with the current sandboxing.
+ * launchpad.py: Ensure that upload chunk size does not underrun. (LP: #1013334)
+ * apport_python_hook: Fix UnicodeEncodeError crash with Python 2 for
+   exceptions with non-ASCII characters. (LP: #972436)
+ * test_ui_kde.py: Fix occasional test failure in test_1_crash_details if the
+   application ends before the "is progress bar visible" check is done.
+
+2.2.5 (2012-06-21):
+-------------------
+ * launchpad.py: Fix str vs. bytes crash for already known bugs, take 2. (LP: #1015788)
+ * apport/ui.py, get_desktop_entry(): Disable interpolation, to correctly read
+   desktop files with % signs. (LP: #1014341)
+ * apport/ui.py: Fix rare crash if a report is already being updated in the
+   background when the UI tries to update a previous version. (LP: #949196)
+ * GTK and KDE UI tests: Avoid eternal hangs due to "this is not a distro
+   package" error messages.
+
+2.2.4 (2012-06-21):
 --------------------
 Bug fixes:
  * test_apport_unpack.py: Fix test_unpack_python() test when running the
@@ -13,6 +73,8 @@ Bug fixes:
  * test/run: Wait for a previous xvfb server to finish before trying to start
    one. This fixes a race condition in the KDE UI tests which often failed to
    start up xvfb.
+ * apport-cli: Unbreak "keep" option. (LP: #1007826)
+ * launchpad.py: Fix str vs. bytes crash for already known bugs. (LP: #1015788)
 
 2.2.3 (2012-06-15):
 -------------------

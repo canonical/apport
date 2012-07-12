@@ -76,6 +76,9 @@ export APPORT_IGNORE_OBSOLETE_PACKAGES=1
 export LC_MESSAGES=C
 unset LANGUAGE
 
+# do not assume/disturb session bus
+unset DBUS_SESSION_BUS_ADDRESS
+
 xvfb=
 if type xvfb-run >/dev/null && [ -z "$APPORT_TEST_NOXVFB" ]; then
     xvfb=xvfb-run
@@ -109,6 +112,9 @@ for t in $TESTS; do
     else
         # ensure that non-UI modules do not require X
         prefix="env -u DISPLAY"
+    fi
+    if [ "$t" = "python_crashes" ]; then
+        prefix="dbus-launch $prefix"
     fi
     test_file="$mydir/test_${t%%.*}.py"
     if [ "$t" = "${t#*.}" ]; then

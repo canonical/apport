@@ -48,7 +48,7 @@ class T(unittest.TestCase):
         self.assertRaises(AssertionError, t.return_value)
         self.assertTrue(t.exc_info()[0] == ZeroDivisionError)
         exc = traceback.format_exception(t.exc_info()[0], t.exc_info()[1],
-            t.exc_info()[2])
+                                         t.exc_info()[2])
         self.assertTrue(exc[-1].startswith('ZeroDivisionError'), 'not a ZeroDivisionError:' + str(exc))
         self.assertTrue(exc[-2].endswith('return x / y\n'))
 

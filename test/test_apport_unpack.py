@@ -45,7 +45,7 @@ class T(unittest.TestCase):
         '''apport-unpack for all possible data types'''
 
         self.assertEqual(self._call(['apport-unpack', self.report_file, self.unpack_dir]),
-                (0, '', ''))
+                         (0, '', ''))
 
         self.assertEqual(self._get_unpack('utf8'), self.utf8_str)
         self.assertEqual(self._get_unpack('unicode'), self.utf8_str)
@@ -59,8 +59,8 @@ class T(unittest.TestCase):
         a different $PYTHON than apport-unpacks' hashbang.
         '''
         apport_unpack = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'bin', 'apport-unpack')
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'bin',
+            'apport-unpack')
         if not os.path.exists(apport_unpack):
             apport_unpack = '/usr/bin/apport-unpack'
         if not os.path.exists(apport_unpack):

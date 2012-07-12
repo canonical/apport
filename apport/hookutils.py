@@ -247,7 +247,7 @@ def attach_hardware(report):
     # Use the hardware information to create a machine type.
     if 'dmi.sys.vendor' in report and 'dmi.product.name' in report:
         report['MachineType'] = '%s %s' % (report['dmi.sys.vendor'],
-                report['dmi.product.name'])
+                                           report['dmi.product.name'])
 
     if command_available('prtconf'):
         report['Prtconf'] = command_output(['prtconf'])
@@ -261,10 +261,9 @@ def attach_hardware(report):
             report['PccardctlIdent'] = out
 
 
-def attach_alsa(report):
-    '''Attach ALSA subsystem information to the report.
-
-    (loosely based on http://www.alsa-project.org/alsa-info.sh)
+def attach_alsa_old(report):
+    ''' (loosely based on http://www.alsa-project.org/alsa-info.sh)
+    for systems where alsa-info is not installed (i e, *buntu 12.04 and earlier)
     '''
     attach_file_if_exists(report, os.path.expanduser('~/.asoundrc'),
                           'UserAsoundrc')
@@ -306,19 +305,23 @@ def attach_alsa(report):
                     key = 'Card%d.Codecs.%s.%s' % (card, path_to_key(codec), path_to_key(name))
                     attach_file(report, path, key)
 
+
+def attach_alsa(report):
+    '''Attach ALSA subsystem information to the report.
+    '''
+    if os.path.exists('/usr/share/alsa-base/alsa-info.sh'):
+        report['AlsaInfo'] = command_output(['/usr/share/alsa-base/alsa-info.sh', '--stdout', '--no-upload'])
+    else:
+        attach_alsa_old(report)
+
     report['AudioDevicesInUse'] = command_output(
-        ['fuser', '-v'] + glob.glob('/dev/dsp*')
-            + glob.glob('/dev/snd/*')
-            + glob.glob('/dev/seq*'))
+        ['fuser', '-v'] + glob.glob('/dev/dsp*') + glob.glob('/dev/snd/*') + glob.glob('/dev/seq*'))
 
     if os.path.exists('/usr/bin/pacmd'):
         report['PulseList'] = command_output(['pacmd', 'list'])
 
     attach_dmi(report)
     attach_dmesg(report)
-
-    # This seems redundant with the amixer info, do we need it?
-    #report['AlsactlStore'] = command-output(['alsactl', '-f', '-', 'store'])
 
 
 def command_available(command):
@@ -336,7 +339,7 @@ def command_available(command):
 
 
 def command_output(command, input=None, stderr=subprocess.STDOUT,
-        keep_locale=False, decode_utf8=True):
+                   keep_locale=False, decode_utf8=True):
     '''Try to execute given command (array) and return its stdout.
 
     In case of failure, a textual error gets returned. This function forces
@@ -352,7 +355,7 @@ def command_output(command, input=None, stderr=subprocess.STDOUT,
         sp = subprocess.Popen(command, stdout=subprocess.PIPE,
                               stderr=stderr,
                               stdin=(input and subprocess.PIPE or None),
-                              close_fds=True, env=env)
+                              env=env)
     except OSError as e:
         return 'Error: ' + str(e)
 
@@ -360,8 +363,8 @@ def command_output(command, input=None, stderr=subprocess.STDOUT,
     if sp.returncode == 0:
         res = out.strip()
     else:
-        res = b'Error: command ' + str(command).encode() + b' failed with exit code ' \
-                + str(sp.returncode).encode() + b': ' + out
+        res = (b'Error: command ' + str(command).encode() + b' failed with exit code '
+               + str(sp.returncode).encode() + b': ' + out)
 
     if decode_utf8:
         res = res.decode('UTF-8', errors='replace')
@@ -373,16 +376,16 @@ def _root_command_prefix():
         prefix = []
     elif os.getenv('DISPLAY') and \
             subprocess.call(['which', 'kdesudo'], stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE) == 0 and \
+                            stderr=subprocess.PIPE) == 0 and \
             subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'ksmserver'],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
         prefix = ['kdesudo', '--desktop', '/usr/share/applications/apport-kde-mime.desktop',
                   '--', 'env', '-u', 'LANGUAGE', 'LC_MESSAGES=C']
     elif os.getenv('DISPLAY') and \
             subprocess.call(['which', 'gksu'], stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE) == 0 and \
+                            stderr=subprocess.PIPE) == 0 and \
             subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'gnome-panel|gconfd-2'],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
         prefix = ['gksu', '-D', 'Apport', '--', 'env', '-u', 'LANGUAGE', 'LC_MESSAGES=C']
     else:
         prefix = ['sudo', 'LC_MESSAGES=C', 'LANGUAGE=']
@@ -401,9 +404,9 @@ def root_command_output(command, input=None, stderr=subprocess.STDOUT, decode_ut
     If decode_utf8 is True (default), the output will be converted to a string,
     otherwise left as bytes.
     '''
-    assert type(command) == type([]), 'command must be a list'
+    assert isinstance(command, list), 'command must be a list'
     return command_output(_root_command_prefix() + command, input, stderr,
-            keep_locale=True, decode_utf8=decode_utf8)
+                          keep_locale=True, decode_utf8=decode_utf8)
 
 
 def attach_root_command_outputs(report, command_map):
@@ -433,8 +436,7 @@ def attach_root_command_outputs(report, command_map):
         script.close()
 
         # run script
-        sp = subprocess.Popen(_root_command_prefix() + ['/bin/sh', script_path],
-            close_fds=True)
+        sp = subprocess.Popen(_root_command_prefix() + ['/bin/sh', script_path])
         sp.wait()
 
         # now read back the individual outputs
@@ -465,7 +467,7 @@ def recent_logfile(logfile, pattern, maxlines=10000):
     lines = ''
     try:
         tail = subprocess.Popen(['tail', '-n', str(maxlines), logfile],
-                stdout=subprocess.PIPE)
+                                stdout=subprocess.PIPE)
         while tail.poll() is None:
             for line in tail.stdout:
                 line = line.decode('UTF-8', errors='replace')
@@ -584,7 +586,7 @@ def attach_gsettings_schema(report, schema):
     env = os.environ.copy()
     env['XDG_CONFIG_HOME'] = '/nonexisting'
     gsettings = subprocess.Popen(['gsettings', 'list-recursively', schema],
-            env=env, stdout=subprocess.PIPE)
+                                 env=env, stdout=subprocess.PIPE)
     for l in gsettings.stdout:
         try:
             (schema, key, value) = l.split(None, 2)
@@ -594,7 +596,7 @@ def attach_gsettings_schema(report, schema):
         defaults.setdefault(schema, {})[key] = value
 
     gsettings = subprocess.Popen(['gsettings', 'list-recursively', schema],
-            stdout=subprocess.PIPE)
+                                 stdout=subprocess.PIPE)
     for l in gsettings.stdout:
         try:
             (schema, key, value) = l.split(None, 2)
@@ -611,8 +613,7 @@ def attach_gsettings_schema(report, schema):
 def attach_gsettings_package(report, package):
     '''Attach user-modified gsettings keys of all schemas in a package.'''
 
-    for schema_file in files_in_package(package,
-            '/usr/share/glib-2.0/schemas/*.gschema.xml'):
+    for schema_file in files_in_package(package, '/usr/share/glib-2.0/schemas/*.gschema.xml'):
         schema = os.path.basename(schema_file)[:-12]
         attach_gsettings_schema(report, schema)
 
@@ -634,10 +635,11 @@ def attach_wifi(report):
     '''Attach wireless (WiFi) network information to report.'''
 
     report['WifiSyslog'] = recent_syslog(re.compile(r'(NetworkManager|modem-manager|dhclient|kernel|wpa_supplicant)(\[\d+\])?:'))
-    report['IwConfig'] = re.sub('ESSID:(.*)', 'ESSID:<hidden>',
+    report['IwConfig'] = re.sub(
+        'ESSID:(.*)', 'ESSID:<hidden>',
         re.sub('Encryption key:(.*)', 'Encryption key: <hidden>',
-        re.sub('Access Point: (.*)', 'Access Point: <hidden>',
-            command_output(['iwconfig']))))
+               re.sub('Access Point: (.*)', 'Access Point: <hidden>',
+                      command_output(['iwconfig']))))
     report['RfKill'] = command_output(['rfkill', 'list'])
     report['CRDA'] = command_output(['iw', 'reg', 'get'])
 
@@ -778,7 +780,7 @@ def _get_module_license(module):
 
     try:
         modinfo = subprocess.Popen(['/sbin/modinfo', module],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = modinfo.communicate()[0].decode('UTF-8')
         if modinfo.returncode != 0:
             return 'invalid'
@@ -865,13 +867,15 @@ def in_session_of_problem(report):
 
     try:
         bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
-        ck_manager = Gio.DBusProxy.new_sync(bus, Gio.DBusProxyFlags.NONE, None,
+        ck_manager = Gio.DBusProxy.new_sync(
+            bus, Gio.DBusProxyFlags.NONE, None,
             'org.freedesktop.ConsoleKit', '/org/freedesktop/ConsoleKit/Manager',
             'org.freedesktop.ConsoleKit.Manager', None)
 
         cur_session = ck_manager.GetCurrentSession()
 
-        ck_session = Gio.DBusProxy.new_sync(bus, Gio.DBusProxyFlags.NONE, None,
+        ck_session = Gio.DBusProxy.new_sync(
+            bus, Gio.DBusProxyFlags.NONE, None,
             'org.freedesktop.ConsoleKit', cur_session,
             'org.freedesktop.ConsoleKit.Session', None)
 
@@ -880,8 +884,7 @@ def in_session_of_problem(report):
         sys.stderr.write('Error connecting to ConsoleKit: %s\n' % str(e))
         return None
 
-    m = re.match('(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d)(?:\.\d+Z)$',
-            session_start_time)
+    m = re.match('(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d)(?:\.\d+Z)$', session_start_time)
     if m:
         # CK gives UTC time
         session_start_time = calendar.timegm(time.strptime(m.group(1), '%Y-%m-%dT%H:%M:%S'))

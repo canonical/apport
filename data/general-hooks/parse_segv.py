@@ -20,7 +20,7 @@ class ParseSegv(object):
         if debug:
             if sys.version > '3':
                 logging.basicConfig(level=logging.DEBUG,
-                        stream=io.TextIOWrapper(sys.stderr, encoding='UTF-8'))
+                                    stream=io.TextIOWrapper(sys.stderr, encoding='UTF-8'))
             else:
                 logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 
@@ -143,7 +143,7 @@ class ParseSegv(object):
     def validate_vma(self, perm, addr, name):
         perm_name = {'x': ['executable', 'executing'], 'r': ['readable', 'reading'], 'w': ['writable', 'writing']}
         vma = self.find_vma(addr)
-        if vma == None:
+        if vma is None:
             alarmist = 'unknown'
             if addr < 65536:
                 alarmist = 'NULL'
@@ -309,8 +309,8 @@ class ParseSegv(object):
             understood = True
 
         # Note position of SP with regard to "[stack]" VMA
-        if self.sp != None:
-            if self.stack_vma != None:
+        if self.sp is not None:
+            if self.stack_vma is not None:
                 if self.sp < self.maps[self.stack_vma]['start']:
                     details.append("Stack memory exhausted (SP below stack segment)")
                 if self.sp >= self.maps[self.stack_vma]['end']:
@@ -365,8 +365,8 @@ if __name__ == '__main__':
         print('  Usage: %s Registers.txt Disassembly.txt ProcMaps.txt' % (sys.argv[0]))
         sys.exit(0)
 
-    segv = ParseSegv(open(sys.argv[1]).read(), \
-                     open(sys.argv[2]).read(), \
+    segv = ParseSegv(open(sys.argv[1]).read(),
+                     open(sys.argv[2]).read(),
                      open(sys.argv[3]).read())
     understood, reason, details = segv.report()
     print('%s\n\n%s' % (reason, details))

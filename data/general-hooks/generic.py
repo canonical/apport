@@ -23,8 +23,7 @@ def add_info(report, ui):
     # check for low space
     mounts = {'/': 'system',
               '/var': '/var',
-              '/tmp': '/tmp',
-             }
+              '/tmp': '/tmp'}
 
     home = os.getenv('HOME')
     if home:
@@ -43,10 +42,10 @@ and installing updates. Please free some space.' % (mounts[mount], free_mb)
     # important glib errors/assertions (which should not have private data)
     if 'ExecutablePath' in report:
         path = report['ExecutablePath']
-        if (apport.hookutils.links_with_shared_library(path, 'libgtk') or
-            apport.hookutils.links_with_shared_library(path, 'libgtk-3') or
-            apport.hookutils.links_with_shared_library(path, 'libX11')) and \
-           apport.hookutils.in_session_of_problem(report):
+        gtk_like = (apport.hookutils.links_with_shared_library(path, 'libgtk') or
+                    apport.hookutils.links_with_shared_library(path, 'libgtk-3') or
+                    apport.hookutils.links_with_shared_library(path, 'libX11'))
+        if gtk_like and apport.hookutils.in_session_of_problem(report):
             xsession_errors = apport.hookutils.xsession_errors()
             if xsession_errors:
                 report['XsessionErrors'] = xsession_errors
@@ -79,13 +78,13 @@ Do you want to continue the report process anyway?
         report['EcryptfsInUse'] = 'Yes'
 
     # filter out crashes on missing GLX (LP#327673)
-    if '/usr/lib/libGL.so' in (report.get('StacktraceTop') or '\n').splitlines()[0] \
-        and 'Loading extension GLX' not in apport.hookutils.read_file('/var/log/Xorg.0.log'):
-            report['UnreportableReason'] = 'The X.org server does not support the GLX extension, which the crashed program expected to use.'
+    in_gl = '/usr/lib/libGL.so' in (report.get('StacktraceTop') or '\n').splitlines()[0]
+    if in_gl and 'Loading extension GLX' not in apport.hookutils.read_file('/var/log/Xorg.0.log'):
+        report['UnreportableReason'] = 'The X.org server does not support the GLX extension, which the crashed program expected to use.'
     # filter out package install failures due to a segfault
     if 'Segmentation fault' in report.get('ErrorMessage', '') \
-        and report['ProblemType'] == 'Package':
-            report['UnreportableReason'] = 'The package installation resulted in a segmentation fault which is better reported as a crash report rather than a package install failure.'
+            and report['ProblemType'] == 'Package':
+        report['UnreportableReason'] = 'The package installation resulted in a segmentation fault which is better reported as a crash report rather than a package install failure.'
 
 
 if __name__ == '__main__':

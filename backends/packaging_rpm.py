@@ -42,7 +42,7 @@ class RPMPackageInfo:
     def get_version(self, package):
         '''Return the installed version of a package.'''
         hdr = self._get_header(package)
-        if hdr == None:
+        if hdr is None:
             raise ValueError
         # Note - "version" here seems to refer to the full EVR, so..
         if not hdr['e']:
@@ -142,7 +142,7 @@ class RPMPackageInfo:
         '''Return the architecture of the system, in the notation used by the
         particular distribution.'''
         rpmarch = subprocess.Popen(['rpm', '--eval', '%_target_cpu'],
-                stdout=subprocess.PIPE)
+                                   stdout=subprocess.PIPE)
         arch = rpmarch.communicate()[0].strip()
         return arch
 

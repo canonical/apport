@@ -23,9 +23,10 @@ class T(unittest.TestCase):
         crashdb_conf = os.path.join(self.workdir, 'crashdb.conf')
         with open(crashdb_conf, 'w') as f:
             f.write('''default = 'memory'
-databases = { 'memory': {
-    'impl': 'memory', 'distro': 'Testux', 'dummy_data': '1',
-    'dupdb_url': '%s'}
+databases = {
+    'memory': {'impl': 'memory', 'distro': 'Testux', 'dummy_data': '1',
+               'dupdb_url': '%s'},
+    'empty': {'impl': 'memory', 'distro': 'Foonux'},
 }''' % os.path.join(self.workdir, 'dupdb'))
 
         self.config_dir = os.path.join(self.workdir, 'config')
@@ -61,8 +62,8 @@ echo "$@" >> %s''' % self.apport_retrace_log)
         Return a pair (stdout, stderr).
         '''
         s = subprocess.Popen(['crash-digger', '--apport-retrace',
-            self.apport_retrace] + args, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+                              self.apport_retrace] + args, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
         (out, err) = s.communicate()
         return (out.decode('UTF-8'), err.decode('UTF-8'))
 
@@ -70,7 +71,7 @@ echo "$@" >> %s''' % self.apport_retrace_log)
         '''Crash retracing'''
 
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assertTrue("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
         self.assertTrue('retracing #0' in out)
@@ -108,7 +109,7 @@ fi
         os.chmod(self.apport_retrace, 0o755)
 
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertTrue('Traceback' in err)
         self.assertTrue('SystemError: retracing #1 failed' in err)
         self.assertTrue("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
@@ -134,7 +135,7 @@ fi
 
         # subsequent start should not do anything until the lock file is cleaned up
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertEqual(out, '')
         self.assertEqual(err, '')
 
@@ -142,7 +143,7 @@ fi
 
         # now it should run again
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertTrue('retracing #2' in out)
         self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assertFalse(os.path.exists(self.lock_file))
@@ -164,7 +165,7 @@ fi
         os.chmod(self.apport_retrace, 0o755)
 
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertTrue("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
         self.assertTrue('retracing #0' in out)
         self.assertTrue('retracing #1' in out)
@@ -183,7 +184,7 @@ fi
         '''Duplicate checking'''
 
         (out, err) = self.call(['-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vDl', self.lock_file])
+                                os.path.join(self.workdir, 'dup.db'), '-vDl', self.lock_file])
         self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assertFalse('#1' in out, 'signal crashes are not retraced')
         self.assertFalse('#2' in out, 'signal crashes are not retraced')
@@ -200,7 +201,7 @@ fi
             f.write('''#!/bin/sh
 echo ApportRetraceError >&2''')
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
+                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assertTrue('ApportRetraceError' in out)
 
@@ -208,11 +209,29 @@ echo ApportRetraceError >&2''')
         '''Duplicate database publishing'''
 
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-            os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file,
-            '--publish-db', os.path.join(self.workdir, 'dupdb')])
+                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file,
+                                '--publish-db', os.path.join(self.workdir, 'dupdb')])
         self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assertTrue('retracing #0' in out)
 
         self.assertTrue(os.path.isdir(os.path.join(self.workdir, 'dupdb', 'sig')))
+
+    def test_alternate_crashdb(self):
+        '''Alternate crash database name'''
+
+        # existing DB "empty" has no crashes
+        (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero',
+                                '-vl', self.lock_file, '--crash-db', 'empty'])
+        self.assertEqual(err, '', 'no error messages:\n' + err)
+        self.assertFalse('retracing #' in out)
+        self.assertFalse('crash is' in out)
+        self.assertFalse('failed with status' in out)
+
+        # nonexisting DB
+        (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero',
+                                '-vl', self.lock_file, '--crash-db', 'nonexisting'])
+        self.assertEqual(out, '', 'no output messages:\n' + out)
+        self.assertFalse('Traceback' in err, err)
+        self.assertTrue('nonexisting' in err, err)
 
 unittest.main()

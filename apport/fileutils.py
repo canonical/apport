@@ -65,7 +65,7 @@ def likely_packaged(file):
     database.
     '''
     pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
-    '/usr/', '/var']  # packages only ship executables in these directories
+                     '/usr/', '/var']  # packages only ship executables in these directories
 
     whitelist_match = False
     for i in pkg_whitelist:
@@ -103,6 +103,19 @@ def seen_report(report):
 def mark_report_upload(report):
     report = '%s.upload' % report.rsplit('.', 1)[0]
     with open(report, 'a'):
+        pass
+
+
+def mark_hanging_process(report, pid):
+    if 'ExecutablePath' in report:
+        subject = report['ExecutablePath'].replace('/', '_')
+    else:
+        raise ValueError('report does not have the ExecutablePath attribute')
+
+    uid = os.getuid()
+    base = '%s.%s.%s.hanging' % (subject, str(uid), pid)
+    path = os.path.join(report_dir, base)
+    with open(path, 'a'):
         pass
 
 
@@ -257,8 +270,8 @@ def check_files_md5(sumfile):
     '''
     assert os.path.exists(sumfile)
     m = subprocess.Popen(['/usr/bin/md5sum', '-c', sumfile],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True,
-        cwd='/', env={})
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         cwd='/', env={})
     out = m.communicate()[0].decode()
 
     # if md5sum succeeded, don't bother parsing the output

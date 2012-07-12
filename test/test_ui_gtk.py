@@ -46,6 +46,8 @@ class T(unittest.TestCase):
         self.report_dir = tempfile.mkdtemp()
         apport.fileutils.report_dir = self.report_dir
         os.environ['APPORT_REPORT_DIR'] = self.report_dir
+        # do not cause eternal hangs because of error dialog boxes
+        os.environ['APPORT_DISABLE_DISTRO_CHECK'] = '1'
 
         saved = sys.argv[0]
         # Work around GTKUserInterface using basename to find the GtkBuilder UI
@@ -101,10 +103,9 @@ class T(unittest.TestCase):
         self.app.report['ProblemType'] = 'KernelCrash'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
-            self.distro)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('Sorry, %s has experienced an internal error.') % self.distro)
+                         _('Sorry, %s has experienced an internal error.') % self.distro)
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
@@ -131,10 +132,9 @@ class T(unittest.TestCase):
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
-            self.distro)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('Sorry, a problem occurred while installing software.'))
+                         _('Sorry, a problem occurred while installing software.'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
@@ -170,10 +170,9 @@ Type=Application''')
             self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
-            self.distro)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('The application Apport has closed unexpectedly.'))
+                         _('The application Apport has closed unexpectedly.'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
@@ -212,10 +211,9 @@ Type=Application''')
             self.app.report['DesktopFile'] = fp.name
             GLib.idle_add(Gtk.main_quit)
             self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
-            self.distro)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('The application Apport has closed unexpectedly.'))
+                         _('The application Apport has closed unexpectedly.'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
@@ -228,6 +226,44 @@ Type=Application''')
         self.assertTrue(self.app.w('ignore_future_problems').get_property('visible'))
         self.assertTrue(self.app.w('ignore_future_problems').get_label().endswith(
             'of this program version'))
+
+    def test_hang_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ apport ] The application Apport has stopped responding.       |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                 [ Force Closed ]  [ Relaunch ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.app.report['ProblemType'] = 'Hang'
+        self.app.report['ProcCmdline'] = 'apport-bug apport'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write(b'''[Desktop Entry]
+Version=1.0
+Name=Apport
+Type=Application''')
+            fp.flush()
+            self.app.report['DesktopFile'] = fp.name
+            GLib.idle_add(Gtk.main_quit)
+            self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
+        self.assertEqual(self.app.w('title_label').get_text(),
+                         _('The application Apport has stopped responding.'))
+        send_error_report = self.app.w('send_error_report')
+        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(),
+                         _('Relaunch'))
+        self.assertTrue(self.app.w('closed_button').get_property('visible'))
+        self.assertEqual(self.app.w('closed_button').get_label(),
+                         _('Force Closed'))
+        self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
+        self.assertFalse(self.app.w('ignore_future_problems').get_property('visible'))
 
     def test_system_crash_layout(self):
         '''
@@ -247,12 +283,11 @@ Type=Application''')
         self.app.report['Package'] = 'bash 5'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
-            self.distro)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('Sorry, %s has experienced an internal error.') % self.distro)
+                         _('Sorry, %s has experienced an internal error.') % self.distro)
         self.assertEqual(self.app.w('subtitle_label').get_text(),
-            _('If you notice further problems, try restarting the computer.'))
+                         _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
@@ -281,19 +316,18 @@ Type=Application''')
         self.app.report['ProblemType'] = 'Crash'
         self.app.report['Package'] = 'bash 5'
         self.app.report['ProcEnviron'] = ('LANGUAGE=en_GB:en\n'
-                                      'SHELL=/bin/sh\n'
-                                      'TERM=xterm')
+                                          'SHELL=/bin/sh\n'
+                                          'TERM=xterm')
         self.app.report['ExecutablePath'] = '/usr/bin/apport'
         # This will be set by apport/ui.py in load_report()
         self.app.cur_package = 'apport'
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
-        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
-            self.distro)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('Sorry, the application apport has closed unexpectedly.'))
+                         _('Sorry, the application apport has closed unexpectedly.'))
         self.assertEqual(self.app.w('subtitle_label').get_text(),
-            _('If you notice further problems, try restarting the computer.'))
+                         _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
@@ -308,7 +342,7 @@ Type=Application''')
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('Sorry, apport has closed unexpectedly.'))
+                         _('Sorry, apport has closed unexpectedly.'))
 
         # no crash counter
         self.assertFalse(self.app.w('ignore_future_problems').get_property('visible'))
@@ -355,7 +389,7 @@ Type=Application''')
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
-            _('Send problem report to the developers?'))
+                         _('Send problem report to the developers?'))
         self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
         send_error_report = self.app.w('send_error_report')
         self.assertFalse(send_error_report.get_property('visible'))
@@ -432,7 +466,7 @@ Type=Application''')
 
         def check_progress(*args):
             self.visible_progress = self.app.w(
-                    'window_information_collection').get_property('visible')
+                'window_information_collection').get_property('visible')
             return False
 
         GLib.timeout_add_seconds(1, cont)
@@ -486,7 +520,7 @@ Type=Application''')
 
         def check_progress(*args):
             self.visible_progress = self.app.w(
-                    'window_information_collection').get_property('visible')
+                'window_information_collection').get_property('visible')
             return False
 
         GLib.timeout_add(200, show_details)
@@ -528,7 +562,7 @@ Type=Application''')
 
         def check_progress(*args):
             self.visible_progress = self.app.w(
-                    'window_information_collection').get_property('visible')
+                'window_information_collection').get_property('visible')
             return False
 
         GLib.timeout_add_seconds(1, cont)
@@ -562,8 +596,7 @@ Type=Application''')
 
         # remove the crash from setUp() and create a kernel oops
         os.remove(self.app.report_file)
-        kernel_oops = subprocess.Popen([kernel_oops_path],
-                stdin=subprocess.PIPE)
+        kernel_oops = subprocess.Popen([kernel_oops_path], stdin=subprocess.PIPE)
         kernel_oops.communicate(b'Plasma conduit phase misalignment')
         self.assertEqual(kernel_oops.returncode, 0)
 
@@ -620,7 +653,7 @@ Type=Application''')
 
         self.assertEqual(self.app.report['ProblemType'], 'Bug')
         self.assertEqual(self.app.report['SourcePackage'],
-                apport.packaging.get_source(pkg))
+                         apport.packaging.get_source(pkg))
         self.assertEqual(self.app.report['Package'], '%s (not installed)' % pkg)
 
     @patch.object(GTKUserInterface, 'open_url')
@@ -671,9 +704,9 @@ Type=Application''')
         kernel_pkg = apport.packaging.get_kernel_package()
         kernel_src = apport.packaging.get_source(kernel_pkg)
         self.assertNotEqual(kernel_pkg, kernel_src,
-                'this test assumes that the kernel binary package != kernel source package')
+                            'this test assumes that the kernel binary package != kernel source package')
         self.assertNotEqual(apport.packaging.get_version(kernel_pkg), '',
-                'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
+                            'this test assumes that the kernel binary package %s is installed' % kernel_pkg)
         # this test assumes that the kernel source package name is not an
         # installed binary package
         self.assertRaises(ValueError, apport.packaging.get_version, kernel_src)

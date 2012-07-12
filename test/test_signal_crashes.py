@@ -16,7 +16,8 @@ test_package = 'coreutils'
 test_source = 'coreutils'
 
 required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
-    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal', 'UserGroups']
+                   'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal',
+                   'UserGroups']
 
 ifpath = os.path.expanduser(apport.report._ignore_file)
 
@@ -40,8 +41,9 @@ class T(unittest.TestCase):
         os.chdir('/tmp')
 
         # expected report name for test executable report
-        self.test_report = os.path.join(apport.fileutils.report_dir,
-                '%s.%i.crash' % (test_executable.replace('/', '_'), os.getuid()))
+        self.test_report = os.path.join(
+            apport.fileutils.report_dir, '%s.%i.crash' %
+            (test_executable.replace('/', '_'), os.getuid()))
 
     def tearDown(self):
         shutil.rmtree(self.report_dir)
@@ -65,9 +67,10 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         try:
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
-                close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             app.stdin.close()
             assert app.wait() == 0, app.stderr.read()
+            app.stderr.close()
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
@@ -82,8 +85,7 @@ class T(unittest.TestCase):
         # check crash report
         self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
         st = os.stat(self.test_report)
-        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640,
-                'report has correct permissions')
+        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
 
         # a subsequent crash does not alter unseen report
         self.do_crash()
@@ -100,28 +102,29 @@ class T(unittest.TestCase):
         with open(self.test_report, 'rb') as f:
             pr.load(f)
         self.assertTrue(set(required_fields).issubset(set(pr.keys())),
-                'report has required fields')
+                        'report has required fields')
         self.assertEqual(pr['ExecutablePath'], test_executable)
         self.assertEqual(pr['ProcCmdline'], test_executable)
         self.assertEqual(pr['Signal'], '%i' % signal.SIGSEGV)
 
         # check safe environment subset
         allowed_vars = ['SHELL', 'PATH', 'LANGUAGE', 'LANG', 'LC_CTYPE',
-            'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MESSAGES',
-            'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT',
-            'LC_IDENTIFICATION', 'LOCPATH', 'TERM']
+                        'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY',
+                        'LC_MESSAGES', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS',
+                        'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION',
+                        'LOCPATH', 'TERM']
 
         for l in pr['ProcEnviron'].splitlines():
             (k, v) = l.split('=', 1)
             self.assertTrue(k in allowed_vars,
-                    'report contains sensitive environment variable %s' % k)
+                            'report contains sensitive environment variable %s' % k)
 
         # UserGroups only has system groups
         for g in pr['UserGroups'].split():
             self.assertLess(grp.getgrnam(g).gr_gid, 500)
 
         self.assertFalse('root' in pr['UserGroups'],
-                'collected system groups are not those from root')
+                         'collected system groups are not those from root')
 
     def test_parallel_crash(self):
         '''only one apport instance is ran at a time'''
@@ -130,12 +133,12 @@ class T(unittest.TestCase):
         test_proc2 = self.create_test_process(False, '/bin/dd')
         try:
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
-                close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
             time.sleep(0.5)  # give it some time to grab the lock
 
             app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0'],
-                close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
             # app should wait indefinitely for stdin, while app2 should terminate
             # immediately (give it 5 seconds)
@@ -152,10 +155,12 @@ class T(unittest.TestCase):
 
             # properly terminate app and app2
             app2.stdin.close()
+            app2.stderr.close()
             app.stdin.write(b'boo')
             app.stdin.close()
 
             self.assertEqual(app.wait(), 0, app.stderr.read())
+            app.stderr.close()
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
@@ -177,11 +182,12 @@ class T(unittest.TestCase):
 
         try:
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
-                close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             app.stdin.write(b'boo')
             app.stdin.close()
 
             self.assertNotEqual(app.wait(), 0, app.stderr.read())
+            app.stderr.close()
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)
@@ -233,7 +239,7 @@ class T(unittest.TestCase):
         self.do_crash(check_running=False, command=local_exe, sleep=2)
 
         leak = os.path.join(apport.fileutils.report_dir, '_usr_bin_perl.%i.crash' %
-            (os.getuid()))
+                            (os.getuid()))
         pr = apport.Report()
         with open(leak, 'rb') as f:
             pr.load(f)
@@ -363,7 +369,7 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         try:
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
-                close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             # pipe an entire total memory size worth of spaces into it, which must be
             # bigger than the 'usable' memory size. apport should digest that and the
             # report should not have a core dump; NB that this should error out
@@ -383,6 +389,7 @@ class T(unittest.TestCase):
                 totalmb -= 1
             app.stdin.close()
             self.assertEqual(app.wait(), 0, app.stderr.read())
+            app.stderr.close()
             onemb = None
         finally:
             os.kill(test_proc, 9)
@@ -441,11 +448,12 @@ class T(unittest.TestCase):
                 os.utime(myexe, None)
 
                 app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
-                    close_fds=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                                       stdin=subprocess.PIPE, stderr=subprocess.PIPE)
                 app.stdin.write(b'boo')
                 app.stdin.close()
                 err = app.stderr.read().decode()
                 self.assertNotEqual(app.wait(), 0, err)
+                app.stderr.close()
             finally:
                 os.kill(test_proc, 9)
                 os.waitpid(test_proc, 0)
@@ -463,7 +471,7 @@ class T(unittest.TestCase):
             env = os.environ.copy()
             env['APPORT_LOG_FILE'] = log
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
-                                   close_fds=True, stdin=subprocess.PIPE, env=env,
+                                   stdin=subprocess.PIPE, env=env,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    universal_newlines=True)
             (out, err) = app.communicate(b'hel\x01lo')
@@ -500,7 +508,7 @@ class T(unittest.TestCase):
             env = os.environ.copy()
             env['APPORT_LOG_FILE'] = '/not/existing/apport.log'
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
-                                   close_fds=True, stdin=subprocess.PIPE, env=env,
+                                   stdin=subprocess.PIPE, env=env,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    universal_newlines=True)
             (out, err) = app.communicate(b'hel\x01lo')
@@ -587,22 +595,25 @@ class T(unittest.TestCase):
         # wait max 10 seconds for apport to finish
         timeout = 50
         while timeout >= 0:
-            if subprocess.call(['pidof', '-x', 'apport'], stdout=subprocess.PIPE) != 0:
+            pidof = subprocess.Popen(['pidof', '-x', 'apport'], stdout=subprocess.PIPE)
+            pidof.communicate()
+            if pidof.returncode != 0:
                 break
             time.sleep(0.2)
             timeout -= 1
         self.assertGreater(timeout, 0)
         if check_running:
             self.assertEqual(subprocess.call(['pidof', command]), 1,
-                    'no running test executable processes')
+                             'no running test executable processes')
 
         if expect_corefile:
             self.assertTrue(os.path.exists('/tmp/core'), 'leaves wanted core file')
             try:
                 # check that core file is valid
                 gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'bt',
-                    command, '/tmp/core'], stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE)
+                                        command, '/tmp/core'],
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE)
                 (out, err) = gdb.communicate()
                 self.assertEqual(gdb.returncode, 0)
                 out = out.decode()
@@ -634,7 +645,7 @@ class T(unittest.TestCase):
         self.assertGreater(len(r['CoreDump']), 5000)
         r.add_gdb_info()
         self.assertTrue('\n#2' in r.get('Stacktrace', ''),
-                r.get('Stacktrace', 'no Stacktrace field'))
+                        r.get('Stacktrace', 'no Stacktrace field'))
 
 #
 # main
@@ -649,7 +660,7 @@ apport_path = core_pattern[1:].split()[0]
 
 if apport.fileutils.get_all_reports():
     sys.stderr.write('Please remove all crash reports from /var/crash/ for this test suite:\n  %s\n' %
-            '\n  '.join(os.listdir('/var/crash')))
+                     '\n  '.join(os.listdir('/var/crash')))
     sys.exit(1)
 
 unittest.main()
