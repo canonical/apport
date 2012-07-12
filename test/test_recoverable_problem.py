@@ -66,6 +66,10 @@ class T(unittest.TestCase):
                           self.call_recoverable_problem,
                           'hello\0there\0extraneous')
 
+        self.assertRaises(subprocess.CalledProcessError,
+                          self.call_recoverable_problem,
+                          'hello\0\0there')
+
 
 with open('/proc/sys/kernel/core_pattern') as f:
     core_pattern = f.read().strip()
