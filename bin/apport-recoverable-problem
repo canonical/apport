@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+
+import apport.report
+import sys
+import os
+
+def main():
+    report = apport.report.Report('RecoverableProblem')
+    items = sys.stdin.read().split('\0')
+    if len(items) % 2 != 0:
+        return
+
+    while items:
+        key = items.pop(0)
+        if not items:
+            break
+        value = items.pop(0)
+        report[key] = value
+
+    report.pid = os.getppid()
+    if not report.pid:
+        return
+    report.add_os_info()
+    report.add_proc_info(report.pid)
+    report.add_user_info()
+    with open(apport.fileutils.make_report_path(report), 'wb') as fp:
+        report.write(fp)
+
+if __name__ == '__main__':
+    main()
