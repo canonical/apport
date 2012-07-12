@@ -223,7 +223,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 icon = self.desktop_info.get('icon')
                 n = self.desktop_info['name']
                 n = GLib.markup_escape_text(n)
-                if report_type == 'RecoverableCrash':
+                if report_type == 'RecoverableProblem':
                     t = _('The application %s has experienced '
                           'an internal error.') % n
                 else:
@@ -240,7 +240,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                     self.w('continue_button').set_label(_('Continue'))
             else:
                 icon = 'distributor-logo'
-                if report_type == 'RecoverableCrash':
+                if report_type == 'RecoverableProblem':
                     title_text = _('The application %s has experienced '
                                    'an internal error.') % self.cur_package
                 else:
@@ -259,7 +259,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 self.w('ignore_future_problems').hide()
 
-            if report_type == 'RecoverableCrash':
+            if report_type == 'RecoverableProblem':
                 body = self.report.get('DialogBody', '')
                 if body:
                     del self.report['DialogBody']

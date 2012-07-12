@@ -294,7 +294,7 @@ Type=Application''')
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
         '''
-        self.app.report['ProblemType'] = 'RecoverableCrash'
+        self.app.report['ProblemType'] = 'RecoverableProblem'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
         self.app.report['DialogBody'] = 'Some developer-specified error text.'
 

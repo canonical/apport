@@ -193,7 +193,7 @@ class ReportDialog(Dialog):
             # Regular crash.
             if desktop_info:
                 icon = desktop_info.get('icon')
-                if report_type == 'RecoverableCrash':
+                if report_type == 'RecoverableProblem':
                     self.heading.setText(_('The application %s has experienced '
                                            'an internal error.') %
                                            desktop_info['name'])
@@ -224,7 +224,7 @@ class ReportDialog(Dialog):
             else:
                 self.ignore_future_problems.hide()
 
-            if report_type == 'RecoverableCrash':
+            if report_type == 'RecoverableProblem':
                 body = report.get('DialogBody', '')
                 if body:
                     del report['DialogBody']
