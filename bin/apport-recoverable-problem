@@ -8,7 +8,7 @@ def main():
     report = apport.report.Report('RecoverableProblem')
     items = sys.stdin.read().split('\0')
     if len(items) % 2 != 0:
-        return
+        sys.exit(1)
 
     while items:
         key = items.pop(0)
@@ -19,7 +19,7 @@ def main():
 
     report.pid = os.getppid()
     if not report.pid:
-        return
+        sys.exit(1)
     report.add_os_info()
     report.add_proc_info(report.pid)
     report.add_user_info()
