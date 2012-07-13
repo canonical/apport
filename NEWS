@@ -29,6 +29,8 @@ Bug fixes:
  * apport-retrace: Fix StacktraceSource generation for relative --cache paths.
  * crashdb.py, check_duplicate(): Do not try to mark a bug as duplicate of
    itself. This can happen when re-processing a previously retraced bug.
+ * apport-retrace: Fix UnicodeDecodeError when encountering a non-ASCII source
+   code file and running under a non-UTF-8 locale.
 
 2.3 (2012-07-09):
 -----------------
