@@ -17,6 +17,7 @@ Bug fixes:
  * ui tests, test_wait_for_pid(): Fix eternal hang when running as root.
  * testsuite: Fix ResourceWarnings when running with Python 3.
  * test_python_crashes.py: Fix race condition in timeout test.
+ * launchpad.py: Fix setting of 'Medium' importance on duplicate checking.
 
 2.3 (2012-07-09):
 -----------------

@@ -820,7 +820,7 @@ in a dependent package.' % master,
             bug.lp_save()
             if 'Traceback' in report:
                 for task in bug.bug_tasks:
-                    if task.target.resource_type_link.endswith('#distribution'):
+                    if '#distribution' in task.target.resource_type_link:
                         if task.importance == 'Undecided':
                             task.importance = 'Medium'
                             task.lp_save()
@@ -1863,7 +1863,8 @@ NameError: global name 'weird' is not defined'''
             t.lp_save()
             b.addTask(target=self.crashdb.launchpad.projects['coreutils'])
 
-            self.crashdb._mark_dup_checked(self.get_python_report(), self.ref_report)
+            r = self.crashdb.download(self.get_python_report())
+            self.crashdb._mark_dup_checked(self.get_python_report(), r)
 
             unchecked_after = self.crashdb.get_dup_unchecked()
             self.assertFalse(self.get_python_report() in unchecked_after)
@@ -1874,10 +1875,12 @@ NameError: global name 'weird' is not defined'''
             b = self.crashdb.launchpad.bugs[self.get_python_report()]
             self.assertEqual(b.bug_tasks[0].bug_target_name, 'coreutils')
             self.assertEqual(b.bug_tasks[0].status, 'New')
+            self.assertEqual(b.bug_tasks[0].importance, 'Undecided')
 
             # package-less distro task should have package name fixed
             self.assertEqual(b.bug_tasks[1].bug_target_name, 'coreutils (Ubuntu)')
             self.assertEqual(b.bug_tasks[1].status, 'New')
+            self.assertEqual(b.bug_tasks[1].importance, 'Medium')
 
             # should not confuse get_fixed_version()
             self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
