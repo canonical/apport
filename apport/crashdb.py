@@ -213,7 +213,7 @@ class CrashDatabase:
                         master_id = addr_match
                         master_ver = None  # no version tracking for address signatures yet
 
-        if master_id is not None:
+        if master_id is not None and master_id != id:
             if addr_sig:
                 self._duplicate_db_add_address_signature(addr_sig, master_id)
             self.close_duplicate(report, id, master_id)
