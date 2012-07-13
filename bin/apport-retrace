@@ -375,7 +375,9 @@ if options.sandbox:
 
     # we call install_packages() multiple times, plus get_file_package(); use a
     # shared cache dir for these
-    if not options.cache:
+    if options.cache:
+        options.cache = os.path.abspath(options.cache)
+    else:
         options.cache = tempfile.mkdtemp()
         atexit.register(shutil.rmtree, options.cache)
 
