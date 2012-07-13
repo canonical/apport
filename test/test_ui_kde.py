@@ -281,6 +281,44 @@ Type=Application''')
         self.assertTrue(self.app.dialog.cancel_button.isVisible())
         self.assertTrue(self.app.dialog.treeview.isVisible())
 
+    def test_recoverable_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ logo ] The application Foo has experienced an internal error. |
+        |          Developer-specified error text.                        |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.app.report['ProblemType'] = 'RecoverableProblem'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['DialogBody'] = 'Some developer-specified error text.'
+
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write(b'''[Desktop Entry]
+Version=1.0
+Name=Apport
+Type=Application''')
+            fp.flush()
+            self.app.report['DesktopFile'] = fp.name
+            QTimer.singleShot(0, QCoreApplication.quit)
+            self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.windowTitle(),
+                         self.distro.split()[0])
+        msg = 'The application Apport has experienced an internal error.'
+        self.assertEqual(self.app.dialog.heading.text(), msg)
+        msg = 'Some developer-specified error text.'
+        self.assertEqual(self.app.dialog.text.text(), msg)
+        self.assertTrue(self.app.dialog.text.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isChecked())
+        self.assertTrue(self.app.dialog.details.isVisible())
+        self.assertTrue(self.app.dialog.continue_button.isVisible())
+        self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
+        self.assertFalse(self.app.dialog.closed_button.isVisible())
+
     @patch.object(MainUserInterface, 'open_url')
     def test_1_crash_nodetails(self, *args):
         '''Crash report without showing details'''

@@ -264,8 +264,12 @@ class GTKUserInterface(apport.ui.UserInterface):
                 icon = self.desktop_info.get('icon')
                 n = self.desktop_info['name']
                 n = GLib.markup_escape_text(n)
-                self.w('title_label').set_label('<big><b>%s</b></big>' %
-                    _('The application %s has closed unexpectedly.') % n)
+                if report_type == 'RecoverableProblem':
+                    t = _('The application %s has experienced '
+                          'an internal error.') % n
+                else:
+                    t = _('The application %s has closed unexpectedly.') % n
+                self.w('title_label').set_label('<big><b>%s</b></big>' % t)
                 self.w('subtitle_label').hide()
 
                 if 'ProcCmdline' in self.report:
@@ -277,7 +281,11 @@ class GTKUserInterface(apport.ui.UserInterface):
                     self.w('continue_button').set_label(_('Continue'))
             else:
                 icon = 'distributor-logo'
-                title_text = self.get_system_application_title()
+                if report_type == 'RecoverableProblem':
+                    title_text = _('The application %s has experienced '
+                                   'an internal error.') % self.cur_package
+                else:
+                    title_text = self.get_system_application_title()
                 self.w('title_label').set_label('<big><b>%s</b></big>' %
                                                 title_text)
                 self.w('subtitle_label').show()
@@ -291,6 +299,15 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('ignore_future_problems').show()
             else:
                 self.w('ignore_future_problems').hide()
+
+            if report_type == 'RecoverableProblem':
+                body = self.report.get('DialogBody', '')
+                if body:
+                    del self.report['DialogBody']
+                    self.w('subtitle_label').show()
+                    # Set a maximum size for the dialog body, so developers do
+                    # not try to shove entire log files into this dialog.
+                    self.w('subtitle_label').set_label(body[:1024])
 
         if icon:
             from gi.repository import GdkPixbuf

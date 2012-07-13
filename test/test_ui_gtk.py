@@ -403,6 +403,45 @@ Type=Application''')
         self.assertTrue(self.app.w('details_scrolledwindow').get_property('visible'))
         self.assertTrue(self.app.w('dialog_crash_new').get_resizable())
 
+    def test_recoverable_crash_layout(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ logo ] The application Foo has experienced an internal error. |
+        |          Developer-specified error text.                        |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        self.app.report['ProblemType'] = 'RecoverableProblem'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        self.app.report['DialogBody'] = 'Some developer-specified error text.'
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write(b'''[Desktop Entry]
+Version=1.0
+Name=Apport
+Type=Application''')
+            fp.flush()
+            self.app.report['DesktopFile'] = fp.name
+            GLib.idle_add(Gtk.main_quit)
+            self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(),
+                         self.distro)
+        msg = 'The application Apport has experienced an internal error.'
+        self.assertEqual(self.app.w('title_label').get_text(), msg)
+        msg = 'Some developer-specified error text.'
+        self.assertEqual(self.app.w('subtitle_label').get_text(), msg)
+        self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
+        send_error_report = self.app.w('send_error_report')
+        self.assertTrue(send_error_report.get_property('visible'))
+        self.assertTrue(send_error_report.get_active())
+        self.assertTrue(self.app.w('show_details').get_property('visible'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(),
+                         _('Continue'))
+        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+
     def test_administrator_disabled_reporting(self):
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(False)

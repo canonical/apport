@@ -12,6 +12,14 @@ Improvements:
    talking to the wrong bus, etc.) (LP: #1020572)
  * hookutils.py, attach_alsa(): Use alsa-info.sh when available. Thanks David
    Henningson.
+ * Add new "RecoverableProblem" report type for problems which the application
+   can handle, but still wishes to notify the user and send a problem report
+   about. As an example, the application may wish to notify the user because
+   handling the error resulted in degraded functionality. The user interface
+   may fail to load items, or the action just performed may not return any
+   data. Applications call /usr/share/apport/recoverable_problem with a
+   string of arbitrary NUL-separated key/value pairs that are added to the
+   report. Thanks Evan Dandrea!
 
 Bug fixes:
  * ui tests, test_wait_for_pid(): Fix eternal hang when running as root.
