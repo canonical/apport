@@ -27,13 +27,9 @@ class T(unittest.TestCase):
         self.datadir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 
     def wait_for_report(self):
-        cwd = os.getcwd().replace('/', '_')
-        base = sys.argv[0]
-        if base.startswith('./'):
-            base = base[2:]
-        base = base.replace('/', '_')
-        path = '%s_%s.%d.crash' % (cwd, base, os.getuid())
-        path = os.path.join(self.report_dir, path)
+        base = os.path.abspath(sys.argv[0]).replace('/', '_')
+        path = os.path.join(self.report_dir,
+                            '%s.%d.crash' % (base, os.getuid()))
         seconds = 0
         while not os.path.exists(path):
             time.sleep(1)
