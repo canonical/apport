@@ -594,8 +594,7 @@ Debug::NoLocking "true";
             real_pkgs.add(pkg)
 
             if permanent_rootdir:
-                mapping_path = os.path.join(cache_dir, release)
-                virtual_mapping = self._virtual_mapping(mapping_path)
+                virtual_mapping = self._virtual_mapping(aptroot)
                 # Remember all the virtual packages that this package provides,
                 # so that if we encounter that virtual package as a
                 # Conflicts/Replaces later, we know to remove this package from
@@ -675,7 +674,7 @@ Debug::NoLocking "true";
             + ' '.join(real_pkgs)
 
         if permanent_rootdir:
-            self._save_virtual_mapping(mapping_path)
+            self._save_virtual_mapping(aptroot)
         return obsolete
 
     def package_name_glob(self, nameglob):

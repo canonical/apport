@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  * test_recoverable_problem.py: Fix test for calling test runner with absolute
    path.
+ * packaging-apt-dpkg.py: Fix crash on writing virtual_mapping.db when running
+   with --sandbox-dir and -S system or giving no --cache.
 
 2.4 (2012-07-18):
 -----------------
