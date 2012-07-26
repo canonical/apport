@@ -71,4 +71,18 @@ class T(unittest.TestCase):
             self.assertTrue(exc[-2].endswith('return x / y\n'))
         self.assertTrue(raised)
 
-unittest.main()
+    def test_exc_raise_complex(self):
+        '''Exceptions that can't be simply created are reraised correctly
+
+        A unicode error takes several arguments on construction, so trying to
+        recreate it by just passing an instance to the class, as the Python 3
+        reraise expression did, will fail. See lp:1024836 for details.
+        '''
+        t = apport.REThread.REThread(target=str.encode, args=("\xff", "ascii"))
+        t.start()
+        t.join()
+        self.assertRaises(UnicodeError, t.exc_raise)
+
+
+if __name__ == "__main__":
+    unittest.main()
