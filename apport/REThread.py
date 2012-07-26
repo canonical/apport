@@ -61,6 +61,6 @@ class REThread(threading.Thread):
             # hack using exec() here
             # Python 3:
             if sys.version > '3':
-                raise self._exception[0](self._exception[1]).with_traceback(self._exception[2])
+                raise self._exception[1].with_traceback(self._exception[2])
             else:
                 exec('raise self._exception[0], self._exception[1], self._exception[2]')
