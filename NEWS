@@ -8,6 +8,8 @@ Bug fixes:
    path.
  * packaging-apt-dpkg.py: Fix crash on writing virtual_mapping.db when running
    with --sandbox-dir and -S system or giving no --cache.
+ * REThread.py: Fix re-raising of exceptions in Python 3. Thanks Martin
+ * Packman! (LP: #1024836)
 
 2.4 (2012-07-18):
 -----------------
