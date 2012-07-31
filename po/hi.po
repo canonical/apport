@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-09 08:04+0200\n"
-"PO-Revision-Date: 2012-06-20 17:52+0000\n"
+"PO-Revision-Date: 2012-07-30 10:06+0000\n"
 "Last-Translator: Manish Kumar <manishku86@yahoo.co.in>\n"
 "Language-Team: Hindi <hi@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-07-26 04:34+0000\n"
-"X-Generator: Launchpad (build 15679)\n"
+"X-Launchpad-Export-Date: 2012-07-31 04:33+0000\n"
+"X-Generator: Launchpad (build 15702)\n"
 "Language: hi\n"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:105
@@ -121,7 +121,7 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:302
 #: ../apport/ui.py:302
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "इस समस्या रिपोर्ट में आपके पहुँच की अनुमति नहीं है."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:305
 #: ../apport/ui.py:305
@@ -168,6 +168,8 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"यह आपका विशिष्ट निर्देश नहीं है. कृपया इस प्रोग्राम को प्रक्रिया "
+"उत्तराधिकारी के रुप में या रुट में चलाएं."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:439
 #: ../apport/ui.py:439
@@ -179,21 +181,21 @@ msgstr ""
 #: ../apport/ui.py:442
 #, python-format
 msgid "Package %s does not exist"
-msgstr ""
+msgstr "पैकेज %s मोजूद नहीं है"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:466
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:654
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:659
 #: ../apport/ui.py:466 ../apport/ui.py:654 ../apport/ui.py:659
 msgid "Cannot create report"
-msgstr ""
+msgstr "रिपोर्ट बनाई नहीं जा सकती"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:481
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:527
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:544
 #: ../apport/ui.py:481 ../apport/ui.py:527 ../apport/ui.py:544
 msgid "Updating problem report"
-msgstr ""
+msgstr "समस्या रिपोर्ट को अद्यतन कर रहा है"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:482
 #: ../apport/ui.py:482
@@ -203,6 +205,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"आप या तो इस समस्या रिपोर्ट का अभिदाता रिपोर्टर नहीं है, या रिपोर्ट दोहरा है "
+"या पुर्ववत बंद हो चुका है.\n"
+"\n"
+"कृपया \"apport-bug\" का उपयोग कर एक नया रिपोर्ट बनाएं."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:491
 #: ../apport/ui.py:491
@@ -216,28 +222,36 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"इस समस्या रिपोर्ट का आप रिपोर्टर नहीं है. अपने टिप्पणी के साथ नए बग को "
+"संलग्न करने की तुलना में यह ज्याद आसान होगा कि बग को अन्य का नकल के रुप में "
+"रेखांकित किया जाए.\n"
+"\n"
+"पश्चात, हम सलाह देंगे  कि आप जो रिपोर्ट भेजेगें उसमें नए बग रिपोर्ट को  "
+"\"apport-bug\" का उपयोग कर तथा इस बग में अपनी टिप्पणी करें.\n"
+"\n"
+"क्या आप आगे की प्रक्रिया करेंगें?"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:528
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:545
 #: ../apport/ui.py:528 ../apport/ui.py:545
 msgid "No additional information collected."
-msgstr ""
+msgstr "अतरिक्त सूचना संगृहित नहीं की जाएगी."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:596
 #: ../apport/ui.py:596
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "किस तरह की समस्या का आप रिपोर्ट करना चाहते हैं?"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:613
 #: ../apport/ui.py:613
 msgid "Unknown symptom"
-msgstr ""
+msgstr "अज्ञात लक्षण"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:614
 #: ../apport/ui.py:614
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "यह लक्षण \"%s\" ज्ञात नहीं है."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:645
 #: ../apport/ui.py:645
@@ -245,34 +259,37 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"इस संदेश के बंद होने के पश्चात कृपया अनुप्रयोग विंडो पर क्लिक कर समस्या के "
+"बारे में रिपोर्ट करें."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:655
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:660
 #: ../apport/ui.py:655 ../apport/ui.py:660
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop विंडो की प्रक्रिया आईडी को निर्धारित करने में असफल हो गया"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:674
 #: ../apport/ui.py:674
 msgid "%prog <report number>"
-msgstr ""
+msgstr "%prog <report number>"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:676
 #: ../apport/ui.py:676
 msgid "Specify package name."
-msgstr ""
+msgstr "संकुल नाम निर्दिष्ट करें."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:678
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:729
 #: ../apport/ui.py:678 ../apport/ui.py:729
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
+msgstr "रिपोर्ट में एक अतरिक्त टैग जोड़े जिससे एकाधिक बार का उल्लेख हो सके."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:708
 #: ../apport/ui.py:708
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:711
 #: ../apport/ui.py:711
@@ -281,16 +298,19 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"बग भरने की पद्धति में शुरु करें. आवश्यकता है --package तथा एक विकल्प --pid "
+"की  या केवल एक --pid की. यदि कोई भी नहीं दिया हुआ हो, तो ज्ञात लक्षणों की "
+"सूची दिखाएं. (यदि एक ही तर्क दिया हो तो लागु करें.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:713
 #: ../apport/ui.py:713
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "एक समस्या रपट दर्ज करने हेतु लक्ष्य विंडो पर क्लिक करें."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:715
 #: ../apport/ui.py:715
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
+msgstr "बग अद्यतन पद्धति में चालु करें. एक विकल्प --package ले सकते हैं ."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:717
 #: ../apport/ui.py:717
@@ -298,6 +318,8 @@ msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
+"लक्षण के बारे में एक बग रिपोर्ट दाखिल करें. (जब लक्षण के नाम केवल तर्क के "
+"रुप में दिया गया हो तो लागु करें.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:719
 #: ../apport/ui.py:719
@@ -305,6 +327,9 @@ msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"पैकेज का नाम --file-bug पद्धति में वर्णन करें. यह वैकल्पिक होगा यदि एक --pid "
+"का वर्णन होगा. (जब पैकेज का नाम केवल तर्क के रुप में दिया गया हो तो लागु "
+"करें.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:721
 #: ../apport/ui.py:721
@@ -313,6 +338,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"एक चल रहे प्रोग्राम --file-bug पद्धति में का उल्लेख करें. यदि इसका उल्लेख "
+"है, तो दोष रपट अधिक सूचनात्मक हो जाएगा.(यह लागू हो यदि pid में केवल तर्क "
+"दिया होगा.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:723
 #: ../apport/ui.py:723
@@ -326,6 +354,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"विध्वंस रिपोर्ट को दिए गए .apport या .crash संचिका से करें बजाए %s में जो "
+"विचाराधीन है. (यदि तर्क के रुप में केवल संचिका दिया गया हो.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:727
 #: ../apport/ui.py:727
