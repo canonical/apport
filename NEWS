@@ -11,6 +11,10 @@ Bug fixes:
  * REThread.py: Fix re-raising of exceptions in Python 3. Thanks Martin
    Packman! (LP: #1024836)
 
+Improvements:
+ * Add an apport.memdbg() function which prints out current memory usage if
+   APPORT_MEMDEBUG is set. Annotate apport-retrace with it.
+
 2.4 (2012-07-18):
 -----------------
 Improvements:

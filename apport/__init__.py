@@ -1,11 +1,12 @@
+import sys
+import os
+
 from apport.report import Report
 
 from apport.packaging_impl import impl as packaging
 
 Report  # pyflakes
 packaging  # pyflakes
-
-import sys
 
 # fix gettext to output proper unicode strings
 import gettext
@@ -40,3 +41,22 @@ def warning(msg, *args):
     sys.stderr.write('WARNING: ')
     sys.stderr.write(msg % args)
     sys.stderr.write('\n')
+
+def memdbg(checkpoint):
+    '''Print current memory usage.
+
+    This is only done if $APPORT_MEMDEBUG is set.
+    '''
+    if not 'APPORT_MEMDEBUG' in os.environ:
+        return
+
+    memstat = {}
+    with open('/proc/self/status') as f:
+        for l in f:
+            if l.startswith('Vm'):
+                (field, size, unit) = l.split()
+                memstat[field[:-1]] = int(size) / 1024.
+    
+    sys.stderr.write('Size: %.1f MB, RSS: %.1f MB, Stk: %.1f MB @ %s\n' %
+                     (memstat['VmSize'], memstat['VmRSS'], memstat['VmStk'], checkpoint))
+

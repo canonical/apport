@@ -278,11 +278,14 @@ def print_traces(report):
 # main
 #
 
+apport.memdbg('start')
+
 gettext.textdomain('apport')
 
 (reportfile, options) = parse_options()
 
 crashdb = get_crashdb(options.auth)
+apport.memdbg('got crash DB')
 
 # load the report
 if os.path.exists(reportfile):
@@ -290,12 +293,14 @@ if os.path.exists(reportfile):
         report = apport.Report()
         with open(reportfile, 'rb') as f:
             report.load(f)
+        apport.memdbg('loaded report from file')
     except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
         apport.fatal('Cannot open report file: %s', str(e))
 elif reportfile.isdigit():
     # crash ID
     try:
         report = crashdb.download(int(reportfile))
+        apport.memdbg('downloaded report from crash DB')
     except AssertionError as e:
         if 'apport format data' in str(e):
             apport.error('Broken report: %s', str(e))
@@ -340,6 +345,9 @@ if options.procmaps:
 if options.rebuild_package_info and 'ExecutablePath' in report:
     report.add_package_info()
 
+apport.memdbg('processed extra options from command line')
+
+
 # sanity checks
 required_fields = set(['CoreDump', 'ExecutablePath', 'Package', 'DistroRelease'])
 if report['ProblemType'] == 'KernelCrash':
@@ -352,6 +360,8 @@ elif not required_fields.issubset(set(report.keys())):
     apport.error('report file does not contain one of the required fields: ' +
                  ' '.join(required_fields))
     sys.exit(0)
+
+apport.memdbg('sanity checks passed')
 
 sandbox = None
 outdated_msg = None
@@ -420,6 +430,8 @@ if options.sandbox:
     if outdated_msg:
         report['RetraceOutdatedPackages'] = outdated_msg
 
+    apport.memdbg('built sandbox')
+
 # interactive gdb session
 if options.gdb:
     core = tempfile.NamedTemporaryFile()
@@ -435,10 +447,12 @@ if options.gdb:
         argv += ['--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath'])]
     argv += ['--ex', 'core-file ' + core.name]
 
+    apport.memdbg('before calling gdb')
     subprocess.call(argv)
     core.close()
 else:
     # regenerate gdb info
+    apport.memdbg('before collecting gdb info')
     report.add_gdb_info(sandbox)
     if options.sandbox == 'system':
         apt_root = os.path.join(options.cache, 'system', 'apt')
@@ -448,6 +462,8 @@ else:
     report.add_kernel_crash_info()
 
 modified = False
+
+apport.memdbg('information collection done')
 
 if options.remove_core:
     del report['CoreDump']
