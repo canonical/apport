@@ -14,6 +14,7 @@
 
 import sys, os, os.path, subprocess, optparse, shutil, tempfile, re, zlib
 import tty, termios, gettext, atexit, time
+import problem_report
 import apport, apport.fileutils
 from apport.crashdb import get_crashdb
 from apport import unicode_gettext as _
@@ -292,7 +293,7 @@ if os.path.exists(reportfile):
     try:
         report = apport.Report()
         with open(reportfile, 'rb') as f:
-            report.load(f)
+            report.load(f, binary='compressed')
         apport.memdbg('loaded report from file')
     except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
         apport.fatal('Cannot open report file: %s', str(e))
@@ -435,7 +436,10 @@ if options.sandbox:
 # interactive gdb session
 if options.gdb:
     core = tempfile.NamedTemporaryFile()
-    core.write(report['CoreDump'])
+    if isinstance(report['CoreDump'], problem_report.CompressedValue):
+        report['CoreDump'].write(core)
+    else:
+        core.write(report['CoreDump'])
     core.flush()
 
     argv = ['gdb']

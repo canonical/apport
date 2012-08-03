@@ -10,6 +10,9 @@ Bug fixes:
    with --sandbox-dir and -S system or giving no --cache.
  * REThread.py: Fix re-raising of exceptions in Python 3. Thanks Martin
    Packman! (LP: #1024836)
+ * apport-retrace: Keep compressed CoreDump from .crash files instead of
+   uncompressing them into memory. This dramatically reduces memory usage.
+   (LP: #981155)
 
 Improvements:
  * Add an apport.memdbg() function which prints out current memory usage if
