@@ -17,6 +17,8 @@ Bug fixes:
 Improvements:
  * Add an apport.memdbg() function which prints out current memory usage if
    APPORT_MEMDEBUG is set. Annotate apport-retrace with it.
+ * hookutils.py: Allow specifying a list of profile names when using
+   attach_mac_events().
 
 2.4 (2012-07-18):
 -----------------
