@@ -157,6 +157,105 @@ class T(unittest.TestCase):
         self.assertEqual(apport.hookutils.recent_syslog(re.compile('ThisCantPossiblyHitAnything')), '')
         self.assertNotEqual(len(apport.hookutils.recent_syslog(re.compile('.'))), 0)
 
+    def test_attach_mac_events(self):
+        '''attach_mac_events()'''
+
+        denied_log = \
+            '[  351.624338] type=1400 audit(1343775571.688:27): apparmor="DENIED"' + \
+            ' operation="capable" parent=1 profile="/usr/sbin/cupsd" pid=1361' + \
+            ' comm="cupsd" pid=1361 comm="cupsd" capability=36  capname="block_suspend"\n'
+
+        report = {}
+        apport.hookutils.attach_mac_events(report)
+        self.assertTrue('KernLog' in report)
+        self.assertFalse('Tags' in report)
+
+        # No AppArmor messages
+        report = {}
+        report['KernLog'] = \
+            "[    2.997534] i915 0000:00:02.0: power state changed by ACPI to D0\n" + \
+            "[    2.997541] i915 0000:00:02.0: PCI INT A -> GSI 16 (level, low)\n" + \
+            "[    2.997544] i915 0000:00:02.0: setting latency timer to 64\n" + \
+            "[    3.061584] i915 0000:00:02.0: irq 42 for MSI/MSI-X\n"
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertFalse('Tags' in report)
+
+        # AppArmor message, but not a denial
+        report = {}
+        report['KernLog'] = \
+            '[   32.420248] type=1400 audit(1344562672.449:2): apparmor="STATUS"' + \
+            ' operation="profile_load" name="/sbin/dhclient" pid=894' + \
+            ' comm="apparmor_parser"\n'
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertFalse('Tags' in report)
+
+        # AppArmor denial, empty tags, no profile specified
+        report = {}
+        report['KernLog'] = denied_log
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertEqual(report['Tags'], 'apparmor')
+
+        # AppArmor denial in AuditLog, no profile specified
+        report = {}
+        report['AuditLog'] = denied_log
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertEqual(report['Tags'], 'apparmor')
+
+        # AppArmor denial, pre-existing tags, no profile specified
+        report = {}
+        report['KernLog'] = denied_log
+        report['Tags'] = 'bogustag'
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertEqual(report['Tags'], 'bogustag apparmor')
+
+        # AppArmor denial, single profile specified
+        report = {}
+        report['KernLog'] = denied_log
+
+        apport.hookutils.attach_mac_events(report, '/usr/sbin/cupsd')
+        self.assertEqual(report['Tags'], 'apparmor')
+
+        # AppArmor denial, single different profile specified
+        report = {}
+        report['KernLog'] = denied_log
+
+        apport.hookutils.attach_mac_events(report, '/usr/sbin/nonexistent')
+        self.assertFalse('Tags' in report)
+
+        # AppArmor denial, multiple profiles specified
+        report = {}
+        report['KernLog'] = denied_log
+        profiles = [ '/usr/bin/nonexistent', '/usr/sbin/cupsd' ]
+
+        apport.hookutils.attach_mac_events(report, profiles)
+        self.assertEqual(report['Tags'], 'apparmor')
+
+        # AppArmor denial, multiple different profiles
+        report = {}
+        report['KernLog'] = denied_log
+        profiles = [ '/usr/bin/nonexistent', '/usr/sbin/anotherone' ]
+
+        apport.hookutils.attach_mac_events(report, profiles)
+        self.assertFalse('Tags' in report)
+
+        # Multiple AppArmor denials, second match
+        report = {}
+        report['KernLog'] = \
+            '[  351.624338] type=1400 audit(1343775571.688:27): apparmor="DENIED"' + \
+            ' operation="capable" parent=1 profile="/usr/sbin/blah" pid=1361' + \
+            ' comm="cupsd" pid=1361 comm="cupsd" capability=36  capname="block_suspend"\n' + \
+            '[  351.624338] type=1400 audit(1343775571.688:27): apparmor="DENIED"' + \
+            ' operation="capable" parent=1 profile="/usr/sbin/cupsd" pid=1361' + \
+            ' comm="cupsd" pid=1361 comm="cupsd" capability=36  capname="block_suspend"\n'
+
+        apport.hookutils.attach_mac_events(report, '/usr/sbin/cupsd')
+        self.assertEqual(report['Tags'], 'apparmor')
+
     def test_recent_logfile_overflow(self):
         '''recent_logfile on a huge file'''
 
