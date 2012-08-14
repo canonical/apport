@@ -165,6 +165,11 @@ class T(unittest.TestCase):
             ' operation="capable" parent=1 profile="/usr/sbin/cupsd" pid=1361' + \
             ' comm="cupsd" pid=1361 comm="cupsd" capability=36  capname="block_suspend"\n'
 
+        denied_hex = \
+            '[  351.624338] type=1400 audit(1343775571.688:27): apparmor="DENIED"' + \
+            ' operation="capable" parent=1 profile=2F7573722F7362696E2F6375707364 pid=1361' + \
+            ' comm="cupsd" pid=1361 comm="cupsd" capability=36  capname="block_suspend"\n'
+
         report = {}
         apport.hookutils.attach_mac_events(report)
         self.assertTrue('KernLog' in report)
@@ -198,7 +203,14 @@ class T(unittest.TestCase):
         apport.hookutils.attach_mac_events(report)
         self.assertEqual(report['Tags'], 'apparmor')
 
-        # AppArmor denial in AuditLog, no profile specified
+        # AppArmor hex-encoded denial, no profile specified
+        report = {}
+        report['KernLog'] =  denied_hex
+
+        apport.hookutils.attach_mac_events(report)
+        self.assertEqual(report['Tags'], 'apparmor')
+
+        # AppArmor denial in AuditLog
         report = {}
         report['AuditLog'] = denied_log
 
@@ -216,6 +228,27 @@ class T(unittest.TestCase):
         # AppArmor denial, single profile specified
         report = {}
         report['KernLog'] = denied_log
+
+        apport.hookutils.attach_mac_events(report, '/usr/sbin/cupsd')
+        self.assertEqual(report['Tags'], 'apparmor')
+
+        # AppArmor denial, regex profile specified
+        report = {}
+        report['KernLog'] = denied_log
+
+        apport.hookutils.attach_mac_events(report, '/usr/sbin/cups.*')
+        self.assertEqual(report['Tags'], 'apparmor')
+
+        # AppArmor denial, subset profile specified
+        report = {}
+        report['KernLog'] = denied_log
+
+        apport.hookutils.attach_mac_events(report, '/usr/sbin/cup')
+        self.assertFalse('Tags' in report)
+
+        # AppArmor hex-encoded denial, single profile specified
+        report = {}
+        report['KernLog'] = denied_hex
 
         apport.hookutils.attach_mac_events(report, '/usr/sbin/cupsd')
         self.assertEqual(report['Tags'], 'apparmor')

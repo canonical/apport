@@ -682,7 +682,7 @@ def attach_mac_events(report, profiles=None):
 
     mac_regex = 'audit\(|apparmor|selinux|security'
     mac_re = re.compile(mac_regex, re.IGNORECASE)
-    aa_regex = 'apparmor="DENIED".+?profile="(.+?)"'
+    aa_regex = 'apparmor="DENIED".+?profile=([^ ]+?)[ ]'
     aa_re = re.compile(aa_regex, re.IGNORECASE)
 
     if 'KernLog' not in report:
@@ -699,13 +699,32 @@ def attach_mac_events(report, profiles=None):
 
     for match in re.findall(aa_re, report.get('KernLog', '') + \
                                    report.get('AuditLog', '')):
-        if not profiles or match in profiles:
-            tags = report.get('Tags', '')
-            if tags:
-                tags += ' '
-            report['Tags'] = tags + 'apparmor'
+
+        if not profiles:
+            _add_tag(report, 'apparmor')
             break
 
+        try:
+            if match[0] == '"':
+                profile = match[1:-1]
+            elif sys.version[0] >= '3':
+                profile = bytes.fromhex(match).decode('UTF-8', errors='replace')
+            else:
+                profile = match.decode('hex', errors='replace')
+        except:
+            continue
+
+        for search_profile in profiles:
+            if re.match('^' + search_profile + '$', profile):
+                _add_tag(report, 'apparmor')
+                break
+
+def _add_tag(report, tag):
+    '''Adds or appends a tag to the report'''
+    current_tags = report.get('Tags', '')
+    if current_tags:
+        current_tags += ' '
+    report['Tags'] = current_tags + tag
 
 def attach_related_packages(report, packages):
     '''Attach version information for related packages
