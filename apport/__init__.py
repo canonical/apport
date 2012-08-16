@@ -42,6 +42,7 @@ def warning(msg, *args):
     sys.stderr.write(msg % args)
     sys.stderr.write('\n')
 
+
 def memdbg(checkpoint):
     '''Print current memory usage.
 
@@ -56,7 +57,6 @@ def memdbg(checkpoint):
             if l.startswith('Vm'):
                 (field, size, unit) = l.split()
                 memstat[field[:-1]] = int(size) / 1024.
-    
+
     sys.stderr.write('Size: %.1f MB, RSS: %.1f MB, Stk: %.1f MB @ %s\n' %
                      (memstat['VmSize'], memstat['VmRSS'], memstat['VmStk'], checkpoint))
-
