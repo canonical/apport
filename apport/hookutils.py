@@ -719,12 +719,14 @@ def attach_mac_events(report, profiles=None):
                 _add_tag(report, 'apparmor')
                 break
 
+
 def _add_tag(report, tag):
     '''Adds or appends a tag to the report'''
     current_tags = report.get('Tags', '')
     if current_tags:
         current_tags += ' '
     report['Tags'] = current_tags + tag
+
 
 def attach_related_packages(report, packages):
     '''Attach version information for related packages

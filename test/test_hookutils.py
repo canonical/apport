@@ -204,7 +204,7 @@ class T(unittest.TestCase):
 
         # AppArmor hex-encoded denial, no profile specified
         report = {}
-        report['KernLog'] =  denied_hex
+        report['KernLog'] = denied_hex
 
         apport.hookutils.attach_mac_events(report)
         self.assertEqual(report['Tags'], 'apparmor')
@@ -262,7 +262,7 @@ class T(unittest.TestCase):
         # AppArmor denial, multiple profiles specified
         report = {}
         report['KernLog'] = denied_log
-        profiles = [ '/usr/bin/nonexistent', '/usr/sbin/cupsd' ]
+        profiles = ['/usr/bin/nonexistent', '/usr/sbin/cupsd']
 
         apport.hookutils.attach_mac_events(report, profiles)
         self.assertEqual(report['Tags'], 'apparmor')
@@ -270,7 +270,7 @@ class T(unittest.TestCase):
         # AppArmor denial, multiple different profiles
         report = {}
         report['KernLog'] = denied_log
-        profiles = [ '/usr/bin/nonexistent', '/usr/sbin/anotherone' ]
+        profiles = ['/usr/bin/nonexistent', '/usr/sbin/anotherone']
 
         apport.hookutils.attach_mac_events(report, profiles)
         self.assertFalse('Tags' in report)
