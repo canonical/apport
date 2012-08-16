@@ -173,7 +173,6 @@ class T(unittest.TestCase):
         report = {}
         apport.hookutils.attach_mac_events(report)
         self.assertTrue('KernLog' in report)
-        self.assertFalse('Tags' in report)
 
         # No AppArmor messages
         report = {}
