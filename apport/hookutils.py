@@ -673,30 +673,57 @@ def attach_printing(report):
         'gutenprint-locales', 'system-config-printer-common', 'kdeprint')
 
 
-def attach_mac_events(report):
+def attach_mac_events(report, profiles=None):
     '''Attach MAC information and events to the report.'''
+
+    # Allow specifying a string, or a list of strings
+    if isinstance(profiles, str):
+        profiles = [profiles]
 
     mac_regex = 'audit\(|apparmor|selinux|security'
     mac_re = re.compile(mac_regex, re.IGNORECASE)
-    aa_denied_regex = 'apparmor="DENIED"'
-    aa_denied_re = re.compile(aa_denied_regex, re.IGNORECASE)
+    aa_regex = 'apparmor="DENIED".+?profile=([^ ]+?)[ ]'
+    aa_re = re.compile(aa_regex, re.IGNORECASE)
 
-    if os.path.exists('/var/log/kern.log'):
-        report['KernLog'] = recent_logfile('/var/log/kern.log', mac_re)
-    elif os.path.exists('/var/log/messages'):
-        report['KernLog'] = recent_logfile('/var/log/messages', mac_re)
+    if 'KernLog' not in report:
+        if os.path.exists('/var/log/kern.log'):
+            report['KernLog'] = recent_logfile('/var/log/kern.log', mac_re)
+        elif os.path.exists('/var/log/messages'):
+            report['KernLog'] = recent_logfile('/var/log/messages', mac_re)
 
-    if os.path.exists('/var/run/auditd.pid'):
+    if 'AuditLog' not in report and os.path.exists('/var/run/auditd.pid'):
         attach_root_command_outputs(report, {'AuditLog': 'egrep "' + mac_regex + '" /var/log/audit/audit.log'})
 
     attach_file(report, '/proc/version_signature', 'ProcVersionSignature')
     attach_file(report, '/proc/cmdline', 'ProcCmdline')
 
-    if re.search(aa_denied_re, report.get('KernLog', '')) or re.search(aa_denied_re, report.get('AuditLog', '')):
-        tags = report.get('Tags', '')
-        if tags:
-            tags += ' '
-        report['Tags'] = tags + 'apparmor'
+    for match in re.findall(aa_re, report.get('KernLog', '') + report.get('AuditLog', '')):
+        if not profiles:
+            _add_tag(report, 'apparmor')
+            break
+
+        try:
+            if match[0] == '"':
+                profile = match[1:-1]
+            elif sys.version[0] >= '3':
+                profile = bytes.fromhex(match).decode('UTF-8', errors='replace')
+            else:
+                profile = match.decode('hex', errors='replace')
+        except:
+            continue
+
+        for search_profile in profiles:
+            if re.match('^' + search_profile + '$', profile):
+                _add_tag(report, 'apparmor')
+                break
+
+
+def _add_tag(report, tag):
+    '''Adds or appends a tag to the report'''
+    current_tags = report.get('Tags', '')
+    if current_tags:
+        current_tags += ' '
+    report['Tags'] = current_tags + tag
 
 
 def attach_related_packages(report, packages):
