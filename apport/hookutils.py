@@ -377,8 +377,6 @@ def _root_command_prefix():
     else:
         return ['pkexec']
 
-    return prefix
-
 
 def root_command_output(command, input=None, stderr=subprocess.STDOUT, decode_utf8=True):
     '''Try to execute given command (array) as root and return its stdout.
