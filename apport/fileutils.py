@@ -65,7 +65,7 @@ def likely_packaged(file):
     database.
     '''
     pkg_whitelist = ['/bin/', '/boot', '/etc/', '/initrd', '/lib', '/sbin/',
-                     '/usr/', '/var']  # packages only ship executables in these directories
+                     '/opt', '/usr/', '/var']  # packages only ship executables in these directories
 
     whitelist_match = False
     for i in pkg_whitelist:

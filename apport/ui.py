@@ -1036,14 +1036,15 @@ class UserInterface:
             self.ui_stop_info_collection_progress()
 
             # check that we were able to determine package names
-            if ('SourcePackage' not in self.report or
-                (not self.report['ProblemType'].startswith('Kernel')
-                 and 'Package' not in self.report)):
-                self.ui_error_message(_('Invalid problem report'),
-                                      _('Could not determine the package or source package name.'))
-                # TODO This is not called consistently, is it really needed?
-                self.ui_shutdown()
-                sys.exit(1)
+            if 'UnreportableReason' not in self.report:
+                if ('SourcePackage' not in self.report or
+                    (not self.report['ProblemType'].startswith('Kernel')
+                     and 'Package' not in self.report)):
+                    self.ui_error_message(_('Invalid problem report'),
+                                          _('Could not determine the package or source package name.'))
+                    # TODO This is not called consistently, is it really needed?
+                    self.ui_shutdown()
+                    sys.exit(1)
 
         if on_finished:
             on_finished()

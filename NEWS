@@ -30,6 +30,11 @@ Improvements:
    "CrashDB" field, not just the DB name. With this, packages do not need to
    ship a separate /etc/apport/crashdb.conf.d/ file. Please see
    doc/package-hooks.txt for details. (LP: #551330)
+ * report.py, add_hooks_info(): If reporting against a package/program in /opt,
+   also search for package hooks in the corresponding /opt directory. This
+   allows such hooks to define a custom crash database and thus report bugs
+   against their own project instead of against the distribution.
+   (LP: #1020503)
 
 2.4 (2012-07-18):
 -----------------

@@ -33,6 +33,7 @@ from apport.packaging_impl import impl as packaging
 _data_dir = os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')
 _hook_dir = '%s/package-hooks/' % (_data_dir)
 _common_hook_dir = '%s/general-hooks/' % (_data_dir)
+_opt_dir = '/opt'
 
 # path of the ignore file
 _ignore_file = '~/.apport-ignore.xml'
@@ -760,26 +761,53 @@ class Report(problem_report.ProblemReport):
 
             return False
 
+        # determine package names, unless already given as arguments
+        if not package:
+            package = self.get('Package')
+        if package:
+            package = package.split()[0]
+        if not srcpackage:
+            srcpackage = self.get('SourcePackage')
+        if srcpackage:
+            srcpackage = srcpackage.split()[0]
+
+        hook_dirs = [_hook_dir]
+        # also search hooks in /opt, when program is from there
+        opt_path = None
+        if self.get('ExecutablePath', '').startswith(_opt_dir):
+            opt_path = self.get('ExecutablePath', '')
+        elif package:
+            # check package contents
+            try:
+                for f in apport.packaging.get_files(package):
+                    if f.startswith(_opt_dir) and os.path.isfile(f):
+                        opt_path = f
+                        break
+            except ValueError:
+                # uninstalled package
+                pass
+
+        if opt_path:
+            while len(opt_path) >= len(_opt_dir):
+                hook_dirs.append(os.path.join(opt_path, 'share', 'apport', 'package-hooks'))
+                opt_path = os.path.dirname(opt_path)
+
         # common hooks
         for hook in glob.glob(_common_hook_dir + '/*.py'):
             if run_hook(hook):
                 return True
 
         # binary package hook
-        if not package:
-            package = self.get('Package')
         if package:
-            hook = '%s/%s.py' % (_hook_dir, package.split()[0])
-            if run_hook(hook):
-                return True
+            for hook_dir in hook_dirs:
+                if run_hook(os.path.join(hook_dir, package + '.py')):
+                    return True
 
         # source package hook
-        if not srcpackage:
-            srcpackage = self.get('SourcePackage')
         if srcpackage:
-            hook = '%s/source_%s.py' % (_hook_dir, srcpackage.split()[0])
-            if run_hook(hook):
-                return True
+            for hook_dir in hook_dirs:
+                if run_hook(os.path.join(hook_dir, 'source_%s.py' % srcpackage)):
+                    return True
 
         return False
 

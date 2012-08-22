@@ -956,6 +956,44 @@ def add_info(report, ui):
             apport.report._hook_dir = orig_hook_dir
             apport.report._common_hook_dir = orig_common_hook_dir
 
+    def test_add_hooks_info_opt(self):
+        '''add_hooks_info() for a package in /opt'''
+
+        orig_hook_dir = apport.report._hook_dir
+        apport.report._hook_dir = tempfile.mkdtemp()
+        orig_common_hook_dir = apport.report._common_hook_dir
+        apport.report._common_hook_dir = tempfile.mkdtemp()
+        orig_opt_dir = apport.report._opt_dir
+        apport.report._opt_dir = tempfile.mkdtemp()
+        try:
+            opt_hook_dir = os.path.join(apport.report._opt_dir,
+                                        'foolabs.example.com', 'foo', 'share',
+                                        'apport', 'package-hooks')
+            os.makedirs(opt_hook_dir)
+            with open(os.path.join(opt_hook_dir, 'source_foo.py'), 'w') as fd:
+                fd.write('''def add_info(report, ui):
+    report['SourceHook'] = '1'
+''')
+            with open(os.path.join(opt_hook_dir, 'foo-bin.py'), 'w') as fd:
+                fd.write('''def add_info(report, ui):
+    report['BinHook'] = '1'
+''')
+
+            r = apport.report.Report()
+            r['Package'] = 'foo-bin 0.2'
+            r['SourcePackage'] = 'foo'
+            r['ExecutablePath'] = '%s/foolabs.example.com/foo/bin/frob' % apport.report._opt_dir
+
+            self.assertEqual(r.add_hooks_info('fake_ui'), False)
+            self.assertEqual(r['SourceHook'], '1')
+        finally:
+            shutil.rmtree(apport.report._opt_dir)
+            shutil.rmtree(apport.report._hook_dir)
+            shutil.rmtree(apport.report._common_hook_dir)
+            apport.report._hook_dir = orig_hook_dir
+            apport.report._common_hook_dir = orig_common_hook_dir
+            apport.report._opt_dir = orig_opt_dir
+
     def test_ignoring(self):
         '''mark_ignore() and check_ignored().'''
 
