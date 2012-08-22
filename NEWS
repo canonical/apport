@@ -25,6 +25,11 @@ Improvements:
    explains the action and works under every environment; thus
    attach_root_command_outputs() is preferred over root_command_output() now,
    as it provides a better user experience.
+ * Package hooks which want to send the report to a different crash database
+   than "default" can now also give the database specification itself in the
+   "CrashDB" field, not just the DB name. With this, packages do not need to
+   ship a separate /etc/apport/crashdb.conf.d/ file. Please see
+   doc/package-hooks.txt for details. (LP: #551330)
 
 2.4 (2012-07-18):
 -----------------

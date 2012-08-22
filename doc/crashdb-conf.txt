@@ -22,7 +22,9 @@ databases = {
 
 The 'default' parameter is used to specify the default database to use when
 getting a crash report.  It's one of the names used as a label in the databases
-dictionary.
+dictionary. Please note that package hooks can change the database to report to
+by setting the "CrashDB" field; please see package-hooks.txt for details of
+this.
 
 Standard options
 ================

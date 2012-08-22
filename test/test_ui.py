@@ -28,7 +28,11 @@ databases = {
     'testsuite': {
         'impl': 'memory',
         'bug_pattern_url': None,
-    }
+    },
+    'debug': {
+        'impl': 'memory',
+        'distro': 'debug',
+    },
 }
 ''')
         self.crashdb_conf.flush()
@@ -369,6 +373,82 @@ bOgUs=
         self.ui.report_file = self.report_file.name
         self.ui.collect_info()
         self.assertTrue(os.stat(self.report_file.name).st_mode & stat.S_IRGRP)
+
+    def test_collect_info_crashdb_spec(self):
+        '''collect_info() with package hook that defines a CrashDB'''
+
+        # set up hook
+        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
+            f.write('''def add_info(report, ui):
+    report['CrashDB'] = "{ 'impl': 'memory', 'local_opt': '1' }"
+    report['BashHook'] = 'Moo'
+''')
+
+        self.ui.report = apport.Report('Bug')
+        self.ui.cur_package = 'bash'
+        self.ui.collect_info()
+        self.assertTrue('CrashDB' in self.ui.report)
+        self.assertFalse('UnreportableReason' in self.ui.report,
+                         self.ui.report.get('UnreportableReason'))
+        self.assertEqual(self.ui.report['BashHook'], 'Moo')
+        self.assertEqual(self.ui.crashdb.options['local_opt'], '1')
+
+    def test_collect_info_crashdb_name(self):
+        '''collect_info() with package hook that chooses a different CrashDB'''
+
+        # set up hook
+        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
+            f.write('''def add_info(report, ui):
+    report['CrashDB'] = 'debug'
+    report['BashHook'] = 'Moo'
+''')
+
+        self.ui.report = apport.Report('Bug')
+        self.ui.cur_package = 'bash'
+        self.ui.collect_info()
+        self.assertFalse('UnreportableReason' in self.ui.report,
+                         self.ui.report.get('UnreportableReason'))
+        self.assertEqual(self.ui.report['BashHook'], 'Moo')
+        self.assertEqual(self.ui.crashdb.options['distro'], 'debug')
+
+    def test_collect_info_crashdb_errors(self):
+        '''collect_info() with package hook setting a broken CrashDB field'''
+
+        # nonexisting implementation
+        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
+            f.write('''def add_info(report, ui):
+    report['CrashDB'] = "{ 'impl': 'nonexisting', 'local_opt': '1' }"
+''')
+
+        self.ui.report = apport.Report('Bug')
+        self.ui.cur_package = 'bash'
+        self.ui.collect_info()
+        self.assertTrue('nonexisting' in self.ui.report['UnreportableReason'],
+                        self.ui.report.get('UnreportableReason', '<not set>'))
+
+        # invalid syntax
+        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
+            f.write('''def add_info(report, ui):
+    report['CrashDB'] = "{ 'impl': 'memory', 'local_opt'"
+''')
+
+        self.ui.report = apport.Report('Bug')
+        self.ui.cur_package = 'bash'
+        self.ui.collect_info()
+        self.assertTrue('package hook' in self.ui.report['UnreportableReason'],
+                        self.ui.report.get('UnreportableReason', '<not set>'))
+
+        # nonexisting name
+        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
+            f.write('''def add_info(report, ui):
+    report['CrashDB'] = 'nonexisting'
+''')
+
+        self.ui.report = apport.Report('Bug')
+        self.ui.cur_package = 'bash'
+        self.ui.collect_info()
+        self.assertTrue('nonexisting' in self.ui.report['UnreportableReason'],
+                        self.ui.report.get('UnreportableReason', '<not set>'))
 
     def test_handle_duplicate(self):
         '''handle_duplicate()'''

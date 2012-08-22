@@ -839,10 +839,16 @@ def get_crashdb(auth_file, name=None, conf=None):
     if not name:
         name = settings['default']
 
-    db = settings['databases'][name]
+    return load_crashdb(auth_file, settings['databases'][name])
 
-    m = __import__('apport.crashdb_impl.' + db['impl'], globals(), locals(), ['CrashDatabase'])
-    return m.CrashDatabase(auth_file, db)
+
+def load_crashdb(auth_file, spec):
+    '''Return a CrashDatabase object for a given DB specification.
+
+    spec is a crash db configuration dictionary as described in get_crashdb().
+    '''
+    m = __import__('apport.crashdb_impl.' + spec['impl'], globals(), locals(), ['CrashDatabase'])
+    return m.CrashDatabase(auth_file, spec)
 
 
 class NeedsCredentials(Exception):

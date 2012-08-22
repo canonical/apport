@@ -98,6 +98,15 @@ an hook that adds a 'CrashDB' field with the name of the database to
 use. See /etc/apport/crashdb.conf and
 /etc/apport/crashdb.conf.d/*.conf for available databases.
 
+If there is no existing database, or you do not want to ship a configuration,
+the 'CrashDB' field can also contain the DB specification itself, i. e. what
+would otherwise be in /etc/apport/crashdb.conf.d/*.conf. Example:
+
+  report['CrashDB'] = '{ "impl": "launchpad", "project": "foo", "my_option": "1"}'
+
+Please see crashdb-conf.txt for a description of available implementations and
+options.
+
 Standard hook functions
 =======================
 

@@ -23,7 +23,7 @@ import time
 
 import apport, apport.fileutils, apport.REThread
 
-from apport.crashdb import get_crashdb, NeedsCredentials
+import apport.crashdb
 from apport import unicode_gettext as _
 
 if sys.version_info.major == 2:
@@ -164,7 +164,7 @@ class UserInterface:
         self.cur_package = None
 
         try:
-            self.crashdb = get_crashdb(None)
+            self.crashdb = apport.crashdb.get_crashdb(None)
         except ImportError as e:
             # this can happen while upgrading python packages
             apport.fatal('Could not import module, is a package upgrade in progress? Error: %s', str(e))
@@ -886,6 +886,36 @@ class UserInterface:
 
         self.ui_run_terminal(cmds[response[0]])
 
+    def check_report_crashdb(self):
+        '''Process reports' CrashDB field, if present'''
+
+        if 'CrashDB' not in self.report:
+            return True
+
+        # specification?
+        if self.report['CrashDB'].lstrip().startswith('{'):
+            try:
+                spec = eval(self.report['CrashDB'], {})
+                assert isinstance(spec, dict)
+                assert 'impl' in spec
+            except:
+                self.report['UnreportableReason'] = 'A package hook defines an invalid crash database definition:\n%s' % self.report['CrashDB']
+                return False
+            try:
+                self.crashdb = apport.crashdb.load_crashdb(None, spec)
+            except (ImportError, KeyError):
+                self.report['UnreportableReason'] = 'A package hook wants to send this report to the crash database "%s" which does not exist.' % self.report['CrashDB']
+
+        else:
+            # DB name
+            try:
+                self.crashdb = apport.crashdb.get_crashdb(None, self.report['CrashDB'])
+            except (ImportError, KeyError):
+                self.report['UnreportableReason'] = 'A package hook wants to send this report to the crash database "%s" which does not exist.' % self.report['CrashDB']
+                return False
+
+        return True
+
     def collect_info(self, symptom_script=None, ignore_uninstalled=False,
                      on_finished=None):
         '''Collect additional information.
@@ -952,8 +982,10 @@ class UserInterface:
 
                 icthread.exc_raise()
 
-            if 'CrashDB' in self.report:
-                self.crashdb = get_crashdb(None, self.report['CrashDB'])
+            if not self.check_report_crashdb():
+                if on_finished:
+                    on_finished()
+                return
 
             # check bug patterns
             if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or 'Package' in self.report:
@@ -1101,7 +1133,7 @@ class UserInterface:
                 upthread.exc_raise()
             except KeyboardInterrupt:
                 sys.exit(1)
-            except NeedsCredentials as e:
+            except apport.crashdb.NeedsCredentials as e:
                 message = _('Please enter your account information for the '
                             '%s bug tracking system')
                 data = self.ui_question_userpass(message % excstr(e))
