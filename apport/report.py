@@ -173,6 +173,32 @@ def _dom_remove_space(node):
         else:
             _dom_remove_space(c)
 
+
+def _run_hook(report, ui, hook):
+    if not os.path.exists(hook):
+        return False
+
+    symb = {}
+    try:
+        with open(hook) as fd:
+            exec(compile(fd.read(), hook, 'exec'), symb)
+        try:
+            symb['add_info'](report, ui)
+        except TypeError as e:
+            if str(e).startswith('add_info()'):
+                # older versions of apport did not pass UI, and hooks that
+                # do not require it don't need to take it
+                symb['add_info'](report)
+            else:
+                raise
+    except StopIteration:
+        return True
+    except:
+        apport.error('hook %s crashed:', hook)
+        traceback.print_exc()
+
+    return False
+
 #
 # Report class
 #
@@ -736,31 +762,6 @@ class Report(problem_report.ProblemReport):
         return True if the hook requested to stop the report filing process,
         False otherwise.
         '''
-        def run_hook(hook):
-            if not os.path.exists(hook):
-                return False
-
-            symb = {}
-            try:
-                with open(hook) as fd:
-                    exec(compile(fd.read(), hook, 'exec'), symb)
-                try:
-                    symb['add_info'](self, ui)
-                except TypeError as e:
-                    if str(e).startswith('add_info()'):
-                        # older versions of apport did not pass UI, and hooks that
-                        # do not require it don't need to take it
-                        symb['add_info'](self)
-                    else:
-                        raise
-            except StopIteration:
-                return True
-            except:
-                apport.error('hook %s crashed:', hook)
-                traceback.print_exc()
-
-            return False
-
         # determine package names, unless already given as arguments
         if not package:
             package = self.get('Package')
@@ -794,19 +795,19 @@ class Report(problem_report.ProblemReport):
 
         # common hooks
         for hook in glob.glob(_common_hook_dir + '/*.py'):
-            if run_hook(hook):
+            if _run_hook(self, ui, hook):
                 return True
 
         # binary package hook
         if package:
             for hook_dir in hook_dirs:
-                if run_hook(os.path.join(hook_dir, package + '.py')):
+                if _run_hook(self, ui, os.path.join(hook_dir, package + '.py')):
                     return True
 
         # source package hook
         if srcpackage:
             for hook_dir in hook_dirs:
-                if run_hook(os.path.join(hook_dir, 'source_%s.py' % srcpackage)):
+                if _run_hook(self, ui, os.path.join(hook_dir, 'source_%s.py' % srcpackage)):
                     return True
 
         return False
