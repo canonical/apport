@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
+<policyconfig>
+  <vendor>Apport</vendor>
+  <vendor_url>https://wiki.ubuntu.com/Apport</vendor_url>
+  <icon_name>apport</icon_name>
+
+  <action id="com.ubuntu.apport.root-info">
+    <_description>Collect system information</_description>
+    <_message>Authentication is required to collect system information for this problem report</_message>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/share/apport/root_info_wrapper</annotate>
+    <!-- <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate> -->
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+  </action>
+
+</policyconfig>

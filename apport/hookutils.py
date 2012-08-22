@@ -373,22 +373,9 @@ def command_output(command, input=None, stderr=subprocess.STDOUT,
 
 def _root_command_prefix():
     if os.getuid() == 0:
-        prefix = []
-    elif os.getenv('DISPLAY') and \
-            subprocess.call(['which', 'kdesudo'], stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE) == 0 and \
-            subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'ksmserver'],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-        prefix = ['kdesudo', '--desktop', '/usr/share/applications/apport-kde-mime.desktop',
-                  '--', 'env', '-u', 'LANGUAGE', 'LC_MESSAGES=C']
-    elif os.getenv('DISPLAY') and \
-            subprocess.call(['which', 'gksu'], stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE) == 0 and \
-            subprocess.call(['pgrep', '-x', '-u', str(os.getuid()), 'gnome-panel|gconfd-2'],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-        prefix = ['gksu', '-D', 'Apport', '--', 'env', '-u', 'LANGUAGE', 'LC_MESSAGES=C']
+        return []
     else:
-        prefix = ['sudo', 'LC_MESSAGES=C', 'LANGUAGE=']
+        return ['pkexec']
 
     return prefix
 
@@ -396,8 +383,7 @@ def _root_command_prefix():
 def root_command_output(command, input=None, stderr=subprocess.STDOUT, decode_utf8=True):
     '''Try to execute given command (array) as root and return its stdout.
 
-    This passes the command through gksu, kdesudo, or sudo, depending on the
-    running desktop environment.
+    This passes the command through pkexec, unless the caller is already root.
 
     In case of failure, a textual error gets returned.
 
@@ -417,12 +403,14 @@ def attach_root_command_outputs(report, command_map):
     escaping yourself. To include stderr output of a command, end it with
     "2>&1".
 
-    Just like root_command_output() this will use gksu, kdesudo, or sudo for
-    gaining root privileges, depending on the running desktop environment.
+    Just like root_command_output, this passes the command through pkexec,
+    unless the caller is already root.
 
     This is preferrable to using root_command_output() multiple times, as that
     will ask for the password every time.
     '''
+    wrapper_path = os.path.join(os.path.abspath(
+        os.environ.get('APPORT_DATA_DIR', '/usr/share/apport')), 'root_info_wrapper')
     workdir = tempfile.mkdtemp()
     try:
         # create a shell script with all the commands
@@ -436,7 +424,7 @@ def attach_root_command_outputs(report, command_map):
         script.close()
 
         # run script
-        sp = subprocess.Popen(_root_command_prefix() + ['/bin/sh', script_path])
+        sp = subprocess.Popen(_root_command_prefix() + [wrapper_path, script_path])
         sp.wait()
 
         # now read back the individual outputs

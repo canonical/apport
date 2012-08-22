@@ -1,7 +1,7 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.4.1 (UNRELEASED):
+2.5 (UNRELEASED):
 -------------------
 Bug fixes:
  * test_recoverable_problem.py: Fix test for calling test runner with absolute
@@ -19,6 +19,12 @@ Improvements:
    APPORT_MEMDEBUG is set. Annotate apport-retrace with it.
  * hookutils.py: Allow specifying a list of profile names when using
    attach_mac_events(). Thanks Marc Deslauriers.
+ * hookutils.py, attach_root_command_outputs() and root_command_output(): Drop
+   usage of sudo, kdesudo, and gksu, and replace with pkexec. For
+   attach_root_command_outputs(), use a wrapper and proper .policy file which
+   explains the action and works under every environment; thus
+   attach_root_command_outputs() is preferred over root_command_output() now,
+   as it provides a better user experience.
 
 2.4 (2012-07-18):
 -----------------
