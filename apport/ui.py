@@ -242,9 +242,7 @@ class UserInterface:
             response = self.ui_present_report_details(allowed_to_report)
             if response['report'] or response['examine']:
                 try:
-                    if 'Dependencies' not in self.report and response['report']:
-                        self.collect_info(on_finished=apport.fileutils.mark_report_upload(report_file))
-                    elif 'Dependencies' not in self.report:
+                    if 'Dependencies' not in self.report:
                         self.collect_info()
                 except (IOError, zlib.error) as e:
                     # can happen with broken core dumps
@@ -282,6 +280,7 @@ class UserInterface:
             if not response['report']:
                 return
 
+            apport.fileutils.mark_report_upload(report_file)
             # We check for duplicates and unreportable crashes here, rather
             # than before we show the dialog, as we want to submit these to the
             # crash database, but not Launchpad.

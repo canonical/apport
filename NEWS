@@ -13,9 +13,6 @@ Bug fixes:
  * apport-retrace: Keep compressed CoreDump from .crash files instead of
    uncompressing them into memory. This dramatically reduces memory usage.
    (LP: #981155)
- * ui.py: Only create the .upload file after collect_info() has completed, to
-   avoid uploading broken reports through whoopsie. Thanks Brian Murray.
-   (LP: #1020994)
 
 Improvements:
  * Add an apport.memdbg() function which prints out current memory usage if
