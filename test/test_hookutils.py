@@ -322,7 +322,7 @@ class T(unittest.TestCase):
         report = {'Date': 'Mon Oct 10 21:06:03 2009'}
         self.assertFalse(apport.hookutils.in_session_of_problem(report))
 
-        report = {'Date': 'Tue Jan  1 12:00:00 2211'}
+        report = {'Date': 'Tue Jan  1 12:00:00 2038'}
         self.assertTrue(apport.hookutils.in_session_of_problem(report))
 
         locale.setlocale(locale.LC_TIME, '')
