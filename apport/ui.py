@@ -1251,8 +1251,15 @@ class UserInterface:
         if not desktop_file:
             return None
 
-        cp = ConfigParser(interpolation=None)
-        cp.read(desktop_file, encoding='UTF-8')
+        cp = ConfigParser(interpolation=None, strict=False)
+        try:
+            cp.read(desktop_file, encoding='UTF-8')
+        except Exception as e:
+            if 'onfig' in str(e.__class__) and 'arser' in str(e.__class__):
+                sys.stderr.write('Warning! %s is broken: %s\n' % (desktop_file, str(e)))
+                return None
+            else:
+                raise
         if not cp.has_section('Desktop Entry'):
             return None
         result = dict(cp.items('Desktop Entry'))

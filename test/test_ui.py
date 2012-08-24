@@ -2012,6 +2012,8 @@ return 'bash'
         self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before)
 
     def test_get_desktop_entry(self):
+        '''parsing of .desktop files'''
+
         desktop_file = tempfile.NamedTemporaryFile()
         desktop_file.write('''[Desktop Entry]
 Name=gtranslate
@@ -2030,6 +2032,53 @@ Categories=GNOME;GTK;Utility;TextEditor;
                                 'name': 'gtranslate',
                                 'genericname[de]': 'Übersetzer',
                                 'exec': 'gedit %U'})
+
+    def test_get_desktop_entry_broken(self):
+        '''parsing of broken .desktop files'''
+
+        # duplicate key
+        desktop_file = tempfile.NamedTemporaryFile()
+        desktop_file.write('''[Desktop Entry]
+Name=gtranslate
+GenericName=Translator
+GenericName[de]=Übersetzer
+Exec=gedit %U
+Keywords=foo;bar;
+Categories=GNOME;GTK;Utility;TextEditor;
+Keywords=baz
+'''.encode('UTF-8'))
+        desktop_file.flush()
+
+        self.report['DesktopFile'] = desktop_file.name
+        self.ui.report = self.report
+        info = self.ui.get_desktop_entry()
+        self.assertEqual(info, {'genericname': 'Translator',
+                                'categories': 'GNOME;GTK;Utility;TextEditor;',
+                                'name': 'gtranslate',
+                                'genericname[de]': 'Übersetzer',
+                                'keywords': 'baz',
+                                'exec': 'gedit %U'})
+
+        # no header
+        desktop_file.seek(0)
+        desktop_file.write('''Name=gtranslate
+GenericName=Translator
+Exec=gedit %U
+'''.encode('UTF-8'))
+        desktop_file.flush()
+
+        self.assertEqual(self.ui.get_desktop_entry(), None)
+
+        # syntax error
+        desktop_file.seek(0)
+        desktop_file.write('''[Desktop Entry]
+Name gtranslate
+GenericName=Translator
+Exec=gedit %U
+'''.encode('UTF-8'))
+        desktop_file.flush()
+
+        self.assertEqual(self.ui.get_desktop_entry(), None)
 
     def test_wait_for_pid(self):
         # fork a test process

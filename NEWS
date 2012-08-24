@@ -9,6 +9,7 @@ detailled list of changes, please see ChangeLog.
  * test_hookutils.py, test_in_session_of_problem(): Use year 2038 for a future
    date instead of 2211, as current Python 3.2 now crashes with an
    OverflowError on 32 bit machines with later years.
+ * Fix crash on broken .desktop files. (LP: #1039889)
 
 2.5.1 (2012-08-22):
 -------------------
