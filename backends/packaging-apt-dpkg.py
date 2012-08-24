@@ -135,8 +135,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         if not cur_ver:
             # happens with virtual packages
             return []
-        return [d[0].target_pkg.name for d in cur_ver.depends_list.get('Depends', []) +
-                cur_ver.depends_list.get('PreDepends', [])]
+        return [d[0].target_pkg.name for d in
+                cur_ver.depends_list.get('Depends', []) +
+                cur_ver.depends_list.get('PreDepends', []) +
+                cur_ver.depends_list.get('Recommends', [])]
 
     def get_source(self, package):
         '''Return the source package name for a package.'''
