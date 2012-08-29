@@ -187,7 +187,7 @@ class ReportDialog(Dialog):
                 self.text.hide()
             self.closed_button.hide()
             self.ignore_future_problems.hide()
-            self.heading.setText(_('Sorry, a problem occurred while installing '
+            self.heading.setText(_('Sorry, there was a problem installing some '
                                    'software.'))
         else:
             # Regular crash.

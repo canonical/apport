@@ -257,7 +257,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('closed_button').hide()
             self.w('ignore_future_problems').hide()
             self.w('title_label').set_label(
-                _('Sorry, a problem occurred while installing software.'))
+                _('Sorry, there was a problem installing some software.'))
         else:
             # Non-system program crash or thread crash.
             self.desktop_info = self.get_desktop_entry()

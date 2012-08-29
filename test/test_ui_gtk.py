@@ -120,10 +120,11 @@ class T(unittest.TestCase):
     def test_package_crash_layout(self):
         '''
         +-----------------------------------------------------------------+
-        | [ error  ] Sorry, a problem occurred while installing software. |
+        | [ error  ] Sorry, there was a problem installing some software. |
+        |                                                                 |
         |            Package: apport 1.2.3~0ubuntu1                       |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |            [/] Send an error report to help fix this problem    |
         |                                                                 |
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+
@@ -134,7 +135,8 @@ class T(unittest.TestCase):
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-                         _('Sorry, a problem occurred while installing software.'))
+                         _('Sorry, there was a problem installing some '
+                           'software.'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
