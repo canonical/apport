@@ -286,10 +286,11 @@ Type=Application''')
     def test_recoverable_crash_layout(self):
         '''
         +-----------------------------------------------------------------+
-        | [ logo ] The application Foo has experienced an internal error. |
+        | [ logo ] The app Foo just had a problem.                        |
+        |                                                                 |
         |          Developer-specified error text.                        |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |          [/] Send an error report to help fix this problem      |
         |                                                                 |
         | [ Show Details ]                                   [ Continue ] |
         +-----------------------------------------------------------------+

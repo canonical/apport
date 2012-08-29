@@ -256,15 +256,14 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('title_label').set_label(
                 _('Sorry, a problem occurred while installing software.'))
         else:
-            # Regular crash.
+            # Non-system program crash or thread crash.
             self.desktop_info = self.get_desktop_entry()
             if self.desktop_info:
                 icon = self.desktop_info.get('icon')
                 n = self.desktop_info['name']
                 n = GLib.markup_escape_text(n)
                 if report_type == 'RecoverableProblem':
-                    t = _('The application %s has experienced '
-                          'an internal error.') % n
+                    t = _('The app %s just had a problem.') % n
                 else:
                     t = _('The application %s has closed unexpectedly.') % n
                 self.w('title_label').set_label('<big><b>%s</b></big>' % t)
@@ -280,8 +279,8 @@ class GTKUserInterface(apport.ui.UserInterface):
             else:
                 icon = 'distributor-logo'
                 if report_type == 'RecoverableProblem':
-                    title_text = _('The application %s has experienced '
-                                   'an internal error.') % self.cur_package
+                    title_text = _(u'The program \u201c%s\u201d just had '
+                                   'a problem.') % self.cur_package
                 else:
                     title_text = self.get_system_application_title()
                 self.w('title_label').set_label('<big><b>%s</b></big>' %

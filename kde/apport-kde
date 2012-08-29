@@ -194,9 +194,8 @@ class ReportDialog(Dialog):
             if desktop_info:
                 icon = desktop_info.get('icon')
                 if report_type == 'RecoverableProblem':
-                    self.heading.setText(_('The application %s has experienced '
-                                           'an internal error.') %
-                                           desktop_info['name'])
+                    self.heading.setText(_('The app %s just had '
+                                           'a problem.') % desktop_info['name'])
                 else:
                     self.heading.setText(_('The application %s has closed '
                                            'unexpectedly.') %
