@@ -153,8 +153,8 @@ class GTKUserInterface(apport.ui.UserInterface):
                 t = (_('The app %s has closed unexpectedly.')
                      % os.path.basename(self.report['ExecutablePath']))
             else:
-                t = (_(u'The program \u2018%s\u2019 has closed unexpectedly.') %
-                     self.cur_package)
+                t = (_(u'The program \u2018%s\u2019 has stopped '
+                       'unexpectedly.') % self.cur_package)
 
         else:
             t = _('Sorry, this computer just had a bit of a problem.')
