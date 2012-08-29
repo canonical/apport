@@ -222,17 +222,20 @@ class GTKUserInterface(apport.ui.UserInterface):
             self.w('closed_button').show()
             self.w('closed_button').set_label(_('Force Closed'))
             self.w('continue_button').set_label(_('Relaunch'))
-            self.w('subtitle_label').hide()
+            self.w('subtitle_label').show()
+            self.w('subtitle_label').set_label(
+                u'You can wait to see if it wakes up, or close or relaunch it.')
             self.desktop_info = self.get_desktop_entry()
             if self.desktop_info:
                 icon = self.desktop_info.get('icon')
                 name = self.desktop_info['name']
                 name = GLib.markup_escape_text(name)
-                title = _('The application %s has stopped responding.') % name
+                title = _(u'The app %s isn\u2019t responding.') % name
             else:
                 icon = 'distributor-logo'
                 name = os.path.basename(self.report['ExecutablePath'])
-                title = _('The program "%s" has stopped responding.') % name
+                title = _(
+                    u'The program \u201c%s\u201d isn\u2019t responding.') % name
             self.w('title_label').set_label('<big><b>%s</b></big>' % title)
         elif not self.report_file:
             self.setup_bug_report()

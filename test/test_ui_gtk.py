@@ -230,9 +230,12 @@ Type=Application''')
     def test_hang_layout(self):
         '''
         +-----------------------------------------------------------------+
-        | [ apport ] The application Apport has stopped responding.       |
+        | [ apport ] The app Apport has stopped responding.               |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |            You can wait to see if it wakes up, or close or      |
+        |            relaunch it.                                         |
+        |                                                                 |
+        |            [/] Send an error report to help fix this problem    |
         |                                                                 |
         | [ Show Details ]                 [ Force Closed ]  [ Relaunch ] |
         +-----------------------------------------------------------------+
@@ -251,7 +254,10 @@ Type=Application''')
             self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-                         _('The application Apport has stopped responding.'))
+                         _('The app Apport has stopped responding.'))
+        self.assertEqual(self.app.w('subtitle_label').get_text(),
+                         _('You can wait to see if it wakes up, or close or '
+                           'relaunch it.'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
