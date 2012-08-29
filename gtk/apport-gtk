@@ -150,10 +150,10 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         if from_console:
             if 'ExecutablePath' in self.report:
-                t = (_('Sorry, the application %s has closed unexpectedly.')
+                t = (_('The app %s has closed unexpectedly.')
                      % os.path.basename(self.report['ExecutablePath']))
             else:
-                t = (_('Sorry, %s has closed unexpectedly.') %
+                t = (_(u'The program \u2018%s\u2019 has closed unexpectedly.') %
                      self.cur_package)
 
         else:
@@ -268,7 +268,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 if report_type == 'RecoverableProblem':
                     t = _('The app %s just had a problem.') % n
                 else:
-                    t = _('The application %s has closed unexpectedly.') % n
+                    t = _('The app %s has closed unexpectedly.') % n
                 self.w('title_label').set_label('<big><b>%s</b></big>' % t)
                 self.w('subtitle_label').hide()
 

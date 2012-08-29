@@ -150,9 +150,9 @@ class T(unittest.TestCase):
     def test_regular_crash_layout(self):
         '''
         +-----------------------------------------------------------------+
-        | [ apport ] The application Apport has closed unexpectedly.      |
+        | [ apport ] The app Apport has closed unexpectedly.              |
         |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
+        |            [/] Send an error report to help fix this problem    |
         |            [ ] Ignore future problems of this program version.  |
         |                                                                 |
         | [ Show Details ]                                   [ Continue ] |
@@ -311,11 +311,12 @@ Type=Application''')
     def test_system_crash_from_console_layout(self):
         '''
         +-------------------------------------------------------------------+
-        | [ ubuntu ] Sorry, the application apport has closed unexpectedly. |
+        | [ ubuntu ] The app apport has closed unexpectedly.                |
+        |                                                                   |
         |            If you notice further problems, try restarting the     |
         |            computer                                               |
         |                                                                   |
-        |            [x] Send an error report to help fix this problem.     |
+        |            [/] Send an error report to help fix this problem      |
         |                                                                   |
         | [ Show Details ]                                     [ Continue ] |
         +-------------------------------------------------------------------+
@@ -332,7 +333,7 @@ Type=Application''')
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-                         _('Sorry, the application apport has closed unexpectedly.'))
+                         _('The app apport has closed unexpectedly.'))
         self.assertEqual(self.app.w('subtitle_label').get_text(),
                          _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
@@ -349,7 +350,8 @@ Type=Application''')
         GLib.idle_add(Gtk.main_quit)
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('title_label').get_text(),
-                         _('Sorry, apport has closed unexpectedly.'))
+                         _(u'The program \u201capport\u201d has closed '
+                            'unexpectedly.'))
 
         # no crash counter
         self.assertFalse(self.app.w('ignore_future_problems').get_property('visible'))
@@ -358,9 +360,9 @@ Type=Application''')
     def test_examine_button(self, *args):
         '''
         +---------------------------------------------------------------------+
-        | [ apport ] The application Apport has closed unexpectedly.          |
+        | [ apport ] The app Apport has closed unexpectedly.                  |
         |                                                                     |
-        |            [x] Send an error report to help fix this problem.       |
+        |            [x] Send an error report to help fix this problem        |
         |                                                                     |
         | [ Show Details ] [ Examine locally ]  [ Leave Closed ] [ Relaunch ] |
         +---------------------------------------------------------------------+
