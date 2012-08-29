@@ -220,16 +220,17 @@ Type=Application''')
 
     def test_system_crash_layout(self):
         '''
-        +-----------------------------------------------------------------+
-        | [ logo ] Sorry, YourDistro has experienced an internal error.   |
-        |            If you notice further problems, try restarting the   |
-        |            computer                                             |
-        |                                                                 |
-        |            [x] Send an error report to help fix this problem.   |
-        |            [ ] Ignore future problems of this type.             |
-        |                                                                 |
-        | [ Show Details ]                                   [ Continue ] |
-        +-----------------------------------------------------------------+
+        +---------------------------------------------------------------+
+        | [ logo] Sorry, this computer just had a bit of a problem.     |
+        |                                                               |
+        |         If you notice it's not working properly, try          |
+        |         restarting the computer.                              |
+        |                                                               |
+        |         [/] Send an error report to help fix this problem     |
+        |         [ ] Ignore future problems of this type               |
+        |                                                               |
+        | [ Show Details ]                                 [ Continue ] |
+        +---------------------------------------------------------------+
         '''
         self.app.report['ProblemType'] = 'Crash'
         self.app.report['CrashCounter'] = '1'
@@ -238,9 +239,10 @@ Type=Application''')
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.dialog.windowTitle(), self.distro.split()[0])
         self.assertEqual(self.app.dialog.heading.text(),
-                         _('Sorry, %s has experienced an internal error.') % self.distro)
+                         _('Sorry, this computer just had a bit of a problem.'))
         self.assertEqual(self.app.dialog.text.text(),
-                         _('If you notice further problems, try restarting the computer.'))
+                         _(u'If you notice it\u2019s not working properly, '
+                            'try restarting the computer.'))
         self.assertTrue(self.app.dialog.text.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isVisible())
         self.assertTrue(self.app.dialog.send_error_report.isChecked())

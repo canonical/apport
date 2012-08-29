@@ -211,10 +211,11 @@ class ReportDialog(Dialog):
                     self.continue_button.setText(_('Continue'))
             else:
                 icon = 'distributor-logo'
-                self.heading.setText(_('Sorry, %s has experienced an '
-                                       'internal error.') % distro)
+                self.heading.setText(_('Sorry, this computer just had a bit '
+                                       'of a problem.'))
                 self.text.show()
-                self.text.setText(_('If you notice further problems, '
+                self.text.setText(_(u'If you notice things aren\u2019t '
+                                    'working properly, '
                                     'try restarting the computer.'))
                 self.closed_button.hide()
                 self.continue_button.setText(_('Continue'))

@@ -268,12 +268,13 @@ Type=Application''')
     def test_system_crash_layout(self):
         '''
         +---------------------------------------------------------------+
-        | [ logo ] Sorry, YourDistro has experienced an internal error. |
-        |          If you notice further problems, try restarting the   |
-        |          computer                                             |
+        | [ logo] Sorry, this computer just had a bit of a problem.     |
         |                                                               |
-        |            [x] Send an error report to help fix this problem. |
-        |            [ ] Ignore future problems of this type.           |
+        |         If you notice it's not working properly, try          |
+        |         restarting the computer.                              |
+        |                                                               |
+        |         [/] Send an error report to help fix this problem     |
+        |         [ ] Ignore future problems of this type               |
         |                                                               |
         | [ Show Details ]                                 [ Continue ] |
         +---------------------------------------------------------------+
@@ -285,7 +286,7 @@ Type=Application''')
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-                         _('Sorry, %s has experienced an internal error.') % self.distro)
+                         _('Sorry, this computer just had a bit of a problem.'))
         self.assertEqual(self.app.w('subtitle_label').get_text(),
                          _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
