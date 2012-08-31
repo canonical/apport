@@ -13,6 +13,8 @@ detailled list of changes, please see ChangeLog.
  * apport-gtk: For console program crashes, say "stopped" instead of "closed".
    Add a subtitle label with a hint about hanging programs. Thanks Matt Price
    and Matthew Paul Thomas!
+ * report.py: Fix crash on determination of Python module path when examining a
+   crash of "python -m ...".
 
 2.5.1 (2012-08-22):
 -------------------

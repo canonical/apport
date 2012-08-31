@@ -431,14 +431,21 @@ class Report(problem_report.ProblemReport):
     def _python_module_path(klass, module):
         '''Determine path of given Python module'''
 
+        module = module.replace('/', '.')
+
         try:
-            m = __import__(module.replace('/', '.'))
+            m = __import__(module)
             m
         except:
             return None
 
         # chop off the first component, as it's already covered by m
-        path = eval('m.%s.__file__' % '.'.join(module.split('/')[1:]))
+        submodule = module.split('.')[1:]
+        if submodule:
+            path = eval('m.%s.__file__' % '.'.join(submodule))
+        else:
+            path = m.__file__
+
         if path.endswith('.pyc'):
             path = path[:-1]
         return path

@@ -376,6 +376,24 @@ sys.stdin.readline()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
             self.assertTrue('report' in pr['ExecutablePath'],
                             'expecting "report" in ExecutablePath "%s"' % pr['ExecutablePath'])
+
+            # python script through -m, with dot separator; top-level module
+            pr = apport.report.Report()
+            pr['ExecutablePath'] = '/usr/bin/python3'
+            pr['ProcStatus'] = 'Name:\tpython3'
+            pr['ProcCmdline'] = 'python\0-m\0re\0install'
+            pr._check_interpreted()
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/python3')
+            self.assertTrue('re.py' in pr['ExecutablePath'], pr['ExecutablePath'])
+
+            # python script through -m, with dot separator; sub-level module
+            pr = apport.report.Report()
+            pr['ExecutablePath'] = '/usr/bin/python3'
+            pr['ProcStatus'] = 'Name:\tpython3'
+            pr['ProcCmdline'] = 'python\0-m\0distutils.cmd\0foo'
+            pr._check_interpreted()
+            self.assertEqual(pr['InterpreterPath'], '/usr/bin/python3')
+            self.assertTrue('distutils/cmd.py' in pr['ExecutablePath'], pr['ExecutablePath'])
         finally:
             if restore_root:
                 os.setresuid(0, 0, -1)
