@@ -10,6 +10,9 @@ detailled list of changes, please see ChangeLog.
    date instead of 2211, as current Python 3.2 now crashes with an
    OverflowError on 32 bit machines with later years.
  * Fix crash on broken .desktop files. (LP: #1039889)
+ * apport-gtk: For console program crashes, say "stopped" instead of "closed".
+   Add a subtitle label with a hint about hanging programs. Thanks Matt Price
+   and Matthew Paul Thomas!
 
 2.5.1 (2012-08-22):
 -------------------

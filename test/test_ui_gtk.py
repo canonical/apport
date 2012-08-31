@@ -252,6 +252,9 @@ Type=Application''')
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
                          _('The application Apport has stopped responding.'))
+        self.assertEqual(self.app.w('subtitle_label').get_text(),
+                         _('You can wait to see if it wakes up, or close or '
+                           'relaunch it.'))
         send_error_report = self.app.w('send_error_report')
         self.assertTrue(send_error_report.get_property('visible'))
         self.assertTrue(send_error_report.get_active())
@@ -262,7 +265,7 @@ Type=Application''')
         self.assertTrue(self.app.w('closed_button').get_property('visible'))
         self.assertEqual(self.app.w('closed_button').get_label(),
                          _('Force Closed'))
-        self.assertFalse(self.app.w('subtitle_label').get_property('visible'))
+        self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
         self.assertFalse(self.app.w('ignore_future_problems').get_property('visible'))
 
     def test_system_crash_layout(self):
@@ -325,7 +328,7 @@ Type=Application''')
         self.app.ui_present_report_details(True)
         self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
         self.assertEqual(self.app.w('title_label').get_text(),
-                         _('Sorry, the application apport has closed unexpectedly.'))
+                         _('Sorry, the application apport has stopped unexpectedly.'))
         self.assertEqual(self.app.w('subtitle_label').get_text(),
                          _('If you notice further problems, try restarting the computer.'))
         self.assertTrue(self.app.w('subtitle_label').get_property('visible'))
