@@ -11,6 +11,13 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+# Explicitly set the PATH to that of ENV_SUPATH in /etc/login.defs. We need do
+# this so that confined applications using ubuntu-browsers.d/ubuntu-integration
+# cannot abuse the environment to escape AppArmor confinement via this script
+# (LP: #1045986). This can be removed once AppArmor supports environment
+# filtering (LP: #1045985)
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 # locate path of a particular program
 find_program() {
     for p in /usr/local/bin /usr/bin /usr/local/share/apport /usr/share/apport; do
