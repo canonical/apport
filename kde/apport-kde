@@ -421,7 +421,7 @@ class MainUserInterface(apport.ui.UserInterface):
         self.progress.hide()
 
     def ui_question_yesno(self, text):
-        response = KMessageBox.questionYesNoCancel(None, _(text), QString(),
+        response = KMessageBox.questionYesNoCancel(None, _(text), '',
                 KStandardGuiItem.yes(), KStandardGuiItem.no(),
                 KStandardGuiItem.cancel())
         if response == KMessageBox.Yes:
