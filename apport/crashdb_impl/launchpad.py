@@ -722,7 +722,8 @@ Please continue to report any other bugs you may find.' % master_id,
             tags_to_copy = ['bugpattern-needed', 'running-unity']
             for series in self.lp_distro.series:
                 if series.status not in ['Active Development',
-                                         'Current Stable Release', 'Supported']:
+                                         'Current Stable Release',
+                                         'Supported', 'Pre-release Freeze']:
                     continue
                 tags_to_copy.append(series.name)
             # copy tags over from the duplicate bug to the master bug
