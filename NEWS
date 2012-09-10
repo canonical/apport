@@ -18,6 +18,8 @@ detailled list of changes, please see ChangeLog.
  * apport-kde: Fix crash with undefined QString under Python 3. Thanks Jonathan
    Riddell! (LP: #1028984)
  * launchpad.py: Add missing "Pre-release Freeze" status. Thanks Brian Murray!
+ * report.py, _check_bug_pattern(): Fix bug pattern matching against binary
+   values. Thanks Brian Murray for the original patch. (LP: #1016380)
 
 2.5.1 (2012-08-22):
 -------------------

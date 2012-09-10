@@ -807,6 +807,12 @@ $0.bin 2>/dev/null
         self.assertEqual(r_bash_compressed.search_bug_patterns(pattern_url),
                          'http://bugtracker.net/bugs/1')
 
+        # also works for binary values
+        r_bash_utf8 = r_bash.copy()
+        r_bash_utf8['Foo'] = b'bazaar'
+        self.assertEqual(r_bash_utf8.search_bug_patterns(pattern_url),
+                         'http://bugtracker.net/bugs/1')
+
         # negative match cases
         r_bash['Package'] = 'bash-static 1-2'
         self.assertEqual(r_bash.search_bug_patterns(pattern_url), None)
@@ -816,6 +822,12 @@ $0.bin 2>/dev/null
         r_bash['Foo'] = 'zz'
         self.assertEqual(r_bash.search_bug_patterns(pattern_url), None,
                          'does not match on wrong Foo value')
+        r_bash['Foo'] = b'zz'
+        self.assertEqual(r_bash.search_bug_patterns(pattern_url), None,
+                         'does not match on wrong Foo UTF-8 value')
+        r_bash['Foo'] = b'\x01\xFF'
+        self.assertEqual(r_bash.search_bug_patterns(pattern_url), None,
+                         'does not match on wrong Foo binary value')
         r_coreutils['Bar'] = '11'
         self.assertEqual(r_coreutils.search_bug_patterns(pattern_url), None,
                          'does not match on wrong Bar value')

@@ -139,6 +139,8 @@ def _check_bug_pattern(report, pattern):
                 if isinstance(v, problem_report.CompressedValue):
                     v = v.get_value()
                     regexp = regexp.encode('UTF-8')
+                elif isinstance(v, bytes):
+                    regexp = regexp.encode('UTF-8')
                 try:
                     re_c = re.compile(regexp)
                 except:
