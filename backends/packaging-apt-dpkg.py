@@ -112,7 +112,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         try:
             return self._cache()[package]
         except KeyError:
-            raise ValueError('package does not exist')
+            raise ValueError('package %s does not exist' % package)
 
     def get_version(self, package):
         '''Return the installed version of a package.'''
@@ -120,7 +120,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         pkg = self._apt_pkg(package)
         inst = pkg.installed
         if not inst:
-            raise ValueError('package does not exist')
+            raise ValueError('package %s does not exist' % package)
         return inst.version
 
     def get_available_version(self, package):

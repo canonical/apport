@@ -4,6 +4,8 @@ detailled list of changes, please see ChangeLog.
 2.5.3 (UNRELEASED):
 -------------------
  * data/apportcheckresume: Open report file in binary mode. (LP: #1040353)
+ * packaging-apt-dpkg.py: When throwing ValueErrors, show the non-existing
+   package name. This makes it easier to debug such crashes.
 
 2.5.2 (2012-09-17):
 -------------------
