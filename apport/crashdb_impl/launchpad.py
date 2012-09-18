@@ -376,7 +376,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             x.append('apport-collected')
             # add any tags (like the release) to the bug
             if 'Tags' in report:
-                x += report['Tags'].lower().split()
+                x += self._filter_tag_names(report['Tags']).split()
             bug.tags = x
             bug.lp_save()
             bug = self.launchpad.bugs[id]  # fresh bug object, LP#336866 workaround
@@ -910,7 +910,7 @@ in a dependent package.' % master,
         if a:
             hdr['Tags'] += ' ' + a
         if 'Tags' in report:
-            hdr['Tags'] += ' ' + report['Tags'].lower()
+            hdr['Tags'] += ' ' + self._filter_tag_names(report['Tags'])
 
         # privacy/retracing for distro reports
         # FIXME: ugly hack until LP has a real crash db
@@ -942,6 +942,21 @@ in a dependent package.' % master,
         mime.seek(0)
 
         return mime
+
+    @classmethod
+    def _filter_tag_names(klass, tags):
+        '''Replace characters from tags which are not palatable to Launchpad'''
+
+        res = ''
+        for ch in tags.lower().encode('ASCII', errors='ignore'):
+            if ch.isspace() or ch.isalpha() or ch.isdigit() or (len(res) > 0 and ch in b'+-.'):
+                res += ch
+            else:
+                res += '.'
+        res = res.decode('ASCII')
+
+        print('_filter_tag_names', tags, '->', res)
+        return res
 
 #
 # Launchpad storeblob API (should go into launchpadlib, see LP #315358)

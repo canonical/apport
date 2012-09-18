@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
  * data/apportcheckresume: Open report file in binary mode. (LP: #1040353)
  * packaging-apt-dpkg.py: When throwing ValueErrors, show the non-existing
    package name. This makes it easier to debug such crashes.
+ * launchpad.py: Replace characters from tags which are not allowed by
+   Launchpad with '.' (LP: #1029479)
 
 2.5.2 (2012-09-17):
 -------------------
