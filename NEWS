@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.5.3 (UNRELEASED):
+-------------------
+ * data/apportcheckresume: Open report file in binary mode. (LP: #1040353)
+
 2.5.2 (2012-09-17):
 -------------------
  * test/run: Ignore root_info_wrapper with pyflakes.

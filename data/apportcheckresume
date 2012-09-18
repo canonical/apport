@@ -79,11 +79,8 @@ def main(argv=None):
 
         nowtime = datetime.datetime.now()
         pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(' ', '_'))
-        report_file = os.fdopen(os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'w')
-        try:
+        with os.fdopen(os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'wb') as report_file:
             pr.write(report_file)
-        finally:
-            report_file.close()
         return 0
     except:
         print('apportcheckresume failed')
