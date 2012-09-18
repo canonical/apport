@@ -153,7 +153,7 @@ def _check_bug_pattern(report, pattern):
 
 def _check_bug_patterns(report, patterns):
     try:
-        dom = xml.dom.minidom.parseString(patterns)
+        dom = xml.dom.minidom.parseString(patterns.encode('UTF-8'))
     except (ExpatError, UnicodeEncodeError):
         return None
 

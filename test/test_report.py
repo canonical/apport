@@ -762,6 +762,10 @@ $0.bin 2>/dev/null
         <re key="SourcePackage">^bazaar$</re>
         <re key="LogFile">AssertionError</re>
     </pattern>
+    <pattern url="http://bugtracker.net/bugs/6">
+        <re key="Package">^update-notifier</re>
+        <re key="LogFile">AssertionError ‽</re>
+    </pattern>
 </patterns>''')
         patterns.flush()
 
@@ -790,6 +794,9 @@ $0.bin 2>/dev/null
 
         pattern_url = 'file://' + patterns.name
 
+        # will return None if the patterns fail parsing
+        self.assertEqual(apport.report._check_bug_patterns(r_bash, pattern_url),
+                         None)
         # positive match cases
         self.assertEqual(r_bash.search_bug_patterns(pattern_url),
                          'http://bugtracker.net/bugs/1')
