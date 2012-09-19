@@ -433,7 +433,7 @@ class UserInterface:
         try:
             self.collect_info(symptom_script)
         except ValueError as e:
-            if str(e) == 'package does not exist':
+            if 'package' in str(e) and 'does not exist' in str(e):
                 if not self.cur_package:
                     self.ui_error_message(_('Invalid problem report'),
                                           _('Symptom script %s did not determine an affected package') % symptom_script)
