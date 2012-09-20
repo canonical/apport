@@ -1707,7 +1707,9 @@ and more
             # create the bug from header and description data
             bug = self.crashdb.launchpad.bugs.createBug(
                 description=description,
-                private=(header['Private'] == 'yes'),
+                # temporarily disabled to work around SSLHandshakeError on
+                # private attachments
+                #private=(header['Private'] == 'yes'),
                 tags=header['Tags'].split(),
                 target=bug_target,
                 title=report.get('Title', report.standard_title()))

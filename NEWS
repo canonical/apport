@@ -8,6 +8,9 @@ detailled list of changes, please see ChangeLog.
    package name. This makes it easier to debug such crashes.
  * launchpad.py: Replace characters from tags which are not allowed by
    Launchpad with '.' (LP: #1029479)
+ * launchpad.py: Temporarily disable filing private bugs in the test suite, to
+   work around the SSLHandshakeError error when downloading private attachments
+   from staging.
 
 2.5.2 (2012-09-17):
 -------------------
