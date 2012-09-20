@@ -19,10 +19,12 @@ if sys.version_info.major == 2:
     from httplib import HTTPSConnection
     from urllib import urlencode, urlopen
     (HTTPSHandler, Request, build_opener, HTTPSConnection, urlencode, urlopen)  # pyflakes
+    _python2 = True
 else:
     from urllib.request import HTTPSHandler, Request, build_opener, urlopen
     from urllib.parse import urlencode
     from http.client import HTTPSConnection
+    _python2 = False
 
 try:
     from launchpadlib.errors import HTTPError
@@ -949,13 +951,14 @@ in a dependent package.' % master,
 
         res = ''
         for ch in tags.lower().encode('ASCII', errors='ignore'):
-            if ch.isspace() or ch.isalpha() or ch.isdigit() or (len(res) > 0 and ch in b'+-.'):
-                res += ch
+            if ch in b'abcdefghijklmnopqrstuvwxyz0123456789 ' or (len(res) > 0 and ch in b'+-.'):
+                if _python2:
+                    res += ch
+                else:
+                    res += chr(ch)
             else:
                 res += '.'
-        res = res.decode('ASCII')
 
-        print('_filter_tag_names', tags, '->', res)
         return res
 
 #
