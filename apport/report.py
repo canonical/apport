@@ -134,7 +134,10 @@ def _check_bug_pattern(report, pattern):
                 return None
             c.normalize()
             if c.hasChildNodes() and c.childNodes[0].nodeType == xml.dom.Node.TEXT_NODE:
-                regexp = c.childNodes[0].nodeValue
+                if _python2:
+                    regexp = c.childNodes[0].nodeValue.encode('UTF-8')
+                else:
+                    regexp = c.childNodes[0].nodeValue
                 v = report[key]
                 if isinstance(v, problem_report.CompressedValue):
                     v = v.get_value()
@@ -148,12 +151,18 @@ def _check_bug_pattern(report, pattern):
                 if not re_c.search(v):
                     return None
 
-    return pattern.attributes['url'].nodeValue
+    if _python2:
+        return pattern.attributes['url'].nodeValue.encode('UTF-8')
+    else:
+        return pattern.attributes['url'].nodeValue
 
 
 def _check_bug_patterns(report, patterns):
     try:
-        dom = xml.dom.minidom.parseString(patterns.encode('UTF-8'))
+        if _python2:
+            dom = xml.dom.minidom.parseString(patterns.encode('UTF-8'))
+        else:
+            dom = xml.dom.minidom.parseString(patterns)
     except (ExpatError, UnicodeEncodeError):
         return None
 
