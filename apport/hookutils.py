@@ -427,8 +427,13 @@ def attach_root_command_outputs(report, command_map):
 
         # now read back the individual outputs
         for keyname in command_map:
-            f = open(os.path.join(workdir, keyname))
-            buf = f.read().strip()
+            try:
+                with open(os.path.join(workdir, keyname)) as f:
+                    buf = f.read().strip()
+            except IOError:
+                # this can happen if the user dismisses authorization in
+                # _root_command_prefix
+                continue
             if buf:
                 report[keyname] = buf
             f.close()

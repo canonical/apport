@@ -11,6 +11,9 @@ detailled list of changes, please see ChangeLog.
  * launchpad.py: Temporarily disable filing private bugs in the test suite, to
    work around the SSLHandshakeError error when downloading private attachments
    from staging.
+ * hookutils.py, attach_root_command_outputs(): Ignore IOError crash about
+   nonexisting files, which can happen if the user dismisses authorization.
+   (LP: #1051222)
 
 2.5.2 (2012-09-17):
 -------------------
