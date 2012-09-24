@@ -762,6 +762,10 @@ $0.bin 2>/dev/null
         <re key="SourcePackage">^bazaar$</re>
         <re key="LogFile">AssertionError</re>
     </pattern>
+    <pattern url="http://bugtracker.net/bugs/6">
+        <re key="Package">^update-notifier</re>
+        <re key="LogFile">AssertionError \xe2\x80\xbd</re>
+    </pattern>
 </patterns>''')
         patterns.flush()
 
@@ -788,6 +792,10 @@ $0.bin 2>/dev/null
         r_invalid = apport.report.Report()
         r_invalid['Package'] = 'invalid 1'
 
+        r_unicode = apport.report.Report()
+        r_unicode['Package'] = 'update-notifier'
+        r_unicode['LogFile'] = b'AssertionError \xe2\x80\xbd'
+
         pattern_url = 'file://' + patterns.name
 
         # positive match cases
@@ -800,6 +808,8 @@ $0.bin 2>/dev/null
                          'http://bugtracker.net/bugs/3')
         self.assertEqual(r_bazaar.search_bug_patterns(pattern_url),
                          'http://bugtracker.net/bugs/5')
+        self.assertEqual(r_unicode.search_bug_patterns(pattern_url),
+                         'http://bugtracker.net/bugs/6')
 
         # also works for CompressedValues
         r_bash_compressed = r_bash.copy()

@@ -14,6 +14,8 @@ detailled list of changes, please see ChangeLog.
  * hookutils.py, attach_root_command_outputs(): Ignore IOError crash about
    nonexisting files, which can happen if the user dismisses authorization.
    (LP: #1051222)
+ * report.py, search_bug_patterns(): Fix bug patterns containing non-ASCII
+   characters. Thanks Brian Murray.
 
 2.5.2 (2012-09-17):
 -------------------
