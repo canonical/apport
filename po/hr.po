@@ -8,20 +8,20 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-08-22 07:26+0200\n"
-"PO-Revision-Date: 2011-10-07 06:10+0000\n"
-"Last-Translator: Dražen Odobašić <dodobas@geoinfo.geof.hr>\n"
+"PO-Revision-Date: 2012-09-25 07:41+0000\n"
+"Last-Translator: freedomrun <freedomrun@yandex.com>\n"
 "Language-Team: Croatian <hr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-13 04:33+0000\n"
-"X-Generator: Launchpad (build 15944)\n"
+"X-Launchpad-Export-Date: 2012-09-26 04:32+0000\n"
+"X-Generator: Launchpad (build 16022)\n"
 "Language: hr\n"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:105
 #: ../apport/ui.py:105
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Čini se da ovaj paket nije ispravno instaliran"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:109
 #: ../apport/ui.py:109
@@ -30,6 +30,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Ovo nije službeni %s paket. Molim vas da uklonite sve nepodržane pakete i "
+"pokušate ponovno."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:126
 #: ../apport/ui.py:126
@@ -40,10 +42,10 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Imate instalirane neke zastarjele verzije paketa. Molim nadogradite sljedeće "
-"pakete i provjerite pojavljuje li se problem ponovno:\n"
+"Instalirane su vam neke od zastarjelih verzija paketa. Molim, nadogradite "
+"sljedeće pakete i provjerite ponavlja li se problem:\n"
 "\n"
-"%s:"
+"%s"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:232
 #: ../apport/ui.py:232
@@ -54,7 +56,7 @@ msgstr "nepoznati program"
 #: ../apport/ui.py:233
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr "Žao nam je, \"%s\" je neplanirano prestao s radom"
+msgstr "Ispričavam se, program \"%s\" se neočekivano zatvorio"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:235
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1230
@@ -69,8 +71,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"Vaše računalo nema dovoljno slobodne memorije za automatsku analizu i slanje "
-"izvještaja razvojnom timu."
+"Vaše računalo nema dovoljno slobodne memorije za automatsku analizu problema "
+"i slanje izvještaja razvojnom timu."
 
 #. package does not exist
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:251
@@ -114,7 +116,7 @@ msgstr "Izvještaj pripada paketu koji nije instaliran."
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:264
 #: ../apport/ui.py:264
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
+msgstr "Došlo je do greške pri pokušaju obrade izvještaja o problemu:"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:302
 #: ../apport/ui.py:302
@@ -146,12 +148,12 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:408
 #: ../apport/ui.py:408
 msgid "Invalid PID"
-msgstr ""
+msgstr "Neispravan PID"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:409
 #: ../apport/ui.py:409
 msgid "The specified process ID does not belong to a program."
-msgstr ""
+msgstr "Navedeni ID procesa ne pripada programu."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:417
 #: ../apport/ui.py:417
@@ -171,7 +173,7 @@ msgstr ""
 #: ../apport/ui.py:439
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Skripta za simptome %s nije odredila pogođen paket"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:442
 #: ../apport/ui.py:442
@@ -184,14 +186,14 @@ msgstr "Paket %s ne postoji"
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:659
 #: ../apport/ui.py:466 ../apport/ui.py:654 ../apport/ui.py:659
 msgid "Cannot create report"
-msgstr ""
+msgstr "Ne mogu napraviti izvještaj"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:481
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:527
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:544
 #: ../apport/ui.py:481 ../apport/ui.py:527 ../apport/ui.py:544
 msgid "Updating problem report"
-msgstr ""
+msgstr "Ažuriranje izvještaja o problemu"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:482
 #: ../apport/ui.py:482
@@ -219,23 +221,23 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:545
 #: ../apport/ui.py:528 ../apport/ui.py:545
 msgid "No additional information collected."
-msgstr ""
+msgstr "Nisu prikupljene dodatne informacije."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:596
 #: ../apport/ui.py:596
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "Kakav problem želite prijaviti?"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:613
 #: ../apport/ui.py:613
 msgid "Unknown symptom"
-msgstr ""
+msgstr "Nepoznat simptom"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:614
 #: ../apport/ui.py:614
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "Simptom \"%s\" nije poznat."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:645
 #: ../apport/ui.py:645
@@ -248,23 +250,23 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:660
 #: ../apport/ui.py:655 ../apport/ui.py:660
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop nije uspio odrediti proces ID prozora"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:674
 #: ../apport/ui.py:674
 msgid "%prog <report number>"
-msgstr ""
+msgstr "%prog <broj izvještaja>"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:676
 #: ../apport/ui.py:676
 msgid "Specify package name."
-msgstr ""
+msgstr "Odredite ime paketa."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:678
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:729
 #: ../apport/ui.py:678 ../apport/ui.py:729
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr ""
+msgstr "Dodajte dodatnu oznaku u izvještaju. Moguće je odrediti više puta."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:708
 #: ../apport/ui.py:708
@@ -336,23 +338,24 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:731
 #: ../apport/ui.py:731
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "Ispis broja Apport inačice."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:865
 #: ../apport/ui.py:865
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"To će pokrenuti apport-retrace u prozoru terminala za ispitivanje kraha."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:866
 #: ../apport/ui.py:866
 msgid "Run gdb session"
-msgstr ""
+msgstr "Pokreni gdb sesiju"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:867
 #: ../apport/ui.py:867
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Pokreni gdb sesiju bez preuzimanja simbola za ispravljanje pogrešaka"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:869
@@ -429,18 +432,18 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Ovaj problem ne može biti prijavljen:\n"
+"Ne može se prijaviti ovaj problem:\n"
 "\n"
 "%s"
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1277
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1284
-#: ../apport/ui.py:1277 ../apport/ui.py:1284
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1291
+#: ../apport/ui.py:1284 ../apport/ui.py:1291
 msgid "Problem already known"
 msgstr "Problem je već poznat"
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1278
-#: ../apport/ui.py:1278
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1285
+#: ../apport/ui.py:1285
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -450,8 +453,8 @@ msgstr ""
 "internet pregledniku. Molim provjerite možete li dodati neke dodatne "
 "informacije koje mogu pomoći razvojnom timu."
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1285
-#: ../apport/ui.py:1285
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1292
+#: ../apport/ui.py:1292
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 
@@ -471,7 +474,7 @@ msgstr "Molim odaberite (%s):"
 #: ../bin/apport-cli.py:144 ../debian/tmp/usr/bin/apport-cli.py:144
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bajtova)"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:335 ../gtk/apport-gtk.py:138
 #: ../bin/apport-cli.py:146 ../debian/tmp/usr/share/apport/apport-gtk.py:138
@@ -480,10 +483,10 @@ msgid "(binary data)"
 msgstr "(binarni podatci)"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:162
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:392
-#: ../gtk/apport-gtk.py:174
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:395
+#: ../gtk/apport-gtk.py:173
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:273
-#: ../bin/apport-cli.py:174 ../debian/tmp/usr/share/apport/apport-gtk.py:174
+#: ../bin/apport-cli.py:174 ../debian/tmp/usr/share/apport/apport-gtk.py:173
 #: ../kde/apport-kde.py:162 ../debian/tmp/usr/bin/apport-cli.py:174
 msgid "Send problem report to the developers?"
 msgstr "Pošaljite izvještaj o problemu razvojnom timu?"
@@ -557,9 +560,8 @@ msgstr ""
 "poboljšala. To može potrajati nekoliko minuta."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../gtk/apport-gtk.ui.h:13
-#: ../bin/apport-cli.py:247 ../kde/apport-kde.py:408
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13
-#: ../debian/tmp/usr/bin/apport-cli.py:247
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13 ../bin/apport-cli.py:247
+#: ../kde/apport-kde.py:408 ../debian/tmp/usr/bin/apport-cli.py:247
 msgid "Uploading problem information"
 msgstr "Slanje informacija o problemu"
 
@@ -573,36 +575,36 @@ msgstr ""
 
 #: ../bin/apport-cli.py:298 ../debian/tmp/usr/bin/apport-cli.py:298
 msgid "&Done"
-msgstr ""
+msgstr "&Obavljeno"
 
 #: ../bin/apport-cli.py:304 ../debian/tmp/usr/bin/apport-cli.py:304
 msgid "none"
-msgstr ""
+msgstr "nijedno"
 
 #: ../bin/apport-cli.py:305 ../debian/tmp/usr/bin/apport-cli.py:305
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "Označeno: %s. Višestruki izbori:"
 
 #: ../bin/apport-cli.py:321 ../debian/tmp/usr/bin/apport-cli.py:321
 msgid "Choices:"
-msgstr ""
+msgstr "Izbori:"
 
 #: ../bin/apport-cli.py:335 ../debian/tmp/usr/bin/apport-cli.py:335
 msgid "Path to file (Enter to cancel):"
-msgstr ""
+msgstr "Putanja do datoteke ( Enter za prekid):"
 
 #: ../bin/apport-cli.py:341 ../debian/tmp/usr/bin/apport-cli.py:341
 msgid "File does not exist."
-msgstr ""
+msgstr "Datoteka ne postoji."
 
 #: ../bin/apport-cli.py:343 ../debian/tmp/usr/bin/apport-cli.py:343
 msgid "This is a directory."
-msgstr ""
+msgstr "Ovo je direktorij."
 
 #: ../bin/apport-cli.py:349 ../debian/tmp/usr/bin/apport-cli.py:349
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "Da biste nastavili, morate posjetiti sljedeći URL:"
 
 #: ../bin/apport-cli.py:351 ../debian/tmp/usr/bin/apport-cli.py:351
 msgid ""
@@ -612,7 +614,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:353 ../debian/tmp/usr/bin/apport-cli.py:353
 msgid "Launch a browser now"
-msgstr ""
+msgstr "Sada pokrenite preglednik"
 
 #: ../bin/apport-cli.py:367 ../debian/tmp/usr/bin/apport-cli.py:367
 msgid "No pending crash reports. Try --help for more information."
@@ -642,10 +644,10 @@ msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:443
 #: ../debian/tmp/usr/share/apport/apport-kde.py:479 ../gtk/apport-gtk.ui.h:1
-#: ../kde/apport-kde.py:443 ../kde/apport-kde.py:479
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../kde/apport-kde.py:443
+#: ../kde/apport-kde.py:479
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../gtk/apport-gtk.ui.h:2 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2
 msgid "Crash report"
@@ -656,12 +658,12 @@ msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:217
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:290
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:330
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:293
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:243
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:293 ../kde/apport-kde.py:217
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:293
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:333
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:294
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:243
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:294 ../kde/apport-kde.py:217
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 
@@ -674,10 +676,10 @@ msgid "Ignore future problems of this program version"
 msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:268 ../gtk/apport-gtk.ui.h:7
-#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:566
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:201
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:566 ../kde/apport-kde.py:268
+#: ../gtk/apport-gtk.py:200 ../gtk/apport-gtk.py:567
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:200
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:567 ../kde/apport-kde.py:268
 msgid "Show Details"
 msgstr ""
 
@@ -686,8 +688,8 @@ msgid "_Examine locally"
 msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:207 ../gtk/apport-gtk.ui.h:9
-#: ../gtk/apport-gtk.py:277 ../debian/tmp/usr/share/apport/apport-gtk.py:277
-#: ../kde/apport-kde.py:207 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../gtk/apport-gtk.py:278 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:278 ../kde/apport-kde.py:207
 msgid "Leave Closed"
 msgstr ""
 
@@ -696,20 +698,20 @@ msgstr ""
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:115
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:144
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:183
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:298
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:338
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:442
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:213 ../gtk/apport-gtk.py:281
-#: ../gtk/apport-gtk.py:296
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:301
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:341
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:445
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:212 ../gtk/apport-gtk.py:282
+#: ../gtk/apport-gtk.py:297 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:111
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:137
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:173
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:249
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:319
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:213
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:281
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:296 ../kde/apport-kde.py:211
-#: ../kde/apport-kde.py:220 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:212
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:282
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:297 ../kde/apport-kde.py:211
+#: ../kde/apport-kde.py:220
 msgid "Continue"
 msgstr ""
 
@@ -730,7 +732,7 @@ msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Učitavanje informacija o problemu</b></big>"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:409 ../gtk/apport-gtk.ui.h:15
-#: ../kde/apport-kde.py:409 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../kde/apport-kde.py:409
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -842,7 +844,7 @@ msgstr ""
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../bin/apport-retrace.py:117 ../debian/tmp/usr/bin/apport-retrace.py:117
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "Jeli u redu otposlati ove privitke? [d/n]"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
@@ -871,85 +873,85 @@ msgstr ""
 #: ../debian/tmp/usr/share/apport/apport-kde.py:176
 #: ../debian/tmp/usr/share/apport/apport-kde.py:214
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:108
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:288
-#: ../gtk/apport-gtk.py:162
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:291
+#: ../gtk/apport-gtk.py:161
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:106
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:241
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:162 ../kde/apport-kde.py:176
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:161 ../kde/apport-kde.py:176
 #: ../kde/apport-kde.py:214
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:170
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:400
-#: ../gtk/apport-gtk.py:183
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:403
+#: ../gtk/apport-gtk.py:182
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:279
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:183 ../kde/apport-kde.py:170
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:182 ../kde/apport-kde.py:170
 msgid "Send"
 msgstr ""
 
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:264
-#: ../gtk/apport-gtk.py:225 ../debian/tmp/usr/share/apport/apport-gtk.py:225
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:267
+#: ../gtk/apport-gtk.py:224 ../debian/tmp/usr/share/apport/apport-gtk.py:224
 msgid "Force Closed"
 msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:208
 #: ../debian/tmp/usr/share/apport/apport-kde.py:354
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:223
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:261
-#: ../gtk/apport-gtk.py:226 ../gtk/apport-gtk.py:278
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:264
+#: ../gtk/apport-gtk.py:225 ../gtk/apport-gtk.py:279
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:213
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:226
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:278 ../kde/apport-kde.py:208
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:225
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:279 ../kde/apport-kde.py:208
 #: ../kde/apport-kde.py:354
 msgid "Relaunch"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:233 ../debian/tmp/usr/share/apport/apport-gtk.py:233
+#: ../gtk/apport-gtk.py:234 ../debian/tmp/usr/share/apport/apport-gtk.py:234
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:237 ../debian/tmp/usr/share/apport/apport-gtk.py:237
+#: ../gtk/apport-gtk.py:238 ../debian/tmp/usr/share/apport/apport-gtk.py:238
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr ""
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:252
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:252 ../kde/apport-kde.py:184
+#: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:253
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:253 ../kde/apport-kde.py:184
 #, python-format
 msgid "Package: %s"
 msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:190
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:137
-#: ../gtk/apport-gtk.py:259
+#: ../gtk/apport-gtk.py:260
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:132
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:259 ../kde/apport-kde.py:190
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:260 ../kde/apport-kde.py:190
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:197 ../gtk/apport-gtk.py:268
-#: ../gtk/apport-gtk.py:285 ../debian/tmp/usr/share/apport/apport-gtk.py:268
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:285 ../kde/apport-kde.py:197
+#: ../debian/tmp/usr/share/apport/apport-kde.py:197 ../gtk/apport-gtk.py:269
+#: ../gtk/apport-gtk.py:286 ../debian/tmp/usr/share/apport/apport-gtk.py:269
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:286 ../kde/apport-kde.py:197
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr ""
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../gtk/apport-gtk.py:271
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:271 ../kde/apport-kde.py:201
+#: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../gtk/apport-gtk.py:272
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:272 ../kde/apport-kde.py:201
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr ""
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:221 ../gtk/apport-gtk.py:297
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:297 ../kde/apport-kde.py:221
+#: ../debian/tmp/usr/share/apport/apport-kde.py:221 ../gtk/apport-gtk.py:298
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:298 ../kde/apport-kde.py:221
 msgid "Ignore future problems of this type"
 msgstr ""
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:265 ../gtk/apport-gtk.py:570
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:570 ../kde/apport-kde.py:265
+#: ../debian/tmp/usr/share/apport/apport-kde.py:265 ../gtk/apport-gtk.py:571
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:571 ../kde/apport-kde.py:265
 msgid "Hide Details"
 msgstr ""
 
