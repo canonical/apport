@@ -100,7 +100,7 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         tb_file = StringIO()
         traceback.print_exception(exc_type, exc_obj, exc_tb, file=tb_file)
         pr['Traceback'] = tb_file.getvalue().strip()
-        pr.add_proc_info()
+        pr.add_proc_info(extraenv=['PYTHONPATH', 'PYTHONHOME'])
         pr.add_user_info()
         # override the ExecutablePath with the script that was actually running
         pr['ExecutablePath'] = binary
