@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.5.4 (UNRELEASED):
+-------------------
+ * setup.py: Build java module with "-target 1.5" option, so that you can run
+   it with OpenJDK 6 even if you build with OpenJDK 7.
+
 2.5.3 (2012-09-28):
 -------------------
  * data/apportcheckresume: Open report file in binary mode. (LP: #1040353)
