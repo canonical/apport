@@ -5,6 +5,7 @@ detailled list of changes, please see ChangeLog.
 -------------------
  * setup.py: Build java module with "-target 1.5" option, so that you can run
    it with OpenJDK 6 even if you build with OpenJDK 7.
+ * report.py, add_proc_info(): Show if $XDG_RUNTIME_DIR is set.
 
 2.5.3 (2012-09-28):
 -------------------

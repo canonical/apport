@@ -570,6 +570,10 @@ class Report(problem_report.ProblemReport):
                         if self['ProcEnviron']:
                             self['ProcEnviron'] += '\n'
                         self['ProcEnviron'] += 'PATH=(custom, no user)'
+                elif l.startswith('XDG_RUNTIME_DIR='):
+                        if self['ProcEnviron']:
+                            self['ProcEnviron'] += '\n'
+                        self['ProcEnviron'] += 'XDG_RUNTIME_DIR=<set>'
 
     def add_kernel_crash_info(self, debugdir=None):
         '''Add information from kernel crash.
