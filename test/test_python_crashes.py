@@ -143,6 +143,24 @@ func(42)
         self.assertTrue('bin/python' in pr['InterpreterPath'])
         self.assertTrue(pr['Traceback'].startswith('Traceback'))
 
+    def test_python_env(self):
+        '''Python environmental variables appear in report'''
+
+        self._test_crash()
+
+        # did we get a report?
+        reports = apport.fileutils.get_new_reports()
+        pr = None
+        self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+
+        pr = problem_report.ProblemReport()
+        with open(reports[0], 'rb') as f:
+            pr.load(f)
+
+        # check report contents
+        self.assertTrue('PYTHONPATH' in pr['ProcEnviron'],
+                        'report contains PYTHONPATH')
+
     def _assert_no_reports(self):
         '''Assert that there are no crash reports.'''
 

@@ -16,6 +16,8 @@ detailled list of changes, please see ChangeLog.
    (LP: #1051222)
  * report.py, search_bug_patterns(): Fix bug patterns containing non-ASCII
    characters. Thanks Brian Murray.
+ * apport_python_hook.py: Capture $PYTHONPATH and $PYTHONHOME environment
+   variables for Python crashes. Thanks Brian Murray.
 
 2.5.2 (2012-09-17):
 -------------------
