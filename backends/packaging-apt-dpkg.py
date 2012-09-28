@@ -585,7 +585,7 @@ Debug::NoLocking "true";
             except KeyError:
                 candidate = None
             if not candidate:
-                m = 'package %s does not exist, ignoring' % pkg
+                m = 'package %s does not exist, ignoring' % pkg.replace('%', '%%')
                 obsolete += m + '\n'
                 apport.warning(m)
                 continue
