@@ -1,11 +1,14 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.5.4 (UNRELEASED):
--------------------
+2.6 (UNRELEASED):
+-----------------
  * setup.py: Build java module with "-target 1.5" option, so that you can run
    it with OpenJDK 6 even if you build with OpenJDK 7.
  * report.py, add_proc_info(): Show if $XDG_RUNTIME_DIR is set.
+ * Add apport/crashdb_impl/debian.py: Initial crash database implementation for
+   the Debian BTS. Add configuration for it to etc/apport/crashdb.conf. Thanks
+   Ritesh Raj Sarraf!
 
 2.5.3 (2012-09-28):
 -------------------
