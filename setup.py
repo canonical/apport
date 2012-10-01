@@ -32,10 +32,11 @@ class build_java_subdir(distutils.core.Command):
         oldwd = os.getcwd()
         os.chdir('java')
 
-        subprocess.check_call(['javac', '-target', '1.5'] + glob('com/ubuntu/apport/*.java'))
+        subprocess.check_call(['javac', '-source', '1.5', '-target', '1.5'] +
+                              glob('com/ubuntu/apport/*.java'))
         subprocess.check_call(['jar', 'cvf', 'apport.jar'] +
                               glob('com/ubuntu/apport/*.class'))
-        subprocess.check_call(['javac', '-target', '1.5', 'crash.java'])
+        subprocess.check_call(['javac', '-source', '1.5', '-target', '1.5', 'crash.java'])
         subprocess.check_call(['jar', 'cvf', 'crash.jar', 'crash.class'])
 
         os.chdir(oldwd)
