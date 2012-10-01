@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-22 07:26+0200\n"
+"POT-Creation-Date: 2012-10-01 11:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr ""
 
-#: ../apport/ui.py:235 ../apport/ui.py:1197
+#: ../apport/ui.py:235 ../apport/ui.py:1230
 #, python-format
 msgid "Problem in %s"
 msgstr ""
@@ -60,13 +60,13 @@ msgstr ""
 #. package does not exist
 #: ../apport/ui.py:251 ../apport/ui.py:257 ../apport/ui.py:263
 #: ../apport/ui.py:301 ../apport/ui.py:309 ../apport/ui.py:438
-#: ../apport/ui.py:441 ../apport/ui.py:642 ../apport/ui.py:1010
-#: ../apport/ui.py:1151 ../apport/ui.py:1155 ../apport/ui.py:1174
-#: ../apport/ui.py:1180
+#: ../apport/ui.py:441 ../apport/ui.py:642 ../apport/ui.py:1043
+#: ../apport/ui.py:1184 ../apport/ui.py:1188 ../apport/ui.py:1207
+#: ../apport/ui.py:1213
 msgid "Invalid problem report"
 msgstr ""
 
-#: ../apport/ui.py:252 ../apport/ui.py:1157
+#: ../apport/ui.py:252 ../apport/ui.py:1190
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 
@@ -273,54 +273,54 @@ msgstr ""
 msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
-#: ../apport/ui.py:910
+#: ../apport/ui.py:940
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
 
-#: ../apport/ui.py:1011
+#: ../apport/ui.py:1044
 msgid "Could not determine the package or source package name."
 msgstr ""
 
-#: ../apport/ui.py:1029
+#: ../apport/ui.py:1062
 msgid "Unable to start web browser"
 msgstr ""
 
-#: ../apport/ui.py:1030
+#: ../apport/ui.py:1063
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr ""
 
-#: ../apport/ui.py:1105
+#: ../apport/ui.py:1138
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 
-#: ../apport/ui.py:1117
+#: ../apport/ui.py:1150
 msgid "Network problem"
 msgstr ""
 
-#: ../apport/ui.py:1119
+#: ../apport/ui.py:1152
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 
-#: ../apport/ui.py:1146
+#: ../apport/ui.py:1179
 msgid "Memory exhaustion"
 msgstr ""
 
-#: ../apport/ui.py:1147
+#: ../apport/ui.py:1180
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 
-#: ../apport/ui.py:1170 ../apport/ui.py:1179
+#: ../apport/ui.py:1203 ../apport/ui.py:1212
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 
-#: ../apport/ui.py:1200
+#: ../apport/ui.py:1233
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -328,18 +328,18 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ../apport/ui.py:1244 ../apport/ui.py:1251
+#: ../apport/ui.py:1284 ../apport/ui.py:1291
 msgid "Problem already known"
 msgstr ""
 
-#: ../apport/ui.py:1245
+#: ../apport/ui.py:1285
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
 
-#: ../apport/ui.py:1252
+#: ../apport/ui.py:1292
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 
@@ -365,7 +365,7 @@ msgstr ""
 msgid "(binary data)"
 msgstr ""
 
-#: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:174 ../kde/apport-kde.py:162
+#: ../bin/apport-cli.py:174 ../gtk/apport-gtk.py:173 ../kde/apport-kde.py:162
 msgid "Send problem report to the developers?"
 msgstr ""
 
@@ -424,7 +424,7 @@ msgid ""
 "application. This might take a few minutes."
 msgstr ""
 
-#: ../bin/apport-cli.py:247 ../gtk/apport-gtk.ui.h:13 ../kde/apport-kde.py:408
+#: ../bin/apport-cli.py:247 ../kde/apport-kde.py:408 ../gtk/apport-gtk.ui.h:13
 msgid "Uploading problem information"
 msgstr ""
 
@@ -497,68 +497,6 @@ msgstr ""
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:443 ../kde/apport-kde.py:479
-msgid "Apport"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:2
-msgid "Crash report"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:3
-msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:293 ../kde/apport-kde.py:217
-msgid "If you notice further problems, try restarting the computer."
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:5
-msgid "Send an error report to help fix this problem"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:6
-msgid "Ignore future problems of this program version"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:7 ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:566
-#: ../kde/apport-kde.py:268
-msgid "Show Details"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:8
-msgid "_Examine locally"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:277 ../kde/apport-kde.py:207
-msgid "Leave Closed"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:213 ../gtk/apport-gtk.py:281
-#: ../gtk/apport-gtk.py:296 ../kde/apport-kde.py:211 ../kde/apport-kde.py:220
-msgid "Continue"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:11
-msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:12
-msgid ""
-"Information is being collected that may help the developers fix the problem "
-"you report."
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:14
-msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
-
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:409
-msgid ""
-"The collected information is being sent to the bug tracking system. This "
-"might take a few minutes."
 msgstr ""
 
 #: ../bin/apport-retrace.py:40
@@ -681,7 +619,7 @@ msgstr ""
 
 #: ../gtk/apport-gtk.py:153
 #, python-format
-msgid "Sorry, the application %s has closed unexpectedly."
+msgid "Sorry, the application %s has stopped unexpectedly."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:156
@@ -689,58 +627,76 @@ msgstr ""
 msgid "Sorry, %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:162 ../kde/apport-kde.py:176 ../kde/apport-kde.py:214
+#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:176 ../kde/apport-kde.py:214
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:183 ../kde/apport-kde.py:170
+#: ../gtk/apport-gtk.py:182 ../kde/apport-kde.py:170
 msgid "Send"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:225
+#: ../gtk/apport-gtk.py:200 ../gtk/apport-gtk.py:567 ../kde/apport-kde.py:268
+#: ../gtk/apport-gtk.ui.h:7
+msgid "Show Details"
+msgstr ""
+
+#: ../gtk/apport-gtk.py:212 ../gtk/apport-gtk.py:282 ../gtk/apport-gtk.py:297
+#: ../kde/apport-kde.py:211 ../kde/apport-kde.py:220 ../gtk/apport-gtk.ui.h:10
+msgid "Continue"
+msgstr ""
+
+#: ../gtk/apport-gtk.py:224
 msgid "Force Closed"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:226 ../gtk/apport-gtk.py:278 ../kde/apport-kde.py:208
+#: ../gtk/apport-gtk.py:225 ../gtk/apport-gtk.py:279 ../kde/apport-kde.py:208
 #: ../kde/apport-kde.py:354
 msgid "Relaunch"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:233
+#: ../gtk/apport-gtk.py:234
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:237
+#: ../gtk/apport-gtk.py:238
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:252 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:253 ../kde/apport-kde.py:184
 #, python-format
 msgid "Package: %s"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:259 ../kde/apport-kde.py:190
+#: ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:190
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:268 ../gtk/apport-gtk.py:285 ../kde/apport-kde.py:197
+#: ../gtk/apport-gtk.py:269 ../gtk/apport-gtk.py:286 ../kde/apport-kde.py:197
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:271 ../kde/apport-kde.py:201
+#: ../gtk/apport-gtk.py:272 ../kde/apport-kde.py:201
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:297 ../kde/apport-kde.py:221
+#: ../gtk/apport-gtk.py:278 ../kde/apport-kde.py:207 ../gtk/apport-gtk.ui.h:9
+msgid "Leave Closed"
+msgstr ""
+
+#: ../gtk/apport-gtk.py:294 ../kde/apport-kde.py:217 ../gtk/apport-gtk.ui.h:4
+msgid "If you notice further problems, try restarting the computer."
+msgstr ""
+
+#: ../gtk/apport-gtk.py:298 ../kde/apport-kde.py:221
 msgid "Ignore future problems of this type"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:570 ../kde/apport-kde.py:265
+#: ../gtk/apport-gtk.py:571 ../kde/apport-kde.py:265
 msgid "Hide Details"
 msgstr ""
 
@@ -766,6 +722,16 @@ msgstr ""
 msgid "Uploading Problem Information"
 msgstr ""
 
+#: ../kde/apport-kde.py:409 ../gtk/apport-gtk.ui.h:15
+msgid ""
+"The collected information is being sent to the bug tracking system. This "
+"might take a few minutes."
+msgstr ""
+
+#: ../kde/apport-kde.py:443 ../kde/apport-kde.py:479 ../gtk/apport-gtk.ui.h:1
+msgid "Apport"
+msgstr ""
+
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
 msgstr ""
@@ -774,6 +740,40 @@ msgstr ""
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:2
+msgid "Crash report"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:3
+msgid "<big><b>Sorry, an internal error happened.</b></big>"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:5
+msgid "Send an error report to help fix this problem"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:6
+msgid "Ignore future problems of this program version"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:8
+msgid "_Examine locally"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:11
+msgid "<big><b>Collecting problem information</b></big>"
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:12
+msgid ""
+"Information is being collected that may help the developers fix the problem "
+"you report."
+msgstr ""
+
+#: ../gtk/apport-gtk.ui.h:14
+msgid "<big><b>Uploading problem information</b></big>"
 msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
