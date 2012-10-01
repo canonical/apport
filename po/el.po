@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-08-22 07:26+0200\n"
-"PO-Revision-Date: 2012-05-04 08:47+0000\n"
-"Last-Translator: Filippos Kolyvas <fkolyvas@gmail.com>\n"
+"PO-Revision-Date: 2012-09-30 20:32+0000\n"
+"Last-Translator: George Christofis <geochr22@gmail.com>\n"
 "Language-Team: Greek, Modern (1453-) <el@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-13 04:32+0000\n"
-"X-Generator: Launchpad (build 15944)\n"
+"X-Launchpad-Export-Date: 2012-10-01 04:33+0000\n"
+"X-Generator: Launchpad (build 16049)\n"
 "Language: \n"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:105
@@ -362,6 +362,8 @@ msgstr ""
 #: ../apport/ui.py:723
 msgid "The provided pid is a hanging application."
 msgstr ""
+"Το παρεχόμενο αναγνωριστικό διεργασίας (PID) είναι για μια εφαρμογή που έχει "
+"κολλήσει."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:725
 #: ../apport/ui.py:725
@@ -459,8 +461,8 @@ msgstr "Πρόβλημα δικτύου"
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
-"Αδυναμία σύνδεσης στη βάση δεδομένων καταρρεύσεων, παρακαλώ ελέγξτε την "
-"σύνδεση σας στο διαδίκτυο."
+"Αδυναμία σύνδεσης στη βάση δεδομένων καταρρεύσεων, παρακαλώ ελέγξτε τη "
+"σύνδεσή σας στο διαδίκτυο."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1179
 #: ../apport/ui.py:1179
@@ -493,14 +495,14 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1277
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1284
-#: ../apport/ui.py:1277 ../apport/ui.py:1284
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1291
+#: ../apport/ui.py:1284 ../apport/ui.py:1291
 msgid "Problem already known"
 msgstr "Πρόβλημα ήδη γνωστό"
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1278
-#: ../apport/ui.py:1278
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1285
+#: ../apport/ui.py:1285
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -510,8 +512,8 @@ msgstr ""
 "που βλέπετε. Παρακαλώ εξετάστε, αν μπορείτε να προσθέσετε κάποιες επιπλέον "
 "πληροφορίες, που να είναι χρήσιμες στους προγραμματιστές."
 
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1285
-#: ../apport/ui.py:1285
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1292
+#: ../apport/ui.py:1292
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 "Αυτό το πρόβλημα έχει ήδη αναφερθεί στους συντελεστές της εφαρμογής. Σας "
@@ -542,10 +544,10 @@ msgid "(binary data)"
 msgstr "(δυαδικά δεδομένα)"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:162
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:392
-#: ../gtk/apport-gtk.py:174
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:395
+#: ../gtk/apport-gtk.py:173
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:273
-#: ../bin/apport-cli.py:174 ../debian/tmp/usr/share/apport/apport-gtk.py:174
+#: ../bin/apport-cli.py:174 ../debian/tmp/usr/share/apport/apport-gtk.py:173
 #: ../kde/apport-kde.py:162 ../debian/tmp/usr/bin/apport-cli.py:174
 msgid "Send problem report to the developers?"
 msgstr "Αποστολή αναφοράς προβλήματος στους προγραμματιστές;"
@@ -615,9 +617,9 @@ msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
-"Οι πληροφορίες που συλλέχθηκαν μπορούν να αποσταλούν στους υπεύθυνους "
-"ανάπτυξης για την βελτίωση της\n"
-"εφαρμογής. Αυτό μπορεί να διαρκέσει μερικά λεπτά."
+"Οι πληροφορίες που έχουν συλλεχθεί, μπορούν να αποσταλούν στους υπεύθυνους "
+"ανάπτυξης για την περαιτέρω βελτίωση της\n"
+"εφαρμογής. Η αποστολή μπορεί να διαρκέσει μερικά λεπτά."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../gtk/apport-gtk.ui.h:13
 #: ../bin/apport-cli.py:247 ../kde/apport-kde.py:408
@@ -730,11 +732,11 @@ msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>Μας συγχωρείτε, συνέβη ένα εσωτερικό σφάλμα.</b></big>"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:217
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:290
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:330
-#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:293
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:293
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:333
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:294
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:243
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:293 ../kde/apport-kde.py:217
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:294 ../kde/apport-kde.py:217
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
@@ -751,9 +753,9 @@ msgid "Ignore future problems of this program version"
 msgstr "Αγνοήστε μελλοντικά προβλήματα αυτής της έκδοσης προγράμματος"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:268 ../gtk/apport-gtk.ui.h:7
-#: ../gtk/apport-gtk.py:201 ../gtk/apport-gtk.py:566
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:201
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:566 ../kde/apport-kde.py:268
+#: ../gtk/apport-gtk.py:200 ../gtk/apport-gtk.py:567
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:200
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:567 ../kde/apport-kde.py:268
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
 msgid "Show Details"
 msgstr "Προβολή λεπτομερειών"
@@ -763,7 +765,7 @@ msgid "_Examine locally"
 msgstr "Τοπική _εξέταση"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:207 ../gtk/apport-gtk.ui.h:9
-#: ../gtk/apport-gtk.py:277 ../debian/tmp/usr/share/apport/apport-gtk.py:277
+#: ../gtk/apport-gtk.py:278 ../debian/tmp/usr/share/apport/apport-gtk.py:278
 #: ../kde/apport-kde.py:207 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
 msgid "Leave Closed"
 msgstr "Να παραμείνει κλεισμένο"
@@ -773,19 +775,19 @@ msgstr "Να παραμείνει κλεισμένο"
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:115
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:144
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:183
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:298
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:338
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:442
-#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:213 ../gtk/apport-gtk.py:281
-#: ../gtk/apport-gtk.py:296
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:301
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:341
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:445
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:212 ../gtk/apport-gtk.py:282
+#: ../gtk/apport-gtk.py:297
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:111
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:137
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:173
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:249
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:319
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:213
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:281
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:296 ../kde/apport-kde.py:211
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:212
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:282
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:297 ../kde/apport-kde.py:211
 #: ../kde/apport-kde.py:220 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
 msgid "Continue"
 msgstr "Συνέχεια"
@@ -830,6 +832,8 @@ msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"Εκκινήστε μια διαδραστική συνεδρία gdb με το core dump της αναφοράς (το -o "
+"παραβλέπεται, δεν δημιουργείται εκ νέου η αναφορά)"
 
 #: ../bin/apport-retrace.py:46 ../debian/tmp/usr/bin/apport-retrace.py:46
 msgid ""
@@ -900,6 +904,8 @@ msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
+"Κατάλογος για χύμα πακέτα.Οι μελλοντικές διαδρομές ας υποθέσουμε πως ήδη τα "
+"πακέτα έχουν κατεβεί και εξάγονται στο sandbox."
 
 #: ../bin/apport-retrace.py:68 ../debian/tmp/usr/bin/apport-retrace.py:68
 msgid ""
@@ -983,86 +989,86 @@ msgstr "Συγνώμη,το %s τερματίστηκε απροδόκητα."
 #: ../debian/tmp/usr/share/apport/apport-kde.py:176
 #: ../debian/tmp/usr/share/apport/apport-kde.py:214
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:108
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:288
-#: ../gtk/apport-gtk.py:162
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:291
+#: ../gtk/apport-gtk.py:161
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:106
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:241
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:162 ../kde/apport-kde.py:176
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:161 ../kde/apport-kde.py:176
 #: ../kde/apport-kde.py:214
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Συγνώμη, το %s παρουσίασε εσωτερικό σφάλμα."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:170
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:400
-#: ../gtk/apport-gtk.py:183
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:403
+#: ../gtk/apport-gtk.py:182
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:279
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:183 ../kde/apport-kde.py:170
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:182 ../kde/apport-kde.py:170
 msgid "Send"
 msgstr "Αποστολή"
 
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:264
-#: ../gtk/apport-gtk.py:225 ../debian/tmp/usr/share/apport/apport-gtk.py:225
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:267
+#: ../gtk/apport-gtk.py:224 ../debian/tmp/usr/share/apport/apport-gtk.py:224
 msgid "Force Closed"
-msgstr ""
+msgstr "Εξαναγκασμένος τερματισμός"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:208
 #: ../debian/tmp/usr/share/apport/apport-kde.py:354
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:223
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:261
-#: ../gtk/apport-gtk.py:226 ../gtk/apport-gtk.py:278
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:264
+#: ../gtk/apport-gtk.py:225 ../gtk/apport-gtk.py:279
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:213
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:226
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:278 ../kde/apport-kde.py:208
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:225
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:279 ../kde/apport-kde.py:208
 #: ../kde/apport-kde.py:354
 msgid "Relaunch"
 msgstr "Επανεκκίνηση"
 
-#: ../gtk/apport-gtk.py:233 ../debian/tmp/usr/share/apport/apport-gtk.py:233
+#: ../gtk/apport-gtk.py:234 ../debian/tmp/usr/share/apport/apport-gtk.py:234
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr "Η εφαρμογή %s σταμάτησε να ανταποκρίνεται."
 
-#: ../gtk/apport-gtk.py:237 ../debian/tmp/usr/share/apport/apport-gtk.py:237
+#: ../gtk/apport-gtk.py:238 ../debian/tmp/usr/share/apport/apport-gtk.py:238
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr "Το πρόγραμμα \"%s\" σταμάτησε να ανταποκρίνεται."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:252
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:252 ../kde/apport-kde.py:184
+#: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:253
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:253 ../kde/apport-kde.py:184
 #, python-format
 msgid "Package: %s"
 msgstr "Πακέτο: %s"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:190
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:137
-#: ../gtk/apport-gtk.py:259
+#: ../gtk/apport-gtk.py:260
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:132
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:259 ../kde/apport-kde.py:190
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:260 ../kde/apport-kde.py:190
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 "Συγνώμη , κάποιο πρόβλημα παρουσιάστηκε κατά την εγκατάσταση του λογισμικού."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:197 ../gtk/apport-gtk.py:268
-#: ../gtk/apport-gtk.py:285 ../debian/tmp/usr/share/apport/apport-gtk.py:268
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:285 ../kde/apport-kde.py:197
+#: ../debian/tmp/usr/share/apport/apport-kde.py:197 ../gtk/apport-gtk.py:269
+#: ../gtk/apport-gtk.py:286 ../debian/tmp/usr/share/apport/apport-gtk.py:269
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:286 ../kde/apport-kde.py:197
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Η εφαρμογή %s παρουσίασε ένα εσωτερικό σφάλμα."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../gtk/apport-gtk.py:271
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:271 ../kde/apport-kde.py:201
+#: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../gtk/apport-gtk.py:272
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:272 ../kde/apport-kde.py:201
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Η εφαρμογή %s τερματίστηκε απροσδόκητα."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:221 ../gtk/apport-gtk.py:297
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:297 ../kde/apport-kde.py:221
+#: ../debian/tmp/usr/share/apport/apport-kde.py:221 ../gtk/apport-gtk.py:298
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:298 ../kde/apport-kde.py:221
 msgid "Ignore future problems of this type"
 msgstr "Στο μέλλον να αγνοούνται προβλήματα αυτού του τύπου"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:265 ../gtk/apport-gtk.py:570
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:570 ../kde/apport-kde.py:265
+#: ../debian/tmp/usr/share/apport/apport-kde.py:265 ../gtk/apport-gtk.py:571
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:571 ../kde/apport-kde.py:265
 msgid "Hide Details"
 msgstr "Απόκρυψη λεπτομεριών"
 
@@ -1093,13 +1099,15 @@ msgstr "Αποστολή πληροφοριών προβλήματος"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr ""
+msgstr "Συλλογή πληροφοριών συστήματος"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
+"Απαιτείται πιστοποίηση για την συλλογή πληροφοριών συστήματος για αυτήν την "
+"αναφορά προβλήματος"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
