@@ -48,9 +48,11 @@ func(42)
 ''' % (os.getenv('PYTHON', 'python3'), extracode)).encode())
             os.close(fd)
             os.chmod(script, 0o755)
+            env = os.environ.copy()
+            env['PYTHONPATH'] = '/my/bogus/path'
 
             p = subprocess.Popen([script, 'testarg1', 'testarg2'],
-                                 stderr=subprocess.PIPE, env=os.environ)
+                                 stderr=subprocess.PIPE, env=env)
             err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
                              'crashing test python program exits with failure code')
@@ -160,6 +162,8 @@ func(42)
         # check report contents
         self.assertTrue('PYTHONPATH' in pr['ProcEnviron'],
                         'report contains PYTHONPATH')
+        self.assertTrue('/my/bogus/path' in pr['ProcEnviron'],
+                        pr['ProcEnviron'])
 
     def _assert_no_reports(self):
         '''Assert that there are no crash reports.'''

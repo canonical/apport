@@ -9,6 +9,7 @@ detailled list of changes, please see ChangeLog.
  * Add apport/crashdb_impl/debian.py: Initial crash database implementation for
    the Debian BTS. Add configuration for it to etc/apport/crashdb.conf. Thanks
    Ritesh Raj Sarraf!
+ * test_python_crashes.py: Robustify "$PYTHONPATH in ProcEnviron" check.
 
 2.5.3 (2012-09-28):
 -------------------
