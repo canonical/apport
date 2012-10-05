@@ -1,12 +1,6 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.6.2 (UNRELEASED):
--------------------
- * packaging-apt-dpkg.py: Extract debs using apt_inst instead of 'dpkg -x'. The
-   latter breaks when a symlink is to be created for a directory that already
-   exists (LP: #1059621).
-
 2.6.1 (2012-10-01):
 -------------------
  * setup.py: Specify "-source 1.5" javac option as well, to avoid build failure

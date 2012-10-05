@@ -18,7 +18,6 @@ import hashlib
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
-from debian import debfile
 try:
     import cPickle as pickle
     from urllib import urlopen
@@ -666,14 +665,7 @@ Debug::NoLocking "true";
             print('Extracting downloaded debs...')
         for i in fetcher.items:
             if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
-                # Don't use 'dpkg -x' as it lacks the 'skip if target directory
-                # exists' logic present in other parts of dpkg.
-                df = debfile.DebFile(i.destfile)
-                tgz = df.data.tgz()
-                allowed = [x for x in tgz.getmembers()
-                            if not (x.issym() and
-                                os.path.exists(os.path.join(rootdir, x.name)))]
-                tgz.extractall(rootdir, allowed)
+                subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
             real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
 
         if tmp_aptroot:
