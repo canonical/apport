@@ -3,6 +3,8 @@ detailled list of changes, please see ChangeLog.
 
 2.6.2 (UNRELEASED):
 -------------------
+ * problem_report.py: Fix UnicodeDecodeError crash under Python 2 when the
+   report has an unicode field with an unprintable ASCII character < 20.
 
 2.6.1 (2012-10-01):
 -------------------

@@ -212,6 +212,9 @@ class ProblemReport(UserDict):
     def _is_binary_py2(klass, string):
         '''Check if the given strings contains binary data. (Python 2)'''
 
+        if type(string) == unicode:
+            return False
+
         for c in string:
             if c < ' ' and not c.isspace():
                 return True

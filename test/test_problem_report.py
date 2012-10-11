@@ -105,6 +105,8 @@ class T(unittest.TestCase):
             pr['TwoLineUnicode'] = 'pi-π\nnu-η'
             pr['TwoLineUTF8'] = 'pi-π\nnu-η'.encode('UTF-8')
         pr['WhiteSpace'] = ' foo   bar\nbaz\n  blip  \n\nafteremptyline'
+        # Unicode with a non-space low ASCII character \x05 in it
+        pr['UnprintableUnicode'] = b'a\xc3\xa4\x05z1\xc3\xa9'.decode('UTF-8')
         io = BytesIO()
         pr.write(io)
         expected = '''ProblemType: Crash
@@ -118,6 +120,7 @@ TwoLineUTF8:
 TwoLineUnicode:
  pi-π
  nu-η
+UnprintableUnicode: aä\x05z1é
 WhiteSpace:
   foo   bar
  baz
