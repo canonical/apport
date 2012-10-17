@@ -48,9 +48,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # At this time, we are not ready to take CrashDumps
         if not report.has_useful_stacktrace():
             report['UnreportableReason'] = 'Incomplete backtrace. Please install the debug symbol packages'
-            return False
 
-        return apport.crashdb.CrashDatabase.accepts(self)
+        return apport.crashdb.CrashDatabase.accepts(self, report)
 
     def upload(self, report, progress_callback=None):
         '''Upload given problem report return a handle for it.
