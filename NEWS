@@ -7,6 +7,7 @@ detailled list of changes, please see ChangeLog.
    report has an unicode field with an unprintable ASCII character < 20.
  * debian.py: Fix calling of parent accepts() method and return value. Thanks
    Ritesh Raj Sarraf.
+ * bin/apport-retrace: Fix crash when not using --sandbox mode.
 
 2.6.1 (2012-10-01):
 -------------------

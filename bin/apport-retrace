@@ -460,8 +460,10 @@ else:
     report.add_gdb_info(sandbox)
     if options.sandbox == 'system':
         apt_root = os.path.join(options.cache, 'system', 'apt')
-    else:
+    else if options.sandbox:
         apt_root = os.path.join(options.cache, report['DistroRelease'], 'apt')
+    else:
+        apt_root = None
     gen_source_stacktrace(report, apt_root)
     report.add_kernel_crash_info()
 
