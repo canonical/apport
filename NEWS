@@ -8,6 +8,8 @@ detailled list of changes, please see ChangeLog.
  * debian.py: Fix calling of parent accepts() method and return value. Thanks
    Ritesh Raj Sarraf.
  * bin/apport-retrace: Fix crash when not using --sandbox mode.
+ * report.py, add_proc_info(): Throw correct exception if the executable path
+   does not exist, to provide a more appropriate error message. (LP: #1065129)
 
 2.6.1 (2012-10-01):
 -------------------

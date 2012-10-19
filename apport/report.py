@@ -507,7 +507,8 @@ class Report(problem_report.ProblemReport):
             if self['ExecutablePath'].startswith('/%s/' % p):
                 self['ExecutablePath'] = self['ExecutablePath'][len('/%s' % p):]
                 break
-        assert os.path.exists(self['ExecutablePath'])
+        if not os.path.exists(self['ExecutablePath']):
+            raise ValueError('%s does not exist' % self['ExecutablePath'])
 
         # check if we have an interpreted program
         self._check_interpreted()
