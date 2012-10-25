@@ -10,6 +10,8 @@ detailled list of changes, please see ChangeLog.
  * bin/apport-retrace: Fix crash when not using --sandbox mode.
  * report.py, add_proc_info(): Throw correct exception if the executable path
    does not exist, to provide a more appropriate error message. (LP: #1065129)
+ * report.py, add_gdb_info(): Check __glib_assert_msg for assertion messages,
+   too.
 
 2.6.1 (2012-10-01):
 -------------------
