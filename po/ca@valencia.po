@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-10-19 04:33+0000\n"
-"X-Generator: Launchpad (build 16165)\n"
+"X-Launchpad-Export-Date: 2012-10-27 04:33+0000\n"
+"X-Generator: Launchpad (build 16194)\n"
 "Language: \n"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:105
@@ -30,8 +30,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
-"%s no és un paquet oficial. Suprimiu tots els paquets de tercers i torneu-ho "
-"a provar."
+"Este no és un paquet oficial del %s. Suprimiu tots els paquets de tercers i "
+"torneu-ho a provar."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:126
 #: ../apport/ui.py:126
@@ -259,6 +259,8 @@ msgstr "Especifiqueu el nom del paquet."
 #: ../apport/ui.py:683 ../apport/ui.py:734
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
+"Afig una etiqueta addicional a l'informe. Es pot especificar diverses "
+"vegades."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:713
 #: ../apport/ui.py:713
@@ -305,11 +307,14 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Especifiqueu un programa executant-s'en mode --file-bug. Si s'especifica, "
+"l'informe d'error contindrà més informació (en cas que el pid es doni com a "
+"únic argument)."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:728
 #: ../apport/ui.py:728
 msgid "The provided pid is a hanging application."
-msgstr ""
+msgstr "El PID proporcionat és una aplicació que es penja."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:730
 #: ../apport/ui.py:730
@@ -542,9 +547,8 @@ msgid ""
 msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../gtk/apport-gtk.ui.h:13
-#: ../bin/apport-cli.py:247 ../kde/apport-kde.py:408
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13
-#: ../debian/tmp/usr/bin/apport-cli.py:247
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13 ../bin/apport-cli.py:247
+#: ../kde/apport-kde.py:408 ../debian/tmp/usr/bin/apport-cli.py:247
 msgid "Uploading problem information"
 msgstr ""
 
@@ -700,6 +704,9 @@ msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
+"El directori per als paquets descomprimits. Les pròximes execucions "
+"assumiran que qualsevol paquet que s'haja baixat també s'ha extret en este "
+"entorn de proves."
 
 #: ../bin/apport-retrace.py:68 ../debian/tmp/usr/bin/apport-retrace.py:68
 msgid ""
@@ -758,7 +765,7 @@ msgstr ""
 #: ../gtk/apport-gtk.py:153 ../debian/tmp/usr/share/apport/apport-gtk.py:153
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr ""
+msgstr "L'aplicació %s s'ha parat inesperadament."
 
 #: ../gtk/apport-gtk.py:156 ../debian/tmp/usr/share/apport/apport-gtk.py:156
 #, python-format
@@ -788,9 +795,9 @@ msgstr "Envia"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:268 ../gtk/apport-gtk.ui.h:7
 #: ../gtk/apport-gtk.py:200 ../gtk/apport-gtk.py:567
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:200
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:567 ../kde/apport-kde.py:268
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
 msgid "Show Details"
 msgstr "Mostra els detalls"
 
@@ -803,7 +810,7 @@ msgstr "Mostra els detalls"
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:341
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:445
 #: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:212 ../gtk/apport-gtk.py:282
-#: ../gtk/apport-gtk.py:297
+#: ../gtk/apport-gtk.py:297 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:111
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:137
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:173
@@ -812,14 +819,14 @@ msgstr "Mostra els detalls"
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:212
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:282
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:297 ../kde/apport-kde.py:211
-#: ../kde/apport-kde.py:220 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
+#: ../kde/apport-kde.py:220
 msgid "Continue"
 msgstr "Continua"
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:267
 #: ../gtk/apport-gtk.py:224 ../debian/tmp/usr/share/apport/apport-gtk.py:224
 msgid "Force Closed"
-msgstr ""
+msgstr "Força el tancament"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:208
 #: ../debian/tmp/usr/share/apport/apport-kde.py:354
@@ -836,12 +843,12 @@ msgstr "Torna-la a executar"
 #: ../gtk/apport-gtk.py:234 ../debian/tmp/usr/share/apport/apport-gtk.py:234
 #, python-format
 msgid "The application %s has stopped responding."
-msgstr ""
+msgstr "L'aplicació %s ha deixat de respondre."
 
 #: ../gtk/apport-gtk.py:238 ../debian/tmp/usr/share/apport/apport-gtk.py:238
 #, python-format
 msgid "The program \"%s\" has stopped responding."
-msgstr ""
+msgstr "El programa «%s» ha deixat de respondre."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:253
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:253 ../kde/apport-kde.py:184
@@ -862,7 +869,7 @@ msgstr "S'ha produït un problema mentre s'instal·lava el programa."
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:286 ../kde/apport-kde.py:197
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr ""
+msgstr "L'aplicació %s ha experimentat un error intern."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../gtk/apport-gtk.py:272
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:272 ../kde/apport-kde.py:201
@@ -871,25 +878,25 @@ msgid "The application %s has closed unexpectedly."
 msgstr "L'aplicació %s s'ha tancat inesperadament."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:207 ../gtk/apport-gtk.ui.h:9
-#: ../gtk/apport-gtk.py:278 ../debian/tmp/usr/share/apport/apport-gtk.py:278
-#: ../kde/apport-kde.py:207 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../gtk/apport-gtk.py:278 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:278 ../kde/apport-kde.py:207
 msgid "Leave Closed"
-msgstr "Deixa'l tancat"
+msgstr "Mantén-la tancada"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:217
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:293
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:333
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:294
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:243
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:294 ../kde/apport-kde.py:217
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
 msgid "If you notice further problems, try restarting the computer."
 msgstr "Si observeu altres problemes, intenteu reiniciar l'ordinador."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:221 ../gtk/apport-gtk.py:298
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:298 ../kde/apport-kde.py:221
 msgid "Ignore future problems of this type"
-msgstr ""
+msgstr "En el futur ignora problemes d'este tipus"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:265 ../gtk/apport-gtk.py:571
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:571 ../kde/apport-kde.py:265
@@ -919,7 +926,7 @@ msgid "Uploading Problem Information"
 msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:409 ../gtk/apport-gtk.ui.h:15
-#: ../kde/apport-kde.py:409 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../kde/apport-kde.py:409
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -927,20 +934,22 @@ msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:443
 #: ../debian/tmp/usr/share/apport/apport-kde.py:479 ../gtk/apport-gtk.ui.h:1
-#: ../kde/apport-kde.py:443 ../kde/apport-kde.py:479
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../kde/apport-kde.py:443
+#: ../kde/apport-kde.py:479
 msgid "Apport"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr ""
+msgstr "Recopila informació del sistema"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
+"Cal autenticació per recollir informació del sistema per l'informe d'este "
+"problema"
 
 #: ../gtk/apport-gtk.ui.h:2 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2
 msgid "Crash report"

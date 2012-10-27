@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-10-19 04:32+0000\n"
-"X-Generator: Launchpad (build 16165)\n"
+"X-Launchpad-Export-Date: 2012-10-27 04:32+0000\n"
+"X-Generator: Launchpad (build 16194)\n"
 "Language: fi\n"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:105
@@ -589,9 +589,8 @@ msgstr ""
 "Tähän voi mennä muutama minuutti."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../gtk/apport-gtk.ui.h:13
-#: ../bin/apport-cli.py:247 ../kde/apport-kde.py:408
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13
-#: ../debian/tmp/usr/bin/apport-cli.py:247
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13 ../bin/apport-cli.py:247
+#: ../kde/apport-kde.py:408 ../debian/tmp/usr/bin/apport-cli.py:247
 msgid "Uploading problem information"
 msgstr "Lähetetään tiedot ongelmasta"
 
@@ -849,9 +848,9 @@ msgstr "Lähetä"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:268 ../gtk/apport-gtk.ui.h:7
 #: ../gtk/apport-gtk.py:200 ../gtk/apport-gtk.py:567
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:200
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:567 ../kde/apport-kde.py:268
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
 msgid "Show Details"
 msgstr "Näytä tiedot"
 
@@ -864,7 +863,7 @@ msgstr "Näytä tiedot"
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:341
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:445
 #: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:212 ../gtk/apport-gtk.py:282
-#: ../gtk/apport-gtk.py:297
+#: ../gtk/apport-gtk.py:297 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:111
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:137
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:173
@@ -873,7 +872,7 @@ msgstr "Näytä tiedot"
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:212
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:282
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:297 ../kde/apport-kde.py:211
-#: ../kde/apport-kde.py:220 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
+#: ../kde/apport-kde.py:220
 msgid "Continue"
 msgstr "Jatka"
 
@@ -932,8 +931,8 @@ msgid "The application %s has closed unexpectedly."
 msgstr "Sovellus %s sulkeutui yllättäen."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:207 ../gtk/apport-gtk.ui.h:9
-#: ../gtk/apport-gtk.py:278 ../debian/tmp/usr/share/apport/apport-gtk.py:278
-#: ../kde/apport-kde.py:207 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../gtk/apport-gtk.py:278 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:278 ../kde/apport-kde.py:207
 msgid "Leave Closed"
 msgstr "Sulje sovellus"
 
@@ -941,9 +940,9 @@ msgstr "Sulje sovellus"
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:293
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:333
 #: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:294
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:243
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:294 ../kde/apport-kde.py:217
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
 msgid "If you notice further problems, try restarting the computer."
 msgstr "Jos ongelmat jatkuvat, käynnistä tietokone uudelleen."
 
@@ -982,7 +981,7 @@ msgid "Uploading Problem Information"
 msgstr "Lähetetään tiedot ongelmasta"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:409 ../gtk/apport-gtk.ui.h:15
-#: ../kde/apport-kde.py:409 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../kde/apport-kde.py:409
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -992,8 +991,8 @@ msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:443
 #: ../debian/tmp/usr/share/apport/apport-kde.py:479 ../gtk/apport-gtk.ui.h:1
-#: ../kde/apport-kde.py:443 ../kde/apport-kde.py:479
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../kde/apport-kde.py:443
+#: ../kde/apport-kde.py:479
 msgid "Apport"
 msgstr "Apport"
 
