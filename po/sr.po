@@ -2,20 +2,21 @@
 # Serbian linux distribution cp6Linux
 # Copyright (C) 2007 Marko Uskokovic
 # Marko Uskokovic <uskokovic@etf.bg.ac.yu>, 2007, 2008.
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-01 11:58+0200\n"
-"PO-Revision-Date: 2012-02-04 22:59+0000\n"
+"PO-Revision-Date: 2012-11-04 22:43+0000\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
-"Language-Team: <sr@li.org>\n"
+"Language-Team: Serbian <gnom@prevod.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-10-27 04:33+0000\n"
-"X-Generator: Launchpad (build 16194)\n"
-"Language: \n"
+"X-Launchpad-Export-Date: 2012-11-05 04:32+0000\n"
+"X-Generator: Launchpad (build 16232)\n"
+"Language: sr\n"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:105
 #: ../apport/ui.py:105
@@ -41,8 +42,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Имате инсталиране неке застареле верзије пакета. Надоградите следеће пакете "
-"и проверите да ли и даље долази до проблема:\n"
+"Имате инсталирана нека застарела издања пакета. Надоградите следеће пакете и "
+"проверите да ли и даље долази до проблема:\n"
 "\n"
 "%s"
 
@@ -70,7 +71,7 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"Ваш рачунар нема довољно слободне меморије да аутоматски анализира проблем и "
+"Ваш рачунар нема довољно слободне меморије да самостално анализира проблем и "
 "пошаље извештај ауторима."
 
 #. package does not exist
@@ -116,12 +117,12 @@ msgstr "Извештај припада пакету који није инст�
 #: ../apport/ui.py:264
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
-"Догодила се грешка док сам покушавао да обрадим извештај о овом проблему:"
+"Дошло је до грешке док сам покушавао да обрадим извештај о овом проблему:"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:307
 #: ../apport/ui.py:307
 msgid "You are not allowed to access this problem report."
-msgstr "Вама није допуштено да приступите овом извештају проблема."
+msgstr "Вама није допуштено да приступите извештају овог проблема."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:310
 #: ../apport/ui.py:310
@@ -136,7 +137,7 @@ msgstr "Нема довољно простора на диску за обрађ
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:395
 #: ../apport/ui.py:395
 msgid "No package specified"
-msgstr "Ниједан пакет није одређен"
+msgstr "Ниједан пакет није наведен"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:396
 #: ../apport/ui.py:396
@@ -148,17 +149,17 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:413
 #: ../apport/ui.py:413
 msgid "Invalid PID"
-msgstr "Неважећи ПИД"
+msgstr "Неисправан ПИД"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:414
 #: ../apport/ui.py:414
 msgid "The specified process ID does not belong to a program."
-msgstr "Одређени ПИД не припада програму."
+msgstr "Наведени ПИД не припада програму."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:422
 #: ../apport/ui.py:422
 msgid "Permission denied"
-msgstr "Дозвола је одбијена"
+msgstr "Приступ је одбијен"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:423
 #: ../apport/ui.py:423
@@ -166,8 +167,8 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"Процес који сте одредили не припада вама. Покрените овај програм као власник "
-"процеса или као администратор."
+"Наведени процес не припада вама. Покрените овај програм као власник процеса "
+"или као администратор."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:444
 #: ../apport/ui.py:444
@@ -263,7 +264,7 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:665
 #: ../apport/ui.py:660 ../apport/ui.py:665
 msgid "xprop failed to determine process ID of the window"
-msgstr "хпроп није успео да одреди ИБ процеса прозора"
+msgstr "икспроп није успео да одреди ИБ процеса прозора"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:679
 #: ../apport/ui.py:679
@@ -273,7 +274,7 @@ msgstr "%prog <број извештаја>"
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:681
 #: ../apport/ui.py:681
 msgid "Specify package name."
-msgstr "Одредите име пакета."
+msgstr "Наведите назив пакета."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:683
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:734
@@ -286,7 +287,7 @@ msgstr "Додаје додатну ознаку извештају. Може б
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [опције] [симптом|пид|пакет|путања програма|.apport/.crash file]"
+"%prog [опције] [симптом|пид|пакет|путања програма|.apport/.crash датотека]"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:716
 #: ../apport/ui.py:716
@@ -295,8 +296,8 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"Биће покренут у режиму пријављивања грешке. Захтева име пакета (--package) и "
-"један опционалан пид (--pid), или само пид (--pid). Ако ниједан није дат, "
+"Биће покренут у режиму пријављивања грешке. Захтева назив пакета (--package) "
+"и један опционалан пид (--pid), или само пид (--pid). Ако ниједан није дат, "
 "приказаће списак познатих симптома. (Подразумева се ако је дат само један "
 "аргумент.)"
 
@@ -327,7 +328,7 @@ msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
-"Одредиће име пакета у режиму пријављивања грешке (--file-bug). Ово је "
+"Навешће назив пакета у режиму пријављивања грешке (--file-bug). Ово је "
 "опционално ако је одређен пид (--pid). (Подразумева се ако је име пакета "
 "дато као једини аргумент.)"
 
@@ -338,14 +339,14 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"Одређује покренути програм у „--file-bug“ режиму. Ако је ово одређено, "
+"Наводи покренути програм у „--file-bug“ режиму. Ако је ово одређено, "
 "извештај о грешци ће садржати више информација. (Подразумева се ако је пид "
 "дат као једини аргумент.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:728
 #: ../apport/ui.py:728
 msgid "The provided pid is a hanging application."
-msgstr ""
+msgstr "Обезбеђени пид је проблематичан програм."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:730
 #: ../apport/ui.py:730
@@ -387,7 +388,7 @@ msgstr "Покреће гдб сесију"
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:872
 #: ../apport/ui.py:872
 msgid "Run gdb session without downloading debug symbols"
-msgstr "Покрени гдб сесију без преузимања симбола уклањања грешака"
+msgstr "Покреће гдб сесију без преузимања симбола уклањања грешака"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:874
@@ -414,13 +415,13 @@ msgstr "Не могу да утврдим пакет или изворно им�
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1069
 #: ../apport/ui.py:1069
 msgid "Unable to start web browser"
-msgstr "Не могу да покренем интернет претраживач"
+msgstr "Не могу да покренем интернет прегледник"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1070
 #: ../apport/ui.py:1070
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "Не могу да покренем интернет претраживач да бих отворио %s."
+msgstr "Не могу да покренем интернет прегледник да бих отворио %s."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1145
 #: ../apport/ui.py:1145
@@ -496,11 +497,11 @@ msgstr "Овај проблем је већ пријављен програме�
 
 #: ../bin/apport-cli.py:73 ../debian/tmp/usr/bin/apport-cli.py:73
 msgid "Press any key to continue..."
-msgstr "Притисните било који тастер да наставите..."
+msgstr "Притисните неки тастер да наставите..."
 
 #: ../bin/apport-cli.py:80 ../debian/tmp/usr/bin/apport-cli.py:80
 msgid "What would you like to do? Your options are:"
-msgstr "Шта бисте желели да урадите? Ваше могућности су:"
+msgstr "Шта желите да урадите? Ваше могућности су:"
 
 #: ../bin/apport-cli.py:84 ../debian/tmp/usr/bin/apport-cli.py:84
 #, python-format
@@ -510,7 +511,7 @@ msgstr "Молим изаберите (%s):"
 #: ../bin/apport-cli.py:144 ../debian/tmp/usr/bin/apport-cli.py:144
 #, python-format
 msgid "(%i bytes)"
-msgstr "(%i bytes)"
+msgstr "(%i бајта)"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:335 ../gtk/apport-gtk.py:138
 #: ../bin/apport-cli.py:146 ../debian/tmp/usr/share/apport/apport-gtk.py:138
@@ -627,7 +628,7 @@ msgstr "Избори:"
 
 #: ../bin/apport-cli.py:335 ../debian/tmp/usr/bin/apport-cli.py:335
 msgid "Path to file (Enter to cancel):"
-msgstr "Путања до датотеке (Ентер да откажете):"
+msgstr "Путања до датотеке („Унеси“ да откажете):"
 
 #: ../bin/apport-cli.py:341 ../debian/tmp/usr/bin/apport-cli.py:341
 msgid "File does not exist."
@@ -639,19 +640,19 @@ msgstr "Ово је директоријум."
 
 #: ../bin/apport-cli.py:349 ../debian/tmp/usr/bin/apport-cli.py:349
 msgid "To continue, you must visit the following URL:"
-msgstr "Да наставите, морате да посетите следећу адресу (URL):"
+msgstr "Да наставите, морате да посетите следећу адресу:"
 
 #: ../bin/apport-cli.py:351 ../debian/tmp/usr/bin/apport-cli.py:351
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
-"Сада можете покренути претраживач, или копирати ову интернет локацију у "
-"претраживачу на неком другом рачунару."
+"Сада можете покренути прегледник, или копирати ову интернет локацију у "
+"прегледнику на неком другом рачунару."
 
 #: ../bin/apport-cli.py:353 ../debian/tmp/usr/bin/apport-cli.py:353
 msgid "Launch a browser now"
-msgstr "Покрени претраживач сада"
+msgstr "Покрени прегледника сада"
 
 #: ../bin/apport-cli.py:367 ../debian/tmp/usr/bin/apport-cli.py:367
 msgid "No pending crash reports. Try --help for more information."
@@ -692,8 +693,7 @@ msgstr "%prog [опције] <извештај проблема апорта | �
 #: ../bin/apport-retrace.py:42 ../debian/tmp/usr/bin/apport-retrace.py:42
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr ""
-"Неће унети нове трагове у извештај, већ ће их записати у стандардни излаз "
-"(stdout)."
+"Неће унети нове трагове у извештај, већ ће их записати у стандардни излаз."
 
 #: ../bin/apport-retrace.py:44 ../debian/tmp/usr/bin/apport-retrace.py:44
 msgid ""
@@ -768,6 +768,8 @@ msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
+"Директоријум за нераспаковане пакете. Наредна покретања ће подразумевати да "
+"је било који већ преузети пакет такође извучен у ову пешчану кутију."
 
 #: ../bin/apport-retrace.py:68 ../debian/tmp/usr/bin/apport-retrace.py:68
 msgid ""
@@ -821,7 +823,7 @@ msgstr "ОК да бисте послали ове као прилог? [y/n]"
 #: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 #: ../kde/apport-kde.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
-msgstr "Пријавите проблем..."
+msgstr "Пријави проблем..."
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 #: ../kde/apport-kde.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
@@ -837,7 +839,7 @@ msgstr ""
 #: ../gtk/apport-gtk.py:153 ../debian/tmp/usr/share/apport/apport-gtk.py:153
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr ""
+msgstr "Извините, програм „%s“ се неочекивано зауставио."
 
 #: ../gtk/apport-gtk.py:156 ../debian/tmp/usr/share/apport/apport-gtk.py:156
 #, python-format
@@ -898,7 +900,7 @@ msgstr "Настави"
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:267
 #: ../gtk/apport-gtk.py:224 ../debian/tmp/usr/share/apport/apport-gtk.py:224
 msgid "Force Closed"
-msgstr ""
+msgstr "Приморај затварање"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:208
 #: ../debian/tmp/usr/share/apport/apport-kde.py:354
@@ -915,12 +917,12 @@ msgstr "Поново покрени"
 #: ../gtk/apport-gtk.py:234 ../debian/tmp/usr/share/apport/apport-gtk.py:234
 #, python-format
 msgid "The application %s has stopped responding."
-msgstr ""
+msgstr "Програм „%s“ је престао да одговара."
 
 #: ../gtk/apport-gtk.py:238 ../debian/tmp/usr/share/apport/apport-gtk.py:238
 #, python-format
 msgid "The program \"%s\" has stopped responding."
-msgstr ""
+msgstr "Програм „%s“ је престао да одговара."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:253
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:253 ../kde/apport-kde.py:184
@@ -941,7 +943,7 @@ msgstr "Извините, догодио се проблем приликом и
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:286 ../kde/apport-kde.py:197
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr ""
+msgstr "Програм „%s“ је наишао на унутрашњу грешку."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../gtk/apport-gtk.py:272
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:272 ../kde/apport-kde.py:201
@@ -969,7 +971,7 @@ msgstr ""
 #: ../debian/tmp/usr/share/apport/apport-kde.py:221 ../gtk/apport-gtk.py:298
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:298 ../kde/apport-kde.py:221
 msgid "Ignore future problems of this type"
-msgstr ""
+msgstr "Занемари будуће проблеме ове врсте"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:265 ../gtk/apport-gtk.py:571
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:571 ../kde/apport-kde.py:265
@@ -1018,13 +1020,15 @@ msgstr "Апорт"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr ""
+msgstr "Прикупљам системске информације"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
+"Потврђивање идентитета је неопходно за прикупљање системских података за "
+"извештај о овом проблему"
 
 #: ../gtk/apport-gtk.ui.h:2 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2
 msgid "Crash report"
