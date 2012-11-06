@@ -12,6 +12,7 @@ detailled list of changes, please see ChangeLog.
    does not exist, to provide a more appropriate error message. (LP: #1065129)
  * report.py, add_gdb_info(): Check __glib_assert_msg for assertion messages,
    too.
+ * REThread.py: Fix for Python 3.3.
 
 2.6.1 (2012-10-01):
 -------------------
