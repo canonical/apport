@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.6.3 (UNRELEASED):
+-------------------
+ * test_signal_crashes.py: Fix incompatibility with Python 3.3.
+
 2.6.2 (2012-11-06):
 -------------------
  * problem_report.py: Fix UnicodeDecodeError crash under Python 2 when the
