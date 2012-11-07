@@ -4,6 +4,8 @@ detailled list of changes, please see ChangeLog.
 2.6.3 (UNRELEASED):
 -------------------
  * test_signal_crashes.py: Fix incompatibility with Python 3.3.
+ * test_signal_crashes.py: Allow XDG_RUNTIME_DIR environment variable, as it
+   only shows whether or not it is set. (Test regression from 2.6)
 
 2.6.2 (2012-11-06):
 -------------------
