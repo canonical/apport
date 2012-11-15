@@ -46,7 +46,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             report['UnreportableReason'] = 'Please configure sender settings in /etc/apport/crashdb.conf'
 
         # At this time, we are not ready to take CrashDumps
-        if not report.has_useful_stacktrace():
+        if 'Stacktrace' in report and not report.has_useful_stacktrace():
             report['UnreportableReason'] = 'Incomplete backtrace. Please install the debug symbol packages'
 
         return apport.crashdb.CrashDatabase.accepts(self, report)
