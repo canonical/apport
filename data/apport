@@ -422,6 +422,17 @@ try:
     try:
         info.write(reportfile)
         if reportfile != sys.stderr:
+            # Ensure that the file gets written to disk in the event of an
+            # Upstart crash.
+            if info.get('ExectuablePath', '') == '/sbin/init':
+                reportfile.flush()
+                os.fsync(reportfile.fileno())
+                parent_directory = os.path.dirname(report)
+                try:
+                    fd = os.open(parent_directory, os.O_RDONLY)
+                    os.fsync(fd)
+                finally:
+                    os.close(fd)
             reportfile.close()
     except IOError:
         if reportfile != sys.stderr:
