@@ -63,7 +63,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         # Frame the report in the format the BTS understands
         try:
             (buggyPackage, buggyVersion) = report['Package'].split(' ')
-        except KeyError:
+        except (KeyError, ValueError):
             return False
 
         temp = tempfile.NamedTemporaryFile()
