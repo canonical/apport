@@ -627,16 +627,14 @@ Debug::NoLocking "true";
                             debs = os.path.join(archives, '%s_*.deb' % p)
                             for path in glob.glob(debs):
                                 ver = self._deb_version(path)
-                                if apt.apt_pkg.check_dep(ver, conflict[2],
-                                                              conflict[1]):
+                                if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
                                     os.unlink(path)
                         del providers
                     else:
                         debs = os.path.join(archives, '%s_*.deb' % conflict[0])
                         for path in glob.glob(debs):
                             ver = self._deb_version(path)
-                            if apt.apt_pkg.check_dep(ver, conflict[2],
-                                                          conflict[1]):
+                            if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
                                 os.unlink(path)
 
             if candidate.architecture != 'all':
