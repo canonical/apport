@@ -628,8 +628,8 @@ class Report(problem_report.ProblemReport):
         - ThreadStacktrace: Output of gdb's 'thread apply all bt full' command
         - StacktraceTop: simplified stacktrace (topmost 5 functions) for inline
           inclusion into bug reports and easier processing
-        - AssertionMessage: Value of __abort_msg or __glib_assert_msg, if
-          present
+        - AssertionMessage: Value of __abort_msg, __glib_assert_msg, or
+          __nih_abort_msg if present
 
         The optional rootdir can specify a root directory which has the
         executable, libraries, and debug symbols. This does not require
@@ -660,7 +660,8 @@ class Report(problem_report.ProblemReport):
                            'Stacktrace': 'bt full',
                            'ThreadStacktrace': 'thread apply all bt full',
                            'AssertionMessage': 'print __abort_msg->msg',
-                           'GLibAssertionMessage': 'print __glib_assert_msg'}
+                           'GLibAssertionMessage': 'print __glib_assert_msg',
+                           'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
 
             command = ['gdb', '--batch']
             executable = self.get('InterpreterPath', self['ExecutablePath'])
@@ -701,6 +702,11 @@ class Report(problem_report.ProblemReport):
         if '"ERROR:' in self['GLibAssertionMessage']:
             self['AssertionMessage'] = self['GLibAssertionMessage']
         del self['GLibAssertionMessage']
+
+        # same reason for libnih's assertion messages
+        if self['NihAssertionMessage'].startswith('$'):
+            self['AssertionMessage'] = self['NihAssertionMessage']
+        del self['NihAssertionMessage']
 
         # clean up AssertionMessage
         if 'AssertionMessage' in self:

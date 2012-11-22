@@ -767,6 +767,40 @@ $0.bin 2>/dev/null
         self.assertTrue(pr['AssertionMessage'].startswith('ERROR:<stdin>:2:main: assertion failed (1 < 0):'),
                         pr['AssertionMessage'])
 
+    def test_add_gdb_info_abort_libnih(self):
+        '''add_gdb_info() with libnih assertion'''
+        (fd, script) = tempfile.mkstemp()
+        assert not os.path.exists('core')
+        try:
+            os.close(fd)
+
+            # create a test script which produces a core dump for us
+            with open(script, 'w') as fd:
+                fd.write('''#!/bin/sh
+gcc -o $0.bin -x c - `pkg-config --cflags --libs libnih` <<EOF
+#include <libnih.h>
+int main() { nih_assert (1 < 0); }
+EOF
+ulimit -c unlimited
+$0.bin 2>/dev/null
+''')
+            # call script and verify that it gives us a proper ELF core dump
+            assert subprocess.call(['/bin/sh', script]) != 0
+            self._validate_core('core')
+
+            pr = apport.report.Report()
+            pr['ExecutablePath'] = script + '.bin'
+            pr['CoreDump'] = ('core',)
+            pr.add_gdb_info()
+        finally:
+            os.unlink(script)
+            os.unlink(script + '.bin')
+            os.unlink('core')
+
+        self._validate_gdb_fields(pr)
+        self.assertTrue('Assertion failed in main: 1 < 0' in pr['AssertionMessage'],
+                        pr['AssertionMessage'])
+
     def test_search_bug_patterns(self):
         '''search_bug_patterns().'''
 
