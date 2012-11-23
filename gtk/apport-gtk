@@ -36,21 +36,6 @@ def find_xid_for_pid (pid):
             return window.get_xid()
     return None
 
-def get_pid (report):
-    try:
-        pid = re.search('Pid:\t(.*)\n', report.get('ProcStatus', '')).group(1)
-        return int(pid)
-    except (IndexError, AttributeError):
-        return None
-
-def still_running (pid):
-    try:
-        os.kill(int(pid), 0)
-    except OSError as e:
-        if e.errno == errno.ESRCH:
-            return False
-    return True
-
 class GTKUserInterface(apport.ui.UserInterface):
     '''GTK UserInterface.'''
 
@@ -288,8 +273,9 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('title_label').set_label('<big><b>%s</b></big>' % t)
                 self.w('subtitle_label').hide()
 
-                pid = get_pid(self.report)
-                if 'ProcCmdline' not in self.report or (pid and still_running(pid)):
+                pid = apport.ui.get_pid(self.report)
+                still_running = pid and apport.ui.still_running(pid)
+                if 'ProcCmdline' not in self.report or still_running:
                     self.w('closed_button').hide()
                     self.w('continue_button').set_label(_('Continue'))
                 else:
