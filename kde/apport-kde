@@ -202,13 +202,16 @@ class ReportDialog(Dialog):
                                            'unexpectedly.') %
                                            desktop_info['name'])
                 self.text.hide()
-                if 'ProcCmdline' in report:
+
+                pid = apport.ui.get_pid(report)
+                still_running = pid and apport.ui.still_running(pid)
+                if 'ProcCmdline' not in report or still_running:
+                    self.closed_button.hide()
+                    self.continue_button.setText(_('Continue'))
+                else:
                     self.closed_button.show()
                     self.closed_button.setText(_('Leave Closed'))
                     self.continue_button.setText(_('Relaunch'))
-                else:
-                    self.closed_button.hide()
-                    self.continue_button.setText(_('Continue'))
             else:
                 icon = 'distributor-logo'
                 self.heading.setText(_('Sorry, %s has experienced an '

@@ -147,6 +147,15 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.w('subtitle_label').get_text(),
                          _('Package: apport 1.2.3~0ubuntu1'))
 
+    def test_regular_crash_thread_layout(self):
+        '''A thread of execution has failed, but the application persists.'''
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['ProcStatus'] = 'Name:\tupstart\nPid:\t1'
+        GLib.idle_add(Gtk.main_quit)
+        self.app.ui_present_report_details(True)
+        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(), _('Continue'))
+
     def test_regular_crash_layout(self):
         '''
         +-----------------------------------------------------------------+

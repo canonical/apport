@@ -139,6 +139,15 @@ class T(unittest.TestCase):
         self.assertEqual(self.app.dialog.text.text(),
                          _('Package: apport 1.2.3~0ubuntu1'))
 
+    def test_regular_crash_thread_layout(self):
+        '''A thread of execution has failed, but the application persists.'''
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['ProcStatus'] = 'Name:\tupstart\nPid:\t1'
+        QTimer.singleShot(0, QCoreApplication.quit)
+        self.app.ui_present_report_details(True)
+        self.assertFalse(self.app.dialog.closed_button.isVisible())
+        self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
+
     def test_regular_crash_layout(self):
         '''
         +-----------------------------------------------------------------+

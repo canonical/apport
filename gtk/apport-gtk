@@ -11,7 +11,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os.path, sys, subprocess, os, re
+import os.path, sys, subprocess, os, re, errno
 
 from gi.repository import GObject, GLib, Wnck, GdkX11, Gdk
 try:
@@ -273,13 +273,15 @@ class GTKUserInterface(apport.ui.UserInterface):
                 self.w('title_label').set_label('<big><b>%s</b></big>' % t)
                 self.w('subtitle_label').hide()
 
-                if 'ProcCmdline' in self.report:
+                pid = apport.ui.get_pid(self.report)
+                still_running = pid and apport.ui.still_running(pid)
+                if 'ProcCmdline' not in self.report or still_running:
+                    self.w('closed_button').hide()
+                    self.w('continue_button').set_label(_('Continue'))
+                else:
                     self.w('closed_button').show()
                     self.w('closed_button').set_label(_('Leave Closed'))
                     self.w('continue_button').set_label(_('Relaunch'))
-                else:
-                    self.w('closed_button').hide()
-                    self.w('continue_button').set_label(_('Continue'))
             else:
                 icon = 'distributor-logo'
                 if report_type == 'RecoverableProblem':

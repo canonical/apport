@@ -14,6 +14,8 @@ detailled list of changes, please see ChangeLog.
  * data/apport: Call fsync when writing upstart crash reports.
  * report.py, add_gdb_info(): Handle libnih's assertion messages.
    (LP: #997359)
+ * apport-gtk, apport-kde: Don't provide an option to restart a crashed
+   application when the crash occurred in a thread (LP: #1033902).
 
 2.6.2 (2012-11-06):
 -------------------

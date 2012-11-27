@@ -15,7 +15,7 @@ implementation (like GTK, Qt, or CLI).
 
 __version__ = '2.6.2'
 
-import glob, sys, os.path, optparse, traceback, locale, gettext
+import glob, sys, os.path, optparse, traceback, locale, gettext, re
 import errno, zlib
 import subprocess, threading, webbrowser
 import signal
@@ -43,6 +43,23 @@ def excstr(exception):
 symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
                                     '/usr/share/apport/symptoms')
 PF_KTHREAD = 0x200000
+
+
+def get_pid(report):
+    try:
+        pid = re.search('Pid:\t(.*)\n', report.get('ProcStatus', '')).group(1)
+        return int(pid)
+    except (IndexError, AttributeError):
+        return None
+
+
+def still_running(pid):
+    try:
+        os.kill(int(pid), 0)
+    except OSError as e:
+        if e.errno == errno.ESRCH:
+            return False
+    return True
 
 
 def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
