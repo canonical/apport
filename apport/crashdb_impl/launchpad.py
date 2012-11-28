@@ -485,7 +485,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         A user should add additional information to an existing ID if (s)he is
         the reporter or subscribed, the bug is open, not a duplicate, etc. The
-        exact policy and checks should be done according to  the particular
+        exact policy and checks should be done according to the particular
         implementation.
         '''
         bug = self.launchpad.bugs[id]
