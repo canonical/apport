@@ -79,6 +79,12 @@ def parse_options():
         optparser.error(_('incorrect number of arguments; use --help for a short help'))
         sys.exit(1)
 
+    # catch invalid usage of -C without -S (cache is only used when making a
+    # sandbox)
+    if opts.cache and not opts.sandbox:
+        optparser.error(_('You cannot use -C without -S. Stopping.'))
+        sys.exit(1)
+
     if not (opts.auth or opts.output or opts.stdout or opts.gdb):
         optparser.error(_('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short help'))
         sys.exit(1)
