@@ -130,6 +130,24 @@ class T(unittest.TestCase):
         expected = os.path.join(apport.fileutils.report_dir, 'report.upload')
         self.assertTrue(os.path.exists(expected))
 
+    def test_mark_2nd_report_upload(self):
+        '''mark_report_upload() for a previously uploaded report'''
+        upload = os.path.join(apport.fileutils.report_dir, 'report.upload')
+        with open(upload, 'w'):
+            pass
+        uploaded = os.path.join(apport.fileutils.report_dir, 'report.uploaded')
+        with open(uploaded, 'w'):
+            pass
+        time.sleep(1)
+        report = os.path.join(apport.fileutils.report_dir, 'report.crash')
+        with open(report, 'w'):
+            pass
+        time.sleep(1)
+        apport.fileutils.mark_report_upload(report)
+        upload_st = os.stat(upload)
+        report_st = os.stat(report)
+        self.assertTrue(upload_st.st_mtime > report_st.st_mtime)
+
     def test_get_all_reports(self):
         '''get_all_reports()'''
 

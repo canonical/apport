@@ -17,6 +17,9 @@ detailled list of changes, please see ChangeLog.
  * apport-gtk, apport-kde: Don't provide an option to restart a crashed
    application when the crash occurred in a thread (LP: #1033902).
  * apport-retrace: Disallow option -C without option -S. Thanks Kyle Nitzsche.
+ * fileutils.py, mark_report_upload(): Refresh the .upload stamps if a previous
+   version of the report was already uploaded, but another instance of the
+   problem happened since then. Thanks Brian Murray. (LP: #1084296)
 
 2.6.2 (2012-11-06):
 -------------------
