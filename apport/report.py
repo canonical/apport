@@ -1010,8 +1010,16 @@ class Report(problem_report.ProblemReport):
             e.setAttribute('mtime', mtime)
             dom.documentElement.appendChild(e)
 
-        # write back file
-        with open(os.path.expanduser(_ignore_file), 'w') as fd:
+        # write back file; temporarily unset $HOME, as this gets the wrong home
+        # dir for e. g. sudo
+        orig_home = os.getenv('HOME')
+        if orig_home is not None:
+            del os.environ['HOME']
+        ignore_file_path = os.path.expanduser(_ignore_file)
+        if orig_home is not None:
+            os.environ['HOME'] = orig_home
+
+        with open(ignore_file_path, 'w') as fd:
             dom.writexml(fd, addindent='  ', newl='\n')
 
         dom.unlink()

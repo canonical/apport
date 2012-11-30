@@ -5,6 +5,8 @@ detailled list of changes, please see ChangeLog.
 -------------------
  * Fix test_find_package_desktopfile test to not consider packages with only
    one "NoDisplay=true" .desktop file for the "has one desktop file" test.
+ * report.py, mark_ignore(): Use home directory of actual effective user, not
+   of $HOME. Fixes ignore file when using through sudo.
 
 2.6.3 (2012-11-30):
 -------------------
