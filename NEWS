@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.6.4 (UNRELEASED):
+-------------------
+ * Fix test_find_package_desktopfile test to not consider packages with only
+   one "NoDisplay=true" .desktop file for the "has one desktop file" test.
+
 2.6.3 (2012-11-30):
 -------------------
  * test_signal_crashes.py: Fix incompatibility with Python 3.3.

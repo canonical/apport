@@ -60,10 +60,11 @@ class T(unittest.TestCase):
             pkg = apport.packaging.get_file_package(path)
             num = len([f for f in apport.packaging.get_files(pkg)
                        if f.endswith('.desktop')])
-            if not nodisplay and num == 1:
-                with open(path) as f:
-                    if 'NoDisplay=true' in f.read():
+            with open(path) as f:
+                if 'NoDisplay=true' in f.read():
+                    if not nodisplay and num == 1:
                         nodisplay = pkg
+                    continue
             if not onedesktop and num == 1:
                 onedesktop = pkg
             elif not multidesktop and num > 1:
