@@ -1302,6 +1302,10 @@ class Report(problem_report.ProblemReport):
                 if not addr.startswith('0x'):
                     continue
                 addr = int(addr, 16)  # we do want to know about ValueErrors here, so don't catch
+                # ignore impossibly low addresses; these are usually artifacts
+                # from gdb when not having debug symbols
+                if addr < 0x1000:
+                    continue
                 offset = self._address_to_offset(addr)
                 if offset:
                     # avoid ':' in ELF paths, we use that as separator

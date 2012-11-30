@@ -1866,6 +1866,8 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsysca
         self.assertEqual(pr._address_to_offset(0x006de000), '/bin/bash+0')
         self.assertEqual(pr._address_to_offset(0x006df000), '/bin/bash+1000')
         self.assertEqual(pr._address_to_offset(0x006df001), None)
+        self.assertEqual(pr._address_to_offset(0), None)
+        self.assertEqual(pr._address_to_offset(0x10), None)
 
         self.assertEqual(pr._address_to_offset(0x7f491fc24010),
                          '/lib/with spaces !/libfoo.so+10')
@@ -1938,7 +1940,27 @@ No symbol table info available.
 #6  0x000000000041d715 in main ()
 #7  0x000000000041d703 in _start ()
 '''
-        self.assertNotEqual(pr.crash_signature_addresses(), None)
+        sig = pr.crash_signature_addresses()
+        self.assertNotEqual(sig, None)
+
+        # one true unresolvable, and some "low address" artifacts; should be
+        # identical to the one above
+        pr['Stacktrace'] = '''
+#0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82
+No locals.
+#1  0x000001000043fd51 in kill_pid ()
+#2  0x0000000000000010 in ??
+#3  g_main_context_iterate (context=0x1731680) at gmain.c:3068
+#4  0x000000000042eb76 in ?? ()
+#5  0x0000000000000000 in ?? ()
+#6  0x0000000000000421 in ?? ()
+#7  0x00000000004324d8 in ??
+No symbol table info available.
+#8  0x00000000004707e3 in parse_and_execute ()
+#9  0x000000000041d715 in main ()
+#10 0x000000000041d703 in _start ()
+'''
+        self.assertEqual(pr.crash_signature_addresses(), sig)
 
         # two unresolvables, 2/7 is too much
         pr['Stacktrace'] = '''

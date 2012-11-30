@@ -20,6 +20,10 @@ detailled list of changes, please see ChangeLog.
  * fileutils.py, mark_report_upload(): Refresh the .upload stamps if a previous
    version of the report was already uploaded, but another instance of the
    problem happened since then. Thanks Brian Murray. (LP: #1084296)
+ * Ignore implausibly low addresses when computing StacktraceAddressSignature.
+   These are usually artifacts from gdb when not having debug symbols, and
+   having too many of them prevents proper client-side duplicate detection and
+   proper bucketing in daisy. (LP: #1084996)
 
 2.6.2 (2012-11-06):
 -------------------
