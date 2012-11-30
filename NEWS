@@ -24,6 +24,7 @@ detailled list of changes, please see ChangeLog.
    These are usually artifacts from gdb when not having debug symbols, and
    having too many of them prevents proper client-side duplicate detection and
    proper bucketing in daisy. (LP: #1084996)
+ * fileutils.py: Ignore .desktop files with NoDisplay=true. (LP: #1048524)
 
 2.6.2 (2012-11-06):
 -------------------

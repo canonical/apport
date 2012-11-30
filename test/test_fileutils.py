@@ -48,33 +48,44 @@ class T(unittest.TestCase):
         assert len([f for f in apport.packaging.get_files(nodesktop)
                     if f.endswith('.desktop')]) == 0
 
-        # find a package with one and a package with multiple .desktop files
+        # find a package with one, a package with multiple .desktop files, and
+        # a package with a NoDisplay .desktop file
         onedesktop = None
         multidesktop = None
+        nodisplay = None
         for d in os.listdir('/usr/share/applications/'):
             if not d.endswith('.desktop'):
                 continue
-            pkg = apport.packaging.get_file_package(
-                os.path.join('/usr/share/applications/', d))
+            path = os.path.join('/usr/share/applications/', d)
+            pkg = apport.packaging.get_file_package(path)
             num = len([f for f in apport.packaging.get_files(pkg)
                        if f.endswith('.desktop')])
+            if not nodisplay and num == 1:
+                with open(path) as f:
+                    if 'NoDisplay=true' in f.read():
+                        nodisplay = pkg
             if not onedesktop and num == 1:
                 onedesktop = pkg
             elif not multidesktop and num > 1:
                 multidesktop = pkg
 
-            if onedesktop and multidesktop:
+            if onedesktop and multidesktop and nodisplay:
                 break
 
         if nodesktop:
-            self.assertEqual(apport.fileutils.find_package_desktopfile(nodesktop), None, 'no-desktop package %s' % nodesktop)
+            self.assertEqual(apport.fileutils.find_package_desktopfile(nodesktop),
+                             None, 'no-desktop package %s' % nodesktop)
         if multidesktop:
-            self.assertEqual(apport.fileutils.find_package_desktopfile(multidesktop), None, 'multi-desktop package %s' % multidesktop)
+            self.assertEqual(apport.fileutils.find_package_desktopfile(multidesktop),
+                             None, 'multi-desktop package %s' % multidesktop)
         if onedesktop:
             d = apport.fileutils.find_package_desktopfile(onedesktop)
             self.assertNotEqual(d, None, 'one-desktop package %s' % onedesktop)
             self.assertTrue(os.path.exists(d))
             self.assertTrue(d.endswith('.desktop'))
+        if nodisplay:
+            self.assertEqual(apport.fileutils.find_package_desktopfile(nodisplay), None,
+                             'NoDisplay package %s' % nodisplay)
 
     def test_likely_packaged(self):
         '''likely_packaged()'''
