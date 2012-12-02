@@ -39,6 +39,7 @@ class CLIDialog:
 
         sys.stdout.write(prompt)
         sys.stdout.write(' ')
+        sys.stdout.flush()
 
         file = sys.stdin.fileno()
         saved_attributes = termios.tcgetattr(file)
