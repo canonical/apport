@@ -87,7 +87,8 @@ class PackageInfo:
         '''
         return {}
 
-    def get_file_package(self, file, uninstalled=False, map_cachedir=None):
+    def get_file_package(self, file, uninstalled=False, map_cachedir=None,
+                         release=None, arch=None):
         '''Return the package a file belongs to.
 
         Return None if the file is not shipped by any package.
@@ -97,6 +98,8 @@ class PackageInfo:
         lots of CPU and I/O resources. In this case, map_cachedir can be set to
         an existing directory which will be used to permanently store the
         downloaded maps. If it is not set, a temporary directory will be used.
+        Also, release and arch can be set to a foreign release/architecture
+        instead of the one from the current system.
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 

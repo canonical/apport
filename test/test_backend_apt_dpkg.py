@@ -193,28 +193,25 @@ usr/bin/frobnicate                                      foo/frob
 usr/bin/frob                                            foo/frob-utils
 bo/gu/s                                                 na/mypackage
 ''')
+            # use this as a mirror
+            impl.set_mirror('file://' + basedir)
 
-            self.assertEqual(impl.get_file_package('usr/bin/frob', False, mapdir), None)
+            self.assertEqual(impl.get_file_package('usr/bin/frob', False), None)
             # must not match frob (same file name prefix)
-            self.assertEqual(impl.get_file_package('usr/bin/frob', True, mapdir), 'frob-utils')
-            self.assertEqual(impl.get_file_package('/usr/bin/frob', True, mapdir), 'frob-utils')
+            self.assertEqual(impl.get_file_package('usr/bin/frob', True), 'frob-utils')
+            self.assertEqual(impl.get_file_package('/usr/bin/frob', True), 'frob-utils')
 
             # invalid mirror
             impl.set_mirror('file:///foo/nonexisting')
             self.assertRaises(IOError, impl.get_file_package, 'usr/bin/frob', True)
 
-            # valid mirror, no cache directory
+            # valid mirror, test cache directory
             impl.set_mirror('file://' + basedir)
-            self.assertEqual(impl.get_file_package('usr/bin/frob', True), 'frob-utils')
-            self.assertEqual(impl.get_file_package('/usr/bin/frob', True), 'frob-utils')
-
-            # valid mirror, test caching
             cache_dir = os.path.join(basedir, 'cache')
             os.mkdir(cache_dir)
             self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir), 'frob-utils')
             self.assertEqual(len(os.listdir(cache_dir)), 1)
             cache_file = os.listdir(cache_dir)[0]
-            self.assertTrue(cache_file.startswith('Contents-'))
             self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
 
             # valid cache, should not need to access the mirror
@@ -227,6 +224,117 @@ bo/gu/s                                                 na/mypackage
             os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
 
             self.assertRaises(IOError, impl.get_file_package, '/bo/gu/s', True, cache_dir)
+        finally:
+            shutil.rmtree(basedir)
+
+    def test_get_file_package_uninstalled_multiarch(self):
+        '''get_file_package() on foreign arches and releases'''
+
+        # determine distro release code name
+        lsb_release = subprocess.Popen(['lsb_release', '-sc'],
+                                       stdout=subprocess.PIPE)
+        release_name = lsb_release.communicate()[0].decode('UTF-8').strip()
+        assert lsb_release.returncode == 0
+
+        # generate test Contents.gz for two fantasy architectures
+        basedir = tempfile.mkdtemp()
+        try:
+            mapdir = os.path.join(basedir, 'dists', release_name)
+            os.makedirs(mapdir)
+            with gzip.open(os.path.join(mapdir, 'Contents-even.gz'), 'w') as f:
+                f.write(b'''
+foo header
+FILE                                                    LOCATION
+usr/lib/even/libfrob.so.1                               foo/libfrob1
+usr/bin/frob                                            foo/frob-utils
+''')
+            with gzip.open(os.path.join(mapdir, 'Contents-odd.gz'), 'w') as f:
+                f.write(b'''
+foo header
+FILE                                                    LOCATION
+usr/lib/odd/libfrob.so.1                                foo/libfrob1
+usr/bin/frob                                            foo/frob-utils
+''')
+
+            # and another one for fantasy release
+            os.mkdir(os.path.join(basedir, 'dists', 'mocky'))
+            with gzip.open(os.path.join(basedir, 'dists', 'mocky', 'Contents-even.gz'), 'w') as f:
+                f.write(b'''
+foo header
+FILE                                                    LOCATION
+usr/lib/even/libfrob.so.0                               foo/libfrob0
+usr/bin/frob                                            foo/frob
+''')
+
+            # use this as a mirror
+            impl.set_mirror('file://' + basedir)
+
+            # must not match system architecture
+            self.assertEqual(impl.get_file_package('usr/bin/frob', False), None)
+            # must match correct architecture
+            self.assertEqual(impl.get_file_package('usr/bin/frob', True, arch='even'),
+                             'frob-utils')
+            self.assertEqual(impl.get_file_package('usr/bin/frob', True, arch='odd'),
+                             'frob-utils')
+            self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.1', True, arch='even'),
+                             'libfrob1')
+            self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.1', True, arch='odd'),
+                             None)
+            self.assertEqual(impl.get_file_package('/usr/lib/odd/libfrob.so.1', True, arch='odd'),
+                             'libfrob1')
+
+            # for mocky release
+            self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.1',
+                                                   True, release='mocky', arch='even'),
+                             None)
+            self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.0',
+                                                   True, release='mocky', arch='even'),
+                             'libfrob0')
+            self.assertEqual(impl.get_file_package('/usr/bin/frob',
+                                                   True, release='mocky', arch='even'),
+                             'frob')
+
+            # invalid mirror
+            impl.set_mirror('file:///foo/nonexisting')
+            self.assertRaises(IOError, impl.get_file_package,
+                              '/usr/lib/even/libfrob.so.1', True, arch='even')
+            self.assertRaises(IOError, impl.get_file_package,
+                              '/usr/lib/even/libfrob.so.0', True, release='mocky', arch='even')
+
+            # valid mirror, test caching
+            impl.set_mirror('file://' + basedir)
+            cache_dir = os.path.join(basedir, 'cache')
+            os.mkdir(cache_dir)
+            self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.1',
+                                                   True, cache_dir, arch='even'),
+                             'libfrob1')
+            self.assertEqual(len(os.listdir(cache_dir)), 1)
+            cache_file = os.listdir(cache_dir)[0]
+
+            self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.0',
+                                                   True, cache_dir, release='mocky', arch='even'),
+                             'libfrob0')
+            self.assertEqual(len(os.listdir(cache_dir)), 2)
+
+            # valid cache, should not need to access the mirror
+            impl.set_mirror('file:///foo/nonexisting')
+            self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir, arch='even'),
+                             'frob-utils')
+            self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir,
+                                                   release='mocky', arch='even'),
+                             'frob')
+
+            # but no cached file for the other arch
+            self.assertRaises(IOError, impl.get_file_package, 'usr/bin/frob',
+                              True, cache_dir, arch='odd')
+
+            # outdated cache, must refresh the cache and hit the invalid
+            # mirror
+            now = int(time.time())
+            os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
+
+            self.assertRaises(IOError, impl.get_file_package, 'usr/bin/frob',
+                              True, cache_dir, arch='even')
         finally:
             shutil.rmtree(basedir)
 

@@ -128,12 +128,19 @@ class RPMPackageInfo:
 
         return modified
 
-    def get_file_package(self, file):
-        '''Return the package a file belongs to, or None if the file is not
-        shipped by any package.
+    def get_file_package(self, file, uninstalled=False, map_cachedir=None,
+                         release=None, arch=None):
+        '''Return the package a file belongs to.
 
-        Under normal use, the 'file' argument will always be the executable
-        that crashed.
+        Return None if the file is not shipped by any package.
+
+        If uninstalled is True, this will also find files of uninstalled
+        packages; this is very expensive, though, and needs network access and
+        lots of CPU and I/O resources. In this case, map_cachedir can be set to
+        an existing directory which will be used to permanently store the
+        downloaded maps. If it is not set, a temporary directory will be used.
+        Also, release and arch can be set to a foreign release/architecture
+        instead of the one from the current system.
         '''
         # The policy for handling files which belong to multiple packages depends on the distro
         raise NotImplementedError('method must be implemented by distro-specific RPMPackageInfo subclass')

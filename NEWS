@@ -1,8 +1,14 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.6.4 (UNRELEASED):
--------------------
+2.7 (UNRELEASED):
+-----------------
+Improvements:
+ * packaging.py, get_file_package(): Add optional "release" and "arch"
+   arguments for getting a file's package for a foreign release or
+   architecture. Implement this for apt/dpkg backend.
+
+Bug fixes:
  * Fix test_find_package_desktopfile test to not consider packages with only
    one "NoDisplay=true" .desktop file for the "has one desktop file" test.
  * report.py, mark_ignore(): Use home directory of actual effective user, not
