@@ -14,6 +14,8 @@ Bug fixes:
  * report.py, mark_ignore(): Use home directory of actual effective user, not
    of $HOME. Fixes ignore file when using through sudo.
  * apport-cli: Fix showing of prompt. Thanks Dmitry Shachnev!
+ * fileutils.py, mark_report_upload(): Do not try to remove the .uploaded file,
+   as this is not owned by the user.
 
 2.6.3 (2012-11-30):
 -------------------
