@@ -899,7 +899,12 @@ class Report(problem_report.ProblemReport):
 
         Raises ValueError if the file exists but is invalid XML.
         '''
+        orig_home = os.getenv('HOME')
+        if orig_home is not None:
+            del os.environ['HOME']
         ifpath = os.path.expanduser(_ignore_file)
+        if orig_home is not None:
+            os.environ['HOME'] = orig_home
         if not os.access(ifpath, os.R_OK) or os.path.getsize(ifpath) == 0:
             # create a document from scratch
             dom = xml.dom.getDOMImplementation().createDocument(None, 'apport', None)

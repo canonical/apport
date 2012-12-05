@@ -197,8 +197,13 @@ func(42)
         # put the script into /var/crash, since that isn't ignored in the
         # hook
         (fd, script) = tempfile.mkstemp(dir=apport.fileutils.report_dir)
+        orig_home = os.getenv('HOME')
+        if orig_home is not None:
+            del os.environ['HOME']
         ifpath = os.path.expanduser(apport.report._ignore_file)
         orig_ignore_file = None
+        if orig_home is not None:
+            os.environ['HOME'] = orig_home
         try:
             os.write(fd, ('''#!/usr/bin/env %s
 import apport_python_hook

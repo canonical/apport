@@ -19,7 +19,12 @@ required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
                    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal',
                    'UserGroups']
 
+orig_home = os.getenv('HOME')
+if orig_home is not None:
+    del os.environ['HOME']
 ifpath = os.path.expanduser(apport.report._ignore_file)
+if orig_home is not None:
+    os.environ['HOME'] = orig_home
 
 
 class T(unittest.TestCase):
