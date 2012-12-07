@@ -556,6 +556,17 @@ Debug::NoLocking "true";
             apt_sources = '/etc/apt/sources.list'
         else:
             apt_sources = os.path.join(configdir, release, 'sources.list')
+
+            # set mirror for get_file_package()
+            with open(apt_sources) as f:
+                for l in f:
+                    fields = l.split()
+                    if len(fields) >= 3 and fields[0] == 'deb' and fields[1].startswith('http://'):
+                        self.set_mirror(fields[1])
+                        break
+                else:
+                    apport.warning('cannot determine mirror, %s does not contain a valid deb line' % apt_sources)
+
         if not os.path.exists(apt_sources):
             raise SystemError('%s does not exist' % apt_sources)
 

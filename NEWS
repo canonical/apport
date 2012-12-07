@@ -16,6 +16,8 @@ Bug fixes:
  * apport-cli: Fix showing of prompt. Thanks Dmitry Shachnev!
  * fileutils.py, mark_report_upload(): Do not try to remove the .uploaded file,
    as this is not owned by the user.
+ * backends/packaging-apt-dpkg.py, install_packages(): Set mirror to the one in
+   the sandbox config.
 
 2.6.3 (2012-11-30):
 -------------------
