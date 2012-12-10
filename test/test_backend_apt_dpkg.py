@@ -444,6 +444,8 @@ usr/bin/frob                                            foo/frob
         self.assertEqual(obsolete, '')
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
+        self.assert_elf_arch(os.path.join(self.rootdir, 'usr/bin/stat'),
+                             impl.get_system_architecture())
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/lib/debug/usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -453,7 +455,9 @@ usr/bin/frob                                            foo/frob
 
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
-        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')),
+        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
+                         ['armhf', 'sources.list'])
+        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
                          ['sources.list'])
 
         # caches packages
@@ -527,6 +531,8 @@ usr/bin/frob                                            foo/frob
         self.assertEqual(obsolete, '')
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
+        self.assert_elf_arch(os.path.join(self.rootdir, 'usr/bin/stat'),
+                             impl.get_system_architecture())
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/lib/debug/usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -534,7 +540,9 @@ usr/bin/frob                                            foo/frob
 
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
-        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2')),
+        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
+                         ['armhf', 'sources.list'])
+        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
                          ['sources.list'])
 
         # no cache
@@ -676,6 +684,32 @@ usr/bin/frob                                            foo/frob
                         'should have installed mpm-worker, but have mpm-event.')
 
     @unittest.skipUnless(_has_internet(), 'online test')
+    @unittest.skipIf(impl.get_system_architecture() == 'armhf', 'native armhf architecture')
+    def test_install_packages_armhf(self):
+        '''install_packages() for foreign architecture armhf'''
+
+        self._setup_foonux_config()
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                                         [('coreutils', '8.13-3ubuntu3'),
+                                          ('libc6', '2.15-0ubuntu9'),
+                                         ], False, self.cachedir,
+                                         architecture='armhf')
+
+        self.assertEqual(obsolete, 'libc6 version 2.15-0ubuntu9 required, but 2.15-0ubuntu10 is available\n')
+
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                                                    'usr/bin/stat')))
+        self.assert_elf_arch(os.path.join(self.rootdir, 'usr/bin/stat'), 'armhf')
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                                                    'usr/share/doc/libc6/copyright')))
+
+        # caches packages
+        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
+                                        'var', 'cache', 'apt', 'archives'))
+        self.assertTrue('coreutils_8.13-3ubuntu3_armhf.deb' in cache, cache)
+        self.assertTrue('libc6_2.15-0ubuntu10_armhf.deb' in cache, cache)
+
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_get_source_tree_sandbox(self):
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
@@ -703,6 +737,40 @@ usr/bin/frob                                            foo/frob
             f.write('deb http://archive.ubuntu.com/ubuntu/ precise main\n')
             f.write('deb-src http://archive.ubuntu.com/ubuntu/ precise main\n')
             f.write('deb http://ddebs.ubuntu.com/ precise main\n')
+        os.mkdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))
+        with open(os.path.join(self.configdir, 'Foonux 1.2', 'armhf', 'sources.list'), 'w') as f:
+            f.write('deb http://ports.ubuntu.com/ precise main\n')
+            f.write('deb-src http://ports.ubuntu.com/ precise main\n')
+            f.write('deb http://ddebs.ubuntu.com/ precise main\n')
+
+    def assert_elf_arch(self, path, expected):
+        '''Assert that an ELF file is for an expected machine type.
+
+        Expected is a Debian-style architecture (i386, amd64, armhf)
+        '''
+        archmap = {
+            'i386': '80386',
+            'amd64': 'X86-64',
+            'armhf': 'ARM',
+        }
+
+        # get ELF machine type
+        readelf = subprocess.Popen(['readelf', '-e', path], env={},
+                                   stdout=subprocess.PIPE,
+                                   universal_newlines=True)
+        out = readelf.communicate()[0]
+        assert readelf.returncode == 0
+        for line in out.splitlines():
+            if line.startswith('  Machine:'):
+                machine = line.split(maxsplit=1)[1]
+                break
+        else:
+            self.fail('could not fine Machine: in readelf output')
+
+        self.assertTrue(archmap[expected] in machine,
+                        '%s has unexpected machine type "%s" for architecture %s' % (
+                            path, machine, expected))
+
 
 # only execute if dpkg is available
 try:

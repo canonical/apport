@@ -7,6 +7,9 @@ Improvements:
  * packaging.py, get_file_package(): Add optional "release" and "arch"
    arguments for getting a file's package for a foreign release or
    architecture. Implement this for apt/dpkg backend.
+ * packaging.py, install_packages(): Add optional "architecture" argument for
+   creating a sandbox for a foreign architecture. Implement this for apt/dpkg
+   backend.
 
 Bug fixes:
  * Fix test_find_package_desktopfile test to not consider packages with only

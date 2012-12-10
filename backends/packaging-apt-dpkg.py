@@ -520,7 +520,8 @@ Debug::NoLocking "true";
         return (installed, outdated)
 
     def install_packages(self, rootdir, configdir, release, packages,
-                         verbose=False, cache_dir=None, permanent_rootdir=False):
+                         verbose=False, cache_dir=None,
+                         permanent_rootdir=False, architecture=None):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -545,6 +546,10 @@ Debug::NoLocking "true";
         If permanent_rootdir is True, then the sandbox created from the
         downloaded packages will be reused, to speed up subsequent retraces.
 
+        If architecture is given, the sandbox will be created with packages of
+        the given architecture (as specified in a report's "Architecture"
+        field). If not given it defaults to the host system's architecture.
+
         Return a string with outdated packages, or None if all packages were
         installed.
 
@@ -555,7 +560,13 @@ Debug::NoLocking "true";
         if not configdir:
             apt_sources = '/etc/apt/sources.list'
         else:
+            # support architecture specific config, fall back to global config
             apt_sources = os.path.join(configdir, release, 'sources.list')
+            if architecture:
+                arch_apt_sources = os.path.join(configdir, release,
+                                                architecture, 'sources.list')
+                if os.path.exists(arch_apt_sources):
+                    apt_sources = arch_apt_sources
 
             # set mirror for get_file_package()
             with open(apt_sources) as f:
@@ -582,6 +593,11 @@ Debug::NoLocking "true";
         else:
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
+
+        if architecture:
+            apt.apt_pkg.config.set('APT::Architecture', architecture)
+        else:
+            apt.apt_pkg.config.set('APT::Architecture', self.get_system_architecture())
 
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()

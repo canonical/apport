@@ -176,7 +176,8 @@ class PackageInfo:
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
     def install_packages(self, rootdir, configdir, release, packages,
-                         verbose=False, cache_dir=None, permanent_rootdir=False):
+                         verbose=False, cache_dir=None,
+                         permanent_rootdir=False, architecture=None):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -200,6 +201,10 @@ class PackageInfo:
 
         If permanent_rootdir is True, then the sandbox created from the
         downloaded packages will be reused, to speed up subsequent retraces.
+
+        If architecture is given, the sandbox will be created with packages of
+        the given architecture (as specified in a report's "Architecture"
+        field). If not given it defaults to the host system's architecture.
 
         Return a string with outdated packages, or None if all packages were
         installed.
