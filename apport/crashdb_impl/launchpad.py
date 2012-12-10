@@ -88,6 +88,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         - triaging_team: The Launchpad user/team which gets subscribed after
           updating a crash report bug by the retracer (default:
           "ubuntu-crashes-universe")
+        - architecture: If set, this sets and watches out for needs-*-retrace
+          tags of this architecture. This is useful when being used with
+          apport-retrace and crash-digger to process crash reports of foreign
+          architectures. Defaults to system architecture.
         '''
         if os.getenv('APPORT_LAUNCHPAD_INSTANCE'):
             options['launchpad_instance'] = os.getenv(
@@ -106,7 +110,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         else:
             assert 'project' in options, 'Need to have either "project" or "distro" option'
 
-        self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
+        if 'architecture' in options:
+            self.arch_tag = 'need-%s-retrace' % options['architecture']
+        else:
+            self.arch_tag = 'need-%s-retrace' % apport.packaging.get_system_architecture()
         self.options = options
         self.auth = auth
         assert self.auth
@@ -1602,6 +1609,34 @@ and more
             self.assertEqual(unretraced_before,
                              unretraced_after.union(set([project_bug.id])))
             self.assertEqual(self.crashdb.get_fixed_version(project_bug.id), None)
+
+        def test_marking_foreign_arch(self):
+            '''processing status markings for a project CrashDB'''
+
+            # create a DB for fake arch
+            launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
+            fakearch_db = CrashDatabase(
+                os.environ.get('LP_CREDENTIALS'),
+                {'distro': 'ubuntu', 'launchpad_instance': launchpad_instance,
+                 'architecture': 'fakearch'})
+
+            fakearch_unretraced_before = fakearch_db.get_unretraced()
+            systemarch_unretraced_before = self.crashdb.get_unretraced()
+
+            # create a bug with a fake architecture
+            bug = self.crashdb.launchpad.bugs.createBug(
+                description='foo',
+                tags=['need-fakearch-retrace'],
+                target=self.crashdb.lp_distro,
+                title='ubuntu distro retrace bug for fakearch')
+            print('fake arch bug: https://staging.launchpad.net/bugs/%i' % bug.id)
+
+            fakearch_unretraced_after = fakearch_db.get_unretraced()
+            systemarch_unretraced_after = self.crashdb.get_unretraced()
+
+            self.assertEqual(systemarch_unretraced_before, systemarch_unretraced_after)
+            self.assertEqual(fakearch_unretraced_after,
+                             fakearch_unretraced_before.union(set([bug.id])))
 
         def test_marking_python(self):
             '''processing status markings for interpreter crashes'''

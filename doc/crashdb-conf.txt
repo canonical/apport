@@ -126,6 +126,10 @@ Crash database implementations
    - triaging_team: The Launchpad user/team which gets subscribed after
      updating a crash report bug by the retracer (default:
      "ubuntu-crashes-universe")
+   - architecture: If set, this sets and watches out for needs-*-retrace
+     tags of this architecture. This is useful when being used with
+     apport-retrace and crash-digger to process crash reports of foreign
+     architectures. Defaults to system architecture.
 
 
  * "memory" is a simple implementation of crash database interface which keeps
