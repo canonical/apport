@@ -31,6 +31,7 @@ Bug fixes:
    as this is not owned by the user.
  * backends/packaging-apt-dpkg.py, install_packages(): Set mirror to the one in
    the sandbox config.
+ * apportcheckresume: Fix crash if state file does not exist.
 
 2.6.3 (2012-11-30):
 -------------------

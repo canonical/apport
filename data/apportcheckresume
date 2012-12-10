@@ -51,10 +51,11 @@ def main(argv=None):
         attach_file_if_exists(pr, stresslog, 'StressLog')
 
         # Ensure we are appropriatly tagged.
-        pr['Tags'] = 'resume ' + pr['Failure']
+        if 'Failure' in pr:
+            pr['Tags'] = 'resume ' + pr['Failure']
 
-        # Record the failure mode.
-        pr['Failure'] += '/resume'
+            # Record the failure mode.
+            pr['Failure'] += '/resume'
 
         # If we had a late hang pull in the resume-hang logfile.  Also
         # add an additional tag so we can pick these out.
@@ -63,7 +64,7 @@ def main(argv=None):
             pr['Tags'] += ' resume-late-hang'
 
         # Generate a sensible report message.
-        if pr['Failure'] == 'suspend/resume':
+        if pr.get('Failure') == 'suspend/resume':
             pr['Annotation'] = _('This occured during a previous suspend and prevented it from resuming properly.')
         else:
             pr['Annotation'] = _('This occured during a previous hibernate and prevented it from resuming properly.')
