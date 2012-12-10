@@ -1379,14 +1379,21 @@ class Report(problem_report.ProblemReport):
         assert 'ExecutablePath' in self
         executable = self.get('InterpreterPath', self['ExecutablePath'])
 
-        # check if we have gdb-multiarch
-        which = subprocess.Popen(['which', 'gdb-multiarch'],
-                                 stdout=subprocess.PIPE)
-        which.communicate()
-        if which.returncode == 0:
-            command = ['gdb-multiarch']
-        else:
-            command = ['gdb']
+        command = ['gdb']
+
+        if self.get('Architecture') != packaging.get_system_architecture():
+            # check if we have gdb-multiarch
+            which = subprocess.Popen(['which', 'gdb-multiarch'],
+                                     stdout=subprocess.PIPE)
+            which.communicate()
+            if which.returncode == 0:
+                command = ['gdb-multiarch']
+
+            # check for foreign architecture
+            arch = self.get('Uname', 'none').split()[-1]
+            if 'arm' in arch:
+                command += ['--ex', 'set architecture arm', '--ex', 'set gnutarget elf32-littlearm']
+            # note, i386 vs. x86_64 is auto-detected just fine
 
         if sandbox:
             command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,

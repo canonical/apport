@@ -10,6 +10,11 @@ Improvements:
  * packaging.py, install_packages(): Add optional "architecture" argument for
    creating a sandbox for a foreign architecture. Implement this for apt/dpkg
    backend.
+ * When a report's architecture does not match the system architecture, try to
+   use gdb-multiarch (if available, as packaged on Debian/Ubuntu), and set
+   architecture and gnutarget accordingly in gdb. This supports x86, x86_64,
+   and ARM for now, so that reports from all these architectures can be
+   retraced on an x86_84 machine. (LP: #1044437)
 
 Bug fixes:
  * Fix test_find_package_desktopfile test to not consider packages with only

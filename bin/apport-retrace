@@ -257,7 +257,8 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
         if os.path.exists(sandbox + l):
             continue
 
-        pkg = apport.packaging.get_file_package(l, True, cache_dir)
+        pkg = apport.packaging.get_file_package(l, True, cache_dir,
+                                                arch=report.get('Architecture'))
         if pkg:
             if verbose:
                 log('dynamically loaded %s needs package %s, queueing' % (l, pkg))
@@ -401,7 +402,8 @@ if options.sandbox:
     try:
         outdated_msg = apport.packaging.install_packages(
             sandbox, sandbox_arg, report['DistroRelease'], pkgs,
-            options.verbose, options.cache, permanent_rootdir)
+            options.verbose, options.cache, permanent_rootdir,
+            architecture=report.get('Architecture'))
     except SystemError as e:
         sys.stderr.write(str(e) + '\n')
         sys.exit(1)
@@ -411,7 +413,8 @@ if options.sandbox:
     # package hooks might reassign Package:, check that we have the originally crashing binary
     for path in ('InterpreterPath', 'ExecutablePath'):
         if path in report and not os.path.exists(sandbox + report[path]):
-            pkg = apport.packaging.get_file_package(report[path], True, options.cache)
+            pkg = apport.packaging.get_file_package(report[path], True, options.cache,
+                                                    arch=report.get('Architecture'))
             if pkg:
                 log('Installing extra package %s to get %s' % (pkg, path))
                 pkgs.append((pkg, None))
@@ -422,7 +425,8 @@ if options.sandbox:
         try:
             outdated_msg += apport.packaging.install_packages(
                 sandbox, sandbox_arg, report['DistroRelease'], pkgs,
-                options.verbose, options.cache)
+                options.verbose, options.cache,
+                architecture=report.get('Architecture'))
         except SystemError as e:
             sys.stderr.write(str(e) + '\n')
             sys.exit(1)
