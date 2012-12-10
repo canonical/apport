@@ -416,7 +416,7 @@ usr/bin/frob                                            foo/frob
         self.assertEqual(impl.enabled(), True)
         f.close()
 
-    def test_get_kernel_pacakge(self):
+    def test_get_kernel_package(self):
         '''get_kernel_package().'''
 
         self.assertTrue('linux' in impl.get_kernel_package())
@@ -434,12 +434,14 @@ usr/bin/frob                                            foo/frob
         '''install_packages() with versions and with cache'''
 
         self._setup_foonux_config()
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('coreutils', '7.4-2ubuntu2'),
-                               ('libc6', '2.11.1-0ubuntu7'),
-                               ('tzdata', '2010i-1'),
-                              ], False, self.cachedir)
+        obsolete = impl.install_packages(self.rootdir, self.configdir,
+                                         'Foonux 1.2',
+                                         [('coreutils', '8.13-3ubuntu3'),
+                                          ('libc6', '2.15-0ubuntu10'),
+                                          ('tzdata', '2012b-1'),
+                                         ], False, self.cachedir)
 
+        self.assertEqual(obsolete, '')
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -466,9 +468,11 @@ usr/bin/frob                                            foo/frob
 
         # installs cached packages
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('coreutils', '7.4-2ubuntu2'),
-                              ], False, self.cachedir)
+        obsolete = impl.install_packages(self.rootdir, self.configdir,
+                                         'Foonux 1.2',
+                                         [('coreutils', '8.13-3ubuntu3'),
+                                         ], False, self.cachedir)
+        self.assertEqual(obsolete, '')
         self.assertTrue(os.path.exists(
             os.path.join(self.rootdir, 'usr/bin/stat')))
 
@@ -501,7 +505,7 @@ usr/bin/frob                                            foo/frob
         # still installs packages after above operations
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('coreutils', '7.4-2ubuntu2'),
+                              [('coreutils', '8.13-3ubuntu3'),
                                ('dpkg', None),
                               ], False, self.cachedir)
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -514,11 +518,13 @@ usr/bin/frob                                            foo/frob
         '''install_packages() without versions and no cache'''
 
         self._setup_foonux_config()
-        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('coreutils', None),
-                               ('tzdata', None),
-                              ], False, None)
+        obsolete = impl.install_packages(self.rootdir, self.configdir,
+                                         'Foonux 1.2',
+                                         [('coreutils', None),
+                                          ('tzdata', None),
+                                         ], False, None)
 
+        self.assertEqual(obsolete, '')
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -598,7 +604,7 @@ usr/bin/frob                                            foo/frob
 
         # sources.list with wrong server
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
-            f.write('deb http://archive.ubuntu.com/nosuchdistro/ lucid main\n')
+            f.write('deb http://archive.ubuntu.com/nosuchdistro/ precise main\n')
 
         try:
             impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
@@ -680,7 +686,7 @@ usr/bin/frob                                            foo/frob
         self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
         # this needs to be updated when the release in _setup_foonux_config
         # changes
-        self.assertTrue(res.endswith('/base-files-5.0.0ubuntu20'),
+        self.assertTrue(res.endswith('/base-files-6.5ubuntu6'),
                         'unexpected version: ' + res.split('/')[-1])
 
     def _setup_foonux_config(self):
@@ -694,9 +700,9 @@ usr/bin/frob                                            foo/frob
         os.mkdir(self.configdir)
         os.mkdir(os.path.join(self.configdir, 'Foonux 1.2'))
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
-            f.write('deb http://archive.ubuntu.com/ubuntu/ lucid main\n')
-            f.write('deb-src http://archive.ubuntu.com/ubuntu/ lucid main\n')
-            f.write('deb http://ddebs.ubuntu.com/ lucid main\n')
+            f.write('deb http://archive.ubuntu.com/ubuntu/ precise main\n')
+            f.write('deb-src http://archive.ubuntu.com/ubuntu/ precise main\n')
+            f.write('deb http://ddebs.ubuntu.com/ precise main\n')
 
 # only execute if dpkg is available
 try:
