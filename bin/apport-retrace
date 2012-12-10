@@ -14,7 +14,6 @@
 
 import sys, os, os.path, subprocess, optparse, shutil, tempfile, re, zlib
 import tty, termios, gettext, atexit, time
-import problem_report
 import apport, apport.fileutils
 from apport.crashdb import get_crashdb
 from apport import unicode_gettext as _
@@ -379,7 +378,7 @@ if options.sandbox:
             os.makedirs(sandbox)
         permanent_rootdir = True
     else:
-        sandbox = tempfile.mkdtemp()
+        sandbox = tempfile.mkdtemp(prefix='apport_sandbox_')
         atexit.register(shutil.rmtree, sandbox)
         permanent_rootdir = False
 
@@ -441,25 +440,20 @@ if options.sandbox:
 
 # interactive gdb session
 if options.gdb:
-    core = tempfile.NamedTemporaryFile()
-    if isinstance(report['CoreDump'], problem_report.CompressedValue):
-        report['CoreDump'].write(core)
-    else:
-        core.write(report['CoreDump'])
-    core.flush()
-
-    argv = ['gdb']
-    if options.sandbox:
-        argv += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
-                 '--ex', 'set solib-absolute-prefix ' + sandbox]
-        argv += ['--ex', 'file ' + sandbox + report.get('InterpreterPath', report['ExecutablePath'])]
-    else:
-        argv += ['--ex', 'file ' + report.get('InterpreterPath', report['ExecutablePath'])]
-    argv += ['--ex', 'core-file ' + core.name]
-
+    gdb_cmd = report.gdb_command(sandbox)
+    if options.verbose:
+        # build a shell-style command
+        cmd = ''
+        for w in gdb_cmd:
+            if cmd:
+                cmd += ' '
+            if ' ' in w:
+                cmd += "'" + w + "'"
+            else:
+                cmd += w
+        log('Calling gdb command: ' + cmd)
     apport.memdbg('before calling gdb')
-    subprocess.call(argv)
-    core.close()
+    subprocess.call(gdb_cmd)
 else:
     # regenerate gdb info
     apport.memdbg('before collecting gdb info')

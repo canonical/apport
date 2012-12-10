@@ -10,7 +10,7 @@
 # the full text of the license.
 
 import subprocess, tempfile, os.path, re, pwd, grp, os
-import fnmatch, glob, traceback, errno, sys
+import fnmatch, glob, traceback, errno, sys, atexit
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -639,63 +639,38 @@ class Report(problem_report.ProblemReport):
         if 'CoreDump' not in self or 'ExecutablePath' not in self:
             return
 
-        unlink_core = False
+        gdb_reports = {'Registers': 'info registers',
+                       'Disassembly': 'x/16i $pc',
+                       'Stacktrace': 'bt full',
+                       'ThreadStacktrace': 'thread apply all bt full',
+                       'AssertionMessage': 'print __abort_msg->msg',
+                       'GLibAssertionMessage': 'print __glib_assert_msg',
+                       'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
+
+        gdb_cmd = self.gdb_command(rootdir)
+
+        # limit maximum backtrace depth (to avoid looped stacks)
+        gdb_cmd += ['--batch', '--ex', 'set backtrace limit 2000']
+
+        value_keys = []
+        # append the actual commands and something that acts as a separator
+        for name, cmd in gdb_reports.items():
+            value_keys.append(name)
+            gdb_cmd += ['--ex', 'p -99', '--ex', cmd]
+
+        # call gdb
         try:
-            if hasattr(self['CoreDump'], 'find'):
-                (fd, core) = tempfile.mkstemp()
-                unlink_core = True
-                os.write(fd, self['CoreDump'])
-                os.close(fd)
-            elif hasattr(self['CoreDump'], 'gzipvalue'):
-                (fd, core) = tempfile.mkstemp()
-                unlink_core = True
-                os.close(fd)
-                with open(core, 'wb') as f:
-                    self['CoreDump'].write(f)
-            else:
-                core = self['CoreDump'][0]
+            out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
+        except OSError:
+            return
 
-            gdb_reports = {'Registers': 'info registers',
-                           'Disassembly': 'x/16i $pc',
-                           'Stacktrace': 'bt full',
-                           'ThreadStacktrace': 'thread apply all bt full',
-                           'AssertionMessage': 'print __abort_msg->msg',
-                           'GLibAssertionMessage': 'print __glib_assert_msg',
-                           'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
-
-            command = ['gdb', '--batch']
-            executable = self.get('InterpreterPath', self['ExecutablePath'])
-            if rootdir:
-                command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % rootdir,
-                            '--ex', 'set solib-absolute-prefix ' + rootdir]
-                executable = rootdir + '/' + executable
-            command += ['--ex', 'file "%s"' % executable, '--ex', 'core-file ' + core]
-            # limit maximum backtrace depth (to avoid looped stacks)
-            command += ['--ex', 'set backtrace limit 2000']
-            value_keys = []
-            # append the actual commands and something that acts as a separator
-            for name, cmd in gdb_reports.items():
-                value_keys.append(name)
-                command += ['--ex', 'p -99', '--ex', cmd]
-
-            assert os.path.exists(executable)
-
-            # call gdb
-            try:
-                out = _command_output(command).decode('UTF-8', errors='replace')
-            except OSError:
-                return
-
-            # split the output into the various fields
-            part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
-            parts = part_re.split(out)
-            # drop the gdb startup text prior to first separator
-            parts.pop(0)
-            for part in parts:
-                self[value_keys.pop(0)] = part.replace('\n\n', '\n.\n').strip()
-        finally:
-            if unlink_core:
-                os.unlink(core)
+        # split the output into the various fields
+        part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
+        parts = part_re.split(out)
+        # drop the gdb startup text prior to first separator
+        parts.pop(0)
+        for part in parts:
+            self[value_keys.pop(0)] = part.replace('\n\n', '\n.\n').strip()
 
         # glib's assertion has precedence, since it internally uses
         # abort(), and then glib's __abort_msg is bogus
@@ -1387,6 +1362,59 @@ class Report(problem_report.ProblemReport):
                         self[k] = pattern.sub(repl, self[k].decode('UTF-8', errors='replace')).encode('UTF-8')
                     else:
                         self[k] = pattern.sub(repl, self[k])
+
+    def gdb_command(self, sandbox):
+        '''Build gdb command for this report.
+
+        This builds a gdb command for processing the given report, by setting
+        the file to the ExectuablePath/InterpreterPath, unpacking the core dump
+        and pointing "core-file" to it (if the report has a core dump), and
+        setting up the paths when calling gdb in a package sandbox.
+
+        When available, this calls "gdb-multiarch" instead of "gdb", for
+        processing crash reports from foreign architectures.
+
+        Return argv list.
+        '''
+        assert 'ExecutablePath' in self
+        executable = self.get('InterpreterPath', self['ExecutablePath'])
+
+        # check if we have gdb-multiarch
+        which = subprocess.Popen(['which', 'gdb-multiarch'],
+                                 stdout=subprocess.PIPE)
+        which.communicate()
+        if which.returncode == 0:
+            command = ['gdb-multiarch']
+        else:
+            command = ['gdb']
+
+        if sandbox:
+            command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
+                        '--ex', 'set solib-absolute-prefix ' + sandbox]
+            executable = sandbox + '/' + executable
+
+        assert os.path.exists(executable)
+        command += ['--ex', 'file "%s"' % executable]
+
+        if 'CoreDump' in self:
+            if hasattr(self['CoreDump'], 'find'):
+                (fd, core) = tempfile.mkstemp(prefix='apport_core_')
+                atexit.register(os.unlink, core)
+                os.write(fd, self['CoreDump'])
+                os.close(fd)
+            elif hasattr(self['CoreDump'], 'gzipvalue'):
+                (fd, core) = tempfile.mkstemp(prefix='apport_core_')
+                atexit.register(os.unlink, core)
+                os.close(fd)
+                with open(core, 'wb') as f:
+                    self['CoreDump'].write(f)
+            else:
+                # value is a file path
+                core = self['CoreDump'][0]
+
+            command += ['--ex', 'core-file ' + core]
+
+        return command
 
     def _address_to_offset(self, addr):
         '''Resolve a memory address to an ELF name and offset.
