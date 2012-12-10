@@ -1,5 +1,11 @@
 # coding: UTF-8
-import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, re
+import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, re, sys
+
+try:
+    from cStringIO import StringIO
+    StringIO  # pyflakes
+except ImportError:
+    from io import StringIO
 
 import apport.report
 import problem_report
@@ -1101,6 +1107,66 @@ def add_info(report, ui):
             apport.report._hook_dir = orig_hook_dir
             apport.report._common_hook_dir = orig_common_hook_dir
             apport.report._opt_dir = orig_opt_dir
+
+    def test_add_hooks_info_errors(self):
+        '''add_hooks_info() with errors in hooks'''
+
+        orig_hook_dir = apport.report._hook_dir
+        apport.report._hook_dir = tempfile.mkdtemp()
+        orig_common_hook_dir = apport.report._common_hook_dir
+        apport.report._common_hook_dir = tempfile.mkdtemp()
+        orig_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            with open(os.path.join(apport.report._hook_dir, 'fooprogs.py'), 'w') as fd:
+                fd.write('''def add_info(report, ui):
+    report['BinHookBefore'] = '1'
+    1/0
+    report['BinHookAfter'] = '1'
+''')
+            with open(os.path.join(apport.report._hook_dir, 'source_foo.py'), 'w') as fd:
+                fd.write('''def add_info(report, ui):
+    report['SourceHookBefore'] = '1'
+    unknown()
+    report['SourceHookAfter'] = '1'
+''')
+
+            r = apport.report.Report()
+            r['Package'] = 'fooprogs 0.2'
+            r['SourcePackage'] = 'foo'
+            r['ExecutablePath'] = '/bin/foo-cli'
+
+            self.assertEqual(r.add_hooks_info('fake_ui'), False)
+
+            # should have the data until the crash
+            self.assertEqual(r['BinHookBefore'], '1')
+            self.assertEqual(r['SourceHookBefore'], '1')
+
+            # should print the exceptions to stderr
+            err = sys.stderr.getvalue()
+            self.assertTrue('ZeroDivisionError:' in err, err)
+            self.assertTrue("global name 'unknown' is not defined" in err, err)
+
+            # should also add the exceptions to the report
+            self.assertTrue('NameError:' in r['HookError_source_foo'],
+                            r['HookError_source_foo'])
+            self.assertTrue('line 3, in add_info' in r['HookError_source_foo'],
+                            r['HookError_source_foo'])
+            self.assertFalse('ZeroDivisionError' in r['HookError_source_foo'],
+                             r['HookError_source_foo'])
+
+            self.assertTrue('ZeroDivisionError:' in r['HookError_fooprogs'],
+                            r['HookError_fooprogs'])
+            self.assertTrue('line 3, in add_info' in r['HookError_source_foo'],
+                            r['HookError_fooprogs'])
+            self.assertFalse('NameError:' in r['HookError_fooprogs'],
+                             r['HookError_fooprogs'])
+        finally:
+            sys.stderr = orig_stderr
+            shutil.rmtree(apport.report._hook_dir)
+            shutil.rmtree(apport.report._common_hook_dir)
+            apport.report._hook_dir = orig_hook_dir
+            apport.report._common_hook_dir = orig_common_hook_dir
 
     def test_ignoring(self):
         '''mark_ignore() and check_ignored().'''

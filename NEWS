@@ -17,6 +17,9 @@ Improvements:
    retraced on an x86_84 machine. (LP: #1044437)
  * launchpad.py: Add "architecture" option to process reports for a foreign
    architecture.
+ * Add exceptions from package hooks to new HookError_<filename> report field,
+   to make them more visible. Until now they were only written to stderr.
+   (LP: #1086309)
 
 Bug fixes:
  * Fix test_find_package_desktopfile test to not consider packages with only
