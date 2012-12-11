@@ -95,53 +95,51 @@ pkg))
     return [(p, None) for p in pkgs]
 
 
-def make_sandbox(options, report, log_timestamps=None):
+def make_sandbox(sandbox, sandbox_dir, cache, verbose, report, extra_package=[], log_timestamps=None):
 
-    if options.sandbox:
-        if options.sandbox_dir:
-            sandbox = os.path.abspath(options.sandbox_dir)
-            if not os.path.isdir(sandbox):
-                os.makedirs(sandbox)
+    if sandbox:
+        if sandbox_dir:
+            sbox = os.path.abspath(sandbox_dir)
+            if not os.path.isdir(sbox):
+                os.makedirs(sbox)
             permanent_rootdir = True
         else:
-            sandbox = tempfile.mkdtemp()
-            atexit.register(shutil.rmtree, sandbox)
+            sbox = tempfile.mkdtemp()
+            atexit.register(shutil.rmtree, sbox)
             permanent_rootdir = False
 
         pkgs = needed_packages(report)
-        for p in options.extra_package:
+        for p in extra_package:
             pkgs.append((p, None))
-        if options.sandbox == 'system':
+        if sandbox == 'system':
             sandbox_arg = None
         else:
-            sandbox_arg = options.sandbox
+            sandbox_arg = sandbox
 
         # we call install_packages() multiple times, plus get_file_package(); use
         # a
         # shared cache dir for these
-        if options.cache:
-            options.cache = os.path.abspath(options.cache)
+        if cache:
+            cache = os.path.abspath(cache)
         else:
-            options.cache = tempfile.mkdtemp()
-            atexit.register(shutil.rmtree, options.cache)
+            cache = tempfile.mkdtemp()
+            atexit.register(shutil.rmtree, cache)
 
         try:
             outdated_msg = apport.packaging.install_packages(
-                sandbox, sandbox_arg, report['DistroRelease'], pkgs,
-                options.verbose, options.cache, permanent_rootdir)
+                sbox, sandbox_arg, report['DistroRelease'], pkgs,
+                verbose, cache, permanent_rootdir)
         except SystemError as e:
             sys.stderr.write(str(e) + '\n')
             sys.exit(1)
 
-        pkgs = needed_runtime_packages(report, sandbox, options.cache,
-    options.verbose)
+        pkgs = needed_runtime_packages(report, sbox, cache, verbose)
 
         # package hooks might reassign Package:, check that we have the originally
         # crashing binary
         for path in ('InterpreterPath', 'ExecutablePath'):
-            if path in report and not os.path.exists(sandbox + report[path]):
-                pkg = apport.packaging.get_file_package(report[path], True,
-    options.cache)
+            if path in report and not os.path.exists(sbox + report[path]):
+                pkg = apport.packaging.get_file_package(report[path], True, cache)
                 if pkg:
                     log('Installing extra package %s to get %s' % (pkg, path))
                     pkgs.append((pkg, None))
@@ -151,16 +149,16 @@ def make_sandbox(options, report, log_timestamps=None):
         if pkgs:
             try:
                 outdated_msg += apport.packaging.install_packages(
-                    sandbox, sandbox_arg, report['DistroRelease'], pkgs,
-                    options.verbose, options.cache)
+                    sbox, sandbox_arg, report['DistroRelease'], pkgs,
+                    cache)
             except SystemError as e:
                 sys.stderr.write(str(e) + '\n')
                 sys.exit(1)
 
         for path in ('InterpreterPath', 'ExecutablePath'):
-            if path in report and not os.path.exists(sandbox + report[path]):
+            if path in report and not os.path.exists(sbox + report[path]):
                 apport.error('%s %s does not exist (report specified package %s)',
-                             path, sandbox + report[path], report['Package'])
+                             path, sbox + report[path], report['Package'])
                 sys.exit(0)
 
         if outdated_msg:
@@ -168,5 +166,5 @@ def make_sandbox(options, report, log_timestamps=None):
 
         apport.memdbg('built sandbox')
 
-    return sandbox, outdated_msg
+    return sbox, outdated_msg
 

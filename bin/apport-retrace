@@ -306,7 +306,14 @@ apport.memdbg('sanity checks passed')
 
 sandbox = None
 outdated_msg = None
-sandbox, outdated_msg = apport.sandboxutils.make_sandbox(options, report)
+sandbox, outdated_msg = apport.sandboxutils.make_sandbox(
+        options.sandbox,
+        options.sandbox_dir,
+        options.cache,
+        options.verbose,
+        report,
+        options.extra_package,
+        )
 
 # interactive gdb session
 if options.gdb:
