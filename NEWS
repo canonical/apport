@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.8 (UNRELEASED):
+-----------------
+Improvements:
+ * Factor out sandbox management functions from apport-retrace into
+   apport/sandboxutils.py, so that other programs can re-use the API easily.
+   Thanks to Kyle Nitzsche for the initial work on this.
+
 2.7 (2012-12-10):
 -----------------
 Improvements:

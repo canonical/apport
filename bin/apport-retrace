@@ -13,8 +13,8 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, optparse, shutil, tempfile, re, zlib
-import tty, termios, gettext, atexit, time
-import apport, apport.fileutils
+import tty, termios, gettext
+import apport, apport.fileutils, apport.sandboxutils
 from apport.crashdb import get_crashdb
 from apport import unicode_gettext as _
 
@@ -23,14 +23,6 @@ from apport import unicode_gettext as _
 #
 
 log_timestamps = False
-
-
-def log(message):
-    '''Log the given string to stdout. Prepend timestamp if requested'''
-
-    if log_timestamps:
-        sys.stdout.write('%s: ' % time.strftime('%x %X'))
-    print(message)
 
 
 def parse_options():
@@ -203,72 +195,6 @@ def gen_source_stacktrace(report, sandbox):
         pass
 
 
-def needed_packages(report):
-    '''Determine necessary packages for given report.
-
-    Return list of (pkgname, version) pairs. version might be None for unknown
-    package versions.
-    '''
-    pkgs = {}
-
-    # first, grab the versions that we captured at crash time
-    for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
-        if not l.strip():
-            continue
-        try:
-            (pkg, version) = l.split()[:2]
-        except ValueError:
-            apport.warning('invalid Package/Dependencies line: %s', l)
-            # invalid line, ignore
-            continue
-        pkgs[pkg] = version
-
-    return [(p, v) for (p, v) in pkgs.items()]
-
-
-def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
-    '''Determine necessary runtime packages for given report.
-
-    This determines libraries which were dynamically loaded at runtime, i. e.
-    appear in /proc/pid/maps, but not in Dependencies: (such as plugins).
-
-    Return list of (pkgname, None) pairs.
-
-    When cache_dir is specified, it is used as a cache for get_file_package().
-    '''
-    # check list of libraries that the crashed process referenced at
-    # runtime and warn about those which are not available
-    pkgs = set()
-    libs = set()
-    if 'ProcMaps' in report:
-        for l in report['ProcMaps'].splitlines():
-            if not l.strip():
-                continue
-            cols = l.split()
-            if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
-                lib = os.path.realpath(cols[5])
-                libs.add(lib)
-
-    if sandbox:
-        cache_dir = os.path.join(cache_dir, report['DistroRelease'])
-
-    # grab as much as we can
-    for l in libs:
-        if os.path.exists(sandbox + l):
-            continue
-
-        pkg = apport.packaging.get_file_package(l, True, cache_dir,
-                                                arch=report.get('Architecture'))
-        if pkg:
-            if verbose:
-                log('dynamically loaded %s needs package %s, queueing' % (l, pkg))
-            pkgs.add(pkg)
-        else:
-                apport.warning('%s is needed, but cannot be mapped to a package', l)
-
-    return [(p, None) for p in pkgs]
-
-
 def print_traces(report):
     '''Print stack traces from given report'''
 
@@ -370,77 +296,13 @@ elif not required_fields.issubset(set(report.keys())):
 
 apport.memdbg('sanity checks passed')
 
-sandbox = None
-outdated_msg = None
 if options.sandbox:
-    if options.sandbox_dir:
-        sandbox = os.path.abspath(options.sandbox_dir)
-        if not os.path.isdir(sandbox):
-            os.makedirs(sandbox)
-        permanent_rootdir = True
-    else:
-        sandbox = tempfile.mkdtemp(prefix='apport_sandbox_')
-        atexit.register(shutil.rmtree, sandbox)
-        permanent_rootdir = False
-
-    pkgs = needed_packages(report)
-    for p in options.extra_package:
-        pkgs.append((p, None))
-    if options.sandbox == 'system':
-        sandbox_arg = None
-    else:
-        sandbox_arg = options.sandbox
-
-    # we call install_packages() multiple times, plus get_file_package(); use a
-    # shared cache dir for these
-    if options.cache:
-        options.cache = os.path.abspath(options.cache)
-    else:
-        options.cache = tempfile.mkdtemp()
-        atexit.register(shutil.rmtree, options.cache)
-
-    try:
-        outdated_msg = apport.packaging.install_packages(
-            sandbox, sandbox_arg, report['DistroRelease'], pkgs,
-            options.verbose, options.cache, permanent_rootdir,
-            architecture=report.get('Architecture'))
-    except SystemError as e:
-        sys.stderr.write(str(e) + '\n')
-        sys.exit(1)
-
-    pkgs = needed_runtime_packages(report, sandbox, options.cache, options.verbose)
-
-    # package hooks might reassign Package:, check that we have the originally crashing binary
-    for path in ('InterpreterPath', 'ExecutablePath'):
-        if path in report and not os.path.exists(sandbox + report[path]):
-            pkg = apport.packaging.get_file_package(report[path], True, options.cache,
-                                                    arch=report.get('Architecture'))
-            if pkg:
-                log('Installing extra package %s to get %s' % (pkg, path))
-                pkgs.append((pkg, None))
-            else:
-                apport.warning('Cannot find package which ships %s', path)
-
-    if pkgs:
-        try:
-            outdated_msg += apport.packaging.install_packages(
-                sandbox, sandbox_arg, report['DistroRelease'], pkgs,
-                options.verbose, options.cache,
-                architecture=report.get('Architecture'))
-        except SystemError as e:
-            sys.stderr.write(str(e) + '\n')
-            sys.exit(1)
-
-    for path in ('InterpreterPath', 'ExecutablePath'):
-        if path in report and not os.path.exists(sandbox + report[path]):
-            apport.error('%s %s does not exist (report specified package %s)',
-                         path, sandbox + report[path], report['Package'])
-            sys.exit(0)
-
-    if outdated_msg:
-        report['RetraceOutdatedPackages'] = outdated_msg
-
-    apport.memdbg('built sandbox')
+    sandbox, outdated_msg = apport.sandboxutils.make_sandbox(
+        report, options.sandbox, options.cache, options.sandbox_dir,
+        options.extra_package, options.verbose)
+else:
+    sandbox = None
+    outdated_msg = None
 
 # interactive gdb session
 if options.gdb:
@@ -455,7 +317,7 @@ if options.gdb:
                 cmd += "'" + w + "'"
             else:
                 cmd += w
-        log('Calling gdb command: ' + cmd)
+        apport.log('Calling gdb command: ' + cmd, log_timestamps)
     apport.memdbg('before calling gdb')
     subprocess.call(gdb_cmd)
 else:
@@ -497,22 +359,22 @@ if modified:
                 res = crashdb.check_duplicate(int(crashid), report)
                 if res:
                     if res[1] is None:
-                        log('Report is a duplicate of #%i (not fixed yet)' % res[0])
+                        apport.log('Report is a duplicate of #%i (not fixed yet)' % res[0], log_timestamps)
                     elif res[1] == '':
-                        log('Report is a duplicate of #%i (fixed in latest version)' % res[0])
+                        apport.log('Report is a duplicate of #%i (fixed in latest version)' % res[0], log_timestamps)
                     else:
-                        log('Report is a duplicate of #%i (fixed in version %s)' % res)
+                        apport.log('Report is a duplicate of #%i (fixed in version %s)' % res, log_timestamps)
                     update_bug = False
                 else:
-                    log('Duplicate check negative')
+                    apport.log('Duplicate check negative', log_timestamps)
 
             if update_bug:
                 if 'Stacktrace' in report:
                     crashdb.update_traces(crashid, report)
-                    log('New attachments uploaded to crash database #' + crashid)
+                    apport.log('New attachments uploaded to crash database #' + crashid, log_timestamps)
                 else:
                     # this happens when gdb crashes
-                    log('No stack trace, invalid report')
+                    apport.log('No stack trace, invalid report', log_timestamps)
 
                 if not report.has_useful_stacktrace():
                     if outdated_msg:
@@ -530,10 +392,10 @@ encounter the crash, please file a new report.
 
 Thank you for your understanding, and sorry for the inconvenience!
 ''' % outdated_msg
-                        log('No crash signature and outdated packages, invalidating report')
+                        apport.log('No crash signature and outdated packages, invalidating report', log_timestamps)
                         crashdb.mark_retrace_failed(crashid, invalid_msg)
                     else:
-                        log('Report has no crash signature, so retrace is flawed')
+                        apport.log('Report has no crash signature, so retrace is flawed', log_timestamps)
                         crashdb.mark_retrace_failed(crashid)
 
     else:

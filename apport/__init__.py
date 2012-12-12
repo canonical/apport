@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 
 from apport.report import Report
 
@@ -18,6 +19,14 @@ def unicode_gettext(str):
         return trans.decode('UTF-8')
     else:
         return trans
+
+
+def log(message, timestamp=False):
+    '''Log the given string to stdout. Prepend timestamp if requested'''
+
+    if timestamp:
+        sys.stdout.write('%s: ' % time.strftime('%x %X'))
+    print(message)
 
 
 def fatal(msg, *args):
