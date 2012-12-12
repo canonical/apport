@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, time, optparse, subprocess, sys, zlib, errno, shutil
+import os, optparse, subprocess, sys, zlib, errno, shutil
 
 import apport
 from apport.crashdb import get_crashdb
@@ -44,7 +44,7 @@ class CrashDigger:
         if config_dir:
             self.releases = os.listdir(config_dir)
             self.releases.sort()
-            self.log('Available releases: %s' % str(self.releases))
+            apport.log('Available releases: %s' % str(self.releases), True)
         else:
             self.releases = None
 
@@ -53,37 +53,30 @@ class CrashDigger:
             # this verified DB integrity; make a backup now
             shutil.copy2(self.dup_db, self.dup_db + '.backup')
 
-    def log(self, str):
-        '''If verbosity is enabled, log the given string to stdout, and prepend
-        the current date and time.'''
-
-        sys.stdout.write('%s: %s\n' % (time.strftime('%x %X'), str))
-        sys.stdout.flush()
-
     def fill_pool(self):
         '''Query crash db for new IDs to process.'''
 
         if self.dupcheck_mode:
             self.dupcheck_pool.update(self.crashdb.get_dup_unchecked())
-            self.log('fill_pool: dup check pool now: %s' % str(self.dupcheck_pool))
+            apport.log('fill_pool: dup check pool now: %s' % str(self.dupcheck_pool), True)
         else:
             self.retrace_pool.update(self.crashdb.get_unretraced())
-            self.log('fill_pool: retrace pool now: %s' % str(self.retrace_pool))
+            apport.log('fill_pool: retrace pool now: %s' % str(self.retrace_pool), True)
 
     def retrace_next(self):
         '''Grab an ID from the retrace pool and retrace it.'''
 
         id = self.retrace_pool.pop()
-        self.log('retracing #%i (left in pool: %i)' % (id, len(self.retrace_pool)))
+        apport.log('retracing #%i (left in pool: %i)' % (id, len(self.retrace_pool)), True)
 
         try:
             rel = self.crashdb.get_distro_release(id)
         except ValueError:
-            self.log('could not determine release -- no DistroRelease field?')
+            apport.log('could not determine release -- no DistroRelease field?', True)
             self.crashdb.mark_retraced(id)
             return
         if rel not in self.releases:
-            self.log('crash is release %s which does not have a config available, skipping' % rel)
+            apport.log('crash is release %s which does not have a config available, skipping' % rel, True)
             return
 
         argv = [self.apport_retrace, '-S', self.config_dir, '--auth',
@@ -100,10 +93,10 @@ class CrashDigger:
 
         result = subprocess.call(argv, stdout=sys.stdout, stderr=subprocess.STDOUT)
         if result != 0:
-            self.log('retracing #%i failed with status: %i' % (id, result))
+            apport.log('retracing #%i failed with status: %i' % (id, result), True)
             if result == 99:
                 self.retrace_pool = set()
-                self.log('transient error reported; halting')
+                apport.log('transient error reported; halting', True)
                 return
             raise SystemError('retracing #%i failed' % id)
 
@@ -113,25 +106,25 @@ class CrashDigger:
         '''Grab an ID from the dupcheck pool and process it.'''
 
         id = self.dupcheck_pool.pop()
-        self.log('checking #%i for duplicate (left in pool: %i)' % (id, len(self.dupcheck_pool)))
+        apport.log('checking #%i for duplicate (left in pool: %i)' % (id, len(self.dupcheck_pool)), True)
 
         try:
             report = self.crashdb.download(id)
         except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
-            self.log('Cannot download report: ' + str(e))
+            apport.log('Cannot download report: ' + str(e), True)
             apport.error('Cannot download report %i: %s', id, str(e))
             return
 
         res = self.crashdb.check_duplicate(id, report)
         if res:
             if res[1] is None:
-                self.log('Report is a duplicate of #%i (not fixed yet)' % res[0])
+                apport.log('Report is a duplicate of #%i (not fixed yet)' % res[0], True)
             elif res[1] == '':
-                self.log('Report is a duplicate of #%i (fixed in latest version)' % res[0])
+                apport.log('Report is a duplicate of #%i (fixed in latest version)' % res[0], True)
             else:
-                self.log('Report is a duplicate of #%i (fixed in version %s)' % res)
+                apport.log('Report is a duplicate of #%i (fixed in version %s)' % res, True)
         else:
-            self.log('Duplicate check negative')
+            apport.log('Duplicate check negative', True)
 
     def run(self):
         '''Process the work pools until they are empty.'''
