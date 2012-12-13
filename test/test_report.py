@@ -1938,6 +1938,28 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsysca
         self.assertEqual(pr._address_to_offset(0x7f491fc24010),
                          '/lib/with spaces !/libfoo.so+10')
 
+    def test_address_to_offset_arm(self):
+        '''_address_to_offset() for ARM /proc/pid/maps'''
+
+        pr = apport.report.Report()
+        pr['ProcMaps'] = '''
+00008000-0000e000 r-xp 00000000 08:01 13243326   /usr/lib/dconf/dconf-service
+00017000-00038000 rw-p 00000000 00:00 0          [heap]
+40017000-4001d000 rw-p 00000000 00:00 0
+40026000-400f2000 r-xp 00000000 08:01 13110792   /usr/lib/arm-linux-gnueabihf/libgio-2.0.so.0.3400.0
+400f2000-400f9000 ---p 000cc000 08:01 13110792   /usr/lib/arm-linux-gnueabihf/libgio-2.0.so.0.3400.0
+4020d000-4020f000 rw-p 00000000 00:00 0
+4020f000-402e5000 r-xp 00000000 08:01 13108294   /lib/arm-linux-gnueabihf/libc-2.15.so
+402e5000-402ed000 ---p 000d6000 08:01 13108294   /lib/arm-linux-gnueabihf/libc-2.15.so
+40d21000-40e00000 ---p 00000000 00:00 0
+befdf000-bf000000 rw-p 00000000 00:00 0          [stack]
+ffff0000-ffff1000 r-xp 00000000 00:00 0          [vectors]
+'''
+        self.assertEqual(pr._address_to_offset(0x402261e6),
+                         '/lib/arm-linux-gnueabihf/libc-2.15.so+171e6')
+        self.assertEqual(pr._address_to_offset(0x4002601F),
+                         '/usr/lib/arm-linux-gnueabihf/libgio-2.0.so.0.3400.0+1f')
+
     def test_address_to_offset_live(self):
         '''_address_to_offset() for current /proc/pid/maps'''
 

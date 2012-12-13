@@ -1460,9 +1460,9 @@ class Report(problem_report.ProblemReport):
         # library paths might have spaces, so we need to make some assumptions
         # about the intermediate fields. But we know that in between the pre-last
         # data field and the path there are many spaces, while between the
-        # other data fields there is only one. So we take 4 or more spaces as
+        # other data fields there is only one. So we take 2 or more spaces as
         # the separator of the last data field and the path.
-        fmt = re.compile('^([0-9a-fA-F]+)-([0-9a-fA-F]+).*\s{4,}(\S.*$)')
+        fmt = re.compile('^([0-9a-fA-F]+)-([0-9a-fA-F]+).*\s{2,}(\S.*$)')
         fmt_unknown = re.compile('^([0-9a-fA-F]+)-([0-9a-fA-F]+)\s')
 
         for line in self['ProcMaps'].splitlines():
