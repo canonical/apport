@@ -50,7 +50,7 @@ func(42)
         os.close(fd)
         os.chmod(script, 0o755)
         env = os.environ.copy()
-        env['PYTHONPATH'] = '/my/bogus/path'
+        env['PYTHONPATH'] = '.:/my/bogus/path'
 
         p = subprocess.Popen([script, 'testarg1', 'testarg2'],
                              stderr=subprocess.PIPE, env=env)
@@ -144,6 +144,12 @@ func(42)
         self.assertTrue(set(expected_keys).issubset(set(pr.keys())),
                         'report has necessary fields')
         self.assertTrue('bin/python' in pr['InterpreterPath'])
+        # we have no actual executable, so we should fall back to the
+        # interpreter
+        self.assertEqual(pr['ExecutablePath'], pr['InterpreterPath'])
+        if 'ExecutableTimestamp' in pr:
+            self.assertEqual(pr['ExecutableTimestamp'],
+                             str(int(os.stat(pr['ExecutablePath']).st_mtime)))
         self.assertTrue(pr['Traceback'].startswith('Traceback'))
 
     def test_python_env(self):

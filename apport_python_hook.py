@@ -104,6 +104,8 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
         pr.add_user_info()
         # override the ExecutablePath with the script that was actually running
         pr['ExecutablePath'] = binary
+        if 'ExecutableTimestamp' in pr:
+            pr['ExecutableTimestamp'] = str(int(os.stat(binary).st_mtime))
         try:
             pr['PythonArgs'] = '%r' % sys.argv
         except AttributeError:

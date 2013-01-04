@@ -12,6 +12,8 @@ Bug fixes:
  * Fix StacktraceAddressSignature generation on ARM. (LP: #1089778)
  * debian.py: Fix TypeError crash in payload generation. Thanks Ritesh Raj
    Sarraf.
+ * apport_python_hook.py: Update "ExecutableTimestamp" field when mangling
+   "ExecutablePath". (LP: #1077253)
 
 2.7 (2012-12-10):
 -----------------
