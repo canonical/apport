@@ -98,7 +98,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         msg.add_header('Usertag', 'apport-%s' % report['ProblemType'].lower())
 
         s = smtplib.SMTP(self.options['smtphost'])
-        s.sendmail(self.options['sender'], self.options['recipient'], msg.as_string())
+        s.sendmail(self.options['sender'], self.options['recipient'], msg.as_string().encode('UTF-8'))
         s.quit()
 
     def get_comment_url(self, report, handle):

@@ -10,6 +10,8 @@ Improvements:
 
 Bug fixes:
  * Fix StacktraceAddressSignature generation on ARM. (LP: #1089778)
+ * debian.py: Fix TypeError crash in payload generation. Thanks Ritesh Raj
+   Sarraf.
 
 2.7 (2012-12-10):
 -----------------
