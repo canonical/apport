@@ -35,8 +35,9 @@ class T(unittest.TestCase):
             fd = os.open(scriptname, os.O_CREAT | os.O_WRONLY)
         else:
             (fd, script) = tempfile.mkstemp(dir='/var/tmp')
-        try:
-            os.write(fd, ('''#!/usr/bin/env %s
+            self.addCleanup(os.unlink, script)
+
+        os.write(fd, ('''#!/usr/bin/env %s
 import apport_python_hook
 apport_python_hook.install()
 
@@ -46,21 +47,19 @@ def func(x):
 %s
 func(42)
 ''' % (os.getenv('PYTHON', 'python3'), extracode)).encode())
-            os.close(fd)
-            os.chmod(script, 0o755)
-            env = os.environ.copy()
-            env['PYTHONPATH'] = '/my/bogus/path'
+        os.close(fd)
+        os.chmod(script, 0o755)
+        env = os.environ.copy()
+        env['PYTHONPATH'] = '/my/bogus/path'
 
-            p = subprocess.Popen([script, 'testarg1', 'testarg2'],
-                                 stderr=subprocess.PIPE, env=env)
-            err = p.communicate()[1].decode()
-            self.assertEqual(p.returncode, 1,
-                             'crashing test python program exits with failure code')
-            if not extracode:
-                self.assertTrue('This should happen.' in err, err)
-            self.assertFalse('OSError' in err, err)
-        finally:
-            os.unlink(script)
+        p = subprocess.Popen([script, 'testarg1', 'testarg2'],
+                             stderr=subprocess.PIPE, env=env)
+        err = p.communicate()[1].decode()
+        self.assertEqual(p.returncode, 1,
+                         'crashing test python program exits with failure code')
+        if not extracode:
+            self.assertTrue('This should happen.' in err, err)
+        self.assertFalse('OSError' in err, err)
 
         return script
 
@@ -89,6 +88,8 @@ func(42)
                         'report has necessary fields')
         self.assertTrue('bin/python' in pr['InterpreterPath'])
         self.assertEqual(pr['ExecutablePath'], script)
+        self.assertEqual(pr['ExecutableTimestamp'],
+                         str(int(os.stat(script).st_mtime)))
         self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
         self.assertTrue(pr['Traceback'].startswith('Traceback'))
         self.assertTrue("func\n    raise Exception(b'This should happen." in
@@ -252,14 +253,17 @@ func(42)
 
         count = 0
         limit = 5
-        while count < limit:
-            self._test_crash(scriptname='/var/tmp/pytestcrash')
-            reports = apport.fileutils.get_new_reports()
-            if not reports:
-                break
-            self.assertEqual(len(reports), 1, 'crashed Python program produced one report')
-            apport.fileutils.mark_report_seen(reports[0])
-            count += 1
+        try:
+            while count < limit:
+                self._test_crash(scriptname='/var/tmp/pytestcrash')
+                reports = apport.fileutils.get_new_reports()
+                if not reports:
+                    break
+                self.assertEqual(len(reports), 1, 'crashed Python program produced one report')
+                apport.fileutils.mark_report_seen(reports[0])
+                count += 1
+        finally:
+            os.unlink('/var/tmp/pytestcrash')
 
         self.assertGreater(count, 1)
         self.assertLess(count, limit)
