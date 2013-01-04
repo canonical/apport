@@ -7,6 +7,7 @@ Improvements:
  * Factor out sandbox management functions from apport-retrace into
    apport/sandboxutils.py, so that other programs can re-use the API easily.
    Thanks to Kyle Nitzsche for the initial work on this.
+ * Generate a crash signature for kernel OOPSes.
 
 Bug fixes:
  * Fix StacktraceAddressSignature generation on ARM. (LP: #1089778)

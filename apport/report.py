@@ -1195,8 +1195,9 @@ class Report(problem_report.ProblemReport):
         For Python crashes, this concatenates the ExecutablePath, exception
         name, and Traceback function names, again separated by a colon.
         '''
-        if 'ExecutablePath' not in self and not self['ProblemType'] == 'KernelCrash':
-            return None
+        if 'ExecutablePath' not in self:
+            if not self['ProblemType'] in ('KernelCrash', 'KernelOops'):
+                return None
 
         # kernel crash
         if 'Stacktrace' in self and self['ProblemType'] == 'KernelCrash':
@@ -1261,6 +1262,45 @@ class Report(problem_report.ProblemReport):
 
             return self['ExecutablePath'] + ':' + trace[-1].split(':')[0] + sig
 
+        # KernelOops crashes
+        if 'OopsText' in self:
+            in_trace_body = False
+            parts = []
+            for line in self['OopsText'].split('\n'):
+                if line.startswith('BUG: unable to handle'):
+                    parsed = re.search('^BUG: unable to handle (.*) at ', line)
+                    if parsed:
+                        match = parsed.group(1)
+                        assert match, 'could not parse expected problem type line: %s' % line
+                        parts.append(match)
+
+                if line.startswith('IP: '):
+                    match = self._extract_function_and_address(line)
+                    if match:
+                        parts.append(match)
+
+                elif line.startswith('Call Trace:'):
+                    in_trace_body = True
+
+                elif in_trace_body:
+                    match = None
+                    if line and line[0] == ' ':
+                        match = self._extract_function_and_address(line)
+                        if match:
+                            parts.append(match)
+                    else:
+                        in_trace_body = False
+            if parts:
+                return ':'.join(parts)
+        return None
+
+    def _extract_function_and_address(self, line):
+        parsed = re.search('\[.*\] (.*)$', line)
+        if parsed:
+            match = parsed.group(1)
+            assert match, 'could not parse expected call trace line: %s' % line
+            if match[0] != '?':
+                return match
         return None
 
     def crash_signature_addresses(self):
