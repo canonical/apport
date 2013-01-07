@@ -1,0 +1,185 @@
+#! /usr/bin/python3
+
+# Use the coredump in a crash report to regenerate the stack traces. This is
+# helpful to get a trace with debug symbols.
+#
+# Copyright (c) 2006 - 2012 Canonical Ltd.
+# Authors: Martin Pitt <martin.pitt@ubuntu.com>
+#          Alex Chiang <alex.chiang@canonical.com>
+#          Kyle Nitzsche <kyle.nitzsche@canonical.com>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
+# the full text of the license.
+
+import sys
+import os
+import os.path
+import subprocess
+import argparse
+import shutil
+import tempfile
+import re
+import zlib
+import tty
+import gettext
+import atexit
+import time
+import problem_report
+import apport
+import apport.fileutils
+import apport.sandboxutils
+from apport.crashdb import get_crashdb
+from apport import unicode_gettext as _
+
+#
+# vars
+#
+
+# tmp sandbox and cache dirs for deletion on exit
+tmpdirs = []
+# processes to kill on cleanup
+processes = []
+
+#
+# functions
+#
+
+
+def parse_options():
+    '''Parse command line options and return options.'''
+
+    description = _("See man page for details.")
+
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        '-l', '--log', metavar='LOGFILE', default='valgrind.log',
+        help=_('specify the log file name produced by valgrind'))
+    parser.add_argument(
+        '--sandbox-dir', metavar='SDIR',
+        help=_('reuse a previously created sandbox dir (SDIR) or, if it does '
+               'not exist, create it'))
+    parser.add_argument(
+        '--no-sandbox', action='store_true',
+        help=_('do  not  create  or reuse a sandbox directory for additional '
+               'debug symbols but rely only on installed debug symbols.'))
+    parser.add_argument(
+        '-C', '--cache', metavar='DIR',
+        help=_('reuse a previously created cache dir (CDIR) or, if it does '
+               'not exist, create it'))
+    parser.add_argument(
+        '-v', '--verbose', action='store_true',
+        help=_('report download/install progress when installing packages '
+               'into sandbox'))
+    parser.add_argument(
+        'exe', metavar='EXECUTABLE',
+        help=_('the executable that is run under valgrind\'s memcheck tool '
+               ' for memory leak detection'))
+    parser.add_argument(
+        '-p', '--extra-package', metavar='PKG', action='append', default=[],
+        help=_('Install an extra package into the sandbox (can be specified '
+               'multiple times)'))
+    opts = parser.parse_args()
+
+    return opts
+
+#
+# main
+#
+
+
+options = parse_options()
+
+
+try:
+    apport.memdbg('start')
+    apport.memdbg('Executable: ' + options.exe)
+    apport.memdbg('Command arguments: ' + str(options))
+
+    gettext.textdomain('apport')
+
+    # get and verify path to executable
+    exepath = subprocess.Popen(
+        ['which', options.exe], stdout=subprocess.PIPE).communicate()[0]
+    exepath = bytes.decode(exepath)
+    exepath = exepath.rstrip('\n')
+    if not exepath:
+        print (_('Error: %s is not an executable. Stopping.') % (options.exe),
+               file=sys.stderr)
+        sys.exit(1)
+
+except (KeyboardInterrupt, SystemExit) as e:
+    print ("\nInterrupted during initialization", file=sys.stderr)
+
+try:
+    if (not options.no_sandbox):
+        # create report unless in no-sandbox mode
+        report = apport.Report()
+
+        report['ExecutablePath'] = exepath
+        report['DistroRelease'] = report.add_os_info()
+        report.add_package_info()
+
+        apport.memdbg('\nCreated report')
+
+except (KeyboardInterrupt, SystemExit) as e:
+    print ("\nInterrupted during report creation", file=sys.stderr)
+
+
+apport.memdbg('About to handle sandbox')
+
+cache = None
+
+try:
+    # make the sandbox unless not wanted
+    if (not options.no_sandbox):
+        sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
+            report, "system", options.cache, options.sandbox_dir,
+            options.extra_package, options.verbose)
+
+except (KeyboardInterrupt, SystemExit) as e:
+    print ("\nInterrupted while creating sandbox", file=sys.stderr)
+
+apport.memdbg('About to get path to sandbox')
+
+debugrootdir = None
+
+try:
+    if (not options.no_sandbox):
+        # get path to sandbox
+        if sandbox:
+            # sandbox is only defined when an auto created dir in tmp is in use
+            debugrootdir = os.path.abspath(sandbox)
+        elif options.sandbox_dir:
+            # this is used when --sandbox-dir is passed as arg
+            debugrootdir = os.path.abspath(options.sandbox_dir)
+
+        # display sandbox and cache dirs, if any
+        if debugrootdir:
+            print('Sandbox directory:', debugrootdir)
+        if cache:
+            print('Cache directory:', cache)
+
+    # prep to run valgrind
+    argv = ['valgrind']
+    argv += ['-v', '--tool=memcheck', '--leak-check=full', '--num-callers=40']
+    argv += ['--log-file=%s' % options.log]
+    argv += ['--track-origins=yes']
+    if (not options.no_sandbox):
+        argv += ['--extra-debuginfo-path=%s' % debugrootdir]
+    argv += [exepath]
+
+    apport.memdbg('before calling valgrind')
+
+except (KeyboardInterrupt, SystemExit) as e:
+    print ("\nInterrupted while preparing to create sandbox", file=sys.stderr)
+
+try:
+    subprocess.call(argv)
+except (KeyboardInterrupt, SystemExit) as e:
+    print ("\nInterrupted while running valgrind", file=sys.stderr)
+
+apport.memdbg('information collection done')
