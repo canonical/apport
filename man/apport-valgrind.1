@@ -1,0 +1,114 @@
+.TH apport\-valgrind 1 "December 14, 2012" "Kyle Nitzsche"
+
+.SH NAME
+
+apport\-valgrind \- valgrind wrapper that first downloads debug symbols
+
+.SH SYNOPSIS
+
+.B apport\-valgrind
+[
+.I OPTIONS
+]
+.I EXECUTABLE
+
+.SH DESCRIPTION
+
+.B apport\-valgrind
+is a valgrind wrapper that automatically downloads related available debug
+symbols and provides them to valgrind's memcheck tool, which is executed. The
+output is a valgrind log file ("valgrind.log") that contains stack traces (with
+as many symbols resolved as available) and that shows memory leaks.
+
+By default, a temporary cache directory is created to hold the latest debug
+symbol packages. These are unpacked into a temporary sandbox directory.  The
+path to the sandbox directory is provided to valgrind as an additional location
+for symbol files.
+
+You may create and use persistent cache and sandbox directories to save time
+across multiple executions, thus preventing the need to recreate them each
+time. Downloading all packages into the the cache directory each time is
+particularly time consuming.
+
+It is recommended to update your system before execution. This ensures your
+runtime environment is consistent with the latest downloaded symbol packages
+and therefore results in a more complete stack trace from valgrind.
+
+.I EXECUTABLE
+is the program to run under valgrind. Always terminate the
+.I EXECUTABLE
+in its usual way. Exit it from the GUI if there is one. If not, use the most
+appropriate method.
+
+.SH OPTIONS
+
+.TP
+.B \-C \fICDIR\fR, \-\-cache=\fICDIR\fR
+Reuse a previously created cache dir (\fICDIR\fR) or, if it does not exist,
+create it.
+
+.TP
+.B \-\-sandbox\-dir=\fISDIR\fR
+Reuse a previously created sandbox dir (\fISDIR\fR) or, if it does not exist,
+create it
+
+.TP
+.B \-\-no\-sandbox
+Do not create or reuse a sandbox directory for additional debug symbols but
+rely only on installed debug symbols. This speeds execution time but may result
+in an incomplete and less useful valgrind log if you do not have all
+appropriate debug symbol packages installed.
+
+.TP
+.B \-p, \-\-extra-package
+Specify an extra package (or packages) to unpack in the sandbox. Useful to add
+additional debug symbol packages that result in more complete valgrind logs.
+
+.TP
+.B \-v, \-\-verbose
+Report download/install progress when installing packages in sandbox mode.
+
+.TP
+.B \-l \fILOGFILE\fR, \-\-log=\fILOGFILE\fR
+Specify the file name for the generated valgrind log file. Default is:
+valgrind.log
+
+.TP
+.B \-h, \-\-help
+Display short help that documents all options.
+
+.SH EXAMPLES
+
+Create and use temporary cache and sandbox directories:
+.RS 4
+apport\-valgrind
+.I EXECUTABLE
+.RE
+
+Reuse or create cache dir:
+.RS 4
+apport\-valgrind \-C
+.I CDIR
+.I EXECUTABLE
+.RE
+
+Reuse or create sandbox dir:
+.RS 4
+apport\-valgrind \-\-sandbox\-dir
+.I SDIR
+.I EXECUTABLE
+.RE
+
+.SH KNOWN ISSUES
+
+If you abnormally terminate the executable you are running under valgrind,
+temporary directories may not be deleted and processes may not all terminate.
+For example, if the executable does not normally terminate on ctrl+c, pressing
+ctrl+c in the terminal may cause apport-valgrind and valgrind to terminate, but
+may not terminate the executable and may not delete the temporary directories.
+
+.SH AUTHORS
+
+Developed by Martin Pitt <martin.pitt@ubuntu.com>, Alex Chiang 
+<alex.chiang@canonical.com> and Kyle Nitzsche
+<kyle.nitzsche@canonical.com>

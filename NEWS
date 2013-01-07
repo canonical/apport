@@ -8,6 +8,9 @@ Improvements:
    apport/sandboxutils.py, so that other programs can re-use the API easily.
    Thanks to Kyle Nitzsche for the initial work on this.
  * Generate a crash signature for kernel OOPSes.
+ * Add "apport-valgrind" tool to produce valgrind reports in a temporary
+   sandbox with debug symbols (similar to apport-retrace). Thanks Alex Chiang
+   and Kyle Nitzsche!
 
 Bug fixes:
  * Fix StacktraceAddressSignature generation on ARM. (LP: #1089778)

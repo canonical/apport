@@ -297,7 +297,7 @@ elif not required_fields.issubset(set(report.keys())):
 apport.memdbg('sanity checks passed')
 
 if options.sandbox:
-    sandbox, outdated_msg = apport.sandboxutils.make_sandbox(
+    sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
         report, options.sandbox, options.cache, options.sandbox_dir,
         options.extra_package, options.verbose)
 else:
