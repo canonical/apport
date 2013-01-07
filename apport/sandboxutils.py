@@ -136,7 +136,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     if cache_dir:
         cache_dir = os.path.abspath(cache_dir)
     else:
-        cache_dir = tempfile.mkdtemp()
+        cache_dir = tempfile.mkdtemp(prefix='apport_cache_')
         atexit.register(shutil.rmtree, cache_dir)
 
     try:
@@ -182,4 +182,4 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     apport.memdbg('built sandbox')
 
-    return sandbox_dir, outdated_msg
+    return sandbox_dir, cache_dir, outdated_msg
