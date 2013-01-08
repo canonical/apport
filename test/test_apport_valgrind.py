@@ -14,7 +14,12 @@ import shutil
 import os
 import os.path
 
+p = subprocess.Popen(['which', 'valgrind'], stdout=subprocess.PIPE)
+p.communicate()
+have_valgrind = (p.returncode == 0)
 
+
+@unittest.skipUnless(have_valgrind, 'valgrind not installed')
 class T(unittest.TestCase):
     def setUp(self):
         self.workdir = tempfile.mkdtemp()
