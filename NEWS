@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.8.1 (UNRELEASED):
+-------------------
+Bug fixes:
+ * Add "com.ubuntu.pkexec.apport-gtk" polkit action for running apport-gtk
+   through pkexec to access system crash reports. Thanks Brian Murray.
+
 2.8 (2013-01-08):
 -----------------
 Improvements:
