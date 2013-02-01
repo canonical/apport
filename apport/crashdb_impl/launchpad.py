@@ -728,7 +728,7 @@ Please continue to report any other bugs you may find.' % master_id,
                     pass  # LP#336866 workaround
 
             # white list of tags to copy from duplicates bugs to the master
-            tags_to_copy = ['bugpattern-needed', 'running-unity']
+            tags_to_copy = ['bugpattern-needed']
             for series in self.lp_distro.series:
                 if series.status not in ['Active Development',
                                          'Current Stable Release',
