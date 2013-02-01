@@ -1094,7 +1094,7 @@ class UserInterface:
         # If we are called through sudo, determine the real user id and run the
         # browser with it to get the user's web browser settings.
         try:
-            uid = int(os.getenv('SUDO_UID'))
+            uid = int(os.getenv('PKEXEC_UID', os.getenv('SUDO_UID')))
             sudo_prefix = ['sudo', '-H', '-u', '#' + str(uid)]
         except TypeError:
             sudo_prefix = []
