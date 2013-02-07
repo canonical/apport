@@ -577,6 +577,14 @@ class Report(problem_report.ProblemReport):
                         if self['ProcEnviron']:
                             self['ProcEnviron'] += '\n'
                         self['ProcEnviron'] += 'XDG_RUNTIME_DIR=<set>'
+                elif l.startswith('LD_PRELOAD='):
+                        if self['ProcEnviron']:
+                            self['ProcEnviron'] += '\n'
+                        self['ProcEnviron'] += 'LD_PRELOAD=<set>'
+                elif l.startswith('LD_LIBRARY_PATH='):
+                        if self['ProcEnviron']:
+                            self['ProcEnviron'] += '\n'
+                        self['ProcEnviron'] += 'LD_LIBRARY_PATH=<set>'
 
     def add_kernel_crash_info(self, debugdir=None):
         '''Add information from kernel crash.
