@@ -10,6 +10,8 @@ Bug fixes:
  * apport/report.py: report if LD_PRELOAD and LD_LIBRARY_PATH are set. Thanks
    James Hunt.
  * apport-valgrind: Cleanly exit on keyboard interrupts. Thanks Kyle Nitzsche.
+ * debian.py: Fix "string payload expected" crash when building the report.
+   Thanks Dmitry Shachnev. (Debian #698010)
 
 2.8 (2013-01-08):
 -----------------

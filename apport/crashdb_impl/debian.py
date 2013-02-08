@@ -88,7 +88,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         temp.file.seek(0)
 
-        msg = MIMEText(temp.file.read())
+        msg = MIMEText(temp.file.read().decode('UTF-8'))
         msg['Subject'] = report['Title']
         msg['From'] = self.options['sender']
         msg['To'] = self.options['recipient']
