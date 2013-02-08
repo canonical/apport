@@ -42,6 +42,9 @@ def shared_libraries(path):
             continue
 
         lib = lib.strip()
+        # exclude linux-vdso since that is a virtual so
+        if 'linux-vdso' in lib:
+            continue
         libs.add(lib)
 
     return libs
