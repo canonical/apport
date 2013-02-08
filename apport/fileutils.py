@@ -21,6 +21,7 @@ except ImportError:
 from problem_report import ProblemReport
 
 from apport.packaging_impl import impl as packaging
+import apport.hookutils
 
 report_dir = os.environ.get('APPORT_REPORT_DIR', '/var/crash')
 
@@ -34,7 +35,7 @@ def shared_libraries(path):
 
     libs = set()
 
-    for line in command_output(['ldd', path]).split('\n'):
+    for line in apport.hookutils.command_output(['ldd', path]).split('\n'):
         try:
             lib, rest = line.split('=>', 1)
         except ValueError:
