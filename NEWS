@@ -9,6 +9,7 @@ Bug fixes:
  * ui.py: Check $PKEXEC_UID in addition to $SUDO_UID for opening a browser.
  * apport/report.py: report if LD_PRELOAD and LD_LIBRARY_PATH are set. Thanks
    James Hunt.
+ * apport-valgrind: Cleanly exit on keyboard interrupts. Thanks Kyle Nitzsche.
 
 2.8 (2013-01-08):
 -----------------

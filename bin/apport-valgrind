@@ -69,6 +69,9 @@ def parse_options():
 
     return opts
 
+def _exit_on_interrupt():
+    sys.exit(1)
+
 #
 # main
 #
@@ -94,6 +97,7 @@ try:
         sys.exit(1)
 except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted during initialization\n")
+    _exit_on_interrupt()
 
 try:
     if (not options.no_sandbox):
@@ -107,6 +111,7 @@ try:
         apport.memdbg('\nCreated report')
 except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted during report creation\n")
+    _exit_on_interrupt()
 
 
 apport.memdbg('About to handle sandbox')
@@ -122,6 +127,7 @@ try:
 
 except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted while creating sandbox\n")
+    _exit_on_interrupt()
 
 apport.memdbg('About to get path to sandbox')
 
@@ -155,10 +161,12 @@ try:
     apport.memdbg('before calling valgrind')
 except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted while preparing to create sandbox\n")
+    _exit_on_interrupt()
 
 try:
     subprocess.call(argv)
 except (KeyboardInterrupt, SystemExit):
     sys.stderr.write("\nInterrupted while running valgrind\n")
+    _exit_on_interrupt()
 
 apport.memdbg('information collection done')
