@@ -42,9 +42,9 @@ and installing updates. Please free some space.' % (mounts[mount], free_mb)
     # important glib errors/assertions (which should not have private data)
     if 'ExecutablePath' in report:
         path = report['ExecutablePath']
-        gtk_like = (apport.hookutils.links_with_shared_library(path, 'libgtk') or
-                    apport.hookutils.links_with_shared_library(path, 'libgtk-3') or
-                    apport.hookutils.links_with_shared_library(path, 'libX11'))
+        gtk_like = (apport.fileutils.links_with_shared_library(path, 'libgtk') or
+                    apport.fileutils.links_with_shared_library(path, 'libgtk-3') or
+                    apport.fileutils.links_with_shared_library(path, 'libX11'))
         if gtk_like and apport.hookutils.in_session_of_problem(report):
             xsession_errors = apport.hookutils.xsession_errors()
             if xsession_errors:

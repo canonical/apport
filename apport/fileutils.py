@@ -28,6 +28,44 @@ _config_file = '~/.config/apport/settings'
 _whoopsie_config_file = '/etc/default/whoopsie'
 
 
+def shared_libraries(path):
+    '''Returns a list of strings containing the sonames of shared libraries
+    with which the specified binary is linked.'''
+
+    libs = set()
+
+    for line in command_output(['ldd', path]).split('\n'):
+        try:
+            lib, rest = line.split('=>', 1)
+        except ValueError:
+            continue
+
+        lib = lib.strip()
+        libs.add(lib)
+
+    return libs
+
+
+def links_with_shared_library(path, lib):
+    '''Returns True if the binary at path links with the library named lib.
+
+    path should be a fully qualified path (e.g. report['ExecutablePath'])
+    lib may be of the form 'lib<name>' or 'lib<name>.so.<version>'
+    '''
+
+    libs = shared_libraries(path)
+
+    if lib in libs:
+        return True
+
+    for linked_lib in libs:
+        if linked_lib.startswith(lib + '.so.'):
+            return True
+
+    return False
+
+
+
 def allowed_to_report():
     '''Check whether crash reporting is enabled.'''
 
