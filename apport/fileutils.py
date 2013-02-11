@@ -318,3 +318,46 @@ def get_config(section, setting, default=None, path=None, bool=False):
         return default
 
 get_config.config = None
+
+
+def shared_libraries(path):
+    '''Return libraries with which the specified binary is linked.'''
+
+    libs = set()
+
+    ldd = subprocess.Popen(['ldd', path], stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT,
+                           universal_newlines=True)
+    for line in ldd.stdout:
+        try:
+            lib, rest = line.split('=>', 1)
+        except ValueError:
+            continue
+
+        lib = lib.strip()
+        libs.add(lib)
+    ldd.stdout.close()
+    ldd.wait(5)
+
+    if ldd.returncode != 0:
+        return set()
+
+    return libs
+
+
+def links_with_shared_library(path, lib):
+    '''Check if the binary at path links with the library named lib.
+
+    path should be a fully qualified path (e.g. report['ExecutablePath']),
+    lib may be of the form 'lib<name>' or 'lib<name>.so.<version>'
+    '''
+    libs = shared_libraries(path)
+
+    if lib in libs:
+        return True
+
+    for linked_lib in libs:
+        if linked_lib.startswith(lib + '.so.'):
+            return True
+
+    return False

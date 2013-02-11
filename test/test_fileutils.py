@@ -1,4 +1,4 @@
-import unittest, tempfile, os, shutil, time
+import unittest, tempfile, os, shutil, time, sys
 
 import problem_report
 import apport.fileutils
@@ -310,6 +310,28 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         apport.fileutils.get_config.config = None  # trash cache
 
         f.close()
+
+    def test_shared_libraries(self):
+        '''shared_libraries()'''
+
+        libs = apport.fileutils.shared_libraries(sys.executable)
+        self.assertGreater(len(libs), 3)
+        self.assertTrue('libc.so.6' in libs, libs)
+
+        self.assertEqual(apport.fileutils.shared_libraries('/non/existing'), set())
+        self.assertEqual(apport.fileutils.shared_libraries('/etc'), set())
+        self.assertEqual(apport.fileutils.shared_libraries('/etc/passwd'), set())
+
+    def test_links_with_shared_library(self):
+        '''links_with_shared_library()'''
+
+        self.assertTrue(apport.fileutils.links_with_shared_library(sys.executable, 'libc'))
+        self.assertTrue(apport.fileutils.links_with_shared_library(sys.executable, 'libc.so.6'))
+        self.assertFalse(apport.fileutils.links_with_shared_library(sys.executable, 'libc.so.7'))
+        self.assertFalse(apport.fileutils.links_with_shared_library(sys.executable, 'libd'))
+        self.assertFalse(apport.fileutils.links_with_shared_library('/non/existing', 'libc'))
+        self.assertFalse(apport.fileutils.links_with_shared_library('/etc', 'libc'))
+        self.assertFalse(apport.fileutils.links_with_shared_library('/etc/passwd', 'libc'))
 
 if __name__ == '__main__':
     unittest.main()
