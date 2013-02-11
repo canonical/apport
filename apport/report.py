@@ -270,12 +270,14 @@ class Report(problem_report.ProblemReport):
           pre-dependencies; this also checks if the files are unmodified and
           appends a list of all modified files
         '''
+        print("self['ExecutablePath']",self['ExecutablePath'])
         if not package:
             # the kernel does not have a executable path but a package
             if not 'ExecutablePath' in self and self['ProblemType'] == 'KernelCrash':
                 package = self['Package']
             else:
                 package = apport.fileutils.find_file_package(self['ExecutablePath'])
+            print('package 1', package)
             if not package:
                 return
 
