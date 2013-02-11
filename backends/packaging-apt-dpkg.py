@@ -826,8 +826,7 @@ Debug::NoLocking "true";
             age = None
 
         if age is None or age >= 86400:
-            #TODO: this url works for me but is different from trunk
-            url = '%s/dists/%s-Contents-%s.gz' % (self._get_mirror(), release, arch)
+            url = '%s/dists/%s/Contents-%s.gz' % (self._get_mirror(), release, arch)
 
             src = urlopen(url)
             with open(map, 'wb') as f:
