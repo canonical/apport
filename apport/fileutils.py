@@ -36,17 +36,23 @@ def shared_libraries(path):
     libs = set()
 
     for line in apport.hookutils.command_output(['ldd', path]).split('\n'):
+       # print('line', line)
         try:
             lib, rest = line.split('=>', 1)
         except ValueError:
             continue
 
+        #print('lib', lib)
+        lib = lib.encode('utf8')
+        #print('lib', lib)
         lib = lib.strip()
+        #print('lib', lib)
         # exclude linux-vdso since that is a virtual so
         if 'linux-vdso' in lib:
             continue
         libs.add(lib)
 
+    #print('libs', libs)
     return libs
 
 
@@ -127,11 +133,13 @@ def find_file_package(file):
     Return None if no package ships it.
     '''
     # resolve symlinks in directories
+    print('find_file_p file',file)
     (dir, name) = os.path.split(file)
     resolved_dir = os.path.realpath(dir)
     if os.path.isdir(resolved_dir):
         file = os.path.join(resolved_dir, name)
 
+    print('find_file_p likely_packaged(file)',likely_packaged(file))
     if not likely_packaged(file):
         return None
 
