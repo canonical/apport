@@ -39,8 +39,31 @@ def needed_packages(report):
 def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     '''Determine necessary runtime packages for given report.
 
-    This determines libraries which were dynamically loaded at runtime, i. e.
-    appear in /proc/pid/maps, but not in Dependencies: (such as plugins).
+    This determines libraries dynamically loaded at runtime and
+    supports four use cases:
+
+    1. The executable is packaged and already ran (apport-retrace only)
+    2. The executable is packaged and has not yet run (apport-valgrind only)
+    3. The executable is unpackaged and already ran (theoretical only, no
+    use case)
+    4. The executable is unpackaged and has not yet run (apport-valgrind)
+
+    Two report keys are used to select the code path appropriate for the
+    particular use case:
+
+    1. report['Procmaps']: this only exists when the executable has already
+    run and therefore is applicable to apport-retrace only. When this key is
+    present, its value contains data from /proc/pid/maps, which shows the
+    shared libraries.
+
+    2. report['Packaged']: this only exists when the executable is installed
+    by a package. This case applies to both apport-retrace and apport
+    valgrind. However, when the key does not exist, it (probably) only applies
+    to apport-valgrind. The idea is to support running apport-valgrind on
+    unpackaged executables. In this case, shared libraries are determined from
+    shared_libraries(), which uses ldd on the executable.
+
+    The package for each shared lib is obtained from get_file_package().
 
     Return list of (pkgname, None) pairs.
 
@@ -58,6 +81,14 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
                 lib = os.path.realpath(cols[5])
                 libs.add(lib)
+    try:
+        report['Packaged']
+    except KeyError:
+        # 'Packaged' key is absent on unpackaged executables
+        libs = apport.fileutils.shared_libraries(report['ExecutablePath'])
+        for l in libs:
+            libs.add(l.encode('utf8'))
+        print('libs', libs)
 
     if sandbox:
         cache_dir = os.path.join(cache_dir, report['DistroRelease'])
@@ -81,16 +112,22 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
 
 def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                  extra_packages=[], verbose=False, log_timestamps=False):
-    '''Build a sandbox with the packages that belong to a particular report.
+    '''Build a sandbox with the packages that belong to a particular report
+    and for the executable.
 
     This downloads and unpacks all packages from the report's Package and
     Dependencies fields, plus all packages that ship the files from ProcMaps
     (often, runtime plugins do not appear in Dependencies), plus optionally
     some extra ones, for the distro release and architecture of the report.
 
-    report is an apport.Report object to build a sandbox for. It needs to
-    have at least a Package field, and usually also Dependencies, Architecture,
-    and Uname.
+    For unpackaged executables, there are no Dependencies. Packages for shared
+    libaries are unpacked.
+
+    report is an apport.Report object to build a sandbox for. Presence of the
+    Package field determines whether to determine dependencies through
+    packaging (vai the optional report['Dependencies'] field), or through ldd
+    via needed_runtime_packages() -> shared_libraries().  Usually
+    report['Architecture'] and report['Uname'] are present.
 
     config_dir points to a directory with by-release configuration files for
     the packaging system, or "system"; this is passed to
@@ -127,7 +164,16 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         atexit.register(shutil.rmtree, sandbox_dir)
         permanent_rootdir = False
 
-    pkgs = needed_packages(report)
+    try:
+        report['Package']
+        pkgs = needed_packages(report)
+    except KeyError:
+        # Package key does not exist in case of unpackaged exectutable, so
+        # simply create the pkgs var
+        pkgs=[]
+
+    print('needed pkgs',pkgs)
+
     for p in extra_packages:
         pkgs.append((p, None))
     if config_dir == 'system':
@@ -152,6 +198,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     pkgs = needed_runtime_packages(report, sandbox_dir, cache_dir, verbose)
 
+    print('runtime pkgs',pkgs)
+
     # package hooks might reassign Package:, check that we have the originally
     # crashing binary
     for path in ('InterpreterPath', 'ExecutablePath'):
@@ -166,22 +214,28 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     if pkgs:
         try:
+            print('trying to install runtime pkgs')
             outdated_msg += apport.packaging.install_packages(
                 sandbox_dir, config_dir, report['DistroRelease'], pkgs,
-                cache_dir, architecture=report.get('Architecture'))
+                cache_dir=cache_dir, architecture=report.get('Architecture'))
         except SystemError as e:
             sys.stderr.write(str(e) + '\n')
             sys.exit(1)
-
-    for path in ('InterpreterPath', 'ExecutablePath'):
-        if path in report and not os.path.exists(sandbox_dir + report[path]):
-            apport.error('%s %s does not exist (report specified package %s)',
-                         path, sandbox_dir + report[path], report['Package'])
-            sys.exit(0)
+    try:
+        # This test for the executable being in the sandbox is not valid for
+        # unpackaged executables, so do not run on KeyError
+        for path in ('InterpreterPath', 'ExecutablePath'):
+            if path in report and not os.path.exists(sandbox_dir + report[path]):
+                apport.error('%s %s does not exist (report specified package %s)',
+                             path, sandbox_dir + report[path], report['Package'])
+                sys.exit(0)
+    except KeyError:
+        pass
 
     if outdated_msg:
         report['RetraceOutdatedPackages'] = outdated_msg
 
     apport.memdbg('built sandbox')
+    print('about to return from make_sandbox')
 
     return sandbox_dir, cache_dir, outdated_msg
