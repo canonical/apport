@@ -2,6 +2,7 @@
 
 # Copyright (C) 2006 - 2009 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
+#         Kyle Nitzsche <kyle.nitzsche@canonical.com>
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -88,7 +89,6 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
         libs = apport.fileutils.shared_libraries(report['ExecutablePath'])
         for l in libs:
             libs.add(l.encode('utf8'))
-        print('libs', libs)
 
     if sandbox:
         cache_dir = os.path.join(cache_dir, report['DistroRelease'])
@@ -99,6 +99,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             continue
 
         pkg = apport.packaging.get_file_package(l, True, cache_dir,
+                                                exact_match=False,
                                                 arch=report.get('Architecture'))
         if pkg:
             if verbose:
@@ -154,6 +155,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     Return a tuple (sandbox_dir, cache_dir, outdated_msg).
     '''
+    # sandbox
     if sandbox_dir:
         sandbox_dir = os.path.abspath(sandbox_dir)
         if not os.path.isdir(sandbox_dir):
@@ -164,6 +166,14 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         atexit.register(shutil.rmtree, sandbox_dir)
         permanent_rootdir = False
 
+    # cache
+    if cache_dir:
+        cache_dir = os.path.abspath(cache_dir)
+    else:
+        cache_dir = tempfile.mkdtemp(prefix='apport_cache_')
+        atexit.register(shutil.rmtree, cache_dir)
+
+    # get dependencies of packaged executable, if any
     try:
         report['Package']
         pkgs = needed_packages(report)
@@ -172,21 +182,12 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         # simply create the pkgs var
         pkgs=[]
 
-    print('needed pkgs',pkgs)
-
     for p in extra_packages:
         pkgs.append((p, None))
     if config_dir == 'system':
         config_dir = None
 
-    # we call install_packages() multiple times, plus get_file_package(); use
-    # a shared cache dir for these
-    if cache_dir:
-        cache_dir = os.path.abspath(cache_dir)
-    else:
-        cache_dir = tempfile.mkdtemp(prefix='apport_cache_')
-        atexit.register(shutil.rmtree, cache_dir)
-
+    # unpack dependencies of packaged executable using cache and sandbox
     try:
         outdated_msg = apport.packaging.install_packages(
             sandbox_dir, config_dir, report['DistroRelease'], pkgs,
@@ -196,9 +197,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         sys.stderr.write(str(e) + '\n')
         sys.exit(1)
 
+    # get packages for executable (packaged or not)
     pkgs = needed_runtime_packages(report, sandbox_dir, cache_dir, verbose)
-
-    print('runtime pkgs',pkgs)
 
     # package hooks might reassign Package:, check that we have the originally
     # crashing binary
@@ -212,9 +212,9 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
             else:
                 apport.warning('Cannot find package which ships %s', path)
 
+    # unpack packages for executable using cache and sandbox
     if pkgs:
         try:
-            print('trying to install runtime pkgs')
             outdated_msg += apport.packaging.install_packages(
                 sandbox_dir, config_dir, report['DistroRelease'], pkgs,
                 cache_dir=cache_dir, architecture=report.get('Architecture'))
@@ -236,6 +236,5 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         report['RetraceOutdatedPackages'] = outdated_msg
 
     apport.memdbg('built sandbox')
-    print('about to return from make_sandbox')
 
     return sandbox_dir, cache_dir, outdated_msg
