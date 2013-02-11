@@ -36,23 +36,18 @@ def shared_libraries(path):
     libs = set()
 
     for line in apport.hookutils.command_output(['ldd', path]).split('\n'):
-       # print('line', line)
         try:
             lib, rest = line.split('=>', 1)
         except ValueError:
             continue
 
-        #print('lib', lib)
         lib = lib.encode('utf8')
-        #print('lib', lib)
         lib = lib.strip()
-        #print('lib', lib)
         # exclude linux-vdso since that is a virtual so
         if 'linux-vdso' in lib:
             continue
         libs.add(lib)
 
-    #print('libs', libs)
     return libs
 
 
