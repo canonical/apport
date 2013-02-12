@@ -1,4 +1,4 @@
-.TH apport\-valgrind 1 "December 14, 2012" "Kyle Nitzsche"
+.TH apport\-valgrind 1 "February 12, 2013" "Kyle Nitzsche"
 
 .SH NAME
 
@@ -39,6 +39,17 @@ is the program to run under valgrind. Always terminate the
 .I EXECUTABLE
 in its usual way. Exit it from the GUI if there is one. If not, use the most
 appropriate method.
+
+Different techniques are used to determine which packages should be unpacked
+into the sandbox depending on whether
+.I EXECUTABLE
+is packaged (installed by a debian package) or not (for example something
+created for development or testing). A packaged
+.I EXECUTABLE
+has debian dependencies that are used. For an unpackaged
+.I EXECUTABLE
+, the shared object files are found with ldd and the packages for these are
+found and used.
 
 .SH OPTIONS
 
