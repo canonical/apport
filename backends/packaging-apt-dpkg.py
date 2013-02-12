@@ -346,7 +346,7 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         exact_match is False when called from shared_libraries(), that is,
         when finding shared libs for an unpackaged executable. Only the lib
-        file name, not the full path, is searched for, so we relax the search by 
+        file name, not the full path, is searched for, so we relax the search by
         __fgrep()) this way as needed.
         '''
         # check if the file is a diversion

@@ -180,7 +180,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     except KeyError:
         # Package key does not exist in case of unpackaged exectutable, so
         # simply create the pkgs var
-        pkgs=[]
+        pkgs = []
 
     for p in extra_packages:
         pkgs.append((p, None))
