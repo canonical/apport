@@ -317,6 +317,8 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         libs = apport.fileutils.shared_libraries(sys.executable)
         self.assertGreater(len(libs), 3)
         self.assertTrue('libc.so.6' in libs, libs)
+        for l in libs:
+            self.assertFalse('vdso' in l, libs)
 
         self.assertEqual(apport.fileutils.shared_libraries('/non/existing'), set())
         self.assertEqual(apport.fileutils.shared_libraries('/etc'), set())

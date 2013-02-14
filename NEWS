@@ -15,6 +15,8 @@ Bug fixes:
  * Move shared_libraries() and links_with_shared_library() from hookutils into
    fileutils, so that we can use it from apport-valgrind. Thanks to Kyle
    Nitzsche for the initial patch.
+ * fileutils.shared_libraries(): Filter out virtual "linux-vdso" from result.
+   Thanks Kyle Nitzsche.
 
 2.8 (2013-01-08):
 -----------------
