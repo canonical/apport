@@ -111,8 +111,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
 
 def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                  extra_packages=[], verbose=False, log_timestamps=False):
-    '''Build a sandbox with the packages that belong to a particular report
-    and for the executable.
+    '''Build a sandbox with the packages that belong to a particular report.
 
     This downloads and unpacks all packages from the report's Package and
     Dependencies fields, plus all packages that ship the files from ProcMaps
