@@ -305,15 +305,14 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def __fgrep_files(self, pattern, file_list):
         '''Call fgrep for a pattern on given file list and return the first
-        matching file, or None if no file matches.
-        '''
+        matching file, or None if no file matches.'''
 
         match = None
         slice_size = 100
         i = 0
 
         while not match and i < len(file_list):
-            p = subprocess.Popen(['fgrep', '-xlm', '1', '--', pattern] +
+            p = subprocess.Popen(['fgrep', '-lxm', '1', '--', pattern] +
                                  file_list[i:(i + slice_size)], stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out = p.communicate()[0].decode('UTF-8')
@@ -336,11 +335,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         downloaded maps. If it is not set, a temporary directory will be used.
         Also, release and arch can be set to a foreign release/architecture
         instead of the one from the current system.
-
-        exact_match is False when called from shared_libraries(), that is,
-        when finding shared libs for an unpackaged executable. Only the lib
-        file name, not the full path, is searched for, so we relax the search by
-        __fgrep()) this way as needed.
         '''
         # check if the file is a diversion
         dpkg = subprocess.Popen(['/usr/sbin/dpkg-divert', '--list', file],
