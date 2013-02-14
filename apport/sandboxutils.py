@@ -87,8 +87,6 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     except KeyError:
         # 'Package' key is absent on unpackaged executables
         libs = apport.fileutils.shared_libraries(report['ExecutablePath'])
-        for l in libs:
-            libs.add(l.encode('utf8'))
 
     if sandbox:
         cache_dir = os.path.join(cache_dir, report['DistroRelease'])
