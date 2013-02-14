@@ -313,7 +313,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         i = 0
 
         while not match and i < len(file_list):
-            p = subprocess.Popen(['fgrep', -'xlm', '1', '--', pattern] +
+            p = subprocess.Popen(['fgrep', '-xlm', '1', '--', pattern] +
                                  file_list[i:(i + slice_size)], stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out = p.communicate()[0].decode('UTF-8')
