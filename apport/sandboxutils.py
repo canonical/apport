@@ -57,7 +57,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     present, its value contains data from /proc/pid/maps, which shows the
     shared libraries.
 
-    2. report['Packaged']: this only exists when the executable is installed
+    2. report['Package']: this only exists when the executable is installed
     by a package. This case applies to both apport-retrace and apport
     valgrind. However, when the key does not exist, it (probably) only applies
     to apport-valgrind. The idea is to support running apport-valgrind on
@@ -83,9 +83,9 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
                 lib = os.path.realpath(cols[5])
                 libs.add(lib)
     try:
-        report['Packaged']
+        report['Package']
     except KeyError:
-        # 'Packaged' key is absent on unpackaged executables
+        # 'Package' key is absent on unpackaged executables
         libs = apport.fileutils.shared_libraries(report['ExecutablePath'])
         for l in libs:
             libs.add(l.encode('utf8'))
