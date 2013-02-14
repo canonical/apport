@@ -97,7 +97,6 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             continue
 
         pkg = apport.packaging.get_file_package(l, True, cache_dir,
-                                                exact_match=False,
                                                 arch=report.get('Architecture'))
         if pkg:
             if verbose:
