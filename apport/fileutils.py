@@ -340,7 +340,7 @@ def shared_libraries(path):
             continue
         libs.add(lib)
     ldd.stdout.close()
-    ldd.wait()
+    ldd.wait(5)
 
     if ldd.returncode != 0:
         return set()
