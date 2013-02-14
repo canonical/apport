@@ -330,11 +330,14 @@ def shared_libraries(path):
                            universal_newlines=True)
     for line in ldd.stdout:
         try:
-            lib, rest = line.split('=>', 1)
+            rest, lib = line.split('=>', 1)
         except ValueError:
             continue
 
         lib = lib.strip()
+        lib = lib.split(' ')[0]
+        if lib.startswith('('):
+            continue
         # exclude linux-vdso since that is a virtual so
         if 'linux-vdso' in lib:
             continue

@@ -303,24 +303,17 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         return modified
 
-    def __fgrep_files(self, pattern, file_list, exact_match=True):
+    def __fgrep_files(self, pattern, file_list):
         '''Call fgrep for a pattern on given file list and return the first
         matching file, or None if no file matches.
-
-        exact_match sets whether -x (for exact match) is used on fgrep.
         '''
 
         match = None
         slice_size = 100
         i = 0
 
-        if exact_match:
-            fgrep_args = '-lxm'
-        else:
-            fgrep_args = '-lm'
-
         while not match and i < len(file_list):
-            p = subprocess.Popen(['fgrep', fgrep_args, '1', '--', pattern] +
+            p = subprocess.Popen(['fgrep', -'xlm', '1', '--', pattern] +
                                  file_list[i:(i + slice_size)], stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out = p.communicate()[0].decode('UTF-8')
@@ -331,7 +324,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         return match
 
     def get_file_package(self, file, uninstalled=False, map_cachedir=None,
-                         release=None, exact_match=True, arch=None):
+                         release=None, arch=None):
         '''Return the package a file belongs to.
 
         Return None if the file is not shipped by any package.
@@ -370,9 +363,9 @@ class __AptDpkgPackageInfo(PackageInfo):
                 all_lists.append(f)
 
         # first check the likely packages
-        match = self.__fgrep_files(file, likely_lists, exact_match)
+        match = self.__fgrep_files(file, likely_lists)
         if not match:
-            match = self.__fgrep_files(file, all_lists, exact_match)
+            match = self.__fgrep_files(file, all_lists)
         if match:
             return os.path.splitext(os.path.basename(match))[0].split(':')[0]
 
