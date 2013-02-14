@@ -40,31 +40,11 @@ def needed_packages(report):
 def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     '''Determine necessary runtime packages for given report.
 
-    This determines libraries dynamically loaded at runtime and
-    supports four use cases:
+    This determines libraries dynamically loaded at runtime in two cases:
+    1. The executable has already run: /proc/pid/maps is used, from the report
+    2. The executable has not already run: shared_libraries() is used
 
-    1. The executable is packaged and already ran (apport-retrace only)
-    2. The executable is packaged and has not yet run (apport-valgrind only)
-    3. The executable is unpackaged and already ran (theoretical only, no
-    use case)
-    4. The executable is unpackaged and has not yet run (apport-valgrind)
-
-    Two report keys are used to select the code path appropriate for the
-    particular use case:
-
-    1. report['Procmaps']: this only exists when the executable has already
-    run and therefore is applicable to apport-retrace only. When this key is
-    present, its value contains data from /proc/pid/maps, which shows the
-    shared libraries.
-
-    2. report['Package']: this only exists when the executable is installed
-    by a package. This case applies to both apport-retrace and apport
-    valgrind. However, when the key does not exist, it (probably) only applies
-    to apport-valgrind. The idea is to support running apport-valgrind on
-    unpackaged executables. In this case, shared libraries are determined from
-    shared_libraries(), which uses ldd on the executable.
-
-    The package for each shared lib is obtained from get_file_package().
+    The libraries are resolved to the packages that installed them.
 
     Return list of (pkgname, None) pairs.
 
@@ -82,10 +62,8 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
                 lib = os.path.realpath(cols[5])
                 libs.add(lib)
-    try:
-        report['Package']
-    except KeyError:
-        # 'Package' key is absent on unpackaged executables
+    else:
+        # 'ProcMaps' key is absent in apport-valgrind use case
         libs = apport.fileutils.shared_libraries(report['ExecutablePath'])
 
     if sandbox:
@@ -122,7 +100,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     report is an apport.Report object to build a sandbox for. Presence of the
     Package field determines whether to determine dependencies through
-    packaging (vai the optional report['Dependencies'] field), or through ldd
+    packaging (via the optional report['Dependencies'] field), or through ldd
     via needed_runtime_packages() -> shared_libraries().  Usually
     report['Architecture'] and report['Uname'] are present.
 
@@ -169,21 +147,26 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         cache_dir = tempfile.mkdtemp(prefix='apport_cache_')
         atexit.register(shutil.rmtree, cache_dir)
 
-    # get dependencies of packaged executable, if any
-    try:
-        report['Package']
-        pkgs = needed_packages(report)
-    except KeyError:
-        # Package key does not exist in case of unpackaged exectutable, so
-        # simply create the pkgs var
-        pkgs = []
+    pkgs = []
 
+    # when ProcMaps is not available, try to use report to get packages
+    try:
+        report['ProcMaps']
+    except KeyError:
+        try:
+            report['Package']
+            # key only exists for packaged executables
+            pkgs = needed_packages(report)
+        except KeyError:
+            pass
+
+    # add user-specified extra packages, if any
     for p in extra_packages:
         pkgs.append((p, None))
     if config_dir == 'system':
         config_dir = None
 
-    # unpack dependencies of packaged executable using cache and sandbox
+    # unpack packages, if any, using cache and sandbox
     try:
         outdated_msg = apport.packaging.install_packages(
             sandbox_dir, config_dir, report['DistroRelease'], pkgs,
@@ -193,7 +176,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         sys.stderr.write(str(e) + '\n')
         sys.exit(1)
 
-    # get packages for executable (packaged or not)
+    # get 'runtime' packages for executable
     pkgs = needed_runtime_packages(report, sandbox_dir, cache_dir, verbose)
 
     # package hooks might reassign Package:, check that we have the originally
