@@ -323,25 +323,26 @@ get_config.config = None
 def shared_libraries(path):
     '''Return libraries with which the specified binary is linked.'''
 
-    libs = set()
+    libs = dict()
 
     ldd = subprocess.Popen(['ldd', path], stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT,
                            universal_newlines=True)
     for line in ldd.stdout:
         try:
-            rest, lib = line.split('=>', 1)
+            lib, rest = line.split('=>', 1)
         except ValueError:
             continue
 
         lib = lib.strip()
-        lib = lib.split(' ')[0]
-        if lib.startswith('('):
-            continue
         # exclude linux-vdso since that is a virtual so
         if 'linux-vdso' in lib:
             continue
-        libs.add(lib)
+        rest = rest.lstrip().rstrip()
+        rest = rest.split(' ')[0]
+        if rest.startswith('('):
+            continue
+        libs[lib] = rest
     ldd.stdout.close()
     ldd.wait()
 

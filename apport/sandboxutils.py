@@ -53,7 +53,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     # check list of libraries that the crashed process referenced at
     # runtime and warn about those which are not available
     pkgs = set()
-    libs = set()
+    libs = dict()
     if 'ProcMaps' in report:
         for l in report['ProcMaps'].splitlines():
             if not l.strip():
@@ -61,11 +61,10 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             cols = l.split()
             if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
                 lib = os.path.realpath(cols[5])
-                libs.add(lib)
+                libs[lib] = None
     else:
         # 'ProcMaps' key is absent in apport-valgrind use case
         libs = apport.fileutils.shared_libraries(report['ExecutablePath'])
-
     if sandbox:
         cache_dir = os.path.join(cache_dir, report['DistroRelease'])
 
@@ -73,8 +72,11 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     for l in libs:
         if os.path.exists(sandbox + l):
             continue
-
-        pkg = apport.packaging.get_file_package(l, True, cache_dir,
+        if 'ProcMaps' in report:
+            lib = l
+        else:
+            lib = libs[l]
+        pkg = apport.packaging.get_file_package(lib, True, cache_dir,
                                                 arch=report.get('Architecture'))
         if pkg:
             if verbose:
