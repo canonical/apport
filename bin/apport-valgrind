@@ -92,6 +92,7 @@ try:
         ['which', options.exe], stdout=subprocess.PIPE).communicate()[0]
     exepath = bytes.decode(exepath)
     exepath = exepath.rstrip('\n')
+    exepath = os.path.abspath(exepath)
     if not exepath:
         sys.stderr.write(_('Error: %s is not an executable. Stopping.') % options.exe)
         sys.stderr.write('\n')
