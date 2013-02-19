@@ -33,7 +33,6 @@ if os.path.exists(vmcore_path):
         apport.fatal('Cannot create report: ' + str(e))
 else:
 # kdump-tools has moved vmcore to timestamped dir
-# unless makedumpfile failed
     for root, dirs, files in os.walk(vmcore_root):
         for timedir in dirs:
             if re.search('^[0-9]{12}$', timedir):
