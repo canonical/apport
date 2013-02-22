@@ -37,12 +37,13 @@ else:
         for timedir in dirs:
             if re.search('^[0-9]{12}$', timedir):
                 vmcore_dir = os.path.join(vmcore_root, timedir)
-                dmesgfile = os.path.join(vmcore_dir, 'dmesg.'+timedir)
+                dmesgfile = os.path.join(vmcore_dir, 'dmesg.' + timedir)
+                report_name = pr['Package'] + '-' + timedir + '.crash'
+                crash_report = os.path.join(vmcore_root, report_name)
                 pr['VmCoreDmesg'] = (dmesgfile,)
-                pr['Package'] = apport.packaging.get_kernel_package()+'-'+timedir
-                if not os.path.exists(apport.fileutils.make_report_path(pr)):
+                if not os.path.exists(crash_report):
                     try:
-                        with open(apport.fileutils.make_report_path(pr), 'wb') as f:
+                        with open(crash_report, 'wb') as f:
                             pr.write(f)
                     except IOError as e:
                         apport.fatal('Cannot create report: ' + str(e))
