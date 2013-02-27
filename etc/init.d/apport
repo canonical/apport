@@ -40,7 +40,7 @@ do_start()
         chmod 1777 /var/crash
 
         # check for kernel crash dump, convert it to apport report
-        if [ -e /var/crash/vmcore ] || [ "`ls /var/crash | egrep ^[0-9]{12}$`" ];then
+        if [ -e /var/crash/vmcore ] || [ -n "`ls /var/crash | egrep ^[0-9]{12}$`" ];then
             /usr/share/apport/kernel_crashdump || true
         fi
 
