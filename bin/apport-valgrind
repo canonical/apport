@@ -157,7 +157,7 @@ try:
     argv += ['--log-file=%s' % options.log]
     argv += ['--track-origins=yes']
     if (not options.no_sandbox):
-        argv += ['--extra-debuginfo-path=%s' % debugrootdir]
+        argv += ['--extra-debuginfo-path=%s/usr/lib/debug/' % debugrootdir]
     argv += [exepath]
 
     apport.memdbg('before calling valgrind')
