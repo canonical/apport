@@ -125,42 +125,39 @@ void makeleak(void){
         cmd = ['cp', '/bin/pwd', self.workdir]
         subprocess.call(cmd)
 
-        EXEPATH = os.path.join(self.workdir, 'pwd')
+        exepath = os.path.join(self.workdir, 'pwd')
 
-        LOG = 'unpackaged-exe.log'
-        LOGPATH = os.path.join(self.workdir, LOG)
+        log = 'unpackaged-exe.log'
+        logpath = os.path.join(self.workdir, log)
 
-        cmd = ['apport-valgrind', '--no-sandbox', '-l', LOG, EXEPATH]
+        cmd = ['apport-valgrind', '--no-sandbox', '-l', log, exepath]
         subprocess.call(cmd)
 
-        cmd = ['ls', LOGPATH]
-        self.assertEqual(subprocess.call(cmd), 0,
-                         'A logfile (%s) should exist but does not' % LOGPATH)
+        self.assertTrue(os.path.exists(logpath),
+                        'A log file %s should exist but does not' % logpath)
 
     def test_sandbox_cache(self):
         '''apport-valgrind creates a user specified sandbox and cache'''
 
         os.chdir(self.workdir)
 
-        SANDBOX = '/tmp/test-sandbox'
-        SANDBOXPATH = os.path.join(self.workdir, SANDBOX)
+        sandbox = '/tmp/test-sandbox'
+        sandboxpath = os.path.join(self.workdir, sandbox)
 
-        CACHE = '/tmp/test-cache'
-        CACHEPATH = os.path.join(self.workdir, CACHE)
+        cache = '/tmp/test-cache'
+        cachepath = os.path.join(self.workdir, cache)
 
-        cmd = ['apport-valgrind', '--sandbox-dir', SANDBOX, '--cache', CACHE,
+        cmd = ['apport-valgrind', '--sandbox-dir', sandbox, '--cache', cache,
                'pwd']
         subprocess.call(cmd)
 
-        cmd = ['ls', SANDBOXPATH]
-        self.assertEqual(subprocess.call(cmd), 0,
-                         'A sandbox directory %s was specified but was not '
-                         'created' % SANDBOXPATH)
+        self.assertTrue(os.path.exists(sandboxpath),
+                        'A sandbox directory %s was specified but was not created'
+                        % sandboxpath)
 
-        cmd = ['ls', CACHEPATH]
-        self.assertEqual(subprocess.call(cmd), 0,
-                         'A cache directory %s was specified but was not '
-                         'created' % CACHEPATH)
+        self.assertTrue(os.path.exists(cachepath),
+                        'A cache directory %s was specified but was not created' %
+                        cachepath)
 
 
 unittest.main()

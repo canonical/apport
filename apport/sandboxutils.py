@@ -23,7 +23,7 @@ def needed_packages(report):
     pkgs = {}
 
     # first, grab the versions that we captured at crash time
-    for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
+    for l in (report.get('Package', '') + '\n' + report.get('Dependencies', '')).splitlines():
         if not l.strip():
             continue
         try:
@@ -53,7 +53,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     # check list of libraries that the crashed process referenced at
     # runtime and warn about those which are not available
     pkgs = set()
-    libs = dict()
+    libs = set()
     if 'ProcMaps' in report:
         for l in report['ProcMaps'].splitlines():
             if not l.strip():
@@ -61,10 +61,10 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             cols = l.split()
             if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
                 lib = os.path.realpath(cols[5])
-                libs[lib] = None
+                libs.add(lib)
     else:
         # 'ProcMaps' key is absent in apport-valgrind use case
-        libs = apport.fileutils.shared_libraries(report['ExecutablePath'])
+        libs = apport.fileutils.shared_libraries(report['ExecutablePath']).values()
     if sandbox:
         cache_dir = os.path.join(cache_dir, report['DistroRelease'])
 
@@ -72,11 +72,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     for l in libs:
         if os.path.exists(sandbox + l):
             continue
-        if 'ProcMaps' in report:
-            lib = l
-        else:
-            lib = libs[l]
-        pkg = apport.packaging.get_file_package(lib, True, cache_dir,
+        pkg = apport.packaging.get_file_package(l, True, cache_dir,
                                                 arch=report.get('Architecture'))
         if pkg:
             if verbose:
@@ -155,12 +151,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     try:
         report['ProcMaps']
     except KeyError:
-        try:
-            report['Package']
-            # key only exists for packaged executables
-            pkgs = needed_packages(report)
-        except KeyError:
-            pass
+        pkgs = needed_packages(report)
 
     # add user-specified extra packages, if any
     for p in extra_packages:
@@ -202,16 +193,13 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         except SystemError as e:
             sys.stderr.write(str(e) + '\n')
             sys.exit(1)
-    try:
-        # This test for the executable being in the sandbox is not valid for
-        # unpackaged executables, so do not run on KeyError
-        for path in ('InterpreterPath', 'ExecutablePath'):
-            if path in report and not os.path.exists(sandbox_dir + report[path]):
-                apport.error('%s %s does not exist (report specified package %s)',
-                             path, sandbox_dir + report[path], report['Package'])
+    for path in ('InterpreterPath', 'ExecutablePath'):
+        if path in report and not os.path.exists(sandbox_dir + report[path]):
+            apport.error('%s %s does not exist (report specified package %s)',
+                         path, sandbox_dir + report[path],
+                         report.get('Package', '<no package>'))
+            if 'Package' in report:
                 sys.exit(0)
-    except KeyError:
-        pass
 
     if outdated_msg:
         report['RetraceOutdatedPackages'] = outdated_msg
