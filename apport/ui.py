@@ -29,8 +29,10 @@ from apport import unicode_gettext as _
 if sys.version_info.major == 2:
     from ConfigParser import ConfigParser
     ConfigParser  # pyflakes
+    PY3 = False
 else:
     from configparser import ConfigParser
+    PY3 = True
 
 
 def excstr(exception):
@@ -1268,9 +1270,14 @@ class UserInterface:
         if not desktop_file:
             return None
 
-        cp = ConfigParser(interpolation=None, strict=False)
+        if PY3:
+            cp = ConfigParser(interpolation=None, strict=False)
+            kwargs = {'encoding': 'UTF-8'}
+        else:
+            cp = ConfigParser()
+            kwargs = {}
         try:
-            cp.read(desktop_file, encoding='UTF-8')
+            cp.read(desktop_file, **kwargs)
         except Exception as e:
             if 'onfig' in str(e.__class__) and 'arser' in str(e.__class__):
                 sys.stderr.write('Warning! %s is broken: %s\n' % (desktop_file, str(e)))

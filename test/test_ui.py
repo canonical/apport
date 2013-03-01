@@ -2015,22 +2015,27 @@ return 'bash'
         '''parsing of .desktop files'''
 
         desktop_file = tempfile.NamedTemporaryFile()
-        desktop_file.write('''[Desktop Entry]
+        desktop_file.write(b'''[Desktop Entry]
 Name=gtranslate
 GenericName=Translator
-GenericName[de]=Übersetzer
+GenericName[de]=\xc3\x9cbersetzer
 Exec=gedit %U
 Categories=GNOME;GTK;Utility;TextEditor;
-'''.encode('UTF-8'))
+''')
         desktop_file.flush()
 
         self.report['DesktopFile'] = desktop_file.name
         self.ui.report = self.report
         info = self.ui.get_desktop_entry()
+        if sys.version_info.major == 2:
+            exp_genericname = b'\xc3\x9cbersetzer'
+        else:
+            exp_genericname = b'\xc3\x9cbersetzer'.decode('UTF-8')
+
         self.assertEqual(info, {'genericname': 'Translator',
                                 'categories': 'GNOME;GTK;Utility;TextEditor;',
                                 'name': 'gtranslate',
-                                'genericname[de]': 'Übersetzer',
+                                'genericname[de]': exp_genericname,
                                 'exec': 'gedit %U'})
 
     def test_get_desktop_entry_broken(self):
@@ -2038,24 +2043,28 @@ Categories=GNOME;GTK;Utility;TextEditor;
 
         # duplicate key
         desktop_file = tempfile.NamedTemporaryFile()
-        desktop_file.write('''[Desktop Entry]
+        desktop_file.write(b'''[Desktop Entry]
 Name=gtranslate
 GenericName=Translator
-GenericName[de]=Übersetzer
+GenericName[de]=\xc3\x9cbersetzer
 Exec=gedit %U
 Keywords=foo;bar;
 Categories=GNOME;GTK;Utility;TextEditor;
 Keywords=baz
-'''.encode('UTF-8'))
+''')
         desktop_file.flush()
 
         self.report['DesktopFile'] = desktop_file.name
         self.ui.report = self.report
         info = self.ui.get_desktop_entry()
+        if sys.version_info.major == 2:
+            exp_genericname = b'\xc3\x9cbersetzer'
+        else:
+            exp_genericname = b'\xc3\x9cbersetzer'.decode('UTF-8')
         self.assertEqual(info, {'genericname': 'Translator',
                                 'categories': 'GNOME;GTK;Utility;TextEditor;',
                                 'name': 'gtranslate',
-                                'genericname[de]': 'Übersetzer',
+                                'genericname[de]': exp_genericname,
                                 'keywords': 'baz',
                                 'exec': 'gedit %U'})
 

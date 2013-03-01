@@ -25,6 +25,7 @@ Bug fixes:
  * fileutils.shared_libraries(): Filter out virtual "linux-vdso" from result.
    Thanks Kyle Nitzsche.
  * apport-valgrind: Fix path to debug symbols in the sandbox.
+ * ui.py, get_desktop_entry(): Fix for Python 2.
 
 2.8 (2013-01-08):
 -----------------
