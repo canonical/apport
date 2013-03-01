@@ -317,12 +317,15 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         libs = apport.fileutils.shared_libraries(sys.executable)
         self.assertGreater(len(libs), 3)
         self.assertTrue('libc.so.6' in libs, libs)
+        self.assertTrue('libc.so.6' in libs['libc.so.6'], libs['libc.so.6'])
+        self.assertTrue(os.path.exists(libs['libc.so.6']))
         for l in libs:
             self.assertFalse('vdso' in l, libs)
+            self.assertTrue(os.path.exists(libs[l]))
 
-        self.assertEqual(apport.fileutils.shared_libraries('/non/existing'), set())
-        self.assertEqual(apport.fileutils.shared_libraries('/etc'), set())
-        self.assertEqual(apport.fileutils.shared_libraries('/etc/passwd'), set())
+        self.assertEqual(apport.fileutils.shared_libraries('/non/existing'), {})
+        self.assertEqual(apport.fileutils.shared_libraries('/etc'), {})
+        self.assertEqual(apport.fileutils.shared_libraries('/etc/passwd'), {})
 
     def test_links_with_shared_library(self):
         '''links_with_shared_library()'''

@@ -321,30 +321,36 @@ get_config.config = None
 
 
 def shared_libraries(path):
-    '''Return libraries with which the specified binary is linked.'''
+    '''Get libraries with which the specified binary is linked.
 
-    libs = set()
+    Return a library name -> path mapping, for example 'libc.so.6' ->
+    '/lib/x86_64-linux-gnu/libc.so.6'.
+    '''
+    libs = {}
 
     ldd = subprocess.Popen(['ldd', path], stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT,
                            universal_newlines=True)
     for line in ldd.stdout:
         try:
-            lib, rest = line.split('=>', 1)
+            name, rest = line.split('=>', 1)
         except ValueError:
             continue
 
-        lib = lib.strip()
+        name = name.strip()
         # exclude linux-vdso since that is a virtual so
-        if 'linux-vdso' in lib:
+        if 'linux-vdso' in name:
             continue
-        libs.add(lib)
+        # this is usually "path (address)"
+        rest = rest.split()[0].strip()
+        if rest.startswith('('):
+            continue
+        libs[name] = rest
     ldd.stdout.close()
     ldd.wait()
 
     if ldd.returncode != 0:
-        return set()
-
+        return {}
     return libs
 
 
