@@ -117,7 +117,7 @@ class T(unittest.TestCase):
                         'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY',
                         'LC_MESSAGES', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS',
                         'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION',
-                        'LOCPATH', 'TERM', 'XDG_RUNTIME_DIR']
+                        'LOCPATH', 'TERM', 'XDG_RUNTIME_DIR', 'LD_PRELOAD']
 
         for l in pr['ProcEnviron'].splitlines():
             (k, v) = l.split('=', 1)
