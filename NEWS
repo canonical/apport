@@ -6,6 +6,9 @@ detailled list of changes, please see ChangeLog.
 Improvements:
  * fileutils.py, shared_libraries(): Return a "name → path" dict instead of
    just a set of names. Thanks Kyle Nitzsche.
+ * sandboxutils.py: Support unpackaged executables, i. e. reports which do not
+   have "Package" and "Dependencies" fields. For those, get required libraries
+   from "ProcMaps". Thanks Kyle Nitzsche.
 
 Bug fixes:
  * Add "com.ubuntu.apport.apport-gtk-root" polkit action for running apport-gtk
@@ -21,6 +24,7 @@ Bug fixes:
    Nitzsche for the initial patch.
  * fileutils.shared_libraries(): Filter out virtual "linux-vdso" from result.
    Thanks Kyle Nitzsche.
+ * apport-valgrind: Fix path to debug symbols in the sandbox.
 
 2.8 (2013-01-08):
 -----------------

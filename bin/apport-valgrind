@@ -92,6 +92,7 @@ try:
         ['which', options.exe], stdout=subprocess.PIPE).communicate()[0]
     exepath = bytes.decode(exepath)
     exepath = exepath.rstrip('\n')
+    exepath = os.path.abspath(exepath)
     if not exepath:
         sys.stderr.write(_('Error: %s is not an executable. Stopping.') % options.exe)
         sys.stderr.write('\n')
@@ -156,7 +157,7 @@ try:
     argv += ['--log-file=%s' % options.log]
     argv += ['--track-origins=yes']
     if (not options.no_sandbox):
-        argv += ['--extra-debuginfo-path=%s' % debugrootdir]
+        argv += ['--extra-debuginfo-path=%s/usr/lib/debug/' % debugrootdir]
     argv += [exepath]
 
     apport.memdbg('before calling valgrind')

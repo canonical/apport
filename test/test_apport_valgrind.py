@@ -118,5 +118,37 @@ void makeleak(void){
                            'The intentional memory leak should be reported '
                            'in the valgrind log file but is not.')
 
+    def test_unpackaged_exe(self):
+        '''apport-valgrind creates valgrind log on unpackaged executable'''
+
+        exepath = os.path.join(self.workdir, 'pwd')
+        shutil.copy('/bin/pwd', exepath)
+        logpath = os.path.join(self.workdir, 'unpackaged-exe.log')
+
+        subprocess.check_call(['apport-valgrind', '--no-sandbox', '-l', logpath, exepath])
+        self.assertTrue(os.path.exists(logpath),
+                        'A log file %s should exist but does not' % logpath)
+
+        with open(logpath) as f:
+            log = f.read()
+            self.assertTrue(exepath in log, log)
+
+    def test_sandbox_cache_options(self):
+        '''apport-valgrind creates a user specified sandbox and cache'''
+
+        sandbox = os.path.join(self.workdir, 'test-sandbox')
+        cache = os.path.join(self.workdir, 'test-cache')
+
+        cmd = ['apport-valgrind', '--sandbox-dir', sandbox, '--cache', cache, 'true']
+        subprocess.check_call(cmd)
+
+        self.assertTrue(os.path.exists(sandbox),
+                        'A sandbox directory %s was specified but was not created'
+                        % sandbox)
+
+        self.assertTrue(os.path.exists(cache),
+                        'A cache directory %s was specified but was not created' %
+                        cache)
+
 
 unittest.main()

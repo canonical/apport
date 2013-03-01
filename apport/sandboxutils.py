@@ -1,7 +1,8 @@
 '''Functions to manage sandboxes'''
 
-# Copyright (C) 2006 - 2009 Canonical Ltd.
+# Copyright (C) 2006 - 2013 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
+#         Kyle Nitzsche <kyle.nitzsche@canonical.com>
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -22,7 +23,7 @@ def needed_packages(report):
     pkgs = {}
 
     # first, grab the versions that we captured at crash time
-    for l in (report['Package'] + '\n' + report.get('Dependencies', '')).splitlines():
+    for l in (report.get('Package', '') + '\n' + report.get('Dependencies', '')).splitlines():
         if not l.strip():
             continue
         try:
@@ -39,8 +40,11 @@ def needed_packages(report):
 def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     '''Determine necessary runtime packages for given report.
 
-    This determines libraries which were dynamically loaded at runtime, i. e.
-    appear in /proc/pid/maps, but not in Dependencies: (such as plugins).
+    This determines libraries dynamically loaded at runtime in two cases:
+    1. The executable has already run: /proc/pid/maps is used, from the report
+    2. The executable has not already run: shared_libraries() is used
+
+    The libraries are resolved to the packages that installed them.
 
     Return list of (pkgname, None) pairs.
 
@@ -58,7 +62,9 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             if len(cols) == 6 and 'x' in cols[1] and '.so' in cols[5]:
                 lib = os.path.realpath(cols[5])
                 libs.add(lib)
-
+    else:
+        # 'ProcMaps' key is absent in apport-valgrind use case
+        libs = apport.fileutils.shared_libraries(report['ExecutablePath']).values()
     if sandbox:
         cache_dir = os.path.join(cache_dir, report['DistroRelease'])
 
@@ -88,9 +94,14 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     (often, runtime plugins do not appear in Dependencies), plus optionally
     some extra ones, for the distro release and architecture of the report.
 
-    report is an apport.Report object to build a sandbox for. It needs to
-    have at least a Package field, and usually also Dependencies, Architecture,
-    and Uname.
+    For unpackaged executables, there are no Dependencies. Packages for shared
+    libaries are unpacked.
+
+    report is an apport.Report object to build a sandbox for. Presence of the
+    Package field determines whether to determine dependencies through
+    packaging (via the optional report['Dependencies'] field), or through ldd
+    via needed_runtime_packages() -> shared_libraries().  Usually
+    report['Architecture'] and report['Uname'] are present.
 
     config_dir points to a directory with by-release configuration files for
     the packaging system, or "system"; this is passed to
@@ -117,6 +128,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     Return a tuple (sandbox_dir, cache_dir, outdated_msg).
     '''
+    # sandbox
     if sandbox_dir:
         sandbox_dir = os.path.abspath(sandbox_dir)
         if not os.path.isdir(sandbox_dir):
@@ -127,20 +139,27 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         atexit.register(shutil.rmtree, sandbox_dir)
         permanent_rootdir = False
 
-    pkgs = needed_packages(report)
-    for p in extra_packages:
-        pkgs.append((p, None))
-    if config_dir == 'system':
-        config_dir = None
-
-    # we call install_packages() multiple times, plus get_file_package(); use
-    # a shared cache dir for these
+    # cache
     if cache_dir:
         cache_dir = os.path.abspath(cache_dir)
     else:
         cache_dir = tempfile.mkdtemp(prefix='apport_cache_')
         atexit.register(shutil.rmtree, cache_dir)
 
+    pkgs = []
+
+    # when ProcMaps is available, it is enough to get the libraries in it; if
+    # it is not available, get Package/Dependencies
+    if 'ProcMaps' not in report:
+        pkgs = needed_packages(report)
+
+    # add user-specified extra packages, if any
+    for p in extra_packages:
+        pkgs.append((p, None))
+    if config_dir == 'system':
+        config_dir = None
+
+    # unpack packages, if any, using cache and sandbox
     try:
         outdated_msg = apport.packaging.install_packages(
             sandbox_dir, config_dir, report['DistroRelease'], pkgs,
@@ -164,20 +183,26 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
             else:
                 apport.warning('Cannot find package which ships %s', path)
 
+    # unpack packages for executable using cache and sandbox
     if pkgs:
         try:
             outdated_msg += apport.packaging.install_packages(
                 sandbox_dir, config_dir, report['DistroRelease'], pkgs,
-                cache_dir, architecture=report.get('Architecture'))
+                cache_dir=cache_dir, architecture=report.get('Architecture'))
         except SystemError as e:
             sys.stderr.write(str(e) + '\n')
             sys.exit(1)
 
-    for path in ('InterpreterPath', 'ExecutablePath'):
-        if path in report and not os.path.exists(sandbox_dir + report[path]):
-            apport.error('%s %s does not exist (report specified package %s)',
-                         path, sandbox_dir + report[path], report['Package'])
-            sys.exit(0)
+    # sanity check: for a packaged binary we require having the executable in
+    # the sandbox; TODO: for an unpackage binary we don't currently copy its
+    # potential local library dependencies (like those in build trees) into the
+    # sandbox, and we call gdb/valgrind on the binary outside the sandbox.
+    if 'Package' in report:
+        for path in ('InterpreterPath', 'ExecutablePath'):
+            if path in report and not os.path.exists(sandbox_dir + report[path]):
+                apport.error('%s %s does not exist (report specified package %s)',
+                             path, sandbox_dir + report[path], report['Package'])
+                sys.exit(0)
 
     if outdated_msg:
         report['RetraceOutdatedPackages'] = outdated_msg
