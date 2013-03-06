@@ -39,17 +39,19 @@ def fatal(msg, *args):
 def error(msg, *args):
     '''Print out an error message.'''
 
-    sys.stderr.write('ERROR: ')
-    sys.stderr.write(msg % args)
-    sys.stderr.write('\n')
+    if sys.stderr:
+        sys.stderr.write('ERROR: ')
+        sys.stderr.write(msg % args)
+        sys.stderr.write('\n')
 
 
 def warning(msg, *args):
     '''Print out an warning message.'''
 
-    sys.stderr.write('WARNING: ')
-    sys.stderr.write(msg % args)
-    sys.stderr.write('\n')
+    if sys.stderr:
+        sys.stderr.write('WARNING: ')
+        sys.stderr.write(msg % args)
+        sys.stderr.write('\n')
 
 
 def memdbg(checkpoint):
@@ -57,7 +59,7 @@ def memdbg(checkpoint):
 
     This is only done if $APPORT_MEMDEBUG is set.
     '''
-    if not 'APPORT_MEMDEBUG' in os.environ:
+    if not 'APPORT_MEMDEBUG' in os.environ or not sys.stderr:
         return
 
     memstat = {}
