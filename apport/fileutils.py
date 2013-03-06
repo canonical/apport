@@ -48,6 +48,10 @@ def find_package_desktopfile(package):
 
     for line in packaging.get_files(package):
         if line.endswith('.desktop'):
+            # restrict to autostart and applications, see LP#1147528
+            if not line.startswith('/etc/xdg/autostart') and not line.startswith('/usr/share/applications/'):
+                continue
+
             if desktopfile:
                 return None  # more than one
             else:
