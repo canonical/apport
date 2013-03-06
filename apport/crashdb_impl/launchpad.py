@@ -924,9 +924,10 @@ in a dependent package.' % master,
         # privacy/retracing for distro reports
         # FIXME: ugly hack until LP has a real crash db
         if 'DistroRelease' in report:
-            if a and ('VmCore' in report or 'CoreDump' in report):
+            if a and ('VmCore' in report or 'CoreDump' in report or 'LaunchpadPrivate' in report):
                 hdr['Private'] = 'yes'
-                hdr['Subscribers'] = self.options.get('initial_subscriber', 'apport')
+                hdr['Subscribers'] = report.get('LaunchpadSubscribe',
+                                                self.options.get('initial_subscriber', 'apport'))
                 hdr['Tags'] += ' need-%s-retrace' % a
             elif 'Traceback' in report:
                 hdr['Private'] = 'yes'
@@ -946,7 +947,9 @@ in a dependent package.' % master,
 
         # write MIME/Multipart version into temporary file
         mime = tempfile.TemporaryFile()
-        report.write_mime(mime, extra_headers=hdr, skip_keys=['Tags'], priority_fields=order)
+        report.write_mime(mime, extra_headers=hdr,
+                          skip_keys=['Tags', 'LaunchpadPrivate', 'LaunchpadSubscribe'],
+                          priority_fields=order)
         mime.flush()
         mime.seek(0)
 

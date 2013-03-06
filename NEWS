@@ -3,6 +3,10 @@ detailled list of changes, please see ChangeLog.
 
 2.9.1 (UNRELEASED):
 -------------------
+Improvements:
+ * launchpad.py: Add support for filing bugs as private. Document this in
+   doc/crashdb-conf.txt. (LP: #1144647)
+
 Bug fixes:
  * test_signal_crashes.py: Fix test_crash_apport() when being run under
    LD_PRELOAD.

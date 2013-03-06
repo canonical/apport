@@ -131,6 +131,15 @@ Crash database implementations
      apport-retrace and crash-digger to process crash reports of foreign
      architectures. Defaults to system architecture.
 
+   Crash reports are always filed as private Launchpad bug. Bug reports are
+   public by default, but a package hook can change this by adding a
+   "LaunchpadPrivate" report field (NOT a crashdb option!) with any value, and
+   adding a "LaunchpadSubscribe" report field with a list of initial
+   subscribers. For example, your package hook might do this:
+
+   def add_info(report):
+       report['LaunchpadPrivate'] = '1'
+       report['LaunchpadSubscribe'] = 'joe-hacker foobar-dev'
 
  * "memory" is a simple implementation of crash database interface which keeps
    everything in RAM. This is mainly useful for testing and debugging.
