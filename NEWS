@@ -14,6 +14,8 @@ Bug fixes:
  * Fix Turkish translation to add missing keyboard accelerator. (LP: #648750)
  * fileutils.py, find_package_desktopfile(): Restrict to autostart and
    application .desktop files. (LP: #1147528)
+ * apt/dpkg get_modified_files(): Fix crash when encountering non-ASCII file
+   names in an ASCII locale. (LP: #1044014)
 
 2.9 (2013-03-01):
 -----------------
