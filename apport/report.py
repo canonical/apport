@@ -251,6 +251,8 @@ class Report(problem_report.ProblemReport):
                 origin = packaging.get_package_origin(package)
                 if origin:
                     suffix += ' [origin: %s]' % origin
+                else:
+                    suffix += ' [origin: unknown]'
         except ValueError:
             # no-op for nonexisting packages
             pass

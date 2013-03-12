@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.9.2 (UNRELEASED):
+-------------------
+Improvements:
+ * report.py, add_package_info(): Add "[origin: unknown]" tag to
+   Package/Dependencies fields for non-distro package whose origin cannot be
+   determined. (LP: #1148116)
+
 2.9.1 (2013-03-07):
 -------------------
 Improvements:
