@@ -306,6 +306,11 @@ class T(unittest.TestCase):
             self.do_crash(expect_corefile=True)
             apport.fileutils.delete_report(self.test_report)
 
+        # for SIGQUIT we only expect core files, no report
+        resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
+        self.do_crash(expect_corefile=True, sig=signal.SIGQUIT)
+        self.assertEqual(apport.fileutils.get_all_reports(), [])
+
     def test_core_dump_unpackaged(self):
         '''unpackaged executables create core dumps on proper ulimits'''
 
@@ -315,7 +320,7 @@ class T(unittest.TestCase):
                 dest.write(src.read())
         os.chmod(local_exe, 0o755)
 
-        for sig in (signal.SIGSEGV, signal.SIGABRT):
+        for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGQUIT):
             for (kb, exp_sig, exp_file, exp_report) in core_ulimit_table:
                 resource.setrlimit(resource.RLIMIT_CORE, (kb, -1))
                 self.do_crash(expect_coredump=exp_sig, expect_corefile=exp_file, command=local_exe, sig=sig)

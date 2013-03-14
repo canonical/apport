@@ -8,6 +8,10 @@ Improvements:
    Package/Dependencies fields for non-distro package whose origin cannot be
    determined. (LP: #1148116)
 
+Bug fixes:
+ * Write core dumps on SIGQUIT if ulimit allows. Thanks Graeme Hewson.
+   (LP: #1153662)
+
 2.9.1 (2013-03-07):
 -------------------
 Improvements:
