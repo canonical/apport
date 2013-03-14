@@ -15,6 +15,12 @@ test_executable = '/usr/bin/yes'
 test_package = 'coreutils'
 test_source = 'coreutils'
 
+# (core ulimit (kb), expect core signal, expect core file, expect report)
+core_ulimit_table = [(1, False, False, False),
+                     (10, True, False, True),
+                     (10000, True, True, True),
+                     (-1, True, True, True)]
+
 required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
                    'ProcCmdline', 'ProcEnviron', 'ProcMaps', 'Signal',
                    'UserGroups']
@@ -284,44 +290,21 @@ class T(unittest.TestCase):
     def test_core_dump_packaged(self):
         '''packaged executables create core dumps on proper ulimits'''
 
-        # for SIGSEGV
-        resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
-        self.do_crash(expect_coredump=False, expect_corefile=False)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-        resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
-        self.do_crash(expect_corefile=False)
-        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
-        self.check_report_coredump(self.test_report)
-        apport.fileutils.delete_report(self.test_report)
-        resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
-        self.do_crash(expect_corefile=True)
-        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
-        self.check_report_coredump(self.test_report)
-        apport.fileutils.delete_report(self.test_report)
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash(expect_corefile=True)
-        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
-        self.check_report_coredump(self.test_report)
-        apport.fileutils.delete_report(self.test_report)
+        # for SEGV and ABRT we expect reports and core files
+        for sig in (signal.SIGSEGV, signal.SIGABRT):
+            for (kb, exp_sig, exp_file, exp_report) in core_ulimit_table:
+                resource.setrlimit(resource.RLIMIT_CORE, (kb, -1))
+                self.do_crash(expect_coredump=exp_sig, expect_corefile=exp_file, sig=sig)
+                if exp_report:
+                    self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
+                    self.check_report_coredump(self.test_report)
+                    apport.fileutils.delete_report(self.test_report)
+                else:
+                    self.assertEqual(apport.fileutils.get_all_reports(), [])
 
-        # for SIGABRT
-        resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
-        self.do_crash(expect_coredump=False, expect_corefile=False, sig=signal.SIGABRT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-        resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
-        self.do_crash(expect_corefile=False, sig=signal.SIGABRT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
-        apport.fileutils.delete_report(self.test_report)
-        resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
-        self.do_crash(expect_corefile=True, sig=signal.SIGABRT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
-        apport.fileutils.delete_report(self.test_report)
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash(expect_corefile=True, sig=signal.SIGABRT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
-
-        # creates core file with existing crash report, too
-        self.do_crash(expect_corefile=True)
+            # creates core file with existing crash report, too
+            self.do_crash(expect_corefile=True)
+            apport.fileutils.delete_report(self.test_report)
 
     def test_core_dump_unpackaged(self):
         '''unpackaged executables create core dumps on proper ulimits'''
@@ -332,32 +315,11 @@ class T(unittest.TestCase):
                 dest.write(src.read())
         os.chmod(local_exe, 0o755)
 
-        # for SIGSEGV
-        resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
-        self.do_crash(expect_coredump=False, expect_corefile=False, command=local_exe)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-        resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-        resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
-        self.do_crash(expect_corefile=True, command=local_exe)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash(expect_corefile=True, command=local_exe)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-
-        # for SIGABRT
-        resource.setrlimit(resource.RLIMIT_CORE, (1, -1))
-        self.do_crash(expect_coredump=False, expect_corefile=False, command=local_exe, sig=signal.SIGABRT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-        resource.setrlimit(resource.RLIMIT_CORE, (10, -1))
-        self.do_crash(expect_corefile=False, command=local_exe, sig=signal.SIGABRT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-        resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
-        self.do_crash(expect_corefile=True, command=local_exe, sig=signal.SIGABRT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
-        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
-        self.do_crash(expect_corefile=True, command=local_exe, sig=signal.SIGABRT)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        for sig in (signal.SIGSEGV, signal.SIGABRT):
+            for (kb, exp_sig, exp_file, exp_report) in core_ulimit_table:
+                resource.setrlimit(resource.RLIMIT_CORE, (kb, -1))
+                self.do_crash(expect_coredump=exp_sig, expect_corefile=exp_file, command=local_exe, sig=sig)
+                self.assertEqual(apport.fileutils.get_all_reports(), [])
 
     def test_limit_size(self):
         '''core dumps are capped on available memory size'''
