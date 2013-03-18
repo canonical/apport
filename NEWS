@@ -7,6 +7,8 @@ Improvements:
  * report.py, add_package_info(): Add "[origin: unknown]" tag to
    Package/Dependencies fields for non-distro package whose origin cannot be
    determined. (LP: #1148116)
+ * Adjust kernel_crashdump to the format kdump-tools produces. Thanks Louis
+   Bouchard.
 
 Bug fixes:
  * Write core dumps on SIGQUIT if ulimit allows. Thanks Graeme Hewson.

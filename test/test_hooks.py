@@ -11,6 +11,8 @@
 
 import unittest, subprocess, tempfile, os, shutil, os.path, sys, optparse
 
+from datetime import datetime
+
 import apport, apport.fileutils
 
 # parse command line options
@@ -136,8 +138,8 @@ class T(unittest.TestCase):
 
         self.assertEqual(r['Tags'], 'dist-upgrade verybad')
 
-    def test_kernel_crashdump(self):
-        '''kernel_crashdump.'''
+    def test_kernel_crashdump_kexec(self):
+        '''kernel_crashdump using kexec-tools.'''
 
         f = open(os.path.join(apport.fileutils.report_dir, 'vmcore'), 'wb')
         f.write(b'\x01' * 100)
@@ -162,6 +164,40 @@ class T(unittest.TestCase):
         self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
         self.assertEqual(r['VmCore'], b'\x01' * 100)
+        self.assertTrue('linux' in r['Package'])
+
+        self.assertTrue(os.uname()[2].split('-')[0] in r['Package'])
+
+        r.add_package_info(r['Package'])
+        self.assertTrue(' ' in r['Package'])  # appended version number
+
+    def test_kernel_crashdump_kdump(self):
+        '''kernel_crashdump using kdump-tools.'''
+
+        timedir = datetime.strftime(datetime.now(), '%Y%m%d%H%M')
+        vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
+        os.mkdir(vmcore_dir)
+
+        dmesgfile = os.path.join(vmcore_dir, 'dmesg.' + timedir)
+        f = open(dmesgfile, 'wt')
+        f.write('1' * 100)
+        f.close()
+
+        self.assertEqual(subprocess.call('%s/kernel_crashdump' % datadir), 0,
+                         'kernel_crashdump finished successfully')
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, 'kernel_crashdump created a report')
+
+        r = apport.Report()
+        with open(reps[0], 'rb') as f:
+            r.load(f)
+
+        self.assertEqual(set(r.keys()), set(['Date', 'Package', 'ProblemType',
+                                             'VmCoreDmesg', 'Uname',
+                                             'Architecture', 'DistroRelease']))
+        self.assertEqual(r['ProblemType'], 'KernelCrash')
+        self.assertEqual(r['VmCoreDmesg'], '1' * 100)
         self.assertTrue('linux' in r['Package'])
 
         self.assertTrue(os.uname()[2].split('-')[0] in r['Package'])
