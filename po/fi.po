@@ -7,22 +7,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 22:54+0100\n"
+"POT-Creation-Date: 2013-03-19 11:23+0100\n"
 "PO-Revision-Date: 2012-04-09 17:00+0000\n"
 "Last-Translator: Jani Uusitalo <jani@mummila.net>\n"
 "Language-Team: Finnish <fi@li.org>\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-01-08 04:39+0000\n"
 "X-Generator: Launchpad (build 16402)\n"
-"Language: fi\n"
 
-#: ../apport/ui.py:122
+#: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
 msgstr "Tätä pakettia ei ole asennettu oikein"
 
-#: ../apport/ui.py:126
+#: ../apport/ui.py:128
 #, python-format
 msgid ""
 "This is not an official %s package. Please remove any third party package "
@@ -31,7 +31,7 @@ msgstr ""
 "Tämä ei ole virallinen %s-paketti. Poista kolmansien osapuolten paketit ja "
 "yritä sitten uudelleen."
 
-#: ../apport/ui.py:143
+#: ../apport/ui.py:145
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -44,21 +44,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:249
+#: ../apport/ui.py:251
 msgid "unknown program"
 msgstr "tuntematon sovellus"
 
-#: ../apport/ui.py:250
+#: ../apport/ui.py:252
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Ikävä kyllä ohjelma \"%s\" sulkeutui yllättäen"
 
-#: ../apport/ui.py:252 ../apport/ui.py:1247
+#: ../apport/ui.py:254 ../apport/ui.py:1249
 #, python-format
 msgid "Problem in %s"
 msgstr "Ongelma osan %s kanssa"
 
-#: ../apport/ui.py:253
+#: ../apport/ui.py:255
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -67,62 +67,62 @@ msgstr ""
 "virheraportin lähettämiseen."
 
 #. package does not exist
-#: ../apport/ui.py:268 ../apport/ui.py:274 ../apport/ui.py:280
-#: ../apport/ui.py:318 ../apport/ui.py:326 ../apport/ui.py:455
-#: ../apport/ui.py:458 ../apport/ui.py:659 ../apport/ui.py:1060
-#: ../apport/ui.py:1201 ../apport/ui.py:1205 ../apport/ui.py:1224
-#: ../apport/ui.py:1230
+#: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
+#: ../apport/ui.py:320 ../apport/ui.py:328 ../apport/ui.py:457
+#: ../apport/ui.py:460 ../apport/ui.py:661 ../apport/ui.py:1062
+#: ../apport/ui.py:1203 ../apport/ui.py:1207 ../apport/ui.py:1226
+#: ../apport/ui.py:1232
 msgid "Invalid problem report"
 msgstr "Virheellinen ongelmaraportti"
 
-#: ../apport/ui.py:269 ../apport/ui.py:1207
+#: ../apport/ui.py:271 ../apport/ui.py:1209
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Tämä ongelman raportti on vahingoittunut, eikä sitä voida käsitellä."
 
-#: ../apport/ui.py:275
+#: ../apport/ui.py:277
 msgid "The report belongs to a package that is not installed."
 msgstr "Raportti liittyy pakettiin, jota ei ole asennettu."
 
-#: ../apport/ui.py:281
+#: ../apport/ui.py:283
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "Virhe käsiteltäessä ongelmaraporttia:"
 
-#: ../apport/ui.py:319
+#: ../apport/ui.py:321
 msgid "You are not allowed to access this problem report."
 msgstr "Sinulla ei ole lukuoikeuksia tähän ongelmaraporttiin."
 
-#: ../apport/ui.py:322
+#: ../apport/ui.py:324
 msgid "Error"
 msgstr "Virhe"
 
-#: ../apport/ui.py:323
+#: ../apport/ui.py:325
 msgid "There is not enough disk space available to process this report."
 msgstr "Levyllä ei ole tarpeeksi tilaa raportin käsittelyyn."
 
-#: ../apport/ui.py:407
+#: ../apport/ui.py:409
 msgid "No package specified"
 msgstr "Pakettia ei ole määritelty"
 
-#: ../apport/ui.py:408
+#: ../apport/ui.py:410
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Paketti tai PID-tunniste on annettava. Katso lisätietoja käyttämällä "
 "valitsinta --help."
 
-#: ../apport/ui.py:425
+#: ../apport/ui.py:427
 msgid "Invalid PID"
 msgstr "PID-numero ei kelpaa"
 
-#: ../apport/ui.py:426
+#: ../apport/ui.py:428
 msgid "The specified process ID does not belong to a program."
 msgstr "Määritetty prosessin ID-numero ei kuulu kyseiselle ohjelmalle."
 
-#: ../apport/ui.py:434
+#: ../apport/ui.py:436
 msgid "Permission denied"
 msgstr "Lupa evätty"
 
-#: ../apport/ui.py:435
+#: ../apport/ui.py:437
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -130,25 +130,25 @@ msgstr ""
 "Kyseinen prosessi ei kuulu sinulle. Aja tämä ohjelma prosessin omistajana "
 "tai pääkäyttäjänä."
 
-#: ../apport/ui.py:456
+#: ../apport/ui.py:458
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Oirekomentosarja %s ei määritellyt vaikuttanutta pakettia"
 
-#: ../apport/ui.py:459
+#: ../apport/ui.py:461
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Pakettia %s ei ole olemassa"
 
-#: ../apport/ui.py:483 ../apport/ui.py:671 ../apport/ui.py:676
+#: ../apport/ui.py:485 ../apport/ui.py:673 ../apport/ui.py:678
 msgid "Cannot create report"
 msgstr "Raporttia ei voida luoda"
 
-#: ../apport/ui.py:498 ../apport/ui.py:544 ../apport/ui.py:561
+#: ../apport/ui.py:500 ../apport/ui.py:546 ../apport/ui.py:563
 msgid "Updating problem report"
 msgstr "Päivitetään ongelmaraporttia"
 
-#: ../apport/ui.py:499
+#: ../apport/ui.py:501
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -160,14 +160,14 @@ msgstr ""
 "\n"
 "Ole hyvä, ja luo uusi raportti käyttäen \"apport-bug\" määrittelyä."
 
-#: ../apport/ui.py:508
+#: ../apport/ui.py:510
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -181,24 +181,24 @@ msgstr ""
 "\n"
 "Haluatko todella jatkaa?"
 
-#: ../apport/ui.py:545 ../apport/ui.py:562
+#: ../apport/ui.py:547 ../apport/ui.py:564
 msgid "No additional information collected."
 msgstr "Lisätietoja ei kerätty."
 
-#: ../apport/ui.py:613
+#: ../apport/ui.py:615
 msgid "What kind of problem do you want to report?"
 msgstr "Millainen ongelma raportoidaan?"
 
-#: ../apport/ui.py:630
+#: ../apport/ui.py:632
 msgid "Unknown symptom"
 msgstr "Tuntematon ongelma"
 
-#: ../apport/ui.py:631
+#: ../apport/ui.py:633
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Ongelmaa \"%s\" ei tunnistettu."
 
-#: ../apport/ui.py:662
+#: ../apport/ui.py:664
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -206,31 +206,30 @@ msgstr ""
 "Kun olet sulkenut tämän viestin napsauta sen sovelluksen ikkunaa, johon "
 "liittyvän virheraportin haluat tehdä."
 
-#: ../apport/ui.py:672 ../apport/ui.py:677
+#: ../apport/ui.py:674 ../apport/ui.py:679
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop ei onnistunut selvittämään ikkunaan ID-tunnistenumeroa"
 
-#: ../apport/ui.py:691
+#: ../apport/ui.py:693
 msgid "%prog <report number>"
 msgstr "%prog <raportin numero>"
 
-#: ../apport/ui.py:693
+#: ../apport/ui.py:695
 msgid "Specify package name."
 msgstr "Määritä paketin nimi."
 
-#: ../apport/ui.py:695 ../apport/ui.py:746
+#: ../apport/ui.py:697 ../apport/ui.py:748
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "Lisää raporttiin liittyvä tunniste. Tämä voidaan tehdä useampia kertoja."
 
-#: ../apport/ui.py:725
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+#: ../apport/ui.py:727
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [valinnat] [ongelma|pid|paketti|ohjelman "
-"polku|.apport/.kaatumisraportti]"
+"%prog [valinnat] [ongelma|pid|paketti|ohjelman polku|.apport/."
+"kaatumisraportti]"
 
-#: ../apport/ui.py:728
+#: ../apport/ui.py:730
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -240,17 +239,17 @@ msgstr ""
 "pid:n, tai vain --pid:n. Jos kumpaakaan ei anneta, näytä lista tunnetuista "
 "oireista. (Epäsuora jos yksi argumentti on annettu.)"
 
-#: ../apport/ui.py:730
+#: ../apport/ui.py:732
 msgid "Click a window as a target for filing a problem report."
 msgstr "Napsauta ikkunaa, johon liittyvän virheraportin haluat tehdä"
 
-#: ../apport/ui.py:732
+#: ../apport/ui.py:734
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "Aloita ohjelmavirheiden päivitystilassa. Voi ottaa valinnaisen valitsimen --"
 "package."
 
-#: ../apport/ui.py:734
+#: ../apport/ui.py:736
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -258,7 +257,7 @@ msgstr ""
 "Arkistoi ohjelmavirheen raportti oireena. (Epäsuora jos oireen nimi on "
 "annettu vain argumenttina.)"
 
-#: ../apport/ui.py:736
+#: ../apport/ui.py:738
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -266,18 +265,18 @@ msgstr ""
 "Tarkenna paketin nimi --file-bug-tilassa. Tämä on valinnainen jos --pid on "
 "määritetty. (Epäsuora jos paketin nimi on annettu vain argumenttina.)"
 
-#: ../apport/ui.py:738
+#: ../apport/ui.py:740
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:740
+#: ../apport/ui.py:742
 msgid "The provided pid is a hanging application."
 msgstr ""
 
-#: ../apport/ui.py:742
+#: ../apport/ui.py:744
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -286,87 +285,86 @@ msgstr ""
 "Raportoi kaatuminen annetusta .apport tai .crash-tiedostosta odottavien "
 "sijaan kohdassa %s. (Epäsuora jos tiedosta on annettu vain argumenttina.)"
 
-#: ../apport/ui.py:744
+#: ../apport/ui.py:746
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:748
+#: ../apport/ui.py:750
 msgid "Print the Apport version number."
 msgstr "Tulosta Apport-versionumero."
 
-#: ../apport/ui.py:882
+#: ../apport/ui.py:884
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 
-#: ../apport/ui.py:883
+#: ../apport/ui.py:885
 msgid "Run gdb session"
 msgstr "Käynnistä gdb sessiossa"
 
-#: ../apport/ui.py:884
+#: ../apport/ui.py:886
 msgid "Run gdb session without downloading debug symbols"
 msgstr ""
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:886
+#: ../apport/ui.py:888
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
-#: ../apport/ui.py:957
+#: ../apport/ui.py:959
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
 
-#: ../apport/ui.py:1061
+#: ../apport/ui.py:1063
 msgid "Could not determine the package or source package name."
 msgstr "Paketin tai lähdekoodipaketin nimeä ei voi määrittää."
 
-#: ../apport/ui.py:1079
+#: ../apport/ui.py:1081
 msgid "Unable to start web browser"
 msgstr "Selaimen käynnistäminen epäonnistui"
 
-#: ../apport/ui.py:1080
+#: ../apport/ui.py:1082
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Verkkoselainta ei saatu käynnistettyä avattaessa sivua %s."
 
-#: ../apport/ui.py:1155
+#: ../apport/ui.py:1157
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr "Ole hyvä ja syötä %s bugi raportointi järjestelmän kirjautumistiedot"
 
-#: ../apport/ui.py:1167
+#: ../apport/ui.py:1169
 msgid "Network problem"
 msgstr "Verkko-ongelma"
 
-#: ../apport/ui.py:1169
+#: ../apport/ui.py:1171
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Kaatumistietokantaan ei voi yhdistää. Tarkista Internet-yhteyden toimivuus."
 
-#: ../apport/ui.py:1196
+#: ../apport/ui.py:1198
 msgid "Memory exhaustion"
 msgstr "Muisti ei riitä"
 
-#: ../apport/ui.py:1197
+#: ../apport/ui.py:1199
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Järjestelmässäsi ei ole tarpeeksi muistia tämän kaatumisraportin käsittelyyn."
 
-#: ../apport/ui.py:1220 ../apport/ui.py:1229
+#: ../apport/ui.py:1222 ../apport/ui.py:1231
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
-"Tämä ongelmaraportti kytkeytyy ohjelmaan, joka ei ole enää asennettu."
+msgstr "Tämä ongelmaraportti kytkeytyy ohjelmaan, joka ei ole enää asennettu."
 
-#: ../apport/ui.py:1250
+#: ../apport/ui.py:1252
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -377,11 +375,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1301 ../apport/ui.py:1308
+#: ../apport/ui.py:1308 ../apport/ui.py:1315
 msgid "Problem already known"
 msgstr "Ongelma on jo tiedossa"
 
-#: ../apport/ui.py:1302
+#: ../apport/ui.py:1309
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -390,7 +388,7 @@ msgstr ""
 "Tämä ongelma raportoitiin jo virheraportissa, joka on näkyvissä selaimessa. "
 "Tarkista, voisitko lisätä joitakin kehittäjiä auttavaa tietoa."
 
-#: ../apport/ui.py:1309
+#: ../apport/ui.py:1316
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 "Tästä ongelmasta on jo ilmoitettu kehittäjille. Kiitos kuitenkin "
@@ -574,8 +572,7 @@ msgstr "%prog [valinnat] <tasaa ongelmaraportti | kaatumistunniste>"
 
 #: ../bin/apport-retrace.py:33
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
-"Älä laita uusia jäljityksiä raporttiin, mutta kirjoita ne stdout:iin."
+msgstr "Älä laita uusia jäljityksiä raporttiin, mutta kirjoita ne stdout:iin."
 
 #: ../bin/apport-retrace.py:35
 msgid ""
@@ -623,8 +620,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:51
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
@@ -665,8 +661,7 @@ msgstr ""
 "kaatumistietokantaan."
 
 #: ../bin/apport-retrace.py:65
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Polku jäljennös-sqlite-tietokantaan (oletus: ei jälkennöksen tarkistusta)"
 
@@ -693,12 +688,12 @@ msgid "OK to send these as attachments? [y/n]"
 msgstr "Sopiiko näiden lähettäminen liitteinä? [y/n] (y=kyllä, n=ei)"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
+#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "Raportoi ongelma"
 
 #: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
+#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "Raportoi toimintahäiriöstä sovelluksen kehittäjille"
 
@@ -707,6 +702,47 @@ msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Järjestelmästäsi saattaa tulla epävakaa ja se saattaa tarvita "
 "uudelleenkäynnistystä."
+
+#: ../bin/apport-valgrind.py:37
+msgid "See man page for details."
+msgstr ""
+
+#: ../bin/apport-valgrind.py:43
+msgid "specify the log file name produced by valgrind"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:46
+msgid ""
+"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
+"create it"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:50
+msgid ""
+"do  not  create  or reuse a sandbox directory for additional debug symbols "
+"but rely only on installed debug symbols."
+msgstr ""
+
+#: ../bin/apport-valgrind.py:54
+msgid ""
+"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
+"it"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:58
+msgid "report download/install progress when installing packages into sandbox"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:62
+msgid ""
+"the executable that is run under valgrind's memcheck tool  for memory leak "
+"detection"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:97
+#, python-format
+msgid "Error: %s is not an executable. Stopping."
+msgstr ""
 
 #: ../gtk/apport-gtk.py:153
 #, python-format
@@ -791,48 +827,6 @@ msgstr "Jätä huomiotta tulevat vastaavanlaiset ongelmat"
 msgid "Hide Details"
 msgstr "Piilota tiedot"
 
-#: ../bin/apport-valgrind.py:37
-msgid "See man page for details."
-msgstr ""
-
-#: ../bin/apport-valgrind.py:43
-msgid "specify the log file name produced by valgrind"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:46
-msgid ""
-"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
-"create it"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:50
-msgid ""
-"do  not  create  or reuse a sandbox directory for additional debug symbols "
-"but rely only on installed debug symbols."
-msgstr ""
-
-#: ../bin/apport-valgrind.py:54
-msgid ""
-"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
-"it"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:62
-msgid ""
-"the executable that is run under valgrind's memcheck tool  for memory leak "
-"detection"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:92
-#, python-format
-msgid "Error: %s is not an executable. Stopping."
-msgstr ""
-
 #: ../kde/apport-kde.py:294
 msgid "Username:"
 msgstr "Käyttäjätunnus"
@@ -880,6 +874,15 @@ msgid ""
 msgstr ""
 "Vikailmoitukseen tarvittavien järjestelmätietojen kerääminen vaatii "
 "tunnistautumisen"
+
+#: ../apport/com.ubuntu.apport.policy.in.h:3
+#, fuzzy
+msgid "System problem reports"
+msgstr "Päivitetään ongelmaraporttia"
+
+#: ../apport/com.ubuntu.apport.policy.in.h:4
+msgid "Please enter your password to access problem reports of system programs"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Crash report"
@@ -931,11 +934,9 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Voit auttaa kehittäjiä korjaaman ongelman ilmoittamalla siitä."
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Paketin \"%s\" asennus tai päivitys epäonnistui."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Täydellinen raportti (suositus; %s)"
 
@@ -952,14 +953,13 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Jos et tehnyt mitään luottamuksellista (syöttänyt salasanoja tai muita "
 #~ "henkilökohtaisia tietoja), voit auttaa kehittämään ohjelmaa raportoimalla "
 #~ "ongelmasta."
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Ikävä kyllä %s sulkeutui yllättäen"
 
@@ -984,22 +984,22 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Jos et ollut tekemässä mitään luottamuksellista (kuten syöttänyt salasanoja "
-#~ "tai muuta\n"
-#~ "henkilökohtaista tietoa), voit auttaa ohjelman kehittämisessä raportoimalla\n"
+#~ "Jos et ollut tekemässä mitään luottamuksellista (kuten syöttänyt "
+#~ "salasanoja tai muuta\n"
+#~ "henkilökohtaista tietoa), voit auttaa ohjelman kehittämisessä "
+#~ "raportoimalla\n"
 #~ "ongelman."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Uudelleenkäynnistä _ohjelma"
 
-#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Ikävä kyllä paketin \"%s\" asennus tai päivitys epäonnistui."
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1007,15 +1007,12 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ "<span weight=\"bold\" size=\"larger\">Paketin \"%s\" asennus tai päivitys "
 #~ "epäonnistui.</span>"
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Lähetä täydellinen raportti (suositeltavaa; %s)"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Pelkistetty raportti (hidas Internet-yhteys; %s)"
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Ikävä kyllä %s sulkeutui yllättäen."
 
@@ -1025,18 +1022,18 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ msgid "Restart &Program"
 #~ msgstr "Käynnistä &ohjelma uudelleen"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Lähetä &suppea raportti (hitaille Internet-yhteyksille; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Tämä poistaa joitain isoimpia osuuksia raportista. Osuudet ovat hyödyllisiä "
-#~ "ohjelman kehittäjille ongelman selvittämisessä mutta et välttämättä halua "
-#~ "odottaa niiden lähettämistä, jos Internet-yhteytesi on hidas."
+#~ "Tämä poistaa joitain isoimpia osuuksia raportista. Osuudet ovat "
+#~ "hyödyllisiä ohjelman kehittäjille ongelman selvittämisessä mutta et "
+#~ "välttämättä halua odottaa niiden lähettämistä, jos Internet-yhteytesi on "
+#~ "hidas."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Raportoi ongelma..."
@@ -1057,11 +1054,9 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr "Voi auttaa kehittäjiä korjaamaan ongelman raportoimalla ongelmasta."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Tämä ei ole alkuperäinen %s-paketti"
 
-#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Ikävä kyllä ohjelma \"%s\" sulkeutui yllättäen."
 
@@ -1077,10 +1072,8 @@ msgstr "Kohdehakemisto on jo olemassa, eikä ole tyhjä."
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Lähetetäänkö nämä tiedot kehittäjille?"
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s sulkeutui yllättäen %s %s."
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Valitettavasti sovellus %s sulkeutui odottamatta."
