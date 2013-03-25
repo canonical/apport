@@ -840,12 +840,15 @@ def in_session_of_problem(report):
     # report time is in local TZ
     orig_ctime = locale.getlocale(locale.LC_TIME)
     try:
-        locale.setlocale(locale.LC_TIME, 'C')
-        report_time = time.mktime(time.strptime(report['Date']))
-    except KeyError:
+        try:
+            locale.setlocale(locale.LC_TIME, 'C')
+            report_time = time.mktime(time.strptime(report['Date']))
+        except KeyError:
+            return None
+        finally:
+            locale.setlocale(locale.LC_TIME, orig_ctime)
+    except locale.Error:
         return None
-    finally:
-        locale.setlocale(locale.LC_TIME, orig_ctime)
 
     try:
         bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)

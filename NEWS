@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  * hookutils.attach_conffiles(): Fix IOError crash on inaccessible conffiles;
    mark them as '[inaccessible: <reason>]' instead. (LP: #1154536)
+ * hookutils.in_session_of_problem(): Fix crash when the current locale is
+   invalid. (LP: #1154896) 
 
 2.9.2 (2013-03-19):
 -------------------
