@@ -290,14 +290,17 @@ class __AptDpkgPackageInfo(PackageInfo):
             path, default_md5sum = line.strip().split()[:2]
 
             if os.path.exists(path):
-                with open(path, 'rb') as fd:
-                    contents = fd.read()
-                m = hashlib.md5()
-                m.update(contents)
-                calculated_md5sum = m.hexdigest()
+                try:
+                    with open(path, 'rb') as fd:
+                        contents = fd.read()
+                    m = hashlib.md5()
+                    m.update(contents)
+                    calculated_md5sum = m.hexdigest()
 
-                if calculated_md5sum != default_md5sum:
-                    modified[path] = contents
+                    if calculated_md5sum != default_md5sum:
+                        modified[path] = contents
+                except IOError as e:
+                    modified[path] = '[inaccessible: %s]' % str(e)
             else:
                 modified[path] = '[deleted]'
 

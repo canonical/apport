@@ -132,7 +132,7 @@ def attach_conffiles(report, package, conffiles=None, ui=None):
             continue
 
         key = 'modified.conffile.' + path_to_key(path)
-        if contents == '[deleted]':
+        if contents == '[deleted]' or contents.startswith('[inaccessible'):
             report[key] = contents
             continue
 
