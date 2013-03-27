@@ -251,6 +251,27 @@ class T(unittest.TestCase):
         self.assertEqual(r['Package'].split()[0], 'gcc-' + gcc_version)
         self.assertTrue(r['SourcePackage'].startswith('gcc'))
 
+    def test_gcc_ide_hook_file_binary(self):
+        '''gcc_ice_hook with a temporary file with binary data.'''
+
+        (gcc_version, gcc_path) = self._gcc_version_path()
+
+        test_source = tempfile.NamedTemporaryFile()
+        test_source.write(b'int f(int x); \xFF\xFF')
+        test_source.flush()
+        test_source.seek(0)
+
+        self.assertEqual(subprocess.call(['%s/gcc_ice_hook' % datadir, gcc_path, test_source.name]),
+                         0, 'gcc_ice_hook finished successfully')
+
+        reps = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reps), 1, 'gcc_ice_hook created a report')
+
+        r = apport.Report()
+        with open(reps[0], 'rb') as f:
+            r.load(f)
+        self.assertEqual(r['PreprocessedSource'], test_source.read())
+
     def test_gcc_ide_hook_pipe(self):
         '''gcc_ice_hook with piping.'''
 

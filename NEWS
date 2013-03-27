@@ -8,6 +8,8 @@ Bug fixes:
    mark them as '[inaccessible: <reason>]' instead. (LP: #1154536)
  * hookutils.in_session_of_problem(): Fix crash when the current locale is
    invalid. (LP: #1154896) 
+ * data/gcc_ice_hook: Fix crash with source files that have non-UTF8 data.
+   (LP: #1045283)
 
 2.9.2 (2013-03-19):
 -------------------
