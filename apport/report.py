@@ -1445,6 +1445,8 @@ class Report(problem_report.ProblemReport):
             arch = self.get('Uname', 'none').split()[-1]
             if 'arm' in arch:
                 command += ['--ex', 'set architecture arm', '--ex', 'set gnutarget elf32-littlearm']
+            elif 'ppc' in arch:
+                command += ['--ex', 'set architecture powerpc:common', '--ex', 'set gnutarget elf32-powerpc']
             # note, i386 vs. x86_64 is auto-detected just fine
 
         if sandbox:
