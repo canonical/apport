@@ -10,6 +10,8 @@ Bug fixes:
    invalid. (LP: #1154896) 
  * data/gcc_ice_hook: Fix crash with source files that have non-UTF8 data.
    (LP: #1045283)
+ * apport/report.py: Handle the case where the user has been removed from the
+   system, but one of its still-running binaries crashes (LP: #1163453).
 
 2.9.2 (2013-03-19):
 -------------------
