@@ -952,7 +952,12 @@ class Report(problem_report.ProblemReport):
         except OSError:
             pass
 
-        dom = self._get_ignore_dom()
+        try:
+            dom = self._get_ignore_dom()
+        except (ValueError, KeyError):
+            apport.error('Could not get ignore file:')
+            traceback.print_exc()
+            return False
 
         try:
             cur_mtime = int(os.stat(self['ExecutablePath']).st_mtime)

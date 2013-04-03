@@ -2116,5 +2116,17 @@ No symbol table info available.
 '''
         self.assertEqual(pr.crash_signature_addresses(), None)
 
+    def test_missing_uid(self):
+        '''check_ignored() works for removed user'''
+
+        orig_getuid = os.getuid
+        os.getuid = lambda: 123456789
+        try:
+            pr = apport.report.Report()
+            pr['ExecutablePath'] = '/bin/bash'
+            pr.check_ignored()
+        finally:
+            os.getuid = orig_getuid
+
 if __name__ == '__main__':
     unittest.main()
