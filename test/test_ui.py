@@ -1333,6 +1333,42 @@ bOgUs=
         finally:
             os.uname = orig_uname
 
+    def test_run_crash_anonymity_escaping(self):
+        '''run_crash() anonymization escapes special chars'''
+
+        # inject GECOS field with regexp control chars
+        orig_getpwuid = pwd.getpwuid
+
+        def fake_getpwuid(uid):
+            r = list(orig_getpwuid(uid))
+            r[4] = 'Joe (Hacker,+1 234,,'
+            return r
+
+        pwd.getpwuid = fake_getpwuid
+
+        try:
+            r = self._gen_test_crash()
+            r['ProcInfo1'] = 'That was Joe (Hacker and friends'
+            r['ProcInfo2'] = 'Call +1 234!'
+            r['ProcInfo3'] = '(Hacker should stay'
+            report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+            with open(report_file, 'wb') as f:
+                r.write(f)
+
+            self.ui = TestSuiteUserInterface()
+            self.ui.present_details_response = {'report': True,
+                                                'blacklist': False,
+                                                'examine': False,
+                                                'restart': False}
+            self.ui.run_crash(report_file)
+            self.assertEqual(self.ui.msg_severity, None, self.ui.msg_text)
+
+            self.assertEqual(self.ui.report['ProcInfo1'], 'That was User Name and friends')
+            self.assertEqual(self.ui.report['ProcInfo2'], 'Call User Name!')
+            self.assertEqual(self.ui.report['ProcInfo3'], '(Hacker should stay')
+        finally:
+            pwd.getpwuid = orig_getpwuid
+
     def test_run_crash_known(self):
         '''run_crash() for already known problem'''
 

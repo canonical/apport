@@ -13,6 +13,8 @@ Bug fixes:
  * Support retracing foreign powerpc reports, thanks Steve Langasek.
  * apport/report.py: Handle the case where the user has been removed from the
    system, but one of its still-running binaries crashes (LP: #1163453).
+ * Fix anonymization of user/GECOS fields with regexp control characters like
+   '+'. (LP: #985049)
 
 2.9.2 (2013-03-19):
 -------------------

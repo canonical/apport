@@ -337,7 +337,7 @@ class Report(problem_report.ProblemReport):
         This adds:
         - UserGroups: system groups the user is in
         '''
-        user = pwd.getpwuid(os.getuid()).pw_name
+        user = pwd.getpwuid(os.getuid())[0]
         groups = [name for name, p, gid, memb in grp.getgrall()
                   if user in memb and gid < 1000]
         groups.sort()
@@ -1391,17 +1391,17 @@ class Report(problem_report.ProblemReport):
             # do not replace "root"
             p = pwd.getpwuid(os.getuid())
             if len(p[0]) >= 2:
-                replacements.append((re.compile('\\b%s\\b' % p[0]), 'username'))
-            replacements.append((re.compile('\\b%s\\b' % p[5]), '/home/username'))
+                replacements.append((re.compile(r'\b%s\b' % re.escape(p[0])), 'username'))
+            replacements.append((re.compile(r'\b%s\b' % re.escape(p[5])), '/home/username'))
 
             for s in p[4].split(','):
                 s = s.strip()
                 if len(s) > 2:
-                    replacements.append((re.compile('\\b%s\\b' % s), 'User Name'))
+                    replacements.append((re.compile(r'(\b|\s)%s\b' % re.escape(s)), r'\1User Name'))
 
         hostname = os.uname()[1]
         if len(hostname) >= 2:
-            replacements.append((re.compile('\\b%s\\b' % hostname), 'hostname'))
+            replacements.append((re.compile(r'\b%s\b' % re.escape(hostname)), 'hostname'))
 
         try:
             del self['ProcCwd']
