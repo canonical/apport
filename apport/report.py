@@ -1209,6 +1209,10 @@ class Report(problem_report.ProblemReport):
 
         For Python crashes, this concatenates the ExecutablePath, exception
         name, and Traceback function names, again separated by a colon.
+
+        For suspend/resume failures, this concatenates whether it was a suspend
+        or resume failure with the hardware identifier and the BIOS version, if
+        it exists.
         '''
         if 'ExecutablePath' not in self:
             if not self['ProblemType'] in ('KernelCrash', 'KernelOops'):
@@ -1276,6 +1280,15 @@ class Report(problem_report.ProblemReport):
                         sig += ':%s@%s' % (m.group(1), m.group(2))
 
             return self['ExecutablePath'] + ':' + trace[-1].split(':')[0] + sig
+
+        if self['ProblemType'] == 'KernelOops' and 'Failure' in self:
+            # Suspend / resume failure
+            sig = self['Failure']
+            if self.get('MachineType'):
+                sig += ':%s' % self['MachineType']
+            if self.get('dmi.bios.version'):
+                sig += ':%s' % self['dmi.bios.version']
+            return sig
 
         # KernelOops crashes
         if 'OopsText' in self:
