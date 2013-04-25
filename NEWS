@@ -19,6 +19,7 @@ Bug fixes:
    about UTF-8 locales. Fix the two failing tests.
  * Fix UnicodeDecodeError when apport encounters non-ASCII environment
    variables. (LP: #1172638)
+ * apport/report.py: Generate a crash signature for suspend/resume failures.
 
 2.9.2 (2013-03-19):
 -------------------

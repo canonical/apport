@@ -2146,5 +2146,19 @@ No symbol table info available.
         finally:
             os.getuid = orig_getuid
 
+    def test_suspend_resume(self):
+        pr = apport.report.Report()
+        pr['ProblemType'] = 'KernelOops'
+        pr['Failure'] = 'suspend/resume'
+        pr['MachineType'] = 'Cray XT5'
+        pr['dmi.bios.version'] = 'ABC123 (1.0)'
+        expected = 'suspend/resume:Cray XT5:ABC123 (1.0)'
+        self.assertEqual(expected, pr.crash_signature())
+
+        # There will not always be a BIOS version
+        del pr['dmi.bios.version']
+        expected = 'suspend/resume:Cray XT5'
+        self.assertEqual(expected, pr.crash_signature())
+
 if __name__ == '__main__':
     unittest.main()
