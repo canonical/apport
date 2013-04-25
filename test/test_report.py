@@ -69,9 +69,6 @@ class T(unittest.TestCase):
     def test_add_proc_info(self):
         '''add_proc_info().'''
 
-        # set test environment
-        assert 'LANG' in os.environ, 'please set $LANG for this test'
-
         # check without additional safe environment variables
         pr = apport.report.Report()
         self.assertEqual(pr.pid, None)
@@ -79,7 +76,10 @@ class T(unittest.TestCase):
         self.assertEqual(pr.pid, os.getpid())
         self.assertTrue(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
                              'ProcMaps']).issubset(set(pr.keys())), 'report has required fields')
-        self.assertTrue('LANG=' + os.environ['LANG'] in pr['ProcEnviron'])
+        if 'LANG' in os.environ:
+            self.assertTrue('LANG=' + os.environ['LANG'] in pr['ProcEnviron'])
+        else:
+            self.assertFalse('LANG=' in pr['ProcEnviron'])
         self.assertTrue('USER' not in pr['ProcEnviron'])
         self.assertTrue('PWD' not in pr['ProcEnviron'])
         self.assertTrue('report.py' in pr['ExecutablePath'])

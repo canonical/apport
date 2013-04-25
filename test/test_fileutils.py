@@ -60,8 +60,8 @@ class T(unittest.TestCase):
             pkg = apport.packaging.get_file_package(path)
             num = len([f for f in apport.packaging.get_files(pkg)
                        if f.endswith('.desktop')])
-            with open(path) as f:
-                if 'NoDisplay=true' in f.read():
+            with open(path, 'rb') as f:
+                if b'NoDisplay=true' in f.read():
                     if not nodisplay and num == 1:
                         nodisplay = pkg
                     continue
