@@ -17,6 +17,8 @@ Bug fixes:
    '+'. (LP: #985049)
  * Run tests under LC_CTYPE=C and unset LANG as well, to discover assumptions
    about UTF-8 locales. Fix the two failing tests.
+ * Fix UnicodeDecodeError when apport encounters non-ASCII environment
+   variables. (LP: #1172638)
 
 2.9.2 (2013-03-19):
 -------------------

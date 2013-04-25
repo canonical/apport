@@ -200,6 +200,24 @@ sys.stdin.readline()
         # test process is gone, should complain about nonexisting PID
         self.assertRaises(ValueError, pr.add_proc_info, p.pid)
 
+    def test_add_proc_info_nonascii(self):
+        '''add_proc_info() for non-ASCII values'''
+
+        lang = b'n\xc3\xb6_v\xc3\xb8lid'
+
+        # one variable from each category (ignored/filtered/shown)
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE,
+                             env={'MYNAME': b'J\xc3\xbcrgen-Ren\xc3\xa9',
+                                  'XDG_RUNTIME_DIR': b'/a\xc3\xafb',
+                                  'LANG': lang})
+
+        time.sleep(0.1)
+        r = apport.report.Report()
+        r.add_proc_environ(pid=p.pid)
+        p.communicate(b'')
+        self.assertTrue(lang in r['ProcEnviron'].encode('UTF-8'))
+        self.assertTrue('XDG_RUNTIME_DIR=<set>' in r['ProcEnviron'], r['ProcEnviron'])
+
     def test_add_path_classification(self):
         '''classification of $PATH.'''
 

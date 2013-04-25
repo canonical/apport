@@ -70,8 +70,8 @@ def _read_file(path):
     Return its content, or return a textual error if it failed.
     '''
     try:
-        with open(path) as fd:
-            return fd.read().strip()
+        with open(path, 'rb') as fd:
+            return fd.read().strip().decode('UTF-8', errors='replace')
     except (OSError, IOError) as e:
         return 'Error: ' + str(e)
 
