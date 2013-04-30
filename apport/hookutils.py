@@ -16,7 +16,6 @@ import subprocess
 import os
 import sys
 import time
-import calendar
 import datetime
 import glob
 import re
@@ -25,8 +24,6 @@ import base64
 import tempfile
 import shutil
 import locale
-
-from gi.repository import Gio, GLib
 
 from apport.packaging_impl import impl as packaging
 
@@ -857,8 +854,7 @@ def in_session_of_problem(report):
     This can be used to determine if e. g. ~/.xsession-errors is relevant and
     should be attached.
 
-    Return None if this cannot be determined due to not being able to talk to
-    ConsoleKit.
+    Return None if this cannot be determined.
     '''
     # report time is in local TZ
     orig_ctime = locale.getlocale(locale.LC_TIME)
@@ -873,32 +869,20 @@ def in_session_of_problem(report):
     except locale.Error:
         return None
 
+    # determine cgroup
     try:
-        bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
-        ck_manager = Gio.DBusProxy.new_sync(
-            bus, Gio.DBusProxyFlags.NONE, None,
-            'org.freedesktop.ConsoleKit', '/org/freedesktop/ConsoleKit/Manager',
-            'org.freedesktop.ConsoleKit.Manager', None)
-
-        cur_session = ck_manager.GetCurrentSession()
-
-        ck_session = Gio.DBusProxy.new_sync(
-            bus, Gio.DBusProxyFlags.NONE, None,
-            'org.freedesktop.ConsoleKit', cur_session,
-            'org.freedesktop.ConsoleKit.Session', None)
-
-        session_start_time = ck_session.GetCreationTime()
-    except GLib.GError as e:
-        sys.stderr.write('Error connecting to ConsoleKit: %s\n' % str(e))
+        with open('/proc/self/cgroup') as f:
+            for l in f:
+                if 'name=systemd:' in l:
+                    my_cgroup = l.split('systemd:', 1)[1].strip()
+                    break
+            else:
+                return None
+    except IOError:
         return None
 
-    m = re.match('(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d)(?:\.\d+Z)$', session_start_time)
-    if m:
-        # CK gives UTC time
-        session_start_time = calendar.timegm(time.strptime(m.group(1), '%Y-%m-%dT%H:%M:%S'))
-    else:
-        sys.stderr.write('cannot parse time returned by CK: %s\n' % session_start_time)
-        return None
+    # determine cgroup creation time
+    session_start_time = os.stat('/sys/fs/cgroup/systemd/' + my_cgroup).st_mtime
 
     return session_start_time <= report_time
 

@@ -309,7 +309,7 @@ class T(unittest.TestCase):
         self.assertGreater(len(data), 100000)
         self.assertLess(len(data), 1000000)
 
-    @unittest.skipIf(apport.hookutils.apport.hookutils.in_session_of_problem(apport.Report()) is None, 'no ConsoleKit session')
+    @unittest.skipIf(apport.hookutils.apport.hookutils.in_session_of_problem(apport.Report()) is None, 'no logind session')
     def test_in_session_of_problem(self):
         '''in_session_of_problem()'''
 
