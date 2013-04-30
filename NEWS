@@ -6,6 +6,7 @@ detailled list of changes, please see ChangeLog.
 Improvements:
  * Support retracing foreign powerpc reports, thanks Steve Langasek.
  * apport/report.py: Generate a crash signature for suspend/resume failures.
+ * hookutils.py: Add attach_upstart_logs(), thanks Steve Langasek.
 
 Bug fixes:
  * hookutils.attach_conffiles(): Fix IOError crash on inaccessible conffiles;

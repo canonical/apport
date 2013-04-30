@@ -164,6 +164,29 @@ def attach_upstart_overrides(report, package):
             attach_file_if_exists(report, override, key)
 
 
+def attach_upstart_logs(report, package):
+    '''Attach information about a package's session upstart logs'''
+
+    try:
+        files = apport.packaging.get_files(package)
+    except ValueError:
+        return
+
+    for f in files:
+        if os.path.exists(f) and f.startswith('/usr/share/upstart/sessions/'):
+            log = os.path.basename(f).replace('.conf', '.log')
+            key = 'upstart.' + log
+            try:
+                log = os.path.join(os.environ['XDG_CACHE_HOME'], 'upstart', log)
+            except KeyError:
+                try:
+                    log = os.path.join(os.environ['HOME'], '.cache', 'upstart', log)
+                except KeyError:
+                    continue
+
+            attach_file_if_exists(report, log, key)
+
+
 def attach_dmesg(report):
     '''Attach information from the kernel ring buffer (dmesg).
 
