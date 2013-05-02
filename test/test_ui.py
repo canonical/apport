@@ -1338,13 +1338,15 @@ bOgUs=
 
         # inject GECOS field with regexp control chars
         orig_getpwuid = pwd.getpwuid
+        orig_getuid = os.getuid
 
         def fake_getpwuid(uid):
-            r = list(orig_getpwuid(uid))
+            r = list(orig_getpwuid(orig_getuid()))
             r[4] = 'Joe (Hacker,+1 234,,'
             return r
 
         pwd.getpwuid = fake_getpwuid
+        os.getuid = lambda: 1234
 
         try:
             r = self._gen_test_crash()
@@ -1368,6 +1370,7 @@ bOgUs=
             self.assertEqual(self.ui.report['ProcInfo3'], '(Hacker should stay')
         finally:
             pwd.getpwuid = orig_getpwuid
+            os.getuid = orig_getuid
 
     def test_run_crash_known(self):
         '''run_crash() for already known problem'''
