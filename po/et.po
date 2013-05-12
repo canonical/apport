@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-03-19 11:23+0100\n"
-"PO-Revision-Date: 2013-02-17 13:18+0000\n"
-"Last-Translator: Jalakas <Unknown>\n"
+"PO-Revision-Date: 2013-05-11 16:24+0000\n"
+"Last-Translator: olavi tohver <Unknown>\n"
 "Language-Team: Estonian <et@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-03 05:09+0000\n"
+"X-Launchpad-Export-Date: 2013-05-12 05:09+0000\n"
 "X-Generator: Launchpad (build 16598)\n"
 "Language: et\n"
 
@@ -263,7 +263,7 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:700
 #: ../apport/ui.py:700
 msgid "Specify package name."
-msgstr ""
+msgstr "Täpsusta paketi nimi."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:702
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:753
@@ -352,7 +352,7 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:890
 #: ../apport/ui.py:890
 msgid "Run gdb session"
-msgstr ""
+msgstr "Käivita gdb sessioon"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:891
 #: ../apport/ui.py:891
@@ -814,7 +814,7 @@ msgstr "Viga: %s ei ole käivitusfail. Katkestan."
 #: ../gtk/apport-gtk.py:153 ../debian/tmp/usr/share/apport/apport-gtk.py:153
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr ""
+msgstr "Vabandust, rakendus %s peatus ootamatult."
 
 #: ../gtk/apport-gtk.py:156 ../debian/tmp/usr/share/apport/apport-gtk.py:156
 #, python-format
@@ -898,13 +898,13 @@ msgstr ""
 #: ../gtk/apport-gtk.py:238 ../debian/tmp/usr/share/apport/apport-gtk.py:238
 #, python-format
 msgid "The program \"%s\" has stopped responding."
-msgstr ""
+msgstr "Programm \"%s\" ei vasta enam."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:253
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:253 ../kde/apport-kde.py:184
 #, python-format
 msgid "Package: %s"
-msgstr ""
+msgstr "Pakett: %s"
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:132
 #: ../debian/tmp/usr/share/apport/apport-kde.py:190
@@ -912,7 +912,7 @@ msgstr ""
 #: ../gtk/apport-gtk.py:260 ../debian/tmp/usr/share/apport/apport-gtk.py:260
 #: ../kde/apport-kde.py:190
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
+msgstr "Vabandust, tarkvara paigaldamisel tekkis viga."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:197 ../gtk/apport-gtk.py:269
 #: ../gtk/apport-gtk.py:288 ../debian/tmp/usr/share/apport/apport-gtk.py:269
@@ -1020,7 +1020,7 @@ msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3 ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>Vabandust, ilmnes sisemine viga .</b></big>"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5 ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
