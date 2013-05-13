@@ -819,8 +819,12 @@ in a dependent package.' % master,
                 if task.target.resource_type_link.endswith('#distribution'):
                     task.target = self.lp_distro.getSourcePackage(
                         name=report['SourcePackage'])
-                    task.lp_save()
-                    bug = self.launchpad.bugs[id]
+                    try:
+                        task.lp_save()
+                        bug = self.launchpad.bugs[id]
+                    except HTTPError:
+                        # might fail if there is already another Ubuntu package task
+                        pass
                     break
 
         if 'need-duplicate-check' in bug.tags:

@@ -5,6 +5,8 @@ detailled list of changes, please see ChangeLog.
 -------------------
 Bug fixes:
  * Fix ui.test_run_crash_anonymity_escaping test when running as root.
+ * launchpad.py: Fix crash when trying to adjust a distro-only bug task if the
+   bug also already has a distropackage task.
 
 2.10 (2013-04-30):
 ------------------
