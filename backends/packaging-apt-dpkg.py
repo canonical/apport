@@ -619,6 +619,8 @@ Debug::NoLocking "true";
 
         obsolete = ''
 
+        src_records = apt.apt_pkg.SourceRecords()
+
         # mark packages for installation
         real_pkgs = set()
         for (pkg, ver) in packages:
@@ -682,11 +684,22 @@ Debug::NoLocking "true";
             if candidate.architecture != 'all':
                 if pkg + '-dbg' in c:
                     real_pkgs.add(pkg + '-dbg')
-                elif pkg + '-dbgsym' in c:
-                    real_pkgs.add(pkg + '-dbgsym')
-                    if c[pkg + '-dbgsym'].candidate.version != candidate.version:
-                        obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
-                            pkg, candidate.version, c[pkg + '-dbgsym'].candidate.version)
+                    print('found direct -dbg match for', pkg)
+                else:
+                    # install all -dbg from the source package
+                    if src_records.lookup(candidate.source_name):
+                        dbgs = [p for p in src_records.binaries if p.endswith('-dbg') and p in c]
+                    else:
+                        dbgs = []
+                    if dbgs:
+                        for p in dbgs:
+                            real_pkgs.add(p)
+                    else:
+                        if pkg + '-dbgsym' in c:
+                            real_pkgs.add(pkg + '-dbgsym')
+                            if c[pkg + '-dbgsym'].candidate.version != candidate.version:
+                                obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
+                                    pkg, candidate.version, c[pkg + '-dbgsym'].candidate.version)
 
         for p in real_pkgs:
             c[p].mark_install(False, False)

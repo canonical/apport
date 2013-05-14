@@ -7,6 +7,9 @@ Bug fixes:
  * Fix ui.test_run_crash_anonymity_escaping test when running as root.
  * launchpad.py: Fix crash when trying to adjust a distro-only bug task if the
    bug also already has a distropackage task.
+ * apt/dpkg: When there is no -dbg package, install all -dbg packages of the
+   corresponding source package, and only then fall back to -dbgsym.
+   (LP: #1003234)
 
 2.10 (2013-04-30):
 ------------------
