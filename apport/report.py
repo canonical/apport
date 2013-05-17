@@ -1277,7 +1277,11 @@ class Report(problem_report.ProblemReport):
                     if m.group(3) != '<module>':
                         sig += ':' + m.group(3)
                     else:
-                        sig += ':%s@%s' % (m.group(1), m.group(2))
+                        # resolve symlinks for more stable signatures
+                        f = m.group(1)
+                        if os.path.islink(f):
+                            f = os.path.realpath(f)
+                        sig += ':%s@%s' % (f, m.group(2))
 
             return self['ExecutablePath'] + ':' + trace[-1].split(':')[0] + sig
 

@@ -121,6 +121,44 @@ func(42)
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1)
 
+    def test_symlink(self):
+        '''Python crash of a symlinked program resolves to target'''
+
+        script = self._test_crash()
+
+        # load report for this
+        reports = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+        pr1 = apport.Report()
+        with open(reports[0], 'rb') as f:
+            pr1.load(f)
+        for f in apport.fileutils.get_all_reports():
+            os.unlink(f)
+
+        script_link = os.path.join(os.path.dirname(script), 'script-link')
+        os.symlink(os.path.basename(script), script_link)
+        self.addCleanup(os.unlink, script_link)
+
+        # run script through symlink name
+        p = subprocess.Popen([script_link], stderr=subprocess.PIPE)
+        err = p.communicate()[1].decode()
+        self.assertEqual(p.returncode, 1,
+                         'crashing test python program exits with failure code')
+        self.assertTrue('This should happen.' in err, err)
+
+        # get report for symlinked crash
+        reports = apport.fileutils.get_new_reports()
+        self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
+        pr2 = apport.Report()
+        with open(reports[0], 'rb') as f:
+            pr2.load(f)
+
+        # check report contents
+        self.assertTrue('bin/python' in pr2['InterpreterPath'])
+        self.assertEqual(pr1['ExecutablePath'], script)
+        self.assertEqual(pr2['ExecutablePath'], script)
+        self.assertEqual(pr1.crash_signature(), pr2.crash_signature())
+
     def test_no_argv(self):
         '''with zapped sys.argv.'''
 
