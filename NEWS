@@ -7,6 +7,8 @@ Bug fixes:
  * Resolve symlinks in file references in Python crash signatures.
    (LP: #1179979)
  * Fix endless loop of EOFErrors with broken core dumps. (LP: #1168849)
+ * report.py, add_gdb_info(): Fix crash if gdb did not determine an assertion
+   message. (LP: #1171484)
 
 2.10.1 (2013-05-14)
 -------------------

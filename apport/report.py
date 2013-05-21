@@ -686,12 +686,12 @@ class Report(problem_report.ProblemReport):
 
         # glib's assertion has precedence, since it internally uses
         # abort(), and then glib's __abort_msg is bogus
-        if '"ERROR:' in self['GLibAssertionMessage']:
+        if '"ERROR:' in self.get('GLibAssertionMessage', ''):
             self['AssertionMessage'] = self['GLibAssertionMessage']
         del self['GLibAssertionMessage']
 
         # same reason for libnih's assertion messages
-        if self['NihAssertionMessage'].startswith('$'):
+        if self.get('NihAssertionMessage', '').startswith('$'):
             self['AssertionMessage'] = self['NihAssertionMessage']
         del self['NihAssertionMessage']
 
