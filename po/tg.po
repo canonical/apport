@@ -14,13 +14,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-03 05:10+0000\n"
-"X-Generator: Launchpad (build 16598)\n"
+"X-Launchpad-Export-Date: 2013-05-21 04:35+0000\n"
+"X-Generator: Launchpad (build 16626)\n"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:124
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
-msgstr ""
+msgstr "Чунин менамояд, ки ин баста ба таври дуруст насб нашудааст"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:128
 #: ../apport/ui.py:128
@@ -29,6 +29,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
+"Ин бастаи расмии %s намебошад. Лутфан, ягон бастаи тарафи сеюмро тоза карда, "
+"амалро такрор кунед."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:145
 #: ../apport/ui.py:145
@@ -39,24 +41,28 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Шумо баъзе версияҳои кӯҳнаи баста доред. Лутфан, ба бастаҳои зерин такмил "
+"диҳед ва санҷед, ки оё мушкилӣ боз ҳам ба вуҷуд меояд:\n"
+"\n"
+"%s"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:251
 #: ../apport/ui.py:251
 msgid "unknown program"
-msgstr ""
+msgstr "барномаи номаълум"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:252
 #: ../apport/ui.py:252
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
-msgstr ""
+msgstr "Мутаассифона, барномаи \"%s\" ногаҳонан пӯшида шуд"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:254
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1256
 #: ../apport/ui.py:254 ../apport/ui.py:1256
 #, python-format
 msgid "Problem in %s"
-msgstr ""
+msgstr "Мушкилӣ дар %s"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:255
 #: ../apport/ui.py:255
@@ -64,6 +70,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
+"Компютери шумо барои ба таври худкор ташхис кардани мушкилӣ ва фиристодани "
+"гузориш ба таҳиягарон ҳофизаи озоди кофӣ надорад."
 
 #. package does not exist
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:268
@@ -91,64 +99,66 @@ msgstr ""
 #: ../apport/ui.py:1210 ../apport/ui.py:1214 ../apport/ui.py:1233
 #: ../apport/ui.py:1239
 msgid "Invalid problem report"
-msgstr ""
+msgstr "Гузориши мушкилӣ беэътибор аст"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:271
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1216
 #: ../apport/ui.py:271 ../apport/ui.py:1216
 msgid "This problem report is damaged and cannot be processed."
-msgstr ""
+msgstr "Гузориши мушкилӣ вайроншуда мебошад ва наметавонад коркард шавад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:277
 #: ../apport/ui.py:277
 msgid "The report belongs to a package that is not installed."
-msgstr ""
+msgstr "Гузориш ба бастае тааллуқ дорад, ки насб карда нашудааст."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:283
 #: ../apport/ui.py:283
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
+msgstr "Ҳангоми кӯшиши коркарди ин гузориши мушкилӣ хатогӣ ба вуҷуд омад:"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:326
 #: ../apport/ui.py:326
 msgid "You are not allowed to access this problem report."
-msgstr ""
+msgstr "Шумо наметавонед ба ин гузориши мушкилӣ дастрасӣ пайдо кунед."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:329
 #: ../apport/ui.py:329
 msgid "Error"
-msgstr ""
+msgstr "Хатогӣ"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:330
 #: ../apport/ui.py:330
 msgid "There is not enough disk space available to process this report."
-msgstr ""
+msgstr "Барои коркарди ин гузориш фазои диск кофӣ нест."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:414
 #: ../apport/ui.py:414
 msgid "No package specified"
-msgstr ""
+msgstr "Ягон баста муайян нашудааст"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:415
 #: ../apport/ui.py:415
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
+"Шумо бояд баста ё PID-ро муайян кунед. Барои маълумоти бештар \"--help\"-ро "
+"истифода баред."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:432
 #: ../apport/ui.py:432
 msgid "Invalid PID"
-msgstr ""
+msgstr "PID беэътибор"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:433
 #: ../apport/ui.py:433
 msgid "The specified process ID does not belong to a program."
-msgstr ""
+msgstr "ID-и раванди муайяншуда ба барнома тааллуқ надорад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:441
 #: ../apport/ui.py:441
 msgid "Permission denied"
-msgstr ""
+msgstr "Дастарсӣ манъ аст"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:442
 #: ../apport/ui.py:442
@@ -156,32 +166,34 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
+"Раванди муайяншуда ба шумо тааллуқ надорад. Лутфан, ин барномаро ҳамчун "
+"раванди root иҷро кунед."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:463
 #: ../apport/ui.py:463
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
-msgstr ""
+msgstr "Скрипти нишонаи %s бастаи таъсиргирифтаро муайян накард"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:466
 #: ../apport/ui.py:466
 #, python-format
 msgid "Package %s does not exist"
-msgstr ""
+msgstr "Бастаи %s вуҷуд надорад"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:490
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:678
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:683
 #: ../apport/ui.py:490 ../apport/ui.py:678 ../apport/ui.py:683
 msgid "Cannot create report"
-msgstr ""
+msgstr "Гузориш эҷод намешавад"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:505
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:551
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:568
 #: ../apport/ui.py:505 ../apport/ui.py:551 ../apport/ui.py:568
 msgid "Updating problem report"
-msgstr ""
+msgstr "Навсозии гузориши мушкилӣ"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:506
 #: ../apport/ui.py:506
@@ -191,6 +203,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Шумо гузоришдиҳанда ё обуначии ин гузориши мушкилӣ намебошед, ё ки гузориш "
+"такрорӣ ё аллакай пӯшида мебошад.\n"
+"\n"
+"Лутфан, гузориши навро тавассути \"apport-bug\" эҷод кунед."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:515
 #: ../apport/ui.py:515
@@ -204,28 +220,37 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Шумо гузоришдиҳандаи ин гузориши мушкилӣ мебошед. Ба ҷойи интиқол додани "
+"шурҳҳо ва замимаҳои худ ба хатои нав, шумо метавонед ба осонӣ хаторо ҳамчун "
+"такрорӣ қайд кунед.\n"
+"\n"
+"Баъдан, мо тавсия медиҳем, ки шумо гузориши нави хаторо тавассути \"apport-"
+"bug\" фиристонед, ва дар ин хато дар бораи хатои фиристодашавандаи худ шарҳ "
+"диҳед.\n"
+"\n"
+"Шумо воқеан мехоҳед идома диҳед?"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:552
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:569
 #: ../apport/ui.py:552 ../apport/ui.py:569
 msgid "No additional information collected."
-msgstr ""
+msgstr "Ягон маълумоти иловагӣ ҷамъ карда намешавад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:620
 #: ../apport/ui.py:620
 msgid "What kind of problem do you want to report?"
-msgstr ""
+msgstr "Шумо мехоҳед кадом намуди мушкилиро гузориш диҳед?"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:637
 #: ../apport/ui.py:637
 msgid "Unknown symptom"
-msgstr ""
+msgstr "Мушкилии номаълум"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:638
 #: ../apport/ui.py:638
 #, python-format
 msgid "The symptom \"%s\" is not known."
-msgstr ""
+msgstr "Мушкилии \"%s\" номаълум аст."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:669
 #: ../apport/ui.py:669
@@ -233,34 +258,39 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
+"Баъд аз пӯшидани ин паём, лутфан, ба равзанаи барнома зер кунед, то ин ки "
+"мушкилии онро гузориш диҳед."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:679
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:684
 #: ../apport/ui.py:679 ../apport/ui.py:684
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop ID-и раванди равзанаро муайян карда натавонист"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:698
 #: ../apport/ui.py:698
 msgid "%prog <report number>"
-msgstr ""
+msgstr "%prog <report number>"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:700
 #: ../apport/ui.py:700
 msgid "Specify package name."
-msgstr ""
+msgstr "Муайян кардани номи баста."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:702
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:753
 #: ../apport/ui.py:702 ../apport/ui.py:753
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
+"Иловакунии барчаспи иловагӣ ба гузориш. Метавонад якчанд маротиба муайян "
+"карда шавад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:732
 #: ../apport/ui.py:732
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:735
 #: ../apport/ui.py:735
@@ -269,16 +299,22 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
+"Оғоз дар ҳолати сабти рӯйдодҳои хатогиҳо. \"--package\" ва \"--pid\"-и "
+"ихтиёриро, ё ки танҳо \"--pid\"-ро талаб мекунад. Агар ягонтои онҳо дода "
+"нашуда бошад, рӯйхати нишонаҳои маълум намоиш дода мешавад. (Агар аргументи "
+"ягона дода шавад, ба кор меояд.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:737
 #: ../apport/ui.py:737
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
+msgstr "Ба равзанае зер кунед ва мушкилиро гузориш диҳед."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:739
 #: ../apport/ui.py:739
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"Оғоз кардан дар ҳолати навсозии хатогиҳо. Метавонад \"--package\"-и "
+"ихтиёриро гирад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:741
 #: ../apport/ui.py:741
@@ -286,6 +322,8 @@ msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
+"Фиристодани гузориши хатогӣ оид ба нишона. (Танҳо агар номи нишона танҳо "
+"ҳамчун аргумент дода шудааст, тааллуқ дорад.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:743
 #: ../apport/ui.py:743
@@ -293,6 +331,9 @@ msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
+"Муайян кардани номи баста дар ҳолати --file-bug. Агар --pid муайян карда "
+"бошад, ин ихтиёрӣ мебошад. (Агар ба номи баста танҳо як аргумент дода шавад, "
+"ба кор меояд.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:745
 #: ../apport/ui.py:745
@@ -301,11 +342,14 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Муайян кардани барномаи иҷрошаванда дар ҳолати --file-bug. Агар ин муайян "
+"карда шавад, гузориши хатогӣ маълумоти бештарро дар бар мегирад.  (Агар ба "
+"pid танҳо як аргумент дода шавад, ба кор меояд.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:747
 #: ../apport/ui.py:747
 msgid "The provided pid is a hanging application."
-msgstr ""
+msgstr "Pid-и пешниҳодшуда барномаи боздошта мебошад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:749
 #: ../apport/ui.py:749
@@ -314,6 +358,9 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
+"Гузориш додани нокомӣ аз файли додашудаи .apport ё .crash ба ҷойи файлҳои "
+"мунтазир дар %s. (Агар файл ҳамчун аргументи ягона дода шавад, истифода "
+"мешавад.)"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:751
 #: ../apport/ui.py:751
@@ -322,34 +369,39 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Дар намуди фиристодани хатоҳо, маълумоти ҷамъшударо ба ҷойи гузориш додани "
+"он ба файл захира кунед. Ин файл метавонад баъдан дар компютери дигар "
+"гузориш дода шавад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:755
 #: ../apport/ui.py:755
 msgid "Print the Apport version number."
-msgstr ""
+msgstr "Чоп кардани рақами версияи Apport."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:889
 #: ../apport/ui.py:889
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
+"Ин apport-retrace-ро дар равзанаи терминал аз нав оғоз мекунад, то ин ки "
+"нокомӣ ташхис карда шавад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:890
 #: ../apport/ui.py:890
 msgid "Run gdb session"
-msgstr ""
+msgstr "Иҷро кардани ҷаласаи gdb"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:891
 #: ../apport/ui.py:891
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
+msgstr "Иҷро кардани ҷаласаи gdb бе боргирии аломатҳои ислоҳи хатоҳо"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:893
 #: ../apport/ui.py:893
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
-msgstr ""
+msgstr "Навсозӣ кардани %s бо пайгирии аломатии анбора"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:966
 #: ../apport/ui.py:966
@@ -358,56 +410,63 @@ msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
+"Мушкилӣ бо барномаи %s ба вуҷуд омад, ки аз лаҳзаи ба вуҷуд омадани нокомӣ "
+"тағйир ёфт."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1070
 #: ../apport/ui.py:1070
 msgid "Could not determine the package or source package name."
-msgstr ""
+msgstr "Баста ё номи бастаи аслӣ муайян карда нашуд."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1088
 #: ../apport/ui.py:1088
 msgid "Unable to start web browser"
-msgstr ""
+msgstr "Браузер оғоз намешавад"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1089
 #: ../apport/ui.py:1089
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr ""
+msgstr "Барои кушодани %s браузер оғоз намешавад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1164
 #: ../apport/ui.py:1164
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
+"Лутфан, маълумоти ҳисоби худро барои системаи пайгирии хатогиҳои %s ворид "
+"кунед"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1176
 #: ../apport/ui.py:1176
 msgid "Network problem"
-msgstr ""
+msgstr "Мушкилии шабака"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1178
 #: ../apport/ui.py:1178
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
+"Ба пойгоҳи иттилоотии нокомӣ пайваст шудан нашуд, лутфан, пайвасти Интернети "
+"худро санҷед."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1205
 #: ../apport/ui.py:1205
 msgid "Memory exhaustion"
-msgstr ""
+msgstr "Ҳофиза кофӣ нест"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1206
 #: ../apport/ui.py:1206
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
+"Системаи шумо барои коркарди ин гузориши нокомӣ ҳофизаи кофӣ надорад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1229
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1238
 #: ../apport/ui.py:1229 ../apport/ui.py:1238
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr ""
+msgstr "Гузориши мушкилӣ ба барномае тааллуқ дорад, ки дигар насб нашудааст."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1259
 #: ../apport/ui.py:1259
@@ -417,12 +476,15 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Мушкилӣ гузориш дода намешавад:\n"
+"\n"
+"%s"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1315
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1322
 #: ../apport/ui.py:1315 ../apport/ui.py:1322
 msgid "Problem already known"
-msgstr ""
+msgstr "Мушкилӣ аллакай дониста мебошад"
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1316
 #: ../apport/ui.py:1316
@@ -431,35 +493,38 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
+"Ин мушкилӣ аллакай даргузориши хатогие, ки дар браузер намоиш дода шуд, "
+"гузориш дода шуда буд. Лутфан, санҷед, ки оё шумо метавонед ягон маълумоти "
+"бештарро илова кунед, ки метавонад барои таҳиягарон фоидаовар бошад."
 
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1323
 #: ../apport/ui.py:1323
 msgid "This problem was already reported to developers. Thank you!"
-msgstr ""
+msgstr "Ин мушкилӣ аллакай ба таҳиягарон гузориш дода шуд. Ташаккур ба шумо!"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:74 ../bin/apport-cli.py:74
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "Барои идома додан ягон тугмаеро зер кунед..."
 
 #: ../debian/tmp/usr/bin/apport-cli.py:81 ../bin/apport-cli.py:81
 msgid "What would you like to do? Your options are:"
-msgstr ""
+msgstr "Шумо мехоҳед чӣ кор кунед? Имконот зерин аст:"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:85 ../bin/apport-cli.py:85
 #, python-format
 msgid "Please choose (%s):"
-msgstr ""
+msgstr "Лутфан интихоб кунед (%s):"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:145 ../bin/apport-cli.py:145
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i байт)"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:338 ../gtk/apport-gtk.py:138
 #: ../debian/tmp/usr/bin/apport-cli.py:147 ../bin/apport-cli.py:147
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:138 ../kde/apport-kde.py:338
 msgid "(binary data)"
-msgstr ""
+msgstr "(иттилооти дуӣ)"
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:282
 #: ../debian/tmp/usr/share/apport/apport-kde.py:162
@@ -468,34 +533,39 @@ msgstr ""
 #: ../bin/apport-cli.py:175 ../debian/tmp/usr/share/apport/apport-gtk.py:173
 #: ../kde/apport-kde.py:162
 msgid "Send problem report to the developers?"
-msgstr ""
+msgstr "Гузориши мушкилиро ба таҳиягарон мефиристед?"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:176 ../bin/apport-cli.py:176
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
 msgstr ""
+"Баъд аз фиристодани гузориши мушкилӣ, лутфан, шаклро дар\n"
+"браузере, ки ба таври худкор кушода мешавад, пур кунед."
 
 #: ../debian/tmp/usr/bin/apport-cli.py:179 ../bin/apport-cli.py:179
 #, python-format
 msgid "&Send report (%s)"
-msgstr ""
+msgstr "&Фиристодани гузориш (%s)"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:183 ../bin/apport-cli.py:183
 msgid "&Examine locally"
-msgstr ""
+msgstr "&Санҷиши маҳаллӣ"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:187 ../bin/apport-cli.py:187
 msgid "&View report"
-msgstr ""
+msgstr "&Намоиш додани гузориш"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:188 ../bin/apport-cli.py:188
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
+"&Нигоҳ доштани файли гузориш барои фиристодани баъдина ё нусхабардорӣ ба "
+"ҷойи дигар"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:189 ../bin/apport-cli.py:189
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr ""
+"Бекор кунед ва &нокомиҳои ояндаи ин версияи барномаро нодида гузаронед"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:191
 #: ../debian/tmp/usr/bin/apport-cli.py:268
@@ -503,94 +573,102 @@ msgstr ""
 #: ../debian/tmp/usr/bin/apport-cli.py:321 ../bin/apport-cli.py:191
 #: ../bin/apport-cli.py:268 ../bin/apport-cli.py:300 ../bin/apport-cli.py:321
 msgid "&Cancel"
-msgstr ""
+msgstr "&Бекор кардан"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:219 ../bin/apport-cli.py:219
 msgid "Problem report file:"
-msgstr ""
+msgstr "Гузориши мушкилӣ ҳамчун:"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:225
 #: ../debian/tmp/usr/bin/apport-cli.py:230 ../bin/apport-cli.py:225
 #: ../bin/apport-cli.py:230
 msgid "&Confirm"
-msgstr ""
+msgstr "&Тасдиқ кардан"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:229 ../bin/apport-cli.py:229
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Хатогӣ: %s"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:383
 #: ../debian/tmp/usr/bin/apport-cli.py:235 ../bin/apport-cli.py:235
 #: ../kde/apport-kde.py:383
 msgid "Collecting problem information"
-msgstr ""
+msgstr "Ҷамъкунии маълумоти мушкилӣ"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:236 ../bin/apport-cli.py:236
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
+"Маълумоти ҷамъшуда метавонад барои беҳтар кардани барнома ба таҳиягарон \n"
+"фиристода шавад. Ин метавонад якчанд дақиқаро гирад."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:411
 #: ../debian/tmp/usr/bin/apport-cli.py:248 ../bin/apport-cli.py:248
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13 ../kde/apport-kde.py:411
 #: ../gtk/apport-gtk.ui.h:13
 msgid "Uploading problem information"
-msgstr ""
+msgstr "Боркунии иттилооти мушкилӣ"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:249 ../bin/apport-cli.py:249
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
+"Маълумоти ҷамъшуда ба системаи пайгирии хатогиҳо фиристода шуда истодааст. \n"
+"Ин метавонад якчанд дақиқаро гирад."
 
 #: ../debian/tmp/usr/bin/apport-cli.py:299 ../bin/apport-cli.py:299
 msgid "&Done"
-msgstr ""
+msgstr "&Тайёр"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:305 ../bin/apport-cli.py:305
 msgid "none"
-msgstr ""
+msgstr "ҳеҷ"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:306 ../bin/apport-cli.py:306
 #, python-format
 msgid "Selected: %s. Multiple choices:"
-msgstr ""
+msgstr "Интихобшуда: %s. Интихобҳои чандгона:"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:322 ../bin/apport-cli.py:322
 msgid "Choices:"
-msgstr ""
+msgstr "Интихобҳо:"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:336 ../bin/apport-cli.py:336
 msgid "Path to file (Enter to cancel):"
-msgstr ""
+msgstr "Масири файл (Барои бекор кардан тугмаи \"Enter\"-ро зер кунед):"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:342 ../bin/apport-cli.py:342
 msgid "File does not exist."
-msgstr ""
+msgstr "Файл вуҷуд надорад."
 
 #: ../debian/tmp/usr/bin/apport-cli.py:344 ../bin/apport-cli.py:344
 msgid "This is a directory."
-msgstr ""
+msgstr "Ин директория мебошад."
 
 #: ../debian/tmp/usr/bin/apport-cli.py:350 ../bin/apport-cli.py:350
 msgid "To continue, you must visit the following URL:"
-msgstr ""
+msgstr "Барои идома додан, шумо бояд ба суроғаи URL-и зерин ташриф оред:"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:352 ../bin/apport-cli.py:352
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
+"Шумо метавонед ҳозир браузерро иҷро кунед, ё ки ин URL-ро дар браузери "
+"компютери дигар гузоред."
 
 #: ../debian/tmp/usr/bin/apport-cli.py:354 ../bin/apport-cli.py:354
 msgid "Launch a browser now"
-msgstr ""
+msgstr "Ҳозир иҷро кардани браузер"
 
 #: ../debian/tmp/usr/bin/apport-cli.py:368 ../bin/apport-cli.py:368
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
+"Ягон гузориши интихори нокомиҳо вуҷуд надорад. Барои маълумоти бештар "
+"фармони \"--help\"-ро истифода баред."
 
 #: ../data/apportcheckresume.py:68
 #: ../debian/tmp/usr/share/apport/apportcheckresume.py:68
@@ -598,6 +676,8 @@ msgid ""
 "This occured during a previous suspend and prevented it from resuming "
 "properly."
 msgstr ""
+"Ин ҳангоми боздоштани қаблӣ ва вуҷуд омад, ва ба он оғози дубораи дурустро "
+"иҷозат надод."
 
 #: ../data/apportcheckresume.py:70
 #: ../debian/tmp/usr/share/apport/apportcheckresume.py:70
@@ -605,6 +685,8 @@ msgid ""
 "This occured during a previous hibernate and prevented it from resuming "
 "properly."
 msgstr ""
+"Ин ҳангоми гибернатсияи қаблӣ ба вуҷуд оамд, ва ба он оғози дубораи дурустро "
+"иҷозат надод."
 
 #: ../data/apportcheckresume.py:75
 #: ../debian/tmp/usr/share/apport/apportcheckresume.py:75
@@ -612,45 +694,52 @@ msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
 msgstr ""
+"Коркарди оғози дубора дар назди анҷом боздошта шуд, ва ҳамчун бомуваффақият "
+"ба анҷомрасида намоён мегардад."
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:31 ../bin/apport-retrace.py:31
 msgid "%prog [options] <apport problem report | crash ID>"
-msgstr ""
+msgstr "%prog [options] <гузориши мушкилии барнома | ID-и нокомӣ>"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:33 ../bin/apport-retrace.py:33
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
+msgstr "Пайгириҳои навро ба гузориш нагузоред, онҳоро ба stdout нависед."
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:35 ../bin/apport-retrace.py:35
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
+"Оғоз кардани ҷаласаи интерактивии gdb бо анбораи мағзи гузориш (-o нодида "
+"гирифта мешавад; гузоришро рӯйҳамнависӣ намекунад)"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:37 ../bin/apport-retrace.py:37
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
+"Навиштани гузориши тағйирёфта ба файли додашуда ба ҷойи тағйир додани "
+"гузориши аслӣ"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:39 ../bin/apport-retrace.py:39
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr ""
+"Тоза кардани дампи мағз аз гузориш баъд аз эҷодкунии дубораи пайгирии анбора"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:41 ../bin/apport-retrace.py:41
 msgid "Override report's CoreFile"
-msgstr ""
+msgstr "Бекор кардани CoreFile-и гузориш"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:43 ../bin/apport-retrace.py:43
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "Бекор кардани ExecutablePath-и гузориш"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:45 ../bin/apport-retrace.py:45
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "Бекор кардани ProcMaps-и гузориш"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:47 ../bin/apport-retrace.py:47
 msgid "Rebuild report's Package information"
-msgstr ""
+msgstr "Аз нав сохтани маълумоти баста"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
 msgid ""
@@ -661,25 +750,35 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Сохтани регдони муваққатӣ ва ба он ҷо боргирӣ/насб кардани бастаҳои лозимӣ "
+"ва аломатҳои ислоҳи хатоҳо; бе ин имкон ҳисоб карда мешавад, ки бастаҳо ва "
+"аломатҳои ислоҳи хатоҳои лозимӣ аллакай дар система насб карда шудаанд. "
+"Аргумент ба директорияи асоси конфигуратсияи системаи бастаҳо нишона "
+"мегузорад; агар шумо \"система\" муайян кунед, он файлҳои конфигуратсияи "
+"системаро истифода мебарад, аммо он гоҳ метавонад танҳо нокомиҳоеро, ки дар "
+"релизи ҷории иҷрошаванда ба вуҷуд омаданд, дубора рад мекунад."
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Гузориш додани раванди боргирӣ/насбкунӣ ҳангоми насбкунии бастаҳо ба регдон"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:53 ../bin/apport-retrace.py:53
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
+msgstr "Гузоштани вақт ба паёмҳои сабти рӯйдодҳо, барои амалиётҳои гурӯҳӣ"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Директорияи зерҳофиза барои бастаҳое, ки дар регдон боргирӣ шудаанд"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
+"Директория барои бастаҳои баровардашуда. Иҷрокуниҳои оянда ҳисоб мекунанд, "
+"ки бастаи аллакай боргиришуда ба ин регдон низ бароварда шудааст."
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:59
 #: ../debian/tmp/usr/bin/apport-valgrind.py:66 ../bin/apport-valgrind.py:66
@@ -687,6 +786,8 @@ msgstr ""
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
+"Насб кардани бастаи иловагӣ ба регдон (метавонад якчанд маротиба муайян "
+"карда шавад)"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
 msgid ""
@@ -694,102 +795,126 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"Масир ба файл бо маълумоти воридшавии пойгоҳи иттилоотии нокомиҳо. Ин он гоҳ "
+"истифода мешавад, ки барои боркунии пайгириҳои дубора радшудаи анбора ID-и "
+"нокомӣ муайян карда мешавад (танҳо он гоҳ, ки -g, -o, ё -s муайян нашудааст)"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:63 ../bin/apport-retrace.py:63
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
+"Намоиш додани пайгириҳои радшудаи дубора ва пурсидани тасдиқнома пеш аз "
+"фиристодани онҳо ба пойгоҳи иттилоотии нокомиҳо."
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:65 ../bin/apport-retrace.py:65
 msgid ""
 "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
+"Масир ба пойгоҳи иттилоотии такрории sqlite (пешфарз: бе санҷиши такрориҳо)"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:70 ../bin/apport-retrace.py:70
 msgid "incorrect number of arguments; use --help for a short help"
 msgstr ""
+"миқдори нодурусти аргументҳо; барои кӯмаки кӯтоҳ фармони \"--help\"-ро "
+"истифода баред"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:76 ../bin/apport-retrace.py:76
 msgid "You cannot use -C without -S. Stopping."
 msgstr ""
+"Шумо наметавонед \"-C\"-ро бе \"-S\" истифода баред. Амал қатъ карда шуд."
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:80 ../bin/apport-retrace.py:80
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
 msgstr ""
+"шумо бояд амалиёти маҳаллиро иҷро кунед (-s, -g, -o) ё ки файли санҷиши "
+"ҳаққониятро пешниҳод кунед (--auth); барои кӯмаки кӯтоҳ \"--help\"-ро "
+"истифода баред"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../debian/tmp/usr/bin/apport-retrace.py:114 ../bin/apport-retrace.py:114
 msgid "OK to send these as attachments? [y/n]"
-msgstr ""
+msgstr "Инҳоро ҳамчун замимаҳо мефиристонед? [y/n]"
 
 #: ../gtk/apport-gtk.desktop.in.h:1 ../gtk/apport-gtk-mime.desktop.in.h:1
 #: ../kde/apport-kde-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
-msgstr ""
+msgstr "Гузориши мушкилӣ..."
 
 #: ../gtk/apport-gtk.desktop.in.h:2 ../gtk/apport-gtk-mime.desktop.in.h:2
 #: ../kde/apport-kde-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
-msgstr ""
+msgstr "Гузориш додани амали нодуруст ба таҳиягарон"
 
 #: ../debian/tmp/usr/share/apport/kernel_oops.py:28 ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
+"Ҳозир системаи шумо метавонад ноустувор гардад ва бояд бозоғозӣ карда шавад."
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:37 ../bin/apport-valgrind.py:37
 msgid "See man page for details."
-msgstr ""
+msgstr "Барои тафсилот ба саҳифаи man нигаред."
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:43 ../bin/apport-valgrind.py:43
 msgid "specify the log file name produced by valgrind"
 msgstr ""
+"муайян кардани номи файли сабти рӯйдодҳо, ки бо valgrind эҷод карда шудааст"
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:46 ../bin/apport-valgrind.py:46
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr ""
+"истифодаи дубораи директорияи қаблан эҷодшудаи регдон (SDIR), ё дар ҳолати "
+"мавҷуд набудан, эҷод кардани он"
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:50 ../bin/apport-valgrind.py:50
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
+"директорияи регдонро барои аломатҳои иловагии ислоҳи хатоҳо эҷод  накунед  ё "
+" аз нав истифода набаред, танҳо ба аломатҳои насбшудаи ислоҳи хатоҳо асос "
+"ёбед."
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:54 ../bin/apport-valgrind.py:54
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr ""
+"истифодаи дубораи директорияи қаблан эҷодшудаи зерҳофиза (CDIR), ё дар "
+"ҳолати мавҷуд набудан, эҷод кардани он"
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:58 ../bin/apport-valgrind.py:58
 msgid ""
 "report download/install progress when installing packages into sandbox"
 msgstr ""
+"гузориш додани раванди боргирӣ/насбкунӣ ҳангоми насбкунии бастаҳо ба регдон"
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:62 ../bin/apport-valgrind.py:62
 msgid ""
 "the executable that is run under valgrind's memcheck tool  for memory leak "
 "detection"
 msgstr ""
+"файли иҷрошаванда, ки дар абзори саниҷиши ҳофизаи valgrind барои пайдо "
+"кардани ихроҷҳои ҳофиза иҷро мешавад"
 
 #: ../debian/tmp/usr/bin/apport-valgrind.py:97 ../bin/apport-valgrind.py:97
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
-msgstr ""
+msgstr "Хатогӣ: %s иҷро намешавад. Амал қатъ карда шуд."
 
 #: ../gtk/apport-gtk.py:153 ../debian/tmp/usr/share/apport/apport-gtk.py:153
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
-msgstr ""
+msgstr "Мутаассифода, барномаи %s ногаҳонан пӯшида шуд."
 
 #: ../gtk/apport-gtk.py:156 ../debian/tmp/usr/share/apport/apport-gtk.py:156
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
-msgstr ""
+msgstr "Мутаассифона, %s ногаҳонан пӯшида шуд."
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:106
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:250
@@ -801,7 +926,7 @@ msgstr ""
 #: ../kde/apport-kde.py:176 ../kde/apport-kde.py:217
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
-msgstr ""
+msgstr "Мутаассифона, %s бо хатогии дохилӣ дучор шуд."
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:288
 #: ../debian/tmp/usr/share/apport/apport-kde.py:170
@@ -809,7 +934,7 @@ msgstr ""
 #: ../gtk/apport-gtk.py:182 ../debian/tmp/usr/share/apport/apport-gtk.py:182
 #: ../kde/apport-kde.py:170
 msgid "Send"
-msgstr ""
+msgstr "Фиристодан"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:271 ../gtk/apport-gtk.py:200
 #: ../gtk/apport-gtk.py:569 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
@@ -817,7 +942,7 @@ msgstr ""
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:569 ../kde/apport-kde.py:271
 #: ../gtk/apport-gtk.ui.h:7
 msgid "Show Details"
-msgstr ""
+msgstr "Намоиш додани тафсилот"
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:111
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:137
@@ -841,12 +966,12 @@ msgstr ""
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:299 ../kde/apport-kde.py:210
 #: ../kde/apport-kde.py:223 ../gtk/apport-gtk.ui.h:10
 msgid "Continue"
-msgstr ""
+msgstr "Давом додан"
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:276
 #: ../gtk/apport-gtk.py:224 ../debian/tmp/usr/share/apport/apport-gtk.py:224
 msgid "Force Closed"
-msgstr ""
+msgstr "Маҷбур кардани пӯшидан"
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:222
 #: ../debian/tmp/usr/share/apport/apport-kde.py:214
@@ -858,23 +983,23 @@ msgstr ""
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:284 ../kde/apport-kde.py:214
 #: ../kde/apport-kde.py:357
 msgid "Relaunch"
-msgstr ""
+msgstr "Аз нав иҷро кардан"
 
 #: ../gtk/apport-gtk.py:234 ../debian/tmp/usr/share/apport/apport-gtk.py:234
 #, python-format
 msgid "The application %s has stopped responding."
-msgstr ""
+msgstr "Барномаи %s ҷавоб намедиҳад."
 
 #: ../gtk/apport-gtk.py:238 ../debian/tmp/usr/share/apport/apport-gtk.py:238
 #, python-format
 msgid "The program \"%s\" has stopped responding."
-msgstr ""
+msgstr "Барномаи \"%s\" ҷавоб намедиҳад."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:253
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:253 ../kde/apport-kde.py:184
 #, python-format
 msgid "Package: %s"
-msgstr ""
+msgstr "Баста: %s"
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:132
 #: ../debian/tmp/usr/share/apport/apport-kde.py:190
@@ -882,27 +1007,27 @@ msgstr ""
 #: ../gtk/apport-gtk.py:260 ../debian/tmp/usr/share/apport/apport-gtk.py:260
 #: ../kde/apport-kde.py:190
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
+msgstr "Мутаассифона, ҳангоми насбкунии нармафзор мушкилие ба вуҷуд омад."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:197 ../gtk/apport-gtk.py:269
 #: ../gtk/apport-gtk.py:288 ../debian/tmp/usr/share/apport/apport-gtk.py:269
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:288 ../kde/apport-kde.py:197
 #, python-format
 msgid "The application %s has experienced an internal error."
-msgstr ""
+msgstr "Барномаи %s дорои хатогии дарунӣ мебошад."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../gtk/apport-gtk.py:272
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:272 ../kde/apport-kde.py:201
 #, python-format
 msgid "The application %s has closed unexpectedly."
-msgstr ""
+msgstr "Барномаи %s ногаҳон қатъ шудааст."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:213 ../gtk/apport-gtk.py:283
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:283 ../kde/apport-kde.py:213
 #: ../gtk/apport-gtk.ui.h:9
 msgid "Leave Closed"
-msgstr ""
+msgstr "Пӯшида нигоҳ доред"
 
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:252
 #: ../debian/tmp/usr/share/apport/apport-kde.py:220
@@ -913,38 +1038,42 @@ msgstr ""
 #: ../gtk/apport-gtk.ui.h:4
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
+"Агар шумо мушкилиҳои дигарро бинед, кӯшиш кунед, ки компютерро бозоғозӣ "
+"намоед."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:224 ../gtk/apport-gtk.py:300
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:300 ../kde/apport-kde.py:224
 msgid "Ignore future problems of this type"
-msgstr ""
+msgstr "Нодида гирифтани мушкилиҳои ояндаи ин намуд"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:268 ../gtk/apport-gtk.py:573
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:573 ../kde/apport-kde.py:268
 msgid "Hide Details"
-msgstr ""
+msgstr "Пинҳон кардани тафсилот"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:294 ../kde/apport-kde.py:294
 msgid "Username:"
-msgstr ""
+msgstr "Номи корбар:"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:295 ../kde/apport-kde.py:295
 msgid "Password:"
-msgstr ""
+msgstr "Парол:"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:382 ../kde/apport-kde.py:382
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Ҷамъкунии маълумоти мушкилӣ"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:384 ../kde/apport-kde.py:384
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Маълумоти ҷамъшуда метавонад барои беҳтар кардани барнома ба таҳиягарон "
+"фиристода шавад. Ин метавонад якчанд дақиқаро гирад."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:410 ../kde/apport-kde.py:410
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Боркунии иттилооти мушкилӣ"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:412
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../kde/apport-kde.py:412
@@ -953,76 +1082,84 @@ msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
+"Маълумоти ҷамъшуда ба системаи пайгирии хатогиҳо фиристода шуда истодааст. "
+"Ин метавонад якчанд дақиқаро гирад."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:446
 #: ../debian/tmp/usr/share/apport/apport-kde.py:482
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../kde/apport-kde.py:446
 #: ../kde/apport-kde.py:482 ../gtk/apport-gtk.ui.h:1
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
-msgstr ""
+msgstr "Ҷвмъ кардани маълумоти система"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:2
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
 msgstr ""
+"Барои ҷамъ кардани маълумоти система барои ин гузориши мушкилӣ, номи корбар "
+"ва парол лозим аст"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
-msgstr ""
+msgstr "Системаи гузоришдиҳии мушкилиҳо"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
 msgid ""
 "Please enter your password to access problem reports of system programs"
 msgstr ""
+"Лутфан, пароли худро ворид кунед, то ин ки ба гузоришҳои мушкилиҳои "
+"барномаҳои системавӣ дастрасӣ пайдо кунед"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2 ../gtk/apport-gtk.ui.h:2
 msgid "Crash report"
-msgstr ""
+msgstr "Гузориши вайроншавӣ"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3 ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
+msgstr "<big><b>Мутаассифона, хатогии дохилӣ ба вуҷуд омад.</b></big>"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5 ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
-msgstr ""
+msgstr "Фиристодани гузориши хатогӣ барои кӯмак дар ислоҳ кардани ин мушкилӣ"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6 ../gtk/apport-gtk.ui.h:6
 msgid "Ignore future problems of this program version"
-msgstr ""
+msgstr "Нодида гирифтани мушкилиҳои ояндаи ин версияи барнома"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8 ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
-msgstr ""
+msgstr "_Санҷиши маҳаллӣ"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11 ../gtk/apport-gtk.ui.h:11
 msgid "<big><b>Collecting problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Маълумоти мушкилӣ ҷамъ шуда истодааст</b></big>"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12 ../gtk/apport-gtk.ui.h:12
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
 msgstr ""
+"Маълумоте ҷамъ карда мешавад, ки метавонад ба таҳиягарон ҳангоми ислоҳ "
+"кардани мушкилии гузоришдодашудаи шумо кӯмак кунад."
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:14 ../gtk/apport-gtk.ui.h:14
 msgid "<big><b>Uploading problem information</b></big>"
-msgstr ""
+msgstr "<big><b>Маълумоти мушкилӣ бор шуда истодааст</b></big>"
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr ""
+msgstr "Файли нокомии Apport"
 
 #: ../bin/apport-unpack.py:22 ../debian/tmp/usr/bin/apport-unpack.py:22
 #, python-format
 msgid "Usage: %s <report> <target directory>"
-msgstr ""
+msgstr "Истифодабарӣ: %s <report> <target directory>"
 
 #: ../bin/apport-unpack.py:46 ../debian/tmp/usr/bin/apport-unpack.py:46
 msgid "Destination directory exists and is not empty."
-msgstr ""
+msgstr "Директорияи таъинотӣ вуҷуд дорад ва холӣ намебошад."
