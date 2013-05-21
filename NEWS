@@ -6,6 +6,7 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  * Resolve symlinks in file references in Python crash signatures.
    (LP: #1179979)
+ * Fix endless loop of EOFErrors with broken core dumps. (LP: #1168849)
 
 2.10.1 (2013-05-14)
 -------------------

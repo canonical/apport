@@ -263,7 +263,7 @@ class UserInterface:
                 try:
                     if 'Dependencies' not in self.report:
                         self.collect_info()
-                except (IOError, zlib.error) as e:
+                except (IOError, EOFError, zlib.error) as e:
                     # can happen with broken core dumps
                     self.report = None
                     self.ui_error_message(
