@@ -684,7 +684,6 @@ Debug::NoLocking "true";
             if candidate.architecture != 'all':
                 if pkg + '-dbg' in c:
                     real_pkgs.add(pkg + '-dbg')
-                    print('found direct -dbg match for', pkg)
                 else:
                     # install all -dbg from the source package
                     if src_records.lookup(candidate.source_name):
