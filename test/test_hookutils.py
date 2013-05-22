@@ -78,22 +78,22 @@ class T(unittest.TestCase):
     def test_attach_file(self):
         '''attach_file()'''
 
-        with open('/etc/motd') as f:
-            motd_contents = f.read().strip()
+        with open('/etc/passwd') as f:
+            passwd_contents = f.read().strip()
         with open('/etc/issue') as f:
             issue_contents = f.read().strip()
 
         # default key name
         report = {}
-        apport.hookutils.attach_file(report, '/etc/motd')
-        self.assertEqual(list(report), ['.etc.motd'])
-        self.assertEqual(report['.etc.motd'], motd_contents)
+        apport.hookutils.attach_file(report, '/etc/passwd')
+        self.assertEqual(list(report), ['.etc.passwd'])
+        self.assertEqual(report['.etc.passwd'], passwd_contents)
 
         # custom key name
         report = {}
-        apport.hookutils.attach_file(report, '/etc/motd', 'Motd')
-        self.assertEqual(list(report), ['Motd'])
-        self.assertEqual(report['Motd'], motd_contents)
+        apport.hookutils.attach_file(report, '/etc/passwd', 'Passwd')
+        self.assertEqual(list(report), ['Passwd'])
+        self.assertEqual(report['Passwd'], passwd_contents)
 
         # nonexisting file
         report = {}
@@ -103,15 +103,15 @@ class T(unittest.TestCase):
 
         # existing key
         report = {}
-        apport.hookutils.attach_file(report, '/etc/motd')
-        apport.hookutils.attach_file(report, '/etc/motd')
-        self.assertEqual(list(report), ['.etc.motd'])
-        self.assertEqual(report['.etc.motd'], motd_contents)
+        apport.hookutils.attach_file(report, '/etc/passwd')
+        apport.hookutils.attach_file(report, '/etc/passwd')
+        self.assertEqual(list(report), ['.etc.passwd'])
+        self.assertEqual(report['.etc.passwd'], passwd_contents)
 
-        apport.hookutils.attach_file(report, '/etc/issue', '.etc.motd', overwrite=False)
-        self.assertEqual(sorted(report.keys()), ['.etc.motd', '.etc.motd_'])
-        self.assertEqual(report['.etc.motd'], motd_contents)
-        self.assertEqual(report['.etc.motd_'], issue_contents)
+        apport.hookutils.attach_file(report, '/etc/issue', '.etc.passwd', overwrite=False)
+        self.assertEqual(sorted(report.keys()), ['.etc.passwd', '.etc.passwd_'])
+        self.assertEqual(report['.etc.passwd'], passwd_contents)
+        self.assertEqual(report['.etc.passwd_'], issue_contents)
 
     def test_attach_file_binary(self):
         '''attach_file() for binary files'''
@@ -130,20 +130,20 @@ class T(unittest.TestCase):
     def test_attach_file_if_exists(self):
         '''attach_file_if_exists()'''
 
-        with open('/etc/motd') as f:
-            motd_contents = f.read().strip()
+        with open('/etc/passwd') as f:
+            passwd_contents = f.read().strip()
 
         # default key name
         report = {}
-        apport.hookutils.attach_file_if_exists(report, '/etc/motd')
-        self.assertEqual(list(report), ['.etc.motd'])
-        self.assertEqual(report['.etc.motd'], motd_contents)
+        apport.hookutils.attach_file_if_exists(report, '/etc/passwd')
+        self.assertEqual(list(report), ['.etc.passwd'])
+        self.assertEqual(report['.etc.passwd'], passwd_contents)
 
         # custom key name
         report = {}
-        apport.hookutils.attach_file_if_exists(report, '/etc/motd', 'Motd')
-        self.assertEqual(list(report), ['Motd'])
-        self.assertEqual(report['Motd'], motd_contents)
+        apport.hookutils.attach_file_if_exists(report, '/etc/passwd', 'Passwd')
+        self.assertEqual(list(report), ['Passwd'])
+        self.assertEqual(report['Passwd'], passwd_contents)
 
         # nonexisting file
         report = {}

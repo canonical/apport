@@ -15,6 +15,7 @@ Bug fixes:
    <configdir>/<release>/codename with the release's code name in it.
  * sandboxutils.py: Call get_file_package() with the report's release, so that
    we actually get files from the target release, not the host release.
+ * test_hookutils.py: Don't assume that /etc/motd exists.
 
 2.10.1 (2013-05-14)
 -------------------
