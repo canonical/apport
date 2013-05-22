@@ -562,6 +562,12 @@ Debug::NoLocking "true";
         '''
         if not configdir:
             apt_sources = '/etc/apt/sources.list'
+
+            # determine system distro release code name
+            lsb_release = subprocess.Popen(['lsb_release', '-sc'],
+                                           stdout=subprocess.PIPE)
+            self.current_release_codename = lsb_release.communicate()[0].decode('UTF-8').strip()
+            assert lsb_release.returncode == 0
         else:
             # support architecture specific config, fall back to global config
             apt_sources = os.path.join(configdir, release, 'sources.list')
@@ -580,6 +586,10 @@ Debug::NoLocking "true";
                         break
                 else:
                     apport.warning('cannot determine mirror, %s does not contain a valid deb line' % apt_sources)
+
+            # set current release code name for _distro_release_to_codename
+            with open(os.path.join(configdir, release, 'codename')) as f:
+                self.current_release_codename = f.read().strip()
 
         if not os.path.exists(apt_sources):
             raise SystemError('%s does not exist' % apt_sources)
@@ -729,6 +739,8 @@ Debug::NoLocking "true";
 
         if permanent_rootdir:
             self._save_virtual_mapping(aptroot)
+
+        del self.current_release_codename
         return obsolete
 
     def package_name_glob(self, nameglob):
@@ -799,6 +811,16 @@ Debug::NoLocking "true";
 
         return self._mirror
 
+    def _distro_release_to_codename(self, release):
+        '''Map a DistroRelease: field value to a release code name'''
+
+        # if we called install_packages() with a configdir, we can read the
+        # codename from there
+        if hasattr(self, 'current_release_codename') and self.current_release_codename is not None:
+            return self.current_release_codename
+
+        raise NotImplementedError('Cannot map DistroRelease to a code name without install_packages()')
+
     def _search_contents(self, file, map_cachedir, release, arch):
         '''Internal function for searching file in Contents.gz.'''
 
@@ -817,6 +839,8 @@ Debug::NoLocking "true";
                                            stdout=subprocess.PIPE)
             release = lsb_release.communicate()[0].decode('UTF-8').strip()
             assert lsb_release.returncode == 0
+        else:
+            release = self._distro_release_to_codename(release)
 
         map = os.path.join(dir, '%s-Contents-%s.gz' % (release, arch))
 

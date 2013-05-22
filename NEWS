@@ -9,6 +9,10 @@ Bug fixes:
  * Fix endless loop of EOFErrors with broken core dumps. (LP: #1168849)
  * report.py, add_gdb_info(): Fix crash if gdb did not determine an assertion
    message. (LP: #1171484)
+ * apt/dpkg: Fix get_file_package()'s "release" field to actually mean
+   DistroRelease:, not a distro code name. This now requires a previous call to
+   install_packages() with a configdir, which needs to have a file
+   <configdir>/<release>/codename with the release's code name in it.
 
 2.10.1 (2013-05-14)
 -------------------

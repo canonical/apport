@@ -236,6 +236,10 @@ bo/gu/s                                                 na/mypackage
         release_name = lsb_release.communicate()[0].decode('UTF-8').strip()
         assert lsb_release.returncode == 0
 
+        # map "Foonux 3.14" to "mocky"
+        orig_distro_release_to_codename = impl._distro_release_to_codename
+        impl._distro_release_to_codename = lambda r: (r == 'Foonux 3.14') and 'mocky' or None
+
         # generate test Contents.gz for two fantasy architectures
         basedir = tempfile.mkdtemp()
         try:
@@ -283,15 +287,15 @@ usr/bin/frob                                            foo/frob
             self.assertEqual(impl.get_file_package('/usr/lib/odd/libfrob.so.1', True, arch='odd'),
                              'libfrob1')
 
-            # for mocky release
+            # for mocky release ("Foonux 3.14")
             self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.1',
-                                                   True, release='mocky', arch='even'),
+                                                   True, release='Foonux 3.14', arch='even'),
                              None)
             self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.0',
-                                                   True, release='mocky', arch='even'),
+                                                   True, release='Foonux 3.14', arch='even'),
                              'libfrob0')
             self.assertEqual(impl.get_file_package('/usr/bin/frob',
-                                                   True, release='mocky', arch='even'),
+                                                   True, release='Foonux 3.14', arch='even'),
                              'frob')
 
             # invalid mirror
@@ -299,7 +303,7 @@ usr/bin/frob                                            foo/frob
             self.assertRaises(IOError, impl.get_file_package,
                               '/usr/lib/even/libfrob.so.1', True, arch='even')
             self.assertRaises(IOError, impl.get_file_package,
-                              '/usr/lib/even/libfrob.so.0', True, release='mocky', arch='even')
+                              '/usr/lib/even/libfrob.so.0', True, release='Foonux 3.14', arch='even')
 
             # valid mirror, test caching
             impl.set_mirror('file://' + basedir)
@@ -312,7 +316,7 @@ usr/bin/frob                                            foo/frob
             cache_file = os.listdir(cache_dir)[0]
 
             self.assertEqual(impl.get_file_package('/usr/lib/even/libfrob.so.0',
-                                                   True, cache_dir, release='mocky', arch='even'),
+                                                   True, cache_dir, release='Foonux 3.14', arch='even'),
                              'libfrob0')
             self.assertEqual(len(os.listdir(cache_dir)), 2)
 
@@ -321,7 +325,7 @@ usr/bin/frob                                            foo/frob
             self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir, arch='even'),
                              'frob-utils')
             self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir,
-                                                   release='mocky', arch='even'),
+                                                   release='Foonux 3.14', arch='even'),
                              'frob')
 
             # but no cached file for the other arch
@@ -337,6 +341,7 @@ usr/bin/frob                                            foo/frob
                               True, cache_dir, arch='even')
         finally:
             shutil.rmtree(basedir)
+            impl._distro_release_to_codename = orig_distro_release_to_codename
 
     def test_get_file_package_diversion(self):
         '''get_file_package() for a diverted file.'''
@@ -456,7 +461,7 @@ usr/bin/frob                                            foo/frob
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
-                         ['armhf', 'sources.list'])
+                         ['armhf', 'codename', 'sources.list'])
         self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
                          ['sources.list'])
 
@@ -541,7 +546,7 @@ usr/bin/frob                                            foo/frob
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
-                         ['armhf', 'sources.list'])
+                         ['armhf', 'codename', 'sources.list'])
         self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
                          ['sources.list'])
 
@@ -742,6 +747,8 @@ usr/bin/frob                                            foo/frob
             f.write('deb http://ports.ubuntu.com/ precise main\n')
             f.write('deb-src http://ports.ubuntu.com/ precise main\n')
             f.write('deb http://ddebs.ubuntu.com/ precise main\n')
+        with open(os.path.join(self.configdir, 'Foonux 1.2', 'codename'), 'w') as f:
+            f.write('precise')
 
     def assert_elf_arch(self, path, expected):
         '''Assert that an ELF file is for an expected machine type.
