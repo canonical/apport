@@ -740,7 +740,6 @@ Debug::NoLocking "true";
         if permanent_rootdir:
             self._save_virtual_mapping(aptroot)
 
-        del self.current_release_codename
         return obsolete
 
     def package_name_glob(self, nameglob):

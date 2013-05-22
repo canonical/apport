@@ -13,6 +13,8 @@ Bug fixes:
    DistroRelease:, not a distro code name. This now requires a previous call to
    install_packages() with a configdir, which needs to have a file
    <configdir>/<release>/codename with the release's code name in it.
+ * sandboxutils.py: Call get_file_package() with the report's release, so that
+   we actually get files from the target release, not the host release.
 
 2.10.1 (2013-05-14)
 -------------------

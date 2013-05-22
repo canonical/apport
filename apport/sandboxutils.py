@@ -74,6 +74,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             continue
 
         pkg = apport.packaging.get_file_package(l, True, cache_dir,
+                                                release=report['DistroRelease'],
                                                 arch=report.get('Architecture'))
         if pkg:
             if verbose:
@@ -176,6 +177,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     for path in ('InterpreterPath', 'ExecutablePath'):
         if path in report and not os.path.exists(sandbox_dir + report[path]):
             pkg = apport.packaging.get_file_package(report[path], True, cache_dir,
+                                                    release=report['DistroRelease'],
                                                     arch=report.get('Architecture'))
             if pkg:
                 apport.log('Installing extra package %s to get %s' % (pkg, path), log_timestamps)
