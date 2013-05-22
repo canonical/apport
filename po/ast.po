@@ -6,12 +6,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:48+0000\n"
 "Last-Translator: Iñigo Varela <malditoastur@gmail.com>\n"
 "Language-Team: Asturian <alministradores@softastur.org>\n"
-"Language: ast\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-21 04:34+0000\n"
+"X-Launchpad-Export-Date: 2013-05-22 04:32+0000\n"
 "X-Generator: Launchpad (build 16626)\n"
+"Language: ast\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -158,8 +158,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -204,7 +204,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:727
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [opciones] [síntomes|pid|paquete|camín pal programa|.apport/.crash]"
 
@@ -607,7 +608,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
@@ -653,7 +655,8 @@ msgstr ""
 "d'unviales a la base de datos d'errores"
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Camín a la base de datos sqlite duplicada (por omisión: ensin comprobación "
 "de duplicáu)"
@@ -727,7 +730,8 @@ msgstr ""
 "crealu"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "informar del avance na descarga/instalación al instalar paquetes nel sistema "
 "de pruebes"
@@ -879,7 +883,8 @@ msgid "System problem reports"
 msgstr "Informes de problemes del sistema"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Escribi la to contraseña p'acceder a los informes de problemes de programes "
 "del sistema"
@@ -947,6 +952,7 @@ msgstr "El direutoriu de destín esiste y nun ta ermu."
 #~ "Una vegada se heba unviáu l'informe del problema, rellena'l formulariu "
 #~ "qu'aparecerá na ventana del restolador (que s'abrirá automáticamente)."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Informe completu (recomendáu; %s)"
 
@@ -955,11 +961,11 @@ msgstr "El direutoriu de destín esiste y nun ta ermu."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "Si nun tabes faciendo res confidencial (como introducir contraseñes o "
-#~ "otra información privada), puedes informar del problema p'aidar a meyorar "
+#~ "Si nun tabes faciendo res confidencial (como introducir contraseñes o otra "
+#~ "información privada), puedes informar del problema p'aidar a meyorar "
 #~ "l'aplicación."
 
 #~ msgid "Kernel problem"
@@ -980,22 +986,24 @@ msgstr "El direutoriu de destín esiste y nun ta ermu."
 #~ msgid "&Report Problem..."
 #~ msgstr "&Informar d'un problema..."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s zarróse de forma inesperada en %s a %s."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Si nun tabes faciendo res confidencial (como introducir contraseñes o\n"
 #~ "otra información privada), puedes informar del problema p'aidar a\n"
 #~ "meyorar l'aplicación."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Unviar l'informe completu (recomendáu; %s)"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1006,13 +1014,14 @@ msgstr "El direutoriu de destín esiste y nun ta ermu."
 #~ msgid "Application problem"
 #~ msgstr "Problema n'aplicación"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Informe reducíu (conexón lenta a Internet; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Esto desaniciará dalgunos elementos grandes del informe. Éstos son mui "
 #~ "útiles pa que los desendolcadores depuren el problema, pero puede resulta-"
@@ -1028,17 +1037,20 @@ msgstr "El direutoriu de destín esiste y nun ta ermu."
 #~ msgstr "_Inorar fallos futuros d'esta versión del programa"
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
-#~ msgstr ""
-#~ "Si lo notifiques, aidarás a los desendolcadores a iguar el problema."
+#~ msgstr "Si lo notifiques, aidarás a los desendolcadores a iguar el problema."
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Unviar informe &reducíu (conexones d'internet lentes; %s)"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Falló la instalación o l'anovamientu del paquete «%s»."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Esti nun ye un paquete %s xenuín"
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Sentímoslo, l'aplicación %s zarróse de manera inesperada."

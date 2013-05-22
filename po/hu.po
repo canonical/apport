@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-03-22 14:03+0000\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
-"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-21 04:34+0000\n"
+"X-Launchpad-Export-Date: 2013-05-22 04:32+0000\n"
 "X-Generator: Launchpad (build 16626)\n"
+"Language: hu\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -166,8 +166,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -223,7 +223,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Extra címke hozzáadása a jelentéshez. Többször is megadható."
 
 #: ../apport/ui.py:727
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [kapcsolók] [tünet|pid|csomag|program elérési_út|.apport/.crash fájl]"
 
@@ -640,7 +641,8 @@ msgstr ""
 "az aktuálisan futó kiadás összeomlásait lesz képes nyomon követni."
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Homokozóba történő telepítéskor a letöltés/telepítési folyamat kijelzése"
 
@@ -685,7 +687,8 @@ msgstr ""
 "kérése a beküldés előtt az összeomlási adatbázisba."
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Útvonal a kettőzött sqlite adatbázishoz (alapértelmezett: nincs ellenőrzés)"
 
@@ -752,7 +755,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -903,7 +907,8 @@ msgid "System problem reports"
 msgstr "Rendszerhiba-jelentések"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr "Adja meg jelszavát a rendszerprogramok hibáinak eléréséhez"
 
 #: ../gtk/apport-gtk.ui.h:2
@@ -959,9 +964,11 @@ msgstr "A célkönyvtár létezik és nem üres."
 #~ msgstr ""
 #~ "Amennyiben hibajelentést küld, a hiba kijavításában segíti a fejlesztőket."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "A(z) „%s” csomagot nem sikerült telepíteni vagy frissíteni."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Teljes jelentés (ajánlott; %s)"
 
@@ -978,12 +985,13 @@ msgstr "A célkönyvtár létezik és nem üres."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Ha nem csinált semmi bizalmasat (jelszó vagy egyéb személyes információk "
 #~ "beírása), a hiba jelentésével segíthet az alkalmazás továbbfejlesztésében."
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Elnézést, a következő váratlanul befejeződött: %s"
 
@@ -1008,30 +1016,34 @@ msgstr "A célkönyvtár létezik és nem üres."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Ha éppen semmi bizalmasat sem végzett (jelszavak vagy egyéb \n"
 #~ "magánjellegű információk bevitele), a hiba bejelentésével segíthet \n"
 #~ "a fejlesztőknek annak javításában."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s váratlanul befejeződött (%s %s)."
 
 #~ msgid "Restart _Program"
 #~ msgstr "_Program újraindítása"
 
+#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr ""
 #~ "Elnézést, a(z) \"%s\" csomagot nem sikerült telepíteni vagy frissíteni."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "Teljes hibajelentés &küldése (ajánlott; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Egyszerűsített jelentés (lassú internetkapcsolat esetén; %s)"
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Elnézést, a következő váratlanul befejeződött: %s."
 
@@ -1041,18 +1053,19 @@ msgstr "A célkönyvtár létezik és nem üres."
 #~ msgid "Restart &Program"
 #~ msgstr "&Program újraindítása"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr ""
 #~ "&Csökkentett hibajelentés küldése (lassú internetkapcsolat esetén; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Ez eltávolítja a jelentés néhány nagy méretű elemét. Ezek nagyon "
-#~ "hasznosak a fejlesztők számára a hiba megkeresésében, de lassú "
-#~ "internetkapcsolat esetén túl nagyok lehetnek a feltöltéshez."
+#~ "Ez eltávolítja a jelentés néhány nagy méretű elemét. Ezek nagyon hasznosak a "
+#~ "fejlesztők számára a hiba megkeresésében, de lassú internetkapcsolat esetén "
+#~ "túl nagyok lehetnek a feltöltéshez."
 
 #~ msgid "&Send"
 #~ msgstr "&Küldés"
@@ -1067,9 +1080,11 @@ msgstr "A célkönyvtár létezik és nem üres."
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr "A hiba jelentésével segítheti a fejlesztőket a csomag javításában."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ez nem eredeti %s csomag"
 
+#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Elnézést, a következő program váratlanul befejeződött: %s"
 
@@ -1079,12 +1094,13 @@ msgstr "A célkönyvtár létezik és nem üres."
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "A rendszer súlyos rendszermag-problémát észlelt."
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Elnézést, a(z)  „%s” csomag "
-#~ "telepítése vagy frissítése meghiúsult.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Elnézést, a(z)  „%s” csomag telepítése "
+#~ "vagy frissítése meghiúsult.</span>"
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Hiba jelentése…"
@@ -1098,5 +1114,6 @@ msgstr "A célkönyvtár létezik és nem üres."
 #~ msgid "Content of the report"
 #~ msgstr "Jelentés tartalma"
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Elnézést, a(z) %s alkalmazás váratlanul befejeződött."

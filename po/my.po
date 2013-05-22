@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-09-04 12:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Burmese <my@li.org>\n"
-"Language: my\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-21 04:34+0000\n"
+"X-Launchpad-Export-Date: 2013-05-22 04:32+0000\n"
 "X-Generator: Launchpad (build 16626)\n"
+"Language: my\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -150,8 +150,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -196,7 +196,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:727
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:730
@@ -512,7 +513,9 @@ msgstr "တင်ပြမှုတွင်လမ်းကြောင်းသ
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
-msgstr "gdb အပြန်အလှန်ကဏ္ဍကို တင်ပြမှုရဲ့ ပင်မအစုဖြင့်စတင်ပါ (-o လျစ်လျှူရှု; တင်ပြမှုကိုပြန်လည်မရေးတော့ပါ)"
+msgstr ""
+"gdb အပြန်အလှန်ကဏ္ဍကို တင်ပြမှုရဲ့ ပင်မအစုဖြင့်စတင်ပါ (-o လျစ်လျှူရှု; "
+"တင်ပြမှုကိုပြန်လည်မရေးတော့ပါ)"
 
 #: ../bin/apport-retrace.py:37
 msgid ""
@@ -548,14 +551,19 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
-"ယာယီ ပေးပို့မှုတည်ဆောက်ပြီး လိုအပ်သော ပက်ကေ့ချ်များကို ဆွဲချခြင်းတပ်ဆင်ခြင်းနှင့် အပြစ်တွေ့ရှိမှုရဲ့သင်္ကေတရှိနေမည်။ "
-"ဤရွေးချယ်မှုမပါဝင်ပါကလိုအပ်သောပက်ကေ့ချ်များနှင့် အပြစ်တွေ့ရှိမှုရဲ့သင်္ကေတများရှိပြီးသားဟုမှတ်ယူမည်။"
-"ပက်ကေ့ချ်စနစ်ရဲ့ပြုပြင်ပြီးသားအခြေခံလမ်းကြောင်းတွင်ရှိသော ထပ်ဖြည့်မှတ်များ၌ "
-"အကယ်၍သင့်အနေဖြင့်စနစ်ဟုသတ်မှတ်လျှင် ၎င်းတို့သည် စနစ်ရဲ့စီမံပြီးသားဖိုင်တွေကိုအသုံးပြုမည်။သို့သော် "
-"ပျက်စီးမှုလမ်းကြောင်းများကိုသာသိနိုင်ပြီးယခုလက်ရှိထွက်ရှိမှုတွင်သာအကြုံးဝင်သည်။"
+"ယာယီ ပေးပို့မှုတည်ဆောက်ပြီး လိုအပ်သော ပက်ကေ့ချ်များကို "
+"ဆွဲချခြင်းတပ်ဆင်ခြင်းနှင့် အပြစ်တွေ့ရှိမှုရဲ့သင်္ကေတရှိနေမည်။ "
+"ဤရွေးချယ်မှုမပါဝင်ပါကလိုအပ်သောပက်ကေ့ချ်များနှင့် "
+"အပြစ်တွေ့ရှိမှုရဲ့သင်္ကေတများရှိပြီးသားဟုမှတ်ယူမည်။ပက်ကေ့ချ်စနစ်ရဲ့ပြုပြင်ပြီ"
+"းသားအခြေခံလမ်းကြောင်းတွင်ရှိသော ထပ်ဖြည့်မှတ်များ၌ "
+"အကယ်၍သင့်အနေဖြင့်စနစ်ဟုသတ်မှတ်လျှင် ၎င်းတို့သည် "
+"စနစ်ရဲ့စီမံပြီးသားဖိုင်တွေကိုအသုံးပြုမည်။သို့သော် "
+"ပျက်စီးမှုလမ်းကြောင်းများကိုသာသိနိုင်ပြီးယခုလက်ရှိထွက်ရှိမှုတွင်သာအကြုံးဝင်သည"
+"်။"
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
@@ -591,7 +599,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:70
@@ -654,7 +663,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -741,7 +751,9 @@ msgstr "ပိတ်လိုက်မည်"
 
 #: ../gtk/apport-gtk.py:296 ../kde/apport-kde.py:220 ../gtk/apport-gtk.ui.h:4
 msgid "If you notice further problems, try restarting the computer."
-msgstr "နောက်ထပ်ပြသာနာများကိုတွေ့ရှိပါက သင်၏ကွန်ပြူတာကိုပိတ်ပြီးပြန်ဖွင့်ခြင်းဖြင့်ကြိုးစားကြည့်ပါ"
+msgstr ""
+"နောက်ထပ်ပြသာနာများကိုတွေ့ရှိပါက "
+"သင်၏ကွန်ပြူတာကိုပိတ်ပြီးပြန်ဖွင့်ခြင်းဖြင့်ကြိုးစားကြည့်ပါ"
 
 #: ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:224
 msgid "Ignore future problems of this type"
@@ -768,8 +780,8 @@ msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"ဒီ application ကောင်းမွန်စေရန်အတွက် စုဆောင်းရရှိသည့်အချက်အလက်များကို  developer များထံသို့ပို့မည်။ "
-"မိနစ်အနည်းငယ်ကြာနိုင်ပါသည်။"
+"ဒီ application ကောင်းမွန်စေရန်အတွက် စုဆောင်းရရှိသည့်အချက်အလက်များကို  "
+"developer များထံသို့ပို့မည်။ မိနစ်အနည်းငယ်ကြာနိုင်ပါသည်။"
 
 #: ../kde/apport-kde.py:410
 msgid "Uploading Problem Information"
@@ -800,7 +812,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2

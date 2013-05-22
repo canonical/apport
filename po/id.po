@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2013-03-02 10:57+0000\n"
 "Last-Translator: Cecep Mahbub <cecep.mahbub@gmail.com>\n"
 "Language-Team: Indonesian <id@li.org>\n"
-"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-21 04:34+0000\n"
+"X-Launchpad-Export-Date: 2013-05-22 04:32+0000\n"
 "X-Generator: Launchpad (build 16626)\n"
+"Language: id\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -166,8 +166,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -225,7 +225,8 @@ msgstr ""
 "sekaligus."
 
 #: ../apport/ui.py:727
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [opsi] [gejala|pid|paket|path program|berkas .apport/.crash]"
 
 #: ../apport/ui.py:730
@@ -635,7 +636,8 @@ msgstr ""
 "sedang berjalan."
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Laporkan kemajuan pengunduhan/pemasangan ketika memasang paket ke dalam "
 "kotak pasir"
@@ -683,7 +685,8 @@ msgstr ""
 "mengirim mereka ke basis data crash."
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "Path ke basis data sqlite duplikat (baku: tak ada uji duplikasi)"
 
 #: ../bin/apport-retrace.py:70
@@ -756,7 +759,8 @@ msgstr ""
 "ada, buatlah"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "laporkan kemajuan unduh/pasang ketika memasang paket ke dalam kotak pasir"
 
@@ -909,7 +913,8 @@ msgid "System problem reports"
 msgstr "Laporan masalah sistem"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Harap masukkan sandi Anda untuk mengakses laporan masalah dari program sistem"
 
@@ -962,6 +967,7 @@ msgstr "Cara pakai: %s <laporan> <direktori target>"
 msgid "Destination directory exists and is not empty."
 msgstr "Direktori tujuan ada dan tak kosong."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Laporan penuh (disarankan; %s)"
 
@@ -978,12 +984,12 @@ msgstr "Direktori tujuan ada dan tak kosong."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Jika Anda tidak melakukan hal-hal yang bersifat rahasia (memasukkan kata "
-#~ "sandi atau informasi pribadi lainnya), Anda dapat membantu untuk "
-#~ "memperbaiki kinerja aplikasi ini dengan cara melaporkan masalah."
+#~ "sandi atau informasi pribadi lainnya), Anda dapat membantu untuk memperbaiki "
+#~ "kinerja aplikasi ini dengan cara melaporkan masalah."
 
 #~ msgid "Application problem"
 #~ msgstr "Masalah pada aplikasi"
@@ -994,13 +1000,15 @@ msgstr "Direktori tujuan ada dan tak kosong."
 #~ msgid "Restart _Program"
 #~ msgstr "Restart _Program"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Maaf, paket \"%s\" gagal diinstal "
-#~ "atau diperbaharui.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Maaf, paket \"%s\" gagal diinstal atau "
+#~ "diperbaharui.</span>"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Laporan singkat (koneksi internet lambat; %s)"
 
@@ -1013,9 +1021,10 @@ msgstr "Direktori tujuan ada dan tak kosong."
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr ""
-#~ "Anda dapat membantu pengembang untuk memperbaiki paketnya dengan "
-#~ "melaporkan masalahnya."
+#~ "Anda dapat membantu pengembang untuk memperbaiki paketnya dengan melaporkan "
+#~ "masalahnya."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ini bukan paket %s yang asli"
 
@@ -1028,6 +1037,7 @@ msgstr "Direktori tujuan ada dan tak kosong."
 #~ msgid "&Report Problem..."
 #~ msgstr "Lapo&rkan Masalah..."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Paket \"%s\" gagal dipasang atau ditingkatkan."
 
@@ -1039,29 +1049,29 @@ msgstr "Direktori tujuan ada dan tak kosong."
 #~ "Anda dapat membantu para pengembang untuk memperbaiki masalah dengan "
 #~ "melaporkannya."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "Kirim laporan lengkap (di&sarankan; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Ki&rim laporan singkat (sambungan Internet lambat; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Ini akan menghapus beberapa item besar dari laporan. Mereka sangat "
-#~ "berguna bagi para pengembang untuk mengawakutu masalah, tapi mungkin "
-#~ "terlalu besar bagi Anda untuk mengunggah bila Anda memiliki sambungan "
-#~ "Internet yang lambat."
+#~ "Ini akan menghapus beberapa item besar dari laporan. Mereka sangat berguna "
+#~ "bagi para pengembang untuk mengawakutu masalah, tapi mungkin terlalu besar "
+#~ "bagi Anda untuk mengunggah bila Anda memiliki sambungan Internet yang lambat."
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "Aba_ikan crash di masa mendatang dari versi program ini"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Bila Anda tak lakukan apapun yang rahasia (memasukkan kata sandi atau "
@@ -1070,5 +1080,6 @@ msgstr "Direktori tujuan ada dan tak kosong."
 #~ "melaporkan\n"
 #~ "masalah ini."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s tertutup tak terduga di %s pada %s."
