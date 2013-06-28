@@ -14,15 +14,17 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-30 05:08+0000\n"
-"X-Generator: Launchpad (build 16652)\n"
+"X-Launchpad-Export-Date: 2013-06-28 05:10+0000\n"
+"X-Generator: Launchpad (build 16681)\n"
 "Language: lt\n"
 
 #: ../apport/ui.py:124
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
 msgstr "Atrodo šis paketas įdiegtas neteisingai"
 
 #: ../apport/ui.py:128
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:128
 #, python-format
 msgid ""
 "This is not an official %s package. Please remove any third party package "
@@ -32,6 +34,7 @@ msgstr ""
 "paketus ir pabandyti dar kartą."
 
 #: ../apport/ui.py:145
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:145
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -45,20 +48,25 @@ msgstr ""
 "%s"
 
 #: ../apport/ui.py:251
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:251
 msgid "unknown program"
 msgstr "nežinoma programa"
 
 #: ../apport/ui.py:252
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:252
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Atsiprašome, programa „%s“ netikėtai užsidarė"
 
-#: ../apport/ui.py:254 ../apport/ui.py:1249
+#: ../apport/ui.py:254 ../apport/ui.py:1256
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:254
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1256
 #, python-format
 msgid "Problem in %s"
 msgstr "%s klaida"
 
 #: ../apport/ui.py:255
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:255
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -68,60 +76,92 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
-#: ../apport/ui.py:320 ../apport/ui.py:328 ../apport/ui.py:457
-#: ../apport/ui.py:460 ../apport/ui.py:661 ../apport/ui.py:1062
-#: ../apport/ui.py:1203 ../apport/ui.py:1207 ../apport/ui.py:1226
-#: ../apport/ui.py:1232
+#: ../apport/ui.py:325 ../apport/ui.py:333 ../apport/ui.py:462
+#: ../apport/ui.py:465 ../apport/ui.py:666 ../apport/ui.py:1069
+#: ../apport/ui.py:1210 ../apport/ui.py:1214 ../apport/ui.py:1233
+#: ../apport/ui.py:1239
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:270
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:276
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:282
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:325
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:333
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:462
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:465
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:666
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1069
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1210
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1214
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1233
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1239
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:268
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:285
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:1052
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:1072
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:1083
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:1094
 msgid "Invalid problem report"
 msgstr "Neteisingas ataskaita apie klaidą"
 
-#: ../apport/ui.py:271 ../apport/ui.py:1209
+#: ../apport/ui.py:271 ../apport/ui.py:1216
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:271
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1216
 msgid "This problem report is damaged and cannot be processed."
 msgstr "Ši ataskaita apie klaidą yra pažeista ir negali būti apdorota."
 
 #: ../apport/ui.py:277
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:277
 msgid "The report belongs to a package that is not installed."
 msgstr "Ataskaita priklauso neįdiegtam paketui"
 
 #: ../apport/ui.py:283
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:283
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "Įvyko klaida mėginant apdoroti šį pranešimą apie klaidą:"
 
-#: ../apport/ui.py:321
+#: ../apport/ui.py:326
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:326
 msgid "You are not allowed to access this problem report."
 msgstr "Jums neleidžiama prieiti prie ataskaitos apie problemą."
 
-#: ../apport/ui.py:324
+#: ../apport/ui.py:329
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:329
 msgid "Error"
 msgstr "Klaida"
 
-#: ../apport/ui.py:325
+#: ../apport/ui.py:330
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:330
 msgid "There is not enough disk space available to process this report."
 msgstr "Nepakanka vietos diske šios ataskaitos apdorojimui."
 
-#: ../apport/ui.py:409
+#: ../apport/ui.py:414
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:414
 msgid "No package specified"
 msgstr "Nenurodytas paketas"
 
-#: ../apport/ui.py:410
+#: ../apport/ui.py:415
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:415
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Jums reikia nurodyti paketą arba PID. Daugiau informacijos gausite su --help."
 
-#: ../apport/ui.py:427
+#: ../apport/ui.py:432
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:432
 msgid "Invalid PID"
 msgstr "Neteisingas PID"
 
-#: ../apport/ui.py:428
+#: ../apport/ui.py:433
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:433
 msgid "The specified process ID does not belong to a program."
 msgstr "Nurodytas proceso ID nepriklauso programai."
 
-#: ../apport/ui.py:436
+#: ../apport/ui.py:441
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:441
 msgid "Permission denied"
 msgstr "Neturite teisės"
 
-#: ../apport/ui.py:437
+#: ../apport/ui.py:442
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:442
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -129,25 +169,34 @@ msgstr ""
 "Nurodytas procesas jums nepriklauso. Paleiskite programą kaip proceso "
 "valdytojas ar pagrindinis naudotojas."
 
-#: ../apport/ui.py:458
+#: ../apport/ui.py:463
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:463
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Simptomų scenarijus %s nenustatė paveikto paketo"
 
-#: ../apport/ui.py:461
+#: ../apport/ui.py:466
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:466
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Paketas %s neegzistuoja"
 
-#: ../apport/ui.py:485 ../apport/ui.py:673 ../apport/ui.py:678
+#: ../apport/ui.py:490 ../apport/ui.py:678 ../apport/ui.py:683
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:490
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:678
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:683
 msgid "Cannot create report"
 msgstr "Ataskaitos sukurti nepavyko"
 
-#: ../apport/ui.py:500 ../apport/ui.py:546 ../apport/ui.py:563
+#: ../apport/ui.py:505 ../apport/ui.py:551 ../apport/ui.py:568
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:505
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:551
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:568
 msgid "Updating problem report"
 msgstr "Atnaujinama problemos ataskaita"
 
-#: ../apport/ui.py:501
+#: ../apport/ui.py:506
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:506
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -159,7 +208,8 @@ msgstr ""
 "\n"
 "Prašome sukurti naują pranešimą naudojant „apport-bug“."
 
-#: ../apport/ui.py:510
+#: ../apport/ui.py:515
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:515
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -179,24 +229,30 @@ msgstr ""
 "\n"
 "Ar tikrai norite tęsti?"
 
-#: ../apport/ui.py:547 ../apport/ui.py:564
+#: ../apport/ui.py:552 ../apport/ui.py:569
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:552
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:569
 msgid "No additional information collected."
 msgstr "Jokios papildomos informacijos nesurinkta."
 
-#: ../apport/ui.py:615
+#: ../apport/ui.py:620
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:620
 msgid "What kind of problem do you want to report?"
 msgstr "Apie kokią problemų rūšį norite pranešti?"
 
-#: ../apport/ui.py:632
+#: ../apport/ui.py:637
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:637
 msgid "Unknown symptom"
 msgstr "Nežinomas simptomas"
 
-#: ../apport/ui.py:633
+#: ../apport/ui.py:638
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:638
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Simptomas „%s“ yra nežinomas."
 
-#: ../apport/ui.py:664
+#: ../apport/ui.py:669
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:669
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -204,31 +260,39 @@ msgstr ""
 "Kai uždarysite šį pranešimą, paspauskite ant programos lango, kad "
 "praneštumėte apie tai."
 
-#: ../apport/ui.py:674 ../apport/ui.py:679
+#: ../apport/ui.py:679 ../apport/ui.py:684
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:679
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:684
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop nepavyko nustatyti lango proceso ID"
 
-#: ../apport/ui.py:693
+#: ../apport/ui.py:698
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:698
 msgid "%prog <report number>"
 msgstr "%prog <pranešimo numeris>"
 
-#: ../apport/ui.py:695
+#: ../apport/ui.py:700
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:700
 msgid "Specify package name."
 msgstr "Nurodykite paketo pavadinimą."
 
-#: ../apport/ui.py:697 ../apport/ui.py:748
+#: ../apport/ui.py:702 ../apport/ui.py:753
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:702
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:753
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "Prie ataskaitos pridėti papildomą žymę. Gali būti nurodyta kelis kartus."
 
-#: ../apport/ui.py:727
+#: ../apport/ui.py:732
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:732
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [parametrai] [simptomas|pid|paketas|programos kelias|.apport/.crash "
 "failas]"
 
-#: ../apport/ui.py:730
+#: ../apport/ui.py:735
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:735
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -238,16 +302,19 @@ msgstr ""
 "arba tik --pid. Jei nė vienas neduotas, parodyti žinomų simptomų sąrašą. "
 "(Turima omeny, jei duotas tik vienas argumentas.)"
 
-#: ../apport/ui.py:732
+#: ../apport/ui.py:737
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:737
 msgid "Click a window as a target for filing a problem report."
 msgstr "Pranešti apie problemą, paspauskite ant lango."
 
-#: ../apport/ui.py:734
+#: ../apport/ui.py:739
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:739
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "Pradėti klaidos atnaujinimo režime. Gali prireikti nebūtino --package."
 
-#: ../apport/ui.py:736
+#: ../apport/ui.py:741
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:741
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -255,7 +322,8 @@ msgstr ""
 "Registruoti pranešimą apie simptomą. (Turima omeny, jei simptomo vardas "
 "duotas kaip vienintelis argumentas.)"
 
-#: ../apport/ui.py:738
+#: ../apport/ui.py:743
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:743
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -263,7 +331,8 @@ msgstr ""
 "Nurodyti paketo vardą --file-bug režime. Tai neprivaloma, jei nurodytas --"
 "pid. (Turima omeny, jei paketo vardas duotas kaip vienintelis argumentas.)"
 
-#: ../apport/ui.py:740
+#: ../apport/ui.py:745
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:745
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -273,11 +342,13 @@ msgstr ""
 "pranešimas apie klaidą turės daugiau informacijos. (Numanoma, jei pateiktas "
 "„pid“ kaip vienintelis argumentas.)"
 
-#: ../apport/ui.py:742
+#: ../apport/ui.py:747
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:747
 msgid "The provided pid is a hanging application."
 msgstr "Pateiktas pid yra užstrigusi programa."
 
-#: ../apport/ui.py:744
+#: ../apport/ui.py:749
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:749
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -286,7 +357,8 @@ msgstr ""
 "Pranešti apie strigtį iš duoto apport ar .crash failo, o ne iš laukiančių "
 "%s. (Turima omeny, jei failas duotas kaip vienintelis argumentas.)"
 
-#: ../apport/ui.py:746
+#: ../apport/ui.py:751
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:751
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -295,81 +367,98 @@ msgstr ""
 "Pranešimo apie klaidą veiksenoje išsaugoti surinktą informaciją į failą "
 "vietoje perdavimo. Šis failas gali būti perduotas vėliau iš kito kompiuterio."
 
-#: ../apport/ui.py:750
+#: ../apport/ui.py:755
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:755
 msgid "Print the Apport version number."
 msgstr "Atspausdinti Apport versijos numerį."
 
-#: ../apport/ui.py:884
+#: ../apport/ui.py:889
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:889
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "Tai terminalo lange paleis „apport-retrace“ ir bus galima išanalizuoti lūžį."
 
-#: ../apport/ui.py:885
+#: ../apport/ui.py:890
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:890
 msgid "Run gdb session"
 msgstr "Vykdyti gdb sesiją"
 
-#: ../apport/ui.py:886
+#: ../apport/ui.py:891
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:891
 msgid "Run gdb session without downloading debug symbols"
 msgstr "Vykdyti gdb sesiją, neparsiunčiant derinimo simbolių"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:888
+#: ../apport/ui.py:893
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:893
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "Atnaujinti %s su visiškai simboliniu dėklo pėdsaku"
 
-#: ../apport/ui.py:959
+#: ../apport/ui.py:966
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:966
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr "Problema įvyko su programa %s, kuri pasikeitė nuo strigties įvykio."
 
-#: ../apport/ui.py:1063
+#: ../apport/ui.py:1070
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1070
 msgid "Could not determine the package or source package name."
 msgstr "Nepavyko nustatyti paketo ar pirminio paketo vardo."
 
-#: ../apport/ui.py:1081
+#: ../apport/ui.py:1088
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1088
 msgid "Unable to start web browser"
 msgstr "Nepavyko paleisti žiniatinklio naršyklės"
 
-#: ../apport/ui.py:1082
+#: ../apport/ui.py:1089
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1089
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Nepavyko paleisti žiniatinklio naršyklės %s atverti."
 
-#: ../apport/ui.py:1157
+#: ../apport/ui.py:1164
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1164
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr "Prašome įvesti savo paskyros informaciją %s klaidų sekimo sistemoje"
 
-#: ../apport/ui.py:1169
+#: ../apport/ui.py:1176
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1176
 msgid "Network problem"
 msgstr "Tinklo problema"
 
-#: ../apport/ui.py:1171
+#: ../apport/ui.py:1178
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1178
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Nepavyko prisijungti prie strigčių duomenų bazės, patikrinkite interneto "
 "ryšį."
 
-#: ../apport/ui.py:1198
+#: ../apport/ui.py:1205
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1205
 msgid "Memory exhaustion"
 msgstr "Atminties išnaudojimas"
 
-#: ../apport/ui.py:1199
+#: ../apport/ui.py:1206
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1206
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Jūsų sistema neturi pakankamai atminties ataskaitai apie strigtį apdoroti."
 
-#: ../apport/ui.py:1222 ../apport/ui.py:1231
+#: ../apport/ui.py:1229 ../apport/ui.py:1238
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1229
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1238
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Ši ataskaita apie problemą yra programos, kuri jau nėra įdiegta."
 
-#: ../apport/ui.py:1252
+#: ../apport/ui.py:1259
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1259
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -380,11 +469,14 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1308 ../apport/ui.py:1315
+#: ../apport/ui.py:1315 ../apport/ui.py:1322
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1315
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1322
 msgid "Problem already known"
 msgstr "Problema jau žinoma"
 
-#: ../apport/ui.py:1309
+#: ../apport/ui.py:1316
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1316
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -394,37 +486,46 @@ msgstr ""
 "rodomoje žiniatinklio naršyklėje. Patikrinkite ar galite pridėti daugiau "
 "informacijos, kuri galėtų būti naudinga kūrėjams."
 
-#: ../apport/ui.py:1316
+#: ../apport/ui.py:1323
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1323
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "Apie šią problemą jau buvo pranešta kūrėjams. Ačiū!"
 
-#: ../bin/apport-cli.py:74
+#: ../bin/apport-cli.py:74 ../debian/tmp/usr/bin/apport-cli.py:74
 msgid "Press any key to continue..."
 msgstr "Spauskite bet kurį klavišą tęsimui..."
 
-#: ../bin/apport-cli.py:81
+#: ../bin/apport-cli.py:81 ../debian/tmp/usr/bin/apport-cli.py:81
 msgid "What would you like to do? Your options are:"
 msgstr "Ką norite atlikti? Jūsų parinktys yra:"
 
-#: ../bin/apport-cli.py:85
+#: ../bin/apport-cli.py:85 ../debian/tmp/usr/bin/apport-cli.py:85
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Prašome pasirinkti (%s):"
 
-#: ../bin/apport-cli.py:145
+#: ../bin/apport-cli.py:145 ../debian/tmp/usr/bin/apport-cli.py:145
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i baitų)"
 
-#: ../bin/apport-cli.py:147 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:338
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:138 ../kde/apport-kde.py:338
+#: ../bin/apport-cli.py:147 ../gtk/apport-gtk.py:138
+#: ../debian/tmp/usr/share/apport/apport-kde.py:338
+#: ../debian/tmp/usr/bin/apport-cli.py:147
 msgid "(binary data)"
 msgstr "(dvejetainiai duomenys)"
 
-#: ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:173 ../kde/apport-kde.py:162
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:173
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:404
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:282
+#: ../kde/apport-kde.py:162 ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:173
+#: ../debian/tmp/usr/share/apport/apport-kde.py:162
+#: ../debian/tmp/usr/bin/apport-cli.py:175
 msgid "Send problem report to the developers?"
 msgstr "Siųsti pranešimą apie problemą kūrėjams?"
 
-#: ../bin/apport-cli.py:176
+#: ../bin/apport-cli.py:176 ../debian/tmp/usr/bin/apport-cli.py:176
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -432,51 +533,58 @@ msgstr ""
 "Kai ataskaita apie problemą bus nusiųsta, prašome užpildyti formą\n"
 "automatiškai atvertoje žiniatinklio naršyklėje."
 
-#: ../bin/apport-cli.py:179
+#: ../bin/apport-cli.py:179 ../debian/tmp/usr/bin/apport-cli.py:179
 #, python-format
 msgid "&Send report (%s)"
 msgstr "&Siųsti ataskaitą (%s)"
 
-#: ../bin/apport-cli.py:183
+#: ../bin/apport-cli.py:183 ../debian/tmp/usr/bin/apport-cli.py:183
 msgid "&Examine locally"
 msgstr "&Ištirti vietoje"
 
-#: ../bin/apport-cli.py:187
+#: ../bin/apport-cli.py:187 ../debian/tmp/usr/bin/apport-cli.py:187
 msgid "&View report"
 msgstr "&Peržiūrėti ataskaitą"
 
-#: ../bin/apport-cli.py:188
+#: ../bin/apport-cli.py:188 ../debian/tmp/usr/bin/apport-cli.py:188
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "Lai&kyti ataskaitos failą vėlesniam siuntimui ar kopijavimui kur nors kitur"
 
-#: ../bin/apport-cli.py:189
+#: ../bin/apport-cli.py:189 ../debian/tmp/usr/bin/apport-cli.py:189
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Atsisakyti ir &ignoruoti šios programos strigtis ateityje"
 
 #: ../bin/apport-cli.py:191 ../bin/apport-cli.py:268 ../bin/apport-cli.py:300
-#: ../bin/apport-cli.py:321
+#: ../bin/apport-cli.py:321 ../debian/tmp/usr/bin/apport-cli.py:191
+#: ../debian/tmp/usr/bin/apport-cli.py:268
+#: ../debian/tmp/usr/bin/apport-cli.py:300
+#: ../debian/tmp/usr/bin/apport-cli.py:321
 msgid "&Cancel"
 msgstr "&Atsisakyti"
 
-#: ../bin/apport-cli.py:219
+#: ../bin/apport-cli.py:219 ../debian/tmp/usr/bin/apport-cli.py:219
 msgid "Problem report file:"
 msgstr "Ataskaitos apie problemą failas:"
 
 #: ../bin/apport-cli.py:225 ../bin/apport-cli.py:230
+#: ../debian/tmp/usr/bin/apport-cli.py:225
+#: ../debian/tmp/usr/bin/apport-cli.py:230
 msgid "&Confirm"
 msgstr "Pa&tvirtinti"
 
-#: ../bin/apport-cli.py:229
+#: ../bin/apport-cli.py:229 ../debian/tmp/usr/bin/apport-cli.py:229
 #, python-format
 msgid "Error: %s"
 msgstr "Klaida: %s"
 
-#: ../bin/apport-cli.py:235 ../kde/apport-kde.py:383
+#: ../kde/apport-kde.py:383 ../bin/apport-cli.py:235
+#: ../debian/tmp/usr/share/apport/apport-kde.py:383
+#: ../debian/tmp/usr/bin/apport-cli.py:235
 msgid "Collecting problem information"
 msgstr "Renkama informacija apie problemą"
 
-#: ../bin/apport-cli.py:236
+#: ../bin/apport-cli.py:236 ../debian/tmp/usr/bin/apport-cli.py:236
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -484,11 +592,14 @@ msgstr ""
 "Surinkta informacija gali būti nusiųsta kūrėjams, kad jie patobulintų\n"
 "programą. Tai gali užtrukti kelias minutes."
 
-#: ../bin/apport-cli.py:248 ../kde/apport-kde.py:411 ../gtk/apport-gtk.ui.h:13
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13 ../gtk/apport-gtk.ui.h:13
+#: ../kde/apport-kde.py:411 ../bin/apport-cli.py:248
+#: ../debian/tmp/usr/share/apport/apport-kde.py:411
+#: ../debian/tmp/usr/bin/apport-cli.py:248
 msgid "Uploading problem information"
 msgstr "Išsiunčiama informacija apie problemą"
 
-#: ../bin/apport-cli.py:249
+#: ../bin/apport-cli.py:249 ../debian/tmp/usr/bin/apport-cli.py:249
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -496,40 +607,40 @@ msgstr ""
 "Surinkta informacija yra siunčiama į klaidų sekimo sistemą.\n"
 "Tai gali užtrukti kelias minutes."
 
-#: ../bin/apport-cli.py:299
+#: ../bin/apport-cli.py:299 ../debian/tmp/usr/bin/apport-cli.py:299
 msgid "&Done"
 msgstr "&Baigta"
 
-#: ../bin/apport-cli.py:305
+#: ../bin/apport-cli.py:305 ../debian/tmp/usr/bin/apport-cli.py:305
 msgid "none"
 msgstr "nėra"
 
-#: ../bin/apport-cli.py:306
+#: ../bin/apport-cli.py:306 ../debian/tmp/usr/bin/apport-cli.py:306
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Pasirinkta: %s. Daugybinis pasirinkimas:"
 
-#: ../bin/apport-cli.py:322
+#: ../bin/apport-cli.py:322 ../debian/tmp/usr/bin/apport-cli.py:322
 msgid "Choices:"
 msgstr "Pasirinkimai:"
 
-#: ../bin/apport-cli.py:336
+#: ../bin/apport-cli.py:336 ../debian/tmp/usr/bin/apport-cli.py:336
 msgid "Path to file (Enter to cancel):"
 msgstr "Kelias iki failo (Enter - atsisakyti):"
 
-#: ../bin/apport-cli.py:342
+#: ../bin/apport-cli.py:342 ../debian/tmp/usr/bin/apport-cli.py:342
 msgid "File does not exist."
 msgstr "Failas neegzistuoja."
 
-#: ../bin/apport-cli.py:344
+#: ../bin/apport-cli.py:344 ../debian/tmp/usr/bin/apport-cli.py:344
 msgid "This is a directory."
 msgstr "Tai katalogas."
 
-#: ../bin/apport-cli.py:350
+#: ../bin/apport-cli.py:350 ../debian/tmp/usr/bin/apport-cli.py:350
 msgid "To continue, you must visit the following URL:"
 msgstr "Norėdami tęsti privalote aplankyti šį URL:"
 
-#: ../bin/apport-cli.py:352
+#: ../bin/apport-cli.py:352 ../debian/tmp/usr/bin/apport-cli.py:352
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -537,29 +648,32 @@ msgstr ""
 "Galite paleisti naršyklę dabar arba nukopijuoti šį URL į naršyklę kitame "
 "kompiuteryje."
 
-#: ../bin/apport-cli.py:354
+#: ../bin/apport-cli.py:354 ../debian/tmp/usr/bin/apport-cli.py:354
 msgid "Launch a browser now"
 msgstr "Paleisti naršyklę dabar"
 
-#: ../bin/apport-cli.py:368
+#: ../bin/apport-cli.py:368 ../debian/tmp/usr/bin/apport-cli.py:368
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Nėra laukiančiųjų strigčių ataskaitų. Mėginkite --help daugiau informacijos "
 "gauti."
 
 #: ../data/apportcheckresume.py:68
+#: ../debian/tmp/usr/share/apport/apportcheckresume.py:68
 msgid ""
 "This occured during a previous suspend and prevented it from resuming "
 "properly."
 msgstr "Tai įvyko ankstesnio pristabdymo metu ir sutrukdė tinkamai tęsti."
 
 #: ../data/apportcheckresume.py:70
+#: ../debian/tmp/usr/share/apport/apportcheckresume.py:70
 msgid ""
 "This occured during a previous hibernate and prevented it from resuming "
 "properly."
 msgstr "Tai įvyko ankstesnio užmigdymo metu ir sutrukdė tinkamai tęsti."
 
 #: ../data/apportcheckresume.py:75
+#: ../debian/tmp/usr/share/apport/apportcheckresume.py:75
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
@@ -567,16 +681,16 @@ msgstr ""
 "Tęsimo apdorojimas užstrigo prie pat pabaigos ir atrodė, kad buvo atliktas "
 "normaliai."
 
-#: ../bin/apport-retrace.py:31
+#: ../bin/apport-retrace.py:31 ../debian/tmp/usr/bin/apport-retrace.py:31
 msgid "%prog [options] <apport problem report | crash ID>"
 msgstr "%prog [parametrai] <apport problemos ataskaita | strigties ID>"
 
-#: ../bin/apport-retrace.py:33
+#: ../bin/apport-retrace.py:33 ../debian/tmp/usr/bin/apport-retrace.py:33
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr ""
 "Nedėti naujų pėdsakų į ataskaitą, bet išvesti juos į standartinę išvestį."
 
-#: ../bin/apport-retrace.py:35
+#: ../bin/apport-retrace.py:35 ../debian/tmp/usr/bin/apport-retrace.py:35
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -584,34 +698,34 @@ msgstr ""
 "Pradėti interaktyvų gdb seansą su ataskaitos „core dump“ (-o ignoruojamas; "
 "neperrašo ataskaitos)"
 
-#: ../bin/apport-retrace.py:37
+#: ../bin/apport-retrace.py:37 ../debian/tmp/usr/bin/apport-retrace.py:37
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
 "Įrašyti modifikuotą ataskaitą į nurodytą failą, vietoje originalios "
 "ataskaitos keitimo"
 
-#: ../bin/apport-retrace.py:39
+#: ../bin/apport-retrace.py:39 ../debian/tmp/usr/bin/apport-retrace.py:39
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr "Pašalinti „core dump“ iš ataskaitos po dėklo pėdsakų atkūrimo."
 
-#: ../bin/apport-retrace.py:41
+#: ../bin/apport-retrace.py:41 ../debian/tmp/usr/bin/apport-retrace.py:41
 msgid "Override report's CoreFile"
 msgstr "Nustelbti ataskaitos CoreFile"
 
-#: ../bin/apport-retrace.py:43
+#: ../bin/apport-retrace.py:43 ../debian/tmp/usr/bin/apport-retrace.py:43
 msgid "Override report's ExecutablePath"
 msgstr "Nustelbti ataskaitos ExecutablePath"
 
-#: ../bin/apport-retrace.py:45
+#: ../bin/apport-retrace.py:45 ../debian/tmp/usr/bin/apport-retrace.py:45
 msgid "Override report's ProcMaps"
 msgstr "Nustelbti ataskaitos ProcMaps"
 
-#: ../bin/apport-retrace.py:47
+#: ../bin/apport-retrace.py:47 ../debian/tmp/usr/bin/apport-retrace.py:47
 msgid "Rebuild report's Package information"
 msgstr "Perdaryti ataskaitos paketų informaciją"
 
-#: ../bin/apport-retrace.py:49
+#: ../bin/apport-retrace.py:49 ../debian/tmp/usr/bin/apport-retrace.py:49
 msgid ""
 "Build a temporary sandbox and download/install the necessary packages and "
 "debug symbols in there; without this option it assumes that the necessary "
@@ -627,21 +741,21 @@ msgstr ""
 "naudojami sistemos konfigūravimo failai, bet tada galėsite tik atsekti "
 "strigtis, kurios įvyko dabar vykdomoje laidoje."
 
-#: ../bin/apport-retrace.py:51
+#: ../bin/apport-retrace.py:51 ../debian/tmp/usr/bin/apport-retrace.py:51
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Raportuoti atsiuntimo/įdiegimo eigą kai įdiegiami paketai į smėlio dėžę"
 
-#: ../bin/apport-retrace.py:53
+#: ../bin/apport-retrace.py:53 ../debian/tmp/usr/bin/apport-retrace.py:53
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr "Prie žurnalo pranešimų pridėti laiko žymes"
 
-#: ../bin/apport-retrace.py:55
+#: ../bin/apport-retrace.py:55 ../debian/tmp/usr/bin/apport-retrace.py:55
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr "Podėlio katalogas paketams atsiųstiems smėlio dėžėje"
 
-#: ../bin/apport-retrace.py:57
+#: ../bin/apport-retrace.py:57 ../debian/tmp/usr/bin/apport-retrace.py:57
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
@@ -650,12 +764,14 @@ msgstr ""
 "atsiųstas paketas yra išpakuotas šioje smėlio dėžėje."
 
 #: ../bin/apport-retrace.py:59 ../bin/apport-valgrind.py:66
+#: ../debian/tmp/usr/bin/apport-retrace.py:59
+#: ../debian/tmp/usr/bin/apport-valgrind.py:66
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
 "Įdiegti papildomą paketą smėlio dėžėje (gali būti nurodyta daugelį kartų)"
 
-#: ../bin/apport-retrace.py:61
+#: ../bin/apport-retrace.py:61 ../debian/tmp/usr/bin/apport-retrace.py:61
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -665,7 +781,7 @@ msgstr ""
 "naudojama, kai nurodomas strigties ID atsektiems dėklo pėdsakams išsiųsti "
 "(tik, jei nenurodyti -g, -o, ar -s)"
 
-#: ../bin/apport-retrace.py:63
+#: ../bin/apport-retrace.py:63 ../debian/tmp/usr/bin/apport-retrace.py:63
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -673,21 +789,21 @@ msgstr ""
 "Rodyti atsektus dėklo pėdsakus ir klausti patvirtinimo prieš siunčiant juos "
 "į strigčių duomenų bazę."
 
-#: ../bin/apport-retrace.py:65
+#: ../bin/apport-retrace.py:65 ../debian/tmp/usr/bin/apport-retrace.py:65
 msgid ""
 "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Kelias į dublikatų sqlite duomenų bazę (numatyta r.: netikrinti dublikatų)"
 
-#: ../bin/apport-retrace.py:70
+#: ../bin/apport-retrace.py:70 ../debian/tmp/usr/bin/apport-retrace.py:70
 msgid "incorrect number of arguments; use --help for a short help"
 msgstr "neteisingas argumentų skaičius; naudokite --help trumpai pagalbai"
 
-#: ../bin/apport-retrace.py:76
+#: ../bin/apport-retrace.py:76 ../debian/tmp/usr/bin/apport-retrace.py:76
 msgid "You cannot use -C without -S. Stopping."
 msgstr "Negalite naudoti -C be -S. Stabdoma."
 
-#: ../bin/apport-retrace.py:80
+#: ../bin/apport-retrace.py:80 ../debian/tmp/usr/bin/apport-retrace.py:80
 msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
@@ -696,164 +812,225 @@ msgstr ""
 "atpažinimo failą (--auth); žiūrėkite --help trumpai pagalbai"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:114
+#: ../bin/apport-retrace.py:114 ../debian/tmp/usr/bin/apport-retrace.py:114
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Ar siųsti šiuos priedus? [y/n]"
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
+#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk-mime.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "Pranešti apie problemą..."
 
-#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
+#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk-mime.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "Pranešti apie triktį kūrėjams"
 
-#: ../data/kernel_oops.py:28
+#: ../debian/tmp/usr/share/apport/kernel_oops.py:28 ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Jūsų sistema dabar gali tapti nestabili ir gali reikėti įkrauti OS iš naujo."
 
-#: ../bin/apport-valgrind.py:37
+#: ../bin/apport-valgrind.py:37 ../debian/tmp/usr/bin/apport-valgrind.py:37
 msgid "See man page for details."
 msgstr ""
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:43 ../debian/tmp/usr/bin/apport-valgrind.py:43
 msgid "specify the log file name produced by valgrind"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:46
+#: ../bin/apport-valgrind.py:46 ../debian/tmp/usr/bin/apport-valgrind.py:46
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:50
+#: ../bin/apport-valgrind.py:50 ../debian/tmp/usr/bin/apport-valgrind.py:50
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
 
-#: ../bin/apport-valgrind.py:54
+#: ../bin/apport-valgrind.py:54 ../debian/tmp/usr/bin/apport-valgrind.py:54
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:58
+#: ../bin/apport-valgrind.py:58 ../debian/tmp/usr/bin/apport-valgrind.py:58
 msgid ""
 "report download/install progress when installing packages into sandbox"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:62
+#: ../bin/apport-valgrind.py:62 ../debian/tmp/usr/bin/apport-valgrind.py:62
 msgid ""
 "the executable that is run under valgrind's memcheck tool  for memory leak "
 "detection"
 msgstr ""
 
-#: ../bin/apport-valgrind.py:97
+#: ../bin/apport-valgrind.py:97 ../debian/tmp/usr/bin/apport-valgrind.py:97
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr ""
 
-#: ../gtk/apport-gtk.py:153
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:153 ../gtk/apport-gtk.py:153
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
 msgstr "Atsiprašome, programa „%s“ netikėtai sustojo."
 
-#: ../gtk/apport-gtk.py:156
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:156 ../gtk/apport-gtk.py:156
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Atsiprašome, %s netikėtai užsivėrė."
 
-#: ../gtk/apport-gtk.py:161 ../kde/apport-kde.py:176 ../kde/apport-kde.py:217
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:161
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:108
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:300
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:106
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:250
+#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:217 ../gtk/apport-gtk.py:161
+#: ../debian/tmp/usr/share/apport/apport-kde.py:176
+#: ../debian/tmp/usr/share/apport/apport-kde.py:217
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Atsiprašome, %s patyrė vidinę klaidą."
 
-#: ../gtk/apport-gtk.py:182 ../kde/apport-kde.py:170
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:182
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:412
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:288
+#: ../kde/apport-kde.py:170 ../gtk/apport-gtk.py:182
+#: ../debian/tmp/usr/share/apport/apport-kde.py:170
 msgid "Send"
 msgstr "Siųsti"
 
-#: ../gtk/apport-gtk.py:200 ../gtk/apport-gtk.py:569 ../kde/apport-kde.py:271
-#: ../gtk/apport-gtk.ui.h:7
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:200
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:569 ../gtk/apport-gtk.ui.h:7
+#: ../kde/apport-kde.py:271 ../gtk/apport-gtk.py:200 ../gtk/apport-gtk.py:569
+#: ../debian/tmp/usr/share/apport/apport-kde.py:271
 msgid "Show Details"
 msgstr "Rodyti išsamiau"
 
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:212
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:280
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:299
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:115
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:144
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:157
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:192
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:310
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:350
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:454
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:111
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:137
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:149
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:182
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:258
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:328
+#: ../gtk/apport-gtk.ui.h:10 ../kde/apport-kde.py:210 ../kde/apport-kde.py:223
 #: ../gtk/apport-gtk.py:212 ../gtk/apport-gtk.py:280 ../gtk/apport-gtk.py:299
-#: ../kde/apport-kde.py:210 ../kde/apport-kde.py:223 ../gtk/apport-gtk.ui.h:10
+#: ../debian/tmp/usr/share/apport/apport-kde.py:210
+#: ../debian/tmp/usr/share/apport/apport-kde.py:223
 msgid "Continue"
 msgstr "Tęsti"
 
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:224
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:276
 #: ../gtk/apport-gtk.py:224
 msgid "Force Closed"
 msgstr ""
 
-#: ../gtk/apport-gtk.py:225 ../gtk/apport-gtk.py:284 ../kde/apport-kde.py:214
-#: ../kde/apport-kde.py:357
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:225
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:284
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:232
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:273
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:222
+#: ../kde/apport-kde.py:214 ../kde/apport-kde.py:357 ../gtk/apport-gtk.py:225
+#: ../gtk/apport-gtk.py:284 ../debian/tmp/usr/share/apport/apport-kde.py:214
+#: ../debian/tmp/usr/share/apport/apport-kde.py:357
 msgid "Relaunch"
 msgstr "Paleisti iš naujo"
 
-#: ../gtk/apport-gtk.py:234
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:234 ../gtk/apport-gtk.py:234
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr "Programa „%s“ nustojo reaguoti."
 
-#: ../gtk/apport-gtk.py:238
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:238 ../gtk/apport-gtk.py:238
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr "Programa „%s“ nustojo reaguoti."
 
-#: ../gtk/apport-gtk.py:253 ../kde/apport-kde.py:184
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:253 ../kde/apport-kde.py:184
+#: ../gtk/apport-gtk.py:253 ../debian/tmp/usr/share/apport/apport-kde.py:184
 #, python-format
 msgid "Package: %s"
 msgstr "Paketas: %s"
 
-#: ../gtk/apport-gtk.py:260 ../kde/apport-kde.py:190
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:260
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:137
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:132
+#: ../kde/apport-kde.py:190 ../gtk/apport-gtk.py:260
+#: ../debian/tmp/usr/share/apport/apport-kde.py:190
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Atsiprašome, įvyko klaida diegiant programinę įrangą."
 
-#: ../gtk/apport-gtk.py:269 ../gtk/apport-gtk.py:288 ../kde/apport-kde.py:197
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:269
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:288 ../kde/apport-kde.py:197
+#: ../gtk/apport-gtk.py:269 ../gtk/apport-gtk.py:288
+#: ../debian/tmp/usr/share/apport/apport-kde.py:197
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Programa „%s“ patyrė vidinę klaidą."
 
-#: ../gtk/apport-gtk.py:272 ../kde/apport-kde.py:201
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:272 ../kde/apport-kde.py:201
+#: ../gtk/apport-gtk.py:272 ../debian/tmp/usr/share/apport/apport-kde.py:201
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Programa %s netikėtai užsivėrė."
 
-#: ../gtk/apport-gtk.py:283 ../kde/apport-kde.py:213 ../gtk/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:283 ../gtk/apport-gtk.ui.h:9
+#: ../kde/apport-kde.py:213 ../gtk/apport-gtk.py:283
+#: ../debian/tmp/usr/share/apport/apport-kde.py:213
 msgid "Leave Closed"
 msgstr "Palikti užvertą"
 
-#: ../gtk/apport-gtk.py:296 ../kde/apport-kde.py:220 ../gtk/apport-gtk.ui.h:4
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:296
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:302
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:342
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:252
+#: ../gtk/apport-gtk.ui.h:4 ../kde/apport-kde.py:220 ../gtk/apport-gtk.py:296
+#: ../debian/tmp/usr/share/apport/apport-kde.py:220
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "Jei pastebite tolesnių problemų, mėginkite paleisti kompiuterį iš naujo."
 
-#: ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:224
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:300 ../kde/apport-kde.py:224
+#: ../gtk/apport-gtk.py:300 ../debian/tmp/usr/share/apport/apport-kde.py:224
 msgid "Ignore future problems of this type"
 msgstr "Ignoruoti šio tipo problemas ateityje"
 
-#: ../gtk/apport-gtk.py:573 ../kde/apport-kde.py:268
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:573 ../kde/apport-kde.py:268
+#: ../gtk/apport-gtk.py:573 ../debian/tmp/usr/share/apport/apport-kde.py:268
 msgid "Hide Details"
 msgstr "Slėpti detales"
 
-#: ../kde/apport-kde.py:294
+#: ../kde/apport-kde.py:294 ../debian/tmp/usr/share/apport/apport-kde.py:294
 msgid "Username:"
 msgstr "Naudotojo vardas:"
 
-#: ../kde/apport-kde.py:295
+#: ../kde/apport-kde.py:295 ../debian/tmp/usr/share/apport/apport-kde.py:295
 msgid "Password:"
 msgstr "Slaptažodis:"
 
-#: ../kde/apport-kde.py:382
+#: ../kde/apport-kde.py:382 ../debian/tmp/usr/share/apport/apport-kde.py:382
 msgid "Collecting Problem Information"
 msgstr "Renkama informacija apie problemą"
 
-#: ../kde/apport-kde.py:384
+#: ../kde/apport-kde.py:384 ../debian/tmp/usr/share/apport/apport-kde.py:384
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -861,11 +1038,12 @@ msgstr ""
 "Surinkta informacija gali būti nusiųsta kūrėjams programai patobulinti. Tai "
 "gali užtrukti kelias minutes."
 
-#: ../kde/apport-kde.py:410
+#: ../kde/apport-kde.py:410 ../debian/tmp/usr/share/apport/apport-kde.py:410
 msgid "Uploading Problem Information"
 msgstr "Išsiunčiama informacija apie klaidą"
 
-#: ../kde/apport-kde.py:412 ../gtk/apport-gtk.ui.h:15
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../gtk/apport-gtk.ui.h:15
+#: ../kde/apport-kde.py:412 ../debian/tmp/usr/share/apport/apport-kde.py:412
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -873,7 +1051,10 @@ msgstr ""
 "Surinkta informacija siunčiama į klaidų sekimo sistemą. Tai gali užtrukti "
 "keletą minučių."
 
-#: ../kde/apport-kde.py:446 ../kde/apport-kde.py:482 ../gtk/apport-gtk.ui.h:1
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../gtk/apport-gtk.ui.h:1
+#: ../kde/apport-kde.py:446 ../kde/apport-kde.py:482
+#: ../debian/tmp/usr/share/apport/apport-kde.py:446
+#: ../debian/tmp/usr/share/apport/apport-kde.py:482
 msgid "Apport"
 msgstr "Apport"
 
@@ -900,31 +1081,31 @@ msgstr ""
 "Įveskite slaptažodį, kad prieitumėte prie sistemos programų pranešimų apie "
 "klaidas"
 
-#: ../gtk/apport-gtk.ui.h:2
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2 ../gtk/apport-gtk.ui.h:2
 msgid "Crash report"
 msgstr "Strigties pranešimas"
 
-#: ../gtk/apport-gtk.ui.h:3
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3 ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>Atsiprašome, įvyko vidinė klaida.</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:5
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5 ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"
 msgstr "Siųsti pranešimą apie klaidą, kad padėtų ištaisyti šią problemą"
 
-#: ../gtk/apport-gtk.ui.h:6
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6 ../gtk/apport-gtk.ui.h:6
 msgid "Ignore future problems of this program version"
 msgstr "Ignoruoti šios programos versijos problemas ateityje"
 
-#: ../gtk/apport-gtk.ui.h:8
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8 ../gtk/apport-gtk.ui.h:8
 msgid "_Examine locally"
 msgstr "_Ištirti vietoje"
 
-#: ../gtk/apport-gtk.ui.h:11
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11 ../gtk/apport-gtk.ui.h:11
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>Renkama informacija apie problemą</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:12
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12 ../gtk/apport-gtk.ui.h:12
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -932,7 +1113,7 @@ msgstr ""
 "Renkama informacija, kuri gali padėti kūrėjams pataisyti problemą apie kurią "
 "pranešėte."
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:14 ../gtk/apport-gtk.ui.h:14
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Siunčiama informacija apie problemą</b></big>"
 
@@ -940,12 +1121,12 @@ msgstr "<big><b>Siunčiama informacija apie problemą</b></big>"
 msgid "Apport crash file"
 msgstr "Apport strigties failas"
 
-#: ../bin/apport-unpack.py:22
+#: ../debian/tmp/usr/bin/apport-unpack.py:22 ../bin/apport-unpack.py:22
 #, python-format
 msgid "Usage: %s <report> <target directory>"
 msgstr "Naudojimas: %s <ataskaita> <paskirties katalogas>"
 
-#: ../bin/apport-unpack.py:46
+#: ../debian/tmp/usr/bin/apport-unpack.py:46 ../bin/apport-unpack.py:46
 msgid "Destination directory exists and is not empty."
 msgstr "Paskirties katalogas egzistuoja ir yra netuščias."
 
