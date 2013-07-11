@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-'''Automatic reporting Apport user interface.'''
+'''Noninteractive reporting Apport user interface.'''
 
 # Copyright (C) 2013 Canonical Ltd.
 # Author: Evan Dandrea <evan.dandrea@canonical.com>
@@ -16,8 +16,8 @@ import apport
 import apport.ui
 
 
-class AutoreportUserInterface(apport.ui.UserInterface):
-    '''Autoreport UserInterface.'''
+class NoninteractiveUserInterface(apport.ui.UserInterface):
+    '''Noninteractive UserInterface.'''
 
     #
     # ui_* implementation of abstract UserInterface classes
@@ -30,10 +30,10 @@ class AutoreportUserInterface(apport.ui.UserInterface):
         return return_value
 
     def ui_info_message(self, title, text):
-        apport.log('Automatic reporting: %s: %s' % (title, text))
+        apport.log('Noninteractive reporting: %s: %s' % (title, text))
 
     def ui_error_message(self, title, text):
-        apport.log('Automatic reporting: %s: %s' % (title, text))
+        apport.log('Noninteractive reporting: %s: %s' % (title, text))
 
     def ui_start_upload_progress(self):
         return
@@ -74,5 +74,5 @@ class AutoreportUserInterface(apport.ui.UserInterface):
 
 
 if __name__ == '__main__':
-    app = AutoreportUserInterface()
+    app = NoninteractiveUserInterface()
     app.run_argv()
