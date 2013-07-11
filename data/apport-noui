@@ -72,12 +72,6 @@ class AutoreportUserInterface(apport.ui.UserInterface):
         '''
         return None
 
-    def ui_run_terminal(self, command):
-        # we are already running in a terminal, so this works by definition
-        if not command:
-            return True
-        subprocess.call(command, shell=True)
-
 
 if __name__ == '__main__':
     app = AutoreportUserInterface()
