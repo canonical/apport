@@ -3,6 +3,10 @@ detailled list of changes, please see ChangeLog.
 
 2.10.3 (UNRELEASED)
 -------------------
+Improvements:
+ * data/apport-noui: A noninteractive frontend for automatic error
+   reporting.
+
 Bug fixes:
  * hookutils.py, attach_conffiles(): Fix check for inaccessible or modified
    conffiles. (LP: #1192899)
