@@ -30,7 +30,7 @@ find_programs() {
     GTK="$RET"
     find_program "apport-kde"
     KDE="$RET"
-    find_program "apport-autoreport"
+    find_program "apport-noui"
     AUTO="$RET"
 
     # find a terminal emulator
@@ -78,7 +78,7 @@ elif [ -n "$CLI" ]; then
     fi
 
 else
-    echo "Neither apport-gtk, apport-kde, apport-cli, or apport-autoreport are installed. Install either to make this program work." >&2
+    echo "Neither apport-gtk, apport-kde, apport-cli, or apport-noui are installed. Install either to make this program work." >&2
     exit 1
 fi
 
