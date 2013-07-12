@@ -46,10 +46,9 @@ export APPORT_INVOKED_AS="$0"
 
 if [ -n "$AUTO" ] && grep -qs -e "^[[:space:]]*automatic[[:space:]]*=[[:space:]]*1[[:space:]]*$" /etc/default/apport; then
     $AUTO "$@"
-fi
 
 # check for X
-if [ -z "$DISPLAY" ]; then
+elif [ -z "$DISPLAY" ]; then
     if [ -n "$CLI" ] ; then
         $CLI "$@"
     else
