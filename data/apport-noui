@@ -11,7 +11,6 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess
 import apport
 import apport.ui
 
@@ -23,10 +22,9 @@ class NoninteractiveUserInterface(apport.ui.UserInterface):
     # ui_* implementation of abstract UserInterface classes
     #
 
-
     def ui_present_report_details(self, allowed_to_report=True, modal_for=None):
-        return_value = { 'report' : True, 'blacklist' : False,
-                         'restart' : False, 'examine' : False }
+        return_value = {'report': True, 'blacklist': False,
+                        'restart': False, 'examine': False}
         return return_value
 
     def ui_info_message(self, title, text):
