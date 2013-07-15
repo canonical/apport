@@ -412,6 +412,8 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
         apport.hookutils.attach_conffiles(report, 'nonexisting')
         apport.hookutils.attach_upstart_overrides(report, 'apport')
         apport.hookutils.attach_upstart_overrides(report, 'nonexisting')
+        apport.hookutils.attach_upstart_logs(report, 'apport')
+        apport.hookutils.attach_upstart_logs(report, 'nonexisting')
         apport.hookutils.attach_default_grub(report)
 
     def test_command_output(self):
