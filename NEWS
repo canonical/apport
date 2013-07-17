@@ -5,7 +5,8 @@ detailled list of changes, please see ChangeLog.
 -------------------
 Improvements:
  * data/apport-noui: A noninteractive frontend for automatic error
-   reporting.
+   reporting. apport-bug will use this if the /etc/apport/autoreport flag
+   file exists.
  * hookutils.py, attach_upstart_logs(): Also attach
    ~/.cache/upstart/application-<desktopname>.log for any *.desktop file
    shipped by a package.
