@@ -6,6 +6,9 @@ detailled list of changes, please see ChangeLog.
 Improvements:
  * data/apport-noui: A noninteractive frontend for automatic error
    reporting.
+ * hookutils.py, attach_upstart_logs(): Also attach
+   ~/.cache/upstart/application-<desktopname>.log for any *.desktop file
+   shipped by a package.
 
 Bug fixes:
  * hookutils.py, attach_conffiles(): Fix check for inaccessible or modified

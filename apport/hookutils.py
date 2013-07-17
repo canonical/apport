@@ -170,9 +170,25 @@ def attach_upstart_logs(report, package):
         return
 
     for f in files:
-        if os.path.exists(f) and f.startswith('/usr/share/upstart/sessions/'):
+        if not os.path.exists(f):
+            continue
+        if f.startswith('/usr/share/upstart/sessions/'):
             log = os.path.basename(f).replace('.conf', '.log')
             key = 'upstart.' + log
+            try:
+                log = os.path.join(os.environ['XDG_CACHE_HOME'], 'upstart', log)
+            except KeyError:
+                try:
+                    log = os.path.join(os.environ['HOME'], '.cache', 'upstart', log)
+                except KeyError:
+                    continue
+
+            attach_file_if_exists(report, log, key)
+
+        if f.startswith('/usr/share/applications/') and f.endswith('.desktop'):
+            desktopname = os.path.splitext(os.path.basename(f))[0]
+            key = 'upstart.application.' + desktopname
+            log = 'application-%s.log' % desktopname
             try:
                 log = os.path.join(os.environ['XDG_CACHE_HOME'], 'upstart', log)
             except KeyError:
