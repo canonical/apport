@@ -1968,6 +1968,9 @@ return 'bash'
               'save': None, 'window': False, 'tag': ['foo', 'bar'],
               'hanging': False})
 
+        # mutually exclusive options
+        self.assertRaises(SystemExit, _chk, ['-c', '/tmp/foo.report', '-u', '1234'], {})
+
     def test_can_examine_locally_crash(self):
         '''can_examine_locally() for a crash report'''
 

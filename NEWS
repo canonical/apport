@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
 Bug fixes:
  * launchpad.py: Show the Python major version in the error message about
    missing launchpadlib.
+ * ui.py: Check if options for updating and reporting a new bug get used
+   together, and give a proper error message in this case. (LP: #1071905)
 
 2.11 (2013-07-17)
 -----------------

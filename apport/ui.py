@@ -755,6 +755,12 @@ class UserInterface:
 
         (self.options, self.args) = optparser.parse_args()
 
+        # mutually exclusive arguments
+        if self.options.update_report:
+            if self.options.filebug or self.options.window or self.options.symptom \
+               or self.options.pid or self.options.crash_file or self.options.save:
+                optparser.error('-u/--update-bug option cannot be used together with options for a new report')
+
         # "do what I mean" for zero or one arguments
         if len(sys.argv) == 0:
             return
