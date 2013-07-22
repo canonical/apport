@@ -35,12 +35,6 @@ def main():
     else:
         report.pid = os.getppid()
 
-    print report.pid
-
-    # In the end, we need a PID today
-    if not report.pid:
-        sys.exit(1)
-
     # Grab PID info right away, as we don't know how long it'll stick around
     report.add_proc_info(report.pid)
 
