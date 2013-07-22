@@ -23,17 +23,28 @@ import optparse
 optpid = 0
 
 def main():
+    # Check parameters
     optparser = optparse.OptionParser('%prog [options]')
     optparser.add_option('-p', '--pid', action='store', type='int', dest='optpid')
     (opts, args) = optparser.parse_args()
 
+    # Build the base report
     report = apport.report.Report('RecoverableProblem')
 
+    # If we have a parameter pid, use that, otherwise look to our parent
     if optpid != 0:
         report.pid = optpid
     else:
         report.pid = os.getppid()
 
+    # In the end, we need a PID today
+    if not report.pid:
+        sys.exit(1)
+
+    # Grab PID info right away, as we don't know how long it'll stick around
+    report.add_proc_info(report.pid)
+
+    # Get the info on the bug
     items = sys.stdin.read().split('\0')
     if len(items) % 2 != 0:
         sys.stderr.write('Expect even number of fields in stdin, needs to have pairs of key and value.\n')
@@ -46,11 +57,11 @@ def main():
         value = items.pop(0)
         report[key] = value
 
-    if not report.pid:
-        sys.exit(1)
+    # Put in the more general stuff
     report.add_os_info()
-    report.add_proc_info(report.pid)
     report.add_user_info()
+
+    # Write the final report
     with open(apport.fileutils.make_report_path(report), 'wb') as fp:
         report.write(fp)
 
