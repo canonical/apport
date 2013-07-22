@@ -426,7 +426,7 @@ try:
         if reportfile != sys.stderr:
             # Ensure that the file gets written to disk in the event of an
             # Upstart crash.
-            if info.get('ExectuablePath', '') == '/sbin/init':
+            if info.get('ExecutablePath', '') == '/sbin/init':
                 reportfile.flush()
                 os.fsync(reportfile.fileno())
                 parent_directory = os.path.dirname(report)

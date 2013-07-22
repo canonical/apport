@@ -1442,7 +1442,7 @@ class Report(problem_report.ProblemReport):
         '''Build gdb command for this report.
 
         This builds a gdb command for processing the given report, by setting
-        the file to the ExectuablePath/InterpreterPath, unpacking the core dump
+        the file to the ExecutablePath/InterpreterPath, unpacking the core dump
         and pointing "core-file" to it (if the report has a core dump), and
         setting up the paths when calling gdb in a package sandbox.
 

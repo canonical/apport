@@ -8,6 +8,8 @@ Bug fixes:
    missing launchpadlib.
  * ui.py: Check if options for updating and reporting a new bug get used
    together, and give a proper error message in this case. (LP: #1071905)
+ * apport: Fix "Exectuable" typo, leading to reports not being synced on
+   upstart crashes. Thanks James Hunt. (LP: #1203744)
 
 2.11 (2013-07-17)
 -----------------
