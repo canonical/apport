@@ -18,24 +18,24 @@ nul-separated list of key-value pairs.
 import apport.report
 import sys
 import os
-import optparse
-
-optpid = 0
+import argparse
 
 def main():
     # Check parameters
-    optparser = optparse.OptionParser('%prog [options]')
-    optparser.add_option('-p', '--pid', action='store', type='int', dest='optpid')
-    (opts, args) = optparser.parse_args()
+    argparser = argparse.ArgumentParser('%(prog) [options]')
+    argparser.add_argument('-p', '--pid', action='store', type=int, dest='optpid')
+    args = argparser.parse_args()
 
     # Build the base report
     report = apport.report.Report('RecoverableProblem')
 
     # If we have a parameter pid, use that, otherwise look to our parent
-    if optpid != 0:
-        report.pid = optpid
+    if args.optpid:
+        report.pid = args.optpid
     else:
         report.pid = os.getppid()
+
+    print report.pid
 
     # In the end, we need a PID today
     if not report.pid:
