@@ -18,10 +18,22 @@ nul-separated list of key-value pairs.
 import apport.report
 import sys
 import os
+import optparse
 
+optpid = 0
 
 def main():
+    optparser = optparse.OptionParser('%prog [options]')
+    optparser.add_option('-p', '--pid', action='store', type='int', dest='optpid')
+    (opts, args) = optparser.parse_args()
+
     report = apport.report.Report('RecoverableProblem')
+
+    if optpid != 0:
+        report.pid = optpid
+    else:
+        report.pid = os.getppid()
+
     items = sys.stdin.read().split('\0')
     if len(items) % 2 != 0:
         sys.stderr.write('Expect even number of fields in stdin, needs to have pairs of key and value.\n')
@@ -34,7 +46,6 @@ def main():
         value = items.pop(0)
         report[key] = value
 
-    report.pid = os.getppid()
     if not report.pid:
         sys.exit(1)
     report.add_os_info()
