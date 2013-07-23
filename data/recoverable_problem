@@ -18,10 +18,28 @@ nul-separated list of key-value pairs.
 import apport.report
 import sys
 import os
+import argparse
 
 
 def main():
+    # Check parameters
+    argparser = argparse.ArgumentParser('%(prog) [options]')
+    argparser.add_argument('-p', '--pid', action='store', type=int, dest='optpid')
+    args = argparser.parse_args()
+
+    # Build the base report
     report = apport.report.Report('RecoverableProblem')
+
+    # If we have a parameter pid, use that, otherwise look to our parent
+    if args.optpid:
+        report.pid = args.optpid
+    else:
+        report.pid = os.getppid()
+
+    # Grab PID info right away, as we don't know how long it'll stick around
+    report.add_proc_info(report.pid)
+
+    # Get the info on the bug
     items = sys.stdin.read().split('\0')
     if len(items) % 2 != 0:
         sys.stderr.write('Expect even number of fields in stdin, needs to have pairs of key and value.\n')
@@ -34,12 +52,11 @@ def main():
         value = items.pop(0)
         report[key] = value
 
-    report.pid = os.getppid()
-    if not report.pid:
-        sys.exit(1)
+    # Put in the more general stuff
     report.add_os_info()
-    report.add_proc_info(report.pid)
     report.add_user_info()
+
+    # Write the final report
     with open(apport.fileutils.make_report_path(report), 'wb') as fp:
         report.write(fp)
 
