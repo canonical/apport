@@ -473,7 +473,7 @@ Type=Application''')
             if not self.app.w('continue_button').get_visible():
                 return True
             self.app.w('continue_button').clicked()
-            GLib.timeout_add(500, check_progress)
+            GLib.timeout_add(200, check_progress)
             return False
 
         def check_progress(*args):
@@ -527,7 +527,7 @@ Type=Application''')
 
             self.assertTrue(self.app.w('continue_button').get_visible())
             self.app.w('continue_button').clicked()
-            GLib.timeout_add(500, check_progress)
+            GLib.timeout_add(200, check_progress)
             return False
 
         def check_progress(*args):
@@ -545,7 +545,7 @@ Type=Application''')
         self.assertEqual(r['ExecutablePath'], '/bin/bash')
 
         # we already collected details, do not show the progress dialog again
-        self.assertEqual(self.visible_progress, False)
+        self.assertNotEqual(self.visible_progress, True)
 
         # data was collected
         self.assertTrue(r['Package'].startswith('bash '))
@@ -569,7 +569,7 @@ Type=Application''')
             if not self.app.w('continue_button').get_visible():
                 return True
             self.app.w('continue_button').clicked()
-            GLib.timeout_add(500, check_progress)
+            GLib.timeout_add(200, check_progress)
             return False
 
         def check_progress(*args):
@@ -586,7 +586,7 @@ Type=Application''')
         self.assertEqual(self.app.open_url.call_count, 0)
 
         # no progress dialog for non-accepting DB
-        self.assertEqual(self.visible_progress, False)
+        self.assertNotEqual(self.visible_progress, True)
 
         # data was collected for whoopsie
         r = self.app.report

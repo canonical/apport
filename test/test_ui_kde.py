@@ -337,7 +337,7 @@ Type=Application''')
         def cont(*args):
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
-                QTimer.singleShot(500, check_progress)
+                QTimer.singleShot(200, check_progress)
                 return
             # try again
             QTimer.singleShot(1000, cont)
@@ -389,7 +389,7 @@ Type=Application''')
 
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
-                QTimer.singleShot(500, check_progress)
+                QTimer.singleShot(200, check_progress)
                 return
             # try again
             QTimer.singleShot(200, cont)
@@ -426,7 +426,7 @@ Type=Application''')
         def cont(*args):
             if self.app.dialog and self.app.dialog.continue_button.isVisible():
                 self.app.dialog.continue_button.click()
-                QTimer.singleShot(500, check_progress)
+                QTimer.singleShot(200, check_progress)
                 return
             # try again
             QTimer.singleShot(1000, cont)
@@ -443,7 +443,7 @@ Type=Application''')
         self.assertEqual(self.app.open_url.call_count, 0)
 
         # no progress dialog for non-accepting DB
-        self.assertEqual(self.visible_progress, False)
+        self.assertNotEqual(self.visible_progress, True)
 
         # data was collected for whoopsie
         r = self.app.report

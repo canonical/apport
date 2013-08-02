@@ -7,6 +7,8 @@ detailled list of changes, please see ChangeLog.
    Dependencies: fields also if we have a ProcMaps: field and there are any
    third-party packages. This fixes retracing crashes that use PPAs (as they
    don't have Contents.gz).
+ * Robustify "progress bar visible" GTK and KDE UI checks for the faster
+   collection due to dropping lsb_release.
 
 2.12 (2013-08-02)
 -----------------
