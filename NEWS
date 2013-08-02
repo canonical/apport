@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.12.1 (UNRELEASED)
+-------------------
+ * sandboxutils.py, make_sandbox(): Install packages from Package: and
+   Dependencies: fields also if we have a ProcMaps: field. Not doing that was a
+   nice optimization for distro packages, but makes life hard for retracing
+   crashes that use PPAs (as they don't have Contents.gz)
+
 2.12 (2013-08-02)
 -----------------
 Improvements:
