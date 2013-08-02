@@ -22,6 +22,8 @@ Bug fixes:
    GNOME shell and other DEs. Thanks Jeremy Bicha. (LP: #1207496)
  * report.py, add_gdb_info(): Fix crash if gdb cannot load the symbol map.
    (LP: #1171484)
+ * apport-retrace: Fix crash when using --sandbox without --cache.
+   (LP: #1197034)
 
 2.11 (2013-07-17)
 -----------------
