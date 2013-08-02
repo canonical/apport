@@ -167,20 +167,17 @@ class __AptDpkgPackageInfo(PackageInfo):
         return None
 
     def is_distro_package(self, package):
-        '''Check if a package is a genuine distro package (True) or comes from
-        a third-party source.'''
+        '''Check if a package is a genuine distro package.
 
-        lsb_release = subprocess.Popen(['lsb_release', '-i', '-s'],
-                                       stdout=subprocess.PIPE)
-        this_os = lsb_release.communicate()[0].decode().strip()
-        assert lsb_release.returncode == 0
-
+        Return True for a native distro package, False if it comes from a
+        third-party source.
+        '''
         pkg = self._apt_pkg(package)
         # some PPA packages have installed version None, see LP#252734
         if pkg.installed and pkg.installed.version is None:
             return False
 
-        native_origins = [this_os]
+        native_origins = [self.get_os_version()[0]]
         for f in glob.glob('/etc/apport/native-origins.d/*'):
             try:
                 with open(f) as fd:
@@ -562,12 +559,7 @@ Debug::NoLocking "true";
         '''
         if not configdir:
             apt_sources = '/etc/apt/sources.list'
-
-            # determine system distro release code name
-            lsb_release = subprocess.Popen(['lsb_release', '-sc'],
-                                           stdout=subprocess.PIPE)
-            self.current_release_codename = lsb_release.communicate()[0].decode('UTF-8').strip()
-            assert lsb_release.returncode == 0
+            self.current_release_codename = self.get_distro_codename()
         else:
             # support architecture specific config, fall back to global config
             apt_sources = os.path.join(configdir, release, 'sources.list')
@@ -833,11 +825,7 @@ Debug::NoLocking "true";
         if arch is None:
             arch = self.get_system_architecture()
         if release is None:
-            # determine system distro release code name
-            lsb_release = subprocess.Popen(['lsb_release', '-sc'],
-                                           stdout=subprocess.PIPE)
-            release = lsb_release.communicate()[0].decode('UTF-8').strip()
-            assert lsb_release.returncode == 0
+            release = self.get_distro_codename()
         else:
             release = self._distro_release_to_codename(release)
 
@@ -958,5 +946,18 @@ Debug::NoLocking "true";
             return True
 
         return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
+
+    _distro_codename = None
+
+    def get_distro_codename(self):
+        '''Get "lsb_release -sc", cache the result.'''
+
+        if self._distro_codename is None:
+            lsb_release = subprocess.Popen(['lsb_release', '-sc'],
+                                           stdout=subprocess.PIPE)
+            self._distro_codename = lsb_release.communicate()[0].decode('UTF-8').strip()
+            assert lsb_release.returncode == 0
+
+        return self._distro_codename
 
 impl = __AptDpkgPackageInfo()

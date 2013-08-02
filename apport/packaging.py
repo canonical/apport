@@ -9,6 +9,10 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
+import os
+import sys
+import subprocess
+
 
 class PackageInfo:
     def get_version(self, package):
@@ -235,3 +239,41 @@ class PackageInfo:
                 continue
             except ValueError:
                 return p
+
+    _os_version = None
+
+    def get_os_version(self):
+        '''Return (osname, osversion) tuple.
+
+        This is read from /etc/os-release, or if that doesn't exist,
+        'lsb_release -sir' output.
+        '''
+        if self._os_version:
+            return self._os_version
+
+        if os.path.exists('/etc/os-release'):
+            name = None
+            version = None
+            with open('/etc/os-release') as f:
+                for l in f:
+                    if l.startswith('NAME='):
+                        name = l.split('=', 1)[1]
+                        if name.startswith('"'):
+                            name = name[1:-2].strip()
+                    elif l.startswith('VERSION_ID='):
+                        version = l.split('=', 1)[1]
+                        if version.startswith('"'):
+                            version = version[1:-2].strip()
+            if name and version:
+                self._os_version = (name, version)
+                return self._os_version
+            else:
+                sys.stderr.write('invalid /etc/os-release: Does not contain NAMe and VERSION_ID\n')
+                sys.exit(1)
+
+        # fall back to lsb_release
+        p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        (name, version) = p.communicate()[0].decode().strip().replace('\n', ' ').split()
+        self._os_version = (name.strip(), version.strip())
+        return self._os_version

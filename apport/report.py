@@ -317,16 +317,14 @@ class Report(problem_report.ProblemReport):
         '''Add operating system information.
 
         This adds:
-        - DistroRelease: lsb_release -sir output
+        - DistroRelease: NAME and VERSION from /etc/os-release, or
+          'lsb_release -sir' output
         - Architecture: system architecture in distro specific notation
         - Uname: uname -srm output
         - NonfreeKernelModules: loaded kernel modules which are not free (if
             there are none, this field will not be present)
         '''
-        p = subprocess.Popen(['lsb_release', '-sir'], stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-        self['DistroRelease'] = p.communicate()[0].decode().strip().replace('\n', ' ')
-
+        self['DistroRelease'] = '%s %s' % apport.packaging.get_os_version()
         u = os.uname()
         self['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
         self['Architecture'] = packaging.get_system_architecture()

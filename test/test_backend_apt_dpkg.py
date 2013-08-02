@@ -129,7 +129,7 @@ class T(unittest.TestCase):
         '''get_package_origin().'''
 
         # determine distro name
-        distro = subprocess.check_output(['lsb_release', '-si']).decode('UTF-8').strip()
+        distro = impl.get_os_version()[0]
 
         self.assertRaises(ValueError, impl.get_package_origin, 'nonexisting')
         # this assumes that this package is not installed
@@ -173,16 +173,10 @@ class T(unittest.TestCase):
     def test_get_file_package_uninstalled(self):
         '''get_file_package() on uninstalled packages.'''
 
-        # determine distro release code name
-        lsb_release = subprocess.Popen(['lsb_release', '-sc'],
-                                       stdout=subprocess.PIPE)
-        release_name = lsb_release.communicate()[0].decode('UTF-8').strip()
-        assert lsb_release.returncode == 0
-
         # generate a test Contents.gz
         basedir = tempfile.mkdtemp()
         try:
-            mapdir = os.path.join(basedir, 'dists', release_name)
+            mapdir = os.path.join(basedir, 'dists', impl.get_distro_codename())
             os.makedirs(mapdir)
             with gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
                                         impl.get_system_architecture()), 'w') as f:
@@ -230,12 +224,6 @@ bo/gu/s                                                 na/mypackage
     def test_get_file_package_uninstalled_multiarch(self):
         '''get_file_package() on foreign arches and releases'''
 
-        # determine distro release code name
-        lsb_release = subprocess.Popen(['lsb_release', '-sc'],
-                                       stdout=subprocess.PIPE)
-        release_name = lsb_release.communicate()[0].decode('UTF-8').strip()
-        assert lsb_release.returncode == 0
-
         # map "Foonux 3.14" to "mocky"
         orig_distro_release_to_codename = impl._distro_release_to_codename
         impl._distro_release_to_codename = lambda r: (r == 'Foonux 3.14') and 'mocky' or None
@@ -243,7 +231,7 @@ bo/gu/s                                                 na/mypackage
         # generate test Contents.gz for two fantasy architectures
         basedir = tempfile.mkdtemp()
         try:
-            mapdir = os.path.join(basedir, 'dists', release_name)
+            mapdir = os.path.join(basedir, 'dists', impl.get_distro_codename())
             os.makedirs(mapdir)
             with gzip.open(os.path.join(mapdir, 'Contents-even.gz'), 'w') as f:
                 f.write(b'''

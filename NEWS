@@ -8,6 +8,9 @@ Improvements:
  * Add data/whoopsie-upload-all: Process all pending crashes and mark them for
    whoopsie upload, but do not upload them to any other crash database. Wait
    until whoopsie is done uploading.
+ * Eliminate multiple calls to lsb_release by caching the result. On systems
+   which provide /etc/os-release, use that instead of lsb_release.
+   (LP: #1164742)
 
 Bug fixes:
  * launchpad.py: Show the Python major version in the error message about
