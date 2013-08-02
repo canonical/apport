@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-21 12:15+0200\n"
+"POT-Creation-Date: 2013-08-02 08:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr ""
 
-#: ../apport/ui.py:254 ../apport/ui.py:1249
+#: ../apport/ui.py:254 ../apport/ui.py:1255
 #, python-format
 msgid "Problem in %s"
 msgstr ""
@@ -60,13 +60,13 @@ msgstr ""
 #. package does not exist
 #: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
 #: ../apport/ui.py:320 ../apport/ui.py:328 ../apport/ui.py:457
-#: ../apport/ui.py:460 ../apport/ui.py:661 ../apport/ui.py:1062
-#: ../apport/ui.py:1203 ../apport/ui.py:1207 ../apport/ui.py:1226
-#: ../apport/ui.py:1232
+#: ../apport/ui.py:460 ../apport/ui.py:661 ../apport/ui.py:1068
+#: ../apport/ui.py:1209 ../apport/ui.py:1213 ../apport/ui.py:1232
+#: ../apport/ui.py:1238
 msgid "Invalid problem report"
 msgstr ""
 
-#: ../apport/ui.py:271 ../apport/ui.py:1209
+#: ../apport/ui.py:271 ../apport/ui.py:1215
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 
@@ -254,73 +254,73 @@ msgstr ""
 msgid "Print the Apport version number."
 msgstr ""
 
-#: ../apport/ui.py:884
+#: ../apport/ui.py:890
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 
-#: ../apport/ui.py:885
+#: ../apport/ui.py:891
 msgid "Run gdb session"
 msgstr ""
 
-#: ../apport/ui.py:886
+#: ../apport/ui.py:892
 msgid "Run gdb session without downloading debug symbols"
 msgstr ""
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:888
+#: ../apport/ui.py:894
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
-#: ../apport/ui.py:959
+#: ../apport/ui.py:965
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
 
-#: ../apport/ui.py:1063
+#: ../apport/ui.py:1069
 msgid "Could not determine the package or source package name."
 msgstr ""
 
-#: ../apport/ui.py:1081
+#: ../apport/ui.py:1087
 msgid "Unable to start web browser"
 msgstr ""
 
-#: ../apport/ui.py:1082
+#: ../apport/ui.py:1088
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr ""
 
-#: ../apport/ui.py:1157
+#: ../apport/ui.py:1163
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 
-#: ../apport/ui.py:1169
+#: ../apport/ui.py:1175
 msgid "Network problem"
 msgstr ""
 
-#: ../apport/ui.py:1171
+#: ../apport/ui.py:1177
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 
-#: ../apport/ui.py:1198
+#: ../apport/ui.py:1204
 msgid "Memory exhaustion"
 msgstr ""
 
-#: ../apport/ui.py:1199
+#: ../apport/ui.py:1205
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 
-#: ../apport/ui.py:1222 ../apport/ui.py:1231
+#: ../apport/ui.py:1228 ../apport/ui.py:1237
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 
-#: ../apport/ui.py:1252
+#: ../apport/ui.py:1258
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -328,19 +328,159 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ../apport/ui.py:1308 ../apport/ui.py:1315
+#: ../apport/ui.py:1314 ../apport/ui.py:1321
 msgid "Problem already known"
 msgstr ""
 
-#: ../apport/ui.py:1309
+#: ../apport/ui.py:1315
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
 
-#: ../apport/ui.py:1316
+#: ../apport/ui.py:1322
 msgid "This problem was already reported to developers. Thank you!"
+msgstr ""
+
+#: ../data/apportcheckresume.py:68
+msgid ""
+"This occured during a previous suspend and prevented it from resuming "
+"properly."
+msgstr ""
+
+#: ../data/apportcheckresume.py:70
+msgid ""
+"This occured during a previous hibernate and prevented it from resuming "
+"properly."
+msgstr ""
+
+#: ../data/apportcheckresume.py:75
+msgid ""
+"The resume processing hung very near the end and will have appeared to have "
+"completed normally."
+msgstr ""
+
+#: ../bin/apport-retrace.py:31
+msgid "%prog [options] <apport problem report | crash ID>"
+msgstr ""
+
+#: ../bin/apport-retrace.py:33
+msgid "Do not put the new traces into the report, but write them to stdout."
+msgstr ""
+
+#: ../bin/apport-retrace.py:35
+msgid ""
+"Start an interactive gdb session with the report's core dump (-o ignored; "
+"does not rewrite report)"
+msgstr ""
+
+#: ../bin/apport-retrace.py:37
+msgid ""
+"Write modified report to given file instead of changing the original report"
+msgstr ""
+
+#: ../bin/apport-retrace.py:39
+msgid "Remove the core dump from the report after stack trace regeneration"
+msgstr ""
+
+#: ../bin/apport-retrace.py:41
+msgid "Override report's CoreFile"
+msgstr ""
+
+#: ../bin/apport-retrace.py:43
+msgid "Override report's ExecutablePath"
+msgstr ""
+
+#: ../bin/apport-retrace.py:45
+msgid "Override report's ProcMaps"
+msgstr ""
+
+#: ../bin/apport-retrace.py:47
+msgid "Rebuild report's Package information"
+msgstr ""
+
+#: ../bin/apport-retrace.py:49
+msgid ""
+"Build a temporary sandbox and download/install the necessary packages and "
+"debug symbols in there; without this option it assumes that the necessary "
+"packages and debug symbols are already installed in the system. The argument "
+"points to the packaging system configuration base directory; if you specify "
+"\"system\", it will use the system configuration files, but will then only "
+"be able to retrace crashes that happened on the currently running release."
+msgstr ""
+
+#: ../bin/apport-retrace.py:51
+msgid "Report download/install progress when installing packages into sandbox"
+msgstr ""
+
+#: ../bin/apport-retrace.py:53
+msgid "Prepend timestamps to log messages, for batch operation"
+msgstr ""
+
+#: ../bin/apport-retrace.py:55
+msgid "Cache directory for packages downloaded in the sandbox"
+msgstr ""
+
+#: ../bin/apport-retrace.py:57
+msgid ""
+"Directory for unpacked packages. Future runs will assume that any already "
+"downloaded package is also extracted to this sandbox."
+msgstr ""
+
+#: ../bin/apport-retrace.py:59 ../bin/apport-valgrind.py:66
+msgid ""
+"Install an extra package into the sandbox (can be specified multiple times)"
+msgstr ""
+
+#: ../bin/apport-retrace.py:61
+msgid ""
+"Path to a file with the crash database authentication information. This is "
+"used when specifying a crash ID to upload the retraced stack traces (only if "
+"neither -g, -o, nor -s are specified)"
+msgstr ""
+
+#: ../bin/apport-retrace.py:63
+msgid ""
+"Display retraced stack traces and ask for confirmation before sending them "
+"to the crash database."
+msgstr ""
+
+#: ../bin/apport-retrace.py:65
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgstr ""
+
+#: ../bin/apport-retrace.py:70
+msgid "incorrect number of arguments; use --help for a short help"
+msgstr ""
+
+#: ../bin/apport-retrace.py:76
+msgid "You cannot use -C without -S. Stopping."
+msgstr ""
+
+#: ../bin/apport-retrace.py:80
+msgid ""
+"you either need to do a local operation (-s, -g, -o) or supply an "
+"authentication file (--auth); see --help for a short help"
+msgstr ""
+
+#. translators: don't translate y/n, apport currently only checks for "y"
+#: ../bin/apport-retrace.py:114
+msgid "OK to send these as attachments? [y/n]"
+msgstr ""
+
+#: ../kde/apport-kde.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
+#: ../gtk/apport-gtk.desktop.in.h:1
+msgid "Report a problem..."
+msgstr ""
+
+#: ../kde/apport-kde.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
+#: ../gtk/apport-gtk.desktop.in.h:2
+msgid "Report a malfunction to the developers"
+msgstr ""
+
+#: ../data/kernel_oops.py:28
+msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 
 #: ../bin/apport-cli.py:74
@@ -481,187 +621,6 @@ msgstr ""
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 
-#: ../data/apportcheckresume.py:68
-msgid ""
-"This occured during a previous suspend and prevented it from resuming "
-"properly."
-msgstr ""
-
-#: ../data/apportcheckresume.py:70
-msgid ""
-"This occured during a previous hibernate and prevented it from resuming "
-"properly."
-msgstr ""
-
-#: ../data/apportcheckresume.py:75
-msgid ""
-"The resume processing hung very near the end and will have appeared to have "
-"completed normally."
-msgstr ""
-
-#: ../bin/apport-retrace.py:31
-msgid "%prog [options] <apport problem report | crash ID>"
-msgstr ""
-
-#: ../bin/apport-retrace.py:33
-msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr ""
-
-#: ../bin/apport-retrace.py:35
-msgid ""
-"Start an interactive gdb session with the report's core dump (-o ignored; "
-"does not rewrite report)"
-msgstr ""
-
-#: ../bin/apport-retrace.py:37
-msgid ""
-"Write modified report to given file instead of changing the original report"
-msgstr ""
-
-#: ../bin/apport-retrace.py:39
-msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
-
-#: ../bin/apport-retrace.py:41
-msgid "Override report's CoreFile"
-msgstr ""
-
-#: ../bin/apport-retrace.py:43
-msgid "Override report's ExecutablePath"
-msgstr ""
-
-#: ../bin/apport-retrace.py:45
-msgid "Override report's ProcMaps"
-msgstr ""
-
-#: ../bin/apport-retrace.py:47
-msgid "Rebuild report's Package information"
-msgstr ""
-
-#: ../bin/apport-retrace.py:49
-msgid ""
-"Build a temporary sandbox and download/install the necessary packages and "
-"debug symbols in there; without this option it assumes that the necessary "
-"packages and debug symbols are already installed in the system. The argument "
-"points to the packaging system configuration base directory; if you specify "
-"\"system\", it will use the system configuration files, but will then only "
-"be able to retrace crashes that happened on the currently running release."
-msgstr ""
-
-#: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
-msgstr ""
-
-#: ../bin/apport-retrace.py:53
-msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
-
-#: ../bin/apport-retrace.py:55
-msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
-
-#: ../bin/apport-retrace.py:57
-msgid ""
-"Directory for unpacked packages. Future runs will assume that any already "
-"downloaded package is also extracted to this sandbox."
-msgstr ""
-
-#: ../bin/apport-retrace.py:59 ../bin/apport-valgrind.py:66
-msgid ""
-"Install an extra package into the sandbox (can be specified multiple times)"
-msgstr ""
-
-#: ../bin/apport-retrace.py:61
-msgid ""
-"Path to a file with the crash database authentication information. This is "
-"used when specifying a crash ID to upload the retraced stack traces (only if "
-"neither -g, -o, nor -s are specified)"
-msgstr ""
-
-#: ../bin/apport-retrace.py:63
-msgid ""
-"Display retraced stack traces and ask for confirmation before sending them "
-"to the crash database."
-msgstr ""
-
-#: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr ""
-
-#: ../bin/apport-retrace.py:70
-msgid "incorrect number of arguments; use --help for a short help"
-msgstr ""
-
-#: ../bin/apport-retrace.py:76
-msgid "You cannot use -C without -S. Stopping."
-msgstr ""
-
-#: ../bin/apport-retrace.py:80
-msgid ""
-"you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short help"
-msgstr ""
-
-#. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:114
-msgid "OK to send these as attachments? [y/n]"
-msgstr ""
-
-#: ../gtk/apport-gtk-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
-msgid "Report a problem..."
-msgstr ""
-
-#: ../gtk/apport-gtk-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
-msgid "Report a malfunction to the developers"
-msgstr ""
-
-#: ../data/kernel_oops.py:28
-msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
-
-#: ../bin/apport-valgrind.py:37
-msgid "See man page for details."
-msgstr ""
-
-#: ../bin/apport-valgrind.py:43
-msgid "specify the log file name produced by valgrind"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:46
-msgid ""
-"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
-"create it"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:50
-msgid ""
-"do  not  create  or reuse a sandbox directory for additional debug symbols "
-"but rely only on installed debug symbols."
-msgstr ""
-
-#: ../bin/apport-valgrind.py:54
-msgid ""
-"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
-"it"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:62
-msgid ""
-"the executable that is run under valgrind's memcheck tool  for memory leak "
-"detection"
-msgstr ""
-
-#: ../bin/apport-valgrind.py:97
-#, python-format
-msgid "Error: %s is not an executable. Stopping."
-msgstr ""
-
 #: ../gtk/apport-gtk.py:153
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
@@ -743,6 +702,47 @@ msgstr ""
 
 #: ../gtk/apport-gtk.py:573 ../kde/apport-kde.py:268
 msgid "Hide Details"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:37
+msgid "See man page for details."
+msgstr ""
+
+#: ../bin/apport-valgrind.py:43
+msgid "specify the log file name produced by valgrind"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:46
+msgid ""
+"reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
+"create it"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:50
+msgid ""
+"do  not  create  or reuse a sandbox directory for additional debug symbols "
+"but rely only on installed debug symbols."
+msgstr ""
+
+#: ../bin/apport-valgrind.py:54
+msgid ""
+"reuse a previously created cache dir (CDIR) or, if it does not exist, create "
+"it"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:58
+msgid "report download/install progress when installing packages into sandbox"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:62
+msgid ""
+"the executable that is run under valgrind's memcheck tool  for memory leak "
+"detection"
+msgstr ""
+
+#: ../bin/apport-valgrind.py:97
+#, python-format
+msgid "Error: %s is not an executable. Stopping."
 msgstr ""
 
 #: ../kde/apport-kde.py:294
