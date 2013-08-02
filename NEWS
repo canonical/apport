@@ -4,9 +4,9 @@ detailled list of changes, please see ChangeLog.
 2.12.1 (UNRELEASED)
 -------------------
  * sandboxutils.py, make_sandbox(): Install packages from Package: and
-   Dependencies: fields also if we have a ProcMaps: field. Not doing that was a
-   nice optimization for distro packages, but makes life hard for retracing
-   crashes that use PPAs (as they don't have Contents.gz)
+   Dependencies: fields also if we have a ProcMaps: field and there are any
+   third-party packages. This fixes retracing crashes that use PPAs (as they
+   don't have Contents.gz).
 
 2.12 (2013-08-02)
 -----------------

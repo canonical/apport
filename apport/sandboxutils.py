@@ -147,7 +147,13 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         cache_dir = tempfile.mkdtemp(prefix='apport_cache_')
         atexit.register(shutil.rmtree, cache_dir)
 
-    pkgs = needed_packages(report)
+    pkgs = []
+
+    # when ProcMaps is available and we don't have any third-party packages, it
+    # is enough to get the libraries in it and map their files to packages;
+    # otherwise, get Package/Dependencies
+    if 'ProcMaps' not in report or '[origin' in (report.get('Package', '') + report.get('Dependencies', '')):
+        pkgs = needed_packages(report)
 
     # add user-specified extra packages, if any
     for p in extra_packages:
