@@ -1,10 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.11.1 (UNRELEASED)
--------------------
+2.12 (UNRELEASED)
+-----------------
 Improvements:
  * recoverable_problem: Can take the PID as an argument.
+ * Add data/whoopsie-upload-all: Process all pending crashes and mark them for
+   whoopsie upload, but do not upload them to any other crash database. Wait
+   until whoopsie is done uploading.
 
 Bug fixes:
  * launchpad.py: Show the Python major version in the error message about
