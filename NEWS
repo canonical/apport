@@ -13,6 +13,10 @@ Bug fixes:
    together, and give a proper error message in this case. (LP: #1071905)
  * apport: Fix "Exectuable" typo, leading to reports not being synced on
    upstart crashes. Thanks James Hunt. (LP: #1203744)
+ * Rename apport-gtk-mime.desktop to apport-gtk.desktop and drop the
+   old apport-gtk.desktop that wasn't even being installed. With that, the
+   window will be shown as "Report a problem..." instead of "Apport-gtk" in
+   GNOME shell and other DEs. Thanks Jeremy Bicha. (LP: #1207496)
 
 2.11 (2013-07-17)
 -----------------
