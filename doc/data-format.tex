@@ -167,11 +167,9 @@ environment.
 
     \item [Uname:] (required) Output of \verb!uname -srm!
 
-    \item [OS:] (optional) Name of the operating system. On LSB compliant
-    systems, this can be determined with \verb!lsb_release -si!.
-
-    \item [OSRelease:] (optional) Release version of the operating system. On
-    LSB compliant systems, this can be determined with \verb!lsb_release -sr!.
+    \item [DistroRelease:] (optional) Name and version of the operating system.
+      Read from NAME and VERSION\_ID in \verb!/etc/os-release!, or from
+      \verb!lsb_release -sir!.
 
     \item [Architecture:] (optional) OS specific notation of
     processor/system architecture (e. g. \verb!i386!)

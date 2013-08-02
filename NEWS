@@ -28,6 +28,8 @@ Bug fixes:
  * apport-retrace: Fix crash when using --sandbox without --cache.
    (LP: #1197034)
  * Fix error message when PID is inaccessible. (LP: #1204718)
+ * doc/data-format.tex: Drop unused "OS" and "OSRelease" fields, replace with
+   "DistroRelease" which is actually being used. (LP: #1018387)
 
 2.11 (2013-07-17)
 -----------------
