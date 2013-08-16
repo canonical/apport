@@ -289,7 +289,12 @@ class Report(problem_report.ProblemReport):
         self['Package'] = '%s %s%s' % (package, version or '(not installed)',
                                        self._customized_package_suffix(package))
         if version or 'SourcePackage' not in self:
-            self['SourcePackage'] = packaging.get_source(package)
+            try:
+                self['SourcePackage'] = packaging.get_source(package)
+            except ValueError:
+                # The package may not exist in the cache, as is the case with
+                # skype-bin.
+                pass
         if not version:
             return
 
