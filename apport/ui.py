@@ -1060,7 +1060,7 @@ class UserInterface:
 
             # check that we were able to determine package names
             if 'UnreportableReason' not in self.report:
-                if ('SourcePackage' not in self.report or
+                if (('SourcePackage' not in self.report and 'Dependencies' not in self.report) or
                     (not self.report['ProblemType'].startswith('Kernel')
                      and 'Package' not in self.report)):
                     self.ui_error_message(_('Invalid problem report'),

@@ -20,8 +20,6 @@ class T(unittest.TestCase):
         bashversion = apport.packaging.get_version('bash')
 
         pr = apport.report.Report()
-        self.assertRaises(ValueError, pr.add_package_info, 'nonexistant_package')
-
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')

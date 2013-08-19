@@ -527,7 +527,10 @@ bOgUs=
         # should not crash on nonexisting package
         sys.argv = ['ui-test', '-f', '-p', 'nonexisting_gibberish']
         self.ui = TestSuiteUserInterface()
-        self.ui.run_argv()
+        try:
+            self.ui.run_argv()
+        except SystemExit:
+            pass
 
         self.assertEqual(self.ui.msg_severity, 'error')
 
@@ -1047,7 +1050,7 @@ bOgUs=
                                             'blacklist': False,
                                             'examine': False,
                                             'restart': False}
-        self.ui.run_crash(report_file)
+        self.assertRaises(SystemExit, self.ui.run_crash, report_file)
 
         self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
         self.assertEqual(self.ui.msg_severity, 'error')

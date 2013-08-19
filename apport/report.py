@@ -265,7 +265,7 @@ class Report(problem_report.ProblemReport):
         If package is not given, the report must have ExecutablePath.
         This adds:
         - Package: package name and installed version
-        - SourcePackage: source package name
+        - SourcePackage: source package name (if possible to determine)
         - PackageArchitecture: processor architecture this package was built
           for
         - Dependencies: package names and versions of all dependencies and
@@ -289,7 +289,11 @@ class Report(problem_report.ProblemReport):
         self['Package'] = '%s %s%s' % (package, version or '(not installed)',
                                        self._customized_package_suffix(package))
         if version or 'SourcePackage' not in self:
-            self['SourcePackage'] = packaging.get_source(package)
+            try:
+                self['SourcePackage'] = packaging.get_source(package)
+            except ValueError:
+                # might not exist for non-free third-party packages
+                pass
         if not version:
             return
 

@@ -12,6 +12,9 @@ detailled list of changes, please see ChangeLog.
  * Drop apport-noui in favour of whoopsie-upload-all. We don't want to process
    hooks when run noninteractively, since they may ask questions or determine a
    report is not due to a bug in Ubuntu. whoopsie-upload-all skips these hooks.
+ * apport/report.py: Gracefully handle being unable to get the source package
+   for a binary package, as when the latter does not exist in the cache.
+   (LP: #1097773)
 
 2.12 (2013-08-02)
 -----------------
