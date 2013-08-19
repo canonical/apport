@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-02 08:32+0200\n"
+"POT-Creation-Date: 2013-08-19 15:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr ""
 
-#: ../apport/ui.py:254 ../apport/ui.py:1255
+#: ../apport/ui.py:254 ../apport/ui.py:1253
 #, python-format
 msgid "Problem in %s"
 msgstr ""
@@ -59,14 +59,14 @@ msgstr ""
 
 #. package does not exist
 #: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
-#: ../apport/ui.py:320 ../apport/ui.py:328 ../apport/ui.py:457
-#: ../apport/ui.py:460 ../apport/ui.py:661 ../apport/ui.py:1068
-#: ../apport/ui.py:1209 ../apport/ui.py:1213 ../apport/ui.py:1232
-#: ../apport/ui.py:1238
+#: ../apport/ui.py:320 ../apport/ui.py:328 ../apport/ui.py:455
+#: ../apport/ui.py:458 ../apport/ui.py:659 ../apport/ui.py:1066
+#: ../apport/ui.py:1207 ../apport/ui.py:1211 ../apport/ui.py:1230
+#: ../apport/ui.py:1236
 msgid "Invalid problem report"
 msgstr ""
 
-#: ../apport/ui.py:271 ../apport/ui.py:1215
+#: ../apport/ui.py:271 ../apport/ui.py:1213
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 
@@ -99,43 +99,43 @@ msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 
-#: ../apport/ui.py:427
-msgid "Invalid PID"
-msgstr ""
-
-#: ../apport/ui.py:428
-msgid "The specified process ID does not belong to a program."
-msgstr ""
-
-#: ../apport/ui.py:436
+#: ../apport/ui.py:433
 msgid "Permission denied"
 msgstr ""
 
-#: ../apport/ui.py:437
+#: ../apport/ui.py:434
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
 
-#: ../apport/ui.py:458
+#: ../apport/ui.py:436
+msgid "Invalid PID"
+msgstr ""
+
+#: ../apport/ui.py:437
+msgid "The specified process ID does not belong to a program."
+msgstr ""
+
+#: ../apport/ui.py:456
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr ""
 
-#: ../apport/ui.py:461
+#: ../apport/ui.py:459
 #, python-format
 msgid "Package %s does not exist"
 msgstr ""
 
-#: ../apport/ui.py:485 ../apport/ui.py:673 ../apport/ui.py:678
+#: ../apport/ui.py:483 ../apport/ui.py:671 ../apport/ui.py:676
 msgid "Cannot create report"
 msgstr ""
 
-#: ../apport/ui.py:500 ../apport/ui.py:546 ../apport/ui.py:563
+#: ../apport/ui.py:498 ../apport/ui.py:544 ../apport/ui.py:561
 msgid "Updating problem report"
 msgstr ""
 
-#: ../apport/ui.py:501
+#: ../apport/ui.py:499
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -143,7 +143,7 @@ msgid ""
 "Please create a new report using \"apport-bug\"."
 msgstr ""
 
-#: ../apport/ui.py:510
+#: ../apport/ui.py:508
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -155,172 +155,172 @@ msgid ""
 "Do you really want to proceed?"
 msgstr ""
 
-#: ../apport/ui.py:547 ../apport/ui.py:564
+#: ../apport/ui.py:545 ../apport/ui.py:562
 msgid "No additional information collected."
 msgstr ""
 
-#: ../apport/ui.py:615
+#: ../apport/ui.py:613
 msgid "What kind of problem do you want to report?"
 msgstr ""
 
-#: ../apport/ui.py:632
+#: ../apport/ui.py:630
 msgid "Unknown symptom"
 msgstr ""
 
-#: ../apport/ui.py:633
+#: ../apport/ui.py:631
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr ""
 
-#: ../apport/ui.py:664
+#: ../apport/ui.py:662
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
 
-#: ../apport/ui.py:674 ../apport/ui.py:679
+#: ../apport/ui.py:672 ../apport/ui.py:677
 msgid "xprop failed to determine process ID of the window"
 msgstr ""
 
-#: ../apport/ui.py:693
+#: ../apport/ui.py:691
 msgid "%prog <report number>"
 msgstr ""
 
-#: ../apport/ui.py:695
+#: ../apport/ui.py:693
 msgid "Specify package name."
 msgstr ""
 
-#: ../apport/ui.py:697 ../apport/ui.py:748
+#: ../apport/ui.py:695 ../apport/ui.py:746
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
-#: ../apport/ui.py:727
+#: ../apport/ui.py:725
 msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
-#: ../apport/ui.py:730
+#: ../apport/ui.py:728
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
 
-#: ../apport/ui.py:732
+#: ../apport/ui.py:730
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
 
-#: ../apport/ui.py:734
+#: ../apport/ui.py:732
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 
-#: ../apport/ui.py:736
+#: ../apport/ui.py:734
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:738
+#: ../apport/ui.py:736
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
 
-#: ../apport/ui.py:740
+#: ../apport/ui.py:738
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
 
-#: ../apport/ui.py:742
+#: ../apport/ui.py:740
 msgid "The provided pid is a hanging application."
 msgstr ""
 
-#: ../apport/ui.py:744
+#: ../apport/ui.py:742
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
 
-#: ../apport/ui.py:746
+#: ../apport/ui.py:744
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
 
-#: ../apport/ui.py:750
+#: ../apport/ui.py:748
 msgid "Print the Apport version number."
 msgstr ""
 
-#: ../apport/ui.py:890
+#: ../apport/ui.py:888
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 
-#: ../apport/ui.py:891
+#: ../apport/ui.py:889
 msgid "Run gdb session"
 msgstr ""
 
-#: ../apport/ui.py:892
+#: ../apport/ui.py:890
 msgid "Run gdb session without downloading debug symbols"
 msgstr ""
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:894
+#: ../apport/ui.py:892
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
-#: ../apport/ui.py:965
+#: ../apport/ui.py:963
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
 
-#: ../apport/ui.py:1069
+#: ../apport/ui.py:1067
 msgid "Could not determine the package or source package name."
 msgstr ""
 
-#: ../apport/ui.py:1087
+#: ../apport/ui.py:1085
 msgid "Unable to start web browser"
 msgstr ""
 
-#: ../apport/ui.py:1088
+#: ../apport/ui.py:1086
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr ""
 
-#: ../apport/ui.py:1163
+#: ../apport/ui.py:1161
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 
-#: ../apport/ui.py:1175
+#: ../apport/ui.py:1173
 msgid "Network problem"
 msgstr ""
 
-#: ../apport/ui.py:1177
+#: ../apport/ui.py:1175
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 
-#: ../apport/ui.py:1204
+#: ../apport/ui.py:1202
 msgid "Memory exhaustion"
 msgstr ""
 
-#: ../apport/ui.py:1205
+#: ../apport/ui.py:1203
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 
-#: ../apport/ui.py:1228 ../apport/ui.py:1237
+#: ../apport/ui.py:1226 ../apport/ui.py:1235
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 
-#: ../apport/ui.py:1258
+#: ../apport/ui.py:1256
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -328,19 +328,157 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ../apport/ui.py:1314 ../apport/ui.py:1321
+#: ../apport/ui.py:1312 ../apport/ui.py:1319
 msgid "Problem already known"
 msgstr ""
 
-#: ../apport/ui.py:1315
+#: ../apport/ui.py:1313
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
 
-#: ../apport/ui.py:1322
+#: ../apport/ui.py:1320
 msgid "This problem was already reported to developers. Thank you!"
+msgstr ""
+
+#: ../bin/apport-cli.py:74
+msgid "Press any key to continue..."
+msgstr ""
+
+#: ../bin/apport-cli.py:81
+msgid "What would you like to do? Your options are:"
+msgstr ""
+
+#: ../bin/apport-cli.py:85
+#, python-format
+msgid "Please choose (%s):"
+msgstr ""
+
+#: ../bin/apport-cli.py:145
+#, python-format
+msgid "(%i bytes)"
+msgstr ""
+
+#: ../bin/apport-cli.py:147 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:338
+msgid "(binary data)"
+msgstr ""
+
+#: ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:173 ../kde/apport-kde.py:162
+msgid "Send problem report to the developers?"
+msgstr ""
+
+#: ../bin/apport-cli.py:176
+msgid ""
+"After the problem report has been sent, please fill out the form in the\n"
+"automatically opened web browser."
+msgstr ""
+
+#: ../bin/apport-cli.py:179
+#, python-format
+msgid "&Send report (%s)"
+msgstr ""
+
+#: ../bin/apport-cli.py:183
+msgid "&Examine locally"
+msgstr ""
+
+#: ../bin/apport-cli.py:187
+msgid "&View report"
+msgstr ""
+
+#: ../bin/apport-cli.py:188
+msgid "&Keep report file for sending later or copying to somewhere else"
+msgstr ""
+
+#: ../bin/apport-cli.py:189
+msgid "Cancel and &ignore future crashes of this program version"
+msgstr ""
+
+#: ../bin/apport-cli.py:191 ../bin/apport-cli.py:268 ../bin/apport-cli.py:300
+#: ../bin/apport-cli.py:321
+msgid "&Cancel"
+msgstr ""
+
+#: ../bin/apport-cli.py:219
+msgid "Problem report file:"
+msgstr ""
+
+#: ../bin/apport-cli.py:225 ../bin/apport-cli.py:230
+msgid "&Confirm"
+msgstr ""
+
+#: ../bin/apport-cli.py:229
+#, python-format
+msgid "Error: %s"
+msgstr ""
+
+#: ../bin/apport-cli.py:235 ../kde/apport-kde.py:383
+msgid "Collecting problem information"
+msgstr ""
+
+#: ../bin/apport-cli.py:236
+msgid ""
+"The collected information can be sent to the developers to improve the\n"
+"application. This might take a few minutes."
+msgstr ""
+
+#: ../bin/apport-cli.py:248 ../kde/apport-kde.py:411 ../gtk/apport-gtk.ui.h:13
+msgid "Uploading problem information"
+msgstr ""
+
+#: ../bin/apport-cli.py:249
+msgid ""
+"The collected information is being sent to the bug tracking system.\n"
+"This might take a few minutes."
+msgstr ""
+
+#: ../bin/apport-cli.py:299
+msgid "&Done"
+msgstr ""
+
+#: ../bin/apport-cli.py:305
+msgid "none"
+msgstr ""
+
+#: ../bin/apport-cli.py:306
+#, python-format
+msgid "Selected: %s. Multiple choices:"
+msgstr ""
+
+#: ../bin/apport-cli.py:322
+msgid "Choices:"
+msgstr ""
+
+#: ../bin/apport-cli.py:336
+msgid "Path to file (Enter to cancel):"
+msgstr ""
+
+#: ../bin/apport-cli.py:342
+msgid "File does not exist."
+msgstr ""
+
+#: ../bin/apport-cli.py:344
+msgid "This is a directory."
+msgstr ""
+
+#: ../bin/apport-cli.py:350
+msgid "To continue, you must visit the following URL:"
+msgstr ""
+
+#: ../bin/apport-cli.py:352
+msgid ""
+"You can launch a browser now, or copy this URL into a browser on another "
+"computer."
+msgstr ""
+
+#: ../bin/apport-cli.py:354
+msgid "Launch a browser now"
+msgstr ""
+
+#: ../bin/apport-cli.py:368
+msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 
 #: ../data/apportcheckresume.py:68
@@ -481,144 +619,6 @@ msgstr ""
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr ""
-
-#: ../bin/apport-cli.py:74
-msgid "Press any key to continue..."
-msgstr ""
-
-#: ../bin/apport-cli.py:81
-msgid "What would you like to do? Your options are:"
-msgstr ""
-
-#: ../bin/apport-cli.py:85
-#, python-format
-msgid "Please choose (%s):"
-msgstr ""
-
-#: ../bin/apport-cli.py:145
-#, python-format
-msgid "(%i bytes)"
-msgstr ""
-
-#: ../bin/apport-cli.py:147 ../gtk/apport-gtk.py:138 ../kde/apport-kde.py:338
-msgid "(binary data)"
-msgstr ""
-
-#: ../bin/apport-cli.py:175 ../gtk/apport-gtk.py:173 ../kde/apport-kde.py:162
-msgid "Send problem report to the developers?"
-msgstr ""
-
-#: ../bin/apport-cli.py:176
-msgid ""
-"After the problem report has been sent, please fill out the form in the\n"
-"automatically opened web browser."
-msgstr ""
-
-#: ../bin/apport-cli.py:179
-#, python-format
-msgid "&Send report (%s)"
-msgstr ""
-
-#: ../bin/apport-cli.py:183
-msgid "&Examine locally"
-msgstr ""
-
-#: ../bin/apport-cli.py:187
-msgid "&View report"
-msgstr ""
-
-#: ../bin/apport-cli.py:188
-msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr ""
-
-#: ../bin/apport-cli.py:189
-msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
-
-#: ../bin/apport-cli.py:191 ../bin/apport-cli.py:268 ../bin/apport-cli.py:300
-#: ../bin/apport-cli.py:321
-msgid "&Cancel"
-msgstr ""
-
-#: ../bin/apport-cli.py:219
-msgid "Problem report file:"
-msgstr ""
-
-#: ../bin/apport-cli.py:225 ../bin/apport-cli.py:230
-msgid "&Confirm"
-msgstr ""
-
-#: ../bin/apport-cli.py:229
-#, python-format
-msgid "Error: %s"
-msgstr ""
-
-#: ../bin/apport-cli.py:235 ../kde/apport-kde.py:383
-msgid "Collecting problem information"
-msgstr ""
-
-#: ../bin/apport-cli.py:236
-msgid ""
-"The collected information can be sent to the developers to improve the\n"
-"application. This might take a few minutes."
-msgstr ""
-
-#: ../bin/apport-cli.py:248 ../kde/apport-kde.py:411 ../gtk/apport-gtk.ui.h:13
-msgid "Uploading problem information"
-msgstr ""
-
-#: ../bin/apport-cli.py:249
-msgid ""
-"The collected information is being sent to the bug tracking system.\n"
-"This might take a few minutes."
-msgstr ""
-
-#: ../bin/apport-cli.py:299
-msgid "&Done"
-msgstr ""
-
-#: ../bin/apport-cli.py:305
-msgid "none"
-msgstr ""
-
-#: ../bin/apport-cli.py:306
-#, python-format
-msgid "Selected: %s. Multiple choices:"
-msgstr ""
-
-#: ../bin/apport-cli.py:322
-msgid "Choices:"
-msgstr ""
-
-#: ../bin/apport-cli.py:336
-msgid "Path to file (Enter to cancel):"
-msgstr ""
-
-#: ../bin/apport-cli.py:342
-msgid "File does not exist."
-msgstr ""
-
-#: ../bin/apport-cli.py:344
-msgid "This is a directory."
-msgstr ""
-
-#: ../bin/apport-cli.py:350
-msgid "To continue, you must visit the following URL:"
-msgstr ""
-
-#: ../bin/apport-cli.py:352
-msgid ""
-"You can launch a browser now, or copy this URL into a browser on another "
-"computer."
-msgstr ""
-
-#: ../bin/apport-cli.py:354
-msgid "Launch a browser now"
-msgstr ""
-
-#: ../bin/apport-cli.py:368
-msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 
 #: ../gtk/apport-gtk.py:153
