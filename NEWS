@@ -9,6 +9,9 @@ detailled list of changes, please see ChangeLog.
    don't have Contents.gz).
  * Robustify "progress bar visible" GTK and KDE UI checks for the faster
    collection due to dropping lsb_release.
+ * Drop apport-noui in favour of whoopsie-upload-all. We don't want to process
+   hooks when run noninteractively, since they may ask questions or determine a
+   report is not due to a bug in Ubuntu. whoopsie-upload-all skips these hooks.
 
 2.12 (2013-08-02)
 -----------------
