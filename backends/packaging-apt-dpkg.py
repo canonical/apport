@@ -20,16 +20,18 @@ warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 try:
     import cPickle as pickle
-    from urllib import urlopen
+    from urllib2 import urlopen, HTTPError
     (pickle, urlopen)  # pyflakes
 except ImportError:
     # python 3
     from urllib.request import urlopen
+    from urllib.error import HTTPError
     import pickle
 
 import apport
 from apport.packaging import PackageInfo
 
+LAUNCHPAD_PPA_API = 'https://launchpad.net/api/1.0/~%s/+archive/%s'
 
 class __AptDpkgPackageInfo(PackageInfo):
     '''Concrete apport.PackageInfo class implementation for python-apt and
@@ -41,6 +43,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._contents_dir = None
         self._mirror = None
         self._virtual_mapping_obj = None
+        self._origins = None
 
         self.configuration = '/etc/default/apport'
 
@@ -91,7 +94,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''
         self._apt_cache = None
         if not self._sandbox_apt_cache:
-            self._build_apt_sandbox(aptroot, apt_sources)
+            self._build_apt_sandbox(aptroot, apt_sources, self.current_release_codename, self._origins)
             rootdir = os.path.abspath(aptroot)
             self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
             try:
@@ -521,7 +524,7 @@ Debug::NoLocking "true";
 
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
-                         permanent_rootdir=False, architecture=None):
+                         permanent_rootdir=False, architecture=None, origins=None):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -569,6 +572,9 @@ Debug::NoLocking "true";
                 if os.path.exists(arch_apt_sources):
                     apt_sources = arch_apt_sources
 
+            # support origin specific config for third party packages
+            self._origins = origins
+
             # set mirror for get_file_package()
             with open(apt_sources) as f:
                 for l in f:
@@ -611,7 +617,7 @@ Debug::NoLocking "true";
         if not tmp_aptroot:
             c = self._sandbox_cache(aptroot, apt_sources, fetchProgress)
         else:
-            self._build_apt_sandbox(aptroot, apt_sources)
+            self._build_apt_sandbox(aptroot, apt_sources, self.current_release_codename, self._origins)
             c = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
                 c.update(fetchProgress)
@@ -868,7 +874,45 @@ Debug::NoLocking "true";
         return package
 
     @classmethod
-    def _build_apt_sandbox(klass, apt_root, apt_sources):
+    def search_ppa_from_origin(klass, origin, codename):
+        if origin.startswith("LP-PPA-"):
+            components = origin[7:].split("-")
+            try_ppa = True        
+            if len(components) == 1:
+                components.append('ppa')
+                try_ppa = False
+
+            index = 1      
+            while (index < len(components)):
+                user = str.join('-', components[0:index])
+                ppa_name = str.join('-', components[index:len(components)])
+                try:
+                    urlopen(LAUNCHPAD_PPA_API % (user, ppa_name))
+                except (HTTPError):
+                    index += 1
+                    if index == len(components):
+                        if try_ppa:
+                            components.append('ppa')
+                            try_ppa = False
+                            index = 2
+                        else:
+                            user = None
+                    continue
+                break
+
+            if user:           
+                ppa_line = "deb http://ppa.launchpad.net/%s/%s/ubuntu %s main" % (user, ppa_name, codename)
+                debug_line = "http://ppa.launchpad.net/%s/%s/ubuntu/dists/%s/main/debug" % (user, ppa_name, codename)
+                try:
+                    urlopen(debug_line)
+                    add_debug = " main/debug"
+                except (HTTPError):
+                    add_debug = ""
+                return ppa_line + add_debug + "\ndeb-src" + ppa_line[3:] + "\n"
+        return False
+
+    @classmethod
+    def _build_apt_sandbox(klass, apt_root, apt_sources, release, origins=None):
         # pre-create directories, to avoid apt.Cache() printing "creating..."
         # messages on stdout
         if not os.path.exists(os.path.join(apt_root, 'var', 'lib', 'apt')):
@@ -889,6 +933,22 @@ Debug::NoLocking "true";
         with open(apt_sources) as src:
             with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'w') as dest:
                 dest.write(src.read())
+
+        # add apt sources for supported third party packages
+        if origins:
+            print("Adding apt sources for supported third party packages")
+            for apt_ext in origins:
+                origin_path = os.path.join(apt_sources + '.ext', apt_ext)
+                if os.path.exists(origin_path):
+                    with open(origin_path) as src_ext:
+                        source_list = src_ext.read()
+                else:
+                    source_list = klass.search_ppa_from_origin(apt_ext, release)
+                if source_list:
+                    with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'a') as dest:
+                        dest.write(source_list)
+                else:
+                    print("Could not find source config for %s" % apt_ext)
 
         # install apt keyrings; prefer the ones from the config dir, fall back
         # to system

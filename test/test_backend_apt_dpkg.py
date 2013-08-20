@@ -707,7 +707,7 @@ usr/bin/frob                                            foo/frob
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
         os.mkdir(out_dir)
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'))
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'precise')
         res = impl.get_source_tree('base-files', out_dir, sandbox=self.rootdir,
                                    apt_update=True)
         self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
