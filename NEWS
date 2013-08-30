@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.12.2 (UNRELEASED)
+-------------------
+ * fileutils.py, get_{new,all}_reports(): Don't consider reports which are
+   readable, but not writable. (LP: #1098844)
+
 2.12.1 (2013-08-19)
 -------------------
  * sandboxutils.py, make_sandbox(): Install packages from Package: and

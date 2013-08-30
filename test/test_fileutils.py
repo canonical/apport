@@ -197,6 +197,24 @@ class T(unittest.TestCase):
             self.assertEqual(set(apport.fileutils.get_all_system_reports()), set([]))
             self.assertEqual(set(apport.fileutils.get_new_system_reports()), set([]))
 
+    def test_unwritable_report(self):
+        '''get_all_reports() and get_new_reports() for unwritable report'''
+
+        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        self.assertEqual(apport.fileutils.get_all_system_reports(), [])
+
+        r = os.path.join(apport.fileutils.report_dir, 'unwritable.crash')
+        with open(r, 'w') as fd:
+            fd.write('unwritable')
+        os.chmod(r, 0o444)
+
+        if os.getuid() == 0:
+            self.assertEqual(set(apport.fileutils.get_new_reports()), set([r]))
+            self.assertEqual(set(apport.fileutils.get_all_reports()), set([r]))
+        else:
+            self.assertEqual(set(apport.fileutils.get_new_reports()), set())
+            self.assertEqual(set(apport.fileutils.get_all_reports()), set())
+
     def test_delete_report(self):
         '''delete_report()'''
 

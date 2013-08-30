@@ -170,7 +170,7 @@ def get_all_reports():
     reports = []
     for r in glob.glob(os.path.join(report_dir, '*.crash')):
         try:
-            if os.path.getsize(r) > 0 and os.access(r, os.R_OK):
+            if os.path.getsize(r) > 0 and os.access(r, os.R_OK | os.W_OK):
                 reports.append(r)
         except OSError:
             # race condition, can happen if report disappears between glob and
