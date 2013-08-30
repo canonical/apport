@@ -252,9 +252,9 @@ class UserInterface:
                 heading = _('Sorry, the program "%s" closed unexpectedly') % subject
                 self.ui_error_message(
                     _('Problem in %s') % subject,
-                    '%s\n\n%s' % (heading, _('Your computer does not have '
-                    'enough free memory to automatically analyze the problem '
-                    'and send a report to the developers.')))
+                    '%s\n\n%s' % (heading, _('Your computer does not have enough free '
+                                             'memory to automatically analyze the problem '
+                                             'and send a report to the developers.')))
                 return
 
             allowed_to_report = apport.fileutils.allowed_to_report()
