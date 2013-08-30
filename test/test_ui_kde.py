@@ -16,10 +16,14 @@ import os
 import shutil
 
 from mock import patch
-from PyQt4.QtCore import QTimer, QCoreApplication
-from PyQt4.QtGui import QTreeWidget
-from PyKDE4.kdecore import ki18n, KCmdLineArgs, KAboutData, KLocalizedString
-from PyKDE4.kdeui import KApplication
+try:
+    from PyQt4.QtCore import QTimer, QCoreApplication
+    from PyQt4.QtGui import QTreeWidget
+    from PyKDE4.kdecore import ki18n, KCmdLineArgs, KAboutData, KLocalizedString
+    from PyKDE4.kdeui import KApplication
+except ImportError as e:
+    sys.stderr.write('SKIP: PyQt/PyKDE not available: %s\n' % str(e))
+    sys.exit(0)
 
 import apport
 from apport import unicode_gettext as _

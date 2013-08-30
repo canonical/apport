@@ -5,6 +5,8 @@ detailled list of changes, please see ChangeLog.
 -------------------
  * fileutils.py, get_{new,all}_reports(): Don't consider reports which are
    readable, but not writable. (LP: #1098844)
+ * test_ui_kde.py: Cleanly skip the test if PyQt/PyKDE are not installed,
+   instead of failing.
 
 2.12.1 (2013-08-19)
 -------------------
