@@ -196,7 +196,7 @@ if not opts.apport_retrace:
 if opts.lockfile:
     try:
         f = os.open(opts.lockfile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666)
-        os.write(f, b"%u\n" % os.getpid())
+        os.write(f, ("%u\n" % os.getpid()).encode())
         os.close(f)
     except OSError as e:
         if e.errno == errno.EEXIST:
