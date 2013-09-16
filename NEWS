@@ -8,6 +8,8 @@ detailled list of changes, please see ChangeLog.
  * test_ui_kde.py: Cleanly skip the test if PyQt/PyKDE are not installed,
    instead of failing.
  * crash-digger: Write pid into lock file. Thanks Steve Langasek.
+ * apport-gtk: When loading a Bug report from a file, properly set up for bug
+   reporting mode. (LP: #1226140)
 
 2.12.1 (2013-08-19)
 -------------------

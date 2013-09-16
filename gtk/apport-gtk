@@ -237,7 +237,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 name = os.path.basename(self.report['ExecutablePath'])
                 title = _('The program "%s" has stopped responding.') % name
             self.w('title_label').set_label('<big><b>%s</b></big>' % title)
-        elif not self.report_file:
+        elif not self.report_file or report_type == 'Bug':
             self.setup_bug_report()
         elif report_type == 'KernelCrash' or report_type == 'KernelOops':
             self.w('ignore_future_problems').set_active(False)
