@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-19 15:33+0200\n"
+"POT-Creation-Date: 2013-09-17 15:41-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr ""
 
-#: ../apport/ui.py:254 ../apport/ui.py:1253
+#: ../apport/ui.py:254 ../apport/ui.py:1255
 #, python-format
 msgid "Problem in %s"
 msgstr ""
@@ -60,13 +60,12 @@ msgstr ""
 #. package does not exist
 #: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
 #: ../apport/ui.py:320 ../apport/ui.py:328 ../apport/ui.py:455
-#: ../apport/ui.py:458 ../apport/ui.py:659 ../apport/ui.py:1066
-#: ../apport/ui.py:1207 ../apport/ui.py:1211 ../apport/ui.py:1230
-#: ../apport/ui.py:1236
+#: ../apport/ui.py:458 ../apport/ui.py:659 ../apport/ui.py:1086
+#: ../apport/ui.py:1227 ../apport/ui.py:1231
 msgid "Invalid problem report"
 msgstr ""
 
-#: ../apport/ui.py:271 ../apport/ui.py:1213
+#: ../apport/ui.py:271 ../apport/ui.py:1233
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 
@@ -273,54 +272,54 @@ msgstr ""
 msgid "Update %s with fully symbolic stack trace"
 msgstr ""
 
-#: ../apport/ui.py:963
+#: ../apport/ui.py:965 ../apport/ui.py:975
+msgid ""
+"This problem report applies to a program which is not installed any more."
+msgstr ""
+
+#: ../apport/ui.py:989
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr ""
 
-#: ../apport/ui.py:1067
+#: ../apport/ui.py:1087
 msgid "Could not determine the package or source package name."
 msgstr ""
 
-#: ../apport/ui.py:1085
+#: ../apport/ui.py:1105
 msgid "Unable to start web browser"
 msgstr ""
 
-#: ../apport/ui.py:1086
+#: ../apport/ui.py:1106
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr ""
 
-#: ../apport/ui.py:1161
+#: ../apport/ui.py:1181
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 
-#: ../apport/ui.py:1173
+#: ../apport/ui.py:1193
 msgid "Network problem"
 msgstr ""
 
-#: ../apport/ui.py:1175
+#: ../apport/ui.py:1195
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 
-#: ../apport/ui.py:1202
+#: ../apport/ui.py:1222
 msgid "Memory exhaustion"
 msgstr ""
 
-#: ../apport/ui.py:1203
+#: ../apport/ui.py:1223
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 
-#: ../apport/ui.py:1226 ../apport/ui.py:1235
-msgid ""
-"This problem report applies to a program which is not installed any more."
-msgstr ""
-
-#: ../apport/ui.py:1256
+#: ../apport/ui.py:1258
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -328,18 +327,18 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ../apport/ui.py:1312 ../apport/ui.py:1319
+#: ../apport/ui.py:1314 ../apport/ui.py:1321
 msgid "Problem already known"
 msgstr ""
 
-#: ../apport/ui.py:1313
+#: ../apport/ui.py:1315
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
 
-#: ../apport/ui.py:1320
+#: ../apport/ui.py:1322
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 
