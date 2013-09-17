@@ -10,6 +10,9 @@ detailled list of changes, please see ChangeLog.
  * crash-digger: Write pid into lock file. Thanks Steve Langasek.
  * apport-gtk: When loading a Bug report from a file, properly set up for bug
    reporting mode. (LP: #1226140)
+ * Move "program is not installed any more" check from report loading into data
+   collection, so that crash reports can be moved and reported on machines
+   without that program installed. (LP: #1226030)
 
 2.12.1 (2013-08-19)
 -------------------

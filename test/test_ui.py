@@ -257,17 +257,6 @@ class T(unittest.TestCase):
                          self.report['CoreDump'].get_value())
         self.assertEqual(self.ui.msg_title, None)
 
-        # report without Package
-        del self.report['Package']
-        del self.report['SourcePackage']
-        del self.report['ExecutablePath']
-        self.update_report_file()
-        self.ui.load_report(self.report_file.name)
-
-        self.assertTrue(self.ui.report is None)
-        self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
-        self.assertEqual(self.ui.msg_severity, 'info')
-
         self.ui.clear_msg()
 
         # invalid base64 encoding
@@ -322,7 +311,7 @@ bOgUs=
         '''collect_info() on report without information (distro bug)'''
 
         # report without any information (distro bug)
-        self.ui.report = apport.Report()
+        self.ui.report = apport.Report('Bug')
         self.ui.collect_info()
         self.assertTrue(set(['Date', 'Uname', 'DistroRelease', 'ProblemType']).issubset(
             set(self.ui.report.keys())))
@@ -1016,6 +1005,8 @@ bOgUs=
         # now pretend to move it to a machine where the package is not
         # installed
         self.ui.report['Package'] = 'uninstalled_pkg 1'
+        self.ui.report['ExecutablePath'] = '/usr/bin/uninstalled_program'
+        self.ui.report['InterpreterPath'] = '/usr/bin/uninstalled_interpreter'
 
         # write crash report
         report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
@@ -1072,8 +1063,8 @@ bOgUs=
                                             'restart': False}
         self.ui.run_crash(report_file)
 
-        self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
-        self.assertEqual(self.ui.msg_severity, 'info')
+        self.assertEqual(self.ui.msg_title, _('Problem in bash'))
+        self.assertIn('not installed any more', self.ui.msg_text)
 
         # interpreted program got uninstalled between crash and report
         r = apport.Report()
@@ -1083,8 +1074,8 @@ bOgUs=
 
         self.ui.run_crash(report_file)
 
-        self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
-        self.assertEqual(self.ui.msg_severity, 'info')
+        self.assertEqual(self.ui.msg_title, _('Problem in bash'))
+        self.assertIn('not installed any more', self.ui.msg_text)
 
         # interpreter got uninstalled between crash and report
         r = apport.Report()
@@ -1094,8 +1085,8 @@ bOgUs=
 
         self.ui.run_crash(report_file)
 
-        self.assertEqual(self.ui.msg_title, _('Invalid problem report'))
-        self.assertEqual(self.ui.msg_severity, 'info')
+        self.assertEqual(self.ui.msg_title, _('Problem in bash'))
+        self.assertIn('not installed any more', self.ui.msg_text)
 
     def test_run_crash_updated_binary(self):
         '''run_crash() on binary that got updated in the meantime'''

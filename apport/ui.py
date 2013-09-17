@@ -952,6 +952,32 @@ class UserInterface:
         If a symptom script is given, this will be run first (used by
         run_symptom()).
         '''
+        # check if we already ran (we might load a processed report), skip if so
+        if (self.report.get('ProblemType') == 'Crash' and 'Stacktrace' in self.report) or (self.report.get('ProblemType') != 'Crash' and 'Dependencies' in self.report):
+            if on_finished:
+                on_finished()
+            return
+
+        # ensure that the crashed program is still installed:
+        if self.report['ProblemType'] == 'Crash':
+            exe_path = self.report.get('ExecutablePath', '')
+            if not os.path.exists(exe_path):
+                msg = _('This problem report applies to a program which is not installed any more.')
+                if exe_path:
+                    msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
+                self.report['UnreportableReason'] = msg
+                if on_finished:
+                    on_finished()
+                return
+
+            if 'InterpreterPath' in self.report:
+                if not os.path.exists(self.report['InterpreterPath']):
+                    msg = _('This problem report applies to a program which is not installed any more.')
+                    self.report['UnreportableReason'] = '%s (%s)' % (msg, self.report['InterpreterPath'])
+                    if on_finished:
+                        on_finished()
+                    return
+
         # check if binary changed since the crash happened
         if 'ExecutablePath' in self.report and 'ExecutableTimestamp' in self.report:
             orig_time = int(self.report['ExecutableTimestamp'])
@@ -970,12 +996,6 @@ class UserInterface:
             # package
             self.report.add_os_info()
         else:
-            # check if we already ran, skip if so
-            if (self.report.get('ProblemType') == 'Crash' and 'Stacktrace' in self.report) or (self.report.get('ProblemType') != 'Crash' and 'Dependencies' in self.report):
-                if on_finished:
-                    on_finished()
-                return
-
             # since this might take a while, create separate threads and
             # display a progress dialog.
             self.ui_start_info_collection_progress()
@@ -1218,24 +1238,6 @@ class UserInterface:
             self.cur_package = self.report['Package'].split()[0]
         else:
             self.cur_package = apport.fileutils.find_file_package(self.report.get('ExecutablePath', ''))
-
-        # ensure that the crashed program is still installed:
-        if self.report['ProblemType'] == 'Crash':
-            exe_path = self.report.get('ExecutablePath', '')
-            if not os.path.exists(exe_path):
-                msg = _('This problem report applies to a program which is not installed any more.')
-                if exe_path:
-                    msg = '%s (%s)' % (msg, self.report['ExecutablePath'])
-                self.report = None
-                self.ui_info_message(_('Invalid problem report'), msg)
-                return False
-
-            if 'InterpreterPath' in self.report:
-                if not os.path.exists(self.report['InterpreterPath']):
-                    msg = _('This problem report applies to a program which is not installed any more.')
-                    self.ui_info_message(_('Invalid problem report'), '%s (%s)'
-                                         % (msg, self.report['InterpreterPath']))
-                    return False
 
         return True
 
