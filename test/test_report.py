@@ -52,6 +52,14 @@ class T(unittest.TestCase):
         self.assertGreater(len(pr['DistroRelease']), 5)
         self.assertTrue(pr['Architecture'])
 
+        # does not overwrite an already existing uname
+        pr['Uname'] = 'foonux 1.2'
+        dr = pr['DistroRelease']
+        del pr['DistroRelease']
+        pr.add_os_info()
+        self.assertEqual(pr['Uname'], 'foonux 1.2')
+        self.assertEqual(pr['DistroRelease'], dr)
+
     def test_add_user_info(self):
         '''add_user_info().'''
 

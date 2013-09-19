@@ -166,7 +166,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         # `apport-collect $id`.
 
         # avoid collecting information again, in this mode we already have it 
-        if 'Uname' in self.report:
+        if 'DistroRelease' in self.report:
             self.collect_called = True
             self.ui_update_view()
         self.w('title_label').set_label('<big><b>%s</b></big>' %

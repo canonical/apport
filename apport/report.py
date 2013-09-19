@@ -328,10 +328,13 @@ class Report(problem_report.ProblemReport):
         - NonfreeKernelModules: loaded kernel modules which are not free (if
             there are none, this field will not be present)
         '''
-        self['DistroRelease'] = '%s %s' % apport.packaging.get_os_version()
-        u = os.uname()
-        self['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
-        self['Architecture'] = packaging.get_system_architecture()
+        if 'DistroRelease' not in self:
+            self['DistroRelease'] = '%s %s' % apport.packaging.get_os_version()
+        if 'Uname' not in self:
+            u = os.uname()
+            self['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
+        if 'Architecture' not in self:
+            self['Architecture'] = packaging.get_system_architecture()
 
     def add_user_info(self):
         '''Add information about the user.
