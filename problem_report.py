@@ -451,7 +451,7 @@ class ProblemReport(UserDict):
 
         keys = sorted(self.data.keys())
 
-        text = b''
+        text = ''
         attachments = []
 
         if 'ProblemType' in keys:
@@ -528,17 +528,16 @@ class ProblemReport(UserDict):
                     assert isinstance(v, unicode)
                 else:
                     assert isinstance(v, str)
-                v = v.encode('UTF-8')
 
                 lines = len(v.splitlines())
                 if size <= 1000 and lines == 1:
                     v = v.rstrip()
-                    text += k.encode() + b': ' + v + b'\n'
+                    text += k + ': ' + v + '\n'
                 elif size <= 1000 and lines <= attach_treshold:
-                    text += k.encode() + b':\n '
-                    if not v.endswith(b'\n'):
-                        v += b'\n'
-                    text += v.strip().replace(b'\n', b'\n ') + b'\n'
+                    text += k + ':\n '
+                    if not v.endswith('\n'):
+                        v += '\n'
+                    text += v.strip().replace('\n', '\n ') + '\n'
                 else:
                     # too large, separate attachment
                     att = MIMEText(v, _charset='UTF-8')
