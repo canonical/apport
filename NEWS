@@ -7,6 +7,9 @@ detailled list of changes, please see ChangeLog.
    upstream changes which now don't tolerate passing bytes any more.
    (LP: #1227381)
  * apport-gtk: Don't use obsolete add_with_viewport() method any more.
+ * Fix ui_present_report_details() "modal_for" keyword for all UI
+   implementations, so that --hanging works for -cli and -kde, too.
+   (LP: #1213790)
 
 2.12.2 (2013-09-17)
 -------------------

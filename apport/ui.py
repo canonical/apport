@@ -1337,7 +1337,7 @@ might be helpful for the developers.'))
     # abstract UI methods that must be implemented in derived classes
     #
 
-    def ui_present_report_details(self, allowed_to_report=True):
+    def ui_present_report_details(self, allowed_to_report=True, modal_for=None):
         '''Show details of the bug report.
 
         Return the action and options as a dictionary:

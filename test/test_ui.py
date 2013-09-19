@@ -70,7 +70,7 @@ databases = {
         self.msg_severity = None  # 'warning' or 'error'
         self.msg_choices = None
 
-    def ui_present_report_details(self, is_update):
+    def ui_present_report_details(self, allowed_to_report=True, modal_for=None):
         self.present_details_shown = True
         return self.present_details_response
 
