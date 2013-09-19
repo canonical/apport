@@ -6,6 +6,7 @@ detailled list of changes, please see ChangeLog.
  * ProblemReport.write_mime(): Adjust MIMEText handling to latest Python 3.3
    upstream changes which now don't tolerate passing bytes any more.
    (LP: #1227381)
+ * apport-gtk: Don't use obsolete add_with_viewport() method any more.
 
 2.12.2 (2013-09-17)
 -------------------

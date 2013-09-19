@@ -80,7 +80,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         parent = treeview.get_parent()
         parent.remove(treeview)
         overlay = Gtk.Overlay()
-        parent.add_with_viewport(overlay)
+        parent.add(overlay)
         overlay.add(treeview)
         spinner = Gtk.Spinner()
         spinner.set_size_request(42, 42)
