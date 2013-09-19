@@ -31,6 +31,8 @@ pr['Package'] = 'linux-image-' + os.uname()[2]
 pr['SourcePackage'] = 'linux'
 
 pr['OopsText'] = oops
+u = os.uname()
+pr['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
 
 # write report
 report_path = apport.fileutils.make_report_path(pr, uid=checksum)

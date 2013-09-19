@@ -323,5 +323,6 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT
         r.add_package_info(r['Package'])
 
         self.assertTrue(r['Package'].startswith('linux-image-'))
+        self.assertIn('Uname', r)
 
 unittest.main()
