@@ -7,6 +7,8 @@ detailled list of changes, please see ChangeLog.
    (LP: #1226776)
  * kernel_oops hook: Collect uname at the time of invoking the hook, instead of
    at data collection time. (LP: #1226776)
+ * Replace fixed size icons with PNGs, which are more efficient and avoid
+   rendering artifacts. (LP: #1231763)
 
 2.12.4 (2013-09-19)
 -------------------
