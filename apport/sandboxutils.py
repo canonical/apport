@@ -67,6 +67,8 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
         libs = apport.fileutils.shared_libraries(report['ExecutablePath']).values()
     if sandbox:
         cache_dir = os.path.join(cache_dir, report['DistroRelease'])
+        if not os.path.exists(cache_dir):
+            os.makedirs(cache_dir)
 
     # grab as much as we can
     for l in libs:

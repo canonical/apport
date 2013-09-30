@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.12.6 (UNRELEASED)
+-------------------
+ * sandboxutils.needed_runtime_packages(): Create cache directory for
+   Contents.gz if missing. (LP: #933199)
+
 2.12.5 (2013-09-27)
 -------------------
  * Report.add_os_info(): Do not overwrite already existing data.
