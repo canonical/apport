@@ -360,6 +360,17 @@ deb http://secondary.mirror tuxy extra
             self.assertEqual(impl._get_primary_mirror_from_apt_sources(s),
                              'http://binary.mirror/tuxy')
 
+        # valid file with options
+        with open(s, 'w') as f:
+            f.write('''# some comment
+deb-src http://source.mirror/foo tuxy main
+deb [arch=flowerpc,leghf] http://binary.mirror/tuxy tuxy main
+deb http://secondary.mirror tuxy extra
+''')
+            f.flush()
+            self.assertEqual(impl._get_primary_mirror_from_apt_sources(s),
+                             'http://binary.mirror/tuxy')
+
         # empty file
         with open(s, 'w') as f:
             f.flush()

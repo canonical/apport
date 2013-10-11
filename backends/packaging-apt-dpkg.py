@@ -788,8 +788,14 @@ Debug::NoLocking "true";
         with open(apt_sources) as f:
             for l in f:
                 fields = l.split()
-                if len(fields) >= 3 and fields[0] == 'deb' and fields[1].startswith('http://'):
-                    return fields[1]
+                if len(fields) >= 3 and fields[0] == 'deb':
+                    if fields[1].startswith('['):
+                        # options given, mirror is in third field
+                        mirror_idx = 2
+                    else:
+                        mirror_idx = 1
+                    if fields[mirror_idx].startswith('http://'):
+                        return fields[mirror_idx]
             else:
                 raise SystemError('cannot determine default mirror: %s does not contain a valid deb line'
                                   % apt_sources)
