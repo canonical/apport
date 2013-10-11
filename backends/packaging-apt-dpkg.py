@@ -570,14 +570,10 @@ Debug::NoLocking "true";
                     apt_sources = arch_apt_sources
 
             # set mirror for get_file_package()
-            with open(apt_sources) as f:
-                for l in f:
-                    fields = l.split()
-                    if len(fields) >= 3 and fields[0] == 'deb' and fields[1].startswith('http://'):
-                        self.set_mirror(fields[1])
-                        break
-                else:
-                    apport.warning('cannot determine mirror, %s does not contain a valid deb line' % apt_sources)
+            try:
+                self.set_mirror(self._get_primary_mirror_from_apt_sources(apt_sources))
+            except SystemError as e:
+                apport.warning('cannot determine mirror: %s' % str(e))
 
             # set current release code name for _distro_release_to_codename
             with open(os.path.join(configdir, release, 'codename')) as f:
@@ -785,6 +781,19 @@ Debug::NoLocking "true";
 
         return mismatches
 
+    @classmethod
+    def _get_primary_mirror_from_apt_sources(klass, apt_sources):
+        '''Heuristically determine primary mirror from an apt sources.list'''
+
+        with open(apt_sources) as f:
+            for l in f:
+                fields = l.split()
+                if len(fields) >= 3 and fields[0] == 'deb' and fields[1].startswith('http://'):
+                    return fields[1]
+            else:
+                raise SystemError('cannot determine default mirror: %s does not contain a valid deb line'
+                                  % apt_sources)
+
     def _get_mirror(self):
         '''Return the distribution mirror URL.
 
@@ -792,14 +801,7 @@ Debug::NoLocking "true";
         configuration.'''
 
         if not self._mirror:
-            for l in open('/etc/apt/sources.list'):
-                fields = l.split()
-                if len(fields) >= 3 and fields[0] == 'deb' and fields[1].startswith('http://'):
-                    self._mirror = fields[1]
-                    break
-            else:
-                raise SystemError('cannot determine default mirror: /etc/apt/sources.list does not contain a valid deb line')
-
+            self._mirror = self._get_primary_mirror_from_apt_sources('/etc/apt/sources.list')
         return self._mirror
 
     def _distro_release_to_codename(self, release):
