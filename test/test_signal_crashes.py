@@ -97,6 +97,7 @@ class T(unittest.TestCase):
         self.assertEqual(apport.fileutils.get_all_reports(), [self.test_report])
         st = os.stat(self.test_report)
         self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
+        self.assertEqual(st.st_uid, os.geteuid(), 'report has correct owner')
 
         # a subsequent crash does not alter unseen report
         self.do_crash()
