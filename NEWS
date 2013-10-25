@@ -3,6 +3,11 @@ detailled list of changes, please see ChangeLog.
 
 2.12.6 (UNRELEASED)
 -------------------
+ * SECURITY FIX: For setuid programs which drop their privileges after
+   startup, make the report and core dumps owned by root, to avoid possible
+   data disclosure. Also, change core dump files to permissions "0600".
+   Thanks to Martin Carpenter for discovering this!
+   (CVE-2013-1067, LP: #1242435)
  * sandboxutils.needed_runtime_packages(): Create cache directory for
    Contents.gz if missing. (LP: #933199)
  * apt/dpkg: Recognize options in apt sources.list. (LP: #1238620)

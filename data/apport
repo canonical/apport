@@ -51,7 +51,7 @@ def drop_privileges(pid, partial=False):
 
     stat = None
     try:
-        stat = os.stat('/proc/' + pid)
+        stat = os.stat('/proc/%s/stat' % pid)
     except OSError as e:
         raise ValueError('Invalid process ID: ' + str(e))
 
@@ -142,7 +142,7 @@ def write_user_coredump(pid, cwd, limit, from_report=None):
         with open('/proc/sys/kernel/core_uses_pid') as f:
             if f.read().strip() != '0':
                 core_path += '.' + str(pid)
-        core_file = os.open(core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640)
+        core_file = os.open(core_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     except (OSError, IOError):
         return
 
@@ -302,7 +302,7 @@ try:
         sys.exit(0)
 
     try:
-        pidstat = os.stat('/proc/' + pid)
+        pidstat = os.stat('/proc/%s/stat' % pid)
     except OSError:
         error_log('Invalid PID')
         sys.exit(1)
