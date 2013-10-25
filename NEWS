@@ -1,7 +1,7 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.12.6 (UNRELEASED)
+2.12.6 (2013-10-25)
 -------------------
  * SECURITY FIX: For setuid programs which drop their privileges after
    startup, make the report and core dumps owned by root, to avoid possible
