@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-11-08 19:06+0000\n"
 "Last-Translator: Aputsiaq Niels Janussen <aj@isit.gl>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
-"Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-10-08 05:09+0000\n"
-"X-Generator: Launchpad (build 16799)\n"
+"X-Launchpad-Export-Date: 2013-10-25 05:13+0000\n"
+"X-Generator: Launchpad (build 16810)\n"
+"Language: da\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -95,7 +95,8 @@ msgstr "Fejl"
 
 #: ../apport/ui.py:325
 msgid "There is not enough disk space available to process this report."
-msgstr "Der er ikke nok diskplads til rådighed til at behandle denne rapport."
+msgstr ""
+"Der er ikke nok diskplads til rådighed til at behandle denne rapport."
 
 #: ../apport/ui.py:409
 msgid "No package specified"
@@ -104,7 +105,8 @@ msgstr "Ingen pakke angivet"
 #: ../apport/ui.py:410
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Du skal angive en pakke eller en PID. Se --help for mere information."
+msgstr ""
+"Du skal angive en pakke eller en PID. Se --help for mere information."
 
 #: ../apport/ui.py:433
 msgid "Permission denied"
@@ -158,8 +160,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -206,7 +208,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Tilføj et ekstra mærke til rapporten. Kan gives flere gange."
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [tilvalg] [symptom|pid|pakke|programsti|.apport/.crash-fil]"
 
 #: ../apport/ui.py:728
@@ -305,7 +308,8 @@ msgstr "Opdatér %s med fuldt symbolsk stakspor"
 #: ../apport/ui.py:965 ../apport/ui.py:975
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "Problemrapporten vedrører et program, som ikke længere er installeret."
+msgstr ""
+"Problemrapporten vedrører et program, som ikke længere er installeret."
 
 #: ../apport/ui.py:989
 #, python-format
@@ -609,7 +613,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
@@ -652,8 +657,10 @@ msgstr ""
 "nedbrudsdatabasen."
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr "Sti til sqlite-duplikatdatabasen (standard: ingen duplikeret kontrol)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgstr ""
+"Sti til sqlite-duplikatdatabasen (standard: ingen duplikeret kontrol)"
 
 #: ../bin/apport-retrace.py:70
 msgid "incorrect number of arguments; use --help for a short help"
@@ -808,7 +815,8 @@ msgstr ""
 "findes, opret den"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "rapportér hentning/installationsforløb, når der installeres pakker i "
 "sandkassen"
@@ -879,7 +887,8 @@ msgid "System problem reports"
 msgstr "Rapporter om systemfejl"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Angiv venligst din adgangskode for at se rapporter over problemer med "
 "systemprogrammer"
@@ -937,16 +946,18 @@ msgstr "Destinationskatalog eksisterer og er ikke tomt."
 #~ msgstr ""
 #~ "Du kan hjælpe udviklerne med at rette dette problem ved at rapportere det."
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Undskyld, pakken \"%s\" fejlede "
-#~ "under installation eller opgradering.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Undskyld, pakken \"%s\" fejlede under "
+#~ "installation eller opgradering.</span>"
 
 #~ msgid "Content of the report"
 #~ msgstr "Indhold af rapporten"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Hele rapporten (anbefalet; %s)"
 
@@ -966,19 +977,20 @@ msgstr "Destinationskatalog eksisterer og er ikke tomt."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Hvis ikke du foretog dig noget fortroligt (indtastning af adgangskode "
-#~ "eller anden\n"
-#~ "privat information), kan du hjælpe udviklerne med at forbedre programmet "
-#~ "ved at\n"
+#~ "Hvis ikke du foretog dig noget fortroligt (indtastning af adgangskode eller "
+#~ "anden\n"
+#~ "privat information), kan du hjælpe udviklerne med at forbedre programmet ved "
+#~ "at\n"
 #~ "rapportere problemet."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s lukkede uventet på %s ved %s."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Send komplet rapport (anbefalet; %s)"
 
@@ -997,12 +1009,15 @@ msgstr "Destinationskatalog eksisterer og er ikke tomt."
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "_Ignorér fremtidige nedbrud af denne programversion"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Pakken \"%s\" fejlede under installation eller opgradering."
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Send &reduceret rapport (langsom Internetforbindelse; %s)"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Dette er ikke en original %s-pakke"
 
@@ -1022,24 +1037,26 @@ msgstr "Destinationskatalog eksisterer og er ikke tomt."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Hvis du ikke var i gang med noget fortroligt (indtastning af adgangskode "
 #~ "eller anden privat information), kan du hjælpe med at forbedre programmet "
 #~ "ved at rapportere problemet."
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Begrænset rapport (langsom internetforbindelse; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Dette vil fjerne nogle store elementer fra rapporten. Disse er meget "
-#~ "nyttige for udviklerne til at fejlsøge problemet, men kan være for store "
-#~ "for dig at afsende, hvis du har en langsom internetforbindelse."
+#~ "Dette vil fjerne nogle store elementer fra rapporten. Disse er meget nyttige "
+#~ "for udviklerne til at fejlsøge problemet, men kan være for store for dig at "
+#~ "afsende, hvis du har en langsom internetforbindelse."
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Beklager, men programmet %s lukkede ned uventet."

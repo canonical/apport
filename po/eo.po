@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-08-14 16:43+0000\n"
 "Last-Translator: Michael Moroni <michael.moroni@mailoo.org>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
-"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-10-08 05:10+0000\n"
-"X-Generator: Launchpad (build 16799)\n"
+"X-Launchpad-Export-Date: 2013-10-25 05:13+0000\n"
+"X-Generator: Launchpad (build 16810)\n"
+"Language: eo\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -163,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -219,10 +219,11 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Aldoni plian markon al la raporto. Tio plurfoje specifeblas."
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [opcioj] [simptomo|pid|pakaĵo|dosierpado de programaro|dosiero ."
-"apport/.crash]"
+"%prog [opcioj] [simptomo|pid|pakaĵo|dosierpado de programaro|dosiero "
+".apport/.crash]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -620,12 +621,13 @@ msgstr ""
 "Fari provizoran provejon kaj elŝuti/instali en ĝin la necesajn pakaĵojn kaj "
 "sencimigajn simbolojn; sen ĉi tiu opcio estas supozate, ke la necesaj "
 "pakaĵoj kaj sencimigaj simboloj jam troveblas en la sistemo. La argumento "
-"ligas al la pakaĵsistema baza dosierujo por agordoj; se vi specifas \"system"
-"\", ĝi uzos la sistemagordajn dosierojn, sed tiam ĝi havos nur la eblon por "
-"retrovi kolapsojn okazitajn sur la nune funkcianta sistemo."
+"ligas al la pakaĵsistema baza dosierujo por agordoj; se vi specifas "
+"\"system\", ĝi uzos la sistemagordajn dosierojn, sed tiam ĝi havos nur la "
+"eblon por retrovi kolapsojn okazitajn sur la nune funkcianta sistemo."
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Raporti progreson de elŝutado/instalado dum instalado de pakaĵoj en la "
 "provejon."
@@ -668,14 +670,16 @@ msgstr ""
 "kolapsdatumbazo."
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Pado al la duobligita sqlite-datumbazo (apriore: neniu kontrolo por "
 "duobligoj)"
 
 #: ../bin/apport-retrace.py:70
 msgid "incorrect number of arguments; use --help for a short help"
-msgstr "Erara nombro de la argumentoj; uzu --help por ricevi koncizan helpon."
+msgstr ""
+"Erara nombro de la argumentoj; uzu --help por ricevi koncizan helpon."
 
 #: ../bin/apport-retrace.py:76
 msgid "You cannot use -C without -S. Stopping."
@@ -706,7 +710,8 @@ msgstr "Raporti misfunkcion al la programistoj"
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr "Via sistemo povas nun nestabiliĝi kaj eble ĝi devas esti restartigata"
+msgstr ""
+"Via sistemo povas nun nestabiliĝi kaj eble ĝi devas esti restartigata"
 
 #: ../gtk/apport-gtk.py:153
 #, python-format
@@ -781,7 +786,8 @@ msgstr "Lasi fermitan"
 
 #: ../gtk/apport-gtk.py:296 ../kde/apport-kde.py:220 ../gtk/apport-gtk.ui.h:4
 msgid "If you notice further problems, try restarting the computer."
-msgstr "Se vi renkontiĝas pliajn problemojn, klopodu restartigi la komputilon."
+msgstr ""
+"Se vi renkontiĝas pliajn problemojn, klopodu restartigi la komputilon."
 
 #: ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:224
 msgid "Ignore future problems of this type"
@@ -818,7 +824,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -883,7 +890,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
@@ -955,14 +963,14 @@ msgstr "La celdosierujo ekzistas kaj ne estas malplena."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Se vi ne estis faranta ion konfidencan (enigante pasvorton aŭ aliajn\n"
 #~ "privatajn informojn), vi povas helpi plibonigi la aplikaĵon raportante\n"
 #~ "la problemon."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s fermiĝis neatendite je %s je la %s."
 
@@ -979,18 +987,22 @@ msgstr "La celdosierujo ekzistas kaj ne estas malplena."
 #~ msgstr ""
 #~ "Vi povas helpi al la evoluigantoj korekti la problemon, raportante ĝin."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Sendu kompletan raporton (rekomendite, %s)"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Ne eblis instali aŭ aktualigi la pakaĵon \"%s\"."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Kompleta raporto (rekomendita; %s)"
 
 #~ msgid "Application problem"
 #~ msgstr "Aplikaĵa problemo"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1009,9 +1021,11 @@ msgstr "La celdosierujo ekzistas kaj ne estas malplena."
 #~ "Post sendo de la raporto bonvolu plenigi la formularon en la aŭtomate "
 #~ "aperonta krozila fenestro."
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Sendu &reduktitan raporton (se via retkonekto estas malrapida; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Reduktita raporto (se via retkonekto estas malrapida; %s)"
 
@@ -1022,24 +1036,26 @@ msgstr "La celdosierujo ekzistas kaj ne estas malplena."
 #~ msgstr "_Ignoru estontajn kraŝojn de tiu ĉi program-versio"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Tio ĉi forigos kelkajn grandajn erojn el la raportaĵo. Tiuj estas tre "
-#~ "utilaj por programistoj por povi sencimigi la problemon. Sed eble tiel la "
-#~ "alŝutaĵo estos tro granda se vi havas malrapidan retkonekton."
+#~ "Tio ĉi forigos kelkajn grandajn erojn el la raportaĵo. Tiuj estas tre utilaj "
+#~ "por programistoj por povi sencimigi la problemon. Sed eble tiel la alŝutaĵo "
+#~ "estos tro granda se vi havas malrapidan retkonekton."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Se vi ne faris ion konfidencan (entajpi pasvortojn aŭ aliajn privatajn "
 #~ "informojn), vi povas helpi plibonigi la aplikaĵon raportante la problemon."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ĉi tio ne estas aŭtentika pakaĵo de %s."
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Pardonu, la aplikaĵo %s fermiĝis neatendite."

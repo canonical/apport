@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Catalan (Valencian) <ca@valencia@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-10-08 05:10+0000\n"
-"X-Generator: Launchpad (build 16799)\n"
+"X-Launchpad-Export-Date: 2013-10-25 05:14+0000\n"
+"X-Generator: Launchpad (build 16810)\n"
+"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -78,7 +78,8 @@ msgstr ""
 
 #: ../apport/ui.py:283
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "S'ha produït un error mentre s'intentava processar l'informe d'error:"
+msgstr ""
+"S'ha produït un error mentre s'intentava processar l'informe d'error:"
 
 #: ../apport/ui.py:321
 msgid "You are not allowed to access this problem report."
@@ -151,8 +152,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -199,7 +200,8 @@ msgstr ""
 "vegades."
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:728
@@ -273,7 +275,8 @@ msgstr "Executa una sessió del Gdb"
 
 #: ../apport/ui.py:890
 msgid "Run gdb session without downloading debug symbols"
-msgstr "Executa una sessió del Gdb sense descarregar els símbols de depuració"
+msgstr ""
+"Executa una sessió del Gdb sense descarregar els símbols de depuració"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:892
@@ -568,7 +571,8 @@ msgstr ""
 "passat a la versió actualment en execució."
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Informa del progrés de la baixada/instal·lació quan s'instal·len paquets a "
 "l'entorn de proves"
@@ -613,7 +617,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:70
@@ -759,7 +764,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -822,7 +828,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
@@ -872,6 +879,7 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "L'aplicació %s s'ha tancat inesperadament."
 
@@ -879,19 +887,20 @@ msgstr ""
 #~ msgstr "_Ignora les fallades d'aquesta versió del programa en el futur"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Això suprimirà certs elements de mida considerable de l'informe. Aquests "
 #~ "elements són normalment molt útils per als desenvolupadors en depurar el "
 #~ "problema. Tot i això, pot ser que si els incloeu en l'informe la mida "
-#~ "d'aquest sigui massa gran per a pujar-lo si és que teniu una connexió "
-#~ "lenta a Internet."
+#~ "d'aquest sigui massa gran per a pujar-lo si és que teniu una connexió lenta "
+#~ "a Internet."
 
 #~ msgid "&Ignore future crashes of this program version"
 #~ msgstr "&Ignora les fallades d'aquesta versió del programa en el futur"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Aquest no és un paquet %s genuí"
 

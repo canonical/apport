@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Khmer <km@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-10-08 05:10+0000\n"
-"X-Generator: Launchpad (build 16799)\n"
+"X-Launchpad-Export-Date: 2013-10-25 05:13+0000\n"
+"X-Generator: Launchpad (build 16810)\n"
+"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -27,7 +27,9 @@ msgstr "កញ្ចប់​នេះ​ហាក់​បី​ដូច​ជ
 msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
-msgstr "នេះ​មិនមែន​ជា​កញ្ចប់ %s ផ្លូវ​ការ​ទេ ។ សូម​យក​កញ្ចប់​ភាគី​ទី​បី​ចេញ ហើយ​ព្យាយាម​ម្ដ​ងទៀត ។"
+msgstr ""
+"នេះ​មិនមែន​ជា​កញ្ចប់ %s ផ្លូវ​ការ​ទេ ។ សូម​យក​កញ្ចប់​ភាគី​ទី​បី​ចេញ "
+"ហើយ​ព្យាយាម​ម្ដ​ងទៀត ។"
 
 #: ../apport/ui.py:145
 #, python-format
@@ -37,8 +39,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"អ្នកមាន​កំណែ​កញ្ចប់​ដែល​លែង​ប្រើ​បាន​ដំឡើង ។ សូម​ធ្វើ​វា​​ឲ្យ​កញ្ចប់​ដូច​ខាង​ក្រោម​ប្រសើរ​ឡើង​ ហើយ​ពិនិត្យ​មើល​ថាតើ​"
-"នៅ​តែ​មាន​បញ្ហា​កើត​ឡើង​ទៀត​ដែរឬទេ ៖ %s"
+"អ្នកមាន​កំណែ​កញ្ចប់​ដែល​លែង​ប្រើ​បាន​ដំឡើង ។ "
+"សូម​ធ្វើ​វា​​ឲ្យ​កញ្ចប់​ដូច​ខាង​ក្រោម​ប្រសើរ​ឡើង​ "
+"ហើយ​ពិនិត្យ​មើល​ថាតើ​នៅ​តែ​មាន​បញ្ហា​កើត​ឡើង​ទៀត​ដែរឬទេ ៖ %s"
 
 #: ../apport/ui.py:251
 msgid "unknown program"
@@ -59,8 +62,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"កម្មវិធី​កុំព្យូទ័រ​របស់​អ្នក​មិន​មាន​អង្គ​ចងចាំ​គ្រប់គ្រាន់ ដើម្បី​ធ្វើវិភាគ​ដោយស្វ័យប្រវត្តិ ហើយ​ផ្ញើ​របាយការណ៍​ទៅ​"
-"អ្នក​អភិវឌ្ឍន៍ ។"
+"កម្មវិធី​កុំព្យូទ័រ​របស់​អ្នក​មិន​មាន​អង្គ​ចងចាំ​គ្រប់គ្រាន់ "
+"ដើម្បី​ធ្វើវិភាគ​ដោយស្វ័យប្រវត្តិ ហើយ​ផ្ញើ​របាយការណ៍​ទៅ​អ្នក​អភិវឌ្ឍន៍ ។"
 
 #. package does not exist
 #: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
@@ -101,7 +104,8 @@ msgstr "គ្មាន​កញ្ចប់​បាន​បញ្ជាក់
 #: ../apport/ui.py:410
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "អ្នក​ត្រូវ​តែ​បញ្ជាក់​កញ្ចប់ ឬ​ PID ។ ចំពោះ​ព័ត៌មាន​បន្ថែម សូម​មើល --help ។"
+msgstr ""
+"អ្នក​ត្រូវ​តែ​បញ្ជាក់​កញ្ចប់ ឬ​ PID ។ ចំពោះ​ព័ត៌មាន​បន្ថែម សូម​មើល --help ។"
 
 #: ../apport/ui.py:433
 msgid "Permission denied"
@@ -112,8 +116,8 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"ដំណើរការ​ដែល​បាន​បញ្ជាក់​មិនមែនជា​របស់​អ្នក​ទេ ។ សូម​ដំណើរការ​កម្មវិធី​នេះ​ជា​ម្ចាស់​ដំណើរការ ឬ​ដំណើរការ​"
-"ជា root ។"
+"ដំណើរការ​ដែល​បាន​បញ្ជាក់​មិនមែនជា​របស់​អ្នក​ទេ ។ "
+"សូម​ដំណើរការ​កម្មវិធី​នេះ​ជា​ម្ចាស់​ដំណើរការ ឬ​ដំណើរការ​ជា root ។"
 
 #: ../apport/ui.py:436
 msgid "Invalid PID"
@@ -121,7 +125,8 @@ msgstr "PID មិន​ត្រឹមត្រូវ"
 
 #: ../apport/ui.py:437
 msgid "The specified process ID does not belong to a program."
-msgstr "លេខ​សម្គាល់​ដំណើរការ​ដែល​បាន​បញ្ជាក់ មិន​មែន​ជា​របស់​កម្មវិធី​​នេះ​ទេ ។"
+msgstr ""
+"លេខ​សម្គាល់​ដំណើរការ​ដែល​បាន​បញ្ជាក់ មិន​មែន​ជា​របស់​កម្មវិធី​​នេះ​ទេ ។"
 
 #: ../apport/ui.py:456
 #, python-format
@@ -148,8 +153,8 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
-"អ្នក​មិន​មែន​ជា​អ្នក​រាយការណ៍ ឬ​អ្នក​ជាវ​នៃ​របាយការណ៍​អំពី​បញ្ហា​ឡើយ របាយការណ៍​គឺ​ជា​ច្បាប់​ចម្លង  ឬ​បាន​បិទ​"
-"ហើយ ។\n"
+"អ្នក​មិន​មែន​ជា​អ្នក​រាយការណ៍ ឬ​អ្នក​ជាវ​នៃ​របាយការណ៍​អំពី​បញ្ហា​ឡើយ "
+"របាយការណ៍​គឺ​ជា​ច្បាប់​ចម្លង  ឬ​បាន​បិទ​ហើយ ។\n"
 "\n"
 "សូម​ធ្វើ​របាយការណ៍​ថ្មី \"apport-bug\" ។"
 
@@ -159,16 +164,17 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
-"អ្នក​មិន​មែន​ជា​អ្នក​រាយការណ៍​អំពី​របាយការណ៍​បញ្ហា​នេះ​ទេ ។ វា​គឺ​​ងាយស្រួល​ខ្លាំង​ណាស់ ក្នុង​ការ​សម្គាល់​កំហុស​ស្ទួន​ "
+"អ្នក​មិន​មែន​ជា​អ្នក​រាយការណ៍​អំពី​របាយការណ៍​បញ្ហា​នេះ​ទេ ។ "
+"វា​គឺ​​ងាយស្រួល​ខ្លាំង​ណាស់ ក្នុង​ការ​សម្គាល់​កំហុស​ស្ទួន​ "
 "ជាជាង​យក​​មតិយោបល់​របស់​អ្នក​ចេញ និង​យក​ឯកសារ​ភ្ជាប់​ទៅ​កាន់​កំហុស​ថ្មី ។\n"
 "\n"
-"យើង​ផ្ដល់​យោបល់​ឲ្យ​អ្នក ប្រើ​ឯកសារ​របាយការណ៍​កំហុស​ថ្មី​ \"apport-bug\" ហើយ​​​ផ្ដល់​មតិយោបល់​​អំពី​​កំហុស​​ក្នុង​"
-"ឯកសារ​នេះ ។\n"
+"យើង​ផ្ដល់​យោបល់​ឲ្យ​អ្នក ប្រើ​ឯកសារ​របាយការណ៍​កំហុស​ថ្មី​ \"apport-bug\" "
+"ហើយ​​​ផ្ដល់​មតិយោបល់​​អំពី​​កំហុស​​ក្នុង​ឯកសារ​នេះ ។\n"
 "\n"
 "តើ​អ្នក​ពិត​ជា​ចង់​ធ្វើ​បន្ត​ឬ ?"
 
@@ -193,7 +199,8 @@ msgstr "មិន​ស្គាល់​សញ្ញា \"%s\" ។"
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
-msgstr "ក្រោយ​ពេល​​បិទ​សារ​នេះ សូម​ចុច​លើ​​បង្អួច​កម្មវិធី ដើម្បី​រាយការណ៍​អំពី​វា ។"
+msgstr ""
+"ក្រោយ​ពេល​​បិទ​សារ​នេះ សូម​ចុច​លើ​​បង្អួច​កម្មវិធី ដើម្បី​រាយការណ៍​អំពី​វា ។"
 
 #: ../apport/ui.py:672 ../apport/ui.py:677
 msgid "xprop failed to determine process ID of the window"
@@ -209,11 +216,14 @@ msgstr "បញ្ជាក់​ឈ្មោះ​កញ្ចប់ ។"
 
 #: ../apport/ui.py:695 ../apport/ui.py:746
 msgid "Add an extra tag to the report. Can be specified multiple times."
-msgstr "បន្ថែម​ស្លាក​​ខាងក្រៅ​ដើម្បី​រាយការណ៍ ។ អាច​ត្រូវ​បាន​បញ្ជាក់​ពេលវេលា​ច្រើន ។"
+msgstr ""
+"បន្ថែម​ស្លាក​​ខាងក្រៅ​ដើម្បី​រាយការណ៍ ។ អាច​ត្រូវ​បាន​បញ្ជាក់​ពេលវេលា​ច្រើន ។"
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -221,9 +231,10 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"ចាប់ផ្ដើម​​ជា​របៀប​ការ​រៀបចំ​ឯកសារ​កំហុស ។ ទាមទារ --កញ្ចប់ និង​ជា​ជម្រើស --pid, ឬ --pid ។ "
-"ប្រសិនបើ​ មិន​ត្រូវ​​បាន​ផ្ដល់​ឲ្យ​ទេ​នោះ បង្ហាញ​បញ្ជី​សញ្ញា​ដែល​មិន​ស្គាល់ ។  (បាន​បញ្ជាក់ ប្រសិនបើ​អាគុយម៉ង់​ត្រូវ​"
-"បាន​ផ្ដល់​ឲ្យ ។)"
+"ចាប់ផ្ដើម​​ជា​របៀប​ការ​រៀបចំ​ឯកសារ​កំហុស ។ ទាមទារ --កញ្ចប់ និង​ជា​ជម្រើស --"
+"pid, ឬ --pid ។ ប្រសិនបើ​ មិន​ត្រូវ​​បាន​ផ្ដល់​ឲ្យ​ទេ​នោះ "
+"បង្ហាញ​បញ្ជី​សញ្ញា​ដែល​មិន​ស្គាល់ ។  (បាន​បញ្ជាក់ "
+"ប្រសិនបើ​អាគុយម៉ង់​ត្រូវ​បាន​ផ្ដល់​ឲ្យ ។)"
 
 #: ../apport/ui.py:730
 msgid "Click a window as a target for filing a problem report."
@@ -231,22 +242,26 @@ msgstr "ចុច​លើ​បង្អួច​ដែល​ជា​គោល
 
 #: ../apport/ui.py:732
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr "ចាប់ផ្ដើម​ជា​របៀប​​ការ​ធ្វើ​បច្ចុប្បន្នភាព​កំហុស ។ អាច​យក​កញ្ចប់ --ជា​ជម្រើស ។"
+msgstr ""
+"ចាប់ផ្ដើម​ជា​របៀប​​ការ​ធ្វើ​បច្ចុប្បន្នភាព​កំហុស ។ អាច​យក​កញ្ចប់ --ជា​ជម្រើស "
+"។"
 
 #: ../apport/ui.py:734
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
-"ឯកសារ​របាយការណ៍​កំហុស​អំពី​សញ្ញា ។ (បាន​បញ្ជាក់ ប្រសិនបើ​ឈ្មោះ​សញ្ញា​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
+"ឯកសារ​របាយការណ៍​កំហុស​អំពី​សញ្ញា ។ (បាន​បញ្ជាក់ "
+"ប្រសិនបើ​ឈ្មោះ​សញ្ញា​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
 #: ../apport/ui.py:736
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
-"បញ្ជាក់​ឈ្មោះ​កញ្ចប់​ជា​របៀប --កំហុស-ឯកសារ ។ វា​គឺ​ជា​ជម្រើស ប្រសិនបើ --pid ត្រូវ​បាន​បញ្ជាក់ ។ (បាន​"
-"បញ្ជាក់ ប្រសិនបើ​​ឈ្មោះ​កញ្ចប់​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
+"បញ្ជាក់​ឈ្មោះ​កញ្ចប់​ជា​របៀប --កំហុស-ឯកសារ ។ វា​គឺ​ជា​ជម្រើស ប្រសិនបើ --pid "
+"ត្រូវ​បាន​បញ្ជាក់ ។ (បាន​បញ្ជាក់ "
+"ប្រសិនបើ​​ឈ្មោះ​កញ្ចប់​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
 #: ../apport/ui.py:738
 msgid ""
@@ -254,8 +269,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"បញ្ជាក់​ការ​ដំណើរការ​កម្មវិធី​ជា​របៀប --កំហុស-ឯកសារ ។ ប្រសិនបើ វា​ត្រូវ​បាន​បញ្ជាក់ របាយការណ៍​កំហុស​នឹង​"
-"មាន​ព័ត៌មាន​បន្ថែម ។  (បាន​បញ្ជាក់ ប្រសិនបើ pid ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
+"បញ្ជាក់​ការ​ដំណើរការ​កម្មវិធី​ជា​របៀប --កំហុស-ឯកសារ ។ ប្រសិនបើ "
+"វា​ត្រូវ​បាន​បញ្ជាក់ របាយការណ៍​កំហុស​នឹង​មាន​ព័ត៌មាន​បន្ថែម ។  (បាន​បញ្ជាក់ "
+"ប្រសិនបើ pid ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
 #: ../apport/ui.py:740
 msgid "The provided pid is a hanging application."
@@ -267,8 +283,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"របាយការណ៍​គាំង​​ដែល​បាន​ផ្ដល់​ពី​ឯកសារ .apport ឬ .crash ជំនួស​នៅ​ក្នុង%s. ( បាន​បញ្ជាក់​ ប្រសិនបើ​"
-"ឯកសារ​ត្រូវ​បាន​ផ្ដល់​​តែ​អាគុយម៉ង់ ។)"
+"របាយការណ៍​គាំង​​ដែល​បាន​ផ្ដល់​ពី​ឯកសារ .apport ឬ .crash ជំនួស​នៅ​ក្នុង%s. ( "
+"បាន​បញ្ជាក់​ ប្រសិនបើ​ឯកសារ​ត្រូវ​បាន​ផ្ដល់​​តែ​អាគុយម៉ង់ ។)"
 
 #: ../apport/ui.py:744
 msgid ""
@@ -276,8 +292,9 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
-"ជា​របៀប​បំពេញ​កំហុស រក្សាទុក​ព័ត៌មាន​ដែល​បាន​ប្រមូល​នៅ​ក្នុង​ឯកសារ​​ជំនួស​ការ​ធ្វើ​របាយការណ៍​​អំពី​វា ។ ឯកសារ​នេះ​​"
-"អាច​ត្រូវ​បាន​​រាយការណ៍​​ក្រោយ​ពេល​ពី​ម៉ាស៊ីន​ខុសគ្នា ។"
+"ជា​របៀប​បំពេញ​កំហុស "
+"រក្សាទុក​ព័ត៌មាន​ដែល​បាន​ប្រមូល​នៅ​ក្នុង​ឯកសារ​​ជំនួស​ការ​ធ្វើ​របាយការណ៍​​អំព"
+"ី​វា ។ ឯកសារ​នេះ​​អាច​ត្រូវ​បាន​​រាយការណ៍​​ក្រោយ​ពេល​ពី​ម៉ាស៊ីន​ខុសគ្នា ។"
 
 #: ../apport/ui.py:748
 msgid "Print the Apport version number."
@@ -286,7 +303,9 @@ msgstr "បោះពុម្ព​លេខ​កំណែ Apport ។"
 #: ../apport/ui.py:888
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
-msgstr "វា​នឹង​ចាប់ផ្ដើម apport-retrace នៅ​ក្នុង​បង្អួយ​ស្ថានីយ ដើម្បី​ត្រួតពិនិត្យ​​ភាគ​គាំង ។"
+msgstr ""
+"វា​នឹង​ចាប់ផ្ដើម apport-retrace នៅ​ក្នុង​បង្អួយ​ស្ថានីយ "
+"ដើម្បី​ត្រួតពិនិត្យ​​ភាគ​គាំង ។"
 
 #: ../apport/ui.py:889
 msgid "Run gdb session"
@@ -305,14 +324,17 @@ msgstr "ធ្វើ​បច្ចុប្បន្ន %s ជា​មួយ�
 #: ../apport/ui.py:965 ../apport/ui.py:975
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "របាយការណ៍​អំពី​បញ្ហា​នេះ​អនុវត្ត​កម្មវិធី​ដែល​មិន​ត្រូវ​បាន​ដំឡើង​ទៀត​ឡើយ ។"
+msgstr ""
+"របាយការណ៍​អំពី​បញ្ហា​នេះ​អនុវត្ត​កម្មវិធី​ដែល​មិន​ត្រូវ​បាន​ដំឡើង​ទៀត​ឡើយ ។"
 
 #: ../apport/ui.py:989
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "បញ្ហា​បានកើត​ឡើង​ជា​មួយ​កម្មវិធី %s ដែល​បាន​ផ្លាស់ប្ដូរ​តាំង​ពី​​មាន​ការ​គាំង ។"
+msgstr ""
+"បញ្ហា​បានកើត​ឡើង​ជា​មួយ​កម្មវិធី %s "
+"ដែល​បាន​ផ្លាស់ប្ដូរ​តាំង​ពី​​មាន​ការ​គាំង ។"
 
 #: ../apport/ui.py:1087
 msgid "Could not determine the package or source package name."
@@ -330,7 +352,8 @@ msgstr "មិន​អាច​ចាប់ផ្ដើម​កម្មវិ
 #: ../apport/ui.py:1181
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr "សូម​បញ្ចូល​ព័ត៌មាន​អំពី​គណនី​របស់​អ្នក​​សម្រាប់​ប្រព័ន្ធ​តាមដាន​កំហុស %s"
+msgstr ""
+"សូម​បញ្ចូល​ព័ត៌មាន​អំពី​គណនី​របស់​អ្នក​​សម្រាប់​ប្រព័ន្ធ​តាមដាន​កំហុស %s"
 
 #: ../apport/ui.py:1193
 msgid "Network problem"
@@ -339,7 +362,9 @@ msgstr "បញ្ហា​បណ្ដាញ"
 #: ../apport/ui.py:1195
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
-msgstr "មិន​អាច​តភ្ជាប់​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ​គាំង​បាន​ទេ សូម​ពិនិត្យមើល​ការ​តភ្ជាប់​អ៊ីនធឺណិត​របស់​អ្នក ។"
+msgstr ""
+"មិន​អាច​តភ្ជាប់​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ​គាំង​បាន​ទេ "
+"សូម​ពិនិត្យមើល​ការ​តភ្ជាប់​អ៊ីនធឺណិត​របស់​អ្នក ។"
 
 #: ../apport/ui.py:1222
 msgid "Memory exhaustion"
@@ -347,7 +372,9 @@ msgstr "ការ​ប្រើ​​​អស់​អង្គ​ចងចា
 
 #: ../apport/ui.py:1223
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "ប្រព័ន្ធ​របស់​អ្នក​មិន​មាន​អង្គ​ចងចាំ​គ្រប់គ្រាន់ ដើម្បី​ដំណើរការ​របាយការណ៍​គាំង​នេះ​ទេ ។"
+msgstr ""
+"ប្រព័ន្ធ​របស់​អ្នក​មិន​មាន​អង្គ​ចងចាំ​គ្រប់គ្រាន់ "
+"ដើម្បី​ដំណើរការ​របាយការណ៍​គាំង​នេះ​ទេ ។"
 
 #: ../apport/ui.py:1258
 #, python-format
@@ -370,8 +397,10 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"បញ្ហា​នេះ​ត្រូវ​បាន​រាយការណ៍​នៅ​ក្នុង​របាយការណ៍​កំហុស ដែល​បង្ហាញ​នៅ​ក្នុង​កម្មវិធី​រុករក​បណ្ដាញ ។ សូម​ពិនិត្យមើល "
-"ប្រសិនបើ​អ្នក​អាច​បន្ថែម​ព័ត៌មាន​បន្ថែម ​​ដែល​​​អា​ផ្ដល់​ជា​ប្រយោជន៍​សម្រាប់​​អ្នក​អ្នក​អភិវឌ្ឍន៍ ។"
+"បញ្ហា​នេះ​ត្រូវ​បាន​រាយការណ៍​នៅ​ក្នុង​របាយការណ៍​កំហុស "
+"ដែល​បង្ហាញ​នៅ​ក្នុង​កម្មវិធី​រុករក​បណ្ដាញ ។ សូម​ពិនិត្យមើល "
+"ប្រសិនបើ​អ្នក​អាច​បន្ថែម​ព័ត៌មាន​បន្ថែម "
+"​​ដែល​​​អា​ផ្ដល់​ជា​ប្រយោជន៍​សម្រាប់​​អ្នក​អ្នក​អភិវឌ្ឍន៍ ។"
 
 #: ../apport/ui.py:1322
 msgid "This problem was already reported to developers. Thank you!"
@@ -459,7 +488,8 @@ msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
 msgstr ""
-"ព័ត៌មាន​ដែល​បាន​ប្រមូល​អាច​ត្រូវ​បាន​ផ្ញើ​ទៅ​អ្នក​អភិវឌ្ឍន៍ ដើម្បី​ធ្វើ​ឲ្យ​កម្មវិធី​ប្រសើរ​ឡើង\n"
+"ព័ត៌មាន​ដែល​បាន​ប្រមូល​អាច​ត្រូវ​បាន​ផ្ញើ​ទៅ​អ្នក​អភិវឌ្ឍន៍ "
+"ដើម្បី​ធ្វើ​ឲ្យ​កម្មវិធី​ប្រសើរ​ឡើង\n"
 " ។ វា​អាច​ចំណាយ​ពេលវេលា​ពីរបី​នាទី ។"
 
 #: ../bin/apport-cli.py:248 ../kde/apport-kde.py:411 ../gtk/apport-gtk.ui.h:13
@@ -471,7 +501,8 @@ msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
 msgstr ""
-"ព័ត៌មាន​ដែល​បាន​ប្រមូល​កំពុង​​​ត្រូវ​បាន​ផ្ញើ​ទៅកាន់​ប្រព័ន្ធ​តាមដាន​កំហុស ។\n"
+"ព័ត៌មាន​ដែល​បាន​ប្រមូល​កំពុង​​​ត្រូវ​បាន​ផ្ញើ​ទៅកាន់​ប្រព័ន្ធ​តាមដាន​កំហុស "
+"។\n"
 "វា​អាច​ចំណាយ​ពេល​ពីរបី​នាទី ។"
 
 #: ../bin/apport-cli.py:299
@@ -512,7 +543,8 @@ msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
 msgstr ""
-"អ្នក​អាច​ចាប់ផ្ដើម​កម្មវិធី​រុករក​ឥឡូវ​នេះ ឬ​ចម្លង URL នេះ​ទៅកាន់​កម្មវិធី​រុករក​នៅ​លើ​កុំព្យូទ័រ​ផ្សេង​ទៀត ។"
+"អ្នក​អាច​ចាប់ផ្ដើម​កម្មវិធី​រុករក​ឥឡូវ​នេះ ឬ​ចម្លង URL "
+"នេះ​ទៅកាន់​កម្មវិធី​រុករក​នៅ​លើ​កុំព្យូទ័រ​ផ្សេង​ទៀត ។"
 
 #: ../bin/apport-cli.py:354
 msgid "Launch a browser now"
@@ -526,19 +558,24 @@ msgstr "គ្មាន​របាយការណ៍​គាំង​ឡើយ
 msgid ""
 "This occured during a previous suspend and prevented it from resuming "
 "properly."
-msgstr "អំឡុង​ពេល​ដែល​កើត​ឡើង​ ការ​ផ្អាក​មុន និង​បាន​ការពារ​វា​ពី​ការ​ធ្វើ​បន្ត​យ៉ាង​ត្រឹមត្រូវ ។"
+msgstr ""
+"អំឡុង​ពេល​ដែល​កើត​ឡើង​ ការ​ផ្អាក​មុន "
+"និង​បាន​ការពារ​វា​ពី​ការ​ធ្វើ​បន្ត​យ៉ាង​ត្រឹមត្រូវ ។"
 
 #: ../data/apportcheckresume.py:70
 msgid ""
 "This occured during a previous hibernate and prevented it from resuming "
 "properly."
-msgstr "អំឡុង​ពេល​ដែល​បាន​កើតឡើង សម្ងំ​មុន និង​បាន​ការពារ​ពី​ការ​ធ្វើ​បន្ត​យ៉ាង​ត្រឹមត្រូវ ។"
+msgstr ""
+"អំឡុង​ពេល​ដែល​បាន​កើតឡើង សម្ងំ​មុន "
+"និង​បាន​ការពារ​ពី​ការ​ធ្វើ​បន្ត​យ៉ាង​ត្រឹមត្រូវ ។"
 
 #: ../data/apportcheckresume.py:75
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
-msgstr "បន្ត​ដំណើរការ hung រៀងរាល់​ជិត​បញ្ចប់ ហើយ​នឹង​លេចឡើង​នៅ​ពេល​​ដែល​បញ្ចប់​​ ។"
+msgstr ""
+"បន្ត​ដំណើរការ hung រៀងរាល់​ជិត​បញ្ចប់ ហើយ​នឹង​លេចឡើង​នៅ​ពេល​​ដែល​បញ្ចប់​​ ។"
 
 #: ../bin/apport-retrace.py:31
 msgid "%prog [options] <apport problem report | crash ID>"
@@ -546,24 +583,28 @@ msgstr "%prog [options] <apport problem report | crash ID>"
 
 #: ../bin/apport-retrace.py:33
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "កុំ​ដាក់​ដាន​ថ្មី​​​នៅ​ក្នុង​របាយការណ៍ ប៉ុន្តែ​​អាច​សរសេរ​ទាន់ stdout បាន ។"
+msgstr ""
+"កុំ​ដាក់​ដាន​ថ្មី​​​នៅ​ក្នុង​របាយការណ៍ ប៉ុន្តែ​​អាច​សរសេរ​ទាន់ stdout បាន ។"
 
 #: ../bin/apport-retrace.py:35
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
 msgstr ""
-"ចាប់ផ្ដើម​សម័យ gdb អន្តរ​សកម្ម​​ជាមួយ​ធាតុ​ចម្បង​របស់​របាយការណ៍ (-o មិន​អើពើ មិន​សរសេរ​របាយការណ៍​"
-"ឡើងវិញ)"
+"ចាប់ផ្ដើម​សម័យ gdb អន្តរ​សកម្ម​​ជាមួយ​ធាតុ​ចម្បង​របស់​របាយការណ៍ (-o មិន​អើពើ "
+"មិន​សរសេរ​របាយការណ៍​ឡើងវិញ)"
 
 #: ../bin/apport-retrace.py:37
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr "សរសេរ​របាយការណ៍​ដែល​បាន​កែប្រែ​ទៅ​កាន់​ឯកសារ​ដែល​បាន​ផ្ដល់​ជំនួស​ការ​ផ្លាស់ប្ដូរ​របាយការណ៍​ដើម"
+msgstr ""
+"សរសេរ​របាយការណ៍​ដែល​បាន​កែប្រែ​ទៅ​កាន់​ឯកសារ​ដែល​បាន​ផ្ដល់​ជំនួស​ការ​ផ្លាស់ប្"
+"ដូរ​របាយការណ៍​ដើម"
 
 #: ../bin/apport-retrace.py:39
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr "យក​ធាតុ​ចម្បង​​ចេញ​ពី​របាយការណ៍ ក្រោយ​​ពេល​ការ​ធ្វើ​ឲ្យ​មាន​​ដាន​ជង់​ឡើងវិញ"
+msgstr ""
+"យក​ធាតុ​ចម្បង​​ចេញ​ពី​របាយការណ៍ ក្រោយ​​ពេល​ការ​ធ្វើ​ឲ្យ​មាន​​ដាន​ជង់​ឡើងវិញ"
 
 #: ../bin/apport-retrace.py:41
 msgid "Override report's CoreFile"
@@ -590,18 +631,24 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
-"បង្កើត sandbox បណ្ដោះ​អាសន្ន ហើយ​ទាញ​យក/​ដំឡើង កញ្ចប់​ដែល​ចាំបាច់ បំបាត់​កំហុស​និមិត្តសញ្ញា​នៅ​ទី​នេះ ដោយ​"
-"មិន​ចាំបាច់​ជម្រើស​នេះ  សម្មត​ថា​កញ្ចប់​ដែល​ចាំបាច់ និង​បំបាត់​កំហុស​និមិត្ត​សញ្ញា​ត្រូវ​បាន​ដំឡើង​នៅ​ក្នុង​ប្រព័ន្ធ​រួច​"
-"ហើយ ។ ចំណុច​អាគុយម៉ង់​ទៅ​កាន់​ការ​កំណត់​រចនាសម្ព័ន្ធ​ប្រព័ន្ធ​ផ្អែក​លើ​ថត ប្រសិនបើ​អ្នក​បញ្ជាក់ \"ប្រព័ន្ធ\" វា​"
-"នឹង​ប្រើ​​ឯកសារ​ការ​កំណត់​រចនាសម្ព័ន្ធ​ប្រព័ន្ធ ប៉ុន្តែ​វា​អាច​​តាមដាន​ភាព​គាំង​ឡើង​វិញ នៅ​ពេល​ដែល​វា​ដំណើរការ​ ។"
+"បង្កើត sandbox បណ្ដោះ​អាសន្ន ហើយ​ទាញ​យក/​ដំឡើង កញ្ចប់​ដែល​ចាំបាច់ "
+"បំបាត់​កំហុស​និមិត្តសញ្ញា​នៅ​ទី​នេះ ដោយ​មិន​ចាំបាច់​ជម្រើស​នេះ  "
+"សម្មត​ថា​កញ្ចប់​ដែល​ចាំបាច់ "
+"និង​បំបាត់​កំហុស​និមិត្ត​សញ្ញា​ត្រូវ​បាន​ដំឡើង​នៅ​ក្នុង​ប្រព័ន្ធ​រួច​ហើយ ។ "
+"ចំណុច​អាគុយម៉ង់​ទៅ​កាន់​ការ​កំណត់​រចនាសម្ព័ន្ធ​ប្រព័ន្ធ​ផ្អែក​លើ​ថត "
+"ប្រសិនបើ​អ្នក​បញ្ជាក់ \"ប្រព័ន្ធ\" "
+"វា​នឹង​ប្រើ​​ឯកសារ​ការ​កំណត់​រចនាសម្ព័ន្ធ​ប្រព័ន្ធ "
+"ប៉ុន្តែ​វា​អាច​​តាមដាន​ភាព​គាំង​ឡើង​វិញ នៅ​ពេល​ដែល​វា​ដំណើរការ​ ។"
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr "របាយការណ៍​ទាញ​យក/ដំឡើង វឌ្ឍនភាព​ នៅ​ពេល​ដំឡើង​កញ្ចប់​ទៅកាន់​ sandbox"
 
 #: ../bin/apport-retrace.py:53
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr "បន្ថែម​ខាងដើម timestamps ដើម្បី​ចុះ​កំណត់ហេតុ សម្រាប់​ប្រតិបត្តិការ​ច្រើន"
+msgstr ""
+"បន្ថែម​ខាងដើម timestamps ដើម្បី​ចុះ​កំណត់ហេតុ សម្រាប់​ប្រតិបត្តិការ​ច្រើន"
 
 #: ../bin/apport-retrace.py:55
 msgid "Cache directory for packages downloaded in the sandbox"
@@ -612,13 +659,15 @@ msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
-"ថត​សម្រាប់​កញ្ចប់​ដែល​មិន​បាន​វេច​ខ្ចប់។ ពេល​អនាគត​ដំណើរការ​នឹង​សម្មត​ថា​កញ្ចប់​ដែល​បាន​ទាញ​យក​រួច​ហើយ​ត្រូវ​បាន​"
-"ស្រង់​ចេញ​ទៅ​ sandbox នេះ។"
+"ថត​សម្រាប់​កញ្ចប់​ដែល​មិន​បាន​វេច​ខ្ចប់។ "
+"ពេល​អនាគត​ដំណើរការ​នឹង​សម្មត​ថា​កញ្ចប់​ដែល​បាន​ទាញ​យក​រួច​ហើយ​ត្រូវ​បាន​ស្រង់"
+"​ចេញ​ទៅ​ sandbox នេះ។"
 
 #: ../bin/apport-retrace.py:59 ../bin/apport-valgrind.py:66
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
-msgstr "ដំឡើង​កញ្ចប់​ខាងក្រៅ​ទៅ​ក្នុង sandbox (អាច​ត្រូវ​បាន​​បញ្ជាក់​​ពេលវេលា​ច្រើន)"
+msgstr ""
+"ដំឡើង​កញ្ចប់​ខាងក្រៅ​ទៅ​ក្នុង sandbox (អាច​ត្រូវ​បាន​​បញ្ជាក់​​ពេលវេលា​ច្រើន)"
 
 #: ../bin/apport-retrace.py:61
 msgid ""
@@ -626,20 +675,26 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
-"ផ្លូវ​ទៅកាន់​ឯកសារ​​ដែល​មាន​​​​ព័ត៌មាន​អំពី​​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​មូលដ្ឋាន​ទិន្នន័យ​ភាព​គាំ​ ។ វា​អាច​ត្រូវ​បាន​"
-"ប្រើ​ នៅ​ពេល​បញ្ជាក់​លេខ​សម្គាល់​​​ភាព​គាំង ដើម្បី​​ផ្ទុក​ដាន​ជង់​ដែល​បាន​តាមដាន​​ឡើង​វិញ (ប្រសិនបើ​មិន​ត្រូវ​​បញ្ជាក់ "
-"-g, -o, និង -s)"
+"ផ្លូវ​ទៅកាន់​ឯកសារ​​ដែល​មាន​​​​ព័ត៌មាន​អំពី​​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​ម"
+"ូលដ្ឋាន​ទិន្នន័យ​ភាព​គាំ​ ។ វា​អាច​ត្រូវ​បាន​ប្រើ​ "
+"នៅ​ពេល​បញ្ជាក់​លេខ​សម្គាល់​​​ភាព​គាំង "
+"ដើម្បី​​ផ្ទុក​ដាន​ជង់​ដែល​បាន​តាមដាន​​ឡើង​វិញ (ប្រសិនបើ​មិន​ត្រូវ​​បញ្ជាក់ -"
+"g, -o, និង -s)"
 
 #: ../bin/apport-retrace.py:63
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
 msgstr ""
-"បង្ហាញ​ដាន​ជង់​ដែល​បាន​តាម​ដាន​ឡើងវិញ សួរ​រក​ការ​អះអាង​មុន​ពេល​ផ្ញើ​វា​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ​គាំង ។"
+"បង្ហាញ​ដាន​ជង់​ដែល​បាន​តាម​ដាន​ឡើងវិញ "
+"សួរ​រក​ការ​អះអាង​មុន​ពេល​ផ្ញើ​វា​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ​គាំង ។"
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
-msgstr "ផ្លូវ​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ sqlite​ ស្ទួន (លំនាំដើម ៖ គ្មាន​ការ​ត្រួតពិនិត្យ​ស្ទួន​ឡើង)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgstr ""
+"ផ្លូវ​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ sqlite​ ស្ទួន (លំនាំដើម ៖ "
+"គ្មាន​ការ​ត្រួតពិនិត្យ​ស្ទួន​ឡើង)"
 
 #: ../bin/apport-retrace.py:70
 msgid "incorrect number of arguments; use --help for a short help"
@@ -654,8 +709,9 @@ msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
 msgstr ""
-"អ្នក​ត្រូវ​ធ្វើ​ប្រតិបត្តិការ​​ណាមួយ​ក៏បាន (-s, -g, -o) ឬ​ផ្គត់ផ្គង់​ឯកសារ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ (--"
-"auth) សូម​មើល​ជំនួយ --សម្រាប់​ជំនួយ​ខ្លី"
+"អ្នក​ត្រូវ​ធ្វើ​ប្រតិបត្តិការ​​ណាមួយ​ក៏បាន (-s, -g, -o) "
+"ឬ​ផ្គត់ផ្គង់​ឯកសារ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ (--auth) សូម​មើល​ជំនួយ --"
+"សម្រាប់​ជំនួយ​ខ្លី"
 
 #. translators: don't translate y/n, apport currently only checks for "y"
 #: ../bin/apport-retrace.py:114
@@ -674,7 +730,9 @@ msgstr "រាយការណ៍​​កំហុស​ទៅកាន់​អ
 
 #: ../data/kernel_oops.py:28
 msgid "Your system might become unstable now and might need to be restarted."
-msgstr "ប្រព័ន្ធ​របស់​អ្នក​អាច​​គ្មាន​ស្ថេរ​ភាព​​ឥឡូវ​នេះ ត្រូវ​​ការ​​​ចាប់ផ្ដើម​ឡើងវិញ ។"
+msgstr ""
+"ប្រព័ន្ធ​របស់​អ្នក​អាច​​គ្មាន​ស្ថេរ​ភាព​​ឥឡូវ​នេះ "
+"ត្រូវ​​ការ​​​ចាប់ផ្ដើម​ឡើងវិញ ។"
 
 #: ../gtk/apport-gtk.py:153
 #, python-format
@@ -749,7 +807,8 @@ msgstr "ទុក​ឲ្យ​បិទ"
 
 #: ../gtk/apport-gtk.py:296 ../kde/apport-kde.py:220 ../gtk/apport-gtk.ui.h:4
 msgid "If you notice further problems, try restarting the computer."
-msgstr "ប្រសិនបើ​អ្នក​កត់​សម្គាល់​បញ្ហា​បន្ថែម ព្យាយាម​ចាប់ផ្ដើម​កុំព្យូទ័រ​ឡើង​វិញ ។"
+msgstr ""
+"ប្រសិនបើ​អ្នក​កត់​សម្គាល់​បញ្ហា​បន្ថែម ព្យាយាម​ចាប់ផ្ដើម​កុំព្យូទ័រ​ឡើង​វិញ ។"
 
 #: ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:224
 msgid "Ignore future problems of this type"
@@ -771,25 +830,32 @@ msgstr "បញ្ជាក់​ឈ្មោះ​ឯកសារ​កំណត
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
-msgstr "ប្រើ sandbox dir (SDIR) ដែល​បាន​បង្កើត​ពី​មុន​ឡើង​វិញ, ប្រសិនបើ​វា​មិន​មាន, បង្កើត​វា​ថ្មី"
+msgstr ""
+"ប្រើ sandbox dir (SDIR) ដែល​បាន​បង្កើត​ពី​មុន​ឡើង​វិញ, ប្រសិនបើ​វា​មិន​មាន, "
+"បង្កើត​វា​ថ្មី"
 
 #: ../bin/apport-valgrind.py:50
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
-"កុំ​បង្កើត ឬ​ប្រើ​ថត sandbox ឡើង​វិញ​សម្រាប់​​និមិត្ត​សញ្ញា​​បំបាត់​កំហុស​បន្ថែម ប៉ុន្តែ​អាស្រ័យ​លើ​និមិត្ត​សញ្ញា​បំបាត់​"
-"កំហុស។"
+"កុំ​បង្កើត ឬ​ប្រើ​ថត sandbox "
+"ឡើង​វិញ​សម្រាប់​​និមិត្ត​សញ្ញា​​បំបាត់​កំហុស​បន្ថែម "
+"ប៉ុន្តែ​អាស្រ័យ​លើ​និមិត្ត​សញ្ញា​បំបាត់​កំហុស។"
 
 #: ../bin/apport-valgrind.py:54
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
-msgstr "ប្រើ​ថត​ឃ្លាំង​ដែល​បាន​បង្កើត​ពី​មុន​ឡើង​វិញ (CDIR) , ប្រសិនបើ​វា​មិន​ទាន់​មាន, បង្កើត​វា"
+msgstr ""
+"ប្រើ​ថត​ឃ្លាំង​ដែល​បាន​បង្កើត​ពី​មុន​ឡើង​វិញ (CDIR) , "
+"ប្រសិនបើ​វា​មិន​ទាន់​មាន, បង្កើត​វា"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
-msgstr "រាយការណ៍​វឌ្ឍនភាព ទាញ​យក/​ដំឡើង នៅ​ពេល​កំពុង​ទាញ​យក​កញ្ចប់​ទៅ​កាន់ sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
+msgstr ""
+"រាយការណ៍​វឌ្ឍនភាព ទាញ​យក/​ដំឡើង នៅ​ពេល​កំពុង​ទាញ​យក​កញ្ចប់​ទៅ​កាន់ sandbox"
 
 #: ../bin/apport-valgrind.py:62
 msgid ""
@@ -821,8 +887,8 @@ msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
-"ព័ត៌មាន​ដែល​បាន​ប្រមូល​អាច​ត្រូវ​បាន​ផ្ញើ​ទៅកាន់​អ្នក​អភិវឌ្ឍន៍ ដើម្បី​ធ្វើ​ឲ្យ​កម្មវិធី​ប្រសើរ​ឡើង ។ វា​អាច​ចំណាយ​"
-"ពេលវេលា​ពីរបី​នាទី ។"
+"ព័ត៌មាន​ដែល​បាន​ប្រមូល​អាច​ត្រូវ​បាន​ផ្ញើ​ទៅកាន់​អ្នក​អភិវឌ្ឍន៍ "
+"ដើម្បី​ធ្វើ​ឲ្យ​កម្មវិធី​ប្រសើរ​ឡើង ។ វា​អាច​ចំណាយ​ពេលវេលា​ពីរបី​នាទី ។"
 
 #: ../kde/apport-kde.py:410
 msgid "Uploading Problem Information"
@@ -833,7 +899,8 @@ msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
 msgstr ""
-"ព័ត៌មាន​ដែល​បាន​ប្រមូល​​កំពុង​ត្រូវ​បាន​ផ្ញើ​ទៅ​កាន់​កញ្ចប់​តាមដាន​កំហុស ។ វា​អាច​ចំណាយ​ពេលវេលា​ពីរ​បី​នាទី ។"
+"ព័ត៌មាន​ដែល​បាន​ប្រមូល​​កំពុង​ត្រូវ​បាន​ផ្ញើ​ទៅ​កាន់​កញ្ចប់​តាមដាន​កំហុស ។ "
+"វា​អាច​ចំណាយ​ពេលវេលា​ពីរ​បី​នាទី ។"
 
 #: ../kde/apport-kde.py:446 ../kde/apport-kde.py:482 ../gtk/apport-gtk.ui.h:1
 msgid "Apport"
@@ -847,15 +914,20 @@ msgstr "ប្រមូល​ព័ត៌មាន​ប្រព័ន្ធ"
 msgid ""
 "Authentication is required to collect system information for this problem "
 "report"
-msgstr "ការ​ផ្ទៀងផ្ទាត់​ត្រូវ​បាន​ទាមទារ​ដើម្បី​​ប្រមូល​ព័ត៌មាន​ប្រព័ន្ធ​សម្រាប់​របាយការណ៍​បញ្ហា​នេះ"
+msgstr ""
+"ការ​ផ្ទៀងផ្ទាត់​ត្រូវ​បាន​ទាមទារ​ដើម្បី​​ប្រមូល​ព័ត៌មាន​ប្រព័ន្ធ​សម្រាប់​របាយ"
+"ការណ៍​បញ្ហា​នេះ"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:3
 msgid "System problem reports"
 msgstr "របាយការណ៍​បញ្ហា​ប្រព័ន្ធ"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
-msgstr "សូម​បញ្ចូល​ព័ត៌មាន​លម្អិត​របស់​អ្នក​ ដើម្បី​​ចូល​ដំណើរការ​​​របាយការណ៍​បញ្ហា​នៃ​កម្មវិធី​ប្រព័ន្ធ"
+msgid ""
+"Please enter your password to access problem reports of system programs"
+msgstr ""
+"សូម​បញ្ចូល​ព័ត៌មាន​លម្អិត​របស់​អ្នក​ "
+"ដើម្បី​​ចូល​ដំណើរការ​​​របាយការណ៍​បញ្ហា​នៃ​កម្មវិធី​ប្រព័ន្ធ"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Crash report"
@@ -885,7 +957,9 @@ msgstr "<big><b>ការ​ប្រមូល​ព័ត៌មាន​អំ�
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
-msgstr "ព័ត៌មាន​កំពុង​ត្រូវ​បាន​ប្រមូល​ ​ដែល​អាច​ជា​ជំនួយ​ដល់​អ្នក​អភិវឌ្ឍន៍​ក្នុង​ការ​កែសម្រួល​របាយការណ៍​កំហុស ។"
+msgstr ""
+"ព័ត៌មាន​កំពុង​ត្រូវ​បាន​ប្រមូល​ "
+"​ដែល​អាច​ជា​ជំនួយ​ដល់​អ្នក​អភិវឌ្ឍន៍​ក្នុង​ការ​កែសម្រួល​របាយការណ៍​កំហុស ។"
 
 #: ../gtk/apport-gtk.ui.h:14
 msgid "<big><b>Uploading problem information</b></big>"
@@ -904,5 +978,6 @@ msgstr "ការ​ប្រើប្រាស់ ៖ %s <report> <target direc
 msgid "Destination directory exists and is not empty."
 msgstr "មាន​ថត​ទិសដៅ ។"
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "សូម​ទោស កម្មវិធី %s បាន​បិទ​ដោយ​មិន​រំពឹង​ទុក"
