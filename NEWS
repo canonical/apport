@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.12.7 (UNRELEASED)
+-------------------
+ * Properly fall back to lsb_release if /etc/os-release is invalid.
+
 2.12.6 (2013-10-25)
 -------------------
  * SECURITY FIX: For setuid programs which drop their privileges after
