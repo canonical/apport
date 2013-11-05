@@ -490,6 +490,7 @@ class Report(problem_report.ProblemReport):
         - ProcStatus: /proc/pid/status contents
         - ProcMaps: /proc/pid/maps contents
         - ProcAttrCurrent: /proc/pid/attr/current contents, if not "unconfined"
+        - CurrentDesktop: Value of $XDG_CURRENT_DESKTOP, if present
         '''
         if not pid:
             pid = self.pid or os.getpid()
@@ -549,6 +550,7 @@ class Report(problem_report.ProblemReport):
         - ProcEnviron: A subset of the process' environment (only some standard
           variables that do not disclose potentially sensitive information, plus
           the ones mentioned in extraenv)
+        - CurrentDesktop: Value of $XDG_CURRENT_DESKTOP, if present
         '''
         safe_vars = ['SHELL', 'TERM', 'LANGUAGE', 'LANG', 'LC_CTYPE',
                      'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY',
@@ -581,17 +583,19 @@ class Report(problem_report.ProblemReport):
                             self['ProcEnviron'] += '\n'
                         self['ProcEnviron'] += 'PATH=(custom, no user)'
                 elif l.startswith('XDG_RUNTIME_DIR='):
-                        if self['ProcEnviron']:
-                            self['ProcEnviron'] += '\n'
-                        self['ProcEnviron'] += 'XDG_RUNTIME_DIR=<set>'
+                    if self['ProcEnviron']:
+                        self['ProcEnviron'] += '\n'
+                    self['ProcEnviron'] += 'XDG_RUNTIME_DIR=<set>'
                 elif l.startswith('LD_PRELOAD='):
-                        if self['ProcEnviron']:
-                            self['ProcEnviron'] += '\n'
-                        self['ProcEnviron'] += 'LD_PRELOAD=<set>'
+                    if self['ProcEnviron']:
+                        self['ProcEnviron'] += '\n'
+                    self['ProcEnviron'] += 'LD_PRELOAD=<set>'
                 elif l.startswith('LD_LIBRARY_PATH='):
-                        if self['ProcEnviron']:
-                            self['ProcEnviron'] += '\n'
-                        self['ProcEnviron'] += 'LD_LIBRARY_PATH=<set>'
+                    if self['ProcEnviron']:
+                        self['ProcEnviron'] += '\n'
+                    self['ProcEnviron'] += 'LD_LIBRARY_PATH=<set>'
+                elif l.startswith('XDG_CURRENT_DESKTOP='):
+                    self['CurrentDesktop'] = l.split('=', 1)[1]
 
     def add_kernel_crash_info(self, debugdir=None):
         '''Add information from kernel crash.

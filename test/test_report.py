@@ -224,6 +224,28 @@ sys.stdin.readline()
         self.assertTrue(lang in r['ProcEnviron'].encode('UTF-8'))
         self.assertTrue('XDG_RUNTIME_DIR=<set>' in r['ProcEnviron'], r['ProcEnviron'])
 
+    def test_add_proc_info_current_desktop(self):
+        '''add_proc_info() CurrentDesktop'''
+
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE,
+                             env={'LANG': 'xx_YY.UTF-8'})
+        time.sleep(0.1)
+        r = apport.report.Report()
+        r.add_proc_info(pid=p.pid)
+        p.communicate(b'')
+        self.assertEqual(r['ProcEnviron'], 'LANG=xx_YY.UTF-8')
+        self.assertFalse('CurrentDesktop' in r, r)
+
+        p = subprocess.Popen(['cat'], stdin=subprocess.PIPE,
+                             env={'LANG': 'xx_YY.UTF-8',
+                                  'XDG_CURRENT_DESKTOP': 'Pixel Pusher'})
+        time.sleep(0.1)
+        r = apport.report.Report()
+        r.add_proc_info(pid=p.pid)
+        p.communicate(b'')
+        self.assertEqual(r['ProcEnviron'], 'LANG=xx_YY.UTF-8')
+        self.assertEqual(r['CurrentDesktop'], 'Pixel Pusher')
+
     def test_add_path_classification(self):
         '''classification of $PATH.'''
 

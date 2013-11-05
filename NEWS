@@ -4,6 +4,8 @@ detailled list of changes, please see ChangeLog.
 2.12.7 (UNRELEASED)
 -------------------
  * Properly fall back to lsb_release if /etc/os-release is invalid.
+ * report.py, add_proc_info(): Add "CurrentDesktop" field with the value of
+   $XDG_CURRENT_DESKTOP, if present. (LP: #1247904)
 
 2.12.6 (2013-10-25)
 -------------------
