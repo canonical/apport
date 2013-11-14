@@ -1,10 +1,12 @@
-import unittest, tempfile, os, shutil, time, sys
+import unittest, tempfile, os, shutil, time, sys, pwd
 
 import problem_report
 import apport.fileutils
 import apport.packaging
 
 from io import BytesIO
+
+from mock import patch
 
 
 class T(unittest.TestCase):
@@ -196,6 +198,18 @@ class T(unittest.TestCase):
             tr = [r for r in self._create_reports(True) if not 'inaccessible' in r]
             self.assertEqual(set(apport.fileutils.get_all_system_reports()), set([]))
             self.assertEqual(set(apport.fileutils.get_new_system_reports()), set([]))
+
+    @patch.object(os, 'stat')
+    @patch.object(pwd, 'getpwuid')
+    def test_get_system_reports_guest(self, *args):
+        '''get_all_system_reports() filters out reports from guest user'''
+
+        self._create_reports()
+
+        os.stat.return_value.st_size = 1000
+        os.stat.return_value.st_uid = 123
+        pwd.getpwuid.return_value.pw_name = 'guest_tmp987'
+        self.assertEqual(apport.fileutils.get_all_system_reports(), [])
 
     def test_unwritable_report(self):
         '''get_all_reports() and get_new_reports() for unwritable report'''

@@ -6,6 +6,8 @@ detailled list of changes, please see ChangeLog.
  * Properly fall back to lsb_release if /etc/os-release is invalid.
  * report.py, add_proc_info(): Add "CurrentDesktop" field with the value of
    $XDG_CURRENT_DESKTOP, if present. (LP: #1247904)
+ * fileutils.py, get_all_system_reports(): Filter out "guest..." users, they
+   might have a system UID. (LP: #1250679)
 
 2.12.6 (2013-10-25)
 -------------------

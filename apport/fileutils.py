@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, glob, subprocess, os.path, time
+import os, glob, subprocess, os.path, time, pwd
 
 try:
     from configparser import ConfigParser, NoOptionError, NoSectionError
@@ -206,7 +206,16 @@ def get_all_system_reports():
     reports = []
     for r in glob.glob(os.path.join(report_dir, '*.crash')):
         try:
-            if os.path.getsize(r) > 0 and os.stat(r).st_uid < 500:
+            st = os.stat(r)
+            if st.st_size > 0 and st.st_uid < 500:
+                # filter out guest session crashes; they might have a system UID
+                try:
+                    pw = pwd.getpwuid(st.st_uid)
+                    if pw.pw_name.startswith('guest'):
+                        continue
+                except KeyError:
+                    pass
+
                 reports.append(r)
         except OSError:
             # race condition, can happen if report disappears between glob and
