@@ -8,6 +8,7 @@ detailled list of changes, please see ChangeLog.
    $XDG_CURRENT_DESKTOP, if present. (LP: #1247904)
  * fileutils.py, get_all_system_reports(): Filter out "guest..." users, they
    might have a system UID. (LP: #1250679)
+ * apt/dpkg: Don't call dpkg-divert with full path, it moved in Ubuntu 14.04.
 
 2.12.6 (2013-10-25)
 -------------------
