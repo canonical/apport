@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-25 06:19+0200\n"
+"POT-Creation-Date: 2013-11-19 08:43+0100\n"
 "PO-Revision-Date: 2011-10-14 18:58+0000\n"
 "Last-Translator: Cédric VALMARY (Tot en òc) <cvalmary@yahoo.fr>\n"
 "Language-Team: Occitan (post 1500) <oc@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
 "X-Generator: Launchpad (build 16820)\n"
-"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -163,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -219,10 +219,8 @@ msgstr ""
 "còp."
 
 #: ../apport/ui.py:725
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -642,8 +640,7 @@ msgstr ""
 "plantatges de la version en cors d'execucion poiràn èsser traçats."
 
 #: ../bin/apport-retrace.py:51
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Senhalar l'avançament del telecargament/de l'installacion pendent "
 "l'installacion de paquets dins lo nauc de sabla."
@@ -655,8 +652,7 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:55
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
-"Repertòri d'escondedor pels paquets telecargats dins lo nauc de sabla"
+msgstr "Repertòri d'escondedor pels paquets telecargats dins lo nauc de sabla"
 
 #: ../bin/apport-retrace.py:57
 msgid ""
@@ -693,8 +689,7 @@ msgstr ""
 "de lo mandar a la banca de donadas dels plantatges."
 
 #: ../bin/apport-retrace.py:65
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Emplaçament de la còpia de la banca de donadas SQLite (per defaut : pas de "
 "verificacion de la còpia)"
@@ -853,8 +848,7 @@ msgstr ""
 "s'existís pas, lo crear"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "afichar la progression del telecargament e de l'installacion al moment de "
 "l'installacion de paquets dins lo nauc de sabla (« sandbox »)"
@@ -925,8 +919,7 @@ msgid "System problem reports"
 msgstr "Rapòrts de problèmas sistèma"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 "Picatz vòstre senhal per accedir a de rapòrts de problèmas de programas "
 "sistèma"
@@ -994,21 +987,21 @@ msgstr "Lo dorsièr de destinacion existís ja e es pas void."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Se fasiatz pas res de confidencial (picada de senhals o d'autras\n"
-#~ "informacions privadas), podètz ajudar a melhorar l'aplicacion en senhalant\n"
+#~ "informacions privadas), podètz ajudar a melhorar l'aplicacion en "
+#~ "senhalant\n"
 #~ "lo problèma."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s a quitat d'un biais imprevist lo %s à %s"
 
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "Un problèma seriós amb lo nucli s'es produch sus vòstre sistèma."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Mandar un rapòrt complet (recomandat ; %s)"
 
@@ -1019,24 +1012,21 @@ msgstr "Lo dorsièr de destinacion existís ja e es pas void."
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Podètz ajudar los desvolopaires a corregir aqueste problèma en lo senhalant."
+#~ "Podètz ajudar los desvolopaires a corregir aqueste problèma en lo "
+#~ "senhalant."
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Mandar un rap*rt ab&reujat (connexion Internet lenta ; %s)"
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "L'installacion o la mesa a jorn dl paquet « %s » a fracassat."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Rapòrt complet (recomandat ; %s)"
 
 #~ msgid "Application problem"
 #~ msgstr "Problèma logicial"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1052,22 +1042,21 @@ msgstr "Lo dorsièr de destinacion existís ja e es pas void."
 #~ msgstr ""
 #~ "<big><b>Mandar un rapòrt d'incident als desvolopaires ?</b></big>\n"
 #~ "\n"
-#~ "Un còp lo rapòrt mandat, emplenatz lo formulari afichat automaticament per "
-#~ "vòstre navigador Web."
+#~ "Un còp lo rapòrt mandat, emplenatz lo formulari afichat automaticament "
+#~ "per vòstre navigador Web."
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Rapòrt abreujat (connexion Internet lenta ; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
 #~ "De partidas voluminosas van èsser suprimidas del rapòrt. Son fòrça utilas "
 #~ "als desvolopaires per resòlvre lo problèma, mas se pòdon revelar tròp "
-#~ "pesugas al moment de lor transmission se dispausatz pas que d'una connexion "
-#~ "Internet de bas debit."
+#~ "pesugas al moment de lor transmission se dispausatz pas que d'una "
+#~ "connexion Internet de bas debit."
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "_Ignorar los plantatges venents d'aquesta version del programa"
@@ -1083,8 +1072,8 @@ msgstr "Lo dorsièr de destinacion existís ja e es pas void."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Se fasiatz pas res de confidencial (picada de senhals o d'informacions "
 #~ "privadas), podètz ajudar a melhorar l'aplicacion en senhalant lo problèma."
@@ -1092,19 +1081,16 @@ msgstr "Lo dorsièr de destinacion existís ja e es pas void."
 #~ msgid "_Send Report"
 #~ msgstr "_Mandar lo rapòrt"
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Aquò's pas es pas un paquet %s autentic"
 
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Mandar aquelas donadas als desvolopaires ?"
 
-#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr ""
 #~ "O planhèm, lo paquet « %s » a pas pogut èsser installat o mes a jorn."
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "O planhèm, %s a quitat d'un biais imprevist"
 
@@ -1121,20 +1107,17 @@ msgstr "Lo dorsièr de destinacion existís ja e es pas void."
 #~ msgid "&Ignore future crashes of this program version"
 #~ msgstr "&Ignorar los plantatges que venon d'aquesta version del logicial"
 
-#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "O planhèm, lo programa « %s » a quitat d'un biais imprevist."
 
 #~ msgid "Restart &Program"
 #~ msgstr "Reaviar lo &programa"
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "O planhèm, %s a quitat d'un biais imprevist."
 
 #~ msgid "&Send"
 #~ msgstr "&Mandar"
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "O planhèm, l'aplicacion %s a quitat d'un biais imprevist."

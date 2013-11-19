@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-25 06:19+0200\n"
+"POT-Creation-Date: 2013-11-19 08:43+0100\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Gaelic; Scottish <gd@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
 "X-Generator: Launchpad (build 16820)\n"
-"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -99,8 +99,7 @@ msgstr ""
 
 #: ../apport/ui.py:325
 msgid "There is not enough disk space available to process this report."
-msgstr ""
-"Chan eil àite gu leòr air an diosg gus an aithris seo a làimhseachadh."
+msgstr "Chan eil àite gu leòr air an diosg gus an aithris seo a làimhseachadh."
 
 #: ../apport/ui.py:409
 msgid "No package specified"
@@ -170,8 +169,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -179,8 +178,8 @@ msgstr ""
 "fhasa comharra a chur ri buga a dh'innseas gur e dùblachadh a tha ann seach "
 "na beachdan is ceanglachain agad a ghluasad gu buga ùr.\n"
 "\n"
-"Leis a sin, mholamaid dhut aithris ùr a dhèanamh air a' bhuga le \"apport-"
-"bug\" agus beachd a chur ris a' bhuga seo mun fhear a chlàraich thu.\n"
+"Leis a sin, mholamaid dhut aithris ùr a dhèanamh air a' bhuga le \"apport-bug"
+"\" agus beachd a chur ris a' bhuga seo mun fhear a chlàraich thu.\n"
 "\n"
 "A bheil thu cinnteach gu bheil thu airson leantainn air adhart?"
 
@@ -228,10 +227,8 @@ msgstr ""
 "turas."
 
 #: ../apport/ui.py:725
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -246,8 +243,7 @@ msgstr ""
 
 #: ../apport/ui.py:730
 msgid "Click a window as a target for filing a problem report."
-msgstr ""
-"Briog air uinneag mar thargaid gus aithris a dhèanamh air duilgheadas."
+msgstr "Briog air uinneag mar thargaid gus aithris a dhèanamh air duilgheadas."
 
 #: ../apport/ui.py:732
 msgid "Start in bug updating mode. Can take an optional --package."
@@ -668,8 +664,7 @@ msgstr ""
 "tuislidhean ach feadhainn san sgaoileadh a tha a' ruith an-dràsta fhèin."
 
 #: ../bin/apport-retrace.py:51
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Seall adhartas an luchdaidh a-nuas/an stàlaidh nuair a stàlaichear pacaidean "
 "sa bhogsa-ghainmhich"
@@ -722,8 +717,7 @@ msgstr ""
 "dàta nan tuislidhean."
 
 #: ../bin/apport-retrace.py:65
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "An t-slighe gun stòr-dàta sqlite dùblaichte (bun-roghainn: cha doirear sùil "
 "a bheil iad dùblaichte)"
@@ -886,8 +880,7 @@ msgstr ""
 "eil e ann, cruthaich e"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "seall adhartas an luchdaidh a-nuas/an stàlaidh nuair a stàlaichear pacaidean "
 "sa bhogsa-ghainmhich"
@@ -959,8 +952,7 @@ msgid "System problem reports"
 msgstr "Aithrisean air duilgheadasan an t-siostaim"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 "Cuir a-steach am facal-faire agad gus cothrom fhaighinn air aithrisean mu "
 "dhèidhinn duilgheadas a bha aig prògraman a t-siostaim"
@@ -971,8 +963,7 @@ msgstr "Aithris tuislidh"
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
-msgstr ""
-"<big><b>Tha sinn duillich ach thachair mearachd inntearnail.</b></big>"
+msgstr "<big><b>Tha sinn duillich ach thachair mearachd inntearnail.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:5
 msgid "Send an error report to help fix this problem"

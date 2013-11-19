@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-25 06:19+0200\n"
+"POT-Creation-Date: 2013-11-19 08:43+0100\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Ofir Klinger <klinger.ofir@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
+"Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
 "X-Generator: Launchpad (build 16820)\n"
-"Language: he\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -156,8 +156,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -209,10 +209,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:725
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -220,8 +218,8 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"התחלה במצב מילוי שגיאות. נדרש ‎--package ו־‎--pid (לא חובה), או ‎--pid בלבד. "
-"אם אף אחד מאלה לא הוזן, תוצג רשימה של סימפטומים ידועים. (מרומז במקרה שצוין "
+"התחלה במצב מילוי שגיאות. נדרש ‎--package ו־‎--pid (לא חובה), או ‎--pid בלבד. אם "
+"אף אחד מאלה לא הוזן, תוצג רשימה של סימפטומים ידועים. (מרומז במקרה שצוין "
 "ארגומנט יחיד.)"
 
 #: ../apport/ui.py:730
@@ -263,8 +261,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"דיווח על התקלה מקובץ ‎.apport או ‎.crash נתון במקום אלו שממתינים ב־%s. "
-"(מרומז אם ניתן קובץ כארגומנט יחיד.)"
+"דיווח על התקלה מקובץ ‎.apport או ‎.crash נתון במקום אלו שממתינים ב־%s. (מרומז "
+"אם ניתן קובץ כארגומנט יחיד.)"
 
 #: ../apport/ui.py:744
 msgid ""
@@ -591,8 +589,7 @@ msgstr ""
 "יהיה רק לעקוב מחדש אחר הקריסות שהתחרשו בהפצה הפעילה הנוכחית."
 
 #: ../bin/apport-retrace.py:51
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr "דיווח על תהליך של הורדה/התקנה בעת התקנת חבילות בתוך ארגז החול"
 
 #: ../bin/apport-retrace.py:53
@@ -629,12 +626,10 @@ msgstr ""
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
-msgstr ""
-"הצגת מעקבי מחסניות מחודשים ובקשת אישור בטרם שליחה למסד נתוני הקריסות."
+msgstr "הצגת מעקבי מחסניות מחודשים ובקשת אישור בטרם שליחה למסד נתוני הקריסות."
 
 #: ../bin/apport-retrace.py:65
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:70
@@ -781,8 +776,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -846,8 +840,7 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
@@ -897,11 +890,9 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr "ספריית היעד קיימת ואינה ריקה."
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "התקנת או שדרוג החבילה \"%s\" נכשלו."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "דוח שלם (מומלץ; %s)"
 
@@ -920,20 +911,19 @@ msgstr "ספריית היעד קיימת ואינה ריקה."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "במידה ולא ביצעת כל פעולה חשאית (הזנת סיסמאות או מידע פרטי אחר כלשהו), תוכל "
-#~ "לעזור לשפר את היישום על ידי דיווח אודות התקלה."
+#~ "במידה ולא ביצעת כל פעולה חשאית (הזנת סיסמאות או מידע פרטי אחר כלשהו), "
+#~ "תוכל לעזור לשפר את היישום על ידי דיווח אודות התקלה."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s נסגר במפתיע תחת %s ב- %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "הפעל את התוכנה מחדש"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -941,29 +931,26 @@ msgstr "ספריית היעד קיימת ואינה ריקה."
 #~ "<span weight=\"bold\" size=\"larger\">אנו מתנצלים, עדכון או שדרוג החבילה "
 #~ "\"%s\" נכשל.</span>"
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&שלח דוח מלא (מומלץ; %s)"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "דוח מצומצם (חיבור איטי לאינטרנט; %s)"
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "ה_תעלם מקריסות עתידיות של גירסה זו של התוכנה"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "שלח דוח &מצומצם (לחיבור אינטרנט איטי; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "פעולה זו תסיר כמה פריטים גדולים מהדוח. אלו מאוד שימושיים למפתחים לצורך איתור "
-#~ "השגיאה, אך עלולים להיות גדולים מדי עבורך להעלאה במידה ויש לך חיבור אינטרנט "
-#~ "איטי."
+#~ "פעולה זו תסיר כמה פריטים גדולים מהדוח. אלו מאוד שימושיים למפתחים לצורך "
+#~ "איתור השגיאה, אך עלולים להיות גדולים מדי עבורך להעלאה במידה ויש לך חיבור "
+#~ "אינטרנט איטי."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&דווח על תקלה..."
@@ -978,7 +965,6 @@ msgstr "ספריית היעד קיימת ואינה ריקה."
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr "תוכל לעזור למפתחים לתקן את החבילה על ידי דיווח על התקלה."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "זוהי אינה חבילת %s מקורית"
 
@@ -999,12 +985,11 @@ msgstr "ספריית היעד קיימת ואינה ריקה."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "במידה ולא עשית שום דבר חסוי (כמו הזנת סיסמאות או מידע פרטי), תוכל לעזור "
 #~ "בשיפור היישום באמצעות דיווח על הבעיה."
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "היישום %s נסגר במפתיע, עמך הסליחה."

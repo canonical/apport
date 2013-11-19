@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-25 06:19+0200\n"
+"POT-Creation-Date: 2013-11-19 08:43+0100\n"
 "PO-Revision-Date: 2013-04-20 11:47+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Tajik <tg@li.org>\n"
+"Language: tg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
 "X-Generator: Launchpad (build 16820)\n"
-"Language: tg\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -165,8 +165,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -224,10 +224,8 @@ msgstr ""
 "карда шавад."
 
 #: ../apport/ui.py:725
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -377,8 +375,7 @@ msgstr "Ҳофиза кофӣ нест"
 
 #: ../apport/ui.py:1223
 msgid "Your system does not have enough memory to process this crash report."
-msgstr ""
-"Системаи шумо барои коркарди ин гузориши нокомӣ ҳофизаи кофӣ надорад."
+msgstr "Системаи шумо барои коркарди ин гузориши нокомӣ ҳофизаи кофӣ надорад."
 
 #: ../apport/ui.py:1258
 #, python-format
@@ -464,8 +461,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:189
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
-"Бекор кунед ва &нокомиҳои ояндаи ин версияи барномаро нодида гузаронед"
+msgstr "Бекор кунед ва &нокомиҳои ояндаи ин версияи барномаро нодида гузаронед"
 
 #: ../bin/apport-cli.py:191 ../bin/apport-cli.py:268 ../bin/apport-cli.py:300
 #: ../bin/apport-cli.py:321
@@ -646,8 +642,7 @@ msgstr ""
 "релизи ҷории иҷрошаванда ба вуҷуд омаданд, дубора рад мекунад."
 
 #: ../bin/apport-retrace.py:51
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Гузориш додани раванди боргирӣ/насбкунӣ ҳангоми насбкунии бастаҳо ба регдон"
 
@@ -693,8 +688,7 @@ msgstr ""
 "фиристодани онҳо ба пойгоҳи иттилоотии нокомиҳо."
 
 #: ../bin/apport-retrace.py:65
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Масир ба пойгоҳи иттилоотии такрории sqlite (пешфарз: бе санҷиши такрориҳо)"
 
@@ -845,8 +839,8 @@ msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
 msgstr ""
-"директорияи регдонро барои аломатҳои иловагии ислоҳи хатоҳо эҷод  накунед  ё "
-" аз нав истифода набаред, танҳо ба аломатҳои насбшудаи ислоҳи хатоҳо асос "
+"директорияи регдонро барои аломатҳои иловагии ислоҳи хатоҳо эҷод  накунед  "
+"ё  аз нав истифода набаред, танҳо ба аломатҳои насбшудаи ислоҳи хатоҳо асос "
 "ёбед."
 
 #: ../bin/apport-valgrind.py:54
@@ -858,8 +852,7 @@ msgstr ""
 "ҳолати мавҷуд набудан, эҷод кардани он"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "гузориш додани раванди боргирӣ/насбкунӣ ҳангоми насбкунии бастаҳо ба регдон"
 
@@ -929,8 +922,7 @@ msgid "System problem reports"
 msgstr "Системаи гузоришдиҳии мушкилиҳо"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 "Лутфан, пароли худро ворид кунед, то ин ки ба гузоришҳои мушкилиҳои "
 "барномаҳои системавӣ дастрасӣ пайдо кунед"

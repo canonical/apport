@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-25 06:19+0200\n"
+"POT-Creation-Date: 2013-11-19 08:43+0100\n"
 "PO-Revision-Date: 2012-11-05 05:13+0000\n"
 "Last-Translator: bilgeturghun <bilgeks@gmail.com>\n"
 "Language-Team: Uighur <ug@li.org>\n"
+"Language: ug\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
 "X-Generator: Launchpad (build 16820)\n"
-"Language: ug\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -105,8 +105,7 @@ msgstr "بوغچا كۆرسىتىلمىگەن."
 #: ../apport/ui.py:410
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr ""
-"بوغچا ياكى بىر PID نى كۆرسىتىڭ. تەپسىلاتلار ئۈچۈن --help نى ئىشلىتىڭ."
+msgstr "بوغچا ياكى بىر PID نى كۆرسىتىڭ. تەپسىلاتلار ئۈچۈن --help نى ئىشلىتىڭ."
 
 #: ../apport/ui.py:433
 msgid "Permission denied"
@@ -164,8 +163,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -218,10 +217,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "دوكلاتقا يېڭىدىن خەتكۈش قوشۇڭ، كۆپ قېتىم بەلگىلەشكە بولىدۇ."
 
 #: ../apport/ui.py:725
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -281,8 +278,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"چاتاق مەلۇماتىنى  %s نىڭدىكى كۈتۈپ تۇرغان ھۆججەتنى ئەمەس بەلكى بېرىلگەن  "
-".apport ياكى .crash ھۆججىتىنى ئىشلىتىپ يوللاش(پەقەت ھۆججەت ئاتى ئارگۇمېنت "
+"چاتاق مەلۇماتىنى  %s نىڭدىكى كۈتۈپ تۇرغان ھۆججەتنى ئەمەس بەلكى بېرىلگەن  ."
+"apport ياكى .crash ھۆججىتىنى ئىشلىتىپ يوللاش(پەقەت ھۆججەت ئاتى ئارگۇمېنت "
 "شەكىلدە بېرىلگەندىلا.)"
 
 #: ../apport/ui.py:744
@@ -629,8 +626,7 @@ msgstr ""
 "قىلىنىۋاتقان سىستېمىنى ھالاك قىلىدۇ."
 
 #: ../bin/apport-retrace.py:51
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "بوغچىلارنى قۇم خالتىسى ئىچىگە ئورناتقاندىكى چۈشۈرۈش/ئورنىتىش جەريانىنى مەلۇم "
 "قىلىش"
@@ -680,8 +676,7 @@ msgstr ""
 "يوللىماسلىقنى جەزملەشنى سورايدۇ."
 
 #: ../bin/apport-retrace.py:65
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "تەكرارلانغان sqlite ساندىنىنىڭ يولى.(كۆڭۈلدە تەكرارلىنىشنى تەكشۈرمەيدۇ)"
 
@@ -700,8 +695,8 @@ msgid ""
 "you either need to do a local operation (-s, -g, -o) or supply an "
 "authentication file (--auth); see --help for a short help"
 msgstr ""
-"يەرلىكتە مەشغۇلات قىلىشىڭىز (-s، -g، -o) ياكى سالاھىيەت دەلىللەش ھۆججىتىنى (-"
-"-auth) تەمىنلىشىڭىز كېرەك. ئاددىي ياردەم ئۇچۇرىغا ئېرىشىش ئۈچۈن --help نى "
+"يەرلىكتە مەشغۇلات قىلىشىڭىز (-s، -g، -o) ياكى سالاھىيەت دەلىللەش ھۆججىتىنى "
+"(--auth) تەمىنلىشىڭىز كېرەك. ئاددىي ياردەم ئۇچۇرىغا ئېرىشىش ئۈچۈن --help نى "
 "ئىشلىتىڭ."
 
 #. translators: don't translate y/n, apport currently only checks for "y"
@@ -836,8 +831,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -904,8 +898,7 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
@@ -958,11 +951,9 @@ msgstr "ئىشلىتىش ئۇسۇلى: %s <مەلۇمات> <نىشان مۇند�
 msgid "Destination directory exists and is not empty."
 msgstr "نىشان مۇندەرىجە بار ھەم بوش ئەمەس."
 
-#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "كەچۈرۈڭ، پروگرامما «%s» ئويلىمىغان يەردىن تاقىلىپ قالدى."
 
-#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "كەچۈرۈڭ، بوغچا «%s» نى ئورنىتىش ياكى يۈكسەلدۈرۈش مەغلۇپ بولدى."
 
@@ -975,25 +966,21 @@ msgstr "نىشان مۇندەرىجە بار ھەم بوش ئەمەس."
 #~ msgid "Send this data to the developers?"
 #~ msgstr "بۇ سانلىق-مەلۇماتلارنى ئىجادىيەتچىگە ئەۋەتسۇنمۇ؟"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">كەچۈرۈڭ، بوغچا «%s» نى ئورنىتىش ياكى "
-#~ "يۈكسەلدۈرۈش مەغلۇپ بولدى.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">كەچۈرۈڭ، بوغچا «%s» نى ئورنىتىش "
+#~ "ياكى يۈكسەلدۈرۈش مەغلۇپ بولدى.</span>"
 
 #~ msgid "Package problem"
 #~ msgstr "بوغچىدىكى مەسىلە"
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "بۇ رەسمىي  %s بوغچىسى ئەمەس"
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "بوغچا «%s» نى ئورنىتىش ياكى يېڭىلاش مەغلۇپ بولدى."
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "كەچۈرۈڭ بۇ %s ئەپ تاسادىپىي تاقالدى."
