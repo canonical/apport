@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Namhyung Kim <namhyung@gmail.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
-"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
-"X-Generator: Launchpad (build 16820)\n"
+"X-Launchpad-Export-Date: 2013-11-20 05:13+0000\n"
+"X-Generator: Launchpad (build 16831)\n"
+"Language: ko\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -37,8 +37,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"오래된 버전의 패키지가 몇 개 설치되어 있습니다. 다음 패키지들을 업그레이드한 "
-"후 계속 문제가 발생하는지 점검해 주십시오:\n"
+"오래된 버전의 패키지가 몇 개 설치되어 있습니다. 다음 패키지들을 업그레이드한 후 계속 문제가 발생하는지 점검해 주십시오:\n"
 "\n"
 "%s"
 
@@ -60,9 +59,7 @@ msgstr "%s 내의 문제"
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
-msgstr ""
-"여러분의 컴퓨터에는 자동으로 문제점을 분석하여 개발자에게 보고서를 보낼 수 있"
-"을 정도의 충분한 메모리가 없습니다."
+msgstr "여러분의 컴퓨터에는 자동으로 문제점을 분석하여 개발자에게 보고서를 보낼 수 있을 정도의 충분한 메모리가 없습니다."
 
 #. package does not exist
 #: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
@@ -103,9 +100,7 @@ msgstr "패키지가 지정되지 않음"
 #: ../apport/ui.py:410
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr ""
-"패키지 혹은 PID를 지정해야 합니다. --help 옵션을 이용하여 정보를 볼 수 있습니"
-"다."
+msgstr "패키지 혹은 PID를 지정해야 합니다. --help 옵션을 이용하여 정보를 볼 수 있습니다."
 
 #: ../apport/ui.py:433
 msgid "Permission denied"
@@ -115,9 +110,7 @@ msgstr "권한이 없음"
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
-msgstr ""
-"지정된 프로세스는 여러분이 실행한 것이 아닙니다. 이 프로그램을 직접 실행하거"
-"나 root 사용자로 실행하십시오."
+msgstr "지정된 프로세스는 여러분이 실행한 것이 아닙니다. 이 프로그램을 직접 실행하거나 root 사용자로 실행하십시오."
 
 #: ../apport/ui.py:436
 msgid "Invalid PID"
@@ -159,8 +152,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -205,7 +198,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:728
@@ -351,8 +345,8 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"이 문제는 웹 브라우저에 표시된 버그 보고서에 이미 보고된 것입니다. 개발자에"
-"게 도움이 될 만한 추가적인 정보를 제공할 수 있는지 점검해 주십시오."
+"이 문제는 웹 브라우저에 표시된 버그 보고서에 이미 보고된 것입니다. 개발자에게 도움이 될 만한 추가적인 정보를 제공할 수 있는지 점검해 "
+"주십시오."
 
 #: ../apport/ui.py:1322
 msgid "This problem was already reported to developers. Thank you!"
@@ -500,9 +494,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:368
 msgid "No pending crash reports. Try --help for more information."
-msgstr ""
-"대기 중인 문제점 보고서가 없습니다. --help 옵션을 이용하여 다른 정보를 볼 수 "
-"있습니다."
+msgstr "대기 중인 문제점 보고서가 없습니다. --help 옵션을 이용하여 다른 정보를 볼 수 있습니다."
 
 #: ../data/apportcheckresume.py:68
 msgid ""
@@ -572,7 +564,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
@@ -608,7 +601,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:70
@@ -754,7 +748,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -794,9 +789,7 @@ msgstr ""
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
-msgstr ""
-"수집된 정보를 버그 추적 시스템으로 전송하고 있습니다. 이 작업은 몇 분 정도 걸"
-"릴 수 있습니다."
+msgstr "수집된 정보를 버그 추적 시스템으로 전송하고 있습니다. 이 작업은 몇 분 정도 걸릴 수 있습니다."
 
 #: ../kde/apport-kde.py:446 ../kde/apport-kde.py:482 ../gtk/apport-gtk.ui.h:1
 msgid "Apport"
@@ -817,7 +810,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
@@ -848,9 +842,7 @@ msgstr "<big><b>문제점 정보를 수집하는 중</b></big>"
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
-msgstr ""
-"개발자가 여러분이 보낸 보고서를 통해 문제점을 해결할 수 있도록 정보를 수집하"
-"고 있습니다."
+msgstr "개발자가 여러분이 보낸 보고서를 통해 문제점을 해결할 수 있도록 정보를 수집하고 있습니다."
 
 #: ../gtk/apport-gtk.ui.h:14
 msgid "<big><b>Uploading problem information</b></big>"
@@ -869,6 +861,7 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "보고서 작성 (추천; %s)"
 
@@ -880,16 +873,15 @@ msgstr ""
 #~ msgstr ""
 #~ "<big><b>이 문제를 개발자에게 보고하시겠습니까?</b></big>\n"
 #~ "\n"
-#~ "버그 보고서를 보내고 난 후에, 웹 브라우저에 자동으로 열리는 페이지의 정보"
-#~ "를 입력해 주십시오."
+#~ "버그 보고서를 보내고 난 후에, 웹 브라우저에 자동으로 열리는 페이지의 정보를 입력해 주십시오."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "(암호 또는 다른 개인 정보를 입력하는 것과 같은) 보안 작업을 수행하지 않았"
-#~ "다면, 문제점을 보고하여 프로그램을 개선하도록 도울 수 있습니다."
+#~ "(암호 또는 다른 개인 정보를 입력하는 것과 같은) 보안 작업을 수행하지 않았다면, 문제점을 보고하여 프로그램을 개선하도록 도울 수 "
+#~ "있습니다."
 
 #~ msgid "Application problem"
 #~ msgstr "프로그램 문제점"
@@ -900,13 +892,15 @@ msgstr ""
 #~ msgid "Restart _Program"
 #~ msgstr "프로그램 재시작(_P)"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">죄송합니다. \"%s\" 패키지의 설치 혹"
-#~ "은 업그레이드가 실패했습니다.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">죄송합니다. \"%s\" 패키지의 설치 혹은 업그레이드가 "
+#~ "실패했습니다.</span>"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "보고서 경량화 (느린 인터넷 연결: %s)"
 
@@ -914,13 +908,12 @@ msgstr ""
 #~ msgstr "이 버전의 프로그램에 대해 이후의 문제 발생시 무시(_I)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "이것은 보고서에서 많은 항목을 제거합니다. 이 정보들은 개발자가 문제점을 고"
-#~ "치는 데에는 매우 유용하지만, 인터넷 접속이 느리다면 업로드하기에는 너무 "
-#~ "클 수 있습니다."
+#~ "이것은 보고서에서 많은 항목을 제거합니다. 이 정보들은 개발자가 문제점을 고치는 데에는 매우 유용하지만, 인터넷 접속이 느리다면 "
+#~ "업로드하기에는 너무 클 수 있습니다."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "문제점 보고(_R)..."
@@ -930,9 +923,9 @@ msgstr ""
 
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
-#~ msgstr ""
-#~ "문제점을 보고하여 개발자들이 패키지를 수정하도록 도와줄 수 있습니다."
+#~ msgstr "문제점을 보고하여 개발자들이 패키지를 수정하도록 도와줄 수 있습니다."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "이것은 순수한 %s 용 패키지가 아닙니다"
 
@@ -946,30 +939,32 @@ msgstr ""
 #~ msgstr "시스템에 심각한 커널 문제가 발생하였습니다."
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
-#~ msgstr ""
-#~ "이 문제를 보고하여 개발자들이 문제를 해결할 수 있도록 도와줄 수 있습니다."
+#~ msgstr "이 문제를 보고하여 개발자들이 문제를 해결할 수 있도록 도와줄 수 있습니다."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "문제점 보고...(&R)"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "\"%s\" 패키지가 설치 혹은 업그레이드 과정에서 실패하였습니다."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "만약 비밀 정보를 다루는 작업 (암호 혹은 다른 개인 정보를 입력하는 일)\n"
 #~ "을 수행하는 중이 아니었다면, 문제점을 보고하여 프로그램을 개선하도록\n"
 #~ "도움을 줄 수 있습니다."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s 프로그램이 예상치 않게 종료되었습니다 (%s %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "간소화한 보고서 보내기 (&R) - (느린 인터넷 연결 시; %s)"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "완전한 보고서 보내기(&S) - (추천; %s)"

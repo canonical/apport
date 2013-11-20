@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:48+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Albanian <sq@li.org>\n"
-"Language: sq\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-11-07 05:17+0000\n"
-"X-Generator: Launchpad (build 16820)\n"
+"X-Launchpad-Export-Date: 2013-11-20 05:12+0000\n"
+"X-Generator: Launchpad (build 16831)\n"
+"Language: sq\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -164,8 +164,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -210,8 +210,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -303,14 +305,16 @@ msgstr "Përditëso %s pa gjurmë të plota simbolike"
 #: ../apport/ui.py:965 ../apport/ui.py:975
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "Ky problem ka të bëjë me një program i cili nuk është më i instaluar."
+msgstr ""
+"Ky problem ka të bëjë me një program i cili nuk është më i instaluar."
 
 #: ../apport/ui.py:989
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "Problemi ndodhi me programin %s i cili ndryshoi që kur ndodhi gabimi."
+msgstr ""
+"Problemi ndodhi me programin %s i cili ndryshoi që kur ndodhi gabimi."
 
 #: ../apport/ui.py:1087
 msgid "Could not determine the package or source package name."
@@ -323,7 +327,8 @@ msgstr "Nuk jemi në gjendje të nisim shfletuesin e Internetit"
 #: ../apport/ui.py:1106
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "Nuk jemi në gjendje të nisim shfletuesin e Internetit për të hapur %s."
+msgstr ""
+"Nuk jemi në gjendje të nisim shfletuesin e Internetit për të hapur %s."
 
 #: ../apport/ui.py:1181
 #, python-format
@@ -436,7 +441,8 @@ msgstr ""
 
 #: ../bin/apport-cli.py:189
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Anullo dhe &injoro prishjet e mëvonshme të këtij versioni të programit"
+msgstr ""
+"Anullo dhe &injoro prishjet e mëvonshme të këtij versioni të programit"
 
 #: ../bin/apport-cli.py:191 ../bin/apport-cli.py:268 ../bin/apport-cli.py:300
 #: ../bin/apport-cli.py:321
@@ -609,7 +615,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
@@ -653,7 +660,8 @@ msgstr ""
 "dërgosh ato në databazën e dëmtimit."
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Shtegu për tek databaza e dyfishuar sqlite (nuk ka kërkim për të dyfishta)"
 
@@ -811,7 +819,8 @@ msgstr ""
 "nuk ekziston, krijo një"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "trego progresin e shkarkimit/instalimit kur instalohen paketa në sandbox"
 
@@ -879,7 +888,8 @@ msgid "System problem reports"
 msgstr "Raported e problemeve të sistemit"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Ju lutem vendosni fjalëkalimin tuaj që të keni akses në raportet e "
 "problemeve të programeve së sistemit."
@@ -939,18 +949,18 @@ msgstr "Direktoria e destinacionit ekziston dhe nuk është bosh."
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Ju mund t'i ndihmoni krijuesit ta rregullojnë problemin duke e raportuar "
-#~ "atë."
+#~ "Ju mund t'i ndihmoni krijuesit ta rregullojnë problemin duke e raportuar atë."
 
 #~ msgid "Application problem"
 #~ msgstr "Problem me programin"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Na vjen keq, paketa \"%s\" dështoi "
-#~ "në instalim apo përditësim.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Na vjen keq, paketa \"%s\" dështoi në "
+#~ "instalim apo përditësim.</span>"
 
 #~ msgid ""
 #~ "<big><b>Send problem report to the developers?</b></big>\n"
@@ -966,6 +976,7 @@ msgstr "Direktoria e destinacionit ekziston dhe nuk është bosh."
 #~ msgid "Kernel problem"
 #~ msgstr "Problem kerneli"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Problem i reduktuar (për lidhje interneti të ngadalta; %s)"
 
@@ -978,6 +989,7 @@ msgstr "Direktoria e destinacionit ekziston dhe nuk është bosh."
 #~ msgid "Content of the report"
 #~ msgstr "Përmbajtja e raportit"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Kompleto raportin (rekomandohet; %s)"
 
@@ -999,51 +1011,54 @@ msgstr "Direktoria e destinacionit ekziston dhe nuk është bosh."
 #~ msgid "&Report Problem..."
 #~ msgstr "&Raporto Problemin..."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Paketa \"%s\" dështoi në instalim apo përditësim."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Nëse nuk po bënit asgjë konfidenciale (siç është futja e fjalëkalimit "
-#~ "apo\n"
+#~ "Nëse nuk po bënit asgjë konfidenciale (siç është futja e fjalëkalimit apo\n"
 #~ "ndonjë informacion tjetër privat), ju mund të ndihmoni në përmirësimin e "
 #~ "programit\n"
 #~ "duke raportuar problemin."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s u mbyll papritur në %s të %s."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Dërgoni raportin e kompletuar (rekomandohet; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
-#~ msgstr ""
-#~ "Dërgoni &raportin e reduktuar (për lidhje të ngadaltë Interneti; %s)"
+#~ msgstr "Dërgoni &raportin e reduktuar (për lidhje të ngadaltë Interneti; %s)"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Kjo nuk është një paketë e saktë %s"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Kjo do të heqë disa tema të mëdha nga raporti. kjo është shumë e dobishme "
-#~ "për krijuesit që do shqyrtojnë problemin, por mund të jetë shumë e madhe "
-#~ "për ju për ta ngarkuar nëse keni një lidhje të ngadaltë interneti."
+#~ "për krijuesit që do shqyrtojnë problemin, por mund të jetë shumë e madhe për "
+#~ "ju për ta ngarkuar nëse keni një lidhje të ngadaltë interneti."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Nëse nuk po bënit asgjë konfidenciale (vendosjen e një fjalëkalimi apo "
-#~ "informacion tjetër privat), ju mund të ndihmoni në përmirësimin e "
-#~ "programit duke e raportuar problemin."
+#~ "informacion tjetër privat), ju mund të ndihmoni në përmirësimin e programit "
+#~ "duke e raportuar problemin."
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Na vjen keq, aplikimi %s u mbyll papritmas."

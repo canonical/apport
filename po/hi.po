@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-07-30 10:06+0000\n"
 "Last-Translator: Manish Kumar <manishku86@yahoo.co.in>\n"
 "Language-Team: Hindi <hi@li.org>\n"
-"Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
-"X-Generator: Launchpad (build 16820)\n"
+"X-Launchpad-Export-Date: 2013-11-20 05:13+0000\n"
+"X-Generator: Launchpad (build 16831)\n"
+"Language: hi\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -28,7 +28,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
-"यह एक आधिकारिक % s पैकेज नहीं है. किसी भी तीसरे पक्ष के पैकेज को हटाऐं और फिर कोशिश करें."
+"यह एक आधिकारिक % s पैकेज नहीं है. किसी भी तीसरे पक्ष के पैकेज को हटाऐं और "
+"फिर कोशिश करें."
 
 #: ../apport/ui.py:145
 #, python-format
@@ -38,8 +39,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"आपके के पास कुछ लुप्तप्राय पैकेज के संस्करण संस्थापित हैं. कृपया निम्नलिखित पैकेजों का उन्नयन करें "
-"और अभी भी समस्या आने पर पुन: जाँच करेंः\n"
+"आपके के पास कुछ लुप्तप्राय पैकेज के संस्करण संस्थापित हैं. कृपया निम्नलिखित "
+"पैकेजों का उन्नयन करें और अभी भी समस्या आने पर पुन: जाँच करेंः\n"
 "\n"
 "%s"
 
@@ -62,8 +63,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"आपके कंप्युटर में समस्या का स्वतः विश्लेषण करने और विकासकर्ताओं को सूचित करने के लिये पर्याप्त "
-"रिक्त स्मृति नहीं है।"
+"आपके कंप्युटर में समस्या का स्वतः विश्लेषण करने और विकासकर्ताओं को सूचित "
+"करने के लिये पर्याप्त रिक्त स्मृति नहीं है।"
 
 #. package does not exist
 #: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
@@ -95,7 +96,8 @@ msgstr "त्रुटी"
 
 #: ../apport/ui.py:325
 msgid "There is not enough disk space available to process this report."
-msgstr "इस रिपोर्ट को प्रक्रिया करने हेतु डिस्क में प्रर्याप्त जगह उपलब्ध नहीं है."
+msgstr ""
+"इस रिपोर्ट को प्रक्रिया करने हेतु डिस्क में प्रर्याप्त जगह उपलब्ध नहीं है."
 
 #: ../apport/ui.py:409
 msgid "No package specified"
@@ -105,7 +107,8 @@ msgstr ""
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
-"आपको पैकेज या PID का विशिष्ट निर्देश देना होगा. अधिक जानकारी के लिए  --help देखें."
+"आपको पैकेज या PID का विशिष्ट निर्देश देना होगा. अधिक जानकारी के लिए  --help "
+"देखें."
 
 #: ../apport/ui.py:433
 msgid "Permission denied"
@@ -116,8 +119,8 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"यह आपका विशिष्ट निर्देश नहीं है. कृपया इस प्रोग्राम को प्रक्रिया उत्तराधिकारी के रुप में या "
-"रुट में चलाएं."
+"यह आपका विशिष्ट निर्देश नहीं है. कृपया इस प्रोग्राम को प्रक्रिया "
+"उत्तराधिकारी के रुप में या रुट में चलाएं."
 
 #: ../apport/ui.py:436
 msgid "Invalid PID"
@@ -152,8 +155,8 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
-"आप या तो इस समस्या रिपोर्ट का अभिदाता रिपोर्टर नहीं है, या रिपोर्ट दोहरा है या "
-"पुर्ववत बंद हो चुका है.\n"
+"आप या तो इस समस्या रिपोर्ट का अभिदाता रिपोर्टर नहीं है, या रिपोर्ट दोहरा है "
+"या पुर्ववत बंद हो चुका है.\n"
 "\n"
 "कृपया \"apport-bug\" का उपयोग कर एक नया रिपोर्ट बनाएं."
 
@@ -163,16 +166,17 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
-"इस समस्या रिपोर्ट का आप रिपोर्टर नहीं है. अपने टिप्पणी के साथ नए बग को संलग्न करने की "
-"तुलना में यह ज्याद आसान होगा कि बग को अन्य का नकल के रुप में रेखांकित किया जाए.\n"
+"इस समस्या रिपोर्ट का आप रिपोर्टर नहीं है. अपने टिप्पणी के साथ नए बग को "
+"संलग्न करने की तुलना में यह ज्याद आसान होगा कि बग को अन्य का नकल के रुप में "
+"रेखांकित किया जाए.\n"
 "\n"
-"पश्चात, हम सलाह देंगे  कि आप जो रिपोर्ट भेजेगें उसमें नए बग रिपोर्ट को  \"apport-bug\" "
-"का उपयोग कर तथा इस बग में अपनी टिप्पणी करें.\n"
+"पश्चात, हम सलाह देंगे  कि आप जो रिपोर्ट भेजेगें उसमें नए बग रिपोर्ट को  "
+"\"apport-bug\" का उपयोग कर तथा इस बग में अपनी टिप्पणी करें.\n"
 "\n"
 "क्या आप आगे की प्रक्रिया करेंगें?"
 
@@ -198,7 +202,8 @@ msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
-"इस संदेश के बंद होने के पश्चात कृपया अनुप्रयोग विंडो पर क्लिक कर समस्या के बारे में रिपोर्ट करें."
+"इस संदेश के बंद होने के पश्चात कृपया अनुप्रयोग विंडो पर क्लिक कर समस्या के "
+"बारे में रिपोर्ट करें."
 
 #: ../apport/ui.py:672 ../apport/ui.py:677
 msgid "xprop failed to determine process ID of the window"
@@ -217,8 +222,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "रिपोर्ट में एक अतरिक्त टैग जोड़े जिससे एकाधिक बार का उल्लेख हो सके."
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -226,9 +233,9 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"बग भरने की पद्धति में शुरु करें. आवश्यकता है --package तथा एक विकल्प --pid की  या केवल "
-"एक --pid की. यदि कोई भी नहीं दिया हुआ हो, तो ज्ञात लक्षणों की सूची दिखाएं. (यदि एक "
-"ही तर्क दिया हो तो लागु करें.)"
+"बग भरने की पद्धति में शुरु करें. आवश्यकता है --package तथा एक विकल्प --pid "
+"की  या केवल एक --pid की. यदि कोई भी नहीं दिया हुआ हो, तो ज्ञात लक्षणों की "
+"सूची दिखाएं. (यदि एक ही तर्क दिया हो तो लागु करें.)"
 
 #: ../apport/ui.py:730
 msgid "Click a window as a target for filing a problem report."
@@ -243,16 +250,17 @@ msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
 msgstr ""
-"लक्षण के बारे में एक बग रिपोर्ट दाखिल करें. (जब लक्षण के नाम केवल तर्क के रुप में दिया गया "
-"हो तो लागु करें.)"
+"लक्षण के बारे में एक बग रिपोर्ट दाखिल करें. (जब लक्षण के नाम केवल तर्क के "
+"रुप में दिया गया हो तो लागु करें.)"
 
 #: ../apport/ui.py:736
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
-"पैकेज का नाम --file-bug पद्धति में वर्णन करें. यह वैकल्पिक होगा यदि एक --pid का वर्णन "
-"होगा. (जब पैकेज का नाम केवल तर्क के रुप में दिया गया हो तो लागु करें.)"
+"पैकेज का नाम --file-bug पद्धति में वर्णन करें. यह वैकल्पिक होगा यदि एक --pid "
+"का वर्णन होगा. (जब पैकेज का नाम केवल तर्क के रुप में दिया गया हो तो लागु "
+"करें.)"
 
 #: ../apport/ui.py:738
 msgid ""
@@ -260,8 +268,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"एक चल रहे प्रोग्राम --file-bug पद्धति में का उल्लेख करें. यदि इसका उल्लेख है, तो दोष रपट "
-"अधिक सूचनात्मक हो जाएगा.(यह लागू हो यदि pid में केवल तर्क दिया होगा.)"
+"एक चल रहे प्रोग्राम --file-bug पद्धति में का उल्लेख करें. यदि इसका उल्लेख "
+"है, तो दोष रपट अधिक सूचनात्मक हो जाएगा.(यह लागू हो यदि pid में केवल तर्क "
+"दिया होगा.)"
 
 #: ../apport/ui.py:740
 msgid "The provided pid is a hanging application."
@@ -273,8 +282,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"विध्वंस रिपोर्ट को दिए गए .apport या .crash संचिका से करें बजाए %s में जो विचाराधीन "
-"है. (यदि तर्क के रुप में केवल संचिका दिया गया हो.)"
+"विध्वंस रिपोर्ट को दिए गए .apport या .crash संचिका से करें बजाए %s में जो "
+"विचाराधीन है. (यदि तर्क के रुप में केवल संचिका दिया गया हो.)"
 
 #: ../apport/ui.py:744
 msgid ""
@@ -582,7 +591,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
@@ -618,7 +628,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:70
@@ -764,7 +775,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -825,7 +837,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2

@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-08-22 12:49+0000\n"
 "Last-Translator: abuyop <Unknown>\n"
 "Language-Team: Malay <ms@li.org>\n"
-"Language: ms\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
-"X-Generator: Launchpad (build 16820)\n"
+"X-Launchpad-Export-Date: 2013-11-20 05:13+0000\n"
+"X-Generator: Launchpad (build 16831)\n"
+"Language: ms\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -164,8 +164,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -222,8 +222,10 @@ msgstr ""
 "Tambahkan tag tambahan kedalam laporan. Boleh dinyatakan beberapa kali."
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:728
 msgid ""
@@ -633,12 +635,14 @@ msgstr ""
 "Bina kekotak pasir sementara dan muat turun/pasang pakej yang perlu dan "
 "nyahpepijat simbol disini; tanpa pilihan ini ia anggap pakej dan simbol "
 "nyahpepijat yang diperlukan sudah dipasang didalam sistem. Argumen merujuk "
-"kepada direktori dasar konfigurasi sistem pakej; jika anda tentukan \"sistem"
-"\", ia akan gunakan fail kkonfigurasi sistem, tetapi hanya boleh menyurih "
-"semula kerosakan yang disebabkan keluaran yang dijalankan semasa ini."
+"kepada direktori dasar konfigurasi sistem pakej; jika anda tentukan "
+"\"sistem\", ia akan gunakan fail kkonfigurasi sistem, tetapi hanya boleh "
+"menyurih semula kerosakan yang disebabkan keluaran yang dijalankan semasa "
+"ini."
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Lapor kemajuan muat turun/pasang bilang memasang pakej kedalam kekotak pasir"
 
@@ -684,7 +688,8 @@ msgstr ""
 "menghantarnya ke pangkalan data kerosakan."
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Laluan ke pangkalan data sqlite pendua (lalai: tiada pemeriksaan penduaan)"
 
@@ -841,7 +846,8 @@ msgstr ""
 "cipta baru"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "lapor kemajuan muat turun/pasang bila memasang pakej ke dalam kotak pasir"
 
@@ -911,7 +917,8 @@ msgid "System problem reports"
 msgstr "Laporan masalah sistem"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Sila masukkan kata laluan anda untuk mencapai laporan masalah bagi program "
 "sistem"
@@ -986,8 +993,10 @@ msgstr "Destinasi direktori wujud dan berisi."
 #~ msgid "Package problem"
 #~ msgstr "Masalah pakej"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ini bukanlah pakej %s yang tulen"
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Maaf, aplikasi %s telah ditutup tanpa dijangka."

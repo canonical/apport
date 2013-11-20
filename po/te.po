@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Telugu <te@li.org>\n"
-"Language: te\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-11-07 05:18+0000\n"
-"X-Generator: Launchpad (build 16820)\n"
+"X-Launchpad-Export-Date: 2013-11-20 05:14+0000\n"
+"X-Generator: Launchpad (build 16831)\n"
+"Language: te\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -27,7 +27,9 @@ msgstr "ఈ ప్యాకేజీ సరిగ్గా ఇన్స్టా
 msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
-msgstr "ఈ అధికారిక% s ప్యాకేజీ లేదు. ఏవైనా మూడవ పార్టీ ప్యాకేజీ తొలగించి మళ్ళీ ప్రయత్నించండి."
+msgstr ""
+"ఈ అధికారిక% s ప్యాకేజీ లేదు. ఏవైనా మూడవ పార్టీ ప్యాకేజీ తొలగించి మళ్ళీ "
+"ప్రయత్నించండి."
 
 #: ../apport/ui.py:145
 #, python-format
@@ -57,8 +59,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"మీ కంప్యూటర్ ఆటోమేటిక్గా సమస్య విశ్లేషించేందుకు మరియు డెవలపర్లకు ఒక నివేదిక పంపేందుకు తగినంత ఉచిత "
-"మెమరీ లేదు."
+"మీ కంప్యూటర్ ఆటోమేటిక్గా సమస్య విశ్లేషించేందుకు మరియు డెవలపర్లకు ఒక నివేదిక "
+"పంపేందుకు తగినంత ఉచిత మెమరీ లేదు."
 
 #. package does not exist
 #: ../apport/ui.py:270 ../apport/ui.py:276 ../apport/ui.py:282
@@ -99,7 +101,8 @@ msgstr "ప్యాకేజీ పేర్కొనలేదు"
 #: ../apport/ui.py:410
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "మీరు ఒక ప్యాకేజీ లేదా ఒక PID పేర్కొనాలి. చూడండి  --help మరింత సమాచారం కొరకు ."
+msgstr ""
+"మీరు ఒక ప్యాకేజీ లేదా ఒక PID పేర్కొనాలి. చూడండి  --help మరింత సమాచారం కొరకు ."
 
 #: ../apport/ui.py:433
 msgid "Permission denied"
@@ -110,7 +113,8 @@ msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
 msgstr ""
-"పేర్కొన్న ప్రక్రియ మీకు సంబంధించినది కాదు. ప్రక్రియ యజమాని లేదా, root  లాగ ఈ ప్రోగ్రామ్ రన్ చెయ్యండి."
+"పేర్కొన్న ప్రక్రియ మీకు సంబంధించినది కాదు. ప్రక్రియ యజమాని లేదా, root  లాగ ఈ "
+"ప్రోగ్రామ్ రన్ చెయ్యండి."
 
 #: ../apport/ui.py:436
 msgid "Invalid PID"
@@ -145,7 +149,8 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
-"మీరు ఈ సమస్య నివేదిక యొక్క రిపోర్టర్ లేదా చందాదారుల కాదు, లేదా నివేదిక నకిలీ లేదా ఇప్పటికే మూసివేయబడింది.\n"
+"మీరు ఈ సమస్య నివేదిక యొక్క రిపోర్టర్ లేదా చందాదారుల కాదు, లేదా నివేదిక నకిలీ "
+"లేదా ఇప్పటికే మూసివేయబడింది.\n"
 "\"apport-bug\" ఉపయోగించి ఒక నివేదిక రూపొందించండి."
 
 #: ../apport/ui.py:508
@@ -154,8 +159,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -200,7 +205,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:725
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:728
@@ -554,7 +560,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:51
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
@@ -590,7 +597,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:65
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:70
@@ -736,7 +744,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -797,7 +806,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
