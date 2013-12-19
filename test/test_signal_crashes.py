@@ -70,7 +70,10 @@ class T(unittest.TestCase):
         # permit tests to leave behind test_report, but nothing else
         if os.path.exists(self.test_report):
             apport.fileutils.delete_report(self.test_report)
-        self.assertEqual(apport.fileutils.get_all_reports(), [])
+        unexpected_reports = apport.fileutils.get_all_reports()
+        for r in unexpected_reports:
+            apport.fileutils.delete_report(r)
+        self.assertEqual(unexpected_reports, [])
 
     def test_empty_core_dump(self):
         '''empty core dumps do not generate a report'''

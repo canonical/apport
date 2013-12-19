@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.12.8 (UNRELEASED)
+-------------------
+ * test_signal_crashes: Clean up unexpected reports after every test, to avoid
+   breaking all subsequent tests.
+
 2.12.7 (2013-11-19)
 -------------------
  * Properly fall back to lsb_release if /etc/os-release is invalid.
