@@ -5,6 +5,8 @@ detailled list of changes, please see ChangeLog.
 -------------------
  * test_signal_crashes: Clean up unexpected reports after every test, to avoid
    breaking all subsequent tests.
+ * test_signal_crashes: Stop checking that gdb prints nothing on stderr, as
+   latest gdb 7.6.50 now almost always prints some about missing source files.
 
 2.12.7 (2013-11-19)
 -------------------

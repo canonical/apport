@@ -661,7 +661,6 @@ class T(unittest.TestCase):
                 self.assertEqual(gdb.returncode, 0)
                 out = out.decode()
                 err = err.decode().strip()
-                self.assertTrue(err == '' or err.startswith('warning'), err)
             finally:
                 os.unlink('/tmp/core')
         else:
