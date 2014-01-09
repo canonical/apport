@@ -11,6 +11,9 @@ detailled list of changes, please see ChangeLog.
    also apply it on bin/.
  * Print a warning when trying to retrace a report from a foreign architecture
    and gdb-multiarch is not installed. (LP: #1239395)
+ * whoopsie-upload-all: Add a -t/--timeout option. In CI environments it is
+   undesirable to block on upload for 30 mins, but it's still a reasonable
+   timeout on less well connected devices.
 
 2.12.7 (2013-11-19)
 -------------------

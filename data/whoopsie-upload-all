@@ -17,6 +17,7 @@ import os
 import sys
 import time
 import subprocess
+import argparse
 
 import apport.fileutils
 import apport
@@ -91,10 +92,10 @@ def collect_info():
     return stamps
 
 
-def wait_uploaded(stamps, timeout=1800):
+def wait_uploaded(stamps, timeout):
     '''Wait until all reports were uploaded.
 
-    Times out after a given number of seconds (default is 30 minutes).
+    Times out after a given number of seconds.
 
     Return True if all reports were uploaded, False if there are some missing.
     '''
@@ -119,6 +120,14 @@ def wait_uploaded(stamps, timeout=1800):
 #
 # main
 #
+parser = argparse.ArgumentParser(description='Noninteractively upload all '
+                                 'Apport crash reports to errors.ubuntu.com')
+parser.add_argument('-t', '--timeout', default=1800, type=int,
+                    help='seconds to wait for whoopsie to upload the reports (default: 1800s)')
+opts = parser.parse_args()
+
+# parse args
+
 
 # verify that whoopsie is running
 if subprocess.call(['pidof', 'whoopsie'], stdout=subprocess.PIPE) != 0:
@@ -128,6 +137,6 @@ if subprocess.call(['pidof', 'whoopsie'], stdout=subprocess.PIPE) != 0:
 stamps = collect_info()
 #print('stamps:', stamps)
 if stamps:
-    if not wait_uploaded(stamps):
+    if not wait_uploaded(stamps, opts.timeout):
         sys.exit(2)
     print('All reports uploaded successfully')
