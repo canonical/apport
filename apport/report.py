@@ -9,8 +9,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, tempfile, os.path, re, pwd, grp, os
-import fnmatch, glob, traceback, errno, sys, atexit
+import subprocess, tempfile, os.path, re, pwd, grp, os, time
+import fnmatch, glob, traceback, errno, sys, atexit, locale
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -491,6 +491,8 @@ class Report(problem_report.ProblemReport):
         - ProcMaps: /proc/pid/maps contents
         - ProcAttrCurrent: /proc/pid/attr/current contents, if not "unconfined"
         - CurrentDesktop: Value of $XDG_CURRENT_DESKTOP, if present
+        - _LogindSession: logind cgroup path, if present (Used for filtering
+          out crashes that happened in a session that is not running any more)
         '''
         if not pid:
             pid = self.pid or os.getpid()
@@ -540,6 +542,10 @@ class Report(problem_report.ProblemReport):
                     self['ProcAttrCurrent'] = val
         except (IOError, OSError):
             pass
+
+        ret = self.get_logind_session(pid)
+        if ret:
+            self['_LogindSession'] = ret[0]
 
     def add_proc_environ(self, pid=None, extraenv=[]):
         '''Add environment information.
@@ -1569,3 +1575,47 @@ class Report(problem_report.ProblemReport):
                 assert m, 'cannot parse ProcMaps line: ' + line
             self._proc_maps_cache.append((int(m.group(1), 16),
                                           int(m.group(2), 16), m.group(3)))
+
+    @classmethod
+    def get_logind_session(klass, pid):
+        '''Get logind session path and start time.
+
+        Return (path, session_start_timestamp) if pid is in a logind session,
+        or None otherwise.
+        '''
+        # determine cgroup
+        try:
+            with open('/proc/%s/cgroup' % pid) as f:
+                for l in f:
+                    if 'name=systemd:' in l:
+                        my_cgroup = l.split('systemd:', 1)[1].strip()
+                        break
+                    if len(my_cgroup) < 2:
+                        return None
+                else:
+                    return None
+        except IOError:
+            return None
+
+        # determine cgroup creation time
+        session_start_time = os.stat('/sys/fs/cgroup/systemd/' + my_cgroup).st_mtime
+
+        return (my_cgroup, session_start_time)
+
+    def get_timestamp(self):
+        '''Get timestamp (seconds since epoch) from Date field
+
+        Return None if it is not present.
+        '''
+        # report time is from asctime(), not in locale representation
+        orig_ctime = locale.getlocale(locale.LC_TIME)
+        try:
+            try:
+                locale.setlocale(locale.LC_TIME, 'C')
+                return time.mktime(time.strptime(self['Date']))
+            except KeyError:
+                return None
+            finally:
+                locale.setlocale(locale.LC_TIME, orig_ctime)
+        except locale.Error:
+            return None

@@ -202,6 +202,11 @@ class UserInterface:
 
         Ask the user what to do about them, and offer to file bugs for them.
 
+        Crashes that occurred in a different desktop (logind) session than the
+        one that is currently running are not processed. This skips crashes
+        that happened during logout, which are uninteresting and confusing to
+        see at the next login.
+
         Return True if at least one crash report was processed, False
         otherwise.
         '''
@@ -209,11 +214,24 @@ class UserInterface:
 
         if os.geteuid() == 0:
             reports = apport.fileutils.get_new_system_reports()
+            logind_session = None
         else:
             reports = apport.fileutils.get_new_reports()
+            logind_session = apport.Report.get_logind_session(os.getpid())
+
         for f in reports:
             if not self.load_report(f):
                 continue
+
+            # Skip crashes that happened during logout, which are uninteresting
+            # and confusing to see at the next login. A crash happened and gets
+            # reported in the same session if the logind session paths agree
+            # and the session started before the report's "Date".
+            if logind_session and '_LogindSession' in self.report:
+                if logind_session[0] != self.report['_LogindSession'] or \
+                   logind_session[1] > self.report.get_timestamp():
+                    continue
+
             if self.report['ProblemType'] == 'Hang':
                 self.finish_hang(f)
             else:

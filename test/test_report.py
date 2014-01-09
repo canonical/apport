@@ -2188,5 +2188,34 @@ No symbol table info available.
         expected = 'suspend/resume:Cray XT5'
         self.assertEqual(expected, pr.crash_signature())
 
+    def test_get_logind_session(self):
+        ret = apport.Report.get_logind_session(os.getpid())
+        if ret is None:
+            # ensure that we don't run under logind, and thus the None is
+            # justified
+            with open('/proc/self/cgroup') as f:
+                contents = f.read()
+            sys.stdout.write('[not running under logind] ')
+            sys.stdout.flush()
+            self.assertNotIn('name=systemd:/user/', contents)
+            return
+
+        (session, timestamp) = ret
+        self.assertTrue(session.startswith('/user/'), session)
+        # session start must be >= 2014-01-01 and "now"
+        self.assertLess(timestamp, time.time())
+        self.assertGreater(timestamp,
+                           time.mktime(time.strptime('2014-01-01', '%Y-%m-%d')))
+
+    def test_get_timestamp(self):
+        r = apport.Report()
+        self.assertAlmostEqual(r.get_timestamp(), time.time(), delta=1)
+
+        r['Date'] = 'Thu Jan 9 12:00:00 2014'
+        self.assertAlmostEqual(r.get_timestamp(), 1389265200.0)
+
+        del r['Date']
+        self.assertEqual(r.get_timestamp(), None)
+
 if __name__ == '__main__':
     unittest.main()

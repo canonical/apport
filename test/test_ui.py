@@ -16,6 +16,8 @@ import problem_report
 import apport.crashdb_impl.memory
 import stat
 
+logind_session = apport.Report.get_logind_session(os.getpid())
+
 
 class TestSuiteUserInterface(apport.ui.UserInterface):
     '''Concrete apport.ui.UserInterface suitable for automatic testing'''
@@ -1427,6 +1429,42 @@ bOgUs=
         r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
         self.assertTrue('SourcePackage' in r)
         self.assertFalse('_Temp' in r)
+
+    @unittest.skipIf(logind_session is None, 'not running in logind session')
+    def test_run_crash_older_session(self):
+        '''run_crashes() skips crashes from older logind sessions'''
+
+        latest_id_before = self.ui.crashdb.latest_id()
+
+        # current crash report
+        r = self._gen_test_crash()
+        cur_date = r['Date']
+        self.assertEqual(r['_LogindSession'], logind_session[0])
+        with open(os.path.join(apport.fileutils.report_dir, 'cur.crash'), 'wb') as f:
+            r.write(f)
+
+        # old crash report
+        r['Date'] = time.asctime(time.localtime(logind_session[1] - 1))
+        with open(os.path.join(apport.fileutils.report_dir, 'old.crash'), 'wb') as f:
+            r.write(f)
+
+        # old crash report without session
+        del r['_LogindSession']
+        with open(os.path.join(apport.fileutils.report_dir, 'oldnosession.crash'), 'wb') as f:
+            r.write(f)
+        del r
+
+        self.ui = TestSuiteUserInterface()
+        self.ui.present_details_response = {'report': True,
+                                            'blacklist': False,
+                                            'examine': False,
+                                            'restart': False}
+        self.ui.run_crashes()
+
+        # should have reported two reports only
+        self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before + 2)
+        r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
+        self.assertEqual(r['Date'], cur_date)
 
     def test_run_update_report_nonexisting_package_from_bug(self):
         '''run_update_report() on a nonexisting package (from bug)'''

@@ -10,6 +10,12 @@ Improvements:
  * Do not report keys starting with '_' to the crash database. This can be used
    for keeping private keys in .crash files between crash and report time, or
    to store data between hooks etc., without cluttering reports.
+ * UI: In "run all pending crashes" mode, skip reports that happened during
+   logout in a desktop (specifically, logind) session; they are uninteresting
+   and confusing to see at the next login. (LP: #1033932) They can still be
+   reported manually with running the .crash file directly, but this
+   sufficiently reduces the need to explicitly flag whether the report concerns
+   a logout crash. (LP: #1067646)
 
 Bug fixes:
  * test_signal_crashes: Clean up unexpected reports after every test, to avoid
