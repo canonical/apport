@@ -9,6 +9,8 @@ detailled list of changes, please see ChangeLog.
    latest gdb 7.6.50 now almost always prints some about missing source files.
  * setup.py: Make updating of hashbangs work when building without Java, and
    also apply it on bin/.
+ * Print a warning when trying to retrace a report from a foreign architecture
+   and gdb-multiarch is not installed. (LP: #1239395)
 
 2.12.7 (2013-11-19)
 -------------------

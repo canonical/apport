@@ -1474,6 +1474,11 @@ class Report(problem_report.ProblemReport):
             which.communicate()
             if which.returncode == 0:
                 command = ['gdb-multiarch']
+            else:
+                sys.stderr.write(
+                    'WARNING: Please install gdb-multiarch for processing '
+                    'reports from foreign architectures. Results with "gdb" '
+                    'will be very poor.\n')
 
             # check for foreign architecture
             arch = self.get('Uname', 'none').split()[-1]
