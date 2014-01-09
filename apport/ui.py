@@ -954,6 +954,11 @@ class UserInterface:
         '''
         # check if we already ran (we might load a processed report), skip if so
         if (self.report.get('ProblemType') == 'Crash' and 'Stacktrace' in self.report) or (self.report.get('ProblemType') != 'Crash' and 'Dependencies' in self.report):
+            # drop internal/uninteresting keys, that start with "_"
+            for k in list(self.report):
+                if k.startswith('_'):
+                    del self.report[k]
+
             if on_finished:
                 on_finished()
             return
@@ -1088,6 +1093,11 @@ class UserInterface:
                     # TODO This is not called consistently, is it really needed?
                     self.ui_shutdown()
                     sys.exit(1)
+
+        # drop internal/uninteresting keys, that start with "_"
+        for k in list(self.report):
+            if k.startswith('_'):
+                del self.report[k]
 
         if on_finished:
             on_finished()

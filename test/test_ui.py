@@ -1400,6 +1400,34 @@ bOgUs=
         self.assertEqual(self.ui.msg_severity, 'info')
         self.assertEqual(self.ui.opened_url, 'http://myreport/1')
 
+    def test_run_crash_private_keys(self):
+        '''does not upload private keys to crash db'''
+
+        r = self._gen_test_crash()
+        r['_Temp'] = 'boring'
+
+        # write crash report
+        report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+
+        # report
+        with open(report_file, 'wb') as f:
+            r.write(f)
+        self.ui = TestSuiteUserInterface()
+        self.ui.present_details_response = {'report': True,
+                                            'blacklist': False,
+                                            'examine': False,
+                                            'restart': False}
+        self.ui.run_crash(report_file)
+        self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
+        # private key is not in original report
+        self.assertTrue('SourcePackage' in self.ui.report)
+        self.assertFalse('_Temp' in self.ui.report)
+
+        # private key is not in crash db
+        r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
+        self.assertTrue('SourcePackage' in r)
+        self.assertFalse('_Temp' in r)
+
     def test_run_update_report_nonexisting_package_from_bug(self):
         '''run_update_report() on a nonexisting package (from bug)'''
 

@@ -1,8 +1,17 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.12.8 (UNRELEASED)
--------------------
+2.13 (UNRELEASED)
+-----------------
+Improvements:
+ * whoopsie-upload-all: Add a -t/--timeout option. In CI environments it is
+   undesirable to block on upload for 30 mins, but it's still a reasonable
+   timeout on less well connected devices.
+ * Do not report keys starting with '_' to the crash database. This can be used
+   for keeping private keys in .crash files between crash and report time, or
+   to store data between hooks etc., without cluttering reports.
+
+Bug fixes:
  * test_signal_crashes: Clean up unexpected reports after every test, to avoid
    breaking all subsequent tests.
  * test_signal_crashes: Stop checking that gdb prints nothing on stderr, as
@@ -11,9 +20,6 @@ detailled list of changes, please see ChangeLog.
    also apply it on bin/.
  * Print a warning when trying to retrace a report from a foreign architecture
    and gdb-multiarch is not installed. (LP: #1239395)
- * whoopsie-upload-all: Add a -t/--timeout option. In CI environments it is
-   undesirable to block on upload for 30 mins, but it's still a reasonable
-   timeout on less well connected devices.
 
 2.12.7 (2013-11-19)
 -------------------
