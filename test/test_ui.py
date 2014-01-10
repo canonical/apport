@@ -1440,17 +1440,20 @@ bOgUs=
         # current crash report
         r = self._gen_test_crash()
         cur_date = r['Date']
+        r['Tag'] = 'cur'
         self.assertEqual(r['_LogindSession'], logind_session[0])
         with open(os.path.join(apport.fileutils.report_dir, 'cur.crash'), 'wb') as f:
             r.write(f)
 
         # old crash report
         r['Date'] = time.asctime(time.localtime(logind_session[1] - 1))
+        r['Tag'] = 'old'
         with open(os.path.join(apport.fileutils.report_dir, 'old.crash'), 'wb') as f:
             r.write(f)
 
         # old crash report without session
         del r['_LogindSession']
+        r['Tag'] = 'oldnosession'
         with open(os.path.join(apport.fileutils.report_dir, 'oldnosession.crash'), 'wb') as f:
             r.write(f)
         del r
@@ -1465,8 +1468,15 @@ bOgUs=
         if os.getuid() != 0:
             # as user: should have reported two reports only
             self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before + 2)
-            r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
-            self.assertEqual(r['Date'], cur_date)
+            r1 = self.ui.crashdb.download(self.ui.crashdb.latest_id())
+            r2 = self.ui.crashdb.download(self.ui.crashdb.latest_id() - 1)
+            if r1['Tag'] == 'cur':
+                self.assertEqual(r1['Date'], cur_date)
+                self.assertEqual(r2['Tag'], 'oldnosession')
+            else:
+                self.assertEqual(r2['Date'], cur_date)
+                self.assertEqual(r1['Tag'], 'oldnosession')
+                self.assertEqual(r2['Tag'], 'cur')
         else:
             # as root: should have reported all reports
             self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before + 3)
