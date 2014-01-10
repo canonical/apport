@@ -724,6 +724,7 @@ bOgUs=
         r['Signal'] = '11'
         r.add_proc_info(pid)
         r.add_user_info()
+        r.add_os_info()
 
         # generate a core dump
         coredump = os.path.join(apport.fileutils.report_dir, 'core')
