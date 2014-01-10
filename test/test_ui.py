@@ -1462,10 +1462,14 @@ bOgUs=
                                             'restart': False}
         self.ui.run_crashes()
 
-        # should have reported two reports only
-        self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before + 2)
-        r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
-        self.assertEqual(r['Date'], cur_date)
+        if os.getuid() != 0:
+            # as user: should have reported two reports only
+            self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before + 2)
+            r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
+            self.assertEqual(r['Date'], cur_date)
+        else:
+            # as root: should have reported all reports
+            self.assertEqual(self.ui.crashdb.latest_id(), latest_id_before + 3)
 
     def test_run_update_report_nonexisting_package_from_bug(self):
         '''run_update_report() on a nonexisting package (from bug)'''
