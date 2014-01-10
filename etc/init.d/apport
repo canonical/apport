@@ -52,7 +52,7 @@ do_start()
 		rm -f /var/lib/pm-utils/resume-hang.log
 	fi
 
-        echo "|$AGENT %p %s %c" > /proc/sys/kernel/core_pattern
+        echo "|$AGENT %p %s %c %P" > /proc/sys/kernel/core_pattern
 }
 
 #

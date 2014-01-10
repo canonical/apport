@@ -16,6 +16,10 @@ Improvements:
    reported manually with running the .crash file directly, but this
    sufficiently reduces the need to explicitly flag whether the report concerns
    a logout crash. (LP: #1067646)
+ * Add support for PID namespaces (Linux containers): Crashes originating from
+   a container on a system running a >= 3.12 kernel will be automatically
+   redirected to apport inside the container, or ignored if apport is not
+   installed in the container. Thanks to Stéphane Graber!
 
 Bug fixes:
  * test_signal_crashes: Clean up unexpected reports after every test, to avoid

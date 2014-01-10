@@ -248,9 +248,9 @@ def is_closing_session(pid, uid):
 #
 #################################################################
 
-if len(sys.argv) != 4:
+if len(sys.argv) not in (4, 5):
     try:
-        print('Usage: %s <pid> <signal number> <core file ulimit>' % sys.argv[0])
+        print('Usage: %s <pid> <signal number> <core file ulimit> [global pid]' % sys.argv[0])
         print('The core dump is read from stdin.')
     except IOError:
         # sys.stderr might not actually exist, expecially not when being called
@@ -259,12 +259,31 @@ if len(sys.argv) != 4:
     sys.exit(1)
 
 init_error_log()
+
+# Check if we received a valid global PID (kernel >= 3.12). If we do,
+# then compare it with the local PID. If they don't match, it's an
+# indication that the crash originated from another PID namespace. In that
+# case, attempt to forward the crash to apport in that namespace. If
+# apport can't be found, then simply log an entry in the host error log
+# and exit 0.
+if len(sys.argv) == 5 and sys.argv[4].isdigit() and sys.argv[4] != sys.argv[1]:
+    if os.path.exists('/proc/%s/root/%s' % (sys.argv[4], __file__)):
+        error_log('pid %s (host pid %s) crashed in a container with apport '
+                  'support, forwarding' % (sys.argv[1], sys.argv[4]))
+        sys.stderr.flush()
+        os.execv('/usr/sbin/chroot', ('chroot', '/proc/%s/root/' % sys.argv[4],
+                                      __file__, sys.argv[1], sys.argv[2],
+                                      sys.argv[3]))
+    else:
+        error_log('pid %s crashed in a container without apport support' % sys.argv[4])
+        sys.exit(0)
+
 check_lock()
 
 try:
     setup_signals()
 
-    (pid, signum, core_ulimit) = sys.argv[1:]
+    (pid, signum, core_ulimit) = sys.argv[1:4]
 
     # drop our process priority level to not disturb userspace so much
     try:
