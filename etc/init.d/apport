@@ -81,6 +81,9 @@ do_stop()
 
 case "$1" in
   start)
+	# don't start in containers
+	grep -zqs '^container=' /proc/1/environ && exit 0
+
         [ "$enabled" = "1" ] || [ "$force_start" = "1" ] || exit 0
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC:" "$NAME"
 	do_start
@@ -90,6 +93,9 @@ case "$1" in
 	esac
 	;;
   stop)
+	# don't stop in containers
+	grep -zqs '^container=' /proc/1/environ && exit 0
+
 	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC:" "$NAME"
 	do_stop
 	case "$?" in

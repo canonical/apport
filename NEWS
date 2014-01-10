@@ -30,6 +30,8 @@ Bug fixes:
    also apply it on bin/.
  * Print a warning when trying to retrace a report from a foreign architecture
    and gdb-multiarch is not installed. (LP: #1239395)
+ * etc/init.d/apport: Don't change core_pattern when running in a container, as
+   this influences the host and other containers, too. (LP: #1267728)
 
 2.12.7 (2013-11-19)
 -------------------
