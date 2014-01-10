@@ -1473,7 +1473,7 @@ class Report(problem_report.ProblemReport):
 
         command = ['gdb']
 
-        if self.get('Architecture') != packaging.get_system_architecture():
+        if 'Architecture' in self and self['Architecture'] != packaging.get_system_architecture():
             # check if we have gdb-multiarch
             which = subprocess.Popen(['which', 'gdb-multiarch'],
                                      stdout=subprocess.PIPE)
