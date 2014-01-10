@@ -2212,7 +2212,9 @@ No symbol table info available.
         self.assertAlmostEqual(r.get_timestamp(), time.time(), delta=1)
 
         r['Date'] = 'Thu Jan 9 12:00:00 2014'
-        self.assertAlmostEqual(r.get_timestamp(), 1389265200.0)
+        # delta is ±12 hours, as this depends on the timezone that the test is
+        # run in
+        self.assertAlmostEqual(r.get_timestamp(), 1389265200.0, delta=43200)
 
         del r['Date']
         self.assertEqual(r.get_timestamp(), None)
