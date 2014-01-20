@@ -1594,11 +1594,10 @@ class Report(problem_report.ProblemReport):
                         return None
                 else:
                     return None
-        except IOError:
+            # determine cgroup creation time
+            session_start_time = os.stat('/sys/fs/cgroup/systemd/' + my_cgroup).st_mtime
+        except (IOError, OSError):
             return None
-
-        # determine cgroup creation time
-        session_start_time = os.stat('/sys/fs/cgroup/systemd/' + my_cgroup).st_mtime
 
         return (my_cgroup, session_start_time)
 

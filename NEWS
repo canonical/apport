@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.13.2 (UNRELEASED)
+-------------------
+ * Fix crash if systemd cgroup is unreadable in /sys, such as in containers.
+   (LP: #1270783)
+
 2.13.1 (2014-01-10)
 -------------------
  * Fix report.test_get_timestamp test for running in other time zones.
