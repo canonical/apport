@@ -609,7 +609,7 @@ deb http://secondary.mirror tuxy extra
                                                     'usr/share/zoneinfo/zone.tab')))
 
         # complains about obsolete packages
-        self.assertEqual(len(result.splitlines()), 1)
+        self.assertGreaterEqual(len(result.splitlines()), 1)
         self.assertTrue('tzdata' in result)
         self.assertTrue('1.1' in result)
 
