@@ -176,6 +176,7 @@ class T(unittest.TestCase):
         # generate a test Contents.gz
         basedir = tempfile.mkdtemp()
         try:
+            # test Contents.gz for release pocket
             mapdir = os.path.join(basedir, 'dists', impl.get_distro_codename())
             os.makedirs(mapdir)
             with gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
@@ -187,6 +188,18 @@ usr/bin/frobnicate                                      foo/frob
 usr/bin/frob                                            foo/frob-utils
 bo/gu/s                                                 na/mypackage
 ''')
+
+            # test Contents.gz for -updates pocket
+            mapdir = os.path.join(basedir, 'dists', impl.get_distro_codename() + '-updates')
+            os.makedirs(mapdir)
+            with gzip.open(os.path.join(mapdir, 'Contents-%s.gz' %
+                                        impl.get_system_architecture()), 'w') as f:
+                f.write(b'''
+foo header
+FILE                                                    LOCATION
+lib/libnew.so.5                                         universe/libs/libnew5
+''')
+
             # use this as a mirror
             impl.set_mirror('file://' + basedir)
 
@@ -194,6 +207,9 @@ bo/gu/s                                                 na/mypackage
             # must not match frob (same file name prefix)
             self.assertEqual(impl.get_file_package('usr/bin/frob', True), 'frob-utils')
             self.assertEqual(impl.get_file_package('/usr/bin/frob', True), 'frob-utils')
+            # find files from -updates pocket
+            self.assertEqual(impl.get_file_package('/lib/libnew.so.5', False), None)
+            self.assertEqual(impl.get_file_package('/lib/libnew.so.5', True), 'libnew5')
 
             # invalid mirror
             impl.set_mirror('file:///foo/nonexisting')
@@ -204,13 +220,14 @@ bo/gu/s                                                 na/mypackage
             cache_dir = os.path.join(basedir, 'cache')
             os.mkdir(cache_dir)
             self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir), 'frob-utils')
-            self.assertEqual(len(os.listdir(cache_dir)), 1)
+            self.assertEqual(len(os.listdir(cache_dir)), 2)
             cache_file = os.listdir(cache_dir)[0]
             self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
 
             # valid cache, should not need to access the mirror
             impl.set_mirror('file:///foo/nonexisting')
             self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
+            self.assertEqual(impl.get_file_package('/lib/libnew.so.5', True, cache_dir), 'libnew5')
 
             # outdated cache, must refresh the cache and hit the invalid
             # mirror

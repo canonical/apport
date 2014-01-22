@@ -5,6 +5,9 @@ detailled list of changes, please see ChangeLog.
 -------------------
  * Fix crash if systemd cgroup is unreadable in /sys, such as in containers.
    (LP: #1270783)
+ * apt/dpkg: Also consider Contents.gz from updates/security/proposed pockets,
+   so that e. g. apport-retrace works for crash reports with files that are new
+   in those. Thanks to Brian Murray for the initial patch. (LP: #1271258)
 
 2.13.1 (2014-01-10)
 -------------------

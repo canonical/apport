@@ -836,44 +836,54 @@ Debug::NoLocking "true";
             release = self.get_distro_codename()
         else:
             release = self._distro_release_to_codename(release)
+        for pocket in ['-updates', '-security', '-proposed', '']:
+            map = os.path.join(dir, '%s%s-Contents-%s.gz' % (release, pocket, arch))
 
-        map = os.path.join(dir, '%s-Contents-%s.gz' % (release, arch))
+            # check if map exists and is younger than a day; if not, we need to
+            # refresh it
+            try:
+                st = os.stat(map)
+                age = int(time.time() - st.st_mtime)
+            except OSError:
+                age = None
 
-        # check if map exists and is younger than a day; if not, we need to
-        # refresh it
-        try:
-            st = os.stat(map)
-            age = int(time.time() - st.st_mtime)
-        except OSError:
-            age = None
+            if age is None or age >= 86400:
+                url = '%s/dists/%s%s/Contents-%s.gz' % (self._get_mirror(), release, pocket, arch)
 
-        if age is None or age >= 86400:
-            url = '%s/dists/%s/Contents-%s.gz' % (self._get_mirror(), release, arch)
+                try:
+                    src = urlopen(url)
+                except IOError:
+                    # we ignore non-existing pockets, but we do crash if the
+                    # release pocket doesn't exist
+                    if pocket == '':
+                        raise
+                    else:
+                        continue
 
-            src = urlopen(url)
-            with open(map, 'wb') as f:
-                while True:
-                    data = src.read(1000000)
-                    if not data:
-                        break
-                    f.write(data)
-            src.close()
-            assert os.path.exists(map)
+                with open(map, 'wb') as f:
+                    while True:
+                        data = src.read(1000000)
+                        if not data:
+                            break
+                        f.write(data)
+                src.close()
+                assert os.path.exists(map)
 
-        if file.startswith('/'):
-            file = file[1:]
+            if file.startswith('/'):
+                file = file[1:]
 
-        # zgrep is magnitudes faster than a 'gzip.open/split() loop'
-        package = None
-        zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
-                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out = zgrep.communicate()[0].decode('UTF-8')
-        # we do not check the return code, since zgrep -m1 often errors out
-        # with 'stdout: broken pipe'
-        if out:
-            package = out.split()[1].split(',')[0].split('/')[-1]
-
-        return package
+            # zgrep is magnitudes faster than a 'gzip.open/split() loop'
+            package = None
+            zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out = zgrep.communicate()[0].decode('UTF-8')
+            # we do not check the return code, since zgrep -m1 often errors out
+            # with 'stdout: broken pipe'
+            if out:
+                package = out.split()[1].split(',')[0].split('/')[-1]
+            if package:
+                return package
+        return None
 
     @classmethod
     def _build_apt_sandbox(klass, apt_root, apt_sources):
