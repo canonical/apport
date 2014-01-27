@@ -8,6 +8,9 @@ detailled list of changes, please see ChangeLog.
  * apt/dpkg: Also consider Contents.gz from updates/security/proposed pockets,
    so that e. g. apport-retrace works for crash reports with files that are new
    in those. Thanks to Brian Murray for the initial patch. (LP: #1271258)
+ * Only drop internal/private keys (starting with '_') from uploading to the
+   crash DB and from the UI report views, but not already when updating the
+   report. (LP: #1272505)
 
 2.13.1 (2014-01-10)
 -------------------

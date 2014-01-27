@@ -1422,11 +1422,7 @@ bOgUs=
                                             'restart': False}
         self.ui.run_crash(report_file)
         self.assertEqual(self.ui.opened_url, 'http://coreutils.bugs.example.com/%i' % self.ui.crashdb.latest_id())
-        # private key is not in original report
-        self.assertTrue('SourcePackage' in self.ui.report)
-        self.assertFalse('_Temp' in self.ui.report)
-
-        # private key is not in crash db
+        # internal key should not be uploaded to the crash db
         r = self.ui.crashdb.download(self.ui.crashdb.latest_id())
         self.assertTrue('SourcePackage' in r)
         self.assertFalse('_Temp' in r)

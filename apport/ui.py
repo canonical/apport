@@ -972,10 +972,6 @@ class UserInterface:
         '''
         # check if we already ran (we might load a processed report), skip if so
         if (self.report.get('ProblemType') == 'Crash' and 'Stacktrace' in self.report) or (self.report.get('ProblemType') != 'Crash' and 'Dependencies' in self.report):
-            # drop internal/uninteresting keys, that start with "_"
-            for k in list(self.report):
-                if k.startswith('_'):
-                    del self.report[k]
 
             if on_finished:
                 on_finished()
@@ -1112,11 +1108,6 @@ class UserInterface:
                     self.ui_shutdown()
                     sys.exit(1)
 
-        # drop internal/uninteresting keys, that start with "_"
-        for k in list(self.report):
-            if k.startswith('_'):
-                del self.report[k]
-
         if on_finished:
             on_finished()
 
@@ -1193,6 +1184,11 @@ class UserInterface:
         def progress_callback(sent, total):
             global __upload_progress
             __upload_progress = float(sent) / total
+
+        # drop internal/uninteresting keys, that start with "_"
+        for k in list(self.report):
+            if k.startswith('_'):
+                del self.report[k]
 
         self.ui_start_upload_progress()
         upthread = apport.REThread.REThread(target=self.crashdb.upload,

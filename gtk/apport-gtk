@@ -113,6 +113,10 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         self.tree_model.clear()
         for key in keys:
+            # ignore internal keys
+            if key.startswith('_'):
+                continue
+
             keyiter = self.tree_model.insert_before(None, None)
             self.tree_model.set_value(keyiter, 0, key)
 

@@ -322,6 +322,10 @@ class MainUserInterface(apport.ui.UserInterface):
             keys = self.report.keys()
         details.clear()
         for key in sorted(keys):
+            # ignore internal keys
+            if key.startswith('_'):
+                continue
+
             keyitem = QTreeWidgetItem([key])
             details.addTopLevelItem(keyitem)
 

@@ -133,6 +133,9 @@ class CLIUserInterface(apport.ui.UserInterface):
         details = ''
         max_show = 1000000
         for key in sorted(self.report):
+            # ignore internal keys
+            if key.startswith('_'):
+                continue
             details += '== %s =================================\n' % key
             # string value
             keylen = len(self.report[key])
