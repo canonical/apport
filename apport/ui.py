@@ -1062,7 +1062,7 @@ class UserInterface:
                         sys.exit(1)
                 bpthread.exc_raise()
                 if bpthread.return_value():
-                    self.report['KnownReport'] = bpthread.return_value()
+                    self.report['_KnownReport'] = bpthread.return_value()
 
             # check crash database if problem is known
             if self.report['ProblemType'] != 'Bug':
@@ -1079,9 +1079,9 @@ class UserInterface:
                 val = known_thread.return_value()
                 if val is not None:
                     if val is True:
-                        self.report['KnownReport'] = '1'
+                        self.report['_KnownReport'] = '1'
                     else:
-                        self.report['KnownReport'] = val
+                        self.report['_KnownReport'] = val
 
             # anonymize; needs to happen after duplicate checking, otherwise we
             # might damage the stack trace
@@ -1329,18 +1329,18 @@ class UserInterface:
         '''
         if not self.crashdb.accepts(self.report):
             return False
-        if 'KnownReport' not in self.report:
+        if '_KnownReport' not in self.report:
             return False
 
         # if we have an URL, open it; otherwise this is just a marker that we
         # know about it
-        if self.report['KnownReport'].startswith('http'):
+        if self.report['_KnownReport'].startswith('http'):
             self.ui_info_message(_('Problem already known'),
                                  _('This problem was already reported in the bug report displayed \
 in the web browser. Please check if you can add any further information that \
 might be helpful for the developers.'))
 
-            self.open_url(self.report['KnownReport'])
+            self.open_url(self.report['_KnownReport'])
         else:
             self.ui_info_message(_('Problem already known'),
                                  _('This problem was already reported to developers. Thank you!'))

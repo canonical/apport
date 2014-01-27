@@ -450,7 +450,7 @@ bOgUs=
         self.assertEqual(self.ui.opened_url, None)
 
         demo_url = 'http://example.com/1'
-        self.report['KnownReport'] = demo_url
+        self.report['_KnownReport'] = demo_url
         self.update_report_file()
         self.ui.load_report(self.report_file.name)
         self.assertEqual(self.ui.handle_duplicate(), True)
@@ -459,7 +459,7 @@ bOgUs=
 
         self.ui.opened_url = None
         demo_url = 'http://example.com/1'
-        self.report['KnownReport'] = '1'
+        self.report['_KnownReport'] = '1'
         self.update_report_file()
         self.ui.load_report(self.report_file.name)
         self.assertEqual(self.ui.handle_duplicate(), True)
@@ -1385,7 +1385,7 @@ bOgUs=
             r.write(f)
         self.ui.crashdb.known = lambda r: True
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.report['KnownReport'], '1')
+        self.assertEqual(self.ui.report['_KnownReport'], '1')
         self.assertEqual(self.ui.msg_severity, 'info')
         self.assertEqual(self.ui.opened_url, None)
 
@@ -1399,7 +1399,7 @@ bOgUs=
             r.write(f)
         self.ui.crashdb.known = lambda r: 'http://myreport/1'
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.report['KnownReport'], 'http://myreport/1')
+        self.assertEqual(self.ui.report['_KnownReport'], 'http://myreport/1')
         self.assertEqual(self.ui.msg_severity, 'info')
         self.assertEqual(self.ui.opened_url, 'http://myreport/1')
 
