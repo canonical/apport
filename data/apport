@@ -87,7 +87,6 @@ def init_error_log():
             return
         os.dup2(f, 1)
         os.dup2(f, 2)
-        os.close(f)
         sys.stderr = os.fdopen(2, 'wb')
         if sys.version_info.major >= 3:
             sys.stderr = io.TextIOWrapper(sys.stderr)

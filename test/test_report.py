@@ -1190,8 +1190,8 @@ def add_info(report, ui):
 
             # should print the exceptions to stderr
             err = sys.stderr.getvalue()
-            self.assertTrue('ZeroDivisionError:' in err, err)
-            self.assertTrue("global name 'unknown' is not defined" in err, err)
+            self.assertIn('ZeroDivisionError:', err)
+            self.assertIn("name 'unknown' is not defined", err)
 
             # should also add the exceptions to the report
             self.assertTrue('NameError:' in r['HookError_source_foo'],

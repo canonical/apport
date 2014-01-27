@@ -11,6 +11,10 @@ detailled list of changes, please see ChangeLog.
  * Only drop internal/private keys (starting with '_') from uploading to the
    crash DB and from the UI report views, but not already when updating the
    report. (LP: #1272505)
+ * data/apport: Fix stdout/stderr initialization of the error log, don't close
+   the original fd after dup2'ing as it is usually already fd 1. This makes
+   Apport work with Python 3.4. (LP: #1272355)
+ * Adjust report tests to work with Python 3.4 (LP: #1272355)
 
 2.13.1 (2014-01-10)
 -------------------
