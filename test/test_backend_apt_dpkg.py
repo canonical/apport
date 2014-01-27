@@ -220,8 +220,8 @@ lib/libnew.so.5                                         universe/libs/libnew5
             cache_dir = os.path.join(basedir, 'cache')
             os.mkdir(cache_dir)
             self.assertEqual(impl.get_file_package('usr/bin/frob', True, cache_dir), 'frob-utils')
-            self.assertEqual(len(os.listdir(cache_dir)), 2)
-            cache_file = os.listdir(cache_dir)[0]
+            cache_dir_files = os.listdir(cache_dir)
+            self.assertEqual(len(cache_dir_files), 2)
             self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
 
             # valid cache, should not need to access the mirror
@@ -231,6 +231,10 @@ lib/libnew.so.5                                         universe/libs/libnew5
 
             # outdated cache, must refresh the cache and hit the invalid
             # mirror
+            if 'updates' in cache_dir_files[0]:
+                cache_file = cache_dir_files[1]
+            else:
+                cache_file = cache_dir_files[0]
             now = int(time.time())
             os.utime(os.path.join(cache_dir, cache_file), (now, now - 90000))
 

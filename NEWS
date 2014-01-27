@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.13.3 (UNRELEASED)
+-------------------
+ * Fix backend_apt_dpkg.test_get_file_package_uninstalled test that got broken
+   in the previous release.
+
 2.13.2 (2014-01-27)
 -------------------
  * Fix crash if systemd cgroup is unreadable in /sys, such as in containers.
