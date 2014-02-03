@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-19 08:43+0100\n"
-"PO-Revision-Date: 2014-02-01 14:35+0000\n"
+"PO-Revision-Date: 2014-02-02 17:31+0000\n"
 "Last-Translator: Vilson Gjeci <vilsongjeci@gmail.com>\n"
 "Language-Team: Albanian <sq@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-02-02 05:25+0000\n"
+"X-Launchpad-Export-Date: 2014-02-03 05:14+0000\n"
 "X-Generator: Launchpad (build 16916)\n"
 "Language: sq\n"
 
@@ -146,7 +146,7 @@ msgstr "Juve nuk ju lejohet të hyni në këtë raportim të problemit."
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:347
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:347
 msgid "Error"
-msgstr "Veprim i gabuar"
+msgstr "Gabim"
 
 #: ../apport/ui.py:348
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:348
@@ -220,7 +220,7 @@ msgstr "Paketa %s nuk ekziston"
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:694
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:699
 msgid "Cannot create report"
-msgstr ""
+msgstr "Nuk mund të krijoj raport"
 
 #: ../apport/ui.py:521 ../apport/ui.py:567 ../apport/ui.py:584
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:521
@@ -241,6 +241,10 @@ msgid ""
 "\n"
 "Please create a new report using \"apport-bug\"."
 msgstr ""
+"Ju nuk jeni raportues apo nënshkrues i raportimit të këtij problemi, ose "
+"raporti është i dyzuar ose tashmë i mbyllur.\n"
+"\n"
+"Ju lutemi të krijoni një raport të ri duke përdorur \"apport-bug\"."
 
 #: ../apport/ui.py:531
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:531
@@ -255,6 +259,14 @@ msgid ""
 "\n"
 "Do you really want to proceed?"
 msgstr ""
+"Ju nuk jeni raportuesi i këtij problemi. Është shumë më e lehtë të shënoni "
+"një defekt si i dyfishtë i një tjetri se sa të lëvizni komentet dhe "
+"bashkangjitjet në njl gabim të ri.\n"
+"\n"
+"Si rrjedhojë, ne ju rekomandojmë të raportoni një gabim të ri duke përdorur "
+"\"apport-bug\" dhe të bëni një koment në këtë gabim për atë që po shënoni.\n"
+"\n"
+"Dëshironi me të vërtetë të vazhdoni?"
 
 #: ../apport/ui.py:568 ../apport/ui.py:585
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:568
@@ -262,7 +274,7 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:568
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:585
 msgid "No additional information collected."
-msgstr ""
+msgstr "Nuk u mblodh informacion shtesë."
 
 #: ../apport/ui.py:636
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:636
@@ -299,19 +311,19 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:695
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:700
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
+msgstr "xprop dështoi në përcaktimin e ID të proçesit të dritares"
 
 #: ../apport/ui.py:714
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:714
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:714
 msgid "%prog <report number>"
-msgstr ""
+msgstr "%prog <report number>"
 
 #: ../apport/ui.py:716
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:716
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:716
 msgid "Specify package name."
-msgstr ""
+msgstr "Specifiko emrin e paketës."
 
 #: ../apport/ui.py:718 ../apport/ui.py:769
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:718
@@ -320,6 +332,7 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:769
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
+"Shtojini një etiketë më shumë raportit. Mund të specifikohet shumë herë."
 
 #: ../apport/ui.py:748
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:748
@@ -346,12 +359,15 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:753
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
+"Kliko një ditare si shënjestër për të krijuar një raport rreth problemit."
 
 #: ../apport/ui.py:755
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:755
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:755
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
+"Nise në mënyrë të përditësimit të gabimit. Mund të marrë një --paketë "
+"opsionale."
 
 #: ../apport/ui.py:757
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:757
@@ -382,6 +398,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
+"Specifiko një program të nisur në mënyrën --file-bug. Nëse ky specifikohet, "
+"informacioni i gabimit do të përmbajë më tepër informacion. (Implikohet nëse "
+"pid është dhënë vetëm si argument)."
 
 #: ../apport/ui.py:763
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:763
@@ -408,6 +427,9 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
+"Në mënyrën e përshkrimit të një gabimi, ruajeni informacionin e mbledhur në "
+"një skedar në vend që ta raportoni atë. Ky skedar mund të raportohet më vonë "
+"nga një makinë tjetër."
 
 #: ../apport/ui.py:771
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:771
@@ -576,7 +598,7 @@ msgstr "Ju lutemi zgjidhni (%s):"
 #: ../bin/apport-cli.py:148 ../debian/tmp/usr/bin/apport-cli.py:148
 #, python-format
 msgid "(%i bytes)"
-msgstr ""
+msgstr "(%i bytes)"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:342 ../bin/apport-cli.py:150
 #: ../debian/tmp/usr/bin/apport-cli.py:150 ../kde/apport-kde.py:342
@@ -806,11 +828,20 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
+"Ndërto një kuti rëre të përkohshme dhe shkarko/instalo paketat e nevojshme "
+"dhe simbolet e korrigjimit të gabimeve aty; pa këtë opsion ai kujton se "
+"paketat e nevojshme dhe simbolet e korrigjimit të gabimeve janë instaluar "
+"tashmë në sistem. AArgumenti ju drejton në drejtorinë e bazës së sistemit të "
+"konfigurimit të paketave; nëse ju specifikoni \"system\", ai do të përdorë "
+"skedarët e konfigurimit të sistemit, por më pas do të jetë në gjendje vetëm "
+"të gjurmojë dëmitmet që kanë ndodhur në këtë version të programit."
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
+"Raporto progresin e shkarkimit/instalimit kur instalon paketat në kutinë e "
+"rërës"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:53 ../bin/apport-retrace.py:53
 msgid "Prepend timestamps to log messages, for batch operation"
@@ -818,7 +849,7 @@ msgstr "Vendosu gjurmë kohore mesazheve në hyrje, për veprime në grupe"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr ""
+msgstr "Drejtoria e ruajtjes së paketave të shkarkuara në kutinë e rërës"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
 msgid ""
@@ -834,6 +865,7 @@ msgstr ""
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
+"Instalo një paketë shtesë në kutinë e rërës (mund të specifikohet shumë herë)"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
 msgid ""
@@ -1094,25 +1126,27 @@ msgstr "Gabim: %s nuk është i ekzekutueshëm. Po ndalohet."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:294 ../kde/apport-kde.py:294
 msgid "Username:"
-msgstr ""
+msgstr "Emri i Përdoruesit:"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:295 ../kde/apport-kde.py:295
 msgid "Password:"
-msgstr ""
+msgstr "Fjalëkalimi:"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:386 ../kde/apport-kde.py:386
 msgid "Collecting Problem Information"
-msgstr ""
+msgstr "Duke Mbledhur Informacion për Problemin"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:388 ../kde/apport-kde.py:388
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
 msgstr ""
+"Informacioni i mbledhur mund t'iu dërgohet krijuesve për të përmirësuar "
+"programin. Kjo mund të zgjasë disa minuta."
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:414 ../kde/apport-kde.py:414
 msgid "Uploading Problem Information"
-msgstr ""
+msgstr "Duke Ngarkuar Informacionin e Problemit"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:416
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../kde/apport-kde.py:416
@@ -1129,7 +1163,7 @@ msgstr ""
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../kde/apport-kde.py:450
 #: ../kde/apport-kde.py:486 ../gtk/apport-gtk.ui.h:1
 msgid "Apport"
-msgstr ""
+msgstr "Apport"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:1
 msgid "Collect system information"
