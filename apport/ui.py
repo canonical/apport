@@ -1136,11 +1136,30 @@ class UserInterface:
         os.setsid()
         os.close(r)
 
-        # If we are called through sudo, determine the real user id and run the
-        # browser with it to get the user's web browser settings.
+        # If we are called through pkexec/sudo, determine the real user id and
+        # run the browser with it to get the user's web browser settings.
+
         try:
             uid = int(os.getenv('PKEXEC_UID', os.getenv('SUDO_UID')))
             sudo_prefix = ['sudo', '-H', '-u', '#' + str(uid)]
+            # restore some environment for xdg-open; it's incredibly hard, or
+            # alternatively, unsafe to funnel it through pkexec/env/sudo, so
+            # grab it from gvfsd
+            try:
+                out = subprocess.check_output(
+                    ['pgrep', '-a', '-x', '-u', str(uid), 'gvfsd']).decode('UTF-8')
+                pid = out.splitlines()[0].split()[0]
+
+                # find the D-BUS address
+                with open('/proc/%s/environ' % pid, 'rb') as f:
+                    env = f.read().split(b'\0')
+                for e in env:
+                    if e.startswith(b'DBUS_SESSION_BUS_ADDRESS='):
+                        sudo_prefix.append('DBUS_SESSION_BUS_ADDRESS=' + e.split(b'=', 1)[1].decode())
+                        break
+            except (subprocess.CalledProcessError, IOError):
+                pass
+
         except TypeError:
             sudo_prefix = []
 
