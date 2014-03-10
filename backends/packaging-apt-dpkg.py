@@ -362,9 +362,11 @@ class __AptDpkgPackageInfo(PackageInfo):
             match = self.__fgrep_files(file, all_lists)
 
         if match:
+            # no version here
             return os.path.splitext(os.path.basename(match))[0].split(':')[0]
 
         if uninstalled:
+            # no version here
             return self._search_contents(file, map_cachedir, release, arch)
         else:
             return None
@@ -605,15 +607,15 @@ Debug::NoLocking "true";
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
         if not tmp_aptroot:
-            c = self._sandbox_cache(aptroot, apt_sources, fetchProgress)
+            cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress)
         else:
             self._build_apt_sandbox(aptroot, apt_sources)
-            c = apt.Cache(rootdir=os.path.abspath(aptroot))
+            cache = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
-                c.update(fetchProgress)
+                cache.update(fetchProgress)
             except apt.cache.FetchFailedException as e:
                 raise SystemError(str(e))
-            c.open()
+            cache.open()
 
         obsolete = ''
 
@@ -623,7 +625,12 @@ Debug::NoLocking "true";
         real_pkgs = set()
         for (pkg, ver) in packages:
             try:
-                candidate = c[pkg].candidate
+                versions = cache[pkg].versions
+                if ver not in versions:
+                    # try the most recent if we don't have the right version
+                    candidate = cache[pkg].candidate
+                else:
+                    candidate = cache[pkg].versions[ver]
             except KeyError:
                 candidate = None
             if not candidate:
@@ -657,7 +664,7 @@ Debug::NoLocking "true";
                     # Replaces/Depends, we can safely choose the first value
                     # here.
                     conflict = conflict[0]
-                    if c.is_virtual_package(conflict[0]):
+                    if cache.is_virtual_package(conflict[0]):
                         try:
                             providers = virtual_mapping[conflict[0]]
                         except KeyError:
@@ -680,32 +687,32 @@ Debug::NoLocking "true";
                                 os.unlink(path)
 
             if candidate.architecture != 'all':
-                if pkg + '-dbg' in c:
+                if pkg + '-dbg' in cache:
                     real_pkgs.add(pkg + '-dbg')
                 else:
                     # install all -dbg from the source package
                     if src_records.lookup(candidate.source_name):
-                        dbgs = [p for p in src_records.binaries if p.endswith('-dbg') and p in c]
+                        dbgs = [p for p in src_records.binaries if p.endswith('-dbg') and p in cache]
                     else:
                         dbgs = []
                     if dbgs:
                         for p in dbgs:
                             real_pkgs.add(p)
                     else:
-                        if pkg + '-dbgsym' in c:
+                        if pkg + '-dbgsym' in cache:
                             real_pkgs.add(pkg + '-dbgsym')
-                            if c[pkg + '-dbgsym'].candidate.version != candidate.version:
+                            if cache[pkg + '-dbgsym'].candidate.version != candidate.version:
                                 obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
-                                    pkg, candidate.version, c[pkg + '-dbgsym'].candidate.version)
+                                    pkg, candidate.version, cache[pkg + '-dbgsym'].candidate.version)
 
         for p in real_pkgs:
-            c[p].mark_install(False, False)
+            cache[p].mark_install(False, False)
 
         last_written = time.time()
         # fetch packages
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
         try:
-            c.fetch_archives(fetcher=fetcher)
+            cache.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as e:
             apport.error('Package download error, try again later: %s', str(e))
             sys.exit(99)  # transient error
@@ -879,6 +886,7 @@ Debug::NoLocking "true";
             out = zgrep.communicate()[0].decode('UTF-8')
             # we do not check the return code, since zgrep -m1 often errors out
             # with 'stdout: broken pipe'
+            # no version here
             if out:
                 package = out.split()[1].split(',')[0].split('/')[-1]
             if package:
