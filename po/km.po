@@ -14,19 +14,19 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-01-28 05:15+0000\n"
-"X-Generator: Launchpad (build 16914)\n"
+"X-Launchpad-Export-Date: 2014-03-15 05:38+0000\n"
+"X-Generator: Launchpad (build 16963)\n"
 "Language: \n"
 
-#: ../apport/ui.py:124
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:124
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:124
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:124
+#: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
 msgstr "កញ្ចប់​នេះ​ហាក់​បី​ដូច​ជា​ដំឡើង​មិន​ត្រឹមត្រូវ​ទេ"
 
-#: ../apport/ui.py:128
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:128
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:128
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:128
+#: ../apport/ui.py:128
 #, python-format
 msgid ""
 "This is not an official %s package. Please remove any third party package "
@@ -35,9 +35,9 @@ msgstr ""
 "នេះ​មិនមែន​ជា​កញ្ចប់ %s ផ្លូវ​ការ​ទេ ។ សូម​យក​កញ្ចប់​ភាគី​ទី​បី​ចេញ "
 "ហើយ​ព្យាយាម​ម្ដ​ងទៀត ។"
 
-#: ../apport/ui.py:145
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:145
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:145
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:145
+#: ../apport/ui.py:145
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -49,31 +49,31 @@ msgstr ""
 "សូម​ធ្វើ​វា​​ឲ្យ​កញ្ចប់​ដូច​ខាង​ក្រោម​ប្រសើរ​ឡើង​ "
 "ហើយ​ពិនិត្យ​មើល​ថាតើ​នៅ​តែ​មាន​បញ្ហា​កើត​ឡើង​ទៀត​ដែរឬទេ ៖ %s"
 
-#: ../apport/ui.py:269
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:269
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:269
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:269
+#: ../apport/ui.py:269
 msgid "unknown program"
 msgstr "មិន​ស្គាល់​កម្មវិធី"
 
-#: ../apport/ui.py:270
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:270
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:270
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:270
+#: ../apport/ui.py:270
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "សូម​ទោស កម្មវិធី \"%s\" មិន​ត្រឹមត្រូវ"
 
-#: ../apport/ui.py:272 ../apport/ui.py:1287
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:272
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1287
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:272
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1287
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1306
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:272
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1306
+#: ../apport/ui.py:272 ../apport/ui.py:1306
 #, python-format
 msgid "Problem in %s"
 msgstr "បញ្ហា​នៅ​ក្នុង %s"
 
-#: ../apport/ui.py:273
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:273
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:273
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:273
+#: ../apport/ui.py:273
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -82,10 +82,17 @@ msgstr ""
 "ដើម្បី​ធ្វើវិភាគ​ដោយស្វ័យប្រវត្តិ ហើយ​ផ្ញើ​របាយការណ៍​ទៅ​អ្នក​អភិវឌ្ឍន៍ ។"
 
 #. package does not exist
-#: ../apport/ui.py:288 ../apport/ui.py:294 ../apport/ui.py:300
-#: ../apport/ui.py:343 ../apport/ui.py:351 ../apport/ui.py:478
-#: ../apport/ui.py:481 ../apport/ui.py:682 ../apport/ui.py:1113
-#: ../apport/ui.py:1259 ../apport/ui.py:1263
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:288
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:294
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:300
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:343
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:351
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:478
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:481
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:682
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1113
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1278
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1282
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:276
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui.py:1049
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:288
@@ -97,83 +104,76 @@ msgstr ""
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:481
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:682
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1113
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1259
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1263
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:288
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:294
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:300
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:343
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:351
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:478
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:481
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:682
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1113
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1259
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1263
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1278
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1282
+#: ../apport/ui.py:288 ../apport/ui.py:294 ../apport/ui.py:300
+#: ../apport/ui.py:343 ../apport/ui.py:351 ../apport/ui.py:478
+#: ../apport/ui.py:481 ../apport/ui.py:682 ../apport/ui.py:1113
+#: ../apport/ui.py:1278 ../apport/ui.py:1282
 msgid "Invalid problem report"
 msgstr "របាយការណ៍​បញ្ហា​មិន​ត្រឹមត្រូវ"
 
-#: ../apport/ui.py:289 ../apport/ui.py:1265
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:289
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1265
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:289
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1265
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1284
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:289
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1284
+#: ../apport/ui.py:289 ../apport/ui.py:1284
 msgid "This problem report is damaged and cannot be processed."
 msgstr "របាយការណ៍​អំពី​បង្ហាញ​នេះ​ខូច ហើយ​មិន​អាច​ធ្វើ​បន្ត​បាន​ទេ ។"
 
-#: ../apport/ui.py:295
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:295
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:295
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:295
+#: ../apport/ui.py:295
 msgid "The report belongs to a package that is not installed."
 msgstr "របាយការណ៍​ស្ថិត​នៅ​ក្នុង​កញ្ចប់​ដែល​មិន​ត្រូវ​បាន​ដំឡើង ។"
 
-#: ../apport/ui.py:301
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:301
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:301
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:301
+#: ../apport/ui.py:301
 msgid "An error occurred while attempting to process this problem report:"
 msgstr "កំហុស​មួយ​បាន​កើត​ឡើង​ នៅ​ពេល​ព្យាយាម​ដំណើរការ​របាយការណ៍​បញ្ហា​នេះ ៖"
 
-#: ../apport/ui.py:344
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:344
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:344
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:344
+#: ../apport/ui.py:344
 msgid "You are not allowed to access this problem report."
 msgstr "អ្នក​មិន​ត្រូវ​បាន​អនុញ្ញាត​ឲ្យ​ចូល​មើល​របាយការណ៍​បញ្ហា​នេះ ។"
 
-#: ../apport/ui.py:347
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:347
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:347
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:347
+#: ../apport/ui.py:347
 msgid "Error"
 msgstr "កំហុស"
 
-#: ../apport/ui.py:348
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:348
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:348
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:348
+#: ../apport/ui.py:348
 msgid "There is not enough disk space available to process this report."
 msgstr "មិនមាន​ទំហំ​គ្រប់គ្រាន់​ ដើម្បី​ដំណើរការ​របាយការណ៍​នេះ​ទេ ។"
 
-#: ../apport/ui.py:432
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:432
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:432
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:432
+#: ../apport/ui.py:432
 msgid "No package specified"
 msgstr "គ្មាន​កញ្ចប់​បាន​បញ្ជាក់​ទេ"
 
-#: ../apport/ui.py:433
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:433
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:433
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:433
+#: ../apport/ui.py:433
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "អ្នក​ត្រូវ​តែ​បញ្ជាក់​កញ្ចប់ ឬ​ PID ។ ចំពោះ​ព័ត៌មាន​បន្ថែម សូម​មើល --help ។"
 
-#: ../apport/ui.py:456
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:456
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:456
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:456
+#: ../apport/ui.py:456
 msgid "Permission denied"
 msgstr "សិទ្ធិ​ត្រូវ​បាន​បដិសេធ"
 
-#: ../apport/ui.py:457
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:457
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:457
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:457
+#: ../apport/ui.py:457
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -181,56 +181,56 @@ msgstr ""
 "ដំណើរការ​ដែល​បាន​បញ្ជាក់​មិនមែនជា​របស់​អ្នក​ទេ ។ "
 "សូម​ដំណើរការ​កម្មវិធី​នេះ​ជា​ម្ចាស់​ដំណើរការ ឬ​ដំណើរការ​ជា root ។"
 
-#: ../apport/ui.py:459
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:459
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:459
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:459
+#: ../apport/ui.py:459
 msgid "Invalid PID"
 msgstr "PID មិន​ត្រឹមត្រូវ"
 
-#: ../apport/ui.py:460
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:460
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:460
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:460
+#: ../apport/ui.py:460
 msgid "The specified process ID does not belong to a program."
 msgstr ""
 "លេខ​សម្គាល់​ដំណើរការ​ដែល​បាន​បញ្ជាក់ មិន​មែន​ជា​របស់​កម្មវិធី​​នេះ​ទេ ។"
 
-#: ../apport/ui.py:479
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:479
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:479
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:479
+#: ../apport/ui.py:479
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "ស្គ្រីប​សញ្ញា %s មិន​បាន​កំណត់​កញ្ចប់​ដែល​មាន​ប្រសិទ្ធភាព​ឡើយ"
 
-#: ../apport/ui.py:482
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:482
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:482
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:482
+#: ../apport/ui.py:482
 #, python-format
 msgid "Package %s does not exist"
 msgstr "គ្មាន​កញ្ចប់ %s ឡើយ"
 
-#: ../apport/ui.py:506 ../apport/ui.py:694 ../apport/ui.py:699
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:506
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:694
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:699
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:506
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:694
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:699
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:506
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:694
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:699
+#: ../apport/ui.py:506 ../apport/ui.py:694 ../apport/ui.py:699
 msgid "Cannot create report"
 msgstr "មិន​អាច​ធ្វើ​របាយការណ៍​​បាន​ឡើយ"
 
-#: ../apport/ui.py:521 ../apport/ui.py:567 ../apport/ui.py:584
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:521
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:567
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:584
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:521
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:567
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:584
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:521
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:567
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:584
+#: ../apport/ui.py:521 ../apport/ui.py:567 ../apport/ui.py:584
 msgid "Updating problem report"
 msgstr "ធ្វើ​បច្ចុប្បន្នភាព​របាយការណ៍​​អំពី​បញ្ហា"
 
-#: ../apport/ui.py:522
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:522
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:522
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:522
+#: ../apport/ui.py:522
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -242,9 +242,9 @@ msgstr ""
 "\n"
 "សូម​ធ្វើ​របាយការណ៍​ថ្មី \"apport-bug\" ។"
 
-#: ../apport/ui.py:531
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:531
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:531
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:531
+#: ../apport/ui.py:531
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -264,82 +264,82 @@ msgstr ""
 "\n"
 "តើ​អ្នក​ពិត​ជា​ចង់​ធ្វើ​បន្ត​ឬ ?"
 
-#: ../apport/ui.py:568 ../apport/ui.py:585
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:568
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:585
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:568
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:585
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:568
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:585
+#: ../apport/ui.py:568 ../apport/ui.py:585
 msgid "No additional information collected."
 msgstr "គ្មាន​ព័ត៌មាន​បន្ថែម​​ដែល​បាន​ប្រមូល​ឡើយ ។"
 
-#: ../apport/ui.py:636
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:636
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:636
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:636
+#: ../apport/ui.py:636
 msgid "What kind of problem do you want to report?"
 msgstr "តើ​ប្រភេទ​បញ្ហា​អ្វី​ដែល​អ្នក​ចង់​រាយការណ៍ ?"
 
-#: ../apport/ui.py:653
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:653
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:653
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:653
+#: ../apport/ui.py:653
 msgid "Unknown symptom"
 msgstr "មិន​ស្គាល់​សញ្ញា"
 
-#: ../apport/ui.py:654
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:654
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:654
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:654
+#: ../apport/ui.py:654
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "មិន​ស្គាល់​សញ្ញា \"%s\" ។"
 
-#: ../apport/ui.py:685
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:685
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:685
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:685
+#: ../apport/ui.py:685
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
 "ក្រោយ​ពេល​​បិទ​សារ​នេះ សូម​ចុច​លើ​​បង្អួច​កម្មវិធី ដើម្បី​រាយការណ៍​អំពី​វា ។"
 
-#: ../apport/ui.py:695 ../apport/ui.py:700
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:695
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:700
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:695
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:700
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:695
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:700
+#: ../apport/ui.py:695 ../apport/ui.py:700
 msgid "xprop failed to determine process ID of the window"
 msgstr "បាន​បរាជ័យ xprop ដើម្បី​កំណត់​លេខ​សម្គាល់​ដំណើរការ​របស់​បង្អួច"
 
-#: ../apport/ui.py:714
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:714
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:714
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:714
+#: ../apport/ui.py:714
 msgid "%prog <report number>"
 msgstr "%prog <report number>"
 
-#: ../apport/ui.py:716
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:716
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:716
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:716
+#: ../apport/ui.py:716
 msgid "Specify package name."
 msgstr "បញ្ជាក់​ឈ្មោះ​កញ្ចប់ ។"
 
-#: ../apport/ui.py:718 ../apport/ui.py:769
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:718
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:769
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:718
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:769
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:718
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:769
+#: ../apport/ui.py:718 ../apport/ui.py:769
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "បន្ថែម​ស្លាក​​ខាងក្រៅ​ដើម្បី​រាយការណ៍ ។ អាច​ត្រូវ​បាន​បញ្ជាក់​ពេលវេលា​ច្រើន ។"
 
-#: ../apport/ui.py:748
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:748
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:748
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:748
+#: ../apport/ui.py:748
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
-#: ../apport/ui.py:751
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:751
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:751
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:751
+#: ../apport/ui.py:751
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -350,23 +350,23 @@ msgstr ""
 "បង្ហាញ​បញ្ជី​សញ្ញា​ដែល​មិន​ស្គាល់ ។  (បាន​បញ្ជាក់ "
 "ប្រសិនបើ​អាគុយម៉ង់​ត្រូវ​បាន​ផ្ដល់​ឲ្យ ។)"
 
-#: ../apport/ui.py:753
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:753
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:753
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:753
+#: ../apport/ui.py:753
 msgid "Click a window as a target for filing a problem report."
 msgstr "ចុច​លើ​បង្អួច​ដែល​ជា​គោលដៅ​សម្រាប់​បំពេញ​របាយការណ៍​អំពី​បញ្ហា ។"
 
-#: ../apport/ui.py:755
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:755
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:755
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:755
+#: ../apport/ui.py:755
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "ចាប់ផ្ដើម​ជា​របៀប​​ការ​ធ្វើ​បច្ចុប្បន្នភាព​កំហុស ។ អាច​យក​កញ្ចប់ --ជា​ជម្រើស "
 "។"
 
-#: ../apport/ui.py:757
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:757
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:757
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:757
+#: ../apport/ui.py:757
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -374,9 +374,9 @@ msgstr ""
 "ឯកសារ​របាយការណ៍​កំហុស​អំពី​សញ្ញា ។ (បាន​បញ្ជាក់ "
 "ប្រសិនបើ​ឈ្មោះ​សញ្ញា​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:759
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:759
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:759
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:759
+#: ../apport/ui.py:759
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -385,9 +385,9 @@ msgstr ""
 "ត្រូវ​បាន​បញ្ជាក់ ។ (បាន​បញ្ជាក់ "
 "ប្រសិនបើ​​ឈ្មោះ​កញ្ចប់​ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:761
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:761
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:761
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:761
+#: ../apport/ui.py:761
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -397,15 +397,15 @@ msgstr ""
 "វា​ត្រូវ​បាន​បញ្ជាក់ របាយការណ៍​កំហុស​នឹង​មាន​ព័ត៌មាន​បន្ថែម ។  (បាន​បញ្ជាក់ "
 "ប្រសិនបើ pid ត្រូវ​បាន​ផ្ដល់​ជា​អាគុយម៉ង់​តែមួយ ។)"
 
-#: ../apport/ui.py:763
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:763
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:763
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:763
+#: ../apport/ui.py:763
 msgid "The provided pid is a hanging application."
 msgstr "pid ដែល​បាន​ផ្ដល់​ជា​កម្ម​វិធី​ដែល​បាន​ព្យួរ។"
 
-#: ../apport/ui.py:765
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:765
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:765
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:765
+#: ../apport/ui.py:765
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -414,9 +414,9 @@ msgstr ""
 "របាយការណ៍​គាំង​​ដែល​បាន​ផ្ដល់​ពី​ឯកសារ .apport ឬ .crash ជំនួស​នៅ​ក្នុង%s. ( "
 "បាន​បញ្ជាក់​ ប្រសិនបើ​ឯកសារ​ត្រូវ​បាន​ផ្ដល់​​តែ​អាគុយម៉ង់ ។)"
 
-#: ../apport/ui.py:767
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:767
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:767
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:767
+#: ../apport/ui.py:767
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -426,54 +426,54 @@ msgstr ""
 "រក្សាទុក​ព័ត៌មាន​ដែល​បាន​ប្រមូល​នៅ​ក្នុង​ឯកសារ​​ជំនួស​ការ​ធ្វើ​របាយការណ៍​​អំព"
 "ី​វា ។ ឯកសារ​នេះ​​អាច​ត្រូវ​បាន​​រាយការណ៍​​ក្រោយ​ពេល​ពី​ម៉ាស៊ីន​ខុសគ្នា ។"
 
-#: ../apport/ui.py:771
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:771
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:771
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:771
+#: ../apport/ui.py:771
 msgid "Print the Apport version number."
 msgstr "បោះពុម្ព​លេខ​កំណែ Apport ។"
 
-#: ../apport/ui.py:911
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:911
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:911
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:911
+#: ../apport/ui.py:911
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "វា​នឹង​ចាប់ផ្ដើម apport-retrace នៅ​ក្នុង​បង្អួយ​ស្ថានីយ "
 "ដើម្បី​ត្រួតពិនិត្យ​​ភាគ​គាំង ។"
 
-#: ../apport/ui.py:912
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:912
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:912
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:912
+#: ../apport/ui.py:912
 msgid "Run gdb session"
 msgstr "រត់​សម័យ  gdb"
 
-#: ../apport/ui.py:913
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:913
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:913
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:913
+#: ../apport/ui.py:913
 msgid "Run gdb session without downloading debug symbols"
 msgstr "រត់​សម័យ gdb ដោយ​មិន​ទាញ​យក​និមិត្ត​សញ្ញា​បំបាត់​កំហុស"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:915
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:915
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:915
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:915
+#: ../apport/ui.py:915
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "ធ្វើ​បច្ចុប្បន្ន %s ជា​មួយ​ដាន​​ជា​​​និមិត្ត​សញ្ញា​ពេញលេញ"
 
-#: ../apport/ui.py:991 ../apport/ui.py:1001
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:991
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1001
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:991
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1001
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:991
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1001
+#: ../apport/ui.py:991 ../apport/ui.py:1001
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr ""
 "របាយការណ៍​អំពី​បញ្ហា​នេះ​អនុវត្ត​កម្មវិធី​ដែល​មិន​ត្រូវ​បាន​ដំឡើង​ទៀត​ឡើយ ។"
 
-#: ../apport/ui.py:1016
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1016
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1016
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1016
+#: ../apport/ui.py:1016
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -482,65 +482,65 @@ msgstr ""
 "បញ្ហា​បានកើត​ឡើង​ជា​មួយ​កម្មវិធី %s "
 "ដែល​បាន​ផ្លាស់ប្ដូរ​តាំង​ពី​​មាន​ការ​គាំង ។"
 
-#: ../apport/ui.py:1114
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1114
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1114
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1114
+#: ../apport/ui.py:1114
 msgid "Could not determine the package or source package name."
 msgstr "មិន​អាច​កំណត់​​ ឈ្មោះ​កញ្ចប់​ប្រភព ឬ​កញ្ចប់​បាន​ឡើយ ។"
 
-#: ../apport/ui.py:1132
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1132
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1132
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1132
+#: ../apport/ui.py:1132
 msgid "Unable to start web browser"
 msgstr "មិន​អាច​ចាប់ផ្ដើម​កម្មវិធី​រុករក​បណ្ដាញ​បាន​ទេ"
 
-#: ../apport/ui.py:1133
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1133
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1133
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1133
+#: ../apport/ui.py:1133
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "មិន​អាច​ចាប់ផ្ដើម​កម្មវិធី​រុករក​បណ្ដាញ ដើម្បី​បើក %s បាន​ទេ ។"
 
-#: ../apport/ui.py:1213
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1213
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1213
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1232
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1232
+#: ../apport/ui.py:1232
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 "សូម​បញ្ចូល​ព័ត៌មាន​អំពី​គណនី​របស់​អ្នក​​សម្រាប់​ប្រព័ន្ធ​តាមដាន​កំហុស %s"
 
-#: ../apport/ui.py:1225
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1225
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1225
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1244
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1244
+#: ../apport/ui.py:1244
 msgid "Network problem"
 msgstr "បញ្ហា​បណ្ដាញ"
 
-#: ../apport/ui.py:1227
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1227
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1227
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1246
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1246
+#: ../apport/ui.py:1246
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "មិន​អាច​តភ្ជាប់​ទៅកាន់​មូលដ្ឋាន​ទិន្នន័យ​គាំង​បាន​ទេ "
 "សូម​ពិនិត្យមើល​ការ​តភ្ជាប់​អ៊ីនធឺណិត​របស់​អ្នក ។"
 
-#: ../apport/ui.py:1254
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1254
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1254
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1273
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1273
+#: ../apport/ui.py:1273
 msgid "Memory exhaustion"
 msgstr "ការ​ប្រើ​​​អស់​អង្គ​ចងចាំ"
 
-#: ../apport/ui.py:1255
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1255
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1255
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1274
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1274
+#: ../apport/ui.py:1274
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "ប្រព័ន្ធ​របស់​អ្នក​មិន​មាន​អង្គ​ចងចាំ​គ្រប់គ្រាន់ "
 "ដើម្បី​ដំណើរការ​របាយការណ៍​គាំង​នេះ​ទេ ។"
 
-#: ../apport/ui.py:1290
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1290
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1290
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1309
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1309
+#: ../apport/ui.py:1309
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -551,17 +551,17 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1346 ../apport/ui.py:1353
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1346
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1353
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1346
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1353
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1365
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1372
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1365
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1372
+#: ../apport/ui.py:1365 ../apport/ui.py:1372
 msgid "Problem already known"
 msgstr "ស្គាល់​​​អំពី​បញ្ហា​ហើយ"
 
-#: ../apport/ui.py:1347
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1347
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1347
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1366
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1366
+#: ../apport/ui.py:1366
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -572,9 +572,9 @@ msgstr ""
 "ប្រសិនបើ​អ្នក​អាច​បន្ថែម​ព័ត៌មាន​បន្ថែម "
 "​​ដែល​​​អា​ផ្ដល់​ជា​ប្រយោជន៍​សម្រាប់​​អ្នក​អ្នក​អភិវឌ្ឍន៍ ។"
 
-#: ../apport/ui.py:1354
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1354
-#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1354
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1373
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1373
+#: ../apport/ui.py:1373
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "បញ្ហា​នេះ​​អាច​ត្រូវ​បាន​រាយការណ៍​ទៅ​កាន់​​​អ្នក​អភិវឌ្ឍន៍ ។ អរគុណ !"
 
@@ -597,17 +597,18 @@ msgid "(%i bytes)"
 msgstr "(%i បៃ)"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:342 ../bin/apport-cli.py:150
-#: ../debian/tmp/usr/bin/apport-cli.py:150 ../kde/apport-kde.py:342
-#: ../gtk/apport-gtk.py:142 ../debian/tmp/usr/share/apport/apport-gtk.py:142
+#: ../debian/tmp/usr/bin/apport-cli.py:150 ../gtk/apport-gtk.py:142
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:142 ../kde/apport-kde.py:342
 msgid "(binary data)"
 msgstr "(ទិន្នន័យ​គោល​ពីរ)"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:162 ../bin/apport-cli.py:178
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:286
+#: ../debian/tmp/usr/bin/apport-cli.py:178
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:404
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:429
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:286
-#: ../debian/tmp/usr/bin/apport-cli.py:178 ../kde/apport-kde.py:162
 #: ../gtk/apport-gtk.py:177 ../debian/tmp/usr/share/apport/apport-gtk.py:177
+#: ../kde/apport-kde.py:162
 msgid "Send problem report to the developers?"
 msgstr "ផ្ញើ​​របាយការណ៍​អំពី​បញ្ហា​ទៅ​កាន់​​​អ្នក​អភិវឌ្ឍន៍ ?"
 
@@ -679,8 +680,8 @@ msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:415 ../bin/apport-cli.py:251
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13
-#: ../debian/tmp/usr/bin/apport-cli.py:251 ../kde/apport-kde.py:415
-#: ../gtk/apport-gtk.ui.h:13
+#: ../debian/tmp/usr/bin/apport-cli.py:251 ../gtk/apport-gtk.ui.h:13
+#: ../kde/apport-kde.py:415
 msgid "Uploading problem information"
 msgstr "ផ្ទុក​ព័ត៌មាន​អំពី​បញ្ហា"
 
@@ -854,8 +855,9 @@ msgstr ""
 "ពេល​អនាគត​ដំណើរការ​នឹង​សម្មត​ថា​កញ្ចប់​ដែល​បាន​ទាញ​យក​រួច​ហើយ​ត្រូវ​បាន​ស្រង់"
 "​ចេញ​ទៅ​ sandbox នេះ។"
 
-#: ../bin/apport-valgrind.py:66 ../debian/tmp/usr/bin/apport-retrace.py:59
-#: ../bin/apport-retrace.py:59 ../debian/tmp/usr/bin/apport-valgrind.py:66
+#: ../debian/tmp/usr/bin/apport-retrace.py:59
+#: ../debian/tmp/usr/bin/apport-valgrind.py:66 ../bin/apport-retrace.py:59
+#: ../bin/apport-valgrind.py:66
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
@@ -910,17 +912,17 @@ msgstr ""
 msgid "OK to send these as attachments? [y/n]"
 msgstr "យល់ព្រម​​ក្នុង​ការ​ផ្ញើ​​​ជា​ឯកសារ​ភ្ជាប់ឬ ? [y/n]"
 
-#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
-#: ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
+#: ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "រាយការណ៍​បញ្ហា..."
 
-#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
-#: ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
+#: ../gtk/apport-gtk.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "រាយការណ៍​​កំហុស​ទៅកាន់​អ្នក​អភិវឌ្ឍន៍"
 
-#: ../debian/tmp/usr/share/apport/kernel_oops.py:28 ../data/kernel_oops.py:28
+#: ../data/kernel_oops.py:30 ../debian/tmp/usr/share/apport/kernel_oops.py:30
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "ប្រព័ន្ធ​របស់​អ្នក​អាច​​គ្មាន​ស្ថេរ​ភាព​​ឥឡូវ​នេះ "
@@ -938,36 +940,42 @@ msgstr "សូម​ទោស %s បាន​បិទ​ដោយ​មិន�
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:176
 #: ../debian/tmp/usr/share/apport/apport-kde.py:217
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:108
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:300
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:110
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:254
-#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:217 ../gtk/apport-gtk.py:165
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:165
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:108
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:300
+#: ../gtk/apport-gtk.py:165 ../debian/tmp/usr/share/apport/apport-gtk.py:165
+#: ../kde/apport-kde.py:176 ../kde/apport-kde.py:217
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "សូម​ទោស %s បាន​ជួប​ប្រទះ​បញ្ហា​ខាង​ក្នុង ។"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:170
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:292
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:412
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:437
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:292
-#: ../kde/apport-kde.py:170 ../gtk/apport-gtk.py:186
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:186
+#: ../gtk/apport-gtk.py:186 ../debian/tmp/usr/share/apport/apport-gtk.py:186
+#: ../kde/apport-kde.py:170
 msgid "Send"
 msgstr "ផ្ញើ"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:271
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7 ../kde/apport-kde.py:271
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7 ../gtk/apport-gtk.ui.h:7
 #: ../gtk/apport-gtk.py:204 ../gtk/apport-gtk.py:573
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:204
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:573 ../gtk/apport-gtk.ui.h:7
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:573 ../kde/apport-kde.py:271
 msgid "Show Details"
 msgstr "បង្ហាញ​សេចក្ដី​លម្អិត"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:210
 #: ../debian/tmp/usr/share/apport/apport-kde.py:223
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:115
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:141
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:153
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:186
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:262
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:332
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:115
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:144
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:157
@@ -975,17 +983,11 @@ msgstr "បង្ហាញ​សេចក្ដី​លម្អិត"
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:310
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:350
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:479
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:115
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:141
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:153
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:186
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:262
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:332
-#: ../kde/apport-kde.py:210 ../kde/apport-kde.py:223 ../gtk/apport-gtk.py:216
-#: ../gtk/apport-gtk.py:284 ../gtk/apport-gtk.py:303
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:216
+#: ../gtk/apport-gtk.ui.h:10 ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.py:284
+#: ../gtk/apport-gtk.py:303 ../debian/tmp/usr/share/apport/apport-gtk.py:216
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:284
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:303 ../gtk/apport-gtk.ui.h:10
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:303 ../kde/apport-kde.py:210
+#: ../kde/apport-kde.py:223
 msgid "Continue"
 msgstr "បន្ត"
 
@@ -996,12 +998,13 @@ msgstr "បង្ខំ​បិទ"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:214
 #: ../debian/tmp/usr/share/apport/apport-kde.py:361
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:226
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:232
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:273
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:226
-#: ../kde/apport-kde.py:214 ../kde/apport-kde.py:361 ../gtk/apport-gtk.py:229
-#: ../gtk/apport-gtk.py:288 ../debian/tmp/usr/share/apport/apport-gtk.py:229
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:288
+#: ../gtk/apport-gtk.py:229 ../gtk/apport-gtk.py:288
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:229
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:288 ../kde/apport-kde.py:214
+#: ../kde/apport-kde.py:361
 msgid "Relaunch"
 msgstr "ចាប់ផ្ដើម​ឡើង​វិញ"
 
@@ -1015,71 +1018,70 @@ msgstr "កម្មវិធី %s បាន​បញ្ឈប់​ការ�
 msgid "The program \"%s\" has stopped responding."
 msgstr "កម្មវិធី \"%s\" បាន​បញ្ឈប់​ការ​ឆ្លើយតប។"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../kde/apport-kde.py:184
-#: ../gtk/apport-gtk.py:257 ../debian/tmp/usr/share/apport/apport-gtk.py:257
+#: ../debian/tmp/usr/share/apport/apport-kde.py:184 ../gtk/apport-gtk.py:257
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:257 ../kde/apport-kde.py:184
 #, python-format
 msgid "Package: %s"
 msgstr "កញ្ចប់ ៖ %s"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:190
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:137
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:136
-#: ../kde/apport-kde.py:190 ../gtk/apport-gtk.py:264
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:264
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:137
+#: ../gtk/apport-gtk.py:264 ../debian/tmp/usr/share/apport/apport-gtk.py:264
+#: ../kde/apport-kde.py:190
 msgid "Sorry, a problem occurred while installing software."
 msgstr "សូម​ទោស បញ្ហា​មួយ​បានកើត​ឡើង​ខណៈ​ពេល​ដំឡើង​កម្មវិធី ។"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:197 ../kde/apport-kde.py:197
-#: ../gtk/apport-gtk.py:273 ../gtk/apport-gtk.py:292
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:273
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:292
+#: ../debian/tmp/usr/share/apport/apport-kde.py:197 ../gtk/apport-gtk.py:273
+#: ../gtk/apport-gtk.py:292 ../debian/tmp/usr/share/apport/apport-gtk.py:273
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:292 ../kde/apport-kde.py:197
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "កម្មវិធី %s មាន​បទពិសោធន៍​កំហុស​ខាងក្រៅ។"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../kde/apport-kde.py:201
-#: ../gtk/apport-gtk.py:276 ../debian/tmp/usr/share/apport/apport-gtk.py:276
+#: ../debian/tmp/usr/share/apport/apport-kde.py:201 ../gtk/apport-gtk.py:276
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:276 ../kde/apport-kde.py:201
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "កម្មវិធី %s បាន​បិទ​ដោយ​មិន​រំពឹង​ទុក ។"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:213
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9 ../kde/apport-kde.py:213
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9 ../gtk/apport-gtk.ui.h:9
 #: ../gtk/apport-gtk.py:287 ../debian/tmp/usr/share/apport/apport-gtk.py:287
-#: ../gtk/apport-gtk.ui.h:9
+#: ../kde/apport-kde.py:213
 msgid "Leave Closed"
 msgstr "ទុក​ឲ្យ​បិទ"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:220
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4
+#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:256
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:302
 #: ../debian/tmp/usr/share/apport/testsuite/test_ui_gtk.py:342
-#: ../debian/tmp/usr/share/apport/testsuite/test_ui_kde.py:256
-#: ../kde/apport-kde.py:220 ../gtk/apport-gtk.py:300
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:300 ../gtk/apport-gtk.ui.h:4
+#: ../gtk/apport-gtk.ui.h:4 ../gtk/apport-gtk.py:300
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:300 ../kde/apport-kde.py:220
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "ប្រសិនបើ​អ្នក​កត់​សម្គាល់​បញ្ហា​បន្ថែម ព្យាយាម​ចាប់ផ្ដើម​កុំព្យូទ័រ​ឡើង​វិញ ។"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:224 ../kde/apport-kde.py:224
-#: ../gtk/apport-gtk.py:304 ../debian/tmp/usr/share/apport/apport-gtk.py:304
+#: ../debian/tmp/usr/share/apport/apport-kde.py:224 ../gtk/apport-gtk.py:304
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:304 ../kde/apport-kde.py:224
 msgid "Ignore future problems of this type"
 msgstr "មិន​អើពើ​នឹង​បញ្ហា​នា​ពេល​អនាគត​នៃ​ប្រភេទ​នេះ"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:268 ../kde/apport-kde.py:268
-#: ../gtk/apport-gtk.py:577 ../debian/tmp/usr/share/apport/apport-gtk.py:577
+#: ../debian/tmp/usr/share/apport/apport-kde.py:268 ../gtk/apport-gtk.py:577
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:577 ../kde/apport-kde.py:268
 msgid "Hide Details"
 msgstr "លាក់​សេចក្ដី​លម្អិត"
 
-#: ../bin/apport-valgrind.py:37 ../debian/tmp/usr/bin/apport-valgrind.py:37
+#: ../debian/tmp/usr/bin/apport-valgrind.py:37 ../bin/apport-valgrind.py:37
 msgid "See man page for details."
 msgstr "មើល​ទំព័រ​សម្រាប់​ព័ត៌មាន​លម្អិត។"
 
-#: ../bin/apport-valgrind.py:43 ../debian/tmp/usr/bin/apport-valgrind.py:43
+#: ../debian/tmp/usr/bin/apport-valgrind.py:43 ../bin/apport-valgrind.py:43
 msgid "specify the log file name produced by valgrind"
 msgstr "បញ្ជាក់​ឈ្មោះ​ឯកសារ​កំណត់​ហេតុ​ដែល​បាន​ផលិត​ដោយ valgrind"
 
-#: ../bin/apport-valgrind.py:46 ../debian/tmp/usr/bin/apport-valgrind.py:46
+#: ../debian/tmp/usr/bin/apport-valgrind.py:46 ../bin/apport-valgrind.py:46
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -1087,7 +1089,7 @@ msgstr ""
 "ប្រើ sandbox dir (SDIR) ដែល​បាន​បង្កើត​ពី​មុន​ឡើង​វិញ, ប្រសិនបើ​វា​មិន​មាន, "
 "បង្កើត​វា​ថ្មី"
 
-#: ../bin/apport-valgrind.py:50 ../debian/tmp/usr/bin/apport-valgrind.py:50
+#: ../debian/tmp/usr/bin/apport-valgrind.py:50 ../bin/apport-valgrind.py:50
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -1096,7 +1098,7 @@ msgstr ""
 "ឡើង​វិញ​សម្រាប់​​និមិត្ត​សញ្ញា​​បំបាត់​កំហុស​បន្ថែម "
 "ប៉ុន្តែ​អាស្រ័យ​លើ​និមិត្ត​សញ្ញា​បំបាត់​កំហុស។"
 
-#: ../bin/apport-valgrind.py:54 ../debian/tmp/usr/bin/apport-valgrind.py:54
+#: ../debian/tmp/usr/bin/apport-valgrind.py:54 ../bin/apport-valgrind.py:54
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -1104,13 +1106,13 @@ msgstr ""
 "ប្រើ​ថត​ឃ្លាំង​ដែល​បាន​បង្កើត​ពី​មុន​ឡើង​វិញ (CDIR) , "
 "ប្រសិនបើ​វា​មិន​ទាន់​មាន, បង្កើត​វា"
 
-#: ../bin/apport-valgrind.py:58 ../debian/tmp/usr/bin/apport-valgrind.py:58
+#: ../debian/tmp/usr/bin/apport-valgrind.py:58 ../bin/apport-valgrind.py:58
 msgid ""
 "report download/install progress when installing packages into sandbox"
 msgstr ""
 "រាយការណ៍​វឌ្ឍនភាព ទាញ​យក/​ដំឡើង នៅ​ពេល​កំពុង​ទាញ​យក​កញ្ចប់​ទៅ​កាន់ sandbox"
 
-#: ../bin/apport-valgrind.py:62 ../debian/tmp/usr/bin/apport-valgrind.py:62
+#: ../debian/tmp/usr/bin/apport-valgrind.py:62 ../bin/apport-valgrind.py:62
 msgid ""
 "the executable that is run under valgrind's memcheck tool  for memory leak "
 "detection"
@@ -1118,7 +1120,7 @@ msgstr ""
 "the executable that is run under valgrind's memcheck tool  for memory leak "
 "detection"
 
-#: ../bin/apport-valgrind.py:97 ../debian/tmp/usr/bin/apport-valgrind.py:97
+#: ../debian/tmp/usr/bin/apport-valgrind.py:97 ../bin/apport-valgrind.py:97
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "កំហុស៖ %s មិន​អាន​ប្រតិបត្តិ​បាន បាន​បញ្ឈប់។"
@@ -1148,8 +1150,8 @@ msgid "Uploading Problem Information"
 msgstr "ផ្ទុក​ព័ត៌មាន​អំពី​បញ្ហា"
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:416
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../kde/apport-kde.py:416
-#: ../gtk/apport-gtk.ui.h:15
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../gtk/apport-gtk.ui.h:15
+#: ../kde/apport-kde.py:416
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -1159,8 +1161,8 @@ msgstr ""
 
 #: ../debian/tmp/usr/share/apport/apport-kde.py:450
 #: ../debian/tmp/usr/share/apport/apport-kde.py:486
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../kde/apport-kde.py:450
-#: ../kde/apport-kde.py:486 ../gtk/apport-gtk.ui.h:1
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../gtk/apport-gtk.ui.h:1
+#: ../kde/apport-kde.py:450 ../kde/apport-kde.py:486
 msgid "Apport"
 msgstr "Apport"
 
@@ -1227,12 +1229,12 @@ msgstr "<big><b>ផ្ទុក​ព័ត៌មាន​អំពី​បញ�
 msgid "Apport crash file"
 msgstr "ឯកសារ​គាំង​របស់ Apport"
 
-#: ../debian/tmp/usr/bin/apport-unpack.py:22 ../bin/apport-unpack.py:22
+#: ../bin/apport-unpack.py:22 ../debian/tmp/usr/bin/apport-unpack.py:22
 #, python-format
 msgid "Usage: %s <report> <target directory>"
 msgstr "ការ​ប្រើប្រាស់ ៖ %s <report> <target directory>"
 
-#: ../debian/tmp/usr/bin/apport-unpack.py:46 ../bin/apport-unpack.py:46
+#: ../bin/apport-unpack.py:46 ../debian/tmp/usr/bin/apport-unpack.py:46
 msgid "Destination directory exists and is not empty."
 msgstr "មាន​ថត​ទិសដៅ ។"
 
