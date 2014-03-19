@@ -10,7 +10,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import tempfile, os.path, re, gzip, sys, email, time
+import tempfile, atexit, os.path, re, gzip, sys, email, time, shutil
 
 from io import BytesIO
 
@@ -121,6 +121,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         self.__launchpad = None
         self.__lp_distro = None
         self.__lpcache = os.getenv('APPORT_LAUNCHPAD_CACHE', options.get('cache_dir'))
+        if not self.__lpcache:
+            # use a temporary dir
+            self.__lpcache = tempfile.mkdtemp(prefix='launchpadlib.cache.')
+            atexit.register(shutil.rmtree, self.__lpcache)
 
     @property
     def launchpad(self):
@@ -1078,7 +1082,7 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
 #
 
 if __name__ == '__main__':
-    import unittest, atexit, shutil, subprocess
+    import unittest, subprocess
     import mock
 
     crashdb = None

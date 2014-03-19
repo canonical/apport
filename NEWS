@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.13.4 (UNRELEASED)
+-------------------
+ * launchpad: Really use a temporary launchpadlib cache dir by default. This
+   avoids piling up gigabytes of useless cached data over time, which also
+   tends to break every now and then.
+
 2.13.3 (2014-03-07)
 -------------------
  * Fix backend_apt_dpkg.test_get_file_package_uninstalled test that got broken
