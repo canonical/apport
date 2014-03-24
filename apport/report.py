@@ -1589,9 +1589,9 @@ class Report(problem_report.ProblemReport):
                 for l in f:
                     if 'name=systemd:' in l:
                         my_cgroup = l.split('systemd:', 1)[1].strip()
+                        if len(my_cgroup) < 2:
+                            return None
                         break
-                    if len(my_cgroup) < 2:
-                        return None
                 else:
                     return None
             # determine cgroup creation time

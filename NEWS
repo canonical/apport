@@ -6,6 +6,7 @@ detailled list of changes, please see ChangeLog.
  * launchpad: Really use a temporary launchpadlib cache dir by default. This
    avoids piling up gigabytes of useless cached data over time, which also
    tends to break every now and then.
+ * Fix crash in logind session detection. Thanks Dimitri Ledkov! (LP: #1296026)
 
 2.13.3 (2014-03-07)
 -------------------
