@@ -274,7 +274,7 @@ class Report(problem_report.ProblemReport):
         '''
         if not package:
             # the kernel does not have a executable path but a package
-            if not 'ExecutablePath' in self and self['ProblemType'] == 'KernelCrash':
+            if not 'ExecutablePath' in self and self['ProblemType'] in ('KernelCrash', 'IwlErrorDump'):
                 package = self['Package']
             else:
                 package = apport.fileutils.find_file_package(self['ExecutablePath'])
@@ -1194,6 +1194,12 @@ class Report(problem_report.ProblemReport):
 
             return title
 
+        if self['ProblemType'] == 'IwlErrorDump':
+            title = 'iwlwifi firmware error'
+            if 'IwlErrorCode' in self:
+                title += ': ' + self['IwlErrorCode']
+            return title
+
         return None
 
     def obsolete_packages(self):
@@ -1232,7 +1238,7 @@ class Report(problem_report.ProblemReport):
         it exists.
         '''
         if 'ExecutablePath' not in self:
-            if not self['ProblemType'] in ('KernelCrash', 'KernelOops'):
+            if not self['ProblemType'] in ('KernelCrash', 'KernelOops', 'IwlErrorDump'):
                 return None
 
         # kernel crash
@@ -1342,6 +1348,10 @@ class Report(problem_report.ProblemReport):
                         in_trace_body = False
             if parts:
                 return ':'.join(parts)
+
+        # iwlwifi firmware error dumps
+        if self['ProblemType'] == 'IwlErrorDump' and 'IwlFwVersion' in self and 'IwlErrorCode' in self:
+            return 'iwlwifi:' + self['IwlFwVersion'] + ':' + self['IwlErrorCode']
         return None
 
     def _extract_function_and_address(self, line):
