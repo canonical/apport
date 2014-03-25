@@ -23,8 +23,9 @@ sysfs_path = '/sys/kernel/debug/ieee80211/' + phy + '/iwlwifi/iwlmvm/fw_error_du
 if not os.path.exists(sysfs_path):
     sys.exit(1)
 
-pr = apport.Report('IwlErrorDump')
+pr = apport.Report('KernelCrash')
 pr['Package'] = apport.packaging.get_kernel_package()
+pr['Title'] = 'iwlwifi firmware error'
 pr.add_os_info()
 
 # Get iwl firmware version and error code from dmesg
@@ -33,8 +34,13 @@ regex = re.compile('^.*iwlwifi [0-9a-fA-F:]{10}\.[0-9a-fA-F]: Loaded firmware ve
 m = regex.findall(dmesg)
 if m:
     l = m[len(m) - 1]
-    pr['IwlFwVersion'] = l[0]
-    pr['IwlErrorCode'] = l[1]
+    fw_version = l[0]
+    error_code = l[1]
+
+    pr['IwlFwVersion'] = fw_version
+    pr['IwlErrorCode'] = error_code
+    pr['DuplicateSignature'] = 'iwlwifi:' + fw_version + ':' + error_code
+    pr['Title'] += ': ' + error_code
 
 # Get iwl firmware dump file from debugfs
 try:
