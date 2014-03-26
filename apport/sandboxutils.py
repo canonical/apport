@@ -74,6 +74,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
     for l in libs:
         if os.path.exists(sandbox + l):
             continue
+
         pkg = apport.packaging.get_file_package(l, True, cache_dir,
                                                 release=report['DistroRelease'],
                                                 arch=report.get('Architecture'))
@@ -85,7 +86,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             apport.warning('%s is needed, but cannot be mapped to a package', l)
 
     pkg_vers = {}
-    # first, grab the versions that we captured at crash time
+    # create a package -> version map from the report
     for l in (report.get('Package', '') + '\n' + report.get('Dependencies', '')).splitlines():
         if not l.strip():
             continue
@@ -97,7 +98,7 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
             continue
         pkg_vers[pkg] = version
 
-    return [(p, pkg_vers.get(p, 'None')) for p in pkgs]
+    return [(p, pkg_vers.get(p)) for p in pkgs]
 
 
 def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
@@ -196,10 +197,10 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                                                     arch=report.get('Architecture'))
             if pkg:
                 apport.log('Installing extra package %s to get %s' % (pkg, path), log_timestamps)
-                if pkg in report['Package']:
+                if report['Package'].startswith(pkg + ' '):
                     version = report['Package'].split()[1]
-                if version:
-                    pkgs.append((pkg, version))
+                    if version:
+                        pkgs.append((pkg, version))
                 else:
                     pkgs.append((pkg, None))
             else:
