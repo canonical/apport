@@ -476,7 +476,7 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config()
         obsolete = impl.install_packages(self.rootdir, self.configdir,
                                          'Foonux 1.2',
-                                         [('coreutils', '8.13-3ubuntu3'),
+                                         [('coreutils', '8.13-3ubuntu3.2'),
                                           ('libc6', '2.15-0ubuntu10'),
                                           ('tzdata', '2012b-1'),
                                          ], False, self.cachedir)
@@ -514,7 +514,7 @@ deb http://secondary.mirror tuxy extra
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         obsolete = impl.install_packages(self.rootdir, self.configdir,
                                          'Foonux 1.2',
-                                         [('coreutils', '8.13-3ubuntu3'),
+                                         [('coreutils', '8.13-3ubuntu3.2'),
                                          ], False, self.cachedir)
         self.assertEqual(obsolete, '')
         self.assertTrue(os.path.exists(
@@ -549,7 +549,7 @@ deb http://secondary.mirror tuxy extra
         # still installs packages after above operations
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('coreutils', '8.13-3ubuntu3'),
+                              [('coreutils', '8.13-3ubuntu3.2'),
                                ('dpkg', None),
                               ], False, self.cachedir)
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -760,7 +760,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
         # this needs to be updated when the release in _setup_foonux_config
         # changes
-        self.assertTrue(res.endswith('/base-files-6.5ubuntu6'),
+        self.assertTrue(res.endswith('/base-files-6.5ubuntu6.7'),
                         'unexpected version: ' + res.split('/')[-1])
 
     def _setup_foonux_config(self):
@@ -777,6 +777,9 @@ deb http://secondary.mirror tuxy extra
             f.write('deb http://archive.ubuntu.com/ubuntu/ precise main\n')
             f.write('deb-src http://archive.ubuntu.com/ubuntu/ precise main\n')
             f.write('deb http://ddebs.ubuntu.com/ precise main\n')
+            f.write('deb http://archive.ubuntu.com/ubuntu/ precise-updates main\n')
+            f.write('deb-src http://archive.ubuntu.com/ubuntu/ precise-updates main\n')
+            f.write('deb http://ddebs.ubuntu.com/ precise-updates main\n')
         os.mkdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'armhf', 'sources.list'), 'w') as f:
             f.write('deb http://ports.ubuntu.com/ precise main\n')
