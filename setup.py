@@ -126,6 +126,7 @@ DistUtilsExtra.auto.setup(
                 ('share/apport/testsuite/', glob('test/*')),
                 ('share/doc/apport/', glob('doc/*.txt')),
                 ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
+                ('/lib/udev/rules.d', glob('udev/*.rules')),
                 ] + optional_data_files,
     cmdclass=cmdclass
 )
