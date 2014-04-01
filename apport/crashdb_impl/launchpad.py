@@ -124,7 +124,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if not self.__lpcache:
             # use a temporary dir
             self.__lpcache = tempfile.mkdtemp(prefix='launchpadlib.cache.')
-            atexit.register(shutil.rmtree, self.__lpcache)
+            atexit.register(shutil.rmtree, self.__lpcache, ignore_errors=True)
 
     @property
     def launchpad(self):
