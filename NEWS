@@ -5,6 +5,9 @@ detailled list of changes, please see ChangeLog.
 -------------------
  * Fix FileNotFoundError from temporary launchpadlib cache dir cleanup.
    (LP: #1300474)
+ * ui.py, open_url(): Skip any Python cleanup/atexit handlers in the forked
+   xdg-open child, to avoid calling them twice. (Side issue of LP #1300474 and
+   #1282713)
 
 2.14 (2014-03-31)
 -----------------

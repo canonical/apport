@@ -1173,6 +1173,7 @@ class UserInterface:
         except Exception as e:
             os.write(w, str(e))
             sys.exit(1)
+        os._exit(0)
 
     def file_report(self):
         '''Upload the current report and guide the user to the reporting web page.'''
