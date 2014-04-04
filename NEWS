@@ -8,6 +8,8 @@ detailled list of changes, please see ChangeLog.
  * ui.py, open_url(): Skip any Python cleanup/atexit handlers in the forked
    xdg-open child, to avoid calling them twice. (Side issue of LP #1300474 and
    #1282713)
+ * apport-kde: Work around crash in sip by skipping the destructors of SIP
+   objects. Thanks Rohan Garg! (LP: #1282713)
 
 2.14 (2014-03-31)
 -----------------
