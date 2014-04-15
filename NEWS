@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.14.2 (UNRELEASED)
+-------------------
+ * Delay the import of the glob and re modules in the python apport hook,
+   and only import them when needed. Speeds up interpreter startup time
+   by 50%. Thanks Matthias Klose! (LP: #1307684)
+
 2.14.1 (2014-04-04)
 -------------------
  * Fix FileNotFoundError from temporary launchpadlib cache dir cleanup.

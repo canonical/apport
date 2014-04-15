@@ -12,8 +12,6 @@
 
 import os
 import sys
-import re
-from glob import glob
 
 CONFIG = '/etc/default/apport'
 
@@ -23,6 +21,7 @@ def enabled():
 
     # This doesn't use apport.packaging.enabled() because it is too heavyweight
     # See LP: #528355
+    import re
     try:
         with open(CONFIG) as f:
             conf = f.read()
@@ -147,7 +146,8 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
 
 def dbus_service_unknown_analysis(exc_obj, report):
-    import subprocess
+    from glob import glob
+    import subprocess, re
     try:
         from configparser import ConfigParser, NoSectionError, NoOptionError
         (ConfigParser, NoSectionError, NoOptionError)  # pyflakes
