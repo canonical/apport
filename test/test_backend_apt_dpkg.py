@@ -477,15 +477,22 @@ deb http://secondary.mirror tuxy extra
     def test_install_packages_versioned(self):
         '''install_packages() with versions and with cache'''
 
-        self._setup_foonux_config()
+        self._setup_foonux_config(updates=True)
         obsolete = impl.install_packages(self.rootdir, self.configdir,
                                          'Foonux 1.2',
-                                         [('coreutils', '8.13-3ubuntu3'),
+                                         [('coreutils', '8.13-3ubuntu3'),  # should not come from updates
                                           ('libc6', '2.15-0ubuntu10'),
-                                          ('tzdata', '2012b-1'),
+                                          ('tzdata', None),  # should come from -updates, > 2012b-1
                                          ], False, self.cachedir)
 
+        def sandbox_ver(pkg):
+            with gzip.open(os.path.join(self.rootdir, 'usr/share/doc', pkg,
+                                        'changelog.Debian.gz')) as f:
+                return f.readline().decode().split()[1][1:-1]
+
         self.assertEqual(obsolete, '')
+
+        # packages get installed
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
         self.assert_elf_arch(os.path.join(self.rootdir, 'usr/bin/stat'),
@@ -497,6 +504,12 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/share/doc/libc6/copyright')))
 
+        # their versions are as expected
+        self.assertEqual(sandbox_ver('coreutils'), '8.13-3ubuntu3')
+        self.assertEqual(sandbox_ver('libc6'), '2.15-0ubuntu10')
+        self.assertEqual(sandbox_ver('libc6-dbg'), '2.15-0ubuntu10')
+        self.assertGreater(sandbox_ver('tzdata'), '2012b-1')
+
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
@@ -504,15 +517,21 @@ deb http://secondary.mirror tuxy extra
         self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
                          ['sources.list'])
 
-        # caches packages
+        # caches packages, and their versions are as expected
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
-        cache_names = [p.split('_')[0] for p in cache]
-        self.assertTrue('coreutils' in cache_names)
-        self.assertTrue('coreutils-dbgsym' in cache_names)
-        self.assertTrue('tzdata' in cache_names)
-        self.assertTrue('libc6' in cache_names)
-        self.assertTrue('libc6-dbg' in cache_names)
+        cache_versions = {}
+        for p in cache:
+            try:
+                (name, ver) = p.split('_')[:2]
+            except ValueError:
+                pass  # not a .deb, ignore
+            cache_versions[name] = ver
+        self.assertEqual(cache_versions['coreutils'], '8.13-3ubuntu3')
+        self.assertEqual(cache_versions['coreutils-dbgsym'], '8.13-3ubuntu3')
+        self.assertIn('tzdata', cache_versions)
+        self.assertEqual(cache_versions['libc6'], '2.15-0ubuntu10')
+        self.assertEqual(cache_versions['libc6-dbg'], '2.15-0ubuntu10')
 
         # installs cached packages
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
@@ -533,6 +552,7 @@ deb http://secondary.mirror tuxy extra
         # ... but installs the current version anyway
         self.assertTrue(os.path.exists(
             os.path.join(self.rootdir, 'usr/bin/gnome-autogen.sh')))
+        self.assertGreaterEqual(sandbox_ver('gnome-common'), '3.1.0-0ubuntu1')
 
         # does not crash on nonexisting packages
         result = impl.install_packages(self.rootdir, self.configdir,
@@ -544,10 +564,10 @@ deb http://secondary.mirror tuxy extra
         # can interleave with other operations
         dpkg = subprocess.Popen(['dpkg-query', '-Wf${Version}', 'dash'],
                                 stdout=subprocess.PIPE)
-        coreutils_version = dpkg.communicate()[0].decode()
+        dash_version = dpkg.communicate()[0].decode()
         self.assertEqual(dpkg.returncode, 0)
 
-        self.assertEqual(impl.get_version('dash'), coreutils_version)
+        self.assertEqual(impl.get_version('dash'), dash_version)
         self.assertRaises(ValueError, impl.get_available_version, 'buggerbogger')
 
         # still installs packages after above operations
@@ -767,7 +787,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(res.endswith('/base-files-6.5ubuntu6'),
                         'unexpected version: ' + res.split('/')[-1])
 
-    def _setup_foonux_config(self):
+    def _setup_foonux_config(self, updates=False):
         '''Set up directories and configuration for install_packages()'''
 
         self.cachedir = os.path.join(self.workdir, 'cache')
@@ -781,11 +801,19 @@ deb http://secondary.mirror tuxy extra
             f.write('deb http://archive.ubuntu.com/ubuntu/ precise main\n')
             f.write('deb-src http://archive.ubuntu.com/ubuntu/ precise main\n')
             f.write('deb http://ddebs.ubuntu.com/ precise main\n')
+            if updates:
+                f.write('deb http://archive.ubuntu.com/ubuntu/ precise-updates main\n')
+                f.write('deb-src http://archive.ubuntu.com/ubuntu/ precise-updates main\n')
+                f.write('deb http://ddebs.ubuntu.com/ precise-updates main\n')
         os.mkdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'armhf', 'sources.list'), 'w') as f:
             f.write('deb http://ports.ubuntu.com/ precise main\n')
             f.write('deb-src http://ports.ubuntu.com/ precise main\n')
             f.write('deb http://ddebs.ubuntu.com/ precise main\n')
+            if updates:
+                f.write('deb http://ports.ubuntu.com/ precise-updates main\n')
+                f.write('deb-src http://ports.ubuntu.com/ precise-updates main\n')
+                f.write('deb http://ddebs.ubuntu.com/ precise-updates main\n')
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'codename'), 'w') as f:
             f.write('precise')
 

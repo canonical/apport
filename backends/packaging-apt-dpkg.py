@@ -623,18 +623,20 @@ Debug::NoLocking "true";
         real_pkgs = set()
         for (pkg, ver) in packages:
             try:
-                candidate = cache[pkg].candidate
+                cache_pkg = cache[pkg]
             except KeyError:
-                candidate = None
-            if not candidate:
                 m = 'package %s does not exist, ignoring' % pkg.replace('%', '%%')
                 obsolete += m + '\n'
                 apport.warning(m)
                 continue
 
-            if ver and candidate.version != ver:
-                w = '%s version %s required, but %s is available' % (pkg, ver, candidate.version)
-                obsolete += w + '\n'
+            # try to select matching version
+            try:
+                if ver:
+                    cache_pkg.candidate = cache_pkg.versions[ver]
+            except KeyError:
+                obsolete += '%s version %s required, but %s is available\n' % (pkg, ver, cache_pkg.candidate.version)
+            candidate = cache_pkg.candidate
             real_pkgs.add(pkg)
 
             if permanent_rootdir:
@@ -680,9 +682,16 @@ Debug::NoLocking "true";
                                 os.unlink(path)
 
             if candidate.architecture != 'all':
-                if pkg + '-dbg' in cache:
+                try:
+                    dbg = cache[pkg + '-dbg']
+                    # try to get the same version as pkg
+                    try:
+                        dbg.candidate = dbg.versions[candidate.version]
+                    except KeyError:
+                        obsolete += 'outdated -dbg package for %s: package version %s -dbg version %s\n' % (
+                            pkg, candidate.version, dbg.candidate.version)
                     real_pkgs.add(pkg + '-dbg')
-                else:
+                except KeyError:
                     # install all -dbg from the source package
                     if src_records.lookup(candidate.source_name):
                         dbgs = [p for p in src_records.binaries if p.endswith('-dbg') and p in cache]
@@ -690,13 +699,25 @@ Debug::NoLocking "true";
                         dbgs = []
                     if dbgs:
                         for p in dbgs:
+                            # try to get the same version as pkg
+                            try:
+                                cache[p].candidate = cache[p].versions[candidate.version]
+                            except KeyError:
+                                # we don't really expect that, but it's possible that
+                                # other binaries have a different version
+                                pass
                             real_pkgs.add(p)
                     else:
-                        if pkg + '-dbgsym' in cache:
+                        try:
+                            dbgsym = cache[pkg + '-dbgsym']
                             real_pkgs.add(pkg + '-dbgsym')
-                            if cache[pkg + '-dbgsym'].candidate.version != candidate.version:
+                            try:
+                                dbgsym.candidate = dbgsym.versions[candidate.version]
+                            except KeyError:
                                 obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
-                                    pkg, candidate.version, cache[pkg + '-dbgsym'].candidate.version)
+                                    pkg, candidate.version, dbgsym.candidate.version)
+                        except KeyError:
+                            obsolete += 'no debug symbol package found for %s\n' % pkg
 
         for p in real_pkgs:
             cache[p].mark_install(False, False)

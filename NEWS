@@ -10,6 +10,9 @@ detailled list of changes, please see ChangeLog.
    also applies when using the "Show Details..." button in the UI. Otherwise
    the UI just hangs eternally at this point when encountering broken core
    dumps. (LP: #1282349)
+ * apt/dpkg install_packages(): Try to install the requested package version
+   instead of always picking the most recent one. This should improve retracing
+   results for older crash reports. Thanks to Brian Murray for inspiring this.
 
 2.14.1 (2014-04-04)
 -------------------
