@@ -13,6 +13,9 @@ detailled list of changes, please see ChangeLog.
  * apt/dpkg install_packages(): Try to install the requested package version
    instead of always picking the most recent one. This should improve retracing
    results for older crash reports. Thanks to Brian Murray for inspiring this.
+ * sandboxutils.py, make_sandbox(): When determining packages to install from
+   ProcMaps, look up and use the package versions from the reporter, to improve
+   retracing results. Thanks Brian Murray for the initial patch!
 
 2.14.1 (2014-04-04)
 -------------------

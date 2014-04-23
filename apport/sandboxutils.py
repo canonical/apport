@@ -37,7 +37,25 @@ def needed_packages(report):
     return [(p, v) for (p, v) in pkgs.items()]
 
 
-def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
+def report_package_versions(report):
+    '''Return package -> version dictionary from report'''
+
+    pkg_vers = {}
+    for l in (report.get('Package', '') + '\n' + report.get('Dependencies', '')).splitlines():
+        if not l.strip():
+            continue
+        try:
+            (pkg, version) = l.split()[:2]
+        except ValueError:
+            apport.warning('invalid Package/Dependencies line: %s', l)
+            # invalid line, ignore
+            continue
+        pkg_vers[pkg] = version
+
+    return pkg_vers
+
+
+def needed_runtime_packages(report, sandbox, cache_dir, pkg_versions, verbose=False):
     '''Determine necessary runtime packages for given report.
 
     This determines libraries dynamically loaded at runtime in two cases:
@@ -83,9 +101,9 @@ def needed_runtime_packages(report, sandbox, cache_dir, verbose=False):
                 apport.log('dynamically loaded %s needs package %s, queueing' % (l, pkg))
             pkgs.add(pkg)
         else:
-                apport.warning('%s is needed, but cannot be mapped to a package', l)
+            apport.warning('%s is needed, but cannot be mapped to a package', l)
 
-    return [(p, None) for p in pkgs]
+    return [(p, pkg_versions.get(p)) for p in pkgs]
 
 
 def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
@@ -173,7 +191,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         sys.stderr.write(str(e) + '\n')
         sys.exit(1)
 
-    pkgs = needed_runtime_packages(report, sandbox_dir, cache_dir, verbose)
+    pkg_versions = report_package_versions(report)
+    pkgs = needed_runtime_packages(report, sandbox_dir, cache_dir, pkg_versions, verbose)
 
     # package hooks might reassign Package:, check that we have the originally
     # crashing binary
@@ -184,7 +203,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                                                     arch=report.get('Architecture'))
             if pkg:
                 apport.log('Installing extra package %s to get %s' % (pkg, path), log_timestamps)
-                pkgs.append((pkg, None))
+                pkgs.append((pkg, pkg_versions.get(pkg)))
             else:
                 apport.warning('Cannot find package which ships %s', path)
 
