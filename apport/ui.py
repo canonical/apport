@@ -278,30 +278,8 @@ class UserInterface:
             allowed_to_report = apport.fileutils.allowed_to_report()
             response = self.ui_present_report_details(allowed_to_report)
             if response['report'] or response['examine']:
-                try:
-                    if 'Dependencies' not in self.report:
-                        self.collect_info()
-                except (IOError, EOFError, zlib.error) as e:
-                    # can happen with broken core dumps
-                    self.report = None
-                    self.ui_error_message(
-                        _('Invalid problem report'), '%s\n\n%s' % (
-                            _('This problem report is damaged and cannot be processed.'),
-                            repr(e)))
-                    self.ui_shutdown()
-                    return
-                except ValueError:  # package does not exist
-                    self.ui_error_message(_('Invalid problem report'),
-                                          _('The report belongs to a package that is not installed.'))
-                    self.ui_shutdown()
-                    return
-                except Exception as e:
-                    apport.error(repr(e))
-                    self.ui_error_message(_('Invalid problem report'),
-                                          _('An error occurred while attempting to process this'
-                                            ' problem report:') + '\n\n' + str(e))
-                    self.ui_shutdown()
-                    return
+                if 'Dependencies' not in self.report:
+                    self.collect_info()
 
             if self.report is None:
                 # collect() does that on invalid reports
@@ -1042,9 +1020,22 @@ class UserInterface:
                 os.environ.clear()
                 os.environ.update(orig_env)
 
-                icthread.exc_raise()
+                try:
+                    icthread.exc_raise()
+                except (IOError, EOFError, zlib.error) as e:
+                    # can happen with broken core dumps
+                    self.report['UnreportableReason'] = '%s\n\n%s' % (
+                        _('This problem report is damaged and cannot be processed.'),
+                        repr(e))
+                except ValueError:  # package does not exist
+                    self.report['UnreportableReason'] = _('The report belongs to a package that is not installed.')
+                except Exception as e:
+                    apport.error(repr(e))
+                    self.report['UnreportableReason'] = _('An error occurred while attempting to '
+                                                          'process this problem report:') + '\n\n' + str(e)
 
-            if not self.check_report_crashdb():
+            if 'UnreportableReason' in self.report or not self.check_report_crashdb():
+                self.ui_stop_info_collection_progress()
                 if on_finished:
                     on_finished()
                 return

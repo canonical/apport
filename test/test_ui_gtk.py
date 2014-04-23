@@ -585,6 +585,66 @@ Type=Application''')
         self.assertEqual(self.app.open_url.call_count, 1)
 
     @patch.object(GTKUserInterface, 'open_url')
+    @patch.object(GTKUserInterface, 'ui_start_upload_progress')
+    @patch.object(GTKUserInterface, 'ui_stop_upload_progress')
+    def test_broken_crash_details(self, *args):
+        '''Broken crash report with showing details'''
+
+        self.error_title = None
+        self.error_text = None
+
+        def show_details(*args):
+            if not self.app.w('show_details').get_visible():
+                return True
+            self.app.w('show_details').clicked()
+            GLib.timeout_add(200, cont)
+            return False
+
+        def cont(*args):
+            # wait until data collection is done and tree filled
+            if self.app.tree_model.get_iter_first() is None:
+                return True
+
+            self.assertTrue(self.app.w('continue_button').get_visible())
+            self.app.w('continue_button').clicked()
+            GLib.timeout_add(100, ack_error)
+            return False
+
+        def ack_error(*args):
+            # wait until error dialog gets visible
+            if not self.app.md:
+                return True
+            self.error_title = self.app.md.get_title()
+            self.error_text = self.app.md.get_property('text')
+            self.app.md.response(0)
+            return False
+
+        # damage core dump in report file
+        with open(self.app.report_file) as f:
+            lines = f.readlines()
+        lines[-1] = ' iiiiiiiiiiiiAAAA\n'
+        with open(self.app.report_file, 'w') as f:
+            f.write(''.join(lines))
+        self.app.report = None
+        GLib.timeout_add(200, show_details)
+        self.app.run_crash(self.app.report_file)
+
+        # upload dialog not shown
+        self.assertEqual(self.app.ui_start_upload_progress.call_count, 0)
+        self.assertEqual(self.app.ui_stop_upload_progress.call_count, 0)
+
+        # no URL was opened
+        self.assertEqual(self.app.open_url.call_count, 0)
+
+        # no crash uploaded
+        self.assertEqual(self.app.crashdb.latest_id(), -1)
+
+        # proper error message
+        self.assertNotEqual(self.error_title, None)
+        self.assertIn('cannot be reported', self.error_text)
+        self.assertIn('decompressing', self.error_text)
+
+    @patch.object(GTKUserInterface, 'open_url')
     def test_crash_noaccept(self, *args):
         '''Crash report with non-accepting crash DB'''
 

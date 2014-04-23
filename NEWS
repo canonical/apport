@@ -6,6 +6,10 @@ detailled list of changes, please see ChangeLog.
  * Delay the import of the glob and re modules in the python apport hook,
    and only import them when needed. Speeds up interpreter startup time
    by 50%. Thanks Matthias Klose! (LP: #1307684)
+ * Move error handling for invalid .crash files into collect_info(), so that it
+   also applies when using the "Show Details..." button in the UI. Otherwise
+   the UI just hangs eternally at this point when encountering broken core
+   dumps. (LP: #1282349)
 
 2.14.1 (2014-04-04)
 -------------------

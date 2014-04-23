@@ -854,7 +854,7 @@ bOgUs=
                                             'examine': False,
                                             'restart': False}
         self.ui.run_crash(report_file)
-        self.assertEqual(self.ui.msg_severity, 'error', self.ui.msg_text)
+        self.assertEqual(self.ui.msg_severity, 'info', self.ui.msg_text)
         self.assertTrue('decompress' in self.ui.msg_text)
         self.assertTrue(self.ui.present_details_shown)
 
