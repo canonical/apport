@@ -16,6 +16,8 @@ detailled list of changes, please see ChangeLog.
  * sandboxutils.py, make_sandbox(): When determining packages to install from
    ProcMaps, look up and use the package versions from the reporter, to improve
    retracing results. Thanks Brian Murray for the initial patch!
+ * iwlwifi_error_dump: Make reports private, and subscribe canonical-kernel-team.
+   Thanks Seth Forshee. (LP: #1313818)
 
 2.14.1 (2014-04-04)
 -------------------

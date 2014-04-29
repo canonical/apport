@@ -46,6 +46,9 @@ if m:
 try:
     with open(sysfs_path, 'rb') as f:
         pr['IwlFwDump'] = f.read()
+        # Firmware dump could contain sensitive information
+        pr['LaunchpadPrivate'] = 'yes'
+        pr['LaunchpadSubscribe'] = 'canonical-kernel-team'
 except IOError:
     pass
 
