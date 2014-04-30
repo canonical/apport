@@ -622,7 +622,19 @@ class T(unittest.TestCase):
         if sleep > 0:
             time.sleep(sleep)
         os.kill(pid, sig)
-        result = os.waitpid(pid, 0)[1]
+        # wait max 5 seconds for the process to die
+        timeout = 50
+        while timeout >= 0:
+            (p, result) = os.waitpid(pid, os.WNOHANG)
+            if p != 0:
+                break
+            time.sleep(0.1)
+            timeout -= 1
+        else:
+            os.kill(pid, signal.SIGKILL)
+            os.waitpid(pid, 0)
+            self.fail('test process does not die on signal %i' % sig)
+
         self.assertFalse(os.WIFEXITED(result), 'test process did not exit normally')
         self.assertTrue(os.WIFSIGNALED(result), 'test process died due to signal')
         self.assertEqual(os.WCOREDUMP(result), expect_coredump)

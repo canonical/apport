@@ -18,6 +18,8 @@ detailled list of changes, please see ChangeLog.
    retracing results. Thanks Brian Murray for the initial patch!
  * iwlwifi_error_dump: Make reports private, and subscribe canonical-kernel-team.
    Thanks Seth Forshee. (LP: #1313818)
+ * signal_crashes test: Time out after 5 seconds if the test process does not
+   terminate on the specified signal, to avoid eternal hangs.
 
 2.14.1 (2014-04-04)
 -------------------
