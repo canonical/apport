@@ -705,6 +705,9 @@ class T(unittest.TestCase):
 # main
 #
 
+# ensure we don't inherit an ignored SIGQUIT
+signal.signal(signal.SIGQUIT, signal.SIG_DFL)
+
 with open('/proc/sys/kernel/core_pattern') as f:
     core_pattern = f.read().strip()
 if core_pattern[0] != '|':
