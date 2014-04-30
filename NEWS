@@ -1,7 +1,7 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
-2.14.2 (UNRELEASED)
+2.14.2 (2014-04-30)
 -------------------
  * Delay the import of the glob and re modules in the python apport hook,
    and only import them when needed. Speeds up interpreter startup time
