@@ -524,9 +524,9 @@ deb http://secondary.mirror tuxy extra
         for p in cache:
             try:
                 (name, ver) = p.split('_')[:2]
+                cache_versions[name] = ver
             except ValueError:
                 pass  # not a .deb, ignore
-            cache_versions[name] = ver
         self.assertEqual(cache_versions['coreutils'], '8.13-3ubuntu3')
         self.assertEqual(cache_versions['coreutils-dbgsym'], '8.13-3ubuntu3')
         self.assertIn('tzdata', cache_versions)
