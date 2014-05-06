@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailled list of changes, please see ChangeLog.
 
+2.14.3 (UNRELEASED)
+-------------------
+ * Add kernel package version to the various kernel-related hooks. Thanks Brian
+   Murray.
+
 2.14.2 (2014-04-30)
 -------------------
  * Delay the import of the glob and re modules in the python apport hook,

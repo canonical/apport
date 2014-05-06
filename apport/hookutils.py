@@ -490,7 +490,7 @@ def recent_logfile(logfile, pattern, maxlines=10000):
     '''Extract recent messages from a logfile which match a regex.
 
     pattern should be a "re" object. By default this catches at most the last
-    1000 lines, but this can be modified with a different maxlines argument.
+    10000 lines, but this can be modified with a different maxlines argument.
     '''
     lines = ''
     try:
