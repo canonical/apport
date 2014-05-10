@@ -10,7 +10,6 @@
 # the full text of the license.
 
 import os
-import os.path
 import sys
 import datetime
 
@@ -83,6 +82,10 @@ def main(argv=None):
 
         if pr.check_ignored():
             return 0
+
+        crash_signature = pr.crash_signature()
+        if crash_signature:
+            pr['DuplicateSignature'] = crash_signature
 
         nowtime = datetime.datetime.now()
         pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(' ', '_'))
