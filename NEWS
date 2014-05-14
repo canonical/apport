@@ -1,5 +1,5 @@
 This file summarizes the major and interesting changes for each release. For a
-detailled list of changes, please see ChangeLog.
+detailed list of changes, please see ChangeLog.
 
 2.14.3 (UNRELEASED)
 -------------------
@@ -7,6 +7,10 @@ detailled list of changes, please see ChangeLog.
    Murray. (LP: #1316845)
  * Add a duplicate signature to suspend resume failures. Thanks Brian Murray.
    (LP: #1316841)
+ * Use package name in duplicate signature for recoverable problems. Thanks Brian
+   Murray. (LP: #1316763)
+ * Have whoopsie-upload-all upload recoverable problems. Thanks Brian Murray.
+   (LP: #1319099)
 
 2.14.2 (2014-04-30)
 -------------------

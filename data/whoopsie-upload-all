@@ -44,7 +44,7 @@ def process_report(report):
     except Exception as e:
         sys.stderr.write('ERROR: cannot load %s: %s\n' % (report, str(e)))
         return None
-    if r.get('ProblemType', '') != 'Crash' or 'ExecutablePath' not in r:
+    if r.get('ProblemType', '') != 'Crash' and 'ExecutablePath' not in r:
         print('  skipping, not a crash')
         return None
     if 'Dependencies' in r:
