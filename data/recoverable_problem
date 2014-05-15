@@ -56,6 +56,12 @@ def main():
     report.add_os_info()
     report.add_user_info()
 
+    ds = report.get('DuplicateSignature', '')
+    package = report.get('Package', '')
+    if package and ds:
+        package = package.split()[0]
+        report['DuplicateSignature'] = '%s:%s' % (package, ds)
+
     # Write the final report
     with open(apport.fileutils.make_report_path(report), 'wb') as fp:
         report.write(fp)
