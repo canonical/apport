@@ -83,10 +83,6 @@ def main(argv=None):
         if pr.check_ignored():
             return 0
 
-        crash_signature = pr.crash_signature()
-        if crash_signature:
-            pr['DuplicateSignature'] = crash_signature
-
         nowtime = datetime.datetime.now()
         pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(' ', '_'))
         with os.fdopen(os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'wb') as report_file:
