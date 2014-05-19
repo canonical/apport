@@ -55,7 +55,7 @@ def main(argv=None):
         # grab the contents of the suspend/resume stress test log if present.
         attach_file_if_exists(pr, stresslog, 'StressLog')
 
-        # Ensure we are appropriatly tagged.
+        # Ensure we are appropriately tagged.
         if 'Failure' in pr:
             pr['Tags'] = 'resume ' + pr['Failure']
 
@@ -82,10 +82,6 @@ def main(argv=None):
 
         if pr.check_ignored():
             return 0
-
-        crash_signature = pr.crash_signature()
-        if crash_signature:
-            pr['DuplicateSignature'] = crash_signature
 
         nowtime = datetime.datetime.now()
         pr_filename = '/var/crash/susres.%s.crash' % (str(nowtime).replace(' ', '_'))
