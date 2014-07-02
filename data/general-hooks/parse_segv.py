@@ -164,37 +164,37 @@ class ParseSegv(object):
     def register_value(self, reg):
         reg_orig = reg
 
-        #print reg
+        # print reg
         mask = 0
         if reg.startswith('%'):
-            #print('%s -> %s' % (reg, reg[1:]))
+            # print('%s -> %s' % (reg, reg[1:]))
             reg = reg[1:]
         if reg in self.regs:
-            #print('got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask))
+            # print('got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask))
             return self.regs[reg]
 
         if len(reg) == 2 and reg.endswith('l'):
             mask |= 0xff00
-            #print('%s -> %sx' % (reg, reg[0]))
+            # print('%s -> %sx' % (reg, reg[0]))
             reg = '%sx' % reg[0]
         if reg in self.regs:
-            #print('got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask))
+            # print('got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask))
             return self.regs[reg] & ~mask
 
         if len(reg) == 2 and reg.endswith('x'):
             mask |= 0xffff0000
-            #print('%s -> e%s' % (reg, reg))
+            # print('%s -> e%s' % (reg, reg))
             reg = 'e%s' % reg
         if reg in self.regs:
-            #print('got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask))
+            # print('got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask))
             return self.regs[reg] & ~mask
 
         if len(reg) == 3 and reg.startswith('e'):
             mask |= 0xffffffff00000000
-            #print('%s -> r%s' % (reg, reg[1:]))
+            # print('%s -> r%s' % (reg, reg[1:]))
             reg = 'r%s' % reg[1:]
         if reg in self.regs:
-            #print('got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask))
+            # print('got %s (%d & %d == %d)' % (reg, self.regs[reg], mask, self.regs[reg] & ~mask))
             return self.regs[reg] & ~mask
         raise ValueError("Could not resolve register '%s'" % (reg_orig))
 
@@ -280,7 +280,7 @@ class ParseSegv(object):
         else:
             # Verify source is readable
             if self.src:
-                if not ':' in self.src and (self.src[0] in ['%', '$', '*']) and not self.src.startswith('*%'):
+                if ':' not in self.src and (self.src[0] in ['%', '$', '*']) and not self.src.startswith('*%'):
                     details.append('source "%s" ok' % (self.src))
                 else:
                     addr = self.calculate_arg(self.src)
@@ -292,7 +292,7 @@ class ParseSegv(object):
 
             # Verify destination is writable
             if self.dest:
-                if not ':' in self.dest and (self.dest[0] in ['%', '$', '*']):
+                if ':' not in self.dest and (self.dest[0] in ['%', '$', '*']):
                     details.append('destination "%s" ok' % (self.dest))
                 else:
                     addr = self.calculate_arg(self.dest)

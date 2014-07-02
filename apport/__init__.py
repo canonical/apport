@@ -59,7 +59,7 @@ def memdbg(checkpoint):
 
     This is only done if $APPORT_MEMDEBUG is set.
     '''
-    if not 'APPORT_MEMDEBUG' in os.environ or not sys.stderr:
+    if 'APPORT_MEMDEBUG' not in os.environ or not sys.stderr:
         return
 
     memstat = {}

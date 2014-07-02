@@ -828,9 +828,9 @@ bOgUs=
         self.assertEqual(self.ui.report['Signal'], '6')
 
         # we disable the ABRT filtering, we want these crashes after all
-        #self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
-        #    (self.ui.msg_title, self.ui.msg_text))
-        #self.assertEqual(self.ui.msg_severity, 'info')
+        # self.assertTrue('assert' in self.ui.msg_text, '%s: %s' %
+        #     (self.ui.msg_title, self.ui.msg_text))
+        # self.assertEqual(self.ui.msg_severity, 'info')
         self.assertEqual(self.ui.msg_severity, None)
         self.assertTrue(self.ui.present_details_shown)
 
@@ -1924,33 +1924,31 @@ return 'bash'
               None, 'window': False, 'tag': [], 'hanging': False})
 
         # PID
-        _chk('apport-cli', '1234', {'filebug': True, 'package': None,
-             'pid': '1234', 'crash_file': None, 'symptom': None,
-             'update_report': None, 'save': None, 'window': False,
-             'tag': [], 'hanging': False})
+        _chk('apport-cli', '1234',
+             {'filebug': True, 'package': None, 'pid': '1234', 'crash_file':
+              None, 'symptom': None, 'update_report': None, 'save': None,
+              'window': False, 'tag': [], 'hanging': False})
 
         # .crash/.apport files; check correct handling of spaces
         for suffix in ('.crash', '.apport'):
-            _chk('apport-cli', '/tmp/f oo' + suffix, {'filebug': False,
-                 'package': None, 'pid': None,
-                 'crash_file': '/tmp/f oo' + suffix, 'symptom': None,
-                 'update_report': None, 'save': None, 'window': False,
-                 'tag': [], 'hanging': False})
+            _chk('apport-cli', '/tmp/f oo' + suffix,
+                 {'filebug': False, 'package': None, 'pid': None, 'crash_file':
+                  '/tmp/f oo' + suffix, 'symptom': None, 'update_report': None,
+                  'save': None, 'window': False, 'tag': [], 'hanging': False})
 
         # executable
-        _chk('apport-cli', '/usr/bin/tail', {'filebug': True,
-             'package': 'coreutils',
-             'pid': None, 'crash_file': None, 'symptom': None,
-             'update_report': None, 'save': None, 'window': False,
-             'tag': [], 'hanging': False})
+        _chk('apport-cli', '/usr/bin/tail',
+             {'filebug': True, 'package': 'coreutils', 'pid': None,
+              'crash_file': None, 'symptom': None, 'update_report': None,
+              'save': None, 'window': False, 'tag': [], 'hanging': False})
 
         # update existing report
-        _chk('apport-collect', '1234', {'filebug': False, 'package': None,
-             'crash_file': None, 'symptom': None, 'update_report': 1234,
-             'tag': []})
-        _chk('apport-update-bug', '1234', {'filebug': False, 'package': None,
-             'crash_file': None, 'symptom': None, 'update_report': 1234,
-             'tag': []})
+        _chk('apport-collect', '1234',
+             {'filebug': False, 'package': None, 'crash_file': None, 'symptom':
+              None, 'update_report': 1234, 'tag': []})
+        _chk('apport-update-bug', '1234',
+             {'filebug': False, 'package': None, 'crash_file': None, 'symptom':
+              None, 'update_report': 1234, 'tag': []})
 
     def test_parse_argv_apport_bug(self):
         '''parse_args() option inference when invoked as *-bug'''

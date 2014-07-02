@@ -123,7 +123,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             if 'Package' not in report:
                 report['UnreportableReason'] = _('This package does not seem to be installed correctly')
             elif not apport.packaging.is_distro_package(report['Package'].split()[0]):
-                #TRANS: %s is the name of the operating system
+                # TRANS: %s is the name of the operating system
                 report['UnreportableReason'] = _(
                     'This is not an official %s package. Please remove any third party package and try again.') % report['DistroRelease'].split()[0]
     except ValueError:
@@ -147,8 +147,8 @@ versions installed. Please upgrade the following packages and check if the \
 problem still occurs:\n\n%s') % ', '.join(old_pkgs)
 
     # disabled: if we have a SIGABRT without an assertion message, declare as unreportable
-    #if report.get('Signal') == '6' and 'AssertionMessage' not in report:
-    #    report['UnreportableReason'] = _('The program crashed on an assertion failure, but the message could not be retrieved. Apport does not support reporting these crashes.')
+    # if report.get('Signal') == '6' and 'AssertionMessage' not in report:
+    #     report['UnreportableReason'] = _('The program crashed on an assertion failure, but the message could not be retrieved. Apport does not support reporting these crashes.')
 
     if reportfile:
         try:
@@ -520,7 +520,7 @@ class UserInterface:
 
         info_collected = False
         for p in pkgs:
-            #print('Collecting apport information for source package %s...' % p)
+            # print('Collecting apport information for source package %s...' % p)
             self.cur_package = p
             self.report['SourcePackage'] = p
             self.report['Package'] = p  # no way to find this out
@@ -884,7 +884,7 @@ class UserInterface:
             _('This will launch apport-retrace in a terminal window to examine the crash.'),
             [_('Run gdb session'),
              _('Run gdb session without downloading debug symbols'),
-             #TRANSLATORS: %s contains the crash report file name
+             # TRANSLATORS: %s contains the crash report file name
              _('Update %s with fully symbolic stack trace') % self.report_file,
             ],
             False)

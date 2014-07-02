@@ -497,7 +497,7 @@ Debug::NoLocking "true";
         debug_pkgname = 'linux-image-debug-%s' % kver
         c = self._cache()
         if debug_pkgname in c and c[debug_pkgname].isInstalled:
-            #print('kernel ddeb already installed')
+            # print('kernel ddeb already installed')
             return (installed, outdated)
         target_dir = apt.apt_pkg.config.find_dir('Dir::Cache::archives') + '/partial'
         deb = '%s_%s_%s.ddeb' % (debug_pkgname, ver, arch)

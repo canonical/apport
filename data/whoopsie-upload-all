@@ -135,7 +135,7 @@ if subprocess.call(['pidof', 'whoopsie'], stdout=subprocess.PIPE) != 0:
     sys.exit(1)
 
 stamps = collect_info()
-#print('stamps:', stamps)
+# print('stamps:', stamps)
 if stamps:
     if not wait_uploaded(stamps, opts.timeout):
         sys.exit(2)

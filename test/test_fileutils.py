@@ -115,7 +115,7 @@ class T(unittest.TestCase):
         if os.getuid() == 0:
             tr = self._create_reports(True)
         else:
-            tr = [r for r in self._create_reports(True) if not 'inaccessible' in r]
+            tr = [r for r in self._create_reports(True) if 'inaccessible' not in r]
         self.assertEqual(set(apport.fileutils.get_new_reports()), set(tr))
 
         # now mark them as seen and check again
@@ -169,7 +169,7 @@ class T(unittest.TestCase):
         if os.getuid() == 0:
             tr = self._create_reports(True)
         else:
-            tr = [r for r in self._create_reports(True) if not 'inaccessible' in r]
+            tr = [r for r in self._create_reports(True) if 'inaccessible' not in r]
         self.assertEqual(set(apport.fileutils.get_all_reports()), set(tr))
 
         # now mark them as seen and check again
@@ -195,7 +195,7 @@ class T(unittest.TestCase):
             self.assertEqual(set(apport.fileutils.get_all_system_reports()), set(tr))
             self.assertEqual(set(apport.fileutils.get_new_system_reports()), set([]))
         else:
-            tr = [r for r in self._create_reports(True) if not 'inaccessible' in r]
+            tr = [r for r in self._create_reports(True) if 'inaccessible' not in r]
             self.assertEqual(set(apport.fileutils.get_all_system_reports()), set([]))
             self.assertEqual(set(apport.fileutils.get_new_system_reports()), set([]))
 

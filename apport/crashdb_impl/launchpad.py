@@ -902,13 +902,13 @@ in a dependent package.' % master,
     def _subscribe_triaging_team(self, bug, report):
         '''Subscribe the right triaging team to the bug.'''
 
-        #FIXME: this entire function is an ugly Ubuntu specific hack until LP
-        #gets a real crash db; see https://wiki.ubuntu.com/CrashReporting
+        # FIXME: this entire function is an ugly Ubuntu specific hack until LP
+        # gets a real crash db; see https://wiki.ubuntu.com/CrashReporting
 
         if 'DistroRelease' in report and report['DistroRelease'].split()[0] != 'Ubuntu':
             return  # only Ubuntu bugs are filed private
 
-        #use a url hack here, it is faster
+        # use a url hack here, it is faster
         person = '%s~%s' % (self.launchpad._root_uri,
                             self.options.get('triaging_team', 'ubuntu-crashes-universe'))
         bug.subscribe(person=person)
@@ -1595,7 +1595,7 @@ and more
                 tags=self.crashdb.arch_tag,
                 target=self.crashdb.lp_distro,
                 title='ubuntu distro retrace bug')
-            #print('distro bug: https://staging.launchpad.net/bugs/%i' % distro_bug.id)
+            # print('distro bug: https://staging.launchpad.net/bugs/%i' % distro_bug.id)
 
             # create a project crash DB and a bug
             launchpad_instance = os.environ.get('APPORT_LAUNCHPAD_INSTANCE') or 'staging'
@@ -1608,7 +1608,7 @@ and more
                 tags=project_db.arch_tag,
                 target=project_db.lp_distro,
                 title='project retrace bug')
-            #print('project bug: https://staging.launchpad.net/bugs/%i' % project_bug.id)
+            # print('project bug: https://staging.launchpad.net/bugs/%i' % project_bug.id)
 
             # on project_db, we recognize the project bug and can mark it
             unretraced_before = project_db.get_unretraced()
@@ -1758,7 +1758,7 @@ and more
                 description=description,
                 # temporarily disabled to work around SSLHandshakeError on
                 # private attachments
-                #private=(header['Private'] == 'yes'),
+                # private=(header['Private'] == 'yes'),
                 tags=header['Tags'].split(),
                 target=bug_target,
                 title=report.get('Title', report.standard_title()))
