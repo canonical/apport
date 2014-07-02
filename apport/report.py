@@ -1408,10 +1408,16 @@ class Report(problem_report.ProblemReport):
         if (failed == 0 and len(stack) < 3) or (failed > 0 and len(stack) < 6):
             return None
 
+        # make it easier to regenerate signatures on other arches
+        if 'Uname' in self:
+            arch = self['Uname'].split()[2]
+        else:
+            arch = os.uname()[4]
+
         return '%s:%s:%s:%s' % (
             self['ExecutablePath'],
             self['Signal'],
-            os.uname()[4],
+            arch,
             ':'.join(stack))
 
     def anonymize(self):

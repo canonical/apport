@@ -4,6 +4,9 @@ detailed list of changes, please see ChangeLog.
 2.14.4 (UNRELEASED)
 -------------------
  * Adjust code to match latest pep8 checker.
+ * Report.crash_signature_addresses(): If the report has an Uname field, use
+   that instead of querying uname. This makes it easier to regenerate broken
+   signatures from existing reports on different architectures. (LP: #1336565)
 
 2.14.3 (2014-05-30)
 -------------------
