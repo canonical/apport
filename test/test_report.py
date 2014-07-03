@@ -2106,7 +2106,7 @@ No symbol table info available.
 #6  0x000000000041d703 in _start ()
 '''
         self.assertEqual(pr.crash_signature_addresses(),
-                         '/bin/bash:42:%s:/lib/x86_64-linux-gnu/libc-2.13.so+36687:/bin/bash+3fd51:/bin/bash+2eb76:/bin/bash+324d8:/bin/bash+707e3:/bin/bash+1d703' % os.uname()[4])
+                         '/bin/bash:42:/lib/x86_64-linux-gnu/libc-2.13.so+36687:/bin/bash+3fd51:/bin/bash+2eb76:/bin/bash+324d8:/bin/bash+707e3:/bin/bash+1d703')
 
         # all resolvable, but too short
         pr['Stacktrace'] = '#0  0x00007f491fac5687 in kill () at ../sysdeps/unix/syscall-template.S:82'
