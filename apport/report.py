@@ -59,7 +59,7 @@ def _transitive_dependencies(package, depends_set):
     except ValueError:
         return
     for d in packaging.get_dependencies(package):
-        if not d in depends_set:
+        if d not in depends_set:
             depends_set.add(d)
             _transitive_dependencies(d, depends_set)
 
@@ -274,7 +274,7 @@ class Report(problem_report.ProblemReport):
         '''
         if not package:
             # the kernel does not have a executable path but a package
-            if not 'ExecutablePath' in self and self['ProblemType'] == 'KernelCrash':
+            if 'ExecutablePath' not in self and self['ProblemType'] == 'KernelCrash':
                 package = self['Package']
             else:
                 package = apport.fileutils.find_file_package(self['ExecutablePath'])
@@ -1371,7 +1371,7 @@ class Report(problem_report.ProblemReport):
 
         Return None when signature cannot be determined.
         '''
-        if not 'ProcMaps' in self or not 'Stacktrace' in self or not 'Signal' in self:
+        if 'ProcMaps' not in self or 'Stacktrace' not in self or 'Signal' not in self:
             return None
 
         stack = []
@@ -1408,10 +1408,9 @@ class Report(problem_report.ProblemReport):
         if (failed == 0 and len(stack) < 3) or (failed > 0 and len(stack) < 6):
             return None
 
-        return '%s:%s:%s:%s' % (
+        return '%s:%s:%s' % (
             self['ExecutablePath'],
             self['Signal'],
-            os.uname()[4],
             ':'.join(stack))
 
     def anonymize(self):
@@ -1444,7 +1443,7 @@ class Report(problem_report.ProblemReport):
             pass
 
         for k in self:
-            is_proc_field = k.startswith('Proc') and not k in [
+            is_proc_field = k.startswith('Proc') and k not in [
                 'ProcCpuinfo', 'ProcMaps', 'ProcStatus', 'ProcInterrupts', 'ProcModules']
             if is_proc_field or 'Stacktrace' in k or k in ['Traceback', 'PythonArgs', 'Title']:
                 if not hasattr(self[k], 'isspace'):

@@ -13,7 +13,6 @@
 
 import optparse, sys, os.path
 
-#from apport.crashdb import get_crashdb
 import apport.crashdb_impl.memory
 import apport
 
@@ -81,10 +80,10 @@ if not os.path.exists(options.db_file):
 # pure DB operations don't need a real backend, and thus no crashdb.conf
 crashdb = apport.crashdb_impl.memory.CrashDatabase(None, {})
 
-#if args[0] in ():
-#    # these commands require a real DB
-#    crashdb = get_crashdb(None, None, {})
-#else:
+# if args[0] in ():
+#     # these commands require a real DB
+#     crashdb = get_crashdb(None, None, {})
+# else:
 
 crashdb.init_duplicate_db(options.db_file)
 

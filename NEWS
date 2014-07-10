@@ -1,7 +1,22 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.14.3 (UNRELEASED)
+2.14.5 (UNRELEASED)
+-------------------
+ * apport-bug: Stop checking the autoreport flag and calling
+   whoopsie-upload-all; these two are different tasks, and that breaks bug
+   reporting. (LP: #1339663)
+
+2.14.4 (2014-07-03)
+-------------------
+ * Adjust code to match latest pep8 checker.
+ * Report.crash_signature_addresses(): Drop kernel architecture from
+   StacktraceAddressSignature field. It isn't useful there (at most the ELF
+   architecture, but we don't really need that either). This makes it easier to
+   regenerate broken signatures from existing reports on different
+   architectures. (LP: #1336565)
+
+2.14.3 (2014-05-30)
 -------------------
  * Add kernel package version to the various kernel-related hooks. Thanks Brian
    Murray. (LP: #1316845)

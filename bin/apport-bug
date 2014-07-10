@@ -30,10 +30,6 @@ find_programs() {
     GTK="$RET"
     find_program "apport-kde"
     KDE="$RET"
-    find_program "whoopsie-upload-all"
-    AUTO="$RET"
-
-    # find a terminal emulator
 }
 
 #
@@ -44,11 +40,8 @@ find_programs
 
 export APPORT_INVOKED_AS="$0"
 
-if [ -n "$AUTO" ] && [ -e /etc/apport/autoreport ] ; then
-    $AUTO "$@"
-
 # check for X
-elif [ -z "$DISPLAY" ]; then
+if [ -z "$DISPLAY" ]; then
     if [ -n "$CLI" ] ; then
         $CLI "$@"
     else
