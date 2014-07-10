@@ -187,6 +187,7 @@ FILE                                                    LOCATION
 usr/bin/frobnicate                                      foo/frob
 usr/bin/frob                                            foo/frob-utils
 bo/gu/s                                                 na/mypackage
+bin/true                                                na/mypackage
 ''')
 
             # test Contents.gz for -updates pocket
@@ -226,6 +227,7 @@ lib/libnew.so.5                                         universe/libs/libnew5
 
             # valid cache, should not need to access the mirror
             impl.set_mirror('file:///foo/nonexisting')
+            self.assertEqual(impl.get_file_package('/bin/true', True, cache_dir), 'mypackage')
             self.assertEqual(impl.get_file_package('/bo/gu/s', True, cache_dir), 'mypackage')
             self.assertEqual(impl.get_file_package('/lib/libnew.so.5', True, cache_dir), 'libnew5')
 

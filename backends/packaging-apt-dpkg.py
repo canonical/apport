@@ -336,38 +336,38 @@ class __AptDpkgPackageInfo(PackageInfo):
         Also, release and arch can be set to a foreign release/architecture
         instead of the one from the current system.
         '''
-        # check if the file is a diversion
-        dpkg = subprocess.Popen(['dpkg-divert', '--list', file],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out = dpkg.communicate()[0].decode('UTF-8')
-        if dpkg.returncode == 0 and out:
-            pkg = out.split()[-1]
-            if pkg != 'hardening-wrapper':
-                return pkg
-
-        fname = os.path.splitext(os.path.basename(file))[0].lower()
-
-        all_lists = []
-        likely_lists = []
-        for f in glob.glob('/var/lib/dpkg/info/*.list'):
-            p = os.path.splitext(os.path.basename(f))[0].lower().split(':')[0]
-            if p in fname or fname in p:
-                likely_lists.append(f)
-            else:
-                all_lists.append(f)
-
-        # first check the likely packages
-        match = self.__fgrep_files(file, likely_lists)
-        if not match:
-            match = self.__fgrep_files(file, all_lists)
-
-        if match:
-            return os.path.splitext(os.path.basename(match))[0].split(':')[0]
-
         if uninstalled:
             return self._search_contents(file, map_cachedir, release, arch)
         else:
-            return None
+            # check if the file is a diversion
+            dpkg = subprocess.Popen(['dpkg-divert', '--list', file],
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out = dpkg.communicate()[0].decode('UTF-8')
+            if dpkg.returncode == 0 and out:
+                pkg = out.split()[-1]
+                if pkg != 'hardening-wrapper':
+                    return pkg
+
+            fname = os.path.splitext(os.path.basename(file))[0].lower()
+
+            all_lists = []
+            likely_lists = []
+            for f in glob.glob('/var/lib/dpkg/info/*.list'):
+                p = os.path.splitext(os.path.basename(f))[0].lower().split(':')[0]
+                if p in fname or fname in p:
+                    likely_lists.append(f)
+                else:
+                    all_lists.append(f)
+
+            # first check the likely packages
+            match = self.__fgrep_files(file, likely_lists)
+            if not match:
+                match = self.__fgrep_files(file, all_lists)
+
+            if match:
+                return os.path.splitext(os.path.basename(match))[0].split(':')[0]
+
+        return None
 
     @classmethod
     def get_system_architecture(klass):
