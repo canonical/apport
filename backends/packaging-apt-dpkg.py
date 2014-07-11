@@ -336,6 +336,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         Also, release and arch can be set to a foreign release/architecture
         instead of the one from the current system.
         '''
+        if uninstalled:
+            return self._search_contents(file, map_cachedir, release, arch)
+
         # check if the file is a diversion
         dpkg = subprocess.Popen(['dpkg-divert', '--list', file],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -364,10 +367,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if match:
             return os.path.splitext(os.path.basename(match))[0].split(':')[0]
 
-        if uninstalled:
-            return self._search_contents(file, map_cachedir, release, arch)
-        else:
-            return None
+        return None
 
     @classmethod
     def get_system_architecture(klass):

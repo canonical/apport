@@ -6,6 +6,10 @@ detailed list of changes, please see ChangeLog.
  * apport-bug: Stop checking the autoreport flag and calling
    whoopsie-upload-all; these two are different tasks, and that breaks bug
    reporting. (LP: #1339663)
+ * apt/dpkg get_file_package(): If checking for uninstalled packages, don't
+   use package information from the host system, but always look it up in the
+   correct indexes. Otherwise this returns wrong results when files move to a
+   different package between releases. Thanks Brian Murray! (LP: #1336062)
 
 2.14.4 (2014-07-03)
 -------------------
