@@ -599,6 +599,7 @@ Debug::NoLocking "true";
             apt.apt_pkg.config.set('APT::Architecture', architecture)
         else:
             apt.apt_pkg.config.set('APT::Architecture', self.get_system_architecture())
+        apt.apt_pkg.config.set('Acquire::Languages', 'none')
 
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()

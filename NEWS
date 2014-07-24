@@ -10,6 +10,8 @@ detailed list of changes, please see ChangeLog.
    use package information from the host system, but always look it up in the
    correct indexes. Otherwise this returns wrong results when files move to a
    different package between releases. Thanks Brian Murray! (LP: #1336062)
+ * apt/dpkg install_packages(): Disable fetching apt translation indexes, to
+   save some bandwidth.
 
 2.14.4 (2014-07-03)
 -------------------
