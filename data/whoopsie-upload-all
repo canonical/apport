@@ -52,7 +52,11 @@ def process_report(report):
     else:
         print('Collecting info for %s...' % report)
         r.add_os_info()
-        r.add_gdb_info()
+        try:
+            r.add_gdb_info()
+        except EOFError as e:
+            sys.stderr.write('ERROR: processing %s: %s\n' % (report, str(e)))
+            return None
         try:
             r.add_package_info()
         except (SystemError, ValueError) as e:
