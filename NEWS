@@ -19,6 +19,7 @@ detailed list of changes, please see ChangeLog.
  * whoopsie-upload-all: Collect hooks information to gather ApportVersion,
    NonfreeKernelModules, and SystemImageInfo. Do this before collecting package
    data to minimize hook run time. (LP: #1349579)
+ * Adjust report.test_get_logind_session test to work with systemd >= 205.
 
 2.14.4 (2014-07-03)
 -------------------

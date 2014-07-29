@@ -2197,11 +2197,11 @@ No symbol table info available.
                 contents = f.read()
             sys.stdout.write('[not running under logind] ')
             sys.stdout.flush()
-            self.assertNotIn('name=systemd:/user/', contents)
+            self.assertNotIn('name=systemd:/user', contents)
             return
 
         (session, timestamp) = ret
-        self.assertTrue(session.startswith('/user/'), session)
+        self.assertIn('/user', session)
         # session start must be >= 2014-01-01 and "now"
         self.assertLess(timestamp, time.time())
         self.assertGreater(timestamp,
