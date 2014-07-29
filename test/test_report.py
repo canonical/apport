@@ -11,6 +11,9 @@ import apport.report
 import problem_report
 import apport.packaging
 
+have_twistd = subprocess.call(['which', 'twistd'], stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE) == 0
+
 
 class T(unittest.TestCase):
     def test_add_package_info(self):
@@ -450,6 +453,7 @@ sys.stdin.readline()
             if restore_root:
                 os.setresuid(0, 0, -1)
 
+    @unittest.skipUnless(have_twistd, 'twisted is not installed')
     def test_check_interpreted_twistd(self):
         '''_check_interpreted() for programs ran through twistd'''
 
