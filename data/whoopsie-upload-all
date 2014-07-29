@@ -52,6 +52,13 @@ def process_report(report):
     else:
         print('Collecting info for %s...' % report)
         r.add_os_info()
+        # add minimal hook information here; whoopsie only considers
+        # ApportVersion, NonfreeKernelModules, SystemImageInfo
+        try:
+            r.add_hooks_info(None)
+        except Exception as e:
+            sys.stderr.write('WARNING: hook failed for processing %s: %s\n' % (report, str(e)))
+
         try:
             r.add_gdb_info()
         except EOFError as e:
