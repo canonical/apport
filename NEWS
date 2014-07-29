@@ -14,6 +14,8 @@ detailed list of changes, please see ChangeLog.
    save some bandwidth.
  * whoopsie-upload-all: Ignore crash reports with incomplete core dumps instead
    of crashing on them. Thanks Brian Murray. (LP: #1329520)
+ * etc/default/apport: Fix comment to use "service" instead of calling the
+   init.d script directly.
 
 2.14.4 (2014-07-03)
 -------------------
