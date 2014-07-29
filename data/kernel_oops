@@ -11,7 +11,8 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, sys
+import os
+import sys
 import apport.fileutils
 
 from apport import unicode_gettext as _
@@ -25,7 +26,8 @@ oops = sys.stdin.read()
 pr = apport.Report('KernelOops')
 pr['Failure'] = 'oops'
 pr['Tags'] = 'kernel-oops'
-pr['Annotation'] = _('Your system might become unstable now and might need to be restarted.')
+pr['Annotation'] = _('Your system might become unstable'
+                     'now and might need to be restarted.')
 package = apport.packaging.get_kernel_package()
 try:
     package_version = apport.packaging.get_version(package)
