@@ -12,6 +12,8 @@ detailed list of changes, please see ChangeLog.
    different package between releases. Thanks Brian Murray! (LP: #1336062)
  * apt/dpkg install_packages(): Disable fetching apt translation indexes, to
    save some bandwidth.
+ * whoopsie-upload-all: Ignore crash reports with incomplete core dumps instead
+   of crashing on them. Thanks Brian Murray. (LP: #1329520)
 
 2.14.4 (2014-07-03)
 -------------------
