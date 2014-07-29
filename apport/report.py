@@ -325,8 +325,6 @@ class Report(problem_report.ProblemReport):
           'lsb_release -sir' output
         - Architecture: system architecture in distro specific notation
         - Uname: uname -srm output
-        - NonfreeKernelModules: loaded kernel modules which are not free (if
-            there are none, this field will not be present)
         '''
         if 'DistroRelease' not in self:
             self['DistroRelease'] = '%s %s' % apport.packaging.get_os_version()
