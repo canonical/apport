@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.14.6 (UNRELEASED)
+-------------------
+ * general-hooks/generic.py: Fix hook crash if there are non-distro libraries
+   and no user interface.
+
 2.14.5 (2014-07-29)
 -------------------
  * apport-bug: Stop checking the autoreport flag and calling

@@ -56,7 +56,7 @@ and installing updates. Please free some space.' % (mounts[mount], free_mb)
         for lib in re.finditer(r'\s(/[^ ]+\.so[.0-9]*)$', report['ProcMaps'], re.M):
             if not apport.fileutils.likely_packaged(lib.group(1)):
                 local_libs.add(lib.group(1))
-        if local_libs:
+        if ui and local_libs:
             if not ui.yesno('''The crashed program seems to use third-party or local libraries:
 
 %s
