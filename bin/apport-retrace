@@ -29,12 +29,14 @@ def parse_args():
     '''Parse command line options and return args namespace.'''
 
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('-s', '--stdout', action='store_true',
-                           help=_('Do not put the new traces into the report, but write them to stdout.'))
-    argparser.add_argument('-g', '--gdb', action='store_true',
-                           help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'))
-    argparser.add_argument('-o', '--output', metavar='FILE',
-                           help=_('Write modified report to given file instead of changing the original report'))
+    actions = argparser.add_mutually_exclusive_group()
+    actions.add_argument('-s', '--stdout', action='store_true',
+                         help=_('Do not put the new traces into the report, but write them to stdout.'))
+    actions.add_argument('-g', '--gdb', action='store_true',
+                         help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'))
+    actions.add_argument('-o', '--output', metavar='FILE',
+                         help=_('Write modified report to given file instead of changing the original report'))
+
     argparser.add_argument('-c', '--remove-core', action='store_true',
                            help=_('Remove the core dump from the report after stack trace regeneration'))
     argparser.add_argument('-r', '--core-file', metavar='CORE',
