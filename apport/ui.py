@@ -139,7 +139,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             report['Title'] = title
 
     # check obsolete packages
-    if report['ProblemType'] == 'Crash' and 'APPORT_IGNORE_OBSOLETE_PACKAGES' not in os.environ:
+    if report.get('ProblemType') == 'Crash' and 'APPORT_IGNORE_OBSOLETE_PACKAGES' not in os.environ:
         old_pkgs = report.obsolete_packages()
         if old_pkgs:
             report['UnreportableReason'] = _('You have some obsolete package \
@@ -956,7 +956,7 @@ class UserInterface:
             return
 
         # ensure that the crashed program is still installed:
-        if self.report['ProblemType'] == 'Crash':
+        if self.report.get('ProblemType') == 'Crash':
             exe_path = self.report.get('ExecutablePath', '')
             if not os.path.exists(exe_path):
                 msg = _('This problem report applies to a program which is not installed any more.')
@@ -1041,7 +1041,7 @@ class UserInterface:
                 return
 
             # check bug patterns
-            if self.report['ProblemType'] == 'KernelCrash' or self.report['ProblemType'] == 'KernelOops' or 'Package' in self.report:
+            if self.report.get('ProblemType') == 'KernelCrash' or self.report.get('ProblemType') == 'KernelOops' or 'Package' in self.report:
                 bpthread = apport.REThread.REThread(target=self.report.search_bug_patterns,
                                                     args=(self.crashdb.get_bugpattern_baseurl(),))
                 bpthread.start()
@@ -1056,7 +1056,7 @@ class UserInterface:
                     self.report['_KnownReport'] = bpthread.return_value()
 
             # check crash database if problem is known
-            if self.report['ProblemType'] != 'Bug':
+            if self.report.get('ProblemType') != 'Bug':
                 known_thread = apport.REThread.REThread(target=self.crashdb.known,
                                                         args=(self.report,))
                 known_thread.start()
@@ -1091,7 +1091,7 @@ class UserInterface:
             # check that we were able to determine package names
             if 'UnreportableReason' not in self.report:
                 if (('SourcePackage' not in self.report and 'Dependencies' not in self.report) or
-                    (not self.report['ProblemType'].startswith('Kernel')
+                    (not self.report.get('ProblemType', '').startswith('Kernel')
                      and 'Package' not in self.report)):
                     self.ui_error_message(_('Invalid problem report'),
                                           _('Could not determine the package or source package name.'))

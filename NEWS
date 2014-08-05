@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * general-hooks/generic.py: Fix hook crash if there are non-distro libraries
    and no user interface.
+ * collect_info(): Don't assume that reports have a ProblemType. Fixes crashes
+   with apport-collect. (LP: #1325729)
 
 2.14.5 (2014-07-29)
 -------------------
