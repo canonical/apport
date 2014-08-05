@@ -12,7 +12,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import sys, os, os.path, subprocess, optparse, shutil, tempfile, re, zlib
+import sys, os, os.path, subprocess, argparse, shutil, tempfile, re, zlib
 import tty, termios, gettext
 import apport, apport.fileutils, apport.sandboxutils
 from apport.crashdb import get_crashdb
@@ -25,66 +25,62 @@ from apport import unicode_gettext as _
 log_timestamps = False
 
 
-def parse_options():
-    '''Parse command line options and return (reportfile, options) tuple.'''
+def parse_args():
+    '''Parse command line options and return args namespace.'''
 
-    optparser = optparse.OptionParser(_('%prog [options] <apport problem report | crash ID>'))
-    optparser.add_option('-s', '--stdout', action='store_true',
-                         help=_('Do not put the new traces into the report, but write them to stdout.'))
-    optparser.add_option('-g', '--gdb', action='store_true',
-                         help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'))
-    optparser.add_option('-o', '--output', metavar='FILE',
-                         help=_('Write modified report to given file instead of changing the original report'))
-    optparser.add_option('-c', '--remove-core', action='store_true',
-                         help=_('Remove the core dump from the report after stack trace regeneration'))
-    optparser.add_option('-r', '--core-file', metavar='CORE',
-                         help=_('Override report\'s CoreFile'))
-    optparser.add_option('-x', '--executable', metavar='EXE',
-                         help=_('Override report\'s ExecutablePath'))
-    optparser.add_option('-m', '--procmaps', metavar='MAPS',
-                         help=_('Override report\'s ProcMaps'))
-    optparser.add_option('-R', '--rebuild-package-info', action='store_true',
-                         help=_('Rebuild report\'s Package information'))
-    optparser.add_option('-S', '--sandbox', metavar='CONFIG_DIR',
-                         help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'))
-    optparser.add_option('-v', '--verbose', action='store_true',
-                         help=_('Report download/install progress when installing packages into sandbox'))
-    optparser.add_option('--timestamps', action='store_true',
-                         help=_('Prepend timestamps to log messages, for batch operation'))
-    optparser.add_option('-C', '--cache', metavar='DIR',
-                         help=_('Cache directory for packages downloaded in the sandbox'))
-    optparser.add_option('--sandbox-dir', metavar='DIR',
-                         help=_('Directory for unpacked packages. Future runs will assume that any already downloaded package is also extracted to this sandbox.'))
-    optparser.add_option('-p', '--extra-package', action='append', default=[],
-                         help=_('Install an extra package into the sandbox (can be specified multiple times)'))
-    optparser.add_option('--auth',
-                         help=_('Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)'))
-    optparser.add_option('--confirm', action='store_true',
-                         help=_('Display retraced stack traces and ask for confirmation before sending them to the crash database.'))
-    optparser.add_option('--duplicate-db', metavar='PATH',
-                         help=_('Path to the duplicate sqlite database (default: no duplicate checking)'))
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument('-s', '--stdout', action='store_true',
+                           help=_('Do not put the new traces into the report, but write them to stdout.'))
+    argparser.add_argument('-g', '--gdb', action='store_true',
+                           help=_('Start an interactive gdb session with the report\'s core dump (-o ignored; does not rewrite report)'))
+    argparser.add_argument('-o', '--output', metavar='FILE',
+                           help=_('Write modified report to given file instead of changing the original report'))
+    argparser.add_argument('-c', '--remove-core', action='store_true',
+                           help=_('Remove the core dump from the report after stack trace regeneration'))
+    argparser.add_argument('-r', '--core-file', metavar='CORE',
+                           help=_('Override report\'s CoreFile'))
+    argparser.add_argument('-x', '--executable', metavar='EXE',
+                           help=_('Override report\'s ExecutablePath'))
+    argparser.add_argument('-m', '--procmaps', metavar='MAPS',
+                           help=_('Override report\'s ProcMaps'))
+    argparser.add_argument('-R', '--rebuild-package-info', action='store_true',
+                           help=_('Rebuild report\'s Package information'))
+    argparser.add_argument('-S', '--sandbox', metavar='CONFIG_DIR',
+                           help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'))
+    argparser.add_argument('-v', '--verbose', action='store_true',
+                           help=_('Report download/install progress when installing packages into sandbox'))
+    argparser.add_argument('--timestamps', action='store_true',
+                           help=_('Prepend timestamps to log messages, for batch operation'))
+    argparser.add_argument('-C', '--cache', metavar='DIR',
+                           help=_('Cache directory for packages downloaded in the sandbox'))
+    argparser.add_argument('--sandbox-dir', metavar='DIR',
+                           help=_('Directory for unpacked packages. Future runs will assume that any already downloaded package is also extracted to this sandbox.'))
+    argparser.add_argument('-p', '--extra-package', action='append', default=[],
+                           help=_('Install an extra package into the sandbox (can be specified multiple times)'))
+    argparser.add_argument('--auth',
+                           help=_('Path to a file with the crash database authentication information. This is used when specifying a crash ID to upload the retraced stack traces (only if neither -g, -o, nor -s are specified)'))
+    argparser.add_argument('--confirm', action='store_true',
+                           help=_('Display retraced stack traces and ask for confirmation before sending them to the crash database.'))
+    argparser.add_argument('--duplicate-db', metavar='PATH',
+                           help=_('Path to the duplicate sqlite database (default: no duplicate checking)'))
+    argparser.add_argument('report', metavar='some.crash|NNNN',
+                           help='apport .crash file or the crash ID to process')
 
-    (opts, args) = optparser.parse_args()
-
-    if len(args) != 1:
-        optparser.error(_('incorrect number of arguments; use --help for a short help'))
-        sys.exit(1)
+    args = argparser.parse_args()
 
     # catch invalid usage of -C without -S (cache is only used when making a
     # sandbox)
-    if opts.cache and not opts.sandbox:
-        optparser.error(_('You cannot use -C without -S. Stopping.'))
-        sys.exit(1)
+    if args.cache and not args.sandbox:
+        argparser.error(_('You cannot use -C without -S. Stopping.'))
 
-    if not (opts.auth or opts.output or opts.stdout or opts.gdb):
-        optparser.error(_('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short help'))
-        sys.exit(1)
+    if not (args.auth or args.output or args.stdout or args.gdb):
+        argparser.error(_('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short help'))
 
-    if opts.timestamps:
+    if args.timestamps:
         global log_timestamps
         log_timestamps = True
 
-    return (args[0], opts)
+    return args
 
 
 def getch():
@@ -215,24 +211,24 @@ apport.memdbg('start')
 
 gettext.textdomain('apport')
 
-(reportfile, options) = parse_options()
+options = parse_args()
 
 crashdb = get_crashdb(options.auth)
 apport.memdbg('got crash DB')
 
 # load the report
-if os.path.exists(reportfile):
+if os.path.exists(options.report):
     try:
         report = apport.Report()
-        with open(reportfile, 'rb') as f:
+        with open(options.report, 'rb') as f:
             report.load(f, binary='compressed')
         apport.memdbg('loaded report from file')
     except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
         apport.fatal('Cannot open report file: %s', str(e))
-elif reportfile.isdigit():
+elif options.report.isdigit():
     # crash ID
     try:
-        report = crashdb.download(int(reportfile))
+        report = crashdb.download(int(options.report))
         apport.memdbg('downloaded report from crash DB')
     except AssertionError as e:
         if 'apport format data' in str(e):
@@ -246,7 +242,7 @@ elif reportfile.isdigit():
         # an informative message and exit cleanly to not break crash-digger
         if options.auth and not options.output and not options.stdout:
             apport.error('Broken report: %s, closing as invalid', str(e))
-            crashdb.mark_retrace_failed(reportfile, '''Thank you for your report!
+            crashdb.mark_retrace_failed(options.report, '''Thank you for your report!
 
 However, processing it in order to get sufficient information for the
 developers failed, since the report is ill-formed. Perhaps the report data got
@@ -262,10 +258,11 @@ Thank you for your understanding, and sorry for the inconvenience!
         else:
             raise
 
-    crashid = reportfile
-    reportfile = None
+    crashid = options.report
+    options.report = None
 else:
-    apport.fatal('"%s" is neither an existing report file nor a crash ID', reportfile)
+    apport.fatal('"%s" is neither an existing report file nor a crash ID',
+                 options.report)
 
 if options.core_file:
     with open(options.core_file, 'rb') as f:
@@ -348,7 +345,7 @@ else:
         modified = True
 
 if modified:
-    if not reportfile and not options.output:
+    if not options.report and not options.output:
         if not options.auth:
             apport.fatal('You need to specify --auth for uploading retraced results back to the crash database.')
         if not options.confirm or confirm_traces(report):
@@ -400,7 +397,7 @@ Thank you for your understanding, and sorry for the inconvenience!
 
     else:
         if options.output is None:
-            out = open(reportfile, 'wb')
+            out = open(options.report, 'wb')
         elif options.output == '-':
             if sys.version[0] < '3':
                 out = sys.stdout
