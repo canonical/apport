@@ -334,11 +334,11 @@ class GTKUserInterface(apport.ui.UserInterface):
                 if app_icon.get_parent():  # work around LP#938090
                     app_icon.set_from_pixbuf(pb)
             except GLib.GError:
-                self.w('application_icon').set_from_stock(
+                self.w('application_icon').set_from_icon_name(
                     Gtk.STOCK_DIALOG_ERROR, Gtk.IconSize.DIALOG)
         else:
-            self.w('application_icon').set_from_stock(Gtk.STOCK_DIALOG_ERROR,
-                                                      Gtk.IconSize.DIALOG)
+            self.w('application_icon').set_from_icon_name(
+                Gtk.STOCK_DIALOG_ERROR, Gtk.IconSize.DIALOG)
 
         d = self.w('dialog_crash_new')
         if 'DistroRelease' in self.report:
