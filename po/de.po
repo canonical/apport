@@ -10,12 +10,12 @@ msgstr ""
 "PO-Revision-Date: 2014-07-11 09:22+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
-"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-07-31 05:56+0000\n"
-"X-Generator: Launchpad (build 17131)\n"
+"X-Launchpad-Export-Date: 2014-08-18 05:44+0000\n"
+"X-Generator: Launchpad (build 17156)\n"
+"Language: de\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -154,8 +154,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -213,8 +213,10 @@ msgstr ""
 "angegeben werden."
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [Optionen] [Fehler|PID|Paket|Programmpfad|.apport/.crash-Datei]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [Optionen] [Fehler|PID|Paket|Programmpfad|.apport/.crash-Datei]"
 
 #: ../apport/ui.py:724
 msgid ""
@@ -306,7 +308,8 @@ msgstr "Eine gdb-Sitzung ausführen"
 
 #: ../apport/ui.py:886
 msgid "Run gdb session without downloading debug symbols"
-msgstr "Eine gdb-Sitzung ausführen ohne Fehlerdiagnosesymbole herunterzuladen"
+msgstr ""
+"Eine gdb-Sitzung ausführen ohne Fehlerdiagnosesymbole herunterzuladen"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:888
@@ -360,7 +363,8 @@ msgstr "Konnte Web-Browser nicht starten um %s zu öffnen."
 #: ../apport/ui.py:1216
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr "Bitte geben Sie Ihre Kontodaten für das %s-Fehlerverwaltungssystem ein"
+msgstr ""
+"Bitte geben Sie Ihre Kontodaten für das %s-Fehlerverwaltungssystem ein"
 
 #: ../apport/ui.py:1228
 msgid "Network problem"
@@ -649,7 +653,8 @@ msgstr ""
 "Veröffentlichung zurück zu verfolgen."
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Übertragungs-/Installationsfortschritt anzeigen, wenn Pakete in einer "
 "Sandbox installiert werden"
@@ -701,7 +706,8 @@ msgstr ""
 "sie zur Fehlerdatenbank gesendet werden."
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Pfad zur sqlite-Datenbank mit den Duplikaten (Voreinstellung: Keine Prüfung "
 "auf Duplikate)"
@@ -735,11 +741,8 @@ msgid "Report a malfunction to the developers"
 msgstr "Den Entwicklern eine Fehlfunktion melden"
 
 #: ../data/kernel_oops.py:29
-#, fuzzy
 msgid "Your system might become unstablenow and might need to be restarted."
 msgstr ""
-"Ihr System könnte nun instabil werden, und muss eventuell neu gestartet "
-"werden."
 
 #: ../gtk/apport-gtk.py:157
 #, python-format
@@ -862,7 +865,8 @@ msgstr ""
 "neuen erstellen, falls er noch nicht existiert"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "Übertragungs-/Installationsfortschritt anzeigen, wenn Pakete in einer "
 "Sandbox installiert werden"
@@ -933,18 +937,19 @@ msgid "System problem reports"
 msgstr "Systemproblemberichte"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Bitte geben Sie Ihr Passwort ein, um zu den Problemberichten von "
 "Systemprogrammen zu gelangen"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
-msgstr "Abbruch"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
@@ -957,7 +962,8 @@ msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:7
 msgid "Send an error report to help fix this problem"
-msgstr "Einen Fehlerbericht senden, um beim Beheben dieses Problems zu helfen"
+msgstr ""
+"Einen Fehlerbericht senden, um beim Beheben dieses Problems zu helfen"
 
 #: ../gtk/apport-gtk.ui.h:8
 msgid "Ignore future problems of this program version"
@@ -996,16 +1002,11 @@ msgstr "Benutzung: %s <Bericht> <Zielverzeichnis>"
 msgid "Destination directory exists and is not empty."
 msgstr "Zielverzeichnis existiert und ist nicht leer."
 
-#~ msgid "%prog [options] <apport problem report | crash ID>"
-#~ msgstr "%prog [Optionen] <Apport-Berichtsdatei | Absturzkennung>"
-
-#~ msgid "incorrect number of arguments; use --help for a short help"
-#~ msgstr ""
-#~ "Ungültige Anzahl von Argumenten; benutzen Sie --help für die Kurzhilfe"
-
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Das Paket \"%s\" lies sich nicht installieren oder aktualisieren."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Vollständiger Bericht (empfohlen; %s)"
 
@@ -1036,37 +1037,41 @@ msgstr "Zielverzeichnis existiert und ist nicht leer."
 #~ "Bitte füllen Sie, nachdem der Problembericht versandt wurde, das Formular "
 #~ "aus, welches sich automatisch in ihrem Browser öffnen wird."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s wurde unerwartet beendet am %s um %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "_Programm neustarten"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Entschuldigung, das Paket \"%s\" "
-#~ "lies sich nicht installieren oder aktualisieren.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Entschuldigung, das Paket \"%s\" lies "
+#~ "sich nicht installieren oder aktualisieren.</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Vollständiger Bericht (empfohlen; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Reduzierter Bericht (langsame Internetverbindung; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "&Reduzierter Bericht (langsame Internetverbindung; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Dies wird einige große Teile aus dem Bericht entfernen. Diese sind für "
-#~ "die Entwickler sehr hilfreich um das Problem zu untersuchen, aber sie "
-#~ "könnten zu groß zum hochladen sein, wenn Sie eine langsame "
-#~ "Internetverbindung haben."
+#~ "Dies wird einige große Teile aus dem Bericht entfernen. Diese sind für die "
+#~ "Entwickler sehr hilfreich um das Problem zu untersuchen, aber sie könnten zu "
+#~ "groß zum hochladen sein, wenn Sie eine langsame Internetverbindung haben."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Fehler melden..."
@@ -1086,6 +1091,7 @@ msgstr "Zielverzeichnis existiert und ist nicht leer."
 #~ "Sie können den Entwicklern helfen das Paket zu korrigieren, indem sie das "
 #~ "Problem melden."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Dies ist kein %s-Paket"
 
@@ -1100,8 +1106,17 @@ msgstr "Zielverzeichnis existiert und ist nicht leer."
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Sie können den Entwicklern helfen das Problem zu korrigieren, indem sie "
-#~ "es melden."
+#~ "Sie können den Entwicklern helfen das Problem zu korrigieren, indem sie es "
+#~ "melden."
+
+#~ msgid "Your system might become unstable now and might need to be restarted."
+#~ msgstr ""
+#~ "Ihr System könnte nun instabil werden, und muss eventuell neu gestartet "
+#~ "werden."
+
+#~ msgid "incorrect number of arguments; use --help for a short help"
+#~ msgstr ""
+#~ "Ungültige Anzahl von Argumenten; benutzen Sie --help für die Kurzhilfe"
 
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Diese Daten an die Entwickler senden?"
@@ -1111,8 +1126,8 @@ msgstr "Zielverzeichnis existiert und ist nicht leer."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Sofern Sie nicht etwas Vertrauliches durchgeführt haben (Eingabe von "
 #~ "Passwörtern oder anderen privaten Informationen), können Sie bei der "
@@ -1120,8 +1135,7 @@ msgstr "Zielverzeichnis existiert und ist nicht leer."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Sofern Sie nicht etwas Vertrauliches durchgeführt haben (Eingabe von\n"
@@ -1134,20 +1148,28 @@ msgstr "Zielverzeichnis existiert und ist nicht leer."
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "Zukünftige Abstürze dieser Programmversion _ignorieren"
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Entschuldigung, \"%s\" wurde unerwartet beendet"
 
+#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Entschuldigung, das Programm \"%s\" wurde unerwartet beendet."
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Entschuldigung, \"%s\" wurde unerwartet beendet."
 
 #~ msgid "Restart &Program"
 #~ msgstr "&Programm neustarten"
 
+#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Das Paket \"%s\" ließ sich nicht installieren oder aktualisieren."
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Entschuldigung, die Anwendung %s wurde unerwartet beendet."
+
+#~ msgid "%prog [options] <apport problem report | crash ID>"
+#~ msgstr "%prog [Optionen] <Apport-Berichtsdatei | Absturzkennung>"

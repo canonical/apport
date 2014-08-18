@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-22 14:23+0000\n"
 "Last-Translator: Samir Ribić <Unknown>\n"
 "Language-Team: Bosnian <bs@li.org>\n"
-"Language: bs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-07-31 05:55+0000\n"
-"X-Generator: Launchpad (build 17131)\n"
+"X-Launchpad-Export-Date: 2014-08-18 05:44+0000\n"
+"X-Generator: Launchpad (build 17156)\n"
+"Language: bs\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -143,8 +143,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -189,7 +189,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:724
@@ -552,7 +553,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
@@ -588,7 +590,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:76
@@ -736,7 +739,8 @@ msgstr ""
 "ga"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "prijavi napredak o preuzimanjui/instalaciji kada se instaliraju paketi u "
 "zaštićenu kutiju"
@@ -801,7 +805,8 @@ msgid "System problem reports"
 msgstr "Izvještaji o problemima u sistemu"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Molimo unesite svoju šifru kako bi pristupili izvještaju o problemima "
 "nastalim u sistemskim programima"
@@ -862,13 +867,14 @@ msgid "Destination directory exists and is not empty."
 msgstr ""
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Ovo će izbaciti neke velike stvari iz izvještaja. Ovi su veoma korisni za "
-#~ "programere pri ispravljanju problema, ali mogu biti veliki za vaš upload "
-#~ "ako imate spor priključak na Internet."
+#~ "programere pri ispravljanju problema, ali mogu biti veliki za vaš upload ako "
+#~ "imate spor priključak na Internet."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ovo nije originalni %s paket"

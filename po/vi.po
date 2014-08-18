@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Phan Trọng Khanh <phantrongkhanh87@gmail.com>\n"
 "Language-Team: Vietnamese <vi@li.org>\n"
-"Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-07-31 05:58+0000\n"
-"X-Generator: Launchpad (build 17131)\n"
+"X-Launchpad-Export-Date: 2014-08-18 05:46+0000\n"
+"X-Generator: Launchpad (build 17156)\n"
+"Language: vi\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -144,8 +144,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -190,7 +190,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [tùy chọn] [dấu hiệu|pid|gói|đường đẫn chương trình|.apport/.crash "
 "file]"
@@ -513,7 +514,8 @@ msgstr "Chạy một trình duyệt"
 
 #: ../bin/apport-cli.py:371
 msgid "No pending crash reports. Try --help for more information."
-msgstr "Không có báo cáo lỗi nào đang chờ. Thử --help để biết thêm thông tin."
+msgstr ""
+"Không có báo cáo lỗi nào đang chờ. Thử --help để biết thêm thông tin."
 
 #: ../data/apportcheckresume.py:73
 msgid ""
@@ -589,7 +591,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
@@ -627,7 +630,8 @@ msgstr ""
 "chúng tới cơ sở dữ liệu lỗi."
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Đường dẫn tới bản sao cơ sở dữ liệu sqlite (mặc định: không kiểm tra bản sao)"
 
@@ -659,10 +663,8 @@ msgid "Report a malfunction to the developers"
 msgstr "Báo cáo một trục trặc tới nhà phát triển"
 
 #: ../data/kernel_oops.py:29
-#, fuzzy
 msgid "Your system might become unstablenow and might need to be restarted."
 msgstr ""
-"Hệ thống của bạn có thể trở nên không ổn định bây giờ và cần khởi động lại."
 
 #: ../gtk/apport-gtk.py:157
 #, python-format
@@ -774,7 +776,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -837,13 +840,13 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
-#, fuzzy
 msgid "Cancel"
-msgstr "&Thôi"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
@@ -898,21 +901,18 @@ msgstr "Sử dụng: %s <báo cáo> <thư mục đích>"
 msgid "Destination directory exists and is not empty."
 msgstr "Thư mục đích tồn tại và không rỗng."
 
-#~ msgid "%prog [options] <apport problem report | crash ID>"
-#~ msgstr "%prog [tùy chọn] <apport problem report | crash ID>"
-
-#~ msgid "incorrect number of arguments; use --help for a short help"
-#~ msgstr "sai số của tham số; sử dụng --help để xem trợ giúp"
-
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Đây không phải là gói %s chuẩn"
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Báo cáo vấn đề..."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s đóng bất ngờ trên %s lúc %s."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Gói \"%s\" gặp lỗi khi cài hoặc nâng cấp."
 
@@ -928,6 +928,7 @@ msgstr "Thư mục đích tồn tại và không rỗng."
 #~ msgid "Application problem"
 #~ msgstr "Vấn đề về Ứng dụng"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -943,9 +944,10 @@ msgstr "Thư mục đích tồn tại và không rỗng."
 #~ msgstr ""
 #~ "<big><b>Gửi báo cáo vấn đề tới người phát triển?</b></big>\n"
 #~ "\n"
-#~ "Sau khi gửi báo cáo vấn đề, vui lòng điền vào mẫu ở trang web đã tự động "
-#~ "mở ra."
+#~ "Sau khi gửi báo cáo vấn đề, vui lòng điền vào mẫu ở trang web đã tự động mở "
+#~ "ra."
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Báo cáo ngắn gọn (kết nối Internet chậm; %s)"
 
@@ -970,10 +972,16 @@ msgstr "Thư mục đích tồn tại và không rỗng."
 #~ msgid "_Send Report"
 #~ msgstr "_Gửi báo cáo"
 
+#~ msgid "%prog [options] <apport problem report | crash ID>"
+#~ msgstr "%prog [tùy chọn] <apport problem report | crash ID>"
+
+#~ msgid "Your system might become unstable now and might need to be restarted."
+#~ msgstr ""
+#~ "Hệ thống của bạn có thể trở nên không ổn định bây giờ và cần khởi động lại."
+
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Nếu bạn đang không làm một việc riêng tư (nhập mật khẩu hoặc thông tin\n"
@@ -983,28 +991,34 @@ msgstr "Thư mục đích tồn tại và không rỗng."
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "Hệ thống của bạn gặp một vấn đề nghiêm trọng liên quan đến nhân."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Gửi báo cáo đầy đủ (khuyên dùng; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Gửi báo &cáo giản lược (kết nối mạng chậm; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Báo cáo đầy đủ (khuyên dùng; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Lựa chọn này sẽ bỏ một vài mục lớn từ báo cáo. Những mục đó rất hữu ích "
-#~ "cho nhà phát triển để tìm lỗi, nhưng có thể quá lớn khi bạn tải nó lên "
-#~ "nếu bạn có đường truyền Internet chậm."
+#~ "Lựa chọn này sẽ bỏ một vài mục lớn từ báo cáo. Những mục đó rất hữu ích cho "
+#~ "nhà phát triển để tìm lỗi, nhưng có thể quá lớn khi bạn tải nó lên nếu bạn "
+#~ "có đường truyền Internet chậm."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "Nếu bạn đang không làm gì đó riêng tư (nhập mật khẩu hoặc thông tin riêng "
-#~ "tư khác), bạn có thể giúp cải thiện ứng dụng bằng cách báo cáo vấn đề."
+#~ "Nếu bạn đang không làm gì đó riêng tư (nhập mật khẩu hoặc thông tin riêng tư "
+#~ "khác), bạn có thể giúp cải thiện ứng dụng bằng cách báo cáo vấn đề."
+
+#~ msgid "incorrect number of arguments; use --help for a short help"
+#~ msgstr "sai số của tham số; sử dụng --help để xem trợ giúp"

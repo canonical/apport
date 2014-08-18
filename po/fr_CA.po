@@ -6,17 +6,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-08-18 07:38+0200\n"
 "PO-Revision-Date: 2014-02-12 18:24+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French (Canada) <fr_CA@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-07-31 05:58+0000\n"
-"X-Generator: Launchpad (build 17131)\n"
+"X-Launchpad-Export-Date: 2014-08-18 05:46+0000\n"
+"X-Generator: Launchpad (build 17156)\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -83,7 +82,8 @@ msgstr "Erreur"
 
 #: ../apport/ui.py:321
 msgid "There is not enough disk space available to process this report."
-msgstr "Il n'y a pas assez d'espace disque disponible pour traiter ce rapport."
+msgstr ""
+"Il n'y a pas assez d'espace disque disponible pour traiter ce rapport."
 
 #: ../apport/ui.py:405
 msgid "No package specified"
@@ -152,8 +152,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -211,8 +211,10 @@ msgstr ""
 "fois."
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:724
 msgid ""
@@ -230,7 +232,8 @@ msgstr "Cliquer sur une fenêtre qui sera la cible du rapport de problème."
 
 #: ../apport/ui.py:728
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr "Démarrer en mode de mise à jour de bogue. Accepte l’option --package."
+msgstr ""
+"Démarrer en mode de mise à jour de bogue. Accepte l’option --package."
 
 #: ../apport/ui.py:730
 msgid ""
@@ -332,7 +335,8 @@ msgstr "Le rapport appartient à un paquet qui n'est pas installé."
 
 #: ../apport/ui.py:1034
 msgid "An error occurred while attempting to process this problem report:"
-msgstr "Une erreur est survenue lors du traitement de ce rapport de problème :"
+msgstr ""
+"Une erreur est survenue lors du traitement de ce rapport de problème :"
 
 #: ../apport/ui.py:1097
 msgid "Could not determine the package or source package name."
@@ -458,7 +462,8 @@ msgstr ""
 
 #: ../bin/apport-cli.py:192
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Annuler et &ignorer les plantages futurs de cette version du programme"
+msgstr ""
+"Annuler et &ignorer les plantages futurs de cette version du programme"
 
 #: ../bin/apport-cli.py:194 ../bin/apport-cli.py:271 ../bin/apport-cli.py:303
 #: ../bin/apport-cli.py:324
@@ -637,7 +642,8 @@ msgstr ""
 "version en cours d'exécution pourront être retracés."
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Signaler l'avancement du téléchargement/de l'installation lors de "
 "l'installation de paquets dans le bac à sable."
@@ -687,7 +693,8 @@ msgstr ""
 "de les envoyer à la base de données des plantages."
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Chemin de la copie de la base de données sqlite (par défaut : pas de "
 "vérification de la copie)"
@@ -720,11 +727,10 @@ msgid "Report a malfunction to the developers"
 msgstr "Rapporter un dysfonctionnement aux développeurs"
 
 #: ../data/kernel_oops.py:29
-#, fuzzy
 msgid "Your system might become unstablenow and might need to be restarted."
 msgstr ""
-"Votre système pourrait maintenant devenir instable et nécessiter un "
-"redémarrage."
+"Votre système pourrait maintenant devenir instable et pourrait avoir besoin "
+"d'être redémarré."
 
 #: ../gtk/apport-gtk.py:157
 #, python-format
@@ -845,7 +851,8 @@ msgstr ""
 "pas, le créer"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "rapporter la progression du téléchargement/installation lors de "
 "l'installation de paquets dans le bac à sable"
@@ -916,15 +923,15 @@ msgid "System problem reports"
 msgstr "Rapports de problèmes systèmes"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Veuillez saisir votre mot de passe pour accéder aux rapports de problèmes "
 "des programmes systèmes"
 
 #: ../gtk/apport-gtk.ui.h:2
-#, fuzzy
 msgid "Cancel"
-msgstr "&Annuler"
+msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:3
 msgid "OK"
@@ -978,6 +985,11 @@ msgstr "Utilisation : %s <rapport> <répertoire cible>"
 #: ../bin/apport-unpack.py:46
 msgid "Destination directory exists and is not empty."
 msgstr "Le répertoire de destination existe et n'est pas vide."
+
+#~ msgid "Your system might become unstable now and might need to be restarted."
+#~ msgstr ""
+#~ "Votre système pourrait maintenant devenir instable et nécessiter un "
+#~ "redémarrage."
 
 #~ msgid "%prog [options] <apport problem report | crash ID>"
 #~ msgstr "%prog [options] <apport problem report | crash ID>"
