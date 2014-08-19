@@ -167,7 +167,7 @@ class T(unittest.TestCase):
 
         self.assertEqual(impl.get_file_package('/bin/bash'), 'bash')
         self.assertEqual(impl.get_file_package('/bin/cat'), 'coreutils')
-        self.assertEqual(impl.get_file_package('/etc/blkid.tab'), 'libblkid1')
+        self.assertEqual(impl.get_file_package('/etc/pam.conf'), 'libpam-runtime')
         self.assertEqual(impl.get_file_package('/nonexisting'), None)
 
     def test_get_file_package_uninstalled(self):
