@@ -11,6 +11,9 @@ detailed list of changes, please see ChangeLog.
    the given .crash file. (LP: #1361242)
  * Write report even on UnreportableReasons, so that whoopsie can still upload
    them. (LP: #1360417)
+ * apt/dpkg install_packages(): Write a "packages.txt" into sandbox root
+   directory to keep track of installed packages and their versions.
+   Prerequisite for LP #1352591.
 
 2.14.6 (2014-08-18)
 -------------------

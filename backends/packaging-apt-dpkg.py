@@ -732,13 +732,38 @@ Debug::NoLocking "true";
             apport.error('Package download error, try again later: %s', str(e))
             sys.exit(99)  # transient error
 
+        # read original package list
+        pkg_list = os.path.join(rootdir, 'packages.txt')
+        pkg_versions = {}
+        if os.path.exists(pkg_list):
+            with open(pkg_list) as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    (p, v) = line.split()
+                    pkg_versions[p] = v
+
         # unpack packages
         if verbose:
             print('Extracting downloaded debs...')
         for i in fetcher.items:
             if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
+                out = subprocess.check_output(['dpkg-deb', '--show', i.destfile]).decode()
+                (p, v) = out.strip().split()
+                pkg_versions[p] = v
                 subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
             real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
+
+        # update package list
+        pkgs = list(pkg_versions.keys())
+        pkgs.sort()
+        with open(pkg_list, 'w') as f:
+            for p in pkgs:
+                f.write(p)
+                f.write(' ')
+                f.write(pkg_versions[p])
+                f.write('\n')
 
         if tmp_aptroot:
             shutil.rmtree(aptroot)

@@ -512,6 +512,15 @@ deb http://secondary.mirror tuxy extra
         self.assertEqual(sandbox_ver('libc6-dbg'), '2.15-0ubuntu10')
         self.assertGreater(sandbox_ver('tzdata'), '2012b-1')
 
+        with open(os.path.join(self.rootdir, 'packages.txt')) as f:
+            pkglist = f.read().splitlines()
+        self.assertIn('coreutils 8.13-3ubuntu3', pkglist)
+        self.assertIn('coreutils-dbgsym 8.13-3ubuntu3', pkglist)
+        self.assertIn('libc6 2.15-0ubuntu10', pkglist)
+        self.assertIn('libc6-dbg 2.15-0ubuntu10', pkglist)
+        self.assertIn('tzdata ' + sandbox_ver('tzdata'), pkglist)
+        self.assertEqual(len(pkglist), 5, str(pkglist))
+
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
@@ -613,6 +622,14 @@ deb http://secondary.mirror tuxy extra
 
         # no cache
         self.assertEqual(os.listdir(self.cachedir), [])
+
+        # keeps track of package versions
+        with open(os.path.join(self.rootdir, 'packages.txt')) as f:
+            pkglist = f.read().splitlines()
+        self.assertIn('coreutils 8.13-3ubuntu3', pkglist)
+        self.assertIn('coreutils-dbgsym 8.13-3ubuntu3', pkglist)
+        self.assertIn('tzdata 2012b-1', pkglist)
+        self.assertEqual(len(pkglist), 3, str(pkglist))
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_system(self):
