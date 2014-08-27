@@ -14,6 +14,8 @@ detailed list of changes, please see ChangeLog.
  * apt/dpkg install_packages(): Write a "packages.txt" into sandbox root
    directory to keep track of installed packages and their versions.
    Prerequisite for LP #1352591.
+ * apt/dpkg install_packages(): Avoid re-downloading/installing packages which
+   are already installed into a permanent sandbox. Prerequisite for LP #1352591.
 
 2.14.6 (2014-08-18)
 -------------------

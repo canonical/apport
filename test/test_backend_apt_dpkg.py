@@ -546,6 +546,7 @@ deb http://secondary.mirror tuxy extra
 
         # installs cached packages
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
+        os.unlink(os.path.join(self.rootdir, 'packages.txt'))
         obsolete = impl.install_packages(self.rootdir, self.configdir,
                                          'Foonux 1.2',
                                          [('coreutils', '8.13-3ubuntu3'),
@@ -583,6 +584,7 @@ deb http://secondary.mirror tuxy extra
 
         # still installs packages after above operations
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
+        os.unlink(os.path.join(self.rootdir, 'packages.txt'))
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                               [('coreutils', '8.13-3ubuntu3'),
                                ('dpkg', None),
@@ -666,6 +668,7 @@ deb http://secondary.mirror tuxy extra
 
         # works with relative paths and existing cache
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
+        os.unlink(os.path.join(self.rootdir, 'packages.txt'))
         orig_cwd = os.getcwd()
         try:
             os.chdir(self.workdir)
@@ -745,6 +748,19 @@ deb http://secondary.mirror tuxy extra
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                               [('coreutils', None), ('tzdata', None)], False, self.cachedir,
                               permanent_rootdir=True)
+        # even without cached debs, trying to install the same versions should
+        # be a no-op and succeed
+        for f in glob.glob('%s/Foonux 1.2/apt/var/cache/apt/archives/coreutils*' % self.cachedir):
+            os.unlink(f)
+        impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                              [('coreutils', None)], False, self.cachedir,
+                              permanent_rootdir=True)
+
+        # trying to install another package should fail, though
+        self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
+                          self.configdir, 'Foonux 1.2', [('aspell-doc', None)], False,
+                          self.cachedir, permanent_rootdir=True)
+
         apt_pkg.config.set('Acquire::http::Proxy', '')
 
     @unittest.skipUnless(_has_internet(), 'online test')

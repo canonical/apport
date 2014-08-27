@@ -620,6 +620,18 @@ Debug::NoLocking "true";
 
         src_records = apt.apt_pkg.SourceRecords()
 
+        # read original package list
+        pkg_list = os.path.join(rootdir, 'packages.txt')
+        pkg_versions = {}
+        if os.path.exists(pkg_list):
+            with open(pkg_list) as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    (p, v) = line.split()
+                    pkg_versions[p] = v
+
         # mark packages for installation
         real_pkgs = set()
         for (pkg, ver) in packages:
@@ -674,6 +686,10 @@ Debug::NoLocking "true";
                                 ver = self._deb_version(path)
                                 if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
                                     os.unlink(path)
+                            try:
+                                del pkg_versions[p]
+                            except KeyError:
+                                pass
                         del providers
                     else:
                         debs = os.path.join(archives, '%s_*.deb' % conflict[0])
@@ -681,6 +697,10 @@ Debug::NoLocking "true";
                             ver = self._deb_version(path)
                             if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
                                 os.unlink(path)
+                        try:
+                            del pkg_versions[conflict[0]]
+                        except KeyError:
+                            pass
 
             if candidate.architecture != 'all':
                 try:
@@ -720,8 +740,13 @@ Debug::NoLocking "true";
                         except KeyError:
                             obsolete += 'no debug symbol package found for %s\n' % pkg
 
-        for p in real_pkgs:
-            cache[p].mark_install(False, False)
+        # unpack packages, weed out the ones that are already installed (for
+        # permanent sandboxes)
+        for p in real_pkgs.copy():
+            if pkg_versions.get(p) != cache[p].candidate.version:
+                cache[p].mark_install(False, False)
+            else:
+                real_pkgs.remove(p)
 
         last_written = time.time()
         # fetch packages
@@ -732,19 +757,6 @@ Debug::NoLocking "true";
             apport.error('Package download error, try again later: %s', str(e))
             sys.exit(99)  # transient error
 
-        # read original package list
-        pkg_list = os.path.join(rootdir, 'packages.txt')
-        pkg_versions = {}
-        if os.path.exists(pkg_list):
-            with open(pkg_list) as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    (p, v) = line.split()
-                    pkg_versions[p] = v
-
-        # unpack packages
         if verbose:
             print('Extracting downloaded debs...')
         for i in fetcher.items:
