@@ -9,6 +9,8 @@ detailed list of changes, please see ChangeLog.
    (LP: #1346497)
  * apport-retrace: Don't require specifying an operation; default to updating
    the given .crash file. (LP: #1361242)
+ * Write report even on UnreportableReasons, so that whoopsie can still upload
+   them. (LP: #1360417)
 
 2.14.6 (2014-08-18)
 -------------------

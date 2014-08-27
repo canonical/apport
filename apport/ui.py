@@ -111,26 +111,26 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             raise
     except SystemError as e:
         report['UnreportableReason'] = excstr(e)
-        return
 
-    if report.add_hooks_info(ui):
-        sys.exit(0)
+    if 'UnreportableReason' not in report:
+        if report.add_hooks_info(ui):
+            sys.exit(0)
 
-    # check package origin; we do that after adding hooks, so that hooks have
-    # the chance to set a third-party CrashDB.
-    try:
-        if 'CrashDB' not in report and 'APPORT_DISABLE_DISTRO_CHECK' not in os.environ:
-            if 'Package' not in report:
-                report['UnreportableReason'] = _('This package does not seem to be installed correctly')
-            elif not apport.packaging.is_distro_package(report['Package'].split()[0]):
-                # TRANS: %s is the name of the operating system
-                report['UnreportableReason'] = _(
-                    'This is not an official %s package. Please remove any third party package and try again.') % report['DistroRelease'].split()[0]
-    except ValueError:
-        # this happens if we are collecting information on an uninstalled
-        # package
-        if not ignore_uninstalled:
-            raise
+        # check package origin; we do that after adding hooks, so that hooks have
+        # the chance to set a third-party CrashDB.
+        try:
+            if 'CrashDB' not in report and 'APPORT_DISABLE_DISTRO_CHECK' not in os.environ:
+                if 'Package' not in report:
+                    report['UnreportableReason'] = _('This package does not seem to be installed correctly')
+                elif not apport.packaging.is_distro_package(report['Package'].split()[0]):
+                    # TRANS: %s is the name of the operating system
+                    report['UnreportableReason'] = _(
+                        'This is not an official %s package. Please remove any third party package and try again.') % report['DistroRelease'].split()[0]
+        except ValueError:
+            # this happens if we are collecting information on an uninstalled
+            # package
+            if not ignore_uninstalled:
+                raise
 
     # add title
     if 'Title' not in report:
