@@ -15,10 +15,10 @@ test_executable = '/usr/bin/yes'
 test_package = 'coreutils'
 test_source = 'coreutils'
 
-# (core ulimit (kb), expect core signal, expect core file, expect report)
+# (core ulimit (bytes), expect core signal, expect core file, expect report)
 core_ulimit_table = [(1, False, False, False),
-                     (10, True, False, True),
-                     (10000, True, True, True),
+                     (1000, True, False, True),
+                     (1000000, True, True, True),
                      (-1, True, True, True)]
 
 required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',
@@ -314,7 +314,7 @@ class T(unittest.TestCase):
             apport.fileutils.delete_report(self.test_report)
 
         # for SIGQUIT we only expect core files, no report
-        resource.setrlimit(resource.RLIMIT_CORE, (10000, -1))
+        resource.setrlimit(resource.RLIMIT_CORE, (1000000, -1))
         self.do_crash(expect_corefile=True, sig=signal.SIGQUIT)
         self.assertEqual(apport.fileutils.get_all_reports(), [])
 
