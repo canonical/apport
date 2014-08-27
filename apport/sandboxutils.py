@@ -90,9 +90,6 @@ def needed_runtime_packages(report, sandbox, cache_dir, pkg_versions, verbose=Fa
 
     # grab as much as we can
     for l in libs:
-        if os.path.exists(sandbox + l):
-            continue
-
         pkg = apport.packaging.get_file_package(l, True, cache_dir,
                                                 release=report['DistroRelease'],
                                                 arch=report.get('Architecture'))
@@ -197,7 +194,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     # package hooks might reassign Package:, check that we have the originally
     # crashing binary
     for path in ('InterpreterPath', 'ExecutablePath'):
-        if path in report and not os.path.exists(sandbox_dir + report[path]):
+        if path in report:
             pkg = apport.packaging.get_file_package(report[path], True, cache_dir,
                                                     release=report['DistroRelease'],
                                                     arch=report.get('Architecture'))

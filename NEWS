@@ -16,6 +16,10 @@ detailed list of changes, please see ChangeLog.
    Prerequisite for LP #1352591.
  * apt/dpkg install_packages(): Avoid re-downloading/installing packages which
    are already installed into a permanent sandbox. Prerequisite for LP #1352591.
+ * sandboxutils.py, make_sandbox(): Drop check for already existing files when
+   dynamically resolving libraries and ExecutablePaths; with that, these
+   packages would never get updated in a permanent sandbox. The new version
+   tracking from above now takes care of that. (LP: #1352591)
 
 2.14.6 (2014-08-18)
 -------------------
