@@ -75,9 +75,6 @@ def parse_args():
     if args.cache and not args.sandbox:
         argparser.error(_('You cannot use -C without -S. Stopping.'))
 
-    if not (args.auth or args.output or args.stdout or args.gdb):
-        argparser.error(_('you either need to do a local operation (-s, -g, -o) or supply an authentication file (--auth); see --help for a short help'))
-
     if args.timestamps:
         global log_timestamps
         log_timestamps = True
