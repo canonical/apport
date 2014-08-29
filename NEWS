@@ -22,6 +22,10 @@ detailed list of changes, please see ChangeLog.
    tracking from above now takes care of that. (LP: #1352591)
  * Fix report.test_add_proc_info test to stop assuming that pid 1 is named
    "init", as one can specify a different one on the kernel command line.
+ * report.py, add_gdb_info(): Check for truncated core dumps, and set
+   UnreportableReason and raise an IOError on them. Handle this in
+   apport-retrace and whoopsie-upload-all to fail properly instead of silently
+   producing broken Stacktraces. (LP: #1354571)
 
 2.14.6 (2014-08-18)
 -------------------

@@ -660,6 +660,8 @@ class Report(problem_report.ProblemReport):
         executable, libraries, and debug symbols. This does not require
         chroot() or root privileges, it just instructs gdb to search for the
         files there.
+
+        Raises a IOError if the core dump is invalid/truncated.
         '''
         if 'CoreDump' not in self or 'ExecutablePath' not in self:
             return
@@ -688,6 +690,13 @@ class Report(problem_report.ProblemReport):
             out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
         except OSError:
             return
+
+        # check for truncated stack trace
+        if 'is truncated: expected core file size' in out:
+            warnings = '\n'.join([l for l in out.splitlines() if 'Warning:' in l])
+            reason = 'Invalid core dump: ' + warnings.strip()
+            self['UnreportableReason'] = reason
+            raise IOError(reason)
 
         # split the output into the various fields
         part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)

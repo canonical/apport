@@ -605,6 +605,24 @@ int main() {
 
         self._validate_gdb_fields(pr)
 
+    def test_add_gdb_info_damaged(self):
+        '''add_gdb_info() with damaged core dump'''
+
+        pr = self._generate_sigsegv_report()
+        del pr['Stacktrace']
+        del pr['StacktraceTop']
+        del pr['ThreadStacktrace']
+        del pr['Disassembly']
+
+        # truncate core file
+        os.truncate(pr['CoreDump'][0], 10000)
+
+        self.assertRaises(IOError, pr.add_gdb_info)
+
+        self.assertNotIn('Stacktrace', pr)
+        self.assertNotIn('StacktraceTop', pr)
+        self.assertIn('core is truncated', pr['UnreportableReason'])
+
     def test_add_zz_parse_segv_details(self):
         '''parse-segv produces sensible results'''
         rep = tempfile.NamedTemporaryFile()
