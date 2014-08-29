@@ -20,6 +20,8 @@ detailed list of changes, please see ChangeLog.
    dynamically resolving libraries and ExecutablePaths; with that, these
    packages would never get updated in a permanent sandbox. The new version
    tracking from above now takes care of that. (LP: #1352591)
+ * Fix report.test_add_proc_info test to stop assuming that pid 1 is named
+   "init", as one can specify a different one on the kernel command line.
 
 2.14.6 (2014-08-18)
 -------------------

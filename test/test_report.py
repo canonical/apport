@@ -114,7 +114,7 @@ class T(unittest.TestCase):
             os.setresuid(0, 0, -1)
 
         self.assertEqual(pr.pid, 1)
-        self.assertTrue('init' in pr['ProcStatus'], pr['ProcStatus'])
+        self.assertTrue('Pid:\t1' in pr['ProcStatus'], pr['ProcStatus'])
         self.assertTrue(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
         self.assertTrue('InterpreterPath' not in pr)
 
