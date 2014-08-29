@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-18 07:38+0200\n"
+"POT-Creation-Date: 2014-08-29 11:47+0200\n"
 "PO-Revision-Date: 2013-02-04 13:53+0000\n"
 "Last-Translator: OKANO Takayoshi <Unknown>\n"
 "Language-Team: Japanese <ja@li.org>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-08-19 05:42+0000\n"
 "X-Generator: Launchpad (build 17156)\n"
-"Language: ja\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -27,7 +27,9 @@ msgstr "このパッケージは恐らく正常にインストールされてい
 msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
-msgstr "これは %s の公式パッケージではありません。すべてのサードパーティーのパッケージを削除して再度試してください。"
+msgstr ""
+"これは %s の公式パッケージではありません。すべてのサードパーティーのパッケー"
+"ジを削除して再度試してください。"
 
 #: ../apport/ui.py:145
 #, python-format
@@ -37,7 +39,8 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"古いバージョンのパッケージが利用されています。以下のパッケージをアップグレードした上で、それでも問題が発生するかを確認してください:\n"
+"古いバージョンのパッケージが利用されています。以下のパッケージをアップグレー"
+"ドした上で、それでも問題が発生するかを確認してください:\n"
 "\n"
 "%s"
 
@@ -59,7 +62,9 @@ msgstr "%s に問題があります"
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
-msgstr "コンピューターに、問題を自動的に解析して開発者にレポートを送るための十分な空きメモリーがありません。"
+msgstr ""
+"コンピューターに、問題を自動的に解析して開発者にレポートを送るための十分な空"
+"きメモリーがありません。"
 
 #: ../apport/ui.py:316 ../apport/ui.py:324 ../apport/ui.py:451
 #: ../apport/ui.py:454 ../apport/ui.py:655 ../apport/ui.py:1096
@@ -86,7 +91,9 @@ msgstr "パッケージが特定できません"
 #: ../apport/ui.py:406
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "パッケージまたはプロセスIDを特定する必要があります。詳しくは--helpを見てください。"
+msgstr ""
+"パッケージまたはプロセスIDを特定する必要があります。詳しくは--helpを見てくだ"
+"さい。"
 
 #: ../apport/ui.py:429
 msgid "Permission denied"
@@ -96,7 +103,9 @@ msgstr "許可がありません"
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
-msgstr "このプロセスを操作する権限がありません。プロセスの所有者か、もしくはrootユーザとして実行してください。"
+msgstr ""
+"このプロセスを操作する権限がありません。プロセスの所有者か、もしくはrootユー"
+"ザとして実行してください。"
 
 #: ../apport/ui.py:432
 msgid "Invalid PID"
@@ -138,15 +147,17 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
-"あなたはこの問題の報告者または登録者ではありません。新しいバグとしてコメントと添付ファイルを提出するより、他のバグと重複したバグとしてマークするほうがより"
-"簡単です。\n"
+"あなたはこの問題の報告者または登録者ではありません。新しいバグとしてコメント"
+"と添付ファイルを提出するより、他のバグと重複したバグとしてマークするほうがよ"
+"り簡単です。\n"
 "\n"
-"その後、\"apport-bug\"を利用して新たにバグ報告を行い、このバグの中で提出するものについてのコメントを行うことをお勧めします。\n"
+"その後、\"apport-bug\"を利用して新たにバグ報告を行い、このバグの中で提出する"
+"ものについてのコメントを行うことをお勧めします。\n"
 "\n"
 "本当に進めますか?"
 
@@ -190,10 +201,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "レポートに追加タグを追加します。複数回指定できます。"
 
 #: ../apport/ui.py:721
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:724
 msgid ""
@@ -201,12 +210,15 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"バグファイリングモードを開始します。実行には --package と追加の --pid を用いるか、あるいはただ --pid "
-"だけとするオプションが必要です。どちらも与えられていないときには、既知の現象のリストを表示します（暗黙の一つの引数が与えられた場合）。"
+"バグファイリングモードを開始します。実行には --package と追加の --pid を用い"
+"るか、あるいはただ --pid だけとするオプションが必要です。どちらも与えられてい"
+"ないときには、既知の現象のリストを表示します（暗黙の一つの引数が与えられた場"
+"合）。"
 
 #: ../apport/ui.py:726
 msgid "Click a window as a target for filing a problem report."
-msgstr "問題レポートを埋めるには、ターゲットとなるウィンドウをクリックしてください。"
+msgstr ""
+"問題レポートを埋めるには、ターゲットとなるウィンドウをクリックしてください。"
 
 #: ../apport/ui.py:728
 msgid "Start in bug updating mode. Can take an optional --package."
@@ -216,15 +228,17 @@ msgstr "バグ更新モードを開始します。オプション --package が�
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
-msgstr "SYMPTOM（症状）についてのバグを報告します（唯一の引数は症状の名前を意味します）。"
+msgstr ""
+"SYMPTOM（症状）についてのバグを報告します（唯一の引数は症状の名前を意味しま"
+"す）。"
 
 #: ../apport/ui.py:732
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
 msgstr ""
-"--file-bugモードで使用するパッケージ名を指定します。--"
-"pidが指定されている場合はオプション扱いになります（唯一の引数はパッケージ名を意味します）。"
+"--file-bugモードで使用するパッケージ名を指定します。--pidが指定されている場合"
+"はオプション扱いになります（唯一の引数はパッケージ名を意味します）。"
 
 #: ../apport/ui.py:734
 msgid ""
@@ -232,9 +246,9 @@ msgid ""
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
 msgstr ""
-"--file-"
-"bugモードの対象になる実行中のプログラムを指定します。このオプションを指定した場合、バグ報告にはより多くの情報が含まれます（唯一の引数はプロセスIDを意"
-"味します）。"
+"--file-bugモードの対象になる実行中のプログラムを指定します。このオプションを"
+"指定した場合、バグ報告にはより多くの情報が含まれます（唯一の引数はプロセスID"
+"を意味します）。"
 
 #: ../apport/ui.py:736
 msgid "The provided pid is a hanging application."
@@ -246,7 +260,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"クラッシュの報告を %s で保留中のプログラムのかわりに .apport または .crash ファイルで行う（ファイル名が引数のみで与えられた場合）。"
+"クラッシュの報告を %s で保留中のプログラムのかわりに .apport または .crash "
+"ファイルで行う（ファイル名が引数のみで与えられた場合）。"
 
 #: ../apport/ui.py:740
 msgid ""
@@ -254,7 +269,8 @@ msgid ""
 "reporting it. This file can then be reported later on from a different "
 "machine."
 msgstr ""
-"バグファイリングモードでは、収集した情報は報告する代わりにファイルに保存されます。このファイルは、後で別のコンピューターから報告することができます。"
+"バグファイリングモードでは、収集した情報は報告する代わりにファイルに保存され"
+"ます。このファイルは、後で別のコンピューターから報告することができます。"
 
 #: ../apport/ui.py:744
 msgid "Print the Apport version number."
@@ -263,7 +279,8 @@ msgstr "Apport のバージョン番号を表示します。"
 #: ../apport/ui.py:884
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
-msgstr "クラッシュの解析を行うため端末ウィンドウで apport-retrace を起動します。"
+msgstr ""
+"クラッシュの解析を行うため端末ウィンドウで apport-retrace を起動します。"
 
 #: ../apport/ui.py:885
 msgid "Run gdb session"
@@ -282,14 +299,17 @@ msgstr "%s を完全なシンボリックスタックトレースに更新する
 #: ../apport/ui.py:962 ../apport/ui.py:972
 msgid ""
 "This problem report applies to a program which is not installed any more."
-msgstr "この問題レポートは、もうインストールされていないプログラムに対するものです。"
+msgstr ""
+"この問題レポートは、もうインストールされていないプログラムに対するものです。"
 
 #: ../apport/ui.py:986
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "この問題はプログラム%sに発生したものですが、このプログラムはクラッシュしてから変更されています。"
+msgstr ""
+"この問題はプログラム%sに発生したものですが、このプログラムはクラッシュしてか"
+"ら変更されています。"
 
 #: ../apport/ui.py:1028 ../apport/ui.py:1268
 msgid "This problem report is damaged and cannot be processed."
@@ -329,7 +349,9 @@ msgstr "ネットワークの問題"
 #: ../apport/ui.py:1230
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
-msgstr "クラッシュデータベースに接続できませんでした。インターネット接続を確認してください。"
+msgstr ""
+"クラッシュデータベースに接続できませんでした。インターネット接続を確認してく"
+"ださい。"
 
 #: ../apport/ui.py:1257
 msgid "Memory exhaustion"
@@ -337,7 +359,9 @@ msgstr "メモリー不足"
 
 #: ../apport/ui.py:1258
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "あなたのシステムには、このクラッシュレポートを処理するのに十分なメモリがありません。"
+msgstr ""
+"あなたのシステムには、このクラッシュレポートを処理するのに十分なメモリがあり"
+"ません。"
 
 #: ../apport/ui.py:1293
 #, python-format
@@ -360,7 +384,8 @@ msgid ""
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
 msgstr ""
-"この問題は、ブラウザーに表示されたバグレポートですでに報告されています。開発者にとって役立つような、より詳しい情報を追加できるかどうか確認してください。"
+"この問題は、ブラウザーに表示されたバグレポートですでに報告されています。開発"
+"者にとって役立つような、より詳しい情報を追加できるかどうか確認してください。"
 
 #: ../apport/ui.py:1357
 msgid "This problem was already reported to developers. Thank you!"
@@ -396,7 +421,9 @@ msgstr "問題のレポートを開発者に送信しますか?"
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
-msgstr "問題のレポートが送信された後で、フォームに入力してください（入力用ページをウェブブラウザーで自動的に開きます）。"
+msgstr ""
+"問題のレポートが送信された後で、フォームに入力してください（入力用ページを"
+"ウェブブラウザーで自動的に開きます）。"
 
 #: ../bin/apport-cli.py:182
 #, python-format
@@ -413,7 +440,8 @@ msgstr "レポートの表示(&V)"
 
 #: ../bin/apport-cli.py:191
 msgid "&Keep report file for sending later or copying to somewhere else"
-msgstr "後で送信もしくは他の場所にコピーするためにレポートファイルを保持する(&K)"
+msgstr ""
+"後で送信もしくは他の場所にコピーするためにレポートファイルを保持する(&K)"
 
 #: ../bin/apport-cli.py:192
 msgid "Cancel and &ignore future crashes of this program version"
@@ -498,7 +526,9 @@ msgstr ""
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
-msgstr "ブラウザーを今すぐ起動するか、または他のコンピューターのブラウザーにURLをコピーしてください。"
+msgstr ""
+"ブラウザーを今すぐ起動するか、または他のコンピューターのブラウザーにURLをコ"
+"ピーしてください。"
 
 #: ../bin/apport-cli.py:357
 msgid "Launch a browser now"
@@ -506,7 +536,9 @@ msgstr "今すぐブラウザーを起動する"
 
 #: ../bin/apport-cli.py:371
 msgid "No pending crash reports. Try --help for more information."
-msgstr "未解決のクラッシュレポートはありません。詳しくは --help を試してみてください。"
+msgstr ""
+"未解決のクラッシュレポートはありません。詳しくは --help を試してみてくださ"
+"い。"
 
 #: ../data/apportcheckresume.py:73
 msgid ""
@@ -528,7 +560,8 @@ msgstr ""
 
 #: ../bin/apport-retrace.py:34
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "これ以上レポートに新しいトレースを書き込まないが、標準出力には表示する。"
+msgstr ""
+"これ以上レポートに新しいトレースを書き込まないが、標準出力には表示する。"
 
 #: ../bin/apport-retrace.py:36
 msgid ""
@@ -539,7 +572,9 @@ msgstr ""
 #: ../bin/apport-retrace.py:38
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr "オリジナルのレポートを変更せずに、指定されたファイルに変更後のレポートを書き込む"
+msgstr ""
+"オリジナルのレポートを変更せずに、指定されたファイルに変更後のレポートを書き"
+"込む"
 
 #: ../bin/apport-retrace.py:41
 msgid "Remove the core dump from the report after stack trace regeneration"
@@ -570,15 +605,19 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
-"一時的なサンドボックスを作成し、必要なパッケージとデバッグシンボルをそこにダウンロードおよびインストールします。このオプションが指定されなかった場合には、"
-"必要なパッケージやデバッグシンボルはすでにお使いのシステムにインストールされているものとして処理を続行します。引数はパッケージングシステムの設定のベースデ"
-"ィレクトリを指定します。「system」を指定した場合にはシステムの設定ファイルを利用しますが、その場合には現在実行中のリリースで発生したクラッシュしかリ"
-"トレースできません。"
+"一時的なサンドボックスを作成し、必要なパッケージとデバッグシンボルをそこにダ"
+"ウンロードおよびインストールします。このオプションが指定されなかった場合に"
+"は、必要なパッケージやデバッグシンボルはすでにお使いのシステムにインストール"
+"されているものとして処理を続行します。引数はパッケージングシステムの設定の"
+"ベースディレクトリを指定します。「system」を指定した場合にはシステムの設定"
+"ファイルを利用しますが、その場合には現在実行中のリリースで発生したクラッシュ"
+"しかリトレースできません。"
 
 #: ../bin/apport-retrace.py:53
-msgid ""
-"Report download/install progress when installing packages into sandbox"
-msgstr "サンドボックスにパッケージをインストールする際に、ダウンロードおよびインストールの進捗状況を表示する"
+msgid "Report download/install progress when installing packages into sandbox"
+msgstr ""
+"サンドボックスにパッケージをインストールする際に、ダウンロードおよびインス"
+"トールの進捗状況を表示する"
 
 #: ../bin/apport-retrace.py:55
 msgid "Prepend timestamps to log messages, for batch operation"
@@ -586,14 +625,16 @@ msgstr "ログメッセージの先頭にタイムスタンプを挿入する (�
 
 #: ../bin/apport-retrace.py:57
 msgid "Cache directory for packages downloaded in the sandbox"
-msgstr "サンドボックスにダウンロードされたパッケージのためのキャッシュディレクトリ"
+msgstr ""
+"サンドボックスにダウンロードされたパッケージのためのキャッシュディレクトリ"
 
 #: ../bin/apport-retrace.py:59
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
 msgstr ""
-"展開したパッケージのためのディレクトリ。これ以降はダウンロード済みのパッケージはすべてこのサンドボックスに展開されているものと仮定します。"
+"展開したパッケージのためのディレクトリ。これ以降はダウンロード済みのパッケー"
+"ジはすべてこのサンドボックスに展開されているものと仮定します。"
 
 #: ../bin/apport-retrace.py:61 ../bin/apport-valgrind.py:66
 msgid ""
@@ -614,22 +655,15 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:76
 msgid "You cannot use -C without -S. Stopping."
 msgstr "-S を指定せずに -C を使用することはできません。中止します。"
 
-#: ../bin/apport-retrace.py:79
-msgid ""
-"you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short help"
-msgstr ""
-
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:112
+#: ../bin/apport-retrace.py:109
 msgid "OK to send these as attachments? [y/n]"
 msgstr ""
 
@@ -742,30 +776,39 @@ msgstr "valgrind によって生成されたログファイルの名前を指定
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
-msgstr "以前作成されたサンドボックスディレクトリ (SDIR) を再利用するか、もし存在しない場合には作成する"
+msgstr ""
+"以前作成されたサンドボックスディレクトリ (SDIR) を再利用するか、もし存在しな"
+"い場合には作成する"
 
 #: ../bin/apport-valgrind.py:50
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
-msgstr "追加のデバッグシンボル用にサンドボックスディレクトリを作成または再利用せず、インストールされたデバッグシンボルのみを利用する。"
+msgstr ""
+"追加のデバッグシンボル用にサンドボックスディレクトリを作成または再利用せず、"
+"インストールされたデバッグシンボルのみを利用する。"
 
 #: ../bin/apport-valgrind.py:54
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
-msgstr "以前作成されたキャッシュディレクトリ (CDIR) を再利用するか、もし存在しない場合には作成する"
+msgstr ""
+"以前作成されたキャッシュディレクトリ (CDIR) を再利用するか、もし存在しない場"
+"合には作成する"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
-msgstr "サンドボックス内にパッケージをインストールする際、ダウンロードおよびインストールの進捗状況を報告する"
+msgid "report download/install progress when installing packages into sandbox"
+msgstr ""
+"サンドボックス内にパッケージをインストールする際、ダウンロードおよびインス"
+"トールの進捗状況を報告する"
 
 #: ../bin/apport-valgrind.py:62
 msgid ""
 "the executable that is run under valgrind's memcheck tool  for memory leak "
 "detection"
-msgstr "メモリリーク検出のためvalgrindのメモリチェックツールにより実行されているプログラム"
+msgstr ""
+"メモリリーク検出のためvalgrindのメモリチェックツールにより実行されているプロ"
+"グラム"
 
 #: ../bin/apport-valgrind.py:97
 #, python-format
@@ -798,7 +841,9 @@ msgstr "問題の情報をアップロードしています"
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
-msgstr "収集された情報はバグトラッキングシステムに送信されます。しばらくお待ちください。"
+msgstr ""
+"収集された情報はバグトラッキングシステムに送信されます。しばらくお待ちくださ"
+"い。"
 
 #: ../kde/apport-kde.py:457 ../kde/apport-kde.py:493 ../gtk/apport-gtk.ui.h:1
 msgid "Apport"
@@ -819,9 +864,10 @@ msgid "System problem reports"
 msgstr "システムの問題の報告"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
-msgstr "システムプログラムの問題レポートにアクセスするにはパスワードを入力してください"
+msgid "Please enter your password to access problem reports of system programs"
+msgstr ""
+"システムプログラムの問題レポートにアクセスするにはパスワードを入力してくださ"
+"い"
 
 #: ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
@@ -859,7 +905,8 @@ msgstr "<big><b>問題の情報を集めています</b></big>"
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
-msgstr "あなたの報告する不具合を、開発者が修正するのに役立つように情報を収集します。"
+msgstr ""
+"あなたの報告する不具合を、開発者が修正するのに役立つように情報を収集します。"
 
 #: ../gtk/apport-gtk.ui.h:16
 msgid "<big><b>Uploading problem information</b></big>"
@@ -879,13 +926,12 @@ msgid "Destination directory exists and is not empty."
 msgstr ""
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
-#~ msgstr "この問題を報告することで、問題の解決のために開発者を助けることができます。"
+#~ msgstr ""
+#~ "この問題を報告することで、問題の解決のために開発者を助けることができます。"
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "パッケージ \"%s\"のインストールまたはアップグレードに失敗しました。"
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "完全なレポート (推奨; %s)"
 
@@ -897,14 +943,16 @@ msgstr ""
 #~ msgstr ""
 #~ "<big><b>開発者に不具合のレポートを送信しますか?</b></big>\n"
 #~ "\n"
-#~ "不具合のレポートが送信された後で、ウェブブラウザが自動的に開かれますのでフォームに入力してください。"
+#~ "不具合のレポートが送信された後で、ウェブブラウザが自動的に開かれますので"
+#~ "フォームに入力してください。"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
-#~ "秘密にしておくべき作業(パスワードや個人情報の入力など)を行っていたのでなければ、不具合を報告してアプリケーションの改善に協力することができます。"
+#~ "秘密にしておくべき作業(パスワードや個人情報の入力など)を行っていたのでなけ"
+#~ "れば、不具合を報告してアプリケーションの改善に協力することができます。"
 
 #~ msgid "Application problem"
 #~ msgstr "アプリケーションの不具合"
@@ -914,20 +962,19 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "秘密にしておくべき作業(パスワードや個人情報の入力など)を行っていたので\n"
 #~ "なければ、不具合を報告してアプリケーションの改善に協力することができます。"
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s は %s の %s で不意に終了しました"
 
 #~ msgid "Restart _Program"
 #~ msgstr "プログラムを再起動(_P)"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -935,28 +982,26 @@ msgstr ""
 #~ "<span weight=\"bold\" size=\"larger\">申し訳ありません、パッケージ \"%s\" "
 #~ "のインストール(アップグレード)は失敗しました。</span>"
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "完全なレポートの送信(&S) (推奨; %s)"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "簡易レポート (低速回線向け; %s)"
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "今後このバージョンのプログラムがクラッシュしても無視する(_I)"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "簡易レポートの送信(&R) (低速回線向け; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "これはいくつかの大きな項目をレポートから削除します。開発者がこの不具合をデバッグするのに大変役立ちますが、インターネットの接続スピードが遅い場合、アップロ"
-#~ "ードには大きすぎるかもしれません。"
+#~ "これはいくつかの大きな項目をレポートから削除します。開発者がこの不具合をデ"
+#~ "バッグするのに大変役立ちますが、インターネットの接続スピードが遅い場合、"
+#~ "アップロードには大きすぎるかもしれません。"
 
 #~ msgid "&Report Problem..."
 #~ msgstr "不具合を報告(&R)..."
@@ -969,9 +1014,9 @@ msgstr ""
 
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
-#~ msgstr "不具合を報告することで、開発者がプログラムを修正するのに役立ちます。"
+#~ msgstr ""
+#~ "不具合を報告することで、開発者がプログラムを修正するのに役立ちます。"
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "これは正式な %s のパッケージではありません"
 
@@ -984,10 +1029,12 @@ msgstr ""
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "あなたのシステムは深刻なカーネルの問題に遭遇しました。"
 
-#~ msgid "Your system might become unstable now and might need to be restarted."
-#~ msgstr "システムが不安定になる可能性があるので、再起動する必要があるかもしれません。"
+#~ msgid ""
+#~ "Your system might become unstable now and might need to be restarted."
+#~ msgstr ""
+#~ "システムが不安定になる可能性があるので、再起動する必要があるかもしれませ"
+#~ "ん。"
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "残念ながら、アプリケーション %s が予期せず終了しました"
 

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-18 07:38+0200\n"
+"POT-Creation-Date: 2014-08-29 11:47+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (Hong Kong) <zh_HK@li.org>\n"
+"Language: zh_HK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-08-19 05:43+0000\n"
 "X-Generator: Launchpad (build 17156)\n"
-"Language: zh_HK\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -135,8 +135,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -181,8 +181,7 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:721
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:724
@@ -337,7 +336,9 @@ msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
 "helpful for the developers."
-msgstr "此問題在網頁瀏覽器上顯示的錯誤報告中已經回報，請檢查您是否能提供更多可能對開發者有用的進一步資訊。"
+msgstr ""
+"此問題在網頁瀏覽器上顯示的錯誤報告中已經回報，請檢查您是否能提供更多可能對開"
+"發者有用的進一步資訊。"
 
 #: ../apport/ui.py:1357
 msgid "This problem was already reported to developers. Thank you!"
@@ -545,8 +546,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
@@ -582,22 +582,15 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:76
 msgid "You cannot use -C without -S. Stopping."
 msgstr ""
 
-#: ../bin/apport-retrace.py:79
-msgid ""
-"you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short help"
-msgstr ""
-
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:112
+#: ../bin/apport-retrace.py:109
 msgid "OK to send these as attachments? [y/n]"
 msgstr ""
 
@@ -725,8 +718,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -787,8 +779,7 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../gtk/apport-gtk.ui.h:2
@@ -846,6 +837,5 @@ msgstr ""
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "非常抱歉，應用程式 %s 已無預警關閉。"

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-18 07:38+0200\n"
+"POT-Creation-Date: 2014-08-29 11:47+0200\n"
 "PO-Revision-Date: 2012-03-22 13:56+0000\n"
 "Last-Translator: Fran Diéguez <Unknown>\n"
 "Language-Team: Galician <gl@li.org>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-08-19 05:41+0000\n"
 "X-Generator: Launchpad (build 17156)\n"
-"Language: gl\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -151,8 +151,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -192,8 +192,7 @@ msgstr ""
 
 #: ../apport/ui.py:668 ../apport/ui.py:673
 msgid "xprop failed to determine process ID of the window"
-msgstr ""
-"Produciuse un fallo en «xprop» ao determinar o ID de proceso da xanela"
+msgstr "Produciuse un fallo en «xprop» ao determinar o ID de proceso da xanela"
 
 #: ../apport/ui.py:687
 msgid "%prog <report number>"
@@ -209,11 +208,10 @@ msgstr ""
 "Engade unha etiqueta extra ao informe. Pódese especificar varias veces."
 
 #: ../apport/ui.py:721
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [opcións] [síntoma|pid|paquete|ruta ao programa|ficheiro .apport ou "
-".crash]"
+"%prog [opcións] [síntoma|pid|paquete|ruta ao programa|ficheiro .apport ou ."
+"crash]"
 
 #: ../apport/ui.py:724
 msgid ""
@@ -372,8 +370,7 @@ msgstr "Memoria esgotada"
 
 #: ../apport/ui.py:1258
 msgid "Your system does not have enough memory to process this crash report."
-msgstr ""
-"O sistema non posúe memoria abondo para procesar este informe de erro,"
+msgstr "O sistema non posúe memoria abondo para procesar este informe de erro,"
 
 #: ../apport/ui.py:1293
 #, python-format
@@ -638,8 +635,7 @@ msgstr ""
 "en execución actualmente."
 
 #: ../bin/apport-retrace.py:53
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Informar do progreso da descarga/instalación mentres se instalan paquetes na "
 "área de probas"
@@ -688,8 +684,7 @@ msgstr ""
 "datos de falla."
 
 #: ../bin/apport-retrace.py:67
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Ruta á base de datos de duplicados de sqlite (por omisión: non se verifica "
 "se hai duplicados)"
@@ -698,17 +693,8 @@ msgstr ""
 msgid "You cannot use -C without -S. Stopping."
 msgstr "Non é posíbel empregar -C sen -S. Paramos."
 
-#: ../bin/apport-retrace.py:79
-msgid ""
-"you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short help"
-msgstr ""
-"De todos os xeitos é preciso que faga unha operación local (-s, -g, -o) ou "
-"fornecer un ficheiro de autenticación (--auth); vexa --help para obter unha "
-"breve axuda"
-
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:112
+#: ../bin/apport-retrace.py:109
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Acepta enviar estes como anexos? [y/n]"
 
@@ -843,8 +829,7 @@ msgstr ""
 "existe, crealo"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "informar do progreso da descarga/instalación ao instalar paquetes na "
 "«sandbox»"
@@ -915,8 +900,7 @@ msgid "System problem reports"
 msgstr "Informes de problemas do sistema"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 "Introduza o seu contrasinal para acceder aos informes de problemas dos "
 "programas do sistema"
@@ -978,7 +962,14 @@ msgstr "Uso: %s <informe> <directorio de destino>"
 msgid "Destination directory exists and is not empty."
 msgstr "O directorio de destino existe e non está baleiro."
 
-#, no-c-format, python-format
+#~ msgid ""
+#~ "you either need to do a local operation (-s, -g, -o) or supply an "
+#~ "authentication file (--auth); see --help for a short help"
+#~ msgstr ""
+#~ "De todos os xeitos é preciso que faga unha operación local (-s, -g, -o) "
+#~ "ou fornecer un ficheiro de autenticación (--auth); vexa --help para obter "
+#~ "unha breve axuda"
+
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Informe completo (recomendado; %s)"
 
@@ -998,18 +989,15 @@ msgstr "O directorio de destino existe e non está baleiro."
 #~ "Unha vez enviado o problema, encha o formulario no navegador web que se "
 #~ "abrirá automaticamente."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "E&nviar un informe completo (recomendado; %s)"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Informe reducido (Conexión a internet lenta; %s)"
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "_Ignorar no futuro fallos desta versión do programa"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Enviar un informe &reducido (conexións lentas á internet; %s)"
 
@@ -1025,7 +1013,6 @@ msgstr "O directorio de destino existe e non está baleiro."
 #~ msgid "Kernel problem"
 #~ msgstr "Problema no núcleo"
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Este non é un paquete xenuíno para %s"
 
@@ -1047,30 +1034,30 @@ msgstr "O directorio de destino existe e non está baleiro."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Se non estaba a facer nada confidencial (introducir un contrasinal ou\n"
-#~ "outra información privada), pode axudar a mellorar o aplicativo informado\n"
+#~ "outra información privada), pode axudar a mellorar o aplicativo "
+#~ "informado\n"
 #~ "do problema."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
-#~ "Se non estaba a facer nada confidencial (introducindo contrasinais ou outra "
-#~ "información privada) pode axudar a mellorar o aplicativo informando do "
-#~ "problema."
+#~ "Se non estaba a facer nada confidencial (introducindo contrasinais ou "
+#~ "outra información privada) pode axudar a mellorar o aplicativo informando "
+#~ "do problema."
 
 #~ msgid "Application problem"
 #~ msgstr "Problema no aplicativo"
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s pechouse inesperadamente en %s ás %s."
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Non se puido instalar ou anovar o paquete \"%s\"."
 
@@ -1079,46 +1066,45 @@ msgstr "O directorio de destino existe e non está baleiro."
 
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr ""
-#~ "o número de parámetros é incorrecto; empregue --help para unha pequena axuda"
+#~ "o número de parámetros é incorrecto; empregue --help para unha pequena "
+#~ "axuda"
 
-#~ msgid "Your system might become unstable now and might need to be restarted."
+#~ msgid ""
+#~ "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
 #~ "O sistema poderíase volver inestábel agora e podería haber que reinicialo."
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Desculpe, %s pechouse inesperadamente"
 
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Enviar estes datos aos desenvolvedores?"
 
-#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Desculpe, non se puido instalar ou actualizar o paquete «%s»."
 
 #~ msgid "&Ignore future crashes of this program version"
 #~ msgstr "&Ignorar futuras quebras desta versión do programa"
 
-#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Desculpe, o programa «%s» pechouse inesperadamente."
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Desculpe, «%s» pechouse inesperadamente."
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
 #~ "Isto eliminará algúns elementos grandes do informe. Estes son moi útiles "
-#~ "para que os desenvolvedores depuren o problema, mais poden resultarlle moi "
-#~ "grandes para envialos se dispón dunha conexión lenta a internet."
+#~ "para que os desenvolvedores depuren o problema, mais poden resultarlle "
+#~ "moi grandes para envialos se dispón dunha conexión lenta a internet."
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Pode axudar a que os desenvolvedores arranxen o problema informando sobre el."
+#~ "Pode axudar a que os desenvolvedores arranxen o problema informando sobre "
+#~ "el."
 
 #~ msgid ""
 #~ "<big><b>Send problem report to the developers?</b></big>\n"
@@ -1128,23 +1114,21 @@ msgstr "O directorio de destino existe e non está baleiro."
 #~ msgstr ""
 #~ "<big><b>Enviarlles un informe do problema aos desenvolvedores?</b></big>\n"
 #~ "\n"
-#~ "Unha vez enviado o informe sobre o problema, encha o formulario na xanela do "
-#~ "navegador que se abrirá automaticamente."
+#~ "Unha vez enviado o informe sobre o problema, encha o formulario na xanela "
+#~ "do navegador que se abrirá automaticamente."
 
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr ""
-#~ "Pode axudar aos desenvolvedores a arranxar o paquete enviándolles un informe "
-#~ "acerca do problema."
+#~ "Pode axudar aos desenvolvedores a arranxar o paquete enviándolles un "
+#~ "informe acerca do problema."
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Desculpe, non foi posíbel instalar ou "
-#~ "anovar o paquete «%s».</span>."
+#~ "<span weight=\"bold\" size=\"larger\">Desculpe, non foi posíbel instalar "
+#~ "ou anovar o paquete «%s».</span>."
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Desculpe, o aplicativo %s pechouse de maneira inesperada."

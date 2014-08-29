@@ -7,17 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-18 07:38+0200\n"
+"POT-Creation-Date: 2014-08-29 11:47+0200\n"
 "PO-Revision-Date: 2012-03-28 22:30+0000\n"
 "Last-Translator: David Planella <david.planella@ubuntu.com>\n"
-"Language-Team: Ubuntu Catalan Translators list <Ubuntu-l10n-"
-"ca@lists.ubuntu.com>\n"
+"Language-Team: Ubuntu Catalan Translators list <Ubuntu-l10n-ca@lists.ubuntu."
+"com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-08-19 05:41+0000\n"
 "X-Generator: Launchpad (build 17156)\n"
-"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -152,8 +152,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -212,8 +212,7 @@ msgstr ""
 "vegades."
 
 #: ../apport/ui.py:721
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [opcions] [símptoma|pid|paquet|camí al programa|fitxer .apport/.crash]"
 
@@ -233,8 +232,7 @@ msgstr "Feu clic a una finestra per associar-la a l'informe d'error."
 
 #: ../apport/ui.py:728
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr ""
-"Inicieu en mode d'actualització d'errors. Admet un --package opcional."
+msgstr "Inicieu en mode d'actualització d'errors. Admet un --package opcional."
 
 #: ../apport/ui.py:730
 msgid ""
@@ -302,8 +300,7 @@ msgstr "Executa una sessió del Gdb"
 
 #: ../apport/ui.py:886
 msgid "Run gdb session without downloading debug symbols"
-msgstr ""
-"Executa una sessió del Gdb sense descarregar els símbols de depuració"
+msgstr "Executa una sessió del Gdb sense descarregar els símbols de depuració"
 
 #. TRANSLATORS: %s contains the crash report file name
 #: ../apport/ui.py:888
@@ -338,8 +335,7 @@ msgstr "L'informe és per a un paquet que no està instal·lat."
 
 #: ../apport/ui.py:1034
 msgid "An error occurred while attempting to process this problem report:"
-msgstr ""
-"S'ha produït un error mentre s'intentava processar l'informe d'error:"
+msgstr "S'ha produït un error mentre s'intentava processar l'informe d'error:"
 
 #: ../apport/ui.py:1097
 msgid "Could not determine the package or source package name."
@@ -651,8 +647,7 @@ msgstr ""
 "passat a la versió actualment en execució."
 
 #: ../bin/apport-retrace.py:53
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Informa del progrés de la baixada/instal·lació quan s'instal·lin paquets a "
 "l'entorn de proves"
@@ -702,8 +697,7 @@ msgstr ""
 "d'enviar-les a la base de dades de fallades."
 
 #: ../bin/apport-retrace.py:67
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Camí a la base de dades sqlite de duplicats (per defecte: sense comprovació "
 "de duplicat)"
@@ -712,16 +706,8 @@ msgstr ""
 msgid "You cannot use -C without -S. Stopping."
 msgstr "No podeu utilitzar l'opció -C sense l'opció -S. S'interromprà."
 
-#: ../bin/apport-retrace.py:79
-msgid ""
-"you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short help"
-msgstr ""
-"us cal o bé realitzar una operació local (-s, -g o -o) o bé proporcionar un "
-"fitxer d'autenticació (--auth); utilitzeu --help per a obtenir una breu ajuda"
-
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:112
+#: ../bin/apport-retrace.py:109
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Esteu d'acord en enviar-los com a adjuncions? [y/n]"
 
@@ -825,8 +811,7 @@ msgstr "Oculta els detalls"
 
 #: ../bin/apport-valgrind.py:37
 msgid "See man page for details."
-msgstr ""
-"Vegeu la pàgina de manual (ordre «man») per consultar-ne els detalls."
+msgstr "Vegeu la pàgina de manual (ordre «man») per consultar-ne els detalls."
 
 #: ../bin/apport-valgrind.py:43
 msgid "specify the log file name produced by valgrind"
@@ -855,8 +840,7 @@ msgstr ""
 "Reutilitza una carpeta de memòria cau (CDIR) existent o bé crea'n una de nova"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "Mostra un informe del progrés de les baixades i instal·lacions en instal·lar "
 "paquets dins de la carpeta de proves"
@@ -927,8 +911,7 @@ msgid "System problem reports"
 msgstr "Informes d'error del sistema"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 "Introduïu la vostra contrasenya per accedir als informes d'error dels "
 "programes del sistema"
@@ -990,16 +973,22 @@ msgstr "Utilització: %s <informe> <directori objectiu>"
 msgid "Destination directory exists and is not empty."
 msgstr "El directori de destinació existeix i no està buit."
 
+#~ msgid ""
+#~ "you either need to do a local operation (-s, -g, -o) or supply an "
+#~ "authentication file (--auth); see --help for a short help"
+#~ msgstr ""
+#~ "us cal o bé realitzar una operació local (-s, -g o -o) o bé proporcionar "
+#~ "un fitxer d'autenticació (--auth); utilitzeu --help per a obtenir una "
+#~ "breu ajuda"
+
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Podeu ajudar els desenvolupadors a solucionar el problema si els informeu de "
-#~ "l'error."
+#~ "Podeu ajudar els desenvolupadors a solucionar el problema si els informeu "
+#~ "de l'error."
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Ha fallat la instal·lació o actualització del paquet «%s»."
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Informe complet (recomanat; %s)"
 
@@ -1009,19 +998,20 @@ msgstr "El directori de destinació existeix i no està buit."
 #~ "After the problem report has been sent, please fill out the form in the "
 #~ "automatically opened web browser."
 #~ msgstr ""
-#~ "<big><b>Voleu enviar l'informe del problema als desenvolupadors?</b></big>\n"
+#~ "<big><b>Voleu enviar l'informe del problema als desenvolupadors?</b></"
+#~ "big>\n"
 #~ "\n"
 #~ "Després d'haver enviat l'informe, ompliu el formulari que veureu en el "
 #~ "navegador web que s'iniciarà de manera automàtica."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
-#~ "Si no és que estàveu fent quelcom confidencial (escrivint alguna contrasenya "
-#~ "o bé alguna altra informació privada), podeu contribuir a la millora del "
-#~ "programa informant del problema."
+#~ "Si no és que estàveu fent quelcom confidencial (escrivint alguna "
+#~ "contrasenya o bé alguna altra informació privada), podeu contribuir a la "
+#~ "millora del programa informant del problema."
 
 #~ msgid "Application problem"
 #~ msgstr "Problema de programari"
@@ -1031,7 +1021,8 @@ msgstr "El directori de destinació existeix i no està buit."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Si no és que estàveu fent quelcom confidencial (escrivint alguna "
@@ -1039,14 +1030,12 @@ msgstr "El directori de destinació existeix i no està buit."
 #~ "o bé alguna altra informació privada), podeu contribuir a la millora del\n"
 #~ "programa informant del problema."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s s'ha tancat de manera inesperada el %s a les %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Reinicia el _programa"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1054,11 +1043,9 @@ msgstr "El directori de destinació existeix i no està buit."
 #~ "<span weight=\"bold\" size=\"larger\">Ha fallat la instal·lació o "
 #~ "actualització del paquet «%s».</span>"
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "En&via l'informe complet (es recomana; %s)"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr ""
 #~ "Informe reduït (en cas que tingueu una connexió lenta a Internet; %s)"
@@ -1066,20 +1053,19 @@ msgstr "El directori de destinació existeix i no està buit."
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "_Ignora les fallades d'aquesta versió del programa en el futur"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Envia l'informe &resumit (per connexions d'Internet lentes; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
 #~ "Això suprimirà certs elements de mida considerable de l'informe. Aquests "
 #~ "elements són normalment molt útils per als desenvolupadors en depurar el "
 #~ "problema. Tot i això, pot ser que si els incloeu en l'informe la mida "
-#~ "d'aquest sigui massa gran per a pujar-lo si és que teniu una connexió lenta "
-#~ "a Internet."
+#~ "d'aquest sigui massa gran per a pujar-lo si és que teniu una connexió "
+#~ "lenta a Internet."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "Info&rmeu sobre el problema..."
@@ -1093,10 +1079,9 @@ msgstr "El directori de destinació existeix i no està buit."
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr ""
-#~ "Podeu ajudar els desenvolupadors a arreglar el paquet de programari si els "
-#~ "informeu de l'error."
+#~ "Podeu ajudar els desenvolupadors a arreglar el paquet de programari si "
+#~ "els informeu de l'error."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Aquest no és un paquet %s genuí"
 
@@ -1114,15 +1099,16 @@ msgstr "El directori de destinació existeix i no està buit."
 #~ "%prog [opcions] <informe de problema de l'Apport | identificador de la "
 #~ "fallada>"
 
-#~ msgid "Your system might become unstable now and might need to be restarted."
+#~ msgid ""
+#~ "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
 #~ "Pot ser que el vostre sistema esdevingui ara inestable i que l'hàgiu de "
 #~ "reiniciar."
 
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr ""
-#~ "nombre incorrecte d'arguments; utilitzeu --help per a obtenir una breu ajuda"
+#~ "nombre incorrecte d'arguments; utilitzeu --help per a obtenir una breu "
+#~ "ajuda"
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "L'aplicació %s s'ha tancat inesperadament."

@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-18 07:38+0200\n"
+"POT-Creation-Date: 2014-08-29 11:47+0200\n"
 "PO-Revision-Date: 2013-10-23 07:55+0000\n"
 "Last-Translator: Páll Haraldsson <Pall.Haraldsson@gmail.com>\n"
 "Language-Team: Icelandic <is@li.org>\n"
+"Language: is\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-08-19 05:42+0000\n"
 "X-Generator: Launchpad (build 17156)\n"
-"Language: is\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -148,8 +148,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -204,10 +204,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:721
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:724
 msgid ""
@@ -591,8 +589,7 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
@@ -628,22 +625,15 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:76
 msgid "You cannot use -C without -S. Stopping."
 msgstr "Þú getur ekki notað -C án -S. Hætti."
 
-#: ../bin/apport-retrace.py:79
-msgid ""
-"you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short help"
-msgstr ""
-
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:112
+#: ../bin/apport-retrace.py:109
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Er allt í lagi að senda þetta sem sem viðhengi? [y/n]"
 
@@ -734,8 +724,7 @@ msgstr "Skilja eftir lokað"
 
 #: ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:227 ../gtk/apport-gtk.ui.h:6
 msgid "If you notice further problems, try restarting the computer."
-msgstr ""
-"Ef þú verður var við fleiri vandamál, reyndu þá að endurræsa tölvuna."
+msgstr "Ef þú verður var við fleiri vandamál, reyndu þá að endurræsa tölvuna."
 
 #: ../gtk/apport-gtk.py:304 ../kde/apport-kde.py:231
 msgid "Ignore future problems of this type"
@@ -778,8 +767,7 @@ msgstr ""
 "hún er ekki til, búa hana til"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -845,8 +833,7 @@ msgid "System problem reports"
 msgstr "Vandamálaskýrslur kerfis"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr "Sláðu inn lykilorð til að fá aðgang að villuskýrslum kerfisforrita"
 
 #: ../gtk/apport-gtk.ui.h:2
@@ -906,7 +893,6 @@ msgstr "Notkun: %s <report> <target directory>"
 msgid "Destination directory exists and is not empty."
 msgstr ""
 
-#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Full skýrsla (mælt með; %s)"
 
@@ -918,13 +904,13 @@ msgstr ""
 #~ msgstr ""
 #~ "<big><b>Senda vandamálsskýrslu til forritaranna?</b></big>\n"
 #~ "\n"
-#~ "Eftir að skýrslan hefur verið send, vinsamlegast fylltu út formið í vafranum "
-#~ "sem opnast sjálfkrafa."
+#~ "Eftir að skýrslan hefur verið send, vinsamlegast fylltu út formið í "
+#~ "vafranum sem opnast sjálfkrafa."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Ef þú varst ekki að gera eitthvað leynilegt (slá inn lykilorð eða aðrar "
 #~ "persónulegar upplýsingar) geturðu hjálpað við að bæta forritið með því að "
@@ -938,25 +924,26 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Ef þú varst ekki að gera eitthvað persónugreinanlegt (slá inn lykilorð eða \n"
-#~ "aðrar persónulegar upplýsingar) getur þú hjálpað við að laga forritið með\n"
+#~ "Ef þú varst ekki að gera eitthvað persónugreinanlegt (slá inn lykilorð "
+#~ "eða \n"
+#~ "aðrar persónulegar upplýsingar) getur þú hjálpað við að laga forritið "
+#~ "með\n"
 #~ "því að tilkynna vandamálið."
 
 #~ msgid "Restart _Program"
 #~ msgstr "_Endurræsa Forrit"
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Því miður tókst ekki að setja upp eða "
-#~ "uppfæra pakkann \"%s\"</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Því miður tókst ekki að setja upp "
+#~ "eða uppfæra pakkann \"%s\"</span>"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Minnkuð skýrsla (hæg nettenging; %s)"
 
@@ -964,13 +951,13 @@ msgstr ""
 #~ msgstr "_Hunsa frekari hrun þessarar forritsútgáfu"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Þetta tekur nokkra stóra hluta úr skýrslunni. Þeir eru gagnlegir forriturum "
-#~ "til að greina vandamálkið, en gætu verið of stórir til að að senda yfir hæga "
-#~ "nettengingu."
+#~ "Þetta tekur nokkra stóra hluta úr skýrslunni. Þeir eru gagnlegir "
+#~ "forriturum til að greina vandamálkið, en gætu verið of stórir til að að "
+#~ "senda yfir hæga nettengingu."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Tilkynna vandamál"
@@ -987,7 +974,6 @@ msgstr ""
 #~ "Þú getur hjálpað forriturunum að laga pakkann með því að senda inn "
 #~ "tilkynningu."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Þetta er ekki alvöru %s pakki"
 
@@ -997,11 +983,9 @@ msgstr ""
 #~ msgid "Package problem"
 #~ msgstr "Pakkavandamál"
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Það tókst hvorki að setja upp “%s“ eða uppfæra."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s lokaði óviðbúið þann %s klukkan %s."
 
@@ -1011,17 +995,17 @@ msgstr ""
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Þú getur hjálpað til með því að tilkynna vandann."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Senda alla skýrsluna (mælt með þessu; %s)"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Senda &stytta skýrslu (hæg nettenging; %s)"
 
 #~ msgid "%prog [options] <apport problem report | crash ID>"
 #~ msgstr "%prog [options] <apport problem report | crash ID>"
 
-#~ msgid "Your system might become unstable now and might need to be restarted."
+#~ msgid ""
+#~ "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
-#~ "Kerfið þitt verður kannski óstöðugt núna og þarf hugsanlega að endurræsa það."
+#~ "Kerfið þitt verður kannski óstöðugt núna og þarf hugsanlega að endurræsa "
+#~ "það."

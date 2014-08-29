@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-18 07:38+0200\n"
+"POT-Creation-Date: 2014-08-29 11:47+0200\n"
 "PO-Revision-Date: 2013-03-06 12:27+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
+"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-08-19 05:43+0000\n"
 "X-Generator: Launchpad (build 17156)\n"
-"Language: tr\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -151,8 +151,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -208,10 +208,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Rapora fazladan bir etiket ekleyin. Birçok kez belirtilmiş olabilir."
 
 #: ../apport/ui.py:721
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:724
 msgid ""
@@ -219,8 +217,8 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"Hata dosyalama kipinde başlat. --package ve isteğe bağlı --pid, veya sadece -"
-"-pid gerektirir. Eğer hiçbiri belirtilmezse, bilinen belirtilerin listesini "
+"Hata dosyalama kipinde başlat. --package ve isteğe bağlı --pid, veya sadece "
+"--pid gerektirir. Eğer hiçbiri belirtilmezse, bilinen belirtilerin listesini "
 "göster. (Kastedilen; eğer tek bir argüman verilirse.)"
 
 #: ../apport/ui.py:726
@@ -364,8 +362,7 @@ msgstr "Yetersiz bellek"
 
 #: ../apport/ui.py:1258
 msgid "Your system does not have enough memory to process this crash report."
-msgstr ""
-"Sisteminiz bu çökme raporunu işlemek için yeterli belleğe sahip değil."
+msgstr "Sisteminiz bu çökme raporunu işlemek için yeterli belleğe sahip değil."
 
 #: ../apport/ui.py:1293
 #, python-format
@@ -584,8 +581,7 @@ msgstr ""
 #: ../bin/apport-retrace.py:38
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr ""
-"Asıl raporu değiştirmek yerine düzeltilmiş raporu verilen dosyaya yaz"
+msgstr "Asıl raporu değiştirmek yerine düzeltilmiş raporu verilen dosyaya yaz"
 
 #: ../bin/apport-retrace.py:41
 msgid "Remove the core dump from the report after stack trace regeneration"
@@ -625,8 +621,7 @@ msgstr ""
 "kaynağına gidebilir."
 
 #: ../bin/apport-retrace.py:53
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr "Paketler sandbox içine kurulurken indirme/yüklemeyi raporla"
 
 #: ../bin/apport-retrace.py:55
@@ -670,24 +665,15 @@ msgstr ""
 "göndermeden önce onay al."
 
 #: ../bin/apport-retrace.py:67
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "Kopya sqlite veritabanının yolu (varsayılan: kopya kontrolü yok)"
 
 #: ../bin/apport-retrace.py:76
 msgid "You cannot use -C without -S. Stopping."
 msgstr "-S olmaksızın -C kullanamazsınız. Durduruluyor."
 
-#: ../bin/apport-retrace.py:79
-msgid ""
-"you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short help"
-msgstr ""
-"Ya bir yerel işlem yapmalı (-s, -g ve -o gibi) veya Kimlik denetleme dosyası "
-"(--auth); bak --yardım için kısa bir yardım"
-
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:112
+#: ../bin/apport-retrace.py:109
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Eklenti olarak gönderilsinler mi? [y/n]"
 
@@ -822,8 +808,7 @@ msgstr ""
 "bulunmuyorsa oluştur"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr "paketleri sandbox içine kurarken indirme/yükleme sürecini bildir"
 
 #: ../bin/apport-valgrind.py:62
@@ -891,8 +876,7 @@ msgid "System problem reports"
 msgstr "Sistem problem raporları"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 "Lütfen sistem programlarının problem raporlarına ulaşmak için şifrenizi girin"
 
@@ -953,18 +937,24 @@ msgstr "Kullanım: %s <rapor> <hedef dizin>"
 msgid "Destination directory exists and is not empty."
 msgstr "Hedef dizin zaten mevcut ve boş değil."
 
-#, no-c-format, python-format
+#~ msgid ""
+#~ "you either need to do a local operation (-s, -g, -o) or supply an "
+#~ "authentication file (--auth); see --help for a short help"
+#~ msgstr ""
+#~ "Ya bir yerel işlem yapmalı (-s, -g ve -o gibi) veya Kimlik denetleme "
+#~ "dosyası (--auth); bak --yardım için kısa bir yardım"
+
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Tam rapor (önerilen; %s)"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
-#~ "Sorun oluştuğunda yapmakta olduğunuz işlemin gizliliği yoksa (parola ya da "
-#~ "başka kişisel bilgilerin girilmesi gibi), sorunu rapor ederek uygulamanın "
-#~ "geliştirilmesine yardım edebilirsiniz."
+#~ "Sorun oluştuğunda yapmakta olduğunuz işlemin gizliliği yoksa (parola ya "
+#~ "da başka kişisel bilgilerin girilmesi gibi), sorunu rapor ederek "
+#~ "uygulamanın geliştirilmesine yardım edebilirsiniz."
 
 #~ msgid "_Send Report"
 #~ msgstr "Rapor _Gönder"
@@ -976,9 +966,9 @@ msgstr "Hedef dizin zaten mevcut ve boş değil."
 #~ msgstr "_Programın bu sürümünün gelecekteki çökmeleri göz ardı et."
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
 #~ "Bu, rapordan kimi büyük öğeleri çıkaracak. Bunlar geliştiriciler için çok "
 #~ "kullanışlı bilgiler olsa da, eğer yavaş bir internet bağlantınız varsa "
@@ -1004,7 +994,8 @@ msgstr "Hedef dizin zaten mevcut ve boş değil."
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Bu sorunu rapor ederek geliştiricilerin düzeltmesinee yardım edebilirsiniz."
+#~ "Bu sorunu rapor ederek geliştiricilerin düzeltmesinee yardım "
+#~ "edebilirsiniz."
 
 #~ msgid "Kernel problem"
 #~ msgstr "Çekirdek sorunu"
@@ -1018,27 +1009,25 @@ msgstr "Hedef dizin zaten mevcut ve boş değil."
 #~ msgid "&Report Problem..."
 #~ msgstr "&Sorunu Bildir..."
 
-#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Üzgünüm, %s beklenmedik bir şekilde kapandı."
 
 #~ msgid "&Send"
 #~ msgstr "&Gönder"
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr ""
 #~ "%s uygulaması %s tarihinde %s saatinde beklenmedik şekilde kapatıldı."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Bu özgün bir %s paketi değil"
 
-#~ msgid "Your system might become unstable now and might need to be restarted."
+#~ msgid ""
+#~ "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
-#~ "Sisteminiz şimdi kararsız hale gelebilir ve yeniden başlatılması gerekebilir."
+#~ "Sisteminiz şimdi kararsız hale gelebilir ve yeniden başlatılması "
+#~ "gerekebilir."
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1054,21 +1043,18 @@ msgstr "Hedef dizin zaten mevcut ve boş değil."
 #~ msgstr ""
 #~ "<big><b>Geliştiricilerine sorunu rapor gönderilsin mi?</b></big>\n"
 #~ "\n"
-#~ "Sorunu raporladıktan sonra, otomatik olarak açılan web tarayıcısında formu "
-#~ "doldurun gönderildi."
+#~ "Sorunu raporladıktan sonra, otomatik olarak açılan web tarayıcısında "
+#~ "formu doldurun gönderildi."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Tam rapor gönderin(önerilen; %s)"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "&Özet rapor gönderin (düşük ağ bağlantısı; %s)"
 
 #~ msgid "%prog [options] <apport problem report | crash ID>"
 #~ msgstr "%prog [options] <apport problem report | crash ID>"
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "\"%s\" paketinin kurulumu veya güncellenmesi başarısız."
 
@@ -1077,7 +1063,8 @@ msgstr "Hedef dizin zaten mevcut ve boş değil."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Eğer güvenlik gerektiren bir işlem yapmıyorsanız (şifre veya başka\n"
@@ -1085,13 +1072,11 @@ msgstr "Hedef dizin zaten mevcut ve boş değil."
 #~ "geliştirilmesine\n"
 #~ "yardımcı olabilirsiniz."
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Kısa rapor (yavaş internet bağlantısı; %s)"
 
 #~ msgid "&Details..."
 #~ msgstr "&Detaylar..."
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Üzgünüz, %s uygulaması beklenmedik bir şekilde kapandı."

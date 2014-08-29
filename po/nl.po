@@ -9,16 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-18 07:38+0200\n"
+"POT-Creation-Date: 2014-08-29 11:47+0200\n"
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Nederlands <nl_NL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-08-19 05:41+0000\n"
 "X-Generator: Launchpad (build 17156)\n"
-"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -148,8 +148,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-"
-"bug\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-bug"
+"\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -194,8 +194,7 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:721
-msgid ""
-"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [opties] [symptomen|pid|pakket|programmapad|.apport/.crash-bestand]"
 
@@ -436,8 +435,7 @@ msgstr ""
 
 #: ../bin/apport-cli.py:192
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr ""
-"Annuleren en toekomstige vastlopers van deze programmavers&ie negeren"
+msgstr "Annuleren en toekomstige vastlopers van deze programmavers&ie negeren"
 
 #: ../bin/apport-cli.py:194 ../bin/apport-cli.py:271 ../bin/apport-cli.py:303
 #: ../bin/apport-cli.py:324
@@ -608,14 +606,12 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid ""
-"Report download/install progress when installing packages into sandbox"
+msgid "Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr ""
-"Tijdsaanduiding vooraan in logberichten invoegen, voor batchverwerking"
+msgstr "Tijdsaanduiding vooraan in logberichten invoegen, voor batchverwerking"
 
 #: ../bin/apport-retrace.py:57
 msgid "Cache directory for packages downloaded in the sandbox"
@@ -654,8 +650,7 @@ msgstr ""
 "verzenden naar de crash-database."
 
 #: ../bin/apport-retrace.py:67
-msgid ""
-"Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Pad naar de dubbele sqlite-database (standaard: geen controle voor "
 "duplicaten)"
@@ -664,16 +659,8 @@ msgstr ""
 msgid "You cannot use -C without -S. Stopping."
 msgstr "U kunt niet -C zonder -S gebruiken. Wordt stopgezet."
 
-#: ../bin/apport-retrace.py:79
-msgid ""
-"you either need to do a local operation (-s, -g, -o) or supply an "
-"authentication file (--auth); see --help for a short help"
-msgstr ""
-"u moet een lokale handeling uitvoeren (-s, -g, -o) of een "
-"authenticatiebestand (--auth) meegeven; zie --help voor een korte handleiding"
-
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:112
+#: ../bin/apport-retrace.py:109
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Deze bijlagen verzenden? [y/n]"
 
@@ -746,8 +733,7 @@ msgstr "Pakket: %s"
 
 #: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:197
 msgid "Sorry, a problem occurred while installing software."
-msgstr ""
-"Er is helaas een fout opgetreden bij het installeren van de software."
+msgstr "Er is helaas een fout opgetreden bij het installeren van de software."
 
 #: ../gtk/apport-gtk.py:273 ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:204
 #, python-format
@@ -809,8 +795,7 @@ msgstr ""
 "deze niet bestaat"
 
 #: ../bin/apport-valgrind.py:58
-msgid ""
-"report download/install progress when installing packages into sandbox"
+msgid "report download/install progress when installing packages into sandbox"
 msgstr ""
 "rapporteren van de download/installatie-voortgang wanneer pakketten in "
 "sandbox worden geïnstalleerd"
@@ -879,8 +864,7 @@ msgid "System problem reports"
 msgstr "Systeemprobleemrapporten"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid ""
-"Please enter your password to access problem reports of system programs"
+msgid "Please enter your password to access problem reports of system programs"
 msgstr ""
 "Voer uw wachtwoord in om toegang te krijgen tot de probleemrapporten van "
 "systeemprogramma's"
@@ -942,7 +926,14 @@ msgstr "Gebruik: %s <rapport> <doelmap>"
 msgid "Destination directory exists and is not empty."
 msgstr "Doelmap bestaat en is niet leeg."
 
-#, no-c-format, python-format
+#~ msgid ""
+#~ "you either need to do a local operation (-s, -g, -o) or supply an "
+#~ "authentication file (--auth); see --help for a short help"
+#~ msgstr ""
+#~ "u moet een lokale handeling uitvoeren (-s, -g, -o) of een "
+#~ "authenticatiebestand (--auth) meegeven; zie --help voor een korte "
+#~ "handleiding"
+
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Volledig verslag (aanbevolen; %s)"
 
@@ -959,8 +950,8 @@ msgstr "Doelmap bestaat en is niet leeg."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by reporting "
-#~ "the problem."
+#~ "private information), you can help to improve the application by "
+#~ "reporting the problem."
 #~ msgstr ""
 #~ "Als u niets vertrouwelijks aan het doen was (invoeren van wachtwoorden of "
 #~ "privé-informatie), dan kunt u helpen de toepassing te verbeteren door het "
@@ -971,36 +962,36 @@ msgstr "Doelmap bestaat en is niet leeg."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by reporting\n"
+#~ "private information), you can help to improve the application by "
+#~ "reporting\n"
 #~ "the problem."
 #~ msgstr ""
-#~ "Als u niets vertrouwelijks aan het doen was (wachtwoorden of andere privé-\n"
-#~ "informatie invoeren), dan kunt u helpen om de toepassing te verbeteren door\n"
+#~ "Als u niets vertrouwelijks aan het doen was (wachtwoorden of andere "
+#~ "privé-\n"
+#~ "informatie invoeren), dan kunt u helpen om de toepassing te verbeteren "
+#~ "door\n"
 #~ "het probleem te melden."
 
-#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s werd onverwachts afgesloten op %s om %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "_Programma herstarten"
 
-#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Beperkt rapport (langzame internetverbinding; %s)"
 
-#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Bepe&rkt rapport versturen (langzame internetverbinding; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful for "
-#~ "developers to debug the problem, but might be too big for you to upload if "
-#~ "you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful "
+#~ "for developers to debug the problem, but might be too big for you to "
+#~ "upload if you have a slow internet connection."
 #~ msgstr ""
-#~ "Dit verwijdert enkele grote items uit het rapport. Deze zijn erg nuttig voor "
-#~ "de ontwikkelaars om het probleem te analyseren, maar kunnen te groot zijn "
-#~ "voor het uploaden als u een langzame internetverbinding heeft."
+#~ "Dit verwijdert enkele grote items uit het rapport. Deze zijn erg nuttig "
+#~ "voor de ontwikkelaars om het probleem te analyseren, maar kunnen te groot "
+#~ "zijn voor het uploaden als u een langzame internetverbinding heeft."
 
 #~ msgid "Kernel problem"
 #~ msgstr "Kernelprobleem"
@@ -1008,10 +999,9 @@ msgstr "Doelmap bestaat en is niet leeg."
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr ""
-#~ "U kunt de ontwikkelaars helpen om het pakket te repareren door het probleem "
-#~ "te rapporteren."
+#~ "U kunt de ontwikkelaars helpen om het pakket te repareren door het "
+#~ "probleem te rapporteren."
 
-#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Dit is geen authentiek %s-pakket."
 
@@ -1026,13 +1016,14 @@ msgstr "Doelmap bestaat en is niet leeg."
 #~ "U kunt de ontwikkelaars helpen met het probleem te verhelpen, door het te "
 #~ "rapporteren."
 
-#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Het pakket \"%s\" kon niet worden geïnstalleerd of opgewaardeerd"
 
-#~ msgid "Your system might become unstable now and might need to be restarted."
+#~ msgid ""
+#~ "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
-#~ "Uw systeem kan nu instabiel worden en moet mogelijk opnieuw worden opgestart."
+#~ "Uw systeem kan nu instabiel worden en moet mogelijk opnieuw worden "
+#~ "opgestart."
 
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr ""
@@ -1050,24 +1041,21 @@ msgstr "Doelmap bestaat en is niet leeg."
 #~ msgid "&Report Problem..."
 #~ msgstr "P&robleem melden..."
 
-#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "Compleet rapport ver&sturen (aanbevolen; %s)"
 
 #~ msgid "_Report Problem..."
 #~ msgstr "Probleem _rapporteren..."
 
-#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Excuses, de installatie of upgrade van "
-#~ "pakket \"%s\" is mislukt.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Excuses, de installatie of upgrade "
+#~ "van pakket \"%s\" is mislukt.</span>"
 
 #~ msgid "_Send Report"
 #~ msgstr "Rapport ver_sturen"
 
-#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "De toepassing %s is helaas onverwachts gesloten."
