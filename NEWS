@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.14.8 (UNRELEASED)
+-------------------
+ * ui.py: Robustify check if apport-retrace is installed. This brings back the
+   "Examine locally" UI option. (LP: #1358734)
+
 2.14.7 (2014-08-29)
 -------------------
  * Adjust backend_apt_dpkg.test_get_file_package() test: newer util-linux
