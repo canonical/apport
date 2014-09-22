@@ -37,7 +37,13 @@ def main():
         report.pid = os.getppid()
 
     # Grab PID info right away, as we don't know how long it'll stick around
-    report.add_proc_info(report.pid)
+    try:
+        report.add_proc_info(report.pid)
+    except ValueError as e:
+        # The process may have gone away before we could get to it.
+        if e.message == 'invalid process':
+            return
+
 
     # Get the info on the bug
     items = sys.stdin.read().split('\0')

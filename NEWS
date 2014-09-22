@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * ui.py: Robustify check if apport-retrace is installed. This brings back the
    "Examine locally" UI option. (LP: #1358734)
+ * recoverable_problem: Handle the parent process going away while we're
+   attempting to read from proc.
 
 2.14.7 (2014-08-29)
 -------------------
