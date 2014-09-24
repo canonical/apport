@@ -755,7 +755,7 @@ Debug::NoLocking "true";
             cache.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as e:
             apport.error('Package download error, try again later: %s', str(e))
-            sys.exit(99)  # transient error
+            sys.exit(1)  # transient error
 
         if verbose:
             print('Extracting downloaded debs...')
