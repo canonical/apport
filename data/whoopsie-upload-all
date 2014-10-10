@@ -18,6 +18,7 @@ import sys
 import time
 import subprocess
 import argparse
+import fcntl
 
 import apport.fileutils
 import apport
@@ -35,12 +36,22 @@ def process_report(report):
     upload_stamp = '%s.upload' % report.rsplit('.', 1)[0]
     if os.path.exists(upload_stamp):
         print('%s already marked for upload, skipping' % report)
-        return None
+        return upload_stamp
+
+    report_stat = None
 
     r = apport.Report()
+    # make sure we're actually on the hook to write this updated report
+    # before we start doing expensive collection operations
     try:
         with open(report, 'rb') as f:
+            try:
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except IOError:
+                print('%s already being processed, skipping' % report)
+                return None
             r.load(f, binary='compressed')
+            report_stat = os.stat(report)
     except Exception as e:
         sys.stderr.write('ERROR: cannot load %s: %s\n' % (report, str(e)))
         return None
@@ -63,6 +74,7 @@ def process_report(report):
             r.add_gdb_info()
         except (IOError, EOFError) as e:
             sys.stderr.write('ERROR: processing %s: %s\n' % (report, str(e)))
+            os.unlink(report)
             return None
         try:
             r.add_package_info()
@@ -81,6 +93,7 @@ def process_report(report):
     print('Marking %s for whoopsie upload' % report)
     apport.fileutils.mark_report_upload(report)
     assert os.path.exists(upload_stamp)
+    os.chown(upload_stamp, report_stat.st_uid, report_stat.st_gid)
     return upload_stamp
 
 
@@ -117,7 +130,7 @@ def wait_uploaded(stamps, timeout):
         missing = ''
         for stamp in stamps:
             uploaded = stamp + 'ed'
-            if not os.path.exists(uploaded):
+            if os.path.exists(stamp) and not os.path.exists(uploaded):
                 missing += uploaded + ' '
         if not missing:
             return True
@@ -133,8 +146,8 @@ def wait_uploaded(stamps, timeout):
 #
 parser = argparse.ArgumentParser(description='Noninteractively upload all '
                                  'Apport crash reports to errors.ubuntu.com')
-parser.add_argument('-t', '--timeout', default=1800, type=int,
-                    help='seconds to wait for whoopsie to upload the reports (default: 1800s)')
+parser.add_argument('-t', '--timeout', default=0, type=int,
+                    help='seconds to wait for whoopsie to upload the reports (default: do not wait)')
 opts = parser.parse_args()
 
 # parse args
@@ -148,6 +161,9 @@ if subprocess.call(['pidof', 'whoopsie'], stdout=subprocess.PIPE) != 0:
 stamps = collect_info()
 # print('stamps:', stamps)
 if stamps:
-    if not wait_uploaded(stamps, opts.timeout):
-        sys.exit(2)
-    print('All reports uploaded successfully')
+    if opts.timeout > 0:
+        if not wait_uploaded(stamps, opts.timeout):
+            sys.exit(2)
+        print('All reports uploaded successfully')
+    else:
+        print('All reports processed')

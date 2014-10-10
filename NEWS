@@ -1,14 +1,18 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.14.8 (UNRELEASED)
--------------------
+2.15 (UNRELEASED)
+-----------------
  * ui.py: Robustify check if apport-retrace is installed. This brings back the
    "Examine locally" UI option. (LP: #1358734)
  * recoverable_problem: Handle the parent process going away while we're
    attempting to read from proc.
  * apport-retrace: Stop considering a package download error as transient; it
    can too easily lead to unnoticed eternal retry loops.
+ * whoopsie-upload-all: Refactor to behave more reliably in case of overlapping
+   crash processing. Thanks Steve Langasek and Brian Murray. (LP: #1354318)
+ * whoopsie-upload-all: Remove crash reports that have a core dump which is
+   broken and cannot be processed by gdb. Thanks Brian Murray. (LP: #1376374)
 
 2.14.7 (2014-08-29)
 -------------------
