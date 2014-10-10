@@ -44,7 +44,6 @@ def main():
         if e.message == 'invalid process':
             return
 
-
     # Get the info on the bug
     items = sys.stdin.read().split('\0')
     if len(items) % 2 != 0:
