@@ -11,10 +11,14 @@
 
 import os
 import sys
+import re
 import subprocess
 
 
 class PackageInfo:
+    # default global configuration file
+    configuration = '/etc/default/apport'
+
     def get_version(self, package):
         '''Return the installed version of a package.
 
@@ -170,7 +174,14 @@ class PackageInfo:
         Implementations should parse the configuration file which controls
         Apport (such as /etc/default/apport in Debian/Ubuntu).
         '''
-        raise NotImplementedError('this method must be implemented by a concrete subclass')
+        try:
+            with open(self.configuration) as f:
+                conf = f.read()
+        except IOError:
+            # if the file does not exist, assume it's enabled
+            return True
+
+        return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
 
     def get_kernel_package(self):
         '''Return the actual Linux kernel package name.

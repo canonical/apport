@@ -12,7 +12,7 @@ This is used on Debian and derivatives such as Ubuntu.
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import subprocess, os, glob, stat, sys, tempfile, re, shutil, time
+import subprocess, os, glob, stat, sys, tempfile, shutil, time
 import hashlib
 
 import warnings
@@ -41,8 +41,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._contents_dir = None
         self._mirror = None
         self._virtual_mapping_obj = None
-
-        self.configuration = '/etc/default/apport'
 
     def __del__(self):
         try:
@@ -1002,27 +1000,6 @@ Debug::NoLocking "true";
         Return -1 for ver < ver2, 0 for ver1 == ver2, and 1 for ver1 > ver2.'''
 
         return apt.apt_pkg.version_compare(ver1, ver2)
-
-    def enabled(self):
-        '''Return whether Apport should generate crash reports.
-
-        Signal crashes are controlled by /proc/sys/kernel/core_pattern, but
-        some init script needs to set that value based on a configuration file.
-        This also determines whether Apport generates reports for Python,
-        package, or kernel crashes.
-
-        Implementations should parse the configuration file which controls
-        Apport (such as /etc/default/apport in Debian/Ubuntu).
-        '''
-
-        try:
-            with open(self.configuration) as f:
-                conf = f.read()
-        except IOError:
-            # if the file does not exist, assume it's enabled
-            return True
-
-        return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
 
     _distro_codename = None
 
