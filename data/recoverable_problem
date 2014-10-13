@@ -41,7 +41,7 @@ def main():
         report.add_proc_info(report.pid)
     except ValueError as e:
         # The process may have gone away before we could get to it.
-        if e.message == 'invalid process':
+        if 'invalid process' == e.args[0]:
             return
 
     # Get the info on the bug
