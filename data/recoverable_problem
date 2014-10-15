@@ -2,7 +2,7 @@
 
 '''Report an error that can be recovered from.
 
-This application should be called with its stanard input pipe fed a
+This application should be called with its standard input pipe fed a
 nul-separated list of key-value pairs.
 '''
 
@@ -41,7 +41,7 @@ def main():
         report.add_proc_info(report.pid)
     except ValueError as e:
         # The process may have gone away before we could get to it.
-        if e.message == 'invalid process':
+        if str(e) == 'invalid process':
             return
 
     # Get the info on the bug
