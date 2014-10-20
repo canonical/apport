@@ -9,7 +9,6 @@
 # Short-Description: automatic crash report generation
 ### END INIT INFO
 
-PATH=/bin
 DESC="automatic crash report generation"
 NAME=apport
 AGENT=/usr/share/apport/apport
@@ -45,7 +44,6 @@ do_start()
         fi
 
 	# check for incomplete suspend/resume or hibernate
-	export PATH="$PATH:/usr/bin"
 	if [ -e /var/lib/pm-utils/status ]; then
 		/usr/share/apport/apportcheckresume || true
 		rm -f /var/lib/pm-utils/status

@@ -13,6 +13,10 @@ detailed list of changes, please see ChangeLog.
    crash processing. Thanks Steve Langasek and Brian Murray. (LP: #1354318)
  * whoopsie-upload-all: Remove crash reports that have a core dump which is
    broken and cannot be processed by gdb. Thanks Brian Murray. (LP: #1376374)
+ * Stop setting $PATH in the init.d script. It breaks assumptions from
+   /lib/lsb/init-functions.d/ which might call other tools which are not in
+   /bin; also, we generally shouldn't meddle with $PATH in individual scripts.
+   (LP: #1372665)
 
 2.14.7 (2014-08-29)
 -------------------
