@@ -17,6 +17,8 @@ detailed list of changes, please see ChangeLog.
    /lib/lsb/init-functions.d/ which might call other tools which are not in
    /bin; also, we generally shouldn't meddle with $PATH in individual scripts.
    (LP: #1372665)
+ * When core size exceeds the limit (3/4 of available memory) and thus the core
+   dump is skipped, log this to /var/log/apport.log. (LP: #1387835)
 
 2.14.7 (2014-08-29)
 -------------------

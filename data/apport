@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Collect information about a crash and create a report in the directory
 # specified by apport.fileutils.report_dir.
@@ -332,11 +332,12 @@ try:
 
     info = apport.Report('Crash')
     info['Signal'] = signum
+    core_size_limit = usable_ram() * 3 / 4
     if sys.version_info.major < 3:
-        info['CoreDump'] = (sys.stdin, True, usable_ram() * 3 / 4, True)
+        info['CoreDump'] = (sys.stdin, True, core_size_limit, True)
     else:
         # read binary data from stdio
-        info['CoreDump'] = (sys.stdin.detach(), True, usable_ram() * 3 / 4, True)
+        info['CoreDump'] = (sys.stdin.detach(), True, core_size_limit, True)
 
     # We already need this here to figure out the ExecutableName (for scripts,
     # etc).
@@ -455,6 +456,9 @@ try:
         if reportfile != sys.stderr:
             os.unlink(report)
         raise
+    if 'CoreDump' not in info:
+        error_log('core dump exceeded %i MiB, dropped from %s to avoid memory overflow'
+                  % (core_size_limit / 1048576, report))
     if report:
         os.chmod(report, 0o640)
     if reportfile != sys.stderr:
