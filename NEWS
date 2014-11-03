@@ -19,6 +19,8 @@ detailed list of changes, please see ChangeLog.
    (LP: #1372665)
  * When core size exceeds the limit (3/4 of available memory) and thus the core
    dump is skipped, log this to /var/log/apport.log. (LP: #1387835)
+ * apport-gtk: Fix jump-to-top on first click of the details treeview. Thanks
+   Marius Gedminas. (LP: #1387328)
 
 2.14.7 (2014-08-29)
 -------------------

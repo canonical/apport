@@ -62,7 +62,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         column = Gtk.TreeViewColumn('Report', Gtk.CellRendererText(), text=0)
         self.w('details_treeview').append_column(column)
-        self.spinner = self.add_spinner_over_treeview(self.w('details_treeview'))
+        self.spinner = self.add_spinner_over_treeview(self.w('details_overlay'))
 
         self.md = None
 
@@ -72,16 +72,11 @@ class GTKUserInterface(apport.ui.UserInterface):
     # ui_* implementation of abstract UserInterface classes
     #
 
-    def add_spinner_over_treeview(self, treeview):
+    def add_spinner_over_treeview(self, overlay):
         '''Reparents a treeview in a GtkOverlay, then layers a GtkSpinner
         centered on top.'''
         # TODO handle the expose event of the spinner so that we can draw on
         # the treeview's viewport's window instead.
-        parent = treeview.get_parent()
-        parent.remove(treeview)
-        overlay = Gtk.Overlay()
-        parent.add(overlay)
-        overlay.add(treeview)
         spinner = Gtk.Spinner()
         spinner.set_size_request(42, 42)
         align = Gtk.Alignment()
