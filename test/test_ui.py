@@ -626,6 +626,9 @@ bOgUs=
             os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
             os.execv(exename, [exename])
 
+        # give the execv() some time to finish
+        time.sleep(0.2)
+
         try:
             sys.argv = ['ui-test', '-f', '-P', str(pid)]
             self.ui = TestSuiteUserInterface()
