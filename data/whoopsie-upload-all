@@ -74,7 +74,8 @@ def process_report(report):
             r.add_gdb_info()
         except (IOError, EOFError) as e:
             sys.stderr.write('ERROR: processing %s: %s\n' % (report, str(e)))
-            os.unlink(report)
+            if os.path.exists(report):
+                os.unlink(report)
             return None
         try:
             r.add_package_info()

@@ -25,6 +25,8 @@ detailed list of changes, please see ChangeLog.
    (LP: #1394798)
  * Fix backend_apt_dpkg.test_install_packages_permanent_sandbox test case with
    proxy env variables with latest apt.
+ * data/whoopsie-upload-all: confirm that the crash file exists before trying
+   to remove it. (LP: #1384358)
 
 2.14.7 (2014-08-29)
 -------------------
