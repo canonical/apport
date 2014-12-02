@@ -21,6 +21,8 @@ detailed list of changes, please see ChangeLog.
    dump is skipped, log this to /var/log/apport.log. (LP: #1387835)
  * apport-gtk: Fix jump-to-top on first click of the details treeview. Thanks
    Marius Gedminas. (LP: #1387328)
+ * apport-retrace: Fix location of cached Contents.gz when using --sandbox-dir.
+   (LP: #1394798)
 
 2.14.7 (2014-08-29)
 -------------------

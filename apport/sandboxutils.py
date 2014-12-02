@@ -55,7 +55,7 @@ def report_package_versions(report):
     return pkg_vers
 
 
-def needed_runtime_packages(report, sandbox, cache_dir, pkg_versions, verbose=False):
+def needed_runtime_packages(report, sandbox, pkgmap_cache_dir, pkg_versions, verbose=False):
     '''Determine necessary runtime packages for given report.
 
     This determines libraries dynamically loaded at runtime in two cases:
@@ -66,7 +66,8 @@ def needed_runtime_packages(report, sandbox, cache_dir, pkg_versions, verbose=Fa
 
     Return list of (pkgname, None) pairs.
 
-    When cache_dir is specified, it is used as a cache for get_file_package().
+    When pkgmap_cache_dir is specified, it is used as a cache for
+    get_file_package().
     '''
     # check list of libraries that the crashed process referenced at
     # runtime and warn about those which are not available
@@ -83,14 +84,12 @@ def needed_runtime_packages(report, sandbox, cache_dir, pkg_versions, verbose=Fa
     else:
         # 'ProcMaps' key is absent in apport-valgrind use case
         libs = apport.fileutils.shared_libraries(report['ExecutablePath']).values()
-    if sandbox:
-        cache_dir = os.path.join(cache_dir, report['DistroRelease'])
-        if not os.path.exists(cache_dir):
-            os.makedirs(cache_dir)
+    if not os.path.exists(pkgmap_cache_dir):
+        os.makedirs(pkgmap_cache_dir)
 
     # grab as much as we can
     for l in libs:
-        pkg = apport.packaging.get_file_package(l, True, cache_dir,
+        pkg = apport.packaging.get_file_package(l, True, pkgmap_cache_dir,
                                                 release=report['DistroRelease'],
                                                 arch=report.get('Architecture'))
         if pkg:
@@ -164,6 +163,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         cache_dir = tempfile.mkdtemp(prefix='apport_cache_')
         atexit.register(shutil.rmtree, cache_dir)
 
+    pkgmap_cache_dir = os.path.join(cache_dir, report['DistroRelease'])
+
     pkgs = []
 
     # when ProcMaps is available and we don't have any third-party packages, it
@@ -189,13 +190,13 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         sys.exit(1)
 
     pkg_versions = report_package_versions(report)
-    pkgs = needed_runtime_packages(report, sandbox_dir, cache_dir, pkg_versions, verbose)
+    pkgs = needed_runtime_packages(report, sandbox_dir, pkgmap_cache_dir, pkg_versions, verbose)
 
     # package hooks might reassign Package:, check that we have the originally
     # crashing binary
     for path in ('InterpreterPath', 'ExecutablePath'):
         if path in report:
-            pkg = apport.packaging.get_file_package(report[path], True, cache_dir,
+            pkg = apport.packaging.get_file_package(report[path], True, pkgmap_cache_dir,
                                                     release=report['DistroRelease'],
                                                     arch=report.get('Architecture'))
             if pkg:
