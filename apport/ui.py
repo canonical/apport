@@ -13,7 +13,7 @@ implementation (like GTK, Qt, or CLI).
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-__version__ = '2.14.7'
+__version__ = '2.15'
 
 import glob, sys, os.path, optparse, traceback, locale, gettext, re
 import errno, zlib
