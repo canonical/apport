@@ -741,9 +741,16 @@ deb http://secondary.mirror tuxy extra
 
         # Prevent packages from downloading.
         apt_pkg.config.set('Acquire::http::Proxy', 'http://nonexistent')
+        orig_env = os.environ.copy()
+        os.environ['http_proxy'] = 'http://nonexistent'
+        try:
+            del os.environ['no_proxy']
+        except KeyError:
+            pass
         self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
                           self.configdir, 'Foonux 1.2', [('libc6', None)], False,
                           self.cachedir, permanent_rootdir=True)
+        os.environ = orig_env
         # These packages exist, so attempting to install them should not fail.
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                               [('coreutils', None), ('tzdata', None)], False, self.cachedir,

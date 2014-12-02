@@ -23,6 +23,8 @@ detailed list of changes, please see ChangeLog.
    Marius Gedminas. (LP: #1387328)
  * apport-retrace: Fix location of cached Contents.gz when using --sandbox-dir.
    (LP: #1394798)
+ * Fix backend_apt_dpkg.test_install_packages_permanent_sandbox test case with
+   proxy env variables with latest apt.
 
 2.14.7 (2014-08-29)
 -------------------
