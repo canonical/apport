@@ -370,11 +370,8 @@ class T(unittest.TestCase):
                     else:
                         raise
                 totalmb -= 1
-            app.stdin.close()
-            rc = app.wait()
-            err = app.stderr.read()
-            app.stderr.close()
-            self.assertEqual(rc, 0, err)
+            (out, err) = app.communicate()
+            self.assertEqual(app.returncode, 0, err)
             onemb = None
         finally:
             os.kill(test_proc, 9)
