@@ -2231,7 +2231,7 @@ No symbol table info available.
 
     def test_get_timestamp(self):
         r = apport.Report()
-        self.assertAlmostEqual(r.get_timestamp(), time.time(), delta=1)
+        self.assertAlmostEqual(r.get_timestamp(), time.time(), delta=2)
 
         r['Date'] = 'Thu Jan 9 12:00:00 2014'
         # delta is ±12 hours, as this depends on the timezone that the test is
