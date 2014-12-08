@@ -905,26 +905,41 @@ Debug::NoLocking "true";
                 age = None
 
             if age is None or age >= 86400:
-                url = '%s/dists/%s%s/Contents-%s.gz' % (self._get_mirror(), release, pocket, arch)
-
-                try:
-                    src = urlopen(url)
-                except IOError:
-                    # we ignore non-existing pockets, but we do crash if the
-                    # release pocket doesn't exist
-                    if pocket == '':
-                        raise
+                if age:
+                    import httplib
+                    from datetime import datetime
+                    conn = httplib.HTTPConnection("%s" % self._get_mirror().split('/')[2])
+                    conn.request("HEAD", "/ubuntu/dists/%s%s/Contents-%s.gz" %
+                        (release, pocket, arch))
+                    res = conn.getresponse()
+                    modified_str = res.getheader('last-modified')
+                    modified = datetime.strptime(modified_str, '%a, %d %b %Y %H:%M:%S %Z')
+                    if modified > datetime.fromtimestamp(st.st_mtime):
+                        update = True
                     else:
-                        continue
+                        update = False
+                else:
+                    update = True
+                if update:
+                    url = '%s/dists/%s%s/Contents-%s.gz' % (self._get_mirror(), release, pocket, arch)
+                    try:
+                        src = urlopen(url)
+                    except IOError:
+                        # we ignore non-existing pockets, but we do crash if the
+                        # release pocket doesn't exist
+                        if pocket == '':
+                            raise
+                        else:
+                            continue
 
-                with open(map, 'wb') as f:
-                    while True:
-                        data = src.read(1000000)
-                        if not data:
-                            break
-                        f.write(data)
-                src.close()
-                assert os.path.exists(map)
+                    with open(map, 'wb') as f:
+                        while True:
+                            data = src.read(1000000)
+                            if not data:
+                                break
+                            f.write(data)
+                    src.close()
+                    assert os.path.exists(map)
 
             if file.startswith('/'):
                 file = file[1:]
