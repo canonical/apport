@@ -912,10 +912,10 @@ Debug::NoLocking "true";
                     conn.request("HEAD", "/ubuntu/dists/%s%s/Contents-%s.gz" %
                         (release, pocket, arch))
                     res = conn.getresponse()
-                    modified_str = res.getheader('last-modified')
-                    modified = datetime.strptime(modified_str, '%a, %d %b %Y %H:%M:%S %Z')
-                    if modified > datetime.fromtimestamp(st.st_mtime):
-                        update = True
+                    modified_str = res.getheader('last-modified', None)
+                    if modified_str:
+                        modified = datetime.strptime(modified_str, '%a, %d %b %Y %H:%M:%S %Z')
+                        update = (modified > datetime.fromtimestamp(st.st_mtime))
                     else:
                         update = False
                 else:
