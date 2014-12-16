@@ -908,13 +908,18 @@ Debug::NoLocking "true";
                 if age:
                     import httplib
                     from datetime import datetime
-                    conn = httplib.HTTPConnection("%s" % self._get_mirror().split('/')[2])
-                    conn.request("HEAD", "/ubuntu/dists/%s%s/Contents-%s.gz" %
-                        (release, pocket, arch))
+                    from urlparse import urlparse
+                    # HTTPConnection requires server name e.g.
+                    # archive.ubuntu.com
+                    server = urlparse(self._get_mirror())[1]
+                    conn = httplib.HTTPConnection(server)
+                    conn.request("HEAD", "%sdists/%s%s/Contents-%s.gz" %
+                        (urlparse(self._get_mirror())[2], release, pocket, arch))
                     res = conn.getresponse()
                     modified_str = res.getheader('last-modified', None)
                     if modified_str:
-                        modified = datetime.strptime(modified_str, '%a, %d %b %Y %H:%M:%S %Z')
+                        modified = datetime.strptime(modified_str,
+                            '%a, %d %b %Y %H:%M:%S %Z')
                         update = (modified > datetime.fromtimestamp(st.st_mtime))
                     else:
                         update = False
