@@ -1890,7 +1890,8 @@ NameError: global name 'weird' is not defined'''
 
             count = 0
             p = db.launchpad.people[db.options['escalation_subscription']].self_link
-            first_dup = 59
+            # needs to have 13 consecutive valid bugs without dupes
+            first_dup = 10070
             try:
                 for b in range(first_dup, first_dup + 13):
                     count += 1
