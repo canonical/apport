@@ -906,25 +906,49 @@ Debug::NoLocking "true";
 
             if age is None or age >= 86400:
                 url = '%s/dists/%s%s/Contents-%s.gz' % (self._get_mirror(), release, pocket, arch)
-
-                try:
-                    src = urlopen(url)
-                except IOError:
-                    # we ignore non-existing pockets, but we do crash if the
-                    # release pocket doesn't exist
-                    if pocket == '':
-                        raise
+                if age:
+                    try:
+                        from httplib import HTTPConnection
+                        from urlparse import urlparse
+                    except ImportError:
+                        # python 3
+                        from http.client import HTTPConnection
+                        from urllib.parse import urlparse
+                    from datetime import datetime
+                    # HTTPConnection requires server name e.g.
+                    # archive.ubuntu.com
+                    server = urlparse(url)[1]
+                    conn = HTTPConnection(server)
+                    conn.request("HEAD", urlparse(url)[2])
+                    res = conn.getresponse()
+                    modified_str = res.getheader('last-modified', None)
+                    if modified_str:
+                        modified = datetime.strptime(modified_str,
+                                                     '%a, %d %b %Y %H:%M:%S %Z')
+                        update = (modified > datetime.fromtimestamp(st.st_mtime))
                     else:
-                        continue
+                        update = True
+                else:
+                    update = True
+                if update:
+                    try:
+                        src = urlopen(url)
+                    except IOError:
+                        # we ignore non-existing pockets, but we do crash if the
+                        # release pocket doesn't exist
+                        if pocket == '':
+                            raise
+                        else:
+                            continue
 
-                with open(map, 'wb') as f:
-                    while True:
-                        data = src.read(1000000)
-                        if not data:
-                            break
-                        f.write(data)
-                src.close()
-                assert os.path.exists(map)
+                    with open(map, 'wb') as f:
+                        while True:
+                            data = src.read(1000000)
+                            if not data:
+                                break
+                            f.write(data)
+                    src.close()
+                    assert os.path.exists(map)
 
             if file.startswith('/'):
                 file = file[1:]
