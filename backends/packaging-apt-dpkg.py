@@ -905,16 +905,16 @@ Debug::NoLocking "true";
                 age = None
 
             if age is None or age >= 86400:
+                url = '%sdists/%s%s/Contents-%s.gz' % (self._get_mirror(), release, pocket, arch)
                 if age:
                     import httplib
                     from datetime import datetime
                     from urlparse import urlparse
                     # HTTPConnection requires server name e.g.
                     # archive.ubuntu.com
-                    server = urlparse(self._get_mirror())[1]
+                    server = urlparse(url)[1]
                     conn = httplib.HTTPConnection(server)
-                    conn.request("HEAD", "%sdists/%s%s/Contents-%s.gz" %
-                        (urlparse(self._get_mirror())[2], release, pocket, arch))
+                    conn.request("HEAD", urlparse(url)[2])
                     res = conn.getresponse()
                     modified_str = res.getheader('last-modified', None)
                     if modified_str:
@@ -922,11 +922,10 @@ Debug::NoLocking "true";
                             '%a, %d %b %Y %H:%M:%S %Z')
                         update = (modified > datetime.fromtimestamp(st.st_mtime))
                     else:
-                        update = False
+                        update = True
                 else:
                     update = True
                 if update:
-                    url = '%s/dists/%s%s/Contents-%s.gz' % (self._get_mirror(), release, pocket, arch)
                     try:
                         src = urlopen(url)
                     except IOError:
