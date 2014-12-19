@@ -9,6 +9,7 @@ detailed list of changes, please see ChangeLog.
  * apt/dpkg _search_contents(): Check HTTP last-modified header to avoid
    re-downloading Contents.gz every day unless it actually changed. Thanks
    Brian Murray!
+ * apport-gtk: Drop properties which are deprecated in GTK 3.14.
 
 2.15 (2014-12-02)
 -----------------
