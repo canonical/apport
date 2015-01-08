@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.15.2 (UNRELEASED)
+------------------
+ * hookutils, attach_root_command_outputs(): Fix UnicodeDecodeError crash for
+   non-textual values. (LP: #1370259)
+
 2.15.1 (2014-12-19)
 -------------------
  * Robustify report.test_get_timestamp test.
