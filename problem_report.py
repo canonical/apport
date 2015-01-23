@@ -188,6 +188,76 @@ class ProblemReport(UserDict):
 
         self.old_keys = set(self.data.keys())
 
+    def extract(self, file, item=None, directory='/tmp'):
+        '''Extract only one element from the problem_report
+        directly without loading the report beforehand
+        This is required for Kernel Crash Dumps that can be
+        very big and saturate the RAM
+        '''
+        self._assert_bin_mode(file)
+        self.data.clear()
+        key = None
+        value = None
+        b64_block = False
+        bd = None
+        # Make sure the report is at the beginning
+        file.seek(0)
+        for line in file:
+            # continuation line
+            if line.startswith(b' '):
+                if not b64_block:
+                    continue
+                assert (key is not None and value is not None)
+                if b64_block:
+                    l = base64.b64decode(line)
+                    if bd:
+                        out.write(bd.decompress(l))
+                    else:
+                        # lazy initialization of bd
+                        # skip gzip header, if present
+                        if l.startswith(b'\037\213\010'):
+                            bd = zlib.decompressobj(-zlib.MAX_WBITS)
+                            out.write(bd.decompress(self._strip_gzip_header(l)))
+                        else:
+                            # legacy zlib-only format used default block
+                            # size
+                            bd = zlib.decompressobj()
+                            out.write(bd.decompress(l))
+                else:
+                    if len(value) > 0:
+                        out.write('{}'.format(b'\n'))
+                    if line.endswith(b'\n'):
+                        out.write('{}'.format(line[1:-1]))
+                    else:
+                        out.write('{}'.format(line[1:]))
+            else:
+                if b64_block:
+                    if bd:
+                        value += bd.flush()
+                    b64_block = False
+                    bd = None
+                if key:
+                    assert value is not None
+                    self.data[key] = self._try_unicode(value)
+                (key, value) = line.split(b':', 1)
+                if not _python2:
+                    key = key.decode('ASCII')
+                if key != item:
+                    continue
+                value = value.strip()
+                if value == b'base64':
+                    value = b''
+                    b64_block = True
+                    try:
+                        out=open(os.path.join(directory, item), 'wb')
+                    except IOError as e:
+                        fatal(str(e))
+
+        if key is not None:
+            self.data[key] = self._try_unicode(value)
+
+        self.old_keys = set(self.data.keys())
+
     def has_removed_fields(self):
         '''Check if the report has any keys which were not loaded.
 
