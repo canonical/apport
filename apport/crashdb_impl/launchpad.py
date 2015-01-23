@@ -269,20 +269,20 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             m = re.search(r'^--- \r?$[\r\n]*(.*)', b.description, re.M | re.S)
         assert m, 'bug description must contain standard apport format data'
 
-        description = m.group(1).encode('UTF-8').replace('\xc2\xa0', ' ').replace('\r\n', '\n')
+        description = m.group(1).encode('UTF-8').replace(b'\xc2\xa0', b' ').replace(b'\r\n', b'\n')
 
-        if '\n\n' in description:
+        if b'\n\n' in description:
             # this often happens, remove all empty lines between top and
             # 'Uname'
-            if 'Uname:' in description:
+            if b'Uname:' in description:
                 # this will take care of bugs like LP #315728 where stuff
                 # is added after the apport data
-                (part1, part2) = description.split('Uname:', 1)
-                description = part1.replace('\n\n', '\n') + 'Uname:' \
-                    + part2.split('\n\n', 1)[0]
+                (part1, part2) = description.split(b'Uname:', 1)
+                description = part1.replace(b'\n\n', b'\n') + b'Uname:' \
+                    + part2.split(b'\n\n', 1)[0]
             else:
                 # just parse out the Apport block; e. g. LP #269539
-                description = description.split('\n\n', 1)[0]
+                description = description.split(b'\n\n', 1)[0]
 
         report.load(BytesIO(description))
 
@@ -369,16 +369,19 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         report.write_mime(mime, skip_keys=skip_keys)
         mime.flush()
         mime.seek(0)
-        msg = email.message_from_file(mime)
+        if _python2:
+            msg = email.message_from_file(mime)
+        else:
+            msg = email.message_from_binary_file(mime)
         msg_iter = msg.walk()
 
         # first part is the multipart container
-        part = msg_iter.next()
+        part = _python2 and msg_iter.next() or msg_iter.__next__()
         assert part.is_multipart()
 
         # second part should be an inline text/plain attachments with all short
         # fields
-        part = msg_iter.next()
+        part = _python2 and msg_iter.next() or msg_iter.__next__()
         assert not part.is_multipart()
         assert part.get_content_type() == 'text/plain'
 
@@ -395,11 +398,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             bug = self.launchpad.bugs[id]  # fresh bug object, LP#336866 workaround
 
         # short text data
+        text = part.get_payload(decode=True).decode('UTF-8', 'replace')
         if change_description:
-            bug.description = bug.description + '\n--- \n' + part.get_payload(decode=True).decode('UTF-8', 'replace')
+            bug.description = bug.description + '\n--- \n' + text
             bug.lp_save()
         else:
-            bug.newMessage(content=part.get_payload(decode=True), subject=comment)
+            bug.newMessage(content=text, subject=comment)
 
         # other parts are the attachments:
         for part in msg_iter:
@@ -437,7 +441,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     except HTTPError:
                         pass  # LP#249950 workaround
             try:
-                task = self._get_distro_tasks(bug.bug_tasks).next()
+                task = self._get_distro_tasks(bug.bug_tasks)
+                if _python2:
+                    task = task.next()
+                else:
+                    task = task.__next__()
                 if task.importance == 'Undecided':
                     task.importance = 'Medium'
                     task.lp_save()
@@ -792,7 +800,11 @@ in a dependent package.' % master,
         bug = self.launchpad.bugs[id]
         if invalid_msg:
             try:
-                task = self._get_distro_tasks(bug.bug_tasks).next()
+                task = self._get_distro_tasks(bug.bug_tasks)
+                if _python2:
+                    task = task.next()
+                else:
+                    task = task.__next__()
             except StopIteration:
                 # no distro task, just use the first one
                 task = bug.bug_tasks[0]
@@ -1738,17 +1750,20 @@ and more
                 description = 'some description'
 
             mime = self.crashdb._generate_upload_blob(report)
-            msg = email.message_from_file(mime)
+            if _python2:
+                msg = email.message_from_file(mime)
+            else:
+                msg = email.message_from_binary_file(mime)
             mime.close()
             msg_iter = msg.walk()
 
             # first one is the multipart container
-            header = msg_iter.next()
+            header = _python2 and msg_iter.next() or msg_iter.__next__()
             assert header.is_multipart()
 
             # second part should be an inline text/plain attachments with all short
             # fields
-            part = msg_iter.next()
+            part = _python2 and msg_iter.next() or msg_iter.__next__()
             assert not part.is_multipart()
             assert part.get_content_type() == 'text/plain'
             description += '\n\n' + part.get_payload(decode=True).decode('UTF-8', 'replace')

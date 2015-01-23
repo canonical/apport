@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 ------------------
  * hookutils, attach_root_command_outputs(): Fix UnicodeDecodeError crash for
    non-textual values. (LP: #1370259)
+ * launchpad backend: Work with Python 3, now that launchpadlib exists for
+   Python 3. (LP: #1153671)
 
 2.15.1 (2014-12-19)
 -------------------
