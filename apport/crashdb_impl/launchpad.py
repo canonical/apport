@@ -1256,13 +1256,13 @@ and more
             self.assertTrue(r['ExecutablePath'].endswith('/crash'))
             self.assertEqual(r['SourcePackage'], self.test_srcpackage)
             self.assertTrue(r['Package'].startswith(self.test_package + ' '))
-            self.assertTrue('f (x=42)' in r['Stacktrace'])
-            self.assertTrue('f (x=42)' in r['StacktraceTop'])
-            self.assertTrue('f (x=42)' in r['ThreadStacktrace'])
-            self.assertTrue(len(r['CoreDump']) > 1000)
-            self.assertTrue('Dependencies' in r)
-            self.assertTrue('Disassembly' in r)
-            self.assertTrue('Registers' in r)
+            self.assertIn('f (x=42)', r['Stacktrace'])
+            self.assertIn('f (x=42)', r['StacktraceTop'])
+            self.assertIn('f (x=42)', r['ThreadStacktrace'])
+            self.assertGreater(len(r['CoreDump']), 1000)
+            self.assertIn('Dependencies', r)
+            self.assertIn('Disassembly', r)
+            self.assertIn('Registers', r)
 
             # check tags
             r = self.crashdb.download(self.get_python_report())
@@ -1274,12 +1274,12 @@ and more
             '''update_traces()'''
 
             r = self.crashdb.download(self.get_segv_report())
-            self.assertTrue('CoreDump' in r)
-            self.assertTrue('Dependencies' in r)
-            self.assertTrue('Disassembly' in r)
-            self.assertTrue('Registers' in r)
-            self.assertTrue('Stacktrace' in r)
-            self.assertTrue('ThreadStacktrace' in r)
+            self.assertIn('CoreDump', r)
+            self.assertIn('Dependencies', r)
+            self.assertIn('Disassembly', r)
+            self.assertIn('Registers', r)
+            self.assertIn('Stacktrace', r)
+            self.assertIn('ThreadStacktrace', r)
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
 
             # updating with a useless stack trace retains core dump
@@ -1289,18 +1289,18 @@ and more
             r['FooBar'] = 'bogus'
             self.crashdb.update_traces(self.get_segv_report(), r, 'I can has a better retrace?')
             r = self.crashdb.download(self.get_segv_report())
-            self.assertTrue('CoreDump' in r)
-            self.assertTrue('Dependencies' in r)
-            self.assertTrue('Disassembly' in r)
-            self.assertTrue('Registers' in r)
-            self.assertTrue('Stacktrace' in r)  # TODO: ascertain that it's the updated one
-            self.assertTrue('ThreadStacktrace' in r)
-            self.assertFalse('FooBar' in r)
+            self.assertIn('CoreDump', r)
+            self.assertIn('Dependencies', r)
+            self.assertIn('Disassembly', r)
+            self.assertIn('Registers', r)
+            self.assertIn('Stacktrace', r)  # TODO: ascertain that it's the updated one
+            self.assertIn('ThreadStacktrace', r)
+            self.assertNotIn('FooBar', r)
             self.assertEqual(r['Title'], 'crash crashed with SIGSEGV in f()')
 
             tags = self.crashdb.launchpad.bugs[self.get_segv_report()].tags
-            self.assertTrue('apport-crash' in tags)
-            self.assertFalse('apport-collected' in tags)
+            self.assertIn('apport-crash', tags)
+            self.assertNotIn('apport-collected', tags)
 
             # updating with a useful stack trace removes core dump
             r['StacktraceTop'] = 'read () from /lib/libc.6.so\nfoo (i=1) from /usr/lib/libfoo.so'
@@ -1308,13 +1308,13 @@ and more
             r['ThreadStacktrace'] = 'thread\neven longer\ntrace'
             self.crashdb.update_traces(self.get_segv_report(), r, 'good retrace!')
             r = self.crashdb.download(self.get_segv_report())
-            self.assertFalse('CoreDump' in r)
-            self.assertTrue('Dependencies' in r)
-            self.assertTrue('Disassembly' in r)
-            self.assertTrue('Registers' in r)
-            self.assertTrue('Stacktrace' in r)
-            self.assertTrue('ThreadStacktrace' in r)
-            self.assertFalse('FooBar' in r)
+            self.assertNotIn('CoreDump', r)
+            self.assertIn('Dependencies', r)
+            self.assertIn('Disassembly', r)
+            self.assertIn('Registers', r)
+            self.assertIn('Stacktrace', r)
+            self.assertIn('ThreadStacktrace', r)
+            self.assertNotIn('FooBar', r)
 
             # as previous title had standard form, the top function gets
             # updated
@@ -1431,8 +1431,8 @@ and more
 
             r = self.crashdb.download(id)
 
-            self.assertFalse('OneLiner' in r)
-            self.assertFalse('ShortGoo' in r)
+            self.assertNotIn('OneLiner', r)
+            self.assertNotIn('ShortGoo', r)
             self.assertEqual(r['ProblemType'], 'Bug')
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
             self.assertEqual(r['VarLogDistupgradeBinGoo'], '\x01' * 1024)
@@ -1465,11 +1465,11 @@ and more
 
             r = self.crashdb.download(id)
 
-            self.assertFalse('OneLiner' in r)
+            self.assertNotIn('OneLiner', r)
             self.assertEqual(r['ShortGoo'], 'lineone\nlinetwo')
             self.assertEqual(r['ProblemType'], 'Bug')
             self.assertEqual(r['DpkgTerminalLog'], 'one\ntwo\nthree\nfour\nfive\nsix')
-            self.assertFalse('VarLogDistupgradeBinGoo' in r)
+            self.assertNotIn('VarLogDistupgradeBinGoo', r)
 
             self.assertEqual(self.crashdb.launchpad.bugs[id].tags, [])
 
@@ -1525,12 +1525,12 @@ and more
             # this should have removed attachments; note that Stacktrace is
             # short, and thus inline
             r = self.crashdb.download(self.get_segv_report())
-            self.assertFalse('CoreDump' in r)
-            self.assertFalse('Disassembly' in r)
-            self.assertFalse('ProcMaps' in r)
-            self.assertFalse('ProcStatus' in r)
-            self.assertFalse('Registers' in r)
-            self.assertFalse('ThreadStacktrace' in r)
+            self.assertNotIn('CoreDump', r)
+            self.assertNotIn('Disassembly', r)
+            self.assertNotIn('ProcMaps', r)
+            self.assertNotIn('ProcStatus', r)
+            self.assertNotIn('Registers', r)
+            self.assertNotIn('ThreadStacktrace', r)
 
             # now try duplicating to a duplicate bug; this should automatically
             # transition to the master bug
@@ -1556,11 +1556,11 @@ and more
 
             # mark_retraced()
             unretraced_before = self.crashdb.get_unretraced()
-            self.assertTrue(self.get_segv_report() in unretraced_before)
-            self.assertFalse(self.get_python_report() in unretraced_before)
+            self.assertIn(self.get_segv_report(), unretraced_before)
+            self.assertNotIn(self.get_python_report(), unretraced_before)
             self.crashdb.mark_retraced(self.get_segv_report())
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(self.get_segv_report() in unretraced_after)
+            self.assertNotIn(self.get_segv_report(), unretraced_after)
             self.assertEqual(unretraced_before,
                              unretraced_after.union(set([self.get_segv_report()])))
             self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
@@ -1570,7 +1570,7 @@ and more
             self.crashdb.mark_retraced(self.get_segv_report())
             self.crashdb.mark_retrace_failed(self.get_segv_report())
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(self.get_segv_report() in unretraced_after)
+            self.assertNotIn(self.get_segv_report(), unretraced_after)
             self.assertEqual(unretraced_before,
                              unretraced_after.union(set([self.get_segv_report()])))
             self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()), None)
@@ -1580,7 +1580,7 @@ and more
             self.crashdb.mark_retraced(self.get_segv_report())
             self.crashdb.mark_retrace_failed(self.get_segv_report(), "I don't like you")
             unretraced_after = self.crashdb.get_unretraced()
-            self.assertFalse(self.get_segv_report() in unretraced_after)
+            self.assertNotIn(self.get_segv_report(), unretraced_after)
             self.assertEqual(unretraced_before,
                              unretraced_after.union(set([self.get_segv_report()])))
             self.assertEqual(self.crashdb.get_fixed_version(self.get_segv_report()),
@@ -1612,11 +1612,11 @@ and more
 
             # on project_db, we recognize the project bug and can mark it
             unretraced_before = project_db.get_unretraced()
-            self.assertTrue(project_bug.id in unretraced_before)
-            self.assertFalse(distro_bug.id in unretraced_before)
+            self.assertIn(project_bug.id, unretraced_before)
+            self.assertNotIn(distro_bug.id, unretraced_before)
             project_db.mark_retraced(project_bug.id)
             unretraced_after = project_db.get_unretraced()
-            self.assertFalse(project_bug.id in unretraced_after)
+            self.assertNotIn(project_bug.id, unretraced_after)
             self.assertEqual(unretraced_before,
                              unretraced_after.union(set([project_bug.id])))
             self.assertEqual(self.crashdb.get_fixed_version(project_bug.id), None)
@@ -1653,11 +1653,11 @@ and more
             '''processing status markings for interpreter crashes'''
 
             unchecked_before = self.crashdb.get_dup_unchecked()
-            self.assertTrue(self.get_python_report() in unchecked_before)
-            self.assertFalse(self.get_segv_report() in unchecked_before)
+            self.assertIn(self.get_python_report(), unchecked_before)
+            self.assertNotIn(self.get_segv_report(), unchecked_before)
             self.crashdb._mark_dup_checked(self.get_python_report(), self.ref_report)
             unchecked_after = self.crashdb.get_dup_unchecked()
-            self.assertFalse(self.get_python_report() in unchecked_after)
+            self.assertNotIn(self.get_python_report(), unchecked_after)
             self.assertEqual(unchecked_before,
                              unchecked_after.union(set([self.get_python_report()])))
             self.assertEqual(self.crashdb.get_fixed_version(self.get_python_report()), None)
@@ -1681,7 +1681,7 @@ and more
             self.crashdb.update_traces(id, r, 'good retrace!')
 
             r = self.crashdb.download(id)
-            self.assertFalse('CoreDump' in r)
+            self.assertNotIn('CoreDump', r)
 
         @mock.patch.object(CrashDatabase, '_get_source_version')
         def test_get_fixed_version(self, *args):
@@ -1819,7 +1819,7 @@ and more
             '''Verify that report ID is marked as regression.'''
 
             bug = self.crashdb.launchpad.bugs[id]
-            self.assertTrue('regression-retracer' in bug.tags)
+            self.assertIn('regression-retracer', bug.tags)
 
         def test_project(self):
             '''reporting crashes against a project instead of a distro'''
@@ -1917,7 +1917,7 @@ NameError: global name 'weird' is not defined'''
 
             self._mark_needs_dupcheck(self.get_python_report())
             unchecked_before = self.crashdb.get_dup_unchecked()
-            self.assertTrue(self.get_python_report() in unchecked_before)
+            self.assertIn(self.get_python_report(), unchecked_before)
 
             # add an upstream task, and remove the package name from the
             # package task; _mark_dup_checked is supposed to restore the
@@ -1935,7 +1935,7 @@ NameError: global name 'weird' is not defined'''
             self.crashdb._mark_dup_checked(self.get_python_report(), r)
 
             unchecked_after = self.crashdb.get_dup_unchecked()
-            self.assertFalse(self.get_python_report() in unchecked_after)
+            self.assertNotIn(self.get_python_report(), unchecked_after)
             self.assertEqual(unchecked_before,
                              unchecked_after.union(set([self.get_python_report()])))
 
