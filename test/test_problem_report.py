@@ -283,8 +283,6 @@ Last: foo
         pr['Large'] = problem_report.CompressedValue(large_val)
         pr['Multiline'] = problem_report.CompressedValue(b'\1\1\1\n\2\2\n\3\3\3')
 
-        pr.write(open(os.path.join(self.workdir, 'toto'), 'wb'))
-
         report = BytesIO()
         pr.write(report)
         report.seek(0)
