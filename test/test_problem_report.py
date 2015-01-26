@@ -1,5 +1,5 @@
 # vim: set encoding=UTF-8 fileencoding=UTF-8 :
-import unittest, tempfile, os, email, gzip, time, sys
+import unittest, tempfile, os, shutil, email, gzip, time, sys
 
 from io import BytesIO
 import problem_report
@@ -12,6 +12,14 @@ if sys.version < '3':
 
 
 class T(unittest.TestCase):
+    @classmethod
+    def setUp(self):
+        self.workdir = tempfile.mkdtemp()
+
+    @classmethod
+    def tearDown(self):
+        shutil.rmtree(self.workdir)
+
     def test_basic_operations(self):
         '''basic creation and operation.'''
 
@@ -257,6 +265,50 @@ Last: foo
         # test that load() cleans up properly
         pr.load(BytesIO(b'ProblemType: Crash'))
         self.assertEqual(list(pr.keys()), ['ProblemType'])
+
+
+    def test_extract(self):
+        '''extract() with various binary elements.'''
+
+        # create a test report with binary elements
+        large_val = b'A' * 5000000
+
+        pr = problem_report.ProblemReport()
+        pr['Txt'] = 'some text'
+        pr['MoreTxt'] = 'some more text'
+        pr['Foo'] = problem_report.CompressedValue(b'FooFoo!')
+        pr['Uncompressed'] = bin_data
+        pr['Bin'] = problem_report.CompressedValue()
+        pr['Bin'].set_value(bin_data)
+        pr['Large'] = problem_report.CompressedValue(large_val)
+        pr['Multiline'] = problem_report.CompressedValue(b'\1\1\1\n\2\2\n\3\3\3')
+
+        pr.write(open(os.path.join(self.workdir, 'toto'), 'wb'))
+
+        report = BytesIO()
+        pr.write(report)
+        report.seek(0)
+
+        #Extracts nothing if non binary
+        pr.extract(report, 'Txt', self.workdir )
+        self.assertEqual(os.path.exists(os.path.join(self.workdir, 'Txt')), False)
+        pr.extract(report, 'Foo', self.workdir )
+        element = open(os.path.join(self.workdir, 'Foo'))
+        self.assertEqual(element.read(), b'FooFoo!' )
+        pr.extract(report, 'Uncompressed', self.workdir )
+        element = open(os.path.join(self.workdir, 'Uncompressed'))
+        self.assertEqual(element.read(), bin_data )
+        pr.extract(report, 'Bin', self.workdir )
+        element = open(os.path.join(self.workdir, 'Bin'))
+        self.assertEqual(element.read(), bin_data )
+        pr.extract(report, 'Large', self.workdir )
+        element = open(os.path.join(self.workdir, 'Large'))
+        self.assertEqual(element.read(), large_val )
+        pr.extract(report, 'Multiline', self.workdir )
+        element = open(os.path.join(self.workdir, 'Multiline'))
+        self.assertEqual(element.read().splitlines(),
+                         [b'\1\1\1', b'\2\2', b'\3\3\3'])
+
 
     def test_write_file(self):
         '''writing a report with binary file data.'''
