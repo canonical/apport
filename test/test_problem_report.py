@@ -290,6 +290,10 @@ Last: foo
         #Extracts nothing if non binary
         pr.extract(report, 'Txt', self.workdir )
         self.assertEqual(os.path.exists(os.path.join(self.workdir, 'Txt')), False)
+        #Check inexistant element
+        pr.extract(report, 'Bar', self.workdir )
+        self.assertEqual(os.path.exists(os.path.join(self.workdir, 'Bar')), False)
+        #Check valid elements
         pr.extract(report, 'Foo', self.workdir )
         element = open(os.path.join(self.workdir, 'Foo'))
         self.assertEqual(element.read(), b'FooFoo!' )
