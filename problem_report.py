@@ -249,7 +249,7 @@ class ProblemReport(UserDict):
                     value = b''
                     b64_block = True
                     try:
-                        out=open(os.path.join(directory, item), 'wb')
+                        out = open(os.path.join(directory, item), 'wb')
                     except IOError as e:
                         fatal(str(e))
 

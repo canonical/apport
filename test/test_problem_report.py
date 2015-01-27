@@ -266,7 +266,6 @@ Last: foo
         pr.load(BytesIO(b'ProblemType: Crash'))
         self.assertEqual(list(pr.keys()), ['ProblemType'])
 
-
     def test_extract(self):
         '''extract() with various binary elements.'''
 
@@ -287,30 +286,29 @@ Last: foo
         pr.write(report)
         report.seek(0)
 
-        #Extracts nothing if non binary
-        pr.extract(report, 'Txt', self.workdir )
+        # Extracts nothing if non binary
+        pr.extract(report, 'Txt', self.workdir)
         self.assertEqual(os.path.exists(os.path.join(self.workdir, 'Txt')), False)
-        #Check inexistant element
-        pr.extract(report, 'Bar', self.workdir )
+        # Check inexistant element
+        pr.extract(report, 'Bar', self.workdir)
         self.assertEqual(os.path.exists(os.path.join(self.workdir, 'Bar')), False)
-        #Check valid elements
-        pr.extract(report, 'Foo', self.workdir )
+        # Check valid elements
+        pr.extract(report, 'Foo', self.workdir)
         element = open(os.path.join(self.workdir, 'Foo'))
-        self.assertEqual(element.read(), b'FooFoo!' )
-        pr.extract(report, 'Uncompressed', self.workdir )
+        self.assertEqual(element.read(), b'FooFoo!')
+        pr.extract(report, 'Uncompressed', self.workdir)
         element = open(os.path.join(self.workdir, 'Uncompressed'))
-        self.assertEqual(element.read(), bin_data )
-        pr.extract(report, 'Bin', self.workdir )
+        self.assertEqual(element.read(), bin_data)
+        pr.extract(report, 'Bin', self.workdir)
         element = open(os.path.join(self.workdir, 'Bin'))
-        self.assertEqual(element.read(), bin_data )
-        pr.extract(report, 'Large', self.workdir )
+        self.assertEqual(element.read(), bin_data)
+        pr.extract(report, 'Large', self.workdir)
         element = open(os.path.join(self.workdir, 'Large'))
-        self.assertEqual(element.read(), large_val )
-        pr.extract(report, 'Multiline', self.workdir )
+        self.assertEqual(element.read(), large_val)
+        pr.extract(report, 'Multiline', self.workdir)
         element = open(os.path.join(self.workdir, 'Multiline'))
         self.assertEqual(element.read().splitlines(),
                          [b'\1\1\1', b'\2\2', b'\3\3\3'])
-
 
     def test_write_file(self):
         '''writing a report with binary file data.'''
