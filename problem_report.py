@@ -203,8 +203,6 @@ class ProblemReport(UserDict):
         b64_block = False
         bd = None
         out = None
-        # Make sure the report is at the beginning
-        file.seek(0)
         for line in file:
             # continuation line
             if line.startswith(b' '):
