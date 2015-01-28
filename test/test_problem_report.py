@@ -288,11 +288,11 @@ Last: foo
 
         # Extracts nothing if non binary
         pr.extract_key(report, 'Txt', self.workdir)
-        self.assertEqual(os.path.exists(os.path.join(self.workdir, 'Txt')), False)
+        self.assertFalse(os.path.exists(os.path.join(self.workdir, 'Txt')))
         # Check inexistant element
         report.seek(0)
         pr.extract_key(report, 'Bar', self.workdir)
-        self.assertEqual(os.path.exists(os.path.join(self.workdir, 'Bar')), False)
+        self.assertFalse(os.path.exists(os.path.join(self.workdir, 'Bar')))
         # Check valid elements
         report.seek(0)
         pr.extract_key(report, 'Foo', self.workdir)
