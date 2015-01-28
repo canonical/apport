@@ -49,7 +49,7 @@ try:
 except OSError as e:
     fatal(str(e))
 
-binaries = ()
+bin_keys = []
 pr = problem_report.ProblemReport()
 if report == '-':
     pr.load(sys.stdin, binary=False)
@@ -61,7 +61,7 @@ else:
         fatal(str(e))
 for k in pr:
     if pr[k] == u'':
-        binaries += (k,)
+        bin_keys.append(k)
         continue
     with open(os.path.join(dir, k), 'wb') as f:
         if type(pr[k]) == t_str:
@@ -70,7 +70,7 @@ for k in pr:
             f.write(pr[k])
 try:
     with open(report, 'rb') as f:
-        for element in binaries:
-            pr.extract(f, element, dir)
+        for key in bin_keys:
+            pr.extract(f, key, dir)
 except IOError as e:
     fatal(str(e))
