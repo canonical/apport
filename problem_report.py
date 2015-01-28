@@ -188,9 +188,11 @@ class ProblemReport(UserDict):
 
         self.old_keys = set(self.data.keys())
 
-    def extract(self, file, item=None, directory='/tmp'):
-        '''Extract only one element from the problem_report
-        directly without loading the report beforehand
+    def extract_key(self, file, item=None, directory='/tmp'):
+        '''Extract only one binary element from the problem_report
+
+        Binary elements can be very big. This method extracts
+        directly to a file without loading the report beforehand
         This is required for Kernel Crash Dumps that can be
         very big and saturate the RAM
         '''
