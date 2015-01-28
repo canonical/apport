@@ -254,11 +254,6 @@ class ProblemReport(UserDict):
                     except IOError:
                         raise IOError('unable to open {}'.format(os.path.join(dir, bin_key)))
 
-        if key is not None:
-            self.data[key] = self._try_unicode(value)
-
-        self.old_keys = set(self.data.keys())
-
     def has_removed_fields(self):
         '''Check if the report has any keys which were not loaded.
 
