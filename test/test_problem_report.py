@@ -294,27 +294,15 @@ Last: foo
         pr.extract_key(report, 'Bar', self.workdir)
         self.assertFalse(os.path.exists(os.path.join(self.workdir, 'Bar')))
         # Check valid elements
-        report.seek(0)
-        pr.extract_key(report, 'Foo', self.workdir)
-        element = open(os.path.join(self.workdir, 'Foo'))
-        self.assertEqual(element.read(), 'FooFoo!')
-        report.seek(0)
-        pr.extract_key(report, 'Uncompressed', self.workdir)
-        element = open(os.path.join(self.workdir, 'Uncompressed'))
-        self.assertEqual(element.read(), bin_data)
-        report.seek(0)
-        pr.extract_key(report, 'Bin', self.workdir)
-        element = open(os.path.join(self.workdir, 'Bin'))
-        self.assertEqual(element.read(), bin_data)
-        report.seek(0)
-        pr.extract_key(report, 'Large', self.workdir)
-        element = open(os.path.join(self.workdir, 'Large'))
-        self.assertEqual(element.read(), large_val)
-        report.seek(0)
-        pr.extract_key(report, 'Multiline', self.workdir)
-        element = open(os.path.join(self.workdir, 'Multiline'))
-        self.assertEqual(element.read().splitlines(),
-                         [b'\1\1\1', b'\2\2', b'\3\3\3'])
+        tests = {'Foo': b'FooFoo!', 'Uncompressed': bin_data, 'Bin': bin_data, 'Large': large_val,
+                 'Multiline': b'\1\1\1\n\2\2\n\3\3\3'}
+        for test in tests.keys():
+            print("testing {}".format(test))
+            report.seek(0)
+            pr.extract_key(report, test, self.workdir)
+            with open(os.path.join(self.workdir, test), 'rb') as element:
+                self.assertEqual(element.read(), tests[test])
+                element.close()
 
     def test_write_file(self):
         '''writing a report with binary file data.'''
