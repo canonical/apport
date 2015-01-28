@@ -60,7 +60,7 @@ else:
     except IOError as e:
         fatal(str(e))
 for k in pr:
-    if pr[k] == u'':
+    if pr[k] == '':
         bin_keys.append(k)
         continue
     with open(os.path.join(dir, k), 'wb') as f:
