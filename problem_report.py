@@ -188,7 +188,7 @@ class ProblemReport(UserDict):
 
         self.old_keys = set(self.data.keys())
 
-    def extract_key(self, file, item=None, directory='/tmp'):
+    def extract_key(self, file, bin_key, dir):
         '''Extract only one binary element from the problem_report
 
         Binary elements can be very big. This method extracts
@@ -245,16 +245,16 @@ class ProblemReport(UserDict):
                 (key, value) = line.split(b':', 1)
                 if not _python2:
                     key = key.decode('ASCII')
-                if key != item:
+                if key != bin_key:
                     continue
                 value = value.strip()
                 if value == b'base64':
                     value = b''
                     b64_block = True
                     try:
-                        out = open(os.path.join(directory, item), 'wb')
+                        out = open(os.path.join(dir, bin_key), 'wb')
                     except IOError:
-                        raise IOError('unable to open {}'.format(os.path.join(directory, item)))
+                        raise IOError('unable to open {}'.format(os.path.join(dir, bin_key)))
 
         if key is not None:
             self.data[key] = self._try_unicode(value)
