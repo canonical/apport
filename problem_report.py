@@ -200,6 +200,7 @@ class ProblemReport(UserDict):
         value = None
         b64_block = False
         bd = None
+        out = None
         # Make sure the report is at the beginning
         file.seek(0)
         for line in file:
@@ -250,8 +251,8 @@ class ProblemReport(UserDict):
                     b64_block = True
                     try:
                         out = open(os.path.join(directory, item), 'wb')
-                    except IOError as e:
-                        fatal(str(e))
+                    except IOError:
+                        raise IOError('unable to open {}'.format(os.path.join(directory, item)))
 
         if key is not None:
             self.data[key] = self._try_unicode(value)
