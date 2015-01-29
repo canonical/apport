@@ -200,59 +200,53 @@ class ProblemReport(UserDict):
         self.data.clear()
         key = None
         value = None
+        has_key = False
         b64_block = False
         bd = None
         out = None
         for line in file:
-            # continuation line
-            if line.startswith(b' '):
-                if not b64_block:
-                    continue
-                assert (key is not None and value is not None)
-                if b64_block:
-                    l = base64.b64decode(line)
-                    if bd:
-                        out.write(bd.decompress(l))
-                    else:
-                        # lazy initialization of bd
-                        # skip gzip header, if present
-                        if l.startswith(b'\037\213\010'):
-                            bd = zlib.decompressobj(-zlib.MAX_WBITS)
-                            out.write(bd.decompress(self._strip_gzip_header(l)))
-                        else:
-                            # legacy zlib-only format used default block
-                            # size
-                            bd = zlib.decompressobj()
-                            out.write(bd.decompress(l))
-                else:
-                    if len(value) > 0:
-                        out.write('{}'.format(b'\n'))
-                    if line.endswith(b'\n'):
-                        out.write('{}'.format(line[1:-1]))
-                    else:
-                        out.write('{}'.format(line[1:]))
-            else:
-                if b64_block:
-                    if bd:
-                        value += bd.flush()
-                    b64_block = False
-                    bd = None
-                if key:
-                    assert value is not None
-                    self.data[key] = self._try_unicode(value)
+            # Identify the bin_key we're looking for
+            if not line.startswith(b' '):
                 (key, value) = line.split(b':', 1)
                 if not _python2:
                     key = key.decode('ASCII')
                 if key != bin_key:
                     continue
+                has_key = True
                 value = value.strip()
                 if value == b'base64':
                     value = b''
                     b64_block = True
-                    try:
-                        out = open(os.path.join(dir, bin_key), 'wb')
-                    except IOError:
-                        raise IOError('unable to open {}'.format(os.path.join(dir, bin_key)))
+                else:
+                    value = None
+                break
+        if not has_key:
+            raise KeyError('Cannot find {} in report'.format(bin_key))
+        if has_key and not b64_block:
+            raise ValueError('{} has no binary content'.format(bin_key))
+        try:
+            with open(os.path.join(dir, bin_key), 'wb') as out:
+                for line in file:
+                    # continuation line
+                    if line.startswith(b' '):
+                        assert (key is not None and value is not None)
+                        if b64_block:
+                            l = base64.b64decode(line)
+                            if bd:
+                                out.write(bd.decompress(l))
+                            else:
+                                # lazy initialization of bd
+                                # skip gzip header, if present
+                                if l.startswith(b'\037\213\010'):
+                                    bd = zlib.decompressobj(-zlib.MAX_WBITS)
+                                    out.write(bd.decompress(self._strip_gzip_header(l)))
+                                else:
+                                    # legacy zlib-only format used default block
+                                    # size
+                                    bd = zlib.decompressobj()
+                                    out.write(bd.decompress(l))
+        except IOError:
+            raise IOError('unable to open {}'.format(os.path.join(dir, bin_key)))
 
     def has_removed_fields(self):
         '''Check if the report has any keys which were not loaded.
