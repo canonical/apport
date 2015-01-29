@@ -286,13 +286,13 @@ Last: foo
         pr.write(report)
         report.seek(0)
 
+        self.assertRaises(IOError, pr.extract_key, report, 'Bin', '{}/foo'.format(self.workdir))
         # Extracts nothing if non binary
-        pr.extract_key(report, 'Txt', self.workdir)
-        self.assertFalse(os.path.exists(os.path.join(self.workdir, 'Txt')))
+        report.seek(0)
+        self.assertRaises(ValueError, pr.extract_key, report, 'Txt', self.workdir)
         # Check inexistant element
         report.seek(0)
-        pr.extract_key(report, 'Bar', self.workdir)
-        self.assertFalse(os.path.exists(os.path.join(self.workdir, 'Bar')))
+        self.assertRaises(KeyError, pr.extract_key, report, 'Bar', self.workdir)
         # Check valid elements
         tests = {'Foo': b'FooFoo!', 'Uncompressed': bin_data, 'Bin': bin_data, 'Large': large_val,
                  'Multiline': b'\1\1\1\n\2\2\n\3\3\3'}
