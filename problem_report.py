@@ -197,7 +197,6 @@ class ProblemReport(UserDict):
         very big and saturate the RAM
         '''
         self._assert_bin_mode(file)
-        self.data.clear()
         key = None
         value = None
         has_key = False
