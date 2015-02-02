@@ -244,15 +244,15 @@ class ProblemReport(UserDict):
                                 else:
                                     break
                     except IOError:
-                        raise IOError('unable to open {}'.format(os.path.join(dir, key)))
+                        raise IOError('unable to open %s' % (os.path.join(dir, key)))
                 else:
                     break
         if False in has_key.values():
-            raise KeyError('Cannot find {} in report'.format(
-                           [key for key, value in has_key.items() if value is False]))
+            raise KeyError('Cannot find %s in report' %
+                           [item for item, element in has_key.items() if element is False])
         if False in b64_block.values():
-            raise ValueError('{} has no binary content'.format(
-                             [key for key, value in b64_block.items() if value is False]))
+            raise ValueError('%s has no binary content' %
+                             [item for item, element in b64_block.items() if element is False])
 
     def has_removed_fields(self):
         '''Check if the report has any keys which were not loaded.
