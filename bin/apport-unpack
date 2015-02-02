@@ -69,8 +69,7 @@ for k in pr:
         else:
             f.write(pr[k])
 try:
-    for key in bin_keys:
-        with open(report, 'rb') as f:
-            pr.extract_key(f, key, dir)
+    with open(report, 'rb') as f:
+        pr.extract_keys(f, bin_keys, dir)
 except IOError as e:
     fatal(str(e))

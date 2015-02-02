@@ -266,8 +266,8 @@ Last: foo
         pr.load(BytesIO(b'ProblemType: Crash'))
         self.assertEqual(list(pr.keys()), ['ProblemType'])
 
-    def test_extract_key(self):
-        '''extract_key() with various binary elements.'''
+    def test_extract_keys(self):
+        '''extract_keys() with various binary elements.'''
 
         # create a test report with binary elements
         large_val = b'A' * 5000000
@@ -286,23 +286,31 @@ Last: foo
         pr.write(report)
         report.seek(0)
 
-        self.assertRaises(IOError, pr.extract_key, report, 'Bin', '{}/foo'.format(self.workdir))
-        # Extracts nothing if non binary
-        report.seek(0)
-        self.assertRaises(ValueError, pr.extract_key, report, 'Txt', self.workdir)
-        # Check inexistant element
-        report.seek(0)
-        self.assertRaises(KeyError, pr.extract_key, report, 'Bar', self.workdir)
-        # Check valid elements
+        self.assertRaises(IOError, pr.extract_keys, report, 'Bin', '{}/foo'.format(self.workdir))
+        # Test exception handling : Non-binary and inexistant key
+        tests = {ValueError: 'Txt', ValueError: ['Foo', 'Txt'], KeyError: 'Bar', KeyError: ['Foo', 'Bar']}
+        for test in tests.keys():
+            report.seek(0)
+            self.assertRaises(test, pr.extract_keys, report, tests[test], self.workdir)
+        # Check valid single elements
         tests = {'Foo': b'FooFoo!', 'Uncompressed': bin_data, 'Bin': bin_data, 'Large': large_val,
                  'Multiline': b'\1\1\1\n\2\2\n\3\3\3'}
         for test in tests.keys():
-            print("testing {}".format(test))
             report.seek(0)
-            pr.extract_key(report, test, self.workdir)
+            pr.extract_keys(report, test, self.workdir)
             with open(os.path.join(self.workdir, test), 'rb') as element:
                 self.assertEqual(element.read(), tests[test])
                 element.close()
+            # remove file for next pass
+            os.remove(os.path.join(self.workdir, test))
+        # Check element list
+        report.seek(0)
+        key_list = ['Foo', 'Uncompressed']
+        tests = {'Foo': b'FooFoo!', 'Uncompressed': bin_data}
+        pr.extract_keys(report, key_list, self.workdir)
+        for key in key_list:
+            with open(os.path.join(self.workdir, key), 'rb') as element:
+                self.assertEqual(element.read(), tests[key])
 
     def test_write_file(self):
         '''writing a report with binary file data.'''
