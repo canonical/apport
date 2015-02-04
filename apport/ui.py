@@ -995,8 +995,12 @@ class UserInterface:
             # since this might take a while, create separate threads and
             # display a progress dialog.
             self.ui_start_info_collection_progress()
-
-            hookui = HookUI(self)
+            # only use a UI for asking questions if the crash db will accept
+            # the report
+            if self.crashdb.accepts(self.report):
+                hookui = HookUI(self)
+            else:
+                hookui = None
 
             if 'Stacktrace' not in self.report:
                 # save original environment, in case hooks change it
@@ -1008,10 +1012,11 @@ class UserInterface:
                 icthread.start()
                 while icthread.isAlive():
                     self.ui_pulse_info_collection_progress()
-                    try:
-                        hookui.process_event()
-                    except KeyboardInterrupt:
-                        sys.exit(1)
+                    if hookui:
+                        try:
+                            hookui.process_event()
+                        except KeyboardInterrupt:
+                            sys.exit(1)
 
                 icthread.join()
 
