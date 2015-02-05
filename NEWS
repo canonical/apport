@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.15.2 (UNRELEASED)
-------------------
+2.16 (UNRELEASED)
+-----------------
  * hookutils, attach_root_command_outputs(): Fix UnicodeDecodeError crash for
    non-textual values. (LP: #1370259)
  * launchpad backend: Work with Python 3, now that launchpadlib exists for
@@ -10,6 +10,10 @@ detailed list of changes, please see ChangeLog.
  * ui.py: Only provide a UI to hooks if the crash db will accept the report.
    This avoids asking questions if the report is merely sent to whoopsie for
    Ubuntu stable releases. Thanks Brian Murrary. (LP: #1084979)
+ * Add a new method ProblemReport.extract_keys() which writes binary keys
+   (which can be very large) directly to files without loading them all into
+   memory first. Use that in apport-unpack. Thanks Louis Bouchard!
+   (LP: #1307413)
 
 2.15.1 (2014-12-19)
 -------------------

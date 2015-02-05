@@ -49,18 +49,27 @@ try:
 except OSError as e:
     fatal(str(e))
 
+bin_keys = []
 pr = problem_report.ProblemReport()
 if report == '-':
-    pr.load(sys.stdin)
+    pr.load(sys.stdin, binary=False)
 else:
     try:
         with open(report, 'rb') as f:
-            pr.load(f)
+            pr.load(f, binary=False)
     except IOError as e:
         fatal(str(e))
 for k in pr:
+    if pr[k] == '':
+        bin_keys.append(k)
+        continue
     with open(os.path.join(dir, k), 'wb') as f:
         if type(pr[k]) == t_str:
             f.write(pr[k].encode('UTF-8'))
         else:
             f.write(pr[k])
+try:
+    with open(report, 'rb') as f:
+        pr.extract_keys(f, bin_keys, dir)
+except IOError as e:
+    fatal(str(e))

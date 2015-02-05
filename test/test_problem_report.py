@@ -1,5 +1,5 @@
 # vim: set encoding=UTF-8 fileencoding=UTF-8 :
-import unittest, tempfile, os, email, gzip, time, sys
+import unittest, tempfile, os, shutil, email, gzip, time, sys
 
 from io import BytesIO
 import problem_report
@@ -12,6 +12,14 @@ if sys.version < '3':
 
 
 class T(unittest.TestCase):
+    @classmethod
+    def setUp(self):
+        self.workdir = tempfile.mkdtemp()
+
+    @classmethod
+    def tearDown(self):
+        shutil.rmtree(self.workdir)
+
     def test_basic_operations(self):
         '''basic creation and operation.'''
 
@@ -257,6 +265,52 @@ Last: foo
         # test that load() cleans up properly
         pr.load(BytesIO(b'ProblemType: Crash'))
         self.assertEqual(list(pr.keys()), ['ProblemType'])
+
+    def test_extract_keys(self):
+        '''extract_keys() with various binary elements.'''
+
+        # create a test report with binary elements
+        large_val = b'A' * 5000000
+
+        pr = problem_report.ProblemReport()
+        pr['Txt'] = 'some text'
+        pr['MoreTxt'] = 'some more text'
+        pr['Foo'] = problem_report.CompressedValue(b'FooFoo!')
+        pr['Uncompressed'] = bin_data
+        pr['Bin'] = problem_report.CompressedValue()
+        pr['Bin'].set_value(bin_data)
+        pr['Large'] = problem_report.CompressedValue(large_val)
+        pr['Multiline'] = problem_report.CompressedValue(b'\1\1\1\n\2\2\n\3\3\3')
+
+        report = BytesIO()
+        pr.write(report)
+        report.seek(0)
+
+        self.assertRaises(IOError, pr.extract_keys, report, 'Bin', os.path.join(self.workdir, 'nonexistant'))
+        # Test exception handling : Non-binary and inexistant key
+        tests = {ValueError: 'Txt', ValueError: ['Foo', 'Txt'], KeyError: 'Bar', KeyError: ['Foo', 'Bar']}
+        for exc, keys_arg in tests.items():
+            report.seek(0)
+            self.assertRaises(exc, pr.extract_keys, report, keys_arg, self.workdir)
+
+        # Check valid single elements
+        tests = {'Foo': b'FooFoo!', 'Uncompressed': bin_data, 'Bin': bin_data, 'Large': large_val,
+                 'Multiline': b'\1\1\1\n\2\2\n\3\3\3'}
+        for key, expected in tests.items():
+            report.seek(0)
+            pr.extract_keys(report, key, self.workdir)
+            with open(os.path.join(self.workdir, key), 'rb') as f:
+                self.assertEqual(f.read(), expected)
+            # remove file for next pass
+            os.remove(os.path.join(self.workdir, key))
+
+        # Check element list
+        report.seek(0)
+        tests = {'Foo': b'FooFoo!', 'Uncompressed': bin_data}
+        pr.extract_keys(report, tests.keys(), self.workdir)
+        for key, expected in tests.items():
+            with open(os.path.join(self.workdir, key), 'rb') as f:
+                self.assertEqual(f.read(), expected)
 
     def test_write_file(self):
         '''writing a report with binary file data.'''

@@ -188,6 +188,70 @@ class ProblemReport(UserDict):
 
         self.old_keys = set(self.data.keys())
 
+    def extract_keys(self, file, bin_keys, dir):
+        '''Extract only one binary element from the problem_report
+
+        Binary elements like kernel crash dumps can be very big. This method
+        extracts directly files without loading the report into memory.
+        '''
+        self._assert_bin_mode(file)
+        # support singe key and collection of keys
+        if isinstance(bin_keys, str):
+            bin_keys = [bin_keys]
+        key = None
+        value = None
+        missing_keys = list(bin_keys)
+        b64_block = {}
+        bd = None
+        out = None
+        for line in file:
+            # Identify the bin_keys we're looking for
+            while not line.startswith(b' '):
+                (key, value) = line.split(b':', 1)
+                if not _python2:
+                    key = key.decode('ASCII')
+                if key not in missing_keys:
+                    break
+                b64_block[key] = False
+                missing_keys.remove(key)
+                value = value.strip()
+                if value == b'base64':
+                    value = b''
+                    b64_block[key] = True
+                    try:
+                        bd = None
+                        with open(os.path.join(dir, key), 'wb') as out:
+                            for line in file:
+                                # continuation line
+                                if line.startswith(b' '):
+                                    assert (key is not None and value is not None)
+                                    if b64_block[key]:
+                                        l = base64.b64decode(line)
+                                        if bd:
+                                            out.write(bd.decompress(l))
+                                        else:
+                                            # lazy initialization of bd
+                                            # skip gzip header, if present
+                                            if l.startswith(b'\037\213\010'):
+                                                bd = zlib.decompressobj(-zlib.MAX_WBITS)
+                                                out.write(bd.decompress(self._strip_gzip_header(l)))
+                                            else:
+                                                # legacy zlib-only format used default block
+                                                # size
+                                                bd = zlib.decompressobj()
+                                                out.write(bd.decompress(l))
+                                else:
+                                    break
+                    except IOError:
+                        raise IOError('unable to open %s' % (os.path.join(dir, key)))
+                else:
+                    break
+        if missing_keys:
+            raise KeyError('Cannot find %s in report' % ', '.join(missing_keys))
+        if False in b64_block.values():
+            raise ValueError('%s has no binary content' %
+                             [item for item, element in b64_block.items() if element is False])
+
     def has_removed_fields(self):
         '''Check if the report has any keys which were not loaded.
 
