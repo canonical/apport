@@ -7,6 +7,9 @@ detailed list of changes, please see ChangeLog.
    non-textual values. (LP: #1370259)
  * launchpad backend: Work with Python 3, now that launchpadlib exists for
    Python 3. (LP: #1153671)
+ * ui.py: Only provide a UI to hooks if the crash db will accept the report.
+   This avoids asking questions if the report is merely sent to whoopsie for
+   Ubuntu stable releases. Thanks Brian Murrary. (LP: #1084979)
 
 2.15.1 (2014-12-19)
 -------------------
