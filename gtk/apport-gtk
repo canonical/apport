@@ -11,9 +11,10 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os.path, sys, subprocess, os, re, errno
+import os.path, sys, subprocess, os, re
 
-from gi.repository import GObject, GLib, Wnck, GdkX11, Gdk
+from gi.repository import GLib, Wnck, GdkX11, Gdk
+Gdk  # pyflakes; needed for GdkX11
 try:
     from gi.repository import Gtk
 except RuntimeError as e:

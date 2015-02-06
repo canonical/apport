@@ -19,15 +19,13 @@ try:
     import apport
     from PyQt4.QtCore import *
     from PyQt4.QtGui import (QDialog, QLabel, QCheckBox, QRadioButton,
-                             QTreeWidget, QTreeWidgetItem, QMessageBox,
-                             QVBoxLayout, QFileDialog, QDialogButtonBox,
-                             QProgressBar, QGroupBox, QLineEdit, QPushButton,
-                             QIcon, QPainter, QPixmap, QMovie)
+                             QTreeWidget, QTreeWidgetItem, QFileDialog,
+                             QDialogButtonBox, QProgressBar, QLineEdit,
+                             QPushButton, QIcon, QPainter, QMovie)
     from PyQt4 import uic
-    from gettext import gettext
     from PyKDE4.kdecore import (ki18n, KAboutData, KCmdLineArgs,
                                 KLocalizedString)
-    from PyKDE4.kdeui import (KApplication, KNotification, KMessageBox, KIcon,
+    from PyKDE4.kdeui import (KApplication, KMessageBox, KIcon,
                               KStandardGuiItem)
     import apport.ui
     from apport import unicode_gettext as _
