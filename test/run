@@ -37,7 +37,7 @@ if [ -d test -a -e setup.py ]; then
     if type pep8 >/dev/null 2>&1; then
         echo "Running pep8..."
         # . catches all *.py modules; we explicitly need to specify the programs
-        pep8 -r --ignore=E401,E501,E124 --exclude=test_problem_report.py,report.py,is-enabled,apport-bug,apport-collect .  `find bin data -type f -executable`
+        pep8 -r --ignore=E401,E501,E124 --exclude=test_problem_report.py,report.py,is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
         # those tests deliberately have trailing whitespace in test files, ignore
         pep8 -r --ignore=E401,E501,W291,W293 test/test_problem_report.py
         # has_key is minidom API, not the dict operator here

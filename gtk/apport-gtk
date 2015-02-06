@@ -28,7 +28,8 @@ import apport.ui
 
 have_display = os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY')
 
-def find_xid_for_pid (pid):
+
+def find_xid_for_pid(pid):
     '''Return the X11 Window (xid) for the supplied process ID.'''
 
     pid = int(pid)
@@ -38,6 +39,7 @@ def find_xid_for_pid (pid):
         if window.get_pid() == pid:
             return window.get_xid()
     return None
+
 
 class GTKUserInterface(apport.ui.UserInterface):
     '''GTK UserInterface.'''
@@ -55,7 +57,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.widgets = Gtk.Builder()
         self.widgets.set_translation_domain(self.gettext_domain)
         self.widgets.add_from_file(os.path.join(os.path.dirname(sys.argv[0]),
-            'apport-gtk.ui'))
+                                                'apport-gtk.ui'))
 
         # connect signal handlers
         assert self.widgets.connect_signals(self) is None
@@ -120,8 +122,8 @@ class GTKUserInterface(apport.ui.UserInterface):
 
             valiter = self.tree_model.insert_before(keyiter, None)
             if not hasattr(self.report[key], 'gzipvalue') and \
-                hasattr(self.report[key], 'isspace') and \
-                not self.report._is_binary(self.report[key]):
+                    hasattr(self.report[key], 'isspace') and \
+                    not self.report._is_binary(self.report[key]):
                 v = self.report[key]
                 if len(v) > 4000:
                     v = v[:4000]
@@ -167,12 +169,12 @@ class GTKUserInterface(apport.ui.UserInterface):
         # This is a bug generated through `apport-bug $package`, or
         # `apport-collect $id`.
 
-        # avoid collecting information again, in this mode we already have it 
+        # avoid collecting information again, in this mode we already have it
         if 'DistroRelease' in self.report:
             self.collect_called = True
             self.ui_update_view()
         self.w('title_label').set_label('<big><b>%s</b></big>' %
-            _('Send problem report to the developers?'))
+                                        _('Send problem report to the developers?'))
         self.w('title_label').show()
         self.w('subtitle_label').hide()
         self.w('closed_button').hide()
@@ -327,8 +329,8 @@ class GTKUserInterface(apport.ui.UserInterface):
                 off_x = pb.get_width() - overlay_w
                 off_y = pb.get_height() - overlay_h
                 overlay.composite(pb, off_x, off_y, overlay_w, overlay_h,
-                        off_x, off_y, 1, 1,
-                        GdkPixbuf.InterpType.BILINEAR, 255)
+                                  off_x, off_y, 1, 1,
+                                  GdkPixbuf.InterpType.BILINEAR, 255)
                 if app_icon.get_parent():  # work around LP#938090
                     app_icon.set_from_pixbuf(pb)
             except GLib.GError:
@@ -348,8 +350,9 @@ class GTKUserInterface(apport.ui.UserInterface):
         if len(sys.argv) == 1:
             d.set_focus_on_map(False)
 
-        return_value = { 'report' : False, 'blacklist' : False,
-                         'restart' : False, 'examine' : False }
+        return_value = {'report': False, 'blacklist': False,
+                        'restart': False, 'examine': False}
+
         def dialog_crash_dismissed(widget):
             self.w('dialog_crash_new').hide()
             if widget is self.w('dialog_crash_new'):
@@ -375,15 +378,14 @@ class GTKUserInterface(apport.ui.UserInterface):
         Gtk.main()
         return return_value
 
-    def _ui_message_dialog(self, title, text, _type,
-            buttons=Gtk.ButtonsType.CLOSE):
+    def _ui_message_dialog(self, title, text, _type, buttons=Gtk.ButtonsType.CLOSE):
         self.md = Gtk.MessageDialog(message_type=_type, buttons=buttons)
         if 'http://' in text or 'https://' in text:
             if type(text) != type(b''):
                 text = text.encode('UTF-8')
             text = GLib.markup_escape_text(text)
             text = re.sub(r'(https?://[a-zA-Z0-9._-]+(?:[a-zA-Z0-9_#?%/-])*)',
-                    r'<a href="\1">\1</a>', text)
+                          r'<a href="\1">\1</a>', text)
             # turn URLs into links
             self.md.set_markup(text)
         else:
@@ -475,7 +477,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         "None" on cancel/dialog closing.
         '''
         result = self._ui_message_dialog('', text, Gtk.MessageType.QUESTION,
-                Gtk.ButtonsType.YES_NO)
+                                         Gtk.ButtonsType.YES_NO)
         if result == Gtk.ResponseType.YES:
             return True
         if result == Gtk.ResponseType.NO:
@@ -531,9 +533,9 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         Return path if the user selected a file, or None if cancelled.
         '''
-        md = Gtk.FileChooserDialog(text,
-                parent=self.w('window_information_collection'),
-                buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        md = Gtk.FileChooserDialog(
+            text, parent=self.w('window_information_collection'),
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         result = md.run()
         md.hide()
         while Gtk.events_pending():
@@ -545,7 +547,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
     def ui_run_terminal(self, command):
         terminals = ['x-terminal-emulator', 'gnome-terminal', 'terminator',
-                'xfce4-terminal', 'xterm']
+                     'xfce4-terminal', 'xterm']
 
         program = None
         for t in terminals:
