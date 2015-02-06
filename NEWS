@@ -10,7 +10,7 @@ Improvements/behaviour changes:
    (LP: #1307413)
  * launchpad backend: Work with Python 3, now that launchpadlib exists for
    Python 3. (LP: #1153671)
- * apport-bug, apport-gtk: Also check for $WAYLAND_SESSION, to use apport-gtk
+ * apport-bug, apport-gtk: Also check for $WAYLAND_DISPLAY, to use apport-gtk
    instead of apport-cli under Wayland. Thanks Tim Lunn. (LP: #1418766)
  * apport-gtk: When running under Wayland, avoid Gdk/Wnck operation for setting
    crash window modal to the PID of the crashed window; these only work under
