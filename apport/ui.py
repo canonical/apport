@@ -856,8 +856,8 @@ class UserInterface:
         try:
             if subprocess.call(['which', 'apport-retrace'],
                                stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT) == 0:
-                return True
+                               stderr=subprocess.STDOUT) != 0:
+                return False
         except OSError:
             return False
 

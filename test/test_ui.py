@@ -2059,7 +2059,7 @@ return 'bash'
                 os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'bin')
             # this will only work for running the tests in the source tree
             if os.access(os.path.join(src_bindir, 'apport-retrace'), os.X_OK):
-                os.environ['PATH'] = src_bindir
+                os.environ['PATH'] += src_bindir + ':' + orig_path
                 self.assertEqual(self.ui.can_examine_locally(), True)
             else:
                 # if we run tests in installed system, we just check that
