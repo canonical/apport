@@ -25,6 +25,8 @@ import apport
 from apport import unicode_gettext as _
 import apport.ui
 
+have_display = os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY')
+
 def find_xid_for_pid (pid):
     '''Return the X11 Window (xid) for the supplied process ID.'''
 
@@ -552,7 +554,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
         if not command:
             # test mode
-            return 'DISPLAY' in os.environ and program is not None
+            return have_display and program is not None
 
         subprocess.call([program, '-e', command])
 
@@ -583,7 +585,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         return True
 
 if __name__ == '__main__':
-    if not os.environ.get('DISPLAY'):
+    if not have_display:
         apport.fatal('This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.')
     app = GTKUserInterface()
     app.run_argv()

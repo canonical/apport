@@ -41,11 +41,11 @@ find_programs
 export APPORT_INVOKED_AS="$0"
 
 # check for X
-if [ -z "$DISPLAY" ]; then
+if [ -z "$DISPLAY" -a -z "$WAYLAND_DISPLAY" ]; then
     if [ -n "$CLI" ] ; then
         $CLI "$@"
     else
-        echo "\$DISPLAY is not set. You need apport-cli to make this program work." >&2
+        echo "Neither \$DISPLAY nor \$WAYLAND_DISPLAY is set. You need apport-cli to make this program work." >&2
         exit 1
     fi
 

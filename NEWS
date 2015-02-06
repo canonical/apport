@@ -18,6 +18,8 @@ detailed list of changes, please see ChangeLog.
    package hooks. Thanks Brian Murray.
  * Fix check for available terminal when checking whether to display the
    "Examine locally" button.
+ * apport-bug, apport-gtk: Also check for $WAYLAND_SESSION, to use apport-gtk
+   instead of apport-cli under Wayland. Thanks Tim Lunn. (LP: #1418766)
 
 2.15.1 (2014-12-19)
 -------------------
