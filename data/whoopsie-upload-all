@@ -63,8 +63,13 @@ def process_report(report):
     else:
         print('Collecting info for %s...' % report)
         r.add_os_info()
-        # add minimal hook information here; whoopsie only considers
-        # ApportVersion, NonfreeKernelModules, SystemImageInfo
+        try:
+            r.add_package_info()
+        except (SystemError, ValueError) as e:
+            sys.stderr.write('ERROR: cannot add package info on %s: %s\n' %
+                             (report, str(e)))
+            return None
+        # add information from package specific hooks
         try:
             r.add_hooks_info(None)
         except Exception as e:
@@ -76,12 +81,6 @@ def process_report(report):
             sys.stderr.write('ERROR: processing %s: %s\n' % (report, str(e)))
             if os.path.exists(report):
                 os.unlink(report)
-            return None
-        try:
-            r.add_package_info()
-        except (SystemError, ValueError) as e:
-            sys.stderr.write('ERROR: cannot add package info on %s: %s\n' %
-                             (report, str(e)))
             return None
 
         # write updated report

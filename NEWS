@@ -14,6 +14,8 @@ detailed list of changes, please see ChangeLog.
    (which can be very large) directly to files without loading them all into
    memory first. Use that in apport-unpack. Thanks Louis Bouchard!
    (LP: #1307413)
+ * whoopsie-upload-all: Add package information to the report before calling
+   package hooks. Thanks Brian Murray.
 
 2.15.1 (2014-12-19)
 -------------------
