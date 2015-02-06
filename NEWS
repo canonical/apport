@@ -20,6 +20,9 @@ detailed list of changes, please see ChangeLog.
    "Examine locally" button.
  * apport-bug, apport-gtk: Also check for $WAYLAND_SESSION, to use apport-gtk
    instead of apport-cli under Wayland. Thanks Tim Lunn. (LP: #1418766)
+ * apport-gtk: When running under Wayland, avoid Gdk/Wnck operation for setting
+   crash window modal to the PID of the crashed window; these only work under
+   X11.
 
 2.15.1 (2014-12-19)
 -------------------

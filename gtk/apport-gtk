@@ -216,7 +216,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         self.w('continue_button').set_label(_('Continue'))
 
         self.w('cancel_button').hide()
-        if modal_for is not None:
+        if modal_for is not None and 'DISPLAY' in os.environ:
             xid = find_xid_for_pid(modal_for)
             if xid:
                 self.set_modal_for(xid)
