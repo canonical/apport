@@ -123,7 +123,6 @@ DistUtilsExtra.auto.setup(
     data_files=[('share/mime/packages', glob('xdg-mime/*')),
                 # these are not supposed to be called directly, use apport-bug instead
                 ('share/apport', ['gtk/apport-gtk', 'kde/apport-kde']),
-                ('share/apport/testsuite/', glob('test/test_*') + ['test/run']),
                 ('share/doc/apport/', glob('doc/*.txt')),
                 ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
                 ('/lib/udev/rules.d', glob('udev/*.rules')),

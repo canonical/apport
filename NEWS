@@ -15,6 +15,9 @@ Improvements/behaviour changes:
  * apport-gtk: When running under Wayland, avoid Gdk/Wnck operation for setting
    crash window modal to the PID of the crashed window; these only work under
    X11.
+ * Don't install the test suite any more, to save 1 MB of installed space. It
+   can be run out of trunk easily enough, and distributions can install it from
+   tests/ if they desire.
 
 Bug fixes:
  * hookutils, attach_root_command_outputs(): Fix UnicodeDecodeError crash for
