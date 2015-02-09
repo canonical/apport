@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.16.1 (UNRELEASED)
+-------------------
+ * Set gettext translation domain in setup.cfg, so that tools like
+   dh_translations pick it up and show correct polkit translations.
+   Thanks to Aron Xu! (LP: #1306857)
+
 2.16 (2015-02-06)
 -----------------
 Improvements/behaviour changes:
