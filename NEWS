@@ -6,6 +6,8 @@ detailed list of changes, please see ChangeLog.
  * Set gettext translation domain in setup.cfg, so that tools like
    dh_translations pick it up and show correct polkit translations.
    Thanks to Aron Xu! (LP: #1306857)
+ * Report.get_logind_session(): Check $XDG_SESSION_ID and /run/systemd/sessions
+   instead of the cgroup, as the latter does not work under cgmanager.
 
 2.16 (2015-02-06)
 -----------------

@@ -1586,26 +1586,24 @@ class Report(problem_report.ProblemReport):
     def get_logind_session(klass, pid):
         '''Get logind session path and start time.
 
-        Return (path, session_start_timestamp) if pid is in a logind session,
-        or None otherwise.
+        Return (session_id, session_start_timestamp) if pid is in a logind
+        session, or None otherwise.
         '''
         # determine cgroup
         try:
-            with open('/proc/%s/cgroup' % pid) as f:
-                for l in f:
-                    if 'name=systemd:' in l:
-                        my_cgroup = l.split('systemd:', 1)[1].strip()
-                        if len(my_cgroup) < 2:
-                            return None
+            with open('/proc/%s/environ' % pid) as f:
+                for l in f.read().split('\0'):
+                    if l.startswith('XDG_SESSION_ID='):
+                        my_session = l.split('=', 1)[1].strip()
                         break
                 else:
                     return None
-            # determine cgroup creation time
-            session_start_time = os.stat('/sys/fs/cgroup/systemd/' + my_cgroup).st_mtime
+            # determine session creation time
+            session_start_time = os.stat('/run/systemd/sessions/' + my_session).st_mtime
         except (IOError, OSError):
             return None
 
-        return (my_cgroup, session_start_time)
+        return (my_session, session_start_time)
 
     def get_timestamp(self):
         '''Get timestamp (seconds since epoch) from Date field

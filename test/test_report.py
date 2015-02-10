@@ -2223,7 +2223,7 @@ No symbol table info available.
             return
 
         (session, timestamp) = ret
-        self.assertIn('/user', session)
+        self.assertNotEqual(session, '')
         # session start must be >= 2014-01-01 and "now"
         self.assertLess(timestamp, time.time())
         self.assertGreater(timestamp,
