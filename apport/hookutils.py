@@ -872,6 +872,10 @@ def in_session_of_problem(report):
 
     Return None if this cannot be determined.
     '''
+    session_id = os.environ.get('XDG_SESSION_ID')
+    if not session_id:
+        return None
+
     # report time is in local TZ
     orig_ctime = locale.getlocale(locale.LC_TIME)
     try:
@@ -885,20 +889,11 @@ def in_session_of_problem(report):
     except locale.Error:
         return None
 
-    # determine cgroup
+    # determine session creation time
     try:
-        with open('/proc/self/cgroup') as f:
-            for l in f:
-                if 'name=systemd:' in l:
-                    my_cgroup = l.split('systemd:', 1)[1].strip()
-                    break
-            else:
-                return None
-    except IOError:
+        session_start_time = os.stat('/run/systemd/sessions/' + session_id).st_mtime
+    except (IOError, OSError):
         return None
-
-    # determine cgroup creation time
-    session_start_time = os.stat('/sys/fs/cgroup/systemd/' + my_cgroup).st_mtime
 
     return session_start_time <= report_time
 
