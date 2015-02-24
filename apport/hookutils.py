@@ -838,14 +838,14 @@ def __drm_con_info(con):
         path = os.path.join(con, f)
         if f == 'uevent' or not os.path.isfile(path):
             continue
-        val = open(path).read().strip()
+        val = open(path, "rb").read().strip()
         # format some well-known attributes specially
         if f == 'modes':
-            val = val.replace('\n', ' ')
+            val = val.replace(b'\n', b' ')
         if f == 'edid':
             val = base64.b64encode(val)
             f += '-base64'
-        info += '%s: %s\n' % (f, val)
+        info += '%s: %s\n' % (f, val.decode("latin1"))
     return info
 
 
