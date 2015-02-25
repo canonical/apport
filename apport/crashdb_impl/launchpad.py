@@ -414,6 +414,8 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                               data=part.get_payload(decode=True),
                               filename=part.get_filename(), is_patch=False)
 
+        mime.close()
+
     def update_traces(self, id, report, comment=''):
         '''Update the given report ID for retracing results.
 
