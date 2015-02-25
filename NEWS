@@ -9,6 +9,7 @@ detailed list of changes, please see ChangeLog.
  * ProblemReport: Set a timestamp of 0 in gzip compressed fields; they are
    meaningless and cause unnecessary jitter in the output.
  * launchpad backend: Fix unclosed file in upload().
+ * launchpad backend: Fix wrong use of filter() with Python 3.
 
 2.16.1 (2015-02-10)
 -------------------

@@ -603,12 +603,12 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         if self.distro:
             distro_identifier = '(%s)' % self.distro.lower()
-            fixed_tasks = filter(lambda task: task.status == 'Fix Released' and
-                                 distro_identifier in task.bug_target_display_name.lower(), tasks)
+            fixed_tasks = list(filter(lambda task: task.status == 'Fix Released' and
+                                 distro_identifier in task.bug_target_display_name.lower(), tasks))
 
             if not fixed_tasks:
-                fixed_distro = filter(lambda task: task.status == 'Fix Released' and
-                                      task.bug_target_name.lower() == self.distro.lower(), tasks)
+                fixed_distro = list(filter(lambda task: task.status == 'Fix Released' and
+                                      task.bug_target_name.lower() == self.distro.lower(), tasks))
                 if fixed_distro:
                     # fixed in distro inself (without source package)
                     return ''
@@ -626,21 +626,21 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                     return 'invalid'
             else:
                 # check if there only invalid ones
-                invalid_tasks = filter(lambda task: task.status in ('Invalid', "Won't Fix", 'Expired') and
-                                       distro_identifier in task.bug_target_display_name.lower(), tasks)
+                invalid_tasks = list(filter(lambda task: task.status in ('Invalid', "Won't Fix", 'Expired') and
+                                       distro_identifier in task.bug_target_display_name.lower(), tasks))
                 if invalid_tasks:
-                    non_invalid_tasks = filter(
+                    non_invalid_tasks = list(filter(
                         lambda task: task.status not in ('Invalid', "Won't Fix", 'Expired') and
-                        distro_identifier in task.bug_target_display_name.lower(), tasks)
+                        distro_identifier in task.bug_target_display_name.lower(), tasks))
                     if not non_invalid_tasks:
                         return 'invalid'
         else:
-            fixed_tasks = filter(lambda task: task.status == 'Fix Released', tasks)
+            fixed_tasks = list(filter(lambda task: task.status == 'Fix Released', tasks))
             if fixed_tasks:
                 # TODO: look for current series
                 return ''
             # check if there any invalid ones
-            if filter(lambda task: task.status == 'Invalid', tasks):
+            if list(filter(lambda task: task.status == 'Invalid', tasks)):
                 return 'invalid'
 
         return None
@@ -1241,7 +1241,7 @@ more text
 and more
 '''
             bug = self.crashdb.launchpad.bugs.createBug(
-                title=b'mixed description bug'.encode(),
+                title='mixed description bug',
                 description=desc,
                 target=self.crashdb.lp_distro)
             sys.stderr.write('(Created uncommon description: https://%s/bugs/%i) ' % (self.hostname, bug.id))
