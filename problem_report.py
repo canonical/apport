@@ -47,7 +47,7 @@ class CompressedValue:
         '''Set uncompressed value.'''
 
         out = BytesIO()
-        gzip.GzipFile(self.name, mode='wb', fileobj=out).write(value)
+        gzip.GzipFile(self.name, mode='wb', fileobj=out, mtime=0).write(value)
         self.gzipvalue = out.getvalue()
         self.legacy_zlib = False
 
@@ -552,7 +552,7 @@ class ProblemReport(UserDict):
                     attach_value = f.read()
                 else:
                     io = BytesIO()
-                    gf = gzip.GzipFile(k, mode='wb', fileobj=io)
+                    gf = gzip.GzipFile(k, mode='wb', fileobj=io, mtime=0)
                     while True:
                         block = f.read(1048576)
                         if block:

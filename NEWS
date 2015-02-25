@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
  * hookutils.in_session_of_problem(): Check $XDG_SESSION_ID and
    /run/systemd/sessions instead of the cgroup, as the latter does not work
    under cgmanager.
+ * ProblemReport: Set a timestamp of 0 in gzip compressed fields; they are
+   meaningless and cause unnecessary jitter in the output.
 
 2.16.1 (2015-02-10)
 -------------------
