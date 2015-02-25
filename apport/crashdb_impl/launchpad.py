@@ -324,6 +324,10 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
                 continue
             if ext == '.txt':
                 report[key] = attachment.read()
+                try:
+                    report[key] = report[key].decode('UTF-8')
+                except UnicodeDecodeError:
+                    pass
             elif ext == '.gz':
                 try:
                     report[key] = gzip.GzipFile(fileobj=attachment).read()

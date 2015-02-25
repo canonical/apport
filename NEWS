@@ -10,6 +10,8 @@ detailed list of changes, please see ChangeLog.
    meaningless and cause unnecessary jitter in the output.
  * launchpad backend: Fix unclosed file in upload().
  * launchpad backend: Fix wrong use of filter() with Python 3.
+ * launchpad backend download(): Try to convert textual values from byte arrays
+   into into strings.
 
 2.16.1 (2015-02-10)
 -------------------
