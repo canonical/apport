@@ -608,11 +608,11 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         if self.distro:
             distro_identifier = '(%s)' % self.distro.lower()
             fixed_tasks = list(filter(lambda task: task.status == 'Fix Released' and
-                                 distro_identifier in task.bug_target_display_name.lower(), tasks))
+                                      distro_identifier in task.bug_target_display_name.lower(), tasks))
 
             if not fixed_tasks:
                 fixed_distro = list(filter(lambda task: task.status == 'Fix Released' and
-                                      task.bug_target_name.lower() == self.distro.lower(), tasks))
+                                           task.bug_target_name.lower() == self.distro.lower(), tasks))
                 if fixed_distro:
                     # fixed in distro inself (without source package)
                     return ''
@@ -631,7 +631,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             else:
                 # check if there only invalid ones
                 invalid_tasks = list(filter(lambda task: task.status in ('Invalid', "Won't Fix", 'Expired') and
-                                       distro_identifier in task.bug_target_display_name.lower(), tasks))
+                                            distro_identifier in task.bug_target_display_name.lower(), tasks))
                 if invalid_tasks:
                     non_invalid_tasks = list(filter(
                         lambda task: task.status not in ('Invalid', "Won't Fix", 'Expired') and
