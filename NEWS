@@ -12,6 +12,8 @@ detailed list of changes, please see ChangeLog.
  * launchpad backend: Fix wrong use of filter() with Python 3.
  * launchpad backend download(): Try to convert textual values from byte arrays
    into into strings.
+ * ui.py, collect_info(): Fix crash on bug pattern checking with broken gzipped
+   values. (LP: #1345653)
 
 2.16.1 (2015-02-10)
 -------------------

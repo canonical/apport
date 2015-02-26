@@ -1055,7 +1055,13 @@ class UserInterface:
                         bpthread.join(0.1)
                     except KeyboardInterrupt:
                         sys.exit(1)
-                bpthread.exc_raise()
+                try:
+                    bpthread.exc_raise()
+                except (IOError, EOFError, zlib.error) as e:
+                    # can happen with broken gz values
+                    self.report['UnreportableReason'] = '%s\n\n%s' % (
+                        _('This problem report is damaged and cannot be processed.'),
+                        repr(e))
                 if bpthread.return_value():
                     self.report['_KnownReport'] = bpthread.return_value()
 
