@@ -14,6 +14,8 @@ detailed list of changes, please see ChangeLog.
    into into strings.
  * ui.py, collect_info(): Fix crash on bug pattern checking with broken gzipped
    values. (LP: #1345653)
+ * hookutils, attach_drm_info(): Avoid UnicodeDecodeErrors in Python 3 when
+   reading binary files. Thanks Chad Miller. (LP: #1425254)
 
 2.16.1 (2015-02-10)
 -------------------
