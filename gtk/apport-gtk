@@ -335,10 +335,10 @@ class GTKUserInterface(apport.ui.UserInterface):
                     app_icon.set_from_pixbuf(pb)
             except GLib.GError:
                 self.w('application_icon').set_from_icon_name(
-                    Gtk.STOCK_DIALOG_ERROR, Gtk.IconSize.DIALOG)
+                    'dialog-error', Gtk.IconSize.DIALOG)
         else:
             self.w('application_icon').set_from_icon_name(
-                Gtk.STOCK_DIALOG_ERROR, Gtk.IconSize.DIALOG)
+                'dialog-error', Gtk.IconSize.DIALOG)
 
         d = self.w('dialog_crash_new')
         if 'DistroRelease' in self.report:
