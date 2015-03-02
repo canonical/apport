@@ -1,7 +1,7 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.16.2 (UNRELEASED)
+2.16.2 (2015-03-02)
 -------------------
  * hookutils.in_session_of_problem(): Check $XDG_SESSION_ID and
    /run/systemd/sessions instead of the cgroup, as the latter does not work
