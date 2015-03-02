@@ -16,7 +16,6 @@ detailed list of changes, please see ChangeLog.
    values. (LP: #1345653)
  * hookutils, attach_drm_info(): Avoid UnicodeDecodeErrors in Python 3 when
    reading binary files. Thanks Chad Miller. (LP: #1425254)
- * crash-digger: Intercept httplib2.HttpLib2Error on download.
  * apport-gtk: Update legacy icon names to modern GTK ones, to fix icons under
    GNOME. Thanks Scott Sanbar. (LP: #1422176)
  * Move backend_apt_dpkg testsuite to use Ubuntu 14.04 LTS.
