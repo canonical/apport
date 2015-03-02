@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, optparse, subprocess, sys, zlib, errno, shutil
+import os, optparse, subprocess, sys, zlib, errno, shutil, httplib2
 
 import apport
 from apport.crashdb import get_crashdb
@@ -110,7 +110,7 @@ class CrashDigger:
 
         try:
             report = self.crashdb.download(id)
-        except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
+        except (MemoryError, TypeError, ValueError, IOError, zlib.error, httplib2.HttpLib2Error) as e:
             apport.log('Cannot download report: ' + str(e), True)
             apport.error('Cannot download report %i: %s', id, str(e))
             return

@@ -16,6 +16,7 @@ detailed list of changes, please see ChangeLog.
    values. (LP: #1345653)
  * hookutils, attach_drm_info(): Avoid UnicodeDecodeErrors in Python 3 when
    reading binary files. Thanks Chad Miller. (LP: #1425254)
+ * crash-digger: Intercept httplib2.HttpLib2Error on download.
 
 2.16.1 (2015-02-10)
 -------------------
