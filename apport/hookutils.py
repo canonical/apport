@@ -205,19 +205,8 @@ def attach_dmesg(report):
 
     This will not overwrite already existing information.
     '''
-    try:
-        if not report.get('BootDmesg', '').strip():
-            with open('/var/log/dmesg') as f:
-                report['BootDmesg'] = f.read()
-    except IOError:
-        pass
     if not report.get('CurrentDmesg', '').strip():
-        dmesg = command_output(['sh', '-c', 'dmesg | comm -13 --nocheck-order /var/log/dmesg -'])
-        # if an initial message was truncated by the ring buffer, skip over it
-        first_newline = dmesg.find('\n[')
-        if first_newline != -1:
-            dmesg = dmesg[first_newline + 1:]
-        report['CurrentDmesg'] = dmesg
+        report['CurrentDmesg'] = command_output(['dmesg'])
 
 
 def attach_dmi(report):

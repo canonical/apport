@@ -51,28 +51,20 @@ class T(unittest.TestCase):
         self.assertTrue(bad_ko.name in nonfree)
 
     def test_attach_dmesg(self):
-        '''attach_dmesg() does not overwrite already existing data'''
+        '''attach_dmesg()'''
 
         report = {}
 
         apport.hookutils.attach_dmesg(report)
-        self.assertTrue(report['BootDmesg'].startswith('['))
-        self.assertTrue(len(report['BootDmesg']) > 500)
+        self.assertTrue(len(report['CurrentDmesg']) > 500)
         self.assertTrue(report['CurrentDmesg'].startswith('['))
 
     def test_dmesg_overwrite(self):
         '''attach_dmesg() does not overwrite already existing data'''
 
-        report = {'BootDmesg': 'existingboot'}
+        report = {'CurrentDmesg': 'existingcurrent'}
 
         apport.hookutils.attach_dmesg(report)
-        self.assertEqual(report['BootDmesg'][:50], 'existingboot')
-        self.assertTrue(report['CurrentDmesg'].startswith('['))
-
-        report = {'BootDmesg': 'existingboot', 'CurrentDmesg': 'existingcurrent'}
-
-        apport.hookutils.attach_dmesg(report)
-        self.assertEqual(report['BootDmesg'], 'existingboot')
         self.assertEqual(report['CurrentDmesg'], 'existingcurrent')
 
     def test_attach_file(self):
