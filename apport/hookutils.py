@@ -467,6 +467,20 @@ def attach_root_command_outputs(report, command_map):
         shutil.rmtree(workdir)
 
 
+def __filter_re_process(pattern, process):
+    lines = ''
+    while process.poll() is None:
+        for line in process.stdout:
+            line = line.decode('UTF-8', errors='replace')
+            if pattern.search(line):
+                lines += line
+    process.stdout.close()
+    process.wait()
+    if process.returncode == 0:
+        return lines
+    return ''
+
+
 def recent_syslog(pattern, path=None):
     '''Extract recent system messages which match a regex.
 
@@ -483,18 +497,7 @@ def recent_syslog(pattern, path=None):
     elif os.access('/var/log/syslog', os.R_OK):
         p = subprocess.Popen(['tail', '-n', 10000, '/var/log/syslog'],
                              stdout=subprocess.PIPE)
-
-    lines = ''
-    while p.poll() is None:
-        for line in p.stdout:
-            line = line.decode('UTF-8', errors='replace')
-            if pattern.search(line):
-                lines += line
-    p.stdout.close()
-    p.wait()
-    if p.returncode == 0:
-        return lines
-    return ''
+    return __filter_re_process(pattern, p)
 
 
 def xsession_errors(pattern=None):
@@ -703,8 +706,8 @@ def attach_mac_events(report, profiles=None):
     aa_re = re.compile(aa_regex, re.IGNORECASE)
 
     if 'KernLog' not in report:
-        if os.path.exists('/var/log/kern.log'):
-            report['KernLog'] = recent_syslog(mac_re, path='/var/log/kern.log')
+        report['KernLog'] = __filter_re_process(
+            mac_re, subprocess.Popen(['dmesg'], stdout=subprocess.PIPE))
 
     if 'AuditLog' not in report and os.path.exists('/var/run/auditd.pid'):
         attach_root_command_outputs(report, {'AuditLog': 'egrep "' + mac_regex + '" /var/log/audit/audit.log'})

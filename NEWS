@@ -25,6 +25,9 @@ detailed list of changes, please see ChangeLog.
    more.
  * hookutils, recent_syslog(): Read system logs from the journal when running
    under systemd, and fall back to /var/log/syslog if not.
+ * hookutils, attach_mac_events(): Read kernel violation messages from dmesg
+   instead of /var/log/kern.log, as that's specific to rsyslog and its
+   configuration.
 
 2.16.1 (2015-02-10)
 -------------------
