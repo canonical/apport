@@ -467,34 +467,34 @@ def attach_root_command_outputs(report, command_map):
         shutil.rmtree(workdir)
 
 
-def recent_syslog(pattern):
-    '''Extract recent messages from syslog which match a regex.
+def recent_syslog(pattern, path=None):
+    '''Extract recent system messages which match a regex.
 
-    pattern should be a "re" object.
+    pattern should be a "re" object. By default, messages are read from
+    the systemd journal, or /var/log/syslog; but when giving "path", messages
+    are read from there instead.
     '''
-    return recent_logfile('/var/log/syslog', pattern)
+    if path:
+        p = subprocess.Popen(['tail', '-n', '10000', path],
+                             stdout=subprocess.PIPE)
+    elif os.path.exists('/run/systemd/system'):
+        p = subprocess.Popen(['journalctl', '--system', '--quiet', '-b', '-a'],
+                             stdout=subprocess.PIPE)
+    elif os.access('/var/log/syslog', os.R_OK):
+        p = subprocess.Popen(['tail', '-n', 10000, '/var/log/syslog'],
+                             stdout=subprocess.PIPE)
 
-
-def recent_logfile(logfile, pattern, maxlines=10000):
-    '''Extract recent messages from a logfile which match a regex.
-
-    pattern should be a "re" object. By default this catches at most the last
-    10000 lines, but this can be modified with a different maxlines argument.
-    '''
     lines = ''
-    try:
-        tail = subprocess.Popen(['tail', '-n', str(maxlines), logfile],
-                                stdout=subprocess.PIPE)
-        while tail.poll() is None:
-            for line in tail.stdout:
-                line = line.decode('UTF-8', errors='replace')
-                if pattern.search(line):
-                    lines += line
-        tail.stdout.close()
-        tail.wait()
-    except IOError:
-        return ''
-    return lines
+    while p.poll() is None:
+        for line in p.stdout:
+            line = line.decode('UTF-8', errors='replace')
+            if pattern.search(line):
+                lines += line
+    p.stdout.close()
+    p.wait()
+    if p.returncode == 0:
+        return lines
+    return ''
 
 
 def xsession_errors(pattern=None):
@@ -704,9 +704,7 @@ def attach_mac_events(report, profiles=None):
 
     if 'KernLog' not in report:
         if os.path.exists('/var/log/kern.log'):
-            report['KernLog'] = recent_logfile('/var/log/kern.log', mac_re)
-        elif os.path.exists('/var/log/messages'):
-            report['KernLog'] = recent_logfile('/var/log/messages', mac_re)
+            report['KernLog'] = recent_syslog(mac_re, path='/var/log/kern.log')
 
     if 'AuditLog' not in report and os.path.exists('/var/run/auditd.pid'):
         attach_root_command_outputs(report, {'AuditLog': 'egrep "' + mac_regex + '" /var/log/audit/audit.log'})

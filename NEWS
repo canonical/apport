@@ -23,6 +23,8 @@ detailed list of changes, please see ChangeLog.
  * hookutils, attach_dmesg(): Only attach dmesg as CurrentDmesg, drop BootDmesg
    as /var/log/dmesg is upstart specific and thus not reliably correct any
    more.
+ * hookutils, recent_syslog(): Read system logs from the journal when running
+   under systemd, and fall back to /var/log/syslog if not.
 
 2.16.1 (2015-02-10)
 -------------------
