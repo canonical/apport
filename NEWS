@@ -17,6 +17,8 @@ detailed list of changes, please see ChangeLog.
  * hookutils, attach_drm_info(): Avoid UnicodeDecodeErrors in Python 3 when
    reading binary files. Thanks Chad Miller. (LP: #1425254)
  * crash-digger: Intercept httplib2.HttpLib2Error on download.
+ * apport-gtk: Update legacy icon names to modern GTK ones, to fix icons under
+   GNOME. Thanks Scott Sanbar. (LP: #1422176)
 
 2.16.1 (2015-02-10)
 -------------------
