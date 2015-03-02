@@ -482,9 +482,9 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config(updates=True)
         obsolete = impl.install_packages(self.rootdir, self.configdir,
                                          'Foonux 1.2',
-                                         [('coreutils', '8.13-3ubuntu3'),  # should not come from updates
-                                          ('libc6', '2.15-0ubuntu10'),
-                                          ('tzdata', None),  # should come from -updates, > 2012b-1
+                                         [('coreutils', '8.21-1ubuntu5'),  # should not come from updates
+                                          ('libc6', '2.19-0ubuntu6'),
+                                          ('tzdata', None),  # should come from -updates, > 2014b-1
                                          ], False, self.cachedir)
 
         def sandbox_ver(pkg):
@@ -507,17 +507,17 @@ deb http://secondary.mirror tuxy extra
                                                     'usr/share/doc/libc6/copyright')))
 
         # their versions are as expected
-        self.assertEqual(sandbox_ver('coreutils'), '8.13-3ubuntu3')
-        self.assertEqual(sandbox_ver('libc6'), '2.15-0ubuntu10')
-        self.assertEqual(sandbox_ver('libc6-dbg'), '2.15-0ubuntu10')
-        self.assertGreater(sandbox_ver('tzdata'), '2012b-1')
+        self.assertEqual(sandbox_ver('coreutils'), '8.21-1ubuntu5')
+        self.assertEqual(sandbox_ver('libc6'), '2.19-0ubuntu6')
+        self.assertEqual(sandbox_ver('libc6-dbg'), '2.19-0ubuntu6')
+        self.assertGreater(sandbox_ver('tzdata'), '2015')
 
         with open(os.path.join(self.rootdir, 'packages.txt')) as f:
             pkglist = f.read().splitlines()
-        self.assertIn('coreutils 8.13-3ubuntu3', pkglist)
-        self.assertIn('coreutils-dbgsym 8.13-3ubuntu3', pkglist)
-        self.assertIn('libc6 2.15-0ubuntu10', pkglist)
-        self.assertIn('libc6-dbg 2.15-0ubuntu10', pkglist)
+        self.assertIn('coreutils 8.21-1ubuntu5', pkglist)
+        self.assertIn('coreutils-dbgsym 8.21-1ubuntu5', pkglist)
+        self.assertIn('libc6 2.19-0ubuntu6', pkglist)
+        self.assertIn('libc6-dbg 2.19-0ubuntu6', pkglist)
         self.assertIn('tzdata ' + sandbox_ver('tzdata'), pkglist)
         self.assertEqual(len(pkglist), 5, str(pkglist))
 
@@ -538,18 +538,18 @@ deb http://secondary.mirror tuxy extra
                 cache_versions[name] = ver
             except ValueError:
                 pass  # not a .deb, ignore
-        self.assertEqual(cache_versions['coreutils'], '8.13-3ubuntu3')
-        self.assertEqual(cache_versions['coreutils-dbgsym'], '8.13-3ubuntu3')
+        self.assertEqual(cache_versions['coreutils'], '8.21-1ubuntu5')
+        self.assertEqual(cache_versions['coreutils-dbgsym'], '8.21-1ubuntu5')
         self.assertIn('tzdata', cache_versions)
-        self.assertEqual(cache_versions['libc6'], '2.15-0ubuntu10')
-        self.assertEqual(cache_versions['libc6-dbg'], '2.15-0ubuntu10')
+        self.assertEqual(cache_versions['libc6'], '2.19-0ubuntu6')
+        self.assertEqual(cache_versions['libc6-dbg'], '2.19-0ubuntu6')
 
         # installs cached packages
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         os.unlink(os.path.join(self.rootdir, 'packages.txt'))
         obsolete = impl.install_packages(self.rootdir, self.configdir,
                                          'Foonux 1.2',
-                                         [('coreutils', '8.13-3ubuntu3'),
+                                         [('coreutils', '8.21-1ubuntu5'),
                                          ], False, self.cachedir)
         self.assertEqual(obsolete, '')
         self.assertTrue(os.path.exists(
@@ -586,7 +586,7 @@ deb http://secondary.mirror tuxy extra
         os.unlink(os.path.join(self.rootdir, 'usr/bin/stat'))
         os.unlink(os.path.join(self.rootdir, 'packages.txt'))
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('coreutils', '8.13-3ubuntu3'),
+                              [('coreutils', '8.21-1ubuntu5'),
                                ('dpkg', None),
                               ], False, self.cachedir)
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
@@ -628,9 +628,9 @@ deb http://secondary.mirror tuxy extra
         # keeps track of package versions
         with open(os.path.join(self.rootdir, 'packages.txt')) as f:
             pkglist = f.read().splitlines()
-        self.assertIn('coreutils 8.13-3ubuntu3', pkglist)
-        self.assertIn('coreutils-dbgsym 8.13-3ubuntu3', pkglist)
-        self.assertIn('tzdata 2012b-1', pkglist)
+        self.assertIn('coreutils 8.21-1ubuntu5', pkglist)
+        self.assertIn('coreutils-dbgsym 8.21-1ubuntu5', pkglist)
+        self.assertIn('tzdata 2014b-1', pkglist)
         self.assertEqual(len(pkglist), 3, str(pkglist))
 
     @unittest.skipUnless(_has_internet(), 'online test')
@@ -698,7 +698,7 @@ deb http://secondary.mirror tuxy extra
 
         # sources.list with wrong server
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
-            f.write('deb http://archive.ubuntu.com/nosuchdistro/ precise main\n')
+            f.write('deb http://archive.ubuntu.com/nosuchdistro/ trusty main\n')
 
         try:
             impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
@@ -773,21 +773,21 @@ deb http://secondary.mirror tuxy extra
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_permanent_sandbox_repack(self):
         self._setup_foonux_config()
-        apache_bin_path = os.path.join(self.rootdir, 'usr/sbin/apache2')
+        include_path = os.path.join(self.rootdir, 'usr/include/krb5.h')
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('apache2-mpm-worker', None)], False, self.cachedir,
+                              [('libkrb5-dev', None)], False, self.cachedir,
                               permanent_rootdir=True)
-        self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-worker/apache2'))
+        self.assertIn('mit-krb5/', os.readlink(include_path))
+
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('apache2-mpm-event', None)], False, self.cachedir,
+                              [('heimdal-dev', None)], False, self.cachedir,
                               permanent_rootdir=True)
-        self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-event/apache2'),
-                        'should have installed mpm-event, but have mpm-worker.')
+        self.assertIn('heimdal/', os.readlink(include_path))
+
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                              [('apache2-mpm-worker', None)], False, self.cachedir,
+                              [('libkrb5-dev', None)], False, self.cachedir,
                               permanent_rootdir=True)
-        self.assertTrue(os.readlink(apache_bin_path).endswith('mpm-worker/apache2'),
-                        'should have installed mpm-worker, but have mpm-event.')
+        self.assertIn('mit-krb5/', os.readlink(include_path))
 
     @unittest.skipUnless(_has_internet(), 'online test')
     @unittest.skipIf(impl.get_system_architecture() == 'armhf', 'native armhf architecture')
@@ -796,12 +796,12 @@ deb http://secondary.mirror tuxy extra
 
         self._setup_foonux_config()
         obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                                         [('coreutils', '8.13-3ubuntu3'),
-                                          ('libc6', '2.15-0ubuntu9'),
+                                         [('coreutils', '8.21-1ubuntu5'),
+                                          ('libc6', '2.19-0ubuntu5'),
                                          ], False, self.cachedir,
                                          architecture='armhf')
 
-        self.assertEqual(obsolete, 'libc6 version 2.15-0ubuntu9 required, but 2.15-0ubuntu10 is available\n')
+        self.assertEqual(obsolete, 'libc6 version 2.19-0ubuntu5 required, but 2.19-0ubuntu6 is available\n')
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
@@ -812,8 +812,8 @@ deb http://secondary.mirror tuxy extra
         # caches packages
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
-        self.assertTrue('coreutils_8.13-3ubuntu3_armhf.deb' in cache, cache)
-        self.assertTrue('libc6_2.15-0ubuntu10_armhf.deb' in cache, cache)
+        self.assertTrue('coreutils_8.21-1ubuntu5_armhf.deb' in cache, cache)
+        self.assertTrue('libc6_2.19-0ubuntu6_armhf.deb' in cache, cache)
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_get_source_tree_sandbox(self):
@@ -826,7 +826,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
         # this needs to be updated when the release in _setup_foonux_config
         # changes
-        self.assertTrue(res.endswith('/base-files-6.5ubuntu6'),
+        self.assertTrue(res.endswith('/base-files-7.2ubuntu5'),
                         'unexpected version: ' + res.split('/')[-1])
 
     def _setup_foonux_config(self, updates=False):
@@ -840,24 +840,24 @@ deb http://secondary.mirror tuxy extra
         os.mkdir(self.configdir)
         os.mkdir(os.path.join(self.configdir, 'Foonux 1.2'))
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
-            f.write('deb http://archive.ubuntu.com/ubuntu/ precise main\n')
-            f.write('deb-src http://archive.ubuntu.com/ubuntu/ precise main\n')
-            f.write('deb http://ddebs.ubuntu.com/ precise main\n')
+            f.write('deb http://archive.ubuntu.com/ubuntu/ trusty main\n')
+            f.write('deb-src http://archive.ubuntu.com/ubuntu/ trusty main\n')
+            f.write('deb http://ddebs.ubuntu.com/ trusty main\n')
             if updates:
-                f.write('deb http://archive.ubuntu.com/ubuntu/ precise-updates main\n')
-                f.write('deb-src http://archive.ubuntu.com/ubuntu/ precise-updates main\n')
-                f.write('deb http://ddebs.ubuntu.com/ precise-updates main\n')
+                f.write('deb http://archive.ubuntu.com/ubuntu/ trusty-updates main\n')
+                f.write('deb-src http://archive.ubuntu.com/ubuntu/ trusty-updates main\n')
+                f.write('deb http://ddebs.ubuntu.com/ trusty-updates main\n')
         os.mkdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'armhf', 'sources.list'), 'w') as f:
-            f.write('deb http://ports.ubuntu.com/ precise main\n')
-            f.write('deb-src http://ports.ubuntu.com/ precise main\n')
-            f.write('deb http://ddebs.ubuntu.com/ precise main\n')
+            f.write('deb http://ports.ubuntu.com/ trusty main\n')
+            f.write('deb-src http://ports.ubuntu.com/ trusty main\n')
+            f.write('deb http://ddebs.ubuntu.com/ trusty main\n')
             if updates:
-                f.write('deb http://ports.ubuntu.com/ precise-updates main\n')
-                f.write('deb-src http://ports.ubuntu.com/ precise-updates main\n')
-                f.write('deb http://ddebs.ubuntu.com/ precise-updates main\n')
+                f.write('deb http://ports.ubuntu.com/ trusty-updates main\n')
+                f.write('deb-src http://ports.ubuntu.com/ trusty-updates main\n')
+                f.write('deb http://ddebs.ubuntu.com/ trusty-updates main\n')
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'codename'), 'w') as f:
-            f.write('precise')
+            f.write('trusty')
 
     def assert_elf_arch(self, path, expected):
         '''Assert that an ELF file is for an expected machine type.
