@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.16.3 (UNRELEASED)
+-------------------
+ * Adjust signal_crashes.test_crash_setuid_{keep,drop} for systemd.
+
 2.16.2 (2015-03-02)
 -------------------
  * hookutils.in_session_of_problem(): Check $XDG_SESSION_ID and
