@@ -266,15 +266,18 @@ init_error_log()
 # apport can't be found, then simply log an entry in the host error log
 # and exit 0.
 if len(sys.argv) == 5 and sys.argv[4].isdigit() and sys.argv[4] != sys.argv[1]:
-    if os.path.exists('/proc/%s/root/%s' % (sys.argv[4], __file__)):
+    host_pid = sys.argv[4]
+    pid = sys.argv[1]
+    if os.path.exists('/proc/%s/root/%s' % (host_pid, __file__)):
         error_log('pid %s (host pid %s) crashed in a container with apport '
-                  'support, forwarding' % (sys.argv[1], sys.argv[4]))
+                  'support, forwarding' % (pid, host_pid))
         sys.stderr.flush()
-        os.execv('/usr/sbin/chroot', ('chroot', '/proc/%s/root/' % sys.argv[4],
-                                      __file__, sys.argv[1], sys.argv[2],
+        os.execv('/usr/sbin/chroot', ('chroot', '/proc/%s/root/' % host_pid,
+                                      __file__, host_pid, sys.argv[2],
                                       sys.argv[3]))
     else:
-        error_log('pid %s crashed in a container without apport support' % sys.argv[4])
+        error_log('host pid %s crashed in a container without apport support' %
+                  host_pid)
         sys.exit(0)
 
 check_lock()
