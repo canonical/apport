@@ -1,5 +1,6 @@
-'''KDE 4 Apport User Interface tests'''
+'''Qt 5 Apport User Interface tests'''
 
+# Copyright (C) 2015 Harald Sitter <sitter@kde.org>
 # Copyright (C) 2012 Canonical Ltd.
 # Author: Evan Dandrea <evan.dandrea@canonical.com>
 #
@@ -17,10 +18,8 @@ import shutil
 
 from mock import patch
 try:
-    from PyQt4.QtCore import QTimer, QCoreApplication
-    from PyQt4.QtGui import QTreeWidget
-    from PyKDE4.kdecore import ki18n, KCmdLineArgs, KAboutData, KLocalizedString
-    from PyKDE4.kdeui import KApplication
+    from PyQt5.QtCore import *
+    from PyQt5.QtGui import *
 except ImportError as e:
     sys.stderr.write('SKIP: PyQt/PyKDE not available: %s\n' % str(e))
     sys.exit(0)
@@ -592,20 +591,9 @@ Type=Application''')
         self.assertFalse(self.app.dialog.send_error_report.isVisible())
         self.assertFalse(self.app.dialog.send_error_report.isChecked())
 
-appName = 'apport-kde'
-catalog = 'apport'
-programName = ki18n(b'Apport KDE')
-version = '1.0'
-description = ki18n(b'KDE 4 frontend tests for the apport')
-license = KAboutData.License_GPL
-copyright = ki18n(b'2012 Canonical Ltd.')
-text = KLocalizedString()
-homePage = 'https://wiki.ubuntu.com/AutomatedProblemReports'
-bugEmail = 'kubuntu-devel@lists.ubuntu.com'
+app = QApplication(sys.argv)
+app.applicationName = 'apport-kde'
+app.applicationDisplayName = _('Apport')
+app.windowIcon = QIcon.fromTheme('apport')
 
-aboutData = KAboutData(appName, catalog, programName, version, description,
-                       license, copyright, text, homePage, bugEmail)
-
-KCmdLineArgs.init([''], aboutData)
-app = KApplication()
 unittest.main()
