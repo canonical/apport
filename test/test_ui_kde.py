@@ -18,8 +18,8 @@ import shutil
 
 from mock import patch
 try:
-    from PyQt5.QtCore import *
-    from PyQt5.QtGui import *
+    from PyQt5.QtCore import QTimer, QCoreApplication
+    from PyQt5.QtGui import QApplication, QTreeWidget, QIcon
 except ImportError as e:
     sys.stderr.write('SKIP: PyQt/PyKDE not available: %s\n' % str(e))
     sys.exit(0)
