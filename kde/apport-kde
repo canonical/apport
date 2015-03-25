@@ -18,10 +18,29 @@ import os
 
 try:
     import apport
-    from PyQt5.QtCore import *
-    from PyQt5.QtGui import *
-    from PyQt5.QtWidgets import *
-    from PyQt5 import uic
+    from PyQt5.QtCore import (QByteArray,
+                              QLibraryInfo,
+                              QLocale,
+                              Qt,
+                              QTimer,
+                              QTranslator)
+    from PyQt5.QtGui import (QIcon,
+                             QMovie,
+                             QPainter)
+    from PyQt5.QtWidgets import (QApplication,
+                                 QCheckBox,
+                                 QDialog,
+                                 QDialogButtonBox,
+                                 QLabel,
+                                 QLineEdit,
+                                 QMessageBox,
+                                 QProgressBar,
+                                 QPushButton,
+                                 QRadioButton,
+                                 QTreeWidget,
+                                 QTreeWidgetItem,
+                                 QFileDialog)
+    from PyQt5 uic
     import apport.ui
     from apport import unicode_gettext as _
     import sip
@@ -367,10 +386,10 @@ class MainUserInterface(apport.ui.UserInterface):
         return return_value
 
     def ui_info_message(self, title, text):
-        KMessageBox.information(None, _(text), _(title))
+        QMessageBox.information(None, _(title), _(text))
 
     def ui_error_message(self, title, text):
-        KMessageBox.information(None, _(text), _(title))
+        QMessageBox.information(None, _(title), _(text))
 
     def ui_start_info_collection_progress(self):
         # show a spinner if we already have the main window
@@ -428,17 +447,16 @@ class MainUserInterface(apport.ui.UserInterface):
         self.progress.hide()
 
     def ui_question_yesno(self, text):
-        response = KMessageBox.questionYesNoCancel(
-            None, _(text), '', KStandardGuiItem.yes(), KStandardGuiItem.no(),
-            KStandardGuiItem.cancel())
-        if response == KMessageBox.Yes:
+        response = QMessageBox.question(None, '', 'text',
+                                        QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+        if response == QMessageBox.Yes:
             return True
-        if response == KMessageBox.No:
+        if response == QMessageBox.No:
             return False
         return None
 
     def ui_question_choice(self, text, options, multiple):
-        ''' Show a question with predefined choices.
+        ''' Show a question wpredefined choices.
 
         @options is a list of strings to present.
         @multiple - if True, choices should be QCheckBoxes, if False then
@@ -500,9 +518,13 @@ if __name__ == '__main__':
         apport.fatal('This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.')
 
     app = QApplication(sys.argv)
-    app.applicationName = 'apport-kde'
-    app.applicationDisplayName = _('Apport')
-    app.windowIcon = QIcon.fromTheme('apport')
+    app.setApplicationName('apport-kde')
+    app.setApplicationDisplayName(_('Apport'))
+    app.setWindowIcon(QIcon.fromTheme('apport'))
+    translator = QTranslator()
+    translator.load("qtbase_" + QLocale.system().name(),
+                    QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+    app.installTranslator(translator)
 
     UserInterface = MainUserInterface()
     sys.exit(UserInterface.run_argv())
