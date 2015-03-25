@@ -456,7 +456,7 @@ class MainUserInterface(apport.ui.UserInterface):
         return None
 
     def ui_question_choice(self, text, options, multiple):
-        ''' Show a question wpredefined choices.
+        ''' Show a question with predefined choices.
 
         @options is a list of strings to present.
         @multiple - if True, choices should be QCheckBoxes, if False then
