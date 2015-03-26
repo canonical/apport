@@ -40,7 +40,7 @@ try:
                                  QTreeWidget,
                                  QTreeWidgetItem,
                                  QFileDialog)
-    from PyQt5 uic
+    from PyQt5 import uic
     import apport.ui
     from apport import unicode_gettext as _
     import sip
