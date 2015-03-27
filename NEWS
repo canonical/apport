@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * apport-kde: Port to Qt5. Thanks Harald Sitter!
  * Adjust signal_crashes.test_crash_setuid_{keep,drop} for systemd.
+ * general-hooks/generic.py: Add systemd journal warnings and errors to the new
+   "JournalErrors" field.
 
 2.16.2 (2015-03-02)
 -------------------
