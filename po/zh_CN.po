@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2014-04-10 01:45+0000\n"
 "Last-Translator: Wylmer Wang <Unknown>\n"
 "Language-Team: Chinese (China) <zh_CN@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:10+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:09+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -140,15 +140,13 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
-"您并不是这个问题报告的报告者。相对而言，标记一个重复的错误远比迁移您的评论和"
-"附件到新的错误报告容易得多。\n"
-"因此，我们建议您使用 apport-bug 来提交新的错误报告，并在当前报告中对您新提交"
-"的报告进行评论。\n"
+"您并不是这个问题报告的报告者。相对而言，标记一个重复的错误远比迁移您的评论和附件到新的错误报告容易得多。\n"
+"因此，我们建议您使用 apport-bug 来提交新的错误报告，并在当前报告中对您新提交的报告进行评论。\n"
 "您确定要继续么？"
 
 #: ../apport/ui.py:541 ../apport/ui.py:558
@@ -191,7 +189,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "向报告中添加额外的标记，可多次指定。"
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [选项] [症状|PID|软件包|程序目录|.apport/.crash file]"
 
 #: ../apport/ui.py:724
@@ -200,8 +199,7 @@ msgid ""
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
 "a single argument is given.)"
 msgstr ""
-"以填写 bug 模式启动。需要 --package 和可选的 --pid 参数，或单独使用 --pid 参"
-"数。如果二者均未给出，将显示一系列症状供选择。"
+"以填写 bug 模式启动。需要 --package 和可选的 --pid 参数，或单独使用 --pid 参数。如果二者均未给出，将显示一系列症状供选择。"
 
 #: ../apport/ui.py:726
 msgid "Click a window as a target for filing a problem report."
@@ -221,18 +219,14 @@ msgstr "针对某个症状报告 bug。"
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
-msgstr ""
-"--file-bug 模式中指定软件包名。如果指定了 --pid，则是可选的。(如果只给定软件"
-"包名这一个参数则为必需。)"
+msgstr "--file-bug 模式中指定软件包名。如果指定了 --pid，则是可选的。(如果只给定软件包名这一个参数则为必需。)"
 
 #: ../apport/ui.py:734
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
 "argument.)"
-msgstr ""
-"在 --file-bug 模式中指定运行的程序。如果指定，该问题报告将包含更多的信息。(默"
-"认指定 pid 作为唯一参数。)"
+msgstr "在 --file-bug 模式中指定运行的程序。如果指定，该问题报告将包含更多的信息。(默认指定 pid 作为唯一参数。)"
 
 #: ../apport/ui.py:736
 msgid "The provided pid is a hanging application."
@@ -243,18 +237,14 @@ msgstr "此进程号的程序是挂起的。"
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
-msgstr ""
-"从给定的 .apport 或者  .crash 文件，而不是从正在处理的 %s 中汇报崩溃。(如果文"
-"件只给定了参数时实现。)"
+msgstr "从给定的 .apport 或者  .crash 文件，而不是从正在处理的 %s 中汇报崩溃。(如果文件只给定了参数时实现。)"
 
 #: ../apport/ui.py:740
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
 "machine."
-msgstr ""
-"在提交报告过程中，将收集到的信息保存到要报告的文件中。该文件可用于稍后在另一"
-"台机器上提交。"
+msgstr "在提交报告过程中，将收集到的信息保存到要报告的文件中。该文件可用于稍后在另一台机器上提交。"
 
 #: ../apport/ui.py:744
 msgid "Print the Apport version number."
@@ -402,7 +392,8 @@ msgid ""
 msgstr "重复使用以前创建的缓存目录(CDIR)，或者，如果它不存在，则创建它"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr "安装包进入沙盒时报告下载/安装进度"
 
 #: ../bin/apport-valgrind.py:62
@@ -773,7 +764,8 @@ msgid "System problem reports"
 msgstr "系统问题报告"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr "请输入您的密码以查看系统程序问题报告。"
 
 #: ../bin/apport-retrace.py:34
@@ -820,13 +812,12 @@ msgid ""
 "\"system\", it will use the system configuration files, but will then only "
 "be able to retrace crashes that happened on the currently running release."
 msgstr ""
-"构建临时沙盒，以及下载/安装必要的软件包和调试符号；如果没有该选项，则会假设该"
-"系统中已安装了必要的软件包和调试符号。此参数指向该打包系统配置库目录；如果指"
-"定 \"system\"，则其将使用系统配置文件，但之后，其将只能够追溯当前正在运行的版"
-"本上发生的崩溃。"
+"构建临时沙盒，以及下载/安装必要的软件包和调试符号；如果没有该选项，则会假设该系统中已安装了必要的软件包和调试符号。此参数指向该打包系统配置库目录；如果指"
+"定 \"system\"，则其将使用系统配置文件，但之后，其将只能够追溯当前正在运行的版本上发生的崩溃。"
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr "在将软件包安装到沙盒中时，报告下载和安装的进度"
 
 #: ../bin/apport-retrace.py:55
@@ -848,9 +839,7 @@ msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
-msgstr ""
-"包含崩溃数据库访问信息文件之路径。此项将用于为特定崩溃代码上传堆栈的回溯调试"
-"信息(除非用户指定 -g, -o 或 -s)"
+msgstr "包含崩溃数据库访问信息文件之路径。此项将用于为特定崩溃代码上传堆栈的回溯调试信息(除非用户指定 -g, -o 或 -s)"
 
 #: ../bin/apport-retrace.py:65
 msgid ""
@@ -859,7 +848,8 @@ msgid ""
 msgstr "显示返回的堆栈信息，并询求确认是否将其发送至崩溃数据库。"
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "SQLite 数据库路径重复(默认：不重复检查)"
 
 #: ../bin/apport-retrace.py:76
@@ -890,26 +880,24 @@ msgstr "确定以附件形式发送这些？[y/n]"
 #~ msgid "_Send Report"
 #~ msgstr "发送报告(_S)"
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s 异常关闭在 %s 在 %s。"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
-#~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">对不起，软件包 \"%s\" 安装或升级失败"
-#~ "</span>"
+#~ msgstr "<span weight=\"bold\" size=\"larger\">对不起，软件包 \"%s\" 安装或升级失败</span>"
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "忽略这个程序以后的崩溃(_I)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
-#~ msgstr ""
-#~ "这会移除报告的一些大条目。虽然这对开发者报告问题很有用，但如果带宽窄则会上"
-#~ "传太慢。"
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
+#~ msgstr "这会移除报告的一些大条目。虽然这对开发者报告问题很有用，但如果带宽窄则会上传太慢。"
 
 #~ msgid "&Report Problem..."
 #~ msgstr "提交问题报告(&R)…"
@@ -936,33 +924,38 @@ msgstr "确定以附件形式发送这些？[y/n]"
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr "参数数量错误；使用 --help 获取简略帮助"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "这不是真实的 %s 包"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "如果您没有做任何机密的事情 (输入密码或者其它私人信息)，\n"
 #~ "可以通过汇报这个问题来改进程序。"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "发送完整的报告(&S)(推荐：%s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "发送精简的报告(慢速网络连接： %s)"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "软件包\"%s\"安装或者升级失败。"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "完整报告(推荐；%s)"
 
 #~ msgid "Package problem"
 #~ msgstr "软件包问题"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "精简报告(适用于慢速连接；%s)"
 
@@ -971,22 +964,18 @@ msgstr "确定以附件形式发送这些？[y/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
-#~ msgstr ""
-#~ "如果您现在的动作不涉及机密信息(即不是输入口令等涉及私密信息的动作)，则可以"
-#~ "报告本问题以便改进程序。"
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
+#~ msgstr "如果您现在的动作不涉及机密信息(即不是输入口令等涉及私密信息的动作)，则可以报告本问题以便改进程序。"
 
 #~ msgid ""
 #~ "you either need to do a local operation (-s, -g, -o) or supply an "
 #~ "authentication file (--auth); see --help for a short help"
-#~ msgstr ""
-#~ "您或需要进行一项本地操作(-s, -g, -o) 或提供一个认证文件(--auth)；参见 --"
-#~ "help 以获取简单帮助。"
+#~ msgstr "您或需要进行一项本地操作(-s, -g, -o) 或提供一个认证文件(--auth)；参见 --help 以获取简单帮助。"
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "对不起，应用程序 %s 意外关闭。"
 
-#~ msgid ""
-#~ "Your system might become unstable now and might need to be restarted."
+#~ msgid "Your system might become unstable now and might need to be restarted."
 #~ msgstr "您的系统现在可能变得不稳定，可能需要重新启动。"

@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2014-02-10 12:46+0000\n"
 "Last-Translator: Atanas Kovachki <Unknown>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
-"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:09+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:07+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: bg\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -148,8 +148,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -206,7 +206,8 @@ msgstr ""
 "пъти."
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [параметри] [признак|pid|пакет|път до програмата|.apport/.crash файл]"
 
@@ -444,7 +445,8 @@ msgstr ""
 "съществува"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "докладвай прогреса за сваляне/инсталиране по врене на инсталирането на "
 "пакетите в времената среда"
@@ -838,7 +840,8 @@ msgid "System problem reports"
 msgstr "Доклади за системни грешки"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Моля, въведете паролата си за достъп до докладите за проблеми на системни "
 "програми"
@@ -901,13 +904,15 @@ msgstr ""
 "работещата в момента система."
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Докладвай за напредъка при сваляне/инсталиране на пакети във времената среда"
 
 #: ../bin/apport-retrace.py:55
 msgid "Prepend timestamps to log messages, for batch operation"
-msgstr "Добави временни отметки до съобщенията в дневника за групови операции"
+msgstr ""
+"Добави временни отметки до съобщенията в дневника за групови операции"
 
 #: ../bin/apport-retrace.py:57
 msgid "Cache directory for packages downloaded in the sandbox"
@@ -936,7 +941,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Път към дублираната sqlite база данни (стандартно: без проверка за дублиране)"
 
@@ -949,6 +955,7 @@ msgstr "Не може да се използва без -C без -S. Спира
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Да се изпрати ли прикаченото? [y/n]"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Пълен доклад (препоръчва се; %s)"
 
@@ -965,8 +972,8 @@ msgstr "Да се изпрати ли прикаченото? [y/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Ако не правехте нищо конфиденциално (въвеждане на пароли или друга лична "
 #~ "информация), можете да помогнете да бъде подобрено приложението, като "
@@ -981,13 +988,15 @@ msgstr "Да се изпрати ли прикаченото? [y/n]"
 #~ msgid "Restart _Program"
 #~ msgstr "Рестартиране на _програмата"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Съжалявам,пакета \"%s\" не успя да "
-#~ "се инсталира или надгради.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Съжалявам,пакета \"%s\" не успя да се "
+#~ "инсталира или надгради.</span>"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Намален доклад (при бавна Интернет връзка; %s)"
 
@@ -995,13 +1004,13 @@ msgstr "Да се изпрати ли прикаченото? [y/n]"
 #~ msgstr "_Игнориране на бъдещи сривове в тази версия на програмата"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Това ще премахне голяма част от доклада. Тази част е изключително полезна "
-#~ "за разработчиците при откриване на проблема, но може да е твърде голяма "
-#~ "за качване, ако имате бавна Интернет връзка."
+#~ "Това ще премахне голяма част от доклада. Тази част е изключително полезна за "
+#~ "разработчиците при откриване на проблема, но може да е твърде голяма за "
+#~ "качване, ако имате бавна Интернет връзка."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Докладване на проблем..."
@@ -1012,9 +1021,10 @@ msgstr "Да се изпрати ли прикаченото? [y/n]"
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr ""
-#~ "Можете да помогнете на разработчиците да поправят пакета като докладвате "
-#~ "за проблема."
+#~ "Можете да помогнете на разработчиците да поправят пакета като докладвате за "
+#~ "проблема."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Това не е автентичен пакет %s"
 
@@ -1032,33 +1042,34 @@ msgstr "Да се изпрати ли прикаченото? [y/n]"
 
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Можете да помогнете на разработчиците да поправят проблем като го "
-#~ "докладвате."
+#~ "Можете да помогнете на разработчиците да поправят проблем като го докладвате."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Пакетът \"%s\" не успя да се инсталира или надгради."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Ако не правите нищо поверително (въведени пароли или друга\n"
 #~ "лична информация), Вие може да помогнете за подобряване на\n"
 #~ "програмата като докладване проблема."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s се затвори неочаквано на %s в %s."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Изпращане на пълен доклад (препоръчително; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Изпращане на &кратък доклад (бавна интернет връзка; %s)"
 
-#~ msgid ""
-#~ "Your system might become unstable now and might need to be restarted."
+#~ msgid "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
 #~ "Сега вашата система може да стане нестабилна и да се наложи да я "
 #~ "рестартирате."

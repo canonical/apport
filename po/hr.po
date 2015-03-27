@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-12-27 08:38+0000\n"
 "Last-Translator: freedomrun <Unknown>\n"
 "Language-Team: Croatian <hr@li.org>\n"
-"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:09+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:08+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: hr\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -91,7 +91,8 @@ msgstr "Nema određenih paketa"
 #: ../apport/ui.py:406
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Morate odrediti paket ili PID. Pogledajte --help za više informacija."
+msgstr ""
+"Morate odrediti paket ili PID. Pogledajte --help za više informacija."
 
 #: ../apport/ui.py:429
 msgid "Permission denied"
@@ -149,8 +150,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -197,8 +198,10 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Dodajte dodatnu oznaku u izvještaju. Moguće je odrediti više puta."
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
-msgstr "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgstr ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
 #: ../apport/ui.py:724
 msgid ""
@@ -213,7 +216,8 @@ msgstr "Kliknite na prozor kao cilj za podnošenje izvještaja o problemu."
 
 #: ../apport/ui.py:728
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr "Početak načina za bug ažuriranje. Opcionalno se može dodati --package."
+msgstr ""
+"Početak načina za bug ažuriranje. Opcionalno se može dodati --package."
 
 #: ../apport/ui.py:730
 msgid ""
@@ -407,7 +411,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -788,7 +793,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../bin/apport-retrace.py:34
@@ -837,7 +843,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
@@ -868,7 +875,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:76
@@ -883,9 +891,11 @@ msgstr "Jeli u redu otposlati ove privitke? [d/n]"
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Možete pomoći razvojnom timu da riješi problem prijavom istog."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Paket \"%s\" se nije uspio instalirati ili nadograditi"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Potpun izvještaj (preporučeno; %s)"
 
@@ -902,8 +912,8 @@ msgstr "Jeli u redu otposlati ove privitke? [d/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Ako niste radili nešto povjerljivo (unosili lozinke ili nešto slično), "
 #~ "možete pomoći u poboljšanju aplikacije prijavljivanjem problema razvojnom "
@@ -917,43 +927,47 @@ msgstr "Jeli u redu otposlati ove privitke? [d/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Ako niste radili ništa povjerljivo (unosili lozinke ili druge\n"
 #~ "privatne informacije), možete pomoći unaprijediti aplikaciju prijavom\n"
 #~ "problema."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s neočekivano prekinut na %s u %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Ponovo pokreni _Program"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Nažalost, paket \"%s\" se nije "
-#~ "uspio instalirati ili nadograditi</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Nažalost, paket \"%s\" se nije uspio "
+#~ "instalirati ili nadograditi</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Pošaljite potpun izvještaj (preporučeno; %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Sažeti izvještaj (spora Internet veza; %s)"
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "_Zanemari buduća rušenja ove verzije programa"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Pošaljite &sažeti izvještaj (spora Internet veza; %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Ovo će odstraniti neke veće dijelove izvještaja. Oni su vrlo korisni "
 #~ "razvojnom timu za otklanjanje problema, ali mogu biti preveliki za slanje "
@@ -973,6 +987,7 @@ msgstr "Jeli u redu otposlati ove privitke? [d/n]"
 #~ msgstr ""
 #~ "I vi možete pomoći razvojnom timu da popravi paket prijavom problema."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Ovo nije izvorni %s paket"
 
@@ -986,5 +1001,6 @@ msgstr "Jeli u redu otposlati ove privitke? [d/n]"
 #~ msgstr ""
 #~ "Netočan broj argumenata; upotrijebite --pomoć(ili --help) za kratku pomoć."
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Nažalost, aplikacija %s se neočekivano zatvorila."

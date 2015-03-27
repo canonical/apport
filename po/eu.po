@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
 "Language-Team: Basque <eu@li.org>\n"
-"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:08+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:07+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: eu\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -146,8 +146,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -155,8 +155,8 @@ msgstr ""
 "txosten bat beste baten bikoiztutzat markatzea zure iruzkin eta eranskinak "
 "errore-txosten berri batera mugitzea baino.\n"
 "\n"
-"Ondoren, gomendatzen dizugu errore-txosten berri bat bidaltzea \"apport-bug"
-"\" erabiliz eta iruzkin bat uztea errore-txosten horretan zure errore-"
+"Ondoren, gomendatzen dizugu errore-txosten berri bat bidaltzea \"apport-"
+"bug\" erabiliz eta iruzkin bat uztea errore-txosten horretan zure errore-"
 "txostena aipatuz.\n"
 "\n"
 "Ziur aurrera jarraitu nahi duzula?"
@@ -201,7 +201,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [aukerak] [sintoma|pid|paketea|programaren bidea|.apport/.crash "
 "fitxategia]"
@@ -422,7 +423,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -492,7 +494,8 @@ msgstr "<big><b>Barkatu, barne-errore bat gertatu da.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:240 ../gtk/apport-gtk.py:300
 msgid "If you notice further problems, try restarting the computer."
-msgstr "Arazo gehiago aurkitzen badituzu, probatu ordenagailua berrabiaraziz."
+msgstr ""
+"Arazo gehiago aurkitzen badituzu, probatu ordenagailua berrabiaraziz."
 
 #: ../gtk/apport-gtk.ui.h:7
 msgid "Send an error report to help fix this problem"
@@ -677,7 +680,8 @@ msgstr "Txostena &gorde geroago bidaltzeko edo beste leku batera kopiatzeko"
 
 #: ../bin/apport-cli.py:192
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Utzi eta baztertu programa bertsio honen kraskatzeak hemendik aurrera"
+msgstr ""
+"Utzi eta baztertu programa bertsio honen kraskatzeak hemendik aurrera"
 
 #: ../bin/apport-cli.py:194 ../bin/apport-cli.py:271 ../bin/apport-cli.py:303
 #: ../bin/apport-cli.py:324
@@ -809,7 +813,8 @@ msgid "System problem reports"
 msgstr "Sistemako arazoaren jakinarazpena"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr "Sartu pasahitza sistemako programen arazoen txostenak atzitzeko"
 
 #: ../bin/apport-retrace.py:34
@@ -862,7 +867,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
@@ -893,7 +899,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:76
@@ -905,6 +912,7 @@ msgstr ""
 msgid "OK to send these as attachments? [y/n]"
 msgstr ""
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Txosten osoa (gomendatua; %s)"
 
@@ -916,13 +924,13 @@ msgstr ""
 #~ msgstr ""
 #~ "<big><b>Arazoaren txosten bat bidali garatzailei?</b></big>\n"
 #~ "\n"
-#~ "Arazoaren txostena bidali ondoren, mesedez, web-arakatzailean "
-#~ "automatikoki irekitako formularioa bete."
+#~ "Arazoaren txostena bidali ondoren, mesedez, web-arakatzailean automatikoki "
+#~ "irekitako formularioa bete."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Ez bazinen ezer konfidentzialik egiten ari (pasahitz bat edo beste "
 #~ "informazio pribaturik idazten), aplikazioa hobetzen lagundu dezakezu "
@@ -937,13 +945,15 @@ msgstr ""
 #~ msgid "Restart _Program"
 #~ msgstr "_Programa Berrabiarazi"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Lastima, ezin izan da \"%s\" "
-#~ "paketea instalatu edo eguneratu.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Lastima, ezin izan da \"%s\" paketea "
+#~ "instalatu edo eguneratu.</span>"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Txosten laburra (internet konexio geldoa; %s)"
 
@@ -951,13 +961,13 @@ msgstr ""
 #~ msgstr "_Ezikusi programa bertsio honen kraskatzeak"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Honek elementu handi batzuk kenduko ditu txostenetik. Hauek oso "
-#~ "baliagarriak dira garatzaileentzat arazoa konpontzeko, baina zuk "
-#~ "bidaltzeko handiegiak izan daitezke, konexio motela badaukazu."
+#~ "Honek elementu handi batzuk kenduko ditu txostenetik. Hauek oso baliagarriak "
+#~ "dira garatzaileentzat arazoa konpontzeko, baina zuk bidaltzeko handiegiak "
+#~ "izan daitezke, konexio motela badaukazu."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "Arazoaren _Berri eman..."
@@ -970,6 +980,7 @@ msgstr ""
 #~ msgstr ""
 #~ "Garatzaileei paketea konpontzen lagun diezaiekezu arazoaren berri emanez."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Hau ez da benetako %s pakete bat"
 
@@ -984,14 +995,14 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Zerbait konfidentziala egiten ari ez bazinen (pasahitzak edo halako\n"
 #~ "informazio pribaturik idazten), aplikazioa hobetzen lagundu dezakezu\n"
 #~ "arazoaren berri emanez."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s ustekabean itxi da %s(e)an %setan"
 
@@ -1001,12 +1012,15 @@ msgstr ""
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr "Garatzaileei lagun diezaiekezu arazo horren berri emanez."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "Txosten &osoa bidali (gomendatua; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Txosten &murriztua bidali (Internet konexio motelak; %s)"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "\"%s\" paketearen instalazio edo eguneratzeak huts egin du."
 
@@ -1018,15 +1032,13 @@ msgstr ""
 #~ "authentication file (--auth); see --help for a short help"
 #~ msgstr ""
 #~ "ekintza lokal bat (-s, -g, -o) burutu edo autentifikazio-fitxategi bat (--"
-#~ "auth) eskaini behar duzu; --help erabili ezazu laguntza labur bat "
-#~ "jasotzeko"
+#~ "auth) eskaini behar duzu; --help erabili ezazu laguntza labur bat jasotzeko"
 
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr ""
 #~ "argumentu kopuru okerra; --help erabili ezazu laguntza labur bat jasotzeko"
 
-#~ msgid ""
-#~ "Your system might become unstable now and might need to be restarted."
+#~ msgid "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
 #~ "Ezegonkor bilakatu daiteke zure sistema orain eta berrabiarazi beharko "
 #~ "zenuke."

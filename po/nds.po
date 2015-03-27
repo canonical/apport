@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: mafix <launchpad@marfix.net>\n"
 "Language-Team: German, Low <nds@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:09+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:08+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -135,8 +135,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -181,7 +181,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:724
@@ -379,7 +380,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -744,7 +746,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../bin/apport-retrace.py:34
@@ -793,7 +796,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
@@ -824,7 +828,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:76
@@ -836,6 +841,7 @@ msgstr ""
 msgid "OK to send these as attachments? [y/n]"
 msgstr ""
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Kompleter Raport (empfohlen; %s)"
 
@@ -845,6 +851,7 @@ msgstr ""
 #~ msgid "Restart _Program"
 #~ msgstr "Programm neustarten"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Reduzierter Rapport (langsame Internetverbindung; %s)"
 
@@ -852,13 +859,13 @@ msgstr ""
 #~ msgstr "_Ignoriere zukünftige Fehler von dieser Programmversion"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Große Objekte werden dann aus dem Bericht entfernt. Diese sind sehr "
-#~ "nützlich für die Entwickler, die das Programm verbessern, könnte aber zu "
-#~ "groß sein, wenn Sie über einen langsame Internetverbindung verfügen."
+#~ "Große Objekte werden dann aus dem Bericht entfernt. Diese sind sehr nützlich "
+#~ "für die Entwickler, die das Programm verbessern, könnte aber zu groß sein, "
+#~ "wenn Sie über einen langsame Internetverbindung verfügen."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Rapporttiere Problem"

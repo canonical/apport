@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2012-04-07 08:24+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
-"Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:09+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:08+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: sl\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -149,8 +149,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -205,7 +205,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Doda dodatno oznako poročilu. Določite jo lahko večkrat."
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [možnosti] [simptom|pid|paket|pot programa|datoteka .apport/.crash]"
 
@@ -360,7 +361,8 @@ msgstr "Pomnilnik je zapolnjen"
 
 #: ../apport/ui.py:1268
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "Vašemu sistemu je zmanjkalo pomnilnika za obdelavo poročila o sesutju."
+msgstr ""
+"Vašemu sistemu je zmanjkalo pomnilnika za obdelavo poročila o sesutju."
 
 #: ../apport/ui.py:1303
 #, python-format
@@ -434,7 +436,8 @@ msgstr ""
 "če še ne obstaja"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr "poroča napredek prejema /namestitve ob namestitvi paketa v sandbox"
 
 #: ../bin/apport-valgrind.py:62
@@ -506,7 +509,8 @@ msgstr "<big><b>Oprostite, prišlo je do notranje napake.</b></big>"
 
 #: ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:240 ../gtk/apport-gtk.py:300
 msgid "If you notice further problems, try restarting the computer."
-msgstr "Če opazite nadaljnje težave, poskusite s ponovnim zagonom računalnika."
+msgstr ""
+"Če opazite nadaljnje težave, poskusite s ponovnim zagonom računalnika."
 
 #: ../gtk/apport-gtk.ui.h:7
 msgid "Send an error report to help fix this problem"
@@ -826,7 +830,8 @@ msgid "System problem reports"
 msgstr "Poročila o sistemskih težavah"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Vnesite svoje geslo za dostop do poročil o težavah s sistemskimi programi"
 
@@ -885,7 +890,8 @@ msgstr ""
 "sesutjem, ki se zgodijo na trenutno izvajajoči se izdaji."
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Poročaj o napredku prejema/namestitve med nameščanje paketov v peskovnik"
 
@@ -924,7 +930,8 @@ msgstr ""
 "pošiljanjem v podatkovno zbirko sesutij."
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Pot do podatkovne zbirke dvojnika sqlite (privzeto: ni preverjanja za "
 "dvojnike)"
@@ -938,13 +945,14 @@ msgstr "Ne morete uporabiti -C brez -S. Ustavljanje."
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Dokončaj poročilo (priporočeno; %s)"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Če niste delali česa zaupnega (npr. vnašali gesla ali drugih zasebnih "
 #~ "podatkov), lahko pomagate pri izpopolnjevanju programa tako, da pošljete "
@@ -956,6 +964,7 @@ msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 #~ msgid "Restart _Program"
 #~ msgstr "Ponovno zaženi _program"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Skrčeno poročilo (počasna internetna povezava; %s)"
 
@@ -963,13 +972,13 @@ msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 #~ msgstr "_Spreglej bodoča sesutja te različice programa"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "S tem se iz poročila odstrani določene zajetne elemente, ki so sicer zelo "
-#~ "uporabni za odpravljanje napak, a bi utegnili biti preveliki za "
-#~ "pošiljanje po internetu pri počasni povezavi."
+#~ "uporabni za odpravljanje napak, a bi utegnili biti preveliki za pošiljanje "
+#~ "po internetu pri počasni povezavi."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Pošlji poročilo..."
@@ -977,12 +986,13 @@ msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 #~ msgid ""
 #~ "You can help the developers to fix the package by reporting the problem."
 #~ msgstr ""
-#~ "Razvijalcem lahko pomagate pri popravilu paketa ter jim pošljete poročilo "
-#~ "o nastali težavi."
+#~ "Razvijalcem lahko pomagate pri popravilu paketa ter jim pošljete poročilo o "
+#~ "nastali težavi."
 
 #~ msgid "Content of the report"
 #~ msgstr "Vsebina poročila"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "To ni pristen %s paket"
 
@@ -991,23 +1001,26 @@ msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Če niste počeli ničesar zaupnega (vpisovali gesel ali drugih\n"
 #~ "zasebnih podatkov), nam lahko pomagate izboljšati program\n"
 #~ "tako, da nam pošljete poročilo o težavi."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s se je nepričakovano zaprl dne %s ob %s."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Namestitev ali nadgradnja paketa \"%s\" ni uspela."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "Pošlji &popolno poročilo (priporočeno; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Pošlji &skrajšano poročilo (počasna internetna povezava; %s)"
 
@@ -1026,6 +1039,7 @@ msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 #~ msgid "Application problem"
 #~ msgstr "Težava programa"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1047,8 +1061,7 @@ msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 #~ msgid "%prog [options] <apport problem report | crash ID>"
 #~ msgstr "%prog [možnosti] <apport poročilo o težavi | ID sesutja>"
 
-#~ msgid ""
-#~ "Your system might become unstable now and might need to be restarted."
+#~ msgid "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
 #~ "Vaš sistem lahko postane nestabilen in ga bo morda treba znova zagnati."
 
@@ -1062,17 +1075,22 @@ msgstr "Ali je pošiljanje teh prilog vredu? [y/n]"
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr "nepravilno število argumentov; uporabite --help za kratko pomoč"
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Oprostite, program %s se je nepričakovano zaprl."
 
+#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Program \"%s\" se je nepričakovano zaprl."
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Program %s se je nepričakovano zaprl."
 
+#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Paket \"%s\" se ni namestil ali nadgradil."
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Program %s se je nepričakovano zaprl"

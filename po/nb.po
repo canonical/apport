@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2013-06-17 07:52+0000\n"
 "Last-Translator: Åka Sikrom <Unknown>\n"
 "Language-Team: Norwegian Bokmål <nb@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:09+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:08+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: \n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -91,7 +91,8 @@ msgstr "Ingen pakke er spesifisert"
 #: ../apport/ui.py:406
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
-msgstr "Du må spesifisere en pakke eller PID: Se --hjelp for mer informasjon."
+msgstr ""
+"Du må spesifisere en pakke eller PID: Se --hjelp for mer informasjon."
 
 #: ../apport/ui.py:429
 msgid "Permission denied"
@@ -149,8 +150,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -205,7 +206,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Legg til et ekstra stikkord i rapporten. Kan nevnes flere ganger."
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr "%prog [valg] [symptom|pid|pakke|programsti|.apport/.crash-fil]"
 
 #: ../apport/ui.py:724
@@ -220,7 +222,8 @@ msgstr ""
 
 #: ../apport/ui.py:726
 msgid "Click a window as a target for filing a problem report."
-msgstr "Klikk på det aktuelle vinduet for å sende en feilrapport om problemet."
+msgstr ""
+"Klikk på det aktuelle vinduet for å sende en feilrapport om problemet."
 
 #: ../apport/ui.py:728
 msgid "Start in bug updating mode. Can take an optional --package."
@@ -343,7 +346,8 @@ msgstr "Kunne ikke starte nettleseren for å åpne %s."
 #: ../apport/ui.py:1226
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
-msgstr "Vennligst skriv inn kontoinformasjonen din for %s-feilsporingssystemet"
+msgstr ""
+"Vennligst skriv inn kontoinformasjonen din for %s-feilsporingssystemet"
 
 #: ../apport/ui.py:1238
 msgid "Network problem"
@@ -361,7 +365,8 @@ msgstr "Minne fullt"
 
 #: ../apport/ui.py:1268
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "Systemet ditt har ikke nok minne til å behandle denne krasjrapporten."
+msgstr ""
+"Systemet ditt har ikke nok minne til å behandle denne krasjrapporten."
 
 #: ../apport/ui.py:1303
 #, python-format
@@ -435,7 +440,8 @@ msgstr ""
 "det ikke eksisterer"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "rapporter nedlastings- og installasjonsfremdrift når pakker installeres i "
 "sandkassa"
@@ -830,12 +836,15 @@ msgid "System problem reports"
 msgstr "Feilrapporter for system"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
-msgstr "Skriv inn passordet ditt for å få tilgang til systemets feilrapporter"
+msgid ""
+"Please enter your password to access problem reports of system programs"
+msgstr ""
+"Skriv inn passordet ditt for å få tilgang til systemets feilrapporter"
 
 #: ../bin/apport-retrace.py:34
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "Legg ikke til flere meldinger i rapporten, skriv de heller til stdout."
+msgstr ""
+"Legg ikke til flere meldinger i rapporten, skriv de heller til stdout."
 
 #: ../bin/apport-retrace.py:36
 msgid ""
@@ -891,7 +900,8 @@ msgstr ""
 "oppstod på utgivelsen som kjører nå."
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Rapporter nedlastings- og installasjonsfremdrift når pakker blir installert "
 "i sandkassa."
@@ -930,7 +940,8 @@ msgstr ""
 "Vis krasjrapporten og be om bekreftelse før den sendes til krasjdatabasen."
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr "Sti til kopien av sqlite-databasen. (Forvalgt: ikke se etter kopier)"
 
 #: ../bin/apport-retrace.py:76
@@ -946,13 +957,13 @@ msgstr "OK å sende disse som vedlegg? [j/n]"
 #~ msgstr "Program feil"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Dette vil fjerne noen store elementer fra rapporten. Disse er veldig "
-#~ "nyttige for utviklere for å feilsøke problemet, men kan være for store "
-#~ "for deg å laste opp om du har en treg internettforbindelse."
+#~ "Dette vil fjerne noen store elementer fra rapporten. Disse er veldig nyttige "
+#~ "for utviklere for å feilsøke problemet, men kan være for store for deg å "
+#~ "laste opp om du har en treg internettforbindelse."
 
 #~ msgid "Content of the report"
 #~ msgstr "Innhold i rapporten"
@@ -962,8 +973,7 @@ msgstr "OK å sende disse som vedlegg? [j/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Hvis du ikke gjorde noe konfidensielt (skrev inn passord eller annen\n"
@@ -983,15 +993,19 @@ msgstr "OK å sende disse som vedlegg? [j/n]"
 #~ msgstr ""
 #~ "Du kan hjelpe utviklerne med å reparere problemet ved å rapportere det."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Send komplett rapport (anbefalt; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Send &redusert rapport (treg internettforbindelse; %s)"
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Pakken \"%s\" ble ikke installert eller oppgradert."
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Redusert rapport (treg internettforbindelse; %s)"
 
@@ -1009,16 +1023,18 @@ msgstr "OK å sende disse som vedlegg? [j/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "Hvis du ikke gjorde noe konfidensielt (skrev inn passord eller annen "
-#~ "privat informasjon), kan du hjelpe til med å forbedre programmet ved å "
-#~ "rapportere problemet."
+#~ "Hvis du ikke gjorde noe konfidensielt (skrev inn passord eller annen privat "
+#~ "informasjon), kan du hjelpe til med å forbedre programmet ved å rapportere "
+#~ "problemet."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Komplett rapport (anbefalt; %s)"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1026,6 +1042,7 @@ msgstr "OK å sende disse som vedlegg? [j/n]"
 #~ "<span weight=\"bold\" size=\"larger\">Beklager, pakken\"%s\" kunne ikke "
 #~ "installeres eller oppgraderes.</span>"
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s ble lukket uventet på %s på %s."
 
@@ -1037,8 +1054,8 @@ msgstr "OK å sende disse som vedlegg? [j/n]"
 #~ msgstr ""
 #~ "<big><b>Sende problemrapport til utviklerne?</b></big>\n"
 #~ "\n"
-#~ "Vennligst fyll ut skjemaet i det automatisk åpnede nettleservinduet etter "
-#~ "at problemrapporten har blitt sendt."
+#~ "Vennligst fyll ut skjemaet i det automatisk åpnede nettleservinduet etter at "
+#~ "problemrapporten har blitt sendt."
 
 #~ msgid "_Report Problem..."
 #~ msgstr "_Rapporter problem"
@@ -1046,8 +1063,7 @@ msgstr "OK å sende disse som vedlegg? [j/n]"
 #~ msgid "incorrect number of arguments; use --help for a short help"
 #~ msgstr "feil antall argumenter, bruk --help for en kort hjelpedialog"
 
-#~ msgid ""
-#~ "Your system might become unstable now and might need to be restarted."
+#~ msgid "Your system might become unstable now and might need to be restarted."
 #~ msgstr "Systemet ditt kan bli ustabilt nå, og kan måtte startes på nytt."
 
 #~ msgid "_Send Report"
@@ -1056,6 +1072,7 @@ msgstr "OK å sende disse som vedlegg? [j/n]"
 #~ msgid "%prog [options] <apport problem report | crash ID>"
 #~ msgstr "%prog [alternativer] <apport feilrapport | kræsj ID>"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Dette er ikke en gyldig %s-pakke"
 

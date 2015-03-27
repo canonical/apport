@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2011-10-07 06:10+0000\n"
 "Last-Translator: Khandakar Mujahidul Islam <suzan229@gmail.com>\n"
 "Language-Team: Bengali <bn@li.org>\n"
-"Language: bn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:08+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:07+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: bn\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -28,8 +28,8 @@ msgid ""
 "This is not an official %s package. Please remove any third party package "
 "and try again."
 msgstr ""
-"এটি একটি অফিসিয়াল %s প্যাকেজ নয়। অনুগ্রহ করে কোনো তৃতীয় পক্ষের প্যাকেজ অপসারণ করুন "
-"এবং পুনরায় চেষ্টা করুন।"
+"এটি একটি অফিসিয়াল %s প্যাকেজ নয়। অনুগ্রহ করে কোনো তৃতীয় পক্ষের প্যাকেজ "
+"অপসারণ করুন এবং পুনরায় চেষ্টা করুন।"
 
 #: ../apport/ui.py:145
 #, python-format
@@ -59,8 +59,8 @@ msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
 msgstr ""
-"স্বয়ংক্রিয়ভাবে সমস্যাটি পর্যালোচনা করা এবং ডেভেলপারদেরকে রিপোর্ট করার জন্য আপনার "
-"কম্পিউটারে পর্যাপ্ত পরিমাণ খালি মেমোরি নেই।"
+"স্বয়ংক্রিয়ভাবে সমস্যাটি পর্যালোচনা করা এবং ডেভেলপারদেরকে রিপোর্ট করার জন্য "
+"আপনার কম্পিউটারে পর্যাপ্ত পরিমাণ খালি মেমোরি নেই।"
 
 #: ../apport/ui.py:316 ../apport/ui.py:324 ../apport/ui.py:451
 #: ../apport/ui.py:454 ../apport/ui.py:655 ../apport/ui.py:1106
@@ -139,8 +139,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -185,7 +185,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 
 #: ../apport/ui.py:724
@@ -247,7 +248,8 @@ msgstr ""
 #: ../apport/ui.py:883
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
-msgstr "ক্র্যাশ পরীক্ষা করতে টার্মিনালের উইন্ডোর অ্যাপোর্ট-অনুসন্ধান চালু করা হবে।"
+msgstr ""
+"ক্র্যাশ পরীক্ষা করতে টার্মিনালের উইন্ডোর অ্যাপোর্ট-অনুসন্ধান চালু করা হবে।"
 
 #: ../apport/ui.py:884
 msgid "Run gdb session"
@@ -273,7 +275,8 @@ msgstr ""
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
-msgstr "প্রোগ্রাম %s দ্বারা সমস্যা ঘটেছে, ক্র্যাশ সংঘটন হতে যা পরিবর্তিত হয়েছে।"
+msgstr ""
+"প্রোগ্রাম %s দ্বারা সমস্যা ঘটেছে, ক্র্যাশ সংঘটন হতে যা পরিবর্তিত হয়েছে।"
 
 #: ../apport/ui.py:1032 ../apport/ui.py:1063 ../apport/ui.py:1278
 msgid "This problem report is damaged and cannot be processed."
@@ -314,8 +317,8 @@ msgstr "নেটওয়ার্ক সমস্যা"
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
-"বিধস্ত ডাটাবেসে সংযোগ করতে পারছি না, অনুগ্রহ করে আপনার ইন্টারনেট সংযুক্তি পরীক্ষা "
-"করুন।"
+"বিধস্ত ডাটাবেসে সংযোগ করতে পারছি না, অনুগ্রহ করে আপনার ইন্টারনেট সংযুক্তি "
+"পরীক্ষা করুন।"
 
 #: ../apport/ui.py:1267
 msgid "Memory exhaustion"
@@ -323,7 +326,8 @@ msgstr ""
 
 #: ../apport/ui.py:1268
 msgid "Your system does not have enough memory to process this crash report."
-msgstr "এই বিধস্ত রিপোর্ট প্রক্রিয়াজাত করার জন্য আপনার সিস্টেমে পর্যাপ্ত মেমোরি নেই।"
+msgstr ""
+"এই বিধস্ত রিপোর্ট প্রক্রিয়াজাত করার জন্য আপনার সিস্টেমে পর্যাপ্ত মেমোরি নেই।"
 
 #: ../apport/ui.py:1303
 #, python-format
@@ -388,7 +392,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -453,7 +458,8 @@ msgstr "<big><b>দুঃখিত, আভ্যন্তরীন ত্রু�
 #: ../gtk/apport-gtk.ui.h:6 ../kde/apport-kde.py:240 ../gtk/apport-gtk.py:300
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
-"যদি আপনি অতিরিক্ত কোন সমস্যা উল্লেখ করেন, কম্পিউটার পুনরায় আরম্ভ করার চেষ্টা করুন।"
+"যদি আপনি অতিরিক্ত কোন সমস্যা উল্লেখ করেন, কম্পিউটার পুনরায় আরম্ভ করার "
+"চেষ্টা করুন।"
 
 #: ../gtk/apport-gtk.ui.h:7
 msgid "Send an error report to help fix this problem"
@@ -754,7 +760,8 @@ msgid "System problem reports"
 msgstr ""
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 
 #: ../bin/apport-retrace.py:34
@@ -803,7 +810,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-retrace.py:55
@@ -834,7 +842,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 
 #: ../bin/apport-retrace.py:76
@@ -846,5 +855,6 @@ msgstr ""
 msgid "OK to send these as attachments? [y/n]"
 msgstr ""
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "দুঃখিত, অ্যাপ্লিকেশন %s অপ্রত্যাশিতভাবে বন্ধ হয়ে গেছে।"

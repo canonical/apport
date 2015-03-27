@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2014-08-21 13:44+0000\n"
 "Last-Translator: Serhiy Zahoriya <Unknown>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
-"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:10+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:09+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: uk\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -147,8 +147,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -202,7 +202,8 @@ msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "Додати додаткову мітку до звіту. Може бути задано декілька разів."
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [параметри] [симптом|pid|пакунок|шлях програми|.apport/.crash file]"
 
@@ -434,7 +435,8 @@ msgstr ""
 "його не існує"
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "показувати поступ завантаження/встановлення під час встановлення пакунків у "
 "пісочницю"
@@ -830,7 +832,8 @@ msgid "System problem reports"
 msgstr "Звіти про системні помилки"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Уведіть свій пароль для доступу до звітів про помилки у системних програмах"
 
@@ -890,7 +893,8 @@ msgstr ""
 "на дану мить."
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Сповіщати про хід виконання завантаження/встановлення пакунків у тимчасовому "
 "середовищі"
@@ -931,7 +935,8 @@ msgstr ""
 "його у базу аварій."
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Шлях до дублікату бази даних sqlite (типово: немає дублікату для перевірки)"
 
@@ -954,20 +959,20 @@ msgstr "Відіслати їх як вкладення? [так/ні]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Якщо ви не вводили конфіденційну інформацію (паролі або особисті дані),\n"
-#~ "Ви можете допомогти нам покращити програму, якщо надішлете звіт про "
-#~ "помилку."
+#~ "Ви можете допомогти нам покращити програму, якщо надішлете звіт про помилку."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s несподівано закрилась %s в %s."
 
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "У Вашій системі виявлена серйозна несправність ядра."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Пакунок \"%s\" не вдалося встановити або оновити."
 
@@ -976,21 +981,25 @@ msgstr "Відіслати їх як вкладення? [так/ні]"
 #~ msgstr ""
 #~ "Ви можете допомогти розробникам, відправивши звіт про виявлену помилку."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Надіслати повний звіт (рекомендовано; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Надіслати &скорочений звіт (повільне під'єднання до Інтернету; %s)"
 
 #~ msgid "Content of the report"
 #~ msgstr "Вміст звіту"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Повний звіт (рекомендується; %s)"
 
 #~ msgid "Application problem"
 #~ msgstr "Помилка в програмі"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1009,6 +1018,7 @@ msgstr "Відіслати їх як вкладення? [так/ні]"
 #~ "Після того, як звіт буде висланий, заповніть, будь ласка, форму, яка "
 #~ "автоматично відкриється в браузері."
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Скорочений звіт (повільне з'єднання з мережею Інтернет; %s)"
 
@@ -1016,14 +1026,14 @@ msgstr "Відіслати їх як вкладення? [так/ні]"
 #~ msgstr "Перезапустити _програму"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Це призведе до видалення деяких великих елементів зі звіту. Вони дуже "
 #~ "корисні для розробників під час налагодження програм, але можуть бути "
-#~ "занадто великими для завантаження, якщо у Вас повільне з'єднання з "
-#~ "мережею Інтернет."
+#~ "занадто великими для завантаження, якщо у Вас повільне з'єднання з мережею "
+#~ "Інтернет."
 
 #~ msgid "_Ignore future crashes of this program version"
 #~ msgstr "_Ігнорувати майбутні збої в цій версії програми"
@@ -1039,8 +1049,8 @@ msgstr "Відіслати їх як вкладення? [так/ні]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Якщо Ви не вводили секретну інформацію (паролі або особисті дані), можете "
 #~ "допомогти покращити програму, відправивши звіт про помилку."
@@ -1048,11 +1058,11 @@ msgstr "Відіслати їх як вкладення? [так/ні]"
 #~ msgid "_Send Report"
 #~ msgstr "_Надіслати звіт"
 
-#~ msgid ""
-#~ "Your system might become unstable now and might need to be restarted."
+#~ msgid "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
 #~ "Система може стати нестабільною, можливо буде потрібне перезавантаження."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Це не оригінальний пакунок %s"
 
@@ -1066,5 +1076,5 @@ msgstr "Відіслати їх як вкладення? [так/ні]"
 #~ "you either need to do a local operation (-s, -g, -o) or supply an "
 #~ "authentication file (--auth); see --help for a short help"
 #~ msgstr ""
-#~ "Вам необхідно або здійснити локальні операції (-s, -g, -o) або вказати "
-#~ "файл автентифікації (--auth); виберіть  --help для короткої довідки"
+#~ "Вам необхідно або здійснити локальні операції (-s, -g, -o) або вказати файл "
+#~ "автентифікації (--auth); виберіть  --help для короткої довідки"

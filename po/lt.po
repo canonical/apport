@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2013-11-13 12:42+0000\n"
 "Last-Translator: Marius Gedminas <marius@gedmin.as>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
-"Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-17 05:09+0000\n"
-"X-Generator: Launchpad (build 17389)\n"
+"X-Launchpad-Export-Date: 2015-03-27 05:08+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
+"Language: lt\n"
 
 #: ../apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
@@ -150,8 +150,8 @@ msgid ""
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -207,7 +207,8 @@ msgstr ""
 "Prie ataskaitos pridėti papildomą žymę. Gali būti nurodyta kelis kartus."
 
 #: ../apport/ui.py:721
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [parametrai] [simptomas|pid|paketas|programos kelias|.apport/.crash "
 "failas]"
@@ -228,7 +229,8 @@ msgstr "Pranešti apie problemą, paspauskite ant lango."
 
 #: ../apport/ui.py:728
 msgid "Start in bug updating mode. Can take an optional --package."
-msgstr "Pradėti klaidos atnaujinimo režime. Gali prireikti nebūtino --package."
+msgstr ""
+"Pradėti klaidos atnaujinimo režime. Gali prireikti nebūtino --package."
 
 #: ../apport/ui.py:730
 msgid ""
@@ -431,7 +433,8 @@ msgid ""
 msgstr ""
 
 #: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 
 #: ../bin/apport-valgrind.py:62
@@ -819,7 +822,8 @@ msgid "System problem reports"
 msgstr "Sistemos pranešimai apie klaidą"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Įveskite slaptažodį, kad prieitumėte prie sistemos programų pranešimų apie "
 "klaidas"
@@ -881,7 +885,8 @@ msgstr ""
 "strigtis, kurios įvyko dabar vykdomoje laidoje."
 
 #: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Raportuoti atsiuntimo/įdiegimo eigą kai įdiegiami paketai į smėlio dėžę"
 
@@ -920,7 +925,8 @@ msgstr ""
 "į strigčių duomenų bazę."
 
 #: ../bin/apport-retrace.py:67
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Kelias į dublikatų sqlite duomenų bazę (numatyta r.: netikrinti dublikatų)"
 
@@ -933,6 +939,7 @@ msgstr "Negalite naudoti -C be -S. Stabdoma."
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Ar siųsti šiuos priedus? [y/n]"
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Tai ne autentiškas %s paketas"
 
@@ -942,28 +949,33 @@ msgstr "Ar siųsti šiuos priedus? [y/n]"
 #~ msgid "Your system encountered a serious kernel problem."
 #~ msgstr "Sistema susidūrė su rimta branduolio problema."
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Siųsti visą ataskaitą (rekomenduojama; %s)"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Siųsti su&mažintą ataskaitą (lėtas interneto ryšys; %s)"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Deja, paketas „%s“ nebuvo įrašytas "
-#~ "ar atnaujintas.</span>"
+#~ "<span weight=\"bold\" size=\"larger\">Deja, paketas „%s“ nebuvo įrašytas ar "
+#~ "atnaujintas.</span>"
 
 #~ msgid "Content of the report"
 #~ msgstr "Ataskaitos turinys"
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Visa ataskaita (rekomenduojama; %s)"
 
 #~ msgid "Application problem"
 #~ msgstr "Programos problema"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Sumažinta ataskaita (lėtas interneto ryšys; %s)"
 
@@ -987,17 +999,18 @@ msgstr "Ar siųsti šiuos priedus? [y/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Jei nedarėte nieko konfidencialaus (slaptažodžių įvedimas ar kita\n"
 #~ "asmeninė informacija), galite padėti pagerinti programą pranešdami\n"
 #~ "apie problemą."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "%s netikėtai užsidarė %s %s."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Nepavyko įdiegti ar atnaujinti paketo „%s“."
 
@@ -1011,8 +1024,8 @@ msgstr "Ar siųsti šiuos priedus? [y/n]"
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
 #~ "Jei nedarėte nieko konfidencialaus (slaptažodžių įvedimas ar asmeninė "
 #~ "informacija), galite padėti patobulinti programą pranešdami apie problemą."
@@ -1025,13 +1038,13 @@ msgstr "Ar siųsti šiuos priedus? [y/n]"
 #~ msgstr ""
 #~ "<big><b>Ar išsiųsti pranešimą apie problemą kūrėjams?</b></big>\n"
 #~ "\n"
-#~ "Kai pranešimas apie problemą bus išsiųstas, užpildykite formą "
-#~ "automatiškai atvertoje žiniatinklio naršyklėje."
+#~ "Kai pranešimas apie problemą bus išsiųstas, užpildykite formą automatiškai "
+#~ "atvertoje žiniatinklio naršyklėje."
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
 #~ "Tai pašalins kelias dideles dalis iš ataskaitos. Jos yra labai naudingos "
 #~ "kūrėjams problemos derinimui, bet gali būti per didelės išsiuntimui, jei "
@@ -1040,11 +1053,9 @@ msgstr "Ar siųsti šiuos priedus? [y/n]"
 #~ msgid "%prog [options] <apport problem report | crash ID>"
 #~ msgstr "%prog [parametrai] <apport problemos ataskaita | strigties ID>"
 
-#~ msgid ""
-#~ "Your system might become unstable now and might need to be restarted."
+#~ msgid "Your system might become unstable now and might need to be restarted."
 #~ msgstr ""
-#~ "Jūsų sistema dabar gali tapti nestabili ir gali reikėti įkrauti OS iš "
-#~ "naujo."
+#~ "Jūsų sistema dabar gali tapti nestabili ir gali reikėti įkrauti OS iš naujo."
 
 #~ msgid ""
 #~ "you either need to do a local operation (-s, -g, -o) or supply an "
@@ -1059,9 +1070,11 @@ msgstr "Ar siųsti šiuos priedus? [y/n]"
 #~ msgid "Send this data to the developers?"
 #~ msgstr "Siųsti šiuos duomenis kūrėjams?"
 
+#, python-format
 #~ msgid "Sorry, the package \"%s\" failed to install or upgrade."
 #~ msgstr "Atsiprašome, nepavyko įdiegti ar atnaujinti paketo „%s“"
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly"
 #~ msgstr "Atsiprašome, %s netikėtai užvertas"
 
@@ -1071,12 +1084,14 @@ msgstr "Ar siųsti šiuos priedus? [y/n]"
 #~ msgid "Restart &Program"
 #~ msgstr "Paleisti &programą iš naujo"
 
+#, python-format
 #~ msgid "Sorry, %s closed unexpectedly."
 #~ msgstr "Atsiprašome, %s netikėtai užvertas."
 
 #~ msgid "&Send"
 #~ msgstr "&Siųsti"
 
+#, python-format
 #~ msgid "Sorry, the program \"%s\" closed unexpectedly."
 #~ msgstr "Atsiprašome, programa „%s“ netikėtai užsivėrė."
 
@@ -1093,5 +1108,6 @@ msgstr "Ar siųsti šiuos priedus? [y/n]"
 #~ "Kai pranešimas apie klaidą bus išsiųstas, prašome užpildyti formą "
 #~ "automatiškai atvertoje žiniatinklio naršyklėje."
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Atsiprašome, programa %s netikėtai užsivėrė."
