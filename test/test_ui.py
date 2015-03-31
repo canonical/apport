@@ -1250,7 +1250,7 @@ bOgUs=
         bad_strings = [os.uname()[1], p[0], p[4], p[5], os.getcwd()]
 
         for s in bad_strings:
-            self.assertFalse(s in report, 'dump contains sensitive string: %s' % s)
+            self.assertFalse(s in report, 'dump contains sensitive string: %s:\n%s' % (s, report))
 
     def test_run_crash_anonymity_order(self):
         '''run_crash() anonymization runs after info and duplicate collection'''

@@ -1452,7 +1452,7 @@ class Report(problem_report.ProblemReport):
         for k in self:
             is_proc_field = k.startswith('Proc') and k not in [
                 'ProcCpuinfo', 'ProcMaps', 'ProcStatus', 'ProcInterrupts', 'ProcModules']
-            if is_proc_field or 'Stacktrace' in k or k in ['Traceback', 'PythonArgs', 'Title']:
+            if is_proc_field or 'Stacktrace' in k or k in ['Traceback', 'PythonArgs', 'Title', 'JournalErrors']:
                 if not hasattr(self[k], 'isspace'):
                     continue
                 for (pattern, repl) in replacements:
