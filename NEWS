@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * apport-kde tests: Fix imports to make tests work again.
  * Fix UnicodeDecodeError on parsing non-ASCII environment variables.
+ * apport: use the proper pid when calling apport in another PID namespace.
+   Thanks Brian Murray. (LP: #1300235)
 
 2.17 (2015-03-31)
 -------------------
