@@ -602,6 +602,8 @@ class T(unittest.TestCase):
         if pid == 0:
             if uid is not None:
                 os.setuid(uid)
+            # set UTF-8 environment variable, to check proper parsing in apport
+            os.putenv('utf8trap', b'\xc3\xa0\xc3\xa4')
             os.dup2(os.open('/dev/null', os.O_WRONLY), sys.stdout.fileno())
             sys.stdin.close()
             os.setsid()

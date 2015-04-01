@@ -209,11 +209,11 @@ def is_closing_session(pid, uid):
     During that, crashes are common as the session D-BUS and X.org are going
     away, etc. These crash reports are mostly noise, so should be ignored.
     '''
-    with open('/proc/%s/environ' % pid) as e:
-        env = e.read().split('\0')
+    with open('/proc/%s/environ' % pid, 'rb') as e:
+        env = e.read().split(b'\0')
     for e in env:
-        if e.startswith('DBUS_SESSION_BUS_ADDRESS='):
-            dbus_addr = e.split('=', 1)[1]
+        if e.startswith(b'DBUS_SESSION_BUS_ADDRESS='):
+            dbus_addr = e.split(b'=', 1)[1].decode()
             break
     else:
         error_log('is_closing_session(): no DBUS_SESSION_BUS_ADDRESS in environment')

@@ -1591,10 +1591,10 @@ class Report(problem_report.ProblemReport):
         '''
         # determine cgroup
         try:
-            with open('/proc/%s/environ' % pid) as f:
-                for l in f.read().split('\0'):
-                    if l.startswith('XDG_SESSION_ID='):
-                        my_session = l.split('=', 1)[1].strip()
+            with open('/proc/%s/environ' % pid, 'rb') as f:
+                for l in f.read().split(b'\0'):
+                    if l.startswith(b'XDG_SESSION_ID='):
+                        my_session = l.split(b'=', 1)[1].strip().decode()
                         break
                 else:
                     return None
