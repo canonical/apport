@@ -3,6 +3,14 @@ detailed list of changes, please see ChangeLog.
 
 2.17.1 (UNRELEASED)
 -------------------
+ * SECURITY UPDATE: Fix root privilege escalation through crash forwarding to
+   containers.
+   Version 2.13 introduced forwarding a crash to a container's apport. By
+   crafting a specific file system structure, entering it as a namespace
+   ("container"), and crashing something in it, a local user could access
+   arbitrary files on the host system with root privileges.
+   Thanks to Stéphane Graber for discovering and fixing this!
+   (CVE-2015-1318, LP: #1438758)
  * apport-kde tests: Fix imports to make tests work again.
  * Fix UnicodeDecodeError on parsing non-ASCII environment variables.
  * apport: use the proper pid when calling apport in another PID namespace.
