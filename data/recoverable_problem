@@ -62,10 +62,9 @@ def main():
     report.add_user_info()
 
     ds = report.get('DuplicateSignature', '')
-    package = report.get('Package', '')
-    if package and ds:
-        package = package.split()[0]
-        report['DuplicateSignature'] = '%s:%s' % (package, ds)
+    exec_path = report.get('ExecutablePath', '')
+    if exec_path and ds:
+        report['DuplicateSignature'] = '%s:%s' % (exec_path, ds)
 
     # Write the final report
     with open(apport.fileutils.make_report_path(report), 'wb') as fp:
