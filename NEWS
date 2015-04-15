@@ -6,6 +6,8 @@ detailed list of changes, please see ChangeLog.
  * do-release: Force UTC timezone for upstream changelog generation.
  * apport-kde: Fix crash when showing byte array values. Thanks Jonathan
    Riddell. (LP: #1443659)
+ * Really create a better duplicate signature for recoverable problems, using
+   ExecutablePath. Thanks Brian Murray. (LP: #1316763)
 
 2.17.1 (2015-04-14)
 -------------------
