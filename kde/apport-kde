@@ -355,7 +355,7 @@ class MainUserInterface(apport.ui.UserInterface):
                not self.report._is_binary(self.report[key]):
                 lines = self.report[key].splitlines()
                 for line in lines:
-                    QTreeWidgetItem(keyitem, [line])
+                    QTreeWidgetItem(keyitem, [str(line)])
                 if len(lines) < 4:
                     keyitem.setExpanded(True)
             else:
