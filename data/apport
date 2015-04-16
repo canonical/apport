@@ -261,117 +261,12 @@ init_error_log()
 
 # Check if we received a valid global PID (kernel >= 3.12). If we do,
 # then compare it with the local PID. If they don't match, it's an
-# indication that the crash originated from another PID namespace. In that
-# case, attempt to forward the crash to apport in that namespace. If
-# apport can't be found, then simply log an entry in the host error log
-# and exit 0.
+# indication that the crash originated from another PID namespace.
+# Simply log an entry in the host error log and exit 0.
 if len(sys.argv) == 5 and sys.argv[4].isdigit() and sys.argv[4] != sys.argv[1]:
-    host_pid = sys.argv[4]
-    pid = sys.argv[1]
-    if os.path.exists('/proc/%s/root/%s' % (host_pid, __file__)) \
-            and os.path.exists('/proc/%s/ns/' % host_pid):
-        try:
-            import lxc
-        except:
-            error_log('pid %s crashed in a container without python3-lxc' % host_pid)
-            sys.exit(0)
-
-        def list_containers():
-            containers = []
-
-            with open('/proc/net/unix', 'r') as fd:
-                for line in sorted(fd):
-                    fields = line.strip().split(' ')
-                    if len(fields) != 8:
-                        continue
-
-                    inode = fields[6].strip()
-                    path = fields[7].split('/')
-                    if path[-1] != 'command':
-                        continue
-
-                    if len(path) < 2:
-                        continue
-
-                    real_path = '/'.join(path[:-2]).lstrip('@')
-
-                    container = lxc.Container(path[-2], real_path)
-
-                    if not container.controllable:
-                        continue
-
-                    if container.state == 'STOPPED':
-                        continue
-
-                    ppid = 0
-                    with open('/proc/%s/status' % container.init_pid) as fd:
-                        for line in fd:
-                            if line.startswith('PPid:'):
-                                ppid = int(line.strip().split(':')[-1].strip())
-                                break
-                        else:
-                            continue
-
-                    stat = os.stat('/proc/%s' % ppid)
-                    uid = stat.st_uid
-                    gid = stat.st_gid
-
-                    for fd in os.listdir('/proc/%s/fd/' % ppid):
-                        if os.readlink('/proc/%s/fd/%s' % (ppid, fd)) \
-                                == 'socket:[%s]' % inode:
-                            break
-                    else:
-                        continue
-
-                    containers.append((container, (uid, gid)))
-
-            return containers
-
-        def list_ns(pid):
-            return [os.readlink('/proc/%s/ns/%s' % (pid, ns))
-                    for ns in sorted(os.listdir('/proc/%s/ns' % pid))]
-
-        def get_container(pid):
-            pid_ns = list_ns(pid)
-
-            for container, owner in list_containers():
-                container_ns = list_ns(container.init_pid)
-
-                if container_ns == pid_ns:
-                    return container, owner
-
-            return (None, None)
-
-        container, owner = get_container(host_pid)
-        if not container:
-            error_log('pid %s crashed in an unknown container' % host_pid)
-            sys.exit(0)
-
-        if owner[0] or owner[1]:
-            error_log('pid %s crashed in an untrusted container' % host_pid)
-            sys.exit(0)
-
-        error_log('pid %s (host pid %s) crashed in container '
-                  '"%s" (%s), forwarding' % (pid, host_pid,
-                                             container.name,
-                                             container.get_config_path()))
-
-        sys.stderr.flush()
-
-        def run_command(cmd):
-            os.environ['PATH'] = '/usr/sbin:/usr/bin:/sbin:/bin'
-
-            return subprocess.call(cmd)
-
-        cmd = [__file__, sys.argv[1], sys.argv[2], sys.argv[3]]
-        retval = container.attach_wait(run_command, cmd,
-                                       env_policy=lxc.LXC_ATTACH_CLEAR_ENV)
-
-        sys.exit(0)
-    else:
-        error_log('host pid %s crashed in a container without apport support' %
-                  host_pid)
-        sys.exit(0)
+    error_log('host pid %s crashed in a container without apport support' %
+              sys.argv[4])
+    sys.exit(0)
 
 check_lock()
 

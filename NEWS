@@ -3,6 +3,12 @@ detailed list of changes, please see ChangeLog.
 
 2.17.2 (UNRELEASED)
 -------------------
+ * SECURITY UPDATE: Disable crash forwarding to containers. The previous fix in
+   2.17.1 was not sufficient against all attack scenarios. By binding to
+   specially crafted sockes, a normal user program could forge arbitrary
+   entries in /proc/net/unix. We cannot currently rely on a kernel-side
+   solution for this; this feature will be re-enabled once it gets re-done to
+   be secure. (LP: #1444518)
  * do-release: Force UTC timezone for upstream changelog generation.
  * apport-kde: Fix crash when showing byte array values. Thanks Jonathan
    Riddell. (LP: #1443659)
