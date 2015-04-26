@@ -70,9 +70,9 @@ def main(argv=None):
 
         # Generate a sensible report message.
         if pr.get('Failure') == 'suspend/resume':
-            pr['Annotation'] = _('This occured during a previous suspend and prevented it from resuming properly.')
+            pr['Annotation'] = _('This occurred during a previous suspend, and prevented the system from resuming properly.')
         else:
-            pr['Annotation'] = _('This occured during a previous hibernate and prevented it from resuming properly.')
+            pr['Annotation'] = _('This occurred during a previous hibernation, and prevented the system from resuming properly.')
 
         # If we had a late hang make sure the dialog is clear that they may
         # not have noticed.  Also update the bug title so we notice.
