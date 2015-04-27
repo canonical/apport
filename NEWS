@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.17.3 (UNRELEASED)
+-------------------
+ * apportcheckresume: Fix "occured" typo, thanks Matthew Paul Thomas.
+   (LP: #1448636)
+
 2.17.2 (2015-04-16)
 -------------------
  * SECURITY UPDATE: Disable crash forwarding to containers. The previous fix in
