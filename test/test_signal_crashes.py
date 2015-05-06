@@ -671,7 +671,7 @@ fi
                  expect_corefile_owner=None, args=[]):
         '''Generate a test crash.
 
-        This runs command (by default test_executable) in /tmp, lets it crash,
+        This runs command (by default test_executable) in cwd, lets it crash,
         and checks that it exits with the expected return code, leaving a core
         file behind if expect_corefile is set, and generating a crash report if
         expect_coredump is set.
@@ -679,7 +679,7 @@ fi
         If check_running is set (default), this will abort if test_process is
         already running.
         '''
-        self.assertFalse(os.path.exists('core'), '/tmp/core already exists, please clean up first')
+        self.assertFalse(os.path.exists('core'), '%s/core already exists, please clean up first' % os.getcwd())
         pid = self.create_test_process(check_running, command, uid=uid, args=args)
         if sleep > 0:
             time.sleep(sleep)
@@ -718,17 +718,17 @@ fi
                              'no running test executable processes')
 
         if expect_corefile:
-            self.assertTrue(os.path.exists('/tmp/core'), 'leaves wanted core file')
+            self.assertTrue(os.path.exists('core'), 'leaves wanted core file')
             try:
                 # check core file permissions
-                st = os.stat('/tmp/core')
+                st = os.stat('core')
                 self.assertEqual(stat.S_IMODE(st.st_mode), 0o600, 'core file has correct permissions')
                 if expect_corefile_owner is not None:
                     self.assertEqual(st.st_uid, expect_corefile_owner, 'core file has correct owner')
 
                 # check that core file is valid
                 gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'bt',
-                                        command, '/tmp/core'],
+                                        command, 'core'],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
                 (out, err) = gdb.communicate()
@@ -736,10 +736,10 @@ fi
                 out = out.decode()
                 err = err.decode().strip()
             finally:
-                os.unlink('/tmp/core')
+                os.unlink('core')
         else:
-            if os.path.exists('/tmp/core'):
-                os.unlink('/tmp/core')
+            if os.path.exists('core'):
+                os.unlink('core')
                 self.fail('leaves unexpected core file behind')
 
     def get_temp_all_reports(self):
