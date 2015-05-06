@@ -555,7 +555,7 @@ class T(unittest.TestCase):
             st = os.stat(report)
             os.unlink(report)
             self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-            # this must not be owned by root as it is a setuid binary
+            # this must be owned by root as it is a setuid binary
             self.assertEqual(st.st_uid, 0, 'report has correct owner')
         else:
             # no cores/dump if suid_dumpable == 0
@@ -583,7 +583,7 @@ class T(unittest.TestCase):
             st = os.stat(report)
             os.unlink(report)
             self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-            # this must not be owned by root as it is a setuid binary
+            # this must be owned by root as it is a setuid binary
             self.assertEqual(st.st_uid, 0, 'report has correct owner')
         else:
             # no cores/dump if suid_dumpable == 0
