@@ -32,6 +32,15 @@ ifpath = os.path.expanduser(apport.report._ignore_file)
 if orig_home is not None:
     os.environ['HOME'] = orig_home
 
+# did we enable suid_dumpable?
+suid_dumpable = False
+try:
+    with open('/proc/sys/fs/suid_dumpable') as f:
+        if f.read().strip() != '0':
+            suid_dumpable = True
+except IOError:
+    pass
+
 
 class T(unittest.TestCase):
     def setUp(self):
@@ -534,25 +543,24 @@ class T(unittest.TestCase):
         # run test program as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if os.path.isdir('/run/systemd/system'):
-            # FIXME: no core file/apport dump at all under systemd
+        if suid_dumpable:
+            # expect the core file to be owned by root
+            self.do_crash(command=myexe, expect_corefile=True, uid=8,
+                          expect_corefile_owner=0)
+
+            # check crash report
+            reports = apport.fileutils.get_all_reports()
+            self.assertEqual(len(reports), 1)
+            report = reports[0]
+            st = os.stat(report)
+            os.unlink(report)
+            self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
+            # this must not be owned by root as it is a setuid binary
+            self.assertEqual(st.st_uid, 0, 'report has correct owner')
+        else:
+            # no cores/dump if suid_dumpable == 0
             self.do_crash(False, command=myexe, expect_corefile=False, uid=8)
             self.assertEqual(apport.fileutils.get_all_reports(), [])
-            return
-
-        # expect the core file to be owned by root
-        self.do_crash(command=myexe, expect_corefile=True, uid=8,
-                      expect_corefile_owner=0)
-
-        # check crash report
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-        # this must not be owned by root as it is a setuid binary
-        self.assertEqual(st.st_uid, 0, 'report has correct owner')
 
     @unittest.skipUnless(os.path.exists('/bin/ping'), 'this test needs /bin/ping')
     @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
@@ -562,27 +570,26 @@ class T(unittest.TestCase):
         # run ping as user "mail"
         resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
 
-        if os.path.isdir('/run/systemd/system'):
-            # FIXME: no core file/apport dump at all under systemd
+        if suid_dumpable:
+            # expect the core file to be owned by root
+            self.do_crash(command='/bin/ping', args=['127.0.0.1'],
+                          expect_corefile=True, uid=8,
+                          expect_corefile_owner=0)
+
+            # check crash report
+            reports = apport.fileutils.get_all_reports()
+            self.assertEqual(len(reports), 1)
+            report = reports[0]
+            st = os.stat(report)
+            os.unlink(report)
+            self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
+            # this must not be owned by root as it is a setuid binary
+            self.assertEqual(st.st_uid, 0, 'report has correct owner')
+        else:
+            # no cores/dump if suid_dumpable == 0
             self.do_crash(False, command='/bin/ping', args=['127.0.0.1'],
                           uid=8)
             self.assertEqual(apport.fileutils.get_all_reports(), [])
-            return
-
-        # expect the core file to be owned by root
-        self.do_crash(command='/bin/ping', args=['127.0.0.1'],
-                      expect_corefile=True, uid=8,
-                      expect_corefile_owner=0)
-
-        # check crash report
-        reports = apport.fileutils.get_all_reports()
-        self.assertEqual(len(reports), 1)
-        report = reports[0]
-        st = os.stat(report)
-        os.unlink(report)
-        self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
-        # this must not be owned by root as it is a setuid binary
-        self.assertEqual(st.st_uid, 0, 'report has correct owner')
 
     @unittest.skipUnless(os.path.exists('/usr/bin/lxc-usernsexec'), 'this test needs lxc')
     @unittest.skipUnless(os.path.exists('/bin/busybox'), 'this test needs busybox')

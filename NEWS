@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * apportcheckresume: Fix "occured" typo, thanks Matthew Paul Thomas.
    (LP: #1448636)
+ * signal_crashes test: Fix test_crash_setuid_* to look at whether
+   suid_dumpable was enabled.
 
 2.17.2 (2015-04-16)
 -------------------
