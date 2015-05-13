@@ -3,6 +3,15 @@ detailed list of changes, please see ChangeLog.
 
 2.17.3 (UNRELEASED)
 -------------------
+ * SECURITY UPDATE: When /proc/sys/fs/suid_dumpable is enabled, crashing a
+   program that is suid root or not readable for the user would create
+   root-owned core files in the current directory of that program. Creating
+   specially crafted core files in /etc/logrotate.d or similar could then lead
+   to arbitrary code execution with root privileges.
+   Now core files do not get written for these kinds of programs, in accordance
+   with the intention of core(5).
+   Thanks to Sander Bos for discovering this issue!
+   (CVE-2015-1324, LP: #1452239)
  * apportcheckresume: Fix "occured" typo, thanks Matthew Paul Thomas.
    (LP: #1448636)
  * signal_crashes test: Fix test_crash_setuid_* to look at whether
