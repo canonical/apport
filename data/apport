@@ -185,8 +185,7 @@ def write_user_coredump(pid, cwd, limit, from_report=None):
     # Priming read
     if from_report:
         r = apport.Report()
-        with open(from_report, 'rb') as f:
-            r.load(f)
+        r.load(from_report)
         core_size = len(r['CoreDump'])
         if limit > 0 and core_size > limit:
             error_log('aborting core dump writing, size %i exceeds current limit' % core_size)
@@ -438,7 +437,7 @@ try:
             mode = 0o640
         else:
             mode = 0
-        reportfile = os.fdopen(os.open(report, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode), 'wb')
+        reportfile = os.fdopen(os.open(report, os.O_RDWR | os.O_CREAT | os.O_EXCL, mode), 'w+b')
         assert reportfile.fileno() > sys.stderr.fileno()
 
         # Make sure the crash reporting daemon can read this report
@@ -474,7 +473,6 @@ try:
                     os.fsync(fd)
                 finally:
                     os.close(fd)
-            reportfile.close()
     except IOError:
         if reportfile != sys.stderr:
             os.unlink(report)
@@ -493,7 +491,8 @@ try:
     # written report, as we can only read stdin once and write_user_coredump()
     # might abort reading from stdin and remove the written core file when
     # core_ulimit is > 0 and smaller than the core size.
-    write_user_coredump(pid, cwd, core_ulimit, from_report=report)
+    reportfile.seek(0)
+    write_user_coredump(pid, cwd, core_ulimit, from_report=reportfile)
 
 except (SystemExit, KeyboardInterrupt):
     raise

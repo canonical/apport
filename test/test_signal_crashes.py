@@ -389,6 +389,49 @@ class T(unittest.TestCase):
                               sig=sig)
                 self.assertEqual(apport.fileutils.get_all_reports(), [])
 
+    def test_core_file_injection(self):
+        '''cannot inject core file'''
+
+        # CVE-2015-1325: ensure that apport does not re-open its .crash report,
+        # as that allows us to intercept and replace the report and tinker with
+        # the core dump
+
+        with open(self.test_report + '.inject', 'w') as f:
+            # \x01pwned
+            f.write('''ProblemType: Crash
+CoreDump: base64
+ H4sICAAAAAAC/0NvcmVEdW1wAA==
+ Yywoz0tNAQBl1rhlBgAAAA==
+''')
+
+        # crash our test process and let it write a core file
+        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+        pid = self.create_test_process()
+        os.kill(pid, signal.SIGSEGV)
+
+        # replace report with the crafted one above as soon as it exists and
+        # becomes deletable for us; this is a busy loop, we need to be really
+        # fast to intercept
+        while True:
+            try:
+                os.unlink(self.test_report)
+                break
+            except OSError:
+                pass
+        os.rename(self.test_report + '.inject', self.test_report)
+
+        os.waitpid(pid, 0)
+        time.sleep(0.5)
+        os.sync()
+
+        # verify that we get the original core, not the injected one
+        with open('core', 'rb') as f:
+            core = f.read()
+        self.assertNotIn(b'pwned', core)
+        self.assertGreater(len(core), 10000)
+
+        os.unlink('core')
+
     def test_limit_size(self):
         '''core dumps are capped on available memory size'''
 
