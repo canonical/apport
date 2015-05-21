@@ -1,12 +1,32 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.17.3 (UNRELEASED)
+2.17.3 (2015-05-20)
 -------------------
+ * SECURITY UPDATE: When /proc/sys/fs/suid_dumpable is enabled, crashing a
+   program that is suid root or not readable for the user would create
+   root-owned core files in the current directory of that program. Creating
+   specially crafted core files in /etc/logrotate.d or similar could then lead
+   to arbitrary code execution with root privileges.
+   Now core files do not get written for these kinds of programs, in accordance
+   with the intention of core(5).
+   Thanks to Sander Bos for discovering this issue!
+   (CVE-2015-1324, LP: #1452239)
+ * SECURITY UPDATE: When writing a core dump file for a crashed packaged
+   program, don't close and reopen the .crash report file but just rewind and
+   re-read it. This prevents the user from modifying the .crash report file
+   while "apport" is running to inject data and creating crafted core
+   dump files. In conjunction with the above vulnerability of writing core
+   dump files to arbitrary directories this could be exploited to gain root
+   privileges.
+   Thanks to Philip Pettersson for discovering this issue!
+   (CVE-2015-1325, LP: #1453900)
  * apportcheckresume: Fix "occured" typo, thanks Matthew Paul Thomas.
    (LP: #1448636)
  * signal_crashes test: Fix test_crash_setuid_* to look at whether
    suid_dumpable was enabled.
+ * test/run: Run UI tests under dbus-launch, newer GTK versions require this
+   now.
 
 2.17.2 (2015-04-16)
 -------------------

@@ -110,13 +110,13 @@ for t in $TESTS; do
            echo "Waiting for previous xvfb to finish..."
            sleep 0.5
         done
-        prefix=$xvfb
+        prefix="$xvfb dbus-launch"
     else
         # ensure that non-UI modules do not require X
         prefix="env -u DISPLAY"
-    fi
-    if [ "$t" = "python_crashes" ]; then
-        prefix="dbus-launch $prefix"
+        if [ "$t" = "python_crashes" ] || [ "${t#ui_}" != $t ]; then
+            prefix="$prefix dbus-launch"
+        fi
     fi
     test_file="$mydir/test_${t%%.*}.py"
     if [ "$t" = "${t#*.}" ]; then
