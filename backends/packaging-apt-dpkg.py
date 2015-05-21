@@ -206,11 +206,11 @@ class __AptDpkgPackageInfo(PackageInfo):
                                            distro_arch_series=series_arch,
                                            version=version, exact_match=True)
         if not pbs:
-            return None
+            return (None, None)
         for pb in pbs:
-            urls = pb.binaryFileUrls()
+            urls = pb.binaryFileUrls(include_meta=True)
             for url in urls:
-                return url
+                return (url['url'], url['sha1'])
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
@@ -669,10 +669,11 @@ Debug::NoLocking "true";
                 if ver:
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
-                lp_package = self.get_launchpad_package(self.current_release_codename,
-                                                        pkg, ver, architecture)
-                if lp_package:
-                    af = apt.apt_pkg.AcquireFile(fetcher, lp_package,
+                (lp_url, sha1sum) = self.get_launchpad_package(self.current_release_codename,
+                                                               pkg, ver, architecture)
+                if lp_url:
+                    af = apt.apt_pkg.AcquireFile(fetcher, lp_url,
+                                                 md5="sha1:%s" % sha1sum,
                                                  destdir=cache_dir_aptcache)
                     # reference it here to shut up pyflakes
                     af
@@ -745,10 +746,11 @@ Debug::NoLocking "true";
                         else:
                             dbg.candidate = dbg.versions[candidate.version]
                     except KeyError:
-                        lp_package = self.get_launchpad_package(self.current_release_codename,
-                                                                dbg_pkg, ver, architecture)
-                        if lp_package:
-                            af2 = apt.apt_pkg.AcquireFile(fetcher, lp_package,
+                        (lp_url, sha1sum) = self.get_launchpad_package(self.current_release_codename,
+                                                                       dbg_pkg, ver, architecture)
+                        if lp_url:
+                            af2 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
+                                                          md5="sha1:%s" % sha1sum,
                                                           destdir=cache_dir_aptcache)
                             # reference it here to shut up pyflakes
                             af2
@@ -773,11 +775,12 @@ Debug::NoLocking "true";
                                 else:
                                     cache[p].candidate = cache[p].versions[candidate.version]
                             except KeyError:
-                                lp_package = self.get_launchpad_package(self.current_release_codename,
-                                                                        p, ver, architecture)
-                                if lp_package:
+                                (lp_url, sha1sum) = self.get_launchpad_package(self.current_release_codename,
+                                                                               p, ver, architecture)
+                                if lp_url:
                                     af3 = apt.apt_pkg.AcquireFile(fetcher,
-                                                                  lp_package,
+                                                                  lp_url,
+                                                                  md5="sha1:%s" % sha1sum,
                                                                   destdir=cache_dir_aptcache)
                                     # reference it here to shut up pyflakes
                                     af3
@@ -799,10 +802,11 @@ Debug::NoLocking "true";
                                 else:
                                     dbgsym.candidate = dbgsym.versions[candidate.version]
                             except KeyError:
-                                lp_package = self.get_launchpad_package(self.current_release_codename,
-                                                                        dbgsym_pkg, ver, architecture)
-                                if lp_package:
-                                    af4 = apt.apt_pkg.AcquireFile(fetcher, lp_package,
+                                (lp_url, sha1sum) = self.get_launchpad_package(self.current_release_codename,
+                                                                               dbgsym_pkg, ver, architecture)
+                                if lp_url:
+                                    af4 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
+                                                                  md5="sha1:%s" % sha1sum,
                                                                   destdir=cache_dir_aptcache)
                                     # reference it here to shut up pyflakes
                                     af4
