@@ -24,6 +24,13 @@ def _has_internet():
                 _has_internet.cache = True
         except (IOError, urllib.error.URLError):
             pass
+        try:
+            f = urllib.request.urlopen('https://api.launchpad.net/devel/ubuntu/', timeout=30)
+            if f.readline().startswith(b'{"all_specifications'):
+                _has_internet.cache = True
+        except (IOError, urllib.error.URLError):
+            _has_internet.cache = False
+            pass
     return _has_internet.cache
 
 _has_internet.cache = None
@@ -800,8 +807,8 @@ deb http://secondary.mirror tuxy extra
                                           ('libc6', '2.19-0ubuntu5'),
                                          ], False, self.cachedir,
                                          architecture='armhf')
-
-        self.assertEqual(obsolete, 'libc6 version 2.19-0ubuntu5 required, but 2.19-0ubuntu6 is available\n')
+        # this isn't clear to me
+        self.assertEqual(obsolete, 'no debug symbol package found for coreutils\n')
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
@@ -813,7 +820,55 @@ deb http://secondary.mirror tuxy extra
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
         self.assertTrue('coreutils_8.21-1ubuntu5_armhf.deb' in cache, cache)
+        self.assertTrue('libc6_2.19-0ubuntu5_armhf.deb' in cache, cache)
         self.assertTrue('libc6_2.19-0ubuntu6_armhf.deb' in cache, cache)
+
+    @unittest.skipUnless(_has_internet(), 'online test')
+    def test_install_packages_from_launchpad(self):
+        '''install_packages() only available on Launchpad'''
+
+        self._setup_foonux_config(release='wily')
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                                         [('libtotem0', '3.14.2-0ubuntu2'),
+                                         ], False, self.cachedir)
+
+        def sandbox_ver(pkg):
+            with gzip.open(os.path.join(self.rootdir, 'usr/share/doc', pkg,
+                                        'changelog.Debian.gz')) as f:
+                return f.readline().decode().split()[1][1:-1]
+
+        self.assertEqual(obsolete, '')
+
+        # packages get installed
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                                                    'usr/lib/libtotem.so.0.0.0')))
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                                                    'usr/lib/debug/usr/bin/totem')))
+
+        # their versions are as expected
+        self.assertEqual(sandbox_ver('libtotem0'), '3.14.2-0ubuntu2')
+        self.assertEqual(sandbox_ver('totem-dbg'), '3.14.2-0ubuntu2')
+
+        # keeps track of package versions
+        with open(os.path.join(self.rootdir, 'packages.txt')) as f:
+            pkglist = f.read().splitlines()
+        self.assertIn('libtotem0 3.14.2-0ubuntu2', pkglist)
+        self.assertIn('totem-dbg 3.14.2-0ubuntu2', pkglist)
+
+        # caches packages, and their versions are as expected
+        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
+                                        'var', 'cache', 'apt', 'archives'))
+
+        # both versions of totem-dbg exist in the cache, so use a list
+        cache_versions = []
+        for p in cache:
+            try:
+                (name, ver) = p.split('_')[:2]
+                cache_versions.append((name, ver))
+            except ValueError:
+                pass  # not a .deb, ignore
+        self.assertIn(('libtotem0', '3.14.2-0ubuntu2'), cache_versions)
+        self.assertIn(('totem-dbg', '3.14.2-0ubuntu2'), cache_versions)
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_get_source_tree_sandbox(self):
@@ -829,7 +884,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(res.endswith('/base-files-7.2ubuntu5'),
                         'unexpected version: ' + res.split('/')[-1])
 
-    def _setup_foonux_config(self, updates=False):
+    def _setup_foonux_config(self, updates=False, release='trusty'):
         '''Set up directories and configuration for install_packages()'''
 
         self.cachedir = os.path.join(self.workdir, 'cache')
@@ -840,24 +895,24 @@ deb http://secondary.mirror tuxy extra
         os.mkdir(self.configdir)
         os.mkdir(os.path.join(self.configdir, 'Foonux 1.2'))
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'), 'w') as f:
-            f.write('deb http://archive.ubuntu.com/ubuntu/ trusty main\n')
-            f.write('deb-src http://archive.ubuntu.com/ubuntu/ trusty main\n')
-            f.write('deb http://ddebs.ubuntu.com/ trusty main\n')
+            f.write('deb http://archive.ubuntu.com/ubuntu/ %s main\n' % release)
+            f.write('deb-src http://archive.ubuntu.com/ubuntu/ %s main\n' % release)
+            f.write('deb http://ddebs.ubuntu.com/ %s main\n' % release)
             if updates:
-                f.write('deb http://archive.ubuntu.com/ubuntu/ trusty-updates main\n')
-                f.write('deb-src http://archive.ubuntu.com/ubuntu/ trusty-updates main\n')
-                f.write('deb http://ddebs.ubuntu.com/ trusty-updates main\n')
+                f.write('deb http://archive.ubuntu.com/ubuntu/ %s-updates main\n' % release)
+                f.write('deb-src http://archive.ubuntu.com/ubuntu/ %s-updates main\n' % release)
+                f.write('deb http://ddebs.ubuntu.com/ %s-updates main\n' % release)
         os.mkdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'armhf', 'sources.list'), 'w') as f:
-            f.write('deb http://ports.ubuntu.com/ trusty main\n')
-            f.write('deb-src http://ports.ubuntu.com/ trusty main\n')
-            f.write('deb http://ddebs.ubuntu.com/ trusty main\n')
+            f.write('deb http://ports.ubuntu.com/ %s main\n' % release)
+            f.write('deb-src http://ports.ubuntu.com/ %s main\n' % release)
+            f.write('deb http://ddebs.ubuntu.com/ %s main\n' % release)
             if updates:
-                f.write('deb http://ports.ubuntu.com/ trusty-updates main\n')
-                f.write('deb-src http://ports.ubuntu.com/ trusty-updates main\n')
-                f.write('deb http://ddebs.ubuntu.com/ trusty-updates main\n')
+                f.write('deb http://ports.ubuntu.com/ %s-updates main\n' % release)
+                f.write('deb-src http://ports.ubuntu.com/ %s-updates main\n' % release)
+                f.write('deb http://ddebs.ubuntu.com/ %s-updates main\n' % release)
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'codename'), 'w') as f:
-            f.write('trusty')
+            f.write('%s' % release)
 
     def assert_elf_arch(self, path, expected):
         '''Assert that an ELF file is for an expected machine type.
@@ -881,7 +936,7 @@ deb http://secondary.mirror tuxy extra
                 machine = line.split(maxsplit=1)[1]
                 break
         else:
-            self.fail('could not fine Machine: in readelf output')
+            self.fail('could not find Machine: in readelf output')
 
         self.assertTrue(archmap[expected] in machine,
                         '%s has unexpected machine type "%s" for architecture %s' % (

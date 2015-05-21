@@ -192,6 +192,26 @@ class __AptDpkgPackageInfo(PackageInfo):
                     return True
         return False
 
+    def get_launchpad_package(self, release, package, version, arch):
+        from launchpadlib.launchpad import Launchpad
+        launchpad = Launchpad.login_anonymously('apport-retrace',
+                                                'production',
+                                                version='devel')
+        ubuntu = launchpad.distributions['ubuntu']
+        archive = ubuntu.main_archive
+        series = ubuntu.getSeries(name_or_version=release)
+        series_arch = series.getDistroArchSeries(archtag=arch)
+
+        pbs = archive.getPublishedBinaries(binary_name=package,
+                                           distro_arch_series=series_arch,
+                                           version=version, exact_match=True)
+        if not pbs:
+            return None
+        for pb in pbs:
+            urls = pb.binaryFileUrls()
+            for url in urls:
+                return url
+
     def get_architecture(self, package):
         '''Return the architecture of a package.
 
@@ -555,13 +575,15 @@ Debug::NoLocking "true";
         package servers down, etc.), this should raise a SystemError with a
         meaningful error message.
         '''
+        if not architecture:
+            architecture = self.get_system_architecture()
         if not configdir:
             apt_sources = '/etc/apt/sources.list'
             self.current_release_codename = self.get_distro_codename()
         else:
             # support architecture specific config, fall back to global config
             apt_sources = os.path.join(configdir, release, 'sources.list')
-            if architecture:
+            if architecture != self.get_system_architecture:
                 arch_apt_sources = os.path.join(configdir, release,
                                                 architecture, 'sources.list')
                 if os.path.exists(arch_apt_sources):
@@ -593,10 +615,10 @@ Debug::NoLocking "true";
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
 
-        if architecture:
-            apt.apt_pkg.config.set('APT::Architecture', architecture)
-        else:
-            apt.apt_pkg.config.set('APT::Architecture', self.get_system_architecture())
+        cache_dir_aptcache = os.path.join(aptroot, 'var', 'cache', 'apt',
+                                          'archives')
+
+        apt.apt_pkg.config.set('APT::Architecture', architecture)
         apt.apt_pkg.config.set('Acquire::Languages', 'none')
 
         if verbose:
@@ -632,6 +654,8 @@ Debug::NoLocking "true";
 
         # mark packages for installation
         real_pkgs = set()
+        lp_cache = {}
+        fetcher = apt.apt_pkg.Acquire(fetchProgress)
         for (pkg, ver) in packages:
             try:
                 cache_pkg = cache[pkg]
@@ -640,13 +664,22 @@ Debug::NoLocking "true";
                 obsolete += m + '\n'
                 apport.warning(m)
                 continue
-
             # try to select matching version
             try:
                 if ver:
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
-                obsolete += '%s version %s required, but %s is available\n' % (pkg, ver, cache_pkg.candidate.version)
+                lp_package = self.get_launchpad_package(self.current_release_codename,
+                                                        pkg, ver, architecture)
+                if lp_package:
+                    af = apt.apt_pkg.AcquireFile(fetcher, lp_package,
+                                                 destdir=cache_dir_aptcache)
+                    # reference it here to shut up pyflakes
+                    af
+                    lp_cache[pkg] = ver
+                else:
+                    obsolete += '%s version %s required, but %s is available\n' % (pkg, ver, cache_pkg.candidate.version)
+
             candidate = cache_pkg.candidate
             real_pkgs.add(pkg)
 
@@ -702,14 +735,28 @@ Debug::NoLocking "true";
 
             if candidate.architecture != 'all':
                 try:
-                    dbg = cache[pkg + '-dbg']
+                    dbg_pkg = pkg + '-dbg'
+                    dbg = cache[dbg_pkg]
                     # try to get the same version as pkg
                     try:
-                        dbg.candidate = dbg.versions[candidate.version]
+                        # prefer the version requested
+                        if ver:
+                            dbg.candidate = dbg.versions[ver]
+                        else:
+                            dbg.candidate = dbg.versions[candidate.version]
                     except KeyError:
-                        obsolete += 'outdated -dbg package for %s: package version %s -dbg version %s\n' % (
-                            pkg, candidate.version, dbg.candidate.version)
-                    real_pkgs.add(pkg + '-dbg')
+                        lp_package = self.get_launchpad_package(self.current_release_codename,
+                                                                dbg_pkg, ver, architecture)
+                        if lp_package:
+                            af2 = apt.apt_pkg.AcquireFile(fetcher, lp_package,
+                                                          destdir=cache_dir_aptcache)
+                            # reference it here to shut up pyflakes
+                            af2
+                            lp_cache[dbg_pkg] = ver
+                        else:
+                            obsolete += 'outdated -dbg package for %s: package version %s -dbg version %s\n' % (
+                                pkg, ver, dbg.candidate.version)
+                    real_pkgs.add(dbg_pkg)
                 except KeyError:
                     # install all -dbg from the source package
                     if src_records.lookup(candidate.source_name):
@@ -720,21 +767,49 @@ Debug::NoLocking "true";
                         for p in dbgs:
                             # try to get the same version as pkg
                             try:
-                                cache[p].candidate = cache[p].versions[candidate.version]
+                                # prefer the version requested
+                                if ver:
+                                    cache[p].candidate = cache[p].versions[ver]
+                                else:
+                                    cache[p].candidate = cache[p].versions[candidate.version]
                             except KeyError:
-                                # we don't really expect that, but it's possible that
-                                # other binaries have a different version
-                                pass
+                                lp_package = self.get_launchpad_package(self.current_release_codename,
+                                                                        p, ver, architecture)
+                                if lp_package:
+                                    af3 = apt.apt_pkg.AcquireFile(fetcher,
+                                                                  lp_package,
+                                                                  destdir=cache_dir_aptcache)
+                                    # reference it here to shut up pyflakes
+                                    af3
+                                    lp_cache[p] = ver
+                                else:
+                                    # we don't really expect that, but it's possible that
+                                    # other binaries have a different version
+                                    pass
                             real_pkgs.add(p)
                     else:
                         try:
-                            dbgsym = cache[pkg + '-dbgsym']
-                            real_pkgs.add(pkg + '-dbgsym')
+                            dbgsym_pkg = pkg + '-dbgysm'
+                            dbgsym = cache[dbgsym_pkg]
+                            real_pkgs.add(dbgsym_pkg)
                             try:
-                                dbgsym.candidate = dbgsym.versions[candidate.version]
+                                # prefer the version requested
+                                if ver:
+                                    dbgsym.candidate = dbgsym.versions[ver]
+                                else:
+                                    dbgsym.candidate = dbgsym.versions[candidate.version]
                             except KeyError:
-                                obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
-                                    pkg, candidate.version, dbgsym.candidate.version)
+                                lp_package = self.get_launchpad_package(self.current_release_codename,
+                                                                        dbgsym_pkg, ver, architecture)
+                                if lp_package:
+                                    af4 = apt.apt_pkg.AcquireFile(fetcher, lp_package,
+                                                                  destdir=cache_dir_aptcache)
+                                    # reference it here to shut up pyflakes
+                                    af4
+                                    lp_cache[dbgsym_pkg] = ver
+                                else:
+                                    obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
+                                        pkg, candidate.version, dbgsym.candidate.version)
                         except KeyError:
                             obsolete += 'no debug symbol package found for %s\n' % pkg
 
@@ -748,7 +823,6 @@ Debug::NoLocking "true";
 
         last_written = time.time()
         # fetch packages
-        fetcher = apt.apt_pkg.Acquire(fetchProgress)
         try:
             cache.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as e:
@@ -757,12 +831,22 @@ Debug::NoLocking "true";
 
         if verbose:
             print('Extracting downloaded debs...')
+        installed = []
         for i in fetcher.items:
             if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
                 out = subprocess.check_output(['dpkg-deb', '--show', i.destfile]).decode()
                 (p, v) = out.strip().split()
+                # don't install another version of the package if it is
+                # already installed
+                if p in installed:
+                    continue
+                if p in lp_cache and v == lp_cache[p]:
+                    subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
+                    installed.append(p)
+                else:
+                    subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
+                    installed.append(p)
                 pkg_versions[p] = v
-                subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
             real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
 
         # update package list
@@ -1016,7 +1100,7 @@ Debug::NoLocking "true";
         out = dpkg.communicate(input)[0].decode('UTF-8')
         assert dpkg.returncode == 0
         assert out
-        return out
+        return out.replace("\n", "")
 
     def compare_versions(self, ver1, ver2):
         '''Compare two package versions.
