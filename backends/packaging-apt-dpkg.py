@@ -664,6 +664,7 @@ Debug::NoLocking "true";
                 obsolete += m + '\n'
                 apport.warning(m)
                 continue
+
             # try to select matching version
             try:
                 if ver:
