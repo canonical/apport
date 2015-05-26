@@ -884,6 +884,21 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(res.endswith('/base-files-7.2ubuntu5'),
                         'unexpected version: ' + res.split('/')[-1])
 
+    @unittest.skipUnless(_has_internet(), 'online test')
+    def test_get_source_tree_lp_sandbox(self):
+        self._setup_foonux_config(release='wily')
+        out_dir = os.path.join(self.workdir, 'out')
+        os.mkdir(out_dir)
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'))
+        res = impl.get_source_tree('x11-apps', out_dir, version='7.7+4',
+                                   release='wily', sandbox=self.rootdir,
+                                   apt_update=True)
+        self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
+        # this needs to be updated when the release in _setup_foonux_config
+        # changes
+        self.assertTrue(res.endswith('/x11-apps-7.7+4'),
+                        'unexpected version: ' + res.split('/')[-1])
+
     def _setup_foonux_config(self, updates=False, release='trusty'):
         '''Set up directories and configuration for install_packages()'''
 

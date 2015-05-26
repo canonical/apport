@@ -168,6 +168,7 @@ def gen_source_stacktrace(report, sandbox):
             version = None
         srcdir = apport.packaging.get_source_tree(report['SourcePackage'],
                                                   workdir, version,
+                                                  report['DistroRelease'],
                                                   sandbox=sandbox)
         if not srcdir:
             return

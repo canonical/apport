@@ -192,7 +192,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                     return True
         return False
 
-    def get_launchpad_package(self, release, package, version, arch):
+    def get_lp_binary_package(self, release, package, version, arch):
         from launchpadlib.launchpad import Launchpad
         launchpad = Launchpad.login_anonymously('apport-retrace',
                                                 'production',
@@ -211,6 +211,26 @@ class __AptDpkgPackageInfo(PackageInfo):
             urls = pb.binaryFileUrls(include_meta=True)
             for url in urls:
                 return (url['url'], url['sha1'])
+
+    def get_lp_source_package(self, release, package, version):
+        from launchpadlib.launchpad import Launchpad
+        launchpad = Launchpad.login_anonymously('apport-retrace',
+                                                'production',
+                                                version='devel')
+        ubuntu = launchpad.distributions['ubuntu']
+        archive = ubuntu.main_archive
+        series = ubuntu.getSeries(name_or_version=release)
+
+        pss = archive.getPublishedSources(distro_series=series,
+                                          source_name=package,
+                                          version=version,
+                                          exact_match=True)
+        if not pss:
+            return None
+        for ps in pss:
+            for sfu in ps.sourceFileUrls():
+                if sfu.endswith('.dsc'):
+                    return sfu
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
@@ -430,8 +450,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         except AttributeError:
             pass
 
-    def get_source_tree(self, srcpackage, dir, version=None, sandbox=None,
-                        apt_update=False):
+    def get_source_tree(self, srcpackage, dir, version=None, release=None,
+                        architecture=None, sandbox=None, apt_update=False):
         '''Download source package and unpack it into dir.
 
         This also has to care about applying patches etc., so that dir will
@@ -470,7 +490,14 @@ Debug::NoLocking "true";
             argv[-1] += '=' + version
         try:
             if subprocess.call(argv, cwd=dir, env=env) != 0:
-                return None
+                if not version:
+                    return None
+                dsc_url = self.get_lp_source_package(release, srcpackage,
+                                                     version)
+                if dsc_url:
+                    argv = ['dget', dsc_url]
+                    if subprocess.call(argv, cwd=dir, env=env) != 0:
+                        return None
         except OSError:
             return None
 
@@ -670,7 +697,7 @@ Debug::NoLocking "true";
                 if ver:
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
-                (lp_url, sha1sum) = self.get_launchpad_package(self.current_release_codename,
+                (lp_url, sha1sum) = self.get_lp_binary_package(self.current_release_codename,
                                                                pkg, ver, architecture)
                 if lp_url:
                     af = apt.apt_pkg.AcquireFile(fetcher, lp_url,
@@ -747,7 +774,7 @@ Debug::NoLocking "true";
                         else:
                             dbg.candidate = dbg.versions[candidate.version]
                     except KeyError:
-                        (lp_url, sha1sum) = self.get_launchpad_package(self.current_release_codename,
+                        (lp_url, sha1sum) = self.get_lp_binary_package(self.current_release_codename,
                                                                        dbg_pkg, ver, architecture)
                         if lp_url:
                             af2 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
@@ -776,7 +803,7 @@ Debug::NoLocking "true";
                                 else:
                                     cache[p].candidate = cache[p].versions[candidate.version]
                             except KeyError:
-                                (lp_url, sha1sum) = self.get_launchpad_package(self.current_release_codename,
+                                (lp_url, sha1sum) = self.get_lp_binary_package(self.current_release_codename,
                                                                                p, ver, architecture)
                                 if lp_url:
                                     af3 = apt.apt_pkg.AcquireFile(fetcher,
@@ -803,7 +830,7 @@ Debug::NoLocking "true";
                                 else:
                                     dbgsym.candidate = dbgsym.versions[candidate.version]
                             except KeyError:
-                                (lp_url, sha1sum) = self.get_launchpad_package(self.current_release_codename,
+                                (lp_url, sha1sum) = self.get_lp_binary_package(self.current_release_codename,
                                                                                dbgsym_pkg, ver, architecture)
                                 if lp_url:
                                     af4 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
