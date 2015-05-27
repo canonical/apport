@@ -827,9 +827,10 @@ deb http://secondary.mirror tuxy extra
     def test_install_packages_from_launchpad(self):
         '''install_packages() only available on Launchpad'''
 
-        self._setup_foonux_config(release='wily')
+        self._setup_foonux_config()
         obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
-                                         [('libtotem0', '3.14.2-0ubuntu2'),
+                                         [('oxideqt-codecs',
+                                           '1.6.6-0ubuntu0.14.04.1'),
                                          ], False, self.cachedir)
 
         def sandbox_ver(pkg):
@@ -841,19 +842,19 @@ deb http://secondary.mirror tuxy extra
 
         # packages get installed
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-                                                    'usr/lib/libtotem.so.0.0.0')))
-        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-                                                    'usr/lib/debug/usr/bin/totem')))
+                                                    'usr/lib/debug/usr/lib/x86_64-linux-gnu/oxide-qt/libffmpegsumo.so')))
 
         # their versions are as expected
-        self.assertEqual(sandbox_ver('libtotem0'), '3.14.2-0ubuntu2')
-        self.assertEqual(sandbox_ver('totem-dbg'), '3.14.2-0ubuntu2')
+        self.assertEqual(sandbox_ver('oxideqt-codecs'),
+                         '1.6.6-0ubuntu0.14.04.1')
+        self.assertEqual(sandbox_ver('oxideqt-codecs-dbg'),
+                         '1.6.6-0ubuntu0.14.04.1')
 
         # keeps track of package versions
         with open(os.path.join(self.rootdir, 'packages.txt')) as f:
             pkglist = f.read().splitlines()
-        self.assertIn('libtotem0 3.14.2-0ubuntu2', pkglist)
-        self.assertIn('totem-dbg 3.14.2-0ubuntu2', pkglist)
+        self.assertIn('oxideqt-codecs 1.6.6-0ubuntu0.14.04.1', pkglist)
+        self.assertIn('oxideqt-codecs-dbg 1.6.6-0ubuntu0.14.04.1', pkglist)
 
         # caches packages, and their versions are as expected
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
@@ -867,8 +868,8 @@ deb http://secondary.mirror tuxy extra
                 cache_versions.append((name, ver))
             except ValueError:
                 pass  # not a .deb, ignore
-        self.assertIn(('libtotem0', '3.14.2-0ubuntu2'), cache_versions)
-        self.assertIn(('totem-dbg', '3.14.2-0ubuntu2'), cache_versions)
+        self.assertIn(('oxideqt-codecs', '1.6.6-0ubuntu0.14.04.1'), cache_versions)
+        self.assertIn(('oxideqt-codecs-dbg', '1.6.6-0ubuntu0.14.04.1'), cache_versions)
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_get_source_tree_sandbox(self):
@@ -886,17 +887,17 @@ deb http://secondary.mirror tuxy extra
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_get_source_tree_lp_sandbox(self):
-        self._setup_foonux_config(release='wily')
+        self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
         os.mkdir(out_dir)
         impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'))
-        res = impl.get_source_tree('x11-apps', out_dir, version='7.7+4',
-                                   release='wily', sandbox=self.rootdir,
+        res = impl.get_source_tree('debian-installer', out_dir, version='20101020ubuntu318.16',
+                                   release='trusty', sandbox=self.rootdir,
                                    apt_update=True)
         self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
         # this needs to be updated when the release in _setup_foonux_config
         # changes
-        self.assertTrue(res.endswith('/x11-apps-7.7+4'),
+        self.assertTrue(res.endswith('/debian-installer-20101020ubuntu318.16'),
                         'unexpected version: ' + res.split('/')[-1])
 
     def _setup_foonux_config(self, updates=False, release='trusty'):
