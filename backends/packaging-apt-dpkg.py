@@ -14,17 +14,19 @@ This is used on Debian and derivatives such as Ubuntu.
 
 import subprocess, os, glob, stat, sys, tempfile, shutil, time
 import hashlib
+import json
 
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 try:
     import cPickle as pickle
-    from urllib import urlopen
-    (pickle, urlopen)  # pyflakes
+    from urllib import urlopen, quote_plus
+    (pickle, urlopen, quote_plus)  # pyflakes
 except ImportError:
     # python 3
     from urllib.request import urlopen
+    from urllib.parse import quote_plus
     import pickle
 
 import apport
@@ -41,6 +43,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._contents_dir = None
         self._mirror = None
         self._virtual_mapping_obj = None
+        self._launchpad_base = 'https://api.launchpad.net/devel'
+        self._archive_url = self._launchpad_base + '/ubuntu/%s/main_archive'
+        self._series_url = self._launchpad_base + '/ubuntu/%s'
+        self._series_arch_url = self._launchpad_base + '/ubuntu/%s/%s'
 
     def __del__(self):
         try:
@@ -193,49 +199,49 @@ class __AptDpkgPackageInfo(PackageInfo):
         return False
 
     def get_lp_binary_package(self, release, package, version, arch):
-        from launchpadlib.launchpad import Launchpad
-        launchpad = Launchpad.login_anonymously('apport-retrace',
-                                                'production',
-                                                version='devel')
-        ubuntu = launchpad.distributions['ubuntu']
-        archive = ubuntu.main_archive
-        series = ubuntu.getSeries(name_or_version=release)
-        series_arch = series.getDistroArchSeries(archtag=arch)
-
-        pbs = archive.getPublishedBinaries(binary_name=package,
-                                           distro_arch_series=series_arch,
-                                           version=version, exact_match=True)
-        if not pbs:
+        package = quote_plus(package)
+        version = quote_plus(version)
+        ma = self.json_request(self._archive_url % release)
+        ma_link = ma['self_link']
+        series_arch_url = self._series_arch_url % (release, arch)
+        pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&distro_arch_series=%s&version=%s&exact_match=True' %
+                            (package, series_arch_url, version))
+        pb = self.json_request(pb_url, entries=True)[0]['self_link']
+        if not pb:
             return (None, None)
-        for pb in pbs:
-            urls = pb.binaryFileUrls(include_meta=True)
-            for url in urls:
-                return (url['url'], url['sha1'])
+        bf_urls = pb + '?ws.op=binaryFileUrls&include_meta=True'
+        bfs = self.json_request(bf_urls)
+        for bf in bfs:
+            return (bf['url'], bf['sha1'])
+
+    def json_request(self, url, entries=False):
+        response = urlopen(url)
+        content = response.read().decode('utf-8')
+        if entries:
+            return json.loads(content)['entries']
+        else:
+            return json.loads(content)
 
     def get_lp_source_package(self, release, package, version):
-        from launchpadlib.launchpad import Launchpad
-        launchpad = Launchpad.login_anonymously('apport-retrace',
-                                                'production',
-                                                version='devel')
-        ubuntu = launchpad.distributions['ubuntu']
-        archive = ubuntu.main_archive
-        series = ubuntu.getSeries(name_or_version=release)
-
-        pss = archive.getPublishedSources(distro_series=series,
-                                          source_name=package,
-                                          version=version,
-                                          exact_match=True)
-        if not pss:
-            return None
-        for ps in pss:
-            for sfu in ps.sourceFileUrls():
-                if sfu.endswith('.dsc'):
-                    return sfu
+        package = quote_plus(package)
+        version = quote_plus(version)
+        ma = self.json_request(self._archive_url % release)
+        ma_link = ma['self_link']
+        series_url = self._series_url % release
+        ps_url = ma_link + ('/?ws.op=getPublishedSources&exact_match=true&source_name=%s&distro_series=%s&version=%s' %
+                            (package, series_url, version))
+        # use the first entry as they are sorted chronologically
+        ps = self.json_request(ps_url, entries=True)[0]['self_link']
+        sf_urls = ps + '?ws.op=sourceFileUrls'
+        sfus = self.json_request(sf_urls)
+        for sfu in sfus:
+            if sfu.endswith('.dsc'):
+                return sfu
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
 
-        This might differ on multiarch architectures (e. g.  an i386 Firefox
+        This might differ on multiarch architectures (e. g. an i386 Firefox
         package on a x86_64 system)'''
 
         if self._apt_pkg(package).installed:
