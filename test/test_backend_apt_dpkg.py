@@ -740,17 +740,25 @@ deb http://secondary.mirror tuxy extra
                 os.path.join(self.rootdir, 'usr/bin/stat')))
 
         # Prevent packages from downloading.
+        orig_apt_proxy = apt_pkg.config.get('Acquire::http::Proxy')
         apt_pkg.config.set('Acquire::http::Proxy', 'http://nonexistent')
-        orig_env = os.environ.copy()
+        orig_http_proxy = os.environ.get('http_proxy')
         os.environ['http_proxy'] = 'http://nonexistent'
         try:
+            orig_no_proxy = os.environ['no_proxy']
             del os.environ['no_proxy']
         except KeyError:
-            pass
+            orig_no_proxy = None
         self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
                           self.configdir, 'Foonux 1.2', [('libc6', None)], False,
                           self.cachedir, permanent_rootdir=True)
-        os.environ = orig_env
+        if orig_http_proxy:
+            os.environ['http_proxy'] = orig_http_proxy
+        else:
+            del os.environ['http_proxy']
+        if orig_no_proxy:
+            os.environ['no_proxy'] = orig_no_proxy
+
         # These packages exist, so attempting to install them should not fail.
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                               [('coreutils', None), ('tzdata', None)], False, self.cachedir,
@@ -768,7 +776,7 @@ deb http://secondary.mirror tuxy extra
                           self.configdir, 'Foonux 1.2', [('aspell-doc', None)], False,
                           self.cachedir, permanent_rootdir=True)
 
-        apt_pkg.config.set('Acquire::http::Proxy', '')
+        apt_pkg.config.set('Acquire::http::Proxy', orig_apt_proxy)
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_permanent_sandbox_repack(self):
