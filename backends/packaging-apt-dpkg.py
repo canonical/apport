@@ -44,9 +44,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._mirror = None
         self._virtual_mapping_obj = None
         self._launchpad_base = 'https://api.launchpad.net/devel'
-        self._archive_url = self._launchpad_base + '/%s/%s/main_archive'
-        self._series_url = self._launchpad_base + '/%s/%s'
-        self._series_arch_url = self._launchpad_base + '/%s/%s/%s'
+        self._archive_url = self._launchpad_base + '/%s/main_archive'
 
     def __del__(self):
         try:
@@ -198,14 +196,13 @@ class __AptDpkgPackageInfo(PackageInfo):
                     return True
         return False
 
-    def get_lp_binary_package(self, distro_id, release, package, version, arch):
+    def get_lp_binary_package(self, distro_id, package, version, arch):
         package = quote_plus(package)
         version = quote_plus(version)
-        ma = self.json_request(self._archive_url % (distro_id, release))
+        ma = self.json_request(self._archive_url % distro_id)
         ma_link = ma['self_link']
-        series_arch_url = self._series_arch_url % (distro_id, release, arch)
-        pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&distro_arch_series=%s&version=%s&exact_match=true' %
-                            (package, series_arch_url, version))
+        pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&version=%s&exact_match=true' %
+                            (package, version))
         pb = self.json_request(pb_url, entries=True)[0]['self_link']
         if not pb:
             return (None, None)
@@ -222,14 +219,13 @@ class __AptDpkgPackageInfo(PackageInfo):
         else:
             return json.loads(content)
 
-    def get_lp_source_package(self, distro_id, release, package, version):
+    def get_lp_source_package(self, distro_id, package, version):
         package = quote_plus(package)
         version = quote_plus(version)
-        ma = self.json_request(self._archive_url % (distro_id, release))
+        ma = self.json_request(self._archive_url % distro_id)
         ma_link = ma['self_link']
-        series_url = self._series_url % (distro_id, release)
-        ps_url = ma_link + ('/?ws.op=getPublishedSources&exact_match=true&source_name=%s&distro_series=%s&version=%s' %
-                            (package, series_url, version))
+        ps_url = ma_link + ('/?ws.op=getPublishedSources&exact_match=true&source_name=%s&version=%s' %
+                            (package, version))
         # use the first entry as they are sorted chronologically
         ps = self.json_request(ps_url, entries=True)[0]['self_link']
         sf_urls = ps + '?ws.op=sourceFileUrls'
@@ -499,8 +495,7 @@ Debug::NoLocking "true";
                 if not version:
                     return None
                 dsc_url = self.get_lp_source_package(self.get_distro_id(),
-                                                     release, srcpackage,
-                                                     version)
+                                                     srcpackage, version)
                 if dsc_url:
                     argv = ['dget', dsc_url]
                     if subprocess.call(argv, cwd=dir, env=env) != 0:
@@ -705,7 +700,6 @@ Debug::NoLocking "true";
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
                 (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
-                                                               self.current_release_codename,
                                                                pkg, ver, architecture)
                 if lp_url:
                     af = apt.apt_pkg.AcquireFile(fetcher, lp_url,
@@ -783,7 +777,6 @@ Debug::NoLocking "true";
                             dbg.candidate = dbg.versions[candidate.version]
                     except KeyError:
                         (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
-                                                                       self.current_release_codename,
                                                                        dbg_pkg, ver, architecture)
                         if lp_url:
                             af2 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
@@ -813,7 +806,6 @@ Debug::NoLocking "true";
                                     cache[p].candidate = cache[p].versions[candidate.version]
                             except KeyError:
                                 (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
-                                                                               self.current_release_codename,
                                                                                p, ver, architecture)
                                 if lp_url:
                                     af3 = apt.apt_pkg.AcquireFile(fetcher,
@@ -841,7 +833,6 @@ Debug::NoLocking "true";
                                     dbgsym.candidate = dbgsym.versions[candidate.version]
                             except KeyError:
                                 (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
-                                                                               self.current_release_codename,
                                                                                dbgsym_pkg, ver, architecture)
                                 if lp_url:
                                     af4 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
