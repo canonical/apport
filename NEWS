@@ -8,6 +8,7 @@ detailed list of changes, please see ChangeLog.
  * Enable suid_dumpable in the init.d script to also get Apport reports about
    suid, unreadable, and otherwise protected binaries. These will be "system
    reports" owned and readable by root only.
+ * init.d script: Fix tab usage inconsistencies.
 
 2.17.3 (2015-05-20)
 -------------------

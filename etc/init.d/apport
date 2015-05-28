@@ -1,11 +1,11 @@
 #! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          apport
-# Required-Start:    $local_fs $remote_fs
-# Required-Stop:     $local_fs $remote_fs
-# Default-Start:     2 3 4 5
-# Default-Stop:      
+# Provides:        apport
+# Required-Start:  $local_fs $remote_fs
+# Required-Stop:   $local_fs $remote_fs
+# Default-Start:   2 3 4 5
+# Default-Stop:
 # Short-Description: automatic crash report generation
 ### END INIT INFO
 
@@ -36,12 +36,12 @@ do_start()
 	#   2 if daemon could not be started
 
 	[ -e /var/crash ] || mkdir -p /var/crash
-        chmod 1777 /var/crash
+	chmod 1777 /var/crash
 
-        # check for kernel crash dump, convert it to apport report
-        if [ -e /var/crash/vmcore ] || [ -n "`ls /var/crash | egrep ^[0-9]{12}$`" ];then
-            /usr/share/apport/kernel_crashdump || true
-        fi
+	# check for kernel crash dump, convert it to apport report
+	if [ -e /var/crash/vmcore ] || [ -n "`ls /var/crash | egrep ^[0-9]{12}$`" ];then
+	    /usr/share/apport/kernel_crashdump || true
+	fi
 
 	# check for incomplete suspend/resume or hibernate
 	if [ -e /var/lib/pm-utils/status ]; then
@@ -50,8 +50,8 @@ do_start()
 		rm -f /var/lib/pm-utils/resume-hang.log
 	fi
 
-        echo "|$AGENT %p %s %c %P" > /proc/sys/kernel/core_pattern
-        echo 2 > /proc/sys/fs/suid_dumpable
+	echo "|$AGENT %p %s %c %P" > /proc/sys/kernel/core_pattern
+	echo 2 > /proc/sys/fs/suid_dumpable
 }
 
 #
@@ -65,7 +65,7 @@ do_stop()
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
 
-        echo 0 > /proc/sys/fs/suid_dumpable
+	echo 0 > /proc/sys/fs/suid_dumpable
 
 	# Check for a hung resume.  If we find one try and grab everything
 	# we can to aid in its discovery.
@@ -85,7 +85,7 @@ case "$1" in
 	# don't start in containers
 	grep -zqs '^container=' /proc/1/environ && exit 0
 
-        [ "$enabled" = "1" ] || [ "$force_start" = "1" ] || exit 0
+	[ "$enabled" = "1" ] || [ "$force_start" = "1" ] || exit 0
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC:" "$NAME"
 	do_start
 	case "$?" in
@@ -105,8 +105,8 @@ case "$1" in
 	esac
 	;;
   restart|force-reload)
-        $0 stop || true
-        $0 start
+	$0 stop || true
+	$0 start
 	;;
   *)
 	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
