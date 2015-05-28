@@ -749,15 +749,10 @@ deb http://secondary.mirror tuxy extra
             del os.environ['no_proxy']
         except KeyError:
             orig_no_proxy = None
+
         self.assertRaises(SystemExit, impl.install_packages, self.rootdir,
                           self.configdir, 'Foonux 1.2', [('libc6', None)], False,
                           self.cachedir, permanent_rootdir=True)
-        if orig_http_proxy:
-            os.environ['http_proxy'] = orig_http_proxy
-        else:
-            del os.environ['http_proxy']
-        if orig_no_proxy:
-            os.environ['no_proxy'] = orig_no_proxy
 
         # These packages exist, so attempting to install them should not fail.
         impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
@@ -776,6 +771,13 @@ deb http://secondary.mirror tuxy extra
                           self.configdir, 'Foonux 1.2', [('aspell-doc', None)], False,
                           self.cachedir, permanent_rootdir=True)
 
+        # restore original proxy settings
+        if orig_http_proxy:
+            os.environ['http_proxy'] = orig_http_proxy
+        else:
+            del os.environ['http_proxy']
+        if orig_no_proxy:
+            os.environ['no_proxy'] = orig_no_proxy
         apt_pkg.config.set('Acquire::http::Proxy', orig_apt_proxy)
 
     @unittest.skipUnless(_has_internet(), 'online test')
