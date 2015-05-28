@@ -51,6 +51,7 @@ do_start()
 	fi
 
         echo "|$AGENT %p %s %c %P" > /proc/sys/kernel/core_pattern
+        echo 2 > /proc/sys/fs/suid_dumpable
 }
 
 #
@@ -63,6 +64,8 @@ do_stop()
 	#   1 if daemon was already stopped
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
+
+        echo 0 > /proc/sys/fs/suid_dumpable
 
 	# Check for a hung resume.  If we find one try and grab everything
 	# we can to aid in its discovery.

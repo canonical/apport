@@ -1,10 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.17.4 (UNRELEASED)
--------------------
+2.18 (UNRELEASED)
+-----------------
  * Fix backend_apt_dpkg.test_install_packages_permanent_sandbox test to more
    carefully restore the environment and apt config.
+ * Enable suid_dumpable in the init.d script to also get Apport reports about
+   suid, unreadable, and otherwise protected binaries. These will be "system
+   reports" owned and readable by root only.
 
 2.17.3 (2015-05-20)
 -------------------
