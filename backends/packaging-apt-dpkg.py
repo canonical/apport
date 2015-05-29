@@ -203,8 +203,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         ma_link = ma['self_link']
         pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&version=%s&exact_match=true' %
                             (package, version))
-        pb = self.json_request(pb_url, entries=True)[0]['self_link']
-        if not pb:
+        try:
+            pb = self.json_request(pb_url, entries=True)[0]['self_link']
+        except IndexError:
             return (None, None)
         bf_urls = pb + '?ws.op=binaryFileUrls&include_meta=true'
         bfs = self.json_request(bf_urls)
@@ -769,23 +770,29 @@ Debug::NoLocking "true";
                     dbg_pkg = pkg + '-dbg'
                     dbg = cache[dbg_pkg]
                     # try to get the same version as pkg
-                    try:
-                        # prefer the version requested
-                        if ver:
+                    if ver:
+                        try:
                             dbg.candidate = dbg.versions[ver]
-                        else:
+                        except KeyError:
+                            (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
+                                                                           dbg_pkg, ver, architecture)
+                            if lp_url:
+                                af2 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
+                                                              md5="sha1:%s" % sha1sum,
+                                                              destdir=cache_dir_aptcache)
+                                # reference it here to shut up pyflakes
+                                af2
+                                lp_cache[dbg_pkg] = ver
+                            else:
+                                try:
+                                    dbg.candidate = dbg.versions[candidate.version]
+                                except KeyError:
+                                    obsolete += 'outdated -dbg package for %s: package version %s -dbg version %s\n' % (
+                                        pkg, ver, dbg.candidate.version)
+                    else:
+                        try:
                             dbg.candidate = dbg.versions[candidate.version]
-                    except KeyError:
-                        (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
-                                                                       dbg_pkg, ver, architecture)
-                        if lp_url:
-                            af2 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
-                                                          md5="sha1:%s" % sha1sum,
-                                                          destdir=cache_dir_aptcache)
-                            # reference it here to shut up pyflakes
-                            af2
-                            lp_cache[dbg_pkg] = ver
-                        else:
+                        except KeyError:
                             obsolete += 'outdated -dbg package for %s: package version %s -dbg version %s\n' % (
                                 pkg, ver, dbg.candidate.version)
                     real_pkgs.add(dbg_pkg)
@@ -797,51 +804,65 @@ Debug::NoLocking "true";
                         dbgs = []
                     if dbgs:
                         for p in dbgs:
-                            # try to get the same version as pkg
-                            try:
-                                # prefer the version requested
-                                if ver:
+                            # prefer the version requested
+                            if ver:
+                                try:
                                     cache[p].candidate = cache[p].versions[ver]
-                                else:
+                                except KeyError:
+                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
+                                                                                   p, ver, architecture)
+                                    if lp_url:
+                                        af3 = apt.apt_pkg.AcquireFile(fetcher,
+                                                                      lp_url,
+                                                                      md5="sha1:%s" % sha1sum,
+                                                                      destdir=cache_dir_aptcache)
+                                        # reference it here to shut up pyflakes
+                                        af3
+                                        lp_cache[p] = ver
+                                    else:
+                                        try:
+                                            cache[p].candidate = cache[p].versions[candidate.version]
+                                        except KeyError:
+                                            # we don't really expect that, but it's possible that
+                                            # other binaries have a different version
+                                            pass
+                            else:
+                                try:
                                     cache[p].candidate = cache[p].versions[candidate.version]
-                            except KeyError:
-                                (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
-                                                                               p, ver, architecture)
-                                if lp_url:
-                                    af3 = apt.apt_pkg.AcquireFile(fetcher,
-                                                                  lp_url,
-                                                                  md5="sha1:%s" % sha1sum,
-                                                                  destdir=cache_dir_aptcache)
-                                    # reference it here to shut up pyflakes
-                                    af3
-                                    lp_cache[p] = ver
-                                else:
+                                except KeyError:
                                     # we don't really expect that, but it's possible that
                                     # other binaries have a different version
                                     pass
                             real_pkgs.add(p)
                     else:
                         try:
-                            dbgsym_pkg = pkg + '-dbgysm'
+                            dbgsym_pkg = pkg + '-dbgsym'
                             dbgsym = cache[dbgsym_pkg]
                             real_pkgs.add(dbgsym_pkg)
-                            try:
-                                # prefer the version requested
-                                if ver:
+                            # prefer the version requested
+                            if ver:
+                                try:
                                     dbgsym.candidate = dbgsym.versions[ver]
-                                else:
+                                except KeyError:
+                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
+                                                                                   dbgsym_pkg, ver, architecture)
+                                    if lp_url:
+                                        af4 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
+                                                                      md5="sha1:%s" % sha1sum,
+                                                                      destdir=cache_dir_aptcache)
+                                        # reference it here to shut up pyflakes
+                                        af4
+                                        lp_cache[dbgsym_pkg] = ver
+                                    else:
+                                        try:
+                                            dbgsym.candidate = dbgsym.versions[candidate.version]
+                                        except KeyError:
+                                            obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
+                                                pkg, candidate.version, dbgsym.candidate.version)
+                            else:
+                                try:
                                     dbgsym.candidate = dbgsym.versions[candidate.version]
-                            except KeyError:
-                                (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
-                                                                               dbgsym_pkg, ver, architecture)
-                                if lp_url:
-                                    af4 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
-                                                                  md5="sha1:%s" % sha1sum,
-                                                                  destdir=cache_dir_aptcache)
-                                    # reference it here to shut up pyflakes
-                                    af4
-                                    lp_cache[dbgsym_pkg] = ver
-                                else:
+                                except KeyError:
                                     obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
                                         pkg, candidate.version, dbgsym.candidate.version)
                         except KeyError:
