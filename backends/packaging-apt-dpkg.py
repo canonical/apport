@@ -1159,15 +1159,12 @@ Debug::NoLocking "true";
     _distro_id = None
 
     def get_distro_id(self):
-        '''Get "lsb_release -si", cache the result.'''
+        '''Get osname and cache the result.'''
 
         if self._distro_id is None:
-            lsb_release = subprocess.Popen(['lsb_release', '-si'],
-                                           stdout=subprocess.PIPE)
-            self._distro_id = lsb_release.communicate()[0].decode('UTF-8').strip().lower()
+            self._distro_id = self.get_os_version()[0].lower()
             if ' ' in self._distro_id:
                 self._distro_id = self._distro_id.replace(' ', '-')
-            assert lsb_release.returncode == 0
 
         return self._distro_id
 
