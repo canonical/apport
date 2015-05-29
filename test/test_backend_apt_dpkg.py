@@ -804,11 +804,12 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config()
         obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                                          [('coreutils', '8.21-1ubuntu5'),
-                                          ('libc6', '2.19-0ubuntu5'),
+                                          ('libc6', '2.19-0ubuntu6'),
                                          ], False, self.cachedir,
                                          architecture='armhf')
-        # this isn't clear to me
-        self.assertEqual(obsolete, 'no debug symbol package found for coreutils\n')
+
+        # self.assertEqual(obsolete, 'libc6 version 2.19-0ubuntu5 required, but 2.19-0ubuntu6 is available\n')
+        self.assertEqual(obsolete, '')
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
@@ -820,7 +821,6 @@ deb http://secondary.mirror tuxy extra
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
         self.assertTrue('coreutils_8.21-1ubuntu5_armhf.deb' in cache, cache)
-        self.assertTrue('libc6_2.19-0ubuntu5_armhf.deb' in cache, cache)
         self.assertTrue('libc6_2.19-0ubuntu6_armhf.deb' in cache, cache)
 
     @unittest.skipUnless(_has_internet(), 'online test')
