@@ -453,8 +453,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         except AttributeError:
             pass
 
-    def get_source_tree(self, srcpackage, dir, version=None, release=None,
-                        architecture=None, sandbox=None, apt_update=False):
+    def get_source_tree(self, srcpackage, dir, version=None, sandbox=None,
+                        apt_update=False):
         '''Download source package and unpack it into dir.
 
         This also has to care about applying patches etc., so that dir will

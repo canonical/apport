@@ -892,8 +892,7 @@ deb http://secondary.mirror tuxy extra
         os.mkdir(out_dir)
         impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'))
         res = impl.get_source_tree('debian-installer', out_dir, version='20101020ubuntu318.16',
-                                   release='trusty', sandbox=self.rootdir,
-                                   apt_update=True)
+                                   sandbox=self.rootdir, apt_update=True)
         self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
         # this needs to be updated when the release in _setup_foonux_config
         # changes
