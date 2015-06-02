@@ -629,7 +629,7 @@ Debug::NoLocking "true";
         else:
             # support architecture specific config, fall back to global config
             apt_sources = os.path.join(configdir, release, 'sources.list')
-            if architecture != self.get_system_architecture:
+            if architecture != self.get_system_architecture():
                 arch_apt_sources = os.path.join(configdir, release,
                                                 architecture, 'sources.list')
                 if os.path.exists(arch_apt_sources):
