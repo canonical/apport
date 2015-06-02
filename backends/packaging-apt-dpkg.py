@@ -231,12 +231,15 @@ class __AptDpkgPackageInfo(PackageInfo):
         ps = self.json_request(ps_url, entries=True)[0]['self_link']
         sf_urls = ps + '?ws.op=sourceFileUrls'
         sfus = self.json_request(sf_urls)
+
+        source_files = []
         for sfu in sfus:
-            if sfu.endswith('.dsc'):
-                if sys.version_info.major == 2:
-                    if isinstance(sfu, unicode):
-                        sfu = sfu.decode('utf-8')
-                return sfu
+            if sys.version_info.major == 2:
+                if isinstance(sfu, unicode):
+                    sfu = sfu.decode('utf-8')
+            source_files.append(sfu)
+
+        return source_files
 
     def get_architecture(self, package):
         '''Return the architecture of a package.
@@ -498,12 +501,22 @@ Debug::NoLocking "true";
             if subprocess.call(argv, cwd=dir, env=env) != 0:
                 if not version:
                     return None
-                dsc_url = self.get_lp_source_package(self.get_distro_id(),
+                sf_urls = self.get_lp_source_package(self.get_distro_id(),
                                                      srcpackage, version)
-                if dsc_url:
-                    argv = ['dget', dsc_url]
-                    if subprocess.call(argv, cwd=dir, env=env) != 0:
+                if sf_urls:
+                    fetchProgress = apt.progress.base.AcquireProgress()
+                    fetcher = apt.apt_pkg.Acquire(fetchProgress)
+                    af_queue = []
+                    for sf in sf_urls:
+                        af_queue.append(apt.apt_pkg.AcquireFile(fetcher,
+                                        sf, destdir=dir))
+                    result = fetcher.run()
+                    if result != fetcher.RESULT_CONTINUE:
                         return None
+                    for dsc in glob.glob(os.path.join(dir, '*.dsc')):
+                        subprocess.call(['dpkg-source', '-sn',
+                                         '-x', dsc], stdout=subprocess.PIPE,
+                                        cwd=dir)
         except OSError:
             return None
 
