@@ -648,9 +648,6 @@ Debug::NoLocking "true";
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
 
-        cache_dir_aptcache = os.path.join(aptroot, 'var', 'cache', 'apt',
-                                          'archives')
-
         apt.apt_pkg.config.set('APT::Architecture', architecture)
         apt.apt_pkg.config.set('Acquire::Languages', 'none')
 
@@ -668,6 +665,8 @@ Debug::NoLocking "true";
             except apt.cache.FetchFailedException as e:
                 raise SystemError(str(e))
             cache.open()
+
+        archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
 
         obsolete = ''
 
@@ -710,7 +709,7 @@ Debug::NoLocking "true";
                 if lp_url:
                     acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
                                          md5="sha1:%s" % sha1sum,
-                                         destdir=cache_dir_aptcache))
+                                         destdir=archivedir))
                     lp_cache[pkg] = ver
                 else:
                     obsolete += '%s version %s required, but %s is available\n' % (pkg, ver, cache_pkg.candidate.version)
@@ -782,7 +781,7 @@ Debug::NoLocking "true";
                             if lp_url:
                                 acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
                                                      md5="sha1:%s" % sha1sum,
-                                                     destdir=cache_dir_aptcache))
+                                                     destdir=archivedir))
                                 lp_cache[dbg_pkg] = ver
                             else:
                                 try:
@@ -816,7 +815,7 @@ Debug::NoLocking "true";
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
                                                              lp_url,
                                                              md5="sha1:%s" % sha1sum,
-                                                             destdir=cache_dir_aptcache))
+                                                             destdir=archivedir))
                                         lp_cache[p] = ver
                                     else:
                                         try:
@@ -848,7 +847,7 @@ Debug::NoLocking "true";
                                     if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
                                                              md5="sha1:%s" % sha1sum,
-                                                             destdir=cache_dir_aptcache))
+                                                             destdir=archivedir))
                                         lp_cache[dbgsym_pkg] = ver
                                     else:
                                         try:
