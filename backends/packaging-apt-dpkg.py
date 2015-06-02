@@ -1158,10 +1158,10 @@ Debug::NoLocking "true";
         '''Return the version of a .deb file'''
 
         dpkg = subprocess.Popen(['dpkg-deb', '-f', pkg, 'Version'], stdout=subprocess.PIPE)
-        out = dpkg.communicate(input)[0].decode('UTF-8')
+        out = dpkg.communicate(input)[0].decode('UTF-8').strip()
         assert dpkg.returncode == 0
         assert out
-        return out.replace("\n", "")
+        return out
 
     def compare_versions(self, ver1, ver2):
         '''Compare two package versions.
