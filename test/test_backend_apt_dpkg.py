@@ -804,12 +804,11 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config()
         obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                                          [('coreutils', '8.21-1ubuntu5'),
-                                          ('libc6', '2.19-0ubuntu6'),
+                                          ('libc6', '2.19-0ubuntu0'),
                                          ], False, self.cachedir,
                                          architecture='armhf')
 
-        # self.assertEqual(obsolete, 'libc6 version 2.19-0ubuntu5 required, but 2.19-0ubuntu6 is available\n')
-        self.assertEqual(obsolete, '')
+        self.assertEqual(obsolete, 'libc6 version 2.19-0ubuntu0 required, but 2.19-0ubuntu6 is available\n')
 
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/bin/stat')))
@@ -870,6 +869,48 @@ deb http://secondary.mirror tuxy extra
                 pass  # not a .deb, ignore
         self.assertIn(('oxideqt-codecs', '1.6.6-0ubuntu0.14.04.1'), cache_versions)
         self.assertIn(('oxideqt-codecs-dbg', '1.6.6-0ubuntu0.14.04.1'), cache_versions)
+
+    @unittest.skipUnless(_has_internet(), 'online test')
+    def test_install_old_packages(self):
+        '''sandbox will install older package versions from launchpad'''
+
+        self._setup_foonux_config()
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                                         [('oxideqt-codecs',
+                                           '1.7.8-0ubuntu0.14.04.1'),
+                                         ], False, self.cachedir)
+
+        self.assertEqual(obsolete, '')
+
+        def sandbox_ver(pkg):
+            with gzip.open(os.path.join(self.rootdir, 'usr/share/doc', pkg,
+                                        'changelog.Debian.gz')) as f:
+                return f.readline().decode().split()[1][1:-1]
+
+        # the version is as expected
+        self.assertEqual(sandbox_ver('oxideqt-codecs'),
+                         '1.7.8-0ubuntu0.14.04.1')
+
+        # keeps track of package version
+        with open(os.path.join(self.rootdir, 'packages.txt')) as f:
+            pkglist = f.read().splitlines()
+        self.assertIn('oxideqt-codecs 1.7.8-0ubuntu0.14.04.1', pkglist)
+
+        obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
+                                         [('oxideqt-codecs',
+                                           '1.6.6-0ubuntu0.14.04.1'),
+                                         ], False, self.cachedir)
+
+        self.assertEqual(obsolete, '')
+
+        # the old version is installed
+        self.assertEqual(sandbox_ver('oxideqt-codecs'),
+                         '1.6.6-0ubuntu0.14.04.1')
+
+        # the old versions is tracked
+        with open(os.path.join(self.rootdir, 'packages.txt')) as f:
+            pkglist = f.read().splitlines()
+        self.assertIn('oxideqt-codecs 1.6.6-0ubuntu0.14.04.1', pkglist)
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_get_source_tree_sandbox(self):
