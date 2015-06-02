@@ -233,6 +233,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         sfus = self.json_request(sf_urls)
         for sfu in sfus:
             if sfu.endswith('.dsc'):
+                if sys.version_info.major == 2:
+                    if isinstance(sfu, unicode):
+                        sfu = sfu.decode('utf-8')
                 return sfu
 
     def get_architecture(self, package):
@@ -686,6 +689,8 @@ Debug::NoLocking "true";
         real_pkgs = set()
         lp_cache = {}
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
+        # need to keep AcquireFile references
+        acquire_queue = []
         for (pkg, ver) in packages:
             try:
                 cache_pkg = cache[pkg]
@@ -703,11 +708,9 @@ Debug::NoLocking "true";
                 (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
                                                                pkg, ver, architecture)
                 if lp_url:
-                    af = apt.apt_pkg.AcquireFile(fetcher, lp_url,
-                                                 md5="sha1:%s" % sha1sum,
-                                                 destdir=cache_dir_aptcache)
-                    # reference it here to shut up pyflakes
-                    af
+                    acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
+                                         md5="sha1:%s" % sha1sum,
+                                         destdir=cache_dir_aptcache))
                     lp_cache[pkg] = ver
                 else:
                     obsolete += '%s version %s required, but %s is available\n' % (pkg, ver, cache_pkg.candidate.version)
@@ -777,11 +780,9 @@ Debug::NoLocking "true";
                             (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
                                                                            dbg_pkg, ver, architecture)
                             if lp_url:
-                                af2 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
-                                                              md5="sha1:%s" % sha1sum,
-                                                              destdir=cache_dir_aptcache)
-                                # reference it here to shut up pyflakes
-                                af2
+                                acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
+                                                     md5="sha1:%s" % sha1sum,
+                                                     destdir=cache_dir_aptcache))
                                 lp_cache[dbg_pkg] = ver
                             else:
                                 try:
@@ -812,12 +813,10 @@ Debug::NoLocking "true";
                                     (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
                                                                                    p, ver, architecture)
                                     if lp_url:
-                                        af3 = apt.apt_pkg.AcquireFile(fetcher,
-                                                                      lp_url,
-                                                                      md5="sha1:%s" % sha1sum,
-                                                                      destdir=cache_dir_aptcache)
-                                        # reference it here to shut up pyflakes
-                                        af3
+                                        acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
+                                                             lp_url,
+                                                             md5="sha1:%s" % sha1sum,
+                                                             destdir=cache_dir_aptcache))
                                         lp_cache[p] = ver
                                     else:
                                         try:
@@ -847,11 +846,9 @@ Debug::NoLocking "true";
                                     (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
                                                                                    dbgsym_pkg, ver, architecture)
                                     if lp_url:
-                                        af4 = apt.apt_pkg.AcquireFile(fetcher, lp_url,
-                                                                      md5="sha1:%s" % sha1sum,
-                                                                      destdir=cache_dir_aptcache)
-                                        # reference it here to shut up pyflakes
-                                        af4
+                                        acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
+                                                             md5="sha1:%s" % sha1sum,
+                                                             destdir=cache_dir_aptcache))
                                         lp_cache[dbgsym_pkg] = ver
                                     else:
                                         try:
@@ -871,10 +868,18 @@ Debug::NoLocking "true";
         # unpack packages, weed out the ones that are already installed (for
         # permanent sandboxes)
         for p in real_pkgs.copy():
-            if pkg_versions.get(p) != cache[p].candidate.version:
-                cache[p].mark_install(False, False)
+            if ver:
+                if pkg_versions.get(p) != ver:
+                    cache[p].mark_install(False, False)
+                elif pkg_versions.get(p) != cache[p].candidate.version:
+                    cache[p].mark_install(False, False)
+                else:
+                    real_pkgs.remove(p)
             else:
-                real_pkgs.remove(p)
+                if pkg_versions.get(p) != cache[p].candidate.version:
+                    cache[p].mark_install(False, False)
+                else:
+                    real_pkgs.remove(p)
 
         last_written = time.time()
         # fetch packages
@@ -895,6 +900,7 @@ Debug::NoLocking "true";
                 # already installed
                 if p in installed:
                     continue
+                # prefer the version in the lp_cache over any other
                 if p in lp_cache and v == lp_cache[p]:
                     subprocess.check_output(['dpkg', '-x', i.destfile, rootdir])
                     installed.append(p)
