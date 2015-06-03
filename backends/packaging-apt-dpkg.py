@@ -21,12 +21,12 @@ warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 try:
     import cPickle as pickle
-    from urllib import urlopen, quote_plus
-    (pickle, urlopen, quote_plus)  # pyflakes
+    from urllib import urlopen, quote, unquote
+    (pickle, urlopen, quote, unquote)  # pyflakes
 except ImportError:
     # python 3
     from urllib.request import urlopen
-    from urllib.parse import quote_plus
+    from urllib.parse import quote, unquote
     import pickle
 
 import apport
@@ -197,8 +197,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         return False
 
     def get_lp_binary_package(self, distro_id, package, version, arch):
-        package = quote_plus(package)
-        version = quote_plus(version)
+        package = quote(package)
+        version = quote(version)
         ma = self.json_request(self._archive_url % distro_id)
         ma_link = ma['self_link']
         pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&version=%s&exact_match=true' %
@@ -221,8 +221,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             return json.loads(content)
 
     def get_lp_source_package(self, distro_id, package, version):
-        package = quote_plus(package)
-        version = quote_plus(version)
+        package = quote(package)
+        version = quote(version)
         ma = self.json_request(self._archive_url % distro_id)
         ma_link = ma['self_link']
         ps_url = ma_link + ('/?ws.op=getPublishedSources&exact_match=true&source_name=%s&version=%s' %
@@ -237,6 +237,7 @@ class __AptDpkgPackageInfo(PackageInfo):
             if sys.version_info.major == 2:
                 if isinstance(sfu, unicode):
                     sfu = sfu.decode('utf-8')
+            sfu = unquote(sfu)
             source_files.append(sfu)
 
         return source_files
