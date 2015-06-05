@@ -210,7 +210,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         bf_urls = pb + '?ws.op=binaryFileUrls&include_meta=true'
         bfs = self.json_request(bf_urls)
         for bf in bfs:
-            return (bf['url'], bf['sha1'])
+            return (unquote(bf['url']), bf['sha1'])
 
     def json_request(self, url, entries=False):
         response = urlopen(url)
