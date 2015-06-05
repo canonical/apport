@@ -9,6 +9,8 @@ detailed list of changes, please see ChangeLog.
    suid, unreadable, and otherwise protected binaries. These will be "system
    reports" owned and readable by root only.
  * init.d script: Fix tab usage inconsistencies.
+ * apport-gtk: Use GtkWidget::valign property instead of GtkMisc::yalign which
+   is deprecated in GTK 3.16. Thanks Iain Lane.
 
 2.17.3 (2015-05-20)
 -------------------
