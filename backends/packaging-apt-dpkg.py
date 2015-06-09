@@ -203,11 +203,20 @@ class __AptDpkgPackageInfo(PackageInfo):
         ma_link = ma['self_link']
         pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&version=%s&exact_match=true' %
                             (package, version))
+        bpub_url = ''
         try:
-            pb = self.json_request(pb_url, entries=True)[0]['self_link']
+            pbs = self.json_request(pb_url, entries=True)
+            for pb in pbs:
+                if pb['architecture_specific'] == 'false':
+                    bpub_url = pb['self_link']
+                else:
+                    if pb['distro_arch_series_link'].endswith(arch):
+                        bpub_url = pb['self_link']
         except IndexError:
             return (None, None)
-        bf_urls = pb + '?ws.op=binaryFileUrls&include_meta=true'
+        if not bpub_url:
+            return (None, None)
+        bf_urls = bpub_url + '?ws.op=binaryFileUrls&include_meta=true'
         bfs = self.json_request(bf_urls)
         for bf in bfs:
             return (unquote(bf['url']), bf['sha1'])
@@ -228,7 +237,10 @@ class __AptDpkgPackageInfo(PackageInfo):
         ps_url = ma_link + ('/?ws.op=getPublishedSources&exact_match=true&source_name=%s&version=%s' %
                             (package, version))
         # use the first entry as they are sorted chronologically
-        ps = self.json_request(ps_url, entries=True)[0]['self_link']
+        try:
+            ps = self.json_request(ps_url, entries=True)[0]['self_link']
+        except IndexError:
+            return None
         sf_urls = ps + '?ws.op=sourceFileUrls'
         sfus = self.json_request(sf_urls)
 
@@ -518,6 +530,8 @@ Debug::NoLocking "true";
                         subprocess.call(['dpkg-source', '-sn',
                                          '-x', dsc], stdout=subprocess.PIPE,
                                         cwd=dir)
+                else:
+                    return None
         except OSError:
             return None
 
