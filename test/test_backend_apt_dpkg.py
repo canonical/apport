@@ -838,17 +838,23 @@ deb http://secondary.mirror tuxy extra
 
     @unittest.skipUnless(_has_launchpad(), 'online test')
     def test_install_packages_from_launchpad(self):
-        '''install_packages() only available on Launchpad'''
+        '''install_packages() using packages only available on Launchpad'''
 
         self._setup_foonux_config()
         obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                                          [('oxideqt-codecs',
                                            '1.6.6-0ubuntu0.14.04.1'),
+                                          ('distro-info-data',
+                                           '0.18ubuntu0.2')
                                          ], False, self.cachedir)
 
-        def sandbox_ver(pkg):
+        def sandbox_ver(pkg, debian=True):
+            if debian:
+                changelog = 'changelog.Debian.gz'
+            else:
+                changelog = 'changelog.gz'
             with gzip.open(os.path.join(self.rootdir, 'usr/share/doc', pkg,
-                                        'changelog.Debian.gz')) as f:
+                                        changelog)) as f:
                 return f.readline().decode().split()[1][1:-1]
 
         self.assertEqual(obsolete, '')
@@ -856,24 +862,29 @@ deb http://secondary.mirror tuxy extra
         # packages get installed
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/lib/debug/usr/lib/x86_64-linux-gnu/oxide-qt/libffmpegsumo.so')))
+        self.assertTrue(os.path.exists(os.path.join(self.rootdir,
+                                                    'usr/share/distro-info/ubuntu.csv')))
 
         # their versions are as expected
         self.assertEqual(sandbox_ver('oxideqt-codecs'),
                          '1.6.6-0ubuntu0.14.04.1')
         self.assertEqual(sandbox_ver('oxideqt-codecs-dbg'),
                          '1.6.6-0ubuntu0.14.04.1')
+        self.assertEqual(sandbox_ver('distro-info-data', debian=False),
+                         '0.18ubuntu0.2')
 
         # keeps track of package versions
         with open(os.path.join(self.rootdir, 'packages.txt')) as f:
             pkglist = f.read().splitlines()
         self.assertIn('oxideqt-codecs 1.6.6-0ubuntu0.14.04.1', pkglist)
         self.assertIn('oxideqt-codecs-dbg 1.6.6-0ubuntu0.14.04.1', pkglist)
+        self.assertIn('distro-info-data 0.18ubuntu0.2', pkglist)
 
         # caches packages, and their versions are as expected
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
 
-        # both versions of totem-dbg exist in the cache, so use a list
+        # archive and launchpad versions of packages exist in the cache, so use a list
         cache_versions = []
         for p in cache:
             try:
@@ -883,6 +894,7 @@ deb http://secondary.mirror tuxy extra
                 pass  # not a .deb, ignore
         self.assertIn(('oxideqt-codecs', '1.6.6-0ubuntu0.14.04.1'), cache_versions)
         self.assertIn(('oxideqt-codecs-dbg', '1.6.6-0ubuntu0.14.04.1'), cache_versions)
+        self.assertIn(('distro-info-data', '0.18ubuntu0.2'), cache_versions)
 
     @unittest.skipUnless(_has_launchpad(), 'online test')
     def test_install_old_packages(self):
