@@ -209,9 +209,11 @@ class __AptDpkgPackageInfo(PackageInfo):
             for pb in pbs:
                 if pb['architecture_specific'] == 'false':
                     bpub_url = pb['self_link']
+                    break
                 else:
                     if pb['distro_arch_series_link'].endswith(arch):
                         bpub_url = pb['self_link']
+                        break
         except IndexError:
             return (None, None)
         if not bpub_url:
