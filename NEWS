@@ -11,6 +11,8 @@ detailed list of changes, please see ChangeLog.
  * init.d script: Fix tab usage inconsistencies.
  * apport-gtk: Use GtkWidget::valign property instead of GtkMisc::yalign which
    is deprecated in GTK 3.16. Thanks Iain Lane.
+ * sandboxutils, make_sandbox(): Don't exit with 0 (success) if the
+   ExecutablePath does not exist. (LP: #1462469)
 
 2.17.3 (2015-05-20)
 -------------------

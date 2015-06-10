@@ -10,7 +10,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import atexit, os, os.path, shutil, sys, tempfile
+import atexit, os, os.path, shutil, tempfile
 import apport
 
 
@@ -186,8 +186,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
             verbose, cache_dir, permanent_rootdir,
             architecture=report.get('Architecture'))
     except SystemError as e:
-        sys.stderr.write(str(e) + '\n')
-        sys.exit(1)
+        apport.fatal(str(e))
 
     pkg_versions = report_package_versions(report)
     pkgs = needed_runtime_packages(report, sandbox_dir, pkgmap_cache_dir, pkg_versions, verbose)
@@ -212,8 +211,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                 sandbox_dir, config_dir, report['DistroRelease'], pkgs,
                 cache_dir=cache_dir, architecture=report.get('Architecture'))
         except SystemError as e:
-            sys.stderr.write(str(e) + '\n')
-            sys.exit(1)
+            apport.fatal(str(e))
 
     # sanity check: for a packaged binary we require having the executable in
     # the sandbox; TODO: for an unpackage binary we don't currently copy its
@@ -222,9 +220,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     if 'Package' in report:
         for path in ('InterpreterPath', 'ExecutablePath'):
             if path in report and not os.path.exists(sandbox_dir + report[path]):
-                apport.error('%s %s does not exist (report specified package %s)',
+                apport.fatal('%s %s does not exist (report specified package %s)',
                              path, sandbox_dir + report[path], report['Package'])
-                sys.exit(0)
 
     if outdated_msg:
         report['RetraceOutdatedPackages'] = outdated_msg
