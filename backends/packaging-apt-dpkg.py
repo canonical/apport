@@ -918,24 +918,26 @@ Debug::NoLocking "true";
 
         if verbose:
             print('Extracting downloaded debs...')
-        installed = []
         for i in fetcher.items:
             if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
                 out = subprocess.check_output(['dpkg-deb', '--show', i.destfile]).decode()
                 (p, v) = out.strip().split()
-                # don't install another version of the package if it is
-                # already installed
-                if p in installed:
-                    continue
-                # prefer the version in the lp_cache over any other
-                if p in lp_cache and v == lp_cache[p]:
-                    subprocess.check_output(['dpkg', '-x', i.destfile, rootdir])
-                    installed.append(p)
+                # don't extract the same version of the package if it is
+                # already extracted
+                if pkg_versions.get(p) == v:
+                    pass
+                # don't extract the package if it is a different version than
+                # the one we want to extract from Launchpad
+                elif p in lp_cache and lp_cache[p] != v:
+                    pass
                 else:
                     subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
-                    installed.append(p)
-                pkg_versions[p] = v
-            real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
+                    pkg_versions[p] = v
+            pkg_name = os.path.basename(i.destfile).split('_', 1)[0]
+            # because a package may exist multiple times in the fetcher it may
+            # have already been removed
+            if pkg_name in real_pkgs:
+                real_pkgs.remove(pkg_name)
 
         # update package list
         pkgs = list(pkg_versions.keys())
