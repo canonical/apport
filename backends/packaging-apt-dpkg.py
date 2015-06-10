@@ -223,7 +223,9 @@ class __AptDpkgPackageInfo(PackageInfo):
 
     def json_request(self, url, entries=False):
         response = urlopen(url)
-        content = response.read().decode('utf-8')
+        content = response.read()
+        if isinstance(content, bytes):
+            content = content.decode('utf-8')
         if entries:
             return json.loads(content)['entries']
         else:
@@ -246,9 +248,8 @@ class __AptDpkgPackageInfo(PackageInfo):
 
         source_files = []
         for sfu in sfus:
-            if sys.version_info.major == 2:
-                if isinstance(sfu, unicode):
-                    sfu = sfu.decode('utf-8')
+            if sys.version_info.major == 2 and isinstance(sfu, unicode):
+                    sfu = sfu.encode('utf-8')
             sfu = unquote(sfu)
             source_files.append(sfu)
 
