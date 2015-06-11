@@ -221,9 +221,17 @@ class __AptDpkgPackageInfo(PackageInfo):
         bf_urls = bpub_url + '?ws.op=binaryFileUrls&include_meta=true'
         bfs = self.json_request(bf_urls)
         for bf in bfs:
+            # return the first binary file url
             return (unquote(bf['url']), bf['sha1'])
 
     def json_request(self, url, entries=False):
+        '''Open, read and parse the json of a url
+
+        Set entries to True when the json data returned by Launchpad
+        has a dictionary with an entries key which contains the data
+        desired.
+        '''
+
         response = urlopen(url)
         content = response.read()
         if isinstance(content, bytes):
@@ -517,7 +525,7 @@ Debug::NoLocking "true";
             if subprocess.call(argv, cwd=dir, env=env) != 0:
                 if not version:
                     return None
-                sf_urls = self.get_lp_source_package(self.get_distro_id(),
+                sf_urls = self.get_lp_source_package(self.get_distro_name(),
                                                      srcpackage, version)
                 if sf_urls:
                     fetchProgress = apt.progress.base.AcquireProgress()
@@ -735,7 +743,7 @@ Debug::NoLocking "true";
                 if ver:
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
-                (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
+                (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
                                                                pkg, ver, architecture)
                 if lp_url:
                     acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
@@ -802,25 +810,22 @@ Debug::NoLocking "true";
                 try:
                     dbg_pkg = pkg + '-dbg'
                     dbg = cache[dbg_pkg]
+                    pkg_found = False
                     # try to get the same version as pkg
                     if ver:
                         try:
                             dbg.candidate = dbg.versions[ver]
+                            pkg_found = True
                         except KeyError:
-                            (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
+                            (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
                                                                            dbg_pkg, ver, architecture)
                             if lp_url:
                                 acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
                                                      md5="sha1:%s" % sha1sum,
                                                      destdir=archivedir))
                                 lp_cache[dbg_pkg] = ver
-                            else:
-                                try:
-                                    dbg.candidate = dbg.versions[candidate.version]
-                                except KeyError:
-                                    obsolete += 'outdated -dbg package for %s: package version %s -dbg version %s\n' % (
-                                        pkg, ver, dbg.candidate.version)
-                    else:
+                                pkg_found = True
+                    if not pkg_found:
                         try:
                             dbg.candidate = dbg.versions[candidate.version]
                         except KeyError:
@@ -835,12 +840,18 @@ Debug::NoLocking "true";
                         dbgs = []
                     if dbgs:
                         for p in dbgs:
+                            # if the package has already been added to
+                            # real_pkgs don't search for it again
+                            if p in real_pkgs:
+                                continue
+                            pkg_found = False
                             # prefer the version requested
                             if ver:
                                 try:
                                     cache[p].candidate = cache[p].versions[ver]
+                                    pkg_found = True
                                 except KeyError:
-                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
+                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
                                                                                    p, ver, architecture)
                                     if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
@@ -848,14 +859,8 @@ Debug::NoLocking "true";
                                                              md5="sha1:%s" % sha1sum,
                                                              destdir=archivedir))
                                         lp_cache[p] = ver
-                                    else:
-                                        try:
-                                            cache[p].candidate = cache[p].versions[candidate.version]
-                                        except KeyError:
-                                            # we don't really expect that, but it's possible that
-                                            # other binaries have a different version
-                                            pass
-                            else:
+                                        pkg_found = True
+                            if not pkg_found:
                                 try:
                                     cache[p].candidate = cache[p].versions[candidate.version]
                                 except KeyError:
@@ -868,25 +873,22 @@ Debug::NoLocking "true";
                             dbgsym_pkg = pkg + '-dbgsym'
                             dbgsym = cache[dbgsym_pkg]
                             real_pkgs.add(dbgsym_pkg)
+                            pkg_found = False
                             # prefer the version requested
                             if ver:
                                 try:
                                     dbgsym.candidate = dbgsym.versions[ver]
+                                    pkg_found = True
                                 except KeyError:
-                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_id(),
+                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
                                                                                    dbgsym_pkg, ver, architecture)
                                     if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher, lp_url,
                                                              md5="sha1:%s" % sha1sum,
                                                              destdir=archivedir))
                                         lp_cache[dbgsym_pkg] = ver
-                                    else:
-                                        try:
-                                            dbgsym.candidate = dbgsym.versions[candidate.version]
-                                        except KeyError:
-                                            obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
-                                                pkg, candidate.version, dbgsym.candidate.version)
-                            else:
+                                        pkg_found = True
+                            if not pkg_found:
                                 try:
                                     dbgsym.candidate = dbgsym.versions[candidate.version]
                                 except KeyError:
@@ -1215,16 +1217,17 @@ Debug::NoLocking "true";
 
         return self._distro_codename
 
-    _distro_id = None
+    _distro_name = None
 
-    def get_distro_id(self):
-        '''Get osname and cache the result.'''
+    def get_distro_name(self):
+        '''Get osname from /etc/os-release, or if that doesn't exist,
+           'lsb_release -sir' output and cache the result.'''
 
-        if self._distro_id is None:
-            self._distro_id = self.get_os_version()[0].lower()
-            if ' ' in self._distro_id:
-                self._distro_id = self._distro_id.replace(' ', '-')
+        if self._distro_name is None:
+            self._distro_name = self.get_os_version()[0].lower()
+            if ' ' in self._distro_name:
+                self._distro_name = self._distro_name.replace(' ', '-')
 
-        return self._distro_id
+        return self._distro_name
 
 impl = __AptDpkgPackageInfo()
