@@ -209,7 +209,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         try:
             outdated_msg += apport.packaging.install_packages(
                 sandbox_dir, config_dir, report['DistroRelease'], pkgs,
-                cache_dir=cache_dir, architecture=report.get('Architecture'))
+                verbose, cache_dir, permanent_rootdir,
+                architecture=report.get('Architecture'))
         except SystemError as e:
             apport.fatal(str(e))
 

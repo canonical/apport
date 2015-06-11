@@ -13,6 +13,8 @@ detailed list of changes, please see ChangeLog.
    is deprecated in GTK 3.16. Thanks Iain Lane.
  * sandboxutils, make_sandbox(): Don't exit with 0 (success) if the
    ExecutablePath does not exist. (LP: #1462469)
+ * sandboxutils, make_sandbox(): Fix second round of package installs to go
+   into permanent root dir as well.
 
 2.17.3 (2015-05-20)
 -------------------
