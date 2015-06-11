@@ -861,7 +861,7 @@ deb http://secondary.mirror tuxy extra
 
         # packages get installed
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
-                                                    'usr/lib/debug/usr/lib/x86_64-linux-gnu/oxide-qt/libffmpegsumo.so')))
+                                                    'usr/share/doc/oxideqt-codecs/copyright')))
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/share/distro-info/ubuntu.csv')))
 
