@@ -221,7 +221,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         bf_urls = bpub_url + '?ws.op=binaryFileUrls&include_meta=true'
         bfs = self.json_request(bf_urls)
         for bf in bfs:
-            # return the first binary file url
+            # return the first binary file url since there being more than one
+            # is theoretical
             return (unquote(bf['url']), bf['sha1'])
 
     def json_request(self, url, entries=False):
@@ -1226,6 +1227,7 @@ Debug::NoLocking "true";
         if self._distro_name is None:
             self._distro_name = self.get_os_version()[0].lower()
             if ' ' in self._distro_name:
+                # concatenate distro name e.g. ubuntu-rtm
                 self._distro_name = self._distro_name.replace(' ', '-')
 
         return self._distro_name
