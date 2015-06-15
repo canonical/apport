@@ -245,7 +245,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         except URLError:
             apport.warning('cannot connect to: %s' % url)
             return None
-        content = response.read()
+        try:
+            content = response.read()
+        except IOError:
+            apport.warning('failure reading data at: %s' % url)
+            return None
         if isinstance(content, bytes):
             content = content.decode('utf-8')
         if entries:
