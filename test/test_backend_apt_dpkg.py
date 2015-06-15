@@ -845,7 +845,9 @@ deb http://secondary.mirror tuxy extra
                                          [('oxideqt-codecs',
                                            '1.6.6-0ubuntu0.14.04.1'),
                                           ('distro-info-data',
-                                           '0.18ubuntu0.2')
+                                           '0.18ubuntu0.2'),
+                                          ('qemu-utils',
+                                           '2.0.0+dfsg-2ubuntu1.11')
                                          ], False, self.cachedir)
 
         def sandbox_ver(pkg, debian=True):
@@ -879,6 +881,8 @@ deb http://secondary.mirror tuxy extra
         self.assertIn('oxideqt-codecs 1.6.6-0ubuntu0.14.04.1', pkglist)
         self.assertIn('oxideqt-codecs-dbg 1.6.6-0ubuntu0.14.04.1', pkglist)
         self.assertIn('distro-info-data 0.18ubuntu0.2', pkglist)
+        self.assertIn('qemu-utils-dbgsym 2.0.0+dfsg-2ubuntu1.11',
+                      pkglist)
 
         # caches packages, and their versions are as expected
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
@@ -895,6 +899,7 @@ deb http://secondary.mirror tuxy extra
         self.assertIn(('oxideqt-codecs', '1.6.6-0ubuntu0.14.04.1'), cache_versions)
         self.assertIn(('oxideqt-codecs-dbg', '1.6.6-0ubuntu0.14.04.1'), cache_versions)
         self.assertIn(('distro-info-data', '0.18ubuntu0.2'), cache_versions)
+        self.assertIn(('qemu-utils-dbgsym', '2.0.0+dfsg-2ubuntu1.11'), cache_versions)
 
     @unittest.skipUnless(_has_launchpad(), 'online test')
     def test_install_old_packages(self):
