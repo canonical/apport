@@ -25,6 +25,7 @@ try:
     (pickle, urlopen, quote, unquote)  # pyflakes
 except ImportError:
     # python 3
+    from urllib.error import URLError
     from urllib.request import urlopen
     from urllib.parse import quote, unquote
     import pickle
@@ -200,12 +201,16 @@ class __AptDpkgPackageInfo(PackageInfo):
         package = quote(package)
         version = quote(version)
         ma = self.json_request(self._archive_url % distro_id)
+        if not ma:
+            return (None, None)
         ma_link = ma['self_link']
         pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&version=%s&exact_match=true' %
                             (package, version))
         bpub_url = ''
         try:
             pbs = self.json_request(pb_url, entries=True)
+            if not pbs:
+                return (None, None)
             for pb in pbs:
                 if pb['architecture_specific'] == 'false':
                     bpub_url = pb['self_link']
@@ -220,6 +225,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             return (None, None)
         bf_urls = bpub_url + '?ws.op=binaryFileUrls&include_meta=true'
         bfs = self.json_request(bf_urls)
+        if not bfs:
+            return (None, None)
         for bf in bfs:
             # return the first binary file url since there being more than one
             # is theoretical
@@ -233,7 +240,11 @@ class __AptDpkgPackageInfo(PackageInfo):
         desired.
         '''
 
-        response = urlopen(url)
+        try:
+            response = urlopen(url)
+        except URLError:
+            apport.warning('cannot connect to: %s' % url)
+            return None
         content = response.read()
         if isinstance(content, bytes):
             content = content.decode('utf-8')
@@ -246,6 +257,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         package = quote(package)
         version = quote(version)
         ma = self.json_request(self._archive_url % distro_id)
+        if not ma:
+            return None
         ma_link = ma['self_link']
         ps_url = ma_link + ('/?ws.op=getPublishedSources&exact_match=true&source_name=%s&version=%s' %
                             (package, version))
@@ -256,6 +269,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             return None
         sf_urls = ps + '?ws.op=sourceFileUrls'
         sfus = self.json_request(sf_urls)
+        if not sfus:
+            return None
 
         source_files = []
         for sfu in sfus:
