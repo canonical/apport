@@ -11,43 +11,22 @@ else:
 def _has_internet():
     '''Return if there is sufficient network connection for the tests.
 
-    This checks if http://ddebs.ubuntu.com/ can be downloaded from, to check if
-    we can run the online tests.
+    This checks if https://api.launchpad.net/devel/ubuntu/ can be downloaded
+    from, to check if we can run the online tests.
     '''
     if os.environ.get('SKIP_ONLINE_TESTS'):
         return False
     if _has_internet.cache is None:
         _has_internet.cache = False
         try:
-            f = urllib.request.urlopen('http://ddebs.ubuntu.com/dbgsym-release-key.asc', timeout=30)
-            if f.readline().startswith(b'-----BEGIN PGP'):
+            f = urllib.request.urlopen('https://api.launchpad.net/devel/ubuntu/', timeout=30)
+            if f.readline().startswith(b'{"all_specifications'):
                 _has_internet.cache = True
         except (IOError, urllib.error.URLError):
             pass
     return _has_internet.cache
 
-
-def _has_launchpad():
-    '''Return if there is network connection to Launchpad for the tests.
-
-    This checks if https://apt.launchpad.net/deve/ubuntu/ can be downloaded from, to check if
-    we can run the online tests.
-    '''
-    if os.environ.get('SKIP_ONLINE_TESTS'):
-        return False
-    if _has_launchpad.cache is None:
-        _has_launchpad.cache = False
-        try:
-            f = urllib.request.urlopen('https://api.launchpad.net/devel/ubuntu/', timeout=30)
-            if f.readline().startswith(b'{"all_specifications'):
-                _has_launchpad.cache = True
-        except (IOError, urllib.error.URLError):
-            _has_launchpad.cache = False
-            pass
-    return _has_launchpad.cache
-
 _has_internet.cache = None
-_has_launchpad.cache = None
 
 
 class T(unittest.TestCase):
@@ -836,7 +815,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue('coreutils_8.21-1ubuntu5_armhf.deb' in cache, cache)
         self.assertTrue('libc6_2.19-0ubuntu6_armhf.deb' in cache, cache)
 
-    @unittest.skipUnless(_has_launchpad(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_from_launchpad(self):
         '''install_packages() using packages only available on Launchpad'''
 
@@ -901,7 +880,7 @@ deb http://secondary.mirror tuxy extra
         self.assertIn(('distro-info-data', '0.18ubuntu0.2'), cache_versions)
         self.assertIn(('qemu-utils-dbgsym', '2.0.0+dfsg-2ubuntu1.11'), cache_versions)
 
-    @unittest.skipUnless(_has_launchpad(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_old_packages(self):
         '''sandbox will install older package versions from launchpad'''
 
@@ -957,7 +936,7 @@ deb http://secondary.mirror tuxy extra
         self.assertTrue(res.endswith('/base-files-7.2ubuntu5'),
                         'unexpected version: ' + res.split('/')[-1])
 
-    @unittest.skipUnless(_has_launchpad(), 'online test')
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_get_source_tree_lp_sandbox(self):
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
