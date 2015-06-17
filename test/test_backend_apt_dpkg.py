@@ -1021,7 +1021,7 @@ deb http://secondary.mirror tuxy extra
         assert readelf.returncode == 0
         for line in out.splitlines():
             if line.startswith('  Machine:'):
-                machine = line.split(maxsplit=1)[1]
+                machine = line.split(None, 1)[1]
                 break
         else:
             self.fail('could not find Machine: in readelf output')
