@@ -1,6 +1,15 @@
 import unittest, gzip, imp, subprocess, tempfile, shutil, os, os.path, time
-import glob, urllib
+import glob, sys
 from apt import apt_pkg
+
+try:
+    from urllib import urlopen
+    URLError = IOError
+    (urlopen)  # pyflakes
+except ImportError:
+    # python3
+    from urllib.request import urlopen
+    from urllib.error import URLError
 
 if os.environ.get('APPORT_TEST_LOCAL'):
     impl = imp.load_source('', 'backends/packaging-apt-dpkg.py').impl
@@ -19,10 +28,13 @@ def _has_internet():
     if _has_internet.cache is None:
         _has_internet.cache = False
         try:
-            f = urllib.request.urlopen('https://api.launchpad.net/devel/ubuntu/', timeout=30)
+            if sys.version > '3':
+                f = urlopen('https://api.launchpad.net/devel/ubuntu/', timeout=30)
+            else:
+                f = urlopen('https://api.launchpad.net/devel/ubuntu/')
             if f.readline().startswith(b'{"all_specifications'):
                 _has_internet.cache = True
-        except (IOError, urllib.error.URLError):
+        except URLError:
             pass
     return _has_internet.cache
 
