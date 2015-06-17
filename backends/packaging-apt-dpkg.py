@@ -229,26 +229,9 @@ class __AptDpkgPackageInfo(PackageInfo):
         if not bfs:
             return (None, None)
         for bf in bfs:
-            # use the first binary file url since there being more than one
+            # return the first binary file url since there being more than one
             # is theoretical
-            deb_url = bf['url']
-            sha1 = bf['sha1']
-            break
-        archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
-        deb = unquote(deb_url.split('/')[-1])
-        out = open(os.path.join(archivedir, deb), 'wb')
-        u = urlopen(deb_url)
-        if u.getcode() > 400:
-            apport.warning('Failed to download %s from Launchpad.' % deb)
-            return (None, None)
-        while True:
-            block = u.read(8 * 1024)
-            if not block:
-                break
-            out.write(block)
-        out.flush()
-        out.close()
-        return (deb, sha1)
+            return (unquote(bf['url']), bf['sha1'])
 
     def json_request(self, url, entries=False):
         '''Open, read and parse the json of a url
@@ -734,6 +717,8 @@ Debug::NoLocking "true";
 
         apt.apt_pkg.config.set('APT::Architecture', architecture)
         apt.apt_pkg.config.set('Acquire::Languages', 'none')
+        # directly connect to Launchpad when downloading deb files
+        apt.apt_pkg.config.set('Acquire::http::Proxy::api.launchpad.net', 'direct')
 
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()
@@ -788,12 +773,13 @@ Debug::NoLocking "true";
                 if ver:
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
-                (deb, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
-                                                            pkg, ver, architecture)
-                if deb:
+                (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                               pkg, ver, architecture)
+                if lp_url:
                     acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
-                                                                 'file:///%s' % os.path.join(archivedir, deb),
-                                                                 md5="sha1:%s" % sha1sum))
+                                                                 lp_url,
+                                                                 md5="sha1:%s" % sha1sum,
+                                                                 destdir=archivedir))
                     lp_cache[pkg] = ver
                 else:
                     obsolete += '%s version %s required, but %s is available\n' % (pkg, ver, cache_pkg.candidate.version)
@@ -862,12 +848,13 @@ Debug::NoLocking "true";
                             dbg.candidate = dbg.versions[ver]
                             pkg_found = True
                         except KeyError:
-                            (deb, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
-                                                                        dbg_pkg, ver, architecture)
-                            if deb:
+                            (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                           dbg_pkg, ver, architecture)
+                            if lp_url:
                                 acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
-                                                                             'file:///%s' % os.path.join(archivedir, deb),
-                                                                             md5="sha1:%s" % sha1sum))
+                                                                             lp_url,
+                                                                             md5="sha1:%s" % sha1sum,
+                                                                             destdir=archivedir))
                                 lp_cache[dbg_pkg] = ver
                                 pkg_found = True
                     if not pkg_found:
@@ -896,12 +883,13 @@ Debug::NoLocking "true";
                                     cache[p].candidate = cache[p].versions[ver]
                                     pkg_found = True
                                 except KeyError:
-                                    (deb, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
-                                                                                p, ver, architecture)
-                                    if deb:
+                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                                   p, ver, architecture)
+                                    if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
-                                                                                     'file:///%s' % os.path.join(archivedir, deb),
-                                                                                     md5="sha1:%s" % sha1sum))
+                                                                                     lp_url,
+                                                                                     md5="sha1:%s" % sha1sum,
+                                                                                     destdir=archivedir))
                                         lp_cache[p] = ver
                                         pkg_found = True
                             if not pkg_found:
@@ -924,12 +912,13 @@ Debug::NoLocking "true";
                                     dbgsym.candidate = dbgsym.versions[ver]
                                     pkg_found = True
                                 except KeyError:
-                                    (deb, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
-                                                                                dbgsym_pkg, ver, architecture)
-                                    if deb:
+                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                                   dbgsym_pkg, ver, architecture)
+                                    if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
-                                                                                     'file:///%s' % os.path.join(archivedir, deb),
-                                                                                     md5="sha1:%s" % sha1sum))
+                                                                                     lp_url,
+                                                                                     md5="sha1:%s" % sha1sum,
+                                                                                     destdir=archivedir))
                                         lp_cache[dbgsym_pkg] = ver
                                         pkg_found = True
                             if not pkg_found:
