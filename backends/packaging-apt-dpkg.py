@@ -14,17 +14,21 @@ This is used on Debian and derivatives such as Ubuntu.
 
 import subprocess, os, glob, stat, sys, tempfile, shutil, time
 import hashlib
+import json
 
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
 try:
     import cPickle as pickle
-    from urllib import urlopen
-    (pickle, urlopen)  # pyflakes
+    from urllib import urlopen, quote, unquote
+    (pickle, urlopen, quote, unquote)  # pyflakes
+    URLError = IOError
 except ImportError:
     # python 3
+    from urllib.error import URLError
     from urllib.request import urlopen
+    from urllib.parse import quote, unquote
     import pickle
 
 import apport
@@ -41,6 +45,8 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._contents_dir = None
         self._mirror = None
         self._virtual_mapping_obj = None
+        self._launchpad_base = 'https://api.launchpad.net/devel'
+        self._archive_url = self._launchpad_base + '/%s/main_archive'
 
     def __del__(self):
         try:
@@ -192,10 +198,98 @@ class __AptDpkgPackageInfo(PackageInfo):
                     return True
         return False
 
+    def get_lp_binary_package(self, distro_id, package, version, arch):
+        package = quote(package)
+        version = quote(version)
+        ma = self.json_request(self._archive_url % distro_id)
+        if not ma:
+            return (None, None)
+        ma_link = ma['self_link']
+        pb_url = ma_link + ('/?ws.op=getPublishedBinaries&binary_name=%s&version=%s&exact_match=true' %
+                            (package, version))
+        bpub_url = ''
+        try:
+            pbs = self.json_request(pb_url, entries=True)
+            if not pbs:
+                return (None, None)
+            for pb in pbs:
+                if pb['architecture_specific'] == 'false':
+                    bpub_url = pb['self_link']
+                    break
+                else:
+                    if pb['distro_arch_series_link'].endswith(arch):
+                        bpub_url = pb['self_link']
+                        break
+        except IndexError:
+            return (None, None)
+        if not bpub_url:
+            return (None, None)
+        bf_urls = bpub_url + '?ws.op=binaryFileUrls&include_meta=true'
+        bfs = self.json_request(bf_urls)
+        if not bfs:
+            return (None, None)
+        for bf in bfs:
+            # return the first binary file url since there being more than one
+            # is theoretical
+            return (unquote(bf['url']), bf['sha1'])
+
+    def json_request(self, url, entries=False):
+        '''Open, read and parse the json of a url
+
+        Set entries to True when the json data returned by Launchpad
+        has a dictionary with an entries key which contains the data
+        desired.
+        '''
+
+        try:
+            response = urlopen(url)
+        except URLError:
+            apport.warning('cannot connect to: %s' % url)
+            return None
+        try:
+            content = response.read()
+        except IOError:
+            apport.warning('failure reading data at: %s' % url)
+            return None
+        if isinstance(content, bytes):
+            content = content.decode('utf-8')
+        if entries:
+            return json.loads(content)['entries']
+        else:
+            return json.loads(content)
+
+    def get_lp_source_package(self, distro_id, package, version):
+        package = quote(package)
+        version = quote(version)
+        ma = self.json_request(self._archive_url % distro_id)
+        if not ma:
+            return None
+        ma_link = ma['self_link']
+        ps_url = ma_link + ('/?ws.op=getPublishedSources&exact_match=true&source_name=%s&version=%s' %
+                            (package, version))
+        # use the first entry as they are sorted chronologically
+        try:
+            ps = self.json_request(ps_url, entries=True)[0]['self_link']
+        except IndexError:
+            return None
+        sf_urls = ps + '?ws.op=sourceFileUrls'
+        sfus = self.json_request(sf_urls)
+        if not sfus:
+            return None
+
+        source_files = []
+        for sfu in sfus:
+            if sys.version_info.major == 2 and isinstance(sfu, unicode):
+                    sfu = sfu.encode('utf-8')
+            sfu = unquote(sfu)
+            source_files.append(sfu)
+
+        return source_files
+
     def get_architecture(self, package):
         '''Return the architecture of a package.
 
-        This might differ on multiarch architectures (e. g.  an i386 Firefox
+        This might differ on multiarch architectures (e. g. an i386 Firefox
         package on a x86_64 system)'''
 
         if self._apt_pkg(package).installed:
@@ -450,7 +544,32 @@ Debug::NoLocking "true";
             argv[-1] += '=' + version
         try:
             if subprocess.call(argv, cwd=dir, env=env) != 0:
-                return None
+                if not version:
+                    return None
+                sf_urls = self.get_lp_source_package(self.get_distro_name(),
+                                                     srcpackage, version)
+                if sf_urls:
+                    proxy = ''
+                    if apt.apt_pkg.config.find('Acquire::http::Proxy') != '':
+                        proxy = apt.apt_pkg.config.find('Acquire::http::Proxy')
+                        apt.apt_pkg.config.set('Acquire::http::Proxy', '')
+                    fetchProgress = apt.progress.base.AcquireProgress()
+                    fetcher = apt.apt_pkg.Acquire(fetchProgress)
+                    af_queue = []
+                    for sf in sf_urls:
+                        af_queue.append(apt.apt_pkg.AcquireFile(fetcher,
+                                        sf, destdir=dir))
+                    result = fetcher.run()
+                    if result != fetcher.RESULT_CONTINUE:
+                        return None
+                    if proxy:
+                        apt.apt_pkg.config.set('Acquire::http::Proxy', proxy)
+                    for dsc in glob.glob(os.path.join(dir, '*.dsc')):
+                        subprocess.call(['dpkg-source', '-sn',
+                                         '-x', dsc], stdout=subprocess.PIPE,
+                                        cwd=dir)
+                else:
+                    return None
         except OSError:
             return None
 
@@ -512,6 +631,7 @@ Debug::NoLocking "true";
                 break
             out.write(block)
         out.flush()
+        out.close()
         ret = subprocess.call(['dpkg', '-i', os.path.join(target_dir, deb)])
         if ret == 0:
             installed.append(deb.split('_')[0])
@@ -555,13 +675,15 @@ Debug::NoLocking "true";
         package servers down, etc.), this should raise a SystemError with a
         meaningful error message.
         '''
+        if not architecture:
+            architecture = self.get_system_architecture()
         if not configdir:
             apt_sources = '/etc/apt/sources.list'
             self.current_release_codename = self.get_distro_codename()
         else:
             # support architecture specific config, fall back to global config
             apt_sources = os.path.join(configdir, release, 'sources.list')
-            if architecture:
+            if architecture != self.get_system_architecture():
                 arch_apt_sources = os.path.join(configdir, release,
                                                 architecture, 'sources.list')
                 if os.path.exists(arch_apt_sources):
@@ -593,11 +715,11 @@ Debug::NoLocking "true";
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
 
-        if architecture:
-            apt.apt_pkg.config.set('APT::Architecture', architecture)
-        else:
-            apt.apt_pkg.config.set('APT::Architecture', self.get_system_architecture())
+        apt.apt_pkg.config.set('APT::Architecture', architecture)
         apt.apt_pkg.config.set('Acquire::Languages', 'none')
+        # directly connect to Launchpad when downloading deb files
+        apt.apt_pkg.config.set('Acquire::http::Proxy::api.launchpad.net', 'direct')
+        apt.apt_pkg.config.set('Acquire::http::Proxy::launchpad.net', 'direct')
 
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()
@@ -613,6 +735,8 @@ Debug::NoLocking "true";
             except apt.cache.FetchFailedException as e:
                 raise SystemError(str(e))
             cache.open()
+
+        archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
 
         obsolete = ''
 
@@ -632,6 +756,10 @@ Debug::NoLocking "true";
 
         # mark packages for installation
         real_pkgs = set()
+        lp_cache = {}
+        fetcher = apt.apt_pkg.Acquire(fetchProgress)
+        # need to keep AcquireFile references
+        acquire_queue = []
         for (pkg, ver) in packages:
             try:
                 cache_pkg = cache[pkg]
@@ -646,7 +774,17 @@ Debug::NoLocking "true";
                 if ver:
                     cache_pkg.candidate = cache_pkg.versions[ver]
             except KeyError:
-                obsolete += '%s version %s required, but %s is available\n' % (pkg, ver, cache_pkg.candidate.version)
+                (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                               pkg, ver, architecture)
+                if lp_url:
+                    acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
+                                                                 lp_url,
+                                                                 md5="sha1:%s" % sha1sum,
+                                                                 destdir=archivedir))
+                    lp_cache[pkg] = ver
+                else:
+                    obsolete += '%s version %s required, but %s is available\n' % (pkg, ver, cache_pkg.candidate.version)
+
             candidate = cache_pkg.candidate
             real_pkgs.add(pkg)
 
@@ -702,14 +840,31 @@ Debug::NoLocking "true";
 
             if candidate.architecture != 'all':
                 try:
-                    dbg = cache[pkg + '-dbg']
+                    dbg_pkg = pkg + '-dbg'
+                    dbg = cache[dbg_pkg]
+                    pkg_found = False
                     # try to get the same version as pkg
-                    try:
-                        dbg.candidate = dbg.versions[candidate.version]
-                    except KeyError:
-                        obsolete += 'outdated -dbg package for %s: package version %s -dbg version %s\n' % (
-                            pkg, candidate.version, dbg.candidate.version)
-                    real_pkgs.add(pkg + '-dbg')
+                    if ver:
+                        try:
+                            dbg.candidate = dbg.versions[ver]
+                            pkg_found = True
+                        except KeyError:
+                            (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                           dbg_pkg, ver, architecture)
+                            if lp_url:
+                                acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
+                                                                             lp_url,
+                                                                             md5="sha1:%s" % sha1sum,
+                                                                             destdir=archivedir))
+                                lp_cache[dbg_pkg] = ver
+                                pkg_found = True
+                    if not pkg_found:
+                        try:
+                            dbg.candidate = dbg.versions[candidate.version]
+                        except KeyError:
+                            obsolete += 'outdated -dbg package for %s: package version %s -dbg version %s\n' % (
+                                pkg, ver, dbg.candidate.version)
+                    real_pkgs.add(dbg_pkg)
                 except KeyError:
                     # install all -dbg from the source package
                     if src_records.lookup(candidate.source_name):
@@ -718,37 +873,82 @@ Debug::NoLocking "true";
                         dbgs = []
                     if dbgs:
                         for p in dbgs:
-                            # try to get the same version as pkg
-                            try:
-                                cache[p].candidate = cache[p].versions[candidate.version]
-                            except KeyError:
-                                # we don't really expect that, but it's possible that
-                                # other binaries have a different version
-                                pass
+                            # if the package has already been added to
+                            # real_pkgs don't search for it again
+                            if p in real_pkgs:
+                                continue
+                            pkg_found = False
+                            # prefer the version requested
+                            if ver:
+                                try:
+                                    cache[p].candidate = cache[p].versions[ver]
+                                    pkg_found = True
+                                except KeyError:
+                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                                   p, ver, architecture)
+                                    if lp_url:
+                                        acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
+                                                                                     lp_url,
+                                                                                     md5="sha1:%s" % sha1sum,
+                                                                                     destdir=archivedir))
+                                        lp_cache[p] = ver
+                                        pkg_found = True
+                            if not pkg_found:
+                                try:
+                                    cache[p].candidate = cache[p].versions[candidate.version]
+                                except KeyError:
+                                    # we don't really expect that, but it's possible that
+                                    # other binaries have a different version
+                                    pass
                             real_pkgs.add(p)
                     else:
                         try:
-                            dbgsym = cache[pkg + '-dbgsym']
-                            real_pkgs.add(pkg + '-dbgsym')
-                            try:
-                                dbgsym.candidate = dbgsym.versions[candidate.version]
-                            except KeyError:
-                                obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
-                                    pkg, candidate.version, dbgsym.candidate.version)
+                            dbgsym_pkg = pkg + '-dbgsym'
+                            dbgsym = cache[dbgsym_pkg]
+                            real_pkgs.add(dbgsym_pkg)
+                            pkg_found = False
+                            # prefer the version requested
+                            if ver:
+                                try:
+                                    dbgsym.candidate = dbgsym.versions[ver]
+                                    pkg_found = True
+                                except KeyError:
+                                    (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                                   dbgsym_pkg, ver, architecture)
+                                    if lp_url:
+                                        acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
+                                                                                     lp_url,
+                                                                                     md5="sha1:%s" % sha1sum,
+                                                                                     destdir=archivedir))
+                                        lp_cache[dbgsym_pkg] = ver
+                                        pkg_found = True
+                            if not pkg_found:
+                                try:
+                                    dbgsym.candidate = dbgsym.versions[candidate.version]
+                                except KeyError:
+                                    obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
+                                        pkg, candidate.version, dbgsym.candidate.version)
                         except KeyError:
                             obsolete += 'no debug symbol package found for %s\n' % pkg
 
         # unpack packages, weed out the ones that are already installed (for
         # permanent sandboxes)
         for p in real_pkgs.copy():
-            if pkg_versions.get(p) != cache[p].candidate.version:
-                cache[p].mark_install(False, False)
+            if ver:
+                if pkg_versions.get(p) != ver:
+                    cache[p].mark_install(False, False)
+                elif pkg_versions.get(p) != cache[p].candidate.version:
+                    cache[p].mark_install(False, False)
+                else:
+                    real_pkgs.remove(p)
             else:
-                real_pkgs.remove(p)
+                if pkg_versions.get(p) != cache[p].candidate.version:
+                    cache[p].mark_install(False, False)
+                else:
+                    real_pkgs.remove(p)
 
         last_written = time.time()
         # fetch packages
-        fetcher = apt.apt_pkg.Acquire(fetchProgress)
         try:
             cache.fetch_archives(fetcher=fetcher)
         except apt.cache.FetchFailedException as e:
@@ -761,9 +961,22 @@ Debug::NoLocking "true";
             if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
                 out = subprocess.check_output(['dpkg-deb', '--show', i.destfile]).decode()
                 (p, v) = out.strip().split()
-                pkg_versions[p] = v
-                subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
-            real_pkgs.remove(os.path.basename(i.destfile).split('_', 1)[0])
+                # don't extract the same version of the package if it is
+                # already extracted
+                if pkg_versions.get(p) == v:
+                    pass
+                # don't extract the package if it is a different version than
+                # the one we want to extract from Launchpad
+                elif p in lp_cache and lp_cache[p] != v:
+                    pass
+                else:
+                    subprocess.check_call(['dpkg', '-x', i.destfile, rootdir])
+                    pkg_versions[p] = v
+            pkg_name = os.path.basename(i.destfile).split('_', 1)[0]
+            # because a package may exist multiple times in the fetcher it may
+            # have already been removed
+            if pkg_name in real_pkgs:
+                real_pkgs.remove(pkg_name)
 
         # update package list
         pkgs = list(pkg_versions.keys())
@@ -1013,7 +1226,7 @@ Debug::NoLocking "true";
         '''Return the version of a .deb file'''
 
         dpkg = subprocess.Popen(['dpkg-deb', '-f', pkg, 'Version'], stdout=subprocess.PIPE)
-        out = dpkg.communicate(input)[0].decode('UTF-8')
+        out = dpkg.communicate(input)[0].decode('UTF-8').strip()
         assert dpkg.returncode == 0
         assert out
         return out
@@ -1037,5 +1250,19 @@ Debug::NoLocking "true";
             assert lsb_release.returncode == 0
 
         return self._distro_codename
+
+    _distro_name = None
+
+    def get_distro_name(self):
+        '''Get osname from /etc/os-release, or if that doesn't exist,
+           'lsb_release -sir' output and cache the result.'''
+
+        if self._distro_name is None:
+            self._distro_name = self.get_os_version()[0].lower()
+            if ' ' in self._distro_name:
+                # concatenate distro name e.g. ubuntu-rtm
+                self._distro_name = self._distro_name.replace(' ', '-')
+
+        return self._distro_name
 
 impl = __AptDpkgPackageInfo()
