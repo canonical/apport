@@ -272,6 +272,8 @@ class __AptDpkgPackageInfo(PackageInfo):
             ps = self.json_request(ps_url, entries=True)[0]['self_link']
         except IndexError:
             return None
+        if not ps:
+            return None
         sf_urls = ps + '?ws.op=sourceFileUrls'
         sfus = self.json_request(sf_urls)
         if not sfus:
@@ -801,7 +803,6 @@ Debug::NoLocking "true";
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Conflicts'])
                 if 'Replaces' in candidate.record:
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
-                archives = apt.apt_pkg.config.find_dir('Dir::Cache::archives')
                 for conflict in conflicts:
                     # apt_pkg.parse_depends needs to handle the or operator,
                     # but as policy states it is invalid to use that in
@@ -817,7 +818,7 @@ Debug::NoLocking "true";
                             # unpacked into the sandbox.
                             continue
                         for p in providers:
-                            debs = os.path.join(archives, '%s_*.deb' % p)
+                            debs = os.path.join(archivedir, '%s_*.deb' % p)
                             for path in glob.glob(debs):
                                 ver = self._deb_version(path)
                                 if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
@@ -828,7 +829,7 @@ Debug::NoLocking "true";
                                 pass
                         del providers
                     else:
-                        debs = os.path.join(archives, '%s_*.deb' % conflict[0])
+                        debs = os.path.join(archivedir, '%s_*.deb' % conflict[0])
                         for path in glob.glob(debs):
                             ver = self._deb_version(path)
                             if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
