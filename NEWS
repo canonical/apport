@@ -18,6 +18,8 @@ detailed list of changes, please see ChangeLog.
  * apt/dpkg install_packages(): If a requested package version is not available
    from apt in the given archive, try to download it from Launchpad. Thanks to
    Brian Murray!
+ * kerneloops: Fix crash when determining the version of a custom kernel.
+   Thanks Brian Murray. (LP: #1468154)
 
 2.17.3 (2015-05-20)
 -------------------
