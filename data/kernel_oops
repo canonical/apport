@@ -32,7 +32,7 @@ package = apport.packaging.get_kernel_package()
 try:
     package_version = apport.packaging.get_version(package)
 except ValueError as e:
-    if 'does not exist' in e.message:
+    if 'does not exist' in str(e):
         package_version = 'unknown'
 pr['Package'] = '%s %s' % (package, package_version)
 pr['SourcePackage'] = 'linux'
