@@ -869,7 +869,10 @@ Debug::NoLocking "true";
                 except KeyError:
                     # install all -dbg from the source package
                     if src_records.lookup(candidate.source_name):
-                        dbgs = [p for p in src_records.binaries if p.endswith('-dbg') and p in cache]
+                        # ignore transitional packages
+                        dbgs = [p for p in src_records.binaries
+                                if p.endswith('-dbg') and p in cache and
+                                'transitional' not in cache[p].candidate.description]
                     else:
                         dbgs = []
                     if dbgs:

@@ -848,7 +848,9 @@ deb http://secondary.mirror tuxy extra
                                           ('distro-info-data',
                                            '0.18ubuntu0.2'),
                                           ('qemu-utils',
-                                           '2.0.0+dfsg-2ubuntu1.11')
+                                           '2.0.0+dfsg-2ubuntu1.11'),
+                                          ('unity-services',
+                                           '7.2.5+14.04.20150521.1-0ubuntu1'),
                                          ], False, self.cachedir)
 
         def sandbox_ver(pkg, debian=True):
@@ -883,6 +885,8 @@ deb http://secondary.mirror tuxy extra
         self.assertIn('oxideqt-codecs-dbg 1.6.6-0ubuntu0.14.04.1', pkglist)
         self.assertIn('distro-info-data 0.18ubuntu0.2', pkglist)
         self.assertIn('qemu-utils-dbgsym 2.0.0+dfsg-2ubuntu1.11',
+                      pkglist)
+        self.assertIn('unity-services-dbgsym 7.2.5+14.04.20150521.1-0ubuntu1',
                       pkglist)
 
         # caches packages, and their versions are as expected
