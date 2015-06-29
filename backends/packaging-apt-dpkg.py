@@ -781,7 +781,7 @@ Debug::NoLocking "true";
                 if lp_url:
                     acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
                                                                  lp_url,
-                                                                 md5="sha1:%s" % sha1sum,
+                                                                 hash="sha1:%s" % sha1sum,
                                                                  destdir=archivedir))
                     lp_cache[pkg] = ver
                 else:
@@ -855,7 +855,7 @@ Debug::NoLocking "true";
                             if lp_url:
                                 acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
                                                                              lp_url,
-                                                                             md5="sha1:%s" % sha1sum,
+                                                                             hash="sha1:%s" % sha1sum,
                                                                              destdir=archivedir))
                                 lp_cache[dbg_pkg] = ver
                                 pkg_found = True
@@ -890,7 +890,7 @@ Debug::NoLocking "true";
                                     if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
                                                                                      lp_url,
-                                                                                     md5="sha1:%s" % sha1sum,
+                                                                                     hash="sha1:%s" % sha1sum,
                                                                                      destdir=archivedir))
                                         lp_cache[p] = ver
                                         pkg_found = True
@@ -919,7 +919,7 @@ Debug::NoLocking "true";
                                     if lp_url:
                                         acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
                                                                                      lp_url,
-                                                                                     md5="sha1:%s" % sha1sum,
+                                                                                     hash="sha1:%s" % sha1sum,
                                                                                      destdir=archivedir))
                                         lp_cache[dbgsym_pkg] = ver
                                         pkg_found = True
