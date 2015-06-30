@@ -10,7 +10,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import atexit, os, os.path, shutil, tempfile
+import atexit, os, os.path, re, shutil, tempfile
 import apport
 
 
@@ -179,12 +179,19 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     if config_dir == 'system':
         config_dir = None
 
+    pkg_list = report.get('Package', '') + '\n' + report.get('Dependencies', '')
+    m = re.compile('\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]$')
+    origins = set(m.findall(pkg_list))
+    origins -= set([u'unknown'])
+    if origins:
+        apport.log("Origins: %s" % origins)
+
     # unpack packages, if any, using cache and sandbox
     try:
         outdated_msg = apport.packaging.install_packages(
             sandbox_dir, config_dir, report['DistroRelease'], pkgs,
             verbose, cache_dir, permanent_rootdir,
-            architecture=report.get('Architecture'))
+            architecture=report.get('Architecture'), origins=origins)
     except SystemError as e:
         apport.fatal(str(e))
 
