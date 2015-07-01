@@ -171,6 +171,11 @@ class RPMPackageInfo:
                 return True
         return False
 
+    def is_native_origin_package(self, package):
+        '''Check if a package originated from a native location (True) 
+           or comes from a third-party source.'''
+        return False
+
     def set_mirror(self, url):
         '''Explicitly set a distribution mirror URL for operations that need to
         fetch distribution files/packages from the network.

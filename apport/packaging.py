@@ -65,10 +65,18 @@ class PackageInfo:
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
 
+    def is_native_origin_package(self, package):
+        '''Check if a package is one which has been white listed.
+
+        Return True for a package which came from an origin which is listed in
+        native-origins.d, False if it comes from a third- party source.
+        '''
+        raise NotImplementedError('this method must be implemented by a concrete subclass')
+
     def get_architecture(self, package):
         '''Return the architecture of a package.
 
-        This might differ on multiarch architectures (e. g.  an i386 Firefox
+        This might differ on multiarch architectures (e. g. an i386 Firefox
         package on a x86_64 system)
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
