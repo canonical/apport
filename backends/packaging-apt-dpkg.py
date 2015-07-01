@@ -182,6 +182,29 @@ class __AptDpkgPackageInfo(PackageInfo):
             return False
 
         native_origins = [self.get_os_version()[0]]
+
+        if pkg.candidate and pkg.candidate.origins:  # might be None
+            for o in pkg.candidate.origins:
+                if o.origin in native_origins:
+                    return True
+        return False
+
+    def is_native_origin_package(self, package):
+        '''Check if a package is one which has been white listed.
+
+        Return True for a distro package or a package which came from an
+        origin which is listed in native-origins.d, False if it comes from a
+        third- party source.
+        '''
+        if self.is_distro_package(package):
+            return True
+
+        pkg = self._apt_pkg(package)
+        # some PPA packages have installed version None, see LP#252734
+        if pkg.installed and pkg.installed.version is None:
+            return False
+
+        native_origins = []
         for f in glob.glob('/etc/apport/native-origins.d/*'):
             try:
                 with open(f) as fd:
