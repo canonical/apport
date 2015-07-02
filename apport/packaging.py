@@ -68,7 +68,7 @@ class PackageInfo:
     def get_architecture(self, package):
         '''Return the architecture of a package.
 
-        This might differ on multiarch architectures (e. g.  an i386 Firefox
+        This might differ on multiarch architectures (e. g. an i386 Firefox
         package on a x86_64 system)
         '''
         raise NotImplementedError('this method must be implemented by a concrete subclass')
@@ -234,6 +234,16 @@ class PackageInfo:
         '''Return known package names which match given glob.'''
 
         raise NotImplementedError('this method must be implemented by a concrete subclass')
+
+    def is_native_origin_package(self, package):
+        '''Check if a package is one which has been white listed.
+
+        Return True for a package which came from an origin which is listed in
+        native-origins.d, False if it comes from a third-party source.
+        '''
+        # Default implementation does nothing, i. e. native origins are not
+        # supported.
+        return False
 
     def get_uninstalled_package(self):
         '''Return a valid package name which is not installed.

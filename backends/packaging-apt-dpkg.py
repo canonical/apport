@@ -181,7 +181,26 @@ class __AptDpkgPackageInfo(PackageInfo):
         if pkg.installed and pkg.installed.version is None:
             return False
 
-        native_origins = [self.get_os_version()[0]]
+        distro_name = self.get_os_version()[0]
+
+        if pkg.candidate and pkg.candidate.origins:  # might be None
+            for o in pkg.candidate.origins:
+                if o.origin == distro_name:
+                    return True
+        return False
+
+    def is_native_origin_package(self, package):
+        '''Check if a package originated from a native location
+
+        Return True for a package which came from an origin which is listed in
+        native-origins.d, False if it comes from a third-party source.
+        '''
+        pkg = self._apt_pkg(package)
+        # some PPA packages have installed version None, see LP#252734
+        if pkg.installed and pkg.installed.version is None:
+            return False
+
+        native_origins = []
         for f in glob.glob('/etc/apport/native-origins.d/*'):
             try:
                 with open(f) as fd:
