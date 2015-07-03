@@ -953,7 +953,8 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
         os.mkdir(out_dir)
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'))
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
+                                'ubuntu', 'trusty', None)
         res = impl.get_source_tree('base-files', out_dir, sandbox=self.rootdir,
                                    apt_update=True)
         self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
@@ -967,7 +968,8 @@ deb http://secondary.mirror tuxy extra
         self._setup_foonux_config()
         out_dir = os.path.join(self.workdir, 'out')
         os.mkdir(out_dir)
-        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'))
+        impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
+                                'ubuntu', 'trusty', None)
         res = impl.get_source_tree('debian-installer', out_dir, version='20101020ubuntu318.16',
                                    sandbox=self.rootdir, apt_update=True)
         self.assertTrue(os.path.isdir(os.path.join(res, 'debian')))
@@ -979,14 +981,23 @@ deb http://secondary.mirror tuxy extra
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_create_sources_for_a_named_ppa(self):
         '''Add sources.list entries for a named PPA.'''
-        ppa = 'LP-PPA-ci-train-ppa-service-stable-phone-overlay'
-        self._setup_foonux_config(release='vivid')
+        ppa = 'LP-PPA-daisy-pluckers-daisy-seeds'
+        self._setup_foonux_config()
         impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
-                                origins=[ppa])
+                                'ubuntu', 'trusty', origins=[ppa])
         with open(os.path.join(self.rootdir, 'etc', 'apt', 'sources.list.d', ppa + '.list')) as f:
             sources = f.read().splitlines()
-        self.assertIn('deb http://ppa.launchpad.net/ci-train-ppa-service/stable-phone-overlay/ubuntu vivid main main/debug', sources)
-        self.assertIn('deb-src http://ppa.launchpad.net/ci-train-ppa-service/stable-phone-overlay/ubuntu vivid main', sources)
+        self.assertIn('deb http://ppa.launchpad.net/daisy-pluckers/daisy-seeds/ubuntu trusty main main/debug', sources)
+        self.assertIn('deb-src http://ppa.launchpad.net/daisy-pluckers/daisy-seeds/ubuntu trusty main', sources)
+
+        d = subprocess.Popen(['gpg', '--no-options', '--no-default-keyring',
+                              '--no-auto-check-trustdb', '--trust-model',
+                              'always', '--batch', '--list-keys', '--keyring',
+                              os.path.join(self.rootdir, 'etc', 'apt', 'trusted.gpg.d', 'LP-PPA-daisy-pluckers-daisy-seeds.gpg')],
+                             stdout=subprocess.PIPE)
+        apt_keys = d.communicate()[0].decode().splitlines()
+        assert d.returncode == 0
+        self.assertIn('uid                  Launchpad PPA for Daisy Pluckers', apt_keys)
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_create_sources_for_an_unnamed_ppa(self):
@@ -994,18 +1005,27 @@ deb http://secondary.mirror tuxy extra
         ppa = 'LP-PPA-brian-murray'
         self._setup_foonux_config()
         impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
-                                origins=[ppa])
+                                'ubuntu', 'trusty', origins=[ppa])
         with open(os.path.join(self.rootdir, 'etc', 'apt', 'sources.list.d', ppa + '.list')) as f:
             sources = f.read().splitlines()
         self.assertIn('deb http://ppa.launchpad.net/brian-murray/ppa/ubuntu trusty main', sources)
         self.assertIn('deb-src http://ppa.launchpad.net/brian-murray/ppa/ubuntu trusty main', sources)
+
+        d = subprocess.Popen(['gpg', '--no-options', '--no-default-keyring',
+                              '--no-auto-check-trustdb', '--trust-model',
+                              'always', '--batch', '--list-keys', '--keyring',
+                              os.path.join(self.rootdir, 'etc', 'apt', 'trusted.gpg.d', 'LP-PPA-brian-murray.gpg')],
+                             stdout=subprocess.PIPE)
+        apt_keys = d.communicate()[0].decode().splitlines()
+        assert d.returncode == 0
+        self.assertIn('uid                  Launchpad PPA for Brian Murray', apt_keys)
 
     def test_use_sources_for_a_ppa(self):
         '''Use a sources.list.d file for a PPA.'''
         ppa = 'fooser-bar-ppa'
         self._setup_foonux_config(ppa=True)
         impl._build_apt_sandbox(self.rootdir, os.path.join(self.configdir, 'Foonux 1.2', 'sources.list'),
-                                origins=['LP-PPA-%s' % ppa])
+                                'ubuntu', 'trusty', origins=['LP-PPA-%s' % ppa])
         with open(os.path.join(self.rootdir, 'etc', 'apt', 'sources.list.d', ppa + '.list')) as f:
             sources = f.read().splitlines()
         self.assertIn('deb http://ppa.launchpad.net/fooser/bar-ppa/ubuntu trusty main main/debug', sources)
@@ -1015,7 +1035,7 @@ deb http://secondary.mirror tuxy extra
     def test_install_package_from_a_ppa(self):
         '''Install a package from a PPA.'''
         ppa = 'LP-PPA-brian-murray'
-        self._setup_foonux_config(release='trusty')
+        self._setup_foonux_config()
         obsolete = impl.install_packages(self.rootdir, self.configdir, 'Foonux 1.2',
                                          [('apport',
                                            '2.14.1-0ubuntu3.7~ppa4')
@@ -1032,7 +1052,11 @@ deb http://secondary.mirror tuxy extra
                          '2.14.1-0ubuntu3.7~ppa4')
 
     def _setup_foonux_config(self, updates=False, release='trusty', ppa=False):
-        '''Set up directories and configuration for install_packages()'''
+        '''Set up directories and configuration for install_packages()
+
+           If ppa is True, then a sources.list file for a PPA will be created
+           in sources.list.d used to test copying of a sources.list file to a
+           sandbox.'''
 
         self.cachedir = os.path.join(self.workdir, 'cache')
         self.rootdir = os.path.join(self.workdir, 'root')

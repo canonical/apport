@@ -182,7 +182,6 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     pkg_list = report.get('Package', '') + '\n' + report.get('Dependencies', '')
     m = re.compile('\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]$')
     origins = set(m.findall(pkg_list))
-    origins -= set([u'unknown'])
     if origins:
         apport.log("Origins: %s" % origins)
 
