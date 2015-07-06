@@ -1293,6 +1293,8 @@ Debug::NoLocking "true";
                                                    origin.strip('LP-PPA-') + '.list')
                         if not os.path.exists(origin_path):
                             origin_path = None
+                    elif not os.path.exists(origin_path):
+                        origin_path = None
                 if origin_path:
                     with open(origin_path) as src_ext:
                         source_list_content = src_ext.read()

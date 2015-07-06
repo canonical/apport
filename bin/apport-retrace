@@ -297,7 +297,8 @@ apport.memdbg('sanity checks passed')
 if options.sandbox:
     sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
         report, options.sandbox, options.cache, options.sandbox_dir,
-        options.extra_package, options.verbose, options.ppa)
+        options.extra_package, options.verbose, log_timestamps,
+        options.any_ppa)
 else:
     sandbox = None
     outdated_msg = None

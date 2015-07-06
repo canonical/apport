@@ -186,7 +186,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         config_dir = None
 
     pkg_list = report.get('Package', '') + '\n' + report.get('Dependencies', '')
-    m = re.compile('\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]$')
+    m = re.compile('\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]')
     origins = set(m.findall(pkg_list))
     if origins:
         apport.log("Origins: %s" % origins)
@@ -223,7 +223,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
             outdated_msg += apport.packaging.install_packages(
                 sandbox_dir, config_dir, report['DistroRelease'], pkgs,
                 verbose, cache_dir, permanent_rootdir,
-                architecture=report.get('Architecture'))
+                architecture=report.get('Architecture'), origins=origins,
+                any_ppa=any_ppa)
         except SystemError as e:
             apport.fatal(str(e))
 
