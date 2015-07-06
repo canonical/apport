@@ -90,14 +90,15 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._apt_cache = apt.Cache(rootdir='/')
         return self._apt_cache
 
-    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name, distro_codename, origins):
+    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name, distro_codename, origins, any_ppa):
         '''Build apt sandbox and return apt.Cache(rootdir=) (initialized lazily).
 
         Clear the package selection on subsequent calls.
         '''
         self._apt_cache = None
         if not self._sandbox_apt_cache:
-            self._build_apt_sandbox(aptroot, apt_sources, distro_name, distro_codename, origins)
+            self._build_apt_sandbox(aptroot, apt_sources, distro_name,
+                                    distro_codename, origins, any_ppa)
             rootdir = os.path.abspath(aptroot)
             self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
             try:
@@ -644,7 +645,7 @@ Debug::NoLocking "true";
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
                          permanent_rootdir=False, architecture=None,
-                         origins=None):
+                         origins=None, any_ppa=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -674,7 +675,11 @@ Debug::NoLocking "true";
         field). If not given it defaults to the host system's architecture.
 
         If origins is given, the sandbox will be created with apt data sources
-        for any origins that are Launchpad PPAs.
+        for origins that are Launchpad PPAs.
+
+        If any_ppa is True, then apt sources will be created for origins from
+        any Launchpad PPA. If False, then apt sources will only be created for
+        PPAs specified in configdir.
 
         Return a string with outdated packages, or None if all packages were
         installed.
@@ -736,11 +741,13 @@ Debug::NoLocking "true";
         if not tmp_aptroot:
             cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress,
                                         self.get_distro_name(),
-                                        self.current_release_codename, origins)
+                                        self.current_release_codename,
+                                        origins, any_ppa)
         else:
             self._build_apt_sandbox(aptroot, apt_sources,
                                     self.get_distro_name(),
-                                    self.current_release_codename, origins)
+                                    self.current_release_codename, origins,
+                                    any_ppa)
             cache = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
                 cache.update(fetchProgress)
@@ -1249,7 +1256,7 @@ Debug::NoLocking "true";
         return None
 
     @classmethod
-    def _build_apt_sandbox(klass, apt_root, apt_sources, distro_name, distro_codename, origins):
+    def _build_apt_sandbox(klass, apt_root, apt_sources, distro_name, distro_codename, origins, any_ppa):
         # pre-create directories, to avoid apt.Cache() printing "creating..."
         # messages on stdout
         if not os.path.exists(os.path.join(apt_root, 'var', 'lib', 'apt')):
@@ -1289,7 +1296,7 @@ Debug::NoLocking "true";
                 if origin_path:
                     with open(origin_path) as src_ext:
                         source_list_content = src_ext.read()
-                else:
+                elif any_ppa:
                     source_list_content = klass.create_ppa_source_from_origin(origin, distro_name, distro_codename)
                 if source_list_content:
                     with open(os.path.join(apt_root, 'etc', 'apt',
@@ -1303,8 +1310,10 @@ Debug::NoLocking "true";
                         user = line.split()[1].split('/')[3]
                         ppa = line.split()[1].split('/')[4]
                         origin_data[origin] = (user, ppa)
-                else:
+                elif not any_ppa:
                     apport.warning("Could not find source config for %s" % origin)
+                else:
+                    apport.warning("Could not create source config for %s" % origin)
 
         # install apt keyrings; prefer the ones from the config dir, fall back
         # to system

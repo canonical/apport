@@ -103,7 +103,8 @@ def needed_runtime_packages(report, sandbox, pkgmap_cache_dir, pkg_versions, ver
 
 
 def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
-                 extra_packages=[], verbose=False, log_timestamps=False):
+                 extra_packages=[], verbose=False, log_timestamps=False,
+                 any_ppa=False):
     '''Build a sandbox with the packages that belong to a particular report.
 
     This downloads and unpacks all packages from the report's Package and
@@ -140,8 +141,13 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     are not derived from the report.
 
     If verbose is True (False by default), this will write some additional
-    logging to stdout. If log_timestamps is True, these log messages will be
-    prefixed with the current time.
+    logging to stdout.
+
+    If log_timestamps is True, these log messages will be prefixed with the
+    current time.
+
+    If any_ppa is True (False by default), the sandbox will be built with
+    packages that have an origin from any Launchpad PPA.
 
     Return a tuple (sandbox_dir, cache_dir, outdated_msg).
     '''
@@ -190,7 +196,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         outdated_msg = apport.packaging.install_packages(
             sandbox_dir, config_dir, report['DistroRelease'], pkgs,
             verbose, cache_dir, permanent_rootdir,
-            architecture=report.get('Architecture'), origins=origins)
+            architecture=report.get('Architecture'), origins=origins,
+            any_ppa=any_ppa)
     except SystemError as e:
         apport.fatal(str(e))
 
