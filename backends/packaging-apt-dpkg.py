@@ -16,6 +16,8 @@ import subprocess, os, glob, stat, sys, tempfile, shutil, time
 import hashlib
 import json
 
+from contextlib import closing
+
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
@@ -1230,7 +1232,8 @@ Debug::NoLocking "true";
                 user = str.join('-', components[0:index])
                 ppa_name = str.join('-', components[index:len(components)])
                 try:
-                    urlopen(apport.packaging._ppa_archive_url % (user, distro, ppa_name))
+                    with closing(urlopen(apport.packaging._ppa_archive_url % (user, distro, ppa_name))) as response:
+                        response.read()
                 except (URLError, HTTPError):
                     index += 1
                     if index == len(components):
@@ -1248,7 +1251,8 @@ Debug::NoLocking "true";
                 debug_url = 'http://ppa.launchpad.net/%s/%s/%s/dists/%s/main/debug' % \
                             (user, ppa_name, distro, codename)
                 try:
-                    urlopen(debug_url)
+                    with closing(urlopen(debug_url)) as response:
+                        response.read()
                     add_debug = ' main/debug'
                 except (URLError, HTTPError):
                     add_debug = ''
