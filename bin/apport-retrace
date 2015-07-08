@@ -53,8 +53,8 @@ def parse_args():
                            help=_('Report download/install progress when installing packages into sandbox'))
     argparser.add_argument('--timestamps', action='store_true',
                            help=_('Prepend timestamps to log messages, for batch operation'))
-    argparser.add_argument('--any-ppa', action='store_true',
-                           help=_('Create apt sources for any Launchpad PPA from which a package originated'))
+    argparser.add_argument('--dynamic-origins', action='store_true',
+                           help=_('Create and use third-party repositories from origins specified in reports'))
     argparser.add_argument('-C', '--cache', metavar='DIR',
                            help=_('Cache directory for packages downloaded in the sandbox'))
     argparser.add_argument('--sandbox-dir', metavar='DIR',
@@ -298,7 +298,7 @@ if options.sandbox:
     sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
         report, options.sandbox, options.cache, options.sandbox_dir,
         options.extra_package, options.verbose, log_timestamps,
-        options.any_ppa)
+        options.dynamic_origins)
 else:
     sandbox = None
     outdated_msg = None

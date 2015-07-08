@@ -50,7 +50,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._virtual_mapping_obj = None
         self._launchpad_base = 'https://api.launchpad.net/devel'
         self._archive_url = self._launchpad_base + '/%s/main_archive'
-        self._ppa_archive_url = self._launchpad_base + '/~%s/+archive/%s/%s'
+        self._ppa_archive_url = self._launchpad_base + '/~%(user)s/+archive/%(distro)s/%(ppaname)s'
 
     def __del__(self):
         try:
@@ -92,7 +92,7 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._apt_cache = apt.Cache(rootdir='/')
         return self._apt_cache
 
-    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name, distro_codename, origins, any_ppa):
+    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name, release_codename, origins):
         '''Build apt sandbox and return apt.Cache(rootdir=) (initialized lazily).
 
         Clear the package selection on subsequent calls.
@@ -100,7 +100,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._apt_cache = None
         if not self._sandbox_apt_cache:
             self._build_apt_sandbox(aptroot, apt_sources, distro_name,
-                                    distro_codename, origins, any_ppa)
+                                    release_codename, origins)
             rootdir = os.path.abspath(aptroot)
             self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
             try:
@@ -647,7 +647,7 @@ Debug::NoLocking "true";
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
                          permanent_rootdir=False, architecture=None,
-                         origins=None, any_ppa=False):
+                         origins=None):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -677,11 +677,7 @@ Debug::NoLocking "true";
         field). If not given it defaults to the host system's architecture.
 
         If origins is given, the sandbox will be created with apt data sources
-        for origins that are Launchpad PPAs.
-
-        If any_ppa is True, then apt sources will be created for origins from
-        any Launchpad PPA. If False, then apt sources will only be created for
-        PPAs specified in configdir.
+        for foreign origins.
 
         Return a string with outdated packages, or None if all packages were
         installed.
@@ -744,12 +740,11 @@ Debug::NoLocking "true";
             cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress,
                                         self.get_distro_name(),
                                         self.current_release_codename,
-                                        origins, any_ppa)
+                                        origins)
         else:
             self._build_apt_sandbox(aptroot, apt_sources,
                                     self.get_distro_name(),
-                                    self.current_release_codename, origins,
-                                    any_ppa)
+                                    self.current_release_codename, origins)
             cache = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
                 cache.update(fetchProgress)
@@ -1203,21 +1198,19 @@ Debug::NoLocking "true";
         return None
 
     @classmethod
-    def create_ppa_source_from_origin(klass, origin, distro, codename):
+    def create_ppa_source_from_origin(klass, origin, distro, release_codename):
         '''For an origin from a Launchpad PPA create sources.list content.
 
-           distro is the distribution for which content is being created e.g.
-           ubuntu.
+        distro is the distribution for which content is being created e.g.
+        ubuntu.
 
-           codename is the codename of the release for which content is being
-           created e.g. trusty.
+        codename is the codename of the release for which content is being
+        created e.g. trusty.
 
-           Return a string containing content suitable for writing to a sources.list
-           file, or None if the origin is not a Launchpad PPA.'''
+        Return a string containing content suitable for writing to a sources.list
+        file, or None if the origin is not a Launchpad PPA.
+        '''
 
-        # apport's report format uses unknown for packages w/o an origin
-        if origin == 'unknown':
-            return None
         if origin.startswith("LP-PPA-"):
             components = origin.split("-")[2:]
             # If the PPA is unnamed, it will not appear in origin information
@@ -1229,10 +1222,15 @@ Debug::NoLocking "true";
 
             index = 1
             while (index < len(components)):
+                # For an origin we can't tell where the user name ends and the
+                # PPA name starts, so split on each "-" until we find a PPA
+                # that exists.
                 user = str.join('-', components[0:index])
                 ppa_name = str.join('-', components[index:len(components)])
                 try:
-                    with closing(urlopen(apport.packaging._ppa_archive_url % (user, distro, ppa_name))) as response:
+                    with closing(urlopen(apport.packaging._ppa_archive_url %
+                                         {'user': user, 'distro': distro,
+                                          'ppaname': ppa_name})) as response:
                         response.read()
                 except (URLError, HTTPError):
                     index += 1
@@ -1247,9 +1245,9 @@ Debug::NoLocking "true";
                 break
             if user and ppa_name:
                 ppa_line = 'deb http://ppa.launchpad.net/%s/%s/%s %s main' % \
-                           (user, ppa_name, distro, codename)
+                           (user, ppa_name, distro, release_codename)
                 debug_url = 'http://ppa.launchpad.net/%s/%s/%s/dists/%s/main/debug' % \
-                            (user, ppa_name, distro, codename)
+                            (user, ppa_name, distro, release_codename)
                 try:
                     with closing(urlopen(debug_url)) as response:
                         response.read()
@@ -1260,7 +1258,7 @@ Debug::NoLocking "true";
         return None
 
     @classmethod
-    def _build_apt_sandbox(klass, apt_root, apt_sources, distro_name, distro_codename, origins, any_ppa):
+    def _build_apt_sandbox(klass, apt_root, apt_sources, distro_name, release_codename, origins):
         # pre-create directories, to avoid apt.Cache() printing "creating..."
         # messages on stdout
         if not os.path.exists(os.path.join(apt_root, 'var', 'lib', 'apt')):
@@ -1287,6 +1285,9 @@ Debug::NoLocking "true";
             # map an origin to a Launchpad username and PPA name
             origin_data = {}
             for origin in origins:
+                # apport's report format uses unknown for packages w/o an origin
+                if origin == 'unknown':
+                    continue
                 origin_path = None
                 if os.path.isdir(apt_sources + '.d'):
                     # check to see if there is a sources.list file for the origin,
@@ -1302,8 +1303,8 @@ Debug::NoLocking "true";
                 if origin_path:
                     with open(origin_path) as src_ext:
                         source_list_content = src_ext.read()
-                elif any_ppa:
-                    source_list_content = klass.create_ppa_source_from_origin(origin, distro_name, distro_codename)
+                else:
+                    source_list_content = klass.create_ppa_source_from_origin(origin, distro_name, release_codename)
                 if source_list_content:
                     with open(os.path.join(apt_root, 'etc', 'apt',
                                            'sources.list.d', origin + '.list'), 'a') as dest:
@@ -1316,10 +1317,8 @@ Debug::NoLocking "true";
                         user = line.split()[1].split('/')[3]
                         ppa = line.split()[1].split('/')[4]
                         origin_data[origin] = (user, ppa)
-                elif not any_ppa:
-                    apport.warning("Could not find source config for %s" % origin)
                 else:
-                    apport.warning("Could not create source config for %s" % origin)
+                    apport.warning("Could not find or create source config for %s" % origin)
 
         # install apt keyrings; prefer the ones from the config dir, fall back
         # to system
@@ -1344,7 +1343,8 @@ Debug::NoLocking "true";
         if origins and source_list_content:
             for origin, (ppa_user, ppa_name) in origin_data.items():
                 ppa_archive_url = apport.packaging._ppa_archive_url % \
-                    (quote(ppa_user), distro_name, quote(ppa_name))
+                    {'user': quote(ppa_user), 'distro': distro_name,
+                     'ppaname': quote(ppa_name)}
                 ppa_info = apport.packaging.json_request(ppa_archive_url)
                 if not ppa_info:
                     continue

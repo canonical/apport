@@ -193,7 +193,7 @@ class PackageInfo:
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
                          permanent_rootdir=False, architecture=None,
-                         origins=None, any_ppa=False):
+                         origins=None):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -223,11 +223,7 @@ class PackageInfo:
         field). If not given it defaults to the host system's architecture.
 
         If origins is given, the sandbox will be created with apt data sources
-        for origins that are Launchpad PPAs.
-
-        If any_ppa is True, then apt sources will be created for origins from
-        any Launchpad PPA. If False, then apt sources will only be created for
-        PPAs specified in configdir.
+        for foreign origins.
 
         Return a string with outdated packages, or None if all packages were
         installed.
