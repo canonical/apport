@@ -995,9 +995,9 @@ deb http://secondary.mirror tuxy extra
                               'always', '--batch', '--list-keys', '--keyring',
                               os.path.join(self.rootdir, 'etc', 'apt', 'trusted.gpg.d', 'LP-PPA-daisy-pluckers-daisy-seeds.gpg')],
                              stdout=subprocess.PIPE)
-        apt_keys = d.communicate()[0].decode().splitlines()
+        apt_keys = d.communicate()[0].decode()
         assert d.returncode == 0
-        self.assertIn('uid                  Launchpad PPA for Daisy Pluckers', apt_keys)
+        self.assertIn('Launchpad PPA for Daisy Pluckers', apt_keys)
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_sources_not_created_for_unauth_ppa(self):
@@ -1025,9 +1025,9 @@ deb http://secondary.mirror tuxy extra
                               'always', '--batch', '--list-keys', '--keyring',
                               os.path.join(self.rootdir, 'etc', 'apt', 'trusted.gpg.d', 'LP-PPA-brian-murray.gpg')],
                              stdout=subprocess.PIPE)
-        apt_keys = d.communicate()[0].decode().splitlines()
+        apt_keys = d.communicate()[0].decode()
         assert d.returncode == 0
-        self.assertIn('uid                  Launchpad PPA for Brian Murray', apt_keys)
+        self.assertIn('Launchpad PPA for Brian Murray', apt_keys)
 
     def test_use_sources_for_a_ppa(self):
         '''Use a sources.list.d file for a PPA.'''
