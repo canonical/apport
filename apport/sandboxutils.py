@@ -147,7 +147,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     current time.
 
     If dynamic_origins is True (False by default), the sandbox will be built
-    with packages that have foreign origins.
+    with packages from foreign origins that appear in the report's
+    Packages:/Dependencies:.
 
     Return a tuple (sandbox_dir, cache_dir, outdated_msg).
     '''

@@ -1204,8 +1204,8 @@ Debug::NoLocking "true";
         distro is the distribution for which content is being created e.g.
         ubuntu.
 
-        codename is the codename of the release for which content is being
-        created e.g. trusty.
+        release_codename is the codename of the release for which content is
+        being created e.g. trusty.
 
         Return a string containing content suitable for writing to a sources.list
         file, or None if the origin is not a Launchpad PPA.
@@ -1221,7 +1221,7 @@ Debug::NoLocking "true";
                 try_ppa = False
 
             index = 1
-            while (index < len(components)):
+            while components[index:]:
                 # For an origin we can't tell where the user name ends and the
                 # PPA name starts, so split on each "-" until we find a PPA
                 # that exists.
