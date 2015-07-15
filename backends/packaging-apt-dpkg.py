@@ -266,13 +266,15 @@ class __AptDpkgPackageInfo(PackageInfo):
         '''
         try:
             response = urlopen(url)
-        except URLError:
-            apport.warning('cannot connect to: %s' % url)
+            if response.getcode() >= 400:
+                raise HTTPError('%u' % response.getcode())
+        except (URLError, HTTPError):
+            apport.warning('cannot connect to: %s' % unquote(url))
             return None
         try:
             content = response.read()
         except IOError:
-            apport.warning('failure reading data at: %s' % url)
+            apport.warning('failure reading data at: %s' % unquote(url))
             return None
         if isinstance(content, bytes):
             content = content.decode('utf-8')
