@@ -192,7 +192,8 @@ class PackageInfo:
 
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
-                         permanent_rootdir=False, architecture=None):
+                         permanent_rootdir=False, architecture=None,
+                         origins=None):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -220,6 +221,9 @@ class PackageInfo:
         If architecture is given, the sandbox will be created with packages of
         the given architecture (as specified in a report's "Architecture"
         field). If not given it defaults to the host system's architecture.
+
+        If origins is given, the sandbox will be created with apt data sources
+        for foreign origins.
 
         Return a string with outdated packages, or None if all packages were
         installed.

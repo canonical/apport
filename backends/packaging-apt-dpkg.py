@@ -16,6 +16,8 @@ import subprocess, os, glob, stat, sys, tempfile, shutil, time
 import hashlib
 import json
 
+from contextlib import closing
+
 import warnings
 warnings.filterwarnings('ignore', 'apt API not stable yet', FutureWarning)
 import apt
@@ -24,9 +26,10 @@ try:
     from urllib import urlopen, quote, unquote
     (pickle, urlopen, quote, unquote)  # pyflakes
     URLError = IOError
+    HTTPError = IOError
 except ImportError:
     # python 3
-    from urllib.error import URLError
+    from urllib.error import URLError, HTTPError
     from urllib.request import urlopen
     from urllib.parse import quote, unquote
     import pickle
@@ -47,6 +50,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         self._virtual_mapping_obj = None
         self._launchpad_base = 'https://api.launchpad.net/devel'
         self._archive_url = self._launchpad_base + '/%s/main_archive'
+        self._ppa_archive_url = self._launchpad_base + '/~%(user)s/+archive/%(distro)s/%(ppaname)s'
 
     def __del__(self):
         try:
@@ -88,14 +92,15 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._apt_cache = apt.Cache(rootdir='/')
         return self._apt_cache
 
-    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress):
+    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name, release_codename, origins):
         '''Build apt sandbox and return apt.Cache(rootdir=) (initialized lazily).
 
         Clear the package selection on subsequent calls.
         '''
         self._apt_cache = None
         if not self._sandbox_apt_cache:
-            self._build_apt_sandbox(aptroot, apt_sources)
+            self._build_apt_sandbox(aptroot, apt_sources, distro_name,
+                                    release_codename, origins)
             rootdir = os.path.abspath(aptroot)
             self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
             try:
@@ -259,7 +264,6 @@ class __AptDpkgPackageInfo(PackageInfo):
         has a dictionary with an entries key which contains the data
         desired.
         '''
-
         try:
             response = urlopen(url)
         except URLError:
@@ -660,7 +664,8 @@ Debug::NoLocking "true";
 
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
-                         permanent_rootdir=False, architecture=None):
+                         permanent_rootdir=False, architecture=None,
+                         origins=None):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -688,6 +693,9 @@ Debug::NoLocking "true";
         If architecture is given, the sandbox will be created with packages of
         the given architecture (as specified in a report's "Architecture"
         field). If not given it defaults to the host system's architecture.
+
+        If origins is given, the sandbox will be created with apt data sources
+        for foreign origins.
 
         Return a string with outdated packages, or None if all packages were
         installed.
@@ -747,9 +755,14 @@ Debug::NoLocking "true";
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
         if not tmp_aptroot:
-            cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress)
+            cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress,
+                                        self.get_distro_name(),
+                                        self.current_release_codename,
+                                        origins)
         else:
-            self._build_apt_sandbox(aptroot, apt_sources)
+            self._build_apt_sandbox(aptroot, apt_sources,
+                                    self.get_distro_name(),
+                                    self.current_release_codename, origins)
             cache = apt.Cache(rootdir=os.path.abspath(aptroot))
             try:
                 cache.update(fetchProgress)
@@ -1203,7 +1216,73 @@ Debug::NoLocking "true";
         return None
 
     @classmethod
-    def _build_apt_sandbox(klass, apt_root, apt_sources):
+    def create_ppa_source_from_origin(klass, origin, distro, release_codename):
+        '''For an origin from a Launchpad PPA create sources.list content.
+
+        distro is the distribution for which content is being created e.g.
+        ubuntu.
+
+        release_codename is the codename of the release for which content is
+        being created e.g. trusty.
+
+        Return a string containing content suitable for writing to a sources.list
+        file, or None if the origin is not a Launchpad PPA.
+        '''
+
+        if origin.startswith("LP-PPA-"):
+            components = origin.split("-")[2:]
+            # If the PPA is unnamed, it will not appear in origin information
+            # but is named ppa in Launchpad.
+            try_ppa = True
+            if len(components) == 1:
+                components.append('ppa')
+                try_ppa = False
+
+            index = 1
+            while index < len(components):
+                # For an origin we can't tell where the user name ends and the
+                # PPA name starts, so split on each "-" until we find a PPA
+                # that exists.
+                user = str.join('-', components[:index])
+                ppa_name = str.join('-', components[index:])
+                try:
+                    with closing(urlopen(apport.packaging._ppa_archive_url %
+                                         {'user': user, 'distro': distro,
+                                          'ppaname': ppa_name})) as response:
+                        response.read()
+                        # in Python 2 an error does not raise an exception
+                        if response.getcode() >= 400:
+                            raise HTTPError('%u' % response.getcode())
+                except (URLError, HTTPError):
+                    index += 1
+                    if index == len(components):
+                        if try_ppa:
+                            components.append('ppa')
+                            try_ppa = False
+                            index = 2
+                        else:
+                            user = None
+                    continue
+                break
+            if user and ppa_name:
+                ppa_line = 'deb http://ppa.launchpad.net/%s/%s/%s %s main' % \
+                           (user, ppa_name, distro, release_codename)
+                debug_url = 'http://ppa.launchpad.net/%s/%s/%s/dists/%s/main/debug' % \
+                            (user, ppa_name, distro, release_codename)
+                try:
+                    with closing(urlopen(debug_url)) as response:
+                        response.read()
+                        # in Python 2 an error does not raise an exception
+                        if response.getcode() >= 400:
+                            raise HTTPError('%u' % response.getcode())
+                    add_debug = ' main/debug'
+                except (URLError, HTTPError):
+                    add_debug = ''
+                return ppa_line + add_debug + '\ndeb-src' + ppa_line[3:] + '\n'
+        return None
+
+    @classmethod
+    def _build_apt_sandbox(klass, apt_root, apt_sources, distro_name, release_codename, origins):
         # pre-create directories, to avoid apt.Cache() printing "creating..."
         # messages on stdout
         if not os.path.exists(os.path.join(apt_root, 'var', 'lib', 'apt')):
@@ -1225,6 +1304,46 @@ Debug::NoLocking "true";
             with open(os.path.join(apt_root, 'etc', 'apt', 'sources.list'), 'w') as dest:
                 dest.write(src.read())
 
+        if origins:
+            source_list_content = ''
+            # map an origin to a Launchpad username and PPA name
+            origin_data = {}
+            for origin in origins:
+                # apport's report format uses unknown for packages w/o an origin
+                if origin == 'unknown':
+                    continue
+                origin_path = None
+                if os.path.isdir(apt_sources + '.d'):
+                    # check to see if there is a sources.list file for the origin,
+                    # if there isn't try using a sources.list file w/o LP-PPA-
+                    origin_path = os.path.join(apt_sources + '.d', origin + '.list')
+                    if not os.path.exists(origin_path) and 'LP-PPA' in origin:
+                        origin_path = os.path.join(apt_sources + '.d',
+                                                   origin.strip('LP-PPA-') + '.list')
+                        if not os.path.exists(origin_path):
+                            origin_path = None
+                    elif not os.path.exists(origin_path):
+                        origin_path = None
+                if origin_path:
+                    with open(origin_path) as src_ext:
+                        source_list_content = src_ext.read()
+                else:
+                    source_list_content = klass.create_ppa_source_from_origin(origin, distro_name, release_codename)
+                if source_list_content:
+                    with open(os.path.join(apt_root, 'etc', 'apt',
+                                           'sources.list.d', origin + '.list'), 'a') as dest:
+                        dest.write(source_list_content)
+                    for line in source_list_content.splitlines():
+                        if line.startswith('#'):
+                            continue
+                        if 'ppa.launchpad.net' not in line:
+                            continue
+                        user = line.split()[1].split('/')[3]
+                        ppa = line.split()[1].split('/')[4]
+                        origin_data[origin] = (user, ppa)
+                else:
+                    apport.warning("Could not find or create source config for %s" % origin)
+
         # install apt keyrings; prefer the ones from the config dir, fall back
         # to system
         trusted_gpg = os.path.join(os.path.dirname(apt_sources), 'trusted.gpg')
@@ -1243,6 +1362,36 @@ Debug::NoLocking "true";
             shutil.copytree('/etc/apt/trusted.gpg.d', trusted_d)
         else:
             os.makedirs(trusted_d)
+
+        # install apt keyrings for PPAs
+        if origins and source_list_content:
+            for origin, (ppa_user, ppa_name) in origin_data.items():
+                ppa_archive_url = apport.packaging._ppa_archive_url % \
+                    {'user': quote(ppa_user), 'distro': distro_name,
+                     'ppaname': quote(ppa_name)}
+                ppa_info = apport.packaging.json_request(ppa_archive_url)
+                if not ppa_info:
+                    continue
+                try:
+                    signing_key_fingerprint = ppa_info['signing_key_fingerprint']
+                except IndexError:
+                    apport.warning("Error: can't find signing_key_fingerprint at %s"
+                                   % ppa_archive_url)
+                    continue
+                argv = ['gpg', '--no-options',
+                        '--no-default-keyring',
+                        '--no-auto-check-trustdb',
+                        '--keyring',
+                        os.path.join(trusted_d,
+                                     '%s.gpg' % origin),
+                        ]
+                argv += ['--quiet', '--batch',
+                         '--keyserver', 'hkp://keyserver.ubuntu.com:80/',
+                         '--recv', signing_key_fingerprint]
+                if subprocess.call(argv) != 0:
+                    apport.warning('Unable to import key for %s' %
+                                   ppa_archive_url)
+                    pass
 
     @classmethod
     def _deb_version(klass, pkg):

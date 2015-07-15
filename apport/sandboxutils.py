@@ -10,7 +10,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import atexit, os, os.path, shutil, tempfile
+import atexit, os, os.path, re, shutil, tempfile
 import apport
 
 
@@ -103,7 +103,8 @@ def needed_runtime_packages(report, sandbox, pkgmap_cache_dir, pkg_versions, ver
 
 
 def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
-                 extra_packages=[], verbose=False, log_timestamps=False):
+                 extra_packages=[], verbose=False, log_timestamps=False,
+                 dynamic_origins=False):
     '''Build a sandbox with the packages that belong to a particular report.
 
     This downloads and unpacks all packages from the report's Package and
@@ -140,8 +141,14 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     are not derived from the report.
 
     If verbose is True (False by default), this will write some additional
-    logging to stdout. If log_timestamps is True, these log messages will be
-    prefixed with the current time.
+    logging to stdout.
+
+    If log_timestamps is True, these log messages will be prefixed with the
+    current time.
+
+    If dynamic_origins is True (False by default), the sandbox will be built
+    with packages from foreign origins that appear in the report's
+    Packages:/Dependencies:.
 
     Return a tuple (sandbox_dir, cache_dir, outdated_msg).
     '''
@@ -179,12 +186,20 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     if config_dir == 'system':
         config_dir = None
 
+    origins = None
+    if dynamic_origins:
+        pkg_list = report.get('Package', '') + '\n' + report.get('Dependencies', '')
+        m = re.compile('\[origin: ([a-zA-Z0-9][a-zA-Z0-9\+\.\-]+)\]')
+        origins = set(m.findall(pkg_list))
+        if origins:
+            apport.log("Origins: %s" % origins)
+
     # unpack packages, if any, using cache and sandbox
     try:
         outdated_msg = apport.packaging.install_packages(
             sandbox_dir, config_dir, report['DistroRelease'], pkgs,
             verbose, cache_dir, permanent_rootdir,
-            architecture=report.get('Architecture'))
+            architecture=report.get('Architecture'), origins=origins)
     except SystemError as e:
         apport.fatal(str(e))
 
@@ -210,7 +225,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
             outdated_msg += apport.packaging.install_packages(
                 sandbox_dir, config_dir, report['DistroRelease'], pkgs,
                 verbose, cache_dir, permanent_rootdir,
-                architecture=report.get('Architecture'))
+                architecture=report.get('Architecture'), origins=origins)
         except SystemError as e:
             apport.fatal(str(e))
 
