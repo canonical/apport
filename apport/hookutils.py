@@ -661,7 +661,11 @@ def attach_wifi(report):
                re.sub('Access Point: (.*)', 'Access Point: <hidden>',
                       command_output(['iwconfig']))))
     report['RfKill'] = command_output(['rfkill', 'list'])
-    report['CRDA'] = command_output(['iw', 'reg', 'get'])
+    if os.path.exists('/sbin/iw'):
+        iw_output = command_output(['iw', 'reg', 'get'])
+    else:
+        iw_output = 'N/A'
+    report['CRDA'] = iw_output
 
     attach_file_if_exists(report, '/var/log/wpa_supplicant.log', key='WpaSupplicantLog')
 
