@@ -41,7 +41,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         assert self.accepts(report)
 
         self.reports.append({'report': report, 'fixed_version': None, 'dup_of':
-                             None, 'comment:': ''})
+                             None, 'comment': ''})
         id = len(self.reports) - 1
         if 'Traceback' in report:
             self.dup_unchecked.add(id)

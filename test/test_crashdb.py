@@ -295,7 +295,7 @@ databases = {
         # ID#4: dup of ID#3
         self.assertEqual(self.crashes.check_duplicate(4), (3, None))
         # not marked as regression
-        self.assertFalse('comment' in self.crashes.reports[3])
+        self.assertEqual(self.crashes.reports[3]['comment'], '')
 
         # check DB consistency; #1 and #4 are dupes and do not appear
         self.assertEqual(self.crashes._duplicate_db_dump(),
@@ -328,7 +328,7 @@ databases = {
         self.assertEqual(self.crashes.check_duplicate(5), (3, '4.1'))
         self.assertEqual(self.crashes.duplicate_of(5), 3)
         # not marked as regression, happened earlier than #3
-        self.assertFalse('comment' in self.crashes.reports[5])
+        self.assertEqual(self.crashes.reports[5]['comment'], '')
 
         r = copy.copy(self.crashes.download(3))
         r['Package'] = 'python-goo 5.1'
@@ -337,7 +337,7 @@ databases = {
         self.assertEqual(self.crashes.check_duplicate(6), (4, None))
         self.assertEqual(self.crashes.duplicate_of(6), 4)
         # not marked as regression, as it's now a dupe of new master bug 4
-        self.assertFalse('comment' in self.crashes.reports[6])
+        self.assertEqual(self.crashes.reports[6]['comment'], '')
 
         # check DB consistency; #5 and #6 are dupes of #3 and #4, so no new
         # entries
@@ -357,7 +357,7 @@ databases = {
                          'http://pygoo.bugs.example.com/7')
         self.assertEqual(self.crashes.check_duplicate(7), (3, ''))
         # not marked as regression
-        self.assertFalse('comment' in self.crashes.reports[6])
+        self.assertEqual(self.crashes.reports[6]['comment'], '')
 
         # final consistency check
         self.assertEqual(self.crashes._duplicate_db_dump(),
