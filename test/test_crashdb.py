@@ -312,13 +312,12 @@ databases = {
         self.assertEqual(self.crashes.duplicate_of(4), None)
         self.assertEqual(self.crashes.reports[4]['comment'], 'regression, already fixed in #3')
 
-        # check DB consistency; ID#3 should now be updated to be fixed in 4.1,
-        # and as 4 is a regression, appear as a new crash
+        # check DB consistency; ID#4 is a regression, thus appears as the new
+        # master bug for the sig of 3/4
         self.assertEqual(self.crashes._duplicate_db_dump(),
                          {self.crashes.download(0).crash_signature(): (0, None),
                           self.crashes.download(2).crash_signature(): (2, None),
-                          self.crashes.download(3).crash_signature(): (3, '4.1'),
-                          self.crashes.download(4).crash_signature(): (4, None)})
+                          self.crashes.download(3).crash_signature(): (4, None)})
 
         # add two more  Python crash dups and verify that they are dup'ed
         # to the correct ID
@@ -344,8 +343,7 @@ databases = {
         self.assertEqual(self.crashes._duplicate_db_dump(),
                          {self.crashes.download(0).crash_signature(): (0, None),
                           self.crashes.download(2).crash_signature(): (2, None),
-                          self.crashes.download(3).crash_signature(): (3, '4.1'),
-                          self.crashes.download(4).crash_signature(): (4, None)})
+                          self.crashes.download(3).crash_signature(): (4, None)})
 
         # check with unknown fixed version
         self.crashes.reports[3]['fixed_version'] = ''
@@ -363,8 +361,7 @@ databases = {
         self.assertEqual(self.crashes._duplicate_db_dump(),
                          {self.crashes.download(0).crash_signature(): (0, None),
                           self.crashes.download(2).crash_signature(): (2, None),
-                          self.crashes.download(3).crash_signature(): (3, ''),
-                          self.crashes.download(4).crash_signature(): (4, None)})
+                          self.crashes.download(3).crash_signature(): (4, None)})
 
     def test_check_duplicate_utf8(self):
         '''check_duplicate() with UTF-8 strings'''

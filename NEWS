@@ -30,6 +30,8 @@ detailed list of changes, please see ChangeLog.
    Brian Murray!
  * hookutils.attach_wifi(): Shorten value of CRDA if iw isn't available on the
    system. Thanks Brian Murray.
+ * Fix wrong assertion in crashdb.test_check_duplicate() which surfaces under
+   Python 3.5. (LP: #1474539)
 
 2.17.3 (2015-05-20)
 -------------------
