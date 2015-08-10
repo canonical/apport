@@ -149,7 +149,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             else:
                 l = _('(binary data)')
 
-            if type(l) == type(b''):
+            if isinstance(l, bytes):
                 l = l.decode('UTF-8', errors='ignore')
             details += l
             details += '\n\n'

@@ -160,8 +160,8 @@ def dbus_service_unknown_analysis(exc_obj, report):
                   exc_obj.get_dbus_message())
     if not m:
         if sys.stderr:
-            sys.stderr.write('Error: cannot parse D-BUS name from exception: '
-                             + exc_obj.get_dbus_message())
+            sys.stderr.write('Error: cannot parse D-BUS name from exception: ' +
+                             exc_obj.get_dbus_message())
             return
 
     dbus_name = m.group(1)

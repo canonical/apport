@@ -13,8 +13,6 @@ implementation (like GTK, Qt, or CLI).
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-__version__ = '2.18'
-
 import glob, sys, os.path, optparse, traceback, locale, gettext, re
 import errno, zlib
 import subprocess, threading, webbrowser
@@ -33,6 +31,8 @@ if sys.version_info.major == 2:
 else:
     from configparser import ConfigParser
     PY3 = True
+
+__version__ = '2.18'
 
 
 def excstr(exception):
@@ -1102,8 +1102,8 @@ class UserInterface:
             # check that we were able to determine package names
             if 'UnreportableReason' not in self.report:
                 if (('SourcePackage' not in self.report and 'Dependencies' not in self.report) or
-                    (not self.report.get('ProblemType', '').startswith('Kernel')
-                     and 'Package' not in self.report)):
+                    (not self.report.get('ProblemType', '').startswith('Kernel') and
+                     'Package' not in self.report)):
                     self.ui_error_message(_('Invalid problem report'),
                                           _('Could not determine the package or source package name.'))
                     # TODO This is not called consistently, is it really needed?

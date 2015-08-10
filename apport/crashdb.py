@@ -29,7 +29,7 @@ import apport
 def _u(str):
     '''Convert str to an unicode if it isn't already.'''
 
-    if type(str) == type(b''):
+    if isinstance(str, bytes):
         return str.decode('UTF-8', 'ignore')
     return str
 

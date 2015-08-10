@@ -15,7 +15,7 @@ import gettext
 
 def unicode_gettext(str):
     trans = gettext.gettext(str)
-    if type(trans) == type(b''):
+    if isinstance(trans, bytes):
         return trans.decode('UTF-8')
     else:
         return trans

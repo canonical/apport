@@ -6,10 +6,10 @@ This adds /var/log/apport.log and the file listing in /var/crash to the report.
 # Copyright 2007 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 
-APPORT_LOG = '/var/log/apport.log'
-
 from glob import glob
 import apport.hookutils
+
+APPORT_LOG = '/var/log/apport.log'
 
 
 def add_info(report):

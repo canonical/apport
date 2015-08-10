@@ -44,10 +44,10 @@ def path_to_key(path):
     This will replace invalid punctuation symbols with valid ones.
     '''
     if sys.version[0] >= '3':
-        if type(path) == type(b''):
+        if isinstance(path, bytes):
             path = path.decode('UTF-8')
     else:
-        if type(path) != type(b''):
+        if not isinstance(path, bytes):
             path = path.encode('UTF-8')
     return path.translate(_path_key_trans)
 
@@ -389,8 +389,8 @@ def command_output(command, input=None, stderr=subprocess.STDOUT,
     if sp.returncode == 0:
         res = out.strip()
     else:
-        res = (b'Error: command ' + str(command).encode() + b' failed with exit code '
-               + str(sp.returncode).encode() + b': ' + out)
+        res = (b'Error: command ' + str(command).encode() + b' failed with exit code ' +
+               str(sp.returncode).encode() + b': ' + out)
 
     if decode_utf8:
         res = res.decode('UTF-8', errors='replace')

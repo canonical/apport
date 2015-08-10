@@ -629,8 +629,8 @@ class ProblemReport(UserDict):
         # (tuple (string|file [, bool]))
         assert (isinstance(v, CompressedValue) or hasattr(v, 'isalnum') or
                 (hasattr(v, '__getitem__') and (
-                    len(v) == 1 or (len(v) >= 2 and v[1] in (True, False)))
-                    and (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
+                    len(v) == 1 or (len(v) >= 2 and v[1] in (True, False))) and
+                    (hasattr(v[0], 'isalnum') or hasattr(v[0], 'read'))))
 
         return self.data.__setitem__(k, v)
 
