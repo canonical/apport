@@ -868,7 +868,15 @@ def in_session_of_problem(report):
     '''
     session_id = os.environ.get('XDG_SESSION_ID')
     if not session_id:
-        return None
+        # fall back to reading cgroup
+        with open('/proc/self/cgroup') as f:
+            for l in f:
+                l = l.strip()
+                if 'name=systemd:' in l and l.endswith('.scope') and '/session-' in l:
+                    session_id = l.split('/session-', 1)[1][:-6]
+                    break
+            else:
+                return None
 
     # report time is in local TZ
     orig_ctime = locale.getlocale(locale.LC_TIME)

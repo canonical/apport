@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * test_hooks.py: Adjust for gcc executable names that don't include the minor
    version number.
+ * When determinining the logind session and $XDG_SESSION_ID is not set, fall
+   back to reading it from /proc/pid/cgroup.
 
 2.18 (2015-07-17)
 -----------------
