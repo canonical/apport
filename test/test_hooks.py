@@ -214,8 +214,14 @@ class T(unittest.TestCase):
         out = gcc.communicate()[0].decode()
         assert gcc.returncode == 0, '"gcc --version" must work for this test suite'
 
-        gcc_ver = '.'.join(out.splitlines()[0].split()[2].split('.')[:2])
+        ver_fields = out.splitlines()[0].split()[2].split('.')
+        # try major/minor first
+        gcc_ver = '.'.join(ver_fields[:2])
         gcc_path = '/usr/bin/gcc-' + gcc_ver
+        if not os.path.exists(gcc_path):
+            # fall back to only major
+            gcc_ver = ver_fields[0]
+            gcc_path = '/usr/bin/gcc-' + gcc_ver
 
         gcc = subprocess.Popen([gcc_path, '--version'], stdout=subprocess.PIPE)
         gcc.communicate()

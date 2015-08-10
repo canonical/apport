@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.18.1 (UNRELEASED)
+-------------------
+ * test_hooks.py: Adjust for gcc executable names that don't include the minor
+   version number.
+
 2.18 (2015-07-17)
 -----------------
  * Fix backend_apt_dpkg.test_install_packages_permanent_sandbox test to more
