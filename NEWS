@@ -7,6 +7,8 @@ detailed list of changes, please see ChangeLog.
    version number.
  * When determinining the logind session and $XDG_SESSION_ID is not set, fall
    back to reading it from /proc/pid/cgroup.
+ * whoopsie-upload-all: Intercept OSError too (e. g. "No space left on
+   device"). (LP: #1476258)
 
 2.18 (2015-07-17)
 -----------------
