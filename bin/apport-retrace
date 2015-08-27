@@ -180,7 +180,7 @@ def gen_source_stacktrace(report, sandbox):
         for frame in report['Stacktrace'].splitlines():
             m = src_frame.match(frame)
             if m:
-                result += frame + '\n' + get_code(srcdir, m.group(1), int(m.group(2)))
+                result += frame + '\n' + get_code(srcdir, os.path.basename(m.group(1)), int(m.group(2)))
             else:
                 m = other_frame.search(frame)
                 if m:

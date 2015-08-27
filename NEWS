@@ -9,6 +9,10 @@ detailed list of changes, please see ChangeLog.
    back to reading it from /proc/pid/cgroup.
  * whoopsie-upload-all: Intercept OSError too (e. g. "No space left on
    device"). (LP: #1476258)
+ * apport-retrace: Only consider the file name of a source file, not its path;
+   the latter often contains parts like "../" or directories which are specific
+   to a build machine. This fixes most broken StacktraceSource results.
+   (LP: #1462491)
 
 2.18 (2015-07-17)
 -----------------
