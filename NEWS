@@ -13,6 +13,8 @@ detailed list of changes, please see ChangeLog.
    the latter often contains parts like "../" or directories which are specific
    to a build machine. This fixes most broken StacktraceSource results.
    (LP: #1462491)
+ * packaging.py: Only consider first word in /etc/os-release's NAME value. This
+   works around Debian's inconsistent value. (LP: #1408245)
 
 2.18 (2015-07-17)
 -----------------
