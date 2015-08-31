@@ -226,6 +226,12 @@ class __AptDpkgPackageInfo(PackageInfo):
             for o in pkg.candidate.origins:
                 if o.origin == distro_name:
                     return True
+
+        # on Ubuntu system-image we might not have any /var/lib/apt/lists
+        if set([o.origin for o in pkg.candidate.origins]) == set(['']) and \
+           os.path.exists('/etc/system-image/channel.ini'):
+            return True
+
         return False
 
     def is_native_origin_package(self, package):
