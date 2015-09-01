@@ -29,12 +29,7 @@ pr['Tags'] = 'kernel-oops'
 pr['Annotation'] = _('Your system might become unstable '
                      'now and might need to be restarted.')
 package = apport.packaging.get_kernel_package()
-try:
-    package_version = apport.packaging.get_version(package)
-except ValueError as e:
-    if 'does not exist' in str(e):
-        package_version = 'unknown'
-pr['Package'] = '%s %s' % (package, package_version)
+pr.add_package(package)
 pr['SourcePackage'] = 'linux'
 
 pr['OopsText'] = oops

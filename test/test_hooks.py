@@ -51,8 +51,7 @@ class T(unittest.TestCase):
             r.load(f)
 
         self.assertEqual(r['ProblemType'], 'Package')
-        self.assertEqual(r['Package'], 'bash')
-        self.assertEqual(r['SourcePackage'], 'bash')
+        self.assertEqual(r['Package'], 'bash ' + apport.packaging.get_version('bash'))
         self.assertEqual(r['ErrorMessage'], 'something is wrong')
 
     def test_package_hook_uninstalled(self):
@@ -72,8 +71,7 @@ class T(unittest.TestCase):
             r.load(f)
 
         self.assertEqual(r['ProblemType'], 'Package')
-        self.assertEqual(r['Package'], pkg)
-        self.assertEqual(r['SourcePackage'], apport.packaging.get_source(pkg))
+        self.assertEqual(r['Package'], pkg + ' (not installed)')
         self.assertEqual(r['ErrorMessage'], 'something is wrong')
 
     def test_package_hook_logs(self):
@@ -116,7 +114,7 @@ class T(unittest.TestCase):
         self.assertTrue(filekey)
         self.assertTrue(log1key)
         self.assertTrue(log2key)
-        self.assertTrue('0234lkjas' in r[filekey])
+        self.assertIn('0234lkjas', r[filekey])
         self.assertEqual(len(r[filekey]), os.path.getsize(sys.argv[0]))
         self.assertEqual(r[log1key], 'Log 1\nbla')
         self.assertEqual(r[log2key], 'Yet\nanother\nlog')
@@ -164,12 +162,8 @@ class T(unittest.TestCase):
         self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreLog'], 'vmcore successfully dumped')
         self.assertEqual(r['VmCore'], b'\x01' * 100)
-        self.assertTrue('linux' in r['Package'])
-
-        self.assertTrue(os.uname()[2].split('-')[0] in r['Package'])
-
-        r.add_package_info(r['Package'])
-        self.assertTrue(' ' in r['Package'])  # appended version number
+        self.assertIn('linux', r['Package'])
+        self.assertIn(os.uname()[2].split('-')[0], r['Package'])
 
     def test_kernel_crashdump_kdump(self):
         '''kernel_crashdump using kdump-tools.'''
@@ -198,12 +192,12 @@ class T(unittest.TestCase):
                                              'Architecture', 'DistroRelease']))
         self.assertEqual(r['ProblemType'], 'KernelCrash')
         self.assertEqual(r['VmCoreDmesg'], '1' * 100)
-        self.assertTrue('linux' in r['Package'])
+        self.assertIn('linux', r['Package'])
 
-        self.assertTrue(os.uname()[2].split('-')[0] in r['Package'])
+        self.assertIn(os.uname()[2].split('-')[0], r['Package'])
 
         r.add_package_info(r['Package'])
-        self.assertTrue(' ' in r['Package'])  # appended version number
+        self.assertIn(os.uname()[2].split('-')[0], r['Package'])
 
     @classmethod
     def _gcc_version_path(klass):
@@ -255,7 +249,8 @@ class T(unittest.TestCase):
         r.add_package_info()
 
         self.assertEqual(r['Package'].split()[0], 'gcc-' + gcc_version)
-        self.assertTrue(r['SourcePackage'].startswith('gcc'))
+        self.assertNotEqual(r['Package'].split()[1], '')  # has package version
+        self.assertIn('libc', r['Dependencies'])
 
     def test_gcc_ide_hook_file_binary(self):
         '''gcc_ice_hook with a temporary file with binary data.'''
@@ -304,7 +299,6 @@ class T(unittest.TestCase):
         r.add_package_info()
 
         self.assertEqual(r['Package'].split()[0], 'gcc-' + gcc_version)
-        self.assertTrue(r['SourcePackage'].startswith('gcc'))
 
     def test_kernel_oops_hook(self):
         test_source = '''------------[ cut here ]------------
@@ -326,9 +320,8 @@ Modules linked in: oops cpufreq_stats ext2 i915 drm nf_conntrack_ipv4 ipt_REJECT
         self.assertEqual(r['ProblemType'], 'KernelOops')
         self.assertEqual(r['OopsText'], test_source)
 
-        r.add_package_info(r['Package'])
+        self.assertIn('linux', r['Package'])
+        self.assertIn(os.uname()[2].split('-')[0], r['Package'])
 
-        self.assertTrue(r['Package'].startswith('linux-image-'))
-        self.assertIn('Uname', r)
 
 unittest.main()

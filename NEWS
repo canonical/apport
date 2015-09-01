@@ -15,6 +15,9 @@ detailed list of changes, please see ChangeLog.
    (LP: #1462491)
  * packaging.py: Only consider first word in /etc/os-release's NAME value. This
    works around Debian's inconsistent value. (LP: #1408245)
+ * Unify and simplify Package: field generation in kernel_crashdump,
+   kernel_oops, and package_hook by using the new Report.add_package() method.
+   (LP: #1485787)
 
 2.18 (2015-07-17)
 -----------------

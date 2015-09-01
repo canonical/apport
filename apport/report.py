@@ -259,6 +259,25 @@ class Report(problem_report.ProblemReport):
 
         return suffix
 
+    def add_package(self, package):
+        '''Add Package: field
+
+        Determine the version of the given package (uses "(not installed") for
+        uninstalled packages) and add Package: field to report.
+        This also checks for any modified files.
+
+        Return determined package version (None for uninstalled).
+        '''
+        try:
+            version = packaging.get_version(package)
+        except ValueError:
+            # package not installed
+            version = None
+        self['Package'] = '%s %s%s' % (package, version or '(not installed)',
+                                       self._customized_package_suffix(package))
+
+        return version
+
     def add_package_info(self, package=None):
         '''Add packaging information.
 
@@ -281,13 +300,8 @@ class Report(problem_report.ProblemReport):
             if not package:
                 return
 
-        try:
-            version = packaging.get_version(package)
-        except ValueError:
-            # package not installed
-            version = None
-        self['Package'] = '%s %s%s' % (package, version or '(not installed)',
-                                       self._customized_package_suffix(package))
+        version = self.add_package(package)
+
         if version or 'SourcePackage' not in self:
             try:
                 self['SourcePackage'] = packaging.get_source(package)
