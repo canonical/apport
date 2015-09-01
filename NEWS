@@ -18,6 +18,9 @@ detailed list of changes, please see ChangeLog.
  * Unify and simplify Package: field generation in kernel_crashdump,
    kernel_oops, and package_hook by using the new Report.add_package() method.
    (LP: #1485787)
+ * sandboxutils.py, make_sandbox(): Make "Cannot find package which ships
+   Executable/InterpreterPath" fatal, to save some unnecessary package unpack
+   cycles. (LP: #1487174)
 
 2.18 (2015-07-17)
 -----------------

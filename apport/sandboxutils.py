@@ -217,7 +217,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                 apport.log('Installing extra package %s to get %s' % (pkg, path), log_timestamps)
                 pkgs.append((pkg, pkg_versions.get(pkg)))
             else:
-                apport.warning('Cannot find package which ships %s', path)
+                apport.fatal('Cannot find package which ships %s %s', path, report[path])
 
     # unpack packages for executable using cache and sandbox
     if pkgs:
