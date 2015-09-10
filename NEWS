@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.18.2 (UNRELEASED)
+-------------------
+ * apport: Drop re-nicing. This might decrease the time a user has to wait for
+   apport to finish the core dump for a crashed/hanging foreground process.
+   (See LP #1278780)
+
 2.18.1 (2015-09-10)
 -------------------
  * test_hooks.py: Adjust for gcc executable names that don't include the minor

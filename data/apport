@@ -307,12 +307,6 @@ try:
 
     (pid, signum, core_ulimit) = sys.argv[1:4]
 
-    # drop our process priority level to not disturb userspace so much
-    try:
-        os.nice(10)
-    except OSError:
-        pass  # *shrug*, we tried
-
     get_pid_info(pid)
 
     # Partially drop privs to gain proper os.access() checks
