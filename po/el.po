@@ -11,72 +11,90 @@ msgstr ""
 "PO-Revision-Date: 2015-04-27 21:47+0000\n"
 "Last-Translator: Nick Andrik <nick.andrik@gmail.com>\n"
 "Language-Team: Greek, Modern (1453-) <el@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-09-09 05:10+0000\n"
-"X-Generator: Launchpad (build 17706)\n"
+"X-Launchpad-Export-Date: 2015-09-11 05:11+0000\n"
+"X-Generator: Launchpad (build 17720)\n"
+"Language: \n"
 
-#: ../gtk/apport-gtk.ui.h:1 ../kde/apport-kde.py:468 ../kde/apport-kde.py:503
-#: ../kde/apport-kde.py:522
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
+#: ../debian/tmp/usr/share/apport/apport-kde.py:468
+#: ../debian/tmp/usr/share/apport/apport-kde.py:503
+#: ../debian/tmp/usr/share/apport/apport-kde.py:522 ../kde/apport-kde.py:468
+#: ../kde/apport-kde.py:503 ../kde/apport-kde.py:522 ../gtk/apport-gtk.ui.h:1
 msgid "Apport"
 msgstr "Apport"
 
-#: ../gtk/apport-gtk.ui.h:2
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:2 ../gtk/apport-gtk.ui.h:2
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: ../gtk/apport-gtk.ui.h:3
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:3 ../gtk/apport-gtk.ui.h:3
 msgid "OK"
 msgstr "Εντάξει"
 
-#: ../gtk/apport-gtk.ui.h:4
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:4 ../gtk/apport-gtk.ui.h:4
 msgid "Crash report"
 msgstr "Αναφορά αποτυχίας συστήματος"
 
-#: ../gtk/apport-gtk.ui.h:5
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:5 ../gtk/apport-gtk.ui.h:5
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>Μας συγχωρείτε, συνέβη ένα εσωτερικό σφάλμα.</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:6 ../gtk/apport-gtk.py:300 ../kde/apport-kde.py:240
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:300 ../gtk/apport-gtk.py:300
+#: ../debian/tmp/usr/share/apport/apport-kde.py:240 ../kde/apport-kde.py:240
+#: ../gtk/apport-gtk.ui.h:6
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "Εάν συναντήσετε περαιτέρω προβλήματα, παρακαλούμε επανεκκινήστε  τον "
 "υπολογιστή σας."
 
-#: ../gtk/apport-gtk.ui.h:7
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:7 ../gtk/apport-gtk.ui.h:7
 msgid "Send an error report to help fix this problem"
 msgstr ""
 "Αποστείλετε αναφορά λάθους για να βοηθήσει στην επίλυση του προβλήματος"
 
-#: ../gtk/apport-gtk.ui.h:8
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:8 ../gtk/apport-gtk.ui.h:8
 msgid "Ignore future problems of this program version"
 msgstr "Αγνοήστε μελλοντικά προβλήματα αυτής της έκδοσης προγράμματος"
 
-#: ../gtk/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:204 ../gtk/apport-gtk.py:573
-#: ../kde/apport-kde.py:291
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:204
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:573 ../gtk/apport-gtk.py:204
+#: ../gtk/apport-gtk.py:573 ../debian/tmp/usr/share/apport/apport-kde.py:291
+#: ../kde/apport-kde.py:291 ../gtk/apport-gtk.ui.h:9
 msgid "Show Details"
 msgstr "Προβολή λεπτομερειών"
 
-#: ../gtk/apport-gtk.ui.h:10
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:10 ../gtk/apport-gtk.ui.h:10
 msgid "_Examine locally"
 msgstr "Τοπική _εξέταση"
 
-#: ../gtk/apport-gtk.ui.h:11 ../gtk/apport-gtk.py:287 ../kde/apport-kde.py:233
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:287 ../gtk/apport-gtk.py:287
+#: ../debian/tmp/usr/share/apport/apport-kde.py:233 ../kde/apport-kde.py:233
+#: ../gtk/apport-gtk.ui.h:11
 msgid "Leave Closed"
 msgstr "Να παραμείνει κλεισμένο"
 
-#: ../gtk/apport-gtk.ui.h:12 ../gtk/apport-gtk.py:216 ../gtk/apport-gtk.py:284
-#: ../gtk/apport-gtk.py:303 ../kde/apport-kde.py:230 ../kde/apport-kde.py:243
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:216
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:284
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:303 ../gtk/apport-gtk.py:216
+#: ../gtk/apport-gtk.py:284 ../gtk/apport-gtk.py:303
+#: ../debian/tmp/usr/share/apport/apport-kde.py:230
+#: ../debian/tmp/usr/share/apport/apport-kde.py:243 ../kde/apport-kde.py:230
+#: ../kde/apport-kde.py:243 ../gtk/apport-gtk.ui.h:12
 msgid "Continue"
 msgstr "Συνέχεια"
 
-#: ../gtk/apport-gtk.ui.h:13
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:13 ../gtk/apport-gtk.ui.h:13
 msgid "<big><b>Collecting problem information</b></big>"
 msgstr "<big><b>Συλλογή πληροφοριών προβλήματος</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:14
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:14 ../gtk/apport-gtk.ui.h:14
 msgid ""
 "Information is being collected that may help the developers fix the problem "
 "you report."
@@ -84,15 +102,19 @@ msgstr ""
 "Συλλέγονται πληροφορίες που μπορεί να βοηθήσουν τους υπευθύνους ανάπτυξης "
 "στην επιδιόρθωση του προβλήματος που αναφέρετε."
 
-#: ../gtk/apport-gtk.ui.h:15 ../kde/apport-kde.py:434 ../bin/apport-cli.py:251
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../bin/apport-cli.py:251
+#: ../debian/tmp/usr/share/apport/apport-kde.py:434 ../kde/apport-kde.py:434
+#: ../debian/tmp/usr/bin/apport-cli.py:251 ../gtk/apport-gtk.ui.h:15
 msgid "Uploading problem information"
 msgstr "Αποστολή πληροφοριών προβλήματος"
 
-#: ../gtk/apport-gtk.ui.h:16
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:16 ../gtk/apport-gtk.ui.h:16
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Αποστολή πληροφοριών του προβλήματος</b></big>"
 
-#: ../gtk/apport-gtk.ui.h:17 ../kde/apport-kde.py:435
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17
+#: ../debian/tmp/usr/share/apport/apport-kde.py:435 ../kde/apport-kde.py:435
+#: ../gtk/apport-gtk.ui.h:17
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -104,106 +126,126 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Αρχείο κατάρρευσης Apport"
 
-#: ../gtk/apport-gtk.py:142 ../kde/apport-kde.py:362 ../bin/apport-cli.py:150
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:142 ../bin/apport-cli.py:150
+#: ../gtk/apport-gtk.py:142 ../debian/tmp/usr/share/apport/apport-kde.py:362
+#: ../kde/apport-kde.py:362 ../debian/tmp/usr/bin/apport-cli.py:150
 msgid "(binary data)"
 msgstr "(δυαδικά δεδομένα)"
 
-#: ../gtk/apport-gtk.py:157
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:157 ../gtk/apport-gtk.py:157
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
 msgstr "Λυπούμαστε, η εφαρμογή %s σταμάτησε απροσδόκητα."
 
-#: ../gtk/apport-gtk.py:160
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:160 ../gtk/apport-gtk.py:160
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Συγνώμη,το %s τερματίστηκε απροδόκητα."
 
-#: ../gtk/apport-gtk.py:165 ../kde/apport-kde.py:199 ../kde/apport-kde.py:237
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:165 ../gtk/apport-gtk.py:165
+#: ../debian/tmp/usr/share/apport/apport-kde.py:199
+#: ../debian/tmp/usr/share/apport/apport-kde.py:237 ../kde/apport-kde.py:199
+#: ../kde/apport-kde.py:237
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Συγνώμη, το %s παρουσίασε εσωτερικό σφάλμα."
 
-#: ../gtk/apport-gtk.py:177 ../kde/apport-kde.py:185 ../bin/apport-cli.py:178
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:177 ../bin/apport-cli.py:178
+#: ../gtk/apport-gtk.py:177 ../debian/tmp/usr/share/apport/apport-kde.py:185
+#: ../kde/apport-kde.py:185 ../debian/tmp/usr/bin/apport-cli.py:178
 msgid "Send problem report to the developers?"
 msgstr "Αποστολή αναφοράς προβλήματος στους προγραμματιστές;"
 
-#: ../gtk/apport-gtk.py:186 ../kde/apport-kde.py:193
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:186 ../gtk/apport-gtk.py:186
+#: ../debian/tmp/usr/share/apport/apport-kde.py:193 ../kde/apport-kde.py:193
 msgid "Send"
 msgstr "Αποστολή"
 
-#: ../gtk/apport-gtk.py:228
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:228 ../gtk/apport-gtk.py:228
 msgid "Force Closed"
 msgstr "Εξαναγκασμένος τερματισμός"
 
-#: ../gtk/apport-gtk.py:229 ../gtk/apport-gtk.py:288 ../kde/apport-kde.py:234
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:229
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:288 ../gtk/apport-gtk.py:229
+#: ../gtk/apport-gtk.py:288 ../debian/tmp/usr/share/apport/apport-kde.py:234
+#: ../debian/tmp/usr/share/apport/apport-kde.py:380 ../kde/apport-kde.py:234
 #: ../kde/apport-kde.py:380
 msgid "Relaunch"
 msgstr "Επανεκκίνηση"
 
-#: ../gtk/apport-gtk.py:238
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:238 ../gtk/apport-gtk.py:238
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr "Η εφαρμογή %s σταμάτησε να ανταποκρίνεται."
 
-#: ../gtk/apport-gtk.py:242
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:242 ../gtk/apport-gtk.py:242
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr "Το πρόγραμμα \"%s\" σταμάτησε να ανταποκρίνεται."
 
-#: ../gtk/apport-gtk.py:257 ../kde/apport-kde.py:207
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:257 ../gtk/apport-gtk.py:257
+#: ../debian/tmp/usr/share/apport/apport-kde.py:207 ../kde/apport-kde.py:207
 #, python-format
 msgid "Package: %s"
 msgstr "Πακέτο: %s"
 
-#: ../gtk/apport-gtk.py:264 ../kde/apport-kde.py:213
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:264 ../gtk/apport-gtk.py:264
+#: ../debian/tmp/usr/share/apport/apport-kde.py:213 ../kde/apport-kde.py:213
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 "Συγνώμη , κάποιο πρόβλημα παρουσιάστηκε κατά την εγκατάσταση του λογισμικού."
 
-#: ../gtk/apport-gtk.py:273 ../gtk/apport-gtk.py:292 ../kde/apport-kde.py:219
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:273
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:292 ../gtk/apport-gtk.py:273
+#: ../gtk/apport-gtk.py:292 ../debian/tmp/usr/share/apport/apport-kde.py:219
+#: ../kde/apport-kde.py:219
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Η εφαρμογή %s παρουσίασε ένα εσωτερικό σφάλμα."
 
-#: ../gtk/apport-gtk.py:276 ../kde/apport-kde.py:222
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:276 ../gtk/apport-gtk.py:276
+#: ../debian/tmp/usr/share/apport/apport-kde.py:222 ../kde/apport-kde.py:222
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Η εφαρμογή %s τερματίστηκε απροσδόκητα."
 
-#: ../gtk/apport-gtk.py:304 ../kde/apport-kde.py:244
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:304 ../gtk/apport-gtk.py:304
+#: ../debian/tmp/usr/share/apport/apport-kde.py:244 ../kde/apport-kde.py:244
 msgid "Ignore future problems of this type"
 msgstr "Στο μέλλον να αγνοούνται προβλήματα αυτού του τύπου"
 
-#: ../gtk/apport-gtk.py:577 ../kde/apport-kde.py:288
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:577 ../gtk/apport-gtk.py:577
+#: ../debian/tmp/usr/share/apport/apport-kde.py:288 ../kde/apport-kde.py:288
 msgid "Hide Details"
 msgstr "Απόκρυψη λεπτομεριών"
 
-#: ../bin/apport-unpack.py:22
+#: ../debian/tmp/usr/bin/apport-unpack.py:22 ../bin/apport-unpack.py:22
 #, python-format
 msgid "Usage: %s <report> <target directory>"
 msgstr "Χρήση: %s <αναφορά> <κατάλογος προορισμού>"
 
-#: ../bin/apport-unpack.py:46
+#: ../debian/tmp/usr/bin/apport-unpack.py:46 ../bin/apport-unpack.py:46
 msgid "Destination directory exists and is not empty."
 msgstr "Ο κατάλογος προορισμού υπάρχει ήδη και δεν είναι κενός."
 
-#: ../kde/apport-kde.py:314
+#: ../debian/tmp/usr/share/apport/apport-kde.py:314 ../kde/apport-kde.py:314
 msgid "Username:"
 msgstr "Όνομα χρήστη:"
 
-#: ../kde/apport-kde.py:315
+#: ../debian/tmp/usr/share/apport/apport-kde.py:315 ../kde/apport-kde.py:315
 msgid "Password:"
 msgstr "Κωδικός πρόσβασης:"
 
-#: ../kde/apport-kde.py:405
+#: ../debian/tmp/usr/share/apport/apport-kde.py:405 ../kde/apport-kde.py:405
 msgid "Collecting Problem Information"
 msgstr "Συλλογή πληροφοριών προβλήματος"
 
-#: ../kde/apport-kde.py:406 ../bin/apport-cli.py:238
+#: ../bin/apport-cli.py:238 ../debian/tmp/usr/share/apport/apport-kde.py:406
+#: ../kde/apport-kde.py:406 ../debian/tmp/usr/bin/apport-cli.py:238
 msgid "Collecting problem information"
 msgstr "Συλλογή πληροφοριών προβλήματος"
 
-#: ../kde/apport-kde.py:407
+#: ../debian/tmp/usr/share/apport/apport-kde.py:407 ../kde/apport-kde.py:407
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -212,7 +254,7 @@ msgstr ""
 "ανάπτυξης ώστε να βελτιώσουν την εφαρμογή. Αυτό μπορεί να διαρκέσει λίγα "
 "λεπτά."
 
-#: ../kde/apport-kde.py:433
+#: ../debian/tmp/usr/share/apport/apport-kde.py:433 ../kde/apport-kde.py:433
 msgid "Uploading Problem Information"
 msgstr "Αποστολή πληροφοριών προβλήματος"
 
@@ -233,7 +275,8 @@ msgid "System problem reports"
 msgstr "Αναφορές προβλημάτων συστήματος"
 
 #: ../apport/com.ubuntu.apport.policy.in.h:4
-msgid "Please enter your password to access problem reports of system programs"
+msgid ""
+"Please enter your password to access problem reports of system programs"
 msgstr ""
 "Παρακαλώ εισάγετε το συνθηματικό σας για να αποκτήσετε πρόσβαση στις "
 "αναφορές προβλημάτων των προγραμμάτων συστήματος"
@@ -248,15 +291,15 @@ msgstr "Αναφορά προβλήματος..."
 msgid "Report a malfunction to the developers"
 msgstr "Αναφορά δυσλειτουργίας στους προγραμματιστές"
 
-#: ../bin/apport-valgrind.py:37
+#: ../bin/apport-valgrind.py:37 ../debian/tmp/usr/bin/apport-valgrind.py:37
 msgid "See man page for details."
 msgstr "Δείτε τη σελίδα τεκμηρίωσης για λεπτομέρειες."
 
-#: ../bin/apport-valgrind.py:43
+#: ../bin/apport-valgrind.py:43 ../debian/tmp/usr/bin/apport-valgrind.py:43
 msgid "specify the log file name produced by valgrind"
 msgstr "ορίστε το όνομα αρχείου καταγραφών που θα παράγεται από το valgrind"
 
-#: ../bin/apport-valgrind.py:46
+#: ../bin/apport-valgrind.py:46 ../debian/tmp/usr/bin/apport-valgrind.py:46
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -264,7 +307,7 @@ msgstr ""
 "επαναχρησιμοποίηση ενός καταλόγου απομόνωσης (SDIR) που δημιουργήθηκε την "
 "προηγούμενη φορά, ή αν δεν υπάρχει, δημιούργησε το"
 
-#: ../bin/apport-valgrind.py:50
+#: ../bin/apport-valgrind.py:50 ../debian/tmp/usr/bin/apport-valgrind.py:50
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -273,7 +316,7 @@ msgstr ""
 "αποσφαλμάτωσης, αλλά να χρησιμοποιηθούν μόνο εγκαταστημένα σύμβολα "
 "αποσφαλμάτωσης."
 
-#: ../bin/apport-valgrind.py:54
+#: ../bin/apport-valgrind.py:54 ../debian/tmp/usr/bin/apport-valgrind.py:54
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -281,13 +324,14 @@ msgstr ""
 "επαναχρησιμοποίηση ενός καταλόγου προσωρινής μνήμης (CDIR) που δημιουργήθηκε "
 "προηγούμενη φορά, ή αν δεν υπάρχει, δημιούργησε το"
 
-#: ../bin/apport-valgrind.py:58
-msgid "report download/install progress when installing packages into sandbox"
+#: ../bin/apport-valgrind.py:58 ../debian/tmp/usr/bin/apport-valgrind.py:58
+msgid ""
+"report download/install progress when installing packages into sandbox"
 msgstr ""
 "να αναφέρεται η πρόοδος λήψης/εγκατάστασης όταν γίνεται εγκατάσταση πακέτων "
 "σε περιβάλλον απομόνωσης"
 
-#: ../bin/apport-valgrind.py:62
+#: ../bin/apport-valgrind.py:62 ../debian/tmp/usr/bin/apport-valgrind.py:62
 msgid ""
 "the executable that is run under valgrind's memcheck tool  for memory leak "
 "detection"
@@ -295,31 +339,32 @@ msgstr ""
 "το εκτελέσιμο που τρέχει το εργαλείο ελέγχου μνήμης του valgrind για την "
 "ανίχνευση διαρροής μνήμης (memory leak)"
 
-#: ../bin/apport-valgrind.py:66 ../bin/apport-retrace.py:63
+#: ../bin/apport-valgrind.py:66 ../debian/tmp/usr/bin/apport-retrace.py:63
+#: ../bin/apport-retrace.py:63 ../debian/tmp/usr/bin/apport-valgrind.py:66
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
 "Εγκαταστήστε ένα επιπλέον πακέτο στο περιβάλλον δοκιμών (μπορεί να "
 "προσδιοριστεί πολλές φορές)"
 
-#: ../bin/apport-valgrind.py:97
+#: ../bin/apport-valgrind.py:97 ../debian/tmp/usr/bin/apport-valgrind.py:97
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Σφάλμα: το %s δεν είναι εκτελέσιμο. Διακοπή."
 
-#: ../data/kernel_oops.py:29
+#: ../data/kernel_oops.py:29 ../debian/tmp/usr/share/apport/kernel_oops.py:29
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Το σύστημά σας πιθανώς να καταστεί ασταθές και ίσως  απαιτηθεί η "
 "επανεκκίνησή του."
 
-#: ../bin/apport-retrace.py:34
+#: ../debian/tmp/usr/bin/apport-retrace.py:34 ../bin/apport-retrace.py:34
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr ""
 "Να μην γίνει προσθήκη νέων στοιχείων στην αναφορά, αλλά να γραφτούν στο "
 "stdout."
 
-#: ../bin/apport-retrace.py:36
+#: ../debian/tmp/usr/bin/apport-retrace.py:36 ../bin/apport-retrace.py:36
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -327,36 +372,36 @@ msgstr ""
 "Εκκινήστε μια διαδραστική συνεδρία gdb με το core dump της αναφοράς (το -o "
 "παραβλέπεται, δεν δημιουργείται εκ νέου η αναφορά)"
 
-#: ../bin/apport-retrace.py:38
+#: ../debian/tmp/usr/bin/apport-retrace.py:38 ../bin/apport-retrace.py:38
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
 "Εγγραφή της τροποποιημένης αναφοράς στο επιλεγμένο αρχείο αντί για αλλαγή "
 "της αρχικής αναφοράς"
 
-#: ../bin/apport-retrace.py:41
+#: ../debian/tmp/usr/bin/apport-retrace.py:41 ../bin/apport-retrace.py:41
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr ""
 "Αφαίρεση του αρχείου εικόνας μνήμης (core dump) από την αναφορά μετά την "
 "επαναδημιουργία της ακολουθίας κλήσεων στοίβας"
 
-#: ../bin/apport-retrace.py:43
+#: ../debian/tmp/usr/bin/apport-retrace.py:43 ../bin/apport-retrace.py:43
 msgid "Override report's CoreFile"
 msgstr "Παράκαμψη του CoreFile της αναφοράς"
 
-#: ../bin/apport-retrace.py:45
+#: ../debian/tmp/usr/bin/apport-retrace.py:45 ../bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
 msgstr "Παράκαμψη του ExecutablePath της αναφοράς"
 
-#: ../bin/apport-retrace.py:47
+#: ../debian/tmp/usr/bin/apport-retrace.py:47 ../bin/apport-retrace.py:47
 msgid "Override report's ProcMaps"
 msgstr "Παράκαμψη των ProcMaps της αναφοράς"
 
-#: ../bin/apport-retrace.py:49
+#: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
 msgid "Rebuild report's Package information"
 msgstr "Επανοικοδόμηση των πληροφοριών πακέτου της αναφοράς"
 
-#: ../bin/apport-retrace.py:51
+#: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
 msgid ""
 "Build a temporary sandbox and download/install the necessary packages and "
 "debug symbols in there; without this option it assumes that the necessary "
@@ -374,30 +419,31 @@ msgstr ""
 "εντοπίζει τα σπασμένα αρχεία που συνέβησαν όταν ήταν σε εκτέλεση η "
 "αποδέσμευση."
 
-#: ../bin/apport-retrace.py:53
-msgid "Report download/install progress when installing packages into sandbox"
+#: ../debian/tmp/usr/bin/apport-retrace.py:53 ../bin/apport-retrace.py:53
+msgid ""
+"Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Αναφορά προόδου λήψης/εγκατάστασης όταν εγκαθίστανται πακέτα στο δοκιμαστικό "
 "χώρο"
 
-#: ../bin/apport-retrace.py:55
+#: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr ""
 "Βάζουμε μπροστά χρονικές ενδείξεις για να συνδεθούν μηνύματα, για τη "
 "λειτουργία παρτίδας"
 
-#: ../bin/apport-retrace.py:57
+#: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
 
-#: ../bin/apport-retrace.py:59
+#: ../debian/tmp/usr/bin/apport-retrace.py:59 ../bin/apport-retrace.py:59
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
 "Προσωρινός κατάλογος για πακέτα που τοποθετούνται στο δοκιμαστικό χώρο "
 "(sandbox)"
 
-#: ../bin/apport-retrace.py:61
+#: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
@@ -405,7 +451,7 @@ msgstr ""
 "Κατάλογος για χύμα πακέτα.Οι μελλοντικές διαδρομές ας υποθέσουμε πως ήδη τα "
 "πακέτα έχουν κατεβεί και εξάγονται στο sandbox."
 
-#: ../bin/apport-retrace.py:65
+#: ../debian/tmp/usr/bin/apport-retrace.py:65 ../bin/apport-retrace.py:65
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -416,7 +462,7 @@ msgstr ""
 "αποστολή των επαναπροσδιορισμένων στοιχείων του stack (μόνο αν κανένα από τα "
 "-g, -o και -s δεν ορίζονται)"
 
-#: ../bin/apport-retrace.py:67
+#: ../debian/tmp/usr/bin/apport-retrace.py:67 ../bin/apport-retrace.py:67
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -424,26 +470,31 @@ msgstr ""
 "Προβολή των επαναπροσδιορισμένων στοιχείων του stack και ερώτηση για "
 "επιβεβαίωση πριν την αποστολή τους στη βάση δεδομένων κατάρρευσης."
 
-#: ../bin/apport-retrace.py:69
-msgid "Path to the duplicate sqlite database (default: no duplicate checking)"
+#: ../debian/tmp/usr/bin/apport-retrace.py:69 ../bin/apport-retrace.py:69
+msgid ""
+"Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "Διαδρομή προς τη διπλότυπη βάση δεδομένων sqlite (προεπιλογή: μη έλεγχος "
 "διπλότυπου)"
 
-#: ../bin/apport-retrace.py:78
+#: ../debian/tmp/usr/bin/apport-retrace.py:78 ../bin/apport-retrace.py:78
 msgid "You cannot use -C without -S. Stopping."
 msgstr "Δεν μπορείτε να χρησιμοποιήσετε το -C χωρίς το -S. Διακοπή."
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:111
+#: ../debian/tmp/usr/bin/apport-retrace.py:111 ../bin/apport-retrace.py:111
 msgid "OK to send these as attachments? [y/n]"
 msgstr "Συμφωνείτε με την αποστολή αυτών ως συνημμένων; [y/n]"
 
 #: ../apport/ui.py:124
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:124
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:124
 msgid "This package does not seem to be installed correctly"
 msgstr "Αυτό το πακέτο δεν φαίνεται να έχει εγκατασταθεί σωστά"
 
 #: ../apport/ui.py:129
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:129
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:129
 #, python-format
 msgid ""
 "This is not an official %s package. Please remove any third party package "
@@ -453,6 +504,8 @@ msgstr ""
 "τρίτους και προσπαθήστε ξανά."
 
 #: ../apport/ui.py:146
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:146
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:146
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -467,20 +520,30 @@ msgstr ""
 "%s"
 
 #: ../apport/ui.py:270
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:270
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:270
 msgid "unknown program"
 msgstr "άγνωστο πρόγραμμα"
 
 #: ../apport/ui.py:271
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:271
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:271
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "Συγνώμη, το πρόγραμμα \"%s\" τερματίστηκε απροσδόκητα"
 
-#: ../apport/ui.py:273 ../apport/ui.py:1301
+#: ../apport/ui.py:273 ../apport/ui.py:1309
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:273
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1309
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:273
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1309
 #, python-format
 msgid "Problem in %s"
 msgstr "Πρόβλημα στο %s"
 
 #: ../apport/ui.py:274
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:274
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:274
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -488,42 +551,72 @@ msgstr ""
 "Ο υπολογιστής σας δεν έχει αρκετή ελεύθερη μνήμη για να αναλύσει αυτόματα το "
 "πρόβλημα και να στείλει μια αναφορά στους προγραμματιστές."
 
-#: ../apport/ui.py:317 ../apport/ui.py:325 ../apport/ui.py:452
-#: ../apport/ui.py:455 ../apport/ui.py:656 ../apport/ui.py:1107
-#: ../apport/ui.py:1273 ../apport/ui.py:1277
+#: ../apport/ui.py:322 ../apport/ui.py:330 ../apport/ui.py:457
+#: ../apport/ui.py:460 ../apport/ui.py:661 ../apport/ui.py:1115
+#: ../apport/ui.py:1281 ../apport/ui.py:1285
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:322
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:330
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:457
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:460
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:661
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1115
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1281
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1285
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:322
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:330
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:457
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:460
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:661
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1115
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1281
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1285
 msgid "Invalid problem report"
 msgstr "Μη έγκυρη αναφορά προβλήματος"
 
-#: ../apport/ui.py:318
+#: ../apport/ui.py:323
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:323
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:323
 msgid "You are not allowed to access this problem report."
 msgstr ""
 "Δεν σας επιτρέπεται να αποκτήσετε πρόσβαση σε αυτή την αναφορά προβλήματος."
 
-#: ../apport/ui.py:321
+#: ../apport/ui.py:326
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:326
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:326
 msgid "Error"
 msgstr "Σφάλμα"
 
-#: ../apport/ui.py:322
+#: ../apport/ui.py:327
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:327
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:327
 msgid "There is not enough disk space available to process this report."
 msgstr ""
 "Δεν υπάρχει αρκετός χώρος στον δίσκο για την επεξεργασία αυτής της αναφοράς."
 
-#: ../apport/ui.py:406
+#: ../apport/ui.py:411
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:411
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:411
 msgid "No package specified"
 msgstr "Δεν ορίστηκε πακέτο"
 
-#: ../apport/ui.py:407
+#: ../apport/ui.py:412
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:412
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:412
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "Χρειάζεται να ορίσετε ένα πακέτο ή ένα PID. Δείτε την --help για "
 "περισσότερες πληροφορίες."
 
-#: ../apport/ui.py:430
+#: ../apport/ui.py:435
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:435
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:435
 msgid "Permission denied"
 msgstr "Δεν επιτρέπεται η πρόσβαση"
 
-#: ../apport/ui.py:431
+#: ../apport/ui.py:436
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:436
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:436
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -531,35 +624,57 @@ msgstr ""
 "Η συγκεκριμένη διεργασία δεν ανήκει σε εσάς. Παρακαλούμε τρέξτε το πρόγραμμα "
 "ως ιδιοκτήτης της διεργασίας ή ως root."
 
-#: ../apport/ui.py:433
+#: ../apport/ui.py:438
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:438
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:438
 msgid "Invalid PID"
 msgstr "Άκυρος αριθμός αναγνώρισης της διεργασίας (PID)"
 
-#: ../apport/ui.py:434
+#: ../apport/ui.py:439
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:439
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:439
 msgid "The specified process ID does not belong to a program."
 msgstr ""
 "Αυτός ο αριθμός αναγνώρισης της διεργασίας (PID) δεν ανήκει σε κάποιο "
 "πρόγραμμα"
 
-#: ../apport/ui.py:453
+#: ../apport/ui.py:458
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:458
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:458
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "Το σενάριο συμπτώματος %s δεν προσδιόρισε κανένα επηρεασμένο πακέτο"
 
-#: ../apport/ui.py:456
+#: ../apport/ui.py:461
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:461
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:461
 #, python-format
 msgid "Package %s does not exist"
 msgstr "Το πακέτο %s δεν υπάρχει"
 
-#: ../apport/ui.py:480 ../apport/ui.py:668 ../apport/ui.py:673
+#: ../apport/ui.py:485 ../apport/ui.py:673 ../apport/ui.py:678
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:485
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:673
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:678
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:485
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:673
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:678
 msgid "Cannot create report"
 msgstr "Αδυναμία δημιουργίας αναφοράς"
 
-#: ../apport/ui.py:495 ../apport/ui.py:541 ../apport/ui.py:558
+#: ../apport/ui.py:500 ../apport/ui.py:546 ../apport/ui.py:563
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:500
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:546
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:563
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:500
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:546
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:563
 msgid "Updating problem report"
 msgstr "Ενημέρωση αναφοράς προβλήματος"
 
-#: ../apport/ui.py:496
+#: ../apport/ui.py:501
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:501
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:501
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -571,14 +686,16 @@ msgstr ""
 "\n"
 "Παρακαλούμε δημιουργήστε μια νέα αναφορά με τη χρήση του \"apport-bug\"."
 
-#: ../apport/ui.py:505
+#: ../apport/ui.py:510
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:510
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:510
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
 "a new bug.\n"
 "\n"
-"Subsequently, we recommend that you file a new bug report using \"apport-bug"
-"\" and make a comment in this bug about the one you file.\n"
+"Subsequently, we recommend that you file a new bug report using \"apport-"
+"bug\" and make a comment in this bug about the one you file.\n"
 "\n"
 "Do you really want to proceed?"
 msgstr ""
@@ -592,24 +709,36 @@ msgstr ""
 "\n"
 "Θέλετε σίγουρα να προχωρήσετε;"
 
-#: ../apport/ui.py:542 ../apport/ui.py:559
+#: ../apport/ui.py:547 ../apport/ui.py:564
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:547
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:564
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:547
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:564
 msgid "No additional information collected."
 msgstr "Δεν έχουν συλλεχθεί επιπλέον πληροφορίες."
 
-#: ../apport/ui.py:610
+#: ../apport/ui.py:615
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:615
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:615
 msgid "What kind of problem do you want to report?"
 msgstr "Τι είδους πρόβλημα θέλετε να αναφέρετε;"
 
-#: ../apport/ui.py:627
+#: ../apport/ui.py:632
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:632
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:632
 msgid "Unknown symptom"
 msgstr "Άγνωστο σύμπτωμα"
 
-#: ../apport/ui.py:628
+#: ../apport/ui.py:633
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:633
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:633
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "Το σύμπτωμα \"%s\" είναι άγνωστο."
 
-#: ../apport/ui.py:659
+#: ../apport/ui.py:664
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:664
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:664
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
@@ -617,30 +746,47 @@ msgstr ""
 "Αφού κλείσετε αυτό το μήνυμα παρακαλούμε κάντε κλικ στο παράθυρο μιας "
 "εφαρμογής για να αναφέρετε ένα πρόβλημα σχετικό με αυτήν."
 
-#: ../apport/ui.py:669 ../apport/ui.py:674
+#: ../apport/ui.py:674 ../apport/ui.py:679
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:674
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:679
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:674
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:679
 msgid "xprop failed to determine process ID of the window"
 msgstr "Το xprop απέτυχε να προσδιορίσει την ταυτότητα (PID) του παραθύρου."
 
-#: ../apport/ui.py:688
+#: ../apport/ui.py:693
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:693
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:693
 msgid "%prog <report number>"
 msgstr "%prog <αριθμός αναφοράς>"
 
-#: ../apport/ui.py:690
+#: ../apport/ui.py:695
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:695
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:695
 msgid "Specify package name."
 msgstr "Καθορίστε ένα όνομα πακέτου."
 
-#: ../apport/ui.py:692 ../apport/ui.py:743
+#: ../apport/ui.py:697 ../apport/ui.py:748
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:697
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:748
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:697
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:748
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr ""
 "Προσθέστε μια επιπλέον ετικέτα στην αναφορά. Μπορεί να οριστεί πολλές φορές."
 
-#: ../apport/ui.py:722
-msgid "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
+#: ../apport/ui.py:727
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:727
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:727
+msgid ""
+"%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
-"%prog [επιλογές] [σύμπτωμα|pid|πακέτο|διαδρομή προγράμματος|αρχείο .apport/."
-"crash]"
+"%prog [επιλογές] [σύμπτωμα|pid|πακέτο|διαδρομή προγράμματος|αρχείο "
+".apport/.crash]"
 
-#: ../apport/ui.py:725
+#: ../apport/ui.py:730
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:730
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:730
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -651,19 +797,25 @@ msgstr ""
 "εμφανίστε έναν κατάλογο γνωστών συμπτωμάτων. ( Η εξ ορισμού επιλογή εάν "
 "δίνεται ένα και μοναδικό όρισμα.)"
 
-#: ../apport/ui.py:727
+#: ../apport/ui.py:732
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:732
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:732
 msgid "Click a window as a target for filing a problem report."
 msgstr ""
 "Επιλέξτε ένα παράθυρο πατώντας το, για να συμπληρώσετε μια αναφορά "
 "προβλήματος."
 
-#: ../apport/ui.py:729
+#: ../apport/ui.py:734
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:734
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:734
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "Εκκίνηση σε λειτουργία ενημέρωσης σφάλματος. Δέχεται προαιρετικά την "
 "παράμετρο --package."
 
-#: ../apport/ui.py:731
+#: ../apport/ui.py:736
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:736
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:736
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -671,7 +823,9 @@ msgstr ""
 "Υποβάλετε αναφορά σφάλματος για ένα σύμπτωμα. (Στην περίπτωση που η ονομασία "
 "του συμπτώματος δίνεται ως μοναδικό όρισμα.)"
 
-#: ../apport/ui.py:733
+#: ../apport/ui.py:738
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:738
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:738
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -680,7 +834,9 @@ msgstr ""
 "έχει ήδη καθοριστεί ένα --pid. (Στην περίπτωση που το όνομα πακέτου δίνεται "
 "ως μοναδικό όρισμα.)"
 
-#: ../apport/ui.py:735
+#: ../apport/ui.py:740
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:740
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:740
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -690,13 +846,17 @@ msgstr ""
 "προσδιοριστεί, η αναφορά θα περιέχει περισσότερες πληροφορίες. (Όταν η "
 "ταυτότητα διεργασίας (PID) δίνεται ως η μόνη παράμετρος.)"
 
-#: ../apport/ui.py:737
+#: ../apport/ui.py:742
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:742
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:742
 msgid "The provided pid is a hanging application."
 msgstr ""
 "Το παρεχόμενο αναγνωριστικό διεργασίας (PID) είναι για μια εφαρμογή που έχει "
 "κολλήσει."
 
-#: ../apport/ui.py:739
+#: ../apport/ui.py:744
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:744
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:744
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -705,7 +865,9 @@ msgstr ""
 "Αναφέρετε την κατάρρευση από το δεδομένο αρχείο .apport ή .crash αντί αυτών "
 "στο %s. (Στην περίπτωση που το αρχείο δίδεται ως το μοναδικό όρισμα.)"
 
-#: ../apport/ui.py:741
+#: ../apport/ui.py:746
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:746
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:746
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -715,37 +877,53 @@ msgstr ""
 "πληροφορίες σε ένα αρχείο αντί να τις αναφέρετε. Το αρχείο αυτό μπορεί να "
 "αποσταλεί για αναφορά αργότερα από έναν διαφορετικό υπολογιστή."
 
-#: ../apport/ui.py:745
+#: ../apport/ui.py:750
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:750
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:750
 msgid "Print the Apport version number."
 msgstr "Τυπώστε τον αριθμό έκδοσης της εφαρμογής Apport."
 
-#: ../apport/ui.py:884
+#: ../apport/ui.py:889
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:889
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:889
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "Αυτό θα εκκινήσει το apport-retrace σε ένα παράθυρο τερματικού για να "
 "διερευνηθεί η σύγκρουση."
 
-#: ../apport/ui.py:885
+#: ../apport/ui.py:890
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:890
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:890
 msgid "Run gdb session"
 msgstr "Εκτέλεση συνεδρίας gdb"
 
-#: ../apport/ui.py:886
+#: ../apport/ui.py:891
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:891
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:891
 msgid "Run gdb session without downloading debug symbols"
 msgstr "Εκτέλεση συνεδρίας gdb χωρίς λήψη συμβόλων εκφαλμάτωσης"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:888
+#: ../apport/ui.py:893
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:893
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:893
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "Ενημέρωση %s με πλήρως συμβολική παρακολούθηση στίβας"
 
-#: ../apport/ui.py:962 ../apport/ui.py:972
+#: ../apport/ui.py:969 ../apport/ui.py:979
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:969
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:979
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:969
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:979
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "Αυτή η αναφορά αφορά πρόγραμμα το οποίο έχει πλέον απεγκατασταθεί."
 
-#: ../apport/ui.py:986
+#: ../apport/ui.py:994
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:994
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:994
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
@@ -754,66 +932,94 @@ msgstr ""
 "Το πρόβλημα παρουσιάστηκε με το πρόγραμμα %s το οποίο έχει αλλάξει από τη "
 "στιγμή που συνέβη η κατάρρευση."
 
-#: ../apport/ui.py:1033 ../apport/ui.py:1064 ../apport/ui.py:1279
+#: ../apport/ui.py:1041 ../apport/ui.py:1072 ../apport/ui.py:1287
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1041
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1072
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1287
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1041
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1072
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1287
 msgid "This problem report is damaged and cannot be processed."
 msgstr ""
 "Αυτή η αναφορά προβλήματος έχει καταστραφεί και είναι αδύνατη η επεξεργασία "
 "της."
 
 #. package does not exist
-#: ../apport/ui.py:1036
+#: ../apport/ui.py:1044
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1044
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1044
 msgid "The report belongs to a package that is not installed."
 msgstr "Η αναφορά ανήκει σε ένα πακέτο το οποίο δεν είναι εγκατεστημένο."
 
-#: ../apport/ui.py:1039
+#: ../apport/ui.py:1047
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1047
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1047
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
 "Παρουσιάστηκε ένα σφάλμα κατά την προσπάθεια επεξεργασίας αυτής της αναφοράς "
 "προβλήματος:"
 
-#: ../apport/ui.py:1108
+#: ../apport/ui.py:1116
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1116
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1116
 msgid "Could not determine the package or source package name."
 msgstr ""
 "Αδύνατος ο καθορισμός του πακέτου ή του ονόματος του πακέτου πηγαίου κώδικα."
 
-#: ../apport/ui.py:1126
+#: ../apport/ui.py:1134
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1134
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1134
 msgid "Unable to start web browser"
 msgstr "Αδύνατη η εκκίνηση του περιηγητή"
 
-#: ../apport/ui.py:1127
+#: ../apport/ui.py:1135
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1135
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1135
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "Αδύνατη η εκκίνηση του περιηγητή για το άνοιγμα του %s."
 
-#: ../apport/ui.py:1227
+#: ../apport/ui.py:1235
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1235
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1235
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr ""
 "Εισάγετε τα στοιχεία του λογαριασμού σας στο σύστημα παρακολούθησης "
 "σφαλμάτων %s."
 
-#: ../apport/ui.py:1239
+#: ../apport/ui.py:1247
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1247
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1247
 msgid "Network problem"
 msgstr "Πρόβλημα δικτύου"
 
-#: ../apport/ui.py:1241
+#: ../apport/ui.py:1249
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1249
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1249
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
 "Αδυναμία σύνδεσης στη βάση δεδομένων καταρρεύσεων, παρακαλώ ελέγξτε τη "
 "σύνδεσή σας στο διαδίκτυο."
 
-#: ../apport/ui.py:1268
+#: ../apport/ui.py:1276
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1276
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1276
 msgid "Memory exhaustion"
 msgstr "Εξάντληση μνήμης"
 
-#: ../apport/ui.py:1269
+#: ../apport/ui.py:1277
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1277
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1277
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "Το σύστημα δεν έχει αρκετή ελεύθερη μνήμη για τη διαδικασία αναφοράς "
 "κατάρρευσης."
 
-#: ../apport/ui.py:1304
+#: ../apport/ui.py:1312
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1312
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1312
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -824,11 +1030,17 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1360 ../apport/ui.py:1367
+#: ../apport/ui.py:1368 ../apport/ui.py:1375
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1368
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1375
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1368
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1375
 msgid "Problem already known"
 msgstr "Πρόβλημα ήδη γνωστό"
 
-#: ../apport/ui.py:1361
+#: ../apport/ui.py:1369
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1369
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1369
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -838,31 +1050,30 @@ msgstr ""
 "που βλέπετε. Παρακαλώ εξετάστε, αν μπορείτε να προσθέσετε κάποιες επιπλέον "
 "πληροφορίες, που να είναι χρήσιμες στους προγραμματιστές."
 
-#: ../apport/ui.py:1368
+#: ../apport/ui.py:1376
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1376
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1376
 msgid "This problem was already reported to developers. Thank you!"
 msgstr ""
 "Αυτό το πρόβλημα έχει ήδη αναφερθεί στους συντελεστές της εφαρμογής. Σας "
 "ευχαριστούμε!"
 
 #: ../data/apportcheckresume.py:67
-#, fuzzy
+#: ../debian/tmp/usr/share/apport/apportcheckresume.py:67
 msgid ""
 "This occurred during a previous suspend, and prevented the system from "
 "resuming properly."
 msgstr ""
-"Αυτό συνέβη σε προηγούμενη αναστολή λειτουργίας του υπολογιστή και εμπόδισε "
-"την κανονική επαναφορά της."
 
 #: ../data/apportcheckresume.py:69
-#, fuzzy
+#: ../debian/tmp/usr/share/apport/apportcheckresume.py:69
 msgid ""
 "This occurred during a previous hibernation, and prevented the system from "
 "resuming properly."
 msgstr ""
-"Αυτό συνέβη σε προηγούμενη αδρανοποίηση λειτουργίας του υπολογιστή και "
-"εμπόδισε την κανονική επαναφορά της."
 
 #: ../data/apportcheckresume.py:74
+#: ../debian/tmp/usr/share/apport/apportcheckresume.py:74
 msgid ""
 "The resume processing hung very near the end and will have appeared to have "
 "completed normally."
@@ -870,25 +1081,25 @@ msgstr ""
 "Η διαδικασία επαναφοράς σταμάτησε λίγο πριν την ολοκλήρωσή της και φαίνεται "
 "σαν να ολοκληρώθηκε κανονικά."
 
-#: ../bin/apport-cli.py:74
+#: ../bin/apport-cli.py:74 ../debian/tmp/usr/bin/apport-cli.py:74
 msgid "Press any key to continue..."
 msgstr "Πατήστε ένα πλήκτρο για να συνεχίσετε..."
 
-#: ../bin/apport-cli.py:81
+#: ../bin/apport-cli.py:81 ../debian/tmp/usr/bin/apport-cli.py:81
 msgid "What would you like to do? Your options are:"
 msgstr "Τι θα θέλατε να κάνετε; Οι επιλογές σας είναι:"
 
-#: ../bin/apport-cli.py:85
+#: ../bin/apport-cli.py:85 ../debian/tmp/usr/bin/apport-cli.py:85
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Παρακαλώ επιλέξτε (%s):"
 
-#: ../bin/apport-cli.py:148
+#: ../bin/apport-cli.py:148 ../debian/tmp/usr/bin/apport-cli.py:148
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i bytes)"
 
-#: ../bin/apport-cli.py:179
+#: ../bin/apport-cli.py:179 ../debian/tmp/usr/bin/apport-cli.py:179
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -896,49 +1107,54 @@ msgstr ""
 "Μετά την αποστολή της αναφοράς προβλήματος, παρακαλώ\n"
 "συμπληρώστε την φόρμα στον περιηγητή ιστού που θα ανοίξει αυτόματα."
 
-#: ../bin/apport-cli.py:182
+#: ../bin/apport-cli.py:182 ../debian/tmp/usr/bin/apport-cli.py:182
 #, python-format
 msgid "&Send report (%s)"
 msgstr "Απο&στολή αναφοράς (%s)"
 
-#: ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:186 ../debian/tmp/usr/bin/apport-cli.py:186
 msgid "&Examine locally"
 msgstr "&Διερεύνηση τοπικά"
 
-#: ../bin/apport-cli.py:190
+#: ../bin/apport-cli.py:190 ../debian/tmp/usr/bin/apport-cli.py:190
 msgid "&View report"
 msgstr "&Εμφάνιση αναφοράς"
 
-#: ../bin/apport-cli.py:191
+#: ../bin/apport-cli.py:191 ../debian/tmp/usr/bin/apport-cli.py:191
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Κράτηση της αναφοράς για μετέπειτα αποστολή ή αντιγραφή της κάπου αλλού"
 
-#: ../bin/apport-cli.py:192
+#: ../bin/apport-cli.py:192 ../debian/tmp/usr/bin/apport-cli.py:192
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr ""
 "Ακύρωση και αγνόηση μελλοντ&ικών καταρρεύσεων αυτής της έκδοσης του "
 "προγράμματος"
 
 #: ../bin/apport-cli.py:194 ../bin/apport-cli.py:271 ../bin/apport-cli.py:303
-#: ../bin/apport-cli.py:324
+#: ../bin/apport-cli.py:324 ../debian/tmp/usr/bin/apport-cli.py:194
+#: ../debian/tmp/usr/bin/apport-cli.py:271
+#: ../debian/tmp/usr/bin/apport-cli.py:303
+#: ../debian/tmp/usr/bin/apport-cli.py:324
 msgid "&Cancel"
 msgstr "&Ακύρωση"
 
-#: ../bin/apport-cli.py:222
+#: ../bin/apport-cli.py:222 ../debian/tmp/usr/bin/apport-cli.py:222
 msgid "Problem report file:"
 msgstr "Αρχείο αναφοράς προβλήματος:"
 
 #: ../bin/apport-cli.py:228 ../bin/apport-cli.py:233
+#: ../debian/tmp/usr/bin/apport-cli.py:228
+#: ../debian/tmp/usr/bin/apport-cli.py:233
 msgid "&Confirm"
 msgstr "&Επιβεβαίωση"
 
-#: ../bin/apport-cli.py:232
+#: ../bin/apport-cli.py:232 ../debian/tmp/usr/bin/apport-cli.py:232
 #, python-format
 msgid "Error: %s"
 msgstr "Σφάλμα: %s"
 
-#: ../bin/apport-cli.py:239
+#: ../bin/apport-cli.py:239 ../debian/tmp/usr/bin/apport-cli.py:239
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -947,7 +1163,7 @@ msgstr ""
 "ανάπτυξης για την περαιτέρω βελτίωση της\n"
 "εφαρμογής. Η αποστολή μπορεί να διαρκέσει μερικά λεπτά."
 
-#: ../bin/apport-cli.py:252
+#: ../bin/apport-cli.py:252 ../debian/tmp/usr/bin/apport-cli.py:252
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -956,41 +1172,41 @@ msgstr ""
 "σφαλμάτων.\n"
 "Αυτό μπορεί να διαρκέσει μερικά λεπτά."
 
-#: ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:302 ../debian/tmp/usr/bin/apport-cli.py:302
 msgid "&Done"
 msgstr "&Ολοκληρώθηκε"
 
-#: ../bin/apport-cli.py:308
+#: ../bin/apport-cli.py:308 ../debian/tmp/usr/bin/apport-cli.py:308
 msgid "none"
 msgstr "κανένα"
 
-#: ../bin/apport-cli.py:309
+#: ../bin/apport-cli.py:309 ../debian/tmp/usr/bin/apport-cli.py:309
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Επιλέχθηκε: %s. Πολλαπλές επιλογές:"
 
-#: ../bin/apport-cli.py:325
+#: ../bin/apport-cli.py:325 ../debian/tmp/usr/bin/apport-cli.py:325
 msgid "Choices:"
 msgstr "Επιλογές:"
 
-#: ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:339 ../debian/tmp/usr/bin/apport-cli.py:339
 msgid "Path to file (Enter to cancel):"
 msgstr "Διαδρομή προς το αρχείο (πατήστε Enter για ακύρωση):"
 
-#: ../bin/apport-cli.py:345
+#: ../bin/apport-cli.py:345 ../debian/tmp/usr/bin/apport-cli.py:345
 msgid "File does not exist."
 msgstr "Το αρχείο δεν υπάρχει."
 
-#: ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:347 ../debian/tmp/usr/bin/apport-cli.py:347
 msgid "This is a directory."
 msgstr "Αυτό είναι κατάλογος αρχείων."
 
-#: ../bin/apport-cli.py:353
+#: ../bin/apport-cli.py:353 ../debian/tmp/usr/bin/apport-cli.py:353
 msgid "To continue, you must visit the following URL:"
 msgstr ""
 "Για να συνεχίσετε πρέπει να επισκεφθείτε αυτή τη διεύθυνση διαδικτύου (URL):"
 
-#: ../bin/apport-cli.py:355
+#: ../bin/apport-cli.py:355 ../debian/tmp/usr/bin/apport-cli.py:355
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -998,29 +1214,26 @@ msgstr ""
 "Μπορείτε να εκκινήσετε τώρα ένα περιηγητή ιστοσελίδων ή να αντιγράψετε αυτή "
 "τη διεύθυνση σε έναν περιηγητή σε άλλον υπολογιστή."
 
-#: ../bin/apport-cli.py:357
+#: ../bin/apport-cli.py:357 ../debian/tmp/usr/bin/apport-cli.py:357
 msgid "Launch a browser now"
 msgstr "Εκκινήστε έναν περιηγητή ιστοσελίδων τώρα"
 
-#: ../bin/apport-cli.py:371
+#: ../bin/apport-cli.py:371 ../debian/tmp/usr/bin/apport-cli.py:371
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "Δεν εκκρεμούν αναφορές καταρρεύσεων. Δοκιμάστε την --help για περισσότερες "
 "πληροφορίες."
 
-#~ msgid "Your system might become unstablenow and might need to be restarted."
-#~ msgstr ""
-#~ "Το σύστημά σας τώρα υπάρχει περίπτωση να καταστεί ασταθές και ίσως "
-#~ "χρειαστεί επανεκκίνηση."
-
 #~ msgid "You can help the developers to fix the problem by reporting it."
 #~ msgstr ""
-#~ "Μπορείτε να βοηθήσετε τους υπεύθυνους ανάπτυξης να το φτιάξουν "
-#~ "αναφέροντας το."
+#~ "Μπορείτε να βοηθήσετε τους υπεύθυνους ανάπτυξης να το φτιάξουν αναφέροντας "
+#~ "το."
 
+#, python-format
 #~ msgid "The package \"%s\" failed to install or upgrade."
 #~ msgstr "Το πακέτο \"%s\" απέτυχε να εγκατασταθεί ή να ενημερωθεί."
 
+#, no-c-format, python-format
 #~ msgid "Complete report (recommended; %s)"
 #~ msgstr "Ολοκληρωμένη αναφορά (προτείνεται το %s)"
 
@@ -1030,20 +1243,20 @@ msgstr ""
 #~ "After the problem report has been sent, please fill out the form in the "
 #~ "automatically opened web browser."
 #~ msgstr ""
-#~ "<big><b>Να αποσταλεί η αναφορά του προβλήματος στους προγραμματιστές;</"
-#~ "b></big>\n"
+#~ "<big><b>Να αποσταλεί η αναφορά του προβλήματος στους "
+#~ "προγραμματιστές;</b></big>\n"
 #~ "\n"
 #~ "Μετά την αναφορά του προβλήματος, παρακαλώ συμπληρώστε τη φόρμα που θα "
 #~ "ανοίξει αυτόματα στον περιηγητή ιστού."
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other "
-#~ "private information), you can help to improve the application by "
-#~ "reporting the problem."
+#~ "private information), you can help to improve the application by reporting "
+#~ "the problem."
 #~ msgstr ""
-#~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή "
-#~ "κάποιων άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην "
-#~ "βελτίωση της εφαρμογής, αναφέροντας το πρόβλημα."
+#~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή κάποιων "
+#~ "άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην βελτίωση της "
+#~ "εφαρμογής, αναφέροντας το πρόβλημα."
 
 #~ msgid "Application problem"
 #~ msgstr "Πρόβλημα εφαρμογής"
@@ -1053,20 +1266,21 @@ msgstr ""
 
 #~ msgid ""
 #~ "If you were not doing anything confidential (entering passwords or other\n"
-#~ "private information), you can help to improve the application by "
-#~ "reporting\n"
+#~ "private information), you can help to improve the application by reporting\n"
 #~ "the problem."
 #~ msgstr ""
 #~ "Αν δεν κάνατε κάτι πολύ εμπιστευτικό (εισαγωγή κωδικών πρόσβασης ή \n"
 #~ "κάποιων άλλων ιδιωτικών σας δεδομένων), μπορείτε να βοηθήσετε στην \n"
 #~ "βελτίωση της εφαρμογής, αναφέροντας το πρόβλημα."
 
+#, python-format
 #~ msgid "%s closed unexpectedly on %s at %s."
 #~ msgstr "Το %s τερματίστηκε απροσδόκητα στο %s και στο %s."
 
 #~ msgid "Restart _Program"
 #~ msgstr "Επανεκκίνηση_Προγράμματος"
 
+#, no-c-format
 #~ msgid ""
 #~ "<span weight=\"bold\" size=\"larger\">Sorry, the package \"%s\" failed to "
 #~ "install or upgrade.</span>"
@@ -1074,9 +1288,11 @@ msgstr ""
 #~ "<span weight=\"bold\" size=\"larger\"> Λυπούμαστε, αλλά το πακέτο \"%s\" "
 #~ "απέτυχε να εγκατασταθεί ή να αναβαθμιστεί.</span>"
 
+#, python-format
 #~ msgid "&Send complete report (recommended; %s)"
 #~ msgstr "&Αποστολή ολοκληρωμένης αναφοράς (προτείνεται %s)"
 
+#, no-c-format, python-format
 #~ msgid "Reduced report (slow Internet connection; %s)"
 #~ msgstr "Περιορισμένη αναφορά (αργή σύνδεση με το διαδίκτυο: %s)"
 
@@ -1084,18 +1300,18 @@ msgstr ""
 #~ msgstr ""
 #~ "Να αγνοηθούν μελλοντικές καταρρεύσεις αυτής της έκδοσης του προγράμματος"
 
+#, python-format
 #~ msgid "Send &reduced report (slow Internet connection; %s)"
 #~ msgstr "Απόστολή &περιορισμένης αναφοράς (αργή σύνδεση με το διαδίκτυο %s)"
 
 #~ msgid ""
-#~ "This will remove some large items from the report. These are very useful "
-#~ "for developers to debug the problem, but might be too big for you to "
-#~ "upload if you have a slow internet connection."
+#~ "This will remove some large items from the report. These are very useful for "
+#~ "developers to debug the problem, but might be too big for you to upload if "
+#~ "you have a slow internet connection."
 #~ msgstr ""
-#~ "Αυτό θα αφαιρέσει κάποια ογκώδη στοιχεία από την αναφορά. Τα στοιχεία "
-#~ "αυτά είναι πολύ χρήσιμα στους προγραμματιστές για τον εντοπισμό και την "
-#~ "διόρθωση λαθών, αλλά είναι πολύ μεγάλα για να τα αποστείλετε αν έχετε "
-#~ "αργή σύνδεση."
+#~ "Αυτό θα αφαιρέσει κάποια ογκώδη στοιχεία από την αναφορά. Τα στοιχεία αυτά "
+#~ "είναι πολύ χρήσιμα στους προγραμματιστές για τον εντοπισμό και την διόρθωση "
+#~ "λαθών, αλλά είναι πολύ μεγάλα για να τα αποστείλετε αν έχετε αργή σύνδεση."
 
 #~ msgid "&Report Problem..."
 #~ msgstr "&Αναφορά Προβλήματος..."
@@ -1112,6 +1328,7 @@ msgstr ""
 #~ "Μπορείτε να βοηθήσετε τους προγραμματιστές να διορθώσουν το πακέτο "
 #~ "αναφέροντας το πρόβλημα."
 
+#, python-format
 #~ msgid "This is not a genuine %s package"
 #~ msgstr "Αυτό δεν είναι γνήσιο το πακέτο %s"
 
@@ -1132,13 +1349,33 @@ msgstr ""
 #~ msgid "%prog [options] <apport problem report | crash ID>"
 #~ msgstr "%prog [επιλογές] <αναφορά προβλήματος apport | ID κατάρρευσης>"
 
+#, python-format
 #~ msgid "Sorry, the application %s has closed unexpectedly."
 #~ msgstr "Συγνώμη, η εφαρμογή %s τερματίστηκε απροσδόκητα."
+
+#~ msgid ""
+#~ "This occured during a previous suspend and prevented it from resuming "
+#~ "properly."
+#~ msgstr ""
+#~ "Αυτό συνέβη σε προηγούμενη αναστολή λειτουργίας του υπολογιστή και εμπόδισε "
+#~ "την κανονική επαναφορά της."
+
+#~ msgid ""
+#~ "This occured during a previous hibernate and prevented it from resuming "
+#~ "properly."
+#~ msgstr ""
+#~ "Αυτό συνέβη σε προηγούμενη αδρανοποίηση λειτουργίας του υπολογιστή και "
+#~ "εμπόδισε την κανονική επαναφορά της."
 
 #~ msgid ""
 #~ "you either need to do a local operation (-s, -g, -o) or supply an "
 #~ "authentication file (--auth); see --help for a short help"
 #~ msgstr ""
 #~ "χρειάζεται είτε να πραγματοποιήσετε μια τοπική ενέργεια (-s, -g, -o) ή να "
-#~ "παρέχετε ένα αρχείο πιστοποίησης (--auth). Δείτε το --help για μια "
-#~ "σύντομη βοήθεια"
+#~ "παρέχετε ένα αρχείο πιστοποίησης (--auth). Δείτε το --help για μια σύντομη "
+#~ "βοήθεια"
+
+#~ msgid "Your system might become unstablenow and might need to be restarted."
+#~ msgstr ""
+#~ "Το σύστημά σας τώρα υπάρχει περίπτωση να καταστεί ασταθές και ίσως χρειαστεί "
+#~ "επανεκκίνηση."
