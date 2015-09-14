@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: apport\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-10 11:16+0200\n"
-"PO-Revision-Date: 2015-08-31 17:09+0000\n"
-"Last-Translator: Claudia Cotună <special4ti@gmail.com>\n"
+"PO-Revision-Date: 2015-09-13 13:17+0000\n"
+"Last-Translator: Meriuță Cornel <meriutacornel@neacornel.eu>\n"
 "Language-Team: Romanian <ro@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-09-11 05:12+0000\n"
+"X-Launchpad-Export-Date: 2015-09-14 05:10+0000\n"
 "X-Generator: Launchpad (build 17720)\n"
 "Language: ro\n"
 "100 > 19) || ((n % 100 == 0) && (n != 0))) ? 2: 1))\n"
@@ -124,7 +124,7 @@ msgstr ""
 
 #: ../kde/apport-kde-mimelnk.desktop.in.h:1
 msgid "Apport crash file"
-msgstr "Fișier despre o terminare neașteptată Apport"
+msgstr "Fișier despre o avarie Apport"
 
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:142 ../bin/apport-cli.py:150
 #: ../gtk/apport-gtk.py:142 ../debian/tmp/usr/share/apport/apport-kde.py:362
@@ -450,9 +450,9 @@ msgid ""
 "neither -g, -o, nor -s are specified)"
 msgstr ""
 "Calea către un fișier cu informații de autentificare pentru baza de date "
-"despre terminări neașteptate. Aceasta este folosită când se specifică un ID "
-"al unei terminări neașteptate pentru a trimite trasările de stivă de apeluri "
-"retrasate (doar dacă niciuna dintre -g, -o și -s nu au fost specificate)"
+"despre avarii. Aceasta este folosită când se specifică un ID al unei avarii "
+"pentru a trimite trasările de stivă de apeluri retrasate (doar dacă niciuna "
+"dintre -g, -o și -s nu au fost specificate)"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:67 ../bin/apport-retrace.py:67
 msgid ""
@@ -460,7 +460,7 @@ msgid ""
 "to the crash database."
 msgstr ""
 "Afișează trasările de stivă de apeluri retrasate și cere confirmarea înainte "
-"de a le trimite în baza de date despre terminări neașteptate."
+"de a le trimite în baza de date despre avarii."
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:69 ../bin/apport-retrace.py:69
 msgid ""
@@ -846,9 +846,8 @@ msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
 "ones in %s. (Implied if file is given as only argument.)"
 msgstr ""
-"Raportează terminarea neașteptată din fișierul .apport sau .crash și nu a "
-"celor în așteptare din %s. (Implicit, dacă fișierul este dat ca singurul "
-"argument.)"
+"Raportează avaria din fișierul .apport sau .crash și nu a celor în așteptare "
+"din %s. (Implicit, dacă fișierul este dat ca singurul argument.)"
 
 #: ../apport/ui.py:746
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:746
@@ -958,7 +957,7 @@ msgstr "Nu s-a putut porni navigatorul web"
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1135
 #, python-format
 msgid "Unable to start web browser to open %s."
-msgstr "Nu s-a putu porni navigatorul web pentru a deschide %s."
+msgstr "Nu s-a putut porni navigatorul web pentru a deschide %s."
 
 #: ../apport/ui.py:1235
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1235
@@ -981,8 +980,8 @@ msgstr "Problemă de rețea"
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr ""
-"Nu s-a reușit conexiunea la baza de date despre terminări neașteptate, "
-"verificați conexiunea la internet."
+"Nu s-a reușit conexiunea la baza de date despre avarii, verificați "
+"conexiunea la internet."
 
 #: ../apport/ui.py:1276
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1276
@@ -995,7 +994,8 @@ msgstr "Memorie consumată"
 #: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1277
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
-"Sistemul nu dispune de suficientă memorie pentru a procesa raportul cu erori"
+"Sistemul nu dispune de suficientă memorie pentru a procesa acest raport de "
+"avarie."
 
 #: ../apport/ui.py:1312
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1312
@@ -1106,7 +1106,8 @@ msgstr ""
 
 #: ../bin/apport-cli.py:192 ../debian/tmp/usr/bin/apport-cli.py:192
 msgid "Cancel and &ignore future crashes of this program version"
-msgstr "Anulează și &ignoră viitoarele erori ale acestei versiuni de program"
+msgstr ""
+"Renunță și &ignoră viitoarele avarii ale acestei versiuni a programului"
 
 #: ../bin/apport-cli.py:194 ../bin/apport-cli.py:271 ../bin/apport-cli.py:303
 #: ../bin/apport-cli.py:324 ../debian/tmp/usr/bin/apport-cli.py:194
@@ -1195,7 +1196,7 @@ msgstr "Lansează un navigator"
 #: ../bin/apport-cli.py:371 ../debian/tmp/usr/bin/apport-cli.py:371
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
-"Nu există nici un raport de eroare în curs. Pentru mai multe informații "
+"Nu există nici un raport de avarie în curs. Pentru mai multe informații, "
 "consultați --help."
 
 #, python-format
