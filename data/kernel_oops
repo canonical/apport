@@ -37,7 +37,5 @@ u = os.uname()
 pr['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
 
 # write report
-report_path = apport.fileutils.make_report_path(pr, uid=checksum)
-if not os.path.exists(report_path):
-    with open(report_path, 'wb') as f:
-        pr.write(f)
+with apport.fileutils.make_report_file(pr, uid=checksum) as f:
+    pr.write(f)

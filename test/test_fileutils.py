@@ -269,16 +269,36 @@ Date: ''' + date.encode() + b'''
 CrashCounter: 3''')
         self.assertEqual(apport.fileutils.get_recent_crashes(r), 3)
 
-    def test_make_report_path(self):
-        '''make_report_path()'''
+    def test_make_report_file(self):
+        '''make_report_file()'''
 
         pr = problem_report.ProblemReport()
-        self.assertRaises(ValueError, apport.fileutils.make_report_path, pr)
+        self.assertRaises(ValueError, apport.fileutils.make_report_file, pr)
 
         pr['Package'] = 'bash 1'
-        self.assertTrue(apport.fileutils.make_report_path(pr).startswith('%s/bash' % apport.fileutils.report_dir))
+        with apport.fileutils.make_report_file(pr) as f:
+            if sys.version >= '3':
+                path = f.name
+            else:
+                path = os.path.join(apport.fileutils.report_dir, os.listdir(apport.fileutils.report_dir)[0])
+            self.assertTrue(path.startswith('%s/bash' % apport.fileutils.report_dir), path)
+            os.unlink(path)
+
         pr['ExecutablePath'] = '/bin/bash'
-        self.assertTrue(apport.fileutils.make_report_path(pr).startswith('%s/_bin_bash' % apport.fileutils.report_dir))
+        with apport.fileutils.make_report_file(pr) as f:
+            if sys.version >= '3':
+                path = f.name
+            else:
+                path = os.path.join(apport.fileutils.report_dir, os.listdir(apport.fileutils.report_dir)[0])
+            self.assertTrue(path.startswith('%s/_bin_bash' % apport.fileutils.report_dir), path)
+
+        # file exists already, should fail now
+        self.assertRaises(OSError, apport.fileutils.make_report_file, pr)
+
+        # should still fail if it's a dangling symlink
+        os.unlink(path)
+        os.symlink(os.path.join(apport.fileutils.report_dir, 'pwned'), path)
+        self.assertRaises(OSError, apport.fileutils.make_report_file, pr)
 
     def test_check_files_md5(self):
         '''check_files_md5()'''

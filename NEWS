@@ -11,6 +11,12 @@ detailed list of changes, please see ChangeLog.
    file, and thus triggering a "fill up disk" DoS attack when the .crash report
    tries to include itself. Thanks to halfdog for discovering this!
    (CVE-2015-1338, part of LP #1492570)
+ * SECURITY FIX: Fix all writers of report files (package_hook,
+   kernel_crashdump, and similar) to open the report file exclusively, i. e.
+   fail if they already exist. This prevents privilege escalation through
+   symlink attacks. Note that this will also prevent overwriting previous
+   reports with the same same. Thanks to halfdog for discovering this!
+   (CVE-2015-1338, LP: #1492570)
 
 2.18.1 (2015-09-10)
 -------------------

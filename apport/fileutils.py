@@ -9,7 +9,7 @@
 # option) any later version.  See http://www.gnu.org/copyleft/gpl.html for
 # the full text of the license.
 
-import os, glob, subprocess, os.path, time, pwd
+import os, glob, subprocess, os.path, time, pwd, sys
 
 try:
     from configparser import ConfigParser, NoOptionError, NoSectionError
@@ -266,10 +266,14 @@ def get_recent_crashes(report):
         return 0
 
 
-def make_report_path(report, uid=None):
-    '''Construct a canonical pathname for the given report.
+def make_report_file(report, uid=None):
+    '''Construct a canonical pathname for a report and open it for writing
 
     If uid is not given, it defaults to the uid of the current process.
+    The report file must not exist already, to prevent losing previous reports
+    or symlink attacks.
+
+    Return an open file object for binary writing.
     '''
     if 'ExecutablePath' in report:
         subject = report['ExecutablePath'].replace('/', '_')
@@ -281,7 +285,11 @@ def make_report_path(report, uid=None):
     if not uid:
         uid = os.getuid()
 
-    return os.path.join(report_dir, '%s.%s.crash' % (subject, str(uid)))
+    path = os.path.join(report_dir, '%s.%s.crash' % (subject, str(uid)))
+    if sys.version >= '3':
+        return open(path, 'xb')
+    else:
+        return os.fdopen(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'wb')
 
 
 def check_files_md5(sumfile):

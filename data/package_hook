@@ -61,5 +61,5 @@ for l in (options.logs or []):
                 pr[mkattrname(path)] = (path,)
 
 # write report
-with open(apport.fileutils.make_report_path(pr), 'wb') as f:
+with apport.fileutils.make_report_file(pr) as f:
     pr.write(f)
