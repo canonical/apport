@@ -6,6 +6,11 @@ detailed list of changes, please see ChangeLog.
  * apport: Drop re-nicing. This might decrease the time a user has to wait for
    apport to finish the core dump for a crashed/hanging foreground process.
    (See LP #1278780)
+ * kernel_crashdump: Enforce that the log/dmesg files are not a symlink. This
+   prevents normal users from pre-creating a symlink to the predictable .crash
+   file, and thus triggering a "fill up disk" DoS attack when the .crash report
+   tries to include itself. Thanks to halfdog for discovering this!
+   (CVE-2015-1338, part of LP #1492570)
 
 2.18.1 (2015-09-10)
 -------------------

@@ -199,6 +199,60 @@ class T(unittest.TestCase):
         r.add_package_info(r['Package'])
         self.assertIn(os.uname()[2].split('-')[0], r['Package'])
 
+    def test_kernel_crashdump_log_symlink(self):
+        '''attempted DoS with vmcore.log symlink
+
+        We must only accept plain files, otherwise vmcore.log might be a
+        symlink to the .crash file, which would recursively fill itself.
+        '''
+        f = open(os.path.join(apport.fileutils.report_dir, 'vmcore'), 'wb')
+        f.write(b'\x01' * 100)
+        f.close()
+        os.symlink('vmcore', os.path.join(apport.fileutils.report_dir, 'vmcore.log'))
+
+        self.assertNotEqual(subprocess.call('%s/kernel_crashdump' % datadir,
+                                            stderr=subprocess.PIPE),
+                            0, 'kernel_crashdump unexpectedly succeeded')
+
+        self.assertEqual(apport.fileutils.get_new_reports(), [])
+
+    def test_kernel_crashdump_kdump_log_symlink(self):
+        '''attempted DoS with dmesg symlink with kdump-tools'''
+
+        timedir = datetime.strftime(datetime.now(), '%Y%m%d%H%M')
+        vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
+        os.mkdir(vmcore_dir)
+
+        dmesgfile = os.path.join(vmcore_dir, 'dmesg.' + timedir)
+        os.symlink('../kernel.crash', dmesgfile)
+
+        self.assertNotEqual(subprocess.call('%s/kernel_crashdump' % datadir,
+                                            stderr=subprocess.PIPE),
+                            0, 'kernel_crashdump unexpectedly succeeded')
+        self.assertEqual(apport.fileutils.get_new_reports(), [])
+
+    @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as user')
+    def test_kernel_crashdump_kdump_log_dir_symlink(self):
+        '''attempted DoS with dmesg dir symlink with kdump-tools'''
+
+        timedir = datetime.strftime(datetime.now(), '%Y%m%d%H%M')
+        vmcore_dir = os.path.join(apport.fileutils.report_dir, timedir)
+        os.mkdir(vmcore_dir + '.real')
+        # pretend that a user tries information disclosure by pre-creating a
+        # symlink to another dir
+        os.symlink(vmcore_dir + '.real', vmcore_dir)
+        os.lchown(vmcore_dir, 65534, 65534)
+
+        dmesgfile = os.path.join(vmcore_dir, 'dmesg.' + timedir)
+        f = open(dmesgfile, 'wt')
+        f.write('1' * 100)
+        f.close()
+
+        self.assertNotEqual(subprocess.call('%s/kernel_crashdump' % datadir,
+                                            stderr=subprocess.PIPE),
+                            0, 'kernel_crashdump unexpectedly succeeded')
+        self.assertEqual(apport.fileutils.get_new_reports(), [])
+
     @classmethod
     def _gcc_version_path(klass):
         '''Determine a valid version and executable path of gcc and return it
