@@ -273,6 +273,30 @@ def is_closing_session(pid, uid):
     return False
 
 
+def is_systemd_watchdog_restart(signum, pid):
+    '''Check if this is a restart by systemd's watchdog'''
+
+    if signum != str(signal.SIGABRT) or not os.path.isdir('/run/systemd/system'):
+        return False
+
+    try:
+        with open('/proc/%s/cgroup' % pid) as f:
+            for line in f:
+                if 'name=systemd:' in line:
+                    unit = line.split('/')[-1].strip()
+                    break
+            else:
+                return False
+
+        journalctl = subprocess.Popen(['/bin/journalctl', '--output=cat', '--since=-5min', '--priority=warning',
+                                       '--unit', unit], stdout=subprocess.PIPE)
+        out = journalctl.communicate()[0]
+        return b'Watchdog timeout' in out
+    except (IOError, OSError) as e:
+        error_log('cannot determine if this crash is from systemd watchdog: %s' % e)
+        return False
+
+
 #################################################################
 #
 # main
@@ -397,6 +421,12 @@ try:
 
     if is_closing_session(pid, pidstat.st_uid):
         error_log('happens for shutting down session, ignoring')
+        sys.exit(1)
+
+    # ignore systemd watchdog kills; most often they don't tell us the actual
+    # reason (kernel hang, etc.), LP #1433320
+    if is_systemd_watchdog_restart(signum, pid):
+        error_log('Ignoring systemd watchdog restart')
         sys.exit(1)
 
     crash_counter = 0

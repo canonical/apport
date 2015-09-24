@@ -17,6 +17,10 @@ detailed list of changes, please see ChangeLog.
    symlink attacks. Note that this will also prevent overwriting previous
    reports with the same same. Thanks to halfdog for discovering this!
    (CVE-2015-1338, LP: #1492570)
+ * apport: Ignore process restarts from systemd's watchdog. Their traces are
+   usually useless as they don't have any information about the actual reasaon
+   why processes hang (like VM suspends or kernel lockups with bad hardware)
+   (LP: #1433320)
 
 2.18.1 (2015-09-10)
 -------------------
