@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Examine the crash files saved by apport to attempt to determine the cause
 # of a segfault.  Currently very very simplistic, and only finds commonly
 # understood situations for x86/x86_64.

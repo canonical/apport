@@ -1,8 +1,8 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.18.2 (UNRELEASED)
--------------------
+2.19 (UNRELEASED)
+-----------------
  * apport: Drop re-nicing. This might decrease the time a user has to wait for
    apport to finish the core dump for a crashed/hanging foreground process.
    (See LP #1278780)
@@ -21,6 +21,7 @@ detailed list of changes, please see ChangeLog.
    usually useless as they don't have any information about the actual reasaon
    why processes hang (like VM suspends or kernel lockups with bad hardware)
    (LP: #1433320)
+ * Switch all executables to use Python 3 by default.
 
 2.18.1 (2015-09-10)
 -------------------
