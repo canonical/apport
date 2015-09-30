@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.19.1 (UNRELEASED)
+-------------------
+ * Consistently intercept "report file already exists" errors in all writers of
+   report files (package_hook, kernel_crashdump, and similar) to avoid
+   unhandled exceptions on those. (LP: #1500450)
+
 2.19 (2015-09-24)
 -----------------
  * apport: Drop re-nicing. This might decrease the time a user has to wait for

@@ -37,5 +37,8 @@ u = os.uname()
 pr['Uname'] = '%s %s %s' % (u[0], u[2], u[4])
 
 # write report
-with apport.fileutils.make_report_file(pr, uid=checksum) as f:
-    pr.write(f)
+try:
+    with apport.fileutils.make_report_file(pr, uid=checksum) as f:
+        pr.write(f)
+except (IOError, OSError) as e:
+    apport.fatal('Cannot create report: ' + str(e))

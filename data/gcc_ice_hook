@@ -31,5 +31,8 @@ else:
     pr['PreprocessedSource'] = (sourcefile, False)
 
 # write report
-with apport.fileutils.make_report_file(pr) as f:
-    pr.write(f)
+try:
+    with apport.fileutils.make_report_file(pr) as f:
+        pr.write(f)
+except (IOError, OSError) as e:
+    apport.fatal('Cannot create report: ' + str(e))

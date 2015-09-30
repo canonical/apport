@@ -67,8 +67,11 @@ def main():
         report['DuplicateSignature'] = '%s:%s' % (exec_path, ds)
 
     # Write the final report
-    with apport.fileutils.make_report_file(report) as fp:
-        report.write(fp)
+    try:
+        with apport.fileutils.make_report_file(report) as f:
+            report.write(f)
+    except (IOError, OSError) as e:
+        apport.fatal('Cannot create report: ' + str(e))
 
 if __name__ == '__main__':
     main()

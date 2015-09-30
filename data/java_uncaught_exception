@@ -85,8 +85,12 @@ def main():
 
     report['Title'] = make_title(report)
 
-    with apport.fileutils.make_report_file(report) as f:
-        report.write(f)
+    try:
+        with apport.fileutils.make_report_file(report) as f:
+            report.write(f)
+    except (IOError, OSError) as e:
+        apport.fatal('Cannot create report: ' + str(e))
+
 
 if __name__ == '__main__':
     main()

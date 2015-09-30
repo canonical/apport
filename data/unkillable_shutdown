@@ -95,8 +95,11 @@ def do_report(pid, blacklist):
     if blacklist:
         r['OmitPids'] = ' '.join(blacklist)
 
-    with apport.fileutils.make_report_file(r) as f:
-        r.write(f)
+    try:
+        with apport.fileutils.make_report_file(r) as f:
+            r.write(f)
+    except (IOError, OSError) as e:
+        apport.fatal('Cannot create report: ' + str(e))
 
 #
 # main
