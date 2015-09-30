@@ -6,6 +6,8 @@ detailed list of changes, please see ChangeLog.
  * Consistently intercept "report file already exists" errors in all writers of
    report files (package_hook, kernel_crashdump, and similar) to avoid
    unhandled exceptions on those. (LP: #1500450)
+ * apt/dpkg: Fall back to direct Launchpad ddeb download if we can't find it in
+   the apt cache. Thanks Brian Murray! (LP: #1500557)
 
 2.19 (2015-09-24)
 -----------------

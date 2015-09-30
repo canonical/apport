@@ -940,11 +940,11 @@ Debug::NoLocking "true";
                                     pass
                             real_pkgs.add(p)
                     else:
+                        pkg_found = False
+                        dbgsym_pkg = pkg + '-dbgsym'
                         try:
-                            dbgsym_pkg = pkg + '-dbgsym'
                             dbgsym = cache[dbgsym_pkg]
                             real_pkgs.add(dbgsym_pkg)
-                            pkg_found = False
                             # prefer the version requested
                             if ver:
                                 try:
@@ -967,7 +967,19 @@ Debug::NoLocking "true";
                                     obsolete += 'outdated debug symbol package for %s: package version %s dbgsym version %s\n' % (
                                         pkg, candidate.version, dbgsym.candidate.version)
                         except KeyError:
-                            obsolete += 'no debug symbol package found for %s\n' % pkg
+                            if ver:
+                                (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
+                                                                               dbgsym_pkg, ver, architecture)
+                                if lp_url:
+                                    real_pkgs.add(dbgsym_pkg)
+                                    acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
+                                                                                 lp_url,
+                                                                                 hash="sha1:%s" % sha1sum,
+                                                                                 destdir=archivedir))
+                                    lp_cache[dbgsym_pkg] = ver
+                                    pkg_found = True
+                            if not pkg_found:
+                                obsolete += 'no debug symbol package found for %s\n' % pkg
 
         # unpack packages, weed out the ones that are already installed (for
         # permanent sandboxes)
