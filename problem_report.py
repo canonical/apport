@@ -119,7 +119,7 @@ class ProblemReport(UserDict):
 
         file needs to be opened in binary mode.
 
-        Files are in RFC822 format.
+        Files are in RFC822 format, but with case sensitive keys.
         '''
         self._assert_bin_mode(file)
         self.data.clear()

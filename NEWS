@@ -8,6 +8,8 @@ detailed list of changes, please see ChangeLog.
    unhandled exceptions on those. (LP: #1500450)
  * apt/dpkg: Fall back to direct Launchpad ddeb download if we can't find it in
    the apt cache. Thanks Brian Murray! (LP: #1500557)
+ * doc/data-format.tex: Clarify that key names are being treated as case
+   sensitive (unlike RFC822).
 
 2.19 (2015-09-24)
 -----------------

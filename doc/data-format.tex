@@ -48,9 +48,10 @@ fields.
 
 \subsection{Structure}
 
-Apport report files consist of key/value pairs encoded with the standard
-RFC822\footnote{http://www.ietf.org/rfc/rfc0822.txt} header format. Key name
-and value are separated by a dot and a space (``\verb!: !'' ).
+Apport report files consist of key/value pairs based on the standard
+RFC822\footnote{http://www.ietf.org/rfc/rfc0822.txt} format, except that Apport
+uses case sensitive keys. Key name and value are separated by a colon and a
+space (``\verb!: !'' ).
 
 There must not be any blank lines and no lines that start with a non-whitespace
 character and do not start with a key name and a colon.
@@ -59,7 +60,8 @@ character and do not start with a key name and a colon.
 
 Key names consist of numbers (\verb!0! -- \verb!9!), English letters (\verb!a!
 -- \verb!z! and \verb!A! -- \verb!Z!), dots (\verb!.!), dashes (\verb!-!), and
-underscores (\verb!_!).
+underscores (\verb!_!). Apport and its libraries treat them as case sensitive
+(unlike RFC822).
 
 \subsection{Textual values}
 
