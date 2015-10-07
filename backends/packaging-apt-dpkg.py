@@ -971,7 +971,6 @@ Debug::NoLocking "true";
                                 (lp_url, sha1sum) = self.get_lp_binary_package(self.get_distro_name(),
                                                                                dbgsym_pkg, ver, architecture)
                                 if lp_url:
-                                    real_pkgs.add(dbgsym_pkg)
                                     acquire_queue.append(apt.apt_pkg.AcquireFile(fetcher,
                                                                                  lp_url,
                                                                                  hash="sha1:%s" % sha1sum,
