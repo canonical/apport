@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.19.2 (UNRELEASED)
+-------------------
+ * apt/dpkg: Don't mark packages downloaded from Launchpad for installation by
+   apt. Thanks Brian Murray.
+
 2.19.1 (2015-10-07)
 -------------------
  * Consistently intercept "report file already exists" errors in all writers of
