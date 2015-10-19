@@ -47,12 +47,6 @@ class T(unittest.TestCase):
         self.orig_conf = impl.configuration
         self.workdir = tempfile.mkdtemp()
 
-        try:
-            impl.get_available_version('coreutils-dbgsym')
-            self.has_dbgsym = True
-        except ValueError:
-            self.has_dbgsym = False
-
     def tearDown(self):
         impl.configuration = self.orig_conf
         shutil.rmtree(self.workdir)
@@ -675,7 +669,7 @@ deb http://secondary.mirror tuxy extra
                                         'var', 'cache', 'apt', 'archives'))
         cache_names = [p.split('_')[0] for p in cache]
         self.assertTrue('coreutils' in cache_names)
-        self.assertEqual('coreutils-dbgsym' in cache_names, self.has_dbgsym)
+        self.assertIn('coreutils-dbgsym', cache_names)
         self.assertTrue('tzdata' in cache_names)
 
         # works with relative paths and existing cache
