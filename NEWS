@@ -8,6 +8,8 @@ detailed list of changes, please see ChangeLog.
  * Fix backend_apt_dpkg.test_install_packages_system for recent "Fall back to
    direct Launchpad ddeb download" fix. coreutils-dbgsym should now always be
    available independent of whether the local system has ddeb apt sources.
+ * test_backend_apt_dpkg.py: Reset internal apt caches between tests. Avoids
+   random test failures due to leaking paths from previous test cases.
 
 2.19.1 (2015-10-07)
 -------------------
