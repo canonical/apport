@@ -453,6 +453,25 @@ sys.stdin.readline()
             if restore_root:
                 os.setresuid(0, 0, -1)
 
+    def test_check_interpreted_no_exec(self):
+        '''_check_interpreted() does not run module code'''
+
+        # python script through -m, with dot separator; top-level module
+        pr = apport.report.Report()
+        pr['ExecutablePath'] = '/usr/bin/python'
+        pr['ProcStatus'] = 'Name:\tpython'
+        pr['ProcCmdline'] = 'python\0-m\0unittest.__main__'
+        orig_argv = sys.argv
+        try:
+            sys.argv = ['/usr/bin/python', '-m', 'unittest.__main__']
+            pr._check_interpreted()
+        finally:
+            sys.argv = orig_argv
+        self.assertTrue(pr['ExecutablePath'].endswith('unittest/__main__.py'),
+                        pr['ExecutablePath'])
+        self.assertEqual(pr['InterpreterPath'], '/usr/bin/python')
+        self.assertNotIn('UnreportableReason', pr)
+
     @unittest.skipUnless(have_twistd, 'twisted is not installed')
     def test_check_interpreted_twistd(self):
         '''_check_interpreted() for programs ran through twistd'''

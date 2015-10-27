@@ -10,7 +10,7 @@
 # the full text of the license.
 
 import subprocess, tempfile, os.path, re, pwd, grp, os, time
-import fnmatch, glob, traceback, errno, sys, atexit, locale
+import fnmatch, glob, traceback, errno, sys, atexit, locale, imp
 
 import xml.dom, xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -463,22 +463,26 @@ class Report(problem_report.ProblemReport):
     def _python_module_path(klass, module):
         '''Determine path of given Python module'''
 
-        module = module.replace('/', '.')
+        module = module.replace('/', '.').split('.')
+        pathlist = sys.path
 
-        try:
-            m = __import__(module)
-            m
-        except:
-            return None
+        path = None
+        while module:
+            name = module.pop(0)
 
-        # chop off the first component, as it's already covered by m
-        submodule = module.split('.')[1:]
-        if submodule:
-            path = eval('m.%s.__file__' % '.'.join(submodule))
-        else:
-            path = m.__file__
+            try:
+                (fd, path, desc) = imp.find_module(name, pathlist)
+            except ImportError:
+                path = None
+                break
+            if fd:
+                fd.close()
+            pathlist = [path]
 
-        if path.endswith('.pyc'):
+            if not module and desc[2] == imp.PKG_DIRECTORY:
+                    module = ['__init__']
+
+        if path and path.endswith('.pyc'):
             path = path[:-1]
         return path
 

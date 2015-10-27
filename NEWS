@@ -3,6 +3,11 @@ detailed list of changes, please see ChangeLog.
 
 2.19.2 (UNRELEASED)
 -------------------
+ * SECURITY FIX: When determining the path of a Python module for a program
+   like "python -m module_name", avoid actually importing and running the
+   module; this could lead to local root privilege escalation. Thanks to
+   Gabriel Campana for discovering this and the fix!
+   (CVE-2015-1341, LP: #1507480)
  * apt/dpkg: Don't mark packages downloaded from Launchpad for installation by
    apt. Thanks Brian Murray.
  * Fix backend_apt_dpkg.test_install_packages_system for recent "Fall back to
