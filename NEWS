@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.19.3 (UNRELEASED)
+-------------------
+ * apport: Fix comparison against SIGQUIT to work for current Python versions.
+
 2.19.2 (2015-10-27)
 -------------------
  * SECURITY FIX: When determining the path of a Python module for a program
