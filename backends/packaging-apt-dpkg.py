@@ -901,7 +901,10 @@ Debug::NoLocking "true";
                                 pkg, ver, dbg.candidate.version)
                     real_pkgs.add(dbg_pkg)
                 except KeyError:
-                    # install all -dbg from the source package
+                    # install all -dbg from the source package; lookup() just
+                    # works from the current list pointer, we always need to
+                    # start from the beginning
+                    src_records.restart()
                     if src_records.lookup(candidate.source_name):
                         # ignore transitional packages
                         dbgs = [p for p in src_records.binaries

@@ -4,6 +4,7 @@ detailed list of changes, please see ChangeLog.
 2.19.3 (UNRELEASED)
 -------------------
  * apport: Fix comparison against SIGQUIT to work for current Python versions.
+ * apt/dpkg: Fix source record lookup in install_packages. Thanks Brian Murray!
 
 2.19.2 (2015-10-27)
 -------------------
