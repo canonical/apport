@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * apport: Fix comparison against SIGQUIT to work for current Python versions.
  * apt/dpkg: Fix source record lookup in install_packages. Thanks Brian Murray!
+ * hookutils.py, attach_gsettings_schema(): Don't replace the schema variable;
+   fixes attaching relocatable schemas. Thanks Sébastien Bacher!
 
 2.19.2 (2015-10-27)
 -------------------

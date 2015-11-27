@@ -609,23 +609,23 @@ def attach_gsettings_schema(report, schema):
                                  env=env, stdout=subprocess.PIPE)
     for l in gsettings.stdout:
         try:
-            (schema, key, value) = l.split(None, 2)
+            (schema_name, key, value) = l.split(None, 2)
             value = value.rstrip()
         except ValueError:
             continue  # invalid line
-        defaults.setdefault(schema, {})[key] = value
+        defaults.setdefault(schema_name, {})[key] = value
 
     gsettings = subprocess.Popen(['gsettings', 'list-recursively', schema],
                                  stdout=subprocess.PIPE)
     for l in gsettings.stdout:
         try:
-            (schema, key, value) = l.split(None, 2)
+            (schema_name, key, value) = l.split(None, 2)
             value = value.rstrip()
         except ValueError:
             continue  # invalid line
 
-        if value != defaults.get(schema, {}).get(key, ''):
-            cur_value += '%s %s %s\n' % (schema, key, value)
+        if value != defaults.get(schema_name, {}).get(key, ''):
+            cur_value += '%s %s %s\n' % (schema_name, key, value)
 
     report['GsettingsChanges'] = cur_value
 
