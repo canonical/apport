@@ -89,7 +89,7 @@ Do you want to continue the report process anyway?
     # log warnings/errors
     if os.path.exists('/run/systemd/system'):
         report['JournalErrors'] = apport.hookutils.command_output(
-            ['journalctl', '-b', '--priority', 'warning'])
+            ['journalctl', '-b', '--priority=warning', '--lines=1000'])
 
 if __name__ == '__main__':
     r = {}
