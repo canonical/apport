@@ -10,6 +10,8 @@ detailed list of changes, please see ChangeLog.
  * generic hook: Limit JournalErrors to the 1.000 last lines. This avoids long
    report load times when processes cause massive log spew. (LP: #1516947)
  * Add key filtering to ProblemReport.load().
+ * Don't read the entire report when determining the CrashCounter. This avoids
+   long delays for existing large reports.
 
 2.19.2 (2015-10-27)
 -------------------
