@@ -9,6 +9,7 @@ detailed list of changes, please see ChangeLog.
    fixes attaching relocatable schemas. Thanks Sébastien Bacher!
  * generic hook: Limit JournalErrors to the 1.000 last lines. This avoids long
    report load times when processes cause massive log spew. (LP: #1516947)
+ * Add key filtering to ProblemReport.load().
 
 2.19.2 (2015-10-27)
 -------------------

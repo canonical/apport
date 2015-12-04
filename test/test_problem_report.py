@@ -1038,5 +1038,24 @@ Baz: blob
         self.assertEqual(pr['newbin'], '11\000\001\002\xFFZZ')
         self.assertEqual(pr['overwrite'], 'I am good')
 
+    def test_load_key_filter(self):
+        '''load a report with filtering keys.'''
+
+        io = BytesIO(b'''ProblemType: Crash
+DataNo: nonono
+GoodFile: base64
+ H4sICAAAAAAC/0FmaWxlAA==
+ c3RyhEIGBoYoRiYAM5XUCxAAAAA=
+DataYes: yesyes
+BadFile: base64
+ H4sICAAAAAAC/0ZpbGUA
+ S8vPZ0hKLAIACq50HgcAAAA=
+''')
+        pr = problem_report.ProblemReport()
+        pr.load(io, key_filter=['DataYes', 'GoodFile'])
+        self.assertEqual(pr['DataYes'], 'yesyes')
+        self.assertEqual(pr['GoodFile'], bin_data)
+        self.assertEqual(sorted(pr.keys()), ['DataYes', 'GoodFile'])
+
 if __name__ == '__main__':
     unittest.main()
