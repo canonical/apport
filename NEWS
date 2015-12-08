@@ -15,6 +15,7 @@ detailed list of changes, please see ChangeLog.
  * test_python_crashes.py: Be less sensitive to the precise names of
    gvfs-metadata D-Bus service files.
  * Move backend_apt_dpkg -dbgsym test cases to Ubuntu 15.10.
+ * Tests: Move to unittest's builtin "mock" module.
 
 2.19.2 (2015-10-27)
 -------------------

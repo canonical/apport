@@ -16,7 +16,7 @@ import sys
 import os
 import shutil
 
-from mock import patch
+from unittest.mock import patch
 try:
     from PyQt5.QtCore import QTimer, QCoreApplication
     from PyQt5.QtWidgets import QApplication, QTreeWidget

@@ -1101,7 +1101,7 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
 
 if __name__ == '__main__':
     import unittest, subprocess
-    import mock
+    from unittest.mock import patch
 
     crashdb = None
     _segv_report = None
@@ -1701,7 +1701,7 @@ and more
             r = self.crashdb.download(id)
             self.assertNotIn('CoreDump', r)
 
-        @mock.patch.object(CrashDatabase, '_get_source_version')
+        @patch.object(CrashDatabase, '_get_source_version')
         def test_get_fixed_version(self, *args):
             '''get_fixed_version() for fixed bugs
 

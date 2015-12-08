@@ -20,7 +20,7 @@ import shutil
 import subprocess
 from gi.repository import GLib, Gtk
 from apport import unicode_gettext as _
-from mock import patch
+from unittest.mock import patch
 
 import apport.crashdb_impl.memory
 
