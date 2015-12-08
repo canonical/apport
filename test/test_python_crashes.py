@@ -58,8 +58,8 @@ func(42)
         self.assertEqual(p.returncode, 1,
                          'crashing test python program exits with failure code')
         if not extracode:
-            self.assertTrue('This should happen.' in err, err)
-        self.assertFalse('OSError' in err, err)
+            self.assertIn('This should happen.', err)
+        self.assertNotIn('OSError', err)
 
         return script
 
@@ -86,14 +86,13 @@ func(42)
                          'UserGroups']
         self.assertTrue(set(expected_keys).issubset(set(pr.keys())),
                         'report has necessary fields')
-        self.assertTrue('bin/python' in pr['InterpreterPath'])
+        self.assertIn('bin/python', pr['InterpreterPath'])
         self.assertEqual(pr['ExecutablePath'], script)
         self.assertEqual(pr['ExecutableTimestamp'],
                          str(int(os.stat(script).st_mtime)))
         self.assertEqual(pr['PythonArgs'], "['%s', 'testarg1', 'testarg2']" % script)
         self.assertTrue(pr['Traceback'].startswith('Traceback'))
-        self.assertTrue("func\n    raise Exception(b'This should happen." in
-                        pr['Traceback'], pr['Traceback'])
+        self.assertIn("func\n    raise Exception(b'This should happen.", pr['Traceback'])
 
     def test_existing(self):
         '''Python crash hook overwrites seen existing files.'''
@@ -144,7 +143,7 @@ func(42)
         err = p.communicate()[1].decode()
         self.assertEqual(p.returncode, 1,
                          'crashing test python program exits with failure code')
-        self.assertTrue('This should happen.' in err, err)
+        self.assertIn('This should happen.', err)
 
         # get report for symlinked crash
         reports = apport.fileutils.get_new_reports()
@@ -154,7 +153,7 @@ func(42)
             pr2.load(f)
 
         # check report contents
-        self.assertTrue('bin/python' in pr2['InterpreterPath'])
+        self.assertIn('bin/python', pr2['InterpreterPath'])
         self.assertEqual(pr1['ExecutablePath'], script)
         self.assertEqual(pr2['ExecutablePath'], script)
         self.assertEqual(pr1.crash_signature(), pr2.crash_signature())
@@ -181,7 +180,7 @@ func(42)
                          'ExecutablePath', 'ProcMaps', 'UserGroups']
         self.assertTrue(set(expected_keys).issubset(set(pr.keys())),
                         'report has necessary fields')
-        self.assertTrue('bin/python' in pr['InterpreterPath'])
+        self.assertIn('bin/python', pr['InterpreterPath'])
         # we have no actual executable, so we should fall back to the
         # interpreter
         self.assertEqual(pr['ExecutablePath'], pr['InterpreterPath'])
@@ -205,10 +204,8 @@ func(42)
             pr.load(f)
 
         # check report contents
-        self.assertTrue('PYTHONPATH' in pr['ProcEnviron'],
-                        'report contains PYTHONPATH')
-        self.assertTrue('/my/bogus/path' in pr['ProcEnviron'],
-                        pr['ProcEnviron'])
+        self.assertIn('PYTHONPATH', pr['ProcEnviron'])
+        self.assertIn('/my/bogus/path', pr['ProcEnviron'])
 
     def _assert_no_reports(self):
         '''Assert that there are no crash reports.'''
@@ -278,7 +275,7 @@ func(42)
             err = p.communicate()[1].decode()
             self.assertEqual(p.returncode, 1,
                              'crashing test python program exits with failure code')
-            self.assertTrue('Exception: This should happen.' in err, err)
+            self.assertIn('Exception: This should happen.', err)
 
         finally:
             os.unlink(script)
@@ -321,7 +318,7 @@ obj = dbus.SessionBus().get_object('com.example.NotExisting', '/Foo')
 
         pr = self._load_report()
         self.assertTrue(pr['Traceback'].startswith('Traceback'), pr['Traceback'])
-        self.assertTrue('org.freedesktop.DBus.Error.ServiceUnknown' in pr['Traceback'], pr['Traceback'])
+        self.assertIn('org.freedesktop.DBus.Error.ServiceUnknown', pr['Traceback'])
         self.assertEqual(pr['DbusErrorAnalysis'], 'no service file providing com.example.NotExisting')
 
     def test_dbus_service_unknown_wrongbus_notrunning(self):
