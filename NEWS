@@ -12,6 +12,8 @@ detailed list of changes, please see ChangeLog.
  * Add key filtering to ProblemReport.load().
  * Don't read the entire report when determining the CrashCounter. This avoids
    long delays for existing large reports.
+ * test_python_crashes.py: Be less sensitive to the precise names of
+   gvfs-metadata D-Bus service files.
 
 2.19.2 (2015-10-27)
 -------------------

@@ -333,10 +333,9 @@ obj = dbus.SystemBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata
 ''')
 
         pr = self._load_report()
-        self.assertTrue('org.freedesktop.DBus.Error.ServiceUnknown' in pr['Traceback'], pr['Traceback'])
-        self.assertTrue(pr['DbusErrorAnalysis'].startswith('provided by /usr/share/dbus-1/services/gvfs-metadata.service'),
-                        pr['DbusErrorAnalysis'])
-        self.assertTrue('gvfsd-metadata is not running' in pr['DbusErrorAnalysis'], pr['DbusErrorAnalysis'])
+        self.assertIn('org.freedesktop.DBus.Error.ServiceUnknown', pr['Traceback'])
+        self.assertRegex(pr['DbusErrorAnalysis'], '^provided by .*/dbus-1/services.*vfs.*[mM]etadata.service')
+        self.assertIn('gvfsd-metadata is not running', pr['DbusErrorAnalysis'])
 
     def test_dbus_service_unknown_wrongbus_running(self):
         '''DBus.Error.ServiceUnknown with a valid name on a different bus (running)'''
@@ -349,10 +348,9 @@ obj = dbus.SystemBus().get_object('org.gtk.vfs.Metadata', '/org/gtk/vfs/metadata
 ''')
 
         pr = self._load_report()
-        self.assertTrue('org.freedesktop.DBus.Error.ServiceUnknown' in pr['Traceback'], pr['Traceback'])
-        self.assertTrue(pr['DbusErrorAnalysis'].startswith('provided by /usr/share/dbus-1/services/gvfs-metadata.service'),
-                        pr['DbusErrorAnalysis'])
-        self.assertTrue('gvfsd-metadata is running' in pr['DbusErrorAnalysis'], pr['DbusErrorAnalysis'])
+        self.assertIn('org.freedesktop.DBus.Error.ServiceUnknown', pr['Traceback'])
+        self.assertRegex(pr['DbusErrorAnalysis'], '^provided by .*/dbus-1/services.*vfs.*[mM]etadata.service')
+        self.assertIn('gvfsd-metadata is running', pr['DbusErrorAnalysis'])
 
     def test_dbus_service_timeout_running(self):
         '''DBus.Error.NoReply with a running service'''
