@@ -253,7 +253,7 @@ def get_recent_crashes(report):
     than 24 hours ago are discarded).
     '''
     pr = ProblemReport()
-    pr.load(report, False, key_filter=['CrashCounter'])
+    pr.load(report, False, key_filter=['CrashCounter', 'Date'])
     try:
         count = int(pr['CrashCounter'])
         report_time = time.mktime(time.strptime(pr['Date']))
