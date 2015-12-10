@@ -55,11 +55,15 @@ class T(unittest.TestCase):
         onedesktop = None
         multidesktop = None
         nodisplay = None
+        found_some = False
         for d in os.listdir('/usr/share/applications/'):
             if not d.endswith('.desktop'):
                 continue
             path = os.path.join('/usr/share/applications/', d)
             pkg = apport.packaging.get_file_package(path)
+            if pkg is None:
+                continue
+            found_some = True
             num = len([f for f in apport.packaging.get_files(pkg)
                        if f.endswith('.desktop')])
             with open(path, 'rb') as f:
@@ -74,6 +78,8 @@ class T(unittest.TestCase):
 
             if onedesktop and multidesktop and nodisplay:
                 break
+
+        self.assertTrue(found_some)
 
         if nodesktop:
             self.assertEqual(apport.fileutils.find_package_desktopfile(nodesktop),
