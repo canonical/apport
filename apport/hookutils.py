@@ -598,7 +598,7 @@ def attach_gconf(report, package):
 
 
 def attach_gsettings_schema(report, schema):
-    '''Attach user-modified gsttings keys of a schema.'''
+    '''Attach user-modified gsettings keys of a schema.'''
 
     cur_value = report.get('GsettingsChanges', '')
 
