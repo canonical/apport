@@ -262,7 +262,7 @@ class T(unittest.TestCase):
         out = gcc.communicate()[0].decode()
         assert gcc.returncode == 0, '"gcc --version" must work for this test suite'
 
-        ver_fields = out.splitlines()[0].split()[2].split('.')
+        ver_fields = out.splitlines()[0].split()[3].split('.')
         # try major/minor first
         gcc_ver = '.'.join(ver_fields[:2])
         gcc_path = '/usr/bin/gcc-' + gcc_ver

@@ -7,6 +7,8 @@ detailed list of changes, please see ChangeLog.
    unowned files in /usr/share/applications/.
  * Fix ui.test_run_crash_anonymity test case to not fail if the base64 encoded
    core dump happens to contain the user name, as that's just by chance.
+ * Fix test_hooks.py for unreleased gcc versions which have a different
+   --version format.
 
 2.19.3 (2015-12-08)
 -------------------
