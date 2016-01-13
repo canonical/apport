@@ -1243,6 +1243,9 @@ bOgUs=
         self.assertFalse('ProcCwd' in self.ui.report)
 
         dump = BytesIO()
+        # this contains more or less random characters which might contain the
+        # user name
+        del self.ui.report['CoreDump']
         self.ui.report.write(dump)
         report = dump.getvalue().decode('UTF-8')
 

@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * Fix fileutils.test_find_package_desktopfile test for symlinks and other
    unowned files in /usr/share/applications/.
+ * Fix ui.test_run_crash_anonymity test case to not fail if the base64 encoded
+   core dump happens to contain the user name, as that's just by chance.
 
 2.19.3 (2015-12-08)
 -------------------
