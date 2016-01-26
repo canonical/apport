@@ -250,7 +250,6 @@ def attach_hardware(report):
     attach_file(report, '/proc/interrupts', 'ProcInterrupts')
     attach_file(report, '/proc/cpuinfo', 'ProcCpuinfo')
     attach_file(report, '/proc/cmdline', 'ProcKernelCmdLine')
-    attach_file(report, '/var/log/udev', 'UdevLog', force_unicode=True)
 
     if os.path.exists('/sys/bus/pci'):
         report['Lspci'] = command_output(['lspci', '-vvnn'])
@@ -259,14 +258,14 @@ def attach_hardware(report):
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
     # anonymize partition labels
-    l = report['UdevLog']
+    l = report['UdevDb']
     l = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', l)
     l = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', l)
     l = re.sub('by-label/(.*)', 'by-label/<hidden>', l)
     l = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', l)
     l = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', l)
     l = re.sub('by-label/(.*)', 'by-label/<hidden>', l)
-    report['UdevLog'] = l
+    report['UdevDb'] = l
 
     attach_dmi(report)
 

@@ -9,6 +9,9 @@ detailed list of changes, please see ChangeLog.
    core dump happens to contain the user name, as that's just by chance.
  * Fix test_hooks.py for unreleased gcc versions which have a different
    --version format.
+ * hookutils.py, attach_hardware(): Stop attaching /var/log/udev. This was an
+   upstart-ism, mostly redundant with the udev db and is not being written
+   under systemd. (LP: #1537211)
 
 2.19.3 (2015-12-08)
 -------------------
