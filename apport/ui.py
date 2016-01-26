@@ -32,7 +32,7 @@ else:
     from configparser import ConfigParser
     PY3 = True
 
-__version__ = '2.19.3'
+__version__ = '2.19.4'
 
 
 def excstr(exception):
