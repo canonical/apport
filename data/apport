@@ -18,8 +18,6 @@ import signal, inspect, grp, fcntl, socket, atexit, array
 
 import apport, apport.fileutils
 
-from systemd.daemon import listen_fds
-
 #################################################################
 #
 # functions
@@ -307,6 +305,8 @@ def is_systemd_watchdog_restart(signum, pid):
 
 # Systemd socket activation
 if "LISTEN_FDS" in os.environ:
+    from systemd.daemon import listen_fds
+
     # Extract and validate the fd
     fds = listen_fds()
     if len(fds) < 1:
