@@ -532,7 +532,8 @@ CoreDump: base64
             app.stdin.write(b'boo')
             app.stdin.close()
             err = app.stderr.read().decode()
-            self.assertNotEqual(app.wait(), 0, err)
+            self.assertEqual(app.wait(), 0, err)
+            self.assertIn('executable was modified after program start', err)
             app.stderr.close()
         finally:
             os.kill(test_proc, 9)

@@ -415,7 +415,7 @@ try:
     process_start = os.lstat('/proc/%s/cmdline' % pid).st_mtime
     if not os.path.exists(os.readlink('/proc/%s/exe' % pid)) or exe_mtime > process_start:
         error_log('executable was modified after program start, ignoring')
-        sys.exit(1)
+        sys.exit(0)
 
     info = apport.Report('Crash')
     info['Signal'] = signum
@@ -458,7 +458,7 @@ try:
             # check if the user wants a core dump
             drop_privileges(pid)
             write_user_coredump(pid, cwd, core_ulimit)
-            sys.exit(1)
+            sys.exit(0)
 
     # ignore SIGXCPU and SIGXFSZ since this indicates some external
     # influence changing soft RLIMIT values when running programs.
@@ -471,17 +471,17 @@ try:
     # ignore blacklisted binaries
     if info.check_ignored():
         error_log('executable version is blacklisted, ignoring')
-        sys.exit(1)
+        sys.exit(0)
 
     if is_closing_session(pid, pidstat.st_uid):
         error_log('happens for shutting down session, ignoring')
-        sys.exit(1)
+        sys.exit(0)
 
     # ignore systemd watchdog kills; most often they don't tell us the actual
     # reason (kernel hang, etc.), LP #1433320
     if is_systemd_watchdog_restart(signum, pid):
         error_log('Ignoring systemd watchdog restart')
-        sys.exit(1)
+        sys.exit(0)
 
     crash_counter = 0
 
@@ -499,7 +499,7 @@ try:
                     drop_privileges(pid)
                     write_user_coredump(pid, cwd, core_ulimit)
                     error_log('this executable already crashed %i times, ignoring' % crash_counter)
-                    sys.exit(1)
+                    sys.exit(0)
                 # remove the old file, so that we can create the new one with
                 # os.O_CREAT|os.O_EXCL
                 os.unlink(report)
@@ -507,7 +507,7 @@ try:
                 error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
                 drop_privileges(pid)
                 write_user_coredump(pid, cwd, core_ulimit)
-                sys.exit(1)
+                sys.exit(0)
         # we prefer having a file mode of 0 while writing; this doesn't work
         # for suid binaries as we completely drop privs and thus can't chmod
         # them later on
