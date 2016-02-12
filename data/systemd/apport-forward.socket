@@ -1,5 +1,6 @@
 [Unit]
 Description=Unix socket for apport crash forwarding
+ConditionVirtualization=container
 
 [Socket]
 ListenStream=/run/apport.socket
