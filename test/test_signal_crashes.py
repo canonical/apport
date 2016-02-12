@@ -835,6 +835,9 @@ fi
         self.assertEqual(pr['ExecutablePath'], test_executable)
         self.assertEqual(pr['CoreDump'], b'hel\x01lo')
 
+        # should not create report on the host
+        self.assertEqual(apport.fileutils.get_all_system_reports(), [])
+
     #
     # Helper methods
     #
