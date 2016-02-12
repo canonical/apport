@@ -5,6 +5,3 @@ Requires=apport-forward.socket
 [Service]
 Type=oneshot
 ExecStart=/usr/share/apport/apport
-
-[Install]
-WantedBy=multi-user.target
