@@ -1,0 +1,13 @@
+[Unit]
+Description=Unix socket for apport crash forwarding
+ConditionVirtualization=container
+
+[Socket]
+ListenStream=/run/apport.socket
+SocketMode=0600
+Accept=yes
+MaxConnections=10
+Backlog=5
+
+[Install]
+WantedBy=sockets.target

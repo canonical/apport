@@ -14,7 +14,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback, pwd, io
-import signal, inspect, grp, fcntl
+import signal, inspect, grp, fcntl, socket, atexit, array
 
 import apport, apport.fileutils
 
@@ -303,6 +303,40 @@ def is_systemd_watchdog_restart(signum, pid):
 #
 #################################################################
 
+# Systemd socket activation
+if 'LISTEN_FDS' in os.environ:
+    try:
+        from systemd.daemon import listen_fds
+    except ImportError:
+        error_log('Received a crash via apport-forward@.socket, but systemd python module is not installed')
+        sys.exit(0)
+
+    # Extract and validate the fd
+    fds = listen_fds()
+    if len(fds) < 1:
+        error_log('Invalid socket activation, no fd provided')
+        sys.exit(1)
+
+    # Open the socket
+    sock = socket.fromfd(int(fds[0]), socket.AF_UNIX, socket.SOCK_STREAM)
+    atexit.register(sock.shutdown, socket.SHUT_RDWR)
+
+    # Replace stdin by the socket activation fd
+    sys.stdin.close()
+
+    fds = array.array('i')
+    msg, ancdata, flags, addr = sock.recvmsg(4096, socket.CMSG_LEN(fds.itemsize))
+    for cmsg_level, cmsg_type, cmsg_data in ancdata:
+        if (cmsg_level == socket.SOL_SOCKET and cmsg_type == socket.SCM_RIGHTS):
+            fds.fromstring(cmsg_data[:len(cmsg_data) - (len(cmsg_data) % fds.itemsize)])
+
+    sys.stdin = os.fdopen(int(fds[0]), 'r')
+
+    # Replace argv by the arguments received over the socket
+    sys.argv = [sys.argv[0]]
+    sys.argv += msg.decode().split()
+
+# Normal startup
 if len(sys.argv) not in (4, 5):
     try:
         print('Usage: %s <pid> <signal number> <core file ulimit> [global pid]' % sys.argv[0])
@@ -318,10 +352,30 @@ init_error_log()
 # Check if we received a valid global PID (kernel >= 3.12). If we do,
 # then compare it with the local PID. If they don't match, it's an
 # indication that the crash originated from another PID namespace.
-# Simply log an entry in the host error log and exit 0.
+# Attempt to forward it to the container
 if len(sys.argv) == 5 and sys.argv[4].isdigit() and sys.argv[4] != sys.argv[1]:
-    error_log('host pid %s crashed in a container without apport support' %
-              sys.argv[4])
+    host_pid = int(sys.argv[4])
+
+    if not os.path.exists('/proc/%d/root/run/apport.socket' % host_pid):
+        error_log('host pid %s crashed in a container without apport support' %
+                  sys.argv[4])
+        sys.exit(0)
+
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
+        sock.connect('/proc/%d/root/run/apport.socket' % host_pid)
+    except:
+        error_log('host pid %s crashed in a container with a broken apport' %
+                  sys.argv[4])
+        sys.exit(0)
+
+    args = '%s %s %s' % (sys.argv[1], sys.argv[2], sys.argv[3])
+
+    try:
+        sock.sendmsg([args.encode()], [(socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array('i', [0]))])
+        sock.shutdown(socket.SHUT_RDWR)
+    except socket.timeout:
+        error_log('Container apport failed to process crash within 30s')
     sys.exit(0)
 
 check_lock()
@@ -361,7 +415,7 @@ try:
     process_start = os.lstat('/proc/%s/cmdline' % pid).st_mtime
     if not os.path.exists(os.readlink('/proc/%s/exe' % pid)) or exe_mtime > process_start:
         error_log('executable was modified after program start, ignoring')
-        sys.exit(1)
+        sys.exit(0)
 
     info = apport.Report('Crash')
     info['Signal'] = signum
@@ -404,7 +458,7 @@ try:
             # check if the user wants a core dump
             drop_privileges(pid)
             write_user_coredump(pid, cwd, core_ulimit)
-            sys.exit(1)
+            sys.exit(0)
 
     # ignore SIGXCPU and SIGXFSZ since this indicates some external
     # influence changing soft RLIMIT values when running programs.
@@ -417,17 +471,17 @@ try:
     # ignore blacklisted binaries
     if info.check_ignored():
         error_log('executable version is blacklisted, ignoring')
-        sys.exit(1)
+        sys.exit(0)
 
     if is_closing_session(pid, pidstat.st_uid):
         error_log('happens for shutting down session, ignoring')
-        sys.exit(1)
+        sys.exit(0)
 
     # ignore systemd watchdog kills; most often they don't tell us the actual
     # reason (kernel hang, etc.), LP #1433320
     if is_systemd_watchdog_restart(signum, pid):
         error_log('Ignoring systemd watchdog restart')
-        sys.exit(1)
+        sys.exit(0)
 
     crash_counter = 0
 
@@ -445,7 +499,7 @@ try:
                     drop_privileges(pid)
                     write_user_coredump(pid, cwd, core_ulimit)
                     error_log('this executable already crashed %i times, ignoring' % crash_counter)
-                    sys.exit(1)
+                    sys.exit(0)
                 # remove the old file, so that we can create the new one with
                 # os.O_CREAT|os.O_EXCL
                 os.unlink(report)
@@ -453,7 +507,7 @@ try:
                 error_log('apport: report %s already exists and unseen, doing nothing to avoid disk usage DoS' % report)
                 drop_privileges(pid)
                 write_user_coredump(pid, cwd, core_ulimit)
-                sys.exit(1)
+                sys.exit(0)
         # we prefer having a file mode of 0 while writing; this doesn't work
         # for suid binaries as we completely drop privs and thus can't chmod
         # them later on

@@ -111,6 +111,15 @@ except (OSError, subprocess.CalledProcessError):
 
 from apport.ui import __version__
 
+# determine systemd unit directory
+try:
+    systemd_unit_dir = subprocess.check_output(
+        ['pkg-config', '--variable=systemdsystemunitdir', 'systemd'],
+        universal_newlines=True).strip()
+except subprocess.CalledProcessError:
+    # hardcoded fallback path
+    systemd_unit_dir = '/lib/systemd/system'
+
 DistUtilsExtra.auto.setup(
     name='apport',
     author='Martin Pitt',
@@ -126,6 +135,7 @@ DistUtilsExtra.auto.setup(
                 ('share/doc/apport/', glob('doc/*.txt')),
                 ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
                 ('/lib/udev/rules.d', glob('udev/*.rules')),
+                (systemd_unit_dir, glob('data/systemd/*')),
                 ] + optional_data_files,
     cmdclass=cmdclass
 )
