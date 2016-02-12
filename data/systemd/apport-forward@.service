@@ -3,7 +3,7 @@ Description=Apport crash forwarding receiver
 Requires=apport-forward.socket
 
 [Service]
-Type=forking
+Type=oneshot
 ExecStart=/usr/share/apport/apport
 
 [Install]
