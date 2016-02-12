@@ -7,6 +7,8 @@ detailed list of changes, please see ChangeLog.
    apport-forward.socket in the container and handing over the core dump fd.
    This is a much safer way than the original implementation with nsexec.
    Thanks Stéphane Graber! (LP: #1445064)
+ * Drop obsolete signal_crashes.test_ns_forward_privilege() test case. This
+   code was dropped long ago.
 
 2.19.4 (2016-01-26)
 -------------------

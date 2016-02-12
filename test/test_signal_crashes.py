@@ -737,49 +737,6 @@ CoreDump: base64
             self.do_crash(False, command=myexe, expect_corefile=False, uid=8)
             self.assertEqual(apport.fileutils.get_all_reports(), [])
 
-    @unittest.skipUnless(os.path.exists('/usr/bin/lxc-usernsexec'), 'this test needs lxc')
-    @unittest.skipUnless(os.path.exists('/bin/busybox'), 'this test needs busybox')
-    @unittest.skipIf(os.access('/etc/shadow', os.R_OK), 'this test needs to be run as user')
-    def test_ns_forward_privilege(self):
-        c = os.path.join(self.workdir, 'c')
-        os.makedirs(os.path.join(c, 'dev'))
-        os.mkdir(os.path.join(c, 'mnt'))
-        os.makedirs(os.path.join(c, 'usr/share/apport'))
-        shutil.copy('/bin/busybox', c)
-        with open(os.path.join(c, 'usr/share/apport/apport'), 'w') as f:
-            f.write('''#!/busybox sh
-set -x
-exec 2>/apport.trace
-cat /mnt/1/root/etc/shadow > /mnt/1/root/tmp/pwned
-chmod 644 /mnt/1/root/tmp/pwned
-''')
-            os.fchmod(f.fileno(), 0o755)
-
-        ns_apport = subprocess.Popen(
-            ['lxc-usernsexec', '-m', 'u:0:%i:1' % os.getuid(),
-             '-m', 'g:0:%i:1' % os.getgid(), '--',
-             'lxc-unshare', '-s', 'MOUNT|PID|NETWORK|UTSNAME|IPC', '--', '/bin/sh'],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
-        ns_apport.stdin.write(('''set -x
-cd %s
-mount -o bind . .
-cd .
-mount --rbind /proc mnt
-touch dev/null
-pivot_root . .
-./busybox ls -lh /
-./busybox sh -c 'kill -SEGV $$'
-./busybox sleep 5
-if [ -e /apport.trace ]; then
-    echo "=== apport trace ===="
-    ./busybox cat /apport.trace
-fi
-''' % c).encode())
-        out = ns_apport.communicate()[0].decode()
-        self.assertEqual(ns_apport.returncode, 0, out)
-        self.assertFalse(os.path.exists('/tmp/pwned'), out)
-
     def test_coredump_from_socket(self):
         '''forwarding of a core dump through socket
 
