@@ -304,13 +304,13 @@ def is_systemd_watchdog_restart(signum, pid):
 #################################################################
 
 # Systemd socket activation
-if "LISTEN_FDS" in os.environ:
+if 'LISTEN_FDS' in os.environ:
     from systemd.daemon import listen_fds
 
     # Extract and validate the fd
     fds = listen_fds()
     if len(fds) < 1:
-        print("Invalid socket activation, no fd provided")
+        error_log('Invalid socket activation, no fd provided')
         sys.exit(1)
 
     # Open the socket
@@ -326,7 +326,7 @@ if "LISTEN_FDS" in os.environ:
         if (cmsg_level == socket.SOL_SOCKET and cmsg_type == socket.SCM_RIGHTS):
             fds.fromstring(cmsg_data[:len(cmsg_data) - (len(cmsg_data) % fds.itemsize)])
 
-    sys.stdin = os.fdopen(int(fds[0]), "r")
+    sys.stdin = os.fdopen(int(fds[0]), 'r')
 
     # Replace argv by the arguments received over the socket
     sys.argv = [sys.argv[0]]
@@ -352,23 +352,23 @@ init_error_log()
 if len(sys.argv) == 5 and sys.argv[4].isdigit() and sys.argv[4] != sys.argv[1]:
     host_pid = int(sys.argv[4])
 
-    if not os.path.exists("/proc/%d/root/run/apport.socket" % host_pid):
+    if not os.path.exists('/proc/%d/root/run/apport.socket' % host_pid):
         error_log('host pid %s crashed in a container without apport support' %
                   sys.argv[4])
         sys.exit(0)
 
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     try:
-        sock.connect("/proc/%d/root/run/apport.socket" % host_pid)
+        sock.connect('/proc/%d/root/run/apport.socket' % host_pid)
     except:
         error_log('host pid %s crashed in a container with a broken apport' %
                   sys.argv[4])
         sys.exit(0)
 
-    args = "%s %s %s" % (sys.argv[1], sys.argv[2], sys.argv[3])
+    args = '%s %s %s' % (sys.argv[1], sys.argv[2], sys.argv[3])
 
     try:
-        sock.sendmsg([args.encode()], [(socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array("i", [0]))])
+        sock.sendmsg([args.encode()], [(socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array('i', [0]))])
         sock.shutdown(socket.SHUT_RDWR)
     except socket.timeout:
         error_log('Container apport failed to process crash within 30s')
