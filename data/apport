@@ -320,7 +320,7 @@ if 'LISTEN_FDS' in os.environ:
     # Replace stdin by the socket activation fd
     sys.stdin.close()
 
-    fds = array.array("i")
+    fds = array.array('i')
     msg, ancdata, flags, addr = sock.recvmsg(4096, socket.CMSG_LEN(fds.itemsize))
     for cmsg_level, cmsg_type, cmsg_data in ancdata:
         if (cmsg_level == socket.SOL_SOCKET and cmsg_type == socket.SCM_RIGHTS):

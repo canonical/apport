@@ -8,7 +8,7 @@
 # the full text of the license.
 
 import tempfile, shutil, os, subprocess, signal, time, stat, sys
-import resource, errno, grp, unittest
+import resource, errno, grp, unittest, socket, array
 import apport.fileutils
 
 test_executable = '/usr/bin/yes'
@@ -778,6 +778,61 @@ fi
         out = ns_apport.communicate()[0].decode()
         self.assertEqual(ns_apport.returncode, 0, out)
         self.assertFalse(os.path.exists('/tmp/pwned'), out)
+
+    def test_coredump_from_socket(self):
+        '''forwarding of a core dump through socket
+
+        This is being used in a container via systemd activation, where the
+        core dump gets read from /run/apport.socket.
+        '''
+        socket_path = os.path.join(self.workdir, 'apport.socket')
+        test_proc = self.create_test_process()
+        try:
+            # emulate apport on the host which forwards the crash to the apport
+            # socket in the container
+            server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            server.bind(socket_path)
+            server.listen(1)
+
+            if os.fork() == 0:
+                client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                client.connect(socket_path)
+                with tempfile.TemporaryFile() as fd:
+                    fd.write(b'hel\x01lo')
+                    fd.flush()
+                    fd.seek(0)
+                    args = '%s 11 0' % test_proc
+                    fd_msg = (socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array('i', [fd.fileno()]))
+                    client.sendmsg([args.encode()], [fd_msg])
+                os._exit(0)
+
+            # call apport like systemd does via socket activation
+            def child_setup():
+                os.environ['LISTEN_FDNAMES'] = 'connection'
+                os.environ['LISTEN_FDS'] = '1'
+                os.environ['LISTEN_PID'] = str(os.getpid())
+                # socket from server becomes fd 3 (SD_LISTEN_FDS_START)
+                conn = server.accept()[0]
+                os.dup2(conn.fileno(), 3)
+
+            app = subprocess.Popen([apport_path], preexec_fn=child_setup,
+                                   pass_fds=[3], stderr=subprocess.PIPE)
+            log = app.communicate()[1]
+            self.assertEqual(app.returncode, 0, log)
+            server.close()
+        finally:
+            os.kill(test_proc, 9)
+            os.waitpid(test_proc, 0)
+
+        reports = self.get_temp_all_reports()
+        self.assertEqual(len(reports), 1)
+        pr = apport.Report()
+        with open(reports[0], 'rb') as f:
+            pr.load(f)
+        os.unlink(reports[0])
+        self.assertEqual(pr['Signal'], '11')
+        self.assertEqual(pr['ExecutablePath'], test_executable)
+        self.assertEqual(pr['CoreDump'], b'hel\x01lo')
 
     #
     # Helper methods
