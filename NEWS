@@ -1,8 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.19.4 (UNRELEASED)
+2.20.0 (UNRELEASED)
 -------------------
+ * Reimplement forwarding crashes into a container, via activating the new
+   apport-forward.socket in the container and handing over the core dump fd.
+   This is a much safer way than the original implementation with nsexec.
+   Thanks Stéphane Graber! (LP: #1445064)
  * Fix fileutils.test_find_package_desktopfile test for symlinks and other
    unowned files in /usr/share/applications/.
  * Fix ui.test_run_crash_anonymity test case to not fail if the base64 encoded
