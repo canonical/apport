@@ -529,12 +529,14 @@ CoreDump: base64
 
             app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-            app.stdin.write(b'boo')
-            app.stdin.close()
-            err = app.stderr.read().decode()
-            self.assertEqual(app.wait(), 0, err)
-            self.assertIn('executable was modified after program start', err)
-            app.stderr.close()
+            err = app.communicate(b'foo')[1]
+            self.assertEqual(app.returncode, 0, err)
+            if os.getuid() > 0:
+                self.assertIn(b'executable was modified after program start', err)
+            else:
+                with open('/var/log/apport.log') as f:
+                    lines = f.readlines()
+                self.assertIn('executable was modified after program start', lines[-1])
         finally:
             os.kill(test_proc, 9)
             os.waitpid(test_proc, 0)

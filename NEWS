@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.20.1 (UNRELEASED)
+-------------------
+ * Fix signal_crashes.test_modify_after_start test when running as root.
+
 2.20 (2016-02-12)
 -----------------
  * Reimplement forwarding crashes into a container, via activating the new
