@@ -515,7 +515,7 @@ sys.stdin.readline()
 
     @classmethod
     def _generate_sigsegv_report(klass, file=None, signal='11', code='''
-int f(x) {
+int f(int x) {
     int* p = 0; *p = x;
     return x+1;
 }
