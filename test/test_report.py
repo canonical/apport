@@ -1,5 +1,5 @@
 # coding: UTF-8
-import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, re, sys
+import unittest, shutil, time, tempfile, os, subprocess, grp, atexit, sys
 
 try:
     from cStringIO import StringIO
@@ -26,7 +26,7 @@ class T(unittest.TestCase):
         pr.add_package_info('bash')
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assertTrue('libc' in pr['Dependencies'])
+        self.assertIn('libc', pr['Dependencies'])
 
         # test without specifying a package, but with ExecutablePath
         pr = apport.report.Report()
@@ -35,15 +35,15 @@ class T(unittest.TestCase):
         pr.add_package_info()
         self.assertEqual(pr['Package'], 'bash ' + bashversion.strip())
         self.assertEqual(pr['SourcePackage'], 'bash')
-        self.assertTrue('libc' in pr['Dependencies'])
+        self.assertIn('libc', pr['Dependencies'])
         # check for stray empty lines
-        self.assertTrue('\n\n' not in pr['Dependencies'])
-        self.assertTrue('PackageArchitecture' in pr)
+        self.assertNotIn('\n\n', pr['Dependencies'])
+        self.assertIn('PackageArchitecture', pr)
 
         pr = apport.report.Report()
         pr['ExecutablePath'] = '/nonexisting'
         pr.add_package_info()
-        self.assertTrue('Package' not in pr)
+        self.assertNotIn('Package', pr)
 
     def test_add_os_info(self):
         '''add_os_info().'''
@@ -53,7 +53,7 @@ class T(unittest.TestCase):
         self.assertTrue(pr['Uname'].startswith('Linux'))
         self.assertTrue(hasattr(pr['DistroRelease'], 'startswith'))
         self.assertGreater(len(pr['DistroRelease']), 5)
-        self.assertTrue(pr['Architecture'])
+        self.assertNotEqual(pr['Architecture'], '')
 
         # does not overwrite an already existing uname
         pr['Uname'] = 'foonux 1.2'
@@ -68,12 +68,12 @@ class T(unittest.TestCase):
 
         pr = apport.report.Report()
         pr.add_user_info()
-        self.assertTrue('UserGroups' in pr)
+        self.assertIn('UserGroups', pr)
 
         # double-check that user group names are removed
         for g in pr['UserGroups'].split():
-            self.assertTrue(grp.getgrnam(g).gr_gid < 1000)
-        self.assertTrue(grp.getgrgid(os.getgid()).gr_name not in pr['UserGroups'])
+            self.assertLess(grp.getgrnam(g).gr_gid, 1000)
+        self.assertNotIn(grp.getgrgid(os.getgid()).gr_name, pr['UserGroups'])
 
     def test_add_proc_info(self):
         '''add_proc_info().'''
@@ -86,21 +86,21 @@ class T(unittest.TestCase):
         self.assertTrue(set(['ProcEnviron', 'ProcMaps', 'ProcCmdline',
                              'ProcMaps']).issubset(set(pr.keys())), 'report has required fields')
         if 'LANG' in os.environ:
-            self.assertTrue('LANG=' + os.environ['LANG'] in pr['ProcEnviron'])
+            self.assertIn('LANG=' + os.environ['LANG'], pr['ProcEnviron'])
         else:
-            self.assertFalse('LANG=' in pr['ProcEnviron'])
-        self.assertTrue('USER' not in pr['ProcEnviron'])
-        self.assertTrue('PWD' not in pr['ProcEnviron'])
-        self.assertTrue('report.py' in pr['ExecutablePath'])
+            self.assertNotIn('LANG=', pr['ProcEnviron'])
+        self.assertNotIn('USER', pr['ProcEnviron'])
+        self.assertNotIn('PWD', pr['ProcEnviron'])
+        self.assertIn('report.py', pr['ExecutablePath'])
         self.assertEqual(int(pr['ExecutableTimestamp']),
                          int(os.stat(__file__).st_mtime))
 
         # check with one additional safe environment variable
         pr = apport.report.Report()
         pr.add_proc_info(extraenv=['PWD'])
-        self.assertTrue('USER' not in pr['ProcEnviron'])
+        self.assertNotIn('USER', pr['ProcEnviron'])
         if 'PWD' in os.environ:
-            self.assertTrue('PWD=' + os.environ['PWD'] in pr['ProcEnviron'])
+            self.assertIn('PWD=' + os.environ['PWD'], pr['ProcEnviron'])
 
         # check process from other user
         restore_root = False
@@ -114,9 +114,9 @@ class T(unittest.TestCase):
             os.setresuid(0, 0, -1)
 
         self.assertEqual(pr.pid, 1)
-        self.assertTrue('Pid:\t1' in pr['ProcStatus'], pr['ProcStatus'])
+        self.assertIn('Pid:\t1', pr['ProcStatus'])
         self.assertTrue(pr['ProcEnviron'].startswith('Error:'), pr['ProcEnviron'])
-        self.assertTrue('InterpreterPath' not in pr)
+        self.assertNotIn('InterpreterPath', pr)
 
         # check escaping of ProcCmdline
         p = subprocess.Popen(['cat', '/foo bar', '\\h', '\\ \\', '-'],
@@ -135,9 +135,9 @@ class T(unittest.TestCase):
         p.communicate(b'\n')
         self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
         self.assertEqual(pr['ExecutablePath'], '/bin/cat')
-        self.assertTrue('InterpreterPath' not in pr)
-        self.assertTrue('/bin/cat' in pr['ProcMaps'])
-        self.assertTrue('[stack]' in pr['ProcMaps'])
+        self.assertNotIn('InterpreterPath', pr)
+        self.assertIn('/bin/cat', pr['ProcMaps'])
+        self.assertIn('[stack]', pr['ProcMaps'])
 
         # check correct handling of executable symlinks
         assert os.path.islink('/bin/sh'), '/bin/sh needs to be a symlink for this test'
@@ -176,7 +176,7 @@ class T(unittest.TestCase):
                              os.path.realpath(fd.readline().strip()[2:]))
         self.assertEqual(int(pr['ExecutableTimestamp']),
                          int(os.stat(pr['ExecutablePath']).st_mtime))
-        self.assertTrue('[stack]' in pr['ProcMaps'])
+        self.assertIn('[stack]', pr['ProcMaps'])
 
         # check correct handling of interpreted executables: python
         (fd, testscript) = tempfile.mkstemp()
@@ -202,9 +202,9 @@ sys.stdin.readline()
         self.assertEqual(int(pr['ExecutableTimestamp']),
                          int(os.stat(testscript).st_mtime))
         os.unlink(testscript)
-        self.assertTrue('python' in pr['InterpreterPath'])
-        self.assertTrue('python' in pr['ProcMaps'])
-        self.assertTrue('[stack]' in pr['ProcMaps'])
+        self.assertIn('python', pr['InterpreterPath'])
+        self.assertIn('python', pr['ProcMaps'])
+        self.assertIn('[stack]', pr['ProcMaps'])
 
         # test process is gone, should complain about nonexisting PID
         self.assertRaises(ValueError, pr.add_proc_info, p.pid)
@@ -224,8 +224,8 @@ sys.stdin.readline()
         r = apport.report.Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate(b'')
-        self.assertTrue(lang in r['ProcEnviron'].encode('UTF-8'))
-        self.assertTrue('XDG_RUNTIME_DIR=<set>' in r['ProcEnviron'], r['ProcEnviron'])
+        self.assertIn(lang, r['ProcEnviron'].encode('UTF-8'))
+        self.assertIn('XDG_RUNTIME_DIR=<set>', r['ProcEnviron'])
 
     def test_add_proc_info_current_desktop(self):
         '''add_proc_info() CurrentDesktop'''
@@ -269,8 +269,7 @@ sys.stdin.readline()
         r = apport.report.Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate(b'')
-        self.assertTrue('PATH=(custom, no user)' in r['ProcEnviron'],
-                        'PATH is customized without user paths')
+        self.assertIn('PATH=(custom, no user)', r['ProcEnviron'])
 
         # user paths
         p = subprocess.Popen(['cat'], stdin=subprocess.PIPE,
@@ -279,8 +278,7 @@ sys.stdin.readline()
         r = apport.report.Report()
         r.add_proc_environ(pid=p.pid)
         p.communicate(b'')
-        self.assertTrue('PATH=(custom, user)' in r['ProcEnviron'],
-                        'PATH is customized with user paths')
+        self.assertIn('PATH=(custom, user)', r['ProcEnviron'])
 
     def test_check_interpreted(self):
         '''_check_interpreted().'''
@@ -429,8 +427,7 @@ sys.stdin.readline()
             pr['ProcCmdline'] = 'python\0-tt\0-m\0apport/report\0-v'
             pr._check_interpreted()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python2.7')
-            self.assertTrue('report' in pr['ExecutablePath'],
-                            'expecting "report" in ExecutablePath "%s"' % pr['ExecutablePath'])
+            self.assertIn('report', pr['ExecutablePath'])
 
             # python script through -m, with dot separator; top-level module
             pr = apport.report.Report()
@@ -439,7 +436,7 @@ sys.stdin.readline()
             pr['ProcCmdline'] = 'python\0-m\0re\0install'
             pr._check_interpreted()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python3')
-            self.assertTrue('re.py' in pr['ExecutablePath'], pr['ExecutablePath'])
+            self.assertIn('re.py', pr['ExecutablePath'])
 
             # python script through -m, with dot separator; sub-level module
             pr = apport.report.Report()
@@ -448,7 +445,7 @@ sys.stdin.readline()
             pr['ProcCmdline'] = 'python\0-m\0distutils.cmd\0foo'
             pr._check_interpreted()
             self.assertEqual(pr['InterpreterPath'], '/usr/bin/python3')
-            self.assertTrue('distutils/cmd.py' in pr['ExecutablePath'], pr['ExecutablePath'])
+            self.assertIn('distutils/cmd.py', pr['ExecutablePath'])
         finally:
             if restore_root:
                 os.setresuid(0, 0, -1)
@@ -509,8 +506,8 @@ sys.stdin.readline()
         pr['ProcStatus'] = 'Name:\ttwistd'
         pr['ProcCmdline'] = '/usr/bin/python\0/usr/bin/twistd\0--pidfile=/var/run/poker-network-server.pid\0--logfile=/var/log/poker-network-server.log\0--no_save\0--reactor=poll\0pokerserver'
         pr._check_interpreted()
-        self.assertTrue('ExecutablePath' in pr)
-        self.assertTrue('UnreportableReason' in pr)
+        self.assertIn('ExecutablePath', pr)
+        self.assertIn('UnreportableReason', pr)
         self.assertEqual(pr['InterpreterPath'], '/usr/bin/twistd')
 
     @classmethod
@@ -569,21 +566,20 @@ int main() { return f(42); }
         assert readelf.returncode == 0
 
     def _validate_gdb_fields(self, pr):
-        self.assertTrue('Stacktrace' in pr)
-        self.assertTrue('ThreadStacktrace' in pr)
-        self.assertTrue('StacktraceTop' in pr)
-        self.assertTrue('Registers' in pr)
-        self.assertTrue('Disassembly' in pr)
-        self.assertTrue('(no debugging symbols found)' not in pr['Stacktrace'])
-        self.assertTrue('Core was generated by' not in pr['Stacktrace'], pr['Stacktrace'])
-        self.assertTrue(not re.match(r'(?s)(^|.*\n)#0  [^\n]+\n#0  ',
-                                     pr['Stacktrace']))
-        self.assertTrue('#0  0x' in pr['Stacktrace'])
-        self.assertTrue('#1  0x' in pr['Stacktrace'])
-        self.assertTrue('#0  0x' in pr['ThreadStacktrace'])
-        self.assertTrue('#1  0x' in pr['ThreadStacktrace'])
-        self.assertTrue('Thread 1 (' in pr['ThreadStacktrace'])
-        self.assertTrue(len(pr['StacktraceTop'].splitlines()) <= 5)
+        self.assertIn('Stacktrace', pr)
+        self.assertIn('ThreadStacktrace', pr)
+        self.assertIn('StacktraceTop', pr)
+        self.assertIn('Registers', pr)
+        self.assertIn('Disassembly', pr)
+        self.assertNotIn('(no debugging symbols found)', pr['Stacktrace'])
+        self.assertNotIn('Core was generated by', pr['Stacktrace'])
+        self.assertNotRegex(pr['Stacktrace'], r'(?s)(^|.*\n)#0  [^\n]+\n#0  ')
+        self.assertIn('#0  0x', pr['Stacktrace'])
+        self.assertIn('#1  0x', pr['Stacktrace'])
+        self.assertIn('#0  0x', pr['ThreadStacktrace'])
+        self.assertIn('#1  0x', pr['ThreadStacktrace'])
+        self.assertIn('Thread 1 (', pr['ThreadStacktrace'])
+        self.assertLessEqual(len(pr['StacktraceTop'].splitlines()), 5)
 
     def test_add_gdb_info(self):
         '''add_gdb_info() with core dump file reference.'''
@@ -607,8 +603,8 @@ int main() {
 }
 ''')
         self._validate_gdb_fields(pr)
-        self.assertTrue('Cannot access memory at address 0x0' in pr['Disassembly'], pr['Disassembly'])
-        self.assertFalse('AssertionMessage' in pr)
+        self.assertIn('Cannot access memory at address 0x0', pr['Disassembly'])
+        self.assertNotIn('AssertionMessage', pr)
 
     def test_add_gdb_info_load(self):
         '''add_gdb_info() with inline core dump.'''
@@ -653,24 +649,21 @@ int main() {
             pr.load(f)
         pr['Signal'] = '1'
         pr.add_hooks_info('fake_ui')
-        self.assertTrue('SegvAnalysis' not in pr.keys())
+        self.assertNotIn('SegvAnalysis', pr)
 
         pr = apport.report.Report()
         with open(rep.name, 'rb') as f:
             pr.load(f)
         pr.add_hooks_info('fake_ui')
-        self.assertTrue('Skipped: missing required field "Architecture"' in pr['SegvAnalysis'],
-                        pr['SegvAnalysis'])
+        self.assertIn('Skipped: missing required field "Architecture"', pr['SegvAnalysis'])
 
         pr.add_os_info()
         pr.add_hooks_info('fake_ui')
-        self.assertTrue('Skipped: missing required field "ProcMaps"' in pr['SegvAnalysis'],
-                        pr['SegvAnalysis'])
+        self.assertIn('Skipped: missing required field "ProcMaps"', pr['SegvAnalysis'])
 
         pr.add_proc_info()
         pr.add_hooks_info('fake_ui')
-        self.assertTrue('not located in a known VMA region' in pr['SegvAnalysis'],
-                        pr['SegvAnalysis'])
+        self.assertIn('not located in a known VMA region', pr['SegvAnalysis'])
 
     def test_add_gdb_info_script(self):
         '''add_gdb_info() with a script.'''
@@ -744,10 +737,9 @@ $0.bin 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.assertTrue("<stdin>:2: main: Assertion `1 < 0' failed." in
-                        pr['AssertionMessage'], pr['AssertionMessage'])
+        self.assertIn("<stdin>:2: main: Assertion `1 < 0' failed.", pr['AssertionMessage'])
         self.assertFalse(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
-        self.assertFalse('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
+        self.assertNotIn('= 0x', pr['AssertionMessage'])
         self.assertFalse(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
 
         # abort with internal error
@@ -786,10 +778,10 @@ LIBC_FATAL_STDERR_=1 $0.bin aaaaaaaaaaaaaaaa 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.assertTrue("** buffer overflow detected ***: %s.bin terminated" % (script) in
-                        pr['AssertionMessage'], pr['AssertionMessage'])
+        self.assertIn("** buffer overflow detected ***: %s.bin terminated" % (script),
+                      pr['AssertionMessage'])
         self.assertFalse(pr['AssertionMessage'].startswith('$'), pr['AssertionMessage'])
-        self.assertFalse('= 0x' in pr['AssertionMessage'], pr['AssertionMessage'])
+        self.assertNotIn('= 0x', pr['AssertionMessage'])
         self.assertFalse(pr['AssertionMessage'].endswith('\\n'), pr['AssertionMessage'])
 
         # abort without assertion
@@ -891,8 +883,7 @@ $0.bin 2>/dev/null
             os.unlink('core')
 
         self._validate_gdb_fields(pr)
-        self.assertTrue('Assertion failed in main: 1 < 0' in pr['AssertionMessage'],
-                        pr['AssertionMessage'])
+        self.assertIn('Assertion failed in main: 1 < 0', pr['AssertionMessage'])
 
     def test_search_bug_patterns(self):
         '''search_bug_patterns().'''
@@ -1235,19 +1226,13 @@ def add_info(report, ui):
             self.assertIn("name 'unknown' is not defined", err)
 
             # should also add the exceptions to the report
-            self.assertTrue('NameError:' in r['HookError_source_foo'],
-                            r['HookError_source_foo'])
-            self.assertTrue('line 3, in add_info' in r['HookError_source_foo'],
-                            r['HookError_source_foo'])
-            self.assertFalse('ZeroDivisionError' in r['HookError_source_foo'],
-                             r['HookError_source_foo'])
+            self.assertIn('NameError:', r['HookError_source_foo'])
+            self.assertIn('line 3, in add_info', r['HookError_source_foo'])
+            self.assertNotIn('ZeroDivisionError', r['HookError_source_foo'])
 
-            self.assertTrue('ZeroDivisionError:' in r['HookError_fooprogs'],
-                            r['HookError_fooprogs'])
-            self.assertTrue('line 3, in add_info' in r['HookError_source_foo'],
-                            r['HookError_fooprogs'])
-            self.assertFalse('NameError:' in r['HookError_fooprogs'],
-                             r['HookError_fooprogs'])
+            self.assertIn('ZeroDivisionError:', r['HookError_fooprogs'])
+            self.assertIn('line 3, in add_info', r['HookError_source_foo'])
+            self.assertNotIn('NameError:', r['HookError_fooprogs'])
         finally:
             sys.stderr = orig_stderr
             shutil.rmtree(apport.report._hook_dir)
@@ -2108,7 +2093,7 @@ ffff0000-ffff1000 r-xp 00000000 00:00 0          [vectors]
         self.assertEqual(pr._address_to_offset(0), None)
         res = pr._address_to_offset(int(pr['ProcMaps'].split('-', 1)[0], 16) + 5)
         self.assertEqual(res.split('+', 1)[1], '5')
-        self.assertTrue('python' in res.split('+', 1)[0])
+        self.assertIn('python', res.split('+', 1)[0])
 
     def test_crash_signature_addresses(self):
         '''crash_signature_addresses()'''
