@@ -4,6 +4,8 @@ detailed list of changes, please see ChangeLog.
 2.20.1 (UNRELEASED)
 -------------------
  * Fix signal_crashes.test_modify_after_start test when running as root.
+ * Relax report.test_add_gdb_info gdb warning check, as this changed with gdb
+   7.10.90.
 
 2.20 (2016-02-12)
 -----------------
