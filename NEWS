@@ -6,6 +6,9 @@ detailed list of changes, please see ChangeLog.
  * Fix signal_crashes.test_modify_after_start test when running as root.
  * Relax report.test_add_gdb_info gdb warning check, as this changed with gdb
    7.10.90.
+ * crash-digger: Untag bugs which cannot be retraced instead of stopping
+   crash-digger. This led to too many pointless manual restarts on broken bug
+   reports.
 
 2.20 (2016-02-12)
 -----------------

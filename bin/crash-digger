@@ -98,7 +98,6 @@ class CrashDigger:
                 self.retrace_pool = set()
                 apport.log('transient error reported; halting', True)
                 return
-            raise SystemError('retracing #%i failed' % id)
 
         self.crashdb.mark_retraced(id)
 
