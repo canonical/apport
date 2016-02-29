@@ -308,7 +308,7 @@ if 'LISTEN_FDS' in os.environ:
     try:
         from systemd.daemon import listen_fds
     except ImportError:
-        error_log('Received a crash via apport-forward@.socket, but systemd python module is not installed')
+        error_log('Received a crash via apport-forward.socket, but systemd python module is not installed')
         sys.exit(0)
 
     # Extract and validate the fd
