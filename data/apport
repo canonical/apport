@@ -4,7 +4,7 @@
 # specified by apport.fileutils.report_dir.
 # See https://wiki.ubuntu.com/Apport for details.
 #
-# Copyright (c) 2006 - 2011 Canonical Ltd.
+# Copyright (c) 2006 - 2016 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -303,7 +303,7 @@ def is_systemd_watchdog_restart(signum, pid):
 #
 #################################################################
 
-# Systemd socket activation
+# systemd socket activation
 if 'LISTEN_FDS' in os.environ:
     try:
         from systemd.daemon import listen_fds
