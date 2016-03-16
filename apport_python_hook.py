@@ -87,12 +87,19 @@ def apport_excepthook(exc_type, exc_obj, exc_tb):
 
         # special handling of dbus-python exceptions
         if hasattr(exc_obj, 'get_dbus_name'):
-            if exc_obj.get_dbus_name() == 'org.freedesktop.DBus.Error.NoReply':
+            name = exc_obj.get_dbus_name()
+            if name == 'org.freedesktop.DBus.Error.NoReply':
                 # NoReply is an useless crash, we do not even get the method it
                 # was trying to call; needs actual crash from D-BUS backend (LP #914220)
                 return
-            if exc_obj.get_dbus_name() == 'org.freedesktop.DBus.Error.ServiceUnknown':
+            elif name == 'org.freedesktop.DBus.Error.ServiceUnknown':
                 dbus_service_unknown_analysis(exc_obj, pr)
+            else:
+                pr['_PythonExceptionQualifier'] = name
+
+        # disambiguate OSErrors with errno:
+        if exc_type == OSError and exc_obj.errno is not None:
+            pr['_PythonExceptionQualifier'] = str(exc_obj.errno)
 
         # append a basic traceback. In future we may want to include
         # additional data such as the local variables, loaded modules etc.

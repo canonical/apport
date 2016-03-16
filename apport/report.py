@@ -1325,7 +1325,12 @@ class Report(problem_report.ProblemReport):
                             f = os.path.realpath(f)
                         sig += ':%s@%s' % (f, m.group(2))
 
-            return self['ExecutablePath'] + ':' + trace[-1].split(':')[0] + sig
+            exc_name = trace[-1].split(':')[0]
+            try:
+                exc_name += '(%s)' % self['_PythonExceptionQualifier']
+            except KeyError:
+                pass
+            return self['ExecutablePath'] + ':' + exc_name + sig
 
         if self['ProblemType'] == 'KernelOops' and 'Failure' in self:
             if 'suspend' in self['Failure'] or 'resume' in self['Failure']:

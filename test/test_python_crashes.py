@@ -17,7 +17,8 @@ temp_report_dir = tempfile.mkdtemp()
 os.environ['APPORT_REPORT_DIR'] = temp_report_dir
 atexit.register(shutil.rmtree, temp_report_dir)
 
-import apport.fileutils, problem_report
+import apport.fileutils
+import apport.report
 
 
 class T(unittest.TestCase):
@@ -59,7 +60,7 @@ func(42)
                          'crashing test python program exits with failure code')
         if not extracode:
             self.assertIn('This should happen.', err)
-        self.assertNotIn('OSError', err)
+        self.assertNotIn('IOError', err)
 
         return script
 
@@ -75,7 +76,7 @@ func(42)
         self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
                          0o640, 'report has correct permissions')
 
-        pr = problem_report.ProblemReport()
+        pr = apport.report.Report()
         with open(reports[0], 'rb') as f:
             pr.load(f)
 
@@ -170,7 +171,7 @@ func(42)
         self.assertEqual(stat.S_IMODE(os.stat(reports[0]).st_mode),
                          0o640, 'report has correct permissions')
 
-        pr = problem_report.ProblemReport()
+        pr = apport.report.Report()
         with open(reports[0], 'rb') as f:
             pr.load(f)
 
@@ -199,7 +200,7 @@ func(42)
         pr = None
         self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
 
-        pr = problem_report.ProblemReport()
+        pr = apport.report.Report()
         with open(reports[0], 'rb') as f:
             pr.load(f)
 
@@ -418,12 +419,67 @@ i.Ping(timeout=1)
 #                         pr['DbusErrorAnalysis'])
 #         self.assertTrue('gvfsd-metadata is not running' in pr['DbusErrorAnalysis'], pr['DbusErrorAnalysis'])
 
+    def test_dbus_service_other_error(self):
+        '''Other DBusExceptions get an unwrapped original exception'''
+
+        self._test_crash(extracode='''import dbus
+obj = dbus.SessionBus().get_object('org.gtk.vfs.Daemon', '/org/gtk/vfs/Daemon')
+dbus.Interface(obj, 'org.gtk.vfs.Daemon').Nonexisting(1)
+''')
+
+        pr = self._load_report()
+        self.assertTrue(pr['Traceback'].startswith('Traceback'), pr['Traceback'])
+        self.assertIn('org.freedesktop.DBus.Error.UnknownMethod', pr['Traceback'])
+        self.assertNotIn('DbusErrorAnalysis', pr)
+        # we expect it to unwrap the actual exception from the DBusException
+        self.assertIn('dbus.exceptions.DBusException(org.freedesktop.DBus.Error.UnknownMethod):',
+                      pr.crash_signature())
+
+    def test_generic_os_error(self):
+        '''OSError with errno and no known subclass'''
+
+        self._test_crash(extracode='''def g():
+    raise OSError(99, 'something bad')
+
+g()''')
+        pr = self._load_report()
+        # we expect it to append errno
+        exe = pr['ExecutablePath']
+        self.assertEqual(pr.crash_signature(),
+                         '%s:OSError(99):%s@11:g' % (exe, exe))
+
+    def test_generic_os_error_no_errno(self):
+        '''OSError without errno and no known subclass'''
+
+        self._test_crash(extracode='''def g():
+    raise OSError('something bad')
+
+g()''')
+        pr = self._load_report()
+        # we expect it to not stumble over the missing errno
+        exe = pr['ExecutablePath']
+        self.assertEqual(pr.crash_signature(),
+                         '%s:OSError:%s@11:g' % (exe, exe))
+
+    def test_subclassed_os_error(self):
+        '''OSError with known subclass'''
+
+        self._test_crash(extracode='''def g():
+    raise OSError(2, 'no such file /notexisting')
+
+g()''')
+        pr = self._load_report()
+        # we expect it to not append errno, as it's already encoded in the subclass
+        exe = pr['ExecutablePath']
+        self.assertEqual(pr.crash_signature(),
+                         '%s:FileNotFoundError:%s@11:g' % (exe, exe))
+
     def _load_report(self):
         '''Ensure that there is exactly one crash report and load it'''
 
         reports = apport.fileutils.get_new_reports()
         self.assertEqual(len(reports), 1, 'crashed Python program produced a report')
-        pr = problem_report.ProblemReport()
+        pr = apport.Report()
         with open(reports[0], 'rb') as f:
             pr.load(f)
         return pr

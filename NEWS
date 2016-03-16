@@ -9,6 +9,11 @@ detailed list of changes, please see ChangeLog.
  * crash-digger: Untag bugs which cannot be retraced instead of stopping
    crash-digger. This led to too many pointless manual restarts on broken bug
    reports.
+ * Disambiguate overly generic Python exceptions in duplicate signature
+   computation: dbus-glib's DBusException wraps a "real" server-side exception,
+   so add the class of that to disambiguate different crashes; for OSError
+   that is not a known subclass like FileNotFoundError, add the errno.
+   (LP: #989819)
 
 2.20 (2016-02-12)
 -----------------
