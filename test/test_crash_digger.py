@@ -73,21 +73,21 @@ echo "$@" >> %s''' % self.apport_retrace_log)
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
                                 os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertEqual(err, '', 'no error messages:\n' + err)
-        self.assertTrue("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
-        self.assertTrue('retracing #0' in out)
-        self.assertTrue('retracing #1' in out)
-        self.assertTrue('retracing #2' in out)
-        self.assertTrue('crash is release FooLinux Pi/2 which does not have a config available' in out)
-        self.assertFalse('failed with status' in out)
-        self.assertFalse('#3' in out, 'dupcheck crashes are not retraced')
-        self.assertFalse('#4' in out, 'dupcheck crashes are not retraced')
+        self.assertIn("Available releases: ['Testux 1.0', 'Testux 2.2']", out)
+        self.assertIn('retracing #0', out)
+        self.assertIn('retracing #1', out)
+        self.assertIn('retracing #2', out)
+        self.assertIn('crash is release FooLinux Pi/2 which does not have a config available', out)
+        self.assertNotIn('failed with status', out)
+        self.assertNotIn('#3', out, 'dupcheck crashes are not retraced')
+        self.assertNotIn('#4', out, 'dupcheck crashes are not retraced')
 
         with open(self.apport_retrace_log) as f:
             retrace_log = f.read()
         self.assertEqual(len(retrace_log.splitlines()), 2)
-        self.assertFalse('dup.db -v 0\n' in retrace_log)
-        self.assertTrue('dup.db -v 1\n' in retrace_log)
-        self.assertTrue('dup.db -v 2\n' in retrace_log)
+        self.assertNotIn('dup.db -v 0\n', retrace_log)
+        self.assertIn('dup.db -v 1\n', retrace_log)
+        self.assertIn('dup.db -v 2\n', retrace_log)
         self.assertFalse(os.path.exists(self.lock_file))
 
         self.assertFalse(os.path.isdir(os.path.join(self.workdir, 'dupdb', 'sig')))
@@ -110,25 +110,25 @@ fi
 
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
                                 os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
-        self.assertTrue('Traceback' in err)
-        self.assertTrue('SystemError: retracing #1 failed' in err)
-        self.assertTrue("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
-        self.assertTrue('retracing #0' in out)
-        self.assertTrue('retracing #1' in out)
-        self.assertFalse('retracing #2' in out, 'should not continue after errors')
-        self.assertTrue('crash is release FooLinux Pi/2 which does not have a config available' in out)
-        self.assertFalse('#0 failed with status' in out)
-        self.assertTrue('#1 failed with status: 1' in out)
-        self.assertFalse('#3' in out, 'dupcheck crashes are not retraced')
-        self.assertFalse('#4' in out, 'dupcheck crashes are not retraced')
+        self.assertIn('Traceback', err)
+        self.assertIn('SystemError: retracing #1 failed', err)
+        self.assertIn("Available releases: ['Testux 1.0', 'Testux 2.2']", out)
+        self.assertIn('retracing #0', out)
+        self.assertIn('retracing #1', out)
+        self.assertNotIn('retracing #2', out, 'should not continue after errors')
+        self.assertIn('crash is release FooLinux Pi/2 which does not have a config available', out)
+        self.assertNotIn('#0 failed with status', out)
+        self.assertIn('#1 failed with status: 1', out)
+        self.assertNotIn('#3', out, 'dupcheck crashes are not retraced')
+        self.assertNotIn('#4', out, 'dupcheck crashes are not retraced')
 
         with open(self.apport_retrace_log) as f:
             retrace_log = f.read()
         self.assertEqual(len(retrace_log.splitlines()), 1)
-        self.assertFalse('dup.db -v 0\n' in retrace_log)
-        self.assertTrue('dup.db -v 1\n' in retrace_log)
+        self.assertNotIn('dup.db -v 0\n', retrace_log)
+        self.assertIn('dup.db -v 1\n', retrace_log)
         # stops after failing #1
-        self.assertFalse('dup.db -v 2\n' in retrace_log)
+        self.assertNotIn('dup.db -v 2\n', retrace_log)
         self.assertTrue(os.path.exists(self.lock_file))
 
         os.rename(self.apport_retrace + '.bak', self.apport_retrace)
@@ -144,7 +144,7 @@ fi
         # now it should run again
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
                                 os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
-        self.assertTrue('retracing #2' in out)
+        self.assertIn('retracing #2', out)
         self.assertEqual(err, '', 'no error messages:\n' + err)
         self.assertFalse(os.path.exists(self.lock_file))
 
@@ -166,17 +166,17 @@ fi
 
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
                                 os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
-        self.assertTrue("Available releases: ['Testux 1.0', 'Testux 2.2']" in out)
-        self.assertTrue('retracing #0' in out)
-        self.assertTrue('retracing #1' in out)
-        self.assertFalse('retracing #2' in out, 'should not continue after errors')
-        self.assertTrue('transient error reported; halting' in out)
+        self.assertIn("Available releases: ['Testux 1.0', 'Testux 2.2']", out)
+        self.assertIn('retracing #0', out)
+        self.assertIn('retracing #1', out)
+        self.assertNotIn('retracing #2', out, 'should not continue after errors')
+        self.assertIn('transient error reported; halting', out)
 
         with open(self.apport_retrace_log) as f:
             retrace_log = f.read()
-        self.assertTrue('dup.db -v 1\n' in retrace_log)
+        self.assertIn('dup.db -v 1\n', retrace_log)
         # stops after failing #1
-        self.assertFalse('dup.db -v 2\n' in retrace_log)
+        self.assertNotIn('dup.db -v 2\n', retrace_log)
 
         self.assertFalse(os.path.exists(self.lock_file))
 
@@ -186,11 +186,11 @@ fi
         (out, err) = self.call(['-a', '/dev/zero', '-d',
                                 os.path.join(self.workdir, 'dup.db'), '-vDl', self.lock_file])
         self.assertEqual(err, '', 'no error messages:\n' + err)
-        self.assertFalse('#1' in out, 'signal crashes are not retraced')
-        self.assertFalse('#2' in out, 'signal crashes are not retraced')
-        self.assertTrue('checking #3 for duplicate' in out)
-        self.assertTrue('checking #4 for duplicate' in out)
-        self.assertTrue('Report is a duplicate of #3 (not fixed yet)' in out)
+        self.assertNotIn('#1', out, 'signal crashes are not retraced')
+        self.assertNotIn('#2', out, 'signal crashes are not retraced')
+        self.assertIn('checking #3 for duplicate', out)
+        self.assertIn('checking #4 for duplicate', out)
+        self.assertIn('Report is a duplicate of #3 (not fixed yet)', out)
         self.assertFalse(os.path.exists(self.apport_retrace_log))
         self.assertFalse(os.path.exists(self.lock_file))
 
@@ -203,7 +203,7 @@ echo ApportRetraceError >&2''')
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
                                 os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
         self.assertEqual(err, '', 'no error messages:\n' + err)
-        self.assertTrue('ApportRetraceError' in out)
+        self.assertIn('ApportRetraceError', out)
 
     def test_publish_db(self):
         '''Duplicate database publishing'''
@@ -212,7 +212,7 @@ echo ApportRetraceError >&2''')
                                 os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file,
                                 '--publish-db', os.path.join(self.workdir, 'dupdb')])
         self.assertEqual(err, '', 'no error messages:\n' + err)
-        self.assertTrue('retracing #0' in out)
+        self.assertIn('retracing #0', out)
 
         self.assertTrue(os.path.isdir(os.path.join(self.workdir, 'dupdb', 'sig')))
 
@@ -223,15 +223,15 @@ echo ApportRetraceError >&2''')
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero',
                                 '-vl', self.lock_file, '--crash-db', 'empty'])
         self.assertEqual(err, '', 'no error messages:\n' + err)
-        self.assertFalse('retracing #' in out)
-        self.assertFalse('crash is' in out)
-        self.assertFalse('failed with status' in out)
+        self.assertNotIn('retracing #', out)
+        self.assertNotIn('crash is', out)
+        self.assertNotIn('failed with status', out)
 
         # nonexisting DB
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero',
                                 '-vl', self.lock_file, '--crash-db', 'nonexisting'])
         self.assertEqual(out, '', 'no output messages:\n' + out)
-        self.assertFalse('Traceback' in err, err)
-        self.assertTrue('nonexisting' in err, err)
+        self.assertNotIn('Traceback', err)
+        self.assertIn('nonexisting', err)
 
 unittest.main()
