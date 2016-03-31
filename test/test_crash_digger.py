@@ -110,12 +110,11 @@ fi
 
         (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
                                 os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
-        self.assertIn('Traceback', err)
-        self.assertIn('SystemError: retracing #1 failed', err)
+        self.assertEqual(err, '')
         self.assertIn("Available releases: ['Testux 1.0', 'Testux 2.2']", out)
         self.assertIn('retracing #0', out)
         self.assertIn('retracing #1', out)
-        self.assertNotIn('retracing #2', out, 'should not continue after errors')
+        self.assertIn('retracing #2', out)
         self.assertIn('crash is release FooLinux Pi/2 which does not have a config available', out)
         self.assertNotIn('#0 failed with status', out)
         self.assertIn('#1 failed with status: 1', out)
@@ -124,29 +123,13 @@ fi
 
         with open(self.apport_retrace_log) as f:
             retrace_log = f.read()
-        self.assertEqual(len(retrace_log.splitlines()), 1)
+        self.assertEqual(len(retrace_log.splitlines()), 2)
         self.assertNotIn('dup.db -v 0\n', retrace_log)
         self.assertIn('dup.db -v 1\n', retrace_log)
-        # stops after failing #1
-        self.assertNotIn('dup.db -v 2\n', retrace_log)
-        self.assertTrue(os.path.exists(self.lock_file))
+        self.assertIn('dup.db -v 2\n', retrace_log)
+        self.assertFalse(os.path.exists(self.lock_file))
 
         os.rename(self.apport_retrace + '.bak', self.apport_retrace)
-
-        # subsequent start should not do anything until the lock file is cleaned up
-        (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
-        self.assertEqual(out, '')
-        self.assertEqual(err, '')
-
-        os.unlink(self.lock_file)
-
-        # now it should run again
-        (out, err) = self.call(['-c', self.config_dir, '-a', '/dev/zero', '-d',
-                                os.path.join(self.workdir, 'dup.db'), '-vl', self.lock_file])
-        self.assertIn('retracing #2', out)
-        self.assertEqual(err, '', 'no error messages:\n' + err)
-        self.assertFalse(os.path.exists(self.lock_file))
 
     def test_crashes_transient_error(self):
         '''Crash retracing if apport-retrace reports a transient error'''
