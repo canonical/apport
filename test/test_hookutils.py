@@ -142,6 +142,16 @@ class T(unittest.TestCase):
         apport.hookutils.attach_file_if_exists(report, '/nonexisting')
         self.assertEqual(list(report), [])
 
+    def test_path_to_key(self):
+        '''transforming a file path to a valid report key'''
+
+        self.assertEqual(apport.hookutils.path_to_key('simple.txt'),
+                         'simple.txt')
+        self.assertEqual(apport.hookutils.path_to_key('path/with/dirs.txt'),
+                         'path.with.dirs.txt')
+        self.assertEqual(apport.hookutils.path_to_key('/funny:characters!& ".txt'),
+                         '.funny.characters.._..txt')
+
     def test_recent_syslog(self):
         '''recent_syslog'''
 

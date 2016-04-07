@@ -4,6 +4,9 @@ detailed list of changes, please see ChangeLog.
 2.20.2 (UNRELEASED)
 -------------------
  * problem_report.py: Make assertion of invalid key names more verbose.
+ * hookutils.py: Fix generation of valid report key names from arbitrary paths
+   in attach_file() and related functions. This will now replace all invalid
+   characters with dots, not just a few known invalid ones. (LP: #1566975)
 
 2.20.1 (2016-03-31)
 -------------------

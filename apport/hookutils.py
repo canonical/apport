@@ -30,12 +30,7 @@ from apport.packaging_impl import impl as packaging
 import apport
 import apport.fileutils
 
-try:
-    _path_key_trans = ''.maketrans('#/-_+ ', '....._')
-except AttributeError:
-    # Python 2 variant
-    import string
-    _path_key_trans = string.maketrans('#/-_+ ', '....._')
+_invalid_key_chars_re = re.compile(r'[^0-9a-zA-Z_.-]')
 
 
 def path_to_key(path):
@@ -49,7 +44,7 @@ def path_to_key(path):
     else:
         if not isinstance(path, bytes):
             path = path.encode('UTF-8')
-    return path.translate(_path_key_trans)
+    return _invalid_key_chars_re.sub('.', path.replace(' ', '_'))
 
 
 def attach_file_if_exists(report, path, key=None, overwrite=True, force_unicode=False):
