@@ -641,7 +641,8 @@ class ProblemReport(UserDict):
 
     def __setitem__(self, k, v):
         assert hasattr(k, 'isalnum')
-        assert k.replace('.', '').replace('-', '').replace('_', '').isalnum()
+        assert k.replace('.', '').replace('-', '').replace('_', '').isalnum(), \
+            "key '%s' contains invalid characters (only numbers, letters, '.', '_', and '-' are allowed)" % k
         # value must be a string or a CompressedValue or a file reference
         # (tuple (string|file [, bool]))
         assert (isinstance(v, CompressedValue) or hasattr(v, 'isalnum') or

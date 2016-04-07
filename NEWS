@@ -1,6 +1,10 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.20.2 (UNRELEASED)
+-------------------
+ * problem_report.py: Make assertion of invalid key names more verbose.
+
 2.20.1 (2016-03-31)
 -------------------
  * Fix signal_crashes.test_modify_after_start test when running as root.
