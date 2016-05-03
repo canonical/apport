@@ -212,6 +212,21 @@ def _run_hook(report, ui, hook):
 
     return False
 
+
+def _which_extrapath(command, extra_path):
+    '''Return path of command, preferring extra_path'''
+
+    if extra_path:
+        env = os.environ.copy()
+        env['PATH'] = extra_path + ':' + env.get('PATH', '')
+    else:
+        env = None
+    try:
+        return subprocess.check_output(['which', command], env=env).decode().strip()
+    except subprocess.CalledProcessError:
+        return None
+
+
 #
 # Report class
 #
@@ -1500,15 +1515,18 @@ class Report(problem_report.ProblemReport):
         assert 'ExecutablePath' in self
         executable = self.get('InterpreterPath', self['ExecutablePath'])
 
-        command = ['gdb']
+        # prefer gdb in the sandbox, if present
+        sandbox_bin = sandbox and os.path.join(sandbox, 'usr', 'bin') or None
+        gdb_path = _which_extrapath('gdb', sandbox_bin)
+        if not gdb_path:
+            apport.fatal('gdb does not exist in the sandbox nor on the host')
+        command = [gdb_path]
 
         if 'Architecture' in self and self['Architecture'] != packaging.get_system_architecture():
             # check if we have gdb-multiarch
-            which = subprocess.Popen(['which', 'gdb-multiarch'],
-                                     stdout=subprocess.PIPE)
-            which.communicate()
-            if which.returncode == 0:
-                command = ['gdb-multiarch']
+            ma = _which_extrapath('gdb-multiarch', sandbox_bin)
+            if ma:
+                command = [ma]
             else:
                 sys.stderr.write(
                     'WARNING: Please install gdb-multiarch for processing '
