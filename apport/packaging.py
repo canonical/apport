@@ -193,7 +193,7 @@ class PackageInfo:
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
                          permanent_rootdir=False, architecture=None,
-                         origins=None):
+                         origins=None, install_dbg=True):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
