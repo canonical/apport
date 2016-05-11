@@ -239,20 +239,6 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                 apport.fatal('%s %s does not exist (report specified package %s)',
                              path, sandbox_dir + report[path], report['Package'])
 
-    # install gdb for the target release/arch
-    try:
-        gdb_pkgs = [('gdb', None)]
-        if 'Architecture' in report and report['Architecture'] != apport.packaging.get_system_architecture():
-            gdb_pkgs.append(('gdb-multiarch', None))
-
-        apport.packaging.install_packages(
-            sandbox_dir, config_dir, report['DistroRelease'], gdb_pkgs,
-            verbose, cache_dir, permanent_rootdir,
-            architecture=report.get('Architecture'), origins=origins,
-            install_dbg=False)
-    except SystemError as e:
-        apport.fatal(str(e))
-
     if outdated_msg:
         report['RetraceOutdatedPackages'] = outdated_msg
 

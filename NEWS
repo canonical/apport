@@ -9,9 +9,6 @@ detailed list of changes, please see ChangeLog.
    characters with dots, not just a few known invalid ones. (LP: #1566975)
  * problem_report.py: Instead of AssertionError, raise a ValueError for invalid
    key names and TypeError for invalid kinds of values. Thanks Barry Warsaw.
- * apport-retrace: In sandbox mode, install and use gdb in the sandbox. This
-   should improve stack traces as it uses the gdb from the target release
-   instead of from the (potentially much older) host release. (LP: #1517257)
  * Don't ignore OSError in Report.add_gdb_info(), as we do want to fail with an
    useful error message if gdb cannot be called in apport-retrace. Move the
    catching to the UI as not having gdb installed is still fine for reporting
