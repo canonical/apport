@@ -91,24 +91,25 @@ def _read_maps(pid):
     return maps
 
 
-def _command_output(command, input=None, stderr=subprocess.STDOUT):
+def _command_output(command, input=None):
     '''Run command and capture its output.
 
     Try to execute given command (argv list) and return its stdout, or return
     a textual error if it failed.
     '''
-    sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr)
+    sp = subprocess.Popen(command, stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT)
 
-    (out, err) = sp.communicate(input)
+    out = sp.communicate(input)[0]
     if sp.returncode == 0:
         return out
     else:
-        if err:
-            err = err.decode('UTF-8', errors='replace')
+        if out:
+            out = out.decode('UTF-8', errors='replace')
         else:
-            err = ''
+            out = ''
         raise OSError('Error: command %s failed with exit code %i: %s' % (
-            str(command), sp.returncode, err))
+            str(command), sp.returncode, out))
 
 
 def _check_bug_pattern(report, pattern):

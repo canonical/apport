@@ -16,6 +16,8 @@ detailed list of changes, please see ChangeLog.
    useful error message if gdb cannot be called in apport-retrace. Move the
    catching to the UI as not having gdb installed is still fine for reporting
    clients. (LP: #1579949)
+ * Show gdb error messages in Report.add_gdb_info() OSError exception when gdb
+   fails. (LP: #1579897)
 
 2.20.1 (2016-03-31)
 -------------------
