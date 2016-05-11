@@ -77,7 +77,12 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
 
     If symptom_script is given, it will be run first (for run_symptom()).
     '''
-    report.add_gdb_info()
+    try:
+        report.add_gdb_info()
+    except OSError:
+        # it's okay if gdb is not installed on the client side; we'll get stack
+        # traces on retracing.
+        pass
     report.add_os_info()
 
     if symptom_script:

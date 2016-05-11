@@ -694,7 +694,8 @@ class Report(problem_report.ProblemReport):
         chroot() or root privileges, it just instructs gdb to search for the
         files there.
 
-        Raises a IOError if the core dump is invalid/truncated.
+        Raises a IOError if the core dump is invalid/truncated, or OSError if
+        calling gdb fails.
         '''
         if 'CoreDump' not in self or 'ExecutablePath' not in self:
             return
@@ -718,11 +719,8 @@ class Report(problem_report.ProblemReport):
             value_keys.append(name)
             gdb_cmd += ['--ex', 'p -99', '--ex', cmd]
 
-        # call gdb
-        try:
-            out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
-        except OSError:
-            return
+        # call gdb (might raise OSError)
+        out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
 
         # check for truncated stack trace
         if 'is truncated: expected core file size' in out:

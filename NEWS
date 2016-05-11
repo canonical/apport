@@ -12,6 +12,10 @@ detailed list of changes, please see ChangeLog.
  * apport-retrace: In sandbox mode, install and use gdb in the sandbox. This
    should improve stack traces as it uses the gdb from the target release
    instead of from the (potentially much older) host release. (LP: #1517257)
+ * Don't ignore OSError in Report.add_gdb_info(), as we do want to fail with an
+   useful error message if gdb cannot be called in apport-retrace. Move the
+   catching to the UI as not having gdb installed is still fine for reporting
+   clients. (LP: #1579949)
 
 2.20.1 (2016-03-31)
 -------------------
