@@ -454,6 +454,11 @@ def attach_root_command_outputs(report, command_map):
                 # this can happen if the user dismisses authorization in
                 # _root_command_prefix
                 continue
+            # opportunistically convert to strings, like command_output()
+            try:
+                buf = buf.decode('UTF-8')
+            except UnicodeDecodeError:
+                pass
             if buf:
                 report[keyname] = buf
             f.close()

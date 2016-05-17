@@ -15,6 +15,8 @@ detailed list of changes, please see ChangeLog.
    clients. (LP: #1579949)
  * Show gdb error messages in Report.add_gdb_info() OSError exception when gdb
    fails. (LP: #1579897)
+ * hookutils, attach_root_command_outputs(): Return str again, like before
+   2.15.2. (LP: #1370259)
 
 2.20.1 (2016-03-31)
 -------------------
