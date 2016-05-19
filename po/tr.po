@@ -14,15 +14,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-05-11 05:13+0000\n"
+"X-Launchpad-Export-Date: 2016-05-19 05:14+0000\n"
 "X-Generator: Launchpad (build 18025)\n"
 "Language: tr\n"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
+#: ../kde/apport-kde.py:468 ../kde/apport-kde.py:503 ../kde/apport-kde.py:522
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../gtk/apport-gtk.ui.h:1
 #: ../debian/tmp/usr/share/apport/apport-kde.py:468
 #: ../debian/tmp/usr/share/apport/apport-kde.py:503
-#: ../debian/tmp/usr/share/apport/apport-kde.py:522 ../gtk/apport-gtk.ui.h:1
-#: ../kde/apport-kde.py:468 ../kde/apport-kde.py:503 ../kde/apport-kde.py:522
+#: ../debian/tmp/usr/share/apport/apport-kde.py:522
 msgid "Apport"
 msgstr "Apport"
 
@@ -42,10 +42,10 @@ msgstr "Çökme raporu"
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b> Üzgünüz, içsel bir hata oluştu.</b></big>"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:300
-#: ../debian/tmp/usr/share/apport/apport-kde.py:240 ../gtk/apport-gtk.ui.h:6
 #: ../kde/apport-kde.py:240 ../gtk/apport-gtk.py:300
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6 ../gtk/apport-gtk.ui.h:6
+#: ../debian/tmp/usr/share/apport/apport-kde.py:240
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:300
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "Daha fazla sorunla karşılaşırsanız bilgisayarınız yeniden başlatmayı deneyin."
@@ -58,11 +58,11 @@ msgstr "Bu sorunu çözmek için hata raporu gönder"
 msgid "Ignore future problems of this program version"
 msgstr "Bu yazılım sürümünün gelecekteki sorunlarını görmezden gel"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
+#: ../kde/apport-kde.py:291 ../gtk/apport-gtk.py:204 ../gtk/apport-gtk.py:573
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9 ../gtk/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-kde.py:291
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:204
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:573
-#: ../debian/tmp/usr/share/apport/apport-kde.py:291 ../gtk/apport-gtk.ui.h:9
-#: ../kde/apport-kde.py:291 ../gtk/apport-gtk.py:204 ../gtk/apport-gtk.py:573
 msgid "Show Details"
 msgstr "Ayrıntıları Göster"
 
@@ -70,21 +70,21 @@ msgstr "Ayrıntıları Göster"
 msgid "_Examine locally"
 msgstr "Yerel olarak _İncele"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:287
-#: ../debian/tmp/usr/share/apport/apport-kde.py:233 ../gtk/apport-gtk.ui.h:11
 #: ../kde/apport-kde.py:233 ../gtk/apport-gtk.py:287
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11 ../gtk/apport-gtk.ui.h:11
+#: ../debian/tmp/usr/share/apport/apport-kde.py:233
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:287
 msgid "Leave Closed"
 msgstr "Kapalı Bırak"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12
+#: ../kde/apport-kde.py:230 ../kde/apport-kde.py:243 ../gtk/apport-gtk.py:216
+#: ../gtk/apport-gtk.py:284 ../gtk/apport-gtk.py:303
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12 ../gtk/apport-gtk.ui.h:12
+#: ../debian/tmp/usr/share/apport/apport-kde.py:230
+#: ../debian/tmp/usr/share/apport/apport-kde.py:243
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:216
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:284
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:303
-#: ../debian/tmp/usr/share/apport/apport-kde.py:230
-#: ../debian/tmp/usr/share/apport/apport-kde.py:243 ../gtk/apport-gtk.ui.h:12
-#: ../kde/apport-kde.py:230 ../kde/apport-kde.py:243 ../gtk/apport-gtk.py:216
-#: ../gtk/apport-gtk.py:284 ../gtk/apport-gtk.py:303
 msgid "Continue"
 msgstr "Devam Et"
 
@@ -100,10 +100,9 @@ msgstr ""
 "Bilgi, bildirdiğiniz sorunun çözümünde geliştiricilere yardımı "
 "dokunabileceği için toplanıyor."
 
-#: ../bin/apport-cli.py:251 ../debian/tmp/usr/bin/apport-cli.py:251
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
-#: ../debian/tmp/usr/share/apport/apport-kde.py:434 ../gtk/apport-gtk.ui.h:15
-#: ../kde/apport-kde.py:434
+#: ../kde/apport-kde.py:434 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
+#: ../gtk/apport-gtk.ui.h:15 ../debian/tmp/usr/bin/apport-cli.py:251
+#: ../debian/tmp/usr/share/apport/apport-kde.py:434 ../bin/apport-cli.py:251
 msgid "Uploading problem information"
 msgstr "Sorun bilgileri yükleniyor"
 
@@ -111,9 +110,8 @@ msgstr "Sorun bilgileri yükleniyor"
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>Sorun bilgileri yükleniyor</b></big>"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17
-#: ../debian/tmp/usr/share/apport/apport-kde.py:435 ../gtk/apport-gtk.ui.h:17
-#: ../kde/apport-kde.py:435
+#: ../kde/apport-kde.py:435 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17
+#: ../gtk/apport-gtk.ui.h:17 ../debian/tmp/usr/share/apport/apport-kde.py:435
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -125,103 +123,103 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Apport çökme dosyası"
 
-#: ../bin/apport-cli.py:150 ../debian/tmp/usr/bin/apport-cli.py:150
+#: ../kde/apport-kde.py:362 ../gtk/apport-gtk.py:142
+#: ../debian/tmp/usr/bin/apport-cli.py:150
+#: ../debian/tmp/usr/share/apport/apport-kde.py:362 ../bin/apport-cli.py:150
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:142
-#: ../debian/tmp/usr/share/apport/apport-kde.py:362 ../kde/apport-kde.py:362
-#: ../gtk/apport-gtk.py:142
 msgid "(binary data)"
 msgstr "(ikili veri)"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:157 ../gtk/apport-gtk.py:157
+#: ../gtk/apport-gtk.py:157 ../debian/tmp/usr/share/apport/apport-gtk.py:157
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
 msgstr "Üzgünüz, %s uygulaması beklenmedik şekilde durdu."
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:160 ../gtk/apport-gtk.py:160
+#: ../gtk/apport-gtk.py:160 ../debian/tmp/usr/share/apport/apport-gtk.py:160
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Üzgünüz, %s beklenmedik bir şekilde kapandı."
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:165
+#: ../kde/apport-kde.py:199 ../kde/apport-kde.py:237 ../gtk/apport-gtk.py:165
 #: ../debian/tmp/usr/share/apport/apport-kde.py:199
-#: ../debian/tmp/usr/share/apport/apport-kde.py:237 ../kde/apport-kde.py:199
-#: ../kde/apport-kde.py:237 ../gtk/apport-gtk.py:165
+#: ../debian/tmp/usr/share/apport/apport-kde.py:237
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:165
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Üzgünüz, %s içsel bir hatayla karşılaştı."
 
-#: ../bin/apport-cli.py:178 ../debian/tmp/usr/bin/apport-cli.py:178
+#: ../kde/apport-kde.py:185 ../gtk/apport-gtk.py:177
+#: ../debian/tmp/usr/bin/apport-cli.py:178
+#: ../debian/tmp/usr/share/apport/apport-kde.py:185 ../bin/apport-cli.py:178
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:177
-#: ../debian/tmp/usr/share/apport/apport-kde.py:185 ../kde/apport-kde.py:185
-#: ../gtk/apport-gtk.py:177
 msgid "Send problem report to the developers?"
 msgstr "Hata raporu geliştiricilere gönderilsin mi?"
 
+#: ../kde/apport-kde.py:193 ../gtk/apport-gtk.py:186
+#: ../debian/tmp/usr/share/apport/apport-kde.py:193
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:186
-#: ../debian/tmp/usr/share/apport/apport-kde.py:193 ../kde/apport-kde.py:193
-#: ../gtk/apport-gtk.py:186
 msgid "Send"
 msgstr "Gönder"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:228 ../gtk/apport-gtk.py:228
+#: ../gtk/apport-gtk.py:228 ../debian/tmp/usr/share/apport/apport-gtk.py:228
 msgid "Force Closed"
 msgstr "Kapatmaya Zorla"
 
+#: ../kde/apport-kde.py:234 ../kde/apport-kde.py:380 ../gtk/apport-gtk.py:229
+#: ../gtk/apport-gtk.py:288 ../debian/tmp/usr/share/apport/apport-kde.py:234
+#: ../debian/tmp/usr/share/apport/apport-kde.py:380
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:229
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:288
-#: ../debian/tmp/usr/share/apport/apport-kde.py:234
-#: ../debian/tmp/usr/share/apport/apport-kde.py:380 ../kde/apport-kde.py:234
-#: ../kde/apport-kde.py:380 ../gtk/apport-gtk.py:229 ../gtk/apport-gtk.py:288
 msgid "Relaunch"
 msgstr "Yeniden başlat"
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:238 ../gtk/apport-gtk.py:238
+#: ../gtk/apport-gtk.py:238 ../debian/tmp/usr/share/apport/apport-gtk.py:238
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr "%s uygulaması yanıt vermeyi durdurdu."
 
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:242 ../gtk/apport-gtk.py:242
+#: ../gtk/apport-gtk.py:242 ../debian/tmp/usr/share/apport/apport-gtk.py:242
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr "\"%s\" programı yanıt vermeyi durdurdu."
 
+#: ../kde/apport-kde.py:207 ../gtk/apport-gtk.py:257
+#: ../debian/tmp/usr/share/apport/apport-kde.py:207
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:257
-#: ../debian/tmp/usr/share/apport/apport-kde.py:207 ../kde/apport-kde.py:207
-#: ../gtk/apport-gtk.py:257
 #, python-format
 msgid "Package: %s"
 msgstr "Paket: %s"
 
+#: ../kde/apport-kde.py:213 ../gtk/apport-gtk.py:264
+#: ../debian/tmp/usr/share/apport/apport-kde.py:213
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:264
-#: ../debian/tmp/usr/share/apport/apport-kde.py:213 ../kde/apport-kde.py:213
-#: ../gtk/apport-gtk.py:264
 msgid "Sorry, a problem occurred while installing software."
 msgstr "Üzgünüz, yazılım yüklenirken bir hatayla karşılaşıldı."
 
+#: ../kde/apport-kde.py:219 ../gtk/apport-gtk.py:273 ../gtk/apport-gtk.py:292
+#: ../debian/tmp/usr/share/apport/apport-kde.py:219
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:273
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:292
-#: ../debian/tmp/usr/share/apport/apport-kde.py:219 ../kde/apport-kde.py:219
-#: ../gtk/apport-gtk.py:273 ../gtk/apport-gtk.py:292
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "%s uygulaması bir iç hata ile karşılaştı."
 
+#: ../kde/apport-kde.py:222 ../gtk/apport-gtk.py:276
+#: ../debian/tmp/usr/share/apport/apport-kde.py:222
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:276
-#: ../debian/tmp/usr/share/apport/apport-kde.py:222 ../kde/apport-kde.py:222
-#: ../gtk/apport-gtk.py:276
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "%s yazılımı beklenmedik bir şekilde kapandı."
 
+#: ../kde/apport-kde.py:244 ../gtk/apport-gtk.py:304
+#: ../debian/tmp/usr/share/apport/apport-kde.py:244
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:304
-#: ../debian/tmp/usr/share/apport/apport-kde.py:244 ../kde/apport-kde.py:244
-#: ../gtk/apport-gtk.py:304
 msgid "Ignore future problems of this type"
 msgstr "İlerde oluşabilecek bu türden sorunları yok say"
 
+#: ../kde/apport-kde.py:288 ../gtk/apport-gtk.py:577
+#: ../debian/tmp/usr/share/apport/apport-kde.py:288
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:577
-#: ../debian/tmp/usr/share/apport/apport-kde.py:288 ../kde/apport-kde.py:288
-#: ../gtk/apport-gtk.py:577
 msgid "Hide Details"
 msgstr "Ayrıntıları Gizle"
 
@@ -234,24 +232,24 @@ msgstr "Kullanım: %s <rapor> <hedef dizin>"
 msgid "Destination directory exists and is not empty."
 msgstr "Hedef dizin zaten mevcut ve boş değil."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:314 ../kde/apport-kde.py:314
+#: ../kde/apport-kde.py:314 ../debian/tmp/usr/share/apport/apport-kde.py:314
 msgid "Username:"
 msgstr "Kullanıcı Adı:"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:315 ../kde/apport-kde.py:315
+#: ../kde/apport-kde.py:315 ../debian/tmp/usr/share/apport/apport-kde.py:315
 msgid "Password:"
 msgstr "Parola:"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:405 ../kde/apport-kde.py:405
+#: ../kde/apport-kde.py:405 ../debian/tmp/usr/share/apport/apport-kde.py:405
 msgid "Collecting Problem Information"
 msgstr "Sorun Bilgileri Toplanıyor"
 
-#: ../bin/apport-cli.py:238 ../debian/tmp/usr/bin/apport-cli.py:238
-#: ../debian/tmp/usr/share/apport/apport-kde.py:406 ../kde/apport-kde.py:406
+#: ../kde/apport-kde.py:406 ../debian/tmp/usr/bin/apport-cli.py:238
+#: ../debian/tmp/usr/share/apport/apport-kde.py:406 ../bin/apport-cli.py:238
 msgid "Collecting problem information"
 msgstr "Sorun bilgileri toplanıyor"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:407 ../kde/apport-kde.py:407
+#: ../kde/apport-kde.py:407 ../debian/tmp/usr/share/apport/apport-kde.py:407
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -259,7 +257,7 @@ msgstr ""
 "Toplanan bilgi, uygulamanın geliştirilmesi için geliştiricilere "
 "gönderilebilir. Bu, birkaç dakika sürebilir."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:433 ../kde/apport-kde.py:433
+#: ../kde/apport-kde.py:433 ../debian/tmp/usr/share/apport/apport-kde.py:433
 msgid "Uploading Problem Information"
 msgstr "Sorun Bilgileri Gönderiliyor"
 
@@ -352,7 +350,7 @@ msgstr ""
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Hata: %s yürütülebilir değil. Durduruluyor."
 
-#: ../data/kernel_oops.py:29 ../debian/tmp/usr/share/apport/kernel_oops.py:29
+#: ../debian/tmp/usr/share/apport/kernel_oops.py:29 ../data/kernel_oops.py:29
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Sisteminiz şimdi kararsız hale gelebilir ve yeniden başlatılması gerekebilir."
@@ -955,25 +953,25 @@ msgstr ""
 "Kalan işlem bitmesine çok yakın bir yerde takıldı ve normal bir biçimde "
 "tamamlanmış gibi görünecek."
 
-#: ../bin/apport-cli.py:74 ../debian/tmp/usr/bin/apport-cli.py:74
+#: ../debian/tmp/usr/bin/apport-cli.py:74 ../bin/apport-cli.py:74
 msgid "Press any key to continue..."
 msgstr "Devam etmek için bir tuşa basın..."
 
-#: ../bin/apport-cli.py:81 ../debian/tmp/usr/bin/apport-cli.py:81
+#: ../debian/tmp/usr/bin/apport-cli.py:81 ../bin/apport-cli.py:81
 msgid "What would you like to do? Your options are:"
 msgstr "Ne yapmak istersiniz? Seçenekleriniz:"
 
-#: ../bin/apport-cli.py:85 ../debian/tmp/usr/bin/apport-cli.py:85
+#: ../debian/tmp/usr/bin/apport-cli.py:85 ../bin/apport-cli.py:85
 #, python-format
 msgid "Please choose (%s):"
 msgstr "Lütfen seçin (%s):"
 
-#: ../bin/apport-cli.py:148 ../debian/tmp/usr/bin/apport-cli.py:148
+#: ../debian/tmp/usr/bin/apport-cli.py:148 ../bin/apport-cli.py:148
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i sekiz ikil)"
 
-#: ../bin/apport-cli.py:179 ../debian/tmp/usr/bin/apport-cli.py:179
+#: ../debian/tmp/usr/bin/apport-cli.py:179 ../bin/apport-cli.py:179
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -981,53 +979,53 @@ msgstr ""
 "Problem raporu gönderildikten sonra, lütfen web tarayıcınızda otomatik\n"
 "olarak açılan  sayfada yer alan formu doldurun."
 
-#: ../bin/apport-cli.py:182 ../debian/tmp/usr/bin/apport-cli.py:182
+#: ../debian/tmp/usr/bin/apport-cli.py:182 ../bin/apport-cli.py:182
 #, python-format
 msgid "&Send report (%s)"
 msgstr "Rapor &Gönder (%s)"
 
-#: ../bin/apport-cli.py:186 ../debian/tmp/usr/bin/apport-cli.py:186
+#: ../debian/tmp/usr/bin/apport-cli.py:186 ../bin/apport-cli.py:186
 msgid "&Examine locally"
 msgstr "Yerel olarak &İncele"
 
-#: ../bin/apport-cli.py:190 ../debian/tmp/usr/bin/apport-cli.py:190
+#: ../debian/tmp/usr/bin/apport-cli.py:190 ../bin/apport-cli.py:190
 msgid "&View report"
 msgstr "Rapor Görüntü&le"
 
-#: ../bin/apport-cli.py:191 ../debian/tmp/usr/bin/apport-cli.py:191
+#: ../debian/tmp/usr/bin/apport-cli.py:191 ../bin/apport-cli.py:191
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "&Rapor dosyasını, daha sonra gönderme veya başka bir yere kopyalanması için "
 "saklayın."
 
-#: ../bin/apport-cli.py:192 ../debian/tmp/usr/bin/apport-cli.py:192
+#: ../debian/tmp/usr/bin/apport-cli.py:192 ../bin/apport-cli.py:192
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr "Programın bu sürümünün gelecekteki çökmelerini iptal et ve &yoksay"
 
-#: ../bin/apport-cli.py:194 ../bin/apport-cli.py:271 ../bin/apport-cli.py:303
-#: ../bin/apport-cli.py:324 ../debian/tmp/usr/bin/apport-cli.py:194
+#: ../debian/tmp/usr/bin/apport-cli.py:194
 #: ../debian/tmp/usr/bin/apport-cli.py:271
 #: ../debian/tmp/usr/bin/apport-cli.py:303
-#: ../debian/tmp/usr/bin/apport-cli.py:324
+#: ../debian/tmp/usr/bin/apport-cli.py:324 ../bin/apport-cli.py:194
+#: ../bin/apport-cli.py:271 ../bin/apport-cli.py:303 ../bin/apport-cli.py:324
 msgid "&Cancel"
 msgstr "&Vazgeç"
 
-#: ../bin/apport-cli.py:222 ../debian/tmp/usr/bin/apport-cli.py:222
+#: ../debian/tmp/usr/bin/apport-cli.py:222 ../bin/apport-cli.py:222
 msgid "Problem report file:"
 msgstr "Sorun rapor dosyası:"
 
-#: ../bin/apport-cli.py:228 ../bin/apport-cli.py:233
 #: ../debian/tmp/usr/bin/apport-cli.py:228
-#: ../debian/tmp/usr/bin/apport-cli.py:233
+#: ../debian/tmp/usr/bin/apport-cli.py:233 ../bin/apport-cli.py:228
+#: ../bin/apport-cli.py:233
 msgid "&Confirm"
 msgstr "&Onayla"
 
-#: ../bin/apport-cli.py:232 ../debian/tmp/usr/bin/apport-cli.py:232
+#: ../debian/tmp/usr/bin/apport-cli.py:232 ../bin/apport-cli.py:232
 #, python-format
 msgid "Error: %s"
 msgstr "Hata: %s"
 
-#: ../bin/apport-cli.py:239 ../debian/tmp/usr/bin/apport-cli.py:239
+#: ../debian/tmp/usr/bin/apport-cli.py:239 ../bin/apport-cli.py:239
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -1036,7 +1034,7 @@ msgstr ""
 "gönderilebilir. \n"
 "Bu birkaç dakika sürebilir."
 
-#: ../bin/apport-cli.py:252 ../debian/tmp/usr/bin/apport-cli.py:252
+#: ../debian/tmp/usr/bin/apport-cli.py:252 ../bin/apport-cli.py:252
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -1044,40 +1042,40 @@ msgstr ""
 "Toplanan bilgiler hata takip sistemi için gönderiliyor.\n"
 "Bu birkaç dakika sürebilir."
 
-#: ../bin/apport-cli.py:302 ../debian/tmp/usr/bin/apport-cli.py:302
+#: ../debian/tmp/usr/bin/apport-cli.py:302 ../bin/apport-cli.py:302
 msgid "&Done"
 msgstr "&Bitti"
 
-#: ../bin/apport-cli.py:308 ../debian/tmp/usr/bin/apport-cli.py:308
+#: ../debian/tmp/usr/bin/apport-cli.py:308 ../bin/apport-cli.py:308
 msgid "none"
 msgstr "hiçbiri"
 
-#: ../bin/apport-cli.py:309 ../debian/tmp/usr/bin/apport-cli.py:309
+#: ../debian/tmp/usr/bin/apport-cli.py:309 ../bin/apport-cli.py:309
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "Seçili: %s. Birden fazla seçenek:"
 
-#: ../bin/apport-cli.py:325 ../debian/tmp/usr/bin/apport-cli.py:325
+#: ../debian/tmp/usr/bin/apport-cli.py:325 ../bin/apport-cli.py:325
 msgid "Choices:"
 msgstr "Seçenekler:"
 
-#: ../bin/apport-cli.py:339 ../debian/tmp/usr/bin/apport-cli.py:339
+#: ../debian/tmp/usr/bin/apport-cli.py:339 ../bin/apport-cli.py:339
 msgid "Path to file (Enter to cancel):"
 msgstr "Dosya yolu (Iptal etmek için girin):"
 
-#: ../bin/apport-cli.py:345 ../debian/tmp/usr/bin/apport-cli.py:345
+#: ../debian/tmp/usr/bin/apport-cli.py:345 ../bin/apport-cli.py:345
 msgid "File does not exist."
 msgstr "Dosya mevcut değil."
 
-#: ../bin/apport-cli.py:347 ../debian/tmp/usr/bin/apport-cli.py:347
+#: ../debian/tmp/usr/bin/apport-cli.py:347 ../bin/apport-cli.py:347
 msgid "This is a directory."
 msgstr "Bu bir dizin."
 
-#: ../bin/apport-cli.py:353 ../debian/tmp/usr/bin/apport-cli.py:353
+#: ../debian/tmp/usr/bin/apport-cli.py:353 ../bin/apport-cli.py:353
 msgid "To continue, you must visit the following URL:"
 msgstr "Devam etmek için, aşağıdaki URL'yi ziyaret etmelisiniz:"
 
-#: ../bin/apport-cli.py:355 ../debian/tmp/usr/bin/apport-cli.py:355
+#: ../debian/tmp/usr/bin/apport-cli.py:355 ../bin/apport-cli.py:355
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -1085,11 +1083,11 @@ msgstr ""
 "Şimdi tarayıcıda açabilirsiniz, ya da bu URL'yi başka bilgisayardaki bir "
 "tarayıcıya kopyalayabilirsiniz."
 
-#: ../bin/apport-cli.py:357 ../debian/tmp/usr/bin/apport-cli.py:357
+#: ../debian/tmp/usr/bin/apport-cli.py:357 ../bin/apport-cli.py:357
 msgid "Launch a browser now"
 msgstr "Tarayıcıyı aç"
 
-#: ../bin/apport-cli.py:371 ../debian/tmp/usr/bin/apport-cli.py:371
+#: ../debian/tmp/usr/bin/apport-cli.py:371 ../bin/apport-cli.py:371
 msgid "No pending crash reports. Try --help for more information."
 msgstr "Bekleyen çökme raporu yok. Daha fazla bilgi için --help 'i deneyin."
 
