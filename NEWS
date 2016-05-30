@@ -17,6 +17,9 @@ detailed list of changes, please see ChangeLog.
    fails. (LP: #1579897)
  * hookutils, attach_root_command_outputs(): Return str again, like before
    2.15.2. (LP: #1370259)
+ * Stop issuing "set architecture" gdb commands on ARM and Power; these only
+   applied to 32 bit platforms and are apparently not needed any more with
+   recent gdb versions. (LP: #1585702)
 
 2.20.1 (2016-03-31)
 -------------------

@@ -1514,14 +1514,6 @@ class Report(problem_report.ProblemReport):
                     'reports from foreign architectures. Results with "gdb" '
                     'will be very poor.\n')
 
-            # check for foreign architecture
-            arch = self.get('Uname', 'none').split()[-1]
-            if 'arm' in arch:
-                command += ['--ex', 'set architecture arm', '--ex', 'set gnutarget elf32-littlearm']
-            elif 'ppc' in arch:
-                command += ['--ex', 'set architecture powerpc:common', '--ex', 'set gnutarget elf32-powerpc']
-            # note, i386 vs. x86_64 is auto-detected just fine
-
         if sandbox:
             command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
                         '--ex', 'set solib-absolute-prefix ' + sandbox]
