@@ -20,6 +20,8 @@ detailed list of changes, please see ChangeLog.
  * Stop issuing "set architecture" gdb commands on ARM and Power; these only
    applied to 32 bit platforms and are apparently not needed any more with
    recent gdb versions. (LP: #1585702)
+ * Disable report.test_add_gdb_info_abort_libnih test case for now, as libnih
+   is broken under current Ubuntu (LP: #1580601)
 
 2.20.1 (2016-03-31)
 -------------------

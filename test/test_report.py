@@ -852,7 +852,8 @@ $0.bin 2>/dev/null
         self.assertTrue(pr['AssertionMessage'].startswith('ERROR:<stdin>:2:main: assertion failed (1 < 0):'),
                         pr['AssertionMessage'])
 
-    def test_add_gdb_info_abort_libnih(self):
+    # disabled: __nih_abort_msg symbol not available (LP: #1580601)
+    def disabled_test_add_gdb_info_abort_libnih(self):
         '''add_gdb_info() with libnih assertion'''
         (fd, script) = tempfile.mkstemp()
         assert not os.path.exists('core')
