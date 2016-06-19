@@ -22,12 +22,4 @@ sed -i "s/(UNRELEASED)/$(date '+(%Y-%m-%d)')/" NEWS
 bzr commit -m "release $version"
 bzr tag "$version"
 
-TZ=Etc/UTC bzr log -v --log-format 'gnu' > ChangeLog
-
-# temporarily add ChangeLog for export
-bzr add ChangeLog
-bzr commit -m 'temporarily add changelog'
 bzr export ../apport-${version}.tar.gz
-bzr uncommit --force
-bzr revert --no-backup
-rm ChangeLog
