@@ -53,6 +53,8 @@ class T(unittest.TestCase):
         self.assertRaises(TypeError, pr.__setitem__, 'a', 1)
         self.assertRaises(TypeError, pr.__setitem__, 'a', (1,))
         self.assertRaises(TypeError, pr.__setitem__, 'a', ('/tmp/nonexistant', ''))
+        self.assertRaises(TypeError, pr.__setitem__, 'a', ('/tmp/nonexistant', False, 0, True, 'bogus'))
+        self.assertRaises(TypeError, pr.__setitem__, 'a', ['/tmp/nonexistant'])
         self.assertRaises(KeyError, pr.__getitem__, 'Nonexistant')
 
     def test_compressed_values(self):

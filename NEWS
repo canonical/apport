@@ -1,6 +1,12 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.20.3 (UNRELEASED)
+-------------------
+ * problem_report.py: Fail with proper exception when trying to assign a list
+   to a report key, or when trying to assing a tuple with more than 4 entries.
+   (LP: #1596713)
+
 2.20.2 (2016-06-19)
 -------------------
  * problem_report.py: Make assertion of invalid key names more verbose.
