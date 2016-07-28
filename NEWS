@@ -6,6 +6,8 @@ detailed list of changes, please see ChangeLog.
  * problem_report.py: Fail with proper exception when trying to assign a list
    to a report key, or when trying to assing a tuple with more than 4 entries.
    (LP: #1596713)
+ * test_backend_apt_dpkg.py: Install GPG key for ddebs.ubuntu.com to avoid apt
+   authentication errors.
 
 2.20.2 (2016-06-19)
 -------------------

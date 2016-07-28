@@ -535,7 +535,7 @@ deb http://secondary.mirror tuxy extra
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
-                         ['armhf', 'codename', 'sources.list'])
+                         ['armhf', 'codename', 'sources.list', 'trusted.gpg.d'])
         self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
                          ['sources.list'])
 
@@ -629,7 +629,7 @@ deb http://secondary.mirror tuxy extra
         # does not clobber config dir
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
-                         ['armhf', 'codename', 'sources.list'])
+                         ['armhf', 'codename', 'sources.list', 'trusted.gpg.d'])
         self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
                          ['sources.list'])
 
@@ -1089,6 +1089,13 @@ deb http://secondary.mirror tuxy extra
                 f.write('deb http://ddebs.ubuntu.com/ %s-updates main\n' % release)
         with open(os.path.join(self.configdir, 'Foonux 1.2', 'codename'), 'w') as f:
             f.write('%s' % release)
+
+        # install GPG key for ddebs
+        keyring_dir = os.path.join(self.configdir, 'Foonux 1.2', 'trusted.gpg.d')
+        os.makedirs(keyring_dir, exist_ok=True)
+        subprocess.check_call(['apt-key', '--keyring', os.path.join(keyring_dir, 'ddebs.ubuntu.com.gpg'),
+                               'adv', '--quiet', '--keyserver', 'keyserver.ubuntu.com', '--recv-key', 'C8CAB6595FDFF622'],
+                              stdout=subprocess.DEVNULL)
 
     def assert_elf_arch(self, path, expected):
         '''Assert that an ELF file is for an expected machine type.
