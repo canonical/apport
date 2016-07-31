@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.30.4 (UNRELEASED)
+-------------------
+ * test_backend_apt_dpkg.py: Move tests from Ubuntu 15.10 "wily" (which is EOL
+   now) to 16.04 LTS "xenial".
+
 2.20.3 (2016-07-28)
 -------------------
  * problem_report.py: Fail with proper exception when trying to assign a list
