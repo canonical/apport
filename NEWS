@@ -5,6 +5,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * test_backend_apt_dpkg.py: Move tests from Ubuntu 15.10 "wily" (which is EOL
    now) to 16.04 LTS "xenial".
+ * packaging-apt-dpkg.py: Explicitly set Dir::State::Status to the host
+   dpkg status file for get_source_tree(), to work with apt 1.3~pre4.
 
 2.20.3 (2016-07-28)
 -------------------

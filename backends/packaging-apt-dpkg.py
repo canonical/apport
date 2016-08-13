@@ -557,6 +557,7 @@ class __AptDpkgPackageInfo(PackageInfo):
         if sandbox:
             f = tempfile.NamedTemporaryFile()
             f.write(('''Dir "%s";
+Dir::State::Status "/var/lib/dpkg/status";
 Debug::NoLocking "true";
  ''' % sandbox).encode())
             f.flush()
