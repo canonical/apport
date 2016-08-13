@@ -11,6 +11,8 @@ detailed list of changes, please see ChangeLog.
    of "direct". The latter never really worked, but APT did not complain about
    it.
  * data/iwlwifi_error_dump: Fix add_package() call.
+ * hookutils.py, attach_mac_events(): Only attach /proc/version_signature if
+   that actually exists.
 
 2.20.3 (2016-07-28)
 -------------------

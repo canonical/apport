@@ -57,7 +57,7 @@ def attach_file_if_exists(report, path, key=None, overwrite=True, force_unicode=
     new key with '_' appended will be added instead.
 
     If the contents is valid UTF-8, or force_unicode is True, then the value
-    will a string, otherwise it will be bytes.
+    will be a string, otherwise it will be bytes.
     '''
     if not key:
         key = path_to_key(path)
@@ -360,7 +360,7 @@ def command_available(command):
 
 def command_output(command, input=None, stderr=subprocess.STDOUT,
                    keep_locale=False, decode_utf8=True):
-    '''Try to execute given command (array) and return its stdout.
+    '''Try to execute given command (list) and return its stdout.
 
     In case of failure, a textual error gets returned. This function forces
     LC_MESSAGES to C, to avoid translated output in bug reports.
@@ -399,7 +399,7 @@ def _root_command_prefix():
 
 
 def root_command_output(command, input=None, stderr=subprocess.STDOUT, decode_utf8=True):
-    '''Try to execute given command (array) as root and return its stdout.
+    '''Try to execute given command (list) as root and return its stdout.
 
     This passes the command through pkexec, unless the caller is already root.
 
@@ -715,7 +715,7 @@ def attach_mac_events(report, profiles=None):
     if 'AuditLog' not in report and os.path.exists('/var/run/auditd.pid'):
         attach_root_command_outputs(report, {'AuditLog': 'egrep "' + mac_regex + '" /var/log/audit/audit.log'})
 
-    attach_file(report, '/proc/version_signature', 'ProcVersionSignature')
+    attach_file_if_exists(report, '/proc/version_signature', 'ProcVersionSignature')
     attach_file(report, '/proc/cmdline', 'ProcCmdline')
 
     for match in re.findall(aa_re, report.get('KernLog', '') + report.get('AuditLog', '')):
