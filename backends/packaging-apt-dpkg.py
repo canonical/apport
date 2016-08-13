@@ -750,8 +750,8 @@ Debug::NoLocking "true";
         apt.apt_pkg.config.set('APT::Architecture', architecture)
         apt.apt_pkg.config.set('Acquire::Languages', 'none')
         # directly connect to Launchpad when downloading deb files
-        apt.apt_pkg.config.set('Acquire::http::Proxy::api.launchpad.net', 'direct')
-        apt.apt_pkg.config.set('Acquire::http::Proxy::launchpad.net', 'direct')
+        apt.apt_pkg.config.set('Acquire::http::Proxy::api.launchpad.net', 'DIRECT')
+        apt.apt_pkg.config.set('Acquire::http::Proxy::launchpad.net', 'DIRECT')
 
         if verbose:
             fetchProgress = apt.progress.text.AcquireProgress()
