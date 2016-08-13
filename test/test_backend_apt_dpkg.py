@@ -536,8 +536,8 @@ deb http://secondary.mirror tuxy extra
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
                          ['armhf', 'codename', 'sources.list', 'trusted.gpg.d'])
-        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
-                         ['sources.list'])
+        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))),
+                         ['sources.list', 'trusted.gpg.d'])
 
         # caches packages, and their versions are as expected
         cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
@@ -628,8 +628,8 @@ deb http://secondary.mirror tuxy extra
         self.assertEqual(os.listdir(self.configdir), ['Foonux 1.2'])
         self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2'))),
                          ['armhf', 'codename', 'sources.list', 'trusted.gpg.d'])
-        self.assertEqual(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf')),
-                         ['sources.list'])
+        self.assertEqual(sorted(os.listdir(os.path.join(self.configdir, 'Foonux 1.2', 'armhf'))),
+                         ['sources.list', 'trusted.gpg.d'])
 
         # no cache
         self.assertEqual(os.listdir(self.cachedir), [])
@@ -1097,6 +1097,12 @@ deb http://secondary.mirror tuxy extra
         subprocess.check_call(['apt-key', '--keyring', os.path.join(keyring_dir, 'ddebs.ubuntu.com.gpg'),
                                'adv', '--quiet', '--keyserver', 'keyserver.ubuntu.com', '--recv-key', 'C8CAB6595FDFF622'],
                               stdout=subprocess.DEVNULL)
+
+        # Create an architecture specific symlink, otherwise it cannot be
+        # found for armhf in __AptDpkgPackageInfo._build_apt_sandbox() as
+        # that looks for trusted.gpg.d relative to sources.list.
+        keyring_arch_dir = os.path.join(self.configdir, 'Foonux 1.2', 'armhf', 'trusted.gpg.d')
+        os.symlink("../trusted.gpg.d", keyring_arch_dir)
 
     def assert_elf_arch(self, path, expected):
         '''Assert that an ELF file is for an expected machine type.
