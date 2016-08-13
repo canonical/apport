@@ -24,7 +24,7 @@ if not os.path.exists(sysfs_path):
     sys.exit(1)
 
 pr = apport.Report('KernelCrash')
-apport.add_package(apport.packaging.get_kernel_package())
+pr.add_package(apport.packaging.get_kernel_package())
 pr['Title'] = 'iwlwifi firmware error'
 pr.add_os_info()
 

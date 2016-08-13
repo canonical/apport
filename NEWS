@@ -10,6 +10,7 @@ detailed list of changes, please see ChangeLog.
  * packaging-apt-dpkg.py: Change the proxy settings to use "DIRECT" instead
    of "direct". The latter never really worked, but APT did not complain about
    it.
+ * data/iwlwifi_error_dump: Fix add_package() call.
 
 2.20.3 (2016-07-28)
 -------------------
