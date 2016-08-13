@@ -715,7 +715,10 @@ deb http://secondary.mirror tuxy extra
             self.fail('install_packages() unexpectedly succeeded with broken server URL')
         except SystemError as e:
             self.assertIn('nosuchdistro', str(e))
-            self.assertIn('index files failed to download', str(e))
+            try:
+                self.assertRegex(str(e), ".*'http://archive.ubuntu.com/nosuchdistro trusty.*' does not have a Release file")
+            except AssertionError:
+                self.assertIn('index files failed to download', str(e))
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_permanent_sandbox(self):
