@@ -15,6 +15,8 @@ detailed list of changes, please see ChangeLog.
    that actually exists.
  * test/test_report.py: Slightly relax stack trace checks to also work with
    glibc 2.24.
+ * apport-gtk: Specify module version with GI imports to avoid warnings. Thanks
+   Anatoly Techtonik. (LP: #1502173)
 
 2.20.3 (2016-07-28)
 -------------------

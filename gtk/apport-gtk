@@ -2,7 +2,7 @@
 
 '''GTK Apport user interface.'''
 
-# Copyright (C) 2007-2012 Canonical Ltd.
+# Copyright (C) 2007-2016 Canonical Ltd.
 # Author: Martin Pitt <martin.pitt@ubuntu.com>
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -13,6 +13,9 @@
 
 import os.path, sys, subprocess, os, re
 
+import gi
+gi.require_version('Wnck', '3.0')
+gi.require_version('GdkX11', '3.0')
 from gi.repository import GLib, Wnck, GdkX11, Gdk
 Gdk  # pyflakes; needed for GdkX11
 try:

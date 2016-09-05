@@ -18,6 +18,10 @@ import imp
 import apport
 import shutil
 import subprocess
+
+import gi
+gi.require_version('Gtk', '3.0')
+
 from gi.repository import GLib, Gtk
 from apport import unicode_gettext as _
 from unittest.mock import patch
