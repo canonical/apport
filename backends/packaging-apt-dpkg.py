@@ -13,6 +13,7 @@ This is used on Debian and derivatives such as Ubuntu.
 # the full text of the license.
 
 import subprocess, os, glob, stat, sys, tempfile, shutil, time
+import errno
 import hashlib
 import json
 
@@ -1221,9 +1222,25 @@ Debug::NoLocking "true";
 
             # zgrep is magnitudes faster than a 'gzip.open/split() loop'
             package = None
-            zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
-                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out = zgrep.communicate()[0].decode('UTF-8')
+            try:
+                zgrep = subprocess.Popen(['zgrep', '-m1', '^%s[[:space:]]' % file, map],
+                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                out = zgrep.communicate()[0].decode('UTF-8')
+            except OSError as e:
+                if e.errno != errno.ENOMEM:
+                    raise
+                import gzip
+                with gzip.open('%s' % map, 'rb') as contents:
+                    out = ''
+                    for line in contents:
+                        try:
+                            line = line.decode('UTF-8').rstrip('\n')
+                        # 2016-11-01 this should be better
+                        except UnicodeDecodeError:
+                            continue
+                        if line.startswith(file):
+                            out = line
+                            break
             # we do not check the return code, since zgrep -m1 often errors out
             # with 'stdout: broken pipe'
             if out:
