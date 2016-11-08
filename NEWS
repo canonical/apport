@@ -18,6 +18,9 @@ detailed list of changes, please see ChangeLog.
  * apport-gtk: Specify module version with GI imports to avoid warnings. Thanks
    Anatoly Techtonik. (LP: #1502173)
  * test/run: Prefer pycodestyle over pep8.
+ * backends/packaging-apt-dpkg.py: provide a fallback method if using zgrep to
+   search for a file in Contents.gz fails due to a lack of memory.  Thanks
+   Brian Murray.
 
 2.20.3 (2016-07-28)
 -------------------
