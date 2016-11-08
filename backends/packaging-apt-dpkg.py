@@ -1229,16 +1229,12 @@ Debug::NoLocking "true";
             except OSError as e:
                 if e.errno != errno.ENOMEM:
                     raise
+                file_b = file.encode()
                 import gzip
                 with gzip.open('%s' % map, 'rb') as contents:
                     out = ''
                     for line in contents:
-                        try:
-                            line = line.decode('UTF-8').rstrip('\n')
-                        # 2016-11-01 this should be better
-                        except UnicodeDecodeError:
-                            continue
-                        if line.startswith(file):
+                        if line.startswith(file_b):
                             out = line
                             break
             # we do not check the return code, since zgrep -m1 often errors out
