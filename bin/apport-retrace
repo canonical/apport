@@ -266,8 +266,7 @@ else:
                  options.report)
 
 if options.core_file:
-    with open(options.core_file, 'rb') as f:
-        report['CoreDump'] = f.read()
+    report['CoreDump'] = (os.path.abspath(options.core_file),)
 if options.executable:
     report['ExecutablePath'] = options.executable
 if options.procmaps:

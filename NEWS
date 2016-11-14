@@ -21,6 +21,8 @@ detailed list of changes, please see ChangeLog.
  * backends/packaging-apt-dpkg.py: provide a fallback method if using zgrep to
    search for a file in Contents.gz fails due to a lack of memory.  Thanks
    Brian Murray.
+ * bin/apport-retrace: When --core-file is used instead of loading the core
+   file and adding it to the apport report just pass the file reference to gdb.
 
 2.20.3 (2016-07-28)
 -------------------
