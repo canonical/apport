@@ -687,5 +687,6 @@ databases = {
         finally:
             os.unlink(db)
 
+
 if __name__ == '__main__':
     unittest.main()

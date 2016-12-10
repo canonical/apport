@@ -140,27 +140,27 @@ class ProblemReport(UserDict):
                     continue
                 assert (key is not None and value is not None)
                 if b64_block:
-                    l = base64.b64decode(line)
+                    block = base64.b64decode(line)
                     if bd:
-                        value += bd.decompress(l)
+                        value += bd.decompress(block)
                     else:
                         if binary == 'compressed':
                             # check gzip header; if absent, we have legacy zlib
                             # data
-                            if value.gzipvalue == b'' and not l.startswith(b'\037\213\010'):
+                            if value.gzipvalue == b'' and not block.startswith(b'\037\213\010'):
                                 value.legacy_zlib = True
-                            value.gzipvalue += l
+                            value.gzipvalue += block
                         else:
                             # lazy initialization of bd
                             # skip gzip header, if present
-                            if l.startswith(b'\037\213\010'):
+                            if block.startswith(b'\037\213\010'):
                                 bd = zlib.decompressobj(-zlib.MAX_WBITS)
-                                value = bd.decompress(self._strip_gzip_header(l))
+                                value = bd.decompress(self._strip_gzip_header(block))
                             else:
                                 # legacy zlib-only format used default block
                                 # size
                                 bd = zlib.decompressobj()
-                                value += bd.decompress(l)
+                                value += bd.decompress(block)
                 else:
                     if len(value) > 0:
                         value += b'\n'
@@ -243,20 +243,20 @@ class ProblemReport(UserDict):
                                 if line.startswith(b' '):
                                     assert (key is not None and value is not None)
                                     if b64_block[key]:
-                                        l = base64.b64decode(line)
+                                        block = base64.b64decode(line)
                                         if bd:
-                                            out.write(bd.decompress(l))
+                                            out.write(bd.decompress(block))
                                         else:
                                             # lazy initialization of bd
                                             # skip gzip header, if present
-                                            if l.startswith(b'\037\213\010'):
+                                            if block.startswith(b'\037\213\010'):
                                                 bd = zlib.decompressobj(-zlib.MAX_WBITS)
-                                                out.write(bd.decompress(self._strip_gzip_header(l)))
+                                                out.write(bd.decompress(self._strip_gzip_header(block)))
                                             else:
                                                 # legacy zlib-only format used default block
                                                 # size
                                                 bd = zlib.decompressobj()
-                                                out.write(bd.decompress(l))
+                                                out.write(bd.decompress(block))
                                 else:
                                     break
                     except IOError:

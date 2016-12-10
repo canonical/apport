@@ -91,6 +91,7 @@ Do you want to continue the report process anyway?
         report['JournalErrors'] = apport.hookutils.command_output(
             ['journalctl', '-b', '--priority=warning', '--lines=1000'])
 
+
 if __name__ == '__main__':
     r = {}
     add_info(r, None)

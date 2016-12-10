@@ -2246,5 +2246,6 @@ No symbol table info available.
         del r['Date']
         self.assertEqual(r.get_timestamp(), None)
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -24,6 +24,7 @@ def mkattrname(path):
             name += ''.join([c for c in dir[0].upper() + dir[1:] if c.isalnum()])
     return name
 
+
 #
 # main
 #

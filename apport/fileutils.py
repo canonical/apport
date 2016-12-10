@@ -338,6 +338,7 @@ def get_config(section, setting, default=None, path=None, bool=False):
     except (NoOptionError, NoSectionError):
         return default
 
+
 get_config.config = None
 
 

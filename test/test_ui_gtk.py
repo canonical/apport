@@ -949,4 +949,5 @@ Type=Application''')
 
         self.assertEqual(self.app.ui_start_upload_progress.call_count, 0)
 
+
 unittest.main()

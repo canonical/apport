@@ -1467,4 +1467,5 @@ Debug::NoLocking "true";
 
         return self._distro_name
 
+
 impl = __AptDpkgPackageInfo()

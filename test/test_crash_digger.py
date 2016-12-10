@@ -217,4 +217,5 @@ echo ApportRetraceError >&2''')
         self.assertNotIn('Traceback', err)
         self.assertIn('nonexisting', err)
 
+
 unittest.main()

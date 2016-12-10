@@ -101,6 +101,7 @@ def do_report(pid, blacklist):
     except (IOError, OSError) as e:
         apport.fatal('Cannot create report: ' + str(e))
 
+
 #
 # main
 #

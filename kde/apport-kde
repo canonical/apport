@@ -66,6 +66,7 @@ def translate(self, prop):
         text = prop.text.encode('UTF-8')
         return _(text)
 
+
 uic.properties.Properties._string = translate
 
 
@@ -512,6 +513,7 @@ class MainUserInterface(apport.ui.UserInterface):
         if len(username) == 0 or len(password) == 0:
             return None
         return (username, password)
+
 
 if __name__ == '__main__':
     if not os.environ.get('DISPLAY'):

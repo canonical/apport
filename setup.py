@@ -78,6 +78,7 @@ class install_fix_hashbangs(DistUtilsExtra.auto.install_auto):
                             for l in lines:
                                 fd.write(l)
 
+
 #
 # main
 #

@@ -143,15 +143,15 @@ class CLIUserInterface(apport.ui.UserInterface):
                     hasattr(self.report[key], 'isspace') and \
                     not self.report._is_binary(self.report[key]) and \
                     keylen < max_show:
-                l = self.report[key]
+                s = self.report[key]
             elif keylen >= max_show:
-                l = _('(%i bytes)') % keylen
+                s = _('(%i bytes)') % keylen
             else:
-                l = _('(binary data)')
+                s = _('(binary data)')
 
-            if isinstance(l, bytes):
-                l = l.decode('UTF-8', errors='ignore')
-            details += l
+            if isinstance(s, bytes):
+                s = s.decode('UTF-8', errors='ignore')
+            details += s
             details += '\n\n'
 
         return details
@@ -364,6 +364,7 @@ class CLIUserInterface(apport.ui.UserInterface):
             return True
 
         subprocess.call(command, shell=True)
+
 
 if __name__ == '__main__':
     app = CLIUserInterface()

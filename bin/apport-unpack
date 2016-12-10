@@ -21,6 +21,7 @@ import problem_report
 def help():
     print(_('Usage: %s <report> <target directory>') % sys.argv[0])
 
+
 if sys.version[0] < '3':
     t_str = unicode
 else:

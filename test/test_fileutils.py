@@ -396,5 +396,6 @@ f6423dfbc4faf022e58b4d3f5ff71a70  %s
         self.assertFalse(apport.fileutils.links_with_shared_library('/etc', 'libc'))
         self.assertFalse(apport.fileutils.links_with_shared_library('/etc/passwd', 'libc'))
 
+
 if __name__ == '__main__':
     unittest.main()

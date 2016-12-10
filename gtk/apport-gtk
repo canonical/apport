@@ -590,6 +590,7 @@ class GTKUserInterface(apport.ui.UserInterface):
         sys.exit(0)
         return True
 
+
 if __name__ == '__main__':
     if not have_display:
         apport.fatal('This program needs a running X session. Please see "man apport-cli" for a command line version of Apport.')

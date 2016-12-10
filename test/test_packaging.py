@@ -26,4 +26,5 @@ class T(unittest.TestCase):
         (n2, v2) = apport.packaging.get_os_version()
         self.assertEqual((n, v), (n2, v2))
 
+
 unittest.main()

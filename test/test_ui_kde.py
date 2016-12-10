@@ -592,6 +592,7 @@ Type=Application''')
         self.assertFalse(self.app.dialog.send_error_report.isVisible())
         self.assertFalse(self.app.dialog.send_error_report.isChecked())
 
+
 app = QApplication(sys.argv)
 app.applicationName = 'apport-kde'
 app.applicationDisplayName = _('Apport')

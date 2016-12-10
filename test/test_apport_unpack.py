@@ -113,4 +113,5 @@ class T(unittest.TestCase):
         with open(os.path.join(self.unpack_dir, fname), 'rb') as f:
             return f.read()
 
+
 unittest.main()

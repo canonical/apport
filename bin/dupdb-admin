@@ -56,6 +56,7 @@ def command_publish(crashdb, opts, args):
         apport.fatal('publish needs exactly one argument (use --help for a short help)')
     crashdb.duplicate_db_publish(args[0])
 
+
 #
 # main
 #

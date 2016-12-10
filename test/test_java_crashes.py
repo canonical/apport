@@ -78,6 +78,7 @@ class T(unittest.TestCase):
         self.assertTrue('DistroRelease' in r)
         self.assertTrue('ProcCwd' in r)
 
+
 #
 # main
 #

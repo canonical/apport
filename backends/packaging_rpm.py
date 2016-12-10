@@ -269,4 +269,5 @@ class RPMPackageInfo:
         m.update(data)
         return (filemd5 == m.hexdigest())
 
+
 impl = RPMPackageInfo()

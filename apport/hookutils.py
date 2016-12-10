@@ -253,14 +253,14 @@ def attach_hardware(report):
     report['UdevDb'] = command_output(['udevadm', 'info', '--export-db'])
 
     # anonymize partition labels
-    l = report['UdevDb']
-    l = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', l)
-    l = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', l)
-    l = re.sub('by-label/(.*)', 'by-label/<hidden>', l)
-    l = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', l)
-    l = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', l)
-    l = re.sub('by-label/(.*)', 'by-label/<hidden>', l)
-    report['UdevDb'] = l
+    labels = report['UdevDb']
+    labels = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', labels)
+    labels = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', labels)
+    labels = re.sub('by-label/(.*)', 'by-label/<hidden>', labels)
+    labels = re.sub('ID_FS_LABEL=(.*)', 'ID_FS_LABEL=<hidden>', labels)
+    labels = re.sub('ID_FS_LABEL_ENC=(.*)', 'ID_FS_LABEL_ENC=<hidden>', labels)
+    labels = re.sub('by-label/(.*)', 'by-label/<hidden>', labels)
+    report['UdevDb'] = labels
 
     attach_dmi(report)
 
@@ -523,6 +523,7 @@ def xsession_errors(pattern=None):
             if pattern.search(line):
                 lines += line
     return lines
+
 
 PCI_MASS_STORAGE = 0x01
 PCI_NETWORK = 0x02
@@ -818,8 +819,8 @@ def nonfree_kernel_modules(module_list='/proc/modules'):
 
     nonfree = []
     for m in mods:
-        l = _get_module_license(m)
-        if l and not ('GPL' in l or 'BSD' in l or 'MPL' in l or 'MIT' in l):
+        s = _get_module_license(m)
+        if s and not ('GPL' in s or 'BSD' in s or 'MPL' in s or 'MIT' in s):
             nonfree.append(m)
 
     return nonfree
@@ -869,10 +870,10 @@ def in_session_of_problem(report):
     if not session_id:
         # fall back to reading cgroup
         with open('/proc/self/cgroup') as f:
-            for l in f:
-                l = l.strip()
-                if 'name=systemd:' in l and l.endswith('.scope') and '/session-' in l:
-                    session_id = l.split('/session-', 1)[1][:-6]
+            for line in f:
+                line = line.strip()
+                if 'name=systemd:' in line and line.endswith('.scope') and '/session-' in line:
+                    session_id = line.split('/session-', 1)[1][:-6]
                     break
             else:
                 return None

@@ -144,11 +144,11 @@ def get_code(srcdir, filename, line, context=5):
     format = '  %%%ii: %%s' % len(str(line + context))
 
     with open(files[0], 'rb') as f:
-        for l in f:
-            l = l.decode('UTF8', errors='replace')
+        for ln in f:
+            ln = ln.decode('UTF8', errors='replace')
             lineno += 1
             if lineno >= line - context and lineno <= line + context:
-                result += format % (lineno, l)
+                result += format % (lineno, ln)
 
     return result
 
@@ -203,6 +203,7 @@ def print_traces(report):
     if 'StacktraceSource' in report:
         print('--- source code stack trace ---')
         print(report['StacktraceSource'])
+
 
 #
 # main

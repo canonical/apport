@@ -939,6 +939,7 @@ CoreDump: base64
         self.assertTrue('\n#2' in r.get('Stacktrace', ''),
                         r.get('Stacktrace', 'no Stacktrace field'))
 
+
 #
 # main
 #

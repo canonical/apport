@@ -42,6 +42,7 @@ def excstr(exception):
         return str(exception).decode(locale.getpreferredencoding(), 'replace')
     return str(exception)
 
+
 symptom_script_dir = os.environ.get('APPORT_SYMPTOMS_DIR',
                                     '/usr/share/apport/symptoms')
 PF_KTHREAD = 0x200000

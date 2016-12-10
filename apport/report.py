@@ -381,9 +381,9 @@ class Report(problem_report.ProblemReport):
 
         # first, determine process name
         name = None
-        for l in self['ProcStatus'].splitlines():
+        for line in self['ProcStatus'].splitlines():
             try:
-                (k, v) = l.split('\t', 1)
+                (k, v) = line.split('\t', 1)
             except ValueError:
                 continue
             if k == 'Name:':
@@ -590,13 +590,13 @@ class Report(problem_report.ProblemReport):
         if env.startswith('Error:'):
             self['ProcEnviron'] = env
         else:
-            for l in env.split('\0'):
-                if l.split('=', 1)[0] in safe_vars:
+            for line in env.split('\0'):
+                if line.split('=', 1)[0] in safe_vars:
                     if self['ProcEnviron']:
                         self['ProcEnviron'] += '\n'
-                    self['ProcEnviron'] += l
-                elif l.startswith('PATH='):
-                    p = l.split('=', 1)[1]
+                    self['ProcEnviron'] += line
+                elif line.startswith('PATH='):
+                    p = line.split('=', 1)[1]
                     if '/home' in p or '/tmp' in p:
                         if self['ProcEnviron']:
                             self['ProcEnviron'] += '\n'
@@ -605,20 +605,20 @@ class Report(problem_report.ProblemReport):
                         if self['ProcEnviron']:
                             self['ProcEnviron'] += '\n'
                         self['ProcEnviron'] += 'PATH=(custom, no user)'
-                elif l.startswith('XDG_RUNTIME_DIR='):
+                elif line.startswith('XDG_RUNTIME_DIR='):
                     if self['ProcEnviron']:
                         self['ProcEnviron'] += '\n'
                     self['ProcEnviron'] += 'XDG_RUNTIME_DIR=<set>'
-                elif l.startswith('LD_PRELOAD='):
+                elif line.startswith('LD_PRELOAD='):
                     if self['ProcEnviron']:
                         self['ProcEnviron'] += '\n'
                     self['ProcEnviron'] += 'LD_PRELOAD=<set>'
-                elif l.startswith('LD_LIBRARY_PATH='):
+                elif line.startswith('LD_LIBRARY_PATH='):
                     if self['ProcEnviron']:
                         self['ProcEnviron'] += '\n'
                     self['ProcEnviron'] += 'LD_LIBRARY_PATH=<set>'
-                elif l.startswith('XDG_CURRENT_DESKTOP='):
-                    self['CurrentDesktop'] = l.split('=', 1)[1]
+                elif line.startswith('XDG_CURRENT_DESKTOP='):
+                    self['CurrentDesktop'] = line.split('=', 1)[1]
 
     def add_kernel_crash_info(self, debugdir=None):
         '''Add information from kernel crash.
@@ -1082,8 +1082,8 @@ class Report(problem_report.ProblemReport):
     def stacktrace_top_function(self):
         '''Return topmost function in StacktraceTop'''
 
-        for l in self.get('StacktraceTop', '').splitlines():
-            fname = l.split('(')[0].strip()
+        for line in self.get('StacktraceTop', '').splitlines():
+            fname = line.split('(')[0].strip()
             if fname != '??':
                 return fname
 
@@ -1224,10 +1224,10 @@ class Report(problem_report.ProblemReport):
         '''Return list of obsolete packages in Package and Dependencies.'''
 
         obsolete = []
-        for l in (self.get('Package', '') + '\n' + self.get('Dependencies', '')).splitlines():
-            if not l:
+        for line in (self.get('Package', '') + '\n' + self.get('Dependencies', '')).splitlines():
+            if not line:
                 continue
-            pkg, ver = l.split()[:2]
+            pkg, ver = line.split()[:2]
             avail = packaging.get_available_version(pkg)
             if ver is not None and ver != 'None' and avail is not None and packaging.compare_versions(ver, avail) < 0:
                 obsolete.append(pkg)
@@ -1309,8 +1309,8 @@ class Report(problem_report.ProblemReport):
                 return None
 
             loc_re = re.compile('^\s+File "([^"]+).*line (\d+).*\sin (.*)$')
-            for l in trace:
-                m = loc_re.match(l)
+            for line in trace:
+                m = loc_re.match(line)
                 if m:
                     # if we have a function name, use this; for a a crash
                     # outside of a function/method, fall back to the source
@@ -1606,10 +1606,10 @@ class Report(problem_report.ProblemReport):
         # determine cgroup
         try:
             with open('/proc/%s/cgroup' % pid) as f:
-                for l in f:
-                    l = l.strip()
-                    if 'name=systemd:' in l and l.endswith('.scope') and '/session-' in l:
-                        my_session = l.split('/session-', 1)[1][:-6]
+                for line in f:
+                    line = line.strip()
+                    if 'name=systemd:' in line and line.endswith('.scope') and '/session-' in line:
+                        my_session = line.split('/session-', 1)[1][:-6]
                         break
                 else:
                     return None

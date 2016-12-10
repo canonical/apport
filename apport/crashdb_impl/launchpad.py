@@ -997,6 +997,7 @@ in a dependent package.' % master,
 
         return res
 
+
 #
 # Launchpad storeblob API (should go into launchpadlib, see LP #315358)
 #
@@ -1094,6 +1095,7 @@ def upload_blob(blob, progress_callback=None, hostname='launchpad.net'):
 
     assert ticket
     return ticket
+
 
 #
 # Unit tests

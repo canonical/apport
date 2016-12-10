@@ -38,6 +38,7 @@ def _has_internet():
             pass
     return _has_internet.cache
 
+
 _has_internet.cache = None
 
 

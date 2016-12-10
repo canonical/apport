@@ -33,9 +33,9 @@ dmesg = command_output(['dmesg'])
 regex = re.compile('^.*iwlwifi [0-9a-fA-F:]{10}\.[0-9a-fA-F]: Loaded firmware version: ([0-9\.]+).*\\n.*iwlwifi [0-9a-fA-F:]{10}\.[0-9a-fA-F]: (0x[0-9A-F]{8} \| [A-Z_]+)', re.MULTILINE)
 m = regex.findall(dmesg)
 if m:
-    l = m[len(m) - 1]
-    fw_version = l[0]
-    error_code = l[1]
+    v = m[len(m) - 1]
+    fw_version = v[0]
+    error_code = v[1]
 
     pr['IwlFwVersion'] = fw_version
     pr['IwlErrorCode'] = error_code
