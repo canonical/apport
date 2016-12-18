@@ -94,7 +94,7 @@ class CrashDigger:
 
         result = subprocess.call(argv, stdout=sys.stdout, stderr=subprocess.STDOUT)
         if result != 0:
-            apport.log('retracing %i failed with status: %i' %
+            apport.log('retracing %s#%i failed with status: %i' %
                        ("LP: " if self.crashdb.launchpad else "", id, result), True)
             if result == 99:
                 self.retrace_pool = set()
@@ -107,7 +107,8 @@ class CrashDigger:
         '''Grab an ID from the dupcheck pool and process it.'''
 
         id = self.dupcheck_pool.pop()
-        apport.log('checking #%i for duplicate (left in pool: %i)' % (id, len(self.dupcheck_pool)), True)
+        apport.log('checking %s#%i for duplicate (left in pool: %i)' %
+                   ("LP: " if self.crashdb.launchpad else "", id, len(self.dupcheck_pool)), True)
 
         try:
             report = self.crashdb.download(id)
