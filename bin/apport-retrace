@@ -325,6 +325,19 @@ else:
     try:
         report.add_gdb_info(sandbox)
     except IOError as e:
+        if not options.auth:
+            apport.fatal(str(e))
+        if not options.confirm or confirm_traces(report):
+            invalid_msg = '''Thank you for your report!
+
+However, processing it in order to get sufficient information for the
+developers failed as the report has a core dump which is invalid. The
+corruption may have happened on the system which the crash occurred or during
+transit.
+
+Thank you for your understanding, and sorry for the inconvenience!
+'''
+            crashdb.mark_retrace_failed(crashid, corruptcore_msg)
         apport.fatal(str(e))
     if options.sandbox == 'system':
         apt_root = os.path.join(cache, 'system', 'apt')

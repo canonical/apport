@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.20.5 (UNRELEASED)
+-------------------
+ * bin/apport-retrace: Comment on bug reports when an invalid core is
+   encountered dump. (LP: #1647635)
+
 2.20.4 (2016-12-14)
 -------------------
  * SECURITY FIX: Restrict a report's CrashDB field to literals.
