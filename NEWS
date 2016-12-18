@@ -1,7 +1,7 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
-2.20.4 (UNRELEASED)
+2.20.4 (2016-12-14)
 -------------------
  * SECURITY FIX: Restrict a report's CrashDB field to literals.
    Use ast.literal_eval() instead of the generic eval(), to prevent arbitrary
