@@ -67,7 +67,8 @@ class CrashDigger:
         '''Grab an ID from the retrace pool and retrace it.'''
 
         id = self.retrace_pool.pop()
-        apport.log('retracing #%i (left in pool: %i)' % (id, len(self.retrace_pool)), True)
+        apport.log('retracing %s#%i (left in pool: %i)' %
+                   ("LP: " if self.crashdb.launchpad else "", id, len(self.retrace_pool)), True)
 
         try:
             rel = self.crashdb.get_distro_release(id)
@@ -93,7 +94,8 @@ class CrashDigger:
 
         result = subprocess.call(argv, stdout=sys.stdout, stderr=subprocess.STDOUT)
         if result != 0:
-            apport.log('retracing #%i failed with status: %i' % (id, result), True)
+            apport.log('retracing %i failed with status: %i' %
+                       ("LP: " if self.crashdb.launchpad else "", id, result), True)
             if result == 99:
                 self.retrace_pool = set()
                 apport.log('transient error reported; halting', True)
