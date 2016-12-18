@@ -441,6 +441,18 @@ bOgUs=
         self.assertTrue('nonexisting' in self.ui.report['UnreportableReason'],
                         self.ui.report.get('UnreportableReason', '<not set>'))
 
+        # string with unsafe contents
+        with open(os.path.join(self.hookdir, 'source_bash.py'), 'w') as f:
+            f.write('''def add_info(report, ui):
+    report['CrashDB'] = """{'impl': 'memory', 'trap': exec('open("/tmp/pwned", "w").close()')}"""
+''')
+
+        self.ui.report = apport.Report('Bug')
+        self.ui.cur_package = 'bash'
+        self.ui.collect_info()
+        self.assertIn('package hook', self.ui.report['UnreportableReason'])
+        self.assertFalse(os.path.exists('/tmp/pwned'))
+
     def test_handle_duplicate(self):
         '''handle_duplicate()'''
 
@@ -921,6 +933,23 @@ bOgUs=
         self.assertTrue('It stinks.' in self.ui.msg_text, '%s: %s' %
                         (self.ui.msg_title, self.ui.msg_text))
         self.assertEqual(self.ui.msg_severity, 'info')
+
+    def test_run_crash_malicious_crashdb(self):
+        '''run_crash() on a crash with malicious CrashDB'''
+
+        self.report['ExecutablePath'] = '/bin/bash'
+        self.report['Package'] = 'bash 1'
+        self.report['CrashDB'] = "{'impl': 'memory', 'crash_config': open('/tmp/pwned', 'w').close()}"
+        self.update_report_file()
+        self.ui.present_details_response = {'report': True,
+                                            'blacklist': False,
+                                            'examine': False,
+                                            'restart': False}
+
+        self.ui.run_crash(self.report_file.name)
+
+        self.assertFalse(os.path.exists('/tmp/pwned'))
+        self.assertIn('invalid crash database definition', self.ui.msg_text)
 
     def test_run_crash_ignore(self):
         '''run_crash() on a crash with the Ignore field'''

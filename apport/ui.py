@@ -18,6 +18,7 @@ import errno, zlib
 import subprocess, threading, webbrowser
 import signal
 import time
+import ast
 
 import apport, apport.fileutils, apport.REThread
 
@@ -920,11 +921,11 @@ class UserInterface:
         # specification?
         if self.report['CrashDB'].lstrip().startswith('{'):
             try:
-                spec = eval(self.report['CrashDB'], {})
+                spec = ast.literal_eval(self.report['CrashDB'])
                 assert isinstance(spec, dict)
                 assert 'impl' in spec
-            except:
-                self.report['UnreportableReason'] = 'A package hook defines an invalid crash database definition:\n%s' % self.report['CrashDB']
+            except Exception as e:
+                self.report['UnreportableReason'] = 'A package hook defines an invalid crash database definition:\n%s\n%s' % (self.report['CrashDB'], e)
                 return False
             try:
                 self.crashdb = apport.crashdb.load_crashdb(None, spec)
