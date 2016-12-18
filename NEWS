@@ -10,6 +10,16 @@ detailed list of changes, please see ChangeLog.
    similar commands; this is fairly easy as we install a MIME handler for
    these. Thanks to Donncha O'Cearbhaill for discovering this!
    (CVE-2016-9949, LP: #1648806)
+ * SECURITY FIX: Fix path traversal vulnerability with hooks execution.
+   Ensure that Package: and SourcePackage: fields loaded from reports do not
+   contain directories. Until now, an attacker could trick a user into opening a
+   malicious .crash file containing
+
+     Package: ../../../../some/dir/foo
+
+   which would execute /some/dir/foo.py with arbitrary code.
+   Thanks to Donncha O'Cearbhaill for discovering this!
+   (CVE-2016-9950, LP: #1648806)
  * test_backend_apt_dpkg.py: Move tests from Ubuntu 15.10 "wily" (which is EOL
    now) to 16.04 LTS "xenial".
  * packaging-apt-dpkg.py: Explicitly set Dir::State::Status to the host

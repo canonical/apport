@@ -951,6 +951,26 @@ bOgUs=
         self.assertFalse(os.path.exists('/tmp/pwned'))
         self.assertIn('invalid crash database definition', self.ui.msg_text)
 
+    def test_run_crash_malicious_package(self):
+        '''Package: path traversal'''
+
+        bad_hook = tempfile.NamedTemporaryFile(suffix='.py')
+        bad_hook.write(b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()")
+        bad_hook.flush()
+
+        self.report['ExecutablePath'] = '/bin/bash'
+        self.report['Package'] = '../' * 20 + os.path.splitext(bad_hook.name)[0]
+        self.update_report_file()
+        self.ui.present_details_response = {'report': True,
+                                            'blacklist': False,
+                                            'examine': False,
+                                            'restart': False}
+
+        self.ui.run_crash(self.report_file.name)
+
+        self.assertFalse(os.path.exists('/tmp/pwned'))
+        self.assertIn('invalid Package:', self.ui.msg_text)
+
     def test_run_crash_ignore(self):
         '''run_crash() on a crash with the Ignore field'''
         self.report['Ignore'] = 'True'

@@ -828,14 +828,21 @@ class Report(problem_report.ProblemReport):
         False otherwise.
         '''
         # determine package names, unless already given as arguments
+        # avoid path traversal
         if not package:
             package = self.get('Package')
         if package:
             package = package.split()[0]
+            if '/' in package:
+                self['UnreportableReason'] = 'invalid Package: %s' % package
+                return
         if not srcpackage:
             srcpackage = self.get('SourcePackage')
         if srcpackage:
             srcpackage = srcpackage.split()[0]
+            if '/' in srcpackage:
+                self['UnreportableReason'] = 'invalid SourcePackage: %s' % package
+                return
 
         hook_dirs = [_hook_dir]
         # also search hooks in /opt, when program is from there
