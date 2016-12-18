@@ -211,6 +211,8 @@ Type=Application''')
         | [ Show Details ]                 [ Leave Closed ]  [ Relaunch ] |
         +-----------------------------------------------------------------+
         '''
+        # pretend we got called through run_crashes() which sets offer_restart
+        self.app.offer_restart = True
         self.app.report['ProblemType'] = 'Crash'
         self.app.report['CrashCounter'] = '1'
         self.app.report['ProcCmdline'] = 'apport-bug apport'
@@ -240,6 +242,39 @@ Type=Application''')
         self.assertTrue(self.app.w('ignore_future_problems').get_label().endswith(
             'of this program version'))
 
+    def test_regular_crash_layout_norestart(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ apport ] The application Apport has closed unexpectedly.      |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Ignore future problems of this program version.  |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        # pretend we did not get called through run_crashes(), thus no offer_restart
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['CrashCounter'] = '1'
+        self.app.report['ProcCmdline'] = 'apport-bug apport'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write(b'''[Desktop Entry]
+Version=1.0
+Name=Apport
+Type=Application''')
+            fp.flush()
+            self.app.report['DesktopFile'] = fp.name
+            GLib.idle_add(Gtk.main_quit)
+            self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.w('dialog_crash_new').get_title(), self.distro)
+        self.assertEqual(self.app.w('title_label').get_text(),
+                         _('The application Apport has closed unexpectedly.'))
+        self.assertTrue(self.app.w('continue_button').get_property('visible'))
+        self.assertEqual(self.app.w('continue_button').get_label(),
+                         _('Continue'))
+        self.assertFalse(self.app.w('closed_button').get_property('visible'))
+
     def test_hang_layout(self):
         '''
         +-----------------------------------------------------------------+
@@ -250,6 +285,8 @@ Type=Application''')
         | [ Show Details ]                 [ Force Closed ]  [ Relaunch ] |
         +-----------------------------------------------------------------+
         '''
+        # pretend we got called through run_crashes() which sets offer_restart
+        self.app.offer_restart = True
         self.app.report['ProblemType'] = 'Hang'
         self.app.report['ProcCmdline'] = 'apport-bug apport'
         self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'

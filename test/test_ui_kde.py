@@ -202,6 +202,8 @@ Type=Application''')
         | [ Show Details ]                 [ Leave Closed ]  [ Relaunch ] |
         +-----------------------------------------------------------------+
         '''
+        # pretend we got called through run_crashes() which sets offer_restart
+        self.app.offer_restart = True
         self.app.report['ProblemType'] = 'Crash'
         self.app.report['CrashCounter'] = '1'
         self.app.report['ProcCmdline'] = 'apport-bug apport'
@@ -230,6 +232,40 @@ Type=Application''')
         self.assertTrue(self.app.dialog.ignore_future_problems.isVisible())
         self.assertTrue(str(self.app.dialog.ignore_future_problems.text()).endswith(
             'of this program version'))
+
+    def test_regular_crash_layout_norestart(self):
+        '''
+        +-----------------------------------------------------------------+
+        | [ apport ] The application Apport has closed unexpectedly.      |
+        |                                                                 |
+        |            [x] Send an error report to help fix this problem.   |
+        |            [ ] Ignore future problems of this program version.  |
+        |                                                                 |
+        | [ Show Details ]                                   [ Continue ] |
+        +-----------------------------------------------------------------+
+        '''
+        # pretend we did not get called through run_crashes(), thus no offer_restart
+        self.app.report['ProblemType'] = 'Crash'
+        self.app.report['CrashCounter'] = '1'
+        self.app.report['ProcCmdline'] = 'apport-bug apport'
+        self.app.report['Package'] = 'apport 1.2.3~0ubuntu1'
+        with tempfile.NamedTemporaryFile() as fp:
+            fp.write(b'''[Desktop Entry]
+Version=1.0
+Name=Apport
+Type=Application''')
+            fp.flush()
+            self.app.report['DesktopFile'] = fp.name
+            QTimer.singleShot(0, QCoreApplication.quit)
+            self.app.ui_present_report_details(True)
+        self.assertEqual(self.app.dialog.heading.text(),
+                         _('The application Apport has closed unexpectedly.'))
+        self.assertTrue(self.app.dialog.send_error_report.isVisible())
+        self.assertTrue(self.app.dialog.send_error_report.isChecked())
+        self.assertTrue(self.app.dialog.details.isVisible())
+        self.assertTrue(self.app.dialog.continue_button.isVisible())
+        self.assertEqual(self.app.dialog.continue_button.text(), _('Continue'))
+        self.assertFalse(self.app.dialog.closed_button.isVisible())
 
     def test_system_crash_layout(self):
         '''

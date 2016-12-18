@@ -224,7 +224,7 @@ class GTKUserInterface(apport.ui.UserInterface):
             if xid:
                 self.set_modal_for(xid)
 
-        if report_type == 'Hang':
+        if report_type == 'Hang' and self.offer_restart:
             self.w('ignore_future_problems').set_active(False)
             self.w('ignore_future_problems').hide()
             self.w('closed_button').show()
@@ -282,7 +282,7 @@ class GTKUserInterface(apport.ui.UserInterface):
 
                 pid = apport.ui.get_pid(self.report)
                 still_running = pid and apport.ui.still_running(pid)
-                if 'ProcCmdline' not in self.report or still_running:
+                if 'ProcCmdline' not in self.report or still_running or not self.offer_restart:
                     self.w('closed_button').hide()
                     self.w('continue_button').set_label(_('Continue'))
                 else:
@@ -370,7 +370,7 @@ class GTKUserInterface(apport.ui.UserInterface):
                 return_value['report'] = True
             if self.w('ignore_future_problems').get_active():
                 return_value['blacklist'] = True
-            if widget == self.w('continue_button') and self.desktop_info:
+            if widget == self.w('continue_button') and self.desktop_info and self.offer_restart:
                 return_value['restart'] = True
             Gtk.main_quit()
 

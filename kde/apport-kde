@@ -226,7 +226,7 @@ class ReportDialog(Dialog):
 
                 pid = apport.ui.get_pid(report)
                 still_running = pid and apport.ui.still_running(pid)
-                if 'ProcCmdline' not in report or still_running:
+                if 'ProcCmdline' not in report or still_running or not self.ui.offer_restart:
                     self.closed_button.hide()
                     self.continue_button.setText(_('Continue'))
                 else:
@@ -378,7 +378,7 @@ class MainUserInterface(apport.ui.UserInterface):
             return return_value
 
         text = self.dialog.continue_button.text().replace('&', '')
-        if response == 1 and text == _('Relaunch'):
+        if response == 1 and text == _('Relaunch') and self.offer_restart:
             return_value['restart'] = True
         if self.dialog.send_error_report.isChecked():
             return_value['report'] = True

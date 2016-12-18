@@ -20,6 +20,14 @@ detailed list of changes, please see ChangeLog.
    which would execute /some/dir/foo.py with arbitrary code.
    Thanks to Donncha O'Cearbhaill for discovering this!
    (CVE-2016-9950, LP: #1648806)
+ * SECURITY FIX: apport-{gtk,kde}: Only offer "Relaunch" for recent /var/crash
+   crashes.
+   It only makes sense to offer relaunching for crashes that just happened and
+   the apport UI got triggered on those. When opening a .crash file copied from
+   somewhere else or after the crash happened, this is even actively dangerous
+   as a malicious crash file can specify any arbitrary command to run.
+   Thanks to Donncha O'Cearbhaill for discovering this!
+   (CVE-2016-9951, LP: #1648806)
  * test_backend_apt_dpkg.py: Move tests from Ubuntu 15.10 "wily" (which is EOL
    now) to 16.04 LTS "xenial".
  * packaging-apt-dpkg.py: Explicitly set Dir::State::Status to the host

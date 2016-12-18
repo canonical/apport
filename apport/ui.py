@@ -189,6 +189,7 @@ class UserInterface:
         self.report = None
         self.report_file = None
         self.cur_package = None
+        self.offer_restart = False
 
         try:
             self.crashdb = apport.crashdb.get_crashdb(None)
@@ -219,6 +220,9 @@ class UserInterface:
         otherwise.
         '''
         result = False
+        # for iterating over /var/crash (as opposed to running on or clicking
+        # on a particular .crash file) we offer restarting
+        self.offer_restart = True
 
         if os.geteuid() == 0:
             reports = apport.fileutils.get_new_system_reports()

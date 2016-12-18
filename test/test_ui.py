@@ -485,6 +485,22 @@ bOgUs=
         self.ui = TestSuiteUserInterface()
         self.assertEqual(self.ui.run_argv(), False)
 
+    def test_run_restart(self):
+        '''running the frontend with pending reports offers restart'''
+
+        r = self._gen_test_crash()
+        report_file = os.path.join(apport.fileutils.report_dir, 'test.crash')
+        with open(report_file, 'wb') as f:
+            r.write(f)
+        sys.argv = []
+        self.ui = TestSuiteUserInterface()
+        self.ui.present_details_response = {'report': False,
+                                            'blacklist': False,
+                                            'examine': False,
+                                            'restart': False}
+        self.ui.run_argv()
+        self.assertEqual(self.ui.offer_restart, True)
+
     def test_run_report_bug_noargs(self):
         '''run_report_bug() without specifying arguments'''
 
@@ -773,6 +789,7 @@ bOgUs=
         self.assertEqual(self.ui.msg_title, None)
         self.assertEqual(self.ui.opened_url, None)
         self.assertEqual(self.ui.ic_progress_pulses, 0)
+        self.assertEqual(self.ui.offer_restart, False)
 
         # report in crash notification dialog, send full report
         with open(report_file, 'wb') as f:
@@ -818,6 +835,7 @@ bOgUs=
         self.assertEqual(self.ui.ic_progress_pulses, 0)
 
         self.assertTrue(self.ui.report.check_ignored())
+        self.assertEqual(self.ui.offer_restart, False)
 
     def test_run_crash_abort(self):
         '''run_crash() for an abort() without assertion message'''
