@@ -748,7 +748,6 @@ Debug::NoLocking "true";
             tmp_aptroot = True
             aptroot = tempfile.mkdtemp()
 
-        # 2016-12-20 the arch is amd64
         apt.apt_pkg.config.set('APT::Architecture', architecture)
         apt.apt_pkg.config.set('Acquire::Languages', 'none')
         # directly connect to Launchpad when downloading deb files
@@ -759,7 +758,6 @@ Debug::NoLocking "true";
             fetchProgress = apt.progress.text.AcquireProgress()
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
-        from ipdb import set_trace; set_trace()
         if not tmp_aptroot:
             cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress,
                                         self.get_distro_name(),
@@ -800,8 +798,6 @@ Debug::NoLocking "true";
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
         # need to keep AcquireFile references
         acquire_queue = []
-        # 2016-12-20 the packages in the cache are armhf!
-        from ipdb import set_trace; set_trace()
         for (pkg, ver) in packages:
             try:
                 cache_pkg = cache[pkg]
