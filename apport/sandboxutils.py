@@ -104,7 +104,7 @@ def needed_runtime_packages(report, sandbox, pkgmap_cache_dir, pkg_versions, ver
 
 def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                  extra_packages=[], verbose=False, log_timestamps=False,
-                 dynamic_origins=False):
+                 dynamic_origins=False, debug=False):
     '''Build a sandbox with the packages that belong to a particular report.
 
     This downloads and unpacks all packages from the report's Package and
@@ -152,6 +152,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     Return a tuple (sandbox_dir, cache_dir, outdated_msg).
     '''
+    #if debug:
+    #    from ipdb import set_trace; set_trace()
     # sandbox
     if sandbox_dir:
         sandbox_dir = os.path.abspath(sandbox_dir)
@@ -194,12 +196,17 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         if origins:
             apport.log("Origins: %s" % origins)
 
+    #if 'gdb' in extra_packages:
+    #    from ipdb import set_trace; set_trace()
     # unpack packages, if any, using cache and sandbox
+    # 2017-01-03 13:41 the armhf gdb is installed here afaict
+    print("BRIAN: report's arch in sandboxutils.py is: %s" % report.get('Architecture'))
     try:
         outdated_msg = apport.packaging.install_packages(
             sandbox_dir, config_dir, report['DistroRelease'], pkgs,
             verbose, cache_dir, permanent_rootdir,
-            architecture=report.get('Architecture'), origins=origins)
+            architecture=report.get('Architecture'), origins=origins,
+            debug=debug)
     except SystemError as e:
         apport.fatal(str(e))
 
@@ -208,6 +215,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     # package hooks might reassign Package:, check that we have the originally
     # crashing binary
+    #if debug:
+    #    from ipdb import set_trace; set_trace()
     for path in ('InterpreterPath', 'ExecutablePath'):
         if path in report:
             pkg = apport.packaging.get_file_package(report[path], True, pkgmap_cache_dir,
@@ -238,6 +247,24 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
             if path in report and not os.path.exists(sandbox_dir + report[path]):
                 apport.fatal('%s %s does not exist (report specified package %s)',
                              path, sandbox_dir + report[path], report['Package'])
+
+    # install gdb for the target release/arch
+    try:
+        # 2017-01-04 15:50 cramming in extra packages to make gdb warnings go
+        # away
+        gdb_pkgs = [('gdb', None), ('libc6', None), ('libpcre3', None)]
+        if 'Architecture' in report and report['Architecture'] != apport.packaging.get_system_architecture():
+            gdb_pkgs.append(('gdb-multiarch', None))
+        # 2017-01-04 10:54 let's not do this
+        # 2017-01-04 10:57 it didn't help either
+        #gdb_pkgs = []
+        apport.packaging.install_packages(
+            sandbox_dir, config_dir, report['DistroRelease'], gdb_pkgs,
+            verbose, cache_dir, permanent_rootdir,
+            architecture=report.get('Architecture'), origins=origins,
+            install_dbg=False)
+    except SystemError as e:
+        apport.fatal(str(e))
 
     if outdated_msg:
         report['RetraceOutdatedPackages'] = outdated_msg

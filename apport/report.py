@@ -213,6 +213,21 @@ def _run_hook(report, ui, hook):
 
     return False
 
+
+def _which_extrapath(command, extra_path):
+    '''Return path of command, preferring extra_path'''
+
+    if extra_path:
+        env = os.environ.copy()
+        env['PATH'] = extra_path + ':' + env.get('PATH', '')
+    else:
+        env = None
+    try:
+        return subprocess.check_output(['which', command], env=env).decode().strip()
+    except subprocess.CalledProcessError:
+        return None
+
+
 #
 # Report class
 #
@@ -661,7 +676,7 @@ class Report(problem_report.ProblemReport):
                 os.unlink(core)
         return ret
 
-    def add_gdb_info(self, rootdir=None):
+    def add_gdb_info(self, rootdir=None, gdb_sandbox=None):
         '''Add information from gdb.
 
         This requires that the report has a CoreDump and an
@@ -693,8 +708,9 @@ class Report(problem_report.ProblemReport):
                        'AssertionMessage': 'print __abort_msg->msg',
                        'GLibAssertionMessage': 'print __glib_assert_msg',
                        'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
-
-        gdb_cmd = self.gdb_command(rootdir)
+        if not gdb_sandbox:
+            gdb_sandbox = rootdir
+        gdb_cmd = self.gdb_command(rootdir, gdb_sandbox)
 
         # limit maximum backtrace depth (to avoid looped stacks)
         gdb_cmd += ['--batch', '--ex', 'set backtrace limit 2000']
@@ -704,9 +720,23 @@ class Report(problem_report.ProblemReport):
         for name, cmd in gdb_reports.items():
             value_keys.append(name)
             gdb_cmd += ['--ex', 'p -99', '--ex', cmd]
-
+        # 2016-12-19 prepend LD_LIBRARY_PATH
+        orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
+        # cat /usr/lib/pkg-config.multiarch ?
+        native_multiarch = "x86_64-linux-gnu"
+# /path/to/native/sandbox/lib/$(native_multiarch):/path/to/native/sandbox/lib/:/path/to/native/sandbox/usr/lib/$(native_multiarch):/path/to/native/sandbox/usr/lib
+        ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
+                       (rootdir, rootdir, native_multiarch, rootdir, native_multiarch, rootdir)
+        # 2016-12-19 I don't think we need to pass env to popen as
+        # "default behavior of inheriting the current process’ environment"
+        os.environ['LD_LIBRARY_PATH'] = ld_lib_path
+        # 2017-01-04 14:49 this is working now
+        # from ipdb import set_trace; set_trace()
+        gdb_cmd.insert(0, '%s/lib64/ld-linux-x86-64.so.2' % gdb_sandbox)
         # call gdb (might raise OSError)
         out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
+        # we only need LD_LIBRARY_PATH set for gdb
+        os.environ['LD_LIBRARY_PATH'] = orig_ld_lib_path
 
         # check for truncated stack trace
         if 'is truncated: expected core file size' in out:
@@ -718,6 +748,7 @@ class Report(problem_report.ProblemReport):
         # split the output into the various fields
         part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
         parts = part_re.split(out)
+        #from ipdb import set_trace; set_trace()
         # drop the gdb startup text prior to first separator
         parts.pop(0)
         for part in parts:
@@ -1490,7 +1521,7 @@ class Report(problem_report.ProblemReport):
                     else:
                         self[k] = pattern.sub(repl, self[k])
 
-    def gdb_command(self, sandbox):
+    def gdb_command(self, sandbox, gdb_sandbox=None):
         '''Build gdb command for this report.
 
         This builds a gdb command for processing the given report, by setting
@@ -1506,24 +1537,37 @@ class Report(problem_report.ProblemReport):
         assert 'ExecutablePath' in self
         executable = self.get('InterpreterPath', self['ExecutablePath'])
 
-        command = ['gdb']
+        if not gdb_sandbox:
+            gdb_sandbox = sandbox
+        # prefer gdb in the sandbox, if present
+        gdb_sandbox_bin = gdb_sandbox and os.path.join(gdb_sandbox, 'usr', 'bin') or None
+        gdb_path = _which_extrapath('gdb', gdb_sandbox_bin)
+        if not gdb_path:
+            apport.fatal('gdb does not exist in %sthe sandbox nor on the host'
+                         % ('the gdb sandbox, ' if gdb_sandbox else ''))
+        command = [gdb_path]
 
         if 'Architecture' in self and self['Architecture'] != packaging.get_system_architecture():
             # check if we have gdb-multiarch
-            which = subprocess.Popen(['which', 'gdb-multiarch'],
-                                     stdout=subprocess.PIPE)
-            which.communicate()
-            if which.returncode == 0:
-                command = ['gdb-multiarch']
+            ma = _which_extrapath('gdb-multiarch', gdb_sandbox_bin)
+            if ma:
+                command = [ma]
             else:
                 sys.stderr.write(
                     'WARNING: Please install gdb-multiarch for processing '
                     'reports from foreign architectures. Results with "gdb" '
                     'will be very poor.\n')
-
-        if sandbox:
+        # 2016-12-20 should this be conditional?
+        if gdb_sandbox:
+            # 2016-12-19 set data-directory works (confirmed with -g and show data-directory)
+            # 2017-01-04 15:19 maybe using gdb_sandbox too much
+            # Try 1: gdb, gdb, gdb
+            # Try 2: sandbox, gdb, sandbox
             command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
-                        '--ex', 'set solib-absolute-prefix ' + sandbox]
+                        '--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
+                        '--ex', 'set solib-absolute-prefix ' + sandbox,
+                        '--ex', 'add-auto-load-safe-path ' + sandbox,
+                        '--ex', 'set sysroot ' + sandbox]
             executable = sandbox + '/' + executable
 
         assert os.path.exists(executable)
