@@ -316,24 +316,18 @@ if options.gdb_sandbox:
             create_gdb_sandbox = False
     if create_gdb_sandbox:
         fake_report = apport.Report()
+        # if the report has no Arch the host one will be used
         fake_report['DistroRelease'] = report['DistroRelease']
-        # if there is no architecture apport'll use the host one in theory
-        # 2017-01-03 13:10 confirming
-        fake_report['Architecture'] = apport.packaging.get_system_architecture()
-        fake_report['ExecutablePath'] = '/usr/bin/gdb'
-        # 2016-12-20 gdb isn't really needed
+        # use a empty ProcMaps so needed_runtimes packages won't want ExecPath
+        fake_report['ProcMaps'] = '\n\n'
         gdb_packages = ['gdb', 'gdb-multiarch']
-        print('BRIAN!: Before setting up gdb sandbox')
-        # 2017-01-03 13:08 this ends up being armhf
         # 2017-01-04 11:07 is using the same options.sandbox a bad idea?
         # options.sandbox becomes the config_dir
         # options.caches becoomes cache_dir
         gdb_sandbox, gdb_cache, outdated_msg = apport.sandboxutils.make_sandbox(
             fake_report, options.sandbox, options.cache, options.sandbox_dir,
             gdb_packages, options.verbose, log_timestamps,
-            options.dynamic_origins, debug=True)
-        # 2017-01-03 13:15 is options.sandbox_dir the armhf one?
-        #from ipdb import set_trace; set_trace()
+            options.dynamic_origins)
         print("BRIAN!: Created gdb sandbox %s with right packages" % gdb_sandbox)
 else:
     if sandbox:
@@ -385,7 +379,8 @@ Thank you for your understanding, and sorry for the inconvenience!
         apt_root = os.path.join(cache, report['DistroRelease'], 'apt')
     else:
         apt_root = None
-    gen_source_stacktrace(report, apt_root)
+    # 2017-01-10 12:52 disabled to make things faster
+    #gen_source_stacktrace(report, apt_root)
     report.add_kernel_crash_info()
 
 modified = False
