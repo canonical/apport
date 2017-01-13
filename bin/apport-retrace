@@ -306,35 +306,29 @@ else:
     outdated_msg = None
 
 if options.gdb_sandbox:
-    create_gdb_sandbox = True
-    # 2016-12-20 should check report's Architecture against ours
+    gdb_packages = ['gdb', 'gdb-multiarch']
     if 'Architecture' in report and report['Architecture'] == apport.packaging.get_system_architecture():
-        # if the target is the same arch we can just use gdb there
+        gdb_packages.remove('gdb-multiarch')
+        # install gdb in the report's sandbox
         if sandbox:
             gdb_sandbox = sandbox
             gdb_cache = cache
-            create_gdb_sandbox = False
-    if create_gdb_sandbox:
-        fake_report = apport.Report()
-        # if the report has no Arch the host one will be used
-        fake_report['DistroRelease'] = report['DistroRelease']
-        # use a empty ProcMaps so needed_runtimes packages won't want ExecPath
-        fake_report['ProcMaps'] = '\n\n'
-        gdb_packages = ['gdb', 'gdb-multiarch']
-        # 2017-01-04 11:07 is using the same options.sandbox a bad idea?
-        # options.sandbox becomes the config_dir
-        # options.caches becoomes cache_dir
-        gdb_sandbox, gdb_cache, outdated_msg = apport.sandboxutils.make_sandbox(
-            fake_report, options.sandbox, options.cache, options.sandbox_dir,
-            gdb_packages, options.verbose, log_timestamps,
-            options.dynamic_origins)
-        print("BRIAN!: Created gdb sandbox %s with right packages" % gdb_sandbox)
+    fake_report = apport.Report()
+    # if the report has no Arch the host one will be used
+    fake_report['DistroRelease'] = report['DistroRelease']
+    # use a empty ProcMaps so needed_runtimes packages won't want ExecPath
+    fake_report['ProcMaps'] = '\n\n'
+    # 2017-01-04 11:07 is using the same options.sandbox a bad idea?
+    # options.sandbox becomes the config_dir
+    # options.caches becoomes cache_dir
+    gdb_sandbox, gdb_cache, outdated_msg = apport.sandboxutils.make_sandbox(
+        fake_report, options.sandbox, options.cache, options.sandbox_dir,
+        gdb_packages, options.verbose, log_timestamps,
+        options.dynamic_origins, install_deps=True)
 else:
     if sandbox:
         gdb_sandbox = sandbox
         gdb_cache = cache
-    else:
-        print('OMG something horrible happened')
 
 # interactive gdb session
 if options.gdb:
