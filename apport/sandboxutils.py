@@ -181,8 +181,11 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         pkgs = needed_packages(report)
 
     # add user-specified extra packages, if any
+    if extra_packages:
+        extra_pkgs = []
     for p in extra_packages:
-        pkgs.append((p, None))
+        extra_pkgs.append((p, None))
+
     if config_dir == 'system':
         config_dir = None
     origins = None
@@ -197,10 +200,19 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         outdated_msg = apport.packaging.install_packages(
             sandbox_dir, config_dir, report['DistroRelease'], pkgs,
             verbose, cache_dir, permanent_rootdir,
-            architecture=report.get('Architecture'), origins=origins,
-            install_deps=install_deps)
+            architecture=report.get('Architecture'), origins=origins)
     except SystemError as e:
         apport.fatal(str(e))
+    # install the extra packages and their deps
+    if extra_pkgs:
+        try:
+            other_outdated_msg = apport.packaging.install_packages(
+                sandbox_dir, config_dir, report['DistroRelease'], extra_pkgs,
+                verbose, cache_dir, permanent_rootdir,
+                architecture=report.get('Architecture'), origins=origins,
+                install_deps=install_deps)
+        except SystemError as e:
+            apport.fatal(str(e))
 
     pkg_versions = report_package_versions(report)
     pkgs = needed_runtime_packages(report, sandbox_dir, pkgmap_cache_dir, pkg_versions, verbose)
@@ -224,8 +236,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
             outdated_msg += apport.packaging.install_packages(
                 sandbox_dir, config_dir, report['DistroRelease'], pkgs,
                 verbose, cache_dir, permanent_rootdir,
-                architecture=report.get('Architecture'), origins=origins,
-                install_deps=install_deps)
+                architecture=report.get('Architecture'), origins=origins)
         except SystemError as e:
             apport.fatal(str(e))
 
