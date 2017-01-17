@@ -104,7 +104,7 @@ def needed_runtime_packages(report, sandbox, pkgmap_cache_dir, pkg_versions, ver
 
 def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                  extra_packages=[], verbose=False, log_timestamps=False,
-                 dynamic_origins=False, install_deps=False):
+                 dynamic_origins=False):
     '''Build a sandbox with the packages that belong to a particular report.
 
     This downloads and unpacks all packages from the report's Package and
@@ -138,7 +138,8 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     deleted at program exit.
 
     extra_packages can specify a list of additional packages to install which
-    are not derived from the report.
+    are not derived from the report and will be installed along with their
+    dependencies.
 
     If verbose is True (False by default), this will write some additional
     logging to stdout.
@@ -210,7 +211,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                 sandbox_dir, config_dir, report['DistroRelease'], extra_pkgs,
                 verbose, cache_dir, permanent_rootdir,
                 architecture=report.get('Architecture'), origins=origins,
-                install_deps=install_deps)
+                install_deps=True)
         except SystemError as e:
             apport.fatal(str(e))
 
