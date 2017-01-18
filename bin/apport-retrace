@@ -297,6 +297,9 @@ elif not required_fields.issubset(set(report.keys())):
 apport.memdbg('sanity checks passed')
 
 if options.sandbox:
+    if options.gdb_sandbox:
+        if 'Architecture' in report and report['Architecture'] == apport.packaging.get_system_architecture():
+            options.extra_package.append('gdb')
     sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
         report, options.sandbox, options.cache, options.sandbox_dir,
         options.extra_package, options.verbose, log_timestamps,
@@ -306,29 +309,32 @@ else:
     outdated_msg = None
 
 if options.gdb_sandbox:
-    gdb_packages = ['gdb', 'gdb-multiarch']
     if 'Architecture' in report and report['Architecture'] == apport.packaging.get_system_architecture():
-        gdb_packages.remove('gdb-multiarch')
-        # install gdb in the report's sandbox
         if sandbox:
+            # gdb was installed in the sandbox
             gdb_sandbox = sandbox
             gdb_cache = cache
-    fake_report = apport.Report()
-    # if the report has no Arch the host one will be used
-    fake_report['DistroRelease'] = report['DistroRelease']
-    # use a empty ProcMaps so needed_runtimes packages won't want ExecPath
-    fake_report['ProcMaps'] = '\n\n'
-    # 2017-01-04 11:07 is using the same options.sandbox a bad idea?
-    # options.sandbox becomes the config_dir
-    # options.caches becoomes cache_dir
-    gdb_sandbox, gdb_cache, outdated_msg = apport.sandboxutils.make_sandbox(
-        fake_report, options.sandbox, options.cache, options.sandbox_dir,
-        gdb_packages, options.verbose, log_timestamps,
-        options.dynamic_origins, install_deps=True)
+    else:
+        gdb_packages = ['gdb', 'gdb-multiarch']
+        fake_report = apport.Report()
+        # if the report has no Arch the host one will be used
+        fake_report['DistroRelease'] = report['DistroRelease']
+        # use a empty ProcMaps so needed_runtimes packages won't want ExecPath
+        fake_report['ProcMaps'] = '\n\n'
+        # 2017-01-04 11:07 is using the same options.sandbox a bad idea?
+        # options.sandbox becomes the config_dir
+        # options.caches becoomes cache_dir
+        gdb_sandbox, gdb_cache, outdated_msg = apport.sandboxutils.make_sandbox(
+            fake_report, options.sandbox, options.cache, options.sandbox_dir,
+            gdb_packages, options.verbose, log_timestamps,
+            options.dynamic_origins)
 else:
     if sandbox:
         gdb_sandbox = sandbox
         gdb_cache = cache
+    else:
+        gdb_sandbox = None
+        gdb_cache = None
 
 # interactive gdb session
 if options.gdb:
