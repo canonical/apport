@@ -46,6 +46,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def __init__(self):
         self._apt_cache = None
         self._sandbox_apt_cache = None
+        self._sandbox_apt_cache_arch = None
         self._contents_dir = None
         self._mirror = None
         self._virtual_mapping_obj = None
@@ -93,17 +94,19 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._apt_cache = apt.Cache(rootdir='/')
         return self._apt_cache
 
-    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name, release_codename, origins):
+    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name,
+                       release_codename, origins, arch):
         '''Build apt sandbox and return apt.Cache(rootdir=) (initialized lazily).
 
         Clear the package selection on subsequent calls.
         '''
         self._apt_cache = None
-        if not self._sandbox_apt_cache:
+        if not self._sandbox_apt_cache or arch != self._sandbox_apt_cache_arch:
             self._build_apt_sandbox(aptroot, apt_sources, distro_name,
                                     release_codename, origins)
             rootdir = os.path.abspath(aptroot)
             self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
+            self._sandbox_apt_cache_arch = arch
             try:
                 # We don't need to update this multiple times.
                 self._sandbox_apt_cache.update(fetchProgress)
@@ -669,7 +672,8 @@ Debug::NoLocking "true";
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
                          permanent_rootdir=False, architecture=None,
-                         origins=None, install_dbg=True):
+                         origins=None, install_dbg=True, install_deps=False,
+                         debug=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -710,6 +714,9 @@ Debug::NoLocking "true";
         '''
         if not architecture:
             architecture = self.get_system_architecture()
+        print("BRIAN: arch in packaging_impl.py is: %s" % architecture)
+        # 2017-01-03 12:06 are we using the right sources.list file?
+        # 2017-01-03 12:11 yes
         if not configdir:
             apt_sources = '/etc/apt/sources.list'
             self.current_release_codename = self.get_distro_codename()
@@ -738,10 +745,14 @@ Debug::NoLocking "true";
         # create apt sandbox
         if cache_dir:
             tmp_aptroot = False
-            if configdir:
-                aptroot = os.path.join(cache_dir, release, 'apt')
+            if architecture != self.get_system_architecture():
+                aptroot_arch = architecture
             else:
-                aptroot = os.path.join(cache_dir, 'system', 'apt')
+                aptroot_arch = ''
+            if configdir:
+                aptroot = os.path.join(cache_dir, release, aptroot_arch, 'apt')
+            else:
+                aptroot = os.path.join(cache_dir, 'system', aptroot_arch, 'apt')
             if not os.path.isdir(aptroot):
                 os.makedirs(aptroot)
         else:
@@ -759,10 +770,14 @@ Debug::NoLocking "true";
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
         if not tmp_aptroot:
+            # 2017-01-03 12:11 this is armhf. What is aptroot?
+            # It comes from the -C switch and might not be arch specific
+            print("BRIAN: packages are: %s" % packages)
+            print("BRIAN: aptroot is: %s" % aptroot)
             cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress,
                                         self.get_distro_name(),
                                         self.current_release_codename,
-                                        origins)
+                                        origins, architecture)
         else:
             self._build_apt_sandbox(aptroot, apt_sources,
                                     self.get_distro_name(),
@@ -774,7 +789,13 @@ Debug::NoLocking "true";
                 raise SystemError(str(e))
             cache.open()
 
-        archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
+        # 2017-01-03 13:55 does Dir::Cache::archives need setting?
+        # 2017-01-03 14:21 set it after setting sources.list etc
+        #apt.apt_pkg.config.set('Dir', aptroot)
+        #archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
+        # 2017-01-03 14:40 this didn't fix the armhf version of gdb being
+        # installed
+        archivedir = '/mnt/sec-machines/apport-retrace/Ubuntu 16.04/apt/var/cache/apt/archives/'
 
         obsolete = ''
 
@@ -798,6 +819,35 @@ Debug::NoLocking "true";
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
         # need to keep AcquireFile references
         acquire_queue = []
+        # add any dependencies to the packages list
+        if install_deps:
+            deps = []
+            for (pkg, ver) in packages:
+                # 2017-01-17 15:18 see below regarding KeyError and LP
+                # check for current_ver and then depends_list for that e.g.
+                # Depends PreDepends
+                cache_pkg = cache[pkg]
+                for dep in cache_pkg.candidate.dependencies:
+                    # if the dependency is in the list of packages we don't
+                    # need to get its deps again
+                    if dep[0].name in [p[0] for p in packages]:
+                        continue
+                    # if the package is already extracted in the sandbox we
+                    # don't want to install a newer version which may cause a
+                    # CRC mismatch with the installed dbg symbols
+                    if dep[0].name in pkg_versions:
+                        inst_version = pkg_versions[dep[0].name]
+                        if self.compare_versions(inst_version, dep[0].version) > -1:
+                            deps.append((dep[0].name, inst_version))
+                        else:
+                            deps.append((dep[0].name, dep[0].version))
+                    else:
+                        deps.append((dep[0].name, dep[0].version))
+                    if dep[0].name not in [p[0] for p in packages]:
+                        packages.append((dep[0].name, None))
+            packages.extend(deps)
+            print("BRIAN: packages with deps is: %s" % packages)
+
         for (pkg, ver) in packages:
             try:
                 cache_pkg = cache[pkg]
