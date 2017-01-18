@@ -182,8 +182,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         pkgs = needed_packages(report)
 
     # add user-specified extra packages, if any
-    if extra_packages:
-        extra_pkgs = []
+    extra_pkgs = []
     for p in extra_packages:
         extra_pkgs.append((p, None))
 
