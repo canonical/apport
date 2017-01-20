@@ -329,12 +329,8 @@ if options.gdb_sandbox:
             gdb_packages, options.verbose, log_timestamps,
             options.dynamic_origins)
 else:
-    if sandbox:
-        gdb_sandbox = sandbox
-        gdb_cache = cache
-    else:
-        gdb_sandbox = None
-        gdb_cache = None
+    gdb_sandbox = None
+    gdb_cache = None
 
 # interactive gdb session
 if options.gdb:
