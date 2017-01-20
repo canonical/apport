@@ -708,8 +708,6 @@ class Report(problem_report.ProblemReport):
                        'AssertionMessage': 'print __abort_msg->msg',
                        'GLibAssertionMessage': 'print __glib_assert_msg',
                        'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
-        if not gdb_sandbox:
-            gdb_sandbox = rootdir
         gdb_cmd = self.gdb_command(rootdir, gdb_sandbox)
 
         # limit maximum backtrace depth (to avoid looped stacks)
@@ -720,23 +718,42 @@ class Report(problem_report.ProblemReport):
         for name, cmd in gdb_reports.items():
             value_keys.append(name)
             gdb_cmd += ['--ex', 'p -99', '--ex', cmd]
-        # 2016-12-19 prepend LD_LIBRARY_PATH
-        orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
-        # cat /usr/lib/pkg-config.multiarch ?
-        native_multiarch = "x86_64-linux-gnu"
-# /path/to/native/sandbox/lib/$(native_multiarch):/path/to/native/sandbox/lib/:/path/to/native/sandbox/usr/lib/$(native_multiarch):/path/to/native/sandbox/usr/lib
-        ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
-                       (rootdir, rootdir, native_multiarch, rootdir, native_multiarch, rootdir)
-        # 2016-12-19 I don't think we need to pass env to popen as
-        # "default behavior of inheriting the current process’ environment"
-        os.environ['LD_LIBRARY_PATH'] = ld_lib_path
-        # 2017-01-04 14:49 this is working now
-        # from ipdb import set_trace; set_trace()
-        gdb_cmd.insert(0, '%s/lib64/ld-linux-x86-64.so.2' % gdb_sandbox)
-        # call gdb (might raise OSError)
+
+        if gdb_sandbox:
+            # 2017-01-05 10:27 slangasek suggested just hard coding this but that
+            # seems terrible
+            native_multiarch = "x86_64-linux-gnu"
+            ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
+                           (gdb_sandbox, gdb_sandbox, native_multiarch, gdb_sandbox, native_multiarch, gdb_sandbox)
+            pyhome = '%s/usr' % gdb_sandbox
+            # LD_LIBRARY_PATH needs to be modified when gdb is called
+            orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
+            orig_pyhome = os.environ.get('PYTHONHOME', '')
+            orig_gconv_path = os.environ.get('GCONV_PATH', '')
+            os.environ['LD_LIBRARY_PATH'] = ld_lib_path
+            # PYTHONHOME is needed for trusty and where the arch of gdb_sandbox !=
+            # the hosts
+            os.environ['PYTHONHOME'] = pyhome
+            os.environ['GCONV_PATH'] = '%s/usr/lib/%s/gconv' % (gdb_sandbox,
+                                                                native_multiarch)
+            #gdb_cmd.insert(0, '%s/lib64/ld-linux-x86-64.so.2' % gdb_sandbox)
+            # is this only needed on Trusty? We want the report arch not x86_64
+            #gdb_cmd.insert(1, '--ex')
+            #gdb_cmd.insert(2, 'set solib-search-path %s/lib/x86_64-linux-gnu' % gdb_sandbox)
+            # 2017-01-05 10:30 Why is this first? need a good comment
+            gdb_cmd.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
+            # call gdb (might raise OSError)
+            print("BRIAN!: gdb command is: %s" % gdb_cmd)
+            print("BRIAN: debug command is:\n")
+            print("GCONV_PATH=%s/usr/lib/%s/gconv PYTHONHOME=%s LD_LIBRARY_PATH=%s %s" % \
+                (gdb_sandbox, native_multiarch, pyhome, ld_lib_path, ' '.join(gdb_cmd[0:2])))
+        from ipdb import set_trace; set_trace()
         out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
-        # we only need LD_LIBRARY_PATH set for gdb
-        os.environ['LD_LIBRARY_PATH'] = orig_ld_lib_path
+        if gdb_sandbox:
+            # restore LD_LIBRARY_PATH
+            os.environ['LD_LIBRARY_PATH'] = orig_ld_lib_path
+            os.environ['PYTHONHOME'] = orig_pyhome
+            os.environ['GCONV_PATH'] = orig_gconv_path
 
         # check for truncated stack trace
         if 'is truncated: expected core file size' in out:
@@ -748,7 +765,6 @@ class Report(problem_report.ProblemReport):
         # split the output into the various fields
         part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
         parts = part_re.split(out)
-        #from ipdb import set_trace; set_trace()
         # drop the gdb startup text prior to first separator
         parts.pop(0)
         for part in parts:
@@ -1537,17 +1553,18 @@ class Report(problem_report.ProblemReport):
         assert 'ExecutablePath' in self
         executable = self.get('InterpreterPath', self['ExecutablePath'])
 
-        if not gdb_sandbox:
-            gdb_sandbox = sandbox
-        # prefer gdb in the sandbox, if present
+        same_arch = False
+        if 'Architecture' in self and self['Architecture'] == packaging.get_system_architecture():
+            same_arch = True
+
         gdb_sandbox_bin = gdb_sandbox and os.path.join(gdb_sandbox, 'usr', 'bin') or None
         gdb_path = _which_extrapath('gdb', gdb_sandbox_bin)
         if not gdb_path:
-            apport.fatal('gdb does not exist in %sthe sandbox nor on the host'
-                         % ('the gdb sandbox, ' if gdb_sandbox else ''))
+            apport.fatal('gdb does not exist in the %ssandbox nor on the host'
+                         % ('gdb ' if not same_arch else ''))
         command = [gdb_path]
 
-        if 'Architecture' in self and self['Architecture'] != packaging.get_system_architecture():
+        if not same_arch:
             # check if we have gdb-multiarch
             ma = _which_extrapath('gdb-multiarch', gdb_sandbox_bin)
             if ma:
@@ -1557,17 +1574,17 @@ class Report(problem_report.ProblemReport):
                     'WARNING: Please install gdb-multiarch for processing '
                     'reports from foreign architectures. Results with "gdb" '
                     'will be very poor.\n')
-        # 2016-12-20 should this be conditional?
-        if gdb_sandbox:
-            # 2016-12-19 set data-directory works (confirmed with -g and show data-directory)
-            # 2017-01-04 15:19 maybe using gdb_sandbox too much
-            # Try 1: gdb, gdb, gdb
-            # Try 2: sandbox, gdb, sandbox
+
+        if sandbox:
+            # N.B. set solib-absolute-prefix is an alias for set sysroot
             command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
-                        '--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
-                        '--ex', 'set solib-absolute-prefix ' + sandbox,
-                        '--ex', 'add-auto-load-safe-path ' + sandbox,
-                        '--ex', 'set sysroot ' + sandbox]
+                        '--ex', 'set solib-absolute-prefix ' + sandbox]
+            if gdb_sandbox:
+                command += ['--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
+                            # is this only needed on Trusty?
+                            #'--ex', 'set solib-search-path ' + sandbox + "/lib/x86_64-linux-gnu",
+                            # 2017-01-18 13:40 is auto-load safe-path redundant?
+                            '--ex', 'set auto-load safe-path ' + sandbox]
             executable = sandbox + '/' + executable
 
         assert os.path.exists(executable)
