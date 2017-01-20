@@ -672,8 +672,7 @@ Debug::NoLocking "true";
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
                          permanent_rootdir=False, architecture=None,
-                         origins=None, install_dbg=True, install_deps=False,
-                         debug=False):
+                         origins=None, install_dbg=True, install_deps=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -714,9 +713,6 @@ Debug::NoLocking "true";
         '''
         if not architecture:
             architecture = self.get_system_architecture()
-        print("BRIAN: arch in packaging_impl.py is: %s" % architecture)
-        # 2017-01-03 12:06 are we using the right sources.list file?
-        # 2017-01-03 12:11 yes
         if not configdir:
             apt_sources = '/etc/apt/sources.list'
             self.current_release_codename = self.get_distro_codename()
@@ -770,8 +766,6 @@ Debug::NoLocking "true";
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
         if not tmp_aptroot:
-            # 2017-01-03 12:11 this is armhf. What is aptroot?
-            # It comes from the -C switch and might not be arch specific
             print("BRIAN: packages are: %s" % packages)
             print("BRIAN: aptroot is: %s" % aptroot)
             cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress,
@@ -789,13 +783,7 @@ Debug::NoLocking "true";
                 raise SystemError(str(e))
             cache.open()
 
-        # 2017-01-03 13:55 does Dir::Cache::archives need setting?
-        # 2017-01-03 14:21 set it after setting sources.list etc
-        #apt.apt_pkg.config.set('Dir', aptroot)
-        #archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
-        # 2017-01-03 14:40 this didn't fix the armhf version of gdb being
-        # installed
-        archivedir = '/mnt/sec-machines/apport-retrace/Ubuntu 16.04/apt/var/cache/apt/archives/'
+        archivedir = apt.apt_pkg.config.find_dir("Dir::Cache::archives")
 
         obsolete = ''
 
