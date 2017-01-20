@@ -239,7 +239,8 @@ class UserInterface:
             # and confusing to see at the next login. A crash happened and gets
             # reported in the same session if the logind session paths agree
             # and the session started before the report's "Date".
-            if logind_session and '_LogindSession' in self.report:
+            if logind_session and '_LogindSession' in self.report and \
+               'Date' in self.report:
                 if logind_session[0] != self.report['_LogindSession'] or \
                    logind_session[1] > self.report.get_timestamp():
                     continue
