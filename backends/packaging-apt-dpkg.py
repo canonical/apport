@@ -766,8 +766,6 @@ Debug::NoLocking "true";
         else:
             fetchProgress = apt.progress.base.AcquireProgress()
         if not tmp_aptroot:
-            print("BRIAN: packages are: %s" % packages)
-            print("BRIAN: aptroot is: %s" % aptroot)
             cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress,
                                         self.get_distro_name(),
                                         self.current_release_codename,
@@ -834,7 +832,6 @@ Debug::NoLocking "true";
                     if dep[0].name not in [p[0] for p in packages]:
                         packages.append((dep[0].name, None))
             packages.extend(deps)
-            print("BRIAN: packages with deps is: %s" % packages)
 
         for (pkg, ver) in packages:
             try:

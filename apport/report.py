@@ -743,11 +743,10 @@ class Report(problem_report.ProblemReport):
             # 2017-01-05 10:30 Why is this first? need a good comment
             gdb_cmd.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
             # call gdb (might raise OSError)
-            print("BRIAN!: gdb command is: %s" % gdb_cmd)
-            print("BRIAN: debug command is:\n")
-            print("GCONV_PATH=%s/usr/lib/%s/gconv PYTHONHOME=%s LD_LIBRARY_PATH=%s %s" % \
-                (gdb_sandbox, native_multiarch, pyhome, ld_lib_path, ' '.join(gdb_cmd[0:2])))
-        from ipdb import set_trace; set_trace()
+            #print("BRIAN!: gdb command is: %s" % gdb_cmd)
+            #print("BRIAN: debug command is:\n")
+            #print("GCONV_PATH=%s/usr/lib/%s/gconv PYTHONHOME=%s LD_LIBRARY_PATH=%s %s" % \
+            #    (gdb_sandbox, native_multiarch, pyhome, ld_lib_path, ' '.join(gdb_cmd[0:2])))
         out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
         if gdb_sandbox:
             # restore LD_LIBRARY_PATH
