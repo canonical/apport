@@ -299,6 +299,8 @@ apport.memdbg('sanity checks passed')
 if options.sandbox:
     if options.sandbox_dir:
         sandbox_dir = '%s/%s/%s/report-sandbox/' % (options.sandbox_dir, report['DistroRelease'], report['Architecture'])
+    else:
+        sandbox_dir = None
     if options.gdb_sandbox:
         if report['Architecture'] == apport.packaging.get_system_architecture():
             options.extra_package.append('gdb')
@@ -328,6 +330,8 @@ if options.gdb_sandbox:
         # options.cache becomes cache_dir
         if options.sandbox_dir:
             gdb_sandbox_dir = '%s/%s/%s/gdb-sandbox/' % (options.sandbox_dir, report['DistroRelease'], apport.packaging.get_system_architecture())
+        else:
+            gdb_sandbox_dir = None
         gdb_sandbox, gdb_cache, outdated_msg = apport.sandboxutils.make_sandbox(
             fake_report, options.sandbox, options.cache, gdb_sandbox_dir,
             gdb_packages, options.verbose, log_timestamps,
