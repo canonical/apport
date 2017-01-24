@@ -1047,9 +1047,9 @@ Debug::NoLocking "true";
         if verbose:
             print('Extracting downloaded debs...')
         for i in fetcher.items:
-            if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
-                out = subprocess.check_output(['dpkg-deb', '--show', i.destfile]).decode()
-                (p, v) = out.strip().split()
+            out = subprocess.check_output(['dpkg-deb', '--show', i.destfile]).decode()
+            (p, v) = out.strip().split()
+            if not permanent_rootdir or p not in pkg_versions or os.path.getctime(i.destfile) > last_written:
                 # don't extract the same version of the package if it is
                 # already extracted
                 if pkg_versions.get(p) == v:
