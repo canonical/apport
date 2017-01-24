@@ -282,7 +282,7 @@ apport.memdbg('processed extra options from command line')
 
 
 # sanity checks
-required_fields = set(['CoreDump', 'ExecutablePath', 'Package', 'DistroRelease'])
+required_fields = set(['CoreDump', 'ExecutablePath', 'Package', 'DistroRelease', 'Architecture'])
 if report['ProblemType'] == 'KernelCrash':
     if not set(['Package', 'VmCore']).issubset(set(report.keys())):
         apport.error('report file does not contain the required fields')
@@ -297,11 +297,13 @@ elif not required_fields.issubset(set(report.keys())):
 apport.memdbg('sanity checks passed')
 
 if options.sandbox:
+    if options.sandbox_dir:
+        sandbox_dir = '%s/%s/%s/report-sandbox/' % (options.sandbox_dir, report['DistroRelease'], report['Architecture'])
     if options.gdb_sandbox:
-        if 'Architecture' in report and report['Architecture'] == apport.packaging.get_system_architecture():
+        if report['Architecture'] == apport.packaging.get_system_architecture():
             options.extra_package.append('gdb')
     sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
-        report, options.sandbox, options.cache, options.sandbox_dir,
+        report, options.sandbox, options.cache, sandbox_dir,
         options.extra_package, options.verbose, log_timestamps,
         options.dynamic_origins)
 else:
@@ -309,7 +311,7 @@ else:
     outdated_msg = None
 
 if options.gdb_sandbox:
-    if 'Architecture' in report and report['Architecture'] == apport.packaging.get_system_architecture():
+    if report['Architecture'] == apport.packaging.get_system_architecture():
         if sandbox:
             # gdb was installed in the sandbox
             gdb_sandbox = sandbox
@@ -323,9 +325,11 @@ if options.gdb_sandbox:
         fake_report['ProcMaps'] = '\n\n'
         # 2017-01-04 11:07 is using the same options.sandbox a bad idea?
         # options.sandbox becomes the config_dir
-        # options.caches becoomes cache_dir
+        # options.cache becomes cache_dir
+        if options.sandbox_dir:
+            gdb_sandbox_dir = '%s/%s/%s/gdb-sandbox/' % (options.sandbox_dir, report['DistroRelease'], apport.packaging.get_system_architecture())
         gdb_sandbox, gdb_cache, outdated_msg = apport.sandboxutils.make_sandbox(
-            fake_report, options.sandbox, options.cache, options.sandbox_dir,
+            fake_report, options.sandbox, options.cache, gdb_sandbox_dir,
             gdb_packages, options.verbose, log_timestamps,
             options.dynamic_origins)
 else:
