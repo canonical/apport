@@ -720,36 +720,13 @@ class Report(problem_report.ProblemReport):
             gdb_cmd += ['--ex', 'p -99', '--ex', cmd]
 
         if gdb_sandbox:
-            # 2017-01-05 10:27 slangasek suggested just hard coding this but that
-            # seems terrible
-            native_multiarch = "x86_64-linux-gnu"
-            ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
-                           (gdb_sandbox, gdb_sandbox, native_multiarch, gdb_sandbox, native_multiarch, gdb_sandbox)
-            pyhome = '%s/usr' % gdb_sandbox
-            # LD_LIBRARY_PATH needs to be modified when gdb is called
+            # these env settings will be modified when gdb is called
             orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
             orig_pyhome = os.environ.get('PYTHONHOME', '')
             orig_gconv_path = os.environ.get('GCONV_PATH', '')
-            os.environ['LD_LIBRARY_PATH'] = ld_lib_path
-            # PYTHONHOME is needed for trusty and where the arch of gdb_sandbox !=
-            # the hosts
-            os.environ['PYTHONHOME'] = pyhome
-            os.environ['GCONV_PATH'] = '%s/usr/lib/%s/gconv' % (gdb_sandbox,
-                                                                native_multiarch)
-            #gdb_cmd.insert(0, '%s/lib64/ld-linux-x86-64.so.2' % gdb_sandbox)
-            # is this only needed on Trusty? We want the report arch not x86_64
-            #gdb_cmd.insert(1, '--ex')
-            #gdb_cmd.insert(2, 'set solib-search-path %s/lib/x86_64-linux-gnu' % gdb_sandbox)
-            # 2017-01-05 10:30 Why is this first? need a good comment
-            gdb_cmd.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
-            # call gdb (might raise OSError)
-            #print("BRIAN!: gdb command is: %s" % gdb_cmd)
-            #print("BRIAN: debug command is:\n")
-            #print("GCONV_PATH=%s/usr/lib/%s/gconv PYTHONHOME=%s LD_LIBRARY_PATH=%s %s" % \
-            #    (gdb_sandbox, native_multiarch, pyhome, ld_lib_path, ' '.join(gdb_cmd[0:2])))
         out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
         if gdb_sandbox:
-            # restore LD_LIBRARY_PATH
+            # restore original env settings
             os.environ['LD_LIBRARY_PATH'] = orig_ld_lib_path
             os.environ['PYTHONHOME'] = orig_pyhome
             os.environ['GCONV_PATH'] = orig_gconv_path
@@ -1579,10 +1556,23 @@ class Report(problem_report.ProblemReport):
             command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
                         '--ex', 'set solib-absolute-prefix ' + sandbox]
             if gdb_sandbox:
+                # 2017-01-05 10:27 slangasek suggested just hard coding this but that
+                # seems terrible
+                native_multiarch = "x86_64-linux-gnu"
+                ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
+                               (gdb_sandbox, gdb_sandbox, native_multiarch, gdb_sandbox, native_multiarch, gdb_sandbox)
+                pyhome = '%s/usr' % gdb_sandbox
+                # env settings need to be modified for gdb
+                orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
+                orig_pyhome = os.environ.get('PYTHONHOME', '')
+                orig_gconv_path = os.environ.get('GCONV_PATH', '')
+                os.environ['LD_LIBRARY_PATH'] = ld_lib_path
+                os.environ['PYTHONHOME'] = pyhome
+                os.environ['GCONV_PATH'] = '%s/usr/lib/%s/gconv' % (gdb_sandbox,
+                                                                    native_multiarch)
+                # 2017-01-05 10:30 forget why is this first - need a good comment
+                command.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
                 command += ['--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
-                            # is this only needed on Trusty?
-                            #'--ex', 'set solib-search-path ' + sandbox + "/lib/x86_64-linux-gnu",
-                            # 2017-01-18 13:40 is auto-load safe-path redundant?
                             '--ex', 'set auto-load safe-path ' + sandbox]
             executable = sandbox + '/' + executable
 
