@@ -338,10 +338,11 @@ if options.gdb_sandbox:
         else:
             gdb_sandbox_dir = None
         gdb_sandbox, gdb_cache, gdb_outdated_msg = \
-                apport.sandboxutils.make_sandbox(fake_report,
-                    options.sandbox, options.cache, gdb_sandbox_dir,
-                    gdb_packages, options.verbose, log_timestamps,
-                    options.dynamic_origins)
+            apport.sandboxutils.make_sandbox(fake_report,
+                                             options.sandbox, options.cache,
+                                             gdb_sandbox_dir, gdb_packages,
+                                             options.verbose, log_timestamps,
+                                             options.dynamic_origins)
 else:
     gdb_sandbox = None
     gdb_cache = None
@@ -391,7 +392,7 @@ transit.
 
 Thank you for your understanding, and sorry for the inconvenience!
 '''
-            crashdb.mark_retrace_failed(crashid, corruptcore_msg)
+            crashdb.mark_retrace_failed(crashid, invalid_msg)
         apport.fatal(str(e))
     if options.sandbox == 'system':
         apt_root = os.path.join(cache, 'system', 'apt')

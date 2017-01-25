@@ -1559,12 +1559,10 @@ class Report(problem_report.ProblemReport):
             if gdb_sandbox:
                 native_multiarch = "x86_64-linux-gnu"
                 ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
-                               (gdb_sandbox, gdb_sandbox, native_multiarch, gdb_sandbox, native_multiarch, gdb_sandbox)
+                    (gdb_sandbox, gdb_sandbox, native_multiarch,
+                     gdb_sandbox, native_multiarch, gdb_sandbox)
                 pyhome = '%s/usr' % gdb_sandbox
                 # env settings need to be modified for gdb
-                orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
-                orig_pyhome = os.environ.get('PYTHONHOME', '')
-                orig_gconv_path = os.environ.get('GCONV_PATH', '')
                 os.environ['LD_LIBRARY_PATH'] = ld_lib_path
                 os.environ['PYTHONHOME'] = pyhome
                 os.environ['GCONV_PATH'] = '%s/usr/lib/%s/gconv' % (gdb_sandbox,

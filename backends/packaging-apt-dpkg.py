@@ -822,7 +822,7 @@ Debug::NoLocking "true";
                 for dep in cache_pkg.candidate.dependencies:
                     # if the dependency is in the list of packages we don't
                     # need to look up its dependencies again
-                    if dep[0].name in [p[0] for p in packages]:
+                    if dep[0].name in [pkg[0] for pkg in packages]:
                         continue
                     # if the package is already extracted in the sandbox
                     # because the report need that package we don't want to
@@ -836,7 +836,7 @@ Debug::NoLocking "true";
                             deps.append((dep[0].name, dep[0].version))
                     else:
                         deps.append((dep[0].name, dep[0].version))
-                    if dep[0].name not in [p[0] for p in packages]:
+                    if dep[0].name not in [pkg[0] for pkg in packages]:
                         packages.append((dep[0].name, None))
             packages.extend(deps)
 
