@@ -704,6 +704,9 @@ Debug::NoLocking "true";
         If origins is given, the sandbox will be created with apt data sources
         for foreign origins.
 
+        If install_deps is True, then the dependencies of packages will also
+        be installed.
+
         Return a string with outdated packages, or None if all packages were
         installed.
 
@@ -809,18 +812,22 @@ Debug::NoLocking "true";
         if install_deps:
             deps = []
             for (pkg, ver) in packages:
-                # 2017-01-17 15:18 see below regarding KeyError and LP
-                # check for current_ver and then depends_list for that e.g.
-                # Depends PreDepends
-                cache_pkg = cache[pkg]
+                try:
+                    cache_pkg = cache[pkg]
+                except KeyError:
+                    m = 'package %s does not exist, ignoring' % pkg.replace('%', '%%')
+                    obsolete += m + '\n'
+                    apport.warning(m)
+                    continue
                 for dep in cache_pkg.candidate.dependencies:
                     # if the dependency is in the list of packages we don't
-                    # need to get its deps again
+                    # need to look up its dependencies again
                     if dep[0].name in [p[0] for p in packages]:
                         continue
-                    # if the package is already extracted in the sandbox we
-                    # don't want to install a newer version which may cause a
-                    # CRC mismatch with the installed dbg symbols
+                    # if the package is already extracted in the sandbox
+                    # because the report need that package we don't want to
+                    # install a newer version which may cause a CRC mismatch
+                    # with the installed dbg symbols
                     if dep[0].name in pkg_versions:
                         inst_version = pkg_versions[dep[0].name]
                         if self.compare_versions(inst_version, dep[0].version) > -1:
