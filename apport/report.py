@@ -724,6 +724,7 @@ class Report(problem_report.ProblemReport):
             orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
             orig_pyhome = os.environ.get('PYTHONHOME', '')
             orig_gconv_path = os.environ.get('GCONV_PATH', '')
+        # call gdb (might raise OSError)
         out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
         if gdb_sandbox:
             # restore original env settings
@@ -1556,8 +1557,6 @@ class Report(problem_report.ProblemReport):
             command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
                         '--ex', 'set solib-absolute-prefix ' + sandbox]
             if gdb_sandbox:
-                # 2017-01-05 10:27 slangasek suggested just hard coding this but that
-                # seems terrible
                 native_multiarch = "x86_64-linux-gnu"
                 ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
                                (gdb_sandbox, gdb_sandbox, native_multiarch, gdb_sandbox, native_multiarch, gdb_sandbox)
@@ -1570,7 +1569,6 @@ class Report(problem_report.ProblemReport):
                 os.environ['PYTHONHOME'] = pyhome
                 os.environ['GCONV_PATH'] = '%s/usr/lib/%s/gconv' % (gdb_sandbox,
                                                                     native_multiarch)
-                # 2017-01-05 10:30 forget why is this first - need a good comment
                 command.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
                 command += ['--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
                             '--ex', 'set auto-load safe-path ' + sandbox]
