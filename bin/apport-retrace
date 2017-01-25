@@ -350,7 +350,7 @@ else:
 
 # interactive gdb session
 if options.gdb:
-    gdb_cmd = report.gdb_command(sandbox, gdb_sandbox)
+    gdb_cmd, environ = report.gdb_command(sandbox, gdb_sandbox)
     if options.verbose:
         # build a shell-style command
         cmd = ''
@@ -363,17 +363,7 @@ if options.gdb:
                 cmd += w
         apport.log('Calling gdb command: ' + cmd, log_timestamps)
     apport.memdbg('before calling gdb')
-    if options.gdb_sandbox:
-        # save existing env settings
-        orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
-        orig_pyhome = os.environ.get('PYTHONHOME', '')
-        orig_gconv_path = os.environ.get('GCONV_PATH', '')
-    subprocess.call(gdb_cmd)
-    if options.gdb_sandbox:
-        # restore the env settings
-        os.environ['LD_LIBRARY_PATH'] = orig_ld_lib_path
-        os.environ['PYTHONHOME'] = orig_pyhome
-        os.environ['GCONV_PATH'] = orig_gconv_path
+    subprocess.call(gdb_cmd, env=environ)
 else:
     # regenerate gdb info
     apport.memdbg('before collecting gdb info')

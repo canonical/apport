@@ -91,14 +91,14 @@ def _read_maps(pid):
     return maps
 
 
-def _command_output(command, input=None):
+def _command_output(command, input=None, env=None):
     '''Run command and capture its output.
 
     Try to execute given command (argv list) and return its stdout, or return
     a textual error if it failed.
     '''
     sp = subprocess.Popen(command, stdout=subprocess.PIPE,
-                          stderr=subprocess.STDOUT)
+                          stderr=subprocess.STDOUT, env=env)
 
     out = sp.communicate(input)[0]
     if sp.returncode == 0:
@@ -708,7 +708,7 @@ class Report(problem_report.ProblemReport):
                        'AssertionMessage': 'print __abort_msg->msg',
                        'GLibAssertionMessage': 'print __glib_assert_msg',
                        'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
-        gdb_cmd = self.gdb_command(rootdir, gdb_sandbox)
+        gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)
 
         # limit maximum backtrace depth (to avoid looped stacks)
         gdb_cmd += ['--batch', '--ex', 'set backtrace limit 2000']
@@ -719,18 +719,7 @@ class Report(problem_report.ProblemReport):
             value_keys.append(name)
             gdb_cmd += ['--ex', 'p -99', '--ex', cmd]
 
-        if gdb_sandbox:
-            # these env settings will be modified when gdb is called
-            orig_ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
-            orig_pyhome = os.environ.get('PYTHONHOME', '')
-            orig_gconv_path = os.environ.get('GCONV_PATH', '')
-        # call gdb (might raise OSError)
-        out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
-        if gdb_sandbox:
-            # restore original env settings
-            os.environ['LD_LIBRARY_PATH'] = orig_ld_lib_path
-            os.environ['PYTHONHOME'] = orig_pyhome
-            os.environ['GCONV_PATH'] = orig_gconv_path
+        out = _command_output(gdb_cmd, env=environ).decode('UTF-8', errors='replace')
 
         # check for truncated stack trace
         if 'is truncated: expected core file size' in out:
@@ -1525,7 +1514,7 @@ class Report(problem_report.ProblemReport):
         When available, this calls "gdb-multiarch" instead of "gdb", for
         processing crash reports from foreign architectures.
 
-        Return argv list.
+        Return argv list for gdb and any environment variables.
         '''
         assert 'ExecutablePath' in self
         executable = self.get('InterpreterPath', self['ExecutablePath'])
@@ -1540,6 +1529,7 @@ class Report(problem_report.ProblemReport):
             apport.fatal('gdb does not exist in the %ssandbox nor on the host'
                          % ('gdb ' if not same_arch else ''))
         command = [gdb_path]
+        environ = None
 
         if not same_arch:
             # check if we have gdb-multiarch
@@ -1562,11 +1552,11 @@ class Report(problem_report.ProblemReport):
                     (gdb_sandbox, gdb_sandbox, native_multiarch,
                      gdb_sandbox, native_multiarch, gdb_sandbox)
                 pyhome = '%s/usr' % gdb_sandbox
-                # env settings need to be modified for gdb
-                os.environ['LD_LIBRARY_PATH'] = ld_lib_path
-                os.environ['PYTHONHOME'] = pyhome
-                os.environ['GCONV_PATH'] = '%s/usr/lib/%s/gconv' % (gdb_sandbox,
-                                                                    native_multiarch)
+                # env settings need to be modified for gdb in a sandbox
+                environ = {'LD_LIBRARY_PATH': ld_lib_path,
+                           'PYTHONHOME': pyhome,
+                           'GCONV_PATH': '%s/usr/lib/%s/gconv' % (gdb_sandbox, native_multiarch)
+                          }
                 command.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
                 command += ['--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
                             '--ex', 'set auto-load safe-path ' + sandbox]
@@ -1593,7 +1583,7 @@ class Report(problem_report.ProblemReport):
 
             command += ['--ex', 'core-file ' + core]
 
-        return command
+        return command, environ
 
     def _address_to_offset(self, addr):
         '''Resolve a memory address to an ELF name and offset.
