@@ -188,6 +188,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
 
     if config_dir == 'system':
         config_dir = None
+
     origins = None
     if dynamic_origins:
         pkg_list = report.get('Package', '') + '\n' + report.get('Dependencies', '')
@@ -195,6 +196,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
         origins = set(m.findall(pkg_list))
         if origins:
             apport.log("Origins: %s" % origins)
+
     # unpack packages, if any, using cache and sandbox
     try:
         outdated_msg = apport.packaging.install_packages(
@@ -206,7 +208,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
     # install the extra packages and their deps
     if extra_pkgs:
         try:
-            other_outdated_msg = apport.packaging.install_packages(
+            outdated_msg += apport.packaging.install_packages(
                 sandbox_dir, config_dir, report['DistroRelease'], extra_pkgs,
                 verbose, cache_dir, permanent_rootdir,
                 architecture=report.get('Architecture'), origins=origins,
