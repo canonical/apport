@@ -2246,6 +2246,11 @@ No symbol table info available.
         del r['Date']
         self.assertEqual(r.get_timestamp(), None)
 
+    def test_command_output_passes_env(self):
+        fake_env = {'GCONV_PATH': '/tmp'}
+        out = apport.report._command_output(['env'], env=fake_env)
+        self.assertTrue(b'GCONV_PATH' in out)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1555,8 +1555,7 @@ class Report(problem_report.ProblemReport):
                 # env settings need to be modified for gdb in a sandbox
                 environ = {'LD_LIBRARY_PATH': ld_lib_path,
                            'PYTHONHOME': pyhome,
-                           'GCONV_PATH': '%s/usr/lib/%s/gconv' % (gdb_sandbox, native_multiarch)
-                          }
+                           'GCONV_PATH': '%s/usr/lib/%s/gconv' % (gdb_sandbox, native_multiarch)}
                 command.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
                 command += ['--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
                             '--ex', 'set auto-load safe-path ' + sandbox]
