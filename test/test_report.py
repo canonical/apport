@@ -2251,6 +2251,15 @@ No symbol table info available.
         out = apport.report._command_output(['env'], env=fake_env)
         self.assertTrue(b'GCONV_PATH' in out)
 
+    def test_extrapath_preferred(self):
+        '''if extrapath is passed it is preferred'''
+        bin_true = apport.report._which_extrapath('true', None)
+        # need something to be preferred
+        os.symlink('/bin/true', '/tmp/true')
+        tmp_true = apport.report._which_extrapath('true', '/tmp')
+        os.unlink('/tmp/true')
+        self.assertEqual(tmp_true, '/tmp/true')
+        self.assertEqual(bin_true, '/bin/true')
 
 if __name__ == '__main__':
     unittest.main()
