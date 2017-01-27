@@ -299,6 +299,9 @@ apport.memdbg('sanity checks passed')
 
 if options.gdb_sandbox:
     system_arch = apport.packaging.get_system_architecture()
+    if system_arch != 'amd64':
+        apport.error('gdb sandboxes are only implemented for amd64 hosts')
+        sys.exit(0)
 
 if options.sandbox:
     if options.sandbox_dir:
