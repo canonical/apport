@@ -219,7 +219,9 @@ def _which_extrapath(command, extra_path):
 
     if extra_path:
         env = os.environ.copy()
-        env['PATH'] = extra_path + ':' + env.get('PATH', '')
+        parts = env.get('PATH', '').split(os.pathsep)
+        parts[0:0] = extra_path
+        env['PATH'] = os.pathsep.join(parts)
     else:
         env = None
     try:
@@ -1523,7 +1525,7 @@ class Report(problem_report.ProblemReport):
         if 'Architecture' in self and self['Architecture'] == packaging.get_system_architecture():
             same_arch = True
 
-        gdb_sandbox_bin = gdb_sandbox and os.path.join(gdb_sandbox, 'usr', 'bin') or None
+        gdb_sandbox_bin = (os.path.join(gdb_sandbox, 'usr', 'bin') if gdb_sandbox else None)
         gdb_path = _which_extrapath('gdb', gdb_sandbox_bin)
         if not gdb_path:
             apport.fatal('gdb does not exist in the %ssandbox nor on the host'
