@@ -644,6 +644,23 @@ deb http://secondary.mirror tuxy extra
         self.assertEqual(len(pkglist), 3, str(pkglist))
 
     @unittest.skipUnless(_has_internet(), 'online test')
+    def test_install_packages_dependencies(self):
+        '''install packages's dependencies'''
+
+        self._setup_foonux_config(release='xenial')
+        # coreutils should always depend on libc6
+        impl.install_packages(self.rootdir, self.configdir,
+                              'Foonux 1.2',
+                              [('coreutils', None)],
+                              False, None, install_deps=True)
+
+        # check packages.txt for a dependency
+        with open(os.path.join(self.rootdir, 'packages.txt')) as f:
+            pkglist = f.read().splitlines()
+        self.assertIn('coreutils 8.25-2ubuntu2', pkglist)
+        self.assertIn('libc6 2.23-0ubuntu3', pkglist)
+
+    @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_system(self):
         '''install_packages() with system configuration'''
 

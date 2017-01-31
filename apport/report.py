@@ -91,14 +91,14 @@ def _read_maps(pid):
     return maps
 
 
-def _command_output(command, input=None):
+def _command_output(command, input=None, env=None):
     '''Run command and capture its output.
 
     Try to execute given command (argv list) and return its stdout, or return
     a textual error if it failed.
     '''
     sp = subprocess.Popen(command, stdout=subprocess.PIPE,
-                          stderr=subprocess.STDOUT)
+                          stderr=subprocess.STDOUT, env=env)
 
     out = sp.communicate(input)[0]
     if sp.returncode == 0:
@@ -212,6 +212,23 @@ def _run_hook(report, ui, hook):
         traceback.print_exc()
 
     return False
+
+
+def _which_extrapath(command, extra_path):
+    '''Return path of command, preferring extra_path'''
+
+    if extra_path:
+        env = os.environ.copy()
+        parts = env.get('PATH', '').split(os.pathsep)
+        parts[0:0] = extra_path
+        env['PATH'] = os.pathsep.join(parts)
+    else:
+        env = None
+    try:
+        return subprocess.check_output(['which', command], env=env).decode().strip()
+    except subprocess.CalledProcessError:
+        return None
+
 
 #
 # Report class
@@ -661,7 +678,7 @@ class Report(problem_report.ProblemReport):
                 os.unlink(core)
         return ret
 
-    def add_gdb_info(self, rootdir=None):
+    def add_gdb_info(self, rootdir=None, gdb_sandbox=None):
         '''Add information from gdb.
 
         This requires that the report has a CoreDump and an
@@ -693,8 +710,7 @@ class Report(problem_report.ProblemReport):
                        'AssertionMessage': 'print __abort_msg->msg',
                        'GLibAssertionMessage': 'print __glib_assert_msg',
                        'NihAssertionMessage': 'print (char*) __nih_abort_msg'}
-
-        gdb_cmd = self.gdb_command(rootdir)
+        gdb_cmd, environ = self.gdb_command(rootdir, gdb_sandbox)
 
         # limit maximum backtrace depth (to avoid looped stacks)
         gdb_cmd += ['--batch', '--ex', 'set backtrace limit 2000']
@@ -705,8 +721,7 @@ class Report(problem_report.ProblemReport):
             value_keys.append(name)
             gdb_cmd += ['--ex', 'p -99', '--ex', cmd]
 
-        # call gdb (might raise OSError)
-        out = _command_output(gdb_cmd).decode('UTF-8', errors='replace')
+        out = _command_output(gdb_cmd, env=environ).decode('UTF-8', errors='replace')
 
         # check for truncated stack trace
         if 'is truncated: expected core file size' in out:
@@ -1490,7 +1505,7 @@ class Report(problem_report.ProblemReport):
                     else:
                         self[k] = pattern.sub(repl, self[k])
 
-    def gdb_command(self, sandbox):
+    def gdb_command(self, sandbox, gdb_sandbox=None):
         '''Build gdb command for this report.
 
         This builds a gdb command for processing the given report, by setting
@@ -1501,20 +1516,28 @@ class Report(problem_report.ProblemReport):
         When available, this calls "gdb-multiarch" instead of "gdb", for
         processing crash reports from foreign architectures.
 
-        Return argv list.
+        Return argv list for gdb and any environment variables.
         '''
         assert 'ExecutablePath' in self
         executable = self.get('InterpreterPath', self['ExecutablePath'])
 
-        command = ['gdb']
+        same_arch = False
+        if 'Architecture' in self and self['Architecture'] == packaging.get_system_architecture():
+            same_arch = True
 
-        if 'Architecture' in self and self['Architecture'] != packaging.get_system_architecture():
+        gdb_sandbox_bin = (os.path.join(gdb_sandbox, 'usr', 'bin') if gdb_sandbox else None)
+        gdb_path = _which_extrapath('gdb', gdb_sandbox_bin)
+        if not gdb_path:
+            apport.fatal('gdb does not exist in the %ssandbox nor on the host'
+                         % ('gdb ' if not same_arch else ''))
+        command = [gdb_path]
+        environ = None
+
+        if not same_arch:
             # check if we have gdb-multiarch
-            which = subprocess.Popen(['which', 'gdb-multiarch'],
-                                     stdout=subprocess.PIPE)
-            which.communicate()
-            if which.returncode == 0:
-                command = ['gdb-multiarch']
+            ma = _which_extrapath('gdb-multiarch', gdb_sandbox_bin)
+            if ma:
+                command = [ma]
             else:
                 sys.stderr.write(
                     'WARNING: Please install gdb-multiarch for processing '
@@ -1522,8 +1545,22 @@ class Report(problem_report.ProblemReport):
                     'will be very poor.\n')
 
         if sandbox:
+            # N.B. set solib-absolute-prefix is an alias for set sysroot
             command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
                         '--ex', 'set solib-absolute-prefix ' + sandbox]
+            if gdb_sandbox:
+                native_multiarch = "x86_64-linux-gnu"
+                ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
+                    (gdb_sandbox, gdb_sandbox, native_multiarch,
+                     gdb_sandbox, native_multiarch, gdb_sandbox)
+                pyhome = '%s/usr' % gdb_sandbox
+                # env settings need to be modified for gdb in a sandbox
+                environ = {'LD_LIBRARY_PATH': ld_lib_path,
+                           'PYTHONHOME': pyhome,
+                           'GCONV_PATH': '%s/usr/lib/%s/gconv' % (gdb_sandbox, native_multiarch)}
+                command.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
+                command += ['--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
+                            '--ex', 'set auto-load safe-path ' + sandbox]
             executable = sandbox + '/' + executable
 
         assert os.path.exists(executable)
@@ -1547,7 +1584,7 @@ class Report(problem_report.ProblemReport):
 
             command += ['--ex', 'core-file ' + core]
 
-        return command
+        return command, environ
 
     def _address_to_offset(self, addr):
         '''Resolve a memory address to an ELF name and offset.

@@ -46,6 +46,7 @@ class __AptDpkgPackageInfo(PackageInfo):
     def __init__(self):
         self._apt_cache = None
         self._sandbox_apt_cache = None
+        self._sandbox_apt_cache_arch = None
         self._contents_dir = None
         self._mirror = None
         self._virtual_mapping_obj = None
@@ -93,17 +94,19 @@ class __AptDpkgPackageInfo(PackageInfo):
                 self._apt_cache = apt.Cache(rootdir='/')
         return self._apt_cache
 
-    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name, release_codename, origins):
+    def _sandbox_cache(self, aptroot, apt_sources, fetchProgress, distro_name,
+                       release_codename, origins, arch):
         '''Build apt sandbox and return apt.Cache(rootdir=) (initialized lazily).
 
         Clear the package selection on subsequent calls.
         '''
         self._apt_cache = None
-        if not self._sandbox_apt_cache:
+        if not self._sandbox_apt_cache or arch != self._sandbox_apt_cache_arch:
             self._build_apt_sandbox(aptroot, apt_sources, distro_name,
                                     release_codename, origins)
             rootdir = os.path.abspath(aptroot)
             self._sandbox_apt_cache = apt.Cache(rootdir=rootdir)
+            self._sandbox_apt_cache_arch = arch
             try:
                 # We don't need to update this multiple times.
                 self._sandbox_apt_cache.update(fetchProgress)
@@ -669,7 +672,7 @@ Debug::NoLocking "true";
     def install_packages(self, rootdir, configdir, release, packages,
                          verbose=False, cache_dir=None,
                          permanent_rootdir=False, architecture=None,
-                         origins=None, install_dbg=True):
+                         origins=None, install_dbg=True, install_deps=False):
         '''Install packages into a sandbox (for apport-retrace).
 
         In order to work without any special permissions and without touching
@@ -700,6 +703,9 @@ Debug::NoLocking "true";
 
         If origins is given, the sandbox will be created with apt data sources
         for foreign origins.
+
+        If install_deps is True, then the dependencies of packages will also
+        be installed.
 
         Return a string with outdated packages, or None if all packages were
         installed.
@@ -738,10 +744,14 @@ Debug::NoLocking "true";
         # create apt sandbox
         if cache_dir:
             tmp_aptroot = False
-            if configdir:
-                aptroot = os.path.join(cache_dir, release, 'apt')
+            if architecture != self.get_system_architecture():
+                aptroot_arch = architecture
             else:
-                aptroot = os.path.join(cache_dir, 'system', 'apt')
+                aptroot_arch = ''
+            if configdir:
+                aptroot = os.path.join(cache_dir, release, aptroot_arch, 'apt')
+            else:
+                aptroot = os.path.join(cache_dir, 'system', aptroot_arch, 'apt')
             if not os.path.isdir(aptroot):
                 os.makedirs(aptroot)
         else:
@@ -762,7 +772,7 @@ Debug::NoLocking "true";
             cache = self._sandbox_cache(aptroot, apt_sources, fetchProgress,
                                         self.get_distro_name(),
                                         self.current_release_codename,
-                                        origins)
+                                        origins, architecture)
         else:
             self._build_apt_sandbox(aptroot, apt_sources,
                                     self.get_distro_name(),
@@ -798,6 +808,38 @@ Debug::NoLocking "true";
         fetcher = apt.apt_pkg.Acquire(fetchProgress)
         # need to keep AcquireFile references
         acquire_queue = []
+        # add any dependencies to the packages list
+        if install_deps:
+            deps = []
+            for (pkg, ver) in packages:
+                try:
+                    cache_pkg = cache[pkg]
+                except KeyError:
+                    m = 'package %s does not exist, ignoring' % pkg.replace('%', '%%')
+                    obsolete += m + '\n'
+                    apport.warning(m)
+                    continue
+                for dep in cache_pkg.candidate.dependencies:
+                    # if the dependency is in the list of packages we don't
+                    # need to look up its dependencies again
+                    if dep[0].name in [pkg[0] for pkg in packages]:
+                        continue
+                    # if the package is already extracted in the sandbox
+                    # because the report need that package we don't want to
+                    # install a newer version which may cause a CRC mismatch
+                    # with the installed dbg symbols
+                    if dep[0].name in pkg_versions:
+                        inst_version = pkg_versions[dep[0].name]
+                        if self.compare_versions(inst_version, dep[0].version) > -1:
+                            deps.append((dep[0].name, inst_version))
+                        else:
+                            deps.append((dep[0].name, dep[0].version))
+                    else:
+                        deps.append((dep[0].name, dep[0].version))
+                    if dep[0].name not in [pkg[0] for pkg in packages]:
+                        packages.append((dep[0].name, None))
+            packages.extend(deps)
+
         for (pkg, ver) in packages:
             try:
                 cache_pkg = cache[pkg]
@@ -1012,9 +1054,9 @@ Debug::NoLocking "true";
         if verbose:
             print('Extracting downloaded debs...')
         for i in fetcher.items:
-            if not permanent_rootdir or os.path.getctime(i.destfile) > last_written:
-                out = subprocess.check_output(['dpkg-deb', '--show', i.destfile]).decode()
-                (p, v) = out.strip().split()
+            out = subprocess.check_output(['dpkg-deb', '--show', i.destfile]).decode()
+            (p, v) = out.strip().split()
+            if not permanent_rootdir or p not in pkg_versions or os.path.getctime(i.destfile) > last_written:
                 # don't extract the same version of the package if it is
                 # already extracted
                 if pkg_versions.get(p) == v:

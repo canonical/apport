@@ -49,6 +49,8 @@ def parse_args():
                            help=_('Rebuild report\'s Package information'))
     argparser.add_argument('-S', '--sandbox', metavar='CONFIG_DIR',
                            help=_('Build a temporary sandbox and download/install the necessary packages and debug symbols in there; without this option it assumes that the necessary packages and debug symbols are already installed in the system. The argument points to the packaging system configuration base directory; if you specify "system", it will use the system configuration files, but will then only be able to retrace crashes that happened on the currently running release.'))
+    argparser.add_argument('--gdb-sandbox', action='store_true',
+                           help=_('Build another temporary sandbox for installing gdb and its dependencies using the same release as the report rather than whatever version of gdb you have installed.'))
     argparser.add_argument('-v', '--verbose', action='store_true',
                            help=_('Report download/install progress when installing packages into sandbox'))
     argparser.add_argument('--timestamps', action='store_true',
@@ -280,7 +282,8 @@ apport.memdbg('processed extra options from command line')
 
 
 # sanity checks
-required_fields = set(['CoreDump', 'ExecutablePath', 'Package', 'DistroRelease'])
+required_fields = set(['CoreDump', 'ExecutablePath', 'Package',
+                       'DistroRelease', 'Architecture'])
 if report['ProblemType'] == 'KernelCrash':
     if not set(['Package', 'VmCore']).issubset(set(report.keys())):
         apport.error('report file does not contain the required fields')
@@ -294,18 +297,63 @@ elif not required_fields.issubset(set(report.keys())):
 
 apport.memdbg('sanity checks passed')
 
+if options.gdb_sandbox:
+    system_arch = apport.packaging.get_system_architecture()
+    if system_arch != 'amd64':
+        apport.error('gdb sandboxes are only implemented for amd64 hosts')
+        sys.exit(0)
+
 if options.sandbox:
+    if options.sandbox_dir:
+        sandbox_dir = '%s/%s/%s/report-sandbox/' % \
+            (options.sandbox_dir, report['DistroRelease'],
+             report['Architecture'])
+    else:
+        sandbox_dir = None
+    if options.gdb_sandbox:
+        if report['Architecture'] == system_arch:
+            options.extra_package.append('gdb')
     sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
-        report, options.sandbox, options.cache, options.sandbox_dir,
+        report, options.sandbox, options.cache, sandbox_dir,
         options.extra_package, options.verbose, log_timestamps,
         options.dynamic_origins)
 else:
     sandbox = None
+    cache = None
     outdated_msg = None
+
+if options.gdb_sandbox:
+    if report['Architecture'] == system_arch:
+        if sandbox:
+            # gdb was installed in the sandbox
+            gdb_sandbox = sandbox
+            gdb_cache = cache
+    else:
+        gdb_packages = ['gdb', 'gdb-multiarch']
+        fake_report = apport.Report()
+        # if the report has no Architecture the host one will be used
+        fake_report['DistroRelease'] = report['DistroRelease']
+        # use a empty ProcMaps so needed_runtimes packages won't want ExecPath
+        fake_report['ProcMaps'] = '\n\n'
+        if options.sandbox_dir:
+            gdb_sandbox_dir = '%s/%s/%s/gdb-sandbox/' % \
+                (options.sandbox_dir, report['DistroRelease'], system_arch)
+        else:
+            gdb_sandbox_dir = None
+        gdb_sandbox, gdb_cache, gdb_outdated_msg = \
+            apport.sandboxutils.make_sandbox(fake_report,
+                                             options.sandbox, options.cache,
+                                             gdb_sandbox_dir, gdb_packages,
+                                             options.verbose, log_timestamps,
+                                             options.dynamic_origins)
+else:
+    gdb_sandbox = None
+    gdb_cache = None
+    gdb_outdated_msg = None
 
 # interactive gdb session
 if options.gdb:
-    gdb_cmd = report.gdb_command(sandbox)
+    gdb_cmd, environ = report.gdb_command(sandbox, gdb_sandbox)
     if options.verbose:
         # build a shell-style command
         cmd = ''
@@ -318,12 +366,12 @@ if options.gdb:
                 cmd += w
         apport.log('Calling gdb command: ' + cmd, log_timestamps)
     apport.memdbg('before calling gdb')
-    subprocess.call(gdb_cmd)
+    subprocess.call(gdb_cmd, env=environ)
 else:
     # regenerate gdb info
     apport.memdbg('before collecting gdb info')
     try:
-        report.add_gdb_info(sandbox)
+        report.add_gdb_info(sandbox, gdb_sandbox)
     except IOError as e:
         if not options.auth:
             apport.fatal(str(e))
@@ -337,7 +385,7 @@ transit.
 
 Thank you for your understanding, and sorry for the inconvenience!
 '''
-            crashdb.mark_retrace_failed(crashid, corruptcore_msg)
+            crashdb.mark_retrace_failed(crashid, invalid_msg)
         apport.fatal(str(e))
     if options.sandbox == 'system':
         apt_root = os.path.join(cache, 'system', 'apt')
