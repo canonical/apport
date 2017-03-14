@@ -1522,10 +1522,12 @@ class Report(problem_report.ProblemReport):
         executable = self.get('InterpreterPath', self['ExecutablePath'])
 
         same_arch = False
-        if 'Architecture' in self and self['Architecture'] == packaging.get_system_architecture():
+        if 'Architecture' in self and \
+                self['Architecture'] == packaging.get_system_architecture():
             same_arch = True
 
-        gdb_sandbox_bin = (os.path.join(gdb_sandbox, 'usr', 'bin') if gdb_sandbox else None)
+        gdb_sandbox_bin = (os.path.join(gdb_sandbox, 'usr', 'bin')
+                           if gdb_sandbox else None)
         gdb_path = _which_extrapath('gdb', gdb_sandbox_bin)
         if not gdb_path:
             apport.fatal('gdb does not exist in the %ssandbox nor on the host'
@@ -1545,11 +1547,17 @@ class Report(problem_report.ProblemReport):
                     'will be very poor.\n')
 
         if sandbox:
+            native_multiarch = "x86_64-linux-gnu"
             # N.B. set solib-absolute-prefix is an alias for set sysroot
-            command += ['--ex', 'set debug-file-directory %s/usr/lib/debug' % sandbox,
-                        '--ex', 'set solib-absolute-prefix ' + sandbox]
+            command += ['--ex',
+                        'set debug-file-directory %s/usr/lib/debug' % sandbox,
+                        '--ex', 'set solib-absolute-prefix ' + sandbox,
+                        '--ex', 'add-auto-load-safe-path ' + sandbox,
+                        # needed to fix /lib64/ld-linux-x86-64.so.2 broken
+                        # symlink
+                        '--ex', 'set solib-search-path %s/lib/%s' % \
+                        (sandbox, native_multiarch)]
             if gdb_sandbox:
-                native_multiarch = "x86_64-linux-gnu"
                 ld_lib_path = '%s/lib:%s/lib/%s:%s/usr/lib/%s:%s/usr/lib' % \
                     (gdb_sandbox, gdb_sandbox, native_multiarch,
                      gdb_sandbox, native_multiarch, gdb_sandbox)
@@ -1557,10 +1565,12 @@ class Report(problem_report.ProblemReport):
                 # env settings need to be modified for gdb in a sandbox
                 environ = {'LD_LIBRARY_PATH': ld_lib_path,
                            'PYTHONHOME': pyhome,
-                           'GCONV_PATH': '%s/usr/lib/%s/gconv' % (gdb_sandbox, native_multiarch)}
-                command.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' % (gdb_sandbox, native_multiarch))
-                command += ['--ex', 'set data-directory %s/usr/share/gdb' % gdb_sandbox,
-                            '--ex', 'set auto-load safe-path ' + sandbox]
+                           'GCONV_PATH': '%s/usr/lib/%s/gconv' %
+                           (gdb_sandbox, native_multiarch)}
+                command.insert(0, '%s/lib/%s/ld-linux-x86-64.so.2' %
+                               (gdb_sandbox, native_multiarch))
+                command += ['--ex', 'set data-directory %s/usr/share/gdb' %
+                            gdb_sandbox]
             executable = sandbox + '/' + executable
 
         assert os.path.exists(executable)
