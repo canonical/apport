@@ -289,7 +289,8 @@ class PackageInfo:
                         if name.startswith('"'):
                             name = name[1:-2].strip()
                         # work around inconsistent "Debian GNU/Linux" in os-release
-                        name = name.split()[0]
+                        if name.endswith('GNU/Linux'):
+                            name = name.split()[0:-1]
                     elif l.startswith('VERSION_ID='):
                         version = l.split('=', 1)[1]
                         if version.startswith('"'):
