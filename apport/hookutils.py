@@ -510,7 +510,8 @@ def xsession_errors(pattern=None):
     it can, and often does, contain sensitive and private data.
     '''
     path = os.path.expanduser('~/.xsession-errors')
-    if not os.path.exists(path):
+    if not os.path.exists(path) or \
+            not os.access(path, os.R_OK):
         return ''
 
     if not pattern:

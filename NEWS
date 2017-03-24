@@ -12,6 +12,8 @@ detailed list of changes, please see ChangeLog.
  * bin/apport-retrace: Add in a --gdb-sandbox switch which creates or utilizes
    a sandbox with the report's distribution release and the host system's
    architecture for installing and running gdb. (LP: #1517257)
+ * apport/hookutils.py: Don't crash if .xsession-errors is not readable by the
+   user. (LP: #1675928)
 
 2.20.4 (2016-12-14)
 -------------------
