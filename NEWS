@@ -14,6 +14,8 @@ detailed list of changes, please see ChangeLog.
    architecture for installing and running gdb. (LP: #1517257)
  * apport/hookutils.py: Don't crash if .xsession-errors is not readable by the
    user. (LP: #1675928)
+ * bin/apport-retrace: Be specific about which required field is missing from a
+   report and not retracing it.
 
 2.20.4 (2016-12-14)
 -------------------

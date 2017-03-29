@@ -291,8 +291,12 @@ if report['ProblemType'] == 'KernelCrash':
     apport.error('KernelCrash processing not implemented yet')
     sys.exit(0)
 elif not required_fields.issubset(set(report.keys())):
+    missing_fields = []
+    for required_field in required_fields:
+        if required_field not in set(report.keys()):
+            missing_fields.append(required_field)
     apport.error('report file does not contain one of the required fields: ' +
-                 ' '.join(required_fields))
+                 ' '.join(missing_fields))
     sys.exit(0)
 
 apport.memdbg('sanity checks passed')
