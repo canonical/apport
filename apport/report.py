@@ -220,7 +220,7 @@ def _which_extrapath(command, extra_path):
     if extra_path:
         env = os.environ.copy()
         parts = env.get('PATH', '').split(os.pathsep)
-        parts[0:0] = extra_path
+        parts[0:0] = extra_path.split(os.pathsep)
         env['PATH'] = os.pathsep.join(parts)
     else:
         env = None
