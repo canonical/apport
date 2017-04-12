@@ -438,7 +438,7 @@ if modified:
             if update_bug:
                 if 'Stacktrace' in report:
                     crashdb.update_traces(crashid, report)
-                    apport.log('New attachments uploaded to crash database #' + crashid, log_timestamps)
+                    apport.log('New attachments uploaded to crash database LP: #' + crashid, log_timestamps)
                 else:
                     # this happens when gdb crashes
                     apport.log('No stack trace, invalid report', log_timestamps)
