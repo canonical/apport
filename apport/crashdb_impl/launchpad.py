@@ -929,7 +929,7 @@ in a dependent package.' % master,
         # use a url hack here, it is faster
         person = '%s~%s' % (self.launchpad._root_uri,
                             self.options.get('triaging_team', 'ubuntu-crashes-universe'))
-        if not person.replace(str(self.launchpad._root_uri) '').strip('~') \
+        if not person.replace(str(self.launchpad._root_uri), '').strip('~') \
                 in [str(sub).split('/')[-1] for sub in bug.subscriptions]:
             bug.subscribe(person=person)
 
