@@ -1112,6 +1112,7 @@ deb http://secondary.mirror tuxy extra
         # install GPG key for ddebs
         keyring_dir = os.path.join(self.configdir, 'Foonux 1.2', 'trusted.gpg.d')
         os.makedirs(keyring_dir, exist_ok=True)
+        shutil.copy('/usr/share/keyrings/ubuntu-archive-keyring.gpg', keyring_dir)
         subprocess.check_call(['apt-key', '--keyring', os.path.join(keyring_dir, 'ddebs.ubuntu.com.gpg'),
                                'adv', '--quiet', '--keyserver', 'keyserver.ubuntu.com', '--recv-key', 'C8CAB6595FDFF622'],
                               stdout=subprocess.DEVNULL)
