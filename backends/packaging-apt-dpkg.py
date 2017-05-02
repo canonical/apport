@@ -1450,16 +1450,12 @@ Debug::NoLocking "true";
                     apport.warning("Error: can't find signing_key_fingerprint at %s"
                                    % ppa_archive_url)
                     continue
-                argv = ['gpg', '--no-options',
-                        '--no-default-keyring',
-                        '--no-auto-check-trustdb',
-                        '--keyring',
-                        os.path.join(trusted_d,
-                                     '%s.gpg' % origin),
-                        ]
-                argv += ['--quiet', '--batch',
-                         '--keyserver', 'hkp://keyserver.ubuntu.com:80/',
-                         '--recv', signing_key_fingerprint]
+                argv = ['apt-key', '--keyring',
+                        os.path.join(trusted_d, '%s.gpg' % origin),
+                        'adv', '--quiet',
+                        '--keyserver', 'keyserver.ubuntu.com', '--recv-key',
+                        signing_key_fingerprint]
+
                 if subprocess.call(argv) != 0:
                     apport.warning('Unable to import key for %s' %
                                    ppa_archive_url)
