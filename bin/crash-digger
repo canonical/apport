@@ -112,7 +112,11 @@ class CrashDigger:
 
         try:
             report = self.crashdb.download(id)
-        except (MemoryError, TypeError, ValueError, IOError, zlib.error) as e:
+        except (MemoryError, TypeError, ValueError, IOError, AssertionError, zlib.error) as e:
+            if str(e) == "bug description must contain standard apport format data":
+                apport.log('Cannot download report: ' + str(e), True)
+                apport.error('Cannot download report %i: %s', id, str(e))
+                return
             apport.log('Cannot download report: ' + str(e), True)
             apport.error('Cannot download report %i: %s', id, str(e))
             return
