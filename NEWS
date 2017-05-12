@@ -16,6 +16,8 @@ detailed list of changes, please see ChangeLog.
    user. (LP: #1675928)
  * bin/apport-retrace: Be specific about which required field is missing from a
    report and not retracing it.
+ * Disable report.test_add_gdb_info_abort_glib test case for now, as the
+   glib assertion message is broken under current Ubuntu (LP: #1689344)
 
 2.20.4 (2016-12-14)
 -------------------

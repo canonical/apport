@@ -818,7 +818,8 @@ $0.bin 2>/dev/null
         self._validate_gdb_fields(pr)
         self.assertFalse('AssertionMessage' in pr, pr.get('AssertionMessage'))
 
-    def test_add_gdb_info_abort_glib(self):
+    # disabled: __glib_assert_msg symbol not available (LP: #1689344)
+    def disabled_test_add_gdb_info_abort_glib(self):
         '''add_gdb_info() with glib assertion'''
         (fd, script) = tempfile.mkstemp()
         assert not os.path.exists('core')
