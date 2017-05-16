@@ -1,6 +1,13 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+
+2.20.5 (UNRELEASED)
+-------------------
+ * bin/crash-digger: Set self.lp if the crashdb is Launchpad.
+ * test/test_backend_apt_dpkg.py: cache directories contain the
+   architecture in the path if if is not the native arch.
+
 2.20.5 (2017-05-12)
 -------------------
  * bin/apport-retrace: Comment on bug reports when an invalid core file is

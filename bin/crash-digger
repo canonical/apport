@@ -39,6 +39,12 @@ class CrashDigger:
         except KeyError:
             apport.error('Crash database %s does not exist', crash_db)
             sys.exit(1)
+        self.lp = False
+        try:
+            if self.crashdb.launchpad:
+                self.lp = True
+        except AttributeError:
+            pass
         self.apport_retrace = apport_retrace
         self.publish_dir = publish_dir
         if config_dir:
@@ -68,7 +74,7 @@ class CrashDigger:
 
         id = self.retrace_pool.pop()
         apport.log('retracing %s#%i (left in pool: %i)' %
-                   ("LP: " if self.crashdb.launchpad else "", id, len(self.retrace_pool)), True)
+                   ("LP: " if self.lp else "", id, len(self.retrace_pool)), True)
 
         try:
             rel = self.crashdb.get_distro_release(id)
@@ -95,7 +101,7 @@ class CrashDigger:
         result = subprocess.call(argv, stdout=sys.stdout, stderr=subprocess.STDOUT)
         if result != 0:
             apport.log('retracing %s#%i failed with status: %i' %
-                       ("LP: " if self.crashdb.launchpad else "", id, result), True)
+                       ("LP: " if self.lp else "", id, result), True)
             if result == 99:
                 self.retrace_pool = set()
                 apport.log('transient error reported; halting', True)
@@ -108,7 +114,7 @@ class CrashDigger:
 
         id = self.dupcheck_pool.pop()
         apport.log('checking %s#%i for duplicate (left in pool: %i)' %
-                   ("LP: " if self.crashdb.launchpad else "", id, len(self.dupcheck_pool)), True)
+                   ("LP: " if self.lp else "", id, len(self.dupcheck_pool)), True)
 
         try:
             report = self.crashdb.download(id)

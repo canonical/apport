@@ -848,9 +848,8 @@ deb http://secondary.mirror tuxy extra
         self.assert_elf_arch(os.path.join(self.rootdir, 'usr/bin/stat'), 'armhf')
         self.assertTrue(os.path.exists(os.path.join(self.rootdir,
                                                     'usr/share/doc/libc6/copyright')))
-
         # caches packages
-        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'apt',
+        cache = os.listdir(os.path.join(self.cachedir, 'Foonux 1.2', 'armhf', 'apt',
                                         'var', 'cache', 'apt', 'archives'))
         self.assertIn('coreutils_8.25-2ubuntu2_armhf.deb', cache)
         self.assertIn('libc6_2.23-0ubuntu3_armhf.deb', cache)
