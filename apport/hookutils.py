@@ -515,7 +515,7 @@ def xsession_errors(pattern=None):
         return ''
 
     if not pattern:
-        pattern = re.compile('^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)|([^ ]+\[\d+\]: ([A-Z]+):)|([^ ]-[A-Z]+ \*\*:)|(received an X Window System error)|(^The error was \')|(^  \(Details: serial \d+ error_code)')
+        pattern = re.compile(r'^(\(.*:\d+\): \w+-(WARNING|CRITICAL|ERROR))|(Error: .*No Symbols named)|([^ ]+\[\d+\]: ([A-Z]+):)|([^ ]-[A-Z]+ \*\*:)|(received an X Window System error)|(^The error was \')|(^  \(Details: serial \d+ error_code)')
 
     lines = ''
     with open(path, 'rb') as f:
@@ -684,7 +684,7 @@ def attach_printing(report):
     ppds = glob.glob('/etc/cups/ppd/*.ppd')
     if ppds:
         nicknames = command_output(['fgrep', '-H', '*NickName'] + ppds)
-        report['PpdFiles'] = re.sub('/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', '\g<1>: \g<2>', nicknames)
+        report['PpdFiles'] = re.sub(r'/etc/cups/ppd/(.*).ppd:\*NickName: *"(.*)"', r'\g<1>: \g<2>', nicknames)
 
     report['PrintingPackages'] = package_versions(
         'foo2zjs', 'foomatic-db', 'foomatic-db-engine',
@@ -705,7 +705,7 @@ def attach_mac_events(report, profiles=None):
     if isinstance(profiles, str):
         profiles = [profiles]
 
-    mac_regex = 'audit\(|apparmor|selinux|security'
+    mac_regex = r'audit\(|apparmor|selinux|security'
     mac_re = re.compile(mac_regex, re.IGNORECASE)
     aa_regex = 'apparmor="DENIED".+?profile=([^ ]+?)[ ]'
     aa_re = re.compile(aa_regex, re.IGNORECASE)

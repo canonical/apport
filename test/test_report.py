@@ -133,7 +133,7 @@ class T(unittest.TestCase):
         pr.add_proc_info(pid=p.pid)
         self.assertEqual(pr.pid, p.pid)
         p.communicate(b'\n')
-        self.assertEqual(pr['ProcCmdline'], 'cat /foo\ bar \\\\h \\\\\\ \\\\ -')
+        self.assertEqual(pr['ProcCmdline'], 'cat /foo\\ bar \\\\h \\\\\\ \\\\ -')
         self.assertEqual(pr['ExecutablePath'], '/bin/cat')
         self.assertNotIn('InterpreterPath', pr)
         self.assertIn('/bin/cat', pr['ProcMaps'])

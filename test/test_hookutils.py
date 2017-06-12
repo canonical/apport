@@ -377,7 +377,7 @@ GdkPixbuf-CRITICAL **: gdk_pixbuf_scale_simple: another standard glib assertion
             pattern = re.compile('notfound')
             self.assertEqual(apport.hookutils.xsession_errors(pattern), '')
 
-            pattern = re.compile('^\w+-CRITICAL')
+            pattern = re.compile(r'^\w+-CRITICAL')
             res = apport.hookutils.xsession_errors(pattern).splitlines()
             self.assertEqual(len(res), 2)
             self.assertTrue(res[0].startswith('EggSMClient-CRITICAL'))

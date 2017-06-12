@@ -181,7 +181,7 @@ class PackageInfo:
             # if the file does not exist, assume it's enabled
             return True
 
-        return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
+        return re.search(r'^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
 
     def get_kernel_package(self):
         '''Return the actual Linux kernel package name.

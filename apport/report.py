@@ -731,7 +731,7 @@ class Report(problem_report.ProblemReport):
             raise IOError(reason)
 
         # split the output into the various fields
-        part_re = re.compile('^\$\d+\s*=\s*-99$', re.MULTILINE)
+        part_re = re.compile(r'^\$\d+\s*=\s*-99$', re.MULTILINE)
         parts = part_re.split(out)
         # drop the gdb startup text prior to first separator
         parts.pop(0)
@@ -754,7 +754,7 @@ class Report(problem_report.ProblemReport):
         # clean up AssertionMessage
         if 'AssertionMessage' in self:
             # chop off "$n = 0x...." prefix, drop empty ones
-            m = re.match('^\$\d+\s+=\s+0x[0-9a-fA-F]+\s+"(.*)"\s*$',
+            m = re.match(r'^\$\d+\s+=\s+0x[0-9a-fA-F]+\s+"(.*)"\s*$',
                          self['AssertionMessage'])
             if m:
                 self['AssertionMessage'] = m.group(1)
@@ -783,10 +783,10 @@ class Report(problem_report.ProblemReport):
         unwound = False
         unwinding = False
         unwinding_xerror = False
-        bt_fn_re = re.compile('^#(\d+)\s+(?:0x(?:\w+)\s+in\s+\*?(.*)|(<signal handler called>)\s*)$')
-        bt_fn_noaddr_re = re.compile('^#(\d+)\s+(?:(.*)|(<signal handler called>)\s*)$')
+        bt_fn_re = re.compile(r'^#(\d+)\s+(?:0x(?:\w+)\s+in\s+\*?(.*)|(<signal handler called>)\s*)$')
+        bt_fn_noaddr_re = re.compile(r'^#(\d+)\s+(?:(.*)|(<signal handler called>)\s*)$')
         # some internal functions like the SSE stubs cause unnecessary jitter
-        ignore_functions_re = re.compile('^(__.*_s?sse\d+(?:_\w+)?|__kernel_vsyscall)$')
+        ignore_functions_re = re.compile(r'^(__.*_s?sse\d+(?:_\w+)?|__kernel_vsyscall)$')
 
         for line in self['Stacktrace'].splitlines():
             m = bt_fn_re.match(line)
@@ -916,7 +916,7 @@ class Report(problem_report.ProblemReport):
                 <re key="Foo">ba.*r</re>
             </pattern>
             <pattern url="http://bugtracker.net/bugs/2">
-                <re key="Package">^\S* 1-2$</re> <!-- test for a particular version -->
+                <re key="Package">^\\S* 1-2$</re> <!-- test for a particular version -->
                 <re key="Foo">write_(hello|goodbye)</re>
             </pattern>
         </patterns>
@@ -1167,7 +1167,7 @@ class Report(problem_report.ProblemReport):
                     os.path.basename(self['ExecutablePath']),
                     trace[0])
 
-            trace_re = re.compile('^\s*File\s*"(\S+)".* in (.+)$')
+            trace_re = re.compile(r'^\s*File\s*"(\S+)".* in (.+)$')
             i = len(trace) - 1
             function = 'unknown'
             while i >= 0:
@@ -1284,7 +1284,7 @@ class Report(problem_report.ProblemReport):
         # kernel crash
         if 'Stacktrace' in self and self['ProblemType'] == 'KernelCrash':
             sig = 'kernel'
-            regex = re.compile('^\s*\#\d+\s\[\w+\]\s(\w+)')
+            regex = re.compile(r'^\s*\#\d+\s\[\w+\]\s(\w+)')
             for line in self['Stacktrace'].splitlines():
                 m = regex.match(line)
                 if m:
@@ -1300,7 +1300,7 @@ class Report(problem_report.ProblemReport):
         # signal crashes
         if 'StacktraceTop' in self and 'Signal' in self:
             sig = '%s:%s' % (self['ExecutablePath'], self['Signal'])
-            bt_fn_re = re.compile('^(?:([\w:~]+).*|(<signal handler called>)\s*)$')
+            bt_fn_re = re.compile(r'^(?:([\w:~]+).*|(<signal handler called>)\s*)$')
 
             lines = self['StacktraceTop'].splitlines()
             if len(lines) < 2:
@@ -1322,7 +1322,7 @@ class Report(problem_report.ProblemReport):
             sig = ''
             if len(trace) == 1:
                 # sometimes, Python exceptions do not have file references
-                m = re.match('(\w+): ', trace[0])
+                m = re.match(r'(\w+): ', trace[0])
                 if m:
                     return self['ExecutablePath'] + ':' + m.group(1)
                 else:
@@ -1330,7 +1330,7 @@ class Report(problem_report.ProblemReport):
             elif len(trace) < 3:
                 return None
 
-            loc_re = re.compile('^\s+File "([^"]+).*line (\d+).*\sin (.*)$')
+            loc_re = re.compile(r'^\s+File "([^"]+).*line (\d+).*\sin (.*)$')
             for line in trace:
                 m = loc_re.match(line)
                 if m:
@@ -1396,7 +1396,7 @@ class Report(problem_report.ProblemReport):
         return None
 
     def _extract_function_and_address(self, line):
-        parsed = re.search('\[.*\] (.*)$', line)
+        parsed = re.search(r'\[.*\] (.*)$', line)
         if parsed:
             match = parsed.group(1)
             assert match, 'could not parse expected call trace line: %s' % line
@@ -1633,8 +1633,8 @@ class Report(problem_report.ProblemReport):
         # data field and the path there are many spaces, while between the
         # other data fields there is only one. So we take 2 or more spaces as
         # the separator of the last data field and the path.
-        fmt = re.compile('^([0-9a-fA-F]+)-([0-9a-fA-F]+).*\s{2,}(\S.*$)')
-        fmt_unknown = re.compile('^([0-9a-fA-F]+)-([0-9a-fA-F]+)\s')
+        fmt = re.compile(r'^([0-9a-fA-F]+)-([0-9a-fA-F]+).*\s{2,}(\S.*$)')
+        fmt_unknown = re.compile(r'^([0-9a-fA-F]+)-([0-9a-fA-F]+)\s')
 
         for line in self['ProcMaps'].splitlines():
             if not line.strip():

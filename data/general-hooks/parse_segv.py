@@ -121,7 +121,7 @@ class ParseSegv(object):
         else:
             logging.debug('args: "%s"', args_str)
 
-            for m in re.finditer('([^,\(]*(\(:?[^\)]+\))*)', args_str):
+            for m in re.finditer(r'([^,\(]*(\(:?[^\)]+\))*)', args_str):
                 if len(m.group(0)):
                     args.append(m.group(0))
             if len(args) > 0:
