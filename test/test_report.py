@@ -2262,5 +2262,6 @@ No symbol table info available.
         self.assertEqual(tmp_true, '/tmp/true')
         self.assertEqual(bin_true, '/bin/true')
 
+
 if __name__ == '__main__':
     unittest.main()

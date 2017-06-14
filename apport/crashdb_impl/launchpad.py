@@ -403,11 +403,15 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         # short text data
         text = part.get_payload(decode=True).decode('UTF-8', 'replace')
-        if change_description:
-            bug.description = bug.description + '\n--- \n' + text
-            bug.lp_save()
-        else:
-            bug.newMessage(content=text, subject=comment)
+        # text can be empty if you are only adding an attachment to a bug
+        if text:
+            if change_description:
+                bug.description = bug.description + '\n--- \n' + text
+                bug.lp_save()
+            else:
+                if not comment:
+                    comment = bug.title
+                bug.newMessage(content=text, subject=comment)
 
         # other parts are the attachments:
         for part in msg_iter:
