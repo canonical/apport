@@ -7,6 +7,8 @@ detailed list of changes, please see ChangeLog.
  * bin/crash-digger: Set self.lp if the crashdb is Launchpad.
  * test/test_backend_apt_dpkg.py: cache directories contain the
    architecture in the path if if is not the native arch.
+ * apport/crashdb_impl/launchpad.py: Don't make a contentless change to a bug,
+   it just generates more bug mail.
 
 2.20.5 (2017-05-12)
 -------------------

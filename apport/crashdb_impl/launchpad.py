@@ -361,6 +361,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
         '''
         bug = self.launchpad.bugs[id]
 
+        # TODO: raise an error if key_filter is not a list or set
         if key_filter:
             skip_keys = set(report.keys()) - set(key_filter)
         else:
