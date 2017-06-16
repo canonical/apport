@@ -486,7 +486,7 @@ CoreDump: base64
         # FIXME: sometimes this is empty!?
         if err:
             self.assertRegex(
-                err, rb'core dump exceeded.*dropped from .*yes\..*\.crash')
+                err, b'core dump exceeded.*dropped from .*yes\\..*\\.crash')
 
     def test_ignore(self):
         '''ignoring executables'''

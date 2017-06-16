@@ -9,6 +9,8 @@ detailed list of changes, please see ChangeLog.
    architecture in the path if if is not the native arch.
  * apport/crashdb_impl/launchpad.py: Don't make a contentless change to a bug,
    it just generates more bug mail.
+ * Convert regular expressions to raw strings to avoid deprecation warnings
+   with Python version 3.6. Thanks to Michael Hudson-Doyle for the patch!
 
 2.20.5 (2017-05-12)
 -------------------
