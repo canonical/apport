@@ -25,7 +25,7 @@ def enabled():
     try:
         with open(CONFIG) as f:
             conf = f.read()
-        return re.search('^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
+        return re.search(r'^\s*enabled\s*=\s*0\s*$', conf, re.M) is None
     except IOError:
         # if the file does not exist, assume it's enabled
         return True
@@ -163,7 +163,7 @@ def dbus_service_unknown_analysis(exc_obj, report):
         from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 
     # determine D-BUS name
-    m = re.search('name\s+(\S+)\s+was not provided by any .service',
+    m = re.search(r'name\s+(\S+)\s+was not provided by any .service',
                   exc_obj.get_dbus_message())
     if not m:
         if sys.stderr:

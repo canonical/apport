@@ -176,8 +176,8 @@ def gen_source_stacktrace(report, sandbox):
         if not srcdir:
             return
 
-        src_frame = re.compile('^#\d+\s.* at (.*):(\d+)$')
-        other_frame = re.compile('^#\d+')
+        src_frame = re.compile(r'^#\d+\s.* at (.*):(\d+)$')
+        other_frame = re.compile(r'^#\d+')
         result = ''
         for frame in report['Stacktrace'].splitlines():
             m = src_frame.match(frame)

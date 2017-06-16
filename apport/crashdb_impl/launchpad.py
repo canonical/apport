@@ -169,7 +169,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
 
         for t in tasks:
             if t.bug_target_name.lower() == self.distro or \
-                    re.match('^.+\(%s.*\)$' % self.distro, t.bug_target_name.lower()):
+                    re.match(r'^.+\(%s.*\)$' % self.distro, t.bug_target_name.lower()):
                 yield t
 
     @property
@@ -466,7 +466,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             # update bug title with retraced function name
             fn = report.stacktrace_top_function()
             if fn:
-                m = re.match('^(.*crashed with SIG.* in )([^( ]+)(\(\).*$)', bug.title)
+                m = re.match(r'^(.*crashed with SIG.* in )([^( ]+)(\(\).*$)', bug.title)
                 if m and m.group(2) != fn:
                     bug.title = m.group(1) + fn + m.group(3)
                     try:
