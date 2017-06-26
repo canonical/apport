@@ -18,7 +18,7 @@ test_source = 'coreutils'
 # (core ulimit (bytes), expect core signal, expect core file, expect report)
 core_ulimit_table = [(1, False, False, False),
                      (1000, True, False, True),
-                     (1000000, True, True, True),
+                     (10000000, True, True, True),
                      (-1, True, True, True)]
 
 required_fields = ['ProblemType', 'CoreDump', 'Date', 'ExecutablePath',

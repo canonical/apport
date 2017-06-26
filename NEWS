@@ -2,7 +2,7 @@ This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
 
-2.20.5 (UNRELEASED)
+2.20.6 (UNRELEASED)
 -------------------
  * bin/crash-digger: Set self.lp if the crashdb is Launchpad.
  * test/test_backend_apt_dpkg.py: cache directories contain the
@@ -11,6 +11,8 @@ detailed list of changes, please see ChangeLog.
    it just generates more bug mail.
  * Convert regular expressions to raw strings to avoid deprecation warnings
    with Python version 3.6. Thanks to Michael Hudson-Doyle for the patch!
+ * test/test_signal_crashes.py: a ulimit of 1M bytes isn't enough to produce a
+   core file anymore so bump it to 10M.
 
 2.20.5 (2017-05-12)
 -------------------
