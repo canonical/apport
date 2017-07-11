@@ -12,6 +12,7 @@
 
 import tempfile, atexit, os.path, re, gzip, sys, email, time, shutil
 
+from httplib2 import FailedToDecompressContent
 from io import BytesIO
 
 if sys.version_info.major == 2:
@@ -44,7 +45,7 @@ def filter_filename(attachments):
     for attachment in attachments:
         try:
             f = attachment.data.open()
-        except HTTPError:
+        except (HTTPError, FailedToDecompressContent):
             apport.error('Broken attachment on bug, ignoring')
             continue
         name = f.filename
