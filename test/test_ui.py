@@ -989,6 +989,27 @@ bOgUs=
         self.assertFalse(os.path.exists('/tmp/pwned'))
         self.assertIn('invalid Package:', self.ui.msg_text)
 
+    def test_run_crash_malicious_exec_path(self):
+        '''ExecutablePath: path traversal'''
+
+        hook_dir = '/tmp/share/apport/package-hooks'
+        os.makedirs(hook_dir, exist_ok=True)
+        bad_hook = tempfile.NamedTemporaryFile(dir=hook_dir, suffix='.py')
+        bad_hook.write(b"def add_info(r, u):\n  open('/tmp/pwned', 'w').close()")
+        bad_hook.flush()
+
+        self.report['ExecutablePath'] = '/opt/../' + hook_dir
+        self.report['Package'] = os.path.splitext(bad_hook.name)[0].replace(hook_dir, '')
+        self.update_report_file()
+        self.ui.present_details_response = {'report': True,
+                                            'blacklist': False,
+                                            'examine': False,
+                                            'restart': False}
+
+        self.ui.run_crash(self.report_file.name)
+
+        self.assertFalse(os.path.exists('/tmp/pwned'))
+
     def test_run_crash_ignore(self):
         '''run_crash() on a crash with the Ignore field'''
         self.report['Ignore'] = 'True'

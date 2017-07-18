@@ -130,10 +130,9 @@ DistUtilsExtra.auto.setup(
     description='intercept, process, and report crashes and bug reports',
     version=__version__,
 
-    data_files=[('share/mime/packages', glob('xdg-mime/*')),
+    data_files=[('share/doc/apport/', glob('doc/*.txt')),
                 # these are not supposed to be called directly, use apport-bug instead
                 ('share/apport', ['gtk/apport-gtk', 'kde/apport-kde']),
-                ('share/doc/apport/', glob('doc/*.txt')),
                 ('lib/pm-utils/sleep.d/', glob('pm-utils/sleep.d/*')),
                 ('/lib/udev/rules.d', glob('udev/*.rules')),
                 (systemd_unit_dir, glob('data/systemd/*')),

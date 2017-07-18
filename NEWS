@@ -4,6 +4,18 @@ detailed list of changes, please see ChangeLog.
 
 2.20.6 (UNRELEASED)
 -------------------
+ * SECURITY FIX: Fix path traversal vulnerability with hooks execution.
+   Ensure that ExecutablePath: fields loaded from reports do not contain
+   directories. Until now, an attacker could trick a user into opening a
+   malicious .crash file containing
+
+     ExecutablePath: /opt/../../../../some/dir/foo
+
+   which would execute /some/dir/foo.py with arbitrary code.  Thanks to Felix
+   Wilhelm for discovering this!
+   (CVE-2017-10708, LP: #1700573)
+ * Stop installing a MIME handler for crash files as it ends up causing more
+   trouble than it is worth.
  * bin/crash-digger: Set self.lp if the crashdb is Launchpad.
  * test/test_backend_apt_dpkg.py: cache directories contain the
    architecture in the path if if is not the native arch.
