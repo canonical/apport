@@ -862,8 +862,9 @@ class Report(problem_report.ProblemReport):
         hook_dirs = [_hook_dir]
         # also search hooks in /opt, when program is from there
         opt_path = None
-        if self.get('ExecutablePath', '').startswith(_opt_dir):
-            opt_path = self.get('ExecutablePath', '')
+        exec_path = os.path.realpath(self.get('ExecutablePath', ''))
+        if exec_path.startswith(_opt_dir):
+            opt_path = exec_path
         elif package:
             # check package contents
             try:
