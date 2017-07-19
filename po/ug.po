@@ -14,15 +14,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-07-04 05:07+0000\n"
+"X-Launchpad-Export-Date: 2017-07-19 05:09+0000\n"
 "X-Generator: Launchpad (build 18419)\n"
 "Language: ug\n"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:468
-#: ../debian/tmp/usr/share/apport/apport-kde.py:503
-#: ../debian/tmp/usr/share/apport/apport-kde.py:522
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../kde/apport-kde.py:468
-#: ../kde/apport-kde.py:503 ../kde/apport-kde.py:522 ../gtk/apport-gtk.ui.h:1
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1 ../gtk/apport-gtk.ui.h:1
+#: ../debian/tmp/usr/share/apport/apport-kde.py:469
+#: ../debian/tmp/usr/share/apport/apport-kde.py:504
+#: ../debian/tmp/usr/share/apport/apport-kde.py:524 ../kde/apport-kde.py:469
+#: ../kde/apport-kde.py:504 ../kde/apport-kde.py:524
 msgid "Apport"
 msgstr "Apport"
 
@@ -42,10 +42,10 @@ msgstr "يىمىرىلىش دوكلاتى"
 msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr "<big><b>كەچۈرۈڭ، ئىچكى خاتالىق يۈز بەردى.</b></big>"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:240 ../gtk/apport-gtk.py:303
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:303
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6 ../kde/apport-kde.py:240
-#: ../gtk/apport-gtk.ui.h:6
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6 ../gtk/apport-gtk.py:303
+#: ../gtk/apport-gtk.ui.h:6 ../debian/tmp/usr/share/apport/apport-kde.py:241
+#: ../kde/apport-kde.py:241
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "ئەگەر تېخىمۇ كۆپ مەسىلىنى بايقىسىڭىز، كومپيۇتېرنى قايتا قوزغىتىشنى سىناڭ."
@@ -59,11 +59,11 @@ msgstr ""
 msgid "Ignore future problems of this program version"
 msgstr "بۇ پروگرامما نەشرىنىڭ كەلگۈسىدىكى مەسىلىلىرىگە پەرۋا قىلما"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:291 ../gtk/apport-gtk.py:207
-#: ../gtk/apport-gtk.py:576 ../debian/tmp/usr/share/apport/apport-gtk.py:207
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:207
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:576
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9 ../kde/apport-kde.py:291
-#: ../gtk/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:207
+#: ../gtk/apport-gtk.py:576 ../gtk/apport-gtk.ui.h:9
+#: ../debian/tmp/usr/share/apport/apport-kde.py:292 ../kde/apport-kde.py:292
 msgid "Show Details"
 msgstr "تەپسىلاتلارنى كۆرسەت"
 
@@ -71,21 +71,21 @@ msgstr "تەپسىلاتلارنى كۆرسەت"
 msgid "_Examine locally"
 msgstr "يەرلىكتە تەكشۈر(_E)"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:233 ../gtk/apport-gtk.py:290
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:290
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11 ../kde/apport-kde.py:233
-#: ../gtk/apport-gtk.ui.h:11
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11 ../gtk/apport-gtk.py:290
+#: ../gtk/apport-gtk.ui.h:11 ../debian/tmp/usr/share/apport/apport-kde.py:234
+#: ../kde/apport-kde.py:234
 msgid "Leave Closed"
 msgstr "تاقاق پېتى قالدۇر"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:230
-#: ../debian/tmp/usr/share/apport/apport-kde.py:243 ../gtk/apport-gtk.py:219
-#: ../gtk/apport-gtk.py:287 ../gtk/apport-gtk.py:306
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:219
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:287
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:306
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12 ../kde/apport-kde.py:230
-#: ../kde/apport-kde.py:243 ../gtk/apport-gtk.ui.h:12
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12 ../gtk/apport-gtk.py:219
+#: ../gtk/apport-gtk.py:287 ../gtk/apport-gtk.py:306 ../gtk/apport-gtk.ui.h:12
+#: ../debian/tmp/usr/share/apport/apport-kde.py:231
+#: ../debian/tmp/usr/share/apport/apport-kde.py:244 ../kde/apport-kde.py:231
+#: ../kde/apport-kde.py:244
 msgid "Continue"
 msgstr "داۋاملاشتۇر"
 
@@ -101,10 +101,9 @@ msgstr ""
 "سىز مەلۇم قىلغان مەسىلىنى ئىجادىيەتچىلەرنىڭ تۈزىتىشىگە ياردىمى بولسۇن دەپ "
 "ئۇچۇرلار توپلاندى."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:434
-#: ../debian/tmp/usr/bin/apport-cli.py:251 ../bin/apport-cli.py:251
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../kde/apport-kde.py:434
-#: ../gtk/apport-gtk.ui.h:15
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../gtk/apport-gtk.ui.h:15
+#: ../bin/apport-cli.py:251 ../debian/tmp/usr/share/apport/apport-kde.py:435
+#: ../kde/apport-kde.py:435 ../debian/tmp/usr/bin/apport-cli.py:251
 msgid "Uploading problem information"
 msgstr "مەسىلىلەر ھەققىدىكى ئۇچۇرلارنى يېڭىلاۋاتىدۇ"
 
@@ -112,9 +111,8 @@ msgstr "مەسىلىلەر ھەققىدىكى ئۇچۇرلارنى يېڭىلا�
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>مەسىلە ھەققىدىكى ئۇچۇرلارنى يۈكلەۋاتىدۇ</b></big>"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:435
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17 ../kde/apport-kde.py:435
-#: ../gtk/apport-gtk.ui.h:17
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17 ../gtk/apport-gtk.ui.h:17
+#: ../debian/tmp/usr/share/apport/apport-kde.py:436 ../kde/apport-kde.py:436
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -126,96 +124,95 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Apport چاتاق ھۆججىتى"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:362 ../gtk/apport-gtk.py:145
-#: ../debian/tmp/usr/bin/apport-cli.py:150
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:145 ../bin/apport-cli.py:150
-#: ../kde/apport-kde.py:362
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:145 ../gtk/apport-gtk.py:145
+#: ../bin/apport-cli.py:150 ../debian/tmp/usr/share/apport/apport-kde.py:363
+#: ../kde/apport-kde.py:363 ../debian/tmp/usr/bin/apport-cli.py:150
 msgid "(binary data)"
 msgstr "(ئىككىلىك سانلىق-مەلۇمات)"
 
-#: ../gtk/apport-gtk.py:160 ../debian/tmp/usr/share/apport/apport-gtk.py:160
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:160 ../gtk/apport-gtk.py:160
 #, python-format
 msgid "Sorry, the application %s has stopped unexpectedly."
 msgstr "كەچۈرۈڭ، پروگرامما %s  تاسادىپىي توختاپ قالدى."
 
-#: ../gtk/apport-gtk.py:163 ../debian/tmp/usr/share/apport/apport-gtk.py:163
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:163 ../gtk/apport-gtk.py:163
 #, python-format
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "كەچۈرۈڭ، %s تاسادىپىي تاقالدى."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:199
-#: ../debian/tmp/usr/share/apport/apport-kde.py:237 ../gtk/apport-gtk.py:168
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:168 ../kde/apport-kde.py:199
-#: ../kde/apport-kde.py:237
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:168 ../gtk/apport-gtk.py:168
+#: ../debian/tmp/usr/share/apport/apport-kde.py:200
+#: ../debian/tmp/usr/share/apport/apport-kde.py:238 ../kde/apport-kde.py:200
+#: ../kde/apport-kde.py:238
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "كەچۈرۈڭ، %s ئىچكى خاتالىققا يولۇقتى."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:185 ../gtk/apport-gtk.py:180
-#: ../debian/tmp/usr/bin/apport-cli.py:178
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:180 ../bin/apport-cli.py:178
-#: ../kde/apport-kde.py:185
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:180 ../gtk/apport-gtk.py:180
+#: ../bin/apport-cli.py:178 ../debian/tmp/usr/share/apport/apport-kde.py:186
+#: ../kde/apport-kde.py:186 ../debian/tmp/usr/bin/apport-cli.py:178
 msgid "Send problem report to the developers?"
 msgstr "بۇ مەلۇماتنى ئىجادىيەتچىگە ئەۋەتسۇنمۇ؟"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:193 ../gtk/apport-gtk.py:189
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:189 ../kde/apport-kde.py:193
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:189 ../gtk/apport-gtk.py:189
+#: ../debian/tmp/usr/share/apport/apport-kde.py:194 ../kde/apport-kde.py:194
 msgid "Send"
 msgstr "يوللا"
 
-#: ../gtk/apport-gtk.py:231 ../debian/tmp/usr/share/apport/apport-gtk.py:231
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:231 ../gtk/apport-gtk.py:231
 msgid "Force Closed"
 msgstr "مەجبۇرىي يېپىلغان"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:234
-#: ../debian/tmp/usr/share/apport/apport-kde.py:380 ../gtk/apport-gtk.py:232
-#: ../gtk/apport-gtk.py:291 ../debian/tmp/usr/share/apport/apport-gtk.py:232
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:291 ../kde/apport-kde.py:234
-#: ../kde/apport-kde.py:380
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:232
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:291 ../gtk/apport-gtk.py:232
+#: ../gtk/apport-gtk.py:291 ../debian/tmp/usr/share/apport/apport-kde.py:235
+#: ../debian/tmp/usr/share/apport/apport-kde.py:381 ../kde/apport-kde.py:235
+#: ../kde/apport-kde.py:381
 msgid "Relaunch"
 msgstr "قايتا ئىجرا قىل"
 
-#: ../gtk/apport-gtk.py:241 ../debian/tmp/usr/share/apport/apport-gtk.py:241
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:241 ../gtk/apport-gtk.py:241
 #, python-format
 msgid "The application %s has stopped responding."
 msgstr "پروگرامما %s جاۋاب قايتۇرۇشتىن توختىدى."
 
-#: ../gtk/apport-gtk.py:245 ../debian/tmp/usr/share/apport/apport-gtk.py:245
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:245 ../gtk/apport-gtk.py:245
 #, python-format
 msgid "The program \"%s\" has stopped responding."
 msgstr "پروگرامما «%s» جاۋاب قايتۇرۇشتىن توختىدى."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:207 ../gtk/apport-gtk.py:260
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:260 ../kde/apport-kde.py:207
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:260 ../gtk/apport-gtk.py:260
+#: ../debian/tmp/usr/share/apport/apport-kde.py:208 ../kde/apport-kde.py:208
 #, python-format
 msgid "Package: %s"
 msgstr "بوغچا: %s"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:213 ../gtk/apport-gtk.py:267
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:267 ../kde/apport-kde.py:213
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:267 ../gtk/apport-gtk.py:267
+#: ../debian/tmp/usr/share/apport/apport-kde.py:214 ../kde/apport-kde.py:214
 msgid "Sorry, a problem occurred while installing software."
 msgstr "كەچۈرۈڭ، يۇمشاق دېتال ئورناتقاندا بىر خاتالىق كۆرۈلدى."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:219 ../gtk/apport-gtk.py:276
-#: ../gtk/apport-gtk.py:295 ../debian/tmp/usr/share/apport/apport-gtk.py:276
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:295 ../kde/apport-kde.py:219
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:276
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:295 ../gtk/apport-gtk.py:276
+#: ../gtk/apport-gtk.py:295 ../debian/tmp/usr/share/apport/apport-kde.py:220
+#: ../kde/apport-kde.py:220
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "پروگرامما %s نىڭدا بىر ئىچكى خاتالىق يۈز بەردى."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:222 ../gtk/apport-gtk.py:279
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:279 ../kde/apport-kde.py:222
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:279 ../gtk/apport-gtk.py:279
+#: ../debian/tmp/usr/share/apport/apport-kde.py:223 ../kde/apport-kde.py:223
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "بۇ %s ئەپ تاسادىپىي تاقالدى."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:244 ../gtk/apport-gtk.py:307
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:307 ../kde/apport-kde.py:244
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:307 ../gtk/apport-gtk.py:307
+#: ../debian/tmp/usr/share/apport/apport-kde.py:245 ../kde/apport-kde.py:245
 msgid "Ignore future problems of this type"
 msgstr "بۇ تۈردىكى كەلگۈسىدىكى مەسىلىگە سەل قاراش"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:288 ../gtk/apport-gtk.py:580
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:580 ../kde/apport-kde.py:288
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:580 ../gtk/apport-gtk.py:580
+#: ../debian/tmp/usr/share/apport/apport-kde.py:289 ../kde/apport-kde.py:289
 msgid "Hide Details"
 msgstr "تەپسىلاتلارنى يوشۇر"
 
@@ -224,29 +221,28 @@ msgstr "تەپسىلاتلارنى يوشۇر"
 msgid "Usage: %s <report> <target directory>"
 msgstr "ئىشلىتىش ئۇسۇلى: %s <مەلۇمات> <نىشان مۇندەرىجە>"
 
-#: ../bin/apport-unpack.py:46 ../debian/tmp/usr/bin/apport-unpack.py:46
+#: ../bin/apport-unpack.py:47 ../debian/tmp/usr/bin/apport-unpack.py:47
 msgid "Destination directory exists and is not empty."
 msgstr "نىشان مۇندەرىجە بار ھەم بوش ئەمەس."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:314 ../kde/apport-kde.py:314
+#: ../debian/tmp/usr/share/apport/apport-kde.py:315 ../kde/apport-kde.py:315
 msgid "Username:"
 msgstr "ئىشلەتكۈچى ئاتى:"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:315 ../kde/apport-kde.py:315
+#: ../debian/tmp/usr/share/apport/apport-kde.py:316 ../kde/apport-kde.py:316
 msgid "Password:"
 msgstr "ئىم:"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:405 ../kde/apport-kde.py:405
+#: ../debian/tmp/usr/share/apport/apport-kde.py:406 ../kde/apport-kde.py:406
 msgid "Collecting Problem Information"
 msgstr "چاتاق ھەققىدىكى ئۇچۇرلارنى توپلاۋاتىدۇ"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:406
-#: ../debian/tmp/usr/bin/apport-cli.py:238 ../bin/apport-cli.py:238
-#: ../kde/apport-kde.py:406
+#: ../bin/apport-cli.py:238 ../debian/tmp/usr/share/apport/apport-kde.py:407
+#: ../kde/apport-kde.py:407 ../debian/tmp/usr/bin/apport-cli.py:238
 msgid "Collecting problem information"
 msgstr "مەسىلىلەرگە ئائىت ئۇچۇرلارنى توپلاۋاتىدۇ"
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:407 ../kde/apport-kde.py:407
+#: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../kde/apport-kde.py:408
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -254,7 +250,7 @@ msgstr ""
 "ئىجادىيەتچىنىڭ پروگرامما ئىقتىدارىنى ياخشىلىشىغا قۇلايلىق يارىتىش ئۈچۈن، "
 "توپلانغان ئۇچۇرلار ئىجادىيەتچىگە يوللىنىدۇ. بۇنىڭغا بىرقانچە مىنۇت كېتىدۇ."
 
-#: ../debian/tmp/usr/share/apport/apport-kde.py:433 ../kde/apport-kde.py:433
+#: ../debian/tmp/usr/share/apport/apport-kde.py:434 ../kde/apport-kde.py:434
 msgid "Uploading Problem Information"
 msgstr "چاتاق ھەققىدىكى ئۇچۇرلارنى يۈكلەۋاتىدۇ"
 
@@ -279,25 +275,25 @@ msgid ""
 "Please enter your password to access problem reports of system programs"
 msgstr "ئىمنى كىرگۈزۈپ سىستېما مەسىلە دوكلاتىنى كۆرۈڭ."
 
-#: ../gtk/apport-gtk.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
-#: ../kde/apport-kde.desktop.in.h:1
+#: ../kde/apport-kde.desktop.in.h:1 ../kde/apport-kde-mime.desktop.in.h:1
+#: ../gtk/apport-gtk.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "مەسىلىنى مەلۇم قىلىش..."
 
-#: ../gtk/apport-gtk.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
-#: ../kde/apport-kde.desktop.in.h:2
+#: ../kde/apport-kde.desktop.in.h:2 ../kde/apport-kde-mime.desktop.in.h:2
+#: ../gtk/apport-gtk.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "خاتالىقنى ئىجادىيەتچىگە مەلۇم قىلىدۇ"
 
-#: ../bin/apport-valgrind.py:37 ../debian/tmp/usr/bin/apport-valgrind.py:37
+#: ../debian/tmp/usr/bin/apport-valgrind.py:37 ../bin/apport-valgrind.py:37
 msgid "See man page for details."
 msgstr "تېخىمۇ كۆپ تەپسىلاتنى man قوللانمىسىدىن كۆرۈڭ."
 
-#: ../bin/apport-valgrind.py:43 ../debian/tmp/usr/bin/apport-valgrind.py:43
+#: ../debian/tmp/usr/bin/apport-valgrind.py:43 ../bin/apport-valgrind.py:43
 msgid "specify the log file name produced by valgrind"
 msgstr "بۇ valgrind ھاسىل قىلىدىغان خاتىرە ھۆججىتىنىڭ ئىسمىنى بەلگىلەڭ."
 
-#: ../bin/apport-valgrind.py:46 ../debian/tmp/usr/bin/apport-valgrind.py:46
+#: ../debian/tmp/usr/bin/apport-valgrind.py:46 ../bin/apport-valgrind.py:46
 msgid ""
 "reuse a previously created sandbox dir (SDIR) or, if it does not exist, "
 "create it"
@@ -305,7 +301,7 @@ msgstr ""
 "ئىلگىرى قۇرۇلغان sandbox مۇندەرىجىسى (SDIR) نى قايتا ئىشلىتىدۇ ياكى ئەگەر ئۇ "
 "مەۋجۇت بولمىسا، ئۇنى قۇرىدۇ"
 
-#: ../bin/apport-valgrind.py:50 ../debian/tmp/usr/bin/apport-valgrind.py:50
+#: ../debian/tmp/usr/bin/apport-valgrind.py:50 ../bin/apport-valgrind.py:50
 msgid ""
 "do  not  create  or reuse a sandbox directory for additional debug symbols "
 "but rely only on installed debug symbols."
@@ -313,7 +309,7 @@ msgstr ""
 "قوشۇمچە سازلاش بەلگىسى ئۈچۈن sandbox مۇندەرىجىسىنى قۇرمايدۇ ياكى قايتا "
 "ئىشلەتمەيدۇ ئەمما پەقەت ئورنىتىلغان سازلاش بەلگىلىرىگە تايىنىدۇ."
 
-#: ../bin/apport-valgrind.py:54 ../debian/tmp/usr/bin/apport-valgrind.py:54
+#: ../debian/tmp/usr/bin/apport-valgrind.py:54 ../bin/apport-valgrind.py:54
 msgid ""
 "reuse a previously created cache dir (CDIR) or, if it does not exist, create "
 "it"
@@ -321,13 +317,13 @@ msgstr ""
 "ئىلگىرى قۇرۇلغان غەملەك مۇندەرىجە (CDIR) نى قايتا ئىشلىتىدۇ ياكى ئەگەر "
 "مەۋجۇت بولمىسا ئۇنى قۇرىدۇ"
 
-#: ../bin/apport-valgrind.py:58 ../debian/tmp/usr/bin/apport-valgrind.py:58
+#: ../debian/tmp/usr/bin/apport-valgrind.py:58 ../bin/apport-valgrind.py:58
 msgid ""
 "report download/install progress when installing packages into sandbox"
 msgstr ""
 "ئورنىتىش بوغچىسى sandbox قا كىرسە چۈشۈرۈش/ئورنىتىش جەريانىنى دوكلات قىلىدۇ"
 
-#: ../bin/apport-valgrind.py:62 ../debian/tmp/usr/bin/apport-valgrind.py:62
+#: ../debian/tmp/usr/bin/apport-valgrind.py:62 ../bin/apport-valgrind.py:62
 msgid ""
 "the executable that is run under valgrind's memcheck tool  for memory leak "
 "detection"
@@ -335,31 +331,30 @@ msgstr ""
 "ئەسلەك ھالقىشنى بايقاش ئۈچۈن ئىجراچان پىروگراممىلار valgrind ئەسلەك تەكشۈرۈش "
 "قورالىنىڭ ئاستىدا ئىجرا قىلىنىدۇ"
 
-#: ../bin/apport-retrace.py:63 ../bin/apport-valgrind.py:66
-#: ../debian/tmp/usr/bin/apport-retrace.py:63
-#: ../debian/tmp/usr/bin/apport-valgrind.py:66
+#: ../debian/tmp/usr/bin/apport-valgrind.py:66 ../bin/apport-valgrind.py:66
+#: ../debian/tmp/usr/bin/apport-retrace.py:65 ../bin/apport-retrace.py:65
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
 "قۇم خالتىسى ئىچىگە قوشۇمچە بوغچىنى ئورنىتىش(بىر قانچە قېتىم كۆرسىتىشكە "
 "بولىدۇ)"
 
-#: ../bin/apport-valgrind.py:97 ../debian/tmp/usr/bin/apport-valgrind.py:97
+#: ../debian/tmp/usr/bin/apport-valgrind.py:97 ../bin/apport-valgrind.py:97
 #, python-format
 msgid "Error: %s is not an executable. Stopping."
 msgstr "خاتالىق: %s نى ئىجرا قىلغىلى بولمايدۇ. توختىتىۋاتىدۇ."
 
-#: ../debian/tmp/usr/share/apport/kernel_oops.py:29 ../data/kernel_oops.py:29
+#: ../data/kernel_oops.py:29 ../debian/tmp/usr/share/apport/kernel_oops.py:29
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "سىستېمىڭىزنىڭ تۇراقسىز بولۇپ قېلىش ئېھتىماللىقى بار، قايتا قوزغىتىش "
 "زۆرۈرىيىتى باردەك قىلىدۇ."
 
-#: ../bin/apport-retrace.py:34 ../debian/tmp/usr/bin/apport-retrace.py:34
+#: ../debian/tmp/usr/bin/apport-retrace.py:34 ../bin/apport-retrace.py:34
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr "بۇ يېڭى چىققانلىرىنى مەلۇماتقا يازماي stdout قا يازسۇن."
 
-#: ../bin/apport-retrace.py:36 ../debian/tmp/usr/bin/apport-retrace.py:36
+#: ../debian/tmp/usr/bin/apport-retrace.py:36 ../bin/apport-retrace.py:36
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -367,34 +362,34 @@ msgstr ""
 "مەلۇماتنىڭ غول تۆكمىسىگە نىسبەتەن تەسىرلىشىشچان gdb ئەڭگىمەسىنى باشلايدۇ(-o "
 "غا پەرۋا قىلمايدۇ؛ مەلۇماتنى قاپلىمايدۇ)"
 
-#: ../bin/apport-retrace.py:38 ../debian/tmp/usr/bin/apport-retrace.py:38
+#: ../debian/tmp/usr/bin/apport-retrace.py:38 ../bin/apport-retrace.py:38
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr "ئەسلىدىكى مەلۇماتقا يازماي كۆرسىتىلگەن ھۆججەتكە يازسۇن."
 
-#: ../bin/apport-retrace.py:41 ../debian/tmp/usr/bin/apport-retrace.py:41
+#: ../debian/tmp/usr/bin/apport-retrace.py:41 ../bin/apport-retrace.py:41
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr ""
 "stack ئىزلىشى قايتا ھاسىللانغاندىن كېيىن، غول تۆكمىنى(core dump) مەلۇماتتىن "
 "چىقىرىۋېتىش"
 
-#: ../bin/apport-retrace.py:43 ../debian/tmp/usr/bin/apport-retrace.py:43
+#: ../debian/tmp/usr/bin/apport-retrace.py:43 ../bin/apport-retrace.py:43
 msgid "Override report's CoreFile"
 msgstr "دوكلاتنىڭ CoreFile نى قاپلاش"
 
-#: ../bin/apport-retrace.py:45 ../debian/tmp/usr/bin/apport-retrace.py:45
+#: ../debian/tmp/usr/bin/apport-retrace.py:45 ../bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
 msgstr "دوكلاتنىڭ ExecutablePath نى قاپلاش"
 
-#: ../bin/apport-retrace.py:47 ../debian/tmp/usr/bin/apport-retrace.py:47
+#: ../debian/tmp/usr/bin/apport-retrace.py:47 ../bin/apport-retrace.py:47
 msgid "Override report's ProcMaps"
 msgstr "دوكلاتنىڭ ProcMaps نى قاپلاش"
 
-#: ../bin/apport-retrace.py:49 ../debian/tmp/usr/bin/apport-retrace.py:49
+#: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
 msgid "Rebuild report's Package information"
 msgstr "دوكلاتنىڭ بوغچا ئۇچۇرىنى قايتا قۇرۇش"
 
-#: ../bin/apport-retrace.py:51 ../debian/tmp/usr/bin/apport-retrace.py:51
+#: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
 msgid ""
 "Build a temporary sandbox and download/install the necessary packages and "
 "debug symbols in there; without this option it assumes that the necessary "
@@ -408,29 +403,29 @@ msgstr ""
 "سىستېما بەلگىلىمىسىڭىز، سىستېما سەپلىمىسىنى ئىشلىتىدۇ، شۇنىڭ بىلەن ئىجرا "
 "قىلىنىۋاتقان سىستېمىنى ھالاك قىلىدۇ."
 
-#: ../bin/apport-retrace.py:53 ../debian/tmp/usr/bin/apport-retrace.py:53
+#: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "بوغچىلارنى قۇم خالتىسى ئىچىگە ئورناتقاندىكى چۈشۈرۈش/ئورنىتىش جەريانىنى مەلۇم "
 "قىلىش"
 
-#: ../bin/apport-retrace.py:55 ../debian/tmp/usr/bin/apport-retrace.py:55
+#: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr ""
 "ئۇچۇر خاتىرىلەشتىن بۇرۇن ۋاقىتنى خاتىرىلەڭ، بۇ قېتىملىق مەشغۇلاتنى "
 "تەمىنلەيدۇ."
 
-#: ../bin/apport-retrace.py:57 ../debian/tmp/usr/bin/apport-retrace.py:57
+#: ../debian/tmp/usr/bin/apport-retrace.py:59 ../bin/apport-retrace.py:59
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
 
-#: ../bin/apport-retrace.py:59 ../debian/tmp/usr/bin/apport-retrace.py:59
+#: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr "قۇم خالتىسى ئىچىگە چۈشۈرۈلگەن بوغچىلارنىڭ غەملەك مۇندەرىجىسى"
 
-#: ../bin/apport-retrace.py:61 ../debian/tmp/usr/bin/apport-retrace.py:61
+#: ../debian/tmp/usr/bin/apport-retrace.py:63 ../bin/apport-retrace.py:63
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
@@ -438,7 +433,7 @@ msgstr ""
 "يېيىلمىغان بوغچىلارنىڭ مۇندەرىجىسى. كېيىن ئىجرا قىلىدىغان چاغدا، چۈشۈرۈلگەن "
 "بوغچىلار مۇشۇ يەرگە يېيىلىدۇ."
 
-#: ../bin/apport-retrace.py:65 ../debian/tmp/usr/bin/apport-retrace.py:65
+#: ../debian/tmp/usr/bin/apport-retrace.py:67 ../bin/apport-retrace.py:67
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -449,7 +444,7 @@ msgstr ""
 "ئۇچۇرى ئۈچۈن ئىشلىتىلىدۇ. (ئىشلەتكۈچى -g, -o, ياكى -s نى بەلگىلىگەن "
 "بولمىسىلا)"
 
-#: ../bin/apport-retrace.py:67 ../debian/tmp/usr/bin/apport-retrace.py:67
+#: ../debian/tmp/usr/bin/apport-retrace.py:69 ../bin/apport-retrace.py:69
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -457,29 +452,31 @@ msgstr ""
 "قايتۇرغان ئىزلاش ئۇچۇرىنى كۆرسىتىدۇ ھەمدە يىمىرىلىش ساندىنىغا يوللاش "
 "يوللىماسلىقنى جەزملەشنى سورايدۇ."
 
-#: ../bin/apport-retrace.py:69 ../debian/tmp/usr/bin/apport-retrace.py:69
+#: ../debian/tmp/usr/bin/apport-retrace.py:71 ../bin/apport-retrace.py:71
 msgid ""
 "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "تەكرارلانغان sqlite ساندىنىنىڭ يولى.(كۆڭۈلدە تەكرارلىنىشنى تەكشۈرمەيدۇ)"
 
-#: ../bin/apport-retrace.py:78 ../debian/tmp/usr/bin/apport-retrace.py:78
+#: ../debian/tmp/usr/bin/apport-retrace.py:80 ../bin/apport-retrace.py:80
 msgid "You cannot use -C without -S. Stopping."
 msgstr ""
 "سىز -S نى بەلگىلىمەي تۇرۇپ -C تاللانمىنى ئىشلىتەلمەيسىز، توختىتىۋاتىدۇ."
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../bin/apport-retrace.py:111 ../debian/tmp/usr/bin/apport-retrace.py:111
+#: ../debian/tmp/usr/bin/apport-retrace.py:113 ../bin/apport-retrace.py:113
 msgid "OK to send these as attachments? [y/n]"
 msgstr "بۇ قوشۇلما ھۆججەتلەرنى ئەۋەتسە بولامدۇ؟[y/n]"
 
-#: ../apport/ui.py:125
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:125
+#: ../apport/ui.py:131
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:131
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:131
 msgid "This package does not seem to be installed correctly"
 msgstr "مەزكۇر بوغچا توغرا ئورنىتىلمىغاندەك قىلىدۇ"
 
-#: ../apport/ui.py:130
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:130
+#: ../apport/ui.py:136
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:136
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:136
 #, python-format
 msgid ""
 "This is not an official %s package. Please remove any third party package "
@@ -487,8 +484,9 @@ msgid ""
 msgstr ""
 "بۇ رەسمىي %s بوغچىسى ئەمەس. ئۈچىنچى تەرەپ بوغچىسىنى چىقىرىۋېتىپ، قايتا سىناڭ."
 
-#: ../apport/ui.py:147
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:147
+#: ../apport/ui.py:153
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:153
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:153
 #, python-format
 msgid ""
 "You have some obsolete package versions installed. Please upgrade the "
@@ -501,26 +499,31 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:275
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:275
+#: ../apport/ui.py:282
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:282
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:282
 msgid "unknown program"
 msgstr "نامەلۇم پروگرامما"
 
-#: ../apport/ui.py:276
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:276
+#: ../apport/ui.py:283
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:283
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:283
 #, python-format
 msgid "Sorry, the program \"%s\" closed unexpectedly"
 msgstr "كەچۈرۈڭ، پروگرامما  «%s» ئويلىمىغان يەردىن تاقىلىپ قالدى"
 
-#: ../apport/ui.py:278 ../apport/ui.py:1317
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:278
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1317
+#: ../apport/ui.py:285 ../apport/ui.py:1324
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:285
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1324
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:285
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1324
 #, python-format
 msgid "Problem in %s"
 msgstr "مەسىلە %s نىڭدا"
 
-#: ../apport/ui.py:279
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:279
+#: ../apport/ui.py:286
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:286
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:286
 msgid ""
 "Your computer does not have enough free memory to automatically analyze the "
 "problem and send a report to the developers."
@@ -528,54 +531,69 @@ msgstr ""
 "مەسىلىنى ئاپتوماتىك ئانالىز قىلىش ۋە ئىجادىيەتچىگە مەلۇمات يوللاشقا كېرەكلىك "
 "ئەسلەك يېتەرلىك ئەمەس ئىكەن."
 
-#: ../apport/ui.py:327 ../apport/ui.py:335 ../apport/ui.py:462
-#: ../apport/ui.py:465 ../apport/ui.py:666 ../apport/ui.py:1123
-#: ../apport/ui.py:1289 ../apport/ui.py:1293
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:327
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:335
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:462
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:465
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:666
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1123
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1289
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1293
+#: ../apport/ui.py:334 ../apport/ui.py:342 ../apport/ui.py:469
+#: ../apport/ui.py:472 ../apport/ui.py:673 ../apport/ui.py:1130
+#: ../apport/ui.py:1296 ../apport/ui.py:1300
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:334
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:342
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:469
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:472
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:673
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1130
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1296
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1300
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:334
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:342
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:469
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:472
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:673
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1130
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1296
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1300
 msgid "Invalid problem report"
 msgstr "مەلۇمات ئىناۋەتسىز"
 
-#: ../apport/ui.py:328
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:328
+#: ../apport/ui.py:335
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:335
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:335
 msgid "You are not allowed to access this problem report."
 msgstr "بۇ مەسىلىنى مەلۇم قىلىش ھوقۇقىڭىز يوق."
 
-#: ../apport/ui.py:331
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:331
+#: ../apport/ui.py:338
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:338
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:338
 msgid "Error"
 msgstr "خاتالىق"
 
-#: ../apport/ui.py:332
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:332
+#: ../apport/ui.py:339
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:339
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:339
 msgid "There is not enough disk space available to process this report."
 msgstr "مەزكۇر مەلۇماتنى بىر تەرەپ قىلىشقا كېرەكلىك دىسكا بوشلۇقى يوق."
 
-#: ../apport/ui.py:416
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:416
+#: ../apport/ui.py:423
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:423
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:423
 msgid "No package specified"
 msgstr "بوغچا كۆرسىتىلمىگەن."
 
-#: ../apport/ui.py:417
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:417
+#: ../apport/ui.py:424
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:424
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:424
 msgid ""
 "You need to specify a package or a PID. See --help for more information."
 msgstr ""
 "بوغچا ياكى بىر PID نى كۆرسىتىڭ. تەپسىلاتلار ئۈچۈن --help نى ئىشلىتىڭ."
 
-#: ../apport/ui.py:440
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:440
+#: ../apport/ui.py:447
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:447
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:447
 msgid "Permission denied"
 msgstr "ھوقۇقىڭىز يەتمىدى"
 
-#: ../apport/ui.py:441
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:441
+#: ../apport/ui.py:448
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:448
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:448
 msgid ""
 "The specified process does not belong to you. Please run this program as the "
 "process owner or as root."
@@ -583,44 +601,55 @@ msgstr ""
 "بۇ سىزنىڭ پروگراممىڭىز ئەمەس. مەزكۇر پروگراممىنى ئۆزىڭىزنىڭ ياكى root نىڭ "
 "ھوقۇقىدا ئىجرا قىلدۇرۇڭ."
 
-#: ../apport/ui.py:443
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:443
+#: ../apport/ui.py:450
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:450
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:450
 msgid "Invalid PID"
 msgstr "ئىناۋەتسىز PID"
 
-#: ../apport/ui.py:444
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:444
+#: ../apport/ui.py:451
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:451
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:451
 msgid "The specified process ID does not belong to a program."
 msgstr "كۆرسىتىلگەن PID مەزكۇر پروگراممىنىڭ PID ئەمەس."
 
-#: ../apport/ui.py:463
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:463
+#: ../apport/ui.py:470
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:470
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:470
 #, python-format
 msgid "Symptom script %s did not determine an affected package"
 msgstr "ئەھۋال قوليازما %s تەسىر كۆرسىتىدىغان بوغچىنى بەلگىلىمىگەن"
 
-#: ../apport/ui.py:466
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:466
+#: ../apport/ui.py:473
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:473
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:473
 #, python-format
 msgid "Package %s does not exist"
 msgstr "بوغچا %s مەۋجۇت ئەمەس"
 
-#: ../apport/ui.py:490 ../apport/ui.py:678 ../apport/ui.py:683
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:490
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:678
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:683
+#: ../apport/ui.py:497 ../apport/ui.py:685 ../apport/ui.py:690
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:497
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:685
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:690
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:497
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:685
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:690
 msgid "Cannot create report"
 msgstr "مەلۇمات قۇرالمىدى"
 
-#: ../apport/ui.py:505 ../apport/ui.py:551 ../apport/ui.py:568
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:505
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:551
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:568
+#: ../apport/ui.py:512 ../apport/ui.py:558 ../apport/ui.py:575
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:512
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:558
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:575
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:512
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:558
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:575
 msgid "Updating problem report"
 msgstr "مەلۇماتىنى يېڭىلاۋاتىدۇ"
 
-#: ../apport/ui.py:506
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:506
+#: ../apport/ui.py:513
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:513
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:513
 msgid ""
 "You are not the reporter or subscriber of this problem report, or the report "
 "is a duplicate or already closed.\n"
@@ -632,8 +661,9 @@ msgstr ""
 "\n"
 "«apport-bug» نى ئىشلىتىپ يېڭىدىن مەلۇمات تەييارلاڭ."
 
-#: ../apport/ui.py:515
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:515
+#: ../apport/ui.py:522
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:522
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:522
 msgid ""
 "You are not the reporter of this problem report. It is much easier to mark a "
 "bug as a duplicate of another than to move your comments and attachments to "
@@ -652,67 +682,81 @@ msgstr ""
 "\n"
 "راستلا داۋاملاشتۇرامسىز؟"
 
-#: ../apport/ui.py:552 ../apport/ui.py:569
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:552
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:569
+#: ../apport/ui.py:559 ../apport/ui.py:576
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:559
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:576
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:559
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:576
 msgid "No additional information collected."
 msgstr "قوشۇمچە ئۇچۇرلار توپلانمىدى."
 
-#: ../apport/ui.py:620
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:620
+#: ../apport/ui.py:627
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:627
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:627
 msgid "What kind of problem do you want to report?"
 msgstr "قانداق مەسىلىنى مەلۇم قىلماقچى؟"
 
-#: ../apport/ui.py:637
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:637
+#: ../apport/ui.py:644
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:644
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:644
 msgid "Unknown symptom"
 msgstr "نامەلۇم ھادىسە"
 
-#: ../apport/ui.py:638
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:638
+#: ../apport/ui.py:645
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:645
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:645
 #, python-format
 msgid "The symptom \"%s\" is not known."
 msgstr "ھادىسە «%s» نامەلۇم."
 
-#: ../apport/ui.py:669
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:669
+#: ../apport/ui.py:676
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:676
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:676
 msgid ""
 "After closing this message please click on an application window to report a "
 "problem about it."
 msgstr ""
 "ئۇچۇرنى ياپقاندىن كېيىن پروگرامما كۆزنىكىنى چېكىپ، بۇ مەسىلىنى مەلۇم قىلىڭ."
 
-#: ../apport/ui.py:679 ../apport/ui.py:684
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:679
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:684
+#: ../apport/ui.py:686 ../apport/ui.py:691
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:686
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:691
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:686
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:691
 msgid "xprop failed to determine process ID of the window"
 msgstr "xprop كۆزنەكنىڭ ئىجرا ID سىنى تېپىشتا مەغلۇپ بولدى"
 
-#: ../apport/ui.py:698
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:698
+#: ../apport/ui.py:705
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:705
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:705
 msgid "%prog <report number>"
 msgstr "%prog <مەلۇمات نومۇرى>"
 
-#: ../apport/ui.py:700
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:700
+#: ../apport/ui.py:707
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:707
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:707
 msgid "Specify package name."
 msgstr "بوغچا ئاتىنى كۆرسىتىپ بېرىڭ."
 
-#: ../apport/ui.py:702 ../apport/ui.py:753
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:702
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:753
+#: ../apport/ui.py:709 ../apport/ui.py:760
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:709
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:760
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:709
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:760
 msgid "Add an extra tag to the report. Can be specified multiple times."
 msgstr "دوكلاتقا يېڭىدىن خەتكۈش قوشۇڭ، كۆپ قېتىم بەلگىلەشكە بولىدۇ."
 
-#: ../apport/ui.py:732
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:732
+#: ../apport/ui.py:739
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:739
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:739
 msgid ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 msgstr ""
 "%prog [options] [symptom|pid|package|program path|.apport/.crash file]"
 
-#: ../apport/ui.py:735
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:735
+#: ../apport/ui.py:742
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:742
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:742
 msgid ""
 "Start in bug filing mode. Requires --package and an optional --pid, or just "
 "a --pid. If neither is given, display a list of known symptoms. (Implied if "
@@ -723,20 +767,23 @@ msgstr ""
 "كۆرۈلگەن ئالامەتلەرنىڭ تىزىمىنى كۆرسىتىدۇ. (پەقەت يالغۇز ئارگۇمېنت "
 "بېرىلگەندىلا.)"
 
-#: ../apport/ui.py:737
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:737
+#: ../apport/ui.py:744
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:744
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:744
 msgid "Click a window as a target for filing a problem report."
 msgstr "خاتالىق دوكلاتىنى تولدۇرۇش ئۈچۈن كۆزنەكنى نىشان قىلىپ چېكىڭ"
 
-#: ../apport/ui.py:739
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:739
+#: ../apport/ui.py:746
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:746
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:746
 msgid "Start in bug updating mode. Can take an optional --package."
 msgstr ""
 "كەمتۈك يېڭىلاش ھالىتىدە قوزغىتىش. --package دېگەن تاللانمىنى ئىشلىتىشكە "
 "بولىدۇ."
 
-#: ../apport/ui.py:741
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:741
+#: ../apport/ui.py:748
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:748
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:748
 msgid ""
 "File a bug report about a symptom. (Implied if symptom name is given as only "
 "argument.)"
@@ -744,8 +791,9 @@ msgstr ""
 "ھادىسە ھەققىدە مەلۇمات تەييارلاڭ. (Implied if symptom name is given as only "
 "argument)"
 
-#: ../apport/ui.py:743
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:743
+#: ../apport/ui.py:750
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:750
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:750
 msgid ""
 "Specify package name in --file-bug mode. This is optional if a --pid is "
 "specified. (Implied if package name is given as only argument.)"
@@ -753,8 +801,9 @@ msgstr ""
 "--file-bug ھالىتىدە بوغچا ئاتىنى كۆرسىتىڭ. ئەگەر --pid كۆرسىتىلگەن بولسا، "
 "بۇنى كۆرسەتمىسىمۇ بولىدۇ.(Implied if package name is given as only argument.)"
 
-#: ../apport/ui.py:745
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:745
+#: ../apport/ui.py:752
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:752
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:752
 msgid ""
 "Specify a running program in --file-bug mode. If this is specified, the bug "
 "report will contain more information.  (Implied if pid is given as only "
@@ -764,14 +813,16 @@ msgstr ""
 "كۆرسىتىلسە، كەمتۈك مەلۇماتىغا تېخىمۇ كۆپ ئۇچۇرلار قوشۇلىدۇ. (Implied if pid "
 "is given as only argument.)"
 
-#: ../apport/ui.py:747
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:747
+#: ../apport/ui.py:754
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:754
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:754
 msgid "The provided pid is a hanging application."
 msgstr ""
 "تەمىنلەنگەن pid بولسا بىر ئېسىلىپ قالغان(توختاپ قالغان) پروگرامما ئىكەن."
 
-#: ../apport/ui.py:749
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:749
+#: ../apport/ui.py:756
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:756
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:756
 #, python-format
 msgid ""
 "Report the crash from given .apport or .crash file instead of the pending "
@@ -781,8 +832,9 @@ msgstr ""
 ".apport ياكى .crash ھۆججىتىنى ئىشلىتىپ يوللاش(پەقەت ھۆججەت ئاتى ئارگۇمېنت "
 "شەكىلدە بېرىلگەندىلا.)"
 
-#: ../apport/ui.py:751
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:751
+#: ../apport/ui.py:758
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:758
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:758
 msgid ""
 "In bug filing mode, save the collected information into a file instead of "
 "reporting it. This file can then be reported later on from a different "
@@ -791,115 +843,137 @@ msgstr ""
 "كەمتۈك يېزىش ھالىتىدە، توپلانغان ئۇچۇرلارنى مەلۇم قىلماي ھۆججەتكە ساقلاپ "
 "قويۇشقا، بۇ ھۆججەتنى كېيىن باشقا كومپيۇتېر ئارقىلىق يوللاشقىمۇ بولىدۇ."
 
-#: ../apport/ui.py:755
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:755
+#: ../apport/ui.py:762
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:762
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:762
 msgid "Print the Apport version number."
 msgstr "Apport نىڭ نەشر نومۇرىنى بېسىپ چىقىرىدۇ."
 
-#: ../apport/ui.py:894
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:894
+#: ../apport/ui.py:901
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:901
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:901
 msgid ""
 "This will launch apport-retrace in a terminal window to examine the crash."
 msgstr ""
 "crash نى تەكشۈرۈش ئۈچۈن apport-retrace تېرمىنال كۆزنىكىدە ئىجرا بولىدۇ."
 
-#: ../apport/ui.py:895
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:895
+#: ../apport/ui.py:902
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:902
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:902
 msgid "Run gdb session"
 msgstr "gdb ئەڭگىمەسىنى ئىجرا قىلىش"
 
-#: ../apport/ui.py:896
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:896
+#: ../apport/ui.py:903
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:903
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:903
 msgid "Run gdb session without downloading debug symbols"
 msgstr "سازلاش بەلگىلىرىنى چۈشۈرمەيلا gdb ئەڭگىمەسىنى ئىجرا قىلىش"
 
 #. TRANSLATORS: %s contains the crash report file name
-#: ../apport/ui.py:898
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:898
+#: ../apport/ui.py:905
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:905
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:905
 #, python-format
 msgid "Update %s with fully symbolic stack trace"
 msgstr "%s نى تولۇق بەلگىلەر بىلەن يېڭىلاش"
 
-#: ../apport/ui.py:974 ../apport/ui.py:984
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:974
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:984
+#: ../apport/ui.py:981 ../apport/ui.py:991
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:981
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:991
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:981
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:991
 msgid ""
 "This problem report applies to a program which is not installed any more."
 msgstr "بۇ دوكلات زادىلا ئورنىتىلىپ باقمىغان پروگراممىغا ئىشلىتىلىدۇ."
 
-#: ../apport/ui.py:999
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:999
+#: ../apport/ui.py:1006
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1006
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1006
 #, python-format
 msgid ""
 "The problem happened with the program %s which changed since the crash "
 "occurred."
 msgstr "توقۇنۇشتا ئۆزگەرگەن پروگرامما %s تە خاتالىق كۆرۈلدى."
 
-#: ../apport/ui.py:1046 ../apport/ui.py:1080 ../apport/ui.py:1295
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1046
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1080
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1295
+#: ../apport/ui.py:1053 ../apport/ui.py:1087 ../apport/ui.py:1302
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1053
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1087
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1302
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1053
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1087
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1302
 msgid "This problem report is damaged and cannot be processed."
 msgstr "بوغچا بۇزۇلغان بولغاچقا بىر تەرەپ قىلغىلى بولمىدى."
 
 #. package does not exist
-#: ../apport/ui.py:1050
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1050
+#: ../apport/ui.py:1057
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1057
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1057
 msgid "The report belongs to a package that is not installed."
 msgstr "مەلۇمات ئورنىتىلمىغان بوغچىغا تەۋە ئىكەن."
 
-#: ../apport/ui.py:1054
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1054
+#: ../apport/ui.py:1061
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1061
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1061
 msgid "An error occurred while attempting to process this problem report:"
 msgstr ""
 "بۇ مەسىلە ھەققىدىكى مەلۇماتنى بىر تەرەپ قىلاي دېگەندە  خاتالىق يۈز بەردى:"
 
-#: ../apport/ui.py:1124
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1124
+#: ../apport/ui.py:1131
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1131
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1131
 msgid "Could not determine the package or source package name."
 msgstr "بوغچا ياكى مەنبە كود بوغچىسىنىڭ نامىنى بېكىتكىلى بولمىدى."
 
-#: ../apport/ui.py:1142
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1142
+#: ../apport/ui.py:1149
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1149
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1149
 msgid "Unable to start web browser"
 msgstr "توركۆرگۈنى قوزغاتقىلى بولمىدى"
 
-#: ../apport/ui.py:1143
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1143
+#: ../apport/ui.py:1150
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1150
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1150
 #, python-format
 msgid "Unable to start web browser to open %s."
 msgstr "%s نى كۆرىدىغان توركۆرگۈنى قوزغاتقىلى بولمىدى."
 
-#: ../apport/ui.py:1243
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1243
+#: ../apport/ui.py:1250
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1250
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1250
 #, python-format
 msgid "Please enter your account information for the %s bug tracking system"
 msgstr "كەمتۈك باشقۇرۇش سىستېمىسى %s غا ھېسابات ئۇچۇرىڭىزنى كىرگۈزۈڭ."
 
-#: ../apport/ui.py:1255
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1255
+#: ../apport/ui.py:1262
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1262
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1262
 msgid "Network problem"
 msgstr "توردىكى مەسىلە"
 
-#: ../apport/ui.py:1257
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1257
+#: ../apport/ui.py:1264
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1264
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1264
 msgid ""
 "Cannot connect to crash database, please check your Internet connection."
 msgstr "crash ساندىنىغا باغلىنالمىدى، ئىنتېرنېت باغلىنىشىنى تەكشۈرۈپ كۆرۈڭ."
 
-#: ../apport/ui.py:1284
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1284
+#: ../apport/ui.py:1291
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1291
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1291
 msgid "Memory exhaustion"
 msgstr "ئەسلەك يېتىشمىدى"
 
-#: ../apport/ui.py:1285
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1285
+#: ../apport/ui.py:1292
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1292
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1292
 msgid "Your system does not have enough memory to process this crash report."
 msgstr ""
 "سىستېمىڭىزدا مەزكۇر crash مەلۇماتىنى بىر تەرەپ قىلىشقا يېتەرلىك ئەسلەك يوق."
 
-#: ../apport/ui.py:1320
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1320
+#: ../apport/ui.py:1327
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1327
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1327
 #, python-format
 msgid ""
 "The problem cannot be reported:\n"
@@ -910,14 +984,17 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../apport/ui.py:1376 ../apport/ui.py:1383
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1376
+#: ../apport/ui.py:1383 ../apport/ui.py:1390
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1383
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1390
 #: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1383
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1390
 msgid "Problem already known"
 msgstr "مەسىلە ئاللىقاچان ئايدىڭلاشقان"
 
-#: ../apport/ui.py:1377
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1377
+#: ../apport/ui.py:1384
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1384
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1384
 msgid ""
 "This problem was already reported in the bug report displayed in the web "
 "browser. Please check if you can add any further information that might be "
@@ -927,8 +1004,9 @@ msgstr ""
 "كۆرۈڭ، ئەگەر سىزنىڭ مەلۇماتىڭىزدا تېخىمۇ كۆپرەك ئۇچۇرلار بار بولسا "
 "ئىجادىيەتچىلەر ئۈچۈن تېخىمۇ پايدىلىق بولاتتى."
 
-#: ../apport/ui.py:1384
-#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1384
+#: ../apport/ui.py:1391
+#: ../debian/tmp/usr/lib/python3/dist-packages/apport/ui.py:1391
+#: ../debian/tmp/usr/lib/python2.7/dist-packages/apport/ui.py:1391
 msgid "This problem was already reported to developers. Thank you!"
 msgstr "مەسىلە ئىجادىيەتچىلەرگە مەلۇم قىلىندى. سىزگە تەشەككۈر!"
 
@@ -955,25 +1033,25 @@ msgstr ""
 "ئەسلىگە قايتۇرۇش باسقۇچى ئاخىرلىشاي دەپ قالدى، بۇنداق بولغاندا نورمال "
 "تاماملىنىدۇ."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:74 ../bin/apport-cli.py:74
+#: ../bin/apport-cli.py:74 ../debian/tmp/usr/bin/apport-cli.py:74
 msgid "Press any key to continue..."
 msgstr "خالىغان كۇنۇپكىنى باسسىڭىز داۋاملىشىدۇ..."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:81 ../bin/apport-cli.py:81
+#: ../bin/apport-cli.py:81 ../debian/tmp/usr/bin/apport-cli.py:81
 msgid "What would you like to do? Your options are:"
 msgstr "نېمە قىلغۇڭىز بار؟ سىز تۆۋەندىكىلەرنى قىلالايسىز:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:85 ../bin/apport-cli.py:85
+#: ../bin/apport-cli.py:85 ../debian/tmp/usr/bin/apport-cli.py:85
 #, python-format
 msgid "Please choose (%s):"
 msgstr "تاللاڭ(%s):"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:148 ../bin/apport-cli.py:148
+#: ../bin/apport-cli.py:148 ../debian/tmp/usr/bin/apport-cli.py:148
 #, python-format
 msgid "(%i bytes)"
 msgstr "(%i بايت)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:179 ../bin/apport-cli.py:179
+#: ../bin/apport-cli.py:179 ../debian/tmp/usr/bin/apport-cli.py:179
 msgid ""
 "After the problem report has been sent, please fill out the form in the\n"
 "automatically opened web browser."
@@ -981,55 +1059,55 @@ msgstr ""
 "مەلۇماتنى ئەۋەتىپ بولغاندىن كېيىن \n"
 "توركۆرگۈدە ئېچىلغان بەتتىكى جەدۋەلنى تولدۇرۇڭ."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:182 ../bin/apport-cli.py:182
+#: ../bin/apport-cli.py:182 ../debian/tmp/usr/bin/apport-cli.py:182
 #, python-format
 msgid "&Send report (%s)"
 msgstr "مەلۇمات (%s) نى ئەۋەت(&S)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:186 ../bin/apport-cli.py:186
+#: ../bin/apport-cli.py:186 ../debian/tmp/usr/bin/apport-cli.py:186
 msgid "&Examine locally"
 msgstr "يەرلىكتە تەكشۈر(&E)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:190 ../bin/apport-cli.py:190
+#: ../bin/apport-cli.py:190 ../debian/tmp/usr/bin/apport-cli.py:190
 msgid "&View report"
 msgstr "مەلۇمات كۆرسەت(&V)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:191 ../bin/apport-cli.py:191
+#: ../bin/apport-cli.py:191 ../debian/tmp/usr/bin/apport-cli.py:191
 msgid "&Keep report file for sending later or copying to somewhere else"
 msgstr ""
 "كېيىن يەنە باشقىلارغا ئەۋەتىش ياكى كۆچۈرۈپ بېرىش ئۈچۈن مەلۇمات ھۆججىتى "
 "ساقلاپ قوي(&K)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:192 ../bin/apport-cli.py:192
+#: ../bin/apport-cli.py:192 ../debian/tmp/usr/bin/apport-cli.py:192
 msgid "Cancel and &ignore future crashes of this program version"
 msgstr ""
 "پروگراممىنىڭ مەزكۇر نەشرىدە بۇنىڭدىن كېلىپ چىققان crashes نى ئەمەلدىن قالدۇر "
 "ياكى پىسەنت قىلما(&I)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:194
+#: ../bin/apport-cli.py:194 ../bin/apport-cli.py:271 ../bin/apport-cli.py:303
+#: ../bin/apport-cli.py:324 ../debian/tmp/usr/bin/apport-cli.py:194
 #: ../debian/tmp/usr/bin/apport-cli.py:271
 #: ../debian/tmp/usr/bin/apport-cli.py:303
-#: ../debian/tmp/usr/bin/apport-cli.py:324 ../bin/apport-cli.py:194
-#: ../bin/apport-cli.py:271 ../bin/apport-cli.py:303 ../bin/apport-cli.py:324
+#: ../debian/tmp/usr/bin/apport-cli.py:324
 msgid "&Cancel"
 msgstr "ئەمەلدىن قالدۇر(&C)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:222 ../bin/apport-cli.py:222
+#: ../bin/apport-cli.py:222 ../debian/tmp/usr/bin/apport-cli.py:222
 msgid "Problem report file:"
 msgstr "مەلۇمات ھۆججىتى:"
 
+#: ../bin/apport-cli.py:228 ../bin/apport-cli.py:233
 #: ../debian/tmp/usr/bin/apport-cli.py:228
-#: ../debian/tmp/usr/bin/apport-cli.py:233 ../bin/apport-cli.py:228
-#: ../bin/apport-cli.py:233
+#: ../debian/tmp/usr/bin/apport-cli.py:233
 msgid "&Confirm"
 msgstr "جەزملە(&C)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:232 ../bin/apport-cli.py:232
+#: ../bin/apport-cli.py:232 ../debian/tmp/usr/bin/apport-cli.py:232
 #, python-format
 msgid "Error: %s"
 msgstr "خاتالىق: %s"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:239 ../bin/apport-cli.py:239
+#: ../bin/apport-cli.py:239 ../debian/tmp/usr/bin/apport-cli.py:239
 msgid ""
 "The collected information can be sent to the developers to improve the\n"
 "application. This might take a few minutes."
@@ -1037,7 +1115,7 @@ msgstr ""
 "ئىجادىيەتچىلەرنىڭ پروگراممىنى مۇكەممەللەشتۈرۈشى ئۈچۈن \n"
 "توپلانغان ئۇچۇرلارنى ئەۋەتىدۇ. بۇنىڭغا ئازراق ۋاقىت كېتىدۇ."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:252 ../bin/apport-cli.py:252
+#: ../bin/apport-cli.py:252 ../debian/tmp/usr/bin/apport-cli.py:252
 msgid ""
 "The collected information is being sent to the bug tracking system.\n"
 "This might take a few minutes."
@@ -1045,40 +1123,40 @@ msgstr ""
 "توپلانغان ئۇچۇرلارنى كەمتۈك باشقۇرۇش سىستېمىسىغا ئەۋەتىدۇ.\n"
 "بۇنىڭغا ئازراق ۋاقىت كېتىدۇ."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:302 ../bin/apport-cli.py:302
+#: ../bin/apport-cli.py:302 ../debian/tmp/usr/bin/apport-cli.py:302
 msgid "&Done"
 msgstr "تامام(&D)"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:308 ../bin/apport-cli.py:308
+#: ../bin/apport-cli.py:308 ../debian/tmp/usr/bin/apport-cli.py:308
 msgid "none"
 msgstr "يوق"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:309 ../bin/apport-cli.py:309
+#: ../bin/apport-cli.py:309 ../debian/tmp/usr/bin/apport-cli.py:309
 #, python-format
 msgid "Selected: %s. Multiple choices:"
 msgstr "تاللانغىنى : %s. كوپنى تاللاش:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:325 ../bin/apport-cli.py:325
+#: ../bin/apport-cli.py:325 ../debian/tmp/usr/bin/apport-cli.py:325
 msgid "Choices:"
 msgstr "تاللاشلار:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:339 ../bin/apport-cli.py:339
+#: ../bin/apport-cli.py:339 ../debian/tmp/usr/bin/apport-cli.py:339
 msgid "Path to file (Enter to cancel):"
 msgstr "ھۆججەتنىڭ يولى(بولدى قىلىش ئۈچۈن قايتۇرۇش كۇنۇپكىسىنى بېسىڭ):"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:345 ../bin/apport-cli.py:345
+#: ../bin/apport-cli.py:345 ../debian/tmp/usr/bin/apport-cli.py:345
 msgid "File does not exist."
 msgstr "ھۆججەت مەۋجۇت ئەمەس."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:347 ../bin/apport-cli.py:347
+#: ../bin/apport-cli.py:347 ../debian/tmp/usr/bin/apport-cli.py:347
 msgid "This is a directory."
 msgstr "بۇ بىر مۇندەرىجە."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:353 ../bin/apport-cli.py:353
+#: ../bin/apport-cli.py:353 ../debian/tmp/usr/bin/apport-cli.py:353
 msgid "To continue, you must visit the following URL:"
 msgstr "داۋاملاشتۇرۇش ئۈچۈن تۆۋەندىكى URL نى كۆرۈشىڭىز كېرەك:"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:355 ../bin/apport-cli.py:355
+#: ../bin/apport-cli.py:355 ../debian/tmp/usr/bin/apport-cli.py:355
 msgid ""
 "You can launch a browser now, or copy this URL into a browser on another "
 "computer."
@@ -1086,11 +1164,11 @@ msgstr ""
 "ئەمدى توركۆرگۈنى قوزغىتىڭ ياكى، URL نى باشقا كومپيۇتېردىكى توركۆرگۈگە "
 "كۆچۈرۈڭ."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:357 ../bin/apport-cli.py:357
+#: ../bin/apport-cli.py:357 ../debian/tmp/usr/bin/apport-cli.py:357
 msgid "Launch a browser now"
 msgstr "ھازىرلا توركۆرگۈنى قوزغىتىش"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:371 ../bin/apport-cli.py:371
+#: ../bin/apport-cli.py:372 ../debian/tmp/usr/bin/apport-cli.py:372
 msgid "No pending crash reports. Try --help for more information."
 msgstr ""
 "تېخى بىر تەرەپ قىلىنمىغان crash ھەققىدىكى مەلۇمات يوق. --help نى ئىشلەتسىڭىز "
