@@ -321,7 +321,7 @@ class CrashDatabase(apport.crashdb.CrashDatabase):
             # ignore attachments with invalid keys
             try:
                 report[key] = ''
-            except:
+            except Exception as e:
                 continue
             if ext == '.txt':
                 report[key] = attachment.read()

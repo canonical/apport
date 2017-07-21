@@ -148,7 +148,7 @@ def _check_bug_pattern(report, pattern):
                         regexp = regexp.encode('UTF-8')
                 try:
                     re_c = re.compile(regexp)
-                except:
+                except Exception:
                     continue
                 if not re_c.search(v):
                     return None
@@ -205,7 +205,7 @@ def _run_hook(report, ui, hook):
                 raise
     except StopIteration:
         return True
-    except:
+    except Exception as e:
         hookname = os.path.splitext(os.path.basename(hook))[0].replace('-', '_')
         report['HookError_' + hookname] = traceback.format_exc()
         apport.error('hook %s crashed:', hook)

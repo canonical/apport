@@ -131,7 +131,7 @@ def _log_signal_handler(sgn, frame):
         error_log('Got signal %i, aborting; frame:' % sgn)
         for s in inspect.stack():
             error_log(str(s))
-    except:
+    except Exception:
         pass
     sys.exit(1)
 
@@ -364,7 +364,7 @@ if len(sys.argv) == 5 and sys.argv[4].isdigit() and sys.argv[4] != sys.argv[1]:
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     try:
         sock.connect('/proc/%d/root/run/apport.socket' % host_pid)
-    except:
+    except Exception as e:
         error_log('host pid %s crashed in a container with a broken apport' %
                   sys.argv[4])
         sys.exit(0)

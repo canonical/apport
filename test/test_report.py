@@ -560,6 +560,12 @@ int main() { return f(42); }
     @classmethod
     def _validate_core(klass, core_path):
         subprocess.check_call(['sync'])
+        count = 0
+        while count < 21:
+            if os.path.exists(core_path):
+                break
+            time.sleep(0.5)
+            count += 1
         assert os.path.exists(core_path)
         readelf = subprocess.Popen(['readelf', '-n', core_path], stdout=subprocess.PIPE)
         readelf.communicate()

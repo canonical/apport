@@ -37,11 +37,13 @@ if [ -d test -a -e setup.py ]; then
     if PYCODESTYLE=$(which pycodestyle 2>/dev/null || which pep8 2>/dev/null); then
         echo "Running $(basename $PYCODESTYLE)..."
         # . catches all *.py modules; we explicitly need to specify the programs
-        $PYCODESTYLE -r --ignore=E401,E402,E501,E124 --exclude=test_problem_report.py,report.py,is-enabled,apport-bug,apport-collect .  `find bin data gtk kde -type f -executable`
+        $PYCODESTYLE -r --ignore=E401,E402,E501,E124 --exclude=test_problem_report.py,report.py,is-enabled,apport-bug,apport-collect,REThread.py .  `find bin data gtk kde -type f -executable`
         # those tests deliberately have trailing whitespace in test files, ignore
         $PYCODESTYLE -r --ignore=E401,E402,E501,W291,W293 test/test_problem_report.py
         # has_key is minidom API, not the dict operator here
         $PYCODESTYLE -r --ignore=E401,E402,E501,W601 apport/report.py
+        # need the bare except to catch the dialog being closed
+        $PYCODESTYLE -r --ignore=E401,E402,E501,E124,E722 apport/REThread.py
     else
         echo "Skipping PEP 8 tests, neither pycodestyle nor pep8 are installed"
     fi

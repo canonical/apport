@@ -63,7 +63,7 @@ class T(unittest.TestCase):
         raised = False
         try:
             t.exc_raise()
-        except:
+        except Exception as e:
             raised = True
             e = sys.exc_info()
             exc = traceback.format_exception(e[0], e[1], e[2])

@@ -732,7 +732,7 @@ def attach_mac_events(report, profiles=None):
                 profile = bytes.fromhex(match).decode('UTF-8', errors='replace')
             else:
                 profile = match.decode('hex', errors='replace')
-        except:
+        except Exception:
             continue
 
         for search_profile in profiles:

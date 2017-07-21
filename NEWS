@@ -2,6 +2,14 @@ This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
 
+2.20.7 (UNRELEASED)
+-------------------
+ * Fix new pep8 failures in artful - E722 do not use bare except.
+ * apport/REThread.py: A bare except needs to be used so that we can catch
+   the dialog being closed.
+ * test/test_report.py: Be a little patient and give some time for the core
+   file to show up.
+
 2.20.6 (2017-07-18)
 -------------------
  * SECURITY FIX: Fix path traversal vulnerability with hooks execution.

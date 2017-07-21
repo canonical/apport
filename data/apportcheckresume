@@ -82,7 +82,7 @@ def main(argv=None):
         with os.fdopen(os.open(pr_filename, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640), 'wb') as report_file:
             pr.write(report_file)
         return 0
-    except:
+    except Exception:
         print('apportcheckresume failed')
         raise
 

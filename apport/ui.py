@@ -99,7 +99,7 @@ def thread_collect_info(report, reportfile, package, ui, symptom_script=None,
             report['Symptom'] = os.path.splitext(os.path.basename(symptom_script))[0]
         except StopIteration:
             sys.exit(0)
-        except:
+        except Exception as e:
             apport.error('symptom script %s crashed:', symptom_script)
             traceback.print_exc()
             sys.exit(0)
@@ -599,7 +599,7 @@ class UserInterface:
             try:
                 with open(script) as f:
                     exec(compile(f.read(), script, 'exec'), symb)
-            except:
+            except Exception:
                 apport.error('symptom script %s is invalid', script)
                 traceback.print_exc()
                 continue
