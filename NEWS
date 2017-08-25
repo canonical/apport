@@ -9,6 +9,10 @@ detailed list of changes, please see ChangeLog.
    the dialog being closed.
  * test/test_report.py: Be a little patient and give some time for the core
    file to show up.
+ * backends/packaging-apt-dpkg.py: Don't install the version mentioned in a
+   versioned dep, rather install the latest version of that dep.
+ * backends/packaging-apt-dpkg.py: search -proposed last so we prefer packages
+   from other pockets
 
 2.20.6 (2017-07-18)
 -------------------
