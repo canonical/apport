@@ -820,22 +820,25 @@ Debug::NoLocking "true";
                     apport.warning(m)
                     continue
                 for dep in cache_pkg.candidate.dependencies:
+                    # the version in dep is the one from pkg's dependencies,
+                    # so use the version from the cache
+                    dep_pkg_vers = cache[dep[0].name].candidate.version
                     # if the dependency is in the list of packages we don't
                     # need to look up its dependencies again
                     if dep[0].name in [pkg[0] for pkg in packages]:
                         continue
                     # if the package is already extracted in the sandbox
-                    # because the report need that package we don't want to
+                    # because the report needs that package we don't want to
                     # install a newer version which may cause a CRC mismatch
                     # with the installed dbg symbols
                     if dep[0].name in pkg_versions:
                         inst_version = pkg_versions[dep[0].name]
-                        if self.compare_versions(inst_version, dep[0].version) > -1:
+                        if self.compare_versions(inst_version, dep_pkg_vers) > -1:
                             deps.append((dep[0].name, inst_version))
                         else:
-                            deps.append((dep[0].name, dep[0].version))
+                            deps.append((dep[0].name, dep_pkg_vers))
                     else:
-                        deps.append((dep[0].name, dep[0].version))
+                        deps.append((dep[0].name, dep_pkg_vers))
                     if dep[0].name not in [pkg[0] for pkg in packages]:
                         packages.append((dep[0].name, None))
             packages.extend(deps)
