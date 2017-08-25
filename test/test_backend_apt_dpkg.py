@@ -649,16 +649,19 @@ deb http://secondary.mirror tuxy extra
 
         self._setup_foonux_config(release='xenial')
         # coreutils should always depend on libc6
-        impl.install_packages(self.rootdir, self.configdir,
-                              'Foonux 1.2',
-                              [('coreutils', None)],
-                              False, None, install_deps=True)
+        result = impl.install_packages(self.rootdir, self.configdir,
+                                       'Foonux 1.2',
+                                       [('coreutils', None)],
+                                       False, None, install_deps=True)
 
         # check packages.txt for a dependency
         with open(os.path.join(self.rootdir, 'packages.txt')) as f:
             pkglist = f.read().splitlines()
         self.assertIn('coreutils 8.25-2ubuntu2', pkglist)
         self.assertIn('libc6 2.23-0ubuntu3', pkglist)
+
+        # ensure obsolete packages doesn't include libc6
+        self.assertNotIn('libc6', result)
 
     @unittest.skipUnless(_has_internet(), 'online test')
     def test_install_packages_system(self):
