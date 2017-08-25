@@ -1205,7 +1205,8 @@ Debug::NoLocking "true";
             release = self.get_distro_codename()
         else:
             release = self._distro_release_to_codename(release)
-        for pocket in ['-updates', '-security', '-proposed', '']:
+        # search -proposed last since file may be provided by a new package
+        for pocket in ['-updates', '-security', '', '-proposed']:
             map = os.path.join(dir, '%s%s-Contents-%s.gz' % (release, pocket, arch))
 
             # check if map exists and is younger than a day; if not, we need to
