@@ -762,6 +762,8 @@ def package_versions(*packages):
 
     Arguments may be package names or globs, e. g. "foo*"
     '''
+    if not packages:
+        return ''
     versions = []
     for package_pattern in packages:
         if not package_pattern:

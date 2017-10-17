@@ -2,6 +2,11 @@ This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
 
+2.20.8 (UNRELEASED)
+-------------------
+ * apport/hookutils.py: modify package_versions to return an empty string if
+   packages is empty. (LP: #1723822)
+
 2.20.7 (2017-08-29)
 -------------------
  * Fix new pep8 failures in artful - E722 do not use bare except.
@@ -12,7 +17,7 @@ detailed list of changes, please see ChangeLog.
  * backends/packaging-apt-dpkg.py: Don't install the version mentioned in a
    versioned dep, rather install the latest version of that dep.
  * backends/packaging-apt-dpkg.py: search -proposed last so we prefer packages
-   from other pockets
+   from other pockets.
 
 2.20.6 (2017-07-18)
 -------------------
