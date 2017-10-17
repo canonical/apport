@@ -6,6 +6,8 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * apport/hookutils.py: modify package_versions to return an empty string if
    packages is empty. (LP: #1723822)
+ * apport/ui.py: switch to using 'gio open' to launch a browser as xdg-open has
+   been deprecated. (LP: #1721948)
 
 2.20.7 (2017-08-29)
 -------------------
