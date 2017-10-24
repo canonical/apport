@@ -34,8 +34,12 @@ class CLIDialog:
         self.buttons = []
         self.visible = False
 
-    def raw_input_char(self, prompt):
-        '''raw_input, but read only one character'''
+    def raw_input_char(self, prompt, multi_char=False):
+        '''raw_input, but read a single character unless multi_char is True.
+
+        @param: prompt: the text presented to the user to solict a response.
+        @param: multi_char: Boolean True if we need to read until <enter>.
+        '''
 
         sys.stdout.write(prompt)
         sys.stdout.write(' ')
@@ -48,14 +52,16 @@ class CLIDialog:
         attributes[6][termios.VMIN] = 1
         attributes[6][termios.VTIME] = 0
         termios.tcsetattr(file, termios.TCSANOW, attributes)
-
         try:
-            ch = str(sys.stdin.read(1))
+            if multi_char:
+                response = str(sys.stdin.readline()).strip()
+            else:
+                response = str(sys.stdin.read(1))
         finally:
             termios.tcsetattr(file, termios.TCSANOW, saved_attributes)
 
         sys.stdout.write('\n')
-        return ch
+        return response
 
     def show(self):
         self.visible = True
@@ -82,9 +88,19 @@ class CLIDialog:
                 for index, button in enumerate(self.buttons):
                     print('  %s: %s' % (self.keys[index], button))
 
-                response = self.raw_input_char(_('Please choose (%s):') % ('/'.join(self.keys)))
+                if len(self.keys) <= 10:
+                    # A 10 option prompt would can still be a single character
+                    # response because the 10 options listed will be 1-9 and C.
+                    # Therefore there are 10 unique responses which can be
+                    # given.
+                    multi_char = False
+                else:
+                    multi_char = True
+                response = self.raw_input_char(
+                   _('Please choose (%s):') % ('/'.join(self.keys)),
+                   multi_char)
                 try:
-                    return self.keys.index(response[0].upper()) + 1
+                    return self.keys.index(response.upper()) + 1
                 except ValueError:
                     pass
         except KeyboardInterrupt:
