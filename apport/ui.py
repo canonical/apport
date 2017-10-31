@@ -1179,7 +1179,7 @@ class UserInterface:
 
         try:
             try:
-                subprocess.call(sudo_prefix + ['gio', 'open', url])
+                subprocess.call(sudo_prefix + ['xdg-open', url])
             except OSError as e:
                 # fall back to webbrowser
                 webbrowser.open(url, new=True, autoraise=True)
