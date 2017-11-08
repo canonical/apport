@@ -6,6 +6,9 @@ detailed list of changes, please see ChangeLog.
 -------------------
  * apport/hookutils.py: modify package_versions to return an empty string if
    packages is empty. (LP: #1723822)
+ * bin/apport-cli: read until <enter> instead of a single character when # of
+   apport options is non-unique with a single character. Thanks to Chad Smith
+   for the patch. (LP: #1722564)
 
 2.20.7 (2017-08-29)
 -------------------
