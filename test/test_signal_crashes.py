@@ -8,7 +8,7 @@
 # the full text of the license.
 
 import tempfile, shutil, os, subprocess, signal, time, stat, sys
-import resource, errno, grp, unittest, socket, array
+import resource, errno, grp, unittest, socket, array, pwd
 import apport.fileutils
 
 test_executable = '/usr/bin/yes'
@@ -89,7 +89,7 @@ class T(unittest.TestCase):
 
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             app.stdin.close()
             assert app.wait() == 0, app.stderr.read()
@@ -156,12 +156,12 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
         test_proc2 = self.create_test_process(False, '/bin/dd')
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
             time.sleep(0.5)  # give it some time to grab the lock
 
-            app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0'],
+            app2 = subprocess.Popen([apport_path, str(test_proc2), '42', '0', '1'],
                                     stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
             # app should wait indefinitely for stdin, while app2 should terminate
@@ -205,7 +205,7 @@ class T(unittest.TestCase):
         test_proc = self.create_test_process()
 
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             app.stdin.write(b'boo')
             app.stdin.close()
@@ -446,7 +446,7 @@ CoreDump: base64
 
         test_proc = self.create_test_process()
         try:
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             # pipe an entire total memory size worth of spaces into it, which must be
             # bigger than the 'usable' memory size. apport should digest that and the
@@ -528,7 +528,7 @@ CoreDump: base64
             time.sleep(1.1)
             os.utime(myexe, None)
 
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             err = app.communicate(b'foo')[1]
             self.assertEqual(app.returncode, 0, err)
@@ -552,7 +552,7 @@ CoreDump: base64
         try:
             env = os.environ.copy()
             env['APPORT_LOG_FILE'] = log
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, env=env,
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
@@ -589,7 +589,7 @@ CoreDump: base64
         try:
             env = os.environ.copy()
             env['APPORT_LOG_FILE'] = '/not/existing/apport.log'
-            app = subprocess.Popen([apport_path, str(test_proc), '42', '0'],
+            app = subprocess.Popen([apport_path, str(test_proc), '42', '0', '1'],
                                    stdin=subprocess.PIPE, env=env,
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
@@ -662,6 +662,43 @@ CoreDump: base64
         if suid_dumpable:
             # if a user can crash a suid root binary, it should not create core files
             self.do_crash(command='/bin/ping', args=['127.0.0.1'], uid=8)
+
+            # check crash report
+            reports = apport.fileutils.get_all_reports()
+            self.assertEqual(len(reports), 1)
+            report = reports[0]
+            st = os.stat(report)
+            os.unlink(report)
+            self.assertEqual(stat.S_IMODE(st.st_mode), 0o640, 'report has correct permissions')
+            # this must be owned by root as it is a setuid binary
+            self.assertEqual(st.st_uid, 0, 'report has correct owner')
+        else:
+            # no cores/dump if suid_dumpable == 0
+            self.do_crash(False, command='/bin/ping', args=['127.0.0.1'],
+                          uid=8)
+            self.assertEqual(apport.fileutils.get_all_reports(), [])
+
+    @unittest.skipUnless(os.path.exists('/bin/ping'), 'this test needs /bin/ping')
+    @unittest.skipIf(os.geteuid() != 0, 'this test needs to be run as root')
+    def test_crash_setuid_drop_and_kill(self):
+        '''process started by root as another user, killed by that user no core'''
+        # override expected report file name
+        self.test_report = os.path.join(
+            apport.fileutils.report_dir, '%s.%i.crash' %
+            ('_usr_bin_crontab', os.getuid()))
+        # edit crontab as user "mail"
+        resource.setrlimit(resource.RLIMIT_CORE, (-1, -1))
+
+        if suid_dumpable:
+            user = pwd.getpwuid(8)
+            # if a user can crash a suid root binary, it should not create core files
+            orig_editor = os.getenv('EDITOR')
+            os.environ['EDITOR'] = '/usr/bin/yes'
+            self.do_crash(command='/usr/bin/crontab', args=['-e', '-u', user[0]],
+                          expect_corefile=False, core_location='/var/spool/cron/',
+                          killer_id=8)
+            if orig_editor is not None:
+                os.environ['EDITOR'] = orig_editor
 
             # check crash report
             reports = apport.fileutils.get_all_reports()
@@ -762,7 +799,7 @@ CoreDump: base64
                     fd.write(b'hel\x01lo')
                     fd.flush()
                     fd.seek(0)
-                    args = '%s 11 0' % test_proc
+                    args = '%s 11 0 1' % test_proc
                     fd_msg = (socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array('i', [fd.fileno()]))
                     client.sendmsg([args.encode()], [fd_msg])
                 os._exit(0)
@@ -839,7 +876,9 @@ CoreDump: base64
     def do_crash(self, expect_coredump=True, expect_corefile=False,
                  sig=signal.SIGSEGV, check_running=True, sleep=0,
                  command=test_executable, uid=None,
-                 expect_corefile_owner=None, args=[]):
+                 expect_corefile_owner=None,
+                 core_location=None,
+                 killer_id=False, args=[]):
         '''Generate a test crash.
 
         This runs command (by default test_executable) in cwd, lets it crash,
@@ -854,7 +893,21 @@ CoreDump: base64
         pid = self.create_test_process(check_running, command, uid=uid, args=args)
         if sleep > 0:
             time.sleep(sleep)
-        os.kill(pid, sig)
+        if killer_id:
+            user = pwd.getpwuid(killer_id)
+            # testing different editors via VISUAL= didn't help
+            kill = subprocess.Popen(['sudo', '-s', '/bin/bash', '-c',
+                                     "/bin/kill -s %i %s" % (sig, pid),
+                                     '-u', user[0]])  # 'mail'])
+            kill.communicate()
+            # need to clean up system state
+            if command == '/usr/bin/crontab':
+                os.system('stty sane')
+            if kill.returncode != 0:
+                self.fail("Couldn't kill process %s as user %s." %
+                          (pid, user[0]))
+        else:
+            os.kill(pid, sig)
         # wait max 5 seconds for the process to die
         timeout = 50
         while timeout >= 0:
@@ -867,7 +920,10 @@ CoreDump: base64
             os.kill(pid, signal.SIGKILL)
             os.waitpid(pid, 0)
             self.fail('test process does not die on signal %i' % sig)
-
+        if command == '/usr/bin/crontab':
+            subprocess.Popen(['sudo', '-s', '/bin/bash', '-c',
+                              "/usr/bin/pkill -9 -f crontab",
+                              '-u', 'mail'])
         self.assertFalse(os.WIFEXITED(result), 'test process did not exit normally')
         self.assertTrue(os.WIFSIGNALED(result), 'test process died due to signal')
         self.assertEqual(os.WCOREDUMP(result), expect_coredump)
@@ -888,18 +944,22 @@ CoreDump: base64
             self.assertEqual(subprocess.call(['pidof', command]), 1,
                              'no running test executable processes')
 
+        core_path = '%s/' % os.getcwd()
+        if core_location:
+            core_path = '%s/' % core_location
+        core_path += 'core'
         if expect_corefile:
-            self.assertTrue(os.path.exists('core'), 'leaves wanted core file')
+            self.assertTrue(os.path.exists(core_path), 'leaves wanted core file')
             try:
                 # check core file permissions
-                st = os.stat('core')
+                st = os.stat(core_path)
                 self.assertEqual(stat.S_IMODE(st.st_mode), 0o600, 'core file has correct permissions')
                 if expect_corefile_owner is not None:
                     self.assertEqual(st.st_uid, expect_corefile_owner, 'core file has correct owner')
 
                 # check that core file is valid
                 gdb = subprocess.Popen(['gdb', '--batch', '--ex', 'bt',
-                                        command, 'core'],
+                                        command, core_path],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
                 (out, err) = gdb.communicate()
@@ -907,15 +967,15 @@ CoreDump: base64
                 out = out.decode()
                 err = err.decode().strip()
             finally:
-                os.unlink('core')
+                os.unlink(core_path)
         else:
-            if os.path.exists('core'):
+            if os.path.exists(core_path):
                 try:
-                    os.unlink('core')
+                    os.unlink(core_path)
                 except OSError as e:
                     sys.stderr.write(
-                        'WARNING: cannot clean up core file %s/core: %s\n' %
-                        (os.getcwd(), str(e)))
+                        'WARNING: cannot clean up core file %s: %s\n' %
+                        (core_path, str(e)))
 
                 self.fail('leaves unexpected core file behind')
 

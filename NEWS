@@ -4,6 +4,24 @@ detailed list of changes, please see ChangeLog.
 
 2.20.8 (UNRELEASED)
 -------------------
+  * SECURITY UPDATE: Denial of service via resource exhaustion and
+    privilege escalation when handling crashes of tainted processes.
+    - When /proc/sys/fs/suid_dumpable is set to 2, do not assume that
+      the user and group owning the /proc/<PID>/stat file is the same
+      owner and group that started the process. Rather check the dump
+      mode of the crashed process and do not write a core file if its
+      value is 2. Thanks to Sander Bos for discovering this issue!
+    (CVE-2017-14177, LP: #1726372)
+  * SECURITY UPDATE: Denial of service via resource exhaustion,
+    privilege escalation, and possible container escape when handling
+    crashes of processes inside PID namespaces.
+    - Change the method for determining if a crash is from a container
+      so that there are no false positives from software using PID
+      namespaces. Additionally, disable container crash forwarding by
+      ignoring crashes that occur in a PID namespace. This functionality
+      may be re-enabled in a future update. Thanks to Sander Bos for
+      discovering this issue!
+    (CVE-2017-14180, LP: #1726372)
  * apport/hookutils.py: modify package_versions to return an empty string if
    packages is empty. (LP: #1723822)
  * bin/apport-cli: read until <enter> instead of a single character when # of
