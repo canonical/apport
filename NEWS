@@ -1,6 +1,15 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.20.9 (UNRELEASED)
+-------------------
+  * Re-enable container support. Thanks to Stéphane Graber! (LP: #1732518)
+  * Add code preventing a user from confusing apport by using
+    a manually crafted filesystem inside a combination of a user and mount
+    namespace. Thanks to Stéphane Graber!
+  * Add a check in apport receiver for the number of arguments so that
+    should another argument be added later, the receiver will simply ignore
+    the crash until it itself gets updated. Thanks to Stéphane Graber!
 
 2.20.8 (2017-11-15)
 -------------------

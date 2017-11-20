@@ -8,6 +8,7 @@ SocketMode=0600
 Accept=yes
 MaxConnections=10
 Backlog=5
+PassCredentials=true
 
 [Install]
 WantedBy=sockets.target

@@ -14,7 +14,7 @@
 # the full text of the license.
 
 import sys, os, os.path, subprocess, time, traceback, pwd, io
-import signal, inspect, grp, fcntl, socket, atexit, array
+import signal, inspect, grp, fcntl, socket, atexit, array, struct
 
 import apport, apport.fileutils
 
@@ -297,12 +297,16 @@ def is_systemd_watchdog_restart(signum, pid):
         return False
 
 
-def is_container_pid(pid):
-    if not os.path.exists('/proc/self/ns/pid') or os.readlink('/proc/%s/ns/pid' % pid) == os.readlink('/proc/self/ns/pid'):
-        # Crashed process is in the same namespace as apport, not a container
-        return False
+def is_same_ns(pid, ns):
+    if not os.path.exists('/proc/self/ns/%s' % ns):
+        # If the namespace doesn't exist, then it's obviously shared
+        return True
 
-    return True
+    if os.readlink('/proc/%s/ns/%s' % (pid, ns)) == os.readlink('/proc/self/ns/%s' % ns):
+        # Check that the inode for both namespaces is the same
+        return True
+
+    return False
 
 
 #################################################################
@@ -333,16 +337,25 @@ if 'LISTEN_FDS' in os.environ:
     sys.stdin.close()
 
     fds = array.array('i')
-    msg, ancdata, flags, addr = sock.recvmsg(4096, socket.CMSG_LEN(fds.itemsize))
+    ucreds = array.array('i')
+    msg, ancdata, flags, addr = sock.recvmsg(4096, 4096)
     for cmsg_level, cmsg_type, cmsg_data in ancdata:
         if (cmsg_level == socket.SOL_SOCKET and cmsg_type == socket.SCM_RIGHTS):
             fds.fromstring(cmsg_data[:len(cmsg_data) - (len(cmsg_data) % fds.itemsize)])
+        elif (cmsg_level == socket.SOL_SOCKET and cmsg_type == socket.SCM_CREDENTIALS):
+            ucreds.fromstring(cmsg_data[:len(cmsg_data) - (len(cmsg_data) % ucreds.itemsize)])
 
     sys.stdin = os.fdopen(int(fds[0]), 'r')
 
     # Replace argv by the arguments received over the socket
     sys.argv = [sys.argv[0]]
     sys.argv += msg.decode().split()
+    if len(ucreds) >= 3:
+        sys.argv[1] = "%d" % ucreds[0]
+
+    if len(sys.argv) != 5:
+        error_log('Received a bad number of arguments from forwarder, received %d, expected 5, aborting.' % len(sys.argv))
+        sys.exit(1)
 
 # Normal startup
 if len(sys.argv) not in (5, 6):
@@ -364,9 +377,52 @@ init_error_log()
 if len(sys.argv) == 6:
     host_pid = int(sys.argv[5])
 
-    if is_container_pid(host_pid):
-        error_log('host pid %s crashed in a container without apport support' %
-                  host_pid)
+    if not is_same_ns(host_pid, "pid") and not is_same_ns(host_pid, "mnt"):
+        # If the crash came from a container, don't attempt to handle
+        # locally as that would just result in wrong system information.
+
+        # Instead, attempt to find apport inside the container and
+        # forward the process information there.
+        if not os.path.exists('/proc/%d/root/run/apport.socket' % host_pid):
+            error_log('host pid %s crashed in a container without apport support' %
+                      sys.argv[5])
+            sys.exit(0)
+
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        try:
+            sock.connect('/proc/%d/root/run/apport.socket' % host_pid)
+        except Exception as e:
+            error_log('host pid %s crashed in a container with a broken apport' %
+                      sys.argv[5])
+            sys.exit(0)
+
+        # Send all arguments except for the first (exec path) and last (global pid)
+        args = ' '.join(sys.argv[1:-1])
+        try:
+            sock.sendmsg([args.encode()], [
+                # Send a ucred containing the global pid
+                (socket.SOL_SOCKET, socket.SCM_CREDENTIALS, struct.pack("3i", host_pid, 0, 0)),
+
+                # Send fd 0 (the coredump)
+                (socket.SOL_SOCKET, socket.SCM_RIGHTS, array.array('i', [0]))])
+            sock.shutdown(socket.SHUT_RDWR)
+        except socket.timeout:
+            error_log('Container apport failed to process crash within 30s')
+            sys.exit(0)
+
+        sys.exit(0)
+    elif not is_same_ns(host_pid, "pid") and is_same_ns(host_pid, "mnt"):
+        # If it doesn't look like the crash originated from within a
+        # full container, then take the global pid and replace the local
+        # pid with it, then move on to normal handling.
+
+        # This bit is needed because some software like the chrome
+        # sandbox will use container namespaces as a security measure but are
+        # still otherwise host processes. When that's the case, we need to keep
+        # handling those crashes locally using the global pid.
+        sys.argv[1] = str(host_pid)
+    elif not is_same_ns(host_pid, "mnt"):
+        error_log('host pid %s crashed in a separate mount namespace, ignoring' % host_pid)
         sys.exit(0)
 
 check_lock()
