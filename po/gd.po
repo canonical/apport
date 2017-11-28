@@ -14,14 +14,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-11-16 05:12+0000\n"
-"X-Generator: Launchpad (build 18505)\n"
+"X-Launchpad-Export-Date: 2017-11-28 05:11+0000\n"
+"X-Generator: Launchpad (build 18511)\n"
 "Language: \n"
 
-#: ../kde/apport-kde.py:469 ../kde/apport-kde.py:504 ../kde/apport-kde.py:524
 #: ../gtk/apport-gtk.ui.h:1 ../debian/tmp/usr/share/apport/apport-kde.py:469
 #: ../debian/tmp/usr/share/apport/apport-kde.py:504
-#: ../debian/tmp/usr/share/apport/apport-kde.py:524
+#: ../debian/tmp/usr/share/apport/apport-kde.py:524 ../kde/apport-kde.py:469
+#: ../kde/apport-kde.py:504 ../kde/apport-kde.py:524
 #: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:1
 msgid "Apport"
 msgstr ""
@@ -43,10 +43,9 @@ msgid "<big><b>Sorry, an internal error happened.</b></big>"
 msgstr ""
 "<big><b>Tha sinn duillich ach thachair mearachd inntearnail.</b></big>"
 
-#: ../kde/apport-kde.py:241 ../gtk/apport-gtk.ui.h:6
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:303
-#: ../debian/tmp/usr/share/apport/apport-kde.py:241
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6 ../gtk/apport-gtk.py:303
+#: ../gtk/apport-gtk.ui.h:6 ../debian/tmp/usr/share/apport/apport-gtk.py:303
+#: ../debian/tmp/usr/share/apport/apport-kde.py:241 ../gtk/apport-gtk.py:303
+#: ../kde/apport-kde.py:241 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:6
 msgid "If you notice further problems, try restarting the computer."
 msgstr ""
 "Ma mhothaicheas tu do dhuilgheadasan eile, feuch is ath-thòisich an "
@@ -63,12 +62,11 @@ msgid "Ignore future problems of this program version"
 msgstr ""
 "Leig seachad duilgheadas an tionndaidh seo dhen phrògram san àm ri teachd"
 
-#: ../kde/apport-kde.py:292 ../gtk/apport-gtk.ui.h:9
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:207
+#: ../gtk/apport-gtk.ui.h:9 ../debian/tmp/usr/share/apport/apport-gtk.py:207
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:576
-#: ../debian/tmp/usr/share/apport/apport-kde.py:292
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9 ../gtk/apport-gtk.py:207
-#: ../gtk/apport-gtk.py:576
+#: ../debian/tmp/usr/share/apport/apport-kde.py:292 ../gtk/apport-gtk.py:207
+#: ../gtk/apport-gtk.py:576 ../kde/apport-kde.py:292
+#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:9
 msgid "Show Details"
 msgstr "Seall am mion-fhiosrachadh"
 
@@ -76,21 +74,19 @@ msgstr "Seall am mion-fhiosrachadh"
 msgid "_Examine locally"
 msgstr "_Sgrùd e gu h-ionadail"
 
-#: ../kde/apport-kde.py:234 ../gtk/apport-gtk.ui.h:11
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:290
-#: ../debian/tmp/usr/share/apport/apport-kde.py:234
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11 ../gtk/apport-gtk.py:290
+#: ../gtk/apport-gtk.ui.h:11 ../debian/tmp/usr/share/apport/apport-gtk.py:290
+#: ../debian/tmp/usr/share/apport/apport-kde.py:234 ../gtk/apport-gtk.py:290
+#: ../kde/apport-kde.py:234 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:11
 msgid "Leave Closed"
 msgstr "Fàg dùinte e"
 
-#: ../kde/apport-kde.py:231 ../kde/apport-kde.py:244 ../gtk/apport-gtk.ui.h:12
-#: ../debian/tmp/usr/share/apport/apport-gtk.py:219
+#: ../gtk/apport-gtk.ui.h:12 ../debian/tmp/usr/share/apport/apport-gtk.py:219
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:287
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:306
 #: ../debian/tmp/usr/share/apport/apport-kde.py:231
-#: ../debian/tmp/usr/share/apport/apport-kde.py:244
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12 ../gtk/apport-gtk.py:219
-#: ../gtk/apport-gtk.py:287 ../gtk/apport-gtk.py:306
+#: ../debian/tmp/usr/share/apport/apport-kde.py:244 ../gtk/apport-gtk.py:219
+#: ../gtk/apport-gtk.py:287 ../gtk/apport-gtk.py:306 ../kde/apport-kde.py:231
+#: ../kde/apport-kde.py:244 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:12
 msgid "Continue"
 msgstr "Lean air adhart"
 
@@ -106,9 +102,9 @@ msgstr ""
 "Tha sinn a' cruinneachadh fiosrachadh a dh'fhaodadh a bhith cuideachail dhan "
 "luchd-leasachaidh a' càradh an duilgheadais a rinn thu aithris air."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:251 ../kde/apport-kde.py:435
-#: ../gtk/apport-gtk.ui.h:15 ../debian/tmp/usr/share/apport/apport-kde.py:435
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15 ../bin/apport-cli.py:251
+#: ../gtk/apport-gtk.ui.h:15 ../debian/tmp/usr/bin/apport-cli.py:251
+#: ../debian/tmp/usr/share/apport/apport-kde.py:435 ../kde/apport-kde.py:435
+#: ../bin/apport-cli.py:251 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:15
 msgid "Uploading problem information"
 msgstr "A' luchdadh suas fiosrachadh mun duilgheadas"
 
@@ -116,9 +112,8 @@ msgstr "A' luchdadh suas fiosrachadh mun duilgheadas"
 msgid "<big><b>Uploading problem information</b></big>"
 msgstr "<big><b>A' luchdadh suas fiosrachadh mun duilgheadas</b></big>"
 
-#: ../kde/apport-kde.py:436 ../gtk/apport-gtk.ui.h:17
-#: ../debian/tmp/usr/share/apport/apport-kde.py:436
-#: ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17
+#: ../gtk/apport-gtk.ui.h:17 ../debian/tmp/usr/share/apport/apport-kde.py:436
+#: ../kde/apport-kde.py:436 ../debian/tmp/usr/share/apport/apport-gtk.ui.h:17
 msgid ""
 "The collected information is being sent to the bug tracking system. This "
 "might take a few minutes."
@@ -130,10 +125,10 @@ msgstr ""
 msgid "Apport crash file"
 msgstr "Faidhle tuislidh  Apport"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:150 ../kde/apport-kde.py:363
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:145
-#: ../debian/tmp/usr/share/apport/apport-kde.py:363 ../bin/apport-cli.py:150
-#: ../gtk/apport-gtk.py:145
+#: ../debian/tmp/usr/bin/apport-cli.py:150
+#: ../debian/tmp/usr/share/apport/apport-kde.py:363 ../gtk/apport-gtk.py:145
+#: ../kde/apport-kde.py:363 ../bin/apport-cli.py:150
 msgid "(binary data)"
 msgstr "(dàta bìnearaidh)"
 
@@ -147,24 +142,25 @@ msgstr "Tha sinn duilich ach stad an aplacaid %s gu h-obann."
 msgid "Sorry, %s has closed unexpectedly."
 msgstr "Tha sinn duilich ach dhùin %s  gu h-obann."
 
-#: ../kde/apport-kde.py:200 ../kde/apport-kde.py:238
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:168
 #: ../debian/tmp/usr/share/apport/apport-kde.py:200
 #: ../debian/tmp/usr/share/apport/apport-kde.py:238 ../gtk/apport-gtk.py:168
+#: ../kde/apport-kde.py:200 ../kde/apport-kde.py:238
 #, python-format
 msgid "Sorry, %s has experienced an internal error."
 msgstr "Tha sinn duilich, thachair mearachd inntearnail ann an %s."
 
-#: ../debian/tmp/usr/bin/apport-cli.py:178 ../kde/apport-kde.py:186
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:180
-#: ../debian/tmp/usr/share/apport/apport-kde.py:186 ../bin/apport-cli.py:178
-#: ../gtk/apport-gtk.py:180
+#: ../debian/tmp/usr/bin/apport-cli.py:178
+#: ../debian/tmp/usr/share/apport/apport-kde.py:186 ../gtk/apport-gtk.py:180
+#: ../kde/apport-kde.py:186 ../bin/apport-cli.py:178
 msgid "Send problem report to the developers?"
 msgstr ""
 "A bheil thu airson aithris mun duilgheadas a chur gun luchd-leasachaidh?"
 
-#: ../kde/apport-kde.py:194 ../debian/tmp/usr/share/apport/apport-gtk.py:189
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:189
 #: ../debian/tmp/usr/share/apport/apport-kde.py:194 ../gtk/apport-gtk.py:189
+#: ../kde/apport-kde.py:194
 msgid "Send"
 msgstr ""
 
@@ -172,12 +168,11 @@ msgstr ""
 msgid "Force Closed"
 msgstr "Sparr air dùnadh"
 
-#: ../kde/apport-kde.py:235 ../kde/apport-kde.py:381
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:232
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:291
 #: ../debian/tmp/usr/share/apport/apport-kde.py:235
 #: ../debian/tmp/usr/share/apport/apport-kde.py:381 ../gtk/apport-gtk.py:232
-#: ../gtk/apport-gtk.py:291
+#: ../gtk/apport-gtk.py:291 ../kde/apport-kde.py:235 ../kde/apport-kde.py:381
 msgid "Relaunch"
 msgstr ""
 
@@ -191,40 +186,45 @@ msgstr "Chan eil an aplacaid \"%s\" a' freagairt tuilleadh."
 msgid "The program \"%s\" has stopped responding."
 msgstr "Chan eil am prògram \"%s\" a' freagairt tuilleadh."
 
-#: ../kde/apport-kde.py:208 ../debian/tmp/usr/share/apport/apport-gtk.py:260
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:260
 #: ../debian/tmp/usr/share/apport/apport-kde.py:208 ../gtk/apport-gtk.py:260
+#: ../kde/apport-kde.py:208
 #, python-format
 msgid "Package: %s"
 msgstr ""
 
-#: ../kde/apport-kde.py:214 ../debian/tmp/usr/share/apport/apport-gtk.py:267
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:267
 #: ../debian/tmp/usr/share/apport/apport-kde.py:214 ../gtk/apport-gtk.py:267
+#: ../kde/apport-kde.py:214
 msgid "Sorry, a problem occurred while installing software."
 msgstr ""
 "Tha sinn duilich, dh'èirich duilgheadas nuair a bha sinn a' stàladh a' "
 "bhathair-bhog."
 
-#: ../kde/apport-kde.py:220 ../debian/tmp/usr/share/apport/apport-gtk.py:276
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:276
 #: ../debian/tmp/usr/share/apport/apport-gtk.py:295
 #: ../debian/tmp/usr/share/apport/apport-kde.py:220 ../gtk/apport-gtk.py:276
-#: ../gtk/apport-gtk.py:295
+#: ../gtk/apport-gtk.py:295 ../kde/apport-kde.py:220
 #, python-format
 msgid "The application %s has experienced an internal error."
 msgstr "Thachair an aplacaid %s ri mearachd inntearnail."
 
-#: ../kde/apport-kde.py:223 ../debian/tmp/usr/share/apport/apport-gtk.py:279
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:279
 #: ../debian/tmp/usr/share/apport/apport-kde.py:223 ../gtk/apport-gtk.py:279
+#: ../kde/apport-kde.py:223
 #, python-format
 msgid "The application %s has closed unexpectedly."
 msgstr "Dhùin an aplacaid %s gu h-obann."
 
-#: ../kde/apport-kde.py:245 ../debian/tmp/usr/share/apport/apport-gtk.py:307
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:307
 #: ../debian/tmp/usr/share/apport/apport-kde.py:245 ../gtk/apport-gtk.py:307
+#: ../kde/apport-kde.py:245
 msgid "Ignore future problems of this type"
 msgstr "Leig seachad duilgheadasan dhen t-seòrsa seo san àm ri teachd"
 
-#: ../kde/apport-kde.py:289 ../debian/tmp/usr/share/apport/apport-gtk.py:580
+#: ../debian/tmp/usr/share/apport/apport-gtk.py:580
 #: ../debian/tmp/usr/share/apport/apport-kde.py:289 ../gtk/apport-gtk.py:580
+#: ../kde/apport-kde.py:289
 msgid "Hide Details"
 msgstr "Falaich am mion-fhiosrachadh"
 
@@ -237,24 +237,25 @@ msgstr "Pàtran: %s <report> <target directory>"
 msgid "Destination directory exists and is not empty."
 msgstr "Tha am pasgan sin sa cheann-uidhe mu thràth 's chan eil e falamh."
 
-#: ../kde/apport-kde.py:315 ../debian/tmp/usr/share/apport/apport-kde.py:315
+#: ../debian/tmp/usr/share/apport/apport-kde.py:315 ../kde/apport-kde.py:315
 msgid "Username:"
 msgstr ""
 
-#: ../kde/apport-kde.py:316 ../debian/tmp/usr/share/apport/apport-kde.py:316
+#: ../debian/tmp/usr/share/apport/apport-kde.py:316 ../kde/apport-kde.py:316
 msgid "Password:"
 msgstr ""
 
-#: ../kde/apport-kde.py:406 ../debian/tmp/usr/share/apport/apport-kde.py:406
+#: ../debian/tmp/usr/share/apport/apport-kde.py:406 ../kde/apport-kde.py:406
 msgid "Collecting Problem Information"
 msgstr "A' cruinneachadh fiosrachadh mun duilgheadas"
 
-#: ../debian/tmp/usr/bin/apport-cli.py:238 ../kde/apport-kde.py:407
-#: ../debian/tmp/usr/share/apport/apport-kde.py:407 ../bin/apport-cli.py:238
+#: ../debian/tmp/usr/bin/apport-cli.py:238
+#: ../debian/tmp/usr/share/apport/apport-kde.py:407 ../kde/apport-kde.py:407
+#: ../bin/apport-cli.py:238
 msgid "Collecting problem information"
 msgstr "A' cruinneachadh fiosrachadh mun duilgheadas"
 
-#: ../kde/apport-kde.py:408 ../debian/tmp/usr/share/apport/apport-kde.py:408
+#: ../debian/tmp/usr/share/apport/apport-kde.py:408 ../kde/apport-kde.py:408
 msgid ""
 "The collected information can be sent to the developers to improve the "
 "application. This might take a few minutes."
@@ -263,7 +264,7 @@ msgstr ""
 "leasachaidh airson 's gun urrainn dhaibh an aplacaid a leasachadh. "
 "Dh'fhaoidte gum feum seo beagan mhionaidean."
 
-#: ../kde/apport-kde.py:434 ../debian/tmp/usr/share/apport/apport-kde.py:434
+#: ../debian/tmp/usr/share/apport/apport-kde.py:434 ../kde/apport-kde.py:434
 msgid "Uploading Problem Information"
 msgstr "A' luchdadh suas fiosrachadh mun duilgheadas"
 
@@ -290,13 +291,13 @@ msgstr ""
 "Cuir a-steach am facal-faire agad gus cothrom fhaighinn air aithrisean mu "
 "dhèidhinn duilgheadas a bha aig prògraman a t-siostaim"
 
-#: ../kde/apport-kde-mime.desktop.in.h:1 ../kde/apport-kde.desktop.in.h:1
-#: ../gtk/apport-gtk.desktop.in.h:1
+#: ../kde/apport-kde-mime.desktop.in.h:1 ../gtk/apport-gtk.desktop.in.h:1
+#: ../kde/apport-kde.desktop.in.h:1
 msgid "Report a problem..."
 msgstr "Dèan aithris air duilgheadas..."
 
-#: ../kde/apport-kde-mime.desktop.in.h:2 ../kde/apport-kde.desktop.in.h:2
-#: ../gtk/apport-gtk.desktop.in.h:2
+#: ../kde/apport-kde-mime.desktop.in.h:2 ../gtk/apport-gtk.desktop.in.h:2
+#: ../kde/apport-kde.desktop.in.h:2
 msgid "Report a malfunction to the developers"
 msgstr "Dèan aithris air mearachd dhan luchd-leasachaidh"
 
@@ -347,8 +348,8 @@ msgstr ""
 "an executable a thèid a ruith fo inneal sgrùdadh na cuimhne aig valgrind "
 "airson greim fhaighinn air aoidion cuimhne"
 
-#: ../bin/apport-valgrind.py:66 ../debian/tmp/usr/bin/apport-retrace.py:63
-#: ../bin/apport-retrace.py:63 ../debian/tmp/usr/bin/apport-valgrind.py:66
+#: ../bin/apport-valgrind.py:66 ../debian/tmp/usr/bin/apport-valgrind.py:66
+#: ../bin/apport-retrace.py:63 ../debian/tmp/usr/bin/apport-retrace.py:63
 msgid ""
 "Install an extra package into the sandbox (can be specified multiple times)"
 msgstr ""
@@ -360,17 +361,17 @@ msgstr ""
 msgid "Error: %s is not an executable. Stopping."
 msgstr "Mearachd: Chan eil %s 'na rud so-ghnìomhaichte. A' sgur dheth."
 
-#: ../debian/tmp/usr/share/apport/kernel_oops.py:29 ../data/kernel_oops.py:29
+#: ../data/kernel_oops.py:29 ../debian/tmp/usr/share/apport/kernel_oops.py:29
 msgid "Your system might become unstable now and might need to be restarted."
 msgstr ""
 "Dh'fhaoidte gum fàs an siostam agad neo-sheasmhach a-nis is gum b' fheairrde "
 "dhut ath-thòiseachadh."
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:34 ../bin/apport-retrace.py:34
+#: ../bin/apport-retrace.py:34 ../debian/tmp/usr/bin/apport-retrace.py:34
 msgid "Do not put the new traces into the report, but write them to stdout."
 msgstr "Na cuir na traces ùra dhan aithris ach sgrìobh iad ann an stdout."
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:36 ../bin/apport-retrace.py:36
+#: ../bin/apport-retrace.py:36 ../debian/tmp/usr/bin/apport-retrace.py:36
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
@@ -378,36 +379,36 @@ msgstr ""
 "Tòisich air seisean gdb eadar-ghnìomhach le core dump na h-aithrise (-o air "
 "a leigeil seachad; cha dèan e ath-sgrìobhadh na h-aithrise)"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:38 ../bin/apport-retrace.py:38
+#: ../bin/apport-retrace.py:38 ../debian/tmp/usr/bin/apport-retrace.py:38
 msgid ""
 "Write modified report to given file instead of changing the original report"
 msgstr ""
 "Sgrìobh an aithris atharraichte san fhaidhle a tha ann 's na atharraich an "
 "aithris thùsail"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:41 ../bin/apport-retrace.py:41
+#: ../bin/apport-retrace.py:41 ../debian/tmp/usr/bin/apport-retrace.py:41
 msgid "Remove the core dump from the report after stack trace regeneration"
 msgstr ""
 "Thoir air falbh an core dump às an aithris às dèidh ath-ghintinn an stack "
 "trace"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:43 ../bin/apport-retrace.py:43
+#: ../bin/apport-retrace.py:43 ../debian/tmp/usr/bin/apport-retrace.py:43
 msgid "Override report's CoreFile"
 msgstr "Tar-àithn CoreFile na h-aithrise"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:45 ../bin/apport-retrace.py:45
+#: ../bin/apport-retrace.py:45 ../debian/tmp/usr/bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
 msgstr "Tar-àithn ExecutablePath na h-aithrise"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:47 ../bin/apport-retrace.py:47
+#: ../bin/apport-retrace.py:47 ../debian/tmp/usr/bin/apport-retrace.py:47
 msgid "Override report's ProcMaps"
 msgstr "Tar-àithn ProcMaps na h-aithrise"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
+#: ../bin/apport-retrace.py:49 ../debian/tmp/usr/bin/apport-retrace.py:49
 msgid "Rebuild report's Package information"
 msgstr "Ath-thog fiosrachadh pacaid na h-aithrise"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:51 ../bin/apport-retrace.py:51
+#: ../bin/apport-retrace.py:51 ../debian/tmp/usr/bin/apport-retrace.py:51
 msgid ""
 "Build a temporary sandbox and download/install the necessary packages and "
 "debug symbols in there; without this option it assumes that the necessary "
@@ -425,33 +426,33 @@ msgstr ""
 "siostaim ach ma nì thu sin, chan urrainn dha retrace a dhèanamh air "
 "tuislidhean ach feadhainn san sgaoileadh a tha a' ruith an-dràsta fhèin."
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:53 ../bin/apport-retrace.py:53
+#: ../bin/apport-retrace.py:53 ../debian/tmp/usr/bin/apport-retrace.py:53
 msgid ""
 "Report download/install progress when installing packages into sandbox"
 msgstr ""
 "Seall adhartas an luchdaidh a-nuas/an stàlaidh nuair a stàlaichear pacaidean "
 "sa bhogsa-ghainmhich"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:55 ../bin/apport-retrace.py:55
+#: ../bin/apport-retrace.py:55 ../debian/tmp/usr/bin/apport-retrace.py:55
 msgid "Prepend timestamps to log messages, for batch operation"
 msgstr ""
 "Cuir stampa-ama air beulaibh teachdaireachdan an loga, airson gnìomhachadh "
 "batch"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:57 ../bin/apport-retrace.py:57
+#: ../bin/apport-retrace.py:57 ../debian/tmp/usr/bin/apport-retrace.py:57
 msgid ""
 "Create and use third-party repositories from origins specified in reports"
 msgstr ""
 "Cruthaich is cleachd ionadan-tasgaidh le treas-phàrtaidhean o thùsan a "
 "chaidh a shònrachadh ann an aithrisean"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:59 ../bin/apport-retrace.py:59
+#: ../bin/apport-retrace.py:59 ../debian/tmp/usr/bin/apport-retrace.py:59
 msgid "Cache directory for packages downloaded in the sandbox"
 msgstr ""
 "Pasgan an tasgadain airson pacaidean a chaidh a luchdadh a-nuas dhan bhogsa-"
 "ghainmhich"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:61 ../bin/apport-retrace.py:61
+#: ../bin/apport-retrace.py:61 ../debian/tmp/usr/bin/apport-retrace.py:61
 msgid ""
 "Directory for unpacked packages. Future runs will assume that any already "
 "downloaded package is also extracted to this sandbox."
@@ -460,7 +461,7 @@ msgstr ""
 "sam bith o seo a-mach gun dèid pacaid sam bith a chaidh a luchdadh a-nuas "
 "fhosgladh 's a chur dhan bhogsa-ghainmhich seo mu thràth."
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:65 ../bin/apport-retrace.py:65
+#: ../bin/apport-retrace.py:65 ../debian/tmp/usr/bin/apport-retrace.py:65
 msgid ""
 "Path to a file with the crash database authentication information. This is "
 "used when specifying a crash ID to upload the retraced stack traces (only if "
@@ -471,7 +472,7 @@ msgstr ""
 "retraced stack traces a luchdadh suas (dìreach mur an deach -g, -o no -s a "
 "shònrachadh)"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:67 ../bin/apport-retrace.py:67
+#: ../bin/apport-retrace.py:67 ../debian/tmp/usr/bin/apport-retrace.py:67
 msgid ""
 "Display retraced stack traces and ask for confirmation before sending them "
 "to the crash database."
@@ -479,19 +480,19 @@ msgstr ""
 "Seall na retraced stack traces is faighnich dhìom mus dèid an cur gu stòr-"
 "dàta nan tuislidhean."
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:69 ../bin/apport-retrace.py:69
+#: ../bin/apport-retrace.py:69 ../debian/tmp/usr/bin/apport-retrace.py:69
 msgid ""
 "Path to the duplicate sqlite database (default: no duplicate checking)"
 msgstr ""
 "An t-slighe gun stòr-dàta sqlite dùblaichte (bun-roghainn: cha doirear sùil "
 "a bheil iad dùblaichte)"
 
-#: ../debian/tmp/usr/bin/apport-retrace.py:78 ../bin/apport-retrace.py:78
+#: ../bin/apport-retrace.py:78 ../debian/tmp/usr/bin/apport-retrace.py:78
 msgid "You cannot use -C without -S. Stopping."
 msgstr "Chan urrainn dhut -C a chleachdadh às aonais -S. A' stad."
 
 #. translators: don't translate y/n, apport currently only checks for "y"
-#: ../debian/tmp/usr/bin/apport-retrace.py:111 ../bin/apport-retrace.py:111
+#: ../bin/apport-retrace.py:111 ../debian/tmp/usr/bin/apport-retrace.py:111
 msgid "OK to send these as attachments? [y/n]"
 msgstr "A bheil e ceart gu leòr an cur mar cheanglachain? [y/n]"
 
