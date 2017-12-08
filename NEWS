@@ -10,6 +10,8 @@ detailed list of changes, please see ChangeLog.
   * Add a check in apport receiver for the number of arguments so that
     should another argument be added later, the receiver will simply ignore
     the crash until it itself gets updated. Thanks to Stéphane Graber!
+  * data/apport: add a second os.path.exists check to ensure we do not
+    receive a Traceback in is_container_id(). (LP: #1733366)
 
 2.20.8 (2017-11-15)
 -------------------

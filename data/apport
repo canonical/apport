@@ -298,7 +298,8 @@ def is_systemd_watchdog_restart(signum, pid):
 
 
 def is_same_ns(pid, ns):
-    if not os.path.exists('/proc/self/ns/%s' % ns):
+    if not os.path.exists('/proc/self/ns/%s' % ns) or \
+            not os.path.exists('/proc/%s/ns/%s' % (pid, ns)):
         # If the namespace doesn't exist, then it's obviously shared
         return True
 
