@@ -707,8 +707,8 @@ Debug::NoLocking "true";
         If install_deps is True, then the dependencies of packages will also
         be installed.
 
-        Return a string with outdated packages, or None if all packages were
-        installed.
+        Return a string with outdated packages, or an empty string if all
+        packages were installed.
 
         If something is wrong with the environment (invalid configuration,
         package servers down, etc.), this should raise a SystemError with a
@@ -884,12 +884,20 @@ Debug::NoLocking "true";
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Conflicts'])
                 if 'Replaces' in candidate.record:
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
+
                 for conflict in conflicts:
+                    if conflict[0][0] == candidate.package.name:
+                        continue
                     # apt_pkg.parse_depends needs to handle the or operator,
                     # but as policy states it is invalid to use that in
                     # Replaces/Depends, we can safely choose the first value
                     # here.
                     conflict = conflict[0]
+                    # if the conflicting package isn't installed in the
+                    # sandbox or in the list of packages to install its not a
+                    # concern.
+                    if conflict[0] not in packages and conflict[0] not in pkg_versions:
+                        continue
                     if cache.is_virtual_package(conflict[0]):
                         try:
                             providers = virtual_mapping[conflict[0]]
@@ -915,11 +923,10 @@ Debug::NoLocking "true";
                             ver = self._deb_version(path)
                             if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
                                 os.unlink(path)
-                        try:
-                            del pkg_versions[conflict[0]]
-                        except KeyError:
-                            pass
-
+                                try:
+                                    del pkg_versions[conflict[0]]
+                                except KeyError:
+                                    pass
             if candidate.architecture != 'all' and install_dbg:
                 try:
                     dbg_pkg = pkg + '-dbg'
