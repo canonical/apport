@@ -885,6 +885,8 @@ Debug::NoLocking "true";
                 if 'Replaces' in candidate.record:
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
                 for conflict in conflicts:
+                    # if the package conflicts with itself its wonky e.g.
+                    # gdb in artful
                     if conflict[0][0] == candidate.package.name:
                         continue
                     # apt_pkg.parse_depends needs to handle the or operator,
@@ -901,6 +903,10 @@ Debug::NoLocking "true";
                             # unpacked into the sandbox.
                             continue
                         for p in providers:
+                            # if the candidate package being installed
+                            # conflicts with but also provides a virtual
+                            # package don't act on the candidate e.g.
+                            # libpam-modules and libpam-mkhomedir in artful
                             if p == candidate.package.name:
                                 continue
                             debs = os.path.join(archivedir, '%s_*.deb' % p)
