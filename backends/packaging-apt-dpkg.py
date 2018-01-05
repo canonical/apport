@@ -707,8 +707,8 @@ Debug::NoLocking "true";
         If install_deps is True, then the dependencies of packages will also
         be installed.
 
-        Return a string with outdated packages, or None if all packages were
-        installed.
+        Return a string with outdated packages, or an empty string if all
+        packages were installed.
 
         If something is wrong with the environment (invalid configuration,
         package servers down, etc.), this should raise a SystemError with a
@@ -885,6 +885,10 @@ Debug::NoLocking "true";
                 if 'Replaces' in candidate.record:
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
                 for conflict in conflicts:
+                    # if the package conflicts with itself its wonky e.g.
+                    # gdb in artful
+                    if conflict[0][0] == candidate.package.name:
+                        continue
                     # apt_pkg.parse_depends needs to handle the or operator,
                     # but as policy states it is invalid to use that in
                     # Replaces/Depends, we can safely choose the first value
@@ -899,6 +903,12 @@ Debug::NoLocking "true";
                             # unpacked into the sandbox.
                             continue
                         for p in providers:
+                            # if the candidate package being installed
+                            # conflicts with but also provides a virtual
+                            # package don't act on the candidate e.g.
+                            # libpam-modules and libpam-mkhomedir in artful
+                            if p == candidate.package.name:
+                                continue
                             debs = os.path.join(archivedir, '%s_*.deb' % p)
                             for path in glob.glob(debs):
                                 ver = self._deb_version(path)
@@ -915,10 +925,10 @@ Debug::NoLocking "true";
                             ver = self._deb_version(path)
                             if apt.apt_pkg.check_dep(ver, conflict[2], conflict[1]):
                                 os.unlink(path)
-                        try:
-                            del pkg_versions[conflict[0]]
-                        except KeyError:
-                            pass
+                                try:
+                                    del pkg_versions[conflict[0]]
+                                except KeyError:
+                                    pass
 
             if candidate.architecture != 'all' and install_dbg:
                 try:

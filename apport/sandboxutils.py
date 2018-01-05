@@ -212,7 +212,7 @@ def make_sandbox(report, config_dir, cache_dir=None, sandbox_dir=None,
                 sandbox_dir, config_dir, report['DistroRelease'], extra_pkgs,
                 verbose, cache_dir, permanent_rootdir,
                 architecture=report.get('Architecture'), origins=origins,
-                install_deps=True)
+                install_dbg=False, install_deps=True)
         except SystemError as e:
             apport.fatal(str(e))
 
