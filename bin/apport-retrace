@@ -318,13 +318,10 @@ if options.sandbox:
     if options.gdb_sandbox:
         if report['Architecture'] == system_arch:
             options.extra_package.append('gdb')
-        # if only gdb is being installed we don't need dbg symbols for it
-        if len(options.extra_package) == 1:
-            extra_dbg=False
     sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
         report, options.sandbox, options.cache, sandbox_dir,
         options.extra_package, options.verbose, log_timestamps,
-        options.dynamic_origins, extra_pkgs_dbg=extra_dbg)
+        options.dynamic_origins, extra_pkgs_dbg=False)
 else:
     sandbox = None
     cache = None

@@ -884,7 +884,6 @@ Debug::NoLocking "true";
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Conflicts'])
                 if 'Replaces' in candidate.record:
                     conflicts += apt.apt_pkg.parse_depends(candidate.record['Replaces'])
-
                 for conflict in conflicts:
                     if conflict[0][0] == candidate.package.name:
                         continue
@@ -893,11 +892,6 @@ Debug::NoLocking "true";
                     # Replaces/Depends, we can safely choose the first value
                     # here.
                     conflict = conflict[0]
-                    # if the conflicting package isn't installed in the
-                    # sandbox or in the list of packages to install its not a
-                    # concern.
-                    if conflict[0] not in packages and conflict[0] not in pkg_versions:
-                        continue
                     if cache.is_virtual_package(conflict[0]):
                         try:
                             providers = virtual_mapping[conflict[0]]
@@ -907,6 +901,8 @@ Debug::NoLocking "true";
                             # unpacked into the sandbox.
                             continue
                         for p in providers:
+                            if p == candidate.package.name:
+                                continue
                             debs = os.path.join(archivedir, '%s_*.deb' % p)
                             for path in glob.glob(debs):
                                 ver = self._deb_version(path)
