@@ -12,6 +12,12 @@ detailed list of changes, please see ChangeLog.
     the crash until it itself gets updated. Thanks to Stéphane Graber!
   * data/apport: add a second os.path.exists check to ensure we do not
     receive a Traceback in is_container_id(). (LP: #1733366)
+  * apport/sandboxutils.py: when installing extra packages do not install the
+    debug versions of them as this was installing gdb-dbg. If debug versions of
+    a package are specifically required they can be passed as an extra-package.
+  * backends/packaging-apt-dpkg.py: when reusing a sandbox do not remove
+    conflicting packages when they conflict with themselves, or when they
+    conflict with but also provide a virtual package.
 
 2.20.8 (2017-11-15)
 -------------------
