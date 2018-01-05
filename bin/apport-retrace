@@ -314,14 +314,13 @@ if options.sandbox:
              report['Architecture'])
     else:
         sandbox_dir = None
-    extra_dbg=True
     if options.gdb_sandbox:
         if report['Architecture'] == system_arch:
             options.extra_package.append('gdb')
     sandbox, cache, outdated_msg = apport.sandboxutils.make_sandbox(
         report, options.sandbox, options.cache, sandbox_dir,
         options.extra_package, options.verbose, log_timestamps,
-        options.dynamic_origins, extra_pkgs_dbg=False)
+        options.dynamic_origins)
 else:
     sandbox = None
     cache = None
@@ -350,8 +349,7 @@ if options.gdb_sandbox:
                                              options.sandbox, options.cache,
                                              gdb_sandbox_dir, gdb_packages,
                                              options.verbose, log_timestamps,
-                                             options.dynamic_origins,
-                                             extra_pkgs_dbg=False)
+                                             options.dynamic_origins)
 else:
     gdb_sandbox = None
     gdb_cache = None
