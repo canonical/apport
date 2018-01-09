@@ -69,6 +69,8 @@ def parse_args():
                            help=_('Display retraced stack traces and ask for confirmation before sending them to the crash database.'))
     argparser.add_argument('--duplicate-db', metavar='PATH',
                            help=_('Path to the duplicate sqlite database (default: no duplicate checking)'))
+    argparser.add_argument('--no-stacktrace-source', action='store_false', dest='stacktrace_source',
+                           help=_('Do not add StacktraceSource to the report.'))
     argparser.add_argument('report', metavar='some.crash|NNNN',
                            help='apport .crash file or the crash ID to process')
 
@@ -397,7 +399,8 @@ Thank you for your understanding, and sorry for the inconvenience!
         apt_root = os.path.join(cache, report['DistroRelease'], 'apt')
     else:
         apt_root = None
-    gen_source_stacktrace(report, apt_root)
+    if options.stacktrace_source:
+        gen_source_stacktrace(report, apt_root)
     report.add_kernel_crash_info()
 
 modified = False

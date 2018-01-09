@@ -18,6 +18,9 @@ detailed list of changes, please see ChangeLog.
   * backends/packaging-apt-dpkg.py: when reusing a sandbox do not remove
     conflicting packages when they conflict with themselves, or when they
     conflict with but also provide a virtual package.
+  * bin/apport-retrace: add a --no-stracktrace-source option that does not do
+    the work of creating a StacktraceSource field in the retraced report
+    thereby decreasing the time to retrace.
 
 2.20.8 (2017-11-15)
 -------------------
