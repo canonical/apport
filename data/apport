@@ -15,6 +15,7 @@
 
 import sys, os, os.path, subprocess, time, traceback, pwd, io
 import signal, inspect, grp, fcntl, socket, atexit, array, struct
+import errno
 
 import apport, apport.fileutils
 
@@ -303,9 +304,15 @@ def is_same_ns(pid, ns):
         # If the namespace doesn't exist, then it's obviously shared
         return True
 
-    if os.readlink('/proc/%s/ns/%s' % (pid, ns)) == os.readlink('/proc/self/ns/%s' % ns):
-        # Check that the inode for both namespaces is the same
-        return True
+    try:
+        if os.readlink('/proc/%s/ns/%s' % (pid, ns)) == os.readlink('/proc/self/ns/%s' % ns):
+            # Check that the inode for both namespaces is the same
+            return True
+    except OSError as e:
+        if e.errno == errno.ENOENT:
+            return True
+        else:
+            raise
 
     return False
 

@@ -24,6 +24,8 @@ detailed list of changes, please see ChangeLog.
   * apport/report.py: gdb's version 8.0.90 output changed from Warning to
     warning however to support using gdb in sandbox we need to support either
     case so check for both.
+  * data/apport: add an exception handler in case either name space can not be
+    found.
 
 2.20.8 (2017-11-15)
 -------------------
