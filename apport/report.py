@@ -725,7 +725,10 @@ class Report(problem_report.ProblemReport):
 
         # check for truncated stack trace
         if 'is truncated: expected core file size' in out:
-            warnings = '\n'.join([l for l in out.splitlines() if 'Warning:' in l])
+            if 'warning:' in out:
+                warnings = '\n'.join([l for l in out.splitlines() if 'warning:' in l])
+            elif 'Warning:' in out:
+                warnings = '\n'.join([l for l in out.splitlines() if 'Warning:' in l])
             reason = 'Invalid core dump: ' + warnings.strip()
             self['UnreportableReason'] = reason
             raise IOError(reason)
