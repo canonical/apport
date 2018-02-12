@@ -40,12 +40,19 @@ def check_lock():
         error_log('cannot create lock file (uid %i): %s' % (os.getuid(), str(e)))
         sys.exit(1)
 
-    try:
-        fcntl.lockf(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except IOError:
+    def error_running(*args):
         error_log('another apport instance is already running, aborting')
         sys.exit(1)
 
+    original_handler = signal.signal(signal.SIGALRM, error_running)
+    signal.alarm(30) # Timeout after that many seconds
+    try:
+        fcntl.lockf(fd, fcntl.LOCK_EX)
+    except IOError:
+        error_running()
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, original_handler)
 
 (pidstat, real_uid, real_gid, cwd) = (None, None, None, None)
 

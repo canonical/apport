@@ -26,6 +26,7 @@ detailed list of changes, please see ChangeLog.
     case so check for both.
   * data/apport: add an exception handler in case either name space can not be
     found.
+  * data/apport: wait for lock, with 30s timeout (LP: #1746874)
 
 2.20.8 (2017-11-15)
 -------------------
