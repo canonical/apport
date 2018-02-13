@@ -26,6 +26,8 @@ detailed list of changes, please see ChangeLog.
     case so check for both.
   * data/apport: add an exception handler in case either name space can not be
     found.
+  * data/general-hooks/generic.py: change JournalErrors to contain errors not
+    warnings. (LP: #1738581)
 
 2.20.8 (2017-11-15)
 -------------------

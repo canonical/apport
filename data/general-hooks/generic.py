@@ -86,10 +86,10 @@ Do you want to continue the report process anyway?
             and report['ProblemType'] == 'Package':
         report['UnreportableReason'] = 'The package installation resulted in a segmentation fault which is better reported as a crash report rather than a package install failure.'
 
-    # log warnings/errors
+    # log errors
     if os.path.exists('/run/systemd/system'):
         report['JournalErrors'] = apport.hookutils.command_output(
-            ['journalctl', '-b', '--priority=warning', '--lines=1000'])
+            ['journalctl', '-b', '--priority=err', '--lines=1000'])
 
 
 if __name__ == '__main__':
