@@ -1,6 +1,11 @@
 This file summarizes the major and interesting changes for each release. For a
 detailed list of changes, please see ChangeLog.
 
+2.20.10 (UNRELEASED)
+--------------------
+  * backends/packaging-apt-dpkg.py: when using a permanent sandbox better check
+    for the package being already available thereby quantity of downloads.
+
 2.20.9 (2018-02-14)
 -------------------
   * Re-enable container support. Thanks to Stéphane Graber! (LP: #1732518)
