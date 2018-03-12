@@ -99,8 +99,15 @@ def _command_output(command, input=None, env=None):
     '''
     sp = subprocess.Popen(command, stdout=subprocess.PIPE,
                           stderr=subprocess.STDOUT, env=env)
-
-    out = sp.communicate(input)[0]
+    # gdb can timeout when trying to retrace some core files, giving it 30
+    # minutes to run should be more than enough.
+    try:
+        out = sp.communicate(input=input, timeout=1800)[0]
+    except subprocess.TimeoutExpired:
+        sp.kill()
+        out, errs = sp.communicate()
+        raise OSError('Error: command %s timedout with exit code %i: %s' % (
+            str(command), sp.returncode, out))
     if sp.returncode == 0:
         return out
     else:

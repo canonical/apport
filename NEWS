@@ -5,6 +5,9 @@ detailed list of changes, please see ChangeLog.
 --------------------
   * backends/packaging-apt-dpkg.py: when using a permanent sandbox better check
     for the package being already available thereby quantity of downloads.
+  * apport/report.py: Use timeout parameter in subprocess to limit how long
+    we'll wait for gdb to return information as gdb can hang with some core
+    files.
 
 2.20.9 (2018-02-14)
 -------------------
