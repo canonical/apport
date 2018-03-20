@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2018-02-20 05:15+0000\n"
-"X-Generator: Launchpad (build 18553)\n"
+"X-Launchpad-Export-Date: 2018-03-20 05:18+0000\n"
+"X-Generator: Launchpad (build 18571)\n"
 "Language: ja\n"
 
 #: ../kde/apport-kde.py:469 ../kde/apport-kde.py:504 ../kde/apport-kde.py:524
@@ -334,22 +334,22 @@ msgstr "システムが不安定になる可能性があるので、再起動す
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:34 ../bin/apport-retrace.py:34
 msgid "Do not put the new traces into the report, but write them to stdout."
-msgstr "これ以上レポートに新しいトレースを書き込まないが、標準出力には表示する。"
+msgstr "これ以上レポートに新しいトレースを書き込みませんが、標準出力には表示します。"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:36 ../bin/apport-retrace.py:36
 msgid ""
 "Start an interactive gdb session with the report's core dump (-o ignored; "
 "does not rewrite report)"
-msgstr ""
+msgstr "レポートのコアダンプに対してインタラクティブなgdbセッションを開始します（-o 無視；レポートを上書きしません）"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:38 ../bin/apport-retrace.py:38
 msgid ""
 "Write modified report to given file instead of changing the original report"
-msgstr "オリジナルのレポートを変更せずに、指定されたファイルに変更後のレポートを書き込む"
+msgstr "オリジナルのレポートを変更せずに、指定されたファイルに変更後のレポートを書き込みます"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:41 ../bin/apport-retrace.py:41
 msgid "Remove the core dump from the report after stack trace regeneration"
-msgstr ""
+msgstr "スタックトレースを再生成した後にコアダンプをレポートから取り除きます"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:43 ../bin/apport-retrace.py:43
 msgid "Override report's CoreFile"
@@ -357,11 +357,11 @@ msgstr "レポートのコアファイルを上書きします"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:45 ../bin/apport-retrace.py:45
 msgid "Override report's ExecutablePath"
-msgstr ""
+msgstr "レポートの ExecutablePath を上書きします"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:47 ../bin/apport-retrace.py:47
 msgid "Override report's ProcMaps"
-msgstr ""
+msgstr "レポートの ProcMaps を上書きします"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:49 ../bin/apport-retrace.py:49
 msgid "Rebuild report's Package information"
@@ -412,6 +412,8 @@ msgid ""
 "used when specifying a crash ID to upload the retraced stack traces (only if "
 "neither -g, -o, nor -s are specified)"
 msgstr ""
+"クラッシュデータベース認証情報のファイルへのパス。これはリトレースしたスタックトレースをアップロードする際にクラッシュIDを指定するために使われます（-"
+"g, -o, または -s が指定されていない場合）。"
 
 #: ../debian/tmp/usr/bin/apport-retrace.py:69 ../bin/apport-retrace.py:69
 msgid ""
