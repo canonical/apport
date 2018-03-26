@@ -8,6 +8,7 @@ detailed list of changes, please see ChangeLog.
   * apport/report.py: Use timeout parameter in subprocess to limit how long
     we'll wait for gdb to return information as gdb can hang with some core
     files.
+  * data/apport: Fix PEP8 issues
 
 2.20.9 (2018-02-14)
 -------------------

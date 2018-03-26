@@ -45,7 +45,7 @@ def check_lock():
         sys.exit(1)
 
     original_handler = signal.signal(signal.SIGALRM, error_running)
-    signal.alarm(30) # Timeout after that many seconds
+    signal.alarm(30)  # Timeout after that many seconds
     try:
         fcntl.lockf(fd, fcntl.LOCK_EX)
     except IOError:
@@ -53,6 +53,7 @@ def check_lock():
     finally:
         signal.alarm(0)
         signal.signal(signal.SIGALRM, original_handler)
+
 
 (pidstat, real_uid, real_gid, cwd) = (None, None, None, None)
 
